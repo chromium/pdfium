@@ -56,12 +56,6 @@ class CXML_Element : public CXML_Object {
                     const WideString& value);
 
  private:
-  bool GetAttrValue(const ByteStringView& name, WideString& attribute) const;
-  bool GetAttrValue(const ByteStringView& space,
-                    const ByteStringView& name,
-                    WideString& attribute) const;
-  bool GetAttrInteger(const ByteStringView& name, int& attribute) const;
-
   UnownedPtr<const CXML_Element> const m_pParent;
   ByteString m_QSpaceName;
   ByteString m_TagName;

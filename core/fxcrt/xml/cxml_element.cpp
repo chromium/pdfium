@@ -72,50 +72,27 @@ void CXML_Element::GetAttrByIndex(int index,
   *value = item.m_Value;
 }
 
-bool CXML_Element::GetAttrValue(const ByteStringView& name,
-                                WideString& attribute) const {
-  ByteStringView bsSpace;
-  ByteStringView bsName;
-  FX_XML_SplitQualifiedName(name, bsSpace, bsName);
-  return GetAttrValue(bsSpace, bsName, attribute);
-}
-
 WideString CXML_Element::GetAttrValue(const ByteStringView& name) const {
-  WideString attr;
-  GetAttrValue(name, attr);
-  return attr;
-}
-
-bool CXML_Element::GetAttrValue(const ByteStringView& space,
-                                const ByteStringView& name,
-                                WideString& attribute) const {
-  const WideString* pValue =
-      m_AttrMap.Lookup(ByteString(space), ByteString(name));
-  if (!pValue)
-    return false;
-
-  attribute = *pValue;
-  return true;
-}
-
-bool CXML_Element::GetAttrInteger(const ByteStringView& name,
-                                  int& attribute) const {
   ByteStringView bsSpace;
   ByteStringView bsName;
   FX_XML_SplitQualifiedName(name, bsSpace, bsName);
-  const WideString* pwsValue =
-      m_AttrMap.Lookup(ByteString(bsSpace), ByteString(bsName));
-  if (!pwsValue)
-    return false;
 
-  attribute = pwsValue->GetInteger();
-  return true;
+  WideString attr;
+  const WideString* pValue =
+      m_AttrMap.Lookup(ByteString(bsSpace), ByteString(bsName));
+  if (pValue)
+    attr = *pValue;
+  return attr;
 }
 
 int CXML_Element::GetAttrInteger(const ByteStringView& name) const {
-  int attr = 0;
-  GetAttrInteger(name, attr);
-  return attr;
+  ByteStringView bsSpace;
+  ByteStringView bsName;
+  FX_XML_SplitQualifiedName(name, bsSpace, bsName);
+
+  const WideString* pwsValue =
+      m_AttrMap.Lookup(ByteString(bsSpace), ByteString(bsName));
+  return pwsValue ? pwsValue->GetInteger() : 0;
 }
 
 uint32_t CXML_Element::CountElements(const ByteStringView& space,
