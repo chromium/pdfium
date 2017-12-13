@@ -28,18 +28,6 @@ class CJX_Node : public CJX_Tree {
   CXFA_Node* GetXFANode();
   const CXFA_Node* GetXFANode() const;
 
-  CXFA_Node* GetProperty(int32_t index,
-                         XFA_Element eType,
-                         bool bCreateProperty);
-
-  pdfium::Optional<WideString> TryContent(bool bScriptModify, bool bProto);
-  bool SetContent(const WideString& wsContent,
-                  const WideString& wsXMLValue,
-                  bool bNotify,
-                  bool bScriptModify,
-                  bool bSyncData);
-  WideString GetContent(bool bScriptModify);
-
   void SetLayoutItem(CXFA_LayoutItem* item) { layout_item_ = item; }
   CXFA_LayoutItem* GetLayoutItem() const { return layout_item_.Get(); }
 
@@ -52,7 +40,6 @@ class CJX_Node : public CJX_Tree {
                                      const WideString& prop) const;
   void ThrowTooManyOccurancesException(const WideString& obj) const;
 
-  int32_t Subform_and_SubformSet_InstanceIndex();
   int32_t InstanceManager_SetInstances(int32_t iDesired);
   int32_t InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom);
 
@@ -101,30 +88,6 @@ class CJX_Node : public CJX_Tree {
   void Script_Field_Length(CFXJSE_Value* pValue,
                            bool bSetting,
                            XFA_Attribute eAttribute);
-  void Script_Som_DefaultValue(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_Attribute eAttribute);
-  void Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
-  void Script_Boolean_Value(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
-  void Script_Som_DataNode(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void Script_Som_Mandatory(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
-  void Script_Som_InstanceIndex(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
-  void Script_Draw_DefaultValue(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
-  void Script_Field_DefaultValue(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute);
   void Script_Field_EditValue(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute);

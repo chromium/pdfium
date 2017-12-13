@@ -77,6 +77,18 @@ class CJX_Object {
   pdfium::Optional<WideString> TryAttribute(XFA_Attribute eAttr,
                                             bool bUseDefault);
 
+  pdfium::Optional<WideString> TryContent(bool bScriptModify, bool bProto);
+  bool SetContent(const WideString& wsContent,
+                  const WideString& wsXMLValue,
+                  bool bNotify,
+                  bool bScriptModify,
+                  bool bSyncData);
+  WideString GetContent(bool bScriptModify);
+
+  CXFA_Node* GetProperty(int32_t index,
+                         XFA_Element eType,
+                         bool bCreateProperty);
+
   void SetAttributeValue(const WideString& wsValue,
                          const WideString& wsXMLValue,
                          bool bNotify,
@@ -113,6 +125,21 @@ class CJX_Object {
   void Script_Field_FormatMessage(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute);
+  void Script_Som_DefaultValue(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute);
+  void Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute);
+  void Script_Som_DataNode(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute);
+  void Script_Som_Mandatory(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute);
+  void Script_Som_InstanceIndex(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute);
 
   pdfium::Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
@@ -170,6 +197,16 @@ class CJX_Object {
   void Script_Som_Message(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_SOM_MESSAGETYPE iMessageType);
+  void Script_Boolean_DefaultValue(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute);
+  void Script_Draw_DefaultValue(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute);
+  void Script_Field_DefaultValue(CFXJSE_Value* pValue,
+                                 bool bSetting,
+                                 XFA_Attribute eAttribute);
+  int32_t Subform_and_SubformSet_InstanceIndex();
 
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);

@@ -8,6 +8,7 @@
 
 #include <tuple>
 
+#include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cfxjse_engine.h"
@@ -20,6 +21,7 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
+#include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
 
@@ -576,6 +578,308 @@ CFX_XMLElement* CJX_Object::SetValue(XFA_Attribute eAttr,
   return elem;
 }
 
+bool CJX_Object::SetContent(const WideString& wsContent,
+                            const WideString& wsXMLValue,
+                            bool bNotify,
+                            bool bScriptModify,
+                            bool bSyncData) {
+  CXFA_Node* pNode = nullptr;
+  CXFA_Node* pBindNode = nullptr;
+  switch (ToNode(GetXFAObject())->GetObjectType()) {
+    case XFA_ObjectType::ContainerNode: {
+      if (XFA_FieldIsMultiListBox(ToNode(GetXFAObject()))) {
+        CXFA_Node* pValue = GetProperty(0, XFA_Element::Value, true);
+        if (!pValue)
+          break;
+
+        CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+        ASSERT(pChildValue);
+        pChildValue->JSNode()->SetCData(XFA_Attribute::ContentType, L"text/xml",
+                                        false, false);
+        pChildValue->JSNode()->SetContent(wsContent, wsContent, bNotify,
+                                          bScriptModify, false);
+        CXFA_Node* pBind = ToNode(GetXFAObject())->GetBindData();
+        if (bSyncData && pBind) {
+          std::vector<WideString> wsSaveTextArray;
+          size_t iSize = 0;
+          if (!wsContent.IsEmpty()) {
+            size_t iStart = 0;
+            size_t iLength = wsContent.GetLength();
+            auto iEnd = wsContent.Find(L'\n', iStart);
+            iEnd = !iEnd.has_value() ? iLength : iEnd;
+            while (iEnd.value() >= iStart) {
+              wsSaveTextArray.push_back(
+                  wsContent.Mid(iStart, iEnd.value() - iStart));
+              iStart = iEnd.value() + 1;
+              if (iStart >= iLength)
+                break;
+
+              iEnd = wsContent.Find(L'\n', iStart);
+              if (!iEnd.has_value()) {
+                wsSaveTextArray.push_back(
+                    wsContent.Mid(iStart, iLength - iStart));
+              }
+            }
+            iSize = wsSaveTextArray.size();
+          }
+          if (iSize == 0) {
+            while (CXFA_Node* pChildNode =
+                       pBind->GetNodeItem(XFA_NODEITEM_FirstChild)) {
+              pBind->RemoveChild(pChildNode, true);
+            }
+          } else {
+            std::vector<CXFA_Node*> valueNodes = pBind->GetNodeList(
+                XFA_NODEFILTER_Children, XFA_Element::DataValue);
+            size_t iDatas = valueNodes.size();
+            if (iDatas < iSize) {
+              size_t iAddNodes = iSize - iDatas;
+              CXFA_Node* pValueNodes = nullptr;
+              while (iAddNodes-- > 0) {
+                pValueNodes =
+                    pBind->CreateSamePacketNode(XFA_Element::DataValue);
+                pValueNodes->JSNode()->SetCData(XFA_Attribute::Name, L"value",
+                                                false, false);
+                pValueNodes->CreateXMLMappingNode();
+                pBind->InsertChild(pValueNodes, nullptr);
+              }
+              pValueNodes = nullptr;
+            } else if (iDatas > iSize) {
+              size_t iDelNodes = iDatas - iSize;
+              while (iDelNodes-- > 0) {
+                pBind->RemoveChild(pBind->GetNodeItem(XFA_NODEITEM_FirstChild),
+                                   true);
+              }
+            }
+            int32_t i = 0;
+            for (CXFA_Node* pValueNode =
+                     pBind->GetNodeItem(XFA_NODEITEM_FirstChild);
+                 pValueNode; pValueNode = pValueNode->GetNodeItem(
+                                 XFA_NODEITEM_NextSibling)) {
+              pValueNode->JSNode()->SetAttributeValue(
+                  wsSaveTextArray[i], wsSaveTextArray[i], false, false);
+              i++;
+            }
+          }
+          for (const auto& pArrayNode : *(pBind->GetBindItems())) {
+            if (pArrayNode.Get() != ToNode(GetXFAObject())) {
+              pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
+                                               bScriptModify, false);
+            }
+          }
+        }
+        break;
+      }
+      if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExclGroup) {
+        pNode = ToNode(GetXFAObject());
+      } else {
+        CXFA_Node* pValue = GetProperty(0, XFA_Element::Value, true);
+        if (!pValue)
+          break;
+
+        CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+        ASSERT(pChildValue);
+        pChildValue->JSNode()->SetContent(wsContent, wsContent, bNotify,
+                                          bScriptModify, false);
+      }
+      pBindNode = ToNode(GetXFAObject())->GetBindData();
+      if (pBindNode && bSyncData) {
+        pBindNode->JSNode()->SetContent(wsContent, wsXMLValue, bNotify,
+                                        bScriptModify, false);
+        for (const auto& pArrayNode : *(pBindNode->GetBindItems())) {
+          if (pArrayNode.Get() != ToNode(GetXFAObject())) {
+            pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
+                                             true, false);
+          }
+        }
+      }
+      pBindNode = nullptr;
+      break;
+    }
+    case XFA_ObjectType::ContentNode: {
+      WideString wsContentType;
+      if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExData) {
+        pdfium::Optional<WideString> ret =
+            TryAttribute(XFA_Attribute::ContentType, false);
+        if (ret)
+          wsContentType = *ret;
+        if (wsContentType == L"text/html") {
+          wsContentType = L"";
+          SetAttribute(XFA_Attribute::ContentType, wsContentType.AsStringView(),
+                       false);
+        }
+      }
+
+      CXFA_Node* pContentRawDataNode =
+          ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_FirstChild);
+      if (!pContentRawDataNode) {
+        pContentRawDataNode =
+            ToNode(GetXFAObject())
+                ->CreateSamePacketNode((wsContentType == L"text/xml")
+                                           ? XFA_Element::Sharpxml
+                                           : XFA_Element::Sharptext);
+        ToNode(GetXFAObject())->InsertChild(pContentRawDataNode, nullptr);
+      }
+      return pContentRawDataNode->JSNode()->SetContent(
+          wsContent, wsXMLValue, bNotify, bScriptModify, bSyncData);
+    }
+    case XFA_ObjectType::NodeC:
+    case XFA_ObjectType::TextNode:
+      pNode = ToNode(GetXFAObject());
+      break;
+    case XFA_ObjectType::NodeV:
+      pNode = ToNode(GetXFAObject());
+      if (bSyncData &&
+          ToNode(GetXFAObject())->GetPacketType() == XFA_PacketType::Form) {
+        CXFA_Node* pParent =
+            ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_Parent);
+        if (pParent) {
+          pParent = pParent->GetNodeItem(XFA_NODEITEM_Parent);
+        }
+        if (pParent && pParent->GetElementType() == XFA_Element::Value) {
+          pParent = pParent->GetNodeItem(XFA_NODEITEM_Parent);
+          if (pParent && pParent->IsContainerNode()) {
+            pBindNode = pParent->GetBindData();
+            if (pBindNode) {
+              pBindNode->JSNode()->SetContent(wsContent, wsXMLValue, bNotify,
+                                              bScriptModify, false);
+            }
+          }
+        }
+      }
+      break;
+    default:
+      if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::DataValue) {
+        pNode = ToNode(GetXFAObject());
+        pBindNode = ToNode(GetXFAObject());
+      }
+      break;
+  }
+  if (!pNode)
+    return false;
+
+  SetAttributeValue(wsContent, wsXMLValue, bNotify, bScriptModify);
+  if (pBindNode && bSyncData) {
+    for (const auto& pArrayNode : *(pBindNode->GetBindItems())) {
+      pArrayNode->JSNode()->SetContent(wsContent, wsContent, bNotify,
+                                       bScriptModify, false);
+    }
+  }
+  return true;
+}
+
+WideString CJX_Object::GetContent(bool bScriptModify) {
+  return TryContent(bScriptModify, true).value_or(WideString());
+}
+
+pdfium::Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
+                                                    bool bProto) {
+  CXFA_Node* pNode = nullptr;
+  switch (ToNode(GetXFAObject())->GetObjectType()) {
+    case XFA_ObjectType::ContainerNode:
+      if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExclGroup) {
+        pNode = ToNode(GetXFAObject());
+      } else {
+        CXFA_Node* pValue =
+            ToNode(GetXFAObject())->GetChild(0, XFA_Element::Value, false);
+        if (!pValue)
+          return {};
+
+        CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+        if (pChildValue && XFA_FieldIsMultiListBox(ToNode(GetXFAObject()))) {
+          pChildValue->JSNode()->SetAttribute(XFA_Attribute::ContentType,
+                                              L"text/xml", false);
+        }
+        if (pChildValue)
+          return pChildValue->JSNode()->TryContent(bScriptModify, bProto);
+        return {};
+      }
+      break;
+    case XFA_ObjectType::ContentNode: {
+      CXFA_Node* pContentRawDataNode =
+          ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_FirstChild);
+      if (!pContentRawDataNode) {
+        XFA_Element element = XFA_Element::Sharptext;
+        if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExData) {
+          pdfium::Optional<WideString> contentType =
+              TryAttribute(XFA_Attribute::ContentType, false);
+          if (contentType) {
+            if (*contentType == L"text/html")
+              element = XFA_Element::SharpxHTML;
+            else if (*contentType == L"text/xml")
+              element = XFA_Element::Sharpxml;
+          }
+        }
+        pContentRawDataNode =
+            ToNode(GetXFAObject())->CreateSamePacketNode(element);
+        ToNode(GetXFAObject())->InsertChild(pContentRawDataNode, nullptr);
+      }
+      return pContentRawDataNode->JSNode()->TryContent(bScriptModify, true);
+    }
+    case XFA_ObjectType::NodeC:
+    case XFA_ObjectType::NodeV:
+    case XFA_ObjectType::TextNode:
+      pNode = ToNode(GetXFAObject());
+    default:
+      if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::DataValue)
+        pNode = ToNode(GetXFAObject());
+      break;
+  }
+  if (pNode) {
+    if (bScriptModify) {
+      CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
+      if (pScriptContext)
+        GetDocument()->GetScriptContext()->AddNodesOfRunScript(
+            ToNode(GetXFAObject()));
+    }
+    return TryCData(XFA_Attribute::Value, false);
+  }
+  return {};
+}
+
+CXFA_Node* CJX_Object::GetProperty(int32_t index,
+                                   XFA_Element eProperty,
+                                   bool bCreateProperty) {
+  if (index < 0 ||
+      index >= ToNode(GetXFAObject())->PropertyOccuranceCount(eProperty)) {
+    return nullptr;
+  }
+
+  int32_t iCount = 0;
+  for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetChildNode(); pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    if (pNode->GetElementType() == eProperty) {
+      iCount++;
+      if (iCount > index)
+        return pNode;
+    }
+  }
+  if (!bCreateProperty)
+    return nullptr;
+
+  if (ToNode(GetXFAObject())
+          ->HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
+    for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetChildNode(); pNode;
+         pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+      if (ToNode(GetXFAObject())
+              ->HasPropertyFlags(pNode->GetElementType(),
+                                 XFA_PROPERTYFLAG_OneOf)) {
+        return nullptr;
+      }
+    }
+  }
+
+  CXFA_Node* pNewNode = nullptr;
+  for (; iCount <= index; ++iCount) {
+    pNewNode = GetDocument()->CreateNode(
+        ToNode(GetXFAObject())->GetPacketType(), eProperty);
+    if (!pNewNode)
+      return nullptr;
+    ToNode(GetXFAObject())->InsertChild(pNewNode, nullptr);
+    pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);
+  }
+  return pNewNode;
+}
+
 bool CJX_Object::SetUserData(void* pKey,
                              void* pData,
                              XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
@@ -1106,4 +1410,281 @@ void CJX_Object::Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_Attribute eAttribute) {
   Script_Som_Message(pValue, bSetting, XFA_SOM_MandatoryMessage);
+}
+
+void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
+                                         bool bSetting,
+                                         XFA_Attribute /* unused */) {
+  XFA_Element eType = ToNode(GetXFAObject())->GetElementType();
+  if (eType == XFA_Element::Field) {
+    Script_Field_DefaultValue(pValue, bSetting, XFA_Attribute::Unknown);
+    return;
+  }
+  if (eType == XFA_Element::Draw) {
+    Script_Draw_DefaultValue(pValue, bSetting, XFA_Attribute::Unknown);
+    return;
+  }
+  if (eType == XFA_Element::Boolean) {
+    Script_Boolean_DefaultValue(pValue, bSetting, XFA_Attribute::Unknown);
+    return;
+  }
+
+  if (bSetting) {
+    WideString wsNewValue;
+    if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
+      wsNewValue = pValue->ToWideString();
+
+    WideString wsFormatValue(wsNewValue);
+    CXFA_WidgetData* pContainerWidgetData = nullptr;
+    if (ToNode(GetXFAObject())->GetPacketType() == XFA_PacketType::Datasets) {
+      WideString wsPicture;
+      for (const auto& pFormNode : *(ToNode(GetXFAObject())->GetBindItems())) {
+        if (!pFormNode || pFormNode->HasRemovedChildren())
+          continue;
+
+        pContainerWidgetData = pFormNode->GetContainerWidgetData();
+        if (pContainerWidgetData) {
+          wsPicture = pContainerWidgetData->GetPictureContent(
+              XFA_VALUEPICTURE_DataBind);
+        }
+        if (!wsPicture.IsEmpty())
+          break;
+
+        pContainerWidgetData = nullptr;
+      }
+    } else if (ToNode(GetXFAObject())->GetPacketType() ==
+               XFA_PacketType::Form) {
+      pContainerWidgetData = ToNode(GetXFAObject())->GetContainerWidgetData();
+    }
+
+    if (pContainerWidgetData)
+      wsFormatValue = pContainerWidgetData->GetFormatDataValue(wsNewValue);
+
+    SetContent(wsNewValue, wsFormatValue, true, true, true);
+    return;
+  }
+
+  WideString content = GetContent(true);
+  if (content.IsEmpty() && eType != XFA_Element::Text &&
+      eType != XFA_Element::SubmitUrl) {
+    pValue->SetNull();
+  } else if (eType == XFA_Element::Integer) {
+    pValue->SetInteger(FXSYS_wtoi(content.c_str()));
+  } else if (eType == XFA_Element::Float || eType == XFA_Element::Decimal) {
+    CFX_Decimal decimal(content.AsStringView());
+    pValue->SetFloat((float)(double)decimal);
+  } else {
+    pValue->SetString(content.UTF8Encode().AsStringView());
+  }
+}
+
+void CJX_Object::Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
+                                              bool bSetting,
+                                              XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+
+  WideString content = GetContent(true);
+  if (content.IsEmpty()) {
+    pValue->SetNull();
+    return;
+  }
+  pValue->SetString(content.UTF8Encode().AsStringView());
+}
+
+void CJX_Object::Script_Som_DataNode(CFXJSE_Value* pValue,
+                                     bool bSetting,
+                                     XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+
+  CXFA_Node* pDataNode = ToNode(GetXFAObject())->GetBindData();
+  if (!pDataNode) {
+    pValue->SetNull();
+    return;
+  }
+
+  pValue->Assign(
+      GetDocument()->GetScriptContext()->GetJSValueFromMap(pDataNode));
+}
+
+void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
+                                      bool bSetting,
+                                      XFA_Attribute eAttribute) {
+  if (!widget_data_)
+    return;
+
+  CXFA_ValidateData validateData = widget_data_->GetValidateData(true);
+  if (bSetting) {
+    validateData.SetNullTest(pValue->ToWideString());
+    return;
+  }
+
+  WideString str = CXFA_Node::AttributeEnumToName(validateData.GetNullTest());
+  pValue->SetString(str.UTF8Encode().AsStringView());
+}
+
+void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
+                                          bool bSetting,
+                                          XFA_Attribute eAttribute) {
+  if (!bSetting) {
+    pValue->SetInteger(Subform_and_SubformSet_InstanceIndex());
+    return;
+  }
+
+  int32_t iTo = pValue->ToInteger();
+  int32_t iFrom = Subform_and_SubformSet_InstanceIndex();
+  CXFA_Node* pManagerNode = nullptr;
+  for (CXFA_Node* pNode =
+           ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_PrevSibling);
+       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+    if (pNode->GetElementType() == XFA_Element::InstanceManager) {
+      pManagerNode = pNode;
+      break;
+    }
+  }
+  if (!pManagerNode)
+    return;
+
+  pManagerNode->JSNode()->InstanceManager_MoveInstance(iTo, iFrom);
+  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
+  if (!pNotify)
+    return;
+
+  CXFA_Node* pToInstance = pManagerNode->GetItem(iTo);
+  if (pToInstance && pToInstance->GetElementType() == XFA_Element::Subform) {
+    pNotify->RunSubformIndexChange(pToInstance);
+  }
+
+  CXFA_Node* pFromInstance = pManagerNode->GetItem(iFrom);
+  if (pFromInstance &&
+      pFromInstance->GetElementType() == XFA_Element::Subform) {
+    pNotify->RunSubformIndexChange(pFromInstance);
+  }
+}
+
+void CJX_Object::Script_Field_DefaultValue(CFXJSE_Value* pValue,
+                                           bool bSetting,
+                                           XFA_Attribute eAttribute) {
+  if (!widget_data_)
+    return;
+
+  if (bSetting) {
+    if (pValue) {
+      widget_data_->SetPreNull(widget_data_->IsNull());
+      widget_data_->SetIsNull(pValue->IsNull());
+    }
+
+    WideString wsNewText;
+    if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
+      wsNewText = pValue->ToWideString();
+
+    CXFA_Node* pUIChild = widget_data_->GetUIChild();
+    if (pUIChild->GetElementType() == XFA_Element::NumericEdit) {
+      wsNewText =
+          widget_data_->NumericLimit(wsNewText, widget_data_->GetLeadDigits(),
+                                     widget_data_->GetFracDigits());
+    }
+
+    CXFA_WidgetData* pContainerWidgetData =
+        ToNode(GetXFAObject())->GetContainerWidgetData();
+    WideString wsFormatText(wsNewText);
+    if (pContainerWidgetData)
+      wsFormatText = pContainerWidgetData->GetFormatDataValue(wsNewText);
+
+    SetContent(wsNewText, wsFormatText, true, true, true);
+    return;
+  }
+
+  WideString content = GetContent(true);
+  if (content.IsEmpty()) {
+    pValue->SetNull();
+    return;
+  }
+
+  CXFA_Node* pUIChild = widget_data_->GetUIChild();
+  CXFA_Node* pNode = widget_data_->GetFormValueData().GetNode()->GetNodeItem(
+      XFA_NODEITEM_FirstChild);
+  if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
+    if (pUIChild->GetElementType() == XFA_Element::NumericEdit &&
+        (pNode->JSNode()->GetInteger(XFA_Attribute::FracDigits) == -1)) {
+      pValue->SetString(content.UTF8Encode().AsStringView());
+    } else {
+      CFX_Decimal decimal(content.AsStringView());
+      pValue->SetFloat((float)(double)decimal);
+    }
+  } else if (pNode && pNode->GetElementType() == XFA_Element::Integer) {
+    pValue->SetInteger(FXSYS_wtoi(content.c_str()));
+  } else if (pNode && pNode->GetElementType() == XFA_Element::Boolean) {
+    pValue->SetBoolean(FXSYS_wtoi(content.c_str()) == 0 ? false : true);
+  } else if (pNode && pNode->GetElementType() == XFA_Element::Float) {
+    CFX_Decimal decimal(content.AsStringView());
+    pValue->SetFloat((float)(double)decimal);
+  } else {
+    pValue->SetString(content.UTF8Encode().AsStringView());
+  }
+}
+
+void CJX_Object::Script_Boolean_DefaultValue(CFXJSE_Value* pValue,
+                                             bool bSetting,
+                                             XFA_Attribute eAttribute) {
+  if (!bSetting) {
+    WideString wsValue = GetContent(true);
+    pValue->SetBoolean(wsValue == L"1");
+    return;
+  }
+
+  ByteString newValue;
+  if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
+    newValue = pValue->ToString();
+
+  int32_t iValue = FXSYS_atoi(newValue.c_str());
+  WideString wsNewValue(iValue == 0 ? L"0" : L"1");
+  WideString wsFormatValue(wsNewValue);
+  CXFA_WidgetData* pContainerWidgetData =
+      ToNode(GetXFAObject())->GetContainerWidgetData();
+  if (pContainerWidgetData)
+    wsFormatValue = pContainerWidgetData->GetFormatDataValue(wsNewValue);
+
+  SetContent(wsNewValue, wsFormatValue, true, true, true);
+}
+
+void CJX_Object::Script_Draw_DefaultValue(CFXJSE_Value* pValue,
+                                          bool bSetting,
+                                          XFA_Attribute eAttribute) {
+  if (!bSetting) {
+    WideString content = GetContent(true);
+    if (content.IsEmpty())
+      pValue->SetNull();
+    else
+      pValue->SetString(content.UTF8Encode().AsStringView());
+
+    return;
+  }
+
+  if (!pValue || !pValue->IsString())
+    return;
+  if (widget_data_->GetUIType() != XFA_Element::Text)
+    return;
+
+  WideString wsNewValue = pValue->ToWideString();
+  SetContent(wsNewValue, wsNewValue, true, true, true);
+}
+
+int32_t CJX_Object::Subform_and_SubformSet_InstanceIndex() {
+  int32_t index = 0;
+  for (CXFA_Node* pNode =
+           ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_PrevSibling);
+       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+    if ((pNode->GetElementType() != XFA_Element::Subform) &&
+        (pNode->GetElementType() != XFA_Element::SubformSet)) {
+      break;
+    }
+    index++;
+  }
+  return index;
 }
