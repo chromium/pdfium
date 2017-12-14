@@ -502,9 +502,9 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
     if (captionData.HasValidNode()) {
       CXFA_Value* capValue = captionData.GetValue();
       if (capValue) {
-        CXFA_TextData captionTextData = capValue->GetTextData();
-        if (captionTextData.HasValidNode())
-          wsCaptionName = captionTextData.GetContent();
+        CXFA_Text* captionText = capValue->GetText();
+        if (captionText)
+          wsCaptionName = captionText->GetContent();
       }
     }
   }

@@ -2681,8 +2681,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_templatecache.h",
       "xfa/fxfa/parser/cxfa_text.cpp",
       "xfa/fxfa/parser/cxfa_text.h",
-      "xfa/fxfa/parser/cxfa_textdata.cpp",
-      "xfa/fxfa/parser/cxfa_textdata.h",
       "xfa/fxfa/parser/cxfa_textedit.cpp",
       "xfa/fxfa/parser/cxfa_textedit.h",
       "xfa/fxfa/parser/cxfa_thisproxy.cpp",

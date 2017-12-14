@@ -7,12 +7,15 @@
 #ifndef XFA_FXFA_PARSER_CXFA_TEXT_H_
 #define XFA_FXFA_PARSER_CXFA_TEXT_H_
 
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Text : public CXFA_Node {
  public:
   CXFA_Text(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Text() override;
+
+  WideString GetContent();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TEXT_H_

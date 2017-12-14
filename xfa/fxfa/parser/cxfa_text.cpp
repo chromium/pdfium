@@ -37,3 +37,7 @@ CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Text>(this)) {}
 
 CXFA_Text::~CXFA_Text() {}
+
+WideString CXFA_Text::GetContent() {
+  return JSObject()->GetContent(false);
+}

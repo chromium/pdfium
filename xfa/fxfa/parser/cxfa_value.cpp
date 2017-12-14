@@ -75,8 +75,8 @@ CXFA_RectangleData CXFA_Value::GetRectangleData() const {
   return CXFA_RectangleData(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
-CXFA_TextData CXFA_Value::GetTextData() const {
-  return CXFA_TextData(GetNodeItem(XFA_NODEITEM_FirstChild));
+CXFA_Text* CXFA_Value::GetText() const {
+  return static_cast<CXFA_Text*>(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
 CXFA_ExDataData CXFA_Value::GetExData() const {
