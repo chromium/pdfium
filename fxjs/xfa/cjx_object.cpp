@@ -26,7 +26,10 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
+#include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/cxfa_occurdata.h"
+#include "xfa/fxfa/parser/cxfa_proto.h"
+#include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -1217,9 +1220,9 @@ void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
 
   CXFA_Node* pTemplateNode =
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Template));
-  CXFA_Node* pProtoRoot =
-      pTemplateNode->GetFirstChildByClass(XFA_Element::Subform)
-          ->GetFirstChildByClass(XFA_Element::Proto);
+  CXFA_Proto* pProtoRoot =
+      pTemplateNode->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform)
+          ->GetFirstChildByClass<CXFA_Proto>(XFA_Element::Proto);
 
   WideString wsID;
   WideString wsSOM;

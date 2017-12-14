@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 
-class CXFA_Node;
+class CXFA_Occur;
 
 class CXFA_OccurData : public CXFA_DataData {
  public:

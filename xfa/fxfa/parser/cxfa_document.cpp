@@ -15,11 +15,14 @@
 #include "xfa/fxfa/parser/cscript_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
+#include "xfa/fxfa/parser/cxfa_datagroup.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/cxfa_interactive.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_pdf.h"
+#include "xfa/fxfa/parser/cxfa_present.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -154,11 +157,13 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
       if (!pDatasetsNode)
         return nullptr;
 
-      for (CXFA_Node* pDatasetsChild =
-               pDatasetsNode->GetFirstChildByClass(XFA_Element::DataGroup);
+      for (CXFA_DataGroup* pDatasetsChild =
+               pDatasetsNode->GetFirstChildByClass<CXFA_DataGroup>(
+                   XFA_Element::DataGroup);
            pDatasetsChild;
-           pDatasetsChild = pDatasetsChild->GetNextSameClassSibling(
-               XFA_Element::DataGroup)) {
+           pDatasetsChild =
+               pDatasetsChild->GetNextSameClassSibling<CXFA_DataGroup>(
+                   XFA_Element::DataGroup)) {
         if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data)
           continue;
 
@@ -178,7 +183,8 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
     }
     case XFA_HASHCODE_Record: {
       CXFA_Node* pData = ToNode(GetXFAObject(XFA_HASHCODE_Data));
-      return pData ? pData->GetFirstChildByClass(XFA_Element::DataGroup)
+      return pData ? pData->GetFirstChildByClass<CXFA_DataGroup>(
+                         XFA_Element::DataGroup)
                    : nullptr;
     }
     case XFA_HASHCODE_DataWindow: {
@@ -254,11 +260,12 @@ bool CXFA_Document::IsInteractive() {
   if (!pConfig)
     return false;
 
-  CXFA_Node* pPresent = pConfig->GetFirstChildByClass(XFA_Element::Present);
+  CXFA_Present* pPresent =
+      pConfig->GetFirstChildByClass<CXFA_Present>(XFA_Element::Present);
   if (!pPresent)
     return false;
 
-  CXFA_Node* pPDF = pPresent->GetFirstChildByClass(XFA_Element::Pdf);
+  CXFA_Pdf* pPDF = pPresent->GetFirstChildByClass<CXFA_Pdf>(XFA_Element::Pdf);
   if (!pPDF)
     return false;
 

@@ -13,9 +13,11 @@
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
+#include "xfa/fxfa/parser/cxfa_checkbutton.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_ui.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 
 CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
@@ -354,8 +356,9 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateExclGroup(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateRadioButton(CXFA_Node* pParent,
                                                    CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateField(XFA_Element::CheckButton, pParent, pBefore);
-  CXFA_Node* pUi = pField->GetFirstChildByClass(XFA_Element::Ui);
-  CXFA_Node* pWidget = pUi->GetFirstChildByClass(XFA_Element::CheckButton);
+  CXFA_Ui* pUi = pField->GetFirstChildByClass<CXFA_Ui>(XFA_Element::Ui);
+  CXFA_CheckButton* pWidget =
+      pUi->GetFirstChildByClass<CXFA_CheckButton>(XFA_Element::CheckButton);
   pWidget->JSObject()->SetEnum(XFA_Attribute::Shape, XFA_AttributeEnum::Round,
                                false);
   return pField;

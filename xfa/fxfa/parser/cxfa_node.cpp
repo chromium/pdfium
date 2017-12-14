@@ -30,11 +30,14 @@
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_attachnodelist.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_keep.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
+#include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/cxfa_occurdata.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
+#include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -621,7 +624,8 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
 
 bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
   CXFA_Node* pForm = GetDocument()->GetXFAObject(XFA_HASHCODE_Form)->AsNode();
-  CXFA_Node* pTopSubform = pForm->GetFirstChildByClass(XFA_Element::Subform);
+  CXFA_Subform* pTopSubform =
+      pForm->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
   ASSERT(pTopSubform);
 
   CXFA_Node* pLocaleNode = this;
@@ -658,7 +662,7 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
 }
 
 XFA_AttributeEnum CXFA_Node::GetIntact() {
-  CXFA_Node* pKeep = GetFirstChildByClass(XFA_Element::Keep);
+  CXFA_Keep* pKeep = GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
   XFA_AttributeEnum eLayoutType = JSObject()
                                       ->TryEnum(XFA_Attribute::Layout, true)
                                       .value_or(XFA_AttributeEnum::Position);
@@ -681,8 +685,8 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
             return XFA_AttributeEnum::ContentArea;
           }
 
-          CXFA_Node* pNode =
-              pPreviewRow->GetFirstChildByClass(XFA_Element::Keep);
+          CXFA_Keep* pNode =
+              pPreviewRow->GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
           pdfium::Optional<XFA_AttributeEnum> ret;
           if (pNode)
             ret = pNode->JSObject()->TryEnum(XFA_Attribute::Next, false);
@@ -983,7 +987,7 @@ CXFA_Node* CXFA_Node::GetFirstChildByName(uint32_t dwNameHash) const {
   return nullptr;
 }
 
-CXFA_Node* CXFA_Node::GetFirstChildByClass(XFA_Element eType) const {
+CXFA_Node* CXFA_Node::GetFirstChildByClassInternal(XFA_Element eType) const {
   for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() == eType) {
@@ -1003,12 +1007,12 @@ CXFA_Node* CXFA_Node::GetNextSameNameSibling(uint32_t dwNameHash) const {
   return nullptr;
 }
 
-CXFA_Node* CXFA_Node::GetNextSameNameSibling(
+CXFA_Node* CXFA_Node::GetNextSameNameSiblingInternal(
     const WideStringView& wsNodeName) const {
   return GetNextSameNameSibling(FX_HashCode_GetW(wsNodeName, false));
 }
 
-CXFA_Node* CXFA_Node::GetNextSameClassSibling(XFA_Element eType) const {
+CXFA_Node* CXFA_Node::GetNextSameClassSiblingInternal(XFA_Element eType) const {
   for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_NextSibling); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() == eType) {
@@ -1064,7 +1068,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
 }
 
 CXFA_Node* CXFA_Node::GetOccurNode() {
-  return GetFirstChildByClass(XFA_Element::Occur);
+  return GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
 }
 
 bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {

@@ -183,12 +183,23 @@ class CXFA_Node : public CXFA_Object {
   CXFA_WidgetData* GetContainerWidgetData();
   bool GetLocaleName(WideString& wsLocaleName);
   XFA_AttributeEnum GetIntact();
+
   CXFA_Node* GetFirstChildByName(const WideStringView& wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
-  CXFA_Node* GetFirstChildByClass(XFA_Element eType) const;
+  template <typename T>
+  T* GetFirstChildByClass(XFA_Element eType) const {
+    return static_cast<T*>(GetFirstChildByClassInternal(eType));
+  }
   CXFA_Node* GetNextSameNameSibling(uint32_t dwNodeNameHash) const;
-  CXFA_Node* GetNextSameNameSibling(const WideStringView& wsNodeName) const;
-  CXFA_Node* GetNextSameClassSibling(XFA_Element eType) const;
+  template <typename T>
+  T* GetNextSameNameSibling(const WideStringView& wsNodeName) const {
+    return static_cast<T*>(GetNextSameNameSiblingInternal(wsNodeName));
+  }
+  template <typename T>
+  T* GetNextSameClassSibling(XFA_Element eType) const {
+    return static_cast<T*>(GetNextSameClassSiblingInternal(eType));
+  }
+
   int32_t GetNodeSameNameIndex() const;
   int32_t GetNodeSameClassIndex() const;
   CXFA_Node* GetInstanceMgrOfSubform();
@@ -233,6 +244,10 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetChildInternal(int32_t index,
                               XFA_Element eType,
                               bool bOnlyChild);
+  CXFA_Node* GetFirstChildByClassInternal(XFA_Element eType) const;
+  CXFA_Node* GetNextSameNameSiblingInternal(
+      const WideStringView& wsNodeName) const;
+  CXFA_Node* GetNextSameClassSiblingInternal(XFA_Element eType) const;
 
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;

@@ -15,6 +15,7 @@
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -38,8 +39,8 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
   if (!pFormPacketNode)
     return -1;
 
-  CXFA_Node* pFormRoot =
-      pFormPacketNode->GetFirstChildByClass(XFA_Element::Subform);
+  CXFA_Subform* pFormRoot =
+      pFormPacketNode->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
   if (!pFormRoot)
     return -1;
 

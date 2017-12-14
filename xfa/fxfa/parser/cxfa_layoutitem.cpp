@@ -9,6 +9,7 @@
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -73,8 +74,9 @@ CFX_RectF CXFA_LayoutItem::GetRect(bool bRelative) const {
        pLayoutItem = pLayoutItem->m_pParent) {
     if (CXFA_ContentLayoutItem* pContent = pLayoutItem->AsContentLayoutItem()) {
       sPos += pContent->m_sPos;
-      CXFA_Node* pMarginNode =
-          pLayoutItem->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+      CXFA_Margin* pMarginNode =
+          pLayoutItem->m_pFormNode->GetFirstChildByClass<CXFA_Margin>(
+              XFA_Element::Margin);
       if (pMarginNode) {
         sPos += CFX_PointF(pMarginNode->JSObject()
                                ->GetMeasure(XFA_Attribute::LeftInset)

@@ -32,6 +32,7 @@
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_binditemsdata.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/parser/cxfa_pageset.h"
 #include "xfa/fxfa/parser/cxfa_present.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
@@ -120,8 +121,8 @@ void CXFA_FFDocView::StopLayout() {
   if (!pSubformNode)
     return;
 
-  CXFA_Node* pPageSetNode =
-      pSubformNode->GetFirstChildByClass(XFA_Element::PageSet);
+  CXFA_PageSet* pPageSetNode =
+      pSubformNode->GetFirstChildByClass<CXFA_PageSet>(XFA_Element::PageSet);
   if (!pPageSetNode)
     return;
 
@@ -315,7 +316,7 @@ CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
 
 std::unique_ptr<CXFA_WidgetAccIterator>
 CXFA_FFDocView::CreateWidgetAccIterator() {
-  CXFA_Node* pFormRoot = GetRootSubform();
+  CXFA_Subform* pFormRoot = GetRootSubform();
   return pFormRoot ? pdfium::MakeUnique<CXFA_WidgetAccIterator>(pFormRoot)
                    : nullptr;
 }
@@ -775,11 +776,12 @@ void CXFA_FFDocView::SetChangeMark() {
   m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
 }
 
-CXFA_Node* CXFA_FFDocView::GetRootSubform() {
+CXFA_Subform* CXFA_FFDocView::GetRootSubform() {
   CXFA_Node* pFormPacketNode =
       ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form));
   if (!pFormPacketNode)
     return nullptr;
 
-  return pFormPacketNode->GetFirstChildByClass(XFA_Element::Subform);
+  return pFormPacketNode->GetFirstChildByClass<CXFA_Subform>(
+      XFA_Element::Subform);
 }

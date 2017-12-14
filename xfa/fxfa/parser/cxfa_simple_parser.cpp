@@ -26,6 +26,8 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_subform.h"
+#include "xfa/fxfa/parser/cxfa_template.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -709,10 +711,11 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Form(
   pNode->JSObject()->SetCData(XFA_Attribute::Name, packet->name, false, false);
   pNode->JSObject()->SetAttribute(XFA_Attribute::Checksum,
                                   wsChecksum.AsStringView(), false);
-  CXFA_Node* pTemplateRoot =
-      m_pRootNode->GetFirstChildByClass(XFA_Element::Template);
-  CXFA_Node* pTemplateChosen =
-      pTemplateRoot ? pTemplateRoot->GetFirstChildByClass(XFA_Element::Subform)
+  CXFA_Template* pTemplateRoot =
+      m_pRootNode->GetFirstChildByClass<CXFA_Template>(XFA_Element::Template);
+  CXFA_Subform* pTemplateChosen =
+      pTemplateRoot ? pTemplateRoot->GetFirstChildByClass<CXFA_Subform>(
+                          XFA_Element::Subform)
                     : nullptr;
   bool bUseAttribute = true;
   if (pTemplateChosen &&

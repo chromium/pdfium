@@ -18,13 +18,17 @@
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_keep.h"
 #include "xfa/fxfa/parser/cxfa_layoutcontext.h"
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
+#include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/cxfa_occurdata.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -130,7 +134,8 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
     float fContentCalculatedHeight,
     const CFX_SizeF& currentContainerSize) {
   CFX_SizeF componentSize = currentContainerSize;
-  CXFA_Node* pMarginNode = pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+  CXFA_Margin* pMarginNode =
+      pFormNode->GetFirstChildByClass<CXFA_Margin>(XFA_Element::Margin);
   if (bContainerWidthAutoSize) {
     componentSize.width = fContentCalculatedWidth;
     if (pMarginNode) {
@@ -172,8 +177,9 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
   CFX_SizeF containerSize = CalculateContainerSpecifiedSize(
       pLayoutRow->m_pFormNode, &bContainerWidthAutoSize,
       &bContainerHeightAutoSize);
-  CXFA_Node* pMarginNode =
-      pLayoutRow->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+  CXFA_Margin* pMarginNode =
+      pLayoutRow->m_pFormNode->GetFirstChildByClass<CXFA_Margin>(
+          XFA_Element::Margin);
   float fLeftInset = 0;
   float fTopInset = 0;
   float fRightInset = 0;
@@ -255,8 +261,9 @@ void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
                        &fContentCalculatedHeight);
       float fOldChildHeight = pLayoutChild->m_sSize.height;
       pLayoutChild->m_sSize.height = fContentCalculatedHeight;
-      CXFA_Node* pParaNode =
-          pLayoutChild->m_pFormNode->GetFirstChildByClass(XFA_Element::Para);
+      CXFA_Para* pParaNode =
+          pLayoutChild->m_pFormNode->GetFirstChildByClass<CXFA_Para>(
+              XFA_Element::Para);
       if (pParaNode && pLayoutChild->m_pFirstChild) {
         float fOffHeight = fContentCalculatedHeight - fOldChildHeight;
         XFA_AttributeEnum eVType =
@@ -346,8 +353,9 @@ void AddTrailerBeforeSplit(CXFA_ItemLayoutProcessor* pProcessor,
   }
 
   UpdatePendingItemLayout(pProcessor, pTrailerLayoutItem);
-  CXFA_Node* pMarginNode =
-      pProcessor->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+  CXFA_Margin* pMarginNode =
+      pProcessor->m_pFormNode->GetFirstChildByClass<CXFA_Margin>(
+          XFA_Element::Margin);
   float fLeftInset = 0;
   float fTopInset = 0;
   float fRightInset = 0;
@@ -413,8 +421,9 @@ void AddLeaderAfterSplit(CXFA_ItemLayoutProcessor* pProcessor,
                          CXFA_ContentLayoutItem* pLeaderLayoutItem) {
   UpdatePendingItemLayout(pProcessor, pLeaderLayoutItem);
 
-  CXFA_Node* pMarginNode =
-      pProcessor->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+  CXFA_Margin* pMarginNode =
+      pProcessor->m_pFormNode->GetFirstChildByClass<CXFA_Margin>(
+          XFA_Element::Margin);
   float fLeftInset = 0;
   float fRightInset = 0;
   if (pMarginNode) {
@@ -522,7 +531,8 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
   if (!pPreContainer)
     return false;
 
-  CXFA_Node* pKeep = pCurNode->GetFirstChildByClass(XFA_Element::Keep);
+  CXFA_Keep* pKeep =
+      pCurNode->GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
   if (pKeep) {
     XFA_Attribute eKeepType = XFA_Attribute::Previous;
     if (!bPreFind)
@@ -538,7 +548,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
     }
   }
 
-  pKeep = pPreContainer->GetFirstChildByClass(XFA_Element::Keep);
+  pKeep = pPreContainer->GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
   if (!pKeep)
     return false;
 
@@ -996,8 +1006,8 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
       CXFA_Document* pDocument = pFormNode->GetDocument();
       CXFA_FFNotify* pNotify = pDocument->GetNotify();
       float fCurTopMargin = 0, fCurBottomMargin = 0;
-      CXFA_Node* pMarginNode =
-          pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+      CXFA_Margin* pMarginNode =
+          pFormNode->GetFirstChildByClass<CXFA_Margin>(XFA_Element::Margin);
       if (pMarginNode && bCalculateMargin) {
         fCurTopMargin = pMarginNode->JSObject()
                             ->GetMeasure(XFA_Attribute::TopInset)
@@ -1221,8 +1231,9 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
   if (eLayout == XFA_AttributeEnum::Position)
     bCalculateMargin = false;
 
-  CXFA_Node* pMarginNode =
-      pLayoutItem->m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+  CXFA_Margin* pMarginNode =
+      pLayoutItem->m_pFormNode->GetFirstChildByClass<CXFA_Margin>(
+          XFA_Element::Margin);
   if (pMarginNode && bCalculateMargin) {
     fCurTopMargin = pMarginNode->JSObject()
                         ->GetMeasure(XFA_Attribute::TopInset)
@@ -1784,8 +1795,8 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
       m_pFormNode, &bContainerWidthAutoSize, &bContainerHeightAutoSize);
   float fContentCalculatedWidth = 0;
   float fContentCalculatedHeight = 0;
-  CXFA_Node* pMarginNode =
-      m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+  CXFA_Margin* pMarginNode =
+      m_pFormNode->GetFirstChildByClass<CXFA_Margin>(XFA_Element::Margin);
   float fLeftInset = 0;
   float fRightInset = 0;
   if (pMarginNode) {
@@ -2184,8 +2195,8 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
     }
   }
 
-  CXFA_Node* pMarginNode =
-      m_pFormNode->GetFirstChildByClass(XFA_Element::Margin);
+  CXFA_Margin* pMarginNode =
+      m_pFormNode->GetFirstChildByClass<CXFA_Margin>(XFA_Element::Margin);
   float fLeftInset = 0;
   float fTopInset = 0;
   float fRightInset = 0;
@@ -2840,9 +2851,9 @@ bool CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(
   if (!pTemplate)
     pTemplate = pFormNode;
 
-  int32_t iMax =
-      CXFA_OccurData(pTemplate->GetFirstChildByClass(XFA_Element::Occur))
-          .GetMax();
+  int32_t iMax = CXFA_OccurData(pTemplate->GetFirstChildByClass<CXFA_Occur>(
+                                    XFA_Element::Occur))
+                     .GetMax();
   if (iMax < 0)
     return true;
 

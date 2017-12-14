@@ -16,8 +16,12 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/xml/cxml_element.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_acrobat.h"
+#include "xfa/fxfa/parser/cxfa_common.h"
+#include "xfa/fxfa/parser/cxfa_locale.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodelocale.h"
+#include "xfa/fxfa/parser/cxfa_present.h"
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -1225,17 +1229,19 @@ WideStringView CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
     m_wsConfigLocale.clear();
     if (pConfig) {
       CXFA_Node* pChildfConfig =
-          pConfig->GetFirstChildByClass(XFA_Element::Acrobat);
+          pConfig->GetFirstChildByClass<CXFA_Acrobat>(XFA_Element::Acrobat);
       if (!pChildfConfig) {
-        pChildfConfig = pConfig->GetFirstChildByClass(XFA_Element::Present);
+        pChildfConfig =
+            pConfig->GetFirstChildByClass<CXFA_Present>(XFA_Element::Present);
       }
-      CXFA_Node* pCommon =
-          pChildfConfig
-              ? pChildfConfig->GetFirstChildByClass(XFA_Element::Common)
+      CXFA_Common* pCommon =
+          pChildfConfig ? pChildfConfig->GetFirstChildByClass<CXFA_Common>(
+                              XFA_Element::Common)
+                        : nullptr;
+      CXFA_Locale* pLocale =
+          pCommon
+              ? pCommon->GetFirstChildByClass<CXFA_Locale>(XFA_Element::Locale)
               : nullptr;
-      CXFA_Node* pLocale =
-          pCommon ? pCommon->GetFirstChildByClass(XFA_Element::Locale)
-                  : nullptr;
       if (pLocale) {
         m_wsConfigLocale = pLocale->JSObject()
                                ->TryCData(XFA_Attribute::Value, false)

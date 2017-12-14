@@ -17,6 +17,7 @@
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_form.h"
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
@@ -400,7 +401,8 @@ CJS_Return CJX_LayoutPseudoModel::relayout(
     CJS_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Node* pRootNode = GetDocument()->GetRoot();
-  CXFA_Node* pFormRoot = pRootNode->GetFirstChildByClass(XFA_Element::Form);
+  CXFA_Form* pFormRoot =
+      pRootNode->GetFirstChildByClass<CXFA_Form>(XFA_Element::Form);
   CXFA_Node* pContentRootNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
   CXFA_LayoutProcessor* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
   if (pContentRootNode)

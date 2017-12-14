@@ -28,9 +28,12 @@
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
+#include "xfa/fxfa/parser/cxfa_acrobat.h"
+#include "xfa/fxfa/parser/cxfa_acrobat7.h"
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 #include "xfa/fxfa/parser/cxfa_dataimporter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_dynamicrender.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 namespace {
@@ -245,16 +248,19 @@ void CXFA_FFDoc::StopLoad() {
   if (!pConfig)
     return;
 
-  CXFA_Node* pAcrobat = pConfig->GetFirstChildByClass(XFA_Element::Acrobat);
+  CXFA_Acrobat* pAcrobat =
+      pConfig->GetFirstChildByClass<CXFA_Acrobat>(XFA_Element::Acrobat);
   if (!pAcrobat)
     return;
 
-  CXFA_Node* pAcrobat7 = pAcrobat->GetFirstChildByClass(XFA_Element::Acrobat7);
+  CXFA_Acrobat7* pAcrobat7 =
+      pAcrobat->GetFirstChildByClass<CXFA_Acrobat7>(XFA_Element::Acrobat7);
   if (!pAcrobat7)
     return;
 
-  CXFA_Node* pDynamicRender =
-      pAcrobat7->GetFirstChildByClass(XFA_Element::DynamicRender);
+  CXFA_DynamicRender* pDynamicRender =
+      pAcrobat7->GetFirstChildByClass<CXFA_DynamicRender>(
+          XFA_Element::DynamicRender);
   if (!pDynamicRender)
     return;
 

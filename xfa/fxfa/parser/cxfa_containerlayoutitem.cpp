@@ -9,6 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
+#include "xfa/fxfa/parser/cxfa_medium.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
@@ -27,7 +28,8 @@ int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
 
 CFX_SizeF CXFA_ContainerLayoutItem::GetPageSize() const {
   CFX_SizeF size;
-  CXFA_Node* pMedium = m_pFormNode->GetFirstChildByClass(XFA_Element::Medium);
+  CXFA_Medium* pMedium =
+      m_pFormNode->GetFirstChildByClass<CXFA_Medium>(XFA_Element::Medium);
   if (!pMedium)
     return size;
 

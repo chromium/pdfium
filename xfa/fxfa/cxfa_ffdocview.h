@@ -18,6 +18,7 @@
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;
+class CXFA_Subform;
 class CXFA_WidgetAccIterator;
 
 extern const XFA_AttributeEnum gs_EventActivity[];
@@ -116,7 +117,7 @@ class CXFA_FFDocView {
   size_t RunCalculateRecursive(size_t index);
   void ShowNullTestMsg();
   bool ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
-  CXFA_Node* GetRootSubform();
+  CXFA_Subform* GetRootSubform();
 
   UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
