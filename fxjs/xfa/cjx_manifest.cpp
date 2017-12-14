@@ -30,3 +30,27 @@ CJS_Return CJX_Manifest::evaluate(
   CXFA_WidgetData* pWidgetData = GetWidgetData();
   return CJS_Return(runtime->NewBoolean(!!pWidgetData));
 }
+
+void CJX_Manifest::defaultValue(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute) {
+  Script_Som_DefaultValue(pValue, bSetting, eAttribute);
+}
+
+void CJX_Manifest::action(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Manifest::use(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Manifest::usehref(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}

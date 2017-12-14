@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_encodings.h"
 
+#include "fxjs/xfa/cjx_encodings.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -28,6 +31,7 @@ CXFA_Encodings::CXFA_Encodings(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Encodings,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Encodings>(this)) {}
 
 CXFA_Encodings::~CXFA_Encodings() {}

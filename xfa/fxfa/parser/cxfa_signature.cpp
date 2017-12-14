@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_signature.h"
 
+#include "fxjs/xfa/cjx_signature.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {
@@ -32,6 +35,7 @@ CXFA_Signature::CXFA_Signature(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Signature,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Signature>(this)) {}
 
 CXFA_Signature::~CXFA_Signature() {}

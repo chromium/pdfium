@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_execute.h"
 
+#include "fxjs/xfa/cjx_execute.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -31,6 +34,7 @@ CXFA_Execute::CXFA_Execute(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Execute,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Execute>(this)) {}
 
 CXFA_Execute::~CXFA_Execute() {}

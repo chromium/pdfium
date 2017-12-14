@@ -21,17 +21,14 @@ class CJX_Tree : public CJX_Object {
   JS_METHOD(resolveNode, CJX_Tree);
   JS_METHOD(resolveNodes, CJX_Tree);
 
-  void all(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void nodes(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void classAll(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void parent(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void index(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void classIndex(CFXJSE_Value* pValue,
-                  bool bSetting,
-                  XFA_Attribute eAttribute);
-  void somExpression(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute);
+  JS_PROP(all);
+  JS_PROP(classAll);
+  JS_PROP(classIndex);
+  JS_PROP(index);
+  JS_PROP(name);
+  JS_PROP(nodes);
+  JS_PROP(parent);
+  JS_PROP(somExpression);
 
  private:
   void ResolveNodeList(CFXJSE_Value* pValue,

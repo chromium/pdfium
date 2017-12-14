@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_barcode.h"
 
+#include "fxjs/xfa/cjx_barcode.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -48,6 +51,7 @@ CXFA_Barcode::CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Barcode,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Barcode>(this)) {}
 
 CXFA_Barcode::~CXFA_Barcode() {}

@@ -161,3 +161,19 @@ CJS_Return CJX_Source::hasDataChanged(
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
+
+void CJX_Source::db(CFXJSE_Value* pValue,
+                    bool bSetting,
+                    XFA_Attribute eAttribute) {}
+
+void CJX_Source::use(CFXJSE_Value* pValue,
+                     bool bSetting,
+                     XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Source::usehref(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}

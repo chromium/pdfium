@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_boolean.h"
 
-#include "fxjs/xfa/cjx_content.h"
+#include "fxjs/xfa/cjx_boolean.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -32,6 +32,6 @@ CXFA_Boolean::CXFA_Boolean(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_Content>(this)) {}
+                pdfium::MakeUnique<CJX_Boolean>(this)) {}
 
 CXFA_Boolean::~CXFA_Boolean() {}

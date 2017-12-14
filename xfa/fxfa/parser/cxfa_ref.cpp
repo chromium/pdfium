@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_ref.h"
 
-#include "fxjs/xfa/cjx_textnode.h"
+#include "fxjs/xfa/cjx_ref.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -30,6 +30,6 @@ CXFA_Ref::CXFA_Ref(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_TextNode>(this)) {}
+                pdfium::MakeUnique<CJX_Ref>(this)) {}
 
 CXFA_Ref::~CXFA_Ref() {}

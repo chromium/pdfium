@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_overflow.h"
 
+#include "fxjs/xfa/cjx_overflow.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -29,6 +32,7 @@ CXFA_Overflow::CXFA_Overflow(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Overflow,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Overflow>(this)) {}
 
 CXFA_Overflow::~CXFA_Overflow() {}

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_timestamp.h"
 
+#include "fxjs/xfa/cjx_timestamp.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {

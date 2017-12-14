@@ -14,6 +14,10 @@
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/cjs_return.h"
+#include "fxjs/xfa/cjx_boolean.h"
+#include "fxjs/xfa/cjx_draw.h"
+#include "fxjs/xfa/cjx_field.h"
+#include "fxjs/xfa/cjx_instancemanager.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -125,15 +129,29 @@ CXFA_Document* CJX_Object::GetDocument() const {
   return object_->GetDocument();
 }
 
-void CJX_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
-                                              bool bSetting,
-                                              XFA_Attribute eAttribute) {
+void CJX_Object::className(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
   }
   pValue->SetString(
       FX_UTF8Encode(GetXFAObject()->GetClassName()).AsStringView());
+}
+
+int32_t CJX_Object::Subform_and_SubformSet_InstanceIndex() {
+  int32_t index = 0;
+  for (CXFA_Node* pNode =
+           ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_PrevSibling);
+       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+    if ((pNode->GetElementType() != XFA_Element::Subform) &&
+        (pNode->GetElementType() != XFA_Element::SubformSet)) {
+      break;
+    }
+    index++;
+  }
+  return index;
 }
 
 bool CJX_Object::HasMethod(const WideString& func) const {
@@ -844,6 +862,36 @@ pdfium::Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
   return {};
 }
 
+pdfium::Optional<WideString> CJX_Object::TryNamespace() {
+  if (ToNode(GetXFAObject())->IsModelNode() ||
+      ToNode(GetXFAObject())->GetElementType() == XFA_Element::Packet) {
+    CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
+    if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
+      return {};
+
+    return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
+  }
+
+  if (ToNode(GetXFAObject())->GetPacketType() != XFA_PacketType::Datasets)
+    return ToNode(GetXFAObject())->GetModelNode()->JSObject()->TryNamespace();
+
+  CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
+  if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
+    return {};
+
+  if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::DataValue &&
+      GetEnum(XFA_Attribute::Contains) == XFA_AttributeEnum::MetaData) {
+    WideString wsNamespace;
+    bool ret = XFA_FDEExtension_ResolveNamespaceQualifier(
+        static_cast<CFX_XMLElement*>(pXMLNode),
+        GetCData(XFA_Attribute::QualifiedName), &wsNamespace);
+    if (!ret)
+      return {};
+    return {wsNamespace};
+  }
+  return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
+}
+
 CXFA_Node* CJX_Object::GetProperty(int32_t index,
                                    XFA_Element eProperty,
                                    bool bCreateProperty) {
@@ -1408,32 +1456,47 @@ void CJX_Object::Script_Som_ValidationMessage(CFXJSE_Value* pValue,
   Script_Som_Message(pValue, bSetting, XFA_SOM_ValidationMessage);
 }
 
-void CJX_Object::Script_Field_FormatMessage(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
-  Script_Som_Message(pValue, bSetting, XFA_SOM_FormatMessage);
-}
-
 void CJX_Object::Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
                                              bool bSetting,
                                              XFA_Attribute eAttribute) {
   Script_Som_Message(pValue, bSetting, XFA_SOM_MandatoryMessage);
 }
 
+void CJX_Object::Script_Field_Length(CFXJSE_Value* pValue,
+                                     bool bSetting,
+                                     XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+  if (!widget_data_) {
+    pValue->SetInteger(0);
+    return;
+  }
+  pValue->SetInteger(widget_data_->CountChoiceListItems(true));
+}
+
 void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_Attribute /* unused */) {
   XFA_Element eType = ToNode(GetXFAObject())->GetElementType();
+
+  // TODO(dsinclair): This should look through the properties on the node to see
+  // if defaultValue is defined and, if so, call that one. Just have to make
+  // sure that those defaultValue calls don't call back to this one ....
   if (eType == XFA_Element::Field) {
-    Script_Field_DefaultValue(pValue, bSetting, XFA_Attribute::Unknown);
+    static_cast<CJX_Field*>(this)->defaultValue(pValue, bSetting,
+                                                XFA_Attribute::Unknown);
     return;
   }
   if (eType == XFA_Element::Draw) {
-    Script_Draw_DefaultValue(pValue, bSetting, XFA_Attribute::Unknown);
+    static_cast<CJX_Draw*>(this)->defaultValue(pValue, bSetting,
+                                               XFA_Attribute::Unknown);
     return;
   }
   if (eType == XFA_Element::Boolean) {
-    Script_Boolean_DefaultValue(pValue, bSetting, XFA_Attribute::Unknown);
+    static_cast<CJX_Boolean*>(this)->defaultValue(pValue, bSetting,
+                                                  XFA_Attribute::Unknown);
     return;
   }
 
@@ -1558,7 +1621,8 @@ void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
   if (!pManagerNode)
     return;
 
-  pManagerNode->JSObject()->InstanceManager_MoveInstance(iTo, iFrom);
+  auto* mgr = static_cast<CJX_InstanceManager*>(pManagerNode->JSObject());
+  mgr->MoveInstance(iTo, iFrom);
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return;
@@ -1575,322 +1639,9 @@ void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
   }
 }
 
-void CJX_Object::Script_Field_DefaultValue(CFXJSE_Value* pValue,
-                                           bool bSetting,
-                                           XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  if (bSetting) {
-    if (pValue) {
-      widget_data_->SetPreNull(widget_data_->IsNull());
-      widget_data_->SetIsNull(pValue->IsNull());
-    }
-
-    WideString wsNewText;
-    if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
-      wsNewText = pValue->ToWideString();
-
-    CXFA_Node* pUIChild = widget_data_->GetUIChild();
-    if (pUIChild->GetElementType() == XFA_Element::NumericEdit) {
-      wsNewText =
-          widget_data_->NumericLimit(wsNewText, widget_data_->GetLeadDigits(),
-                                     widget_data_->GetFracDigits());
-    }
-
-    CXFA_WidgetData* pContainerWidgetData =
-        ToNode(GetXFAObject())->GetContainerWidgetData();
-    WideString wsFormatText(wsNewText);
-    if (pContainerWidgetData)
-      wsFormatText = pContainerWidgetData->GetFormatDataValue(wsNewText);
-
-    SetContent(wsNewText, wsFormatText, true, true, true);
-    return;
-  }
-
-  WideString content = GetContent(true);
-  if (content.IsEmpty()) {
-    pValue->SetNull();
-    return;
-  }
-
-  CXFA_Node* pUIChild = widget_data_->GetUIChild();
-  CXFA_Node* pNode = widget_data_->GetFormValueData().GetNode()->GetNodeItem(
-      XFA_NODEITEM_FirstChild);
-  if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
-    if (pUIChild->GetElementType() == XFA_Element::NumericEdit &&
-        (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {
-      pValue->SetString(content.UTF8Encode().AsStringView());
-    } else {
-      CFX_Decimal decimal(content.AsStringView());
-      pValue->SetFloat((float)(double)decimal);
-    }
-  } else if (pNode && pNode->GetElementType() == XFA_Element::Integer) {
-    pValue->SetInteger(FXSYS_wtoi(content.c_str()));
-  } else if (pNode && pNode->GetElementType() == XFA_Element::Boolean) {
-    pValue->SetBoolean(FXSYS_wtoi(content.c_str()) == 0 ? false : true);
-  } else if (pNode && pNode->GetElementType() == XFA_Element::Float) {
-    CFX_Decimal decimal(content.AsStringView());
-    pValue->SetFloat((float)(double)decimal);
-  } else {
-    pValue->SetString(content.UTF8Encode().AsStringView());
-  }
-}
-
-void CJX_Object::Script_Boolean_DefaultValue(CFXJSE_Value* pValue,
-                                             bool bSetting,
-                                             XFA_Attribute eAttribute) {
-  if (!bSetting) {
-    WideString wsValue = GetContent(true);
-    pValue->SetBoolean(wsValue == L"1");
-    return;
-  }
-
-  ByteString newValue;
-  if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
-    newValue = pValue->ToString();
-
-  int32_t iValue = FXSYS_atoi(newValue.c_str());
-  WideString wsNewValue(iValue == 0 ? L"0" : L"1");
-  WideString wsFormatValue(wsNewValue);
-  CXFA_WidgetData* pContainerWidgetData =
-      ToNode(GetXFAObject())->GetContainerWidgetData();
-  if (pContainerWidgetData)
-    wsFormatValue = pContainerWidgetData->GetFormatDataValue(wsNewValue);
-
-  SetContent(wsNewValue, wsFormatValue, true, true, true);
-}
-
-void CJX_Object::Script_Draw_DefaultValue(CFXJSE_Value* pValue,
-                                          bool bSetting,
-                                          XFA_Attribute eAttribute) {
-  if (!bSetting) {
-    WideString content = GetContent(true);
-    if (content.IsEmpty())
-      pValue->SetNull();
-    else
-      pValue->SetString(content.UTF8Encode().AsStringView());
-
-    return;
-  }
-
-  if (!pValue || !pValue->IsString())
-    return;
-  if (widget_data_->GetUIType() != XFA_Element::Text)
-    return;
-
-  WideString wsNewValue = pValue->ToWideString();
-  SetContent(wsNewValue, wsNewValue, true, true, true);
-}
-
-int32_t CJX_Object::Subform_and_SubformSet_InstanceIndex() {
-  int32_t index = 0;
-  for (CXFA_Node* pNode =
-           ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_PrevSibling);
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
-    if ((pNode->GetElementType() != XFA_Element::Subform) &&
-        (pNode->GetElementType() != XFA_Element::SubformSet)) {
-      break;
-    }
-    index++;
-  }
-  return index;
-}
-
-void CJX_Object::Script_NodeClass_Ns(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetString(
-      TryNamespace().value_or(WideString()).UTF8Encode().AsStringView());
-}
-
-void CJX_Object::Script_NodeClass_Model(CFXJSE_Value* pValue,
-                                        bool bSetting,
-                                        XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-
-  pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(
-      ToNode(GetXFAObject())->GetModelNode()));
-}
-
-void CJX_Object::Script_NodeClass_IsContainer(CFXJSE_Value* pValue,
-                                              bool bSetting,
-                                              XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-
-  pValue->SetBoolean(GetXFAObject()->IsContainerNode());
-}
-
-void CJX_Object::Script_NodeClass_IsNull(CFXJSE_Value* pValue,
-                                         bool bSetting,
-                                         XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::Subform) {
-    pValue->SetBoolean(false);
-    return;
-  }
-  pValue->SetBoolean(GetContent(false).IsEmpty());
-}
-
-void CJX_Object::Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
-                                             bool bSetting,
-                                             XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-
-  std::vector<CXFA_Node*> properties =
-      ToNode(GetXFAObject())
-          ->GetNodeList(XFA_NODEFILTER_OneOfProperty, XFA_Element::Unknown);
-  if (!properties.empty()) {
-    pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(
-        properties.front()));
-  }
-}
-
-void CJX_Object::Script_ModelClass_Context(CFXJSE_Value* pValue,
-                                           bool bSetting,
-                                           XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_ModelClass_AliasNode(CFXJSE_Value* pValue,
-                                             bool bSetting,
-                                             XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_Delta_CurrentValue(CFXJSE_Value* pValue,
-                                           bool bSetting,
-                                           XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_Delta_SavedValue(CFXJSE_Value* pValue,
-                                         bool bSetting,
-                                         XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_Delta_Target(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_Field_Length(CFXJSE_Value* pValue,
-                                     bool bSetting,
-                                     XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  if (!widget_data_) {
-    pValue->SetInteger(0);
-    return;
-  }
-  pValue->SetInteger(widget_data_->CountChoiceListItems(true));
-}
-
-void CJX_Object::Script_Field_EditValue(CFXJSE_Value* pValue,
-                                        bool bSetting,
-                                        XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  if (bSetting) {
-    widget_data_->SetValue(XFA_VALUEPICTURE_Edit, pValue->ToWideString());
-    return;
-  }
-  pValue->SetString(widget_data_->GetValue(XFA_VALUEPICTURE_Edit)
-                        .UTF8Encode()
-                        .AsStringView());
-}
-
-void CJX_Object::Script_Field_FormattedValue(CFXJSE_Value* pValue,
-                                             bool bSetting,
-                                             XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  if (bSetting) {
-    widget_data_->SetValue(XFA_VALUEPICTURE_Display, pValue->ToWideString());
-    return;
-  }
-  pValue->SetString(widget_data_->GetValue(XFA_VALUEPICTURE_Display)
-                        .UTF8Encode()
-                        .AsStringView());
-}
-
-void CJX_Object::Script_Field_ParentSubform(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetNull();
-}
-
-void CJX_Object::Script_Field_SelectedIndex(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  if (!bSetting) {
-    pValue->SetInteger(widget_data_->GetSelectedItem(0));
-    return;
-  }
-
-  int32_t iIndex = pValue->ToInteger();
-  if (iIndex == -1) {
-    widget_data_->ClearAllSelections();
-    return;
-  }
-
-  widget_data_->SetItemState(iIndex, true, true, true, true);
-}
-
-void CJX_Object::Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
-  if (bSetting)
-    ThrowInvalidPropertyException();
-}
-
-void CJX_Object::Script_ExclGroup_DefaultAndRawValue(CFXJSE_Value* pValue,
-                                                     bool bSetting,
-                                                     XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  if (bSetting) {
-    widget_data_->SetSelectedMemberByValue(
-        pValue->ToWideString().AsStringView(), true, true, true);
-    return;
-  }
-
-  WideString wsValue = GetContent(true);
-  XFA_VERSION curVersion = GetDocument()->GetCurVersionMode();
-  if (wsValue.IsEmpty() && curVersion >= XFA_VERSION_300) {
-    pValue->SetNull();
-    return;
-  }
-  pValue->SetString(wsValue.UTF8Encode().AsStringView());
-}
-
-void CJX_Object::Script_ExclGroup_Transient(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {}
-
 void CJX_Object::Script_Subform_InstanceManager(CFXJSE_Value* pValue,
                                                 bool bSetting,
-                                                XFA_Attribute eAttribute) {
+                                                XFA_AttributeEnum eAttribute) {
   if (bSetting) {
     ThrowInvalidPropertyException();
     return;
@@ -1920,72 +1671,9 @@ void CJX_Object::Script_Subform_InstanceManager(CFXJSE_Value* pValue,
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pInstanceMgr));
 }
 
-void CJX_Object::Script_Subform_Locale(CFXJSE_Value* pValue,
-                                       bool bSetting,
-                                       XFA_Attribute eAttribute) {
-  if (bSetting) {
-    SetCData(XFA_Attribute::Locale, pValue->ToWideString(), true, true);
-    return;
-  }
-
-  WideString wsLocaleName;
-  ToNode(GetXFAObject())->GetLocaleName(wsLocaleName);
-  pValue->SetString(wsLocaleName.UTF8Encode().AsStringView());
-}
-
-void CJX_Object::Script_InstanceManager_Max(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetInteger(
-      CXFA_OccurData(ToNode(GetXFAObject())->GetOccurNode()).GetMax());
-}
-
-void CJX_Object::Script_InstanceManager_Min(CFXJSE_Value* pValue,
-                                            bool bSetting,
-                                            XFA_Attribute eAttribute) {
-  if (bSetting) {
-    ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetInteger(
-      CXFA_OccurData(ToNode(GetXFAObject())->GetOccurNode()).GetMin());
-}
-
-void CJX_Object::Script_InstanceManager_Count(CFXJSE_Value* pValue,
-                                              bool bSetting,
-                                              XFA_Attribute eAttribute) {
-  if (bSetting) {
-    pValue->SetInteger(ToNode(GetXFAObject())->GetCount());
-    return;
-  }
-  InstanceManager_SetInstances(pValue->ToInteger());
-}
-
-void CJX_Object::Script_Occur_Max(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute) {
-  CXFA_OccurData occurData(ToNode(GetXFAObject()));
-  if (!bSetting) {
-    pValue->SetInteger(occurData.GetMax());
-    return;
-  }
-  occurData.SetMax(pValue->ToInteger());
-}
-
-void CJX_Object::Script_Occur_Min(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute) {
-  CXFA_OccurData occurData(ToNode(GetXFAObject()));
-  if (!bSetting) {
-    pValue->SetInteger(occurData.GetMin());
-    return;
-  }
-  occurData.SetMin(pValue->ToInteger());
-}
+void CJX_Object::Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
+                                          bool bSetting,
+                                          XFA_Attribute eAttribute) {}
 
 void CJX_Object::Script_Form_Checksum(CFXJSE_Value* pValue,
                                       bool bSetting,
@@ -2001,179 +1689,9 @@ void CJX_Object::Script_Form_Checksum(CFXJSE_Value* pValue,
   pValue->SetString(checksum ? checksum->UTF8Encode().AsStringView() : "");
 }
 
-void CJX_Object::Script_Packet_Content(CFXJSE_Value* pValue,
-                                       bool bSetting,
-                                       XFA_Attribute eAttribute) {
-  CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
-  if (bSetting) {
-    if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
-      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-      pXMLElement->SetTextData(pValue->ToWideString());
-    }
-    return;
-  }
-
-  WideString wsTextData;
-  if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
-    CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-    wsTextData = pXMLElement->GetTextData();
-  }
-
-  pValue->SetString(wsTextData.UTF8Encode().AsStringView());
-}
-
-void CJX_Object::Script_Source_Db(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_Xfa_This(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute) {
+void CJX_Object::Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
+                                            bool bSetting,
+                                            XFA_Attribute eAttribute) {
   if (bSetting)
-    return;
-
-  CXFA_Object* pThis = GetDocument()->GetScriptContext()->GetThisObject();
-  ASSERT(pThis);
-  pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(pThis));
-}
-
-void CJX_Object::Script_Handler_Version(CFXJSE_Value* pValue,
-                                        bool bSetting,
-                                        XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
-                                          bool bSetting,
-                                          XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_Extras_Type(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute) {}
-
-void CJX_Object::Script_Script_Stateless(CFXJSE_Value* pValue,
-                                         bool bSetting,
-                                         XFA_Attribute eAttribute) {
-  if (bSetting) {
     ThrowInvalidPropertyException();
-    return;
-  }
-  pValue->SetString(FX_UTF8Encode(WideStringView(L"0", 1)).AsStringView());
-}
-
-void CJX_Object::Script_Encrypt_Format(CFXJSE_Value* pValue,
-                                       bool bSetting,
-                                       XFA_Attribute eAttribute) {}
-
-pdfium::Optional<WideString> CJX_Object::TryNamespace() {
-  if (ToNode(GetXFAObject())->IsModelNode() ||
-      ToNode(GetXFAObject())->GetElementType() == XFA_Element::Packet) {
-    CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
-    if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
-      return {};
-
-    return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
-  }
-
-  if (ToNode(GetXFAObject())->GetPacketType() != XFA_PacketType::Datasets)
-    return ToNode(GetXFAObject())->GetModelNode()->JSObject()->TryNamespace();
-
-  CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
-  if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
-    return {};
-
-  if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::DataValue &&
-      GetEnum(XFA_Attribute::Contains) == XFA_AttributeEnum::MetaData) {
-    WideString wsNamespace;
-    bool ret = XFA_FDEExtension_ResolveNamespaceQualifier(
-        static_cast<CFX_XMLElement*>(pXMLNode),
-        GetCData(XFA_Attribute::QualifiedName), &wsNamespace);
-    if (!ret)
-      return {};
-    return {wsNamespace};
-  }
-  return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
-}
-
-int32_t CJX_Object::InstanceManager_SetInstances(int32_t iDesired) {
-  CXFA_OccurData occurData(ToNode(GetXFAObject())->GetOccurNode());
-  if (iDesired < occurData.GetMin()) {
-    ThrowTooManyOccurancesException(L"min");
-    return 1;
-  }
-
-  int32_t iMax = occurData.GetMax();
-  if (iMax >= 0 && iDesired > iMax) {
-    ThrowTooManyOccurancesException(L"max");
-    return 2;
-  }
-
-  int32_t iCount = ToNode(GetXFAObject())->GetCount();
-  if (iDesired == iCount)
-    return 0;
-
-  if (iDesired < iCount) {
-    WideString wsInstManagerName = GetCData(XFA_Attribute::Name);
-    WideString wsInstanceName = WideString(
-        wsInstManagerName.IsEmpty()
-            ? wsInstManagerName
-            : wsInstManagerName.Right(wsInstManagerName.GetLength() - 1));
-    uint32_t dInstanceNameHash =
-        FX_HashCode_GetW(wsInstanceName.AsStringView(), false);
-    CXFA_Node* pPrevSibling =
-        iDesired == 0 ? ToNode(GetXFAObject())
-                      : ToNode(GetXFAObject())->GetItem(iDesired - 1);
-    while (iCount > iDesired) {
-      CXFA_Node* pRemoveInstance =
-          pPrevSibling->GetNodeItem(XFA_NODEITEM_NextSibling);
-      if (pRemoveInstance->GetElementType() != XFA_Element::Subform &&
-          pRemoveInstance->GetElementType() != XFA_Element::SubformSet) {
-        continue;
-      }
-      if (pRemoveInstance->GetElementType() == XFA_Element::InstanceManager) {
-        NOTREACHED();
-        break;
-      }
-      if (pRemoveInstance->GetNameHash() == dInstanceNameHash) {
-        ToNode(GetXFAObject())->RemoveItem(pRemoveInstance, true);
-        iCount--;
-      }
-    }
-  } else {
-    while (iCount < iDesired) {
-      CXFA_Node* pNewInstance = ToNode(GetXFAObject())->CreateInstance(true);
-      ToNode(GetXFAObject())->InsertItem(pNewInstance, iCount, iCount, false);
-      iCount++;
-      CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-      if (!pNotify)
-        return 0;
-
-      pNotify->RunNodeInitialize(pNewInstance);
-    }
-  }
-
-  CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
-  if (pLayoutPro) {
-    pLayoutPro->AddChangedContainer(
-        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
-  }
-  return 0;
-}
-
-int32_t CJX_Object::InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom) {
-  int32_t iCount = ToNode(GetXFAObject())->GetCount();
-  if (iFrom > iCount || iTo > iCount - 1) {
-    ThrowIndexOutOfBoundsException();
-    return 1;
-  }
-  if (iFrom < 0 || iTo < 0 || iFrom == iTo)
-    return 0;
-
-  CXFA_Node* pMoveInstance = ToNode(GetXFAObject())->GetItem(iFrom);
-  ToNode(GetXFAObject())->RemoveItem(pMoveInstance, false);
-  ToNode(GetXFAObject())->InsertItem(pMoveInstance, iTo, iCount - 1, true);
-  CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
-  if (pLayoutPro) {
-    pLayoutPro->AddChangedContainer(
-        ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
-  }
-  return 0;
 }

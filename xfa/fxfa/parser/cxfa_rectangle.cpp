@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
 
+#include "fxjs/xfa/cjx_rectangle.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Edge, 4, 0},
@@ -32,6 +35,7 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Rectangle,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Rectangle>(this)) {}
 
 CXFA_Rectangle::~CXFA_Rectangle() {}

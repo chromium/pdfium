@@ -15,6 +15,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "fxjs/CJX_Define.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
@@ -44,10 +45,18 @@ struct XFA_MAPDATABLOCKCALLBACKINFO {
   PD_CALLBACK_DUPLICATEDATA pCopy;
 };
 
+enum XFA_SOM_MESSAGETYPE {
+  XFA_SOM_ValidationMessage,
+  XFA_SOM_FormatMessage,
+  XFA_SOM_MandatoryMessage
+};
+
 class CJX_Object {
  public:
   explicit CJX_Object(CXFA_Object* obj);
   virtual ~CJX_Object();
+
+  JS_PROP(className);
 
   CXFA_Object* GetXFAObject() { return object_.Get(); }
   const CXFA_Object* GetXFAObject() const { return object_.Get(); }
@@ -129,9 +138,9 @@ class CJX_Object {
   void Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute);
-  void Script_Field_FormatMessage(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
+  void Script_Field_Length(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute);
   void Script_Som_DefaultValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute);
@@ -147,114 +156,21 @@ class CJX_Object {
   void Script_Som_InstanceIndex(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute);
-
-  void Script_NodeClass_Ns(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void Script_NodeClass_Model(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute);
-  void Script_NodeClass_IsContainer(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
-  void Script_NodeClass_IsNull(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_Attribute eAttribute);
-  void Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
-  void Script_ModelClass_Context(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute);
-  void Script_ModelClass_AliasNode(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
-  void Script_Delta_CurrentValue(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute);
-  void Script_Delta_SavedValue(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_Attribute eAttribute);
-  void Script_Delta_Target(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void Script_Field_Length(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void Script_Field_EditValue(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute);
-  void Script_Field_FormattedValue(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
-  void Script_Field_ParentSubform(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
-  void Script_Field_SelectedIndex(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
-  void Script_ExclGroup_DefaultAndRawValue(CFXJSE_Value* pValue,
-                                           bool bSetting,
-                                           XFA_Attribute eAttribute);
-  void Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
-  void Script_ExclGroup_Transient(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
-
+  void Script_Som_Message(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_SOM_MESSAGETYPE iMessageType);
   void Script_Subform_InstanceManager(CFXJSE_Value* pValue,
                                       bool bSetting,
-                                      XFA_Attribute eAttribute);
-  void Script_Subform_Locale(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute);
-  void Script_InstanceManager_Count(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
-  void Script_InstanceManager_Max(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
-  void Script_InstanceManager_Min(CFXJSE_Value* pValue,
-                                  bool bSetting,
-                                  XFA_Attribute eAttribute);
-
-  void Script_Occur_Max(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute);
-  void Script_Occur_Min(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute);
-
-  void Script_Form_Checksum(CFXJSE_Value* pValue,
-                            bool bSetting,
-                            XFA_Attribute eAttribute);
-
-  void Script_Packet_Content(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute);
-
-  void Script_Source_Db(CFXJSE_Value* pValue,
-                        bool bSetting,
-                        XFA_Attribute eAttribute);
-  void Script_Xfa_This(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute);
-  void Script_Handler_Version(CFXJSE_Value* pValue,
-                              bool bSetting,
-                              XFA_Attribute eAttribute);
+                                      XFA_AttributeEnum eAttribute);
   void Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute);
-  void Script_Extras_Type(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute);
-  void Script_Encrypt_Format(CFXJSE_Value* pValue,
-                             bool bSetting,
-                             XFA_Attribute eAttribute);
-  void Script_Script_Stateless(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_Attribute eAttribute);
+  void Script_Form_Checksum(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute);
+  void Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
+                                  bool bSetting,
+                                  XFA_Attribute eAttribute);
 
   pdfium::Optional<WideString> TryNamespace();
 
@@ -283,10 +199,6 @@ class CJX_Object {
   bool SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
 
-  void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_Attribute eAttribute);
-
   void MergeAllData(CXFA_Object* pDstModule);
 
   void SetCalcData(std::unique_ptr<CXFA_CalcData> data);
@@ -310,25 +222,6 @@ class CJX_Object {
   void ThrowException(const wchar_t* str, ...) const;
 
  private:
-  enum XFA_SOM_MESSAGETYPE {
-    XFA_SOM_ValidationMessage,
-    XFA_SOM_FormatMessage,
-    XFA_SOM_MandatoryMessage
-  };
-  void Script_Som_Message(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_SOM_MESSAGETYPE iMessageType);
-  void Script_Boolean_DefaultValue(CFXJSE_Value* pValue,
-                                   bool bSetting,
-                                   XFA_Attribute eAttribute);
-  void Script_Draw_DefaultValue(CFXJSE_Value* pValue,
-                                bool bSetting,
-                                XFA_Attribute eAttribute);
-  void Script_Field_DefaultValue(CFXJSE_Value* pValue,
-                                 bool bSetting,
-                                 XFA_Attribute eAttribute);
-  int32_t Subform_and_SubformSet_InstanceIndex();
-
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
   bool SetUserData(void* pKey,
@@ -341,6 +234,7 @@ class CJX_Object {
                            XFA_AttributeType eType,
                            void* pValue,
                            bool bNotify);
+  int32_t Subform_and_SubformSet_InstanceIndex();
 
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;

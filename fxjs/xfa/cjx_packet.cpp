@@ -68,3 +68,24 @@ CJS_Return CJX_Packet::removeAttribute(
   }
   return CJS_Return(runtime->NewNull());
 }
+
+void CJX_Packet::content(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
+  if (bSetting) {
+    if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
+      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
+      pXMLElement->SetTextData(pValue->ToWideString());
+    }
+    return;
+  }
+
+  WideString wsTextData;
+  if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
+    CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
+    wsTextData = pXMLElement->GetTextData();
+  }
+
+  pValue->SetString(wsTextData.UTF8Encode().AsStringView());
+}

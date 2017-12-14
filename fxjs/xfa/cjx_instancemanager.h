@@ -23,7 +23,15 @@ class CJX_InstanceManager : public CJX_Node {
   JS_METHOD(removeInstance, CJX_InstanceManager);
   JS_METHOD(setInstances, CJX_InstanceManager);
 
+  JS_PROP(count);
+  JS_PROP(max);
+  JS_PROP(min);
+
+  int32_t MoveInstance(int32_t iTo, int32_t iFrom);
+
  private:
+  int32_t SetInstances(int32_t iDesired);
+
   static const CJX_MethodSpec MethodSpecs[];
 };
 

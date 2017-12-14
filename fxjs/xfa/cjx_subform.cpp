@@ -77,3 +77,154 @@ CJS_Return CJX_Subform::execValidate(
       pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate);
   return CJS_Return(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
+
+void CJX_Subform::locale(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  if (bSetting) {
+    SetCData(XFA_Attribute::Locale, pValue->ToWideString(), true, true);
+    return;
+  }
+
+  WideString wsLocaleName;
+  GetXFANode()->GetLocaleName(wsLocaleName);
+  pValue->SetString(wsLocaleName.UTF8Encode().AsStringView());
+}
+
+void CJX_Subform::instanceIndex(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute) {
+  Script_Som_InstanceIndex(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::allowMacro(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::anchorType(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::colSpan(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::columnWidths(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::h(CFXJSE_Value* pValue,
+                    bool bSetting,
+                    XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::hAlign(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::layout(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::maxH(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::maxW(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::minH(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::minW(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::presence(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::relevant(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::restoreState(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::scope(CFXJSE_Value* pValue,
+                        bool bSetting,
+                        XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::use(CFXJSE_Value* pValue,
+                      bool bSetting,
+                      XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::usehref(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::validationMessage(CFXJSE_Value* pValue,
+                                    bool bSetting,
+                                    XFA_Attribute eAttribute) {
+  Script_Som_ValidationMessage(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::vAlign(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::w(CFXJSE_Value* pValue,
+                    bool bSetting,
+                    XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::x(CFXJSE_Value* pValue,
+                    bool bSetting,
+                    XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Subform::y(CFXJSE_Value* pValue,
+                    bool bSetting,
+                    XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}

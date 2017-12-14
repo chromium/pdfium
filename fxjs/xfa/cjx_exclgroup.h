@@ -23,6 +23,35 @@ class CJX_ExclGroup : public CJX_Node {
   JS_METHOD(execValidate, CJX_ExclGroup);
   JS_METHOD(selectedMember, CJX_ExclGroup);
 
+  JS_PROP(defaultValue); /* {default} */
+  JS_PROP(access);
+  JS_PROP(accessKey);
+  JS_PROP(anchorType);
+  JS_PROP(borderColor);
+  JS_PROP(borderWidth);
+  JS_PROP(colSpan);
+  JS_PROP(fillColor);
+  JS_PROP(h);
+  JS_PROP(hAlign);
+  JS_PROP(layout);
+  JS_PROP(mandatory);
+  JS_PROP(mandatoryMessage);
+  JS_PROP(maxH);
+  JS_PROP(maxW);
+  JS_PROP(minH);
+  JS_PROP(minW);
+  JS_PROP(presence);
+  JS_PROP(rawValue);
+  JS_PROP(relevant);
+  JS_PROP(transient);
+  JS_PROP(use);
+  JS_PROP(usehref);
+  JS_PROP(validationMessage);
+  JS_PROP(vAlign);
+  JS_PROP(w);
+  JS_PROP(x);
+  JS_PROP(y);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

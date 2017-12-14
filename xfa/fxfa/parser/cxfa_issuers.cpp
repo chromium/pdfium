@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_issuers.h"
 
+#include "fxjs/xfa/cjx_issuers.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -28,6 +31,7 @@ CXFA_Issuers::CXFA_Issuers(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Issuers,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Issuers>(this)) {}
 
 CXFA_Issuers::~CXFA_Issuers() {}

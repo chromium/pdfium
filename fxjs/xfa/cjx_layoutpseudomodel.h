@@ -29,8 +29,6 @@ class CJX_LayoutPseudoModel : public CJX_Object {
   explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
   ~CJX_LayoutPseudoModel() override;
 
-  void Ready(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-
   JS_METHOD(absPage, CJX_LayoutPseudoModel);
   JS_METHOD(absPageCount, CJX_LayoutPseudoModel);
   JS_METHOD(absPageCountInBatch, CJX_LayoutPseudoModel);
@@ -50,6 +48,8 @@ class CJX_LayoutPseudoModel : public CJX_Object {
   JS_METHOD(w, CJX_LayoutPseudoModel);
   JS_METHOD(x, CJX_LayoutPseudoModel);
   JS_METHOD(y, CJX_LayoutPseudoModel);
+
+  JS_PROP(ready);
 
  private:
   CJS_Return NumberedPageCount(CJS_V8* runtime, bool bNumbered);

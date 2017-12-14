@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_comb.h"
 
+#include "fxjs/xfa/cjx_comb.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -27,6 +30,7 @@ CXFA_Comb::CXFA_Comb(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Comb,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Comb>(this)) {}
 
 CXFA_Comb::~CXFA_Comb() {}

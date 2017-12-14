@@ -19,6 +19,9 @@ class CJX_Desc : public CJX_Node {
 
   JS_METHOD(metadata, CJX_Desc);
 
+  JS_PROP(use);
+  JS_PROP(usehref);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

@@ -26,3 +26,15 @@ CJS_Return CJX_Desc::metadata(CJS_V8* runtime,
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(runtime->NewString(""));
 }
+
+void CJX_Desc::use(CFXJSE_Value* pValue,
+                   bool bSetting,
+                   XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Desc::usehref(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}

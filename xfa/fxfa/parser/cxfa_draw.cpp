@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_draw.h"
 
-#include "fxjs/xfa/cjx_container.h"
+#include "fxjs/xfa/cjx_draw.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -59,6 +59,6 @@ CXFA_Draw::CXFA_Draw(CXFA_Document* doc, XFA_PacketType packet)
                 kPropertyData,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_Container>(this)) {}
+                pdfium::MakeUnique<CJX_Draw>(this)) {}
 
 CXFA_Draw::~CXFA_Draw() {}

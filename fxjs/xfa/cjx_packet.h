@@ -21,6 +21,8 @@ class CJX_Packet : public CJX_Node {
   JS_METHOD(removeAttribute, CJX_Packet);
   JS_METHOD(setAttribute, CJX_Packet);
 
+  JS_PROP(content);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

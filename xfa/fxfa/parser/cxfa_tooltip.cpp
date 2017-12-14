@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_tooltip.h"
 
-#include "fxjs/xfa/cjx_textnode.h"
+#include "fxjs/xfa/cjx_tooltip.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -31,6 +31,6 @@ CXFA_ToolTip::CXFA_ToolTip(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_TextNode>(this)) {}
+                pdfium::MakeUnique<CJX_ToolTip>(this)) {}
 
 CXFA_ToolTip::~CXFA_ToolTip() {}

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_sourceset.h"
 
-#include "fxjs/xfa/cjx_model.h"
+#include "fxjs/xfa/cjx_sourceset.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -31,6 +31,6 @@ CXFA_SourceSet::CXFA_SourceSet(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_Model>(this)) {}
+                pdfium::MakeUnique<CJX_SourceSet>(this)) {}
 
 CXFA_SourceSet::~CXFA_SourceSet() {}

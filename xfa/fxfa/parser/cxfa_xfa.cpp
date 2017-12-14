@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_xfa.h"
 
-#include "fxjs/xfa/cjx_model.h"
+#include "fxjs/xfa/cjx_xfa.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -29,6 +29,6 @@ CXFA_Xfa::CXFA_Xfa(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_Model>(this)) {}
+                pdfium::MakeUnique<CJX_Xfa>(this)) {}
 
 CXFA_Xfa::~CXFA_Xfa() {}

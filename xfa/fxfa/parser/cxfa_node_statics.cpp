@@ -1511,9 +1511,6 @@ std::unique_ptr<CXFA_Node> CXFA_Node::Create(CXFA_Document* doc,
     case XFA_Element::Delete:
       node = pdfium::MakeUnique<CXFA_Delete>(doc, packet);
       break;
-    case XFA_Element::Deltas:
-      node = pdfium::MakeUnique<CXFA_Deltas>(doc, packet);
-      break;
     case XFA_Element::DigestMethod:
       node = pdfium::MakeUnique<CXFA_DigestMethod>(doc, packet);
       break;

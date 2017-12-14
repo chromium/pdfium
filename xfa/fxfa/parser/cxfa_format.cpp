@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_format.h"
 
+#include "fxjs/xfa/cjx_format.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Picture, 1, 0},
@@ -29,6 +32,7 @@ CXFA_Format::CXFA_Format(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Format,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Format>(this)) {}
 
 CXFA_Format::~CXFA_Format() {}

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_break.h"
 
+#include "fxjs/xfa/cjx_break.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
@@ -40,6 +43,7 @@ CXFA_Break::CXFA_Break(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Break,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Break>(this)) {}
 
 CXFA_Break::~CXFA_Break() {}

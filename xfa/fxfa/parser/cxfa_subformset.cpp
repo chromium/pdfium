@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_subformset.h"
 
-#include "fxjs/xfa/cjx_container.h"
+#include "fxjs/xfa/cjx_subformset.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -39,6 +39,6 @@ CXFA_SubformSet::CXFA_SubformSet(CXFA_Document* doc, XFA_PacketType packet)
                 kPropertyData,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_Container>(this)) {}
+                pdfium::MakeUnique<CJX_SubformSet>(this)) {}
 
 CXFA_SubformSet::~CXFA_SubformSet() {}

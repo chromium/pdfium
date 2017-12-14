@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_traverse.h"
 
+#include "fxjs/xfa/cjx_traverse.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Script, 1, 0},
@@ -32,6 +35,7 @@ CXFA_Traverse::CXFA_Traverse(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Traverse,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Traverse>(this)) {}
 
 CXFA_Traverse::~CXFA_Traverse() {}

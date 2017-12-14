@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_margin.h"
 
+#include "fxjs/xfa/cjx_margin.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
@@ -32,6 +35,7 @@ CXFA_Margin::CXFA_Margin(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Margin,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Margin>(this)) {}
 
 CXFA_Margin::~CXFA_Margin() {}

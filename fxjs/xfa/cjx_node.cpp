@@ -386,6 +386,74 @@ CJS_Return CJX_Node::setElement(
   return CJS_Return(true);
 }
 
+void CJX_Node::id(CFXJSE_Value* pValue,
+                  bool bSetting,
+                  XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_Node::ns(CFXJSE_Value* pValue,
+                  bool bSetting,
+                  XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+  pValue->SetString(
+      TryNamespace().value_or(WideString()).UTF8Encode().AsStringView());
+}
+
+void CJX_Node::model(CFXJSE_Value* pValue,
+                     bool bSetting,
+                     XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+  pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(
+      GetXFANode()->GetModelNode()));
+}
+
+void CJX_Node::isContainer(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+  pValue->SetBoolean(GetXFANode()->IsContainerNode());
+}
+
+void CJX_Node::isNull(CFXJSE_Value* pValue,
+                      bool bSetting,
+                      XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+  if (GetXFANode()->GetElementType() == XFA_Element::Subform) {
+    pValue->SetBoolean(false);
+    return;
+  }
+  pValue->SetBoolean(GetContent(false).IsEmpty());
+}
+
+void CJX_Node::oneOfChild(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute) {
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
+  }
+
+  std::vector<CXFA_Node*> properties = GetXFANode()->GetNodeList(
+      XFA_NODEFILTER_OneOfProperty, XFA_Element::Unknown);
+  if (!properties.empty()) {
+    pValue->Assign(GetDocument()->GetScriptContext()->GetJSValueFromMap(
+        properties.front()));
+  }
+}
+
 int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
                                         XFA_Element eType) {
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();

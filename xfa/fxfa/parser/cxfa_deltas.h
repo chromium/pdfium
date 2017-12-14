@@ -7,11 +7,11 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DELTAS_H_
 #define XFA_FXFA_PARSER_CXFA_DELTAS_H_
 
-#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_list.h"
 
-class CXFA_Deltas : public CXFA_Node {
+class CXFA_Deltas : public CXFA_List {
  public:
-  CXFA_Deltas(CXFA_Document* doc, XFA_PacketType packet);
+  explicit CXFA_Deltas(CXFA_Document* doc);
   ~CXFA_Deltas() override;
 };
 

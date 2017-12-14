@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_connect.h"
 
+#include "fxjs/xfa/cjx_connect.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {
@@ -40,6 +43,7 @@ CXFA_Connect::CXFA_Connect(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Connect,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Connect>(this)) {}
 
 CXFA_Connect::~CXFA_Connect() {}

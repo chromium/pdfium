@@ -19,6 +19,10 @@ class CJX_Delta : public CJX_Object {
 
   JS_METHOD(restore, CJX_Delta);
 
+  JS_PROP(currentValue);
+  JS_PROP(savedValue);
+  JS_PROP(target);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

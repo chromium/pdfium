@@ -19,24 +19,6 @@ class CJX_HostPseudoModel : public CJX_Object {
   explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
   ~CJX_HostPseudoModel() override;
 
-  void AppType(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void CalculationsEnabled(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void CurrentPage(CFXJSE_Value* pValue,
-                   bool bSetting,
-                   XFA_Attribute eAttribute);
-  void Language(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void NumPages(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void Platform(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void Title(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void ValidationsEnabled(CFXJSE_Value* pValue,
-                          bool bSetting,
-                          XFA_Attribute eAttribute);
-  void Variation(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void Version(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void Name(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-
   JS_METHOD(beep, CJX_HostPseudoModel);
   JS_METHOD(documentCountInBatch, CJX_HostPseudoModel);
   JS_METHOD(documentInBatch, CJX_HostPseudoModel);
@@ -52,6 +34,21 @@ class CJX_HostPseudoModel : public CJX_Object {
   JS_METHOD(resetData, CJX_HostPseudoModel);
   JS_METHOD(response, CJX_HostPseudoModel);
   JS_METHOD(setFocus, CJX_HostPseudoModel);
+
+  JS_PROP(appType);
+  JS_PROP(calculationsEnabled);
+  JS_PROP(currentPage);
+  JS_PROP(language);
+  JS_PROP(numPages);
+  JS_PROP(platform);
+  JS_PROP(title);
+  JS_PROP(validationsEnabled);
+  JS_PROP(variation);
+  JS_PROP(version);
+
+  // TODO(dsinclair): Remove when xfa_basic_data_element_script is removed.
+  // Doesn't exist in spec
+  JS_PROP(name);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

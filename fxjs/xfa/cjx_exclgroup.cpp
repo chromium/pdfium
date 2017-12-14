@@ -107,3 +107,185 @@ CJS_Return CJX_ExclGroup::selectedMember(
 
   return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
 }
+
+void CJX_ExclGroup::defaultValue(CFXJSE_Value* pValue,
+                                 bool bSetting,
+                                 XFA_Attribute eAttribute) {
+  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
+  if (!pWidgetData)
+    return;
+
+  if (bSetting) {
+    pWidgetData->SetSelectedMemberByValue(pValue->ToWideString().AsStringView(),
+                                          true, true, true);
+    return;
+  }
+
+  WideString wsValue = GetContent(true);
+  XFA_VERSION curVersion = GetDocument()->GetCurVersionMode();
+  if (wsValue.IsEmpty() && curVersion >= XFA_VERSION_300) {
+    pValue->SetNull();
+    return;
+  }
+  pValue->SetString(wsValue.UTF8Encode().AsStringView());
+}
+
+void CJX_ExclGroup::rawValue(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute) {
+  defaultValue(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::transient(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute) {}
+
+void CJX_ExclGroup::access(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::accessKey(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::anchorType(CFXJSE_Value* pValue,
+                               bool bSetting,
+                               XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::borderColor(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute) {
+  Script_Som_BorderColor(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::borderWidth(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute) {
+  Script_Som_BorderWidth(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::colSpan(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::fillColor(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute) {
+  Script_Som_FillColor(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::h(CFXJSE_Value* pValue,
+                      bool bSetting,
+                      XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::hAlign(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::layout(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::mandatory(CFXJSE_Value* pValue,
+                              bool bSetting,
+                              XFA_Attribute eAttribute) {
+  Script_Som_Mandatory(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::mandatoryMessage(CFXJSE_Value* pValue,
+                                     bool bSetting,
+                                     XFA_Attribute eAttribute) {
+  Script_Som_MandatoryMessage(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::maxH(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::maxW(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::minH(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::minW(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::presence(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::relevant(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::use(CFXJSE_Value* pValue,
+                        bool bSetting,
+                        XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::usehref(CFXJSE_Value* pValue,
+                            bool bSetting,
+                            XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::validationMessage(CFXJSE_Value* pValue,
+                                      bool bSetting,
+                                      XFA_Attribute eAttribute) {
+  Script_Som_ValidationMessage(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::vAlign(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::w(CFXJSE_Value* pValue,
+                      bool bSetting,
+                      XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::x(CFXJSE_Value* pValue,
+                      bool bSetting,
+                      XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_ExclGroup::y(CFXJSE_Value* pValue,
+                      bool bSetting,
+                      XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}

@@ -31,4 +31,7 @@ CJS_Return JSMethod(C* node,
   CJS_Return method_name(CJS_V8* runtime,                  \
                          const std::vector<v8::Local<v8::Value>>& params)
 
+#define JS_PROP(prop_name) \
+  void prop_name(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute)
+
 #endif  // FXJS_CJX_DEFINE_H_

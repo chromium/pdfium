@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_validate.h"
 
+#include "fxjs/xfa/cjx_validate.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Message, 1, 0},
@@ -40,6 +43,7 @@ CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Validate,
           kPropertyData,
           kAttributeData,
-          kName) {}
+          kName,
+          pdfium::MakeUnique<CJX_Validate>(this)) {}
 
 CXFA_Validate::~CXFA_Validate() {}

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_arc.h"
 
+#include "fxjs/xfa/cjx_arc.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Edge, 1, 0},
@@ -34,6 +37,7 @@ CXFA_Arc::CXFA_Arc(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Arc,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Arc>(this)) {}
 
 CXFA_Arc::~CXFA_Arc() {}

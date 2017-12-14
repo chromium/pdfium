@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_choicelist.h"
 
+#include "fxjs/xfa/cjx_choicelist.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
@@ -35,6 +38,7 @@ CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ChoiceList,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_ChoiceList>(this)) {}
 
 CXFA_ChoiceList::~CXFA_ChoiceList() {}

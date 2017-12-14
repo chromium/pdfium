@@ -19,21 +19,15 @@ class CJX_DataWindow : public CJX_Object {
   explicit CJX_DataWindow(CScript_DataWindow* window);
   ~CJX_DataWindow() override;
 
-  void RecordsBefore(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute);
-  void CurrentRecordNumber(CFXJSE_Value* pValue,
-                           bool bSetting,
-                           XFA_Attribute eAttribute);
-  void RecordsAfter(CFXJSE_Value* pValue,
-                    bool bSetting,
-                    XFA_Attribute eAttribute);
-  void IsDefined(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-
   JS_METHOD(gotoRecord, CJX_DataWindow);
   JS_METHOD(isRecordGroup, CJX_DataWindow);
   JS_METHOD(moveCurrentRecord, CJX_DataWindow);
   JS_METHOD(record, CJX_DataWindow);
+
+  JS_PROP(currentRecordNumber);
+  JS_PROP(isDefined);
+  JS_PROP(recordsAfter);
+  JS_PROP(recordsBefore);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

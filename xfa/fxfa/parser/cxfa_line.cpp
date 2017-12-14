@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_line.h"
 
+#include "fxjs/xfa/cjx_line.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Edge, 1, 0},
@@ -32,6 +35,7 @@ CXFA_Line::CXFA_Line(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Line,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Line>(this)) {}
 
 CXFA_Line::~CXFA_Line() {}

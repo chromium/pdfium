@@ -26,3 +26,15 @@ CJS_Return CJX_Delta::restore(CJS_V8* runtime,
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
+
+void CJX_Delta::currentValue(CFXJSE_Value* pValue,
+                             bool bSetting,
+                             XFA_Attribute eAttribute) {}
+
+void CJX_Delta::savedValue(CFXJSE_Value* pValue,
+                           bool bSetting,
+                           XFA_Attribute eAttribute) {}
+
+void CJX_Delta::target(CFXJSE_Value* pValue,
+                       bool bSetting,
+                       XFA_Attribute eAttribute) {}

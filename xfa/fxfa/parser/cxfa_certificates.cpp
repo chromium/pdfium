@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_certificates.h"
 
+#include "fxjs/xfa/cjx_certificates.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {
@@ -34,6 +37,7 @@ CXFA_Certificates::CXFA_Certificates(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Certificates,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Certificates>(this)) {}
 
 CXFA_Certificates::~CXFA_Certificates() {}

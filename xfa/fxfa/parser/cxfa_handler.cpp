@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_handler.h"
 
-#include "fxjs/xfa/cjx_textnode.h"
+#include "fxjs/xfa/cjx_handler.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -32,6 +32,6 @@ CXFA_Handler::CXFA_Handler(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_TextNode>(this)) {}
+                pdfium::MakeUnique<CJX_Handler>(this)) {}
 
 CXFA_Handler::~CXFA_Handler() {}

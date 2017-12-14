@@ -12,3 +12,15 @@
 CJX_TextNode::CJX_TextNode(CXFA_Node* node) : CJX_Node(node) {}
 
 CJX_TextNode::~CJX_TextNode() {}
+
+void CJX_TextNode::defaultValue(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute attr) {
+  Script_Som_DefaultValue(pValue, bSetting, attr);
+}
+
+void CJX_TextNode::value(CFXJSE_Value* pValue,
+                         bool bSetting,
+                         XFA_Attribute attr) {
+  Script_Som_DefaultValue(pValue, bSetting, attr);
+}

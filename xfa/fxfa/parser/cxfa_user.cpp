@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_user.h"
 
-#include "fxjs/xfa/cjx_textnode.h"
+#include "fxjs/xfa/cjx_user.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -31,6 +31,6 @@ CXFA_User::CXFA_User(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_TextNode>(this)) {}
+                pdfium::MakeUnique<CJX_User>(this)) {}
 
 CXFA_User::~CXFA_User() {}

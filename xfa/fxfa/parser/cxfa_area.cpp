@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_area.h"
 
-#include "fxjs/xfa/cjx_container.h"
+#include "fxjs/xfa/cjx_area.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -41,6 +41,6 @@ CXFA_Area::CXFA_Area(CXFA_Document* doc, XFA_PacketType packet)
           kPropertyData,
           kAttributeData,
           kName,
-          pdfium::MakeUnique<CJX_Container>(this)) {}
+          pdfium::MakeUnique<CJX_Area>(this)) {}
 
 CXFA_Area::~CXFA_Area() {}

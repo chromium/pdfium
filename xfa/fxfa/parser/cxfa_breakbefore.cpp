@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_breakbefore.h"
 
+#include "fxjs/xfa/cjx_breakbefore.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Script, 1, 0},
@@ -34,6 +37,7 @@ CXFA_BreakBefore::CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::BreakBefore,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_BreakBefore>(this)) {}
 
 CXFA_BreakBefore::~CXFA_BreakBefore() {}

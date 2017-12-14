@@ -29,3 +29,15 @@ CJS_Return CJX_WsdlConnection::execute(
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(runtime->NewBoolean(false));
 }
+
+void CJX_WsdlConnection::dataDescription(CFXJSE_Value* pValue,
+                                         bool bSetting,
+                                         XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}
+
+void CJX_WsdlConnection::execute(CFXJSE_Value* pValue,
+                                 bool bSetting,
+                                 XFA_Attribute eAttribute) {
+  Script_Attribute_String(pValue, bSetting, eAttribute);
+}

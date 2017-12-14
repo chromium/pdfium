@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_keep.h"
 
+#include "fxjs/xfa/cjx_keep.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
@@ -34,6 +37,7 @@ CXFA_Keep::CXFA_Keep(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Keep,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Keep>(this)) {}
 
 CXFA_Keep::~CXFA_Keep() {}

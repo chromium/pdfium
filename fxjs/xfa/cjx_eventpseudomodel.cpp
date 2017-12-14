@@ -54,97 +54,97 @@ CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
 
 CJX_EventPseudoModel::~CJX_EventPseudoModel() {}
 
-void CJX_EventPseudoModel::Change(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::change(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::Change, bSetting);
 }
 
-void CJX_EventPseudoModel::CommitKey(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::commitKey(CFXJSE_Value* pValue,
                                      bool bSetting,
                                      XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::CommitKey, bSetting);
 }
 
-void CJX_EventPseudoModel::FullText(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::fullText(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::FullText, bSetting);
 }
 
-void CJX_EventPseudoModel::KeyDown(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::keyDown(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::Keydown, bSetting);
 }
 
-void CJX_EventPseudoModel::Modifier(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::modifier(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::Modifier, bSetting);
 }
 
-void CJX_EventPseudoModel::NewContentType(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::newContentType(CFXJSE_Value* pValue,
                                           bool bSetting,
                                           XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::NewContentType, bSetting);
 }
 
-void CJX_EventPseudoModel::NewText(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::newText(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::NewText, bSetting);
 }
 
-void CJX_EventPseudoModel::PrevContentType(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::prevContentType(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::PreviousContentType, bSetting);
 }
 
-void CJX_EventPseudoModel::PrevText(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::prevText(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::PreviousText, bSetting);
 }
 
-void CJX_EventPseudoModel::Reenter(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::reenter(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::Reenter, bSetting);
 }
 
-void CJX_EventPseudoModel::SelEnd(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::selEnd(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::SelectionEnd, bSetting);
 }
 
-void CJX_EventPseudoModel::SelStart(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::selStart(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::SelectionStart, bSetting);
 }
 
-void CJX_EventPseudoModel::Shift(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::shift(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::Shift, bSetting);
 }
 
-void CJX_EventPseudoModel::SoapFaultCode(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::soapFaultCode(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::SoapFaultCode, bSetting);
 }
 
-void CJX_EventPseudoModel::SoapFaultString(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::soapFaultString(CFXJSE_Value* pValue,
                                            bool bSetting,
                                            XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::SoapFaultString, bSetting);
 }
 
-void CJX_EventPseudoModel::Target(CFXJSE_Value* pValue,
+void CJX_EventPseudoModel::target(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
   Property(pValue, XFA_Event::Target, bSetting);

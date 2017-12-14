@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_signdata.h"
 
+#include "fxjs/xfa/cjx_signdata.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Filter, 1, 0},
@@ -33,6 +36,7 @@ CXFA_SignData::CXFA_SignData(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::SignData,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_SignData>(this)) {}
 
 CXFA_SignData::~CXFA_SignData() {}

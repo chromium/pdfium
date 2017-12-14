@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_time.h"
 
-#include "fxjs/xfa/cjx_content.h"
+#include "fxjs/xfa/cjx_time.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -31,6 +31,6 @@ CXFA_Time::CXFA_Time(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_Content>(this)) {}
+                pdfium::MakeUnique<CJX_Time>(this)) {}
 
 CXFA_Time::~CXFA_Time() {}

@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_digestmethods.h"
 
+#include "fxjs/xfa/cjx_digestmethods.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -29,6 +32,7 @@ CXFA_DigestMethods::CXFA_DigestMethods(CXFA_Document* doc,
                 XFA_Element::DigestMethods,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_DigestMethods>(this)) {}
 
 CXFA_DigestMethods::~CXFA_DigestMethods() {}

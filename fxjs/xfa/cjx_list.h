@@ -22,7 +22,7 @@ class CJX_List : public CJX_Object {
   JS_METHOD(item, CJX_List);
   JS_METHOD(remove, CJX_List);
 
-  void length(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
+  JS_PROP(length);
 
  private:
   CXFA_List* GetXFAList();

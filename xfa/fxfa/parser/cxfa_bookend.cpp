@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_bookend.h"
 
+#include "fxjs/xfa/cjx_bookend.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -28,6 +31,7 @@ CXFA_Bookend::CXFA_Bookend(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Bookend,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Bookend>(this)) {}
 
 CXFA_Bookend::~CXFA_Bookend() {}

@@ -21,6 +21,9 @@ class CJX_Model : public CJX_Node {
   JS_METHOD(createNode, CJX_Model);
   JS_METHOD(isCompatibleNS, CJX_Model);
 
+  JS_PROP(aliasNode);
+  JS_PROP(context);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

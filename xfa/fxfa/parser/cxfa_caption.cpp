@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_caption.h"
 
+#include "fxjs/xfa/cjx_caption.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {
@@ -35,6 +38,7 @@ CXFA_Caption::CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Caption,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Caption>(this)) {}
 
 CXFA_Caption::~CXFA_Caption() {}

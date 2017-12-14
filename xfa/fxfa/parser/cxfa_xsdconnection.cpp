@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_xsdconnection.h"
 
+#include "fxjs/xfa/cjx_xsdconnection.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {
@@ -30,6 +33,7 @@ CXFA_XsdConnection::CXFA_XsdConnection(CXFA_Document* doc,
                 XFA_Element::XsdConnection,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_XsdConnection>(this)) {}
 
 CXFA_XsdConnection::~CXFA_XsdConnection() {}

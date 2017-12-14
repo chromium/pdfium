@@ -38,33 +38,25 @@ class CJX_EventPseudoModel : public CJX_Object {
   explicit CJX_EventPseudoModel(CScript_EventPseudoModel* model);
   ~CJX_EventPseudoModel() override;
 
-  void Change(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void CommitKey(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void FullText(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void KeyDown(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void Modifier(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void NewContentType(CFXJSE_Value* pValue,
-                      bool bSetting,
-                      XFA_Attribute eAttribute);
-  void NewText(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void PrevContentType(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute);
-  void PrevText(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void Reenter(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void SelEnd(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void SelStart(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void Shift(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-  void SoapFaultCode(CFXJSE_Value* pValue,
-                     bool bSetting,
-                     XFA_Attribute eAttribute);
-  void SoapFaultString(CFXJSE_Value* pValue,
-                       bool bSetting,
-                       XFA_Attribute eAttribute);
-  void Target(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute);
-
   JS_METHOD(emit, CJX_EventPseudoModel);
   JS_METHOD(reset, CJX_EventPseudoModel);
+
+  JS_PROP(change);
+  JS_PROP(commitKey);
+  JS_PROP(fullText);
+  JS_PROP(keyDown);
+  JS_PROP(modifier);
+  JS_PROP(newContentType);
+  JS_PROP(newText);
+  JS_PROP(prevContentType);
+  JS_PROP(prevText);
+  JS_PROP(reenter);
+  JS_PROP(selEnd);
+  JS_PROP(selStart);
+  JS_PROP(shift);
+  JS_PROP(soapFaultCode);
+  JS_PROP(soapFaultString);
+  JS_PROP(target);
 
  private:
   void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, bool bSetting);

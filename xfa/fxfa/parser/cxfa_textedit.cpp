@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_textedit.h"
 
+#include "fxjs/xfa/cjx_textedit.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
@@ -37,6 +40,7 @@ CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::TextEdit,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_TextEdit>(this)) {}
 
 CXFA_TextEdit::~CXFA_TextEdit() {}

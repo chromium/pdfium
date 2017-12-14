@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_message.h"
 
+#include "fxjs/xfa/cjx_message.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::MsgId, 1, 0},
@@ -32,6 +35,7 @@ CXFA_Message::CXFA_Message(CXFA_Document* doc, XFA_PacketType packet)
           XFA_Element::Message,
           kPropertyData,
           kAttributeData,
-          kName) {}
+          kName,
+          pdfium::MakeUnique<CJX_Message>(this)) {}
 
 CXFA_Message::~CXFA_Message() {}

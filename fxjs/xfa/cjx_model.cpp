@@ -82,3 +82,11 @@ CJS_Return CJX_Model::isCompatibleNS(
   return CJS_Return(
       runtime->NewBoolean(TryNamespace().value_or(WideString()) == nameSpace));
 }
+
+void CJX_Model::context(CFXJSE_Value* pValue,
+                        bool bSetting,
+                        XFA_Attribute eAttribute) {}
+
+void CJX_Model::aliasNode(CFXJSE_Value* pValue,
+                          bool bSetting,
+                          XFA_Attribute eAttribute) {}

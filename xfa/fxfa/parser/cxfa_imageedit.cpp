@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_imageedit.h"
 
+#include "fxjs/xfa/cjx_imageedit.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
@@ -32,6 +35,7 @@ CXFA_ImageEdit::CXFA_ImageEdit(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::ImageEdit,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_ImageEdit>(this)) {}
 
 CXFA_ImageEdit::~CXFA_ImageEdit() {}

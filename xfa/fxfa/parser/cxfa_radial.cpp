@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_radial.h"
 
+#include "fxjs/xfa/cjx_radial.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Color, 1, 0},
@@ -31,6 +34,7 @@ CXFA_Radial::CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Radial,
                 kPropertyData,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Radial>(this)) {}
 
 CXFA_Radial::~CXFA_Radial() {}

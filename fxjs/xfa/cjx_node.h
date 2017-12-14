@@ -19,9 +19,6 @@ class CJX_Node : public CJX_Tree {
   explicit CJX_Node(CXFA_Node* node);
   ~CJX_Node() override;
 
-  CXFA_Node* GetXFANode();
-  const CXFA_Node* GetXFANode() const;
-
   JS_METHOD(applyXSL, CJX_Node);
   JS_METHOD(assignNode, CJX_Node);
   JS_METHOD(clone, CJX_Node);
@@ -33,6 +30,16 @@ class CJX_Node : public CJX_Tree {
   JS_METHOD(saveXML, CJX_Node);
   JS_METHOD(setAttribute, CJX_Node);
   JS_METHOD(setElement, CJX_Node);
+
+  JS_PROP(id);
+  JS_PROP(isContainer);
+  JS_PROP(isNull);
+  JS_PROP(model);
+  JS_PROP(ns);
+  JS_PROP(oneOfChild);
+
+  CXFA_Node* GetXFANode();
+  const CXFA_Node* GetXFANode() const;
 
  protected:
   int32_t execSingleEventByName(const WideStringView& wsEventName,

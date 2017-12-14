@@ -30,6 +30,41 @@ class CJX_Field : public CJX_Container {
   JS_METHOD(getSaveItem, CJX_Field);
   JS_METHOD(setItemState, CJX_Field);
 
+  JS_PROP(defaultValue); /* {default} */
+  JS_PROP(access);
+  JS_PROP(accessKey);
+  JS_PROP(anchorType);
+  JS_PROP(borderColor);
+  JS_PROP(borderWidth);
+  JS_PROP(colSpan);
+  JS_PROP(editValue);
+  JS_PROP(fillColor);
+  JS_PROP(fontColor);
+  JS_PROP(formatMessage);
+  JS_PROP(formattedValue);
+  JS_PROP(h);
+  JS_PROP(hAlign);
+  JS_PROP(locale);
+  JS_PROP(mandatory);
+  JS_PROP(mandatoryMessage);
+  JS_PROP(maxH);
+  JS_PROP(maxW);
+  JS_PROP(minH);
+  JS_PROP(minW);
+  JS_PROP(parentSubform);
+  JS_PROP(presence);
+  JS_PROP(rawValue);
+  JS_PROP(relevant);
+  JS_PROP(rotate);
+  JS_PROP(selectedIndex);
+  JS_PROP(use);
+  JS_PROP(usehref);
+  JS_PROP(validationMessage);
+  JS_PROP(vAlign);
+  JS_PROP(w);
+  JS_PROP(x);
+  JS_PROP(y);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

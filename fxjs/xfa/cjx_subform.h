@@ -22,6 +22,31 @@ class CJX_Subform : public CJX_Container {
   JS_METHOD(execInitialize, CJX_Subform);
   JS_METHOD(execValidate, CJX_Subform);
 
+  JS_PROP(allowMacro);
+  JS_PROP(anchorType);
+  JS_PROP(colSpan);
+  JS_PROP(columnWidths);
+  JS_PROP(h);
+  JS_PROP(hAlign);
+  JS_PROP(instanceIndex);
+  JS_PROP(layout);
+  JS_PROP(locale);
+  JS_PROP(maxH);
+  JS_PROP(maxW);
+  JS_PROP(minH);
+  JS_PROP(minW);
+  JS_PROP(presence);
+  JS_PROP(relevant);
+  JS_PROP(restoreState);
+  JS_PROP(scope);
+  JS_PROP(use);
+  JS_PROP(usehref);
+  JS_PROP(validationMessage);
+  JS_PROP(vAlign);
+  JS_PROP(w);
+  JS_PROP(x);
+  JS_PROP(y);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };

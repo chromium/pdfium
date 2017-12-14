@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_reasons.h"
 
+#include "fxjs/xfa/cjx_reasons.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -28,6 +31,7 @@ CXFA_Reasons::CXFA_Reasons(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Reasons,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Reasons>(this)) {}
 
 CXFA_Reasons::~CXFA_Reasons() {}

@@ -48,18 +48,18 @@ CJS_Return CJX_DataWindow::isRecordGroup(
   return CJS_Return(true);
 }
 
-void CJX_DataWindow::RecordsBefore(CFXJSE_Value* pValue,
+void CJX_DataWindow::recordsBefore(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {}
 
-void CJX_DataWindow::CurrentRecordNumber(CFXJSE_Value* pValue,
+void CJX_DataWindow::currentRecordNumber(CFXJSE_Value* pValue,
                                          bool bSetting,
                                          XFA_Attribute eAttribute) {}
 
-void CJX_DataWindow::RecordsAfter(CFXJSE_Value* pValue,
+void CJX_DataWindow::recordsAfter(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {}
 
-void CJX_DataWindow::IsDefined(CFXJSE_Value* pValue,
+void CJX_DataWindow::isDefined(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {}

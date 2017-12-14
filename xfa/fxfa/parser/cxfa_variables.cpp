@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_variables.h"
 
-#include "fxjs/xfa/cjx_container.h"
+#include "fxjs/xfa/cjx_variables.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -30,6 +30,6 @@ CXFA_Variables::CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet)
                 nullptr,
                 kAttributeData,
                 kName,
-                pdfium::MakeUnique<CJX_Container>(this)) {}
+                pdfium::MakeUnique<CJX_Variables>(this)) {}
 
 CXFA_Variables::~CXFA_Variables() {}

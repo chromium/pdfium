@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_mdp.h"
 
+#include "fxjs/xfa/cjx_mdp.h"
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -29,6 +32,7 @@ CXFA_Mdp::CXFA_Mdp(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Mdp,
                 nullptr,
                 kAttributeData,
-                kName) {}
+                kName,
+                pdfium::MakeUnique<CJX_Mdp>(this)) {}
 
 CXFA_Mdp::~CXFA_Mdp() {}

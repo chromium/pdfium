@@ -35,6 +35,10 @@ class CJX_Source : public CJX_Node {
   JS_METHOD(update, CJX_Source);
   JS_METHOD(updateBatch, CJX_Source);
 
+  JS_PROP(db);
+  JS_PROP(use);
+  JS_PROP(usehref);
+
  private:
   static const CJX_MethodSpec MethodSpecs[];
 };
