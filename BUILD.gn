@@ -2736,8 +2736,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_validate.h",
       "xfa/fxfa/parser/cxfa_validateapprovalsignatures.cpp",
       "xfa/fxfa/parser/cxfa_validateapprovalsignatures.h",
-      "xfa/fxfa/parser/cxfa_validatedata.cpp",
-      "xfa/fxfa/parser/cxfa_validatedata.h",
       "xfa/fxfa/parser/cxfa_validationmessaging.cpp",
       "xfa/fxfa/parser/cxfa_validationmessaging.h",
       "xfa/fxfa/parser/cxfa_value.cpp",

@@ -22,7 +22,6 @@
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
 #include "xfa/fxfa/parser/cxfa_paradata.h"
-#include "xfa/fxfa/parser/cxfa_validatedata.h"
 
 enum XFA_CHECKSTATE {
   XFA_CHECKSTATE_On = 0,
@@ -38,6 +37,7 @@ enum XFA_VALUEPICTURE {
 };
 
 class CXFA_Node;
+class CXFA_Validate;
 class IFX_Locale;
 
 class CXFA_WidgetData : public CXFA_DataData {
@@ -66,7 +66,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_ValueData GetDefaultValueData();
   CXFA_ValueData GetFormValueData();
   CXFA_CalculateData GetCalculateData();
-  CXFA_ValidateData GetValidateData(bool bModified);
+  CXFA_Validate* GetValidate(bool bModified);
   CXFA_BorderData GetUIBorderData();
 
   std::vector<CXFA_Node*> GetEventByActivity(XFA_AttributeEnum iActivity,

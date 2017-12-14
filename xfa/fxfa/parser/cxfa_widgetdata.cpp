@@ -15,6 +15,7 @@
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -311,8 +312,8 @@ CXFA_CalculateData CXFA_WidgetData::GetCalculateData() {
       m_pNode->JSObject()->GetProperty(0, XFA_Element::Calculate, false));
 }
 
-CXFA_ValidateData CXFA_WidgetData::GetValidateData(bool bModified) {
-  return CXFA_ValidateData(
+CXFA_Validate* CXFA_WidgetData::GetValidate(bool bModified) {
+  return static_cast<CXFA_Validate*>(
       m_pNode->JSObject()->GetProperty(0, XFA_Element::Validate, bModified));
 }
 

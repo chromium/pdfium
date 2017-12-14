@@ -31,6 +31,7 @@
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_binditemsdata.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 const XFA_AttributeEnum gs_EventActivity[] = {
@@ -221,11 +222,12 @@ bool CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
 
   pWidgetAcc->ResetData();
   pWidgetAcc->UpdateUIDisplay();
-  CXFA_ValidateData validateData = pWidgetAcc->GetValidateData(false);
-  if (validateData.HasValidNode()) {
-    AddValidateWidget(pWidgetAcc);
-    validateData.GetNode()->SetFlag(XFA_NodeFlag_NeedsInitApp, false);
-  }
+  CXFA_Validate* validate = pWidgetAcc->GetValidate(false);
+  if (!validate)
+    return true;
+
+  AddValidateWidget(pWidgetAcc);
+  validate->SetFlag(XFA_NodeFlag_NeedsInitApp, false);
   return true;
 }
 

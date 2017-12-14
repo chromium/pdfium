@@ -27,6 +27,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 #include "xfa/fxfa/parser/cxfa_occurdata.h"
+#include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -1403,31 +1404,31 @@ void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
     return;
 
   bool bNew = false;
-  CXFA_ValidateData validateData = widget_data_->GetValidateData(false);
-  if (!validateData.HasValidNode()) {
-    validateData = widget_data_->GetValidateData(true);
+  CXFA_Validate* validate = widget_data_->GetValidate(false);
+  if (!validate) {
+    validate = widget_data_->GetValidate(true);
     bNew = true;
   }
 
   if (bSetting) {
     switch (iMessageType) {
       case XFA_SOM_ValidationMessage:
-        validateData.SetScriptMessageText(pValue->ToWideString());
+        validate->SetScriptMessageText(pValue->ToWideString());
         break;
       case XFA_SOM_FormatMessage:
-        validateData.SetFormatMessageText(pValue->ToWideString());
+        validate->SetFormatMessageText(pValue->ToWideString());
         break;
       case XFA_SOM_MandatoryMessage:
-        validateData.SetNullMessageText(pValue->ToWideString());
+        validate->SetNullMessageText(pValue->ToWideString());
         break;
       default:
         break;
     }
     if (!bNew) {
       CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-      if (!pNotify) {
+      if (!pNotify)
         return;
-      }
+
       pNotify->AddCalcValidate(ToNode(GetXFAObject()));
     }
     return;
@@ -1436,13 +1437,13 @@ void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
   WideString wsMessage;
   switch (iMessageType) {
     case XFA_SOM_ValidationMessage:
-      wsMessage = validateData.GetScriptMessageText();
+      wsMessage = validate->GetScriptMessageText();
       break;
     case XFA_SOM_FormatMessage:
-      wsMessage = validateData.GetFormatMessageText();
+      wsMessage = validate->GetFormatMessageText();
       break;
     case XFA_SOM_MandatoryMessage:
-      wsMessage = validateData.GetNullMessageText();
+      wsMessage = validate->GetNullMessageText();
       break;
     default:
       break;
@@ -1589,13 +1590,16 @@ void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_ValidateData validateData = widget_data_->GetValidateData(true);
+  CXFA_Validate* validate = widget_data_->GetValidate(true);
+  if (!validate)
+    return;
+
   if (bSetting) {
-    validateData.SetNullTest(pValue->ToWideString());
+    validate->SetNullTest(pValue->ToWideString());
     return;
   }
 
-  WideString str = CXFA_Node::AttributeEnumToName(validateData.GetNullTest());
+  WideString str = CXFA_Node::AttributeEnumToName(validate->GetNullTest());
   pValue->SetString(str.UTF8Encode().AsStringView());
 }
 

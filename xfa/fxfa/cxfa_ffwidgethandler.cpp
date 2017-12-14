@@ -16,6 +16,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_validate.h"
 
 CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
     : m_pDocView(pDocView) {}
@@ -193,9 +194,8 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
       return calcData.HasValidNode() && calcData.GetScriptData().HasValidNode();
     }
     case XFA_EVENT_Validate: {
-      CXFA_ValidateData validateData = pWidgetAcc->GetValidateData(false);
-      return validateData.HasValidNode() &&
-             validateData.GetScriptData().HasValidNode();
+      CXFA_Validate* validate = pWidgetAcc->GetValidate(false);
+      return validate && validate->GetScriptData().HasValidNode();
     }
     default:
       break;

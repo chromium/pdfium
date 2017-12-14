@@ -24,6 +24,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 class CXFA_WidgetLayoutData {
@@ -338,7 +339,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
   return XFA_EVENTERROR_Success;
 }
 
-void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_ValidateData validateData,
+void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate* validate,
                                                int32_t iRet,
                                                bool bRetValue,
                                                bool bVersionFlag) {
@@ -352,8 +353,8 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_ValidateData validateData,
     return;
 
   WideString wsTitle = pAppProvider->GetAppTitle();
-  WideString wsScriptMsg = validateData.GetScriptMessageText();
-  if (validateData.GetScriptTest() == XFA_AttributeEnum::Warning) {
+  WideString wsScriptMsg = validate->GetScriptMessageText();
+  if (validate->GetScriptTest() == XFA_AttributeEnum::Warning) {
     if (GetNode()->IsUserInteractive())
       return;
     if (wsScriptMsg.IsEmpty())
@@ -375,12 +376,11 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_ValidateData validateData,
   pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
 }
 
-int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(
-    CXFA_ValidateData validateData,
-    bool bVersionFlag) {
+int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate* validate,
+                                                  bool bVersionFlag) {
   WideString wsRawValue = GetRawValue();
   if (!wsRawValue.IsEmpty()) {
-    WideString wsPicture = validateData.GetPicture();
+    WideString wsPicture = validate->GetPicture();
     if (wsPicture.IsEmpty())
       return XFA_EVENTERROR_NotExist;
 
@@ -395,9 +395,9 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(
       if (!pAppProvider)
         return XFA_EVENTERROR_NotExist;
 
-      WideString wsFormatMsg = validateData.GetFormatMessageText();
+      WideString wsFormatMsg = validate->GetFormatMessageText();
       WideString wsTitle = pAppProvider->GetAppTitle();
-      if (validateData.GetFormatTest() == XFA_AttributeEnum::Error) {
+      if (validate->GetFormatTest() == XFA_AttributeEnum::Error) {
         if (wsFormatMsg.IsEmpty())
           wsFormatMsg = GetValidateMessage(true, bVersionFlag);
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
@@ -423,7 +423,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(
   return XFA_EVENTERROR_NotExist;
 }
 
-int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
+int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate* validate,
                                                 int32_t iFlags,
                                                 bool bVersionFlag) {
   if (!GetValue(XFA_VALUEPICTURE_Raw).IsEmpty())
@@ -431,8 +431,8 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_ValidateData validateData,
   if (IsNull() && IsPreNull())
     return XFA_EVENTERROR_Success;
 
-  XFA_AttributeEnum eNullTest = validateData.GetNullTest();
-  WideString wsNullMsg = validateData.GetNullMessageText();
+  XFA_AttributeEnum eNullTest = validate->GetNullTest();
+  WideString wsNullMsg = validate->GetNullMessageText();
   if (iFlags & 0x01) {
     int32_t iRet = XFA_EVENTERROR_Success;
     if (eNullTest != XFA_AttributeEnum::Disabled)
@@ -528,15 +528,15 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_ValidateData validateData = GetValidateData(false);
-  if (!validateData.HasValidNode())
+  CXFA_Validate* validate = GetValidate(false);
+  if (!validate)
     return XFA_EVENTERROR_NotExist;
 
-  bool bInitDoc = validateData.GetNode()->NeedsInitApp();
+  bool bInitDoc = validate->NeedsInitApp();
   bool bStatus = m_pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
   int32_t iRet = XFA_EVENTERROR_NotExist;
-  CXFA_ScriptData scriptData = validateData.GetScriptData();
+  CXFA_ScriptData scriptData = validate->GetScriptData();
   bool bRet = false;
   bool hasBoolResult = (bInitDoc || bStatus) && GetRawValue().IsEmpty();
   if (scriptData.HasValidNode()) {
@@ -552,17 +552,17 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
     bVersionFlag = true;
 
   if (bInitDoc) {
-    validateData.GetNode()->ClearFlag(XFA_NodeFlag_NeedsInitApp);
+    validate->ClearFlag(XFA_NodeFlag_NeedsInitApp);
   } else {
-    iFormat = ProcessFormatTestValidate(validateData, bVersionFlag);
+    iFormat = ProcessFormatTestValidate(validate, bVersionFlag);
     if (!bVersionFlag)
       bVersionFlag = GetDoc()->GetXFADoc()->HasFlag(XFA_DOCFLAG_Scripting);
 
-    iRet |= ProcessNullTestValidate(validateData, iFlags, bVersionFlag);
+    iRet |= ProcessNullTestValidate(validate, iFlags, bVersionFlag);
   }
 
   if (iFormat != XFA_EVENTERROR_Success && hasBoolResult)
-    ProcessScriptTestValidate(validateData, iRet, bRet, bVersionFlag);
+    ProcessScriptTestValidate(validate, iRet, bRet, bVersionFlag);
 
   return iRet | iFormat;
 }

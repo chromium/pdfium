@@ -13,6 +13,28 @@ class CXFA_Validate : public CXFA_Node {
  public:
   CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Validate() override;
+
+  XFA_AttributeEnum GetFormatTest();
+  WideString GetFormatMessageText();
+  void SetFormatMessageText(const WideString& wsMessage);
+
+  XFA_AttributeEnum GetNullTest();
+  void SetNullTest(const WideString& wsValue);
+
+  WideString GetNullMessageText();
+  void SetNullMessageText(const WideString& wsMessage);
+
+  XFA_AttributeEnum GetScriptTest();
+  WideString GetScriptMessageText();
+  void SetScriptMessageText(const WideString& wsMessage);
+
+  WideString GetPicture();
+  CXFA_ScriptData GetScriptData();
+
+ private:
+  WideString GetMessageText(const WideString& wsMessageType);
+  void SetMessageText(const WideString& wsMessageType,
+                      const WideString& wsMessage);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALIDATE_H_

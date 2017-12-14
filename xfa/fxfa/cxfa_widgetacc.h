@@ -87,13 +87,12 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
 
  private:
   IXFA_AppProvider* GetAppProvider();
-  void ProcessScriptTestValidate(CXFA_ValidateData validateData,
+  void ProcessScriptTestValidate(CXFA_Validate* validate,
                                  int32_t iRet,
                                  bool pRetValue,
                                  bool bVersionFlag);
-  int32_t ProcessFormatTestValidate(CXFA_ValidateData validateData,
-                                    bool bVersionFlag);
-  int32_t ProcessNullTestValidate(CXFA_ValidateData validateData,
+  int32_t ProcessFormatTestValidate(CXFA_Validate* validate, bool bVersionFlag);
+  int32_t ProcessNullTestValidate(CXFA_Validate* validate,
                                   int32_t iFlags,
                                   bool bVersionFlag);
   WideString GetValidateCaptionName(bool bVersionFlag);

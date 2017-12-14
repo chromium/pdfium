@@ -31,6 +31,9 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
 constexpr wchar_t kName[] = L"validate";
+constexpr wchar_t kFormatTest[] = L"formatTest";
+constexpr wchar_t kNullTest[] = L"nullTest";
+constexpr wchar_t kScriptTest[] = L"scriptTest";
 
 }  // namespace
 
@@ -47,3 +50,100 @@ CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
           pdfium::MakeUnique<CJX_Validate>(this)) {}
 
 CXFA_Validate::~CXFA_Validate() {}
+
+XFA_AttributeEnum CXFA_Validate::GetFormatTest() {
+  return JSObject()->GetEnum(XFA_Attribute::FormatTest);
+}
+
+void CXFA_Validate::SetNullTest(const WideString& wsValue) {
+  pdfium::Optional<XFA_AttributeEnum> item =
+      CXFA_Node::NameToAttributeEnum(wsValue.AsStringView());
+  JSObject()->SetEnum(XFA_Attribute::NullTest,
+                      item ? *item : XFA_AttributeEnum::Disabled, false);
+}
+
+XFA_AttributeEnum CXFA_Validate::GetNullTest() {
+  return JSObject()->GetEnum(XFA_Attribute::NullTest);
+}
+
+XFA_AttributeEnum CXFA_Validate::GetScriptTest() {
+  return JSObject()->GetEnum(XFA_Attribute::ScriptTest);
+}
+
+WideString CXFA_Validate::GetMessageText(const WideString& wsMessageType) {
+  CXFA_Node* pNode = JSObject()->GetProperty(0, XFA_Element::Message, false);
+  if (!pNode)
+    return L"";
+
+  for (CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+       pItemNode;
+       pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    if (pItemNode->GetElementType() != XFA_Element::Text)
+      continue;
+
+    WideString wsName = pItemNode->JSObject()->GetCData(XFA_Attribute::Name);
+    if (wsName.IsEmpty() || wsName == wsMessageType)
+      return pItemNode->JSObject()->GetContent(false);
+  }
+  return L"";
+}
+
+void CXFA_Validate::SetFormatMessageText(const WideString& wsMessage) {
+  SetMessageText(kFormatTest, wsMessage);
+}
+
+WideString CXFA_Validate::GetFormatMessageText() {
+  return GetMessageText(kFormatTest);
+}
+
+void CXFA_Validate::SetNullMessageText(const WideString& wsMessage) {
+  SetMessageText(kNullTest, wsMessage);
+}
+
+WideString CXFA_Validate::GetNullMessageText() {
+  return GetMessageText(kNullTest);
+}
+
+WideString CXFA_Validate::GetScriptMessageText() {
+  return GetMessageText(kScriptTest);
+}
+
+void CXFA_Validate::SetScriptMessageText(const WideString& wsMessage) {
+  SetMessageText(kScriptTest, wsMessage);
+}
+
+void CXFA_Validate::SetMessageText(const WideString& wsMessageType,
+                                   const WideString& wsMessage) {
+  CXFA_Node* pNode = JSObject()->GetProperty(0, XFA_Element::Message, true);
+  if (!pNode)
+    return;
+
+  for (CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+       pItemNode;
+       pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    if (pItemNode->GetElementType() != XFA_Element::Text)
+      continue;
+
+    WideString wsName = pItemNode->JSObject()->GetCData(XFA_Attribute::Name);
+    if (wsName.IsEmpty() || wsName == wsMessageType) {
+      pItemNode->JSObject()->SetContent(wsMessage, wsMessage, false, false,
+                                        true);
+      return;
+    }
+  }
+
+  CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_Element::Text);
+  pNode->InsertChild(pTextNode, nullptr);
+  pTextNode->JSObject()->SetCData(XFA_Attribute::Name, wsMessageType, false,
+                                  false);
+  pTextNode->JSObject()->SetContent(wsMessage, wsMessage, false, false, true);
+}
+
+WideString CXFA_Validate::GetPicture() {
+  CXFA_Node* pNode = GetChild(0, XFA_Element::Picture, false);
+  return pNode ? pNode->JSObject()->GetContent(false) : L"";
+}
+
+CXFA_ScriptData CXFA_Validate::GetScriptData() {
+  return CXFA_ScriptData(GetChild(0, XFA_Element::Script, false));
+}
