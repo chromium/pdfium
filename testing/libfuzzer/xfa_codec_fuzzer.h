@@ -17,8 +17,9 @@
 #include "testing/fx_string_testhelpers.h"
 #include "third_party/base/ptr_util.h"
 
-// Support up to 512 MB. This prevents trivial OOM when MSAN is on.
-const int kXFACodecFuzzerPixelLimit = 512000000;
+// Support up to 64 MB. This prevents trivial OOM when MSAN is on and
+// time outs.
+const int kXFACodecFuzzerPixelLimit = 64000000;
 
 class XFACodecFuzzer {
  public:
