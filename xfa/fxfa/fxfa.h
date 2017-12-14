@@ -14,6 +14,7 @@
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_FFPageView;
+class CXFA_Submit;
 class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
 class IFX_SeekableReadStream;
@@ -248,7 +249,7 @@ class IXFA_DocEnvironment {
                      uint32_t dwOptions) = 0;
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
-  virtual bool SubmitData(CXFA_FFDoc* hDoc, CXFA_SubmitData submitData) = 0;
+  virtual bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) = 0;
   virtual bool GetGlobalProperty(CXFA_FFDoc* hDoc,
                                  const ByteStringView& szPropName,
                                  CFXJSE_Value* pValue) = 0;

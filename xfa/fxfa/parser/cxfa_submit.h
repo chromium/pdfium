@@ -7,12 +7,18 @@
 #ifndef XFA_FXFA_PARSER_CXFA_SUBMIT_H_
 #define XFA_FXFA_PARSER_CXFA_SUBMIT_H_
 
+#include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Submit : public CXFA_Node {
  public:
   CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Submit() override;
+
+  bool IsSubmitEmbedPDF();
+  XFA_AttributeEnum GetSubmitFormat();
+  WideString GetSubmitTarget();
+  WideString GetSubmitXDPContent();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SUBMIT_H_

@@ -311,8 +311,8 @@ int32_t CXFA_WidgetAcc::ProcessEvent(const CXFA_EventData& eventData,
     case XFA_Element::SignData:
       break;
     case XFA_Element::Submit:
-      return GetDoc()->GetDocEnvironment()->SubmitData(
-          GetDoc(), eventData.GetSubmitData());
+      return GetDoc()->GetDocEnvironment()->Submit(GetDoc(),
+                                                   eventData.GetSubmit());
     default:
       break;
   }

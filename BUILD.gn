@@ -2663,8 +2663,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_subjectdns.h",
       "xfa/fxfa/parser/cxfa_submit.cpp",
       "xfa/fxfa/parser/cxfa_submit.h",
-      "xfa/fxfa/parser/cxfa_submitdata.cpp",
-      "xfa/fxfa/parser/cxfa_submitdata.h",
       "xfa/fxfa/parser/cxfa_submitformat.cpp",
       "xfa/fxfa/parser/cxfa_submitformat.h",
       "xfa/fxfa/parser/cxfa_submiturl.cpp",

@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_eventdata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_submit.h"
 
 CXFA_EventData::CXFA_EventData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
@@ -34,6 +35,7 @@ CXFA_ScriptData CXFA_EventData::GetScriptData() const {
   return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
-CXFA_SubmitData CXFA_EventData::GetSubmitData() const {
-  return CXFA_SubmitData(m_pNode->GetChild(0, XFA_Element::Submit, false));
+CXFA_Submit* CXFA_EventData::GetSubmit() const {
+  return static_cast<CXFA_Submit*>(
+      m_pNode->GetChild(0, XFA_Element::Submit, false));
 }

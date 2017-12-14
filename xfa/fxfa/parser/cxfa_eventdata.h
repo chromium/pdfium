@@ -12,9 +12,9 @@
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_scriptdata.h"
-#include "xfa/fxfa/parser/cxfa_submitdata.h"
 
 class CXFA_Node;
+class CXFA_Submit;
 
 class CXFA_EventData : public CXFA_DataData {
  public:
@@ -23,7 +23,7 @@ class CXFA_EventData : public CXFA_DataData {
   XFA_AttributeEnum GetActivity();
   XFA_Element GetEventType() const;
   CXFA_ScriptData GetScriptData() const;
-  CXFA_SubmitData GetSubmitData() const;
+  CXFA_Submit* GetSubmit() const;
   WideString GetRef() const;
 };
 

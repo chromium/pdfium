@@ -41,3 +41,19 @@ CXFA_Submit::CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Submit>(this)) {}
 
 CXFA_Submit::~CXFA_Submit() {}
+
+bool CXFA_Submit::IsSubmitEmbedPDF() {
+  return JSObject()->GetBoolean(XFA_Attribute::EmbedPDF);
+}
+
+XFA_AttributeEnum CXFA_Submit::GetSubmitFormat() {
+  return JSObject()->GetEnum(XFA_Attribute::Format);
+}
+
+WideString CXFA_Submit::GetSubmitTarget() {
+  return JSObject()->GetCData(XFA_Attribute::Target);
+}
+
+WideString CXFA_Submit::GetSubmitXDPContent() {
+  return JSObject()->GetCData(XFA_Attribute::XdpContent);
+}

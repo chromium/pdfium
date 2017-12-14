@@ -22,6 +22,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
+#include "xfa/fxfa/parser/cxfa_submit.h"
 
 #define IDS_XFA_Validate_Input                                          \
   "At least one required field was empty. Please fill in the required " \
@@ -684,13 +685,12 @@ void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
   m_pContext->GetXFADocView()->UpdateDocView();
 }
 
-bool CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc,
-                                        CXFA_SubmitData submitData) {
+bool CPDFXFA_DocEnvironment::Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) {
   if (!NotifySubmit(true) || !m_pContext->GetXFADocView())
     return false;
 
   m_pContext->GetXFADocView()->UpdateDocView();
-  bool ret = SubmitDataInternal(hDoc, submitData);
+  bool ret = SubmitInternal(hDoc, submit);
   NotifySubmit(false);
   return ret;
 }
@@ -893,13 +893,13 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
   return true;
 }
 
-bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
-                                                CXFA_SubmitData submitData) {
+bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
+                                            CXFA_Submit* submit) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return false;
 
-  WideString csURL = submitData.GetSubmitTarget();
+  WideString csURL = submit->GetSubmitTarget();
   if (csURL.IsEmpty()) {
     WideString ws = WideString::FromLocal("Submit cancelled.");
     ByteString bs = ws.UTF16LE_Encode();
@@ -912,15 +912,15 @@ bool CPDFXFA_DocEnvironment::SubmitDataInternal(CXFA_FFDoc* hDoc,
 
   FPDF_FILEHANDLER* pFileHandler = nullptr;
   int fileFlag = -1;
-  switch (submitData.GetSubmitFormat()) {
+  switch (submit->GetSubmitFormat()) {
     case XFA_AttributeEnum::Xdp: {
-      WideString csContent = submitData.GetSubmitXDPContent();
+      WideString csContent = submit->GetSubmitXDPContent();
       csContent.Trim();
 
       WideString space = WideString::FromLocal(" ");
       csContent = space + csContent + space;
       FPDF_DWORD flag = 0;
-      if (submitData.IsSubmitEmbedPDF())
+      if (submit->IsSubmitEmbedPDF())
         flag |= FXFA_PDF;
 
       ToXFAContentFlags(csContent, flag);
