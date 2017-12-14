@@ -57,6 +57,11 @@ class CPDF_ColorSpace {
   void GetDefaultColor(float* buf) const;
   uint32_t CountComponents() const;
   int GetFamily() const { return m_Family; }
+  bool IsSpecial() const {
+    return GetFamily() == PDFCS_SEPARATION || GetFamily() == PDFCS_DEVICEN ||
+           GetFamily() == PDFCS_INDEXED || GetFamily() == PDFCS_PATTERN;
+  }
+
   virtual void GetDefaultValue(int iComponent,
                                float* value,
                                float* min,
