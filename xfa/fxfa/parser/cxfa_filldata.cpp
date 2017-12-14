@@ -7,7 +7,11 @@
 #include "xfa/fxfa/parser/cxfa_filldata.h"
 
 #include "xfa/fxfa/parser/cxfa_color.h"
+#include "xfa/fxfa/parser/cxfa_linear.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_pattern.h"
+#include "xfa/fxfa/parser/cxfa_radial.h"
+#include "xfa/fxfa/parser/cxfa_stipple.h"
 
 CXFA_FillData::CXFA_FillData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
@@ -21,8 +25,8 @@ bool CXFA_FillData::IsVisible() const {
 }
 
 void CXFA_FillData::SetColor(FX_ARGB color) {
-  CXFA_Node* pNode =
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Color, true);
+  CXFA_Color* pNode =
+      m_pNode->JSObject()->GetProperty<CXFA_Color>(0, XFA_Element::Color, true);
   int a;
   int r;
   int g;
@@ -127,18 +131,22 @@ FX_ARGB CXFA_FillData::GetRadialColor() const {
   return 0xFF000000;
 }
 
-CXFA_Node* CXFA_FillData::GetStipple() const {
-  return m_pNode->JSObject()->GetProperty(0, XFA_Element::Stipple, true);
+CXFA_Stipple* CXFA_FillData::GetStipple() const {
+  return m_pNode->JSObject()->GetProperty<CXFA_Stipple>(0, XFA_Element::Stipple,
+                                                        true);
 }
 
-CXFA_Node* CXFA_FillData::GetRadial() const {
-  return m_pNode->JSObject()->GetProperty(0, XFA_Element::Radial, true);
+CXFA_Radial* CXFA_FillData::GetRadial() const {
+  return m_pNode->JSObject()->GetProperty<CXFA_Radial>(0, XFA_Element::Radial,
+                                                       true);
 }
 
-CXFA_Node* CXFA_FillData::GetLinear() const {
-  return m_pNode->JSObject()->GetProperty(0, XFA_Element::Linear, true);
+CXFA_Linear* CXFA_FillData::GetLinear() const {
+  return m_pNode->JSObject()->GetProperty<CXFA_Linear>(0, XFA_Element::Linear,
+                                                       true);
 }
 
-CXFA_Node* CXFA_FillData::GetPattern() const {
-  return m_pNode->JSObject()->GetProperty(0, XFA_Element::Pattern, true);
+CXFA_Pattern* CXFA_FillData::GetPattern() const {
+  return m_pNode->JSObject()->GetProperty<CXFA_Pattern>(0, XFA_Element::Pattern,
+                                                        true);
 }

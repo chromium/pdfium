@@ -78,7 +78,8 @@ bool CXFA_FontData::IsItalic() const {
 }
 
 void CXFA_FontData::SetColor(FX_ARGB color) {
-  CXFA_FillData(m_pNode->JSObject()->GetProperty(0, XFA_Element::Fill, true))
+  CXFA_FillData(
+      m_pNode->JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill, true))
       .SetColor(color);
 }
 

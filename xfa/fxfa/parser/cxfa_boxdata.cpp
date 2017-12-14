@@ -6,7 +6,10 @@
 
 #include "xfa/fxfa/parser/cxfa_boxdata.h"
 
+#include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_cornerdata.h"
+#include "xfa/fxfa/parser/cxfa_edge.h"
+#include "xfa/fxfa/parser/cxfa_fill.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -21,8 +24,9 @@ std::vector<CXFA_StrokeData> GetStrokesInternal(CXFA_Node* pNode, bool bNull) {
   strokes.resize(8);
   int32_t i, j;
   for (i = 0, j = 0; i < 4; i++) {
-    CXFA_CornerData cornerData = CXFA_CornerData(
-        pNode->JSObject()->GetProperty(i, XFA_Element::Corner, i == 0));
+    CXFA_CornerData cornerData =
+        CXFA_CornerData(pNode->JSObject()->GetProperty<CXFA_Corner>(
+            i, XFA_Element::Corner, i == 0));
     if (cornerData.HasValidNode() || i == 0) {
       strokes[j] = cornerData;
     } else if (!bNull) {
@@ -32,8 +36,9 @@ std::vector<CXFA_StrokeData> GetStrokesInternal(CXFA_Node* pNode, bool bNull) {
         strokes[j] = strokes[2];
     }
     j++;
-    CXFA_EdgeData edgeData = CXFA_EdgeData(
-        pNode->JSObject()->GetProperty(i, XFA_Element::Edge, i == 0));
+    CXFA_EdgeData edgeData =
+        CXFA_EdgeData(pNode->JSObject()->GetProperty<CXFA_Edge>(
+            i, XFA_Element::Edge, i == 0));
     if (edgeData.HasValidNode() || i == 0) {
       strokes[j] = edgeData;
     } else if (!bNull) {
@@ -98,7 +103,7 @@ int32_t CXFA_BoxData::CountEdges() const {
 }
 
 CXFA_EdgeData CXFA_BoxData::GetEdgeData(int32_t nIndex) const {
-  return CXFA_EdgeData(m_pNode ? m_pNode->JSObject()->GetProperty(
+  return CXFA_EdgeData(m_pNode ? m_pNode->JSObject()->GetProperty<CXFA_Edge>(
                                      nIndex, XFA_Element::Edge, nIndex == 0)
                                : nullptr);
 }
@@ -129,8 +134,8 @@ CXFA_FillData CXFA_BoxData::GetFillData(bool bModified) const {
   if (!m_pNode)
     return CXFA_FillData(nullptr);
 
-  CXFA_Node* pFillNode =
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Fill, bModified);
+  CXFA_Node* pFillNode = m_pNode->JSObject()->GetProperty<CXFA_Fill>(
+      0, XFA_Element::Fill, bModified);
   return CXFA_FillData(pFillNode);
 }
 

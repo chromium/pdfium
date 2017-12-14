@@ -10,15 +10,22 @@
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
+#include "xfa/fxfa/parser/cxfa_bind.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_calculate.h"
+#include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_comb.h"
 #include "xfa/fxfa/parser/cxfa_decimal.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_eventdata.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_format.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
 #include "xfa/fxfa/parser/cxfa_ui.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
@@ -76,8 +83,8 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
 
   eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
-  auto* defValue = static_cast<CXFA_Value*>(
-      pNode->JSObject()->GetProperty(0, XFA_Element::Value, true));
+  auto* defValue =
+      pNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value, true);
   XFA_Element eValueType =
       defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
   switch (eValueType) {
@@ -114,7 +121,8 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   }
 
   CXFA_Node* pUIChild = nullptr;
-  CXFA_Node* pUI = pNode->JSObject()->GetProperty(0, XFA_Element::Ui, true);
+  CXFA_Ui* pUI =
+      pNode->JSObject()->GetProperty<CXFA_Ui>(0, XFA_Element::Ui, true);
   CXFA_Node* pChild = pUI->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     XFA_Element eChildType = pChild->GetElementType();
@@ -160,9 +168,9 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   if (!pUIChild) {
     if (eUIType == XFA_Element::Unknown) {
       eUIType = XFA_Element::TextEdit;
-      defValue->JSObject()->GetProperty(0, XFA_Element::Text, true);
+      defValue->JSObject()->GetProperty<CXFA_Text>(0, XFA_Element::Text, true);
     }
-    return pUI->JSObject()->GetProperty(0, eUIType, true);
+    return pUI->JSObject()->GetProperty<CXFA_Node>(0, eUIType, true);
   }
 
   if (eUIType != XFA_Element::Unknown)
@@ -205,7 +213,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
       eValueType = XFA_Element::Text;
       break;
   }
-  defValue->JSObject()->GetProperty(0, eValueType, true);
+  defValue->JSObject()->GetProperty<CXFA_Node>(0, eValueType, true);
 
   return pUIChild;
 }
@@ -253,28 +261,28 @@ int32_t CXFA_WidgetData::GetRotate() const {
 }
 
 CXFA_BorderData CXFA_WidgetData::GetBorderData(bool bModified) {
-  return CXFA_BorderData(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Border, bModified));
+  return CXFA_BorderData(m_pNode->JSObject()->GetProperty<CXFA_Border>(
+      0, XFA_Element::Border, bModified));
 }
 
 CXFA_CaptionData CXFA_WidgetData::GetCaptionData() {
-  return CXFA_CaptionData(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Caption, false));
+  return CXFA_CaptionData(m_pNode->JSObject()->GetProperty<CXFA_Caption>(
+      0, XFA_Element::Caption, false));
 }
 
 CXFA_FontData CXFA_WidgetData::GetFontData(bool bModified) {
-  return CXFA_FontData(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Font, bModified));
+  return CXFA_FontData(m_pNode->JSObject()->GetProperty<CXFA_Font>(
+      0, XFA_Element::Font, bModified));
 }
 
 CXFA_MarginData CXFA_WidgetData::GetMarginData() {
-  return CXFA_MarginData(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Margin, false));
+  return CXFA_MarginData(m_pNode->JSObject()->GetProperty<CXFA_Margin>(
+      0, XFA_Element::Margin, false));
 }
 
 CXFA_ParaData CXFA_WidgetData::GetParaData() {
   return CXFA_ParaData(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Para, false));
+      m_pNode->JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para, false));
 }
 
 std::vector<CXFA_Node*> CXFA_WidgetData::GetEventList() {
@@ -307,28 +315,28 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(
 
 CXFA_Value* CXFA_WidgetData::GetDefaultValue() {
   CXFA_Node* pTemNode = m_pNode->GetTemplateNode();
-  return static_cast<CXFA_Value*>(
-      pTemNode->JSObject()->GetProperty(0, XFA_Element::Value, false));
+  return pTemNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value,
+                                                       false);
 }
 
 CXFA_Value* CXFA_WidgetData::GetFormValue() {
-  return static_cast<CXFA_Value*>(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Value, false));
+  return m_pNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value,
+                                                      false);
 }
 
 CXFA_CalculateData CXFA_WidgetData::GetCalculateData() {
-  return CXFA_CalculateData(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Calculate, false));
+  return CXFA_CalculateData(m_pNode->JSObject()->GetProperty<CXFA_Calculate>(
+      0, XFA_Element::Calculate, false));
 }
 
 CXFA_Validate* CXFA_WidgetData::GetValidate(bool bModified) {
-  return static_cast<CXFA_Validate*>(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Validate, bModified));
+  return m_pNode->JSObject()->GetProperty<CXFA_Validate>(
+      0, XFA_Element::Validate, bModified);
 }
 
 CXFA_BindData CXFA_WidgetData::GetBindData() {
   return CXFA_BindData(
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Bind, false));
+      m_pNode->JSObject()->GetProperty<CXFA_Bind>(0, XFA_Element::Bind, false));
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryWidth() {
@@ -357,15 +365,16 @@ pdfium::Optional<float> CXFA_WidgetData::TryMaxHeight() {
 
 CXFA_BorderData CXFA_WidgetData::GetUIBorderData() {
   CXFA_Node* pUIChild = GetUIChild();
-  return CXFA_BorderData(pUIChild ? pUIChild->JSObject()->GetProperty(
-                                        0, XFA_Element::Border, false)
-                                  : nullptr);
+  return CXFA_BorderData(pUIChild
+                             ? pUIChild->JSObject()->GetProperty<CXFA_Border>(
+                                   0, XFA_Element::Border, false)
+                             : nullptr);
 }
 
 CFX_RectF CXFA_WidgetData::GetUIMargin() {
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_MarginData mgUI =
-      CXFA_MarginData(pUIChild ? pUIChild->JSObject()->GetProperty(
+      CXFA_MarginData(pUIChild ? pUIChild->JSObject()->GetProperty<CXFA_Margin>(
                                      0, XFA_Element::Margin, false)
                                : nullptr);
 

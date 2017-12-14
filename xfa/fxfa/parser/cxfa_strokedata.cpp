@@ -65,8 +65,8 @@ void CXFA_StrokeData::SetColor(FX_ARGB argb) {
   if (!m_pNode)
     return;
 
-  CXFA_Node* pNode =
-      m_pNode->JSObject()->GetProperty(0, XFA_Element::Color, true);
+  CXFA_Color* pNode =
+      m_pNode->JSObject()->GetProperty<CXFA_Color>(0, XFA_Element::Color, true);
   int a;
   int r;
   int g;

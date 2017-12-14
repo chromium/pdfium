@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_validate.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_message.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 
@@ -73,7 +74,8 @@ XFA_AttributeEnum CXFA_Validate::GetScriptTest() {
 }
 
 WideString CXFA_Validate::GetMessageText(const WideString& wsMessageType) {
-  CXFA_Node* pNode = JSObject()->GetProperty(0, XFA_Element::Message, false);
+  CXFA_Message* pNode =
+      JSObject()->GetProperty<CXFA_Message>(0, XFA_Element::Message, false);
   if (!pNode)
     return L"";
 
@@ -116,7 +118,8 @@ void CXFA_Validate::SetScriptMessageText(const WideString& wsMessage) {
 
 void CXFA_Validate::SetMessageText(const WideString& wsMessageType,
                                    const WideString& wsMessage) {
-  CXFA_Node* pNode = JSObject()->GetProperty(0, XFA_Element::Message, true);
+  CXFA_Message* pNode =
+      JSObject()->GetProperty<CXFA_Message>(0, XFA_Element::Message, true);
   if (!pNode)
     return;
 

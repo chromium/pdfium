@@ -19,6 +19,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
+#include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -345,13 +346,13 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       CXFA_Node* pInstanceManager =
           curNode->AsNode()->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
-        pProp = pInstanceManager->JSObject()->GetProperty(0, XFA_Element::Occur,
-                                                          true);
+        pProp = pInstanceManager->JSObject()->GetProperty<CXFA_Occur>(
+            0, XFA_Element::Occur, true);
       }
     } else {
       XFA_Element eType = CXFA_Node::NameToElement(wsName);
       if (eType != XFA_Element::Unknown) {
-        pProp = curNode->AsNode()->JSObject()->GetProperty(
+        pProp = curNode->AsNode()->JSObject()->GetProperty<CXFA_Node>(
             0, eType, eType != XFA_Element::PageSet);
       }
     }

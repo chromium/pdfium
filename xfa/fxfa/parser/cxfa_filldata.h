@@ -11,7 +11,11 @@
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 
+class CXFA_Linear;
 class CXFA_Node;
+class CXFA_Pattern;
+class CXFA_Radial;
+class CXFA_Stipple;
 
 class CXFA_FillData : public CXFA_DataData {
  public:
@@ -38,10 +42,10 @@ class CXFA_FillData : public CXFA_DataData {
   FX_ARGB GetRadialColor() const;
 
  private:
-  CXFA_Node* GetStipple() const;
-  CXFA_Node* GetRadial() const;
-  CXFA_Node* GetLinear() const;
-  CXFA_Node* GetPattern() const;
+  CXFA_Stipple* GetStipple() const;
+  CXFA_Radial* GetRadial() const;
+  CXFA_Linear* GetLinear() const;
+  CXFA_Pattern* GetPattern() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FILLDATA_H_

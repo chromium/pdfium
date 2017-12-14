@@ -101,9 +101,10 @@ class CJX_Object {
                   bool bSyncData);
   WideString GetContent(bool bScriptModify);
 
-  CXFA_Node* GetProperty(int32_t index,
-                         XFA_Element eType,
-                         bool bCreateProperty);
+  template <typename T>
+  T* GetProperty(int32_t index, XFA_Element eType, bool bCreateProperty) {
+    return static_cast<T*>(GetPropertyInternal(index, eType, bCreateProperty));
+  }
 
   void SetAttributeValue(const WideString& wsValue,
                          const WideString& wsXMLValue,
@@ -222,6 +223,20 @@ class CJX_Object {
   void ThrowException(const wchar_t* str, ...) const;
 
  private:
+  void Script_Boolean_DefaultValue(CFXJSE_Value* pValue,
+                                   bool bSetting,
+                                   XFA_Attribute eAttribute);
+  void Script_Draw_DefaultValue(CFXJSE_Value* pValue,
+                                bool bSetting,
+                                XFA_Attribute eAttribute);
+  void Script_Field_DefaultValue(CFXJSE_Value* pValue,
+                                 bool bSetting,
+                                 XFA_Attribute eAttribute);
+
+  CXFA_Node* GetPropertyInternal(int32_t index,
+                                 XFA_Element eType,
+                                 bool bCreateProperty);
+
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
   bool SetUserData(void* pKey,
