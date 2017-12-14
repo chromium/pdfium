@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_validate.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
 
 namespace {
 
@@ -144,6 +145,6 @@ WideString CXFA_Validate::GetPicture() {
   return pNode ? pNode->JSObject()->GetContent(false) : L"";
 }
 
-CXFA_ScriptData CXFA_Validate::GetScriptData() {
-  return CXFA_ScriptData(GetChild(0, XFA_Element::Script, false));
+CXFA_Script* CXFA_Validate::GetScript() {
+  return static_cast<CXFA_Script*>(GetChild(0, XFA_Element::Script, false));
 }

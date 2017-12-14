@@ -98,7 +98,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate)
                                          &GlobalClassDescriptor,
                                          pDocument->GetRoot())),
       m_pJsClass(nullptr),
-      m_eScriptType(CXFA_ScriptData::Type::Unknown),
+      m_eScriptType(CXFA_Script::Type::Unknown),
       m_pScriptNodeArray(nullptr),
       m_ResolveProcessor(pdfium::MakeUnique<CFXJSE_ResolveProcessor>()),
       m_pThisObject(nullptr),
@@ -117,14 +117,14 @@ CFXJSE_Engine::~CFXJSE_Engine() {
     delete ToThisProxy(pair.second->GetGlobalObject().get(), nullptr);
 }
 
-bool CFXJSE_Engine::RunScript(CXFA_ScriptData::Type eScriptType,
+bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
                               const WideStringView& wsScript,
                               CFXJSE_Value* hRetValue,
                               CXFA_Object* pThisObject) {
   ByteString btScript;
-  AutoRestorer<CXFA_ScriptData::Type> typeRestorer(&m_eScriptType);
+  AutoRestorer<CXFA_Script::Type> typeRestorer(&m_eScriptType);
   m_eScriptType = eScriptType;
-  if (eScriptType == CXFA_ScriptData::Type::Formcalc) {
+  if (eScriptType == CXFA_Script::Type::Formcalc) {
     if (!m_FM2JSContext) {
       m_FM2JSContext = pdfium::MakeUnique<CFXJSE_FormCalcContext>(
           GetIsolate(), m_JsContext.get(), m_pDocument.Get());
@@ -210,7 +210,7 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
   CXFA_Document* pDoc = pOriginalObject->GetDocument();
   CFXJSE_Engine* lpScriptContext = pDoc->GetScriptContext();
   WideString wsPropName = WideString::FromUTF8(szPropName);
-  if (lpScriptContext->GetType() == CXFA_ScriptData::Type::Formcalc) {
+  if (lpScriptContext->GetType() == CXFA_Script::Type::Formcalc) {
     if (szPropName == kFormCalcRuntime) {
       lpScriptContext->m_FM2JSContext->GlobalPropertyGetter(pValue);
       return;
@@ -305,7 +305,7 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
     return;
 
   if (pObject == lpScriptContext->GetThisObject() ||
-      (lpScriptContext->GetType() == CXFA_ScriptData::Type::Javascript &&
+      (lpScriptContext->GetType() == CXFA_Script::Type::Javascript &&
        !lpScriptContext->IsStrictScopeInJavaScript())) {
     bRet = lpScriptContext->QueryNodeByFlag(
         ToNode(pObject), wsPropName.AsStringView(), pReturnValue,
@@ -417,7 +417,7 @@ bool CFXJSE_Engine::IsStrictScopeInJavaScript() {
   return m_pDocument->HasFlag(XFA_DOCFLAG_StrictScoping);
 }
 
-CXFA_ScriptData::Type CFXJSE_Engine::GetType() {
+CXFA_Script::Type CFXJSE_Engine::GetType() {
   return m_eScriptType;
 }
 
@@ -537,7 +537,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   if (wsExpression.IsEmpty())
     return false;
 
-  if (m_eScriptType != CXFA_ScriptData::Type::Formcalc ||
+  if (m_eScriptType != CXFA_Script::Type::Formcalc ||
       (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings))) {
     m_upObjectArray.clear();
   }

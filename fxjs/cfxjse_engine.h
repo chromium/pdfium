@@ -15,6 +15,7 @@
 #include "fxjs/cjs_v8.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 #define XFA_RESOLVENODE_TagName 0x0002
@@ -53,7 +54,7 @@ class CFXJSE_Engine : public CJS_V8 {
 
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() { return &m_eventParam; }
-  bool RunScript(CXFA_ScriptData::Type eScriptType,
+  bool RunScript(CXFA_Script::Type eScriptType,
                  const WideStringView& wsScript,
                  CFXJSE_Value* pRetValue,
                  CXFA_Object* pThisObject);
@@ -78,7 +79,7 @@ class CFXJSE_Engine : public CJS_V8 {
   void SetRunAtType(XFA_AttributeEnum eRunAt) { m_eRunAtType = eRunAt; }
   bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeEnum::Server; }
 
-  CXFA_ScriptData::Type GetType();
+  CXFA_Script::Type GetType();
   std::vector<CXFA_Node*>* GetUpObjectArray() { return &m_upObjectArray; }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
@@ -102,7 +103,7 @@ class CFXJSE_Engine : public CJS_V8 {
   UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CFXJSE_Context> m_JsContext;
   CFXJSE_Class* m_pJsClass;
-  CXFA_ScriptData::Type m_eScriptType;
+  CXFA_Script::Type m_eScriptType;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Context>>
       m_mapVariableToContext;

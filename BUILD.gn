@@ -2603,8 +2603,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_runscripts.h",
       "xfa/fxfa/parser/cxfa_script.cpp",
       "xfa/fxfa/parser/cxfa_script.h",
-      "xfa/fxfa/parser/cxfa_scriptdata.cpp",
-      "xfa/fxfa/parser/cxfa_scriptdata.h",
       "xfa/fxfa/parser/cxfa_scriptmodel.cpp",
       "xfa/fxfa/parser/cxfa_scriptmodel.h",
       "xfa/fxfa/parser/cxfa_select.cpp",

@@ -191,11 +191,11 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
       CXFA_CalculateData calcData = pWidgetAcc->GetCalculateData();
-      return calcData.HasValidNode() && calcData.GetScriptData().HasValidNode();
+      return calcData.HasValidNode() && calcData.GetScript();
     }
     case XFA_EVENT_Validate: {
       CXFA_Validate* validate = pWidgetAcc->GetValidate(false);
-      return validate && validate->GetScriptData().HasValidNode();
+      return validate && validate->GetScript();
     }
     default:
       break;
@@ -226,9 +226,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
         return XFA_EVENTERROR_NotExist;
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
-
-      CXFA_ScriptData script = calcData.GetScriptData();
-      return pWidgetAcc->ExecuteScript(script, pParam);
+      return pWidgetAcc->ExecuteScript(calcData.GetScript(), pParam);
     }
     default:
       break;

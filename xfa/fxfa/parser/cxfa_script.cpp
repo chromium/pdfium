@@ -46,3 +46,21 @@ CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_PacketType packet)
           pdfium::MakeUnique<CJX_Script>(this)) {}
 
 CXFA_Script::~CXFA_Script() {}
+
+CXFA_Script::Type CXFA_Script::GetContentType() {
+  pdfium::Optional<WideString> cData =
+      JSObject()->TryCData(XFA_Attribute::ContentType, false);
+  if (!cData || *cData == L"application/x-formcalc")
+    return Type::Formcalc;
+  if (*cData == L"application/x-javascript")
+    return Type::Javascript;
+  return Type::Unknown;
+}
+
+XFA_AttributeEnum CXFA_Script::GetRunAt() {
+  return JSObject()->GetEnum(XFA_Attribute::RunAt);
+}
+
+WideString CXFA_Script::GetExpression() {
+  return JSObject()->GetContent(false);
+}

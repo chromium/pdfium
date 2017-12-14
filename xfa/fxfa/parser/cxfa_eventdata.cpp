@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_eventdata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_submit.h"
 
 CXFA_EventData::CXFA_EventData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
@@ -31,8 +32,9 @@ WideString CXFA_EventData::GetRef() const {
   return m_pNode->JSObject()->GetCData(XFA_Attribute::Ref);
 }
 
-CXFA_ScriptData CXFA_EventData::GetScriptData() const {
-  return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
+CXFA_Script* CXFA_EventData::GetScript() const {
+  return static_cast<CXFA_Script*>(
+      m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
 CXFA_Submit* CXFA_EventData::GetSubmit() const {

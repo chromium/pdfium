@@ -624,11 +624,11 @@ void CFXJSE_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
                                                 CFXJSE_ResolveNodeData& rnd) {
   ASSERT(iFoundCount == pdfium::CollectionSize<int32_t>(rnd.m_Objects));
   WideString wsExpression;
-  CXFA_ScriptData::Type eLangType = CXFA_ScriptData::Type::Unknown;
+  CXFA_Script::Type eLangType = CXFA_Script::Type::Unknown;
   if (wsCondition.Left(2) == L".[" && wsCondition.Last() == L']')
-    eLangType = CXFA_ScriptData::Type::Formcalc;
+    eLangType = CXFA_Script::Type::Formcalc;
   else if (wsCondition.Left(2) == L".(" && wsCondition.Last() == L')')
-    eLangType = CXFA_ScriptData::Type::Javascript;
+    eLangType = CXFA_Script::Type::Javascript;
   else
     return;
 

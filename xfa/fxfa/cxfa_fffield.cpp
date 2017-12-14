@@ -23,6 +23,7 @@
 #include "xfa/fxfa/cxfa_fwltheme.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
@@ -680,10 +681,10 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
     }
     case XFA_AttributeEnum::Warning: {
       if (version <= XFA_VERSION_204) {
-        CXFA_ScriptData scriptData = calcData.GetScriptData();
-        if (!scriptData.HasValidNode())
+        CXFA_Script* script = calcData.GetScript();
+        if (!script)
           return 1;
-        if (scriptData.GetExpression().IsEmpty())
+        if (script->GetExpression().IsEmpty())
           return 1;
       }
 

@@ -417,7 +417,7 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
 
-      return pWidgetAcc->ExecuteScript(calcData.GetScriptData(), pParam);
+      return pWidgetAcc->ExecuteScript(calcData.GetScript(), pParam);
     }
     default:
       break;

@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_calculatedata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
 
 CXFA_CalculateData::CXFA_CalculateData(CXFA_Node* pNode)
@@ -18,8 +19,9 @@ XFA_AttributeEnum CXFA_CalculateData::GetOverride() const {
       .value_or(XFA_AttributeEnum::Error);
 }
 
-CXFA_ScriptData CXFA_CalculateData::GetScriptData() const {
-  return CXFA_ScriptData(m_pNode->GetChild(0, XFA_Element::Script, false));
+CXFA_Script* CXFA_CalculateData::GetScript() const {
+  return static_cast<CXFA_Script*>(
+      m_pNode->GetChild(0, XFA_Element::Script, false));
 }
 
 WideString CXFA_CalculateData::GetMessageText() const {

@@ -9,6 +9,8 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+class CXFA_Script;
+
 class CXFA_Validate : public CXFA_Node {
  public:
   CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet);
@@ -29,7 +31,7 @@ class CXFA_Validate : public CXFA_Node {
   void SetScriptMessageText(const WideString& wsMessage);
 
   WideString GetPicture();
-  CXFA_ScriptData GetScriptData();
+  CXFA_Script* GetScript();
 
  private:
   WideString GetMessageText(const WideString& wsMessageType);

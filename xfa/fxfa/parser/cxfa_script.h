@@ -7,12 +7,23 @@
 #ifndef XFA_FXFA_PARSER_CXFA_SCRIPT_H_
 #define XFA_FXFA_PARSER_CXFA_SCRIPT_H_
 
+#include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Script : public CXFA_Node {
  public:
+  enum class Type {
+    Formcalc = 0,
+    Javascript,
+    Unknown,
+  };
+
   CXFA_Script(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Script() override;
+
+  Type GetContentType();
+  XFA_AttributeEnum GetRunAt();
+  WideString GetExpression();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SCRIPT_H_

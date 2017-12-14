@@ -9,16 +9,16 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
-#include "xfa/fxfa/parser/cxfa_scriptdata.h"
 
 class CXFA_Node;
+class CXFA_Script;
 
 class CXFA_CalculateData : public CXFA_DataData {
  public:
   explicit CXFA_CalculateData(CXFA_Node* pNode);
 
   XFA_AttributeEnum GetOverride() const;
-  CXFA_ScriptData GetScriptData() const;
+  CXFA_Script* GetScript() const;
   WideString GetMessageText() const;
 };
 

@@ -229,6 +229,15 @@ void SyncRemoveLayoutItem(CXFA_LayoutItem* pParentLayoutItem,
   }
 }
 
+bool RunBreakTestScript(CXFA_Script* pTestScript) {
+  WideString wsExpression = pTestScript->JSObject()->GetContent(false);
+  if (wsExpression.IsEmpty())
+    return true;
+  return pTestScript->GetDocument()->GetNotify()->RunScript(
+      pTestScript, pTestScript->GetNodeItem(XFA_NODEITEM_Parent,
+                                            XFA_ObjectType::ContainerNode));
+}
+
 }  // namespace
 
 class CXFA_ContainerRecord {
@@ -479,15 +488,6 @@ float CXFA_LayoutPageMgr::GetAvailHeight() {
   if (m_CurrentContainerRecordIter == m_ProposedContainerRecords.begin())
     return 0.0f;
   return FLT_MAX;
-}
-
-bool XFA_LayoutPageMgr_RunBreakTestScript(CXFA_Node* pTestScript) {
-  WideString wsExpression = pTestScript->JSObject()->GetContent(false);
-  if (wsExpression.IsEmpty())
-    return true;
-  return pTestScript->GetDocument()->GetNotify()->RunScript(
-      pTestScript, pTestScript->GetNodeItem(XFA_NODEITEM_Parent,
-                                            XFA_ObjectType::ContainerNode));
 }
 
 CXFA_ContainerRecord* CXFA_LayoutPageMgr::CreateContainerRecord(
@@ -816,8 +816,9 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
       CXFA_Node* pContainer = pFormNode->GetTemplateNode();
       bool bStartNew =
           pCurNode->JSObject()->GetInteger(XFA_Attribute::StartNew) != 0;
-      CXFA_Node* pScript = pCurNode->GetFirstChildByClass(XFA_Element::Script);
-      if (pScript && !XFA_LayoutPageMgr_RunBreakTestScript(pScript))
+      CXFA_Script* pScript = static_cast<CXFA_Script*>(
+          pCurNode->GetFirstChildByClass(XFA_Element::Script));
+      if (pScript && !RunBreakTestScript(pScript))
         return false;
 
       WideString wsTarget =
