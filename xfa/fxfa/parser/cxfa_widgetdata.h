@@ -21,7 +21,6 @@
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
-#include "xfa/fxfa/parser/cxfa_paradata.h"
 
 enum XFA_CHECKSTATE {
   XFA_CHECKSTATE_On = 0,
@@ -37,6 +36,7 @@ enum XFA_VALUEPICTURE {
 };
 
 class CXFA_Node;
+class CXFA_Para;
 class CXFA_Validate;
 class IFX_Locale;
 
@@ -62,7 +62,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_CaptionData GetCaptionData();
   CXFA_FontData GetFontData(bool bModified);
   CXFA_MarginData GetMarginData();
-  CXFA_ParaData GetParaData();
+  CXFA_Para* GetPara();
   CXFA_Value* GetDefaultValue();
   CXFA_Value* GetFormValue();
   CXFA_CalculateData GetCalculateData();

@@ -14,6 +14,7 @@
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 
 namespace {
 
@@ -139,12 +140,12 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
 }
 
 uint32_t CXFA_FFComboBox::GetAlignment() {
-  CXFA_ParaData paraData = m_pDataAcc->GetParaData();
-  if (!paraData.HasValidNode())
+  CXFA_Para* para = m_pDataAcc->GetPara();
+  if (!para)
     return 0;
 
   uint32_t dwExtendedStyle = 0;
-  switch (paraData.GetHorizontalAlign()) {
+  switch (para->GetHorizontalAlign()) {
     case XFA_AttributeEnum::Center:
       dwExtendedStyle |=
           FWL_STYLEEXT_CMB_EditHCenter | FWL_STYLEEXT_CMB_ListItemCenterAlign;
@@ -164,7 +165,7 @@ uint32_t CXFA_FFComboBox::GetAlignment() {
       break;
   }
 
-  switch (paraData.GetVerticalAlign()) {
+  switch (para->GetVerticalAlign()) {
     case XFA_AttributeEnum::Middle:
       dwExtendedStyle |= FWL_STYLEEXT_CMB_EditVCenter;
       break;

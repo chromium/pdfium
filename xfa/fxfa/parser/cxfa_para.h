@@ -13,6 +13,15 @@ class CXFA_Para : public CXFA_Node {
  public:
   CXFA_Para(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Para() override;
+
+  XFA_AttributeEnum GetHorizontalAlign();
+  XFA_AttributeEnum GetVerticalAlign();
+  float GetLineHeight();
+  float GetMarginLeft();
+  float GetMarginRight();
+  float GetSpaceAbove();
+  float GetSpaceBelow();
+  float GetTextIndent();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PARA_H_

@@ -20,6 +20,7 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 
 namespace {
 
@@ -214,12 +215,12 @@ bool CXFA_FFTextEdit::IsDataChanged() {
 }
 
 uint32_t CXFA_FFTextEdit::GetAlignment() {
-  CXFA_ParaData paraData = m_pDataAcc->GetParaData();
-  if (!paraData.HasValidNode())
+  CXFA_Para* para = m_pDataAcc->GetPara();
+  if (!para)
     return 0;
 
   uint32_t dwExtendedStyle = 0;
-  switch (paraData.GetHorizontalAlign()) {
+  switch (para->GetHorizontalAlign()) {
     case XFA_AttributeEnum::Center:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_HCenter;
       break;
@@ -237,7 +238,7 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
       break;
   }
 
-  switch (paraData.GetVerticalAlign()) {
+  switch (para->GetVerticalAlign()) {
     case XFA_AttributeEnum::Middle:
       dwExtendedStyle |= FWL_STYLEEXT_EDT_VCenter;
       break;

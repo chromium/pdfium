@@ -15,6 +15,7 @@
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -99,12 +100,12 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
 }
 
 uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
-  CXFA_ParaData paraData = m_pDataAcc->GetParaData();
-  if (!paraData.HasValidNode())
+  CXFA_Para* para = m_pDataAcc->GetPara();
+  if (!para)
     return 0;
 
   uint32_t dwExtendedStyle = 0;
-  switch (paraData.GetHorizontalAlign()) {
+  switch (para->GetHorizontalAlign()) {
     case XFA_AttributeEnum::Center:
       dwExtendedStyle |= FWL_STYLEEXT_DTP_EditHCenter;
       break;
@@ -122,7 +123,7 @@ uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
       break;
   }
 
-  switch (paraData.GetVerticalAlign()) {
+  switch (para->GetVerticalAlign()) {
     case XFA_AttributeEnum::Middle:
       dwExtendedStyle |= FWL_STYLEEXT_DTP_EditVCenter;
       break;

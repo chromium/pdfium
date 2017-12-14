@@ -25,6 +25,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
@@ -772,9 +773,9 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
     size.height += marginData.GetTopInset() + marginData.GetBottomInset();
   }
 
-  CXFA_ParaData paraData = GetParaData();
-  if (paraData.HasValidNode())
-    size.width += paraData.GetMarginLeft() + paraData.GetTextIndent();
+  CXFA_Para* para = GetPara();
+  if (para)
+    size.width += para->GetMarginLeft() + para->GetTextIndent();
 
   pdfium::Optional<float> width = TryWidth();
   if (width) {
@@ -1231,12 +1232,12 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   if (fHeight > 0.1f && iBlockIndex == 0) {
     fStartOffset = fTopInset;
     fHeight -= (fTopInset + fBottomInset);
-    CXFA_ParaData paraData = GetParaData();
-    if (paraData.HasValidNode()) {
-      fSpaceAbove = paraData.GetSpaceAbove();
-      float fSpaceBelow = paraData.GetSpaceBelow();
+    CXFA_Para* para = GetPara();
+    if (para) {
+      fSpaceAbove = para->GetSpaceAbove();
+      float fSpaceBelow = para->GetSpaceBelow();
       fHeight -= (fSpaceAbove + fSpaceBelow);
-      switch (paraData.GetVerticalAlign()) {
+      switch (para->GetVerticalAlign()) {
         case XFA_AttributeEnum::Top:
           fStartOffset += fSpaceAbove;
           break;
@@ -1503,9 +1504,9 @@ float CXFA_WidgetAcc::GetFontSize() {
 
 float CXFA_WidgetAcc::GetLineHeight() {
   float fLineHeight = 0;
-  CXFA_ParaData paraData = GetParaData();
-  if (paraData.HasValidNode())
-    fLineHeight = paraData.GetLineHeight();
+  CXFA_Para* para = GetPara();
+  if (para)
+    fLineHeight = para->GetLineHeight();
   if (fLineHeight < 1)
     fLineHeight = GetFontSize() * 1.2f;
   return fLineHeight;

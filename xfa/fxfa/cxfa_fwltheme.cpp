@@ -24,6 +24,7 @@
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 
 namespace {
@@ -154,11 +155,11 @@ CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
   CXFA_LayoutItem* pItem = pWidget;
   CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
   rect = pWidgetAcc->GetUIMargin();
-  CXFA_ParaData paraData = pWidgetAcc->GetParaData();
-  if (paraData.HasValidNode()) {
-    rect.left += paraData.GetMarginLeft();
+  CXFA_Para* para = pWidgetAcc->GetPara();
+  if (para) {
+    rect.left += para->GetMarginLeft();
     if (pWidgetAcc->IsMultiLine())
-      rect.width += paraData.GetMarginRight();
+      rect.width += para->GetMarginRight();
   }
   if (!pItem->GetPrev()) {
     if (pItem->GetNext())
@@ -213,10 +214,10 @@ CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
   CFX_SizeF sizeAboveBelow;
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
     CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
-    CXFA_ParaData paraData = pWidgetAcc->GetParaData();
-    if (paraData.HasValidNode()) {
-      sizeAboveBelow.width = paraData.GetSpaceAbove();
-      sizeAboveBelow.height = paraData.GetSpaceBelow();
+    CXFA_Para* para = pWidgetAcc->GetPara();
+    if (para) {
+      sizeAboveBelow.width = para->GetSpaceAbove();
+      sizeAboveBelow.height = para->GetSpaceBelow();
     }
   }
   return sizeAboveBelow;

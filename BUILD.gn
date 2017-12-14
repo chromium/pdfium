@@ -2528,8 +2528,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_paginationoverride.h",
       "xfa/fxfa/parser/cxfa_para.cpp",
       "xfa/fxfa/parser/cxfa_para.h",
-      "xfa/fxfa/parser/cxfa_paradata.cpp",
-      "xfa/fxfa/parser/cxfa_paradata.h",
       "xfa/fxfa/parser/cxfa_part.cpp",
       "xfa/fxfa/parser/cxfa_part.h",
       "xfa/fxfa/parser/cxfa_password.cpp",

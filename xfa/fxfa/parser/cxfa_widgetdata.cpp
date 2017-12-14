@@ -280,9 +280,9 @@ CXFA_MarginData CXFA_WidgetData::GetMarginData() {
       0, XFA_Element::Margin, false));
 }
 
-CXFA_ParaData CXFA_WidgetData::GetParaData() {
-  return CXFA_ParaData(
-      m_pNode->JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para, false));
+CXFA_Para* CXFA_WidgetData::GetPara() {
+  return m_pNode->JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para,
+                                                     false);
 }
 
 std::vector<CXFA_Node*> CXFA_WidgetData::GetEventList() {

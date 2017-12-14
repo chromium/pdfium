@@ -11,7 +11,6 @@
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
-#include "xfa/fxfa/parser/cxfa_paradata.h"
 
 class CXFA_FFDoc;
 class CXFA_Node;
@@ -33,7 +32,7 @@ class CXFA_TextProvider {
   ~CXFA_TextProvider() {}
 
   CXFA_Node* GetTextNode(bool& bRichText);
-  CXFA_ParaData GetParaData();
+  CXFA_Para* GetPara();
   CXFA_FontData GetFontData();
   bool IsCheckButtonAndAutoWidth();
   CXFA_FFDoc* GetDocNode() { return m_pWidgetAcc->GetDoc(); }

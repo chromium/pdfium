@@ -18,6 +18,7 @@
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
 CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_WidgetAcc* pDataAcc)
@@ -71,10 +72,10 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtImage = m_pNormalWidget->GetWidgetRect();
   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
-  CXFA_ParaData paraData = m_pDataAcc->GetParaData();
-  if (paraData.HasValidNode()) {
-    iHorzAlign = paraData.GetHorizontalAlign();
-    iVertAlign = paraData.GetVerticalAlign();
+  CXFA_Para* para = m_pDataAcc->GetPara();
+  if (para) {
+    iHorzAlign = para->GetHorizontalAlign();
+    iVertAlign = para->GetVerticalAlign();
   }
 
   XFA_AttributeEnum iAspect = XFA_AttributeEnum::Fit;

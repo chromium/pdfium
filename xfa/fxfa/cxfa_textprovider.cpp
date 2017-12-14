@@ -117,13 +117,13 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   return nullptr;
 }
 
-CXFA_ParaData CXFA_TextProvider::GetParaData() {
+CXFA_Para* CXFA_TextProvider::GetPara() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
-    return m_pWidgetAcc->GetParaData();
+    return m_pWidgetAcc->GetPara();
 
   CXFA_Caption* pNode = m_pWidgetAcc->GetNode()->GetChild<CXFA_Caption>(
       0, XFA_Element::Caption, false);
-  return CXFA_ParaData(pNode->GetChild<CXFA_Para>(0, XFA_Element::Para, false));
+  return pNode->GetChild<CXFA_Para>(0, XFA_Element::Para, false);
 }
 
 CXFA_FontData CXFA_TextProvider::GetFontData() {
