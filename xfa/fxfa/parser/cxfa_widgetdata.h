@@ -63,8 +63,8 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_FontData GetFontData(bool bModified);
   CXFA_MarginData GetMarginData();
   CXFA_ParaData GetParaData();
-  CXFA_ValueData GetDefaultValueData();
-  CXFA_ValueData GetFormValueData();
+  CXFA_Value* GetDefaultValue();
+  CXFA_Value* GetFormValue();
   CXFA_CalculateData GetCalculateData();
   CXFA_Validate* GetValidate(bool bModified);
   CXFA_BorderData GetUIBorderData();

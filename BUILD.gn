@@ -2740,8 +2740,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_validationmessaging.h",
       "xfa/fxfa/parser/cxfa_value.cpp",
       "xfa/fxfa/parser/cxfa_value.h",
-      "xfa/fxfa/parser/cxfa_valuedata.cpp",
-      "xfa/fxfa/parser/cxfa_valuedata.h",
       "xfa/fxfa/parser/cxfa_variables.cpp",
       "xfa/fxfa/parser/cxfa_variables.h",
       "xfa/fxfa/parser/cxfa_version.cpp",

@@ -15,6 +15,7 @@
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_FFDateTimeEdit::CXFA_FFDateTimeEdit(CXFA_WidgetAcc* pDataAcc)
@@ -50,9 +51,9 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
   WideString wsText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
 
-  CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
-  if (valueData.HasValidNode()) {
-    switch (valueData.GetChildValueClassID()) {
+  CXFA_Value* value = m_pDataAcc->GetFormValue();
+  if (value) {
+    switch (value->GetChildValueClassID()) {
       case XFA_Element::Date: {
         if (!wsText.IsEmpty()) {
           CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc.Get());

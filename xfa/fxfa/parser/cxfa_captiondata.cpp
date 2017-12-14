@@ -8,6 +8,7 @@
 
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 
 CXFA_CaptionData::CXFA_CaptionData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
@@ -46,7 +47,8 @@ CXFA_FontData CXFA_CaptionData::GetFontData() const {
                                : nullptr);
 }
 
-CXFA_ValueData CXFA_CaptionData::GetValueData() const {
-  return CXFA_ValueData(
-      m_pNode ? m_pNode->GetChild(0, XFA_Element::Value, false) : nullptr);
+CXFA_Value* CXFA_CaptionData::GetValue() const {
+  return m_pNode ? static_cast<CXFA_Value*>(
+                       m_pNode->GetChild(0, XFA_Element::Value, false))
+                 : nullptr;
 }

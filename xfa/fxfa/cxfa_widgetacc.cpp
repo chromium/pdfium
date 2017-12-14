@@ -25,6 +25,7 @@
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 class CXFA_WidgetLayoutData {
@@ -70,11 +71,11 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
     if (m_pDIBitmap)
       return true;
 
-    CXFA_ValueData valueData = pAcc->GetFormValueData();
-    if (!valueData.HasValidNode())
+    CXFA_Value* value = pAcc->GetFormValue();
+    if (!value)
       return false;
 
-    CXFA_ImageData imageData = valueData.GetImageData();
+    CXFA_ImageData imageData = value->GetImageData();
     if (!imageData.HasValidNode())
       return false;
 
@@ -130,11 +131,11 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
     if (m_pDIBitmap)
       return true;
 
-    CXFA_ValueData valueData = pAcc->GetFormValueData();
-    if (!valueData.HasValidNode())
+    CXFA_Value* value = pAcc->GetFormValue();
+    if (!value)
       return false;
 
-    CXFA_ImageData imageData = valueData.GetImageData();
+    CXFA_ImageData imageData = value->GetImageData();
     CXFA_FFDoc* pFFDoc = pAcc->GetDoc();
     pAcc->SetImageEditImage(XFA_LoadImageData(pFFDoc, &imageData, m_bNamedImage,
                                               m_iImageXDpi, m_iImageYDpi));
@@ -171,8 +172,9 @@ void CXFA_WidgetAcc::ResetData() {
   XFA_Element eUIType = GetUIType();
   switch (eUIType) {
     case XFA_Element::ImageEdit: {
-      CXFA_ValueData imageValueData = GetDefaultValueData();
-      CXFA_ImageData imageData = imageValueData.GetImageData();
+      CXFA_Value* imageValue = GetDefaultValue();
+      CXFA_ImageData imageData =
+          imageValue ? imageValue->GetImageData() : CXFA_ImageData(nullptr);
       WideString wsContentType, wsHref;
       if (imageData.HasValidNode()) {
         wsValue = imageData.GetContent();
@@ -194,9 +196,9 @@ void CXFA_WidgetAcc::ResetData() {
 
         bool done = false;
         if (wsValue.IsEmpty()) {
-          CXFA_ValueData defValueData = pAcc->GetDefaultValueData();
-          if (defValueData.HasValidNode()) {
-            wsValue = defValueData.GetChildValueContent();
+          CXFA_Value* defValue = pAcc->GetDefaultValue();
+          if (defValue) {
+            wsValue = defValue->GetChildValueContent();
             SetValue(XFA_VALUEPICTURE_Raw, wsValue);
             pAcc->SetValue(XFA_VALUEPICTURE_Raw, wsValue);
             done = true;
@@ -223,9 +225,9 @@ void CXFA_WidgetAcc::ResetData() {
     case XFA_Element::ChoiceList:
       ClearAllSelections();
     default: {
-      CXFA_ValueData defValueData = GetDefaultValueData();
-      if (defValueData.HasValidNode())
-        wsValue = defValueData.GetChildValueContent();
+      CXFA_Value* defValue = GetDefaultValue();
+      if (defValue)
+        wsValue = defValue->GetChildValueContent();
 
       SetValue(XFA_VALUEPICTURE_Raw, wsValue);
       break;
@@ -236,7 +238,8 @@ void CXFA_WidgetAcc::ResetData() {
 void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
                                   const WideString& wsHref,
                                   const WideString& wsData) {
-  CXFA_ImageData imageData = GetFormValueData().GetImageData();
+  CXFA_ImageData imageData =
+      GetFormValue() ? GetFormValue()->GetImageData() : CXFA_ImageData(nullptr);
   if (imageData.HasValidNode()) {
     imageData.SetContentType(WideString(wsContentType));
     imageData.SetHref(wsHref);
@@ -497,9 +500,9 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
   if (!bVersionFlag) {
     CXFA_CaptionData captionData = GetCaptionData();
     if (captionData.HasValidNode()) {
-      CXFA_ValueData capValue = captionData.GetValueData();
-      if (capValue.HasValidNode()) {
-        CXFA_TextData captionTextData = capValue.GetTextData();
+      CXFA_Value* capValue = captionData.GetValue();
+      if (capValue) {
+        CXFA_TextData captionTextData = capValue->GetTextData();
         if (captionTextData.HasValidNode())
           wsCaptionName = captionTextData.GetContent();
       }

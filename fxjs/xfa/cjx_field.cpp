@@ -16,6 +16,7 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_field.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 const CJX_MethodSpec CJX_Field::MethodSpecs[] = {
@@ -276,8 +277,8 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   }
 
   CXFA_Node* pUIChild = pWidgetData->GetUIChild();
-  CXFA_Node* pNode = pWidgetData->GetFormValueData().GetNode()->GetNodeItem(
-      XFA_NODEITEM_FirstChild);
+  CXFA_Node* pNode =
+      pWidgetData->GetFormValue()->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
     if (pUIChild->GetElementType() == XFA_Element::NumericEdit &&
         (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {

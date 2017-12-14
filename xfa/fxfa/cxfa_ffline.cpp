@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffline.h"
 
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
@@ -84,11 +85,11 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
-  if (!valueData.HasValidNode())
+  CXFA_Value* value = m_pDataAcc->GetFormValue();
+  if (!value)
     return;
 
-  CXFA_LineData lineData = valueData.GetLineData();
+  CXFA_LineData lineData = value->GetLineData();
   FX_ARGB lineColor = 0xFF000000;
   float fLineWidth = 1.0f;
   XFA_AttributeEnum iStrokeType = XFA_AttributeEnum::Unknown;

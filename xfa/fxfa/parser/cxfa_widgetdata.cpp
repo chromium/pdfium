@@ -16,6 +16,7 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -69,9 +70,10 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
 
   eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
-  CXFA_ValueData defValueData(
+  auto* defValue = static_cast<CXFA_Value*>(
       pNode->JSObject()->GetProperty(0, XFA_Element::Value, true));
-  XFA_Element eValueType = defValueData.GetChildValueClassID();
+  XFA_Element eValueType =
+      defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
   switch (eValueType) {
     case XFA_Element::Boolean:
       eUIType = XFA_Element::CheckButton;
@@ -152,8 +154,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   if (!pUIChild) {
     if (eUIType == XFA_Element::Unknown) {
       eUIType = XFA_Element::TextEdit;
-      defValueData.GetNode()->JSObject()->GetProperty(0, XFA_Element::Text,
-                                                      true);
+      defValue->JSObject()->GetProperty(0, XFA_Element::Text, true);
     }
     return pUI->JSObject()->GetProperty(0, eUIType, true);
   }
@@ -195,7 +196,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
       eValueType = XFA_Element::Text;
       break;
   }
-  defValueData.GetNode()->JSObject()->GetProperty(0, eValueType, true);
+  defValue->JSObject()->GetProperty(0, eValueType, true);
 
   return pUIChild;
 }
@@ -295,15 +296,14 @@ std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(
   return events;
 }
 
-CXFA_ValueData CXFA_WidgetData::GetDefaultValueData() {
+CXFA_Value* CXFA_WidgetData::GetDefaultValue() {
   CXFA_Node* pTemNode = m_pNode->GetTemplateNode();
-  return CXFA_ValueData(
-      pTemNode ? pTemNode->JSObject()->GetProperty(0, XFA_Element::Value, false)
-               : nullptr);
+  return static_cast<CXFA_Value*>(
+      pTemNode->JSObject()->GetProperty(0, XFA_Element::Value, false));
 }
 
-CXFA_ValueData CXFA_WidgetData::GetFormValueData() {
-  return CXFA_ValueData(
+CXFA_Value* CXFA_WidgetData::GetFormValue() {
+  return static_cast<CXFA_Value*>(
       m_pNode->JSObject()->GetProperty(0, XFA_Element::Value, false));
 }
 

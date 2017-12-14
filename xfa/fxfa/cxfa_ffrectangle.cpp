@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/cxfa_ffrectangle.h"
 
+#include "xfa/fxfa/parser/cxfa_value.h"
+
 CXFA_FFRectangle::CXFA_FFRectangle(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFDraw(pDataAcc) {}
 
@@ -17,8 +19,8 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_ValueData valueData = m_pDataAcc->GetFormValueData();
-  if (!valueData.HasValidNode())
+  CXFA_Value* value = m_pDataAcc->GetFormValue();
+  if (!value)
     return;
 
   CFX_RectF rect = GetRectWithoutRotate();
@@ -29,5 +31,5 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, valueData.GetRectangleData(), rect, mtRotate);
+  DrawBorder(pGS, value->GetRectangleData(), rect, mtRotate);
 }

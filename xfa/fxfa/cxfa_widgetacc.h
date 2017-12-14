@@ -19,7 +19,6 @@
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
 #include "xfa/fxfa/parser/cxfa_margindata.h"
 #include "xfa/fxfa/parser/cxfa_scriptdata.h"
-#include "xfa/fxfa/parser/cxfa_valuedata.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 class CFGAS_GEFont;
