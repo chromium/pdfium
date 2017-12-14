@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_filldata.h"
 
+#include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_FillData::CXFA_FillData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
@@ -33,7 +34,8 @@ void CXFA_FillData::SetColor(FX_ARGB color) {
 }
 
 FX_ARGB CXFA_FillData::GetColor(bool bText) const {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color, false)) {
+  if (CXFA_Color* pNode =
+          m_pNode->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
     pdfium::Optional<WideString> wsColor =
         pNode->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
@@ -61,8 +63,8 @@ XFA_AttributeEnum CXFA_FillData::GetPatternType() const {
 }
 
 FX_ARGB CXFA_FillData::GetPatternColor() const {
-  if (CXFA_Node* pColor =
-          GetPattern()->GetChild(0, XFA_Element::Color, false)) {
+  if (CXFA_Color* pColor =
+          GetPattern()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
@@ -79,8 +81,8 @@ int32_t CXFA_FillData::GetStippleRate() const {
 }
 
 FX_ARGB CXFA_FillData::GetStippleColor() const {
-  if (CXFA_Node* pColor =
-          GetStipple()->GetChild(0, XFA_Element::Color, false)) {
+  if (CXFA_Color* pColor =
+          GetStipple()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
@@ -97,7 +99,8 @@ XFA_AttributeEnum CXFA_FillData::GetLinearType() const {
 }
 
 FX_ARGB CXFA_FillData::GetLinearColor() const {
-  if (CXFA_Node* pColor = GetLinear()->GetChild(0, XFA_Element::Color, false)) {
+  if (CXFA_Color* pColor =
+          GetLinear()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
@@ -114,7 +117,8 @@ bool CXFA_FillData::IsRadialToEdge() const {
 }
 
 FX_ARGB CXFA_FillData::GetRadialColor() const {
-  if (CXFA_Node* pColor = GetRadial()->GetChild(0, XFA_Element::Color, false)) {
+  if (CXFA_Color* pColor =
+          GetRadial()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)

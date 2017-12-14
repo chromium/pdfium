@@ -16,6 +16,7 @@
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
+#include "xfa/fxfa/parser/cxfa_interactive.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -261,7 +262,8 @@ bool CXFA_Document::IsInteractive() {
   if (!pPDF)
     return false;
 
-  CXFA_Node* pFormFiller = pPDF->GetChild(0, XFA_Element::Interactive, false);
+  CXFA_Interactive* pFormFiller =
+      pPDF->GetChild<CXFA_Interactive>(0, XFA_Element::Interactive, false);
   if (pFormFiller) {
     m_dwDocFlags |= XFA_DOCFLAG_HasInteractive;
 

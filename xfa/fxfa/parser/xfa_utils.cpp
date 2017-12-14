@@ -22,6 +22,8 @@
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_ui.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
 namespace {
@@ -422,15 +424,15 @@ int XFA_GetMaxFractionalScale() {
 }
 
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
-  CXFA_Node* pNodeValue =
-      pWidgetData->GetNode()->GetChild(0, XFA_Element::Value, false);
-  if (!pNodeValue) {
+  CXFA_Value* pNodeValue = pWidgetData->GetNode()->GetChild<CXFA_Value>(
+      0, XFA_Element::Value, false);
+  if (!pNodeValue)
     return CXFA_LocaleValue();
-  }
+
   CXFA_Node* pValueChild = pNodeValue->GetNodeItem(XFA_NODEITEM_FirstChild);
-  if (!pValueChild) {
+  if (!pValueChild)
     return CXFA_LocaleValue();
-  }
+
   int32_t iVTType = XFA_VT_NULL;
   switch (pValueChild->GetElementType()) {
     case XFA_Element::Decimal:
@@ -564,20 +566,21 @@ void XFA_DataExporter_RegenerateFormFile(
 }
 
 bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
-  bool bRet = false;
   if (!pFieldNode)
-    return bRet;
+    return false;
 
-  CXFA_Node* pUIChild = pFieldNode->GetChild(0, XFA_Element::Ui, false);
-  if (pUIChild) {
-    CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
-    if (pFirstChild &&
-        pFirstChild->GetElementType() == XFA_Element::ChoiceList) {
-      bRet = pFirstChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
-             XFA_AttributeEnum::MultiSelect;
-    }
+  CXFA_Ui* pUIChild = pFieldNode->GetChild<CXFA_Ui>(0, XFA_Element::Ui, false);
+  if (!pUIChild)
+    return false;
+
+  CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
+  if (!pFirstChild ||
+      pFirstChild->GetElementType() != XFA_Element::ChoiceList) {
+    return false;
   }
-  return bRet;
+
+  return pFirstChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
+         XFA_AttributeEnum::MultiSelect;
 }
 
 int32_t XFA_MapRotation(int32_t nRotation) {

@@ -786,9 +786,9 @@ int32_t CXFA_Node::CountChildren(XFA_Element eType, bool bOnlyChild) {
   return iCount;
 }
 
-CXFA_Node* CXFA_Node::GetChild(int32_t index,
-                               XFA_Element eType,
-                               bool bOnlyChild) {
+CXFA_Node* CXFA_Node::GetChildInternal(int32_t index,
+                                       XFA_Element eType,
+                                       bool bOnlyChild) {
   ASSERT(index > -1);
 
   int32_t iCount = 0;

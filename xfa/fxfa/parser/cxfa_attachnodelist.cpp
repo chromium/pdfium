@@ -41,7 +41,7 @@ bool CXFA_AttachNodeList::Remove(CXFA_Node* pNode) {
 }
 
 CXFA_Node* CXFA_AttachNodeList::Item(int32_t iIndex) {
-  return m_pAttachNode->GetChild(
+  return m_pAttachNode->GetChild<CXFA_Node>(
       iIndex, XFA_Element::Unknown,
       m_pAttachNode->GetElementType() == XFA_Element::Subform);
 }

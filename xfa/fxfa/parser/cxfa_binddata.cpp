@@ -7,12 +7,12 @@
 #include "xfa/fxfa/parser/cxfa_binddata.h"
 
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_picture.h"
 
 CXFA_BindData::CXFA_BindData(CXFA_Node* pNode) : CXFA_DataData(pNode) {}
 
 WideString CXFA_BindData::GetPicture() {
-  CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_Element::Picture, false);
-  if (!pPicture)
-    return L"";
-  return pPicture->JSObject()->GetContent(false);
+  CXFA_Picture* pPicture =
+      m_pNode->GetChild<CXFA_Picture>(0, XFA_Element::Picture, false);
+  return pPicture ? pPicture->JSObject()->GetContent(false) : L"";
 }

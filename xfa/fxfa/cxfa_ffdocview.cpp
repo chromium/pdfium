@@ -29,8 +29,11 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
+#include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_binditemsdata.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/parser/cxfa_present.h"
+#include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
@@ -112,7 +115,8 @@ void CXFA_FFDocView::StopLayout() {
   if (!pRootItem)
     return;
 
-  CXFA_Node* pSubformNode = pRootItem->GetChild(0, XFA_Element::Subform, false);
+  CXFA_Subform* pSubformNode =
+      pRootItem->GetChild<CXFA_Subform>(0, XFA_Element::Subform, false);
   if (!pSubformNode)
     return;
 
@@ -267,16 +271,16 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
     CXFA_Node* pConfigItem =
         ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Config));
     if (pConfigItem) {
-      CXFA_Node* pValidateNode = nullptr;
-      CXFA_Node* pAcrobatNode =
-          pConfigItem->GetChild(0, XFA_Element::Acrobat, false);
-      pValidateNode =
-          pAcrobatNode ? pAcrobatNode->GetChild(0, XFA_Element::Validate, false)
+      CXFA_Acrobat* pAcrobatNode =
+          pConfigItem->GetChild<CXFA_Acrobat>(0, XFA_Element::Acrobat, false);
+      CXFA_Validate* pValidateNode =
+          pAcrobatNode ? pAcrobatNode->GetChild<CXFA_Validate>(
+                             0, XFA_Element::Validate, false)
                        : nullptr;
       if (!pValidateNode) {
-        CXFA_Node* pPresentNode =
-            pConfigItem->GetChild(0, XFA_Element::Present, false);
-        pValidateNode = pPresentNode ? pPresentNode->GetChild(
+        CXFA_Present* pPresentNode =
+            pConfigItem->GetChild<CXFA_Present>(0, XFA_Element::Present, false);
+        pValidateNode = pPresentNode ? pPresentNode->GetChild<CXFA_Validate>(
                                            0, XFA_Element::Validate, false)
                                      : nullptr;
       }
@@ -295,7 +299,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
     if (!pRootItem)
       return XFA_EVENTERROR_Error;
 
-    pNode = pRootItem->GetChild(0, XFA_Element::Subform, false);
+    pNode = pRootItem->GetChild<CXFA_Node>(0, XFA_Element::Subform, false);
   }
 
   ExecEventActivityByDeepFirst(pNode, pParam->m_eType, pParam->m_bIsFormReady,

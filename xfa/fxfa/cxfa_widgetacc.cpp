@@ -21,6 +21,7 @@
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
+#include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -206,15 +207,17 @@ void CXFA_WidgetAcc::ResetData() {
           }
         }
         if (!done) {
-          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items, false);
+          CXFA_Items* pItems =
+              pChild->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
           if (!pItems)
             continue;
 
           WideString itemText;
           if (pItems->CountChildren(XFA_Element::Unknown, false) > 1) {
-            itemText = pItems->GetChild(1, XFA_Element::Unknown, false)
-                           ->JSObject()
-                           ->GetContent(false);
+            itemText =
+                pItems->GetChild<CXFA_Node>(1, XFA_Element::Unknown, false)
+                    ->JSObject()
+                    ->GetContent(false);
           }
           pAcc->SetValue(XFA_VALUEPICTURE_Raw, itemText);
         }

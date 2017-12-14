@@ -21,6 +21,8 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_traversal.h"
+#include "xfa/fxfa/parser/cxfa_traverse.h"
 
 namespace {
 
@@ -308,11 +310,11 @@ bool CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
     CXFA_FFWidget* pWidget) {
   CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
-  CXFA_Node* pTraversal =
-      pAcc->GetNode()->GetChild(0, XFA_Element::Traversal, false);
+  CXFA_Traversal* pTraversal = pAcc->GetNode()->GetChild<CXFA_Traversal>(
+      0, XFA_Element::Traversal, false);
   if (pTraversal) {
-    CXFA_Node* pTraverse =
-        pTraversal->GetChild(0, XFA_Element::Traverse, false);
+    CXFA_Traverse* pTraverse =
+        pTraversal->GetChild<CXFA_Traverse>(0, XFA_Element::Traverse, false);
     if (pTraverse) {
       pdfium::Optional<WideString> traverseWidgetName =
           pTraverse->JSObject()->TryAttribute(XFA_Attribute::Ref, true);

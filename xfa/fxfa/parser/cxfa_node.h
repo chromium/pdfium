@@ -153,7 +153,12 @@ class CXFA_Node : public CXFA_Object {
   void UpdateNameHash();
 
   int32_t CountChildren(XFA_Element eType, bool bOnlyChild);
-  CXFA_Node* GetChild(int32_t index, XFA_Element eType, bool bOnlyChild);
+
+  template <typename T>
+  T* GetChild(int32_t index, XFA_Element eType, bool bOnlyChild) {
+    return static_cast<T*>(GetChildInternal(index, eType, bOnlyChild));
+  }
+
   int32_t InsertChild(int32_t index, CXFA_Node* pNode);
   bool InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode);
   bool RemoveChild(CXFA_Node* pNode, bool bNotify);
@@ -225,6 +230,9 @@ class CXFA_Node : public CXFA_Object {
   void OnRemoved(bool bNotify);
   pdfium::Optional<void*> GetDefaultValue(XFA_Attribute attr,
                                           XFA_AttributeType eType) const;
+  CXFA_Node* GetChildInternal(int32_t index,
+                              XFA_Element eType,
+                              bool bOnlyChild);
 
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;

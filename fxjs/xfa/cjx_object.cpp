@@ -807,8 +807,9 @@ pdfium::Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
       if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExclGroup) {
         pNode = ToNode(GetXFAObject());
       } else {
-        CXFA_Node* pValue =
-            ToNode(GetXFAObject())->GetChild(0, XFA_Element::Value, false);
+        CXFA_Value* pValue =
+            ToNode(GetXFAObject())
+                ->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
         if (!pValue)
           return {};
 

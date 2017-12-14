@@ -9,6 +9,8 @@
 #include <utility>
 
 #include "core/fxcrt/xml/cxml_element.h"
+#include "xfa/fxfa/parser/cxfa_calendarsymbols.h"
+#include "xfa/fxfa/parser/cxfa_datetimesymbols.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -69,8 +71,9 @@ WideString CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const {
 }
 
 WideString CXFA_NodeLocale::GetDateTimeSymbols() const {
-  CXFA_Node* pSymbols =
-      m_pLocale ? m_pLocale->GetChild(0, XFA_Element::DateTimeSymbols, false)
+  CXFA_DateTimeSymbols* pSymbols =
+      m_pLocale ? m_pLocale->GetChild<CXFA_DateTimeSymbols>(
+                      0, XFA_Element::DateTimeSymbols, false)
                 : nullptr;
   return pSymbols ? pSymbols->JSObject()->GetContent(false) : WideString();
 }
@@ -147,7 +150,7 @@ CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
 WideString CXFA_NodeLocale::GetSymbol(XFA_Element eElement,
                                       const WideStringView& symbol_type) const {
   CXFA_Node* pSymbols =
-      m_pLocale ? m_pLocale->GetChild(0, eElement, false) : nullptr;
+      m_pLocale ? m_pLocale->GetChild<CXFA_Node>(0, eElement, false) : nullptr;
   CXFA_Node* pSymbol = GetNodeByName(pSymbols, symbol_type);
   return pSymbol ? pSymbol->JSObject()->GetContent(false) : WideString();
 }
@@ -155,8 +158,9 @@ WideString CXFA_NodeLocale::GetSymbol(XFA_Element eElement,
 WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
                                               int index,
                                               bool bAbbr) const {
-  CXFA_Node* pCalendar =
-      m_pLocale ? m_pLocale->GetChild(0, XFA_Element::CalendarSymbols, false)
+  CXFA_CalendarSymbols* pCalendar =
+      m_pLocale ? m_pLocale->GetChild<CXFA_CalendarSymbols>(
+                      0, XFA_Element::CalendarSymbols, false)
                 : nullptr;
   if (!pCalendar)
     return WideString();
@@ -164,7 +168,8 @@ WideString CXFA_NodeLocale::GetCalendarSymbol(XFA_Element eElement,
   CXFA_Node* pNode = pCalendar->GetFirstChildByClass(eElement);
   for (; pNode; pNode = pNode->GetNextSameClassSibling(eElement)) {
     if (pNode->JSObject()->GetBoolean(XFA_Attribute::Abbr) == bAbbr) {
-      CXFA_Node* pSymbol = pNode->GetChild(index, XFA_Element::Unknown, false);
+      CXFA_Node* pSymbol =
+          pNode->GetChild<CXFA_Node>(index, XFA_Element::Unknown, false);
       return pSymbol ? pSymbol->JSObject()->GetContent(false) : WideString();
     }
   }

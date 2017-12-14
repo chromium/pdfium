@@ -16,6 +16,7 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -194,8 +195,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (pChild->GetElementType() != XFA_Element::Field)
             continue;
 
-          auto* pValue = static_cast<CXFA_Value*>(
-              pChild->GetChild(0, XFA_Element::Value, false));
+          auto* pValue =
+              pChild->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
           if (!pValue)
             continue;
 
@@ -203,7 +204,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           if (wsValue.IsEmpty())
             continue;
 
-          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items, false);
+          CXFA_Items* pItems =
+              pChild->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
           if (!pItems)
             continue;
 
@@ -233,7 +235,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
           CXFA_Node* pValue =
               pChild->JSObject()->GetProperty(0, XFA_Element::Value, true);
-          CXFA_Node* pItems = pChild->GetChild(0, XFA_Element::Items, false);
+          CXFA_Items* pItems =
+              pChild->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
           CXFA_Node* pText =
               pItems ? pItems->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr;
           if (pText)

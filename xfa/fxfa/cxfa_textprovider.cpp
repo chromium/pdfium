@@ -27,9 +27,14 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
+#include "xfa/fxfa/parser/cxfa_caption.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
+#include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -38,8 +43,8 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
     CXFA_Node* pElementNode = m_pWidgetAcc->GetNode();
-    CXFA_Node* pValueNode =
-        pElementNode->GetChild(0, XFA_Element::Value, false);
+    CXFA_Value* pValueNode =
+        pElementNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
     if (!pValueNode)
       return nullptr;
 
@@ -72,13 +77,14 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   }
 
   if (m_eType == XFA_TEXTPROVIDERTYPE_Caption) {
-    CXFA_Node* pCaptionNode =
-        m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption, false);
+    CXFA_Caption* pCaptionNode =
+        m_pWidgetAcc->GetNode()->GetChild<CXFA_Caption>(0, XFA_Element::Caption,
+                                                        false);
     if (!pCaptionNode)
       return nullptr;
 
-    CXFA_Node* pValueNode =
-        pCaptionNode->GetChild(0, XFA_Element::Value, false);
+    CXFA_Value* pValueNode =
+        pCaptionNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
     if (!pValueNode)
       return nullptr;
 
@@ -93,8 +99,8 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     return pChildNode;
   }
 
-  CXFA_Node* pItemNode =
-      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Items, false);
+  CXFA_Items* pItemNode = m_pWidgetAcc->GetNode()->GetChild<CXFA_Items>(
+      0, XFA_Element::Items, false);
   if (!pItemNode)
     return nullptr;
 
@@ -115,19 +121,19 @@ CXFA_ParaData CXFA_TextProvider::GetParaData() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
     return m_pWidgetAcc->GetParaData();
 
-  CXFA_Node* pNode =
-      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption, false);
-  return CXFA_ParaData(pNode->GetChild(0, XFA_Element::Para, false));
+  CXFA_Caption* pNode = m_pWidgetAcc->GetNode()->GetChild<CXFA_Caption>(
+      0, XFA_Element::Caption, false);
+  return CXFA_ParaData(pNode->GetChild<CXFA_Para>(0, XFA_Element::Para, false));
 }
 
 CXFA_FontData CXFA_TextProvider::GetFontData() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
     return m_pWidgetAcc->GetFontData(false);
 
-  CXFA_Node* pNode =
-      m_pWidgetAcc->GetNode()->GetChild(0, XFA_Element::Caption, false);
-  pNode = pNode->GetChild(0, XFA_Element::Font, false);
-  return pNode ? CXFA_FontData(pNode) : m_pWidgetAcc->GetFontData(false);
+  CXFA_Caption* pNode = m_pWidgetAcc->GetNode()->GetChild<CXFA_Caption>(
+      0, XFA_Element::Caption, false);
+  CXFA_Font* font = pNode->GetChild<CXFA_Font>(0, XFA_Element::Font, false);
+  return font ? CXFA_FontData(font) : m_pWidgetAcc->GetFontData(false);
 }
 
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {

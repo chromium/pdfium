@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_boxdata.h"
 
 #include "xfa/fxfa/parser/cxfa_cornerdata.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -135,7 +136,8 @@ CXFA_FillData CXFA_BoxData::GetFillData(bool bModified) const {
 
 CXFA_MarginData CXFA_BoxData::GetMarginData() const {
   return CXFA_MarginData(
-      m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false) : nullptr);
+      m_pNode ? m_pNode->GetChild<CXFA_Margin>(0, XFA_Element::Margin, false)
+              : nullptr);
 }
 
 std::tuple<XFA_AttributeEnum, bool, float> CXFA_BoxData::Get3DStyle() const {

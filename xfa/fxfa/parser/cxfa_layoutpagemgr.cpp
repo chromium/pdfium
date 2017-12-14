@@ -10,12 +10,14 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_contentarea.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
+#include "xfa/fxfa/parser/cxfa_medium.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
@@ -318,7 +320,8 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     return false;
 
   CXFA_Document* pDocument = pTemplateNode->GetDocument();
-  pPageArea = m_pTemplatePageSetRoot->GetChild(0, XFA_Element::PageArea, false);
+  pPageArea = m_pTemplatePageSetRoot->GetChild<CXFA_Node>(
+      0, XFA_Element::PageArea, false);
   if (!pPageArea) {
     pPageArea = pDocument->CreateNode(m_pTemplatePageSetRoot->GetPacketType(),
                                       XFA_Element::PageArea);
@@ -328,11 +331,11 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     m_pTemplatePageSetRoot->InsertChild(pPageArea, nullptr);
     pPageArea->SetFlag(XFA_NodeFlag_Initialized, true);
   }
-  CXFA_Node* pContentArea =
-      pPageArea->GetChild(0, XFA_Element::ContentArea, false);
+  CXFA_ContentArea* pContentArea =
+      pPageArea->GetChild<CXFA_ContentArea>(0, XFA_Element::ContentArea, false);
   if (!pContentArea) {
-    pContentArea = pDocument->CreateNode(pPageArea->GetPacketType(),
-                                         XFA_Element::ContentArea);
+    pContentArea = static_cast<CXFA_ContentArea*>(pDocument->CreateNode(
+        pPageArea->GetPacketType(), XFA_Element::ContentArea));
     if (!pContentArea)
       return false;
 
@@ -347,10 +350,11 @@ bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
     pContentArea->JSObject()->SetMeasure(
         XFA_Attribute::H, CXFA_Measurement(10.5f, XFA_Unit::In), false);
   }
-  CXFA_Node* pMedium = pPageArea->GetChild(0, XFA_Element::Medium, false);
+  CXFA_Medium* pMedium =
+      pPageArea->GetChild<CXFA_Medium>(0, XFA_Element::Medium, false);
   if (!pMedium) {
-    pMedium =
-        pDocument->CreateNode(pPageArea->GetPacketType(), XFA_Element::Medium);
+    pMedium = static_cast<CXFA_Medium*>(
+        pDocument->CreateNode(pPageArea->GetPacketType(), XFA_Element::Medium));
     if (!pContentArea)
       return false;
 

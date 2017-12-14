@@ -33,11 +33,9 @@ WideString CXFA_EventData::GetRef() const {
 }
 
 CXFA_Script* CXFA_EventData::GetScript() const {
-  return static_cast<CXFA_Script*>(
-      m_pNode->GetChild(0, XFA_Element::Script, false));
+  return m_pNode->GetChild<CXFA_Script>(0, XFA_Element::Script, false);
 }
 
 CXFA_Submit* CXFA_EventData::GetSubmit() const {
-  return static_cast<CXFA_Submit*>(
-      m_pNode->GetChild(0, XFA_Element::Submit, false));
+  return m_pNode->GetChild<CXFA_Submit>(0, XFA_Element::Submit, false);
 }

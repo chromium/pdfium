@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_captiondata.h"
 
+#include "xfa/fxfa/parser/cxfa_font.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
@@ -39,16 +41,17 @@ float CXFA_CaptionData::GetReserve() const {
 
 CXFA_MarginData CXFA_CaptionData::GetMarginData() const {
   return CXFA_MarginData(
-      m_pNode ? m_pNode->GetChild(0, XFA_Element::Margin, false) : nullptr);
+      m_pNode ? m_pNode->GetChild<CXFA_Margin>(0, XFA_Element::Margin, false)
+              : nullptr);
 }
 
 CXFA_FontData CXFA_CaptionData::GetFontData() const {
-  return CXFA_FontData(m_pNode ? m_pNode->GetChild(0, XFA_Element::Font, false)
-                               : nullptr);
+  return CXFA_FontData(
+      m_pNode ? m_pNode->GetChild<CXFA_Font>(0, XFA_Element::Font, false)
+              : nullptr);
 }
 
 CXFA_Value* CXFA_CaptionData::GetValue() const {
-  return m_pNode ? static_cast<CXFA_Value*>(
-                       m_pNode->GetChild(0, XFA_Element::Value, false))
+  return m_pNode ? m_pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false)
                  : nullptr;
 }

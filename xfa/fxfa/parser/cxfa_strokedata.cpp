@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_strokedata.h"
 
+#include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -51,7 +52,8 @@ FX_ARGB CXFA_StrokeData::GetColor() const {
   if (!m_pNode)
     return 0xFF000000;
 
-  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color, false);
+  CXFA_Color* pNode =
+      m_pNode->GetChild<CXFA_Color>(0, XFA_Element::Color, false);
   if (!pNode)
     return 0xFF000000;
 

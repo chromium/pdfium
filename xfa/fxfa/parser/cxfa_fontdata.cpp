@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 
 #include "core/fxge/fx_dib.h"
+#include "xfa/fxfa/parser/cxfa_fill.h"
 #include "xfa/fxfa/parser/cxfa_filldata.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -82,6 +83,7 @@ void CXFA_FontData::SetColor(FX_ARGB color) {
 }
 
 FX_ARGB CXFA_FontData::GetColor() const {
-  CXFA_FillData fillData(m_pNode->GetChild(0, XFA_Element::Fill, false));
+  CXFA_FillData fillData(
+      m_pNode->GetChild<CXFA_Fill>(0, XFA_Element::Fill, false));
   return fillData.HasValidNode() ? fillData.GetColor(true) : 0xFF000000;
 }

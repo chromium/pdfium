@@ -10,11 +10,17 @@
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
+#include "xfa/fxfa/parser/cxfa_comb.h"
+#include "xfa/fxfa/parser/cxfa_decimal.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_eventdata.h"
+#include "xfa/fxfa/parser/cxfa_format.h"
+#include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_picture.h"
+#include "xfa/fxfa/parser/cxfa_ui.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -165,9 +171,12 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   switch (pUIChild->GetElementType()) {
     case XFA_Element::CheckButton: {
       eValueType = XFA_Element::Text;
-      if (CXFA_Node* pItems = pNode->GetChild(0, XFA_Element::Items, false)) {
-        if (CXFA_Node* pItem = pItems->GetChild(0, XFA_Element::Unknown, false))
+      if (CXFA_Items* pItems =
+              pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
+        if (CXFA_Node* pItem =
+                pItems->GetChild<CXFA_Node>(0, XFA_Element::Unknown, false)) {
           eValueType = pItem->GetElementType();
+        }
       }
       break;
     }
@@ -402,7 +411,8 @@ XFA_AttributeEnum CXFA_WidgetData::GetButtonHighlight() {
 }
 
 bool CXFA_WidgetData::HasButtonRollover() const {
-  CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false);
+  CXFA_Items* pItems =
+      m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
   if (!pItems)
     return false;
 
@@ -415,7 +425,8 @@ bool CXFA_WidgetData::HasButtonRollover() const {
 }
 
 bool CXFA_WidgetData::HasButtonDown() const {
-  CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false);
+  CXFA_Items* pItems =
+      m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
   if (!pItems)
     return false;
 
@@ -468,7 +479,8 @@ XFA_CHECKSTATE CXFA_WidgetData::GetCheckState() {
   if (wsValue.IsEmpty())
     return XFA_CHECKSTATE_Off;
 
-  if (CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false)) {
+  if (CXFA_Items* pItems =
+          m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
     CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
     int32_t i = 0;
     while (pText) {
@@ -489,7 +501,8 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
   if (exclGroup.HasValidNode()) {
     WideString wsValue;
     if (eCheckState != XFA_CHECKSTATE_Off) {
-      if (CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false)) {
+      if (CXFA_Items* pItems =
+              m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
         CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
         if (pText)
           wsValue = pText->JSObject()->GetContent(false);
@@ -501,7 +514,8 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       if (pChild->GetElementType() != XFA_Element::Field)
         continue;
 
-      CXFA_Node* pItem = pChild->GetChild(0, XFA_Element::Items, false);
+      CXFA_Items* pItem =
+          pChild->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
       if (!pItem)
         continue;
 
@@ -523,7 +537,8 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
     }
     exclGroup.SyncValue(wsValue, bNotify);
   } else {
-    CXFA_Node* pItems = m_pNode->GetChild(0, XFA_Element::Items, false);
+    CXFA_Items* pItems =
+        m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
     if (!pItems)
       return;
 
@@ -590,7 +605,8 @@ void CXFA_WidgetData::SetSelectedMemberByValue(const WideStringView& wsValue,
     if (pNode->GetElementType() != XFA_Element::Field)
       continue;
 
-    CXFA_Node* pItem = pNode->GetChild(0, XFA_Element::Items, false);
+    CXFA_Items* pItem =
+        pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
     if (!pItem)
       continue;
 
@@ -735,7 +751,8 @@ pdfium::Optional<WideString> CXFA_WidgetData::GetChoiceListItem(
   if (!pItems)
     return {};
 
-  CXFA_Node* pItem = pItems->GetChild(nIndex, XFA_Element::Unknown, false);
+  CXFA_Node* pItem =
+      pItems->GetChild<CXFA_Node>(nIndex, XFA_Element::Unknown, false);
   if (pItem)
     return {pItem->JSObject()->GetContent(false)};
   return {};
@@ -1024,7 +1041,7 @@ void CXFA_WidgetData::GetItemLabel(const WideStringView& wsValue,
     return;
 
   CXFA_Node* pText =
-      pLabelItems->GetChild(iSearch, XFA_Element::Unknown, false);
+      pLabelItems->GetChild<CXFA_Node>(iSearch, XFA_Element::Unknown, false);
   if (pText)
     wsLabel = pText->JSObject()->GetContent(false);
 }
@@ -1067,7 +1084,8 @@ WideString CXFA_WidgetData::GetItemValue(const WideStringView& wsLabel) {
   if (iSearch < 0)
     return L"";
 
-  CXFA_Node* pText = pSaveItems->GetChild(iSearch, XFA_Element::Unknown, false);
+  CXFA_Node* pText =
+      pSaveItems->GetChild<CXFA_Node>(iSearch, XFA_Element::Unknown, false);
   return pText ? pText->JSObject()->GetContent(false) : L"";
 }
 
@@ -1128,7 +1146,8 @@ pdfium::Optional<int32_t> CXFA_WidgetData::GetNumberOfCells() {
   CXFA_Node* pUIChild = GetUIChild();
   if (!pUIChild)
     return {};
-  if (CXFA_Node* pNode = pUIChild->GetChild(0, XFA_Element::Comb, false))
+  if (CXFA_Comb* pNode =
+          pUIChild->GetChild<CXFA_Comb>(0, XFA_Element::Comb, false))
     return {pNode->JSObject()->GetInteger(XFA_Attribute::NumberOfCells)};
   return {};
 }
@@ -1293,7 +1312,8 @@ bool CXFA_WidgetData::IsMultiLine() {
 }
 
 std::pair<XFA_Element, int32_t> CXFA_WidgetData::GetMaxChars() {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value, false)) {
+  if (CXFA_Value* pNode =
+          m_pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false)) {
     if (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild)) {
       switch (pChild->GetElementType()) {
         case XFA_Element::Text:
@@ -1313,11 +1333,13 @@ std::pair<XFA_Element, int32_t> CXFA_WidgetData::GetMaxChars() {
 }
 
 int32_t CXFA_WidgetData::GetFracDigits() {
-  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value, false);
+  CXFA_Value* pNode =
+      m_pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
   if (!pNode)
     return -1;
 
-  CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal, false);
+  CXFA_Decimal* pChild =
+      pNode->GetChild<CXFA_Decimal>(0, XFA_Element::Decimal, false);
   if (!pChild)
     return -1;
 
@@ -1327,11 +1349,13 @@ int32_t CXFA_WidgetData::GetFracDigits() {
 }
 
 int32_t CXFA_WidgetData::GetLeadDigits() {
-  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Value, false);
+  CXFA_Value* pNode =
+      m_pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
   if (!pNode)
     return -1;
 
-  CXFA_Node* pChild = pNode->GetChild(0, XFA_Element::Decimal, false);
+  CXFA_Decimal* pChild =
+      pNode->GetChild<CXFA_Decimal>(0, XFA_Element::Decimal, false);
   if (!pChild)
     return -1;
 
@@ -1394,10 +1418,10 @@ WideString CXFA_WidgetData::GetPictureContent(XFA_VALUEPICTURE ePicture) {
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
   switch (ePicture) {
     case XFA_VALUEPICTURE_Display: {
-      if (CXFA_Node* pFormat =
-              m_pNode->GetChild(0, XFA_Element::Format, false)) {
-        if (CXFA_Node* pPicture =
-                pFormat->GetChild(0, XFA_Element::Picture, false)) {
+      if (CXFA_Format* pFormat =
+              m_pNode->GetChild<CXFA_Format>(0, XFA_Element::Format, false)) {
+        if (CXFA_Picture* pPicture = pFormat->GetChild<CXFA_Picture>(
+                0, XFA_Element::Picture, false)) {
           pdfium::Optional<WideString> picture =
               pPicture->JSObject()->TryContent(false, true);
           if (picture)
@@ -1426,10 +1450,10 @@ WideString CXFA_WidgetData::GetPictureContent(XFA_VALUEPICTURE ePicture) {
       }
     }
     case XFA_VALUEPICTURE_Edit: {
-      CXFA_Node* pUI = m_pNode->GetChild(0, XFA_Element::Ui, false);
+      CXFA_Ui* pUI = m_pNode->GetChild<CXFA_Ui>(0, XFA_Element::Ui, false);
       if (pUI) {
-        if (CXFA_Node* pPicture =
-                pUI->GetChild(0, XFA_Element::Picture, false)) {
+        if (CXFA_Picture* pPicture =
+                pUI->GetChild<CXFA_Picture>(0, XFA_Element::Picture, false)) {
           pdfium::Optional<WideString> picture =
               pPicture->JSObject()->TryContent(false, true);
           if (picture)
@@ -1574,7 +1598,8 @@ WideString CXFA_WidgetData::GetFormatDataValue(const WideString& wsValue) {
   WideString wsFormattedValue = wsValue;
   if (IFX_Locale* pLocale = GetLocale()) {
     ASSERT(GetNode());
-    CXFA_Node* pNodeValue = GetNode()->GetChild(0, XFA_Element::Value, false);
+    CXFA_Value* pNodeValue =
+        GetNode()->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
     if (!pNodeValue)
       return wsValue;
 

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_calculatedata.h"
 
+#include "xfa/fxfa/parser/cxfa_message.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
@@ -20,16 +21,15 @@ XFA_AttributeEnum CXFA_CalculateData::GetOverride() const {
 }
 
 CXFA_Script* CXFA_CalculateData::GetScript() const {
-  return static_cast<CXFA_Script*>(
-      m_pNode->GetChild(0, XFA_Element::Script, false));
+  return m_pNode->GetChild<CXFA_Script>(0, XFA_Element::Script, false);
 }
 
 WideString CXFA_CalculateData::GetMessageText() const {
-  CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Message, false);
+  CXFA_Message* pNode =
+      m_pNode->GetChild<CXFA_Message>(0, XFA_Element::Message, false);
   if (!pNode)
     return L"";
 
-  CXFA_Text* text =
-      static_cast<CXFA_Text*>(pNode->GetChild(0, XFA_Element::Text, false));
+  CXFA_Text* text = pNode->GetChild<CXFA_Text>(0, XFA_Element::Text, false);
   return text ? text->GetContent() : L"";
 }
