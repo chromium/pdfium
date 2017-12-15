@@ -1407,19 +1407,14 @@ FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* str) {
 FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* str,
                                                     FPDF_LPCSTR bstr,
                                                     int length) {
-  if (!str)
+  if (!str || !bstr || !length)
     return -1;
-  if (!bstr || !length)
-    return -1;
+
   if (length == -1)
     length = strlen(bstr);
 
   if (length == 0) {
-    if (str->str) {
-      FX_Free(str->str);
-      str->str = nullptr;
-    }
-    str->len = 0;
+    FPDF_BStr_Clear(str);
     return 0;
   }
 
