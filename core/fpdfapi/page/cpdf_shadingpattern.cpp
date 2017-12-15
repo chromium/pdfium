@@ -89,6 +89,11 @@ bool CPDF_ShadingPattern::Load() {
 
   CPDF_DocPageData* pDocPageData = document()->GetPageData();
   m_pCS = pDocPageData->GetColorSpace(pCSObj, nullptr);
+  // The color space cannot be a Pattern space, according to the PDF 1.7 spec,
+  // page 305.
+  if (m_pCS->GetFamily() == PDFCS_PATTERN)
+    return false;
+
   if (m_pCS)
     m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
 
