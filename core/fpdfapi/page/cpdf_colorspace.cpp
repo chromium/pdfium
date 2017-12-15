@@ -1015,6 +1015,12 @@ bool CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   if (!m_pBaseCS)
     return false;
 
+  // The base color space cannot be a Pattern or Indexed space, according to the
+  // PDF 1.7 spec, page 263.
+  if (m_pBaseCS->GetFamily() == PDFCS_INDEXED ||
+      m_pBaseCS->GetFamily() == PDFCS_PATTERN)
+    return false;
+
   m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());
   m_nBaseComponents = m_pBaseCS->CountComponents();
   m_pCompMinMax = FX_Alloc2D(float, m_nBaseComponents, 2);
