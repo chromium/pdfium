@@ -947,6 +947,9 @@ bool CPDF_ICCBasedCS::FindAlternateProfile(CPDF_Document* pDoc,
   if (!pAlterCS)
     return false;
 
+  if (pAlterCS->GetFamily() == PDFCS_PATTERN)
+    return false;
+
   if (pAlterCS->CountComponents() != m_nComponents)
     return false;
 
@@ -1102,6 +1105,9 @@ bool CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
   if (!m_pAltCS)
     return false;
 
+  if (m_pAltCS->IsSpecial())
+    return false;
+
   CPDF_Object* pFuncObj = pArray->GetDirectObjectAt(3);
   if (pFuncObj && !pFuncObj->IsName())
     m_pFunc = CPDF_Function::Load(pFuncObj);
@@ -1179,6 +1185,9 @@ bool CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
   m_pAltCS = Load(pDoc, pAltCS, pVisited);
   m_pFunc = CPDF_Function::Load(pArray->GetDirectObjectAt(3));
   if (!m_pAltCS || !m_pFunc)
+    return false;
+
+  if (m_pAltCS->IsSpecial())
     return false;
 
   return m_pFunc->CountOutputs() >= m_pAltCS->CountComponents();
