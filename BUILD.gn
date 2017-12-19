@@ -25,14 +25,6 @@ config("pdfium_common_config") {
     "PNG_USE_READ_MACROS",
   ]
 
-  if (pdf_use_skia) {
-    defines += [ "_SKIA_SUPPORT_" ]
-  }
-
-  if (pdf_use_skia_paths) {
-    defines += [ "_SKIA_SUPPORT_PATHS_" ]
-  }
-
   if (pdf_enable_v8) {
     defines += [ "PDF_ENABLE_V8" ]
   }
@@ -51,6 +43,14 @@ config("pdfium_common_config") {
     if (pdf_enable_xfa_tiff) {
       defines += [ "PDF_ENABLE_XFA_TIFF" ]
     }
+  }
+
+  if (pdf_use_skia) {
+    defines += [ "_SKIA_SUPPORT_" ]
+  }
+
+  if (pdf_use_skia_paths) {
+    defines += [ "_SKIA_SUPPORT_PATHS_" ]
   }
 
   if (pdf_use_win32_gdi) {

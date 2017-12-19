@@ -59,6 +59,8 @@ executable("pdfium_test") {
     "//build/config:exe_and_shlib_deps",
     "//build/win:default_exe_manifest",
   ]
+  configs += [ ":pdfium_samples_config" ]
+
   if (pdf_enable_v8) {
     deps += [ "//v8:v8_libplatform" ]
     include_dirs = [
@@ -70,5 +72,4 @@ executable("pdfium_test") {
   if (pdf_use_skia || pdf_use_skia_paths) {
     deps += [ "//skia" ]
   }
-  configs += [ ":pdfium_samples_config" ]
 }
