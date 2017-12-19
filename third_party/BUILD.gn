@@ -89,6 +89,7 @@ if (pdf_bundle_freetype) {
 
     defines = [ "FT2_BUILD_LIBRARY" ]
     sources = [
+      "//third_party/freetype/include/pstables.h",
       "//third_party/freetype/src/include/freetype/config/ftconfig.h",
       "//third_party/freetype/src/include/freetype/config/ftheader.h",
       "//third_party/freetype/src/include/freetype/config/ftstdlib.h",
