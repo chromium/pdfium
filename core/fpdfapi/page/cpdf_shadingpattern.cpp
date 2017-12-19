@@ -89,14 +89,13 @@ bool CPDF_ShadingPattern::Load() {
 
   CPDF_DocPageData* pDocPageData = document()->GetPageData();
   m_pCS = pDocPageData->GetColorSpace(pCSObj, nullptr);
-  if (m_pCS) {
-    // The color space cannot be a Pattern space, according to the PDF 1.7 spec,
-    // page 305.
-    if (m_pCS->GetFamily() == PDFCS_PATTERN)
-      return false;
 
-    m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
-  }
+  // The color space is required and cannot be a Pattern space, according to the
+  // PDF 1.7 spec, page 305.
+  if (!m_pCS || m_pCS->GetFamily() == PDFCS_PATTERN)
+    return false;
+
+  m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
 
   m_ShadingType = ToShadingType(pShadingDict->GetIntegerFor("ShadingType"));
 
