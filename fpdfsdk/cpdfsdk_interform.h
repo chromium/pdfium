@@ -92,7 +92,6 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   ByteString ExportFieldsToFDFTextBuf(
       const std::vector<CPDF_FormField*>& fields,
       bool bIncludeOrExclude);
-  WideString GetTemporaryFileName(const WideString& sFileExt);
 
   bool IsNeedHighLight(int nFieldType);
   void RemoveAllHighLight();

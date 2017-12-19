@@ -100,13 +100,6 @@ class CCodec_ModuleMgr {
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
 uint32_t ComponentsForFamily(int family);
-void sRGB_to_AdobeCMYK(float R,
-                       float G,
-                       float B,
-                       float& c,
-                       float& m,
-                       float& y,
-                       float& k);
 std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
                                                   float m,
                                                   float y,

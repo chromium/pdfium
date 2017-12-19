@@ -644,7 +644,6 @@ class CFX_Matrix {
   CFX_FloatRect GetUnitRect() const;
 
   float TransformXDistance(float dx) const;
-  float TransformDistance(float dx, float dy) const;
   float TransformDistance(float distance) const;
 
   CFX_PointF Transform(const CFX_PointF& point) const;

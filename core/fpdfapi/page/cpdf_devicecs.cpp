@@ -36,19 +36,6 @@ uint32_t ComponentsForFamily(int family) {
   return 4;
 }
 
-void sRGB_to_AdobeCMYK(float R,
-                       float G,
-                       float B,
-                       float& c,
-                       float& m,
-                       float& y,
-                       float& k) {
-  c = 1.0f - R;
-  m = 1.0f - G;
-  y = 1.0f - B;
-  k = std::min(c, std::min(m, y));
-}
-
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
   if (pDestBuf == pSrcBuf) {
     for (int i = 0; i < pixels; i++) {

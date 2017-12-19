@@ -313,12 +313,6 @@ float CFX_Matrix::TransformXDistance(float dx) const {
   return sqrt(fx * fx + fy * fy);
 }
 
-float CFX_Matrix::TransformDistance(float dx, float dy) const {
-  float fx = a * dx + c * dy;
-  float fy = b * dx + d * dy;
-  return sqrt(fx * fx + fy * fy);
-}
-
 float CFX_Matrix::TransformDistance(float distance) const {
   return distance * (GetXUnit() + GetYUnit()) / 2;
 }

@@ -74,7 +74,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void SetCharSpace(float fCharSpace);
 
   bool CanSelectAll() const;
-  bool CanClear() const;
   bool CanCopy() const;
   bool CanCut() const;
 
@@ -122,7 +121,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
                                   const CPVT_WordRange& wr2);
   CPVT_WordRange GetLatinWordsRange(const CFX_PointF& point) const;
   CPVT_WordRange GetLatinWordsRange(const CPVT_WordPlace& place) const;
-  CPVT_WordRange GetArabicWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,
                                    bool bLatin,
                                    bool bArabic) const;

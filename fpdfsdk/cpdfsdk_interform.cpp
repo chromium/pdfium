@@ -518,10 +518,6 @@ ByteString CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
   return pFDF ? pFDF->WriteToString() : ByteString();
 }
 
-WideString CPDFSDK_InterForm::GetTemporaryFileName(const WideString& sFileExt) {
-  return L"";
-}
-
 bool CPDFSDK_InterForm::SubmitForm(const WideString& sDestination,
                                    bool bUrlEncoded) {
   if (sDestination.IsEmpty())

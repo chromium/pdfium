@@ -126,10 +126,6 @@ bool CPWL_Edit::CanSelectAll() const {
   return GetSelectWordRange() != m_pEdit->GetWholeWordRange();
 }
 
-bool CPWL_Edit::CanClear() const {
-  return !IsReadOnly() && m_pEdit->IsSelected();
-}
-
 bool CPWL_Edit::CanCopy() const {
   return !HasFlag(PES_PASSWORD) && !HasFlag(PES_NOREAD) &&
          m_pEdit->IsSelected();
@@ -672,11 +668,6 @@ CPVT_WordRange CPWL_Edit::GetLatinWordsRange(const CFX_PointF& point) const {
 CPVT_WordRange CPWL_Edit::GetLatinWordsRange(
     const CPVT_WordPlace& place) const {
   return GetSameWordsRange(place, true, false);
-}
-
-CPVT_WordRange CPWL_Edit::GetArabicWordsRange(
-    const CPVT_WordPlace& place) const {
-  return GetSameWordsRange(place, false, true);
 }
 
 #define PWL_ISARABICWORD(word) \

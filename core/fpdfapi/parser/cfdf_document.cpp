@@ -29,20 +29,11 @@ std::unique_ptr<CFDF_Document> CFDF_Document::CreateNewDoc() {
   return pDoc;
 }
 
-std::unique_ptr<CFDF_Document> CFDF_Document::ParseFile(
-    const RetainPtr<IFX_SeekableReadStream>& pFile) {
-  if (!pFile)
-    return nullptr;
-
-  auto pDoc = pdfium::MakeUnique<CFDF_Document>();
-  pDoc->ParseStream(pFile);
-  return pDoc->m_pRootDict ? std::move(pDoc) : nullptr;
-}
-
 std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(uint8_t* pData,
                                                           uint32_t size) {
-  return CFDF_Document::ParseFile(
-      pdfium::MakeRetain<CFX_MemoryStream>(pData, size, false));
+  auto pDoc = pdfium::MakeUnique<CFDF_Document>();
+  pDoc->ParseStream(pdfium::MakeRetain<CFX_MemoryStream>(pData, size, false));
+  return pDoc->m_pRootDict ? std::move(pDoc) : nullptr;
 }
 
 void CFDF_Document::ParseStream(

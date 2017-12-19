@@ -81,7 +81,6 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
   bool OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
 
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, bool bRegister);
-  void RemoveFormFiller(CPDFSDK_Annot* pAnnot);
 
   WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
   void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);

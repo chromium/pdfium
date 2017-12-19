@@ -19,8 +19,6 @@ class IFX_SeekableReadStream;
 class CFDF_Document : public CPDF_IndirectObjectHolder {
  public:
   static std::unique_ptr<CFDF_Document> CreateNewDoc();
-  static std::unique_ptr<CFDF_Document> ParseFile(
-      const RetainPtr<IFX_SeekableReadStream>& pFile);
   static std::unique_ptr<CFDF_Document> ParseMemory(uint8_t* pData,
                                                     uint32_t size);
 

@@ -16,7 +16,6 @@
 class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
-  explicit CFX_BinaryBuf(size_t size);
   virtual ~CFX_BinaryBuf();
 
   uint8_t* GetBuffer() const { return m_pBuffer.get(); }
@@ -36,7 +35,6 @@ class CFX_BinaryBuf {
     m_pBuffer.get()[m_DataSize++] = byte;
   }
 
-  void InsertBlock(size_t pos, const void* pBuf, size_t size);
   void Delete(size_t start_index, size_t count);
 
   // Releases ownership of |m_pBuffer| and returns it.

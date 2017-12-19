@@ -12,11 +12,6 @@
 CFX_BinaryBuf::CFX_BinaryBuf()
     : m_AllocStep(0), m_AllocSize(0), m_DataSize(0) {}
 
-CFX_BinaryBuf::CFX_BinaryBuf(size_t size)
-    : m_AllocStep(0), m_AllocSize(size), m_DataSize(size) {
-  m_pBuffer.reset(FX_Alloc(uint8_t, size));
-}
-
 CFX_BinaryBuf::~CFX_BinaryBuf() {}
 
 void CFX_BinaryBuf::Delete(size_t start_index, size_t count) {
@@ -74,21 +69,6 @@ void CFX_BinaryBuf::AppendBlock(const void* pBuf, size_t size) {
     memcpy(m_pBuffer.get() + m_DataSize, pBuf, size);
   } else {
     memset(m_pBuffer.get() + m_DataSize, 0, size);
-  }
-  m_DataSize += size;
-}
-
-void CFX_BinaryBuf::InsertBlock(size_t pos, const void* pBuf, size_t size) {
-  if (size <= 0)
-    return;
-
-  ExpandBuf(size);
-  memmove(m_pBuffer.get() + pos + size, m_pBuffer.get() + pos,
-          m_DataSize - pos);
-  if (pBuf) {
-    memcpy(m_pBuffer.get() + pos, pBuf, size);
-  } else {
-    memset(m_pBuffer.get() + pos, 0, size);
   }
   m_DataSize += size;
 }
