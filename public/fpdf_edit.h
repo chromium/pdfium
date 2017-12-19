@@ -524,8 +524,8 @@ FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
 //
 // Line join can be one of following: FPDF_LINEJOIN_MITER, FPDF_LINEJOIN_ROUND,
 // FPDF_LINEJOIN_BEVEL
-FPDF_EXPORT void FPDF_CALLCONV FPDF_CALLCONV
-FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join);
+FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page_object,
+                                                    int line_join);
 
 // Set the line cap of |page_object|.
 //
