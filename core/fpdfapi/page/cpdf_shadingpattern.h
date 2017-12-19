@@ -61,6 +61,12 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
   }
 
  private:
+  // Constraints in PDF 1.7 spec, 4.6.3 Shading Patterns, pages 308-331.
+  bool Validate() const;
+  bool ValidateFunctions(uint32_t nExpectedNumFunctions,
+                         uint32_t nExpectedNumInputs,
+                         uint32_t nExpectedNumOutputs) const;
+
   ShadingType m_ShadingType;
   bool m_bShadingObj;
   UnownedPtr<CPDF_Object> m_pShadingObj;

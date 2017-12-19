@@ -99,9 +99,98 @@ bool CPDF_ShadingPattern::Load() {
 
   m_ShadingType = ToShadingType(pShadingDict->GetIntegerFor("ShadingType"));
 
+  return Validate();
+}
+
+bool CPDF_ShadingPattern::Validate() const {
+  if (m_ShadingType == kInvalidShading)
+    return false;
+
   // We expect to have a stream if our shading type is a mesh.
   if (IsMeshShading() && !ToStream(m_pShadingObj.Get()))
     return false;
 
+  // Validate color space
+  switch (m_ShadingType) {
+    case kFunctionBasedShading:
+    case kAxialShading:
+    case kRadialShading: {
+      if (m_pCS->GetFamily() == PDFCS_INDEXED)
+        return false;
+      break;
+    }
+    case kFreeFormGouraudTriangleMeshShading:
+    case kLatticeFormGouraudTriangleMeshShading:
+    case kCoonsPatchMeshShading:
+    case kTensorProductPatchMeshShading: {
+      if (!m_pFunctions.empty() && m_pCS->GetFamily() == PDFCS_INDEXED)
+        return false;
+      break;
+    }
+    default: {
+      NOTREACHED();
+      return false;
+    }
+  }
+
+  uint32_t nNumColorSpaceComponents = m_pCS->CountComponents();
+  switch (m_ShadingType) {
+    case kFunctionBasedShading: {
+      // Either one 2-to-N function or N 2-to-1 functions.
+      if (!ValidateFunctions(1, 2, nNumColorSpaceComponents) &&
+          !ValidateFunctions(nNumColorSpaceComponents, 2, 1)) {
+        return false;
+      }
+      break;
+    }
+    case kAxialShading:
+    case kRadialShading: {
+      // Either one 1-to-N function or N 1-to-1 functions.
+      if (!ValidateFunctions(1, 1, nNumColorSpaceComponents) &&
+          !ValidateFunctions(nNumColorSpaceComponents, 1, 1)) {
+        return false;
+      }
+      break;
+    }
+    case kFreeFormGouraudTriangleMeshShading:
+    case kLatticeFormGouraudTriangleMeshShading:
+    case kCoonsPatchMeshShading:
+    case kTensorProductPatchMeshShading: {
+      // Either no function, one 1-to-N function, or N 1-to-1 functions.
+      if (!m_pFunctions.empty() &&
+          !ValidateFunctions(1, 1, nNumColorSpaceComponents) &&
+          !ValidateFunctions(nNumColorSpaceComponents, 1, 1)) {
+        return false;
+      }
+      break;
+    }
+    default: {
+      NOTREACHED();
+      return false;
+    }
+  }
   return true;
+}
+
+bool CPDF_ShadingPattern::ValidateFunctions(
+    uint32_t nExpectedNumFunctions,
+    uint32_t nExpectedNumInputs,
+    uint32_t nExpectedNumOutputs) const {
+  if (m_pFunctions.size() != nExpectedNumFunctions)
+    return false;
+
+  pdfium::base::CheckedNumeric<uint32_t> nTotalOutputs = 0;
+  for (const auto& function : m_pFunctions) {
+    if (!function)
+      return false;
+
+    if (function->CountInputs() != nExpectedNumInputs ||
+        function->CountOutputs() != nExpectedNumOutputs) {
+      return false;
+    }
+
+    nTotalOutputs += function->CountOutputs();
+  }
+
+  return nTotalOutputs.IsValid();
 }
