@@ -346,19 +346,20 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
         m_pPDFDoc.Get(), pPatternObj, true, matrix);
   } else {
     CPDF_Dictionary* pDict = pPatternObj->GetDict();
-    if (pDict) {
-      int type = pDict->GetIntegerFor("PatternType");
-      if (type == CPDF_Pattern::TILING) {
-        pPattern = pdfium::MakeUnique<CPDF_TilingPattern>(m_pPDFDoc.Get(),
-                                                          pPatternObj, matrix);
-      } else if (type == CPDF_Pattern::SHADING) {
-        pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(
-            m_pPDFDoc.Get(), pPatternObj, false, matrix);
-      }
+    if (!pDict)
+      return nullptr;
+
+    int type = pDict->GetIntegerFor("PatternType");
+    if (type == CPDF_Pattern::TILING) {
+      pPattern = pdfium::MakeUnique<CPDF_TilingPattern>(m_pPDFDoc.Get(),
+                                                        pPatternObj, matrix);
+    } else if (type == CPDF_Pattern::SHADING) {
+      pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(
+          m_pPDFDoc.Get(), pPatternObj, false, matrix);
+    } else {
+      return nullptr;
     }
   }
-  if (!pPattern)
-    return nullptr;
 
   if (ptData) {
     ptData->reset(std::move(pPattern));
