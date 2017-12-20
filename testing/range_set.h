@@ -5,6 +5,8 @@
 #ifndef TESTING_RANGE_SET_H_
 #define TESTING_RANGE_SET_H_
 
+#include <stddef.h>
+
 #include <set>
 #include <utility>
 
