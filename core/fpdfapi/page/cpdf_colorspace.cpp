@@ -10,6 +10,7 @@
 #include <limits>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_devicecs.h"
@@ -178,8 +179,8 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
 
   MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
   RetainPtr<CPDF_IccProfile> m_pProfile;
-  mutable uint8_t* m_pCache;
-  float* m_pRanges;
+  mutable std::unique_ptr<uint8_t, FxFreeDeleter> m_pCache;
+  std::vector<float> m_pRanges;
 };
 
 class CPDF_IndexedCS : public CPDF_ColorSpace {
@@ -195,12 +196,12 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
 
   void EnableStdConversion(bool bEnabled) override;
 
-  CPDF_ColorSpace* m_pBaseCS;
+  CPDF_ColorSpace* m_pBaseCS = nullptr;
   UnownedPtr<CPDF_CountedColorSpace> m_pCountedBaseCS;
-  uint32_t m_nBaseComponents;
-  int m_MaxIndex;
+  uint32_t m_nBaseComponents = 0;
+  int m_MaxIndex = 0;
   ByteString m_Table;
-  float* m_pCompMinMax;
+  float* m_pCompMinMax = nullptr;
 };
 
 class CPDF_SeparationCS : public CPDF_ColorSpace {
@@ -788,13 +789,9 @@ void CPDF_LabCS::TranslateImageLine(uint8_t* pDestBuf,
 }
 
 CPDF_ICCBasedCS::CPDF_ICCBasedCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_ICCBASED, 0),
-      m_pCache(nullptr),
-      m_pRanges(nullptr) {}
+    : CPDF_ColorSpace(pDoc, PDFCS_ICCBASED, 0) {}
 
 CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
-  FX_Free(m_pCache);
-  FX_Free(m_pRanges);
   if (m_pProfile && m_pDocument) {
     CPDF_Stream* pStream = m_pProfile->GetStream();
     m_pProfile.Reset();  // Give up our reference first.
@@ -889,50 +886,62 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
     ReverseRGB(pDestBuf, pSrcBuf, pixels);
     return;
   }
-  if (m_pProfile->transform()) {
-    int nMaxColors = 1;
-    for (uint32_t i = 0; i < m_nComponents; i++)
-      nMaxColors *= 52;
-
-    if (m_nComponents > 3 || image_width * image_height < nMaxColors * 3 / 2) {
-      CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
-          m_pProfile->transform(), pDestBuf, pSrcBuf, pixels);
-      return;
-    }
-
-    if (!m_pCache) {
-      m_pCache = FX_Alloc2D(uint8_t, nMaxColors, 3);
-      uint8_t* temp_src = FX_Alloc2D(uint8_t, nMaxColors, m_nComponents);
-      uint8_t* pSrc = temp_src;
-      for (int i = 0; i < nMaxColors; i++) {
-        uint32_t color = i;
-        uint32_t order = nMaxColors / 52;
-        for (uint32_t c = 0; c < m_nComponents; c++) {
-          *pSrc++ = static_cast<uint8_t>(color / order * 5);
-          color %= order;
-          order /= 52;
-        }
-      }
-      CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
-          m_pProfile->transform(), m_pCache, temp_src, nMaxColors);
-      FX_Free(temp_src);
-    }
-    for (int i = 0; i < pixels; i++) {
-      int index = 0;
-      for (uint32_t c = 0; c < m_nComponents; c++) {
-        index = index * 52 + (*pSrcBuf) / 5;
-        pSrcBuf++;
-      }
-      index *= 3;
-      *pDestBuf++ = m_pCache[index];
-      *pDestBuf++ = m_pCache[index + 1];
-      *pDestBuf++ = m_pCache[index + 2];
+  if (!m_pProfile->transform()) {
+    if (m_pAlterCS) {
+      m_pAlterCS->TranslateImageLine(pDestBuf, pSrcBuf, pixels, image_width,
+                                     image_height, false);
     }
     return;
   }
-  if (m_pAlterCS) {
-    m_pAlterCS->TranslateImageLine(pDestBuf, pSrcBuf, pixels, image_width,
-                                   image_height, false);
+
+  // |nMaxColors| below will not overflow because |m_nComponents| is limited in
+  // size.
+  ASSERT(IsValidComponents(m_nComponents));
+  int nMaxColors = 1;
+  for (uint32_t i = 0; i < m_nComponents; i++)
+    nMaxColors *= 52;
+
+  bool bTranslate = m_nComponents > 3;
+  if (!bTranslate) {
+    FX_SAFE_INT32 nPixelCount = image_width;
+    nPixelCount *= image_height;
+    if (nPixelCount.IsValid())
+      bTranslate = nPixelCount.ValueOrDie() < nMaxColors * 3 / 2;
+  }
+  if (bTranslate) {
+    CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
+        m_pProfile->transform(), pDestBuf, pSrcBuf, pixels);
+    return;
+  }
+
+  if (!m_pCache) {
+    m_pCache.reset(FX_Alloc2D(uint8_t, nMaxColors, 3));
+    std::unique_ptr<uint8_t, FxFreeDeleter> temp_src(
+        FX_Alloc2D(uint8_t, nMaxColors, m_nComponents));
+    uint8_t* pSrc = temp_src.get();
+    for (int i = 0; i < nMaxColors; i++) {
+      uint32_t color = i;
+      uint32_t order = nMaxColors / 52;
+      for (uint32_t c = 0; c < m_nComponents; c++) {
+        *pSrc++ = static_cast<uint8_t>(color / order * 5);
+        color %= order;
+        order /= 52;
+      }
+    }
+    CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
+        m_pProfile->transform(), m_pCache.get(), temp_src.get(), nMaxColors);
+  }
+  uint8_t* pCachePtr = m_pCache.get();
+  for (int i = 0; i < pixels; i++) {
+    int index = 0;
+    for (uint32_t c = 0; c < m_nComponents; c++) {
+      index = index * 52 + (*pSrcBuf) / 5;
+      pSrcBuf++;
+    }
+    index *= 3;
+    *pDestBuf++ = pCachePtr[index];
+    *pDestBuf++ = pCachePtr[index + 1];
+    *pDestBuf++ = pCachePtr[index + 2];
   }
 }
 
@@ -972,23 +981,24 @@ bool CPDF_ICCBasedCS::IsValidComponents(int32_t nComps) const {
 }
 
 void CPDF_ICCBasedCS::PopulateRanges(CPDF_Dictionary* pDict) {
+  ASSERT(IsValidComponents(m_nComponents));
+  m_pRanges.reserve(m_nComponents * 2);
+
   CPDF_Array* pRanges = pDict->GetArrayFor("Range");
-  m_pRanges = FX_Alloc2D(float, m_nComponents, 2);
-  for (uint32_t i = 0; i < m_nComponents * 2; i++) {
-    if (pRanges)
-      m_pRanges[i] = pRanges->GetNumberAt(i);
-    else if (i % 2)
-      m_pRanges[i] = 1.0f;
-    else
-      m_pRanges[i] = 0.0f;
+  if (pRanges) {
+    for (uint32_t i = 0; i < m_nComponents * 2; i++) {
+      m_pRanges.push_back(pRanges->GetNumberAt(i));
+    }
+  } else {
+    for (uint32_t i = 0; i < m_nComponents; i++) {
+      m_pRanges.push_back(0.0f);
+      m_pRanges.push_back(1.0f);
+    }
   }
 }
 
 CPDF_IndexedCS::CPDF_IndexedCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_INDEXED, 1),
-      m_pBaseCS(nullptr),
-      m_pCountedBaseCS(nullptr),
-      m_pCompMinMax(nullptr) {}
+    : CPDF_ColorSpace(pDoc, PDFCS_INDEXED, 1) {}
 
 CPDF_IndexedCS::~CPDF_IndexedCS() {
   FX_Free(m_pCompMinMax);
@@ -1017,8 +1027,8 @@ bool CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
 
   // The base color space cannot be a Pattern or Indexed space, according to the
   // PDF 1.7 spec, page 263.
-  if (m_pBaseCS->GetFamily() == PDFCS_INDEXED ||
-      m_pBaseCS->GetFamily() == PDFCS_PATTERN)
+  int family = m_pBaseCS->GetFamily();
+  if (family == PDFCS_INDEXED || family == PDFCS_PATTERN)
     return false;
 
   m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());

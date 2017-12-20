@@ -81,8 +81,10 @@ void CPDF_Color::SetValue(float* comps) {
     memcpy(m_pBuffer, comps, m_pCS->CountComponents() * sizeof(float));
 }
 
-void CPDF_Color::SetValue(CPDF_Pattern* pPattern, float* comps, int ncomps) {
-  if (ncomps > MAX_PATTERN_COLORCOMPS)
+void CPDF_Color::SetValue(CPDF_Pattern* pPattern,
+                          float* comps,
+                          uint32_t ncomps) {
+  if (ncomps > kMaxPatternColorComps)
     return;
 
   if (!IsPattern()) {

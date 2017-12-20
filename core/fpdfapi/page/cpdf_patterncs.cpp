@@ -43,7 +43,7 @@ bool CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
 
   m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());
   m_nComponents = m_pBaseCS->CountComponents() + 1;
-  return m_pBaseCS->CountComponents() <= MAX_PATTERN_COLORCOMPS;
+  return m_pBaseCS->CountComponents() <= kMaxPatternColorComps;
 }
 
 bool CPDF_PatternCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {

@@ -31,12 +31,13 @@ class CPDF_Array;
 class CPDF_Document;
 class CPDF_Object;
 
-#define MAX_PATTERN_COLORCOMPS 16
+constexpr size_t kMaxPatternColorComps = 16;
+
 struct PatternValue {
   CPDF_Pattern* m_pPattern;
   CPDF_CountedPattern* m_pCountedPattern;
   int m_nComps;
-  float m_Comps[MAX_PATTERN_COLORCOMPS];
+  float m_Comps[kMaxPatternColorComps];
 };
 
 class CPDF_ColorSpace {
