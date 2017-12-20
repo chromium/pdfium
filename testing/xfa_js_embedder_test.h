@@ -22,12 +22,12 @@ class XFAJSEmbedderTest : public EmbedderTest {
   XFAJSEmbedderTest();
   ~XFAJSEmbedderTest() override;
 
+  // EmbedderTest:
   void SetUp() override;
   void TearDown() override;
-
-  bool OpenDocument(const std::string& filename,
-                    const char* password = nullptr,
-                    bool must_linearize = false) override;
+  bool OpenDocumentWithOptions(const std::string& filename,
+                               const char* password,
+                               bool must_linearize) override;
 
   v8::Isolate* GetIsolate() const { return isolate_; }
   CXFA_Document* GetXFADocument();
@@ -40,8 +40,8 @@ class XFAJSEmbedderTest : public EmbedderTest {
  private:
   std::unique_ptr<FXJS_ArrayBufferAllocator> array_buffer_allocator_;
   std::unique_ptr<CFXJSE_Value> value_;
-  v8::Isolate* isolate_;
-  CFXJSE_Engine* script_context_;
+  v8::Isolate* isolate_ = nullptr;
+  CFXJSE_Engine* script_context_ = nullptr;
 
   bool ExecuteHelper(const ByteStringView& input);
 };

@@ -131,9 +131,22 @@ bool EmbedderTest::CreateEmptyDocument() {
   return true;
 }
 
-bool EmbedderTest::OpenDocument(const std::string& filename,
-                                const char* password,
-                                bool must_linearize) {
+bool EmbedderTest::OpenDocument(const std::string& filename) {
+  return OpenDocumentWithOptions(filename, nullptr, false);
+}
+
+bool EmbedderTest::OpenDocumentLinearized(const std::string& filename) {
+  return OpenDocumentWithOptions(filename, nullptr, true);
+}
+
+bool EmbedderTest::OpenDocumentWithPassword(const std::string& filename,
+                                            const char* password) {
+  return OpenDocumentWithOptions(filename, password, false);
+}
+
+bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
+                                           const char* password,
+                                           bool must_linearize) {
   std::string file_path;
   if (!PathService::GetTestFilePath(filename, &file_path))
     return false;

@@ -89,7 +89,7 @@ TEST_F(FPDFViewEmbeddertest, EmptyDocument) {
 }
 
 TEST_F(FPDFViewEmbeddertest, LinearizedDocument) {
-  EXPECT_TRUE(OpenDocument("feature_linearized_loading.pdf", nullptr, true));
+  EXPECT_TRUE(OpenDocumentLinearized("feature_linearized_loading.pdf"));
   int version;
   EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
   EXPECT_EQ(16, version);

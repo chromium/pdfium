@@ -19,7 +19,7 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, Unencrypted) {
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, UnencryptedWithPassword) {
-  ASSERT_TRUE(OpenDocument("about_blank.pdf", "foobar"));
+  ASSERT_TRUE(OpenDocumentWithPassword("about_blank.pdf", "foobar"));
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
 }
 
@@ -28,16 +28,16 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, NoPassword) {
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, BadPassword) {
-  EXPECT_FALSE(OpenDocument("encrypted.pdf", "tiger"));
+  EXPECT_FALSE(OpenDocumentWithPassword("encrypted.pdf", "tiger"));
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, UserPassword) {
-  ASSERT_TRUE(OpenDocument("encrypted.pdf", "1234"));
+  ASSERT_TRUE(OpenDocumentWithPassword("encrypted.pdf", "1234"));
   EXPECT_EQ(0xFFFFF2C0, FPDF_GetDocPermissions(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, OwnerPassword) {
-  ASSERT_TRUE(OpenDocument("encrypted.pdf", "5678"));
+  ASSERT_TRUE(OpenDocumentWithPassword("encrypted.pdf", "5678"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }
 
@@ -50,7 +50,7 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
   const char md5[] = "a5dde3c6c37b8716b9b369a03752a728";
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   {
-    ASSERT_TRUE(OpenDocument("encrypted.pdf", "5678", true));
+    ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678", true));
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
     FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
@@ -95,15 +95,15 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, NoPasswordVersion5) {
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, BadPasswordVersion5) {
-  ASSERT_FALSE(OpenDocument("bug_644.pdf", "tiger"));
+  ASSERT_FALSE(OpenDocumentWithPassword("bug_644.pdf", "tiger"));
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, OwnerPasswordVersion5) {
-  ASSERT_TRUE(OpenDocument("bug_644.pdf", "a"));
+  ASSERT_TRUE(OpenDocumentWithPassword("bug_644.pdf", "a"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbeddertest, UserPasswordVersion5) {
-  ASSERT_TRUE(OpenDocument("bug_644.pdf", "b"));
+  ASSERT_TRUE(OpenDocumentWithPassword("bug_644.pdf", "b"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
 }

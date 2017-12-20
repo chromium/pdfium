@@ -87,9 +87,16 @@ class EmbedderTest : public ::testing::Test,
   // environment, or return false on failure.
   // The filename is relative to the test data directory where we store all the
   // test files.
-  virtual bool OpenDocument(const std::string& filename,
-                            const char* password = nullptr,
-                            bool must_linearize = false);
+  // |password| can be nullptr if there is none.
+  virtual bool OpenDocumentWithOptions(const std::string& filename,
+                                       const char* password,
+                                       bool must_linearize);
+
+  // Variants provided for convenience.
+  bool OpenDocument(const std::string& filename);
+  bool OpenDocumentLinearized(const std::string& filename);
+  bool OpenDocumentWithPassword(const std::string& filename,
+                                const char* password);
 
   // Perform JavaScript actions that are to run at document open time.
   void DoOpenActions();

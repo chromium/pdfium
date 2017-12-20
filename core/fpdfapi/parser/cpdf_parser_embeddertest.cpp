@@ -59,7 +59,7 @@ TEST_F(CPDFParserEmbeddertest, Bug_757705) {
 }
 
 TEST_F(CPDFParserEmbeddertest, LoadMainCrossRefTable) {
-  EXPECT_TRUE(OpenDocument("feature_linearized_loading.pdf", nullptr, true));
+  EXPECT_TRUE(OpenDocumentLinearized("feature_linearized_loading.pdf"));
   // To check that main cross ref table is loaded correctly,will be enough to
   // check that the second page was correctly loaded. Because it is contains
   // crossrefs for second page.
