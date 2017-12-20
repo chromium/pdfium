@@ -9,7 +9,9 @@
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 
-CPDF_ShadingObject::CPDF_ShadingObject() : m_pShading(nullptr) {}
+CPDF_ShadingObject::CPDF_ShadingObject(CPDF_ShadingPattern* pattern,
+                                       const CFX_Matrix& matrix)
+    : m_pShading(pattern), m_Matrix(matrix) {}
 
 CPDF_ShadingObject::~CPDF_ShadingObject() {}
 

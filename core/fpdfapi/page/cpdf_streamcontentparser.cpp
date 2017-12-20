@@ -1113,15 +1113,14 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   if (!pShading->IsShadingObject() || !pShading->Load())
     return;
 
-  auto pObj = pdfium::MakeUnique<CPDF_ShadingObject>();
-  pObj->m_pShading = pShading;
+  CFX_Matrix matrix = m_pCurStates->m_CTM;
+  matrix.Concat(m_mtContentToUser);
+  auto pObj = pdfium::MakeUnique<CPDF_ShadingObject>(pShading, matrix);
   SetGraphicStates(pObj.get(), false, false, false);
-  pObj->m_Matrix = m_pCurStates->m_CTM;
-  pObj->m_Matrix.Concat(m_mtContentToUser);
   CFX_FloatRect bbox =
       pObj->m_ClipPath.HasRef() ? pObj->m_ClipPath.GetClipBox() : m_BBox;
   if (pShading->IsMeshShading())
-    bbox.Intersect(GetShadingBBox(pShading, pObj->m_Matrix));
+    bbox.Intersect(GetShadingBBox(pShading, pObj->matrix()));
   pObj->m_Left = bbox.left;
   pObj->m_Right = bbox.right;
   pObj->m_Top = bbox.top;

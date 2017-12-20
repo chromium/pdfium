@@ -2065,7 +2065,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   }
 }
 
-void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
+void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
                                     CFX_Matrix* pMatrix,
                                     FX_RECT& clip_rect,
                                     int alpha,
@@ -2197,9 +2197,9 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
   if (rect.IsEmpty())
     return;
 
-  CFX_Matrix matrix = pShadingObj->m_Matrix;
+  CFX_Matrix matrix = pShadingObj->matrix();
   matrix.Concat(*pObj2Device);
-  DrawShading(pShadingObj->m_pShading.Get(), &matrix, rect,
+  DrawShading(pShadingObj->pattern(), &matrix, rect,
               FXSYS_round(255 * pShadingObj->m_GeneralState.GetFillAlpha()),
               m_Options.ColorModeIs(CPDF_RenderOptions::kAlpha));
 }

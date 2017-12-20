@@ -15,10 +15,10 @@ class CPDF_ShadingPattern;
 
 class CPDF_ShadingObject : public CPDF_PageObject {
  public:
-  CPDF_ShadingObject();
+  CPDF_ShadingObject(CPDF_ShadingPattern* pattern, const CFX_Matrix& matrix);
   ~CPDF_ShadingObject() override;
 
-  // CPDF_PageObject
+  // CPDF_PageObject:
   Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
   bool IsShading() const override;
@@ -27,6 +27,10 @@ class CPDF_ShadingObject : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
+  const CPDF_ShadingPattern* pattern() const { return m_pShading.Get(); }
+  const CFX_Matrix& matrix() const { return m_Matrix; }
+
+ private:
   UnownedPtr<CPDF_ShadingPattern> m_pShading;
   CFX_Matrix m_Matrix;
 };
