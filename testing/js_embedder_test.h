@@ -6,7 +6,6 @@
 #define TESTING_JS_EMBEDDER_TEST_H_
 
 #include <memory>
-#include <vector>
 
 #include "fxjs/fxjs_v8.h"
 #include "testing/embedder_test.h"
@@ -25,7 +24,7 @@ class JSEmbedderTest : public EmbedderTest {
 
  private:
   std::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
-  v8::Isolate* m_pIsolate;
+  v8::Isolate* m_pIsolate = nullptr;
   std::unique_ptr<CFXJS_Engine> m_Engine;
 };
 
