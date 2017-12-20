@@ -317,16 +317,7 @@ bool ByteString::operator<(const char* ptr) const {
 }
 
 bool ByteString::operator<(const ByteStringView& str) const {
-  if (!m_pData && !str.unterminated_c_str())
-    return false;
-  if (c_str() == str.unterminated_c_str())
-    return false;
-
-  size_t len = GetLength();
-  size_t other_len = str.GetLength();
-  int result =
-      memcmp(c_str(), str.unterminated_c_str(), std::min(len, other_len));
-  return result < 0 || (result == 0 && len < other_len);
+  return Compare(str) < 0;
 }
 
 bool ByteString::operator<(const ByteString& other) const {
@@ -717,17 +708,12 @@ int ByteString::Compare(const ByteStringView& str) const {
   size_t this_len = m_pData->m_nDataLength;
   size_t that_len = str.GetLength();
   size_t min_len = std::min(this_len, that_len);
-  for (size_t i = 0; i < min_len; i++) {
-    if (static_cast<uint8_t>(m_pData->m_String[i]) < str[i])
-      return -1;
-    if (static_cast<uint8_t>(m_pData->m_String[i]) > str[i])
-      return 1;
-  }
-  if (this_len < that_len)
-    return -1;
-  if (this_len > that_len)
-    return 1;
-  return 0;
+  int result = memcmp(m_pData->m_String, str.unterminated_c_str(), min_len);
+  if (result != 0)
+    return result;
+  if (this_len == that_len)
+    return 0;
+  return this_len < that_len ? -1 : 1;
 }
 
 void ByteString::Trim() {

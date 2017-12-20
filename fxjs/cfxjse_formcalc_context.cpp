@@ -4976,9 +4976,9 @@ void CFXJSE_FormCalcContext::less_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    args.GetReturnValue()->SetInteger(
-        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) ==
-        -1);
+    int result =
+        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) < 0;
+    args.GetReturnValue()->SetInteger(result);
     return;
   }
 
@@ -5006,9 +5006,9 @@ void CFXJSE_FormCalcContext::lessequal_operator(
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    args.GetReturnValue()->SetInteger(
-        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) !=
-        1);
+    int result =
+        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) <= 0;
+    args.GetReturnValue()->SetInteger(result);
     return;
   }
 
@@ -5034,9 +5034,9 @@ void CFXJSE_FormCalcContext::greater_operator(CFXJSE_Value* pThis,
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    args.GetReturnValue()->SetInteger(
-        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) ==
-        1);
+    int result =
+        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) > 0;
+    args.GetReturnValue()->SetInteger(result);
     return;
   }
 
@@ -5064,9 +5064,9 @@ void CFXJSE_FormCalcContext::greaterequal_operator(
   }
 
   if (argFirst->IsString() && argSecond->IsString()) {
-    args.GetReturnValue()->SetInteger(
-        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) !=
-        -1);
+    int result =
+        argFirst->ToString().Compare(argSecond->ToString().AsStringView()) >= 0;
+    args.GetReturnValue()->SetInteger(result);
     return;
   }
 
