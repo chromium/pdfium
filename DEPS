@@ -1,21 +1,31 @@
 use_relative_paths = True
 
 vars = {
+  # By default, we should check out everything needed to run on the main
+  # chromium waterfalls. This var can be also be set to "small", in order
+  # to skip things are not strictly needed to build chromium for development
+  # purposes.
+  'checkout_configuration': 'default',
+
+  # TODO(dpranke): change to != "small" once != is supported.
+  'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration == "default"',
+
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
 
   'android_ndk_revision': 'd57523210239b867fa4fb9d05c2aacc3f1802fe0',
   'binutils_revision': 'e146228c20af6af922887d0be2d3641cbffb33c5',
-  'build_revision': '3d1686497c66b711f35b5c58994c08d95e8aff4b',
-  'buildtools_revision': 'f6d165d9d842ddd29056c127a5f3a3c5d8e0d2e3',
+  'build_revision': '097c79babc9b2ce40b61c3e33da1c6681acf837c',
+  'buildtools_revision': 'b36c7b60ed73919b157c7d23ec5fce2aa69ab05e',
   'catapult_revision': 'd624b3ced2c81d4fb4ea98a8dbb4532272cc1e0a',
   'clang_revision': '8427dae2b5a769314af722e09000563b5184ba06',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
+  'depot_tools_revision': '2e8d8348b8574f06c26dbf3ef959b5df11ba5148',
   'freetype_revision': '2c048a8a622e9f44f255aa3316026f124ac9ecbc',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': 'e3b480d3be4446ea17011c0cdc9c4cd380a5c58f',
-  'instrumented_lib_revision': '644afd349826cb68204226a16c38bde13abe9c3c',
+  'instrumented_lib_revision': '28417458ac4dc79f68915079d0f283f682504cc0',
   'jinja2_revision': 'd34383206fa42d52faa10bb9931d6d538f3a57e0',
   'jpeg_turbo_revision': '7260e4d8b8e1e40b17f03fafdf1cd83296900f76',
   'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
@@ -52,6 +62,10 @@ deps = {
   "third_party/binutils":
     Var('chromium_git') + "/chromium/src/third_party/binutils.git@" +
         Var('binutils_revision'),
+
+  'third_party/depot_tools':
+    Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' +
+        Var('depot_tools_revision'),
 
   "third_party/freetype/src":
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
@@ -244,10 +258,27 @@ hooks = [
     'action': ['python', 'pdfium/build/mac_toolchain.py'],
   },
   {
-    # Pull sanitizer-instrumented third-party libraries if requested via
-    # GYP_DEFINES.
-    'name': 'instrumented_libraries',
-    'pattern': '\\.sha1',
-    'action': ['python', 'pdfium/third_party/instrumented_libraries/scripts/download_binaries.py'],
+    'name': 'msan_chained_origins',
+    'pattern': '.',
+    'condition': 'checkout_instrumented_libraries',
+    'action': [ 'python',
+                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                "--no_resume",
+                "--no_auth",
+                "--bucket", "chromium-instrumented-libraries",
+                "-s", "pdfium/third_party/instrumented_libraries/binaries/msan-chained-origins-trusty.tgz.sha1",
+              ],
+  },
+  {
+    'name': 'msan_no_origins',
+    'pattern': '.',
+    'condition': 'checkout_instrumented_libraries',
+    'action': [ 'python',
+                'pdfium/third_party/depot_tools/download_from_google_storage.py',
+                "--no_resume",
+                "--no_auth",
+                "--bucket", "chromium-instrumented-libraries",
+                "-s", "pdfium/third_party/instrumented_libraries/binaries/msan-no-origins-trusty.tgz.sha1",
+              ],
   },
 ]
