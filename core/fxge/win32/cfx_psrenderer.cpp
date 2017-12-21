@@ -676,8 +676,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
       last_fontnum = ps_fontnum;
     }
     buf << pCharPos[i].m_Origin.x << " " << pCharPos[i].m_Origin.y << " m";
-    ByteString hex;
-    hex.Format("<%02X>", ps_glyphindex);
+    ByteString hex = ByteString::Format("<%02X>", ps_glyphindex);
     buf << hex.AsStringView() << "Tj\n";
   }
   buf << "Q\n";
