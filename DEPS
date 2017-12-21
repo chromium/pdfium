@@ -5,7 +5,8 @@ vars = {
   'pdfium_git': 'https://pdfium.googlesource.com',
 
   'android_ndk_revision': 'd57523210239b867fa4fb9d05c2aacc3f1802fe0',
-  'build_revision': '92d3b8cfce9c0fc49847e783546ad3b01504aba4',
+  'binutils_revision': 'e146228c20af6af922887d0be2d3641cbffb33c5',
+  'build_revision': '3d1686497c66b711f35b5c58994c08d95e8aff4b',
   'buildtools_revision': 'f6d165d9d842ddd29056c127a5f3a3c5d8e0d2e3',
   'catapult_revision': 'd624b3ced2c81d4fb4ea98a8dbb4532272cc1e0a',
   'clang_revision': '8427dae2b5a769314af722e09000563b5184ba06',
@@ -47,6 +48,10 @@ deps = {
 
   "testing/gtest":
     Var('chromium_git') + "/external/googletest.git@" + Var('gtest_revision'),
+
+  "third_party/binutils":
+    Var('chromium_git') + "/chromium/src/third_party/binutils.git@" +
+        Var('binutils_revision'),
 
   "third_party/freetype/src":
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
@@ -209,6 +214,15 @@ hooks = [
     ],
   },
   {
+    'name': 'binutils',
+    'pattern': 'src/third_party/binutils',
+    'condition': 'host_os == "linux"',
+    'action': [
+        'python',
+        'pdfium/third_party/binutils/download.py',
+    ],
+  },
+  {
     # Downloads the current stable linux sysroot to build/linux/ if needed.
     # This sysroot updates at about the same rate that the chrome build deps
     # change.
@@ -236,5 +250,4 @@ hooks = [
     'pattern': '\\.sha1',
     'action': ['python', 'pdfium/third_party/instrumented_libraries/scripts/download_binaries.py'],
   },
-
 ]
