@@ -249,7 +249,8 @@ hooks = [
     # Update the Windows toolchain if necessary.
     'name': 'win_toolchain',
     'pattern': '.',
-    'action': ['python', 'pdfium/build/vs_toolchain.py', 'update'],
+    'condition': 'checkout_win',
+    'action': ['vpython', 'pdfium/build/vs_toolchain.py', 'update', '--force'],
   },
   {
     # Update the Mac toolchain if necessary.
