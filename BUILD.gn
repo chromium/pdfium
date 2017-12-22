@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import("//build/config/freetype/freetype.gni")
+import("//build/config/jumbo.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
@@ -100,7 +101,7 @@ config("xfa_warnings") {
   }
 }
 
-static_library("pdfium") {
+jumbo_static_library("pdfium") {
   sources = [
     "fpdfsdk/cba_annotiterator.cpp",
     "fpdfsdk/cba_annotiterator.h",
@@ -231,7 +232,7 @@ static_library("pdfium") {
   }
 }
 
-static_library("test_support") {
+jumbo_static_library("test_support") {
   testonly = true
   sources = [
     "testing/fx_string_testhelpers.cpp",
@@ -264,7 +265,7 @@ static_library("test_support") {
   configs += [ ":pdfium_core_config" ]
 }
 
-static_library("image_diff") {
+jumbo_static_library("image_diff") {
   testonly = true
   sources = [
     "testing/image_diff/image_diff_png.cpp",
@@ -284,6 +285,7 @@ visibility = [
   "//:gn_visibility",
 ]
 
+# TODO(crbug.com/pdfium/964): Support jumbo builds.
 static_library("fdrm") {
   sources = [
     "core/fdrm/crypto/fx_crypt.cpp",
@@ -297,6 +299,7 @@ static_library("fdrm") {
   ]
 }
 
+# TODO(crbug.com/pdfium/964): Support jumbo builds.
 static_library("fpdfdoc") {
   sources = [
     "core/fpdfdoc/cline.cpp",
@@ -380,7 +383,7 @@ static_library("fpdfdoc") {
   ]
 }
 
-static_library("fpdfapi") {
+jumbo_static_library("fpdfapi") {
   sources = [
     "core/fpdfapi/cmaps/CNS1/Adobe-CNS1-UCS2_5.cpp",
     "core/fpdfapi/cmaps/CNS1/B5pc-H_0.cpp",
@@ -672,7 +675,7 @@ static_library("fpdfapi") {
   ]
 }
 
-static_library("fpdftext") {
+jumbo_static_library("fpdftext") {
   sources = [
     "core/fpdftext/cpdf_linkextract.cpp",
     "core/fpdftext/cpdf_linkextract.h",
@@ -689,7 +692,7 @@ static_library("fpdftext") {
   ]
 }
 
-static_library("fxcodec") {
+jumbo_static_library("fxcodec") {
   sources = [
     "core/fxcodec/JBig2_DocumentContext.h",
     "core/fxcodec/codec/ccodec_basicmodule.h",
@@ -801,6 +804,7 @@ config("fxge_warnings") {
   }
 }
 
+# TODO(crbug.com/pdfium/964): Support jumbo builds.
 static_library("fxcrt") {
   sources = [
     "core/fxcrt/autorestorer.h",
@@ -967,6 +971,7 @@ static_library("fxcrt") {
   }
 }
 
+# TODO(crbug.com/pdfium/964): Support jumbo builds.
 static_library("fxge") {
   sources = [
     "core/fxge/android/cfpf_skiabufferfont.cpp",
@@ -1137,6 +1142,7 @@ static_library("fxge") {
   }
 }
 
+# TODO(crbug.com/pdfium/964): Support jumbo builds.
 static_library("pwl") {
   sources = [
     "fpdfsdk/pwl/cpwl_appstream.cpp",
@@ -1178,7 +1184,7 @@ static_library("pwl") {
   ]
 }
 
-static_library("fxjs") {
+jumbo_static_library("fxjs") {
   sources = [
     "fxjs/ijs_event_context.h",
     "fxjs/ijs_runtime.h",
@@ -1617,7 +1623,7 @@ static_library("fxjs") {
   }
 }
 
-static_library("formfiller") {
+jumbo_static_library("formfiller") {
   sources = [
     "fpdfsdk/formfiller/cba_fontmap.cpp",
     "fpdfsdk/formfiller/cba_fontmap.h",
@@ -1649,7 +1655,7 @@ static_library("formfiller") {
 }
 
 if (pdf_enable_xfa) {
-  static_library("fpdfxfa") {
+  jumbo_static_library("fpdfxfa") {
     sources = [
       "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
       "fpdfsdk/fpdfxfa/cpdfxfa_context.h",
@@ -1668,6 +1674,7 @@ if (pdf_enable_xfa) {
     configs += [ ":pdfium_core_config" ]
   }
 
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
   static_library("fxbarcode") {
     sources = [
       "fxbarcode/BC_Library.cpp",
@@ -1805,6 +1812,7 @@ if (pdf_enable_xfa) {
     configs += [ ":pdfium_core_config" ]
   }
 
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
   static_library("xfa") {
     sources = [
       "xfa/fde/cfde_texteditengine.cpp",
