@@ -11,7 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_PatternCS::CPDF_PatternCS(CPDF_Document* pDoc)
-    : CPDF_ColorSpace(pDoc, PDFCS_PATTERN, 1),
+    : CPDF_ColorSpace(pDoc, PDFCS_PATTERN),
       m_pBaseCS(nullptr),
       m_pCountedBaseCS(nullptr) {}
 
@@ -24,32 +24,36 @@ CPDF_PatternCS::~CPDF_PatternCS() {
   }
 }
 
-bool CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
-                            CPDF_Array* pArray,
-                            std::set<CPDF_Object*>* pVisited) {
+void CPDF_PatternCS::InitializeStockPattern() {
+  SetComponentsForStockCS(1);
+}
+
+uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
+                                CPDF_Array* pArray,
+                                std::set<CPDF_Object*>* pVisited) {
   CPDF_Object* pBaseCS = pArray->GetDirectObjectAt(1);
   if (pBaseCS == m_pArray)
-    return false;
+    return 0;
 
   CPDF_DocPageData* pDocPageData = pDoc->GetPageData();
   m_pBaseCS = pDocPageData->GetColorSpaceGuarded(pBaseCS, nullptr, pVisited);
-  if (!m_pBaseCS) {
-    m_nComponents = 1;
-    return true;
-  }
+  if (!m_pBaseCS)
+    return 1;
 
   if (m_pBaseCS->GetFamily() == PDFCS_PATTERN)
-    return false;
+    return 0;
 
   m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());
-  m_nComponents = m_pBaseCS->CountComponents() + 1;
-  return m_pBaseCS->CountComponents() <= kMaxPatternColorComps;
+  if (m_pBaseCS->CountComponents() > kMaxPatternColorComps)
+    return 0;
+
+  return m_pBaseCS->CountComponents() + 1;
 }
 
 bool CPDF_PatternCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   if (m_pBaseCS) {
     ASSERT(m_pBaseCS->GetFamily() != PDFCS_PATTERN);
-    PatternValue* pvalue = (PatternValue*)pBuf;
+    PatternValue* pvalue = reinterpret_cast<PatternValue*>(pBuf);
     if (m_pBaseCS->GetRGB(pvalue->m_Comps, R, G, B))
       return true;
   }

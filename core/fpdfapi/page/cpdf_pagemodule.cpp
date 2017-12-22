@@ -10,7 +10,9 @@ CPDF_PageModule::CPDF_PageModule()
     : m_StockGrayCS(PDFCS_DEVICEGRAY),
       m_StockRGBCS(PDFCS_DEVICERGB),
       m_StockCMYKCS(PDFCS_DEVICECMYK),
-      m_StockPatternCS(nullptr) {}
+      m_StockPatternCS(nullptr) {
+  m_StockPatternCS.InitializeStockPattern();
+}
 
 CPDF_PageModule::~CPDF_PageModule() {}
 

@@ -18,10 +18,13 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
   explicit CPDF_PatternCS(CPDF_Document* pDoc);
   ~CPDF_PatternCS() override;
 
+  // Called for the stock pattern, since it is initialized via Load().
+  void InitializeStockPattern();
+
   // CPDF_ColorSpace:
-  bool v_Load(CPDF_Document* pDoc,
-              CPDF_Array* pArray,
-              std::set<CPDF_Object*>* pVisited) override;
+  uint32_t v_Load(CPDF_Document* pDoc,
+                  CPDF_Array* pArray,
+                  std::set<CPDF_Object*>* pVisited) override;
   bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
 
  private:

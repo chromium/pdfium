@@ -82,18 +82,25 @@ class CPDF_ColorSpace {
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
  protected:
-  CPDF_ColorSpace(CPDF_Document* pDoc, int family, uint32_t nComponents);
+  CPDF_ColorSpace(CPDF_Document* pDoc, int family);
   virtual ~CPDF_ColorSpace();
 
-  virtual bool v_Load(CPDF_Document* pDoc,
-                      CPDF_Array* pArray,
-                      std::set<CPDF_Object*>* pVisited);
+  // Returns the number of components, or 0 on failure.
+  virtual uint32_t v_Load(CPDF_Document* pDoc,
+                          CPDF_Array* pArray,
+                          std::set<CPDF_Object*>* pVisited) = 0;
+
+  // Stock colorspaces are not loaded normally. This initializes their
+  // components count.
+  void SetComponentsForStockCS(uint32_t nComponents);
 
   UnownedPtr<CPDF_Document> const m_pDocument;
-  int m_Family;
-  uint32_t m_nComponents;
   UnownedPtr<CPDF_Array> m_pArray;
-  uint32_t m_dwStdConversion;
+  const int m_Family;
+  uint32_t m_dwStdConversion = 0;
+
+ private:
+  uint32_t m_nComponents = 0;
 };
 using CPDF_CountedColorSpace = CPDF_CountedObject<CPDF_ColorSpace>;
 
