@@ -25,6 +25,11 @@ const CPDF_ContentMarkItem& CPDF_ContentMark::GetItem(size_t i) const {
   return m_Ref.GetObject()->GetItem(i);
 }
 
+int CPDF_ContentMark::GetMarkedContentID() const {
+  const MarkData* pData = m_Ref.GetObject();
+  return pData ? pData->GetMarkedContentID() : -1;
+}
+
 void CPDF_ContentMark::AddMark(const ByteString& name,
                                CPDF_Dictionary* pDict,
                                bool bDirect) {
@@ -51,6 +56,15 @@ size_t CPDF_ContentMark::MarkData::CountItems() const {
 const CPDF_ContentMarkItem& CPDF_ContentMark::MarkData::GetItem(
     size_t index) const {
   return m_Marks[index];
+}
+
+int CPDF_ContentMark::MarkData::GetMarkedContentID() const {
+  for (const auto& mark : m_Marks) {
+    const CPDF_Dictionary* pDict = mark.GetParam();
+    if (pDict && pDict->KeyExist("MCID"))
+      return pDict->GetIntegerFor("MCID");
+  }
+  return -1;
 }
 
 void CPDF_ContentMark::MarkData::AddMark(const ByteString& name,

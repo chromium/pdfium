@@ -75,6 +75,16 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
                               void* buffer,
                               unsigned long buflen);
 
+// Function: FPDF_StructElement_GetMarkedContentID
+//          Get the marked content ID for a given element.
+// Parameters:
+//          struct_element -   Handle to the struct element.
+// Return value:
+//          The marked content ID of the element. If no ID exists, returns
+//          -1.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetMarkedContentID(FPDF_STRUCTELEMENT struct_element);
+
 // Function: FPDF_StructElement_GetType
 //           Get the type (/S) for a given element.
 // Parameters:

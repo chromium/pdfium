@@ -1205,6 +1205,7 @@ TEST_F(FPDFEditEmbeddertest, GetImageMetadata) {
   // |page|, all values are correct, with the last two being default values.
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, nullptr, &metadata));
+  EXPECT_EQ(7, metadata.marked_content_id);
   EXPECT_EQ(92u, metadata.width);
   EXPECT_EQ(68u, metadata.height);
   EXPECT_NEAR(96.000000, metadata.horizontal_dpi, 0.001);
@@ -1214,6 +1215,7 @@ TEST_F(FPDFEditEmbeddertest, GetImageMetadata) {
 
   // Verify the metadata of a bitmap image with indexed colorspace.
   ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page, &metadata));
+  EXPECT_EQ(7, metadata.marked_content_id);
   EXPECT_EQ(92u, metadata.width);
   EXPECT_EQ(68u, metadata.height);
   EXPECT_NEAR(96.000000, metadata.horizontal_dpi, 0.001);
@@ -1225,6 +1227,7 @@ TEST_F(FPDFEditEmbeddertest, GetImageMetadata) {
   obj = FPDFPage_GetObject(page, 37);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   ASSERT_TRUE(FPDFImageObj_GetImageMetadata(obj, page, &metadata));
+  EXPECT_EQ(9, metadata.marked_content_id);
   EXPECT_EQ(126u, metadata.width);
   EXPECT_EQ(106u, metadata.height);
   EXPECT_NEAR(162.173752, metadata.horizontal_dpi, 0.001);
