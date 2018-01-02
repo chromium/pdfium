@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 
+#include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace fxcrt {
@@ -28,7 +29,7 @@ class Observer {
   std::map<std::string, int> destruction_counts_;
 };
 
-class Object {
+class Object : public Retainable {
  public:
   Object(Observer* observer, const std::string& name)
       : name_(name), observer_(observer) {
@@ -37,7 +38,7 @@ class Object {
   Object(const Object& that) : name_(that.name_), observer_(that.observer_) {
     observer_->OnConstruct(name_);
   }
-  ~Object() { observer_->OnDestruct(name_); }
+  ~Object() override { observer_->OnDestruct(name_); }
 
  private:
   std::string name_;

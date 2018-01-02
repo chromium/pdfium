@@ -8,14 +8,15 @@
 #define CORE_FXGE_CFX_GRAPHSTATEDATA_H_
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 
-class CFX_GraphStateData {
+class CFX_GraphStateData : public Retainable {
  public:
   enum LineCap { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 };
 
   CFX_GraphStateData();
   CFX_GraphStateData(const CFX_GraphStateData& src);
-  ~CFX_GraphStateData();
+  ~CFX_GraphStateData() override;
 
   void Copy(const CFX_GraphStateData& src);
   void SetDashCount(int count);

@@ -59,11 +59,11 @@ class CPDF_TextState {
   float* GetMutableCTM();
 
  private:
-  class TextData {
+  class TextData : public Retainable {
    public:
     TextData();
     TextData(const TextData& src);
-    ~TextData();
+    ~TextData() override;
 
     void SetFont(CPDF_Font* pFont);
     float GetFontSizeV() const;

@@ -29,11 +29,11 @@ class FX_PATHPOINT {
   bool m_CloseFigure;
 };
 
-class CFX_PathData {
+class CFX_PathData : public Retainable {
  public:
   CFX_PathData();
   CFX_PathData(const CFX_PathData& src);
-  ~CFX_PathData();
+  ~CFX_PathData() override;
 
   void Clear();
 

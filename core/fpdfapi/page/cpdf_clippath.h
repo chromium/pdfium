@@ -44,13 +44,13 @@ class CPDF_ClipPath {
   void Transform(const CFX_Matrix& matrix);
 
  private:
-  class PathData {
+  class PathData : public Retainable {
    public:
     using PathAndTypeData = std::pair<CPDF_Path, uint8_t>;
 
     PathData();
     PathData(const PathData& that);
-    ~PathData();
+    ~PathData() override;
 
     std::vector<PathAndTypeData> m_PathAndTypeList;
     std::vector<std::unique_ptr<CPDF_TextObject>> m_TextList;

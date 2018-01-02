@@ -30,11 +30,11 @@ class CPDF_ContentMark {
   bool HasRef() const { return !!m_Ref; }
 
  private:
-  class MarkData {
+  class MarkData : public Retainable {
    public:
     MarkData();
     MarkData(const MarkData& src);
-    ~MarkData();
+    ~MarkData() override;
 
     size_t CountItems() const;
     const CPDF_ContentMarkItem& GetItem(size_t index) const;

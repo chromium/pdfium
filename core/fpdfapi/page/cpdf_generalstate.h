@@ -77,11 +77,11 @@ class CPDF_GeneralState {
   CFX_Matrix* GetMutableMatrix();
 
  private:
-  class StateData {
+  class StateData : public Retainable {
    public:
     StateData();
     StateData(const StateData& that);
-    ~StateData();
+    ~StateData() override;
 
     ByteString m_BlendMode;
     int m_BlendType;
