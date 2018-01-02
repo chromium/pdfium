@@ -70,16 +70,9 @@ endobj
 {{object 21 0}} <<
 >>
 stream
-function gc() {
-  tmp = [];
-  for (var i = 0; i < 0x200000; i++)
-    tmp.push(new Uint8Array(10));
-  tmp = null;
-}
 this.getField("MyField2").setFocus();
 this.getField("MyField").borderStyle="dashed";
 this.getField("MyField").setFocus();
-gc();
 endstream
 endobj
 {{object 43 0}} <<
