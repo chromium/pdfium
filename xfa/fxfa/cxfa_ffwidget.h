@@ -63,7 +63,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
 FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType);
 char* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len);
 void XFA_RectWidthoutMargin(CFX_RectF& rt,
-                            const CXFA_MarginData& marginData,
+                            const CXFA_Margin* margin,
                             bool bUI = false);
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
 bool XFA_IsCreateWidget(XFA_Element iType);

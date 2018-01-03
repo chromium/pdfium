@@ -431,6 +431,14 @@ pdfium::Optional<CXFA_Measurement> CJX_Object::TryMeasure(
   return ToNode(GetXFAObject())->GetDefaultMeasurement(eAttr);
 }
 
+pdfium::Optional<float> CJX_Object::TryMeasureAsFloat(
+    XFA_Attribute attr) const {
+  pdfium::Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
+  if (measure)
+    return {measure->ToUnit(XFA_Unit::Pt)};
+  return {};
+}
+
 CXFA_Measurement CJX_Object::GetMeasure(XFA_Attribute eAttr) const {
   return TryMeasure(eAttr, true).value_or(CXFA_Measurement());
 }

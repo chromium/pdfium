@@ -31,6 +31,7 @@
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_cornerdata.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
@@ -989,9 +990,9 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CFX_RectF rtBorder = GetRectWithoutRotate();
-  CXFA_MarginData marginData = borderData.GetMarginData();
-  if (marginData.HasValidNode())
-    XFA_RectWidthoutMargin(rtBorder, marginData);
+  CXFA_Margin* margin = borderData.GetMargin();
+  if (margin)
+    XFA_RectWidthoutMargin(rtBorder, margin);
 
   rtBorder.Normalize();
   DrawBorder(pGS, borderData, rtBorder, matrix);
@@ -2016,13 +2017,13 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
 }
 
 void XFA_RectWidthoutMargin(CFX_RectF& rt,
-                            const CXFA_MarginData& marginData,
+                            const CXFA_Margin* margin,
                             bool bUI) {
-  if (!marginData.HasValidNode())
+  if (!margin)
     return;
 
-  rt.Deflate(marginData.GetLeftInset(), marginData.GetTopInset(),
-             marginData.GetRightInset(), marginData.GetBottomInset());
+  rt.Deflate(margin->GetLeftInset(), margin->GetTopInset(),
+             margin->GetRightInset(), margin->GetBottomInset());
 }
 
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {

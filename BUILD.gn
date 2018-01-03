@@ -2432,8 +2432,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_map.h",
       "xfa/fxfa/parser/cxfa_margin.cpp",
       "xfa/fxfa/parser/cxfa_margin.h",
-      "xfa/fxfa/parser/cxfa_margindata.cpp",
-      "xfa/fxfa/parser/cxfa_margindata.h",
       "xfa/fxfa/parser/cxfa_mdp.cpp",
       "xfa/fxfa/parser/cxfa_mdp.h",
       "xfa/fxfa/parser/cxfa_measurement.cpp",

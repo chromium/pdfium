@@ -14,8 +14,8 @@
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_edgedata.h"
 #include "xfa/fxfa/parser/cxfa_filldata.h"
-#include "xfa/fxfa/parser/cxfa_margindata.h"
 
+class CXFA_Margin;
 class CXFA_Node;
 
 class CXFA_BoxData : public CXFA_DataData {
@@ -32,7 +32,7 @@ class CXFA_BoxData : public CXFA_DataData {
   int32_t CountEdges() const;
   CXFA_EdgeData GetEdgeData(int32_t nIndex) const;
   CXFA_FillData GetFillData(bool bModified) const;
-  CXFA_MarginData GetMarginData() const;
+  CXFA_Margin* GetMargin() const;
 
   std::vector<CXFA_StrokeData> GetStrokes() const;
 

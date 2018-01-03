@@ -39,10 +39,9 @@ float CXFA_CaptionData::GetReserve() const {
       .ToUnit(XFA_Unit::Pt);
 }
 
-CXFA_MarginData CXFA_CaptionData::GetMarginData() const {
-  return CXFA_MarginData(
-      m_pNode ? m_pNode->GetChild<CXFA_Margin>(0, XFA_Element::Margin, false)
-              : nullptr);
+CXFA_Margin* CXFA_CaptionData::GetMargin() const {
+  return m_pNode ? m_pNode->GetChild<CXFA_Margin>(0, XFA_Element::Margin, false)
+                 : nullptr;
 }
 
 CXFA_FontData CXFA_CaptionData::GetFontData() const {

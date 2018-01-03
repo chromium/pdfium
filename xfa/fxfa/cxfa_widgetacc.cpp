@@ -25,6 +25,7 @@
 #include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
@@ -725,12 +726,12 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
     }
   }
 
-  CXFA_MarginData captionMarginData = captionData.GetMarginData();
-  if (captionMarginData.HasValidNode()) {
-    float fLeftInset = captionMarginData.GetLeftInset();
-    float fTopInset = captionMarginData.GetTopInset();
-    float fRightInset = captionMarginData.GetRightInset();
-    float fBottomInset = captionMarginData.GetBottomInset();
+  CXFA_Margin* captionMargin = captionData.GetMargin();
+  if (captionMargin) {
+    float fLeftInset = captionMargin->GetLeftInset();
+    float fTopInset = captionMargin->GetTopInset();
+    float fRightInset = captionMargin->GetRightInset();
+    float fBottomInset = captionMargin->GetBottomInset();
     if (bReserveExit) {
       bVert ? (szCap.width += fLeftInset + fRightInset)
             : (szCap.height += fTopInset + fBottomInset);
@@ -768,10 +769,10 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
 }
 
 bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
-  CXFA_MarginData marginData = GetMarginData();
-  if (marginData.HasValidNode()) {
-    size.width += marginData.GetLeftInset() + marginData.GetRightInset();
-    size.height += marginData.GetTopInset() + marginData.GetBottomInset();
+  CXFA_Margin* margin = GetMargin();
+  if (margin) {
+    size.width += margin->GetLeftInset() + margin->GetRightInset();
+    size.height += margin->GetTopInset() + margin->GetBottomInset();
   }
 
   CXFA_Para* para = GetPara();
@@ -860,9 +861,9 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     }
     CFX_RectF rtUIMargin = GetUIMargin();
     size.width -= rtUIMargin.left + rtUIMargin.width;
-    CXFA_MarginData marginData = GetMarginData();
-    if (marginData.HasValidNode())
-      size.width -= marginData.GetLeftInset() + marginData.GetRightInset();
+    CXFA_Margin* margin = GetMargin();
+    if (margin)
+      size.width -= margin->GetLeftInset() + margin->GetRightInset();
 
     CalculateTextContentSize(size);
     size.height += rtUIMargin.top + rtUIMargin.height;
@@ -1005,9 +1006,9 @@ void CXFA_WidgetAcc::LoadText() {
 }
 
 float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
-  CXFA_MarginData marginData = GetMarginData();
-  if (marginData.HasValidNode())
-    fWidthCalc += marginData.GetLeftInset() + marginData.GetRightInset();
+  CXFA_Margin* margin = GetMargin();
+  if (margin)
+    fWidthCalc += margin->GetLeftInset() + margin->GetRightInset();
 
   pdfium::Optional<float> min = TryMinWidth();
   if (min)
@@ -1021,16 +1022,16 @@ float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
 }
 
 float CXFA_WidgetAcc::GetWidthWithoutMargin(float fWidthCalc) {
-  CXFA_MarginData marginData = GetMarginData();
-  if (marginData.HasValidNode())
-    fWidthCalc -= marginData.GetLeftInset() + marginData.GetRightInset();
+  CXFA_Margin* margin = GetMargin();
+  if (margin)
+    fWidthCalc -= margin->GetLeftInset() + margin->GetRightInset();
   return fWidthCalc;
 }
 
 float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
-  CXFA_MarginData marginData = GetMarginData();
-  if (marginData.HasValidNode())
-    fHeightCalc += marginData.GetTopInset() + marginData.GetBottomInset();
+  CXFA_Margin* margin = GetMargin();
+  if (margin)
+    fHeightCalc += margin->GetTopInset() + margin->GetBottomInset();
 
   pdfium::Optional<float> min = TryMinHeight();
   if (min)
@@ -1044,9 +1045,9 @@ float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
 }
 
 float CXFA_WidgetAcc::GetHeightWithoutMargin(float fHeightCalc) {
-  CXFA_MarginData marginData = GetMarginData();
-  if (marginData.HasValidNode())
-    fHeightCalc -= marginData.GetTopInset() + marginData.GetBottomInset();
+  CXFA_Margin* margin = GetMargin();
+  if (margin)
+    fHeightCalc -= margin->GetTopInset() + margin->GetBottomInset();
   return fHeightCalc;
 }
 
@@ -1149,10 +1150,10 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   float fTopInset = 0;
   float fBottomInset = 0;
   if (iBlockIndex == 0) {
-    CXFA_MarginData marginData = GetMarginData();
-    if (marginData.HasValidNode()) {
-      fTopInset = marginData.GetTopInset();
-      fBottomInset = marginData.GetBottomInset();
+    CXFA_Margin* margin = GetMargin();
+    if (margin) {
+      fTopInset = margin->GetTopInset();
+      fBottomInset = margin->GetBottomInset();
     }
 
     CFX_RectF rtUIMargin = GetUIMargin();

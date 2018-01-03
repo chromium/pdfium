@@ -17,6 +17,7 @@
 #include "xfa/fxfa/cxfa_pieceline.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textpiece.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 CXFA_FFText::CXFA_FFText(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
@@ -40,21 +41,21 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtText = GetRectWithoutRotate();
-  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
-  if (marginData.HasValidNode()) {
+  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  if (margin) {
     CXFA_LayoutItem* pItem = this;
     if (!pItem->GetPrev() && !pItem->GetNext()) {
-      XFA_RectWidthoutMargin(rtText, marginData);
+      XFA_RectWidthoutMargin(rtText, margin);
     } else {
       float fTopInset = 0;
       float fBottomInset = 0;
       if (!pItem->GetPrev())
-        fTopInset = marginData.GetTopInset();
+        fTopInset = margin->GetTopInset();
       else if (!pItem->GetNext())
-        fBottomInset = marginData.GetBottomInset();
+        fBottomInset = margin->GetBottomInset();
 
-      rtText.Deflate(marginData.GetLeftInset(), fTopInset,
-                     marginData.GetRightInset(), fBottomInset);
+      rtText.Deflate(margin->GetLeftInset(), fTopInset, margin->GetRightInset(),
+                     fBottomInset);
     }
   }
 
@@ -85,12 +86,12 @@ bool CXFA_FFText::PerformLayout() {
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetRect(false);
-    CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
-    if (marginData.HasValidNode()) {
+    CXFA_Margin* margin = m_pDataAcc->GetMargin();
+    if (margin) {
       if (!pItem->GetPrev())
-        rtText.height -= marginData.GetTopInset();
+        rtText.height -= margin->GetTopInset();
       else if (!pItem->GetNext())
-        rtText.height -= marginData.GetBottomInset();
+        rtText.height -= margin->GetBottomInset();
     }
     pTextLayout->ItemBlocks(rtText, pItem->GetIndex());
     pItem = pItem->GetNext();

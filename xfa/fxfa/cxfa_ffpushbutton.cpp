@@ -97,15 +97,15 @@ bool CXFA_FFPushButton::PerformLayout() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
 
   m_rtUI = rtWidget;
-  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
-  if (marginData.HasValidNode())
-    XFA_RectWidthoutMargin(rtWidget, marginData);
+  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  if (margin)
+    XFA_RectWidthoutMargin(rtWidget, margin);
 
   CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
   m_rtCaption = rtWidget;
-  CXFA_MarginData captionMarginData = captionData.GetMarginData();
-  if (captionMarginData.HasValidNode())
-    XFA_RectWidthoutMargin(m_rtCaption, captionMarginData);
+  CXFA_Margin* captionMargin = captionData.GetMargin();
+  if (captionMargin)
+    XFA_RectWidthoutMargin(m_rtCaption, captionMargin);
 
   LayoutHighlightCaption();
   SetFWLRect();

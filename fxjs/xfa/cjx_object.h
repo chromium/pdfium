@@ -197,6 +197,7 @@ class CJX_Object {
 
   pdfium::Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
                                                 bool bUseDefault) const;
+  pdfium::Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
   bool SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
 

@@ -39,3 +39,35 @@ CXFA_Margin::CXFA_Margin(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Margin>(this)) {}
 
 CXFA_Margin::~CXFA_Margin() {}
+
+float CXFA_Margin::GetLeftInset() const {
+  return TryLeftInset().value_or(0);
+}
+
+float CXFA_Margin::GetTopInset() const {
+  return TryTopInset().value_or(0);
+}
+
+float CXFA_Margin::GetRightInset() const {
+  return TryRightInset().value_or(0);
+}
+
+float CXFA_Margin::GetBottomInset() const {
+  return TryBottomInset().value_or(0);
+}
+
+pdfium::Optional<float> CXFA_Margin::TryLeftInset() const {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::LeftInset);
+}
+
+pdfium::Optional<float> CXFA_Margin::TryTopInset() const {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::TopInset);
+}
+
+pdfium::Optional<float> CXFA_Margin::TryRightInset() const {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::RightInset);
+}
+
+pdfium::Optional<float> CXFA_Margin::TryBottomInset() const {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::BottomInset);
+}

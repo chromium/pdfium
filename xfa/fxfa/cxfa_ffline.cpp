@@ -109,9 +109,9 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
-  CXFA_MarginData marginData = m_pDataAcc->GetMarginData();
-  if (marginData.HasValidNode())
-    XFA_RectWidthoutMargin(rtLine, marginData);
+  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  if (margin)
+    XFA_RectWidthoutMargin(rtLine, margin);
 
   GetRectFromHand(rtLine, lineData.GetHand(), fLineWidth);
   CXFA_GEPath linePath;

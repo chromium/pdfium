@@ -275,9 +275,9 @@ CXFA_FontData CXFA_WidgetData::GetFontData(bool bModified) {
       0, XFA_Element::Font, bModified));
 }
 
-CXFA_MarginData CXFA_WidgetData::GetMarginData() {
-  return CXFA_MarginData(m_pNode->JSObject()->GetProperty<CXFA_Margin>(
-      0, XFA_Element::Margin, false));
+CXFA_Margin* CXFA_WidgetData::GetMargin() {
+  return m_pNode->JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin,
+                                                       false);
 }
 
 CXFA_Para* CXFA_WidgetData::GetPara() {
@@ -373,12 +373,13 @@ CXFA_BorderData CXFA_WidgetData::GetUIBorderData() {
 
 CFX_RectF CXFA_WidgetData::GetUIMargin() {
   CXFA_Node* pUIChild = GetUIChild();
-  CXFA_MarginData mgUI =
-      CXFA_MarginData(pUIChild ? pUIChild->JSObject()->GetProperty<CXFA_Margin>(
-                                     0, XFA_Element::Margin, false)
-                               : nullptr);
+  CXFA_Margin* mgUI = nullptr;
+  if (pUIChild) {
+    mgUI = pUIChild->JSObject()->GetProperty<CXFA_Margin>(
+        0, XFA_Element::Margin, false);
+  }
 
-  if (!mgUI.HasValidNode())
+  if (!mgUI)
     return CFX_RectF();
 
   CXFA_BorderData borderData = GetUIBorderData();
@@ -387,10 +388,10 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
     return CFX_RectF();
   }
 
-  pdfium::Optional<float> left = mgUI.TryLeftInset();
-  pdfium::Optional<float> top = mgUI.TryTopInset();
-  pdfium::Optional<float> right = mgUI.TryRightInset();
-  pdfium::Optional<float> bottom = mgUI.TryBottomInset();
+  pdfium::Optional<float> left = mgUI->TryLeftInset();
+  pdfium::Optional<float> top = mgUI->TryTopInset();
+  pdfium::Optional<float> right = mgUI->TryRightInset();
+  pdfium::Optional<float> bottom = mgUI->TryBottomInset();
   if (borderData.HasValidNode()) {
     bool bVisible = false;
     float fThickness = 0;
