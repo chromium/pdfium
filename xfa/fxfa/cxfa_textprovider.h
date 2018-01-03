@@ -10,9 +10,9 @@
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_widgetacc.h"
-#include "xfa/fxfa/parser/cxfa_fontdata.h"
 
 class CXFA_FFDoc;
+class CXFA_Font;
 class CXFA_Node;
 
 enum XFA_TEXTPROVIDERTYPE {
@@ -33,7 +33,7 @@ class CXFA_TextProvider {
 
   CXFA_Node* GetTextNode(bool& bRichText);
   CXFA_Para* GetPara();
-  CXFA_FontData GetFontData();
+  CXFA_Font* GetFont();
   bool IsCheckButtonAndAutoWidth();
   CXFA_FFDoc* GetDocNode() { return m_pWidgetAcc->GetDoc(); }
   bool GetEmbbedObj(bool bURI,

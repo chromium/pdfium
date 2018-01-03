@@ -25,6 +25,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_fill.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -1309,9 +1310,8 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_FontData fontData = widget_data_->GetFontData(true);
-  CXFA_Node* pNode = fontData.GetNode();
-  if (!pNode)
+  CXFA_Font* font = widget_data_->GetFont(true);
+  if (!font)
     return;
 
   if (bSetting) {
@@ -1320,7 +1320,7 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
     int32_t b;
     std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
-    fontData.SetColor(color);
+    font->SetColor(color);
     return;
   }
 
@@ -1328,7 +1328,7 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
   int32_t r;
   int32_t g;
   int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(fontData.GetColor());
+  std::tie(a, r, g, b) = ArgbDecode(font->GetColor());
   pValue->SetString(ByteString::Format("%d,%d,%d", r, g, b).AsStringView());
 }
 

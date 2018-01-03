@@ -23,6 +23,7 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
@@ -709,13 +710,13 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
   } else {
     float fFontSize = 10.0f;
-    CXFA_FontData fontData = caption->GetFontData();
-    if (fontData.HasValidNode()) {
-      fFontSize = fontData.GetFontSize();
+    CXFA_Font* font = caption->GetFont();
+    if (font) {
+      fFontSize = font->GetFontSize();
     } else {
-      CXFA_FontData widgetfontData = GetFontData(false);
-      if (widgetfontData.HasValidNode())
-        fFontSize = widgetfontData.GetFontSize();
+      CXFA_Font* widgetfont = GetFont(false);
+      if (widgetfont)
+        fFontSize = widgetfont->GetFontSize();
     }
 
     if (bVert) {
@@ -1483,14 +1484,14 @@ void CXFA_WidgetAcc::SetImageEditImage(
 RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
   WideString wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
-  CXFA_FontData fontData = GetFontData(false);
-  if (fontData.HasValidNode()) {
-    if (fontData.IsBold())
+  CXFA_Font* font = GetFont(false);
+  if (font) {
+    if (font->IsBold())
       dwFontStyle |= FXFONT_BOLD;
-    if (fontData.IsItalic())
+    if (font->IsItalic())
       dwFontStyle |= FXFONT_ITALIC;
 
-    wsFontName = fontData.GetTypeface();
+    wsFontName = font->GetTypeface();
   }
 
   auto* pDoc = GetDoc();
@@ -1499,8 +1500,8 @@ RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
 }
 
 float CXFA_WidgetAcc::GetFontSize() {
-  CXFA_FontData fontData = GetFontData(false);
-  float fFontSize = fontData.HasValidNode() ? fontData.GetFontSize() : 10.0f;
+  CXFA_Font* font = GetFont(false);
+  float fFontSize = font ? font->GetFontSize() : 10.0f;
   return fFontSize < 0.1f ? 10.0f : fFontSize;
 }
 
@@ -1515,6 +1516,6 @@ float CXFA_WidgetAcc::GetLineHeight() {
 }
 
 FX_ARGB CXFA_WidgetAcc::GetTextColor() {
-  CXFA_FontData fontData = GetFontData(false);
-  return fontData.HasValidNode() ? fontData.GetColor() : 0xFF000000;
+  CXFA_Font* font = GetFont(false);
+  return font ? font->GetColor() : 0xFF000000;
 }

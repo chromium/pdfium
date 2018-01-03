@@ -74,8 +74,8 @@ CXFA_Margin* CXFA_Caption::GetMargin() {
   return GetChild<CXFA_Margin>(0, XFA_Element::Margin, false);
 }
 
-CXFA_FontData CXFA_Caption::GetFontData() {
-  return CXFA_FontData(GetChild<CXFA_Font>(0, XFA_Element::Font, false));
+CXFA_Font* CXFA_Caption::GetFont() {
+  return GetChild<CXFA_Font>(0, XFA_Element::Font, false);
 }
 
 CXFA_Value* CXFA_Caption::GetValue() {

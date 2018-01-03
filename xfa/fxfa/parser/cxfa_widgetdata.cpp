@@ -272,9 +272,9 @@ CXFA_Caption* CXFA_WidgetData::GetCaption() {
                                                         false);
 }
 
-CXFA_FontData CXFA_WidgetData::GetFontData(bool bModified) {
-  return CXFA_FontData(m_pNode->JSObject()->GetProperty<CXFA_Font>(
-      0, XFA_Element::Font, bModified));
+CXFA_Font* CXFA_WidgetData::GetFont(bool bModified) {
+  return m_pNode->JSObject()->GetProperty<CXFA_Font>(0, XFA_Element::Font,
+                                                     bModified);
 }
 
 CXFA_Margin* CXFA_WidgetData::GetMargin() {

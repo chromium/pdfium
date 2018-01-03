@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_Library.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
-#include "xfa/fxfa/parser/cxfa_fontdata.h"
 
 enum XFA_CHECKSTATE {
   XFA_CHECKSTATE_On = 0,
@@ -34,6 +33,7 @@ class CXFA_Bind;
 class CXFA_Border;
 class CXFA_Calculate;
 class CXFA_Caption;
+class CXFA_Font;
 class CXFA_Margin;
 class CXFA_Node;
 class CXFA_Para;
@@ -61,7 +61,7 @@ class CXFA_WidgetData : public CXFA_DataData {
 
   CXFA_Border* GetBorder(bool bModified);
   CXFA_Caption* GetCaption();
-  CXFA_FontData GetFontData(bool bModified);
+  CXFA_Font* GetFont(bool bModified);
   CXFA_Margin* GetMargin();
   CXFA_Para* GetPara();
   CXFA_Value* GetDefaultValue();

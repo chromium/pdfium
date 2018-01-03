@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CXFA_CAPTION_H_
 #define XFA_FXFA_PARSER_CXFA_CAPTION_H_
 
-#include "xfa/fxfa/parser/cxfa_fontdata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+class CXFA_Font;
 class CXFA_Margin;
 class CXFA_Value;
 
@@ -23,7 +23,7 @@ class CXFA_Caption : public CXFA_Node {
   XFA_AttributeEnum GetPlacementType();
   float GetReserve() const;
   CXFA_Margin* GetMargin();
-  CXFA_FontData GetFontData();
+  CXFA_Font* GetFont();
   CXFA_Value* GetValue();
 };
 

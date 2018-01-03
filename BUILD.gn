@@ -2329,8 +2329,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_float.h",
       "xfa/fxfa/parser/cxfa_font.cpp",
       "xfa/fxfa/parser/cxfa_font.h",
-      "xfa/fxfa/parser/cxfa_fontdata.cpp",
-      "xfa/fxfa/parser/cxfa_fontdata.h",
       "xfa/fxfa/parser/cxfa_fontinfo.cpp",
       "xfa/fxfa/parser/cxfa_fontinfo.h",
       "xfa/fxfa/parser/cxfa_form.cpp",

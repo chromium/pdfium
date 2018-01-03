@@ -27,7 +27,7 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/cxfa_texttabstopscontext.h"
 #include "xfa/fxfa/cxfa_textuserdata.h"
-#include "xfa/fxfa/parser/cxfa_fontdata.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
@@ -148,13 +148,12 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
   m_pBreak->SetLineBoundary(fStart, fLineWidth);
   m_pBreak->SetLineStartPos(fStartPos);
 
-  CXFA_FontData fontData = m_pTextProvider->GetFontData();
-  if (fontData.HasValidNode()) {
+  CXFA_Font* font = m_pTextProvider->GetFont();
+  if (font) {
     m_pBreak->SetHorizontalScale(
-        static_cast<int32_t>(fontData.GetHorizontalScale()));
-    m_pBreak->SetVerticalScale(
-        static_cast<int32_t>(fontData.GetVerticalScale()));
-    m_pBreak->SetCharSpace(fontData.GetLetterSpacing());
+        static_cast<int32_t>(font->GetHorizontalScale()));
+    m_pBreak->SetVerticalScale(static_cast<int32_t>(font->GetVerticalScale()));
+    m_pBreak->SetCharSpace(font->GetLetterSpacing());
   }
 
   float fFontSize = m_textParser.GetFontSize(m_pTextProvider, nullptr);

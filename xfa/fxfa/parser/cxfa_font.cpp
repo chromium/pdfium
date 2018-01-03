@@ -8,6 +8,8 @@
 
 #include "fxjs/xfa/cjx_font.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_fill.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
 
 namespace {
 
@@ -63,3 +65,71 @@ CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_PacketType packet)
           pdfium::MakeUnique<CJX_Font>(this)) {}
 
 CXFA_Font::~CXFA_Font() {}
+
+float CXFA_Font::GetBaselineShift() const {
+  return JSObject()
+      ->GetMeasure(XFA_Attribute::BaselineShift)
+      .ToUnit(XFA_Unit::Pt);
+}
+
+float CXFA_Font::GetHorizontalScale() {
+  WideString wsValue = JSObject()->GetCData(XFA_Attribute::FontHorizontalScale);
+  int32_t iScale = FXSYS_wtoi(wsValue.c_str());
+  return iScale > 0 ? (float)iScale : 100.0f;
+}
+
+float CXFA_Font::GetVerticalScale() {
+  WideString wsValue = JSObject()->GetCData(XFA_Attribute::FontVerticalScale);
+  int32_t iScale = FXSYS_wtoi(wsValue.c_str());
+  return iScale > 0 ? (float)iScale : 100.0f;
+}
+
+float CXFA_Font::GetLetterSpacing() {
+  WideString wsValue = JSObject()->GetCData(XFA_Attribute::LetterSpacing);
+  CXFA_Measurement ms(wsValue.AsStringView());
+  if (ms.GetUnit() == XFA_Unit::Em)
+    return ms.GetValue() * GetFontSize();
+  return ms.ToUnit(XFA_Unit::Pt);
+}
+
+int32_t CXFA_Font::GetLineThrough() {
+  return JSObject()->GetInteger(XFA_Attribute::LineThrough);
+}
+
+int32_t CXFA_Font::GetUnderline() {
+  return JSObject()->GetInteger(XFA_Attribute::Underline);
+}
+
+XFA_AttributeEnum CXFA_Font::GetUnderlinePeriod() {
+  return JSObject()
+      ->TryEnum(XFA_Attribute::UnderlinePeriod, true)
+      .value_or(XFA_AttributeEnum::All);
+}
+
+float CXFA_Font::GetFontSize() const {
+  return JSObject()->GetMeasure(XFA_Attribute::Size).ToUnit(XFA_Unit::Pt);
+}
+
+WideString CXFA_Font::GetTypeface() {
+  return JSObject()->GetCData(XFA_Attribute::Typeface);
+}
+
+bool CXFA_Font::IsBold() {
+  return JSObject()->GetEnum(XFA_Attribute::Weight) == XFA_AttributeEnum::Bold;
+}
+
+bool CXFA_Font::IsItalic() {
+  return JSObject()->GetEnum(XFA_Attribute::Posture) ==
+         XFA_AttributeEnum::Italic;
+}
+
+void CXFA_Font::SetColor(FX_ARGB color) {
+  JSObject()
+      ->GetProperty<CXFA_Fill>(0, XFA_Element::Fill, true)
+      ->SetColor(color);
+}
+
+FX_ARGB CXFA_Font::GetColor() {
+  CXFA_Fill* fill = GetChild<CXFA_Fill>(0, XFA_Element::Fill, false);
+  return fill ? fill->GetColor(true) : 0xFF000000;
+}
