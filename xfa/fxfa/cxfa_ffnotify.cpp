@@ -37,6 +37,7 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
+#include "xfa/fxfa/parser/cxfa_binditems.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 namespace {
@@ -346,7 +347,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   }
   switch (eType) {
     case XFA_Element::BindItems:
-      pDocView->m_BindItems.push_back(pNode);
+      pDocView->AddBindItem(static_cast<CXFA_BindItems*>(pNode));
       break;
     case XFA_Element::Validate:
       pNode->SetFlag(XFA_NodeFlag_NeedsInitApp, false);

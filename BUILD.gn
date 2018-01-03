@@ -2117,8 +2117,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_bind.h",
       "xfa/fxfa/parser/cxfa_binditems.cpp",
       "xfa/fxfa/parser/cxfa_binditems.h",
-      "xfa/fxfa/parser/cxfa_binditemsdata.cpp",
-      "xfa/fxfa/parser/cxfa_binditemsdata.h",
       "xfa/fxfa/parser/cxfa_bookend.cpp",
       "xfa/fxfa/parser/cxfa_bookend.h",
       "xfa/fxfa/parser/cxfa_boolean.cpp",

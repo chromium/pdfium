@@ -13,6 +13,10 @@ class CXFA_BindItems : public CXFA_Node {
  public:
   CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_BindItems() override;
+
+  WideString GetLabelRef();
+  WideString GetValueRef();
+  WideString GetRef();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BINDITEMS_H_

@@ -15,6 +15,7 @@
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
+class CXFA_BindItems;
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;
@@ -102,14 +103,15 @@ class CXFA_FFDocView {
                                        bool bIsFormReady,
                                        bool bRecursive,
                                        CXFA_Node* pExclude);
+
+  void AddBindItem(CXFA_BindItems* item) { m_BindItems.push_back(item); }
+
   bool m_bLayoutEvent;
   std::vector<WideString> m_arrNullTestMsg;
   CXFA_FFWidget* m_pListFocusWidget;
   bool m_bInLayoutStatus;
 
  private:
-  friend class CXFA_FFNotify;
-
   bool RunEventLayoutReady();
   void RunBindItems();
   void InitCalculate(CXFA_Node* pNode);
@@ -128,7 +130,7 @@ class CXFA_FFDocView {
   std::map<CXFA_FFPageView*, std::unique_ptr<CFX_RectF>> m_mapPageInvalidate;
   std::vector<CXFA_WidgetAcc*> m_ValidateAccs;
   std::vector<CXFA_WidgetAcc*> m_CalculateAccs;
-  std::vector<CXFA_Node*> m_BindItems;
+  std::vector<CXFA_BindItems*> m_BindItems;
   std::vector<CXFA_Node*> m_NewAddedNodes;
   std::vector<CXFA_Node*> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus;

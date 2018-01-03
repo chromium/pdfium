@@ -34,3 +34,15 @@ CXFA_BindItems::CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_BindItems>(this)) {}
 
 CXFA_BindItems::~CXFA_BindItems() {}
+
+WideString CXFA_BindItems::GetLabelRef() {
+  return JSObject()->GetCData(XFA_Attribute::LabelRef);
+}
+
+WideString CXFA_BindItems::GetValueRef() {
+  return JSObject()->GetCData(XFA_Attribute::ValueRef);
+}
+
+WideString CXFA_BindItems::GetRef() {
+  return JSObject()->GetCData(XFA_Attribute::Ref);
+}
