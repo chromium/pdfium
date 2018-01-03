@@ -14,7 +14,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_Library.h"
-#include "xfa/fxfa/parser/cxfa_binddata.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 
@@ -31,6 +30,7 @@ enum XFA_VALUEPICTURE {
   XFA_VALUEPICTURE_DataBind,
 };
 
+class CXFA_Bind;
 class CXFA_Border;
 class CXFA_Calculate;
 class CXFA_Caption;
@@ -174,7 +174,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   void SetIsNull(bool val) { m_bIsNull = val; }
 
  private:
-  CXFA_BindData GetBindData();
+  CXFA_Bind* GetBind();
   void SyncValue(const WideString& wsValue, bool bNotify);
   void InsertListTextItem(CXFA_Node* pItems,
                           const WideString& wsText,

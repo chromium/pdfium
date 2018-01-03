@@ -2115,8 +2115,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_behavioroverride.h",
       "xfa/fxfa/parser/cxfa_bind.cpp",
       "xfa/fxfa/parser/cxfa_bind.h",
-      "xfa/fxfa/parser/cxfa_binddata.cpp",
-      "xfa/fxfa/parser/cxfa_binddata.h",
       "xfa/fxfa/parser/cxfa_binditems.cpp",
       "xfa/fxfa/parser/cxfa_binditems.h",
       "xfa/fxfa/parser/cxfa_binditemsdata.cpp",

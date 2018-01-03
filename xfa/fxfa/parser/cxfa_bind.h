@@ -13,6 +13,8 @@ class CXFA_Bind : public CXFA_Node {
  public:
   CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Bind() override;
+
+  WideString GetPicture();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BIND_H_

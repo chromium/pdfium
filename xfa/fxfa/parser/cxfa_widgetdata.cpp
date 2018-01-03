@@ -336,9 +336,9 @@ CXFA_Validate* CXFA_WidgetData::GetValidate(bool bModified) {
       0, XFA_Element::Validate, bModified);
 }
 
-CXFA_BindData CXFA_WidgetData::GetBindData() {
-  return CXFA_BindData(
-      m_pNode->JSObject()->GetProperty<CXFA_Bind>(0, XFA_Element::Bind, false));
+CXFA_Bind* CXFA_WidgetData::GetBind() {
+  return m_pNode->JSObject()->GetProperty<CXFA_Bind>(0, XFA_Element::Bind,
+                                                     false);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryWidth() {
@@ -1489,9 +1489,9 @@ WideString CXFA_WidgetData::GetPictureContent(XFA_VALUEPICTURE ePicture) {
       }
     }
     case XFA_VALUEPICTURE_DataBind: {
-      CXFA_BindData bindData = GetBindData();
-      if (bindData.HasValidNode())
-        return bindData.GetPicture();
+      CXFA_Bind* bind = GetBind();
+      if (bind)
+        return bind->GetPicture();
       break;
     }
     default:

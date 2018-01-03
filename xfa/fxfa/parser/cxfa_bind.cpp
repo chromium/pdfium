@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_bind.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_picture.h"
 
 namespace {
 
@@ -43,3 +44,9 @@ CXFA_Bind::CXFA_Bind(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Bind>(this)) {}
 
 CXFA_Bind::~CXFA_Bind() {}
+
+WideString CXFA_Bind::GetPicture() {
+  CXFA_Picture* pPicture =
+      GetChild<CXFA_Picture>(0, XFA_Element::Picture, false);
+  return pPicture ? pPicture->JSObject()->GetContent(false) : L"";
+}
