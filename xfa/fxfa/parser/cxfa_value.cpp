@@ -8,6 +8,8 @@
 
 #include "fxjs/xfa/cjx_value.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_arc.h"
+#include "xfa/fxfa/parser/cxfa_rectangle.h"
 
 namespace {
 
@@ -63,16 +65,16 @@ WideString CXFA_Value::GetChildValueContent() const {
   return pNode->JSObject()->TryContent(false, true).value_or(L"");
 }
 
-CXFA_ArcData CXFA_Value::GetArcData() const {
-  return CXFA_ArcData(GetNodeItem(XFA_NODEITEM_FirstChild));
+CXFA_Arc* CXFA_Value::GetArc() const {
+  return static_cast<CXFA_Arc*>(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
 CXFA_LineData CXFA_Value::GetLineData() const {
   return CXFA_LineData(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
-CXFA_RectangleData CXFA_Value::GetRectangleData() const {
-  return CXFA_RectangleData(GetNodeItem(XFA_NODEITEM_FirstChild));
+CXFA_Rectangle* CXFA_Value::GetRectangle() const {
+  return static_cast<CXFA_Rectangle*>(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
 CXFA_Text* CXFA_Value::GetText() const {

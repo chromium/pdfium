@@ -260,9 +260,9 @@ int32_t CXFA_WidgetData::GetRotate() const {
   return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
 }
 
-CXFA_BorderData CXFA_WidgetData::GetBorderData(bool bModified) {
-  return CXFA_BorderData(m_pNode->JSObject()->GetProperty<CXFA_Border>(
-      0, XFA_Element::Border, bModified));
+CXFA_Border* CXFA_WidgetData::GetBorder(bool bModified) {
+  return m_pNode->JSObject()->GetProperty<CXFA_Border>(0, XFA_Element::Border,
+                                                       bModified);
 }
 
 CXFA_CaptionData CXFA_WidgetData::GetCaptionData() {
@@ -363,12 +363,11 @@ pdfium::Optional<float> CXFA_WidgetData::TryMaxHeight() {
   return TryMeasureAsFloat(XFA_Attribute::MaxH);
 }
 
-CXFA_BorderData CXFA_WidgetData::GetUIBorderData() {
+CXFA_Border* CXFA_WidgetData::GetUIBorder() {
   CXFA_Node* pUIChild = GetUIChild();
-  return CXFA_BorderData(pUIChild
-                             ? pUIChild->JSObject()->GetProperty<CXFA_Border>(
-                                   0, XFA_Element::Border, false)
-                             : nullptr);
+  return pUIChild ? pUIChild->JSObject()->GetProperty<CXFA_Border>(
+                        0, XFA_Element::Border, false)
+                  : nullptr;
 }
 
 CFX_RectF CXFA_WidgetData::GetUIMargin() {
@@ -382,23 +381,21 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
   if (!mgUI)
     return CFX_RectF();
 
-  CXFA_BorderData borderData = GetUIBorderData();
-  if (borderData.HasValidNode() &&
-      borderData.GetPresence() != XFA_AttributeEnum::Visible) {
+  CXFA_Border* border = GetUIBorder();
+  if (border && border->GetPresence() != XFA_AttributeEnum::Visible)
     return CFX_RectF();
-  }
 
   pdfium::Optional<float> left = mgUI->TryLeftInset();
   pdfium::Optional<float> top = mgUI->TryTopInset();
   pdfium::Optional<float> right = mgUI->TryRightInset();
   pdfium::Optional<float> bottom = mgUI->TryBottomInset();
-  if (borderData.HasValidNode()) {
+  if (border) {
     bool bVisible = false;
     float fThickness = 0;
     XFA_AttributeEnum iType = XFA_AttributeEnum::Unknown;
-    std::tie(iType, bVisible, fThickness) = borderData.Get3DStyle();
+    std::tie(iType, bVisible, fThickness) = border->Get3DStyle();
     if (!left || !top || !right || !bottom) {
-      std::vector<CXFA_StrokeData> strokes = borderData.GetStrokes();
+      std::vector<CXFA_StrokeData> strokes = border->GetStrokes();
       if (!top)
         top = GetEdgeThickness(strokes, bVisible, 0);
       if (!right)

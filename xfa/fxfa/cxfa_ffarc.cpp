@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffarc.h"
 
+#include "xfa/fxfa/parser/cxfa_arc.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
 CXFA_FFArc::CXFA_FFArc(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
@@ -30,5 +31,5 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, value->GetArcData(), rtArc, mtRotate);
+  DrawBorder(pGS, value->GetArc(), rtArc, mtRotate);
 }

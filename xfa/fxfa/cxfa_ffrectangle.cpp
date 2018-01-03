@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffrectangle.h"
 
+#include "xfa/fxfa/parser/cxfa_rectangle.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
 CXFA_FFRectangle::CXFA_FFRectangle(CXFA_WidgetAcc* pDataAcc)
@@ -31,5 +32,5 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, value->GetRectangleData(), rect, mtRotate);
+  DrawBorder(pGS, value->GetRectangle(), rect, mtRotate);
 }

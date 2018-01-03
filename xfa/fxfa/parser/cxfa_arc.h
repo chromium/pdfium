@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CXFA_ARC_H_
 #define XFA_FXFA_PARSER_CXFA_ARC_H_
 
-#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_box.h"
 
-class CXFA_Arc : public CXFA_Node {
+class CXFA_Arc : public CXFA_Box {
  public:
   CXFA_Arc(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Arc() override;

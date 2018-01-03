@@ -33,14 +33,14 @@ constexpr wchar_t kName[] = L"border";
 }  // namespace
 
 CXFA_Border::CXFA_Border(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(doc,
-                packet,
-                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
-                XFA_ObjectType::Node,
-                XFA_Element::Border,
-                kPropertyData,
-                kAttributeData,
-                kName,
-                pdfium::MakeUnique<CJX_Border>(this)) {}
+    : CXFA_Box(doc,
+               packet,
+               (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+               XFA_ObjectType::Node,
+               XFA_Element::Border,
+               kPropertyData,
+               kAttributeData,
+               kName,
+               pdfium::MakeUnique<CJX_Border>(this)) {}
 
 CXFA_Border::~CXFA_Border() {}

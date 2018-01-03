@@ -30,14 +30,14 @@ constexpr wchar_t kName[] = L"arc";
 }  // namespace
 
 CXFA_Arc::CXFA_Arc(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(doc,
-                packet,
-                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
-                XFA_ObjectType::Node,
-                XFA_Element::Arc,
-                kPropertyData,
-                kAttributeData,
-                kName,
-                pdfium::MakeUnique<CJX_Arc>(this)) {}
+    : CXFA_Box(doc,
+               packet,
+               (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+               XFA_ObjectType::Node,
+               XFA_Element::Arc,
+               kPropertyData,
+               kAttributeData,
+               kName,
+               pdfium::MakeUnique<CJX_Arc>(this)) {}
 
 CXFA_Arc::~CXFA_Arc() {}

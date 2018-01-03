@@ -19,6 +19,7 @@
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
 CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_WidgetAcc* pDataAcc)
@@ -171,9 +172,9 @@ bool CXFA_FFCheckButton::PerformLayout() {
   m_rtUI.height = fCheckSize;
   AddUIMargin(iCapPlacement);
   m_rtCheckBox = m_rtUI;
-  CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
-  if (borderUIData.HasValidNode()) {
-    CXFA_Margin* borderMargin = borderUIData.GetMargin();
+  CXFA_Border* borderUI = m_pDataAcc->GetUIBorder();
+  if (borderUI) {
+    CXFA_Margin* borderMargin = borderUI->GetMargin();
     if (borderMargin)
       XFA_RectWidthoutMargin(m_rtUI, borderMargin);
   }
@@ -233,7 +234,7 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   DrawBorderWithFlags(
-      pGS, m_pDataAcc->GetUIBorderData(), m_rtUI, mtRotate,
+      pGS, m_pDataAcc->GetUIBorder(), m_rtUI, mtRotate,
       m_pDataAcc->IsCheckButtonRound() ? XFA_DRAWBOX_ForceRound : 0);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, m_pDataAcc->IsCheckButtonRound());

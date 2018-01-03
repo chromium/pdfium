@@ -22,6 +22,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwltheme.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -68,7 +69,7 @@ void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorder(pGS, m_pDataAcc->GetUIBorderData(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pDataAcc->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
 
@@ -264,9 +265,9 @@ void CXFA_FFField::CapPlacement() {
       break;
   }
 
-  CXFA_BorderData borderUIData = m_pDataAcc->GetUIBorderData();
-  if (borderUIData.HasValidNode()) {
-    CXFA_Margin* borderMargin = borderUIData.GetMargin();
+  CXFA_Border* borderUI = m_pDataAcc->GetUIBorder();
+  if (borderUI) {
+    CXFA_Margin* borderMargin = borderUI->GetMargin();
     if (borderMargin)
       XFA_RectWidthoutMargin(m_rtUI, borderMargin);
   }

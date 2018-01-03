@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_Library.h"
 #include "xfa/fxfa/parser/cxfa_binddata.h"
-#include "xfa/fxfa/parser/cxfa_borderdata.h"
 #include "xfa/fxfa/parser/cxfa_captiondata.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
@@ -33,6 +32,7 @@ enum XFA_VALUEPICTURE {
   XFA_VALUEPICTURE_DataBind,
 };
 
+class CXFA_Border;
 class CXFA_Calculate;
 class CXFA_Margin;
 class CXFA_Node;
@@ -58,7 +58,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   bool IsChoiceListAllowTextEntry();
   bool IsMultiLine();
 
-  CXFA_BorderData GetBorderData(bool bModified);
+  CXFA_Border* GetBorder(bool bModified);
   CXFA_CaptionData GetCaptionData();
   CXFA_FontData GetFontData(bool bModified);
   CXFA_Margin* GetMargin();
@@ -67,7 +67,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_Value* GetFormValue();
   CXFA_Calculate* GetCalculate();
   CXFA_Validate* GetValidate(bool bModified);
-  CXFA_BorderData GetUIBorderData();
+  CXFA_Border* GetUIBorder();
 
   std::vector<CXFA_Node*> GetEventByActivity(XFA_AttributeEnum iActivity,
                                              bool bIsFormReady);

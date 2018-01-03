@@ -8,14 +8,15 @@
 #define XFA_FXFA_PARSER_CXFA_VALUE_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fxfa/parser/cxfa_arcdata.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_exdatadata.h"
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
 #include "xfa/fxfa/parser/cxfa_linedata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_rectangledata.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
+
+class CXFA_Arc;
+class CXFA_Rectangle;
 
 class CXFA_Value : public CXFA_Node {
  public:
@@ -24,9 +25,9 @@ class CXFA_Value : public CXFA_Node {
 
   XFA_Element GetChildValueClassID() const;
   WideString GetChildValueContent() const;
-  CXFA_ArcData GetArcData() const;
+  CXFA_Arc* GetArc() const;
   CXFA_LineData GetLineData() const;
-  CXFA_RectangleData GetRectangleData() const;
+  CXFA_Rectangle* GetRectangle() const;
   CXFA_Text* GetText() const;
   CXFA_ExDataData GetExData() const;
   CXFA_ImageData GetImageData() const;

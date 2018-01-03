@@ -18,6 +18,7 @@
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
@@ -63,7 +64,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorder(pGS, m_pDataAcc->GetUIBorderData(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pDataAcc->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDataAcc->GetImageEditImage();
   if (!pDIBitmap)

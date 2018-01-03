@@ -18,6 +18,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
@@ -115,12 +116,9 @@ bool CXFA_FFPushButton::PerformLayout() {
   return true;
 }
 float CXFA_FFPushButton::GetLineWidth() {
-  CXFA_BorderData borderData = m_pDataAcc->GetBorderData(false);
-  if (borderData.HasValidNode() &&
-      borderData.GetPresence() == XFA_AttributeEnum::Visible) {
-    return borderData.GetEdgeData(0).GetThickness();
-  }
-
+  CXFA_Border* border = m_pDataAcc->GetBorder(false);
+  if (border && border->GetPresence() == XFA_AttributeEnum::Visible)
+    return border->GetEdgeData(0).GetThickness();
   return 0;
 }
 

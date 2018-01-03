@@ -17,6 +17,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
 
 namespace {
 
@@ -145,7 +146,7 @@ void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorder(pGS, m_pDataAcc->GetUIBorderData(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pDataAcc->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
 

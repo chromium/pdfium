@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CXFA_RECTANGLE_H_
 #define XFA_FXFA_PARSER_CXFA_RECTANGLE_H_
 
-#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_box.h"
 
-class CXFA_Rectangle : public CXFA_Node {
+class CXFA_Rectangle : public CXFA_Box {
  public:
   CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Rectangle() override;

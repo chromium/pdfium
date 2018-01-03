@@ -14,7 +14,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxfa/parser/cxfa_boxdata.h"
 #include "xfa/fxfa/parser/cxfa_eventdata.h"
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"

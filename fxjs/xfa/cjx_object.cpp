@@ -21,7 +21,9 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_filldata.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -1335,8 +1337,8 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_BorderData borderData = widget_data_->GetBorderData(true);
-  CXFA_FillData borderfillData = borderData.GetFillData(true);
+  CXFA_Border* border = widget_data_->GetBorder(true);
+  CXFA_FillData borderfillData = border->GetFillData(true);
   CXFA_Node* pNode = borderfillData.GetNode();
   if (!pNode)
     return;
@@ -1367,8 +1369,8 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_BorderData borderData = widget_data_->GetBorderData(true);
-  int32_t iSize = borderData.CountEdges();
+  CXFA_Border* border = widget_data_->GetBorder(true);
+  int32_t iSize = border->CountEdges();
   if (bSetting) {
     int32_t r = 0;
     int32_t g = 0;
@@ -1376,12 +1378,12 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
     std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
     FX_ARGB rgb = ArgbEncode(100, r, g, b);
     for (int32_t i = 0; i < iSize; ++i)
-      borderData.GetEdgeData(i).SetColor(rgb);
+      border->GetEdgeData(i).SetColor(rgb);
 
     return;
   }
 
-  FX_ARGB color = borderData.GetEdgeData(0).GetColor();
+  FX_ARGB color = border->GetEdgeData(0).GetColor();
   int32_t a;
   int32_t r;
   int32_t g;
@@ -1397,16 +1399,16 @@ void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_BorderData borderData = widget_data_->GetBorderData(true);
+  CXFA_Border* border = widget_data_->GetBorder(true);
   if (bSetting) {
-    CXFA_Measurement thickness = borderData.GetEdgeData(0).GetMSThickness();
+    CXFA_Measurement thickness = border->GetEdgeData(0).GetMSThickness();
     pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
     return;
   }
 
   WideString wsThickness = pValue->ToWideString();
-  for (int32_t i = 0; i < borderData.CountEdges(); ++i) {
-    borderData.GetEdgeData(i).SetMSThickness(
+  for (int32_t i = 0; i < border->CountEdges(); ++i) {
+    border->GetEdgeData(i).SetMSThickness(
         CXFA_Measurement(wsThickness.AsStringView()));
   }
 }

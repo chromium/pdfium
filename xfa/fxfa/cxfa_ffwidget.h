@@ -15,6 +15,7 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 
+class CXFA_Box;
 class CXFA_FFPageView;
 class CXFA_FFDocView;
 class CXFA_FFDoc;
@@ -164,11 +165,11 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual bool PtInActiveRect(const CFX_PointF& point);
 
   void DrawBorder(CXFA_Graphics* pGS,
-                  const CXFA_BoxData& boxData,
+                  CXFA_Box* box,
                   const CFX_RectF& rtBorder,
                   const CFX_Matrix& matrix);
   void DrawBorderWithFlags(CXFA_Graphics* pGS,
-                           const CXFA_BoxData& boxData,
+                           CXFA_Box* box,
                            const CFX_RectF& rtBorder,
                            const CFX_Matrix& matrix,
                            uint32_t dwFlags);

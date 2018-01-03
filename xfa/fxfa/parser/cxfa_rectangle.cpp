@@ -28,14 +28,14 @@ constexpr wchar_t kName[] = L"rectangle";
 }  // namespace
 
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(doc,
-                packet,
-                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
-                XFA_ObjectType::Node,
-                XFA_Element::Rectangle,
-                kPropertyData,
-                kAttributeData,
-                kName,
-                pdfium::MakeUnique<CJX_Rectangle>(this)) {}
+    : CXFA_Box(doc,
+               packet,
+               (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+               XFA_ObjectType::Node,
+               XFA_Element::Rectangle,
+               kPropertyData,
+               kAttributeData,
+               kName,
+               pdfium::MakeUnique<CJX_Rectangle>(this)) {}
 
 CXFA_Rectangle::~CXFA_Rectangle() {}
