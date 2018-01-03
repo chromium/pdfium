@@ -167,9 +167,6 @@ class EmbedderTest : public ::testing::Test,
   FPDF_FORMHANDLE form_handle_;
   FPDF_AVAIL avail_;
   FPDF_FILEACCESS file_access_;  // must outlive avail_.
-#ifdef PDF_ENABLE_V8
-  v8::Platform* platform_;
-#endif  // PDF_ENABLE_V8
   void* external_isolate_;
   TestLoader* loader_;
   size_t file_length_;

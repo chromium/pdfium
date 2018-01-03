@@ -28,15 +28,6 @@
 
 namespace {
 
-const char* g_exe_path = nullptr;
-
-#ifdef PDF_ENABLE_V8
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-v8::StartupData* g_v8_natives = nullptr;
-v8::StartupData* g_v8_snapshot = nullptr;
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // PDF_ENABLE_V8
-
 int GetBitmapBytesPerPixel(FPDF_BITMAP bitmap) {
   const int format = FPDFBitmap_GetFormat(bitmap);
   switch (format) {
@@ -67,31 +58,11 @@ EmbedderTest::EmbedderTest()
   memset(&file_access_, 0, sizeof(file_access_));
   delegate_ = default_delegate_.get();
 
-#ifdef PDF_ENABLE_V8
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  if (g_v8_natives && g_v8_snapshot) {
-    InitializeV8ForPDFium(g_exe_path, std::string(), nullptr, nullptr,
-                          &platform_);
-  } else {
-    g_v8_natives = new v8::StartupData;
-    g_v8_snapshot = new v8::StartupData;
-    InitializeV8ForPDFium(g_exe_path, std::string(), g_v8_natives,
-                          g_v8_snapshot, &platform_);
-  }
-#else
-  InitializeV8ForPDFium(g_exe_path, &platform_);
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // FPDF_ENABLE_V8
   FPDF_FILEWRITE::version = 1;
   FPDF_FILEWRITE::WriteBlock = WriteBlockCallback;
 }
 
-EmbedderTest::~EmbedderTest() {
-#ifdef PDF_ENABLE_V8
-  v8::V8::ShutdownPlatform();
-  delete platform_;
-#endif  // PDF_ENABLE_V8
-}
+EmbedderTest::~EmbedderTest() {}
 
 void EmbedderTest::SetUp() {
   FPDF_LIBRARY_CONFIG config;
@@ -498,24 +469,4 @@ int EmbedderTest::GetBlockFromString(void* param,
 
   memcpy(buf, new_file->data() + pos, size);
   return 1;
-}
-
-// Can't use gtest-provided main since we need to stash the path to the
-// executable in order to find the external V8 binary data files.
-int main(int argc, char** argv) {
-  g_exe_path = argv[0];
-  testing::InitGoogleTest(&argc, argv);
-  testing::InitGoogleMock(&argc, argv);
-  int ret_val = RUN_ALL_TESTS();
-
-#ifdef PDF_ENABLE_V8
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  if (g_v8_natives)
-    free(const_cast<char*>(g_v8_natives->data));
-  if (g_v8_snapshot)
-    free(const_cast<char*>(g_v8_snapshot->data));
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
-#endif  // PDF_ENABLE_V8
-
-  return ret_val;
 }

@@ -2913,6 +2913,7 @@ test("pdfium_embeddertests") {
     "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
     "testing/embedder_test.cpp",
     "testing/embedder_test.h",
+    "testing/embedder_test_main.cpp",
     "testing/embedder_test_mock_delegate.h",
     "testing/embedder_test_timer_handling_delegate.h",
     "testing/fake_file_access.cpp",
