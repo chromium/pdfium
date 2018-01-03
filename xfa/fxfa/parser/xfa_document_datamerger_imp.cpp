@@ -19,6 +19,7 @@
 #include "xfa/fxfa/parser/cxfa_datagroup.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_form.h"
+#include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -137,14 +138,13 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     WideString wsValue;
     switch (eUIType) {
       case XFA_Element::ImageEdit: {
-        CXFA_ImageData imageData =
-            defValue ? defValue->GetImageData() : CXFA_ImageData(nullptr);
+        CXFA_Image* image = defValue ? defValue->GetImage() : nullptr;
         WideString wsContentType;
         WideString wsHref;
-        if (imageData.HasValidNode()) {
-          wsValue = imageData.GetContent();
-          wsContentType = imageData.GetContentType();
-          wsHref = imageData.GetHref();
+        if (image) {
+          wsValue = image->GetContent();
+          wsContentType = image->GetContentType();
+          wsHref = image->GetHref();
         }
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
@@ -290,9 +290,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     case XFA_Element::ImageEdit: {
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                     XFA_Element::Image);
-      CXFA_ImageData imageData =
-          defValue ? defValue->GetImageData() : CXFA_ImageData(nullptr);
-      if (imageData.HasValidNode()) {
+      CXFA_Image* image = defValue ? defValue->GetImage() : nullptr;
+      if (image) {
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
@@ -302,12 +301,12 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         if (!wsContentType.IsEmpty()) {
           pDataNode->JSObject()->SetCData(XFA_Attribute::ContentType,
                                           wsContentType, false, false);
-          imageData.SetContentType(wsContentType);
+          image->SetContentType(wsContentType);
         }
 
         WideString wsHref = pXMLDataElement->GetString(L"href");
         if (!wsHref.IsEmpty())
-          imageData.SetHref(wsHref);
+          image->SetHref(wsHref);
       }
       break;
     }

@@ -23,6 +23,7 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
+#include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
@@ -81,12 +82,12 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
     if (!value)
       return false;
 
-    CXFA_ImageData imageData = value->GetImageData();
-    if (!imageData.HasValidNode())
+    CXFA_Image* image = value->GetImage();
+    if (!image)
       return false;
 
     CXFA_FFDoc* pFFDoc = pAcc->GetDoc();
-    pAcc->SetImageImage(XFA_LoadImageData(pFFDoc, &imageData, m_bNamedImage,
+    pAcc->SetImageImage(XFA_LoadImageData(pFFDoc, image, m_bNamedImage,
                                           m_iImageXDpi, m_iImageYDpi));
     return !!m_pDIBitmap;
   }
@@ -141,9 +142,9 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
     if (!value)
       return false;
 
-    CXFA_ImageData imageData = value->GetImageData();
+    CXFA_Image* image = value->GetImage();
     CXFA_FFDoc* pFFDoc = pAcc->GetDoc();
-    pAcc->SetImageEditImage(XFA_LoadImageData(pFFDoc, &imageData, m_bNamedImage,
+    pAcc->SetImageEditImage(XFA_LoadImageData(pFFDoc, image, m_bNamedImage,
                                               m_iImageXDpi, m_iImageYDpi));
     return !!m_pDIBitmap;
   }
@@ -179,13 +180,12 @@ void CXFA_WidgetAcc::ResetData() {
   switch (eUIType) {
     case XFA_Element::ImageEdit: {
       CXFA_Value* imageValue = GetDefaultValue();
-      CXFA_ImageData imageData =
-          imageValue ? imageValue->GetImageData() : CXFA_ImageData(nullptr);
+      CXFA_Image* image = imageValue ? imageValue->GetImage() : nullptr;
       WideString wsContentType, wsHref;
-      if (imageData.HasValidNode()) {
-        wsValue = imageData.GetContent();
-        wsContentType = imageData.GetContentType();
-        wsHref = imageData.GetHref();
+      if (image) {
+        wsValue = image->GetContent();
+        wsContentType = image->GetContentType();
+        wsHref = image->GetHref();
       }
       SetImageEdit(wsContentType, wsHref, wsValue);
       break;
@@ -246,11 +246,10 @@ void CXFA_WidgetAcc::ResetData() {
 void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
                                   const WideString& wsHref,
                                   const WideString& wsData) {
-  CXFA_ImageData imageData =
-      GetFormValue() ? GetFormValue()->GetImageData() : CXFA_ImageData(nullptr);
-  if (imageData.HasValidNode()) {
-    imageData.SetContentType(WideString(wsContentType));
-    imageData.SetHref(wsHref);
+  CXFA_Image* image = GetFormValue() ? GetFormValue()->GetImage() : nullptr;
+  if (image) {
+    image->SetContentType(WideString(wsContentType));
+    image->SetHref(wsHref);
   }
 
   m_pNode->JSObject()->SetContent(wsData, GetFormatDataValue(wsData), true,
@@ -258,7 +257,7 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
 
   CXFA_Node* pBind = GetDatasets();
   if (!pBind) {
-    imageData.SetTransferEncoding(XFA_AttributeEnum::Base64);
+    image->SetTransferEncoding(XFA_AttributeEnum::Base64);
     return;
   }
   pBind->JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false,

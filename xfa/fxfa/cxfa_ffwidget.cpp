@@ -34,6 +34,7 @@
 #include "xfa/fxfa/parser/cxfa_box.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
+#include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
@@ -1877,21 +1878,21 @@ FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
 }
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
-                                          CXFA_ImageData* pImageData,
+                                          CXFA_Image* pImage,
                                           bool& bNameImage,
                                           int32_t& iImageXDpi,
                                           int32_t& iImageYDpi) {
-  WideString wsHref = pImageData->GetHref();
-  WideString wsImage = pImageData->GetContent();
+  WideString wsHref = pImage->GetHref();
+  WideString wsImage = pImage->GetContent();
   if (wsHref.IsEmpty() && wsImage.IsEmpty())
     return nullptr;
 
-  FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImageData->GetContentType());
+  FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImage->GetContentType());
   ByteString bsContent;
   uint8_t* pImageBuffer = nullptr;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
-    XFA_AttributeEnum iEncoding = pImageData->GetTransferEncoding();
+    XFA_AttributeEnum iEncoding = pImage->GetTransferEncoding();
     if (iEncoding == XFA_AttributeEnum::Base64) {
       ByteString bsData = wsImage.UTF8Encode();
       int32_t iLength = bsData.GetLength();

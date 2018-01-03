@@ -11,6 +11,7 @@
 #include "xfa/fxfa/cxfa_ffdraw.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
@@ -67,9 +68,7 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
   int32_t iImageYDpi = 0;
   m_pDataAcc->GetImageDpi(iImageXDpi, iImageYDpi);
   auto* value = m_pDataAcc->GetFormValue();
-  CXFA_ImageData imageData =
-      value ? value->GetImageData() : CXFA_ImageData(nullptr);
-
-  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, imageData.GetAspect(),
+  CXFA_Image* image = value ? value->GetImage() : nullptr;
+  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, image->GetAspect(),
                 iImageXDpi, iImageYDpi, iHorzAlign, iVertAlign);
 }

@@ -19,6 +19,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
@@ -82,9 +83,9 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   XFA_AttributeEnum iAspect = XFA_AttributeEnum::Fit;
   CXFA_Value* value = m_pDataAcc->GetFormValue();
   if (value) {
-    CXFA_ImageData imageData = value->GetImageData();
-    if (imageData.HasValidNode())
-      iAspect = imageData.GetAspect();
+    CXFA_Image* image = value->GetImage();
+    if (image)
+      iAspect = image->GetAspect();
   }
 
   int32_t iImageXDpi = 0;

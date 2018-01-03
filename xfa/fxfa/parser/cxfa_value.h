@@ -10,11 +10,11 @@
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_exdatadata.h"
-#include "xfa/fxfa/parser/cxfa_imagedata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
 
 class CXFA_Arc;
+class CXFA_Image;
 class CXFA_Line;
 class CXFA_Rectangle;
 
@@ -30,7 +30,7 @@ class CXFA_Value : public CXFA_Node {
   CXFA_Rectangle* GetRectangle() const;
   CXFA_Text* GetText() const;
   CXFA_ExDataData GetExData() const;
-  CXFA_ImageData GetImageData() const;
+  CXFA_Image* GetImage() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALUE_H_

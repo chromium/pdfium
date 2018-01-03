@@ -21,6 +21,7 @@ class CXFA_FFDocView;
 class CXFA_FFDoc;
 class CXFA_FFApp;
 class CXFA_Graphics;
+class CXFA_Image;
 enum class FWL_WidgetHit;
 
 inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
@@ -50,7 +51,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top);
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
-                                          CXFA_ImageData* pImageData,
+                                          CXFA_Image* pImage,
                                           bool& bNameImage,
                                           int32_t& iImageXDpi,
                                           int32_t& iImageYDpi);

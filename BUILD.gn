@@ -2351,8 +2351,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_ifempty.h",
       "xfa/fxfa/parser/cxfa_image.cpp",
       "xfa/fxfa/parser/cxfa_image.h",
-      "xfa/fxfa/parser/cxfa_imagedata.cpp",
-      "xfa/fxfa/parser/cxfa_imagedata.h",
       "xfa/fxfa/parser/cxfa_imageedit.cpp",
       "xfa/fxfa/parser/cxfa_imageedit.h",
       "xfa/fxfa/parser/cxfa_includexdpcontent.cpp",

@@ -13,6 +13,18 @@ class CXFA_Image : public CXFA_Node {
  public:
   CXFA_Image(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Image() override;
+
+  XFA_AttributeEnum GetAspect();
+  WideString GetContent();
+
+  WideString GetHref();
+  void SetHref(const WideString& wsHref);
+
+  XFA_AttributeEnum GetTransferEncoding();
+  void SetTransferEncoding(XFA_AttributeEnum iTransferEncoding);
+
+  WideString GetContentType();
+  void SetContentType(const WideString& wsContentType);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_IMAGE_H_
