@@ -111,7 +111,7 @@ void CPWL_EditImpl_Iterator::SetAt(const CPVT_WordPlace& place) {
 }
 
 const CPVT_WordPlace& CPWL_EditImpl_Iterator::GetAt() const {
-  return m_pVTIterator->GetAt();
+  return m_pVTIterator->GetWordPlace();
 }
 
 CPWL_EditImpl_Provider::CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap)
@@ -723,9 +723,9 @@ WideString CPWL_EditImpl::GetText() const {
   pIterator->SetAt(0);
 
   CPVT_Word wordinfo;
-  CPVT_WordPlace oldplace = pIterator->GetAt();
+  CPVT_WordPlace oldplace = pIterator->GetWordPlace();
   while (pIterator->NextWord()) {
-    CPVT_WordPlace place = pIterator->GetAt();
+    CPVT_WordPlace place = pIterator->GetWordPlace();
     if (pIterator->GetWord(wordinfo))
       swRet += wordinfo.Word;
     if (oldplace.nSecIndex != place.nSecIndex)
@@ -749,7 +749,7 @@ WideString CPWL_EditImpl::GetRangeText(const CPVT_WordRange& range) const {
   CPVT_Word wordinfo;
   CPVT_WordPlace oldplace = wrTemp.BeginPos;
   while (pIterator->NextWord()) {
-    CPVT_WordPlace place = pIterator->GetAt();
+    CPVT_WordPlace place = pIterator->GetWordPlace();
     if (place > wrTemp.EndPos)
       break;
     if (pIterator->GetWord(wordinfo))
@@ -1190,7 +1190,7 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
   CPVT_WordPlace place;
 
   while (pIterator->NextWord()) {
-    place = pIterator->GetAt();
+    place = pIterator->GetWordPlace();
     if (place > wrTemp.EndPos)
       break;
 

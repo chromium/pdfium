@@ -192,9 +192,7 @@ CPDF_VariableText::CPDF_VariableText()
       m_bInitialized(false),
       m_pVTProvider(nullptr) {}
 
-CPDF_VariableText::~CPDF_VariableText() {
-  ResetAll();
-}
+CPDF_VariableText::~CPDF_VariableText() {}
 
 void CPDF_VariableText::Initialize() {
   if (m_bInitialized)
@@ -213,11 +211,6 @@ void CPDF_VariableText::Initialize() {
     m_SectionArray.front()->ResetLinePlace();
 
   m_bInitialized = true;
-}
-
-void CPDF_VariableText::ResetAll() {
-  m_bInitialized = false;
-  m_SectionArray.clear();
 }
 
 CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace& place,
@@ -265,42 +258,6 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(const CPVT_WordPlace& place) {
   }
   ClearSectionRightWords(wordplace);
   return result;
-}
-
-CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
-                                             const wchar_t* text) {
-  WideString swText = text;
-  CPVT_WordPlace wp = place;
-  for (int32_t i = 0, sz = swText.GetLength(); i < sz; i++) {
-    CPVT_WordPlace oldwp = wp;
-    uint16_t word = swText[i];
-    switch (word) {
-      case 0x0D:
-        if (m_bMultiLine) {
-          if (swText[i + 1] == 0x0A)
-            i += 1;
-
-          wp = InsertSection(wp);
-        }
-        break;
-      case 0x0A:
-        if (m_bMultiLine) {
-          if (swText[i + 1] == 0x0D)
-            i += 1;
-
-          wp = InsertSection(wp);
-        }
-        break;
-      case 0x09:
-        word = 0x20;
-      default:
-        wp = InsertWord(wp, word, FX_CHARSET_Default);
-        break;
-    }
-    if (wp == oldwp)
-      break;
-  }
-  return wp;
 }
 
 CPVT_WordPlace CPDF_VariableText::DeleteWords(
@@ -1001,10 +958,6 @@ CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
 
 void CPDF_VariableText::SetProvider(CPDF_VariableText::Provider* pProvider) {
   m_pVTProvider = pProvider;
-}
-
-CFX_SizeF CPDF_VariableText::GetPlateSize() const {
-  return CFX_SizeF(GetPlateWidth(), GetPlateHeight());
 }
 
 CFX_PointF CPDF_VariableText::GetBTPoint() const {

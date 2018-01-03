@@ -99,7 +99,7 @@ ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
 
   pIterator->SetAt(0);
   while (pIterator->NextWord()) {
-    CPVT_WordPlace place = pIterator->GetAt();
+    CPVT_WordPlace place = pIterator->GetWordPlace();
     if (bContinuous) {
       if (place.LineCmp(oldplace) != 0) {
         if (sWords.tellp() > 0) {
