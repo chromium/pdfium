@@ -2486,8 +2486,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_object.h",
       "xfa/fxfa/parser/cxfa_occur.cpp",
       "xfa/fxfa/parser/cxfa_occur.h",
-      "xfa/fxfa/parser/cxfa_occurdata.cpp",
-      "xfa/fxfa/parser/cxfa_occurdata.h",
       "xfa/fxfa/parser/cxfa_oid.cpp",
       "xfa/fxfa/parser/cxfa_oid.h",
       "xfa/fxfa/parser/cxfa_oids.cpp",

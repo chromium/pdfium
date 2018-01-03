@@ -7,12 +7,22 @@
 #ifndef XFA_FXFA_PARSER_CXFA_OCCUR_H_
 #define XFA_FXFA_PARSER_CXFA_OCCUR_H_
 
+#include <tuple>
+
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Occur : public CXFA_Node {
  public:
   CXFA_Occur(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Occur() override;
+
+  int32_t GetMax();
+  void SetMax(int32_t iMax);
+
+  int32_t GetMin();
+  void SetMin(int32_t iMin);
+
+  std::tuple<int32_t, int32_t, int32_t> GetOccurInfo();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_OCCUR_H_

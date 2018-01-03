@@ -18,6 +18,7 @@
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFX_XMLNode;
+class CXFA_Occur;
 class CXFA_WidgetData;
 
 #define XFA_NODEFILTER_Children 0x01
@@ -204,7 +205,7 @@ class CXFA_Node : public CXFA_Object {
   int32_t GetNodeSameClassIndex() const;
   CXFA_Node* GetInstanceMgrOfSubform();
 
-  CXFA_Node* GetOccurNode();
+  CXFA_Occur* GetOccur();
 
   pdfium::Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
   pdfium::Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;

@@ -38,3 +38,46 @@ CXFA_Occur::CXFA_Occur(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Occur>(this)) {}
 
 CXFA_Occur::~CXFA_Occur() {}
+
+int32_t CXFA_Occur::GetMax() {
+  pdfium::Optional<int32_t> max =
+      JSObject()->TryInteger(XFA_Attribute::Max, true);
+  return max ? *max : GetMin();
+}
+
+int32_t CXFA_Occur::GetMin() {
+  pdfium::Optional<int32_t> min =
+      JSObject()->TryInteger(XFA_Attribute::Min, true);
+  return min && *min >= 0 ? *min : 1;
+}
+
+std::tuple<int32_t, int32_t, int32_t> CXFA_Occur::GetOccurInfo() {
+  int32_t iMin = GetMin();
+  int32_t iMax = GetMax();
+
+  pdfium::Optional<int32_t> init =
+      JSObject()->TryInteger(XFA_Attribute::Initial, false);
+  return {iMin, iMax, init && *init >= iMin ? *init : iMin};
+}
+
+void CXFA_Occur::SetMax(int32_t iMax) {
+  iMax = (iMax != -1 && iMax < 1) ? 1 : iMax;
+  JSObject()->SetInteger(XFA_Attribute::Max, iMax, false);
+
+  int32_t iMin = GetMin();
+  if (iMax != -1 && iMax < iMin) {
+    iMin = iMax;
+    JSObject()->SetInteger(XFA_Attribute::Min, iMin, false);
+  }
+}
+
+void CXFA_Occur::SetMin(int32_t iMin) {
+  iMin = (iMin < 0) ? 1 : iMin;
+  JSObject()->SetInteger(XFA_Attribute::Min, iMin, false);
+
+  int32_t iMax = GetMax();
+  if (iMax > 0 && iMax < iMin) {
+    iMax = iMin;
+    JSObject()->SetInteger(XFA_Attribute::Max, iMax, false);
+  }
+}

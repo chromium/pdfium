@@ -35,7 +35,6 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
-#include "xfa/fxfa/parser/cxfa_occurdata.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
@@ -1067,7 +1066,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
   return pInstanceMgr;
 }
 
-CXFA_Node* CXFA_Node::GetOccurNode() {
+CXFA_Occur* CXFA_Node::GetOccur() {
   return GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
 }
 

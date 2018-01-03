@@ -16,7 +16,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_instancemanager.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
-#include "xfa/fxfa/parser/cxfa_occurdata.h"
+#include "xfa/fxfa/parser/cxfa_occur.h"
 
 const CJX_MethodSpec CJX_InstanceManager::MethodSpecs[] = {
     {"addInstance", addInstance_static},
@@ -33,13 +33,13 @@ CJX_InstanceManager::CJX_InstanceManager(CXFA_InstanceManager* mgr)
 CJX_InstanceManager::~CJX_InstanceManager() {}
 
 int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
-  CXFA_OccurData occurData(GetXFANode()->GetOccurNode());
-  if (iDesired < occurData.GetMin()) {
+  CXFA_Occur* occur = GetXFANode()->GetOccur();
+  if (iDesired < occur->GetMin()) {
     ThrowTooManyOccurancesException(L"min");
     return 1;
   }
 
-  int32_t iMax = occurData.GetMax();
+  int32_t iMax = occur->GetMax();
   if (iMax >= 0 && iDesired > iMax) {
     ThrowTooManyOccurancesException(L"max");
     return 2;
@@ -154,7 +154,7 @@ CJS_Return CJX_InstanceManager::removeInstance(
   if (iIndex < 0 || iIndex >= iCount)
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
-  int32_t iMin = CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMin();
+  int32_t iMin = GetXFANode()->GetOccur()->GetMin();
   if (iCount - 1 < iMin)
     return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
 
@@ -200,7 +200,7 @@ CJS_Return CJX_InstanceManager::addInstance(
     fFlags = runtime->ToBoolean(params[0]);
 
   int32_t iCount = GetXFANode()->GetCount();
-  int32_t iMax = CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMax();
+  int32_t iMax = GetXFANode()->GetOccur()->GetMax();
   if (iMax >= 0 && iCount >= iMax)
     return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
 
@@ -241,7 +241,7 @@ CJS_Return CJX_InstanceManager::insertInstance(
   if (iIndex < 0 || iIndex > iCount)
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
-  int32_t iMax = CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMax();
+  int32_t iMax = GetXFANode()->GetOccur()->GetMax();
   if (iMax >= 0 && iCount >= iMax)
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
@@ -273,7 +273,7 @@ void CJX_InstanceManager::max(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMax());
+  pValue->SetInteger(GetXFANode()->GetOccur()->GetMax());
 }
 
 void CJX_InstanceManager::min(CFXJSE_Value* pValue,
@@ -283,7 +283,7 @@ void CJX_InstanceManager::min(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(CXFA_OccurData(GetXFANode()->GetOccurNode()).GetMin());
+  pValue->SetInteger(GetXFANode()->GetOccur()->GetMin());
 }
 
 void CJX_InstanceManager::count(CFXJSE_Value* pValue,

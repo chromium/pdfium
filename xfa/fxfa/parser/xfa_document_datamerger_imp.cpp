@@ -25,7 +25,6 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
-#include "xfa/fxfa/parser/cxfa_occurdata.h"
 #include "xfa/fxfa/parser/cxfa_pageset.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_template.h"
@@ -603,8 +602,7 @@ CXFA_Node* FindMatchingDataNode(
       int32_t iMin;
       int32_t iMax;
       int32_t iInit;
-      std::tie(iMin, iMax, iInit) =
-          CXFA_OccurData(pTemplateNodeOccur).GetOccurInfo();
+      std::tie(iMin, iMax, iInit) = pTemplateNodeOccur->GetOccurInfo();
       if (iMax == 0) {
         pCurTemplateNode = pIterator->MoveToNext();
         continue;
@@ -759,7 +757,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
   int32_t iMin = 1;
   if (!bOneInstance && pOccurNode) {
     std::tie(iMin, iMax, iInit) =
-        CXFA_OccurData(static_cast<CXFA_Occur*>(pOccurNode)).GetOccurInfo();
+        static_cast<CXFA_Occur*>(pOccurNode)->GetOccurInfo();
   }
 
   XFA_AttributeEnum eRelation =
