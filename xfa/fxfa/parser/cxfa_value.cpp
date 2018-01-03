@@ -9,6 +9,7 @@
 #include "fxjs/xfa/cjx_value.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_arc.h"
+#include "xfa/fxfa/parser/cxfa_line.h"
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
 
 namespace {
@@ -69,8 +70,8 @@ CXFA_Arc* CXFA_Value::GetArc() const {
   return static_cast<CXFA_Arc*>(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
-CXFA_LineData CXFA_Value::GetLineData() const {
-  return CXFA_LineData(GetNodeItem(XFA_NODEITEM_FirstChild));
+CXFA_Line* CXFA_Value::GetLine() const {
+  return static_cast<CXFA_Line*>(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
 CXFA_Rectangle* CXFA_Value::GetRectangle() const {

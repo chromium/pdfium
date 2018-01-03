@@ -2400,8 +2400,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_linear.h",
       "xfa/fxfa/parser/cxfa_linearized.cpp",
       "xfa/fxfa/parser/cxfa_linearized.h",
-      "xfa/fxfa/parser/cxfa_linedata.cpp",
-      "xfa/fxfa/parser/cxfa_linedata.h",
       "xfa/fxfa/parser/cxfa_list.cpp",
       "xfa/fxfa/parser/cxfa_list.h",
       "xfa/fxfa/parser/cxfa_locale.cpp",

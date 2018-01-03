@@ -7,6 +7,7 @@
 #include "xfa/fxfa/cxfa_ffline.h"
 
 #include "xfa/fxfa/parser/cxfa_edge.h"
+#include "xfa/fxfa/parser/cxfa_line.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
@@ -90,12 +91,12 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (!value)
     return;
 
-  CXFA_LineData lineData = value->GetLineData();
+  CXFA_Line* line = value->GetLine();
   FX_ARGB lineColor = 0xFF000000;
   float fLineWidth = 1.0f;
   XFA_AttributeEnum iStrokeType = XFA_AttributeEnum::Unknown;
   XFA_AttributeEnum iCap = XFA_AttributeEnum::Unknown;
-  CXFA_Edge* edge = lineData.GetEdge();
+  CXFA_Edge* edge = line->GetEdge();
   if (edge) {
     if (!edge->IsVisible())
       return;
@@ -114,9 +115,9 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (margin)
     XFA_RectWidthoutMargin(rtLine, margin);
 
-  GetRectFromHand(rtLine, lineData.GetHand(), fLineWidth);
+  GetRectFromHand(rtLine, line->GetHand(), fLineWidth);
   CXFA_GEPath linePath;
-  if (lineData.GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
+  if (line->GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
     linePath.AddLine(rtLine.TopRight(), rtLine.BottomLeft());
   else
     linePath.AddLine(rtLine.TopLeft(), rtLine.BottomRight());

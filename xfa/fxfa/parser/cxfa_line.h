@@ -9,10 +9,16 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+class CXFA_Edge;
+
 class CXFA_Line : public CXFA_Node {
  public:
   CXFA_Line(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Line() override;
+
+  XFA_AttributeEnum GetHand();
+  bool GetSlope();
+  CXFA_Edge* GetEdge();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LINE_H_

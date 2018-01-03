@@ -11,11 +11,11 @@
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_exdatadata.h"
 #include "xfa/fxfa/parser/cxfa_imagedata.h"
-#include "xfa/fxfa/parser/cxfa_linedata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
 
 class CXFA_Arc;
+class CXFA_Line;
 class CXFA_Rectangle;
 
 class CXFA_Value : public CXFA_Node {
@@ -26,7 +26,7 @@ class CXFA_Value : public CXFA_Node {
   XFA_Element GetChildValueClassID() const;
   WideString GetChildValueContent() const;
   CXFA_Arc* GetArc() const;
-  CXFA_LineData GetLineData() const;
+  CXFA_Line* GetLine() const;
   CXFA_Rectangle* GetRectangle() const;
   CXFA_Text* GetText() const;
   CXFA_ExDataData GetExData() const;
