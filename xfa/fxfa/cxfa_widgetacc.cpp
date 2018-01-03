@@ -22,6 +22,7 @@
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
+#include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
@@ -104,8 +105,8 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   bool LoadCaption(CXFA_WidgetAcc* pAcc) {
     if (m_pCapTextLayout)
       return true;
-    CXFA_CaptionData captionData = pAcc->GetCaptionData();
-    if (!captionData.HasValidNode() || captionData.IsHidden())
+    CXFA_Caption* caption = pAcc->GetCaption();
+    if (!caption || caption->IsHidden())
       return false;
 
     m_pCapTextProvider = pdfium::MakeUnique<CXFA_TextProvider>(
@@ -505,9 +506,9 @@ WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
   WideString wsCaptionName;
 
   if (!bVersionFlag) {
-    CXFA_CaptionData captionData = GetCaptionData();
-    if (captionData.HasValidNode()) {
-      CXFA_Value* capValue = captionData.GetValue();
+    CXFA_Caption* caption = GetCaption();
+    if (caption) {
+      CXFA_Value* capValue = caption->GetValue();
       if (capValue) {
         CXFA_Text* captionText = capValue->GetText();
         if (captionText)
@@ -685,14 +686,14 @@ void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
 }
 
 void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
-  CXFA_CaptionData captionData = GetCaptionData();
-  if (!captionData.HasValidNode() || !captionData.IsVisible())
+  CXFA_Caption* caption = GetCaption();
+  if (!caption || !caption->IsVisible())
     return;
 
   LoadCaption();
   XFA_Element eUIType = GetUIType();
-  XFA_AttributeEnum iCapPlacement = captionData.GetPlacementType();
-  float fCapReserve = captionData.GetReserve();
+  XFA_AttributeEnum iCapPlacement = caption->GetPlacementType();
+  float fCapReserve = caption->GetReserve();
   const bool bVert = iCapPlacement == XFA_AttributeEnum::Top ||
                      iCapPlacement == XFA_AttributeEnum::Bottom;
   const bool bReserveExit = fCapReserve > 0.01;
@@ -709,7 +710,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
   } else {
     float fFontSize = 10.0f;
-    CXFA_FontData fontData = captionData.GetFontData();
+    CXFA_FontData fontData = caption->GetFontData();
     if (fontData.HasValidNode()) {
       fFontSize = fontData.GetFontSize();
     } else {
@@ -726,7 +727,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
     }
   }
 
-  CXFA_Margin* captionMargin = captionData.GetMargin();
+  CXFA_Margin* captionMargin = caption->GetMargin();
   if (captionMargin) {
     float fLeftInset = captionMargin->GetLeftInset();
     float fTopInset = captionMargin->GetTopInset();
@@ -749,7 +750,7 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
   size.width += rtUIMargin.left + rtUIMargin.width;
   size.height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
-    switch (GetCaptionData().GetPlacementType()) {
+    switch (GetCaption()->GetPlacementType()) {
       case XFA_AttributeEnum::Left:
       case XFA_AttributeEnum::Right:
       case XFA_AttributeEnum::Inline: {
@@ -848,7 +849,7 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     bool bCapExit = szCap.width > 0.01 && szCap.height > 0.01;
     XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
     if (bCapExit) {
-      iCapPlacement = GetCaptionData().GetPlacementType();
+      iCapPlacement = GetCaption()->GetPlacementType();
       switch (iCapPlacement) {
         case XFA_AttributeEnum::Left:
         case XFA_AttributeEnum::Right:
@@ -1184,10 +1185,10 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
   if (iBlockIndex == 0) {
-    CXFA_CaptionData captionData = GetCaptionData();
-    if (captionData.HasValidNode() && !captionData.IsHidden()) {
-      iCapPlacement = captionData.GetPlacementType();
-      fCapReserve = captionData.GetReserve();
+    CXFA_Caption* caption = GetCaption();
+    if (caption && !caption->IsHidden()) {
+      iCapPlacement = caption->GetPlacementType();
+      fCapReserve = caption->GetReserve();
     }
     if (iCapPlacement == XFA_AttributeEnum::Top &&
         fCalcHeight < fCapReserve + fTopInset) {

@@ -19,6 +19,7 @@
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
@@ -102,9 +103,9 @@ bool CXFA_FFPushButton::PerformLayout() {
   if (margin)
     XFA_RectWidthoutMargin(rtWidget, margin);
 
-  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
+  CXFA_Caption* caption = m_pDataAcc->GetCaption();
   m_rtCaption = rtWidget;
-  CXFA_Margin* captionMargin = captionData.GetMargin();
+  CXFA_Margin* captionMargin = caption->GetMargin();
   if (captionMargin)
     XFA_RectWidthoutMargin(m_rtCaption, captionMargin);
 
@@ -131,8 +132,8 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 }
 
 void CXFA_FFPushButton::LoadHighlightCaption() {
-  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData.HasValidNode() || captionData.IsHidden())
+  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  if (!caption || caption->IsHidden())
     return;
 
   if (m_pDataAcc->HasButtonRollover()) {
@@ -166,8 +167,8 @@ void CXFA_FFPushButton::LayoutHighlightCaption() {
 void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
-  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData.HasValidNode() || !captionData.IsVisible())
+  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  if (!caption || !caption->IsVisible())
     return;
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();

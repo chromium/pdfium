@@ -2145,8 +2145,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_calendarsymbols.h",
       "xfa/fxfa/parser/cxfa_caption.cpp",
       "xfa/fxfa/parser/cxfa_caption.h",
-      "xfa/fxfa/parser/cxfa_captiondata.cpp",
-      "xfa/fxfa/parser/cxfa_captiondata.h",
       "xfa/fxfa/parser/cxfa_certificate.cpp",
       "xfa/fxfa/parser/cxfa_certificate.h",
       "xfa/fxfa/parser/cxfa_certificates.cpp",

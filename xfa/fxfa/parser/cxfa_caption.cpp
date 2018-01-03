@@ -8,6 +8,10 @@
 
 #include "fxjs/xfa/cjx_caption.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
+#include "xfa/fxfa/parser/cxfa_measurement.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 
 namespace {
 
@@ -42,3 +46,38 @@ CXFA_Caption::CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Caption>(this)) {}
 
 CXFA_Caption::~CXFA_Caption() {}
+
+bool CXFA_Caption::IsVisible() {
+  return JSObject()
+             ->TryEnum(XFA_Attribute::Presence, true)
+             .value_or(XFA_AttributeEnum::Visible) ==
+         XFA_AttributeEnum::Visible;
+}
+
+bool CXFA_Caption::IsHidden() {
+  return JSObject()
+             ->TryEnum(XFA_Attribute::Presence, true)
+             .value_or(XFA_AttributeEnum::Visible) == XFA_AttributeEnum::Hidden;
+}
+
+XFA_AttributeEnum CXFA_Caption::GetPlacementType() {
+  return JSObject()
+      ->TryEnum(XFA_Attribute::Placement, true)
+      .value_or(XFA_AttributeEnum::Left);
+}
+
+float CXFA_Caption::GetReserve() const {
+  return JSObject()->GetMeasure(XFA_Attribute::Reserve).ToUnit(XFA_Unit::Pt);
+}
+
+CXFA_Margin* CXFA_Caption::GetMargin() {
+  return GetChild<CXFA_Margin>(0, XFA_Element::Margin, false);
+}
+
+CXFA_FontData CXFA_Caption::GetFontData() {
+  return CXFA_FontData(GetChild<CXFA_Font>(0, XFA_Element::Font, false));
+}
+
+CXFA_Value* CXFA_Caption::GetValue() {
+  return GetChild<CXFA_Value>(0, XFA_Element::Value, false);
+}

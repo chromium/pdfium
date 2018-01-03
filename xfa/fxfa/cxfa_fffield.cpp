@@ -24,6 +24,7 @@
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
+#include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
@@ -191,15 +192,15 @@ void CXFA_FFField::CapPlacement() {
 
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
-  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (captionData.HasValidNode() && !captionData.IsHidden()) {
-    iCapPlacement = captionData.GetPlacementType();
+  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  if (caption && !caption->IsHidden()) {
+    iCapPlacement = caption->GetPlacementType();
     if (iCapPlacement == XFA_AttributeEnum::Top && GetPrev()) {
       m_rtCaption.Reset();
     } else if (iCapPlacement == XFA_AttributeEnum::Bottom && GetNext()) {
       m_rtCaption.Reset();
     } else {
-      fCapReserve = captionData.GetReserve();
+      fCapReserve = caption->GetReserve();
       CXFA_LayoutItem* pItem = this;
       if (!pItem->GetPrev() && !pItem->GetNext()) {
         m_rtCaption = rtWidget;
@@ -233,14 +234,14 @@ void CXFA_FFField::CapPlacement() {
   switch (iCapPlacement) {
     case XFA_AttributeEnum::Left: {
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(captionData.GetMargin(), rtWidget, iCapPlacement);
+      CapLeftRightPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
       m_rtUI.left += fCapReserve;
       break;
     }
     case XFA_AttributeEnum::Top: {
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(captionData.GetMargin(), rtWidget, iCapPlacement);
+      CapTopBottomPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
       m_rtUI.top += fCapReserve;
       m_rtUI.height -= fCapReserve;
       break;
@@ -248,14 +249,14 @@ void CXFA_FFField::CapPlacement() {
     case XFA_AttributeEnum::Right: {
       m_rtCaption.left = m_rtCaption.right() - fCapReserve;
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(captionData.GetMargin(), rtWidget, iCapPlacement);
+      CapLeftRightPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
       break;
     }
     case XFA_AttributeEnum::Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(captionData.GetMargin(), rtWidget, iCapPlacement);
+      CapTopBottomPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
       m_rtUI.height -= fCapReserve;
       break;
     }
@@ -602,8 +603,8 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   if (!pCapTextLayout)
     return;
 
-  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (!captionData.HasValidNode() || !captionData.IsVisible())
+  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  if (!caption || !caption->IsVisible())
     return;
 
   if (!pCapTextLayout->IsLoaded())

@@ -20,6 +20,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
 CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_WidgetAcc* pDataAcc)
@@ -97,11 +98,11 @@ bool CXFA_FFCheckButton::PerformLayout() {
 
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
-  CXFA_CaptionData captionData = m_pDataAcc->GetCaptionData();
-  if (captionData.HasValidNode() && captionData.IsVisible()) {
+  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  if (caption && caption->IsVisible()) {
     m_rtCaption = rtWidget;
-    iCapPlacement = captionData.GetPlacementType();
-    fCapReserve = captionData.GetReserve();
+    iCapPlacement = caption->GetPlacementType();
+    fCapReserve = caption->GetReserve();
     if (fCapReserve <= 0) {
       if (iCapPlacement == XFA_AttributeEnum::Top ||
           iCapPlacement == XFA_AttributeEnum::Bottom) {
@@ -121,7 +122,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   }
 
   m_rtUI = rtWidget;
-  CXFA_Margin* captionMargin = captionData.GetMargin();
+  CXFA_Margin* captionMargin = caption->GetMargin();
   switch (iCapPlacement) {
     case XFA_AttributeEnum::Left: {
       m_rtCaption.width = fCapReserve;

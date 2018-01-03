@@ -265,9 +265,9 @@ CXFA_Border* CXFA_WidgetData::GetBorder(bool bModified) {
                                                        bModified);
 }
 
-CXFA_CaptionData CXFA_WidgetData::GetCaptionData() {
-  return CXFA_CaptionData(m_pNode->JSObject()->GetProperty<CXFA_Caption>(
-      0, XFA_Element::Caption, false));
+CXFA_Caption* CXFA_WidgetData::GetCaption() {
+  return m_pNode->JSObject()->GetProperty<CXFA_Caption>(0, XFA_Element::Caption,
+                                                        false);
 }
 
 CXFA_FontData CXFA_WidgetData::GetFontData(bool bModified) {

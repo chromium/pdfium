@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_Library.h"
 #include "xfa/fxfa/parser/cxfa_binddata.h"
-#include "xfa/fxfa/parser/cxfa_captiondata.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
 
@@ -34,9 +33,11 @@ enum XFA_VALUEPICTURE {
 
 class CXFA_Border;
 class CXFA_Calculate;
+class CXFA_Caption;
 class CXFA_Margin;
 class CXFA_Node;
 class CXFA_Para;
+class CXFA_Value;
 class CXFA_Validate;
 class IFX_Locale;
 
@@ -59,7 +60,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   bool IsMultiLine();
 
   CXFA_Border* GetBorder(bool bModified);
-  CXFA_CaptionData GetCaptionData();
+  CXFA_Caption* GetCaption();
   CXFA_FontData GetFontData(bool bModified);
   CXFA_Margin* GetMargin();
   CXFA_Para* GetPara();
