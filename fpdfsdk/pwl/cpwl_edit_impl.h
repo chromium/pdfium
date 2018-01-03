@@ -38,36 +38,6 @@ struct CPWL_EditImpl_LineRect {
   CFX_FloatRect m_rcLine;
 };
 
-class CPWL_EditImpl_LineRectArray {
- public:
-  CPWL_EditImpl_LineRectArray();
-  ~CPWL_EditImpl_LineRectArray();
-
-  void operator=(CPWL_EditImpl_LineRectArray&& rects);
-  void Add(const CPVT_WordRange& wrLine, const CFX_FloatRect& rcLine);
-
-  int32_t GetSize() const;
-  CPWL_EditImpl_LineRect* GetAt(int32_t nIndex) const;
-
- private:
-  std::vector<std::unique_ptr<CPWL_EditImpl_LineRect>> m_LineRects;
-};
-
-class CPWL_EditImpl_RectArray {
- public:
-  CPWL_EditImpl_RectArray();
-  ~CPWL_EditImpl_RectArray();
-
-  void Clear();
-  void Add(const CFX_FloatRect& rect);
-
-  int32_t GetSize() const;
-  CFX_FloatRect* GetAt(int32_t nIndex) const;
-
- private:
-  std::vector<std::unique_ptr<CFX_FloatRect>> m_Rects;
-};
-
 class CPWL_EditImpl_Refresh {
  public:
   CPWL_EditImpl_Refresh();
@@ -76,13 +46,15 @@ class CPWL_EditImpl_Refresh {
   void BeginRefresh();
   void Push(const CPVT_WordRange& linerange, const CFX_FloatRect& rect);
   void NoAnalyse();
-  const CPWL_EditImpl_RectArray* GetRefreshRects() const;
+  std::vector<CFX_FloatRect>* GetRefreshRects();
   void EndRefresh();
 
  private:
-  CPWL_EditImpl_LineRectArray m_NewLineRects;
-  CPWL_EditImpl_LineRectArray m_OldLineRects;
-  CPWL_EditImpl_RectArray m_RefreshRects;
+  void Add(const CFX_FloatRect& new_rect);
+
+  std::vector<CPWL_EditImpl_LineRect> m_NewLineRects;
+  std::vector<CPWL_EditImpl_LineRect> m_OldLineRects;
+  std::vector<CFX_FloatRect> m_RefreshRects;
 };
 
 class CPWL_EditImpl_Select {
