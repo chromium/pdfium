@@ -167,6 +167,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* Clone(bool bRecursive);
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_ObjectType eType) const;
+
   std::vector<CXFA_Node*> GetNodeList(uint32_t dwTypeFilter,
                                       XFA_Element eTypeFilter);
   CXFA_Node* CreateSamePacketNode(XFA_Element eType);

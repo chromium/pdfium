@@ -8,6 +8,8 @@
 
 #include "fxjs/xfa/cjx_event.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/cxfa_submit.h"
 
 namespace {
 
@@ -46,3 +48,31 @@ CXFA_Event::CXFA_Event(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Event>(this)) {}
 
 CXFA_Event::~CXFA_Event() {}
+
+XFA_AttributeEnum CXFA_Event::GetActivity() {
+  return JSObject()->GetEnum(XFA_Attribute::Activity);
+}
+
+XFA_Element CXFA_Event::GetEventType() const {
+  CXFA_Node* pChild = GetNodeItem(XFA_NODEITEM_FirstChild);
+  while (pChild) {
+    XFA_Element eType = pChild->GetElementType();
+    if (eType != XFA_Element::Extras)
+      return eType;
+
+    pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+  }
+  return XFA_Element::Unknown;
+}
+
+WideString CXFA_Event::GetRef() {
+  return JSObject()->GetCData(XFA_Attribute::Ref);
+}
+
+CXFA_Script* CXFA_Event::GetScript() {
+  return GetChild<CXFA_Script>(0, XFA_Element::Script, false);
+}
+
+CXFA_Submit* CXFA_Event::GetSubmit() {
+  return GetChild<CXFA_Submit>(0, XFA_Element::Submit, false);
+}

@@ -14,10 +14,10 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxfa/parser/cxfa_eventdata.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 class CFGAS_GEFont;
+class CXFA_Event;
 class CXFA_EventParam;
 class CXFA_FFApp;
 class CXFA_FFDoc;
@@ -42,8 +42,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   bool ProcessValueChanged();
   int32_t ProcessEvent(XFA_AttributeEnum iActivity,
                        CXFA_EventParam* pEventParam);
-  int32_t ProcessEvent(const CXFA_EventData& eventData,
-                       CXFA_EventParam* pEventParam);
+  int32_t ProcessEvent(CXFA_Event* event, CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate();
   int32_t ProcessValidate(int32_t iFlags);
   int32_t ExecuteScript(CXFA_Script* script, CXFA_EventParam* pEventParam);

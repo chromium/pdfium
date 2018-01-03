@@ -9,10 +9,19 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+class CXFA_Script;
+class CXFA_Submit;
+
 class CXFA_Event : public CXFA_Node {
  public:
   CXFA_Event(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Event() override;
+
+  XFA_AttributeEnum GetActivity();
+  XFA_Element GetEventType() const;
+  CXFA_Script* GetScript();
+  CXFA_Submit* GetSubmit();
+  WideString GetRef();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EVENT_H_

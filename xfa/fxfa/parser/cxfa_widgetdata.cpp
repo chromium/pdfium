@@ -17,7 +17,7 @@
 #include "xfa/fxfa/parser/cxfa_comb.h"
 #include "xfa/fxfa/parser/cxfa_decimal.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_eventdata.h"
+#include "xfa/fxfa/parser/cxfa_event.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_format.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
@@ -287,28 +287,24 @@ CXFA_Para* CXFA_WidgetData::GetPara() {
                                                      false);
 }
 
-std::vector<CXFA_Node*> CXFA_WidgetData::GetEventList() {
-  return m_pNode->GetNodeList(0, XFA_Element::Event);
-}
-
-std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(
+std::vector<CXFA_Event*> CXFA_WidgetData::GetEventByActivity(
     XFA_AttributeEnum iActivity,
     bool bIsFormReady) {
-  std::vector<CXFA_Node*> events;
-  for (CXFA_Node* pNode : GetEventList()) {
-    CXFA_EventData eventData(pNode);
-    if (eventData.GetActivity() == iActivity) {
+  std::vector<CXFA_Event*> events;
+  for (CXFA_Node* node : m_pNode->GetNodeList(0, XFA_Element::Event)) {
+    auto* event = static_cast<CXFA_Event*>(node);
+    if (event->GetActivity() == iActivity) {
       if (iActivity == XFA_AttributeEnum::Ready) {
-        WideString wsRef = eventData.GetRef();
+        WideString wsRef = event->GetRef();
         if (bIsFormReady) {
           if (wsRef == WideStringView(L"$form"))
-            events.push_back(pNode);
+            events.push_back(event);
         } else {
           if (wsRef == WideStringView(L"$layout"))
-            events.push_back(pNode);
+            events.push_back(event);
         }
       } else {
-        events.push_back(pNode);
+        events.push_back(event);
       }
     }
   }

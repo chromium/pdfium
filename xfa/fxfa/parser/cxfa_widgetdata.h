@@ -33,6 +33,7 @@ class CXFA_Bind;
 class CXFA_Border;
 class CXFA_Calculate;
 class CXFA_Caption;
+class CXFA_Event;
 class CXFA_Font;
 class CXFA_Margin;
 class CXFA_Node;
@@ -70,8 +71,8 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_Validate* GetValidate(bool bModified);
   CXFA_Border* GetUIBorder();
 
-  std::vector<CXFA_Node*> GetEventByActivity(XFA_AttributeEnum iActivity,
-                                             bool bIsFormReady);
+  std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
+                                              bool bIsFormReady);
 
   pdfium::Optional<float> TryWidth();
   pdfium::Optional<float> TryHeight();
@@ -182,7 +183,6 @@ class CXFA_WidgetData : public CXFA_DataData {
   WideString FormatNumStr(const WideString& wsValue, IFX_Locale* pLocale);
   CXFA_Node* GetExclGroupNode();
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
-  std::vector<CXFA_Node*> GetEventList();
 
   bool m_bIsNull;
   bool m_bPreNull;

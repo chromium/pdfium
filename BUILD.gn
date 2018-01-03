@@ -2299,8 +2299,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_eranames.h",
       "xfa/fxfa/parser/cxfa_event.cpp",
       "xfa/fxfa/parser/cxfa_event.h",
-      "xfa/fxfa/parser/cxfa_eventdata.cpp",
-      "xfa/fxfa/parser/cxfa_eventdata.h",
       "xfa/fxfa/parser/cxfa_exclgroup.cpp",
       "xfa/fxfa/parser/cxfa_exclgroup.h",
       "xfa/fxfa/parser/cxfa_exclude.cpp",

@@ -23,6 +23,7 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
+#include "xfa/fxfa/parser/cxfa_event.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
@@ -293,12 +294,12 @@ int32_t CXFA_WidgetAcc::ProcessEvent(XFA_AttributeEnum iActivity,
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  std::vector<CXFA_Node*> eventArray =
+  std::vector<CXFA_Event*> eventArray =
       GetEventByActivity(iActivity, pEventParam->m_bIsFormReady);
   bool first = true;
   int32_t iRet = XFA_EVENTERROR_NotExist;
-  for (CXFA_Node* pNode : eventArray) {
-    int32_t result = ProcessEvent(CXFA_EventData(pNode), pEventParam);
+  for (CXFA_Event* event : eventArray) {
+    int32_t result = ProcessEvent(event, pEventParam);
     if (first || result == XFA_EVENTERROR_Success)
       iRet = result;
     first = false;
@@ -306,21 +307,21 @@ int32_t CXFA_WidgetAcc::ProcessEvent(XFA_AttributeEnum iActivity,
   return iRet;
 }
 
-int32_t CXFA_WidgetAcc::ProcessEvent(const CXFA_EventData& eventData,
+int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_Event* event,
                                      CXFA_EventParam* pEventParam) {
-  if (!eventData.HasValidNode())
+  if (!event)
     return XFA_EVENTERROR_NotExist;
 
-  switch (eventData.GetEventType()) {
+  switch (event->GetEventType()) {
     case XFA_Element::Execute:
       break;
     case XFA_Element::Script:
-      return ExecuteScript(eventData.GetScript(), pEventParam);
+      return ExecuteScript(event->GetScript(), pEventParam);
     case XFA_Element::SignData:
       break;
     case XFA_Element::Submit:
       return GetDoc()->GetDocEnvironment()->Submit(GetDoc(),
-                                                   eventData.GetSubmit());
+                                                   event->GetSubmit());
     default:
       break;
   }
