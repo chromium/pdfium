@@ -324,9 +324,9 @@ CXFA_Value* CXFA_WidgetData::GetFormValue() {
                                                       false);
 }
 
-CXFA_CalculateData CXFA_WidgetData::GetCalculateData() {
-  return CXFA_CalculateData(m_pNode->JSObject()->GetProperty<CXFA_Calculate>(
-      0, XFA_Element::Calculate, false));
+CXFA_Calculate* CXFA_WidgetData::GetCalculate() {
+  return m_pNode->JSObject()->GetProperty<CXFA_Calculate>(
+      0, XFA_Element::Calculate, false);
 }
 
 CXFA_Validate* CXFA_WidgetData::GetValidate(bool bModified) {

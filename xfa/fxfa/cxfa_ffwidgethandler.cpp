@@ -13,6 +13,7 @@
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
+#include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_checkbutton.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
@@ -192,8 +193,8 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
-      CXFA_CalculateData calcData = pWidgetAcc->GetCalculateData();
-      return calcData.HasValidNode() && calcData.GetScript();
+      CXFA_Calculate* calc = pWidgetAcc->GetCalculate();
+      return calc && calc->GetScript();
     }
     case XFA_EVENT_Validate: {
       CXFA_Validate* validate = pWidgetAcc->GetValidate(false);
@@ -223,12 +224,12 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_CalculateData calcData = pWidgetAcc->GetCalculateData();
-      if (!calcData.HasValidNode())
+      CXFA_Calculate* calc = pWidgetAcc->GetCalculate();
+      if (!calc)
         return XFA_EVENTERROR_NotExist;
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
-      return pWidgetAcc->ExecuteScript(calcData.GetScript(), pParam);
+      return pWidgetAcc->ExecuteScript(calc->GetScript(), pParam);
     }
     default:
       break;

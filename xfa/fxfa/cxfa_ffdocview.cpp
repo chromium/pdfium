@@ -31,6 +31,7 @@
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_binditemsdata.h"
+#include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_pageset.h"
 #include "xfa/fxfa/parser/cxfa_present.h"
@@ -416,13 +417,13 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_CalculateData calcData = pWidgetAcc->GetCalculateData();
-      if (!calcData.HasValidNode())
+      CXFA_Calculate* calc = pWidgetAcc->GetCalculate();
+      if (!calc)
         return XFA_EVENTERROR_NotExist;
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
 
-      return pWidgetAcc->ExecuteScript(calcData.GetScript(), pParam);
+      return pWidgetAcc->ExecuteScript(calc->GetScript(), pParam);
     }
     default:
       break;

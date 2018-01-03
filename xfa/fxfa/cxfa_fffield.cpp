@@ -22,6 +22,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwltheme.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
+#include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
@@ -661,12 +662,12 @@ int32_t CXFA_FFField::CalculateOverride() {
 }
 
 int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
-  CXFA_CalculateData calcData = pAcc->GetCalculateData();
-  if (!calcData.HasValidNode())
+  CXFA_Calculate* calc = pAcc->GetCalculate();
+  if (!calc)
     return 1;
 
   XFA_VERSION version = pAcc->GetDoc()->GetXFADoc()->GetCurVersionMode();
-  switch (calcData.GetOverride()) {
+  switch (calc->GetOverride()) {
     case XFA_AttributeEnum::Error: {
       if (version <= XFA_VERSION_204)
         return 1;
@@ -681,7 +682,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
     }
     case XFA_AttributeEnum::Warning: {
       if (version <= XFA_VERSION_204) {
-        CXFA_Script* script = calcData.GetScript();
+        CXFA_Script* script = calc->GetScript();
         if (!script)
           return 1;
         if (script->GetExpression().IsEmpty())
@@ -695,7 +696,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
       if (!pAppProvider)
         return 0;
 
-      WideString wsMessage = calcData.GetMessageText();
+      WideString wsMessage = calc->GetMessageText();
       if (!wsMessage.IsEmpty())
         wsMessage += L"\r\n";
 

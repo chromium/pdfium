@@ -9,10 +9,16 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+class CXFA_Script;
+
 class CXFA_Calculate : public CXFA_Node {
  public:
   CXFA_Calculate(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Calculate() override;
+
+  XFA_AttributeEnum GetOverride();
+  CXFA_Script* GetScript();
+  WideString GetMessageText();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CALCULATE_H_

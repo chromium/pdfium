@@ -21,6 +21,7 @@
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
+#include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
@@ -328,15 +329,15 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_CalculateData calcData = GetCalculateData();
-  if (!calcData.HasValidNode())
+  CXFA_Calculate* calc = GetCalculate();
+  if (!calc)
     return XFA_EVENTERROR_NotExist;
   if (GetNode()->IsUserInteractive())
     return XFA_EVENTERROR_Disabled;
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Calculate;
-  int32_t iRet = ExecuteScript(calcData.GetScript(), &EventParam);
+  int32_t iRet = ExecuteScript(calc->GetScript(), &EventParam);
   if (iRet != XFA_EVENTERROR_Success)
     return iRet;
 

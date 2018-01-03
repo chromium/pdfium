@@ -16,7 +16,6 @@
 #include "fxbarcode/BC_Library.h"
 #include "xfa/fxfa/parser/cxfa_binddata.h"
 #include "xfa/fxfa/parser/cxfa_borderdata.h"
-#include "xfa/fxfa/parser/cxfa_calculatedata.h"
 #include "xfa/fxfa/parser/cxfa_captiondata.h"
 #include "xfa/fxfa/parser/cxfa_datadata.h"
 #include "xfa/fxfa/parser/cxfa_fontdata.h"
@@ -35,6 +34,7 @@ enum XFA_VALUEPICTURE {
   XFA_VALUEPICTURE_DataBind,
 };
 
+class CXFA_Calculate;
 class CXFA_Node;
 class CXFA_Para;
 class CXFA_Validate;
@@ -65,7 +65,7 @@ class CXFA_WidgetData : public CXFA_DataData {
   CXFA_Para* GetPara();
   CXFA_Value* GetDefaultValue();
   CXFA_Value* GetFormValue();
-  CXFA_CalculateData GetCalculateData();
+  CXFA_Calculate* GetCalculate();
   CXFA_Validate* GetValidate(bool bModified);
   CXFA_BorderData GetUIBorderData();
 

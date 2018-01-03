@@ -2143,8 +2143,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_cache.h",
       "xfa/fxfa/parser/cxfa_calculate.cpp",
       "xfa/fxfa/parser/cxfa_calculate.h",
-      "xfa/fxfa/parser/cxfa_calculatedata.cpp",
-      "xfa/fxfa/parser/cxfa_calculatedata.h",
       "xfa/fxfa/parser/cxfa_calendarsymbols.cpp",
       "xfa/fxfa/parser/cxfa_calendarsymbols.h",
       "xfa/fxfa/parser/cxfa_caption.cpp",
