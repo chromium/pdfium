@@ -102,10 +102,8 @@ pdfium::Optional<int32_t> CXFA_Box::GetSweepAngle() {
   return JSObject()->TryInteger(XFA_Attribute::SweepAngle, false);
 }
 
-CXFA_FillData CXFA_Box::GetFillData(bool bModified) {
-  CXFA_Node* pFillNode =
-      JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill, bModified);
-  return CXFA_FillData(pFillNode);
+CXFA_Fill* CXFA_Box::GetFill(bool bModified) {
+  return JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill, bModified);
 }
 
 CXFA_Margin* CXFA_Box::GetMargin() {

@@ -11,11 +11,10 @@
 #include <tuple>
 #include <vector>
 
-#include "xfa/fxfa/parser/cxfa_datadata.h"
-#include "xfa/fxfa/parser/cxfa_filldata.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Edge;
+class CXFA_Fill;
 class CXFA_Margin;
 class CXFA_Stroke;
 
@@ -32,7 +31,7 @@ class CXFA_Box : public CXFA_Node {
 
   int32_t CountEdges();
   CXFA_Edge* GetEdge(int32_t nIndex);
-  CXFA_FillData GetFillData(bool bModified);
+  CXFA_Fill* GetFill(bool bModified);
   CXFA_Margin* GetMargin();
 
   std::vector<CXFA_Stroke*> GetStrokes();

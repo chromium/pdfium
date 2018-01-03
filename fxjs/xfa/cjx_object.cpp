@@ -24,7 +24,7 @@
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
-#include "xfa/fxfa/parser/cxfa_filldata.h"
+#include "xfa/fxfa/parser/cxfa_fill.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -1339,9 +1339,8 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
     return;
 
   CXFA_Border* border = widget_data_->GetBorder(true);
-  CXFA_FillData borderfillData = border->GetFillData(true);
-  CXFA_Node* pNode = borderfillData.GetNode();
-  if (!pNode)
+  CXFA_Fill* borderfill = border->GetFill(true);
+  if (!borderfill)
     return;
 
   if (bSetting) {
@@ -1350,11 +1349,11 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
     int32_t b;
     std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
-    borderfillData.SetColor(color);
+    borderfill->SetColor(color);
     return;
   }
 
-  FX_ARGB color = borderfillData.GetColor(false);
+  FX_ARGB color = borderfill->GetColor(false);
   int32_t a;
   int32_t r;
   int32_t g;

@@ -2321,8 +2321,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_field.h",
       "xfa/fxfa/parser/cxfa_fill.cpp",
       "xfa/fxfa/parser/cxfa_fill.h",
-      "xfa/fxfa/parser/cxfa_filldata.cpp",
-      "xfa/fxfa/parser/cxfa_filldata.h",
       "xfa/fxfa/parser/cxfa_filter.cpp",
       "xfa/fxfa/parser/cxfa_filter.h",
       "xfa/fxfa/parser/cxfa_fliplabel.cpp",
