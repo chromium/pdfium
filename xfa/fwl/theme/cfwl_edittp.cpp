@@ -12,6 +12,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwltheme.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
@@ -26,10 +27,10 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;
     if (borderUI) {
-      CXFA_EdgeData edgeData = borderUI->GetEdgeData(0);
-      if (edgeData.HasValidNode()) {
-        cr = edgeData.GetColor();
-        fWidth = edgeData.GetThickness();
+      CXFA_Edge* edge = borderUI->GetEdge(0);
+      if (edge) {
+        cr = edge->GetColor();
+        fWidth = edge->GetThickness();
       }
     }
     pParams->m_pGraphics->SetStrokeColor(CXFA_GEColor(cr));

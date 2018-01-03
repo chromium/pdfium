@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "xfa/fxfa/parser/cxfa_corner.h"
-#include "xfa/fxfa/parser/cxfa_cornerdata.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_fill.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
@@ -18,32 +17,31 @@
 
 namespace {
 
-XFA_AttributeEnum Style3D(const std::vector<CXFA_StrokeData>& strokes,
-                          CXFA_StrokeData& strokeData) {
+std::pair<XFA_AttributeEnum, CXFA_Stroke*> Style3D(
+    const std::vector<CXFA_Stroke*>& strokes) {
   if (strokes.empty())
-    return XFA_AttributeEnum::Unknown;
+    return {XFA_AttributeEnum::Unknown, nullptr};
 
-  strokeData = strokes[0];
+  CXFA_Stroke* stroke = strokes[0];
   for (size_t i = 1; i < strokes.size(); i++) {
-    CXFA_StrokeData find = strokes[i];
-    if (!find.HasValidNode())
+    CXFA_Stroke* find = strokes[i];
+    if (!find)
       continue;
-
-    if (!strokeData.HasValidNode())
-      strokeData = find;
-    else if (strokeData.GetStrokeType() != find.GetStrokeType())
-      strokeData = find;
+    if (!stroke)
+      stroke = find;
+    else if (stroke->GetStrokeType() != find->GetStrokeType())
+      stroke = find;
     break;
   }
 
-  XFA_AttributeEnum iType = strokeData.GetStrokeType();
+  XFA_AttributeEnum iType = stroke->GetStrokeType();
   if (iType == XFA_AttributeEnum::Lowered ||
       iType == XFA_AttributeEnum::Raised ||
       iType == XFA_AttributeEnum::Etched ||
       iType == XFA_AttributeEnum::Embossed) {
-    return iType;
+    return {iType, stroke};
   }
-  return XFA_AttributeEnum::Unknown;
+  return {XFA_AttributeEnum::Unknown, stroke};
 }
 
 }  // namespace
@@ -83,12 +81,12 @@ int32_t CXFA_Box::CountEdges() {
   return CountChildren(XFA_Element::Edge, false);
 }
 
-CXFA_EdgeData CXFA_Box::GetEdgeData(int32_t nIndex) {
-  return CXFA_EdgeData(JSObject()->GetProperty<CXFA_Edge>(
-      nIndex, XFA_Element::Edge, nIndex == 0));
+CXFA_Edge* CXFA_Box::GetEdge(int32_t nIndex) {
+  return JSObject()->GetProperty<CXFA_Edge>(nIndex, XFA_Element::Edge,
+                                            nIndex == 0);
 }
 
-std::vector<CXFA_StrokeData> CXFA_Box::GetStrokes() {
+std::vector<CXFA_Stroke*> CXFA_Box::GetStrokes() {
   return GetStrokesInternal(false);
 }
 
@@ -118,24 +116,26 @@ std::tuple<XFA_AttributeEnum, bool, float> CXFA_Box::Get3DStyle() {
   if (IsArc())
     return {XFA_AttributeEnum::Unknown, false, 0.0f};
 
-  std::vector<CXFA_StrokeData> strokes = GetStrokesInternal(true);
-  CXFA_StrokeData strokeData(nullptr);
-  XFA_AttributeEnum iType = Style3D(strokes, strokeData);
+  std::vector<CXFA_Stroke*> strokes = GetStrokesInternal(true);
+  CXFA_Stroke* stroke;
+  XFA_AttributeEnum iType;
+
+  std::tie(iType, stroke) = Style3D(strokes);
   if (iType == XFA_AttributeEnum::Unknown)
     return {XFA_AttributeEnum::Unknown, false, 0.0f};
 
-  return {iType, strokeData.IsVisible(), strokeData.GetThickness()};
+  return {iType, stroke->IsVisible(), stroke->GetThickness()};
 }
 
-std::vector<CXFA_StrokeData> CXFA_Box::GetStrokesInternal(bool bNull) {
-  std::vector<CXFA_StrokeData> strokes;
+std::vector<CXFA_Stroke*> CXFA_Box::GetStrokesInternal(bool bNull) {
+  std::vector<CXFA_Stroke*> strokes;
   strokes.resize(8);
-  int32_t i, j;
-  for (i = 0, j = 0; i < 4; i++) {
-    CXFA_CornerData cornerData = CXFA_CornerData(
-        JSObject()->GetProperty<CXFA_Corner>(i, XFA_Element::Corner, i == 0));
-    if (cornerData.HasValidNode() || i == 0) {
-      strokes[j] = cornerData;
+
+  for (int32_t i = 0, j = 0; i < 4; i++) {
+    CXFA_Corner* corner =
+        JSObject()->GetProperty<CXFA_Corner>(i, XFA_Element::Corner, i == 0);
+    if (corner || i == 0) {
+      strokes[j] = corner;
     } else if (!bNull) {
       if (i == 1 || i == 2)
         strokes[j] = strokes[0];
@@ -143,10 +143,11 @@ std::vector<CXFA_StrokeData> CXFA_Box::GetStrokesInternal(bool bNull) {
         strokes[j] = strokes[2];
     }
     j++;
-    CXFA_EdgeData edgeData = CXFA_EdgeData(
-        JSObject()->GetProperty<CXFA_Edge>(i, XFA_Element::Edge, i == 0));
-    if (edgeData.HasValidNode() || i == 0) {
-      strokes[j] = edgeData;
+
+    CXFA_Edge* edge =
+        JSObject()->GetProperty<CXFA_Edge>(i, XFA_Element::Edge, i == 0);
+    if (edge || i == 0) {
+      strokes[j] = edge;
     } else if (!bNull) {
       if (i == 1 || i == 2)
         strokes[j] = strokes[1];

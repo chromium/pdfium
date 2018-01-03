@@ -27,6 +27,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_picture.h"
+#include "xfa/fxfa/parser/cxfa_stroke.h"
 #include "xfa/fxfa/parser/cxfa_ui.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
@@ -34,16 +35,17 @@
 
 namespace {
 
-float GetEdgeThickness(const std::vector<CXFA_StrokeData>& strokes,
+float GetEdgeThickness(const std::vector<CXFA_Stroke*>& strokes,
                        bool b3DStyle,
                        int32_t nIndex) {
   float fThickness = 0;
 
-  if (strokes[nIndex * 2 + 1].IsVisible()) {
+  CXFA_Stroke* stroke = strokes[nIndex * 2 + 1];
+  if (stroke->IsVisible()) {
     if (nIndex == 0)
       fThickness += 2.5f;
 
-    fThickness += strokes[nIndex * 2 + 1].GetThickness() * (b3DStyle ? 4 : 2);
+    fThickness += stroke->GetThickness() * (b3DStyle ? 4 : 2);
   }
   return fThickness;
 }
@@ -395,7 +397,7 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
     XFA_AttributeEnum iType = XFA_AttributeEnum::Unknown;
     std::tie(iType, bVisible, fThickness) = border->Get3DStyle();
     if (!left || !top || !right || !bottom) {
-      std::vector<CXFA_StrokeData> strokes = border->GetStrokes();
+      std::vector<CXFA_Stroke*> strokes = border->GetStrokes();
       if (!top)
         top = GetEdgeThickness(strokes, bVisible, 0);
       if (!right)

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffline.h"
 
+#include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
@@ -94,15 +95,15 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   float fLineWidth = 1.0f;
   XFA_AttributeEnum iStrokeType = XFA_AttributeEnum::Unknown;
   XFA_AttributeEnum iCap = XFA_AttributeEnum::Unknown;
-  CXFA_EdgeData edgeData = lineData.GetEdgeData();
-  if (edgeData.HasValidNode()) {
-    if (!edgeData.IsVisible())
+  CXFA_Edge* edge = lineData.GetEdge();
+  if (edge) {
+    if (!edge->IsVisible())
       return;
 
-    lineColor = edgeData.GetColor();
-    iStrokeType = edgeData.GetStrokeType();
-    fLineWidth = edgeData.GetThickness();
-    iCap = edgeData.GetCapType();
+    lineColor = edge->GetColor();
+    iStrokeType = edge->GetStrokeType();
+    fLineWidth = edge->GetThickness();
+    iCap = edge->GetCapType();
   }
 
   CFX_Matrix mtRotate = GetRotateMatrix();

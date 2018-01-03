@@ -23,6 +23,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_filldata.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
@@ -1378,12 +1379,12 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
     std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
     FX_ARGB rgb = ArgbEncode(100, r, g, b);
     for (int32_t i = 0; i < iSize; ++i)
-      border->GetEdgeData(i).SetColor(rgb);
+      border->GetEdge(i)->SetColor(rgb);
 
     return;
   }
 
-  FX_ARGB color = border->GetEdgeData(0).GetColor();
+  FX_ARGB color = border->GetEdge(0)->GetColor();
   int32_t a;
   int32_t r;
   int32_t g;
@@ -1401,14 +1402,14 @@ void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
 
   CXFA_Border* border = widget_data_->GetBorder(true);
   if (bSetting) {
-    CXFA_Measurement thickness = border->GetEdgeData(0).GetMSThickness();
+    CXFA_Measurement thickness = border->GetEdge(0)->GetMSThickness();
     pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
     return;
   }
 
   WideString wsThickness = pValue->ToWideString();
   for (int32_t i = 0; i < border->CountEdges(); ++i) {
-    border->GetEdgeData(i).SetMSThickness(
+    border->GetEdge(i)->SetMSThickness(
         CXFA_Measurement(wsThickness.AsStringView()));
   }
 }

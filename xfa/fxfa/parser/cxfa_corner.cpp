@@ -34,13 +34,14 @@ constexpr wchar_t kName[] = L"corner";
 }  // namespace
 
 CXFA_Corner::CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet)
-    : CXFA_Node(doc,
-                packet,
-                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
-                XFA_ObjectType::Node,
-                XFA_Element::Corner,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+    : CXFA_Stroke(doc,
+                  packet,
+                  (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
+                  XFA_ObjectType::Node,
+                  XFA_Element::Corner,
+                  kPropertyData,
+                  kAttributeData,
+                  kName,
+                  pdfium::MakeUnique<CJX_Corner>(this)) {}
 
 CXFA_Corner::~CXFA_Corner() {}

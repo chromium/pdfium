@@ -20,6 +20,7 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
+#include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
@@ -119,7 +120,7 @@ bool CXFA_FFPushButton::PerformLayout() {
 float CXFA_FFPushButton::GetLineWidth() {
   CXFA_Border* border = m_pDataAcc->GetBorder(false);
   if (border && border->GetPresence() == XFA_AttributeEnum::Visible)
-    return border->GetEdgeData(0).GetThickness();
+    return border->GetEdge(0)->GetThickness();
   return 0;
 }
 

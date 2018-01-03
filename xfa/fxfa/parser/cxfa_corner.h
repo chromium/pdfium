@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CXFA_CORNER_H_
 #define XFA_FXFA_PARSER_CXFA_CORNER_H_
 
-#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_stroke.h"
 
-class CXFA_Corner : public CXFA_Node {
+class CXFA_Corner : public CXFA_Stroke {
  public:
   CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Corner() override;

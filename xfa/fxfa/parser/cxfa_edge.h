@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CXFA_EDGE_H_
 #define XFA_FXFA_PARSER_CXFA_EDGE_H_
 
-#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_stroke.h"
 
-class CXFA_Edge : public CXFA_Node {
+class CXFA_Edge : public CXFA_Stroke {
  public:
   CXFA_Edge(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Edge() override;
