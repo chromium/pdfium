@@ -13,6 +13,8 @@ class CXFA_ExData : public CXFA_Node {
  public:
   CXFA_ExData(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ExData() override;
+
+  void SetContentType(const WideString& wsContentType);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EXDATA_H_

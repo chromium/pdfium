@@ -40,3 +40,7 @@ CXFA_ExData::CXFA_ExData(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_ExData>(this)) {}
 
 CXFA_ExData::~CXFA_ExData() {}
+
+void CXFA_ExData::SetContentType(const WideString& wsContentType) {
+  JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false, false);
+}

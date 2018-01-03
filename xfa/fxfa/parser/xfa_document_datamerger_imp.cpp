@@ -18,6 +18,7 @@
 #include "xfa/fxfa/parser/cxfa_bind.h"
 #include "xfa/fxfa/parser/cxfa_datagroup.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_exdata.h"
 #include "xfa/fxfa/parser/cxfa_form.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_items.h"
@@ -326,11 +327,10 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
             wsNormalizeValue += wsItem;
           }
-          CXFA_ExDataData exData =
-              defValue ? defValue->GetExData() : CXFA_ExDataData(nullptr);
-          ASSERT(exData.HasValidNode());
+          CXFA_ExData* exData = defValue ? defValue->GetExData() : nullptr;
+          ASSERT(exData);
 
-          exData.SetContentType(single ? L"text/plain" : L"text/xml");
+          exData->SetContentType(single ? L"text/plain" : L"text/xml");
         }
         FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                       XFA_Element::ExData);

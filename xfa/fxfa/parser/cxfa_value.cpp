@@ -9,6 +9,7 @@
 #include "fxjs/xfa/cjx_value.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_arc.h"
+#include "xfa/fxfa/parser/cxfa_exdata.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_line.h"
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
@@ -83,8 +84,8 @@ CXFA_Text* CXFA_Value::GetText() const {
   return static_cast<CXFA_Text*>(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
-CXFA_ExDataData CXFA_Value::GetExData() const {
-  return CXFA_ExDataData(GetNodeItem(XFA_NODEITEM_FirstChild));
+CXFA_ExData* CXFA_Value::GetExData() const {
+  return static_cast<CXFA_ExData*>(GetNodeItem(XFA_NODEITEM_FirstChild));
 }
 
 CXFA_Image* CXFA_Value::GetImage() const {

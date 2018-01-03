@@ -2309,8 +2309,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_excludens.h",
       "xfa/fxfa/parser/cxfa_exdata.cpp",
       "xfa/fxfa/parser/cxfa_exdata.h",
-      "xfa/fxfa/parser/cxfa_exdatadata.cpp",
-      "xfa/fxfa/parser/cxfa_exdatadata.h",
       "xfa/fxfa/parser/cxfa_execute.cpp",
       "xfa/fxfa/parser/cxfa_execute.h",
       "xfa/fxfa/parser/cxfa_exobject.cpp",
