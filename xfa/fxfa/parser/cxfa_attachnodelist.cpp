@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_attachnodelist.h"
 
+#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
@@ -40,8 +41,8 @@ bool CXFA_AttachNodeList::Remove(CXFA_Node* pNode) {
   return m_pAttachNode->RemoveChild(pNode, true);
 }
 
-CXFA_Node* CXFA_AttachNodeList::Item(int32_t iIndex) {
+CXFA_Node* CXFA_AttachNodeList::Item(size_t index) {
   return m_pAttachNode->GetChild<CXFA_Node>(
-      iIndex, XFA_Element::Unknown,
+      pdfium::base::checked_cast<int32_t>(index), XFA_Element::Unknown,
       m_pAttachNode->GetElementType() == XFA_Element::Subform);
 }

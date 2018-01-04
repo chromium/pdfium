@@ -29,7 +29,7 @@ CXFA_Node* CXFA_TreeList::NamedItem(const WideStringView& wsName) {
   uint32_t dwHashCode = FX_HashCode_GetW(wsName, false);
   size_t count = GetLength();
   for (size_t i = 0; i < count; i++) {
-    CXFA_Node* ret = Item(pdfium::base::checked_cast<int32_t>(i));
+    CXFA_Node* ret = Item(i);
     if (dwHashCode == ret->GetNameHash())
       return ret;
   }

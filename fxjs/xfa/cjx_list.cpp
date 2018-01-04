@@ -76,12 +76,13 @@ CJS_Return CJX_List::item(CJS_V8* runtime,
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  int32_t iIndex = runtime->ToInt32(params[0]);
-  if (iIndex < 0 || static_cast<size_t>(iIndex) >= GetXFAList()->GetLength())
+  int32_t index = runtime->ToInt32(params[0]);
+  size_t cast_index = static_cast<size_t>(index);
+  if (index < 0 || cast_index >= GetXFAList()->GetLength())
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
   return CJS_Return(runtime->NewXFAObject(
-      GetXFAList()->Item(iIndex),
+      GetXFAList()->Item(cast_index),
       GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
 }
 

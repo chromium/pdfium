@@ -24,7 +24,7 @@ class CXFA_ArrayNodeList : public CXFA_TreeList {
   bool Append(CXFA_Node* pNode) override;
   bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
   bool Remove(CXFA_Node* pNode) override;
-  CXFA_Node* Item(int32_t iIndex) override;
+  CXFA_Node* Item(size_t iIndex) override;
 
   void SetArrayNodeList(const std::vector<CXFA_Node*>& srcArray);
 
