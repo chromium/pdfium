@@ -741,8 +741,8 @@ int32_t CFXJSE_Engine::GetIndexByClassName(CXFA_Node* refNode) {
 void CFXJSE_Engine::GetSomExpression(CXFA_Node* refNode,
                                      WideString& wsExpression) {
   CXFA_NodeHelper* lpNodeHelper = m_ResolveProcessor->GetNodeHelper();
-  lpNodeHelper->GetNameExpression(refNode, wsExpression, true,
-                                  XFA_LOGIC_Transparent);
+  wsExpression =
+      lpNodeHelper->GetNameExpression(refNode, true, XFA_LOGIC_Transparent);
 }
 
 void CFXJSE_Engine::SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray) {

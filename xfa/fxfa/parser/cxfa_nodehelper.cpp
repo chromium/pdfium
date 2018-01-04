@@ -230,24 +230,23 @@ int32_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
   return 0;
 }
 
-void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
-                                        WideString& wsName,
-                                        bool bIsAllPath,
-                                        XFA_LOGIC_TYPE eLogicType) {
-  wsName.clear();
+WideString CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
+                                              bool bIsAllPath,
+                                              XFA_LOGIC_TYPE eLogicType) {
+  WideString wsName;
   if (bIsAllPath) {
-    GetNameExpression(refNode, wsName, false, eLogicType);
+    wsName = GetNameExpression(refNode, false, eLogicType);
     WideString wsParent;
     CXFA_Node* parent =
         ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
     while (parent) {
-      GetNameExpression(parent, wsParent, false, eLogicType);
+      wsParent = GetNameExpression(parent, false, eLogicType);
       wsParent += L".";
       wsParent += wsName;
       wsName = wsParent;
       parent = ResolveNodes_GetParent(parent, XFA_LOGIC_NoTransparent);
     }
-    return;
+    return wsName;
   }
 
   WideString ws;
@@ -255,16 +254,13 @@ void CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
     ws = refNode->GetClassName();
-    wsName =
-        WideString::Format(L"#%ls[%d]", ws.c_str(),
-                           GetIndex(refNode, eLogicType, bIsProperty, true));
-    return;
+    return WideString::Format(L"#%ls[%d]", ws.c_str(),
+                              GetIndex(refNode, eLogicType, bIsProperty, true));
   }
   ws = refNode->JSObject()->GetCData(XFA_Attribute::Name);
   ws.Replace(L".", L"\\.");
-  wsName =
-      WideString::Format(L"%ls[%d]", ws.c_str(),
-                         GetIndex(refNode, eLogicType, bIsProperty, false));
+  return WideString::Format(L"%ls[%d]", ws.c_str(),
+                            GetIndex(refNode, eLogicType, bIsProperty, false));
 }
 
 bool CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {

@@ -48,10 +48,10 @@ class CXFA_NodeHelper {
                    XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent,
                    bool bIsProperty = false,
                    bool bIsClassIndex = false);
-  void GetNameExpression(CXFA_Node* refNode,
-                         WideString& wsName,
-                         bool bIsAllPath,
-                         XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
+  WideString GetNameExpression(
+      CXFA_Node* refNode,
+      bool bIsAllPath,
+      XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
   bool NodeIsTransparent(CXFA_Node* refNode);
   bool ResolveNodes_CreateNode(WideString wsName,
                                WideString wsCondition,
