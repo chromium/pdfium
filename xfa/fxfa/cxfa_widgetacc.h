@@ -62,8 +62,6 @@ class CXFA_WidgetAcc {
 
   void ResetData();
 
-  XFA_Element GetElementType() const;
-
   CXFA_WidgetAcc* GetExclGroup();
 
   int32_t ProcessEvent(CXFA_FFDocView* docView,
@@ -109,7 +107,6 @@ class CXFA_WidgetAcc {
   void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void UpdateUIDisplay(CXFA_FFDocView* docView, CXFA_FFWidget* pExcept);
 
-  CXFA_Node* GetDatasets();
   RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
   float GetFontSize();
   FX_ARGB GetTextColor();

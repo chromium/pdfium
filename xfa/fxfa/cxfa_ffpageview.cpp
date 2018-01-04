@@ -73,7 +73,8 @@ bool PageWidgetFilter(CXFA_FFWidget* pWidget,
   CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
 
   if (!!(dwFilter & XFA_WidgetStatus_Focused) &&
-      pWidgetAcc->GetElementType() != XFA_Element::Field) {
+      (!pWidgetAcc->GetNode() ||
+       pWidgetAcc->GetNode()->GetElementType() != XFA_Element::Field)) {
     return false;
   }
 

@@ -364,14 +364,6 @@ CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_Node* pNode)
 
 CXFA_WidgetAcc::~CXFA_WidgetAcc() = default;
 
-XFA_Element CXFA_WidgetAcc::GetElementType() const {
-  return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
-}
-
-CXFA_Node* CXFA_WidgetAcc::GetDatasets() {
-  return m_pNode->GetBindData();
-}
-
 void CXFA_WidgetAcc::ResetData() {
   WideString wsValue;
   XFA_Element eUIType = GetUIType();
@@ -452,7 +444,7 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
   m_pNode->JSObject()->SetContent(wsData, GetFormatDataValue(wsData), true,
                                   false, true);
 
-  CXFA_Node* pBind = GetDatasets();
+  CXFA_Node* pBind = m_pNode->GetBindData();
   if (!pBind) {
     image->SetTransferEncoding(XFA_AttributeEnum::Base64);
     return;
@@ -479,7 +471,7 @@ CXFA_WidgetAcc* CXFA_WidgetAcc::GetExclGroup() {
 int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_FFDocView* docView,
                                      XFA_AttributeEnum iActivity,
                                      CXFA_EventParam* pEventParam) {
-  if (GetElementType() == XFA_Element::Draw)
+  if (m_pNode && m_pNode->GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   std::vector<CXFA_Event*> eventArray =
@@ -518,7 +510,7 @@ int32_t CXFA_WidgetAcc::ProcessEvent(CXFA_FFDocView* docView,
 }
 
 int32_t CXFA_WidgetAcc::ProcessCalculate(CXFA_FFDocView* docView) {
-  if (GetElementType() == XFA_Element::Draw)
+  if (m_pNode && m_pNode->GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   CXFA_Calculate* calc = GetCalculate();
@@ -733,7 +725,7 @@ WideString CXFA_WidgetAcc::GetValidateMessage(bool bError, bool bVersionFlag) {
 
 int32_t CXFA_WidgetAcc::ProcessValidate(CXFA_FFDocView* docView,
                                         int32_t iFlags) {
-  if (GetElementType() == XFA_Element::Draw)
+  if (m_pNode && m_pNode->GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   CXFA_Validate* validate = GetValidate(false);
@@ -1582,7 +1574,7 @@ void CXFA_WidgetAcc::InitLayoutData() {
     default:
       break;
   }
-  if (GetElementType() == XFA_Element::Field) {
+  if (m_pNode && m_pNode->GetElementType() == XFA_Element::Field) {
     m_pLayoutData = pdfium::MakeUnique<CXFA_FieldLayoutData>();
     return;
   }

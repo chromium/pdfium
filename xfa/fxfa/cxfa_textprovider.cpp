@@ -59,7 +59,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   }
 
   if (m_eType == XFA_TEXTPROVIDERTYPE_Datasets) {
-    CXFA_Node* pBind = m_pWidgetAcc->GetDatasets();
+    CXFA_Node* pBind = m_pWidgetAcc->GetNode()->GetBindData();
     CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode);
     for (CFX_XMLNode* pXMLChild =

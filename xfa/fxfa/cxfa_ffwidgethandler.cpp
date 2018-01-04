@@ -188,8 +188,11 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
   if (eEventType == XFA_EVENT_Unknown)
     return false;
 
-  if (!pWidgetAcc || pWidgetAcc->GetElementType() == XFA_Element::Draw)
+  if (!pWidgetAcc ||
+      (pWidgetAcc->GetNode() &&
+       pWidgetAcc->GetNode()->GetElementType() == XFA_Element::Draw)) {
     return false;
+  }
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
@@ -211,8 +214,11 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
                                            CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
     return XFA_EVENTERROR_NotExist;
-  if (!pWidgetAcc || pWidgetAcc->GetElementType() == XFA_Element::Draw)
+  if (!pWidgetAcc ||
+      (pWidgetAcc->GetNode() &&
+       pWidgetAcc->GetNode()->GetElementType() == XFA_Element::Draw)) {
     return XFA_EVENTERROR_NotExist;
+  }
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:

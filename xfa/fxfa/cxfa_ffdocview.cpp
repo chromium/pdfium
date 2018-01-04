@@ -408,8 +408,11 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
                                 CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
     return XFA_EVENTERROR_NotExist;
-  if (!pWidgetAcc || pWidgetAcc->GetElementType() == XFA_Element::Draw)
+  if (!pWidgetAcc ||
+      (pWidgetAcc->GetNode() &&
+       pWidgetAcc->GetNode()->GetElementType() == XFA_Element::Draw)) {
     return XFA_EVENTERROR_NotExist;
+  }
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:
