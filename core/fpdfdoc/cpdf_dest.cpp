@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_dest.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -13,8 +15,14 @@
 
 namespace {
 
-const char* const g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",
-                                    "FitB", "FitBH", "FitBV", nullptr};
+// These arrays are indexed by the PDFDEST_VIEW_* constants.
+
+// Last element is a sentinel.
+const char* const g_sZoomModes[] = {"Unknown", "XYZ",  "Fit",  "FitH",
+                                    "FitV",    "FitR", "FitB", "FitBH",
+                                    "FitBV",   nullptr};
+
+const int g_sZoomModeMaxParamCount[] = {0, 3, 0, 1, 1, 4, 0, 1, 1, 0};
 
 }  // namespace
 
@@ -66,9 +74,9 @@ int CPDF_Dest::GetZoomMode() {
     return 0;
 
   ByteString mode = pObj->GetString();
-  for (int i = 0; g_sZoomModes[i]; ++i) {
+  for (int i = 1; g_sZoomModes[i]; ++i) {
     if (mode == g_sZoomModes[i])
-      return i + 1;
+      return i;
   }
 
   return 0;
@@ -119,6 +127,16 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   }
 
   return true;
+}
+
+unsigned int CPDF_Dest::GetNumParams() {
+  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  if (!pArray || pArray->GetCount() < 2)
+    return 0;
+
+  size_t maxParamsForFitType = g_sZoomModeMaxParamCount[GetZoomMode()];
+  size_t numParamsInArray = pArray->GetCount() - 2;
+  return std::min(maxParamsForFitType, numParamsInArray);
 }
 
 float CPDF_Dest::GetParam(int index) {

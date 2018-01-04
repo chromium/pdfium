@@ -42,6 +42,65 @@ TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
   EXPECT_EQ(0U, FPDFDest_GetPageIndex(document(), dest));
 }
 
+TEST_F(FPDFDocEmbeddertest, DestGetView) {
+  EXPECT_TRUE(OpenDocument("named_dests.pdf"));
+
+  unsigned long numParams;
+  FS_FLOAT params[4];
+
+  numParams = 42;
+  std::fill_n(params, 4, 42.4242f);
+  EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_UNKNOWN_MODE),
+            FPDFDest_GetView(document(), nullptr, &numParams, params));
+  EXPECT_EQ(0U, numParams);
+  EXPECT_FLOAT_EQ(42.4242f, params[0]);
+
+  numParams = 42;
+  std::fill_n(params, 4, 42.4242f);
+  FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
+  EXPECT_TRUE(dest);
+  EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_XYZ),
+            FPDFDest_GetView(document(), dest, &numParams, params));
+  EXPECT_EQ(3U, numParams);
+  EXPECT_FLOAT_EQ(0, params[0]);
+  EXPECT_FLOAT_EQ(0, params[1]);
+  EXPECT_FLOAT_EQ(1, params[2]);
+  EXPECT_FLOAT_EQ(42.4242f, params[3]);
+
+  numParams = 42;
+  std::fill_n(params, 4, 42.4242f);
+  dest = FPDF_GetNamedDestByName(document(), "Next");
+  EXPECT_TRUE(dest);
+  EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_FIT),
+            FPDFDest_GetView(document(), dest, &numParams, params));
+  EXPECT_EQ(0U, numParams);
+  EXPECT_FLOAT_EQ(42.4242f, params[0]);
+
+  numParams = 42;
+  std::fill_n(params, 4, 42.4242f);
+  dest = FPDF_GetNamedDestByName(document(), "FirstAlternate");
+  EXPECT_TRUE(dest);
+  EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_XYZ),
+            FPDFDest_GetView(document(), dest, &numParams, params));
+  EXPECT_EQ(3U, numParams);
+  EXPECT_FLOAT_EQ(200, params[0]);
+  EXPECT_FLOAT_EQ(400, params[1]);
+  EXPECT_FLOAT_EQ(800, params[2]);
+  EXPECT_FLOAT_EQ(42.4242f, params[3]);
+
+  numParams = 42;
+  std::fill_n(params, 4, 42.4242f);
+  dest = FPDF_GetNamedDestByName(document(), "LastAlternate");
+  EXPECT_TRUE(dest);
+  EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_XYZ),
+            FPDFDest_GetView(document(), dest, &numParams, params));
+  EXPECT_EQ(3U, numParams);
+  EXPECT_FLOAT_EQ(0, params[0]);
+  EXPECT_FLOAT_EQ(0, params[1]);
+  EXPECT_FLOAT_EQ(-200, params[2]);
+  EXPECT_FLOAT_EQ(42.4242f, params[3]);
+}
+
 TEST_F(FPDFDocEmbeddertest, DestGetLocationInPage) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 

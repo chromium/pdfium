@@ -25,7 +25,11 @@ class CPDF_Dest {
   ByteString GetRemoteName();
   int GetPageIndex(CPDF_Document* pDoc);
   uint32_t GetPageObjNum();
+
+  // Returns the zoom mode, as one of the PDFDEST_VIEW_* values in fpdf_doc.h.
   int GetZoomMode();
+
+  unsigned int GetNumParams();
   float GetParam(int index);
 
   bool GetXYZ(bool* pHasX,
