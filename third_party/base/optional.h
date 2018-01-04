@@ -503,4 +503,7 @@ struct hash<pdfium::Optional<T>> {
 
 }  // namespace std
 
+template <class T>
+using Optional = pdfium::Optional<T>;
+
 #endif  // PDFIUM_THIRD_PARTY_BASE_OPTIONAL_H_

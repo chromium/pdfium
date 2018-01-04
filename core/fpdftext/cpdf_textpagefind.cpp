@@ -81,7 +81,7 @@ int CPDF_TextPageFind::GetCharIndex(int index) const {
 
 bool CPDF_TextPageFind::FindFirst(const WideString& findwhat,
                                   int flags,
-                                  pdfium::Optional<size_t> startPos) {
+                                  Optional<size_t> startPos) {
   if (!m_pTextPage)
     return false;
   if (m_strText.IsEmpty() || m_bMatchCase != (flags & FPDFTEXT_MATCHCASE))
@@ -142,7 +142,7 @@ bool CPDF_TextPageFind::FindNext() {
     return m_IsFind;
   }
   int nCount = pdfium::CollectionSize<int>(m_csFindWhatArray);
-  pdfium::Optional<size_t> nResultPos = 0;
+  Optional<size_t> nResultPos = 0;
   size_t nStartPos = m_findNextStart.value();
   bool bSpaceStart = false;
   for (int iWord = 0; iWord < nCount; iWord++) {
@@ -236,8 +236,7 @@ bool CPDF_TextPageFind::FindPrev() {
     return m_IsFind;
   }
   CPDF_TextPageFind findEngine(m_pTextPage.Get());
-  bool ret =
-      findEngine.FindFirst(m_findWhat, m_flags, pdfium::Optional<size_t>(0));
+  bool ret = findEngine.FindFirst(m_findWhat, m_flags, Optional<size_t>(0));
   if (!ret) {
     m_IsFind = false;
     return m_IsFind;

@@ -56,18 +56,18 @@ float CXFA_Margin::GetBottomInset() const {
   return TryBottomInset().value_or(0);
 }
 
-pdfium::Optional<float> CXFA_Margin::TryLeftInset() const {
+Optional<float> CXFA_Margin::TryLeftInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::LeftInset);
 }
 
-pdfium::Optional<float> CXFA_Margin::TryTopInset() const {
+Optional<float> CXFA_Margin::TryTopInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::TopInset);
 }
 
-pdfium::Optional<float> CXFA_Margin::TryRightInset() const {
+Optional<float> CXFA_Margin::TryRightInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::RightInset);
 }
 
-pdfium::Optional<float> CXFA_Margin::TryBottomInset() const {
+Optional<float> CXFA_Margin::TryBottomInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::BottomInset);
 }

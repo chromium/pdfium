@@ -128,7 +128,7 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_Attribute eAttribute) {
 }
 
 bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
-  pdfium::Optional<WideString> wsContent =
+  Optional<WideString> wsContent =
       pContentNode->JSObject()->TryContent(false, false);
   if (!wsContent)
     return false;
@@ -159,8 +159,7 @@ void SaveAttribute(CXFA_Node* pNode,
   if (!bProto && !pNode->JSObject()->HasAttribute(eName))
     return;
 
-  pdfium::Optional<WideString> value =
-      pNode->JSObject()->TryAttribute(eName, false);
+  Optional<WideString> value = pNode->JSObject()->TryAttribute(eName, false);
   if (!value)
     return;
 
@@ -206,7 +205,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       if (!pRawValueNode)
         break;
 
-      pdfium::Optional<WideString> contentType =
+      Optional<WideString> contentType =
           pNode->JSObject()->TryAttribute(XFA_Attribute::ContentType, false);
       if (pRawValueNode->GetElementType() == XFA_Element::SharpxHTML &&
           (contentType && *contentType == L"text/html")) {
@@ -229,9 +228,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
             ByteStringView(pMemStream->GetBuffer(), pMemStream->GetSize()));
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  (contentType && *contentType == L"text/xml")) {
-        pdfium::Optional<WideString> rawValue =
-            pRawValueNode->JSObject()->TryAttribute(XFA_Attribute::Value,
-                                                    false);
+        Optional<WideString> rawValue = pRawValueNode->JSObject()->TryAttribute(
+            XFA_Attribute::Value, false);
         if (!rawValue || rawValue->IsEmpty())
           break;
 
@@ -399,8 +397,7 @@ void RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot,
   if (!pTemplateRoot)
     return;
 
-  pdfium::Optional<WideString> templateNS =
-      pTemplateRoot->JSObject()->TryNamespace();
+  Optional<WideString> templateNS = pTemplateRoot->JSObject()->TryNamespace();
   if (!templateNS)
     return;
 

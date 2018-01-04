@@ -615,7 +615,7 @@ TEST(ByteString, Find) {
   EXPECT_FALSE(empty_string.Find('a').has_value());
   EXPECT_FALSE(empty_string.Find('\0').has_value());
 
-  pdfium::Optional<size_t> result;
+  Optional<size_t> result;
   ByteString single_string("a");
   result = single_string.Find('a');
   ASSERT_TRUE(result.has_value());
@@ -664,7 +664,7 @@ TEST(ByteString, ReverseFind) {
   EXPECT_FALSE(empty_string.ReverseFind('a').has_value());
   EXPECT_FALSE(empty_string.ReverseFind('\0').has_value());
 
-  pdfium::Optional<size_t> result;
+  Optional<size_t> result;
   ByteString single_string("a");
   result = single_string.ReverseFind('a');
   ASSERT_TRUE(result.has_value());
@@ -1111,7 +1111,7 @@ TEST(ByteStringView, Find) {
   EXPECT_FALSE(empty_string.Find('a').has_value());
   EXPECT_FALSE(empty_string.Find('\0').has_value());
 
-  pdfium::Optional<size_t> result;
+  Optional<size_t> result;
   ByteStringView single_string("a");
   result = single_string.Find('a');
   ASSERT_TRUE(result.has_value());

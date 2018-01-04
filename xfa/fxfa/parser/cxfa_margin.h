@@ -19,10 +19,10 @@ class CXFA_Margin : public CXFA_Node {
   float GetRightInset() const;
   float GetBottomInset() const;
 
-  pdfium::Optional<float> TryLeftInset() const;
-  pdfium::Optional<float> TryTopInset() const;
-  pdfium::Optional<float> TryRightInset() const;
-  pdfium::Optional<float> TryBottomInset() const;
+  Optional<float> TryLeftInset() const;
+  Optional<float> TryTopInset() const;
+  Optional<float> TryRightInset() const;
+  Optional<float> TryBottomInset() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MARGIN_H_

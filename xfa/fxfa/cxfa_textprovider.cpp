@@ -50,9 +50,8 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
-      pdfium::Optional<WideString> contentType =
-          pChildNode->JSObject()->TryAttribute(XFA_Attribute::ContentType,
-                                               false);
+      Optional<WideString> contentType = pChildNode->JSObject()->TryAttribute(
+          XFA_Attribute::ContentType, false);
       if (contentType && *contentType == L"text/html")
         bRichText = true;
     }
@@ -90,9 +89,8 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
     CXFA_Node* pChildNode = pValueNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
-      pdfium::Optional<WideString> contentType =
-          pChildNode->JSObject()->TryAttribute(XFA_Attribute::ContentType,
-                                               false);
+      Optional<WideString> contentType = pChildNode->JSObject()->TryAttribute(
+          XFA_Attribute::ContentType, false);
       if (contentType && *contentType == L"text/html")
         bRichText = true;
     }

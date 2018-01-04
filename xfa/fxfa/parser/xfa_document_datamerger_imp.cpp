@@ -90,7 +90,7 @@ bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (pChildNode->GetElementType() == XFA_Element::ExData) {
-          pdfium::Optional<WideString> contentType =
+          Optional<WideString> contentType =
               pChildNode->JSObject()->TryAttribute(XFA_Attribute::ContentType,
                                                    false);
           if (contentType) {
@@ -1058,8 +1058,7 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
       if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
         continue;
 
-      pdfium::Optional<WideString> ns =
-          pDDGroupNode->JSObject()->TryNamespace();
+      Optional<WideString> ns = pDDGroupNode->JSObject()->TryNamespace();
       if (!ns || *ns != L"http://ns.adobe.com/data-description/")
         continue;
     }
@@ -1238,8 +1237,7 @@ void UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDataDescriptionNode) {
         if (pDDGroupNode->GetElementType() != XFA_Element::DataGroup)
           continue;
 
-        pdfium::Optional<WideString> ns =
-            pDDGroupNode->JSObject()->TryNamespace();
+        Optional<WideString> ns = pDDGroupNode->JSObject()->TryNamespace();
         if (!ns || *ns != L"http://ns.adobe.com/data-description/")
           continue;
       }
@@ -1416,14 +1414,14 @@ void CXFA_Document::DoDataMerge() {
       continue;
 
     if (!pDDRoot && pChildNode->GetNameHash() == XFA_HASHCODE_DataDescription) {
-      pdfium::Optional<WideString> namespaceURI =
+      Optional<WideString> namespaceURI =
           pChildNode->JSObject()->TryNamespace();
       if (!namespaceURI)
         continue;
       if (*namespaceURI == L"http://ns.adobe.com/data-description/")
         pDDRoot = pChildNode;
     } else if (!pDataRoot && pChildNode->GetNameHash() == XFA_HASHCODE_Data) {
-      pdfium::Optional<WideString> namespaceURI =
+      Optional<WideString> namespaceURI =
           pChildNode->JSObject()->TryNamespace();
       if (!namespaceURI)
         continue;

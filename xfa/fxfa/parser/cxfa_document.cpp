@@ -167,12 +167,12 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
         if (pDatasetsChild->GetNameHash() != XFA_HASHCODE_Data)
           continue;
 
-        pdfium::Optional<WideString> namespaceURI =
+        Optional<WideString> namespaceURI =
             pDatasetsChild->JSObject()->TryNamespace();
         if (!namespaceURI)
           continue;
 
-        pdfium::Optional<WideString> datasetsURI =
+        Optional<WideString> datasetsURI =
             pDatasetsNode->JSObject()->TryNamespace();
         if (!datasetsURI)
           continue;

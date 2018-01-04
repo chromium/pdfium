@@ -575,7 +575,7 @@ TEST(WideString, Find) {
   EXPECT_FALSE(empty_string.Find(L'a').has_value());
   EXPECT_FALSE(empty_string.Find(L'\0').has_value());
 
-  pdfium::Optional<size_t> result;
+  Optional<size_t> result;
   WideString single_string(L"a");
   result = single_string.Find(L'a');
   ASSERT_TRUE(result.has_value());
@@ -1146,7 +1146,7 @@ TEST(WideStringView, Find) {
   EXPECT_FALSE(empty_string.Find(L'a').has_value());
   EXPECT_FALSE(empty_string.Find(L'\0').has_value());
 
-  pdfium::Optional<size_t> result;
+  Optional<size_t> result;
   WideStringView single_string(L"a");
   result = single_string.Find(L'a');
   ASSERT_TRUE(result.has_value());

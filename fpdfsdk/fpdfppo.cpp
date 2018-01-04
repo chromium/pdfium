@@ -85,7 +85,7 @@ bool ParserPageRangeString(ByteString rangstring,
 
   ByteString cbMidRange;
   size_t nStringFrom = 0;
-  pdfium::Optional<size_t> nStringTo = 0;
+  Optional<size_t> nStringTo = 0;
   while (nStringTo < nLength) {
     nStringTo = rangstring.Find(',', nStringFrom);
     if (!nStringTo.has_value())

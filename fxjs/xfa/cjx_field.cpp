@@ -104,8 +104,7 @@ CJS_Return CJX_Field::getSaveItem(
   if (!pWidgetAcc)
     return CJS_Return(runtime->NewNull());
 
-  pdfium::Optional<WideString> value =
-      pWidgetAcc->GetChoiceListItem(iIndex, true);
+  Optional<WideString> value = pWidgetAcc->GetChoiceListItem(iIndex, true);
   if (!value)
     return CJS_Return(runtime->NewNull());
 
@@ -169,8 +168,7 @@ CJS_Return CJX_Field::getDisplayItem(
   if (!pWidgetAcc)
     return CJS_Return(runtime->NewNull());
 
-  pdfium::Optional<WideString> value =
-      pWidgetAcc->GetChoiceListItem(iIndex, false);
+  Optional<WideString> value = pWidgetAcc->GetChoiceListItem(iIndex, false);
   if (!value)
     return CJS_Return(runtime->NewNull());
 

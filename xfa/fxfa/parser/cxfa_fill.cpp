@@ -74,7 +74,7 @@ void CXFA_Fill::SetColor(FX_ARGB color) {
 
 FX_ARGB CXFA_Fill::GetColor(bool bText) {
   if (CXFA_Color* pNode = GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    pdfium::Optional<WideString> wsColor =
+    Optional<WideString> wsColor =
         pNode->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
       return StringToFXARGB(wsColor->AsStringView());
@@ -103,7 +103,7 @@ XFA_AttributeEnum CXFA_Fill::GetPatternType() {
 FX_ARGB CXFA_Fill::GetPatternColor() {
   if (CXFA_Color* pColor =
           GetPattern()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    pdfium::Optional<WideString> wsColor =
+    Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
       return StringToFXARGB(wsColor->AsStringView());
@@ -121,7 +121,7 @@ int32_t CXFA_Fill::GetStippleRate() {
 FX_ARGB CXFA_Fill::GetStippleColor() {
   if (CXFA_Color* pColor =
           GetStipple()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    pdfium::Optional<WideString> wsColor =
+    Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
       return StringToFXARGB(wsColor->AsStringView());
@@ -139,7 +139,7 @@ XFA_AttributeEnum CXFA_Fill::GetLinearType() {
 FX_ARGB CXFA_Fill::GetLinearColor() {
   if (CXFA_Color* pColor =
           GetLinear()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    pdfium::Optional<WideString> wsColor =
+    Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
       return StringToFXARGB(wsColor->AsStringView());
@@ -157,7 +157,7 @@ bool CXFA_Fill::IsRadialToEdge() {
 FX_ARGB CXFA_Fill::GetRadialColor() {
   if (CXFA_Color* pColor =
           GetRadial()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    pdfium::Optional<WideString> wsColor =
+    Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
       return StringToFXARGB(wsColor->AsStringView());

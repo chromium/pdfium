@@ -65,7 +65,7 @@ class CXFA_Node : public CXFA_Object {
 #endif  // NDEBUG
 
   static WideString AttributeEnumToName(XFA_AttributeEnum item);
-  static pdfium::Optional<XFA_AttributeEnum> NameToAttributeEnum(
+  static Optional<XFA_AttributeEnum> NameToAttributeEnum(
       const WideStringView& name);
   static XFA_Attribute NameToAttribute(const WideStringView& name);
   static WideString AttributeToName(XFA_Attribute attr);
@@ -210,12 +210,11 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Occur* GetOccur();
 
-  pdfium::Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
-  pdfium::Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;
-  pdfium::Optional<CXFA_Measurement> GetDefaultMeasurement(
-      XFA_Attribute attr) const;
-  pdfium::Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
-  pdfium::Optional<XFA_AttributeEnum> GetDefaultEnum(XFA_Attribute attr) const;
+  Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
+  Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;
+  Optional<CXFA_Measurement> GetDefaultMeasurement(XFA_Attribute attr) const;
+  Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
+  Optional<XFA_AttributeEnum> GetDefaultEnum(XFA_Attribute attr) const;
 
   void SyncValue(const WideString& wsValue, bool bNotify);
 
@@ -243,10 +242,10 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* Deprecated_GetPrevSibling();
   const PropertyData* GetPropertyData(XFA_Element property) const;
   const AttributeData* GetAttributeData(XFA_Attribute attr) const;
-  pdfium::Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag);
+  Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag);
   void OnRemoved(bool bNotify);
-  pdfium::Optional<void*> GetDefaultValue(XFA_Attribute attr,
-                                          XFA_AttributeType eType) const;
+  Optional<void*> GetDefaultValue(XFA_Attribute attr,
+                                  XFA_AttributeType eType) const;
   CXFA_Node* GetChildInternal(int32_t index,
                               XFA_Element eType,
                               bool bOnlyChild);

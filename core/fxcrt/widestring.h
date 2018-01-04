@@ -169,9 +169,8 @@ class WideString {
   int GetInteger() const;
   float GetFloat() const;
 
-  pdfium::Optional<size_t> Find(const WideStringView& pSub,
-                                size_t start = 0) const;
-  pdfium::Optional<size_t> Find(wchar_t ch, size_t start = 0) const;
+  Optional<size_t> Find(const WideStringView& pSub, size_t start = 0) const;
+  Optional<size_t> Find(wchar_t ch, size_t start = 0) const;
 
   bool Contains(const WideStringView& lpszSub, size_t start = 0) const {
     return Find(lpszSub, start).has_value();

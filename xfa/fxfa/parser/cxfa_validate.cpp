@@ -59,7 +59,7 @@ XFA_AttributeEnum CXFA_Validate::GetFormatTest() {
 }
 
 void CXFA_Validate::SetNullTest(const WideString& wsValue) {
-  pdfium::Optional<XFA_AttributeEnum> item =
+  Optional<XFA_AttributeEnum> item =
       CXFA_Node::NameToAttributeEnum(wsValue.AsStringView());
   JSObject()->SetEnum(XFA_Attribute::NullTest,
                       item ? *item : XFA_AttributeEnum::Disabled, false);

@@ -92,14 +92,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
 
   CFX_SizeF containerSize;
   if (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup) {
-    pdfium::Optional<CXFA_Measurement> wValue =
+    Optional<CXFA_Measurement> wValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::W, false);
     if (wValue && wValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.width = wValue->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
-    pdfium::Optional<CXFA_Measurement> hValue =
+    Optional<CXFA_Measurement> hValue =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::H, false);
     if (hValue && hValue->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.height = hValue->ToUnit(XFA_Unit::Pt);
@@ -108,14 +108,14 @@ CFX_SizeF CalculateContainerSpecifiedSize(CXFA_Node* pFormNode,
   }
 
   if (*bContainerWidthAutoSize && eType == XFA_Element::Subform) {
-    pdfium::Optional<CXFA_Measurement> maxW =
+    Optional<CXFA_Measurement> maxW =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxW, false);
     if (maxW && maxW->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.width = maxW->ToUnit(XFA_Unit::Pt);
       *bContainerWidthAutoSize = false;
     }
 
-    pdfium::Optional<CXFA_Measurement> maxH =
+    Optional<CXFA_Measurement> maxH =
         pFormNode->JSObject()->TryMeasure(XFA_Attribute::MaxH, false);
     if (maxH && maxH->GetValue() > XFA_LAYOUT_FLOAT_PERCISION) {
       containerSize.height = maxH->ToUnit(XFA_Unit::Pt);
@@ -138,12 +138,12 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
   if (bContainerWidthAutoSize) {
     componentSize.width = fContentCalculatedWidth;
     if (pMarginNode) {
-      pdfium::Optional<CXFA_Measurement> leftInset =
+      Optional<CXFA_Measurement> leftInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::LeftInset, false);
       if (leftInset)
         componentSize.width += leftInset->ToUnit(XFA_Unit::Pt);
 
-      pdfium::Optional<CXFA_Measurement> rightInset =
+      Optional<CXFA_Measurement> rightInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::RightInset, false);
       if (rightInset)
         componentSize.width += rightInset->ToUnit(XFA_Unit::Pt);
@@ -153,12 +153,12 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
   if (bContainerHeightAutoSize) {
     componentSize.height = fContentCalculatedHeight;
     if (pMarginNode) {
-      pdfium::Optional<CXFA_Measurement> topInset =
+      Optional<CXFA_Measurement> topInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::TopInset, false);
       if (topInset)
         componentSize.height += topInset->ToUnit(XFA_Unit::Pt);
 
-      pdfium::Optional<CXFA_Measurement> bottomInset =
+      Optional<CXFA_Measurement> bottomInset =
           pMarginNode->JSObject()->TryMeasure(XFA_Attribute::BottomInset,
                                               false);
       if (bottomInset)
@@ -504,7 +504,7 @@ float InsertPendingItems(CXFA_ItemLayoutProcessor* pProcessor,
 
 XFA_AttributeEnum GetLayout(CXFA_Node* pFormNode, bool* bRootForceTb) {
   *bRootForceTb = false;
-  pdfium::Optional<XFA_AttributeEnum> layoutMode =
+  Optional<XFA_AttributeEnum> layoutMode =
       pFormNode->JSObject()->TryEnum(XFA_Attribute::Layout, false);
   if (layoutMode)
     return *layoutMode;
@@ -537,7 +537,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
     if (!bPreFind)
       eKeepType = XFA_Attribute::Next;
 
-    pdfium::Optional<XFA_AttributeEnum> previous =
+    Optional<XFA_AttributeEnum> previous =
         pKeep->JSObject()->TryEnum(eKeepType, false);
     if (previous) {
       if (*previous == XFA_AttributeEnum::ContentArea ||
@@ -555,7 +555,7 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
   if (!bPreFind)
     eKeepType = XFA_Attribute::Previous;
 
-  pdfium::Optional<XFA_AttributeEnum> next =
+  Optional<XFA_AttributeEnum> next =
       pKeep->JSObject()->TryEnum(eKeepType, false);
   if (!next)
     return false;

@@ -89,12 +89,11 @@ class CJX_Object {
   void RemoveAttribute(const WideStringView& wsAttr);
   WideString GetAttribute(const WideStringView& attr);
   WideString GetAttribute(XFA_Attribute attr);
-  pdfium::Optional<WideString> TryAttribute(const WideStringView& wsAttr,
-                                            bool bUseDefault);
-  pdfium::Optional<WideString> TryAttribute(XFA_Attribute eAttr,
-                                            bool bUseDefault);
+  Optional<WideString> TryAttribute(const WideStringView& wsAttr,
+                                    bool bUseDefault);
+  Optional<WideString> TryAttribute(XFA_Attribute eAttr, bool bUseDefault);
 
-  pdfium::Optional<WideString> TryContent(bool bScriptModify, bool bProto);
+  Optional<WideString> TryContent(bool bScriptModify, bool bProto);
   bool SetContent(const WideString& wsContent,
                   const WideString& wsXMLValue,
                   bool bNotify,
@@ -174,31 +173,30 @@ class CJX_Object {
                                   bool bSetting,
                                   XFA_Attribute eAttribute);
 
-  pdfium::Optional<WideString> TryNamespace();
+  Optional<WideString> TryNamespace();
 
-  pdfium::Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
+  Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
   bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_Attribute eAttr);
 
-  pdfium::Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault);
+  Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault);
   bool SetCData(XFA_Attribute eAttr,
                 const WideString& wsValue,
                 bool bNotify,
                 bool bScriptModify);
   WideString GetCData(XFA_Attribute eAttr);
 
-  pdfium::Optional<XFA_AttributeEnum> TryEnum(XFA_Attribute eAttr,
-                                              bool bUseDefault);
+  Optional<XFA_AttributeEnum> TryEnum(XFA_Attribute eAttr, bool bUseDefault);
   bool SetEnum(XFA_Attribute eAttr, XFA_AttributeEnum eValue, bool bNotify);
   XFA_AttributeEnum GetEnum(XFA_Attribute eAttr);
 
-  pdfium::Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault);
+  Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault);
   bool SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
   bool GetBoolean(XFA_Attribute eAttr);
 
-  pdfium::Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
-                                                bool bUseDefault) const;
-  pdfium::Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
+  Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
+                                        bool bUseDefault) const;
+  Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
   bool SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
 

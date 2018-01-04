@@ -94,11 +94,11 @@ bool CXFA_Box::IsCircular() {
   return JSObject()->GetBoolean(XFA_Attribute::Circular);
 }
 
-pdfium::Optional<int32_t> CXFA_Box::GetStartAngle() {
+Optional<int32_t> CXFA_Box::GetStartAngle() {
   return JSObject()->TryInteger(XFA_Attribute::StartAngle, false);
 }
 
-pdfium::Optional<int32_t> CXFA_Box::GetSweepAngle() {
+Optional<int32_t> CXFA_Box::GetSweepAngle() {
   return JSObject()->TryInteger(XFA_Attribute::SweepAngle, false);
 }
 

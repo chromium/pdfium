@@ -84,7 +84,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 
   uint32_t dwEditStyles = 0;
-  pdfium::Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
+  Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
   if (numCells && *numCells > 0) {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetEditLimit(*numCells);

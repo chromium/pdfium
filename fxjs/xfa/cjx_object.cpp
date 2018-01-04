@@ -222,7 +222,7 @@ bool CJX_Object::SetAttribute(XFA_Attribute eAttr,
                               bool bNotify) {
   switch (ToNode(GetXFAObject())->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      pdfium::Optional<XFA_AttributeEnum> item =
+      Optional<XFA_AttributeEnum> item =
           CXFA_Node::NameToAttributeEnum(wsValue);
       return SetEnum(
           eAttr,
@@ -271,11 +271,11 @@ WideString CJX_Object::GetAttribute(XFA_Attribute attr) {
   return TryAttribute(attr, true).value_or(WideString());
 }
 
-pdfium::Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
-                                                      bool bUseDefault) {
+Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
+                                              bool bUseDefault) {
   switch (ToNode(GetXFAObject())->GetAttributeType(eAttr)) {
     case XFA_AttributeType::Enum: {
-      pdfium::Optional<XFA_AttributeEnum> value = TryEnum(eAttr, bUseDefault);
+      Optional<XFA_AttributeEnum> value = TryEnum(eAttr, bUseDefault);
       if (!value)
         return {};
 
@@ -285,19 +285,19 @@ pdfium::Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
       return TryCData(eAttr, bUseDefault);
 
     case XFA_AttributeType::Boolean: {
-      pdfium::Optional<bool> value = TryBoolean(eAttr, bUseDefault);
+      Optional<bool> value = TryBoolean(eAttr, bUseDefault);
       if (!value)
         return {};
       return {*value ? L"1" : L"0"};
     }
     case XFA_AttributeType::Integer: {
-      pdfium::Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
+      Optional<int32_t> iValue = TryInteger(eAttr, bUseDefault);
       if (!iValue)
         return {};
       return {WideString::Format(L"%d", *iValue)};
     }
     case XFA_AttributeType::Measure: {
-      pdfium::Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
+      Optional<CXFA_Measurement> value = TryMeasure(eAttr, bUseDefault);
       if (!value)
         return {};
 
@@ -309,9 +309,8 @@ pdfium::Optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
   return {};
 }
 
-pdfium::Optional<WideString> CJX_Object::TryAttribute(
-    const WideStringView& wsAttr,
-    bool bUseDefault) {
+Optional<WideString> CJX_Object::TryAttribute(const WideStringView& wsAttr,
+                                              bool bUseDefault) {
   XFA_Attribute attr = CXFA_Node::NameToAttribute(wsAttr);
   if (attr != XFA_Attribute::Unknown)
     return TryAttribute(attr, bUseDefault);
@@ -330,8 +329,7 @@ void CJX_Object::RemoveAttribute(const WideStringView& wsAttr) {
     RemoveMapModuleKey(pKey);
 }
 
-pdfium::Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr,
-                                              bool bUseDefault) {
+Optional<bool> CJX_Object::TryBoolean(XFA_Attribute eAttr, bool bUseDefault) {
   void* pValue = nullptr;
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   if (GetMapModuleValue(pKey, pValue))
@@ -368,8 +366,8 @@ int32_t CJX_Object::GetInteger(XFA_Attribute eAttr) {
   return TryInteger(eAttr, true).value_or(0);
 }
 
-pdfium::Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
-                                                 bool bUseDefault) {
+Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
+                                         bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   void* pValue = nullptr;
   if (GetMapModuleValue(pKey, pValue))
@@ -380,8 +378,8 @@ pdfium::Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
   return ToNode(GetXFAObject())->GetDefaultInteger(eAttr);
 }
 
-pdfium::Optional<XFA_AttributeEnum> CJX_Object::TryEnum(XFA_Attribute eAttr,
-                                                        bool bUseDefault) {
+Optional<XFA_AttributeEnum> CJX_Object::TryEnum(XFA_Attribute eAttr,
+                                                bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   void* pValue = nullptr;
   if (GetMapModuleValue(pKey, pValue)) {
@@ -420,9 +418,8 @@ bool CJX_Object::SetMeasure(XFA_Attribute eAttr,
   return true;
 }
 
-pdfium::Optional<CXFA_Measurement> CJX_Object::TryMeasure(
-    XFA_Attribute eAttr,
-    bool bUseDefault) const {
+Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
+                                                  bool bUseDefault) const {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   void* pValue;
   int32_t iBytes;
@@ -436,9 +433,8 @@ pdfium::Optional<CXFA_Measurement> CJX_Object::TryMeasure(
   return ToNode(GetXFAObject())->GetDefaultMeasurement(eAttr);
 }
 
-pdfium::Optional<float> CJX_Object::TryMeasureAsFloat(
-    XFA_Attribute attr) const {
-  pdfium::Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
+Optional<float> CJX_Object::TryMeasureAsFloat(XFA_Attribute attr) const {
+  Optional<CXFA_Measurement> measure = TryMeasure(attr, false);
   if (measure)
     return {measure->ToUnit(XFA_Unit::Pt)};
   return {};
@@ -579,8 +575,8 @@ void CJX_Object::SetAttributeValue(const WideString& wsValue,
   }
 }
 
-pdfium::Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
-                                                  bool bUseDefault) {
+Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
+                                          bool bUseDefault) {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   if (eAttr == XFA_Attribute::Value) {
     void* pData;
@@ -744,7 +740,7 @@ bool CJX_Object::SetContent(const WideString& wsContent,
     case XFA_ObjectType::ContentNode: {
       WideString wsContentType;
       if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExData) {
-        pdfium::Optional<WideString> ret =
+        Optional<WideString> ret =
             TryAttribute(XFA_Attribute::ContentType, false);
         if (ret)
           wsContentType = *ret;
@@ -817,8 +813,7 @@ WideString CJX_Object::GetContent(bool bScriptModify) {
   return TryContent(bScriptModify, true).value_or(WideString());
 }
 
-pdfium::Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
-                                                    bool bProto) {
+Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
   CXFA_Node* pNode = nullptr;
   switch (ToNode(GetXFAObject())->GetObjectType()) {
     case XFA_ObjectType::ContainerNode:
@@ -847,7 +842,7 @@ pdfium::Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExData) {
-          pdfium::Optional<WideString> contentType =
+          Optional<WideString> contentType =
               TryAttribute(XFA_Attribute::ContentType, false);
           if (contentType) {
             if (*contentType == L"text/html")
@@ -883,7 +878,7 @@ pdfium::Optional<WideString> CJX_Object::TryContent(bool bScriptModify,
   return {};
 }
 
-pdfium::Optional<WideString> CJX_Object::TryNamespace() {
+Optional<WideString> CJX_Object::TryNamespace() {
   if (ToNode(GetXFAObject())->IsModelNode() ||
       ToNode(GetXFAObject())->GetElementType() == XFA_Element::Packet) {
     CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
@@ -1706,8 +1701,7 @@ void CJX_Object::Script_Form_Checksum(CFXJSE_Value* pValue,
     return;
   }
 
-  pdfium::Optional<WideString> checksum =
-      TryAttribute(XFA_Attribute::Checksum, false);
+  Optional<WideString> checksum = TryAttribute(XFA_Attribute::Checksum, false);
   pValue->SetString(checksum ? checksum->UTF8Encode().AsStringView() : "");
 }
 

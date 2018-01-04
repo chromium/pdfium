@@ -464,7 +464,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (!pTextNode)
     return false;
 
-  pdfium::Optional<WideString> wsScript =
+  Optional<WideString> wsScript =
       pTextNode->JSObject()->TryCData(XFA_Attribute::Value, true);
   if (!wsScript)
     return false;

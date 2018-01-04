@@ -153,7 +153,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   bool bTargetAllFind = true;
   while (iSplitIndex != -1) {
     WideString wsExpr;
-    pdfium::Optional<size_t> iSplitNextIndex = 0;
+    Optional<size_t> iSplitNextIndex = 0;
     if (!bTargetAllFind) {
       iSplitNextIndex = wsTargetAll.Find(' ', iSplitIndex);
       if (!iSplitNextIndex.has_value())
@@ -1151,7 +1151,7 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet_Ordered(
     CXFA_Node* pOccurNode =
         pPageSet->GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
     if (pOccurNode) {
-      pdfium::Optional<int32_t> ret =
+      Optional<int32_t> ret =
           pOccurNode->JSObject()->TryInteger(XFA_Attribute::Max, false);
       if (ret)
         iMax = *ret;
@@ -1324,7 +1324,7 @@ bool CXFA_LayoutPageMgr::MatchPageAreaOddOrEven(CXFA_Node* pPageArea) {
   if (m_ePageSetMode != XFA_AttributeEnum::DuplexPaginated)
     return true;
 
-  pdfium::Optional<XFA_AttributeEnum> ret =
+  Optional<XFA_AttributeEnum> ret =
       pPageArea->JSObject()->TryEnum(XFA_Attribute::OddOrEven, true);
   if (!ret || *ret == XFA_AttributeEnum::Any)
     return true;
@@ -1354,7 +1354,7 @@ CXFA_Node* CXFA_LayoutPageMgr::GetNextAvailPageArea(
       CXFA_Node* pOccurNode =
           m_pCurPageArea->GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
       if (pOccurNode) {
-        pdfium::Optional<int32_t> ret =
+        Optional<int32_t> ret =
             pOccurNode->JSObject()->TryInteger(XFA_Attribute::Max, false);
         if (ret)
           iMax = *ret;
@@ -1460,7 +1460,7 @@ int32_t CXFA_LayoutPageMgr::CreateMinPageRecord(CXFA_Node* pPageArea,
     return 0;
 
   int32_t iMin = 0;
-  pdfium::Optional<int32_t> ret;
+  Optional<int32_t> ret;
   CXFA_Node* pOccurNode =
       pPageArea->GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
   if (pOccurNode) {
@@ -1507,7 +1507,7 @@ void CXFA_LayoutPageMgr::CreateMinPageSetRecord(CXFA_Node* pPageSet,
   if (!pOccurNode)
     return;
 
-  pdfium::Optional<int32_t> iMin =
+  Optional<int32_t> iMin =
       pOccurNode->JSObject()->TryInteger(XFA_Attribute::Min, false);
   if (!iMin || iCurSetCount >= *iMin)
     return;
@@ -1572,7 +1572,7 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(float fChildHeight) {
   CXFA_Node* pOccurNode =
       pPageNode->GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
   int32_t iMax = 0;
-  pdfium::Optional<int32_t> ret;
+  Optional<int32_t> ret;
   if (pOccurNode) {
     ret = pOccurNode->JSObject()->TryInteger(XFA_Attribute::Max, false);
     if (ret)

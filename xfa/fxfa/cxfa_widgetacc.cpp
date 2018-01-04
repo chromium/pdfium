@@ -975,28 +975,28 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
   if (para)
     size.width += para->GetMarginLeft() + para->GetTextIndent();
 
-  pdfium::Optional<float> width = TryWidth();
+  Optional<float> width = TryWidth();
   if (width) {
     size.width = *width;
   } else {
-    pdfium::Optional<float> min = TryMinWidth();
+    Optional<float> min = TryMinWidth();
     if (min)
       size.width = std::max(size.width, *min);
 
-    pdfium::Optional<float> max = TryMaxWidth();
+    Optional<float> max = TryMaxWidth();
     if (max && *max > 0)
       size.width = std::min(size.width, *max);
   }
 
-  pdfium::Optional<float> height = TryHeight();
+  Optional<float> height = TryHeight();
   if (height) {
     size.height = *height;
   } else {
-    pdfium::Optional<float> min = TryMinHeight();
+    Optional<float> min = TryMinHeight();
     if (min)
       size.height = std::max(size.height, *min);
 
-    pdfium::Optional<float> max = TryMaxHeight();
+    Optional<float> max = TryMaxHeight();
     if (max && *max > 0)
       size.height = std::min(size.height, *max);
   }
@@ -1104,7 +1104,7 @@ CFX_SizeF CXFA_WidgetAcc::CalculateImageSize(float img_width,
                     XFA_UnitPx2Pt(img_height, dpi_y));
 
   CFX_RectF rtFit;
-  pdfium::Optional<float> width = TryWidth();
+  Optional<float> width = TryWidth();
   if (width) {
     rtFit.width = *width;
     GetWidthWithoutMargin(rtFit.width);
@@ -1112,7 +1112,7 @@ CFX_SizeF CXFA_WidgetAcc::CalculateImageSize(float img_width,
     rtFit.width = rtImage.width;
   }
 
-  pdfium::Optional<float> height = TryHeight();
+  Optional<float> height = TryHeight();
   if (height) {
     rtFit.height = *height;
     GetHeightWithoutMargin(rtFit.height);
@@ -1206,11 +1206,11 @@ float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
   if (margin)
     fWidthCalc += margin->GetLeftInset() + margin->GetRightInset();
 
-  pdfium::Optional<float> min = TryMinWidth();
+  Optional<float> min = TryMinWidth();
   if (min)
     fWidthCalc = std::max(fWidthCalc, *min);
 
-  pdfium::Optional<float> max = TryMaxWidth();
+  Optional<float> max = TryMaxWidth();
   if (max && *max > 0)
     fWidthCalc = std::min(fWidthCalc, *max);
 
@@ -1229,11 +1229,11 @@ float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
   if (margin)
     fHeightCalc += margin->GetTopInset() + margin->GetBottomInset();
 
-  pdfium::Optional<float> min = TryMinHeight();
+  Optional<float> min = TryMinHeight();
   if (min)
     fHeightCalc = std::max(fHeightCalc, *min);
 
-  pdfium::Optional<float> max = TryMaxHeight();
+  Optional<float> max = TryMaxHeight();
   if (max && *max > 0)
     fHeightCalc = std::min(fHeightCalc, *max);
 
@@ -1261,7 +1261,7 @@ void CXFA_WidgetAcc::StartWidgetLayout(float& fCalcWidth, float& fCalcHeight) {
   m_pLayoutData->m_fWidgetHeight = -1;
   float fWidth = 0;
   if (fCalcWidth > 0 && fCalcHeight < 0) {
-    pdfium::Optional<float> height = TryHeight();
+    Optional<float> height = TryHeight();
     if (height)
       fCalcHeight = *height;
     else
@@ -1271,8 +1271,8 @@ void CXFA_WidgetAcc::StartWidgetLayout(float& fCalcWidth, float& fCalcHeight) {
     return;
   }
   if (fCalcWidth < 0 && fCalcHeight < 0) {
-    pdfium::Optional<float> height;
-    pdfium::Optional<float> width = TryWidth();
+    Optional<float> height;
+    Optional<float> width = TryWidth();
     if (width) {
       fWidth = *width;
 
@@ -1605,7 +1605,7 @@ void CXFA_WidgetAcc::StartTextLayout(float& fCalcWidth, float& fCalcHeight) {
   }
 
   if (fCalcWidth < 0 && fCalcHeight < 0) {
-    pdfium::Optional<float> width = TryWidth();
+    Optional<float> width = TryWidth();
     if (width) {
       pTextLayout->StartLayout(GetWidthWithoutMargin(*width));
       fCalcWidth = *width;
@@ -1743,7 +1743,7 @@ bool CXFA_WidgetAcc::IsOpenAccess() const {
 }
 
 int32_t CXFA_WidgetAcc::GetRotate() const {
-  pdfium::Optional<int32_t> degrees =
+  Optional<int32_t> degrees =
       m_pNode->JSObject()->TryInteger(XFA_Attribute::Rotate, false);
   return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
 }
@@ -1823,27 +1823,27 @@ CXFA_Bind* CXFA_WidgetAcc::GetBind() {
                                                      false);
 }
 
-pdfium::Optional<float> CXFA_WidgetAcc::TryWidth() {
+Optional<float> CXFA_WidgetAcc::TryWidth() {
   return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::W);
 }
 
-pdfium::Optional<float> CXFA_WidgetAcc::TryHeight() {
+Optional<float> CXFA_WidgetAcc::TryHeight() {
   return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::H);
 }
 
-pdfium::Optional<float> CXFA_WidgetAcc::TryMinWidth() {
+Optional<float> CXFA_WidgetAcc::TryMinWidth() {
   return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MinW);
 }
 
-pdfium::Optional<float> CXFA_WidgetAcc::TryMinHeight() {
+Optional<float> CXFA_WidgetAcc::TryMinHeight() {
   return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MinH);
 }
 
-pdfium::Optional<float> CXFA_WidgetAcc::TryMaxWidth() {
+Optional<float> CXFA_WidgetAcc::TryMaxWidth() {
   return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MaxW);
 }
 
-pdfium::Optional<float> CXFA_WidgetAcc::TryMaxHeight() {
+Optional<float> CXFA_WidgetAcc::TryMaxHeight() {
   return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MaxH);
 }
 
@@ -1869,10 +1869,10 @@ CFX_RectF CXFA_WidgetAcc::GetUIMargin() {
   if (border && border->GetPresence() != XFA_AttributeEnum::Visible)
     return CFX_RectF();
 
-  pdfium::Optional<float> left = mgUI->TryLeftInset();
-  pdfium::Optional<float> top = mgUI->TryTopInset();
-  pdfium::Optional<float> right = mgUI->TryRightInset();
-  pdfium::Optional<float> bottom = mgUI->TryBottomInset();
+  Optional<float> left = mgUI->TryLeftInset();
+  Optional<float> top = mgUI->TryTopInset();
+  Optional<float> right = mgUI->TryRightInset();
+  Optional<float> bottom = mgUI->TryBottomInset();
   if (border) {
     bool bVisible = false;
     float fThickness = 0;
@@ -1977,8 +1977,7 @@ XFA_CHECKSTATE CXFA_WidgetAcc::GetCheckState() {
   CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
   int32_t i = 0;
   while (pText) {
-    pdfium::Optional<WideString> wsContent =
-        pText->JSObject()->TryContent(false, true);
+    Optional<WideString> wsContent = pText->JSObject()->TryContent(false, true);
     if (wsContent && *wsContent == wsValue)
       return static_cast<XFA_CHECKSTATE>(i);
 
@@ -2213,9 +2212,8 @@ int32_t CXFA_WidgetAcc::CountChoiceListItems(bool bSaveValue) {
   return pItem->CountChildren(XFA_Element::Unknown, false);
 }
 
-pdfium::Optional<WideString> CXFA_WidgetAcc::GetChoiceListItem(
-    int32_t nIndex,
-    bool bSaveValue) {
+Optional<WideString> CXFA_WidgetAcc::GetChoiceListItem(int32_t nIndex,
+                                                       bool bSaveValue) {
   std::vector<CXFA_Node*> pItemsArray;
   int32_t iCount = 0;
   for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
@@ -2634,7 +2632,7 @@ bool CXFA_WidgetAcc::IsVerticalScrollPolicyOff() {
   return false;
 }
 
-pdfium::Optional<int32_t> CXFA_WidgetAcc::GetNumberOfCells() {
+Optional<int32_t> CXFA_WidgetAcc::GetNumberOfCells() {
   CXFA_Node* pUIChild = GetUIChild();
   if (!pUIChild)
     return {};
@@ -2651,9 +2649,8 @@ WideString CXFA_WidgetAcc::GetBarcodeType() {
              : WideString();
 }
 
-pdfium::Optional<BC_CHAR_ENCODING>
-CXFA_WidgetAcc::GetBarcodeAttribute_CharEncoding() {
-  pdfium::Optional<WideString> wsCharEncoding =
+Optional<BC_CHAR_ENCODING> CXFA_WidgetAcc::GetBarcodeAttribute_CharEncoding() {
+  Optional<WideString> wsCharEncoding =
       GetUIChild()->JSObject()->TryCData(XFA_Attribute::CharEncoding, true);
   if (!wsCharEncoding)
     return {};
@@ -2664,8 +2661,8 @@ CXFA_WidgetAcc::GetBarcodeAttribute_CharEncoding() {
   return {};
 }
 
-pdfium::Optional<bool> CXFA_WidgetAcc::GetBarcodeAttribute_Checksum() {
-  pdfium::Optional<XFA_AttributeEnum> checksum =
+Optional<bool> CXFA_WidgetAcc::GetBarcodeAttribute_Checksum() {
+  Optional<XFA_AttributeEnum> checksum =
       GetUIChild()->JSObject()->TryEnum(XFA_Attribute::Checksum, true);
   if (!checksum)
     return {};
@@ -2684,8 +2681,8 @@ pdfium::Optional<bool> CXFA_WidgetAcc::GetBarcodeAttribute_Checksum() {
   return {};
 }
 
-pdfium::Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_DataLength() {
-  pdfium::Optional<WideString> wsDataLength =
+Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_DataLength() {
+  Optional<WideString> wsDataLength =
       GetUIChild()->JSObject()->TryCData(XFA_Attribute::DataLength, true);
   if (!wsDataLength)
     return {};
@@ -2693,8 +2690,8 @@ pdfium::Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_DataLength() {
   return {FXSYS_wtoi(wsDataLength->c_str())};
 }
 
-pdfium::Optional<char> CXFA_WidgetAcc::GetBarcodeAttribute_StartChar() {
-  pdfium::Optional<WideString> wsStartEndChar =
+Optional<char> CXFA_WidgetAcc::GetBarcodeAttribute_StartChar() {
+  Optional<WideString> wsStartEndChar =
       GetUIChild()->JSObject()->TryCData(XFA_Attribute::StartChar, true);
   if (!wsStartEndChar || wsStartEndChar->IsEmpty())
     return {};
@@ -2702,8 +2699,8 @@ pdfium::Optional<char> CXFA_WidgetAcc::GetBarcodeAttribute_StartChar() {
   return {static_cast<char>((*wsStartEndChar)[0])};
 }
 
-pdfium::Optional<char> CXFA_WidgetAcc::GetBarcodeAttribute_EndChar() {
-  pdfium::Optional<WideString> wsStartEndChar =
+Optional<char> CXFA_WidgetAcc::GetBarcodeAttribute_EndChar() {
+  Optional<WideString> wsStartEndChar =
       GetUIChild()->JSObject()->TryCData(XFA_Attribute::EndChar, true);
   if (!wsStartEndChar || wsStartEndChar->IsEmpty())
     return {};
@@ -2711,16 +2708,16 @@ pdfium::Optional<char> CXFA_WidgetAcc::GetBarcodeAttribute_EndChar() {
   return {static_cast<char>((*wsStartEndChar)[0])};
 }
 
-pdfium::Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ECLevel() {
-  pdfium::Optional<WideString> wsECLevel = GetUIChild()->JSObject()->TryCData(
+Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ECLevel() {
+  Optional<WideString> wsECLevel = GetUIChild()->JSObject()->TryCData(
       XFA_Attribute::ErrorCorrectionLevel, true);
   if (!wsECLevel)
     return {};
   return {FXSYS_wtoi(wsECLevel->c_str())};
 }
 
-pdfium::Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ModuleWidth() {
-  pdfium::Optional<CXFA_Measurement> moduleWidthHeight =
+Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ModuleWidth() {
+  Optional<CXFA_Measurement> moduleWidthHeight =
       GetUIChild()->JSObject()->TryMeasure(XFA_Attribute::ModuleWidth, true);
   if (!moduleWidthHeight)
     return {};
@@ -2728,8 +2725,8 @@ pdfium::Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ModuleWidth() {
   return {static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt))};
 }
 
-pdfium::Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ModuleHeight() {
-  pdfium::Optional<CXFA_Measurement> moduleWidthHeight =
+Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ModuleHeight() {
+  Optional<CXFA_Measurement> moduleWidthHeight =
       GetUIChild()->JSObject()->TryMeasure(XFA_Attribute::ModuleHeight, true);
   if (!moduleWidthHeight)
     return {};
@@ -2737,14 +2734,13 @@ pdfium::Optional<int32_t> CXFA_WidgetAcc::GetBarcodeAttribute_ModuleHeight() {
   return {static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt))};
 }
 
-pdfium::Optional<bool> CXFA_WidgetAcc::GetBarcodeAttribute_PrintChecksum() {
+Optional<bool> CXFA_WidgetAcc::GetBarcodeAttribute_PrintChecksum() {
   return GetUIChild()->JSObject()->TryBoolean(XFA_Attribute::PrintCheckDigit,
                                               true);
 }
 
-pdfium::Optional<BC_TEXT_LOC>
-CXFA_WidgetAcc::GetBarcodeAttribute_TextLocation() {
-  pdfium::Optional<XFA_AttributeEnum> textLocation =
+Optional<BC_TEXT_LOC> CXFA_WidgetAcc::GetBarcodeAttribute_TextLocation() {
+  Optional<XFA_AttributeEnum> textLocation =
       GetUIChild()->JSObject()->TryEnum(XFA_Attribute::TextLocation, true);
   if (!textLocation)
     return {};
@@ -2766,17 +2762,17 @@ CXFA_WidgetAcc::GetBarcodeAttribute_TextLocation() {
   return {};
 }
 
-pdfium::Optional<bool> CXFA_WidgetAcc::GetBarcodeAttribute_Truncate() {
+Optional<bool> CXFA_WidgetAcc::GetBarcodeAttribute_Truncate() {
   return GetUIChild()->JSObject()->TryBoolean(XFA_Attribute::Truncate, true);
 }
 
-pdfium::Optional<int8_t> CXFA_WidgetAcc::GetBarcodeAttribute_WideNarrowRatio() {
-  pdfium::Optional<WideString> wsWideNarrowRatio =
+Optional<int8_t> CXFA_WidgetAcc::GetBarcodeAttribute_WideNarrowRatio() {
+  Optional<WideString> wsWideNarrowRatio =
       GetUIChild()->JSObject()->TryCData(XFA_Attribute::WideNarrowRatio, true);
   if (!wsWideNarrowRatio)
     return {};
 
-  pdfium::Optional<size_t> ptPos = wsWideNarrowRatio->Find(':');
+  Optional<size_t> ptPos = wsWideNarrowRatio->Find(':');
   if (!ptPos)
     return {static_cast<int8_t>(FXSYS_wtoi(wsWideNarrowRatio->c_str()))};
 
@@ -2916,7 +2912,7 @@ WideString CXFA_WidgetAcc::GetPictureContent(XFA_VALUEPICTURE ePicture) {
               m_pNode->GetChild<CXFA_Format>(0, XFA_Element::Format, false)) {
         if (CXFA_Picture* pPicture = pFormat->GetChild<CXFA_Picture>(
                 0, XFA_Element::Picture, false)) {
-          pdfium::Optional<WideString> picture =
+          Optional<WideString> picture =
               pPicture->JSObject()->TryContent(false, true);
           if (picture)
             return *picture;
@@ -2948,7 +2944,7 @@ WideString CXFA_WidgetAcc::GetPictureContent(XFA_VALUEPICTURE ePicture) {
       if (pUI) {
         if (CXFA_Picture* pPicture =
                 pUI->GetChild<CXFA_Picture>(0, XFA_Element::Picture, false)) {
-          pdfium::Optional<WideString> picture =
+          Optional<WideString> picture =
               pPicture->JSObject()->TryContent(false, true);
           if (picture)
             return *picture;

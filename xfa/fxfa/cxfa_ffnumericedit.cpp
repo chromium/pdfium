@@ -53,7 +53,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   if (!m_pDataAcc->IsHorizontalScrollPolicyOff())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
 
-  pdfium::Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
+  Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
   if (numCells && *numCells > 0) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetLimit(*numCells);

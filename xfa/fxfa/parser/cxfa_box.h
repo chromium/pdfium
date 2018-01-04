@@ -36,8 +36,8 @@ class CXFA_Box : public CXFA_Node {
 
   std::vector<CXFA_Stroke*> GetStrokes();
 
-  pdfium::Optional<int32_t> GetStartAngle();
-  pdfium::Optional<int32_t> GetSweepAngle();
+  Optional<int32_t> GetStartAngle();
+  Optional<int32_t> GetSweepAngle();
 
  protected:
   CXFA_Box(CXFA_Document* pDoc,

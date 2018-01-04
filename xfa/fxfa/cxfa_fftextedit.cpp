@@ -92,7 +92,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   if (eType == XFA_Element::ExData)
     iMaxChars = 0;
 
-  pdfium::Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
+  Optional<int32_t> numCells = m_pDataAcc->GetNumberOfCells();
   if (!numCells) {
     pWidget->SetLimit(iMaxChars);
   } else if (*numCells == 0) {

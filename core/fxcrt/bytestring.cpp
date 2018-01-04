@@ -549,46 +549,44 @@ size_t ByteString::Insert(size_t location, char ch) {
   return new_length;
 }
 
-pdfium::Optional<size_t> ByteString::Find(char ch, size_t start) const {
+Optional<size_t> ByteString::Find(char ch, size_t start) const {
   if (!m_pData)
-    return pdfium::Optional<size_t>();
+    return Optional<size_t>();
 
   if (!IsValidIndex(start))
-    return pdfium::Optional<size_t>();
+    return Optional<size_t>();
 
   const char* pStr = static_cast<const char*>(
       memchr(m_pData->m_String + start, ch, m_pData->m_nDataLength - start));
-  return pStr ? pdfium::Optional<size_t>(
-                    static_cast<size_t>(pStr - m_pData->m_String))
-              : pdfium::Optional<size_t>();
+  return pStr ? Optional<size_t>(static_cast<size_t>(pStr - m_pData->m_String))
+              : Optional<size_t>();
 }
 
-pdfium::Optional<size_t> ByteString::Find(const ByteStringView& subStr,
-                                          size_t start) const {
+Optional<size_t> ByteString::Find(const ByteStringView& subStr,
+                                  size_t start) const {
   if (!m_pData)
-    return pdfium::Optional<size_t>();
+    return Optional<size_t>();
 
   if (!IsValidIndex(start))
-    return pdfium::Optional<size_t>();
+    return Optional<size_t>();
 
   const char* pStr =
       FX_strstr(m_pData->m_String + start, m_pData->m_nDataLength - start,
                 subStr.unterminated_c_str(), subStr.GetLength());
-  return pStr ? pdfium::Optional<size_t>(
-                    static_cast<size_t>(pStr - m_pData->m_String))
-              : pdfium::Optional<size_t>();
+  return pStr ? Optional<size_t>(static_cast<size_t>(pStr - m_pData->m_String))
+              : Optional<size_t>();
 }
 
-pdfium::Optional<size_t> ByteString::ReverseFind(char ch) const {
+Optional<size_t> ByteString::ReverseFind(char ch) const {
   if (!m_pData)
-    return pdfium::Optional<size_t>();
+    return Optional<size_t>();
 
   size_t nLength = m_pData->m_nDataLength;
   while (nLength--) {
     if (m_pData->m_String[nLength] == ch)
-      return pdfium::Optional<size_t>(nLength);
+      return Optional<size_t>(nLength);
   }
-  return pdfium::Optional<size_t>();
+  return Optional<size_t>();
 }
 
 void ByteString::MakeLower() {

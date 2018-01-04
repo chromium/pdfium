@@ -137,12 +137,12 @@ class CXFA_WidgetAcc {
   std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
                                               bool bIsFormReady);
 
-  pdfium::Optional<float> TryWidth();
-  pdfium::Optional<float> TryHeight();
-  pdfium::Optional<float> TryMinWidth();
-  pdfium::Optional<float> TryMinHeight();
-  pdfium::Optional<float> TryMaxWidth();
-  pdfium::Optional<float> TryMaxHeight();
+  Optional<float> TryWidth();
+  Optional<float> TryHeight();
+  Optional<float> TryMinWidth();
+  Optional<float> TryMinHeight();
+  Optional<float> TryMaxWidth();
+  Optional<float> TryMaxHeight();
 
   XFA_AttributeEnum GetButtonHighlight();
   bool HasButtonRollover() const;
@@ -166,8 +166,7 @@ class CXFA_WidgetAcc {
   CXFA_Node* GetExclGroupNextMember(CXFA_Node* pNode);
 
   int32_t CountChoiceListItems(bool bSaveValue);
-  pdfium::Optional<WideString> GetChoiceListItem(int32_t nIndex,
-                                                 bool bSaveValue);
+  Optional<WideString> GetChoiceListItem(int32_t nIndex, bool bSaveValue);
   bool IsChoiceListMultiSelect();
   bool IsChoiceListCommitOnSelect();
   std::vector<WideString> GetChoiceListItems(bool bSaveValue);
@@ -197,7 +196,7 @@ class CXFA_WidgetAcc {
 
   bool IsHorizontalScrollPolicyOff();
   bool IsVerticalScrollPolicyOff();
-  pdfium::Optional<int32_t> GetNumberOfCells();
+  Optional<int32_t> GetNumberOfCells();
 
   bool SetValue(XFA_VALUEPICTURE eValueType, const WideString& wsValue);
   WideString GetValue(XFA_VALUEPICTURE eValueType);
@@ -210,18 +209,18 @@ class CXFA_WidgetAcc {
   WideString NormalizeNumStr(const WideString& wsValue);
 
   WideString GetBarcodeType();
-  pdfium::Optional<BC_CHAR_ENCODING> GetBarcodeAttribute_CharEncoding();
-  pdfium::Optional<bool> GetBarcodeAttribute_Checksum();
-  pdfium::Optional<int32_t> GetBarcodeAttribute_DataLength();
-  pdfium::Optional<char> GetBarcodeAttribute_StartChar();
-  pdfium::Optional<char> GetBarcodeAttribute_EndChar();
-  pdfium::Optional<int32_t> GetBarcodeAttribute_ECLevel();
-  pdfium::Optional<int32_t> GetBarcodeAttribute_ModuleWidth();
-  pdfium::Optional<int32_t> GetBarcodeAttribute_ModuleHeight();
-  pdfium::Optional<bool> GetBarcodeAttribute_PrintChecksum();
-  pdfium::Optional<BC_TEXT_LOC> GetBarcodeAttribute_TextLocation();
-  pdfium::Optional<bool> GetBarcodeAttribute_Truncate();
-  pdfium::Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
+  Optional<BC_CHAR_ENCODING> GetBarcodeAttribute_CharEncoding();
+  Optional<bool> GetBarcodeAttribute_Checksum();
+  Optional<int32_t> GetBarcodeAttribute_DataLength();
+  Optional<char> GetBarcodeAttribute_StartChar();
+  Optional<char> GetBarcodeAttribute_EndChar();
+  Optional<int32_t> GetBarcodeAttribute_ECLevel();
+  Optional<int32_t> GetBarcodeAttribute_ModuleWidth();
+  Optional<int32_t> GetBarcodeAttribute_ModuleHeight();
+  Optional<bool> GetBarcodeAttribute_PrintChecksum();
+  Optional<BC_TEXT_LOC> GetBarcodeAttribute_TextLocation();
+  Optional<bool> GetBarcodeAttribute_Truncate();
+  Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
 
   WideString GetPasswordChar();
   std::pair<XFA_Element, int32_t> GetMaxChars();

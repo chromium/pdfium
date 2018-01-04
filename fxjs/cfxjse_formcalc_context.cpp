@@ -5947,7 +5947,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
       if (bHasNoResolveName) {
         WideString wsName;
         if (CXFA_Node* pXFANode = pNode->AsNode()) {
-          pdfium::Optional<WideString> ret =
+          Optional<WideString> ret =
               pXFANode->JSObject()->TryAttribute(XFA_Attribute::Name, false);
           if (ret)
             wsName = *ret;

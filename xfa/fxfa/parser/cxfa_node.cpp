@@ -142,7 +142,7 @@ WideString CXFA_Node::AttributeEnumToName(XFA_AttributeEnum item) {
 }
 
 // static
-pdfium::Optional<XFA_AttributeEnum> CXFA_Node::NameToAttributeEnum(
+Optional<XFA_AttributeEnum> CXFA_Node::NameToAttributeEnum(
     const WideStringView& name) {
   if (name.IsEmpty())
     return {};
@@ -309,8 +309,7 @@ uint8_t CXFA_Node::PropertyOccuranceCount(XFA_Element property) const {
   return data ? data->occurance_count : 0;
 }
 
-pdfium::Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(
-    uint8_t flag) {
+Optional<XFA_Element> CXFA_Node::GetFirstPropertyWithFlag(uint8_t flag) {
   if (m_Properties == nullptr)
     return {};
 
@@ -439,7 +438,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   if (m_Properties == nullptr)
     return nodes;
 
-  pdfium::Optional<XFA_Element> property =
+  Optional<XFA_Element> property =
       GetFirstPropertyWithFlag(XFA_PROPERTYFLAG_DefaultOneOf);
   if (!property)
     return nodes;
@@ -637,7 +636,7 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
 
   CXFA_Node* pLocaleNode = this;
   do {
-    pdfium::Optional<WideString> ret =
+    Optional<WideString> ret =
         pLocaleNode->JSObject()->TryCData(XFA_Attribute::Locale, false);
     if (ret) {
       wsLocaleName = *ret;
@@ -652,7 +651,7 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
     return true;
 
   if (pTopSubform) {
-    pdfium::Optional<WideString> ret =
+    Optional<WideString> ret =
         pTopSubform->JSObject()->TryCData(XFA_Attribute::Locale, false);
     if (ret) {
       wsLocaleName = *ret;
@@ -674,7 +673,7 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
                                       ->TryEnum(XFA_Attribute::Layout, true)
                                       .value_or(XFA_AttributeEnum::Position);
   if (pKeep) {
-    pdfium::Optional<XFA_AttributeEnum> intact =
+    Optional<XFA_AttributeEnum> intact =
         pKeep->JSObject()->TryEnum(XFA_Attribute::Intact, false);
     if (intact) {
       if (*intact == XFA_AttributeEnum::None &&
@@ -685,7 +684,7 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
         if (pPreviewRow &&
             pPreviewRow->JSObject()->GetEnum(XFA_Attribute::Layout) ==
                 XFA_AttributeEnum::Row) {
-          pdfium::Optional<XFA_AttributeEnum> value =
+          Optional<XFA_AttributeEnum> value =
               pKeep->JSObject()->TryEnum(XFA_Attribute::Previous, false);
           if (value && (*value == XFA_AttributeEnum::ContentArea ||
                         *value == XFA_AttributeEnum::PageArea)) {
@@ -694,7 +693,7 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
 
           CXFA_Keep* pNode =
               pPreviewRow->GetFirstChildByClass<CXFA_Keep>(XFA_Element::Keep);
-          pdfium::Optional<XFA_AttributeEnum> ret;
+          Optional<XFA_AttributeEnum> ret;
           if (pNode)
             ret = pNode->JSObject()->TryEnum(XFA_Attribute::Next, false);
           if (ret && (*ret == XFA_AttributeEnum::ContentArea ||
@@ -734,7 +733,7 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
 
       XFA_VERSION version = m_pDocument->GetCurVersionMode();
       if (eParLayout == XFA_AttributeEnum::Tb && version < XFA_VERSION_208) {
-        pdfium::Optional<CXFA_Measurement> measureH =
+        Optional<CXFA_Measurement> measureH =
             JSObject()->TryMeasure(XFA_Attribute::H, false);
         if (measureH)
           return XFA_AttributeEnum::ContentArea;
@@ -1326,27 +1325,23 @@ CXFA_Node* CXFA_Node::CreateInstance(bool bDataMerge) {
   return pInstance;
 }
 
-pdfium::Optional<bool> CXFA_Node::GetDefaultBoolean(XFA_Attribute attr) const {
-  pdfium::Optional<void*> value =
-      GetDefaultValue(attr, XFA_AttributeType::Boolean);
+Optional<bool> CXFA_Node::GetDefaultBoolean(XFA_Attribute attr) const {
+  Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Boolean);
   if (!value)
     return {};
   return {!!*value};
 }
 
-pdfium::Optional<int32_t> CXFA_Node::GetDefaultInteger(
-    XFA_Attribute attr) const {
-  pdfium::Optional<void*> value =
-      GetDefaultValue(attr, XFA_AttributeType::Integer);
+Optional<int32_t> CXFA_Node::GetDefaultInteger(XFA_Attribute attr) const {
+  Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Integer);
   if (!value)
     return {};
   return {static_cast<int32_t>(reinterpret_cast<uintptr_t>(*value))};
 }
 
-pdfium::Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
+Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
     XFA_Attribute attr) const {
-  pdfium::Optional<void*> value =
-      GetDefaultValue(attr, XFA_AttributeType::Measure);
+  Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Measure);
   if (!value)
     return {};
 
@@ -1354,28 +1349,24 @@ pdfium::Optional<CXFA_Measurement> CXFA_Node::GetDefaultMeasurement(
   return {CXFA_Measurement(str.AsStringView())};
 }
 
-pdfium::Optional<WideString> CXFA_Node::GetDefaultCData(
-    XFA_Attribute attr) const {
-  pdfium::Optional<void*> value =
-      GetDefaultValue(attr, XFA_AttributeType::CData);
+Optional<WideString> CXFA_Node::GetDefaultCData(XFA_Attribute attr) const {
+  Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::CData);
   if (!value)
     return {};
 
   return {WideString(static_cast<const wchar_t*>(*value))};
 }
 
-pdfium::Optional<XFA_AttributeEnum> CXFA_Node::GetDefaultEnum(
+Optional<XFA_AttributeEnum> CXFA_Node::GetDefaultEnum(
     XFA_Attribute attr) const {
-  pdfium::Optional<void*> value =
-      GetDefaultValue(attr, XFA_AttributeType::Enum);
+  Optional<void*> value = GetDefaultValue(attr, XFA_AttributeType::Enum);
   if (!value)
     return {};
   return {static_cast<XFA_AttributeEnum>(reinterpret_cast<uintptr_t>(*value))};
 }
 
-pdfium::Optional<void*> CXFA_Node::GetDefaultValue(
-    XFA_Attribute attr,
-    XFA_AttributeType eType) const {
+Optional<void*> CXFA_Node::GetDefaultValue(XFA_Attribute attr,
+                                           XFA_AttributeType eType) const {
   const AttributeData* data = GetAttributeData(attr);
   if (!data)
     return {};
