@@ -391,23 +391,20 @@ void RegenerateFormFile_Container(
   }
 }
 
-void RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot,
-                               WideString& wsVersionNumber) {
-  wsVersionNumber.clear();
+WideString RecognizeXFAVersionNumber(CXFA_Node* pTemplateRoot) {
   if (!pTemplateRoot)
-    return;
+    return WideString();
 
   Optional<WideString> templateNS = pTemplateRoot->JSObject()->TryNamespace();
   if (!templateNS)
-    return;
+    return WideString();
 
   XFA_VERSION eVersion =
       pTemplateRoot->GetDocument()->RecognizeXFAVersionNumber(*templateNS);
   if (eVersion == XFA_VERSION_UNKNOWN)
     eVersion = XFA_VERSION_DEFAULT;
 
-  wsVersionNumber =
-      WideString::Format(L"%i.%i", eVersion / 100, eVersion % 100);
+  return WideString::Format(L"%i.%i", eVersion / 100, eVersion % 100);
 }
 
 }  // namespace
@@ -541,10 +538,8 @@ void XFA_DataExporter_RegenerateFormFile(
     pStream->WriteString(L" xmlns=\"");
     pStream->WriteString(WideStringView(kFormNS));
 
-    WideString wsVersionNumber;
-    RecognizeXFAVersionNumber(
-        ToNode(pNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Template)),
-        wsVersionNumber);
+    WideString wsVersionNumber = RecognizeXFAVersionNumber(
+        ToNode(pNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Template)));
     if (wsVersionNumber.IsEmpty())
       wsVersionNumber = L"2.8";
 
