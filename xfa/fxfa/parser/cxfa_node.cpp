@@ -621,6 +621,15 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
                             : nullptr;
 }
 
+IFX_Locale* CXFA_Node::GetLocale() {
+  WideString wsLocaleName;
+  if (!GetLocaleName(wsLocaleName))
+    return nullptr;
+  if (wsLocaleName == L"ambient")
+    return GetDocument()->GetLocalMgr()->GetDefLocale();
+  return GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
+}
+
 bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
   CXFA_Node* pForm = GetDocument()->GetXFAObject(XFA_HASHCODE_Form)->AsNode();
   CXFA_Subform* pTopSubform =

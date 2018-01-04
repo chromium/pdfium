@@ -1500,15 +1500,7 @@ WideString CXFA_WidgetData::GetPictureContent(XFA_VALUEPICTURE ePicture) {
 }
 
 IFX_Locale* CXFA_WidgetData::GetLocale() {
-  if (!m_pNode)
-    return nullptr;
-
-  WideString wsLocaleName;
-  if (!m_pNode->GetLocaleName(wsLocaleName))
-    return nullptr;
-  if (wsLocaleName == L"ambient")
-    return m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
-  return m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
+  return m_pNode ? m_pNode->GetLocale() : nullptr;
 }
 
 WideString CXFA_WidgetData::GetValue(XFA_VALUEPICTURE eValueType) {

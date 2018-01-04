@@ -44,7 +44,6 @@ class IFX_Locale;
 
 class CXFA_WidgetData {
  public:
-  explicit CXFA_WidgetData(CXFA_Node* pNode);
   virtual ~CXFA_WidgetData();
 
   CXFA_Node* GetNode() const { return m_pNode; }
@@ -178,6 +177,8 @@ class CXFA_WidgetData {
   void SetIsNull(bool val) { m_bIsNull = val; }
 
  protected:
+  explicit CXFA_WidgetData(CXFA_Node* pNode);
+
   CXFA_Node* m_pNode;
 
  private:

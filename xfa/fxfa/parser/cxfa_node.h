@@ -183,6 +183,7 @@ class CXFA_Node : public CXFA_Object {
   bool HasBindItem();
   CXFA_WidgetData* GetWidgetData();
   CXFA_WidgetData* GetContainerWidgetData();
+  IFX_Locale* GetLocale();
   bool GetLocaleName(WideString& wsLocaleName);
   XFA_AttributeEnum GetIntact();
 
