@@ -672,6 +672,13 @@ void CXFA_FFDocView::InitCalculate(CXFA_Node* pNode) {
                                nullptr);
 }
 
+void CXFA_FFDocView::ProcessValueChanged(CXFA_WidgetAcc* widgetAcc) {
+  AddValidateWidget(widgetAcc);
+  AddCalculateWidgetAcc(widgetAcc);
+  RunCalculateWidgets();
+  RunValidate();
+}
+
 bool CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
   if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc.Get()))
     return false;

@@ -376,14 +376,6 @@ CXFA_Node* CXFA_WidgetAcc::GetDatasets() {
   return m_pNode->GetBindData();
 }
 
-bool CXFA_WidgetAcc::ProcessValueChanged() {
-  m_pDocView->AddValidateWidget(this);
-  m_pDocView->AddCalculateWidgetAcc(this);
-  m_pDocView->RunCalculateWidgets();
-  m_pDocView->RunValidate();
-  return true;
-}
-
 void CXFA_WidgetAcc::ResetData() {
   WideString wsValue;
   XFA_Element eUIType = GetUIType();

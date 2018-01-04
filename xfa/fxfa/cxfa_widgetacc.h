@@ -68,7 +68,6 @@ class CXFA_WidgetAcc {
   CXFA_WidgetAcc* GetExclGroup();
   CXFA_FFDoc* GetDoc();
 
-  bool ProcessValueChanged();
   int32_t ProcessEvent(XFA_AttributeEnum iActivity,
                        CXFA_EventParam* pEventParam);
   int32_t ProcessEvent(CXFA_Event* event, CXFA_EventParam* pEventParam);

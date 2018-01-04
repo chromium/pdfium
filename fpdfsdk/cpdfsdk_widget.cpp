@@ -319,8 +319,10 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
     }
   }
 
-  if (bSynchronizeElse)
-    pWidgetAcc->ProcessValueChanged();
+  if (bSynchronizeElse) {
+    CPDFXFA_Context* context = m_pPageView->GetFormFillEnv()->GetXFAContext();
+    context->GetXFADocView()->ProcessValueChanged(pWidgetAcc);
+  }
 }
 
 void CPDFSDK_Widget::SynchronizeXFAValue() {

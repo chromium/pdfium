@@ -79,6 +79,8 @@ class CXFA_FFDocView {
   void RunDocClose();
   void DestroyDocView();
 
+  void ProcessValueChanged(CXFA_WidgetAcc* widgetAcc);
+
   bool InitValidate(CXFA_Node* pNode);
   bool RunValidate();
 
