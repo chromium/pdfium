@@ -98,9 +98,17 @@ void CFX_FontMgr::InitFTLibrary() {
   if (m_FTLibrary)
     return;
   FXFT_Init_FreeType(&m_FTLibrary);
+  FT_Int major;
+  FT_Int minor;
+  FT_Int patch;
+  FXFT_Library_Version(m_FTLibrary, &major, &minor, &patch);
+  // Freetype versions >= 2.8.1 support hinting even if subpixel rendering is
+  // disabled. https://sourceforge.net/projects/freetype/files/freetype2/2.8.1/
   m_FTLibrarySupportsHinting =
+      major > 2 || (major >= 2 && minor > 8) ||
+      (major >= 2 && minor >= 8 && patch >= 1) ||
       FXFT_Library_SetLcdFilter(m_FTLibrary, FT_LCD_FILTER_DEFAULT) !=
-      FT_Err_Unimplemented_Feature;
+          FT_Err_Unimplemented_Feature;
 }
 
 void CFX_FontMgr::SetSystemFontInfo(

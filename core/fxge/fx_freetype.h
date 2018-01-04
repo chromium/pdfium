@@ -69,6 +69,9 @@ using FXFT_Outline_Funcs = FT_Outline_Funcs;
   FT_Done_FreeType(static_cast<FT_Library>(library))
 #define FXFT_Init_FreeType(library) \
   FT_Init_FreeType(reinterpret_cast<FT_Library*>(library))
+#define FXFT_Library_Version(library, amajor, aminor, apatch)               \
+  FT_Library_Version(reinterpret_cast<FT_Library>(library), amajor, aminor, \
+                     apatch)
 #define FXFT_New_Memory_Face(library, base, size, index, face)            \
   FT_New_Memory_Face(static_cast<FT_Library>(library), base, size, index, \
                      static_cast<FT_Face*>(face))
