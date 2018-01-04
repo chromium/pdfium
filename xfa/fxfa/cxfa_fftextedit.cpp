@@ -80,8 +80,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   } else if (!m_pDataAcc->IsHorizontalScrollPolicyOff()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
   }
-  if (!m_pDataAcc->IsOpenAccess() ||
-      !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!m_pDataAcc->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
     dwExtendedStyle |= FWL_STYLEEXT_EDT_MultiLine;
   }
@@ -317,14 +316,14 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
     if (pEdit->HasSelection())
       std::tie(eParam.m_iSelStart, eParam.m_iSelEnd) = pEdit->GetSelection();
   }
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Change, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
 }
 
 void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Full, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Full, &eParam);
 }
 
 bool CXFA_FFTextEdit::CheckWord(const ByteStringView& sWord) {

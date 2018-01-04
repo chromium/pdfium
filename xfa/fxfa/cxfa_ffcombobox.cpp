@@ -78,8 +78,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
     dwEditStyles &= ~FWL_STYLEEXT_EDT_ReadOnly;
     dwExtendedStyle |= FWL_STYLEEXT_CMB_DropDown;
   }
-  if (!m_pDataAcc->IsOpenAccess() ||
-      !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!m_pDataAcc->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive()) {
     dwEditStyles |= FWL_STYLEEXT_EDT_ReadOnly;
     dwExtendedStyle |= FWL_STYLEEXT_CMB_ReadOnly;
   }
@@ -136,7 +135,7 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
   pParam->m_eType = XFA_EVENT_Change;
   pParam->m_pTarget = m_pDataAcc.Get();
   pParam->m_wsNewText = ToComboBox(m_pNormalWidget.get())->GetEditText();
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Change, pParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, pParam);
 }
 
 uint32_t CXFA_FFComboBox::GetAlignment() {
@@ -302,14 +301,14 @@ void CXFA_FFComboBox::OnPreOpen(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_PreOpen;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::PreOpen, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::PreOpen, &eParam);
 }
 
 void CXFA_FFComboBox::OnPostOpen(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_PostOpen;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::PostOpen, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::PostOpen, &eParam);
 }
 
 void CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {

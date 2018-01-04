@@ -89,10 +89,8 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetEditLimit(*numCells);
   }
-  if (!m_pDataAcc->IsOpenAccess() ||
-      !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!m_pDataAcc->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     dwEditStyles |= FWL_STYLEEXT_EDT_ReadOnly;
-  }
   if (!m_pDataAcc->IsHorizontalScrollPolicyOff())
     dwEditStyles |= FWL_STYLEEXT_EDT_AutoHScroll;
 
@@ -200,7 +198,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pDataAcc.Get();
   eParam.m_wsNewText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Change, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
 }
 
 void CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {

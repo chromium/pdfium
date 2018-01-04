@@ -59,10 +59,9 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
     pWidget->SetLimit(*numCells);
   }
   dwExtendedStyle |= GetAlignment();
-  if (!m_pDataAcc->IsOpenAccess() ||
-      !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!m_pDataAcc->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
-  }
+
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
 

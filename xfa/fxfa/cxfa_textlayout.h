@@ -30,7 +30,7 @@ class CXFA_TextPiece;
 
 class CXFA_TextLayout {
  public:
-  explicit CXFA_TextLayout(CXFA_TextProvider* pTextProvider);
+  explicit CXFA_TextLayout(CXFA_FFDoc* doc, CXFA_TextProvider* pTextProvider);
   ~CXFA_TextLayout();
 
   float GetLayoutHeight();
@@ -110,6 +110,7 @@ class CXFA_TextLayout {
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
 
+  CXFA_FFDoc* m_pDoc;
   CXFA_TextProvider* m_pTextProvider;
   CXFA_Node* m_pTextDataNode;
   bool m_bRichText;

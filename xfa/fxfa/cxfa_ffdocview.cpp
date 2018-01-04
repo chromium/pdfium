@@ -413,12 +413,11 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:
-      return pWidgetAcc->ProcessCalculate();
+      return pWidgetAcc->ProcessCalculate(pDocView);
     case XFA_EVENT_Validate:
-      if (((CXFA_FFDoc*)pDocView->GetDoc())
-              ->GetDocEnvironment()
-              ->IsValidationsEnabled(pDocView->GetDoc())) {
-        return pWidgetAcc->ProcessValidate(0x01);
+      if (pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
+              pDocView->GetDoc())) {
+        return pWidgetAcc->ProcessValidate(pDocView, 0x01);
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
@@ -428,13 +427,14 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
 
-      return pWidgetAcc->ExecuteScript(calc->GetScript(), pParam);
+      return pWidgetAcc->ExecuteScript(pDocView, calc->GetScript(), pParam);
     }
     default:
       break;
   }
 
-  return pWidgetAcc->ProcessEvent(gs_EventActivity[pParam->m_eType], pParam);
+  return pWidgetAcc->ProcessEvent(pDocView, gs_EventActivity[pParam->m_eType],
+                                  pParam);
 }
 
 int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
@@ -587,7 +587,7 @@ void CXFA_FFDocView::RunSubformIndexChange() {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_IndexChange;
     eParam.m_pTarget = pWidgetAcc;
-    pWidgetAcc->ProcessEvent(XFA_AttributeEnum::IndexChange, &eParam);
+    pWidgetAcc->ProcessEvent(this, XFA_AttributeEnum::IndexChange, &eParam);
   }
   m_IndexChangedSubforms.clear();
 }
@@ -648,7 +648,7 @@ size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
     pCurAcc->GetNode()->JSObject()->SetCalcRecursionCount(recurse);
     if (recurse > 11)
       break;
-    if (pCurAcc->ProcessCalculate() == XFA_EVENTERROR_Success)
+    if (pCurAcc->ProcessCalculate(this) == XFA_EVENTERROR_Success)
       AddValidateWidget(pCurAcc);
 
     index = RunCalculateRecursive(++index);
@@ -701,7 +701,7 @@ bool CXFA_FFDocView::RunValidate() {
 
   for (CXFA_WidgetAcc* pAcc : m_ValidateAccs) {
     if (!pAcc->GetNode()->HasRemovedChildren())
-      pAcc->ProcessValidate(0);
+      pAcc->ProcessValidate(this, 0);
   }
   m_ValidateAccs.clear();
   return true;

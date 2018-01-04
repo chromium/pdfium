@@ -21,6 +21,7 @@ class CFX_CSSComputedStyle;
 class CFX_CSSStyleSelector;
 class CFX_CSSStyleSheet;
 class CFX_XMLNode;
+class CXFA_FFDoc;
 class CXFA_TextParseContext;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
@@ -50,7 +51,8 @@ class CXFA_TextParser {
   bool GetTabstops(CFX_CSSComputedStyle* pStyle,
                    CXFA_TextTabstopsContext* pTabstopContext);
 
-  RetainPtr<CFGAS_GEFont> GetFont(CXFA_TextProvider* pTextProvider,
+  RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* doc,
+                                  CXFA_TextProvider* pTextProvider,
                                   CFX_CSSComputedStyle* pStyle) const;
   float GetFontSize(CXFA_TextProvider* pTextProvider,
                     CFX_CSSComputedStyle* pStyle) const;

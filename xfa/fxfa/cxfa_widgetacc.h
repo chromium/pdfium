@@ -53,12 +53,11 @@ class CXFA_TextLayout;
 class CXFA_Value;
 class CXFA_Validate;
 class CXFA_WidgetLayoutData;
-class IXFA_AppProvider;
 class IFX_Locale;
 
 class CXFA_WidgetAcc {
  public:
-  CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode);
+  explicit CXFA_WidgetAcc(CXFA_Node* pNode);
   ~CXFA_WidgetAcc();
 
   void ResetData();
@@ -66,29 +65,38 @@ class CXFA_WidgetAcc {
   XFA_Element GetElementType() const;
 
   CXFA_WidgetAcc* GetExclGroup();
-  CXFA_FFDoc* GetDoc();
 
-  int32_t ProcessEvent(XFA_AttributeEnum iActivity,
+  int32_t ProcessEvent(CXFA_FFDocView* docView,
+                       XFA_AttributeEnum iActivity,
                        CXFA_EventParam* pEventParam);
-  int32_t ProcessEvent(CXFA_Event* event, CXFA_EventParam* pEventParam);
-  int32_t ProcessCalculate();
-  int32_t ProcessValidate(int32_t iFlags);
-  int32_t ExecuteScript(CXFA_Script* script, CXFA_EventParam* pEventParam);
-  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_Script* script,
+  int32_t ProcessEvent(CXFA_FFDocView* docView,
+                       CXFA_Event* event,
+                       CXFA_EventParam* pEventParam);
+  int32_t ProcessCalculate(CXFA_FFDocView* docView);
+  int32_t ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags);
+  int32_t ExecuteScript(CXFA_FFDocView* docView,
+                        CXFA_Script* script,
+                        CXFA_EventParam* pEventParam);
+  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_FFDocView* docView,
+                                             CXFA_Script* script,
                                              CXFA_EventParam* pEventParam);
 
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
-  void StartWidgetLayout(float& fCalcWidth, float& fCalcHeight);
-  bool FindSplitPos(int32_t iBlockIndex, float& fCalcHeight);
+  void StartWidgetLayout(CXFA_FFDoc* doc,
+                         float& fCalcWidth,
+                         float& fCalcHeight);
+  bool FindSplitPos(CXFA_FFDocView* docView,
+                    int32_t iBlockIndex,
+                    float& fCalcHeight);
 
-  bool LoadCaption();
+  bool LoadCaption(CXFA_FFDoc* doc);
   CXFA_TextLayout* GetCaptionTextLayout();
 
-  void LoadText();
+  void LoadText(CXFA_FFDoc* doc);
   CXFA_TextLayout* GetTextLayout();
 
-  bool LoadImageImage();
-  bool LoadImageEditImage();
+  bool LoadImageImage(CXFA_FFDoc* doc);
+  bool LoadImageEditImage(CXFA_FFDoc* doc);
   void GetImageDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
   void GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
 
@@ -102,7 +110,7 @@ class CXFA_WidgetAcc {
   void UpdateUIDisplay(CXFA_FFDocView* docView, CXFA_FFWidget* pExcept);
 
   CXFA_Node* GetDatasets();
-  RetainPtr<CFGAS_GEFont> GetFDEFont();
+  RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
   float GetFontSize();
   FX_ARGB GetTextColor();
   float GetLineHeight();
@@ -237,40 +245,43 @@ class CXFA_WidgetAcc {
   void SetIsNull(bool val) { m_bIsNull = val; }
 
  private:
-  IXFA_AppProvider* GetAppProvider();
-  void ProcessScriptTestValidate(CXFA_Validate* validate,
+  void ProcessScriptTestValidate(CXFA_FFDocView* docView,
+                                 CXFA_Validate* validate,
                                  int32_t iRet,
                                  bool pRetValue,
                                  bool bVersionFlag);
-  int32_t ProcessFormatTestValidate(CXFA_Validate* validate, bool bVersionFlag);
-  int32_t ProcessNullTestValidate(CXFA_Validate* validate,
+  int32_t ProcessFormatTestValidate(CXFA_FFDocView* docView,
+                                    CXFA_Validate* validate,
+                                    bool bVersionFlag);
+  int32_t ProcessNullTestValidate(CXFA_FFDocView* docView,
+                                  CXFA_Validate* validate,
                                   int32_t iFlags,
                                   bool bVersionFlag);
   WideString GetValidateCaptionName(bool bVersionFlag);
   WideString GetValidateMessage(bool bError, bool bVersionFlag);
-  void CalcCaptionSize(CFX_SizeF& szCap);
-  bool CalculateFieldAutoSize(CFX_SizeF& size);
+  void CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap);
+  bool CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
   bool CalculateWidgetAutoSize(CFX_SizeF& size);
-  bool CalculateTextEditAutoSize(CFX_SizeF& size);
-  bool CalculateCheckButtonAutoSize(CFX_SizeF& size);
-  bool CalculatePushButtonAutoSize(CFX_SizeF& size);
+  bool CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
+  bool CalculateCheckButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
+  bool CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
   CFX_SizeF CalculateImageSize(float img_width,
                                float img_height,
                                float dpi_x,
                                float dpi_y);
-  bool CalculateImageEditAutoSize(CFX_SizeF& size);
-  bool CalculateImageAutoSize(CFX_SizeF& size);
-  bool CalculateTextAutoSize(CFX_SizeF& size);
+  bool CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
+  bool CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
   float CalculateWidgetAutoHeight(float fHeightCalc);
   float CalculateWidgetAutoWidth(float fWidthCalc);
   float GetWidthWithoutMargin(float fWidthCalc);
   float GetHeightWithoutMargin(float fHeightCalc);
-  void CalculateTextContentSize(CFX_SizeF& size);
-  void CalculateAccWidthAndHeight(XFA_Element eUIType,
+  void CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF& size);
+  void CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
+                                  XFA_Element eUIType,
                                   float& fWidth,
                                   float& fCalcHeight);
   void InitLayoutData();
-  void StartTextLayout(float& fCalcWidth, float& fCalcHeight);
+  void StartTextLayout(CXFA_FFDoc* doc, float& fCalcWidth, float& fCalcHeight);
 
   CXFA_Bind* GetBind();
   void InsertListTextItem(CXFA_Node* pItems,
@@ -280,7 +291,6 @@ class CXFA_WidgetAcc {
   CXFA_Node* GetExclGroupNode();
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
 
-  CXFA_FFDocView* m_pDocView;
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
   uint32_t m_nRecursionDepth;
   bool m_bIsNull;

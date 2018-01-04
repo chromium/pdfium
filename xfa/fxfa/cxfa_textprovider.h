@@ -11,7 +11,6 @@
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_widgetacc.h"
 
-class CXFA_FFDoc;
 class CXFA_Font;
 class CXFA_Node;
 
@@ -35,7 +34,6 @@ class CXFA_TextProvider {
   CXFA_Para* GetPara();
   CXFA_Font* GetFont();
   bool IsCheckButtonAndAutoWidth();
-  CXFA_FFDoc* GetDocNode() { return m_pWidgetAcc->GetDoc(); }
   bool GetEmbbedObj(bool bURI,
                     bool bRaw,
                     const WideString& wsAttr,

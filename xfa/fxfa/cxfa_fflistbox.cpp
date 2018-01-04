@@ -160,7 +160,7 @@ void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
     CFWL_ListItem* item = pListBox->GetSelItem(0);
     eParam.m_wsNewText = item ? item->GetText() : L"";
   }
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Change, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
 }
 
 void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {

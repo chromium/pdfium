@@ -29,7 +29,8 @@ bool CXFA_FFImage::LoadWidget() {
   if (GetDataAcc()->GetImageImage())
     return true;
 
-  return GetDataAcc()->LoadImageImage() ? CXFA_FFDraw::LoadWidget() : false;
+  return GetDataAcc()->LoadImageImage(GetDoc()) ? CXFA_FFDraw::LoadWidget()
+                                                : false;
 }
 
 void CXFA_FFImage::UnloadWidget() {

@@ -1090,7 +1090,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Enter, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Enter, &eParam);
   return true;
 }
 
@@ -1342,7 +1342,7 @@ void CXFA_FFWidget::EventKillFocus() {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Exit;
   eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Exit, &eParam);
+  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Exit, &eParam);
 }
 
 bool CXFA_FFWidget::IsButtonDown() {

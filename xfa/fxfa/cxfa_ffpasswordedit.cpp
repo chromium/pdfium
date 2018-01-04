@@ -53,10 +53,9 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
     pWidget->SetAliasChar(password[0]);
   if (!m_pDataAcc->IsHorizontalScrollPolicyOff())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
-  if (!m_pDataAcc->IsOpenAccess() ||
-      !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!m_pDataAcc->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
-  }
+
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }

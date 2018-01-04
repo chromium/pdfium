@@ -613,16 +613,16 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
   if (!m_pContext->ContainsXFAForm())
     return true;
 
-  if (!m_pContext->GetXFADocView())
+  CXFA_FFDocView* docView = m_pContext->GetXFADocView();
+  if (!docView)
     return true;
 
-  CXFA_FFWidgetHandler* pWidgetHandler =
-      m_pContext->GetXFADocView()->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = docView->GetWidgetHandler();
   if (!pWidgetHandler)
     return true;
 
   std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
-      m_pContext->GetXFADocView()->CreateWidgetAccIterator();
+      docView->CreateWidgetAccIterator();
   if (pWidgetAccIterator) {
     CXFA_EventParam Param;
     Param.m_eType = XFA_EVENT_PreSubmit;
@@ -630,14 +630,14 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       pWidgetHandler->ProcessEvent(pWidgetAcc, &Param);
   }
 
-  pWidgetAccIterator = m_pContext->GetXFADocView()->CreateWidgetAccIterator();
+  pWidgetAccIterator = docView->CreateWidgetAccIterator();
   if (!pWidgetAccIterator)
     return true;
 
   CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
   pWidgetAcc = pWidgetAccIterator->MoveToNext();
   while (pWidgetAcc) {
-    int fRet = pWidgetAcc->ProcessValidate(-1);
+    int fRet = pWidgetAcc->ProcessValidate(docView, -1);
     if (fRet == XFA_EVENTERROR_Error) {
       CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
       if (!pFormFillEnv)
@@ -653,7 +653,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
     }
     pWidgetAcc = pWidgetAccIterator->MoveToNext();
   }
-  m_pContext->GetXFADocView()->UpdateDocView();
+  docView->UpdateDocView();
 
   return true;
 }

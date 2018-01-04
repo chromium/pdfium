@@ -216,11 +216,11 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:
-      return pWidgetAcc->ProcessCalculate();
+      return pWidgetAcc->ProcessCalculate(m_pDocView);
     case XFA_EVENT_Validate:
       if (m_pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
               m_pDocView->GetDoc())) {
-        return pWidgetAcc->ProcessValidate(0);
+        return pWidgetAcc->ProcessValidate(m_pDocView, 0);
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
@@ -229,13 +229,13 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
         return XFA_EVENTERROR_NotExist;
       if (pWidgetAcc->GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
-      return pWidgetAcc->ExecuteScript(calc->GetScript(), pParam);
+      return pWidgetAcc->ExecuteScript(m_pDocView, calc->GetScript(), pParam);
     }
     default:
       break;
   }
-  int32_t iRet =
-      pWidgetAcc->ProcessEvent(gs_EventActivity[pParam->m_eType], pParam);
+  int32_t iRet = pWidgetAcc->ProcessEvent(
+      m_pDocView, gs_EventActivity[pParam->m_eType], pParam);
   return iRet;
 }
 

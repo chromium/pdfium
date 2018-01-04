@@ -189,14 +189,15 @@ void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node* pItem,
   if (!pAcc)
     return;
 
-  pAcc->StartWidgetLayout(fCalcWidth, fCalcHeight);
+  pAcc->StartWidgetLayout(m_pDoc.Get(), fCalcWidth, fCalcHeight);
 }
 
 bool CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
                                  int32_t iBlockIndex,
                                  float& fCalcHeightPos) {
   CXFA_WidgetAcc* pAcc = pItem->GetWidgetAcc();
-  return pAcc && pAcc->FindSplitPos(iBlockIndex, fCalcHeightPos);
+  return pAcc &&
+         pAcc->FindSplitPos(m_pDoc->GetDocView(), iBlockIndex, fCalcHeightPos);
 }
 
 bool CXFA_FFNotify::RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem) {
@@ -213,7 +214,8 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem) {
 
   int32_t iRet;
   bool bRet;
-  std::tie(iRet, bRet) = pWidgetAcc->ExecuteBoolScript(pScript, &EventParam);
+  std::tie(iRet, bRet) =
+      pWidgetAcc->ExecuteBoolScript(pDocView, pScript, &EventParam);
   return iRet == XFA_EVENTERROR_Success && bRet;
 }
 
@@ -337,8 +339,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
 
   XFA_Element eType = pNode->GetElementType();
   if (XFA_IsCreateWidget(eType)) {
-    pNode->JSObject()->SetWidgetAcc(
-        pdfium::MakeUnique<CXFA_WidgetAcc>(pDocView, pNode));
+    pNode->JSObject()->SetWidgetAcc(pdfium::MakeUnique<CXFA_WidgetAcc>(pNode));
     return;
   }
   switch (eType) {

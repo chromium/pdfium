@@ -315,19 +315,22 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
         if (pFFExclGroup) {
           m_pDocView->AddValidateWidget(pFFExclGroup);
           m_pDocView->AddCalculateWidgetAcc(pFFExclGroup);
-          pFFExclGroup->ProcessEvent(XFA_AttributeEnum::Change, &eParam);
+          pFFExclGroup->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
+                                     &eParam);
         }
         eParam.m_pTarget = m_pDataAcc.Get();
-        m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Change, &eParam);
+        m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
+                                 &eParam);
       } else {
         SetFWLCheckState(m_pDataAcc->GetCheckState());
       }
       if (pFFExclGroup) {
         eParam.m_pTarget = pFFExclGroup;
-        pFFExclGroup->ProcessEvent(XFA_AttributeEnum::Click, &eParam);
+        pFFExclGroup->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click,
+                                   &eParam);
       }
       eParam.m_pTarget = m_pDataAcc.Get();
-      m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Click, &eParam);
+      m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
       break;
     }
     default:

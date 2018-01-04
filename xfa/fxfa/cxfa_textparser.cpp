@@ -325,6 +325,7 @@ bool CXFA_TextParser::IsSpaceRun(CFX_CSSComputedStyle* pStyle) const {
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
+    CXFA_FFDoc* doc,
     CXFA_TextProvider* pTextProvider,
     CFX_CSSComputedStyle* pStyle) const {
   WideString wsFamily = L"Courier";
@@ -350,9 +351,8 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
       dwStyle |= FXFONT_ITALIC;
   }
 
-  CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
-  CXFA_FontMgr* pFontMgr = pDoc->GetApp()->GetXFAFontMgr();
-  return pFontMgr->GetFont(pDoc, wsFamily.AsStringView(), dwStyle);
+  CXFA_FontMgr* pFontMgr = doc->GetApp()->GetXFAFontMgr();
+  return pFontMgr->GetFont(doc, wsFamily.AsStringView(), dwStyle);
 }
 
 float CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,

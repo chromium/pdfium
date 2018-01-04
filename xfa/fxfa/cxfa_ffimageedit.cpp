@@ -129,7 +129,7 @@ bool CXFA_FFImageEdit::CommitData() {
 
 bool CXFA_FFImageEdit::UpdateFWLData() {
   m_pDataAcc->SetImageEditImage(nullptr);
-  m_pDataAcc->LoadImageEditImage();
+  m_pDataAcc->LoadImageEditImage(GetDoc());
   return true;
 }
 

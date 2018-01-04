@@ -84,7 +84,7 @@ void CXFA_FFField::DrawHighlight(CXFA_Graphics* pGS,
                                  CFX_Matrix* pMatrix,
                                  uint32_t dwStatus,
                                  bool bEllipse) {
-  if (m_rtUI.IsEmpty() || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive())
+  if (m_rtUI.IsEmpty() || !GetDoc()->GetXFADoc()->IsInteractive())
     return;
   if (!(dwStatus & XFA_WidgetStatus_Highlight) || !m_pDataAcc->IsOpenAccess())
     return;
@@ -127,7 +127,7 @@ bool CXFA_FFField::IsLoaded() {
 
 bool CXFA_FFField::LoadWidget() {
   SetFWLThemeProvider();
-  m_pDataAcc->LoadCaption();
+  m_pDataAcc->LoadCaption(GetDoc());
   PerformLayout();
   return true;
 }
@@ -348,7 +348,7 @@ void CXFA_FFField::SetFWLRect() {
   CFX_RectF rtUi = m_rtUI;
   if (rtUi.width < 1.0)
     rtUi.width = 1.0;
-  if (!m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!GetDoc()->GetXFADoc()->IsInteractive()) {
     float fFontSize = m_pDataAcc->GetFontSize();
     if (rtUi.height < fFontSize)
       rtUi.height = fFontSize;
@@ -384,10 +384,8 @@ CFX_PointF CXFA_FFField::FWLToClient(const CFX_PointF& point) {
 bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!m_pNormalWidget)
     return false;
-  if (!m_pDataAcc->IsOpenAccess() ||
-      !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!m_pDataAcc->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
-  }
   if (!PtInActiveRect(point))
     return false;
 
@@ -456,10 +454,8 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
 bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!m_pNormalWidget)
     return false;
-  if (!m_pDataAcc->IsOpenAccess() ||
-      !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (!m_pDataAcc->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
-  }
   if (!PtInActiveRect(point))
     return false;
 
@@ -525,7 +521,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 }
 
 bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
-  if (!m_pNormalWidget || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive())
+  if (!m_pNormalWidget || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
   CFWL_MessageKey ms(nullptr, m_pNormalWidget.get());
@@ -537,7 +533,7 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
 }
 
 bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
-  if (!m_pNormalWidget || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive())
+  if (!m_pNormalWidget || !GetDoc()->GetXFADoc()->IsInteractive())
     return false;
 
   CFWL_MessageKey ms(nullptr, m_pNormalWidget.get());
@@ -549,7 +545,7 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
 }
 
 bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
-  if (!m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive())
+  if (!GetDoc()->GetXFADoc()->IsInteractive())
     return false;
   if (dwChar == FWL_VKEY_Tab)
     return true;
@@ -665,7 +661,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
   if (!calc)
     return 1;
 
-  XFA_VERSION version = pAcc->GetDoc()->GetXFADoc()->GetCurVersionMode();
+  XFA_VERSION version = GetDoc()->GetXFADoc()->GetCurVersionMode();
   switch (calc->GetOverride()) {
     case XFA_AttributeEnum::Error: {
       if (version <= XFA_VERSION_204)
@@ -739,22 +735,26 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseEnter;
         eParam.m_pTarget = m_pDataAcc.Get();
-        m_pDataAcc->ProcessEvent(XFA_AttributeEnum::MouseEnter, &eParam);
+        m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseEnter,
+                                 &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::Leave) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseExit;
         eParam.m_pTarget = m_pDataAcc.Get();
-        m_pDataAcc->ProcessEvent(XFA_AttributeEnum::MouseExit, &eParam);
+        m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseExit,
+                                 &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonDown) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseDown;
         eParam.m_pTarget = m_pDataAcc.Get();
-        m_pDataAcc->ProcessEvent(XFA_AttributeEnum::MouseDown, &eParam);
+        m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseDown,
+                                 &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonUp) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseUp;
         eParam.m_pTarget = m_pDataAcc.Get();
-        m_pDataAcc->ProcessEvent(XFA_AttributeEnum::MouseUp, &eParam);
+        m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseUp,
+                                 &eParam);
       }
       break;
     }
@@ -762,7 +762,7 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Click;
       eParam.m_pTarget = m_pDataAcc.Get();
-      m_pDataAcc->ProcessEvent(XFA_AttributeEnum::Click, &eParam);
+      m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
       break;
     }
     default:
