@@ -36,6 +36,8 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
 
   void ResetData();
 
+  XFA_Element GetElementType() const;
+
   CXFA_WidgetAcc* GetExclGroup();
   CXFA_FFDoc* GetDoc();
 

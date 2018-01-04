@@ -223,11 +223,13 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
 }  // namespace
 
 CXFA_WidgetData::CXFA_WidgetData(CXFA_Node* pNode)
-    : CXFA_DataData(pNode),
+    : m_pNode(pNode),
       m_bIsNull(true),
       m_bPreNull(true),
       m_pUiChildNode(nullptr),
       m_eUIType(XFA_Element::Unknown) {}
+
+CXFA_WidgetData::~CXFA_WidgetData() = default;
 
 CXFA_Node* CXFA_WidgetData::GetUIChild() {
   if (m_eUIType == XFA_Element::Unknown)
@@ -338,27 +340,27 @@ CXFA_Bind* CXFA_WidgetData::GetBind() {
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryWidth() {
-  return TryMeasureAsFloat(XFA_Attribute::W);
+  return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::W);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryHeight() {
-  return TryMeasureAsFloat(XFA_Attribute::H);
+  return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::H);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMinWidth() {
-  return TryMeasureAsFloat(XFA_Attribute::MinW);
+  return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MinW);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMinHeight() {
-  return TryMeasureAsFloat(XFA_Attribute::MinH);
+  return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MinH);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMaxWidth() {
-  return TryMeasureAsFloat(XFA_Attribute::MaxW);
+  return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MaxW);
 }
 
 pdfium::Optional<float> CXFA_WidgetData::TryMaxHeight() {
-  return TryMeasureAsFloat(XFA_Attribute::MaxH);
+  return m_pNode->JSObject()->TryMeasureAsFloat(XFA_Attribute::MaxH);
 }
 
 CXFA_Border* CXFA_WidgetData::GetUIBorder() {
@@ -502,46 +504,8 @@ XFA_CHECKSTATE CXFA_WidgetData::GetCheckState() {
 }
 
 void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
-  CXFA_WidgetData exclGroup(GetExclGroupNode());
-  if (exclGroup.HasValidNode()) {
-    WideString wsValue;
-    if (eCheckState != XFA_CHECKSTATE_Off) {
-      if (CXFA_Items* pItems =
-              m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
-        CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
-        if (pText)
-          wsValue = pText->JSObject()->GetContent(false);
-      }
-    }
-    CXFA_Node* pChild =
-        exclGroup.GetNode()->GetNodeItem(XFA_NODEITEM_FirstChild);
-    for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      if (pChild->GetElementType() != XFA_Element::Field)
-        continue;
-
-      CXFA_Items* pItem =
-          pChild->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
-      if (!pItem)
-        continue;
-
-      CXFA_Node* pItemchild = pItem->GetNodeItem(XFA_NODEITEM_FirstChild);
-      if (!pItemchild)
-        continue;
-
-      WideString text = pItemchild->JSObject()->GetContent(false);
-      WideString wsChildValue = text;
-      if (wsValue != text) {
-        pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
-        if (pItemchild)
-          wsChildValue = pItemchild->JSObject()->GetContent(false);
-        else
-          wsChildValue.clear();
-      }
-      CXFA_WidgetData ch(pChild);
-      ch.SyncValue(wsChildValue, bNotify);
-    }
-    exclGroup.SyncValue(wsValue, bNotify);
-  } else {
+  CXFA_Node* node = GetExclGroupNode();
+  if (!node) {
     CXFA_Items* pItems =
         m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
     if (!pItems)
@@ -559,7 +523,46 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
     SyncValue(wsContent, bNotify);
+    return;
   }
+
+  CXFA_WidgetData exclGroup(node);
+  WideString wsValue;
+  if (eCheckState != XFA_CHECKSTATE_Off) {
+    if (CXFA_Items* pItems =
+            m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
+      CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
+      if (pText)
+        wsValue = pText->JSObject()->GetContent(false);
+    }
+  }
+  CXFA_Node* pChild = exclGroup.GetNode()->GetNodeItem(XFA_NODEITEM_FirstChild);
+  for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    if (pChild->GetElementType() != XFA_Element::Field)
+      continue;
+
+    CXFA_Items* pItem =
+        pChild->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
+    if (!pItem)
+      continue;
+
+    CXFA_Node* pItemchild = pItem->GetNodeItem(XFA_NODEITEM_FirstChild);
+    if (!pItemchild)
+      continue;
+
+    WideString text = pItemchild->JSObject()->GetContent(false);
+    WideString wsChildValue = text;
+    if (wsValue != text) {
+      pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      if (pItemchild)
+        wsChildValue = pItemchild->JSObject()->GetContent(false);
+      else
+        wsChildValue.clear();
+    }
+    CXFA_WidgetData ch(pChild);
+    ch.SyncValue(wsChildValue, bNotify);
+  }
+  exclGroup.SyncValue(wsValue, bNotify);
 }
 
 CXFA_Node* CXFA_WidgetData::GetExclGroupNode() {

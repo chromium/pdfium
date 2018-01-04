@@ -77,7 +77,7 @@ FX_ARGB CXFA_Fill::GetColor(bool bText) {
     pdfium::Optional<WideString> wsColor =
         pNode->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
-      return CXFA_DataData::ToColor(wsColor->AsStringView());
+      return StringToFXARGB(wsColor->AsStringView());
   }
   if (bText)
     return 0xFF000000;
@@ -106,7 +106,7 @@ FX_ARGB CXFA_Fill::GetPatternColor() {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
-      return CXFA_DataData::ToColor(wsColor->AsStringView());
+      return StringToFXARGB(wsColor->AsStringView());
   }
   return 0xFF000000;
 }
@@ -124,7 +124,7 @@ FX_ARGB CXFA_Fill::GetStippleColor() {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
-      return CXFA_DataData::ToColor(wsColor->AsStringView());
+      return StringToFXARGB(wsColor->AsStringView());
   }
   return 0xFF000000;
 }
@@ -142,7 +142,7 @@ FX_ARGB CXFA_Fill::GetLinearColor() {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
-      return CXFA_DataData::ToColor(wsColor->AsStringView());
+      return StringToFXARGB(wsColor->AsStringView());
   }
   return 0xFF000000;
 }
@@ -160,7 +160,7 @@ FX_ARGB CXFA_Fill::GetRadialColor() {
     pdfium::Optional<WideString> wsColor =
         pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
     if (wsColor)
-      return CXFA_DataData::ToColor(wsColor->AsStringView());
+      return StringToFXARGB(wsColor->AsStringView());
   }
   return 0xFF000000;
 }

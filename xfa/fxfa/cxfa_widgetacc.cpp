@@ -164,6 +164,10 @@ CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode)
 
 CXFA_WidgetAcc::~CXFA_WidgetAcc() {}
 
+XFA_Element CXFA_WidgetAcc::GetElementType() const {
+  return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
+}
+
 CXFA_Node* CXFA_WidgetAcc::GetDatasets() {
   return m_pNode->GetBindData();
 }

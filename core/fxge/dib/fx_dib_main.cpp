@@ -9,6 +9,7 @@
 #include <tuple>
 #include <utility>
 
+#include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"
 
 const int16_t SDP_Table[513] = {
@@ -86,4 +87,54 @@ std::pair<int, FX_COLORREF> ArgbToColorRef(FX_ARGB argb) {
 uint32_t ArgbEncode(int a, FX_COLORREF rgb) {
   return FXARGB_MAKE(a, FXSYS_GetRValue(rgb), FXSYS_GetGValue(rgb),
                      FXSYS_GetBValue(rgb));
+}
+
+FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
+  uint8_t r = 0, g = 0, b = 0;
+  if (wsValue.GetLength() == 0)
+    return 0xff000000;
+
+  int cc = 0;
+  const wchar_t* str = wsValue.unterminated_c_str();
+  int len = wsValue.GetLength();
+  while (FXSYS_iswspace(str[cc]) && cc < len)
+    cc++;
+
+  if (cc >= len)
+    return 0xff000000;
+
+  while (cc < len) {
+    if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
+      break;
+
+    r = r * 10 + str[cc] - '0';
+    cc++;
+  }
+  if (cc < len && str[cc] == ',') {
+    cc++;
+    while (FXSYS_iswspace(str[cc]) && cc < len)
+      cc++;
+
+    while (cc < len) {
+      if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
+        break;
+
+      g = g * 10 + str[cc] - '0';
+      cc++;
+    }
+    if (cc < len && str[cc] == ',') {
+      cc++;
+      while (FXSYS_iswspace(str[cc]) && cc < len)
+        cc++;
+
+      while (cc < len) {
+        if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
+          break;
+
+        b = b * 10 + str[cc] - '0';
+        cc++;
+      }
+    }
+  }
+  return (0xff << 24) | (r << 16) | (g << 8) | b;
 }

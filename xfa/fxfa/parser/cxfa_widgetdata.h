@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_Library.h"
-#include "xfa/fxfa/parser/cxfa_datadata.h"
+#include "xfa/fxfa/fxfa_basic.h"
 
 enum XFA_CHECKSTATE {
   XFA_CHECKSTATE_On = 0,
@@ -42,9 +42,12 @@ class CXFA_Value;
 class CXFA_Validate;
 class IFX_Locale;
 
-class CXFA_WidgetData : public CXFA_DataData {
+class CXFA_WidgetData {
  public:
   explicit CXFA_WidgetData(CXFA_Node* pNode);
+  virtual ~CXFA_WidgetData();
+
+  CXFA_Node* GetNode() const { return m_pNode; }
 
   CXFA_Node* GetUIChild();
   XFA_Element GetUIType();
@@ -173,6 +176,9 @@ class CXFA_WidgetData : public CXFA_DataData {
   void SetPreNull(bool val) { m_bPreNull = val; }
   bool IsNull() const { return m_bIsNull; }
   void SetIsNull(bool val) { m_bIsNull = val; }
+
+ protected:
+  CXFA_Node* m_pNode;
 
  private:
   CXFA_Bind* GetBind();

@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_FILL_H_
 #define XFA_FXFA_PARSER_CXFA_FILL_H_
 
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Linear;

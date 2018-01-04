@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/widestring.h"
 
 enum FXDIB_Format {
   FXDIB_Invalid = 0,
@@ -93,6 +94,8 @@ inline FX_ARGB ArgbEncode(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
 }
 FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
+
+FX_ARGB StringToFXARGB(const WideStringView& view);
 
 #define FXARGB_A(argb) ((uint8_t)((argb) >> 24))
 #define FXARGB_R(argb) ((uint8_t)((argb) >> 16))
