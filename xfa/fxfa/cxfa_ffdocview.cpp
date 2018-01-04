@@ -309,6 +309,10 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
   return XFA_EVENTERROR_Success;
 }
 
+CXFA_FFWidget* CXFA_FFDocView::GetWidgetForNode(CXFA_Node* node) {
+  return static_cast<CXFA_FFWidget*>(GetXFALayout()->GetLayoutItem(node));
+}
+
 CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   if (!m_pWidgetHandler)
     m_pWidgetHandler = pdfium::MakeUnique<CXFA_FFWidgetHandler>(this);
@@ -376,8 +380,9 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
 }
 
 void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
-  CXFA_FFWidget* pNewFocus =
-      pWidgetAcc ? pWidgetAcc->GetNextWidget(nullptr) : nullptr;
+  CXFA_FFWidget* pNewFocus = nullptr;
+  if (pWidgetAcc)
+    pNewFocus = GetWidgetForNode(pWidgetAcc->GetNode());
   if (!SetFocus(pNewFocus))
     return;
 
@@ -487,7 +492,9 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
                                                CXFA_FFWidget* pRefWidget) {
   CXFA_WidgetAcc* pRefAcc = pRefWidget ? pRefWidget->GetDataAcc() : nullptr;
   CXFA_WidgetAcc* pAcc = GetWidgetAccByName(wsName, pRefAcc);
-  return pAcc ? pAcc->GetNextWidget(nullptr) : nullptr;
+  if (!pAcc)
+    return nullptr;
+  return GetWidgetForNode(pAcc->GetNode());
 }
 
 CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(

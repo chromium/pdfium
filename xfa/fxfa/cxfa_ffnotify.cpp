@@ -70,8 +70,9 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetAcc* pSender,
   if (pSender->GetUIType() != XFA_Element::ChoiceList)
     return;
 
-  CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pSender->GetNextWidget(pWidget)) != nullptr) {
+  CXFA_FFWidget* pWidget =
+      m_pDoc->GetDocView()->GetWidgetForNode(pSender->GetNode());
+  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded()) {
       if (pSender->IsListBox())
         ToListBox(pWidget)->InsertItem(pLabel, iIndex);
@@ -86,8 +87,9 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_WidgetAcc* pSender,
   if (pSender->GetUIType() != XFA_Element::ChoiceList)
     return;
 
-  CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pSender->GetNextWidget(pWidget)) != nullptr) {
+  CXFA_FFWidget* pWidget =
+      m_pDoc->GetDocView()->GetWidgetForNode(pSender->GetNode());
+  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded()) {
       if (pSender->IsListBox())
         ToListBox(pWidget)->DeleteItem(iIndex);
@@ -369,8 +371,9 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr) {
   if (!pWidgetAcc)
     return;
 
-  CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
+  CXFA_FFWidget* pWidget =
+      m_pDoc->GetDocView()->GetWidgetForNode(pWidgetAcc->GetNode());
+  for (; pWidget; pWidget = pWidgetAcc->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded())
       pWidget->AddInvalidateRect();
   }
@@ -432,8 +435,9 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     }
   }
 
-  CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
+  CXFA_FFWidget* pWidget =
+      m_pDoc->GetDocView()->GetWidgetForNode(pWidgetAcc->GetNode());
+  for (; pWidget; pWidget = pWidgetAcc->GetNextWidget(pWidget)) {
     if (!pWidget->IsLoaded())
       continue;
 

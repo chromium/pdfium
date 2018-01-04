@@ -864,18 +864,12 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
 }
 
 CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
-  CXFA_LayoutItem* pLayout = nullptr;
-  if (pWidget)
-    pLayout = pWidget->GetNext();
-  else
-    pLayout = m_pDocView->GetXFALayout()->GetLayoutItem(m_pNode);
-
-  return static_cast<CXFA_FFWidget*>(pLayout);
+  return static_cast<CXFA_FFWidget*>(pWidget->GetNext());
 }
 
 void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
-  CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = GetNextWidget(pWidget)) != nullptr) {
+  CXFA_FFWidget* pWidget = m_pDocView->GetWidgetForNode(m_pNode);
+  for (; pWidget; pWidget = GetNextWidget(pWidget)) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
         (GetUIType() != XFA_Element::CheckButton && pWidget->IsFocused())) {
       continue;

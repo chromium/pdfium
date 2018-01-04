@@ -62,6 +62,7 @@ class CXFA_FFDocView {
   CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget.Get(); }
   void KillFocus();
   bool SetFocus(CXFA_FFWidget* hWidget);
+  CXFA_FFWidget* GetWidgetForNode(CXFA_Node* node);
   CXFA_FFWidget* GetWidgetByName(const WideString& wsName,
                                  CXFA_FFWidget* pRefWidget);
   CXFA_WidgetAcc* GetWidgetAccByName(const WideString& wsName,

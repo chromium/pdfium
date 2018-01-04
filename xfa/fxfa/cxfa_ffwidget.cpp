@@ -36,6 +36,7 @@
 #include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxfa/parser/cxfa_fill.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
+#include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
@@ -1282,7 +1283,9 @@ CXFA_FFWidget* CXFA_FFWidget::GetParent() {
     CXFA_WidgetAcc* pParentWidgetAcc =
         static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetAcc());
     if (pParentWidgetAcc) {
-      return pParentWidgetAcc->GetNextWidget(nullptr);
+      CXFA_LayoutProcessor* layout = GetDocView()->GetXFALayout();
+      return static_cast<CXFA_FFWidget*>(
+          layout->GetLayoutItem(pParentWidgetAcc->GetNode()));
     }
   }
   return nullptr;
