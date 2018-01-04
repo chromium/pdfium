@@ -19,7 +19,8 @@
 
 class CFX_XMLNode;
 class CXFA_Occur;
-class CXFA_WidgetData;
+class CXFA_WidgetAcc;
+class IXFA_Locale;
 
 #define XFA_NODEFILTER_Children 0x01
 #define XFA_NODEFILTER_Properties 0x02
@@ -181,8 +182,8 @@ class CXFA_Node : public CXFA_Object {
   int32_t AddBindItem(CXFA_Node* pFormNode);
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem();
-  CXFA_WidgetData* GetWidgetData();
-  CXFA_WidgetData* GetContainerWidgetData();
+  CXFA_WidgetAcc* GetWidgetAcc();
+  CXFA_WidgetAcc* GetContainerWidgetAcc();
   IFX_Locale* GetLocale();
   bool GetLocaleName(WideString& wsLocaleName);
   XFA_AttributeEnum GetIntact();
@@ -215,6 +216,8 @@ class CXFA_Node : public CXFA_Object {
       XFA_Attribute attr) const;
   pdfium::Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
   pdfium::Optional<XFA_AttributeEnum> GetDefaultEnum(XFA_Attribute attr) const;
+
+  void SyncValue(const WideString& wsValue, bool bNotify);
 
  protected:
   CXFA_Node(CXFA_Document* pDoc,

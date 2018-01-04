@@ -14,7 +14,7 @@ class CFX_XMLElement;
 class CFX_XMLNode;
 class CXFA_LocaleValue;
 class CXFA_Node;
-class CXFA_WidgetData;
+class CXFA_WidgetAcc;
 
 double XFA_GetFractionalScale(uint32_t idx);
 int XFA_GetMaxFractionalScale();
@@ -23,7 +23,7 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
                                                 const WideString& wsQualifier,
                                                 WideString* wsNamespaceURI);
 
-CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
+CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetAcc* pWidgetAcc);
 int32_t XFA_MapRotation(int32_t nRotation);
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode);

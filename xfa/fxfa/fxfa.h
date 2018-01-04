@@ -225,9 +225,9 @@ class IXFA_DocEnvironment {
   virtual bool PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) = 0;
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
   virtual void WidgetPostAdd(CXFA_FFWidget* hWidget,
-                             CXFA_WidgetAcc* pWidgetData) = 0;
+                             CXFA_WidgetAcc* pWidgetAcc) = 0;
   virtual void WidgetPreRemove(CXFA_FFWidget* hWidget,
-                               CXFA_WidgetAcc* pWidgetData) = 0;
+                               CXFA_WidgetAcc* pWidgetAcc) = 0;
 
   virtual int32_t CountPages(CXFA_FFDoc* hDoc) = 0;
   virtual int32_t GetCurrentPage(CXFA_FFDoc* hDoc) = 0;

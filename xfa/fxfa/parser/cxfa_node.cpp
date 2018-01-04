@@ -557,11 +557,11 @@ bool CXFA_Node::HasBindItem() {
   return GetPacketType() == XFA_PacketType::Datasets && GetBindingNode();
 }
 
-CXFA_WidgetData* CXFA_Node::GetWidgetData() {
-  return JSObject()->GetWidgetData();
+CXFA_WidgetAcc* CXFA_Node::GetWidgetAcc() {
+  return JSObject()->GetWidgetAcc();
 }
 
-CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
+CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
   if (GetPacketType() != XFA_PacketType::Form)
     return nullptr;
   XFA_Element eType = GetElementType();
@@ -572,35 +572,34 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
     return nullptr;
 
   if (eType == XFA_Element::Field) {
-    CXFA_WidgetData* pFieldWidgetData = GetWidgetData();
-    if (pFieldWidgetData && pFieldWidgetData->IsChoiceListMultiSelect())
+    CXFA_WidgetAcc* pFieldWidgetAcc = GetWidgetAcc();
+    if (pFieldWidgetAcc && pFieldWidgetAcc->IsChoiceListMultiSelect())
       return nullptr;
 
     WideString wsPicture;
-    if (pFieldWidgetData) {
-      wsPicture =
-          pFieldWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
+    if (pFieldWidgetAcc) {
+      wsPicture = pFieldWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
     }
     if (!wsPicture.IsEmpty())
-      return pFieldWidgetData;
+      return pFieldWidgetAcc;
 
     CXFA_Node* pDataNode = GetBindData();
     if (!pDataNode)
       return nullptr;
-    pFieldWidgetData = nullptr;
+    pFieldWidgetAcc = nullptr;
     for (const auto& pFormNode : *(pDataNode->GetBindItems())) {
       if (!pFormNode || pFormNode->HasRemovedChildren())
         continue;
-      pFieldWidgetData = pFormNode->GetWidgetData();
-      if (pFieldWidgetData) {
+      pFieldWidgetAcc = pFormNode->GetWidgetAcc();
+      if (pFieldWidgetAcc) {
         wsPicture =
-            pFieldWidgetData->GetPictureContent(XFA_VALUEPICTURE_DataBind);
+            pFieldWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
       }
       if (!wsPicture.IsEmpty())
         break;
-      pFieldWidgetData = nullptr;
+      pFieldWidgetAcc = nullptr;
     }
-    return pFieldWidgetData;
+    return pFieldWidgetAcc;
   }
 
   CXFA_Node* pGrandNode =
@@ -617,7 +616,7 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
   }
   CXFA_Node* pParentOfValueNode =
       pValueNode ? pValueNode->GetNodeItem(XFA_NODEITEM_Parent) : nullptr;
-  return pParentOfValueNode ? pParentOfValueNode->GetContainerWidgetData()
+  return pParentOfValueNode ? pParentOfValueNode->GetContainerWidgetAcc()
                             : nullptr;
 }
 
@@ -1538,4 +1537,13 @@ void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
 
   if (pParent)
     pLayoutPro->AddChangedContainer(pParent);
+}
+
+void CXFA_Node::SyncValue(const WideString& wsValue, bool bNotify) {
+  WideString wsFormatValue = wsValue;
+  CXFA_WidgetAcc* pContainerWidgetAcc = GetContainerWidgetAcc();
+  if (pContainerWidgetAcc)
+    wsFormatValue = pContainerWidgetAcc->GetFormatDataValue(wsValue);
+
+  JSObject()->SetContent(wsValue, wsFormatValue, bNotify, false, true);
 }

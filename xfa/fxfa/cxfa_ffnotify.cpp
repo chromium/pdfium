@@ -42,10 +42,6 @@
 
 namespace {
 
-CXFA_WidgetAcc* ToWidgetAcc(void* data) {
-  return static_cast<CXFA_WidgetAcc*>(data);
-}
-
 CXFA_FFListBox* ToListBox(CXFA_FFWidget* widget) {
   return static_cast<CXFA_FFListBox*>(widget);
 }
@@ -67,18 +63,17 @@ void CXFA_FFNotify::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
     pDocView->OnPageEvent(pSender, dwEvent);
 }
 
-void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetData* pSender,
+void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetAcc* pSender,
                                           const wchar_t* pLabel,
                                           const wchar_t* pValue,
                                           int32_t iIndex) {
-  CXFA_WidgetAcc* pWidgetAcc = ToWidgetAcc(pSender);
-  if (pWidgetAcc->GetUIType() != XFA_Element::ChoiceList)
+  if (pSender->GetUIType() != XFA_Element::ChoiceList)
     return;
 
   CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
+  while ((pWidget = pSender->GetNextWidget(pWidget)) != nullptr) {
     if (pWidget->IsLoaded()) {
-      if (pWidgetAcc->IsListBox())
+      if (pSender->IsListBox())
         ToListBox(pWidget)->InsertItem(pLabel, iIndex);
       else
         ToComboBox(pWidget)->InsertItem(pLabel, iIndex);
@@ -86,16 +81,15 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetData* pSender,
   }
 }
 
-void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_WidgetData* pSender,
+void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_WidgetAcc* pSender,
                                             int32_t iIndex) {
-  CXFA_WidgetAcc* pWidgetAcc = ToWidgetAcc(pSender);
-  if (pWidgetAcc->GetUIType() != XFA_Element::ChoiceList)
+  if (pSender->GetUIType() != XFA_Element::ChoiceList)
     return;
 
   CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != nullptr) {
+  while ((pWidget = pSender->GetNextWidget(pWidget)) != nullptr) {
     if (pWidget->IsLoaded()) {
-      if (pWidgetAcc->IsListBox())
+      if (pSender->IsListBox())
         ToListBox(pWidget)->DeleteItem(iIndex);
       else
         ToComboBox(pWidget)->DeleteItem(iIndex);
@@ -112,7 +106,7 @@ CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
   if (eType == XFA_Element::ContentArea)
     return new CXFA_ContainerLayoutItem(pNode);
 
-  CXFA_WidgetAcc* pAcc = ToWidgetAcc(pNode->GetWidgetData());
+  CXFA_WidgetAcc* pAcc = pNode->GetWidgetAcc();
   if (!pAcc)
     return new CXFA_ContentLayoutItem(pNode);
 
@@ -189,7 +183,7 @@ CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
 void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node* pItem,
                                          float& fCalcWidth,
                                          float& fCalcHeight) {
-  CXFA_WidgetAcc* pAcc = ToWidgetAcc(pItem->GetWidgetData());
+  CXFA_WidgetAcc* pAcc = pItem->GetWidgetAcc();
   if (!pAcc)
     return;
 
@@ -199,7 +193,7 @@ void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node* pItem,
 bool CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
                                  int32_t iBlockIndex,
                                  float& fCalcHeightPos) {
-  CXFA_WidgetAcc* pAcc = ToWidgetAcc(pItem->GetWidgetData());
+  CXFA_WidgetAcc* pAcc = pItem->GetWidgetAcc();
   return pAcc && pAcc->FindSplitPos(iBlockIndex, fCalcHeightPos);
 }
 
@@ -208,7 +202,7 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem) {
   if (!pDocView)
     return false;
 
-  CXFA_WidgetAcc* pWidgetAcc = ToWidgetAcc(pFormItem->GetWidgetData());
+  CXFA_WidgetAcc* pWidgetAcc = pFormItem->GetWidgetAcc();
   if (!pWidgetAcc)
     return false;
 
@@ -239,7 +233,7 @@ void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
   if (!pDocView)
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = ToWidgetAcc(pNode->GetWidgetData());
+  CXFA_WidgetAcc* pWidgetAcc = pNode->GetWidgetAcc();
   if (!pWidgetAcc)
     return;
 
@@ -287,12 +281,12 @@ WideString CXFA_FFNotify::GetCurrentDateTime() {
                             dataTime.GetSecond());
 }
 
-void CXFA_FFNotify::ResetData(CXFA_WidgetData* pWidgetData) {
+void CXFA_FFNotify::ResetData(CXFA_WidgetAcc* pWidgetAcc) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
     return;
 
-  pDocView->ResetWidgetData(ToWidgetAcc(pWidgetData));
+  pDocView->ResetWidgetAcc(pWidgetAcc);
 }
 
 int32_t CXFA_FFNotify::GetLayoutStatus() {
@@ -330,7 +324,7 @@ void CXFA_FFNotify::SetFocusWidgetNode(CXFA_Node* pNode) {
   if (!pDocView)
     return;
 
-  CXFA_WidgetAcc* pAcc = pNode ? ToWidgetAcc(pNode->GetWidgetData()) : nullptr;
+  CXFA_WidgetAcc* pAcc = pNode ? pNode->GetWidgetAcc() : nullptr;
   pDocView->SetFocusWidgetAcc(pAcc);
 }
 
@@ -341,7 +335,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
 
   XFA_Element eType = pNode->GetElementType();
   if (XFA_IsCreateWidget(eType)) {
-    pNode->JSObject()->SetWidgetData(
+    pNode->JSObject()->SetWidgetAcc(
         pdfium::MakeUnique<CXFA_WidgetAcc>(pDocView, pNode));
     return;
   }
@@ -371,7 +365,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr) {
   if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End)
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = ToWidgetAcc(pSender->GetWidgetData());
+  CXFA_WidgetAcc* pWidgetAcc = pSender->GetWidgetAcc();
   if (!pWidgetAcc)
     return;
 
@@ -398,7 +392,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
 
   XFA_Element eType = pParentNode->GetElementType();
   bool bIsContainerNode = pParentNode->IsContainerNode();
-  CXFA_WidgetAcc* pWidgetAcc = ToWidgetAcc(pWidgetNode->GetWidgetData());
+  CXFA_WidgetAcc* pWidgetAcc = pWidgetNode->GetWidgetAcc();
   if (!pWidgetAcc)
     return;
 

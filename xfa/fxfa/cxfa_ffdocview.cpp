@@ -237,7 +237,7 @@ bool CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
   return true;
 }
 
-void CXFA_FFDocView::ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc) {
+void CXFA_FFDocView::ResetWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
   m_bLayoutEvent = true;
   bool bChanged = false;
   CXFA_Node* pFormNode = nullptr;
@@ -445,7 +445,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
     if (eEventType == XFA_EVENT_IndexChange)
       return XFA_EVENTERROR_NotExist;
 
-    CXFA_WidgetAcc* pWidgetAcc = (CXFA_WidgetAcc*)pFormNode->GetWidgetData();
+    CXFA_WidgetAcc* pWidgetAcc = pFormNode->GetWidgetAcc();
     if (!pWidgetAcc)
       return XFA_EVENTERROR_NotExist;
 
@@ -470,7 +470,7 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
       }
     }
   }
-  CXFA_WidgetAcc* pWidgetAcc = (CXFA_WidgetAcc*)pFormNode->GetWidgetData();
+  CXFA_WidgetAcc* pWidgetAcc = pFormNode->GetWidgetAcc();
   if (!pWidgetAcc)
     return iRet;
 
@@ -517,7 +517,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     CXFA_Node* pNode = resolveNodeRS.objects.front()->AsNode();
     if (pNode)
-      return static_cast<CXFA_WidgetAcc*>(pNode->GetWidgetData());
+      return pNode->GetWidgetAcc();
   }
   return nullptr;
 }
@@ -573,8 +573,7 @@ bool CXFA_FFDocView::RunLayout() {
 
 void CXFA_FFDocView::RunSubformIndexChange() {
   for (CXFA_Node* pSubformNode : m_IndexChangedSubforms) {
-    CXFA_WidgetAcc* pWidgetAcc =
-        static_cast<CXFA_WidgetAcc*>(pSubformNode->GetWidgetData());
+    CXFA_WidgetAcc* pWidgetAcc = pSubformNode->GetWidgetAcc();
     if (!pWidgetAcc)
       continue;
 
@@ -712,8 +711,7 @@ void CXFA_FFDocView::RunBindItems() {
       continue;
 
     CXFA_Node* pWidgetNode = item->GetNodeItem(XFA_NODEITEM_Parent);
-    CXFA_WidgetAcc* pAcc =
-        static_cast<CXFA_WidgetAcc*>(pWidgetNode->GetWidgetData());
+    CXFA_WidgetAcc* pAcc = pWidgetNode->GetWidgetAcc();
     if (!pAcc)
       continue;
 

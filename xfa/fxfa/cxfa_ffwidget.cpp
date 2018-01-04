@@ -1280,7 +1280,7 @@ CXFA_FFWidget* CXFA_FFWidget::GetParent() {
       m_pDataAcc->GetNode()->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParentNode) {
     CXFA_WidgetAcc* pParentWidgetAcc =
-        static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetData());
+        static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetAcc());
     if (pParentWidgetAcc) {
       return pParentWidgetAcc->GetNextWidget(nullptr);
     }

@@ -13,7 +13,6 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_widgetdata.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)

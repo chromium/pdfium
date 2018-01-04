@@ -289,7 +289,7 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
 }
 
 void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
-                                           CXFA_WidgetAcc* pWidgetData) {
+                                           CXFA_WidgetAcc* pWidgetAcc) {
   if (m_pContext->GetFormType() != FormType::kXFAFull || !hWidget)
     return;
 
@@ -307,7 +307,7 @@ void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
 }
 
 void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget,
-                                             CXFA_WidgetAcc* pWidgetData) {
+                                             CXFA_WidgetAcc* pWidgetAcc) {
   if (m_pContext->GetFormType() != FormType::kXFAFull || !hWidget)
     return;
 

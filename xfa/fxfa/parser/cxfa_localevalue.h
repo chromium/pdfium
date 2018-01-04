@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/parser/cxfa_widgetdata.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 
 class IFX_Locale;
 class CFX_DateTime;

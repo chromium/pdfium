@@ -2713,8 +2713,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_webclient.h",
       "xfa/fxfa/parser/cxfa_whitespace.cpp",
       "xfa/fxfa/parser/cxfa_whitespace.h",
-      "xfa/fxfa/parser/cxfa_widgetdata.cpp",
-      "xfa/fxfa/parser/cxfa_widgetdata.h",
       "xfa/fxfa/parser/cxfa_window.cpp",
       "xfa/fxfa/parser/cxfa_window.h",
       "xfa/fxfa/parser/cxfa_wsdladdress.cpp",

@@ -54,7 +54,7 @@ class CXFA_FFDocView {
   int32_t CountPageViews() const;
   CXFA_FFPageView* GetPageView(int32_t nIndex) const;
 
-  void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc);
+  void ResetWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
   int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
                              CXFA_WidgetAcc* pWidgetAcc);
   CXFA_FFWidgetHandler* GetWidgetHandler();

@@ -119,8 +119,8 @@ void CJX_Draw::defaultValue(CFXJSE_Value* pValue,
   if (!pValue || !pValue->IsString())
     return;
 
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  XFA_Element uiType = pWidgetData->GetUIType();
+  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
+  XFA_Element uiType = pWidgetAcc->GetUIType();
   if (uiType != XFA_Element::Text)
     return;
 

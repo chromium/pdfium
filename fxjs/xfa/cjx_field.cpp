@@ -17,7 +17,6 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_field.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
-#include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 const CJX_MethodSpec CJX_Field::MethodSpecs[] = {
     {"addItem", addItem_static},
@@ -42,9 +41,9 @@ CJX_Field::~CJX_Field() {}
 CJS_Return CJX_Field::clearItems(
     CJS_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (pWidgetData)
-    pWidgetData->DeleteItem(-1, true, false);
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (pWidgetAcc)
+    pWidgetAcc->DeleteItem(-1, true, false);
   return CJS_Return(true);
 }
 
@@ -83,12 +82,11 @@ CJS_Return CJX_Field::deleteItem(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(true);
 
-  bool bValue =
-      pWidgetData->DeleteItem(runtime->ToInt32(params[0]), true, true);
+  bool bValue = pWidgetAcc->DeleteItem(runtime->ToInt32(params[0]), true, true);
   return CJS_Return(runtime->NewBoolean(bValue));
 }
 
@@ -102,12 +100,12 @@ CJS_Return CJX_Field::getSaveItem(
   if (iIndex < 0)
     return CJS_Return(runtime->NewNull());
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(runtime->NewNull());
 
   pdfium::Optional<WideString> value =
-      pWidgetData->GetChoiceListItem(iIndex, true);
+      pWidgetAcc->GetChoiceListItem(iIndex, true);
   if (!value)
     return CJS_Return(runtime->NewNull());
 
@@ -120,12 +118,12 @@ CJS_Return CJX_Field::boundItem(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(true);
 
   WideString value = runtime->ToWideString(params[0]);
-  WideString boundValue = pWidgetData->GetItemValue(value.AsStringView());
+  WideString boundValue = pWidgetAcc->GetItemValue(value.AsStringView());
   return CJS_Return(runtime->NewString(boundValue.UTF8Encode().AsStringView()));
 }
 
@@ -135,11 +133,11 @@ CJS_Return CJX_Field::getItemState(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(true);
 
-  int32_t state = pWidgetData->GetItemState(runtime->ToInt32(params[0]));
+  int32_t state = pWidgetAcc->GetItemState(runtime->ToInt32(params[0]));
   return CJS_Return(runtime->NewBoolean(state != 0));
 }
 
@@ -167,12 +165,12 @@ CJS_Return CJX_Field::getDisplayItem(
   if (iIndex < 0)
     return CJS_Return(runtime->NewNull());
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(runtime->NewNull());
 
   pdfium::Optional<WideString> value =
-      pWidgetData->GetChoiceListItem(iIndex, false);
+      pWidgetAcc->GetChoiceListItem(iIndex, false);
   if (!value)
     return CJS_Return(runtime->NewNull());
 
@@ -185,17 +183,17 @@ CJS_Return CJX_Field::setItemState(
   if (params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(true);
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (runtime->ToInt32(params[1]) != 0) {
-    pWidgetData->SetItemState(iIndex, true, true, true, true);
+    pWidgetAcc->SetItemState(iIndex, true, true, true, true);
     return CJS_Return(true);
   }
-  if (pWidgetData->GetItemState(iIndex))
-    pWidgetData->SetItemState(iIndex, false, true, true, true);
+  if (pWidgetAcc->GetItemState(iIndex))
+    pWidgetAcc->SetItemState(iIndex, false, true, true, true);
 
   return CJS_Return(true);
 }
@@ -205,8 +203,8 @@ CJS_Return CJX_Field::addItem(CJS_V8* runtime,
   if (params.size() != 1 && params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(true);
 
   WideString label;
@@ -217,7 +215,7 @@ CJS_Return CJX_Field::addItem(CJS_V8* runtime,
   if (params.size() >= 2)
     value = runtime->ToWideString(params[1]);
 
-  pWidgetData->InsertItem(label, value, true);
+  pWidgetAcc->InsertItem(label, value, true);
   return CJS_Return(true);
 }
 
@@ -239,32 +237,30 @@ CJS_Return CJX_Field::execValidate(
 void CJX_Field::defaultValue(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
+  if (!pWidgetAcc)
     return;
 
   if (bSetting) {
     if (pValue) {
-      pWidgetData->SetPreNull(pWidgetData->IsNull());
-      pWidgetData->SetIsNull(pValue->IsNull());
+      pWidgetAcc->SetPreNull(pWidgetAcc->IsNull());
+      pWidgetAcc->SetIsNull(pValue->IsNull());
     }
 
     WideString wsNewText;
     if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
       wsNewText = pValue->ToWideString();
 
-    CXFA_Node* pUIChild = pWidgetData->GetUIChild();
+    CXFA_Node* pUIChild = pWidgetAcc->GetUIChild();
     if (pUIChild->GetElementType() == XFA_Element::NumericEdit) {
-      wsNewText =
-          pWidgetData->NumericLimit(wsNewText, pWidgetData->GetLeadDigits(),
-                                    pWidgetData->GetFracDigits());
+      wsNewText = pWidgetAcc->NumericLimit(
+          wsNewText, pWidgetAcc->GetLeadDigits(), pWidgetAcc->GetFracDigits());
     }
 
-    CXFA_WidgetData* pContainerWidgetData =
-        GetXFANode()->GetContainerWidgetData();
+    CXFA_WidgetAcc* pContainerWidgetAcc = GetXFANode()->GetContainerWidgetAcc();
     WideString wsFormatText(wsNewText);
-    if (pContainerWidgetData)
-      wsFormatText = pContainerWidgetData->GetFormatDataValue(wsNewText);
+    if (pContainerWidgetAcc)
+      wsFormatText = pContainerWidgetAcc->GetFormatDataValue(wsNewText);
 
     SetContent(wsNewText, wsFormatText, true, true, true);
     return;
@@ -276,9 +272,9 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
     return;
   }
 
-  CXFA_Node* pUIChild = pWidgetData->GetUIChild();
+  CXFA_Node* pUIChild = pWidgetAcc->GetUIChild();
   CXFA_Node* pNode =
-      pWidgetData->GetFormValue()->GetNodeItem(XFA_NODEITEM_FirstChild);
+      pWidgetAcc->GetFormValue()->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
     if (pUIChild->GetElementType() == XFA_Element::NumericEdit &&
         (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {
@@ -302,16 +298,16 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
 void CJX_Field::editValue(CFXJSE_Value* pValue,
                           bool bSetting,
                           XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
+  if (!pWidgetAcc)
     return;
 
   if (bSetting) {
-    pWidgetData->SetValue(XFA_VALUEPICTURE_Edit, pValue->ToWideString());
+    pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pValue->ToWideString());
     return;
   }
   pValue->SetString(
-      pWidgetData->GetValue(XFA_VALUEPICTURE_Edit).UTF8Encode().AsStringView());
+      pWidgetAcc->GetValue(XFA_VALUEPICTURE_Edit).UTF8Encode().AsStringView());
 }
 
 void CJX_Field::formatMessage(CFXJSE_Value* pValue,
@@ -323,15 +319,15 @@ void CJX_Field::formatMessage(CFXJSE_Value* pValue,
 void CJX_Field::formattedValue(CFXJSE_Value* pValue,
                                bool bSetting,
                                XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
+  if (!pWidgetAcc)
     return;
 
   if (bSetting) {
-    pWidgetData->SetValue(XFA_VALUEPICTURE_Display, pValue->ToWideString());
+    pWidgetAcc->SetValue(XFA_VALUEPICTURE_Display, pValue->ToWideString());
     return;
   }
-  pValue->SetString(pWidgetData->GetValue(XFA_VALUEPICTURE_Display)
+  pValue->SetString(pWidgetAcc->GetValue(XFA_VALUEPICTURE_Display)
                         .UTF8Encode()
                         .AsStringView());
 }
@@ -349,22 +345,22 @@ void CJX_Field::parentSubform(CFXJSE_Value* pValue,
 void CJX_Field::selectedIndex(CFXJSE_Value* pValue,
                               bool bSetting,
                               XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
+  if (!pWidgetAcc)
     return;
 
   if (!bSetting) {
-    pValue->SetInteger(pWidgetData->GetSelectedItem(0));
+    pValue->SetInteger(pWidgetAcc->GetSelectedItem(0));
     return;
   }
 
   int32_t iIndex = pValue->ToInteger();
   if (iIndex == -1) {
-    pWidgetData->ClearAllSelections();
+    pWidgetAcc->ClearAllSelections();
     return;
   }
 
-  pWidgetData->SetItemState(iIndex, true, true, true, true);
+  pWidgetAcc->SetItemState(iIndex, true, true, true, true);
 }
 
 void CJX_Field::access(CFXJSE_Value* pValue,

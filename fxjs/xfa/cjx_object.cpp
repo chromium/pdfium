@@ -21,6 +21,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_datavalue.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -1166,9 +1167,9 @@ void CJX_Object::MoveBufferMapData(CXFA_Object* pDstModule) {
 
   WideString wsValue = ToNode(pDstModule)->JSObject()->GetContent(false);
   WideString wsFormatValue(wsValue);
-  CXFA_WidgetData* pWidgetData = ToNode(pDstModule)->GetContainerWidgetData();
-  if (pWidgetData)
-    wsFormatValue = pWidgetData->GetFormatDataValue(wsValue);
+  CXFA_WidgetAcc* pWidgetAcc = ToNode(pDstModule)->GetContainerWidgetAcc();
+  if (pWidgetAcc)
+    wsFormatValue = pWidgetAcc->GetFormatDataValue(wsValue);
 
   ToNode(pDstModule)
       ->JSObject()
@@ -1524,30 +1525,30 @@ void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
       wsNewValue = pValue->ToWideString();
 
     WideString wsFormatValue(wsNewValue);
-    CXFA_WidgetData* pContainerWidgetData = nullptr;
+    CXFA_WidgetAcc* pContainerWidgetAcc = nullptr;
     if (ToNode(GetXFAObject())->GetPacketType() == XFA_PacketType::Datasets) {
       WideString wsPicture;
       for (const auto& pFormNode : *(ToNode(GetXFAObject())->GetBindItems())) {
         if (!pFormNode || pFormNode->HasRemovedChildren())
           continue;
 
-        pContainerWidgetData = pFormNode->GetContainerWidgetData();
-        if (pContainerWidgetData) {
-          wsPicture = pContainerWidgetData->GetPictureContent(
-              XFA_VALUEPICTURE_DataBind);
+        pContainerWidgetAcc = pFormNode->GetContainerWidgetAcc();
+        if (pContainerWidgetAcc) {
+          wsPicture =
+              pContainerWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
         }
         if (!wsPicture.IsEmpty())
           break;
 
-        pContainerWidgetData = nullptr;
+        pContainerWidgetAcc = nullptr;
       }
     } else if (ToNode(GetXFAObject())->GetPacketType() ==
                XFA_PacketType::Form) {
-      pContainerWidgetData = ToNode(GetXFAObject())->GetContainerWidgetData();
+      pContainerWidgetAcc = ToNode(GetXFAObject())->GetContainerWidgetAcc();
     }
 
-    if (pContainerWidgetData)
-      wsFormatValue = pContainerWidgetData->GetFormatDataValue(wsNewValue);
+    if (pContainerWidgetAcc)
+      wsFormatValue = pContainerWidgetAcc->GetFormatDataValue(wsNewValue);
 
     SetContent(wsNewValue, wsFormatValue, true, true, true);
     return;

@@ -167,7 +167,7 @@ bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
         wsAttr.AsStringView());
   }
   if (pIDNode)
-    pEmbAcc = static_cast<CXFA_WidgetAcc*>(pIDNode->GetWidgetData());
+    pEmbAcc = pIDNode->GetWidgetAcc();
 
   if (!pEmbAcc)
     return false;

@@ -16,7 +16,6 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_exclgroup.h"
-#include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 const CJX_MethodSpec CJX_ExclGroup::MethodSpecs[] = {
     {"execCalculate", execCalculate_static},
@@ -86,15 +85,15 @@ CJS_Return CJX_ExclGroup::selectedMember(
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetData* pWidgetData = GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  if (!pWidgetAcc)
     return CJS_Return(runtime->NewNull());
 
   CXFA_Node* pReturnNode = nullptr;
   if (params.empty()) {
-    pReturnNode = pWidgetData->GetSelectedMember();
+    pReturnNode = pWidgetAcc->GetSelectedMember();
   } else {
-    pReturnNode = pWidgetData->SetSelectedMember(
+    pReturnNode = pWidgetAcc->SetSelectedMember(
         runtime->ToWideString(params[0]).AsStringView(), true);
   }
   if (!pReturnNode)
@@ -111,13 +110,13 @@ CJS_Return CJX_ExclGroup::selectedMember(
 void CJX_ExclGroup::defaultValue(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {
-  CXFA_WidgetData* pWidgetData = GetXFANode()->GetWidgetData();
-  if (!pWidgetData)
+  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
+  if (!pWidgetAcc)
     return;
 
   if (bSetting) {
-    pWidgetData->SetSelectedMemberByValue(pValue->ToWideString().AsStringView(),
-                                          true, true, true);
+    pWidgetAcc->SetSelectedMemberByValue(pValue->ToWideString().AsStringView(),
+                                         true, true, true);
     return;
   }
 

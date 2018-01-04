@@ -17,14 +17,15 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "fxjs/CJX_Define.h"
 #include "third_party/base/optional.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/fxfa_basic.h"
-#include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 class CFXJSE_Value;
 class CJS_V8;
 class CXFA_CalcData;
 class CXFA_Document;
 class CXFA_LayoutItem;
+class CXFA_Node;
 class CXFA_Object;
 struct XFA_MAPMODULEDATA;
 
@@ -63,10 +64,10 @@ class CJX_Object {
 
   CXFA_Document* GetDocument() const;
 
-  void SetWidgetData(std::unique_ptr<CXFA_WidgetData> data) {
+  void SetWidgetAcc(std::unique_ptr<CXFA_WidgetAcc> data) {
     widget_data_ = std::move(data);
   }
-  CXFA_WidgetData* GetWidgetData() const { return widget_data_.get(); }
+  CXFA_WidgetAcc* GetWidgetAcc() const { return widget_data_.get(); }
 
   void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }
   size_t GetCalcRecursionCount() const { return calc_recursion_count_; }
@@ -272,7 +273,7 @@ class CJX_Object {
 
   UnownedPtr<CXFA_Object> object_;
   UnownedPtr<CXFA_LayoutItem> layout_item_;
-  std::unique_ptr<CXFA_WidgetData> widget_data_;
+  std::unique_ptr<CXFA_WidgetAcc> widget_data_;
   std::unique_ptr<XFA_MAPMODULEDATA> map_module_data_;
   std::unique_ptr<CXFA_CalcData> calc_data_;
   std::map<ByteString, CJX_MethodCall> method_specs_;

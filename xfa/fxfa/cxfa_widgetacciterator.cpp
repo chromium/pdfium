@@ -17,7 +17,7 @@ CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
   CXFA_Node* pItem = m_pCurWidgetAcc ? m_ContentIterator.MoveToNext()
                                      : m_ContentIterator.GetCurrent();
   while (pItem) {
-    m_pCurWidgetAcc = static_cast<CXFA_WidgetAcc*>(pItem->GetWidgetData());
+    m_pCurWidgetAcc = pItem->GetWidgetAcc();
     if (m_pCurWidgetAcc)
       return m_pCurWidgetAcc.Get();
     pItem = m_ContentIterator.MoveToNext();
