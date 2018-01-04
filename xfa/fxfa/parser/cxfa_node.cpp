@@ -796,22 +796,20 @@ size_t CXFA_Node::CountChildren(XFA_Element eType, bool bOnlyChild) {
   return count;
 }
 
-CXFA_Node* CXFA_Node::GetChildInternal(int32_t index,
+CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
                                        XFA_Element eType,
                                        bool bOnlyChild) {
-  ASSERT(index > -1);
-
-  int32_t iCount = 0;
+  size_t count = 0;
   for (CXFA_Node* pNode = m_pChild; pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() != eType && eType != XFA_Element::Unknown)
       continue;
     if (bOnlyChild && HasProperty(pNode->GetElementType()))
       continue;
-    if (iCount == index)
+    if (count == index)
       return pNode;
 
-    ++iCount;
+    ++count;
   }
   return nullptr;
 }

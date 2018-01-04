@@ -157,7 +157,7 @@ class CXFA_Node : public CXFA_Object {
   size_t CountChildren(XFA_Element eType, bool bOnlyChild);
 
   template <typename T>
-  T* GetChild(int32_t index, XFA_Element eType, bool bOnlyChild) {
+  T* GetChild(size_t index, XFA_Element eType, bool bOnlyChild) {
     return static_cast<T*>(GetChildInternal(index, eType, bOnlyChild));
   }
 
@@ -246,9 +246,7 @@ class CXFA_Node : public CXFA_Object {
   void OnRemoved(bool bNotify);
   Optional<void*> GetDefaultValue(XFA_Attribute attr,
                                   XFA_AttributeType eType) const;
-  CXFA_Node* GetChildInternal(int32_t index,
-                              XFA_Element eType,
-                              bool bOnlyChild);
+  CXFA_Node* GetChildInternal(size_t index, XFA_Element eType, bool bOnlyChild);
   CXFA_Node* GetFirstChildByClassInternal(XFA_Element eType) const;
   CXFA_Node* GetNextSameNameSiblingInternal(
       const WideStringView& wsNodeName) const;

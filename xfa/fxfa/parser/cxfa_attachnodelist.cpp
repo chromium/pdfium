@@ -43,6 +43,6 @@ bool CXFA_AttachNodeList::Remove(CXFA_Node* pNode) {
 
 CXFA_Node* CXFA_AttachNodeList::Item(size_t index) {
   return m_pAttachNode->GetChild<CXFA_Node>(
-      pdfium::base::checked_cast<int32_t>(index), XFA_Element::Unknown,
+      index, XFA_Element::Unknown,
       m_pAttachNode->GetElementType() == XFA_Element::Subform);
 }
