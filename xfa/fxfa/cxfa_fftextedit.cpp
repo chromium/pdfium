@@ -185,7 +185,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 bool CXFA_FFTextEdit::CommitData() {
   WideString wsText = static_cast<CFWL_Edit*>(m_pNormalWidget.get())->GetText();
   if (m_pDataAcc->SetValue(XFA_VALUEPICTURE_Edit, wsText)) {
-    m_pDataAcc->UpdateUIDisplay(this);
+    m_pDataAcc->UpdateUIDisplay(GetDoc()->GetDocView(), this);
     return true;
   }
   ValidateNumberField(wsText);

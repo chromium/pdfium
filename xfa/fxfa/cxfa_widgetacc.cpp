@@ -545,7 +545,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
 
   if (GetRawValue() != EventParam.m_wsResult) {
     SetValue(XFA_VALUEPICTURE_Raw, EventParam.m_wsResult);
-    UpdateUIDisplay();
+    UpdateUIDisplay(m_pDocView, nullptr);
   }
   return XFA_EVENTERROR_Success;
 }
@@ -867,8 +867,9 @@ CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
   return static_cast<CXFA_FFWidget*>(pWidget->GetNext());
 }
 
-void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
-  CXFA_FFWidget* pWidget = m_pDocView->GetWidgetForNode(m_pNode);
+void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFDocView* docView,
+                                     CXFA_FFWidget* pExcept) {
+  CXFA_FFWidget* pWidget = docView->GetWidgetForNode(m_pNode);
   for (; pWidget; pWidget = GetNextWidget(pWidget)) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
         (GetUIType() != XFA_Element::CheckButton && pWidget->IsFocused())) {

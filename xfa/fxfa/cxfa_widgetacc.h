@@ -99,7 +99,7 @@ class CXFA_WidgetAcc {
                     const WideString& wsData);
   void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
-  void UpdateUIDisplay(CXFA_FFWidget* pExcept = nullptr);
+  void UpdateUIDisplay(CXFA_FFDocView* docView, CXFA_FFWidget* pExcept);
 
   CXFA_Node* GetDatasets();
   RetainPtr<CFGAS_GEFont> GetFDEFont();

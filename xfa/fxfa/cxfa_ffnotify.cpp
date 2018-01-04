@@ -424,12 +424,12 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     pDocView->AddCalculateNodeNotify(pSender);
     if (eType == XFA_Element::Value || bIsContainerNode) {
       if (bIsContainerNode) {
-        pWidgetAcc->UpdateUIDisplay();
+        pWidgetAcc->UpdateUIDisplay(m_pDoc->GetDocView(), nullptr);
         pDocView->AddCalculateWidgetAcc(pWidgetAcc);
         pDocView->AddValidateWidget(pWidgetAcc);
       } else if (pWidgetNode->GetNodeItem(XFA_NODEITEM_Parent)
                      ->GetElementType() == XFA_Element::ExclGroup) {
-        pWidgetAcc->UpdateUIDisplay();
+        pWidgetAcc->UpdateUIDisplay(m_pDoc->GetDocView(), nullptr);
       }
       return;
     }

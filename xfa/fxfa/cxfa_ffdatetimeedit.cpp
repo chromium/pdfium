@@ -142,7 +142,7 @@ bool CXFA_FFDateTimeEdit::CommitData() {
   if (!m_pDataAcc->SetValue(XFA_VALUEPICTURE_Edit, pPicker->GetEditText()))
     return false;
 
-  m_pDataAcc->UpdateUIDisplay(this);
+  m_pDataAcc->UpdateUIDisplay(GetDoc()->GetDocView(), this);
   return true;
 }
 
