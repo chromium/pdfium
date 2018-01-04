@@ -784,17 +784,17 @@ CXFA_Node* CXFA_Node::GetModelNode() {
   }
 }
 
-int32_t CXFA_Node::CountChildren(XFA_Element eType, bool bOnlyChild) {
-  int32_t iCount = 0;
+size_t CXFA_Node::CountChildren(XFA_Element eType, bool bOnlyChild) {
+  size_t count = 0;
   for (CXFA_Node* pNode = m_pChild; pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() != eType && eType != XFA_Element::Unknown)
       continue;
     if (bOnlyChild && HasProperty(pNode->GetElementType()))
       continue;
-    ++iCount;
+    ++count;
   }
-  return iCount;
+  return count;
 }
 
 CXFA_Node* CXFA_Node::GetChildInternal(int32_t index,

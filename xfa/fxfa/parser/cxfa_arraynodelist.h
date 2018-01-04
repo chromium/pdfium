@@ -20,7 +20,7 @@ class CXFA_ArrayNodeList : public CXFA_TreeList {
   ~CXFA_ArrayNodeList() override;
 
   // From CXFA_TreeList.
-  int32_t GetLength() override;
+  size_t GetLength() override;
   bool Append(CXFA_Node* pNode) override;
   bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
   bool Remove(CXFA_Node* pNode) override;

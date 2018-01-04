@@ -14,7 +14,7 @@ CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
   m_pAttachNode = pAttachNode;
 }
 
-int32_t CXFA_AttachNodeList::GetLength() {
+size_t CXFA_AttachNodeList::GetLength() {
   return m_pAttachNode->CountChildren(
       XFA_Element::Unknown,
       m_pAttachNode->GetElementType() == XFA_Element::Subform);

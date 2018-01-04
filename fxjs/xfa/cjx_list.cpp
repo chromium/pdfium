@@ -11,6 +11,7 @@
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -76,7 +77,7 @@ CJS_Return CJX_List::item(CJS_V8* runtime,
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   int32_t iIndex = runtime->ToInt32(params[0]);
-  if (iIndex < 0 || iIndex >= GetXFAList()->GetLength())
+  if (iIndex < 0 || static_cast<size_t>(iIndex) >= GetXFAList()->GetLength())
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
   return CJS_Return(runtime->NewXFAObject(
@@ -91,5 +92,6 @@ void CJX_List::length(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(GetXFAList()->GetLength());
+  pValue->SetInteger(
+      pdfium::base::checked_cast<int32_t>(GetXFAList()->GetLength()));
 }

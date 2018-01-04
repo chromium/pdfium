@@ -21,8 +21,8 @@ void CXFA_ArrayNodeList::SetArrayNodeList(
     m_array = srcArray;
 }
 
-int32_t CXFA_ArrayNodeList::GetLength() {
-  return pdfium::CollectionSize<int32_t>(m_array);
+size_t CXFA_ArrayNodeList::GetLength() {
+  return m_array.size();
 }
 
 bool CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
