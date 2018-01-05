@@ -86,8 +86,7 @@ void CJX_Subform::locale(CFXJSE_Value* pValue,
     return;
   }
 
-  WideString wsLocaleName;
-  GetXFANode()->GetLocaleName(wsLocaleName);
+  WideString wsLocaleName = GetXFANode()->GetLocaleName().value_or(L"");
   pValue->SetString(wsLocaleName.UTF8Encode().AsStringView());
 }
 

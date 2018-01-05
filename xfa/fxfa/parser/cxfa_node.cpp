@@ -620,15 +620,15 @@ CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
 }
 
 IFX_Locale* CXFA_Node::GetLocale() {
-  WideString wsLocaleName;
-  if (!GetLocaleName(wsLocaleName))
+  Optional<WideString> localeName = GetLocaleName();
+  if (!localeName)
     return nullptr;
-  if (wsLocaleName == L"ambient")
+  if (localeName.value() == L"ambient")
     return GetDocument()->GetLocalMgr()->GetDefLocale();
-  return GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
+  return GetDocument()->GetLocalMgr()->GetLocaleByName(localeName.value());
 }
 
-bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
+Optional<WideString> CXFA_Node::GetLocaleName() {
   CXFA_Node* pForm = GetDocument()->GetXFAObject(XFA_HASHCODE_Form)->AsNode();
   CXFA_Subform* pTopSubform =
       pForm->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
@@ -636,35 +636,32 @@ bool CXFA_Node::GetLocaleName(WideString& wsLocaleName) {
 
   CXFA_Node* pLocaleNode = this;
   do {
-    Optional<WideString> ret =
+    Optional<WideString> localeName =
         pLocaleNode->JSObject()->TryCData(XFA_Attribute::Locale, false);
-    if (ret) {
-      wsLocaleName = *ret;
-      return true;
-    }
+    if (localeName)
+      return localeName;
+
     pLocaleNode = pLocaleNode->GetNodeItem(XFA_NODEITEM_Parent);
   } while (pLocaleNode && pLocaleNode != pTopSubform);
 
   CXFA_Node* pConfig = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
-  wsLocaleName = GetDocument()->GetLocalMgr()->GetConfigLocaleName(pConfig);
-  if (!wsLocaleName.IsEmpty())
-    return true;
+  Optional<WideString> localeName = {
+      WideString(GetDocument()->GetLocalMgr()->GetConfigLocaleName(pConfig))};
+  if (localeName && !localeName->IsEmpty())
+    return localeName;
 
   if (pTopSubform) {
-    Optional<WideString> ret =
+    localeName =
         pTopSubform->JSObject()->TryCData(XFA_Attribute::Locale, false);
-    if (ret) {
-      wsLocaleName = *ret;
-      return true;
-    }
+    if (localeName)
+      return localeName;
   }
 
   IFX_Locale* pLocale = GetDocument()->GetLocalMgr()->GetDefLocale();
   if (!pLocale)
-    return false;
+    return {};
 
-  wsLocaleName = pLocale->GetName();
-  return true;
+  return {pLocale->GetName()};
 }
 
 XFA_AttributeEnum CXFA_Node::GetIntact() {

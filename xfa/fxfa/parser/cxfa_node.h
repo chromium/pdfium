@@ -185,7 +185,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_WidgetAcc* GetWidgetAcc();
   CXFA_WidgetAcc* GetContainerWidgetAcc();
   IFX_Locale* GetLocale();
-  bool GetLocaleName(WideString& wsLocaleName);
+  Optional<WideString> GetLocaleName();
   XFA_AttributeEnum GetIntact();
 
   CXFA_Node* GetFirstChildByName(const WideStringView& wsNodeName) const;
