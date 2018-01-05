@@ -102,10 +102,6 @@ class CPDF_InterForm {
                        const WideString& parent_name,
                        bool bNotify = false,
                        int nLevel = 0);
-  bool ValidateFieldName(WideString& csNewFieldName,
-                         int iType,
-                         const CPDF_FormField* pExcludedField,
-                         const CPDF_FormControl* pExcludedControl) const;
 
   static bool s_bUpdateAP;
 

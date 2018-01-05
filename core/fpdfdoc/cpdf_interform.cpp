@@ -370,22 +370,6 @@ bool RetrieveSpecificFont(uint8_t charSet,
 }
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
-int CompareFieldName(const WideString& name1, const WideString& name2) {
-  const wchar_t* ptr1 = name1.c_str();
-  const wchar_t* ptr2 = name2.c_str();
-  if (name1.GetLength() == name2.GetLength())
-    return name1 == name2 ? 1 : 0;
-
-  size_t i = 0;
-  while (ptr1[i] == ptr2[i])
-    i++;
-  if (i == name1.GetLength())
-    return 2;
-  if (i == name2.GetLength())
-    return 3;
-  return 0;
-}
-
 }  // namespace
 
 class CFieldTree {
@@ -797,64 +781,6 @@ CPDF_Font* CPDF_InterForm::AddNativeFont(uint8_t charSet,
 
 CPDF_Font* CPDF_InterForm::AddNativeFont(CPDF_Document* pDocument) {
   return pDocument ? AddNativeFont(GetNativeCharSet(), pDocument) : nullptr;
-}
-
-bool CPDF_InterForm::ValidateFieldName(
-    WideString& csNewFieldName,
-    int iType,
-    const CPDF_FormField* pExcludedField,
-    const CPDF_FormControl* pExcludedControl) const {
-  if (csNewFieldName.IsEmpty())
-    return false;
-
-  int iPos = 0;
-  int iLength = csNewFieldName.GetLength();
-  WideString csSub;
-  while (true) {
-    while (iPos < iLength &&
-           (csNewFieldName[iPos] == L'.' || csNewFieldName[iPos] == L' ')) {
-      iPos++;
-    }
-    if (iPos < iLength && !csSub.IsEmpty())
-      csSub += L'.';
-    while (iPos < iLength && csNewFieldName[iPos] != L'.')
-      csSub += csNewFieldName[iPos++];
-    for (int i = csSub.GetLength() - 1; i > -1; i--) {
-      if (csSub[i] != L' ' && csSub[i] != L'.')
-        break;
-
-      csSub.SetAt(i, L'\0');
-    }
-    size_t dwCount = m_pFieldTree->m_Root.CountFields();
-    for (size_t m = 0; m < dwCount; ++m) {
-      CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(m);
-      if (!pField)
-        continue;
-      if (pField == pExcludedField) {
-        if (!pExcludedControl || pField->CountControls() < 2)
-          continue;
-      }
-      WideString csFullName = pField->GetFullName();
-      int iRet = CompareFieldName(csSub, csFullName);
-      if (iRet == 1) {
-        if (pField->GetFieldType() != iType)
-          return false;
-      } else if (iRet == 2 && csSub == csNewFieldName) {
-        if (csFullName[iPos] == L'.')
-          return false;
-      } else if (iRet == 3 && csSub == csNewFieldName) {
-        if (csNewFieldName[csFullName.GetLength()] == L'.')
-          return false;
-      }
-    }
-    if (iPos >= iLength)
-      break;
-  }
-  if (csSub.IsEmpty())
-    return false;
-
-  csNewFieldName = csSub;
-  return true;
 }
 
 size_t CPDF_InterForm::CountFields(const WideString& csFieldName) const {
