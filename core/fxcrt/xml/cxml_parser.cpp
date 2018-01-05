@@ -266,19 +266,20 @@ uint32_t CXML_Parser::GetCharRef() {
   return code;
 }
 
-void CXML_Parser::GetAttrValue(WideString& value) {
+WideString CXML_Parser::GetAttrValue() {
   m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);
   if (IsEOF())
-    return;
+    return WideString();
 
   CFX_UTF8Decoder decoder;
-  uint8_t mark = 0, ch = 0;
+  uint8_t mark = 0;
+  uint8_t ch = 0;
   do {
     while (m_dwIndex < m_dwBufferSize) {
       ch = m_pBuffer[m_dwIndex];
       if (mark == 0) {
         if (ch != '\'' && ch != '"')
-          return;
+          return WideString();
 
         mark = ch;
         m_dwIndex++;
@@ -291,10 +292,8 @@ void CXML_Parser::GetAttrValue(WideString& value) {
 
       if (ch == '&') {
         decoder.AppendCodePoint(GetCharRef());
-        if (IsEOF()) {
-          value = decoder.GetResult();
-          return;
-        }
+        if (IsEOF())
+          return WideString(decoder.GetResult());
       } else {
         decoder.Input(ch);
       }
@@ -303,7 +302,7 @@ void CXML_Parser::GetAttrValue(WideString& value) {
     if (ch == mark || m_dwIndex < m_dwBufferSize || IsEOF())
       break;
   } while (ReadNextBlock());
-  value = decoder.GetResult();
+  return WideString(decoder.GetResult());
 }
 
 void CXML_Parser::GetTagName(bool bStartTag,
@@ -407,8 +406,7 @@ std::unique_ptr<CXML_Element> CXML_Parser::ParseElementInternal(
       if (IsEOF())
         break;
 
-      WideString attr_value;
-      GetAttrValue(attr_value);
+      WideString attr_value = GetAttrValue();
       pElement->SetAttribute(attr_space, attr_name, attr_value);
     }
     m_nOffset = m_nBufferOffset + static_cast<FX_FILESIZE>(m_dwIndex);

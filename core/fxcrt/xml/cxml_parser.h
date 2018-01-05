@@ -27,7 +27,7 @@ class CXML_Parser {
   bool HaveAvailData();
   void SkipWhiteSpaces();
   void GetName(ByteString* space, ByteString* name);
-  void GetAttrValue(WideString& value);
+  WideString GetAttrValue();
   uint32_t GetCharRef();
   void GetTagName(bool bStartTag,
                   bool* bEndTag,
