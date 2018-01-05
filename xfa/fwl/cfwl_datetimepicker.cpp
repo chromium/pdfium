@@ -208,18 +208,20 @@ void CFWL_DateTimePicker::DrawDropDownButton(CXFA_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void CFWL_DateTimePicker::FormatDateString(int32_t iYear,
-                                           int32_t iMonth,
-                                           int32_t iDay,
-                                           WideString& wsText) {
+WideString CFWL_DateTimePicker::FormatDateString(int32_t iYear,
+                                                 int32_t iMonth,
+                                                 int32_t iDay) {
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_ShortDateFormat) ==
       FWL_STYLEEXT_DTP_ShortDateFormat) {
-    wsText = WideString::Format(L"%d-%d-%d", iYear, iMonth, iDay);
-  } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_LongDateFormat) ==
-             FWL_STYLEEXT_DTP_LongDateFormat) {
-    wsText =
-        WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
+    return WideString::Format(L"%d-%d-%d", iYear, iMonth, iDay);
   }
+
+  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_LongDateFormat) ==
+      FWL_STYLEEXT_DTP_LongDateFormat) {
+    return WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
+  }
+
+  return WideString();
 }
 
 void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
@@ -308,8 +310,7 @@ void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
   m_iMonth = iMonth;
   m_iDay = iDay;
 
-  WideString wsText;
-  FormatDateString(m_iYear, m_iMonth, m_iDay, wsText);
+  WideString wsText = FormatDateString(m_iYear, m_iMonth, m_iDay);
   m_pEdit->SetText(wsText);
   m_pEdit->Update();
   RepaintRect(m_rtClient);
