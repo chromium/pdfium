@@ -150,9 +150,7 @@ WideString CXFA_FFWidgetHandler::GetSelectedText(CXFA_FFWidget* widget) {
   if (!widget->CanCopy())
     return WideString();
 
-  WideString val;
-  widget->Copy(val);
-  return val;
+  return widget->Copy().value_or(WideString());
 }
 
 void CXFA_FFWidgetHandler::PasteText(CXFA_FFWidget* widget,

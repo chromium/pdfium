@@ -51,8 +51,8 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   bool CanCut() override;
   bool CanPaste() override;
   bool CanSelectAll() override;
-  bool Copy(WideString& wsCopy) override;
-  bool Cut(WideString& wsCut) override;
+  Optional<WideString> Copy() override;
+  Optional<WideString> Cut() override;
   bool Paste(const WideString& wsPaste) override;
   void SelectAll() override;
   void Delete() override;

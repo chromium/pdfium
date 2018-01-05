@@ -232,13 +232,15 @@ bool CXFA_FFComboBox::CanSelectAll() {
   return ToComboBox(m_pNormalWidget.get())->EditCanSelectAll();
 }
 
-bool CXFA_FFComboBox::Copy(WideString& wsCopy) {
-  return ToComboBox(m_pNormalWidget.get())->EditCopy(wsCopy);
+Optional<WideString> CXFA_FFComboBox::Copy() {
+  return ToComboBox(m_pNormalWidget.get())->EditCopy();
 }
 
-bool CXFA_FFComboBox::Cut(WideString& wsCut) {
-  return m_pDataAcc->IsChoiceListAllowTextEntry() &&
-         ToComboBox(m_pNormalWidget.get())->EditCut(wsCut);
+Optional<WideString> CXFA_FFComboBox::Cut() {
+  if (!m_pDataAcc->IsChoiceListAllowTextEntry())
+    return {};
+
+  return ToComboBox(m_pNormalWidget.get())->EditCut();
 }
 
 bool CXFA_FFComboBox::Paste(const WideString& wsPaste) {

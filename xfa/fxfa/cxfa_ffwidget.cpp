@@ -1166,12 +1166,12 @@ bool CXFA_FFWidget::CanDeSelect() {
   return CanCopy();
 }
 
-bool CXFA_FFWidget::Copy(WideString& wsCopy) {
-  return false;
+Optional<WideString> CXFA_FFWidget::Copy() {
+  return {};
 }
 
-bool CXFA_FFWidget::Cut(WideString& wsCut) {
-  return false;
+Optional<WideString> CXFA_FFWidget::Cut() {
+  return {};
 }
 
 bool CXFA_FFWidget::Paste(const WideString& wsPaste) {

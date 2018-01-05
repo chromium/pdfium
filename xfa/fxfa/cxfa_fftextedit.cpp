@@ -398,12 +398,12 @@ bool CXFA_FFTextEdit::CanSelectAll() {
   return ToEdit(m_pNormalWidget.get())->GetTextLength() > 0;
 }
 
-bool CXFA_FFTextEdit::Copy(WideString& wsCopy) {
-  return ToEdit(m_pNormalWidget.get())->Copy(wsCopy);
+Optional<WideString> CXFA_FFTextEdit::Copy() {
+  return ToEdit(m_pNormalWidget.get())->Copy();
 }
 
-bool CXFA_FFTextEdit::Cut(WideString& wsCut) {
-  return ToEdit(m_pNormalWidget.get())->Copy(wsCut);
+Optional<WideString> CXFA_FFTextEdit::Cut() {
+  return ToEdit(m_pNormalWidget.get())->Cut();
 }
 
 bool CXFA_FFTextEdit::Paste(const WideString& wsPaste) {

@@ -322,20 +322,18 @@ void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
   m_EdtEngine.SetAliasChar(wAlias);
 }
 
-bool CFWL_Edit::Copy(WideString& wsCopy) {
+Optional<WideString> CFWL_Edit::Copy() {
   if (!m_EdtEngine.HasSelection())
-    return false;
+    return {};
 
-  wsCopy = m_EdtEngine.GetSelectedText();
-  return true;
+  return {m_EdtEngine.GetSelectedText()};
 }
 
-bool CFWL_Edit::Cut(WideString& wsCut) {
+Optional<WideString> CFWL_Edit::Cut() {
   if (!m_EdtEngine.HasSelection())
-    return false;
+    return {};
 
-  wsCut = m_EdtEngine.DeleteSelectedText();
-  return true;
+  return {m_EdtEngine.DeleteSelectedText()};
 }
 
 bool CFWL_Edit::Paste(const WideString& wsPaste) {

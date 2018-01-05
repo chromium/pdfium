@@ -80,8 +80,8 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   int32_t GetLimit() const;
   void SetLimit(int32_t nLimit);
   void SetAliasChar(wchar_t wAlias);
-  bool Copy(WideString& wsCopy);
-  bool Cut(WideString& wsCut);
+  Optional<WideString> Copy();
+  Optional<WideString> Cut();
   bool Paste(const WideString& wsPaste);
   bool Undo();
   bool Redo();

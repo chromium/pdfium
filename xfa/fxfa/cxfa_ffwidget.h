@@ -127,8 +127,8 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual bool CanSelectAll();
   virtual bool CanDelete();
   virtual bool CanDeSelect();
-  virtual bool Copy(WideString& wsCopy);
-  virtual bool Cut(WideString& wsCut);
+  virtual Optional<WideString> Copy();
+  virtual Optional<WideString> Cut();
   virtual bool Paste(const WideString& wsPaste);
   virtual void SelectAll();
   virtual void Delete();

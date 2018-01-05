@@ -500,8 +500,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Copy(FPDF_DOCUMENT document,
   if (!pContext->ContainsXFAForm())
     return;
 
-  WideString wsCpText;
-  static_cast<CXFA_FFWidget*>(hWidget)->Copy(wsCpText);
+  WideString wsCpText =
+      static_cast<CXFA_FFWidget*>(hWidget)->Copy().value_or(WideString());
 
   ByteString bsCpText = wsCpText.UTF16LE_Encode();
   uint32_t len = bsCpText.GetLength() / sizeof(unsigned short);
@@ -531,8 +531,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Cut(FPDF_DOCUMENT document,
   if (!pContext->ContainsXFAForm())
     return;
 
-  WideString wsCpText;
-  static_cast<CXFA_FFWidget*>(hWidget)->Cut(wsCpText);
+  WideString wsCpText =
+      static_cast<CXFA_FFWidget*>(hWidget)->Cut().value_or(WideString());
 
   ByteString bsCpText = wsCpText.UTF16LE_Encode();
   uint32_t len = bsCpText.GetLength() / sizeof(unsigned short);
