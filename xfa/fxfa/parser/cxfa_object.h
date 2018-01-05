@@ -75,7 +75,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   WideStringView GetClassName() const { return m_elementName; }
   uint32_t GetClassHashCode() const { return m_elementNameHash; }
 
-  void GetSOMExpression(WideString& wsSOMExpression);
+  WideString GetSOMExpression();
 
  protected:
   CXFA_Object(CXFA_Document* pDocument,

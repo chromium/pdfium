@@ -31,12 +31,12 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
 
 CXFA_Object::~CXFA_Object() {}
 
-void CXFA_Object::GetSOMExpression(WideString& wsSOMExpression) {
+WideString CXFA_Object::GetSOMExpression() {
   CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext)
-    return;
+    return WideString();
 
-  pScriptContext->GetSomExpression(ToNode(this), wsSOMExpression);
+  return pScriptContext->GetSomExpression(ToNode(this));
 }
 
 CXFA_Node* CXFA_Object::AsNode() {

@@ -70,7 +70,7 @@ class CFXJSE_Engine : public CJS_V8 {
 
   int32_t GetIndexByName(CXFA_Node* refNode);
   int32_t GetIndexByClassName(CXFA_Node* refNode);
-  void GetSomExpression(CXFA_Node* refNode, WideString& wsExpression);
+  WideString GetSomExpression(CXFA_Node* refNode);
 
   void SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray);
   void AddNodesOfRunScript(CXFA_Node* pNode);

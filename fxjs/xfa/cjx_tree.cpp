@@ -196,8 +196,7 @@ void CJX_Tree::somExpression(CFXJSE_Value* pValue,
     return;
   }
 
-  WideString wsSOMExpression;
-  GetXFAObject()->GetSOMExpression(wsSOMExpression);
+  WideString wsSOMExpression = GetXFAObject()->GetSOMExpression();
   pValue->SetString(wsSOMExpression.UTF8Encode().AsStringView());
 }
 

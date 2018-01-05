@@ -200,9 +200,7 @@ void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
   if (!pAppProvider)
     return;
 
-  WideString wsSomField;
-  pAcc->GetNode()->GetSOMExpression(wsSomField);
-
+  WideString wsSomField = pAcc->GetNode()->GetSOMExpression();
   pAppProvider->MsgBox(WideString::Format(L"%ls can not contain %ls",
                                           wsText.c_str(), wsSomField.c_str()),
                        pAppProvider->GetAppTitle(), XFA_MBICON_Error,
