@@ -78,20 +78,20 @@ CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
 
 CPDF_PageLabel::~CPDF_PageLabel() {}
 
-bool CPDF_PageLabel::GetLabel(int nPage, WideString* wsLabel) const {
+Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!m_pDocument)
-    return false;
+    return {};
 
   if (nPage < 0 || nPage >= m_pDocument->GetPageCount())
-    return false;
+    return {};
 
   const CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
   if (!pPDFRoot)
-    return false;
+    return {};
 
   CPDF_Dictionary* pLabels = pPDFRoot->GetDictFor("PageLabels");
   if (!pLabels)
-    return false;
+    return {};
 
   CPDF_NumberTree numberTree(pLabels);
   CPDF_Object* pValue = nullptr;
@@ -103,21 +103,22 @@ bool CPDF_PageLabel::GetLabel(int nPage, WideString* wsLabel) const {
     n--;
   }
 
+  WideString label;
   if (pValue) {
     pValue = pValue->GetDirect();
     if (CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
       if (pLabel->KeyExist("P"))
-        *wsLabel += pLabel->GetUnicodeTextFor("P");
+        label += pLabel->GetUnicodeTextFor("P");
 
       ByteString bsNumberingStyle = pLabel->GetStringFor("S", "");
       int nLabelNum = nPage - n + pLabel->GetIntegerFor("St", 1);
       WideString wsNumPortion = GetLabelNumPortion(nLabelNum, bsNumberingStyle);
-      *wsLabel += wsNumPortion;
-      return true;
+      label += wsNumPortion;
+      return {label};
     }
   }
-  *wsLabel = WideString::Format(L"%d", nPage + 1);
-  return true;
+  label = WideString::Format(L"%d", nPage + 1);
+  return {label};
 }
 
 int32_t CPDF_PageLabel::GetPageByLabel(const ByteStringView& bsLabel) const {
@@ -130,10 +131,10 @@ int32_t CPDF_PageLabel::GetPageByLabel(const ByteStringView& bsLabel) const {
 
   int nPages = m_pDocument->GetPageCount();
   for (int i = 0; i < nPages; i++) {
-    WideString str;
-    if (!GetLabel(i, &str))
+    Optional<WideString> str = GetLabel(i);
+    if (!str.has_value())
       continue;
-    if (PDF_EncodeText(str).Compare(bsLabel))
+    if (PDF_EncodeText(str.value()).Compare(bsLabel))
       return i;
   }
 

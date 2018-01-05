@@ -424,8 +424,8 @@ FPDF_GetPageLabel(FPDF_DOCUMENT document,
 
   // CPDF_PageLabel can deal with NULL |document|.
   CPDF_PageLabel label(CPDFDocumentFromFPDFDocument(document));
-  WideString str;
-  if (!label.GetLabel(page_index, &str))
-    return 0;
-  return Utf16EncodeMaybeCopyAndReturnLength(str, buffer, buflen);
+  Optional<WideString> str = label.GetLabel(page_index);
+  return str.has_value()
+             ? Utf16EncodeMaybeCopyAndReturnLength(str.value(), buffer, buflen)
+             : 0;
 }

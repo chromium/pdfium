@@ -8,6 +8,7 @@
 #define CORE_FPDFDOC_CPDF_PAGELABEL_H_
 
 #include "core/fxcrt/fx_string.h"
+#include "third_party/base/optional.h"
 
 class CPDF_Document;
 
@@ -16,7 +17,7 @@ class CPDF_PageLabel {
   explicit CPDF_PageLabel(CPDF_Document* pDocument);
   ~CPDF_PageLabel();
 
-  bool GetLabel(int nPage, WideString* wsLabel) const;
+  Optional<WideString> GetLabel(int nPage) const;
   int32_t GetPageByLabel(const ByteStringView& bsLabel) const;
   int32_t GetPageByLabel(const WideStringView& wsLabel) const;
 
