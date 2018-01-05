@@ -24,7 +24,6 @@ class CFX_BreakLine {
   int32_t CountPieces() const;
   const CFX_BreakPiece* GetPiece(int32_t index) const;
 
-  void GetString(WideString& wsStr) const;
   int32_t GetLineEnd() const;
 
   void Clear();

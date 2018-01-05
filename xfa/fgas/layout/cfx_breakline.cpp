@@ -35,14 +35,6 @@ const CFX_BreakPiece* CFX_BreakLine::GetPiece(int32_t index) const {
   return &m_LinePieces[index];
 }
 
-void CFX_BreakLine::GetString(WideString& wsStr) const {
-  int32_t iCount = pdfium::CollectionSize<int32_t>(m_LineChars);
-  wchar_t* pBuf = wsStr.GetBuffer(iCount);
-  for (int32_t i = 0; i < iCount; i++)
-    *pBuf++ = static_cast<wchar_t>(m_LineChars[i].char_code());
-  wsStr.ReleaseBuffer(iCount);
-}
-
 int32_t CFX_BreakLine::GetLineEnd() const {
   return m_iStart + m_iWidth;
 }
