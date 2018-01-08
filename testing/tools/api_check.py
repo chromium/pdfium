@@ -101,7 +101,8 @@ def main():
   src_path = os.path.dirname(os.path.dirname(os.path.dirname(script_abspath)))
   public_functions = _GetFunctionsFromPublicHeaders(src_path)
 
-  api_test_path = os.path.join(src_path, 'fpdfsdk', 'fpdfview_c_api_test.c')
+  api_test_relative_path = os.path.join('fpdfsdk', 'fpdfview_c_api_test.c')
+  api_test_path = os.path.join(src_path, api_test_relative_path)
   test_functions = _GetFunctionsFromTest(api_test_path)
 
   result = True
@@ -124,7 +125,13 @@ def main():
   check = _CheckAndPrintFailures(non_existent, 'Tested functions do not exist')
   result = result and check
 
-  return 0 if result else 1
+  if not result:
+    print ('Some checks failed. Make sure %s is in sync with the public API '
+           'headers.'
+           % api_test_relative_path);
+    return 1
+
+  return 0
 
 
 if __name__ == '__main__':
