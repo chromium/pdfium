@@ -20,7 +20,7 @@ class IFWL_WidgetDelegate;
 
 class CXFA_FFTextEdit : public CXFA_FFField {
  public:
-  explicit CXFA_FFTextEdit(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFTextEdit(CXFA_Node* pNode);
   ~CXFA_FFTextEdit() override;
 
   // CXFA_FFField

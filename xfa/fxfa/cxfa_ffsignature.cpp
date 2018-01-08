@@ -12,8 +12,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 
-CXFA_FFSignature::CXFA_FFSignature(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pDataAcc) {}
+CXFA_FFSignature::CXFA_FFSignature(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 
 CXFA_FFSignature::~CXFA_FFSignature() {}
 
@@ -32,7 +31,7 @@ void CXFA_FFSignature::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
 
-  DrawBorder(pGS, m_pDataAcc->GetUIBorder(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
 }

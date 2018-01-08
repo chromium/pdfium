@@ -11,8 +11,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pDataAcc) {}
+CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFExclGroup::~CXFA_FFExclGroup() {}
 

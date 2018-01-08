@@ -917,10 +917,8 @@ bool IsFXCodecErrorStatus(FXCODEC_STATUS status) {
 
 }  // namespace
 
-CXFA_FFWidget::CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_ContentLayoutItem(pDataAcc->GetNode()),
-      m_pPageView(nullptr),
-      m_pDataAcc(pDataAcc) {}
+CXFA_FFWidget::CXFA_FFWidget(CXFA_Node* node)
+    : CXFA_ContentLayoutItem(node), m_pNode(node) {}
 
 CXFA_FFWidget::~CXFA_FFWidget() {}
 
@@ -943,7 +941,7 @@ const CFX_RectF& CXFA_FFWidget::RecacheWidgetRect() const {
 CFX_RectF CXFA_FFWidget::GetRectWithoutRotate() {
   CFX_RectF rtWidget = GetWidgetRect();
   float fValue = 0;
-  switch (m_pDataAcc->GetNode()->GetRotate()) {
+  switch (m_pNode->GetRotate()) {
     case 90:
       rtWidget.top = rtWidget.bottom();
       fValue = rtWidget.width;
@@ -978,17 +976,13 @@ CFX_RectF CXFA_FFWidget::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   return m_pPageView->GetPageViewRect();
 }
 
-CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
-  return m_pDataAcc.Get();
-}
-
 void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
                                  const CFX_Matrix& matrix,
                                  uint32_t dwStatus) {
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Border* border = m_pDataAcc->GetNode()->GetBorder(false);
+  CXFA_Border* border = m_pNode->GetBorder(false);
   if (!border)
     return;
 
@@ -1089,8 +1083,9 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   m_dwStatus |= XFA_WidgetStatus_Focused;
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
-  eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Enter, &eParam);
+  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  m_pNode->GetWidgetAcc()->ProcessEvent(GetDocView(), XFA_AttributeEnum::Enter,
+                                        &eParam);
   return true;
 }
 
@@ -1261,7 +1256,7 @@ static void XFA_GetMatrix(CFX_Matrix& m,
 
 CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
   CFX_Matrix mt;
-  int32_t iRotate = m_pDataAcc->GetNode()->GetRotate();
+  int32_t iRotate = m_pNode->GetRotate();
   if (!iRotate)
     return mt;
 
@@ -1277,8 +1272,7 @@ bool CXFA_FFWidget::IsLayoutRectEmpty() {
   return rtLayout.width < 0.1f && rtLayout.height < 0.1f;
 }
 CXFA_FFWidget* CXFA_FFWidget::GetParent() {
-  CXFA_Node* pParentNode =
-      m_pDataAcc->GetNode()->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParentNode = m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParentNode) {
     CXFA_WidgetAcc* pParentWidgetAcc =
         static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetAcc());
@@ -1295,10 +1289,9 @@ bool CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {
   if (!pWidget)
     return false;
 
-  CXFA_Node* pNode = m_pDataAcc->GetNode();
-  CXFA_Node* pChildNode = pWidget->GetDataAcc()->GetNode();
+  CXFA_Node* pChildNode = pWidget->GetNode();
   while (pChildNode) {
-    if (pChildNode == pNode)
+    if (pChildNode == m_pNode)
       return true;
 
     pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -1341,8 +1334,9 @@ void CXFA_FFWidget::EventKillFocus() {
   }
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Exit;
-  eParam.m_pTarget = m_pDataAcc.Get();
-  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Exit, &eParam);
+  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  m_pNode->GetWidgetAcc()->ProcessEvent(GetDocView(), XFA_AttributeEnum::Exit,
+                                        &eParam);
 }
 
 bool CXFA_FFWidget::IsButtonDown() {

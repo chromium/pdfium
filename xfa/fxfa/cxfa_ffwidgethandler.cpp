@@ -246,10 +246,8 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
 CXFA_FFWidget* CXFA_FFWidgetHandler::CreateWidget(CXFA_FFWidget* hParent,
                                                   XFA_WIDGETTYPE eType,
                                                   CXFA_FFWidget* hBefore) {
-  CXFA_Node* pParentFormItem =
-      hParent ? hParent->GetDataAcc()->GetNode() : nullptr;
-  CXFA_Node* pBeforeFormItem =
-      hBefore ? hBefore->GetDataAcc()->GetNode() : nullptr;
+  CXFA_Node* pParentFormItem = hParent ? hParent->GetNode() : nullptr;
+  CXFA_Node* pBeforeFormItem = hBefore ? hBefore->GetNode() : nullptr;
   CXFA_Node* pNewFormItem =
       CreateWidgetFormItem(eType, pParentFormItem, pBeforeFormItem);
   if (!pNewFormItem)

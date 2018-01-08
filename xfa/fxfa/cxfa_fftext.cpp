@@ -20,7 +20,7 @@
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
-CXFA_FFText::CXFA_FFText(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
+CXFA_FFText::CXFA_FFText(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
 
 CXFA_FFText::~CXFA_FFText() {}
 
@@ -35,13 +35,13 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
 
-  CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
   if (!pTextLayout)
     return;
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtText = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMargin();
   if (margin) {
     CXFA_LayoutItem* pItem = this;
     if (!pItem->GetPrev() && !pItem->GetNext()) {
@@ -66,13 +66,13 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 }
 
 bool CXFA_FFText::IsLoaded() {
-  CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
   return pTextLayout && !pTextLayout->m_bHasBlock;
 }
 
 bool CXFA_FFText::PerformLayout() {
   CXFA_FFDraw::PerformLayout();
-  CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
   if (!pTextLayout)
     return false;
   if (!pTextLayout->m_bHasBlock)
@@ -86,7 +86,7 @@ bool CXFA_FFText::PerformLayout() {
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetRect(false);
-    CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
+    CXFA_Margin* margin = m_pNode->GetMargin();
     if (margin) {
       if (!pItem->GetPrev())
         rtText.height -= margin->GetTopInset();
@@ -139,7 +139,7 @@ FWL_WidgetHit CXFA_FFText::OnHitTest(const CFX_PointF& point) {
 }
 
 const wchar_t* CXFA_FFText::GetLinkURLAtPoint(const CFX_PointF& point) {
-  CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
   if (!pTextLayout)
     return nullptr;
 

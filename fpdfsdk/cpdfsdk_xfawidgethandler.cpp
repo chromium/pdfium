@@ -20,6 +20,7 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/fxfa_basic.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 CPDFSDK_XFAWidgetHandler::CPDFSDK_XFAWidgetHandler(
@@ -81,7 +82,8 @@ CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   ASSERT(pAnnot);
 
   CFX_RectF rcBBox;
-  XFA_Element eType = pAnnot->GetXFAWidget()->GetDataAcc()->GetUIType();
+  XFA_Element eType =
+      pAnnot->GetXFAWidget()->GetNode()->GetWidgetAcc()->GetUIType();
   if (eType == XFA_Element::Signature)
     rcBBox = pAnnot->GetXFAWidget()->GetBBox(XFA_WidgetStatus_Visible, true);
   else

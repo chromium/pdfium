@@ -11,7 +11,7 @@
 
 class CXFA_FFSignature final : public CXFA_FFField {
  public:
-  explicit CXFA_FFSignature(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFSignature(CXFA_Node* pNode);
   ~CXFA_FFSignature() override;
 
   // CXFA_FFField

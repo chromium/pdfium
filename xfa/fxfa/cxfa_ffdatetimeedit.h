@@ -21,7 +21,7 @@ class CFWL_Widget;
 
 class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
  public:
-  explicit CXFA_FFDateTimeEdit(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFDateTimeEdit(CXFA_Node* pNode);
   ~CXFA_FFDateTimeEdit() override;
 
   // CXFA_FFTextEdit

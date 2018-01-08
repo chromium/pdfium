@@ -12,7 +12,7 @@
 
 class CXFA_FFExclGroup : public CXFA_FFWidget {
  public:
-  explicit CXFA_FFExclGroup(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFExclGroup(CXFA_Node* pNode);
   ~CXFA_FFExclGroup() override;
 
   // CXFA_FFWidget

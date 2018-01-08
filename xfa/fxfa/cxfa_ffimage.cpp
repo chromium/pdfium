@@ -15,26 +15,27 @@
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-CXFA_FFImage::CXFA_FFImage(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
+CXFA_FFImage::CXFA_FFImage(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
 
 CXFA_FFImage::~CXFA_FFImage() {
   CXFA_FFImage::UnloadWidget();
 }
 
 bool CXFA_FFImage::IsLoaded() {
-  return !!GetDataAcc()->GetImageImage();
+  return !!GetNode()->GetWidgetAcc()->GetImageImage();
 }
 
 bool CXFA_FFImage::LoadWidget() {
-  if (GetDataAcc()->GetImageImage())
+  if (GetNode()->GetWidgetAcc()->GetImageImage())
     return true;
 
-  return GetDataAcc()->LoadImageImage(GetDoc()) ? CXFA_FFDraw::LoadWidget()
-                                                : false;
+  return GetNode()->GetWidgetAcc()->LoadImageImage(GetDoc())
+             ? CXFA_FFDraw::LoadWidget()
+             : false;
 }
 
 void CXFA_FFImage::UnloadWidget() {
-  GetDataAcc()->SetImageImage(nullptr);
+  GetNode()->GetWidgetAcc()->SetImageImage(nullptr);
 }
 
 void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
@@ -48,18 +49,19 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
 
-  RetainPtr<CFX_DIBitmap> pDIBitmap = GetDataAcc()->GetImageImage();
+  RetainPtr<CFX_DIBitmap> pDIBitmap =
+      GetNode()->GetWidgetAcc()->GetImageImage();
   if (!pDIBitmap)
     return;
 
   CFX_RectF rtImage = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMargin();
   if (margin)
     XFA_RectWidthoutMargin(rtImage, margin);
 
   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
-  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
+  CXFA_Para* para = m_pNode->GetPara();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
     iVertAlign = para->GetVerticalAlign();
@@ -67,8 +69,8 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
 
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
-  m_pDataAcc->GetImageDpi(iImageXDpi, iImageYDpi);
-  auto* value = m_pDataAcc->GetNode()->GetFormValue();
+  m_pNode->GetWidgetAcc()->GetImageDpi(iImageXDpi, iImageYDpi);
+  auto* value = m_pNode->GetFormValue();
   CXFA_Image* image = value ? value->GetImage() : nullptr;
   XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, image->GetAspect(),
                 iImageXDpi, iImageYDpi, iHorzAlign, iVertAlign);

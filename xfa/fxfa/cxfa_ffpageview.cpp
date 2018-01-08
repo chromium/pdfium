@@ -70,11 +70,10 @@ bool PageWidgetFilter(CXFA_FFWidget* pWidget,
                       uint32_t dwFilter,
                       bool bTraversal,
                       bool bIgnorerelevant) {
-  CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
+  CXFA_Node* pNode = pWidget->GetNode();
 
   if (!!(dwFilter & XFA_WidgetStatus_Focused) &&
-      (!pWidgetAcc->GetNode() ||
-       pWidgetAcc->GetNode()->GetElementType() != XFA_Element::Field)) {
+      (!pNode || pNode->GetElementType() != XFA_Element::Field)) {
     return false;
   }
 
@@ -310,8 +309,7 @@ bool CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
     CXFA_FFWidget* pWidget) {
-  CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
-  CXFA_Traversal* pTraversal = pAcc->GetNode()->GetChild<CXFA_Traversal>(
+  CXFA_Traversal* pTraversal = pWidget->GetNode()->GetChild<CXFA_Traversal>(
       0, XFA_Element::Traversal, false);
   if (pTraversal) {
     CXFA_Traverse* pTraverse =
@@ -345,7 +343,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
          nWidgetCount) {
     if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget)) {
       m_TabOrderWidgetArray.push_back(hWidget);
-      CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc();
+      CXFA_WidgetAcc* pWidgetAcc = hWidget->GetNode()->GetWidgetAcc();
       if (pWidgetAcc->GetUIType() == XFA_Element::ExclGroup) {
         auto it = std::find(SpaceOrderWidgetArray.begin(),
                             SpaceOrderWidgetArray.end(), hWidget);
@@ -355,13 +353,11 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
         while (true) {
           CXFA_FFWidget* pRadio =
               SpaceOrderWidgetArray[iWidgetIndex % nWidgetCount];
-          if (pRadio->GetDataAcc()->GetNode()->GetExclGroup() !=
-              pWidgetAcc->GetNode()) {
+          if (pRadio->GetNode()->GetExclGroup() != pWidgetAcc->GetNode())
             break;
-          }
-          if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget)) {
+          if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget))
             m_TabOrderWidgetArray.push_back(pRadio);
-          }
+
           iWidgetIndex++;
         }
       }

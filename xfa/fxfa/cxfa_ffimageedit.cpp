@@ -23,8 +23,8 @@
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
+CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_Node* pNode)
+    : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
 
 CXFA_FFImageEdit::~CXFA_FFImageEdit() {
   CXFA_FFImageEdit::UnloadWidget();
@@ -44,14 +44,14 @@ bool CXFA_FFImageEdit::LoadWidget() {
   pPictureBox->SetDelegate(this);
 
   CXFA_FFField::LoadWidget();
-  if (!m_pDataAcc->GetImageEditImage())
+  if (!m_pNode->GetWidgetAcc()->GetImageEditImage())
     UpdateFWLData();
 
   return true;
 }
 
 void CXFA_FFImageEdit::UnloadWidget() {
-  m_pDataAcc->SetImageEditImage(nullptr);
+  m_pNode->GetWidgetAcc()->SetImageEditImage(nullptr);
   CXFA_FFField::UnloadWidget();
 }
 
@@ -65,23 +65,24 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorder(pGS, m_pDataAcc->GetUIBorder(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
-  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDataAcc->GetImageEditImage();
+  RetainPtr<CFX_DIBitmap> pDIBitmap =
+      m_pNode->GetWidgetAcc()->GetImageEditImage();
   if (!pDIBitmap)
     return;
 
   CFX_RectF rtImage = m_pNormalWidget->GetWidgetRect();
   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
-  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
+  CXFA_Para* para = m_pNode->GetPara();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
     iVertAlign = para->GetVerticalAlign();
   }
 
   XFA_AttributeEnum iAspect = XFA_AttributeEnum::Fit;
-  CXFA_Value* value = m_pDataAcc->GetNode()->GetFormValue();
+  CXFA_Value* value = m_pNode->GetFormValue();
   if (value) {
     CXFA_Image* image = value->GetImage();
     if (image)
@@ -90,14 +91,14 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
 
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
-  m_pDataAcc->GetImageEditDpi(iImageXDpi, iImageYDpi);
+  m_pNode->GetWidgetAcc()->GetImageEditDpi(iImageXDpi, iImageYDpi);
   XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, iAspect, iImageXDpi,
                 iImageYDpi, iHorzAlign, iVertAlign);
 }
 
 bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
                                      const CFX_PointF& point) {
-  if (!m_pDataAcc->IsOpenAccess())
+  if (!m_pNode->IsOpenAccess())
     return false;
   if (!PtInActiveRect(point))
     return false;
@@ -116,7 +117,7 @@ void CXFA_FFImageEdit::SetFWLRect() {
   if (!m_pNormalWidget)
     return;
 
-  CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
+  CFX_RectF rtUIMargin = m_pNode->GetWidgetAcc()->GetUIMargin();
   CFX_RectF rtImage(m_rtUI);
   rtImage.Deflate(rtUIMargin.left, rtUIMargin.top, rtUIMargin.width,
                   rtUIMargin.height);
@@ -128,8 +129,8 @@ bool CXFA_FFImageEdit::CommitData() {
 }
 
 bool CXFA_FFImageEdit::UpdateFWLData() {
-  m_pDataAcc->SetImageEditImage(nullptr);
-  m_pDataAcc->LoadImageEditImage(GetDoc());
+  m_pNode->GetWidgetAcc()->SetImageEditImage(nullptr);
+  m_pNode->GetWidgetAcc()->LoadImageEditImage(GetDoc());
   return true;
 }
 

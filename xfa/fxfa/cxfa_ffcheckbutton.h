@@ -12,7 +12,7 @@
 
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:
-  explicit CXFA_FFCheckButton(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFCheckButton(CXFA_Node* pNode);
   ~CXFA_FFCheckButton() override;
 
   // CXFA_FFField

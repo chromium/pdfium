@@ -78,13 +78,13 @@ class CXFA_CalcData {
   CXFA_CalcData();
   ~CXFA_CalcData();
 
-  std::vector<CXFA_WidgetAcc*> m_Globals;
+  std::vector<CXFA_Node*> m_Globals;
   int32_t m_iRefCount;
 };
 
 class CXFA_FFWidget : public CXFA_ContentLayoutItem {
  public:
-  explicit CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFWidget(CXFA_Node* pNode);
   ~CXFA_FFWidget() override;
 
   virtual CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false);
@@ -146,7 +146,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   uint32_t GetStatus();
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
 
-  CXFA_WidgetAcc* GetDataAcc();
+  CXFA_Node* GetNode() { return m_pNode.Get(); }
 
   CXFA_FFDocView* GetDocView();
   void SetDocView(CXFA_FFDocView* pDocView);
@@ -181,9 +181,9 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   bool IsButtonDown();
   void SetButtonDown(bool bSet);
 
-  CXFA_FFDocView* m_pDocView;
-  CXFA_FFPageView* m_pPageView;
-  UnownedPtr<CXFA_WidgetAcc> const m_pDataAcc;
+  CXFA_FFDocView* m_pDocView = nullptr;
+  CXFA_FFPageView* m_pPageView = nullptr;
+  UnownedPtr<CXFA_Node> const m_pNode;
   mutable CFX_RectF m_rtWidget;
 };
 

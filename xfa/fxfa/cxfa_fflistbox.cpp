@@ -24,8 +24,8 @@ CFWL_ListBox* ToListBox(CFWL_Widget* widget) {
 
 }  // namespace
 
-CXFA_FFListBox::CXFA_FFListBox(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
+CXFA_FFListBox::CXFA_FFListBox(CXFA_Node* pNode)
+    : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
 
 CXFA_FFListBox::~CXFA_FFListBox() {
   if (!m_pNormalWidget)
@@ -53,16 +53,16 @@ bool CXFA_FFListBox::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  for (const auto& label : m_pDataAcc->GetChoiceListItems(false))
+  for (const auto& label : m_pNode->GetWidgetAcc()->GetChoiceListItems(false))
     pListBox->AddString(label.AsStringView());
 
   uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
-  if (m_pDataAcc->IsChoiceListMultiSelect())
+  if (m_pNode->GetWidgetAcc()->IsChoiceListMultiSelect())
     dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
 
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
-  for (int32_t selected : m_pDataAcc->GetSelectedItems())
+  for (int32_t selected : m_pNode->GetWidgetAcc()->GetSelectedItems())
     pListBox->SetSelItem(pListBox->GetItem(nullptr, selected), true);
 
   m_pNormalWidget->UnlockUpdate();
@@ -84,12 +84,12 @@ bool CXFA_FFListBox::CommitData() {
   for (int32_t i = 0; i < iSels; ++i)
     iSelArray.push_back(pListBox->GetSelIndex(i));
 
-  m_pDataAcc->SetSelectedItems(iSelArray, true, false, true);
+  m_pNode->GetWidgetAcc()->SetSelectedItems(iSelArray, true, false, true);
   return true;
 }
 
 bool CXFA_FFListBox::IsDataChanged() {
-  std::vector<int32_t> iSelArray = m_pDataAcc->GetSelectedItems();
+  std::vector<int32_t> iSelArray = m_pNode->GetWidgetAcc()->GetSelectedItems();
   int32_t iOldSels = pdfium::CollectionSize<int32_t>(iSelArray);
   auto* pListBox = ToListBox(m_pNormalWidget.get());
   int32_t iSels = pListBox->CountSelItems();
@@ -105,7 +105,7 @@ bool CXFA_FFListBox::IsDataChanged() {
 }
 
 uint32_t CXFA_FFListBox::GetAlignment() {
-  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
+  CXFA_Para* para = m_pNode->GetPara();
   if (!para)
     return 0;
 
@@ -135,7 +135,7 @@ bool CXFA_FFListBox::UpdateFWLData() {
     return false;
 
   auto* pListBox = ToListBox(m_pNormalWidget.get());
-  std::vector<int32_t> iSelArray = m_pDataAcc->GetSelectedItems();
+  std::vector<int32_t> iSelArray = m_pNode->GetWidgetAcc()->GetSelectedItems();
   std::vector<CFWL_ListItem*> selItemArray(iSelArray.size());
   std::transform(iSelArray.begin(), iSelArray.end(), selItemArray.begin(),
                  [pListBox](int32_t val) { return pListBox->GetSelItem(val); });
@@ -151,8 +151,8 @@ bool CXFA_FFListBox::UpdateFWLData() {
 void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
-  eParam.m_pTarget = m_pDataAcc.Get();
-  eParam.m_wsPrevText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
+  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  eParam.m_wsPrevText = m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
 
   auto* pListBox = ToListBox(m_pNormalWidget.get());
   int32_t iSels = pListBox->CountSelItems();
@@ -160,7 +160,8 @@ void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
     CFWL_ListItem* item = pListBox->GetSelItem(0);
     eParam.m_wsNewText = item ? item->GetText() : L"";
   }
-  m_pDataAcc->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
+  m_pNode->GetWidgetAcc()->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
+                                        &eParam);
 }
 
 void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {

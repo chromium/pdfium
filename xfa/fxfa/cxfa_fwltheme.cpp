@@ -125,7 +125,7 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
   if (!pWidget)
     return;
 
-  CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
+  CXFA_Node* pNode = pWidget->GetNode();
   CXFA_Graphics* pGraphics = pParams->m_pGraphics;
   CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
   if (!pRenderDevice)
@@ -133,9 +133,9 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
 
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
-  m_pTextOut->SetFont(pAcc->GetFDEFont(pWidget->GetDoc()));
-  m_pTextOut->SetFontSize(pAcc->GetNode()->GetFontSize());
-  m_pTextOut->SetTextColor(pAcc->GetNode()->GetTextColor());
+  m_pTextOut->SetFont(pNode->GetWidgetAcc()->GetFDEFont(pWidget->GetDoc()));
+  m_pTextOut->SetFontSize(pNode->GetFontSize());
+  m_pTextOut->SetTextColor(pNode->GetTextColor());
   CFX_Matrix mtPart = pParams->m_matrix;
   const CFX_Matrix* pMatrix = pGraphics->GetMatrix();
   if (pMatrix)
@@ -153,7 +153,7 @@ CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
     return rect;
 
   CXFA_LayoutItem* pItem = pWidget;
-  CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
+  CXFA_WidgetAcc* pWidgetAcc = pWidget->GetNode()->GetWidgetAcc();
   rect = pWidgetAcc->GetUIMargin();
   CXFA_Para* para = pWidgetAcc->GetNode()->GetPara();
   if (para) {
@@ -183,20 +183,20 @@ float CXFA_FWLTheme::GetCYBorderSize() const {
 
 float CXFA_FWLTheme::GetFontSize(CFWL_ThemePart* pThemePart) const {
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
-    return pWidget->GetDataAcc()->GetNode()->GetFontSize();
+    return pWidget->GetNode()->GetFontSize();
   return FWLTHEME_CAPACITY_FontSize;
 }
 
 RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
     CFWL_ThemePart* pThemePart) const {
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
-    return pWidget->GetDataAcc()->GetFDEFont(pWidget->GetDoc());
+    return pWidget->GetNode()->GetWidgetAcc()->GetFDEFont(pWidget->GetDoc());
   return GetTheme(pThemePart->m_pWidget)->GetFont();
 }
 
 float CXFA_FWLTheme::GetLineHeight(CFWL_ThemePart* pThemePart) const {
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
-    return pWidget->GetDataAcc()->GetNode()->GetLineHeight();
+    return pWidget->GetNode()->GetLineHeight();
   return kLineHeight;
 }
 
@@ -206,14 +206,14 @@ float CXFA_FWLTheme::GetScrollBarWidth() const {
 
 FX_COLORREF CXFA_FWLTheme::GetTextColor(CFWL_ThemePart* pThemePart) const {
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
-    return pWidget->GetDataAcc()->GetNode()->GetTextColor();
+    return pWidget->GetNode()->GetTextColor();
   return FWLTHEME_CAPACITY_TextColor;
 }
 
 CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
   CFX_SizeF sizeAboveBelow;
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
-    CXFA_Para* para = pWidget->GetDataAcc()->GetNode()->GetPara();
+    CXFA_Para* para = pWidget->GetNode()->GetPara();
     if (para) {
       sizeAboveBelow.width = para->GetSpaceAbove();
       sizeAboveBelow.height = para->GetSpaceBelow();
@@ -240,10 +240,10 @@ void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   if (!pWidget)
     return;
 
-  CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
-  m_pTextOut->SetFont(pAcc->GetFDEFont(pWidget->GetDoc()));
-  m_pTextOut->SetFontSize(pAcc->GetNode()->GetFontSize());
-  m_pTextOut->SetTextColor(pAcc->GetNode()->GetTextColor());
+  CXFA_Node* pNode = pWidget->GetNode();
+  m_pTextOut->SetFont(pNode->GetWidgetAcc()->GetFDEFont(pWidget->GetDoc()));
+  m_pTextOut->SetFontSize(pNode->GetFontSize());
+  m_pTextOut->SetTextColor(pNode->GetTextColor());
   if (!pParams)
     return;
 

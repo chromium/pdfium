@@ -13,7 +13,7 @@ class CXFA_WidgetAcc;
 
 class CXFA_FFPasswordEdit : public CXFA_FFTextEdit {
  public:
-  explicit CXFA_FFPasswordEdit(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFPasswordEdit(CXFA_Node* pNode);
   ~CXFA_FFPasswordEdit() override;
 
   // CXFA_FFTextEdit

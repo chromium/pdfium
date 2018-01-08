@@ -9,7 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_arc.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-CXFA_FFArc::CXFA_FFArc(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
+CXFA_FFArc::CXFA_FFArc(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
 
 CXFA_FFArc::~CXFA_FFArc() {}
 
@@ -19,12 +19,12 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Value* value = m_pDataAcc->GetNode()->GetFormValue();
+  CXFA_Value* value = m_pNode->GetFormValue();
   if (!value)
     return;
 
   CFX_RectF rtArc = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMargin();
   if (margin)
     XFA_RectWidthoutMargin(rtArc, margin);
 

@@ -111,8 +111,7 @@ const BarCodeInfo* CXFA_FFBarcode::GetBarcodeTypeByName(
   return nullptr;
 }
 
-CXFA_FFBarcode::CXFA_FFBarcode(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFTextEdit(pDataAcc) {}
+CXFA_FFBarcode::CXFA_FFBarcode(CXFA_Node* pNode) : CXFA_FFTextEdit(pNode) {}
 
 CXFA_FFBarcode::~CXFA_FFBarcode() {}
 
@@ -130,7 +129,8 @@ bool CXFA_FFBarcode::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  pFWLBarcode->SetText(m_pDataAcc->GetValue(XFA_VALUEPICTURE_Display));
+  pFWLBarcode->SetText(
+      m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display));
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
@@ -146,7 +146,7 @@ void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorder(pGS, m_pDataAcc->GetUIBorder(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
 
@@ -159,14 +159,14 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
 
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
-  WideString wsType = GetDataAcc()->GetBarcodeType();
+  WideString wsType = GetNode()->GetWidgetAcc()->GetBarcodeType();
   const BarCodeInfo* pBarcodeInfo = GetBarcodeTypeByName(wsType.AsStringView());
   if (!pBarcodeInfo)
     return;
 
   pBarCodeWidget->SetType(pBarcodeInfo->eBCType);
 
-  CXFA_WidgetAcc* pAcc = GetDataAcc();
+  CXFA_WidgetAcc* pAcc = GetNode()->GetWidgetAcc();
   Optional<BC_CHAR_ENCODING> encoding =
       pAcc->GetBarcodeAttribute_CharEncoding();
   if (encoding)
@@ -228,7 +228,7 @@ bool CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
-  if (!m_pDataAcc->IsOpenAccess())
+  if (!m_pNode->IsOpenAccess())
     return false;
   return CXFA_FFTextEdit::OnLButtonDown(dwFlags, point);
 }

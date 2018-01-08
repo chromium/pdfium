@@ -11,7 +11,7 @@
 
 class CXFA_FFComboBox : public CXFA_FFField {
  public:
-  explicit CXFA_FFComboBox(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFComboBox(CXFA_Node* pNode);
   ~CXFA_FFComboBox() override;
 
   // CXFA_FFField

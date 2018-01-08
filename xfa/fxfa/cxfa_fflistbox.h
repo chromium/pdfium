@@ -11,7 +11,7 @@
 
 class CXFA_FFListBox : public CXFA_FFField {
  public:
-  explicit CXFA_FFListBox(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFListBox(CXFA_Node* pNode);
   ~CXFA_FFListBox() override;
 
   // CXFA_FFField

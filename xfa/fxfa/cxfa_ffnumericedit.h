@@ -16,7 +16,7 @@ class CXFA_WidgetAcc;
 
 class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
  public:
-  explicit CXFA_FFNumericEdit(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFNumericEdit(CXFA_Node* pNode);
   ~CXFA_FFNumericEdit() override;
 
   // CXFA_FFTextEdit

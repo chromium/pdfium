@@ -843,8 +843,8 @@ std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
               pdfium::MakeUnique<CXFA_CalcData>());
           pGlobalData = pRefNode->JSObject()->GetCalcData();
         }
-        if (!pdfium::ContainsValue(pGlobalData->m_Globals, this))
-          pGlobalData->m_Globals.push_back(this);
+        if (!pdfium::ContainsValue(pGlobalData->m_Globals, GetNode()))
+          pGlobalData->m_Globals.push_back(GetNode());
       }
     }
   }

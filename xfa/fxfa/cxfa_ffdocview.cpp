@@ -373,7 +373,7 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
       pNewFocus->LoadWidget();
     pNewFocus->OnSetFocus(m_pFocusWidget.Get());
   }
-  m_pFocusAcc = pNewFocus ? pNewFocus->GetDataAcc() : nullptr;
+  m_pFocusAcc = pNewFocus ? pNewFocus->GetNode()->GetWidgetAcc() : nullptr;
   m_pFocusWidget = pNewFocus;
   m_pOldFocusWidget = m_pFocusWidget;
   return true;
@@ -395,7 +395,7 @@ void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 }
 
 void CXFA_FFDocView::DeleteLayoutItem(CXFA_FFWidget* pWidget) {
-  if (m_pFocusAcc != pWidget->GetDataAcc())
+  if (m_pFocusAcc && m_pFocusAcc->GetNode() != pWidget->GetNode())
     return;
 
   m_pFocusAcc = nullptr;
@@ -493,7 +493,8 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
 
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
                                                CXFA_FFWidget* pRefWidget) {
-  CXFA_WidgetAcc* pRefAcc = pRefWidget ? pRefWidget->GetDataAcc() : nullptr;
+  CXFA_WidgetAcc* pRefAcc =
+      pRefWidget ? pRefWidget->GetNode()->GetWidgetAcc() : nullptr;
   CXFA_WidgetAcc* pAcc = GetWidgetAccByName(wsName, pRefAcc);
   if (!pAcc)
     return nullptr;
@@ -636,9 +637,9 @@ void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
   if (!pGlobalData)
     return;
 
-  for (auto* pResultAcc : pGlobalData->m_Globals) {
-    if (!pResultAcc->GetNode()->HasRemovedChildren())
-      AddCalculateWidgetAcc(pResultAcc);
+  for (auto* pResult : pGlobalData->m_Globals) {
+    if (!pResult->HasRemovedChildren())
+      AddCalculateWidgetAcc(pResult->GetWidgetAcc());
   }
 }
 

@@ -11,7 +11,7 @@
 
 class CXFA_FFLine : public CXFA_FFDraw {
  public:
-  explicit CXFA_FFLine(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFLine(CXFA_Node* pNode);
   ~CXFA_FFLine() override;
 
   // CXFA_FFWidget

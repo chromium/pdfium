@@ -19,7 +19,7 @@
 
 class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
  public:
-  explicit CXFA_FFField(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFField(CXFA_Node* pNode);
   ~CXFA_FFField() override;
 
   // CXFA_FFWidget

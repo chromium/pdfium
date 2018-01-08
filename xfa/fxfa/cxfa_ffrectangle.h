@@ -11,7 +11,7 @@
 
 class CXFA_FFRectangle : public CXFA_FFDraw {
  public:
-  explicit CXFA_FFRectangle(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFRectangle(CXFA_Node* pNode);
   ~CXFA_FFRectangle() override;
 
   // CXFA_FFWidget

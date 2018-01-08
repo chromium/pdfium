@@ -11,7 +11,7 @@
 
 class CXFA_FFArc : public CXFA_FFDraw {
  public:
-  explicit CXFA_FFArc(CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFArc(CXFA_Node* pnode);
   ~CXFA_FFArc() override;
 
   // CXFA_FFWidget

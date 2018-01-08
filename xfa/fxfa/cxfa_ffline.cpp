@@ -29,7 +29,7 @@ CFX_GraphStateData::LineCap LineCapToFXGE(XFA_AttributeEnum iLineCap) {
 
 }  // namespace
 
-CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
+CXFA_FFLine::CXFA_FFLine(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
 
 CXFA_FFLine::~CXFA_FFLine() {}
 
@@ -87,7 +87,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Value* value = m_pDataAcc->GetNode()->GetFormValue();
+  CXFA_Value* value = m_pNode->GetFormValue();
   if (!value)
     return;
 
@@ -111,7 +111,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMargin();
   if (margin)
     XFA_RectWidthoutMargin(rtLine, margin);
 
