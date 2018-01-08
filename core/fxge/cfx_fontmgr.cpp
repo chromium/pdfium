@@ -105,10 +105,10 @@ void CFX_FontMgr::InitFTLibrary() {
   // Freetype versions >= 2.8.1 support hinting even if subpixel rendering is
   // disabled. https://sourceforge.net/projects/freetype/files/freetype2/2.8.1/
   m_FTLibrarySupportsHinting =
-      major > 2 || (major >= 2 && minor > 8) ||
-      (major >= 2 && minor >= 8 && patch >= 1) ||
       FXFT_Library_SetLcdFilter(m_FTLibrary, FT_LCD_FILTER_DEFAULT) !=
-          FT_Err_Unimplemented_Feature;
+          FT_Err_Unimplemented_Feature ||
+      major > 2 || (major >= 2 && minor > 8) ||
+      (major >= 2 && minor >= 8 && patch >= 1);
 }
 
 void CFX_FontMgr::SetSystemFontInfo(
