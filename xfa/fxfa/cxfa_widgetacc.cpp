@@ -7,6 +7,7 @@
 #include "xfa/fxfa/cxfa_widgetacc.h"
 
 #include <algorithm>
+#include <tuple>
 #include <vector>
 
 #include "core/fxcrt/cfx_decimal.h"
@@ -209,11 +210,11 @@ bool SplitDateTime(const WideString& wsDateTime,
   return true;
 }
 
-CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
+std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
   XFA_Element eType = pNode->GetElementType();
-  eWidgetType = eType;
+  XFA_Element eWidgetType = eType;
   if (eType != XFA_Element::Field && eType != XFA_Element::Draw)
-    return nullptr;
+    return {eWidgetType, nullptr};
 
   eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
@@ -304,11 +305,12 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
       eUIType = XFA_Element::TextEdit;
       defValue->JSObject()->GetProperty<CXFA_Text>(0, XFA_Element::Text, true);
     }
-    return pUI->JSObject()->GetProperty<CXFA_Node>(0, eUIType, true);
+    return {eWidgetType,
+            pUI->JSObject()->GetProperty<CXFA_Node>(0, eUIType, true)};
   }
 
   if (eUIType != XFA_Element::Unknown)
-    return pUIChild;
+    return {eWidgetType, pUIChild};
 
   switch (pUIChild->GetElementType()) {
     case XFA_Element::CheckButton: {
@@ -349,7 +351,7 @@ CXFA_Node* CreateUIChild(CXFA_Node* pNode, XFA_Element& eWidgetType) {
   }
   defValue->JSObject()->GetProperty<CXFA_Node>(0, eValueType, true);
 
-  return pUIChild;
+  return {eWidgetType, pUIChild};
 }
 
 }  // namespace
@@ -1713,7 +1715,7 @@ FX_ARGB CXFA_WidgetAcc::GetTextColor() {
 
 CXFA_Node* CXFA_WidgetAcc::GetUIChild() {
   if (m_eUIType == XFA_Element::Unknown)
-    m_pUiChildNode = CreateUIChild(m_pNode, m_eUIType);
+    std::tie(m_eUIType, m_pUiChildNode) = CreateUIChild(m_pNode);
 
   return m_pUiChildNode;
 }
