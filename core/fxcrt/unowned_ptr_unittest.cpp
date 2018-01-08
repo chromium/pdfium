@@ -54,7 +54,7 @@ TEST(UnownedPtr, PtrOk) {
 }
 
 TEST(UnownedPtr, PtrNotOk) {
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+#if defined(ADDRESS_SANITIZER)
   EXPECT_DEATH(DeleteDangling(), "");
 #else
   DeleteDangling();
@@ -71,7 +71,7 @@ TEST(UnownedPtr, AssignOk) {
 }
 
 TEST(UnownedPtr, AssignNotOk) {
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+#if defined(ADDRESS_SANITIZER)
   EXPECT_DEATH(AssignDangling(), "");
 #else
   AssignDangling();
@@ -88,7 +88,7 @@ TEST(UnownedPtr, ReleaseOk) {
 }
 
 TEST(UnownedPtr, ReleaseNotOk) {
-#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+#if defined(ADDRESS_SANITIZER)
   EXPECT_DEATH(ReleaseDangling(), "");
 #else
   ReleaseDangling();
