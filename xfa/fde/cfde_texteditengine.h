@@ -23,10 +23,10 @@ struct FDE_TEXTEDITPIECE {
   FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that);
   ~FDE_TEXTEDITPIECE();
 
+  CFX_RectF rtPiece;
   int32_t nStart = 0;
   int32_t nCount = 0;
   int32_t nBidiLevel = 0;
-  CFX_RectF rtPiece;
   uint32_t dwCharStyles = 0;
 };
 
