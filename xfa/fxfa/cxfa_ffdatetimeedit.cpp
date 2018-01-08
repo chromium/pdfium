@@ -58,8 +58,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
     switch (value->GetChildValueClassID()) {
       case XFA_Element::Date: {
         if (!wsText.IsEmpty()) {
-          CXFA_LocaleValue lcValue =
-              XFA_GetLocaleValue(m_pNode->GetWidgetAcc());
+          CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pNode.Get());
           CFX_DateTime date = lcValue.GetDate();
           if (date.IsSet())
             pWidget->SetCurSel(date.GetYear(), date.GetMonth(), date.GetDay());
@@ -160,7 +159,7 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
   auto* normalWidget = static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
   normalWidget->SetEditText(wsText);
   if (IsFocused() && !wsText.IsEmpty()) {
-    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pNode->GetWidgetAcc());
+    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pNode.Get());
     CFX_DateTime date = lcValue.GetDate();
     if (lcValue.IsValid()) {
       if (date.IsSet())

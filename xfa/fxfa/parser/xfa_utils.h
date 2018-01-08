@@ -23,7 +23,7 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
                                                 const WideString& wsQualifier,
                                                 WideString* wsNamespaceURI);
 
-CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetAcc* pWidgetAcc);
+CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode);
 int32_t XFA_MapRotation(int32_t nRotation);
 
 bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode);

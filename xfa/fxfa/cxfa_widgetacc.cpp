@@ -580,7 +580,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_FFDocView* docView,
     if (!pLocale)
       return XFA_EVENTERROR_NotExist;
 
-    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(this);
+    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(GetNode());
     if (!lcValue.ValidateValue(lcValue.GetValue(), wsPicture, pLocale,
                                nullptr)) {
       IXFA_AppProvider* pAppProvider =
@@ -2745,7 +2745,7 @@ bool CXFA_WidgetAcc::SetValue(XFA_VALUEPICTURE eValueType,
   if (!wsPicture.IsEmpty()) {
     CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
     IFX_Locale* pLocale = GetLocale();
-    CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
+    CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(GetNode());
     bValidate =
         widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture);
     if (bValidate) {
@@ -2777,7 +2777,7 @@ WideString CXFA_WidgetAcc::GetPictureContent(XFA_VALUEPICTURE ePicture) {
   if (ePicture == XFA_VALUEPICTURE_Raw)
     return L"";
 
-  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
+  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(GetNode());
   switch (ePicture) {
     case XFA_VALUEPICTURE_Display: {
       if (CXFA_Format* pFormat =
@@ -2892,7 +2892,7 @@ WideString CXFA_WidgetAcc::GetValue(XFA_VALUEPICTURE eValueType) {
     return wsValue;
 
   if (IFX_Locale* pLocale = GetLocale()) {
-    CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
+    CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(GetNode());
     CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
     switch (widgetValue.GetType()) {
       case XFA_VT_DATE: {
@@ -2932,7 +2932,7 @@ WideString CXFA_WidgetAcc::GetNormalizeDataValue(const WideString& wsValue) {
   ASSERT(GetNode());
   CXFA_LocaleMgr* pLocalMgr = GetNode()->GetDocument()->GetLocalMgr();
   IFX_Locale* pLocale = GetLocale();
-  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
+  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(GetNode());
   if (widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture)) {
     widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsValue, wsPicture,
                                    pLocale, pLocalMgr);

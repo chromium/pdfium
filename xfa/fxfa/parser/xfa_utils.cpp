@@ -144,8 +144,7 @@ bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   if (pGrandParentNode->GetBindData())
     return false;
 
-  CXFA_WidgetAcc* pWidgetAcc = pGrandParentNode->GetWidgetAcc();
-  XFA_Element eUIType = pWidgetAcc->GetUIType();
+  XFA_Element eUIType = pGrandParentNode->GetWidgetAcc()->GetUIType();
   if (eUIType == XFA_Element::PasswordEdit)
     return false;
   return true;
@@ -417,9 +416,9 @@ int XFA_GetMaxFractionalScale() {
   return FX_ArraySize(fraction_scales);
 }
 
-CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetAcc* pWidgetAcc) {
+CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode) {
   CXFA_Value* pNodeValue =
-      pWidgetAcc->GetNode()->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
+      pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
   if (!pNodeValue)
     return CXFA_LocaleValue();
 
@@ -457,8 +456,8 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetAcc* pWidgetAcc) {
       iVTType = XFA_VT_NULL;
       break;
   }
-  return CXFA_LocaleValue(iVTType, pWidgetAcc->GetNode()->GetRawValue(),
-                          pWidgetAcc->GetNode()->GetDocument()->GetLocalMgr());
+  return CXFA_LocaleValue(iVTType, pNode->GetRawValue(),
+                          pNode->GetDocument()->GetLocalMgr());
 }
 
 bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,

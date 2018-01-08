@@ -82,7 +82,7 @@ bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget, WideString& wsText) {
     return true;
 
   WideString wsFormat;
-  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pNode->GetWidgetAcc());
+  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pNode.Get());
   widgetValue.GetNumericFormat(wsFormat,
                                m_pNode->GetWidgetAcc()->GetLeadDigits(),
                                m_pNode->GetWidgetAcc()->GetFracDigits());
