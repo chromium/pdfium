@@ -317,16 +317,14 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
     if (pEdit->HasSelection())
       std::tie(eParam.m_iSelStart, eParam.m_iSelEnd) = pEdit->GetSelection();
   }
-  m_pNode->GetWidgetAcc()->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
-                                        &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
 }
 
 void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
   eParam.m_pTarget = m_pNode->GetWidgetAcc();
-  m_pNode->GetWidgetAcc()->ProcessEvent(GetDocView(), XFA_AttributeEnum::Full,
-                                        &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Full, &eParam);
 }
 
 bool CXFA_FFTextEdit::CheckWord(const ByteStringView& sWord) {

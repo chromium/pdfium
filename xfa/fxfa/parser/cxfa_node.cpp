@@ -25,6 +25,8 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
+#include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -34,9 +36,11 @@
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_event.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_keep.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
@@ -1655,4 +1659,307 @@ CXFA_Node* CXFA_Node::GetExclGroup() {
   if (!pExcl || pExcl->GetElementType() != XFA_Element::ExclGroup)
     return nullptr;
   return pExcl;
+}
+
+int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
+                                XFA_AttributeEnum iActivity,
+                                CXFA_EventParam* pEventParam) {
+  if (GetElementType() == XFA_Element::Draw)
+    return XFA_EVENTERROR_NotExist;
+
+  std::vector<CXFA_Event*> eventArray = GetWidgetAcc()->GetEventByActivity(
+      iActivity, pEventParam->m_bIsFormReady);
+  bool first = true;
+  int32_t iRet = XFA_EVENTERROR_NotExist;
+  for (CXFA_Event* event : eventArray) {
+    int32_t result = ProcessEvent(docView, event, pEventParam);
+    if (first || result == XFA_EVENTERROR_Success)
+      iRet = result;
+    first = false;
+  }
+  return iRet;
+}
+
+int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
+                                CXFA_Event* event,
+                                CXFA_EventParam* pEventParam) {
+  if (!event)
+    return XFA_EVENTERROR_NotExist;
+
+  switch (event->GetEventType()) {
+    case XFA_Element::Execute:
+      break;
+    case XFA_Element::Script:
+      return GetWidgetAcc()->ExecuteScript(docView, event->GetScript(),
+                                           pEventParam);
+    case XFA_Element::SignData:
+      break;
+    case XFA_Element::Submit:
+      return docView->GetDoc()->GetDocEnvironment()->Submit(docView->GetDoc(),
+                                                            event->GetSubmit());
+    default:
+      break;
+  }
+  return XFA_EVENTERROR_NotExist;
+}
+
+int32_t CXFA_Node::ProcessCalculate(CXFA_FFDocView* docView) {
+  if (GetElementType() == XFA_Element::Draw)
+    return XFA_EVENTERROR_NotExist;
+
+  CXFA_Calculate* calc = GetCalculate();
+  if (!calc)
+    return XFA_EVENTERROR_NotExist;
+  if (IsUserInteractive())
+    return XFA_EVENTERROR_Disabled;
+
+  CXFA_EventParam EventParam;
+  EventParam.m_eType = XFA_EVENT_Calculate;
+  int32_t iRet =
+      GetWidgetAcc()->ExecuteScript(docView, calc->GetScript(), &EventParam);
+  if (iRet != XFA_EVENTERROR_Success)
+    return iRet;
+
+  if (GetRawValue() != EventParam.m_wsResult) {
+    GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Raw, EventParam.m_wsResult);
+    GetWidgetAcc()->UpdateUIDisplay(docView, nullptr);
+  }
+  return XFA_EVENTERROR_Success;
+}
+
+void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* docView,
+                                          CXFA_Validate* validate,
+                                          int32_t iRet,
+                                          bool bRetValue,
+                                          bool bVersionFlag) {
+  if (iRet != XFA_EVENTERROR_Success)
+    return;
+  if (bRetValue)
+    return;
+
+  IXFA_AppProvider* pAppProvider =
+      docView->GetDoc()->GetApp()->GetAppProvider();
+  if (!pAppProvider)
+    return;
+
+  WideString wsTitle = pAppProvider->GetAppTitle();
+  WideString wsScriptMsg = validate->GetScriptMessageText();
+  if (validate->GetScriptTest() == XFA_AttributeEnum::Warning) {
+    if (IsUserInteractive())
+      return;
+    if (wsScriptMsg.IsEmpty())
+      wsScriptMsg = GetValidateMessage(false, bVersionFlag);
+
+    if (bVersionFlag) {
+      pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning, XFA_MB_OK);
+      return;
+    }
+    if (pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
+                             XFA_MB_YesNo) == XFA_IDYes) {
+      SetFlag(XFA_NodeFlag_UserInteractive, false);
+    }
+    return;
+  }
+
+  if (wsScriptMsg.IsEmpty())
+    wsScriptMsg = GetValidateMessage(true, bVersionFlag);
+  pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
+}
+
+int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
+                                             CXFA_Validate* validate,
+                                             bool bVersionFlag) {
+  WideString wsRawValue = GetRawValue();
+  if (!wsRawValue.IsEmpty()) {
+    WideString wsPicture = validate->GetPicture();
+    if (wsPicture.IsEmpty())
+      return XFA_EVENTERROR_NotExist;
+
+    IFX_Locale* pLocale = GetLocale();
+    if (!pLocale)
+      return XFA_EVENTERROR_NotExist;
+
+    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(this);
+    if (!lcValue.ValidateValue(lcValue.GetValue(), wsPicture, pLocale,
+                               nullptr)) {
+      IXFA_AppProvider* pAppProvider =
+          docView->GetDoc()->GetApp()->GetAppProvider();
+      if (!pAppProvider)
+        return XFA_EVENTERROR_NotExist;
+
+      WideString wsFormatMsg = validate->GetFormatMessageText();
+      WideString wsTitle = pAppProvider->GetAppTitle();
+      if (validate->GetFormatTest() == XFA_AttributeEnum::Error) {
+        if (wsFormatMsg.IsEmpty())
+          wsFormatMsg = GetValidateMessage(true, bVersionFlag);
+        pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
+        return XFA_EVENTERROR_Success;
+      }
+      if (IsUserInteractive())
+        return XFA_EVENTERROR_NotExist;
+      if (wsFormatMsg.IsEmpty())
+        wsFormatMsg = GetValidateMessage(false, bVersionFlag);
+
+      if (bVersionFlag) {
+        pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
+                             XFA_MB_OK);
+        return XFA_EVENTERROR_Success;
+      }
+      if (pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
+                               XFA_MB_YesNo) == XFA_IDYes) {
+        SetFlag(XFA_NodeFlag_UserInteractive, false);
+      }
+      return XFA_EVENTERROR_Success;
+    }
+  }
+  return XFA_EVENTERROR_NotExist;
+}
+
+int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
+                                           CXFA_Validate* validate,
+                                           int32_t iFlags,
+                                           bool bVersionFlag) {
+  if (!GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw).IsEmpty())
+    return XFA_EVENTERROR_Success;
+  if (GetWidgetAcc()->IsNull() && GetWidgetAcc()->IsPreNull())
+    return XFA_EVENTERROR_Success;
+
+  XFA_AttributeEnum eNullTest = validate->GetNullTest();
+  WideString wsNullMsg = validate->GetNullMessageText();
+  if (iFlags & 0x01) {
+    int32_t iRet = XFA_EVENTERROR_Success;
+    if (eNullTest != XFA_AttributeEnum::Disabled)
+      iRet = XFA_EVENTERROR_Error;
+
+    if (!wsNullMsg.IsEmpty()) {
+      if (eNullTest != XFA_AttributeEnum::Disabled) {
+        docView->m_arrNullTestMsg.push_back(wsNullMsg);
+        return XFA_EVENTERROR_Error;
+      }
+      return XFA_EVENTERROR_Success;
+    }
+    return iRet;
+  }
+  if (wsNullMsg.IsEmpty() && bVersionFlag &&
+      eNullTest != XFA_AttributeEnum::Disabled) {
+    return XFA_EVENTERROR_Error;
+  }
+  IXFA_AppProvider* pAppProvider =
+      docView->GetDoc()->GetApp()->GetAppProvider();
+  if (!pAppProvider)
+    return XFA_EVENTERROR_NotExist;
+
+  WideString wsCaptionName;
+  WideString wsTitle = pAppProvider->GetAppTitle();
+  switch (eNullTest) {
+    case XFA_AttributeEnum::Error: {
+      if (wsNullMsg.IsEmpty()) {
+        wsCaptionName = GetValidateCaptionName(bVersionFlag);
+        wsNullMsg =
+            WideString::Format(L"%ls cannot be blank.", wsCaptionName.c_str());
+      }
+      pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
+      return XFA_EVENTERROR_Error;
+    }
+    case XFA_AttributeEnum::Warning: {
+      if (IsUserInteractive())
+        return true;
+
+      if (wsNullMsg.IsEmpty()) {
+        wsCaptionName = GetValidateCaptionName(bVersionFlag);
+        wsNullMsg = WideString::Format(
+            L"%ls cannot be blank. To ignore validations for %ls, click "
+            L"Ignore.",
+            wsCaptionName.c_str(), wsCaptionName.c_str());
+      }
+      if (pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Warning,
+                               XFA_MB_YesNo) == XFA_IDYes) {
+        SetFlag(XFA_NodeFlag_UserInteractive, false);
+      }
+      return XFA_EVENTERROR_Error;
+    }
+    case XFA_AttributeEnum::Disabled:
+    default:
+      break;
+  }
+  return XFA_EVENTERROR_Success;
+}
+
+int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
+  if (GetElementType() == XFA_Element::Draw)
+    return XFA_EVENTERROR_NotExist;
+
+  CXFA_Validate* validate = GetValidate(false);
+  if (!validate)
+    return XFA_EVENTERROR_NotExist;
+
+  bool bInitDoc = validate->NeedsInitApp();
+  bool bStatus = docView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
+  int32_t iFormat = 0;
+  int32_t iRet = XFA_EVENTERROR_NotExist;
+  CXFA_Script* script = validate->GetScript();
+  bool bRet = false;
+  bool hasBoolResult = (bInitDoc || bStatus) && GetRawValue().IsEmpty();
+  if (script) {
+    CXFA_EventParam eParam;
+    eParam.m_eType = XFA_EVENT_Validate;
+    eParam.m_pTarget = GetWidgetAcc();
+    std::tie(iRet, bRet) =
+        GetWidgetAcc()->ExecuteBoolScript(docView, script, &eParam);
+  }
+
+  XFA_VERSION version = docView->GetDoc()->GetXFADoc()->GetCurVersionMode();
+  bool bVersionFlag = false;
+  if (version < XFA_VERSION_208)
+    bVersionFlag = true;
+
+  if (bInitDoc) {
+    validate->ClearFlag(XFA_NodeFlag_NeedsInitApp);
+  } else {
+    iFormat = ProcessFormatTestValidate(docView, validate, bVersionFlag);
+    if (!bVersionFlag) {
+      bVersionFlag =
+          docView->GetDoc()->GetXFADoc()->HasFlag(XFA_DOCFLAG_Scripting);
+    }
+
+    iRet |= ProcessNullTestValidate(docView, validate, iFlags, bVersionFlag);
+  }
+
+  if (iFormat != XFA_EVENTERROR_Success && hasBoolResult)
+    ProcessScriptTestValidate(docView, validate, iRet, bRet, bVersionFlag);
+
+  return iRet | iFormat;
+}
+
+WideString CXFA_Node::GetValidateCaptionName(bool bVersionFlag) {
+  WideString wsCaptionName;
+
+  if (!bVersionFlag) {
+    CXFA_Caption* caption = GetCaption();
+    if (caption) {
+      CXFA_Value* capValue = caption->GetValue();
+      if (capValue) {
+        CXFA_Text* captionText = capValue->GetText();
+        if (captionText)
+          wsCaptionName = captionText->GetContent();
+      }
+    }
+  }
+  if (!wsCaptionName.IsEmpty())
+    return wsCaptionName;
+  return JSObject()->GetCData(XFA_Attribute::Name);
+}
+
+WideString CXFA_Node::GetValidateMessage(bool bError, bool bVersionFlag) {
+  WideString wsCaptionName = GetValidateCaptionName(bVersionFlag);
+  if (bVersionFlag)
+    return WideString::Format(L"%ls validation failed", wsCaptionName.c_str());
+  if (bError) {
+    return WideString::Format(L"The value you entered for %ls is invalid.",
+                              wsCaptionName.c_str());
+  }
+  return WideString::Format(
+      L"The value you entered for %ls is invalid. To ignore "
+      L"validations for %ls, click Ignore.",
+      wsCaptionName.c_str(), wsCaptionName.c_str());
 }

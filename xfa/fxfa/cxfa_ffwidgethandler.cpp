@@ -185,20 +185,20 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
                                     XFA_EVENTTYPE eEventType) {
   if (eEventType == XFA_EVENT_Unknown)
     return false;
-
-  if (!pWidgetAcc ||
-      (pWidgetAcc->GetNode() &&
-       pWidgetAcc->GetNode()->GetElementType() == XFA_Element::Draw)) {
+  if (!pWidgetAcc)
     return false;
-  }
+
+  CXFA_Node* node = pWidgetAcc->GetNode();
+  if (!node || node->GetElementType() == XFA_Element::Draw)
+    return false;
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
-      CXFA_Calculate* calc = pWidgetAcc->GetNode()->GetCalculate();
+      CXFA_Calculate* calc = node->GetCalculate();
       return calc && calc->GetScript();
     }
     case XFA_EVENT_Validate: {
-      CXFA_Validate* validate = pWidgetAcc->GetNode()->GetValidate(false);
+      CXFA_Validate* validate = node->GetValidate(false);
       return validate && validate->GetScript();
     }
     default:
@@ -212,19 +212,20 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
                                            CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
     return XFA_EVENTERROR_NotExist;
-  if (!pWidgetAcc ||
-      (pWidgetAcc->GetNode() &&
-       pWidgetAcc->GetNode()->GetElementType() == XFA_Element::Draw)) {
+  if (!pWidgetAcc)
     return XFA_EVENTERROR_NotExist;
-  }
+
+  CXFA_Node* node = pWidgetAcc->GetNode();
+  if (!node || node->GetElementType() == XFA_Element::Draw)
+    return XFA_EVENTERROR_NotExist;
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:
-      return pWidgetAcc->ProcessCalculate(m_pDocView);
+      return node->ProcessCalculate(m_pDocView);
     case XFA_EVENT_Validate:
       if (m_pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
               m_pDocView->GetDoc())) {
-        return pWidgetAcc->ProcessValidate(m_pDocView, 0);
+        return node->ProcessValidate(m_pDocView, 0);
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
@@ -238,8 +239,8 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
     default:
       break;
   }
-  int32_t iRet = pWidgetAcc->ProcessEvent(
-      m_pDocView, gs_EventActivity[pParam->m_eType], pParam);
+  int32_t iRet =
+      node->ProcessEvent(m_pDocView, gs_EventActivity[pParam->m_eType], pParam);
   return iRet;
 }
 

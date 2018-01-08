@@ -62,14 +62,6 @@ class CXFA_WidgetAcc {
 
   void ResetData();
 
-  int32_t ProcessEvent(CXFA_FFDocView* docView,
-                       XFA_AttributeEnum iActivity,
-                       CXFA_EventParam* pEventParam);
-  int32_t ProcessEvent(CXFA_FFDocView* docView,
-                       CXFA_Event* event,
-                       CXFA_EventParam* pEventParam);
-  int32_t ProcessCalculate(CXFA_FFDocView* docView);
-  int32_t ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags);
   int32_t ExecuteScript(CXFA_FFDocView* docView,
                         CXFA_Script* script,
                         CXFA_EventParam* pEventParam);
@@ -218,20 +210,6 @@ class CXFA_WidgetAcc {
   void SetIsNull(bool val) { m_bIsNull = val; }
 
  private:
-  void ProcessScriptTestValidate(CXFA_FFDocView* docView,
-                                 CXFA_Validate* validate,
-                                 int32_t iRet,
-                                 bool pRetValue,
-                                 bool bVersionFlag);
-  int32_t ProcessFormatTestValidate(CXFA_FFDocView* docView,
-                                    CXFA_Validate* validate,
-                                    bool bVersionFlag);
-  int32_t ProcessNullTestValidate(CXFA_FFDocView* docView,
-                                  CXFA_Validate* validate,
-                                  int32_t iFlags,
-                                  bool bVersionFlag);
-  WideString GetValidateCaptionName(bool bVersionFlag);
-  WideString GetValidateMessage(bool bError, bool bVersionFlag);
   void CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap);
   bool CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
   bool CalculateWidgetAutoSize(CFX_SizeF& size);

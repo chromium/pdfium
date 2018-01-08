@@ -408,26 +408,27 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
                                 CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
     return XFA_EVENTERROR_NotExist;
-  if (!pWidgetAcc ||
-      (pWidgetAcc->GetNode() &&
-       pWidgetAcc->GetNode()->GetElementType() == XFA_Element::Draw)) {
+  if (!pWidgetAcc)
     return XFA_EVENTERROR_NotExist;
-  }
+
+  CXFA_Node* node = pWidgetAcc->GetNode();
+  if (node && node->GetElementType() == XFA_Element::Draw)
+    return XFA_EVENTERROR_NotExist;
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:
-      return pWidgetAcc->ProcessCalculate(pDocView);
+      return node->ProcessCalculate(pDocView);
     case XFA_EVENT_Validate:
       if (pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
               pDocView->GetDoc())) {
-        return pWidgetAcc->ProcessValidate(pDocView, 0x01);
+        return node->ProcessValidate(pDocView, 0x01);
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_Calculate* calc = pWidgetAcc->GetNode()->GetCalculate();
+      CXFA_Calculate* calc = node->GetCalculate();
       if (!calc)
         return XFA_EVENTERROR_NotExist;
-      if (pWidgetAcc->GetNode()->IsUserInteractive())
+      if (node->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
 
       return pWidgetAcc->ExecuteScript(pDocView, calc->GetScript(), pParam);
@@ -436,8 +437,8 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       break;
   }
 
-  return pWidgetAcc->ProcessEvent(pDocView, gs_EventActivity[pParam->m_eType],
-                                  pParam);
+  return node->ProcessEvent(pDocView, gs_EventActivity[pParam->m_eType],
+                            pParam);
 }
 
 int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
@@ -584,14 +585,13 @@ bool CXFA_FFDocView::RunLayout() {
 
 void CXFA_FFDocView::RunSubformIndexChange() {
   for (CXFA_Node* pSubformNode : m_IndexChangedSubforms) {
-    CXFA_WidgetAcc* pWidgetAcc = pSubformNode->GetWidgetAcc();
-    if (!pWidgetAcc)
+    if (!pSubformNode->GetWidgetAcc())
       continue;
 
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_IndexChange;
-    eParam.m_pTarget = pWidgetAcc;
-    pWidgetAcc->ProcessEvent(this, XFA_AttributeEnum::IndexChange, &eParam);
+    eParam.m_pTarget = pSubformNode->GetWidgetAcc();
+    pSubformNode->ProcessEvent(this, XFA_AttributeEnum::IndexChange, &eParam);
   }
   m_IndexChangedSubforms.clear();
 }
@@ -645,15 +645,15 @@ void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
 
 size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
   while (index < m_CalculateAccs.size()) {
-    CXFA_WidgetAcc* pCurAcc = m_CalculateAccs[index];
-    AddCalculateNodeNotify(pCurAcc->GetNode());
-    size_t recurse =
-        pCurAcc->GetNode()->JSObject()->GetCalcRecursionCount() + 1;
-    pCurAcc->GetNode()->JSObject()->SetCalcRecursionCount(recurse);
+    CXFA_Node* node = m_CalculateAccs[index]->GetNode();
+
+    AddCalculateNodeNotify(node);
+    size_t recurse = node->JSObject()->GetCalcRecursionCount() + 1;
+    node->JSObject()->SetCalcRecursionCount(recurse);
     if (recurse > 11)
       break;
-    if (pCurAcc->ProcessCalculate(this) == XFA_EVENTERROR_Success)
-      AddValidateWidget(pCurAcc);
+    if (node->ProcessCalculate(this) == XFA_EVENTERROR_Success)
+      AddValidateWidget(node->GetWidgetAcc());
 
     index = RunCalculateRecursive(++index);
   }
@@ -704,8 +704,9 @@ bool CXFA_FFDocView::RunValidate() {
     return false;
 
   for (CXFA_WidgetAcc* pAcc : m_ValidateAccs) {
-    if (!pAcc->GetNode()->HasRemovedChildren())
-      pAcc->ProcessValidate(this, 0);
+    CXFA_Node* node = pAcc->GetNode();
+    if (!node->HasRemovedChildren())
+      node->ProcessValidate(this, 0);
   }
   m_ValidateAccs.clear();
   return true;

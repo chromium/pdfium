@@ -313,30 +313,25 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
           m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
 
       CXFA_Node* exclNode = m_pNode->GetExclGroup();
-      CXFA_WidgetAcc* pFFExclGroup =
-          exclNode ? exclNode->GetWidgetAcc() : nullptr;
       if (ProcessCommittedData()) {
-        eParam.m_pTarget = pFFExclGroup;
-        if (pFFExclGroup) {
-          m_pDocView->AddValidateWidget(pFFExclGroup);
-          m_pDocView->AddCalculateWidgetAcc(pFFExclGroup);
-          pFFExclGroup->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
-                                     &eParam);
+        eParam.m_pTarget = exclNode ? exclNode->GetWidgetAcc() : nullptr;
+        if (exclNode) {
+          m_pDocView->AddValidateWidget(exclNode->GetWidgetAcc());
+          m_pDocView->AddCalculateWidgetAcc(exclNode->GetWidgetAcc());
+          exclNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
+                                 &eParam);
         }
         eParam.m_pTarget = m_pNode->GetWidgetAcc();
-        m_pNode->GetWidgetAcc()->ProcessEvent(
-            GetDocView(), XFA_AttributeEnum::Change, &eParam);
+        m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
       } else {
         SetFWLCheckState(m_pNode->GetWidgetAcc()->GetCheckState());
       }
-      if (pFFExclGroup) {
-        eParam.m_pTarget = pFFExclGroup;
-        pFFExclGroup->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click,
-                                   &eParam);
+      if (exclNode) {
+        eParam.m_pTarget = exclNode->GetWidgetAcc();
+        exclNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
       }
       eParam.m_pTarget = m_pNode->GetWidgetAcc();
-      m_pNode->GetWidgetAcc()->ProcessEvent(GetDocView(),
-                                            XFA_AttributeEnum::Click, &eParam);
+      m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
       break;
     }
     default:

@@ -24,6 +24,9 @@ class CXFA_Bind;
 class CXFA_Border;
 class CXFA_Calculate;
 class CXFA_Caption;
+class CXFA_Event;
+class CXFA_EventParam;
+class CXFA_FFDocView;
 class CXFA_Font;
 class CXFA_Margin;
 class CXFA_Occur;
@@ -259,6 +262,15 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Node* GetExclGroup();
 
+  int32_t ProcessEvent(CXFA_FFDocView* docView,
+                       XFA_AttributeEnum iActivity,
+                       CXFA_EventParam* pEventParam);
+  int32_t ProcessEvent(CXFA_FFDocView* docView,
+                       CXFA_Event* event,
+                       CXFA_EventParam* pEventParam);
+  int32_t ProcessCalculate(CXFA_FFDocView* docView);
+  int32_t ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags);
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
@@ -279,6 +291,21 @@ class CXFA_Node : public CXFA_Object {
             const WideStringView& elementName);
 
  private:
+  void ProcessScriptTestValidate(CXFA_FFDocView* docView,
+                                 CXFA_Validate* validate,
+                                 int32_t iRet,
+                                 bool pRetValue,
+                                 bool bVersionFlag);
+  int32_t ProcessFormatTestValidate(CXFA_FFDocView* docView,
+                                    CXFA_Validate* validate,
+                                    bool bVersionFlag);
+  int32_t ProcessNullTestValidate(CXFA_FFDocView* docView,
+                                  CXFA_Validate* validate,
+                                  int32_t iFlags,
+                                  bool bVersionFlag);
+  WideString GetValidateCaptionName(bool bVersionFlag);
+  WideString GetValidateMessage(bool bError, bool bVersionFlag);
+
   bool HasFlag(XFA_NodeFlag dwFlag) const;
   CXFA_Node* Deprecated_GetPrevSibling();
   const PropertyData* GetPropertyData(XFA_Element property) const;

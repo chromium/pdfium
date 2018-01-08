@@ -202,8 +202,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pNode->GetWidgetAcc();
   eParam.m_wsNewText = m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
-  m_pNode->GetWidgetAcc()->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
-                                        &eParam);
+  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
 }
 
 void CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {

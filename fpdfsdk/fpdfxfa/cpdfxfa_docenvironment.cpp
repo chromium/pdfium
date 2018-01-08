@@ -637,7 +637,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
   CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
   pWidgetAcc = pWidgetAccIterator->MoveToNext();
   while (pWidgetAcc) {
-    int fRet = pWidgetAcc->ProcessValidate(docView, -1);
+    int fRet = pWidgetAcc->GetNode()->ProcessValidate(docView, -1);
     if (fRet == XFA_EVENTERROR_Error) {
       CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
       if (!pFormFillEnv)
