@@ -457,7 +457,7 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetAcc* pWidgetAcc) {
       iVTType = XFA_VT_NULL;
       break;
   }
-  return CXFA_LocaleValue(iVTType, pWidgetAcc->GetRawValue(),
+  return CXFA_LocaleValue(iVTType, pWidgetAcc->GetNode()->GetRawValue(),
                           pWidgetAcc->GetNode()->GetDocument()->GetLocalMgr());
 }
 

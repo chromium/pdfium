@@ -212,7 +212,7 @@ bool CXFA_FFTextEdit::IsDataChanged() {
 }
 
 uint32_t CXFA_FFTextEdit::GetAlignment() {
-  CXFA_Para* para = m_pDataAcc->GetPara();
+  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
   if (!para)
     return 0;
 

@@ -228,7 +228,7 @@ bool CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
 
   pWidgetAcc->ResetData();
   pWidgetAcc->UpdateUIDisplay(this, nullptr);
-  CXFA_Validate* validate = pWidgetAcc->GetValidate(false);
+  CXFA_Validate* validate = pNode->GetValidate(false);
   if (!validate)
     return true;
 
@@ -424,7 +424,7 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_Calculate* calc = pWidgetAcc->GetCalculate();
+      CXFA_Calculate* calc = pWidgetAcc->GetNode()->GetCalculate();
       if (!calc)
         return XFA_EVENTERROR_NotExist;
       if (pWidgetAcc->GetNode()->IsUserInteractive())

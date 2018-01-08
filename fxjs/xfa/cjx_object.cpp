@@ -1307,7 +1307,7 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_Font* font = widget_data_->GetFont(true);
+  CXFA_Font* font = widget_data_->GetNode()->GetFont(true);
   if (!font)
     return;
 
@@ -1335,7 +1335,7 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_Border* border = widget_data_->GetBorder(true);
+  CXFA_Border* border = widget_data_->GetNode()->GetBorder(true);
   CXFA_Fill* borderfill = border->GetFill(true);
   if (!borderfill)
     return;
@@ -1366,7 +1366,7 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_Border* border = widget_data_->GetBorder(true);
+  CXFA_Border* border = widget_data_->GetNode()->GetBorder(true);
   int32_t iSize = border->CountEdges();
   if (bSetting) {
     int32_t r = 0;
@@ -1396,7 +1396,7 @@ void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_Border* border = widget_data_->GetBorder(true);
+  CXFA_Border* border = widget_data_->GetNode()->GetBorder(true);
   if (bSetting) {
     CXFA_Measurement thickness = border->GetEdge(0)->GetMSThickness();
     pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
@@ -1417,9 +1417,9 @@ void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
     return;
 
   bool bNew = false;
-  CXFA_Validate* validate = widget_data_->GetValidate(false);
+  CXFA_Validate* validate = widget_data_->GetNode()->GetValidate(false);
   if (!validate) {
-    validate = widget_data_->GetValidate(true);
+    validate = widget_data_->GetNode()->GetValidate(true);
     bNew = true;
   }
 
@@ -1603,7 +1603,7 @@ void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
   if (!widget_data_)
     return;
 
-  CXFA_Validate* validate = widget_data_->GetValidate(true);
+  CXFA_Validate* validate = widget_data_->GetNode()->GetValidate(true);
   if (!validate)
     return;
 

@@ -91,14 +91,14 @@ bool CXFA_FFCheckButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
 
   float fCheckSize = m_pDataAcc->GetCheckButtonSize();
-  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
   CFX_RectF rtWidget = GetRectWithoutRotate();
   if (margin)
     XFA_RectWidthoutMargin(rtWidget, margin);
 
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
-  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  CXFA_Caption* caption = m_pDataAcc->GetNode()->GetCaption();
   if (caption && caption->IsVisible()) {
     m_rtCaption = rtWidget;
     iCapPlacement = caption->GetPlacementType();
@@ -115,7 +115,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
 
   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
-  CXFA_Para* para = m_pDataAcc->GetPara();
+  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
     iVertAlign = para->GetVerticalAlign();
@@ -309,7 +309,9 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
       eParam.m_eType = XFA_EVENT_Change;
       eParam.m_wsNewText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Raw);
 
-      CXFA_WidgetAcc* pFFExclGroup = m_pDataAcc->GetExclGroup();
+      CXFA_Node* exclNode = m_pDataAcc->GetNode()->GetExclGroup();
+      CXFA_WidgetAcc* pFFExclGroup =
+          exclNode ? exclNode->GetWidgetAcc() : nullptr;
       if (ProcessCommittedData()) {
         eParam.m_pTarget = pFFExclGroup;
         if (pFFExclGroup) {

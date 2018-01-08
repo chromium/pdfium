@@ -139,7 +139,7 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
 }
 
 uint32_t CXFA_FFComboBox::GetAlignment() {
-  CXFA_Para* para = m_pDataAcc->GetPara();
+  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
   if (!para)
     return 0;
 

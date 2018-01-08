@@ -235,7 +235,8 @@ CJS_Return CJX_Field::execValidate(
 void CJX_Field::defaultValue(CFXJSE_Value* pValue,
                              bool bSetting,
                              XFA_Attribute eAttribute) {
-  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
+  CXFA_Node* xfaNode = GetXFANode();
+  CXFA_WidgetAcc* pWidgetAcc = xfaNode->GetWidgetAcc();
   if (!pWidgetAcc)
     return;
 
@@ -255,7 +256,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
           wsNewText, pWidgetAcc->GetLeadDigits(), pWidgetAcc->GetFracDigits());
     }
 
-    CXFA_WidgetAcc* pContainerWidgetAcc = GetXFANode()->GetContainerWidgetAcc();
+    CXFA_WidgetAcc* pContainerWidgetAcc = xfaNode->GetContainerWidgetAcc();
     WideString wsFormatText(wsNewText);
     if (pContainerWidgetAcc)
       wsFormatText = pContainerWidgetAcc->GetFormatDataValue(wsNewText);
@@ -272,7 +273,7 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
 
   CXFA_Node* pUIChild = pWidgetAcc->GetUIChild();
   CXFA_Node* pNode =
-      pWidgetAcc->GetFormValue()->GetNodeItem(XFA_NODEITEM_FirstChild);
+      xfaNode->GetFormValue()->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
     if (pUIChild->GetElementType() == XFA_Element::NumericEdit &&
         (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {

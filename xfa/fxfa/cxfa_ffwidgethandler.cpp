@@ -194,11 +194,11 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
-      CXFA_Calculate* calc = pWidgetAcc->GetCalculate();
+      CXFA_Calculate* calc = pWidgetAcc->GetNode()->GetCalculate();
       return calc && calc->GetScript();
     }
     case XFA_EVENT_Validate: {
-      CXFA_Validate* validate = pWidgetAcc->GetValidate(false);
+      CXFA_Validate* validate = pWidgetAcc->GetNode()->GetValidate(false);
       return validate && validate->GetScript();
     }
     default:
@@ -228,7 +228,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_Calculate* calc = pWidgetAcc->GetCalculate();
+      CXFA_Calculate* calc = pWidgetAcc->GetNode()->GetCalculate();
       if (!calc)
         return XFA_EVENTERROR_NotExist;
       if (pWidgetAcc->GetNode()->IsUserInteractive())

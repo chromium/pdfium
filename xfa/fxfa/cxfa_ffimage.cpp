@@ -53,13 +53,13 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CFX_RectF rtImage = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
   if (margin)
     XFA_RectWidthoutMargin(rtImage, margin);
 
   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
-  CXFA_Para* para = m_pDataAcc->GetPara();
+  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
     iVertAlign = para->GetVerticalAlign();
@@ -68,7 +68,7 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
   m_pDataAcc->GetImageDpi(iImageXDpi, iImageYDpi);
-  auto* value = m_pDataAcc->GetFormValue();
+  auto* value = m_pDataAcc->GetNode()->GetFormValue();
   CXFA_Image* image = value ? value->GetImage() : nullptr;
   XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, image->GetAspect(),
                 iImageXDpi, iImageYDpi, iHorzAlign, iVertAlign);

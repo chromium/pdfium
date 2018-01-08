@@ -87,7 +87,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Value* value = m_pDataAcc->GetFormValue();
+  CXFA_Value* value = m_pDataAcc->GetNode()->GetFormValue();
   if (!value)
     return;
 
@@ -111,7 +111,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
   if (margin)
     XFA_RectWidthoutMargin(rtLine, margin);
 

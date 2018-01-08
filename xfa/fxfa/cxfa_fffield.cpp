@@ -171,7 +171,7 @@ bool CXFA_FFField::PerformLayout() {
 
 void CXFA_FFField::CapPlacement() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
   if (margin) {
     CXFA_LayoutItem* pItem = this;
     float fLeftInset = margin->GetLeftInset();
@@ -192,7 +192,7 @@ void CXFA_FFField::CapPlacement() {
 
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
-  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  CXFA_Caption* caption = m_pDataAcc->GetNode()->GetCaption();
   if (caption && !caption->IsHidden()) {
     iCapPlacement = caption->GetPlacementType();
     if (iCapPlacement == XFA_AttributeEnum::Top && GetPrev()) {
@@ -349,7 +349,7 @@ void CXFA_FFField::SetFWLRect() {
   if (rtUi.width < 1.0)
     rtUi.width = 1.0;
   if (!GetDoc()->GetXFADoc()->IsInteractive()) {
-    float fFontSize = m_pDataAcc->GetFontSize();
+    float fFontSize = m_pDataAcc->GetNode()->GetFontSize();
     if (rtUi.height < fFontSize)
       rtUi.height = fFontSize;
   }
@@ -599,7 +599,7 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   if (!pCapTextLayout)
     return;
 
-  CXFA_Caption* caption = m_pDataAcc->GetCaption();
+  CXFA_Caption* caption = m_pDataAcc->GetNode()->GetCaption();
   if (!caption || !caption->IsVisible())
     return;
 
@@ -633,7 +633,11 @@ bool CXFA_FFField::ProcessCommittedData() {
 }
 
 int32_t CXFA_FFField::CalculateOverride() {
-  CXFA_WidgetAcc* pAcc = m_pDataAcc->GetExclGroup();
+  CXFA_Node* exclNode = m_pDataAcc->GetNode()->GetExclGroup();
+  if (!exclNode)
+    return CalculateWidgetAcc(m_pDataAcc.Get());
+
+  CXFA_WidgetAcc* pAcc = exclNode->GetWidgetAcc();
   if (!pAcc)
     return CalculateWidgetAcc(m_pDataAcc.Get());
   if (CalculateWidgetAcc(pAcc) == 0)
@@ -657,7 +661,7 @@ int32_t CXFA_FFField::CalculateOverride() {
 }
 
 int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
-  CXFA_Calculate* calc = pAcc->GetCalculate();
+  CXFA_Calculate* calc = pAcc->GetNode()->GetCalculate();
   if (!calc)
     return 1;
 

@@ -105,7 +105,7 @@ bool CXFA_FFListBox::IsDataChanged() {
 }
 
 uint32_t CXFA_FFListBox::GetAlignment() {
-  CXFA_Para* para = m_pDataAcc->GetPara();
+  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
   if (!para)
     return 0;
 

@@ -29,15 +29,24 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
 #include "xfa/fxfa/parser/cxfa_attachnodelist.h"
+#include "xfa/fxfa/parser/cxfa_bind.h"
+#include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_calculate.h"
+#include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
 #include "xfa/fxfa/parser/cxfa_keep.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
+#include "xfa/fxfa/parser/cxfa_validate.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -1532,4 +1541,122 @@ void CXFA_Node::SyncValue(const WideString& wsValue, bool bNotify) {
     wsFormatValue = pContainerWidgetAcc->GetFormatDataValue(wsValue);
 
   JSObject()->SetContent(wsValue, wsFormatValue, bNotify, false, true);
+}
+
+WideString CXFA_Node::GetRawValue() {
+  return JSObject()->GetContent(false);
+}
+
+int32_t CXFA_Node::GetRotate() {
+  Optional<int32_t> degrees =
+      JSObject()->TryInteger(XFA_Attribute::Rotate, false);
+  return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
+}
+
+CXFA_Border* CXFA_Node::GetBorder(bool bModified) {
+  return JSObject()->GetProperty<CXFA_Border>(0, XFA_Element::Border,
+                                              bModified);
+}
+
+CXFA_Caption* CXFA_Node::GetCaption() {
+  return JSObject()->GetProperty<CXFA_Caption>(0, XFA_Element::Caption, false);
+}
+
+CXFA_Font* CXFA_Node::GetFont(bool bModified) {
+  return JSObject()->GetProperty<CXFA_Font>(0, XFA_Element::Font, bModified);
+}
+
+float CXFA_Node::GetFontSize() {
+  CXFA_Font* font = GetFont(false);
+  float fFontSize = font ? font->GetFontSize() : 10.0f;
+  return fFontSize < 0.1f ? 10.0f : fFontSize;
+}
+
+float CXFA_Node::GetLineHeight() {
+  float fLineHeight = 0;
+  CXFA_Para* para = GetPara();
+  if (para)
+    fLineHeight = para->GetLineHeight();
+  if (fLineHeight < 1)
+    fLineHeight = GetFontSize() * 1.2f;
+  return fLineHeight;
+}
+
+FX_ARGB CXFA_Node::GetTextColor() {
+  CXFA_Font* font = GetFont(false);
+  return font ? font->GetColor() : 0xFF000000;
+}
+
+CXFA_Margin* CXFA_Node::GetMargin() {
+  return JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin, false);
+}
+
+CXFA_Para* CXFA_Node::GetPara() {
+  return JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para, false);
+}
+
+bool CXFA_Node::IsOpenAccess() {
+  for (auto* pNode = this; pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_Parent,
+                                  XFA_ObjectType::ContainerNode)) {
+    XFA_AttributeEnum iAcc = pNode->JSObject()->GetEnum(XFA_Attribute::Access);
+    if (iAcc != XFA_AttributeEnum::Open)
+      return false;
+  }
+  return true;
+}
+
+CXFA_Value* CXFA_Node::GetDefaultValue() {
+  CXFA_Node* pTemNode = GetTemplateNode();
+  return pTemNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value,
+                                                       false);
+}
+
+CXFA_Value* CXFA_Node::GetFormValue() {
+  return JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value, false);
+}
+
+CXFA_Calculate* CXFA_Node::GetCalculate() {
+  return JSObject()->GetProperty<CXFA_Calculate>(0, XFA_Element::Calculate,
+                                                 false);
+}
+
+CXFA_Validate* CXFA_Node::GetValidate(bool bModified) {
+  return JSObject()->GetProperty<CXFA_Validate>(0, XFA_Element::Validate,
+                                                bModified);
+}
+
+CXFA_Bind* CXFA_Node::GetBind() {
+  return JSObject()->GetProperty<CXFA_Bind>(0, XFA_Element::Bind, false);
+}
+
+Optional<float> CXFA_Node::TryWidth() {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::W);
+}
+
+Optional<float> CXFA_Node::TryHeight() {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::H);
+}
+
+Optional<float> CXFA_Node::TryMinWidth() {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::MinW);
+}
+
+Optional<float> CXFA_Node::TryMinHeight() {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::MinH);
+}
+
+Optional<float> CXFA_Node::TryMaxWidth() {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::MaxW);
+}
+
+Optional<float> CXFA_Node::TryMaxHeight() {
+  return JSObject()->TryMeasureAsFloat(XFA_Attribute::MaxH);
+}
+
+CXFA_Node* CXFA_Node::GetExclGroup() {
+  CXFA_Node* pExcl = GetNodeItem(XFA_NODEITEM_Parent);
+  if (!pExcl || pExcl->GetElementType() != XFA_Element::ExclGroup)
+    return nullptr;
+  return pExcl;
 }

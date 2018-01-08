@@ -41,7 +41,7 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtText = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pDataAcc->GetMargin();
+  CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
   if (margin) {
     CXFA_LayoutItem* pItem = this;
     if (!pItem->GetPrev() && !pItem->GetNext()) {
@@ -86,7 +86,7 @@ bool CXFA_FFText::PerformLayout() {
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetRect(false);
-    CXFA_Margin* margin = m_pDataAcc->GetMargin();
+    CXFA_Margin* margin = m_pDataAcc->GetNode()->GetMargin();
     if (margin) {
       if (!pItem->GetPrev())
         rtText.height -= margin->GetTopInset();

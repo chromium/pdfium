@@ -117,7 +117,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
 
 CXFA_Para* CXFA_TextProvider::GetPara() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
-    return m_pWidgetAcc->GetPara();
+    return m_pWidgetAcc->GetNode()->GetPara();
 
   CXFA_Caption* pNode = m_pWidgetAcc->GetNode()->GetChild<CXFA_Caption>(
       0, XFA_Element::Caption, false);
@@ -126,19 +126,19 @@ CXFA_Para* CXFA_TextProvider::GetPara() {
 
 CXFA_Font* CXFA_TextProvider::GetFont() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
-    return m_pWidgetAcc->GetFont(false);
+    return m_pWidgetAcc->GetNode()->GetFont(false);
 
   CXFA_Caption* pNode = m_pWidgetAcc->GetNode()->GetChild<CXFA_Caption>(
       0, XFA_Element::Caption, false);
   CXFA_Font* font = pNode->GetChild<CXFA_Font>(0, XFA_Element::Font, false);
-  return font ? font : m_pWidgetAcc->GetFont(false);
+  return font ? font : m_pWidgetAcc->GetNode()->GetFont(false);
 }
 
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
   XFA_Element eType = m_pWidgetAcc->GetUIType();
   if (eType != XFA_Element::CheckButton)
     return false;
-  return !m_pWidgetAcc->TryWidth();
+  return !m_pWidgetAcc->GetNode()->TryWidth();
 }
 
 bool CXFA_TextProvider::GetEmbbedObj(bool bURI,

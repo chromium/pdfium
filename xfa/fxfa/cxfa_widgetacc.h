@@ -62,8 +62,6 @@ class CXFA_WidgetAcc {
 
   void ResetData();
 
-  CXFA_WidgetAcc* GetExclGroup();
-
   int32_t ProcessEvent(CXFA_FFDocView* docView,
                        XFA_AttributeEnum iActivity,
                        CXFA_EventParam* pEventParam);
@@ -108,18 +106,12 @@ class CXFA_WidgetAcc {
   void UpdateUIDisplay(CXFA_FFDocView* docView, CXFA_FFWidget* pExcept);
 
   RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
-  float GetFontSize();
-  FX_ARGB GetTextColor();
-  float GetLineHeight();
 
   CXFA_Node* GetNode() const { return m_pNode; }
 
   CXFA_Node* GetUIChild();
   XFA_Element GetUIType();
   CFX_RectF GetUIMargin();
-
-  WideString GetRawValue() const;
-  int32_t GetRotate() const;
 
   bool IsOpenAccess() const;
   bool IsListBox();
@@ -128,26 +120,10 @@ class CXFA_WidgetAcc {
   bool IsChoiceListAllowTextEntry();
   bool IsMultiLine();
 
-  CXFA_Border* GetBorder(bool bModified);
-  CXFA_Caption* GetCaption();
-  CXFA_Font* GetFont(bool bModified);
-  CXFA_Margin* GetMargin();
-  CXFA_Para* GetPara();
-  CXFA_Value* GetDefaultValue();
-  CXFA_Value* GetFormValue();
-  CXFA_Calculate* GetCalculate();
-  CXFA_Validate* GetValidate(bool bModified);
   CXFA_Border* GetUIBorder();
 
   std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
                                               bool bIsFormReady);
-
-  Optional<float> TryWidth();
-  Optional<float> TryHeight();
-  Optional<float> TryMinWidth();
-  Optional<float> TryMinHeight();
-  Optional<float> TryMaxWidth();
-  Optional<float> TryMaxHeight();
 
   XFA_AttributeEnum GetButtonHighlight();
   bool HasButtonRollover() const;
@@ -280,12 +256,10 @@ class CXFA_WidgetAcc {
   void InitLayoutData();
   void StartTextLayout(CXFA_FFDoc* doc, float& fCalcWidth, float& fCalcHeight);
 
-  CXFA_Bind* GetBind();
   void InsertListTextItem(CXFA_Node* pItems,
                           const WideString& wsText,
                           int32_t nIndex);
   WideString FormatNumStr(const WideString& wsValue, IFX_Locale* pLocale);
-  CXFA_Node* GetExclGroupNode();
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
 
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;

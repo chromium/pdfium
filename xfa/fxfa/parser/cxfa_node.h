@@ -218,6 +218,37 @@ class CXFA_Node : public CXFA_Object {
 
   void SyncValue(const WideString& wsValue, bool bNotify);
 
+  bool IsOpenAccess();
+
+  CXFA_Border* GetBorder(bool bModified);
+  CXFA_Caption* GetCaption();
+
+  CXFA_Font* GetFont(bool bModified);
+  float GetFontSize();
+  FX_ARGB GetTextColor();
+  float GetLineHeight();
+
+  CXFA_Margin* GetMargin();
+  CXFA_Para* GetPara();
+  CXFA_Calculate* GetCalculate();
+  CXFA_Validate* GetValidate(bool bModified);
+
+  CXFA_Value* GetDefaultValue();
+  CXFA_Value* GetFormValue();
+  WideString GetRawValue();
+  int32_t GetRotate();
+
+  CXFA_Bind* GetBind();
+
+  Optional<float> TryWidth();
+  Optional<float> TryHeight();
+  Optional<float> TryMinWidth();
+  Optional<float> TryMinHeight();
+  Optional<float> TryMaxWidth();
+  Optional<float> TryMaxHeight();
+
+  CXFA_Node* GetExclGroup();
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,

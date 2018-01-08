@@ -943,7 +943,7 @@ const CFX_RectF& CXFA_FFWidget::RecacheWidgetRect() const {
 CFX_RectF CXFA_FFWidget::GetRectWithoutRotate() {
   CFX_RectF rtWidget = GetWidgetRect();
   float fValue = 0;
-  switch (m_pDataAcc->GetRotate()) {
+  switch (m_pDataAcc->GetNode()->GetRotate()) {
     case 90:
       rtWidget.top = rtWidget.bottom();
       fValue = rtWidget.width;
@@ -988,7 +988,7 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Border* border = m_pDataAcc->GetBorder(false);
+  CXFA_Border* border = m_pDataAcc->GetNode()->GetBorder(false);
   if (!border)
     return;
 
@@ -1261,7 +1261,7 @@ static void XFA_GetMatrix(CFX_Matrix& m,
 
 CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
   CFX_Matrix mt;
-  int32_t iRotate = m_pDataAcc->GetRotate();
+  int32_t iRotate = m_pDataAcc->GetNode()->GetRotate();
   if (!iRotate)
     return mt;
 

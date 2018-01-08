@@ -52,7 +52,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
   WideString wsText = m_pDataAcc->GetValue(XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
 
-  CXFA_Value* value = m_pDataAcc->GetFormValue();
+  CXFA_Value* value = m_pDataAcc->GetNode()->GetFormValue();
   if (value) {
     switch (value->GetChildValueClassID()) {
       case XFA_Element::Date: {
@@ -98,7 +98,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
 }
 
 uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
-  CXFA_Para* para = m_pDataAcc->GetPara();
+  CXFA_Para* para = m_pDataAcc->GetNode()->GetPara();
   if (!para)
     return 0;
 

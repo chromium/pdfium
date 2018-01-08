@@ -355,7 +355,8 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
         while (true) {
           CXFA_FFWidget* pRadio =
               SpaceOrderWidgetArray[iWidgetIndex % nWidgetCount];
-          if (pRadio->GetDataAcc()->GetExclGroup() != pWidgetAcc) {
+          if (pRadio->GetDataAcc()->GetNode()->GetExclGroup() !=
+              pWidgetAcc->GetNode()) {
             break;
           }
           if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget)) {
