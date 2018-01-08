@@ -11,6 +11,8 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_FFWidgetHandler;
+class CXFA_ContainerLayoutItem;
+class CXFA_ContentLayoutItem;
 
 class CXFA_FFNotify {
  public:
@@ -35,7 +37,9 @@ class CXFA_FFNotify {
   void OnChildAdded(CXFA_Node* pSender);
   void OnChildRemoved();
 
-  CXFA_LayoutItem* OnCreateLayoutItem(CXFA_Node* pNode);
+  CXFA_ContainerLayoutItem* OnCreateContainerLayoutItem(CXFA_Node* pNode);
+  CXFA_ContentLayoutItem* OnCreateContentLayoutItem(CXFA_Node* pNode);
+
   void OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
                          CXFA_LayoutItem* pSender,
                          int32_t iPageIdx,

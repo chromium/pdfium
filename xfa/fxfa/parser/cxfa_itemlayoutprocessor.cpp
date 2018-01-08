@@ -1184,9 +1184,9 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     m_pOldLayoutItem = m_pOldLayoutItem->m_pNext;
     return pLayoutItem;
   }
-  pLayoutItem = (CXFA_ContentLayoutItem*)pFormNode->GetDocument()
-                    ->GetNotify()
-                    ->OnCreateLayoutItem(pFormNode);
+  pLayoutItem =
+      pFormNode->GetDocument()->GetNotify()->OnCreateContentLayoutItem(
+          pFormNode);
   CXFA_ContentLayoutItem* pPrevLayoutItem =
       static_cast<CXFA_ContentLayoutItem*>(
           pFormNode->JSObject()->GetLayoutItem());

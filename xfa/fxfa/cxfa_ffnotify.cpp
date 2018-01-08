@@ -99,14 +99,22 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_WidgetAcc* pSender,
   }
 }
 
-CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
-  CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
-  CXFA_FFDocView* pDocView = m_pDoc->GetDocView(pLayout);
+CXFA_ContainerLayoutItem* CXFA_FFNotify::OnCreateContainerLayoutItem(
+    CXFA_Node* pNode) {
+  XFA_Element type = pNode->GetElementType();
+  ASSERT(type == XFA_Element::ContentArea || type == XFA_Element::PageArea);
+
+  if (type == XFA_Element::PageArea) {
+    CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
+    return new CXFA_FFPageView(m_pDoc->GetDocView(pLayout), pNode);
+  }
+  return new CXFA_ContainerLayoutItem(pNode);
+}
+
+CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
+    CXFA_Node* pNode) {
   XFA_Element eType = pNode->GetElementType();
-  if (eType == XFA_Element::PageArea)
-    return new CXFA_FFPageView(pDocView, pNode);
-  if (eType == XFA_Element::ContentArea)
-    return new CXFA_ContainerLayoutItem(pNode);
+  ASSERT(eType != XFA_Element::ContentArea && eType != XFA_Element::PageArea);
 
   // We only need to create the widget for certain types of objects.
   if (!XFA_IsCreateWidget(eType))
@@ -177,8 +185,10 @@ CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
       break;
   }
 
-  if (pWidget)
-    pWidget->SetDocView(pDocView);
+  if (pWidget) {
+    CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
+    pWidget->SetDocView(m_pDoc->GetDocView(pLayout));
+  }
   return pWidget;
 }
 
