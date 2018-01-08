@@ -31,6 +31,7 @@ class CJX_Object;
 class CXFA_Document;
 class CXFA_Node;
 class CXFA_TreeList;
+class CXFA_WidgetAcc;
 
 class CXFA_Object : public CFXJSE_HostObject {
  public:
@@ -71,6 +72,9 @@ class CXFA_Object : public CFXJSE_HostObject {
   CJX_Object* JSObject() { return m_pJSObject.get(); }
   const CJX_Object* JSObject() const { return m_pJSObject.get(); }
 
+  void CreateWidgetAcc();
+  CXFA_WidgetAcc* GetWidgetAcc() { return acc_.get(); }
+
   XFA_Element GetElementType() const { return m_elementType; }
   WideStringView GetClassName() const { return m_elementName; }
   uint32_t GetClassHashCode() const { return m_elementNameHash; }
@@ -92,6 +96,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   const WideStringView m_elementName;
 
   std::unique_ptr<CJX_Object> m_pJSObject;
+  std::unique_ptr<CXFA_WidgetAcc> acc_;
 };
 
 CXFA_Node* ToNode(CXFA_Object* pObj);

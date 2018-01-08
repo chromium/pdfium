@@ -11,6 +11,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -53,6 +54,10 @@ const CXFA_Node* CXFA_Object::AsNode() const {
 
 const CXFA_TreeList* CXFA_Object::AsTreeList() const {
   return IsTreeList() ? static_cast<const CXFA_TreeList*>(this) : nullptr;
+}
+
+void CXFA_Object::CreateWidgetAcc() {
+  acc_ = pdfium::MakeUnique<CXFA_WidgetAcc>(AsNode());
 }
 
 CXFA_Node* ToNode(CXFA_Object* pObj) {

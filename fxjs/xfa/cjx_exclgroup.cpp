@@ -85,7 +85,7 @@ CJS_Return CJX_ExclGroup::selectedMember(
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetAcc* pWidgetAcc = GetWidgetAcc();
+  CXFA_WidgetAcc* pWidgetAcc = ToNode(GetXFAObject())->GetWidgetAcc();
   if (!pWidgetAcc)
     return CJS_Return(runtime->NewNull());
 

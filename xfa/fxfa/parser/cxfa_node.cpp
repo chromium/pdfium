@@ -565,10 +565,6 @@ bool CXFA_Node::HasBindItem() {
   return GetPacketType() == XFA_PacketType::Datasets && GetBindingNode();
 }
 
-CXFA_WidgetAcc* CXFA_Node::GetWidgetAcc() {
-  return JSObject()->GetWidgetAcc();
-}
-
 CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
   if (GetPacketType() != XFA_PacketType::Form)
     return nullptr;

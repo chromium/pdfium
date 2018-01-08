@@ -1304,10 +1304,7 @@ void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  CXFA_Font* font = widget_data_->GetNode()->GetFont(true);
+  CXFA_Font* font = ToNode(object_.Get())->GetFont(true);
   if (!font)
     return;
 
@@ -1332,10 +1329,7 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  CXFA_Border* border = widget_data_->GetNode()->GetBorder(true);
+  CXFA_Border* border = ToNode(object_.Get())->GetBorder(true);
   CXFA_Fill* borderfill = border->GetFill(true);
   if (!borderfill)
     return;
@@ -1363,10 +1357,7 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  CXFA_Border* border = widget_data_->GetNode()->GetBorder(true);
+  CXFA_Border* border = ToNode(object_.Get())->GetBorder(true);
   int32_t iSize = border->CountEdges();
   if (bSetting) {
     int32_t r = 0;
@@ -1393,10 +1384,7 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  CXFA_Border* border = widget_data_->GetNode()->GetBorder(true);
+  CXFA_Border* border = ToNode(object_.Get())->GetBorder(true);
   if (bSetting) {
     CXFA_Measurement thickness = border->GetEdge(0)->GetMSThickness();
     pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
@@ -1413,13 +1401,10 @@ void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_SOM_MESSAGETYPE iMessageType) {
-  if (!widget_data_)
-    return;
-
   bool bNew = false;
-  CXFA_Validate* validate = widget_data_->GetNode()->GetValidate(false);
+  CXFA_Validate* validate = ToNode(object_.Get())->GetValidate(false);
   if (!validate) {
-    validate = widget_data_->GetNode()->GetValidate(true);
+    validate = ToNode(object_.Get())->GetValidate(true);
     bNew = true;
   }
 
@@ -1483,11 +1468,12 @@ void CJX_Object::Script_Field_Length(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  if (!widget_data_) {
+  if (!ToNode(object_.Get())->GetWidgetAcc()) {
     pValue->SetInteger(0);
     return;
   }
-  pValue->SetInteger(widget_data_->CountChoiceListItems(true));
+  pValue->SetInteger(
+      ToNode(object_.Get())->GetWidgetAcc()->CountChoiceListItems(true));
 }
 
 void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
@@ -1600,10 +1586,7 @@ void CJX_Object::Script_Som_DataNode(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  if (!widget_data_)
-    return;
-
-  CXFA_Validate* validate = widget_data_->GetNode()->GetValidate(true);
+  CXFA_Validate* validate = ToNode(object_.Get())->GetValidate(true);
   if (!validate)
     return;
 

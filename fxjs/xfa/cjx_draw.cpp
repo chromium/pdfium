@@ -7,6 +7,7 @@
 #include "fxjs/xfa/cjx_draw.h"
 
 #include "fxjs/cfxjse_value.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_draw.h"
 
 CJX_Draw::CJX_Draw(CXFA_Draw* node) : CJX_Container(node) {}
@@ -119,8 +120,7 @@ void CJX_Draw::defaultValue(CFXJSE_Value* pValue,
   if (!pValue || !pValue->IsString())
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
-  XFA_Element uiType = pWidgetAcc->GetUIType();
+  XFA_Element uiType = GetXFANode()->GetWidgetAcc()->GetUIType();
   if (uiType != XFA_Element::Text)
     return;
 

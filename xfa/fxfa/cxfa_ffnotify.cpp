@@ -340,7 +340,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
 
   XFA_Element eType = pNode->GetElementType();
   if (XFA_IsCreateWidget(eType)) {
-    pNode->JSObject()->SetWidgetAcc(pdfium::MakeUnique<CXFA_WidgetAcc>(pNode));
+    pNode->CreateWidgetAcc();
     return;
   }
 

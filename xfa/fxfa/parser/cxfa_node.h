@@ -13,12 +13,23 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/ifx_locale.h"
+#include "core/fxge/fx_dib.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFX_XMLNode;
+class CXFA_Bind;
+class CXFA_Border;
+class CXFA_Calculate;
+class CXFA_Caption;
+class CXFA_Font;
+class CXFA_Margin;
 class CXFA_Occur;
+class CXFA_Para;
+class CXFA_Validate;
+class CXFA_Value;
 class CXFA_WidgetAcc;
 class IXFA_Locale;
 
@@ -182,7 +193,6 @@ class CXFA_Node : public CXFA_Object {
   int32_t AddBindItem(CXFA_Node* pFormNode);
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem();
-  CXFA_WidgetAcc* GetWidgetAcc();
   CXFA_WidgetAcc* GetContainerWidgetAcc();
   IFX_Locale* GetLocale();
   Optional<WideString> GetLocaleName();
