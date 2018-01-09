@@ -357,8 +357,7 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
 }  // namespace
 
 CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_Node* pNode)
-    : m_nRecursionDepth(0),
-      m_bIsNull(true),
+    : m_bIsNull(true),
       m_bPreNull(true),
       m_pUiChildNode(nullptr),
       m_eUIType(XFA_Element::Unknown),
@@ -462,93 +461,6 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
     ASSERT(pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element);
     static_cast<CFX_XMLElement*>(pXMLNode)->SetString(L"href", wsHref);
   }
-}
-
-int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_FFDocView* docView,
-                                      CXFA_Script* script,
-                                      CXFA_EventParam* pEventParam) {
-  bool bRet;
-  int32_t iRet;
-  std::tie(iRet, bRet) = ExecuteBoolScript(docView, script, pEventParam);
-  return iRet;
-}
-
-std::pair<int32_t, bool> CXFA_WidgetAcc::ExecuteBoolScript(
-    CXFA_FFDocView* docView,
-    CXFA_Script* script,
-    CXFA_EventParam* pEventParam) {
-  static const uint32_t MAX_RECURSION_DEPTH = 2;
-  if (m_nRecursionDepth > MAX_RECURSION_DEPTH)
-    return {XFA_EVENTERROR_Success, false};
-
-  ASSERT(pEventParam);
-  if (!script)
-    return {XFA_EVENTERROR_NotExist, false};
-  if (script->GetRunAt() == XFA_AttributeEnum::Server)
-    return {XFA_EVENTERROR_Disabled, false};
-
-  WideString wsExpression = script->GetExpression();
-  if (wsExpression.IsEmpty())
-    return {XFA_EVENTERROR_NotExist, false};
-
-  CXFA_Script::Type eScriptType = script->GetContentType();
-  if (eScriptType == CXFA_Script::Type::Unknown)
-    return {XFA_EVENTERROR_Success, false};
-
-  CXFA_FFDoc* pDoc = docView->GetDoc();
-  CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
-  pContext->SetEventParam(*pEventParam);
-  pContext->SetRunAtType(script->GetRunAt());
-
-  std::vector<CXFA_Node*> refNodes;
-  if (pEventParam->m_eType == XFA_EVENT_InitCalculate ||
-      pEventParam->m_eType == XFA_EVENT_Calculate) {
-    pContext->SetNodesOfRunScript(&refNodes);
-  }
-
-  auto pTmpRetValue = pdfium::MakeUnique<CFXJSE_Value>(pContext->GetIsolate());
-  ++m_nRecursionDepth;
-  bool bRet = pContext->RunScript(eScriptType, wsExpression.AsStringView(),
-                                  pTmpRetValue.get(), m_pNode);
-  --m_nRecursionDepth;
-  int32_t iRet = XFA_EVENTERROR_Error;
-  if (bRet) {
-    iRet = XFA_EVENTERROR_Success;
-    if (pEventParam->m_eType == XFA_EVENT_Calculate ||
-        pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-      if (!pTmpRetValue->IsUndefined()) {
-        if (!pTmpRetValue->IsNull())
-          pEventParam->m_wsResult = pTmpRetValue->ToWideString();
-
-        iRet = XFA_EVENTERROR_Success;
-      } else {
-        iRet = XFA_EVENTERROR_Error;
-      }
-      if (pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-        if ((iRet == XFA_EVENTERROR_Success) &&
-            (m_pNode->GetRawValue() != pEventParam->m_wsResult)) {
-          SetValue(XFA_VALUEPICTURE_Raw, pEventParam->m_wsResult);
-          docView->AddValidateWidget(this);
-        }
-      }
-      for (CXFA_Node* pRefNode : refNodes) {
-        if (pRefNode->GetWidgetAcc() == this)
-          continue;
-
-        CXFA_CalcData* pGlobalData = pRefNode->JSObject()->GetCalcData();
-        if (!pGlobalData) {
-          pRefNode->JSObject()->SetCalcData(
-              pdfium::MakeUnique<CXFA_CalcData>());
-          pGlobalData = pRefNode->JSObject()->GetCalcData();
-        }
-        if (!pdfium::ContainsValue(pGlobalData->m_Globals, GetNode()))
-          pGlobalData->m_Globals.push_back(GetNode());
-      }
-    }
-  }
-  pContext->SetNodesOfRunScript(nullptr);
-
-  return {iRet, pTmpRetValue->IsBoolean() ? pTmpRetValue->ToBoolean() : false};
 }
 
 CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {

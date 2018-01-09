@@ -62,13 +62,6 @@ class CXFA_WidgetAcc {
 
   void ResetData();
 
-  int32_t ExecuteScript(CXFA_FFDocView* docView,
-                        CXFA_Script* script,
-                        CXFA_EventParam* pEventParam);
-  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_FFDocView* docView,
-                                             CXFA_Script* script,
-                                             CXFA_EventParam* pEventParam);
-
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
   void StartWidgetLayout(CXFA_FFDoc* doc,
                          float& fCalcWidth,
@@ -241,7 +234,6 @@ class CXFA_WidgetAcc {
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
 
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
-  uint32_t m_nRecursionDepth;
   bool m_bIsNull;
   bool m_bPreNull;
   CXFA_Node* m_pUiChildNode;

@@ -229,12 +229,12 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_Calculate* calc = pWidgetAcc->GetNode()->GetCalculate();
+      CXFA_Calculate* calc = node->GetCalculate();
       if (!calc)
         return XFA_EVENTERROR_NotExist;
-      if (pWidgetAcc->GetNode()->IsUserInteractive())
+      if (node->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
-      return pWidgetAcc->ExecuteScript(m_pDocView, calc->GetScript(), pParam);
+      return node->ExecuteScript(m_pDocView, calc->GetScript(), pParam);
     }
     default:
       break;

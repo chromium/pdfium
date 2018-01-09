@@ -31,6 +31,7 @@ class CXFA_Font;
 class CXFA_Margin;
 class CXFA_Occur;
 class CXFA_Para;
+class CXFA_Script;
 class CXFA_Validate;
 class CXFA_Value;
 class CXFA_WidgetAcc;
@@ -271,6 +272,13 @@ class CXFA_Node : public CXFA_Object {
   int32_t ProcessCalculate(CXFA_FFDocView* docView);
   int32_t ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags);
 
+  int32_t ExecuteScript(CXFA_FFDocView* docView,
+                        CXFA_Script* script,
+                        CXFA_EventParam* pEventParam);
+  std::pair<int32_t, bool> ExecuteBoolScript(CXFA_FFDocView* docView,
+                                             CXFA_Script* script,
+                                             CXFA_EventParam* pEventParam);
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
@@ -329,6 +337,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pParent;
   CFX_XMLNode* m_pXMLNode;
   const XFA_PacketType m_ePacket;
+  uint8_t m_ExecuteRecursionDepth = 0;
   uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;

@@ -210,13 +210,9 @@ bool CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
          pAcc->FindSplitPos(m_pDoc->GetDocView(), iBlockIndex, fCalcHeightPos);
 }
 
-bool CXFA_FFNotify::RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem) {
+bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
-    return false;
-
-  CXFA_WidgetAcc* pWidgetAcc = pFormItem->GetWidgetAcc();
-  if (!pWidgetAcc)
     return false;
 
   CXFA_EventParam EventParam;
@@ -224,8 +220,7 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem) {
 
   int32_t iRet;
   bool bRet;
-  std::tie(iRet, bRet) =
-      pWidgetAcc->ExecuteBoolScript(pDocView, pScript, &EventParam);
+  std::tie(iRet, bRet) = item->ExecuteBoolScript(pDocView, script, &EventParam);
   return iRet == XFA_EVENTERROR_Success && bRet;
 }
 
