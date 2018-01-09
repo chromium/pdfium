@@ -17,7 +17,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
-#include "fxbarcode/BC_Library.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 enum XFA_CHECKSTATE {
@@ -173,20 +172,6 @@ class CXFA_WidgetAcc {
   WideString GetNormalizeDataValue(const WideString& wsValue);
   WideString GetFormatDataValue(const WideString& wsValue);
   WideString NormalizeNumStr(const WideString& wsValue);
-
-  WideString GetBarcodeType();
-  Optional<BC_CHAR_ENCODING> GetBarcodeAttribute_CharEncoding();
-  Optional<bool> GetBarcodeAttribute_Checksum();
-  Optional<int32_t> GetBarcodeAttribute_DataLength();
-  Optional<char> GetBarcodeAttribute_StartChar();
-  Optional<char> GetBarcodeAttribute_EndChar();
-  Optional<int32_t> GetBarcodeAttribute_ECLevel();
-  Optional<int32_t> GetBarcodeAttribute_ModuleWidth();
-  Optional<int32_t> GetBarcodeAttribute_ModuleHeight();
-  Optional<bool> GetBarcodeAttribute_PrintChecksum();
-  Optional<BC_TEXT_LOC> GetBarcodeAttribute_TextLocation();
-  Optional<bool> GetBarcodeAttribute_Truncate();
-  Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
 
   WideString GetPasswordChar();
   std::pair<XFA_Element, int32_t> GetMaxChars();

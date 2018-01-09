@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/ifx_locale.h"
 #include "core/fxge/fx_dib.h"
+#include "fxbarcode/BC_Library.h"
 #include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
@@ -278,6 +279,21 @@ class CXFA_Node : public CXFA_Object {
   std::pair<int32_t, bool> ExecuteBoolScript(CXFA_FFDocView* docView,
                                              CXFA_Script* script,
                                              CXFA_EventParam* pEventParam);
+
+  // TODO(dsinclair): Figure out how to move this to cxfa_barcode.
+  WideString GetBarcodeType();
+  Optional<BC_CHAR_ENCODING> GetBarcodeAttribute_CharEncoding();
+  Optional<bool> GetBarcodeAttribute_Checksum();
+  Optional<int32_t> GetBarcodeAttribute_DataLength();
+  Optional<char> GetBarcodeAttribute_StartChar();
+  Optional<char> GetBarcodeAttribute_EndChar();
+  Optional<int32_t> GetBarcodeAttribute_ECLevel();
+  Optional<int32_t> GetBarcodeAttribute_ModuleWidth();
+  Optional<int32_t> GetBarcodeAttribute_ModuleHeight();
+  Optional<bool> GetBarcodeAttribute_PrintChecksum();
+  Optional<BC_TEXT_LOC> GetBarcodeAttribute_TextLocation();
+  Optional<bool> GetBarcodeAttribute_Truncate();
+  Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
 
  protected:
   CXFA_Node(CXFA_Document* pDoc,

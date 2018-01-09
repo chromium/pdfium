@@ -273,10 +273,8 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     }
   } else if (m_pNode->GetWidgetAcc()->GetUIType() == XFA_Element::Barcode) {
     int32_t nDataLen = 0;
-    if (eType == XFA_VALUEPICTURE_Edit) {
-      nDataLen =
-          m_pNode->GetWidgetAcc()->GetBarcodeAttribute_DataLength().value_or(0);
-    }
+    if (eType == XFA_VALUEPICTURE_Edit)
+      nDataLen = m_pNode->GetBarcodeAttribute_DataLength().value_or(0);
 
     pEdit->SetLimit(nDataLen);
     bUpdate = true;
