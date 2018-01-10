@@ -113,7 +113,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtLine = GetRectWithoutRotate();
   CXFA_Margin* margin = m_pNode->GetMargin();
   if (margin)
-    XFA_RectWidthoutMargin(rtLine, margin);
+    XFA_RectWithoutMargin(rtLine, margin);
 
   GetRectFromHand(rtLine, line->GetHand(), fLineWidth);
   CXFA_GEPath linePath;

@@ -57,7 +57,7 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtImage = GetRectWithoutRotate();
   CXFA_Margin* margin = m_pNode->GetMargin();
   if (margin)
-    XFA_RectWidthoutMargin(rtImage, margin);
+    XFA_RectWithoutMargin(rtImage, margin);
 
   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;

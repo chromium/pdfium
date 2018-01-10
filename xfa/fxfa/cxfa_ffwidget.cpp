@@ -989,7 +989,7 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
   CFX_RectF rtBorder = GetRectWithoutRotate();
   CXFA_Margin* margin = border->GetMargin();
   if (margin)
-    XFA_RectWidthoutMargin(rtBorder, margin);
+    XFA_RectWithoutMargin(rtBorder, margin);
 
   rtBorder.Normalize();
   DrawBorder(pGS, border, rtBorder, matrix);
@@ -2013,9 +2013,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   return pBitmap;
 }
 
-void XFA_RectWidthoutMargin(CFX_RectF& rt,
-                            const CXFA_Margin* margin,
-                            bool bUI) {
+void XFA_RectWithoutMargin(CFX_RectF& rt, const CXFA_Margin* margin, bool bUI) {
   if (!margin)
     return;
 
