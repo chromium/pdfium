@@ -19,12 +19,12 @@ static constexpr char kContentsKey[] = "Contents";
 
 class FPDFAnnotEmbeddertest : public EmbedderTest {};
 
-const std::wstring BufferToWString(std::vector<char>& buf) {
-  return GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()));
+std::wstring BufferToWString(const std::vector<char>& buf) {
+  return GetPlatformWString(reinterpret_cast<FPDF_WIDESTRING>(buf.data()));
 }
 
-const std::string BufferToString(std::vector<char>& buf) {
-  return GetPlatformString(reinterpret_cast<unsigned short*>(buf.data()));
+std::string BufferToString(const std::vector<char>& buf) {
+  return GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(buf.data()));
 }
 
 TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
