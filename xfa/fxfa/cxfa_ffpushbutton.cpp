@@ -104,9 +104,10 @@ bool CXFA_FFPushButton::PerformLayout() {
   if (margin)
     XFA_RectWidthoutMargin(rtWidget, margin);
 
-  CXFA_Caption* caption = m_pNode->GetCaption();
   m_rtCaption = rtWidget;
-  CXFA_Margin* captionMargin = caption->GetMargin();
+
+  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
+  CXFA_Margin* captionMargin = caption ? caption->GetMargin() : nullptr;
   if (captionMargin)
     XFA_RectWidthoutMargin(m_rtCaption, captionMargin);
 
@@ -117,6 +118,7 @@ bool CXFA_FFPushButton::PerformLayout() {
 
   return true;
 }
+
 float CXFA_FFPushButton::GetLineWidth() {
   CXFA_Border* border = m_pNode->GetBorderIfExists();
   if (border && border->GetPresence() == XFA_AttributeEnum::Visible)
@@ -133,7 +135,7 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 }
 
 void CXFA_FFPushButton::LoadHighlightCaption() {
-  CXFA_Caption* caption = m_pNode->GetCaption();
+  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (!caption || caption->IsHidden())
     return;
 
@@ -169,7 +171,7 @@ void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout =
       m_pNode->GetWidgetAcc()->GetCaptionTextLayout();
-  CXFA_Caption* caption = m_pNode->GetCaption();
+  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (!caption || !caption->IsVisible())
     return;
 

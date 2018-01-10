@@ -1538,7 +1538,7 @@ CXFA_Border* CXFA_Node::GetOrCreateBorder() {
   return JSObject()->GetOrCreateProperty<CXFA_Border>(0, XFA_Element::Border);
 }
 
-CXFA_Caption* CXFA_Node::GetCaption() const {
+CXFA_Caption* CXFA_Node::GetCaptionIfExists() const {
   return JSObject()->GetProperty<CXFA_Caption>(0, XFA_Element::Caption);
 }
 
@@ -1917,7 +1917,7 @@ WideString CXFA_Node::GetValidateCaptionName(bool bVersionFlag) {
   WideString wsCaptionName;
 
   if (!bVersionFlag) {
-    CXFA_Caption* caption = GetCaption();
+    CXFA_Caption* caption = GetCaptionIfExists();
     if (caption) {
       CXFA_Value* capValue = caption->GetValue();
       if (capValue) {

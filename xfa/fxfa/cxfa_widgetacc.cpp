@@ -122,7 +122,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   bool LoadCaption(CXFA_FFDoc* doc, CXFA_WidgetAcc* pAcc) {
     if (m_pCapTextLayout)
       return true;
-    CXFA_Caption* caption = pAcc->GetNode()->GetCaption();
+    CXFA_Caption* caption = pAcc->GetNode()->GetCaptionIfExists();
     if (!caption || caption->IsHidden())
       return false;
 
@@ -484,7 +484,7 @@ void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFDocView* docView,
 }
 
 void CXFA_WidgetAcc::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
-  CXFA_Caption* caption = m_pNode->GetCaption();
+  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (!caption || !caption->IsVisible())
     return;
 
@@ -550,7 +550,10 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
   size.width += rtUIMargin.left + rtUIMargin.width;
   size.height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
-    switch (m_pNode->GetCaption()->GetPlacementType()) {
+    CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
+    XFA_AttributeEnum placement =
+        caption ? caption->GetPlacementType() : XFA_AttributeEnum::Left;
+    switch (placement) {
       case XFA_AttributeEnum::Left:
       case XFA_AttributeEnum::Right:
       case XFA_AttributeEnum::Inline: {
@@ -651,7 +654,9 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CXFA_FFDoc* doc,
     bool bCapExit = szCap.width > 0.01 && szCap.height > 0.01;
     XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
     if (bCapExit) {
-      iCapPlacement = m_pNode->GetCaption()->GetPlacementType();
+      CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
+      iCapPlacement =
+          caption ? caption->GetPlacementType() : XFA_AttributeEnum::Left;
       switch (iCapPlacement) {
         case XFA_AttributeEnum::Left:
         case XFA_AttributeEnum::Right:
@@ -985,7 +990,7 @@ bool CXFA_WidgetAcc::FindSplitPos(CXFA_FFDocView* docView,
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
   if (iBlockIndex == 0) {
-    CXFA_Caption* caption = m_pNode->GetCaption();
+    CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
     if (caption && !caption->IsHidden()) {
       iCapPlacement = caption->GetPlacementType();
       fCapReserve = caption->GetReserve();

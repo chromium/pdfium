@@ -191,7 +191,7 @@ void CXFA_FFField::CapPlacement() {
 
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
-  CXFA_Caption* caption = m_pNode->GetCaption();
+  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (caption && !caption->IsHidden()) {
     iCapPlacement = caption->GetPlacementType();
     if (iCapPlacement == XFA_AttributeEnum::Top && GetPrev()) {
@@ -231,17 +231,18 @@ void CXFA_FFField::CapPlacement() {
   }
 
   m_rtUI = rtWidget;
+  CXFA_Margin* capMargin = caption ? caption->GetMargin() : nullptr;
   switch (iCapPlacement) {
     case XFA_AttributeEnum::Left: {
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
+      CapLeftRightPlacement(capMargin, rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
       m_rtUI.left += fCapReserve;
       break;
     }
     case XFA_AttributeEnum::Top: {
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
+      CapTopBottomPlacement(capMargin, rtWidget, iCapPlacement);
       m_rtUI.top += fCapReserve;
       m_rtUI.height -= fCapReserve;
       break;
@@ -249,14 +250,14 @@ void CXFA_FFField::CapPlacement() {
     case XFA_AttributeEnum::Right: {
       m_rtCaption.left = m_rtCaption.right() - fCapReserve;
       m_rtCaption.width = fCapReserve;
-      CapLeftRightPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
+      CapLeftRightPlacement(capMargin, rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
       break;
     }
     case XFA_AttributeEnum::Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
-      CapTopBottomPlacement(caption->GetMargin(), rtWidget, iCapPlacement);
+      CapTopBottomPlacement(capMargin, rtWidget, iCapPlacement);
       m_rtUI.height -= fCapReserve;
       break;
     }
@@ -601,7 +602,7 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
   if (!pCapTextLayout)
     return;
 
-  CXFA_Caption* caption = m_pNode->GetCaption();
+  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (!caption || !caption->IsVisible())
     return;
 

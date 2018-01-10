@@ -238,7 +238,7 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Border* GetBorderIfExists() const;
   CXFA_Border* GetOrCreateBorder();
-  CXFA_Caption* GetCaption() const;
+  CXFA_Caption* GetCaptionIfExists() const;
 
   CXFA_Font* GetFont() const;
   CXFA_Font* GetOrCreateFont();

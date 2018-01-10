@@ -98,7 +98,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
 
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
-  CXFA_Caption* caption = m_pNode->GetCaption();
+  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (caption && caption->IsVisible()) {
     m_rtCaption = rtWidget;
     iCapPlacement = caption->GetPlacementType();
@@ -122,7 +122,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   }
 
   m_rtUI = rtWidget;
-  CXFA_Margin* captionMargin = caption->GetMargin();
+  CXFA_Margin* captionMargin = caption ? caption->GetMargin() : nullptr;
   switch (iCapPlacement) {
     case XFA_AttributeEnum::Left: {
       m_rtCaption.width = fCapReserve;
