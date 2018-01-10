@@ -240,7 +240,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Border* GetOrCreateBorderIfPossible();
   CXFA_Caption* GetCaptionIfExists() const;
 
-  CXFA_Font* GetFont() const;
+  CXFA_Font* GetFontIfExists() const;
   CXFA_Font* GetOrCreateFont();
   float GetFontSize() const;
   FX_ARGB GetTextColor() const;

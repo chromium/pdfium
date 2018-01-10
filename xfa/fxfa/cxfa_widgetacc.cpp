@@ -513,7 +513,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
     if (font) {
       fFontSize = font->GetFontSize();
     } else {
-      CXFA_Font* widgetfont = m_pNode->GetFont();
+      CXFA_Font* widgetfont = m_pNode->GetFontIfExists();
       if (widgetfont)
         fFontSize = widgetfont->GetFontSize();
     }
@@ -1292,7 +1292,7 @@ void CXFA_WidgetAcc::SetImageEditImage(
 RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont(CXFA_FFDoc* doc) {
   WideString wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
-  CXFA_Font* font = m_pNode->GetFont();
+  CXFA_Font* font = m_pNode->GetFontIfExists();
   if (font) {
     if (font->IsBold())
       dwFontStyle |= FXFONT_BOLD;

@@ -150,7 +150,7 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
   m_pBreak->SetLineBoundary(fStart, fLineWidth);
   m_pBreak->SetLineStartPos(fStartPos);
 
-  CXFA_Font* font = m_pTextProvider->GetFont();
+  CXFA_Font* font = m_pTextProvider->GetFontIfExists();
   if (font) {
     m_pBreak->SetHorizontalScale(
         static_cast<int32_t>(font->GetHorizontalScale()));

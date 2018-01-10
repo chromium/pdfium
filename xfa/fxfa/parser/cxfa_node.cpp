@@ -1546,12 +1546,12 @@ CXFA_Font* CXFA_Node::GetOrCreateFont() {
   return JSObject()->GetOrCreateProperty<CXFA_Font>(0, XFA_Element::Font);
 }
 
-CXFA_Font* CXFA_Node::GetFont() const {
+CXFA_Font* CXFA_Node::GetFontIfExists() const {
   return JSObject()->GetProperty<CXFA_Font>(0, XFA_Element::Font);
 }
 
 float CXFA_Node::GetFontSize() const {
-  CXFA_Font* font = GetFont();
+  CXFA_Font* font = GetFontIfExists();
   float fFontSize = font ? font->GetFontSize() : 10.0f;
   return fFontSize < 0.1f ? 10.0f : fFontSize;
 }
@@ -1568,7 +1568,7 @@ float CXFA_Node::GetLineHeight() const {
 }
 
 FX_ARGB CXFA_Node::GetTextColor() const {
-  CXFA_Font* font = GetFont();
+  CXFA_Font* font = GetFontIfExists();
   return font ? font->GetColor() : 0xFF000000;
 }
 

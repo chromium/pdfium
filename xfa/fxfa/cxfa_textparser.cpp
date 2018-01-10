@@ -60,7 +60,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   if (!m_pSelector) {
     m_pSelector = pdfium::MakeUnique<CFX_CSSStyleSelector>();
 
-    CXFA_Font* font = pTextProvider->GetFont();
+    CXFA_Font* font = pTextProvider->GetFontIfExists();
     m_pSelector->SetDefFontSize(font ? font->GetFontSize() : 10.0f);
   }
 
@@ -132,7 +132,7 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     pStyle->SetMarginWidth(rtMarginWidth);
   }
 
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   if (font) {
     pStyle->SetColor(font->GetColor());
     pStyle->SetFontStyle(font->IsItalic() ? CFX_CSSFontStyle::Italic
@@ -330,7 +330,7 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
     CFX_CSSComputedStyle* pStyle) const {
   WideString wsFamily = L"Courier";
   uint32_t dwStyle = 0;
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   if (font) {
     wsFamily = font->GetTypeface();
     if (font->IsBold())
@@ -360,7 +360,7 @@ float CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
   if (pStyle)
     return pStyle->GetFontSize();
 
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   return font ? font->GetFontSize() : 10;
 }
 
@@ -386,7 +386,7 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
     }
   }
 
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   return font ? static_cast<int32_t>(font->GetHorizontalScale()) : 100;
 }
 
@@ -398,7 +398,7 @@ int32_t CXFA_TextParser::GetVerScale(CXFA_TextProvider* pTextProvider,
       return wsValue.GetInteger();
   }
 
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   return font ? static_cast<int32_t>(font->GetVerticalScale()) : 100;
 }
 
@@ -408,7 +408,7 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
                                    XFA_AttributeEnum& iPeriod) const {
   iUnderline = 0;
   iPeriod = XFA_AttributeEnum::All;
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   if (!pStyle) {
     if (font) {
       iUnderline = font->GetUnderline();
@@ -441,7 +441,7 @@ void CXFA_TextParser::GetLinethrough(CXFA_TextProvider* pTextProvider,
     return;
   }
 
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   if (font)
     iLinethrough = font->GetLineThrough();
 }
@@ -451,7 +451,7 @@ FX_ARGB CXFA_TextParser::GetColor(CXFA_TextProvider* pTextProvider,
   if (pStyle)
     return pStyle->GetColor();
 
-  CXFA_Font* font = pTextProvider->GetFont();
+  CXFA_Font* font = pTextProvider->GetFontIfExists();
   return font ? font->GetColor() : 0xFF000000;
 }
 
@@ -461,7 +461,7 @@ float CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
     if (pStyle->GetVerticalAlign() == CFX_CSSVerticalAlign::Number)
       return pStyle->GetNumberVerticalAlign();
   } else {
-    CXFA_Font* font = pTextProvider->GetFont();
+    CXFA_Font* font = pTextProvider->GetFontIfExists();
     if (font)
       return font->GetBaselineShift();
   }

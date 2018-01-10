@@ -32,7 +32,7 @@ class CXFA_TextProvider {
 
   CXFA_Node* GetTextNode(bool& bRichText);
   CXFA_Para* GetPara();
-  CXFA_Font* GetFont();
+  CXFA_Font* GetFontIfExists();
   bool IsCheckButtonAndAutoWidth();
   bool GetEmbbedObj(bool bURI,
                     bool bRaw,
