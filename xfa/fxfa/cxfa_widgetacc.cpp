@@ -219,7 +219,7 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
   eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
   auto* defValue =
-      pNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value, true);
+      pNode->JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
   XFA_Element eValueType =
       defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
   switch (eValueType) {
@@ -257,7 +257,7 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
 
   CXFA_Node* pUIChild = nullptr;
   CXFA_Ui* pUI =
-      pNode->JSObject()->GetProperty<CXFA_Ui>(0, XFA_Element::Ui, true);
+      pNode->JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
   CXFA_Node* pChild = pUI->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     XFA_Element eChildType = pChild->GetElementType();
@@ -303,10 +303,11 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
   if (!pUIChild) {
     if (eUIType == XFA_Element::Unknown) {
       eUIType = XFA_Element::TextEdit;
-      defValue->JSObject()->GetProperty<CXFA_Text>(0, XFA_Element::Text, true);
+      defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
+                                                           XFA_Element::Text);
     }
     return {eWidgetType,
-            pUI->JSObject()->GetProperty<CXFA_Node>(0, eUIType, true)};
+            pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)};
   }
 
   if (eUIType != XFA_Element::Unknown)
@@ -349,7 +350,7 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
       eValueType = XFA_Element::Text;
       break;
   }
-  defValue->JSObject()->GetProperty<CXFA_Node>(0, eValueType, true);
+  defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
 
   return {eWidgetType, pUIChild};
 }
@@ -510,7 +511,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
     if (font) {
       fFontSize = font->GetFontSize();
     } else {
-      CXFA_Font* widgetfont = m_pNode->GetFont(false);
+      CXFA_Font* widgetfont = m_pNode->GetFont();
       if (widgetfont)
         fFontSize = widgetfont->GetFontSize();
     }
@@ -1284,7 +1285,7 @@ void CXFA_WidgetAcc::SetImageEditImage(
 RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont(CXFA_FFDoc* doc) {
   WideString wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
-  CXFA_Font* font = m_pNode->GetFont(false);
+  CXFA_Font* font = m_pNode->GetFont();
   if (font) {
     if (font->IsBold())
       dwFontStyle |= FXFONT_BOLD;
@@ -1339,7 +1340,7 @@ std::vector<CXFA_Event*> CXFA_WidgetAcc::GetEventByActivity(
 CXFA_Border* CXFA_WidgetAcc::GetUIBorder() {
   CXFA_Node* pUIChild = GetUIChild();
   return pUIChild ? pUIChild->JSObject()->GetProperty<CXFA_Border>(
-                        0, XFA_Element::Border, false)
+                        0, XFA_Element::Border)
                   : nullptr;
 }
 
@@ -1347,8 +1348,8 @@ CFX_RectF CXFA_WidgetAcc::GetUIMargin() {
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_Margin* mgUI = nullptr;
   if (pUIChild) {
-    mgUI = pUIChild->JSObject()->GetProperty<CXFA_Margin>(
-        0, XFA_Element::Margin, false);
+    mgUI =
+        pUIChild->JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin);
   }
 
   if (!mgUI)

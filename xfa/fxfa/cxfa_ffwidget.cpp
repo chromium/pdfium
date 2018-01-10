@@ -396,7 +396,7 @@ void XFA_BOX_Fill_Radial(CXFA_Box* box,
                          CXFA_GEPath& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_Fill* fill = box->GetFill(false);
+  CXFA_Fill* fill = box->GetFill();
   FX_ARGB crStart = fill->GetColor(false);
   FX_ARGB crEnd = fill->GetRadialColor();
   if (!fill->IsRadialToEdge())
@@ -416,7 +416,7 @@ void XFA_BOX_Fill_Pattern(CXFA_Box* box,
                           CXFA_GEPath& fillPath,
                           CFX_RectF rtFill,
                           const CFX_Matrix& matrix) {
-  CXFA_Fill* fill = box->GetFill(false);
+  CXFA_Fill* fill = box->GetFill();
   FX_ARGB crStart = fill->GetColor(false);
   FX_ARGB crEnd = fill->GetPatternColor();
   FX_HatchStyle iHatch = FX_HatchStyle::Cross;
@@ -450,7 +450,7 @@ void XFA_BOX_Fill_Linear(CXFA_Box* box,
                          CXFA_GEPath& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_Fill* fill = box->GetFill(false);
+  CXFA_Fill* fill = box->GetFill();
   FX_ARGB crStart = fill->GetColor(false);
   FX_ARGB crEnd = fill->GetLinearColor();
 
@@ -488,7 +488,7 @@ void XFA_BOX_Fill(CXFA_Box* box,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix,
                   uint32_t dwFlags) {
-  CXFA_Fill* fill = box->GetFill(false);
+  CXFA_Fill* fill = box->GetFill();
   if (!fill || !fill->IsVisible())
     return;
 
@@ -982,7 +982,7 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Border* border = m_pNode->GetBorder(false);
+  CXFA_Border* border = m_pNode->GetBorder();
   if (!border)
     return;
 

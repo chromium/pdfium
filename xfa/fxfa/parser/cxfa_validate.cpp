@@ -75,7 +75,7 @@ XFA_AttributeEnum CXFA_Validate::GetScriptTest() {
 
 WideString CXFA_Validate::GetMessageText(const WideString& wsMessageType) {
   CXFA_Message* pNode =
-      JSObject()->GetProperty<CXFA_Message>(0, XFA_Element::Message, false);
+      JSObject()->GetProperty<CXFA_Message>(0, XFA_Element::Message);
   if (!pNode)
     return L"";
 
@@ -119,7 +119,7 @@ void CXFA_Validate::SetScriptMessageText(const WideString& wsMessage) {
 void CXFA_Validate::SetMessageText(const WideString& wsMessageType,
                                    const WideString& wsMessage) {
   CXFA_Message* pNode =
-      JSObject()->GetProperty<CXFA_Message>(0, XFA_Element::Message, true);
+      JSObject()->GetOrCreateProperty<CXFA_Message>(0, XFA_Element::Message);
   if (!pNode)
     return;
 

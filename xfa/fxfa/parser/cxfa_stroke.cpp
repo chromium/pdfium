@@ -72,7 +72,7 @@ FX_ARGB CXFA_Stroke::GetColor() {
 
 void CXFA_Stroke::SetColor(FX_ARGB argb) {
   CXFA_Color* pNode =
-      JSObject()->GetProperty<CXFA_Color>(0, XFA_Element::Color, true);
+      JSObject()->GetOrCreateProperty<CXFA_Color>(0, XFA_Element::Color);
   int a;
   int r;
   int g;

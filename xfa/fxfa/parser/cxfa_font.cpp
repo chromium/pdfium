@@ -125,7 +125,7 @@ bool CXFA_Font::IsItalic() {
 
 void CXFA_Font::SetColor(FX_ARGB color) {
   JSObject()
-      ->GetProperty<CXFA_Fill>(0, XFA_Element::Fill, true)
+      ->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill)
       ->SetColor(color);
 }
 

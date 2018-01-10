@@ -61,7 +61,7 @@ bool CXFA_Fill::IsVisible() {
 
 void CXFA_Fill::SetColor(FX_ARGB color) {
   CXFA_Color* pNode =
-      JSObject()->GetProperty<CXFA_Color>(0, XFA_Element::Color, true);
+      JSObject()->GetOrCreateProperty<CXFA_Color>(0, XFA_Element::Color);
   int a;
   int r;
   int g;
@@ -166,17 +166,17 @@ FX_ARGB CXFA_Fill::GetRadialColor() {
 }
 
 CXFA_Stipple* CXFA_Fill::GetStipple() {
-  return JSObject()->GetProperty<CXFA_Stipple>(0, XFA_Element::Stipple, true);
+  return JSObject()->GetOrCreateProperty<CXFA_Stipple>(0, XFA_Element::Stipple);
 }
 
 CXFA_Radial* CXFA_Fill::GetRadial() {
-  return JSObject()->GetProperty<CXFA_Radial>(0, XFA_Element::Radial, true);
+  return JSObject()->GetOrCreateProperty<CXFA_Radial>(0, XFA_Element::Radial);
 }
 
 CXFA_Linear* CXFA_Fill::GetLinear() {
-  return JSObject()->GetProperty<CXFA_Linear>(0, XFA_Element::Linear, true);
+  return JSObject()->GetOrCreateProperty<CXFA_Linear>(0, XFA_Element::Linear);
 }
 
 CXFA_Pattern* CXFA_Fill::GetPattern() {
-  return JSObject()->GetProperty<CXFA_Pattern>(0, XFA_Element::Pattern, true);
+  return JSObject()->GetOrCreateProperty<CXFA_Pattern>(0, XFA_Element::Pattern);
 }

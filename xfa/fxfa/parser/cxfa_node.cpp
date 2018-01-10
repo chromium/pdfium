@@ -1556,46 +1556,54 @@ int32_t CXFA_Node::GetRotate() {
   return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
 }
 
-CXFA_Border* CXFA_Node::GetBorder(bool bModified) {
-  return JSObject()->GetProperty<CXFA_Border>(0, XFA_Element::Border,
-                                              bModified);
+CXFA_Border* CXFA_Node::GetBorder() const {
+  return JSObject()->GetProperty<CXFA_Border>(0, XFA_Element::Border);
 }
 
-CXFA_Caption* CXFA_Node::GetCaption() {
-  return JSObject()->GetProperty<CXFA_Caption>(0, XFA_Element::Caption, false);
+CXFA_Border* CXFA_Node::GetOrCreateBorder() {
+  return JSObject()->GetOrCreateProperty<CXFA_Border>(0, XFA_Element::Border);
 }
 
-CXFA_Font* CXFA_Node::GetFont(bool bModified) {
-  return JSObject()->GetProperty<CXFA_Font>(0, XFA_Element::Font, bModified);
+CXFA_Caption* CXFA_Node::GetCaption() const {
+  return JSObject()->GetProperty<CXFA_Caption>(0, XFA_Element::Caption);
 }
 
-float CXFA_Node::GetFontSize() {
-  CXFA_Font* font = GetFont(false);
+CXFA_Font* CXFA_Node::GetOrCreateFont() {
+  return JSObject()->GetOrCreateProperty<CXFA_Font>(0, XFA_Element::Font);
+}
+
+CXFA_Font* CXFA_Node::GetFont() const {
+  return JSObject()->GetProperty<CXFA_Font>(0, XFA_Element::Font);
+}
+
+float CXFA_Node::GetFontSize() const {
+  CXFA_Font* font = GetFont();
   float fFontSize = font ? font->GetFontSize() : 10.0f;
   return fFontSize < 0.1f ? 10.0f : fFontSize;
 }
 
-float CXFA_Node::GetLineHeight() {
+float CXFA_Node::GetLineHeight() const {
   float fLineHeight = 0;
   CXFA_Para* para = GetPara();
   if (para)
     fLineHeight = para->GetLineHeight();
+
   if (fLineHeight < 1)
     fLineHeight = GetFontSize() * 1.2f;
   return fLineHeight;
 }
 
-FX_ARGB CXFA_Node::GetTextColor() {
-  CXFA_Font* font = GetFont(false);
+FX_ARGB CXFA_Node::GetTextColor() const {
+  CXFA_Font* font = GetFont();
   return font ? font->GetColor() : 0xFF000000;
 }
 
-CXFA_Margin* CXFA_Node::GetMargin() {
-  return JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin, false);
+CXFA_Margin* CXFA_Node::GetMargin() const {
+  return JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin);
 }
 
-CXFA_Para* CXFA_Node::GetPara() {
-  return JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para, false);
+CXFA_Para* CXFA_Node::GetPara() const {
+  return JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para);
 }
 
 bool CXFA_Node::IsOpenAccess() {
@@ -1611,26 +1619,28 @@ bool CXFA_Node::IsOpenAccess() {
 
 CXFA_Value* CXFA_Node::GetDefaultValue() {
   CXFA_Node* pTemNode = GetTemplateNode();
-  return pTemNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value,
-                                                       false);
+  return pTemNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value);
 }
 
-CXFA_Value* CXFA_Node::GetFormValue() {
-  return JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value, false);
+CXFA_Value* CXFA_Node::GetFormValue() const {
+  return JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value);
 }
 
-CXFA_Calculate* CXFA_Node::GetCalculate() {
-  return JSObject()->GetProperty<CXFA_Calculate>(0, XFA_Element::Calculate,
-                                                 false);
+CXFA_Calculate* CXFA_Node::GetCalculate() const {
+  return JSObject()->GetProperty<CXFA_Calculate>(0, XFA_Element::Calculate);
 }
 
-CXFA_Validate* CXFA_Node::GetValidate(bool bModified) {
-  return JSObject()->GetProperty<CXFA_Validate>(0, XFA_Element::Validate,
-                                                bModified);
+CXFA_Validate* CXFA_Node::GetValidate() const {
+  return JSObject()->GetProperty<CXFA_Validate>(0, XFA_Element::Validate);
 }
 
-CXFA_Bind* CXFA_Node::GetBind() {
-  return JSObject()->GetProperty<CXFA_Bind>(0, XFA_Element::Bind, false);
+CXFA_Validate* CXFA_Node::GetOrCreateValidate() {
+  return JSObject()->GetOrCreateProperty<CXFA_Validate>(0,
+                                                        XFA_Element::Validate);
+}
+
+CXFA_Bind* CXFA_Node::GetBind() const {
+  return JSObject()->GetProperty<CXFA_Bind>(0, XFA_Element::Bind);
 }
 
 Optional<float> CXFA_Node::TryWidth() {
@@ -1890,7 +1900,7 @@ int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_Validate* validate = GetValidate(false);
+  CXFA_Validate* validate = GetValidate();
   if (!validate)
     return XFA_EVENTERROR_NotExist;
 

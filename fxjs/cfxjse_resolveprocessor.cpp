@@ -346,14 +346,16 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       CXFA_Node* pInstanceManager =
           curNode->AsNode()->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
-        pProp = pInstanceManager->JSObject()->GetProperty<CXFA_Occur>(
-            0, XFA_Element::Occur, true);
+        pProp = pInstanceManager->JSObject()->GetOrCreateProperty<CXFA_Occur>(
+            0, XFA_Element::Occur);
       }
     } else {
       XFA_Element eType = CXFA_Node::NameToElement(wsName);
-      if (eType != XFA_Element::Unknown) {
-        pProp = curNode->AsNode()->JSObject()->GetProperty<CXFA_Node>(
-            0, eType, eType != XFA_Element::PageSet);
+      if (eType == XFA_Element::PageSet) {
+        pProp = curNode->AsNode()->JSObject()->GetProperty<CXFA_Node>(0, eType);
+      } else if (eType != XFA_Element::Unknown) {
+        pProp = curNode->AsNode()->JSObject()->GetOrCreateProperty<CXFA_Node>(
+            0, eType);
       }
     }
     if (pProp) {

@@ -163,8 +163,8 @@ CJS_Return CJX_Node::getElement(
   WideString expression = runtime->ToWideString(params[0]);
   int32_t iValue = params.size() >= 2 ? runtime->ToInt32(params[1]) : 0;
 
-  CXFA_Node* pNode = GetProperty<CXFA_Node>(
-      iValue, CXFA_Node::NameToElement(expression), true);
+  CXFA_Node* pNode = GetOrCreateProperty<CXFA_Node>(
+      iValue, CXFA_Node::NameToElement(expression));
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode);
   if (!value)
@@ -186,12 +186,12 @@ CJS_Return CJX_Node::isPropertySpecified(
   bool bParent = params.size() < 2 || runtime->ToBoolean(params[1]);
   int32_t iIndex = params.size() == 3 ? runtime->ToInt32(params[2]) : 0;
   XFA_Element eType = CXFA_Node::NameToElement(expression);
-  bool bHas = !!GetProperty<CXFA_Node>(iIndex, eType, true);
+  bool bHas = !!GetOrCreateProperty<CXFA_Node>(iIndex, eType);
   if (!bHas && bParent && GetXFANode()->GetParent()) {
     // Also check on the parent.
     auto* jsnode = GetXFANode()->GetParent()->JSObject();
     bHas = jsnode->HasAttribute(attr) ||
-           !!jsnode->GetProperty<CXFA_Node>(iIndex, eType, true);
+           !!jsnode->GetOrCreateProperty<CXFA_Node>(iIndex, eType);
   }
   return CJS_Return(runtime->NewBoolean(bHas));
 }

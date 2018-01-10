@@ -110,7 +110,7 @@ class CXFA_Node : public CXFA_Object {
   void ClearFlag(uint32_t dwFlag);
 
   CXFA_Node* GetParent() { return m_pParent; }
-  CXFA_Node* GetChildNode() { return m_pChild; }
+  CXFA_Node* GetChildNode() const { return m_pChild; }
 
   CXFA_Node* CreateInstance(bool bDataMerge);
   int32_t GetCount();
@@ -235,25 +235,28 @@ class CXFA_Node : public CXFA_Object {
 
   bool IsOpenAccess();
 
-  CXFA_Border* GetBorder(bool bModified);
-  CXFA_Caption* GetCaption();
+  CXFA_Border* GetBorder() const;
+  CXFA_Border* GetOrCreateBorder();
+  CXFA_Caption* GetCaption() const;
 
-  CXFA_Font* GetFont(bool bModified);
-  float GetFontSize();
-  FX_ARGB GetTextColor();
-  float GetLineHeight();
+  CXFA_Font* GetFont() const;
+  CXFA_Font* GetOrCreateFont();
+  float GetFontSize() const;
+  FX_ARGB GetTextColor() const;
+  float GetLineHeight() const;
 
-  CXFA_Margin* GetMargin();
-  CXFA_Para* GetPara();
-  CXFA_Calculate* GetCalculate();
-  CXFA_Validate* GetValidate(bool bModified);
+  CXFA_Margin* GetMargin() const;
+  CXFA_Para* GetPara() const;
+  CXFA_Calculate* GetCalculate() const;
+  CXFA_Validate* GetValidate() const;
+  CXFA_Validate* GetOrCreateValidate();
 
   CXFA_Value* GetDefaultValue();
-  CXFA_Value* GetFormValue();
+  CXFA_Value* GetFormValue() const;
   WideString GetRawValue();
   int32_t GetRotate();
 
-  CXFA_Bind* GetBind();
+  CXFA_Bind* GetBind() const;
 
   Optional<float> TryWidth();
   Optional<float> TryHeight();

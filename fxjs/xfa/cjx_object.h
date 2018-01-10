@@ -96,8 +96,15 @@ class CJX_Object {
   WideString GetContent(bool bScriptModify);
 
   template <typename T>
-  T* GetProperty(int32_t index, XFA_Element eType, bool bCreateProperty) {
-    return static_cast<T*>(GetPropertyInternal(index, eType, bCreateProperty));
+  T* GetProperty(int32_t index, XFA_Element eType) const {
+    CXFA_Node* node;
+    int32_t count;
+    std::tie(node, count) = GetPropertyInternal(index, eType);
+    return static_cast<T*>(node);
+  }
+  template <typename T>
+  T* GetOrCreateProperty(int32_t index, XFA_Element eType) {
+    return static_cast<T*>(GetOrCreatePropertyInternal(index, eType));
   }
 
   void SetAttributeValue(const WideString& wsValue,
@@ -227,9 +234,9 @@ class CJX_Object {
                                  bool bSetting,
                                  XFA_Attribute eAttribute);
 
-  CXFA_Node* GetPropertyInternal(int32_t index,
-                                 XFA_Element eType,
-                                 bool bCreateProperty);
+  std::pair<CXFA_Node*, int32_t> GetPropertyInternal(int32_t index,
+                                                     XFA_Element eType) const;
+  CXFA_Node* GetOrCreatePropertyInternal(int32_t index, XFA_Element eType);
 
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);

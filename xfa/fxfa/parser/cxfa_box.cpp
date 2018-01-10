@@ -82,8 +82,10 @@ int32_t CXFA_Box::CountEdges() {
 }
 
 CXFA_Edge* CXFA_Box::GetEdge(int32_t nIndex) {
-  return JSObject()->GetProperty<CXFA_Edge>(nIndex, XFA_Element::Edge,
-                                            nIndex == 0);
+  if (nIndex == 0)
+    return JSObject()->GetOrCreateProperty<CXFA_Edge>(nIndex,
+                                                      XFA_Element::Edge);
+  return JSObject()->GetProperty<CXFA_Edge>(nIndex, XFA_Element::Edge);
 }
 
 std::vector<CXFA_Stroke*> CXFA_Box::GetStrokes() {
@@ -102,8 +104,12 @@ Optional<int32_t> CXFA_Box::GetSweepAngle() {
   return JSObject()->TryInteger(XFA_Attribute::SweepAngle, false);
 }
 
-CXFA_Fill* CXFA_Box::GetFill(bool bModified) {
-  return JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill, bModified);
+CXFA_Fill* CXFA_Box::GetFill() const {
+  return JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill);
+}
+
+CXFA_Fill* CXFA_Box::GetOrCreateFill() {
+  return JSObject()->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill);
 }
 
 CXFA_Margin* CXFA_Box::GetMargin() {
@@ -130,8 +136,14 @@ std::vector<CXFA_Stroke*> CXFA_Box::GetStrokesInternal(bool bNull) {
   strokes.resize(8);
 
   for (int32_t i = 0, j = 0; i < 4; i++) {
-    CXFA_Corner* corner =
-        JSObject()->GetProperty<CXFA_Corner>(i, XFA_Element::Corner, i == 0);
+    CXFA_Corner* corner;
+    if (i == 0) {
+      corner =
+          JSObject()->GetOrCreateProperty<CXFA_Corner>(i, XFA_Element::Corner);
+    } else {
+      corner = JSObject()->GetProperty<CXFA_Corner>(i, XFA_Element::Corner);
+    }
+
     if (corner || i == 0) {
       strokes[j] = corner;
     } else if (!bNull) {
@@ -142,8 +154,12 @@ std::vector<CXFA_Stroke*> CXFA_Box::GetStrokesInternal(bool bNull) {
     }
     j++;
 
-    CXFA_Edge* edge =
-        JSObject()->GetProperty<CXFA_Edge>(i, XFA_Element::Edge, i == 0);
+    CXFA_Edge* edge;
+    if (i == 0)
+      edge = JSObject()->GetOrCreateProperty<CXFA_Edge>(i, XFA_Element::Edge);
+    else
+      edge = JSObject()->GetProperty<CXFA_Edge>(i, XFA_Element::Edge);
+
     if (edge || i == 0) {
       strokes[j] = edge;
     } else if (!bNull) {

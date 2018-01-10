@@ -629,7 +629,7 @@ bool CJX_Object::SetContent(const WideString& wsContent,
     case XFA_ObjectType::ContainerNode: {
       if (XFA_FieldIsMultiListBox(ToNode(GetXFAObject()))) {
         CXFA_Value* pValue =
-            GetProperty<CXFA_Value>(0, XFA_Element::Value, true);
+            GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
         if (!pValue)
           break;
 
@@ -714,7 +714,7 @@ bool CJX_Object::SetContent(const WideString& wsContent,
         pNode = ToNode(GetXFAObject());
       } else {
         CXFA_Value* pValue =
-            GetProperty<CXFA_Value>(0, XFA_Element::Value, true);
+            GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
         if (!pValue)
           break;
 
@@ -908,33 +908,42 @@ Optional<WideString> CJX_Object::TryNamespace() {
   return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
 }
 
-CXFA_Node* CJX_Object::GetPropertyInternal(int32_t index,
-                                           XFA_Element eProperty,
-                                           bool bCreateProperty) {
-  if (index < 0 ||
-      index >= ToNode(GetXFAObject())->PropertyOccuranceCount(eProperty)) {
-    return nullptr;
-  }
+std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(
+    int32_t index,
+    XFA_Element eProperty) const {
+  const CXFA_Node* xfaNode = ToNode(GetXFAObject());
+  if (index < 0 || index >= xfaNode->PropertyOccuranceCount(eProperty))
+    return {nullptr, 0};
 
   int32_t iCount = 0;
-  for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetChildNode(); pNode;
+  for (CXFA_Node* pNode = xfaNode->GetChildNode(); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() == eProperty) {
       iCount++;
       if (iCount > index)
-        return pNode;
+        return {pNode, iCount};
     }
   }
-  if (!bCreateProperty)
+  return {nullptr, iCount};
+}
+
+CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
+                                                   XFA_Element eProperty) {
+  CXFA_Node* xfaNode = ToNode(GetXFAObject());
+  if (index < 0 || index >= xfaNode->PropertyOccuranceCount(eProperty))
     return nullptr;
 
-  if (ToNode(GetXFAObject())
-          ->HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
-    for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetChildNode(); pNode;
+  int32_t iCount = 0;
+  CXFA_Node* node;
+  std::tie(node, iCount) = GetPropertyInternal(index, eProperty);
+  if (node)
+    return node;
+
+  if (xfaNode->HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
+    for (CXFA_Node* pNode = xfaNode->GetChildNode(); pNode;
          pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      if (ToNode(GetXFAObject())
-              ->HasPropertyFlags(pNode->GetElementType(),
-                                 XFA_PROPERTYFLAG_OneOf)) {
+      if (xfaNode->HasPropertyFlags(pNode->GetElementType(),
+                                    XFA_PROPERTYFLAG_OneOf)) {
         return nullptr;
       }
     }
@@ -942,11 +951,11 @@ CXFA_Node* CJX_Object::GetPropertyInternal(int32_t index,
 
   CXFA_Node* pNewNode = nullptr;
   for (; iCount <= index; ++iCount) {
-    pNewNode = GetDocument()->CreateNode(
-        ToNode(GetXFAObject())->GetPacketType(), eProperty);
+    pNewNode = GetDocument()->CreateNode(xfaNode->GetPacketType(), eProperty);
     if (!pNewNode)
       return nullptr;
-    ToNode(GetXFAObject())->InsertChild(pNewNode, nullptr);
+
+    xfaNode->InsertChild(pNewNode, nullptr);
     pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);
   }
   return pNewNode;
@@ -1304,7 +1313,7 @@ void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  CXFA_Font* font = ToNode(object_.Get())->GetFont(true);
+  CXFA_Font* font = ToNode(object_.Get())->GetOrCreateFont();
   if (!font)
     return;
 
@@ -1329,8 +1338,8 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  CXFA_Border* border = ToNode(object_.Get())->GetBorder(true);
-  CXFA_Fill* borderfill = border->GetFill(true);
+  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorder();
+  CXFA_Fill* borderfill = border->GetOrCreateFill();
   if (!borderfill)
     return;
 
@@ -1357,7 +1366,7 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {
-  CXFA_Border* border = ToNode(object_.Get())->GetBorder(true);
+  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorder();
   int32_t iSize = border->CountEdges();
   if (bSetting) {
     int32_t r = 0;
@@ -1384,7 +1393,7 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {
-  CXFA_Border* border = ToNode(object_.Get())->GetBorder(true);
+  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorder();
   if (bSetting) {
     CXFA_Measurement thickness = border->GetEdge(0)->GetMSThickness();
     pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
@@ -1402,9 +1411,9 @@ void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_SOM_MESSAGETYPE iMessageType) {
   bool bNew = false;
-  CXFA_Validate* validate = ToNode(object_.Get())->GetValidate(false);
+  CXFA_Validate* validate = ToNode(object_.Get())->GetValidate();
   if (!validate) {
-    validate = ToNode(object_.Get())->GetValidate(true);
+    validate = ToNode(object_.Get())->GetOrCreateValidate();
     bNew = true;
   }
 
@@ -1586,7 +1595,7 @@ void CJX_Object::Script_Som_DataNode(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  CXFA_Validate* validate = ToNode(object_.Get())->GetValidate(true);
+  CXFA_Validate* validate = ToNode(object_.Get())->GetOrCreateValidate();
   if (!validate)
     return;
 

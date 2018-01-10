@@ -228,7 +228,7 @@ bool CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
 
   pWidgetAcc->ResetData();
   pWidgetAcc->UpdateUIDisplay(this, nullptr);
-  CXFA_Validate* validate = pNode->GetValidate(false);
+  CXFA_Validate* validate = pNode->GetValidate();
   if (!validate)
     return true;
 

@@ -31,7 +31,8 @@ class CXFA_Box : public CXFA_Node {
 
   int32_t CountEdges();
   CXFA_Edge* GetEdge(int32_t nIndex);
-  CXFA_Fill* GetFill(bool bModified);
+  CXFA_Fill* GetFill() const;
+  CXFA_Fill* GetOrCreateFill();
   CXFA_Margin* GetMargin();
 
   std::vector<CXFA_Stroke*> GetStrokes();
