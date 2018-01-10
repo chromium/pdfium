@@ -972,7 +972,7 @@ void CJX_Object::SetMapModuleValue(void* pKey, void* pValue) {
 
 bool CJX_Object::GetMapModuleValue(void* pKey, void*& pValue) {
   for (CXFA_Node* pNode = ToNode(GetXFAObject()); pNode;
-       pNode = pNode->GetTemplateNode()) {
+       pNode = pNode->GetTemplateNodeIfExists()) {
     XFA_MAPMODULEDATA* pModule = pNode->JSObject()->GetMapModuleData();
     if (pModule) {
       auto it = pModule->m_ValueMap.find(pKey);
@@ -1032,7 +1032,7 @@ bool CJX_Object::GetMapModuleBuffer(void* pKey,
                                     bool bProtoAlso) const {
   XFA_MAPDATABLOCK* pBuffer = nullptr;
   for (const CXFA_Node* pNode = ToNode(GetXFAObject()); pNode;
-       pNode = pNode->GetTemplateNode()) {
+       pNode = pNode->GetTemplateNodeIfExists()) {
     XFA_MAPMODULEDATA* pModule = pNode->JSObject()->GetMapModuleData();
     if (pModule) {
       auto it = pModule->m_BufferMap.find(pKey);

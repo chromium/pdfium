@@ -1090,7 +1090,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
   CXFA_Node* pDataNode = pFormNode->GetBindData();
   if (eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup ||
       eType == XFA_Element::Field) {
-    CXFA_Node* pTemplateNode = pFormNode->GetTemplateNode();
+    CXFA_Node* pTemplateNode = pFormNode->GetTemplateNodeIfExists();
     CXFA_Bind* pTemplateNodeBind =
         pTemplateNode
             ? pTemplateNode->GetFirstChildByClass<CXFA_Bind>(XFA_Element::Bind)
@@ -1168,7 +1168,9 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
         bParentDataRef = true;
         if (!pDataNode && bDataRef) {
           WideString wsRef =
-              pTemplateNodeBind->JSObject()->GetCData(XFA_Attribute::Ref);
+              pTemplateNodeBind
+                  ? pTemplateNodeBind->JSObject()->GetCData(XFA_Attribute::Ref)
+                  : L"";
           uint32_t dFlags =
               XFA_RESOLVENODE_Children | XFA_RESOLVENODE_CreateNode;
           XFA_RESOLVENODE_RS rs;

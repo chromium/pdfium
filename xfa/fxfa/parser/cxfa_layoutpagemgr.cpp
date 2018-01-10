@@ -144,6 +144,9 @@ void RemoveLayoutItem(CXFA_ContainerLayoutItem* pLayoutItem) {
 CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
                               bool bNewExprStyle,
                               WideString& wsTargetAll) {
+  if (!pPageSetRoot)
+    return nullptr;
+
   CXFA_Document* pDocument = pPageSetRoot->GetDocument();
   if (wsTargetAll.IsEmpty())
     return nullptr;
@@ -282,7 +285,7 @@ CXFA_LayoutPageMgr::~CXFA_LayoutPageMgr() {
 
 bool CXFA_LayoutPageMgr::InitLayoutPage(CXFA_Node* pFormNode) {
   PrepareLayout();
-  CXFA_Node* pTemplateNode = pFormNode->GetTemplateNode();
+  CXFA_Node* pTemplateNode = pFormNode->GetTemplateNodeIfExists();
   if (!pTemplateNode)
     return false;
 
@@ -811,7 +814,7 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
       WideString wsBreakLeader;
       WideString wsBreakTrailer;
       CXFA_Node* pFormNode = pCurNode->GetContainerParent();
-      CXFA_Node* pContainer = pFormNode->GetTemplateNode();
+      CXFA_Node* pContainer = pFormNode->GetTemplateNodeIfExists();
       bool bStartNew =
           pCurNode->JSObject()->GetInteger(XFA_Attribute::StartNew) != 0;
       CXFA_Script* pScript =
@@ -938,7 +941,7 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
                                              CXFA_Node*& pTrailerTemplate,
                                              bool bCreatePage) {
   CXFA_Node* pContainer =
-      pOverflowNode->GetContainerParent()->GetTemplateNode();
+      pOverflowNode->GetContainerParent()->GetTemplateNodeIfExists();
   if (pOverflowNode->GetElementType() == XFA_Element::Break) {
     WideString wsOverflowLeader =
         pOverflowNode->JSObject()->GetCData(XFA_Attribute::OverflowLeader);
@@ -1069,7 +1072,8 @@ bool CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
     CXFA_Node* pBookendNode,
     bool bLeader,
     CXFA_Node*& pBookendAppendTemplate) {
-  CXFA_Node* pContainer = pBookendNode->GetContainerParent()->GetTemplateNode();
+  CXFA_Node* pContainer =
+      pBookendNode->GetContainerParent()->GetTemplateNodeIfExists();
   if (pBookendNode->GetElementType() == XFA_Element::Break) {
     WideString leader = pBookendNode->JSObject()->GetCData(
         bLeader ? XFA_Attribute::BookendLeader : XFA_Attribute::BookendTrailer);
@@ -1800,7 +1804,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           CXFA_Node* pParentNode = pContainerItem->m_pParent->m_pFormNode;
           for (CXFA_Node* pChildNode = pParentNode->GetFirstChild(); pChildNode;
                pChildNode = pChildNode->GetNextSibling()) {
-            if (pChildNode->GetTemplateNode() != pContainerItem->m_pFormNode) {
+            if (pChildNode->GetTemplateNodeIfExists() !=
+                pContainerItem->m_pFormNode) {
               continue;
             }
             pContainerItem->m_pFormNode = pChildNode;

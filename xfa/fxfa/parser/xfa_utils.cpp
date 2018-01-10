@@ -285,7 +285,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
     }
     default:
       if (pNode->GetElementType() == XFA_Element::Items) {
-        CXFA_Node* pTemplateNode = pNode->GetTemplateNode();
+        CXFA_Node* pTemplateNode = pNode->GetTemplateNodeIfExists();
         if (!pTemplateNode ||
             pTemplateNode->CountChildren(XFA_Element::Unknown, false) !=
                 pNode->CountChildren(XFA_Element::Unknown, false)) {

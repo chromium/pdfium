@@ -478,7 +478,7 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
   return pClone;
 }
 
-CXFA_Node* CXFA_Node::GetTemplateNode() const {
+CXFA_Node* CXFA_Node::GetTemplateNodeIfExists() const {
   return m_pAuxNode;
 }
 
@@ -1286,7 +1286,10 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
 
 CXFA_Node* CXFA_Node::CreateInstance(bool bDataMerge) {
   CXFA_Document* pDocument = GetDocument();
-  CXFA_Node* pTemplateNode = GetTemplateNode();
+  CXFA_Node* pTemplateNode = GetTemplateNodeIfExists();
+  if (!pTemplateNode)
+    return nullptr;
+
   CXFA_Node* pFormParent = GetParent();
   CXFA_Node* pDataScope = nullptr;
   for (CXFA_Node* pRootBoundNode = pFormParent;
@@ -1300,6 +1303,7 @@ CXFA_Node* CXFA_Node::CreateInstance(bool bDataMerge) {
     pDataScope = ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record));
     ASSERT(pDataScope);
   }
+
   CXFA_Node* pInstance = pDocument->DataMerge_CopyContainer(
       pTemplateNode, pFormParent, pDataScope, true, bDataMerge, true);
   if (pInstance) {
@@ -1590,8 +1594,10 @@ bool CXFA_Node::IsOpenAccess() {
 }
 
 CXFA_Value* CXFA_Node::GetDefaultValue() {
-  CXFA_Node* pTemNode = GetTemplateNode();
-  return pTemNode->JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value);
+  CXFA_Node* pTemNode = GetTemplateNodeIfExists();
+  return pTemNode ? pTemNode->JSObject()->GetProperty<CXFA_Value>(
+                        0, XFA_Element::Value)
+                  : nullptr;
 }
 
 CXFA_Value* CXFA_Node::GetFormValue() const {

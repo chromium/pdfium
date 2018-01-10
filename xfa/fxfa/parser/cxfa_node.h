@@ -190,7 +190,7 @@ class CXFA_Node : public CXFA_Object {
                                       XFA_Element eTypeFilter);
   CXFA_Node* CreateSamePacketNode(XFA_Element eType);
   CXFA_Node* CloneTemplateToForm(bool bRecursive);
-  CXFA_Node* GetTemplateNode() const;
+  CXFA_Node* GetTemplateNodeIfExists() const;
   void SetTemplateNode(CXFA_Node* pTemplateNode);
   CXFA_Node* GetDataDescriptionNode();
   void SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode);

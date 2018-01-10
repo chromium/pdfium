@@ -2824,7 +2824,7 @@ bool CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(
   if (!pFormNode)
     return false;
 
-  CXFA_Node* pTemplate = pFormNode->GetTemplateNode();
+  CXFA_Node* pTemplate = pFormNode->GetTemplateNodeIfExists();
   if (!pTemplate)
     pTemplate = pFormNode;
 

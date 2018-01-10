@@ -368,9 +368,9 @@ bool CXFA_NodeHelper::ResolveNodes_CreateNode(WideString wsName,
 }
 
 void CXFA_NodeHelper::SetCreateNodeType(CXFA_Node* refNode) {
-  if (!refNode) {
+  if (!refNode)
     return;
-  }
+
   if (refNode->GetElementType() == XFA_Element::Subform) {
     m_eLastCreateType = XFA_Element::DataGroup;
   } else if (refNode->GetElementType() == XFA_Element::Field) {

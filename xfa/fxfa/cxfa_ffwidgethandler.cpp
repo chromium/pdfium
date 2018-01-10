@@ -254,7 +254,11 @@ CXFA_FFWidget* CXFA_FFWidgetHandler::CreateWidget(CXFA_FFWidget* hParent,
   if (!pNewFormItem)
     return nullptr;
 
-  pNewFormItem->GetTemplateNode()->SetFlag(XFA_NodeFlag_Initialized, true);
+  CXFA_Node* templateNode = pNewFormItem->GetTemplateNodeIfExists();
+  if (!templateNode)
+    return nullptr;
+
+  templateNode->SetFlag(XFA_NodeFlag_Initialized, true);
   pNewFormItem->SetFlag(XFA_NodeFlag_Initialized, true);
   m_pDocView->RunLayout();
   CXFA_LayoutItem* pLayout =
@@ -485,7 +489,13 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateSubform(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_Element eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
-  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : nullptr;
+  if (!pParent)
+    return nullptr;
+
+  CXFA_Node* pTemplateParent = pParent->GetTemplateNodeIfExists();
+  if (!pTemplateParent)
+    return nullptr;
+
   CXFA_Node* pNewFormItem = pTemplateParent->CloneTemplateToForm(false);
   if (pParent)
     pParent->InsertChild(pNewFormItem, pBefore);
@@ -495,10 +505,13 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_Element eElement,
 CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_Element eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
-  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : nullptr;
+  if (!pParent)
+    return nullptr;
+
+  CXFA_Node* pTemplateParent = pParent->GetTemplateNodeIfExists();
   CXFA_Node* pNewNode =
       CreateTemplateNode(eElement, pTemplateParent,
-                         pBefore ? pBefore->GetTemplateNode() : nullptr)
+                         pBefore ? pBefore->GetTemplateNodeIfExists() : nullptr)
           ->Clone(false);
   if (pParent)
     pParent->InsertChild(pNewNode, pBefore);
