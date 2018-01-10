@@ -170,7 +170,7 @@ bool CXFA_FFField::PerformLayout() {
 
 void CXFA_FFField::CapPlacement() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin) {
     CXFA_LayoutItem* pItem = this;
     float fLeftInset = margin->GetLeftInset();

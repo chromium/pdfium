@@ -246,7 +246,7 @@ class CXFA_Node : public CXFA_Object {
   FX_ARGB GetTextColor() const;
   float GetLineHeight() const;
 
-  CXFA_Margin* GetMargin() const;
+  CXFA_Margin* GetMarginIfExists() const;
   CXFA_Para* GetPara() const;
   CXFA_Calculate* GetCalculate() const;
   CXFA_Validate* GetValidate() const;

@@ -24,7 +24,7 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CFX_RectF rtArc = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin)
     XFA_RectWithoutMargin(rtArc, margin);
 

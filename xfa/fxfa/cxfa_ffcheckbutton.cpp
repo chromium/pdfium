@@ -91,7 +91,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
 
   float fCheckSize = m_pNode->GetWidgetAcc()->GetCheckButtonSize();
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   CFX_RectF rtWidget = GetRectWithoutRotate();
   if (margin)
     XFA_RectWithoutMargin(rtWidget, margin);

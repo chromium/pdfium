@@ -573,7 +573,7 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
 }
 
 bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin) {
     size.width += margin->GetLeftInset() + margin->GetRightInset();
     size.height += margin->GetTopInset() + margin->GetBottomInset();
@@ -669,7 +669,7 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CXFA_FFDoc* doc,
     }
     CFX_RectF rtUIMargin = GetUIMargin();
     size.width -= rtUIMargin.left + rtUIMargin.width;
-    CXFA_Margin* margin = m_pNode->GetMargin();
+    CXFA_Margin* margin = m_pNode->GetMarginIfExists();
     if (margin)
       size.width -= margin->GetLeftInset() + margin->GetRightInset();
 
@@ -806,7 +806,7 @@ void CXFA_WidgetAcc::LoadText(CXFA_FFDoc* doc) {
 }
 
 float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin)
     fWidthCalc += margin->GetLeftInset() + margin->GetRightInset();
 
@@ -822,14 +822,14 @@ float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
 }
 
 float CXFA_WidgetAcc::GetWidthWithoutMargin(float fWidthCalc) {
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin)
     fWidthCalc -= margin->GetLeftInset() + margin->GetRightInset();
   return fWidthCalc;
 }
 
 float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin)
     fHeightCalc += margin->GetTopInset() + margin->GetBottomInset();
 
@@ -845,7 +845,7 @@ float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
 }
 
 float CXFA_WidgetAcc::GetHeightWithoutMargin(float fHeightCalc) {
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin)
     fHeightCalc -= margin->GetTopInset() + margin->GetBottomInset();
   return fHeightCalc;
@@ -956,7 +956,7 @@ bool CXFA_WidgetAcc::FindSplitPos(CXFA_FFDocView* docView,
   float fTopInset = 0;
   float fBottomInset = 0;
   if (iBlockIndex == 0) {
-    CXFA_Margin* margin = m_pNode->GetMargin();
+    CXFA_Margin* margin = m_pNode->GetMarginIfExists();
     if (margin) {
       fTopInset = margin->GetTopInset();
       fBottomInset = margin->GetBottomInset();

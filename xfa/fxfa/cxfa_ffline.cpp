@@ -111,7 +111,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin)
     XFA_RectWithoutMargin(rtLine, margin);
 

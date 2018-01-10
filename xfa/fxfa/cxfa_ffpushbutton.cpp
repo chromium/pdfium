@@ -100,7 +100,7 @@ bool CXFA_FFPushButton::PerformLayout() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
 
   m_rtUI = rtWidget;
-  CXFA_Margin* margin = m_pNode->GetMargin();
+  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin)
     XFA_RectWithoutMargin(rtWidget, margin);
 

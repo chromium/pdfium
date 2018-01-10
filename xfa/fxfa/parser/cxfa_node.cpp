@@ -1572,7 +1572,7 @@ FX_ARGB CXFA_Node::GetTextColor() const {
   return font ? font->GetColor() : 0xFF000000;
 }
 
-CXFA_Margin* CXFA_Node::GetMargin() const {
+CXFA_Margin* CXFA_Node::GetMarginIfExists() const {
   return JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin);
 }
 
