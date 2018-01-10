@@ -241,7 +241,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Caption* GetCaptionIfExists() const;
 
   CXFA_Font* GetFontIfExists() const;
-  CXFA_Font* GetOrCreateFont();
+  CXFA_Font* GetOrCreateFontIfPossible();
   float GetFontSize() const;
   FX_ARGB GetTextColor() const;
   float GetLineHeight() const;

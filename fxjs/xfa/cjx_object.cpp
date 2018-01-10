@@ -1297,7 +1297,7 @@ void CJX_Object::Script_Attribute_Integer(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  CXFA_Font* font = ToNode(object_.Get())->GetOrCreateFont();
+  CXFA_Font* font = ToNode(object_.Get())->GetOrCreateFontIfPossible();
   if (!font)
     return;
 

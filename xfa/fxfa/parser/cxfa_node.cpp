@@ -1542,7 +1542,7 @@ CXFA_Caption* CXFA_Node::GetCaptionIfExists() const {
   return JSObject()->GetProperty<CXFA_Caption>(0, XFA_Element::Caption);
 }
 
-CXFA_Font* CXFA_Node::GetOrCreateFont() {
+CXFA_Font* CXFA_Node::GetOrCreateFontIfPossible() {
   return JSObject()->GetOrCreateProperty<CXFA_Font>(0, XFA_Element::Font);
 }
 
