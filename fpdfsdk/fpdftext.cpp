@@ -362,25 +362,26 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountRects(FPDF_PAGELINK link_page,
   return pdfium::CollectionSize<int>(pageLink->GetRects(link_index));
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFLink_GetRect(FPDF_PAGELINK link_page,
-                                                int link_index,
-                                                int rect_index,
-                                                double* left,
-                                                double* top,
-                                                double* right,
-                                                double* bottom) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetRect(FPDF_PAGELINK link_page,
+                                                     int link_index,
+                                                     int rect_index,
+                                                     double* left,
+                                                     double* top,
+                                                     double* right,
+                                                     double* bottom) {
   if (!link_page || link_index < 0 || rect_index < 0)
-    return;
+    return false;
 
   CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
   std::vector<CFX_FloatRect> rectArray = pageLink->GetRects(link_index);
   if (rect_index >= pdfium::CollectionSize<int>(rectArray))
-    return;
+    return false;
 
   *left = rectArray[rect_index].left;
   *right = rectArray[rect_index].right;
   *top = rectArray[rect_index].top;
   *bottom = rectArray[rect_index].bottom;
+  return true;
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFLink_CloseWebLinks(FPDF_PAGELINK link_page) {

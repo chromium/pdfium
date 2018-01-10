@@ -422,16 +422,18 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountRects(FPDF_PAGELINK link_page,
 //          bottom      -   Pointer to a double value receiving the rectangle
 //                          bottom boundary.
 // Return Value:
-//          None.  If |link_index| does not correspond to a valid link, then
-//          |left|, |top|, |right|, and |bottom| remain unmodified.
+//          On success, return TRUE and fill in |left|, |top|, |right|, and
+//          |bottom|. If |link_index| does not correspond to a valid link, then
+//          return FALSE, and |left|, |top|, |right|, and |bottom| remain
+//          unmodified.
 //
-FPDF_EXPORT void FPDF_CALLCONV FPDFLink_GetRect(FPDF_PAGELINK link_page,
-                                                int link_index,
-                                                int rect_index,
-                                                double* left,
-                                                double* top,
-                                                double* right,
-                                                double* bottom);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetRect(FPDF_PAGELINK link_page,
+                                                     int link_index,
+                                                     int rect_index,
+                                                     double* left,
+                                                     double* top,
+                                                     double* right,
+                                                     double* bottom);
 
 // Function: FPDFLink_CloseWebLinks
 //          Release resources used by weblink feature.
