@@ -1322,7 +1322,7 @@ void CJX_Object::Script_Som_FontColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorder();
+  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   CXFA_Fill* borderfill = border->GetOrCreateFill();
   if (!borderfill)
     return;
@@ -1350,7 +1350,7 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {
-  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorder();
+  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   int32_t iSize = border->CountEdges();
   if (bSetting) {
     int32_t r = 0;
@@ -1377,7 +1377,7 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
                                         bool bSetting,
                                         XFA_Attribute eAttribute) {
-  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorder();
+  CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   if (bSetting) {
     CXFA_Measurement thickness = border->GetEdge(0)->GetMSThickness();
     pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());

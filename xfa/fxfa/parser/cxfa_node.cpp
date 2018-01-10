@@ -1534,7 +1534,7 @@ CXFA_Border* CXFA_Node::GetBorderIfExists() const {
   return JSObject()->GetProperty<CXFA_Border>(0, XFA_Element::Border);
 }
 
-CXFA_Border* CXFA_Node::GetOrCreateBorder() {
+CXFA_Border* CXFA_Node::GetOrCreateBorderIfPossible() {
   return JSObject()->GetOrCreateProperty<CXFA_Border>(0, XFA_Element::Border);
 }
 
