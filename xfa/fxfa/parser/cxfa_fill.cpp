@@ -62,6 +62,9 @@ bool CXFA_Fill::IsVisible() {
 void CXFA_Fill::SetColor(FX_ARGB color) {
   CXFA_Color* pNode =
       JSObject()->GetOrCreateProperty<CXFA_Color>(0, XFA_Element::Color);
+  if (!pNode)
+    return;
+
   int a;
   int r;
   int g;

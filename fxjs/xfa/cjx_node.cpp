@@ -165,6 +165,9 @@ CJS_Return CJX_Node::getElement(
 
   CXFA_Node* pNode = GetOrCreateProperty<CXFA_Node>(
       iValue, CXFA_Node::NameToElement(expression));
+  if (!pNode)
+    return CJS_Return(runtime->NewNull());
+
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode);
   if (!value)

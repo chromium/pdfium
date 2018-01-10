@@ -124,9 +124,12 @@ bool CXFA_Font::IsItalic() {
 }
 
 void CXFA_Font::SetColor(FX_ARGB color) {
-  JSObject()
-      ->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill)
-      ->SetColor(color);
+  CXFA_Fill* node =
+      JSObject()->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill);
+  if (!node)
+    return;
+
+  node->SetColor(color);
 }
 
 FX_ARGB CXFA_Font::GetColor() {

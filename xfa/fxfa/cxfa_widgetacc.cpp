@@ -258,7 +258,7 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
   CXFA_Node* pUIChild = nullptr;
   CXFA_Ui* pUI =
       pNode->JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
-  CXFA_Node* pChild = pUI->GetFirstChild();
+  CXFA_Node* pChild = pUI ? pUI->GetFirstChild() : nullptr;
   for (; pChild; pChild = pChild->GetNextSibling()) {
     XFA_Element eChildType = pChild->GetElementType();
     if (eChildType == XFA_Element::Extras ||
@@ -303,11 +303,14 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
   if (!pUIChild) {
     if (eUIType == XFA_Element::Unknown) {
       eUIType = XFA_Element::TextEdit;
-      defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
-                                                           XFA_Element::Text);
+      if (defValue) {
+        defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
+                                                             XFA_Element::Text);
+      }
     }
     return {eWidgetType,
-            pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)};
+            pUI ? pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)
+                : nullptr};
   }
 
   if (eUIType != XFA_Element::Unknown)
@@ -350,7 +353,8 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
       eValueType = XFA_Element::Text;
       break;
   }
-  defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
+  if (defValue)
+    defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
 
   return {eWidgetType, pUIChild};
 }
