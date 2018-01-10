@@ -189,18 +189,14 @@ FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST dest);
 // Get the view (fit type) specified by |dest|.
 // Experimental API. Subject to change.
 //
-//   document     - handle to the document.
 //   dest         - handle to the destination.
-//   outNumParams - buffer to write the number of view parameters.
-//   outParams -    buffer to write the view parameters. Must be at least 4
+//   pNumParams   - receives the number of view parameters, which is at most 4.
+//   pParams      - buffer to write the view parameters. Must be at least 4
 //                  FS_FLOATs long.
 // Returns one of the PDFDEST_VIEW_* constants, PDFDEST_VIEW_UNKNOWN_MODE if
 // |dest| does not specify a view.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFDest_GetView(FPDF_DOCUMENT document,
-                 FPDF_DEST dest,
-                 unsigned long* outNumParams,
-                 FS_FLOAT* outParams);
+FPDFDest_GetView(FPDF_DEST dest, unsigned long* pNumParams, FS_FLOAT* pParams);
 
 // Get the (x, y, zoom) location of |dest| in the destination page, if the
 // destination is in [page /XYZ x y zoom] syntax.

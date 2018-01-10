@@ -211,26 +211,20 @@ FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST pDict) {
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFDest_GetView(FPDF_DOCUMENT document,
-                 FPDF_DEST pDict,
-                 unsigned long* outNumParams,
-                 FS_FLOAT* outParams) {
+FPDFDest_GetView(FPDF_DEST pDict,
+                 unsigned long* pNumParams,
+                 FS_FLOAT* pParams) {
   if (!pDict) {
-    *outNumParams = 0;
-    return 0;
-  }
-
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc) {
-    *outNumParams = 0;
+    *pNumParams = 0;
     return 0;
   }
 
   CPDF_Dest dest(static_cast<CPDF_Array*>(pDict));
-
-  *outNumParams = dest.GetNumParams();
-  for (unsigned long i = 0; i < *outNumParams; ++i)
-    outParams[i] = dest.GetParam(i);
+  unsigned long nParams = dest.GetNumParams();
+  ASSERT(nParams <= 4);
+  *pNumParams = nParams;
+  for (unsigned long i = 0; i < nParams; ++i)
+    pParams[i] = dest.GetParam(i);
   return dest.GetZoomMode();
 }
 

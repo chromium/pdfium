@@ -51,7 +51,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetView) {
   numParams = 42;
   std::fill_n(params, 4, 42.4242f);
   EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_UNKNOWN_MODE),
-            FPDFDest_GetView(document(), nullptr, &numParams, params));
+            FPDFDest_GetView(nullptr, &numParams, params));
   EXPECT_EQ(0U, numParams);
   EXPECT_FLOAT_EQ(42.4242f, params[0]);
 
@@ -60,7 +60,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetView) {
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
   EXPECT_TRUE(dest);
   EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_XYZ),
-            FPDFDest_GetView(document(), dest, &numParams, params));
+            FPDFDest_GetView(dest, &numParams, params));
   EXPECT_EQ(3U, numParams);
   EXPECT_FLOAT_EQ(0, params[0]);
   EXPECT_FLOAT_EQ(0, params[1]);
@@ -72,7 +72,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetView) {
   dest = FPDF_GetNamedDestByName(document(), "Next");
   EXPECT_TRUE(dest);
   EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_FIT),
-            FPDFDest_GetView(document(), dest, &numParams, params));
+            FPDFDest_GetView(dest, &numParams, params));
   EXPECT_EQ(0U, numParams);
   EXPECT_FLOAT_EQ(42.4242f, params[0]);
 
@@ -81,7 +81,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetView) {
   dest = FPDF_GetNamedDestByName(document(), "FirstAlternate");
   EXPECT_TRUE(dest);
   EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_XYZ),
-            FPDFDest_GetView(document(), dest, &numParams, params));
+            FPDFDest_GetView(dest, &numParams, params));
   EXPECT_EQ(3U, numParams);
   EXPECT_FLOAT_EQ(200, params[0]);
   EXPECT_FLOAT_EQ(400, params[1]);
@@ -93,7 +93,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetView) {
   dest = FPDF_GetNamedDestByName(document(), "LastAlternate");
   EXPECT_TRUE(dest);
   EXPECT_EQ(static_cast<unsigned long>(PDFDEST_VIEW_XYZ),
-            FPDFDest_GetView(document(), dest, &numParams, params));
+            FPDFDest_GetView(dest, &numParams, params));
   EXPECT_EQ(3U, numParams);
   EXPECT_FLOAT_EQ(0, params[0]);
   EXPECT_FLOAT_EQ(0, params[1]);
