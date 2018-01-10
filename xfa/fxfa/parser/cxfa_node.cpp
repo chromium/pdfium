@@ -1060,7 +1060,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
   return pInstanceMgr;
 }
 
-CXFA_Occur* CXFA_Node::GetOccur() {
+CXFA_Occur* CXFA_Node::GetOccurIfExists() {
   return GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
 }
 

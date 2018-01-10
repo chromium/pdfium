@@ -13,6 +13,9 @@
 
 class CXFA_Occur : public CXFA_Node {
  public:
+  static constexpr int32_t kDefaultMax = 1;
+  static constexpr int32_t kDefaultMin = 1;
+
   CXFA_Occur(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Occur() override;
 

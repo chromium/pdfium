@@ -33,13 +33,14 @@ CJX_InstanceManager::CJX_InstanceManager(CXFA_InstanceManager* mgr)
 CJX_InstanceManager::~CJX_InstanceManager() {}
 
 int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
-  CXFA_Occur* occur = GetXFANode()->GetOccur();
-  if (iDesired < occur->GetMin()) {
+  CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
+  int32_t iMin = occur ? occur->GetMin() : CXFA_Occur::kDefaultMin;
+  if (iDesired < iMin) {
     ThrowTooManyOccurancesException(L"min");
     return 1;
   }
 
-  int32_t iMax = occur->GetMax();
+  int32_t iMax = occur ? occur->GetMax() : CXFA_Occur::kDefaultMax;
   if (iMax >= 0 && iDesired > iMax) {
     ThrowTooManyOccurancesException(L"max");
     return 2;
@@ -153,7 +154,8 @@ CJS_Return CJX_InstanceManager::removeInstance(
   if (iIndex < 0 || iIndex >= iCount)
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
-  int32_t iMin = GetXFANode()->GetOccur()->GetMin();
+  CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
+  int32_t iMin = occur ? occur->GetMin() : CXFA_Occur::kDefaultMin;
   if (iCount - 1 < iMin)
     return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
 
@@ -199,7 +201,8 @@ CJS_Return CJX_InstanceManager::addInstance(
     fFlags = runtime->ToBoolean(params[0]);
 
   int32_t iCount = GetXFANode()->GetCount();
-  int32_t iMax = GetXFANode()->GetOccur()->GetMax();
+  CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
+  int32_t iMax = occur ? occur->GetMax() : CXFA_Occur::kDefaultMax;
   if (iMax >= 0 && iCount >= iMax)
     return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
 
@@ -240,7 +243,8 @@ CJS_Return CJX_InstanceManager::insertInstance(
   if (iIndex < 0 || iIndex > iCount)
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
-  int32_t iMax = GetXFANode()->GetOccur()->GetMax();
+  CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
+  int32_t iMax = occur ? occur->GetMax() : CXFA_Occur::kDefaultMax;
   if (iMax >= 0 && iCount >= iMax)
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
@@ -272,7 +276,8 @@ void CJX_InstanceManager::max(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(GetXFANode()->GetOccur()->GetMax());
+  CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
+  pValue->SetInteger(occur ? occur->GetMax() : CXFA_Occur::kDefaultMax);
 }
 
 void CJX_InstanceManager::min(CFXJSE_Value* pValue,
@@ -282,7 +287,8 @@ void CJX_InstanceManager::min(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(GetXFANode()->GetOccur()->GetMin());
+  CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
+  pValue->SetInteger(occur ? occur->GetMin() : CXFA_Occur::kDefaultMin);
 }
 
 void CJX_InstanceManager::count(CFXJSE_Value* pValue,

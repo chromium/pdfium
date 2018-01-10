@@ -15,6 +15,9 @@ class CXFA_Value;
 
 class CXFA_Caption : public CXFA_Node {
  public:
+  static constexpr XFA_AttributeEnum kDefaultPlacementType =
+      XFA_AttributeEnum::Left;
+
   CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Caption() override;
 

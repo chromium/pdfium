@@ -224,7 +224,7 @@ class CXFA_Node : public CXFA_Object {
   int32_t GetNodeSameClassIndex() const;
   CXFA_Node* GetInstanceMgrOfSubform();
 
-  CXFA_Occur* GetOccur();
+  CXFA_Occur* GetOccurIfExists();
 
   Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
   Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;

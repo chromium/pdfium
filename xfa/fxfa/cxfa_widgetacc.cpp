@@ -551,8 +551,8 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
   size.height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
     CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
-    XFA_AttributeEnum placement =
-        caption ? caption->GetPlacementType() : XFA_AttributeEnum::Left;
+    XFA_AttributeEnum placement = caption ? caption->GetPlacementType()
+                                          : CXFA_Caption::kDefaultPlacementType;
     switch (placement) {
       case XFA_AttributeEnum::Left:
       case XFA_AttributeEnum::Right:
@@ -655,8 +655,8 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CXFA_FFDoc* doc,
     XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
     if (bCapExit) {
       CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
-      iCapPlacement =
-          caption ? caption->GetPlacementType() : XFA_AttributeEnum::Left;
+      iCapPlacement = caption ? caption->GetPlacementType()
+                              : CXFA_Caption::kDefaultPlacementType;
       switch (iCapPlacement) {
         case XFA_AttributeEnum::Left:
         case XFA_AttributeEnum::Right:
