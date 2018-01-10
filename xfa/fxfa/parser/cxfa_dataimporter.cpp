@@ -49,8 +49,7 @@ bool CXFA_DataImporter::ImportData(
     pDataModel->RemoveChild(pDataNode, true);
 
   if (pImportDataRoot->GetElementType() == XFA_Element::DataModel) {
-    while (CXFA_Node* pChildNode =
-               pImportDataRoot->GetNodeItem(XFA_NODEITEM_FirstChild)) {
+    while (CXFA_Node* pChildNode = pImportDataRoot->GetFirstChild()) {
       pImportDataRoot->RemoveChild(pChildNode, true);
       pDataModel->InsertChild(pChildNode, nullptr);
     }

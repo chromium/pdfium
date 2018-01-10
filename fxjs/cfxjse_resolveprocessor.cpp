@@ -233,8 +233,8 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
   std::vector<CXFA_Node*> properties;
   CXFA_Node* pVariablesNode = nullptr;
   CXFA_Node* pPageSetNode = nullptr;
-  for (CXFA_Node* pChild = curNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pChild = curNode->GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
     if (pChild->GetElementType() == XFA_Element::Variables) {
       pVariablesNode = pChild;
       continue;
@@ -378,7 +378,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
   }
 
   if (dwStyles & XFA_RESOLVENODE_Siblings) {
-    CXFA_Node* child = parentNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* child = parentNode->GetFirstChild();
     uint32_t dwSubStyles =
         XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties;
     if (dwStyles & XFA_RESOLVENODE_TagName)
@@ -402,7 +402,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
             }
           }
         }
-        child = child->GetNodeItem(XFA_NODEITEM_NextSibling);
+        child = child->GetNextSibling();
         continue;
       }
 
@@ -437,7 +437,7 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
                              rndFind.m_Objects.end());
         rndFind.m_Objects.clear();
       }
-      child = child->GetNodeItem(XFA_NODEITEM_NextSibling);
+      child = child->GetNextSibling();
     }
     if (rnd.m_Objects.size() > nNum) {
       if (m_pNodeHelper->NodeIsTransparent(parentNode)) {

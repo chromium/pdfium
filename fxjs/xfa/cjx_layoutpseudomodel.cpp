@@ -403,7 +403,7 @@ CJS_Return CJX_LayoutPseudoModel::relayout(
   CXFA_Node* pRootNode = GetDocument()->GetRoot();
   CXFA_Form* pFormRoot =
       pRootNode->GetFirstChildByClass<CXFA_Form>(XFA_Element::Form);
-  CXFA_Node* pContentRootNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pContentRootNode = pFormRoot->GetFirstChild();
   CXFA_LayoutProcessor* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
   if (pContentRootNode)
     pLayoutProcessor->AddChangedContainer(pContentRootNode);

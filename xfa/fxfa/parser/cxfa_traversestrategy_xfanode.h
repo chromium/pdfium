@@ -12,13 +12,13 @@
 class CXFA_TraverseStrategy_XFANode {
  public:
   static inline CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+    return pTemplateNode->GetFirstChild();
   }
   static inline CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+    return pTemplateNode->GetNextSibling();
   }
   static inline CXFA_Node* GetParent(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_Parent);
+    return pTemplateNode->GetParent();
   }
 };
 

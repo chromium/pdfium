@@ -729,7 +729,7 @@ void CXFA_FFDocView::RunBindItems() {
     if (item->HasRemovedChildren())
       continue;
 
-    CXFA_Node* pWidgetNode = item->GetNodeItem(XFA_NODEITEM_Parent);
+    CXFA_Node* pWidgetNode = item->GetParent();
     CXFA_WidgetAcc* pAcc = pWidgetNode->GetWidgetAcc();
     if (!pAcc)
       continue;

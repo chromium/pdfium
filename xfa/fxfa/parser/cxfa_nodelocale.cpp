@@ -136,13 +136,12 @@ WideString CXFA_NodeLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const {
 
 CXFA_Node* CXFA_NodeLocale::GetNodeByName(CXFA_Node* pParent,
                                           const WideStringView& wsName) const {
-  CXFA_Node* pChild =
-      pParent ? pParent->GetNodeItem(XFA_NODEITEM_FirstChild) : nullptr;
+  CXFA_Node* pChild = pParent ? pParent->GetFirstChild() : nullptr;
   while (pChild) {
     if (pChild->JSObject()->GetAttribute(XFA_Attribute::Name) == wsName)
       return pChild;
 
-    pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pChild = pChild->GetNextSibling();
   }
   return nullptr;
 }

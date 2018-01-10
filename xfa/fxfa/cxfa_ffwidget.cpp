@@ -1271,7 +1271,7 @@ bool CXFA_FFWidget::IsLayoutRectEmpty() {
   return rtLayout.width < 0.1f && rtLayout.height < 0.1f;
 }
 CXFA_FFWidget* CXFA_FFWidget::GetParent() {
-  CXFA_Node* pParentNode = m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParentNode = m_pNode->GetParent();
   if (pParentNode) {
     CXFA_WidgetAcc* pParentWidgetAcc =
         static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetAcc());
@@ -1293,7 +1293,7 @@ bool CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {
     if (pChildNode == m_pNode)
       return true;
 
-    pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_Parent);
+    pChildNode = pChildNode->GetParent();
   }
   return false;
 }

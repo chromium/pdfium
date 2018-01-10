@@ -159,7 +159,7 @@ void CJX_Tree::parent(CFXJSE_Value* pValue,
     return;
   }
 
-  CXFA_Node* pParent = ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParent = ToNode(GetXFAObject())->GetParent();
   if (!pParent) {
     pValue->SetNull();
     return;

@@ -57,37 +57,37 @@ CXFA_Value::CXFA_Value(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_Value::~CXFA_Value() {}
 
 XFA_Element CXFA_Value::GetChildValueClassID() const {
-  CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pNode = GetFirstChild();
   return pNode ? pNode->GetElementType() : XFA_Element::Unknown;
 }
 
 WideString CXFA_Value::GetChildValueContent() const {
-  CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pNode = GetFirstChild();
   if (!pNode)
     return L"";
   return pNode->JSObject()->TryContent(false, true).value_or(L"");
 }
 
 CXFA_Arc* CXFA_Value::GetArc() const {
-  return static_cast<CXFA_Arc*>(GetNodeItem(XFA_NODEITEM_FirstChild));
+  return static_cast<CXFA_Arc*>(GetFirstChild());
 }
 
 CXFA_Line* CXFA_Value::GetLine() const {
-  return static_cast<CXFA_Line*>(GetNodeItem(XFA_NODEITEM_FirstChild));
+  return static_cast<CXFA_Line*>(GetFirstChild());
 }
 
 CXFA_Rectangle* CXFA_Value::GetRectangle() const {
-  return static_cast<CXFA_Rectangle*>(GetNodeItem(XFA_NODEITEM_FirstChild));
+  return static_cast<CXFA_Rectangle*>(GetFirstChild());
 }
 
 CXFA_Text* CXFA_Value::GetText() const {
-  return static_cast<CXFA_Text*>(GetNodeItem(XFA_NODEITEM_FirstChild));
+  return static_cast<CXFA_Text*>(GetFirstChild());
 }
 
 CXFA_ExData* CXFA_Value::GetExData() const {
-  return static_cast<CXFA_ExData*>(GetNodeItem(XFA_NODEITEM_FirstChild));
+  return static_cast<CXFA_ExData*>(GetFirstChild());
 }
 
 CXFA_Image* CXFA_Value::GetImage() const {
-  return static_cast<CXFA_Image*>(GetNodeItem(XFA_NODEITEM_FirstChild));
+  return static_cast<CXFA_Image*>(GetFirstChild());
 }

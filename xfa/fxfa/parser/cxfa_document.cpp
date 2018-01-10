@@ -36,10 +36,8 @@ void MergeNodeRecurse(CXFA_Document* pDocument,
                       CXFA_Node* pDestNodeParent,
                       CXFA_Node* pProtoNode) {
   CXFA_Node* pExistingNode = nullptr;
-  for (CXFA_Node* pFormChild =
-           pDestNodeParent->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pFormChild;
-       pFormChild = pFormChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pFormChild = pDestNodeParent->GetFirstChild(); pFormChild;
+       pFormChild = pFormChild->GetNextSibling()) {
     if (pFormChild->GetElementType() == pProtoNode->GetElementType() &&
         pFormChild->GetNameHash() == pProtoNode->GetNameHash() &&
         pFormChild->IsUnusedNode()) {
@@ -51,10 +49,8 @@ void MergeNodeRecurse(CXFA_Document* pDocument,
 
   if (pExistingNode) {
     pExistingNode->SetTemplateNode(pProtoNode);
-    for (CXFA_Node* pTemplateChild =
-             pProtoNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-         pTemplateChild; pTemplateChild = pTemplateChild->GetNodeItem(
-                             XFA_NODEITEM_NextSibling)) {
+    for (CXFA_Node* pTemplateChild = pProtoNode->GetFirstChild();
+         pTemplateChild; pTemplateChild = pTemplateChild->GetNextSibling()) {
       MergeNodeRecurse(pDocument, pExistingNode, pTemplateChild);
     }
     return;
@@ -75,10 +71,8 @@ void MergeNode(CXFA_Document* pDocument,
     }
   }
   pDestNode->SetTemplateNode(pProtoNode);
-  for (CXFA_Node* pTemplateChild =
-           pProtoNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pTemplateChild;
-       pTemplateChild = pTemplateChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pTemplateChild = pProtoNode->GetFirstChild(); pTemplateChild;
+       pTemplateChild = pTemplateChild->GetNextSibling()) {
     MergeNodeRecurse(pDocument, pDestNode, pTemplateChild);
   }
   {

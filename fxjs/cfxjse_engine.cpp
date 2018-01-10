@@ -454,7 +454,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (pScriptNode->GetElementType() != XFA_Element::Script)
     return true;
 
-  CXFA_Node* pParent = pScriptNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParent = pScriptNode->GetParent();
   if (!pParent || pParent->GetElementType() != XFA_Element::Variables)
     return false;
 
@@ -462,7 +462,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (it != m_mapVariableToContext.end() && it->second)
     return true;
 
-  CXFA_Node* pTextNode = pScriptNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pTextNode = pScriptNode->GetFirstChild();
   if (!pTextNode)
     return false;
 
@@ -473,7 +473,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
 
   ByteString btScript = wsScript->UTF8Encode();
   auto hRetValue = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
-  CXFA_Node* pThisObject = pParent->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pThisObject = pParent->GetParent();
   CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
   AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
@@ -488,7 +488,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
   if (!pScriptNode || pScriptNode->GetElementType() != XFA_Element::Script)
     return false;
 
-  CXFA_Node* variablesNode = pScriptNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* variablesNode = pScriptNode->GetParent();
   if (!variablesNode ||
       variablesNode->GetElementType() != XFA_Element::Variables)
     return false;

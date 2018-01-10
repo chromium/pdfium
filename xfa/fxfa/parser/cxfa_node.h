@@ -182,7 +182,12 @@ class CXFA_Node : public CXFA_Object {
   bool RemoveChild(CXFA_Node* pNode, bool bNotify);
 
   CXFA_Node* Clone(bool bRecursive);
-  CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
+
+  CXFA_Node* GetNextSibling() const { return m_pNext; }
+  CXFA_Node* GetPrevSibling() const;
+  CXFA_Node* GetFirstChild() const { return m_pChild; }
+  CXFA_Node* GetParent() const { return m_pParent; }
+
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_ObjectType eType) const;
 
   std::vector<CXFA_Node*> GetNodeList(uint32_t dwTypeFilter,

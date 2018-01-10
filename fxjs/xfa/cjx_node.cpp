@@ -267,11 +267,11 @@ CJS_Return CJX_Node::loadXML(CJS_V8* runtime,
     return CJS_Return(true);
 
   if (bOverwrite) {
-    CXFA_Node* pChild = GetXFANode()->GetNodeItem(XFA_NODEITEM_FirstChild);
-    CXFA_Node* pNewChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pChild = GetXFANode()->GetFirstChild();
+    CXFA_Node* pNewChild = pFakeRoot->GetFirstChild();
     int32_t index = 0;
     while (pNewChild) {
-      CXFA_Node* pItem = pNewChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      CXFA_Node* pItem = pNewChild->GetNextSibling();
       pFakeRoot->RemoveChild(pNewChild, true);
       GetXFANode()->InsertChild(index++, pNewChild);
       pNewChild->SetFlag(XFA_NodeFlag_Initialized, true);
@@ -279,7 +279,7 @@ CJS_Return CJX_Node::loadXML(CJS_V8* runtime,
     }
 
     while (pChild) {
-      CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      CXFA_Node* pItem = pChild->GetNextSibling();
       GetXFANode()->RemoveChild(pChild, true);
       pFakeRoot->InsertChild(pChild, nullptr);
       pChild = pItem;
@@ -297,9 +297,9 @@ CJS_Return CJX_Node::loadXML(CJS_V8* runtime,
     }
     MoveBufferMapData(pFakeRoot, GetXFANode());
   } else {
-    CXFA_Node* pChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pChild = pFakeRoot->GetFirstChild();
     while (pChild) {
-      CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      CXFA_Node* pItem = pChild->GetNextSibling();
       pFakeRoot->RemoveChild(pChild, true);
       GetXFANode()->InsertChild(pChild, nullptr);
       pChild->SetFlag(XFA_NodeFlag_Initialized, true);
@@ -483,7 +483,7 @@ int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
       if (eType != XFA_Element::ExclGroup && eType != XFA_Element::Field)
         return XFA_EVENTERROR_NotExist;
 
-      CXFA_Node* pParentNode = GetXFANode()->GetNodeItem(XFA_NODEITEM_Parent);
+      CXFA_Node* pParentNode = GetXFANode()->GetParent();
       if (pParentNode &&
           pParentNode->GetElementType() == XFA_Element::ExclGroup) {
         // TODO(dsinclair): This seems like a bug, we do the same work twice?

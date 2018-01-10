@@ -60,8 +60,7 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
     CXFA_Node* pPrevSibling =
         iDesired == 0 ? GetXFANode() : GetXFANode()->GetItem(iDesired - 1);
     while (iCount > iDesired) {
-      CXFA_Node* pRemoveInstance =
-          pPrevSibling->GetNodeItem(XFA_NODEITEM_NextSibling);
+      CXFA_Node* pRemoveInstance = pPrevSibling->GetNextSibling();
       if (pRemoveInstance->GetElementType() != XFA_Element::Subform &&
           pRemoveInstance->GetElementType() != XFA_Element::SubformSet) {
         continue;

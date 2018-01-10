@@ -405,8 +405,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateDropdownList(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateListBox(CXFA_Node* pParent,
                                                CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateDropdownList(pParent, pBefore);
-  CXFA_Node* pUi = pField->GetNodeItem(XFA_NODEITEM_FirstChild);
-  CXFA_Node* pListBox = pUi->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pUi = pField->GetFirstChild();
+  CXFA_Node* pListBox = pUi->GetFirstChild();
   pListBox->JSObject()->SetEnum(XFA_Attribute::Open, XFA_AttributeEnum::Always,
                                 false);
   pListBox->JSObject()->SetEnum(XFA_Attribute::CommitOn,

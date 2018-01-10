@@ -152,9 +152,8 @@ void CJX_Object::className(CFXJSE_Value* pValue,
 
 int32_t CJX_Object::Subform_and_SubformSet_InstanceIndex() {
   int32_t index = 0;
-  for (CXFA_Node* pNode =
-           ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_PrevSibling);
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+  for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetPrevSibling(); pNode;
+       pNode = pNode->GetPrevSibling()) {
     if ((pNode->GetElementType() != XFA_Element::Subform) &&
         (pNode->GetElementType() != XFA_Element::SubformSet)) {
       break;
@@ -452,7 +451,8 @@ bool CJX_Object::SetCData(XFA_Attribute eAttr,
                           const WideString& wsValue,
                           bool bNotify,
                           bool bScriptModify) {
-  void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
+  CXFA_Node* xfaObj = ToNode(GetXFAObject());
+  void* pKey = GetMapKey_Element(xfaObj->GetElementType(), eAttr);
   OnChanging(eAttr, bNotify);
   if (eAttr == XFA_Attribute::Value) {
     WideString* pClone = new WideString(wsValue);
@@ -460,40 +460,35 @@ bool CJX_Object::SetCData(XFA_Attribute eAttr,
   } else {
     SetMapModuleString(pKey, wsValue.AsStringView());
     if (eAttr == XFA_Attribute::Name)
-      ToNode(GetXFAObject())->UpdateNameHash();
+      xfaObj->UpdateNameHash();
   }
   OnChanged(eAttr, bNotify, bScriptModify);
 
-  if (!ToNode(GetXFAObject())->IsNeedSavingXMLNode() ||
-      eAttr == XFA_Attribute::QualifiedName ||
+  if (!xfaObj->IsNeedSavingXMLNode() || eAttr == XFA_Attribute::QualifiedName ||
       eAttr == XFA_Attribute::BindingNode) {
     return true;
   }
 
   if (eAttr == XFA_Attribute::Name &&
-      (GetXFAObject()->GetElementType() == XFA_Element::DataValue ||
-       GetXFAObject()->GetElementType() == XFA_Element::DataGroup)) {
+      (xfaObj->GetElementType() == XFA_Element::DataValue ||
+       xfaObj->GetElementType() == XFA_Element::DataGroup)) {
     return true;
   }
 
-  auto* elem =
-      static_cast<CFX_XMLElement*>(ToNode(GetXFAObject())->GetXMLMappingNode());
+  auto* elem = static_cast<CFX_XMLElement*>(xfaObj->GetXMLMappingNode());
   if (eAttr == XFA_Attribute::Value) {
     FX_XMLNODETYPE eXMLType = elem->GetType();
     switch (eXMLType) {
       case FX_XMLNODE_Element:
-        if (ToNode(GetXFAObject())->IsAttributeInXML()) {
+        if (xfaObj->IsAttributeInXML()) {
           elem->SetString(WideString(GetCData(XFA_Attribute::QualifiedName)),
                           wsValue);
         } else {
           bool bDeleteChildren = true;
-          if (ToNode(GetXFAObject())->GetPacketType() ==
-              XFA_PacketType::Datasets) {
-            for (CXFA_Node* pChildDataNode =
-                     ToNode(GetXFAObject())
-                         ->GetNodeItem(XFA_NODEITEM_FirstChild);
-                 pChildDataNode; pChildDataNode = pChildDataNode->GetNodeItem(
-                                     XFA_NODEITEM_NextSibling)) {
+          if (xfaObj->GetPacketType() == XFA_PacketType::Datasets) {
+            for (CXFA_Node* pChildDataNode = xfaObj->GetFirstChild();
+                 pChildDataNode;
+                 pChildDataNode = pChildDataNode->GetNextSibling()) {
               if (!pChildDataNode->GetBindItems()->empty()) {
                 bDeleteChildren = false;
                 break;
@@ -507,7 +502,7 @@ bool CJX_Object::SetCData(XFA_Attribute eAttr,
         }
         break;
       case FX_XMLNODE_Text:
-        static_cast<CFX_XMLText*>(ToNode(GetXFAObject())->GetXMLMappingNode())
+        static_cast<CFX_XMLText*>(xfaObj->GetXMLMappingNode())
             ->SetText(wsValue);
         break;
       default:
@@ -529,31 +524,30 @@ void CJX_Object::SetAttributeValue(const WideString& wsValue,
                                    const WideString& wsXMLValue,
                                    bool bNotify,
                                    bool bScriptModify) {
+  auto* xfaObj = ToNode(GetXFAObject());
+
   void* pKey =
-      GetMapKey_Element(GetXFAObject()->GetElementType(), XFA_Attribute::Value);
+      GetMapKey_Element(xfaObj->GetElementType(), XFA_Attribute::Value);
   OnChanging(XFA_Attribute::Value, bNotify);
   WideString* pClone = new WideString(wsValue);
   SetUserData(pKey, pClone, &deleteWideStringCallBack);
   OnChanged(XFA_Attribute::Value, bNotify, bScriptModify);
-  if (!ToNode(GetXFAObject())->IsNeedSavingXMLNode())
+  if (!xfaObj->IsNeedSavingXMLNode())
     return;
 
-  auto* elem =
-      static_cast<CFX_XMLElement*>(ToNode(GetXFAObject())->GetXMLMappingNode());
+  auto* elem = static_cast<CFX_XMLElement*>(xfaObj->GetXMLMappingNode());
   FX_XMLNODETYPE eXMLType = elem->GetType();
   switch (eXMLType) {
     case FX_XMLNODE_Element:
-      if (ToNode(GetXFAObject())->IsAttributeInXML()) {
+      if (xfaObj->IsAttributeInXML()) {
         elem->SetString(WideString(GetCData(XFA_Attribute::QualifiedName)),
                         wsXMLValue);
       } else {
         bool bDeleteChildren = true;
-        if (ToNode(GetXFAObject())->GetPacketType() ==
-            XFA_PacketType::Datasets) {
-          for (CXFA_Node* pChildDataNode =
-                   ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_FirstChild);
-               pChildDataNode; pChildDataNode = pChildDataNode->GetNodeItem(
-                                   XFA_NODEITEM_NextSibling)) {
+        if (xfaObj->GetPacketType() == XFA_PacketType::Datasets) {
+          for (CXFA_Node* pChildDataNode = xfaObj->GetFirstChild();
+               pChildDataNode;
+               pChildDataNode = pChildDataNode->GetNextSibling()) {
             if (!pChildDataNode->GetBindItems()->empty()) {
               bDeleteChildren = false;
               break;
@@ -567,7 +561,7 @@ void CJX_Object::SetAttributeValue(const WideString& wsValue,
       }
       break;
     case FX_XMLNODE_Text:
-      static_cast<CFX_XMLText*>(ToNode(GetXFAObject())->GetXMLMappingNode())
+      static_cast<CFX_XMLText*>(xfaObj->GetXMLMappingNode())
           ->SetText(wsXMLValue);
       break;
     default:
@@ -633,7 +627,7 @@ bool CJX_Object::SetContent(const WideString& wsContent,
         if (!pValue)
           break;
 
-        CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+        CXFA_Node* pChildValue = pValue->GetFirstChild();
         ASSERT(pChildValue);
         pChildValue->JSObject()->SetCData(XFA_Attribute::ContentType,
                                           L"text/xml", false, false);
@@ -664,8 +658,7 @@ bool CJX_Object::SetContent(const WideString& wsContent,
             iSize = wsSaveTextArray.size();
           }
           if (iSize == 0) {
-            while (CXFA_Node* pChildNode =
-                       pBind->GetNodeItem(XFA_NODEITEM_FirstChild)) {
+            while (CXFA_Node* pChildNode = pBind->GetFirstChild()) {
               pBind->RemoveChild(pChildNode, true);
             }
           } else {
@@ -687,15 +680,12 @@ bool CJX_Object::SetContent(const WideString& wsContent,
             } else if (iDatas > iSize) {
               size_t iDelNodes = iDatas - iSize;
               while (iDelNodes-- > 0) {
-                pBind->RemoveChild(pBind->GetNodeItem(XFA_NODEITEM_FirstChild),
-                                   true);
+                pBind->RemoveChild(pBind->GetFirstChild(), true);
               }
             }
             int32_t i = 0;
-            for (CXFA_Node* pValueNode =
-                     pBind->GetNodeItem(XFA_NODEITEM_FirstChild);
-                 pValueNode; pValueNode = pValueNode->GetNodeItem(
-                                 XFA_NODEITEM_NextSibling)) {
+            for (CXFA_Node* pValueNode = pBind->GetFirstChild(); pValueNode;
+                 pValueNode = pValueNode->GetNextSibling()) {
               pValueNode->JSObject()->SetAttributeValue(
                   wsSaveTextArray[i], wsSaveTextArray[i], false, false);
               i++;
@@ -718,7 +708,7 @@ bool CJX_Object::SetContent(const WideString& wsContent,
         if (!pValue)
           break;
 
-        CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+        CXFA_Node* pChildValue = pValue->GetFirstChild();
         ASSERT(pChildValue);
         pChildValue->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                             bScriptModify, false);
@@ -751,8 +741,7 @@ bool CJX_Object::SetContent(const WideString& wsContent,
         }
       }
 
-      CXFA_Node* pContentRawDataNode =
-          ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_FirstChild);
+      CXFA_Node* pContentRawDataNode = ToNode(GetXFAObject())->GetFirstChild();
       if (!pContentRawDataNode) {
         pContentRawDataNode =
             ToNode(GetXFAObject())
@@ -772,13 +761,12 @@ bool CJX_Object::SetContent(const WideString& wsContent,
       pNode = ToNode(GetXFAObject());
       if (bSyncData &&
           ToNode(GetXFAObject())->GetPacketType() == XFA_PacketType::Form) {
-        CXFA_Node* pParent =
-            ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_Parent);
+        CXFA_Node* pParent = ToNode(GetXFAObject())->GetParent();
         if (pParent) {
-          pParent = pParent->GetNodeItem(XFA_NODEITEM_Parent);
+          pParent = pParent->GetParent();
         }
         if (pParent && pParent->GetElementType() == XFA_Element::Value) {
-          pParent = pParent->GetNodeItem(XFA_NODEITEM_Parent);
+          pParent = pParent->GetParent();
           if (pParent && pParent->IsContainerNode()) {
             pBindNode = pParent->GetBindData();
             if (pBindNode) {
@@ -826,7 +814,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
         if (!pValue)
           return {};
 
-        CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+        CXFA_Node* pChildValue = pValue->GetFirstChild();
         if (pChildValue && XFA_FieldIsMultiListBox(ToNode(GetXFAObject()))) {
           pChildValue->JSObject()->SetAttribute(XFA_Attribute::ContentType,
                                                 L"text/xml", false);
@@ -837,8 +825,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
       }
       break;
     case XFA_ObjectType::ContentNode: {
-      CXFA_Node* pContentRawDataNode =
-          ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_FirstChild);
+      CXFA_Node* pContentRawDataNode = ToNode(GetXFAObject())->GetFirstChild();
       if (!pContentRawDataNode) {
         XFA_Element element = XFA_Element::Sharptext;
         if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::ExData) {
@@ -917,7 +904,7 @@ std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(
 
   int32_t iCount = 0;
   for (CXFA_Node* pNode = xfaNode->GetChildNode(); pNode;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+       pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() == eProperty) {
       iCount++;
       if (iCount > index)
@@ -941,7 +928,7 @@ CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
 
   if (xfaNode->HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
     for (CXFA_Node* pNode = xfaNode->GetChildNode(); pNode;
-         pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+         pNode = pNode->GetNextSibling()) {
       if (xfaNode->HasPropertyFlags(pNode->GetElementType(),
                                     XFA_PROPERTYFLAG_OneOf)) {
         return nullptr;
@@ -1185,15 +1172,13 @@ void CJX_Object::MoveBufferMapData(CXFA_Object* pSrcModule,
   if (!pSrcModule || !pDstModule)
     return;
 
-  CXFA_Node* pSrcChild =
-      ToNode(pSrcModule)->GetNodeItem(XFA_NODEITEM_FirstChild);
-  CXFA_Node* pDstChild =
-      ToNode(pDstModule)->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pSrcChild = ToNode(pSrcModule)->GetFirstChild();
+  CXFA_Node* pDstChild = ToNode(pDstModule)->GetFirstChild();
   while (pSrcChild && pDstChild) {
     MoveBufferMapData(pSrcChild, pDstChild);
 
-    pSrcChild = pSrcChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-    pDstChild = pDstChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pSrcChild = pSrcChild->GetNextSibling();
+    pDstChild = pDstChild->GetNextSibling();
   }
   ToNode(pSrcModule)->JSObject()->MoveBufferMapData(pDstModule);
 }
@@ -1270,18 +1255,17 @@ void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
   if (!pProtoNode)
     return;
 
-  CXFA_Node* pHeadChild =
-      ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pHeadChild = ToNode(GetXFAObject())->GetFirstChild();
   while (pHeadChild) {
-    CXFA_Node* pSibling = pHeadChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    CXFA_Node* pSibling = pHeadChild->GetNextSibling();
     ToNode(GetXFAObject())->RemoveChild(pHeadChild, true);
     pHeadChild = pSibling;
   }
 
   std::unique_ptr<CXFA_Node> pProtoForm(pProtoNode->CloneTemplateToForm(true));
-  pHeadChild = pProtoForm->GetNodeItem(XFA_NODEITEM_FirstChild);
+  pHeadChild = pProtoForm->GetFirstChild();
   while (pHeadChild) {
-    CXFA_Node* pSibling = pHeadChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    CXFA_Node* pSibling = pHeadChild->GetNextSibling();
     pProtoForm->RemoveChild(pHeadChild, true);
     ToNode(GetXFAObject())->InsertChild(pHeadChild, nullptr);
     pHeadChild = pSibling;
@@ -1619,9 +1603,8 @@ void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
   int32_t iTo = pValue->ToInteger();
   int32_t iFrom = Subform_and_SubformSet_InstanceIndex();
   CXFA_Node* pManagerNode = nullptr;
-  for (CXFA_Node* pNode =
-           ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_PrevSibling);
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+  for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetPrevSibling(); pNode;
+       pNode = pNode->GetPrevSibling()) {
     if (pNode->GetElementType() == XFA_Element::InstanceManager) {
       pManagerNode = pNode;
       break;
@@ -1658,9 +1641,8 @@ void CJX_Object::Script_Subform_InstanceManager(CFXJSE_Value* pValue,
 
   WideString wsName = GetCData(XFA_Attribute::Name);
   CXFA_Node* pInstanceMgr = nullptr;
-  for (CXFA_Node* pNode =
-           ToNode(GetXFAObject())->GetNodeItem(XFA_NODEITEM_PrevSibling);
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+  for (CXFA_Node* pNode = ToNode(GetXFAObject())->GetPrevSibling(); pNode;
+       pNode = pNode->GetPrevSibling()) {
     if (pNode->GetElementType() == XFA_Element::InstanceManager) {
       WideString wsInstMgrName =
           pNode->JSObject()->GetCData(XFA_Attribute::Name);

@@ -22,7 +22,7 @@ size_t CXFA_AttachNodeList::GetLength() {
 }
 
 bool CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
-  CXFA_Node* pParent = pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParent = pNode->GetParent();
   if (pParent)
     pParent->RemoveChild(pNode, true);
 
@@ -30,7 +30,7 @@ bool CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
 }
 
 bool CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
-  CXFA_Node* pParent = pNewNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParent = pNewNode->GetParent();
   if (pParent)
     pParent->RemoveChild(pNewNode, true);
 

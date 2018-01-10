@@ -1130,10 +1130,10 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, WideString wsDeflcid)
     : m_dwLocaleFlags(0x00) {
   m_dwDeflcid = XFA_GetLanguage(wsDeflcid);
   if (pLocaleSet) {
-    CXFA_Node* pNodeLocale = pLocaleSet->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pNodeLocale = pLocaleSet->GetFirstChild();
     while (pNodeLocale) {
       m_LocaleArray.push_back(pdfium::MakeUnique<CXFA_NodeLocale>(pNodeLocale));
-      pNodeLocale = pNodeLocale->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pNodeLocale = pNodeLocale->GetNextSibling();
     }
   }
   m_pDefLocale = GetLocaleByName(wsDeflcid);

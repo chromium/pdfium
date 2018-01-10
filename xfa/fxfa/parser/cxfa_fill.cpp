@@ -85,13 +85,13 @@ FX_ARGB CXFA_Fill::GetColor(bool bText) {
 }
 
 XFA_Element CXFA_Fill::GetFillType() const {
-  CXFA_Node* pChild = GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pChild = GetFirstChild();
   while (pChild) {
     XFA_Element eType = pChild->GetElementType();
     if (eType != XFA_Element::Color && eType != XFA_Element::Extras)
       return eType;
 
-    pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pChild = pChild->GetNextSibling();
   }
   return XFA_Element::Solid;
 }

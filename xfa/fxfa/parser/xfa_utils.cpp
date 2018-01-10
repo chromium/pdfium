@@ -115,11 +115,11 @@ bool AttributeSaveInDataModel(CXFA_Node* pNode, XFA_Attribute eAttribute) {
   if (pNode->GetElementType() != XFA_Element::Image)
     return bSaveInDataModel;
 
-  CXFA_Node* pValueNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pValueNode = pNode->GetParent();
   if (!pValueNode || pValueNode->GetElementType() != XFA_Element::Value)
     return bSaveInDataModel;
 
-  CXFA_Node* pFieldNode = pValueNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pFieldNode = pValueNode->GetParent();
   if (pFieldNode && pFieldNode->GetBindData() &&
       eAttribute == XFA_Attribute::Href) {
     bSaveInDataModel = true;
@@ -134,11 +134,11 @@ bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
     return false;
 
   ASSERT(pContentNode->IsContentNode());
-  CXFA_Node* pParentNode = pContentNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParentNode = pContentNode->GetParent();
   if (!pParentNode || pParentNode->GetElementType() != XFA_Element::Value)
     return true;
 
-  CXFA_Node* pGrandParentNode = pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pGrandParentNode = pParentNode->GetParent();
   if (!pGrandParentNode || !pGrandParentNode->IsContainerNode())
     return true;
   if (pGrandParentNode->GetBindData())
@@ -194,12 +194,12 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
       if (!bSaveXML && !ContentNodeNeedtoExport(pNode))
         break;
 
-      CXFA_Node* pRawValueNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+      CXFA_Node* pRawValueNode = pNode->GetFirstChild();
       while (pRawValueNode &&
              pRawValueNode->GetElementType() != XFA_Element::SharpxHTML &&
              pRawValueNode->GetElementType() != XFA_Element::Sharptext &&
              pRawValueNode->GetElementType() != XFA_Element::Sharpxml) {
-        pRawValueNode = pRawValueNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+        pRawValueNode = pRawValueNode->GetNextSibling();
       }
       if (!pRawValueNode)
         break;
@@ -245,10 +245,9 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
           iEnd = rawValue->Find(L'\n', iStart);
         }
 
-        CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
+        CXFA_Node* pParentNode = pNode->GetParent();
         ASSERT(pParentNode);
-        CXFA_Node* pGrandparentNode =
-            pParentNode->GetNodeItem(XFA_NODEITEM_Parent);
+        CXFA_Node* pGrandparentNode = pParentNode->GetParent();
         ASSERT(pGrandparentNode);
         WideString bodyTagName;
         bodyTagName =
@@ -294,23 +293,23 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         }
       }
       CFX_WideTextBuf newBuf;
-      CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+      CXFA_Node* pChildNode = pNode->GetFirstChild();
       while (pChildNode) {
         RegenerateFormFile_Changed(pChildNode, newBuf, bSaveXML);
         wsChildren += newBuf.AsStringView();
         newBuf.Clear();
-        pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+        pChildNode = pChildNode->GetNextSibling();
       }
       if (!bSaveXML && !wsChildren.IsEmpty() &&
           pNode->GetElementType() == XFA_Element::Items) {
         wsChildren.clear();
         bSaveXML = true;
-        CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+        CXFA_Node* pChild = pNode->GetFirstChild();
         while (pChild) {
           RegenerateFormFile_Changed(pChild, newBuf, bSaveXML);
           wsChildren += newBuf.AsStringView();
           newBuf.Clear();
-          pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+          pChild = pChild->GetNextSibling();
         }
       }
       break;
@@ -375,12 +374,12 @@ void RegenerateFormFile_Container(
   if (!wsOutput.IsEmpty())
     pStream->WriteString(wsOutput.AsStringView());
 
-  CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pChildNode = pNode->GetFirstChild();
   if (pChildNode) {
     pStream->WriteString(L"\n>");
     while (pChildNode) {
       RegenerateFormFile_Container(pChildNode, pStream, bSaveXML);
-      pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pChildNode = pChildNode->GetNextSibling();
     }
     pStream->WriteString(L"</");
     pStream->WriteString(wsElement);
@@ -422,7 +421,7 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode) {
   if (!pNodeValue)
     return CXFA_LocaleValue();
 
-  CXFA_Node* pValueChild = pNodeValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pValueChild = pNodeValue->GetFirstChild();
   if (!pValueChild)
     return CXFA_LocaleValue();
 
@@ -495,9 +494,8 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
     return;
 
   int32_t iChildNum = 0;
-  for (CXFA_Node* pChildNode = pDataNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pChildNode;
-       pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pChildNode = pDataNode->GetFirstChild(); pChildNode;
+       pChildNode = pChildNode->GetNextSibling()) {
     iChildNum++;
     XFA_DataExporter_DealWithDataGroupNode(pChildNode);
   }
@@ -545,10 +543,10 @@ void XFA_DataExporter_RegenerateFormFile(
     wsVersionNumber += L"/\"\n>";
     pStream->WriteString(wsVersionNumber.AsStringView());
 
-    CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pChildNode = pNode->GetFirstChild();
     while (pChildNode) {
       RegenerateFormFile_Container(pChildNode, pStream, false);
-      pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pChildNode = pChildNode->GetNextSibling();
     }
     pStream->WriteString(L"</form\n>");
   } else {
@@ -564,7 +562,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
   if (!pUIChild)
     return false;
 
-  CXFA_Node* pFirstChild = pUIChild->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pFirstChild = pUIChild->GetFirstChild();
   if (!pFirstChild ||
       pFirstChild->GetElementType() != XFA_Element::ChoiceList) {
     return false;

@@ -181,7 +181,7 @@ CXFA_Node* CXFA_NodeHelper::ResolveNodes_GetParent(CXFA_Node* pNode,
     return nullptr;
   }
   if (eLogicType == XFA_LOGIC_NoTransparent) {
-    return pNode->GetNodeItem(XFA_NODEITEM_Parent);
+    return pNode->GetParent();
   }
   CXFA_Node* parent;
   CXFA_Node* node = pNode;

@@ -79,9 +79,8 @@ WideString CXFA_Validate::GetMessageText(const WideString& wsMessageType) {
   if (!pNode)
     return L"";
 
-  for (CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pItemNode;
-       pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pItemNode = pNode->GetFirstChild(); pItemNode;
+       pItemNode = pItemNode->GetNextSibling()) {
     if (pItemNode->GetElementType() != XFA_Element::Text)
       continue;
 
@@ -123,9 +122,8 @@ void CXFA_Validate::SetMessageText(const WideString& wsMessageType,
   if (!pNode)
     return;
 
-  for (CXFA_Node* pItemNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pItemNode;
-       pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pItemNode = pNode->GetFirstChild(); pItemNode;
+       pItemNode = pItemNode->GetNextSibling()) {
     if (pItemNode->GetElementType() != XFA_Element::Text)
       continue;
 

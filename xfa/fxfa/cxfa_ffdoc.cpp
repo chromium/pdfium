@@ -214,15 +214,14 @@ bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,
   return true;
 }
 void XFA_XPDPacket_MergeRootNode(CXFA_Node* pOriginRoot, CXFA_Node* pNewRoot) {
-  CXFA_Node* pChildNode = pNewRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pChildNode = pNewRoot->GetFirstChild();
   while (pChildNode) {
     CXFA_Node* pOriginChild =
         pOriginRoot->GetFirstChildByName(pChildNode->GetNameHash());
     if (pOriginChild) {
-      pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pChildNode = pChildNode->GetNextSibling();
     } else {
-      CXFA_Node* pNextSibling =
-          pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+      CXFA_Node* pNextSibling = pChildNode->GetNextSibling();
       pNewRoot->RemoveChild(pChildNode, true);
       pOriginRoot->InsertChild(pChildNode, nullptr);
       pChildNode = pNextSibling;

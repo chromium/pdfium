@@ -258,8 +258,8 @@ std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
   CXFA_Node* pUIChild = nullptr;
   CXFA_Ui* pUI =
       pNode->JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
-  CXFA_Node* pChild = pUI->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  CXFA_Node* pChild = pUI->GetFirstChild();
+  for (; pChild; pChild = pChild->GetNextSibling()) {
     XFA_Element eChildType = pChild->GetElementType();
     if (eChildType == XFA_Element::Extras ||
         eChildType == XFA_Element::Picture) {
@@ -454,7 +454,7 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
   }
   pBind->JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false,
                               false);
-  CXFA_Node* pHrefNode = pBind->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pHrefNode = pBind->GetFirstChild();
   if (pHrefNode) {
     pHrefNode->JSObject()->SetCData(XFA_Attribute::Value, wsHref, false, false);
   } else {
@@ -1069,7 +1069,7 @@ bool CXFA_WidgetAcc::FindSplitPos(CXFA_FFDocView* docView,
   XFA_VERSION version = docView->GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bCanSplitNoContent = false;
   XFA_AttributeEnum eLayoutMode = GetNode()
-                                      ->GetNodeItem(XFA_NODEITEM_Parent)
+                                      ->GetParent()
                                       ->JSObject()
                                       ->TryEnum(XFA_Attribute::Layout, true)
                                       .value_or(XFA_AttributeEnum::Position);
@@ -1397,8 +1397,8 @@ bool CXFA_WidgetAcc::HasButtonRollover() const {
   if (!pItems)
     return false;
 
-  for (CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild); pText;
-       pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pText = pItems->GetFirstChild(); pText;
+       pText = pText->GetNextSibling()) {
     if (pText->JSObject()->GetCData(XFA_Attribute::Name) == L"rollover")
       return !pText->JSObject()->GetContent(false).IsEmpty();
   }
@@ -1411,8 +1411,8 @@ bool CXFA_WidgetAcc::HasButtonDown() const {
   if (!pItems)
     return false;
 
-  for (CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild); pText;
-       pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pText = pItems->GetFirstChild(); pText;
+       pText = pText->GetNextSibling()) {
     if (pText->JSObject()->GetCData(XFA_Attribute::Name) == L"down")
       return !pText->JSObject()->GetContent(false).IsEmpty();
   }
@@ -1435,7 +1435,7 @@ XFA_AttributeEnum CXFA_WidgetAcc::GetCheckButtonMark() {
 }
 
 bool CXFA_WidgetAcc::IsRadioButton() {
-  CXFA_Node* pParent = m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pParent = m_pNode->GetParent();
   return pParent && pParent->GetElementType() == XFA_Element::ExclGroup;
 }
 
@@ -1464,7 +1464,7 @@ XFA_CHECKSTATE CXFA_WidgetAcc::GetCheckState() {
   if (!pItems)
     return XFA_CHECKSTATE_Off;
 
-  CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pText = pItems->GetFirstChild();
   int32_t i = 0;
   while (pText) {
     Optional<WideString> wsContent = pText->JSObject()->TryContent(false, true);
@@ -1472,7 +1472,7 @@ XFA_CHECKSTATE CXFA_WidgetAcc::GetCheckState() {
       return static_cast<XFA_CHECKSTATE>(i);
 
     i++;
-    pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pText = pText->GetNextSibling();
   }
   return XFA_CHECKSTATE_Off;
 }
@@ -1486,7 +1486,7 @@ void CXFA_WidgetAcc::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       return;
 
     int32_t i = -1;
-    CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pText = pItems->GetFirstChild();
     WideString wsContent;
     while (pText) {
       i++;
@@ -1494,7 +1494,7 @@ void CXFA_WidgetAcc::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
         wsContent = pText->JSObject()->GetContent(false);
         break;
       }
-      pText = pText->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pText = pText->GetNextSibling();
     }
     if (m_pNode)
       m_pNode->SyncValue(wsContent, bNotify);
@@ -1505,13 +1505,13 @@ void CXFA_WidgetAcc::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
   if (eCheckState != XFA_CHECKSTATE_Off) {
     if (CXFA_Items* pItems =
             m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
-      CXFA_Node* pText = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
+      CXFA_Node* pText = pItems->GetFirstChild();
       if (pText)
         wsValue = pText->JSObject()->GetContent(false);
     }
   }
-  CXFA_Node* pChild = node->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  CXFA_Node* pChild = node->GetFirstChild();
+  for (; pChild; pChild = pChild->GetNextSibling()) {
     if (pChild->GetElementType() != XFA_Element::Field)
       continue;
 
@@ -1520,14 +1520,14 @@ void CXFA_WidgetAcc::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
     if (!pItem)
       continue;
 
-    CXFA_Node* pItemchild = pItem->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pItemchild = pItem->GetFirstChild();
     if (!pItemchild)
       continue;
 
     WideString text = pItemchild->JSObject()->GetContent(false);
     WideString wsChildValue = text;
     if (wsValue != text) {
-      pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pItemchild = pItemchild->GetNextSibling();
       if (pItemchild)
         wsChildValue = pItemchild->JSObject()->GetContent(false);
       else
@@ -1544,8 +1544,8 @@ CXFA_Node* CXFA_WidgetAcc::GetSelectedMember() {
   if (wsState.IsEmpty())
     return pSelectedMember;
 
-  for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = ToNode(m_pNode->GetFirstChild()); pNode;
+       pNode = pNode->GetNextSibling()) {
     CXFA_WidgetAcc widgetData(pNode);
     if (widgetData.GetCheckState() == XFA_CHECKSTATE_On) {
       pSelectedMember = pNode;
@@ -1558,8 +1558,8 @@ CXFA_Node* CXFA_WidgetAcc::GetSelectedMember() {
 CXFA_Node* CXFA_WidgetAcc::SetSelectedMember(const WideStringView& wsName,
                                              bool bNotify) {
   uint32_t nameHash = FX_HashCode_GetW(wsName, false);
-  for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
-       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = ToNode(m_pNode->GetFirstChild()); pNode;
+       pNode = pNode->GetNextSibling()) {
     if (pNode->GetNameHash() == nameHash) {
       CXFA_WidgetAcc widgetData(pNode);
       widgetData.SetCheckState(XFA_CHECKSTATE_On, bNotify);
@@ -1574,8 +1574,8 @@ void CXFA_WidgetAcc::SetSelectedMemberByValue(const WideStringView& wsValue,
                                               bool bScriptModify,
                                               bool bSyncData) {
   WideString wsExclGroup;
-  for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = m_pNode->GetFirstChild(); pNode;
+       pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() != XFA_Element::Field)
       continue;
 
@@ -1584,13 +1584,13 @@ void CXFA_WidgetAcc::SetSelectedMemberByValue(const WideStringView& wsValue,
     if (!pItem)
       continue;
 
-    CXFA_Node* pItemchild = pItem->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pItemchild = pItem->GetFirstChild();
     if (!pItemchild)
       continue;
 
     WideString wsChildValue = pItemchild->JSObject()->GetContent(false);
     if (wsValue != wsChildValue) {
-      pItemchild = pItemchild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pItemchild = pItemchild->GetNextSibling();
       if (pItemchild)
         wsChildValue = pItemchild->JSObject()->GetContent(false);
       else
@@ -1612,12 +1612,12 @@ CXFA_Node* CXFA_WidgetAcc::GetExclGroupFirstMember() {
   if (!pExcl)
     return nullptr;
 
-  CXFA_Node* pNode = pExcl->GetNodeItem(XFA_NODEITEM_FirstChild);
+  CXFA_Node* pNode = pExcl->GetFirstChild();
   while (pNode) {
     if (pNode->GetElementType() == XFA_Element::Field)
       return pNode;
 
-    pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pNode = pNode->GetNextSibling();
   }
   return nullptr;
 }
@@ -1625,12 +1625,12 @@ CXFA_Node* CXFA_WidgetAcc::GetExclGroupNextMember(CXFA_Node* pNode) {
   if (!pNode)
     return nullptr;
 
-  CXFA_Node* pNodeField = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+  CXFA_Node* pNodeField = pNode->GetNextSibling();
   while (pNodeField) {
     if (pNodeField->GetElementType() == XFA_Element::Field)
       return pNodeField;
 
-    pNodeField = pNodeField->GetNodeItem(XFA_NODEITEM_NextSibling);
+    pNodeField = pNodeField->GetNextSibling();
   }
   return nullptr;
 }
@@ -1671,8 +1671,8 @@ bool CXFA_WidgetAcc::IsListBox() {
 int32_t CXFA_WidgetAcc::CountChoiceListItems(bool bSaveValue) {
   std::vector<CXFA_Node*> pItems;
   int32_t iCount = 0;
-  for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = m_pNode->GetFirstChild(); pNode;
+       pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() != XFA_Element::Items)
       continue;
     iCount++;
@@ -1699,8 +1699,8 @@ Optional<WideString> CXFA_WidgetAcc::GetChoiceListItem(int32_t nIndex,
                                                        bool bSaveValue) {
   std::vector<CXFA_Node*> pItemsArray;
   int32_t iCount = 0;
-  for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = m_pNode->GetFirstChild(); pNode;
+       pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() != XFA_Element::Items)
       continue;
 
@@ -1733,9 +1733,8 @@ Optional<WideString> CXFA_WidgetAcc::GetChoiceListItem(int32_t nIndex,
 
 std::vector<WideString> CXFA_WidgetAcc::GetChoiceListItems(bool bSaveValue) {
   std::vector<CXFA_Node*> items;
-  for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pNode && items.size() < 2;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = m_pNode->GetFirstChild(); pNode && items.size() < 2;
+       pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() == XFA_Element::Items)
       items.push_back(pNode);
   }
@@ -1753,8 +1752,8 @@ std::vector<WideString> CXFA_WidgetAcc::GetChoiceListItems(bool bSaveValue) {
   }
 
   std::vector<WideString> wsTextArray;
-  for (CXFA_Node* pNode = pItem->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = pItem->GetFirstChild(); pNode;
+       pNode = pNode->GetNextSibling()) {
     wsTextArray.emplace_back(pNode->JSObject()->GetContent(false));
   }
   return wsTextArray;
@@ -1908,7 +1907,7 @@ void CXFA_WidgetAcc::ClearAllSelections() {
     return;
   }
 
-  while (CXFA_Node* pChildNode = pBind->GetNodeItem(XFA_NODEITEM_FirstChild))
+  while (CXFA_Node* pChildNode = pBind->GetFirstChild())
     pBind->RemoveChild(pChildNode, true);
 }
 
@@ -1921,8 +1920,8 @@ void CXFA_WidgetAcc::InsertItem(const WideString& wsLabel,
     wsNewValue = wsLabel;
 
   std::vector<CXFA_Node*> listitems;
-  for (CXFA_Node* pItem = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pItem;
-       pItem = pItem->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pItem = m_pNode->GetFirstChild(); pItem;
+       pItem = pItem->GetNextSibling()) {
     if (pItem->GetElementType() == XFA_Element::Items)
       listitems.push_back(pItem);
   }
@@ -1953,14 +1952,14 @@ void CXFA_WidgetAcc::InsertItem(const WideString& wsLabel,
     pSaveItems->JSObject()->SetBoolean(XFA_Attribute::Save, true, false);
     pSaveItems->JSObject()->SetEnum(XFA_Attribute::Presence,
                                     XFA_AttributeEnum::Hidden, false);
-    CXFA_Node* pListNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pListNode = pNode->GetFirstChild();
     int32_t i = 0;
     while (pListNode) {
       InsertListTextItem(pSaveItems, pListNode->JSObject()->GetContent(false),
                          i);
       ++i;
 
-      pListNode = pListNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pListNode = pListNode->GetNextSibling();
     }
     InsertListTextItem(pNode, wsLabel, nIndex);
     InsertListTextItem(pSaveItems, wsNewValue, nIndex);
@@ -1976,8 +1975,8 @@ void CXFA_WidgetAcc::GetItemLabel(const WideStringView& wsValue,
                                   WideString& wsLabel) {
   int32_t iCount = 0;
   std::vector<CXFA_Node*> listitems;
-  CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  CXFA_Node* pItems = m_pNode->GetFirstChild();
+  for (; pItems; pItems = pItems->GetNextSibling()) {
     if (pItems->GetElementType() != XFA_Element::Items)
       continue;
     iCount++;
@@ -2001,9 +2000,8 @@ void CXFA_WidgetAcc::GetItemLabel(const WideStringView& wsValue,
   iCount = 0;
 
   int32_t iSearch = -1;
-  for (CXFA_Node* pChildItem = pSaveItems->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pChildItem;
-       pChildItem = pChildItem->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pChildItem = pSaveItems->GetFirstChild(); pChildItem;
+       pChildItem = pChildItem->GetNextSibling()) {
     if (pChildItem->JSObject()->GetContent(false) == wsValue) {
       iSearch = iCount;
       break;
@@ -2022,8 +2020,8 @@ void CXFA_WidgetAcc::GetItemLabel(const WideStringView& wsValue,
 WideString CXFA_WidgetAcc::GetItemValue(const WideStringView& wsLabel) {
   int32_t iCount = 0;
   std::vector<CXFA_Node*> listitems;
-  for (CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pItems = m_pNode->GetFirstChild(); pItems;
+       pItems = pItems->GetNextSibling()) {
     if (pItems->GetElementType() != XFA_Element::Items)
       continue;
     iCount++;
@@ -2045,9 +2043,8 @@ WideString CXFA_WidgetAcc::GetItemValue(const WideStringView& wsLabel) {
 
   int32_t iSearch = -1;
   WideString wsContent;
-  CXFA_Node* pChildItem = pLabelItems->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pChildItem;
-       pChildItem = pChildItem->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  CXFA_Node* pChildItem = pLabelItems->GetFirstChild();
+  for (; pChildItem; pChildItem = pChildItem->GetNextSibling()) {
     if (pChildItem->JSObject()->GetContent(false) == wsLabel) {
       iSearch = iCount;
       break;
@@ -2066,13 +2063,13 @@ bool CXFA_WidgetAcc::DeleteItem(int32_t nIndex,
                                 bool bNotify,
                                 bool bScriptModify) {
   bool bSetValue = false;
-  CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  CXFA_Node* pItems = m_pNode->GetFirstChild();
+  for (; pItems; pItems = pItems->GetNextSibling()) {
     if (pItems->GetElementType() != XFA_Element::Items)
       continue;
 
     if (nIndex < 0) {
-      while (CXFA_Node* pNode = pItems->GetNodeItem(XFA_NODEITEM_FirstChild)) {
+      while (CXFA_Node* pNode = pItems->GetFirstChild()) {
         pItems->RemoveChild(pNode, true);
       }
     } else {
@@ -2081,14 +2078,14 @@ bool CXFA_WidgetAcc::DeleteItem(int32_t nIndex,
         bSetValue = true;
       }
       int32_t i = 0;
-      CXFA_Node* pNode = pItems->GetNodeItem(XFA_NODEITEM_FirstChild);
+      CXFA_Node* pNode = pItems->GetFirstChild();
       while (pNode) {
         if (i == nIndex) {
           pItems->RemoveChild(pNode, true);
           break;
         }
         i++;
-        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);
+        pNode = pNode->GetNextSibling();
       }
     }
   }
@@ -2139,7 +2136,7 @@ bool CXFA_WidgetAcc::IsMultiLine() {
 std::pair<XFA_Element, int32_t> CXFA_WidgetAcc::GetMaxChars() {
   if (CXFA_Value* pNode =
           m_pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false)) {
-    if (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild)) {
+    if (CXFA_Node* pChild = pNode->GetFirstChild()) {
       switch (pChild->GetElementType()) {
         case XFA_Element::Text:
           return {XFA_Element::Text,
@@ -2423,7 +2420,7 @@ WideString CXFA_WidgetAcc::GetFormatDataValue(const WideString& wsValue) {
     if (!pNodeValue)
       return wsValue;
 
-    CXFA_Node* pValueChild = pNodeValue->GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pValueChild = pNodeValue->GetFirstChild();
     if (!pValueChild)
       return wsValue;
 

@@ -50,8 +50,8 @@ bool CXFA_DataExporter::Export(
       case XFA_PacketType::Xdp: {
         pStream->WriteString(
             L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">");
-        for (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-             pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+        for (CXFA_Node* pChild = pNode->GetFirstChild(); pChild;
+             pChild = pChild->GetNextSibling()) {
           Export(pStream, pChild, dwFlag, pChecksum);
         }
         pStream->WriteString(L"</xdp:xdp\n>");
@@ -63,7 +63,7 @@ bool CXFA_DataExporter::Export(
         if (!pElement || pElement->GetType() != FX_XMLNODE_Element)
           return false;
 
-        CXFA_Node* pDataNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+        CXFA_Node* pDataNode = pNode->GetFirstChild();
         ASSERT(pDataNode);
         XFA_DataExporter_DealWithDataGroupNode(pDataNode);
         pXMLDoc->SaveXMLNode(pStream, pElement);
@@ -87,11 +87,10 @@ bool CXFA_DataExporter::Export(
     return true;
   }
 
-  CXFA_Node* pDataNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pDataNode = pNode->GetParent();
   CXFA_Node* pExportNode = pNode;
-  for (CXFA_Node* pChildNode = pDataNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pChildNode;
-       pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pChildNode = pDataNode->GetFirstChild(); pChildNode;
+       pChildNode = pChildNode->GetNextSibling()) {
     if (pChildNode != pNode) {
       pExportNode = pDataNode;
       break;

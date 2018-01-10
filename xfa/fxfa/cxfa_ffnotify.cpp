@@ -435,8 +435,8 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
         pWidgetAcc->UpdateUIDisplay(m_pDoc->GetDocView(), nullptr);
         pDocView->AddCalculateWidgetAcc(pWidgetAcc);
         pDocView->AddValidateWidget(pWidgetAcc);
-      } else if (pWidgetNode->GetNodeItem(XFA_NODEITEM_Parent)
-                     ->GetElementType() == XFA_Element::ExclGroup) {
+      } else if (pWidgetNode->GetParent()->GetElementType() ==
+                 XFA_Element::ExclGroup) {
         pWidgetAcc->UpdateUIDisplay(m_pDoc->GetDocView(), nullptr);
       }
       return;
