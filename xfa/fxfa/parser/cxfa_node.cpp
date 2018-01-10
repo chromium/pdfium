@@ -1530,7 +1530,7 @@ int32_t CXFA_Node::GetRotate() {
   return degrees ? XFA_MapRotation(*degrees) / 90 * 90 : 0;
 }
 
-CXFA_Border* CXFA_Node::GetBorder() const {
+CXFA_Border* CXFA_Node::GetBorderIfExists() const {
   return JSObject()->GetProperty<CXFA_Border>(0, XFA_Element::Border);
 }
 

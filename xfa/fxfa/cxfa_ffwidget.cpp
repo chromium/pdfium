@@ -982,7 +982,7 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Border* border = m_pNode->GetBorder();
+  CXFA_Border* border = m_pNode->GetBorderIfExists();
   if (!border)
     return;
 

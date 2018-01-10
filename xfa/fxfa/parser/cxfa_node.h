@@ -236,7 +236,7 @@ class CXFA_Node : public CXFA_Object {
 
   bool IsOpenAccess();
 
-  CXFA_Border* GetBorder() const;
+  CXFA_Border* GetBorderIfExists() const;
   CXFA_Border* GetOrCreateBorder();
   CXFA_Caption* GetCaption() const;
 
