@@ -383,8 +383,7 @@ void CXFA_WidgetAcc::ResetData() {
       break;
     }
     case XFA_Element::ExclGroup: {
-      CXFA_Node* pNextChild = m_pNode->GetNodeItem(
-          XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
+      CXFA_Node* pNextChild = m_pNode->GetFirstContainerChild();
       while (pNextChild) {
         CXFA_Node* pChild = pNextChild;
         CXFA_WidgetAcc* pAcc = pChild->GetWidgetAcc();
@@ -416,8 +415,7 @@ void CXFA_WidgetAcc::ResetData() {
           }
           pAcc->SetValue(XFA_VALUEPICTURE_Raw, itemText);
         }
-        pNextChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                         XFA_ObjectType::ContainerNode);
+        pNextChild = pChild->GetNextContainerSibling();
       }
       break;
     }

@@ -239,8 +239,7 @@ bool RunBreakTestScript(CXFA_Script* pTestScript) {
   if (wsExpression.IsEmpty())
     return true;
   return pTestScript->GetDocument()->GetNotify()->RunScript(
-      pTestScript, pTestScript->GetNodeItem(XFA_NODEITEM_Parent,
-                                            XFA_ObjectType::ContainerNode));
+      pTestScript, pTestScript->GetContainerParent());
 }
 
 }  // namespace
@@ -810,8 +809,7 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
     case XFA_Element::BreakAfter: {
       WideString wsBreakLeader;
       WideString wsBreakTrailer;
-      CXFA_Node* pFormNode = pCurNode->GetNodeItem(
-          XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
+      CXFA_Node* pFormNode = pCurNode->GetContainerParent();
       CXFA_Node* pContainer = pFormNode->GetTemplateNode();
       bool bStartNew =
           pCurNode->JSObject()->GetInteger(XFA_Attribute::StartNew) != 0;
@@ -838,12 +836,9 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
       if (!m_ProposedContainerRecords.empty() &&
           m_CurrentContainerRecordIter == m_ProposedContainerRecords.begin() &&
           eType == XFA_Element::BreakBefore) {
-        CXFA_Node* pParentNode = pFormNode->GetNodeItem(
-            XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
+        CXFA_Node* pParentNode = pFormNode->GetContainerParent();
         if (!pParentNode ||
-            pFormNode !=
-                pParentNode->GetNodeItem(XFA_NODEITEM_FirstChild,
-                                         XFA_ObjectType::ContainerNode)) {
+            pFormNode != pParentNode->GetFirstContainerChild()) {
           break;
         }
         pParentNode = pParentNode->GetParent();
@@ -884,15 +879,13 @@ bool CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
     bool& bCreatePage) {
   CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pTrailerTemplate = nullptr;
-  CXFA_Node* pFormNode = pBreakNode->GetNodeItem(XFA_NODEITEM_Parent,
-                                                 XFA_ObjectType::ContainerNode);
+  CXFA_Node* pFormNode = pBreakNode->GetContainerParent();
   if (XFA_ItemLayoutProcessor_IsTakingSpace(pFormNode)) {
     bCreatePage = ExecuteBreakBeforeOrAfter(pBreakNode, bBefore,
                                             pLeaderTemplate, pTrailerTemplate);
     CXFA_Document* pDocument = pBreakNode->GetDocument();
     CXFA_Node* pDataScope = nullptr;
-    pFormNode = pFormNode->GetNodeItem(XFA_NODEITEM_Parent,
-                                       XFA_ObjectType::ContainerNode);
+    pFormNode = pFormNode->GetContainerParent();
     if (pLeaderTemplate) {
       if (!pDataScope)
         pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
@@ -921,8 +914,7 @@ bool CXFA_LayoutPageMgr::ProcessBookendLeaderOrTrailer(
     bool bLeader,
     CXFA_Node*& pBookendAppendNode) {
   CXFA_Node* pLeaderTemplate = nullptr;
-  CXFA_Node* pFormNode = pBookendNode->GetNodeItem(
-      XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
+  CXFA_Node* pFormNode = pBookendNode->GetContainerParent();
   if (ResolveBookendLeaderOrTrailer(pBookendNode, bLeader, pLeaderTemplate)) {
     CXFA_Document* pDocument = pBookendNode->GetDocument();
     CXFA_Node* pDataScope = nullptr;
@@ -945,9 +937,7 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
                                              CXFA_Node*& pTrailerTemplate,
                                              bool bCreatePage) {
   CXFA_Node* pContainer =
-      pOverflowNode
-          ->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode)
-          ->GetTemplateNode();
+      pOverflowNode->GetContainerParent()->GetTemplateNode();
   if (pOverflowNode->GetElementType() == XFA_Element::Break) {
     WideString wsOverflowLeader =
         pOverflowNode->JSObject()->GetCData(XFA_Attribute::OverflowLeader);
@@ -1078,10 +1068,7 @@ bool CXFA_LayoutPageMgr::ResolveBookendLeaderOrTrailer(
     CXFA_Node* pBookendNode,
     bool bLeader,
     CXFA_Node*& pBookendAppendTemplate) {
-  CXFA_Node* pContainer =
-      pBookendNode
-          ->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode)
-          ->GetTemplateNode();
+  CXFA_Node* pContainer = pBookendNode->GetContainerParent()->GetTemplateNode();
   if (pBookendNode->GetElementType() == XFA_Element::Break) {
     WideString leader = pBookendNode->JSObject()->GetCData(
         bLeader ? XFA_Attribute::BookendLeader : XFA_Attribute::BookendTrailer);

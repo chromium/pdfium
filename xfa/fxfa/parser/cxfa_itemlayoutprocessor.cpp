@@ -521,12 +521,8 @@ bool ExistContainerKeep(CXFA_Node* pCurNode, bool bPreFind) {
   if (!pCurNode || !XFA_ItemLayoutProcessor_IsTakingSpace(pCurNode))
     return false;
 
-  XFA_NODEITEM eItemType = XFA_NODEITEM_PrevSibling;
-  if (!bPreFind)
-    eItemType = XFA_NODEITEM_NextSibling;
-
-  CXFA_Node* pPreContainer =
-      pCurNode->GetNodeItem(eItemType, XFA_ObjectType::ContainerNode);
+  CXFA_Node* pPreContainer = bPreFind ? pCurNode->GetPrevContainerSibling()
+                                      : pCurNode->GetNextContainerSibling();
   if (!pPreContainer)
     return false;
 
@@ -1470,15 +1466,12 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
     CheckNextChildContainer : {
       CXFA_Node* pNextChildContainer =
           pChildContainer == XFA_LAYOUT_INVALIDNODE
-              ? pEntireContainer->GetNodeItem(XFA_NODEITEM_FirstChild,
-                                              XFA_ObjectType::ContainerNode)
-              : pChildContainer->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                             XFA_ObjectType::ContainerNode);
+              ? pEntireContainer->GetFirstContainerChild()
+              : pChildContainer->GetNextContainerSibling();
       while (pNextChildContainer &&
              pNextChildContainer->IsLayoutGeneratedNode()) {
         CXFA_Node* pSaveNode = pNextChildContainer;
-        pNextChildContainer = pNextChildContainer->GetNodeItem(
-            XFA_NODEITEM_NextSibling, XFA_ObjectType::ContainerNode);
+        pNextChildContainer = pNextChildContainer->GetNextContainerSibling();
         if (pSaveNode->IsUnusedNode())
           DeleteLayoutGeneratedNode(pSaveNode);
       }
@@ -2171,11 +2164,8 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
     bool bFocrTb = false;
     if (pParentNode &&
         GetLayout(pParentNode, &bFocrTb) == XFA_AttributeEnum::Row) {
-      CXFA_Node* pChildContainer = m_pFormNode->GetNodeItem(
-          XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
-      if (pChildContainer &&
-          pChildContainer->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                       XFA_ObjectType::ContainerNode)) {
+      CXFA_Node* pChildContainer = m_pFormNode->GetFirstContainerChild();
+      if (pChildContainer && pChildContainer->GetNextContainerSibling()) {
         containerSize.height = 0;
         bContainerHeightAutoSize = true;
       }

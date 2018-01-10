@@ -101,8 +101,7 @@ bool CXFA_LayoutProcessor::IncrementLayout() {
     return DoLayout() == 100;
   }
   for (CXFA_Node* pNode : m_rgChangedContainers) {
-    CXFA_Node* pParentNode =
-        pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
+    CXFA_Node* pParentNode = pNode->GetContainerParent();
     if (!pParentNode)
       return false;
     if (!CXFA_ItemLayoutProcessor::IncrementRelayoutNode(this, pNode,

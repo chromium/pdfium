@@ -13,16 +13,13 @@
 class CXFA_TraverseStrategy_XFAContainerNode {
  public:
   static CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild,
-                                      XFA_ObjectType::ContainerNode);
+    return pTemplateNode->GetFirstContainerChild();
   }
   static CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                      XFA_ObjectType::ContainerNode);
+    return pTemplateNode->GetNextContainerSibling();
   }
   static CXFA_Node* GetParent(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_Parent,
-                                      XFA_ObjectType::ContainerNode);
+    return pTemplateNode->GetContainerParent();
   }
 };
 

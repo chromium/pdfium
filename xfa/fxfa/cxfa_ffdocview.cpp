@@ -467,10 +467,8 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
 
   int32_t iRet = XFA_EVENTERROR_NotExist;
   if (bRecursive) {
-    for (CXFA_Node* pNode = pFormNode->GetNodeItem(
-             XFA_NODEITEM_FirstChild, XFA_ObjectType::ContainerNode);
-         pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                           XFA_ObjectType::ContainerNode)) {
+    for (CXFA_Node* pNode = pFormNode->GetFirstContainerChild(); pNode;
+         pNode = pNode->GetNextContainerSibling()) {
       elementType = pNode->GetElementType();
       if (elementType != XFA_Element::Variables &&
           elementType != XFA_Element::Draw) {

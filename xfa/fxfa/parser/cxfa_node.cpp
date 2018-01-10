@@ -277,39 +277,38 @@ CXFA_Node* CXFA_Node::GetPrevSibling() const {
   return nullptr;
 }
 
-CXFA_Node* CXFA_Node::GetNodeItem(XFA_NODEITEM eItem,
-                                  XFA_ObjectType eType) const {
-  CXFA_Node* pNode = nullptr;
-  switch (eItem) {
-    case XFA_NODEITEM_NextSibling:
-      pNode = m_pNext;
-      while (pNode && pNode->GetObjectType() != eType)
-        pNode = pNode->m_pNext;
-      break;
-    case XFA_NODEITEM_FirstChild:
-      pNode = m_pChild;
-      while (pNode && pNode->GetObjectType() != eType)
-        pNode = pNode->m_pNext;
-      break;
-    case XFA_NODEITEM_Parent:
-      pNode = m_pParent;
-      while (pNode && pNode->GetObjectType() != eType)
-        pNode = pNode->m_pParent;
-      break;
-    case XFA_NODEITEM_PrevSibling:
-      if (m_pParent) {
-        CXFA_Node* pSibling = m_pParent->m_pChild;
-        while (pSibling && pSibling != this) {
-          if (eType == pSibling->GetObjectType())
-            pNode = pSibling;
+CXFA_Node* CXFA_Node::GetNextContainerSibling() const {
+  CXFA_Node* pNode = m_pNext;
+  while (pNode && pNode->GetObjectType() != XFA_ObjectType::ContainerNode)
+    pNode = pNode->m_pNext;
+  return pNode;
+}
 
-          pSibling = pSibling->m_pNext;
-        }
-      }
-      break;
-    default:
-      break;
+CXFA_Node* CXFA_Node::GetPrevContainerSibling() const {
+  if (!m_pParent || m_pParent->m_pChild == this)
+    return nullptr;
+
+  CXFA_Node* container = nullptr;
+  for (CXFA_Node* pNode = m_pParent->m_pChild; pNode; pNode = pNode->m_pNext) {
+    if (pNode->GetObjectType() == XFA_ObjectType::ContainerNode)
+      container = pNode;
+    if (pNode->m_pNext == this)
+      return container;
   }
+  return nullptr;
+}
+
+CXFA_Node* CXFA_Node::GetFirstContainerChild() const {
+  CXFA_Node* pNode = m_pChild;
+  while (pNode && pNode->GetObjectType() != XFA_ObjectType::ContainerNode)
+    pNode = pNode->m_pNext;
+  return pNode;
+}
+
+CXFA_Node* CXFA_Node::GetContainerParent() const {
+  CXFA_Node* pNode = m_pParent;
+  while (pNode && pNode->GetObjectType() != XFA_ObjectType::ContainerNode)
+    pNode = pNode->m_pParent;
   return pNode;
 }
 
@@ -672,8 +671,7 @@ XFA_AttributeEnum CXFA_Node::GetIntact() {
       if (*intact == XFA_AttributeEnum::None &&
           eLayoutType == XFA_AttributeEnum::Row &&
           m_pDocument->GetCurVersionMode() < XFA_VERSION_208) {
-        CXFA_Node* pPreviewRow = GetNodeItem(XFA_NODEITEM_PrevSibling,
-                                             XFA_ObjectType::ContainerNode);
+        CXFA_Node* pPreviewRow = GetPrevContainerSibling();
         if (pPreviewRow &&
             pPreviewRow->JSObject()->GetEnum(XFA_Attribute::Layout) ==
                 XFA_AttributeEnum::Row) {
@@ -1583,9 +1581,7 @@ CXFA_Para* CXFA_Node::GetPara() const {
 }
 
 bool CXFA_Node::IsOpenAccess() {
-  for (auto* pNode = this; pNode;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_Parent,
-                                  XFA_ObjectType::ContainerNode)) {
+  for (auto* pNode = this; pNode; pNode = pNode->GetContainerParent()) {
     XFA_AttributeEnum iAcc = pNode->JSObject()->GetEnum(XFA_Attribute::Access);
     if (iAcc != XFA_AttributeEnum::Open)
       return false;

@@ -55,13 +55,6 @@ enum XFA_NodeFlag {
   XFA_NodeFlag_LayoutGeneratedNode = 1 << 8
 };
 
-enum XFA_NODEITEM {
-  XFA_NODEITEM_Parent,
-  XFA_NODEITEM_FirstChild,
-  XFA_NODEITEM_NextSibling,
-  XFA_NODEITEM_PrevSibling,
-};
-
 class CXFA_Node : public CXFA_Object {
  public:
   struct PropertyData {
@@ -188,7 +181,10 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetFirstChild() const { return m_pChild; }
   CXFA_Node* GetParent() const { return m_pParent; }
 
-  CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_ObjectType eType) const;
+  CXFA_Node* GetNextContainerSibling() const;
+  CXFA_Node* GetPrevContainerSibling() const;
+  CXFA_Node* GetFirstContainerChild() const;
+  CXFA_Node* GetContainerParent() const;
 
   std::vector<CXFA_Node*> GetNodeList(uint32_t dwTypeFilter,
                                       XFA_Element eTypeFilter);
