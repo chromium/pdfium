@@ -137,8 +137,9 @@ typedef struct _FS_RECTF_ {
 // Const Pointer to FS_RECTF structure.
 typedef const FS_RECTF* FS_LPCRECTF;
 
-// Annotation subtype.
+// Annotation enums.
 typedef int FPDF_ANNOTATION_SUBTYPE;
+typedef int FPDF_ANNOT_APPEARANCEMODE;
 
 // Dictionary value types.
 typedef int FPDF_OBJECT_TYPE;

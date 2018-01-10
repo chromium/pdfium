@@ -104,6 +104,18 @@ static_assert(static_cast<int>(CPDF_Annot::Subtype::XFAWIDGET) ==
                   FPDF_ANNOT_XFAWIDGET,
               "CPDF_Annot::XFAWIDGET value mismatch");
 
+// These checks ensure the consistency of annotation appearance mode values
+// across core/ and public.
+static_assert(static_cast<int>(CPDF_Annot::AppearanceMode::Normal) ==
+                  FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+              "CPDF_Annot::AppearanceMode::Normal value mismatch");
+static_assert(static_cast<int>(CPDF_Annot::AppearanceMode::Rollover) ==
+                  FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+              "CPDF_Annot::AppearanceMode::Rollover value mismatch");
+static_assert(static_cast<int>(CPDF_Annot::AppearanceMode::Down) ==
+                  FPDF_ANNOT_APPEARANCEMODE_DOWN,
+              "CPDF_Annot::AppearanceMode::Down value mismatch");
+
 // These checks ensure the consistency of dictionary value types across core/
 // and public/.
 static_assert(static_cast<int>(CPDF_Object::Type::BOOLEAN) ==
@@ -733,6 +745,33 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
 
   return Utf16EncodeMaybeCopyAndReturnLength(pAnnotDict->GetUnicodeTextFor(key),
                                              buffer, buflen);
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
+                FPDF_ANNOT_APPEARANCEMODE appearanceMode,
+                void* buffer,
+                unsigned long buflen) {
+  if (appearanceMode < 0 || appearanceMode >= FPDF_ANNOT_APPEARANCEMODE_COUNT)
+    return 0;
+
+  if (!annot)
+    return 0;
+
+  CPDF_Dictionary* pAnnotDict =
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
+  if (!pAnnotDict)
+    return 0;
+
+  CPDF_Annot::AppearanceMode mode =
+      static_cast<CPDF_Annot::AppearanceMode>(appearanceMode);
+
+  CPDF_Stream* pStream = FPDFDOC_GetAnnotAPNoFallback(pAnnotDict, mode);
+  if (!pStream)
+    return Utf16EncodeMaybeCopyAndReturnLength(L"", buffer, buflen);
+
+  return Utf16EncodeMaybeCopyAndReturnLength(pStream->GetUnicodeText(), buffer,
+                                             buflen);
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV

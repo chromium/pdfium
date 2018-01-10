@@ -60,6 +60,43 @@ CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
   return pForm;
 }
 
+CPDF_Stream* FPDFDOC_GetAnnotAPInternal(const CPDF_Dictionary* pAnnotDict,
+                                        CPDF_Annot::AppearanceMode eMode,
+                                        bool bFallbackToNormal) {
+  CPDF_Dictionary* pAP = pAnnotDict->GetDictFor("AP");
+  if (!pAP)
+    return nullptr;
+
+  const char* ap_entry = "N";
+  if (eMode == CPDF_Annot::Down)
+    ap_entry = "D";
+  else if (eMode == CPDF_Annot::Rollover)
+    ap_entry = "R";
+  if (bFallbackToNormal && !pAP->KeyExist(ap_entry))
+    ap_entry = "N";
+
+  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
+  if (!psub)
+    return nullptr;
+  if (CPDF_Stream* pStream = psub->AsStream())
+    return pStream;
+
+  CPDF_Dictionary* pDict = psub->AsDictionary();
+  if (!pDict)
+    return nullptr;
+
+  ByteString as = pAnnotDict->GetStringFor("AS");
+  if (as.IsEmpty()) {
+    ByteString value = pAnnotDict->GetStringFor("V");
+    if (value.IsEmpty()) {
+      CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent");
+      value = pParentDict ? pParentDict->GetStringFor("V") : ByteString();
+    }
+    as = (!value.IsEmpty() && pDict->KeyExist(value)) ? value : "Off";
+  }
+  return pDict->GetStreamFor(as);
+}
+
 }  // namespace
 
 CPDF_Annot::CPDF_Annot(std::unique_ptr<CPDF_Dictionary> pDict,
@@ -140,39 +177,13 @@ uint32_t CPDF_Annot::GetFlags() const {
 }
 
 CPDF_Stream* FPDFDOC_GetAnnotAP(const CPDF_Dictionary* pAnnotDict,
-                                CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = pAnnotDict->GetDictFor("AP");
-  if (!pAP)
-    return nullptr;
+                                CPDF_Annot::AppearanceMode eMode) {
+  return FPDFDOC_GetAnnotAPInternal(pAnnotDict, eMode, true);
+}
 
-  const char* ap_entry = "N";
-  if (mode == CPDF_Annot::Down)
-    ap_entry = "D";
-  else if (mode == CPDF_Annot::Rollover)
-    ap_entry = "R";
-  if (!pAP->KeyExist(ap_entry))
-    ap_entry = "N";
-
-  CPDF_Object* psub = pAP->GetDirectObjectFor(ap_entry);
-  if (!psub)
-    return nullptr;
-  if (CPDF_Stream* pStream = psub->AsStream())
-    return pStream;
-
-  CPDF_Dictionary* pDict = psub->AsDictionary();
-  if (!pDict)
-    return nullptr;
-
-  ByteString as = pAnnotDict->GetStringFor("AS");
-  if (as.IsEmpty()) {
-    ByteString value = pAnnotDict->GetStringFor("V");
-    if (value.IsEmpty()) {
-      CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent");
-      value = pParentDict ? pParentDict->GetStringFor("V") : ByteString();
-    }
-    as = (!value.IsEmpty() && pDict->KeyExist(value)) ? value : "Off";
-  }
-  return pDict->GetStreamFor(as);
+CPDF_Stream* FPDFDOC_GetAnnotAPNoFallback(const CPDF_Dictionary* pAnnotDict,
+                                          CPDF_Annot::AppearanceMode eMode) {
+  return FPDFDOC_GetAnnotAPInternal(pAnnotDict, eMode, false);
 }
 
 CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
