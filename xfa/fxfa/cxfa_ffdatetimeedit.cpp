@@ -99,7 +99,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
 }
 
 uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
-  CXFA_Para* para = m_pNode->GetPara();
+  CXFA_Para* para = m_pNode->GetParaIfExists();
   if (!para)
     return 0;
 

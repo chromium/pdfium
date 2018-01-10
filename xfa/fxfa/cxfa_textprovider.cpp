@@ -115,9 +115,9 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   return nullptr;
 }
 
-CXFA_Para* CXFA_TextProvider::GetPara() {
+CXFA_Para* CXFA_TextProvider::GetParaIfExists() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text)
-    return m_pWidgetAcc->GetNode()->GetPara();
+    return m_pWidgetAcc->GetNode()->GetParaIfExists();
 
   CXFA_Caption* pNode = m_pWidgetAcc->GetNode()->GetChild<CXFA_Caption>(
       0, XFA_Element::Caption, false);

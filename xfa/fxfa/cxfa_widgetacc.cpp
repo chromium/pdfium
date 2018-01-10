@@ -579,7 +579,7 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
     size.height += margin->GetTopInset() + margin->GetBottomInset();
   }
 
-  CXFA_Para* para = m_pNode->GetPara();
+  CXFA_Para* para = m_pNode->GetParaIfExists();
   if (para)
     size.width += para->GetMarginLeft() + para->GetTextIndent();
 
@@ -1040,7 +1040,7 @@ bool CXFA_WidgetAcc::FindSplitPos(CXFA_FFDocView* docView,
   if (fHeight > 0.1f && iBlockIndex == 0) {
     fStartOffset = fTopInset;
     fHeight -= (fTopInset + fBottomInset);
-    CXFA_Para* para = m_pNode->GetPara();
+    CXFA_Para* para = m_pNode->GetParaIfExists();
     if (para) {
       fSpaceAbove = para->GetSpaceAbove();
       float fSpaceBelow = para->GetSpaceBelow();

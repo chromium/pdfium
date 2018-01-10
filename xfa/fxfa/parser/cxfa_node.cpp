@@ -1562,7 +1562,7 @@ float CXFA_Node::GetFontSize() const {
 
 float CXFA_Node::GetLineHeight() const {
   float fLineHeight = 0;
-  CXFA_Para* para = GetPara();
+  CXFA_Para* para = GetParaIfExists();
   if (para)
     fLineHeight = para->GetLineHeight();
 
@@ -1580,7 +1580,7 @@ CXFA_Margin* CXFA_Node::GetMarginIfExists() const {
   return JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin);
 }
 
-CXFA_Para* CXFA_Node::GetPara() const {
+CXFA_Para* CXFA_Node::GetParaIfExists() const {
   return JSObject()->GetProperty<CXFA_Para>(0, XFA_Element::Para);
 }
 

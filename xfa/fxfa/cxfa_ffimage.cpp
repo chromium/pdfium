@@ -61,7 +61,7 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
 
   XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left;
   XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top;
-  CXFA_Para* para = m_pNode->GetPara();
+  CXFA_Para* para = m_pNode->GetParaIfExists();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
     iVertAlign = para->GetVerticalAlign();

@@ -92,7 +92,7 @@ std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
 
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     CXFA_TextProvider* pTextProvider) {
-  CXFA_Para* para = pTextProvider->GetPara();
+  CXFA_Para* para = pTextProvider->GetParaIfExists();
   auto pStyle = m_pSelector->CreateComputedStyle(nullptr);
   float fLineHeight = 0;
   float fFontSize = 10;
@@ -297,7 +297,7 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
 
 XFA_AttributeEnum CXFA_TextParser::GetVAlign(
     CXFA_TextProvider* pTextProvider) const {
-  CXFA_Para* para = pTextProvider->GetPara();
+  CXFA_Para* para = pTextProvider->GetParaIfExists();
   return para ? para->GetVerticalAlign() : XFA_AttributeEnum::Top;
 }
 
@@ -476,7 +476,7 @@ float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
   if (pStyle) {
     fLineHeight = pStyle->GetLineHeight();
   } else {
-    CXFA_Para* para = pTextProvider->GetPara();
+    CXFA_Para* para = pTextProvider->GetParaIfExists();
     if (para)
       fLineHeight = para->GetLineHeight();
   }

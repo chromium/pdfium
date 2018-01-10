@@ -247,7 +247,7 @@ class CXFA_Node : public CXFA_Object {
   float GetLineHeight() const;
 
   CXFA_Margin* GetMarginIfExists() const;
-  CXFA_Para* GetPara() const;
+  CXFA_Para* GetParaIfExists() const;
   CXFA_Calculate* GetCalculate() const;
   CXFA_Validate* GetValidate() const;
   CXFA_Validate* GetOrCreateValidate();

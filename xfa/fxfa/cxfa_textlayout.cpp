@@ -104,7 +104,7 @@ std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
 }
 
 void CXFA_TextLayout::InitBreak(float fLineWidth) {
-  CXFA_Para* para = m_pTextProvider->GetPara();
+  CXFA_Para* para = m_pTextProvider->GetParaIfExists();
   float fStart = 0;
   float fStartPos = 0;
   if (para) {
@@ -652,7 +652,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
                                bool bSavePieces) {
   InitBreak(textWidth);
 
-  CXFA_Para* para = m_pTextProvider->GetPara();
+  CXFA_Para* para = m_pTextProvider->GetParaIfExists();
   float fSpaceAbove = 0;
   if (para) {
     fSpaceAbove = para->GetSpaceAbove();
@@ -1100,7 +1100,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
   if (dwStatus == CFX_BreakType::Paragraph) {
     m_pBreak->Reset();
     if (!pStyle && bEndBreak) {
-      CXFA_Para* para = m_pTextProvider->GetPara();
+      CXFA_Para* para = m_pTextProvider->GetParaIfExists();
       if (para) {
         float fStartPos = para->GetMarginLeft();
         float fIndent = para->GetTextIndent();
