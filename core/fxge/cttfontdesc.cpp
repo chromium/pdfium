@@ -7,32 +7,62 @@
 #include "core/fxge/cttfontdesc.h"
 
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/stl_util.h"
+
+CTTFontDesc::CTTFontDesc(uint8_t* pData, FXFT_Face face)
+    : m_bIsTTC(false), m_SingleFace(face), m_pFontData(pData) {}
+
+CTTFontDesc::CTTFontDesc(uint8_t* pData, size_t index, FXFT_Face face)
+    : m_bIsTTC(true), m_pFontData(pData) {
+  for (size_t i = 0; i < FX_ArraySize(m_TTCFaces); i++)
+    m_TTCFaces[i] = nullptr;
+  SetTTCFace(index, face);
+}
 
 CTTFontDesc::~CTTFontDesc() {
-  if (m_Type == 1) {
-    if (m_SingleFace)
-      FXFT_Done_Face(m_SingleFace);
-  } else if (m_Type == 2) {
-    for (int i = 0; i < 16; i++) {
+  ASSERT(m_RefCount == 0);
+  if (m_bIsTTC) {
+    for (size_t i = 0; i < FX_ArraySize(m_TTCFaces); i++) {
       if (m_TTCFaces[i])
         FXFT_Done_Face(m_TTCFaces[i]);
     }
+  } else {
+    if (m_SingleFace)
+      FXFT_Done_Face(m_SingleFace);
   }
   FX_Free(m_pFontData);
 }
 
-int CTTFontDesc::ReleaseFace(FXFT_Face face) {
-  if (m_Type == 1) {
+void CTTFontDesc::SetTTCFace(size_t index, FXFT_Face face) {
+  ASSERT(m_bIsTTC);
+  ASSERT(index < FX_ArraySize(m_TTCFaces));
+  m_TTCFaces[index] = face;
+}
+
+void CTTFontDesc::AddRef() {
+  ASSERT(m_RefCount > 0);
+  ++m_RefCount;
+}
+
+CTTFontDesc::ReleaseStatus CTTFontDesc::ReleaseFace(FXFT_Face face) {
+  if (m_bIsTTC) {
+    if (!pdfium::ContainsValue(m_TTCFaces, face))
+      return kNotAppropriate;
+  } else {
     if (m_SingleFace != face)
-      return -1;
-  } else if (m_Type == 2) {
-    int i;
-    for (i = 0; i < 16; i++) {
-      if (m_TTCFaces[i] == face)
-        break;
-    }
-    if (i == 16)
-      return -1;
+      return kNotAppropriate;
   }
-  return --m_RefCount;
+  ASSERT(m_RefCount > 0);
+  return --m_RefCount == 0 ? kReleased : kNotReleased;
+}
+
+FXFT_Face CTTFontDesc::SingleFace() const {
+  ASSERT(!m_bIsTTC);
+  return m_SingleFace;
+}
+
+FXFT_Face CTTFontDesc::TTCFace(size_t index) const {
+  ASSERT(m_bIsTTC);
+  ASSERT(index < FX_ArraySize(m_TTCFaces));
+  return m_TTCFaces[index];
 }

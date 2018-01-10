@@ -124,9 +124,9 @@ FXFT_Face CFX_FontMgr::GetCachedFace(const ByteString& face_name,
     return nullptr;
 
   CTTFontDesc* pFontDesc = it->second.get();
-  *pFontData = pFontDesc->m_pFontData;
-  pFontDesc->m_RefCount++;
-  return pFontDesc->m_SingleFace;
+  *pFontData = pFontDesc->FontData();
+  pFontDesc->AddRef();
+  return pFontDesc->SingleFace();
 }
 
 FXFT_Face CFX_FontMgr::AddCachedFace(const ByteString& face_name,
@@ -135,26 +135,21 @@ FXFT_Face CFX_FontMgr::AddCachedFace(const ByteString& face_name,
                                      uint8_t* pData,
                                      uint32_t size,
                                      int face_index) {
-  auto pFontDesc = pdfium::MakeUnique<CTTFontDesc>();
-  pFontDesc->m_Type = 1;
-  pFontDesc->m_SingleFace = nullptr;
-  pFontDesc->m_pFontData = pData;
-  pFontDesc->m_RefCount = 1;
-
   InitFTLibrary();
-  FXFT_Library library = m_FTLibrary;
-  int ret = FXFT_New_Memory_Face(library, pData, size, face_index,
-                                 &pFontDesc->m_SingleFace);
+
+  FXFT_Face face = nullptr;
+  int ret = FXFT_New_Memory_Face(m_FTLibrary, pData, size, face_index, &face);
   if (ret)
     return nullptr;
 
-  ret = FXFT_Set_Pixel_Sizes(pFontDesc->m_SingleFace, 64, 64);
+  ret = FXFT_Set_Pixel_Sizes(face, 64, 64);
   if (ret)
     return nullptr;
 
+  auto pFontDesc = pdfium::MakeUnique<CTTFontDesc>(pData, face);
   CTTFontDesc* pResult = pFontDesc.get();
   m_FaceMap[KeyNameFromFace(face_name, weight, bItalic)] = std::move(pFontDesc);
-  return pResult->m_SingleFace;
+  return pResult->SingleFace();
 }
 
 FXFT_Face CFX_FontMgr::GetCachedTTCFace(int ttc_size,
@@ -166,14 +161,14 @@ FXFT_Face CFX_FontMgr::GetCachedTTCFace(int ttc_size,
     return nullptr;
 
   CTTFontDesc* pFontDesc = it->second.get();
-  *pFontData = pFontDesc->m_pFontData;
-  pFontDesc->m_RefCount++;
-  int face_index = GetTTCIndex(pFontDesc->m_pFontData, ttc_size, font_offset);
-  if (!pFontDesc->m_TTCFaces[face_index]) {
-    pFontDesc->m_TTCFaces[face_index] =
-        GetFixedFace(pFontDesc->m_pFontData, ttc_size, face_index);
+  *pFontData = pFontDesc->FontData();
+  int face_index = GetTTCIndex(pFontDesc->FontData(), ttc_size, font_offset);
+  if (!pFontDesc->TTCFace(face_index)) {
+    pFontDesc->SetTTCFace(
+        face_index, GetFixedFace(pFontDesc->FontData(), ttc_size, face_index));
   }
-  return pFontDesc->m_TTCFaces[face_index];
+  pFontDesc->AddRef();
+  return pFontDesc->TTCFace(face_index);
 }
 
 FXFT_Face CFX_FontMgr::AddCachedTTCFace(int ttc_size,
@@ -181,18 +176,11 @@ FXFT_Face CFX_FontMgr::AddCachedTTCFace(int ttc_size,
                                         uint8_t* pData,
                                         uint32_t size,
                                         int font_offset) {
-  auto pFontDesc = pdfium::MakeUnique<CTTFontDesc>();
-  pFontDesc->m_Type = 2;
-  pFontDesc->m_pFontData = pData;
-  for (int i = 0; i < 16; i++)
-    pFontDesc->m_TTCFaces[i] = nullptr;
-  pFontDesc->m_RefCount++;
-  CTTFontDesc* pResult = pFontDesc.get();
+  int face_index = GetTTCIndex(pData, ttc_size, font_offset);
+  FXFT_Face face = GetFixedFace(pData, ttc_size, face_index);
+  auto pFontDesc = pdfium::MakeUnique<CTTFontDesc>(pData, face_index, face);
   m_FaceMap[KeyNameFromSize(ttc_size, checksum)] = std::move(pFontDesc);
-  int face_index = GetTTCIndex(pResult->m_pFontData, ttc_size, font_offset);
-  pResult->m_TTCFaces[face_index] =
-      GetFixedFace(pResult->m_pFontData, ttc_size, face_index);
-  return pResult->m_TTCFaces[face_index];
+  return face;
 }
 
 FXFT_Face CFX_FontMgr::GetFixedFace(const uint8_t* pData,
@@ -218,11 +206,11 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
     return;
   bool bNeedFaceDone = true;
   for (auto it = m_FaceMap.begin(); it != m_FaceMap.end(); ++it) {
-    int nRet = it->second->ReleaseFace(face);
-    if (nRet == -1)
+    CTTFontDesc::ReleaseStatus nRet = it->second->ReleaseFace(face);
+    if (nRet == CTTFontDesc::kNotAppropriate)
       continue;
     bNeedFaceDone = false;
-    if (nRet == 0)
+    if (nRet == CTTFontDesc::kReleased)
       m_FaceMap.erase(it);
     break;
   }

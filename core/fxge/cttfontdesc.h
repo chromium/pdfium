@@ -12,21 +12,41 @@
 
 class CTTFontDesc {
  public:
-  CTTFontDesc() : m_Type(0), m_pFontData(nullptr), m_RefCount(0) {}
-  ~CTTFontDesc();
-  // ret < 0, releaseface not appropriate for this object.
-  // ret == 0, object released
-  // ret > 0, object still alive, other referrers.
-  int ReleaseFace(FXFT_Face face);
+  enum ReleaseStatus {
+    kNotAppropriate,  // ReleaseFace() not appropriate for given object.
+    kReleased,
+    kNotReleased  // Object still alive.
+  };
 
-  int m_Type;
+  // Single face ctor.
+  CTTFontDesc(uint8_t* pData, FXFT_Face face);
+
+  // TTC face ctor.
+  CTTFontDesc(uint8_t* pData, size_t index, FXFT_Face face);
+
+  ~CTTFontDesc();
+
+  void SetTTCFace(size_t index, FXFT_Face face);
+
+  void AddRef();
+
+  // May not decrement refcount, depending on the value of |face|.
+  ReleaseStatus ReleaseFace(FXFT_Face face);
+
+  uint8_t* FontData() const { return m_pFontData; }
+
+  FXFT_Face SingleFace() const;
+  FXFT_Face TTCFace(size_t index) const;
+
+ private:
+  const bool m_bIsTTC;
 
   union {
-    FXFT_Face m_SingleFace;
+    const FXFT_Face m_SingleFace;
     FXFT_Face m_TTCFaces[16];
   };
-  uint8_t* m_pFontData;
-  int m_RefCount;
+  uint8_t* const m_pFontData;
+  int m_RefCount = 1;
 };
 
 #endif  // CORE_FXGE_CTTFONTDESC_H_
