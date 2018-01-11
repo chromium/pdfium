@@ -747,6 +747,51 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
                                              buffer, buflen);
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
+                FPDF_ANNOT_APPEARANCEMODE appearanceMode,
+                FPDF_WIDESTRING value) {
+  if (appearanceMode < 0 || appearanceMode >= FPDF_ANNOT_APPEARANCEMODE_COUNT)
+    return false;
+
+  if (!annot)
+    return false;
+
+  CPDF_Dictionary* pAnnotDict =
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
+  if (!pAnnotDict)
+    return false;
+
+  constexpr const char* modeKeyForMode[] = {"N", "R", "D"};
+  static_assert(FX_ArraySize(modeKeyForMode) == FPDF_ANNOT_APPEARANCEMODE_COUNT,
+                "length of modeKeyForMode should be equal to "
+                "FPDF_ANNOT_APPEARANCEMODE_COUNT");
+  const char* modeKey = modeKeyForMode[appearanceMode];
+
+  CPDF_Dictionary* pApDict = pAnnotDict->GetDictFor("AP");
+
+  // If value is null, we're in remove mode. Otherwise, we're in add/update
+  // mode.
+  if (value) {
+    if (!pApDict)
+      pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+
+    ByteString newValue = CFXByteStringFromFPDFWideString(value);
+    auto pNewApStream = pdfium::MakeUnique<CPDF_Stream>();
+    pNewApStream->SetData(newValue.raw_str(), newValue.GetLength());
+    pApDict->SetFor(modeKey, std::move(pNewApStream));
+  } else {
+    if (pApDict) {
+      if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL)
+        pAnnotDict->RemoveFor("AP");
+      else
+        pApDict->RemoveFor(modeKey);
+    }
+  }
+
+  return true;
+}
+
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
                 FPDF_ANNOT_APPEARANCEMODE appearanceMode,
