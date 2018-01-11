@@ -351,12 +351,12 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
                                    ? it - SpaceOrderWidgetArray.begin() + 1
                                    : 0;
         while (true) {
-          CXFA_FFWidget* pRadio =
+          CXFA_FFWidget* radio =
               SpaceOrderWidgetArray[iWidgetIndex % nWidgetCount];
-          if (pRadio->GetNode()->GetExclGroup() != pWidgetAcc->GetNode())
+          if (radio->GetNode()->GetExclGroupIfExists() != pWidgetAcc->GetNode())
             break;
           if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget))
-            m_TabOrderWidgetArray.push_back(pRadio);
+            m_TabOrderWidgetArray.push_back(radio);
 
           iWidgetIndex++;
         }

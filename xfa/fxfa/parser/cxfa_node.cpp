@@ -1654,7 +1654,7 @@ Optional<float> CXFA_Node::TryMaxHeight() {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::MaxH);
 }
 
-CXFA_Node* CXFA_Node::GetExclGroup() {
+CXFA_Node* CXFA_Node::GetExclGroupIfExists() {
   CXFA_Node* pExcl = GetParent();
   if (!pExcl || pExcl->GetElementType() != XFA_Element::ExclGroup)
     return nullptr;

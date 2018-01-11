@@ -636,7 +636,7 @@ bool CXFA_FFField::ProcessCommittedData() {
 }
 
 int32_t CXFA_FFField::CalculateOverride() {
-  CXFA_Node* exclNode = m_pNode->GetExclGroup();
+  CXFA_Node* exclNode = m_pNode->GetExclGroupIfExists();
   if (!exclNode)
     return CalculateWidgetAcc(m_pNode->GetWidgetAcc());
 

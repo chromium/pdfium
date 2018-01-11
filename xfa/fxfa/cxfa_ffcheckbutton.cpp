@@ -312,7 +312,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
       eParam.m_wsNewText =
           m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
 
-      CXFA_Node* exclNode = m_pNode->GetExclGroup();
+      CXFA_Node* exclNode = m_pNode->GetExclGroupIfExists();
       if (ProcessCommittedData()) {
         eParam.m_pTarget = exclNode ? exclNode->GetWidgetAcc() : nullptr;
         if (exclNode) {

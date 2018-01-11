@@ -263,7 +263,7 @@ class CXFA_Node : public CXFA_Object {
   Optional<float> TryMaxWidth();
   Optional<float> TryMaxHeight();
 
-  CXFA_Node* GetExclGroup();
+  CXFA_Node* GetExclGroupIfExists();
 
   int32_t ProcessEvent(CXFA_FFDocView* docView,
                        XFA_AttributeEnum iActivity,

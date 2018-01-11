@@ -1486,7 +1486,7 @@ XFA_CHECKSTATE CXFA_WidgetAcc::GetCheckState() {
 }
 
 void CXFA_WidgetAcc::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
-  CXFA_Node* node = m_pNode->GetExclGroup();
+  CXFA_Node* node = m_pNode->GetExclGroupIfExists();
   if (!node) {
     CXFA_Items* pItems =
         m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
@@ -1506,6 +1506,7 @@ void CXFA_WidgetAcc::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
     }
     if (m_pNode)
       m_pNode->SyncValue(wsContent, bNotify);
+
     return;
   }
 
