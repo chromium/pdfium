@@ -250,7 +250,8 @@ void XFA_BOX_GetFillPath(CXFA_Box* box,
                          CXFA_GEPath& fillPath,
                          uint16_t dwFlags) {
   if (box->IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
-    float fThickness = std::fmax(0.0, box->GetEdge(0)->GetThickness());
+    CXFA_Edge* edge = box->GetEdgeIfExists(0);
+    float fThickness = std::fmax(0.0, edge ? edge->GetThickness() : 0);
     float fHalf = fThickness / 2;
     XFA_AttributeEnum iHand = box->GetHand();
     if (iHand == XFA_AttributeEnum::Left)
@@ -391,12 +392,13 @@ void XFA_BOX_GetFillPath(CXFA_Box* box,
   }
 }
 
-void XFA_BOX_Fill_Radial(CXFA_Box* box,
+void XFA_BOX_Fill_Radial(CXFA_Fill* fill,
                          CXFA_Graphics* pGS,
                          CXFA_GEPath& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_Fill* fill = box->GetFill();
+  ASSERT(fill);
+
   FX_ARGB crStart = fill->GetColor(false);
   FX_ARGB crEnd = fill->GetRadialColor();
   if (!fill->IsRadialToEdge())
@@ -411,12 +413,13 @@ void XFA_BOX_Fill_Radial(CXFA_Box* box,
   pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
-void XFA_BOX_Fill_Pattern(CXFA_Box* box,
+void XFA_BOX_Fill_Pattern(CXFA_Fill* fill,
                           CXFA_Graphics* pGS,
                           CXFA_GEPath& fillPath,
                           CFX_RectF rtFill,
                           const CFX_Matrix& matrix) {
-  CXFA_Fill* fill = box->GetFill();
+  ASSERT(fill);
+
   FX_ARGB crStart = fill->GetColor(false);
   FX_ARGB crEnd = fill->GetPatternColor();
   FX_HatchStyle iHatch = FX_HatchStyle::Cross;
@@ -445,12 +448,13 @@ void XFA_BOX_Fill_Pattern(CXFA_Box* box,
   pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
 }
 
-void XFA_BOX_Fill_Linear(CXFA_Box* box,
+void XFA_BOX_Fill_Linear(CXFA_Fill* fill,
                          CXFA_Graphics* pGS,
                          CXFA_GEPath& fillPath,
                          CFX_RectF rtFill,
                          const CFX_Matrix& matrix) {
-  CXFA_Fill* fill = box->GetFill();
+  ASSERT(fill);
+
   FX_ARGB crStart = fill->GetColor(false);
   FX_ARGB crEnd = fill->GetLinearColor();
 
@@ -488,7 +492,7 @@ void XFA_BOX_Fill(CXFA_Box* box,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix,
                   uint32_t dwFlags) {
-  CXFA_Fill* fill = box->GetFill();
+  CXFA_Fill* fill = box->GetFillIfExists();
   if (!fill || !fill->IsVisible())
     return;
 
@@ -500,13 +504,13 @@ void XFA_BOX_Fill(CXFA_Box* box,
   XFA_Element eType = fill->GetFillType();
   switch (eType) {
     case XFA_Element::Radial:
-      XFA_BOX_Fill_Radial(box, pGS, fillPath, rtWidget, matrix);
+      XFA_BOX_Fill_Radial(fill, pGS, fillPath, rtWidget, matrix);
       break;
     case XFA_Element::Pattern:
-      XFA_BOX_Fill_Pattern(box, pGS, fillPath, rtWidget, matrix);
+      XFA_BOX_Fill_Pattern(fill, pGS, fillPath, rtWidget, matrix);
       break;
     case XFA_Element::Linear:
-      XFA_BOX_Fill_Linear(box, pGS, fillPath, rtWidget, matrix);
+      XFA_BOX_Fill_Linear(fill, pGS, fillPath, rtWidget, matrix);
       break;
     default: {
       FX_ARGB cr;
@@ -559,7 +563,7 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
                        CFX_RectF rtWidget,
                        const CFX_Matrix& matrix,
                        uint32_t dwFlags) {
-  CXFA_Edge* edge = box->GetEdge(0);
+  CXFA_Edge* edge = box->GetEdgeIfExists(0);
   if (!edge || !edge->IsVisible())
     return;
 
@@ -987,7 +991,7 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
     return;
 
   CFX_RectF rtBorder = GetRectWithoutRotate();
-  CXFA_Margin* margin = border->GetMargin();
+  CXFA_Margin* margin = border->GetMarginIfExists();
   if (margin)
     XFA_RectWithoutMargin(rtBorder, margin);
 
@@ -998,18 +1002,23 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
 bool CXFA_FFWidget::IsLoaded() {
   return !!m_pPageView;
 }
+
 bool CXFA_FFWidget::LoadWidget() {
   PerformLayout();
   return true;
 }
+
 void CXFA_FFWidget::UnloadWidget() {}
+
 bool CXFA_FFWidget::PerformLayout() {
   RecacheWidgetRect();
   return true;
 }
+
 bool CXFA_FFWidget::UpdateFWLData() {
   return false;
 }
+
 void CXFA_FFWidget::UpdateWidgetProperty() {}
 
 void CXFA_FFWidget::DrawBorder(CXFA_Graphics* pGS,

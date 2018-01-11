@@ -11,6 +11,8 @@
 
 class CXFA_Edge : public CXFA_Stroke {
  public:
+  static constexpr FX_ARGB kDefaultColor = 0xFF000000;
+
   CXFA_Edge(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Edge() override;
 };

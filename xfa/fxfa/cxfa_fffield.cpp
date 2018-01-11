@@ -269,7 +269,7 @@ void CXFA_FFField::CapPlacement() {
 
   CXFA_Border* borderUI = m_pNode->GetWidgetAcc()->GetUIBorder();
   if (borderUI) {
-    CXFA_Margin* borderMargin = borderUI->GetMargin();
+    CXFA_Margin* borderMargin = borderUI->GetMarginIfExists();
     if (borderMargin)
       XFA_RectWithoutMargin(m_rtUI, borderMargin);
   }

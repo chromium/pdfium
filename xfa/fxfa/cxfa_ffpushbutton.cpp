@@ -121,8 +121,10 @@ bool CXFA_FFPushButton::PerformLayout() {
 
 float CXFA_FFPushButton::GetLineWidth() {
   CXFA_Border* border = m_pNode->GetBorderIfExists();
-  if (border && border->GetPresence() == XFA_AttributeEnum::Visible)
-    return border->GetEdge(0)->GetThickness();
+  if (border && border->GetPresence() == XFA_AttributeEnum::Visible) {
+    CXFA_Edge* edge = border->GetEdgeIfExists(0);
+    return edge ? edge->GetThickness() : 0;
+  }
   return 0;
 }
 

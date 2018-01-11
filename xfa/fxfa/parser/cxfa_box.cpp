@@ -81,7 +81,7 @@ int32_t CXFA_Box::CountEdges() {
   return CountChildren(XFA_Element::Edge, false);
 }
 
-CXFA_Edge* CXFA_Box::GetEdge(int32_t nIndex) {
+CXFA_Edge* CXFA_Box::GetEdgeIfExists(int32_t nIndex) {
   if (nIndex == 0)
     return JSObject()->GetOrCreateProperty<CXFA_Edge>(nIndex,
                                                       XFA_Element::Edge);
@@ -104,15 +104,15 @@ Optional<int32_t> CXFA_Box::GetSweepAngle() {
   return JSObject()->TryInteger(XFA_Attribute::SweepAngle, false);
 }
 
-CXFA_Fill* CXFA_Box::GetFill() const {
+CXFA_Fill* CXFA_Box::GetFillIfExists() const {
   return JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill);
 }
 
-CXFA_Fill* CXFA_Box::GetOrCreateFill() {
+CXFA_Fill* CXFA_Box::GetOrCreateFillIfPossible() {
   return JSObject()->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill);
 }
 
-CXFA_Margin* CXFA_Box::GetMargin() {
+CXFA_Margin* CXFA_Box::GetMarginIfExists() {
   return GetChild<CXFA_Margin>(0, XFA_Element::Margin, false);
 }
 
@@ -144,6 +144,8 @@ std::vector<CXFA_Stroke*> CXFA_Box::GetStrokesInternal(bool bNull) {
       corner = JSObject()->GetProperty<CXFA_Corner>(i, XFA_Element::Corner);
     }
 
+    // TODO(dsinclair): If i == 0 and GetOrCreateProperty failed, we can end up
+    // with a null corner in the first position.
     if (corner || i == 0) {
       strokes[j] = corner;
     } else if (!bNull) {
@@ -160,6 +162,8 @@ std::vector<CXFA_Stroke*> CXFA_Box::GetStrokesInternal(bool bNull) {
     else
       edge = JSObject()->GetProperty<CXFA_Edge>(i, XFA_Element::Edge);
 
+    // TODO(dsinclair): If i == 0 and GetOrCreateProperty failed, we can end up
+    // with a null edge in the first position.
     if (edge || i == 0) {
       strokes[j] = edge;
     } else if (!bNull) {

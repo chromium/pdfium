@@ -30,10 +30,10 @@ class CXFA_Box : public CXFA_Node {
   std::tuple<XFA_AttributeEnum, bool, float> Get3DStyle();
 
   int32_t CountEdges();
-  CXFA_Edge* GetEdge(int32_t nIndex);
-  CXFA_Fill* GetFill() const;
-  CXFA_Fill* GetOrCreateFill();
-  CXFA_Margin* GetMargin();
+  CXFA_Edge* GetEdgeIfExists(int32_t nIndex);
+  CXFA_Fill* GetFillIfExists() const;
+  CXFA_Fill* GetOrCreateFillIfPossible();
+  CXFA_Margin* GetMarginIfExists();
 
   std::vector<CXFA_Stroke*> GetStrokes();
 

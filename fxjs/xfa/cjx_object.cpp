@@ -1323,7 +1323,7 @@ void CJX_Object::Script_Som_FillColor(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
   CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
-  CXFA_Fill* borderfill = border->GetOrCreateFill();
+  CXFA_Fill* borderfill = border->GetOrCreateFillIfPossible();
   if (!borderfill)
     return;
 
@@ -1358,13 +1358,17 @@ void CJX_Object::Script_Som_BorderColor(CFXJSE_Value* pValue,
     int32_t b = 0;
     std::tie(r, g, b) = StrToRGB(pValue->ToWideString());
     FX_ARGB rgb = ArgbEncode(100, r, g, b);
-    for (int32_t i = 0; i < iSize; ++i)
-      border->GetEdge(i)->SetColor(rgb);
+    for (int32_t i = 0; i < iSize; ++i) {
+      CXFA_Edge* edge = border->GetEdgeIfExists(i);
+      if (edge)
+        edge->SetColor(rgb);
+    }
 
     return;
   }
 
-  FX_ARGB color = border->GetEdge(0)->GetColor();
+  CXFA_Edge* edge = border->GetEdgeIfExists(0);
+  FX_ARGB color = edge ? edge->GetColor() : CXFA_Edge::kDefaultColor;
   int32_t a;
   int32_t r;
   int32_t g;
@@ -1379,15 +1383,18 @@ void CJX_Object::Script_Som_BorderWidth(CFXJSE_Value* pValue,
                                         XFA_Attribute eAttribute) {
   CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   if (bSetting) {
-    CXFA_Measurement thickness = border->GetEdge(0)->GetMSThickness();
+    CXFA_Edge* edge = border->GetEdgeIfExists(0);
+    CXFA_Measurement thickness =
+        edge ? edge->GetMSThickness() : CXFA_Measurement(0.5, XFA_Unit::Pt);
     pValue->SetString(thickness.ToString().UTF8Encode().AsStringView());
     return;
   }
 
   WideString wsThickness = pValue->ToWideString();
   for (int32_t i = 0; i < border->CountEdges(); ++i) {
-    border->GetEdge(i)->SetMSThickness(
-        CXFA_Measurement(wsThickness.AsStringView()));
+    CXFA_Edge* edge = border->GetEdgeIfExists(i);
+    if (edge)
+      edge->SetMSThickness(CXFA_Measurement(wsThickness.AsStringView()));
   }
 }
 

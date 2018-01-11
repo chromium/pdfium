@@ -27,7 +27,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;
     if (borderUI) {
-      CXFA_Edge* edge = borderUI->GetEdge(0);
+      CXFA_Edge* edge = borderUI->GetEdgeIfExists(0);
       if (edge) {
         cr = edge->GetColor();
         fWidth = edge->GetThickness();
