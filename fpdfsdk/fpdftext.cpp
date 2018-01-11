@@ -105,24 +105,26 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
   return charinfo.m_FontSize;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
-                                                   int index,
-                                                   double* left,
-                                                   double* right,
-                                                   double* bottom,
-                                                   double* top) {
-  if (!text_page)
-    return;
-  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
+                                                        int index,
+                                                        double* left,
+                                                        double* right,
+                                                        double* bottom,
+                                                        double* top) {
+  if (!text_page || index < 0)
+    return false;
 
-  if (index < 0 || index >= textpage->CountChars())
-    return;
+  CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
+  if (index >= textpage->CountChars())
+    return false;
+
   FPDF_CHAR_INFO charinfo;
   textpage->GetCharInfo(index, &charinfo);
   *left = charinfo.m_CharBox.left;
   *right = charinfo.m_CharBox.right;
   *bottom = charinfo.m_CharBox.bottom;
   *top = charinfo.m_CharBox.top;
+  return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

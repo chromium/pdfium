@@ -102,16 +102,18 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
 //          top         -   Pointer to a double number receiving top position of
 //          the character box.
 // Return Value:
-//          None.
+//          On success, return TRUE and fill in |left|, |right|, |bottom|, and
+//          |top|. If |text_page| is invalid, or if |index| is out of bounds,
+//          then return FALSE, and the out parameters remain unmodified.
 // Comments:
 //          All positions are measured in PDF "user space".
 //
-FPDF_EXPORT void FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
-                                                   int index,
-                                                   double* left,
-                                                   double* right,
-                                                   double* bottom,
-                                                   double* top);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
+                                                        int index,
+                                                        double* left,
+                                                        double* right,
+                                                        double* bottom,
+                                                        double* top);
 
 // Function: FPDFText_GetCharOrigin
 //          Get origin of a particular character.

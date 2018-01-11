@@ -87,7 +87,23 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   double right = 0.0;
   double bottom = 0.0;
   double top = 0.0;
-  FPDFText_GetCharBox(textpage, 4, &left, &right, &bottom, &top);
+  EXPECT_FALSE(FPDFText_GetCharBox(nullptr, 4, &left, &right, &bottom, &top));
+  EXPECT_DOUBLE_EQ(0.0, left);
+  EXPECT_DOUBLE_EQ(0.0, right);
+  EXPECT_DOUBLE_EQ(0.0, bottom);
+  EXPECT_DOUBLE_EQ(0.0, top);
+  EXPECT_FALSE(FPDFText_GetCharBox(textpage, -1, &left, &right, &bottom, &top));
+  EXPECT_DOUBLE_EQ(0.0, left);
+  EXPECT_DOUBLE_EQ(0.0, right);
+  EXPECT_DOUBLE_EQ(0.0, bottom);
+  EXPECT_DOUBLE_EQ(0.0, top);
+  EXPECT_FALSE(FPDFText_GetCharBox(textpage, 55, &left, &right, &bottom, &top));
+  EXPECT_DOUBLE_EQ(0.0, left);
+  EXPECT_DOUBLE_EQ(0.0, right);
+  EXPECT_DOUBLE_EQ(0.0, bottom);
+  EXPECT_DOUBLE_EQ(0.0, top);
+
+  EXPECT_TRUE(FPDFText_GetCharBox(textpage, 4, &left, &right, &bottom, &top));
   EXPECT_NEAR(41.071, left, 0.001);
   EXPECT_NEAR(46.243, right, 0.001);
   EXPECT_NEAR(49.844, bottom, 0.001);
