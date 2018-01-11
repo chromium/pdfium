@@ -104,7 +104,7 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Node* CreateInstanceIfPossible(bool bDataMerge);
   int32_t GetCount();
-  CXFA_Node* GetItem(int32_t iIndex);
+  CXFA_Node* GetItemIfExists(int32_t iIndex);
   void RemoveItem(CXFA_Node* pRemoveInstance, bool bRemoveDataBinding);
   void InsertItem(CXFA_Node* pNewInstance,
                   int32_t iPos,

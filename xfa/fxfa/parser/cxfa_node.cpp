@@ -1129,7 +1129,7 @@ bool CXFA_Node::IsNeedSavingXMLNode() {
                         GetElementType() == XFA_Element::Xfa);
 }
 
-CXFA_Node* CXFA_Node::GetItem(int32_t iIndex) {
+CXFA_Node* CXFA_Node::GetItemIfExists(int32_t iIndex) {
   int32_t iCount = 0;
   uint32_t dwNameHash = 0;
   for (CXFA_Node* pNode = GetNextSibling(); pNode;
@@ -1198,8 +1198,12 @@ void CXFA_Node::InsertItem(CXFA_Node* pNewInstance,
   if (iPos < 0)
     iPos = iCount;
   if (iPos == iCount) {
+    CXFA_Node* item = GetItemIfExists(iCount - 1);
+    if (!item)
+      return;
+
     CXFA_Node* pNextSibling =
-        iCount > 0 ? GetItem(iCount - 1)->GetNextSibling() : GetNextSibling();
+        iCount > 0 ? item->GetNextSibling() : GetNextSibling();
     GetParent()->InsertChild(pNewInstance, pNextSibling);
     if (bMoveDataBindingNodes) {
       std::set<CXFA_Node*> sNew;
@@ -1229,7 +1233,12 @@ void CXFA_Node::InsertItem(CXFA_Node* pNewInstance,
       ReorderDataNodes(sNew, sAfter, false);
     }
   } else {
-    CXFA_Node* pBeforeInstance = GetItem(iPos);
+    CXFA_Node* pBeforeInstance = GetItemIfExists(iPos);
+    if (!pBeforeInstance) {
+      // TODO(dsinclair): What should happen here?
+      return;
+    }
+
     GetParent()->InsertChild(pNewInstance, pBeforeInstance);
     if (bMoveDataBindingNodes) {
       std::set<CXFA_Node*> sNew;

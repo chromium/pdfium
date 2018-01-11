@@ -1629,12 +1629,12 @@ void CJX_Object::Script_Som_InstanceIndex(CFXJSE_Value* pValue,
   if (!pNotify)
     return;
 
-  CXFA_Node* pToInstance = pManagerNode->GetItem(iTo);
+  CXFA_Node* pToInstance = pManagerNode->GetItemIfExists(iTo);
   if (pToInstance && pToInstance->GetElementType() == XFA_Element::Subform) {
     pNotify->RunSubformIndexChange(pToInstance);
   }
 
-  CXFA_Node* pFromInstance = pManagerNode->GetItem(iFrom);
+  CXFA_Node* pFromInstance = pManagerNode->GetItemIfExists(iFrom);
   if (pFromInstance &&
       pFromInstance->GetElementType() == XFA_Element::Subform) {
     pNotify->RunSubformIndexChange(pFromInstance);

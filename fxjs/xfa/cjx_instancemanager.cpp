@@ -58,8 +58,15 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
             : wsInstManagerName.Right(wsInstManagerName.GetLength() - 1));
     uint32_t dInstanceNameHash =
         FX_HashCode_GetW(wsInstanceName.AsStringView(), false);
-    CXFA_Node* pPrevSibling =
-        iDesired == 0 ? GetXFANode() : GetXFANode()->GetItem(iDesired - 1);
+    CXFA_Node* pPrevSibling = iDesired == 0
+                                  ? GetXFANode()
+                                  : GetXFANode()->GetItemIfExists(iDesired - 1);
+    if (!pPrevSibling) {
+      // TODO(dsinclair): Better error?
+      ThrowIndexOutOfBoundsException();
+      return 0;
+    }
+
     while (iCount > iDesired) {
       CXFA_Node* pRemoveInstance = pPrevSibling->GetNextSibling();
       if (pRemoveInstance->GetElementType() != XFA_Element::Subform &&
@@ -109,7 +116,12 @@ int32_t CJX_InstanceManager::MoveInstance(int32_t iTo, int32_t iFrom) {
   if (iFrom < 0 || iTo < 0 || iFrom == iTo)
     return 0;
 
-  CXFA_Node* pMoveInstance = GetXFANode()->GetItem(iFrom);
+  CXFA_Node* pMoveInstance = GetXFANode()->GetItemIfExists(iFrom);
+  if (!pMoveInstance) {
+    ThrowIndexOutOfBoundsException();
+    return 1;
+  }
+
   GetXFANode()->RemoveItem(pMoveInstance, false);
   GetXFANode()->InsertItem(pMoveInstance, iTo, iCount - 1, true);
   CXFA_LayoutProcessor* pLayoutPro = GetDocument()->GetLayoutProcessor();
@@ -134,11 +146,11 @@ CJS_Return CJX_InstanceManager::moveInstance(
   if (!pNotify)
     return CJS_Return(true);
 
-  CXFA_Node* pToInstance = GetXFANode()->GetItem(iTo);
+  CXFA_Node* pToInstance = GetXFANode()->GetItemIfExists(iTo);
   if (pToInstance && pToInstance->GetElementType() == XFA_Element::Subform)
     pNotify->RunSubformIndexChange(pToInstance);
 
-  CXFA_Node* pFromInstance = GetXFANode()->GetItem(iFrom);
+  CXFA_Node* pFromInstance = GetXFANode()->GetItemIfExists(iFrom);
   if (pFromInstance &&
       pFromInstance->GetElementType() == XFA_Element::Subform) {
     pNotify->RunSubformIndexChange(pFromInstance);
@@ -163,13 +175,16 @@ CJS_Return CJX_InstanceManager::removeInstance(
   if (iCount - 1 < iMin)
     return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
 
-  CXFA_Node* pRemoveInstance = GetXFANode()->GetItem(iIndex);
+  CXFA_Node* pRemoveInstance = GetXFANode()->GetItemIfExists(iIndex);
+  if (!pRemoveInstance)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
   GetXFANode()->RemoveItem(pRemoveInstance, true);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     for (int32_t i = iIndex; i < iCount - 1; i++) {
-      CXFA_Node* pSubformInstance = GetXFANode()->GetItem(i);
+      CXFA_Node* pSubformInstance = GetXFANode()->GetItemIfExists(i);
       if (pSubformInstance &&
           pSubformInstance->GetElementType() == XFA_Element::Subform) {
         pNotify->RunSubformIndexChange(pSubformInstance);
