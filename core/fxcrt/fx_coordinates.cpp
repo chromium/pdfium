@@ -199,6 +199,14 @@ FX_RECT CFX_FloatRect::ToRoundedFxRect() const {
                  FXSYS_round(bottom));
 }
 
+#ifndef NDEBUG
+std::ostream& operator<<(std::ostream& os, const CFX_FloatRect& rect) {
+  os << "rect[" << rect.Width() << "x" << rect.Height() << " (" << rect.left
+     << ", " << rect.bottom << ")]";
+  return os;
+}
+#endif
+
 CFX_Matrix CFX_Matrix::GetInverse() const {
   CFX_Matrix inverse;
   float i = a * d - b * c;

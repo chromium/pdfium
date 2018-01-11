@@ -192,6 +192,25 @@ TEST(CFX_FloatRect, ScaleFromCenterPointEmpty) {
   EXPECT_FLOAT_EQ(0.0f, rect.top);
 }
 
+#ifndef NDEBUG
+TEST(CFX_FloatRect, Print) {
+  std::ostringstream os;
+  CFX_FloatRect rect;
+  os << rect;
+  EXPECT_STREQ("rect[0x0 (0, 0)]", os.str().c_str());
+
+  os.str("");
+  rect = CFX_FloatRect(10, 20, 14, 23);
+  os << rect;
+  EXPECT_STREQ("rect[4x3 (10, 20)]", os.str().c_str());
+
+  os.str("");
+  rect = CFX_FloatRect(10.5, 20.5, 14.75, 23.75);
+  os << rect;
+  EXPECT_STREQ("rect[4.25x3.25 (10.5, 20.5)]", os.str().c_str());
+}
+#endif
+
 TEST(CFX_Matrix, ReverseIdentity) {
   CFX_Matrix m;
   m.SetIdentity();
