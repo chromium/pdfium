@@ -1593,7 +1593,7 @@ bool CXFA_Node::IsOpenAccess() {
   return true;
 }
 
-CXFA_Value* CXFA_Node::GetDefaultValue() {
+CXFA_Value* CXFA_Node::GetDefaultValueIfExists() {
   CXFA_Node* pTemNode = GetTemplateNodeIfExists();
   return pTemNode ? pTemNode->JSObject()->GetProperty<CXFA_Value>(
                         0, XFA_Element::Value)

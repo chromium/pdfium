@@ -375,7 +375,7 @@ void CXFA_WidgetAcc::ResetData() {
   XFA_Element eUIType = GetUIType();
   switch (eUIType) {
     case XFA_Element::ImageEdit: {
-      CXFA_Value* imageValue = m_pNode->GetDefaultValue();
+      CXFA_Value* imageValue = m_pNode->GetDefaultValueIfExists();
       CXFA_Image* image = imageValue ? imageValue->GetImage() : nullptr;
       WideString wsContentType, wsHref;
       if (image) {
@@ -396,7 +396,7 @@ void CXFA_WidgetAcc::ResetData() {
 
         bool done = false;
         if (wsValue.IsEmpty()) {
-          CXFA_Value* defValue = pAcc->GetNode()->GetDefaultValue();
+          CXFA_Value* defValue = pAcc->GetNode()->GetDefaultValueIfExists();
           if (defValue) {
             wsValue = defValue->GetChildValueContent();
             SetValue(XFA_VALUEPICTURE_Raw, wsValue);
@@ -426,7 +426,7 @@ void CXFA_WidgetAcc::ResetData() {
     case XFA_Element::ChoiceList:
       ClearAllSelections();
     default: {
-      CXFA_Value* defValue = m_pNode->GetDefaultValue();
+      CXFA_Value* defValue = m_pNode->GetDefaultValueIfExists();
       if (defValue)
         wsValue = defValue->GetChildValueContent();
 

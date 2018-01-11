@@ -252,7 +252,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Validate* GetValidateIfExists() const;
   CXFA_Validate* GetOrCreateValidateIfPossible();
 
-  CXFA_Value* GetDefaultValue();
+  CXFA_Value* GetDefaultValueIfExists();
   CXFA_Value* GetFormValue() const;
   WideString GetRawValue();
   int32_t GetRotate();
