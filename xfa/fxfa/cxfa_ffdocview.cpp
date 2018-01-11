@@ -425,7 +425,7 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_Calculate* calc = node->GetCalculate();
+      CXFA_Calculate* calc = node->GetCalculateIfExists();
       if (!calc)
         return XFA_EVENTERROR_NotExist;
       if (node->IsUserInteractive())

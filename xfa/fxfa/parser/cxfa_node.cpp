@@ -1604,7 +1604,7 @@ CXFA_Value* CXFA_Node::GetFormValue() const {
   return JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value);
 }
 
-CXFA_Calculate* CXFA_Node::GetCalculate() const {
+CXFA_Calculate* CXFA_Node::GetCalculateIfExists() const {
   return JSObject()->GetProperty<CXFA_Calculate>(0, XFA_Element::Calculate);
 }
 
@@ -1697,7 +1697,7 @@ int32_t CXFA_Node::ProcessCalculate(CXFA_FFDocView* docView) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_Calculate* calc = GetCalculate();
+  CXFA_Calculate* calc = GetCalculateIfExists();
   if (!calc)
     return XFA_EVENTERROR_NotExist;
   if (IsUserInteractive())

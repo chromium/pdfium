@@ -664,7 +664,7 @@ int32_t CXFA_FFField::CalculateOverride() {
 }
 
 int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
-  CXFA_Calculate* calc = pAcc->GetNode()->GetCalculate();
+  CXFA_Calculate* calc = pAcc->GetNode()->GetCalculateIfExists();
   if (!calc)
     return 1;
 
