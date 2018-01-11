@@ -122,7 +122,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   }
 
   m_rtUI = rtWidget;
-  CXFA_Margin* captionMargin = caption ? caption->GetMargin() : nullptr;
+  CXFA_Margin* captionMargin = caption ? caption->GetMarginIfExists() : nullptr;
   switch (iCapPlacement) {
     case XFA_AttributeEnum::Left: {
       m_rtCaption.width = fCapReserve;

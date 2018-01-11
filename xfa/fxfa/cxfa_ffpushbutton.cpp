@@ -107,7 +107,7 @@ bool CXFA_FFPushButton::PerformLayout() {
   m_rtCaption = rtWidget;
 
   CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
-  CXFA_Margin* captionMargin = caption ? caption->GetMargin() : nullptr;
+  CXFA_Margin* captionMargin = caption ? caption->GetMarginIfExists() : nullptr;
   if (captionMargin)
     XFA_RectWithoutMargin(m_rtCaption, captionMargin);
 

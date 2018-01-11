@@ -231,7 +231,7 @@ void CXFA_FFField::CapPlacement() {
   }
 
   m_rtUI = rtWidget;
-  CXFA_Margin* capMargin = caption ? caption->GetMargin() : nullptr;
+  CXFA_Margin* capMargin = caption ? caption->GetMarginIfExists() : nullptr;
   switch (iCapPlacement) {
     case XFA_AttributeEnum::Left: {
       m_rtCaption.width = fCapReserve;

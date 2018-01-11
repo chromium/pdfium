@@ -510,7 +510,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
       bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
   } else {
     float fFontSize = 10.0f;
-    CXFA_Font* font = caption->GetFont();
+    CXFA_Font* font = caption->GetFontIfExists();
     if (font) {
       fFontSize = font->GetFontSize();
     } else {
@@ -527,19 +527,20 @@ void CXFA_WidgetAcc::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
     }
   }
 
-  CXFA_Margin* captionMargin = caption->GetMargin();
-  if (captionMargin) {
-    float fLeftInset = captionMargin->GetLeftInset();
-    float fTopInset = captionMargin->GetTopInset();
-    float fRightInset = captionMargin->GetRightInset();
-    float fBottomInset = captionMargin->GetBottomInset();
-    if (bReserveExit) {
-      bVert ? (szCap.width += fLeftInset + fRightInset)
-            : (szCap.height += fTopInset + fBottomInset);
-    } else {
-      szCap.width += fLeftInset + fRightInset;
-      szCap.height += fTopInset + fBottomInset;
-    }
+  CXFA_Margin* captionMargin = caption->GetMarginIfExists();
+  if (!captionMargin)
+    return;
+
+  float fLeftInset = captionMargin->GetLeftInset();
+  float fTopInset = captionMargin->GetTopInset();
+  float fRightInset = captionMargin->GetRightInset();
+  float fBottomInset = captionMargin->GetBottomInset();
+  if (bReserveExit) {
+    bVert ? (szCap.width += fLeftInset + fRightInset)
+          : (szCap.height += fTopInset + fBottomInset);
+  } else {
+    szCap.width += fLeftInset + fRightInset;
+    szCap.height += fTopInset + fBottomInset;
   }
 }
 

@@ -70,14 +70,14 @@ float CXFA_Caption::GetReserve() const {
   return JSObject()->GetMeasure(XFA_Attribute::Reserve).ToUnit(XFA_Unit::Pt);
 }
 
-CXFA_Margin* CXFA_Caption::GetMargin() {
+CXFA_Margin* CXFA_Caption::GetMarginIfExists() {
   return GetChild<CXFA_Margin>(0, XFA_Element::Margin, false);
 }
 
-CXFA_Font* CXFA_Caption::GetFont() {
+CXFA_Font* CXFA_Caption::GetFontIfExists() {
   return GetChild<CXFA_Font>(0, XFA_Element::Font, false);
 }
 
-CXFA_Value* CXFA_Caption::GetValue() {
+CXFA_Value* CXFA_Caption::GetValueIfExists() {
   return GetChild<CXFA_Value>(0, XFA_Element::Value, false);
 }

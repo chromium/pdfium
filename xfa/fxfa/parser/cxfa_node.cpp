@@ -1934,7 +1934,7 @@ WideString CXFA_Node::GetValidateCaptionName(bool bVersionFlag) {
   if (!bVersionFlag) {
     CXFA_Caption* caption = GetCaptionIfExists();
     if (caption) {
-      CXFA_Value* capValue = caption->GetValue();
+      CXFA_Value* capValue = caption->GetValueIfExists();
       if (capValue) {
         CXFA_Text* captionText = capValue->GetText();
         if (captionText)

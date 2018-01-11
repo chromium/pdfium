@@ -25,9 +25,9 @@ class CXFA_Caption : public CXFA_Node {
   bool IsHidden();
   XFA_AttributeEnum GetPlacementType();
   float GetReserve() const;
-  CXFA_Margin* GetMargin();
-  CXFA_Font* GetFont();
-  CXFA_Value* GetValue();
+  CXFA_Margin* GetMarginIfExists();
+  CXFA_Font* GetFontIfExists();
+  CXFA_Value* GetValueIfExists();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CAPTION_H_
