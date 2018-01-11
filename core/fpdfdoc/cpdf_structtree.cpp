@@ -15,8 +15,6 @@
 
 namespace {
 
-const int nMaxRecursion = 32;
-
 bool IsTagged(const CPDF_Document* pDoc) {
   const CPDF_Dictionary* pCatalog = pDoc->GetRoot();
   const CPDF_Dictionary* pMarkInfo = pCatalog->GetDictFor("MarkInfo");
@@ -87,7 +85,8 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
     CPDF_Dictionary* pDict,
     std::map<CPDF_Dictionary*, RetainPtr<CPDF_StructElement>>* map,
     int nLevel) {
-  if (nLevel > nMaxRecursion)
+  static constexpr int kStructTreeMaxRecursion = 32;
+  if (nLevel > kStructTreeMaxRecursion)
     return nullptr;
 
   auto it = map->find(pDict);

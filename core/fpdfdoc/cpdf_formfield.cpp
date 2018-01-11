@@ -25,8 +25,6 @@
 
 namespace {
 
-const int kMaxRecursion = 32;
-
 const int kFormListMultiSelect = 0x100;
 
 const int kFormComboEdit = 0x100;
@@ -50,9 +48,8 @@ bool IsUnison(CPDF_FormField* pField) {
 CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
                                const char* name,
                                int nLevel) {
-  if (nLevel > kMaxRecursion)
-    return nullptr;
-  if (!pFieldDict)
+  static constexpr int kGetFieldMaxRecursion = 32;
+  if (!pFieldDict || nLevel > kGetFieldMaxRecursion)
     return nullptr;
 
   CPDF_Object* pAttr = pFieldDict->GetDirectObjectFor(name);
@@ -60,9 +57,7 @@ CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
     return pAttr;
 
   CPDF_Dictionary* pParent = pFieldDict->GetDictFor("Parent");
-  if (!pParent)
-    return nullptr;
-  return FPDF_GetFieldAttr(pParent, name, nLevel + 1);
+  return pParent ? FPDF_GetFieldAttr(pParent, name, nLevel + 1) : nullptr;
 }
 
 WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {

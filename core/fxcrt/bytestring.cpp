@@ -69,7 +69,9 @@ bool IsValidCodePage(uint16_t codepage) {
 #endif
 
 ByteString GetByteString(uint16_t codepage, const WideStringView& wstr) {
+#ifndef NDEBUG
   ASSERT(IsValidCodePage(codepage));
+#endif
 
   int src_len = wstr.GetLength();
   int dest_len =

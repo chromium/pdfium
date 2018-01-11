@@ -17,7 +17,7 @@
 
 namespace {
 
-const int nMaxRecursion = 32;
+constexpr int kNameTreeMaxRecursion = 32;
 
 std::pair<WideString, WideString> GetNodeLimitsMaybeSwap(CPDF_Array* pLimits) {
   ASSERT(pLimits);
@@ -40,7 +40,7 @@ bool GetNodeAncestorsLimits(const CPDF_Dictionary* pNode,
                             const CPDF_Array* pFind,
                             int nLevel,
                             std::vector<CPDF_Array*>* pLimits) {
-  if (nLevel > nMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion)
     return false;
 
   if (pNode->GetArrayFor("Names") == pFind) {
@@ -72,7 +72,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
                                       const CPDF_Array* pFind,
                                       const WideString& csName,
                                       int nLevel) {
-  if (nLevel > nMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion)
     return false;
 
   CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
@@ -159,7 +159,7 @@ CPDF_Object* SearchNameNodeByName(const CPDF_Dictionary* pNode,
                                   size_t* nIndex,
                                   CPDF_Array** ppFind,
                                   int* pFindIndex) {
-  if (nLevel > nMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion)
     return nullptr;
 
   CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
@@ -235,7 +235,7 @@ CPDF_Object* SearchNameNodeByIndex(const CPDF_Dictionary* pNode,
                                    WideString* csName,
                                    CPDF_Array** ppFind,
                                    int* pFindIndex) {
-  if (nLevel > nMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion)
     return nullptr;
 
   CPDF_Array* pNames = pNode->GetArrayFor("Names");
@@ -272,7 +272,7 @@ CPDF_Object* SearchNameNodeByIndex(const CPDF_Dictionary* pNode,
 
 // Get the total number of key-value pairs in the tree with root |pNode|.
 size_t CountNamesInternal(CPDF_Dictionary* pNode, int nLevel) {
-  if (nLevel > nMaxRecursion)
+  if (nLevel > kNameTreeMaxRecursion)
     return 0;
 
   CPDF_Array* pNames = pNode->GetArrayFor("Names");

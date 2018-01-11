@@ -285,8 +285,7 @@ visibility = [
   "//:gn_visibility",
 ]
 
-# TODO(crbug.com/pdfium/964): Support jumbo builds.
-static_library("fdrm") {
+jumbo_static_library("fdrm") {
   sources = [
     "core/fdrm/crypto/fx_crypt.cpp",
     "core/fdrm/crypto/fx_crypt.h",
@@ -299,8 +298,7 @@ static_library("fdrm") {
   ]
 }
 
-# TODO(crbug.com/pdfium/964): Support jumbo builds.
-static_library("fpdfdoc") {
+jumbo_static_library("fpdfdoc") {
   sources = [
     "core/fpdfdoc/cline.cpp",
     "core/fpdfdoc/cline.h",
@@ -804,8 +802,7 @@ config("fxge_warnings") {
   }
 }
 
-# TODO(crbug.com/pdfium/964): Support jumbo builds.
-static_library("fxcrt") {
+jumbo_static_library("fxcrt") {
   sources = [
     "core/fxcrt/autorestorer.h",
     "core/fxcrt/bytestring.cpp",

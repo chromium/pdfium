@@ -8,12 +8,12 @@
 
 #define rol(x, y) (((x) << (y)) | (((unsigned int)x) >> (32 - y)))
 
-#define GET_UINT32(n, b, i)                                             \
+#define SHA_GET_UINT32(n, b, i)                                         \
   {                                                                     \
     (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) | \
           ((uint32_t)(b)[(i) + 2] << 8) | ((uint32_t)(b)[(i) + 3]);     \
   }
-#define PUT_UINT32(n, b, i)              \
+#define SHA_PUT_UINT32(n, b, i)          \
   {                                      \
     (b)[(i)] = (uint8_t)((n) >> 24);     \
     (b)[(i) + 1] = (uint8_t)((n) >> 16); \
@@ -70,7 +70,7 @@
 #define F0(x, y, z) ((x & y) | (z & (x | y)))
 #define F1(x, y, z) (z ^ (x & (y ^ z)))
 #define R(t) (W[t] = S1(W[t - 2]) + W[t - 7] + S0(W[t - 15]) + W[t - 16])
-#define P(a, b, c, d, e, f, g, h, x, K)      \
+#define PS(a, b, c, d, e, f, g, h, x, K)     \
   {                                          \
     temp1 = h + S3(e) + F1(e, f, g) + K + x; \
     temp2 = S2(a) + F0(a, b, c);             \
@@ -145,96 +145,98 @@ void SHATransform(unsigned int* digest, unsigned int* block) {
 }
 
 void sha256_process(CRYPT_sha2_context* ctx, const uint8_t data[64]) {
-  uint32_t temp1, temp2, W[64];
-  uint32_t A, B, C, D, E, F, G, H;
-  GET_UINT32(W[0], data, 0);
-  GET_UINT32(W[1], data, 4);
-  GET_UINT32(W[2], data, 8);
-  GET_UINT32(W[3], data, 12);
-  GET_UINT32(W[4], data, 16);
-  GET_UINT32(W[5], data, 20);
-  GET_UINT32(W[6], data, 24);
-  GET_UINT32(W[7], data, 28);
-  GET_UINT32(W[8], data, 32);
-  GET_UINT32(W[9], data, 36);
-  GET_UINT32(W[10], data, 40);
-  GET_UINT32(W[11], data, 44);
-  GET_UINT32(W[12], data, 48);
-  GET_UINT32(W[13], data, 52);
-  GET_UINT32(W[14], data, 56);
-  GET_UINT32(W[15], data, 60);
-  A = ctx->state[0];
-  B = ctx->state[1];
-  C = ctx->state[2];
-  D = ctx->state[3];
-  E = ctx->state[4];
-  F = ctx->state[5];
-  G = ctx->state[6];
-  H = ctx->state[7];
-  P(A, B, C, D, E, F, G, H, W[0], 0x428A2F98);
-  P(H, A, B, C, D, E, F, G, W[1], 0x71374491);
-  P(G, H, A, B, C, D, E, F, W[2], 0xB5C0FBCF);
-  P(F, G, H, A, B, C, D, E, W[3], 0xE9B5DBA5);
-  P(E, F, G, H, A, B, C, D, W[4], 0x3956C25B);
-  P(D, E, F, G, H, A, B, C, W[5], 0x59F111F1);
-  P(C, D, E, F, G, H, A, B, W[6], 0x923F82A4);
-  P(B, C, D, E, F, G, H, A, W[7], 0xAB1C5ED5);
-  P(A, B, C, D, E, F, G, H, W[8], 0xD807AA98);
-  P(H, A, B, C, D, E, F, G, W[9], 0x12835B01);
-  P(G, H, A, B, C, D, E, F, W[10], 0x243185BE);
-  P(F, G, H, A, B, C, D, E, W[11], 0x550C7DC3);
-  P(E, F, G, H, A, B, C, D, W[12], 0x72BE5D74);
-  P(D, E, F, G, H, A, B, C, W[13], 0x80DEB1FE);
-  P(C, D, E, F, G, H, A, B, W[14], 0x9BDC06A7);
-  P(B, C, D, E, F, G, H, A, W[15], 0xC19BF174);
-  P(A, B, C, D, E, F, G, H, R(16), 0xE49B69C1);
-  P(H, A, B, C, D, E, F, G, R(17), 0xEFBE4786);
-  P(G, H, A, B, C, D, E, F, R(18), 0x0FC19DC6);
-  P(F, G, H, A, B, C, D, E, R(19), 0x240CA1CC);
-  P(E, F, G, H, A, B, C, D, R(20), 0x2DE92C6F);
-  P(D, E, F, G, H, A, B, C, R(21), 0x4A7484AA);
-  P(C, D, E, F, G, H, A, B, R(22), 0x5CB0A9DC);
-  P(B, C, D, E, F, G, H, A, R(23), 0x76F988DA);
-  P(A, B, C, D, E, F, G, H, R(24), 0x983E5152);
-  P(H, A, B, C, D, E, F, G, R(25), 0xA831C66D);
-  P(G, H, A, B, C, D, E, F, R(26), 0xB00327C8);
-  P(F, G, H, A, B, C, D, E, R(27), 0xBF597FC7);
-  P(E, F, G, H, A, B, C, D, R(28), 0xC6E00BF3);
-  P(D, E, F, G, H, A, B, C, R(29), 0xD5A79147);
-  P(C, D, E, F, G, H, A, B, R(30), 0x06CA6351);
-  P(B, C, D, E, F, G, H, A, R(31), 0x14292967);
-  P(A, B, C, D, E, F, G, H, R(32), 0x27B70A85);
-  P(H, A, B, C, D, E, F, G, R(33), 0x2E1B2138);
-  P(G, H, A, B, C, D, E, F, R(34), 0x4D2C6DFC);
-  P(F, G, H, A, B, C, D, E, R(35), 0x53380D13);
-  P(E, F, G, H, A, B, C, D, R(36), 0x650A7354);
-  P(D, E, F, G, H, A, B, C, R(37), 0x766A0ABB);
-  P(C, D, E, F, G, H, A, B, R(38), 0x81C2C92E);
-  P(B, C, D, E, F, G, H, A, R(39), 0x92722C85);
-  P(A, B, C, D, E, F, G, H, R(40), 0xA2BFE8A1);
-  P(H, A, B, C, D, E, F, G, R(41), 0xA81A664B);
-  P(G, H, A, B, C, D, E, F, R(42), 0xC24B8B70);
-  P(F, G, H, A, B, C, D, E, R(43), 0xC76C51A3);
-  P(E, F, G, H, A, B, C, D, R(44), 0xD192E819);
-  P(D, E, F, G, H, A, B, C, R(45), 0xD6990624);
-  P(C, D, E, F, G, H, A, B, R(46), 0xF40E3585);
-  P(B, C, D, E, F, G, H, A, R(47), 0x106AA070);
-  P(A, B, C, D, E, F, G, H, R(48), 0x19A4C116);
-  P(H, A, B, C, D, E, F, G, R(49), 0x1E376C08);
-  P(G, H, A, B, C, D, E, F, R(50), 0x2748774C);
-  P(F, G, H, A, B, C, D, E, R(51), 0x34B0BCB5);
-  P(E, F, G, H, A, B, C, D, R(52), 0x391C0CB3);
-  P(D, E, F, G, H, A, B, C, R(53), 0x4ED8AA4A);
-  P(C, D, E, F, G, H, A, B, R(54), 0x5B9CCA4F);
-  P(B, C, D, E, F, G, H, A, R(55), 0x682E6FF3);
-  P(A, B, C, D, E, F, G, H, R(56), 0x748F82EE);
-  P(H, A, B, C, D, E, F, G, R(57), 0x78A5636F);
-  P(G, H, A, B, C, D, E, F, R(58), 0x84C87814);
-  P(F, G, H, A, B, C, D, E, R(59), 0x8CC70208);
-  P(E, F, G, H, A, B, C, D, R(60), 0x90BEFFFA);
-  P(D, E, F, G, H, A, B, C, R(61), 0xA4506CEB);
-  P(C, D, E, F, G, H, A, B, R(62), 0xBEF9A3F7);
-  P(B, C, D, E, F, G, H, A, R(63), 0xC67178F2);
+  uint32_t W[64];
+  SHA_GET_UINT32(W[0], data, 0);
+  SHA_GET_UINT32(W[1], data, 4);
+  SHA_GET_UINT32(W[2], data, 8);
+  SHA_GET_UINT32(W[3], data, 12);
+  SHA_GET_UINT32(W[4], data, 16);
+  SHA_GET_UINT32(W[5], data, 20);
+  SHA_GET_UINT32(W[6], data, 24);
+  SHA_GET_UINT32(W[7], data, 28);
+  SHA_GET_UINT32(W[8], data, 32);
+  SHA_GET_UINT32(W[9], data, 36);
+  SHA_GET_UINT32(W[10], data, 40);
+  SHA_GET_UINT32(W[11], data, 44);
+  SHA_GET_UINT32(W[12], data, 48);
+  SHA_GET_UINT32(W[13], data, 52);
+  SHA_GET_UINT32(W[14], data, 56);
+  SHA_GET_UINT32(W[15], data, 60);
+
+  uint32_t temp1;
+  uint32_t temp2;
+  uint32_t A = ctx->state[0];
+  uint32_t B = ctx->state[1];
+  uint32_t C = ctx->state[2];
+  uint32_t D = ctx->state[3];
+  uint32_t E = ctx->state[4];
+  uint32_t F = ctx->state[5];
+  uint32_t G = ctx->state[6];
+  uint32_t H = ctx->state[7];
+  PS(A, B, C, D, E, F, G, H, W[0], 0x428A2F98);
+  PS(H, A, B, C, D, E, F, G, W[1], 0x71374491);
+  PS(G, H, A, B, C, D, E, F, W[2], 0xB5C0FBCF);
+  PS(F, G, H, A, B, C, D, E, W[3], 0xE9B5DBA5);
+  PS(E, F, G, H, A, B, C, D, W[4], 0x3956C25B);
+  PS(D, E, F, G, H, A, B, C, W[5], 0x59F111F1);
+  PS(C, D, E, F, G, H, A, B, W[6], 0x923F82A4);
+  PS(B, C, D, E, F, G, H, A, W[7], 0xAB1C5ED5);
+  PS(A, B, C, D, E, F, G, H, W[8], 0xD807AA98);
+  PS(H, A, B, C, D, E, F, G, W[9], 0x12835B01);
+  PS(G, H, A, B, C, D, E, F, W[10], 0x243185BE);
+  PS(F, G, H, A, B, C, D, E, W[11], 0x550C7DC3);
+  PS(E, F, G, H, A, B, C, D, W[12], 0x72BE5D74);
+  PS(D, E, F, G, H, A, B, C, W[13], 0x80DEB1FE);
+  PS(C, D, E, F, G, H, A, B, W[14], 0x9BDC06A7);
+  PS(B, C, D, E, F, G, H, A, W[15], 0xC19BF174);
+  PS(A, B, C, D, E, F, G, H, R(16), 0xE49B69C1);
+  PS(H, A, B, C, D, E, F, G, R(17), 0xEFBE4786);
+  PS(G, H, A, B, C, D, E, F, R(18), 0x0FC19DC6);
+  PS(F, G, H, A, B, C, D, E, R(19), 0x240CA1CC);
+  PS(E, F, G, H, A, B, C, D, R(20), 0x2DE92C6F);
+  PS(D, E, F, G, H, A, B, C, R(21), 0x4A7484AA);
+  PS(C, D, E, F, G, H, A, B, R(22), 0x5CB0A9DC);
+  PS(B, C, D, E, F, G, H, A, R(23), 0x76F988DA);
+  PS(A, B, C, D, E, F, G, H, R(24), 0x983E5152);
+  PS(H, A, B, C, D, E, F, G, R(25), 0xA831C66D);
+  PS(G, H, A, B, C, D, E, F, R(26), 0xB00327C8);
+  PS(F, G, H, A, B, C, D, E, R(27), 0xBF597FC7);
+  PS(E, F, G, H, A, B, C, D, R(28), 0xC6E00BF3);
+  PS(D, E, F, G, H, A, B, C, R(29), 0xD5A79147);
+  PS(C, D, E, F, G, H, A, B, R(30), 0x06CA6351);
+  PS(B, C, D, E, F, G, H, A, R(31), 0x14292967);
+  PS(A, B, C, D, E, F, G, H, R(32), 0x27B70A85);
+  PS(H, A, B, C, D, E, F, G, R(33), 0x2E1B2138);
+  PS(G, H, A, B, C, D, E, F, R(34), 0x4D2C6DFC);
+  PS(F, G, H, A, B, C, D, E, R(35), 0x53380D13);
+  PS(E, F, G, H, A, B, C, D, R(36), 0x650A7354);
+  PS(D, E, F, G, H, A, B, C, R(37), 0x766A0ABB);
+  PS(C, D, E, F, G, H, A, B, R(38), 0x81C2C92E);
+  PS(B, C, D, E, F, G, H, A, R(39), 0x92722C85);
+  PS(A, B, C, D, E, F, G, H, R(40), 0xA2BFE8A1);
+  PS(H, A, B, C, D, E, F, G, R(41), 0xA81A664B);
+  PS(G, H, A, B, C, D, E, F, R(42), 0xC24B8B70);
+  PS(F, G, H, A, B, C, D, E, R(43), 0xC76C51A3);
+  PS(E, F, G, H, A, B, C, D, R(44), 0xD192E819);
+  PS(D, E, F, G, H, A, B, C, R(45), 0xD6990624);
+  PS(C, D, E, F, G, H, A, B, R(46), 0xF40E3585);
+  PS(B, C, D, E, F, G, H, A, R(47), 0x106AA070);
+  PS(A, B, C, D, E, F, G, H, R(48), 0x19A4C116);
+  PS(H, A, B, C, D, E, F, G, R(49), 0x1E376C08);
+  PS(G, H, A, B, C, D, E, F, R(50), 0x2748774C);
+  PS(F, G, H, A, B, C, D, E, R(51), 0x34B0BCB5);
+  PS(E, F, G, H, A, B, C, D, R(52), 0x391C0CB3);
+  PS(D, E, F, G, H, A, B, C, R(53), 0x4ED8AA4A);
+  PS(C, D, E, F, G, H, A, B, R(54), 0x5B9CCA4F);
+  PS(B, C, D, E, F, G, H, A, R(55), 0x682E6FF3);
+  PS(A, B, C, D, E, F, G, H, R(56), 0x748F82EE);
+  PS(H, A, B, C, D, E, F, G, R(57), 0x78A5636F);
+  PS(G, H, A, B, C, D, E, F, R(58), 0x84C87814);
+  PS(F, G, H, A, B, C, D, E, R(59), 0x8CC70208);
+  PS(E, F, G, H, A, B, C, D, R(60), 0x90BEFFFA);
+  PS(D, E, F, G, H, A, B, C, R(61), 0xA4506CEB);
+  PS(C, D, E, F, G, H, A, B, R(62), 0xBEF9A3F7);
+  PS(B, C, D, E, F, G, H, A, R(63), 0xC67178F2);
   ctx->state[0] += A;
   ctx->state[1] += B;
   ctx->state[2] += C;
@@ -479,25 +481,23 @@ void CRYPT_SHA256Update(CRYPT_sha2_context* ctx,
 }
 
 void CRYPT_SHA256Finish(CRYPT_sha2_context* ctx, uint8_t digest[32]) {
-  uint32_t last, padn;
-  uint32_t high, low;
   uint8_t msglen[8];
-  high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
-  low = (ctx->total[0] << 3);
-  PUT_UINT32(high, msglen, 0);
-  PUT_UINT32(low, msglen, 4);
-  last = ctx->total[0] & 0x3F;
-  padn = (last < 56) ? (56 - last) : (120 - last);
+  uint32_t high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
+  uint32_t low = (ctx->total[0] << 3);
+  SHA_PUT_UINT32(high, msglen, 0);
+  SHA_PUT_UINT32(low, msglen, 4);
+  uint32_t last = ctx->total[0] & 0x3F;
+  uint32_t padn = (last < 56) ? (56 - last) : (120 - last);
   CRYPT_SHA256Update(ctx, sha256_padding, padn);
   CRYPT_SHA256Update(ctx, msglen, 8);
-  PUT_UINT32(ctx->state[0], digest, 0);
-  PUT_UINT32(ctx->state[1], digest, 4);
-  PUT_UINT32(ctx->state[2], digest, 8);
-  PUT_UINT32(ctx->state[3], digest, 12);
-  PUT_UINT32(ctx->state[4], digest, 16);
-  PUT_UINT32(ctx->state[5], digest, 20);
-  PUT_UINT32(ctx->state[6], digest, 24);
-  PUT_UINT32(ctx->state[7], digest, 28);
+  SHA_PUT_UINT32(ctx->state[0], digest, 0);
+  SHA_PUT_UINT32(ctx->state[1], digest, 4);
+  SHA_PUT_UINT32(ctx->state[2], digest, 8);
+  SHA_PUT_UINT32(ctx->state[3], digest, 12);
+  SHA_PUT_UINT32(ctx->state[4], digest, 16);
+  SHA_PUT_UINT32(ctx->state[5], digest, 20);
+  SHA_PUT_UINT32(ctx->state[6], digest, 24);
+  SHA_PUT_UINT32(ctx->state[7], digest, 28);
 }
 
 void CRYPT_SHA256Generate(const uint8_t* data,

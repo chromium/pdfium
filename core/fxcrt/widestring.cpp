@@ -31,7 +31,7 @@ template struct std::hash<WideString>;
 
 namespace {
 
-constexpr wchar_t kTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
+constexpr wchar_t kWideTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
 
 const wchar_t* FX_wcsstr(const wchar_t* haystack,
                          int haystack_len,
@@ -273,7 +273,7 @@ Optional<WideString> TryVSWPrintf(size_t size,
 }
 
 #ifndef NDEBUG
-bool IsValidCodePage(uint16_t codepage) {
+bool IsValidWideCodePage(uint16_t codepage) {
   switch (codepage) {
     case FX_CODEPAGE_DefANSI:
     case FX_CODEPAGE_ShiftJIS:
@@ -288,7 +288,9 @@ bool IsValidCodePage(uint16_t codepage) {
 #endif
 
 WideString GetWideString(uint16_t codepage, const ByteStringView& bstr) {
-  ASSERT(IsValidCodePage(codepage));
+#ifndef NDEBUG
+  ASSERT(IsValidWideCodePage(codepage));
+#endif
 
   int src_len = bstr.GetLength();
   int dest_len = FXSYS_MultiByteToWideChar(
@@ -940,8 +942,8 @@ size_t WideString::WStringLength(const unsigned short* str) {
 }
 
 void WideString::Trim() {
-  TrimRight(kTrimChars);
-  TrimLeft(kTrimChars);
+  TrimRight(kWideTrimChars);
+  TrimLeft(kWideTrimChars);
 }
 
 void WideString::Trim(wchar_t target) {
@@ -956,7 +958,7 @@ void WideString::Trim(const WideStringView& targets) {
 }
 
 void WideString::TrimLeft() {
-  TrimLeft(kTrimChars);
+  TrimLeft(kWideTrimChars);
 }
 
 void WideString::TrimLeft(wchar_t target) {
@@ -994,7 +996,7 @@ void WideString::TrimLeft(const WideStringView& targets) {
 }
 
 void WideString::TrimRight() {
-  TrimRight(kTrimChars);
+  TrimRight(kWideTrimChars);
 }
 
 void WideString::TrimRight(wchar_t target) {
