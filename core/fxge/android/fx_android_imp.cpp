@@ -11,6 +11,7 @@
 
 #include "core/fxge/android/cfpf_skiadevicemodule.h"
 #include "core/fxge/android/cfx_androidfontinfo.h"
+#include "core/fxge/cfx_fontmgr.h"
 #include "third_party/base/ptr_util.h"
 
 void CFX_GEModule::InitPlatform() {

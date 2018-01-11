@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmapper.h"
+#include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"

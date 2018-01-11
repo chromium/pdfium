@@ -14,10 +14,10 @@
 #include <vector>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
-
 #include "third_party/base/stl_util.h"
 
 namespace {

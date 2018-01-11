@@ -9,6 +9,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 #if PDF_ENABLE_XFA
+#include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"

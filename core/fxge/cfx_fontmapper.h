@@ -11,10 +11,11 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"
 
+class CFX_FontMgr;
 class CFX_SubstFont;
+class IFX_SystemFontInfo;
 
 class CFX_FontMapper {
  public:

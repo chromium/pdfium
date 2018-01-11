@@ -12,10 +12,10 @@
 
 #include "core/fxge/fx_font.h"
 
-class IFX_SystemFontInfo;
 class CFX_FontMapper;
 class CFX_SubstFont;
 class CTTFontDesc;
+class IFX_SystemFontInfo;
 
 class CFX_FontMgr {
  public:

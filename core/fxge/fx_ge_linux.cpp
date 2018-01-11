@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
+#include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "third_party/base/ptr_util.h"
