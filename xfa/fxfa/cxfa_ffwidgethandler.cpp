@@ -195,7 +195,7 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
       CXFA_Calculate* calc = node->GetCalculateIfExists();
-      return calc && calc->GetScript();
+      return calc && calc->GetScriptIfExists();
     }
     case XFA_EVENT_Validate: {
       CXFA_Validate* validate = node->GetValidateIfExists();
@@ -234,7 +234,7 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
         return XFA_EVENTERROR_NotExist;
       if (node->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
-      return node->ExecuteScript(m_pDocView, calc->GetScript(), pParam);
+      return node->ExecuteScript(m_pDocView, calc->GetScriptIfExists(), pParam);
     }
     default:
       break;

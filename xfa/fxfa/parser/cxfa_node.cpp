@@ -1714,7 +1714,7 @@ int32_t CXFA_Node::ProcessCalculate(CXFA_FFDocView* docView) {
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Calculate;
-  int32_t iRet = ExecuteScript(docView, calc->GetScript(), &EventParam);
+  int32_t iRet = ExecuteScript(docView, calc->GetScriptIfExists(), &EventParam);
   if (iRet != XFA_EVENTERROR_Success)
     return iRet;
 

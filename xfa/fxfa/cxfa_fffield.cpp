@@ -684,7 +684,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
     }
     case XFA_AttributeEnum::Warning: {
       if (version <= XFA_VERSION_204) {
-        CXFA_Script* script = calc->GetScript();
+        CXFA_Script* script = calc->GetScriptIfExists();
         if (!script)
           return 1;
         if (script->GetExpression().IsEmpty())

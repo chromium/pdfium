@@ -431,7 +431,7 @@ static int32_t XFA_ProcessEvent(CXFA_FFDocView* pDocView,
       if (node->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
 
-      return node->ExecuteScript(pDocView, calc->GetScript(), pParam);
+      return node->ExecuteScript(pDocView, calc->GetScriptIfExists(), pParam);
     }
     default:
       break;

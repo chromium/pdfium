@@ -17,7 +17,7 @@ class CXFA_Calculate : public CXFA_Node {
   ~CXFA_Calculate() override;
 
   XFA_AttributeEnum GetOverride();
-  CXFA_Script* GetScript();
+  CXFA_Script* GetScriptIfExists();
   WideString GetMessageText();
 };
 

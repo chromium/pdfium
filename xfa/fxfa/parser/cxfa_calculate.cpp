@@ -49,7 +49,7 @@ XFA_AttributeEnum CXFA_Calculate::GetOverride() {
       .value_or(XFA_AttributeEnum::Error);
 }
 
-CXFA_Script* CXFA_Calculate::GetScript() {
+CXFA_Script* CXFA_Calculate::GetScriptIfExists() {
   return GetChild<CXFA_Script>(0, XFA_Element::Script, false);
 }
 
