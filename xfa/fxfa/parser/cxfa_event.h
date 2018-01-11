@@ -19,8 +19,8 @@ class CXFA_Event : public CXFA_Node {
 
   XFA_AttributeEnum GetActivity();
   XFA_Element GetEventType() const;
-  CXFA_Script* GetScript();
-  CXFA_Submit* GetSubmit();
+  CXFA_Script* GetScriptIfExists();
+  CXFA_Submit* GetSubmitIfExists();
   WideString GetRef();
 };
 

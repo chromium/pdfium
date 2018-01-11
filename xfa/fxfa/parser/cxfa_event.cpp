@@ -69,10 +69,10 @@ WideString CXFA_Event::GetRef() {
   return JSObject()->GetCData(XFA_Attribute::Ref);
 }
 
-CXFA_Script* CXFA_Event::GetScript() {
+CXFA_Script* CXFA_Event::GetScriptIfExists() {
   return GetChild<CXFA_Script>(0, XFA_Element::Script, false);
 }
 
-CXFA_Submit* CXFA_Event::GetSubmit() {
+CXFA_Submit* CXFA_Event::GetSubmitIfExists() {
   return GetChild<CXFA_Submit>(0, XFA_Element::Submit, false);
 }

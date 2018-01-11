@@ -1690,12 +1690,16 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
     case XFA_Element::Execute:
       break;
     case XFA_Element::Script:
-      return ExecuteScript(docView, event->GetScript(), pEventParam);
+      return ExecuteScript(docView, event->GetScriptIfExists(), pEventParam);
     case XFA_Element::SignData:
       break;
-    case XFA_Element::Submit:
+    case XFA_Element::Submit: {
+      CXFA_Submit* submit = event->GetSubmitIfExists();
+      if (!submit)
+        return XFA_EVENTERROR_NotExist;
       return docView->GetDoc()->GetDocEnvironment()->Submit(docView->GetDoc(),
-                                                            event->GetSubmit());
+                                                            submit);
+    }
     default:
       break;
   }
