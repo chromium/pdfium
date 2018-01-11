@@ -100,24 +100,24 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       break;
     }
     case FX_CHARSET_ChineseSimplified: {
-      for (size_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
-        auto it = m_FontList.find(g_LinuxGbFontList[i]);
+      for (const char* name : g_LinuxGbFontList) {
+        auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
       }
       break;
     }
     case FX_CHARSET_ChineseTraditional: {
-      for (size_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
-        auto it = m_FontList.find(g_LinuxB5FontList[i]);
+      for (const char* name : g_LinuxB5FontList) {
+        auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
       }
       break;
     }
     case FX_CHARSET_Hangul: {
-      for (size_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
-        auto it = m_FontList.find(g_LinuxHGFontList[i]);
+      for (const char* name : g_LinuxHGFontList) {
+        auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
       }

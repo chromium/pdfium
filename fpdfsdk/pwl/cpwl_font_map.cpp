@@ -149,8 +149,8 @@ void CPWL_FontMap::Initialize() {
 }
 
 bool CPWL_FontMap::IsStandardFont(const ByteString& sFontName) {
-  for (size_t i = 0; i < FX_ArraySize(g_sDEStandardFontName); ++i) {
-    if (sFontName == g_sDEStandardFontName[i])
+  for (const char* name : g_sDEStandardFontName) {
+    if (sFontName == name)
       return true;
   }
 
