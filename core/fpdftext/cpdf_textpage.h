@@ -111,11 +111,7 @@ class CPDF_TextPage {
   WideString GetAllPageText() const { return GetPageText(0, CountChars()); }
 
   int CountRects(int start, int nCount);
-  void GetRect(int rectIndex,
-               float& left,
-               float& top,
-               float& right,
-               float& bottom) const;
+  bool GetRect(int rectIndex, CFX_FloatRect* pRect) const;
 
   static bool IsRectIntersect(const CFX_FloatRect& rect1,
                               const CFX_FloatRect& rect2);

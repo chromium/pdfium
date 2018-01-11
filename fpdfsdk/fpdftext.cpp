@@ -205,22 +205,24 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
   return textpage->CountRects(start, count);
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,
-                                                int rect_index,
-                                                double* left,
-                                                double* top,
-                                                double* right,
-                                                double* bottom) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,
+                                                     int rect_index,
+                                                     double* left,
+                                                     double* top,
+                                                     double* right,
+                                                     double* bottom) {
   if (!text_page)
-    return;
+    return false;
 
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
   CFX_FloatRect rect;
-  textpage->GetRect(rect_index, rect.left, rect.top, rect.right, rect.bottom);
+  bool result = textpage->GetRect(rect_index, &rect);
+
   *left = rect.left;
   *top = rect.top;
   *right = rect.right;
   *bottom = rect.bottom;
+  return result;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,

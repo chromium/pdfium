@@ -471,18 +471,12 @@ int CPDF_TextPage::CountRects(int start, int nCount) {
   return pdfium::CollectionSize<int>(m_SelRects);
 }
 
-void CPDF_TextPage::GetRect(int rectIndex,
-                            float& left,
-                            float& top,
-                            float& right,
-                            float& bottom) const {
+bool CPDF_TextPage::GetRect(int rectIndex, CFX_FloatRect* pRect) const {
   if (!m_bIsParsed || !pdfium::IndexInBounds(m_SelRects, rectIndex))
-    return;
+    return false;
 
-  left = m_SelRects[rectIndex].left;
-  top = m_SelRects[rectIndex].top;
-  right = m_SelRects[rectIndex].right;
-  bottom = m_SelRects[rectIndex].bottom;
+  *pRect = m_SelRects[rectIndex];
+  return true;
 }
 
 CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
