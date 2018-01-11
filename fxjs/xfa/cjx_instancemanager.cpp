@@ -77,9 +77,13 @@ int32_t CJX_InstanceManager::SetInstances(int32_t iDesired) {
     }
   } else {
     while (iCount < iDesired) {
-      CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(true);
+      CXFA_Node* pNewInstance = GetXFANode()->CreateInstanceIfPossible(true);
+      if (!pNewInstance)
+        return 0;
+
       GetXFANode()->InsertItem(pNewInstance, iCount, iCount, false);
-      iCount++;
+      ++iCount;
+
       CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
       if (!pNotify)
         return 0;
@@ -206,7 +210,10 @@ CJS_Return CJX_InstanceManager::addInstance(
   if (iMax >= 0 && iCount >= iMax)
     return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
 
-  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(fFlags);
+  CXFA_Node* pNewInstance = GetXFANode()->CreateInstanceIfPossible(fFlags);
+  if (!pNewInstance)
+    return CJS_Return(runtime->NewNull());
+
   GetXFANode()->InsertItem(pNewInstance, iCount, iCount, false);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
@@ -248,7 +255,10 @@ CJS_Return CJX_InstanceManager::insertInstance(
   if (iMax >= 0 && iCount >= iMax)
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
-  CXFA_Node* pNewInstance = GetXFANode()->CreateInstance(bBind);
+  CXFA_Node* pNewInstance = GetXFANode()->CreateInstanceIfPossible(bBind);
+  if (!pNewInstance)
+    return CJS_Return(runtime->NewNull());
+
   GetXFANode()->InsertItem(pNewInstance, iIndex, iCount, true);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();

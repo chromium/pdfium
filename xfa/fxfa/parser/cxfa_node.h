@@ -102,7 +102,7 @@ class CXFA_Node : public CXFA_Object {
   void SetFlag(uint32_t dwFlag, bool bNotify);
   void ClearFlag(uint32_t dwFlag);
 
-  CXFA_Node* CreateInstance(bool bDataMerge);
+  CXFA_Node* CreateInstanceIfPossible(bool bDataMerge);
   int32_t GetCount();
   CXFA_Node* GetItem(int32_t iIndex);
   void RemoveItem(CXFA_Node* pRemoveInstance, bool bRemoveDataBinding);

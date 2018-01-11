@@ -1284,7 +1284,7 @@ void CXFA_Node::RemoveItem(CXFA_Node* pRemoveInstance,
   }
 }
 
-CXFA_Node* CXFA_Node::CreateInstance(bool bDataMerge) {
+CXFA_Node* CXFA_Node::CreateInstanceIfPossible(bool bDataMerge) {
   CXFA_Document* pDocument = GetDocument();
   CXFA_Node* pTemplateNode = GetTemplateNodeIfExists();
   if (!pTemplateNode)
