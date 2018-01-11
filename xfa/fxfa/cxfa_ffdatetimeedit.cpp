@@ -53,7 +53,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
       m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
 
-  CXFA_Value* value = m_pNode->GetFormValue();
+  CXFA_Value* value = m_pNode->GetFormValueIfExists();
   if (value) {
     switch (value->GetChildValueClassID()) {
       case XFA_Element::Date: {

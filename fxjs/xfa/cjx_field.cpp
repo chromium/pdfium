@@ -272,7 +272,8 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   }
 
   CXFA_Node* pUIChild = pWidgetAcc->GetUIChild();
-  CXFA_Node* pNode = xfaNode->GetFormValue()->GetFirstChild();
+  CXFA_Node* formValue = xfaNode->GetFormValueIfExists();
+  CXFA_Node* pNode = formValue ? formValue->GetFirstChild() : nullptr;
   if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
     if (pUIChild->GetElementType() == XFA_Element::NumericEdit &&
         (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {

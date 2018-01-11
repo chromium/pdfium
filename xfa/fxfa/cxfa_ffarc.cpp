@@ -19,7 +19,7 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CXFA_Value* value = m_pNode->GetFormValue();
+  CXFA_Value* value = m_pNode->GetFormValueIfExists();
   if (!value)
     return;
 

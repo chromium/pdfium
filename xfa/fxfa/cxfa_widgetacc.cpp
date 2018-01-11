@@ -95,7 +95,7 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
     if (m_pDIBitmap)
       return true;
 
-    CXFA_Value* value = pAcc->GetNode()->GetFormValue();
+    CXFA_Value* value = pAcc->GetNode()->GetFormValueIfExists();
     if (!value)
       return false;
 
@@ -152,7 +152,7 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
     if (m_pDIBitmap)
       return true;
 
-    CXFA_Value* value = pAcc->GetNode()->GetFormValue();
+    CXFA_Value* value = pAcc->GetNode()->GetFormValueIfExists();
     if (!value)
       return false;
 
@@ -439,7 +439,7 @@ void CXFA_WidgetAcc::ResetData() {
 void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
                                   const WideString& wsHref,
                                   const WideString& wsData) {
-  CXFA_Value* formValue = m_pNode->GetFormValue();
+  CXFA_Value* formValue = m_pNode->GetFormValueIfExists();
   CXFA_Image* image = formValue ? formValue->GetImage() : nullptr;
   if (image) {
     image->SetContentType(WideString(wsContentType));
@@ -451,7 +451,8 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
 
   CXFA_Node* pBind = m_pNode->GetBindData();
   if (!pBind) {
-    image->SetTransferEncoding(XFA_AttributeEnum::Base64);
+    if (image)
+      image->SetTransferEncoding(XFA_AttributeEnum::Base64);
     return;
   }
   pBind->JSObject()->SetCData(XFA_Attribute::ContentType, wsContentType, false,

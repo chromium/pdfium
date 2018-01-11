@@ -1600,7 +1600,7 @@ CXFA_Value* CXFA_Node::GetDefaultValueIfExists() {
                   : nullptr;
 }
 
-CXFA_Value* CXFA_Node::GetFormValue() const {
+CXFA_Value* CXFA_Node::GetFormValueIfExists() const {
   return JSObject()->GetProperty<CXFA_Value>(0, XFA_Element::Value);
 }
 
