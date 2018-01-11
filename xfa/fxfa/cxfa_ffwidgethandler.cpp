@@ -198,7 +198,7 @@ bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
       return calc && calc->GetScript();
     }
     case XFA_EVENT_Validate: {
-      CXFA_Validate* validate = node->GetValidate();
+      CXFA_Validate* validate = node->GetValidateIfExists();
       return validate && validate->GetScript();
     }
     default:

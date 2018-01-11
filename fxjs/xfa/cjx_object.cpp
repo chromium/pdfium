@@ -1395,26 +1395,29 @@ void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_SOM_MESSAGETYPE iMessageType) {
   bool bNew = false;
-  CXFA_Validate* validate = ToNode(object_.Get())->GetValidate();
+  CXFA_Validate* validate = ToNode(object_.Get())->GetValidateIfExists();
   if (!validate) {
-    validate = ToNode(object_.Get())->GetOrCreateValidate();
+    validate = ToNode(object_.Get())->GetOrCreateValidateIfPossible();
     bNew = true;
   }
 
   if (bSetting) {
-    switch (iMessageType) {
-      case XFA_SOM_ValidationMessage:
-        validate->SetScriptMessageText(pValue->ToWideString());
-        break;
-      case XFA_SOM_FormatMessage:
-        validate->SetFormatMessageText(pValue->ToWideString());
-        break;
-      case XFA_SOM_MandatoryMessage:
-        validate->SetNullMessageText(pValue->ToWideString());
-        break;
-      default:
-        break;
+    if (validate) {
+      switch (iMessageType) {
+        case XFA_SOM_ValidationMessage:
+          validate->SetScriptMessageText(pValue->ToWideString());
+          break;
+        case XFA_SOM_FormatMessage:
+          validate->SetFormatMessageText(pValue->ToWideString());
+          break;
+        case XFA_SOM_MandatoryMessage:
+          validate->SetNullMessageText(pValue->ToWideString());
+          break;
+        default:
+          break;
+      }
     }
+
     if (!bNew) {
       CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
       if (!pNotify)
@@ -1422,6 +1425,12 @@ void CJX_Object::Script_Som_Message(CFXJSE_Value* pValue,
 
       pNotify->AddCalcValidate(ToNode(GetXFAObject()));
     }
+    return;
+  }
+
+  if (!validate) {
+    // TODO(dsinclair): Better error message?
+    ThrowInvalidPropertyException();
     return;
   }
 
@@ -1579,7 +1588,8 @@ void CJX_Object::Script_Som_DataNode(CFXJSE_Value* pValue,
 void CJX_Object::Script_Som_Mandatory(CFXJSE_Value* pValue,
                                       bool bSetting,
                                       XFA_Attribute eAttribute) {
-  CXFA_Validate* validate = ToNode(object_.Get())->GetOrCreateValidate();
+  CXFA_Validate* validate =
+      ToNode(object_.Get())->GetOrCreateValidateIfPossible();
   if (!validate)
     return;
 

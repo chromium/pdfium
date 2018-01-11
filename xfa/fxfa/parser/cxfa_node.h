@@ -249,8 +249,8 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Margin* GetMarginIfExists() const;
   CXFA_Para* GetParaIfExists() const;
   CXFA_Calculate* GetCalculateIfExists() const;
-  CXFA_Validate* GetValidate() const;
-  CXFA_Validate* GetOrCreateValidate();
+  CXFA_Validate* GetValidateIfExists() const;
+  CXFA_Validate* GetOrCreateValidateIfPossible();
 
   CXFA_Value* GetDefaultValue();
   CXFA_Value* GetFormValue() const;

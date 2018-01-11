@@ -1608,11 +1608,11 @@ CXFA_Calculate* CXFA_Node::GetCalculateIfExists() const {
   return JSObject()->GetProperty<CXFA_Calculate>(0, XFA_Element::Calculate);
 }
 
-CXFA_Validate* CXFA_Node::GetValidate() const {
+CXFA_Validate* CXFA_Node::GetValidateIfExists() const {
   return JSObject()->GetProperty<CXFA_Validate>(0, XFA_Element::Validate);
 }
 
-CXFA_Validate* CXFA_Node::GetOrCreateValidate() {
+CXFA_Validate* CXFA_Node::GetOrCreateValidateIfPossible() {
   return JSObject()->GetOrCreateProperty<CXFA_Validate>(0,
                                                         XFA_Element::Validate);
 }
@@ -1878,7 +1878,7 @@ int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  CXFA_Validate* validate = GetValidate();
+  CXFA_Validate* validate = GetValidateIfExists();
   if (!validate)
     return XFA_EVENTERROR_NotExist;
 
