@@ -257,7 +257,7 @@ class CXFA_Node : public CXFA_Object {
   WideString GetRawValue();
   int32_t GetRotate();
 
-  CXFA_Bind* GetBind() const;
+  CXFA_Bind* GetBindIfExists() const;
 
   Optional<float> TryWidth();
   Optional<float> TryHeight();

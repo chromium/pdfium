@@ -1617,7 +1617,7 @@ CXFA_Validate* CXFA_Node::GetOrCreateValidateIfPossible() {
                                                         XFA_Element::Validate);
 }
 
-CXFA_Bind* CXFA_Node::GetBind() const {
+CXFA_Bind* CXFA_Node::GetBindIfExists() const {
   return JSObject()->GetProperty<CXFA_Bind>(0, XFA_Element::Bind);
 }
 

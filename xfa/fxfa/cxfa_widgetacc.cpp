@@ -2313,7 +2313,7 @@ WideString CXFA_WidgetAcc::GetPictureContent(XFA_VALUEPICTURE ePicture) {
       }
     }
     case XFA_VALUEPICTURE_DataBind: {
-      CXFA_Bind* bind = m_pNode->GetBind();
+      CXFA_Bind* bind = m_pNode->GetBindIfExists();
       if (bind)
         return bind->GetPicture();
       break;
