@@ -903,7 +903,7 @@ std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(
     return {nullptr, 0};
 
   int32_t iCount = 0;
-  for (CXFA_Node* pNode = xfaNode->GetChildNode(); pNode;
+  for (CXFA_Node* pNode = xfaNode->GetFirstChild(); pNode;
        pNode = pNode->GetNextSibling()) {
     if (pNode->GetElementType() == eProperty) {
       iCount++;
@@ -927,7 +927,7 @@ CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
     return node;
 
   if (xfaNode->HasPropertyFlags(eProperty, XFA_PROPERTYFLAG_OneOf)) {
-    for (CXFA_Node* pNode = xfaNode->GetChildNode(); pNode;
+    for (CXFA_Node* pNode = xfaNode->GetFirstChild(); pNode;
          pNode = pNode->GetNextSibling()) {
       if (xfaNode->HasPropertyFlags(pNode->GetElementType(),
                                     XFA_PROPERTYFLAG_OneOf)) {
