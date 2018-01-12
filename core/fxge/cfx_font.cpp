@@ -228,6 +228,10 @@ void CFX_Font::SetFace(FXFT_Face face) {
   ClearFaceCache();
   m_Face = face;
 }
+
+void CFX_Font::SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
+  m_pSubstFont = std::move(subst);
+}
 #endif  // PDF_ENABLE_XFA
 
 CFX_Font::~CFX_Font() {

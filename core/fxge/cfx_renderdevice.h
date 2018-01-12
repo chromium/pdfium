@@ -113,10 +113,8 @@ class CFX_RenderDevice {
   int GetRenderCaps() const { return m_RenderCaps; }
   int GetDeviceCaps(int id) const;
   CFX_Matrix GetCTM() const;
-  RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
-  void SetBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap) {
-    m_pBitmap = pBitmap;
-  }
+  RetainPtr<CFX_DIBitmap> GetBitmap() const;
+  void SetBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap);
   bool CreateCompatibleBitmap(const RetainPtr<CFX_DIBitmap>& pDIB,
                               int width,
                               int height) const;

@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 
 namespace {
@@ -92,4 +93,12 @@ void CPDF_Type3Char::Transform(const CFX_Matrix& matrix) {
 
 void CPDF_Type3Char::ResetForm() {
   m_pForm.reset();
+}
+
+RetainPtr<CFX_DIBitmap> CPDF_Type3Char::GetBitmap() {
+  return m_pBitmap;
+}
+
+const RetainPtr<CFX_DIBitmap>& CPDF_Type3Char::GetBitmap() const {
+  return m_pBitmap;
 }

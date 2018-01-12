@@ -8,7 +8,6 @@
 #define CORE_FXGE_CFX_FONT_H_
 
 #include <memory>
-#include <utility>
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
@@ -47,9 +46,7 @@ class CFX_Font {
   bool LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile, int nFaceIndex);
 
   void SetFace(FXFT_Face face);
-  void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
-    m_pSubstFont = std::move(subst);
-  }
+  void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst);
 #endif  // PDF_ENABLE_XFA
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,

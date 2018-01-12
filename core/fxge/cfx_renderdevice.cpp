@@ -429,6 +429,14 @@ CFX_Matrix CFX_RenderDevice::GetCTM() const {
   return m_pDeviceDriver->GetCTM();
 }
 
+RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() const {
+  return m_pBitmap;
+}
+
+void CFX_RenderDevice::SetBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap) {
+  m_pBitmap = pBitmap;
+}
+
 bool CFX_RenderDevice::CreateCompatibleBitmap(
     const RetainPtr<CFX_DIBitmap>& pDIB,
     int width,

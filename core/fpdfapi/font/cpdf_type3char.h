@@ -31,8 +31,8 @@ class CPDF_Type3Char {
   void Transform(const CFX_Matrix& matrix);
   void ResetForm();
 
-  RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
-  const RetainPtr<CFX_DIBitmap>& GetBitmap() const { return m_pBitmap; }
+  RetainPtr<CFX_DIBitmap> GetBitmap();
+  const RetainPtr<CFX_DIBitmap>& GetBitmap() const;
 
   const CPDF_Form* form() const { return m_pForm.get(); }
   CPDF_Form* form() { return m_pForm.get(); }
