@@ -1599,18 +1599,18 @@ CJS_Return CJS_PublicMethods::AFSimple_Calculate(
 
       double dTemp = 0.0;
       switch (pFormField->GetFieldType()) {
-        case FIELDTYPE_TEXTFIELD:
-        case FIELDTYPE_COMBOBOX: {
+        case FormFieldType::kTextField:
+        case FormFieldType::kComboBox: {
           WideString trimmed = pFormField->GetValue();
           trimmed.TrimRight();
           trimmed.TrimLeft();
           dTemp = FX_atof(trimmed.AsStringView());
           break;
         }
-        case FIELDTYPE_PUSHBUTTON:
+        case FormFieldType::kPushButton:
           break;
-        case FIELDTYPE_CHECKBOX:
-        case FIELDTYPE_RADIOBUTTON:
+        case FormFieldType::kCheckBox:
+        case FormFieldType::kRadioButton:
           for (int c = 0; c < pFormField->CountControls(); ++c) {
             CPDF_FormControl* pFormCtrl = pFormField->GetControl(c);
             if (!pFormField || !pFormCtrl->IsChecked())
@@ -1623,7 +1623,7 @@ CJS_Return CJS_PublicMethods::AFSimple_Calculate(
             break;
           }
           break;
-        case FIELDTYPE_LISTBOX:
+        case FormFieldType::kListBox:
           if (pFormField->CountSelectedItems() <= 1) {
             WideString trimmed = pFormField->GetValue();
             trimmed.TrimRight();

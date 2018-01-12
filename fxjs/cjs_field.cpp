@@ -268,8 +268,9 @@ void Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
     pInterForm->GetWidgets(pFormField, &widgets);
 
-    int nFieldType = pFormField->GetFieldType();
-    if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_TEXTFIELD) {
+    FormFieldType fieldType = pFormField->GetFieldType();
+    if (fieldType == FormFieldType::kComboBox ||
+        fieldType == FormFieldType::kTextField) {
       for (auto& pObserved : widgets) {
         if (pObserved) {
           bool bFormatted = false;
@@ -327,9 +328,9 @@ void Field::UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   if (pWidget) {
     CPDFSDK_Widget::ObservedPtr observed_widget(pWidget);
     if (bResetAP) {
-      int nFieldType = pWidget->GetFieldType();
-      if (nFieldType == FIELDTYPE_COMBOBOX ||
-          nFieldType == FIELDTYPE_TEXTFIELD) {
+      FormFieldType fieldType = pWidget->GetFieldType();
+      if (fieldType == FormFieldType::kComboBox ||
+          fieldType == FormFieldType::kTextField) {
         bool bFormatted = false;
         WideString sValue = pWidget->OnFormat(bFormatted);
         if (!observed_widget)
@@ -385,7 +386,7 @@ CJS_Return Field::get_alignment(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -517,7 +518,7 @@ CJS_Return Field::get_button_align_x(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -547,7 +548,7 @@ CJS_Return Field::get_button_align_y(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -577,7 +578,7 @@ CJS_Return Field::get_button_fit_bounds(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -602,7 +603,7 @@ CJS_Return Field::get_button_position(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -626,7 +627,7 @@ CJS_Return Field::get_button_scale_how(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -651,7 +652,7 @@ CJS_Return Field::get_button_scale_when(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -691,8 +692,8 @@ CJS_Return Field::get_calc_order_index(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_COMBOBOX &&
-      pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD) {
+  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
+      pFormField->GetFieldType() != FormFieldType::kTextField) {
     return CJS_Return(false);
   }
 
@@ -716,7 +717,7 @@ CJS_Return Field::get_char_limit(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
   return CJS_Return(
       pRuntime->NewNumber(static_cast<int32_t>(pFormField->GetMaxLen())));
@@ -736,7 +737,7 @@ CJS_Return Field::get_comb(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
 
   return CJS_Return(
@@ -756,8 +757,8 @@ CJS_Return Field::get_commit_on_sel_change(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_COMBOBOX &&
-      pFormField->GetFieldType() != FIELDTYPE_LISTBOX) {
+  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
+      pFormField->GetFieldType() != FormFieldType::kListBox) {
     return CJS_Return(false);
   }
 
@@ -777,8 +778,8 @@ CJS_Return Field::get_current_value_indices(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_COMBOBOX &&
-      pFormField->GetFieldType() != FIELDTYPE_LISTBOX) {
+  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
+      pFormField->GetFieldType() != FormFieldType::kListBox) {
     return CJS_Return(false);
   }
 
@@ -832,8 +833,9 @@ void Field::SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       GetFormFields(pFormFillEnv, swFieldName);
 
   for (CPDF_FormField* pFormField : FieldArray) {
-    int nFieldType = pFormField->GetFieldType();
-    if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_LISTBOX) {
+    FormFieldType fieldType = pFormField->GetFieldType();
+    if (fieldType == FormFieldType::kComboBox ||
+        fieldType == FormFieldType::kListBox) {
       uint32_t dwFieldFlags = pFormField->GetFieldFlags();
       pFormField->ClearSelection(true);
       for (size_t i = 0; i < array.size(); ++i) {
@@ -866,8 +868,8 @@ CJS_Return Field::get_default_value(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() == FIELDTYPE_PUSHBUTTON ||
-      pFormField->GetFieldType() == FIELDTYPE_SIGNATURE) {
+  if (pFormField->GetFieldType() == FormFieldType::kPushButton ||
+      pFormField->GetFieldType() == FormFieldType::kSignature) {
     return CJS_Return(false);
   }
 
@@ -888,7 +890,7 @@ CJS_Return Field::get_do_not_scroll(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -909,8 +911,8 @@ CJS_Return Field::get_do_not_spell_check(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD &&
-      pFormField->GetFieldType() != FIELDTYPE_COMBOBOX) {
+  if (pFormField->GetFieldType() != FormFieldType::kTextField &&
+      pFormField->GetFieldType() != FormFieldType::kComboBox) {
     return CJS_Return(false);
   }
 
@@ -1034,7 +1036,7 @@ CJS_Return Field::get_editable(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_COMBOBOX)
+  if (pFormField->GetFieldType() != FormFieldType::kComboBox)
     return CJS_Return(false);
 
   return CJS_Return(
@@ -1051,8 +1053,8 @@ CJS_Return Field::get_export_values(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_CHECKBOX &&
-      pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON) {
+  if (pFormField->GetFieldType() != FormFieldType::kCheckBox &&
+      pFormField->GetFieldType() != FormFieldType::kRadioButton) {
     return CJS_Return(false);
   }
 
@@ -1087,8 +1089,8 @@ CJS_Return Field::set_export_values(CJS_Runtime* pRuntime,
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_CHECKBOX &&
-      pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON) {
+  if (pFormField->GetFieldType() != FormFieldType::kCheckBox &&
+      pFormField->GetFieldType() != FormFieldType::kRadioButton) {
     return CJS_Return(false);
   }
 
@@ -1101,7 +1103,7 @@ CJS_Return Field::get_file_select(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -1115,7 +1117,7 @@ CJS_Return Field::set_file_select(CJS_Runtime* pRuntime,
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
   return CJS_Return(m_bCanSet);
 }
@@ -1221,7 +1223,7 @@ CJS_Return Field::get_highlight(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -1334,7 +1336,7 @@ CJS_Return Field::get_multiline(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -1354,7 +1356,7 @@ CJS_Return Field::get_multiple_selection(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_LISTBOX)
+  if (pFormField->GetFieldType() != FormFieldType::kListBox)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -1385,8 +1387,8 @@ CJS_Return Field::get_num_items(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_COMBOBOX &&
-      pFormField->GetFieldType() != FIELDTYPE_LISTBOX) {
+  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
+      pFormField->GetFieldType() != FormFieldType::kListBox) {
     return CJS_Return(false);
   }
 
@@ -1443,7 +1445,7 @@ CJS_Return Field::get_password(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -1535,7 +1537,7 @@ CJS_Return Field::get_radios_in_unison(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kRadioButton)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -1688,7 +1690,7 @@ CJS_Return Field::get_required(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() == FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() == FormFieldType::kPushButton)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -1710,7 +1712,7 @@ CJS_Return Field::get_rich_text(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_TEXTFIELD)
+  if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
@@ -1807,8 +1809,8 @@ CJS_Return Field::get_style(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON &&
-      pFormField->GetFieldType() != FIELDTYPE_CHECKBOX) {
+  if (pFormField->GetFieldType() != FormFieldType::kRadioButton &&
+      pFormField->GetFieldType() != FormFieldType::kCheckBox) {
     return CJS_Return(false);
   }
 
@@ -1912,9 +1914,11 @@ CJS_Return Field::get_text_font(CJS_Runtime* pRuntime) {
   if (!pFormControl)
     return CJS_Return(false);
 
-  int nFieldType = pFormField->GetFieldType();
-  if (nFieldType != FIELDTYPE_PUSHBUTTON && nFieldType != FIELDTYPE_COMBOBOX &&
-      nFieldType != FIELDTYPE_LISTBOX && nFieldType != FIELDTYPE_TEXTFIELD) {
+  FormFieldType fieldType = pFormField->GetFieldType();
+  if (fieldType != FormFieldType::kPushButton &&
+      fieldType != FormFieldType::kComboBox &&
+      fieldType != FormFieldType::kListBox &&
+      fieldType != FormFieldType::kTextField) {
     return CJS_Return(false);
   }
 
@@ -1968,24 +1972,25 @@ CJS_Return Field::get_type(CJS_Runtime* pRuntime) {
 
   CPDF_FormField* pFormField = FieldArray[0];
   switch (pFormField->GetFieldType()) {
-    case FIELDTYPE_UNKNOWN:
+    case FormFieldType::kUnknown:
       return CJS_Return(pRuntime->NewString(L"unknown"));
-    case FIELDTYPE_PUSHBUTTON:
+    case FormFieldType::kPushButton:
       return CJS_Return(pRuntime->NewString(L"button"));
-    case FIELDTYPE_CHECKBOX:
+    case FormFieldType::kCheckBox:
       return CJS_Return(pRuntime->NewString(L"checkbox"));
-    case FIELDTYPE_RADIOBUTTON:
+    case FormFieldType::kRadioButton:
       return CJS_Return(pRuntime->NewString(L"radiobutton"));
-    case FIELDTYPE_COMBOBOX:
+    case FormFieldType::kComboBox:
       return CJS_Return(pRuntime->NewString(L"combobox"));
-    case FIELDTYPE_LISTBOX:
+    case FormFieldType::kListBox:
       return CJS_Return(pRuntime->NewString(L"listbox"));
-    case FIELDTYPE_TEXTFIELD:
+    case FormFieldType::kTextField:
       return CJS_Return(pRuntime->NewString(L"text"));
-    case FIELDTYPE_SIGNATURE:
+    case FormFieldType::kSignature:
       return CJS_Return(pRuntime->NewString(L"signature"));
+    default:
+      return CJS_Return(pRuntime->NewString(L"unknown"));
   }
-  return CJS_Return(pRuntime->NewString(L"unknown"));
 }
 
 CJS_Return Field::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
@@ -2018,13 +2023,13 @@ CJS_Return Field::get_value(CJS_Runtime* pRuntime) {
 
   CPDF_FormField* pFormField = FieldArray[0];
   switch (pFormField->GetFieldType()) {
-    case FIELDTYPE_PUSHBUTTON:
+    case FormFieldType::kPushButton:
       return CJS_Return(false);
-    case FIELDTYPE_COMBOBOX:
-    case FIELDTYPE_TEXTFIELD:
+    case FormFieldType::kComboBox:
+    case FormFieldType::kTextField:
       ret = pRuntime->NewString(pFormField->GetValue().c_str());
       break;
-    case FIELDTYPE_LISTBOX: {
+    case FormFieldType::kListBox: {
       if (pFormField->CountSelectedItems() > 1) {
         v8::Local<v8::Array> ValueArray = pRuntime->NewArray();
         v8::Local<v8::Value> ElementValue;
@@ -2045,8 +2050,8 @@ CJS_Return Field::get_value(CJS_Runtime* pRuntime) {
       }
       break;
     }
-    case FIELDTYPE_CHECKBOX:
-    case FIELDTYPE_RADIOBUTTON: {
+    case FormFieldType::kCheckBox:
+    case FormFieldType::kRadioButton: {
       bool bFind = false;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
         if (pFormField->GetControl(i)->IsChecked()) {
@@ -2108,21 +2113,21 @@ void Field::SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       continue;
 
     switch (pFormField->GetFieldType()) {
-      case FIELDTYPE_TEXTFIELD:
-      case FIELDTYPE_COMBOBOX:
+      case FormFieldType::kTextField:
+      case FormFieldType::kComboBox:
         if (pFormField->GetValue() != strArray[0]) {
           pFormField->SetValue(strArray[0], true);
           UpdateFormField(pFormFillEnv, pFormField, true, false, true);
         }
         break;
-      case FIELDTYPE_CHECKBOX:
-      case FIELDTYPE_RADIOBUTTON:
+      case FormFieldType::kCheckBox:
+      case FormFieldType::kRadioButton:
         if (pFormField->GetValue() != strArray[0]) {
           pFormField->SetValue(strArray[0], true);
           UpdateFormField(pFormFillEnv, pFormField, true, false, true);
         }
         break;
-      case FIELDTYPE_LISTBOX: {
+      case FormFieldType::kListBox: {
         bool bModified = false;
         for (const auto& str : strArray) {
           if (!pFormField->IsItemSelected(pFormField->FindOption(str))) {
@@ -2153,17 +2158,17 @@ CJS_Return Field::get_value_as_string(CJS_Runtime* pRuntime) {
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() == FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() == FormFieldType::kPushButton)
     return CJS_Return(false);
 
-  if (pFormField->GetFieldType() == FIELDTYPE_CHECKBOX) {
+  if (pFormField->GetFieldType() == FormFieldType::kCheckBox) {
     if (!pFormField->CountControls())
       return CJS_Return(false);
     return CJS_Return(pRuntime->NewString(
         pFormField->GetControl(0)->IsChecked() ? L"Yes" : L"Off"));
   }
 
-  if (pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON &&
+  if (pFormField->GetFieldType() == FormFieldType::kRadioButton &&
       !(pFormField->GetFieldFlags() & FIELDFLAG_RADIOSINUNISON)) {
     for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
       if (pFormField->GetControl(i)->IsChecked()) {
@@ -2174,7 +2179,7 @@ CJS_Return Field::get_value_as_string(CJS_Runtime* pRuntime) {
     return CJS_Return(pRuntime->NewString(L"Off"));
   }
 
-  if (pFormField->GetFieldType() == FIELDTYPE_LISTBOX &&
+  if (pFormField->GetFieldType() == FormFieldType::kListBox &&
       (pFormField->CountSelectedItems() > 1)) {
     return CJS_Return(pRuntime->NewString(L""));
   }
@@ -2195,7 +2200,7 @@ CJS_Return Field::browseForFileToSubmit(
 
   CPDF_FormField* pFormField = FieldArray[0];
   if ((pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT) &&
-      (pFormField->GetFieldType() == FIELDTYPE_TEXTFIELD)) {
+      (pFormField->GetFieldType() == FormFieldType::kTextField)) {
     WideString wsFileName = m_pFormFillEnv->JS_fieldBrowse();
     if (!wsFileName.IsEmpty()) {
       pFormField->SetValue(wsFileName);
@@ -2219,7 +2224,7 @@ CJS_Return Field::buttonGetCaption(
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -2253,7 +2258,7 @@ CJS_Return Field::buttonGetIcon(
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_PUSHBUTTON)
+  if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(false);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
@@ -2309,15 +2314,15 @@ CJS_Return Field::checkThisBox(
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FIELDTYPE_CHECKBOX &&
-      pFormField->GetFieldType() != FIELDTYPE_RADIOBUTTON) {
+  if (pFormField->GetFieldType() != FormFieldType::kCheckBox &&
+      pFormField->GetFieldType() != FormFieldType::kRadioButton) {
     return CJS_Return(false);
   }
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return CJS_Return(false);
   // TODO(weili): Check whether anything special needed for radio button,
   // otherwise merge these branches.
-  if (pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON)
+  if (pFormField->GetFieldType() == FormFieldType::kRadioButton)
     pFormField->CheckControl(nWidget, bCheckit, true);
   else
     pFormField->CheckControl(nWidget, bCheckit, true);
@@ -2351,8 +2356,8 @@ CJS_Return Field::defaultIsChecked(
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
-      pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
-      pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON));
+      pFormField->GetFieldType() == FormFieldType::kCheckBox ||
+      pFormField->GetFieldType() == FormFieldType::kRadioButton));
 }
 
 CJS_Return Field::deleteItemAt(
@@ -2413,8 +2418,8 @@ CJS_Return Field::getItemAt(CJS_Runtime* pRuntime,
     return CJS_Return(false);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if ((pFormField->GetFieldType() == FIELDTYPE_LISTBOX) ||
-      (pFormField->GetFieldType() == FIELDTYPE_COMBOBOX)) {
+  if ((pFormField->GetFieldType() == FormFieldType::kListBox) ||
+      (pFormField->GetFieldType() == FormFieldType::kComboBox)) {
     if (nIdx == -1 || nIdx > pFormField->CountOptions())
       nIdx = pFormField->CountOptions() - 1;
     if (bExport) {
@@ -2458,8 +2463,8 @@ CJS_Return Field::isBoxChecked(
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
-      ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
-        pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
+      ((pFormField->GetFieldType() == FormFieldType::kCheckBox ||
+        pFormField->GetFieldType() == FormFieldType::kRadioButton) &&
        pFormField->GetControl(nIndex)->IsChecked() != 0)));
 }
 
@@ -2479,8 +2484,8 @@ CJS_Return Field::isDefaultChecked(
     return CJS_Return(false);
 
   return CJS_Return(pRuntime->NewBoolean(
-      ((pFormField->GetFieldType() == FIELDTYPE_CHECKBOX ||
-        pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON) &&
+      ((pFormField->GetFieldType() == FormFieldType::kCheckBox ||
+        pFormField->GetFieldType() == FormFieldType::kRadioButton) &&
        pFormField->GetControl(nIndex)->IsDefaultChecked() != 0)));
 }
 

@@ -71,7 +71,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 
   int GetLayoutOrder() const override;
 
-  int GetFieldType() const;
+  FormFieldType GetFieldType() const;
   int GetFieldFlags() const;
   int GetRotate() const;
 

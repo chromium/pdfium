@@ -1441,7 +1441,9 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 
-// Field Types
+// Form Field Types
+// The names of the defines are stable, but the specific values associated with
+// them are not, so do not hardcode their values.
 #define FPDF_FORMFIELD_UNKNOWN 0      // Unknown.
 #define FPDF_FORMFIELD_PUSHBUTTON 1   // push button type.
 #define FPDF_FORMFIELD_CHECKBOX 2     // check box type.
@@ -1449,8 +1451,15 @@ FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 #define FPDF_FORMFIELD_COMBOBOX 4     // combo box type.
 #define FPDF_FORMFIELD_LISTBOX 5      // list box type.
 #define FPDF_FORMFIELD_TEXTFIELD 6    // text field type.
+#define FPDF_FORMFIELD_SIGNATURE 7    // text field type.
 #ifdef PDF_ENABLE_XFA
-#define FPDF_FORMFIELD_XFA 7          // text field type.
+#define FPDF_FORMFIELD_XFA 8  // Generic XFA type.
+#endif                        // PDF_ENABLE_XFA
+
+#ifndef PDF_ENABLE_XFA
+#define FPDF_FORMFIELD_COUNT 8
+#else
+#define FPDF_FORMFIELD_COUNT 9
 #endif  // PDF_ENABLE_XFA
 
 /**
@@ -1507,11 +1516,11 @@ FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
  * Return Value:
  *          NONE.
  * Comments:
- *          When the parameter fieldType is set to zero, the highlight color
- *will be applied to all the form fields in the
+ *          When the parameter fieldType is set to FPDF_FORMFIELD_UNKNOWN, the
+ *          highlight color will be applied to all the form fields in the
  *          document.
  *          Please refresh the client window to show the highlight immediately
- *if necessary.
+ *          if necessary.
  **/
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,

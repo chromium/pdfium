@@ -1206,12 +1206,13 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
     return;
 
   WideString csWValue = GetFieldValue(*pFieldDict, m_bsEncoding);
-  int iType = pField->GetFieldType();
+  FormFieldType fieldType = pField->GetFieldType();
   if (bNotify && m_pFormNotify) {
-    if (iType == FIELDTYPE_LISTBOX) {
+    if (fieldType == FormFieldType::kListBox) {
       if (m_pFormNotify->BeforeSelectionChange(pField, csWValue) < 0)
         return;
-    } else if (iType == FIELDTYPE_COMBOBOX || iType == FIELDTYPE_TEXTFIELD) {
+    } else if (fieldType == FormFieldType::kComboBox ||
+               fieldType == FormFieldType::kTextField) {
       if (m_pFormNotify->BeforeValueChange(pField, csWValue) < 0)
         return;
     }
@@ -1224,12 +1225,15 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   }
 
   if (bNotify && m_pFormNotify) {
-    if (iType == FIELDTYPE_CHECKBOX || iType == FIELDTYPE_RADIOBUTTON)
+    if (fieldType == FormFieldType::kCheckBox ||
+        fieldType == FormFieldType::kRadioButton) {
       m_pFormNotify->AfterCheckedStatusChange(pField);
-    else if (iType == FIELDTYPE_LISTBOX)
+    } else if (fieldType == FormFieldType::kListBox) {
       m_pFormNotify->AfterSelectionChange(pField);
-    else if (iType == FIELDTYPE_COMBOBOX || iType == FIELDTYPE_TEXTFIELD)
+    } else if (fieldType == FormFieldType::kComboBox ||
+               fieldType == FormFieldType::kTextField) {
       m_pFormNotify->AfterValueChange(pField);
+    }
   }
 }
 

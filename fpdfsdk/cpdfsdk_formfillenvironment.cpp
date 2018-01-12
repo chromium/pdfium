@@ -718,8 +718,9 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
 
   if (pFocusAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET) {
     CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pFocusAnnot.Get());
-    int nFieldType = pWidget->GetFieldType();
-    if (FIELDTYPE_TEXTFIELD == nFieldType || FIELDTYPE_COMBOBOX == nFieldType) {
+    FormFieldType fieldType = pWidget->GetFieldType();
+    if (fieldType == FormFieldType::kTextField ||
+        fieldType == FormFieldType::kComboBox) {
       OnSetFieldInputFocus(nullptr, 0, false);
     }
   }

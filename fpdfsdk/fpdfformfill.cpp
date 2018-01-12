@@ -44,6 +44,37 @@ static_assert(static_cast<int>(FormType::kXFAForeground) ==
               "XFA foreground form types must match");
 #endif  // PDF_ENABLE_XFA
 
+static_assert(static_cast<int>(FormFieldType::kUnknown) ==
+                  FPDF_FORMFIELD_UNKNOWN,
+              "Unknown form field types must match");
+static_assert(static_cast<int>(FormFieldType::kPushButton) ==
+                  FPDF_FORMFIELD_PUSHBUTTON,
+              "PushButton form field types must match");
+static_assert(static_cast<int>(FormFieldType::kCheckBox) ==
+                  FPDF_FORMFIELD_CHECKBOX,
+              "CheckBox form field types must match");
+static_assert(static_cast<int>(FormFieldType::kRadioButton) ==
+                  FPDF_FORMFIELD_RADIOBUTTON,
+              "RadioButton form field types must match");
+static_assert(static_cast<int>(FormFieldType::kComboBox) ==
+                  FPDF_FORMFIELD_COMBOBOX,
+              "ComboBox form field types must match");
+static_assert(static_cast<int>(FormFieldType::kListBox) ==
+                  FPDF_FORMFIELD_LISTBOX,
+              "ListBox form field types must match");
+static_assert(static_cast<int>(FormFieldType::kTextField) ==
+                  FPDF_FORMFIELD_TEXTFIELD,
+              "TextField form field types must match");
+static_assert(static_cast<int>(FormFieldType::kSignature) ==
+                  FPDF_FORMFIELD_SIGNATURE,
+              "Signature form field types must match");
+#ifdef PDF_ENABLE_XFA
+static_assert(static_cast<int>(FormFieldType::kXFA) == FPDF_FORMFIELD_XFA,
+              "XFA form field types must match");
+#endif  // PDF_ENABLE_XFA
+static_assert(kFormFieldTypeCount == FPDF_FORMFIELD_COUNT,
+              "Number of form field types must match");
+
 namespace {
 
 CPDFSDK_FormFillEnvironment* HandleToCPDFSDKEnvironment(
@@ -173,7 +204,7 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     if (!pFormCtrl)
       return -1;
     CPDF_FormField* pFormField = pFormCtrl->GetField();
-    return pFormField ? pFormField->GetFieldType() : -1;
+    return pFormField ? static_cast<int>(pFormField->GetFieldType()) : -1;
   }
 
 #ifdef PDF_ENABLE_XFA
@@ -199,17 +230,16 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (!pWidgetIterator)
     return -1;
 
-  CXFA_FFWidget* pXFAAnnot = pWidgetIterator->MoveToNext();
-  while (pXFAAnnot) {
+  CXFA_FFWidget* pXFAAnnot;
+  while ((pXFAAnnot = pWidgetIterator->MoveToNext()) != nullptr) {
     CFX_RectF rcBBox = pXFAAnnot->GetBBox(0);
     CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                            rcBBox.top + rcBBox.height);
     rcWidget.Inflate(1.0f, 1.0f);
     if (rcWidget.Contains(CFX_PointF(static_cast<float>(page_x),
                                      static_cast<float>(page_y)))) {
-      return FPDF_FORMFIELD_XFA;
+      return static_cast<int>(FormFieldType::kXFA);
     }
-    pXFAAnnot = pWidgetIterator->MoveToNext();
   }
 #endif  // PDF_ENABLE_XFA
   return -1;
@@ -663,8 +693,19 @@ FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
                                 int fieldType,
                                 unsigned long color) {
-  if (CPDFSDK_InterForm* pInterForm = FormHandleToInterForm(hHandle))
-    pInterForm->SetHighlightColor(color, fieldType);
+  CPDFSDK_InterForm* interForm = FormHandleToInterForm(hHandle);
+  if (!interForm)
+    return;
+
+  Optional<FormFieldType> cast_input = IntToFormFieldType(fieldType);
+  if (!cast_input.has_value())
+    return;
+
+  if (cast_input.value() == FormFieldType::kUnknown) {
+    interForm->SetAllHighlightColors(color);
+  } else {
+    interForm->SetHighlightColor(color, cast_input.value());
+  }
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
@@ -676,7 +717,7 @@ FPDF_SetFormFieldHighlightAlpha(FPDF_FORMHANDLE hHandle, unsigned char alpha) {
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle) {
   if (CPDFSDK_InterForm* pInterForm = FormHandleToInterForm(hHandle))
-    pInterForm->RemoveAllHighLight();
+    pInterForm->RemoveAllHighLights();
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FORM_OnAfterLoadPage(FPDF_PAGE page,

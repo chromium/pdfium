@@ -93,12 +93,13 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
       const std::vector<CPDF_FormField*>& fields,
       bool bIncludeOrExclude);
 
-  bool IsNeedHighLight(int nFieldType);
-  void RemoveAllHighLight();
-  void SetHighlightAlpha(uint8_t alpha) { m_iHighlightAlpha = alpha; }
-  uint8_t GetHighlightAlpha() { return m_iHighlightAlpha; }
-  void SetHighlightColor(FX_COLORREF clr, int nFieldType);
-  FX_COLORREF GetHighlightColor(int nFieldType);
+  bool IsNeedHighLight(FormFieldType fieldType);
+  void RemoveAllHighLights();
+  void SetHighlightAlpha(uint8_t alpha) { m_HighlightAlpha = alpha; }
+  uint8_t GetHighlightAlpha() { return m_HighlightAlpha; }
+  void SetHighlightColor(FX_COLORREF clr, FormFieldType fieldType);
+  void SetAllHighlightColors(FX_COLORREF clr);
+  FX_COLORREF GetHighlightColor(FormFieldType fieldType);
 
  private:
   // IPDF_FormNotify:
@@ -127,16 +128,13 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   std::map<CXFA_FFWidget*, CPDFSDK_XFAWidget*> m_XFAMap;
   bool m_bXfaCalculate;
   bool m_bXfaValidationsEnabled;
-  static const int kNumFieldTypes = 7;
-#else   // PDF_ENABLE_XFA
-  static const int kNumFieldTypes = 6;
 #endif  // PDF_ENABLE_XFA
   bool m_bCalculate;
   bool m_bBusy;
 
-  FX_COLORREF m_aHighlightColor[kNumFieldTypes];
-  uint8_t m_iHighlightAlpha;
-  bool m_bNeedHightlight[kNumFieldTypes];
+  uint8_t m_HighlightAlpha;
+  FX_COLORREF m_HighlightColor[kFormFieldTypeCount];
+  bool m_NeedsHighlight[kFormFieldTypeCount];
 };
 
 #endif  // FPDFSDK_CPDFSDK_INTERFORM_H_

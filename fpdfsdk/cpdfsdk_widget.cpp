@@ -77,7 +77,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
     if (!m_hMixXFAWidget) {
       if (CXFA_FFDocView* pDocView = pContext->GetXFADocView()) {
         WideString sName;
-        if (GetFieldType() == FIELDTYPE_RADIOBUTTON) {
+        if (GetFieldType() == FormFieldType::kRadioButton) {
           sName = GetAnnotName();
           if (sName.IsEmpty())
             sName = GetName();
@@ -206,7 +206,7 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
   XFA_EVENTTYPE eEventType = GetXFAEventType(eXFAAAT);
 
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
-      GetFieldType() == FIELDTYPE_RADIOBUTTON) {
+      GetFieldType() == FormFieldType::kRadioButton) {
     if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
       if (pXFAWidgetHandler->HasEvent(hGroupWidget->GetNode()->GetWidgetAcc(),
                                       eEventType)) {
@@ -255,7 +255,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
 
   param.m_wsPrevText = data.sValue;
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
-      GetFieldType() == FIELDTYPE_RADIOBUTTON) {
+      GetFieldType() == FormFieldType::kRadioButton) {
     if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
       CXFA_WidgetAcc* pAcc = hGroupWidget->GetNode()->GetWidgetAcc();
       param.m_pTarget = pAcc;
@@ -286,18 +286,18 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
 
   CPDF_FormField* pFormField = GetFormField();
   switch (GetFieldType()) {
-    case FIELDTYPE_CHECKBOX:
-    case FIELDTYPE_RADIOBUTTON: {
+    case FormFieldType::kCheckBox:
+    case FormFieldType::kRadioButton: {
       CPDF_FormControl* pFormCtrl = GetFormControl();
       XFA_CHECKSTATE eCheckState =
           pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
       pWidgetAcc->SetCheckState(eCheckState, true);
       break;
     }
-    case FIELDTYPE_TEXTFIELD:
+    case FormFieldType::kTextField:
       pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
-    case FIELDTYPE_LISTBOX: {
+    case FormFieldType::kListBox: {
       pWidgetAcc->ClearAllSelections();
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
@@ -307,7 +307,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       }
       break;
     }
-    case FIELDTYPE_COMBOBOX: {
+    case FormFieldType::kComboBox: {
       pWidgetAcc->ClearAllSelections();
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
@@ -318,6 +318,8 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
     }
+    default:
+      break;
   }
 
   if (bSynchronizeElse) {
@@ -360,7 +362,7 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
   ASSERT(pFormControl);
 
   switch (pFormField->GetFieldType()) {
-    case FIELDTYPE_CHECKBOX: {
+    case FormFieldType::kCheckBox: {
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetNode()->GetWidgetAcc()) {
         pFormField->CheckControl(
             pFormField->GetControlIndex(pFormControl),
@@ -368,7 +370,7 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       }
       break;
     }
-    case FIELDTYPE_RADIOBUTTON: {
+    case FormFieldType::kRadioButton: {
       // TODO(weili): Check whether we need to handle checkbox and radio
       // button differently, otherwise, merge these two cases.
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetNode()->GetWidgetAcc()) {
@@ -378,14 +380,14 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       }
       break;
     }
-    case FIELDTYPE_TEXTFIELD: {
+    case FormFieldType::kTextField: {
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetNode()->GetWidgetAcc()) {
         pFormField->SetValue(pWidgetAcc->GetValue(XFA_VALUEPICTURE_Display),
                              true);
       }
       break;
     }
-    case FIELDTYPE_LISTBOX: {
+    case FormFieldType::kListBox: {
       pFormField->ClearSelection(false);
 
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetNode()->GetWidgetAcc()) {
@@ -399,7 +401,7 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       }
       break;
     }
-    case FIELDTYPE_COMBOBOX: {
+    case FormFieldType::kComboBox: {
       pFormField->ClearSelection(false);
 
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetNode()->GetWidgetAcc()) {
@@ -415,6 +417,8 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       }
       break;
     }
+    default:
+      break;
   }
 }
 
@@ -425,7 +429,7 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
   ASSERT(hWidget);
 
   switch (pFormField->GetFieldType()) {
-    case FIELDTYPE_LISTBOX: {
+    case FormFieldType::kListBox: {
       pFormField->ClearSelection(false);
       pFormField->ClearOptions(true);
 
@@ -438,7 +442,7 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       }
       break;
     }
-    case FIELDTYPE_COMBOBOX: {
+    case FormFieldType::kComboBox: {
       pFormField->ClearSelection(false);
       pFormField->ClearOptions(false);
 
@@ -453,6 +457,8 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       pFormField->SetValue(L"", true);
       break;
     }
+    default:
+      break;
   }
 }
 #endif  // PDF_ENABLE_XFA
@@ -476,27 +482,28 @@ bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
   if (!psub)
     return false;
 
-  int nFieldType = GetFieldType();
-  switch (nFieldType) {
-    case FIELDTYPE_PUSHBUTTON:
-    case FIELDTYPE_COMBOBOX:
-    case FIELDTYPE_LISTBOX:
-    case FIELDTYPE_TEXTFIELD:
-    case FIELDTYPE_SIGNATURE:
+  FormFieldType fieldType = GetFieldType();
+  switch (fieldType) {
+    case FormFieldType::kPushButton:
+    case FormFieldType::kComboBox:
+    case FormFieldType::kListBox:
+    case FormFieldType::kTextField:
+    case FormFieldType::kSignature:
       return psub->IsStream();
-    case FIELDTYPE_CHECKBOX:
-    case FIELDTYPE_RADIOBUTTON:
+    case FormFieldType::kCheckBox:
+    case FormFieldType::kRadioButton:
       if (CPDF_Dictionary* pSubDict = psub->AsDictionary()) {
         return !!pSubDict->GetStreamFor(GetAppState());
       }
       return false;
+    default:
+      return true;
   }
-  return true;
 }
 
-int CPDFSDK_Widget::GetFieldType() const {
+FormFieldType CPDFSDK_Widget::GetFieldType() const {
   CPDF_FormField* pField = GetFormField();
-  return pField ? pField->GetFieldType() : FIELDTYPE_UNKNOWN;
+  return pField ? pField->GetFieldType() : FormFieldType::kUnknown;
 }
 
 bool CPDFSDK_Widget::IsAppearanceValid() {
@@ -522,7 +529,7 @@ int CPDFSDK_Widget::GetFieldFlags() const {
 }
 
 bool CPDFSDK_Widget::IsSignatureWidget() const {
-  return GetFieldType() == FIELDTYPE_SIGNATURE;
+  return GetFieldType() == FormFieldType::kSignature;
 }
 
 CPDF_FormField* CPDFSDK_Widget::GetFormField() const {
@@ -733,8 +740,8 @@ bool CPDFSDK_Widget::IsAppModified() const {
 #ifdef PDF_ENABLE_XFA
 void CPDFSDK_Widget::ResetAppearance(bool bValueChanged) {
   switch (GetFieldType()) {
-    case FIELDTYPE_TEXTFIELD:
-    case FIELDTYPE_COMBOBOX: {
+    case FormFieldType::kTextField:
+    case FormFieldType::kComboBox: {
       bool bFormatted = false;
       WideString sValue = OnFormat(bFormatted);
       ResetAppearance(bFormatted ? &sValue : nullptr, true);
@@ -757,23 +764,25 @@ void CPDFSDK_Widget::ResetAppearance(const WideString* sValue,
 
   CPWL_AppStream appStream(this, GetAPDict());
   switch (GetFieldType()) {
-    case FIELDTYPE_PUSHBUTTON:
+    case FormFieldType::kPushButton:
       appStream.SetAsPushButton();
       break;
-    case FIELDTYPE_CHECKBOX:
+    case FormFieldType::kCheckBox:
       appStream.SetAsCheckBox();
       break;
-    case FIELDTYPE_RADIOBUTTON:
+    case FormFieldType::kRadioButton:
       appStream.SetAsRadioButton();
       break;
-    case FIELDTYPE_COMBOBOX:
+    case FormFieldType::kComboBox:
       appStream.SetAsComboBox(sValue);
       break;
-    case FIELDTYPE_LISTBOX:
+    case FormFieldType::kListBox:
       appStream.SetAsListBox();
       break;
-    case FIELDTYPE_TEXTFIELD:
+    case FormFieldType::kTextField:
       appStream.SetAsTextField(sValue);
+      break;
+    default:
       break;
   }
 
@@ -796,10 +805,10 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device,
                                     CPDF_Annot::AppearanceMode mode,
                                     const CPDF_RenderOptions* pOptions) {
-  int nFieldType = GetFieldType();
+  FormFieldType fieldType = GetFieldType();
 
-  if ((nFieldType == FIELDTYPE_CHECKBOX ||
-       nFieldType == FIELDTYPE_RADIOBUTTON) &&
+  if ((fieldType == FormFieldType::kCheckBox ||
+       fieldType == FormFieldType::kRadioButton) &&
       mode == CPDF_Annot::Normal &&
       !IsWidgetAppearanceValid(CPDF_Annot::Normal)) {
     CFX_PathData pathData;
@@ -827,8 +836,8 @@ void CPDFSDK_Widget::UpdateField() {
 
 void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
                                 CPDFSDK_PageView* pPageView) {
-  int nFieldType = GetFieldType();
-  if (!m_pInterForm->IsNeedHighLight(nFieldType))
+  FormFieldType fieldType = GetFieldType();
+  if (!m_pInterForm->IsNeedHighLight(fieldType))
     return;
 
   CFX_Matrix page2device;
@@ -848,7 +857,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   FX_RECT rcDev = rcDevice.ToFxRect();
   pDevice->FillRect(
       &rcDev, ArgbEncode(static_cast<int>(m_pInterForm->GetHighlightAlpha()),
-                         m_pInterForm->GetHighlightColor(nFieldType)));
+                         m_pInterForm->GetHighlightColor(fieldType)));
 }
 
 CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {

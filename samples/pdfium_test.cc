@@ -1437,7 +1437,7 @@ void RenderPdf(const std::string& name,
   }
 #endif  // PDF_ENABLE_XFA
 
-  FPDF_SetFormFieldHighlightColor(form.get(), 0, 0xFFE4DD);
+  FPDF_SetFormFieldHighlightColor(form.get(), FPDF_FORMFIELD_UNKNOWN, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form.get(), 100);
   FORM_DoDocumentJSAction(form.get());
   FORM_DoDocumentOpenAction(form.get());

@@ -219,7 +219,8 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(FPDF_DOCUMENT doc) {
   formfillinfo->m_pJsPlatform = platform;
   FPDF_FORMHANDLE form_handle =
       FPDFDOC_InitFormFillEnvironment(doc, formfillinfo);
-  FPDF_SetFormFieldHighlightColor(form_handle, 0, 0xFFE4DD);
+  FPDF_SetFormFieldHighlightColor(form_handle, FPDF_FORMFIELD_UNKNOWN,
+                                  0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form_handle, 100);
   return form_handle;
 }
