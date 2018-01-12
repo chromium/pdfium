@@ -36,9 +36,9 @@
 
 namespace {
 
-const int8_t START_END_PATTERN[3] = {1, 1, 1};
-const int8_t MIDDLE_PATTERN[5] = {1, 1, 1, 1, 1};
-const int8_t L_PATTERNS[10][4] = {
+const int8_t kOnedEAN8StartPattern[3] = {1, 1, 1};
+const int8_t kOnedEAN8MiddlePattern[5] = {1, 1, 1, 1, 1};
+const int8_t kOnedEAN8LPattern[10][4] = {
     {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
     {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2}};
 
@@ -108,28 +108,28 @@ uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const ByteString& contents,
       FX_Alloc(uint8_t, m_codeWidth));
   int32_t pos = 0;
   int32_t e = BCExceptionNO;
-  pos += AppendPattern(result.get(), pos, START_END_PATTERN, 3, 1, e);
+  pos += AppendPattern(result.get(), pos, kOnedEAN8StartPattern, 3, 1, e);
   if (e != BCExceptionNO)
     return nullptr;
 
   int32_t i = 0;
   for (i = 0; i <= 3; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos += AppendPattern(result.get(), pos, L_PATTERNS[digit], 4, 0, e);
+    pos += AppendPattern(result.get(), pos, kOnedEAN8LPattern[digit], 4, 0, e);
     if (e != BCExceptionNO)
       return nullptr;
   }
-  pos += AppendPattern(result.get(), pos, MIDDLE_PATTERN, 5, 0, e);
+  pos += AppendPattern(result.get(), pos, kOnedEAN8MiddlePattern, 5, 0, e);
   if (e != BCExceptionNO)
     return nullptr;
 
   for (i = 4; i <= 7; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos += AppendPattern(result.get(), pos, L_PATTERNS[digit], 4, 1, e);
+    pos += AppendPattern(result.get(), pos, kOnedEAN8LPattern[digit], 4, 1, e);
     if (e != BCExceptionNO)
       return nullptr;
   }
-  pos += AppendPattern(result.get(), pos, START_END_PATTERN, 3, 1, e);
+  pos += AppendPattern(result.get(), pos, kOnedEAN8StartPattern, 3, 1, e);
   if (e != BCExceptionNO)
     return nullptr;
   return result.release();

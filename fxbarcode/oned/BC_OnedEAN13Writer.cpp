@@ -35,11 +35,11 @@
 
 namespace {
 
-const int8_t FIRST_DIGIT_ENCODINGS[10] = {0x00, 0x0B, 0x0D, 0xE,  0x13,
-                                          0x19, 0x1C, 0x15, 0x16, 0x1A};
-const int8_t START_END_PATTERN[3] = {1, 1, 1};
-const int8_t MIDDLE_PATTERN[5] = {1, 1, 1, 1, 1};
-const int8_t L_PATTERNS[10][4] = {
+const int8_t kFirstDigitEncodings[10] = {0x00, 0x0B, 0x0D, 0xE,  0x13,
+                                         0x19, 0x1C, 0x15, 0x16, 0x1A};
+const int8_t kOnedEAN13StartPattern[3] = {1, 1, 1};
+const int8_t kOnedEAN13MiddlePattern[5] = {1, 1, 1, 1, 1};
+const int8_t kOnedEAN13LPattern[10][4] = {
     {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
     {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2}};
 const int8_t L_AND_G_PATTERNS[20][4] = {
@@ -98,13 +98,13 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const ByteString& contents,
 
   m_iDataLenth = 13;
   int32_t firstDigit = FXSYS_DecimalCharToInt(contents.First());
-  int32_t parities = FIRST_DIGIT_ENCODINGS[firstDigit];
+  int32_t parities = kFirstDigitEncodings[firstDigit];
   outLength = m_codeWidth;
   std::unique_ptr<uint8_t, FxFreeDeleter> result(
       FX_Alloc(uint8_t, m_codeWidth));
   int32_t pos = 0;
   int32_t e = BCExceptionNO;
-  pos += AppendPattern(result.get(), pos, START_END_PATTERN, 3, 1, e);
+  pos += AppendPattern(result.get(), pos, kOnedEAN13StartPattern, 3, 1, e);
   if (e != BCExceptionNO)
     return nullptr;
 
@@ -118,17 +118,17 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const ByteString& contents,
     if (e != BCExceptionNO)
       return nullptr;
   }
-  pos += AppendPattern(result.get(), pos, MIDDLE_PATTERN, 5, 0, e);
+  pos += AppendPattern(result.get(), pos, kOnedEAN13MiddlePattern, 5, 0, e);
   if (e != BCExceptionNO)
     return nullptr;
 
   for (i = 7; i <= 12; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos += AppendPattern(result.get(), pos, L_PATTERNS[digit], 4, 1, e);
+    pos += AppendPattern(result.get(), pos, kOnedEAN13LPattern[digit], 4, 1, e);
     if (e != BCExceptionNO)
       return nullptr;
   }
-  pos += AppendPattern(result.get(), pos, START_END_PATTERN, 3, 1, e);
+  pos += AppendPattern(result.get(), pos, kOnedEAN13StartPattern, 3, 1, e);
   if (e != BCExceptionNO)
     return nullptr;
   return result.release();

@@ -31,7 +31,7 @@
 
 namespace {
 
-WideString EncodeToCodewords(const WideString& sb, int32_t startPos) {
+WideString EncodeToC40Codewords(const WideString& sb, int32_t startPos) {
   wchar_t c1 = sb[startPos];
   wchar_t c2 = sb[startPos + 1];
   wchar_t c3 = sb[startPos + 2];
@@ -99,7 +99,7 @@ void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
 }
 void CBC_C40Encoder::writeNextTriplet(CBC_EncoderContext& context,
                                       WideString& buffer) {
-  context.writeCodewords(EncodeToCodewords(buffer, 0));
+  context.writeCodewords(EncodeToC40Codewords(buffer, 0));
   buffer.Delete(0, 3);
 }
 void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,

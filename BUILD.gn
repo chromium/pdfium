@@ -1671,8 +1671,7 @@ if (pdf_enable_xfa) {
     configs += [ ":pdfium_core_config" ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("fxbarcode") {
+  jumbo_static_library("fxbarcode") {
     sources = [
       "fxbarcode/BC_Library.cpp",
       "fxbarcode/BC_Library.h",

@@ -30,9 +30,9 @@
 
 namespace {
 
-const char ALPHABET_STRING[] = "0123456789-$:/.+ABCDTN";
+const char kOnedCodaAlphabet[] = "0123456789-$:/.+ABCDTN";
 
-const int32_t CHARACTER_ENCODINGS[22] = {
+const int32_t kOnedCodaCharacterEncoding[22] = {
     0x003, 0x006, 0x009, 0x060, 0x012, 0x042, 0x021, 0x024,
     0x030, 0x048, 0x00c, 0x018, 0x045, 0x051, 0x054, 0x015,
     0x01A, 0x029, 0x00B, 0x00E, 0x01A, 0x029};
@@ -158,10 +158,10 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const ByteString& contents,
         break;
     }
     int32_t code = 0;
-    size_t len = strlen(ALPHABET_STRING);
+    size_t len = strlen(kOnedCodaAlphabet);
     for (size_t i = 0; i < len; i++) {
-      if (ch == ALPHABET_STRING[i]) {
-        code = CHARACTER_ENCODINGS[i];
+      if (ch == kOnedCodaAlphabet[i]) {
+        code = kOnedCodaCharacterEncoding[i];
         break;
       }
     }

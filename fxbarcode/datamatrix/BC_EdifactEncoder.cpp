@@ -33,7 +33,7 @@
 
 namespace {
 
-WideString EncodeToCodewords(const WideString& sb, int32_t startPos) {
+WideString EncodeToEdifactCodewords(const WideString& sb, int32_t startPos) {
   int32_t len = sb.GetLength() - startPos;
   if (len == 0)
     return WideString();
@@ -72,7 +72,7 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
   }
 
   int32_t restChars = count - 1;
-  WideString encoded = EncodeToCodewords(buffer, 0);
+  WideString encoded = EncodeToEdifactCodewords(buffer, 0);
   if (encoded.IsEmpty())
     return false;
 
@@ -136,7 +136,7 @@ void CBC_EdifactEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
     context.m_pos++;
     int32_t count = buffer.GetLength();
     if (count >= 4) {
-      WideString encoded = EncodeToCodewords(buffer, 0);
+      WideString encoded = EncodeToEdifactCodewords(buffer, 0);
       if (encoded.IsEmpty()) {
         e = BCExceptionGeneric;
         return;

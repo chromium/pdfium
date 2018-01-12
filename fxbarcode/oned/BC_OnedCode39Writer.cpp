@@ -30,11 +30,13 @@
 
 namespace {
 
-const char ALPHABET_STRING[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%";
+const char kOnedCode39Alphabet[] =
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%";
 
-const char CHECKSUM_STRING[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
+const char kOnedCode39Checksum[] =
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
 
-const int32_t CHARACTER_ENCODINGS[44] = {
+const int32_t kOnedCode39CharacterEncoding[44] = {
     0x034, 0x121, 0x061, 0x160, 0x031, 0x130, 0x070, 0x025, 0x124,
     0x064, 0x109, 0x049, 0x148, 0x019, 0x118, 0x058, 0x00D, 0x10C,
     0x04C, 0x01C, 0x103, 0x043, 0x142, 0x013, 0x112, 0x052, 0x007,
@@ -141,11 +143,11 @@ char CBC_OnedCode39Writer::CalcCheckSum(const ByteString& contents) {
     return '*';
 
   int32_t checksum = 0;
-  size_t len = strlen(ALPHABET_STRING);
+  size_t len = strlen(kOnedCode39Alphabet);
   for (const auto& c : contents) {
     size_t j = 0;
     for (; j < len; j++) {
-      if (ALPHABET_STRING[j] == c) {
+      if (kOnedCode39Alphabet[j] == c) {
         if (c != '*')
           checksum += j;
         break;
@@ -155,7 +157,7 @@ char CBC_OnedCode39Writer::CalcCheckSum(const ByteString& contents) {
       return '*';
   }
   checksum = checksum % 43;
-  return CHECKSUM_STRING[checksum];
+  return kOnedCode39Checksum[checksum];
 }
 
 uint8_t* CBC_OnedCode39Writer::EncodeImpl(const ByteString& contents,
@@ -173,20 +175,20 @@ uint8_t* CBC_OnedCode39Writer::EncodeImpl(const ByteString& contents,
   m_iContentLen = encodedContents.GetLength();
   int32_t codeWidth = (wideStrideNum * m_iWideNarrRatio + narrStrideNum) * 2 +
                       1 + m_iContentLen;
-  size_t len = strlen(ALPHABET_STRING);
+  size_t len = strlen(kOnedCode39Alphabet);
   for (size_t j = 0; j < m_iContentLen; j++) {
     for (size_t i = 0; i < len; i++) {
-      if (ALPHABET_STRING[i] != encodedContents[j])
+      if (kOnedCode39Alphabet[i] != encodedContents[j])
         continue;
 
-      ToIntArray(CHARACTER_ENCODINGS[i], widths);
+      ToIntArray(kOnedCode39CharacterEncoding[i], widths);
       for (size_t k = 0; k < 9; k++)
         codeWidth += widths[k];
     }
   }
   outlength = codeWidth;
   std::unique_ptr<uint8_t, FxFreeDeleter> result(FX_Alloc(uint8_t, codeWidth));
-  ToIntArray(CHARACTER_ENCODINGS[39], widths);
+  ToIntArray(kOnedCode39CharacterEncoding[39], widths);
   int32_t e = BCExceptionNO;
   int32_t pos = AppendPattern(result.get(), 0, widths, 9, 1, e);
   if (e != BCExceptionNO)
@@ -199,10 +201,10 @@ uint8_t* CBC_OnedCode39Writer::EncodeImpl(const ByteString& contents,
 
   for (int32_t l = m_iContentLen - 1; l >= 0; l--) {
     for (size_t i = 0; i < len; i++) {
-      if (ALPHABET_STRING[i] != encodedContents[l])
+      if (kOnedCode39Alphabet[i] != encodedContents[l])
         continue;
 
-      ToIntArray(CHARACTER_ENCODINGS[i], widths);
+      ToIntArray(kOnedCode39CharacterEncoding[i], widths);
       pos += AppendPattern(result.get(), pos, widths, 9, 1, e);
       if (e != BCExceptionNO)
         return nullptr;
@@ -211,7 +213,7 @@ uint8_t* CBC_OnedCode39Writer::EncodeImpl(const ByteString& contents,
     if (e != BCExceptionNO)
       return nullptr;
   }
-  ToIntArray(CHARACTER_ENCODINGS[39], widths);
+  ToIntArray(kOnedCode39CharacterEncoding[39], widths);
   pos += AppendPattern(result.get(), pos, widths, 9, 1, e);
   if (e != BCExceptionNO)
     return nullptr;
