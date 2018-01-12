@@ -35,7 +35,7 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
   bool encodedContents(const WideStringView& contents, WideString* result);
 
  private:
-  void ToIntArray(int32_t a, int8_t* toReturn);
+  void ToIntArray(int16_t a, int8_t* toReturn);
   char CalcCheckSum(const ByteString& contents);
 
   int8_t m_iWideNarrRatio;
