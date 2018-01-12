@@ -137,7 +137,7 @@ class CompareRun(object):
 
     Returns:
       A tuple (before, after), where each of before and after is a dict
-      mapping a test case name to the the profiling values for that test case
+      mapping a test case name to the profiling values for that test case
       in the given branch.
     """
     branch_to_restore = self.git.GetCurrentBranchName()
@@ -172,7 +172,7 @@ class CompareRun(object):
 
     Returns:
       A tuple (before, after), where each of before and after is a dict
-      mapping a test case name to the the profiling values for that test case
+      mapping a test case name to the profiling values for that test case
       in the given branch.
     """
     after = self._ProfileSeparateRepo('after',
@@ -196,7 +196,7 @@ class CompareRun(object):
 
     Returns:
       A tuple (before, after), where each of before and after is a dict
-      mapping a test case name to the the profiling values for that test case
+      mapping a test case name to the profiling values for that test case
       in the given branch. The current branch is considered to be "after" and
       the other branch is considered to be "before".
     """
@@ -230,7 +230,7 @@ class CompareRun(object):
 
     Returns:
       A tuple (before, after), where each of before and after is a dict
-      mapping a test case name to the the profiling values for that test case
+      mapping a test case name to the profiling values for that test case
       in the given branch. The current branch is considered to be "after" and
       the other branch is considered to be "before".
     """
@@ -251,7 +251,7 @@ class CompareRun(object):
 
     Returns:
       A tuple (before, after), where each of before and after is a dict
-      mapping a test case name to the the profiling values for that test case
+      mapping a test case name to the profiling values for that test case
       using the given version. The current branch without uncommitted changes is
       considered to be "before" and with uncommitted changes is considered to be
       "after".
@@ -280,7 +280,7 @@ class CompareRun(object):
 
     Returns:
       A tuple (before, after), where each of before and after is a dict
-      mapping a test case name to the the profiling values for that test case
+      mapping a test case name to the profiling values for that test case
       using the given version. The current branch without uncommitted changes is
       considered to be "before" and with uncommitted changes is considered to be
       "after".
@@ -298,7 +298,7 @@ class CompareRun(object):
       branch: Branch to checkout in the new repository. None will
           profile the same branch checked out in the original repo.
     Returns:
-      A dict mapping each test case name to the the profiling values for that
+      A dict mapping each test case name to the profiling values for that
       test case.
     """
     build_dir = self._CreateTempRepo('repo_%s' % run_label,
@@ -408,7 +408,7 @@ class CompareRun(object):
       build_dir: String with path to build directory
 
     Returns:
-      A dict mapping each test case name to the the profiling values for that
+      A dict mapping each test case name to the profiling values for that
       test case.
     """
     results = {}
@@ -431,7 +431,7 @@ class CompareRun(object):
       build_dir: String with path to build directory
 
     Returns:
-      A dict mapping each test case name to the the profiling values for that
+      A dict mapping each test case name to the profiling values for that
       test case.
     """
     results = {}
@@ -509,10 +509,10 @@ class CompareRun(object):
     """Draws conclusions comparing results of test runs in two branches.
 
     Args:
-      times_before_branch: A dict mapping each test case name to the the
+      times_before_branch: A dict mapping each test case name to the
           profiling values for that test case in the branch to be considered
           as the baseline.
-      times_after_branch: A dict mapping each test case name to the the
+      times_after_branch: A dict mapping each test case name to the
           profiling values for that test case in the branch to be considered
           as the new version.
 

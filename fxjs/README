@@ -11,7 +11,7 @@ for progress on the issue.
 FXJS binds objects by sticking a pointer to a CFXJS_PerObjectData in
 the V8 object's internal slot.  FXJSE binds objects by sticking a
 pointer to either an actual v8 function object or a CFXJSE_HostObject
-in the the V8 object's internal slot, depending upon whether the object
+in the V8 object's internal slot, depending upon whether the object
 represents (in some notion) a "class" or an "instance". Also, V8 objects
 bound in one library may unexpectedly arrive at the other given a script
 that's trying to mess with us.

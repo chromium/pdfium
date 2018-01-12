@@ -50,7 +50,7 @@ class StringViewTemplate {
       : m_Ptr(ptr), m_Length(size) {}
 
   // Deliberately implicit to avoid calling on every string literal.
-  // |ch| must be an lvalue that outlives the the StringViewTemplate.
+  // |ch| must be an lvalue that outlives the StringViewTemplate.
   // NOLINTNEXTLINE(runtime/explicit)
   StringViewTemplate(CharType& ch) {
     m_Ptr = reinterpret_cast<const UnsignedType*>(&ch);

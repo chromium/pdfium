@@ -16,7 +16,7 @@ create its own build_overrides/v8.gni file, and in it set
 `build_standalone_d8 = false`.
 
 The two files should define the same set of variables, but the values may
-vary as appropriate to suit the the needs of the two different builds.
+vary as appropriate to suit the needs of the two different builds.
 
 The build.gni file provides a way for projects to override defaults for
 variables used in //build itself (which we want to be shareable between
