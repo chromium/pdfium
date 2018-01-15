@@ -53,9 +53,6 @@ bool CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
   // Decoding Procedure" on page 113 of the JBIG2 specification (ISO/IEC FCD
   // 14492).
   int PREV = 1;
-  if (pArithDecoder->IsComplete())
-    return false;
-
   const int S = pArithDecoder->DECODE(&m_IAx[PREV]);
   PREV = ShiftOr(PREV, S);
 
@@ -64,9 +61,6 @@ bool CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
 
   int nTemp = 0;
   for (int i = 0; i < g_ArithIntDecodeData[nDecodeDataIndex].nNeedBits; ++i) {
-    if (pArithDecoder->IsComplete())
-      return false;
-
     int D = pArithDecoder->DECODE(&m_IAx[PREV]);
     PREV = ShiftOr(PREV, D);
     if (PREV >= 256)
@@ -98,17 +92,13 @@ CJBig2_ArithIaidDecoder::CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA)
 
 CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() {}
 
-bool CJBig2_ArithIaidDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
+void CJBig2_ArithIaidDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
                                      uint32_t* nResult) {
   int PREV = 1;
   for (unsigned char i = 0; i < SBSYMCODELEN; ++i) {
     JBig2ArithCtx* pCX = &m_IAID[PREV];
-    if (pArithDecoder->IsComplete())
-      return false;
-
     int D = pArithDecoder->DECODE(pCX);
     PREV = ShiftOr(PREV, D);
   }
   *nResult = PREV - (1 << SBSYMCODELEN);
-  return true;
 }

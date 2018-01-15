@@ -17,7 +17,8 @@ class CJBig2_ArithIntDecoder {
   CJBig2_ArithIntDecoder();
   ~CJBig2_ArithIntDecoder();
 
-  // Returns true on success, and false when an OOB condition occurs.
+  // Returns true on success, and false when an OOB condition occurs. Many
+  // callers can tolerate OOB and do not check the return value.
   bool decode(CJBig2_ArithDecoder* pArithDecoder, int* nResult);
 
  private:
@@ -29,7 +30,7 @@ class CJBig2_ArithIaidDecoder {
   explicit CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA);
   ~CJBig2_ArithIaidDecoder();
 
-  bool decode(CJBig2_ArithDecoder* pArithDecoder, uint32_t* nResult);
+  void decode(CJBig2_ArithDecoder* pArithDecoder, uint32_t* nResult);
 
  private:
   std::vector<JBig2ArithCtx> m_IAID;
