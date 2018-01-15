@@ -677,7 +677,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 //          page        -   Handle to the page. Returned by FPDF_LoadPage.
 //          matrix      -   The transform matrix, which must be invertible.
 //                          See PDF Reference 1.7, 4.2.2 Common Transformations.
-//          clipping    -   The rect to clip to in page coords.
+//          clipping    -   The rect to clip to in device coords.
 //          flags       -   0 for normal display, or combination of the Page
 //                          Rendering flags defined above. With the FPDF_ANNOT
 //                          flag, it renders all annotations that do not require
