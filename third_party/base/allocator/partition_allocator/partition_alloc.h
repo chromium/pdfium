@@ -95,7 +95,11 @@ static const size_t kBucketShift = (kAllocationGranularity == 8) ? 3 : 2;
 // system page of the span. For our current max slot span size of 64k and other
 // constant values, we pack _all_ PartitionAllocGeneric() sizes perfectly up
 // against the end of a system page.
+#if defined(_MIPS_ARCH_LOONGSON)
+static const size_t kPartitionPageShift = 16;  // 64KB
+#else
 static const size_t kPartitionPageShift = 14;  // 16KB
+#endif
 static const size_t kPartitionPageSize = 1 << kPartitionPageShift;
 static const size_t kPartitionPageOffsetMask = kPartitionPageSize - 1;
 static const size_t kPartitionPageBaseMask = ~kPartitionPageOffsetMask;
