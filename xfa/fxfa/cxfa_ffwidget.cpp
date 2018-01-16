@@ -532,31 +532,6 @@ void XFA_BOX_Fill(CXFA_Box* box,
   pGS->RestoreGraphState();
 }
 
-void XFA_BOX_StrokePath(CXFA_Stroke* stroke,
-                        CXFA_GEPath* pPath,
-                        CXFA_Graphics* pGS,
-                        const CFX_Matrix& matrix) {
-  if (!stroke || !stroke->IsVisible())
-    return;
-
-  float fThickness = stroke->GetThickness();
-  if (fThickness < 0.001f)
-    return;
-
-  pGS->SaveGraphState();
-  if (stroke->IsCorner() && fThickness > 2 * stroke->GetRadius())
-    fThickness = 2 * stroke->GetRadius();
-
-  pGS->SetLineWidth(fThickness);
-  pGS->EnableActOnDash();
-  pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
-  XFA_StrokeTypeSetLineDash(pGS, stroke->GetStrokeType(),
-                            XFA_AttributeEnum::Butt);
-  pGS->SetStrokeColor(CXFA_GEColor(stroke->GetColor()));
-  pGS->StrokePath(pPath, &matrix);
-  pGS->RestoreGraphState();
-}
-
 void XFA_BOX_StrokeArc(CXFA_Box* box,
                        CXFA_Graphics* pGS,
                        CFX_RectF rtWidget,
@@ -593,7 +568,8 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
 
     CXFA_GEPath arcPath;
     XFA_BOX_GetPath_Arc(box, rtWidget, arcPath, forceRound);
-    XFA_BOX_StrokePath(edge, &arcPath, pGS, matrix);
+    if (edge)
+      edge->Stroke(&arcPath, pGS, matrix);
     return;
   }
   pGS->SaveGraphState();
@@ -800,7 +776,8 @@ void XFA_BOX_Stroke_Rect(CXFA_Box* box,
     if ((i % 1) == 0 && stroke->GetRadius() < 0) {
       bool bEmpty = path.IsEmpty();
       if (!bEmpty) {
-        XFA_BOX_StrokePath(stroke, &path, pGS, matrix);
+        if (stroke)
+          stroke->Stroke(&path, pGS, matrix);
         path.Clear();
       }
       bStart = true;
@@ -810,7 +787,8 @@ void XFA_BOX_Stroke_Rect(CXFA_Box* box,
 
     bStart = !stroke->SameStyles(strokes[(i + 1) % 8], 0);
     if (bStart) {
-      XFA_BOX_StrokePath(stroke, &path, pGS, matrix);
+      if (stroke)
+        stroke->Stroke(&path, pGS, matrix);
       path.Clear();
     }
   }
@@ -819,7 +797,8 @@ void XFA_BOX_Stroke_Rect(CXFA_Box* box,
     if (bClose) {
       path.Close();
     }
-    XFA_BOX_StrokePath(strokes[7], &path, pGS, matrix);
+    if (strokes[7])
+      strokes[7]->Stroke(&path, pGS, matrix);
   }
 }
 

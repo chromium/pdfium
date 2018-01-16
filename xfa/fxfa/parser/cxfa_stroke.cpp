@@ -8,10 +8,12 @@
 
 #include <utility>
 
+#include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+#include "xfa/fxgraphics/cxfa_graphics.h"
 
 CXFA_Stroke::CXFA_Stroke(CXFA_Document* pDoc,
                          XFA_PacketType ePacket,
@@ -119,4 +121,27 @@ bool CXFA_Stroke::SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags) {
     return false;
   }
   return true;
+}
+
+void CXFA_Stroke::Stroke(CXFA_GEPath* pPath,
+                         CXFA_Graphics* pGS,
+                         const CFX_Matrix& matrix) {
+  if (!IsVisible())
+    return;
+
+  float fThickness = GetThickness();
+  if (fThickness < 0.001f)
+    return;
+
+  pGS->SaveGraphState();
+  if (IsCorner() && fThickness > 2 * GetRadius())
+    fThickness = 2 * GetRadius();
+
+  pGS->SetLineWidth(fThickness);
+  pGS->EnableActOnDash();
+  pGS->SetLineCap(CFX_GraphStateData::LineCapButt);
+  XFA_StrokeTypeSetLineDash(pGS, GetStrokeType(), XFA_AttributeEnum::Butt);
+  pGS->SetStrokeColor(CXFA_GEColor(GetColor()));
+  pGS->StrokePath(pPath, &matrix);
+  pGS->RestoreGraphState();
 }

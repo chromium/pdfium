@@ -18,6 +18,8 @@ enum StrokeSameStyle {
   XFA_STROKE_SAMESTYLE_Corner = 2
 };
 
+class CXFA_GEPath;
+class CXFA_Graphics;
 class CXFA_Node;
 
 class CXFA_Stroke : public CXFA_Node {
@@ -41,6 +43,8 @@ class CXFA_Stroke : public CXFA_Node {
   void SetColor(FX_ARGB argb);
 
   bool SameStyles(CXFA_Stroke* stroke, uint32_t dwFlags);
+
+  void Stroke(CXFA_GEPath* pPath, CXFA_Graphics* pGS, const CFX_Matrix& matrix);
 
  protected:
   CXFA_Stroke(CXFA_Document* pDoc,
