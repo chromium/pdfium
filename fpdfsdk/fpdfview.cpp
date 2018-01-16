@@ -726,6 +726,19 @@ FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageHeight(FPDF_PAGE page) {
   return pPage ? pPage->GetPageHeight() : 0.0;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetPageBoundingBox(FPDF_PAGE page,
+                                                            FS_RECTF* rect) {
+  if (!rect)
+    return false;
+
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return false;
+
+  FSRECTFFromCFXFloatRect(pPage->GetPageBBox(), rect);
+  return true;
+}
+
 #if defined(_WIN32)
 namespace {
 

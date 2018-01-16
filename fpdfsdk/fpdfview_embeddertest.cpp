@@ -99,8 +99,17 @@ TEST_F(FPDFViewEmbeddertest, Page) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
+
   EXPECT_EQ(612.0, FPDF_GetPageWidth(page));
   EXPECT_EQ(792.0, FPDF_GetPageHeight(page));
+
+  FS_RECTF rect;
+  EXPECT_TRUE(FPDF_GetPageBoundingBox(page, &rect));
+  EXPECT_EQ(0.0, rect.left);
+  EXPECT_EQ(0.0, rect.bottom);
+  EXPECT_EQ(612.0, rect.right);
+  EXPECT_EQ(792.0, rect.top);
+
   UnloadPage(page);
   EXPECT_EQ(nullptr, LoadPage(1));
 }
