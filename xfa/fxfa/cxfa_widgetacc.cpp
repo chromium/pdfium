@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_decimal.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
@@ -60,6 +61,152 @@ class CXFA_WidgetLayoutData {
 };
 
 namespace {
+
+constexpr uint8_t g_inv_base64[128] = {
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,  255,
+    255, 255, 63,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  255, 255,
+    255, 255, 255, 255, 255, 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,
+    10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,
+    25,  255, 255, 255, 255, 255, 255, 26,  27,  28,  29,  30,  31,  32,  33,
+    34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
+    49,  50,  51,  255, 255, 255, 255, 255,
+};
+
+uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
+  uint8_t* pCP;
+  int32_t i = 0, j = 0;
+  if (iLen == 0) {
+    iLen = strlen((char*)pStr);
+  }
+  pCP = FX_Alloc(uint8_t, iLen + 1);
+  for (; i < iLen; i++) {
+    if ((pStr[i] & 128) == 0) {
+      if (g_inv_base64[pStr[i]] != 0xFF || pStr[i] == '=') {
+        pCP[j++] = pStr[i];
+      }
+    }
+  }
+  pCP[j] = '\0';
+  return pCP;
+}
+
+int32_t XFA_Base64Decode(const char* pStr, uint8_t* pOutBuffer) {
+  if (!pStr) {
+    return 0;
+  }
+  uint8_t* pBuffer =
+      XFA_RemoveBase64Whitespace((uint8_t*)pStr, strlen((char*)pStr));
+  if (!pBuffer) {
+    return 0;
+  }
+  int32_t iLen = strlen((char*)pBuffer);
+  int32_t i = 0, j = 0;
+  uint32_t dwLimb = 0;
+  for (; i + 3 < iLen; i += 4) {
+    if (pBuffer[i] == '=' || pBuffer[i + 1] == '=' || pBuffer[i + 2] == '=' ||
+        pBuffer[i + 3] == '=') {
+      if (pBuffer[i] == '=' || pBuffer[i + 1] == '=') {
+        break;
+      }
+      if (pBuffer[i + 2] == '=') {
+        dwLimb = ((uint32_t)g_inv_base64[pBuffer[i]] << 6) |
+                 ((uint32_t)g_inv_base64[pBuffer[i + 1]]);
+        pOutBuffer[j] = (uint8_t)(dwLimb >> 4) & 0xFF;
+        j++;
+      } else {
+        dwLimb = ((uint32_t)g_inv_base64[pBuffer[i]] << 12) |
+                 ((uint32_t)g_inv_base64[pBuffer[i + 1]] << 6) |
+                 ((uint32_t)g_inv_base64[pBuffer[i + 2]]);
+        pOutBuffer[j] = (uint8_t)(dwLimb >> 10) & 0xFF;
+        pOutBuffer[j + 1] = (uint8_t)(dwLimb >> 2) & 0xFF;
+        j += 2;
+      }
+    } else {
+      dwLimb = ((uint32_t)g_inv_base64[pBuffer[i]] << 18) |
+               ((uint32_t)g_inv_base64[pBuffer[i + 1]] << 12) |
+               ((uint32_t)g_inv_base64[pBuffer[i + 2]] << 6) |
+               ((uint32_t)g_inv_base64[pBuffer[i + 3]]);
+      pOutBuffer[j] = (uint8_t)(dwLimb >> 16) & 0xff;
+      pOutBuffer[j + 1] = (uint8_t)(dwLimb >> 8) & 0xff;
+      pOutBuffer[j + 2] = (uint8_t)(dwLimb)&0xff;
+      j += 3;
+    }
+  }
+  FX_Free(pBuffer);
+  return j;
+}
+
+FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
+  WideString wsContentType(wsType);
+  wsContentType.MakeLower();
+  if (wsContentType == L"image/jpg")
+    return FXCODEC_IMAGE_JPG;
+  if (wsContentType == L"image/png")
+    return FXCODEC_IMAGE_PNG;
+  if (wsContentType == L"image/gif")
+    return FXCODEC_IMAGE_GIF;
+  if (wsContentType == L"image/bmp")
+    return FXCODEC_IMAGE_BMP;
+  if (wsContentType == L"image/tif")
+    return FXCODEC_IMAGE_TIF;
+  return FXCODEC_IMAGE_UNKNOWN;
+}
+
+RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
+                                          CXFA_Image* pImage,
+                                          bool& bNameImage,
+                                          int32_t& iImageXDpi,
+                                          int32_t& iImageYDpi) {
+  WideString wsHref = pImage->GetHref();
+  WideString wsImage = pImage->GetContent();
+  if (wsHref.IsEmpty() && wsImage.IsEmpty())
+    return nullptr;
+
+  FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImage->GetContentType());
+  ByteString bsContent;
+  uint8_t* pImageBuffer = nullptr;
+  RetainPtr<IFX_SeekableReadStream> pImageFileRead;
+  if (wsImage.GetLength() > 0) {
+    XFA_AttributeEnum iEncoding = pImage->GetTransferEncoding();
+    if (iEncoding == XFA_AttributeEnum::Base64) {
+      ByteString bsData = wsImage.UTF8Encode();
+      int32_t iLength = bsData.GetLength();
+      pImageBuffer = FX_Alloc(uint8_t, iLength);
+      int32_t iRead = XFA_Base64Decode(bsData.c_str(), pImageBuffer);
+      if (iRead > 0) {
+        pImageFileRead =
+            pdfium::MakeRetain<CFX_MemoryStream>(pImageBuffer, iRead, false);
+      }
+    } else {
+      bsContent = ByteString::FromUnicode(wsImage);
+      pImageFileRead = pdfium::MakeRetain<CFX_MemoryStream>(
+          const_cast<uint8_t*>(bsContent.raw_str()), bsContent.GetLength(),
+          false);
+    }
+  } else {
+    WideString wsURL = wsHref;
+    if (wsURL.Left(7) != L"http://" && wsURL.Left(6) != L"ftp://") {
+      RetainPtr<CFX_DIBitmap> pBitmap =
+          pDoc->GetPDFNamedImage(wsURL.AsStringView(), iImageXDpi, iImageYDpi);
+      if (pBitmap) {
+        bNameImage = true;
+        return pBitmap;
+      }
+    }
+    pImageFileRead = pDoc->GetDocEnvironment()->OpenLinkedFile(pDoc, wsURL);
+  }
+  if (!pImageFileRead) {
+    FX_Free(pImageBuffer);
+    return nullptr;
+  }
+  bNameImage = false;
+  RetainPtr<CFX_DIBitmap> pBitmap =
+      XFA_LoadImageFromBuffer(pImageFileRead, type, iImageXDpi, iImageYDpi);
+  FX_Free(pImageBuffer);
+  return pBitmap;
+}
 
 class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
  public:

@@ -31,13 +31,6 @@ inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
 
 #define XFA_FLOAT_PERCISION 0.001f
 
-enum XFA_WIDGETITEM {
-  XFA_WIDGETITEM_Parent,
-  XFA_WIDGETITEM_FirstChild,
-  XFA_WIDGETITEM_NextSibling,
-  XFA_WIDGETITEM_PrevSibling,
-};
-
 int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
                                   XFA_AttributeEnum iStrokeType,
                                   XFA_AttributeEnum iCapType);
@@ -51,20 +44,12 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left,
                    XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top);
 
-RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
-                                          CXFA_Image* pImage,
-                                          bool& bNameImage,
-                                          int32_t& iImageXDpi,
-                                          int32_t& iImageYDpi);
-
 RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     const RetainPtr<IFX_SeekableReadStream>& pImageFileRead,
     FXCODEC_IMAGE_TYPE type,
     int32_t& iImageXDpi,
     int32_t& iImageYDpi);
 
-FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType);
-char* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len);
 void XFA_RectWithoutMargin(CFX_RectF& rt,
                            const CXFA_Margin* margin,
                            bool bUI = false);

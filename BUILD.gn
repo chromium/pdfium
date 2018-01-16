@@ -2019,6 +2019,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_fwladapterwidgetmgr.h",
       "xfa/fxfa/cxfa_fwltheme.cpp",
       "xfa/fxfa/cxfa_fwltheme.h",
+      "xfa/fxfa/cxfa_imagerenderer.cpp",
+      "xfa/fxfa/cxfa_imagerenderer.h",
       "xfa/fxfa/cxfa_linkuserdata.cpp",
       "xfa/fxfa/cxfa_linkuserdata.h",
       "xfa/fxfa/cxfa_loadercontext.cpp",
