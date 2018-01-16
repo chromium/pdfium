@@ -266,6 +266,10 @@ void CXFA_FFComboBox::DeSelect() {
   ToComboBox(m_pNormalWidget.get())->EditDeSelect();
 }
 
+FormFieldType CXFA_FFComboBox::GetFormFieldType() {
+  return FormFieldType::kXFA_ComboBox;
+}
+
 void CXFA_FFComboBox::SetItemState(int32_t nIndex, bool bSelected) {
   ToComboBox(m_pNormalWidget.get())->SetCurSel(bSelected ? nIndex : -1);
   m_pNormalWidget->Update();

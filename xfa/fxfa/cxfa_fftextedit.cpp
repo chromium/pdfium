@@ -423,3 +423,7 @@ void CXFA_FFTextEdit::Delete() {
 void CXFA_FFTextEdit::DeSelect() {
   ToEdit(m_pNormalWidget.get())->ClearSelection();
 }
+
+FormFieldType CXFA_FFTextEdit::GetFormFieldType() {
+  return FormFieldType::kXFA_TextField;
+}

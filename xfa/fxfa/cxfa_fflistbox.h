@@ -21,6 +21,7 @@ class CXFA_FFListBox : public CXFA_FFField {
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
+  FormFieldType GetFormFieldType() override;
 
   void OnSelectChanged(CFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, bool bSelected);

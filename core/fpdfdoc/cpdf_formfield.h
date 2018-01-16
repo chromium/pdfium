@@ -28,26 +28,44 @@ enum class FormFieldType : uint8_t {
   kTextField = 6,
   kSignature = 7,
 #ifdef PDF_ENABLE_XFA
-  kXFA = 8,  // Generic XFA field.
-#endif       // PDF_ENABLE_XFA
+  kXFA = 8,  // Generic XFA field, should use value below if possible.
+  kXFA_CheckBox = 9,
+  kXFA_ComboBox = 10,
+  kXFA_ImageField = 11,
+  kXFA_ListBox = 12,
+  kXFA_PushButton = 13,
+  kXFA_Signature = 14,
+  kXFA_TextField = 15
+#endif  // PDF_ENABLE_XFA
 };
 
 Optional<FormFieldType> IntToFormFieldType(int value);
 
 // If values are added to FormFieldType, these will need to be updated.
 #ifdef PDF_ENABLE_XFA
-constexpr size_t kFormFieldTypeCount = 9;
+constexpr size_t kFormFieldTypeCount = 16;
 #else
 constexpr size_t kFormFieldTypeCount = 8;
 #endif  // PDF_ENABLE_XFA
 
 constexpr FormFieldType kFormFieldTypes[kFormFieldTypeCount] = {
-    FormFieldType::kUnknown,   FormFieldType::kPushButton,
-    FormFieldType::kCheckBox,  FormFieldType::kRadioButton,
-    FormFieldType::kComboBox,  FormFieldType::kListBox,
-    FormFieldType::kTextField, FormFieldType::kSignature,
+    FormFieldType::kUnknown,
+    FormFieldType::kPushButton,
+    FormFieldType::kCheckBox,
+    FormFieldType::kRadioButton,
+    FormFieldType::kComboBox,
+    FormFieldType::kListBox,
+    FormFieldType::kTextField,
+    FormFieldType::kSignature,
 #ifdef PDF_ENABLE_XFA
     FormFieldType::kXFA,
+    FormFieldType::kXFA_CheckBox,
+    FormFieldType::kXFA_ComboBox,
+    FormFieldType::kXFA_ImageField,
+    FormFieldType::kXFA_ListBox,
+    FormFieldType::kXFA_PushButton,
+    FormFieldType::kXFA_Signature,
+    FormFieldType::kXFA_TextField
 #endif  // PDF_ENABLE_XFA
 };
 

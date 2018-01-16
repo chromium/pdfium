@@ -1453,13 +1453,31 @@ FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 #define FPDF_FORMFIELD_TEXTFIELD 6    // text field type.
 #define FPDF_FORMFIELD_SIGNATURE 7    // text field type.
 #ifdef PDF_ENABLE_XFA
-#define FPDF_FORMFIELD_XFA 8  // Generic XFA type.
-#endif                        // PDF_ENABLE_XFA
+#define FPDF_FORMFIELD_XFA 8              // Generic XFA type.
+#define FPDF_FORMFIELD_XFA_CHECKBOX 9     // XFA check box type.
+#define FPDF_FORMFIELD_XFA_COMBOBOX 10    // XFA combo box type.
+#define FPDF_FORMFIELD_XFA_IMAGEFIELD 11  // XFA image field type.
+#define FPDF_FORMFIELD_XFA_LISTBOX 12     // XFA list box type.
+#define FPDF_FORMFIELD_XFA_PUSHBUTTON 13  // XFA push button type.
+#define FPDF_FORMFIELD_XFA_SIGNATURE 14   // XFA signture field type.
+#define FPDF_FORMFIELD_XFA_TEXTFIELD 15   // XFA text field type.
+#endif                                    // PDF_ENABLE_XFA
 
 #ifndef PDF_ENABLE_XFA
 #define FPDF_FORMFIELD_COUNT 8
 #else
-#define FPDF_FORMFIELD_COUNT 9
+#define FPDF_FORMFIELD_COUNT 16
+#endif  // PDF_ENABLE_XFA
+
+#ifdef PDF_ENABLE_XFA
+#define IS_XFA_FORMFIELD(type)                                              \
+  ((type == FPDF_FORMFIELD_XFA) || (type == FPDF_FORMFIELD_XFA_CHECKBOX) || \
+   (type == FPDF_FORMFIELD_XFA_COMBOBOX) ||                                 \
+   (type == FPDF_FORMFIELD_XFA_IMAGEFIELD) ||                               \
+   (type == FPDF_FORMFIELD_XFA_LISTBOX) ||                                  \
+   (type == FPDF_FORMFIELD_XFA_PUSHBUTTON) ||                               \
+   (type == FPDF_FORMFIELD_XFA_SIGNATURE) ||                                \
+   (type == FPDF_FORMFIELD_XFA_TEXTFIELD))
 #endif  // PDF_ENABLE_XFA
 
 /**

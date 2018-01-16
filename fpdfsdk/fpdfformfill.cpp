@@ -71,6 +71,27 @@ static_assert(static_cast<int>(FormFieldType::kSignature) ==
 #ifdef PDF_ENABLE_XFA
 static_assert(static_cast<int>(FormFieldType::kXFA) == FPDF_FORMFIELD_XFA,
               "XFA form field types must match");
+static_assert(static_cast<int>(FormFieldType::kXFA_CheckBox) ==
+                  FPDF_FORMFIELD_XFA_CHECKBOX,
+              "XFA CheckBox form field types must match");
+static_assert(static_cast<int>(FormFieldType::kXFA_ComboBox) ==
+                  FPDF_FORMFIELD_XFA_COMBOBOX,
+              "XFA ComboBox form field types must match");
+static_assert(static_cast<int>(FormFieldType::kXFA_ImageField) ==
+                  FPDF_FORMFIELD_XFA_IMAGEFIELD,
+              "XFA ImageField form field types must match");
+static_assert(static_cast<int>(FormFieldType::kXFA_ListBox) ==
+                  FPDF_FORMFIELD_XFA_LISTBOX,
+              "XFA ListBox form field types must match");
+static_assert(static_cast<int>(FormFieldType::kXFA_PushButton) ==
+                  FPDF_FORMFIELD_XFA_PUSHBUTTON,
+              "XFA PushButton form field types must match");
+static_assert(static_cast<int>(FormFieldType::kXFA_Signature) ==
+                  FPDF_FORMFIELD_XFA_SIGNATURE,
+              "XFA Signature form field types must match");
+static_assert(static_cast<int>(FormFieldType::kXFA_TextField) ==
+                  FPDF_FORMFIELD_XFA_TEXTFIELD,
+              "XFA TextField form field types must match");
 #endif  // PDF_ENABLE_XFA
 static_assert(kFormFieldTypeCount == FPDF_FORMFIELD_COUNT,
               "Number of form field types must match");
@@ -238,7 +259,7 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     rcWidget.Inflate(1.0f, 1.0f);
     if (rcWidget.Contains(CFX_PointF(static_cast<float>(page_x),
                                      static_cast<float>(page_y)))) {
-      return static_cast<int>(FormFieldType::kXFA);
+      return static_cast<int>(pXFAAnnot->GetFormFieldType());
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -698,7 +719,7 @@ FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
     return;
 
   Optional<FormFieldType> cast_input = IntToFormFieldType(fieldType);
-  if (!cast_input.has_value())
+  if (!cast_input)
     return;
 
   if (cast_input.value() == FormFieldType::kUnknown) {

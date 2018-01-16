@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "xfa/fwl/cfwl_app.h"
@@ -133,6 +134,8 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual void SelectAll();
   virtual void Delete();
   virtual void DeSelect();
+
+  virtual FormFieldType GetFormFieldType();
 
   // TODO(tsepez): Implement or remove.
   void GetSuggestWords(CFX_PointF pointf, std::vector<ByteString>* pWords);

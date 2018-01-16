@@ -57,6 +57,24 @@ bool IsFormFieldTypeComboOrText(FormFieldType fieldType) {
   }
 }
 
+#ifdef PDF_ENABLE_XFA
+bool IsFormFieldTypeXFA(FormFieldType fieldType) {
+  switch (fieldType) {
+    case FormFieldType::kXFA:
+    case FormFieldType::kXFA_CheckBox:
+    case FormFieldType::kXFA_ComboBox:
+    case FormFieldType::kXFA_ImageField:
+    case FormFieldType::kXFA_ListBox:
+    case FormFieldType::kXFA_PushButton:
+    case FormFieldType::kXFA_Signature:
+    case FormFieldType::kXFA_TextField:
+      return true;
+    default:
+      return false;
+  }
+}
+#endif  // PDF_ENABLE_XFA
+
 }  // namespace
 
 CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv)
@@ -691,6 +709,14 @@ bool CPDFSDK_InterForm::IsNeedHighLight(FormFieldType fieldType) {
   if (fieldType == FormFieldType::kUnknown)
     return false;
 
+#ifdef PDF_ENABLE_XFA
+  // For the XFA fields, we need to return if the specific field type has
+  // highlight enabled or if the general XFA field type has it enabled.
+  if (IsFormFieldTypeXFA(fieldType)) {
+    if (!m_NeedsHighlight[static_cast<size_t>(fieldType)])
+      return m_NeedsHighlight[static_cast<size_t>(FormFieldType::kXFA)];
+  }
+#endif  // PDF_ENABLE_XFA
   return m_NeedsHighlight[static_cast<size_t>(fieldType)];
 }
 
@@ -720,5 +746,15 @@ FX_COLORREF CPDFSDK_InterForm::GetHighlightColor(FormFieldType fieldType) {
   if (fieldType == FormFieldType::kUnknown)
     return FXSYS_RGB(255, 255, 255);
 
+#ifdef PDF_ENABLE_XFA
+  // For the XFA fields, we need to return the specific field type highlight
+  // colour or the general XFA field type colour if present.
+  if (IsFormFieldTypeXFA(fieldType)) {
+    if (!m_NeedsHighlight[static_cast<size_t>(fieldType)] &&
+        m_NeedsHighlight[static_cast<size_t>(FormFieldType::kXFA)]) {
+      return m_HighlightColor[static_cast<size_t>(FormFieldType::kXFA)];
+    }
+  }
+#endif  // PDF_ENABLE_XFA
   return m_HighlightColor[static_cast<size_t>(fieldType)];
 }

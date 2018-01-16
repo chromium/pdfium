@@ -25,6 +25,7 @@ class CXFA_FFImageEdit : public CXFA_FFField {
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
+  FormFieldType GetFormFieldType() override;
 
  private:
   void SetFWLRect() override;

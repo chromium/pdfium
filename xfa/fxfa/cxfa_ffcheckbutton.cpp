@@ -344,3 +344,7 @@ void CXFA_FFCheckButton::OnDrawWidget(CXFA_Graphics* pGraphics,
                                       const CFX_Matrix& matrix) {
   m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }
+
+FormFieldType CXFA_FFCheckButton::GetFormFieldType() {
+  return FormFieldType::kXFA_CheckBox;
+}

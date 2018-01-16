@@ -208,3 +208,7 @@ void CXFA_FFListBox::OnDrawWidget(CXFA_Graphics* pGraphics,
                                   const CFX_Matrix& matrix) {
   m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
 }
+
+FormFieldType CXFA_FFListBox::GetFormFieldType() {
+  return FormFieldType::kXFA_ListBox;
+}
