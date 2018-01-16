@@ -24,12 +24,12 @@ class CXFA_Value : public CXFA_Node {
 
   XFA_Element GetChildValueClassID() const;
   WideString GetChildValueContent() const;
-  CXFA_Arc* GetArc() const;
-  CXFA_Line* GetLine() const;
-  CXFA_Rectangle* GetRectangle() const;
-  CXFA_Text* GetText() const;
-  CXFA_ExData* GetExData() const;
-  CXFA_Image* GetImage() const;
+  CXFA_Arc* GetArcIfExists() const;
+  CXFA_Line* GetLineIfExists() const;
+  CXFA_Rectangle* GetRectangleIfExists() const;
+  CXFA_Text* GetTextIfExists() const;
+  CXFA_ExData* GetExDataIfExists() const;
+  CXFA_Image* GetImageIfExists() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALUE_H_

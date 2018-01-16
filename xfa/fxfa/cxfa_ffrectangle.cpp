@@ -31,5 +31,5 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, value->GetRectangle(), rect, mtRotate);
+  DrawBorder(pGS, value->GetRectangleIfExists(), rect, mtRotate);
 }

@@ -1940,7 +1940,7 @@ WideString CXFA_Node::GetValidateCaptionName(bool bVersionFlag) {
     if (caption) {
       CXFA_Value* capValue = caption->GetValueIfExists();
       if (capValue) {
-        CXFA_Text* captionText = capValue->GetText();
+        CXFA_Text* captionText = capValue->GetTextIfExists();
         if (captionText)
           wsCaptionName = captionText->GetContent();
       }

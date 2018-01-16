@@ -70,8 +70,11 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
   m_pNode->GetWidgetAcc()->GetImageDpi(iImageXDpi, iImageYDpi);
+
   auto* value = m_pNode->GetFormValueIfExists();
-  CXFA_Image* image = value ? value->GetImage() : nullptr;
-  XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, image->GetAspect(),
-                iImageXDpi, iImageYDpi, iHorzAlign, iVertAlign);
+  CXFA_Image* image = value ? value->GetImageIfExists() : nullptr;
+  if (image) {
+    XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, image->GetAspect(),
+                  iImageXDpi, iImageYDpi, iHorzAlign, iVertAlign);
+  }
 }

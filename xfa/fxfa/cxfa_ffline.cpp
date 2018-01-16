@@ -91,20 +91,23 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (!value)
     return;
 
-  CXFA_Line* line = value->GetLine();
   FX_ARGB lineColor = 0xFF000000;
   float fLineWidth = 1.0f;
   XFA_AttributeEnum iStrokeType = XFA_AttributeEnum::Unknown;
   XFA_AttributeEnum iCap = XFA_AttributeEnum::Unknown;
-  CXFA_Edge* edge = line->GetEdgeIfExists();
-  if (edge && !edge->IsVisible())
-    return;
 
-  if (edge) {
-    lineColor = edge->GetColor();
-    iStrokeType = edge->GetStrokeType();
-    fLineWidth = edge->GetThickness();
-    iCap = edge->GetCapType();
+  CXFA_Line* line = value->GetLineIfExists();
+  if (line) {
+    CXFA_Edge* edge = line->GetEdgeIfExists();
+    if (edge && !edge->IsVisible())
+      return;
+
+    if (edge) {
+      lineColor = edge->GetColor();
+      iStrokeType = edge->GetStrokeType();
+      fLineWidth = edge->GetThickness();
+      iCap = edge->GetCapType();
+    }
   }
 
   CFX_Matrix mtRotate = GetRotateMatrix();
@@ -115,12 +118,15 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   if (margin)
     XFA_RectWithoutMargin(rtLine, margin);
 
-  GetRectFromHand(rtLine, line->GetHand(), fLineWidth);
+  GetRectFromHand(rtLine, line ? line->GetHand() : XFA_AttributeEnum::Left,
+                  fLineWidth);
   CXFA_GEPath linePath;
-  if (line->GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
+  if (line && line->GetSlope() && rtLine.right() > 0.0f &&
+      rtLine.bottom() > 0.0f) {
     linePath.AddLine(rtLine.TopRight(), rtLine.BottomLeft());
-  else
+  } else {
     linePath.AddLine(rtLine.TopLeft(), rtLine.BottomRight());
+  }
 
   pGS->SaveGraphState();
   pGS->SetLineWidth(fLineWidth);

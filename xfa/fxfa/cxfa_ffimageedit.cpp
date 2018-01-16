@@ -84,7 +84,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   XFA_AttributeEnum iAspect = XFA_AttributeEnum::Fit;
   CXFA_Value* value = m_pNode->GetFormValueIfExists();
   if (value) {
-    CXFA_Image* image = value->GetImage();
+    CXFA_Image* image = value->GetImageIfExists();
     if (image)
       iAspect = image->GetAspect();
   }

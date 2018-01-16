@@ -99,7 +99,7 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
     if (!value)
       return false;
 
-    CXFA_Image* image = value->GetImage();
+    CXFA_Image* image = value->GetImageIfExists();
     if (!image)
       return false;
 
@@ -156,7 +156,10 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
     if (!value)
       return false;
 
-    CXFA_Image* image = value->GetImage();
+    CXFA_Image* image = value->GetImageIfExists();
+    if (!image)
+      return false;
+
     pAcc->SetImageEditImage(XFA_LoadImageData(doc, image, m_bNamedImage,
                                               m_iImageXDpi, m_iImageYDpi));
     return !!m_pDIBitmap;
@@ -376,7 +379,7 @@ void CXFA_WidgetAcc::ResetData() {
   switch (eUIType) {
     case XFA_Element::ImageEdit: {
       CXFA_Value* imageValue = m_pNode->GetDefaultValueIfExists();
-      CXFA_Image* image = imageValue ? imageValue->GetImage() : nullptr;
+      CXFA_Image* image = imageValue ? imageValue->GetImageIfExists() : nullptr;
       WideString wsContentType, wsHref;
       if (image) {
         wsValue = image->GetContent();
@@ -440,7 +443,7 @@ void CXFA_WidgetAcc::SetImageEdit(const WideString& wsContentType,
                                   const WideString& wsHref,
                                   const WideString& wsData) {
   CXFA_Value* formValue = m_pNode->GetFormValueIfExists();
-  CXFA_Image* image = formValue ? formValue->GetImage() : nullptr;
+  CXFA_Image* image = formValue ? formValue->GetImageIfExists() : nullptr;
   if (image) {
     image->SetContentType(WideString(wsContentType));
     image->SetHref(wsHref);

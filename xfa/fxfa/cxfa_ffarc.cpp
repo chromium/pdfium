@@ -31,5 +31,5 @@ void CXFA_FFArc::RenderWidget(CXFA_Graphics* pGS,
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
 
-  DrawBorder(pGS, value->GetArc(), rtArc, mtRotate);
+  DrawBorder(pGS, value->GetArcIfExists(), rtArc, mtRotate);
 }

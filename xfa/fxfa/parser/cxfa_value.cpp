@@ -63,31 +63,41 @@ XFA_Element CXFA_Value::GetChildValueClassID() const {
 
 WideString CXFA_Value::GetChildValueContent() const {
   CXFA_Node* pNode = GetFirstChild();
-  if (!pNode)
-    return L"";
-  return pNode->JSObject()->TryContent(false, true).value_or(L"");
+  return pNode ? pNode->JSObject()->TryContent(false, true).value_or(L"") : L"";
 }
 
-CXFA_Arc* CXFA_Value::GetArc() const {
-  return static_cast<CXFA_Arc*>(GetFirstChild());
+CXFA_Arc* CXFA_Value::GetArcIfExists() const {
+  CXFA_Node* node = GetFirstChild();
+  ASSERT(!node || node->GetElementType() == XFA_Element::Arc);
+  return static_cast<CXFA_Arc*>(node);
 }
 
-CXFA_Line* CXFA_Value::GetLine() const {
-  return static_cast<CXFA_Line*>(GetFirstChild());
+CXFA_Line* CXFA_Value::GetLineIfExists() const {
+  CXFA_Node* node = GetFirstChild();
+  ASSERT(!node || node->GetElementType() == XFA_Element::Line);
+  return static_cast<CXFA_Line*>(node);
 }
 
-CXFA_Rectangle* CXFA_Value::GetRectangle() const {
-  return static_cast<CXFA_Rectangle*>(GetFirstChild());
+CXFA_Rectangle* CXFA_Value::GetRectangleIfExists() const {
+  CXFA_Node* node = GetFirstChild();
+  ASSERT(!node || node->GetElementType() == XFA_Element::Rectangle);
+  return static_cast<CXFA_Rectangle*>(node);
 }
 
-CXFA_Text* CXFA_Value::GetText() const {
-  return static_cast<CXFA_Text*>(GetFirstChild());
+CXFA_Text* CXFA_Value::GetTextIfExists() const {
+  CXFA_Node* node = GetFirstChild();
+  ASSERT(!node || node->GetElementType() == XFA_Element::Text);
+  return static_cast<CXFA_Text*>(node);
 }
 
-CXFA_ExData* CXFA_Value::GetExData() const {
-  return static_cast<CXFA_ExData*>(GetFirstChild());
+CXFA_ExData* CXFA_Value::GetExDataIfExists() const {
+  CXFA_Node* node = GetFirstChild();
+  ASSERT(!node || node->GetElementType() == XFA_Element::ExData);
+  return static_cast<CXFA_ExData*>(node);
 }
 
-CXFA_Image* CXFA_Value::GetImage() const {
-  return static_cast<CXFA_Image*>(GetFirstChild());
+CXFA_Image* CXFA_Value::GetImageIfExists() const {
+  CXFA_Node* node = GetFirstChild();
+  ASSERT(!node || node->GetElementType() == XFA_Element::Image);
+  return static_cast<CXFA_Image*>(node);
 }

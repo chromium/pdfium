@@ -140,7 +140,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     WideString wsValue;
     switch (eUIType) {
       case XFA_Element::ImageEdit: {
-        CXFA_Image* image = defValue ? defValue->GetImage() : nullptr;
+        CXFA_Image* image = defValue ? defValue->GetImageIfExists() : nullptr;
         WideString wsContentType;
         WideString wsHref;
         if (image) {
@@ -293,7 +293,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     case XFA_Element::ImageEdit: {
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                     XFA_Element::Image);
-      CXFA_Image* image = defValue ? defValue->GetImage() : nullptr;
+      CXFA_Image* image = defValue ? defValue->GetImageIfExists() : nullptr;
       if (image) {
         CFX_XMLElement* pXMLDataElement =
             static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
@@ -329,7 +329,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
             wsNormalizeValue += wsItem;
           }
-          CXFA_ExData* exData = defValue ? defValue->GetExData() : nullptr;
+          CXFA_ExData* exData =
+              defValue ? defValue->GetExDataIfExists() : nullptr;
           ASSERT(exData);
 
           exData->SetContentType(single ? L"text/plain" : L"text/xml");
