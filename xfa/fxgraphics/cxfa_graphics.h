@@ -15,7 +15,6 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
-#include "core/fxge/fx_font.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 
 class CXFA_GEPath;
@@ -65,9 +64,6 @@ class CXFA_Graphics {
   void FillPath(CXFA_GEPath* path,
                 FX_FillMode fillMode,
                 const CFX_Matrix* matrix);
-  void StretchImage(const RetainPtr<CFX_DIBSource>& source,
-                    const CFX_RectF& rect,
-                    const CFX_Matrix& matrix);
   void ConcatMatrix(const CFX_Matrix* matrix);
 
  protected:
@@ -92,9 +88,6 @@ class CXFA_Graphics {
   void RenderDeviceFillPath(const CXFA_GEPath* path,
                             FX_FillMode fillMode,
                             const CFX_Matrix* matrix);
-  void RenderDeviceStretchImage(const RetainPtr<CFX_DIBSource>& source,
-                                const CFX_RectF& rect,
-                                const CFX_Matrix& matrix);
 
   void FillPathWithPattern(const CXFA_GEPath* path,
                            FX_FillMode fillMode,

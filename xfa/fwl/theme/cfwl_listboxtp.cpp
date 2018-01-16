@@ -39,11 +39,6 @@ void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                       &pParams->m_rtPart, pParams->m_pData, &pParams->m_matrix);
       break;
     }
-    case CFWL_Part::Icon: {
-      pParams->m_pGraphics->StretchImage(pParams->m_pImage, pParams->m_rtPart,
-                                         pParams->m_matrix);
-      break;
-    }
     case CFWL_Part::Check: {
       uint32_t color = 0xFF000000;
       if (pParams->m_dwStates == CFWL_PartState_Checked) {
