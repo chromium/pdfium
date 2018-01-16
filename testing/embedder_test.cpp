@@ -6,6 +6,7 @@
 
 #include <limits.h>
 
+#include <fstream>
 #include <list>
 #include <string>
 #include <utility>
@@ -17,6 +18,7 @@
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "testing/gmock/include/gmock/gmock.h"
+#include "testing/image_diff/image_diff_png.h"
 #include "testing/test_support.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/ptr_util.h"
@@ -425,6 +427,32 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
                     digest);
   return CryptToBase16(digest);
 }
+
+#ifndef NDEBUG
+// static
+void EmbedderTest::WriteBitmapToPng(FPDF_BITMAP bitmap,
+                                    const std::string& filename) {
+  const int stride = FPDFBitmap_GetStride(bitmap);
+  const int width = FPDFBitmap_GetWidth(bitmap);
+  const int height = FPDFBitmap_GetHeight(bitmap);
+  const auto* buffer =
+      static_cast<const unsigned char*>(FPDFBitmap_GetBuffer(bitmap));
+
+  std::vector<unsigned char> png_encoding;
+  bool encoded = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
+                                               false, &png_encoding);
+
+  ASSERT_TRUE(encoded);
+  ASSERT_LT(filename.size(), 256u);
+
+  std::ofstream png_file;
+  png_file.open(filename);
+  png_file.write(reinterpret_cast<char*>(&png_encoding.front()),
+                 png_encoding.size());
+  ASSERT_TRUE(png_file.good());
+  png_file.close();
+}
+#endif
 
 // static
 void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,

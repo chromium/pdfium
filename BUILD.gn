@@ -2926,6 +2926,7 @@ test("pdfium_embeddertests") {
     "testing/range_set.h",
   ]
   deps = [
+    ":image_diff",
     ":pdfium",
     ":test_support",
     "//testing/gmock",
