@@ -15,63 +15,12 @@
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fgas/font/cfgas_fontmgr.h"
+#include "xfa/fde/cfde_data.h"
 
 class CFDE_RenderDevice;
+class CFGAS_GEFont;
 class CFX_RenderDevice;
 class CFX_TxtBreak;
-
-enum class FDE_TextAlignment : uint8_t {
-  kTopLeft = 0,
-  kCenterLeft,
-  kCenter,
-  kCenterRight
-};
-
-struct FDE_TextStyle {
-  FDE_TextStyle()
-      : single_line_(false), line_wrap_(false), last_line_height_(false) {}
-  ~FDE_TextStyle() {}
-
-  void Reset() {
-    single_line_ = false;
-    line_wrap_ = false;
-    last_line_height_ = false;
-  }
-
-  bool single_line_;
-  bool line_wrap_;
-  bool last_line_height_;
-};
-
-struct FDE_TTOPIECE {
-  FDE_TTOPIECE();
-  FDE_TTOPIECE(const FDE_TTOPIECE& that);
-  ~FDE_TTOPIECE();
-
-  int32_t iStartChar;
-  int32_t iChars;
-  uint32_t dwCharStyles;
-  CFX_RectF rtPiece;
-};
-
-class CFDE_TTOLine {
- public:
-  CFDE_TTOLine();
-  CFDE_TTOLine(const CFDE_TTOLine& ttoLine);
-  ~CFDE_TTOLine();
-
-  bool GetNewReload() const { return m_bNewReload; }
-  void SetNewReload(bool reload) { m_bNewReload = reload; }
-  int32_t AddPiece(int32_t index, const FDE_TTOPIECE& ttoPiece);
-  int32_t GetSize() const;
-  FDE_TTOPIECE* GetPtrAt(int32_t index);
-  void RemoveLast(int32_t iCount);
-
- private:
-  bool m_bNewReload;
-  std::deque<FDE_TTOPIECE> m_pieces;
-};
 
 class CFDE_TextOut {
  public:
@@ -103,6 +52,24 @@ class CFDE_TextOut {
   int32_t GetTotalLines() const { return m_iTotalLines; }
 
  private:
+  class CFDE_TTOLine {
+   public:
+    CFDE_TTOLine();
+    CFDE_TTOLine(const CFDE_TTOLine& ttoLine);
+    ~CFDE_TTOLine();
+
+    bool GetNewReload() const { return m_bNewReload; }
+    void SetNewReload(bool reload) { m_bNewReload = reload; }
+    int32_t AddPiece(int32_t index, const FDE_TTOPIECE& ttoPiece);
+    int32_t GetSize() const;
+    FDE_TTOPIECE* GetPtrAt(int32_t index);
+    void RemoveLast(int32_t iCount);
+
+   private:
+    bool m_bNewReload;
+    std::deque<FDE_TTOPIECE> m_pieces;
+  };
+
   bool RetrieveLineWidth(CFX_BreakType dwBreakStatus,
                          float& fStartPos,
                          float& fWidth,

@@ -15,8 +15,9 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
+
+class CFGAS_GEFont;
 
 struct FDE_TEXTEDITPIECE {
   FDE_TEXTEDITPIECE();
@@ -97,14 +98,12 @@ class CFDE_TextEditEngine {
   void SetAvailableWidth(size_t width);
 
   void SetFont(RetainPtr<CFGAS_GEFont> font);
-  RetainPtr<CFGAS_GEFont> GetFont() const { return font_; }
+  RetainPtr<CFGAS_GEFont> GetFont() const;
   void SetFontSize(float size);
   float GetFontSize() const { return font_size_; }
   void SetFontColor(FX_ARGB color) { font_color_ = color; }
   FX_ARGB GetFontColor() const { return font_color_; }
-  float GetFontAscent() const {
-    return (static_cast<float>(font_->GetAscent()) * font_size_) / 1000;
-  }
+  float GetFontAscent() const;
 
   void SetAlignment(uint32_t alignment);
   float GetLineSpace() const { return line_spacing_; }

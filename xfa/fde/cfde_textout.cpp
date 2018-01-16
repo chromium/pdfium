@@ -15,6 +15,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
 namespace {
@@ -530,16 +531,18 @@ int32_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
   return m_pTxtBreak->GetDisplayPos(&tr, m_CharPos.data());
 }
 
-CFDE_TTOLine::CFDE_TTOLine() : m_bNewReload(false) {}
+CFDE_TextOut::CFDE_TTOLine::CFDE_TTOLine() : m_bNewReload(false) {}
 
-CFDE_TTOLine::CFDE_TTOLine(const CFDE_TTOLine& ttoLine) : m_pieces(5) {
+CFDE_TextOut::CFDE_TTOLine::CFDE_TTOLine(const CFDE_TTOLine& ttoLine)
+    : m_pieces(5) {
   m_bNewReload = ttoLine.m_bNewReload;
   m_pieces = ttoLine.m_pieces;
 }
 
-CFDE_TTOLine::~CFDE_TTOLine() {}
+CFDE_TextOut::CFDE_TTOLine::~CFDE_TTOLine() {}
 
-int32_t CFDE_TTOLine::AddPiece(int32_t index, const FDE_TTOPIECE& ttoPiece) {
+int32_t CFDE_TextOut::CFDE_TTOLine::AddPiece(int32_t index,
+                                             const FDE_TTOPIECE& ttoPiece) {
   if (index >= pdfium::CollectionSize<int32_t>(m_pieces)) {
     m_pieces.push_back(ttoPiece);
     return pdfium::CollectionSize<int32_t>(m_pieces);
@@ -548,15 +551,15 @@ int32_t CFDE_TTOLine::AddPiece(int32_t index, const FDE_TTOPIECE& ttoPiece) {
   return index;
 }
 
-int32_t CFDE_TTOLine::GetSize() const {
+int32_t CFDE_TextOut::CFDE_TTOLine::GetSize() const {
   return pdfium::CollectionSize<int32_t>(m_pieces);
 }
 
-FDE_TTOPIECE* CFDE_TTOLine::GetPtrAt(int32_t index) {
+FDE_TTOPIECE* CFDE_TextOut::CFDE_TTOLine::GetPtrAt(int32_t index) {
   return pdfium::IndexInBounds(m_pieces, index) ? &m_pieces[index] : nullptr;
 }
 
-void CFDE_TTOLine::RemoveLast(int32_t icount) {
+void CFDE_TextOut::CFDE_TTOLine::RemoveLast(int32_t icount) {
   if (icount < 0)
     return;
   m_pieces.erase(

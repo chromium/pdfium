@@ -11,6 +11,7 @@
 
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_wordbreak_data.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
 namespace {
 
@@ -632,6 +633,10 @@ void CFDE_TextEditEngine::SetFont(RetainPtr<CFGAS_GEFont> font) {
   is_dirty_ = true;
 }
 
+RetainPtr<CFGAS_GEFont> CFDE_TextEditEngine::GetFont() const {
+  return font_;
+}
+
 void CFDE_TextEditEngine::SetFontSize(float size) {
   if (font_size_ == size)
     return;
@@ -648,6 +653,10 @@ void CFDE_TextEditEngine::SetTabWidth(float width) {
     return;
 
   is_dirty_ = true;
+}
+
+float CFDE_TextEditEngine::GetFontAscent() const {
+  return (static_cast<float>(font_->GetAscent()) * font_size_) / 1000;
 }
 
 void CFDE_TextEditEngine::SetAlignment(uint32_t alignment) {

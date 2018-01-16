@@ -7,6 +7,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
 class CFDE_TextEditEngineTest : public testing::Test {
  public:
