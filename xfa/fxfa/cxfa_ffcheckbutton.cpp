@@ -234,10 +234,8 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorderWithFlags(
-      pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI, mtRotate,
-      m_pNode->GetWidgetAcc()->IsCheckButtonRound() ? XFA_DRAWBOX_ForceRound
-                                                    : 0);
+  DrawBorderWithFlag(pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI,
+                     mtRotate, m_pNode->GetWidgetAcc()->IsCheckButtonRound());
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus,
                 m_pNode->GetWidgetAcc()->IsCheckButtonRound());

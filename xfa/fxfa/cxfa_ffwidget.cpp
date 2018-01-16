@@ -50,11 +50,11 @@ namespace {
 void XFA_BOX_GetPath_Arc(CXFA_Box* box,
                          CFX_RectF rtDraw,
                          CXFA_GEPath& fillPath,
-                         uint32_t dwFlags) {
+                         bool forceRound) {
   float a, b;
   a = rtDraw.width / 2.0f;
   b = rtDraw.height / 2.0f;
-  if (box->IsCircular() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0)
+  if (box->IsCircular() || forceRound)
     a = b = std::min(a, b);
 
   CFX_PointF center = rtDraw.Center();
@@ -248,8 +248,8 @@ void XFA_BOX_GetFillPath(CXFA_Box* box,
                          const std::vector<CXFA_Stroke*>& strokes,
                          CFX_RectF rtWidget,
                          CXFA_GEPath& fillPath,
-                         uint16_t dwFlags) {
-  if (box->IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
+                         bool forceRound) {
+  if (box->IsArc() || forceRound) {
     CXFA_Edge* edge = box->GetEdgeIfExists(0);
     float fThickness = std::fmax(0.0, edge ? edge->GetThickness() : 0);
     float fHalf = fThickness / 2;
@@ -259,7 +259,7 @@ void XFA_BOX_GetFillPath(CXFA_Box* box,
     else if (iHand == XFA_AttributeEnum::Right)
       rtWidget.Deflate(fHalf, fHalf);
 
-    XFA_BOX_GetPath_Arc(box, rtWidget, fillPath, dwFlags);
+    XFA_BOX_GetPath_Arc(box, rtWidget, fillPath, forceRound);
     return;
   }
 
@@ -491,15 +491,14 @@ void XFA_BOX_Fill(CXFA_Box* box,
                   CXFA_Graphics* pGS,
                   const CFX_RectF& rtWidget,
                   const CFX_Matrix& matrix,
-                  uint32_t dwFlags) {
+                  bool forceRound) {
   CXFA_Fill* fill = box->GetFillIfExists();
   if (!fill || !fill->IsVisible())
     return;
 
   pGS->SaveGraphState();
   CXFA_GEPath fillPath;
-  XFA_BOX_GetFillPath(box, strokes, rtWidget, fillPath,
-                      (dwFlags & XFA_DRAWBOX_ForceRound) != 0);
+  XFA_BOX_GetFillPath(box, strokes, rtWidget, fillPath, forceRound);
   fillPath.Close();
   XFA_Element eType = fill->GetFillType();
   switch (eType) {
@@ -562,7 +561,7 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
                        CXFA_Graphics* pGS,
                        CFX_RectF rtWidget,
                        const CFX_Matrix& matrix,
-                       uint32_t dwFlags) {
+                       bool forceRound) {
   CXFA_Edge* edge = box->GetEdgeIfExists(0);
   if (!edge || !edge->IsVisible())
     return;
@@ -571,11 +570,12 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
   float fThickness;
   XFA_AttributeEnum i3DType;
   std::tie(i3DType, bVisible, fThickness) = box->Get3DStyle();
+  bool lowered3d = false;
   if (i3DType != XFA_AttributeEnum::Unknown) {
-    if (bVisible && fThickness >= 0.001f) {
-      dwFlags |= XFA_DRAWBOX_Lowered3D;
-    }
+    if (bVisible && fThickness >= 0.001f)
+      lowered3d = true;
   }
+
   float fHalf = edge->GetThickness() / 2;
   if (fHalf < 0) {
     fHalf = 0;
@@ -587,13 +587,12 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
   } else if (iHand == XFA_AttributeEnum::Right) {
     rtWidget.Deflate(fHalf, fHalf);
   }
-  if ((dwFlags & XFA_DRAWBOX_ForceRound) == 0 ||
-      (dwFlags & XFA_DRAWBOX_Lowered3D) == 0) {
+  if (!forceRound || !lowered3d) {
     if (fHalf < 0.001f)
       return;
 
     CXFA_GEPath arcPath;
-    XFA_BOX_GetPath_Arc(box, rtWidget, arcPath, dwFlags);
+    XFA_BOX_GetPath_Arc(box, rtWidget, arcPath, forceRound);
     XFA_BOX_StrokePath(edge, &arcPath, pGS, matrix);
     return;
   }
@@ -603,7 +602,7 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
   float a, b;
   a = rtWidget.width / 2.0f;
   b = rtWidget.height / 2.0f;
-  if (dwFlags & XFA_DRAWBOX_ForceRound) {
+  if (forceRound) {
     a = std::min(a, b);
     b = a;
   }
@@ -829,9 +828,9 @@ void XFA_BOX_Stroke(CXFA_Box* box,
                     CXFA_Graphics* pGS,
                     CFX_RectF rtWidget,
                     const CFX_Matrix& matrix,
-                    uint32_t dwFlags) {
-  if (box->IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
-    XFA_BOX_StrokeArc(box, pGS, rtWidget, matrix, dwFlags);
+                    bool forceRound) {
+  if (box->IsArc() || forceRound) {
+    XFA_BOX_StrokeArc(box, pGS, rtWidget, matrix, forceRound);
     return;
   }
 
@@ -891,7 +890,7 @@ void XFA_DrawBox(CXFA_Box* box,
                  CXFA_Graphics* pGS,
                  const CFX_RectF& rtWidget,
                  const CFX_Matrix& matrix,
-                 uint32_t dwFlags) {
+                 bool forceRound) {
   if (!box || box->GetPresence() != XFA_AttributeEnum::Visible)
     return;
 
@@ -901,11 +900,11 @@ void XFA_DrawBox(CXFA_Box* box,
     return;
   }
   std::vector<CXFA_Stroke*> strokes;
-  if (!(dwFlags & XFA_DRAWBOX_ForceRound) && eType != XFA_Element::Arc)
+  if (!forceRound && eType != XFA_Element::Arc)
     strokes = box->GetStrokes();
 
-  XFA_BOX_Fill(box, strokes, pGS, rtWidget, matrix, dwFlags);
-  XFA_BOX_Stroke(box, strokes, pGS, rtWidget, matrix, dwFlags);
+  XFA_BOX_Fill(box, strokes, pGS, rtWidget, matrix, forceRound);
+  XFA_BOX_Stroke(box, strokes, pGS, rtWidget, matrix, forceRound);
 }
 
 bool IsFXCodecErrorStatus(FXCODEC_STATUS status) {
@@ -1025,15 +1024,15 @@ void CXFA_FFWidget::DrawBorder(CXFA_Graphics* pGS,
                                CXFA_Box* box,
                                const CFX_RectF& rtBorder,
                                const CFX_Matrix& matrix) {
-  XFA_DrawBox(box, pGS, rtBorder, matrix, 0);
+  XFA_DrawBox(box, pGS, rtBorder, matrix, false);
 }
 
-void CXFA_FFWidget::DrawBorderWithFlags(CXFA_Graphics* pGS,
-                                        CXFA_Box* box,
-                                        const CFX_RectF& rtBorder,
-                                        const CFX_Matrix& matrix,
-                                        uint32_t dwFlags) {
-  XFA_DrawBox(box, pGS, rtBorder, matrix, dwFlags);
+void CXFA_FFWidget::DrawBorderWithFlag(CXFA_Graphics* pGS,
+                                       CXFA_Box* box,
+                                       const CFX_RectF& rtBorder,
+                                       const CFX_Matrix& matrix,
+                                       bool forceRound) {
+  XFA_DrawBox(box, pGS, rtBorder, matrix, forceRound);
 }
 
 void CXFA_FFWidget::AddInvalidateRect() {
