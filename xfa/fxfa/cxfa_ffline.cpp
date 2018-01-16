@@ -96,11 +96,11 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
   float fLineWidth = 1.0f;
   XFA_AttributeEnum iStrokeType = XFA_AttributeEnum::Unknown;
   XFA_AttributeEnum iCap = XFA_AttributeEnum::Unknown;
-  CXFA_Edge* edge = line->GetEdge();
-  if (edge) {
-    if (!edge->IsVisible())
-      return;
+  CXFA_Edge* edge = line->GetEdgeIfExists();
+  if (edge && !edge->IsVisible())
+    return;
 
+  if (edge) {
     lineColor = edge->GetColor();
     iStrokeType = edge->GetStrokeType();
     fLineWidth = edge->GetThickness();

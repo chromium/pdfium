@@ -50,6 +50,6 @@ bool CXFA_Line::GetSlope() {
   return JSObject()->GetEnum(XFA_Attribute::Slope) == XFA_AttributeEnum::Slash;
 }
 
-CXFA_Edge* CXFA_Line::GetEdge() {
+CXFA_Edge* CXFA_Line::GetEdgeIfExists() {
   return GetChild<CXFA_Edge>(0, XFA_Element::Edge, false);
 }

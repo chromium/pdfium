@@ -18,7 +18,7 @@ class CXFA_Line : public CXFA_Node {
 
   XFA_AttributeEnum GetHand();
   bool GetSlope();
-  CXFA_Edge* GetEdge();
+  CXFA_Edge* GetEdgeIfExists();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LINE_H_
