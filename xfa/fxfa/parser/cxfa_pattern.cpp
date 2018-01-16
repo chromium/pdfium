@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_pattern.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_color.h"
 
 namespace {
 
@@ -38,3 +39,11 @@ CXFA_Pattern::CXFA_Pattern(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Pattern>(this)) {}
 
 CXFA_Pattern::~CXFA_Pattern() {}
+
+CXFA_Color* CXFA_Pattern::GetColorIfExists() {
+  return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+}
+
+XFA_AttributeEnum CXFA_Pattern::GetType() {
+  return JSObject()->GetEnum(XFA_Attribute::Type);
+}

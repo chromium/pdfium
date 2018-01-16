@@ -40,10 +40,10 @@ class CXFA_Fill : public CXFA_Node {
   FX_ARGB GetRadialColor();
 
  private:
-  CXFA_Stipple* GetStipple();
-  CXFA_Radial* GetRadial();
-  CXFA_Linear* GetLinear();
-  CXFA_Pattern* GetPattern();
+  CXFA_Stipple* GetStippleIfExists();
+  CXFA_Radial* GetRadialIfExists();
+  CXFA_Linear* GetLinearIfExists();
+  CXFA_Pattern* GetPatternIfExists();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FILL_H_

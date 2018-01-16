@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_stipple.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_color.h"
 
 namespace {
 
@@ -37,3 +38,13 @@ CXFA_Stipple::CXFA_Stipple(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Stipple>(this)) {}
 
 CXFA_Stipple::~CXFA_Stipple() {}
+
+CXFA_Color* CXFA_Stipple::GetColorIfExists() {
+  return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+}
+
+int32_t CXFA_Stipple::GetRate() {
+  return JSObject()
+      ->TryInteger(XFA_Attribute::Rate, true)
+      .value_or(GetDefaultRate());
+}

@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_radial.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_color.h"
 
 namespace {
 
@@ -38,3 +39,13 @@ CXFA_Radial::CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Radial>(this)) {}
 
 CXFA_Radial::~CXFA_Radial() {}
+
+bool CXFA_Radial::IsToEdge() {
+  return JSObject()
+             ->TryEnum(XFA_Attribute::Type, true)
+             .value_or(XFA_AttributeEnum::ToEdge) == XFA_AttributeEnum::ToEdge;
+}
+
+CXFA_Color* CXFA_Radial::GetColorIfExists() {
+  return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+}

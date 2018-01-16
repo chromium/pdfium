@@ -9,10 +9,15 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+class CXFA_Color;
+
 class CXFA_Radial : public CXFA_Node {
  public:
   CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Radial() override;
+
+  bool IsToEdge();
+  CXFA_Color* GetColorIfExists();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_RADIAL_H_

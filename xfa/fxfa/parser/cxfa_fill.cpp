@@ -60,31 +60,19 @@ bool CXFA_Fill::IsVisible() {
 }
 
 void CXFA_Fill::SetColor(FX_ARGB color) {
-  CXFA_Color* pNode =
+  CXFA_Color* pColor =
       JSObject()->GetOrCreateProperty<CXFA_Color>(0, XFA_Element::Color);
-  if (!pNode)
+  if (!pColor)
     return;
 
-  int a;
-  int r;
-  int g;
-  int b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
-  pNode->JSObject()->SetCData(XFA_Attribute::Value,
-                              WideString::Format(L"%d,%d,%d", r, g, b), false,
-                              false);
+  pColor->SetValue(color);
 }
 
 FX_ARGB CXFA_Fill::GetColor(bool bText) {
-  if (CXFA_Color* pNode = GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    Optional<WideString> wsColor =
-        pNode->JSObject()->TryCData(XFA_Attribute::Value, false);
-    if (wsColor)
-      return StringToFXARGB(wsColor->AsStringView());
-  }
-  if (bText)
-    return 0xFF000000;
-  return 0xFFFFFFFF;
+  CXFA_Color* pColor = GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+  if (!pColor)
+    return bText ? 0xFF000000 : 0xFFFFFFFF;
+  return pColor->GetValueOrDefault(bText ? 0xFF000000 : 0xFFFFFFFF);
 }
 
 XFA_Element CXFA_Fill::GetFillType() const {
@@ -100,86 +88,75 @@ XFA_Element CXFA_Fill::GetFillType() const {
 }
 
 XFA_AttributeEnum CXFA_Fill::GetPatternType() {
-  return GetPattern()->JSObject()->GetEnum(XFA_Attribute::Type);
+  CXFA_Pattern* pattern = GetPatternIfExists();
+  return pattern ? pattern->GetType() : CXFA_Pattern::kDefaultType;
 }
 
 FX_ARGB CXFA_Fill::GetPatternColor() {
-  if (CXFA_Color* pColor =
-          GetPattern()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    Optional<WideString> wsColor =
-        pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
-    if (wsColor)
-      return StringToFXARGB(wsColor->AsStringView());
-  }
-  return 0xFF000000;
+  CXFA_Pattern* pattern = GetPatternIfExists();
+  if (!pattern)
+    return CXFA_Color::kBlackColor;
+
+  CXFA_Color* pColor = pattern->GetColorIfExists();
+  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
 }
 
 int32_t CXFA_Fill::GetStippleRate() {
-  return GetStipple()
-      ->JSObject()
-      ->TryInteger(XFA_Attribute::Rate, true)
-      .value_or(50);
+  CXFA_Stipple* stipple = GetStippleIfExists();
+  if (!stipple)
+    return CXFA_Stipple::GetDefaultRate();
+  return stipple->GetRate();
 }
 
 FX_ARGB CXFA_Fill::GetStippleColor() {
-  if (CXFA_Color* pColor =
-          GetStipple()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    Optional<WideString> wsColor =
-        pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
-    if (wsColor)
-      return StringToFXARGB(wsColor->AsStringView());
-  }
-  return 0xFF000000;
+  CXFA_Stipple* stipple = GetStippleIfExists();
+  if (!stipple)
+    return CXFA_Color::kBlackColor;
+
+  CXFA_Color* pColor = stipple->GetColorIfExists();
+  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
 }
 
 XFA_AttributeEnum CXFA_Fill::GetLinearType() {
-  return GetLinear()
-      ->JSObject()
-      ->TryEnum(XFA_Attribute::Type, true)
-      .value_or(XFA_AttributeEnum::ToRight);
+  CXFA_Linear* linear = GetLinearIfExists();
+  return linear ? linear->GetType() : CXFA_Linear::kDefaultType;
 }
 
 FX_ARGB CXFA_Fill::GetLinearColor() {
-  if (CXFA_Color* pColor =
-          GetLinear()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    Optional<WideString> wsColor =
-        pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
-    if (wsColor)
-      return StringToFXARGB(wsColor->AsStringView());
-  }
-  return 0xFF000000;
+  CXFA_Linear* linear = GetLinearIfExists();
+  if (!linear)
+    return CXFA_Color::kBlackColor;
+
+  CXFA_Color* pColor = linear->GetColorIfExists();
+  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
 }
 
 bool CXFA_Fill::IsRadialToEdge() {
-  return GetRadial()
-             ->JSObject()
-             ->TryEnum(XFA_Attribute::Type, true)
-             .value_or(XFA_AttributeEnum::ToEdge) == XFA_AttributeEnum::ToEdge;
+  CXFA_Radial* radial = GetRadialIfExists();
+  return radial ? radial->IsToEdge() : false;
 }
 
 FX_ARGB CXFA_Fill::GetRadialColor() {
-  if (CXFA_Color* pColor =
-          GetRadial()->GetChild<CXFA_Color>(0, XFA_Element::Color, false)) {
-    Optional<WideString> wsColor =
-        pColor->JSObject()->TryCData(XFA_Attribute::Value, false);
-    if (wsColor)
-      return StringToFXARGB(wsColor->AsStringView());
-  }
-  return 0xFF000000;
+  CXFA_Radial* radial = GetRadialIfExists();
+  if (!radial)
+    return CXFA_Color::kBlackColor;
+
+  CXFA_Color* pColor = radial->GetColorIfExists();
+  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
 }
 
-CXFA_Stipple* CXFA_Fill::GetStipple() {
+CXFA_Stipple* CXFA_Fill::GetStippleIfExists() {
   return JSObject()->GetOrCreateProperty<CXFA_Stipple>(0, XFA_Element::Stipple);
 }
 
-CXFA_Radial* CXFA_Fill::GetRadial() {
+CXFA_Radial* CXFA_Fill::GetRadialIfExists() {
   return JSObject()->GetOrCreateProperty<CXFA_Radial>(0, XFA_Element::Radial);
 }
 
-CXFA_Linear* CXFA_Fill::GetLinear() {
+CXFA_Linear* CXFA_Fill::GetLinearIfExists() {
   return JSObject()->GetOrCreateProperty<CXFA_Linear>(0, XFA_Element::Linear);
 }
 
-CXFA_Pattern* CXFA_Fill::GetPattern() {
+CXFA_Pattern* CXFA_Fill::GetPatternIfExists() {
   return JSObject()->GetOrCreateProperty<CXFA_Pattern>(0, XFA_Element::Pattern);
 }

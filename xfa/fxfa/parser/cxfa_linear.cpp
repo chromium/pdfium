@@ -8,6 +8,7 @@
 
 #include "fxjs/xfa/cjx_linear.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/parser/cxfa_color.h"
 
 namespace {
 
@@ -38,3 +39,13 @@ CXFA_Linear::CXFA_Linear(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Linear>(this)) {}
 
 CXFA_Linear::~CXFA_Linear() {}
+
+XFA_AttributeEnum CXFA_Linear::GetType() {
+  return JSObject()
+      ->TryEnum(XFA_Attribute::Type, true)
+      .value_or(XFA_AttributeEnum::ToRight);
+}
+
+CXFA_Color* CXFA_Linear::GetColorIfExists() {
+  return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+}

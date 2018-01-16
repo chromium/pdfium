@@ -37,3 +37,23 @@ CXFA_Color::CXFA_Color(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Color>(this)) {}
 
 CXFA_Color::~CXFA_Color() {}
+
+FX_ARGB CXFA_Color::GetValue() {
+  Optional<WideString> val = JSObject()->TryCData(XFA_Attribute::Value, false);
+  return val ? StringToFXARGB(val->AsStringView()) : 0xFF000000;
+}
+
+FX_ARGB CXFA_Color::GetValueOrDefault(FX_ARGB defaultValue) {
+  Optional<WideString> val = JSObject()->TryCData(XFA_Attribute::Value, false);
+  return val ? StringToFXARGB(val->AsStringView()) : defaultValue;
+}
+
+void CXFA_Color::SetValue(FX_ARGB color) {
+  int a;
+  int r;
+  int g;
+  int b;
+  std::tie(a, r, g, b) = ArgbDecode(color);
+  JSObject()->SetCData(XFA_Attribute::Value,
+                       WideString::Format(L"%d,%d,%d", r, g, b), false, false);
+}
