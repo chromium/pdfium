@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 class CXFA_Edge;
 class CXFA_Fill;
@@ -24,23 +25,14 @@ class CXFA_Box : public CXFA_Node {
  public:
   ~CXFA_Box() override;
 
-  bool IsArc() const { return GetElementType() == XFA_Element::Arc; }
-  bool IsCircular();
-
-  XFA_AttributeEnum GetHand();
   XFA_AttributeEnum GetPresence();
   std::tuple<XFA_AttributeEnum, bool, float> Get3DStyle();
 
   int32_t CountEdges();
   CXFA_Edge* GetEdgeIfExists(int32_t nIndex);
-  CXFA_Fill* GetFillIfExists() const;
   CXFA_Fill* GetOrCreateFillIfPossible();
-  CXFA_Margin* GetMarginIfExists();
 
   std::vector<CXFA_Stroke*> GetStrokes();
-
-  Optional<int32_t> GetStartAngle();
-  Optional<int32_t> GetSweepAngle();
 
   void Draw(CXFA_Graphics* pGS,
             const CFX_RectF& rtWidget,
@@ -58,13 +50,26 @@ class CXFA_Box : public CXFA_Node {
            const WideStringView& elementName,
            std::unique_ptr<CJX_Object> js_node);
 
+  XFA_AttributeEnum GetHand();
+
  private:
+  bool IsCircular();
+  Optional<int32_t> GetStartAngle();
+  Optional<int32_t> GetSweepAngle();
+
   std::vector<CXFA_Stroke*> GetStrokesInternal(bool bNull);
   void DrawFill(const std::vector<CXFA_Stroke*>& strokes,
                 CXFA_Graphics* pGS,
                 CFX_RectF rtWidget,
                 const CFX_Matrix& matrix,
                 bool forceRound);
+  void StrokeArcOrRounded(CXFA_Graphics* pGS,
+                          CFX_RectF rtWidget,
+                          const CFX_Matrix& matrix,
+                          bool forceRound);
+  void GetPathArcOrRounded(CFX_RectF rtDraw,
+                           CXFA_GEPath& fillPath,
+                           bool forceRound);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOX_H_

@@ -50,122 +50,6 @@ std::pair<XFA_AttributeEnum, CXFA_Stroke*> Style3D(
   return {XFA_AttributeEnum::Unknown, stroke};
 }
 
-void XFA_BOX_GetPath_ArcOrRounded(CXFA_Box* box,
-                                  CFX_RectF rtDraw,
-                                  CXFA_GEPath& fillPath,
-                                  bool forceRound) {
-  float a, b;
-  a = rtDraw.width / 2.0f;
-  b = rtDraw.height / 2.0f;
-  if (box->IsCircular() || forceRound)
-    a = b = std::min(a, b);
-
-  CFX_PointF center = rtDraw.Center();
-  rtDraw.left = center.x - a;
-  rtDraw.top = center.y - b;
-  rtDraw.width = a + a;
-  rtDraw.height = b + b;
-  Optional<int32_t> startAngle = box->GetStartAngle();
-  Optional<int32_t> sweepAngle = box->GetSweepAngle();
-  if (!startAngle && !sweepAngle) {
-    fillPath.AddEllipse(rtDraw);
-    return;
-  }
-
-  fillPath.AddArc(rtDraw.TopLeft(), rtDraw.Size(),
-                  -startAngle.value_or(0) * FX_PI / 180.0f,
-                  -sweepAngle.value_or(360) * FX_PI / 180.0f);
-}
-
-void XFA_BOX_StrokeArcOrRounded(CXFA_Box* box,
-                                CXFA_Graphics* pGS,
-                                CFX_RectF rtWidget,
-                                const CFX_Matrix& matrix,
-                                bool forceRound) {
-  CXFA_Edge* edge = box->GetEdgeIfExists(0);
-  if (!edge || !edge->IsVisible())
-    return;
-
-  bool bVisible;
-  float fThickness;
-  XFA_AttributeEnum i3DType;
-  std::tie(i3DType, bVisible, fThickness) = box->Get3DStyle();
-  bool lowered3d = false;
-  if (i3DType != XFA_AttributeEnum::Unknown) {
-    if (bVisible && fThickness >= 0.001f)
-      lowered3d = true;
-  }
-
-  float fHalf = edge->GetThickness() / 2;
-  if (fHalf < 0) {
-    fHalf = 0;
-  }
-
-  XFA_AttributeEnum iHand = box->GetHand();
-  if (iHand == XFA_AttributeEnum::Left) {
-    rtWidget.Inflate(fHalf, fHalf);
-  } else if (iHand == XFA_AttributeEnum::Right) {
-    rtWidget.Deflate(fHalf, fHalf);
-  }
-  if (!forceRound || !lowered3d) {
-    if (fHalf < 0.001f)
-      return;
-
-    CXFA_GEPath arcPath;
-    XFA_BOX_GetPath_ArcOrRounded(box, rtWidget, arcPath, forceRound);
-    if (edge)
-      edge->Stroke(&arcPath, pGS, matrix);
-    return;
-  }
-  pGS->SaveGraphState();
-  pGS->SetLineWidth(fHalf);
-
-  float a, b;
-  a = rtWidget.width / 2.0f;
-  b = rtWidget.height / 2.0f;
-  if (forceRound) {
-    a = std::min(a, b);
-    b = a;
-  }
-
-  CFX_PointF center = rtWidget.Center();
-  rtWidget.left = center.x - a;
-  rtWidget.top = center.y - b;
-  rtWidget.width = a + a;
-  rtWidget.height = b + b;
-
-  float startAngle = 0, sweepAngle = 360;
-  startAngle = startAngle * FX_PI / 180.0f;
-  sweepAngle = -sweepAngle * FX_PI / 180.0f;
-
-  CXFA_GEPath arcPath;
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
-                 FX_PI);
-
-  pGS->SetStrokeColor(CXFA_GEColor(0xFF808080));
-  pGS->StrokePath(&arcPath, &matrix);
-  arcPath.Clear();
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
-                 FX_PI);
-
-  pGS->SetStrokeColor(CXFA_GEColor(0xFFFFFFFF));
-  pGS->StrokePath(&arcPath, &matrix);
-  rtWidget.Deflate(fHalf, fHalf);
-  arcPath.Clear();
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
-                 FX_PI);
-
-  pGS->SetStrokeColor(CXFA_GEColor(0xFF404040));
-  pGS->StrokePath(&arcPath, &matrix);
-  arcPath.Clear();
-  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
-                 FX_PI);
-
-  pGS->SetStrokeColor(CXFA_GEColor(0xFFC0C0C0));
-  pGS->StrokePath(&arcPath, &matrix);
-  pGS->RestoreGraphState();
-}
-
 CXFA_Rectangle* ToRectangle(CXFA_Box* box) {
   return static_cast<CXFA_Rectangle*>(box);
 }
@@ -230,20 +114,12 @@ Optional<int32_t> CXFA_Box::GetSweepAngle() {
   return JSObject()->TryInteger(XFA_Attribute::SweepAngle, false);
 }
 
-CXFA_Fill* CXFA_Box::GetFillIfExists() const {
-  return JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill);
-}
-
 CXFA_Fill* CXFA_Box::GetOrCreateFillIfPossible() {
   return JSObject()->GetOrCreateProperty<CXFA_Fill>(0, XFA_Element::Fill);
 }
 
-CXFA_Margin* CXFA_Box::GetMarginIfExists() {
-  return GetChild<CXFA_Margin>(0, XFA_Element::Margin, false);
-}
-
 std::tuple<XFA_AttributeEnum, bool, float> CXFA_Box::Get3DStyle() {
-  if (IsArc())
+  if (GetElementType() == XFA_Element::Arc)
     return {XFA_AttributeEnum::Unknown, false, 0.0f};
 
   std::vector<CXFA_Stroke*> strokes = GetStrokesInternal(true);
@@ -322,7 +198,7 @@ void CXFA_Box::Draw(CXFA_Graphics* pGS,
   DrawFill(strokes, pGS, rtWidget, matrix, forceRound);
   XFA_Element type = GetElementType();
   if (type == XFA_Element::Arc || forceRound) {
-    XFA_BOX_StrokeArcOrRounded(this, pGS, rtWidget, matrix, forceRound);
+    StrokeArcOrRounded(pGS, rtWidget, matrix, forceRound);
   } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
     ToRectangle(this)->Draw(strokes, pGS, rtWidget, matrix);
   } else {
@@ -335,7 +211,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
                         CFX_RectF rtWidget,
                         const CFX_Matrix& matrix,
                         bool forceRound) {
-  CXFA_Fill* fill = GetFillIfExists();
+  CXFA_Fill* fill = JSObject()->GetProperty<CXFA_Fill>(0, XFA_Element::Fill);
   if (!fill || !fill->IsVisible())
     return;
 
@@ -353,7 +229,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
     else if (iHand == XFA_AttributeEnum::Right)
       rtWidget.Deflate(fHalf, fHalf);
 
-    XFA_BOX_GetPath_ArcOrRounded(this, rtWidget, fillPath, forceRound);
+    GetPathArcOrRounded(rtWidget, fillPath, forceRound);
   } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
     ToRectangle(this)->GetFillPath(strokes, rtWidget, &fillPath);
   } else {
@@ -362,5 +238,119 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
   fillPath.Close();
 
   fill->Draw(pGS, &fillPath, rtWidget, matrix);
+  pGS->RestoreGraphState();
+}
+
+void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
+                                   CXFA_GEPath& fillPath,
+                                   bool forceRound) {
+  float a, b;
+  a = rtDraw.width / 2.0f;
+  b = rtDraw.height / 2.0f;
+  if (IsCircular() || forceRound)
+    a = b = std::min(a, b);
+
+  CFX_PointF center = rtDraw.Center();
+  rtDraw.left = center.x - a;
+  rtDraw.top = center.y - b;
+  rtDraw.width = a + a;
+  rtDraw.height = b + b;
+  Optional<int32_t> startAngle = GetStartAngle();
+  Optional<int32_t> sweepAngle = GetSweepAngle();
+  if (!startAngle && !sweepAngle) {
+    fillPath.AddEllipse(rtDraw);
+    return;
+  }
+
+  fillPath.AddArc(rtDraw.TopLeft(), rtDraw.Size(),
+                  -startAngle.value_or(0) * FX_PI / 180.0f,
+                  -sweepAngle.value_or(360) * FX_PI / 180.0f);
+}
+
+void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
+                                  CFX_RectF rtWidget,
+                                  const CFX_Matrix& matrix,
+                                  bool forceRound) {
+  CXFA_Edge* edge = GetEdgeIfExists(0);
+  if (!edge || !edge->IsVisible())
+    return;
+
+  bool bVisible;
+  float fThickness;
+  XFA_AttributeEnum i3DType;
+  std::tie(i3DType, bVisible, fThickness) = Get3DStyle();
+  bool lowered3d = false;
+  if (i3DType != XFA_AttributeEnum::Unknown) {
+    if (bVisible && fThickness >= 0.001f)
+      lowered3d = true;
+  }
+
+  float fHalf = edge->GetThickness() / 2;
+  if (fHalf < 0) {
+    fHalf = 0;
+  }
+
+  XFA_AttributeEnum iHand = GetHand();
+  if (iHand == XFA_AttributeEnum::Left) {
+    rtWidget.Inflate(fHalf, fHalf);
+  } else if (iHand == XFA_AttributeEnum::Right) {
+    rtWidget.Deflate(fHalf, fHalf);
+  }
+  if (!forceRound || !lowered3d) {
+    if (fHalf < 0.001f)
+      return;
+
+    CXFA_GEPath arcPath;
+    GetPathArcOrRounded(rtWidget, arcPath, forceRound);
+    if (edge)
+      edge->Stroke(&arcPath, pGS, matrix);
+    return;
+  }
+  pGS->SaveGraphState();
+  pGS->SetLineWidth(fHalf);
+
+  float a, b;
+  a = rtWidget.width / 2.0f;
+  b = rtWidget.height / 2.0f;
+  if (forceRound) {
+    a = std::min(a, b);
+    b = a;
+  }
+
+  CFX_PointF center = rtWidget.Center();
+  rtWidget.left = center.x - a;
+  rtWidget.top = center.y - b;
+  rtWidget.width = a + a;
+  rtWidget.height = b + b;
+
+  float startAngle = 0, sweepAngle = 360;
+  startAngle = startAngle * FX_PI / 180.0f;
+  sweepAngle = -sweepAngle * FX_PI / 180.0f;
+
+  CXFA_GEPath arcPath;
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
+                 FX_PI);
+
+  pGS->SetStrokeColor(CXFA_GEColor(0xFF808080));
+  pGS->StrokePath(&arcPath, &matrix);
+  arcPath.Clear();
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
+                 FX_PI);
+
+  pGS->SetStrokeColor(CXFA_GEColor(0xFFFFFFFF));
+  pGS->StrokePath(&arcPath, &matrix);
+  rtWidget.Deflate(fHalf, fHalf);
+  arcPath.Clear();
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
+                 FX_PI);
+
+  pGS->SetStrokeColor(CXFA_GEColor(0xFF404040));
+  pGS->StrokePath(&arcPath, &matrix);
+  arcPath.Clear();
+  arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), -1.0f * FX_PI / 4.0f,
+                 FX_PI);
+
+  pGS->SetStrokeColor(CXFA_GEColor(0xFFC0C0C0));
+  pGS->StrokePath(&arcPath, &matrix);
   pGS->RestoreGraphState();
 }
