@@ -40,9 +40,6 @@ bool CXFA_ImageRenderer::Start() {
   int dest_height = image_rect.Height();
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
-    if (m_bPrint && !(m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE))
-      return false;
-
     RetainPtr<CFX_DIBSource> pDib = m_pDIBSource;
     if (m_pDIBSource->HasAlpha() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
@@ -81,8 +78,6 @@ bool CXFA_ImageRenderer::Start() {
       return false;
     }
   }
-  if (m_bPrint && !(m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE))
-    return true;
 
   FX_RECT clip_box = m_pDevice->GetClipBox();
   FX_RECT dest_rect = clip_box;
