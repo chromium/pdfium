@@ -1879,8 +1879,11 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
       GetDownScale(down_scale);
       // Setting jump marker before calling StartScanLine, since a longjmp to
       // the marker indicates a fatal error.
-      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1)
+      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
+        m_pJpegContext.reset();
+        m_status = FXCODEC_STATUS_ERROR;
         return FXCODEC_STATUS_ERROR;
+      }
 
       CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
       bool startStatus =
@@ -2023,6 +2026,14 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
   switch (m_imagType) {
     case FXCODEC_IMAGE_JPG: {
       CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+      // Setting jump marker before calling ReadScanLine, since a longjmp to
+      // the marker indicates a fatal error.
+      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
+        m_pJpegContext.reset();
+        m_status = FXCODEC_STATUS_ERROR;
+        return FXCODEC_STATUS_ERROR;
+      }
+
       while (true) {
         bool readRes =
             pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf);

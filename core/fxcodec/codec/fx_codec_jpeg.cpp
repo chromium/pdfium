@@ -417,7 +417,7 @@ CJpegContext::~CJpegContext() {
 }
 
 std::unique_ptr<CCodec_JpegModule::Context> CCodec_JpegModule::Start() {
-  // Use ordinary pointer until past the fear of a longjump.
+  // Use ordinary pointer until past the possibility of a longjump.
   auto* pContext = new CJpegContext();
   if (setjmp(pContext->m_JumpMark) == -1)
     return nullptr;
@@ -486,10 +486,7 @@ bool CCodec_JpegModule::StartScanline(Context* pContext, int down_scale) {
 bool CCodec_JpegModule::ReadScanline(Context* pContext,
                                      unsigned char* dest_buf) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  if (setjmp(ctx->m_JumpMark) == -1)
-    return false;
-
-  int nlines = jpeg_read_scanlines(&ctx->m_Info, &dest_buf, 1);
+  unsigned int nlines = jpeg_read_scanlines(&ctx->m_Info, &dest_buf, 1);
   return nlines == 1;
 }
 
