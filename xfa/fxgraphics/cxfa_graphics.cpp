@@ -154,9 +154,9 @@ void CXFA_Graphics::SetLineDash(float dashPhase,
   }
 }
 
-void CXFA_Graphics::SetLineDash(FX_DashStyle dashStyle) {
+void CXFA_Graphics::SetSolidLineDash() {
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
-    RenderDeviceSetLineDash(dashStyle);
+    m_info.graphState.SetDashCount(0);
 }
 
 void CXFA_Graphics::SetLineWidth(float lineWidth) {
@@ -227,37 +227,6 @@ void CXFA_Graphics::SetClipRect(const CFX_RectF& rect) {
 
 CFX_RenderDevice* CXFA_Graphics::GetRenderDevice() {
   return m_renderDevice;
-}
-
-void CXFA_Graphics::RenderDeviceSetLineDash(FX_DashStyle dashStyle) {
-  switch (dashStyle) {
-    case FX_DASHSTYLE_Solid: {
-      m_info.graphState.SetDashCount(0);
-      return;
-    }
-    case FX_DASHSTYLE_Dash: {
-      float dashArray[] = {3, 1};
-      SetLineDash(0, dashArray, 2);
-      return;
-    }
-    case FX_DASHSTYLE_Dot: {
-      float dashArray[] = {1, 1};
-      SetLineDash(0, dashArray, 2);
-      return;
-    }
-    case FX_DASHSTYLE_DashDot: {
-      float dashArray[] = {3, 1, 1, 1};
-      SetLineDash(0, dashArray, 4);
-      return;
-    }
-    case FX_DASHSTYLE_DashDotDot: {
-      float dashArray[] = {4, 1, 2, 1, 2, 1};
-      SetLineDash(0, dashArray, 6);
-      return;
-    }
-    default:
-      return;
-  }
 }
 
 void CXFA_Graphics::RenderDeviceStrokePath(const CXFA_GEPath* path,

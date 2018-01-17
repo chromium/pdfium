@@ -31,9 +31,6 @@ inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
 
 #define XFA_FLOAT_PERCISION 0.001f
 
-int32_t XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
-                                  XFA_AttributeEnum iStrokeType,
-                                  XFA_AttributeEnum iCapType);
 void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,

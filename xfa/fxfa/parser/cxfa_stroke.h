@@ -22,6 +22,10 @@ class CXFA_GEPath;
 class CXFA_Graphics;
 class CXFA_Node;
 
+void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
+                               XFA_AttributeEnum iStrokeType,
+                               XFA_AttributeEnum iCapType);
+
 class CXFA_Stroke : public CXFA_Node {
  public:
   ~CXFA_Stroke() override;

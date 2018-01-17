@@ -15,6 +15,51 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
+void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
+                               XFA_AttributeEnum iStrokeType,
+                               XFA_AttributeEnum iCapType) {
+  switch (iStrokeType) {
+    case XFA_AttributeEnum::DashDot: {
+      float dashArray[] = {4, 1, 2, 1};
+      if (iCapType != XFA_AttributeEnum::Butt) {
+        dashArray[1] = 2;
+        dashArray[3] = 2;
+      }
+      pGraphics->SetLineDash(0, dashArray, 4);
+      break;
+    }
+    case XFA_AttributeEnum::DashDotDot: {
+      float dashArray[] = {4, 1, 2, 1, 2, 1};
+      if (iCapType != XFA_AttributeEnum::Butt) {
+        dashArray[1] = 2;
+        dashArray[3] = 2;
+        dashArray[5] = 2;
+      }
+      pGraphics->SetLineDash(0, dashArray, 6);
+      break;
+    }
+    case XFA_AttributeEnum::Dashed: {
+      float dashArray[] = {5, 1};
+      if (iCapType != XFA_AttributeEnum::Butt)
+        dashArray[1] = 2;
+
+      pGraphics->SetLineDash(0, dashArray, 2);
+      break;
+    }
+    case XFA_AttributeEnum::Dotted: {
+      float dashArray[] = {2, 1};
+      if (iCapType != XFA_AttributeEnum::Butt)
+        dashArray[1] = 2;
+
+      pGraphics->SetLineDash(0, dashArray, 2);
+      break;
+    }
+    default:
+      pGraphics->SetSolidLineDash();
+      break;
+  }
+}
+
 CXFA_Stroke::CXFA_Stroke(CXFA_Document* pDoc,
                          XFA_PacketType ePacket,
                          uint32_t validPackets,
