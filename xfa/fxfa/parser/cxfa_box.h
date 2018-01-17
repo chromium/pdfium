@@ -62,7 +62,7 @@ class CXFA_Box : public CXFA_Node {
   std::vector<CXFA_Stroke*> GetStrokesInternal(bool bNull);
   void DrawFill(const std::vector<CXFA_Stroke*>& strokes,
                 CXFA_Graphics* pGS,
-                const CFX_RectF& rtWidget,
+                CFX_RectF rtWidget,
                 const CFX_Matrix& matrix,
                 bool forceRound);
 };

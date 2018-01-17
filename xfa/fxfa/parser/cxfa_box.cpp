@@ -77,154 +77,6 @@ void XFA_BOX_GetPath_Arc(CXFA_Box* box,
                   -sweepAngle.value_or(360) * FX_PI / 180.0f);
 }
 
-void XFA_BOX_GetFillPath(CXFA_Box* box,
-                         const std::vector<CXFA_Stroke*>& strokes,
-                         CFX_RectF rtWidget,
-                         CXFA_GEPath& fillPath,
-                         bool forceRound) {
-  if (box->IsArc() || forceRound) {
-    CXFA_Edge* edge = box->GetEdgeIfExists(0);
-    float fThickness = std::fmax(0.0, edge ? edge->GetThickness() : 0);
-    float fHalf = fThickness / 2;
-    XFA_AttributeEnum iHand = box->GetHand();
-    if (iHand == XFA_AttributeEnum::Left)
-      rtWidget.Inflate(fHalf, fHalf);
-    else if (iHand == XFA_AttributeEnum::Right)
-      rtWidget.Deflate(fHalf, fHalf);
-
-    XFA_BOX_GetPath_Arc(box, rtWidget, fillPath, forceRound);
-    return;
-  }
-
-  bool bSameStyles = true;
-  CXFA_Stroke* stroke1 = strokes[0];
-  for (int32_t i = 1; i < 8; i++) {
-    CXFA_Stroke* stroke2 = strokes[i];
-    if (!stroke1->SameStyles(stroke2, 0)) {
-      bSameStyles = false;
-      break;
-    }
-    stroke1 = stroke2;
-  }
-  if (bSameStyles) {
-    stroke1 = strokes[0];
-    for (int32_t i = 2; i < 8; i += 2) {
-      CXFA_Stroke* stroke2 = strokes[i];
-      if (!stroke1->SameStyles(stroke2, XFA_STROKE_SAMESTYLE_NoPresence |
-                                            XFA_STROKE_SAMESTYLE_Corner)) {
-        bSameStyles = false;
-        break;
-      }
-      stroke1 = stroke2;
-    }
-    if (bSameStyles) {
-      stroke1 = strokes[0];
-      if (stroke1->IsInverted())
-        bSameStyles = false;
-      if (stroke1->GetJoinType() != XFA_AttributeEnum::Square)
-        bSameStyles = false;
-    }
-  }
-  if (bSameStyles) {
-    fillPath.AddRectangle(rtWidget.left, rtWidget.top, rtWidget.width,
-                          rtWidget.height);
-    return;
-  }
-
-  for (int32_t i = 0; i < 8; i += 2) {
-    float sx = 0.0f;
-    float sy = 0.0f;
-    float vx = 1.0f;
-    float vy = 1.0f;
-    float nx = 1.0f;
-    float ny = 1.0f;
-    CFX_PointF cp1, cp2;
-    auto* corner1 = static_cast<CXFA_Corner*>(strokes[i]);
-    auto* corner2 = static_cast<CXFA_Corner*>(strokes[(i + 2) % 8]);
-    float fRadius1 = corner1->GetRadius();
-    float fRadius2 = corner2->GetRadius();
-    bool bInverted = corner1->IsInverted();
-    bool bRound = corner1->GetJoinType() == XFA_AttributeEnum::Round;
-    if (bRound) {
-      sy = FX_PI / 2;
-    }
-    switch (i) {
-      case 0:
-        cp1 = rtWidget.TopLeft();
-        cp2 = rtWidget.TopRight();
-        vx = 1, vy = 1;
-        nx = -1, ny = 0;
-        if (bRound) {
-          sx = bInverted ? FX_PI / 2 : FX_PI;
-        } else {
-          sx = 1, sy = 0;
-        }
-        break;
-      case 2:
-        cp1 = rtWidget.TopRight();
-        cp2 = rtWidget.BottomRight();
-        vx = -1, vy = 1;
-        nx = 0, ny = -1;
-        if (bRound) {
-          sx = bInverted ? FX_PI : FX_PI * 3 / 2;
-        } else {
-          sx = 0, sy = 1;
-        }
-        break;
-      case 4:
-        cp1 = rtWidget.BottomRight();
-        cp2 = rtWidget.BottomLeft();
-        vx = -1, vy = -1;
-        nx = 1, ny = 0;
-        if (bRound) {
-          sx = bInverted ? FX_PI * 3 / 2 : 0;
-        } else {
-          sx = -1, sy = 0;
-        }
-        break;
-      case 6:
-        cp1 = rtWidget.BottomLeft();
-        cp2 = rtWidget.TopLeft();
-        vx = 1, vy = -1;
-        nx = 0, ny = 1;
-        if (bRound) {
-          sx = bInverted ? 0 : FX_PI / 2;
-        } else {
-          sx = 0;
-          sy = -1;
-        }
-        break;
-    }
-    if (i == 0)
-      fillPath.MoveTo(CFX_PointF(cp1.x, cp1.y + fRadius1));
-
-    if (bRound) {
-      if (fRadius1 < 0)
-        sx -= FX_PI;
-      if (bInverted)
-        sy *= -1;
-
-      CFX_RectF rtRadius(cp1.x, cp1.y, fRadius1 * 2 * vx, fRadius1 * 2 * vy);
-      rtRadius.Normalize();
-      if (bInverted)
-        rtRadius.Offset(-fRadius1 * vx, -fRadius1 * vy);
-
-      fillPath.ArcTo(rtRadius.TopLeft(), rtRadius.Size(), sx, sy);
-    } else {
-      CFX_PointF cp;
-      if (bInverted) {
-        cp.x = cp1.x + fRadius1 * vx;
-        cp.y = cp1.y + fRadius1 * vy;
-      } else {
-        cp = cp1;
-      }
-      fillPath.LineTo(cp);
-      fillPath.LineTo(CFX_PointF(cp1.x + fRadius1 * sx, cp1.y + fRadius1 * sy));
-    }
-    fillPath.LineTo(CFX_PointF(cp2.x + fRadius2 * nx, cp2.y + fRadius2 * ny));
-  }
-}
-
 void XFA_BOX_StrokeArc(CXFA_Box* box,
                        CXFA_Graphics* pGS,
                        CFX_RectF rtWidget,
@@ -312,6 +164,10 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
   pGS->SetStrokeColor(CXFA_GEColor(0xFFC0C0C0));
   pGS->StrokePath(&arcPath, &matrix);
   pGS->RestoreGraphState();
+}
+
+CXFA_Rectangle* ToRectangle(CXFA_Box* box) {
+  return static_cast<CXFA_Rectangle*>(box);
 }
 
 }  // namespace
@@ -468,7 +324,7 @@ void CXFA_Box::Draw(CXFA_Graphics* pGS,
   if (type == XFA_Element::Arc || forceRound) {
     XFA_BOX_StrokeArc(this, pGS, rtWidget, matrix, forceRound);
   } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
-    static_cast<CXFA_Rectangle*>(this)->Draw(strokes, pGS, rtWidget, matrix);
+    ToRectangle(this)->Draw(strokes, pGS, rtWidget, matrix);
   } else {
     NOTREACHED();
   }
@@ -476,7 +332,7 @@ void CXFA_Box::Draw(CXFA_Graphics* pGS,
 
 void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
                         CXFA_Graphics* pGS,
-                        const CFX_RectF& rtWidget,
+                        CFX_RectF rtWidget,
                         const CFX_Matrix& matrix,
                         bool forceRound) {
   CXFA_Fill* fill = GetFillIfExists();
@@ -486,7 +342,23 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
   pGS->SaveGraphState();
 
   CXFA_GEPath fillPath;
-  XFA_BOX_GetFillPath(this, strokes, rtWidget, fillPath, forceRound);
+  XFA_Element type = GetElementType();
+  if (type == XFA_Element::Arc || forceRound) {
+    CXFA_Edge* edge = GetEdgeIfExists(0);
+    float fThickness = std::fmax(0.0, edge ? edge->GetThickness() : 0);
+    float fHalf = fThickness / 2;
+    XFA_AttributeEnum iHand = GetHand();
+    if (iHand == XFA_AttributeEnum::Left)
+      rtWidget.Inflate(fHalf, fHalf);
+    else if (iHand == XFA_AttributeEnum::Right)
+      rtWidget.Deflate(fHalf, fHalf);
+
+    XFA_BOX_GetPath_Arc(this, rtWidget, fillPath, forceRound);
+  } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
+    ToRectangle(this)->GetFillPath(strokes, rtWidget, &fillPath);
+  } else {
+    NOTREACHED();
+  }
   fillPath.Close();
 
   fill->Draw(pGS, &fillPath, rtWidget, matrix);

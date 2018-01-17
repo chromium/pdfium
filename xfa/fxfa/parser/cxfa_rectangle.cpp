@@ -63,6 +63,140 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,
 
 CXFA_Rectangle::~CXFA_Rectangle() {}
 
+void CXFA_Rectangle::GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
+                                 const CFX_RectF& rtWidget,
+                                 CXFA_GEPath* fillPath) {
+  bool bSameStyles = true;
+  CXFA_Stroke* stroke1 = strokes[0];
+  for (int32_t i = 1; i < 8; i++) {
+    CXFA_Stroke* stroke2 = strokes[i];
+    if (!stroke1->SameStyles(stroke2, 0)) {
+      bSameStyles = false;
+      break;
+    }
+    stroke1 = stroke2;
+  }
+
+  if (bSameStyles) {
+    stroke1 = strokes[0];
+    for (int32_t i = 2; i < 8; i += 2) {
+      CXFA_Stroke* stroke2 = strokes[i];
+      if (!stroke1->SameStyles(stroke2, XFA_STROKE_SAMESTYLE_NoPresence |
+                                            XFA_STROKE_SAMESTYLE_Corner)) {
+        bSameStyles = false;
+        break;
+      }
+      stroke1 = stroke2;
+    }
+    if (bSameStyles) {
+      stroke1 = strokes[0];
+      if (stroke1->IsInverted())
+        bSameStyles = false;
+      if (stroke1->GetJoinType() != XFA_AttributeEnum::Square)
+        bSameStyles = false;
+    }
+  }
+  if (bSameStyles) {
+    fillPath->AddRectangle(rtWidget.left, rtWidget.top, rtWidget.width,
+                           rtWidget.height);
+    return;
+  }
+
+  for (int32_t i = 0; i < 8; i += 2) {
+    float sx = 0.0f;
+    float sy = 0.0f;
+    float vx = 1.0f;
+    float vy = 1.0f;
+    float nx = 1.0f;
+    float ny = 1.0f;
+    CFX_PointF cp1, cp2;
+    auto* corner1 = static_cast<CXFA_Corner*>(strokes[i]);
+    auto* corner2 = static_cast<CXFA_Corner*>(strokes[(i + 2) % 8]);
+    float fRadius1 = corner1->GetRadius();
+    float fRadius2 = corner2->GetRadius();
+    bool bInverted = corner1->IsInverted();
+    bool bRound = corner1->GetJoinType() == XFA_AttributeEnum::Round;
+    if (bRound) {
+      sy = FX_PI / 2;
+    }
+    switch (i) {
+      case 0:
+        cp1 = rtWidget.TopLeft();
+        cp2 = rtWidget.TopRight();
+        vx = 1, vy = 1;
+        nx = -1, ny = 0;
+        if (bRound) {
+          sx = bInverted ? FX_PI / 2 : FX_PI;
+        } else {
+          sx = 1, sy = 0;
+        }
+        break;
+      case 2:
+        cp1 = rtWidget.TopRight();
+        cp2 = rtWidget.BottomRight();
+        vx = -1, vy = 1;
+        nx = 0, ny = -1;
+        if (bRound) {
+          sx = bInverted ? FX_PI : FX_PI * 3 / 2;
+        } else {
+          sx = 0, sy = 1;
+        }
+        break;
+      case 4:
+        cp1 = rtWidget.BottomRight();
+        cp2 = rtWidget.BottomLeft();
+        vx = -1, vy = -1;
+        nx = 1, ny = 0;
+        if (bRound) {
+          sx = bInverted ? FX_PI * 3 / 2 : 0;
+        } else {
+          sx = -1, sy = 0;
+        }
+        break;
+      case 6:
+        cp1 = rtWidget.BottomLeft();
+        cp2 = rtWidget.TopLeft();
+        vx = 1, vy = -1;
+        nx = 0, ny = 1;
+        if (bRound) {
+          sx = bInverted ? 0 : FX_PI / 2;
+        } else {
+          sx = 0;
+          sy = -1;
+        }
+        break;
+    }
+    if (i == 0)
+      fillPath->MoveTo(CFX_PointF(cp1.x, cp1.y + fRadius1));
+
+    if (bRound) {
+      if (fRadius1 < 0)
+        sx -= FX_PI;
+      if (bInverted)
+        sy *= -1;
+
+      CFX_RectF rtRadius(cp1.x, cp1.y, fRadius1 * 2 * vx, fRadius1 * 2 * vy);
+      rtRadius.Normalize();
+      if (bInverted)
+        rtRadius.Offset(-fRadius1 * vx, -fRadius1 * vy);
+
+      fillPath->ArcTo(rtRadius.TopLeft(), rtRadius.Size(), sx, sy);
+    } else {
+      CFX_PointF cp;
+      if (bInverted) {
+        cp.x = cp1.x + fRadius1 * vx;
+        cp.y = cp1.y + fRadius1 * vy;
+      } else {
+        cp = cp1;
+      }
+      fillPath->LineTo(cp);
+      fillPath->LineTo(
+          CFX_PointF(cp1.x + fRadius1 * sx, cp1.y + fRadius1 * sy));
+    }
+    fillPath->LineTo(CFX_PointF(cp2.x + fRadius2 * nx, cp2.y + fRadius2 * ny));
+  }
+}
+
 void CXFA_Rectangle::Draw(const std::vector<CXFA_Stroke*>& strokes,
                           CXFA_Graphics* pGS,
                           CFX_RectF rtWidget,
