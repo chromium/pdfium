@@ -11,10 +11,12 @@
 #include <tuple>
 #include <vector>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Edge;
 class CXFA_Fill;
+class CXFA_Graphics;
 class CXFA_Margin;
 class CXFA_Stroke;
 
@@ -39,6 +41,11 @@ class CXFA_Box : public CXFA_Node {
 
   Optional<int32_t> GetStartAngle();
   Optional<int32_t> GetSweepAngle();
+
+  void Draw(CXFA_Graphics* pGS,
+            const CFX_RectF& rtWidget,
+            const CFX_Matrix& matrix,
+            bool forceRound);
 
  protected:
   CXFA_Box(CXFA_Document* pDoc,
