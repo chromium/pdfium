@@ -1034,13 +1034,16 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   if (clipping)
     clipping_rect = CFXFloatRectFromFSRECTF(*clipping);
   FX_RECT clip_rect = clipping_rect.ToFxRect();
-  RenderPageImpl(
-      pContext, pPage,
-      pPage->GetDisplayMatrixWithTransformation(
-          clip_rect.left, clip_rect.top, clip_rect.Width(), clip_rect.Height(),
-          CFX_Matrix(matrix->a, matrix->b, matrix->c, matrix->d, matrix->e,
-                     matrix->f)),
-      clip_rect, flags, true, nullptr);
+
+  CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(
+      0, 0, pPage->GetPageWidth(), pPage->GetPageHeight(), 0);
+
+  if (matrix) {
+    transform_matrix.Concat(CFX_Matrix(matrix->a, matrix->b, matrix->c,
+                                       matrix->d, matrix->e, matrix->f));
+  }
+  RenderPageImpl(pContext, pPage, transform_matrix, clip_rect, flags, true,
+                 nullptr);
 
   pPage->SetRenderContext(nullptr);
 }
