@@ -1002,256 +1002,281 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   memset(m_pSrcBuf, 0, size);
   m_SrcSize = size;
   switch (imageType) {
-    case FXCODEC_IMAGE_BMP: {
-      CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-      if (!pBmpModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return false;
-      }
-
-      m_pBmpContext = pBmpModule->Start(this);
-      if (!m_pBmpContext) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return false;
-      }
-
-      if (!m_pFile->ReadBlock(m_pSrcBuf, 0, size)) {
-        m_status = FXCODEC_STATUS_ERR_READ;
-        return false;
-      }
-
-      m_offSet += size;
-      pBmpModule->Input(m_pBmpContext.get(), m_pSrcBuf, size);
-      std::vector<uint32_t> palette;
-      int32_t readResult = pBmpModule->ReadHeader(
-          m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
-          &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
-      while (readResult == 2) {
-        FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
-        if (!BmpReadMoreData(pBmpModule, error_status)) {
-          m_status = error_status;
-          return false;
-        }
-        readResult = pBmpModule->ReadHeader(
-            m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
-            &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
-      }
-
-      if (readResult != 1) {
-        m_pBmpContext.reset();
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-
-      FXDIB_Format format = FXDIB_Invalid;
-      switch (m_SrcComponents) {
-        case 1:
-          m_SrcFormat = FXCodec_8bppRgb;
-          format = FXDIB_8bppRgb;
-          break;
-        case 3:
-          m_SrcFormat = FXCodec_Rgb;
-          format = FXDIB_Rgb;
-          break;
-        case 4:
-          m_SrcFormat = FXCodec_Rgb32;
-          format = FXDIB_Rgb32;
-          break;
-        default:
-          m_pBmpContext.reset();
-          m_status = FXCODEC_STATUS_ERR_FORMAT;
-          return false;
-          break;
-      }
-
-      uint32_t pitch = 0;
-      uint32_t neededData = 0;
-      if (!CFX_DIBitmap::CalculatePitchAndSize(m_SrcWidth, m_SrcHeight, format,
-                                               &pitch, &neededData)) {
-        m_pBmpContext.reset();
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-
-      uint32_t availableData = m_SrcSize > m_offSet ? m_SrcSize - m_offSet : 0;
-      if (neededData > availableData) {
-        m_pBmpContext.reset();
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-
-      m_SrcBPC = 8;
-      m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
-      FX_Free(m_pSrcPalette);
-      if (m_SrcPaletteNumber) {
-        m_pSrcPalette = FX_Alloc(FX_ARGB, m_SrcPaletteNumber);
-        memcpy(m_pSrcPalette, palette.data(),
-               m_SrcPaletteNumber * sizeof(FX_ARGB));
-      } else {
-        m_pSrcPalette = nullptr;
-      }
-      return true;
-    }
-    case FXCODEC_IMAGE_JPG: {
-      CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-      m_pJpegContext = pJpegModule->Start();
-      if (!m_pJpegContext) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return false;
-      }
-      if (!m_pFile->ReadBlock(m_pSrcBuf, 0, size)) {
-        m_status = FXCODEC_STATUS_ERR_READ;
-        return false;
-      }
-      m_offSet += size;
-      pJpegModule->Input(m_pJpegContext.get(), m_pSrcBuf, size);
-      // Setting jump marker before calling ReadHeader, since a longjmp to
-      // the marker indicates a fatal error.
-      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
-        m_pJpegContext.reset();
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-
-      int32_t readResult =
-          pJpegModule->ReadHeader(m_pJpegContext.get(), &m_SrcWidth,
-                                  &m_SrcHeight, &m_SrcComponents, pAttribute);
-      while (readResult == 2) {
-        FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
-        if (!JpegReadMoreData(pJpegModule, error_status)) {
-          m_status = error_status;
-          return false;
-        }
-        readResult =
-            pJpegModule->ReadHeader(m_pJpegContext.get(), &m_SrcWidth,
-                                    &m_SrcHeight, &m_SrcComponents, pAttribute);
-      }
-      if (!readResult) {
-        m_SrcBPC = 8;
-        m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
-        return true;
-      }
-      m_pJpegContext.reset();
-      m_status = FXCODEC_STATUS_ERR_FORMAT;
-      return false;
-    }
-    case FXCODEC_IMAGE_PNG: {
-      CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-      if (!pPngModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return false;
-      }
-      m_pPngContext = pPngModule->Start(this);
-      if (!m_pPngContext) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return false;
-      }
-      bool bResult = m_pFile->ReadBlock(m_pSrcBuf, 0, size);
-      if (!bResult) {
-        m_status = FXCODEC_STATUS_ERR_READ;
-        return false;
-      }
-      m_offSet += size;
-      bResult =
-          pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, size, pAttribute);
-      while (bResult) {
-        uint32_t remain_size = (uint32_t)m_pFile->GetSize() - m_offSet;
-        uint32_t input_size =
-            remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
-        if (input_size == 0) {
-          m_pPngContext.reset();
-          m_status = FXCODEC_STATUS_ERR_FORMAT;
-          return false;
-        }
-        if (m_pSrcBuf && input_size > m_SrcSize) {
-          FX_Free(m_pSrcBuf);
-          m_pSrcBuf = FX_Alloc(uint8_t, input_size);
-          memset(m_pSrcBuf, 0, input_size);
-          m_SrcSize = input_size;
-        }
-        bResult = m_pFile->ReadBlock(m_pSrcBuf, m_offSet, input_size);
-        if (!bResult) {
-          m_status = FXCODEC_STATUS_ERR_READ;
-          return false;
-        }
-        m_offSet += input_size;
-        bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, input_size,
-                                    pAttribute);
-      }
-      ASSERT(!bResult);
-      m_pPngContext.reset();
-      if (m_SrcPassNumber == 0) {
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-      return true;
-    }
-    case FXCODEC_IMAGE_GIF: {
-      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-      if (!pGifModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return false;
-      }
-      m_pGifContext = pGifModule->Start(this);
-      bool bResult = m_pFile->ReadBlock(m_pSrcBuf, 0, size);
-      if (!bResult) {
-        m_status = FXCODEC_STATUS_ERR_READ;
-        return false;
-      }
-      m_offSet += size;
-      pGifModule->Input(m_pGifContext.get(), m_pSrcBuf, size);
-      m_SrcComponents = 1;
-      CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
-          m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
-          (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
-      while (readResult == CFX_GifDecodeStatus::Unfinished) {
-        FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
-        if (!GifReadMoreData(pGifModule, error_status)) {
-          m_pGifContext = nullptr;
-          m_status = error_status;
-          return false;
-        }
-        readResult = pGifModule->ReadHeader(
-            m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
-            (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
-      }
-      if (readResult == CFX_GifDecodeStatus::Success) {
-        m_SrcBPC = 8;
-        m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
-        return true;
-      }
-      m_pGifContext = nullptr;
-      m_status = FXCODEC_STATUS_ERR_FORMAT;
-      return false;
-    }
-    case FXCODEC_IMAGE_TIF: {
-      CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
-      if (!pTiffModule) {
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-      m_pTiffContext = pTiffModule->CreateDecoder(m_pFile);
-      if (!m_pTiffContext) {
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-      int32_t dummy_bpc;
-      bool ret = pTiffModule->LoadFrameInfo(
-          m_pTiffContext.get(), 0, &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
-          &dummy_bpc, pAttribute);
-      m_SrcComponents = 4;
-      m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
-      if (!ret) {
-        m_pTiffContext.reset();
-        m_status = FXCODEC_STATUS_ERR_FORMAT;
-        return false;
-      }
-      return true;
-    }
+    case FXCODEC_IMAGE_BMP:
+      return BmpDetectImageType(pAttribute, size);
+    case FXCODEC_IMAGE_JPG:
+      return JpegDetectImageType(pAttribute, size);
+    case FXCODEC_IMAGE_PNG:
+      return PngDetectImageType(pAttribute, size);
+    case FXCODEC_IMAGE_GIF:
+      return GifDetectImageType(pAttribute, size);
+    case FXCODEC_IMAGE_TIF:
+      return TifDetectImageType(pAttribute, size);
     default:
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return false;
   }
+}
+
+bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
+                                                   uint32_t size) {
+  CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+  if (!pBmpModule) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return false;
+  }
+
+  m_pBmpContext = pBmpModule->Start(this);
+  if (!m_pBmpContext) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return false;
+  }
+
+  if (!m_pFile->ReadBlock(m_pSrcBuf, 0, size)) {
+    m_status = FXCODEC_STATUS_ERR_READ;
+    return false;
+  }
+
+  m_offSet += size;
+  pBmpModule->Input(m_pBmpContext.get(), m_pSrcBuf, size);
+  std::vector<uint32_t> palette;
+  int32_t readResult = pBmpModule->ReadHeader(
+      m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
+      &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
+  while (readResult == 2) {
+    FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
+    if (!BmpReadMoreData(pBmpModule, error_status)) {
+      m_status = error_status;
+      return false;
+    }
+    readResult = pBmpModule->ReadHeader(
+        m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
+        &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
+  }
+
+  if (readResult != 1) {
+    m_pBmpContext.reset();
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+
+  FXDIB_Format format = FXDIB_Invalid;
+  switch (m_SrcComponents) {
+    case 1:
+      m_SrcFormat = FXCodec_8bppRgb;
+      format = FXDIB_8bppRgb;
+      break;
+    case 3:
+      m_SrcFormat = FXCodec_Rgb;
+      format = FXDIB_Rgb;
+      break;
+    case 4:
+      m_SrcFormat = FXCodec_Rgb32;
+      format = FXDIB_Rgb32;
+      break;
+    default:
+      m_pBmpContext.reset();
+      m_status = FXCODEC_STATUS_ERR_FORMAT;
+      return false;
+  }
+
+  uint32_t pitch = 0;
+  uint32_t neededData = 0;
+  if (!CFX_DIBitmap::CalculatePitchAndSize(m_SrcWidth, m_SrcHeight, format,
+                                           &pitch, &neededData)) {
+    m_pBmpContext.reset();
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+
+  uint32_t availableData = m_SrcSize > m_offSet ? m_SrcSize - m_offSet : 0;
+  if (neededData > availableData) {
+    m_pBmpContext.reset();
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+
+  m_SrcBPC = 8;
+  m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
+  FX_Free(m_pSrcPalette);
+  if (m_SrcPaletteNumber) {
+    m_pSrcPalette = FX_Alloc(FX_ARGB, m_SrcPaletteNumber);
+    memcpy(m_pSrcPalette, palette.data(), m_SrcPaletteNumber * sizeof(FX_ARGB));
+  } else {
+    m_pSrcPalette = nullptr;
+  }
+  return true;
+}
+
+bool CCodec_ProgressiveDecoder::JpegDetectImageType(
+    CFX_DIBAttribute* pAttribute,
+    uint32_t size) {
+  CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+  // Setting jump marker before calling Start or ReadHeader, since a longjmp
+  // to the marker indicates a fatal error in these functions.
+  if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
+    m_status = FXCODEC_STATUS_ERROR;
+    return false;
+  }
+
+  m_pJpegContext = pJpegModule->Start();
+  if (!m_pJpegContext) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return false;
+  }
+  if (!m_pFile->ReadBlock(m_pSrcBuf, 0, size)) {
+    m_status = FXCODEC_STATUS_ERR_READ;
+    return false;
+  }
+  m_offSet += size;
+  pJpegModule->Input(m_pJpegContext.get(), m_pSrcBuf, size);
+  // Setting jump marker before calling ReadHeader, since a longjmp to
+  // the marker indicates a fatal error.
+  if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
+    m_pJpegContext.reset();
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+
+  int32_t readResult =
+      pJpegModule->ReadHeader(m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight,
+                              &m_SrcComponents, pAttribute);
+  while (readResult == 2) {
+    FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
+    if (!JpegReadMoreData(pJpegModule, error_status)) {
+      m_status = error_status;
+      return false;
+    }
+    readResult =
+        pJpegModule->ReadHeader(m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight,
+                                &m_SrcComponents, pAttribute);
+  }
+  if (!readResult) {
+    m_SrcBPC = 8;
+    m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
+    return true;
+  }
+  m_pJpegContext.reset();
+  m_status = FXCODEC_STATUS_ERR_FORMAT;
+  return false;
+}
+
+bool CCodec_ProgressiveDecoder::PngDetectImageType(CFX_DIBAttribute* pAttribute,
+                                                   uint32_t size) {
+  CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+  if (!pPngModule) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return false;
+  }
+  m_pPngContext = pPngModule->Start(this);
+  if (!m_pPngContext) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return false;
+  }
+  bool bResult = m_pFile->ReadBlock(m_pSrcBuf, 0, size);
+  if (!bResult) {
+    m_status = FXCODEC_STATUS_ERR_READ;
+    return false;
+  }
+  m_offSet += size;
+  bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, size, pAttribute);
+  while (bResult) {
+    uint32_t remain_size = static_cast<uint32_t>(m_pFile->GetSize()) - m_offSet;
+    uint32_t input_size =
+        remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
+    if (input_size == 0) {
+      m_pPngContext.reset();
+      m_status = FXCODEC_STATUS_ERR_FORMAT;
+      return false;
+    }
+    if (m_pSrcBuf && input_size > m_SrcSize) {
+      FX_Free(m_pSrcBuf);
+      m_pSrcBuf = FX_Alloc(uint8_t, input_size);
+      memset(m_pSrcBuf, 0, input_size);
+      m_SrcSize = input_size;
+    }
+    bResult = m_pFile->ReadBlock(m_pSrcBuf, m_offSet, input_size);
+    if (!bResult) {
+      m_status = FXCODEC_STATUS_ERR_READ;
+      return false;
+    }
+    m_offSet += input_size;
+    bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, input_size,
+                                pAttribute);
+  }
+  ASSERT(!bResult);
+  m_pPngContext.reset();
+  if (m_SrcPassNumber == 0) {
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+  return true;
+}
+
+bool CCodec_ProgressiveDecoder::GifDetectImageType(CFX_DIBAttribute* pAttribute,
+                                                   uint32_t size) {
+  CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+  if (!pGifModule) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return false;
+  }
+  m_pGifContext = pGifModule->Start(this);
+  bool bResult = m_pFile->ReadBlock(m_pSrcBuf, 0, size);
+  if (!bResult) {
+    m_status = FXCODEC_STATUS_ERR_READ;
+    return false;
+  }
+  m_offSet += size;
+  pGifModule->Input(m_pGifContext.get(), m_pSrcBuf, size);
+  m_SrcComponents = 1;
+  CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
+      m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
+      (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
+  while (readResult == CFX_GifDecodeStatus::Unfinished) {
+    FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
+    if (!GifReadMoreData(pGifModule, error_status)) {
+      m_pGifContext = nullptr;
+      m_status = error_status;
+      return false;
+    }
+    readResult = pGifModule->ReadHeader(
+        m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
+        (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
+  }
+  if (readResult == CFX_GifDecodeStatus::Success) {
+    m_SrcBPC = 8;
+    m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
+    return true;
+  }
+  m_pGifContext = nullptr;
+  m_status = FXCODEC_STATUS_ERR_FORMAT;
+  return false;
+}
+
+bool CCodec_ProgressiveDecoder::TifDetectImageType(CFX_DIBAttribute* pAttribute,
+                                                   uint32_t size) {
+  CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
+  if (!pTiffModule) {
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+  m_pTiffContext = pTiffModule->CreateDecoder(m_pFile);
+  if (!m_pTiffContext) {
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+  int32_t dummy_bpc;
+  bool ret = pTiffModule->LoadFrameInfo(m_pTiffContext.get(), 0, &m_SrcWidth,
+                                        &m_SrcHeight, &m_SrcComponents,
+                                        &dummy_bpc, pAttribute);
+  m_SrcComponents = 4;
+  m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
+  if (!ret) {
+    m_pTiffContext.reset();
+    m_status = FXCODEC_STATUS_ERR_FORMAT;
+    return false;
+  }
+  return true;
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(

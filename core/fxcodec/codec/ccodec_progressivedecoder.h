@@ -155,17 +155,23 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
                        FXCODEC_STATUS& err_status);
   bool GifReadMoreData(CCodec_GifModule* pGifModule,
                        FXCODEC_STATUS& err_status);
-  void GifDoubleLineResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-                                 double scale_y,
-                                 int des_row);
+  bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
+                        FXCODEC_STATUS& err_status);
   void PngOneOneMapResampleHorz(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                                 int32_t des_line,
                                 uint8_t* src_scan,
                                 FXCodec_Format src_format);
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
+  bool BmpDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
+  bool JpegDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
+  bool PngDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
+  bool GifDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
+  bool TifDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
+
   void GetDownScale(int& down_scale);
   void GetTransMethod(FXDIB_Format des_format, FXCodec_Format src_format);
+
   void ReSampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                         int32_t des_line,
                         uint8_t* src_scan,
@@ -177,11 +183,12 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   void ResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                     double scale_y,
                     int des_row);
-  bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
-                        FXCODEC_STATUS& err_status);
   void ResampleVertBT(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                       double scale_y,
                       int des_row);
+  void GifDoubleLineResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
+                                 double scale_y,
+                                 int des_row);
 
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
