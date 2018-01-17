@@ -48,3 +48,25 @@ int32_t CXFA_Stipple::GetRate() {
       ->TryInteger(XFA_Attribute::Rate, true)
       .value_or(GetDefaultRate());
 }
+
+void CXFA_Stipple::Draw(CXFA_Graphics* pGS,
+                        CXFA_GEPath* fillPath,
+                        const CFX_RectF& rtFill,
+                        const CFX_Matrix& matrix) {
+  int32_t iRate = GetRate();
+  if (iRate == 0)
+    iRate = 100;
+
+  CXFA_Color* pColor = GetColorIfExists();
+  FX_ARGB crColor = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
+
+  int32_t a;
+  FX_COLORREF rgb;
+  std::tie(a, rgb) = ArgbToColorRef(crColor);
+  FX_ARGB cr = ArgbEncode(iRate * a / 100, rgb);
+
+  pGS->SaveGraphState();
+  pGS->SetFillColor(CXFA_GEColor(cr));
+  pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+  pGS->RestoreGraphState();
+}

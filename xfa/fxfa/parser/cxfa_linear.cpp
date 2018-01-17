@@ -9,6 +9,7 @@
 #include "fxjs/xfa/cjx_linear.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_geshading.h"
 
 namespace {
 
@@ -48,4 +49,43 @@ XFA_AttributeEnum CXFA_Linear::GetType() {
 
 CXFA_Color* CXFA_Linear::GetColorIfExists() {
   return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+}
+
+void CXFA_Linear::Draw(CXFA_Graphics* pGS,
+                       CXFA_GEPath* fillPath,
+                       FX_ARGB crStart,
+                       const CFX_RectF& rtFill,
+                       const CFX_Matrix& matrix) {
+  CXFA_Color* pColor = GetColorIfExists();
+  FX_ARGB crEnd = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
+
+  CFX_PointF ptStart;
+  CFX_PointF ptEnd;
+  switch (GetType()) {
+    case XFA_AttributeEnum::ToRight:
+      ptStart = CFX_PointF(rtFill.left, rtFill.top);
+      ptEnd = CFX_PointF(rtFill.right(), rtFill.top);
+      break;
+    case XFA_AttributeEnum::ToBottom:
+      ptStart = CFX_PointF(rtFill.left, rtFill.top);
+      ptEnd = CFX_PointF(rtFill.left, rtFill.bottom());
+      break;
+    case XFA_AttributeEnum::ToLeft:
+      ptStart = CFX_PointF(rtFill.right(), rtFill.top);
+      ptEnd = CFX_PointF(rtFill.left, rtFill.top);
+      break;
+    case XFA_AttributeEnum::ToTop:
+      ptStart = CFX_PointF(rtFill.left, rtFill.bottom());
+      ptEnd = CFX_PointF(rtFill.left, rtFill.top);
+      break;
+    default:
+      break;
+  }
+
+  CXFA_GEShading shading(ptStart, ptEnd, false, false, crStart, crEnd);
+
+  pGS->SaveGraphState();
+  pGS->SetFillColor(CXFA_GEColor(&shading));
+  pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+  pGS->RestoreGraphState();
 }

@@ -7,9 +7,12 @@
 #ifndef XFA_FXFA_PARSER_CXFA_STIPPLE_H_
 #define XFA_FXFA_PARSER_CXFA_STIPPLE_H_
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
 class CXFA_Color;
+class CXFA_Graphics;
 
 class CXFA_Stipple : public CXFA_Node {
  public:
@@ -18,6 +21,12 @@ class CXFA_Stipple : public CXFA_Node {
   CXFA_Stipple(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Stipple() override;
 
+  void Draw(CXFA_Graphics* pGS,
+            CXFA_GEPath* fillPath,
+            const CFX_RectF& rtFill,
+            const CFX_Matrix& matrix);
+
+ private:
   CXFA_Color* GetColorIfExists();
   int32_t GetRate();
 };

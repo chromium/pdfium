@@ -7,9 +7,12 @@
 #ifndef XFA_FXFA_PARSER_CXFA_FILL_H_
 #define XFA_FXFA_PARSER_CXFA_FILL_H_
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxgraphics/cxfa_gepath.h"
 
+class CXFA_Graphics;
 class CXFA_Linear;
 class CXFA_Pattern;
 class CXFA_Radial;
@@ -25,25 +28,30 @@ class CXFA_Fill : public CXFA_Node {
   FX_ARGB GetColor(bool bText);
   void SetColor(FX_ARGB color);
 
-  XFA_Element GetFillType() const;
-
-  XFA_AttributeEnum GetPatternType();
-  FX_ARGB GetPatternColor();
-
-  XFA_AttributeEnum GetLinearType();
-  FX_ARGB GetLinearColor();
-
-  int32_t GetStippleRate();
-  FX_ARGB GetStippleColor();
-
-  bool IsRadialToEdge();
-  FX_ARGB GetRadialColor();
+  void Draw(CXFA_Graphics* pGS,
+            CXFA_GEPath* fillPath,
+            const CFX_RectF& rtWidget,
+            const CFX_Matrix& matrix);
 
  private:
-  CXFA_Stipple* GetStippleIfExists();
-  CXFA_Radial* GetRadialIfExists();
-  CXFA_Linear* GetLinearIfExists();
-  CXFA_Pattern* GetPatternIfExists();
+  XFA_Element GetType() const;
+
+  void DrawStipple(CXFA_Graphics* pGS,
+                   CXFA_GEPath* fillPath,
+                   const CFX_RectF& rtWidget,
+                   const CFX_Matrix& matrix);
+  void DrawRadial(CXFA_Graphics* pGS,
+                  CXFA_GEPath* fillPath,
+                  const CFX_RectF& rtWidget,
+                  const CFX_Matrix& matrix);
+  void DrawLinear(CXFA_Graphics* pGS,
+                  CXFA_GEPath* fillPath,
+                  const CFX_RectF& rtWidget,
+                  const CFX_Matrix& matrix);
+  void DrawPattern(CXFA_Graphics* pGS,
+                   CXFA_GEPath* fillPath,
+                   const CFX_RectF& rtWidget,
+                   const CFX_Matrix& matrix);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_FILL_H_

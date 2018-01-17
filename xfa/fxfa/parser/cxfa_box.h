@@ -60,6 +60,11 @@ class CXFA_Box : public CXFA_Node {
 
  private:
   std::vector<CXFA_Stroke*> GetStrokesInternal(bool bNull);
+  void DrawFill(const std::vector<CXFA_Stroke*>& strokes,
+                CXFA_Graphics* pGS,
+                const CFX_RectF& rtWidget,
+                const CFX_Matrix& matrix,
+                bool forceRound);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOX_H_

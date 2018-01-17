@@ -9,6 +9,7 @@
 #include "fxjs/xfa/cjx_pattern.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_gepattern.h"
 
 namespace {
 
@@ -46,4 +47,41 @@ CXFA_Color* CXFA_Pattern::GetColorIfExists() {
 
 XFA_AttributeEnum CXFA_Pattern::GetType() {
   return JSObject()->GetEnum(XFA_Attribute::Type);
+}
+
+void CXFA_Pattern::Draw(CXFA_Graphics* pGS,
+                        CXFA_GEPath* fillPath,
+                        FX_ARGB crStart,
+                        const CFX_RectF& rtFill,
+                        const CFX_Matrix& matrix) {
+  CXFA_Color* pColor = GetColorIfExists();
+  FX_ARGB crEnd = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
+
+  FX_HatchStyle iHatch = FX_HatchStyle::Cross;
+  switch (GetType()) {
+    case XFA_AttributeEnum::CrossDiagonal:
+      iHatch = FX_HatchStyle::DiagonalCross;
+      break;
+    case XFA_AttributeEnum::DiagonalLeft:
+      iHatch = FX_HatchStyle::ForwardDiagonal;
+      break;
+    case XFA_AttributeEnum::DiagonalRight:
+      iHatch = FX_HatchStyle::BackwardDiagonal;
+      break;
+    case XFA_AttributeEnum::Horizontal:
+      iHatch = FX_HatchStyle::Horizontal;
+      break;
+    case XFA_AttributeEnum::Vertical:
+      iHatch = FX_HatchStyle::Vertical;
+      break;
+    default:
+      break;
+  }
+
+  CXFA_GEPattern pattern(iHatch, crEnd, crStart);
+
+  pGS->SaveGraphState();
+  pGS->SetFillColor(CXFA_GEColor(&pattern, 0x0));
+  pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+  pGS->RestoreGraphState();
 }

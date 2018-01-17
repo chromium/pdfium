@@ -75,7 +75,7 @@ FX_ARGB CXFA_Fill::GetColor(bool bText) {
   return pColor->GetValueOrDefault(bText ? 0xFF000000 : 0xFFFFFFFF);
 }
 
-XFA_Element CXFA_Fill::GetFillType() const {
+XFA_Element CXFA_Fill::GetType() const {
   CXFA_Node* pChild = GetFirstChild();
   while (pChild) {
     XFA_Element eType = pChild->GetElementType();
@@ -87,76 +87,70 @@ XFA_Element CXFA_Fill::GetFillType() const {
   return XFA_Element::Solid;
 }
 
-XFA_AttributeEnum CXFA_Fill::GetPatternType() {
-  CXFA_Pattern* pattern = GetPatternIfExists();
-  return pattern ? pattern->GetType() : CXFA_Pattern::kDefaultType;
+void CXFA_Fill::Draw(CXFA_Graphics* pGS,
+                     CXFA_GEPath* fillPath,
+                     const CFX_RectF& rtWidget,
+                     const CFX_Matrix& matrix) {
+  pGS->SaveGraphState();
+
+  switch (GetType()) {
+    case XFA_Element::Radial:
+      DrawRadial(pGS, fillPath, rtWidget, matrix);
+      break;
+    case XFA_Element::Pattern:
+      DrawPattern(pGS, fillPath, rtWidget, matrix);
+      break;
+    case XFA_Element::Linear:
+      DrawLinear(pGS, fillPath, rtWidget, matrix);
+      break;
+    case XFA_Element::Stipple:
+      DrawStipple(pGS, fillPath, rtWidget, matrix);
+      break;
+    default:
+      pGS->SetFillColor(CXFA_GEColor(GetColor(false)));
+      pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+      break;
+  }
+
+  pGS->RestoreGraphState();
 }
 
-FX_ARGB CXFA_Fill::GetPatternColor() {
-  CXFA_Pattern* pattern = GetPatternIfExists();
-  if (!pattern)
-    return CXFA_Color::kBlackColor;
-
-  CXFA_Color* pColor = pattern->GetColorIfExists();
-  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
+void CXFA_Fill::DrawStipple(CXFA_Graphics* pGS,
+                            CXFA_GEPath* fillPath,
+                            const CFX_RectF& rtWidget,
+                            const CFX_Matrix& matrix) {
+  CXFA_Stipple* stipple =
+      JSObject()->GetOrCreateProperty<CXFA_Stipple>(0, XFA_Element::Stipple);
+  if (stipple)
+    stipple->Draw(pGS, fillPath, rtWidget, matrix);
 }
 
-int32_t CXFA_Fill::GetStippleRate() {
-  CXFA_Stipple* stipple = GetStippleIfExists();
-  if (!stipple)
-    return CXFA_Stipple::GetDefaultRate();
-  return stipple->GetRate();
+void CXFA_Fill::DrawRadial(CXFA_Graphics* pGS,
+                           CXFA_GEPath* fillPath,
+                           const CFX_RectF& rtWidget,
+                           const CFX_Matrix& matrix) {
+  CXFA_Radial* radial =
+      JSObject()->GetOrCreateProperty<CXFA_Radial>(0, XFA_Element::Radial);
+  if (radial)
+    radial->Draw(pGS, fillPath, GetColor(false), rtWidget, matrix);
 }
 
-FX_ARGB CXFA_Fill::GetStippleColor() {
-  CXFA_Stipple* stipple = GetStippleIfExists();
-  if (!stipple)
-    return CXFA_Color::kBlackColor;
-
-  CXFA_Color* pColor = stipple->GetColorIfExists();
-  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
+void CXFA_Fill::DrawLinear(CXFA_Graphics* pGS,
+                           CXFA_GEPath* fillPath,
+                           const CFX_RectF& rtWidget,
+                           const CFX_Matrix& matrix) {
+  CXFA_Linear* linear =
+      JSObject()->GetOrCreateProperty<CXFA_Linear>(0, XFA_Element::Linear);
+  if (linear)
+    linear->Draw(pGS, fillPath, GetColor(false), rtWidget, matrix);
 }
 
-XFA_AttributeEnum CXFA_Fill::GetLinearType() {
-  CXFA_Linear* linear = GetLinearIfExists();
-  return linear ? linear->GetType() : CXFA_Linear::kDefaultType;
-}
-
-FX_ARGB CXFA_Fill::GetLinearColor() {
-  CXFA_Linear* linear = GetLinearIfExists();
-  if (!linear)
-    return CXFA_Color::kBlackColor;
-
-  CXFA_Color* pColor = linear->GetColorIfExists();
-  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
-}
-
-bool CXFA_Fill::IsRadialToEdge() {
-  CXFA_Radial* radial = GetRadialIfExists();
-  return radial ? radial->IsToEdge() : false;
-}
-
-FX_ARGB CXFA_Fill::GetRadialColor() {
-  CXFA_Radial* radial = GetRadialIfExists();
-  if (!radial)
-    return CXFA_Color::kBlackColor;
-
-  CXFA_Color* pColor = radial->GetColorIfExists();
-  return pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
-}
-
-CXFA_Stipple* CXFA_Fill::GetStippleIfExists() {
-  return JSObject()->GetOrCreateProperty<CXFA_Stipple>(0, XFA_Element::Stipple);
-}
-
-CXFA_Radial* CXFA_Fill::GetRadialIfExists() {
-  return JSObject()->GetOrCreateProperty<CXFA_Radial>(0, XFA_Element::Radial);
-}
-
-CXFA_Linear* CXFA_Fill::GetLinearIfExists() {
-  return JSObject()->GetOrCreateProperty<CXFA_Linear>(0, XFA_Element::Linear);
-}
-
-CXFA_Pattern* CXFA_Fill::GetPatternIfExists() {
-  return JSObject()->GetOrCreateProperty<CXFA_Pattern>(0, XFA_Element::Pattern);
+void CXFA_Fill::DrawPattern(CXFA_Graphics* pGS,
+                            CXFA_GEPath* fillPath,
+                            const CFX_RectF& rtWidget,
+                            const CFX_Matrix& matrix) {
+  CXFA_Pattern* pattern =
+      JSObject()->GetOrCreateProperty<CXFA_Pattern>(0, XFA_Element::Pattern);
+  if (pattern)
+    pattern->Draw(pGS, fillPath, GetColor(false), rtWidget, matrix);
 }

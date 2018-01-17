@@ -394,146 +394,6 @@ void XFA_BOX_GetFillPath(CXFA_Box* box,
   }
 }
 
-void XFA_BOX_Fill_Radial(CXFA_Fill* fill,
-                         CXFA_Graphics* pGS,
-                         CXFA_GEPath& fillPath,
-                         CFX_RectF rtFill,
-                         const CFX_Matrix& matrix) {
-  ASSERT(fill);
-
-  FX_ARGB crStart = fill->GetColor(false);
-  FX_ARGB crEnd = fill->GetRadialColor();
-  if (!fill->IsRadialToEdge())
-    std::swap(crStart, crEnd);
-
-  CXFA_GEShading shading(rtFill.Center(), rtFill.Center(), 0,
-                         sqrt(rtFill.Width() * rtFill.Width() +
-                              rtFill.Height() * rtFill.Height()) /
-                             2,
-                         true, true, crStart, crEnd);
-  pGS->SetFillColor(CXFA_GEColor(&shading));
-  pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
-}
-
-void XFA_BOX_Fill_Pattern(CXFA_Fill* fill,
-                          CXFA_Graphics* pGS,
-                          CXFA_GEPath& fillPath,
-                          CFX_RectF rtFill,
-                          const CFX_Matrix& matrix) {
-  ASSERT(fill);
-
-  FX_ARGB crStart = fill->GetColor(false);
-  FX_ARGB crEnd = fill->GetPatternColor();
-  FX_HatchStyle iHatch = FX_HatchStyle::Cross;
-  switch (fill->GetPatternType()) {
-    case XFA_AttributeEnum::CrossDiagonal:
-      iHatch = FX_HatchStyle::DiagonalCross;
-      break;
-    case XFA_AttributeEnum::DiagonalLeft:
-      iHatch = FX_HatchStyle::ForwardDiagonal;
-      break;
-    case XFA_AttributeEnum::DiagonalRight:
-      iHatch = FX_HatchStyle::BackwardDiagonal;
-      break;
-    case XFA_AttributeEnum::Horizontal:
-      iHatch = FX_HatchStyle::Horizontal;
-      break;
-    case XFA_AttributeEnum::Vertical:
-      iHatch = FX_HatchStyle::Vertical;
-      break;
-    default:
-      break;
-  }
-
-  CXFA_GEPattern pattern(iHatch, crEnd, crStart);
-  pGS->SetFillColor(CXFA_GEColor(&pattern, 0x0));
-  pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
-}
-
-void XFA_BOX_Fill_Linear(CXFA_Fill* fill,
-                         CXFA_Graphics* pGS,
-                         CXFA_GEPath& fillPath,
-                         CFX_RectF rtFill,
-                         const CFX_Matrix& matrix) {
-  ASSERT(fill);
-
-  FX_ARGB crStart = fill->GetColor(false);
-  FX_ARGB crEnd = fill->GetLinearColor();
-
-  CFX_PointF ptStart;
-  CFX_PointF ptEnd;
-  switch (fill->GetLinearType()) {
-    case XFA_AttributeEnum::ToRight:
-      ptStart = CFX_PointF(rtFill.left, rtFill.top);
-      ptEnd = CFX_PointF(rtFill.right(), rtFill.top);
-      break;
-    case XFA_AttributeEnum::ToBottom:
-      ptStart = CFX_PointF(rtFill.left, rtFill.top);
-      ptEnd = CFX_PointF(rtFill.left, rtFill.bottom());
-      break;
-    case XFA_AttributeEnum::ToLeft:
-      ptStart = CFX_PointF(rtFill.right(), rtFill.top);
-      ptEnd = CFX_PointF(rtFill.left, rtFill.top);
-      break;
-    case XFA_AttributeEnum::ToTop:
-      ptStart = CFX_PointF(rtFill.left, rtFill.bottom());
-      ptEnd = CFX_PointF(rtFill.left, rtFill.top);
-      break;
-    default:
-      break;
-  }
-
-  CXFA_GEShading shading(ptStart, ptEnd, false, false, crStart, crEnd);
-  pGS->SetFillColor(CXFA_GEColor(&shading));
-  pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
-}
-
-void XFA_BOX_Fill(CXFA_Box* box,
-                  const std::vector<CXFA_Stroke*>& strokes,
-                  CXFA_Graphics* pGS,
-                  const CFX_RectF& rtWidget,
-                  const CFX_Matrix& matrix,
-                  bool forceRound) {
-  CXFA_Fill* fill = box->GetFillIfExists();
-  if (!fill || !fill->IsVisible())
-    return;
-
-  pGS->SaveGraphState();
-  CXFA_GEPath fillPath;
-  XFA_BOX_GetFillPath(box, strokes, rtWidget, fillPath, forceRound);
-  fillPath.Close();
-  XFA_Element eType = fill->GetFillType();
-  switch (eType) {
-    case XFA_Element::Radial:
-      XFA_BOX_Fill_Radial(fill, pGS, fillPath, rtWidget, matrix);
-      break;
-    case XFA_Element::Pattern:
-      XFA_BOX_Fill_Pattern(fill, pGS, fillPath, rtWidget, matrix);
-      break;
-    case XFA_Element::Linear:
-      XFA_BOX_Fill_Linear(fill, pGS, fillPath, rtWidget, matrix);
-      break;
-    default: {
-      FX_ARGB cr;
-      if (eType == XFA_Element::Stipple) {
-        int32_t iRate = fill->GetStippleRate();
-        if (iRate == 0)
-          iRate = 100;
-
-        int32_t a;
-        FX_COLORREF rgb;
-        std::tie(a, rgb) = ArgbToColorRef(fill->GetStippleColor());
-        cr = ArgbEncode(iRate * a / 100, rgb);
-      } else {
-        cr = fill->GetColor(false);
-      }
-      pGS->SetFillColor(CXFA_GEColor(cr));
-      pGS->FillPath(&fillPath, FXFILL_WINDING, &matrix);
-    } break;
-  }
-  pGS->RestoreGraphState();
-}
-
 void XFA_BOX_StrokeArc(CXFA_Box* box,
                        CXFA_Graphics* pGS,
                        CFX_RectF rtWidget,
@@ -1016,6 +876,25 @@ void CXFA_Box::Draw(CXFA_Graphics* pGS,
   if (!forceRound && eType != XFA_Element::Arc)
     strokes = GetStrokes();
 
-  XFA_BOX_Fill(this, strokes, pGS, rtWidget, matrix, forceRound);
+  DrawFill(strokes, pGS, rtWidget, matrix, forceRound);
   XFA_BOX_Stroke(this, strokes, pGS, rtWidget, matrix, forceRound);
+}
+
+void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
+                        CXFA_Graphics* pGS,
+                        const CFX_RectF& rtWidget,
+                        const CFX_Matrix& matrix,
+                        bool forceRound) {
+  CXFA_Fill* fill = GetFillIfExists();
+  if (!fill || !fill->IsVisible())
+    return;
+
+  pGS->SaveGraphState();
+
+  CXFA_GEPath fillPath;
+  XFA_BOX_GetFillPath(this, strokes, rtWidget, fillPath, forceRound);
+  fillPath.Close();
+
+  fill->Draw(pGS, &fillPath, rtWidget, matrix);
+  pGS->RestoreGraphState();
 }

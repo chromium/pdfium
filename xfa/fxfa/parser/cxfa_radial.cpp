@@ -6,9 +6,12 @@
 
 #include "xfa/fxfa/parser/cxfa_radial.h"
 
+#include <utility>
+
 #include "fxjs/xfa/cjx_radial.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
+#include "xfa/fxgraphics/cxfa_geshading.h"
 
 namespace {
 
@@ -48,4 +51,26 @@ bool CXFA_Radial::IsToEdge() {
 
 CXFA_Color* CXFA_Radial::GetColorIfExists() {
   return GetChild<CXFA_Color>(0, XFA_Element::Color, false);
+}
+
+void CXFA_Radial::Draw(CXFA_Graphics* pGS,
+                       CXFA_GEPath* fillPath,
+                       FX_ARGB crStart,
+                       const CFX_RectF& rtFill,
+                       const CFX_Matrix& matrix) {
+  CXFA_Color* pColor = GetColorIfExists();
+  FX_ARGB crEnd = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
+  if (!IsToEdge())
+    std::swap(crStart, crEnd);
+
+  float endRadius = sqrt(rtFill.Width() * rtFill.Width() +
+                         rtFill.Height() * rtFill.Height()) /
+                    2;
+  CXFA_GEShading shading(rtFill.Center(), rtFill.Center(), 0, endRadius, true,
+                         true, crStart, crEnd);
+
+  pGS->SaveGraphState();
+  pGS->SetFillColor(CXFA_GEColor(&shading));
+  pGS->FillPath(fillPath, FXFILL_WINDING, &matrix);
+  pGS->RestoreGraphState();
 }
