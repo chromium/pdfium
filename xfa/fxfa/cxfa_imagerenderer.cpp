@@ -27,7 +27,8 @@ CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start() {
   if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, 255, 0, &m_ImageMatrix,
-                                      m_Flags, &m_DeviceHandle, m_BlendType)) {
+                                      m_Flags, &m_DeviceHandle,
+                                      FXDIB_BLEND_NORMAL)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return true;
@@ -67,7 +68,7 @@ bool CXFA_ImageRenderer::Start() {
   if (m_pDIBSource->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
             m_pDIBSource, dest_left, dest_top, dest_width, dest_height, m_Flags,
-            m_BlendType)) {
+            FXDIB_BLEND_NORMAL)) {
       return false;
     }
   }
@@ -88,8 +89,7 @@ bool CXFA_ImageRenderer::Start() {
   RetainPtr<CFX_DIBitmap> pStretched =
       m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
   if (pStretched) {
-    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, m_BlendType,
-                      false);
+    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, false);
   }
   return false;
 }
@@ -108,7 +108,8 @@ bool CXFA_ImageRenderer::Continue() {
                             m_pTransformer->result().top, 0);
     } else {
       m_pDevice->SetDIBitsWithBlend(pBitmap, m_pTransformer->result().left,
-                                    m_pTransformer->result().top, m_BlendType);
+                                    m_pTransformer->result().top,
+                                    FXDIB_BLEND_NORMAL);
     }
     return false;
   }
@@ -122,34 +123,30 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     int left,
     int top,
-    int blend_mode,
     int iTransparency) {
-  if (!pDIBitmap) {
+  if (!pDIBitmap)
     return;
-  }
+
   bool bIsolated = !!(iTransparency & PDFTRANS_ISOLATED);
   bool bGroup = !!(iTransparency & PDFTRANS_GROUP);
-  if (blend_mode == FXDIB_BLEND_NORMAL) {
-    if (!pDIBitmap->IsAlphaMask()) {
-      if (m_pDevice->SetDIBits(pDIBitmap, left, top))
-        return;
-    } else {
-      uint32_t fill_argb = 0;
-      if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb))
-        return;
-    }
+  if (!pDIBitmap->IsAlphaMask()) {
+    if (m_pDevice->SetDIBits(pDIBitmap, left, top))
+      return;
+  } else {
+    uint32_t fill_argb = 0;
+    if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb))
+      return;
   }
-  bool bBackAlphaRequired = blend_mode && bIsolated;
-  bool bGetBackGround =
-      ((m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
-      (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
-       (m_pDevice->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);
+
+  bool bGetBackGround = ((m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
+                        (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
+                         (m_pDevice->GetRenderCaps() & FXRC_GET_BITS));
   if (bGetBackGround) {
     if (bIsolated || !bGroup) {
-      if (pDIBitmap->IsAlphaMask()) {
+      if (pDIBitmap->IsAlphaMask())
         return;
-      }
-      m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, blend_mode);
+
+      m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, FXDIB_BLEND_NORMAL);
     } else {
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
@@ -164,10 +161,10 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
         top = top >= 0 ? 0 : top;
         if (!pDIBitmap->IsAlphaMask())
           pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                  pDIBitmap, left, top, blend_mode);
+                                  pDIBitmap, left, top, FXDIB_BLEND_NORMAL);
         else
           pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                pDIBitmap, 0, left, top, blend_mode);
+                                pDIBitmap, 0, left, top, FXDIB_BLEND_NORMAL);
       } else {
         pClone = pDIBitmap;
       }
@@ -177,7 +174,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
         if (pDIBitmap->IsAlphaMask())
           return;
         m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
-                                      blend_mode);
+                                      FXDIB_BLEND_NORMAL);
       }
     }
     return;

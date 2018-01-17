@@ -34,7 +34,6 @@ class CXFA_ImageRenderer {
   void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
                          int top,
-                         int blend_mode,
                          int iTransparency);
 
   CFX_RenderDevice* m_pDevice;
@@ -45,7 +44,6 @@ class CXFA_ImageRenderer {
   uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
-  int32_t m_BlendType = FXDIB_BLEND_NORMAL;
 };
 
 #endif  // XFA_FXFA_CXFA_IMAGERENDERER_H_
