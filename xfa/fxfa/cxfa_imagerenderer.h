@@ -21,20 +21,18 @@ class CFX_ImageRenderer;
 
 class CXFA_ImageRenderer {
  public:
-  CXFA_ImageRenderer();
+  CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
+                     const RetainPtr<CFX_DIBSource>& pDIBSource,
+                     FX_ARGB bitmap_argb,
+                     int bitmap_alpha,
+                     const CFX_Matrix* pImage2Device,
+                     uint32_t flags);
   ~CXFA_ImageRenderer();
 
-  bool Start(CFX_RenderDevice* pDevice,
-             const RetainPtr<CFX_DIBSource>& pDIBSource,
-             FX_ARGB bitmap_argb,
-             int bitmap_alpha,
-             const CFX_Matrix* pImage2Device,
-             uint32_t flags,
-             int blendType = FXDIB_BLEND_NORMAL);
+  bool Start();
   bool Continue();
 
  protected:
-  bool StartDIBSource();
   void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
                          int top,
@@ -48,9 +46,9 @@ class CXFA_ImageRenderer {
   CFX_Matrix m_ImageMatrix;
   RetainPtr<CFX_DIBSource> m_pDIBSource;
   RetainPtr<CFX_DIBitmap> m_pCloneConvert;
-  int m_BitmapAlpha = 255;
-  FX_ARGB m_FillArgb = 0;
-  uint32_t m_Flags = 0;
+  int m_BitmapAlpha;
+  FX_ARGB m_FillArgb;
+  uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
   int32_t m_BlendType = FXDIB_BLEND_NORMAL;

@@ -13,28 +13,23 @@
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/ptr_util.h"
 
-CXFA_ImageRenderer::CXFA_ImageRenderer() : m_pDevice(nullptr) {}
+CXFA_ImageRenderer::CXFA_ImageRenderer(
+    CFX_RenderDevice* pDevice,
+    const RetainPtr<CFX_DIBSource>& pDIBSource,
+    FX_ARGB bitmap_argb,
+    int bitmap_alpha,
+    const CFX_Matrix* pImage2Device,
+    uint32_t flags)
+    : m_pDevice(pDevice),
+      m_ImageMatrix(*pImage2Device),
+      m_pDIBSource(pDIBSource),
+      m_BitmapAlpha(bitmap_alpha),
+      m_FillArgb(bitmap_argb),
+      m_Flags(flags) {}
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
-bool CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
-                               const RetainPtr<CFX_DIBSource>& pDIBSource,
-                               FX_ARGB bitmap_argb,
-                               int bitmap_alpha,
-                               const CFX_Matrix* pImage2Device,
-                               uint32_t flags,
-                               int blendType) {
-  m_pDevice = pDevice;
-  m_pDIBSource = pDIBSource;
-  m_FillArgb = bitmap_argb;
-  m_BitmapAlpha = bitmap_alpha;
-  m_ImageMatrix = *pImage2Device;
-  m_Flags = flags;
-  m_BlendType = blendType;
-  return StartDIBSource();
-}
-
-bool CXFA_ImageRenderer::StartDIBSource() {
+bool CXFA_ImageRenderer::Start() {
   if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, m_BitmapAlpha, m_FillArgb,
                                       &m_ImageMatrix, m_Flags, &m_DeviceHandle,
                                       m_BlendType)) {
@@ -228,9 +223,9 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
   if (!pCloneConvert)
     return;
 
-  CXFA_ImageRenderer imageRender;
-  if (!imageRender.Start(m_pDevice, pCloneConvert, m_FillArgb, m_BitmapAlpha,
-                         &m_ImageMatrix, m_Flags)) {
+  CXFA_ImageRenderer imageRender(m_pDevice, pCloneConvert, m_FillArgb,
+                                 m_BitmapAlpha, &m_ImageMatrix, m_Flags);
+  if (!imageRender.Start()) {
     return;
   }
   while (imageRender.Continue())
