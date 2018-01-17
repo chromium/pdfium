@@ -446,7 +446,7 @@ void EmbedderTest::WriteBitmapToPng(FPDF_BITMAP bitmap,
   ASSERT_LT(filename.size(), 256u);
 
   std::ofstream png_file;
-  png_file.open(filename);
+  png_file.open(filename, std::ios_base::out | std::ios_base::binary);
   png_file.write(reinterpret_cast<char*>(&png_encoding.front()),
                  png_encoding.size());
   ASSERT_TRUE(png_file.good());
