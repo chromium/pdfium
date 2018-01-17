@@ -23,7 +23,6 @@ class CXFA_ImageRenderer {
  public:
   CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
                      const RetainPtr<CFX_DIBSource>& pDIBSource,
-                     FX_ARGB bitmap_argb,
                      const CFX_Matrix* pImage2Device,
                      uint32_t flags);
   ~CXFA_ImageRenderer();
@@ -35,7 +34,6 @@ class CXFA_ImageRenderer {
   void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
                          int top,
-                         FX_ARGB mask_argb,
                          int blend_mode,
                          int iTransparency);
 
@@ -44,7 +42,6 @@ class CXFA_ImageRenderer {
   CFX_Matrix m_ImageMatrix;
   RetainPtr<CFX_DIBSource> m_pDIBSource;
   RetainPtr<CFX_DIBitmap> m_pCloneConvert;
-  FX_ARGB m_FillArgb;
   uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;

@@ -16,21 +16,18 @@
 CXFA_ImageRenderer::CXFA_ImageRenderer(
     CFX_RenderDevice* pDevice,
     const RetainPtr<CFX_DIBSource>& pDIBSource,
-    FX_ARGB bitmap_argb,
     const CFX_Matrix* pImage2Device,
     uint32_t flags)
     : m_pDevice(pDevice),
       m_ImageMatrix(*pImage2Device),
       m_pDIBSource(pDIBSource),
-      m_FillArgb(bitmap_argb),
       m_Flags(flags) {}
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start() {
-  if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, 255, m_FillArgb,
-                                      &m_ImageMatrix, m_Flags, &m_DeviceHandle,
-                                      m_BlendType)) {
+  if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, 255, 0, &m_ImageMatrix,
+                                      m_Flags, &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return true;
@@ -81,7 +78,7 @@ bool CXFA_ImageRenderer::Start() {
   }
   if (m_pDIBSource->IsAlphaMask()) {
     if (m_pDevice->StretchBitMaskWithFlags(m_pDIBSource, dest_left, dest_top,
-                                           dest_width, dest_height, m_FillArgb,
+                                           dest_width, dest_height, 0,
                                            m_Flags)) {
       return false;
     }
@@ -99,8 +96,8 @@ bool CXFA_ImageRenderer::Start() {
   RetainPtr<CFX_DIBitmap> pStretched =
       m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
   if (pStretched) {
-    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, m_FillArgb,
-                      m_BlendType, false);
+    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, m_BlendType,
+                      false);
   }
   return false;
 }
@@ -115,9 +112,8 @@ bool CXFA_ImageRenderer::Continue() {
       return false;
 
     if (pBitmap->IsAlphaMask()) {
-      m_Result =
-          m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
-                                m_pTransformer->result().top, m_FillArgb);
+      m_Result = m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
+                                       m_pTransformer->result().top, 0);
     } else {
       m_Result = m_pDevice->SetDIBitsWithBlend(
           pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
@@ -135,7 +131,6 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     int left,
     int top,
-    FX_ARGB mask_argb,
     int blend_mode,
     int iTransparency) {
   if (!pDIBitmap) {
@@ -148,7 +143,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
       if (m_pDevice->SetDIBits(pDIBitmap, left, top))
         return;
     } else {
-      uint32_t fill_argb = (mask_argb);
+      uint32_t fill_argb = 0;
       if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb))
         return;
     }
@@ -181,7 +176,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
                                   pDIBitmap, left, top, blend_mode);
         else
           pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                pDIBitmap, mask_argb, left, top, blend_mode);
+                                pDIBitmap, 0, left, top, blend_mode);
       } else {
         pClone = pDIBitmap;
       }
@@ -204,8 +199,8 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
   if (!pCloneConvert)
     return;
 
-  CXFA_ImageRenderer imageRender(m_pDevice, pCloneConvert, m_FillArgb,
-                                 &m_ImageMatrix, m_Flags);
+  CXFA_ImageRenderer imageRender(m_pDevice, pCloneConvert, &m_ImageMatrix,
+                                 m_Flags);
   if (!imageRender.Start()) {
     return;
   }
