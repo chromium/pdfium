@@ -50,10 +50,10 @@ std::pair<XFA_AttributeEnum, CXFA_Stroke*> Style3D(
   return {XFA_AttributeEnum::Unknown, stroke};
 }
 
-void XFA_BOX_GetPath_Arc(CXFA_Box* box,
-                         CFX_RectF rtDraw,
-                         CXFA_GEPath& fillPath,
-                         bool forceRound) {
+void XFA_BOX_GetPath_ArcOrRounded(CXFA_Box* box,
+                                  CFX_RectF rtDraw,
+                                  CXFA_GEPath& fillPath,
+                                  bool forceRound) {
   float a, b;
   a = rtDraw.width / 2.0f;
   b = rtDraw.height / 2.0f;
@@ -77,11 +77,11 @@ void XFA_BOX_GetPath_Arc(CXFA_Box* box,
                   -sweepAngle.value_or(360) * FX_PI / 180.0f);
 }
 
-void XFA_BOX_StrokeArc(CXFA_Box* box,
-                       CXFA_Graphics* pGS,
-                       CFX_RectF rtWidget,
-                       const CFX_Matrix& matrix,
-                       bool forceRound) {
+void XFA_BOX_StrokeArcOrRounded(CXFA_Box* box,
+                                CXFA_Graphics* pGS,
+                                CFX_RectF rtWidget,
+                                const CFX_Matrix& matrix,
+                                bool forceRound) {
   CXFA_Edge* edge = box->GetEdgeIfExists(0);
   if (!edge || !edge->IsVisible())
     return;
@@ -112,7 +112,7 @@ void XFA_BOX_StrokeArc(CXFA_Box* box,
       return;
 
     CXFA_GEPath arcPath;
-    XFA_BOX_GetPath_Arc(box, rtWidget, arcPath, forceRound);
+    XFA_BOX_GetPath_ArcOrRounded(box, rtWidget, arcPath, forceRound);
     if (edge)
       edge->Stroke(&arcPath, pGS, matrix);
     return;
@@ -322,7 +322,7 @@ void CXFA_Box::Draw(CXFA_Graphics* pGS,
   DrawFill(strokes, pGS, rtWidget, matrix, forceRound);
   XFA_Element type = GetElementType();
   if (type == XFA_Element::Arc || forceRound) {
-    XFA_BOX_StrokeArc(this, pGS, rtWidget, matrix, forceRound);
+    XFA_BOX_StrokeArcOrRounded(this, pGS, rtWidget, matrix, forceRound);
   } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
     ToRectangle(this)->Draw(strokes, pGS, rtWidget, matrix);
   } else {
@@ -353,7 +353,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
     else if (iHand == XFA_AttributeEnum::Right)
       rtWidget.Deflate(fHalf, fHalf);
 
-    XFA_BOX_GetPath_Arc(this, rtWidget, fillPath, forceRound);
+    XFA_BOX_GetPath_ArcOrRounded(this, rtWidget, fillPath, forceRound);
   } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
     ToRectangle(this)->GetFillPath(strokes, rtWidget, &fillPath);
   } else {
