@@ -1105,6 +1105,14 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       }
       m_offSet += size;
       pJpegModule->Input(m_pJpegContext.get(), m_pSrcBuf, size);
+      // Setting jump marker before calling ReadHeader, since a longjmp to
+      // the marker indicates a fatal error.
+      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
+        m_pJpegContext.reset();
+        m_status = FXCODEC_STATUS_ERR_FORMAT;
+        return false;
+      }
+
       int32_t readResult =
           pJpegModule->ReadHeader(m_pJpegContext.get(), &m_SrcWidth,
                                   &m_SrcHeight, &m_SrcComponents, pAttribute);

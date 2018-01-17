@@ -459,9 +459,6 @@ int CCodec_JpegModule::ReadHeader(Context* pContext,
                                   int* nComps) {
 #endif  // PDF_ENABLE_XFA
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  if (setjmp(ctx->m_JumpMark) == -1)
-    return 1;
-
   int ret = jpeg_read_header(&ctx->m_Info, true);
   if (ret == JPEG_SUSPENDED)
     return 2;
