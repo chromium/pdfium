@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 
+#include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"

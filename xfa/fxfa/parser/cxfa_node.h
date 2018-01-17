@@ -13,10 +13,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/ifx_locale.h"
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
-#include "fxjs/xfa/cjx_node.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
@@ -36,7 +34,7 @@ class CXFA_Script;
 class CXFA_Validate;
 class CXFA_Value;
 class CXFA_WidgetAcc;
-class IXFA_Locale;
+class IFX_Locale;
 
 #define XFA_NODEFILTER_Children 0x01
 #define XFA_NODEFILTER_Properties 0x02

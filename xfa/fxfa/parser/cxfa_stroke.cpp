@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"

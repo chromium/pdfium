@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
 
+#include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"

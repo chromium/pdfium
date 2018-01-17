@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 
+#include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"

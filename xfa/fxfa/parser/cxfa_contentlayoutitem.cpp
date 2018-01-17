@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 
+#include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(CXFA_Node* pNode)

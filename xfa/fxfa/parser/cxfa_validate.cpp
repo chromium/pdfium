@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_validate.h"
 
+#include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/cjx_validate.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_message.h"

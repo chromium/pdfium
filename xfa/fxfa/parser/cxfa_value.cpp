@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_value.h"
 
+#include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/cjx_value.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_arc.h"
