@@ -30,11 +30,10 @@ class CXFA_ImageRenderer {
   bool Start();
   bool Continue();
 
- protected:
+ private:
   void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
-                         int top,
-                         int iTransparency);
+                         int top);
 
   CFX_RenderDevice* m_pDevice;
   int m_Status = 0;

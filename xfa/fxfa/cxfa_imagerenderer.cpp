@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/cxfa_imagerenderer.h"
 
-#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
@@ -88,9 +87,9 @@ bool CXFA_ImageRenderer::Start() {
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
   RetainPtr<CFX_DIBitmap> pStretched =
       m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
-  if (pStretched) {
-    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, false);
-  }
+  if (pStretched)
+    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top);
+
   return false;
 }
 
@@ -122,76 +121,41 @@ bool CXFA_ImageRenderer::Continue() {
 void CXFA_ImageRenderer::CompositeDIBitmap(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     int left,
-    int top,
-    int iTransparency) {
+    int top) {
   if (!pDIBitmap)
     return;
 
-  bool bIsolated = !!(iTransparency & PDFTRANS_ISOLATED);
-  bool bGroup = !!(iTransparency & PDFTRANS_GROUP);
   if (!pDIBitmap->IsAlphaMask()) {
     if (m_pDevice->SetDIBits(pDIBitmap, left, top))
       return;
-  } else {
-    uint32_t fill_argb = 0;
-    if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb))
-      return;
+  } else if (m_pDevice->SetBitMask(pDIBitmap, left, top, 0)) {
+    return;
   }
 
   bool bGetBackGround = ((m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
                         (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
                          (m_pDevice->GetRenderCaps() & FXRC_GET_BITS));
   if (bGetBackGround) {
-    if (bIsolated || !bGroup) {
-      if (pDIBitmap->IsAlphaMask())
-        return;
+    if (pDIBitmap->IsAlphaMask())
+      return;
 
-      m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, FXDIB_BLEND_NORMAL);
-    } else {
-      FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
-                   top + pDIBitmap->GetHeight());
-      rect.Intersect(m_pDevice->GetClipBox());
-      RetainPtr<CFX_DIBitmap> pClone;
-      if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
-        pClone = m_pDevice->GetBackDrop()->Clone(&rect);
-        RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
-        pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                pForeBitmap, rect.left, rect.top);
-        left = left >= 0 ? 0 : left;
-        top = top >= 0 ? 0 : top;
-        if (!pDIBitmap->IsAlphaMask())
-          pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                  pDIBitmap, left, top, FXDIB_BLEND_NORMAL);
-        else
-          pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                pDIBitmap, 0, left, top, FXDIB_BLEND_NORMAL);
-      } else {
-        pClone = pDIBitmap;
-      }
-      if (m_pDevice->GetBackDrop()) {
-        m_pDevice->SetDIBits(pClone, rect.left, rect.top);
-      } else {
-        if (pDIBitmap->IsAlphaMask())
-          return;
-        m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
-                                      FXDIB_BLEND_NORMAL);
-      }
-    }
+    m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, FXDIB_BLEND_NORMAL);
     return;
   }
   if (!pDIBitmap->HasAlpha() ||
       (m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE)) {
     return;
   }
+
   RetainPtr<CFX_DIBitmap> pCloneConvert = pDIBitmap->CloneConvert(FXDIB_Rgb);
   if (!pCloneConvert)
     return;
 
   CXFA_ImageRenderer imageRender(m_pDevice, pCloneConvert, &m_ImageMatrix,
                                  m_Flags);
-  if (!imageRender.Start()) {
+  if (!imageRender.Start())
     return;
-  }
+
   while (imageRender.Continue())
     continue;
 }
