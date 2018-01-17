@@ -158,7 +158,7 @@ void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
 void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
 
-  auto* node = GetNode()->GetWidgetAcc()->GetNode();
+  auto* node = GetNode();
   const BarCodeInfo* info = GetBarcodeTypeByName(node->GetBarcodeType());
   if (!info)
     return;
