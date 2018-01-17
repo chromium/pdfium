@@ -23,8 +23,7 @@ class CXFA_ImageRenderer {
  public:
   CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
                      const RetainPtr<CFX_DIBSource>& pDIBSource,
-                     const CFX_Matrix* pImage2Device,
-                     uint32_t flags);
+                     const CFX_Matrix* pImage2Device);
   ~CXFA_ImageRenderer();
 
   bool Start();
@@ -40,7 +39,6 @@ class CXFA_ImageRenderer {
   CFX_Matrix m_ImageMatrix;
   RetainPtr<CFX_DIBSource> m_pDIBSource;
   RetainPtr<CFX_DIBitmap> m_pCloneConvert;
-  uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
 };

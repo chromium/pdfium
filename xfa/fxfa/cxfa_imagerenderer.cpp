@@ -15,18 +15,16 @@
 CXFA_ImageRenderer::CXFA_ImageRenderer(
     CFX_RenderDevice* pDevice,
     const RetainPtr<CFX_DIBSource>& pDIBSource,
-    const CFX_Matrix* pImage2Device,
-    uint32_t flags)
+    const CFX_Matrix* pImage2Device)
     : m_pDevice(pDevice),
       m_ImageMatrix(*pImage2Device),
-      m_pDIBSource(pDIBSource),
-      m_Flags(flags) {}
+      m_pDIBSource(pDIBSource) {}
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start() {
   if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, 255, 0, &m_ImageMatrix,
-                                      m_Flags, &m_DeviceHandle,
+                                      FXDIB_INTERPOL, &m_DeviceHandle,
                                       FXDIB_BLEND_NORMAL)) {
     if (m_DeviceHandle) {
       m_Status = 3;
@@ -54,7 +52,7 @@ bool CXFA_ImageRenderer::Start() {
     clip_box.Intersect(image_rect);
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        pDib, &m_ImageMatrix, m_Flags, &clip_box);
+        pDib, &m_ImageMatrix, FXDIB_INTERPOL, &clip_box);
     return true;
   }
   if (m_ImageMatrix.a < 0)
@@ -66,15 +64,15 @@ bool CXFA_ImageRenderer::Start() {
   dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
   if (m_pDIBSource->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
-            m_pDIBSource, dest_left, dest_top, dest_width, dest_height, m_Flags,
-            FXDIB_BLEND_NORMAL)) {
+            m_pDIBSource, dest_left, dest_top, dest_width, dest_height,
+            FXDIB_INTERPOL, FXDIB_BLEND_NORMAL)) {
       return false;
     }
   }
   if (m_pDIBSource->IsAlphaMask()) {
     if (m_pDevice->StretchBitMaskWithFlags(m_pDIBSource, dest_left, dest_top,
                                            dest_width, dest_height, 0,
-                                           m_Flags)) {
+                                           FXDIB_INTERPOL)) {
       return false;
     }
   }
@@ -85,8 +83,8 @@ bool CXFA_ImageRenderer::Start() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  RetainPtr<CFX_DIBitmap> pStretched =
-      m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
+  RetainPtr<CFX_DIBitmap> pStretched = m_pDIBSource->StretchTo(
+      dest_width, dest_height, FXDIB_INTERPOL, &dest_clip);
   if (pStretched)
     CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top);
 
@@ -151,8 +149,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
   if (!pCloneConvert)
     return;
 
-  CXFA_ImageRenderer imageRender(m_pDevice, pCloneConvert, &m_ImageMatrix,
-                                 m_Flags);
+  CXFA_ImageRenderer imageRender(m_pDevice, pCloneConvert, &m_ImageMatrix);
   if (!imageRender.Start())
     return;
 

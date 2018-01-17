@@ -1091,8 +1091,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
       CFX_Matrix(rtFit.width, 0, 0, rtFit.height, rtFit.left, rtFit.top));
   mtImage.Concat(matrix);
 
-  CXFA_ImageRenderer imageRender(pRenderDevice, pDIBitmap, &mtImage,
-                                 FXDIB_INTERPOL);
+  CXFA_ImageRenderer imageRender(pRenderDevice, pDIBitmap, &mtImage);
   if (!imageRender.Start()) {
     return;
   }
