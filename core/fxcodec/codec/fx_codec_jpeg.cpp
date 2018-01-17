@@ -34,6 +34,8 @@ class CJpegContext : public CCodec_JpegModule::Context {
   CJpegContext();
   ~CJpegContext() override;
 
+  jmp_buf* GetJumpMark() override { return &m_JumpMark; }
+
   jmp_buf m_JumpMark;
   jpeg_decompress_struct m_Info;
   jpeg_error_mgr m_ErrMgr;
@@ -476,11 +478,11 @@ int CCodec_JpegModule::ReadHeader(Context* pContext,
 }
 
 bool CCodec_JpegModule::StartScanline(Context* pContext, int down_scale) {
-  auto* ctx = static_cast<CJpegContext*>(pContext);
-  if (setjmp(ctx->m_JumpMark) == -1)
+  if (down_scale < 0)
     return false;
 
-  ctx->m_Info.scale_denom = down_scale;
+  auto* ctx = static_cast<CJpegContext*>(pContext);
+  ctx->m_Info.scale_denom = static_cast<unsigned int>(down_scale);
   return !!jpeg_start_decompress(&ctx->m_Info);
 }
 

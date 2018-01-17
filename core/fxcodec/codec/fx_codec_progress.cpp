@@ -1869,10 +1869,15 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
     case FXCODEC_IMAGE_JPG: {
       int down_scale = 1;
       GetDownScale(down_scale);
+      // Setting jump marker before calling StartScanLine, since a longjmp to
+      // the marker indicates a fatal error.
+      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1)
+        return FXCODEC_STATUS_ERROR;
+
       CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-      bool bStart =
+      bool startStatus =
           pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
-      while (!bStart) {
+      while (!startStatus) {
         FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
         if (!JpegReadMoreData(pJpegModule, error_status)) {
           m_pDeviceBitmap = nullptr;
@@ -1880,7 +1885,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
           m_status = error_status;
           return m_status;
         }
-        bStart = pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
+
+        startStatus =
+            pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
       }
       int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
       scanline_size = (scanline_size * m_SrcComponents + 3) / 4 * 4;
