@@ -17,20 +17,18 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(
     CFX_RenderDevice* pDevice,
     const RetainPtr<CFX_DIBSource>& pDIBSource,
     FX_ARGB bitmap_argb,
-    int bitmap_alpha,
     const CFX_Matrix* pImage2Device,
     uint32_t flags)
     : m_pDevice(pDevice),
       m_ImageMatrix(*pImage2Device),
       m_pDIBSource(pDIBSource),
-      m_BitmapAlpha(bitmap_alpha),
       m_FillArgb(bitmap_argb),
       m_Flags(flags) {}
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start() {
-  if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, m_BitmapAlpha, m_FillArgb,
+  if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, 255, m_FillArgb,
                                       &m_ImageMatrix, m_Flags, &m_DeviceHandle,
                                       m_BlendType)) {
     if (m_DeviceHandle) {
@@ -74,7 +72,7 @@ bool CXFA_ImageRenderer::Start() {
   int dest_left, dest_top;
   dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
   dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
-  if (m_pDIBSource->IsOpaqueImage() && m_BitmapAlpha == 255) {
+  if (m_pDIBSource->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
             m_pDIBSource, dest_left, dest_top, dest_width, dest_height, m_Flags,
             m_BlendType)) {
@@ -82,9 +80,6 @@ bool CXFA_ImageRenderer::Start() {
     }
   }
   if (m_pDIBSource->IsAlphaMask()) {
-    if (m_BitmapAlpha != 255) {
-      m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
-    }
     if (m_pDevice->StretchBitMaskWithFlags(m_pDIBSource, dest_left, dest_top,
                                            dest_width, dest_height, m_FillArgb,
                                            m_Flags)) {
@@ -105,7 +100,7 @@ bool CXFA_ImageRenderer::Start() {
       m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
   if (pStretched) {
     CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, m_FillArgb,
-                      m_BitmapAlpha, m_BlendType, false);
+                      m_BlendType, false);
   }
   return false;
 }
@@ -120,14 +115,10 @@ bool CXFA_ImageRenderer::Continue() {
       return false;
 
     if (pBitmap->IsAlphaMask()) {
-      if (m_BitmapAlpha != 255)
-        m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
       m_Result =
           m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
                                 m_pTransformer->result().top, m_FillArgb);
     } else {
-      if (m_BitmapAlpha != 255)
-        pBitmap->MultiplyAlpha(m_BitmapAlpha);
       m_Result = m_pDevice->SetDIBitsWithBlend(
           pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
           m_BlendType);
@@ -145,7 +136,6 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
     int left,
     int top,
     FX_ARGB mask_argb,
-    int bitmap_alpha,
     int blend_mode,
     int iTransparency) {
   if (!pDIBitmap) {
@@ -155,21 +145,12 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
   bool bGroup = !!(iTransparency & PDFTRANS_GROUP);
   if (blend_mode == FXDIB_BLEND_NORMAL) {
     if (!pDIBitmap->IsAlphaMask()) {
-      if (bitmap_alpha < 255) {
-        pDIBitmap->MultiplyAlpha(bitmap_alpha);
-      }
-      if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
+      if (m_pDevice->SetDIBits(pDIBitmap, left, top))
         return;
-      }
     } else {
       uint32_t fill_argb = (mask_argb);
-      if (bitmap_alpha < 255) {
-        ((uint8_t*)&fill_argb)[3] =
-            ((uint8_t*)&fill_argb)[3] * bitmap_alpha / 255;
-      }
-      if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb)) {
+      if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb))
         return;
-      }
     }
   }
   bool bBackAlphaRequired = blend_mode && bIsolated;
@@ -224,7 +205,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
     return;
 
   CXFA_ImageRenderer imageRender(m_pDevice, pCloneConvert, m_FillArgb,
-                                 m_BitmapAlpha, &m_ImageMatrix, m_Flags);
+                                 &m_ImageMatrix, m_Flags);
   if (!imageRender.Start()) {
     return;
   }
