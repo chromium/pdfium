@@ -475,9 +475,6 @@ int CCodec_JpegModule::ReadHeader(Context* pContext,
 }
 
 bool CCodec_JpegModule::StartScanline(Context* pContext, int down_scale) {
-  if (down_scale < 0)
-    return false;
-
   auto* ctx = static_cast<CJpegContext*>(pContext);
   ctx->m_Info.scale_denom = static_cast<unsigned int>(down_scale);
   return !!jpeg_start_decompress(&ctx->m_Info);
