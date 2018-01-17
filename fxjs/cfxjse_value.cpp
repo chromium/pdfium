@@ -384,7 +384,7 @@ ByteString CFXJSE_Value::ToString() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hValue = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
   v8::Local<v8::String> hString = hValue->ToString();
-  v8::String::Utf8Value hStringVal(hString);
+  v8::String::Utf8Value hStringVal(m_pIsolate, hString);
   return ByteString(*hStringVal);
 }
 

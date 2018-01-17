@@ -177,7 +177,7 @@ WideString CJS_V8::ToWideString(v8::Local<v8::Value> pValue) {
   v8::MaybeLocal<v8::String> maybe_string = pValue->ToString(context);
   if (maybe_string.IsEmpty())
     return WideString();
-  v8::String::Utf8Value s(maybe_string.ToLocalChecked());
+  v8::String::Utf8Value s(m_isolate, maybe_string.ToLocalChecked());
   return WideString::FromUTF8(ByteStringView(*s, s.length()));
 }
 
@@ -188,7 +188,7 @@ ByteString CJS_V8::ToByteString(v8::Local<v8::Value> pValue) {
   v8::MaybeLocal<v8::String> maybe_string = pValue->ToString(context);
   if (maybe_string.IsEmpty())
     return ByteString();
-  v8::String::Utf8Value s(maybe_string.ToLocalChecked());
+  v8::String::Utf8Value s(m_isolate, maybe_string.ToLocalChecked());
   return ByteString(*s);
 }
 

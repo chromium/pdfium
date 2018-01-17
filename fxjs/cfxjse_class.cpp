@@ -81,7 +81,7 @@ void DynPropGetterAdapter_MethodCallback(
       hCallBackInfo->GetInternalField(1).As<v8::String>();
   ASSERT(lpClass && !hPropName.IsEmpty());
 
-  v8::String::Utf8Value szPropName(hPropName);
+  v8::String::Utf8Value szPropName(info.GetIsolate(), hPropName);
   WideString szFxPropName = WideString::FromUTF8(*szPropName);
 
   CJS_Return result = lpClass->dynMethodCall(info, szFxPropName);
@@ -168,7 +168,7 @@ void NamedPropertyQueryCallback(
       info.Data().As<v8::External>()->Value());
   v8::Isolate* pIsolate = info.GetIsolate();
   v8::HandleScope scope(pIsolate);
-  v8::String::Utf8Value szPropName(property);
+  v8::String::Utf8Value szPropName(pIsolate, property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
@@ -186,7 +186,7 @@ void NamedPropertyGetterCallback(
   v8::Local<v8::Object> thisObject = info.Holder();
   const FXJSE_CLASS_DESCRIPTOR* lpClass = static_cast<FXJSE_CLASS_DESCRIPTOR*>(
       info.Data().As<v8::External>()->Value());
-  v8::String::Utf8Value szPropName(property);
+  v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
@@ -203,7 +203,7 @@ void NamedPropertySetterCallback(
   v8::Local<v8::Object> thisObject = info.Holder();
   const FXJSE_CLASS_DESCRIPTOR* lpClass = static_cast<FXJSE_CLASS_DESCRIPTOR*>(
       info.Data().As<v8::External>()->Value());
-  v8::String::Utf8Value szPropName(property);
+  v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
   auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);

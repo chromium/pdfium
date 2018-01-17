@@ -41,7 +41,7 @@ float CFXJSE_Arguments::GetFloat(int32_t index) const {
 
 ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   v8::Local<v8::String> hString = (*m_pInfo)[index]->ToString();
-  v8::String::Utf8Value szStringVal(hString);
+  v8::String::Utf8Value szStringVal(m_pInfo->GetIsolate(), hString);
   return ByteString(*szStringVal);
 }
 

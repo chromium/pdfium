@@ -22,8 +22,9 @@
 
 namespace {
 
-WideString PropFromV8Prop(v8::Local<v8::String> property) {
-  v8::String::Utf8Value utf8_value(property);
+WideString PropFromV8Prop(v8::Isolate* pIsolate,
+                          v8::Local<v8::String> property) {
+  v8::String::Utf8Value utf8_value(pIsolate, property);
   return WideString::FromUTF8(ByteStringView(*utf8_value, utf8_value.length()));
 }
 
@@ -42,7 +43,8 @@ void JSSpecialPropQuery(const char*,
     return;
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
-  CJS_Return result = pObj->QueryProperty(PropFromV8Prop(property).c_str());
+  CJS_Return result =
+      pObj->QueryProperty(PropFromV8Prop(info.GetIsolate(), property).c_str());
   info.GetReturnValue().Set(!result.HasError() ? 4 : 0);
 }
 
@@ -61,8 +63,8 @@ void JSSpecialPropGet(const char* class_name,
     return;
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
-  CJS_Return result =
-      pObj->GetProperty(pRuntime, PropFromV8Prop(property).c_str());
+  CJS_Return result = pObj->GetProperty(
+      pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString(class_name, "GetProperty", result.Error()));
@@ -89,8 +91,8 @@ void JSSpecialPropPut(const char* class_name,
     return;
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
-  CJS_Return result =
-      pObj->SetProperty(pRuntime, PropFromV8Prop(property).c_str(), value);
+  CJS_Return result = pObj->SetProperty(
+      pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str(), value);
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString(class_name, "PutProperty", result.Error()));
@@ -112,8 +114,8 @@ void JSSpecialPropDel(const char* class_name,
     return;
 
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
-  CJS_Return result =
-      pObj->DelProperty(pRuntime, PropFromV8Prop(property).c_str());
+  CJS_Return result = pObj->DelProperty(
+      pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
   if (result.HasError()) {
     // TODO(dsinclair): Should this set the pRuntime->Error result?
     // ByteString cbName =

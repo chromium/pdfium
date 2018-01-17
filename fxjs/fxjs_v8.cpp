@@ -465,14 +465,14 @@ int CFXJS_Engine::Execute(const WideString& script, FXJSErr* pError) {
   v8::Local<v8::Script> compiled_script;
   if (!v8::Script::Compile(context, NewString(script.AsStringView()))
            .ToLocal(&compiled_script)) {
-    v8::String::Utf8Value error(try_catch.Exception());
+    v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
     // TODO(tsepez): return error via pError->message.
     return -1;
   }
 
   v8::Local<v8::Value> result;
   if (!compiled_script->Run(context).ToLocal(&result)) {
-    v8::String::Utf8Value error(try_catch.Exception());
+    v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
     // TODO(tsepez): return error via pError->message.
     return -1;
   }
