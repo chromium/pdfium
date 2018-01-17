@@ -1899,149 +1899,164 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
     return FXCODEC_STATUS_ERR_PARAMS;
   }
   switch (m_imagType) {
-    case FXCODEC_IMAGE_JPG: {
-      int down_scale = 1;
-      GetDownScale(down_scale);
-      // Setting jump marker before calling StartScanLine, since a longjmp to
-      // the marker indicates a fatal error.
-      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
-        m_pJpegContext.reset();
-        m_status = FXCODEC_STATUS_ERROR;
-        return FXCODEC_STATUS_ERROR;
-      }
-
-      CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-      bool startStatus =
-          pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
-      while (!startStatus) {
-        FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
-        if (!JpegReadMoreData(pJpegModule, error_status)) {
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = error_status;
-          return m_status;
-        }
-
-        startStatus =
-            pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
-      }
-      int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
-      scanline_size = (scanline_size * m_SrcComponents + 3) / 4 * 4;
-      FX_Free(m_pDecodeBuf);
-      m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
-      memset(m_pDecodeBuf, 0, scanline_size);
-      m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
-                        m_clipBox.Width());
-      m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
-      switch (m_SrcComponents) {
-        case 1:
-          m_SrcFormat = FXCodec_8bppGray;
-          break;
-        case 3:
-          m_SrcFormat = FXCodec_Rgb;
-          break;
-        case 4:
-          m_SrcFormat = FXCodec_Cmyk;
-          break;
-      }
-      GetTransMethod(pDIBitmap->GetFormat(), m_SrcFormat);
-      m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return m_status;
-    }
-    case FXCODEC_IMAGE_PNG: {
-      CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-      if (!pPngModule) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      m_pPngContext = pPngModule->Start(this);
-      if (!m_pPngContext) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      m_offSet = 0;
-      switch (m_pDeviceBitmap->GetFormat()) {
-        case FXDIB_8bppMask:
-        case FXDIB_8bppRgb:
-          m_SrcComponents = 1;
-          m_SrcFormat = FXCodec_8bppGray;
-          break;
-        case FXDIB_Rgb:
-          m_SrcComponents = 3;
-          m_SrcFormat = FXCodec_Rgb;
-          break;
-        case FXDIB_Rgb32:
-        case FXDIB_Argb:
-          m_SrcComponents = 4;
-          m_SrcFormat = FXCodec_Argb;
-          break;
-        default: {
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = FXCODEC_STATUS_ERR_PARAMS;
-          return m_status;
-        }
-      }
-      GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
-      int scanline_size = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
-      FX_Free(m_pDecodeBuf);
-      m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
-      memset(m_pDecodeBuf, 0, scanline_size);
-      m_WeightHorzOO.Calc(m_sizeX, m_clipBox.Width());
-      m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
-      m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return m_status;
-    }
-    case FXCODEC_IMAGE_GIF: {
-      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-      if (!pGifModule) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      m_SrcFormat = FXCodec_8bppRgb;
-      GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
-      int scanline_size = (m_SrcWidth + 3) / 4 * 4;
-      FX_Free(m_pDecodeBuf);
-      m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
-      memset(m_pDecodeBuf, 0, scanline_size);
-      m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
-                        m_clipBox.Width());
-      m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
-      m_FrameCur = 0;
-      m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return m_status;
-    }
-    case FXCODEC_IMAGE_BMP: {
-      CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-      if (!pBmpModule) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
-      m_ScanlineSize = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
-      FX_Free(m_pDecodeBuf);
-      m_pDecodeBuf = FX_Alloc(uint8_t, m_ScanlineSize);
-      memset(m_pDecodeBuf, 0, m_ScanlineSize);
-      m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
-                        m_clipBox.Width());
-      m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
-      m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return m_status;
-    }
+    case FXCODEC_IMAGE_JPG:
+      return JpegStartDecode(pDIBitmap);
+    case FXCODEC_IMAGE_PNG:
+      return PngStartDecode(pDIBitmap);
+    case FXCODEC_IMAGE_GIF:
+      return GifStartDecode(pDIBitmap);
+    case FXCODEC_IMAGE_BMP:
+      return BmpStartDecode(pDIBitmap);
     case FXCODEC_IMAGE_TIF:
       m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return m_status;
     default:
       return FXCODEC_STATUS_ERROR;
   }
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegStartDecode(
+    const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+  int down_scale = 1;
+  GetDownScale(down_scale);
+  // Setting jump marker before calling StartScanLine, since a longjmp to
+  // the marker indicates a fatal error.
+  if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
+    m_pJpegContext.reset();
+    m_status = FXCODEC_STATUS_ERROR;
+    return FXCODEC_STATUS_ERROR;
+  }
+
+  CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+  bool startStatus =
+      pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
+  while (!startStatus) {
+    FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
+    if (!JpegReadMoreData(pJpegModule, error_status)) {
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = error_status;
+      return m_status;
+    }
+
+    startStatus = pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
+  }
+  int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
+  scanline_size = (scanline_size * m_SrcComponents + 3) / 4 * 4;
+  FX_Free(m_pDecodeBuf);
+  m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
+  memset(m_pDecodeBuf, 0, scanline_size);
+  m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+                    m_clipBox.Width());
+  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  switch (m_SrcComponents) {
+    case 1:
+      m_SrcFormat = FXCodec_8bppGray;
+      break;
+    case 3:
+      m_SrcFormat = FXCodec_Rgb;
+      break;
+    case 4:
+      m_SrcFormat = FXCodec_Cmyk;
+      break;
+  }
+  GetTransMethod(pDIBitmap->GetFormat(), m_SrcFormat);
+  m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+  return m_status;
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::PngStartDecode(
+    const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+  CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+  if (!pPngModule) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  m_pPngContext = pPngModule->Start(this);
+  if (!m_pPngContext) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  m_offSet = 0;
+  switch (m_pDeviceBitmap->GetFormat()) {
+    case FXDIB_8bppMask:
+    case FXDIB_8bppRgb:
+      m_SrcComponents = 1;
+      m_SrcFormat = FXCodec_8bppGray;
+      break;
+    case FXDIB_Rgb:
+      m_SrcComponents = 3;
+      m_SrcFormat = FXCodec_Rgb;
+      break;
+    case FXDIB_Rgb32:
+    case FXDIB_Argb:
+      m_SrcComponents = 4;
+      m_SrcFormat = FXCodec_Argb;
+      break;
+    default: {
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = FXCODEC_STATUS_ERR_PARAMS;
+      return m_status;
+    }
+  }
+  GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
+  int scanline_size = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
+  FX_Free(m_pDecodeBuf);
+  m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
+  memset(m_pDecodeBuf, 0, scanline_size);
+  m_WeightHorzOO.Calc(m_sizeX, m_clipBox.Width());
+  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+  return m_status;
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::GifStartDecode(
+    const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+  CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+  if (!pGifModule) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  m_SrcFormat = FXCodec_8bppRgb;
+  GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
+  int scanline_size = (m_SrcWidth + 3) / 4 * 4;
+  FX_Free(m_pDecodeBuf);
+  m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
+  memset(m_pDecodeBuf, 0, scanline_size);
+  m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+                    m_clipBox.Width());
+  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  m_FrameCur = 0;
+  m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+  return m_status;
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpStartDecode(
+    const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
+  CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+  if (!pBmpModule) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
+  m_ScanlineSize = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
+  FX_Free(m_pDecodeBuf);
+  m_pDecodeBuf = FX_Alloc(uint8_t, m_ScanlineSize);
+  memset(m_pDecodeBuf, 0, m_ScanlineSize);
+  m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+                    m_clipBox.Width());
+  m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
+  m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
+  return m_status;
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
