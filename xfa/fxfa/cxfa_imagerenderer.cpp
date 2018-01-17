@@ -40,19 +40,17 @@ bool CXFA_ImageRenderer::Start() {
   int dest_height = image_rect.Height();
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
-    if (m_bPrint && !(m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE)) {
-      m_Result = false;
+    if (m_bPrint && !(m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE))
       return false;
-    }
+
     RetainPtr<CFX_DIBSource> pDib = m_pDIBSource;
     if (m_pDIBSource->HasAlpha() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
         !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
       m_pCloneConvert = m_pDIBSource->CloneConvert(FXDIB_Rgb);
-      if (!m_pCloneConvert) {
-        m_Result = false;
+      if (!m_pCloneConvert)
         return false;
-      }
+
       pDib = m_pCloneConvert;
     }
     FX_RECT clip_box = m_pDevice->GetClipBox();
@@ -83,10 +81,9 @@ bool CXFA_ImageRenderer::Start() {
       return false;
     }
   }
-  if (m_bPrint && !(m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE)) {
-    m_Result = false;
+  if (m_bPrint && !(m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE))
     return true;
-  }
+
   FX_RECT clip_box = m_pDevice->GetClipBox();
   FX_RECT dest_rect = clip_box;
   dest_rect.Intersect(image_rect);
@@ -112,12 +109,11 @@ bool CXFA_ImageRenderer::Continue() {
       return false;
 
     if (pBitmap->IsAlphaMask()) {
-      m_Result = m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
-                                       m_pTransformer->result().top, 0);
+      m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
+                            m_pTransformer->result().top, 0);
     } else {
-      m_Result = m_pDevice->SetDIBitsWithBlend(
-          pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
-          m_BlendType);
+      m_pDevice->SetDIBitsWithBlend(pBitmap, m_pTransformer->result().left,
+                                    m_pTransformer->result().top, m_BlendType);
     }
     return false;
   }

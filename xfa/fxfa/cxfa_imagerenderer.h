@@ -46,7 +46,6 @@ class CXFA_ImageRenderer {
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
   int32_t m_BlendType = FXDIB_BLEND_NORMAL;
-  bool m_Result = true;
   bool m_bPrint = false;
 };
 
