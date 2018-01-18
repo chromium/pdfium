@@ -259,14 +259,18 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
 
   int32_t xs0 = x < 0 ? -x : 0;
   int32_t xs1;
-  if (x + m_nWidth > pDst->m_nWidth)
-    xs1 = pDst->m_nWidth - x;
+  FX_SAFE_INT32 iChecked = pDst->m_nWidth;
+  iChecked -= x;
+  if (iChecked.IsValid() && m_nWidth > iChecked.ValueOrDie())
+    xs1 = iChecked.ValueOrDie();
   else
     xs1 = m_nWidth;
 
   int32_t ys0 = y < 0 ? -y : 0;
   int32_t ys1;
-  if (y + m_nHeight > pDst->m_nHeight)
+  iChecked = pDst->m_nHeight;
+  iChecked -= y;
+  if (iChecked.IsValid() && m_nHeight > iChecked.ValueOrDie())
     ys1 = pDst->m_nHeight - y;
   else
     ys1 = m_nHeight;
