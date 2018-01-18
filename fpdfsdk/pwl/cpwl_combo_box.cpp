@@ -20,8 +20,8 @@
 
 namespace {
 
-constexpr float kDefaultFontSize = 12.0f;
-constexpr float kTriangleHalfLength = 3.0f;
+constexpr float kComboBoxDefaultFontSize = 12.0f;
+constexpr float kComboBoxTriangleHalfLength = 3.0f;
 constexpr int kDefaultButtonWidth = 13;
 
 }  // namespace
@@ -105,14 +105,18 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   CFX_PointF ptCenter = GetCenterPoint();
 
-  CFX_PointF pt1(ptCenter.x - kTriangleHalfLength,
-                 ptCenter.y + kTriangleHalfLength * 0.5f);
-  CFX_PointF pt2(ptCenter.x + kTriangleHalfLength,
-                 ptCenter.y + kTriangleHalfLength * 0.5f);
-  CFX_PointF pt3(ptCenter.x, ptCenter.y - kTriangleHalfLength * 0.5f);
+  static constexpr float kComboBoxTriangleQuarterLength =
+      kComboBoxTriangleHalfLength * 0.5;
+  CFX_PointF pt1(ptCenter.x - kComboBoxTriangleHalfLength,
+                 ptCenter.y + kComboBoxTriangleQuarterLength);
+  CFX_PointF pt2(ptCenter.x + kComboBoxTriangleHalfLength,
+                 ptCenter.y + kComboBoxTriangleQuarterLength);
+  CFX_PointF pt3(ptCenter.x, ptCenter.y - kComboBoxTriangleQuarterLength);
 
-  if (IsFloatBigger(rectWnd.right - rectWnd.left, kTriangleHalfLength * 2) &&
-      IsFloatBigger(rectWnd.top - rectWnd.bottom, kTriangleHalfLength)) {
+  if (IsFloatBigger(rectWnd.right - rectWnd.left,
+                    kComboBoxTriangleHalfLength * 2) &&
+      IsFloatBigger(rectWnd.top - rectWnd.bottom,
+                    kComboBoxTriangleHalfLength)) {
     CFX_PathData path;
     path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
     path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
@@ -304,10 +308,8 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   lcp.eCursorType = FXCT_ARROW;
   lcp.rcRectWnd = CFX_FloatRect();
 
-  if (cp.dwFlags & PWS_AUTOFONTSIZE)
-    lcp.fFontSize = kDefaultFontSize;
-  else
-    lcp.fFontSize = cp.fFontSize;
+  lcp.fFontSize =
+      (cp.dwFlags & PWS_AUTOFONTSIZE) ? kComboBoxDefaultFontSize : cp.fFontSize;
 
   if (cp.sBorderColor.nColorType == CFX_Color::kTransparent)
     lcp.sBorderColor = PWL_DEFAULT_BLACKCOLOR;

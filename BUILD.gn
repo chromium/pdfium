@@ -968,8 +968,7 @@ jumbo_static_library("fxcrt") {
   }
 }
 
-# TODO(crbug.com/pdfium/964): Support jumbo builds.
-static_library("fxge") {
+jumbo_static_library("fxge") {
   sources = [
     "core/fxge/android/cfpf_skiabufferfont.cpp",
     "core/fxge/android/cfpf_skiabufferfont.h",
@@ -1139,8 +1138,7 @@ static_library("fxge") {
   }
 }
 
-# TODO(crbug.com/pdfium/964): Support jumbo builds.
-static_library("pwl") {
+jumbo_static_library("pwl") {
   sources = [
     "fpdfsdk/pwl/cpwl_appstream.cpp",
     "fpdfsdk/pwl/cpwl_appstream.h",

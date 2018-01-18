@@ -18,7 +18,7 @@ namespace {
 
 constexpr float kButtonWidth = 9.0f;
 constexpr float kPosButtonMinWidth = 2.0f;
-constexpr float kTriangleHalfLength = 2.0f;
+constexpr float kScrollBarTriangleHalfLength = 2.0f;
 
 }  // namespace
 
@@ -153,22 +153,26 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
     CFX_PointF pt1;
     CFX_PointF pt2;
     CFX_PointF pt3;
+    static constexpr float kScrollBarTriangleQuarterLength =
+        kScrollBarTriangleHalfLength * 0.5;
     if (m_eSBButtonType == PSBT_MIN) {
-      pt1 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f, ptCenter.y);
-      pt2 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
-                       ptCenter.y + kTriangleHalfLength);
-      pt3 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f,
-                       ptCenter.y - kTriangleHalfLength);
+      pt1 =
+          CFX_PointF(ptCenter.x - kScrollBarTriangleQuarterLength, ptCenter.y);
+      pt2 = CFX_PointF(ptCenter.x + kScrollBarTriangleQuarterLength,
+                       ptCenter.y + kScrollBarTriangleHalfLength);
+      pt3 = CFX_PointF(ptCenter.x + kScrollBarTriangleQuarterLength,
+                       ptCenter.y - kScrollBarTriangleHalfLength);
     } else if (m_eSBButtonType == PSBT_MAX) {
-      pt1 = CFX_PointF(ptCenter.x + kTriangleHalfLength * 0.5f, ptCenter.y);
-      pt2 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
-                       ptCenter.y + kTriangleHalfLength);
-      pt3 = CFX_PointF(ptCenter.x - kTriangleHalfLength * 0.5f,
-                       ptCenter.y - kTriangleHalfLength);
+      pt1 =
+          CFX_PointF(ptCenter.x + kScrollBarTriangleQuarterLength, ptCenter.y);
+      pt2 = CFX_PointF(ptCenter.x - kScrollBarTriangleQuarterLength,
+                       ptCenter.y + kScrollBarTriangleHalfLength);
+      pt3 = CFX_PointF(ptCenter.x - kScrollBarTriangleQuarterLength,
+                       ptCenter.y - kScrollBarTriangleHalfLength);
     }
 
-    if (rectWnd.right - rectWnd.left > kTriangleHalfLength * 2 &&
-        rectWnd.top - rectWnd.bottom > kTriangleHalfLength) {
+    if (rectWnd.right - rectWnd.left > kScrollBarTriangleHalfLength * 2 &&
+        rectWnd.top - rectWnd.bottom > kScrollBarTriangleHalfLength) {
       CFX_PathData path;
       path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
       path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);

@@ -26,8 +26,65 @@ using std::max;
 
 #include <gdiplus.h>  // NOLINT
 
-using namespace Gdiplus;              // NOLINT
-using namespace Gdiplus::DllExports;  // NOLINT
+// TODO(thestig): Remove the infrequently used ones.
+using Gdiplus::CombineMode;
+using Gdiplus::DashCap;
+using Gdiplus::DashCapFlat;
+using Gdiplus::DashCapRound;
+using Gdiplus::FillModeAlternate;
+using Gdiplus::FillModeWinding;
+using Gdiplus::GdiplusStartupInput;
+using Gdiplus::GdiplusStartupOutput;
+using Gdiplus::GpBitmap;
+using Gdiplus::GpBrush;
+using Gdiplus::GpDashCap;
+using Gdiplus::GpDashStyle;
+using Gdiplus::GpFillMode;
+using Gdiplus::GpFont;
+using Gdiplus::GpFontCollection;
+using Gdiplus::GpFontFamily;
+using Gdiplus::GpGraphics;
+using Gdiplus::GpImage;
+using Gdiplus::GpLineCap;
+using Gdiplus::GpLineJoin;
+using Gdiplus::GpMatrix;
+using Gdiplus::GpPath;
+using Gdiplus::GpPen;
+using Gdiplus::GpPoint;
+using Gdiplus::GpPointF;
+using Gdiplus::GpRect;
+using Gdiplus::GpRegion;
+using Gdiplus::GpSolidFill;
+using Gdiplus::GpStatus;
+using Gdiplus::GpStringFormat;
+using Gdiplus::GpUnit;
+using Gdiplus::ImageLockModeRead;
+using Gdiplus::InterpolationMode;
+using Gdiplus::InterpolationModeBilinear;
+using Gdiplus::InterpolationModeHighQuality;
+using Gdiplus::InterpolationModeNearestNeighbor;
+using Gdiplus::LineCap;
+using Gdiplus::LineCapFlat;
+using Gdiplus::LineCapRound;
+using Gdiplus::LineCapSquare;
+using Gdiplus::LineJoin;
+using Gdiplus::LineJoinBevel;
+using Gdiplus::LineJoinMiterClipped;
+using Gdiplus::LineJoinRound;
+using Gdiplus::PaletteFlagsHasAlpha;
+using Gdiplus::PathPointTypeBezier;
+using Gdiplus::PathPointTypeCloseSubpath;
+using Gdiplus::PathPointTypeLine;
+using Gdiplus::PathPointTypeStart;
+using Gdiplus::PixelOffsetMode;
+using Gdiplus::PixelOffsetModeHalf;
+using Gdiplus::REAL;
+using Gdiplus::SmoothingMode;
+using Gdiplus::SmoothingModeAntiAlias;
+using Gdiplus::SmoothingModeNone;
+using Gdiplus::TextRenderingHint;
+using Gdiplus::UnitPixel;
+using Gdiplus::UnitWorld;
 
 #define GdiFillType2Gdip(fill_type) \
   (fill_type == ALTERNATE ? FillModeAlternate : FillModeWinding)
@@ -221,13 +278,13 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPageUnit)(GpGraphics* graphics,
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetSmoothingMode)(
     GpGraphics* graphics,
     SmoothingMode smoothingMode);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateSolidFill)(ARGB color,
+typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateSolidFill)(Gdiplus::ARGB color,
                                                            GpSolidFill** brush);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipFillPath)(GpGraphics* graphics,
                                                     GpBrush* brush,
                                                     GpPath* path);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipDeleteBrush)(GpBrush* brush);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipCreatePen1)(ARGB color,
+typedef GpStatus(WINGDIPAPI* FuncType_GdipCreatePen1)(Gdiplus::ARGB color,
                                                       REAL width,
                                                       GpUnit unit,
                                                       GpPen** pen);
@@ -251,22 +308,22 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipGetImageHeight)(GpImage* image,
                                                           UINT* height);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipGetImagePixelFormat)(
     GpImage* image,
-    PixelFormat* format);
+    Gdiplus::PixelFormat* format);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipBitmapLockBits)(
     GpBitmap* bitmap,
     GDIPCONST GpRect* rect,
     UINT flags,
-    PixelFormat format,
-    BitmapData* lockedBitmapData);
+    Gdiplus::PixelFormat format,
+    Gdiplus::BitmapData* lockedBitmapData);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipGetImagePalette)(
     GpImage* image,
-    ColorPalette* palette,
+    Gdiplus::ColorPalette* palette,
     INT size);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipGetImagePaletteSize)(GpImage* image,
                                                                INT* size);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipBitmapUnlockBits)(
     GpBitmap* bitmap,
-    BitmapData* lockedBitmapData);
+    Gdiplus::BitmapData* lockedBitmapData);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipDisposeImage)(GpImage* image);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipFillRectangle)(GpGraphics* graphics,
                                                          GpBrush* brush,
@@ -278,12 +335,12 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateBitmapFromScan0)(
     INT width,
     INT height,
     INT stride,
-    PixelFormat format,
+    Gdiplus::PixelFormat format,
     BYTE* scan0,
     GpBitmap** bitmap);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetImagePalette)(
     GpImage* image,
-    GDIPCONST ColorPalette* palette);
+    GDIPCONST Gdiplus::ColorPalette* palette);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetInterpolationMode)(
     GpGraphics* graphics,
     InterpolationMode interpolationMode);
@@ -296,7 +353,7 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateBitmapFromGdiDib)(
     GDIPCONST BITMAPINFO* gdiBitmapInfo,
     VOID* gdiBitmapData,
     GpBitmap** bitmap);
-typedef Status(WINAPI* FuncType_GdiplusStartup)(
+typedef Gdiplus::Status(WINAPI* FuncType_GdiplusStartup)(
     OUT uintptr_t* token,
     const GdiplusStartupInput* input,
     OUT GdiplusStartupOutput* output);
@@ -360,7 +417,7 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateFont)(
     GDIPCONST GpFontFamily* fontFamily,
     REAL emSize,
     INT style,
-    Unit unit,
+    Gdiplus::Unit unit,
     GpFont** font);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipGetFontSize)(GpFont* font,
                                                        REAL* size);
@@ -377,7 +434,7 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawDriverString)(
     INT length,
     GDIPCONST GpFont* font,
     GDIPCONST GpBrush* brush,
-    GDIPCONST PointF* positions,
+    GDIPCONST Gdiplus::PointF* positions,
     INT flags,
     GDIPCONST GpMatrix* matrix);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateMatrix2)(REAL m11,
@@ -435,7 +492,7 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawString)(
     GDIPCONST WCHAR* str,
     INT length,
     GDIPCONST GpFont* font,
-    GDIPCONST RectF* layoutRect,
+    GDIPCONST Gdiplus::RectF* layoutRect,
     GDIPCONST GpStringFormat* stringFormat,
     GDIPCONST GpBrush* brush);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenTransform)(GpPen* pen,
@@ -463,7 +520,7 @@ static GpBrush* _GdipCreateBrush(DWORD argb) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   GpSolidFill* solidBrush = nullptr;
-  CallFunc(GdipCreateSolidFill)((ARGB)argb, &solidBrush);
+  CallFunc(GdipCreateSolidFill)((Gdiplus::ARGB)argb, &solidBrush);
   return solidBrush;
 }
 
@@ -542,7 +599,7 @@ static void OutputImageMask(GpGraphics* pGraphics,
       return;
 
     GpSolidFill* solidBrush;
-    CallFunc(GdipCreateSolidFill)((ARGB)argb, &solidBrush);
+    CallFunc(GdipCreateSolidFill)((Gdiplus::ARGB)argb, &solidBrush);
     if (dest_width < 0) {
       dest_width = -dest_width;
       dest_left -= dest_width;
@@ -592,7 +649,7 @@ static void OutputImageMask(GpGraphics* pGraphics,
     for (int i = 0; i < 256; i++) {
       pal[i + 2] = ArgbEncode(i * a / 255, r, g, b);
     }
-    CallFunc(GdipSetImagePalette)(bitmap, (ColorPalette*)pal);
+    CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal);
     CallFunc(GdipDrawImageI)(pGraphics, bitmap,
                              image_rect.left + image_clip.left,
                              image_rect.top + image_clip.top);
@@ -603,10 +660,11 @@ static void OutputImageMask(GpGraphics* pGraphics,
   CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                       PixelFormat1bppIndexed, scan0, &bitmap);
   UINT palette[4] = {PaletteFlagsHasAlpha, 2, 0, argb};
-  CallFunc(GdipSetImagePalette)(bitmap, (ColorPalette*)palette);
-  Point destinationPoints[] = {Point(dest_left, dest_top),
-                               Point(dest_left + dest_width, dest_top),
-                               Point(dest_left, dest_top + dest_height)};
+  CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)palette);
+  Gdiplus::Point destinationPoints[] = {
+      Gdiplus::Point(dest_left, dest_top),
+      Gdiplus::Point(dest_left + dest_width, dest_top),
+      Gdiplus::Point(dest_left, dest_top + dest_height)};
   CallFunc(GdipDrawImagePointsI)(pGraphics, bitmap, destinationPoints, 3);
   CallFunc(GdipDisposeImage)(bitmap);
 }
@@ -655,7 +713,7 @@ static void OutputImage(GpGraphics* pGraphics,
       pal[1] = 256;
       for (int i = 0; i < 256; i++)
         pal[i + 2] = pBitmap->GetPaletteArgb(i);
-      CallFunc(GdipSetImagePalette)(bitmap, (ColorPalette*)pal);
+      CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal);
       break;
     }
     case FXDIB_1bppRgb: {
@@ -671,9 +729,10 @@ static void OutputImage(GpGraphics* pGraphics,
   if (dest_width < 0) {
     dest_width--;
   }
-  Point destinationPoints[] = {Point(dest_left, dest_top),
-                               Point(dest_left + dest_width, dest_top),
-                               Point(dest_left, dest_top + dest_height)};
+  Gdiplus::Point destinationPoints[] = {
+      Gdiplus::Point(dest_left, dest_top),
+      Gdiplus::Point(dest_left + dest_width, dest_top),
+      Gdiplus::Point(dest_left, dest_top + dest_height)};
   CallFunc(GdipDrawImagePointsI)(pGraphics, bitmap, destinationPoints, 3);
   CallFunc(GdipDisposeImage)(bitmap);
 }
@@ -726,7 +785,7 @@ LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
   CallFunc(GdipNewPrivateFontCollection)(&pCollection);
   GpStatus status =
       CallFunc(GdipPrivateAddMemoryFont)(pCollection, pData, size);
-  if (status == Ok)
+  if (status == Gdiplus::Ok)
     return pCollection;
 
   CallFunc(GdipDeletePrivateFontCollection)(&pCollection);
@@ -741,7 +800,7 @@ bool CGdiplusExt::GdipCreateBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                    void** bitmap) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  PixelFormat format;
+  Gdiplus::PixelFormat format;
   switch (pBitmap->GetFormat()) {
     case FXDIB_Rgb:
       format = PixelFormat24bppRGB;
@@ -758,14 +817,14 @@ bool CGdiplusExt::GdipCreateBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   GpStatus status = CallFunc(GdipCreateBitmapFromScan0)(
       pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap->GetPitch(), format,
       pBitmap->GetBuffer(), (GpBitmap**)bitmap);
-  return status == Ok;
+  return status == Gdiplus::Ok;
 }
 bool CGdiplusExt::GdipCreateFromImage(void* bitmap, void** graphics) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   GpStatus status = CallFunc(GdipGetImageGraphicsContext)(
       (GpBitmap*)bitmap, (GpGraphics**)graphics);
-  return status == Ok;
+  return status == Gdiplus::Ok;
 }
 bool CGdiplusExt::GdipCreateFontFamilyFromName(const wchar_t* name,
                                                void* pFontCollection,
@@ -775,7 +834,7 @@ bool CGdiplusExt::GdipCreateFontFamilyFromName(const wchar_t* name,
   GpStatus status = CallFunc(GdipCreateFontFamilyFromName)(
       (GDIPCONST WCHAR*)name, (GpFontCollection*)pFontCollection,
       (GpFontFamily**)pFamily);
-  return status == Ok;
+  return status == Gdiplus::Ok;
 }
 bool CGdiplusExt::GdipCreateFontFromFamily(void* pFamily,
                                            float font_size,
@@ -786,15 +845,15 @@ bool CGdiplusExt::GdipCreateFontFromFamily(void* pFamily,
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   GpStatus status =
       CallFunc(GdipCreateFont)((GpFontFamily*)pFamily, font_size, fontstyle,
-                               Unit(flag), (GpFont**)pFont);
-  return status == Ok;
+                               Gdiplus::Unit(flag), (GpFont**)pFont);
+  return status == Gdiplus::Ok;
 }
 void CGdiplusExt::GdipGetFontSize(void* pFont, float* size) {
   REAL get_size;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   GpStatus status = CallFunc(GdipGetFontSize)((GpFont*)pFont, &get_size);
-  *size = (status == Ok) ? static_cast<float>(get_size) : 0;
+  *size = (status == Gdiplus::Ok) ? static_cast<float>(get_size) : 0;
 }
 void CGdiplusExt::GdipSetTextRenderingHint(void* graphics, int mode) {
   CGdiplusExt& GdiplusExt =
@@ -820,13 +879,15 @@ bool CGdiplusExt::GdipDrawDriverString(void* graphics,
   GpStatus status = CallFunc(GdipDrawDriverString)(
       (GpGraphics*)graphics, (GDIPCONST UINT16*)text, (INT)length,
       (GDIPCONST GpFont*)font, (GDIPCONST GpBrush*)brush,
-      (GDIPCONST PointF*)positions, (INT)flags, (GDIPCONST GpMatrix*)matrix);
-  return status == Ok;
+      (GDIPCONST Gdiplus::PointF*)positions, (INT)flags,
+      (GDIPCONST GpMatrix*)matrix);
+  return status == Gdiplus::Ok;
 }
 void CGdiplusExt::GdipCreateBrush(uint32_t fill_argb, void** pBrush) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipCreateSolidFill)((ARGB)fill_argb, (GpSolidFill**)pBrush);
+  CallFunc(GdipCreateSolidFill)((Gdiplus::ARGB)fill_argb,
+                                (GpSolidFill**)pBrush);
 }
 void CGdiplusExt::GdipDeleteBrush(void* pBrush) {
   CGdiplusExt& GdiplusExt =
@@ -841,19 +902,19 @@ void* CGdiplusExt::GdipCreateFontFromCollection(void* pFontCollection,
   int numFamilies = 0;
   GpStatus status = CallFunc(GdipGetFontCollectionFamilyCount)(
       (GpFontCollection*)pFontCollection, &numFamilies);
-  if (status != Ok)
+  if (status != Gdiplus::Ok)
     return nullptr;
 
   GpFontFamily* family_list[1];
   status = CallFunc(GdipGetFontCollectionFamilyList)(
       (GpFontCollection*)pFontCollection, 1, family_list, &numFamilies);
-  if (status != Ok)
+  if (status != Gdiplus::Ok)
     return nullptr;
 
   GpFont* pFont = nullptr;
   status = CallFunc(GdipCreateFont)(family_list[0], font_size, fontstyle,
                                     UnitPixel, &pFont);
-  if (status != Ok)
+  if (status != Gdiplus::Ok)
     return nullptr;
 
   return pFont;
@@ -970,7 +1031,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
       width = unit;
   }
   GpPen* pPen = nullptr;
-  CallFunc(GdipCreatePen1)((ARGB)argb, width, UnitWorld, &pPen);
+  CallFunc(GdipCreatePen1)((Gdiplus::ARGB)argb, width, UnitWorld, &pPen);
   LineCap lineCap = LineCapFlat;
   DashCap dashCap = DashCapFlat;
   bool bDashExtend = false;
@@ -1057,7 +1118,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
   CallFunc(GdipSetPenMiterLimit)(pPen, pGraphState->m_MiterLimit);
   return pPen;
 }
-static bool IsSmallTriangle(PointF* points,
+static bool IsSmallTriangle(Gdiplus::PointF* points,
                             const CFX_Matrix* pMatrix,
                             int& v1,
                             int& v2) {
@@ -1107,7 +1168,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                                 pObject2Device->e, pObject2Device->f, &pMatrix);
     CallFunc(GdipSetWorldTransform)(pGraphics, pMatrix);
   }
-  PointF* points = FX_Alloc(PointF, pPoints.size());
+  Gdiplus::PointF* points = FX_Alloc(Gdiplus::PointF, pPoints.size());
   BYTE* types = FX_Alloc(BYTE, pPoints.size());
   int nSubPathes = 0;
   bool bSubClose = false;
@@ -1370,7 +1431,7 @@ typedef struct {
   int Stride;
   LPBYTE pScan0;
   GpBitmap* pBitmap;
-  BitmapData* pBitmapData;
+  Gdiplus::BitmapData* pBitmapData;
   GpStream* pStream;
 } PREVIEW3_DIBITMAP;
 
@@ -1379,7 +1440,7 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   GpStream* pStream = nullptr;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  Status status = Ok;
+  Gdiplus::Status status = Gdiplus::Ok;
   if (args.flags == WINDIB_OPEN_PATHNAME) {
     status = CallFunc(GdipCreateBitmapFromFileICM)((wchar_t*)args.path_name,
                                                    &pBitmap);
@@ -1391,7 +1452,7 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
     pStream->Write(args.memory_base, (ULONG)args.memory_size, nullptr);
     status = CallFunc(GdipCreateBitmapFromStreamICM)(pStream, &pBitmap);
   }
-  if (status != Ok) {
+  if (status != Gdiplus::Ok) {
     if (pStream)
       pStream->Release();
 
@@ -1400,7 +1461,7 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   UINT height, width;
   CallFunc(GdipGetImageHeight)(pBitmap, &height);
   CallFunc(GdipGetImageWidth)(pBitmap, &width);
-  PixelFormat pixel_format;
+  Gdiplus::PixelFormat pixel_format;
   CallFunc(GdipGetImagePixelFormat)(pBitmap, &pixel_format);
   int info_size = sizeof(BITMAPINFOHEADER);
   int bpp = 24;
@@ -1424,8 +1485,8 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   pbmih->biHeight = -(int)height;
   pbmih->biPlanes = 1;
   pbmih->biWidth = width;
-  Rect rect(0, 0, width, height);
-  BitmapData* pBitmapData = FX_Alloc(BitmapData, 1);
+  Gdiplus::Rect rect(0, 0, width, height);
+  Gdiplus::BitmapData* pBitmapData = FX_Alloc(Gdiplus::BitmapData, 1);
   CallFunc(GdipBitmapLockBits)(pBitmap, &rect, ImageLockModeRead,
                                dest_pixel_format, pBitmapData);
   if (pixel_format == PixelFormat1bppIndexed ||
@@ -1438,7 +1499,7 @@ static PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
     } pal;
     int size = 0;
     CallFunc(GdipGetImagePaletteSize)(pBitmap, &size);
-    CallFunc(GdipGetImagePalette)(pBitmap, (ColorPalette*)&pal, size);
+    CallFunc(GdipGetImagePalette)(pBitmap, (Gdiplus::ColorPalette*)&pal, size);
     int entries = pixel_format == PixelFormat1bppIndexed ? 2 : 256;
     for (int i = 0; i < entries; i++) {
       ppal[i] = pal.Entries[i] & 0x00ffffff;
