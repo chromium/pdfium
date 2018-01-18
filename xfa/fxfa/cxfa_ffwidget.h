@@ -51,7 +51,6 @@ void XFA_RectWithoutMargin(CFX_RectF& rt,
                            const CXFA_Margin* margin,
                            bool bUI = false);
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
-bool XFA_IsCreateWidget(XFA_Element iType);
 
 class CXFA_CalcData {
  public:

@@ -221,14 +221,9 @@ void XFA_RectWithoutMargin(CFX_RectF& rt, const CXFA_Margin* margin, bool bUI) {
 }
 
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  if (XFA_IsCreateWidget(pLayoutItem->GetFormNode()->GetElementType()))
+  if (pLayoutItem->GetFormNode()->HasCreatedUIWidget())
     return static_cast<CXFA_FFWidget*>(pLayoutItem);
   return nullptr;
-}
-
-bool XFA_IsCreateWidget(XFA_Element eType) {
-  return eType == XFA_Element::Field || eType == XFA_Element::Draw ||
-         eType == XFA_Element::Subform || eType == XFA_Element::ExclGroup;
 }
 
 CXFA_CalcData::CXFA_CalcData() : m_iRefCount(0) {}
