@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "third_party/base/stl_util.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
 namespace {
 

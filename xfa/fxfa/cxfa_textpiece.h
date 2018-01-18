@@ -12,9 +12,9 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+class CFGAS_GEFont;
 class CXFA_LinkUserData;
 
 class CXFA_TextPiece {

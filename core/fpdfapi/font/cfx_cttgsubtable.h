@@ -13,7 +13,6 @@
 #include <set>
 #include <vector>
 
-#include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 
 class CFX_CTTGSUBTable {

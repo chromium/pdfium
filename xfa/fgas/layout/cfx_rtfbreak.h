@@ -13,11 +13,11 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fgas/layout/cfx_break.h"
 #include "xfa/fxfa/cxfa_textuserdata.h"
 
 class CFGAS_GEFont;
+class FXTEXT_CHARPOS;
 
 enum class CFX_RTFLineAlignment {
   Left = 0,

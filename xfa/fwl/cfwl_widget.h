@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fde/cfde_textout.h"
+#include "xfa/fde/cfde_data.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"

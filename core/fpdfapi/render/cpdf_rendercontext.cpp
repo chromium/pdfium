@@ -17,6 +17,7 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Page* pPage)

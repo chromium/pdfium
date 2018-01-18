@@ -14,16 +14,17 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 
-class CFWL_WidgetMgr;
 class CFGAS_DefaultFontManager;
-class CXFA_FWLAdapterWidgetMgr;
-class CXFA_FWLTheme;
+class CFGAS_FontMgr;
+class CFWL_WidgetMgr;
+class CPDF_Document;
 class CXFA_FFDocHandler;
 class CXFA_FontMgr;
+class CXFA_FWLAdapterWidgetMgr;
+class CXFA_FWLTheme;
 class IFWL_AdapterTimerMgr;
 
 class CXFA_FFApp {

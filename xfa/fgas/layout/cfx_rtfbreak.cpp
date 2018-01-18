@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_arabic.h"
 #include "core/fxcrt/fx_bidi.h"
+#include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_linebreak.h"

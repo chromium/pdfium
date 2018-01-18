@@ -1548,6 +1548,10 @@ void CFX_SkiaDeviceDriver::Flush() {
   m_pCache->Flush();
 }
 
+void CFX_SkiaDeviceDriver::PreMultiply() {
+  m_pBitmap->PreMultiply();
+}
+
 bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                           const FXTEXT_CHARPOS* pCharPos,
                                           CFX_Font* pFont,

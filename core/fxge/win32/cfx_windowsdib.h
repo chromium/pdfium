@@ -11,7 +11,8 @@
 #include <windows.h>
 #endif
 
-#include "core/fxge/fx_dib.h"
+#include "core/fxcrt/bytestring.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 
 #define WINDIB_OPEN_MEMORY 0x1
 #define WINDIB_OPEN_PATHNAME 0x2

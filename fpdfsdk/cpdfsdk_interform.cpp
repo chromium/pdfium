@@ -21,7 +21,6 @@
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
-#include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"

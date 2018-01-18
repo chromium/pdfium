@@ -10,8 +10,9 @@
 #include <stdint.h>
 
 #include "core/fxcrt/retain_ptr.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_breakline.h"
+
+class CFGAS_GEFont;
 
 struct FX_TPO {
   bool operator<(const FX_TPO& that) const { return pos < that.pos; }

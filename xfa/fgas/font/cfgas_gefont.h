@@ -18,7 +18,6 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
-class CFGAS_FontMgr;
 class CFX_UnicodeEncoding;
 
 class CFGAS_GEFont : public Retainable {

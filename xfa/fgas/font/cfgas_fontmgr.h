@@ -18,13 +18,13 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
-class CFX_FontSourceEnum_File;
 class CFGAS_GEFont;
+class CFX_FontMapper;
+class CFX_FontSourceEnum_File;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 struct FX_FONTMATCHPARAMS {

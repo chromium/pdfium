@@ -14,9 +14,9 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+class CFGAS_GEFont;
 class CFX_CSSComputedStyle;
 class CFX_CSSStyleSelector;
 class CFX_CSSStyleSheet;

@@ -7,7 +7,6 @@
 #ifndef XFA_FWL_CFWL_THEMEBACKGROUND_H_
 #define XFA_FWL_CFWL_THEMEBACKGROUND_H_
 
-#include "core/fxge/fx_dib.h"
 #include "xfa/fwl/cfwl_themepart.h"
 
 class CXFA_Graphics;

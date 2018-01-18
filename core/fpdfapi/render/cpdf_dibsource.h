@@ -21,7 +21,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/dib/cfx_dibsource.h"
 
 class CCodec_Jbig2Context;
 class CCodec_ScanlineDecoder;

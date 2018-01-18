@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxge/cfx_fontmapper.h"
-#include "core/fxge/fx_font.h"
 
 const uint32_t kTableNAME = FXDWORD_GET_MSBFIRST("name");
 const uint32_t kTableTTCF = FXDWORD_GET_MSBFIRST("ttcf");

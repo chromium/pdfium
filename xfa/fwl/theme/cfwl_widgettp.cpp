@@ -57,6 +57,10 @@ void CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
                             pParams->m_rtPart);
 }
 
+const RetainPtr<CFGAS_GEFont>& CFWL_WidgetTP::GetFont() const {
+  return m_pFDEFont;
+}
+
 void CFWL_WidgetTP::InitializeArrowColorData() {
   if (m_pColorData)
     return;
@@ -284,6 +288,10 @@ bool CFWL_FontData::LoadFont(const WideStringView& wsFontFamily,
   m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.unterminated_c_str(),
                                    dwFontStyles, dwCodePage, m_pFontMgr.get());
   return !!m_pFont;
+}
+
+RetainPtr<CFGAS_GEFont> CFWL_FontData::GetFont() const {
+  return m_pFont;
 }
 
 CFWL_FontManager* CFWL_FontManager::s_FontManager = nullptr;

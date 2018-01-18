@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/cfx_pathdata.h"
-#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 
 IFX_RenderDeviceDriver::~IFX_RenderDeviceDriver() {}
 

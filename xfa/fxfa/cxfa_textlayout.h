@@ -16,17 +16,18 @@
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 
-class CFX_CSSComputedStyle;
 class CFDE_RenderDevice;
-class CFX_XMLNode;
+class CFX_CSSComputedStyle;
+class CFX_RenderDevice;
 class CFX_RTFBreak;
-class CXFA_LoaderContext;
+class CFX_XMLNode;
 class CXFA_LinkUserData;
+class CXFA_LoaderContext;
 class CXFA_Node;
 class CXFA_PieceLine;
+class CXFA_TextPiece;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
-class CXFA_TextPiece;
 
 class CXFA_TextLayout {
  public:

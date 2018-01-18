@@ -13,16 +13,15 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
 class CFDE_TextOut;
+class CFGAS_FontMgr;
 class CFGAS_GEFont;
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
 class CFWL_ThemeText;
-class CFGAS_FontMgr;
 class CFWL_Widget;
 
 #if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
@@ -39,7 +38,7 @@ class CFWL_WidgetTP {
   virtual void DrawBackground(CFWL_ThemeBackground* pParams);
   virtual void DrawText(CFWL_ThemeText* pParams);
 
-  const RetainPtr<CFGAS_GEFont>& GetFont() const { return m_pFDEFont; }
+  const RetainPtr<CFGAS_GEFont>& GetFont() const;
 
  protected:
   struct CColorData {
@@ -112,7 +111,7 @@ class CFWL_FontData {
   bool LoadFont(const WideStringView& wsFontFamily,
                 uint32_t dwFontStyles,
                 uint16_t wCodePage);
-  RetainPtr<CFGAS_GEFont> GetFont() const { return m_pFont; }
+  RetainPtr<CFGAS_GEFont> GetFont() const;
 
  protected:
   WideString m_wsFamily;

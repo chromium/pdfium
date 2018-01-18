@@ -9,7 +9,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/ptr_util.h"
 
 #define _FPDFAPI_IMAGESIZE_LIMIT_ (30 * 1024 * 1024)

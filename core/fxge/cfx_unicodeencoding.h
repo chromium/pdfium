@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_CFX_UNICODEENCODING_H_
 #define CORE_FXGE_CFX_UNICODEENCODING_H_
 
-#include "core/fxge/fx_font.h"
+#include <stdint.h>
 
 #ifdef PDF_ENABLE_XFA
 #define FXFM_ENC_TAG(a, b, c, d)                                          \

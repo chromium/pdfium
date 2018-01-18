@@ -17,6 +17,7 @@
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 
 CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
                                            const RetainPtr<CPDF_Image>& pImage)

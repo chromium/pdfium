@@ -9,8 +9,9 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
+#include "core/fxge/fx_dib.h"
 
+class CFGAS_GEFont;
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
 class CFWL_ThemeText;

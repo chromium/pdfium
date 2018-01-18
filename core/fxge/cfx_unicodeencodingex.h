@@ -14,7 +14,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/fx_dib.h"
-#include "core/fxge/fx_freetype.h"
 
 class CFX_UnicodeEncodingEx : public CFX_UnicodeEncoding {
  public:

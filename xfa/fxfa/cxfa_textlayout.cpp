@@ -20,6 +20,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
 #include "xfa/fxfa/cxfa_pieceline.h"

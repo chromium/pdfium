@@ -150,7 +150,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void Clear(uint32_t color);
   void Flush() override;
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
-  void PreMultiply() { m_pBitmap->PreMultiply(); }
+  void PreMultiply();
   static void PreMultiply(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   SkCanvas* SkiaCanvas() { return m_pCanvas; }
   void DebugVerifyBitmapIsPreMultiplied() const;
