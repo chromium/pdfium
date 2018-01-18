@@ -2064,291 +2064,304 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
     return FXCODEC_STATUS_ERROR;
 
   switch (m_imagType) {
-    case FXCODEC_IMAGE_JPG: {
-      CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
-      // Setting jump marker before calling ReadScanLine, since a longjmp to
-      // the marker indicates a fatal error.
-      if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
-        m_pJpegContext.reset();
-        m_status = FXCODEC_STATUS_ERROR;
-        return FXCODEC_STATUS_ERROR;
-      }
+    case FXCODEC_IMAGE_JPG:
+      return JpegContinueDecode();
+    case FXCODEC_IMAGE_PNG:
+      return PngContinueDecode();
+    case FXCODEC_IMAGE_GIF:
+      return GifContinueDecode();
+    case FXCODEC_IMAGE_BMP:
+      return BmpContinueDecode();
+    case FXCODEC_IMAGE_TIF:
+      return TifContinueDecode();
+    default:
+      return FXCODEC_STATUS_ERROR;
+  }
+}
 
-      while (true) {
-        bool readRes =
-            pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf);
-        while (!readRes) {
-          FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-          if (!JpegReadMoreData(pJpegModule, error_status)) {
-            m_pDeviceBitmap = nullptr;
-            m_pFile = nullptr;
-            m_status = error_status;
-            return m_status;
-          }
-          readRes =
-              pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf);
-        }
-        if (m_SrcFormat == FXCodec_Rgb) {
-          int src_Bpp = (m_SrcFormat & 0xff) >> 3;
-          RGB2BGR(m_pDecodeBuf + m_clipBox.left * src_Bpp, m_clipBox.Width());
-        }
-        if (m_SrcRow >= m_clipBox.bottom) {
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = FXCODEC_STATUS_DECODE_FINISH;
-          return m_status;
-        }
-        Resample(m_pDeviceBitmap, m_SrcRow, m_pDecodeBuf, m_SrcFormat);
-        m_SrcRow++;
+FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegContinueDecode() {
+  CCodec_JpegModule* pJpegModule = m_pCodecMgr->GetJpegModule();
+  // Setting jump marker before calling ReadScanLine, since a longjmp to
+  // the marker indicates a fatal error.
+  if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
+    m_pJpegContext.reset();
+    m_status = FXCODEC_STATUS_ERROR;
+    return FXCODEC_STATUS_ERROR;
+  }
+
+  while (true) {
+    bool readRes =
+        pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf);
+    while (!readRes) {
+      FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
+      if (!JpegReadMoreData(pJpegModule, error_status)) {
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
+        m_status = error_status;
+        return m_status;
       }
+      readRes = pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf);
     }
-    case FXCODEC_IMAGE_PNG: {
-      CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
-      if (!pPngModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      while (true) {
-        uint32_t remain_size = (uint32_t)m_pFile->GetSize() - m_offSet;
-        uint32_t input_size =
-            remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
-        if (input_size == 0) {
-          m_pPngContext.reset();
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = FXCODEC_STATUS_DECODE_FINISH;
-          return m_status;
-        }
-        if (m_pSrcBuf && input_size > m_SrcSize) {
-          FX_Free(m_pSrcBuf);
-          m_pSrcBuf = FX_Alloc(uint8_t, input_size);
-          memset(m_pSrcBuf, 0, input_size);
-          m_SrcSize = input_size;
-        }
-        bool bResult = m_pFile->ReadBlock(m_pSrcBuf, m_offSet, input_size);
-        if (!bResult) {
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = FXCODEC_STATUS_ERR_READ;
-          return m_status;
-        }
-        m_offSet += input_size;
-        bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, input_size,
-                                    nullptr);
-        if (!bResult) {
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = FXCODEC_STATUS_ERROR;
-          return m_status;
-        }
-      }
+    if (m_SrcFormat == FXCodec_Rgb) {
+      int src_Bpp = (m_SrcFormat & 0xff) >> 3;
+      RGB2BGR(m_pDecodeBuf + m_clipBox.left * src_Bpp, m_clipBox.Width());
     }
-    case FXCODEC_IMAGE_GIF: {
-      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
-      if (!pGifModule) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-
-      CFX_GifDecodeStatus readRes =
-          pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
-      while (readRes == CFX_GifDecodeStatus::Unfinished) {
-        FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-        if (!GifReadMoreData(pGifModule, error_status)) {
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = error_status;
-          return m_status;
-        }
-        readRes =
-            pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
-      }
-
-      if (readRes == CFX_GifDecodeStatus::Success) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_DECODE_FINISH;
-        return m_status;
-      }
-
-      m_pDeviceBitmap = nullptr;
-      m_pFile = nullptr;
-      m_status = FXCODEC_STATUS_ERROR;
-      return m_status;
-    }
-    case FXCODEC_IMAGE_BMP: {
-      CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
-      if (!pBmpModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      while (true) {
-        int32_t readRes = pBmpModule->LoadImage(m_pBmpContext.get());
-        while (readRes == 2) {
-          FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-          if (!BmpReadMoreData(pBmpModule, error_status)) {
-            m_pDeviceBitmap = nullptr;
-            m_pFile = nullptr;
-            m_status = error_status;
-            return m_status;
-          }
-          readRes = pBmpModule->LoadImage(m_pBmpContext.get());
-        }
-        if (readRes == 1) {
-          m_pDeviceBitmap = nullptr;
-          m_pFile = nullptr;
-          m_status = FXCODEC_STATUS_DECODE_FINISH;
-          return m_status;
-        }
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERROR;
-        return m_status;
-      }
-    }
-    case FXCODEC_IMAGE_TIF: {
-      CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
-      if (!pTiffModule) {
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      bool ret = false;
-      if (m_pDeviceBitmap->GetBPP() == 32 &&
-          m_pDeviceBitmap->GetWidth() == m_SrcWidth && m_SrcWidth == m_sizeX &&
-          m_pDeviceBitmap->GetHeight() == m_SrcHeight &&
-          m_SrcHeight == m_sizeY && m_startX == 0 && m_startY == 0 &&
-          m_clipBox.left == 0 && m_clipBox.top == 0 &&
-          m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight) {
-        ret = pTiffModule->Decode(m_pTiffContext.get(), m_pDeviceBitmap);
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        if (!ret) {
-          m_status = FXCODEC_STATUS_ERROR;
-          return m_status;
-        }
-        m_status = FXCODEC_STATUS_DECODE_FINISH;
-        return m_status;
-      }
-
-      auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-      pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Argb);
-      if (!pDIBitmap->GetBuffer()) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      ret = pTiffModule->Decode(m_pTiffContext.get(), pDIBitmap);
-      if (!ret) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERROR;
-        return m_status;
-      }
-      RetainPtr<CFX_DIBitmap> pClipBitmap =
-          (m_clipBox.left == 0 && m_clipBox.top == 0 &&
-           m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight)
-              ? pDIBitmap
-              : pDIBitmap->Clone(&m_clipBox);
-      if (!pClipBitmap) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      RetainPtr<CFX_DIBitmap> pFormatBitmap;
-      switch (m_pDeviceBitmap->GetFormat()) {
-        case FXDIB_8bppRgb:
-          pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-          pFormatBitmap->Create(pClipBitmap->GetWidth(),
-                                pClipBitmap->GetHeight(), FXDIB_8bppRgb);
-          break;
-        case FXDIB_8bppMask:
-          pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-          pFormatBitmap->Create(pClipBitmap->GetWidth(),
-                                pClipBitmap->GetHeight(), FXDIB_8bppMask);
-          break;
-        case FXDIB_Rgb:
-          pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-          pFormatBitmap->Create(pClipBitmap->GetWidth(),
-                                pClipBitmap->GetHeight(), FXDIB_Rgb);
-          break;
-        case FXDIB_Rgb32:
-          pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-          pFormatBitmap->Create(pClipBitmap->GetWidth(),
-                                pClipBitmap->GetHeight(), FXDIB_Rgb32);
-          break;
-        case FXDIB_Argb:
-          pFormatBitmap = pClipBitmap;
-          break;
-        default:
-          break;
-      }
-      switch (m_pDeviceBitmap->GetFormat()) {
-        case FXDIB_8bppRgb:
-        case FXDIB_8bppMask: {
-          for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
-            uint8_t* src_line = (uint8_t*)pClipBitmap->GetScanline(row);
-            uint8_t* des_line = (uint8_t*)pFormatBitmap->GetScanline(row);
-            for (int32_t col = 0; col < pClipBitmap->GetWidth(); col++) {
-              uint8_t _a = 255 - src_line[3];
-              uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
-              uint8_t g = (src_line[1] * src_line[3] + 0xFF * _a) / 255;
-              uint8_t r = (src_line[2] * src_line[3] + 0xFF * _a) / 255;
-              *des_line++ = FXRGB2GRAY(r, g, b);
-              src_line += 4;
-            }
-          }
-        } break;
-        case FXDIB_Rgb:
-        case FXDIB_Rgb32: {
-          int32_t desBpp = (m_pDeviceBitmap->GetFormat() == FXDIB_Rgb) ? 3 : 4;
-          for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
-            uint8_t* src_line = (uint8_t*)pClipBitmap->GetScanline(row);
-            uint8_t* des_line = (uint8_t*)pFormatBitmap->GetScanline(row);
-            for (int32_t col = 0; col < pClipBitmap->GetWidth(); col++) {
-              uint8_t _a = 255 - src_line[3];
-              uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
-              uint8_t g = (src_line[1] * src_line[3] + 0xFF * _a) / 255;
-              uint8_t r = (src_line[2] * src_line[3] + 0xFF * _a) / 255;
-              *des_line++ = b;
-              *des_line++ = g;
-              *des_line++ = r;
-              des_line += desBpp - 3;
-              src_line += 4;
-            }
-          }
-        } break;
-        default:
-          break;
-      }
-      if (!pFormatBitmap) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      RetainPtr<CFX_DIBitmap> pStrechBitmap =
-          pFormatBitmap->StretchTo(m_sizeX, m_sizeY, FXDIB_INTERPOL, nullptr);
-      pFormatBitmap = nullptr;
-      if (!pStrechBitmap) {
-        m_pDeviceBitmap = nullptr;
-        m_pFile = nullptr;
-        m_status = FXCODEC_STATUS_ERR_MEMORY;
-        return m_status;
-      }
-      m_pDeviceBitmap->TransferBitmap(m_startX, m_startY, m_sizeX, m_sizeY,
-                                      pStrechBitmap, 0, 0);
+    if (m_SrcRow >= m_clipBox.bottom) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
       m_status = FXCODEC_STATUS_DECODE_FINISH;
       return m_status;
     }
-    default:
-      return FXCODEC_STATUS_ERROR;
+    Resample(m_pDeviceBitmap, m_SrcRow, m_pDecodeBuf, m_SrcFormat);
+    m_SrcRow++;
   }
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
+  CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+  if (!pPngModule) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  while (true) {
+    uint32_t remain_size = (uint32_t)m_pFile->GetSize() - m_offSet;
+    uint32_t input_size =
+        remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
+    if (input_size == 0) {
+      m_pPngContext.reset();
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = FXCODEC_STATUS_DECODE_FINISH;
+      return m_status;
+    }
+    if (m_pSrcBuf && input_size > m_SrcSize) {
+      FX_Free(m_pSrcBuf);
+      m_pSrcBuf = FX_Alloc(uint8_t, input_size);
+      memset(m_pSrcBuf, 0, input_size);
+      m_SrcSize = input_size;
+    }
+    bool bResult = m_pFile->ReadBlock(m_pSrcBuf, m_offSet, input_size);
+    if (!bResult) {
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = FXCODEC_STATUS_ERR_READ;
+      return m_status;
+    }
+    m_offSet += input_size;
+    bResult =
+        pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, input_size, nullptr);
+    if (!bResult) {
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = FXCODEC_STATUS_ERROR;
+      return m_status;
+    }
+  }
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::GifContinueDecode() {
+  CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+  if (!pGifModule) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+
+  CFX_GifDecodeStatus readRes =
+      pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
+  while (readRes == CFX_GifDecodeStatus::Unfinished) {
+    FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
+    if (!GifReadMoreData(pGifModule, error_status)) {
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = error_status;
+      return m_status;
+    }
+    readRes = pGifModule->LoadFrame(m_pGifContext.get(), m_FrameCur, nullptr);
+  }
+
+  if (readRes == CFX_GifDecodeStatus::Success) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_DECODE_FINISH;
+    return m_status;
+  }
+
+  m_pDeviceBitmap = nullptr;
+  m_pFile = nullptr;
+  m_status = FXCODEC_STATUS_ERROR;
+  return m_status;
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
+  CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+  if (!pBmpModule) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  while (true) {
+    int32_t readRes = pBmpModule->LoadImage(m_pBmpContext.get());
+    while (readRes == 2) {
+      FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
+      if (!BmpReadMoreData(pBmpModule, error_status)) {
+        m_pDeviceBitmap = nullptr;
+        m_pFile = nullptr;
+        m_status = error_status;
+        return m_status;
+      }
+      readRes = pBmpModule->LoadImage(m_pBmpContext.get());
+    }
+    if (readRes == 1) {
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = FXCODEC_STATUS_DECODE_FINISH;
+      return m_status;
+    }
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERROR;
+    return m_status;
+  }
+}
+
+FXCODEC_STATUS CCodec_ProgressiveDecoder::TifContinueDecode() {
+  CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
+  if (!pTiffModule) {
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  bool ret = false;
+  if (m_pDeviceBitmap->GetBPP() == 32 &&
+      m_pDeviceBitmap->GetWidth() == m_SrcWidth && m_SrcWidth == m_sizeX &&
+      m_pDeviceBitmap->GetHeight() == m_SrcHeight && m_SrcHeight == m_sizeY &&
+      m_startX == 0 && m_startY == 0 && m_clipBox.left == 0 &&
+      m_clipBox.top == 0 && m_clipBox.right == m_SrcWidth &&
+      m_clipBox.bottom == m_SrcHeight) {
+    ret = pTiffModule->Decode(m_pTiffContext.get(), m_pDeviceBitmap);
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    if (!ret) {
+      m_status = FXCODEC_STATUS_ERROR;
+      return m_status;
+    }
+    m_status = FXCODEC_STATUS_DECODE_FINISH;
+    return m_status;
+  }
+
+  auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Argb);
+  if (!pDIBitmap->GetBuffer()) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  ret = pTiffModule->Decode(m_pTiffContext.get(), pDIBitmap);
+  if (!ret) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERROR;
+    return m_status;
+  }
+  RetainPtr<CFX_DIBitmap> pClipBitmap =
+      (m_clipBox.left == 0 && m_clipBox.top == 0 &&
+       m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight)
+          ? pDIBitmap
+          : pDIBitmap->Clone(&m_clipBox);
+  if (!pClipBitmap) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  RetainPtr<CFX_DIBitmap> pFormatBitmap;
+  switch (m_pDeviceBitmap->GetFormat()) {
+    case FXDIB_8bppRgb:
+      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+      pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(),
+                            FXDIB_8bppRgb);
+      break;
+    case FXDIB_8bppMask:
+      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+      pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(),
+                            FXDIB_8bppMask);
+      break;
+    case FXDIB_Rgb:
+      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+      pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(),
+                            FXDIB_Rgb);
+      break;
+    case FXDIB_Rgb32:
+      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+      pFormatBitmap->Create(pClipBitmap->GetWidth(), pClipBitmap->GetHeight(),
+                            FXDIB_Rgb32);
+      break;
+    case FXDIB_Argb:
+      pFormatBitmap = pClipBitmap;
+      break;
+    default:
+      break;
+  }
+  switch (m_pDeviceBitmap->GetFormat()) {
+    case FXDIB_8bppRgb:
+    case FXDIB_8bppMask: {
+      for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
+        uint8_t* src_line = (uint8_t*)pClipBitmap->GetScanline(row);
+        uint8_t* des_line = (uint8_t*)pFormatBitmap->GetScanline(row);
+        for (int32_t col = 0; col < pClipBitmap->GetWidth(); col++) {
+          uint8_t _a = 255 - src_line[3];
+          uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
+          uint8_t g = (src_line[1] * src_line[3] + 0xFF * _a) / 255;
+          uint8_t r = (src_line[2] * src_line[3] + 0xFF * _a) / 255;
+          *des_line++ = FXRGB2GRAY(r, g, b);
+          src_line += 4;
+        }
+      }
+    } break;
+    case FXDIB_Rgb:
+    case FXDIB_Rgb32: {
+      int32_t desBpp = (m_pDeviceBitmap->GetFormat() == FXDIB_Rgb) ? 3 : 4;
+      for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
+        uint8_t* src_line = (uint8_t*)pClipBitmap->GetScanline(row);
+        uint8_t* des_line = (uint8_t*)pFormatBitmap->GetScanline(row);
+        for (int32_t col = 0; col < pClipBitmap->GetWidth(); col++) {
+          uint8_t _a = 255 - src_line[3];
+          uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
+          uint8_t g = (src_line[1] * src_line[3] + 0xFF * _a) / 255;
+          uint8_t r = (src_line[2] * src_line[3] + 0xFF * _a) / 255;
+          *des_line++ = b;
+          *des_line++ = g;
+          *des_line++ = r;
+          des_line += desBpp - 3;
+          src_line += 4;
+        }
+      }
+    } break;
+    default:
+      break;
+  }
+  if (!pFormatBitmap) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  RetainPtr<CFX_DIBitmap> pStrechBitmap =
+      pFormatBitmap->StretchTo(m_sizeX, m_sizeY, FXDIB_INTERPOL, nullptr);
+  pFormatBitmap = nullptr;
+  if (!pStrechBitmap) {
+    m_pDeviceBitmap = nullptr;
+    m_pFile = nullptr;
+    m_status = FXCODEC_STATUS_ERR_MEMORY;
+    return m_status;
+  }
+  m_pDeviceBitmap->TransferBitmap(m_startX, m_startY, m_sizeX, m_sizeY,
+                                  pStrechBitmap, 0, 0);
+  m_pDeviceBitmap = nullptr;
+  m_pFile = nullptr;
+  m_status = FXCODEC_STATUS_DECODE_FINISH;
+  return m_status;
 }
 
 std::unique_ptr<CCodec_ProgressiveDecoder>

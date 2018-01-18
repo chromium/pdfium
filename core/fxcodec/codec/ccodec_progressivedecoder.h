@@ -195,6 +195,12 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   FXCODEC_STATUS GifStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
+  FXCODEC_STATUS JpegContinueDecode();
+  FXCODEC_STATUS PngContinueDecode();
+  FXCODEC_STATUS GifContinueDecode();
+  FXCODEC_STATUS BmpContinueDecode();
+  FXCODEC_STATUS TifContinueDecode();
+
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
