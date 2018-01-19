@@ -110,10 +110,6 @@ FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBSource>& pDrc) {
   return FXDIB_Rgba;
 }
 
-bool NeedAlpha(bool bHasAlpha, FXDIB_Format format) {
-  return bHasAlpha || format == FXDIB_Cmyka;
-}
-
 void WriteMonoResult(uint32_t r_bgra_cmyk, FXDIB_Format format, uint8_t* dest) {
   if (format == FXDIB_Rgba) {
     dest[0] = static_cast<uint8_t>(r_bgra_cmyk >> 24);
@@ -131,26 +127,24 @@ void WriteColorResult(std::function<uint8_t(int offset)> func,
   uint8_t blue_c = func(0);
   uint8_t green_m = func(1);
   uint8_t red_y = func(2);
-  uint8_t alpha_k = NeedAlpha(bHasAlpha, format) ? func(3) : kOpaqueAlpha;
 
   uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
   if (bHasAlpha) {
     if (format == FXDIB_Argb) {
-      *dest32 = FXARGB_TODIB(FXARGB_MAKE(alpha_k, red_y, green_m, blue_c));
+      *dest32 = FXARGB_TODIB(FXARGB_MAKE(func(3), red_y, green_m, blue_c));
     } else if (format == FXDIB_Rgba) {
       dest[0] = blue_c;
       dest[1] = green_m;
       dest[2] = red_y;
     } else {
-      *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, alpha_k));
+      *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, func(3)));
     }
     return;
   }
 
   if (format == FXDIB_Cmyka) {
-    *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, alpha_k));
+    *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, func(3)));
   } else {
-    ASSERT(alpha_k == kOpaqueAlpha);
     *dest32 = FXARGB_TODIB(FXARGB_MAKE(kOpaqueAlpha, red_y, green_m, blue_c));
   }
 }
