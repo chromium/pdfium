@@ -637,6 +637,8 @@ class CFX_Matrix {
 
   void Scale(float sx, float sy, bool bPrepended = false);
   void Rotate(float fRadian, bool bPrepended = false);
+
+  // Rotates counterclockwise around the (x, y) point.
   void RotateAt(float fRadian, float x, float y, bool bPrepended = false);
 
   void Shear(float fAlphaRadian, float fBetaRadian, bool bPrepended = false);
