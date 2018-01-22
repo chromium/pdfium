@@ -1830,6 +1830,11 @@ CXFA_Node* CXFA_Node::GetExclGroupIfExists() {
   return pExcl;
 }
 
+void CXFA_Node::SetWidgetReady() {
+  acc_ = pdfium::MakeUnique<CXFA_WidgetAcc>(AsNode());
+  is_widget_ready_ = true;
+}
+
 int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
                                 XFA_AttributeEnum iActivity,
                                 CXFA_EventParam* pEventParam) {

@@ -304,6 +304,14 @@ class CXFA_Node : public CXFA_Object {
   bool IsNull() const { return m_bIsNull; }
   void SetIsNull(bool val) { m_bIsNull = val; }
 
+  void SetWidgetReady();
+  bool IsWidgetReady() const { return is_widget_ready_; }
+  CXFA_WidgetAcc* GetWidgetAcc() {
+    ASSERT(IsWidgetReady());
+    ASSERT(acc_.get() != nullptr);
+    return acc_.get();
+  }
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
@@ -371,6 +379,8 @@ class CXFA_Node : public CXFA_Object {
   XFA_Element m_eUIType = XFA_Element::Unknown;
   bool m_bIsNull = true;
   bool m_bPreNull = true;
+  bool is_widget_ready_ = false;
+  std::unique_ptr<CXFA_WidgetAcc> acc_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_
