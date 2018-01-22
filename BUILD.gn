@@ -1806,15 +1806,41 @@ if (pdf_enable_xfa) {
     configs += [ ":pdfium_core_config" ]
   }
 
+  group("xfa") {
+    deps = [
+      ":xfa_fde",
+      ":xfa_fgas",
+      ":xfa_fwl",
+      ":xfa_fxfa",
+      ":xfa_fxfa_fm2js",
+      ":xfa_fxfa_parser",
+      ":xfa_fxgraphics",
+    ]
+  }
+
   # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa") {
+  static_library("xfa_fde") {
     sources = [
+      "xfa/fde/cfde_data.h",
       "xfa/fde/cfde_texteditengine.cpp",
       "xfa/fde/cfde_texteditengine.h",
       "xfa/fde/cfde_textout.cpp",
       "xfa/fde/cfde_textout.h",
       "xfa/fde/cfde_wordbreak_data.cpp",
       "xfa/fde/cfde_wordbreak_data.h",
+    ]
+    deps = [
+      ":fxcrt",
+    ]
+    configs += [
+      ":pdfium_core_config",
+      ":xfa_warnings",
+    ]
+  }
+
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
+  static_library("xfa_fgas") {
+    sources = [
       "xfa/fgas/crt/cfgas_formatstring.cpp",
       "xfa/fgas/crt/cfgas_formatstring.h",
       "xfa/fgas/font/cfgas_defaultfontmanager.cpp",
@@ -1839,6 +1865,19 @@ if (pdf_enable_xfa) {
       "xfa/fgas/layout/cfx_rtfbreak.h",
       "xfa/fgas/layout/cfx_txtbreak.cpp",
       "xfa/fgas/layout/cfx_txtbreak.h",
+    ]
+    deps = [
+      ":fxcrt",
+    ]
+    configs += [
+      ":pdfium_core_config",
+      ":xfa_warnings",
+    ]
+  }
+
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
+  static_library("xfa_fwl") {
+    sources = [
       "xfa/fwl/cfwl_app.cpp",
       "xfa/fwl/cfwl_app.h",
       "xfa/fwl/cfwl_barcode.cpp",
@@ -1955,6 +1994,21 @@ if (pdf_enable_xfa) {
       "xfa/fwl/theme/cfwl_utils.h",
       "xfa/fwl/theme/cfwl_widgettp.cpp",
       "xfa/fwl/theme/cfwl_widgettp.h",
+    ]
+    deps = [
+      ":fxbarcode",
+      ":fxcrt",
+      ":xfa_fgas",
+    ]
+    configs += [
+      ":pdfium_core_config",
+      ":xfa_warnings",
+    ]
+  }
+
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
+  static_library("xfa_fxfa") {
+    sources = [
       "xfa/fxfa/cxfa_eventparam.cpp",
       "xfa/fxfa/cxfa_eventparam.h",
       "xfa/fxfa/cxfa_ffapp.cpp",
@@ -2045,6 +2099,24 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_widgetacc.h",
       "xfa/fxfa/cxfa_widgetacciterator.cpp",
       "xfa/fxfa/cxfa_widgetacciterator.h",
+      "xfa/fxfa/fxfa.h",
+      "xfa/fxfa/fxfa_basic.h",
+    ]
+    deps = [
+      ":fxcrt",
+      ":fxjs",
+      ":xfa_fde",
+      ":xfa_fgas",
+    ]
+    configs += [
+      ":pdfium_core_config",
+      ":xfa_warnings",
+    ]
+  }
+
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
+  static_library("xfa_fxfa_fm2js") {
+    sources = [
       "xfa/fxfa/fm2js/cxfa_fmexpression.cpp",
       "xfa/fxfa/fm2js/cxfa_fmexpression.h",
       "xfa/fxfa/fm2js/cxfa_fmlexer.cpp",
@@ -2055,8 +2127,19 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.h",
       "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.cpp",
       "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h",
-      "xfa/fxfa/fxfa.h",
-      "xfa/fxfa/fxfa_basic.h",
+    ]
+    deps = [
+      "//third_party/icu:icuuc",
+    ]
+    configs += [
+      ":pdfium_core_config",
+      ":xfa_warnings",
+    ]
+  }
+
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
+  static_library("xfa_fxfa_parser") {
+    sources = [
       "xfa/fxfa/parser/cscript_datawindow.cpp",
       "xfa/fxfa/parser/cscript_datawindow.h",
       "xfa/fxfa/parser/cscript_eventpseudomodel.cpp",
@@ -2747,6 +2830,20 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/xfa_resolvenode_rs.h",
       "xfa/fxfa/parser/xfa_utils.cpp",
       "xfa/fxfa/parser/xfa_utils.h",
+    ]
+    deps = [
+      ":fxjs",
+      ":xfa_fgas",
+    ]
+    configs += [
+      ":pdfium_core_config",
+      ":xfa_warnings",
+    ]
+  }
+
+  # TODO(crbug.com/pdfium/964): Support jumbo builds.
+  static_library("xfa_fxgraphics") {
+    sources = [
       "xfa/fxgraphics/cxfa_gecolor.cpp",
       "xfa/fxgraphics/cxfa_gecolor.h",
       "xfa/fxgraphics/cxfa_gepath.cpp",
@@ -2757,12 +2854,6 @@ if (pdf_enable_xfa) {
       "xfa/fxgraphics/cxfa_geshading.h",
       "xfa/fxgraphics/cxfa_graphics.cpp",
       "xfa/fxgraphics/cxfa_graphics.h",
-    ]
-    include_dirs = [ "." ]
-    deps = [
-      ":fxbarcode",
-      ":fxcrt",
-      ":fxjs",
     ]
     configs += [
       ":pdfium_core_config",
