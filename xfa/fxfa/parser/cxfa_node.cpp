@@ -1992,7 +1992,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
                                            bool bVersionFlag) {
   if (!GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw).IsEmpty())
     return XFA_EVENTERROR_Success;
-  if (GetWidgetAcc()->IsNull() && GetWidgetAcc()->IsPreNull())
+  if (m_bIsNull && m_bPreNull)
     return XFA_EVENTERROR_Success;
 
   XFA_AttributeEnum eNullTest = validate->GetNullTest();

@@ -348,10 +348,7 @@ bool SplitDateTime(const WideString& wsDateTime,
 
 }  // namespace
 
-CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_Node* pNode)
-    : m_bIsNull(true),
-      m_bPreNull(true),
-      m_pNode(pNode) {}
+CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_Node* pNode) : m_pNode(pNode) {}
 
 CXFA_WidgetAcc::~CXFA_WidgetAcc() = default;
 
@@ -2132,8 +2129,9 @@ bool CXFA_WidgetAcc::SetValue(XFA_VALUEPICTURE eValueType,
     return true;
   }
 
-  m_bPreNull = m_bIsNull;
-  m_bIsNull = false;
+  m_pNode->SetPreNull(m_pNode->IsNull());
+  m_pNode->SetIsNull(false);
+
   WideString wsNewText(wsValue);
   WideString wsPicture = GetPictureContent(eValueType);
   bool bValidate = true;

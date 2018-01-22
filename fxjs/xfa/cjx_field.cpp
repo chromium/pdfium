@@ -248,8 +248,8 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   CXFA_WidgetAcc* pWidgetAcc = xfaNode->GetWidgetAcc();
   if (bSetting) {
     if (pValue) {
-      pWidgetAcc->SetPreNull(pWidgetAcc->IsNull());
-      pWidgetAcc->SetIsNull(pValue->IsNull());
+      xfaNode->SetPreNull(xfaNode->IsNull());
+      xfaNode->SetIsNull(pValue->IsNull());
     }
 
     WideString wsNewText;

@@ -176,11 +176,6 @@ class CXFA_WidgetAcc {
                           int32_t iLead,
                           int32_t iTread) const;
 
-  bool IsPreNull() const { return m_bPreNull; }
-  void SetPreNull(bool val) { m_bPreNull = val; }
-  bool IsNull() const { return m_bIsNull; }
-  void SetIsNull(bool val) { m_bIsNull = val; }
-
  private:
   void CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap);
   bool CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
@@ -213,8 +208,6 @@ class CXFA_WidgetAcc {
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
 
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
-  bool m_bIsNull;
-  bool m_bPreNull;
   CXFA_Node* m_pNode;
 };
 

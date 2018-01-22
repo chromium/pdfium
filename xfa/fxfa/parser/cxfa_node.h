@@ -299,6 +299,11 @@ class CXFA_Node : public CXFA_Object {
   CFX_RectF GetUIMargin();
   CXFA_Border* GetUIBorder();
 
+  bool IsPreNull() const { return m_bPreNull; }
+  void SetPreNull(bool val) { m_bPreNull = val; }
+  bool IsNull() const { return m_bIsNull; }
+  void SetIsNull(bool val) { m_bIsNull = val; }
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
@@ -364,6 +369,8 @@ class CXFA_Node : public CXFA_Object {
   std::vector<UnownedPtr<CXFA_Node>> binding_nodes_;
   CXFA_Node* m_pUiChildNode = nullptr;
   XFA_Element m_eUIType = XFA_Element::Unknown;
+  bool m_bIsNull = true;
+  bool m_bPreNull = true;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_
