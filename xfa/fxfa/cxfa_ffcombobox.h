@@ -9,6 +9,8 @@
 
 #include "xfa/fxfa/cxfa_fffield.h"
 
+class CXFA_EventParam;
+
 class CXFA_FFComboBox : public CXFA_FFField {
  public:
   explicit CXFA_FFComboBox(CXFA_Node* pNode);

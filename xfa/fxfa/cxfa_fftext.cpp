@@ -17,6 +17,7 @@
 #include "xfa/fxfa/cxfa_pieceline.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textpiece.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 

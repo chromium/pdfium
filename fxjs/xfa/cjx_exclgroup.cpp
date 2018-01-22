@@ -13,6 +13,7 @@
 #include "fxjs/js_resources.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_exclgroup.h"

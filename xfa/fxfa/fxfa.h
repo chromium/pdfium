@@ -9,13 +9,16 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "xfa/fxfa/cxfa_widgetacc.h"
+#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+class CXFA_FFDoc;
 class CXFA_FFPageView;
+class CXFA_FFWidget;
 class CXFA_Submit;
-class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
 class IFX_SeekableReadStream;
 
@@ -224,10 +227,8 @@ class IXFA_DocEnvironment {
                            CFX_RectF& rtPopup) = 0;
   virtual bool PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) = 0;
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
-  virtual void WidgetPostAdd(CXFA_FFWidget* hWidget,
-                             CXFA_WidgetAcc* pWidgetAcc) = 0;
-  virtual void WidgetPreRemove(CXFA_FFWidget* hWidget,
-                               CXFA_WidgetAcc* pWidgetAcc) = 0;
+  virtual void WidgetPostAdd(CXFA_FFWidget* hWidget) = 0;
+  virtual void WidgetPreRemove(CXFA_FFWidget* hWidget) = 0;
 
   virtual int32_t CountPages(CXFA_FFDoc* hDoc) = 0;
   virtual int32_t GetCurrentPage(CXFA_FFDoc* hDoc) = 0;

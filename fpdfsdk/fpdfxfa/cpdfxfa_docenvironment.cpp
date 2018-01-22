@@ -21,6 +21,7 @@
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_submit.h"
 
@@ -288,8 +289,7 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
   pFormFillEnv->PageEvent(count, flag);
 }
 
-void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
-                                           CXFA_WidgetAcc* pWidgetAcc) {
+void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget) {
   if (m_pContext->GetFormType() != FormType::kXFAFull || !hWidget)
     return;
 
@@ -306,8 +306,7 @@ void CPDFXFA_DocEnvironment::WidgetPostAdd(CXFA_FFWidget* hWidget,
       ->AddAnnot(hWidget);
 }
 
-void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget,
-                                             CXFA_WidgetAcc* pWidgetAcc) {
+void CPDFXFA_DocEnvironment::WidgetPreRemove(CXFA_FFWidget* hWidget) {
   if (m_pContext->GetFormType() != FormType::kXFAFull || !hWidget)
     return;
 

@@ -38,10 +38,8 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
 
   // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
   void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) override;
-  void WidgetPostAdd(CXFA_FFWidget* hWidget,
-                     CXFA_WidgetAcc* pWidgetAcc) override;
-  void WidgetPreRemove(CXFA_FFWidget* hWidget,
-                       CXFA_WidgetAcc* pWidgetAcc) override;
+  void WidgetPostAdd(CXFA_FFWidget* hWidget) override;
+  void WidgetPreRemove(CXFA_FFWidget* hWidget) override;
 
   // Host method
   int32_t CountPages(CXFA_FFDoc* hDoc) override;

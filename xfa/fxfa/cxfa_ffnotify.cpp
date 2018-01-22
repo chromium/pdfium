@@ -500,8 +500,7 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
       (dwStatus & (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)) ==
           (XFA_WidgetStatus_Visible | XFA_WidgetStatus_Viewable)) {
     pWidget->SetPageView(pNewPageView);
-    m_pDoc->GetDocEnvironment()->WidgetPostAdd(
-        pWidget, pWidget->GetNode()->GetWidgetAcc());
+    m_pDoc->GetDocEnvironment()->WidgetPostAdd(pWidget);
   }
   if (pDocView->GetLayoutStatus() != XFA_DOCVIEW_LAYOUTSTATUS_End ||
       !(dwStatus & XFA_WidgetStatus_Visible)) {
@@ -527,7 +526,6 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
     return;
 
   pDocView->DeleteLayoutItem(pWidget);
-  m_pDoc->GetDocEnvironment()->WidgetPreRemove(
-      pWidget, pWidget->GetNode()->GetWidgetAcc());
+  m_pDoc->GetDocEnvironment()->WidgetPreRemove(pWidget);
   pWidget->AddInvalidateRect();
 }

@@ -16,6 +16,7 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 
+class CFX_DIBitmap;
 class CXFA_Box;
 class CXFA_FFPageView;
 class CXFA_FFDocView;
@@ -23,6 +24,8 @@ class CXFA_FFDoc;
 class CXFA_FFApp;
 class CXFA_Graphics;
 class CXFA_Image;
+class CXFA_Margin;
+class CXFA_WidgetAcc;
 enum class FWL_WidgetHit;
 
 inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
