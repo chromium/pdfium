@@ -161,8 +161,6 @@ class CXFA_WidgetAcc {
   WideString GetValue(XFA_VALUEPICTURE eValueType);
 
   WideString GetPictureContent(XFA_VALUEPICTURE ePicture);
-  IFX_Locale* GetLocale();
-
   WideString GetNormalizeDataValue(const WideString& wsValue);
   WideString GetFormatDataValue(const WideString& wsValue);
   WideString NormalizeNumStr(const WideString& wsValue);

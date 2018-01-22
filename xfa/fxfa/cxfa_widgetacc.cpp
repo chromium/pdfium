@@ -348,7 +348,9 @@ bool SplitDateTime(const WideString& wsDateTime,
 
 }  // namespace
 
-CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_Node* pNode) : m_pNode(pNode) {}
+CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_Node* pNode) : m_pNode(pNode) {
+  ASSERT(m_pNode);
+}
 
 CXFA_WidgetAcc::~CXFA_WidgetAcc() = default;
 
@@ -1429,8 +1431,7 @@ void CXFA_WidgetAcc::SetCheckState(XFA_CHECKSTATE eCheckState, bool bNotify) {
       }
       pText = pText->GetNextSibling();
     }
-    if (m_pNode)
-      m_pNode->SyncValue(wsContent, bNotify);
+    m_pNode->SyncValue(wsContent, bNotify);
 
     return;
   }
@@ -1535,10 +1536,8 @@ void CXFA_WidgetAcc::SetSelectedMemberByValue(const WideStringView& wsValue,
     pNode->JSObject()->SetContent(wsChildValue, wsChildValue, bNotify,
                                   bScriptModify, false);
   }
-  if (m_pNode) {
-    m_pNode->JSObject()->SetContent(wsExclGroup, wsExclGroup, bNotify,
-                                    bScriptModify, bSyncData);
-  }
+  m_pNode->JSObject()->SetContent(wsExclGroup, wsExclGroup, bNotify,
+                                  bScriptModify, bSyncData);
 }
 
 CXFA_Node* CXFA_WidgetAcc::GetExclGroupFirstMember() {
@@ -2124,8 +2123,7 @@ int32_t CXFA_WidgetAcc::GetLeadDigits() {
 bool CXFA_WidgetAcc::SetValue(XFA_VALUEPICTURE eValueType,
                               const WideString& wsValue) {
   if (wsValue.IsEmpty()) {
-    if (m_pNode)
-      m_pNode->SyncValue(wsValue, true);
+    m_pNode->SyncValue(wsValue, true);
     return true;
   }
 
@@ -2143,7 +2141,7 @@ bool CXFA_WidgetAcc::SetValue(XFA_VALUEPICTURE eValueType,
   XFA_Element eType = pNode->GetElementType();
   if (!wsPicture.IsEmpty()) {
     CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
-    IFX_Locale* pLocale = GetLocale();
+    IFX_Locale* pLocale = m_pNode->GetLocale();
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(GetNode());
     bValidate =
         widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture);
@@ -2164,10 +2162,8 @@ bool CXFA_WidgetAcc::SetValue(XFA_VALUEPICTURE eValueType,
       bSyncData = true;
     }
   }
-  if (eType != XFA_Element::NumericEdit || bSyncData) {
-    if (m_pNode)
-      m_pNode->SyncValue(wsNewText, true);
-  }
+  if (eType != XFA_Element::NumericEdit || bSyncData)
+    m_pNode->SyncValue(wsNewText, true);
 
   return bValidate;
 }
@@ -2190,7 +2186,7 @@ WideString CXFA_WidgetAcc::GetPictureContent(XFA_VALUEPICTURE ePicture) {
         }
       }
 
-      IFX_Locale* pLocale = GetLocale();
+      IFX_Locale* pLocale = m_pNode->GetLocale();
       if (!pLocale)
         return L"";
 
@@ -2222,7 +2218,7 @@ WideString CXFA_WidgetAcc::GetPictureContent(XFA_VALUEPICTURE ePicture) {
         }
       }
 
-      IFX_Locale* pLocale = GetLocale();
+      IFX_Locale* pLocale = m_pNode->GetLocale();
       if (!pLocale)
         return L"";
 
@@ -2252,10 +2248,6 @@ WideString CXFA_WidgetAcc::GetPictureContent(XFA_VALUEPICTURE ePicture) {
   return L"";
 }
 
-IFX_Locale* CXFA_WidgetAcc::GetLocale() {
-  return m_pNode ? m_pNode->GetLocale() : nullptr;
-}
-
 WideString CXFA_WidgetAcc::GetValue(XFA_VALUEPICTURE eValueType) {
   WideString wsValue = m_pNode->JSObject()->GetContent(false);
 
@@ -2279,7 +2271,7 @@ WideString CXFA_WidgetAcc::GetValue(XFA_VALUEPICTURE eValueType) {
     } break;
     case XFA_Element::NumericEdit:
       if (eValueType != XFA_VALUEPICTURE_Raw && wsPicture.IsEmpty()) {
-        IFX_Locale* pLocale = GetLocale();
+        IFX_Locale* pLocale = m_pNode->GetLocale();
         if (eValueType == XFA_VALUEPICTURE_Display && pLocale)
           wsValue = FormatNumStr(NormalizeNumStr(wsValue), pLocale);
       }
@@ -2290,7 +2282,7 @@ WideString CXFA_WidgetAcc::GetValue(XFA_VALUEPICTURE eValueType) {
   if (wsPicture.IsEmpty())
     return wsValue;
 
-  if (IFX_Locale* pLocale = GetLocale()) {
+  if (IFX_Locale* pLocale = m_pNode->GetLocale()) {
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(GetNode());
     CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
     switch (widgetValue.GetType()) {
@@ -2330,7 +2322,7 @@ WideString CXFA_WidgetAcc::GetNormalizeDataValue(const WideString& wsValue) {
 
   ASSERT(GetNode());
   CXFA_LocaleMgr* pLocalMgr = GetNode()->GetDocument()->GetLocalMgr();
-  IFX_Locale* pLocale = GetLocale();
+  IFX_Locale* pLocale = m_pNode->GetLocale();
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(GetNode());
   if (widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture)) {
     widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsValue, wsPicture,
@@ -2349,7 +2341,7 @@ WideString CXFA_WidgetAcc::GetFormatDataValue(const WideString& wsValue) {
     return wsValue;
 
   WideString wsFormattedValue = wsValue;
-  if (IFX_Locale* pLocale = GetLocale()) {
+  if (IFX_Locale* pLocale = m_pNode->GetLocale()) {
     ASSERT(GetNode());
     CXFA_Value* pNodeValue =
         GetNode()->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
