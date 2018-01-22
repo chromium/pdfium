@@ -1818,8 +1818,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa_fde") {
+  jumbo_static_library("xfa_fde") {
     sources = [
       "xfa/fde/cfde_data.h",
       "xfa/fde/cfde_texteditengine.cpp",
@@ -1838,8 +1837,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa_fgas") {
+  jumbo_static_library("xfa_fgas") {
     sources = [
       "xfa/fgas/crt/cfgas_formatstring.cpp",
       "xfa/fgas/crt/cfgas_formatstring.h",
@@ -1875,8 +1873,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa_fwl") {
+  jumbo_static_library("xfa_fwl") {
     sources = [
       "xfa/fwl/cfwl_app.cpp",
       "xfa/fwl/cfwl_app.h",
@@ -2006,8 +2003,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa_fxfa") {
+  jumbo_static_library("xfa_fxfa") {
     sources = [
       "xfa/fxfa/cxfa_eventparam.cpp",
       "xfa/fxfa/cxfa_eventparam.h",
@@ -2114,8 +2110,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa_fxfa_fm2js") {
+  jumbo_static_library("xfa_fxfa_fm2js") {
     sources = [
       "xfa/fxfa/fm2js/cxfa_fmexpression.cpp",
       "xfa/fxfa/fm2js/cxfa_fmexpression.h",
@@ -2841,8 +2836,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa_fxgraphics") {
+  jumbo_static_library("xfa_fxgraphics") {
     sources = [
       "xfa/fxgraphics/cxfa_gecolor.cpp",
       "xfa/fxgraphics/cxfa_gecolor.h",
