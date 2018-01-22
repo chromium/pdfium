@@ -50,7 +50,8 @@ CJS_Return CJX_ExclGroup::execInitialize(
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify)
-    pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize);
+    pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
+                                  true);
   return CJS_Return(true);
 }
 
@@ -62,7 +63,8 @@ CJS_Return CJX_ExclGroup::execCalculate(
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify)
-    pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate);
+    pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
+                                  true);
   return CJS_Return(true);
 }
 
@@ -76,7 +78,8 @@ CJS_Return CJX_ExclGroup::execValidate(
   if (!notify)
     return CJS_Return(runtime->NewBoolean(false));
 
-  int32_t iRet = notify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate);
+  int32_t iRet = notify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate,
+                                              false, true);
   return CJS_Return(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
 

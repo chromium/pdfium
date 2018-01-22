@@ -57,9 +57,8 @@ class CXFA_FFNotify {
   bool RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem);
   int32_t ExecEventByDeepFirst(CXFA_Node* pFormNode,
                                XFA_EVENTTYPE eEventType,
-                               bool bIsFormReady = false,
-                               bool bRecursive = true,
-                               CXFA_WidgetAcc* pExclude = nullptr);
+                               bool bIsFormReady,
+                               bool bRecursive);
   void AddCalcValidate(CXFA_Node* pNode);
   CXFA_FFDoc* GetHDOC();
   IXFA_DocEnvironment* GetDocEnvironment() const;
@@ -68,7 +67,7 @@ class CXFA_FFNotify {
   CXFA_FFWidget* GetHWidget(CXFA_LayoutItem* pLayoutItem);
   void OpenDropDownList(CXFA_FFWidget* hWidget);
   WideString GetCurrentDateTime();
-  void ResetData(CXFA_WidgetAcc* pWidgetAcc = nullptr);
+  void ResetData(CXFA_Node* pNode);
   int32_t GetLayoutStatus();
   void RunNodeInitialize(CXFA_Node* pNode);
   void RunSubformIndexChange(CXFA_Node* pSubformNode);

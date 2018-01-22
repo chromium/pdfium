@@ -54,7 +54,7 @@ class CXFA_FFDocView {
   int32_t CountPageViews() const;
   CXFA_FFPageView* GetPageView(int32_t nIndex) const;
 
-  void ResetWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
+  void ResetNode(CXFA_Node* pNode);
   int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
                              CXFA_WidgetAcc* pWidgetAcc);
   CXFA_FFWidgetHandler* GetWidgetHandler();
@@ -104,8 +104,7 @@ class CXFA_FFDocView {
   int32_t ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
                                        XFA_EVENTTYPE eEventType,
                                        bool bIsFormReady,
-                                       bool bRecursive,
-                                       CXFA_Node* pExclude);
+                                       bool bRecursive);
 
   void AddBindItem(CXFA_BindItems* item) { m_BindItems.push_back(item); }
 
@@ -121,7 +120,7 @@ class CXFA_FFDocView {
   void InitLayout(CXFA_Node* pNode);
   size_t RunCalculateRecursive(size_t index);
   void ShowNullTestMsg();
-  bool ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
+  bool ResetSingleNodeData(CXFA_Node* pNode);
   CXFA_Subform* GetRootSubform();
 
   UnownedPtr<CXFA_FFDoc> const m_pDoc;

@@ -225,14 +225,12 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
 int32_t CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,
                                             XFA_EVENTTYPE eEventType,
                                             bool bIsFormReady,
-                                            bool bRecursive,
-                                            CXFA_WidgetAcc* pExclude) {
+                                            bool bRecursive) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
     return XFA_EVENTERROR_NotExist;
-  return pDocView->ExecEventActivityByDeepFirst(
-      pFormNode, eEventType, bIsFormReady, bRecursive,
-      pExclude ? pExclude->GetNode() : nullptr);
+  return pDocView->ExecEventActivityByDeepFirst(pFormNode, eEventType,
+                                                bIsFormReady, bRecursive);
 }
 
 void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
@@ -288,12 +286,12 @@ WideString CXFA_FFNotify::GetCurrentDateTime() {
                             dataTime.GetSecond());
 }
 
-void CXFA_FFNotify::ResetData(CXFA_WidgetAcc* pWidgetAcc) {
+void CXFA_FFNotify::ResetData(CXFA_Node* pNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
     return;
 
-  pDocView->ResetWidgetAcc(pWidgetAcc);
+  pDocView->ResetNode(pNode);
 }
 
 int32_t CXFA_FFNotify::GetLayoutStatus() {

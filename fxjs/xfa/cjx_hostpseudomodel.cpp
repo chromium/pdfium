@@ -367,7 +367,7 @@ CJS_Return CJX_HostPseudoModel::resetData(
     expression = runtime->ToWideString(params[0]);
 
   if (expression.IsEmpty()) {
-    pNotify->ResetData();
+    pNotify->ResetData(nullptr);
     return CJS_Return(true);
   }
 
@@ -394,11 +394,10 @@ CJS_Return CJX_HostPseudoModel::resetData(
       continue;
 
     pNode = resolveNodeRS.objects.front()->AsNode();
-    pNotify->ResetData(pNode->IsWidgetReady() ? pNode->GetWidgetAcc()
-                                              : nullptr);
+    pNotify->ResetData(pNode->IsWidgetReady() ? pNode : nullptr);
   }
   if (!pNode)
-    pNotify->ResetData();
+    pNotify->ResetData(nullptr);
 
   return CJS_Return(true);
 }
