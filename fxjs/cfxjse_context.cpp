@@ -228,14 +228,17 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
                                    CFXJSE_Value* lpRetValue,
                                    CFXJSE_Value* lpNewThisObject) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
+  v8::Local<v8::Context> hContext = m_pIsolate->GetCurrentContext();
   v8::TryCatch trycatch(m_pIsolate);
   v8::Local<v8::String> hScriptString =
       v8::String::NewFromUtf8(m_pIsolate, szScript);
   if (!lpNewThisObject) {
-    v8::Local<v8::Script> hScript = v8::Script::Compile(hScriptString);
-    if (!trycatch.HasCaught()) {
-      v8::Local<v8::Value> hValue = hScript->Run();
-      if (!trycatch.HasCaught()) {
+    v8::Local<v8::Script> hScript;
+    if (v8::Script::Compile(hContext, hScriptString).ToLocal(&hScript)) {
+      ASSERT(!trycatch.HasCaught());
+      v8::Local<v8::Value> hValue;
+      if (hScript->Run(hContext).ToLocal(&hValue)) {
+        ASSERT(!trycatch.HasCaught());
         if (lpRetValue)
           lpRetValue->m_hValue.Reset(m_pIsolate, hValue);
         return true;
@@ -251,16 +254,21 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   v8::Local<v8::Value> hNewThis =
       v8::Local<v8::Value>::New(m_pIsolate, lpNewThisObject->m_hValue);
   ASSERT(!hNewThis.IsEmpty());
-  v8::Local<v8::Script> hWrapper = v8::Script::Compile(v8::String::NewFromUtf8(
-      m_pIsolate, "(function () { return eval(arguments[0]); })"));
-  v8::Local<v8::Value> hWrapperValue = hWrapper->Run();
-  ASSERT(hWrapperValue->IsFunction());
-  v8::Local<v8::Function> hWrapperFn = hWrapperValue.As<v8::Function>();
-  if (!trycatch.HasCaught()) {
+  v8::Local<v8::Script> hWrapper =
+      v8::Script::Compile(
+          hContext,
+          v8::String::NewFromUtf8(
+              m_pIsolate, "(function () { return eval(arguments[0]); })"))
+          .ToLocalChecked();
+  v8::Local<v8::Value> hWrapperValue;
+  if (hWrapper->Run(hContext).ToLocal(&hWrapperValue)) {
+    ASSERT(!trycatch.HasCaught());
+    v8::Local<v8::Function> hWrapperFn = hWrapperValue.As<v8::Function>();
     v8::Local<v8::Value> rgArgs[] = {hScriptString};
-    v8::Local<v8::Value> hValue =
-        hWrapperFn->Call(hNewThis.As<v8::Object>(), 1, rgArgs);
-    if (!trycatch.HasCaught()) {
+    v8::Local<v8::Value> hValue;
+    if (hWrapperFn->Call(hContext, hNewThis.As<v8::Object>(), 1, rgArgs)
+            .ToLocal(&hValue)) {
+      ASSERT(!trycatch.HasCaught());
       if (lpRetValue)
         lpRetValue->m_hValue.Reset(m_pIsolate, hValue);
       return true;
