@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
-#include "xfa/fxfa/cxfa_widgetacc.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Font;
 class CXFA_Node;
@@ -24,9 +24,9 @@ enum XFA_TEXTPROVIDERTYPE {
 
 class CXFA_TextProvider {
  public:
-  CXFA_TextProvider(CXFA_WidgetAcc* pWidgetAcc, XFA_TEXTPROVIDERTYPE eType)
-      : m_pWidgetAcc(pWidgetAcc), m_eType(eType) {
-    ASSERT(m_pWidgetAcc);
+  CXFA_TextProvider(CXFA_Node* pNode, XFA_TEXTPROVIDERTYPE eType)
+      : m_pNode(pNode), m_eType(eType) {
+    ASSERT(m_pNode);
   }
   ~CXFA_TextProvider() {}
 
@@ -40,7 +40,7 @@ class CXFA_TextProvider {
                     WideString& wsValue);
 
  private:
-  CXFA_WidgetAcc* m_pWidgetAcc;
+  CXFA_Node* m_pNode;
   XFA_TEXTPROVIDERTYPE m_eType;
 };
 

@@ -221,8 +221,8 @@ class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
     if (m_pTextLayout)
       return;
 
-    m_pTextProvider =
-        pdfium::MakeUnique<CXFA_TextProvider>(pAcc, XFA_TEXTPROVIDERTYPE_Text);
+    m_pTextProvider = pdfium::MakeUnique<CXFA_TextProvider>(
+        pAcc->GetNode(), XFA_TEXTPROVIDERTYPE_Text);
     m_pTextLayout =
         pdfium::MakeUnique<CXFA_TextLayout>(doc, m_pTextProvider.get());
   }
@@ -275,7 +275,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
       return false;
 
     m_pCapTextProvider = pdfium::MakeUnique<CXFA_TextProvider>(
-        pAcc, XFA_TEXTPROVIDERTYPE_Caption);
+        pAcc->GetNode(), XFA_TEXTPROVIDERTYPE_Caption);
     m_pCapTextLayout =
         pdfium::MakeUnique<CXFA_TextLayout>(doc, m_pCapTextProvider.get());
     return true;
