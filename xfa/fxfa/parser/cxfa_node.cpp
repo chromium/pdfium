@@ -1840,8 +1840,8 @@ int32_t CXFA_Node::ProcessEvent(CXFA_FFDocView* docView,
   if (GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
-  std::vector<CXFA_Event*> eventArray = GetWidgetAcc()->GetEventByActivity(
-      iActivity, pEventParam->m_bIsFormReady);
+  std::vector<CXFA_Event*> eventArray =
+      GetEventByActivity(iActivity, pEventParam->m_bIsFormReady);
   bool first = true;
   int32_t iRet = XFA_EVENTERROR_NotExist;
   for (CXFA_Event* event : eventArray) {
@@ -2429,4 +2429,31 @@ CFX_RectF CXFA_Node::GetUIMargin() {
   }
   return CFX_RectF(left.value_or(0.0), top.value_or(0.0), right.value_or(0.0),
                    bottom.value_or(0.0));
+}
+
+std::vector<CXFA_Event*> CXFA_Node::GetEventByActivity(
+    XFA_AttributeEnum iActivity,
+    bool bIsFormReady) {
+  std::vector<CXFA_Event*> events;
+  for (CXFA_Node* node : GetNodeList(0, XFA_Element::Event)) {
+    auto* event = static_cast<CXFA_Event*>(node);
+    if (event->GetActivity() != iActivity)
+      continue;
+
+    if (iActivity != XFA_AttributeEnum::Ready) {
+      events.push_back(event);
+      continue;
+    }
+
+    WideString wsRef = event->GetRef();
+    if (bIsFormReady) {
+      if (wsRef == WideStringView(L"$form"))
+        events.push_back(event);
+      continue;
+    }
+
+    if (wsRef == WideStringView(L"$layout"))
+      events.push_back(event);
+  }
+  return events;
 }

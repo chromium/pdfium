@@ -31,6 +31,7 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 #endif
@@ -209,7 +210,7 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
   while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PostSave;
-    pWidgetHandler->ProcessEvent(pWidgetAcc, &preParam);
+    pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &preParam);
   }
   pXFADocView->UpdateDocView();
   pContext->ClearChangeMark();
@@ -231,7 +232,7 @@ bool SendPreSaveToXFADoc(CPDFXFA_Context* pContext,
   while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PreSave;
-    pWidgetHandler->ProcessEvent(pWidgetAcc, &preParam);
+    pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &preParam);
   }
   pXFADocView->UpdateDocView();
   return SaveXFADocumentData(pContext, fileList);

@@ -312,6 +312,9 @@ class CXFA_Node : public CXFA_Object {
     return acc_.get();
   }
 
+  std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
+                                              bool bIsFormReady);
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,

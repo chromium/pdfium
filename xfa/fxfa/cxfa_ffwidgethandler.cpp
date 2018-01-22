@@ -14,7 +14,6 @@
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
-#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 #include "xfa/fxfa/parser/cxfa_checkbutton.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
@@ -183,66 +182,59 @@ void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
                         bHighlight ? XFA_WidgetStatus_Highlight : 0);
 }
 
-bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
+bool CXFA_FFWidgetHandler::HasEvent(CXFA_Node* pNode,
                                     XFA_EVENTTYPE eEventType) {
   if (eEventType == XFA_EVENT_Unknown)
     return false;
-  if (!pWidgetAcc)
-    return false;
-
-  CXFA_Node* node = pWidgetAcc->GetNode();
-  if (!node || node->GetElementType() == XFA_Element::Draw)
+  if (!pNode || pNode->GetElementType() == XFA_Element::Draw)
     return false;
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
-      CXFA_Calculate* calc = node->GetCalculateIfExists();
+      CXFA_Calculate* calc = pNode->GetCalculateIfExists();
       return calc && calc->GetScriptIfExists();
     }
     case XFA_EVENT_Validate: {
-      CXFA_Validate* validate = node->GetValidateIfExists();
+      CXFA_Validate* validate = pNode->GetValidateIfExists();
       return validate && validate->GetScriptIfExists();
     }
     default:
       break;
   }
-  return !pWidgetAcc->GetEventByActivity(gs_EventActivity[eEventType], false)
+  return !pNode->GetEventByActivity(gs_EventActivity[eEventType], false)
               .empty();
 }
 
-int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
+int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_Node* pNode,
                                            CXFA_EventParam* pParam) {
   if (!pParam || pParam->m_eType == XFA_EVENT_Unknown)
     return XFA_EVENTERROR_NotExist;
-  if (!pWidgetAcc)
-    return XFA_EVENTERROR_NotExist;
-
-  CXFA_Node* node = pWidgetAcc->GetNode();
-  if (!node || node->GetElementType() == XFA_Element::Draw)
+  if (!pNode || pNode->GetElementType() == XFA_Element::Draw)
     return XFA_EVENTERROR_NotExist;
 
   switch (pParam->m_eType) {
     case XFA_EVENT_Calculate:
-      return node->ProcessCalculate(m_pDocView);
+      return pNode->ProcessCalculate(m_pDocView);
     case XFA_EVENT_Validate:
       if (m_pDocView->GetDoc()->GetDocEnvironment()->IsValidationsEnabled(
               m_pDocView->GetDoc())) {
-        return node->ProcessValidate(m_pDocView, 0);
+        return pNode->ProcessValidate(m_pDocView, 0);
       }
       return XFA_EVENTERROR_Disabled;
     case XFA_EVENT_InitCalculate: {
-      CXFA_Calculate* calc = node->GetCalculateIfExists();
+      CXFA_Calculate* calc = pNode->GetCalculateIfExists();
       if (!calc)
         return XFA_EVENTERROR_NotExist;
-      if (node->IsUserInteractive())
+      if (pNode->IsUserInteractive())
         return XFA_EVENTERROR_Disabled;
-      return node->ExecuteScript(m_pDocView, calc->GetScriptIfExists(), pParam);
+      return pNode->ExecuteScript(m_pDocView, calc->GetScriptIfExists(),
+                                  pParam);
     }
     default:
       break;
   }
-  int32_t iRet =
-      node->ProcessEvent(m_pDocView, gs_EventActivity[pParam->m_eType], pParam);
+  int32_t iRet = pNode->ProcessEvent(m_pDocView,
+                                     gs_EventActivity[pParam->m_eType], pParam);
   return iRet;
 }
 

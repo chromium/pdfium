@@ -1295,30 +1295,6 @@ bool CXFA_WidgetAcc::IsOpenAccess() const {
   return m_pNode && m_pNode->IsOpenAccess();
 }
 
-std::vector<CXFA_Event*> CXFA_WidgetAcc::GetEventByActivity(
-    XFA_AttributeEnum iActivity,
-    bool bIsFormReady) {
-  std::vector<CXFA_Event*> events;
-  for (CXFA_Node* node : m_pNode->GetNodeList(0, XFA_Element::Event)) {
-    auto* event = static_cast<CXFA_Event*>(node);
-    if (event->GetActivity() == iActivity) {
-      if (iActivity == XFA_AttributeEnum::Ready) {
-        WideString wsRef = event->GetRef();
-        if (bIsFormReady) {
-          if (wsRef == WideStringView(L"$form"))
-            events.push_back(event);
-        } else {
-          if (wsRef == WideStringView(L"$layout"))
-            events.push_back(event);
-        }
-      } else {
-        events.push_back(event);
-      }
-    }
-  }
-  return events;
-}
-
 XFA_AttributeEnum CXFA_WidgetAcc::GetButtonHighlight() {
   CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild)

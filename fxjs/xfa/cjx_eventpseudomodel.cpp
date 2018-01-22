@@ -13,6 +13,7 @@
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
 
 namespace {
@@ -169,7 +170,9 @@ CJS_Return CJX_EventPseudoModel::emit(
   if (!pWidgetHandler)
     return CJS_Return(true);
 
-  pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
+  CXFA_Node* pNode =
+      pEventParam->m_pTarget ? pEventParam->m_pTarget->GetNode() : nullptr;
+  pWidgetHandler->ProcessEvent(pNode, pEventParam);
   return CJS_Return(true);
 }
 

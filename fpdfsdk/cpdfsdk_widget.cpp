@@ -210,7 +210,7 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
     if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
       CXFA_Node* node = hGroupWidget->GetNode();
       if (node->IsWidgetReady()) {
-        if (pXFAWidgetHandler->HasEvent(node->GetWidgetAcc(), eEventType))
+        if (pXFAWidgetHandler->HasEvent(node, eEventType))
           return true;
       }
     }
@@ -218,7 +218,7 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
   CXFA_Node* node = hWidget->GetNode();
   if (!node->IsWidgetReady())
     return false;
-  return pXFAWidgetHandler->HasEvent(node->GetWidgetAcc(), eEventType);
+  return pXFAWidgetHandler->HasEvent(node, eEventType);
 }
 
 bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
@@ -263,9 +263,8 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
       if (!node->IsWidgetReady())
         return false;
 
-      CXFA_WidgetAcc* pAcc = node->GetWidgetAcc();
-      param.m_pTarget = pAcc;
-      if (pXFAWidgetHandler->ProcessEvent(pAcc, &param) !=
+      param.m_pTarget = node->GetWidgetAcc();
+      if (pXFAWidgetHandler->ProcessEvent(node, &param) !=
           XFA_EVENTERROR_Success) {
         return false;
       }
@@ -275,9 +274,8 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   int32_t nRet = XFA_EVENTERROR_NotExist;
   CXFA_Node* node = hWidget->GetNode();
   if (node->IsWidgetReady()) {
-    CXFA_WidgetAcc* pAcc = node->GetWidgetAcc();
-    param.m_pTarget = pAcc;
-    nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
+    param.m_pTarget = node->GetWidgetAcc();
+    nRet = pXFAWidgetHandler->ProcessEvent(node, &param);
   }
   if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
     pDocView->UpdateDocView();
@@ -1018,9 +1016,8 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
         int32_t nRet = XFA_EVENTERROR_NotExist;
         CXFA_Node* node = hWidget->GetNode();
         if (node->IsWidgetReady()) {
-          CXFA_WidgetAcc* pAcc = node->GetWidgetAcc();
-          param.m_pTarget = pAcc;
-          nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
+          param.m_pTarget = node->GetWidgetAcc();
+          nRet = pXFAWidgetHandler->ProcessEvent(node, &param);
         }
 
         if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())

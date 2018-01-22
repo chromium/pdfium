@@ -100,9 +100,6 @@ class CXFA_WidgetAcc {
   bool IsChoiceListAllowTextEntry();
   bool IsMultiLine();
 
-  std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
-                                              bool bIsFormReady);
-
   XFA_AttributeEnum GetButtonHighlight();
   bool HasButtonRollover() const;
   bool HasButtonDown() const;

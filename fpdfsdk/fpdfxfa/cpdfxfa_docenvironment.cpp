@@ -626,7 +626,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
     CXFA_EventParam Param;
     Param.m_eType = XFA_EVENT_PreSubmit;
     while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext())
-      pWidgetHandler->ProcessEvent(pWidgetAcc, &Param);
+      pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &Param);
   }
 
   pWidgetAccIterator = docView->CreateWidgetAccIterator();
@@ -678,7 +678,7 @@ void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
   Param.m_eType = XFA_EVENT_PostSubmit;
   CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
   while (pWidgetAcc) {
-    pWidgetHandler->ProcessEvent(pWidgetAcc, &Param);
+    pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &Param);
     pWidgetAcc = pWidgetAccIterator->MoveToNext();
   }
   m_pContext->GetXFADocView()->UpdateDocView();
