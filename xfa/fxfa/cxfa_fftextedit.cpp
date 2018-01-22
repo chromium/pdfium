@@ -299,7 +299,7 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_wsChange = wsChanged;
-  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  eParam.m_pTarget = m_pNode.Get();
   eParam.m_wsPrevText = wsPrevText;
   CFWL_Edit* pEdit = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
   if (m_pNode->GetUIType() == XFA_Element::DateTimeEdit) {
@@ -321,7 +321,7 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
 void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
-  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Full, &eParam);
 }
 

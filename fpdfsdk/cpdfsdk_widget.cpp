@@ -263,7 +263,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
       if (!node->IsWidgetReady())
         return false;
 
-      param.m_pTarget = node->GetWidgetAcc();
+      param.m_pTarget = node;
       if (pXFAWidgetHandler->ProcessEvent(node, &param) !=
           XFA_EVENTERROR_Success) {
         return false;
@@ -274,7 +274,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   int32_t nRet = XFA_EVENTERROR_NotExist;
   CXFA_Node* node = hWidget->GetNode();
   if (node->IsWidgetReady()) {
-    param.m_pTarget = node->GetWidgetAcc();
+    param.m_pTarget = node;
     nRet = pXFAWidgetHandler->ProcessEvent(node, &param);
   }
   if (CXFA_FFDocView* pDocView = pContext->GetXFADocView())
@@ -1016,7 +1016,7 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
         int32_t nRet = XFA_EVENTERROR_NotExist;
         CXFA_Node* node = hWidget->GetNode();
         if (node->IsWidgetReady()) {
-          param.m_pTarget = node->GetWidgetAcc();
+          param.m_pTarget = node;
           nRet = pXFAWidgetHandler->ProcessEvent(node, &param);
         }
 

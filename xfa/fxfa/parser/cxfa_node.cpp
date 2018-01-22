@@ -2078,7 +2078,7 @@ int32_t CXFA_Node::ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags) {
   if (script) {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_Validate;
-    eParam.m_pTarget = GetWidgetAcc();
+    eParam.m_pTarget = this;
     std::tie(iRet, bRet) = ExecuteBoolScript(docView, script, &eParam);
   }
 

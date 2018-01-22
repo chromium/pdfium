@@ -312,23 +312,23 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
 
       CXFA_Node* exclNode = m_pNode->GetExclGroupIfExists();
       if (ProcessCommittedData()) {
-        eParam.m_pTarget = exclNode ? exclNode->GetWidgetAcc() : nullptr;
+        eParam.m_pTarget = exclNode;
         if (exclNode) {
           m_pDocView->AddValidateWidget(exclNode->GetWidgetAcc());
           m_pDocView->AddCalculateWidgetAcc(exclNode->GetWidgetAcc());
           exclNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
                                  &eParam);
         }
-        eParam.m_pTarget = m_pNode->GetWidgetAcc();
+        eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
       } else {
         SetFWLCheckState(m_pNode->GetWidgetAcc()->GetCheckState());
       }
       if (exclNode) {
-        eParam.m_pTarget = exclNode->GetWidgetAcc();
+        eParam.m_pTarget = exclNode;
         exclNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
       }
-      eParam.m_pTarget = m_pNode->GetWidgetAcc();
+      eParam.m_pTarget = m_pNode.Get();
       m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
       break;
     }

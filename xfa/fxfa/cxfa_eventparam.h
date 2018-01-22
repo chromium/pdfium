@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/fxfa_basic.h"
 
-class CXFA_WidgetAcc;
+class CXFA_Node;
 
 enum XFA_EVENTTYPE {
   XFA_EVENT_Click,
@@ -53,7 +53,7 @@ class CXFA_EventParam {
 
   void Reset();
 
-  CXFA_WidgetAcc* m_pTarget;
+  CXFA_Node* m_pTarget;
   XFA_EVENTTYPE m_eType;
   WideString m_wsResult;
   bool m_bCancelAction;

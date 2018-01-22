@@ -20,6 +20,7 @@ class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;
 class CXFA_Subform;
+class CXFA_WidgetAcc;
 class CXFA_WidgetAccIterator;
 
 extern const XFA_AttributeEnum gs_EventActivity[];

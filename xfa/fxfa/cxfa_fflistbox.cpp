@@ -152,7 +152,7 @@ bool CXFA_FFListBox::UpdateFWLData() {
 void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
-  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  eParam.m_pTarget = m_pNode.Get();
   eParam.m_wsPrevText = m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
 
   auto* pListBox = ToListBox(m_pNormalWidget.get());

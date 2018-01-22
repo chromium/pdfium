@@ -740,25 +740,25 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
       if (event->m_dwCmd == FWL_MouseCommand::Enter) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseEnter;
-        eParam.m_pTarget = m_pNode->GetWidgetAcc();
+        eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseEnter,
                               &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::Leave) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseExit;
-        eParam.m_pTarget = m_pNode->GetWidgetAcc();
+        eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseExit,
                               &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonDown) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseDown;
-        eParam.m_pTarget = m_pNode->GetWidgetAcc();
+        eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseDown,
                               &eParam);
       } else if (event->m_dwCmd == FWL_MouseCommand::LeftButtonUp) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseUp;
-        eParam.m_pTarget = m_pNode->GetWidgetAcc();
+        eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::MouseUp,
                               &eParam);
       }
@@ -767,7 +767,7 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
     case CFWL_Event::Type::Click: {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Click;
-      eParam.m_pTarget = m_pNode->GetWidgetAcc();
+      eParam.m_pTarget = m_pNode.Get();
       m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Click, &eParam);
       break;
     }

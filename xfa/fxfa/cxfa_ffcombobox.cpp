@@ -138,7 +138,7 @@ bool CXFA_FFComboBox::IsDataChanged() {
 
 void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
   pParam->m_eType = XFA_EVENT_Change;
-  pParam->m_pTarget = m_pNode->GetWidgetAcc();
+  pParam->m_pTarget = m_pNode.Get();
   pParam->m_wsNewText = ToComboBox(m_pNormalWidget.get())->GetEditText();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, pParam);
 }
@@ -313,14 +313,14 @@ void CXFA_FFComboBox::OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp) {
 void CXFA_FFComboBox::OnPreOpen(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_PreOpen;
-  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::PreOpen, &eParam);
 }
 
 void CXFA_FFComboBox::OnPostOpen(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_PostOpen;
-  eParam.m_pTarget = m_pNode->GetWidgetAcc();
+  eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::PostOpen, &eParam);
 }
 

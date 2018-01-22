@@ -170,9 +170,7 @@ CJS_Return CJX_EventPseudoModel::emit(
   if (!pWidgetHandler)
     return CJS_Return(true);
 
-  CXFA_Node* pNode =
-      pEventParam->m_pTarget ? pEventParam->m_pTarget->GetNode() : nullptr;
-  pWidgetHandler->ProcessEvent(pNode, pEventParam);
+  pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
   return CJS_Return(true);
 }
 
