@@ -193,15 +193,14 @@ bool CXFA_FFTextEdit::CommitData() {
 }
 
 void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
-  CXFA_WidgetAcc* pAcc = GetNode()->GetWidgetAcc();
-  if (!pAcc || pAcc->GetUIType() != XFA_Element::NumericEdit)
+  if (GetNode()->GetUIType() != XFA_Element::NumericEdit)
     return;
 
   IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
   if (!pAppProvider)
     return;
 
-  WideString wsSomField = pAcc->GetNode()->GetSOMExpression();
+  WideString wsSomField = GetNode()->GetSOMExpression();
   pAppProvider->MsgBox(WideString::Format(L"%ls can not contain %ls",
                                           wsText.c_str(), wsSomField.c_str()),
                        pAppProvider->GetAppTitle(), XFA_MBICON_Error,
@@ -260,7 +259,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     eType = XFA_VALUEPICTURE_Edit;
 
   bool bUpdate = false;
-  if (m_pNode->GetWidgetAcc()->GetUIType() == XFA_Element::TextEdit &&
+  if (m_pNode->GetUIType() == XFA_Element::TextEdit &&
       !m_pNode->GetWidgetAcc()->GetNumberOfCells()) {
     XFA_Element elementType;
     int32_t iMaxChars;
@@ -271,7 +270,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
       pEdit->SetLimit(iMaxChars);
       bUpdate = true;
     }
-  } else if (m_pNode->GetWidgetAcc()->GetUIType() == XFA_Element::Barcode) {
+  } else if (m_pNode->GetUIType() == XFA_Element::Barcode) {
     int32_t nDataLen = 0;
     if (eType == XFA_VALUEPICTURE_Edit)
       nDataLen = m_pNode->GetBarcodeAttribute_DataLength().value_or(0);
@@ -302,7 +301,7 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   eParam.m_pTarget = m_pNode->GetWidgetAcc();
   eParam.m_wsPrevText = wsPrevText;
   CFWL_Edit* pEdit = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
-  if (m_pNode->GetWidgetAcc()->GetUIType() == XFA_Element::DateTimeEdit) {
+  if (m_pNode->GetUIType() == XFA_Element::DateTimeEdit) {
     CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)pEdit;
     eParam.m_wsNewText = pDateTime->GetEditText();
     if (pDateTime->HasSelection()) {
@@ -326,8 +325,7 @@ void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
 }
 
 bool CXFA_FFTextEdit::CheckWord(const ByteStringView& sWord) {
-  return sWord.IsEmpty() ||
-         m_pNode->GetWidgetAcc()->GetUIType() != XFA_Element::TextEdit;
+  return sWord.IsEmpty() || m_pNode->GetUIType() != XFA_Element::TextEdit;
 }
 
 void CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {

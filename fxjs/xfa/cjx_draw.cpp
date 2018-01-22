@@ -121,8 +121,7 @@ void CJX_Draw::defaultValue(CFXJSE_Value* pValue,
     return;
 
   ASSERT(GetXFANode()->IsWidgetReady());
-  XFA_Element uiType = GetXFANode()->GetWidgetAcc()->GetUIType();
-  if (uiType != XFA_Element::Text)
+  if (GetXFANode()->GetUIType() != XFA_Element::Text)
     return;
 
   WideString wsNewValue = pValue->ToWideString();

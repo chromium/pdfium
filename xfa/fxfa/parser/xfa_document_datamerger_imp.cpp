@@ -71,7 +71,8 @@ CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {
 
 void FormValueNode_MatchNoneCreateChild(CXFA_Node* pFormNode) {
   ASSERT(pFormNode->IsWidgetReady());
-  pFormNode->GetWidgetAcc()->GetUIType();
+  // GetUIChild has the side effect of creating the UI child.
+  pFormNode->GetUIChild();
 }
 
 bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
@@ -133,12 +134,11 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
   ASSERT(pFormNode->IsWidgetReady());
   CXFA_WidgetAcc* pWidgetAcc = pFormNode->GetWidgetAcc();
-  XFA_Element eUIType = pWidgetAcc->GetUIType();
   auto* defValue = pFormNode->JSObject()->GetOrCreateProperty<CXFA_Value>(
       0, XFA_Element::Value);
   if (!bDataToForm) {
     WideString wsValue;
-    switch (eUIType) {
+    switch (pFormNode->GetUIType()) {
       case XFA_Element::ImageEdit: {
         CXFA_Image* image = defValue ? defValue->GetImageIfExists() : nullptr;
         WideString wsContentType;
@@ -289,7 +289,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
   pDataNode->JSObject()->SetAttributeValue(wsNormalizeValue, wsXMLValue, false,
                                            false);
-  switch (eUIType) {
+  switch (pFormNode->GetUIType()) {
     case XFA_Element::ImageEdit: {
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                     XFA_Element::Image);

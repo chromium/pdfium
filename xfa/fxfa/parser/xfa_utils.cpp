@@ -142,11 +142,9 @@ bool ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
   CXFA_Node* pGrandParentNode = pParentNode->GetParent();
   if (!pGrandParentNode || !pGrandParentNode->IsContainerNode())
     return true;
-  if (pGrandParentNode->GetBindData())
+  if (!pGrandParentNode->GetBindData())
     return false;
-
-  XFA_Element eUIType = pGrandParentNode->GetWidgetAcc()->GetUIType();
-  if (eUIType == XFA_Element::PasswordEdit)
+  if (pGrandParentNode->GetUIType() == XFA_Element::PasswordEdit)
     return false;
   return true;
 }

@@ -93,18 +93,12 @@ class CXFA_WidgetAcc {
 
   CXFA_Node* GetNode() const { return m_pNode; }
 
-  CXFA_Node* GetUIChild();
-  XFA_Element GetUIType();
-  CFX_RectF GetUIMargin();
-
   bool IsOpenAccess() const;
   bool IsListBox();
   bool IsAllowNeutral();
   bool IsRadioButton();
   bool IsChoiceListAllowTextEntry();
   bool IsMultiLine();
-
-  CXFA_Border* GetUIBorder();
 
   std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
                                               bool bIsFormReady);
@@ -221,8 +215,6 @@ class CXFA_WidgetAcc {
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
   bool m_bIsNull;
   bool m_bPreNull;
-  CXFA_Node* m_pUiChildNode;
-  XFA_Element m_eUIType;
   CXFA_Node* m_pNode;
 };
 

@@ -63,18 +63,17 @@ void CXFA_FFNotify::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
     pDocView->OnPageEvent(pSender, dwEvent);
 }
 
-void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetAcc* pSender,
+void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
                                           const wchar_t* pLabel,
                                           const wchar_t* pValue,
                                           int32_t iIndex) {
   if (pSender->GetUIType() != XFA_Element::ChoiceList)
     return;
 
-  CXFA_FFWidget* pWidget =
-      m_pDoc->GetDocView()->GetWidgetForNode(pSender->GetNode());
-  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
+  CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
+  for (; pWidget; pWidget = pSender->GetWidgetAcc()->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded()) {
-      if (pSender->IsListBox())
+      if (pSender->GetWidgetAcc()->IsListBox())
         ToListBox(pWidget)->InsertItem(pLabel, iIndex);
       else
         ToComboBox(pWidget)->InsertItem(pLabel, iIndex);
@@ -82,16 +81,15 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetAcc* pSender,
   }
 }
 
-void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_WidgetAcc* pSender,
+void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
                                             int32_t iIndex) {
   if (pSender->GetUIType() != XFA_Element::ChoiceList)
     return;
 
-  CXFA_FFWidget* pWidget =
-      m_pDoc->GetDocView()->GetWidgetForNode(pSender->GetNode());
-  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
+  CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
+  for (; pWidget; pWidget = pSender->GetWidgetAcc()->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded()) {
-      if (pSender->IsListBox())
+      if (pSender->GetWidgetAcc()->IsListBox())
         ToListBox(pWidget)->DeleteItem(iIndex);
       else
         ToComboBox(pWidget)->DeleteItem(iIndex);
@@ -121,7 +119,7 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
     return new CXFA_ContentLayoutItem(pNode);
 
   CXFA_FFWidget* pWidget;
-  switch (pNode->GetWidgetAcc()->GetUIType()) {
+  switch (pNode->GetUIType()) {
     case XFA_Element::Barcode:
       pWidget = new CXFA_FFBarcode(pNode);
       break;
@@ -272,8 +270,7 @@ CXFA_FFWidget* CXFA_FFNotify::GetHWidget(CXFA_LayoutItem* pLayoutItem) {
 }
 
 void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
-  if (hWidget->GetNode()->GetWidgetAcc()->GetUIType() !=
-      XFA_Element::ChoiceList)
+  if (hWidget->GetNode()->GetUIType() != XFA_Element::ChoiceList)
     return;
 
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();

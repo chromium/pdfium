@@ -25,7 +25,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
     ASSERT(pWidget->GetNode()->IsWidgetReady());
 
-    CXFA_Border* borderUI = pWidget->GetNode()->GetWidgetAcc()->GetUIBorder();
+    CXFA_Border* borderUI = pWidget->GetNode()->GetUIBorder();
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;
     if (borderUI) {

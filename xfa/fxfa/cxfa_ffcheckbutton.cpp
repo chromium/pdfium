@@ -173,7 +173,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   m_rtUI.height = fCheckSize;
   AddUIMargin(iCapPlacement);
   m_rtCheckBox = m_rtUI;
-  CXFA_Border* borderUI = m_pNode->GetWidgetAcc()->GetUIBorder();
+  CXFA_Border* borderUI = m_pNode->GetUIBorder();
   if (borderUI) {
     CXFA_Margin* borderMargin = borderUI->GetMarginIfExists();
     if (borderMargin)
@@ -201,7 +201,7 @@ void CXFA_FFCheckButton::CapLeftRightPlacement(
 }
 
 void CXFA_FFCheckButton::AddUIMargin(XFA_AttributeEnum iCapPlacement) {
-  CFX_RectF rtUIMargin = m_pNode->GetWidgetAcc()->GetUIMargin();
+  CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
   m_rtUI.top -= rtUIMargin.top / 2 - rtUIMargin.height / 2;
 
   float fLeftAddRight = rtUIMargin.left + rtUIMargin.width;
@@ -234,8 +234,8 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorderWithFlag(pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI,
-                     mtRotate, m_pNode->GetWidgetAcc()->IsCheckButtonRound());
+  DrawBorderWithFlag(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate,
+                     m_pNode->GetWidgetAcc()->IsCheckButtonRound());
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus,
                 m_pNode->GetWidgetAcc()->IsCheckButtonRound());

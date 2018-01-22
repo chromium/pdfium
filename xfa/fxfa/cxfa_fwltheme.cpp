@@ -147,18 +147,17 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
 }
 
 CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
-  CFX_RectF rect;
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget);
   if (!pWidget)
-    return rect;
+    return CFX_RectF();
 
   CXFA_LayoutItem* pItem = pWidget;
-  CXFA_WidgetAcc* pWidgetAcc = pWidget->GetNode()->GetWidgetAcc();
-  rect = pWidgetAcc->GetUIMargin();
-  CXFA_Para* para = pWidgetAcc->GetNode()->GetParaIfExists();
+  CXFA_Node* pNode = pWidget->GetNode();
+  CFX_RectF rect = pNode->GetUIMargin();
+  CXFA_Para* para = pNode->GetParaIfExists();
   if (para) {
     rect.left += para->GetMarginLeft();
-    if (pWidgetAcc->IsMultiLine())
+    if (pNode->GetWidgetAcc()->IsMultiLine())
       rect.width += para->GetMarginRight();
   }
   if (!pItem->GetPrev()) {

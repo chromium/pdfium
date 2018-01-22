@@ -506,7 +506,7 @@ int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
       if (!GetXFANode()->IsWidgetReady())
         return XFA_EVENTERROR_NotExist;
 
-      CXFA_Node* pUINode = GetXFANode()->GetWidgetAcc()->GetUIChild();
+      CXFA_Node* pUINode = GetXFANode()->GetUIChild();
       if (pUINode->GetElementType() != XFA_Element::Signature)
         return XFA_EVENTERROR_NotExist;
 
@@ -517,10 +517,9 @@ int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
       if (!GetXFANode()->IsWidgetReady())
         return XFA_EVENTERROR_NotExist;
 
-      CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
-      CXFA_Node* pUINode = pWidgetAcc->GetUIChild();
+      CXFA_Node* pUINode = GetXFANode()->GetUIChild();
       if (pUINode->GetElementType() != XFA_Element::ChoiceList ||
-          pWidgetAcc->IsListBox()) {
+          GetXFANode()->GetWidgetAcc()->IsListBox()) {
         return XFA_EVENTERROR_NotExist;
       }
       return pNotify->ExecEventByDeepFirst(

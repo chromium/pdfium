@@ -136,7 +136,7 @@ CXFA_Font* CXFA_TextProvider::GetFontIfExists() {
 }
 
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
-  XFA_Element eType = m_pWidgetAcc->GetUIType();
+  XFA_Element eType = m_pWidgetAcc->GetNode()->GetUIType();
   if (eType != XFA_Element::CheckButton)
     return false;
   return !m_pWidgetAcc->GetNode()->TryWidth();

@@ -40,6 +40,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_event.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
+#include "xfa/fxfa/parser/cxfa_items.h"
 #include "xfa/fxfa/parser/cxfa_keep.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
@@ -49,8 +50,10 @@
 #include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
+#include "xfa/fxfa/parser/cxfa_stroke.h"
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
+#include "xfa/fxfa/parser/cxfa_ui.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
@@ -148,6 +151,170 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
     }
     pNodeSetPairMap->clear();
   }
+}
+
+std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
+  XFA_Element eType = pNode->GetElementType();
+  XFA_Element eWidgetType = eType;
+  if (eType != XFA_Element::Field && eType != XFA_Element::Draw)
+    return {eWidgetType, nullptr};
+
+  eWidgetType = XFA_Element::Unknown;
+  XFA_Element eUIType = XFA_Element::Unknown;
+  auto* defValue =
+      pNode->JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
+  XFA_Element eValueType =
+      defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
+  switch (eValueType) {
+    case XFA_Element::Boolean:
+      eUIType = XFA_Element::CheckButton;
+      break;
+    case XFA_Element::Integer:
+    case XFA_Element::Decimal:
+    case XFA_Element::Float:
+      eUIType = XFA_Element::NumericEdit;
+      break;
+    case XFA_Element::ExData:
+    case XFA_Element::Text:
+      eUIType = XFA_Element::TextEdit;
+      eWidgetType = XFA_Element::Text;
+      break;
+    case XFA_Element::Date:
+    case XFA_Element::Time:
+    case XFA_Element::DateTime:
+      eUIType = XFA_Element::DateTimeEdit;
+      break;
+    case XFA_Element::Image:
+      eUIType = XFA_Element::ImageEdit;
+      eWidgetType = XFA_Element::Image;
+      break;
+    case XFA_Element::Arc:
+    case XFA_Element::Line:
+    case XFA_Element::Rectangle:
+      eUIType = XFA_Element::DefaultUi;
+      eWidgetType = eValueType;
+      break;
+    default:
+      break;
+  }
+
+  CXFA_Node* pUIChild = nullptr;
+  CXFA_Ui* pUI =
+      pNode->JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
+  CXFA_Node* pChild = pUI ? pUI->GetFirstChild() : nullptr;
+  for (; pChild; pChild = pChild->GetNextSibling()) {
+    XFA_Element eChildType = pChild->GetElementType();
+    if (eChildType == XFA_Element::Extras ||
+        eChildType == XFA_Element::Picture) {
+      continue;
+    }
+
+    auto node = CXFA_Node::Create(pChild->GetDocument(), XFA_Element::Ui,
+                                  XFA_PacketType::Form);
+    if (node && node->HasPropertyFlags(eChildType, XFA_PROPERTYFLAG_OneOf)) {
+      pUIChild = pChild;
+      break;
+    }
+  }
+
+  if (eType == XFA_Element::Draw) {
+    XFA_Element eDraw =
+        pUIChild ? pUIChild->GetElementType() : XFA_Element::Unknown;
+    switch (eDraw) {
+      case XFA_Element::TextEdit:
+        eWidgetType = XFA_Element::Text;
+        break;
+      case XFA_Element::ImageEdit:
+        eWidgetType = XFA_Element::Image;
+        break;
+      default:
+        eWidgetType = eWidgetType == XFA_Element::Unknown ? XFA_Element::Text
+                                                          : eWidgetType;
+        break;
+    }
+  } else {
+    if (pUIChild && pUIChild->GetElementType() == XFA_Element::DefaultUi) {
+      eWidgetType = XFA_Element::TextEdit;
+    } else {
+      eWidgetType =
+          pUIChild ? pUIChild->GetElementType()
+                   : (eUIType == XFA_Element::Unknown ? XFA_Element::TextEdit
+                                                      : eUIType);
+    }
+  }
+
+  if (!pUIChild) {
+    if (eUIType == XFA_Element::Unknown) {
+      eUIType = XFA_Element::TextEdit;
+      if (defValue) {
+        defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
+                                                             XFA_Element::Text);
+      }
+    }
+    return {eWidgetType,
+            pUI ? pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)
+                : nullptr};
+  }
+
+  if (eUIType != XFA_Element::Unknown)
+    return {eWidgetType, pUIChild};
+
+  switch (pUIChild->GetElementType()) {
+    case XFA_Element::CheckButton: {
+      eValueType = XFA_Element::Text;
+      if (CXFA_Items* pItems =
+              pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
+        if (CXFA_Node* pItem =
+                pItems->GetChild<CXFA_Node>(0, XFA_Element::Unknown, false)) {
+          eValueType = pItem->GetElementType();
+        }
+      }
+      break;
+    }
+    case XFA_Element::DateTimeEdit:
+      eValueType = XFA_Element::DateTime;
+      break;
+    case XFA_Element::ImageEdit:
+      eValueType = XFA_Element::Image;
+      break;
+    case XFA_Element::NumericEdit:
+      eValueType = XFA_Element::Float;
+      break;
+    case XFA_Element::ChoiceList: {
+      eValueType = (pUIChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
+                    XFA_AttributeEnum::MultiSelect)
+                       ? XFA_Element::ExData
+                       : XFA_Element::Text;
+      break;
+    }
+    case XFA_Element::Barcode:
+    case XFA_Element::Button:
+    case XFA_Element::PasswordEdit:
+    case XFA_Element::Signature:
+    case XFA_Element::TextEdit:
+    default:
+      eValueType = XFA_Element::Text;
+      break;
+  }
+  if (defValue)
+    defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
+
+  return {eWidgetType, pUIChild};
+}
+
+float GetEdgeThickness(const std::vector<CXFA_Stroke*>& strokes,
+                       bool b3DStyle,
+                       int32_t nIndex) {
+  float fThickness = 0;
+
+  CXFA_Stroke* stroke = strokes[nIndex * 2 + 1];
+  if (stroke->IsVisible()) {
+    if (nIndex == 0)
+      fThickness += 2.5f;
+
+    fThickness += stroke->GetThickness() * (b3DStyle ? 4 : 2);
+  }
+  return fThickness;
 }
 
 }  // namespace
@@ -2059,7 +2226,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
 }
 
 WideString CXFA_Node::GetBarcodeType() {
-  CXFA_Node* pUIChild = GetWidgetAcc()->GetUIChild();
+  CXFA_Node* pUIChild = GetUIChild();
   return pUIChild
              ? WideString(pUIChild->JSObject()->GetCData(XFA_Attribute::Type))
              : WideString();
@@ -2067,8 +2234,7 @@ WideString CXFA_Node::GetBarcodeType() {
 
 Optional<BC_CHAR_ENCODING> CXFA_Node::GetBarcodeAttribute_CharEncoding() {
   Optional<WideString> wsCharEncoding =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryCData(
-          XFA_Attribute::CharEncoding, true);
+      GetUIChild()->JSObject()->TryCData(XFA_Attribute::CharEncoding, true);
   if (!wsCharEncoding)
     return {};
   if (wsCharEncoding->CompareNoCase(L"UTF-16"))
@@ -2080,8 +2246,7 @@ Optional<BC_CHAR_ENCODING> CXFA_Node::GetBarcodeAttribute_CharEncoding() {
 
 Optional<bool> CXFA_Node::GetBarcodeAttribute_Checksum() {
   Optional<XFA_AttributeEnum> checksum =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryEnum(XFA_Attribute::Checksum,
-                                                        true);
+      GetUIChild()->JSObject()->TryEnum(XFA_Attribute::Checksum, true);
   if (!checksum)
     return {};
 
@@ -2101,8 +2266,7 @@ Optional<bool> CXFA_Node::GetBarcodeAttribute_Checksum() {
 
 Optional<int32_t> CXFA_Node::GetBarcodeAttribute_DataLength() {
   Optional<WideString> wsDataLength =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryCData(
-          XFA_Attribute::DataLength, true);
+      GetUIChild()->JSObject()->TryCData(XFA_Attribute::DataLength, true);
   if (!wsDataLength)
     return {};
 
@@ -2111,8 +2275,7 @@ Optional<int32_t> CXFA_Node::GetBarcodeAttribute_DataLength() {
 
 Optional<char> CXFA_Node::GetBarcodeAttribute_StartChar() {
   Optional<WideString> wsStartEndChar =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryCData(
-          XFA_Attribute::StartChar, true);
+      GetUIChild()->JSObject()->TryCData(XFA_Attribute::StartChar, true);
   if (!wsStartEndChar || wsStartEndChar->IsEmpty())
     return {};
 
@@ -2121,8 +2284,7 @@ Optional<char> CXFA_Node::GetBarcodeAttribute_StartChar() {
 
 Optional<char> CXFA_Node::GetBarcodeAttribute_EndChar() {
   Optional<WideString> wsStartEndChar =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryCData(XFA_Attribute::EndChar,
-                                                         true);
+      GetUIChild()->JSObject()->TryCData(XFA_Attribute::EndChar, true);
   if (!wsStartEndChar || wsStartEndChar->IsEmpty())
     return {};
 
@@ -2130,9 +2292,8 @@ Optional<char> CXFA_Node::GetBarcodeAttribute_EndChar() {
 }
 
 Optional<int32_t> CXFA_Node::GetBarcodeAttribute_ECLevel() {
-  Optional<WideString> wsECLevel =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryCData(
-          XFA_Attribute::ErrorCorrectionLevel, true);
+  Optional<WideString> wsECLevel = GetUIChild()->JSObject()->TryCData(
+      XFA_Attribute::ErrorCorrectionLevel, true);
   if (!wsECLevel)
     return {};
   return {FXSYS_wtoi(wsECLevel->c_str())};
@@ -2140,8 +2301,7 @@ Optional<int32_t> CXFA_Node::GetBarcodeAttribute_ECLevel() {
 
 Optional<int32_t> CXFA_Node::GetBarcodeAttribute_ModuleWidth() {
   Optional<CXFA_Measurement> moduleWidthHeight =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryMeasure(
-          XFA_Attribute::ModuleWidth, true);
+      GetUIChild()->JSObject()->TryMeasure(XFA_Attribute::ModuleWidth, true);
   if (!moduleWidthHeight)
     return {};
 
@@ -2150,8 +2310,7 @@ Optional<int32_t> CXFA_Node::GetBarcodeAttribute_ModuleWidth() {
 
 Optional<int32_t> CXFA_Node::GetBarcodeAttribute_ModuleHeight() {
   Optional<CXFA_Measurement> moduleWidthHeight =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryMeasure(
-          XFA_Attribute::ModuleHeight, true);
+      GetUIChild()->JSObject()->TryMeasure(XFA_Attribute::ModuleHeight, true);
   if (!moduleWidthHeight)
     return {};
 
@@ -2159,14 +2318,13 @@ Optional<int32_t> CXFA_Node::GetBarcodeAttribute_ModuleHeight() {
 }
 
 Optional<bool> CXFA_Node::GetBarcodeAttribute_PrintChecksum() {
-  return GetWidgetAcc()->GetUIChild()->JSObject()->TryBoolean(
-      XFA_Attribute::PrintCheckDigit, true);
+  return GetUIChild()->JSObject()->TryBoolean(XFA_Attribute::PrintCheckDigit,
+                                              true);
 }
 
 Optional<BC_TEXT_LOC> CXFA_Node::GetBarcodeAttribute_TextLocation() {
   Optional<XFA_AttributeEnum> textLocation =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryEnum(
-          XFA_Attribute::TextLocation, true);
+      GetUIChild()->JSObject()->TryEnum(XFA_Attribute::TextLocation, true);
   if (!textLocation)
     return {};
 
@@ -2188,14 +2346,12 @@ Optional<BC_TEXT_LOC> CXFA_Node::GetBarcodeAttribute_TextLocation() {
 }
 
 Optional<bool> CXFA_Node::GetBarcodeAttribute_Truncate() {
-  return GetWidgetAcc()->GetUIChild()->JSObject()->TryBoolean(
-      XFA_Attribute::Truncate, true);
+  return GetUIChild()->JSObject()->TryBoolean(XFA_Attribute::Truncate, true);
 }
 
 Optional<int8_t> CXFA_Node::GetBarcodeAttribute_WideNarrowRatio() {
   Optional<WideString> wsWideNarrowRatio =
-      GetWidgetAcc()->GetUIChild()->JSObject()->TryCData(
-          XFA_Attribute::WideNarrowRatio, true);
+      GetUIChild()->JSObject()->TryCData(XFA_Attribute::WideNarrowRatio, true);
   if (!wsWideNarrowRatio)
     return {};
 
@@ -2212,4 +2368,61 @@ Optional<int8_t> CXFA_Node::GetBarcodeAttribute_WideNarrowRatio() {
   int32_t fA = FXSYS_wtoi(wsWideNarrowRatio->Left(*ptPos).c_str());
   float result = static_cast<float>(fA) / static_cast<float>(fB);
   return {static_cast<int8_t>(result)};
+}
+
+CXFA_Node* CXFA_Node::GetUIChild() {
+  if (m_eUIType == XFA_Element::Unknown)
+    std::tie(m_eUIType, m_pUiChildNode) = CreateUIChild(this);
+  return m_pUiChildNode;
+}
+
+XFA_Element CXFA_Node::GetUIType() {
+  GetUIChild();
+  return m_eUIType;
+}
+
+CXFA_Border* CXFA_Node::GetUIBorder() {
+  CXFA_Node* pUIChild = GetUIChild();
+  return pUIChild ? pUIChild->JSObject()->GetProperty<CXFA_Border>(
+                        0, XFA_Element::Border)
+                  : nullptr;
+}
+
+CFX_RectF CXFA_Node::GetUIMargin() {
+  CXFA_Node* pUIChild = GetUIChild();
+  if (!pUIChild)
+    return CFX_RectF();
+
+  CXFA_Margin* mgUI =
+      pUIChild->JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin);
+  if (!mgUI)
+    return CFX_RectF();
+
+  CXFA_Border* border = GetUIBorder();
+  if (border && border->GetPresence() != XFA_AttributeEnum::Visible)
+    return CFX_RectF();
+
+  Optional<float> left = mgUI->TryLeftInset();
+  Optional<float> top = mgUI->TryTopInset();
+  Optional<float> right = mgUI->TryRightInset();
+  Optional<float> bottom = mgUI->TryBottomInset();
+  if (border) {
+    bool bVisible = false;
+    float fThickness = 0;
+    XFA_AttributeEnum iType = XFA_AttributeEnum::Unknown;
+    std::tie(iType, bVisible, fThickness) = border->Get3DStyle();
+    if (!left || !top || !right || !bottom) {
+      std::vector<CXFA_Stroke*> strokes = border->GetStrokes();
+      if (!top)
+        top = GetEdgeThickness(strokes, bVisible, 0);
+      if (!right)
+        right = GetEdgeThickness(strokes, bVisible, 1);
+      if (!bottom)
+        bottom = GetEdgeThickness(strokes, bVisible, 2);
+      if (!left)
+        left = GetEdgeThickness(strokes, bVisible, 3);
+    }
+  }
+  return CFX_RectF(left.value_or(0.0), top.value_or(0.0), right.value_or(0.0),
+                   bottom.value_or(0.0));
 }

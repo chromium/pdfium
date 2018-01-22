@@ -31,7 +31,7 @@ void CXFA_FFSignature::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
 
-  DrawBorder(pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
 }

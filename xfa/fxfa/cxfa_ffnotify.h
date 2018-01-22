@@ -21,11 +21,11 @@ class CXFA_FFNotify {
 
   void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);
 
-  void OnWidgetListItemAdded(CXFA_WidgetAcc* pSender,
+  void OnWidgetListItemAdded(CXFA_Node* pSender,
                              const wchar_t* pLabel,
                              const wchar_t* pValue,
                              int32_t iIndex);
-  void OnWidgetListItemRemoved(CXFA_WidgetAcc* pSender, int32_t iIndex);
+  void OnWidgetListItemRemoved(CXFA_Node* pSender, int32_t iIndex);
 
   // Node events
   void OnNodeReady(CXFA_Node* pNode);

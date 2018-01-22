@@ -319,21 +319,6 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
   int32_t m_iImageYDpi;
 };
 
-float GetEdgeThickness(const std::vector<CXFA_Stroke*>& strokes,
-                       bool b3DStyle,
-                       int32_t nIndex) {
-  float fThickness = 0;
-
-  CXFA_Stroke* stroke = strokes[nIndex * 2 + 1];
-  if (stroke->IsVisible()) {
-    if (nIndex == 0)
-      fThickness += 2.5f;
-
-    fThickness += stroke->GetThickness() * (b3DStyle ? 4 : 2);
-  }
-  return fThickness;
-}
-
 bool SplitDateTime(const WideString& wsDateTime,
                    WideString& wsDate,
                    WideString& wsTime) {
@@ -361,170 +346,18 @@ bool SplitDateTime(const WideString& wsDateTime,
   return true;
 }
 
-std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
-  XFA_Element eType = pNode->GetElementType();
-  XFA_Element eWidgetType = eType;
-  if (eType != XFA_Element::Field && eType != XFA_Element::Draw)
-    return {eWidgetType, nullptr};
-
-  eWidgetType = XFA_Element::Unknown;
-  XFA_Element eUIType = XFA_Element::Unknown;
-  auto* defValue =
-      pNode->JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
-  XFA_Element eValueType =
-      defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
-  switch (eValueType) {
-    case XFA_Element::Boolean:
-      eUIType = XFA_Element::CheckButton;
-      break;
-    case XFA_Element::Integer:
-    case XFA_Element::Decimal:
-    case XFA_Element::Float:
-      eUIType = XFA_Element::NumericEdit;
-      break;
-    case XFA_Element::ExData:
-    case XFA_Element::Text:
-      eUIType = XFA_Element::TextEdit;
-      eWidgetType = XFA_Element::Text;
-      break;
-    case XFA_Element::Date:
-    case XFA_Element::Time:
-    case XFA_Element::DateTime:
-      eUIType = XFA_Element::DateTimeEdit;
-      break;
-    case XFA_Element::Image:
-      eUIType = XFA_Element::ImageEdit;
-      eWidgetType = XFA_Element::Image;
-      break;
-    case XFA_Element::Arc:
-    case XFA_Element::Line:
-    case XFA_Element::Rectangle:
-      eUIType = XFA_Element::DefaultUi;
-      eWidgetType = eValueType;
-      break;
-    default:
-      break;
-  }
-
-  CXFA_Node* pUIChild = nullptr;
-  CXFA_Ui* pUI =
-      pNode->JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
-  CXFA_Node* pChild = pUI ? pUI->GetFirstChild() : nullptr;
-  for (; pChild; pChild = pChild->GetNextSibling()) {
-    XFA_Element eChildType = pChild->GetElementType();
-    if (eChildType == XFA_Element::Extras ||
-        eChildType == XFA_Element::Picture) {
-      continue;
-    }
-
-    auto node = CXFA_Node::Create(pChild->GetDocument(), XFA_Element::Ui,
-                                  XFA_PacketType::Form);
-    if (node && node->HasPropertyFlags(eChildType, XFA_PROPERTYFLAG_OneOf)) {
-      pUIChild = pChild;
-      break;
-    }
-  }
-
-  if (eType == XFA_Element::Draw) {
-    XFA_Element eDraw =
-        pUIChild ? pUIChild->GetElementType() : XFA_Element::Unknown;
-    switch (eDraw) {
-      case XFA_Element::TextEdit:
-        eWidgetType = XFA_Element::Text;
-        break;
-      case XFA_Element::ImageEdit:
-        eWidgetType = XFA_Element::Image;
-        break;
-      default:
-        eWidgetType = eWidgetType == XFA_Element::Unknown ? XFA_Element::Text
-                                                          : eWidgetType;
-        break;
-    }
-  } else {
-    if (pUIChild && pUIChild->GetElementType() == XFA_Element::DefaultUi) {
-      eWidgetType = XFA_Element::TextEdit;
-    } else {
-      eWidgetType =
-          pUIChild ? pUIChild->GetElementType()
-                   : (eUIType == XFA_Element::Unknown ? XFA_Element::TextEdit
-                                                      : eUIType);
-    }
-  }
-
-  if (!pUIChild) {
-    if (eUIType == XFA_Element::Unknown) {
-      eUIType = XFA_Element::TextEdit;
-      if (defValue) {
-        defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
-                                                             XFA_Element::Text);
-      }
-    }
-    return {eWidgetType,
-            pUI ? pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)
-                : nullptr};
-  }
-
-  if (eUIType != XFA_Element::Unknown)
-    return {eWidgetType, pUIChild};
-
-  switch (pUIChild->GetElementType()) {
-    case XFA_Element::CheckButton: {
-      eValueType = XFA_Element::Text;
-      if (CXFA_Items* pItems =
-              pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
-        if (CXFA_Node* pItem =
-                pItems->GetChild<CXFA_Node>(0, XFA_Element::Unknown, false)) {
-          eValueType = pItem->GetElementType();
-        }
-      }
-      break;
-    }
-    case XFA_Element::DateTimeEdit:
-      eValueType = XFA_Element::DateTime;
-      break;
-    case XFA_Element::ImageEdit:
-      eValueType = XFA_Element::Image;
-      break;
-    case XFA_Element::NumericEdit:
-      eValueType = XFA_Element::Float;
-      break;
-    case XFA_Element::ChoiceList: {
-      eValueType = (pUIChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
-                    XFA_AttributeEnum::MultiSelect)
-                       ? XFA_Element::ExData
-                       : XFA_Element::Text;
-      break;
-    }
-    case XFA_Element::Barcode:
-    case XFA_Element::Button:
-    case XFA_Element::PasswordEdit:
-    case XFA_Element::Signature:
-    case XFA_Element::TextEdit:
-    default:
-      eValueType = XFA_Element::Text;
-      break;
-  }
-  if (defValue)
-    defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
-
-  return {eWidgetType, pUIChild};
-}
-
 }  // namespace
 
 CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_Node* pNode)
     : m_bIsNull(true),
       m_bPreNull(true),
-      m_pUiChildNode(nullptr),
-      m_eUIType(XFA_Element::Unknown),
       m_pNode(pNode) {}
 
 CXFA_WidgetAcc::~CXFA_WidgetAcc() = default;
 
 void CXFA_WidgetAcc::ResetData() {
   WideString wsValue;
-  XFA_Element eUIType = GetUIType();
-  switch (eUIType) {
+  switch (m_pNode->GetUIType()) {
     case XFA_Element::ImageEdit: {
       CXFA_Value* imageValue = m_pNode->GetDefaultValueIfExists();
       CXFA_Image* image = imageValue ? imageValue->GetImageIfExists() : nullptr;
@@ -627,7 +460,8 @@ void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFDocView* docView,
   CXFA_FFWidget* pWidget = docView->GetWidgetForNode(m_pNode);
   for (; pWidget; pWidget = GetNextWidget(pWidget)) {
     if (pWidget == pExcept || !pWidget->IsLoaded() ||
-        (GetUIType() != XFA_Element::CheckButton && pWidget->IsFocused())) {
+        (m_pNode->GetUIType() != XFA_Element::CheckButton &&
+         pWidget->IsFocused())) {
       continue;
     }
     pWidget->UpdateFWLData();
@@ -642,7 +476,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
 
   LoadCaption(doc);
 
-  XFA_Element eUIType = GetUIType();
+  XFA_Element eUIType = m_pNode->GetUIType();
   XFA_AttributeEnum iCapPlacement = caption->GetPlacementType();
   float fCapReserve = caption->GetReserve();
   const bool bVert = iCapPlacement == XFA_AttributeEnum::Top ||
@@ -699,7 +533,7 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
   CFX_SizeF szCap;
   CalcCaptionSize(doc, szCap);
 
-  CFX_RectF rtUIMargin = GetUIMargin();
+  CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
   size.width += rtUIMargin.left + rtUIMargin.width;
   size.height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
@@ -790,7 +624,7 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CXFA_FFDoc* doc,
 
     FDE_TextStyle dwStyles;
     dwStyles.last_line_height_ = true;
-    if (GetUIType() == XFA_Element::TextEdit && IsMultiLine())
+    if (m_pNode->GetUIType() == XFA_Element::TextEdit && IsMultiLine())
       dwStyles.line_wrap_ = true;
 
     pTextOut->SetStyles(dwStyles);
@@ -820,7 +654,7 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CXFA_FFDoc* doc,
           break;
       }
     }
-    CFX_RectF rtUIMargin = GetUIMargin();
+    CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
     size.width -= rtUIMargin.left + rtUIMargin.width;
     CXFA_Margin* margin = m_pNode->GetMarginIfExists();
     if (margin)
@@ -1009,7 +843,7 @@ void CXFA_WidgetAcc::StartWidgetLayout(CXFA_FFDoc* doc,
                                        float& fCalcHeight) {
   InitLayoutData();
 
-  XFA_Element eUIType = GetUIType();
+  XFA_Element eUIType = m_pNode->GetUIType();
   if (eUIType == XFA_Element::Text) {
     m_pLayoutData->m_fWidgetHeight = m_pNode->TryHeight().value_or(-1);
     StartTextLayout(doc, fCalcWidth, fCalcHeight);
@@ -1095,7 +929,7 @@ void CXFA_WidgetAcc::CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
 bool CXFA_WidgetAcc::FindSplitPos(CXFA_FFDocView* docView,
                                   int32_t iBlockIndex,
                                   float& fCalcHeight) {
-  XFA_Element eUIType = GetUIType();
+  XFA_Element eUIType = m_pNode->GetUIType();
   if (eUIType == XFA_Element::Subform)
     return false;
 
@@ -1115,7 +949,7 @@ bool CXFA_WidgetAcc::FindSplitPos(CXFA_FFDocView* docView,
       fBottomInset = margin->GetBottomInset();
     }
 
-    CFX_RectF rtUIMargin = GetUIMargin();
+    CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
     fTopInset += rtUIMargin.top;
     fBottomInset += rtUIMargin.width;
   }
@@ -1326,7 +1160,7 @@ void CXFA_WidgetAcc::InitLayoutData() {
   if (m_pLayoutData)
     return;
 
-  switch (GetUIType()) {
+  switch (m_pNode->GetUIType()) {
     case XFA_Element::Text:
       m_pLayoutData = pdfium::MakeUnique<CXFA_TextLayoutData>();
       return;
@@ -1458,17 +1292,6 @@ RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont(CXFA_FFDoc* doc) {
                                                  dwFontStyle);
 }
 
-CXFA_Node* CXFA_WidgetAcc::GetUIChild() {
-  if (m_eUIType == XFA_Element::Unknown)
-    std::tie(m_eUIType, m_pUiChildNode) = CreateUIChild(m_pNode);
-  return m_pUiChildNode;
-}
-
-XFA_Element CXFA_WidgetAcc::GetUIType() {
-  GetUIChild();
-  return m_eUIType;
-}
-
 bool CXFA_WidgetAcc::IsOpenAccess() const {
   return m_pNode && m_pNode->IsOpenAccess();
 }
@@ -1497,55 +1320,8 @@ std::vector<CXFA_Event*> CXFA_WidgetAcc::GetEventByActivity(
   return events;
 }
 
-CXFA_Border* CXFA_WidgetAcc::GetUIBorder() {
-  CXFA_Node* pUIChild = GetUIChild();
-  return pUIChild ? pUIChild->JSObject()->GetProperty<CXFA_Border>(
-                        0, XFA_Element::Border)
-                  : nullptr;
-}
-
-CFX_RectF CXFA_WidgetAcc::GetUIMargin() {
-  CXFA_Node* pUIChild = GetUIChild();
-  CXFA_Margin* mgUI = nullptr;
-  if (pUIChild) {
-    mgUI =
-        pUIChild->JSObject()->GetProperty<CXFA_Margin>(0, XFA_Element::Margin);
-  }
-
-  if (!mgUI)
-    return CFX_RectF();
-
-  CXFA_Border* border = GetUIBorder();
-  if (border && border->GetPresence() != XFA_AttributeEnum::Visible)
-    return CFX_RectF();
-
-  Optional<float> left = mgUI->TryLeftInset();
-  Optional<float> top = mgUI->TryTopInset();
-  Optional<float> right = mgUI->TryRightInset();
-  Optional<float> bottom = mgUI->TryBottomInset();
-  if (border) {
-    bool bVisible = false;
-    float fThickness = 0;
-    XFA_AttributeEnum iType = XFA_AttributeEnum::Unknown;
-    std::tie(iType, bVisible, fThickness) = border->Get3DStyle();
-    if (!left || !top || !right || !bottom) {
-      std::vector<CXFA_Stroke*> strokes = border->GetStrokes();
-      if (!top)
-        top = GetEdgeThickness(strokes, bVisible, 0);
-      if (!right)
-        right = GetEdgeThickness(strokes, bVisible, 1);
-      if (!bottom)
-        bottom = GetEdgeThickness(strokes, bVisible, 2);
-      if (!left)
-        left = GetEdgeThickness(strokes, bVisible, 3);
-    }
-  }
-  return CFX_RectF(left.value_or(0.0), top.value_or(0.0), right.value_or(0.0),
-                   bottom.value_or(0.0));
-}
-
 XFA_AttributeEnum CXFA_WidgetAcc::GetButtonHighlight() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild)
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::Highlight);
   return XFA_AttributeEnum::Inverted;
@@ -1580,7 +1356,7 @@ bool CXFA_WidgetAcc::HasButtonDown() const {
 }
 
 bool CXFA_WidgetAcc::IsCheckButtonRound() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild)
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::Shape) ==
            XFA_AttributeEnum::Round;
@@ -1588,7 +1364,7 @@ bool CXFA_WidgetAcc::IsCheckButtonRound() {
 }
 
 XFA_AttributeEnum CXFA_WidgetAcc::GetCheckButtonMark() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild)
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::Mark);
   return XFA_AttributeEnum::Default;
@@ -1600,7 +1376,7 @@ bool CXFA_WidgetAcc::IsRadioButton() {
 }
 
 float CXFA_WidgetAcc::GetCheckButtonSize() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild) {
     return pUIChild->JSObject()
         ->GetMeasure(XFA_Attribute::Size)
@@ -1610,7 +1386,7 @@ float CXFA_WidgetAcc::GetCheckButtonSize() {
 }
 
 bool CXFA_WidgetAcc::IsAllowNeutral() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   return pUIChild &&
          pUIChild->JSObject()->GetBoolean(XFA_Attribute::AllowNeutral);
 }
@@ -1797,7 +1573,7 @@ CXFA_Node* CXFA_WidgetAcc::GetExclGroupNextMember(CXFA_Node* pNode) {
 }
 
 bool CXFA_WidgetAcc::IsChoiceListCommitOnSelect() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::CommitOn) ==
            XFA_AttributeEnum::Select;
@@ -1806,12 +1582,12 @@ bool CXFA_WidgetAcc::IsChoiceListCommitOnSelect() {
 }
 
 bool CXFA_WidgetAcc::IsChoiceListAllowTextEntry() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   return pUIChild && pUIChild->JSObject()->GetBoolean(XFA_Attribute::TextEntry);
 }
 
 bool CXFA_WidgetAcc::IsChoiceListMultiSelect() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
            XFA_AttributeEnum::MultiSelect;
@@ -1820,7 +1596,7 @@ bool CXFA_WidgetAcc::IsChoiceListMultiSelect() {
 }
 
 bool CXFA_WidgetAcc::IsListBox() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (!pUIChild)
     return false;
 
@@ -2129,7 +1905,7 @@ void CXFA_WidgetAcc::InsertItem(const WideString& wsLabel,
     return;
 
   m_pNode->GetDocument()->GetNotify()->OnWidgetListItemAdded(
-      this, wsLabel.c_str(), wsValue.c_str(), nIndex);
+      m_pNode, wsLabel.c_str(), wsValue.c_str(), nIndex);
 }
 
 void CXFA_WidgetAcc::GetItemLabel(const WideStringView& wsValue,
@@ -2251,12 +2027,13 @@ bool CXFA_WidgetAcc::DeleteItem(int32_t nIndex,
     }
   }
   if (bNotify)
-    m_pNode->GetDocument()->GetNotify()->OnWidgetListItemRemoved(this, nIndex);
+    m_pNode->GetDocument()->GetNotify()->OnWidgetListItemRemoved(m_pNode,
+                                                                 nIndex);
   return true;
 }
 
 bool CXFA_WidgetAcc::IsHorizontalScrollPolicyOff() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::HScrollPolicy) ==
            XFA_AttributeEnum::Off;
@@ -2265,7 +2042,7 @@ bool CXFA_WidgetAcc::IsHorizontalScrollPolicyOff() {
 }
 
 bool CXFA_WidgetAcc::IsVerticalScrollPolicyOff() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (pUIChild) {
     return pUIChild->JSObject()->GetEnum(XFA_Attribute::VScrollPolicy) ==
            XFA_AttributeEnum::Off;
@@ -2274,7 +2051,7 @@ bool CXFA_WidgetAcc::IsVerticalScrollPolicyOff() {
 }
 
 Optional<int32_t> CXFA_WidgetAcc::GetNumberOfCells() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   if (!pUIChild)
     return {};
   if (CXFA_Comb* pNode =
@@ -2284,13 +2061,13 @@ Optional<int32_t> CXFA_WidgetAcc::GetNumberOfCells() {
 }
 
 WideString CXFA_WidgetAcc::GetPasswordChar() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   return pUIChild ? pUIChild->JSObject()->GetCData(XFA_Attribute::PasswordChar)
                   : L"*";
 }
 
 bool CXFA_WidgetAcc::IsMultiLine() {
-  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Node* pUIChild = m_pNode->GetUIChild();
   return pUIChild && pUIChild->JSObject()->GetBoolean(XFA_Attribute::MultiLine);
 }
 
@@ -2361,7 +2138,7 @@ bool CXFA_WidgetAcc::SetValue(XFA_VALUEPICTURE eValueType,
   WideString wsPicture = GetPictureContent(eValueType);
   bool bValidate = true;
   bool bSyncData = false;
-  CXFA_Node* pNode = GetUIChild();
+  CXFA_Node* pNode = m_pNode->GetUIChild();
   if (!pNode)
     return true;
 
@@ -2488,11 +2265,11 @@ WideString CXFA_WidgetAcc::GetValue(XFA_VALUEPICTURE eValueType) {
     GetItemLabel(wsValue.AsStringView(), wsValue);
 
   WideString wsPicture = GetPictureContent(eValueType);
-  CXFA_Node* pNode = GetUIChild();
+  CXFA_Node* pNode = m_pNode->GetUIChild();
   if (!pNode)
     return wsValue;
 
-  switch (GetUIChild()->GetElementType()) {
+  switch (m_pNode->GetUIChild()->GetElementType()) {
     case XFA_Element::ChoiceList: {
       if (eValueType == XFA_VALUEPICTURE_Display) {
         int32_t iSelItemIndex = GetSelectedItem(0);

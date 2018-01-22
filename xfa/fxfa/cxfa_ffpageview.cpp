@@ -344,8 +344,8 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
          nWidgetCount) {
     if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget)) {
       m_TabOrderWidgetArray.push_back(hWidget);
-      CXFA_WidgetAcc* pWidgetAcc = hWidget->GetNode()->GetWidgetAcc();
-      if (pWidgetAcc->GetUIType() == XFA_Element::ExclGroup) {
+      CXFA_Node* pNode = hWidget->GetNode();
+      if (pNode->GetUIType() == XFA_Element::ExclGroup) {
         auto it = std::find(SpaceOrderWidgetArray.begin(),
                             SpaceOrderWidgetArray.end(), hWidget);
         int32_t iWidgetIndex = it != SpaceOrderWidgetArray.end()
@@ -354,7 +354,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
         while (true) {
           CXFA_FFWidget* radio =
               SpaceOrderWidgetArray[iWidgetIndex % nWidgetCount];
-          if (radio->GetNode()->GetExclGroupIfExists() != pWidgetAcc->GetNode())
+          if (radio->GetNode()->GetExclGroupIfExists() != pNode)
             break;
           if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget))
             m_TabOrderWidgetArray.push_back(radio);

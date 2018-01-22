@@ -294,6 +294,11 @@ class CXFA_Node : public CXFA_Object {
   Optional<bool> GetBarcodeAttribute_Truncate();
   Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
 
+  CXFA_Node* GetUIChild();
+  XFA_Element GetUIType();
+  CFX_RectF GetUIMargin();
+  CXFA_Border* GetUIBorder();
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
@@ -357,6 +362,8 @@ class CXFA_Node : public CXFA_Object {
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;
   std::vector<UnownedPtr<CXFA_Node>> binding_nodes_;
+  CXFA_Node* m_pUiChildNode = nullptr;
+  XFA_Element m_eUIType = XFA_Element::Unknown;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_

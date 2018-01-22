@@ -49,7 +49,7 @@ CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   if (!bDrawFocus)
     return CXFA_FFWidget::GetBBox(dwStatus);
 
-  XFA_Element type = m_pNode->GetWidgetAcc()->GetUIType();
+  XFA_Element type = m_pNode->GetUIType();
   if (type != XFA_Element::Button && type != XFA_Element::CheckButton &&
       type != XFA_Element::ImageEdit && type != XFA_Element::Signature &&
       type != XFA_Element::ChoiceList) {
@@ -69,7 +69,7 @@ void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
-  DrawBorder(pGS, m_pNode->GetWidgetAcc()->GetUIBorder(), m_rtUI, mtRotate);
+  DrawBorder(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
 
@@ -136,7 +136,7 @@ void CXFA_FFField::UnloadWidget() {
 }
 
 void CXFA_FFField::SetEditScrollOffset() {
-  XFA_Element eType = m_pNode->GetWidgetAcc()->GetUIType();
+  XFA_Element eType = m_pNode->GetUIType();
   if (eType != XFA_Element::TextEdit && eType != XFA_Element::NumericEdit &&
       eType != XFA_Element::PasswordEdit) {
     return;
@@ -144,10 +144,8 @@ void CXFA_FFField::SetEditScrollOffset() {
 
   float fScrollOffset = 0;
   CXFA_FFField* pPrev = ToField(GetPrev());
-  if (pPrev) {
-    CFX_RectF rtMargin = m_pNode->GetWidgetAcc()->GetUIMargin();
-    fScrollOffset = -rtMargin.top;
-  }
+  if (pPrev)
+    fScrollOffset = -(m_pNode->GetUIMargin().top);
 
   while (pPrev) {
     fScrollOffset += pPrev->m_rtUI.height;
@@ -267,7 +265,7 @@ void CXFA_FFField::CapPlacement() {
       break;
   }
 
-  CXFA_Border* borderUI = m_pNode->GetWidgetAcc()->GetUIBorder();
+  CXFA_Border* borderUI = m_pNode->GetUIBorder();
   if (borderUI) {
     CXFA_Margin* borderMargin = borderUI->GetMarginIfExists();
     if (borderMargin)
@@ -279,7 +277,7 @@ void CXFA_FFField::CapPlacement() {
 void CXFA_FFField::CapTopBottomPlacement(const CXFA_Margin* margin,
                                          const CFX_RectF& rtWidget,
                                          XFA_AttributeEnum iCapPlacement) {
-  CFX_RectF rtUIMargin = m_pNode->GetWidgetAcc()->GetUIMargin();
+  CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
   m_rtCaption.left += rtUIMargin.left;
   if (margin) {
     XFA_RectWithoutMargin(m_rtCaption, margin);
@@ -305,7 +303,7 @@ void CXFA_FFField::CapTopBottomPlacement(const CXFA_Margin* margin,
 void CXFA_FFField::CapLeftRightPlacement(const CXFA_Margin* margin,
                                          const CFX_RectF& rtWidget,
                                          XFA_AttributeEnum iCapPlacement) {
-  CFX_RectF rtUIMargin = m_pNode->GetWidgetAcc()->GetUIMargin();
+  CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
   m_rtCaption.top += rtUIMargin.top;
   m_rtCaption.height -= rtUIMargin.top;
   if (margin) {
@@ -336,7 +334,7 @@ void CXFA_FFField::UpdateFWL() {
 }
 
 uint32_t CXFA_FFField::UpdateUIProperty() {
-  CXFA_Node* pUiNode = m_pNode->GetWidgetAcc()->GetUIChild();
+  CXFA_Node* pUiNode = m_pNode->GetUIChild();
   if (pUiNode && pUiNode->GetElementType() == XFA_Element::DefaultUi)
     return FWL_STYLEEXT_EDT_ReadOnly;
   return 0;

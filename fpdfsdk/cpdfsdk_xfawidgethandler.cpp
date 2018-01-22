@@ -85,8 +85,7 @@ CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   ASSERT(node->IsWidgetReady());
 
   CFX_RectF rcBBox;
-  XFA_Element eType = node->GetWidgetAcc()->GetUIType();
-  if (eType == XFA_Element::Signature)
+  if (node->GetUIType() == XFA_Element::Signature)
     rcBBox = pAnnot->GetXFAWidget()->GetBBox(XFA_WidgetStatus_Visible, true);
   else
     rcBBox = pAnnot->GetXFAWidget()->GetBBox(XFA_WidgetStatus_None);
