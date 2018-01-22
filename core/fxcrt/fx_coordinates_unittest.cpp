@@ -229,7 +229,30 @@ TEST(CFX_Matrix, ReverseIdentity) {
   EXPECT_FLOAT_EQ(expected.y, result.y);
 }
 
-TEST(CFX_Matrix, Reverse) {
+TEST(CFX_Matrix, SetIdentity) {
+  CFX_Matrix m;
+  EXPECT_FLOAT_EQ(1.0, m.a);
+  EXPECT_FLOAT_EQ(0.0, m.b);
+  EXPECT_FLOAT_EQ(0.0, m.c);
+  EXPECT_FLOAT_EQ(1.0, m.d);
+  EXPECT_FLOAT_EQ(0.0, m.e);
+  EXPECT_FLOAT_EQ(0.0, m.f);
+  EXPECT_TRUE(m.IsIdentity());
+
+  m.a = -1;
+  EXPECT_FALSE(m.IsIdentity());
+
+  m.SetIdentity();
+  EXPECT_FLOAT_EQ(1.0, m.a);
+  EXPECT_FLOAT_EQ(0.0, m.b);
+  EXPECT_FLOAT_EQ(0.0, m.c);
+  EXPECT_FLOAT_EQ(1.0, m.d);
+  EXPECT_FLOAT_EQ(0.0, m.e);
+  EXPECT_FLOAT_EQ(0.0, m.f);
+  EXPECT_TRUE(m.IsIdentity());
+}
+
+TEST(CFX_Matrix, GetInverse) {
   static constexpr float data[6] = {3, 0, 2, 3, 1, 4};
   CFX_Matrix m(data);
   CFX_Matrix rev = m.GetInverse();
@@ -248,7 +271,7 @@ TEST(CFX_Matrix, Reverse) {
 }
 
 // Note, I think these are a bug and the matrix should be the identity.
-TEST(CFX_Matrix, ReverseCR702041) {
+TEST(CFX_Matrix, GetInverseCR702041) {
   // The determinate is < std::numeric_limits<float>::epsilon()
   static constexpr float data[6] = {0.947368443f, -0.108947366f, -0.923076928f,
                                     0.106153846f, 18.0f,         787.929993f};
@@ -269,7 +292,7 @@ TEST(CFX_Matrix, ReverseCR702041) {
   EXPECT_FLOAT_EQ(expected.y, result.y);
 }
 
-TEST(CFX_Matrix, ReverseCR714187) {
+TEST(CFX_Matrix, GetInverseCR714187) {
   // The determinate is < std::numeric_limits<float>::epsilon()
   static constexpr float data[6] = {0.000037f,  0.0f,        0.0f,
                                     -0.000037f, 182.413101f, 136.977646f};
@@ -288,6 +311,135 @@ TEST(CFX_Matrix, ReverseCR714187) {
   CFX_PointF result = rev.Transform(m.Transform(CFX_PointF(2, 3)));
   EXPECT_FLOAT_EQ(expected.x, result.x);
   EXPECT_FLOAT_EQ(expected.y, result.y);
+}
+
+#define EXPECT_NEAR_FIVE_PLACES(a, b) EXPECT_NEAR((a), (b), 1e-5)
+
+TEST(CFX_Matrix, ComposeTransformations) {
+  // sin(FX_PI/2) and cos(FX_PI/2) have a tiny error and are not exactly 1.0f
+  // and 0.0f. The rotation matrix is thus not perfect.
+
+  CFX_Matrix rotate_90;
+  rotate_90.Rotate(FX_PI / 2);
+  EXPECT_NEAR_FIVE_PLACES(0.0f, rotate_90.a);
+  EXPECT_NEAR_FIVE_PLACES(1.0f, rotate_90.b);
+  EXPECT_NEAR_FIVE_PLACES(-1.0f, rotate_90.c);
+  EXPECT_NEAR_FIVE_PLACES(0.0f, rotate_90.d);
+  EXPECT_FLOAT_EQ(0.0f, rotate_90.e);
+  EXPECT_FLOAT_EQ(0.0f, rotate_90.f);
+
+  CFX_Matrix translate_23_11;
+  translate_23_11.Translate(23, 11);
+  EXPECT_FLOAT_EQ(1.0f, translate_23_11.a);
+  EXPECT_FLOAT_EQ(0.0f, translate_23_11.b);
+  EXPECT_FLOAT_EQ(0.0f, translate_23_11.c);
+  EXPECT_FLOAT_EQ(1.0f, translate_23_11.d);
+  EXPECT_FLOAT_EQ(23.0f, translate_23_11.e);
+  EXPECT_FLOAT_EQ(11.0f, translate_23_11.f);
+
+  CFX_Matrix scale_5_13;
+  scale_5_13.Scale(5, 13);
+  EXPECT_FLOAT_EQ(5.0f, scale_5_13.a);
+  EXPECT_FLOAT_EQ(0.0f, scale_5_13.b);
+  EXPECT_FLOAT_EQ(0.0f, scale_5_13.c);
+  EXPECT_FLOAT_EQ(13.0f, scale_5_13.d);
+  EXPECT_FLOAT_EQ(0.0, scale_5_13.e);
+  EXPECT_FLOAT_EQ(0.0, scale_5_13.f);
+
+  // Apply the transforms to points step by step.
+  CFX_PointF origin_transformed(0, 0);
+  CFX_PointF p_10_20_transformed(10, 20);
+
+  origin_transformed = rotate_90.Transform(origin_transformed);
+  EXPECT_FLOAT_EQ(0.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(0.0f, origin_transformed.y);
+  p_10_20_transformed = rotate_90.Transform(p_10_20_transformed);
+  EXPECT_FLOAT_EQ(-20.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(10.0f, p_10_20_transformed.y);
+
+  origin_transformed = translate_23_11.Transform(origin_transformed);
+  EXPECT_FLOAT_EQ(23.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(11.0f, origin_transformed.y);
+  p_10_20_transformed = translate_23_11.Transform(p_10_20_transformed);
+  EXPECT_FLOAT_EQ(3.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(21.0f, p_10_20_transformed.y);
+
+  origin_transformed = scale_5_13.Transform(origin_transformed);
+  EXPECT_FLOAT_EQ(115.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(143.0f, origin_transformed.y);
+  p_10_20_transformed = scale_5_13.Transform(p_10_20_transformed);
+  EXPECT_FLOAT_EQ(15.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(273.0f, p_10_20_transformed.y);
+
+  // Apply the transforms to points in the reverse order.
+  origin_transformed = CFX_PointF(0, 0);
+  p_10_20_transformed = CFX_PointF(10, 20);
+
+  origin_transformed = scale_5_13.Transform(origin_transformed);
+  EXPECT_FLOAT_EQ(0.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(0.0f, origin_transformed.y);
+  p_10_20_transformed = scale_5_13.Transform(p_10_20_transformed);
+  EXPECT_FLOAT_EQ(50.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(260.0f, p_10_20_transformed.y);
+
+  origin_transformed = translate_23_11.Transform(origin_transformed);
+  EXPECT_FLOAT_EQ(23.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(11.0f, origin_transformed.y);
+  p_10_20_transformed = translate_23_11.Transform(p_10_20_transformed);
+  EXPECT_FLOAT_EQ(73.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(271.0f, p_10_20_transformed.y);
+
+  origin_transformed = rotate_90.Transform(origin_transformed);
+  EXPECT_FLOAT_EQ(-11.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(23.0f, origin_transformed.y);
+  p_10_20_transformed = rotate_90.Transform(p_10_20_transformed);
+  EXPECT_FLOAT_EQ(-271.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(73.0f, p_10_20_transformed.y);
+
+  // Compose all transforms.
+  CFX_Matrix m;
+  m.Concat(rotate_90);
+  m.Concat(translate_23_11);
+  m.Concat(scale_5_13);
+  EXPECT_NEAR_FIVE_PLACES(0.0f, m.a);
+  EXPECT_NEAR_FIVE_PLACES(13.0f, m.b);
+  EXPECT_NEAR_FIVE_PLACES(-5.0f, m.c);
+  EXPECT_NEAR_FIVE_PLACES(0.0f, m.d);
+  EXPECT_FLOAT_EQ(115.0, m.e);
+  EXPECT_FLOAT_EQ(143.0, m.f);
+
+  // Note how the results using the combined matrix are equal to the results
+  // when applying the three original matrices step-by-step.
+  origin_transformed = m.Transform(CFX_PointF(0, 0));
+  EXPECT_FLOAT_EQ(115.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(143.0f, origin_transformed.y);
+
+  p_10_20_transformed = m.Transform(CFX_PointF(10, 20));
+  EXPECT_FLOAT_EQ(15.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(273.0f, p_10_20_transformed.y);
+
+  // Now compose all transforms prepending.
+  m.SetIdentity();
+  m.Concat(rotate_90, true);
+  m.Concat(translate_23_11, true);
+  m.Concat(scale_5_13, true);
+  EXPECT_NEAR_FIVE_PLACES(0.0f, m.a);
+  EXPECT_NEAR_FIVE_PLACES(5.0f, m.b);
+  EXPECT_NEAR_FIVE_PLACES(-13.0f, m.c);
+  EXPECT_NEAR_FIVE_PLACES(0.0f, m.d);
+  EXPECT_FLOAT_EQ(-11.0, m.e);
+  EXPECT_FLOAT_EQ(23.0, m.f);
+
+  // Note how the results using the combined matrix are equal to the results
+  // when applying the three original matrices step-by-step in the reverse
+  // order.
+  origin_transformed = m.Transform(CFX_PointF(0, 0));
+  EXPECT_FLOAT_EQ(-11.0f, origin_transformed.x);
+  EXPECT_FLOAT_EQ(23.0f, origin_transformed.y);
+
+  p_10_20_transformed = m.Transform(CFX_PointF(10, 20));
+  EXPECT_FLOAT_EQ(-271.0f, p_10_20_transformed.x);
+  EXPECT_FLOAT_EQ(73.0f, p_10_20_transformed.y);
 }
 
 TEST(CFX_Matrix, RotateAt) {
