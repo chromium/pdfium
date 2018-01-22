@@ -1158,9 +1158,9 @@ void CJX_Object::MoveBufferMapData(CXFA_Object* pDstModule) {
 
   WideString wsValue = ToNode(pDstModule)->JSObject()->GetContent(false);
   WideString wsFormatValue(wsValue);
-  CXFA_WidgetAcc* pWidgetAcc = ToNode(pDstModule)->GetContainerWidgetAcc();
-  if (pWidgetAcc)
-    wsFormatValue = pWidgetAcc->GetFormatDataValue(wsValue);
+  CXFA_Node* pNode = ToNode(pDstModule)->GetContainerNode();
+  if (pNode && pNode->GetWidgetAcc())
+    wsFormatValue = pNode->GetWidgetAcc()->GetFormatDataValue(wsValue);
 
   ToNode(pDstModule)
       ->JSObject()
@@ -1516,30 +1516,31 @@ void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
       wsNewValue = pValue->ToWideString();
 
     WideString wsFormatValue(wsNewValue);
-    CXFA_WidgetAcc* pContainerWidgetAcc = nullptr;
+    CXFA_Node* pContainerNode = nullptr;
     if (ToNode(GetXFAObject())->GetPacketType() == XFA_PacketType::Datasets) {
       WideString wsPicture;
       for (const auto& pFormNode : *(ToNode(GetXFAObject())->GetBindItems())) {
         if (!pFormNode || pFormNode->HasRemovedChildren())
           continue;
 
-        pContainerWidgetAcc = pFormNode->GetContainerWidgetAcc();
-        if (pContainerWidgetAcc) {
-          wsPicture =
-              pContainerWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
+        pContainerNode = pFormNode->GetContainerNode();
+        if (pContainerNode && pContainerNode->GetWidgetAcc()) {
+          wsPicture = pContainerNode->GetWidgetAcc()->GetPictureContent(
+              XFA_VALUEPICTURE_DataBind);
         }
         if (!wsPicture.IsEmpty())
           break;
 
-        pContainerWidgetAcc = nullptr;
+        pContainerNode = nullptr;
       }
     } else if (ToNode(GetXFAObject())->GetPacketType() ==
                XFA_PacketType::Form) {
-      pContainerWidgetAcc = ToNode(GetXFAObject())->GetContainerWidgetAcc();
+      pContainerNode = ToNode(GetXFAObject())->GetContainerNode();
     }
 
-    if (pContainerWidgetAcc)
-      wsFormatValue = pContainerWidgetAcc->GetFormatDataValue(wsNewValue);
+    if (pContainerNode && pContainerNode->GetWidgetAcc())
+      wsFormatValue =
+          pContainerNode->GetWidgetAcc()->GetFormatDataValue(wsNewValue);
 
     SetContent(wsNewValue, wsFormatValue, true, true, true);
     return;

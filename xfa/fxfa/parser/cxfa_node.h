@@ -194,7 +194,7 @@ class CXFA_Node : public CXFA_Object {
   int32_t AddBindItem(CXFA_Node* pFormNode);
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem();
-  CXFA_WidgetAcc* GetContainerWidgetAcc();
+  CXFA_Node* GetContainerNode();
   IFX_Locale* GetLocale();
   Optional<WideString> GetLocaleName();
   XFA_AttributeEnum GetIntact();

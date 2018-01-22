@@ -724,7 +724,7 @@ bool CXFA_Node::HasBindItem() {
   return GetPacketType() == XFA_PacketType::Datasets && GetBindingNode();
 }
 
-CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
+CXFA_Node* CXFA_Node::GetContainerNode() {
   if (GetPacketType() != XFA_PacketType::Form)
     return nullptr;
   XFA_Element eType = GetElementType();
@@ -744,7 +744,7 @@ CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
       wsPicture = pFieldWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
     }
     if (!wsPicture.IsEmpty())
-      return pFieldWidgetAcc;
+      return this;
 
     CXFA_Node* pDataNode = GetBindData();
     if (!pDataNode)
@@ -763,7 +763,7 @@ CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
         break;
       pFieldWidgetAcc = nullptr;
     }
-    return pFieldWidgetAcc;
+    return pFieldWidgetAcc ? pFieldWidgetAcc->GetNode() : nullptr;
   }
 
   CXFA_Node* pGrandNode = pParentNode ? pParentNode->GetParent() : nullptr;
@@ -779,8 +779,7 @@ CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
   }
   CXFA_Node* pParentOfValueNode =
       pValueNode ? pValueNode->GetParent() : nullptr;
-  return pParentOfValueNode ? pParentOfValueNode->GetContainerWidgetAcc()
-                            : nullptr;
+  return pParentOfValueNode ? pParentOfValueNode->GetContainerNode() : nullptr;
 }
 
 IFX_Locale* CXFA_Node::GetLocale() {
@@ -1695,9 +1694,9 @@ void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
 
 void CXFA_Node::SyncValue(const WideString& wsValue, bool bNotify) {
   WideString wsFormatValue = wsValue;
-  CXFA_WidgetAcc* pContainerWidgetAcc = GetContainerWidgetAcc();
-  if (pContainerWidgetAcc)
-    wsFormatValue = pContainerWidgetAcc->GetFormatDataValue(wsValue);
+  CXFA_Node* pContainerNode = GetContainerNode();
+  if (pContainerNode && pContainerNode->GetWidgetAcc())
+    wsFormatValue = pContainerNode->GetWidgetAcc()->GetFormatDataValue(wsValue);
 
   JSObject()->SetContent(wsValue, wsFormatValue, bNotify, false, true);
 }

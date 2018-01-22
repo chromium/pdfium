@@ -261,10 +261,12 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
           wsNewText, pWidgetAcc->GetLeadDigits(), pWidgetAcc->GetFracDigits());
     }
 
-    CXFA_WidgetAcc* pContainerWidgetAcc = xfaNode->GetContainerWidgetAcc();
+    CXFA_Node* pContainerNode = xfaNode->GetContainerNode();
     WideString wsFormatText(wsNewText);
-    if (pContainerWidgetAcc)
-      wsFormatText = pContainerWidgetAcc->GetFormatDataValue(wsNewText);
+    if (pContainerNode && pContainerNode->GetWidgetAcc()) {
+      wsFormatText =
+          pContainerNode->GetWidgetAcc()->GetFormatDataValue(wsNewText);
+    }
 
     SetContent(wsNewText, wsFormatText, true, true, true);
     return;
