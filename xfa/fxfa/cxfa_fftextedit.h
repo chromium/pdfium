@@ -15,7 +15,6 @@ class CFWL_Event;
 class CFWL_Widget;
 class CFX_Matrix;
 class CXFA_FFWidget;
-class CXFA_WidgetAcc;
 class IFWL_WidgetDelegate;
 
 class CXFA_FFTextEdit : public CXFA_FFField {

@@ -14,7 +14,6 @@ class CFX_XMLElement;
 class CFX_XMLNode;
 class CXFA_LocaleValue;
 class CXFA_Node;
-class CXFA_WidgetAcc;
 
 double XFA_GetFractionalScale(uint32_t idx);
 int XFA_GetMaxFractionalScale();

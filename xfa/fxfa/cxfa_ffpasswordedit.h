@@ -9,8 +9,6 @@
 
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
-class CXFA_WidgetAcc;
-
 class CXFA_FFPasswordEdit : public CXFA_FFTextEdit {
  public:
   explicit CXFA_FFPasswordEdit(CXFA_Node* pNode);

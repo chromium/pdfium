@@ -12,7 +12,6 @@
 
 class CFWL_Event;
 class CFWL_Widget;
-class CXFA_WidgetAcc;
 
 class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
  public:

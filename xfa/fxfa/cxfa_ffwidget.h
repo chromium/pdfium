@@ -25,7 +25,6 @@ class CXFA_FFApp;
 class CXFA_Graphics;
 class CXFA_Image;
 class CXFA_Margin;
-class CXFA_WidgetAcc;
 enum class FWL_WidgetHit;
 
 inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
