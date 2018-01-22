@@ -503,11 +503,10 @@ int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     case EventAppliesToo::kSignature: {
-      CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
-      if (!pWidgetAcc)
+      if (!GetXFANode()->IsWidgetReady())
         return XFA_EVENTERROR_NotExist;
 
-      CXFA_Node* pUINode = pWidgetAcc->GetUIChild();
+      CXFA_Node* pUINode = GetXFANode()->GetWidgetAcc()->GetUIChild();
       if (pUINode->GetElementType() != XFA_Element::Signature)
         return XFA_EVENTERROR_NotExist;
 
@@ -515,10 +514,10 @@ int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
     case EventAppliesToo::kChoiceList: {
-      CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
-      if (!pWidgetAcc)
+      if (!GetXFANode()->IsWidgetReady())
         return XFA_EVENTERROR_NotExist;
 
+      CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
       CXFA_Node* pUINode = pWidgetAcc->GetUIChild();
       if (pUINode->GetElementType() != XFA_Element::ChoiceList ||
           pWidgetAcc->IsListBox()) {

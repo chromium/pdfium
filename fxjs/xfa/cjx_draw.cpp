@@ -120,6 +120,7 @@ void CJX_Draw::defaultValue(CFXJSE_Value* pValue,
   if (!pValue || !pValue->IsString())
     return;
 
+  ASSERT(GetXFANode()->IsWidgetReady());
   XFA_Element uiType = GetXFANode()->GetWidgetAcc()->GetUIType();
   if (uiType != XFA_Element::Text)
     return;

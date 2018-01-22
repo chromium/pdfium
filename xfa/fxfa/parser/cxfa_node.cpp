@@ -586,7 +586,8 @@ CXFA_WidgetAcc* CXFA_Node::GetContainerWidgetAcc() {
     for (const auto& pFormNode : *(pDataNode->GetBindItems())) {
       if (!pFormNode || pFormNode->HasRemovedChildren())
         continue;
-      pFieldWidgetAcc = pFormNode->GetWidgetAcc();
+      pFieldWidgetAcc =
+          pFormNode->IsWidgetReady() ? pFormNode->GetWidgetAcc() : nullptr;
       if (pFieldWidgetAcc) {
         wsPicture =
             pFieldWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);

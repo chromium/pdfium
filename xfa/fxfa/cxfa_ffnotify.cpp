@@ -344,7 +344,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
     return;
 
   if (pNode->HasCreatedUIWidget()) {
-    pNode->CreateWidgetAcc();
+    pNode->SetWidgetReady();
     return;
   }
 

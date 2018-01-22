@@ -85,10 +85,11 @@ CJS_Return CJX_ExclGroup::selectedMember(
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_WidgetAcc* pWidgetAcc = ToNode(GetXFAObject())->GetWidgetAcc();
-  if (!pWidgetAcc)
+  CXFA_Node* node = GetXFANode();
+  if (!node->IsWidgetReady())
     return CJS_Return(runtime->NewNull());
 
+  CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
   CXFA_Node* pReturnNode = nullptr;
   if (params.empty()) {
     pReturnNode = pWidgetAcc->GetSelectedMember();
@@ -110,13 +111,13 @@ CJS_Return CJX_ExclGroup::selectedMember(
 void CJX_ExclGroup::defaultValue(CFXJSE_Value* pValue,
                                  bool bSetting,
                                  XFA_Attribute eAttribute) {
-  CXFA_WidgetAcc* pWidgetAcc = GetXFANode()->GetWidgetAcc();
-  if (!pWidgetAcc)
+  CXFA_Node* node = GetXFANode();
+  if (!node->IsWidgetReady())
     return;
 
   if (bSetting) {
-    pWidgetAcc->SetSelectedMemberByValue(pValue->ToWideString().AsStringView(),
-                                         true, true, true);
+    node->GetWidgetAcc()->SetSelectedMemberByValue(
+        pValue->ToWideString().AsStringView(), true, true, true);
     return;
   }
 

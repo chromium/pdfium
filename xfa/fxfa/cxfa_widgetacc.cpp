@@ -541,10 +541,10 @@ void CXFA_WidgetAcc::ResetData() {
       CXFA_Node* pNextChild = m_pNode->GetFirstContainerChild();
       while (pNextChild) {
         CXFA_Node* pChild = pNextChild;
-        CXFA_WidgetAcc* pAcc = pChild->GetWidgetAcc();
-        if (!pAcc)
+        if (!pChild->IsWidgetReady())
           continue;
 
+        CXFA_WidgetAcc* pAcc = pChild->GetWidgetAcc();
         bool done = false;
         if (wsValue.IsEmpty()) {
           CXFA_Value* defValue = pAcc->GetNode()->GetDefaultValueIfExists();

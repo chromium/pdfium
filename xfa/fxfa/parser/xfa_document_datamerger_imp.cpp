@@ -70,9 +70,8 @@ CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {
 }
 
 void FormValueNode_MatchNoneCreateChild(CXFA_Node* pFormNode) {
-  CXFA_WidgetAcc* pWidgetAcc = pFormNode->GetWidgetAcc();
-  ASSERT(pWidgetAcc);
-  pWidgetAcc->GetUIType();
+  ASSERT(pFormNode->IsWidgetReady());
+  pFormNode->GetWidgetAcc()->GetUIType();
 }
 
 bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
@@ -132,8 +131,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
   if (eType != XFA_Element::Field && eType != XFA_Element::ExclGroup)
     return;
 
+  ASSERT(pFormNode->IsWidgetReady());
   CXFA_WidgetAcc* pWidgetAcc = pFormNode->GetWidgetAcc();
-  ASSERT(pWidgetAcc);
   XFA_Element eUIType = pWidgetAcc->GetUIType();
   auto* defValue = pFormNode->JSObject()->GetOrCreateProperty<CXFA_Value>(
       0, XFA_Element::Value);

@@ -564,13 +564,8 @@ bool CXFA_FFWidget::IsLayoutRectEmpty() {
 CXFA_FFWidget* CXFA_FFWidget::GetParent() {
   CXFA_Node* pParentNode = m_pNode->GetParent();
   if (pParentNode) {
-    CXFA_WidgetAcc* pParentWidgetAcc =
-        static_cast<CXFA_WidgetAcc*>(pParentNode->GetWidgetAcc());
-    if (pParentWidgetAcc) {
-      CXFA_LayoutProcessor* layout = GetDocView()->GetXFALayout();
-      return static_cast<CXFA_FFWidget*>(
-          layout->GetLayoutItem(pParentWidgetAcc->GetNode()));
-    }
+    CXFA_LayoutProcessor* layout = GetDocView()->GetXFALayout();
+    return static_cast<CXFA_FFWidget*>(layout->GetLayoutItem(pParentNode));
   }
   return nullptr;
 }

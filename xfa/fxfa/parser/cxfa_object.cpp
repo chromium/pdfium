@@ -56,8 +56,9 @@ const CXFA_TreeList* CXFA_Object::AsTreeList() const {
   return IsTreeList() ? static_cast<const CXFA_TreeList*>(this) : nullptr;
 }
 
-void CXFA_Object::CreateWidgetAcc() {
+void CXFA_Object::SetWidgetReady() {
   acc_ = pdfium::MakeUnique<CXFA_WidgetAcc>(AsNode());
+  is_widget_ready_ = true;
 }
 
 CXFA_Node* ToNode(CXFA_Object* pObj) {

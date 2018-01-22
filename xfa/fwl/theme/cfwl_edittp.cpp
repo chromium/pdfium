@@ -23,6 +23,8 @@ CFWL_EditTP::~CFWL_EditTP() {}
 void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (CFWL_Part::CombTextLine == pParams->m_iPart) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
+    ASSERT(pWidget->GetNode()->IsWidgetReady());
+
     CXFA_Border* borderUI = pWidget->GetNode()->GetWidgetAcc()->GetUIBorder();
     FX_ARGB cr = 0xFF000000;
     float fWidth = 1.0f;

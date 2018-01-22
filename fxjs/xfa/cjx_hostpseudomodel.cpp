@@ -394,7 +394,8 @@ CJS_Return CJX_HostPseudoModel::resetData(
       continue;
 
     pNode = resolveNodeRS.objects.front()->AsNode();
-    pNotify->ResetData(pNode->GetWidgetAcc());
+    pNotify->ResetData(pNode->IsWidgetReady() ? pNode->GetWidgetAcc()
+                                              : nullptr);
   }
   if (!pNode)
     pNotify->ResetData();

@@ -1477,12 +1477,13 @@ void CJX_Object::Script_Field_Length(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  if (!ToNode(object_.Get())->GetWidgetAcc()) {
+
+  CXFA_Node* node = ToNode(object_.Get());
+  if (!node->IsWidgetReady()) {
     pValue->SetInteger(0);
     return;
   }
-  pValue->SetInteger(
-      ToNode(object_.Get())->GetWidgetAcc()->CountChoiceListItems(true));
+  pValue->SetInteger(node->GetWidgetAcc()->CountChoiceListItems(true));
 }
 
 void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,

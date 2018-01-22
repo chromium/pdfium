@@ -78,8 +78,13 @@ class CXFA_Object : public CFXJSE_HostObject {
            m_elementType == XFA_Element::Subform ||
            m_elementType == XFA_Element::ExclGroup;
   }
-  void CreateWidgetAcc();
-  CXFA_WidgetAcc* GetWidgetAcc() { return acc_.get(); }
+  void SetWidgetReady();
+  bool IsWidgetReady() const { return is_widget_ready_; }
+  CXFA_WidgetAcc* GetWidgetAcc() {
+    ASSERT(IsWidgetReady());
+    ASSERT(acc_.get() != nullptr);
+    return acc_.get();
+  }
 
   XFA_Element GetElementType() const { return m_elementType; }
   WideStringView GetClassName() const { return m_elementName; }
@@ -97,7 +102,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   UnownedPtr<CXFA_Document> const m_pDocument;
   const XFA_ObjectType m_objectType;
   const XFA_Element m_elementType;
-
+  bool is_widget_ready_ = false;
   const uint32_t m_elementNameHash;
   const WideStringView m_elementName;
 

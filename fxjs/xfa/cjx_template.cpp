@@ -50,8 +50,7 @@ CJS_Return CJX_Template::execInitialize(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(
-      runtime->NewBoolean(!!ToNode(GetXFAObject())->GetWidgetAcc()));
+  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
 
 CJS_Return CJX_Template::recalculate(
@@ -67,8 +66,7 @@ CJS_Return CJX_Template::execCalculate(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(
-      runtime->NewBoolean(!!ToNode(GetXFAObject())->GetWidgetAcc()));
+  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
 
 CJS_Return CJX_Template::execValidate(
@@ -76,6 +74,5 @@ CJS_Return CJX_Template::execValidate(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(
-      runtime->NewBoolean(!!ToNode(GetXFAObject())->GetWidgetAcc()));
+  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }

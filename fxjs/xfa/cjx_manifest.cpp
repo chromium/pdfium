@@ -27,8 +27,7 @@ CJS_Return CJX_Manifest::evaluate(
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  return CJS_Return(
-      runtime->NewBoolean(!!ToNode(GetXFAObject())->GetWidgetAcc()));
+  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
 
 void CJX_Manifest::defaultValue(CFXJSE_Value* pValue,
