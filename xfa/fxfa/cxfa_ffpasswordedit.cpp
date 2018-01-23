@@ -11,7 +11,6 @@
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
-#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_Node* pNode)

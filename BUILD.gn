@@ -2094,8 +2094,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_texttabstopscontext.h",
       "xfa/fxfa/cxfa_textuserdata.cpp",
       "xfa/fxfa/cxfa_textuserdata.h",
-      "xfa/fxfa/cxfa_widgetacc.cpp",
-      "xfa/fxfa/cxfa_widgetacc.h",
       "xfa/fxfa/fxfa.h",
       "xfa/fxfa/fxfa_basic.h",
     ]
@@ -2828,8 +2826,11 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/xfa_utils.h",
     ]
     deps = [
+      ":fxcrt",
       ":fxjs",
+      ":xfa_fde",
       ":xfa_fgas",
+      ":xfa_fxfa",
     ]
     configs += [
       ":pdfium_core_config",

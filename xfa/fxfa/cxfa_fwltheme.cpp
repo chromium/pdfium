@@ -24,7 +24,6 @@
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 

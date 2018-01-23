@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
-#include "xfa/fxfa/cxfa_widgetacc.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:
