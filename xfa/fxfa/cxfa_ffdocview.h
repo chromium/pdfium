@@ -56,8 +56,6 @@ class CXFA_FFDocView {
   CXFA_FFPageView* GetPageView(int32_t nIndex) const;
 
   void ResetNode(CXFA_Node* pNode);
-  int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
-                             CXFA_WidgetAcc* pWidgetAcc);
   CXFA_FFWidgetHandler* GetWidgetHandler();
   std::unique_ptr<CXFA_ReadyNodeIterator> CreateReadyNodeIterator();
   CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget.Get(); }

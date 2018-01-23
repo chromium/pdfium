@@ -256,52 +256,6 @@ void CXFA_FFDocView::ResetNode(CXFA_Node* pNode) {
     m_pDoc->GetDocEnvironment()->SetChangeMark(m_pDoc.Get());
 }
 
-int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
-                                           CXFA_WidgetAcc* pWidgetAcc) {
-  if (!pParam)
-    return XFA_EVENTERROR_Error;
-
-  if (pParam->m_eType == XFA_EVENT_Validate) {
-    WideString wsValidateStr(L"preSubmit");
-    CXFA_Node* pConfigItem =
-        ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Config));
-    if (pConfigItem) {
-      CXFA_Acrobat* pAcrobatNode =
-          pConfigItem->GetChild<CXFA_Acrobat>(0, XFA_Element::Acrobat, false);
-      CXFA_Validate* pValidateNode =
-          pAcrobatNode ? pAcrobatNode->GetChild<CXFA_Validate>(
-                             0, XFA_Element::Validate, false)
-                       : nullptr;
-      if (!pValidateNode) {
-        CXFA_Present* pPresentNode =
-            pConfigItem->GetChild<CXFA_Present>(0, XFA_Element::Present, false);
-        pValidateNode = pPresentNode ? pPresentNode->GetChild<CXFA_Validate>(
-                                           0, XFA_Element::Validate, false)
-                                     : nullptr;
-      }
-      if (pValidateNode)
-        wsValidateStr = pValidateNode->JSObject()->GetContent(false);
-    }
-
-    if (!wsValidateStr.Contains(L"preSubmit"))
-      return XFA_EVENTERROR_Success;
-  }
-
-  CXFA_Node* pNode = pWidgetAcc ? pWidgetAcc->GetNode() : nullptr;
-  if (!pNode) {
-    CXFA_Node* pRootItem =
-        ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form));
-    if (!pRootItem)
-      return XFA_EVENTERROR_Error;
-
-    pNode = pRootItem->GetChild<CXFA_Node>(0, XFA_Element::Subform, false);
-  }
-
-  ExecEventActivityByDeepFirst(pNode, pParam->m_eType, pParam->m_bIsFormReady,
-                               true);
-  return XFA_EVENTERROR_Success;
-}
-
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetForNode(CXFA_Node* node) {
   return static_cast<CXFA_FFWidget*>(GetXFALayout()->GetLayoutItem(node));
 }
