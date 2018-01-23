@@ -1158,8 +1158,8 @@ void CJX_Object::MoveBufferMapData(CXFA_Object* pDstModule) {
   WideString wsValue = ToNode(pDstModule)->JSObject()->GetContent(false);
   WideString wsFormatValue(wsValue);
   CXFA_Node* pNode = ToNode(pDstModule)->GetContainerNode();
-  if (pNode && pNode->GetWidgetAcc())
-    wsFormatValue = pNode->GetWidgetAcc()->GetFormatDataValue(wsValue);
+  if (pNode)
+    wsFormatValue = pNode->GetFormatDataValue(wsValue);
 
   ToNode(pDstModule)
       ->JSObject()
@@ -1482,7 +1482,7 @@ void CJX_Object::Script_Field_Length(CFXJSE_Value* pValue,
     pValue->SetInteger(0);
     return;
   }
-  pValue->SetInteger(node->GetWidgetAcc()->CountChoiceListItems(true));
+  pValue->SetInteger(node->CountChoiceListItems(true));
 }
 
 void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
@@ -1523,9 +1523,9 @@ void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
           continue;
 
         pContainerNode = pFormNode->GetContainerNode();
-        if (pContainerNode && pContainerNode->GetWidgetAcc()) {
-          wsPicture = pContainerNode->GetWidgetAcc()->GetPictureContent(
-              XFA_VALUEPICTURE_DataBind);
+        if (pContainerNode) {
+          wsPicture =
+              pContainerNode->GetPictureContent(XFA_VALUEPICTURE_DataBind);
         }
         if (!wsPicture.IsEmpty())
           break;
@@ -1537,9 +1537,8 @@ void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
       pContainerNode = ToNode(GetXFAObject())->GetContainerNode();
     }
 
-    if (pContainerNode && pContainerNode->GetWidgetAcc())
-      wsFormatValue =
-          pContainerNode->GetWidgetAcc()->GetFormatDataValue(wsNewValue);
+    if (pContainerNode)
+      wsFormatValue = pContainerNode->GetFormatDataValue(wsNewValue);
 
     SetContent(wsNewValue, wsFormatValue, true, true, true);
     return;

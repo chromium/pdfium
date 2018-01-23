@@ -519,7 +519,7 @@ int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
 
       CXFA_Node* pUINode = GetXFANode()->GetUIChild();
       if (pUINode->GetElementType() != XFA_Element::ChoiceList ||
-          GetXFANode()->GetWidgetAcc()->IsListBox()) {
+          GetXFANode()->IsListBox()) {
         return XFA_EVENTERROR_NotExist;
       }
       return pNotify->ExecEventByDeepFirst(

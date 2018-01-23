@@ -126,7 +126,7 @@ bool CXFA_FFField::IsLoaded() {
 
 bool CXFA_FFField::LoadWidget() {
   SetFWLThemeProvider();
-  m_pNode->GetWidgetAcc()->LoadCaption(GetDoc());
+  m_pNode->LoadCaption(GetDoc());
   PerformLayout();
   return true;
 }
@@ -212,8 +212,7 @@ void CXFA_FFField::CapPlacement() {
         XFA_RectWithoutMargin(m_rtCaption, margin);
       }
 
-      CXFA_TextLayout* pCapTextLayout =
-          m_pNode->GetWidgetAcc()->GetCaptionTextLayout();
+      CXFA_TextLayout* pCapTextLayout = m_pNode->GetCaptionTextLayout();
       if (fCapReserve <= 0 && pCapTextLayout) {
         CFX_SizeF minSize;
         CFX_SizeF maxSize;
@@ -583,8 +582,7 @@ bool CXFA_FFField::PtInActiveRect(const CFX_PointF& point) {
 }
 
 void CXFA_FFField::LayoutCaption() {
-  CXFA_TextLayout* pCapTextLayout =
-      m_pNode->GetWidgetAcc()->GetCaptionTextLayout();
+  CXFA_TextLayout* pCapTextLayout = m_pNode->GetCaptionTextLayout();
   if (!pCapTextLayout)
     return;
 
@@ -595,8 +593,7 @@ void CXFA_FFField::LayoutCaption() {
 }
 
 void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
-  CXFA_TextLayout* pCapTextLayout =
-      m_pNode->GetWidgetAcc()->GetCaptionTextLayout();
+  CXFA_TextLayout* pCapTextLayout = m_pNode->GetCaptionTextLayout();
   if (!pCapTextLayout)
     return;
 
@@ -640,7 +637,7 @@ int32_t CXFA_FFField::CalculateOverride() {
   if (CalculateNode(exclNode) == 0)
     return 0;
 
-  CXFA_Node* pNode = exclNode->GetWidgetAcc()->GetExclGroupFirstMember();
+  CXFA_Node* pNode = exclNode->GetExclGroupFirstMember();
   if (!pNode)
     return 1;
 
@@ -650,7 +647,7 @@ int32_t CXFA_FFField::CalculateOverride() {
     if (CalculateNode(pNode) == 0)
       return 0;
 
-    pNode = pNode->GetWidgetAcc()->GetExclGroupNextMember(pNode);
+    pNode = pNode->GetExclGroupNextMember(pNode);
   }
   return 1;
 }

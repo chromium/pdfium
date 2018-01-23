@@ -45,14 +45,14 @@ bool CXFA_FFImageEdit::LoadWidget() {
   pPictureBox->SetDelegate(this);
 
   CXFA_FFField::LoadWidget();
-  if (!m_pNode->GetWidgetAcc()->GetImageEditImage())
+  if (!m_pNode->GetImageEditImage())
     UpdateFWLData();
 
   return true;
 }
 
 void CXFA_FFImageEdit::UnloadWidget() {
-  m_pNode->GetWidgetAcc()->SetImageEditImage(nullptr);
+  m_pNode->SetImageEditImage(nullptr);
   CXFA_FFField::UnloadWidget();
 }
 
@@ -68,8 +68,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   DrawBorder(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate);
   RenderCaption(pGS, &mtRotate);
-  RetainPtr<CFX_DIBitmap> pDIBitmap =
-      m_pNode->GetWidgetAcc()->GetImageEditImage();
+  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pNode->GetImageEditImage();
   if (!pDIBitmap)
     return;
 
@@ -92,7 +91,7 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
 
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
-  m_pNode->GetWidgetAcc()->GetImageEditDpi(iImageXDpi, iImageYDpi);
+  m_pNode->GetImageEditDpi(iImageXDpi, iImageYDpi);
   XFA_DrawImage(pGS, rtImage, mtRotate, pDIBitmap, iAspect, iImageXDpi,
                 iImageYDpi, iHorzAlign, iVertAlign);
 }
@@ -130,8 +129,8 @@ bool CXFA_FFImageEdit::CommitData() {
 }
 
 bool CXFA_FFImageEdit::UpdateFWLData() {
-  m_pNode->GetWidgetAcc()->SetImageEditImage(nullptr);
-  m_pNode->GetWidgetAcc()->LoadImageEditImage(GetDoc());
+  m_pNode->SetImageEditImage(nullptr);
+  m_pNode->LoadImageEditImage(GetDoc());
   return true;
 }
 

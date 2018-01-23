@@ -164,6 +164,6 @@ bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
   if (!pIDNode || !pIDNode->IsWidgetReady())
     return false;
 
-  wsValue = pIDNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display);
+  wsValue = pIDNode->GetValue(XFA_VALUEPICTURE_Display);
   return true;
 }

@@ -129,8 +129,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  pFWLBarcode->SetText(
-      m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display));
+  pFWLBarcode->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();

@@ -52,16 +52,14 @@ bool CXFA_FFComboBox::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  for (const auto& label : m_pNode->GetWidgetAcc()->GetChoiceListItems(false))
+  for (const auto& label : m_pNode->GetChoiceListItems(false))
     pComboBox->AddString(label.AsStringView());
 
-  std::vector<int32_t> iSelArray = m_pNode->GetWidgetAcc()->GetSelectedItems();
-  if (iSelArray.empty()) {
-    pComboBox->SetEditText(
-        m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw));
-  } else {
+  std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
+  if (iSelArray.empty())
+    pComboBox->SetEditText(m_pNode->GetValue(XFA_VALUEPICTURE_Raw));
+  else
     pComboBox->SetCurSel(iSelArray.front());
-  }
 
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
@@ -76,7 +74,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
   uint32_t dwExtendedStyle = 0;
   uint32_t dwEditStyles = FWL_STYLEEXT_EDT_ReadOnly;
   dwExtendedStyle |= UpdateUIProperty();
-  if (m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry()) {
+  if (m_pNode->IsChoiceListAllowTextEntry()) {
     dwEditStyles &= ~FWL_STYLEEXT_EDT_ReadOnly;
     dwExtendedStyle |= FWL_STYLEEXT_CMB_DropDown;
   }
@@ -87,7 +85,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 
-  if (!m_pNode->GetWidgetAcc()->IsHorizontalScrollPolicyOff())
+  if (!m_pNode->IsHorizontalScrollPolicyOff())
     dwEditStyles |= FWL_STYLEEXT_EDT_AutoHScroll;
 
   pComboBox->EditModifyStylesEx(dwEditStyles, 0xFFFFFFFF);
@@ -114,7 +112,7 @@ void CXFA_FFComboBox::OpenDropDownList() {
 }
 
 bool CXFA_FFComboBox::CommitData() {
-  return m_pNode->GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Raw, m_wsNewValue);
+  return m_pNode->SetValue(XFA_VALUEPICTURE_Raw, m_wsNewValue);
 }
 
 bool CXFA_FFComboBox::IsDataChanged() {
@@ -124,11 +122,9 @@ bool CXFA_FFComboBox::IsDataChanged() {
   if (iCursel >= 0) {
     WideString wsSel = pFWLcombobox->GetTextByIndex(iCursel);
     if (wsSel == wsText)
-      wsText = m_pNode->GetWidgetAcc()
-                   ->GetChoiceListItem(iCursel, true)
-                   .value_or(L"");
+      wsText = m_pNode->GetChoiceListItem(iCursel, true).value_or(L"");
   }
-  if (m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw) == wsText)
+  if (m_pNode->GetValue(XFA_VALUEPICTURE_Raw) == wsText)
     return false;
 
   m_wsNewValue = wsText;
@@ -187,35 +183,34 @@ bool CXFA_FFComboBox::UpdateFWLData() {
   if (!pComboBox)
     return false;
 
-  std::vector<int32_t> iSelArray = m_pNode->GetWidgetAcc()->GetSelectedItems();
+  std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   if (!iSelArray.empty()) {
     pComboBox->SetCurSel(iSelArray.front());
   } else {
     pComboBox->SetCurSel(-1);
-    pComboBox->SetEditText(
-        m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw));
+    pComboBox->SetEditText(m_pNode->GetValue(XFA_VALUEPICTURE_Raw));
   }
   pComboBox->Update();
   return true;
 }
 
 bool CXFA_FFComboBox::CanUndo() {
-  return m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry() &&
+  return m_pNode->IsChoiceListAllowTextEntry() &&
          ToComboBox(m_pNormalWidget.get())->EditCanUndo();
 }
 
 bool CXFA_FFComboBox::CanRedo() {
-  return m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry() &&
+  return m_pNode->IsChoiceListAllowTextEntry() &&
          ToComboBox(m_pNormalWidget.get())->EditCanRedo();
 }
 
 bool CXFA_FFComboBox::Undo() {
-  return m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry() &&
+  return m_pNode->IsChoiceListAllowTextEntry() &&
          ToComboBox(m_pNormalWidget.get())->EditUndo();
 }
 
 bool CXFA_FFComboBox::Redo() {
-  return m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry() &&
+  return m_pNode->IsChoiceListAllowTextEntry() &&
          ToComboBox(m_pNormalWidget.get())->EditRedo();
 }
 
@@ -224,14 +219,12 @@ bool CXFA_FFComboBox::CanCopy() {
 }
 
 bool CXFA_FFComboBox::CanCut() {
-  return m_pNode->IsOpenAccess() &&
-         m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry() &&
+  return m_pNode->IsOpenAccess() && m_pNode->IsChoiceListAllowTextEntry() &&
          ToComboBox(m_pNormalWidget.get())->EditCanCut();
 }
 
 bool CXFA_FFComboBox::CanPaste() {
-  return m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry() &&
-         m_pNode->IsOpenAccess();
+  return m_pNode->IsChoiceListAllowTextEntry() && m_pNode->IsOpenAccess();
 }
 
 bool CXFA_FFComboBox::CanSelectAll() {
@@ -243,14 +236,14 @@ Optional<WideString> CXFA_FFComboBox::Copy() {
 }
 
 Optional<WideString> CXFA_FFComboBox::Cut() {
-  if (!m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry())
+  if (!m_pNode->IsChoiceListAllowTextEntry())
     return {};
 
   return ToComboBox(m_pNormalWidget.get())->EditCut();
 }
 
 bool CXFA_FFComboBox::Paste(const WideString& wsPaste) {
-  return m_pNode->GetWidgetAcc()->IsChoiceListAllowTextEntry() &&
+  return m_pNode->IsChoiceListAllowTextEntry() &&
          ToComboBox(m_pNormalWidget.get())->EditPaste(wsPaste);
 }
 
@@ -296,16 +289,16 @@ void CXFA_FFComboBox::DeleteItem(int32_t nIndex) {
 void CXFA_FFComboBox::OnTextChanged(CFWL_Widget* pWidget,
                                     const WideString& wsChanged) {
   CXFA_EventParam eParam;
-  eParam.m_wsPrevText = m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
+  eParam.m_wsPrevText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
   eParam.m_wsChange = wsChanged;
   FWLEventSelChange(&eParam);
 }
 
 void CXFA_FFComboBox::OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp) {
   CXFA_EventParam eParam;
-  eParam.m_wsPrevText = m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
+  eParam.m_wsPrevText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
   FWLEventSelChange(&eParam);
-  if (m_pNode->GetWidgetAcc()->IsChoiceListCommitOnSelect() && bLButtonUp)
+  if (m_pNode->IsChoiceListCommitOnSelect() && bLButtonUp)
     m_pDocView->SetFocusNode(nullptr);
 }
 

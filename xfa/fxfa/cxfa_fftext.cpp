@@ -35,7 +35,7 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
 
-  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   if (!pTextLayout)
     return;
 
@@ -66,13 +66,13 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
 }
 
 bool CXFA_FFText::IsLoaded() {
-  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   return pTextLayout && !pTextLayout->m_bHasBlock;
 }
 
 bool CXFA_FFText::PerformLayout() {
   CXFA_FFDraw::PerformLayout();
-  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   if (!pTextLayout)
     return false;
   if (!pTextLayout->m_bHasBlock)
@@ -139,7 +139,7 @@ FWL_WidgetHit CXFA_FFText::OnHitTest(const CFX_PointF& point) {
 }
 
 const wchar_t* CXFA_FFText::GetLinkURLAtPoint(const CFX_PointF& point) {
-  CXFA_TextLayout* pTextLayout = m_pNode->GetWidgetAcc()->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   if (!pTextLayout)
     return nullptr;
 

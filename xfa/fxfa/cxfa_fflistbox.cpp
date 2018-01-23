@@ -53,16 +53,16 @@ bool CXFA_FFListBox::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  for (const auto& label : m_pNode->GetWidgetAcc()->GetChoiceListItems(false))
+  for (const auto& label : m_pNode->GetChoiceListItems(false))
     pListBox->AddString(label.AsStringView());
 
   uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
-  if (m_pNode->GetWidgetAcc()->IsChoiceListMultiSelect())
+  if (m_pNode->IsChoiceListMultiSelect())
     dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
 
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
-  for (int32_t selected : m_pNode->GetWidgetAcc()->GetSelectedItems())
+  for (int32_t selected : m_pNode->GetSelectedItems())
     pListBox->SetSelItem(pListBox->GetItem(nullptr, selected), true);
 
   m_pNormalWidget->UnlockUpdate();
@@ -84,12 +84,12 @@ bool CXFA_FFListBox::CommitData() {
   for (int32_t i = 0; i < iSels; ++i)
     iSelArray.push_back(pListBox->GetSelIndex(i));
 
-  m_pNode->GetWidgetAcc()->SetSelectedItems(iSelArray, true, false, true);
+  m_pNode->SetSelectedItems(iSelArray, true, false, true);
   return true;
 }
 
 bool CXFA_FFListBox::IsDataChanged() {
-  std::vector<int32_t> iSelArray = m_pNode->GetWidgetAcc()->GetSelectedItems();
+  std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   int32_t iOldSels = pdfium::CollectionSize<int32_t>(iSelArray);
   auto* pListBox = ToListBox(m_pNormalWidget.get());
   int32_t iSels = pListBox->CountSelItems();
@@ -135,7 +135,7 @@ bool CXFA_FFListBox::UpdateFWLData() {
     return false;
 
   auto* pListBox = ToListBox(m_pNormalWidget.get());
-  std::vector<int32_t> iSelArray = m_pNode->GetWidgetAcc()->GetSelectedItems();
+  std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   std::vector<CFWL_ListItem*> selItemArray(iSelArray.size());
   std::transform(iSelArray.begin(), iSelArray.end(), selItemArray.begin(),
                  [pListBox](int32_t val) { return pListBox->GetSelItem(val); });
@@ -152,7 +152,7 @@ void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pNode.Get();
-  eParam.m_wsPrevText = m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
+  eParam.m_wsPrevText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
 
   auto* pListBox = ToListBox(m_pNormalWidget.get());
   int32_t iSels = pListBox->CountSelItems();

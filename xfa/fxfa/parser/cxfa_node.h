@@ -324,11 +324,6 @@ class CXFA_Node : public CXFA_Object {
 
   void SetWidgetReady() { is_widget_ready_ = true; }
   bool IsWidgetReady() const { return is_widget_ready_; }
-  // TODO(dsinclair): Remove post WidgetAcc merge.
-  CXFA_Node* GetWidgetAcc() {
-    ASSERT(IsWidgetReady());
-    return this;
-  }
 
   std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
                                               bool bIsFormReady);

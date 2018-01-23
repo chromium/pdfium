@@ -33,7 +33,7 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  pWidget->SetText(m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display));
+  pWidget->SetText(m_pNode->GetValue(XFA_VALUEPICTURE_Display));
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
@@ -49,10 +49,10 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
                              FWL_STYLEEXT_EDT_Password;
   dwExtendedStyle |= UpdateUIProperty();
 
-  WideString password = m_pNode->GetWidgetAcc()->GetPasswordChar();
+  WideString password = m_pNode->GetPasswordChar();
   if (!password.IsEmpty())
     pWidget->SetAliasChar(password[0]);
-  if (!m_pNode->GetWidgetAcc()->IsHorizontalScrollPolicyOff())
+  if (!m_pNode->IsHorizontalScrollPolicyOff())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
   if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;

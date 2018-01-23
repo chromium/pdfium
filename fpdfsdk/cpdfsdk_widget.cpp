@@ -298,37 +298,31 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       CPDF_FormControl* pFormCtrl = GetFormControl();
       XFA_CHECKSTATE eCheckState =
           pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
-      node->GetWidgetAcc()->SetCheckState(eCheckState, true);
+      node->SetCheckState(eCheckState, true);
       break;
     }
     case FormFieldType::kTextField:
-      node->GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Edit,
-                                     pFormField->GetValue());
+      node->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
     case FormFieldType::kListBox: {
-      node->GetWidgetAcc()->ClearAllSelections();
+      node->ClearAllSelections();
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 &&
-            nIndex < node->GetWidgetAcc()->CountChoiceListItems(false)) {
-          node->GetWidgetAcc()->SetItemState(nIndex, true, false, false, true);
-        }
+        if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
+          node->SetItemState(nIndex, true, false, false, true);
       }
       break;
     }
     case FormFieldType::kComboBox: {
-      node->GetWidgetAcc()->ClearAllSelections();
+      node->ClearAllSelections();
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 &&
-            nIndex < node->GetWidgetAcc()->CountChoiceListItems(false)) {
-          node->GetWidgetAcc()->SetItemState(nIndex, true, false, false, true);
-        }
+        if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
+          node->SetItemState(nIndex, true, false, false, true);
       }
-      node->GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Edit,
-                                     pFormField->GetValue());
+      node->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
     }
     default:
@@ -378,9 +372,9 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
   switch (pFormField->GetFieldType()) {
     case FormFieldType::kCheckBox: {
       if (node->IsWidgetReady()) {
-        pFormField->CheckControl(
-            pFormField->GetControlIndex(pFormControl),
-            node->GetWidgetAcc()->GetCheckState() == XFA_CHECKSTATE_On, true);
+        pFormField->CheckControl(pFormField->GetControlIndex(pFormControl),
+                                 node->GetCheckState() == XFA_CHECKSTATE_On,
+                                 true);
       }
       break;
     }
@@ -388,26 +382,23 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       // TODO(weili): Check whether we need to handle checkbox and radio
       // button differently, otherwise, merge these two cases.
       if (node->IsWidgetReady()) {
-        pFormField->CheckControl(
-            pFormField->GetControlIndex(pFormControl),
-            node->GetWidgetAcc()->GetCheckState() == XFA_CHECKSTATE_On, true);
+        pFormField->CheckControl(pFormField->GetControlIndex(pFormControl),
+                                 node->GetCheckState() == XFA_CHECKSTATE_On,
+                                 true);
       }
       break;
     }
     case FormFieldType::kTextField: {
-      if (node->IsWidgetReady()) {
-        pFormField->SetValue(
-            node->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display), true);
-      }
+      if (node->IsWidgetReady())
+        pFormField->SetValue(node->GetValue(XFA_VALUEPICTURE_Display), true);
       break;
     }
     case FormFieldType::kListBox: {
       pFormField->ClearSelection(false);
 
       if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->GetWidgetAcc()->CountSelectedItems(); i < sz;
-             i++) {
-          int nIndex = node->GetWidgetAcc()->GetSelectedItem(i);
+        for (int i = 0, sz = node->CountSelectedItems(); i < sz; i++) {
+          int nIndex = node->GetSelectedItem(i);
 
           if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
             pFormField->SetItemSelection(nIndex, true, true);
@@ -420,16 +411,12 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       pFormField->ClearSelection(false);
 
       if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->GetWidgetAcc()->CountSelectedItems(); i < sz;
-             i++) {
-          int nIndex = node->GetWidgetAcc()->GetSelectedItem(i);
-
-          if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
+        for (int i = 0, sz = node->CountSelectedItems(); i < sz; i++) {
+          int nIndex = node->GetSelectedItem(i);
+          if (nIndex > -1 && nIndex < pFormField->CountOptions())
             pFormField->SetItemSelection(nIndex, true, true);
-          }
         }
-        pFormField->SetValue(
-            node->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display), true);
+        pFormField->SetValue(node->GetValue(XFA_VALUEPICTURE_Display), true);
       }
       break;
     }
@@ -451,11 +438,9 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       pFormField->ClearOptions(true);
 
       if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->GetWidgetAcc()->CountChoiceListItems(false);
-             i < sz; i++) {
+        for (int i = 0, sz = node->CountChoiceListItems(false); i < sz; i++) {
           pFormField->InsertOption(
-              node->GetWidgetAcc()->GetChoiceListItem(i, false).value_or(L""),
-              i, true);
+              node->GetChoiceListItem(i, false).value_or(L""), i, true);
         }
       }
       break;
@@ -465,11 +450,9 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       pFormField->ClearOptions(false);
 
       if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->GetWidgetAcc()->CountChoiceListItems(false);
-             i < sz; i++) {
+        for (int i = 0, sz = node->CountChoiceListItems(false); i < sz; i++) {
           pFormField->InsertOption(
-              node->GetWidgetAcc()->GetChoiceListItem(i, false).value_or(L""),
-              i, false);
+              node->GetChoiceListItem(i, false).value_or(L""), i, false);
         }
       }
 
@@ -620,8 +603,8 @@ int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady()) {
-      if (nIndex < node->GetWidgetAcc()->CountSelectedItems())
-        return node->GetWidgetAcc()->GetSelectedItem(nIndex);
+      if (nIndex < node->CountSelectedItems())
+        return node->GetSelectedItem(nIndex);
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -634,8 +617,8 @@ WideString CPDFSDK_Widget::GetValue(bool bDisplay) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady()) {
-      return node->GetWidgetAcc()->GetValue(bDisplay ? XFA_VALUEPICTURE_Display
-                                                     : XFA_VALUEPICTURE_Edit);
+      return node->GetValue(bDisplay ? XFA_VALUEPICTURE_Display
+                                     : XFA_VALUEPICTURE_Edit);
     }
   }
 #else
@@ -665,9 +648,8 @@ bool CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady()) {
-      if (nIndex > -1 &&
-          nIndex < node->GetWidgetAcc()->CountChoiceListItems(false))
-        return node->GetWidgetAcc()->GetItemState(nIndex);
+      if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
+        return node->GetItemState(nIndex);
 
       return false;
     }
@@ -687,7 +669,7 @@ bool CPDFSDK_Widget::IsChecked() const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady())
-      return node->GetWidgetAcc()->GetCheckState() == XFA_CHECKSTATE_On;
+      return node->GetCheckState() == XFA_CHECKSTATE_On;
   }
 #endif  // PDF_ENABLE_XFA
   CPDF_FormControl* pFormCtrl = GetFormControl();

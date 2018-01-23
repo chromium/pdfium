@@ -71,7 +71,7 @@ bool CXFA_FFPushButton::LoadWidget() {
 
 void CXFA_FFPushButton::UpdateWidgetProperty() {
   uint32_t dwStyleEx = 0;
-  switch (m_pNode->GetWidgetAcc()->GetButtonHighlight()) {
+  switch (m_pNode->GetButtonHighlight()) {
     case XFA_AttributeEnum::Inverted:
       dwStyleEx = XFA_FWL_PSBSTYLEEXT_HiliteInverted;
       break;
@@ -141,7 +141,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
   if (!caption || caption->IsHidden())
     return;
 
-  if (m_pNode->GetWidgetAcc()->HasButtonRollover()) {
+  if (m_pNode->HasButtonRollover()) {
     if (!m_pRollProvider) {
       m_pRollProvider = pdfium::MakeUnique<CXFA_TextProvider>(
           m_pNode.Get(), XFA_TEXTPROVIDERTYPE_Rollover);
@@ -150,7 +150,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
         pdfium::MakeUnique<CXFA_TextLayout>(GetDoc(), m_pRollProvider.get());
   }
 
-  if (m_pNode->GetWidgetAcc()->HasButtonDown()) {
+  if (m_pNode->HasButtonDown()) {
     if (!m_pDownProvider) {
       m_pDownProvider = pdfium::MakeUnique<CXFA_TextProvider>(
           m_pNode.Get(), XFA_TEXTPROVIDERTYPE_Down);
@@ -171,8 +171,7 @@ void CXFA_FFPushButton::LayoutHighlightCaption() {
 
 void CXFA_FFPushButton::RenderHighlightCaption(CXFA_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
-  CXFA_TextLayout* pCapTextLayout =
-      m_pNode->GetWidgetAcc()->GetCaptionTextLayout();
+  CXFA_TextLayout* pCapTextLayout = m_pNode->GetCaptionTextLayout();
   CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   if (!caption || !caption->IsVisible())
     return;

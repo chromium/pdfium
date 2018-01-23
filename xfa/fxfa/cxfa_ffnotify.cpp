@@ -71,9 +71,9 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
     return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
-  for (; pWidget; pWidget = pSender->GetWidgetAcc()->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded()) {
-      if (pSender->GetWidgetAcc()->IsListBox())
+      if (pSender->IsListBox())
         ToListBox(pWidget)->InsertItem(pLabel, iIndex);
       else
         ToComboBox(pWidget)->InsertItem(pLabel, iIndex);
@@ -87,9 +87,9 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
     return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
-  for (; pWidget; pWidget = pSender->GetWidgetAcc()->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded()) {
-      if (pSender->GetWidgetAcc()->IsListBox())
+      if (pSender->IsListBox())
         ToListBox(pWidget)->DeleteItem(iIndex);
       else
         ToComboBox(pWidget)->DeleteItem(iIndex);
@@ -130,7 +130,7 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
       pWidget = new CXFA_FFCheckButton(pNode);
       break;
     case XFA_Element::ChoiceList: {
-      if (pNode->GetWidgetAcc()->IsListBox())
+      if (pNode->IsListBox())
         pWidget = new CXFA_FFListBox(pNode);
       else
         pWidget = new CXFA_FFComboBox(pNode);
@@ -193,19 +193,7 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
 void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node* pItem,
                                          float& fCalcWidth,
                                          float& fCalcHeight) {
-  if (!pItem->GetWidgetAcc())
-    return;
-
-  pItem->GetWidgetAcc()->StartWidgetLayout(m_pDoc.Get(), fCalcWidth,
-                                           fCalcHeight);
-}
-
-bool CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
-                                 int32_t iBlockIndex,
-                                 float& fCalcHeightPos) {
-  return pItem->GetWidgetAcc() &&
-         pItem->GetWidgetAcc()->FindSplitPos(m_pDoc->GetDocView(), iBlockIndex,
-                                             fCalcHeightPos);
+  pItem->StartWidgetLayout(m_pDoc.Get(), fCalcWidth, fCalcHeight);
 }
 
 bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
@@ -236,8 +224,6 @@ int32_t CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,
 void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
-    return;
-  if (!pNode->GetWidgetAcc())
     return;
 
   pDocView->AddCalculateNode(pNode);
@@ -360,11 +346,9 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr) {
     return;
   if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End)
     return;
-  if (!pSender->GetWidgetAcc())
-    return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
-  for (; pWidget; pWidget = pSender->GetWidgetAcc()->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded())
       pWidget->AddInvalidateRect();
   }
@@ -386,15 +370,11 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
 
   XFA_Element eType = pParentNode->GetElementType();
   bool bIsContainerNode = pParentNode->IsContainerNode();
-  if (!pWidgetNode->GetWidgetAcc())
-    return;
-
   bool bUpdateProperty = false;
   pDocView->SetChangeMark();
   switch (eType) {
     case XFA_Element::Caption: {
-      CXFA_TextLayout* pCapOut =
-          pWidgetNode->GetWidgetAcc()->GetCaptionTextLayout();
+      CXFA_TextLayout* pCapOut = pWidgetNode->GetCaptionTextLayout();
       if (!pCapOut)
         return;
 
@@ -415,22 +395,19 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     pDocView->AddCalculateNodeNotify(pSender);
     if (eType == XFA_Element::Value || bIsContainerNode) {
       if (bIsContainerNode) {
-        pWidgetNode->GetWidgetAcc()->UpdateUIDisplay(m_pDoc->GetDocView(),
-                                                     nullptr);
+        pWidgetNode->UpdateUIDisplay(m_pDoc->GetDocView(), nullptr);
         pDocView->AddCalculateNode(pWidgetNode);
         pDocView->AddValidateNode(pWidgetNode);
       } else if (pWidgetNode->GetParent()->GetElementType() ==
                  XFA_Element::ExclGroup) {
-        pWidgetNode->GetWidgetAcc()->UpdateUIDisplay(m_pDoc->GetDocView(),
-                                                     nullptr);
+        pWidgetNode->UpdateUIDisplay(m_pDoc->GetDocView(), nullptr);
       }
       return;
     }
   }
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pWidgetNode);
-  for (; pWidget;
-       pWidget = pWidgetNode->GetWidgetAcc()->GetNextWidget(pWidget)) {
+  for (; pWidget; pWidget = pWidgetNode->GetNextWidget(pWidget)) {
     if (!pWidget->IsLoaded())
       continue;
 

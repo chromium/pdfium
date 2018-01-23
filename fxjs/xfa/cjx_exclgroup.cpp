@@ -94,9 +94,9 @@ CJS_Return CJX_ExclGroup::selectedMember(
 
   CXFA_Node* pReturnNode = nullptr;
   if (params.empty()) {
-    pReturnNode = node->GetWidgetAcc()->GetSelectedMember();
+    pReturnNode = node->GetSelectedMember();
   } else {
-    pReturnNode = node->GetWidgetAcc()->SetSelectedMember(
+    pReturnNode = node->SetSelectedMember(
         runtime->ToWideString(params[0]).AsStringView(), true);
   }
   if (!pReturnNode)
@@ -118,8 +118,8 @@ void CJX_ExclGroup::defaultValue(CFXJSE_Value* pValue,
     return;
 
   if (bSetting) {
-    node->GetWidgetAcc()->SetSelectedMemberByValue(
-        pValue->ToWideString().AsStringView(), true, true, true);
+    node->SetSelectedMemberByValue(pValue->ToWideString().AsStringView(), true,
+                                   true, true);
     return;
   }
 

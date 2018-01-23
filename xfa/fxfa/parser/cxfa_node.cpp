@@ -1038,35 +1038,30 @@ CXFA_Node* CXFA_Node::GetContainerNode() {
     return nullptr;
 
   if (eType == XFA_Element::Field) {
-    CXFA_Node* pFieldWidgetAcc = GetWidgetAcc();
-    if (pFieldWidgetAcc && pFieldWidgetAcc->IsChoiceListMultiSelect())
+    if (IsChoiceListMultiSelect())
       return nullptr;
 
-    WideString wsPicture;
-    if (pFieldWidgetAcc) {
-      wsPicture = pFieldWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
-    }
+    WideString wsPicture = GetPictureContent(XFA_VALUEPICTURE_DataBind);
     if (!wsPicture.IsEmpty())
       return this;
 
     CXFA_Node* pDataNode = GetBindData();
     if (!pDataNode)
       return nullptr;
-    pFieldWidgetAcc = nullptr;
+
+    CXFA_Node* pFieldNode = nullptr;
     for (const auto& pFormNode : *(pDataNode->GetBindItems())) {
       if (!pFormNode || pFormNode->HasRemovedChildren())
         continue;
-      pFieldWidgetAcc =
-          pFormNode->IsWidgetReady() ? pFormNode->GetWidgetAcc() : nullptr;
-      if (pFieldWidgetAcc) {
-        wsPicture =
-            pFieldWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
-      }
+      pFieldNode = pFormNode->IsWidgetReady() ? pFormNode.Get() : nullptr;
+      if (pFieldNode)
+        wsPicture = pFieldNode->GetPictureContent(XFA_VALUEPICTURE_DataBind);
       if (!wsPicture.IsEmpty())
         break;
-      pFieldWidgetAcc = nullptr;
+
+      pFieldNode = nullptr;
     }
-    return pFieldWidgetAcc ? pFieldWidgetAcc->GetNode() : nullptr;
+    return pFieldNode;
   }
 
   CXFA_Node* pGrandNode = pParentNode ? pParentNode->GetParent() : nullptr;
@@ -1998,8 +1993,8 @@ void CXFA_Node::SendAttributeChangeMessage(XFA_Attribute eAttribute,
 void CXFA_Node::SyncValue(const WideString& wsValue, bool bNotify) {
   WideString wsFormatValue = wsValue;
   CXFA_Node* pContainerNode = GetContainerNode();
-  if (pContainerNode && pContainerNode->GetWidgetAcc())
-    wsFormatValue = pContainerNode->GetWidgetAcc()->GetFormatDataValue(wsValue);
+  if (pContainerNode)
+    wsFormatValue = pContainerNode->GetFormatDataValue(wsValue);
 
   JSObject()->SetContent(wsValue, wsFormatValue, bNotify, false, true);
 }
@@ -2194,8 +2189,8 @@ int32_t CXFA_Node::ProcessCalculate(CXFA_FFDocView* docView) {
     return iRet;
 
   if (GetRawValue() != EventParam.m_wsResult) {
-    GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Raw, EventParam.m_wsResult);
-    GetWidgetAcc()->UpdateUIDisplay(docView, nullptr);
+    SetValue(XFA_VALUEPICTURE_Raw, EventParam.m_wsResult);
+    UpdateUIDisplay(docView, nullptr);
   }
   return XFA_EVENTERROR_Success;
 }
@@ -2292,7 +2287,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
                                            CXFA_Validate* validate,
                                            int32_t iFlags,
                                            bool bVersionFlag) {
-  if (!GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw).IsEmpty())
+  if (!GetValue(XFA_VALUEPICTURE_Raw).IsEmpty())
     return XFA_EVENTERROR_Success;
   if (m_bIsNull && m_bPreNull)
     return XFA_EVENTERROR_Success;
@@ -2502,8 +2497,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
       if (pEventParam->m_eType == XFA_EVENT_InitCalculate) {
         if ((iRet == XFA_EVENTERROR_Success) &&
             (GetRawValue() != pEventParam->m_wsResult)) {
-          GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Raw,
-                                   pEventParam->m_wsResult);
+          SetValue(XFA_VALUEPICTURE_Raw, pEventParam->m_wsResult);
           docView->AddValidateNode(this);
         }
       }
@@ -2778,14 +2772,13 @@ void CXFA_Node::ResetData() {
         if (!pChild->IsWidgetReady())
           continue;
 
-        CXFA_Node* pAcc = pChild->GetWidgetAcc();
         bool done = false;
         if (wsValue.IsEmpty()) {
-          CXFA_Value* defValue = pAcc->GetNode()->GetDefaultValueIfExists();
+          CXFA_Value* defValue = pChild->GetDefaultValueIfExists();
           if (defValue) {
             wsValue = defValue->GetChildValueContent();
             SetValue(XFA_VALUEPICTURE_Raw, wsValue);
-            pAcc->SetValue(XFA_VALUEPICTURE_Raw, wsValue);
+            pChild->SetValue(XFA_VALUEPICTURE_Raw, wsValue);
             done = true;
           }
         }
@@ -2802,7 +2795,7 @@ void CXFA_Node::ResetData() {
                     ->JSObject()
                     ->GetContent(false);
           }
-          pAcc->SetValue(XFA_VALUEPICTURE_Raw, itemText);
+          pChild->SetValue(XFA_VALUEPICTURE_Raw, itemText);
         }
         pNextChild = pChild->GetNextContainerSibling();
       }

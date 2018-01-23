@@ -23,20 +23,19 @@ CXFA_FFImage::~CXFA_FFImage() {
 }
 
 bool CXFA_FFImage::IsLoaded() {
-  return !!GetNode()->GetWidgetAcc()->GetImageImage();
+  return !!GetNode()->GetImageImage();
 }
 
 bool CXFA_FFImage::LoadWidget() {
-  if (GetNode()->GetWidgetAcc()->GetImageImage())
+  if (GetNode()->GetImageImage())
     return true;
 
-  return GetNode()->GetWidgetAcc()->LoadImageImage(GetDoc())
-             ? CXFA_FFDraw::LoadWidget()
-             : false;
+  return GetNode()->LoadImageImage(GetDoc()) ? CXFA_FFDraw::LoadWidget()
+                                             : false;
 }
 
 void CXFA_FFImage::UnloadWidget() {
-  GetNode()->GetWidgetAcc()->SetImageImage(nullptr);
+  GetNode()->SetImageImage(nullptr);
 }
 
 void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
@@ -50,8 +49,7 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
 
-  RetainPtr<CFX_DIBitmap> pDIBitmap =
-      GetNode()->GetWidgetAcc()->GetImageImage();
+  RetainPtr<CFX_DIBitmap> pDIBitmap = GetNode()->GetImageImage();
   if (!pDIBitmap)
     return;
 
@@ -70,7 +68,7 @@ void CXFA_FFImage::RenderWidget(CXFA_Graphics* pGS,
 
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
-  m_pNode->GetWidgetAcc()->GetImageDpi(iImageXDpi, iImageYDpi);
+  m_pNode->GetImageDpi(iImageXDpi, iImageYDpi);
 
   auto* value = m_pNode->GetFormValueIfExists();
   CXFA_Image* image = value ? value->GetImageIfExists() : nullptr;

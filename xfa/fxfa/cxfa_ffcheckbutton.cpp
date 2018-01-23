@@ -40,12 +40,12 @@ bool CXFA_FFCheckButton::LoadWidget() {
                                    m_pNormalWidget.get());
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
-  if (m_pNode->GetWidgetAcc()->IsRadioButton())
+  if (m_pNode->IsRadioButton())
     pCheckBox->ModifyStylesEx(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
 
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();
-  SetFWLCheckState(m_pNode->GetWidgetAcc()->GetCheckState());
+  SetFWLCheckState(m_pNode->GetCheckState());
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
@@ -55,9 +55,9 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
   if (!pCheckBox)
     return;
 
-  pCheckBox->SetBoxSize(m_pNode->GetWidgetAcc()->GetCheckButtonSize());
+  pCheckBox->SetBoxSize(m_pNode->GetCheckButtonSize());
   uint32_t dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
-  switch (m_pNode->GetWidgetAcc()->GetCheckButtonMark()) {
+  switch (m_pNode->GetCheckButtonMark()) {
     case XFA_AttributeEnum::Check:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCheck;
       break;
@@ -76,11 +76,11 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeStar;
       break;
     default: {
-      if (m_pNode->GetWidgetAcc()->IsCheckButtonRound())
+      if (m_pNode->IsCheckButtonRound())
         dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCircle;
     } break;
   }
-  if (m_pNode->GetWidgetAcc()->IsAllowNeutral())
+  if (m_pNode->IsAllowNeutral())
     dwStyleEx |= FWL_STYLEEXT_CKB_3State;
 
   pCheckBox->ModifyStylesEx(
@@ -90,7 +90,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
 bool CXFA_FFCheckButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
 
-  float fCheckSize = m_pNode->GetWidgetAcc()->GetCheckButtonSize();
+  float fCheckSize = m_pNode->GetCheckButtonSize();
   CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   CFX_RectF rtWidget = GetRectWithoutRotate();
   if (margin)
@@ -235,10 +235,9 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   DrawBorderWithFlag(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate,
-                     m_pNode->GetWidgetAcc()->IsCheckButtonRound());
+                     m_pNode->IsCheckButtonRound());
   RenderCaption(pGS, &mtRotate);
-  DrawHighlight(pGS, &mtRotate, dwStatus,
-                m_pNode->GetWidgetAcc()->IsCheckButtonRound());
+  DrawHighlight(pGS, &mtRotate, dwStatus, m_pNode->IsCheckButtonRound());
   CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
   GetApp()->GetFWLWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);
@@ -269,13 +268,13 @@ XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
 
 bool CXFA_FFCheckButton::CommitData() {
   XFA_CHECKSTATE eCheckState = FWLState2XFAState();
-  m_pNode->GetWidgetAcc()->SetCheckState(eCheckState, true);
+  m_pNode->SetCheckState(eCheckState, true);
   return true;
 }
 
 bool CXFA_FFCheckButton::IsDataChanged() {
   XFA_CHECKSTATE eCheckState = FWLState2XFAState();
-  return m_pNode->GetWidgetAcc()->GetCheckState() != eCheckState;
+  return m_pNode->GetCheckState() != eCheckState;
 }
 
 void CXFA_FFCheckButton::SetFWLCheckState(XFA_CHECKSTATE eCheckState) {
@@ -291,7 +290,7 @@ bool CXFA_FFCheckButton::UpdateFWLData() {
   if (!m_pNormalWidget)
     return false;
 
-  XFA_CHECKSTATE eState = m_pNode->GetWidgetAcc()->GetCheckState();
+  XFA_CHECKSTATE eState = m_pNode->GetCheckState();
   SetFWLCheckState(eState);
   m_pNormalWidget->Update();
   return true;
@@ -307,8 +306,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
     case CFWL_Event::Type::CheckStateChanged: {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Change;
-      eParam.m_wsNewText =
-          m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
+      eParam.m_wsNewText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
 
       CXFA_Node* exclNode = m_pNode->GetExclGroupIfExists();
       if (ProcessCommittedData()) {
@@ -322,7 +320,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
         eParam.m_pTarget = m_pNode.Get();
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, &eParam);
       } else {
-        SetFWLCheckState(m_pNode->GetWidgetAcc()->GetCheckState());
+        SetFWLCheckState(m_pNode->GetCheckState());
       }
       if (exclNode) {
         eParam.m_pTarget = exclNode;

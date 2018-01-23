@@ -15,6 +15,7 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
@@ -1015,8 +1016,8 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
         bChanged = false;
         {
           float fRelSplitPos = *fProposedSplitPos - fCurVerticalOffset;
-          if (pNotify->FindSplitPos(pFormNode, pLayoutItem->GetIndex(),
-                                    fRelSplitPos)) {
+          if (pFormNode->FindSplitPos(pNotify->GetHDOC()->GetDocView(),
+                                      pLayoutItem->GetIndex(), fRelSplitPos)) {
             bAnyChanged = true;
             bChanged = true;
             *fProposedSplitPos = fCurVerticalOffset + fRelSplitPos;
