@@ -338,7 +338,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
 
   if (bSynchronizeElse) {
     CPDFXFA_Context* context = m_pPageView->GetFormFillEnv()->GetXFAContext();
-    context->GetXFADocView()->ProcessValueChanged(node->GetWidgetAcc());
+    context->GetXFADocView()->ProcessValueChanged(node);
   }
 }
 

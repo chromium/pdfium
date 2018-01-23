@@ -630,7 +630,7 @@ bool CXFA_FFField::ProcessCommittedData() {
     return false;
 
   m_pDocView->SetChangeMark();
-  m_pDocView->AddValidateWidget(m_pNode->GetWidgetAcc());
+  m_pDocView->AddValidateNode(m_pNode.Get());
   return true;
 }
 

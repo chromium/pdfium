@@ -314,8 +314,8 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
       if (ProcessCommittedData()) {
         eParam.m_pTarget = exclNode;
         if (exclNode) {
-          m_pDocView->AddValidateWidget(exclNode->GetWidgetAcc());
-          m_pDocView->AddCalculateWidgetAcc(exclNode->GetWidgetAcc());
+          m_pDocView->AddValidateNode(exclNode);
+          m_pDocView->AddCalculateNode(exclNode);
           exclNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change,
                                  &eParam);
         }

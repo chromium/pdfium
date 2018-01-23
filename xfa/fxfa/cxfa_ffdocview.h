@@ -19,8 +19,8 @@ class CXFA_BindItems;
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;
+class CXFA_Node;
 class CXFA_Subform;
-class CXFA_WidgetAcc;
 class CXFA_ReadyNodeIterator;
 
 extern const XFA_AttributeEnum gs_EventActivity[];
@@ -72,19 +72,19 @@ class CXFA_FFDocView {
   void RunInvalidate();
   void RunDocClose();
 
-  void ProcessValueChanged(CXFA_WidgetAcc* widgetAcc);
+  void ProcessValueChanged(CXFA_Node* node);
 
   void SetChangeMark();
 
-  void AddValidateWidget(CXFA_WidgetAcc* pWidget);
+  void AddValidateNode(CXFA_Node* node);
   void AddCalculateNodeNotify(CXFA_Node* pNodeChange);
-  void AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
+  void AddCalculateNode(CXFA_Node* node);
 
   bool RunLayout();
   void AddNewFormNode(CXFA_Node* pNode);
   void AddIndexChangedSubform(CXFA_Node* pNode);
-  CXFA_WidgetAcc* GetFocusWidgetAcc() const { return m_pFocusAcc.Get(); }
-  void SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
+  CXFA_Node* GetFocusNode() const { return m_pFocusNode.Get(); }
+  void SetFocusNode(CXFA_Node* pNode);
   void DeleteLayoutItem(CXFA_FFWidget* pWidget);
   int32_t ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
                                        XFA_EVENTTYPE eEventType,
@@ -116,12 +116,12 @@ class CXFA_FFDocView {
   UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
   CXFA_LayoutProcessor* m_pXFADocLayout = nullptr;  // Not owned.
-  UnownedPtr<CXFA_WidgetAcc> m_pFocusAcc;
+  UnownedPtr<CXFA_Node> m_pFocusNode;
   UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
   UnownedPtr<CXFA_FFWidget> m_pOldFocusWidget;
   std::map<CXFA_FFPageView*, std::unique_ptr<CFX_RectF>> m_mapPageInvalidate;
-  std::vector<CXFA_WidgetAcc*> m_ValidateAccs;
-  std::vector<CXFA_WidgetAcc*> m_CalculateAccs;
+  std::vector<CXFA_Node*> m_ValidateNodes;
+  std::vector<CXFA_Node*> m_CalculateNodes;
   std::vector<CXFA_BindItems*> m_BindItems;
   std::vector<CXFA_Node*> m_NewAddedNodes;
   std::vector<CXFA_Node*> m_IndexChangedSubforms;

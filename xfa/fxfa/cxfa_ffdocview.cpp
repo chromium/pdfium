@@ -134,9 +134,9 @@ void CXFA_FFDocView::StopLayout() {
   if (RunLayout())
     ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_Ready, false, true);
 
-  m_CalculateAccs.clear();
-  if (m_pFocusAcc && !m_pFocusWidget)
-    SetFocusWidgetAcc(m_pFocusAcc.Get());
+  m_CalculateNodes.clear();
+  if (m_pFocusNode && !m_pFocusWidget)
+    SetFocusNode(m_pFocusNode.Get());
 
   m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_End;
 }
@@ -186,7 +186,7 @@ void CXFA_FFDocView::UpdateDocView() {
     RunEventLayoutReady();
 
   m_bLayoutEvent = false;
-  m_CalculateAccs.clear();
+  m_CalculateNodes.clear();
   RunInvalidate();
   UnlockUpdate();
 }
@@ -216,7 +216,7 @@ bool CXFA_FFDocView::ResetSingleNodeData(CXFA_Node* pNode) {
   if (!validate)
     return true;
 
-  AddValidateWidget(pNode->GetWidgetAcc());
+  AddValidateNode(pNode);
   validate->SetFlag(XFA_NodeFlag_NeedsInitApp, false);
   return true;
 }
@@ -296,23 +296,23 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
   }
   if (pNewFocus) {
     CXFA_Node* node = pNewFocus->GetNode();
-    m_pFocusAcc = node->IsWidgetReady() ? node->GetWidgetAcc() : nullptr;
+    m_pFocusNode = node->IsWidgetReady() ? node : nullptr;
   } else {
-    m_pFocusAcc = nullptr;
+    m_pFocusNode = nullptr;
   }
   m_pFocusWidget = pNewFocus;
   m_pOldFocusWidget = m_pFocusWidget;
   return true;
 }
 
-void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
+void CXFA_FFDocView::SetFocusNode(CXFA_Node* node) {
   CXFA_FFWidget* pNewFocus = nullptr;
-  if (pWidgetAcc)
-    pNewFocus = GetWidgetForNode(pWidgetAcc->GetNode());
+  if (node)
+    pNewFocus = GetWidgetForNode(node);
   if (!SetFocus(pNewFocus))
     return;
 
-  m_pFocusAcc = pWidgetAcc;
+  m_pFocusNode = node;
   if (m_iStatus != XFA_DOCVIEW_LAYOUTSTATUS_End)
     return;
 
@@ -321,10 +321,10 @@ void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 }
 
 void CXFA_FFDocView::DeleteLayoutItem(CXFA_FFWidget* pWidget) {
-  if (m_pFocusAcc && m_pFocusAcc->GetNode() != pWidget->GetNode())
+  if (m_pFocusNode != pWidget->GetNode())
     return;
 
-  m_pFocusAcc = nullptr;
+  m_pFocusNode = nullptr;
   m_pFocusWidget = nullptr;
   m_pOldFocusWidget = nullptr;
 }
@@ -514,11 +514,11 @@ void CXFA_FFDocView::RunDocClose() {
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_DocClose, false, true);
 }
 
-void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
-  CXFA_WidgetAcc* pCurrentAcc =
-      !m_CalculateAccs.empty() ? m_CalculateAccs.back() : nullptr;
-  if (pCurrentAcc != pWidgetAcc)
-    m_CalculateAccs.push_back(pWidgetAcc);
+void CXFA_FFDocView::AddCalculateNode(CXFA_Node* node) {
+  CXFA_Node* pCurrentNode =
+      !m_CalculateNodes.empty() ? m_CalculateNodes.back() : nullptr;
+  if (pCurrentNode != node)
+    m_CalculateNodes.push_back(node);
 }
 
 void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
@@ -528,13 +528,13 @@ void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
 
   for (auto* pResult : pGlobalData->m_Globals) {
     if (!pResult->HasRemovedChildren() && pResult->IsWidgetReady())
-      AddCalculateWidgetAcc(pResult->GetWidgetAcc());
+      AddCalculateNode(pResult);
   }
 }
 
 size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
-  while (index < m_CalculateAccs.size()) {
-    CXFA_Node* node = m_CalculateAccs[index]->GetNode();
+  while (index < m_CalculateNodes.size()) {
+    CXFA_Node* node = m_CalculateNodes[index];
 
     AddCalculateNodeNotify(node);
     size_t recurse = node->JSObject()->GetCalcRecursionCount() + 1;
@@ -543,7 +543,7 @@ size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
       break;
     if (node->ProcessCalculate(this) == XFA_EVENTERROR_Success &&
         node->IsWidgetReady()) {
-      AddValidateWidget(node->GetWidgetAcc());
+      AddValidateNode(node);
     }
 
     index = RunCalculateRecursive(++index);
@@ -554,28 +554,28 @@ size_t CXFA_FFDocView::RunCalculateRecursive(size_t index) {
 int32_t CXFA_FFDocView::RunCalculateWidgets() {
   if (!m_pDoc->GetDocEnvironment()->IsCalculationsEnabled(m_pDoc.Get()))
     return XFA_EVENTERROR_Disabled;
-  if (!m_CalculateAccs.empty())
+  if (!m_CalculateNodes.empty())
     RunCalculateRecursive(0);
 
-  for (CXFA_WidgetAcc* pCurAcc : m_CalculateAccs)
-    pCurAcc->GetNode()->JSObject()->SetCalcRecursionCount(0);
+  for (CXFA_Node* node : m_CalculateNodes)
+    node->JSObject()->SetCalcRecursionCount(0);
 
-  m_CalculateAccs.clear();
+  m_CalculateNodes.clear();
   return XFA_EVENTERROR_Success;
 }
 
-void CXFA_FFDocView::AddValidateWidget(CXFA_WidgetAcc* pWidget) {
-  if (!pdfium::ContainsValue(m_ValidateAccs, pWidget))
-    m_ValidateAccs.push_back(pWidget);
+void CXFA_FFDocView::AddValidateNode(CXFA_Node* node) {
+  if (!pdfium::ContainsValue(m_ValidateNodes, node))
+    m_ValidateNodes.push_back(node);
 }
 
 void CXFA_FFDocView::InitCalculate(CXFA_Node* pNode) {
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_InitCalculate, false, true);
 }
 
-void CXFA_FFDocView::ProcessValueChanged(CXFA_WidgetAcc* widgetAcc) {
-  AddValidateWidget(widgetAcc);
-  AddCalculateWidgetAcc(widgetAcc);
+void CXFA_FFDocView::ProcessValueChanged(CXFA_Node* node) {
+  AddValidateNode(node);
+  AddCalculateNode(node);
   RunCalculateWidgets();
   RunValidate();
 }
@@ -585,7 +585,7 @@ bool CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
     return false;
 
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Validate, false, true);
-  m_ValidateAccs.clear();
+  m_ValidateNodes.clear();
   return true;
 }
 
@@ -593,12 +593,11 @@ bool CXFA_FFDocView::RunValidate() {
   if (!m_pDoc->GetDocEnvironment()->IsValidationsEnabled(m_pDoc.Get()))
     return false;
 
-  for (CXFA_WidgetAcc* pAcc : m_ValidateAccs) {
-    CXFA_Node* node = pAcc->GetNode();
+  for (CXFA_Node* node : m_ValidateNodes) {
     if (!node->HasRemovedChildren())
       node->ProcessValidate(this, 0);
   }
-  m_ValidateAccs.clear();
+  m_ValidateNodes.clear();
   return true;
 }
 
@@ -622,7 +621,6 @@ void CXFA_FFDocView::RunBindItems() {
     if (!pWidgetNode->IsWidgetReady())
       continue;
 
-    CXFA_WidgetAcc* pAcc = pWidgetNode->GetWidgetAcc();
     CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
     WideString wsRef = item->GetRef();
@@ -632,7 +630,7 @@ void CXFA_FFDocView::RunBindItems() {
     XFA_RESOLVENODE_RS rs;
     pScriptContext->ResolveObjects(pWidgetNode, wsRef.AsStringView(), &rs,
                                    dwStyle, nullptr);
-    pAcc->DeleteItem(-1, false, false);
+    pWidgetNode->GetWidgetAcc()->DeleteItem(-1, false, false);
     if (rs.dwFlags != XFA_ResolveNode_RSType_Nodes || rs.objects.empty())
       continue;
 
@@ -669,7 +667,7 @@ void CXFA_FFDocView::RunBindItems() {
       } else {
         wsLabel = wsValue;
       }
-      pAcc->InsertItem(wsLabel, wsValue, false);
+      pWidgetNode->GetWidgetAcc()->InsertItem(wsLabel, wsValue, false);
     }
   }
   m_BindItems.clear();

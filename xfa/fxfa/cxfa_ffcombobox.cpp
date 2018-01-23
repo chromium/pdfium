@@ -307,7 +307,7 @@ void CXFA_FFComboBox::OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp) {
   eParam.m_wsPrevText = m_pNode->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Raw);
   FWLEventSelChange(&eParam);
   if (m_pNode->GetWidgetAcc()->IsChoiceListCommitOnSelect() && bLButtonUp)
-    m_pDocView->SetFocusWidgetAcc(nullptr);
+    m_pDocView->SetFocusNode(nullptr);
 }
 
 void CXFA_FFComboBox::OnPreOpen(CFWL_Widget* pWidget) {

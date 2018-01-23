@@ -240,8 +240,8 @@ void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
   if (!pNode->GetWidgetAcc())
     return;
 
-  pDocView->AddCalculateWidgetAcc(pNode->GetWidgetAcc());
-  pDocView->AddValidateWidget(pNode->GetWidgetAcc());
+  pDocView->AddCalculateNode(pNode);
+  pDocView->AddValidateNode(pNode);
 }
 
 CXFA_FFDoc* CXFA_FFNotify::GetHDOC() {
@@ -315,20 +315,14 @@ void CXFA_FFNotify::RunSubformIndexChange(CXFA_Node* pSubformNode) {
 
 CXFA_Node* CXFA_FFNotify::GetFocusWidgetNode() {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
-  if (!pDocView)
-    return nullptr;
-
-  return pDocView->GetFocusWidgetAcc()
-             ? pDocView->GetFocusWidgetAcc()->GetNode()
-             : nullptr;
+  return pDocView ? pDocView->GetFocusNode() : nullptr;
 }
 
 void CXFA_FFNotify::SetFocusWidgetNode(CXFA_Node* pNode) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView)
     return;
-
-  pDocView->SetFocusWidgetAcc(pNode ? pNode->GetWidgetAcc() : nullptr);
+  pDocView->SetFocusNode(pNode);
 }
 
 void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
@@ -423,8 +417,8 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
       if (bIsContainerNode) {
         pWidgetNode->GetWidgetAcc()->UpdateUIDisplay(m_pDoc->GetDocView(),
                                                      nullptr);
-        pDocView->AddCalculateWidgetAcc(pWidgetNode->GetWidgetAcc());
-        pDocView->AddValidateWidget(pWidgetNode->GetWidgetAcc());
+        pDocView->AddCalculateNode(pWidgetNode);
+        pDocView->AddValidateNode(pWidgetNode);
       } else if (pWidgetNode->GetParent()->GetElementType() ==
                  XFA_Element::ExclGroup) {
         pWidgetNode->GetWidgetAcc()->UpdateUIDisplay(m_pDoc->GetDocView(),

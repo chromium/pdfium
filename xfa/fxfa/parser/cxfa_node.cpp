@@ -2206,7 +2206,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
             (GetRawValue() != pEventParam->m_wsResult)) {
           GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Raw,
                                    pEventParam->m_wsResult);
-          docView->AddValidateWidget(GetWidgetAcc());
+          docView->AddValidateNode(this);
         }
       }
       for (CXFA_Node* pRefNode : refNodes) {
