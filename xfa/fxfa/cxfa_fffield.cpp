@@ -636,34 +636,28 @@ bool CXFA_FFField::ProcessCommittedData() {
 
 int32_t CXFA_FFField::CalculateOverride() {
   CXFA_Node* exclNode = m_pNode->GetExclGroupIfExists();
-  if (!exclNode)
-    return CalculateWidgetAcc(m_pNode->GetWidgetAcc());
-
-  CXFA_WidgetAcc* pAcc = exclNode->GetWidgetAcc();
-  if (!pAcc)
-    return CalculateWidgetAcc(m_pNode->GetWidgetAcc());
-  if (CalculateWidgetAcc(pAcc) == 0)
+  if (!exclNode || !exclNode->IsWidgetReady())
+    return CalculateNode(m_pNode.Get());
+  if (CalculateNode(exclNode) == 0)
     return 0;
 
-  CXFA_Node* pNode = pAcc->GetExclGroupFirstMember();
+  CXFA_Node* pNode = exclNode->GetWidgetAcc()->GetExclGroupFirstMember();
   if (!pNode)
     return 1;
 
-  CXFA_WidgetAcc* pWidgetAcc = nullptr;
   while (pNode) {
-    pWidgetAcc = pNode->GetWidgetAcc();
-    if (!pWidgetAcc)
+    if (!pNode->IsWidgetReady())
       return 1;
-    if (CalculateWidgetAcc(pWidgetAcc) == 0)
+    if (CalculateNode(pNode) == 0)
       return 0;
 
-    pNode = pWidgetAcc->GetExclGroupNextMember(pNode);
+    pNode = pNode->GetWidgetAcc()->GetExclGroupNextMember(pNode);
   }
   return 1;
 }
 
-int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
-  CXFA_Calculate* calc = pAcc->GetNode()->GetCalculateIfExists();
+int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
+  CXFA_Calculate* calc = pNode->GetCalculateIfExists();
   if (!calc)
     return 1;
 
@@ -690,7 +684,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
           return 1;
       }
 
-      if (pAcc->GetNode()->IsUserInteractive())
+      if (pNode->IsUserInteractive())
         return 1;
 
       IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
@@ -704,7 +698,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
       wsMessage += L"Are you sure you want to modify this field?";
       if (pAppProvider->MsgBox(wsMessage, L"Calculate Override",
                                XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
-        pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
+        pNode->SetFlag(XFA_NodeFlag_UserInteractive, false);
         return 1;
       }
       return 0;
@@ -712,7 +706,7 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
     case XFA_AttributeEnum::Ignore:
       return 0;
     case XFA_AttributeEnum::Disabled:
-      pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
+      pNode->SetFlag(XFA_NodeFlag_UserInteractive, false);
       return 1;
     default:
       return 1;

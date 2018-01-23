@@ -14,7 +14,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_WidgetAcc;
+class CXFA_Node;
 
 #define XFA_MINUI_HEIGHT 4.32f
 #define XFA_DEFAULTUI_HEIGHT 2.0f
@@ -74,7 +74,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix);
 
   int32_t CalculateOverride();
-  int32_t CalculateWidgetAcc(CXFA_WidgetAcc* pAcc);
+  int32_t CalculateNode(CXFA_Node* pNode);
   bool ProcessCommittedData();
   virtual bool CommitData();
   virtual bool IsDataChanged();
