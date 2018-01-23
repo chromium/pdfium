@@ -134,7 +134,6 @@ void CreateDataBinding(CXFA_Node* pFormNode,
     return;
 
   ASSERT(pFormNode->IsWidgetReady());
-  CXFA_WidgetAcc* pWidgetAcc = pFormNode->GetWidgetAcc();
   auto* defValue = pFormNode->JSObject()->GetOrCreateProperty<CXFA_Value>(
       0, XFA_Element::Value);
   if (!bDataToForm) {
@@ -154,7 +153,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         ASSERT(pXMLDataElement);
 
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pWidgetAcc->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetWidgetAcc()->GetFormatDataValue(wsValue),
+            false, false);
         pDataNode->JSObject()->SetCData(XFA_Attribute::ContentType,
                                         wsContentType, false, false);
         if (!wsHref.IsEmpty())
@@ -164,9 +164,9 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       }
       case XFA_Element::ChoiceList:
         wsValue = defValue ? defValue->GetChildValueContent() : L"";
-        if (pWidgetAcc->IsChoiceListMultiSelect()) {
+        if (pFormNode->GetWidgetAcc()->IsChoiceListMultiSelect()) {
           std::vector<WideString> wsSelTextArray =
-              pWidgetAcc->GetSelectedItemsValue();
+              pFormNode->GetWidgetAcc()->GetSelectedItemsValue();
           if (!wsSelTextArray.empty()) {
             for (const auto& text : wsSelTextArray) {
               CXFA_Node* pValue =
@@ -186,7 +186,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           }
         } else if (!wsValue.IsEmpty()) {
           pDataNode->JSObject()->SetAttributeValue(
-              wsValue, pWidgetAcc->GetFormatDataValue(wsValue), false, false);
+              wsValue, pFormNode->GetWidgetAcc()->GetFormatDataValue(wsValue),
+              false, false);
         }
         break;
       case XFA_Element::CheckButton:
@@ -195,7 +196,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           break;
 
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pWidgetAcc->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetWidgetAcc()->GetFormatDataValue(wsValue),
+            false, false);
         break;
       case XFA_Element::ExclGroup: {
         CXFA_Node* pChecked = nullptr;
@@ -264,9 +266,10 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         if (wsValue.IsEmpty())
           break;
 
-        wsValue = pWidgetAcc->NormalizeNumStr(wsValue);
+        wsValue = pFormNode->GetWidgetAcc()->NormalizeNumStr(wsValue);
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pWidgetAcc->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetWidgetAcc()->GetFormatDataValue(wsValue),
+            false, false);
         CXFA_Value* pValue =
             pFormNode->JSObject()->GetOrCreateProperty<CXFA_Value>(
                 0, XFA_Element::Value);
@@ -279,14 +282,16 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           break;
 
         pDataNode->JSObject()->SetAttributeValue(
-            wsValue, pWidgetAcc->GetFormatDataValue(wsValue), false, false);
+            wsValue, pFormNode->GetWidgetAcc()->GetFormatDataValue(wsValue),
+            false, false);
         break;
     }
     return;
   }
 
   WideString wsXMLValue = pDataNode->JSObject()->GetContent(false);
-  WideString wsNormalizeValue = pWidgetAcc->GetNormalizeDataValue(wsXMLValue);
+  WideString wsNormalizeValue =
+      pFormNode->GetWidgetAcc()->GetNormalizeDataValue(wsXMLValue);
 
   pDataNode->JSObject()->SetAttributeValue(wsNormalizeValue, wsXMLValue, false,
                                            false);
@@ -315,7 +320,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       break;
     }
     case XFA_Element::ChoiceList:
-      if (pWidgetAcc->IsChoiceListMultiSelect()) {
+      if (pFormNode->GetWidgetAcc()->IsChoiceListMultiSelect()) {
         std::vector<CXFA_Node*> items = pDataNode->GetNodeList(
             XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties,
             XFA_Element::Unknown);
@@ -348,8 +353,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                     XFA_Element::Text);
       break;
     case XFA_Element::ExclGroup: {
-      pWidgetAcc->SetSelectedMemberByValue(wsNormalizeValue.AsStringView(),
-                                           false, false, false);
+      pFormNode->GetWidgetAcc()->SetSelectedMemberByValue(
+          wsNormalizeValue.AsStringView(), false, false, false);
       break;
     }
     case XFA_Element::DateTimeEdit:
@@ -357,10 +362,11 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                     XFA_Element::DateTime);
       break;
     case XFA_Element::NumericEdit: {
-      WideString wsPicture =
-          pWidgetAcc->GetPictureContent(XFA_VALUEPICTURE_DataBind);
+      WideString wsPicture = pFormNode->GetWidgetAcc()->GetPictureContent(
+          XFA_VALUEPICTURE_DataBind);
       if (wsPicture.IsEmpty())
-        wsNormalizeValue = pWidgetAcc->NormalizeNumStr(wsNormalizeValue);
+        wsNormalizeValue =
+            pFormNode->GetWidgetAcc()->NormalizeNumStr(wsNormalizeValue);
 
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                     XFA_Element::Float);

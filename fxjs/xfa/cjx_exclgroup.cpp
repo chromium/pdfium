@@ -93,12 +93,11 @@ CJS_Return CJX_ExclGroup::selectedMember(
   if (!node->IsWidgetReady())
     return CJS_Return(runtime->NewNull());
 
-  CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
   CXFA_Node* pReturnNode = nullptr;
   if (params.empty()) {
-    pReturnNode = pWidgetAcc->GetSelectedMember();
+    pReturnNode = node->GetWidgetAcc()->GetSelectedMember();
   } else {
-    pReturnNode = pWidgetAcc->SetSelectedMember(
+    pReturnNode = node->GetWidgetAcc()->SetSelectedMember(
         runtime->ToWideString(params[0]).AsStringView(), true);
   }
   if (!pReturnNode)

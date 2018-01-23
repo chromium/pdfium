@@ -292,7 +292,6 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
   if (!node->IsWidgetReady())
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
   CPDF_FormField* pFormField = GetFormField();
   switch (GetFieldType()) {
     case FormFieldType::kCheckBox:
@@ -300,31 +299,37 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
       CPDF_FormControl* pFormCtrl = GetFormControl();
       XFA_CHECKSTATE eCheckState =
           pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
-      pWidgetAcc->SetCheckState(eCheckState, true);
+      node->GetWidgetAcc()->SetCheckState(eCheckState, true);
       break;
     }
     case FormFieldType::kTextField:
-      pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
+      node->GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Edit,
+                                     pFormField->GetValue());
       break;
     case FormFieldType::kListBox: {
-      pWidgetAcc->ClearAllSelections();
+      node->GetWidgetAcc()->ClearAllSelections();
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems(false))
-          pWidgetAcc->SetItemState(nIndex, true, false, false, true);
+        if (nIndex > -1 &&
+            nIndex < node->GetWidgetAcc()->CountChoiceListItems(false)) {
+          node->GetWidgetAcc()->SetItemState(nIndex, true, false, false, true);
+        }
       }
       break;
     }
     case FormFieldType::kComboBox: {
-      pWidgetAcc->ClearAllSelections();
+      node->GetWidgetAcc()->ClearAllSelections();
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems(false))
-          pWidgetAcc->SetItemState(nIndex, true, false, false, true);
+        if (nIndex > -1 &&
+            nIndex < node->GetWidgetAcc()->CountChoiceListItems(false)) {
+          node->GetWidgetAcc()->SetItemState(nIndex, true, false, false, true);
+        }
       }
-      pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
+      node->GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Edit,
+                                     pFormField->GetValue());
       break;
     }
     default:
@@ -333,7 +338,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
 
   if (bSynchronizeElse) {
     CPDFXFA_Context* context = m_pPageView->GetFormFillEnv()->GetXFAContext();
-    context->GetXFADocView()->ProcessValueChanged(pWidgetAcc);
+    context->GetXFADocView()->ProcessValueChanged(node->GetWidgetAcc());
   }
 }
 
@@ -401,9 +406,9 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       pFormField->ClearSelection(false);
 
       if (node->IsWidgetReady()) {
-        CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
-        for (int i = 0, sz = pWidgetAcc->CountSelectedItems(); i < sz; i++) {
-          int nIndex = pWidgetAcc->GetSelectedItem(i);
+        for (int i = 0, sz = node->GetWidgetAcc()->CountSelectedItems(); i < sz;
+             i++) {
+          int nIndex = node->GetWidgetAcc()->GetSelectedItem(i);
 
           if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
             pFormField->SetItemSelection(nIndex, true, true);
@@ -416,16 +421,16 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
       pFormField->ClearSelection(false);
 
       if (node->IsWidgetReady()) {
-        CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
-        for (int i = 0, sz = pWidgetAcc->CountSelectedItems(); i < sz; i++) {
-          int nIndex = pWidgetAcc->GetSelectedItem(i);
+        for (int i = 0, sz = node->GetWidgetAcc()->CountSelectedItems(); i < sz;
+             i++) {
+          int nIndex = node->GetWidgetAcc()->GetSelectedItem(i);
 
           if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
             pFormField->SetItemSelection(nIndex, true, true);
           }
         }
-        pFormField->SetValue(pWidgetAcc->GetValue(XFA_VALUEPICTURE_Display),
-                             true);
+        pFormField->SetValue(
+            node->GetWidgetAcc()->GetValue(XFA_VALUEPICTURE_Display), true);
       }
       break;
     }
@@ -447,11 +452,11 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       pFormField->ClearOptions(true);
 
       if (node->IsWidgetReady()) {
-        CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
-        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
-             i++) {
+        for (int i = 0, sz = node->GetWidgetAcc()->CountChoiceListItems(false);
+             i < sz; i++) {
           pFormField->InsertOption(
-              pWidgetAcc->GetChoiceListItem(i, false).value_or(L""), i, true);
+              node->GetWidgetAcc()->GetChoiceListItem(i, false).value_or(L""),
+              i, true);
         }
       }
       break;
@@ -461,11 +466,11 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       pFormField->ClearOptions(false);
 
       if (node->IsWidgetReady()) {
-        CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
-        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
-             i++) {
+        for (int i = 0, sz = node->GetWidgetAcc()->CountChoiceListItems(false);
+             i < sz; i++) {
           pFormField->InsertOption(
-              pWidgetAcc->GetChoiceListItem(i, false).value_or(L""), i, false);
+              node->GetWidgetAcc()->GetChoiceListItem(i, false).value_or(L""),
+              i, false);
         }
       }
 
@@ -616,9 +621,8 @@ int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady()) {
-      CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
-      if (nIndex < pWidgetAcc->CountSelectedItems())
-        return pWidgetAcc->GetSelectedItem(nIndex);
+      if (nIndex < node->GetWidgetAcc()->CountSelectedItems())
+        return node->GetWidgetAcc()->GetSelectedItem(nIndex);
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -662,9 +666,9 @@ bool CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
     if (node->IsWidgetReady()) {
-      CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
-      if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems(false))
-        return pWidgetAcc->GetItemState(nIndex);
+      if (nIndex > -1 &&
+          nIndex < node->GetWidgetAcc()->CountChoiceListItems(false))
+        return node->GetWidgetAcc()->GetItemState(nIndex);
 
       return false;
     }

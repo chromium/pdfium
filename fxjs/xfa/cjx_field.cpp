@@ -191,14 +191,13 @@ CJS_Return CJX_Field::setItemState(
   if (!node->IsWidgetReady())
     return CJS_Return(true);
 
-  CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (runtime->ToInt32(params[1]) != 0) {
-    pWidgetAcc->SetItemState(iIndex, true, true, true, true);
+    node->GetWidgetAcc()->SetItemState(iIndex, true, true, true, true);
     return CJS_Return(true);
   }
-  if (pWidgetAcc->GetItemState(iIndex))
-    pWidgetAcc->SetItemState(iIndex, false, true, true, true);
+  if (node->GetWidgetAcc()->GetItemState(iIndex))
+    node->GetWidgetAcc()->SetItemState(iIndex, false, true, true, true);
 
   return CJS_Return(true);
 }
@@ -246,7 +245,6 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   if (!xfaNode->IsWidgetReady())
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = xfaNode->GetWidgetAcc();
   if (bSetting) {
     if (pValue) {
       xfaNode->SetPreNull(xfaNode->IsNull());
@@ -258,8 +256,9 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
       wsNewText = pValue->ToWideString();
 
     if (xfaNode->GetUIChild()->GetElementType() == XFA_Element::NumericEdit) {
-      wsNewText = pWidgetAcc->NumericLimit(
-          wsNewText, pWidgetAcc->GetLeadDigits(), pWidgetAcc->GetFracDigits());
+      wsNewText = xfaNode->GetWidgetAcc()->NumericLimit(
+          wsNewText, xfaNode->GetWidgetAcc()->GetLeadDigits(),
+          xfaNode->GetWidgetAcc()->GetFracDigits());
     }
 
     CXFA_Node* pContainerNode = xfaNode->GetContainerNode();
@@ -308,13 +307,15 @@ void CJX_Field::editValue(CFXJSE_Value* pValue,
   if (!node->IsWidgetReady())
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
   if (bSetting) {
-    pWidgetAcc->SetValue(XFA_VALUEPICTURE_Edit, pValue->ToWideString());
+    node->GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Edit,
+                                   pValue->ToWideString());
     return;
   }
-  pValue->SetString(
-      pWidgetAcc->GetValue(XFA_VALUEPICTURE_Edit).UTF8Encode().AsStringView());
+  pValue->SetString(node->GetWidgetAcc()
+                        ->GetValue(XFA_VALUEPICTURE_Edit)
+                        .UTF8Encode()
+                        .AsStringView());
 }
 
 void CJX_Field::formatMessage(CFXJSE_Value* pValue,
@@ -330,12 +331,13 @@ void CJX_Field::formattedValue(CFXJSE_Value* pValue,
   if (!node->IsWidgetReady())
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
   if (bSetting) {
-    pWidgetAcc->SetValue(XFA_VALUEPICTURE_Display, pValue->ToWideString());
+    node->GetWidgetAcc()->SetValue(XFA_VALUEPICTURE_Display,
+                                   pValue->ToWideString());
     return;
   }
-  pValue->SetString(pWidgetAcc->GetValue(XFA_VALUEPICTURE_Display)
+  pValue->SetString(node->GetWidgetAcc()
+                        ->GetValue(XFA_VALUEPICTURE_Display)
                         .UTF8Encode()
                         .AsStringView());
 }
@@ -357,19 +359,18 @@ void CJX_Field::selectedIndex(CFXJSE_Value* pValue,
   if (!node->IsWidgetReady())
     return;
 
-  CXFA_WidgetAcc* pWidgetAcc = node->GetWidgetAcc();
   if (!bSetting) {
-    pValue->SetInteger(pWidgetAcc->GetSelectedItem(0));
+    pValue->SetInteger(node->GetWidgetAcc()->GetSelectedItem(0));
     return;
   }
 
   int32_t iIndex = pValue->ToInteger();
   if (iIndex == -1) {
-    pWidgetAcc->ClearAllSelections();
+    node->GetWidgetAcc()->ClearAllSelections();
     return;
   }
 
-  pWidgetAcc->SetItemState(iIndex, true, true, true, true);
+  node->GetWidgetAcc()->SetItemState(iIndex, true, true, true, true);
 }
 
 void CJX_Field::access(CFXJSE_Value* pValue,
