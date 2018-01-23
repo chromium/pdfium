@@ -28,8 +28,8 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
+#include "xfa/fxfa/cxfa_readynodeiterator.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
-#include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_binditems.h"
 #include "xfa/fxfa/parser/cxfa_calculate.h"
@@ -245,11 +245,11 @@ void CXFA_FFDocView::ResetNode(CXFA_Node* pNode) {
 
   if (pFormNode->GetElementType() != XFA_Element::Field &&
       pFormNode->GetElementType() != XFA_Element::ExclGroup) {
-    CXFA_WidgetAccIterator Iterator(pFormNode);
-    while (CXFA_WidgetAcc* pAcc = Iterator.MoveToNext()) {
-      bChanged |= ResetSingleNodeData(pAcc->GetNode());
-      if (pAcc->GetNode()->GetElementType() == XFA_Element::ExclGroup)
-        Iterator.SkipTree();
+    CXFA_ReadyNodeIterator it(pFormNode);
+    while (CXFA_Node* pNode = it.MoveToNext()) {
+      bChanged |= ResetSingleNodeData(pNode);
+      if (pNode->GetElementType() == XFA_Element::ExclGroup)
+        it.SkipTree();
     }
   }
   if (bChanged)
@@ -312,10 +312,10 @@ CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   return m_pWidgetHandler.get();
 }
 
-std::unique_ptr<CXFA_WidgetAccIterator>
-CXFA_FFDocView::CreateWidgetAccIterator() {
+std::unique_ptr<CXFA_ReadyNodeIterator>
+CXFA_FFDocView::CreateReadyNodeIterator() {
   CXFA_Subform* pFormRoot = GetRootSubform();
-  return pFormRoot ? pdfium::MakeUnique<CXFA_WidgetAccIterator>(pFormRoot)
+  return pFormRoot ? pdfium::MakeUnique<CXFA_ReadyNodeIterator>(pFormRoot)
                    : nullptr;
 }
 

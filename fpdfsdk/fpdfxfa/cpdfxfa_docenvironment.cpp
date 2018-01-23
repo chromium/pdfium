@@ -21,8 +21,8 @@
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
-#include "xfa/fxfa/cxfa_widgetacc.h"
-#include "xfa/fxfa/cxfa_widgetacciterator.h"
+#include "xfa/fxfa/cxfa_readynodeiterator.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_submit.h"
 
 #define IDS_XFA_Validate_Input                                          \
@@ -620,23 +620,23 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
   if (!pWidgetHandler)
     return true;
 
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
-      docView->CreateWidgetAccIterator();
-  if (pWidgetAccIterator) {
+  auto it = docView->CreateReadyNodeIterator();
+  if (it) {
     CXFA_EventParam Param;
     Param.m_eType = XFA_EVENT_PreSubmit;
-    while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext())
-      pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &Param);
+    while (CXFA_Node* pNode = it->MoveToNext())
+      pWidgetHandler->ProcessEvent(pNode, &Param);
   }
 
-  pWidgetAccIterator = docView->CreateWidgetAccIterator();
-  if (!pWidgetAccIterator)
+  it = docView->CreateReadyNodeIterator();
+  if (!it)
     return true;
 
-  CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
-  pWidgetAcc = pWidgetAccIterator->MoveToNext();
-  while (pWidgetAcc) {
-    int fRet = pWidgetAcc->GetNode()->ProcessValidate(docView, -1);
+  (void)it->MoveToNext();
+  CXFA_Node* pNode = it->MoveToNext();
+
+  while (pNode) {
+    int fRet = pNode->ProcessValidate(docView, -1);
     if (fRet == XFA_EVENTERROR_Error) {
       CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
       if (!pFormFillEnv)
@@ -650,7 +650,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       bs.ReleaseBuffer(len);
       return false;
     }
-    pWidgetAcc = pWidgetAccIterator->MoveToNext();
+    pNode = it->MoveToNext();
   }
   docView->UpdateDocView();
 
@@ -669,17 +669,16 @@ void CPDFXFA_DocEnvironment::OnAfterNotifySubmit() {
   if (!pWidgetHandler)
     return;
 
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
-      m_pContext->GetXFADocView()->CreateWidgetAccIterator();
-  if (!pWidgetAccIterator)
+  auto it = m_pContext->GetXFADocView()->CreateReadyNodeIterator();
+  if (!it)
     return;
 
   CXFA_EventParam Param;
   Param.m_eType = XFA_EVENT_PostSubmit;
-  CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext();
-  while (pWidgetAcc) {
-    pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &Param);
-    pWidgetAcc = pWidgetAccIterator->MoveToNext();
+  CXFA_Node* pNode = it->MoveToNext();
+  while (pNode) {
+    pWidgetHandler->ProcessEvent(pNode, &Param);
+    pNode = it->MoveToNext();
   }
   m_pContext->GetXFADocView()->UpdateDocView();
 }

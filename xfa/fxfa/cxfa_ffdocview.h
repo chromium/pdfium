@@ -21,7 +21,7 @@ class CXFA_FFDoc;
 class CXFA_FFWidget;
 class CXFA_Subform;
 class CXFA_WidgetAcc;
-class CXFA_WidgetAccIterator;
+class CXFA_ReadyNodeIterator;
 
 extern const XFA_AttributeEnum gs_EventActivity[];
 enum XFA_DOCVIEW_LAYOUTSTATUS {
@@ -59,7 +59,7 @@ class CXFA_FFDocView {
   int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
                              CXFA_WidgetAcc* pWidgetAcc);
   CXFA_FFWidgetHandler* GetWidgetHandler();
-  std::unique_ptr<CXFA_WidgetAccIterator> CreateWidgetAccIterator();
+  std::unique_ptr<CXFA_ReadyNodeIterator> CreateReadyNodeIterator();
   CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget.Get(); }
   void KillFocus();
   bool SetFocus(CXFA_FFWidget* hWidget);

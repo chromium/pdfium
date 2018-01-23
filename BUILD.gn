@@ -2076,6 +2076,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_loadercontext.h",
       "xfa/fxfa/cxfa_pieceline.cpp",
       "xfa/fxfa/cxfa_pieceline.h",
+      "xfa/fxfa/cxfa_readynodeiterator.cpp",
+      "xfa/fxfa/cxfa_readynodeiterator.h",
       "xfa/fxfa/cxfa_rendercontext.cpp",
       "xfa/fxfa/cxfa_rendercontext.h",
       "xfa/fxfa/cxfa_textlayout.cpp",
@@ -2094,8 +2096,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_textuserdata.h",
       "xfa/fxfa/cxfa_widgetacc.cpp",
       "xfa/fxfa/cxfa_widgetacc.h",
-      "xfa/fxfa/cxfa_widgetacciterator.cpp",
-      "xfa/fxfa/cxfa_widgetacciterator.h",
       "xfa/fxfa/fxfa.h",
       "xfa/fxfa/fxfa_basic.h",
     ]

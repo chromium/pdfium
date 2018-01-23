@@ -31,8 +31,8 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
+#include "xfa/fxfa/cxfa_readynodeiterator.h"
 #include "xfa/fxfa/cxfa_widgetacc.h"
-#include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 #endif
 
@@ -205,12 +205,11 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
-      pXFADocView->CreateWidgetAccIterator();
-  while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
+  auto it = pXFADocView->CreateReadyNodeIterator();
+  while (CXFA_Node* pNode = it->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PostSave;
-    pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &preParam);
+    pWidgetHandler->ProcessEvent(pNode, &preParam);
   }
   pXFADocView->UpdateDocView();
   pContext->ClearChangeMark();
@@ -227,12 +226,11 @@ bool SendPreSaveToXFADoc(CPDFXFA_Context* pContext,
     return true;
 
   CXFA_FFWidgetHandler* pWidgetHandler = pXFADocView->GetWidgetHandler();
-  std::unique_ptr<CXFA_WidgetAccIterator> pWidgetAccIterator =
-      pXFADocView->CreateWidgetAccIterator();
-  while (CXFA_WidgetAcc* pWidgetAcc = pWidgetAccIterator->MoveToNext()) {
+  auto it = pXFADocView->CreateReadyNodeIterator();
+  while (CXFA_Node* pNode = it->MoveToNext()) {
     CXFA_EventParam preParam;
     preParam.m_eType = XFA_EVENT_PreSave;
-    pWidgetHandler->ProcessEvent(pWidgetAcc->GetNode(), &preParam);
+    pWidgetHandler->ProcessEvent(pNode, &preParam);
   }
   pXFADocView->UpdateDocView();
   return SaveXFADocumentData(pContext, fileList);

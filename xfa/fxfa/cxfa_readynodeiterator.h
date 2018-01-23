@@ -4,26 +4,25 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_CXFA_WIDGETACCITERATOR_H_
-#define XFA_FXFA_CXFA_WIDGETACCITERATOR_H_
+#ifndef XFA_FXFA_CXFA_READYNODEITERATOR_H_
+#define XFA_FXFA_CXFA_READYNODEITERATOR_H_
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 
 class CXFA_Node;
-class CXFA_WidgetAcc;
 
-class CXFA_WidgetAccIterator {
+class CXFA_ReadyNodeIterator {
  public:
-  explicit CXFA_WidgetAccIterator(CXFA_Node* pTravelRoot);
-  ~CXFA_WidgetAccIterator();
+  explicit CXFA_ReadyNodeIterator(CXFA_Node* pTravelRoot);
+  ~CXFA_ReadyNodeIterator();
 
-  CXFA_WidgetAcc* MoveToNext();
+  CXFA_Node* MoveToNext();
   void SkipTree();
 
  private:
   CXFA_ContainerIterator m_ContentIterator;
-  UnownedPtr<CXFA_WidgetAcc> m_pCurWidgetAcc;
+  UnownedPtr<CXFA_Node> m_pCurNode;
 };
 
-#endif  // XFA_FXFA_CXFA_WIDGETACCITERATOR_H_
+#endif  // XFA_FXFA_CXFA_READYNODEITERATOR_H_
