@@ -57,18 +57,9 @@ const XFA_AttributeEnum gs_EventActivity[] = {
     XFA_AttributeEnum::Unknown,
 };
 
-CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc)
-    : m_bLayoutEvent(false),
-      m_pListFocusWidget(nullptr),
-      m_bInLayoutStatus(false),
-      m_pDoc(pDoc),
-      m_pXFADocLayout(nullptr),
-      m_iStatus(XFA_DOCVIEW_LAYOUTSTATUS_None),
-      m_iLock(0) {}
+CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
-CXFA_FFDocView::~CXFA_FFDocView() {
-  DestroyDocView();
-}
+CXFA_FFDocView::~CXFA_FFDocView() {}
 
 void CXFA_FFDocView::InitLayout(CXFA_Node* pNode) {
   RunBindItems();
@@ -76,7 +67,7 @@ void CXFA_FFDocView::InitLayout(CXFA_Node* pNode) {
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_IndexChange, false, true);
 }
 
-int32_t CXFA_FFDocView::StartLayout(int32_t iStartPage) {
+int32_t CXFA_FFDocView::StartLayout() {
   m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Start;
   m_pDoc->GetXFADoc()->DoProtoMerge();
   m_pDoc->GetXFADoc()->DoDataMerge();
@@ -273,16 +264,6 @@ CXFA_FFDocView::CreateReadyNodeIterator() {
                    : nullptr;
 }
 
-void CXFA_FFDocView::KillFocus() {
-  if (m_pFocusWidget &&
-      (m_pFocusWidget->GetStatus() & XFA_WidgetStatus_Focused)) {
-    m_pFocusWidget->OnKillFocus(nullptr);
-  }
-  m_pFocusAcc = nullptr;
-  m_pFocusWidget = nullptr;
-  m_pOldFocusWidget = nullptr;
-}
-
 bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
   CXFA_FFWidget* pNewFocus = hWidget;
   if (m_pOldFocusWidget == pNewFocus)
@@ -308,13 +289,6 @@ bool CXFA_FFDocView::SetFocus(CXFA_FFWidget* hWidget) {
     return false;
 
   pNewFocus = m_pOldFocusWidget.Get();
-  if (m_pListFocusWidget && pNewFocus == m_pListFocusWidget) {
-    m_pFocusAcc = nullptr;
-    m_pFocusWidget = nullptr;
-    m_pListFocusWidget = nullptr;
-    m_pOldFocusWidget = nullptr;
-    return false;
-  }
   if (pNewFocus && (pNewFocus->GetStatus() & XFA_WidgetStatus_Visible)) {
     if (!pNewFocus->IsLoaded())
       pNewFocus->LoadWidget();
@@ -471,11 +445,6 @@ void CXFA_FFDocView::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
 }
 
 
-void CXFA_FFDocView::AddInvalidateRect(CXFA_FFWidget* pWidget,
-                                       const CFX_RectF& rtInvalidate) {
-  AddInvalidateRect(pWidget->GetPageView(), rtInvalidate);
-}
-
 void CXFA_FFDocView::AddInvalidateRect(CXFA_FFPageView* pPageView,
                                        const CFX_RectF& rtInvalidate) {
   if (m_mapPageInvalidate[pPageView]) {
@@ -543,15 +512,6 @@ void CXFA_FFDocView::RunDocClose() {
     return;
 
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_DocClose, false, true);
-}
-
-void CXFA_FFDocView::DestroyDocView() {
-  ClearInvalidateList();
-  m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
-  m_iLock = 0;
-  m_ValidateAccs.clear();
-  m_BindItems.clear();
-  m_CalculateAccs.clear();
 }
 
 void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
