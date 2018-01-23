@@ -483,37 +483,21 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
 
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
                                                CXFA_FFWidget* pRefWidget) {
-  CXFA_WidgetAcc* pRefAcc = nullptr;
-  if (pRefWidget) {
-    CXFA_Node* node = pRefWidget->GetNode();
-    pRefAcc = node->IsWidgetReady() ? node->GetWidgetAcc() : nullptr;
-  }
-  CXFA_WidgetAcc* pAcc = GetWidgetAccByName(wsName, pRefAcc);
-  if (!pAcc)
-    return nullptr;
-  return GetWidgetForNode(pAcc->GetNode());
-}
-
-CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
-    const WideString& wsName,
-    CXFA_WidgetAcc* pRefWidgetAcc) {
-  WideString wsExpression;
-  uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
-                     XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   CFXJSE_Engine* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
   if (!pScriptContext)
     return nullptr;
 
-  CXFA_Node* refNode = nullptr;
-  if (pRefWidgetAcc) {
-    refNode = pRefWidgetAcc->GetNode();
-    wsExpression = wsName;
-  } else {
-    wsExpression = L"$form." + wsName;
+  CXFA_Node* pRefNode = nullptr;
+  if (pRefWidget) {
+    CXFA_Node* node = pRefWidget->GetNode();
+    pRefNode = node->IsWidgetReady() ? node : nullptr;
   }
+  WideString wsExpression = (!pRefNode ? L"$form." : L"") + wsName;
 
   XFA_RESOLVENODE_RS resolveNodeRS;
-  if (!pScriptContext->ResolveObjects(refNode, wsExpression.AsStringView(),
+  uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+                     XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
+  if (!pScriptContext->ResolveObjects(pRefNode, wsExpression.AsStringView(),
                                       &resolveNodeRS, dwStyle, nullptr)) {
     return nullptr;
   }
@@ -521,7 +505,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
     CXFA_Node* pNode = resolveNodeRS.objects.front()->AsNode();
     if (pNode && pNode->IsWidgetReady())
-      return pNode->GetWidgetAcc();
+      return GetWidgetForNode(pNode);
   }
   return nullptr;
 }
