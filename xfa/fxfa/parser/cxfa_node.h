@@ -360,10 +360,6 @@ class CXFA_Node : public CXFA_Object {
 
   RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
 
-  // TODO(dsinclair): Remove post WidgetAcc merge.
-  CXFA_Node* GetNode() { return this; }
-
-  bool IsOpenAccess() const;
   bool IsListBox();
   bool IsAllowNeutral();
   bool IsRadioButton();
@@ -371,8 +367,8 @@ class CXFA_Node : public CXFA_Object {
   bool IsMultiLine();
 
   XFA_AttributeEnum GetButtonHighlight();
-  bool HasButtonRollover() const;
-  bool HasButtonDown() const;
+  bool HasButtonRollover();
+  bool HasButtonDown();
 
   bool IsCheckButtonRound();
   XFA_AttributeEnum GetCheckButtonMark();
@@ -539,8 +535,6 @@ class CXFA_Node : public CXFA_Object {
   bool m_bPreNull = true;
   bool is_widget_ready_ = false;
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
-  // TODO(dsinclair): Remove post WidgetAcc merge.
-  CXFA_Node* m_pNode;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_
