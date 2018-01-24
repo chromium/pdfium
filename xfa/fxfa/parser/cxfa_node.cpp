@@ -2521,7 +2521,7 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
   ASSERT(eType == XFA_Element::Field || eType == XFA_Element::Draw);
 
   XFA_Element eWidgetType = XFA_Element::Unknown;
-  XFA_Element eUIType = XFA_Element::Unknown;
+  XFA_Element valueNodeType = XFA_Element::Unknown;
 
   // Both Field and Draw nodes have a Value child. So, we should either always
   // have it, or always create it. If we don't get the Value child for some
@@ -2536,31 +2536,31 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
   if (child) {
     switch (child->GetElementType()) {
       case XFA_Element::Boolean:
-        eUIType = XFA_Element::CheckButton;
+        valueNodeType = XFA_Element::CheckButton;
         break;
       case XFA_Element::Integer:
       case XFA_Element::Decimal:
       case XFA_Element::Float:
-        eUIType = XFA_Element::NumericEdit;
+        valueNodeType = XFA_Element::NumericEdit;
         break;
       case XFA_Element::ExData:
       case XFA_Element::Text:
-        eUIType = XFA_Element::TextEdit;
+        valueNodeType = XFA_Element::TextEdit;
         eWidgetType = XFA_Element::Text;
         break;
       case XFA_Element::Date:
       case XFA_Element::Time:
       case XFA_Element::DateTime:
-        eUIType = XFA_Element::DateTimeEdit;
+        valueNodeType = XFA_Element::DateTimeEdit;
         break;
       case XFA_Element::Image:
-        eUIType = XFA_Element::ImageEdit;
+        valueNodeType = XFA_Element::ImageEdit;
         eWidgetType = XFA_Element::Image;
         break;
       case XFA_Element::Arc:
       case XFA_Element::Line:
       case XFA_Element::Rectangle:
-        eUIType = XFA_Element::DefaultUi;
+        valueNodeType = XFA_Element::DefaultUi;
         eWidgetType = child->GetElementType();
         break;
       default:
@@ -2586,35 +2586,33 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
   }
 
   if (eType == XFA_Element::Draw) {
-    XFA_Element eDraw =
-        pUIChild ? pUIChild->GetElementType() : XFA_Element::Unknown;
-    switch (eDraw) {
-      case XFA_Element::TextEdit:
-        eWidgetType = XFA_Element::Text;
-        break;
-      case XFA_Element::ImageEdit:
-        eWidgetType = XFA_Element::Image;
-        break;
-      default:
-        eWidgetType = eWidgetType == XFA_Element::Unknown ? XFA_Element::Text
-                                                          : eWidgetType;
-        break;
+    if (pUIChild && pUIChild->GetElementType() == XFA_Element::TextEdit) {
+      eWidgetType = XFA_Element::Text;
+    } else if (pUIChild &&
+               pUIChild->GetElementType() == XFA_Element::ImageEdit) {
+      eWidgetType = XFA_Element::Image;
+    } else if (eWidgetType == XFA_Element::Unknown) {
+      eWidgetType = XFA_Element::Text;
     }
-  } else {
+  } else if (eType == XFA_Element::Field) {
     if (pUIChild && pUIChild->GetElementType() == XFA_Element::DefaultUi) {
       eWidgetType = XFA_Element::TextEdit;
+    } else if (pUIChild) {
+      eWidgetType = pUIChild->GetElementType();
+    } else if (valueNodeType == XFA_Element::Unknown) {
+      eWidgetType = XFA_Element::TextEdit;
     } else {
-      eWidgetType =
-          pUIChild ? pUIChild->GetElementType()
-                   : (eUIType == XFA_Element::Unknown ? XFA_Element::TextEdit
-                                                      : eUIType);
+      eWidgetType = valueNodeType;
     }
+  } else {
+    NOTREACHED();
   }
 
   if (!pUIChild) {
-    if (eUIType == XFA_Element::Unknown)
-      eUIType = XFA_Element::TextEdit;
-    pUIChild = pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType);
+    if (valueNodeType == XFA_Element::Unknown)
+      valueNodeType = XFA_Element::TextEdit;
+    pUIChild =
+        pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, valueNodeType);
   }
 
   CreateValueNodeIfNeeded(value, pUIChild);
