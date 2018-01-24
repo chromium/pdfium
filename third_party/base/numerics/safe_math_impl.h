@@ -44,7 +44,11 @@ struct UnsignedOrFloatForSize<Numeric, false, true> {
 };
 
 // Probe for builtin math overflow support on Clang and version check on GCC.
-#if defined(__has_builtin)
+#if defined(EMSCRIPTEN)
+// Emscripten Clang reports that it has the builtins, it may be lowered to an
+// instruction that is unsupported in asm.js
+#define USE_OVERFLOW_BUILTINS (0)
+#elif defined(__has_builtin)
 #define USE_OVERFLOW_BUILTINS (__has_builtin(__builtin_add_overflow))
 #elif defined(__GNUC__)
 #define USE_OVERFLOW_BUILTINS (__GNUC__ >= 5)
