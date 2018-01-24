@@ -35,6 +35,7 @@ namespace {
 // this may be large enough in practice.
 const int32_t kMaxXRefSize = 1048576;
 
+// "%PDF-1.7\n"
 constexpr FX_FILESIZE kPDFHeaderSize = 9;
 
 uint32_t GetVarInt(const uint8_t* p, int32_t n) {
@@ -167,7 +168,7 @@ bool CPDF_Parser::IsObjectFreeOrNull(uint32_t objnum) const {
     case ObjectType::kCompressed:
       return false;
   }
-  ASSERT(false);  // NOTREACHED();
+  NOTREACHED();
   return false;
 }
 
@@ -395,7 +396,7 @@ bool CPDF_Parser::VerifyCrossRefV4() {
       // something is wrong with the cross reference table.
       return false;
     }
-    return true;
+    break;
   }
   return true;
 }
@@ -637,15 +638,13 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
   return true;
 }
 
-bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
-                                 bool bSkip) {
+bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos, bool bSkip) {
   m_pSyntax->SetPos(pos);
   std::vector<CrossRefObjData> objects;
   if (!ParseCrossRefV4(bSkip ? nullptr : &objects))
     return false;
 
   MergeCrossRefObjectsData(objects);
-
   return true;
 }
 
@@ -1077,7 +1076,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     }
   }
 
-  if (arrIndex.size() == 0)
+  if (arrIndex.empty())
     arrIndex.push_back(std::make_pair(0, size));
 
   pArray = pDict->GetArrayFor("W");
