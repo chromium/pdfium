@@ -13,6 +13,8 @@ class CXFA_Ui : public CXFA_Node {
  public:
   CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Ui() override;
+
+  bool IsAOneOfChild(CXFA_Node* child) const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_UI_H_

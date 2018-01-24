@@ -24,7 +24,6 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::NumericEdit, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Signature, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::TextEdit, 1, XFA_PROPERTYFLAG_OneOf},
-    {XFA_Element::ExObject, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
 const CXFA_Node::AttributeData kAttributeData[] = {
@@ -49,3 +48,13 @@ CXFA_Ui::CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Ui>(this)) {}
 
 CXFA_Ui::~CXFA_Ui() {}
+
+bool CXFA_Ui::IsAOneOfChild(CXFA_Node* child) const {
+  for (auto& prop : kPropertyData) {
+    if (prop.property != child->GetElementType())
+      continue;
+    if (!!(prop.flags & XFA_PROPERTYFLAG_OneOf))
+      return true;
+  }
+  return false;
+}

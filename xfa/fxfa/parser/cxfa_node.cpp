@@ -2564,19 +2564,17 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
       break;
   }
 
-  CXFA_Node* pUIChild = nullptr;
+  // Both Field and Draw have a UI property. We should always be able to
+  // retrieve or create the UI element. If we can't something is wrong.
   CXFA_Ui* pUI = JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
-  CXFA_Node* pChild = pUI ? pUI->GetFirstChild() : nullptr;
-  for (; pChild; pChild = pChild->GetNextSibling()) {
-    XFA_Element eChildType = pChild->GetElementType();
-    if (eChildType == XFA_Element::Extras ||
-        eChildType == XFA_Element::Picture) {
-      continue;
-    }
+  ASSERT(pUI);
 
-    auto node = CXFA_Node::Create(pChild->GetDocument(), XFA_Element::Ui,
-                                  XFA_PacketType::Form);
-    if (node && node->HasPropertyFlags(eChildType, XFA_PROPERTYFLAG_OneOf)) {
+  CXFA_Node* pUIChild = nullptr;
+  // Search through the children of the UI node to see if we have any of our
+  // One-Of entries. If so, that is the node associated with our UI.
+  for (CXFA_Node* pChild = pUI->GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    if (pUI->IsAOneOfChild(pChild)) {
       pUIChild = pChild;
       break;
     }
@@ -2614,8 +2612,7 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
       value->JSObject()->GetOrCreateProperty<CXFA_Text>(0, XFA_Element::Text);
     }
     return {eWidgetType,
-            pUI ? pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)
-                : nullptr};
+            pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)};
   }
 
   if (eUIType != XFA_Element::Unknown)
