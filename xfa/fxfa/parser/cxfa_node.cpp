@@ -457,11 +457,9 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
 
 std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
   XFA_Element eType = pNode->GetElementType();
-  XFA_Element eWidgetType = eType;
-  if (eType != XFA_Element::Field && eType != XFA_Element::Draw)
-    return {eWidgetType, nullptr};
+  ASSERT(eType == XFA_Element::Field || eType == XFA_Element::Draw);
 
-  eWidgetType = XFA_Element::Unknown;
+  XFA_Element eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
   auto* defValue =
       pNode->JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
@@ -2666,8 +2664,16 @@ Optional<int8_t> CXFA_Node::GetBarcodeAttribute_WideNarrowRatio() {
 }
 
 CXFA_Node* CXFA_Node::GetUIChild() {
-  if (m_eUIType == XFA_Element::Unknown)
+  if (m_eUIType != XFA_Element::Unknown)
+    return m_pUiChildNode;
+
+  XFA_Element type = GetElementType();
+  if (type == XFA_Element::Field || type == XFA_Element::Draw) {
     std::tie(m_eUIType, m_pUiChildNode) = CreateUIChild(this);
+  } else {
+    m_eUIType = GetElementType();
+    m_pUiChildNode = nullptr;
+  }
   return m_pUiChildNode;
 }
 
