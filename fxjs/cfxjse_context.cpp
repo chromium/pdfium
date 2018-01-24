@@ -69,8 +69,12 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
       hReturnValue->Set(1, hMessage->Get());
     }
     hReturnValue->Set(2, hException);
-    hReturnValue->Set(3, v8::Integer::New(pIsolate, hMessage->GetLineNumber()));
-    hReturnValue->Set(4, hMessage->GetSourceLine());
+    hReturnValue->Set(
+        3, v8::Integer::New(
+               pIsolate, hMessage->GetLineNumber(pIsolate->GetCurrentContext())
+                             .FromMaybe(0)));
+    hReturnValue->Set(4, hMessage->GetSourceLine(pIsolate->GetCurrentContext())
+                             .FromMaybe(v8::Local<v8::String>()));
     v8::Maybe<int32_t> maybe_int =
         hMessage->GetStartColumn(pIsolate->GetCurrentContext());
     hReturnValue->Set(5, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)));
