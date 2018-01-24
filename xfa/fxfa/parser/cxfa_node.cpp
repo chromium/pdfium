@@ -2520,6 +2520,22 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
   XFA_Element eType = GetElementType();
   ASSERT(eType == XFA_Element::Field || eType == XFA_Element::Draw);
 
+  // Both Field and Draw have a UI property. We should always be able to
+  // retrieve or create the UI element. If we can't something is wrong.
+  CXFA_Ui* pUI = JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
+  ASSERT(pUI);
+
+  CXFA_Node* pUIChild = nullptr;
+  // Search through the children of the UI node to see if we have any of our
+  // One-Of entries. If so, that is the node associated with our UI.
+  for (CXFA_Node* pChild = pUI->GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    if (pUI->IsAOneOfChild(pChild)) {
+      pUIChild = pChild;
+      break;
+    }
+  }
+
   XFA_Element eWidgetType = XFA_Element::Unknown;
   XFA_Element valueNodeType = XFA_Element::Unknown;
 
@@ -2566,22 +2582,6 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
       default:
         NOTREACHED();
         break;
-    }
-  }
-
-  // Both Field and Draw have a UI property. We should always be able to
-  // retrieve or create the UI element. If we can't something is wrong.
-  CXFA_Ui* pUI = JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
-  ASSERT(pUI);
-
-  CXFA_Node* pUIChild = nullptr;
-  // Search through the children of the UI node to see if we have any of our
-  // One-Of entries. If so, that is the node associated with our UI.
-  for (CXFA_Node* pChild = pUI->GetFirstChild(); pChild;
-       pChild = pChild->GetNextSibling()) {
-    if (pUI->IsAOneOfChild(pChild)) {
-      pUIChild = pChild;
-      break;
     }
   }
 
