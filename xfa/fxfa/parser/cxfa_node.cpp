@@ -2522,10 +2522,15 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
 
   XFA_Element eWidgetType = XFA_Element::Unknown;
   XFA_Element eUIType = XFA_Element::Unknown;
-  auto* defValue =
+
+  // Both Field and Draw nodes have a Value child. So, we should either always
+  // have it, or always create it. If we don't get the Value child for some
+  // reason something has gone really wrong.
+  CXFA_Value* value =
       JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
-  XFA_Element eValueType =
-      defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
+  ASSERT(value);
+
+  XFA_Element eValueType = value->GetChildValueClassID();
   switch (eValueType) {
     case XFA_Element::Boolean:
       eUIType = XFA_Element::CheckButton;
@@ -2606,10 +2611,7 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
   if (!pUIChild) {
     if (eUIType == XFA_Element::Unknown) {
       eUIType = XFA_Element::TextEdit;
-      if (defValue) {
-        defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
-                                                             XFA_Element::Text);
-      }
+      value->JSObject()->GetOrCreateProperty<CXFA_Text>(0, XFA_Element::Text);
     }
     return {eWidgetType,
             pUI ? pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)
@@ -2656,8 +2658,7 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
       eValueType = XFA_Element::Text;
       break;
   }
-  if (defValue)
-    defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
+  value->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
 
   return {eWidgetType, pUIChild};
 }
