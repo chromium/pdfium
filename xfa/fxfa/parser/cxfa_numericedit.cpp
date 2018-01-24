@@ -40,3 +40,7 @@ CXFA_NumericEdit::CXFA_NumericEdit(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_NumericEdit>(this)) {}
 
 CXFA_NumericEdit::~CXFA_NumericEdit() {}
+
+XFA_Element CXFA_NumericEdit::GetValueNodeType() const {
+  return XFA_Element::Float;
+}

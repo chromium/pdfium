@@ -13,6 +13,8 @@ class CXFA_ChoiceList : public CXFA_Node {
  public:
   CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ChoiceList() override;
+
+  XFA_Element GetValueNodeType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CHOICELIST_H_

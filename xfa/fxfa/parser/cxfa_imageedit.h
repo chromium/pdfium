@@ -13,6 +13,8 @@ class CXFA_ImageEdit : public CXFA_Node {
  public:
   CXFA_ImageEdit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ImageEdit() override;
+
+  XFA_Element GetValueNodeType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_IMAGEEDIT_H_

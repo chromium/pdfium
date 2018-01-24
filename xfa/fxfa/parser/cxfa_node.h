@@ -437,6 +437,8 @@ class CXFA_Node : public CXFA_Object {
                           int32_t iLead,
                           int32_t iTread) const;
 
+  virtual XFA_Element GetValueNodeType() const;
+
  protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
@@ -515,6 +517,7 @@ class CXFA_Node : public CXFA_Object {
   WideString FormatNumStr(const WideString& wsValue, IFX_Locale* pLocale);
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
   std::pair<XFA_Element, CXFA_Node*> CreateUIChild();
+  void CreateValueNodeIfNeeded(CXFA_Value* value, CXFA_Node* pUIChild);
 
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;

@@ -2530,38 +2530,43 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
       JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
   ASSERT(value);
 
-  XFA_Element eValueType = value->GetChildValueClassID();
-  switch (eValueType) {
-    case XFA_Element::Boolean:
-      eUIType = XFA_Element::CheckButton;
-      break;
-    case XFA_Element::Integer:
-    case XFA_Element::Decimal:
-    case XFA_Element::Float:
-      eUIType = XFA_Element::NumericEdit;
-      break;
-    case XFA_Element::ExData:
-    case XFA_Element::Text:
-      eUIType = XFA_Element::TextEdit;
-      eWidgetType = XFA_Element::Text;
-      break;
-    case XFA_Element::Date:
-    case XFA_Element::Time:
-    case XFA_Element::DateTime:
-      eUIType = XFA_Element::DateTimeEdit;
-      break;
-    case XFA_Element::Image:
-      eUIType = XFA_Element::ImageEdit;
-      eWidgetType = XFA_Element::Image;
-      break;
-    case XFA_Element::Arc:
-    case XFA_Element::Line:
-    case XFA_Element::Rectangle:
-      eUIType = XFA_Element::DefaultUi;
-      eWidgetType = eValueType;
-      break;
-    default:
-      break;
+  // The Value nodes only have One-Of children. So, if we have a first child
+  // that child must be the type we want to use.
+  CXFA_Node* child = value->GetFirstChild();
+  if (child) {
+    switch (child->GetElementType()) {
+      case XFA_Element::Boolean:
+        eUIType = XFA_Element::CheckButton;
+        break;
+      case XFA_Element::Integer:
+      case XFA_Element::Decimal:
+      case XFA_Element::Float:
+        eUIType = XFA_Element::NumericEdit;
+        break;
+      case XFA_Element::ExData:
+      case XFA_Element::Text:
+        eUIType = XFA_Element::TextEdit;
+        eWidgetType = XFA_Element::Text;
+        break;
+      case XFA_Element::Date:
+      case XFA_Element::Time:
+      case XFA_Element::DateTime:
+        eUIType = XFA_Element::DateTimeEdit;
+        break;
+      case XFA_Element::Image:
+        eUIType = XFA_Element::ImageEdit;
+        eWidgetType = XFA_Element::Image;
+        break;
+      case XFA_Element::Arc:
+      case XFA_Element::Line:
+      case XFA_Element::Rectangle:
+        eUIType = XFA_Element::DefaultUi;
+        eWidgetType = child->GetElementType();
+        break;
+      default:
+        NOTREACHED();
+        break;
+    }
   }
 
   // Both Field and Draw have a UI property. We should always be able to
@@ -2607,57 +2612,37 @@ std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
   }
 
   if (!pUIChild) {
-    if (eUIType == XFA_Element::Unknown) {
+    if (eUIType == XFA_Element::Unknown)
       eUIType = XFA_Element::TextEdit;
-      value->JSObject()->GetOrCreateProperty<CXFA_Text>(0, XFA_Element::Text);
-    }
-    return {eWidgetType,
-            pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)};
+    pUIChild = pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType);
   }
 
-  if (eUIType != XFA_Element::Unknown)
-    return {eWidgetType, pUIChild};
-
-  switch (pUIChild->GetElementType()) {
-    case XFA_Element::CheckButton: {
-      eValueType = XFA_Element::Text;
-      if (CXFA_Items* pItems =
-              GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
-        if (CXFA_Node* pItem =
-                pItems->GetChild<CXFA_Node>(0, XFA_Element::Unknown, false)) {
-          eValueType = pItem->GetElementType();
-        }
-      }
-      break;
-    }
-    case XFA_Element::DateTimeEdit:
-      eValueType = XFA_Element::DateTime;
-      break;
-    case XFA_Element::ImageEdit:
-      eValueType = XFA_Element::Image;
-      break;
-    case XFA_Element::NumericEdit:
-      eValueType = XFA_Element::Float;
-      break;
-    case XFA_Element::ChoiceList: {
-      eValueType = (pUIChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
-                    XFA_AttributeEnum::MultiSelect)
-                       ? XFA_Element::ExData
-                       : XFA_Element::Text;
-      break;
-    }
-    case XFA_Element::Barcode:
-    case XFA_Element::Button:
-    case XFA_Element::PasswordEdit:
-    case XFA_Element::Signature:
-    case XFA_Element::TextEdit:
-    default:
-      eValueType = XFA_Element::Text;
-      break;
-  }
-  value->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
-
+  CreateValueNodeIfNeeded(value, pUIChild);
   return {eWidgetType, pUIChild};
+}
+
+void CXFA_Node::CreateValueNodeIfNeeded(CXFA_Value* value,
+                                        CXFA_Node* pUIChild) {
+  // Value nodes only have one child. If we have one already we're done.
+  if (value->GetFirstChild() != nullptr)
+    return;
+
+  // Create the Value node for our UI if needed.
+  XFA_Element valueType = pUIChild->GetValueNodeType();
+  if (pUIChild->GetElementType() == XFA_Element::CheckButton) {
+    CXFA_Items* pItems = GetChild<CXFA_Items>(0, XFA_Element::Items, false);
+    if (pItems) {
+      CXFA_Node* pItem =
+          pItems->GetChild<CXFA_Node>(0, XFA_Element::Unknown, false);
+      if (pItem)
+        valueType = pItem->GetElementType();
+    }
+  }
+  value->JSObject()->GetOrCreateProperty<CXFA_Node>(0, valueType);
+}
+
+XFA_Element CXFA_Node::GetValueNodeType() const {
+  return XFA_Element::Text;
 }
 
 CXFA_Node* CXFA_Node::GetUIChild() {

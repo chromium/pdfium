@@ -42,3 +42,10 @@ CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_ChoiceList>(this)) {}
 
 CXFA_ChoiceList::~CXFA_ChoiceList() {}
+
+XFA_Element CXFA_ChoiceList::GetValueNodeType() const {
+  return JSObject()->GetEnum(XFA_Attribute::Open) ==
+                 XFA_AttributeEnum::MultiSelect
+             ? XFA_Element::ExData
+             : XFA_Element::Text;
+}

@@ -187,9 +187,10 @@ class CJX_Object {
                 bool bScriptModify);
   WideString GetCData(XFA_Attribute eAttr);
 
-  Optional<XFA_AttributeEnum> TryEnum(XFA_Attribute eAttr, bool bUseDefault);
+  Optional<XFA_AttributeEnum> TryEnum(XFA_Attribute eAttr,
+                                      bool bUseDefault) const;
   bool SetEnum(XFA_Attribute eAttr, XFA_AttributeEnum eValue, bool bNotify);
-  XFA_AttributeEnum GetEnum(XFA_Attribute eAttr);
+  XFA_AttributeEnum GetEnum(XFA_Attribute eAttr) const;
 
   Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault);
   bool SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
@@ -255,7 +256,7 @@ class CJX_Object {
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
   void SetMapModuleValue(void* pKey, void* pValue);
-  bool GetMapModuleValue(void* pKey, void*& pValue);
+  bool GetMapModuleValue(void* pKey, void*& pValue) const;
   bool GetMapModuleString(void* pKey, WideStringView& wsValue);
   void SetMapModuleBuffer(void* pKey,
                           void* pValue,

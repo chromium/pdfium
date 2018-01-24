@@ -377,7 +377,7 @@ Optional<int32_t> CJX_Object::TryInteger(XFA_Attribute eAttr,
 }
 
 Optional<XFA_AttributeEnum> CJX_Object::TryEnum(XFA_Attribute eAttr,
-                                                bool bUseDefault) {
+                                                bool bUseDefault) const {
   void* pKey = GetMapKey_Element(GetXFAObject()->GetElementType(), eAttr);
   void* pValue = nullptr;
   if (GetMapModuleValue(pKey, pValue)) {
@@ -402,7 +402,7 @@ bool CJX_Object::SetEnum(XFA_Attribute eAttr,
   return true;
 }
 
-XFA_AttributeEnum CJX_Object::GetEnum(XFA_Attribute eAttr) {
+XFA_AttributeEnum CJX_Object::GetEnum(XFA_Attribute eAttr) const {
   return TryEnum(eAttr, true).value_or(XFA_AttributeEnum::Unknown);
 }
 
@@ -969,8 +969,8 @@ void CJX_Object::SetMapModuleValue(void* pKey, void* pValue) {
   CreateMapModuleData()->m_ValueMap[pKey] = pValue;
 }
 
-bool CJX_Object::GetMapModuleValue(void* pKey, void*& pValue) {
-  for (CXFA_Node* pNode = ToNode(GetXFAObject()); pNode;
+bool CJX_Object::GetMapModuleValue(void* pKey, void*& pValue) const {
+  for (const CXFA_Node* pNode = ToNode(GetXFAObject()); pNode;
        pNode = pNode->GetTemplateNodeIfExists()) {
     XFA_MAPMODULEDATA* pModule = pNode->JSObject()->GetMapModuleData();
     if (pModule) {

@@ -39,3 +39,7 @@ CXFA_ImageEdit::CXFA_ImageEdit(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_ImageEdit>(this)) {}
 
 CXFA_ImageEdit::~CXFA_ImageEdit() {}
+
+XFA_Element CXFA_ImageEdit::GetValueNodeType() const {
+  return XFA_Element::Image;
+}

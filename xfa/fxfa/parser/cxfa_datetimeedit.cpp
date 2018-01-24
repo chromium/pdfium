@@ -42,3 +42,7 @@ CXFA_DateTimeEdit::CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_DateTimeEdit>(this)) {}
 
 CXFA_DateTimeEdit::~CXFA_DateTimeEdit() {}
+
+XFA_Element CXFA_DateTimeEdit::GetValueNodeType() const {
+  return XFA_Element::DateTime;
+}
