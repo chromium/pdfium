@@ -514,6 +514,7 @@ class CXFA_Node : public CXFA_Object {
                           int32_t nIndex);
   WideString FormatNumStr(const WideString& wsValue, IFX_Locale* pLocale);
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
+  std::pair<XFA_Element, CXFA_Node*> CreateUIChild();
 
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;

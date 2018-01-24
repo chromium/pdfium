@@ -455,153 +455,6 @@ void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
   }
 }
 
-std::pair<XFA_Element, CXFA_Node*> CreateUIChild(CXFA_Node* pNode) {
-  XFA_Element eType = pNode->GetElementType();
-  ASSERT(eType == XFA_Element::Field || eType == XFA_Element::Draw);
-
-  XFA_Element eWidgetType = XFA_Element::Unknown;
-  XFA_Element eUIType = XFA_Element::Unknown;
-  auto* defValue =
-      pNode->JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
-  XFA_Element eValueType =
-      defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
-  switch (eValueType) {
-    case XFA_Element::Boolean:
-      eUIType = XFA_Element::CheckButton;
-      break;
-    case XFA_Element::Integer:
-    case XFA_Element::Decimal:
-    case XFA_Element::Float:
-      eUIType = XFA_Element::NumericEdit;
-      break;
-    case XFA_Element::ExData:
-    case XFA_Element::Text:
-      eUIType = XFA_Element::TextEdit;
-      eWidgetType = XFA_Element::Text;
-      break;
-    case XFA_Element::Date:
-    case XFA_Element::Time:
-    case XFA_Element::DateTime:
-      eUIType = XFA_Element::DateTimeEdit;
-      break;
-    case XFA_Element::Image:
-      eUIType = XFA_Element::ImageEdit;
-      eWidgetType = XFA_Element::Image;
-      break;
-    case XFA_Element::Arc:
-    case XFA_Element::Line:
-    case XFA_Element::Rectangle:
-      eUIType = XFA_Element::DefaultUi;
-      eWidgetType = eValueType;
-      break;
-    default:
-      break;
-  }
-
-  CXFA_Node* pUIChild = nullptr;
-  CXFA_Ui* pUI =
-      pNode->JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
-  CXFA_Node* pChild = pUI ? pUI->GetFirstChild() : nullptr;
-  for (; pChild; pChild = pChild->GetNextSibling()) {
-    XFA_Element eChildType = pChild->GetElementType();
-    if (eChildType == XFA_Element::Extras ||
-        eChildType == XFA_Element::Picture) {
-      continue;
-    }
-
-    auto node = CXFA_Node::Create(pChild->GetDocument(), XFA_Element::Ui,
-                                  XFA_PacketType::Form);
-    if (node && node->HasPropertyFlags(eChildType, XFA_PROPERTYFLAG_OneOf)) {
-      pUIChild = pChild;
-      break;
-    }
-  }
-
-  if (eType == XFA_Element::Draw) {
-    XFA_Element eDraw =
-        pUIChild ? pUIChild->GetElementType() : XFA_Element::Unknown;
-    switch (eDraw) {
-      case XFA_Element::TextEdit:
-        eWidgetType = XFA_Element::Text;
-        break;
-      case XFA_Element::ImageEdit:
-        eWidgetType = XFA_Element::Image;
-        break;
-      default:
-        eWidgetType = eWidgetType == XFA_Element::Unknown ? XFA_Element::Text
-                                                          : eWidgetType;
-        break;
-    }
-  } else {
-    if (pUIChild && pUIChild->GetElementType() == XFA_Element::DefaultUi) {
-      eWidgetType = XFA_Element::TextEdit;
-    } else {
-      eWidgetType =
-          pUIChild ? pUIChild->GetElementType()
-                   : (eUIType == XFA_Element::Unknown ? XFA_Element::TextEdit
-                                                      : eUIType);
-    }
-  }
-
-  if (!pUIChild) {
-    if (eUIType == XFA_Element::Unknown) {
-      eUIType = XFA_Element::TextEdit;
-      if (defValue) {
-        defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
-                                                             XFA_Element::Text);
-      }
-    }
-    return {eWidgetType,
-            pUI ? pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)
-                : nullptr};
-  }
-
-  if (eUIType != XFA_Element::Unknown)
-    return {eWidgetType, pUIChild};
-
-  switch (pUIChild->GetElementType()) {
-    case XFA_Element::CheckButton: {
-      eValueType = XFA_Element::Text;
-      if (CXFA_Items* pItems =
-              pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
-        if (CXFA_Node* pItem =
-                pItems->GetChild<CXFA_Node>(0, XFA_Element::Unknown, false)) {
-          eValueType = pItem->GetElementType();
-        }
-      }
-      break;
-    }
-    case XFA_Element::DateTimeEdit:
-      eValueType = XFA_Element::DateTime;
-      break;
-    case XFA_Element::ImageEdit:
-      eValueType = XFA_Element::Image;
-      break;
-    case XFA_Element::NumericEdit:
-      eValueType = XFA_Element::Float;
-      break;
-    case XFA_Element::ChoiceList: {
-      eValueType = (pUIChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
-                    XFA_AttributeEnum::MultiSelect)
-                       ? XFA_Element::ExData
-                       : XFA_Element::Text;
-      break;
-    }
-    case XFA_Element::Barcode:
-    case XFA_Element::Button:
-    case XFA_Element::PasswordEdit:
-    case XFA_Element::Signature:
-    case XFA_Element::TextEdit:
-    default:
-      eValueType = XFA_Element::Text;
-      break;
-  }
-  if (defValue)
-    defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
-
-  return {eWidgetType, pUIChild};
-}
-
 float GetEdgeThickness(const std::vector<CXFA_Stroke*>& strokes,
                        bool b3DStyle,
                        int32_t nIndex) {
@@ -2663,13 +2516,159 @@ Optional<int8_t> CXFA_Node::GetBarcodeAttribute_WideNarrowRatio() {
   return {static_cast<int8_t>(result)};
 }
 
+std::pair<XFA_Element, CXFA_Node*> CXFA_Node::CreateUIChild() {
+  XFA_Element eType = GetElementType();
+  ASSERT(eType == XFA_Element::Field || eType == XFA_Element::Draw);
+
+  XFA_Element eWidgetType = XFA_Element::Unknown;
+  XFA_Element eUIType = XFA_Element::Unknown;
+  auto* defValue =
+      JSObject()->GetOrCreateProperty<CXFA_Value>(0, XFA_Element::Value);
+  XFA_Element eValueType =
+      defValue ? defValue->GetChildValueClassID() : XFA_Element::Unknown;
+  switch (eValueType) {
+    case XFA_Element::Boolean:
+      eUIType = XFA_Element::CheckButton;
+      break;
+    case XFA_Element::Integer:
+    case XFA_Element::Decimal:
+    case XFA_Element::Float:
+      eUIType = XFA_Element::NumericEdit;
+      break;
+    case XFA_Element::ExData:
+    case XFA_Element::Text:
+      eUIType = XFA_Element::TextEdit;
+      eWidgetType = XFA_Element::Text;
+      break;
+    case XFA_Element::Date:
+    case XFA_Element::Time:
+    case XFA_Element::DateTime:
+      eUIType = XFA_Element::DateTimeEdit;
+      break;
+    case XFA_Element::Image:
+      eUIType = XFA_Element::ImageEdit;
+      eWidgetType = XFA_Element::Image;
+      break;
+    case XFA_Element::Arc:
+    case XFA_Element::Line:
+    case XFA_Element::Rectangle:
+      eUIType = XFA_Element::DefaultUi;
+      eWidgetType = eValueType;
+      break;
+    default:
+      break;
+  }
+
+  CXFA_Node* pUIChild = nullptr;
+  CXFA_Ui* pUI = JSObject()->GetOrCreateProperty<CXFA_Ui>(0, XFA_Element::Ui);
+  CXFA_Node* pChild = pUI ? pUI->GetFirstChild() : nullptr;
+  for (; pChild; pChild = pChild->GetNextSibling()) {
+    XFA_Element eChildType = pChild->GetElementType();
+    if (eChildType == XFA_Element::Extras ||
+        eChildType == XFA_Element::Picture) {
+      continue;
+    }
+
+    auto node = CXFA_Node::Create(pChild->GetDocument(), XFA_Element::Ui,
+                                  XFA_PacketType::Form);
+    if (node && node->HasPropertyFlags(eChildType, XFA_PROPERTYFLAG_OneOf)) {
+      pUIChild = pChild;
+      break;
+    }
+  }
+
+  if (eType == XFA_Element::Draw) {
+    XFA_Element eDraw =
+        pUIChild ? pUIChild->GetElementType() : XFA_Element::Unknown;
+    switch (eDraw) {
+      case XFA_Element::TextEdit:
+        eWidgetType = XFA_Element::Text;
+        break;
+      case XFA_Element::ImageEdit:
+        eWidgetType = XFA_Element::Image;
+        break;
+      default:
+        eWidgetType = eWidgetType == XFA_Element::Unknown ? XFA_Element::Text
+                                                          : eWidgetType;
+        break;
+    }
+  } else {
+    if (pUIChild && pUIChild->GetElementType() == XFA_Element::DefaultUi) {
+      eWidgetType = XFA_Element::TextEdit;
+    } else {
+      eWidgetType =
+          pUIChild ? pUIChild->GetElementType()
+                   : (eUIType == XFA_Element::Unknown ? XFA_Element::TextEdit
+                                                      : eUIType);
+    }
+  }
+
+  if (!pUIChild) {
+    if (eUIType == XFA_Element::Unknown) {
+      eUIType = XFA_Element::TextEdit;
+      if (defValue) {
+        defValue->JSObject()->GetOrCreateProperty<CXFA_Text>(0,
+                                                             XFA_Element::Text);
+      }
+    }
+    return {eWidgetType,
+            pUI ? pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eUIType)
+                : nullptr};
+  }
+
+  if (eUIType != XFA_Element::Unknown)
+    return {eWidgetType, pUIChild};
+
+  switch (pUIChild->GetElementType()) {
+    case XFA_Element::CheckButton: {
+      eValueType = XFA_Element::Text;
+      if (CXFA_Items* pItems =
+              GetChild<CXFA_Items>(0, XFA_Element::Items, false)) {
+        if (CXFA_Node* pItem =
+                pItems->GetChild<CXFA_Node>(0, XFA_Element::Unknown, false)) {
+          eValueType = pItem->GetElementType();
+        }
+      }
+      break;
+    }
+    case XFA_Element::DateTimeEdit:
+      eValueType = XFA_Element::DateTime;
+      break;
+    case XFA_Element::ImageEdit:
+      eValueType = XFA_Element::Image;
+      break;
+    case XFA_Element::NumericEdit:
+      eValueType = XFA_Element::Float;
+      break;
+    case XFA_Element::ChoiceList: {
+      eValueType = (pUIChild->JSObject()->GetEnum(XFA_Attribute::Open) ==
+                    XFA_AttributeEnum::MultiSelect)
+                       ? XFA_Element::ExData
+                       : XFA_Element::Text;
+      break;
+    }
+    case XFA_Element::Barcode:
+    case XFA_Element::Button:
+    case XFA_Element::PasswordEdit:
+    case XFA_Element::Signature:
+    case XFA_Element::TextEdit:
+    default:
+      eValueType = XFA_Element::Text;
+      break;
+  }
+  if (defValue)
+    defValue->JSObject()->GetOrCreateProperty<CXFA_Node>(0, eValueType);
+
+  return {eWidgetType, pUIChild};
+}
+
 CXFA_Node* CXFA_Node::GetUIChild() {
   if (m_eUIType != XFA_Element::Unknown)
     return m_pUiChildNode;
 
   XFA_Element type = GetElementType();
   if (type == XFA_Element::Field || type == XFA_Element::Draw) {
-    std::tie(m_eUIType, m_pUiChildNode) = CreateUIChild(this);
+    std::tie(m_eUIType, m_pUiChildNode) = CreateUIChild();
   } else {
     m_eUIType = GetElementType();
     m_pUiChildNode = nullptr;
