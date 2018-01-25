@@ -17,7 +17,6 @@
 #include "xfa/fxfa/cxfa_ffdatetimeedit.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
-#include "xfa/fxfa/cxfa_ffdraw.h"
 #include "xfa/fxfa/cxfa_ffexclgroup.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffimage.h"
@@ -167,9 +166,6 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
       break;
     case XFA_Element::Image:
       pWidget = new CXFA_FFImage(pNode);
-      break;
-    case XFA_Element::Draw:
-      pWidget = new CXFA_FFDraw(pNode);
       break;
     case XFA_Element::Subform:
       pWidget = new CXFA_FFSubForm(pNode);

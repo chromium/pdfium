@@ -12,8 +12,10 @@
 
 class CXFA_FFDraw : public CXFA_FFWidget {
  public:
-  explicit CXFA_FFDraw(CXFA_Node* pNode);
   ~CXFA_FFDraw() override;
+
+ protected:
+  explicit CXFA_FFDraw(CXFA_Node* pNode);
 };
 
 #endif  // XFA_FXFA_CXFA_FFDRAW_H_
