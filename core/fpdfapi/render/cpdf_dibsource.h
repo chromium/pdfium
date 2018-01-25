@@ -72,15 +72,15 @@ class CPDF_DIBSource : public CFX_DIBSource {
                          uint32_t GroupFamily = 0,
                          bool bLoadMask = false);
   int ContinueLoadDIBSource(IFX_PauseIndicator* pPause);
-  int StartLoadMask();
-  int StartLoadMaskDIB();
-  int ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
-  bool ContinueToLoadMask();
   RetainPtr<CPDF_DIBSource> DetachMask();
 
  private:
   CPDF_DIBSource();
 
+  int StartLoadMask();
+  int StartLoadMaskDIB();
+  bool ContinueToLoadMask();
+  int ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
   DIB_COMP_DATA* GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey);
