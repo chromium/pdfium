@@ -68,7 +68,7 @@ class GoldBaseline(object):
     GOLD_BASELINE_URL = ('https://storage.googleapis.com/skia-infra-gm/'
                          'hash_files/gold-pdfium-baseline.json')
     try:
-      response = urllib2.urlopen(GOLD_BASELINE_URL)
+      response = urllib2.urlopen(GOLD_BASELINE_URL, timeout=2)
       json_data = response.read()
     except (urllib2.HTTPError, urllib2.URLError) as e:
       print ('Error: Unable to read skia gold json from %s: %s'
