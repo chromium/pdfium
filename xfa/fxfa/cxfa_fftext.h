@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_CXFA_FFTEXT_H_
 #define XFA_FXFA_CXFA_FFTEXT_H_
 
-#include "xfa/fxfa/cxfa_ffdraw.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFText : public CXFA_FFDraw {
+class CXFA_FFText : public CXFA_FFWidget {
  public:
   explicit CXFA_FFText(CXFA_Node* pNode);
   ~CXFA_FFText() override;

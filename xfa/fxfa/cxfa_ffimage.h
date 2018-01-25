@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_CXFA_FFIMAGE_H_
 #define XFA_FXFA_CXFA_FFIMAGE_H_
 
-#include "xfa/fxfa/cxfa_ffdraw.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFImage : public CXFA_FFDraw {
+class CXFA_FFImage : public CXFA_FFWidget {
  public:
   explicit CXFA_FFImage(CXFA_Node* pNode);
   ~CXFA_FFImage() override;

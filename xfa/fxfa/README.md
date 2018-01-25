@@ -6,12 +6,11 @@ The main hierarchy in this directory are the form elements:
     * CXFA_ContentLayoutItem
         * CXFA_FFPageView
         * CXFA_FFWidget
-            * CXFA_FFDraw
-                * CXFA_FFArc
-                * CXFA_FFImage
-                * CXFA_FFLine
-                * CXFA_FFRectangle
-                * CXFA_FFText
+            * CXFA_FFArc
+            * CXFA_FFImage
+            * CXFA_FFLine
+            * CXFA_FFRectangle
+            * CXFA_FFText
             * CXFA_FFExclGroup
             * CXFA_FFField
                 * CXFA_FFCheckButton
@@ -25,9 +24,6 @@ The main hierarchy in this directory are the form elements:
                     * CXFA_FFDateTimeEdit
                     * CXFA_FFNumericEdit
                     * CXFA_FFPasswordEdit
-            * CXFA_FFSubform
-
-CXFA_FFDraw is the base class for static elements like text and images.
 
 CXFA_FFField is the base class for widgets. It owns a lower level CFWL widget
 instance from xfa/fwl. The correspondence is:

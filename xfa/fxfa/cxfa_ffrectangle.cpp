@@ -9,7 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-CXFA_FFRectangle::CXFA_FFRectangle(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
+CXFA_FFRectangle::CXFA_FFRectangle(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFRectangle::~CXFA_FFRectangle() {}
 

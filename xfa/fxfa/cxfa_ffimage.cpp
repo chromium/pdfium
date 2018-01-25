@@ -9,14 +9,13 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
-#include "xfa/fxfa/cxfa_ffdraw.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_image.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-CXFA_FFImage::CXFA_FFImage(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
+CXFA_FFImage::CXFA_FFImage(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFImage::~CXFA_FFImage() {
   CXFA_FFImage::UnloadWidget();
@@ -30,7 +29,7 @@ bool CXFA_FFImage::LoadWidget() {
   if (GetNode()->GetImageImage())
     return true;
 
-  return GetNode()->LoadImageImage(GetDoc()) ? CXFA_FFDraw::LoadWidget()
+  return GetNode()->LoadImageImage(GetDoc()) ? CXFA_FFWidget::LoadWidget()
                                              : false;
 }
 

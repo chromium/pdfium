@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_CXFA_FFARC_H_
 #define XFA_FXFA_CXFA_FFARC_H_
 
-#include "xfa/fxfa/cxfa_ffdraw.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFArc : public CXFA_FFDraw {
+class CXFA_FFArc : public CXFA_FFWidget {
  public:
   explicit CXFA_FFArc(CXFA_Node* pnode);
   ~CXFA_FFArc() override;

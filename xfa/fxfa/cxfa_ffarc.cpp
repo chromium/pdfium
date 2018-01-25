@@ -9,7 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_arc.h"
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-CXFA_FFArc::CXFA_FFArc(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
+CXFA_FFArc::CXFA_FFArc(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFArc::~CXFA_FFArc() {}
 

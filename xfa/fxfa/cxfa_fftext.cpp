@@ -10,7 +10,6 @@
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
-#include "xfa/fxfa/cxfa_ffdraw.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_linkuserdata.h"
@@ -20,7 +19,7 @@
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
 
-CXFA_FFText::CXFA_FFText(CXFA_Node* pNode) : CXFA_FFDraw(pNode) {}
+CXFA_FFText::CXFA_FFText(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFText::~CXFA_FFText() {}
 
@@ -71,7 +70,7 @@ bool CXFA_FFText::IsLoaded() {
 }
 
 bool CXFA_FFText::PerformLayout() {
-  CXFA_FFDraw::PerformLayout();
+  CXFA_FFWidget::PerformLayout();
   CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
   if (!pTextLayout)
     return false;

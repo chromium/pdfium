@@ -29,7 +29,6 @@
 #include "xfa/fxfa/cxfa_ffpushbutton.h"
 #include "xfa/fxfa/cxfa_ffrectangle.h"
 #include "xfa/fxfa/cxfa_ffsignature.h"
-#include "xfa/fxfa/cxfa_ffsubform.h"
 #include "xfa/fxfa/cxfa_fftext.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
@@ -168,7 +167,7 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
       pWidget = new CXFA_FFImage(pNode);
       break;
     case XFA_Element::Subform:
-      pWidget = new CXFA_FFSubForm(pNode);
+      pWidget = new CXFA_FFWidget(pNode);
       break;
     case XFA_Element::ExclGroup:
       pWidget = new CXFA_FFExclGroup(pNode);
