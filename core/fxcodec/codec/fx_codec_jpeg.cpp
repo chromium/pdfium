@@ -419,8 +419,10 @@ CJpegContext::~CJpegContext() {
 std::unique_ptr<CCodec_JpegModule::Context> CCodec_JpegModule::Start() {
   // Use ordinary pointer until past the possibility of a longjump.
   auto* pContext = new CJpegContext();
-  if (setjmp(pContext->m_JumpMark) == -1)
+  if (setjmp(pContext->m_JumpMark) == -1) {
+    delete pContext;
     return nullptr;
+  }
 
   jpeg_create_decompress(&pContext->m_Info);
   pContext->m_Info.src = &pContext->m_SrcMgr;
