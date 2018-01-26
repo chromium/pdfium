@@ -192,7 +192,7 @@ class CFX_BilinearMatrix : public CPDF_FixedMatrix {
     *res_y = static_cast<int>(fmodf(val.second, kBase));
     if (*res_x < 0 && *res_x > -kBase)
       *res_x = kBase + *res_x;
-    if (*res_y < 0 && *res_x > -kBase)
+    if (*res_y < 0 && *res_y > -kBase)
       *res_y = kBase + *res_y;
   }
 };
