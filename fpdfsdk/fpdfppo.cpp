@@ -70,8 +70,8 @@ bool CopyInheritable(CPDF_Dictionary* pCurPageDict,
 }
 
 bool ParserPageRangeString(ByteString rangstring,
-                           std::vector<uint16_t>* pageArray,
-                           int nCount) {
+                           int nCount,
+                           std::vector<uint16_t>* pageArray) {
   if (rangstring.IsEmpty())
     return true;
 
@@ -120,6 +120,21 @@ bool ParserPageRangeString(ByteString rangstring,
       }
     }
     nStringFrom = nStringTo.value() + 1;
+  }
+  return true;
+}
+
+bool GetPageNumbers(ByteString pageRange,
+                    CPDF_Document* pSrcDoc,
+                    std::vector<uint16_t>* pageArray) {
+  uint16_t nCount = pSrcDoc->GetPageCount();
+  if (!pageRange.IsEmpty()) {
+    if (!ParserPageRangeString(pageRange, nCount, pageArray))
+      return false;
+  } else {
+    for (uint16_t i = 1; i <= nCount; ++i) {
+      pageArray->push_back(i);
+    }
   }
   return true;
 }
@@ -358,18 +373,15 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
     return false;
 
   std::vector<uint16_t> pageArray;
-  int nCount = pSrcDoc->GetPageCount();
-  if (pagerange) {
-    if (!ParserPageRangeString(pagerange, &pageArray, nCount))
-      return false;
-  } else {
-    for (int i = 1; i <= nCount; ++i) {
-      pageArray.push_back(i);
-    }
-  }
+  if (!GetPageNumbers(pagerange, pSrcDoc, &pageArray))
+    return false;
 
   CPDF_PageOrganizer pageOrg(pDestDoc, pSrcDoc);
-  return pageOrg.PDFDocInit() && pageOrg.ExportPage(pageArray, index);
+
+  if (!pageOrg.PDFDocInit())
+    return false;
+
+  return pageOrg.ExportPage(pageArray, index);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
