@@ -116,9 +116,9 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   void* m_pPlatformGraphics;
 #endif
   int m_FillFlags;
-  bool m_bRgbByteOrder;
+  const bool m_bRgbByteOrder;
   RetainPtr<CFX_DIBitmap> m_pOriDevice;
-  bool m_bGroupKnockout;
+  const bool m_bGroupKnockout;
 };
 
 #endif  // CORE_FXGE_AGG_FX_AGG_DRIVER_H_

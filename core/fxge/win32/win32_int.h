@@ -323,7 +323,7 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
                       uint32_t color) override;
 
   HDC m_hDC;
-  bool m_bCmykOutput;
+  const bool m_bCmykOutput;
   int m_Width;
   int m_Height;
   int m_nBitsPerPixel;
@@ -386,11 +386,11 @@ class CTextOnlyPrinterDriver : public IFX_RenderDeviceDriver {
                       uint32_t color) override;
 
   HDC m_hDC;
-  int m_Width;
-  int m_Height;
+  const int m_Width;
+  const int m_Height;
   int m_nBitsPerPixel;
-  int m_HorzSize;
-  int m_VertSize;
+  const int m_HorzSize;
+  const int m_VertSize;
   float m_OriginY;
   bool m_SetOrigin;
 };
