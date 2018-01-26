@@ -20,7 +20,6 @@ class BarcodeTest : public testing::Test {
  public:
   void SetUp() override {
     BC_Library_Init();
-    barcode_ = pdfium::MakeUnique<CFX_Barcode>();
 
     auto device = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -41,7 +40,8 @@ class BarcodeTest : public testing::Test {
   CFX_Barcode* barcode() const { return barcode_.get(); }
 
   bool Create(BC_TYPE type) {
-    if (!barcode_->Create(type))
+    barcode_ = CFX_Barcode::Create(type);
+    if (!barcode_)
       return false;
 
     barcode_->SetModuleHeight(300);

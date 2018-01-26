@@ -22,10 +22,9 @@ class CFX_Matrix;
 
 class CFX_Barcode {
  public:
-  CFX_Barcode();
   ~CFX_Barcode();
 
-  bool Create(BC_TYPE type);
+  static std::unique_ptr<CFX_Barcode> Create(BC_TYPE type);
   BC_TYPE GetType();
   bool Encode(const WideStringView& contents);
 
@@ -56,6 +55,8 @@ class CFX_Barcode {
   bool SetTruncated(bool truncated);
 
  private:
+  CFX_Barcode();
+
   std::unique_ptr<CBC_CodeBase> m_pBCEngine;
 };
 

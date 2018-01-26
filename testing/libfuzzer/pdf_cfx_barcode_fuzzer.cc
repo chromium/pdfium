@@ -17,20 +17,20 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   data += sizeof(wchar_t);
   size -= sizeof(wchar_t);
 
-  CFX_Barcode barcode;
-  if (!barcode.Create(type))
+  auto barcode = CFX_Barcode::Create(type);
+  if (!barcode)
     return 0;
 
   // TODO(tsepez): Setup more options from |data|.
-  barcode.SetModuleHeight(300);
-  barcode.SetModuleWidth(420);
-  barcode.SetHeight(298);
-  barcode.SetWidth(418);
+  barcode->SetModuleHeight(300);
+  barcode->SetModuleWidth(420);
+  barcode->SetHeight(298);
+  barcode->SetWidth(418);
 
   WideStringView content(reinterpret_cast<const wchar_t*>(data),
                          size / sizeof(wchar_t));
 
-  if (!barcode.Encode(content))
+  if (!barcode->Encode(content))
     return 0;
 
   // TODO(tsepez): Output to device.

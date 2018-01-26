@@ -59,9 +59,11 @@ CFX_Barcode::CFX_Barcode() {}
 
 CFX_Barcode::~CFX_Barcode() {}
 
-bool CFX_Barcode::Create(BC_TYPE type) {
-  m_pBCEngine = CreateBarCodeEngineObject(type);
-  return !!m_pBCEngine;
+std::unique_ptr<CFX_Barcode> CFX_Barcode::Create(BC_TYPE type) {
+  auto barcodeEngine = CreateBarCodeEngineObject(type);
+  std::unique_ptr<CFX_Barcode> barcode(new CFX_Barcode());
+  barcode->m_pBCEngine.swap(barcodeEngine);
+  return barcode;
 }
 
 BC_TYPE CFX_Barcode::GetType() {
