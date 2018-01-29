@@ -103,8 +103,6 @@ class CXFA_Node : public CXFA_Object {
 
   ~CXFA_Node() override;
 
-  bool IsValidInPacket(XFA_PacketType packet) const;
-
   bool HasProperty(XFA_Element property) const;
   bool HasPropertyFlags(XFA_Element property, uint8_t flags) const;
   uint8_t PropertyOccuranceCount(XFA_Element property) const;
@@ -130,7 +128,6 @@ class CXFA_Node : public CXFA_Object {
                   bool bMoveDataBindingNodes);
 
   bool IsInitialized() const { return HasFlag(XFA_NodeFlag_Initialized); }
-  bool IsOwnXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }
   bool IsUserInteractive() const {
     return HasFlag(XFA_NodeFlag_UserInteractive);
   }
@@ -139,31 +136,19 @@ class CXFA_Node : public CXFA_Object {
     return HasFlag(XFA_NodeFlag_LayoutGeneratedNode);
   }
 
-  void SetBindingNodes(std::vector<UnownedPtr<CXFA_Node>> nodes) {
-    binding_nodes_ = std::move(nodes);
-  }
-  std::vector<UnownedPtr<CXFA_Node>>* GetBindingNodes() {
-    return &binding_nodes_;
-  }
   void SetBindingNode(CXFA_Node* node) {
     binding_nodes_.clear();
     if (node)
       binding_nodes_.emplace_back(node);
   }
-  CXFA_Node* GetBindingNode() const {
-    if (binding_nodes_.empty())
-      return nullptr;
-    return binding_nodes_[0].Get();
-  }
+
   // TODO(dsinclair): This should not be needed. Nodes should get un-bound when
   // they're deleted instead of us pointing to bad objects.
   void ReleaseBindingNodes();
 
-  bool BindsFormItems() const { return HasFlag(XFA_NodeFlag_BindFormItems); }
   bool HasRemovedChildren() const {
     return HasFlag(XFA_NodeFlag_HasRemovedChildren);
   }
-  bool NeedsInitApp() const { return HasFlag(XFA_NodeFlag_NeedsInitApp); }
 
   bool IsAttributeInXML();
   bool IsFormContainer() const {
@@ -237,24 +222,21 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Node* GetInstanceMgrOfSubform();
 
-  CXFA_Occur* GetOccurIfExists();
-
   Optional<bool> GetDefaultBoolean(XFA_Attribute attr) const;
   Optional<int32_t> GetDefaultInteger(XFA_Attribute attr) const;
   Optional<CXFA_Measurement> GetDefaultMeasurement(XFA_Attribute attr) const;
   Optional<WideString> GetDefaultCData(XFA_Attribute attr) const;
   Optional<XFA_AttributeEnum> GetDefaultEnum(XFA_Attribute attr) const;
 
-  void SyncValue(const WideString& wsValue, bool bNotify);
-
   bool IsOpenAccess();
 
+  CXFA_Occur* GetOccurIfExists();
   CXFA_Border* GetBorderIfExists() const;
   CXFA_Border* GetOrCreateBorderIfPossible();
   CXFA_Caption* GetCaptionIfExists() const;
-
   CXFA_Font* GetFontIfExists() const;
   CXFA_Font* GetOrCreateFontIfPossible();
+
   float GetFontSize() const;
   FX_ARGB GetTextColor() const;
   float GetLineHeight() const;
@@ -265,31 +247,19 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Validate* GetValidateIfExists() const;
   CXFA_Validate* GetOrCreateValidateIfPossible();
 
-  CXFA_Value* GetDefaultValueIfExists();
   CXFA_Value* GetFormValueIfExists() const;
   WideString GetRawValue();
+
   int32_t GetRotate();
-
-  CXFA_Bind* GetBindIfExists() const;
-
   Optional<float> TryWidth();
-  Optional<float> TryHeight();
-  Optional<float> TryMinWidth();
-  Optional<float> TryMinHeight();
-  Optional<float> TryMaxWidth();
-  Optional<float> TryMaxHeight();
 
   CXFA_Node* GetExclGroupIfExists();
 
   int32_t ProcessEvent(CXFA_FFDocView* docView,
                        XFA_AttributeEnum iActivity,
                        CXFA_EventParam* pEventParam);
-  int32_t ProcessEvent(CXFA_FFDocView* docView,
-                       CXFA_Event* event,
-                       CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate(CXFA_FFDocView* docView);
   int32_t ProcessValidate(CXFA_FFDocView* docView, int32_t iFlags);
-
   int32_t ExecuteScript(CXFA_FFDocView* docView,
                         CXFA_Script* script,
                         CXFA_EventParam* pEventParam);
@@ -303,14 +273,12 @@ class CXFA_Node : public CXFA_Object {
   CFX_RectF GetUIMargin();
   CXFA_Border* GetUIBorder();
 
-  bool IsPreNull() const { return m_bPreNull; }
   void SetPreNull(bool val) { m_bPreNull = val; }
   bool IsNull() const { return m_bIsNull; }
   void SetIsNull(bool val) { m_bIsNull = val; }
 
   void SetWidgetReady() { is_widget_ready_ = true; }
   bool IsWidgetReady() const { return is_widget_ready_; }
-
   std::vector<CXFA_Event*> GetEventByActivity(XFA_AttributeEnum iActivity,
                                               bool bIsFormReady);
 
@@ -326,8 +294,6 @@ class CXFA_Node : public CXFA_Object {
 
   bool LoadCaption(CXFA_FFDoc* doc);
   CXFA_TextLayout* GetCaptionTextLayout();
-
-  void LoadText(CXFA_FFDoc* doc);
   CXFA_TextLayout* GetTextLayout();
 
   bool LoadImageImage(CXFA_FFDoc* doc);
@@ -337,9 +303,6 @@ class CXFA_Node : public CXFA_Object {
 
   RetainPtr<CFX_DIBitmap> GetImageImage();
   RetainPtr<CFX_DIBitmap> GetImageEditImage();
-  void SetImageEdit(const WideString& wsContentType,
-                    const WideString& wsHref,
-                    const WideString& wsData);
   void SetImageImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void SetImageEditImage(const RetainPtr<CFX_DIBitmap>& newImage);
   void UpdateUIDisplay(CXFA_FFDocView* docView, CXFA_FFWidget* pExcept);
@@ -423,10 +386,10 @@ class CXFA_Node : public CXFA_Object {
                           int32_t iLead,
                           int32_t iTread) const;
 
+ protected:
   virtual XFA_Element GetValueNodeType() const;
   virtual XFA_FFWidgetType GetDefaultFFWidgetType() const;
 
- protected:
   CXFA_Node(CXFA_Document* pDoc,
             XFA_PacketType ePacket,
             uint32_t validPackets,
@@ -506,6 +469,30 @@ class CXFA_Node : public CXFA_Object {
   std::pair<XFA_FFWidgetType, CXFA_Ui*> CreateChildUIAndValueNodesIfNeeded();
   void CreateValueNodeIfNeeded(CXFA_Value* value, CXFA_Node* pUIChild);
   CXFA_Node* CreateUINodeIfNeeded(CXFA_Ui* ui, XFA_Element type);
+  bool IsValidInPacket(XFA_PacketType packet) const;
+  void SetImageEdit(const WideString& wsContentType,
+                    const WideString& wsHref,
+                    const WideString& wsData);
+  bool IsOwnXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }
+  CXFA_Node* GetBindingNode() const {
+    if (binding_nodes_.empty())
+      return nullptr;
+    return binding_nodes_[0].Get();
+  }
+  bool BindsFormItems() const { return HasFlag(XFA_NodeFlag_BindFormItems); }
+  bool NeedsInitApp() const { return HasFlag(XFA_NodeFlag_NeedsInitApp); }
+  void SyncValue(const WideString& wsValue, bool bNotify);
+  CXFA_Value* GetDefaultValueIfExists();
+  CXFA_Bind* GetBindIfExists() const;
+
+  Optional<float> TryHeight();
+  Optional<float> TryMinWidth();
+  Optional<float> TryMinHeight();
+  Optional<float> TryMaxWidth();
+  Optional<float> TryMaxHeight();
+  int32_t ProcessEvent(CXFA_FFDocView* docView,
+                       CXFA_Event* event,
+                       CXFA_EventParam* pEventParam);
 
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;

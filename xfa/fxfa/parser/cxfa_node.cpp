@@ -813,7 +813,7 @@ CXFA_Node* CXFA_Node::GetBindData() {
 }
 
 std::vector<UnownedPtr<CXFA_Node>>* CXFA_Node::GetBindItems() {
-  return GetBindingNodes();
+  return &binding_nodes_;
 }
 
 int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
@@ -843,7 +843,7 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   std::vector<UnownedPtr<CXFA_Node>> items;
   items.emplace_back(pOldFormItem);
   items.emplace_back(pFormNode);
-  SetBindingNodes(std::move(items));
+  binding_nodes_ = std::move(items);
 
   m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
   return 2;
@@ -3024,11 +3024,6 @@ void CXFA_Node::GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi) {
   iImageYDpi = pData->m_iImageYDpi;
 }
 
-void CXFA_Node::LoadText(CXFA_FFDoc* doc) {
-  InitLayoutData();
-  static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->LoadText(doc, this);
-}
-
 float CXFA_Node::CalculateWidgetAutoWidth(float fWidthCalc) {
   CXFA_Margin* margin = GetMarginIfExists();
   if (margin)
@@ -3426,7 +3421,8 @@ void CXFA_Node::InitLayoutData() {
 void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
                                 float& fCalcWidth,
                                 float& fCalcHeight) {
-  LoadText(doc);
+  InitLayoutData();
+  static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->LoadText(doc, this);
 
   CXFA_TextLayout* pTextLayout =
       static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->GetTextLayout();
