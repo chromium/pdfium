@@ -25,7 +25,7 @@ CFWL_ComboBox* ToComboBox(CFWL_Widget* widget) {
 }  // namespace
 
 CXFA_FFComboBox::CXFA_FFComboBox(CXFA_Node* pNode)
-    : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
+    : CXFA_FFDropDown(pNode), m_pOldDelegate(nullptr) {}
 
 CXFA_FFComboBox::~CXFA_FFComboBox() {}
 

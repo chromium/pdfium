@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_CXFA_FFLISTBOX_H_
 #define XFA_FXFA_CXFA_FFLISTBOX_H_
 
-#include "xfa/fxfa/cxfa_fffield.h"
+#include "xfa/fxfa/cxfa_ffdropdown.h"
 
-class CXFA_FFListBox : public CXFA_FFField {
+class CXFA_FFListBox : public CXFA_FFDropDown {
  public:
   explicit CXFA_FFListBox(CXFA_Node* pNode);
   ~CXFA_FFListBox() override;
@@ -23,10 +23,12 @@ class CXFA_FFListBox : public CXFA_FFField {
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;
 
+  // CXFA_FFDropDown
+  void InsertItem(const WideStringView& wsLabel, int32_t nIndex) override;
+  void DeleteItem(int32_t nIndex) override;
+
   void OnSelectChanged(CFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, bool bSelected);
-  void InsertItem(const WideStringView& wsLabel, int32_t nIndex);
-  void DeleteItem(int32_t nIndex);
 
  private:
   bool CommitData() override;

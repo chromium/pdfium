@@ -2023,6 +2023,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_ffdoc.h",
       "xfa/fxfa/cxfa_ffdocview.cpp",
       "xfa/fxfa/cxfa_ffdocview.h",
+      "xfa/fxfa/cxfa_ffdropdown.cpp",
+      "xfa/fxfa/cxfa_ffdropdown.h",
       "xfa/fxfa/cxfa_ffexclgroup.cpp",
       "xfa/fxfa/cxfa_ffexclgroup.h",
       "xfa/fxfa/cxfa_fffield.cpp",

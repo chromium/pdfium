@@ -7,11 +7,11 @@
 #ifndef XFA_FXFA_CXFA_FFCOMBOBOX_H_
 #define XFA_FXFA_CXFA_FFCOMBOBOX_H_
 
-#include "xfa/fxfa/cxfa_fffield.h"
+#include "xfa/fxfa/cxfa_ffdropdown.h"
 
 class CXFA_EventParam;
 
-class CXFA_FFComboBox : public CXFA_FFField {
+class CXFA_FFComboBox : public CXFA_FFDropDown {
  public:
   explicit CXFA_FFComboBox(CXFA_Node* pNode);
   ~CXFA_FFComboBox() override;
@@ -45,15 +45,17 @@ class CXFA_FFComboBox : public CXFA_FFField {
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
-  virtual void OpenDropDownList();
+  // CXFA_FFDropDown
+  void InsertItem(const WideStringView& wsLabel, int32_t nIndex) override;
+  void DeleteItem(int32_t nIndex) override;
+
+  void OpenDropDownList();
 
   void OnTextChanged(CFWL_Widget* pWidget, const WideString& wsChanged);
   void OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp);
   void OnPreOpen(CFWL_Widget* pWidget);
   void OnPostOpen(CFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, bool bSelected);
-  void InsertItem(const WideStringView& wsLabel, int32_t nIndex);
-  void DeleteItem(int32_t nIndex);
 
  private:
   // CXFA_FFField

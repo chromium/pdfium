@@ -25,7 +25,7 @@ CFWL_ListBox* ToListBox(CFWL_Widget* widget) {
 }  // namespace
 
 CXFA_FFListBox::CXFA_FFListBox(CXFA_Node* pNode)
-    : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
+    : CXFA_FFDropDown(pNode), m_pOldDelegate(nullptr) {}
 
 CXFA_FFListBox::~CXFA_FFListBox() {
   if (!m_pNormalWidget)

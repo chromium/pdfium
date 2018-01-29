@@ -41,8 +41,8 @@
 
 namespace {
 
-CXFA_FFListBox* ToListBox(CXFA_FFWidget* widget) {
-  return static_cast<CXFA_FFListBox*>(widget);
+CXFA_FFDropDown* ToDropDown(CXFA_FFWidget* widget) {
+  return static_cast<CXFA_FFDropDown*>(widget);
 }
 
 CXFA_FFComboBox* ToComboBox(CXFA_FFWidget* widget) {
@@ -71,12 +71,8 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
-    if (pWidget->IsLoaded()) {
-      if (pSender->IsListBox())
-        ToListBox(pWidget)->InsertItem(pLabel, iIndex);
-      else
-        ToComboBox(pWidget)->InsertItem(pLabel, iIndex);
-    }
+    if (pWidget->IsLoaded())
+      ToDropDown(pWidget)->InsertItem(pLabel, iIndex);
   }
 }
 
@@ -87,12 +83,8 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
-    if (pWidget->IsLoaded()) {
-      if (pSender->IsListBox())
-        ToListBox(pWidget)->DeleteItem(iIndex);
-      else
-        ToComboBox(pWidget)->DeleteItem(iIndex);
-    }
+    if (pWidget->IsLoaded())
+      ToDropDown(pWidget)->DeleteItem(iIndex);
   }
 }
 
