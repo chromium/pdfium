@@ -19,6 +19,7 @@
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
+#include "xfa/fxfa/parser/cxfa_barcode.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
@@ -271,8 +272,11 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     }
   } else if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kBarcode) {
     int32_t nDataLen = 0;
-    if (eType == XFA_VALUEPICTURE_Edit)
-      nDataLen = m_pNode->GetBarcodeAttribute_DataLength().value_or(0);
+    if (eType == XFA_VALUEPICTURE_Edit) {
+      nDataLen = static_cast<CXFA_Barcode*>(m_pNode.Get())
+                     ->GetDataLength()
+                     .value_or(0);
+    }
 
     pEdit->SetLimit(nDataLen);
     bUpdate = true;

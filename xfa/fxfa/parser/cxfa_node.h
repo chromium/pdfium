@@ -299,21 +299,6 @@ class CXFA_Node : public CXFA_Object {
                                              CXFA_Script* script,
                                              CXFA_EventParam* pEventParam);
 
-  // TODO(dsinclair): Figure out how to move this to cxfa_barcode.
-  WideString GetBarcodeType();
-  Optional<BC_CHAR_ENCODING> GetBarcodeAttribute_CharEncoding();
-  Optional<bool> GetBarcodeAttribute_Checksum();
-  Optional<int32_t> GetBarcodeAttribute_DataLength();
-  Optional<char> GetBarcodeAttribute_StartChar();
-  Optional<char> GetBarcodeAttribute_EndChar();
-  Optional<int32_t> GetBarcodeAttribute_ECLevel();
-  Optional<int32_t> GetBarcodeAttribute_ModuleWidth();
-  Optional<int32_t> GetBarcodeAttribute_ModuleHeight();
-  Optional<bool> GetBarcodeAttribute_PrintChecksum();
-  Optional<BC_TEXT_LOC> GetBarcodeAttribute_TextLocation();
-  Optional<bool> GetBarcodeAttribute_Truncate();
-  Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
-
   CXFA_Node* GetUIChildNode();
   XFA_FFWidgetType GetFFWidgetType();
 

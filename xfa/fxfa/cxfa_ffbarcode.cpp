@@ -17,6 +17,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
+#include "xfa/fxfa/parser/cxfa_barcode.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 
 namespace {
@@ -111,7 +112,8 @@ const BarCodeInfo* CXFA_FFBarcode::GetBarcodeTypeByName(
   return nullptr;
 }
 
-CXFA_FFBarcode::CXFA_FFBarcode(CXFA_Node* pNode) : CXFA_FFTextEdit(pNode) {}
+CXFA_FFBarcode::CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode)
+    : CXFA_FFTextEdit(pNode), barcode_(barcode) {}
 
 CXFA_FFBarcode::~CXFA_FFBarcode() {}
 
@@ -157,60 +159,58 @@ void CXFA_FFBarcode::RenderWidget(CXFA_Graphics* pGS,
 void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
 
-  auto* node = GetNode();
-  const BarCodeInfo* info = GetBarcodeTypeByName(node->GetBarcodeType());
+  const BarCodeInfo* info = GetBarcodeTypeByName(barcode_->GetBarcodeType());
   if (!info)
     return;
 
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
   pBarCodeWidget->SetType(info->eBCType);
 
-  Optional<BC_CHAR_ENCODING> encoding =
-      node->GetBarcodeAttribute_CharEncoding();
+  Optional<BC_CHAR_ENCODING> encoding = barcode_->GetCharEncoding();
   if (encoding)
     pBarCodeWidget->SetCharEncoding(*encoding);
 
-  Optional<bool> calcChecksum = node->GetBarcodeAttribute_Checksum();
+  Optional<bool> calcChecksum = barcode_->GetChecksum();
   if (calcChecksum)
     pBarCodeWidget->SetCalChecksum(*calcChecksum);
 
-  Optional<int32_t> dataLen = node->GetBarcodeAttribute_DataLength();
+  Optional<int32_t> dataLen = barcode_->GetDataLength();
   if (dataLen)
     pBarCodeWidget->SetDataLength(*dataLen);
 
-  Optional<char> startChar = node->GetBarcodeAttribute_StartChar();
+  Optional<char> startChar = barcode_->GetStartChar();
   if (startChar)
     pBarCodeWidget->SetStartChar(*startChar);
 
-  Optional<char> endChar = node->GetBarcodeAttribute_EndChar();
+  Optional<char> endChar = barcode_->GetEndChar();
   if (endChar)
     pBarCodeWidget->SetEndChar(*endChar);
 
-  Optional<int32_t> ecLevel = node->GetBarcodeAttribute_ECLevel();
+  Optional<int32_t> ecLevel = barcode_->GetECLevel();
   if (ecLevel)
     pBarCodeWidget->SetErrorCorrectionLevel(*ecLevel);
 
-  Optional<int32_t> width = node->GetBarcodeAttribute_ModuleWidth();
+  Optional<int32_t> width = barcode_->GetModuleWidth();
   if (width)
     pBarCodeWidget->SetModuleWidth(*width);
 
-  Optional<int32_t> height = node->GetBarcodeAttribute_ModuleHeight();
+  Optional<int32_t> height = barcode_->GetModuleHeight();
   if (height)
     pBarCodeWidget->SetModuleHeight(*height);
 
-  Optional<bool> printCheck = node->GetBarcodeAttribute_PrintChecksum();
+  Optional<bool> printCheck = barcode_->GetPrintChecksum();
   if (printCheck)
     pBarCodeWidget->SetPrintChecksum(*printCheck);
 
-  Optional<BC_TEXT_LOC> textLoc = node->GetBarcodeAttribute_TextLocation();
+  Optional<BC_TEXT_LOC> textLoc = barcode_->GetTextLocation();
   if (textLoc)
     pBarCodeWidget->SetTextLocation(*textLoc);
 
-  Optional<bool> truncate = node->GetBarcodeAttribute_Truncate();
+  Optional<bool> truncate = barcode_->GetTruncate();
   if (truncate)
     pBarCodeWidget->SetTruncated(*truncate);
 
-  Optional<int8_t> ratio = node->GetBarcodeAttribute_WideNarrowRatio();
+  Optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
   if (ratio)
     pBarCodeWidget->SetWideNarrowRatio(*ratio);
 

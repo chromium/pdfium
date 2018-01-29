@@ -15,6 +15,20 @@ class CXFA_Barcode : public CXFA_Node {
   ~CXFA_Barcode() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
+
+  WideString GetBarcodeType();
+  Optional<BC_CHAR_ENCODING> GetCharEncoding();
+  Optional<bool> GetChecksum();
+  Optional<int32_t> GetDataLength();
+  Optional<char> GetStartChar();
+  Optional<char> GetEndChar();
+  Optional<int32_t> GetECLevel();
+  Optional<int32_t> GetModuleWidth();
+  Optional<int32_t> GetModuleHeight();
+  Optional<bool> GetPrintChecksum();
+  Optional<BC_TEXT_LOC> GetTextLocation();
+  Optional<bool> GetTruncate();
+  Optional<int8_t> GetWideNarrowRatio();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BARCODE_H_

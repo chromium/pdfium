@@ -35,6 +35,7 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
+#include "xfa/fxfa/parser/cxfa_barcode.h"
 #include "xfa/fxfa/parser/cxfa_binditems.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
@@ -119,7 +120,9 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
   CXFA_FFWidget* pWidget = nullptr;
   switch (pNode->GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode:
-      pWidget = new CXFA_FFBarcode(pNode);
+      ASSERT(pNode->GetUIChildNode()->GetElementType() == XFA_Element::Barcode);
+      pWidget = new CXFA_FFBarcode(
+          pNode, static_cast<CXFA_Barcode*>(pNode->GetUIChildNode()));
       break;
     case XFA_FFWidgetType::kButton:
       pWidget = new CXFA_FFPushButton(pNode);

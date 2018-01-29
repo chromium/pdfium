@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFBARCODE_H_
 #define XFA_FXFA_CXFA_FFBARCODE_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxbarcode/BC_Library.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
@@ -83,11 +84,13 @@ struct BarCodeInfo {
   BC_TYPE eBCType;
 };
 
+class CXFA_Barcode;
+
 class CXFA_FFBarcode : public CXFA_FFTextEdit {
  public:
   static const BarCodeInfo* GetBarcodeTypeByName(const WideString& wsName);
 
-  explicit CXFA_FFBarcode(CXFA_Node* pNode);
+  explicit CXFA_FFBarcode(CXFA_Node* pNode, CXFA_Barcode* barcode);
   ~CXFA_FFBarcode() override;
 
   // CXFA_FFTextEdit
@@ -98,6 +101,9 @@ class CXFA_FFBarcode : public CXFA_FFTextEdit {
   void UpdateWidgetProperty() override;
   bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+
+ private:
+  UnownedPtr<CXFA_Barcode> barcode_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFBARCODE_H_
