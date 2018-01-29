@@ -43,10 +43,8 @@ struct CPVT_WordRange {
   }
 
   CPVT_WordRange Intersect(const CPVT_WordRange& that) const {
-    if (that.EndPos < BeginPos || that.BeginPos > EndPos ||
-        EndPos < that.BeginPos || BeginPos > that.EndPos) {
+    if (that.EndPos < BeginPos || that.BeginPos > EndPos)
       return CPVT_WordRange();
-    }
 
     return CPVT_WordRange(std::max(BeginPos, that.BeginPos),
                           std::min(EndPos, that.EndPos));
