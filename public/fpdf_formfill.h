@@ -14,12 +14,13 @@ typedef void* FPDF_FORMHANDLE;
 
 // These values are return values for a public API, so should not be changed
 // other than the count when adding new values.
-#define FORMTYPE_NONE 0       // Document contains no forms
-#define FORMTYPE_ACRO_FORM 1  // Forms are specified using AcroForm spec
-#define FORMTYPE_XFA_FULL 2   // Forms are specified using the entire XFA spec
-#define FORMTYPE_XFA_FOREGROUND \
-  3  // Forms are specified using the XFAF subset of XFA spec
-#define FORMTYPE_COUNT 4  // The number of form types
+#define FORMTYPE_NONE 0            // Document contains no forms
+#define FORMTYPE_ACRO_FORM 1       // Forms are specified using AcroForm spec
+#define FORMTYPE_XFA_FULL 2        // Forms are specified using the entire XFA
+                                   // spec
+#define FORMTYPE_XFA_FOREGROUND 3  // Forms are specified using the XFAF subset
+                                   // of XFA spec
+#define FORMTYPE_COUNT 4           // The number of form types
 
 // Exported Functions
 #ifdef __cplusplus
@@ -1640,15 +1641,13 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
 /**
  * Experimental API
  * Function: FPDF_GetFormType
- *                      Returns the type of form contained in the PDF document.
+ *           Returns the type of form contained in the PDF document.
  * Parameters:
- *                      document                -       Handle to document.
- *Returned by FPDF_LoadDocument function.
- *                      docType                 -       Document type defined as
- *FORMTYPE_xxx.
+ *           document - Handle to document.
  * Return Value:
- *                      Integer value representing one of the FORMTYPE_xxx
- *values.
+ *           Integer value representing one of the FORMTYPE_ values.
+ * Comments:
+ *           If |document| is NULL, then the return value is FORMTYPE_NONE.
  **/
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document);
 

@@ -574,9 +574,6 @@ FPDF_LoadDocument(FPDF_STRING file_path, FPDF_BYTESTRING password) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
-  if (!document)
-    return false;
-
   const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return FORMTYPE_NONE;
@@ -593,8 +590,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
   if (!pXFA)
     return FORMTYPE_ACRO_FORM;
 
-  bool needsRendering = pRoot->GetBooleanFor("NeedsRendering", false);
-  return needsRendering ? FORMTYPE_XFA_FULL : FORMTYPE_XFA_FOREGROUND;
+  bool bNeedsRendering = pRoot->GetBooleanFor("NeedsRendering", false);
+  return bNeedsRendering ? FORMTYPE_XFA_FULL : FORMTYPE_XFA_FOREGROUND;
 }
 
 #ifdef PDF_ENABLE_XFA
