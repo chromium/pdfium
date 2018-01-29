@@ -211,7 +211,7 @@ class Document : public CJS_EmbedObj {
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
   }
-  void AddDelayData(CJS_DelayData* pData);
+  void AddDelayData(std::unique_ptr<CJS_DelayData> pData);
   void DoFieldDelay(const WideString& sFieldName, int nControlIndex);
   CJS_Document* GetCJSDoc() const;
 

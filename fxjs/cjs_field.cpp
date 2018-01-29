@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -2590,47 +2591,47 @@ CJS_Return Field::set_source(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 }
 
 void Field::AddDelay_Int(FIELD_PROP prop, int32_t n) {
-  CJS_DelayData* pNewData =
-      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  auto pNewData =
+      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->num = n;
-  m_pJSDoc->AddDelayData(pNewData);
+  m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void Field::AddDelay_Bool(FIELD_PROP prop, bool b) {
-  CJS_DelayData* pNewData =
-      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  auto pNewData =
+      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->b = b;
-  m_pJSDoc->AddDelayData(pNewData);
+  m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void Field::AddDelay_String(FIELD_PROP prop, const ByteString& string) {
-  CJS_DelayData* pNewData =
-      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  auto pNewData =
+      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->string = string;
-  m_pJSDoc->AddDelayData(pNewData);
+  m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void Field::AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect) {
-  CJS_DelayData* pNewData =
-      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  auto pNewData =
+      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->rect = rect;
-  m_pJSDoc->AddDelayData(pNewData);
+  m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void Field::AddDelay_WordArray(FIELD_PROP prop,
                                const std::vector<uint32_t>& array) {
-  CJS_DelayData* pNewData =
-      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  auto pNewData =
+      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->wordarray = array;
-  m_pJSDoc->AddDelayData(pNewData);
+  m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void Field::AddDelay_WideStringArray(FIELD_PROP prop,
                                      const std::vector<WideString>& array) {
-  CJS_DelayData* pNewData =
-      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  auto pNewData =
+      pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
   pNewData->widestringarray = array;
-  m_pJSDoc->AddDelayData(pNewData);
+  m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
 void Field::DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,

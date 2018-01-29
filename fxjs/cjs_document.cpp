@@ -1474,8 +1474,8 @@ CJS_Return Document::gotoNamedDest(
   return CJS_Return(true);
 }
 
-void Document::AddDelayData(CJS_DelayData* pData) {
-  m_DelayData.push_back(std::unique_ptr<CJS_DelayData>(pData));
+void Document::AddDelayData(std::unique_ptr<CJS_DelayData> pData) {
+  m_DelayData.push_back(std::move(pData));
 }
 
 void Document::DoFieldDelay(const WideString& sFieldName, int nControlIndex) {
