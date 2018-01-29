@@ -175,7 +175,13 @@ void CJX_Tree::index(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(ToNode(GetXFAObject())->GetNodeSameNameIndex());
+
+  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
+  if (!pScriptContext) {
+    pValue->SetInteger(-1);
+    return;
+  }
+  pValue->SetInteger(pScriptContext->GetIndexByName(ToNode(GetXFAObject())));
 }
 
 void CJX_Tree::classIndex(CFXJSE_Value* pValue,
@@ -185,7 +191,14 @@ void CJX_Tree::classIndex(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  pValue->SetInteger(ToNode(GetXFAObject())->GetNodeSameClassIndex());
+
+  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
+  if (!pScriptContext) {
+    pValue->SetInteger(-1);
+    return;
+  }
+  pValue->SetInteger(
+      pScriptContext->GetIndexByClassName(ToNode(GetXFAObject())));
 }
 
 void CJX_Tree::somExpression(CFXJSE_Value* pValue,

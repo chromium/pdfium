@@ -235,8 +235,6 @@ class CXFA_Node : public CXFA_Object {
     return static_cast<T*>(GetNextSameClassSiblingInternal(eType));
   }
 
-  int32_t GetNodeSameNameIndex() const;
-  int32_t GetNodeSameClassIndex() const;
   CXFA_Node* GetInstanceMgrOfSubform();
 
   CXFA_Occur* GetOccurIfExists();

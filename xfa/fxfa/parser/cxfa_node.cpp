@@ -1331,22 +1331,6 @@ CXFA_Node* CXFA_Node::GetNextSameClassSiblingInternal(XFA_Element eType) const {
   return nullptr;
 }
 
-int32_t CXFA_Node::GetNodeSameNameIndex() const {
-  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
-  if (!pScriptContext) {
-    return -1;
-  }
-  return pScriptContext->GetIndexByName(const_cast<CXFA_Node*>(this));
-}
-
-int32_t CXFA_Node::GetNodeSameClassIndex() const {
-  CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
-  if (!pScriptContext) {
-    return -1;
-  }
-  return pScriptContext->GetIndexByClassName(const_cast<CXFA_Node*>(this));
-}
-
 CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
   CXFA_Node* pInstanceMgr = nullptr;
   if (m_ePacket == XFA_PacketType::Form) {
