@@ -45,5 +45,5 @@ Alert: Answer for "1,2,3,4" is: number 1
 Alert: Answer for "[1, 2, 3, 4]" is: string [1, 2, 3, 4]
 Alert: Answer for "[object Object]" is: string [object Object]
 Alert: Answer for "{a: 1, b: 2}" is: string {a: 1, b: 2}
-Alert: Answer for "function (x) { return x+1; }" is: string function (x) { return x+1; }
+Alert: Answer for "function(x) { return x+1; }" is: string function(x) { return x+1; }
 Alert: Answer for "function(x) { return x+1; }" is: string function(x) { return x+1; }
