@@ -417,10 +417,6 @@ void sycc420_to_rgb(opj_image_t* img) {
   img->comps[1].h = yh;
   img->comps[2].w = yw;
   img->comps[2].h = yh;
-  img->comps[1].w = yw;
-  img->comps[1].h = yh;
-  img->comps[2].w = yw;
-  img->comps[2].h = yh;
   img->comps[1].dx = img->comps[0].dx;
   img->comps[2].dx = img->comps[0].dx;
   img->comps[1].dy = img->comps[0].dy;
