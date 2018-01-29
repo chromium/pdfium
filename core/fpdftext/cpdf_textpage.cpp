@@ -1209,7 +1209,7 @@ bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
 
   if ((iter + 1) != curText.rend()) {
     iter++;
-    if (FXSYS_iswalpha(*iter) && FXSYS_iswalpha(*iter))
+    if (FXSYS_iswalpha(*iter) && FXSYS_iswalnum(curChar))
       return true;
   }
 
