@@ -44,3 +44,7 @@ CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_TextEdit>(this)) {}
 
 CXFA_TextEdit::~CXFA_TextEdit() {}
+
+XFA_FFWidgetType CXFA_TextEdit::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kTextEdit;
+}

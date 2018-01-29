@@ -505,21 +505,18 @@ int32_t CJX_Node::execSingleEventByName(const WideStringView& wsEventName,
     case EventAppliesToo::kSignature: {
       if (!GetXFANode()->IsWidgetReady())
         return XFA_EVENTERROR_NotExist;
-
-      CXFA_Node* pUINode = GetXFANode()->GetUIChild();
-      if (pUINode->GetElementType() != XFA_Element::Signature)
+      if (GetXFANode()->GetUIChildNode()->GetElementType() !=
+          XFA_Element::Signature) {
         return XFA_EVENTERROR_NotExist;
-
+      }
       return pNotify->ExecEventByDeepFirst(
           GetXFANode(), eventParaInfo->m_eventType, false, false);
     }
     case EventAppliesToo::kChoiceList: {
       if (!GetXFANode()->IsWidgetReady())
         return XFA_EVENTERROR_NotExist;
-
-      CXFA_Node* pUINode = GetXFANode()->GetUIChild();
-      if (pUINode->GetElementType() != XFA_Element::ChoiceList ||
-          GetXFANode()->IsListBox()) {
+      if (GetXFANode()->GetUIChildNode()->GetElementType() !=
+          XFA_Element::ChoiceList) {
         return XFA_EVENTERROR_NotExist;
       }
       return pNotify->ExecEventByDeepFirst(

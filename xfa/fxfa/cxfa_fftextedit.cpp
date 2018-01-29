@@ -192,7 +192,7 @@ bool CXFA_FFTextEdit::CommitData() {
 }
 
 void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
-  if (GetNode()->GetUIType() != XFA_Element::NumericEdit)
+  if (GetNode()->GetFFWidgetType() != XFA_FFWidgetType::kNumericEdit)
     return;
 
   IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
@@ -258,7 +258,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     eType = XFA_VALUEPICTURE_Edit;
 
   bool bUpdate = false;
-  if (m_pNode->GetUIType() == XFA_Element::TextEdit &&
+  if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kTextEdit &&
       !m_pNode->GetNumberOfCells()) {
     XFA_Element elementType;
     int32_t iMaxChars;
@@ -269,7 +269,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
       pEdit->SetLimit(iMaxChars);
       bUpdate = true;
     }
-  } else if (m_pNode->GetUIType() == XFA_Element::Barcode) {
+  } else if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kBarcode) {
     int32_t nDataLen = 0;
     if (eType == XFA_VALUEPICTURE_Edit)
       nDataLen = m_pNode->GetBarcodeAttribute_DataLength().value_or(0);
@@ -300,7 +300,7 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   eParam.m_pTarget = m_pNode.Get();
   eParam.m_wsPrevText = wsPrevText;
   CFWL_Edit* pEdit = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
-  if (m_pNode->GetUIType() == XFA_Element::DateTimeEdit) {
+  if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kDateTimeEdit) {
     CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)pEdit;
     eParam.m_wsNewText = pDateTime->GetEditText();
     if (pDateTime->HasSelection()) {
@@ -324,7 +324,8 @@ void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
 }
 
 bool CXFA_FFTextEdit::CheckWord(const ByteStringView& sWord) {
-  return sWord.IsEmpty() || m_pNode->GetUIType() != XFA_Element::TextEdit;
+  return sWord.IsEmpty() ||
+         m_pNode->GetFFWidgetType() != XFA_FFWidgetType::kTextEdit;
 }
 
 void CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {

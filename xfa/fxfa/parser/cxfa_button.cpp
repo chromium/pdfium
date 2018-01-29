@@ -37,3 +37,7 @@ CXFA_Button::CXFA_Button(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Button>(this)) {}
 
 CXFA_Button::~CXFA_Button() {}
+
+XFA_FFWidgetType CXFA_Button::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kButton;
+}

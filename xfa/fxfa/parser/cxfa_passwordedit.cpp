@@ -39,3 +39,7 @@ CXFA_PasswordEdit::CXFA_PasswordEdit(CXFA_Document* doc, XFA_PacketType packet)
                 kName) {}
 
 CXFA_PasswordEdit::~CXFA_PasswordEdit() {}
+
+XFA_FFWidgetType CXFA_PasswordEdit::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kPasswordEdit;
+}

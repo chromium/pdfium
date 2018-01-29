@@ -16,6 +16,7 @@
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 #include "third_party/base/optional.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFGAS_GEFont;
@@ -36,6 +37,7 @@ class CXFA_Occur;
 class CXFA_Para;
 class CXFA_Script;
 class CXFA_TextLayout;
+class CXFA_Ui;
 class CXFA_Validate;
 class CXFA_Value;
 class CXFA_WidgetLayoutData;
@@ -312,8 +314,9 @@ class CXFA_Node : public CXFA_Object {
   Optional<bool> GetBarcodeAttribute_Truncate();
   Optional<int8_t> GetBarcodeAttribute_WideNarrowRatio();
 
-  CXFA_Node* GetUIChild();
-  XFA_Element GetUIType();
+  CXFA_Node* GetUIChildNode();
+  XFA_FFWidgetType GetFFWidgetType();
+
   CFX_RectF GetUIMargin();
   CXFA_Border* GetUIBorder();
 
@@ -438,6 +441,7 @@ class CXFA_Node : public CXFA_Object {
                           int32_t iTread) const;
 
   virtual XFA_Element GetValueNodeType() const;
+  virtual XFA_FFWidgetType GetDefaultFFWidgetType() const;
 
  protected:
   CXFA_Node(CXFA_Document* pDoc,
@@ -505,7 +509,6 @@ class CXFA_Node : public CXFA_Object {
   float GetHeightWithoutMargin(float fHeightCalc);
   void CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF& size);
   void CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
-                                  XFA_Element eUIType,
                                   float& fWidth,
                                   float& fCalcHeight);
   void InitLayoutData();
@@ -516,8 +519,10 @@ class CXFA_Node : public CXFA_Object {
                           int32_t nIndex);
   WideString FormatNumStr(const WideString& wsValue, IFX_Locale* pLocale);
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
-  std::pair<XFA_Element, CXFA_Node*> CreateUIChild();
+
+  std::pair<XFA_FFWidgetType, CXFA_Ui*> CreateChildUIAndValueNodesIfNeeded();
   void CreateValueNodeIfNeeded(CXFA_Value* value, CXFA_Node* pUIChild);
+  CXFA_Node* CreateUINodeIfNeeded(CXFA_Ui* ui, XFA_Element type);
 
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;
@@ -533,12 +538,13 @@ class CXFA_Node : public CXFA_Object {
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;
   std::vector<UnownedPtr<CXFA_Node>> binding_nodes_;
-  CXFA_Node* m_pUiChildNode = nullptr;
-  XFA_Element m_eUIType = XFA_Element::Unknown;
   bool m_bIsNull = true;
   bool m_bPreNull = true;
   bool is_widget_ready_ = false;
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;
+
+  CXFA_Ui* ui_ = nullptr;
+  XFA_FFWidgetType ff_widget_type_ = XFA_FFWidgetType::kNone;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_

@@ -71,8 +71,8 @@ CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {
 
 void FormValueNode_MatchNoneCreateChild(CXFA_Node* pFormNode) {
   ASSERT(pFormNode->IsWidgetReady());
-  // GetUIChild has the side effect of creating the UI child.
-  pFormNode->GetUIChild();
+  // GetUIChildNode has the side effect of creating the UI child.
+  pFormNode->GetUIChildNode();
 }
 
 bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
@@ -137,8 +137,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       0, XFA_Element::Value);
   if (!bDataToForm) {
     WideString wsValue;
-    switch (pFormNode->GetUIType()) {
-      case XFA_Element::ImageEdit: {
+    switch (pFormNode->GetFFWidgetType()) {
+      case XFA_FFWidgetType::kImageEdit: {
         CXFA_Image* image = defValue ? defValue->GetImageIfExists() : nullptr;
         WideString wsContentType;
         WideString wsHref;
@@ -160,7 +160,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
         break;
       }
-      case XFA_Element::ChoiceList:
+      case XFA_FFWidgetType::kChoiceList:
         wsValue = defValue ? defValue->GetChildValueContent() : L"";
         if (pFormNode->IsChoiceListMultiSelect()) {
           std::vector<WideString> wsSelTextArray =
@@ -187,7 +187,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
               wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
         }
         break;
-      case XFA_Element::CheckButton:
+      case XFA_FFWidgetType::kCheckButton:
         wsValue = defValue ? defValue->GetChildValueContent() : L"";
         if (wsValue.IsEmpty())
           break;
@@ -195,7 +195,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         pDataNode->JSObject()->SetAttributeValue(
             wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
         break;
-      case XFA_Element::ExclGroup: {
+      case XFA_FFWidgetType::kExclGroup: {
         CXFA_Node* pChecked = nullptr;
         CXFA_Node* pChild = pFormNode->GetFirstChild();
         for (; pChild; pChild = pChild->GetNextSibling()) {
@@ -257,7 +257,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         }
         break;
       }
-      case XFA_Element::NumericEdit: {
+      case XFA_FFWidgetType::kNumericEdit: {
         wsValue = defValue ? defValue->GetChildValueContent() : L"";
         if (wsValue.IsEmpty())
           break;
@@ -288,8 +288,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
 
   pDataNode->JSObject()->SetAttributeValue(wsNormalizeValue, wsXMLValue, false,
                                            false);
-  switch (pFormNode->GetUIType()) {
-    case XFA_Element::ImageEdit: {
+  switch (pFormNode->GetFFWidgetType()) {
+    case XFA_FFWidgetType::kImageEdit: {
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                     XFA_Element::Image);
       CXFA_Image* image = defValue ? defValue->GetImageIfExists() : nullptr;
@@ -312,7 +312,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       }
       break;
     }
-    case XFA_Element::ChoiceList:
+    case XFA_FFWidgetType::kChoiceList:
       if (pFormNode->IsChoiceListMultiSelect()) {
         std::vector<CXFA_Node*> items = pDataNode->GetNodeList(
             XFA_NODEFILTER_Children | XFA_NODEFILTER_Properties,
@@ -341,20 +341,16 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                       XFA_Element::Text);
       }
       break;
-    case XFA_Element::CheckButton:
-      FormValueNode_SetChildContent(defValue, wsNormalizeValue,
-                                    XFA_Element::Text);
-      break;
-    case XFA_Element::ExclGroup: {
+    case XFA_FFWidgetType::kExclGroup: {
       pFormNode->SetSelectedMemberByValue(wsNormalizeValue.AsStringView(),
                                           false, false, false);
       break;
     }
-    case XFA_Element::DateTimeEdit:
+    case XFA_FFWidgetType::kDateTimeEdit:
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                     XFA_Element::DateTime);
       break;
-    case XFA_Element::NumericEdit: {
+    case XFA_FFWidgetType::kNumericEdit: {
       WideString wsPicture =
           pFormNode->GetPictureContent(XFA_VALUEPICTURE_DataBind);
       if (wsPicture.IsEmpty())
@@ -364,11 +360,6 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                     XFA_Element::Float);
       break;
     }
-    case XFA_Element::Barcode:
-    case XFA_Element::Button:
-    case XFA_Element::PasswordEdit:
-    case XFA_Element::Signature:
-    case XFA_Element::TextEdit:
     default:
       FormValueNode_SetChildContent(defValue, wsNormalizeValue,
                                     XFA_Element::Text);

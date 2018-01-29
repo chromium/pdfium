@@ -34,3 +34,7 @@ CXFA_DefaultUi::CXFA_DefaultUi(CXFA_Document* doc, XFA_PacketType packet)
                 kName) {}
 
 CXFA_DefaultUi::~CXFA_DefaultUi() {}
+
+XFA_FFWidgetType CXFA_DefaultUi::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kTextEdit;
+}

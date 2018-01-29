@@ -345,7 +345,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
     if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget)) {
       m_TabOrderWidgetArray.push_back(hWidget);
       CXFA_Node* pNode = hWidget->GetNode();
-      if (pNode->GetUIType() == XFA_Element::ExclGroup) {
+      if (pNode->GetFFWidgetType() == XFA_FFWidgetType::kExclGroup) {
         auto it = std::find(SpaceOrderWidgetArray.begin(),
                             SpaceOrderWidgetArray.end(), hWidget);
         int32_t iWidgetIndex = it != SpaceOrderWidgetArray.end()

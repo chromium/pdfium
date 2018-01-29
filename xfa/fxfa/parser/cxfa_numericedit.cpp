@@ -44,3 +44,7 @@ CXFA_NumericEdit::~CXFA_NumericEdit() {}
 XFA_Element CXFA_NumericEdit::GetValueNodeType() const {
   return XFA_Element::Float;
 }
+
+XFA_FFWidgetType CXFA_NumericEdit::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kNumericEdit;
+}

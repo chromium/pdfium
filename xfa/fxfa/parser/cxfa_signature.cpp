@@ -39,3 +39,7 @@ CXFA_Signature::CXFA_Signature(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Signature>(this)) {}
 
 CXFA_Signature::~CXFA_Signature() {}
+
+XFA_FFWidgetType CXFA_Signature::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kSignature;
+}

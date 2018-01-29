@@ -43,3 +43,7 @@ CXFA_ImageEdit::~CXFA_ImageEdit() {}
 XFA_Element CXFA_ImageEdit::GetValueNodeType() const {
   return XFA_Element::Image;
 }
+
+XFA_FFWidgetType CXFA_ImageEdit::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kImageEdit;
+}

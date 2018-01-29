@@ -15,6 +15,7 @@ class CXFA_ImageEdit : public CXFA_Node {
   ~CXFA_ImageEdit() override;
 
   XFA_Element GetValueNodeType() const override;
+  XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_IMAGEEDIT_H_

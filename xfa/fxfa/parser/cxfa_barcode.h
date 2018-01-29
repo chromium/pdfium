@@ -13,6 +13,8 @@ class CXFA_Barcode : public CXFA_Node {
  public:
   CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Barcode() override;
+
+  XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BARCODE_H_

@@ -13,6 +13,8 @@ class CXFA_CheckButton : public CXFA_Node {
  public:
   CXFA_CheckButton(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CheckButton() override;
+
+  XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_CHECKBUTTON_H_

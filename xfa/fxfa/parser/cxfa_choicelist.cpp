@@ -49,3 +49,7 @@ XFA_Element CXFA_ChoiceList::GetValueNodeType() const {
              ? XFA_Element::ExData
              : XFA_Element::Text;
 }
+
+XFA_FFWidgetType CXFA_ChoiceList::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kChoiceList;
+}

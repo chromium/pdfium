@@ -15,6 +15,7 @@ class CXFA_NumericEdit : public CXFA_Node {
   ~CXFA_NumericEdit() override;
 
   XFA_Element GetValueNodeType() const override;
+  XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NUMERICEDIT_H_

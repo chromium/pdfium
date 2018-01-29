@@ -13,6 +13,8 @@ class CXFA_DefaultUi : public CXFA_Node {
  public:
   CXFA_DefaultUi(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DefaultUi() override;
+
+  XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DEFAULTUI_H_

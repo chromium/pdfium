@@ -65,7 +65,7 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
                                           const wchar_t* pLabel,
                                           const wchar_t* pValue,
                                           int32_t iIndex) {
-  if (pSender->GetUIType() != XFA_Element::ChoiceList)
+  if (pSender->GetFFWidgetType() != XFA_FFWidgetType::kChoiceList)
     return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
@@ -81,7 +81,7 @@ void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_Node* pSender,
 
 void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
                                             int32_t iIndex) {
-  if (pSender->GetUIType() != XFA_Element::ChoiceList)
+  if (pSender->GetFFWidgetType() != XFA_FFWidgetType::kChoiceList)
     return;
 
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
@@ -116,72 +116,70 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
   if (!pNode->HasCreatedUIWidget())
     return new CXFA_ContentLayoutItem(pNode);
 
-  CXFA_FFWidget* pWidget;
-  switch (pNode->GetUIType()) {
-    case XFA_Element::Barcode:
+  CXFA_FFWidget* pWidget = nullptr;
+  switch (pNode->GetFFWidgetType()) {
+    case XFA_FFWidgetType::kBarcode:
       pWidget = new CXFA_FFBarcode(pNode);
       break;
-    case XFA_Element::Button:
+    case XFA_FFWidgetType::kButton:
       pWidget = new CXFA_FFPushButton(pNode);
       break;
-    case XFA_Element::CheckButton:
+    case XFA_FFWidgetType::kCheckButton:
       pWidget = new CXFA_FFCheckButton(pNode);
       break;
-    case XFA_Element::ChoiceList: {
+    case XFA_FFWidgetType::kChoiceList: {
       if (pNode->IsListBox())
         pWidget = new CXFA_FFListBox(pNode);
       else
         pWidget = new CXFA_FFComboBox(pNode);
     } break;
-    case XFA_Element::DateTimeEdit:
+    case XFA_FFWidgetType::kDateTimeEdit:
       pWidget = new CXFA_FFDateTimeEdit(pNode);
       break;
-    case XFA_Element::ImageEdit:
+    case XFA_FFWidgetType::kImageEdit:
       pWidget = new CXFA_FFImageEdit(pNode);
       break;
-    case XFA_Element::NumericEdit:
+    case XFA_FFWidgetType::kNumericEdit:
       pWidget = new CXFA_FFNumericEdit(pNode);
       break;
-    case XFA_Element::PasswordEdit:
+    case XFA_FFWidgetType::kPasswordEdit:
       pWidget = new CXFA_FFPasswordEdit(pNode);
       break;
-    case XFA_Element::Signature:
+    case XFA_FFWidgetType::kSignature:
       pWidget = new CXFA_FFSignature(pNode);
       break;
-    case XFA_Element::TextEdit:
+    case XFA_FFWidgetType::kTextEdit:
       pWidget = new CXFA_FFTextEdit(pNode);
       break;
-    case XFA_Element::Arc:
+    case XFA_FFWidgetType::kArc:
       pWidget = new CXFA_FFArc(pNode);
       break;
-    case XFA_Element::Line:
+    case XFA_FFWidgetType::kLine:
       pWidget = new CXFA_FFLine(pNode);
       break;
-    case XFA_Element::Rectangle:
+    case XFA_FFWidgetType::kRectangle:
       pWidget = new CXFA_FFRectangle(pNode);
       break;
-    case XFA_Element::Text:
+    case XFA_FFWidgetType::kText:
       pWidget = new CXFA_FFText(pNode);
       break;
-    case XFA_Element::Image:
+    case XFA_FFWidgetType::kImage:
       pWidget = new CXFA_FFImage(pNode);
       break;
-    case XFA_Element::Subform:
+    case XFA_FFWidgetType::kSubform:
       pWidget = new CXFA_FFWidget(pNode);
       break;
-    case XFA_Element::ExclGroup:
+    case XFA_FFWidgetType::kExclGroup:
       pWidget = new CXFA_FFExclGroup(pNode);
       break;
-    case XFA_Element::DefaultUi:
-    default:
-      pWidget = nullptr;
-      break;
+    case XFA_FFWidgetType::kNone:
+      return nullptr;
   }
+  ASSERT(pWidget);
 
-  if (pWidget) {
-    CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
-    pWidget->SetDocView(m_pDoc->GetDocView(pLayout));
-  }
+  CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
+  pWidget->SetDocView(m_pDoc->GetDocView(pLayout));
+
   return pWidget;
 }
 
@@ -247,7 +245,7 @@ CXFA_FFWidget* CXFA_FFNotify::GetHWidget(CXFA_LayoutItem* pLayoutItem) {
 }
 
 void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
-  if (hWidget->GetNode()->GetUIType() != XFA_Element::ChoiceList)
+  if (hWidget->GetNode()->GetFFWidgetType() != XFA_FFWidgetType::kChoiceList)
     return;
 
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();

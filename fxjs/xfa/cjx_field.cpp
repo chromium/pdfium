@@ -249,7 +249,8 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
     if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
       wsNewText = pValue->ToWideString();
 
-    if (xfaNode->GetUIChild()->GetElementType() == XFA_Element::NumericEdit) {
+    if (xfaNode->GetUIChildNode()->GetElementType() ==
+        XFA_Element::NumericEdit) {
       wsNewText = xfaNode->NumericLimit(wsNewText, xfaNode->GetLeadDigits(),
                                         xfaNode->GetFracDigits());
     }
@@ -272,7 +273,8 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
   CXFA_Node* formValue = xfaNode->GetFormValueIfExists();
   CXFA_Node* pNode = formValue ? formValue->GetFirstChild() : nullptr;
   if (pNode && pNode->GetElementType() == XFA_Element::Decimal) {
-    if (xfaNode->GetUIChild()->GetElementType() == XFA_Element::NumericEdit &&
+    if (xfaNode->GetUIChildNode()->GetElementType() ==
+            XFA_Element::NumericEdit &&
         (pNode->JSObject()->GetInteger(XFA_Attribute::FracDigits) == -1)) {
       pValue->SetString(content.UTF8Encode().AsStringView());
     } else {

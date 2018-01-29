@@ -49,14 +49,16 @@ CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   if (!bDrawFocus)
     return CXFA_FFWidget::GetBBox(dwStatus);
 
-  XFA_Element type = m_pNode->GetUIType();
-  if (type != XFA_Element::Button && type != XFA_Element::CheckButton &&
-      type != XFA_Element::ImageEdit && type != XFA_Element::Signature &&
-      type != XFA_Element::ChoiceList) {
-    return CFX_RectF();
+  switch (m_pNode->GetFFWidgetType()) {
+    case XFA_FFWidgetType::kButton:
+    case XFA_FFWidgetType::kCheckButton:
+    case XFA_FFWidgetType::kImageEdit:
+    case XFA_FFWidgetType::kSignature:
+    case XFA_FFWidgetType::kChoiceList:
+      return GetRotateMatrix().TransformRect(m_rtUI);
+    default:
+      return CFX_RectF();
   }
-
-  return GetRotateMatrix().TransformRect(m_rtUI);
 }
 
 void CXFA_FFField::RenderWidget(CXFA_Graphics* pGS,
@@ -136,9 +138,10 @@ void CXFA_FFField::UnloadWidget() {
 }
 
 void CXFA_FFField::SetEditScrollOffset() {
-  XFA_Element eType = m_pNode->GetUIType();
-  if (eType != XFA_Element::TextEdit && eType != XFA_Element::NumericEdit &&
-      eType != XFA_Element::PasswordEdit) {
+  XFA_FFWidgetType eType = m_pNode->GetFFWidgetType();
+  if (eType != XFA_FFWidgetType::kTextEdit &&
+      eType != XFA_FFWidgetType::kNumericEdit &&
+      eType != XFA_FFWidgetType::kPasswordEdit) {
     return;
   }
 
@@ -333,7 +336,7 @@ void CXFA_FFField::UpdateFWL() {
 }
 
 uint32_t CXFA_FFField::UpdateUIProperty() {
-  CXFA_Node* pUiNode = m_pNode->GetUIChild();
+  CXFA_Node* pUiNode = m_pNode->GetUIChildNode();
   if (pUiNode && pUiNode->GetElementType() == XFA_Element::DefaultUi)
     return FWL_STYLEEXT_EDT_ReadOnly;
   return 0;

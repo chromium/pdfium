@@ -55,3 +55,7 @@ CXFA_Barcode::CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_Barcode>(this)) {}
 
 CXFA_Barcode::~CXFA_Barcode() {}
+
+XFA_FFWidgetType CXFA_Barcode::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kBarcode;
+}

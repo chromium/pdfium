@@ -43,3 +43,7 @@ CXFA_CheckButton::CXFA_CheckButton(CXFA_Document* doc, XFA_PacketType packet)
                 pdfium::MakeUnique<CJX_CheckButton>(this)) {}
 
 CXFA_CheckButton::~CXFA_CheckButton() {}
+
+XFA_FFWidgetType CXFA_CheckButton::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kCheckButton;
+}

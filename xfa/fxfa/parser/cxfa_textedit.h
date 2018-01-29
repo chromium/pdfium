@@ -13,6 +13,8 @@ class CXFA_TextEdit : public CXFA_Node {
  public:
   CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_TextEdit() override;
+
+  XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TEXTEDIT_H_

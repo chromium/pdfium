@@ -15,6 +15,7 @@ class CXFA_DateTimeEdit : public CXFA_Node {
   ~CXFA_DateTimeEdit() override;
 
   XFA_Element GetValueNodeType() const override;
+  XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATETIMEEDIT_H_

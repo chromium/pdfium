@@ -46,3 +46,7 @@ CXFA_DateTimeEdit::~CXFA_DateTimeEdit() {}
 XFA_Element CXFA_DateTimeEdit::GetValueNodeType() const {
   return XFA_Element::DateTime;
 }
+
+XFA_FFWidgetType CXFA_DateTimeEdit::GetDefaultFFWidgetType() const {
+  return XFA_FFWidgetType::kDateTimeEdit;
+}
