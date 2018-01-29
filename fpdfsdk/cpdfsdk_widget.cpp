@@ -304,25 +304,17 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
     case FormFieldType::kTextField:
       node->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
+    case FormFieldType::kComboBox:
     case FormFieldType::kListBox: {
       node->ClearAllSelections();
 
-      for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
+      for (int i = 0; i < pFormField->CountSelectedItems(); ++i) {
         int nIndex = pFormField->GetSelectedIndex(i);
         if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
           node->SetItemState(nIndex, true, false, false, true);
       }
-      break;
-    }
-    case FormFieldType::kComboBox: {
-      node->ClearAllSelections();
-
-      for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
-        int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 && nIndex < node->CountChoiceListItems(false))
-          node->SetItemState(nIndex, true, false, false, true);
-      }
-      node->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
+      if (GetFieldType() == FormFieldType::kComboBox)
+        node->SetValue(XFA_VALUEPICTURE_Edit, pFormField->GetValue());
       break;
     }
     default:
@@ -431,37 +423,22 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
                                          CPDF_FormControl* pFormControl) {
   ASSERT(hWidget);
 
+  FormFieldType type = pFormField->GetFieldType();
+  if (type != FormFieldType::kComboBox && type != FormFieldType::kListBox)
+    return;
+
   CXFA_Node* node = hWidget->GetNode();
-  switch (pFormField->GetFieldType()) {
-    case FormFieldType::kListBox: {
-      pFormField->ClearSelection(false);
-      pFormField->ClearOptions(true);
+  pFormField->ClearSelection(false);
+  pFormField->ClearOptions(type == FormFieldType::kListBox);
 
-      if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->CountChoiceListItems(false); i < sz; i++) {
-          pFormField->InsertOption(
-              node->GetChoiceListItem(i, false).value_or(L""), i, true);
-        }
-      }
-      break;
+  if (node->IsWidgetReady()) {
+    for (int i = 0; i < node->CountChoiceListItems(false); ++i) {
+      pFormField->InsertOption(node->GetChoiceListItem(i, false).value_or(L""),
+                               i, type == FormFieldType::kListBox);
     }
-    case FormFieldType::kComboBox: {
-      pFormField->ClearSelection(false);
-      pFormField->ClearOptions(false);
-
-      if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->CountChoiceListItems(false); i < sz; i++) {
-          pFormField->InsertOption(
-              node->GetChoiceListItem(i, false).value_or(L""), i, false);
-        }
-      }
-
-      pFormField->SetValue(L"", true);
-      break;
-    }
-    default:
-      break;
   }
+  if (pFormField->GetFieldType() == FormFieldType::kComboBox)
+    pFormField->SetValue(L"", true);
 }
 #endif  // PDF_ENABLE_XFA
 

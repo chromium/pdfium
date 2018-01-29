@@ -312,7 +312,6 @@ class CXFA_Node : public CXFA_Object {
   bool IsListBox();
   bool IsAllowNeutral();
   bool IsRadioButton();
-  bool IsChoiceListAllowTextEntry();
   bool IsMultiLine();
 
   XFA_AttributeEnum GetButtonHighlight();
@@ -336,6 +335,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetExclGroupFirstMember();
   CXFA_Node* GetExclGroupNextMember(CXFA_Node* pNode);
 
+  bool IsChoiceListAllowTextEntry();
   int32_t CountChoiceListItems(bool bSaveValue);
   Optional<WideString> GetChoiceListItem(int32_t nIndex, bool bSaveValue);
   bool IsChoiceListMultiSelect();
