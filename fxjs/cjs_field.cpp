@@ -2320,12 +2320,10 @@ CJS_Return Field::checkThisBox(
   }
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return CJS_Return(false);
-  // TODO(weili): Check whether anything special needed for radio button,
-  // otherwise merge these branches.
-  if (pFormField->GetFieldType() == FormFieldType::kRadioButton)
-    pFormField->CheckControl(nWidget, bCheckit, true);
-  else
-    pFormField->CheckControl(nWidget, bCheckit, true);
+
+  // TODO(weili): Check whether anything special needed for radio button.
+  // (When pFormField->GetFieldType() == FormFieldType::kRadioButton.)
+  pFormField->CheckControl(nWidget, bCheckit, true);
 
   UpdateFormField(m_pFormFillEnv.Get(), pFormField, true, true, true);
   return CJS_Return(true);

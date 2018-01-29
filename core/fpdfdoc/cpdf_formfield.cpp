@@ -168,14 +168,9 @@ bool CPDF_FormField::ResetField(bool bNotify) {
       int iCount = CountControls();
       if (iCount) {
         // TODO(weili): Check whether anything special needs to be done for
-        // unison field. Otherwise, merge these branches.
-        if (IsUnison(this)) {
-          for (int i = 0; i < iCount; i++)
-            CheckControl(i, GetControl(i)->IsDefaultChecked(), false);
-        } else {
-          for (int i = 0; i < iCount; i++)
-            CheckControl(i, GetControl(i)->IsDefaultChecked(), false);
-        }
+        // unison field. (When IsUnison(this) returns true/false.)
+        for (int i = 0; i < iCount; i++)
+          CheckControl(i, GetControl(i)->IsDefaultChecked(), false);
       }
       if (bNotify && m_pForm->GetFormNotify())
         m_pForm->GetFormNotify()->AfterCheckedStatusChange(this);

@@ -1576,13 +1576,8 @@ bool CPWL_EditImpl::Backspace(bool bAddUndo, bool bPaint) {
     return false;
 
   if (bAddUndo && m_bEnableUndo) {
-    if (m_wpCaret.nSecIndex != m_wpOldCaret.nSecIndex) {
-      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Backspace>(
-          this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset));
-    } else {
-      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Backspace>(
-          this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset));
-    }
+    AddEditUndoItem(pdfium::MakeUnique<CFXEU_Backspace>(
+        this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset));
   }
   if (bPaint) {
     RearrangePart(CPVT_WordRange(m_wpCaret, m_wpOldCaret));
