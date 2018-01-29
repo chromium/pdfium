@@ -70,8 +70,8 @@ bool CopyInheritable(CPDF_Dictionary* pCurPageDict,
 }
 
 bool ParserPageRangeString(ByteString rangstring,
-                           int nCount,
-                           std::vector<uint16_t>* pageArray) {
+                           uint32_t nCount,
+                           std::vector<uint32_t>* pageArray) {
   if (rangstring.IsEmpty())
     return true;
 
@@ -93,13 +93,13 @@ bool ParserPageRangeString(ByteString rangstring,
     cbMidRange = rangstring.Mid(nStringFrom, nStringTo.value() - nStringFrom);
     auto nMid = cbMidRange.Find('-');
     if (!nMid.has_value()) {
-      uint16_t pageNum =
-          pdfium::base::checked_cast<uint16_t>(atoi(cbMidRange.c_str()));
+      uint32_t pageNum =
+          pdfium::base::checked_cast<uint32_t>(atoi(cbMidRange.c_str()));
       if (pageNum <= 0 || pageNum > nCount)
         return false;
       pageArray->push_back(pageNum);
     } else {
-      uint16_t nStartPageNum = pdfium::base::checked_cast<uint16_t>(
+      uint32_t nStartPageNum = pdfium::base::checked_cast<uint32_t>(
           atoi(cbMidRange.Left(nMid.value()).c_str()));
       if (nStartPageNum == 0)
         return false;
@@ -109,13 +109,13 @@ bool ParserPageRangeString(ByteString rangstring,
       if (nEnd == 0)
         return false;
 
-      uint16_t nEndPageNum = pdfium::base::checked_cast<uint16_t>(
+      uint32_t nEndPageNum = pdfium::base::checked_cast<uint32_t>(
           atoi(cbMidRange.Mid(nMid.value(), nEnd).c_str()));
       if (nStartPageNum < 0 || nStartPageNum > nEndPageNum ||
           nEndPageNum > nCount) {
         return false;
       }
-      for (uint16_t i = nStartPageNum; i <= nEndPageNum; ++i) {
+      for (uint32_t i = nStartPageNum; i <= nEndPageNum; ++i) {
         pageArray->push_back(i);
       }
     }
@@ -126,13 +126,13 @@ bool ParserPageRangeString(ByteString rangstring,
 
 bool GetPageNumbers(ByteString pageRange,
                     CPDF_Document* pSrcDoc,
-                    std::vector<uint16_t>* pageArray) {
-  uint16_t nCount = pSrcDoc->GetPageCount();
+                    std::vector<uint32_t>* pageArray) {
+  uint32_t nCount = pSrcDoc->GetPageCount();
   if (!pageRange.IsEmpty()) {
     if (!ParserPageRangeString(pageRange, nCount, pageArray))
       return false;
   } else {
-    for (uint16_t i = 1; i <= nCount; ++i) {
+    for (uint32_t i = 1; i <= nCount; ++i) {
       pageArray->push_back(i);
     }
   }
@@ -147,7 +147,7 @@ class CPDF_PageOrganizer {
   ~CPDF_PageOrganizer();
 
   bool PDFDocInit();
-  bool ExportPage(const std::vector<uint16_t>& pageNums, int nIndex);
+  bool ExportPage(const std::vector<uint32_t>& pageNums, int nIndex);
 
  private:
   using ObjectNumberMap = std::map<uint32_t, uint32_t>;
@@ -206,7 +206,7 @@ bool CPDF_PageOrganizer::PDFDocInit() {
   return true;
 }
 
-bool CPDF_PageOrganizer::ExportPage(const std::vector<uint16_t>& pageNums,
+bool CPDF_PageOrganizer::ExportPage(const std::vector<uint32_t>& pageNums,
                                     int nIndex) {
   int curpage = nIndex;
   auto pObjNumberMap = pdfium::MakeUnique<ObjectNumberMap>();
@@ -372,7 +372,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   if (!pSrcDoc)
     return false;
 
-  std::vector<uint16_t> pageArray;
+  std::vector<uint32_t> pageArray;
   if (!GetPageNumbers(pagerange, pSrcDoc, &pageArray))
     return false;
 
