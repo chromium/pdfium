@@ -38,7 +38,6 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
 #ifdef PDF_ENABLE_XFA
   CXFA_FFWidget* GetMixXFAWidget() const;
-  CXFA_FFWidget* GetGroupMixXFAWidget();
   CXFA_FFWidgetHandler* GetXFAWidgetHandler() const;
 
   bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT);
@@ -47,17 +46,6 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
                     CPDFSDK_PageView* pPageView);
 
   void Synchronize(bool bSynchronizeElse);
-  void SynchronizeXFAValue();
-  void SynchronizeXFAItems();
-
-  static void SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
-                                  CXFA_FFWidget* hWidget,
-                                  CPDF_FormField* pFormField,
-                                  CPDF_FormControl* pFormControl);
-  static void SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
-                                  CXFA_FFWidget* hWidget,
-                                  CPDF_FormField* pFormField,
-                                  CPDF_FormControl* pFormControl);
 #endif  // PDF_ENABLE_XFA
 
   CPDFSDK_Widget(CPDF_Annot* pAnnot,
@@ -94,9 +82,6 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   bool IsChecked() const;
   int GetAlignment() const;
   int GetMaxLen() const;
-#ifdef PDF_ENABLE_XFA
-  WideString GetName() const;
-#endif  // PDF_ENABLE_XFA
   WideString GetAlternateName() const;
 
   void SetCheck(bool bChecked, bool bNotify);
@@ -147,6 +132,11 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   CFX_Color GetFillPWLColor() const;
 
  private:
+#ifdef PDF_ENABLE_XFA
+  CXFA_FFWidget* GetGroupMixXFAWidget();
+  WideString GetName() const;
+#endif  // PDF_ENABLE_XFA
+
   UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
   bool m_bAppModified;
   uint32_t m_nAppearanceAge;
