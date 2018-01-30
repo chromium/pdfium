@@ -62,7 +62,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   bool IsXfaCalculateEnabled() const;
   bool IsXfaValidationsEnabled();
   void XfaSetValidationsEnabled(bool bEnabled);
-  void SynchronizeField(CPDF_FormField* pFormField, bool bSynchronizeElse);
+  void SynchronizeField(CPDF_FormField* pFormField);
 #endif  // PDF_ENABLE_XFA
 
   bool OnKeyStrokeCommit(CPDF_FormField* pFormField, const WideString& csValue);
@@ -78,7 +78,6 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   bool DoAction_Hide(const CPDF_Action& action);
   bool DoAction_SubmitForm(const CPDF_Action& action);
   bool DoAction_ResetForm(const CPDF_Action& action);
-  bool DoAction_ImportData(const CPDF_Action& action);
 
   std::vector<CPDF_FormField*> GetFieldFromObjects(
       const std::vector<CPDF_Object*>& objects) const;

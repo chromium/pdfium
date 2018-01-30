@@ -98,20 +98,15 @@ class CPDFSDK_ActionHandler {
 
   bool IsValidField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     CPDF_Dictionary* pFieldDict);
-  bool IsValidDocView(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   void DoAction_GoTo(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                      const CPDF_Action& action);
-  void DoAction_GoToR(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                      const CPDF_Action& action);
   void DoAction_Launch(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        const CPDF_Action& action);
   void DoAction_URI(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     const CPDF_Action& action);
   void DoAction_Named(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                       const CPDF_Action& action);
-  void DoAction_SetOCGState(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                            const CPDF_Action& action);
 
   bool DoAction_Hide(const CPDF_Action& action,
                      CPDFSDK_FormFillEnvironment* pFormFillEnv);
@@ -119,8 +114,6 @@ class CPDFSDK_ActionHandler {
                            CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_ResetForm(const CPDF_Action& action,
                           CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  bool DoAction_ImportData(const CPDF_Action& action,
-                           CPDFSDK_FormFillEnvironment* pFormFillEnv);
 };
 
 #endif  // FPDFSDK_FSDK_ACTIONHANDLER_H_

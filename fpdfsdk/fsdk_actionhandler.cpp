@@ -126,9 +126,8 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
       WideString swJS = action.GetJavaScript();
-      if (!swJS.IsEmpty()) {
+      if (!swJS.IsEmpty())
         RunDocumentOpenJavaScript(pFormFillEnv, L"", swJS);
-      }
     }
   } else {
     DoAction_NoJs(action, pFormFillEnv);
@@ -163,11 +162,9 @@ bool CPDFSDK_ActionHandler::ExecuteLinkAction(
         pContext->OnLink_MouseUp(pFormFillEnv);
 
         WideString csInfo;
-        bool bRet = pContext->RunScript(swJS, &csInfo);
+        pContext->RunScript(swJS, &csInfo);
         pRuntime->ReleaseEventContext(pContext);
-        if (!bRet) {
-          // FIXME: return error.
-        }
+        // TODO(dsinclair): Return error if RunScript returns false.
       }
     }
   } else {
@@ -198,16 +195,14 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
   if (action.GetType() == CPDF_Action::JavaScript) {
     if (pFormFillEnv->IsJSInitiated()) {
       WideString swJS = action.GetJavaScript();
-      if (!swJS.IsEmpty()) {
+      if (!swJS.IsEmpty())
         RunDocumentPageJavaScript(pFormFillEnv, type, swJS);
-      }
     }
   } else {
     DoAction_NoJs(action, pFormFillEnv);
   }
 
-  if (!IsValidDocView(pFormFillEnv))
-    return false;
+  ASSERT(pFormFillEnv);
 
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
@@ -285,11 +280,9 @@ bool CPDFSDK_ActionHandler::ExecuteScreenAction(
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
         IJS_EventContext* pContext = pRuntime->NewEventContext();
         WideString csInfo;
-        bool bRet = pContext->RunScript(swJS, &csInfo);
+        pContext->RunScript(swJS, &csInfo);
         pRuntime->ReleaseEventContext(pContext);
-        if (!bRet) {
-          // FIXME: return error.
-        }
+        // TODO(dsinclair): Return error if RunScript returns false.
       }
     }
   } else {
@@ -326,11 +319,9 @@ bool CPDFSDK_ActionHandler::ExecuteBookMark(
         pContext->OnBookmark_MouseUp(pBookmark);
 
         WideString csInfo;
-        bool bRet = pContext->RunScript(swJS, &csInfo);
+        pContext->RunScript(swJS, &csInfo);
         pRuntime->ReleaseEventContext(pContext);
-        if (!bRet) {
-          // FIXME: return error.
-        }
+        // TODO(dsinclair): Return error if RunScript returns false.
       }
     }
   } else {
@@ -355,22 +346,8 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
     case CPDF_Action::GoTo:
       DoAction_GoTo(pFormFillEnv, action);
       break;
-    case CPDF_Action::GoToR:
-      DoAction_GoToR(pFormFillEnv, action);
-      break;
-    case CPDF_Action::GoToE:
-      break;
-    case CPDF_Action::Launch:
-      DoAction_Launch(pFormFillEnv, action);
-      break;
-    case CPDF_Action::Thread:
-      break;
     case CPDF_Action::URI:
       DoAction_URI(pFormFillEnv, action);
-      break;
-    case CPDF_Action::Sound:
-      break;
-    case CPDF_Action::Movie:
       break;
     case CPDF_Action::Hide:
       DoAction_Hide(action, pFormFillEnv);
@@ -384,30 +361,25 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
     case CPDF_Action::ResetForm:
       DoAction_ResetForm(action, pFormFillEnv);
       break;
-    case CPDF_Action::ImportData:
-      DoAction_ImportData(action, pFormFillEnv);
-      break;
     case CPDF_Action::JavaScript:
       NOTREACHED();
       break;
     case CPDF_Action::SetOCGState:
-      DoAction_SetOCGState(pFormFillEnv, action);
-      break;
+    case CPDF_Action::Thread:
+    case CPDF_Action::Sound:
+    case CPDF_Action::Movie:
     case CPDF_Action::Rendition:
-      break;
     case CPDF_Action::Trans:
-      break;
     case CPDF_Action::GoTo3DView:
+    case CPDF_Action::GoToR:
+    case CPDF_Action::GoToE:
+    case CPDF_Action::Launch:
+    case CPDF_Action::ImportData:
+      // Unimplemented
       break;
     default:
       break;
   }
-}
-
-bool CPDFSDK_ActionHandler::IsValidDocView(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  ASSERT(pFormFillEnv);
-  return true;
 }
 
 void CPDFSDK_ActionHandler::DoAction_GoTo(
@@ -431,14 +403,6 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(
                              posArray.size());
 }
 
-void CPDFSDK_ActionHandler::DoAction_GoToR(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    const CPDF_Action& action) {}
-
-void CPDFSDK_ActionHandler::DoAction_Launch(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    const CPDF_Action& action) {}
-
 void CPDFSDK_ActionHandler::DoAction_URI(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     const CPDF_Action& action) {
@@ -456,10 +420,6 @@ void CPDFSDK_ActionHandler::DoAction_Named(
   ByteString csName = action.GetNamedAction();
   pFormFillEnv->ExecuteNamedAction(csName.c_str());
 }
-
-void CPDFSDK_ActionHandler::DoAction_SetOCGState(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    const CPDF_Action& action) {}
 
 void CPDFSDK_ActionHandler::RunFieldJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -510,11 +470,9 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
   }
 
   WideString csInfo;
-  bool bRet = pContext->RunScript(script, &csInfo);
+  pContext->RunScript(script, &csInfo);
   pRuntime->ReleaseEventContext(pContext);
-  if (!bRet) {
-    // FIXME: return error.
-  }
+  // TODO(dsinclair): Return error if RunScript returns false.
 }
 
 void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
@@ -526,11 +484,9 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
   pContext->OnDoc_Open(pFormFillEnv, sScriptName);
 
   WideString csInfo;
-  bool bRet = pContext->RunScript(script, &csInfo);
+  pContext->RunScript(script, &csInfo);
   pRuntime->ReleaseEventContext(pContext);
-  if (!bRet) {
-    // FIXME: return error.
-  }
+  // TODO(dsinclair): Return error if RunScript returns false.
 }
 
 void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
@@ -573,11 +529,9 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
   }
 
   WideString csInfo;
-  bool bRet = pContext->RunScript(script, &csInfo);
+  pContext->RunScript(script, &csInfo);
   pRuntime->ReleaseEventContext(pContext);
-  if (!bRet) {
-    // FIXME: return error.
-  }
+  // TODO(dsinclair): Return error if RunScript returns false.
 }
 
 bool CPDFSDK_ActionHandler::DoAction_Hide(
@@ -588,7 +542,6 @@ bool CPDFSDK_ActionHandler::DoAction_Hide(
     pFormFillEnv->SetChangeMark();
     return true;
   }
-
   return false;
 }
 
@@ -606,14 +559,3 @@ bool CPDFSDK_ActionHandler::DoAction_ResetForm(
   return pInterForm->DoAction_ResetForm(action);
 }
 
-bool CPDFSDK_ActionHandler::DoAction_ImportData(
-    const CPDF_Action& action,
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-  if (pInterForm->DoAction_ImportData(action)) {
-    pFormFillEnv->SetChangeMark();
-    return true;
-  }
-
-  return false;
-}
