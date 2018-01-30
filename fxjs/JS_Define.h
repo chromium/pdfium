@@ -13,6 +13,7 @@
 #include "fxjs/cjs_return.h"
 #include "fxjs/fxjs_v8.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/ptr_util.h"
 
 double JS_GetDateTime();
 int JS_GetYearFromTime(double dt);
@@ -49,7 +50,7 @@ std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
 template <class T, class A>
 static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
   CJS_Object* pObj = new T(obj);
-  pObj->SetEmbedObject(new A(pObj));
+  pObj->SetEmbedObject(pdfium::MakeUnique<A>(pObj));
   pEngine->SetObjectPrivate(obj, pObj);
   pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
 }
