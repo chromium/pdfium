@@ -234,8 +234,8 @@ void CJBig2_Image::expand(int32_t h, bool v) {
     return;
 
   if (m_pData.IsOwned()) {
-    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
-        FX_Realloc(uint8_t, m_pData.Release().release(), h * m_nStride)));
+    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Realloc(
+        uint8_t, m_pData.ReleaseAndClear().release(), h * m_nStride)));
   } else {
     uint8_t* pExternalBuffer = data();
     m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
