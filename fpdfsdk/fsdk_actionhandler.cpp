@@ -47,7 +47,7 @@ bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    PDFSDK_FieldAction& data) {
+    PDFSDK_FieldAction* data) {
   ASSERT(pFormFillEnv);
   if (pFormFillEnv->IsJSInitiated() &&
       JsAction.GetType() == CPDF_Action::JavaScript) {
@@ -106,7 +106,7 @@ bool CPDFSDK_ActionHandler::DoAction_Field(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    PDFSDK_FieldAction& data) {
+    PDFSDK_FieldAction* data) {
   std::set<CPDF_Dictionary*> visited;
   return ExecuteFieldAction(action, type, pFormFillEnv, pFormField, data,
                             &visited);
@@ -154,19 +154,10 @@ bool CPDFSDK_ActionHandler::ExecuteLinkAction(
 
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
-    if (pFormFillEnv->IsJSInitiated()) {
-      WideString swJS = action.GetJavaScript();
-      if (!swJS.IsEmpty()) {
-        IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-        IJS_EventContext* pContext = pRuntime->NewEventContext();
-        pContext->OnLink_MouseUp(pFormFillEnv);
-
-        WideString csInfo;
-        pContext->RunScript(swJS, &csInfo);
-        pRuntime->ReleaseEventContext(pContext);
-        // TODO(dsinclair): Return error if RunScript returns false.
-      }
-    }
+    RunScriptForAction(action, pFormFillEnv,
+                       [pFormFillEnv](IJS_EventContext* context) {
+                         context->OnLink_MouseUp(pFormFillEnv);
+                       });
   } else {
     DoAction_NoJs(action, pFormFillEnv);
   }
@@ -228,7 +219,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    PDFSDK_FieldAction& data,
+    PDFSDK_FieldAction* data,
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
@@ -273,21 +264,10 @@ bool CPDFSDK_ActionHandler::ExecuteScreenAction(
   visited->insert(pDict);
 
   ASSERT(pFormFillEnv);
-  if (action.GetType() == CPDF_Action::JavaScript) {
-    if (pFormFillEnv->IsJSInitiated()) {
-      WideString swJS = action.GetJavaScript();
-      if (!swJS.IsEmpty()) {
-        IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-        IJS_EventContext* pContext = pRuntime->NewEventContext();
-        WideString csInfo;
-        pContext->RunScript(swJS, &csInfo);
-        pRuntime->ReleaseEventContext(pContext);
-        // TODO(dsinclair): Return error if RunScript returns false.
-      }
-    }
-  } else {
+  if (action.GetType() == CPDF_Action::JavaScript)
+    RunScriptForAction(action, pFormFillEnv, [](IJS_EventContext*) {});
+  else
     DoAction_NoJs(action, pFormFillEnv);
-  }
 
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
@@ -311,19 +291,10 @@ bool CPDFSDK_ActionHandler::ExecuteBookMark(
 
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
-    if (pFormFillEnv->IsJSInitiated()) {
-      WideString swJS = action.GetJavaScript();
-      if (!swJS.IsEmpty()) {
-        IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-        IJS_EventContext* pContext = pRuntime->NewEventContext();
-        pContext->OnBookmark_MouseUp(pBookmark);
-
-        WideString csInfo;
-        pContext->RunScript(swJS, &csInfo);
-        pRuntime->ReleaseEventContext(pContext);
-        // TODO(dsinclair): Return error if RunScript returns false.
-      }
-    }
+    RunScriptForAction(action, pFormFillEnv,
+                       [pFormFillEnv, pBookmark](IJS_EventContext* context) {
+                         context->OnBookmark_MouseUp(pBookmark);
+                       });
   } else {
     DoAction_NoJs(action, pFormFillEnv);
   }
@@ -425,113 +396,105 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
     CPDF_AAction::AActionType type,
-    PDFSDK_FieldAction& data,
+    PDFSDK_FieldAction* data,
     const WideString& script) {
   ASSERT(type != CPDF_AAction::Calculate);
   ASSERT(type != CPDF_AAction::Format);
 
-  IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-  IJS_EventContext* pContext = pRuntime->NewEventContext();
-  switch (type) {
-    case CPDF_AAction::CursorEnter:
-      pContext->OnField_MouseEnter(data.bModifier, data.bShift, pFormField);
-      break;
-    case CPDF_AAction::CursorExit:
-      pContext->OnField_MouseExit(data.bModifier, data.bShift, pFormField);
-      break;
-    case CPDF_AAction::ButtonDown:
-      pContext->OnField_MouseDown(data.bModifier, data.bShift, pFormField);
-      break;
-    case CPDF_AAction::ButtonUp:
-      pContext->OnField_MouseUp(data.bModifier, data.bShift, pFormField);
-      break;
-    case CPDF_AAction::GetFocus:
-      pContext->OnField_Focus(data.bModifier, data.bShift, pFormField,
-                              data.sValue);
-      break;
-    case CPDF_AAction::LoseFocus:
-      pContext->OnField_Blur(data.bModifier, data.bShift, pFormField,
-                             data.sValue);
-      break;
-    case CPDF_AAction::KeyStroke:
-      pContext->OnField_Keystroke(data.sChange, data.sChangeEx, data.bKeyDown,
-                                  data.bModifier, data.nSelEnd, data.nSelStart,
-                                  data.bShift, pFormField, data.sValue,
-                                  data.bWillCommit, data.bFieldFull, data.bRC);
-      break;
-    case CPDF_AAction::Validate:
-      pContext->OnField_Validate(data.sChange, data.sChangeEx, data.bKeyDown,
-                                 data.bModifier, data.bShift, pFormField,
-                                 data.sValue, data.bRC);
-      break;
-    default:
-      NOTREACHED();
-      break;
-  }
-
-  WideString csInfo;
-  pContext->RunScript(script, &csInfo);
-  pRuntime->ReleaseEventContext(pContext);
-  // TODO(dsinclair): Return error if RunScript returns false.
+  RunScript(
+      pFormFillEnv, script,
+      [type, data, pFormField](IJS_EventContext* context) {
+        switch (type) {
+          case CPDF_AAction::CursorEnter:
+            context->OnField_MouseEnter(data->bModifier, data->bShift,
+                                        pFormField);
+            break;
+          case CPDF_AAction::CursorExit:
+            context->OnField_MouseExit(data->bModifier, data->bShift,
+                                       pFormField);
+            break;
+          case CPDF_AAction::ButtonDown:
+            context->OnField_MouseDown(data->bModifier, data->bShift,
+                                       pFormField);
+            break;
+          case CPDF_AAction::ButtonUp:
+            context->OnField_MouseUp(data->bModifier, data->bShift, pFormField);
+            break;
+          case CPDF_AAction::GetFocus:
+            context->OnField_Focus(data->bModifier, data->bShift, pFormField,
+                                   data->sValue);
+            break;
+          case CPDF_AAction::LoseFocus:
+            context->OnField_Blur(data->bModifier, data->bShift, pFormField,
+                                  data->sValue);
+            break;
+          case CPDF_AAction::KeyStroke:
+            context->OnField_Keystroke(
+                data->sChange, data->sChangeEx, data->bKeyDown, data->bModifier,
+                data->nSelEnd, data->nSelStart, data->bShift, pFormField,
+                data->sValue, data->bWillCommit, data->bFieldFull, data->bRC);
+            break;
+          case CPDF_AAction::Validate:
+            context->OnField_Validate(
+                data->sChange, data->sChangeEx, data->bKeyDown, data->bModifier,
+                data->bShift, pFormField, data->sValue, data->bRC);
+            break;
+          default:
+            NOTREACHED();
+            break;
+        }
+      });
 }
 
 void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     const WideString& sScriptName,
     const WideString& script) {
-  IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-  IJS_EventContext* pContext = pRuntime->NewEventContext();
-  pContext->OnDoc_Open(pFormFillEnv, sScriptName);
-
-  WideString csInfo;
-  pContext->RunScript(script, &csInfo);
-  pRuntime->ReleaseEventContext(pContext);
-  // TODO(dsinclair): Return error if RunScript returns false.
+  RunScript(pFormFillEnv, script,
+            [pFormFillEnv, sScriptName](IJS_EventContext* context) {
+              context->OnDoc_Open(pFormFillEnv, sScriptName);
+            });
 }
 
 void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_AAction::AActionType type,
     const WideString& script) {
-  IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-  IJS_EventContext* pContext = pRuntime->NewEventContext();
-  switch (type) {
-    case CPDF_AAction::OpenPage:
-      pContext->OnPage_Open(pFormFillEnv);
-      break;
-    case CPDF_AAction::ClosePage:
-      pContext->OnPage_Close(pFormFillEnv);
-      break;
-    case CPDF_AAction::CloseDocument:
-      pContext->OnDoc_WillClose(pFormFillEnv);
-      break;
-    case CPDF_AAction::SaveDocument:
-      pContext->OnDoc_WillSave(pFormFillEnv);
-      break;
-    case CPDF_AAction::DocumentSaved:
-      pContext->OnDoc_DidSave(pFormFillEnv);
-      break;
-    case CPDF_AAction::PrintDocument:
-      pContext->OnDoc_WillPrint(pFormFillEnv);
-      break;
-    case CPDF_AAction::DocumentPrinted:
-      pContext->OnDoc_DidPrint(pFormFillEnv);
-      break;
-    case CPDF_AAction::PageVisible:
-      pContext->OnPage_InView(pFormFillEnv);
-      break;
-    case CPDF_AAction::PageInvisible:
-      pContext->OnPage_OutView(pFormFillEnv);
-      break;
-    default:
-      NOTREACHED();
-      break;
-  }
-
-  WideString csInfo;
-  pContext->RunScript(script, &csInfo);
-  pRuntime->ReleaseEventContext(pContext);
-  // TODO(dsinclair): Return error if RunScript returns false.
+  RunScript(pFormFillEnv, script,
+            [type, pFormFillEnv](IJS_EventContext* context) {
+              switch (type) {
+                case CPDF_AAction::OpenPage:
+                  context->OnPage_Open(pFormFillEnv);
+                  break;
+                case CPDF_AAction::ClosePage:
+                  context->OnPage_Close(pFormFillEnv);
+                  break;
+                case CPDF_AAction::CloseDocument:
+                  context->OnDoc_WillClose(pFormFillEnv);
+                  break;
+                case CPDF_AAction::SaveDocument:
+                  context->OnDoc_WillSave(pFormFillEnv);
+                  break;
+                case CPDF_AAction::DocumentSaved:
+                  context->OnDoc_DidSave(pFormFillEnv);
+                  break;
+                case CPDF_AAction::PrintDocument:
+                  context->OnDoc_WillPrint(pFormFillEnv);
+                  break;
+                case CPDF_AAction::DocumentPrinted:
+                  context->OnDoc_DidPrint(pFormFillEnv);
+                  break;
+                case CPDF_AAction::PageVisible:
+                  context->OnPage_InView(pFormFillEnv);
+                  break;
+                case CPDF_AAction::PageInvisible:
+                  context->OnPage_OutView(pFormFillEnv);
+                  break;
+                default:
+                  NOTREACHED();
+                  break;
+              }
+            });
 }
 
 bool CPDFSDK_ActionHandler::DoAction_Hide(
@@ -559,3 +522,31 @@ bool CPDFSDK_ActionHandler::DoAction_ResetForm(
   return pInterForm->DoAction_ResetForm(action);
 }
 
+void CPDFSDK_ActionHandler::RunScriptForAction(
+    const CPDF_Action& action,
+    CPDFSDK_FormFillEnvironment* pFormFillEnv,
+    std::function<void(IJS_EventContext* context)> cb) {
+  if (!pFormFillEnv->IsJSInitiated())
+    return;
+
+  WideString swJS = action.GetJavaScript();
+  if (swJS.IsEmpty())
+    return;
+
+  RunScript(pFormFillEnv, swJS, cb);
+}
+
+void CPDFSDK_ActionHandler::RunScript(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv,
+    const WideString& script,
+    std::function<void(IJS_EventContext* context)> cb) {
+  IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
+  IJS_EventContext* pContext = pRuntime->NewEventContext();
+
+  cb(pContext);
+
+  WideString csInfo;
+  pContext->RunScript(script, &csInfo);
+  pRuntime->ReleaseEventContext(pContext);
+  // TODO(dsinclair): Return error if RunScript returns false.
+}

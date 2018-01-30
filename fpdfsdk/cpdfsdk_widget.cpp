@@ -221,7 +221,7 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
 }
 
 bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
-                                  PDFSDK_FieldAction& data,
+                                  PDFSDK_FieldAction* data,
                                   CPDFSDK_PageView* pPageView) {
   CPDFXFA_Context* pContext = m_pPageView->GetFormFillEnv()->GetXFAContext();
 
@@ -239,22 +239,22 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
 
   CXFA_EventParam param;
   param.m_eType = eEventType;
-  param.m_wsChange = data.sChange;
-  param.m_iCommitKey = data.nCommitKey;
-  param.m_bShift = data.bShift;
-  param.m_iSelStart = data.nSelStart;
-  param.m_iSelEnd = data.nSelEnd;
-  param.m_wsFullText = data.sValue;
-  param.m_bKeyDown = data.bKeyDown;
-  param.m_bModifier = data.bModifier;
-  param.m_wsNewText = data.sValue;
-  if (data.nSelEnd > data.nSelStart)
-    param.m_wsNewText.Delete(data.nSelStart, data.nSelEnd - data.nSelStart);
+  param.m_wsChange = data->sChange;
+  param.m_iCommitKey = data->nCommitKey;
+  param.m_bShift = data->bShift;
+  param.m_iSelStart = data->nSelStart;
+  param.m_iSelEnd = data->nSelEnd;
+  param.m_wsFullText = data->sValue;
+  param.m_bKeyDown = data->bKeyDown;
+  param.m_bModifier = data->bModifier;
+  param.m_wsNewText = data->sValue;
+  if (data->nSelEnd > data->nSelStart)
+    param.m_wsNewText.Delete(data->nSelStart, data->nSelEnd - data->nSelStart);
 
-  for (const auto& c : data.sChange)
-    param.m_wsNewText.Insert(data.nSelStart, c);
+  for (const auto& c : data->sChange)
+    param.m_wsNewText.Insert(data->nSelStart, c);
 
-  param.m_wsPrevText = data.sValue;
+  param.m_wsPrevText = data->sValue;
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
       GetFieldType() == FormFieldType::kRadioButton) {
     if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
@@ -831,34 +831,34 @@ CFX_Color CPDFSDK_Widget::GetFillPWLColor() const {
 }
 
 bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
-                               PDFSDK_FieldAction& data,
+                               PDFSDK_FieldAction* data,
                                CPDFSDK_PageView* pPageView) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* pContext = pFormFillEnv->GetXFAContext();
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
-    XFA_EVENTTYPE eEventType = GetXFAEventType(type, data.bWillCommit);
+    XFA_EVENTTYPE eEventType = GetXFAEventType(type, data->bWillCommit);
 
     if (eEventType != XFA_EVENT_Unknown) {
       if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
         CXFA_EventParam param;
         param.m_eType = eEventType;
-        param.m_wsChange = data.sChange;
-        param.m_iCommitKey = data.nCommitKey;
-        param.m_bShift = data.bShift;
-        param.m_iSelStart = data.nSelStart;
-        param.m_iSelEnd = data.nSelEnd;
-        param.m_wsFullText = data.sValue;
-        param.m_bKeyDown = data.bKeyDown;
-        param.m_bModifier = data.bModifier;
-        param.m_wsNewText = data.sValue;
-        if (data.nSelEnd > data.nSelStart)
-          param.m_wsNewText.Delete(data.nSelStart,
-                                   data.nSelEnd - data.nSelStart);
-        for (int i = data.sChange.GetLength() - 1; i >= 0; i--)
-          param.m_wsNewText.Insert(data.nSelStart, data.sChange[i]);
-        param.m_wsPrevText = data.sValue;
+        param.m_wsChange = data->sChange;
+        param.m_iCommitKey = data->nCommitKey;
+        param.m_bShift = data->bShift;
+        param.m_iSelStart = data->nSelStart;
+        param.m_iSelEnd = data->nSelEnd;
+        param.m_wsFullText = data->sValue;
+        param.m_bKeyDown = data->bKeyDown;
+        param.m_bModifier = data->bModifier;
+        param.m_wsNewText = data->sValue;
+        if (data->nSelEnd > data->nSelStart)
+          param.m_wsNewText.Delete(data->nSelStart,
+                                   data->nSelEnd - data->nSelStart);
+        for (int i = data->sChange.GetLength() - 1; i >= 0; i--)
+          param.m_wsNewText.Insert(data->nSelStart, data->sChange[i]);
+        param.m_wsPrevText = data->sValue;
 
         int32_t nRet = XFA_EVENTERROR_NotExist;
         CXFA_Node* node = hWidget->GetNode();

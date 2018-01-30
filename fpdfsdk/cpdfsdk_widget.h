@@ -42,7 +42,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 
   bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT);
   bool OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
-                    PDFSDK_FieldAction& data,
+                    PDFSDK_FieldAction* data,
                     CPDFSDK_PageView* pPageView);
 
   void Synchronize(bool bSynchronizeElse);
@@ -100,7 +100,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   WideString OnFormat(bool& bFormatted);
 
   bool OnAAction(CPDF_AAction::AActionType type,
-                 PDFSDK_FieldAction& data,
+                 PDFSDK_FieldAction* data,
                  CPDFSDK_PageView* pPageView);
 
   CPDFSDK_InterForm* GetInterForm() const { return m_pInterForm.Get(); }

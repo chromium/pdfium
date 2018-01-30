@@ -383,7 +383,7 @@ bool CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
   fa.bShift = false;
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(
-      action, CPDF_AAction::KeyStroke, m_pFormFillEnv.Get(), pFormField, fa);
+      action, CPDF_AAction::KeyStroke, m_pFormFillEnv.Get(), pFormField, &fa);
   return fa.bRC;
 }
 
@@ -403,7 +403,7 @@ bool CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
   fa.bShift = false;
   fa.sValue = csValue;
   pActionHandler->DoAction_FieldJavaScript(
-      action, CPDF_AAction::Validate, m_pFormFillEnv.Get(), pFormField, fa);
+      action, CPDF_AAction::Validate, m_pFormFillEnv.Get(), pFormField, &fa);
   return fa.bRC;
 }
 

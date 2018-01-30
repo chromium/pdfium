@@ -20,6 +20,7 @@ class CPDFSDK_FormFillEnvironment;
 class CPDF_Bookmark;
 class CPDF_Dictionary;
 class CPDF_FormField;
+class IJS_EventContext;
 
 class CPDFSDK_ActionHandler {
  public:
@@ -48,14 +49,21 @@ class CPDFSDK_ActionHandler {
                       CPDF_AAction::AActionType type,
                       CPDFSDK_FormFillEnvironment* pFormFillEnv,
                       CPDF_FormField* pFormField,
-                      PDFSDK_FieldAction& data);
+                      PDFSDK_FieldAction* data);
   bool DoAction_FieldJavaScript(const CPDF_Action& JsAction,
                                 CPDF_AAction::AActionType type,
                                 CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                 CPDF_FormField* pFormField,
-                                PDFSDK_FieldAction& data);
+                                PDFSDK_FieldAction* data);
 
  private:
+  void RunScriptForAction(const CPDF_Action& action,
+                          CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                          std::function<void(IJS_EventContext* context)> cb);
+  void RunScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                 const WideString& script,
+                 std::function<void(IJS_EventContext* context)> cb);
+
   bool ExecuteDocumentOpenAction(const CPDF_Action& action,
                                  CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  std::set<CPDF_Dictionary*>* visited);
@@ -67,7 +75,7 @@ class CPDFSDK_ActionHandler {
                           CPDF_AAction::AActionType type,
                           CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           CPDF_FormField* pFormField,
-                          PDFSDK_FieldAction& data,
+                          PDFSDK_FieldAction* data,
                           std::set<CPDF_Dictionary*>* visited);
   bool ExecuteScreenAction(const CPDF_Action& action,
                            CPDF_AAction::AActionType type,
@@ -93,7 +101,7 @@ class CPDFSDK_ActionHandler {
   void RunFieldJavaScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                           CPDF_FormField* pFormField,
                           CPDF_AAction::AActionType type,
-                          PDFSDK_FieldAction& data,
+                          PDFSDK_FieldAction* data,
                           const WideString& script);
 
   bool IsValidField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
