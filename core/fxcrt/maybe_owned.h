@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/unowned_ptr.h"
 
 namespace fxcrt {
 
@@ -34,34 +33,25 @@ class MaybeOwned {
   }
 
   void Reset(std::unique_ptr<T, D> ptr) {
-    m_pObj = ptr.get();
     m_pOwnedObj = std::move(ptr);
+    m_pObj = m_pOwnedObj.get();
   }
   void Reset(T* ptr = nullptr) {
-    m_pObj = ptr;
     m_pOwnedObj.reset();
+    m_pObj = ptr;
   }
 
-  T* Get() const { return m_pObj.Get(); }
   bool IsOwned() const { return !!m_pOwnedObj; }
-
-  // Downgrades to unowned, caller takes ownership.
+  T* Get() const { return m_pObj; }
   std::unique_ptr<T, D> Release() {
     ASSERT(IsOwned());
     return std::move(m_pOwnedObj);
   }
 
-  // Downgrades to empty, caller takes ownership.
-  std::unique_ptr<T, D> ReleaseAndClear() {
-    ASSERT(IsOwned());
-    m_pObj = nullptr;
-    return std::move(m_pOwnedObj);
-  }
-
   MaybeOwned& operator=(const MaybeOwned& that) = delete;
   MaybeOwned& operator=(MaybeOwned&& that) {
-    m_pObj = that.m_pObj;
     m_pOwnedObj = std::move(that.m_pOwnedObj);
+    m_pObj = that.m_pObj;
     that.m_pObj = nullptr;
     return *this;
   }
@@ -88,11 +78,11 @@ class MaybeOwned {
 
   explicit operator bool() const { return !!m_pObj; }
   T& operator*() const { return *m_pObj; }
-  T* operator->() const { return m_pObj.Get(); }
+  T* operator->() const { return m_pObj; }
 
  private:
   std::unique_ptr<T, D> m_pOwnedObj;
-  UnownedPtr<T> m_pObj;
+  T* m_pObj;
 };
 
 }  // namespace fxcrt

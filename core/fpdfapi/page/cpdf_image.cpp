@@ -35,27 +35,33 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
                        std::unique_ptr<CPDF_Stream> pStream)
-    : m_bIsInline(true), m_pDocument(pDoc), m_pStream(std::move(pStream)) {
+    : m_bIsInline(true),
+      m_pDocument(pDoc),
+      m_pStream(std::move(pStream)),
+      m_pDict(ToDictionary(m_pStream->GetDict()->Clone())) {
   ASSERT(m_pStream.IsOwned());
-  FinishInitialization(m_pStream->GetDict());
+  ASSERT(m_pDict.IsOwned());
+  FinishInitialization();
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
-      m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
+      m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))),
+      m_pDict(m_pStream->GetDict()) {
   ASSERT(!m_pStream.IsOwned());
-  FinishInitialization(m_pStream->GetDict());
+  ASSERT(!m_pDict.IsOwned());
+  FinishInitialization();
 }
 
 CPDF_Image::~CPDF_Image() {}
 
-void CPDF_Image::FinishInitialization(CPDF_Dictionary* pDict) {
-  m_pOC = pDict->GetDictFor("OC");
+void CPDF_Image::FinishInitialization() {
+  m_pOC = m_pDict->GetDictFor("OC");
   m_bIsMask =
-      !pDict->KeyExist("ColorSpace") || pDict->GetIntegerFor("ImageMask");
-  m_bInterpolate = !!pDict->GetIntegerFor("Interpolate");
-  m_Height = pDict->GetIntegerFor("Height");
-  m_Width = pDict->GetIntegerFor("Width");
+      !m_pDict->KeyExist("ColorSpace") || m_pDict->GetIntegerFor("ImageMask");
+  m_bInterpolate = !!m_pDict->GetIntegerFor("Interpolate");
+  m_Height = m_pDict->GetIntegerFor("Height");
+  m_Width = m_pDict->GetIntegerFor("Width");
 }
 
 void CPDF_Image::ConvertStreamToIndirectObject() {

@@ -29,6 +29,7 @@ class CPDF_Image : public Retainable {
 
   void ConvertStreamToIndirectObject();
 
+  CPDF_Dictionary* GetInlineDict() const { return m_pDict.Get(); }
   CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   CPDF_Dictionary* GetDict() const;
   CPDF_Dictionary* GetOC() const { return m_pOC.Get(); }
@@ -67,7 +68,7 @@ class CPDF_Image : public Retainable {
   CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
   ~CPDF_Image() override;
 
-  void FinishInitialization(CPDF_Dictionary* pStreamDict);
+  void FinishInitialization();
   std::unique_ptr<CPDF_Dictionary> InitJPEG(uint8_t* pData, uint32_t size);
 
   int32_t m_Height = 0;
@@ -77,6 +78,7 @@ class CPDF_Image : public Retainable {
   bool m_bInterpolate = false;
   UnownedPtr<CPDF_Document> const m_pDocument;
   MaybeOwned<CPDF_Stream> m_pStream;
+  MaybeOwned<CPDF_Dictionary> m_pDict;
   UnownedPtr<CPDF_Dictionary> m_pOC;
 };
 
