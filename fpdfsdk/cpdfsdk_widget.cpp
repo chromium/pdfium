@@ -362,17 +362,8 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
 
   CXFA_Node* node = hWidget->GetNode();
   switch (pFormField->GetFieldType()) {
+    case FormFieldType::kRadioButton:
     case FormFieldType::kCheckBox: {
-      if (node->IsWidgetReady()) {
-        pFormField->CheckControl(pFormField->GetControlIndex(pFormControl),
-                                 node->GetCheckState() == XFA_CHECKSTATE_On,
-                                 true);
-      }
-      break;
-    }
-    case FormFieldType::kRadioButton: {
-      // TODO(weili): Check whether we need to handle checkbox and radio
-      // button differently, otherwise, merge these two cases.
       if (node->IsWidgetReady()) {
         pFormField->CheckControl(pFormField->GetControlIndex(pFormControl),
                                  node->GetCheckState() == XFA_CHECKSTATE_On,
@@ -385,30 +376,19 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
         pFormField->SetValue(node->GetValue(XFA_VALUEPICTURE_Display), true);
       break;
     }
+    case FormFieldType::kComboBox:
     case FormFieldType::kListBox: {
       pFormField->ClearSelection(false);
 
       if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->CountSelectedItems(); i < sz; i++) {
-          int nIndex = node->GetSelectedItem(i);
-
-          if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
-            pFormField->SetItemSelection(nIndex, true, true);
-          }
-        }
-      }
-      break;
-    }
-    case FormFieldType::kComboBox: {
-      pFormField->ClearSelection(false);
-
-      if (node->IsWidgetReady()) {
-        for (int i = 0, sz = node->CountSelectedItems(); i < sz; i++) {
+        int32_t item_count = node->CountSelectedItems();
+        for (int i = 0; i < item_count; ++i) {
           int nIndex = node->GetSelectedItem(i);
           if (nIndex > -1 && nIndex < pFormField->CountOptions())
             pFormField->SetItemSelection(nIndex, true, true);
         }
-        pFormField->SetValue(node->GetValue(XFA_VALUEPICTURE_Display), true);
+        if (pFormField->GetFieldType() == FormFieldType::kComboBox)
+          pFormField->SetValue(node->GetValue(XFA_VALUEPICTURE_Display), true);
       }
       break;
     }
