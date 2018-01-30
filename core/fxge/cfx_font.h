@@ -52,16 +52,17 @@ class CFX_Font {
   const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,
                                          bool bFontStyle,
                                          const CFX_Matrix* pMatrix,
-                                         int dest_width,
+                                         uint32_t dest_width,
                                          int anti_alias,
                                          int& text_flags) const;
-  const CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
+  const CFX_PathData* LoadGlyphPath(uint32_t glyph_index,
+                                    uint32_t dest_width) const;
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   CFX_TypeFace* GetDeviceCache() const;
 #endif
 
-  int GetGlyphWidth(uint32_t glyph_index);
+  uint32_t GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
   bool GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox);
@@ -83,9 +84,10 @@ class CFX_Font {
 #endif
   uint8_t* GetFontData() const { return m_pFontData; }
   uint32_t GetSize() const { return m_dwSize; }
-  void AdjustMMParams(int glyph_index, int width, int weight) const;
+  void AdjustMMParams(int glyph_index, uint32_t width, int weight) const;
 
-  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index, int dest_width) const;
+  CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
+                                  uint32_t dest_width) const;
 
   static const size_t kAngleSkewArraySize = 30;
   static const char s_AngleSkew[kAngleSkewArraySize];

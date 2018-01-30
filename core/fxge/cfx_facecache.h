@@ -30,12 +30,12 @@ class CFX_FaceCache {
                                          uint32_t glyph_index,
                                          bool bFontStyle,
                                          const CFX_Matrix* pMatrix,
-                                         int dest_width,
+                                         uint32_t dest_width,
                                          int anti_alias,
                                          int& text_flags);
   const CFX_PathData* LoadGlyphPath(const CFX_Font* pFont,
                                     uint32_t glyph_index,
-                                    int dest_width);
+                                    uint32_t dest_width);
 
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
   CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
@@ -44,26 +44,26 @@ class CFX_FaceCache {
  private:
   using SizeGlyphCache = std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>>;
   // <glyph_index, width, weight, angle, vertical>
-  using PathMapKey = std::tuple<uint32_t, int, int, int, bool>;
+  using PathMapKey = std::tuple<uint32_t, uint32_t, int, int, bool>;
 
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
                                                uint32_t glyph_index,
                                                bool bFontStyle,
                                                const CFX_Matrix* pMatrix,
-                                               int dest_width,
+                                               uint32_t dest_width,
                                                int anti_alias);
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph_Nativetext(
       const CFX_Font* pFont,
       uint32_t glyph_index,
       const CFX_Matrix* pMatrix,
-      int dest_width,
+      uint32_t dest_width,
       int anti_alias);
   CFX_GlyphBitmap* LookUpGlyphBitmap(const CFX_Font* pFont,
                                      const CFX_Matrix* pMatrix,
                                      const ByteString& FaceGlyphsKey,
                                      uint32_t glyph_index,
                                      bool bFontStyle,
-                                     int dest_width,
+                                     uint32_t dest_width,
                                      int anti_alias);
   void InitPlatform();
   void DestroyPlatform();

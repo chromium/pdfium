@@ -44,7 +44,7 @@ class CPDF_CIDFont : public CPDF_Font {
   const CPDF_CIDFont* AsCIDFont() const override;
   CPDF_CIDFont* AsCIDFont() override;
   int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
-  int GetCharWidthF(uint32_t charcode) override;
+  uint32_t GetCharWidthF(uint32_t charcode) override;
   FX_RECT GetCharBBox(uint32_t charcode) override;
   uint32_t GetNextChar(const char* pString,
                        int nStrLen,

@@ -285,9 +285,9 @@ void CPDF_Font::LoadUnicodeMap() const {
   m_pToUnicodeMap->Load(pStream);
 }
 
-int CPDF_Font::GetStringWidth(const char* pString, int size) {
+uint32_t CPDF_Font::GetStringWidth(const char* pString, int size) {
   int offset = 0;
-  int width = 0;
+  uint32_t width = 0;
   while (offset < size) {
     uint32_t charcode = GetNextChar(pString, size, offset);
     width += GetCharWidthF(charcode);

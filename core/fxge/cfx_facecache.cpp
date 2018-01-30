@@ -73,7 +73,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
     uint32_t glyph_index,
     bool bFontStyle,
     const CFX_Matrix* pMatrix,
-    int dest_width,
+    uint32_t dest_width,
     int anti_alias) {
   if (!m_Face)
     return nullptr;
@@ -193,7 +193,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
 
 const CFX_PathData* CFX_FaceCache::LoadGlyphPath(const CFX_Font* pFont,
                                                  uint32_t glyph_index,
-                                                 int dest_width) {
+                                                 uint32_t dest_width) {
   if (!m_Face || glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
@@ -216,7 +216,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
                                                       uint32_t glyph_index,
                                                       bool bFontStyle,
                                                       const CFX_Matrix* pMatrix,
-                                                      int dest_width,
+                                                      uint32_t dest_width,
                                                       int anti_alias,
                                                       int& text_flags) {
   if (glyph_index == kInvalidGlyphIndex)
@@ -339,7 +339,7 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     const ByteString& FaceGlyphsKey,
     uint32_t glyph_index,
     bool bFontStyle,
-    int dest_width,
+    uint32_t dest_width,
     int anti_alias) {
   SizeGlyphCache* pSizeCache;
   auto it = m_SizeMap.find(FaceGlyphsKey);

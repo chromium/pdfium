@@ -76,7 +76,7 @@ class FXTEXT_CHARPOS {
   CFX_PointF m_Origin;
   uint32_t m_Unicode;
   uint32_t m_GlyphIndex;
-  int32_t m_FontCharWidth;
+  uint32_t m_FontCharWidth;
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   uint32_t m_ExtGID;
 #endif

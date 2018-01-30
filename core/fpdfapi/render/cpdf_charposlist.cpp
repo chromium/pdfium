@@ -69,8 +69,8 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
     float scalingFactor = 1.0f;
     if (!pFont->IsEmbedded() && pFont->HasFontWidths() && !bVertWriting &&
         !pCurrentFont->GetSubstFont()->m_bFlagMM) {
-      int pdfGlyphWidth = pFont->GetCharWidthF(CharCode);
-      int ftGlyphWidth =
+      uint32_t pdfGlyphWidth = pFont->GetCharWidthF(CharCode);
+      uint32_t ftGlyphWidth =
           pCurrentFont ? pCurrentFont->GetGlyphWidth(charpos.m_GlyphIndex) : 0;
       if (ftGlyphWidth && pdfGlyphWidth > ftGlyphWidth + 1) {
         // Move the initial x position by half of the excess (transformed to
@@ -80,7 +80,6 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
       } else if (pdfGlyphWidth && ftGlyphWidth &&
                  pdfGlyphWidth < ftGlyphWidth) {
         scalingFactor = static_cast<float>(pdfGlyphWidth) / ftGlyphWidth;
-        ASSERT(scalingFactor >= 0.0f);
         charpos.m_AdjustMatrix[0] = scalingFactor;
         charpos.m_AdjustMatrix[1] = 0.0f;
         charpos.m_AdjustMatrix[2] = 0.0f;

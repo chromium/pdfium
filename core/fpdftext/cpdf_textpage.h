@@ -147,7 +147,7 @@ class CPDF_TextPage {
                              const CPDF_PageObjectList* pObjList,
                              CPDF_PageObjectList::const_iterator ObjPos);
   bool IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
-  int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const;
+  uint32_t GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const;
   void CloseTempLine();
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);

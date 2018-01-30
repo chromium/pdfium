@@ -75,11 +75,11 @@ class CPDF_Font {
   void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
   int GetTypeDescent() const { return m_Descent; }
-  int GetStringWidth(const char* pString, int size);
+  uint32_t GetStringWidth(const char* pString, int size);
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
 
-  virtual int GetCharWidthF(uint32_t charcode) = 0;
+  virtual uint32_t GetCharWidthF(uint32_t charcode) = 0;
   virtual FX_RECT GetCharBBox(uint32_t charcode) = 0;
 
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }

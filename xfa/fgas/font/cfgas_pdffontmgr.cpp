@@ -194,7 +194,10 @@ bool CFGAS_PDFFontMgr::GetCharWidth(const RetainPtr<CFGAS_GEFont>& pFont,
     return false;
 
   CPDF_Font* pPDFFont = it->second;
-  *pWidth = pPDFFont->GetCharWidthF(pPDFFont->CharCodeFromUnicode(wUnicode));
+  // TODO(npm): CFGAS_GEFont::GetCharWidth currently uses -1 as a special value,
+  // so |pWidth| cannot be changed to unsigned until this behavior is changed.
+  *pWidth = static_cast<int32_t>(
+      pPDFFont->GetCharWidthF(pPDFFont->CharCodeFromUnicode(wUnicode)));
   return true;
 }
 

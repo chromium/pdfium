@@ -80,7 +80,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   }
 }
 
-int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
+uint32_t CPDF_SimpleFont::GetCharWidthF(uint32_t charcode) {
   if (charcode > 0xff)
     charcode = 0;
 

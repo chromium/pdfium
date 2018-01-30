@@ -26,7 +26,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   bool IsType3Font() const override;
   const CPDF_Type3Font* AsType3Font() const override;
   CPDF_Type3Font* AsType3Font() override;
-  int GetCharWidthF(uint32_t charcode) override;
+  uint32_t GetCharWidthF(uint32_t charcode) override;
   FX_RECT GetCharBBox(uint32_t charcode) override;
 
   void SetPageResources(CPDF_Dictionary* pResources) {
@@ -47,7 +47,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   // CPDF_SimpleFont:
   void LoadGlyphMap() override;
 
-  int m_CharWidthL[256];
+  uint32_t m_CharWidthL[256];
   UnownedPtr<CPDF_Dictionary> m_pCharProcs;
   UnownedPtr<CPDF_Dictionary> m_pPageResources;
   UnownedPtr<CPDF_Dictionary> m_pFontResources;

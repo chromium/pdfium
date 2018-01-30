@@ -831,6 +831,8 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
         pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
 #endif
+        // TODO(npm): change widths in this method to unsigned to avoid implicit
+        // cast in the following line.
         pCharPos->m_FontCharWidth = iCharWidth;
       }
 

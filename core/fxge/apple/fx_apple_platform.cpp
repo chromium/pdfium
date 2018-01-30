@@ -169,7 +169,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph_Nativetext(
     const CFX_Font* pFont,
     uint32_t glyph_index,
     const CFX_Matrix* pMatrix,
-    int dest_width,
+    uint32_t dest_width,
     int anti_alias) {
   return nullptr;
 }
