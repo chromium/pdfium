@@ -9,7 +9,6 @@
 PDFSDK_FieldAction::PDFSDK_FieldAction()
     : bModifier(false),
       bShift(false),
-      nCommitKey(0),
       bKeyDown(false),
       nSelEnd(0),
       nSelStart(0),

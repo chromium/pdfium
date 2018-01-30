@@ -24,7 +24,6 @@ struct PDFSDK_FieldAction {
 
   bool bModifier;
   bool bShift;
-  int nCommitKey;
   WideString sChange;
   WideString sChangeEx;
   bool bKeyDown;

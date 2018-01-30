@@ -240,7 +240,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   CXFA_EventParam param;
   param.m_eType = eEventType;
   param.m_wsChange = data->sChange;
-  param.m_iCommitKey = data->nCommitKey;
+  param.m_iCommitKey = 0;
   param.m_bShift = data->bShift;
   param.m_iSelStart = data->nSelStart;
   param.m_iSelEnd = data->nSelEnd;
@@ -845,7 +845,7 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
         CXFA_EventParam param;
         param.m_eType = eEventType;
         param.m_wsChange = data->sChange;
-        param.m_iCommitKey = data->nCommitKey;
+        param.m_iCommitKey = 0;
         param.m_bShift = data->bShift;
         param.m_iSelStart = data->nSelStart;
         param.m_iSelEnd = data->nSelEnd;

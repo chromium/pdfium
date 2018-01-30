@@ -17,28 +17,28 @@
 
 namespace {
 
-void StringProperty(CFXJSE_Value* pValue, WideString& wsValue, bool bSetting) {
+void StringProperty(CFXJSE_Value* pValue, WideString* wsValue, bool bSetting) {
   if (bSetting) {
-    wsValue = pValue->ToWideString();
+    *wsValue = pValue->ToWideString();
     return;
   }
-  pValue->SetString(wsValue.UTF8Encode().AsStringView());
+  pValue->SetString(wsValue->UTF8Encode().AsStringView());
 }
 
-void InterProperty(CFXJSE_Value* pValue, int32_t& iValue, bool bSetting) {
+void InterProperty(CFXJSE_Value* pValue, int32_t* iValue, bool bSetting) {
   if (bSetting) {
-    iValue = pValue->ToInteger();
+    *iValue = pValue->ToInteger();
     return;
   }
-  pValue->SetInteger(iValue);
+  pValue->SetInteger(*iValue);
 }
 
-void BooleanProperty(CFXJSE_Value* pValue, bool& bValue, bool bSetting) {
+void BooleanProperty(CFXJSE_Value* pValue, bool* bValue, bool bSetting) {
   if (bSetting) {
-    bValue = pValue->ToBoolean();
+    *bValue = pValue->ToBoolean();
     return;
   }
-  pValue->SetBoolean(bValue);
+  pValue->SetBoolean(*bValue);
 }
 
 }  // namespace
@@ -201,55 +201,54 @@ void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,
 
   switch (dwFlag) {
     case XFA_Event::CancelAction:
-      BooleanProperty(pValue, pEventParam->m_bCancelAction, bSetting);
+      BooleanProperty(pValue, &pEventParam->m_bCancelAction, bSetting);
       break;
     case XFA_Event::Change:
-      StringProperty(pValue, pEventParam->m_wsChange, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsChange, bSetting);
       break;
     case XFA_Event::CommitKey:
-      InterProperty(pValue, pEventParam->m_iCommitKey, bSetting);
+      InterProperty(pValue, &pEventParam->m_iCommitKey, bSetting);
       break;
     case XFA_Event::FullText:
-      StringProperty(pValue, pEventParam->m_wsFullText, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsFullText, bSetting);
       break;
     case XFA_Event::Keydown:
-      BooleanProperty(pValue, pEventParam->m_bKeyDown, bSetting);
+      BooleanProperty(pValue, &pEventParam->m_bKeyDown, bSetting);
       break;
     case XFA_Event::Modifier:
-      BooleanProperty(pValue, pEventParam->m_bModifier, bSetting);
+      BooleanProperty(pValue, &pEventParam->m_bModifier, bSetting);
       break;
     case XFA_Event::NewContentType:
-      StringProperty(pValue, pEventParam->m_wsNewContentType, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsNewContentType, bSetting);
       break;
     case XFA_Event::NewText:
-      StringProperty(pValue, pEventParam->m_wsNewText, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsNewText, bSetting);
       break;
     case XFA_Event::PreviousContentType:
-      StringProperty(pValue, pEventParam->m_wsPrevContentType, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsPrevContentType, bSetting);
       break;
     case XFA_Event::PreviousText:
-      StringProperty(pValue, pEventParam->m_wsPrevText, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsPrevText, bSetting);
       break;
     case XFA_Event::Reenter:
-      BooleanProperty(pValue, pEventParam->m_bReenter, bSetting);
+      BooleanProperty(pValue, &pEventParam->m_bReenter, bSetting);
       break;
     case XFA_Event::SelectionEnd:
-      InterProperty(pValue, pEventParam->m_iSelEnd, bSetting);
+      InterProperty(pValue, &pEventParam->m_iSelEnd, bSetting);
       break;
     case XFA_Event::SelectionStart:
-      InterProperty(pValue, pEventParam->m_iSelStart, bSetting);
+      InterProperty(pValue, &pEventParam->m_iSelStart, bSetting);
       break;
     case XFA_Event::Shift:
-      BooleanProperty(pValue, pEventParam->m_bShift, bSetting);
+      BooleanProperty(pValue, &pEventParam->m_bShift, bSetting);
       break;
     case XFA_Event::SoapFaultCode:
-      StringProperty(pValue, pEventParam->m_wsSoapFaultCode, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsSoapFaultCode, bSetting);
       break;
     case XFA_Event::SoapFaultString:
-      StringProperty(pValue, pEventParam->m_wsSoapFaultString, bSetting);
+      StringProperty(pValue, &pEventParam->m_wsSoapFaultString, bSetting);
       break;
     case XFA_Event::Target:
-      break;
     default:
       break;
   }
