@@ -341,9 +341,9 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
   }
 
   if (iDecodeStatus < 0) {
+    m_pJbig2Context.reset();
     m_pCachedBitmap.Reset();
     m_pGlobalStream.Reset();
-    m_pJbig2Context.reset();
     return 0;
   }
   if (iDecodeStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)
