@@ -85,6 +85,7 @@ class CFX_PSRenderer {
                        int* ps_fontnum,
                        int* ps_glyphindex);
   void WritePSBinary(const uint8_t* data, int len);
+  void WriteToStream(std::ostringstream* stringStream);
 
   RetainPtr<IFX_WriteStream> m_pStream;
   int m_PSLevel;

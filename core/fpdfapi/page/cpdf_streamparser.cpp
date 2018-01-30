@@ -478,6 +478,9 @@ ByteString CPDF_StreamParser::ReadString() {
       case 0:
         if (ch == ')') {
           if (parlevel == 0) {
+            if (buf.tellp() <= 0)
+              return ByteString();
+
             return ByteString(
                 buf.str().c_str(),
                 std::min(static_cast<size_t>(buf.tellp()), kMaxStringLength));
@@ -557,6 +560,9 @@ ByteString CPDF_StreamParser::ReadString() {
   if (PositionIsInBounds())
     ++m_Pos;
 
+  if (buf.tellp() <= 0)
+    return ByteString();
+
   return ByteString(
       buf.str().c_str(),
       std::min(static_cast<size_t>(buf.tellp()), kMaxStringLength));
@@ -589,6 +595,9 @@ ByteString CPDF_StreamParser::ReadHexString() {
   }
   if (!bFirst)
     buf << static_cast<char>(code);
+
+  if (buf.tellp() <= 0)
+    return ByteString();
 
   return ByteString(
       buf.str().c_str(),

@@ -100,6 +100,11 @@ void CPDF_Stream::SetDataAndRemoveFilter(const uint8_t* pData, uint32_t size) {
 }
 
 void CPDF_Stream::SetDataAndRemoveFilter(std::ostringstream* stream) {
+  if (stream->tellp() <= 0) {
+    SetDataAndRemoveFilter(nullptr, 0);
+    return;
+  }
+
   SetDataAndRemoveFilter(
       reinterpret_cast<const uint8_t*>(stream->str().c_str()), stream->tellp());
 }
@@ -125,6 +130,11 @@ void CPDF_Stream::SetData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
 }
 
 void CPDF_Stream::SetData(std::ostringstream* stream) {
+  if (stream->tellp() <= 0) {
+    SetData(nullptr, 0);
+    return;
+  }
+
   SetData(reinterpret_cast<const uint8_t*>(stream->str().c_str()),
           stream->tellp());
 }

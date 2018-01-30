@@ -530,7 +530,7 @@ bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
   }
 
   nBufSize = fdfEncodedData.tellp();
-  if (nBufSize == 0)
+  if (nBufSize <= 0)
     return false;
 
   pBuf = FX_Alloc(uint8_t, nBufSize);

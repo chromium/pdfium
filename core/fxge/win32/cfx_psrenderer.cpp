@@ -206,7 +206,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
       }
     }
   }
-  m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+  WriteToStream(&buf);
 }
 
 void CFX_PSRenderer::SetClip_PathFill(const CFX_PathData* pPathData,
@@ -239,7 +239,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
   buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
       << pObject2Device->c << " " << pObject2Device->d << " "
       << pObject2Device->e << " " << pObject2Device->f << "]cm ";
-  m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+  WriteToStream(&buf);
 
   OutputPath(pPathData, nullptr);
   CFX_FloatRect rect = pPathData->GetBoundingBox(pGraphState->m_LineWidth,
@@ -272,7 +272,7 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
       buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
           << pObject2Device->c << " " << pObject2Device->d << " "
           << pObject2Device->e << " " << pObject2Device->f << "]cm ";
-      m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+      WriteToStream(&buf);
     }
   }
 
@@ -333,8 +333,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   }
   m_CurGraphState.Copy(*pGraphState);
   m_bGraphStateSet = true;
-  if (buf.tellp())
-    m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+  WriteToStream(&buf);
 }
 
 bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBSource>& pSource,
@@ -418,7 +417,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBSource>& pSource,
     else
       buf << "false 1 colorimage\n";
 
-    m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+    WriteToStream(&buf);
     WritePSBinary(output_buf.get(), output_size);
     output_buf.release();
   } else {
@@ -496,7 +495,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBSource>& pSource,
 
     buf << "false " << bpp;
     buf << " colorimage\n";
-    m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+    WriteToStream(&buf);
 
     WritePSBinary(output_buf, output_size);
     FX_Free(output_buf);
@@ -522,7 +521,7 @@ void CFX_PSRenderer::SetColor(uint32_t color) {
       m_bColorSet = true;
       m_LastColor = color;
     }
-    m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+    WriteToStream(&buf);
   }
 }
 
@@ -569,7 +568,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
            "currentdict end\n";
     buf << "/X" << static_cast<uint32_t>(m_PSFontList.size() - 1)
         << " exch definefont pop\n";
-    m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+    WriteToStream(&buf);
     buf.str("");
   }
 
@@ -631,7 +630,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
   buf << "f}bind def end\n";
   buf << "/X" << *ps_fontnum << " Ff/Encoding get " << glyphindex << "/"
       << glyphindex << " put\n";
-  m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+  WriteToStream(&buf);
 }
 
 bool CFX_PSRenderer::DrawText(int nChars,
@@ -676,7 +675,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
     buf << hex.AsStringView() << "Tj\n";
   }
   buf << "Q\n";
-  m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
+  WriteToStream(&buf);
   pCache->ReleaseCachedFace(pFont);
   return true;
 }
@@ -692,4 +691,9 @@ void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len) {
   } else {
     m_pStream->WriteBlock(data, len);
   }
+}
+
+void CFX_PSRenderer::WriteToStream(std::ostringstream* stringStream) {
+  if (stringStream->tellp() > 0)
+    m_pStream->WriteBlock(stringStream->str().c_str(), stringStream->tellp());
 }
