@@ -41,6 +41,30 @@ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data,
   return stream;
 }
 
+bool alloc_rgb(int** out_r, int** out_g, int** out_b, size_t size) {
+  int* r = static_cast<int*>(opj_image_data_alloc(size));
+  if (!r)
+    return false;
+
+  int* g = static_cast<int*>(opj_image_data_alloc(size));
+  if (!g) {
+    opj_image_data_free(r);
+    return false;
+  }
+
+  int* b = static_cast<int*>(opj_image_data_alloc(size));
+  if (!b) {
+    opj_image_data_free(r);
+    opj_image_data_free(g);
+    return false;
+  }
+
+  *out_r = r;
+  *out_g = g;
+  *out_b = b;
+  return true;
+}
+
 void sycc_to_rgb(int offset,
                  int upb,
                  int y,
@@ -79,9 +103,12 @@ void sycc444_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  int* r = static_cast<int*>(opj_image_data_alloc(max_size.ValueOrDie()));
-  int* g = static_cast<int*>(opj_image_data_alloc(max_size.ValueOrDie()));
-  int* b = static_cast<int*>(opj_image_data_alloc(max_size.ValueOrDie()));
+  int* r;
+  int* g;
+  int* b;
+  if (!alloc_rgb(&r, &g, &b, max_size.ValueOrDie()))
+    return;
+
   int* d0 = r;
   int* d1 = g;
   int* d2 = b;
@@ -138,9 +165,12 @@ void sycc422_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  int* r = static_cast<int*>(opj_image_data_alloc(max_size.ValueOrDie()));
-  int* g = static_cast<int*>(opj_image_data_alloc(max_size.ValueOrDie()));
-  int* b = static_cast<int*>(opj_image_data_alloc(max_size.ValueOrDie()));
+  int* r;
+  int* g;
+  int* b;
+  if (!alloc_rgb(&r, &g, &b, max_size.ValueOrDie()))
+    return;
+
   int* d0 = r;
   int* d1 = g;
   int* d2 = b;
@@ -309,9 +339,12 @@ void sycc420_to_rgb(opj_image_t* img) {
   if (!safeSize.IsValid())
     return;
 
-  int* r = static_cast<int*>(opj_image_data_alloc(safeSize.ValueOrDie()));
-  int* g = static_cast<int*>(opj_image_data_alloc(safeSize.ValueOrDie()));
-  int* b = static_cast<int*>(opj_image_data_alloc(safeSize.ValueOrDie()));
+  int* r;
+  int* g;
+  int* b;
+  if (!alloc_rgb(&r, &g, &b, safeSize.ValueOrDie()))
+    return;
+
   int* d0 = r;
   int* d1 = g;
   int* d2 = b;
