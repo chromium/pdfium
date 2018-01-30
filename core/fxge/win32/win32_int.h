@@ -29,6 +29,9 @@ typedef HANDLE(__stdcall* FuncType_GdiAddFontMemResourceEx)(PVOID pbFont,
                                                             DWORD* pcFonts);
 typedef BOOL(__stdcall* FuncType_GdiRemoveFontMemResourceEx)(HANDLE handle);
 
+RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
+                                                  LPVOID pData,
+                                                  bool bAlpha);
 class CGdiplusExt {
  public:
   CGdiplusExt();

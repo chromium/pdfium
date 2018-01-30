@@ -52,9 +52,9 @@ ByteString CFX_WindowsDIB::GetBitmapInfo(
   return result;
 }
 
-RetainPtr<CFX_DIBitmap> _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
-                                                   LPVOID pData,
-                                                   bool bAlpha) {
+RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
+                                                  LPVOID pData,
+                                                  bool bAlpha) {
   int width = pbmi->bmiHeader.biWidth;
   int height = pbmi->bmiHeader.biHeight;
   BOOL bBottomUp = true;
@@ -97,7 +97,7 @@ RetainPtr<CFX_DIBitmap> _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
 
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromBuf(BITMAPINFO* pbmi,
                                                     LPVOID pData) {
-  return _FX_WindowsDIB_LoadFromBuf(pbmi, pData, false);
+  return FX_WindowsDIB_LoadFromBuf(pbmi, pData, false);
 }
 
 HBITMAP CFX_WindowsDIB::GetDDBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
