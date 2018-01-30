@@ -730,13 +730,12 @@ GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
                          bool bTextMode) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  float width = pGraphState ? pGraphState->m_LineWidth : 1.0f;
+  float width = pGraphState->m_LineWidth;
   if (!bTextMode) {
     float unit = pMatrix
                      ? 1.0f / ((pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2)
                      : 1.0f;
-    if (width < unit)
-      width = unit;
+    width = std::max(width, unit);
   }
   GpPen* pPen = nullptr;
   CallFunc(GdipCreatePen1)((Gdiplus::ARGB)argb, width, UnitWorld, &pPen);

@@ -50,7 +50,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   /** Set clipping path using stroked region */
   bool SetClip_PathStroke(
       const CFX_PathData* pPathData,     // path info
-      const CFX_Matrix* pObject2Device,  // optional transformation
+      const CFX_Matrix* pObject2Device,  // required transformation
       const CFX_GraphStateData*
           pGraphState)  // graphic state, for pen attributes
       override;

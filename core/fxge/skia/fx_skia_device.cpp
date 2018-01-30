@@ -1856,7 +1856,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
 
 bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,         // path info
-    const CFX_Matrix* pObject2Device,      // optional transformation
+    const CFX_Matrix* pObject2Device,      // required transformation
     const CFX_GraphStateData* pGraphState  // graphic state, for pen attributes
     ) {
   bool cached = m_pCache->SetClipStroke(pPathData, pObject2Device, pGraphState);

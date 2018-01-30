@@ -91,28 +91,24 @@ bool IsGDIEnabled() {
   return true;
 }
 
-HPEN CreatePen(const CFX_GraphStateData* pGraphState,
-               const CFX_Matrix* pMatrix,
-               uint32_t argb) {
-  float width;
-  float scale = 1.f;
-  if (pMatrix)
+HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
+                  const CFX_Matrix* pMatrix,
+                  uint32_t argb) {
+  ASSERT(pGraphState);
+
+  float scale = 1.0f;
+  if (pMatrix) {
     scale = fabs(pMatrix->a) > fabs(pMatrix->b) ? fabs(pMatrix->a)
                                                 : fabs(pMatrix->b);
-  if (pGraphState) {
-    width = scale * pGraphState->m_LineWidth;
-  } else {
-    width = 1.0f;
   }
+  float width = std::max(scale * pGraphState->m_LineWidth, 1.0f);
+
   uint32_t PenStyle = PS_GEOMETRIC;
-  if (width < 1) {
-    width = 1;
-  }
-  if (pGraphState->m_DashCount) {
+  if (pGraphState->m_DashCount)
     PenStyle |= PS_USERSTYLE;
-  } else {
+  else
     PenStyle |= PS_SOLID;
-  }
+
   switch (pGraphState->m_LineCap) {
     case 0:
       PenStyle |= PS_ENDCAP_FLAT;
@@ -135,6 +131,7 @@ HPEN CreatePen(const CFX_GraphStateData* pGraphState,
       PenStyle |= PS_JOIN_BEVEL;
       break;
   }
+
   int a;
   FX_COLORREF rgb;
   std::tie(a, rgb) = ArgbToColorRef(argb);
@@ -1005,7 +1002,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
         ((m_DeviceClass != FXDC_PRINTER && !(fill_mode & FXFILL_FULLCOVER)) ||
          (pGraphState && pGraphState->m_DashCount))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
-            pGraphState->m_LineWidth == 1.f &&
+            pGraphState->m_LineWidth == 1.0f &&
             (pPathData->GetPoints().size() == 5 ||
              pPathData->GetPoints().size() == 4) &&
             pPathData->IsRect())) {
@@ -1023,7 +1020,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   HBRUSH hBrush = nullptr;
   if (pGraphState && stroke_alpha) {
     SetMiterLimit(m_hDC, pGraphState->m_MiterLimit, nullptr);
-    hPen = CreatePen(pGraphState, pMatrix, stroke_color);
+    hPen = CreateExtPen(pGraphState, pMatrix, stroke_color);
     hPen = (HPEN)SelectObject(m_hDC, hPen);
   }
   if (fill_mode && fill_alpha) {
@@ -1111,7 +1108,7 @@ bool CGdiDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pMatrix,
     const CFX_GraphStateData* pGraphState) {
-  HPEN hPen = CreatePen(pGraphState, pMatrix, 0xff000000);
+  HPEN hPen = CreateExtPen(pGraphState, pMatrix, 0xff000000);
   hPen = (HPEN)SelectObject(m_hDC, hPen);
   SetPathToDC(m_hDC, pPathData, pMatrix);
   WidenPath(m_hDC);

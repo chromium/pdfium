@@ -234,23 +234,19 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
                                         const CFX_GraphStateData* pGraphState) {
   StartRendering();
   SetGraphState(pGraphState);
-  if (pObject2Device) {
-    std::ostringstream buf;
-    buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
-        << pObject2Device->c << " " << pObject2Device->d << " "
-        << pObject2Device->e << " " << pObject2Device->f << "]cm ";
-    m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
-  }
+
+  std::ostringstream buf;
+  buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
+      << pObject2Device->c << " " << pObject2Device->d << " "
+      << pObject2Device->e << " " << pObject2Device->f << "]cm ";
+  m_pStream->WriteBlock(buf.str().c_str(), buf.tellp());
 
   OutputPath(pPathData, nullptr);
   CFX_FloatRect rect = pPathData->GetBoundingBox(pGraphState->m_LineWidth,
                                                  pGraphState->m_MiterLimit);
   m_ClipBox.Intersect(pObject2Device->TransformRect(rect).GetOuterRect());
 
-  m_pStream->WriteString("strokepath W n");
-  if (pObject2Device)
-    m_pStream->WriteString(" sm");
-  m_pStream->WriteString("\n");
+  m_pStream->WriteString("strokepath W n sm\n");
 }
 
 bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
