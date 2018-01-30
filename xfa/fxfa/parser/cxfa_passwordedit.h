@@ -15,6 +15,7 @@ class CXFA_PasswordEdit : public CXFA_Node {
   ~CXFA_PasswordEdit() override;
 
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
+  WideString GetPasswordChar();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PASSWORDEDIT_H_

@@ -16,7 +16,7 @@ class CXFA_CheckButton;
 
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:
-  explicit CXFA_FFCheckButton(CXFA_Node* pNode, CXFA_CheckButton* button);
+  CXFA_FFCheckButton(CXFA_Node* pNode, CXFA_CheckButton* button);
   ~CXFA_FFCheckButton() override;
 
   // CXFA_FFField

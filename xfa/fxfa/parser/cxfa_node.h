@@ -310,11 +310,9 @@ class CXFA_Node : public CXFA_Object {
   RetainPtr<CFGAS_GEFont> GetFDEFont(CXFA_FFDoc* doc);
 
   bool IsListBox();
-  bool IsAllowNeutral();
   bool IsRadioButton();
   bool IsMultiLine();
 
-  XFA_AttributeEnum GetButtonHighlight();
   bool HasButtonRollover();
   bool HasButtonDown();
 
@@ -375,7 +373,6 @@ class CXFA_Node : public CXFA_Object {
   WideString GetFormatDataValue(const WideString& wsValue);
   WideString NormalizeNumStr(const WideString& wsValue);
 
-  WideString GetPasswordChar();
   std::pair<XFA_Element, int32_t> GetMaxChars();
   int32_t GetFracDigits();
   int32_t GetLeadDigits();

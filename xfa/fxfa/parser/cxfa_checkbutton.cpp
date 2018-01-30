@@ -55,3 +55,7 @@ bool CXFA_CheckButton::IsRound() {
 XFA_AttributeEnum CXFA_CheckButton::GetMark() {
   return JSObject()->GetEnum(XFA_Attribute::Mark);
 }
+
+bool CXFA_CheckButton::IsAllowNeutral() {
+  return JSObject()->GetBoolean(XFA_Attribute::AllowNeutral);
+}

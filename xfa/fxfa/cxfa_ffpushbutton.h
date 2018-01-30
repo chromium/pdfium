@@ -9,18 +9,20 @@
 
 #include <memory>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 #define XFA_FWL_PSBSTYLEEXT_HiliteInverted (1L << 0)
 #define XFA_FWL_PSBSTYLEEXT_HilitePush (1L << 1)
 #define XFA_FWL_PSBSTYLEEXT_HiliteOutLine (1L << 2)
 
+class CXFA_Button;
 class CXFA_TextLayout;
 class CXFA_TextProvider;
 
 class CXFA_FFPushButton : public CXFA_FFField {
  public:
-  explicit CXFA_FFPushButton(CXFA_Node* pNode);
+  CXFA_FFPushButton(CXFA_Node* pNode, CXFA_Button* button);
   ~CXFA_FFPushButton() override;
 
   // CXFA_FFField
@@ -49,7 +51,8 @@ class CXFA_FFPushButton : public CXFA_FFField {
   std::unique_ptr<CXFA_TextLayout> m_pDownTextLayout;
   std::unique_ptr<CXFA_TextProvider> m_pRollProvider;
   std::unique_ptr<CXFA_TextProvider> m_pDownProvider;
-  IFWL_WidgetDelegate* m_pOldDelegate;
+  IFWL_WidgetDelegate* m_pOldDelegate = nullptr;
+  UnownedPtr<CXFA_Button> button_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFPUSHBUTTON_H_

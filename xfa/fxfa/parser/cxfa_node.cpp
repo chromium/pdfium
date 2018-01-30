@@ -3523,13 +3523,6 @@ RetainPtr<CFGAS_GEFont> CXFA_Node::GetFDEFont(CXFA_FFDoc* doc) {
                                                  dwFontStyle);
 }
 
-XFA_AttributeEnum CXFA_Node::GetButtonHighlight() {
-  CXFA_Node* pUIChild = GetUIChildNode();
-  if (pUIChild)
-    return pUIChild->JSObject()->GetEnum(XFA_Attribute::Highlight);
-  return XFA_AttributeEnum::Inverted;
-}
-
 bool CXFA_Node::HasButtonRollover() {
   CXFA_Items* pItems = GetChild<CXFA_Items>(0, XFA_Element::Items, false);
   if (!pItems)
@@ -3569,12 +3562,6 @@ float CXFA_Node::GetCheckButtonSize() {
         .ToUnit(XFA_Unit::Pt);
   }
   return CXFA_Measurement(10, XFA_Unit::Pt).ToUnit(XFA_Unit::Pt);
-}
-
-bool CXFA_Node::IsAllowNeutral() {
-  CXFA_Node* pUIChild = GetUIChildNode();
-  return pUIChild &&
-         pUIChild->JSObject()->GetBoolean(XFA_Attribute::AllowNeutral);
 }
 
 XFA_CHECKSTATE CXFA_Node::GetCheckState() {
@@ -4232,12 +4219,6 @@ Optional<int32_t> CXFA_Node::GetNumberOfCells() {
   return {};
 }
 
-WideString CXFA_Node::GetPasswordChar() {
-  CXFA_Node* pUIChild = GetUIChildNode();
-  return pUIChild ? pUIChild->JSObject()->GetCData(XFA_Attribute::PasswordChar)
-                  : L"*";
-}
-
 bool CXFA_Node::IsMultiLine() {
   CXFA_Node* pUIChild = GetUIChildNode();
   return pUIChild && pUIChild->JSObject()->GetBoolean(XFA_Attribute::MultiLine);
@@ -4327,13 +4308,11 @@ bool CXFA_Node::SetValue(XFA_VALUEPICTURE eValueType,
 
       bSyncData = true;
     }
-  } else {
-    if (eType == XFA_Element::NumericEdit) {
-      if (wsNewText != L"0")
-        wsNewText = NumericLimit(wsNewText, GetLeadDigits(), GetFracDigits());
+  } else if (eType == XFA_Element::NumericEdit) {
+    if (wsNewText != L"0")
+      wsNewText = NumericLimit(wsNewText, GetLeadDigits(), GetFracDigits());
 
-      bSyncData = true;
-    }
+    bSyncData = true;
   }
   if (eType != XFA_Element::NumericEdit || bSyncData)
     SyncValue(wsNewText, true);
@@ -4432,7 +4411,7 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
   if (!pNode)
     return wsValue;
 
-  switch (GetUIChildNode()->GetElementType()) {
+  switch (pNode->GetElementType()) {
     case XFA_Element::ChoiceList: {
       if (eValueType == XFA_VALUEPICTURE_Display) {
         int32_t iSelItemIndex = GetSelectedItem(0);
@@ -4441,7 +4420,8 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
           wsPicture.clear();
         }
       }
-    } break;
+      break;
+    }
     case XFA_Element::NumericEdit:
       if (eValueType != XFA_VALUEPICTURE_Raw && wsPicture.IsEmpty()) {
         IFX_Locale* pLocale = GetLocale();

@@ -17,6 +17,7 @@ class CXFA_CheckButton : public CXFA_Node {
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
   bool IsRound();
+  bool IsAllowNeutral();
   XFA_AttributeEnum GetMark();
 };
 

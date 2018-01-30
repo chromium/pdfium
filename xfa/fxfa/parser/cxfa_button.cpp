@@ -41,3 +41,7 @@ CXFA_Button::~CXFA_Button() {}
 XFA_FFWidgetType CXFA_Button::GetDefaultFFWidgetType() const {
   return XFA_FFWidgetType::kButton;
 }
+
+XFA_AttributeEnum CXFA_Button::GetHighlight() {
+  return JSObject()->GetEnum(XFA_Attribute::Highlight);
+}

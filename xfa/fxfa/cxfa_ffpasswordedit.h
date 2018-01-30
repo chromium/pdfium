@@ -7,16 +7,22 @@
 #ifndef XFA_FXFA_CXFA_FFPASSWORDEDIT_H_
 #define XFA_FXFA_CXFA_FFPASSWORDEDIT_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
+
+class CXFA_PasswordEdit;
 
 class CXFA_FFPasswordEdit : public CXFA_FFTextEdit {
  public:
-  explicit CXFA_FFPasswordEdit(CXFA_Node* pNode);
+  CXFA_FFPasswordEdit(CXFA_Node* pNode, CXFA_PasswordEdit* password_node);
   ~CXFA_FFPasswordEdit() override;
 
   // CXFA_FFTextEdit
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
+
+ private:
+  UnownedPtr<CXFA_PasswordEdit> password_node_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFPASSWORDEDIT_H_

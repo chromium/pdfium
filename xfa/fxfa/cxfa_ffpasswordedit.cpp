@@ -12,9 +12,11 @@
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_passwordedit.h"
 
-CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_Node* pNode)
-    : CXFA_FFTextEdit(pNode) {}
+CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_Node* pNode,
+                                         CXFA_PasswordEdit* password_node)
+    : CXFA_FFTextEdit(pNode), password_node_(password_node) {}
 
 CXFA_FFPasswordEdit::~CXFA_FFPasswordEdit() {}
 
@@ -49,7 +51,7 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
                              FWL_STYLEEXT_EDT_Password;
   dwExtendedStyle |= UpdateUIProperty();
 
-  WideString password = m_pNode->GetPasswordChar();
+  WideString password = password_node_->GetPasswordChar();
   if (!password.IsEmpty())
     pWidget->SetAliasChar(password[0]);
   if (!m_pNode->IsHorizontalScrollPolicyOff())

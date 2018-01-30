@@ -37,8 +37,10 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_barcode.h"
 #include "xfa/fxfa/parser/cxfa_binditems.h"
+#include "xfa/fxfa/parser/cxfa_button.h"
 #include "xfa/fxfa/parser/cxfa_checkbutton.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_passwordedit.h"
 
 namespace {
 
@@ -118,9 +120,12 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
       pWidget = new CXFA_FFBarcode(pNode, static_cast<CXFA_Barcode*>(child));
       break;
     }
-    case XFA_FFWidgetType::kButton:
-      pWidget = new CXFA_FFPushButton(pNode);
+    case XFA_FFWidgetType::kButton: {
+      CXFA_Node* child = pNode->GetUIChildNode();
+      ASSERT(child->GetElementType() == XFA_Element::Button);
+      pWidget = new CXFA_FFPushButton(pNode, static_cast<CXFA_Button*>(child));
       break;
+    }
     case XFA_FFWidgetType::kCheckButton: {
       CXFA_Node* child = pNode->GetUIChildNode();
       ASSERT(child->GetElementType() == XFA_Element::CheckButton);
@@ -143,9 +148,13 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
     case XFA_FFWidgetType::kNumericEdit:
       pWidget = new CXFA_FFNumericEdit(pNode);
       break;
-    case XFA_FFWidgetType::kPasswordEdit:
-      pWidget = new CXFA_FFPasswordEdit(pNode);
+    case XFA_FFWidgetType::kPasswordEdit: {
+      CXFA_Node* child = pNode->GetUIChildNode();
+      ASSERT(child->GetElementType() == XFA_Element::PasswordEdit);
+      pWidget = new CXFA_FFPasswordEdit(pNode,
+                                        static_cast<CXFA_PasswordEdit*>(child));
       break;
+    }
     case XFA_FFWidgetType::kSignature:
       pWidget = new CXFA_FFSignature(pNode);
       break;

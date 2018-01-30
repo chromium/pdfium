@@ -19,13 +19,14 @@
 #include "xfa/fxfa/cxfa_textlayout.h"
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
+#include "xfa/fxfa/parser/cxfa_button.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
 #include "xfa/fxgraphics/cxfa_gepath.h"
 
-CXFA_FFPushButton::CXFA_FFPushButton(CXFA_Node* pNode)
-    : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
+CXFA_FFPushButton::CXFA_FFPushButton(CXFA_Node* pNode, CXFA_Button* button)
+    : CXFA_FFField(pNode), button_(button) {}
 
 CXFA_FFPushButton::~CXFA_FFPushButton() {
   CXFA_FFPushButton::UnloadWidget();
@@ -71,7 +72,7 @@ bool CXFA_FFPushButton::LoadWidget() {
 
 void CXFA_FFPushButton::UpdateWidgetProperty() {
   uint32_t dwStyleEx = 0;
-  switch (m_pNode->GetButtonHighlight()) {
+  switch (button_->GetHighlight()) {
     case XFA_AttributeEnum::Inverted:
       dwStyleEx = XFA_FWL_PSBSTYLEEXT_HiliteInverted;
       break;

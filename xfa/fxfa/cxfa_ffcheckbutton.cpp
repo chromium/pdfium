@@ -82,7 +82,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
         dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCircle;
     } break;
   }
-  if (m_pNode->IsAllowNeutral())
+  if (button_->IsAllowNeutral())
     dwStyleEx |= FWL_STYLEEXT_CKB_3State;
 
   pCheckBox->ModifyStylesEx(
