@@ -37,6 +37,7 @@
 #include "xfa/fxfa/cxfa_textprovider.h"
 #include "xfa/fxfa/parser/cxfa_barcode.h"
 #include "xfa/fxfa/parser/cxfa_binditems.h"
+#include "xfa/fxfa/parser/cxfa_checkbutton.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 namespace {
@@ -111,17 +112,22 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
 
   CXFA_FFWidget* pWidget = nullptr;
   switch (pNode->GetFFWidgetType()) {
-    case XFA_FFWidgetType::kBarcode:
-      ASSERT(pNode->GetUIChildNode()->GetElementType() == XFA_Element::Barcode);
-      pWidget = new CXFA_FFBarcode(
-          pNode, static_cast<CXFA_Barcode*>(pNode->GetUIChildNode()));
+    case XFA_FFWidgetType::kBarcode: {
+      CXFA_Node* child = pNode->GetUIChildNode();
+      ASSERT(child->GetElementType() == XFA_Element::Barcode);
+      pWidget = new CXFA_FFBarcode(pNode, static_cast<CXFA_Barcode*>(child));
       break;
+    }
     case XFA_FFWidgetType::kButton:
       pWidget = new CXFA_FFPushButton(pNode);
       break;
-    case XFA_FFWidgetType::kCheckButton:
-      pWidget = new CXFA_FFCheckButton(pNode);
+    case XFA_FFWidgetType::kCheckButton: {
+      CXFA_Node* child = pNode->GetUIChildNode();
+      ASSERT(child->GetElementType() == XFA_Element::CheckButton);
+      pWidget =
+          new CXFA_FFCheckButton(pNode, static_cast<CXFA_CheckButton*>(child));
       break;
+    }
     case XFA_FFWidgetType::kChoiceList: {
       if (pNode->IsListBox())
         pWidget = new CXFA_FFListBox(pNode);

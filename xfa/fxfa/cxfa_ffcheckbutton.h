@@ -7,13 +7,16 @@
 #ifndef XFA_FXFA_CXFA_FFCHECKBUTTON_H_
 #define XFA_FXFA_CXFA_FFCHECKBUTTON_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+class CXFA_CheckButton;
+
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:
-  explicit CXFA_FFCheckButton(CXFA_Node* pNode);
+  explicit CXFA_FFCheckButton(CXFA_Node* pNode, CXFA_CheckButton* button);
   ~CXFA_FFCheckButton() override;
 
   // CXFA_FFField
@@ -41,8 +44,9 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   void AddUIMargin(XFA_AttributeEnum iCapPlacement);
   XFA_CHECKSTATE FWLState2XFAState();
 
-  IFWL_WidgetDelegate* m_pOldDelegate;
+  IFWL_WidgetDelegate* m_pOldDelegate = nullptr;
   CFX_RectF m_rtCheckBox;
+  UnownedPtr<CXFA_CheckButton> button_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFCHECKBUTTON_H_

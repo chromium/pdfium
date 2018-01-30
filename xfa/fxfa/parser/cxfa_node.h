@@ -318,8 +318,6 @@ class CXFA_Node : public CXFA_Object {
   bool HasButtonRollover();
   bool HasButtonDown();
 
-  bool IsCheckButtonRound();
-  XFA_AttributeEnum GetCheckButtonMark();
   float GetCheckButtonSize();
 
   XFA_CHECKSTATE GetCheckState();

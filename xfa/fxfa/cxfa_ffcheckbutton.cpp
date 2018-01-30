@@ -21,10 +21,12 @@
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
 #include "xfa/fxfa/parser/cxfa_caption.h"
+#include "xfa/fxfa/parser/cxfa_checkbutton.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
-CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_Node* pNode)
-    : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
+CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_Node* pNode,
+                                       CXFA_CheckButton* button)
+    : CXFA_FFField(pNode), button_(button) {}
 
 CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
 
@@ -57,7 +59,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
 
   pCheckBox->SetBoxSize(m_pNode->GetCheckButtonSize());
   uint32_t dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
-  switch (m_pNode->GetCheckButtonMark()) {
+  switch (button_->GetMark()) {
     case XFA_AttributeEnum::Check:
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCheck;
       break;
@@ -76,7 +78,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
       dwStyleEx = FWL_STYLEEXT_CKB_SignShapeStar;
       break;
     default: {
-      if (m_pNode->IsCheckButtonRound())
+      if (button_->IsRound())
         dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCircle;
     } break;
   }
@@ -235,9 +237,9 @@ void CXFA_FFCheckButton::RenderWidget(CXFA_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, dwStatus);
   DrawBorderWithFlag(pGS, m_pNode->GetUIBorder(), m_rtUI, mtRotate,
-                     m_pNode->IsCheckButtonRound());
+                     button_->IsRound());
   RenderCaption(pGS, &mtRotate);
-  DrawHighlight(pGS, &mtRotate, dwStatus, m_pNode->IsCheckButtonRound());
+  DrawHighlight(pGS, &mtRotate, dwStatus, button_->IsRound());
   CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
   GetApp()->GetFWLWidgetMgr()->OnDrawWidget(m_pNormalWidget.get(), pGS, mt);

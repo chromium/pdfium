@@ -47,3 +47,11 @@ CXFA_CheckButton::~CXFA_CheckButton() {}
 XFA_FFWidgetType CXFA_CheckButton::GetDefaultFFWidgetType() const {
   return XFA_FFWidgetType::kCheckButton;
 }
+
+bool CXFA_CheckButton::IsRound() {
+  return JSObject()->GetEnum(XFA_Attribute::Shape) == XFA_AttributeEnum::Round;
+}
+
+XFA_AttributeEnum CXFA_CheckButton::GetMark() {
+  return JSObject()->GetEnum(XFA_Attribute::Mark);
+}

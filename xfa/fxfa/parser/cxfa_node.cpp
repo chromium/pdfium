@@ -3556,21 +3556,6 @@ bool CXFA_Node::HasButtonDown() {
   return false;
 }
 
-bool CXFA_Node::IsCheckButtonRound() {
-  CXFA_Node* pUIChild = GetUIChildNode();
-  if (pUIChild)
-    return pUIChild->JSObject()->GetEnum(XFA_Attribute::Shape) ==
-           XFA_AttributeEnum::Round;
-  return false;
-}
-
-XFA_AttributeEnum CXFA_Node::GetCheckButtonMark() {
-  CXFA_Node* pUIChild = GetUIChildNode();
-  if (pUIChild)
-    return pUIChild->JSObject()->GetEnum(XFA_Attribute::Mark);
-  return XFA_AttributeEnum::Default;
-}
-
 bool CXFA_Node::IsRadioButton() {
   CXFA_Node* pParent = GetParent();
   return pParent && pParent->GetElementType() == XFA_Element::ExclGroup;
