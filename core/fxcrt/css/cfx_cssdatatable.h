@@ -22,8 +22,7 @@ struct CFX_CSSPropertyTable {
   uint32_t dwType;
 };
 
-const CFX_CSSPropertyTable* CFX_GetCSSPropertyByName(
-    const WideStringView& wsName);
+const CFX_CSSPropertyTable* CFX_GetCSSPropertyByName(WideStringView wsName);
 const CFX_CSSPropertyTable* CFX_GetCSSPropertyByEnum(CFX_CSSProperty eName);
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSDATATABLE_H_

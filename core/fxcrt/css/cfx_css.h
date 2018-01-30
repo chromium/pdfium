@@ -79,6 +79,8 @@ enum class CFX_CSSPropertyValue : uint8_t {
   LAST_MARKER
 };
 
+// Any entries added/removed here, will need to be mirrored in
+// g_CFX_CSSProperties.
 enum class CFX_CSSProperty : uint8_t {
   BorderLeft = 0,
   Top,
@@ -120,7 +122,6 @@ enum class CFX_CSSProperty : uint8_t {
   Padding,
   MarginBottom,
   MarginTop,
-  LAST_MARKER
 };
 
 enum class CFX_CSSSelectorType : uint8_t { Element = 0, Descendant };

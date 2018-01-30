@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/css/cfx_cssdatatable.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fxcrt/css/cfx_cssstyleselector.h"
@@ -115,33 +116,24 @@ static const CFX_CSSPropertyTable g_CFX_CSSProperties[] = {
      CFX_CSSVALUETYPE_Primitive | CFX_CSSVALUETYPE_MaybeNumber |
          CFX_CSSVALUETYPE_MaybeEnum},
 };
-const int32_t g_iCSSPropertyCount =
-    sizeof(g_CFX_CSSProperties) / sizeof(CFX_CSSPropertyTable);
-static_assert(g_iCSSPropertyCount ==
-                  static_cast<int32_t>(CFX_CSSProperty::LAST_MARKER),
-              "Property table differs in size from property enum");
 
-const CFX_CSSPropertyTable* CFX_GetCSSPropertyByName(
-    const WideStringView& wsName) {
-  ASSERT(!wsName.IsEmpty());
-  uint32_t dwHash = FX_HashCode_GetW(wsName, true);
-  int32_t iEnd = g_iCSSPropertyCount;
-  int32_t iMid, iStart = 0;
-  uint32_t dwMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    dwMid = g_CFX_CSSProperties[iMid].dwHash;
-    if (dwHash == dwMid) {
-      return g_CFX_CSSProperties + iMid;
-    } else if (dwHash > dwMid) {
-      iStart = iMid + 1;
-    } else {
-      iEnd = iMid - 1;
-    }
-  } while (iStart <= iEnd);
+const CFX_CSSPropertyTable* CFX_GetCSSPropertyByName(WideStringView name) {
+  if (name.IsEmpty())
+    return nullptr;
+
+  uint32_t hash = FX_HashCode_GetW(name, true);
+
+  auto cmpFunc = [](const CFX_CSSPropertyTable& iter, const uint32_t& hash) {
+    return iter.dwHash < hash;
+  };
+
+  auto* result = std::lower_bound(std::begin(g_CFX_CSSProperties),
+                                  std::end(g_CFX_CSSProperties), hash, cmpFunc);
+  if (result != std::end(g_CFX_CSSProperties) && result->dwHash == hash)
+    return result;
   return nullptr;
 }
 
 const CFX_CSSPropertyTable* CFX_GetCSSPropertyByEnum(CFX_CSSProperty eName) {
-  return g_CFX_CSSProperties + static_cast<int>(eName);
+  return &g_CFX_CSSProperties[static_cast<uint8_t>(eName)];
 }
