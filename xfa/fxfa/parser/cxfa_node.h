@@ -377,9 +377,7 @@ class CXFA_Node : public CXFA_Object {
   int32_t GetFracDigits();
   int32_t GetLeadDigits();
 
-  WideString NumericLimit(const WideString& wsValue,
-                          int32_t iLead,
-                          int32_t iTread) const;
+  WideString NumericLimit(const WideString& wsValue);
 
  protected:
   virtual XFA_Element GetValueNodeType() const;

@@ -4304,13 +4304,13 @@ bool CXFA_Node::SetValue(XFA_VALUEPICTURE eValueType,
                                      wsPicture, pLocale, pLocalMgr);
       wsNewText = widgetValue.GetValue();
       if (eType == XFA_Element::NumericEdit)
-        wsNewText = NumericLimit(wsNewText, GetLeadDigits(), GetFracDigits());
+        wsNewText = NumericLimit(wsNewText);
 
       bSyncData = true;
     }
   } else if (eType == XFA_Element::NumericEdit) {
     if (wsNewText != L"0")
-      wsNewText = NumericLimit(wsNewText, GetLeadDigits(), GetFracDigits());
+      wsNewText = NumericLimit(wsNewText);
 
     bSyncData = true;
   }
@@ -4629,9 +4629,10 @@ void CXFA_Node::InsertListTextItem(CXFA_Node* pItems,
   pText->JSObject()->SetContent(wsText, wsText, false, false, false);
 }
 
-WideString CXFA_Node::NumericLimit(const WideString& wsValue,
-                                   int32_t iLead,
-                                   int32_t iTread) const {
+WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
+  int32_t iLead = GetLeadDigits();
+  int32_t iTread = GetFracDigits();
+
   if ((iLead == -1) && (iTread == -1))
     return wsValue;
 

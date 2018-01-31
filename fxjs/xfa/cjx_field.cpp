@@ -248,12 +248,8 @@ void CJX_Field::defaultValue(CFXJSE_Value* pValue,
     WideString wsNewText;
     if (pValue && !(pValue->IsNull() || pValue->IsUndefined()))
       wsNewText = pValue->ToWideString();
-
-    if (xfaNode->GetUIChildNode()->GetElementType() ==
-        XFA_Element::NumericEdit) {
-      wsNewText = xfaNode->NumericLimit(wsNewText, xfaNode->GetLeadDigits(),
-                                        xfaNode->GetFracDigits());
-    }
+    if (xfaNode->GetUIChildNode()->GetElementType() == XFA_Element::NumericEdit)
+      wsNewText = xfaNode->NumericLimit(wsNewText);
 
     CXFA_Node* pContainerNode = xfaNode->GetContainerNode();
     WideString wsFormatText(wsNewText);
