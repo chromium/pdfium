@@ -67,20 +67,16 @@ const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
 };
 
 uint16_t GetCodePageFromCharset(uint8_t charset) {
-  int32_t iEnd = sizeof(g_FXCharset2CodePageTable) / sizeof(FX_CHARSET_MAP) - 1;
-  ASSERT(iEnd >= 0);
-
-  int32_t iStart = 0, iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    const FX_CHARSET_MAP& cp = g_FXCharset2CodePageTable[iMid];
-    if (charset == cp.charset)
-      return cp.codepage;
-    if (charset < cp.charset)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
+  auto* result =
+      std::lower_bound(std::begin(g_FXCharset2CodePageTable),
+                       std::end(g_FXCharset2CodePageTable), charset,
+                       [](const FX_CHARSET_MAP& iter, const uint16_t& charset) {
+                         return iter.charset < charset;
+                       });
+  if (result != std::end(g_FXCharset2CodePageTable) &&
+      result->charset == charset) {
+    return result->codepage;
+  }
   return 0xFFFF;
 }
 
