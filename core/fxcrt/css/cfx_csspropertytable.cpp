@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/css/cfx_cssdatatable.h"
+#include "core/fxcrt/css/cfx_csspropertytable.h"
 
 #include <algorithm>
 #include <utility>
@@ -14,7 +14,8 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 
-static const CFX_CSSPropertyTable g_CFX_CSSProperties[] = {
+namespace {
+const CFX_CSSPropertyTable::Entry propertyTable[] = {
     {CFX_CSSProperty::BorderLeft, L"border-left", 0x04080036,
      CFX_CSSVALUETYPE_Shorthand},
     {CFX_CSSProperty::Top, L"top", 0x0BEDAF33,
@@ -116,24 +117,26 @@ static const CFX_CSSPropertyTable g_CFX_CSSProperties[] = {
      CFX_CSSVALUETYPE_Primitive | CFX_CSSVALUETYPE_MaybeNumber |
          CFX_CSSVALUETYPE_MaybeEnum},
 };
+}  // namespace
 
-const CFX_CSSPropertyTable* CFX_GetCSSPropertyByName(WideStringView name) {
+const CFX_CSSPropertyTable::Entry* CFX_CSSPropertyTable::GetByName(
+    WideStringView name) {
   if (name.IsEmpty())
     return nullptr;
 
   uint32_t hash = FX_HashCode_GetW(name, true);
 
-  auto cmpFunc = [](const CFX_CSSPropertyTable& iter, const uint32_t& hash) {
-    return iter.dwHash < hash;
-  };
+  auto cmpFunc = [](const CFX_CSSPropertyTable::Entry& iter,
+                    const uint32_t& hash) { return iter.dwHash < hash; };
 
-  auto* result = std::lower_bound(std::begin(g_CFX_CSSProperties),
-                                  std::end(g_CFX_CSSProperties), hash, cmpFunc);
-  if (result != std::end(g_CFX_CSSProperties) && result->dwHash == hash)
+  auto* result = std::lower_bound(std::begin(propertyTable),
+                                  std::end(propertyTable), hash, cmpFunc);
+  if (result != std::end(propertyTable) && result->dwHash == hash)
     return result;
   return nullptr;
 }
 
-const CFX_CSSPropertyTable* CFX_GetCSSPropertyByEnum(CFX_CSSProperty eName) {
-  return &g_CFX_CSSProperties[static_cast<uint8_t>(eName)];
+const CFX_CSSPropertyTable::Entry* CFX_CSSPropertyTable::GetByEnum(
+    CFX_CSSProperty property) {
+  return &propertyTable[static_cast<uint8_t>(property)];
 }

@@ -307,7 +307,7 @@ void CFX_CSSDeclaration::AddPropertyHolder(CFX_CSSProperty eProperty,
   properties_.push_back(std::move(pHolder));
 }
 
-void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
+void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable::Entry* pEntry,
                                      const WideStringView& value) {
   ASSERT(!value.IsEmpty());
 
@@ -321,7 +321,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
 
     bImportant = true;
   }
-  const uint32_t dwType = pTable->dwType;
+  const uint32_t dwType = pEntry->dwType;
   switch (dwType & 0x0F) {
     case CFX_CSSVALUETYPE_Primitive: {
       static const uint32_t g_ValueGuessOrder[] = {
@@ -353,7 +353,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
             break;
         }
         if (pCSSValue) {
-          AddPropertyHolder(pTable->eName, pCSSValue, bImportant);
+          AddPropertyHolder(pEntry->eName, pCSSValue, bImportant);
           return;
         }
 
@@ -364,7 +364,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
     }
     case CFX_CSSVALUETYPE_Shorthand: {
       RetainPtr<CFX_CSSValue> pWidth;
-      switch (pTable->eName) {
+      switch (pEntry->eName) {
         case CFX_CSSProperty::Font:
           ParseFontProperty(pszValue, iValueLen, bImportant);
           return;
@@ -414,7 +414,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable* pTable,
       }
     } break;
     case CFX_CSSVALUETYPE_List:
-      ParseValueListProperty(pTable, pszValue, iValueLen, bImportant);
+      ParseValueListProperty(pEntry, pszValue, iValueLen, bImportant);
       return;
     default:
       NOTREACHED();
@@ -466,15 +466,15 @@ RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseString(const wchar_t* pszValue,
 }
 
 void CFX_CSSDeclaration::ParseValueListProperty(
-    const CFX_CSSPropertyTable* pTable,
+    const CFX_CSSPropertyTable::Entry* pEntry,
     const wchar_t* pszValue,
     int32_t iValueLen,
     bool bImportant) {
   wchar_t separator =
-      (pTable->eName == CFX_CSSProperty::FontFamily) ? ',' : ' ';
+      (pEntry->eName == CFX_CSSProperty::FontFamily) ? ',' : ' ';
   CFX_CSSValueListParser parser(pszValue, iValueLen, separator);
 
-  const uint32_t dwType = pTable->dwType;
+  const uint32_t dwType = pEntry->dwType;
   CFX_CSSPrimitiveType eType;
   std::vector<RetainPtr<CFX_CSSValue>> list;
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
@@ -524,7 +524,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
   if (list.empty())
     return;
 
-  switch (pTable->eName) {
+  switch (pEntry->eName) {
     case CFX_CSSProperty::BorderWidth:
       Add4ValuesProperty(list, bImportant, CFX_CSSProperty::BorderLeftWidth,
                          CFX_CSSProperty::BorderTopWidth,
@@ -545,7 +545,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
       return;
     default: {
       auto pList = pdfium::MakeRetain<CFX_CSSValueList>(list);
-      AddPropertyHolder(pTable->eName, pList, bImportant);
+      AddPropertyHolder(pEntry->eName, pList, bImportant);
       return;
     }
   }

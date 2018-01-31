@@ -90,8 +90,9 @@ void CFX_CSSStyleSelector::ComputeStyle(
     if (!styleString.IsEmpty())
       AppendInlineStyle(pDecl.get(), styleString);
     if (!alignString.IsEmpty()) {
-      pDecl->AddProperty(CFX_GetCSSPropertyByEnum(CFX_CSSProperty::TextAlign),
-                         alignString.AsStringView());
+      pDecl->AddProperty(
+          CFX_CSSPropertyTable::GetByEnum(CFX_CSSProperty::TextAlign),
+          alignString.AsStringView());
     }
   }
   ApplyDeclarations(declArray, pDecl.get(), pDest);
@@ -143,21 +144,21 @@ void CFX_CSSStyleSelector::AppendInlineStyle(CFX_CSSDeclaration* pDecl,
   auto pSyntax = pdfium::MakeUnique<CFX_CSSSyntaxParser>(
       style.c_str(), style.GetLength(), 32, true);
   int32_t iLen2 = 0;
-  const CFX_CSSPropertyTable* table = nullptr;
+  const CFX_CSSPropertyTable::Entry* entry = nullptr;
   WideString wsName;
   while (1) {
     CFX_CSSSyntaxStatus eStatus = pSyntax->DoSyntaxParse();
     if (eStatus == CFX_CSSSyntaxStatus::PropertyName) {
       WideStringView strValue = pSyntax->GetCurrentString();
-      table = CFX_GetCSSPropertyByName(strValue);
-      if (!table)
+      entry = CFX_CSSPropertyTable::GetByName(strValue);
+      if (!entry)
         wsName = WideString(strValue);
     } else if (eStatus == CFX_CSSSyntaxStatus::PropertyValue) {
-      if (table || iLen2 > 0) {
+      if (entry || iLen2 > 0) {
         WideStringView strValue = pSyntax->GetCurrentString();
         if (!strValue.IsEmpty()) {
-          if (table)
-            pDecl->AddProperty(table, strValue);
+          if (entry)
+            pDecl->AddProperty(entry, strValue);
           else if (iLen2 > 0)
             pDecl->AddProperty(wsName, WideString(strValue));
         }
