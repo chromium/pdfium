@@ -37,6 +37,6 @@ void XFA_DataExporter_RegenerateFormFile(
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
-    const WideStringView& wsAttributeName);
+    WideStringView wsAttributeName);
 
 #endif  // XFA_FXFA_PARSER_XFA_UTILS_H_

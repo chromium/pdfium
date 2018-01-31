@@ -579,30 +579,28 @@ int32_t XFA_MapRotation(int32_t nRotation) {
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_Element eElement,
-    const WideStringView& wsAttributeName) {
+    WideStringView wsAttributeName) {
   if (wsAttributeName.IsEmpty())
     return nullptr;
 
   int32_t iElementIndex = static_cast<int32_t>(eElement);
   while (iElementIndex != -1) {
     const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
-    int32_t icount = scriptIndex->wAttributeCount;
-    if (icount == 0) {
+    size_t iCount = scriptIndex->wAttributeCount;
+    if (iCount == 0) {
       iElementIndex = scriptIndex->wParentIndex;
       continue;
     }
+
     uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
-    int32_t iStart = scriptIndex->wAttributeStart, iEnd = iStart + icount - 1;
-    do {
-      int32_t iMid = (iStart + iEnd) / 2;
-      const XFA_SCRIPTATTRIBUTEINFO* pInfo = g_SomAttributeData + iMid;
+    size_t iStart = scriptIndex->wAttributeStart;
+    size_t iEnd = iStart + iCount;
+    for (size_t iter = iStart; iter < iEnd; ++iter) {
+      const XFA_SCRIPTATTRIBUTEINFO* pInfo = g_SomAttributeData + iter;
       if (uHash == pInfo->uHash)
         return pInfo;
-      if (uHash < pInfo->uHash)
-        iEnd = iMid - 1;
-      else
-        iStart = iMid + 1;
-    } while (iStart <= iEnd);
+    }
+
     iElementIndex = scriptIndex->wParentIndex;
   }
   return nullptr;
