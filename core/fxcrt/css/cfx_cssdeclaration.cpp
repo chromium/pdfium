@@ -77,19 +77,15 @@ const CFX_CSSPropertyValueEntry propertyValueTable[] = {
     {CFX_CSSPropertyValue::TextTop, L"text-top", 0xFCB58D45},
 };
 
-struct CFX_CSSLengthUnitTable {
-  uint16_t wHash;
-  CFX_CSSNumberType wValue;
+struct CFX_CSSLengthUnitEntry {
+  const wchar_t* value;
+  CFX_CSSNumberType type;
 };
-const CFX_CSSLengthUnitTable g_CFX_CSSLengthUnits[] = {
-    {0x0672, CFX_CSSNumberType::EMS},
-    {0x067D, CFX_CSSNumberType::EXS},
-    {0x1AF7, CFX_CSSNumberType::Inches},
-    {0x2F7A, CFX_CSSNumberType::MilliMeters},
-    {0x3ED3, CFX_CSSNumberType::Picas},
-    {0x3EE4, CFX_CSSNumberType::Points},
-    {0x3EE8, CFX_CSSNumberType::Pixels},
-    {0xFC30, CFX_CSSNumberType::CentiMeters},
+const CFX_CSSLengthUnitEntry lengthUnitTable[] = {
+    {L"cm", CFX_CSSNumberType::CentiMeters}, {L"em", CFX_CSSNumberType::EMS},
+    {L"ex", CFX_CSSNumberType::EXS},         {L"in", CFX_CSSNumberType::Inches},
+    {L"mm", CFX_CSSNumberType::MilliMeters}, {L"pc", CFX_CSSNumberType::Picas},
+    {L"pt", CFX_CSSNumberType::Points},      {L"px", CFX_CSSNumberType::Pixels},
 };
 
 struct CFX_CSSColorTable {
@@ -124,25 +120,18 @@ const CFX_CSSPropertyValueEntry* GetCSSPropertyValueByName(
   return nullptr;
 }
 
-const CFX_CSSLengthUnitTable* GetCSSLengthUnitByName(
-    const WideStringView& wsName) {
-  ASSERT(!wsName.IsEmpty());
-  uint16_t wHash = FX_HashCode_GetW(wsName, true);
-  int32_t iEnd =
-      sizeof(g_CFX_CSSLengthUnits) / sizeof(CFX_CSSLengthUnitTable) - 1;
-  int32_t iMid, iStart = 0;
-  uint16_t wMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    wMid = g_CFX_CSSLengthUnits[iMid].wHash;
-    if (wHash == wMid) {
-      return g_CFX_CSSLengthUnits + iMid;
-    } else if (wHash > wMid) {
-      iStart = iMid + 1;
-    } else {
-      iEnd = iMid - 1;
-    }
-  } while (iStart <= iEnd);
+const CFX_CSSLengthUnitEntry* GetCSSLengthUnitByName(WideStringView wsName) {
+  if (wsName.IsEmpty() || wsName.GetLength() != 2)
+    return nullptr;
+
+  WideString lowerName = WideString(wsName);
+  lowerName.MakeLower();
+
+  for (auto* iter = std::begin(lengthUnitTable);
+       iter != std::end(lengthUnitTable); ++iter) {
+    if (lowerName.Compare(iter->value) == 0)
+      return iter;
+  }
   return nullptr;
 }
 
@@ -182,10 +171,10 @@ bool ParseCSSNumber(const wchar_t* pszValue,
   if (iValueLen >= 1 && *pszValue == '%') {
     eUnit = CFX_CSSNumberType::Percent;
   } else if (iValueLen == 2) {
-    const CFX_CSSLengthUnitTable* pUnit =
+    const CFX_CSSLengthUnitEntry* pUnit =
         GetCSSLengthUnitByName(WideStringView(pszValue, 2));
     if (pUnit)
-      eUnit = pUnit->wValue;
+      eUnit = pUnit->type;
   }
   return true;
 }
