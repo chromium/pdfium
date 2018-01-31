@@ -1868,22 +1868,23 @@ const FGAS_FontInfo g_XFAFontsMap[] = {
 
 }  // namespace
 
-const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t wUnicode) {
-  int32_t iEnd = sizeof(g_FXGdiFontUSBTable) / sizeof(FGAS_FONTUSB) - 1;
-  ASSERT(iEnd >= 0);
-
-  int32_t iStart = 0;
-  int32_t iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    const FGAS_FONTUSB& usb = g_FXGdiFontUSBTable[iMid];
-    if (wUnicode < usb.wStartUnicode)
-      iEnd = iMid - 1;
-    else if (wUnicode > usb.wEndUnicode)
-      iStart = iMid + 1;
-    else
-      return &usb;
-  } while (iStart <= iEnd);
+const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t unicode) {
+  // This search is trying to find the entry where the unicode character falls
+  // bewtween start and end. std::upper_bound needs to be used here instead of
+  // lower_bound, because they return the first value that meets the
+  // requirement, as though they are linearly searching. For lower_bound this
+  // means the first element less then the value, and for upper_bound this means
+  // the first element greater then the value. Since the entries are sorted in
+  // ascending order, the correct entry is the first one with an end greater,
+  // aka after, the value.
+  auto* result = std::upper_bound(
+      std::begin(g_FXGdiFontUSBTable), std::end(g_FXGdiFontUSBTable), unicode,
+      [](const wchar_t unicode, const FGAS_FONTUSB& iter) {
+        return iter.wEndUnicode > unicode;
+      });
+  if (result != std::end(g_FXGdiFontUSBTable) &&
+      result->wStartUnicode <= unicode && result->wEndUnicode >= unicode)
+    return result;
   return nullptr;
 }
 
