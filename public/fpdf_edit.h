@@ -97,15 +97,15 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument();
 // Create a new PDF page.
 //
 //   document   - handle to document.
-//   page_index - suggested index of the page to create. If it is larger than
-//                document's current last index(L), the created page index is
-//                the next available index -- L+1.
-//   width      - the page width.
-//   height     - the page height.
+//   page_index - suggested 0-based index of the page to create. If it is larger
+//                than document's current last index(L), the created page index
+//                is the next available index -- L+1.
+//   width      - the page width in points.
+//   height     - the page height in points.
 //
-// Returns the handle to the new page.
+// Returns the handle to the new page or NULL on failure.
 //
-// The page should be closed with CPDF_ClosePage() when finished as
+// The page should be closed with FPDF_ClosePage() when finished as
 // with any other page in the document.
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
                                                  int page_index,
