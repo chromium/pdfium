@@ -24,12 +24,13 @@ uint8_t Hex2Dec(uint8_t hexHigh, uint8_t hexLow) {
   return (FXSYS_HexCharToInt(hexHigh) << 4) + FXSYS_HexCharToInt(hexLow);
 }
 
-struct CFX_CSSPropertyValueTable {
+struct CFX_CSSPropertyValueEntry {
   CFX_CSSPropertyValue eName;
   const wchar_t* pszName;
   uint32_t dwHash;
 };
-const CFX_CSSPropertyValueTable g_CFX_CSSPropertyValues[] = {
+
+const CFX_CSSPropertyValueEntry propertyValueTable[] = {
     {CFX_CSSPropertyValue::Bolder, L"bolder", 0x009F1058},
     {CFX_CSSPropertyValue::None, L"none", 0x048B6670},
     {CFX_CSSPropertyValue::Dot, L"dot", 0x0A48CB27},
@@ -75,11 +76,6 @@ const CFX_CSSPropertyValueTable g_CFX_CSSPropertyValues[] = {
     {CFX_CSSPropertyValue::Left, L"left", 0xF5AD782B},
     {CFX_CSSPropertyValue::TextTop, L"text-top", 0xFCB58D45},
 };
-const int32_t g_iCSSPropertyValueCount =
-    sizeof(g_CFX_CSSPropertyValues) / sizeof(CFX_CSSPropertyValueTable);
-static_assert(g_iCSSPropertyValueCount ==
-                  static_cast<int32_t>(CFX_CSSPropertyValue::LAST_MARKER),
-              "Property value table differs in size from property value enum");
 
 struct CFX_CSSLengthUnitTable {
   uint16_t wHash;
@@ -112,24 +108,19 @@ const CFX_CSSColorTable g_CFX_CSSColors[] = {
     {0xF6EFFF31, 0xff008000},
 };
 
-const CFX_CSSPropertyValueTable* GetCSSPropertyValueByName(
-    const WideStringView& wsName) {
-  ASSERT(!wsName.IsEmpty());
-  uint32_t dwHash = FX_HashCode_GetW(wsName, true);
-  int32_t iEnd = g_iCSSPropertyValueCount;
-  int32_t iMid, iStart = 0;
-  uint32_t dwMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    dwMid = g_CFX_CSSPropertyValues[iMid].dwHash;
-    if (dwHash == dwMid) {
-      return g_CFX_CSSPropertyValues + iMid;
-    } else if (dwHash > dwMid) {
-      iStart = iMid + 1;
-    } else {
-      iEnd = iMid - 1;
-    }
-  } while (iStart <= iEnd);
+const CFX_CSSPropertyValueEntry* GetCSSPropertyValueByName(
+    WideStringView wsName) {
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  uint32_t hash = FX_HashCode_GetW(wsName, true);
+  auto* result = std::lower_bound(
+      std::begin(propertyValueTable), std::end(propertyValueTable), hash,
+      [](const CFX_CSSPropertyValueEntry& iter, const uint32_t& hash) {
+        return iter.dwHash < hash;
+      });
+  if (result != std::end(propertyValueTable) && result->dwHash == hash)
+    return result;
   return nullptr;
 }
 
@@ -439,7 +430,7 @@ RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseNumber(const wchar_t* pszValue,
 
 RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseEnum(const wchar_t* pszValue,
                                                       int32_t iValueLen) {
-  const CFX_CSSPropertyValueTable* pValue =
+  const CFX_CSSPropertyValueEntry* pValue =
       GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
   return pValue ? pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName) : nullptr;
 }
@@ -497,7 +488,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
           }
         }
         if (dwType & CFX_CSSVALUETYPE_MaybeEnum) {
-          const CFX_CSSPropertyValueTable* pValue =
+          const CFX_CSSPropertyValueEntry* pValue =
               GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
           if (pValue) {
             list.push_back(pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName));
@@ -614,7 +605,7 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
         if (pColorItem)
           continue;
 
-        const CFX_CSSPropertyValueTable* pValue =
+        const CFX_CSSPropertyValueEntry* pValue =
             GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
         if (!pValue)
           continue;
@@ -656,7 +647,7 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
       case CFX_CSSPrimitiveType::String: {
-        const CFX_CSSPropertyValueTable* pValue =
+        const CFX_CSSPropertyValueEntry* pValue =
             GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
         if (pValue) {
           switch (pValue->eName) {
