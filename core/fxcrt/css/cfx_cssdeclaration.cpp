@@ -88,20 +88,18 @@ const CFX_CSSLengthUnitEntry lengthUnitTable[] = {
     {L"pt", CFX_CSSNumberType::Points},      {L"px", CFX_CSSNumberType::Pixels},
 };
 
-struct CFX_CSSColorTable {
-  uint32_t dwHash;
-  FX_ARGB dwValue;
+struct CFX_CSSColorEntry {
+  const wchar_t* name;
+  FX_ARGB value;
 };
-const CFX_CSSColorTable g_CFX_CSSColors[] = {
-    {0x031B47FE, 0xff000080}, {0x0BB8DF5B, 0xffff0000},
-    {0x0D82A78C, 0xff800000}, {0x2ACC82E8, 0xff00ffff},
-    {0x2D083986, 0xff008080}, {0x4A6A6195, 0xffc0c0c0},
-    {0x546A8EF3, 0xff808080}, {0x65C9169C, 0xffffa500},
-    {0x8422BB61, 0xffffffff}, {0x9271A558, 0xff800080},
-    {0xA65A3EE3, 0xffff00ff}, {0xB1345708, 0xff0000ff},
-    {0xB6D2CF1F, 0xff808000}, {0xD19B5E1C, 0xffffff00},
-    {0xDB64391D, 0xff000000}, {0xF616D507, 0xff00ff00},
-    {0xF6EFFF31, 0xff008000},
+// 16 colours from CSS 2.0 + alternate spelling of grey/gray.
+const CFX_CSSColorEntry colorTable[] = {
+    {L"aqua", 0xff00ffff},    {L"black", 0xff000000}, {L"blue", 0xff0000ff},
+    {L"fuchsia", 0xffff00ff}, {L"gray", 0xff808080},  {L"green", 0xff008000},
+    {L"grey", 0xff808080},    {L"lime", 0xff00ff00},  {L"maroon", 0xff800000},
+    {L"navy", 0xff000080},    {L"olive", 0xff808000}, {L"orange", 0xffffa500},
+    {L"purple", 0xff800080},  {L"red", 0xffff0000},   {L"silver", 0xffc0c0c0},
+    {L"teal", 0xff008080},    {L"white", 0xffffffff}, {L"yellow", 0xffffff00},
 };
 
 const CFX_CSSPropertyValueEntry* GetCSSPropertyValueByName(
@@ -135,23 +133,18 @@ const CFX_CSSLengthUnitEntry* GetCSSLengthUnitByName(WideStringView wsName) {
   return nullptr;
 }
 
-const CFX_CSSColorTable* GetCSSColorByName(const WideStringView& wsName) {
-  ASSERT(!wsName.IsEmpty());
-  uint32_t dwHash = FX_HashCode_GetW(wsName, true);
-  int32_t iEnd = sizeof(g_CFX_CSSColors) / sizeof(CFX_CSSColorTable) - 1;
-  int32_t iMid, iStart = 0;
-  uint32_t dwMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    dwMid = g_CFX_CSSColors[iMid].dwHash;
-    if (dwHash == dwMid) {
-      return g_CFX_CSSColors + iMid;
-    } else if (dwHash > dwMid) {
-      iStart = iMid + 1;
-    } else {
-      iEnd = iMid - 1;
-    }
-  } while (iStart <= iEnd);
+const CFX_CSSColorEntry* GetCSSColorByName(WideStringView wsName) {
+  if (wsName.IsEmpty())
+    return nullptr;
+
+  WideString lowerName = WideString(wsName);
+  lowerName.MakeLower();
+
+  for (auto* iter = std::begin(colorTable); iter != std::end(colorTable);
+       ++iter) {
+    if (lowerName.Compare(iter->name) == 0)
+      return iter;
+  }
   return nullptr;
 }
 
@@ -252,12 +245,12 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
     return true;
   }
 
-  const CFX_CSSColorTable* pColor =
+  const CFX_CSSColorEntry* pColor =
       GetCSSColorByName(WideStringView(pszValue, iValueLen));
   if (!pColor)
     return false;
 
-  *dwColor = pColor->dwValue;
+  *dwColor = pColor->value;
   return true;
 }
 
@@ -589,7 +582,7 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
         break;
       }
       case CFX_CSSPrimitiveType::String: {
-        const CFX_CSSColorTable* pColorItem =
+        const CFX_CSSColorEntry* pColorItem =
             GetCSSColorByName(WideStringView(pszValue, iValueLen));
         if (pColorItem)
           continue;
