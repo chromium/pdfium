@@ -16,8 +16,8 @@ build_with_chromium = false
 
 # Support different NDK locations in non-Chromium builds.
 default_android_ndk_root = "//third_party/android_ndk"
-default_android_ndk_version = "r12b"
-default_android_ndk_major_version = 12
+default_android_ndk_version = "r16"
+default_android_ndk_major_version = 16
 
 # PDFium builds don't support building java targets.
 enable_java_templates = false
