@@ -101,17 +101,7 @@ bool CXFA_LayoutProcessor::IncrementLayout() {
     StartLayout(true);
     return DoLayout() == 100;
   }
-  for (CXFA_Node* pNode : m_rgChangedContainers) {
-    CXFA_Node* pParentNode = pNode->GetContainerParent();
-    if (!pParentNode)
-      return false;
-    if (!CXFA_ItemLayoutProcessor::IncrementRelayoutNode(this, pNode,
-                                                         pParentNode)) {
-      return false;
-    }
-  }
-  m_rgChangedContainers.clear();
-  return true;
+  return m_rgChangedContainers.empty();
 }
 
 int32_t CXFA_LayoutProcessor::CountPages() const {
