@@ -136,6 +136,8 @@ class CXFA_Node : public CXFA_Object {
     return HasFlag(XFA_NodeFlag_LayoutGeneratedNode);
   }
 
+  bool PresenceRequiresSpace() const;
+
   void SetBindingNode(CXFA_Node* node) {
     binding_nodes_.clear();
     if (node)

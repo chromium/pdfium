@@ -398,8 +398,7 @@ bool CXFA_LayoutPageMgr::PrepareFirstPage(CXFA_Node* pRootSubform) {
     bProBreakBefore = true;
     pRootSubform =
         pRootSubform->GetFirstChildByClass<CXFA_Subform>(XFA_Element::Subform);
-    while (pRootSubform &&
-           !XFA_ItemLayoutProcessor_IsTakingSpace(pRootSubform)) {
+    while (pRootSubform && !pRootSubform->PresenceRequiresSpace()) {
       pRootSubform = pRootSubform->GetNextSameClassSibling<CXFA_Subform>(
           XFA_Element::Subform);
     }
@@ -885,7 +884,7 @@ bool CXFA_LayoutPageMgr::ProcessBreakBeforeOrAfter(
   CXFA_Node* pLeaderTemplate = nullptr;
   CXFA_Node* pTrailerTemplate = nullptr;
   CXFA_Node* pFormNode = pBreakNode->GetContainerParent();
-  if (XFA_ItemLayoutProcessor_IsTakingSpace(pFormNode)) {
+  if (pFormNode->PresenceRequiresSpace()) {
     bCreatePage = ExecuteBreakBeforeOrAfter(pBreakNode, bBefore,
                                             pLeaderTemplate, pTrailerTemplate);
     CXFA_Document* pDocument = pBreakNode->GetDocument();
@@ -1760,8 +1759,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
             pFormLayout = pFormLayout->m_pFirstChild;
             if (iLevel == 2) {
               while (pFormLayout &&
-                     !XFA_ItemLayoutProcessor_IsTakingSpace(
-                         pFormLayout->m_pFormNode)) {
+                     !pFormLayout->m_pFormNode->PresenceRequiresSpace()) {
                 pFormLayout = pFormLayout->m_pNextSibling;
               }
             }

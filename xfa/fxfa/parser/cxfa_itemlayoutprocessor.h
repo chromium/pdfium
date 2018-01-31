@@ -46,8 +46,6 @@ enum class XFA_ItemLayoutProcessorStages {
   Done,
 };
 
-bool XFA_ItemLayoutProcessor_IsTakingSpace(CXFA_Node* pNode);
-
 class CXFA_ItemLayoutProcessor {
  public:
   static bool IncrementRelayoutNode(CXFA_LayoutProcessor* pLayoutProcessor,

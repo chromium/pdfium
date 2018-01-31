@@ -4673,3 +4673,11 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
   }
   return wsRet;
 }
+
+bool CXFA_Node::PresenceRequiresSpace() const {
+  XFA_AttributeEnum ePresence = JSObject()
+                                    ->TryEnum(XFA_Attribute::Presence, true)
+                                    .value_or(XFA_AttributeEnum::Visible);
+  return ePresence == XFA_AttributeEnum::Visible ||
+         ePresence == XFA_AttributeEnum::Invisible;
+}
