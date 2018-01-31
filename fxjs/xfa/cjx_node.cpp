@@ -65,20 +65,18 @@ const XFA_ExecEventParaInfo gs_eventParaInfos[] = {
 };
 
 const XFA_ExecEventParaInfo* GetEventParaInfoByName(
-    const WideStringView& wsEventName) {
+    WideStringView wsEventName) {
+  if (wsEventName.IsEmpty())
+    return nullptr;
+
   uint32_t uHash = FX_HashCode_GetW(wsEventName, false);
-  int32_t iStart = 0;
-  int32_t iEnd = (sizeof(gs_eventParaInfos) / sizeof(gs_eventParaInfos[0])) - 1;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    const XFA_ExecEventParaInfo* eventParaInfo = &gs_eventParaInfos[iMid];
-    if (uHash == eventParaInfo->m_uHash)
-      return eventParaInfo;
-    if (uHash < eventParaInfo->m_uHash)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
+  auto* result = std::lower_bound(
+      std::begin(gs_eventParaInfos), std::end(gs_eventParaInfos), uHash,
+      [](const XFA_ExecEventParaInfo& iter, const uint16_t& hash) {
+        return iter.m_uHash < hash;
+      });
+  if (result != std::end(gs_eventParaInfos) && result->m_uHash == uHash)
+    return result;
   return nullptr;
 }
 
