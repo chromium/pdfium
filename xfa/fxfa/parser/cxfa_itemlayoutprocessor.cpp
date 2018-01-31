@@ -622,25 +622,7 @@ CFX_PointF CalculatePositionedContainerPos(CXFA_Node* pNode,
 
 CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
                                                    CXFA_LayoutPageMgr* pPageMgr)
-    : m_pFormNode(pNode),
-      m_pLayoutItem(nullptr),
-      m_pCurChildNode(XFA_LAYOUT_INVALIDNODE),
-      m_fUsedSize(0),
-      m_pPageMgr(pPageMgr),
-      m_bBreakPending(true),
-      m_fLastRowWidth(0),
-      m_fLastRowY(0),
-      m_bUseInheriated(false),
-      m_ePreProcessRs(XFA_ItemLayoutProcessorResult::Done),
-      m_bKeepBreakFinish(false),
-      m_bIsProcessKeep(false),
-      m_pKeepHeadNode(nullptr),
-      m_pKeepTailNode(nullptr),
-      m_pOldLayoutItem(nullptr),
-      m_pCurChildPreprocessor(nullptr),
-      m_nCurChildNodeStage(XFA_ItemLayoutProcessorStages::None),
-      m_fWidthLimite(0),
-      m_bHasAvailHeight(true) {
+    : m_pFormNode(pNode), m_pPageMgr(pPageMgr) {
   ASSERT(m_pFormNode && (m_pFormNode->IsContainerNode() ||
                          m_pFormNode->GetElementType() == XFA_Element::Form));
   m_pOldLayoutItem = static_cast<CXFA_ContentLayoutItem*>(

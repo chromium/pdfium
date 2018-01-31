@@ -164,28 +164,30 @@ class CXFA_ItemLayoutProcessor {
       bool bNewRow);
 
   CXFA_Node* m_pFormNode;
-  CXFA_ContentLayoutItem* m_pLayoutItem;
-  CXFA_Node* m_pCurChildNode;
-  float m_fUsedSize;
+  CXFA_ContentLayoutItem* m_pLayoutItem = nullptr;
+  CXFA_Node* m_pCurChildNode = XFA_LAYOUT_INVALIDNODE;
+  float m_fUsedSize = 0;
   CXFA_LayoutPageMgr* m_pPageMgr;
   std::list<CXFA_Node*> m_PendingNodes;
-  bool m_bBreakPending;
+  bool m_bBreakPending = true;
   std::vector<float> m_rgSpecifiedColumnWidths;
   std::vector<CXFA_ContentLayoutItem*> m_arrayKeepItems;
-  float m_fLastRowWidth;
-  float m_fLastRowY;
-  bool m_bUseInheriated;
-  XFA_ItemLayoutProcessorResult m_ePreProcessRs;
-  bool m_bKeepBreakFinish;
-  bool m_bIsProcessKeep;
-  CXFA_Node* m_pKeepHeadNode;
-  CXFA_Node* m_pKeepTailNode;
-  CXFA_ContentLayoutItem* m_pOldLayoutItem;
-  CXFA_ItemLayoutProcessor* m_pCurChildPreprocessor;
-  XFA_ItemLayoutProcessorStages m_nCurChildNodeStage;
+  float m_fLastRowWidth = 0;
+  float m_fLastRowY = 0;
+  bool m_bUseInheriated = false;
+  XFA_ItemLayoutProcessorResult m_ePreProcessRs =
+      XFA_ItemLayoutProcessorResult::Done;
+  bool m_bKeepBreakFinish = false;
+  bool m_bIsProcessKeep = false;
+  CXFA_Node* m_pKeepHeadNode = nullptr;
+  CXFA_Node* m_pKeepTailNode = nullptr;
+  CXFA_ContentLayoutItem* m_pOldLayoutItem = nullptr;
+  CXFA_ItemLayoutProcessor* m_pCurChildPreprocessor = nullptr;
+  XFA_ItemLayoutProcessorStages m_nCurChildNodeStage =
+      XFA_ItemLayoutProcessorStages::None;
   std::map<CXFA_Node*, int32_t> m_PendingNodesCount;
-  float m_fWidthLimite;
-  bool m_bHasAvailHeight;
+  float m_fWidthLimite = 0;
+  bool m_bHasAvailHeight = true;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ITEMLAYOUTPROCESSOR_H_
