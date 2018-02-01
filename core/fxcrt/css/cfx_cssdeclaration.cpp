@@ -24,130 +24,6 @@ uint8_t Hex2Dec(uint8_t hexHigh, uint8_t hexLow) {
   return (FXSYS_HexCharToInt(hexHigh) << 4) + FXSYS_HexCharToInt(hexLow);
 }
 
-struct CFX_CSSPropertyValueEntry {
-  CFX_CSSPropertyValue eName;
-  const wchar_t* pszName;
-  uint32_t dwHash;
-};
-
-const CFX_CSSPropertyValueEntry propertyValueTable[] = {
-    {CFX_CSSPropertyValue::Bolder, L"bolder", 0x009F1058},
-    {CFX_CSSPropertyValue::None, L"none", 0x048B6670},
-    {CFX_CSSPropertyValue::Dot, L"dot", 0x0A48CB27},
-    {CFX_CSSPropertyValue::Sub, L"sub", 0x0BD37FAA},
-    {CFX_CSSPropertyValue::Top, L"top", 0x0BEDAF33},
-    {CFX_CSSPropertyValue::Right, L"right", 0x193ADE3E},
-    {CFX_CSSPropertyValue::Normal, L"normal", 0x247CF3E9},
-    {CFX_CSSPropertyValue::Auto, L"auto", 0x2B35B6D9},
-    {CFX_CSSPropertyValue::Text, L"text", 0x2D08AF85},
-    {CFX_CSSPropertyValue::XSmall, L"x-small", 0x2D2FCAFE},
-    {CFX_CSSPropertyValue::Thin, L"thin", 0x2D574D53},
-    {CFX_CSSPropertyValue::Small, L"small", 0x316A3739},
-    {CFX_CSSPropertyValue::Bottom, L"bottom", 0x399F02B5},
-    {CFX_CSSPropertyValue::Underline, L"underline", 0x3A0273A6},
-    {CFX_CSSPropertyValue::Double, L"double", 0x3D98515B},
-    {CFX_CSSPropertyValue::Lighter, L"lighter", 0x45BEB7AF},
-    {CFX_CSSPropertyValue::Oblique, L"oblique", 0x53EBDDB1},
-    {CFX_CSSPropertyValue::Super, L"super", 0x6A4F842F},
-    {CFX_CSSPropertyValue::Center, L"center", 0x6C51AFC1},
-    {CFX_CSSPropertyValue::XxLarge, L"xx-large", 0x70BB1508},
-    {CFX_CSSPropertyValue::Smaller, L"smaller", 0x849769F0},
-    {CFX_CSSPropertyValue::Baseline, L"baseline", 0x87436BA3},
-    {CFX_CSSPropertyValue::Thick, L"thick", 0x8CC35EB3},
-    {CFX_CSSPropertyValue::Justify, L"justify", 0x8D269CAE},
-    {CFX_CSSPropertyValue::Middle, L"middle", 0x947FA00F},
-    {CFX_CSSPropertyValue::Medium, L"medium", 0xA084A381},
-    {CFX_CSSPropertyValue::ListItem, L"list-item", 0xA32382B8},
-    {CFX_CSSPropertyValue::XxSmall, L"xx-small", 0xADE1FC76},
-    {CFX_CSSPropertyValue::Bold, L"bold", 0xB18313A1},
-    {CFX_CSSPropertyValue::SmallCaps, L"small-caps", 0xB299428D},
-    {CFX_CSSPropertyValue::Inline, L"inline", 0xC02D649F},
-    {CFX_CSSPropertyValue::Overline, L"overline", 0xC0EC9FA4},
-    {CFX_CSSPropertyValue::TextBottom, L"text-bottom", 0xC7D08D87},
-    {CFX_CSSPropertyValue::Larger, L"larger", 0xCD3C409D},
-    {CFX_CSSPropertyValue::InlineTable, L"inline-table", 0xD131F494},
-    {CFX_CSSPropertyValue::InlineBlock, L"inline-block", 0xD26A8BD7},
-    {CFX_CSSPropertyValue::Blink, L"blink", 0xDC36E390},
-    {CFX_CSSPropertyValue::Block, L"block", 0xDCD480AB},
-    {CFX_CSSPropertyValue::Italic, L"italic", 0xE31D5396},
-    {CFX_CSSPropertyValue::LineThrough, L"line-through", 0xE4C5A276},
-    {CFX_CSSPropertyValue::XLarge, L"x-large", 0xF008E390},
-    {CFX_CSSPropertyValue::Large, L"large", 0xF4434FCB},
-    {CFX_CSSPropertyValue::Left, L"left", 0xF5AD782B},
-    {CFX_CSSPropertyValue::TextTop, L"text-top", 0xFCB58D45},
-};
-
-struct CFX_CSSLengthUnitEntry {
-  const wchar_t* value;
-  CFX_CSSNumberType type;
-};
-const CFX_CSSLengthUnitEntry lengthUnitTable[] = {
-    {L"cm", CFX_CSSNumberType::CentiMeters}, {L"em", CFX_CSSNumberType::EMS},
-    {L"ex", CFX_CSSNumberType::EXS},         {L"in", CFX_CSSNumberType::Inches},
-    {L"mm", CFX_CSSNumberType::MilliMeters}, {L"pc", CFX_CSSNumberType::Picas},
-    {L"pt", CFX_CSSNumberType::Points},      {L"px", CFX_CSSNumberType::Pixels},
-};
-
-struct CFX_CSSColorEntry {
-  const wchar_t* name;
-  FX_ARGB value;
-};
-// 16 colours from CSS 2.0 + alternate spelling of grey/gray.
-const CFX_CSSColorEntry colorTable[] = {
-    {L"aqua", 0xff00ffff},    {L"black", 0xff000000}, {L"blue", 0xff0000ff},
-    {L"fuchsia", 0xffff00ff}, {L"gray", 0xff808080},  {L"green", 0xff008000},
-    {L"grey", 0xff808080},    {L"lime", 0xff00ff00},  {L"maroon", 0xff800000},
-    {L"navy", 0xff000080},    {L"olive", 0xff808000}, {L"orange", 0xffffa500},
-    {L"purple", 0xff800080},  {L"red", 0xffff0000},   {L"silver", 0xffc0c0c0},
-    {L"teal", 0xff008080},    {L"white", 0xffffffff}, {L"yellow", 0xffffff00},
-};
-
-const CFX_CSSPropertyValueEntry* GetCSSPropertyValueByName(
-    WideStringView wsName) {
-  if (wsName.IsEmpty())
-    return nullptr;
-
-  uint32_t hash = FX_HashCode_GetW(wsName, true);
-  auto* result = std::lower_bound(
-      std::begin(propertyValueTable), std::end(propertyValueTable), hash,
-      [](const CFX_CSSPropertyValueEntry& iter, const uint32_t& hash) {
-        return iter.dwHash < hash;
-      });
-  if (result != std::end(propertyValueTable) && result->dwHash == hash)
-    return result;
-  return nullptr;
-}
-
-const CFX_CSSLengthUnitEntry* GetCSSLengthUnitByName(WideStringView wsName) {
-  if (wsName.IsEmpty() || wsName.GetLength() != 2)
-    return nullptr;
-
-  WideString lowerName = WideString(wsName);
-  lowerName.MakeLower();
-
-  for (auto* iter = std::begin(lengthUnitTable);
-       iter != std::end(lengthUnitTable); ++iter) {
-    if (lowerName.Compare(iter->value) == 0)
-      return iter;
-  }
-  return nullptr;
-}
-
-const CFX_CSSColorEntry* GetCSSColorByName(WideStringView wsName) {
-  if (wsName.IsEmpty())
-    return nullptr;
-
-  WideString lowerName = WideString(wsName);
-  lowerName.MakeLower();
-
-  for (auto* iter = std::begin(colorTable); iter != std::end(colorTable);
-       ++iter) {
-    if (lowerName.Compare(iter->name) == 0)
-      return iter;
-  }
-  return nullptr;
-}
-
 bool ParseCSSNumber(const wchar_t* pszValue,
                     int32_t iValueLen,
                     float& fValue,
@@ -164,8 +40,8 @@ bool ParseCSSNumber(const wchar_t* pszValue,
   if (iValueLen >= 1 && *pszValue == '%') {
     eUnit = CFX_CSSNumberType::Percent;
   } else if (iValueLen == 2) {
-    const CFX_CSSLengthUnitEntry* pUnit =
-        GetCSSLengthUnitByName(WideStringView(pszValue, 2));
+    const CFX_CSSData::LengthUnit* pUnit =
+        CFX_CSSData::GetLengthUnitByName(WideStringView(pszValue, 2));
     if (pUnit)
       eUnit = pUnit->type;
   }
@@ -245,8 +121,8 @@ bool CFX_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
     return true;
   }
 
-  const CFX_CSSColorEntry* pColor =
-      GetCSSColorByName(WideStringView(pszValue, iValueLen));
+  const CFX_CSSData::Color* pColor =
+      CFX_CSSData::GetColorByName(WideStringView(pszValue, iValueLen));
   if (!pColor)
     return false;
 
@@ -280,7 +156,7 @@ void CFX_CSSDeclaration::AddPropertyHolder(CFX_CSSProperty eProperty,
   properties_.push_back(std::move(pHolder));
 }
 
-void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable::Entry* pEntry,
+void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
                                      const WideStringView& value) {
   ASSERT(!value.IsEmpty());
 
@@ -294,7 +170,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable::Entry* pEntry,
 
     bImportant = true;
   }
-  const uint32_t dwType = pEntry->dwType;
+  const uint32_t dwType = property->dwType;
   switch (dwType & 0x0F) {
     case CFX_CSSVALUETYPE_Primitive: {
       static const uint32_t g_ValueGuessOrder[] = {
@@ -326,7 +202,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable::Entry* pEntry,
             break;
         }
         if (pCSSValue) {
-          AddPropertyHolder(pEntry->eName, pCSSValue, bImportant);
+          AddPropertyHolder(property->eName, pCSSValue, bImportant);
           return;
         }
 
@@ -337,7 +213,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable::Entry* pEntry,
     }
     case CFX_CSSVALUETYPE_Shorthand: {
       RetainPtr<CFX_CSSValue> pWidth;
-      switch (pEntry->eName) {
+      switch (property->eName) {
         case CFX_CSSProperty::Font:
           ParseFontProperty(pszValue, iValueLen, bImportant);
           return;
@@ -387,7 +263,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSPropertyTable::Entry* pEntry,
       }
     } break;
     case CFX_CSSVALUETYPE_List:
-      ParseValueListProperty(pEntry, pszValue, iValueLen, bImportant);
+      ParseValueListProperty(property, pszValue, iValueLen, bImportant);
       return;
     default:
       NOTREACHED();
@@ -412,8 +288,8 @@ RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseNumber(const wchar_t* pszValue,
 
 RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseEnum(const wchar_t* pszValue,
                                                       int32_t iValueLen) {
-  const CFX_CSSPropertyValueEntry* pValue =
-      GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
+  const CFX_CSSData::PropertyValue* pValue =
+      CFX_CSSData::GetPropertyValueByName(WideStringView(pszValue, iValueLen));
   return pValue ? pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName) : nullptr;
 }
 
@@ -439,15 +315,15 @@ RetainPtr<CFX_CSSValue> CFX_CSSDeclaration::ParseString(const wchar_t* pszValue,
 }
 
 void CFX_CSSDeclaration::ParseValueListProperty(
-    const CFX_CSSPropertyTable::Entry* pEntry,
+    const CFX_CSSData::Property* pProperty,
     const wchar_t* pszValue,
     int32_t iValueLen,
     bool bImportant) {
   wchar_t separator =
-      (pEntry->eName == CFX_CSSProperty::FontFamily) ? ',' : ' ';
+      (pProperty->eName == CFX_CSSProperty::FontFamily) ? ',' : ' ';
   CFX_CSSValueListParser parser(pszValue, iValueLen, separator);
 
-  const uint32_t dwType = pEntry->dwType;
+  const uint32_t dwType = pProperty->dwType;
   CFX_CSSPrimitiveType eType;
   std::vector<RetainPtr<CFX_CSSValue>> list;
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
@@ -470,8 +346,9 @@ void CFX_CSSDeclaration::ParseValueListProperty(
           }
         }
         if (dwType & CFX_CSSVALUETYPE_MaybeEnum) {
-          const CFX_CSSPropertyValueEntry* pValue =
-              GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
+          const CFX_CSSData::PropertyValue* pValue =
+              CFX_CSSData::GetPropertyValueByName(
+                  WideStringView(pszValue, iValueLen));
           if (pValue) {
             list.push_back(pdfium::MakeRetain<CFX_CSSEnumValue>(pValue->eName));
             continue;
@@ -497,7 +374,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
   if (list.empty())
     return;
 
-  switch (pEntry->eName) {
+  switch (pProperty->eName) {
     case CFX_CSSProperty::BorderWidth:
       Add4ValuesProperty(list, bImportant, CFX_CSSProperty::BorderLeftWidth,
                          CFX_CSSProperty::BorderTopWidth,
@@ -518,7 +395,7 @@ void CFX_CSSDeclaration::ParseValueListProperty(
       return;
     default: {
       auto pList = pdfium::MakeRetain<CFX_CSSValueList>(list);
-      AddPropertyHolder(pEntry->eName, pList, bImportant);
+      AddPropertyHolder(pProperty->eName, pList, bImportant);
       return;
     }
   }
@@ -582,13 +459,14 @@ bool CFX_CSSDeclaration::ParseBorderProperty(
         break;
       }
       case CFX_CSSPrimitiveType::String: {
-        const CFX_CSSColorEntry* pColorItem =
-            GetCSSColorByName(WideStringView(pszValue, iValueLen));
+        const CFX_CSSData::Color* pColorItem =
+            CFX_CSSData::GetColorByName(WideStringView(pszValue, iValueLen));
         if (pColorItem)
           continue;
 
-        const CFX_CSSPropertyValueEntry* pValue =
-            GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
+        const CFX_CSSData::PropertyValue* pValue =
+            CFX_CSSData::GetPropertyValueByName(
+                WideStringView(pszValue, iValueLen));
         if (!pValue)
           continue;
 
@@ -629,8 +507,9 @@ void CFX_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
   while (parser.NextValue(&eType, &pszValue, &iValueLen)) {
     switch (eType) {
       case CFX_CSSPrimitiveType::String: {
-        const CFX_CSSPropertyValueEntry* pValue =
-            GetCSSPropertyValueByName(WideStringView(pszValue, iValueLen));
+        const CFX_CSSData::PropertyValue* pValue =
+            CFX_CSSData::GetPropertyValueByName(
+                WideStringView(pszValue, iValueLen));
         if (pValue) {
           switch (pValue->eName) {
             case CFX_CSSPropertyValue::XxSmall:

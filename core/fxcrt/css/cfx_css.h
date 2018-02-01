@@ -32,7 +32,7 @@ enum class CFX_CSSPrimitiveType : uint8_t {
 };
 
 // Any entries added/removed here, will need to be mirrored in
-// propertyValueTable, in core/fxcrt/css/cfx_cssdeclaration.cpp.
+// propertyValueTable, in core/fxcrt/css/cfx_cssdata.cpp.
 enum class CFX_CSSPropertyValue : uint8_t {
   Bolder = 0,
   None,
@@ -81,7 +81,7 @@ enum class CFX_CSSPropertyValue : uint8_t {
 };
 
 // Any entries added/removed here, will need to be mirrored in
-// propertyTable, in core/fxcrt/css/cfx_csspropertytable.cpp.
+// propertyTable, in core/fxcrt/css/cfx_cssdata.cpp.
 enum class CFX_CSSProperty : uint8_t {
   BorderLeft = 0,
   Top,

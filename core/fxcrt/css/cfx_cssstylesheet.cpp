@@ -8,8 +8,8 @@
 
 #include <utility>
 
+#include "core/fxcrt/css/cfx_cssdata.h"
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
-#include "core/fxcrt/css/cfx_csspropertytable.h"
 #include "core/fxcrt/css/cfx_cssstylerule.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/ptr_util.h"
@@ -62,7 +62,7 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
 
   CFX_CSSStyleRule* pStyleRule = nullptr;
   int32_t iValueLen = 0;
-  const CFX_CSSPropertyTable::Entry* entry = nullptr;
+  const CFX_CSSData::Property* property = nullptr;
   WideString wsName;
   while (1) {
     switch (pSyntax->DoSyntaxParse()) {
@@ -75,18 +75,18 @@ CFX_CSSSyntaxStatus CFX_CSSStyleSheet::LoadStyleRule(
       }
       case CFX_CSSSyntaxStatus::PropertyName: {
         WideStringView strValue = pSyntax->GetCurrentString();
-        entry = CFX_CSSPropertyTable::GetByName(strValue);
-        if (!entry)
+        property = CFX_CSSData::GetPropertyByName(strValue);
+        if (!property)
           wsName = WideString(strValue);
         break;
       }
       case CFX_CSSSyntaxStatus::PropertyValue: {
-        if (entry || iValueLen > 0) {
+        if (property || iValueLen > 0) {
           WideStringView strValue = pSyntax->GetCurrentString();
           auto* decl = pStyleRule->GetDeclaration();
           if (!strValue.IsEmpty()) {
-            if (entry) {
-              decl->AddProperty(entry, strValue);
+            if (property) {
+              decl->AddProperty(property, strValue);
             } else {
               decl->AddProperty(wsName, WideString(strValue));
             }
