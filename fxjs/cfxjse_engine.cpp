@@ -97,6 +97,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
     : CJS_V8(fxjs_engine->GetIsolate()),
       m_pDocument(pDocument),
       m_JsContext(CFXJSE_Context::Create(fxjs_engine->GetIsolate(),
+                                         fxjs_engine,
                                          &GlobalClassDescriptor,
                                          pDocument->GetRoot())),
       m_pJsClass(nullptr),
@@ -431,7 +432,7 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
     return nullptr;
 
   auto pNewContext =
-      CFXJSE_Context::Create(GetIsolate(), &VariablesClassDescriptor,
+      CFXJSE_Context::Create(GetIsolate(), nullptr, &VariablesClassDescriptor,
                              new CXFA_ThisProxy(pSubform, pScriptNode));
   RemoveBuiltInObjs(pNewContext.get());
   pNewContext->EnableCompatibleMode();

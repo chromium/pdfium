@@ -10,6 +10,7 @@
 
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/fxjs_v8.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -159,10 +160,12 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
 // static
 std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     v8::Isolate* pIsolate,
+    CFXJS_Engine* pOptionalEngineToSet,
     const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
     CFXJSE_HostObject* pGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
   auto pContext = pdfium::MakeUnique<CFXJSE_Context>(pIsolate);
+
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (pGlobalClass) {
     CFXJSE_Class* pGlobalClassObj =
@@ -176,18 +179,23 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
     hObjectTemplate->SetInternalFieldCount(2);
   }
-
   hObjectTemplate->Set(
       v8::Symbol::GetToStringTag(pIsolate),
       v8::String::NewFromUtf8(pIsolate, "global", v8::NewStringType::kNormal)
           .ToLocalChecked());
+
   v8::Local<v8::Context> hNewContext =
       v8::Context::New(pIsolate, nullptr, hObjectTemplate);
+
   v8::Local<v8::Context> hRootContext = v8::Local<v8::Context>::New(
       pIsolate, CFXJSE_RuntimeData::Get(pIsolate)->m_hRootContext);
   hNewContext->SetSecurityToken(hRootContext->GetSecurityToken());
+
   v8::Local<v8::Object> hGlobalObject = GetGlobalObjectFromContext(hNewContext);
   FXJSE_UpdateObjectBinding(hGlobalObject, pGlobalObject);
+  if (pOptionalEngineToSet)
+    CFXJS_Engine::SetEngineInContext(pOptionalEngineToSet, hNewContext);
+
   pContext->m_hContext.Reset(pIsolate, hNewContext);
   return pContext;
 }
