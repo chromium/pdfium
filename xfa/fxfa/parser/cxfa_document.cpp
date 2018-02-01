@@ -286,9 +286,9 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   return m_pLocalMgr.get();
 }
 
-CFXJSE_Engine* CXFA_Document::InitScriptContext(v8::Isolate* pIsolate) {
+CFXJSE_Engine* CXFA_Document::InitScriptContext(CFXJS_Engine* fxjs_engine) {
   ASSERT(!m_pScriptContext);
-  m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this, pIsolate);
+  m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this, fxjs_engine);
   return m_pScriptContext.get();
 }
 

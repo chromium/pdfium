@@ -20,8 +20,9 @@
 
 #define XFA_RESOLVENODE_TagName 0x0002
 
-class CXFA_List;
 class CFXJSE_ResolveProcessor;
+class CFXJS_Engine;
+class CXFA_List;
 
 class CFXJSE_Engine : public CJS_V8 {
  public:
@@ -49,7 +50,7 @@ class CFXJSE_Engine : public CJS_V8 {
                                       const ByteStringView& szPropName,
                                       bool bQueryIn);
 
-  explicit CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate);
+  CFXJSE_Engine(CXFA_Document* pDocument, CFXJS_Engine* fxjs_engine);
   ~CFXJSE_Engine() override;
 
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }

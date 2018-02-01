@@ -40,9 +40,8 @@ class CFXJSE_Context {
  protected:
   friend class CFXJSE_ScopeUtil_IsolateHandleContext;
 
-  CFXJSE_Context();
-  CFXJSE_Context(const CFXJSE_Context&);
-  CFXJSE_Context& operator=(const CFXJSE_Context&);
+  CFXJSE_Context(const CFXJSE_Context&) = delete;
+  CFXJSE_Context& operator=(const CFXJSE_Context&) = delete;
 
   v8::Global<v8::Context> m_hContext;
   v8::Isolate* m_pIsolate;

@@ -14,6 +14,7 @@
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_resolveprocessor.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/fxjs_v8.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -91,10 +92,11 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue,
   return static_cast<CXFA_Object*>(pHostObj);
 }
 
-CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument, v8::Isolate* pIsolate)
-    : CJS_V8(pIsolate),
+CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
+                             CFXJS_Engine* fxjs_engine)
+    : CJS_V8(fxjs_engine->GetIsolate()),
       m_pDocument(pDocument),
-      m_JsContext(CFXJSE_Context::Create(pIsolate,
+      m_JsContext(CFXJSE_Context::Create(fxjs_engine->GetIsolate(),
                                          &GlobalClassDescriptor,
                                          pDocument->GetRoot())),
       m_pJsClass(nullptr),

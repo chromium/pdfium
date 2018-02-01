@@ -40,13 +40,14 @@ enum XFA_DocFlag {
   XFA_DOCFLAG_Scripting = 0x0008
 };
 
-class CFX_XMLDoc;
 class CFXJSE_Engine;
+class CFXJS_Engine;
+class CFX_XMLDoc;
 class CScript_DataWindow;
 class CScript_EventPseudoModel;
 class CScript_HostPseudoModel;
-class CScript_LogPseudoModel;
 class CScript_LayoutPseudoModel;
+class CScript_LogPseudoModel;
 class CScript_SignaturePseudoModel;
 class CXFA_ContainerLayoutItem;
 class CXFA_DocumentParser;
@@ -61,7 +62,7 @@ class CXFA_Document {
   explicit CXFA_Document(CXFA_DocumentParser* pParser);
   ~CXFA_Document();
 
-  CFXJSE_Engine* InitScriptContext(v8::Isolate* pIsolate);
+  CFXJSE_Engine* InitScriptContext(CFXJS_Engine* fxjs_engine);
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
 

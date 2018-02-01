@@ -104,7 +104,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
   m_pXFADoc->StopLoad();
-  m_pXFADoc->GetXFADoc()->InitScriptContext(GetCJSRuntime()->GetIsolate());
+  m_pXFADoc->GetXFADoc()->InitScriptContext(GetCJSRuntime());
 
   if (m_pXFADoc->GetFormType() == FormType::kXFAFull)
     m_FormType = FormType::kXFAFull;
