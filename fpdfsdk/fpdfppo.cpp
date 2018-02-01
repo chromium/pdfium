@@ -195,7 +195,7 @@ CFX_FloatRect GetTrimBox(CPDF_Dictionary* pPageDict) {
   return GetCropBox(pPageDict);
 }
 
-CPDF_Object* GetPageContent(CPDF_Dictionary* pPageDict) {
+CPDF_Object* GetPageOrganizerPageContent(CPDF_Dictionary* pPageDict) {
   return pPageDict ? pPageDict->GetDirectObjectFor("Contents") : nullptr;
 }
 
@@ -398,7 +398,7 @@ CPDF_Object* CPDF_PageOrganizer::MakeXObject(CPDF_Dictionary* pSrcPageDict,
 
   auto pObjNumberMap = pdfium::MakeUnique<ObjectNumberMap>();
 
-  CPDF_Object* pSrcContentObj = GetPageContent(pSrcPageDict);
+  CPDF_Object* pSrcContentObj = GetPageOrganizerPageContent(pSrcPageDict);
   CPDF_Stream* pNewXObject = pDestDoc->NewIndirect<CPDF_Stream>(
       nullptr, 0,
       pdfium::MakeUnique<CPDF_Dictionary>(pDestDoc->GetByteStringPool()));
