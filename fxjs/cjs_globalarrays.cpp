@@ -16,7 +16,8 @@
     (rt)->DefineGlobalConst(                                                 \
         (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {        \
           CJS_Runtime* pCurrentRuntime =                                     \
-              CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());     \
+              CJS_Runtime::RuntimeFromIsolateCurrentContext(                 \
+                  info.GetIsolate());                                        \
           if (pCurrentRuntime)                                               \
             info.GetReturnValue().Set(pCurrentRuntime->GetConstArray(name)); \
         });                                                                  \

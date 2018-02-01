@@ -6,12 +6,12 @@
 
 #include "fxjs/cjs_globalconsts.h"
 
-#define GLOBAL_STRING(rt, name, value)                                \
-  (rt)->DefineGlobalConst(                                            \
-      (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {   \
-        info.GetReturnValue().Set(                                    \
-            CFXJS_Engine::CurrentEngineFromIsolate(info.GetIsolate()) \
-                ->NewString(value));                                  \
+#define GLOBAL_STRING(rt, name, value)                                       \
+  (rt)->DefineGlobalConst(                                                   \
+      (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {          \
+        info.GetReturnValue().Set(                                           \
+            CFXJS_Engine::EngineFromIsolateCurrentContext(info.GetIsolate()) \
+                ->NewString(value));                                         \
       })
 
 // static

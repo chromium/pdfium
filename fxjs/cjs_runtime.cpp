@@ -63,9 +63,10 @@ std::unique_ptr<IJS_Runtime> IJS_Runtime::Create(
 }
 
 // static
-CJS_Runtime* CJS_Runtime::CurrentRuntimeFromIsolate(v8::Isolate* pIsolate) {
+CJS_Runtime* CJS_Runtime::RuntimeFromIsolateCurrentContext(
+    v8::Isolate* pIsolate) {
   return static_cast<CJS_Runtime*>(
-      CFXJS_Engine::CurrentEngineFromIsolate(pIsolate));
+      CFXJS_Engine::EngineFromIsolateCurrentContext(pIsolate));
 }
 
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)

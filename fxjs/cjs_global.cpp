@@ -33,7 +33,7 @@ void JSSpecialPropQuery(const char*,
                         v8::Local<v8::String> property,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 
@@ -53,7 +53,7 @@ void JSSpecialPropGet(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 
@@ -81,7 +81,7 @@ void JSSpecialPropPut(const char* class_name,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 
@@ -104,7 +104,7 @@ void JSSpecialPropDel(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 
@@ -360,7 +360,7 @@ CJS_Return JSGlobalAlternate::setPersistent(
 
 void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
   CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(CFXJS_Engine::CurrentEngineFromIsolate(
+      static_cast<CJS_Runtime*>(CFXJS_Engine::EngineFromIsolateCurrentContext(
           m_pJSObject->ToV8Object()->GetIsolate()));
 
   for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
@@ -501,7 +501,7 @@ void JSGlobalAlternate::ObjectToArray(CJS_Runtime* pRuntime,
 
 void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
                                           CJS_KeyValue* pData) {
-  CJS_Runtime* pRuntime = CJS_Runtime::CurrentRuntimeFromIsolate(
+  CJS_Runtime* pRuntime = CJS_Runtime::RuntimeFromIsolateCurrentContext(
       m_pJSObject->ToV8Object()->GetIsolate());
 
   for (int i = 0, sz = pData->objData.Count(); i < sz; i++) {

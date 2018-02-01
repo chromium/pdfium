@@ -27,7 +27,7 @@ class CJS_Runtime : public IJS_Runtime,
  public:
   using FieldEvent = std::pair<WideString, JS_EVENT_T>;
 
-  static CJS_Runtime* CurrentRuntimeFromIsolate(v8::Isolate* pIsolate);
+  static CJS_Runtime* RuntimeFromIsolateCurrentContext(v8::Isolate* pIsolate);
 
   explicit CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CJS_Runtime() override;

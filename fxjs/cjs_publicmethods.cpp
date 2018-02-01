@@ -120,7 +120,7 @@ template <CJS_Return (*F)(CJS_Runtime*,
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 

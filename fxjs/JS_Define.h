@@ -66,7 +66,7 @@ void JSPropGetter(const char* prop_name_string,
                   v8::Local<v8::String> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 
@@ -94,7 +94,7 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 
@@ -118,7 +118,7 @@ void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
-      CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
   if (!pRuntime)
     return;
 
