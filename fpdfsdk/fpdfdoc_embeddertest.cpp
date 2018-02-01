@@ -20,26 +20,31 @@ TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
 
   // NULL FPDF_DEST case.
   EXPECT_EQ(0U, FPDFDest_GetPageIndex(document(), nullptr));
+  EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), nullptr));
 
   // Page number directly in item from Dests NameTree.
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
   EXPECT_TRUE(dest);
   EXPECT_EQ(1U, FPDFDest_GetPageIndex(document(), dest));
+  EXPECT_EQ(1, FPDFDest_GetDestPageIndex(document(), dest));
 
   // Page number via object reference in item from Dests NameTree.
   dest = FPDF_GetNamedDestByName(document(), "Next");
   EXPECT_TRUE(dest);
   EXPECT_EQ(1U, FPDFDest_GetPageIndex(document(), dest));
+  EXPECT_EQ(1, FPDFDest_GetDestPageIndex(document(), dest));
 
   // Page number directly in item from Dests dictionary.
   dest = FPDF_GetNamedDestByName(document(), "FirstAlternate");
   EXPECT_TRUE(dest);
   EXPECT_EQ(11U, FPDFDest_GetPageIndex(document(), dest));
+  EXPECT_EQ(11, FPDFDest_GetDestPageIndex(document(), dest));
 
   // Invalid object reference in item from Dests NameTree.
   dest = FPDF_GetNamedDestByName(document(), "LastAlternate");
   EXPECT_TRUE(dest);
   EXPECT_EQ(0U, FPDFDest_GetPageIndex(document(), dest));
+  EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), dest));
 }
 
 TEST_F(FPDFDocEmbeddertest, DestGetView) {
@@ -106,6 +111,7 @@ TEST_F(FPDFDocEmbeddertest, DestGetLocationInPage) {
 
   // NULL FPDF_DEST case.
   EXPECT_EQ(0U, FPDFDest_GetPageIndex(document(), nullptr));
+  EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), nullptr));
 
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
   EXPECT_TRUE(dest);
@@ -134,6 +140,7 @@ TEST_F(FPDFDocEmbeddertest, BUG_680376) {
   EXPECT_TRUE(dest);
   EXPECT_EQ(static_cast<unsigned long>(-1),
             FPDFDest_GetPageIndex(document(), dest));
+  EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), dest));
 }
 
 TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {

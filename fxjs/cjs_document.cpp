@@ -1467,8 +1467,8 @@ CJS_Return Document::gotoNamedDest(
       scrollPositionArray.push_back(arrayObject->GetFloatAt(i));
   }
   pRuntime->BeginBlock();
-  m_pFormFillEnv->DoGoToAction(dest.GetPageIndex(pDocument), dest.GetZoomMode(),
-                               scrollPositionArray.data(),
+  m_pFormFillEnv->DoGoToAction(dest.GetPageIndexDeprecated(pDocument),
+                               dest.GetZoomMode(), scrollPositionArray.data(),
                                scrollPositionArray.size());
   pRuntime->EndBlock();
   return CJS_Return(true);
