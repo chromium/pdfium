@@ -990,13 +990,13 @@ bool CPDFXFA_DocEnvironment::SetGlobalProperty(CXFA_FFDoc* hDoc,
   if (hDoc != m_pContext->GetXFADoc())
     return false;
   if (!m_pContext->GetFormFillEnv() ||
-      !m_pContext->GetFormFillEnv()->GetJSRuntime()) {
+      !m_pContext->GetFormFillEnv()->GetIJSRuntime()) {
     return false;
   }
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  IJS_EventContext* pContext = pFormFillEnv->GetJSRuntime()->NewEventContext();
-  bool bRet = pFormFillEnv->GetJSRuntime()->SetValueByName(szPropName, pValue);
-  pFormFillEnv->GetJSRuntime()->ReleaseEventContext(pContext);
+  IJS_EventContext* pContext = pFormFillEnv->GetIJSRuntime()->NewEventContext();
+  bool bRet = pFormFillEnv->GetIJSRuntime()->SetValueByName(szPropName, pValue);
+  pFormFillEnv->GetIJSRuntime()->ReleaseEventContext(pContext);
   return bRet;
 }
 
@@ -1006,12 +1006,12 @@ bool CPDFXFA_DocEnvironment::GetGlobalProperty(CXFA_FFDoc* hDoc,
   if (hDoc != m_pContext->GetXFADoc())
     return false;
   if (!m_pContext->GetFormFillEnv() ||
-      !m_pContext->GetFormFillEnv()->GetJSRuntime()) {
+      !m_pContext->GetFormFillEnv()->GetIJSRuntime()) {
     return false;
   }
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  IJS_EventContext* pContext = pFormFillEnv->GetJSRuntime()->NewEventContext();
-  bool bRet = pFormFillEnv->GetJSRuntime()->GetValueByName(szPropName, pValue);
-  pFormFillEnv->GetJSRuntime()->ReleaseEventContext(pContext);
+  IJS_EventContext* pContext = pFormFillEnv->GetIJSRuntime()->NewEventContext();
+  bool bRet = pFormFillEnv->GetIJSRuntime()->GetValueByName(szPropName, pValue);
+  pFormFillEnv->GetIJSRuntime()->ReleaseEventContext(pContext);
   return bRet;
 }

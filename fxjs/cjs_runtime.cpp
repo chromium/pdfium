@@ -57,8 +57,9 @@ void IJS_Runtime::Destroy() {
 }
 
 // static
-IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  return new CJS_Runtime(pFormFillEnv);
+std::unique_ptr<IJS_Runtime> IJS_Runtime::Create(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  return pdfium::MakeUnique<CJS_Runtime>(pFormFillEnv);
 }
 
 // static

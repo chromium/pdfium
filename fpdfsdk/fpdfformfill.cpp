@@ -770,7 +770,7 @@ FPDF_EXPORT void FPDF_CALLCONV
 FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
-  if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
+  if (pFormFillEnv && pFormFillEnv->IsJSPlatformPresent())
     pFormFillEnv->ProcJavascriptFun();
 }
 
@@ -778,7 +778,7 @@ FPDF_EXPORT void FPDF_CALLCONV
 FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       HandleToCPDFSDKEnvironment(hHandle);
-  if (pFormFillEnv && pFormFillEnv->IsJSInitiated())
+  if (pFormFillEnv && pFormFillEnv->IsJSPlatformPresent())
     pFormFillEnv->ProcOpenAction();
 }
 

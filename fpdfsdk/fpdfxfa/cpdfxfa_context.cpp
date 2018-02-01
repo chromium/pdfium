@@ -104,7 +104,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
   m_pXFADoc->StopLoad();
-  m_pXFADoc->GetXFADoc()->InitScriptContext(GetJSERuntime());
+  m_pXFADoc->GetXFADoc()->InitScriptContext(GetCJSRuntime()->GetIsolate());
 
   if (m_pXFADoc->GetFormType() == FormType::kXFAFull)
     m_FormType = FormType::kXFAFull;
@@ -198,14 +198,12 @@ void CPDFXFA_Context::ClearChangeMark() {
     m_pFormFillEnv->ClearChangeMark();
 }
 
-v8::Isolate* CPDFXFA_Context::GetJSERuntime() const {
+CJS_Runtime* CPDFXFA_Context::GetCJSRuntime() const {
   if (!m_pFormFillEnv)
     return nullptr;
 
   // XFA requires V8, if we have V8 then we have a CJS_Runtime and not the stub.
-  CJS_Runtime* runtime =
-      static_cast<CJS_Runtime*>(m_pFormFillEnv->GetJSRuntime());
-  return runtime->GetIsolate();
+  return static_cast<CJS_Runtime*>(m_pFormFillEnv->GetIJSRuntime());
 }
 
 WideString CPDFXFA_Context::GetAppTitle() const {

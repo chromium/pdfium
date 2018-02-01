@@ -45,7 +45,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
     return m_FormType == FormType::kXFAFull ||
            m_FormType == FormType::kXFAForeground;
   }
-  v8::Isolate* GetJSERuntime() const;
+  CJS_Runtime* GetCJSRuntime() const;
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {

@@ -247,7 +247,7 @@ void CPDFSDK_InterForm::SynchronizeField(CPDF_FormField* pFormField) {
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
-  if (!m_pFormFillEnv->IsJSInitiated())
+  if (!m_pFormFillEnv->IsJSPlatformPresent())
     return;
 
   if (m_bBusy)
@@ -260,7 +260,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
     return;
   }
 
-  IJS_Runtime* pRuntime = m_pFormFillEnv->GetJSRuntime();
+  IJS_Runtime* pRuntime = m_pFormFillEnv->GetIJSRuntime();
   int nSize = m_pInterForm->CountFieldsInCalculationOrder();
   for (int i = 0; i < nSize; i++) {
     CPDF_FormField* pField = m_pInterForm->GetFieldInCalculationOrder(i);
@@ -301,12 +301,12 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
 WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
                                        bool& bFormatted) {
   WideString sValue = pFormField->GetValue();
-  if (!m_pFormFillEnv->IsJSInitiated()) {
+  if (!m_pFormFillEnv->IsJSPlatformPresent()) {
     bFormatted = false;
     return sValue;
   }
 
-  IJS_Runtime* pRuntime = m_pFormFillEnv->GetJSRuntime();
+  IJS_Runtime* pRuntime = m_pFormFillEnv->GetIJSRuntime();
   if (pFormField->GetFieldType() == FormFieldType::kComboBox &&
       pFormField->CountSelectedItems() > 0) {
     int index = pFormField->GetSelectedIndex(0);

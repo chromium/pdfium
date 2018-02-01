@@ -7,6 +7,8 @@
 #ifndef FXJS_IJS_RUNTIME_H_
 #define FXJS_IJS_RUNTIME_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -22,7 +24,8 @@ class IJS_Runtime {
  public:
   static void Initialize(unsigned int slot, void* isolate);
   static void Destroy();
-  static IJS_Runtime* Create(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  static std::unique_ptr<IJS_Runtime> Create(
+      CPDFSDK_FormFillEnvironment* pFormFillEnv);
   virtual ~IJS_Runtime() {}
 
   virtual IJS_EventContext* NewEventContext() = 0;

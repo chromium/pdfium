@@ -205,7 +205,7 @@ class CPDFSDK_FormFillEnvironment
                    FPDF_BOOL bAnnotations);
   void JS_docgotoPage(int nPageNum);
 
-  bool IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+  bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
   ByteString GetAppName() const { return ""; }
   CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
@@ -213,7 +213,7 @@ class CPDFSDK_FormFillEnvironment
   // Creates if not present.
   CFFL_InteractiveFormFiller* GetInteractiveFormFiller();
   CPDFSDK_AnnotHandlerMgr* GetAnnotHandlerMgr();  // Creates if not present.
-  IJS_Runtime* GetJSRuntime();                    // Creates if not present.
+  IJS_Runtime* GetIJSRuntime();                   // Creates if not present.
   CPDFSDK_ActionHandler* GetActionHandler();      // Creates if not present.
   CPDFSDK_InterForm* GetInterForm();              // Creates if not present.
 
@@ -223,7 +223,7 @@ class CPDFSDK_FormFillEnvironment
   FPDF_FORMFILLINFO* const m_pInfo;
   std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
-  std::unique_ptr<IJS_Runtime> m_pJSRuntime;
+  std::unique_ptr<IJS_Runtime> m_pIJSRuntime;
   std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;

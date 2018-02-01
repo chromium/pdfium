@@ -49,7 +49,7 @@ bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     CPDF_FormField* pFormField,
     PDFSDK_FieldAction* data) {
   ASSERT(pFormFillEnv);
-  if (pFormFillEnv->IsJSInitiated() &&
+  if (pFormFillEnv->IsJSPlatformPresent() &&
       JsAction.GetType() == CPDF_Action::JavaScript) {
     WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
@@ -124,7 +124,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
 
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
-    if (pFormFillEnv->IsJSInitiated()) {
+    if (pFormFillEnv->IsJSPlatformPresent()) {
       WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty())
         RunDocumentOpenJavaScript(pFormFillEnv, L"", swJS);
@@ -184,7 +184,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
 
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
-    if (pFormFillEnv->IsJSInitiated()) {
+    if (pFormFillEnv->IsJSPlatformPresent()) {
       WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty())
         RunDocumentPageJavaScript(pFormFillEnv, type, swJS);
@@ -229,7 +229,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
 
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
-    if (pFormFillEnv->IsJSInitiated()) {
+    if (pFormFillEnv->IsJSPlatformPresent()) {
       WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         RunFieldJavaScript(pFormFillEnv, pFormField, type, data, swJS);
@@ -526,7 +526,7 @@ void CPDFSDK_ActionHandler::RunScriptForAction(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::function<void(IJS_EventContext* context)> cb) {
-  if (!pFormFillEnv->IsJSInitiated())
+  if (!pFormFillEnv->IsJSPlatformPresent())
     return;
 
   WideString swJS = action.GetJavaScript();
@@ -540,7 +540,7 @@ void CPDFSDK_ActionHandler::RunScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     const WideString& script,
     std::function<void(IJS_EventContext* context)> cb) {
-  IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
+  IJS_Runtime* pRuntime = pFormFillEnv->GetIJSRuntime();
   IJS_EventContext* pContext = pRuntime->NewEventContext();
 
   cb(pContext);
