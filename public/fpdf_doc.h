@@ -196,8 +196,8 @@ FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST dest);
 //   dest     - handle to the destination.
 //
 // Returns the -based page index containing |dest|. Returns -1 on error.
-FPDF_EXPORT long FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
-                                                         FPDF_DEST dest);
+FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
+                                                        FPDF_DEST dest);
 
 // Get the view (fit type) specified by |dest|.
 // Experimental API. Subject to change.

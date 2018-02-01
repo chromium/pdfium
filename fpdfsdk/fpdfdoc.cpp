@@ -212,8 +212,8 @@ FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST pDest) {
   return dest.GetPageIndexDeprecated(pDoc);
 }
 
-FPDF_EXPORT long FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
-                                                         FPDF_DEST pDest) {
+FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
+                                                        FPDF_DEST pDest) {
   if (!pDest)
     return -1;
 
