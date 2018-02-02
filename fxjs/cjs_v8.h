@@ -28,9 +28,6 @@ class CJS_V8 {
 
   v8::Isolate* GetIsolate() const { return m_isolate; }
 
-  v8::Local<v8::Context> NewLocalContext();
-  v8::Local<v8::Context> GetPersistentContext();
-
   v8::Local<v8::Value> NewNull();
   v8::Local<v8::Value> NewUndefined();
   v8::Local<v8::Array> NewArray();
@@ -79,15 +76,9 @@ class CJS_V8 {
   void SetIsolate(v8::Isolate* pIsolate) { m_isolate = pIsolate; }
   void ClearConstArray() { m_ConstArrays.clear(); }
 
-  void ResetPersistentContext(v8::Local<v8::Context> context) {
-    m_V8PersistentContext.Reset(m_isolate, context);
-  }
-  void ReleasePersistentContext() { m_V8PersistentContext.Reset(); }
-
  private:
   v8::Isolate* m_isolate;
   std::map<WideString, v8::Global<v8::Array>> m_ConstArrays;
-  v8::Global<v8::Context> m_V8PersistentContext;
 };
 
 #endif  // FXJS_CJS_V8_H_

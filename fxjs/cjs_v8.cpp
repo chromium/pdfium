@@ -13,9 +13,7 @@
 
 CJS_V8::CJS_V8(v8::Isolate* isolate) : m_isolate(isolate) {}
 
-CJS_V8::~CJS_V8() {
-  m_V8PersistentContext.Reset();
-}
+CJS_V8::~CJS_V8() = default;
 
 v8::Local<v8::Value> CJS_V8::GetObjectProperty(
     v8::Local<v8::Object> pObj,
@@ -86,14 +84,6 @@ unsigned CJS_V8::GetArrayLength(v8::Local<v8::Array> pArray) {
   if (pArray.IsEmpty())
     return 0;
   return pArray->Length();
-}
-
-v8::Local<v8::Context> CJS_V8::NewLocalContext() {
-  return v8::Local<v8::Context>::New(m_isolate, m_V8PersistentContext);
-}
-
-v8::Local<v8::Context> CJS_V8::GetPersistentContext() {
-  return m_V8PersistentContext.Get(m_isolate);
 }
 
 v8::Local<v8::Number> CJS_V8::NewNumber(int number) {

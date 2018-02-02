@@ -51,8 +51,8 @@ TEST_F(FXJSV8EmbedderTest, MultipleEngines) {
   CFXJS_Engine engine2(isolate());
   engine2.InitializeEngine();
 
-  v8::Local<v8::Context> context1 = engine1.NewLocalContext();
-  v8::Local<v8::Context> context2 = engine2.NewLocalContext();
+  v8::Local<v8::Context> context1 = engine1.GetV8Context();
+  v8::Local<v8::Context> context2 = engine2.GetV8Context();
 
   v8::Context::Scope context_scope(GetV8Context());
   ExecuteInCurrentContext(WideString(kScript0));

@@ -40,5 +40,5 @@ v8::Isolate* JSEmbedderTest::isolate() {
 }
 
 v8::Local<v8::Context> JSEmbedderTest::GetV8Context() {
-  return m_Engine->GetPersistentContext();
+  return m_Engine->GetV8Context();
 }

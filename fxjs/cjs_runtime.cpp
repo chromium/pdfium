@@ -180,7 +180,7 @@ CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
 void CJS_Runtime::SetFormFillEnvToDocument() {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
-  v8::Local<v8::Context> context = NewLocalContext();
+  v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
 
   v8::Local<v8::Object> pThis = GetThisObj();
@@ -235,7 +235,7 @@ bool CJS_Runtime::GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
                                                  CFXJSE_Value* pValue) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
-  v8::Local<v8::Context> context = NewLocalContext();
+  v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
   v8::Local<v8::Value> propvalue = context->Global()->Get(
       v8::String::NewFromUtf8(GetIsolate(), utf8Name.unterminated_c_str(),
@@ -256,10 +256,10 @@ bool CJS_Runtime::SetValueByNameInGlobalObject(const ByteStringView& utf8Name,
   v8::Isolate* pIsolate = GetIsolate();
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
-  v8::Local<v8::Context> context = NewLocalContext();
+  v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
   v8::Local<v8::Value> propvalue =
-      v8::Local<v8::Value>::New(GetIsolate(), pValue->DirectGetValue());
+      v8::Local<v8::Value>::New(pIsolate, pValue->DirectGetValue());
   context->Global()->Set(
       v8::String::NewFromUtf8(pIsolate, utf8Name.unterminated_c_str(),
                               v8::String::kNormalString, utf8Name.GetLength()),

@@ -28,7 +28,7 @@ CPDFSDK_FormFillEnvironment* CJS_EventContext::GetFormFillEnv() {
 bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
   v8::Isolate::Scope isolate_scope(m_pRuntime->GetIsolate());
   v8::HandleScope handle_scope(m_pRuntime->GetIsolate());
-  v8::Local<v8::Context> context = m_pRuntime->NewLocalContext();
+  v8::Local<v8::Context> context = m_pRuntime->GetV8Context();
   v8::Context::Scope context_scope(context);
 
   if (m_bBusy) {
