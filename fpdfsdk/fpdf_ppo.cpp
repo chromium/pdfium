@@ -6,6 +6,7 @@
 
 #include "public/fpdf_ppo.h"
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <utility>
