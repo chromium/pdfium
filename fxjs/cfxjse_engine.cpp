@@ -202,8 +202,8 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
   if (!pNotify)
     return;
 
-  pNotify->GetDocEnvironment()->SetGlobalProperty(pNotify->GetHDOC(),
-                                                  szPropName, pValue);
+  pNotify->GetDocEnvironment()->SetPropertyInNonXFAGlobalObject(
+      pNotify->GetHDOC(), szPropName, pValue);
 }
 
 void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
@@ -259,8 +259,8 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
   if (!pNotify)
     return;
 
-  pNotify->GetDocEnvironment()->GetGlobalProperty(pNotify->GetHDOC(),
-                                                  szPropName, pValue);
+  pNotify->GetDocEnvironment()->GetPropertyFromNonXFAGlobalObject(
+      pNotify->GetHDOC(), szPropName, pValue);
 }
 
 int32_t CFXJSE_Engine::GlobalPropTypeGetter(CFXJSE_Value* pOriginalValue,

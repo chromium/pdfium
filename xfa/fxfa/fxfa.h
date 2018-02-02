@@ -251,12 +251,13 @@ class IXFA_DocEnvironment {
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
   virtual bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) = 0;
-  virtual bool GetGlobalProperty(CXFA_FFDoc* hDoc,
-                                 const ByteStringView& szPropName,
-                                 CFXJSE_Value* pValue) = 0;
-  virtual bool SetGlobalProperty(CXFA_FFDoc* hDoc,
-                                 const ByteStringView& szPropName,
-                                 CFXJSE_Value* pValue) = 0;
+  virtual bool GetPropertyFromNonXFAGlobalObject(
+      CXFA_FFDoc* hDoc,
+      const ByteStringView& szPropName,
+      CFXJSE_Value* pValue) = 0;
+  virtual bool SetPropertyInNonXFAGlobalObject(CXFA_FFDoc* hDoc,
+                                               const ByteStringView& szPropName,
+                                               CFXJSE_Value* pValue) = 0;
   virtual RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
       CXFA_FFDoc* hDoc,
       const WideString& wsLink) = 0;

@@ -231,8 +231,8 @@ WideString ChangeObjName(const WideString& str) {
   return sRet;
 }
 
-bool CJS_Runtime::GetValueByName(const ByteStringView& utf8Name,
-                                 CFXJSE_Value* pValue) {
+bool CJS_Runtime::GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
+                                                 CFXJSE_Value* pValue) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> context = NewLocalContext();
@@ -248,8 +248,8 @@ bool CJS_Runtime::GetValueByName(const ByteStringView& utf8Name,
   return true;
 }
 
-bool CJS_Runtime::SetValueByName(const ByteStringView& utf8Name,
-                                 CFXJSE_Value* pValue) {
+bool CJS_Runtime::SetValueByNameInGlobalObject(const ByteStringView& utf8Name,
+                                               CFXJSE_Value* pValue) {
   if (utf8Name.IsEmpty() || !pValue)
     return false;
 

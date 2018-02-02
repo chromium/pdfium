@@ -984,34 +984,44 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
   return true;
 }
 
-bool CPDFXFA_DocEnvironment::SetGlobalProperty(CXFA_FFDoc* hDoc,
-                                               const ByteStringView& szPropName,
-                                               CFXJSE_Value* pValue) {
+bool CPDFXFA_DocEnvironment::SetPropertyInNonXFAGlobalObject(
+    CXFA_FFDoc* hDoc,
+    const ByteStringView& szPropName,
+    CFXJSE_Value* pValue) {
   if (hDoc != m_pContext->GetXFADoc())
     return false;
-  if (!m_pContext->GetFormFillEnv() ||
-      !m_pContext->GetFormFillEnv()->GetIJSRuntime()) {
-    return false;
-  }
+
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  IJS_EventContext* pContext = pFormFillEnv->GetIJSRuntime()->NewEventContext();
-  bool bRet = pFormFillEnv->GetIJSRuntime()->SetValueByName(szPropName, pValue);
-  pFormFillEnv->GetIJSRuntime()->ReleaseEventContext(pContext);
+  if (!pFormFillEnv)
+    return false;
+
+  IJS_Runtime* pIJSRuntime = pFormFillEnv->GetIJSRuntime();
+  if (!pIJSRuntime)
+    return false;
+
+  IJS_EventContext* pContext = pIJSRuntime->NewEventContext();
+  bool bRet = pIJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
+  pIJSRuntime->ReleaseEventContext(pContext);
   return bRet;
 }
 
-bool CPDFXFA_DocEnvironment::GetGlobalProperty(CXFA_FFDoc* hDoc,
-                                               const ByteStringView& szPropName,
-                                               CFXJSE_Value* pValue) {
+bool CPDFXFA_DocEnvironment::GetPropertyFromNonXFAGlobalObject(
+    CXFA_FFDoc* hDoc,
+    const ByteStringView& szPropName,
+    CFXJSE_Value* pValue) {
   if (hDoc != m_pContext->GetXFADoc())
     return false;
-  if (!m_pContext->GetFormFillEnv() ||
-      !m_pContext->GetFormFillEnv()->GetIJSRuntime()) {
-    return false;
-  }
+
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  IJS_EventContext* pContext = pFormFillEnv->GetIJSRuntime()->NewEventContext();
-  bool bRet = pFormFillEnv->GetIJSRuntime()->GetValueByName(szPropName, pValue);
-  pFormFillEnv->GetIJSRuntime()->ReleaseEventContext(pContext);
+  if (!pFormFillEnv)
+    return false;
+
+  IJS_Runtime* pIJSRuntime = pFormFillEnv->GetIJSRuntime();
+  if (!pIJSRuntime)
+    return false;
+
+  IJS_EventContext* pContext = pIJSRuntime->NewEventContext();
+  bool bRet = pIJSRuntime->GetValueByNameFromGlobalObject(szPropName, pValue);
+  pIJSRuntime->ReleaseEventContext(pContext);
   return bRet;
 }

@@ -34,10 +34,10 @@ class IJS_Runtime {
   virtual int ExecuteScript(const WideString& script, WideString* info) = 0;
 
 #ifdef PDF_ENABLE_XFA
-  virtual bool GetValueByName(const ByteStringView& utf8Name,
-                              CFXJSE_Value* pValue) = 0;
-  virtual bool SetValueByName(const ByteStringView& utf8Name,
-                              CFXJSE_Value* pValue) = 0;
+  virtual bool GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
+                                              CFXJSE_Value* pValue) = 0;
+  virtual bool SetValueByNameInGlobalObject(const ByteStringView& utf8Name,
+                                            CFXJSE_Value* pValue) = 0;
 #endif  // PDF_ENABLE_XFA
 
  protected:

@@ -30,11 +30,13 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   }
 
 #ifdef PDF_ENABLE_XFA
-  bool GetValueByName(const ByteStringView&, CFXJSE_Value*) override {
+  bool GetValueByNameFromGlobalObject(const ByteStringView&,
+                                      CFXJSE_Value*) override {
     return false;
   }
 
-  bool SetValueByName(const ByteStringView&, CFXJSE_Value*) override {
+  bool SetValueByNameInGlobalObject(const ByteStringView&,
+                                    CFXJSE_Value*) override {
     return false;
   }
 #endif  // PDF_ENABLE_XFA
