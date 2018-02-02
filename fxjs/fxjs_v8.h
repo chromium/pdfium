@@ -14,23 +14,20 @@
 #ifndef FXJS_FXJS_V8_H_
 #define FXJS_FXJS_V8_H_
 
-#include <v8-util.h>
-#include <v8.h>
-
 #include <map>
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cjs_v8.h"
+#include "v8/include/v8-util.h"
+#include "v8/include/v8.h"
 
 #ifdef PDF_ENABLE_XFA
-// Header for CFXJSE_RuntimeData. FXJS_V8 doesn't interpret this class,
-// it is just passed along to XFA.
-#include "fxjs/cfxjse_runtimedata.h"
+// FXJS_V8 doesn't interpret this class, it is just passed along to XFA.
+class CFXJSE_RuntimeData;
 #endif  // PDF_ENABLE_XFA
 
-class CFXJS_Engine;
 class CFXJS_ObjDefinition;
 
 // FXJS_V8 places no restrictions on this class; it merely passes it

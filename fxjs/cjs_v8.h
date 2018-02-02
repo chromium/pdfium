@@ -7,15 +7,14 @@
 #ifndef FXJS_CJS_V8_H_
 #define FXJS_CJS_V8_H_
 
-#include <v8-util.h>
-#include <v8.h>
-
 #include <map>
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/widestring.h"
+#include "v8/include/v8-util.h"
+#include "v8/include/v8.h"
 
 #ifdef PDF_ENABLE_XFA
 class CXFA_Object;
