@@ -9,9 +9,9 @@
 
 #include <cstddef>
 
+#include "build/build_config.h"
 #include "third_party/base/base_export.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/build/build_config.h"
 
 namespace pdfium {
 namespace base {

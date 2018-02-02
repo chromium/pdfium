@@ -4,9 +4,9 @@
 
 #include "third_party/base/allocator/partition_allocator/address_space_randomization.h"
 
+#include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator.h"
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
-#include "third_party/build/build_config.h"
 
 #if defined(OS_WIN)
 #include <windows.h>

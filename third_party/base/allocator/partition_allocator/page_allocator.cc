@@ -8,10 +8,10 @@
 
 #include <atomic>
 
+#include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/address_space_randomization.h"
 #include "third_party/base/base_export.h"
 #include "third_party/base/logging.h"
-#include "third_party/build/build_config.h"
 
 #if defined(OS_POSIX)
 

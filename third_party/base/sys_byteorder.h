@@ -13,8 +13,8 @@
 
 #include <stdint.h>
 
+#include "build/build_config.h"
 #include "third_party/base/logging.h"
-#include "third_party/build/build_config.h"
 
 #if defined(COMPILER_MSVC)
 #include <stdlib.h>

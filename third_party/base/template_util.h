@@ -10,7 +10,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "third_party/build/build_config.h"
+#include "build/build_config.h"
 
 // This hacks around libstdc++ 4.6 missing stuff in type_traits, while we need
 // to support it.

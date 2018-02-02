@@ -62,13 +62,13 @@
 #include <limits.h>
 #include <string.h>
 
+#include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator.h"
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
 #include "third_party/base/bits.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/sys_byteorder.h"
-#include "third_party/build/build_config.h"
 
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
 #include <stdlib.h>
