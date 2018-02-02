@@ -45,8 +45,21 @@ def _CheckUnwantedDependencies(input_api, output_api):
   # eval-ed and thus doesn't have __file__.
   original_sys_path = sys.path
   try:
-    sys.path = sys.path + [input_api.os_path.join(
-        input_api.PresubmitLocalPath(), 'buildtools', 'checkdeps')]
+    def GenerateCheckdepsPath(base_path):
+      return input_api.os_path.join(base_path, 'buildtools', 'checkdeps')
+
+    presubmit_path = input_api.PresubmitLocalPath()
+    presubmit_parent_path = input_api.os_path.dirname(presubmit_path)
+    not_standalone_pdfium = \
+        input_api.os_path.basename(presubmit_parent_path) == "third_party" and \
+        input_api.os_path.basename(presubmit_path) == "pdfium"
+
+    sys.path.append(GenerateCheckdepsPath(presubmit_path))
+    if not_standalone_pdfium:
+      presubmit_grandparent_path = input_api.os_path.dirname(
+          presubmit_parent_path)
+      sys.path.append(GenerateCheckdepsPath(presubmit_grandparent_path))
+
     import checkdeps
     from cpp_checker import CppChecker
     from rules import Rule
