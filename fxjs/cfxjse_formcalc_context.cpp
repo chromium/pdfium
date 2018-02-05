@@ -5944,7 +5944,9 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
       dFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
     } else {
       pNode = CFXJSE_Engine::ToObject(pRefValue, nullptr);
-      ASSERT(pNode);
+      if (!pNode)
+        return false;
+
       if (bHasNoResolveName) {
         WideString wsName;
         if (CXFA_Node* pXFANode = pNode->AsNode()) {
