@@ -34,13 +34,13 @@ class Environment : public testing::Environment {
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
     if (g_v8_natives && g_v8_snapshot) {
-      platform_ =
-          InitializeV8ForPDFium(g_exe_path, std::string(), nullptr, nullptr);
+      platform_ = InitializeV8ForPDFiumWithStartupData(
+          g_exe_path, std::string(), nullptr, nullptr);
     } else {
       g_v8_natives = new v8::StartupData;
       g_v8_snapshot = new v8::StartupData;
-      platform_ = InitializeV8ForPDFium(g_exe_path, std::string(), g_v8_natives,
-                                        g_v8_snapshot);
+      platform_ = InitializeV8ForPDFiumWithStartupData(
+          g_exe_path, std::string(), g_v8_natives, g_v8_snapshot);
     }
 #else
     platform_ = InitializeV8ForPDFium(g_exe_path);

@@ -1568,8 +1568,8 @@ int main(int argc, const char* argv[]) {
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   v8::StartupData natives;
   v8::StartupData snapshot;
-  platform = InitializeV8ForPDFium(options.exe_path, options.bin_directory,
-                                   &natives, &snapshot);
+  platform = InitializeV8ForPDFiumWithStartupData(
+      options.exe_path, options.bin_directory, &natives, &snapshot);
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
   platform = InitializeV8ForPDFium(options.exe_path);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA

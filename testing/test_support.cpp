@@ -60,8 +60,8 @@ bool GetExternalData(const std::string& exe_path,
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
-std::unique_ptr<v8::Platform> InitializeV8Common(const char* exe_path) {
-  v8::V8::InitializeICUDefaultLocation(exe_path);
+std::unique_ptr<v8::Platform> InitializeV8Common(const std::string& exe_path) {
+  v8::V8::InitializeICUDefaultLocation(exe_path.c_str());
 
   std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();
   v8::V8::InitializePlatform(platform.get());
@@ -178,12 +178,12 @@ std::string GenerateMD5Base16(const uint8_t* data, uint32_t size) {
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
+std::unique_ptr<v8::Platform> InitializeV8ForPDFiumWithStartupData(
     const std::string& exe_path,
     const std::string& bin_dir,
     v8::StartupData* natives_blob,
     v8::StartupData* snapshot_blob) {
-  std::unique_ptr<v8::Platform> platform = InitializeV8Common(exe_path.c_str());
+  std::unique_ptr<v8::Platform> platform = InitializeV8Common(exe_path);
   if (natives_blob && snapshot_blob) {
     if (!GetExternalData(exe_path, bin_dir, "natives_blob.bin", natives_blob))
       return nullptr;
@@ -196,11 +196,8 @@ std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
 }
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
 std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
-    const std::string& exe_path,
-    std::unique_ptr<v8::Platform>* platform) {
-  std::unique_ptr<v8::Platform> platform =
-      InitializeV8Common(exe_path.c_str(), platform);
-  return platform;
+    const std::string& exe_path) {
+  return InitializeV8Common(exe_path);
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8

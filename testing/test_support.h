@@ -91,7 +91,10 @@ class Platform;
 namespace v8 {
 class StartupData;
 }
-std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
+
+// |natives_blob| and |snapshot_blob| are optional out parameters. They should
+// either both be valid or both be nullptrs.
+std::unique_ptr<v8::Platform> InitializeV8ForPDFiumWithStartupData(
     const std::string& exe_path,
     const std::string& bin_dir,
     v8::StartupData* natives_blob,
