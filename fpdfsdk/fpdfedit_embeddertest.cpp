@@ -472,14 +472,14 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect2, 0, 255, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, green_rect2);
-  FPDF_BITMAP new_bitmap = RenderPageWithFlags(page, m_SavedForm, 0);
+  FPDF_BITMAP new_bitmap = RenderPageWithFlags(page, saved_form_handle_, 0);
   const char last_md5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
   CompareBitmap(new_bitmap, 612, 792, last_md5);
   FPDFBitmap_Destroy(new_bitmap);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   // Now save the result, closing the page and document
-  EXPECT_TRUE(FPDF_SaveAsCopy(m_SavedDocument, this, 0));
+  EXPECT_TRUE(FPDF_SaveAsCopy(saved_document_, this, 0));
 
   CloseSavedPage(page);
   CloseSavedDocument();

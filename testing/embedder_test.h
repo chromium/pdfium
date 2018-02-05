@@ -146,8 +146,8 @@ class EmbedderTest : public ::testing::Test,
                             int expected_height,
                             const char* expected_md5sum);
 
-  void ClearString() { m_String.clear(); }
-  const std::string& GetString() const { return m_String; }
+  void ClearString() { data_string_.clear(); }
+  const std::string& GetString() const { return data_string_; }
 
   static int GetBlockFromString(void* param,
                                 unsigned long pos,
@@ -167,25 +167,28 @@ class EmbedderTest : public ::testing::Test,
 
   void SetWholeFileAvailable();
 
-  Delegate* delegate_;
   std::unique_ptr<Delegate> default_delegate_;
-  FPDF_DOCUMENT document_;
-  FPDF_FORMHANDLE form_handle_;
-  FPDF_AVAIL avail_;
-  FPDF_FILEACCESS file_access_;  // must outlive avail_.
-  void* external_isolate_;
-  TestLoader* loader_;
-  size_t file_length_;
+  Delegate* delegate_;
+
+  FPDF_DOCUMENT document_ = nullptr;
+  FPDF_FORMHANDLE form_handle_ = nullptr;
+  FPDF_AVAIL avail_ = nullptr;
+  FPDF_FILEACCESS file_access_;                       // must outlive |avail_|.
+  std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive |avail_|.
+
+  void* external_isolate_ = nullptr;
+  TestLoader* loader_ = nullptr;
+  size_t file_length_ = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   std::map<int, FPDF_PAGE> page_map_;
   std::map<FPDF_PAGE, int> page_reverse_map_;
-  FPDF_DOCUMENT m_SavedDocument;
-  FPDF_FORMHANDLE m_SavedForm;
-  FPDF_AVAIL m_SavedAvail;
-  FPDF_FILEACCESS saved_file_access_;  // must outlive m_SavedAvail.
-  std::unique_ptr<FakeFileAccess> fake_file_access_;  // must outlive avail_.
-  std::unique_ptr<FakeFileAccess>
-      saved_fake_file_access_;  // must outlive m_SavedAvail.
+
+  FPDF_DOCUMENT saved_document_ = nullptr;
+  FPDF_FORMHANDLE saved_form_handle_ = nullptr;
+  FPDF_AVAIL saved_avail_ = nullptr;
+  FPDF_FILEACCESS saved_file_access_;  // must outlive |saved_avail_|.
+  // must outlive |saved_avail_|.
+  std::unique_ptr<FakeFileAccess> saved_fake_file_access_;
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);
@@ -205,7 +208,7 @@ class EmbedderTest : public ::testing::Test,
                                 const void* data,
                                 unsigned long size);
 
-  std::string m_String;
+  std::string data_string_;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_H_

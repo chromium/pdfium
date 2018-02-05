@@ -83,7 +83,7 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
     OpenSavedDocument(test.password);
     FPDF_PAGE page = LoadSavedPage(0);
     VerifySavedRendering(page, 612, 792, md5);
-    EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(m_SavedDocument));
+    EXPECT_EQ(test.permissions, FPDF_GetDocPermissions(saved_document_));
 
     CloseSavedPage(page);
     CloseSavedDocument();
