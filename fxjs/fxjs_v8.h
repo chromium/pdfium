@@ -189,12 +189,16 @@ class CFXJS_Engine : public CJS_V8 {
     return v8::Local<v8::Context>::New(GetIsolate(), m_V8Context);
   }
 
+  v8::Local<v8::Array> GetConstArray(const WideString& name);
+  void SetConstArray(const WideString& name, v8::Local<v8::Array> array);
+
  protected:
   CFXJS_Engine();
 
  private:
   v8::Global<v8::Context> m_V8Context;
   std::vector<v8::Global<v8::Object>*> m_StaticObjects;
+  std::map<WideString, v8::Global<v8::Array>> m_ConstArrays;
 };
 
 #endif  // FXJS_FXJS_V8_H_

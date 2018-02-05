@@ -60,9 +60,6 @@ class CJS_V8 {
                            unsigned index,
                            v8::Local<v8::Value> pValue);
 
-  void SetConstArray(const WideString& name, v8::Local<v8::Array> array);
-  v8::Local<v8::Array> GetConstArray(const WideString& name);
-
   // Objects.
   std::vector<WideString> GetObjectPropertyNames(v8::Local<v8::Object> pObj);
   v8::Local<v8::Value> GetObjectProperty(v8::Local<v8::Object> pObj,
@@ -73,11 +70,9 @@ class CJS_V8 {
 
  protected:
   void SetIsolate(v8::Isolate* pIsolate) { m_isolate = pIsolate; }
-  void ClearConstArray() { m_ConstArrays.clear(); }
 
  private:
   v8::Isolate* m_isolate;
-  std::map<WideString, v8::Global<v8::Array>> m_ConstArrays;
 };
 
 #endif  // FXJS_CJS_V8_H_

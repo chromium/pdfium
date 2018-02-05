@@ -196,14 +196,6 @@ v8::Local<v8::Array> CJS_V8::ToArray(v8::Local<v8::Value> pValue) {
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
 }
 
-void CJS_V8::SetConstArray(const WideString& name, v8::Local<v8::Array> array) {
-  m_ConstArrays[name] = v8::Global<v8::Array>(GetIsolate(), array);
-}
-
-v8::Local<v8::Array> CJS_V8::GetConstArray(const WideString& name) {
-  return v8::Local<v8::Array>::New(GetIsolate(), m_ConstArrays[name]);
-}
-
 #ifdef PDF_ENABLE_XFA
 CXFA_Object* CJS_V8::ToXFAObject(v8::Local<v8::Value> obj) {
   ASSERT(!obj.IsEmpty());

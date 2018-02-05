@@ -436,7 +436,7 @@ void CFXJS_Engine::ReleaseEngine() {
   if (!pData)
     return;
 
-  ClearConstArray();
+  m_ConstArrays.clear();
 
   int maxID = CFXJS_ObjDefinition::MaxID(GetIsolate());
   for (int i = 0; i < maxID; ++i) {
@@ -560,4 +560,13 @@ void* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
     }
   }
   return pData ? pData->m_pPrivate : nullptr;
+}
+
+v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const WideString& name) {
+  return v8::Local<v8::Array>::New(GetIsolate(), m_ConstArrays[name]);
+}
+
+void CFXJS_Engine::SetConstArray(const WideString& name,
+                                 v8::Local<v8::Array> array) {
+  m_ConstArrays[name] = v8::Global<v8::Array>(GetIsolate(), array);
 }
