@@ -222,10 +222,13 @@ void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
 // static
 void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("global", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_Global, JSGlobalAlternate>,
-                                 JSDestructor);
+                                 JSConstructor<CJS_Global>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
   DefineAllProperties(pEngine);
+}
+
+CJS_Global::CJS_Global(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<JSGlobalAlternate>(this);
 }
 
 void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {

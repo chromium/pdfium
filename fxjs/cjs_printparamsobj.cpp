@@ -15,9 +15,14 @@ int CJS_PrintParamsObj::GetObjDefnID() {
 
 // static
 void CJS_PrintParamsObj::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj(
-      "PrintParamsObj", FXJSOBJTYPE_DYNAMIC,
-      JSConstructor<CJS_PrintParamsObj, PrintParamsObj>, JSDestructor);
+  ObjDefnID =
+      pEngine->DefineObj("PrintParamsObj", FXJSOBJTYPE_DYNAMIC,
+                         JSConstructor<CJS_PrintParamsObj>, JSDestructor);
+}
+
+CJS_PrintParamsObj::CJS_PrintParamsObj(v8::Local<v8::Object> pObject)
+    : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<PrintParamsObj>(this);
 }
 
 PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)

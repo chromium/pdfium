@@ -87,8 +87,8 @@ class CJS_Color : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Color() override {}
+  explicit CJS_Color(v8::Local<v8::Object> pObject);
+  ~CJS_Color() override = default;
 
   JS_STATIC_PROP(black, black, color);
   JS_STATIC_PROP(blue, blue, color);

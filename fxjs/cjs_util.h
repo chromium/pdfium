@@ -46,8 +46,8 @@ class CJS_Util : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Util() override {}
+  explicit CJS_Util(v8::Local<v8::Object> pObject);
+  ~CJS_Util() override = default;
 
   JS_STATIC_METHOD(printd, util);
   JS_STATIC_METHOD(printf, util);

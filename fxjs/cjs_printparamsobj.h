@@ -30,9 +30,8 @@ class CJS_PrintParamsObj : public CJS_Object {
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_PrintParamsObj(v8::Local<v8::Object> pObject)
-      : CJS_Object(pObject) {}
-  ~CJS_PrintParamsObj() override {}
+  explicit CJS_PrintParamsObj(v8::Local<v8::Object> pObject);
+  ~CJS_PrintParamsObj() override = default;
 
  private:
   static int ObjDefnID;

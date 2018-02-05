@@ -57,10 +57,6 @@ class CJS_Object {
 
   v8::Local<v8::Object> ToV8Object() { return m_pV8Object.Get(m_pIsolate); }
 
-  // Takes ownership of |pObj|.
-  void SetEmbedObject(std::unique_ptr<CJS_EmbedObj> pObj) {
-    m_pEmbedObj = std::move(pObj);
-  }
   CJS_EmbedObj* GetEmbedObject() const { return m_pEmbedObj.get(); }
 
   v8::Isolate* GetIsolate() const { return m_pIsolate; }

@@ -28,8 +28,8 @@ class CJS_Global : public CJS_Object {
   static void setPersistent_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  explicit CJS_Global(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Global() override {}
+  explicit CJS_Global(v8::Local<v8::Object> pObject);
+  ~CJS_Global() override = default;
 
   // CJS_Object
   void InitInstance(IJS_Runtime* pIRuntime) override;

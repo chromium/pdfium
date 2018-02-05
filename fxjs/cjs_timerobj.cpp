@@ -17,15 +17,19 @@ int CJS_TimerObj::GetObjDefnID() {
 
 // static
 void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID =
-      pEngine->DefineObj("TimerObj", FXJSOBJTYPE_DYNAMIC,
-                         JSConstructor<CJS_TimerObj, TimerObj>, JSDestructor);
+  ObjDefnID = pEngine->DefineObj("TimerObj", FXJSOBJTYPE_DYNAMIC,
+                                 JSConstructor<CJS_TimerObj>, JSDestructor);
+}
+
+CJS_TimerObj::CJS_TimerObj(v8::Local<v8::Object> pObject)
+    : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<TimerObj>(this);
 }
 
 TimerObj::TimerObj(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_nTimerID(0) {}
 
-TimerObj::~TimerObj() {}
+TimerObj::~TimerObj() = default;
 
 void TimerObj::SetTimer(GlobalTimer* pTimer) {
   m_nTimerID = pTimer->GetTimerID();

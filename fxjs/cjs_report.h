@@ -27,8 +27,8 @@ class CJS_Report : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
-  explicit CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Report() override {}
+  explicit CJS_Report(v8::Local<v8::Object> pObject);
+  ~CJS_Report() override = default;
 
   JS_STATIC_METHOD(save, Report)
   JS_STATIC_METHOD(writeText, Report);

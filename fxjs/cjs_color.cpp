@@ -36,9 +36,13 @@ int CJS_Color::ObjDefnID = -1;
 // static
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("color", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_Color, color>, JSDestructor);
+                                 JSConstructor<CJS_Color>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+}
+
+CJS_Color::CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<color>(this);
 }
 
 // static

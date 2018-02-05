@@ -31,8 +31,8 @@ class CJS_Console : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Console() override {}
+  explicit CJS_Console(v8::Local<v8::Object> pObject);
+  ~CJS_Console() override = default;
 
   JS_STATIC_METHOD(clear, console);
   JS_STATIC_METHOD(hide, console);

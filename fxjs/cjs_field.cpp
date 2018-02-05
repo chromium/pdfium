@@ -165,9 +165,13 @@ int CJS_Field::GetObjDefnID() {
 // static
 void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Field", FXJSOBJTYPE_DYNAMIC,
-                                 JSConstructor<CJS_Field, Field>, JSDestructor);
+                                 JSConstructor<CJS_Field>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+}
+
+CJS_Field::CJS_Field(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<Field>(this);
 }
 
 void CJS_Field::InitInstance(IJS_Runtime* pIRuntime) {}
@@ -180,7 +184,7 @@ Field::Field(CJS_Object* pJSObject)
       m_bCanSet(false),
       m_bDelay(false) {}
 
-Field::~Field() {}
+Field::~Field() = default;
 
 // note: iControlNo = -1, means not a widget.
 void Field::ParseFieldName(const std::wstring& strFieldNameParsed,

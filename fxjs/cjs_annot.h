@@ -35,8 +35,8 @@ class CJS_Annot : public CJS_Object {
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Annot(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Annot() override {}
+  explicit CJS_Annot(v8::Local<v8::Object> pObject);
+  ~CJS_Annot() override = default;
 
   JS_STATIC_PROP(hidden, hidden, Annot);
   JS_STATIC_PROP(name, name, Annot);

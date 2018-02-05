@@ -22,15 +22,18 @@ int CJS_Console::ObjDefnID = -1;
 
 // static
 void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID =
-      pEngine->DefineObj("console", FXJSOBJTYPE_STATIC,
-                         JSConstructor<CJS_Console, console>, JSDestructor);
+  ObjDefnID = pEngine->DefineObj("console", FXJSOBJTYPE_STATIC,
+                                 JSConstructor<CJS_Console>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+}
+
+CJS_Console::CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<console>(this);
 }
 
 console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
-console::~console() {}
+console::~console() = default;
 
 CJS_Return console::clear(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params) {

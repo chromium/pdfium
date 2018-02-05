@@ -19,14 +19,18 @@ int CJS_Icon::GetObjDefnID() {
 // static
 void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Icon", FXJSOBJTYPE_DYNAMIC,
-                                 JSConstructor<CJS_Icon, Icon>, JSDestructor);
+                                 JSConstructor<CJS_Icon>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+}
+
+CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<Icon>(this);
 }
 
 Icon::Icon(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_swIconName(L"") {}
 
-Icon::~Icon() {}
+Icon::~Icon() = default;
 
 CJS_Return Icon::get_name(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewString(m_swIconName.c_str()));

@@ -78,15 +78,19 @@ int CJS_App::ObjDefnID = -1;
 // static
 void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("app", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_App, app>, JSDestructor);
+                                 JSConstructor<CJS_App>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+}
+
+CJS_App::CJS_App(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<app>(this);
 }
 
 app::app(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_bCalculate(true), m_bRuntimeHighLight(false) {}
 
-app::~app() {}
+app::~app() = default;
 
 CJS_Return app::get_active_docs(CJS_Runtime* pRuntime) {
   CJS_Document* pJSDocument = nullptr;

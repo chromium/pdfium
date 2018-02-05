@@ -69,13 +69,17 @@ int CJS_Util::ObjDefnID = -1;
 // static
 void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("util", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_Util, util>, JSDestructor);
+                                 JSConstructor<CJS_Util>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+}
+
+CJS_Util::CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<util>(this);
 }
 
 util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
-util::~util() {}
+util::~util() = default;
 
 CJS_Return util::printf(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params) {

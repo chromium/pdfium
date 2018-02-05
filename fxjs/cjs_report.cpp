@@ -19,14 +19,18 @@ int CJS_Report::ObjDefnID = -1;
 
 // static
 void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj(
-      "Report", eObjType, JSConstructor<CJS_Report, Report>, JSDestructor);
+  ObjDefnID = pEngine->DefineObj("Report", eObjType, JSConstructor<CJS_Report>,
+                                 JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+}
+
+CJS_Report::CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<Report>(this);
 }
 
 Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
-Report::~Report() {}
+Report::~Report() = default;
 
 CJS_Return Report::writeText(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params) {

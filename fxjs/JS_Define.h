@@ -48,10 +48,9 @@ std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
 // Rich JS classes provide constants, methods, properties, and the ability
 // to construct native object state.
 
-template <class T, class A>
+template <class T>
 static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
   auto pObj = pdfium::MakeUnique<T>(obj);
-  pObj->SetEmbedObject(pdfium::MakeUnique<A>(pObj.get()));
   pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
   pEngine->SetObjectPrivate(obj, std::move(pObj));
 }

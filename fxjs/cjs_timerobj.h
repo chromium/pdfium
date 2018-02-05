@@ -28,8 +28,8 @@ class CJS_TimerObj : public CJS_Object {
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_TimerObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_TimerObj() override {}
+  explicit CJS_TimerObj(v8::Local<v8::Object> pObject);
+  ~CJS_TimerObj() override = default;
 
  private:
   static int ObjDefnID;

@@ -116,11 +116,15 @@ int CJS_Document::GetObjDefnID() {
 
 // static
 void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID =
-      pEngine->DefineObj("Document", FXJSOBJTYPE_GLOBAL,
-                         JSConstructor<CJS_Document, Document>, JSDestructor);
+  ObjDefnID = pEngine->DefineObj("Document", FXJSOBJTYPE_GLOBAL,
+                                 JSConstructor<CJS_Document>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+}
+
+CJS_Document::CJS_Document(v8::Local<v8::Object> pObject)
+    : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<Document>(this);
 }
 
 void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
@@ -135,7 +139,7 @@ Document::Document(CJS_Object* pJSObject)
       m_cwBaseURL(L""),
       m_bDelay(false) {}
 
-Document::~Document() {}
+Document::~Document() = default;
 
 // The total number of fields in document.
 CJS_Return Document::get_num_fields(CJS_Runtime* pRuntime) {

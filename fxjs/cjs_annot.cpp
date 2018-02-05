@@ -34,13 +34,17 @@ int CJS_Annot::GetObjDefnID() {
 // static
 void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Annot", FXJSOBJTYPE_DYNAMIC,
-                                 JSConstructor<CJS_Annot, Annot>, JSDestructor);
+                                 JSConstructor<CJS_Annot>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+}
+
+CJS_Annot::CJS_Annot(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<Annot>(this);
 }
 
 Annot::Annot(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
-Annot::~Annot() {}
+Annot::~Annot() = default;
 
 CJS_Return Annot::get_hidden(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)

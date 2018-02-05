@@ -39,13 +39,17 @@ int CJS_Event::ObjDefnID = -1;
 // static
 void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("event", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_Event, event>, JSDestructor);
+                                 JSConstructor<CJS_Event>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+}
+
+CJS_Event::CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
+  m_pEmbedObj = pdfium::MakeUnique<event>(this);
 }
 
 event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
 
-event::~event() {}
+event::~event() = default;
 
 CJS_Return event::get_change(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
