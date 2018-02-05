@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
+#include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
@@ -54,69 +55,74 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
   EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
 
   // Check that the annotation is of type "highlight".
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot));
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
 
-  // Check that the annotation color is yellow.
-  unsigned int R;
-  unsigned int G;
-  unsigned int B;
-  unsigned int A;
-  EXPECT_TRUE(
-      FPDFAnnot_GetColor(annot, FPDFANNOT_COLORTYPE_Color, &R, &G, &B, &A));
-  EXPECT_EQ(255u, R);
-  EXPECT_EQ(255u, G);
-  EXPECT_EQ(0u, B);
-  EXPECT_EQ(255u, A);
+    // Check that the annotation color is yellow.
+    unsigned int R;
+    unsigned int G;
+    unsigned int B;
+    unsigned int A;
+    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+                                   &G, &B, &A));
+    EXPECT_EQ(255u, R);
+    EXPECT_EQ(255u, G);
+    EXPECT_EQ(0u, B);
+    EXPECT_EQ(255u, A);
 
-  // Check that the author is correct.
-  static constexpr char kAuthorKey[] = "T";
-  EXPECT_EQ(FPDF_OBJECT_STRING, FPDFAnnot_GetValueType(annot, kAuthorKey));
-  unsigned long len = FPDFAnnot_GetStringValue(annot, kAuthorKey, nullptr, 0);
-  std::vector<char> buf(len);
-  EXPECT_EQ(28u, FPDFAnnot_GetStringValue(annot, kAuthorKey, buf.data(), len));
-  EXPECT_STREQ(L"Jae Hyun Park", BufferToWString(buf).c_str());
+    // Check that the author is correct.
+    static constexpr char kAuthorKey[] = "T";
+    EXPECT_EQ(FPDF_OBJECT_STRING,
+              FPDFAnnot_GetValueType(annot.get(), kAuthorKey));
+    unsigned long len =
+        FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, nullptr, 0);
+    std::vector<char> buf(len);
+    EXPECT_EQ(28u, FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, buf.data(),
+                                            len));
+    EXPECT_STREQ(L"Jae Hyun Park", BufferToWString(buf).c_str());
 
-  // Check that the content is correct.
-  EXPECT_EQ(FPDF_OBJECT_STRING, FPDFAnnot_GetValueType(annot, kContentsKey));
-  len = FPDFAnnot_GetStringValue(annot, kContentsKey, nullptr, 0);
-  buf.clear();
-  buf.resize(len);
-  EXPECT_EQ(2690u,
-            FPDFAnnot_GetStringValue(annot, kContentsKey, buf.data(), len));
-  const wchar_t contents[] =
-      L"This is a note for that highlight annotation. Very long highlight "
-      "annotation. Long long long Long long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long longLong long longLong long longLong long longLong long "
-      "longLong long long. END";
-  EXPECT_STREQ(contents, BufferToWString(buf).c_str());
+    // Check that the content is correct.
+    EXPECT_EQ(FPDF_OBJECT_STRING,
+              FPDFAnnot_GetValueType(annot.get(), kContentsKey));
+    len = FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    EXPECT_EQ(2690u, FPDFAnnot_GetStringValue(annot.get(), kContentsKey,
+                                              buf.data(), len));
+    const wchar_t contents[] =
+        L"This is a note for that highlight annotation. Very long highlight "
+        "annotation. Long long long Long long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long longLong long longLong long longLong long longLong long "
+        "longLong long long. END";
+    EXPECT_STREQ(contents, BufferToWString(buf).c_str());
 
-  // Check that the quadpoints are correct.
-  FS_QUADPOINTSF quadpoints;
-  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &quadpoints));
-  EXPECT_EQ(115.802643f, quadpoints.x1);
-  EXPECT_EQ(718.913940f, quadpoints.y1);
-  EXPECT_EQ(157.211182f, quadpoints.x4);
-  EXPECT_EQ(706.264465f, quadpoints.y4);
-
-  FPDFPage_CloseAnnot(annot);
+    // Check that the quadpoints are correct.
+    FS_QUADPOINTSF quadpoints;
+    ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), &quadpoints));
+    EXPECT_EQ(115.802643f, quadpoints.x1);
+    EXPECT_EQ(718.913940f, quadpoints.y1);
+    EXPECT_EQ(157.211182f, quadpoints.x4);
+    EXPECT_EQ(706.264465f, quadpoints.y4);
+  }
   UnloadPage(page);
 }
 
@@ -129,36 +135,38 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
   // Check that there is a total of 3 annotation on its first page.
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
 
-  // Check that the third annotation is of type "ink".
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 2);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(FPDF_ANNOT_INK, FPDFAnnot_GetSubtype(annot));
+  {
+    // Check that the third annotation is of type "ink".
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_INK, FPDFAnnot_GetSubtype(annot.get()));
 
-  // Check that the annotation color is blue with opacity.
-  unsigned int R;
-  unsigned int G;
-  unsigned int B;
-  unsigned int A;
-  EXPECT_TRUE(
-      FPDFAnnot_GetColor(annot, FPDFANNOT_COLORTYPE_Color, &R, &G, &B, &A));
-  EXPECT_EQ(0u, R);
-  EXPECT_EQ(0u, G);
-  EXPECT_EQ(255u, B);
-  EXPECT_EQ(76u, A);
+    // Check that the annotation color is blue with opacity.
+    unsigned int R;
+    unsigned int G;
+    unsigned int B;
+    unsigned int A;
+    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+                                   &G, &B, &A));
+    EXPECT_EQ(0u, R);
+    EXPECT_EQ(0u, G);
+    EXPECT_EQ(255u, B);
+    EXPECT_EQ(76u, A);
 
-  // Check that there is no content.
-  EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot, kContentsKey, nullptr, 0));
+    // Check that there is no content.
+    EXPECT_EQ(2u,
+              FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0));
 
-  // Check that the rectange coordinates are correct.
-  // Note that upon rendering, the rectangle coordinates will be adjusted.
-  FS_RECTF rect;
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_EQ(351.820404f, rect.left);
-  EXPECT_EQ(583.830688f, rect.bottom);
-  EXPECT_EQ(475.336090f, rect.right);
-  EXPECT_EQ(681.535034f, rect.top);
-
-  FPDFPage_CloseAnnot(annot);
+    // Check that the rectange coordinates are correct.
+    // Note that upon rendering, the rectangle coordinates will be adjusted.
+    FS_RECTF rect;
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_EQ(351.820404f, rect.left);
+    EXPECT_EQ(583.830688f, rect.bottom);
+    EXPECT_EQ(475.336090f, rect.right);
+    EXPECT_EQ(681.535034f, rect.top);
+  }
   UnloadPage(page);
 }
 
@@ -181,77 +189,83 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   ASSERT_TRUE(page);
   EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
 
-  // Add a text annotation to the page.
-  FPDF_ANNOTATION annot = FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT);
-  ASSERT_TRUE(annot);
+  {
+    // Add a text annotation to the page.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
+    ASSERT_TRUE(annot);
 
-  // Check that there is now 1 annotations on this page.
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+    // Check that there is now 1 annotations on this page.
+    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
 
-  // Check that the subtype of the annotation is correct.
-  EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot));
-  FPDFPage_CloseAnnot(annot);
+    // Check that the subtype of the annotation is correct.
+    EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
+  }
 
-  annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot));
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
 
-  // Set the color of the annotation.
-  ASSERT_TRUE(
-      FPDFAnnot_SetColor(annot, FPDFANNOT_COLORTYPE_Color, 51, 102, 153, 204));
-  // Check that the color has been set correctly.
-  unsigned int R;
-  unsigned int G;
-  unsigned int B;
-  unsigned int A;
-  EXPECT_TRUE(
-      FPDFAnnot_GetColor(annot, FPDFANNOT_COLORTYPE_Color, &R, &G, &B, &A));
-  EXPECT_EQ(51u, R);
-  EXPECT_EQ(102u, G);
-  EXPECT_EQ(153u, B);
-  EXPECT_EQ(204u, A);
+    // Set the color of the annotation.
+    ASSERT_TRUE(FPDFAnnot_SetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, 51,
+                                   102, 153, 204));
+    // Check that the color has been set correctly.
+    unsigned int R;
+    unsigned int G;
+    unsigned int B;
+    unsigned int A;
+    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+                                   &G, &B, &A));
+    EXPECT_EQ(51u, R);
+    EXPECT_EQ(102u, G);
+    EXPECT_EQ(153u, B);
+    EXPECT_EQ(204u, A);
 
-  // Change the color of the annotation.
-  ASSERT_TRUE(
-      FPDFAnnot_SetColor(annot, FPDFANNOT_COLORTYPE_Color, 204, 153, 102, 51));
-  // Check that the color has been set correctly.
-  EXPECT_TRUE(
-      FPDFAnnot_GetColor(annot, FPDFANNOT_COLORTYPE_Color, &R, &G, &B, &A));
-  EXPECT_EQ(204u, R);
-  EXPECT_EQ(153u, G);
-  EXPECT_EQ(102u, B);
-  EXPECT_EQ(51u, A);
+    // Change the color of the annotation.
+    ASSERT_TRUE(FPDFAnnot_SetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, 204,
+                                   153, 102, 51));
+    // Check that the color has been set correctly.
+    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+                                   &G, &B, &A));
+    EXPECT_EQ(204u, R);
+    EXPECT_EQ(153u, G);
+    EXPECT_EQ(102u, B);
+    EXPECT_EQ(51u, A);
 
-  // Set the annotation rectangle.
-  FS_RECTF rect;
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_EQ(0.f, rect.left);
-  EXPECT_EQ(0.f, rect.right);
-  rect.left = 35;
-  rect.bottom = 150;
-  rect.right = 53;
-  rect.top = 165;
-  ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
-  // Check that the annotation rectangle has been set correctly.
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_EQ(35.f, rect.left);
-  EXPECT_EQ(150.f, rect.bottom);
-  EXPECT_EQ(53.f, rect.right);
-  EXPECT_EQ(165.f, rect.top);
+    // Set the annotation rectangle.
+    FS_RECTF rect;
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_EQ(0.f, rect.left);
+    EXPECT_EQ(0.f, rect.right);
+    rect.left = 35;
+    rect.bottom = 150;
+    rect.right = 53;
+    rect.top = 165;
+    ASSERT_TRUE(FPDFAnnot_SetRect(annot.get(), &rect));
+    // Check that the annotation rectangle has been set correctly.
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_EQ(35.f, rect.left);
+    EXPECT_EQ(150.f, rect.bottom);
+    EXPECT_EQ(53.f, rect.right);
+    EXPECT_EQ(165.f, rect.top);
 
-  // Set the content of the annotation.
-  static constexpr wchar_t contents[] = L"Hello! This is a customized content.";
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-      GetFPDFWideString(contents);
-  ASSERT_TRUE(FPDFAnnot_SetStringValue(annot, kContentsKey, text.get()));
-  // Check that the content has been set correctly.
-  unsigned long len = FPDFAnnot_GetStringValue(annot, kContentsKey, nullptr, 0);
-  std::vector<char> buf(len);
-  EXPECT_EQ(74u,
-            FPDFAnnot_GetStringValue(annot, kContentsKey, buf.data(), len));
-  EXPECT_STREQ(contents, BufferToWString(buf).c_str());
-
-  FPDFPage_CloseAnnot(annot);
+    // Set the content of the annotation.
+    static constexpr wchar_t kContents[] =
+        L"Hello! This is a customized content.";
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+        GetFPDFWideString(kContents);
+    ASSERT_TRUE(
+        FPDFAnnot_SetStringValue(annot.get(), kContentsKey, text.get()));
+    // Check that the content has been set correctly.
+    unsigned long len =
+        FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0);
+    std::vector<char> buf(len);
+    EXPECT_EQ(74u, FPDFAnnot_GetStringValue(annot.get(), kContentsKey,
+                                            buf.data(), len));
+    EXPECT_STREQ(kContents, BufferToWString(buf).c_str());
+  }
   UnloadPage(page);
 }
 
@@ -264,23 +278,27 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   // Check that there is a total of one annotation on its first page, and verify
   // its quadpoints.
   EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
   FS_QUADPOINTSF quadpoints;
-  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &quadpoints));
-  EXPECT_EQ(115.802643f, quadpoints.x1);
-  EXPECT_EQ(718.913940f, quadpoints.y1);
-  EXPECT_EQ(157.211182f, quadpoints.x4);
-  EXPECT_EQ(706.264465f, quadpoints.y4);
-  FPDFPage_CloseAnnot(annot);
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), &quadpoints));
+    EXPECT_EQ(115.802643f, quadpoints.x1);
+    EXPECT_EQ(718.913940f, quadpoints.y1);
+    EXPECT_EQ(157.211182f, quadpoints.x4);
+    EXPECT_EQ(706.264465f, quadpoints.y4);
+  }
 
   // Add an underline annotation to the page and set its quadpoints.
-  annot = FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE);
-  ASSERT_TRUE(annot);
-  quadpoints.x1 = 140.802643f;
-  quadpoints.x3 = 140.802643f;
-  ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
-  FPDFPage_CloseAnnot(annot);
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE));
+    ASSERT_TRUE(annot);
+    quadpoints.x1 = 140.802643f;
+    quadpoints.x3 = 140.802643f;
+    ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot.get(), &quadpoints));
+  }
 
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -296,19 +314,21 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   // Check that the saved document has 2 annotations on the first page
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
-  // Check that the second annotation is an underline annotation and verify
-  // its quadpoints.
-  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(page, 1);
-  ASSERT_TRUE(new_annot);
-  EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot));
-  FS_QUADPOINTSF new_quadpoints;
-  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(new_annot, &new_quadpoints));
-  EXPECT_NEAR(quadpoints.x1, new_quadpoints.x1, 0.001f);
-  EXPECT_NEAR(quadpoints.y1, new_quadpoints.y1, 0.001f);
-  EXPECT_NEAR(quadpoints.x4, new_quadpoints.x4, 0.001f);
-  EXPECT_NEAR(quadpoints.y4, new_quadpoints.y4, 0.001f);
-
-  FPDFPage_CloseAnnot(new_annot);
+  {
+    // Check that the second annotation is an underline annotation and verify
+    // its quadpoints.
+    std::unique_ptr<void, FPDFAnnotationDeleter> new_annot(
+        FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(new_annot);
+    EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot.get()));
+    FS_QUADPOINTSF new_quadpoints;
+    ASSERT_TRUE(
+        FPDFAnnot_GetAttachmentPoints(new_annot.get(), &new_quadpoints));
+    EXPECT_NEAR(quadpoints.x1, new_quadpoints.x1, 0.001f);
+    EXPECT_NEAR(quadpoints.y1, new_quadpoints.y1, 0.001f);
+    EXPECT_NEAR(quadpoints.x4, new_quadpoints.x4, 0.001f);
+    EXPECT_NEAR(quadpoints.y4, new_quadpoints.y4, 0.001f);
+  }
 
   CloseSavedPage(page);
   CloseSavedDocument();
@@ -340,82 +360,88 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   CompareBitmap(bitmap, 612, 792, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
-  // Retrieve the highlight annotation which has its AP stream already defined.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot));
-
-  // Check that color cannot be set when an AP stream is defined already.
-  EXPECT_FALSE(
-      FPDFAnnot_SetColor(annot, FPDFANNOT_COLORTYPE_Color, 51, 102, 153, 204));
-
-  // Verify its attachment points.
-  FS_QUADPOINTSF quadpoints;
-  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &quadpoints));
-  EXPECT_NEAR(72.0000f, quadpoints.x1, 0.001f);
-  EXPECT_NEAR(720.792f, quadpoints.y1, 0.001f);
-  EXPECT_NEAR(132.055f, quadpoints.x4, 0.001f);
-  EXPECT_NEAR(704.796f, quadpoints.y4, 0.001f);
-
-  // Check that updating the attachment points would succeed.
-  quadpoints.x1 -= 50.f;
-  quadpoints.x2 -= 50.f;
-  quadpoints.x3 -= 50.f;
-  quadpoints.x4 -= 50.f;
-  ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot, &quadpoints));
-  FS_QUADPOINTSF new_quadpoints;
-  ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot, &new_quadpoints));
-  EXPECT_EQ(quadpoints.x1, new_quadpoints.x1);
-  EXPECT_EQ(quadpoints.y1, new_quadpoints.y1);
-  EXPECT_EQ(quadpoints.x4, new_quadpoints.x4);
-  EXPECT_EQ(quadpoints.y4, new_quadpoints.y4);
-
-  // Check that updating quadpoints does not change the annotation's position.
-  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 612, 792, md5_original);
-  FPDFBitmap_Destroy(bitmap);
-
-  // Verify its annotation rectangle.
   FS_RECTF rect;
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_NEAR(67.7299f, rect.left, 0.001f);
-  EXPECT_NEAR(704.296f, rect.bottom, 0.001f);
-  EXPECT_NEAR(136.325f, rect.right, 0.001f);
-  EXPECT_NEAR(721.292f, rect.top, 0.001f);
-
-  // Check that updating the rectangle would succeed.
-  rect.left -= 60.f;
-  rect.right -= 60.f;
-  ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
   FS_RECTF new_rect;
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
-  EXPECT_EQ(rect.right, new_rect.right);
-  FPDFPage_CloseAnnot(annot);
+
+  // Retrieve the highlight annotation which has its AP stream already defined.
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
+
+    // Check that color cannot be set when an AP stream is defined already.
+    EXPECT_FALSE(FPDFAnnot_SetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, 51,
+                                    102, 153, 204));
+
+    // Verify its attachment points.
+    FS_QUADPOINTSF quadpoints;
+    ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), &quadpoints));
+    EXPECT_NEAR(72.0000f, quadpoints.x1, 0.001f);
+    EXPECT_NEAR(720.792f, quadpoints.y1, 0.001f);
+    EXPECT_NEAR(132.055f, quadpoints.x4, 0.001f);
+    EXPECT_NEAR(704.796f, quadpoints.y4, 0.001f);
+
+    // Check that updating the attachment points would succeed.
+    quadpoints.x1 -= 50.f;
+    quadpoints.x2 -= 50.f;
+    quadpoints.x3 -= 50.f;
+    quadpoints.x4 -= 50.f;
+    ASSERT_TRUE(FPDFAnnot_SetAttachmentPoints(annot.get(), &quadpoints));
+    FS_QUADPOINTSF new_quadpoints;
+    ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), &new_quadpoints));
+    EXPECT_EQ(quadpoints.x1, new_quadpoints.x1);
+    EXPECT_EQ(quadpoints.y1, new_quadpoints.y1);
+    EXPECT_EQ(quadpoints.x4, new_quadpoints.x4);
+    EXPECT_EQ(quadpoints.y4, new_quadpoints.y4);
+
+    // Check that updating quadpoints does not change the annotation's position.
+    bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+    CompareBitmap(bitmap, 612, 792, md5_original);
+    FPDFBitmap_Destroy(bitmap);
+
+    // Verify its annotation rectangle.
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_NEAR(67.7299f, rect.left, 0.001f);
+    EXPECT_NEAR(704.296f, rect.bottom, 0.001f);
+    EXPECT_NEAR(136.325f, rect.right, 0.001f);
+    EXPECT_NEAR(721.292f, rect.top, 0.001f);
+
+    // Check that updating the rectangle would succeed.
+    rect.left -= 60.f;
+    rect.right -= 60.f;
+    ASSERT_TRUE(FPDFAnnot_SetRect(annot.get(), &rect));
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &new_rect));
+    EXPECT_EQ(rect.right, new_rect.right);
+  }
 
   // Check that updating the rectangle changes the annotation's position.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
   CompareBitmap(bitmap, 612, 792, md5_modified_highlight);
   FPDFBitmap_Destroy(bitmap);
 
-  // Retrieve the square annotation which has its AP stream already defined.
-  annot = FPDFPage_GetAnnot(page, 2);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot));
+  {
+    // Retrieve the square annotation which has its AP stream already defined.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot.get()));
 
-  // Check that updating the rectangle would succeed.
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  rect.left += 70.f;
-  rect.right += 70.f;
-  ASSERT_TRUE(FPDFAnnot_SetRect(annot, &rect));
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
-  EXPECT_EQ(rect.right, new_rect.right);
+    // Check that updating the rectangle would succeed.
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    rect.left += 70.f;
+    rect.right += 70.f;
+    ASSERT_TRUE(FPDFAnnot_SetRect(annot.get(), &rect));
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &new_rect));
+    EXPECT_EQ(rect.right, new_rect.right);
 
-  // Check that updating the rectangle changes the square annotation's position.
-  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 612, 792, md5_modified_square);
-  FPDFBitmap_Destroy(bitmap);
+    // Check that updating the rectangle changes the square annotation's
+    // position.
+    bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+    CompareBitmap(bitmap, 612, 792, md5_modified_square);
+    FPDFBitmap_Destroy(bitmap);
+  }
 
-  FPDFPage_CloseAnnot(annot);
   UnloadPage(page);
 }
 
@@ -426,22 +452,29 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   ASSERT_TRUE(page);
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
 
-  // Check that the annotations have the expected rectangle coordinates.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
   FS_RECTF rect;
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_NEAR(86.1971f, rect.left, 0.001f);
-  FPDFPage_CloseAnnot(annot);
 
-  annot = FPDFPage_GetAnnot(page, 1);
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_NEAR(149.8127f, rect.left, 0.001f);
-  FPDFPage_CloseAnnot(annot);
+  // Check that the annotations have the expected rectangle coordinates.
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_NEAR(86.1971f, rect.left, 0.001f);
+  }
 
-  annot = FPDFPage_GetAnnot(page, 2);
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_NEAR(351.8204f, rect.left, 0.001f);
-  FPDFPage_CloseAnnot(annot);
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_NEAR(149.8127f, rect.left, 0.001f);
+  }
+
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_NEAR(351.8204f, rect.left, 0.001f);
+  }
 
   // Check that nothing happens when attempting to remove an annotation with an
   // out-of-bound index.
@@ -474,17 +507,21 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   // Check that the saved document has 2 annotations on the first page.
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(new_page));
 
-  // Check that the remaining 2 annotations are the original 1st and 3rd ones by
-  // verifying their rectangle coordinates.
-  annot = FPDFPage_GetAnnot(new_page, 0);
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_NEAR(86.1971f, rect.left, 0.001f);
-  FPDFPage_CloseAnnot(annot);
+  // Check that the remaining 2 annotations are the original 1st and 3rd ones
+  // by verifying their rectangle coordinates.
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(new_page, 0));
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_NEAR(86.1971f, rect.left, 0.001f);
+  }
 
-  annot = FPDFPage_GetAnnot(new_page, 1);
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &rect));
-  EXPECT_NEAR(351.8204f, rect.left, 0.001f);
-  FPDFPage_CloseAnnot(annot);
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(new_page, 1));
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
+    EXPECT_NEAR(351.8204f, rect.left, 0.001f);
+  }
   FPDF_ClosePage(new_page);
   FPDF_CloseDocument(new_doc);
 }
@@ -513,83 +550,88 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   CompareBitmap(bitmap, 595, 842, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
-  // Retrieve the stamp annotation which has its AP stream already defined.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the stamp annotation which has its AP stream already defined.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
 
-  // Check that this annotation has one path object and retrieve it.
-  EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
-  FPDF_PAGEOBJECT path = FPDFAnnot_GetObject(annot, 1);
-  EXPECT_FALSE(path);
-  path = FPDFAnnot_GetObject(annot, 0);
-  EXPECT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(path));
-  EXPECT_TRUE(path);
+    // Check that this annotation has one path object and retrieve it.
+    EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
+    FPDF_PAGEOBJECT path = FPDFAnnot_GetObject(annot.get(), 1);
+    EXPECT_FALSE(path);
+    path = FPDFAnnot_GetObject(annot.get(), 0);
+    EXPECT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(path));
+    EXPECT_TRUE(path);
 
-  // Modify the color of the path object.
-  EXPECT_TRUE(FPDFPath_SetStrokeColor(path, 0, 0, 0, 255));
-  EXPECT_TRUE(FPDFAnnot_UpdateObject(annot, path));
+    // Modify the color of the path object.
+    EXPECT_TRUE(FPDFPath_SetStrokeColor(path, 0, 0, 0, 255));
+    EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), path));
 
-  // Check that the page with the modified annotation renders correctly.
-  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_modified_path);
-  FPDFBitmap_Destroy(bitmap);
+    // Check that the page with the modified annotation renders correctly.
+    bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+    CompareBitmap(bitmap, 595, 842, md5_modified_path);
+    FPDFBitmap_Destroy(bitmap);
 
-  // Add a second path object to the same annotation.
-  FPDF_PAGEOBJECT dot = FPDFPageObj_CreateNewPath(7, 84);
-  EXPECT_TRUE(FPDFPath_BezierTo(dot, 9, 86, 10, 87, 11, 88));
-  EXPECT_TRUE(FPDFPath_SetStrokeColor(dot, 255, 0, 0, 100));
-  EXPECT_TRUE(FPDFPath_SetStrokeWidth(dot, 14));
-  EXPECT_TRUE(FPDFPath_SetDrawMode(dot, 0, 1));
-  EXPECT_TRUE(FPDFAnnot_AppendObject(annot, dot));
-  EXPECT_EQ(2, FPDFAnnot_GetObjectCount(annot));
+    // Add a second path object to the same annotation.
+    FPDF_PAGEOBJECT dot = FPDFPageObj_CreateNewPath(7, 84);
+    EXPECT_TRUE(FPDFPath_BezierTo(dot, 9, 86, 10, 87, 11, 88));
+    EXPECT_TRUE(FPDFPath_SetStrokeColor(dot, 255, 0, 0, 100));
+    EXPECT_TRUE(FPDFPath_SetStrokeWidth(dot, 14));
+    EXPECT_TRUE(FPDFPath_SetDrawMode(dot, 0, 1));
+    EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), dot));
+    EXPECT_EQ(2, FPDFAnnot_GetObjectCount(annot.get()));
 
-  // Check that the page with an annotation with two paths renders correctly.
-  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_two_paths);
-  FPDFBitmap_Destroy(bitmap);
+    // Check that the page with an annotation with two paths renders correctly.
+    bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+    CompareBitmap(bitmap, 595, 842, md5_two_paths);
+    FPDFBitmap_Destroy(bitmap);
 
-  // Delete the newly added path object.
-  EXPECT_TRUE(FPDFAnnot_RemoveObject(annot, 1));
-  EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
-  FPDFPage_CloseAnnot(annot);
+    // Delete the newly added path object.
+    EXPECT_TRUE(FPDFAnnot_RemoveObject(annot.get(), 1));
+    EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
+  }
 
   // Check that the page renders the same as before.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
   CompareBitmap(bitmap, 595, 842, md5_modified_path);
   FPDFBitmap_Destroy(bitmap);
 
-  // Create another stamp annotation and set its annotation rectangle.
-  annot = FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP);
-  ASSERT_TRUE(annot);
   FS_RECTF rect;
-  rect.left = 200.f;
-  rect.bottom = 400.f;
-  rect.right = 500.f;
-  rect.top = 600.f;
-  EXPECT_TRUE(FPDFAnnot_SetRect(annot, &rect));
 
-  // Add a new path to the annotation.
-  FPDF_PAGEOBJECT check = FPDFPageObj_CreateNewPath(200, 500);
-  EXPECT_TRUE(FPDFPath_LineTo(check, 300, 400));
-  EXPECT_TRUE(FPDFPath_LineTo(check, 500, 600));
-  EXPECT_TRUE(FPDFPath_MoveTo(check, 350, 550));
-  EXPECT_TRUE(FPDFPath_LineTo(check, 450, 450));
-  EXPECT_TRUE(FPDFPath_SetStrokeColor(check, 0, 255, 255, 180));
-  EXPECT_TRUE(FPDFPath_SetStrokeWidth(check, 8.35f));
-  EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
-  EXPECT_TRUE(FPDFAnnot_AppendObject(annot, check));
-  EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
+  {
+    // Create another stamp annotation and set its annotation rectangle.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ASSERT_TRUE(annot);
+    rect.left = 200.f;
+    rect.bottom = 400.f;
+    rect.right = 500.f;
+    rect.top = 600.f;
+    EXPECT_TRUE(FPDFAnnot_SetRect(annot.get(), &rect));
 
-  // Check that the annotation's bounding box came from its rectangle.
-  FS_RECTF new_rect;
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
-  EXPECT_EQ(rect.left, new_rect.left);
-  EXPECT_EQ(rect.bottom, new_rect.bottom);
-  EXPECT_EQ(rect.right, new_rect.right);
-  EXPECT_EQ(rect.top, new_rect.top);
+    // Add a new path to the annotation.
+    FPDF_PAGEOBJECT check = FPDFPageObj_CreateNewPath(200, 500);
+    EXPECT_TRUE(FPDFPath_LineTo(check, 300, 400));
+    EXPECT_TRUE(FPDFPath_LineTo(check, 500, 600));
+    EXPECT_TRUE(FPDFPath_MoveTo(check, 350, 550));
+    EXPECT_TRUE(FPDFPath_LineTo(check, 450, 450));
+    EXPECT_TRUE(FPDFPath_SetStrokeColor(check, 0, 255, 255, 180));
+    EXPECT_TRUE(FPDFPath_SetStrokeWidth(check, 8.35f));
+    EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
+    EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), check));
+    EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
+
+    // Check that the annotation's bounding box came from its rectangle.
+    FS_RECTF new_rect;
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &new_rect));
+    EXPECT_EQ(rect.left, new_rect.left);
+    EXPECT_EQ(rect.bottom, new_rect.bottom);
+    EXPECT_EQ(rect.right, new_rect.right);
+    EXPECT_EQ(rect.top, new_rect.top);
+  }
 
   // Save the document, closing the page and document.
-  FPDFPage_CloseAnnot(annot);
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
@@ -600,18 +642,22 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   // Check that the document has a correct count of annotations and objects.
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
-  annot = FPDFPage_GetAnnot(page, 2);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
 
-  // Check that the new annotation's rectangle is as defined.
-  ASSERT_TRUE(FPDFAnnot_GetRect(annot, &new_rect));
-  EXPECT_EQ(rect.left, new_rect.left);
-  EXPECT_EQ(rect.bottom, new_rect.bottom);
-  EXPECT_EQ(rect.right, new_rect.right);
-  EXPECT_EQ(rect.top, new_rect.top);
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
 
-  FPDFPage_CloseAnnot(annot);
+    // Check that the new annotation's rectangle is as defined.
+    FS_RECTF new_rect;
+    ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &new_rect));
+    EXPECT_EQ(rect.left, new_rect.left);
+    EXPECT_EQ(rect.bottom, new_rect.bottom);
+    EXPECT_EQ(rect.right, new_rect.right);
+    EXPECT_EQ(rect.top, new_rect.top);
+  }
+
   CloseSavedPage(page);
   CloseSavedDocument();
 }
@@ -627,42 +673,44 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
   CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
   FPDFBitmap_Destroy(bitmap);
 
-  // Retrieve the annotation.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
 
-  // Check that the original flag values are as expected.
-  int flags = FPDFAnnot_GetFlags(annot);
-  EXPECT_FALSE(flags & FPDF_ANNOT_FLAG_HIDDEN);
-  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
+    // Check that the original flag values are as expected.
+    int flags = FPDFAnnot_GetFlags(annot.get());
+    EXPECT_FALSE(flags & FPDF_ANNOT_FLAG_HIDDEN);
+    EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
 
-  // Set the HIDDEN flag.
-  flags |= FPDF_ANNOT_FLAG_HIDDEN;
-  EXPECT_TRUE(FPDFAnnot_SetFlags(annot, flags));
-  flags = FPDFAnnot_GetFlags(annot);
-  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_HIDDEN);
-  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
+    // Set the HIDDEN flag.
+    flags |= FPDF_ANNOT_FLAG_HIDDEN;
+    EXPECT_TRUE(FPDFAnnot_SetFlags(annot.get(), flags));
+    flags = FPDFAnnot_GetFlags(annot.get());
+    EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_HIDDEN);
+    EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
 
-  // Check that the page renders correctly without rendering the annotation.
-  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
-  FPDFBitmap_Destroy(bitmap);
+    // Check that the page renders correctly without rendering the annotation.
+    bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+    CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
+    FPDFBitmap_Destroy(bitmap);
 
-  // Unset the HIDDEN flag.
-  EXPECT_TRUE(FPDFAnnot_SetFlags(annot, FPDF_ANNOT_FLAG_NONE));
-  EXPECT_FALSE(FPDFAnnot_GetFlags(annot));
-  flags &= ~FPDF_ANNOT_FLAG_HIDDEN;
-  EXPECT_TRUE(FPDFAnnot_SetFlags(annot, flags));
-  flags = FPDFAnnot_GetFlags(annot);
-  EXPECT_FALSE(flags & FPDF_ANNOT_FLAG_HIDDEN);
-  EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
+    // Unset the HIDDEN flag.
+    EXPECT_TRUE(FPDFAnnot_SetFlags(annot.get(), FPDF_ANNOT_FLAG_NONE));
+    EXPECT_FALSE(FPDFAnnot_GetFlags(annot.get()));
+    flags &= ~FPDF_ANNOT_FLAG_HIDDEN;
+    EXPECT_TRUE(FPDFAnnot_SetFlags(annot.get(), flags));
+    flags = FPDFAnnot_GetFlags(annot.get());
+    EXPECT_FALSE(flags & FPDF_ANNOT_FLAG_HIDDEN);
+    EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
 
-  // Check that the page renders correctly as before.
-  bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
-  FPDFBitmap_Destroy(bitmap);
+    // Check that the page renders correctly as before.
+    bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
+    CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
+    FPDFBitmap_Destroy(bitmap);
+  }
 
-  FPDFPage_CloseAnnot(annot);
   UnloadPage(page);
 }
 
@@ -688,47 +736,55 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   CompareBitmap(bitmap, 595, 842, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
-  // Create a stamp annotation and set its annotation rectangle.
-  FPDF_ANNOTATION annot = FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP);
-  ASSERT_TRUE(annot);
-  FS_RECTF rect;
-  rect.left = 200.f;
-  rect.bottom = 600.f;
-  rect.right = 400.f;
-  rect.top = 800.f;
-  EXPECT_TRUE(FPDFAnnot_SetRect(annot, &rect));
-
-  // Add a solid-color translucent image object to the new annotation.
   constexpr int kBitmapSize = 200;
-  FPDF_BITMAP image_bitmap = FPDFBitmap_Create(kBitmapSize, kBitmapSize, 1);
-  FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize, kBitmapSize, 0xeeeecccc);
-  EXPECT_EQ(kBitmapSize, FPDFBitmap_GetWidth(image_bitmap));
-  EXPECT_EQ(kBitmapSize, FPDFBitmap_GetHeight(image_bitmap));
-  FPDF_PAGEOBJECT image_object = FPDFPageObj_NewImageObj(document());
-  ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
-  ASSERT_TRUE(FPDFImageObj_SetMatrix(image_object, kBitmapSize, 0, 0,
-                                     kBitmapSize, 0, 0));
-  FPDFPageObj_Transform(image_object, 1, 0, 0, 1, 200, 600);
-  EXPECT_TRUE(FPDFAnnot_AppendObject(annot, image_object));
-  FPDFPage_CloseAnnot(annot);
+  FPDF_BITMAP image_bitmap;
+
+  {
+    // Create a stamp annotation and set its annotation rectangle.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ASSERT_TRUE(annot);
+    FS_RECTF rect;
+    rect.left = 200.f;
+    rect.bottom = 600.f;
+    rect.right = 400.f;
+    rect.top = 800.f;
+    EXPECT_TRUE(FPDFAnnot_SetRect(annot.get(), &rect));
+
+    // Add a solid-color translucent image object to the new annotation.
+    image_bitmap = FPDFBitmap_Create(kBitmapSize, kBitmapSize, 1);
+    FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize, kBitmapSize,
+                        0xeeeecccc);
+    EXPECT_EQ(kBitmapSize, FPDFBitmap_GetWidth(image_bitmap));
+    EXPECT_EQ(kBitmapSize, FPDFBitmap_GetHeight(image_bitmap));
+    FPDF_PAGEOBJECT image_object = FPDFPageObj_NewImageObj(document());
+    ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
+    ASSERT_TRUE(FPDFImageObj_SetMatrix(image_object, kBitmapSize, 0, 0,
+                                       kBitmapSize, 0, 0));
+    FPDFPageObj_Transform(image_object, 1, 0, 0, 1, 200, 600);
+    EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), image_object));
+  }
 
   // Check that the page renders correctly with the new image object.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
   CompareBitmap(bitmap, 595, 842, md5_new_image);
   FPDFBitmap_Destroy(bitmap);
 
-  // Retrieve the newly added stamp annotation and its image object.
-  annot = FPDFPage_GetAnnot(page, 2);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
-  image_object = FPDFAnnot_GetObject(annot, 0);
-  EXPECT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image_object));
+  {
+    // Retrieve the newly added stamp annotation and its image object.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
+    FPDF_PAGEOBJECT image_object = FPDFAnnot_GetObject(annot.get(), 0);
+    EXPECT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image_object));
 
-  // Modify the image in the new annotation.
-  FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize, kBitmapSize, 0xff000000);
-  ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
-  EXPECT_TRUE(FPDFAnnot_UpdateObject(annot, image_object));
-  FPDFPage_CloseAnnot(annot);
+    // Modify the image in the new annotation.
+    FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize, kBitmapSize,
+                        0xff000000);
+    ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
+    EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), image_object));
+  }
 
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -761,46 +817,50 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   CompareBitmap(bitmap, 595, 842, md5_original);
   FPDFBitmap_Destroy(bitmap);
 
-  // Create a stamp annotation and set its annotation rectangle.
-  FPDF_ANNOTATION annot = FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP);
-  ASSERT_TRUE(annot);
-  FS_RECTF rect;
-  rect.left = 200.f;
-  rect.bottom = 550.f;
-  rect.right = 450.f;
-  rect.top = 650.f;
-  EXPECT_TRUE(FPDFAnnot_SetRect(annot, &rect));
+  {
+    // Create a stamp annotation and set its annotation rectangle.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ASSERT_TRUE(annot);
+    FS_RECTF rect;
+    rect.left = 200.f;
+    rect.bottom = 550.f;
+    rect.right = 450.f;
+    rect.top = 650.f;
+    EXPECT_TRUE(FPDFAnnot_SetRect(annot.get(), &rect));
 
-  // Add a translucent text object to the new annotation.
-  FPDF_PAGEOBJECT text_object =
-      FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
-  EXPECT_TRUE(text_object);
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-      GetFPDFWideString(L"I'm a translucent text laying on other text.");
-  EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
-  EXPECT_TRUE(FPDFText_SetFillColor(text_object, 0, 0, 255, 150));
-  FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 200, 600);
-  EXPECT_TRUE(FPDFAnnot_AppendObject(annot, text_object));
-  FPDFPage_CloseAnnot(annot);
+    // Add a translucent text object to the new annotation.
+    FPDF_PAGEOBJECT text_object =
+        FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
+    EXPECT_TRUE(text_object);
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+        GetFPDFWideString(L"I'm a translucent text laying on other text.");
+    EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
+    EXPECT_TRUE(FPDFText_SetFillColor(text_object, 0, 0, 255, 150));
+    FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 200, 600);
+    EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), text_object));
+  }
 
   // Check that the page renders correctly with the new text object.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
   CompareBitmap(bitmap, 595, 842, md5_new_text);
   FPDFBitmap_Destroy(bitmap);
 
-  // Retrieve the newly added stamp annotation and its text object.
-  annot = FPDFPage_GetAnnot(page, 2);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot));
-  text_object = FPDFAnnot_GetObject(annot, 0);
-  EXPECT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+  {
+    // Retrieve the newly added stamp annotation and its text object.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
+    FPDF_PAGEOBJECT text_object = FPDFAnnot_GetObject(annot.get(), 0);
+    EXPECT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
 
-  // Modify the text in the new annotation.
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> new_text =
-      GetFPDFWideString(L"New text!");
-  EXPECT_TRUE(FPDFText_SetText(text_object, new_text.get()));
-  EXPECT_TRUE(FPDFAnnot_UpdateObject(annot, text_object));
-  FPDFPage_CloseAnnot(annot);
+    // Modify the text in the new annotation.
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> new_text =
+        GetFPDFWideString(L"New text!");
+    EXPECT_TRUE(FPDFText_SetText(text_object, new_text.get()));
+    EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), text_object));
+  }
 
   // Check that the page renders correctly with the modified text object.
   bitmap = RenderPageWithFlags(page, form_handle_, FPDF_ANNOT);
@@ -822,45 +882,52 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
-  // Retrieve the first annotation.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
-
-  // Check that a non-existent key does not exist.
-  EXPECT_FALSE(FPDFAnnot_HasKey(annot, "none"));
-
-  // Check that the string value of a non-string dictionary entry is empty.
-  static constexpr char kApKey[] = "AP";
-  EXPECT_TRUE(FPDFAnnot_HasKey(annot, kApKey));
-  EXPECT_EQ(FPDF_OBJECT_REFERENCE, FPDFAnnot_GetValueType(annot, kApKey));
-  EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot, kApKey, nullptr, 0));
-
-  // Check that the string value of the hash is correct.
-  static constexpr char kHashKey[] = "AAPL:Hash";
-  EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot, kHashKey));
-  unsigned long len = FPDFAnnot_GetStringValue(annot, kHashKey, nullptr, 0);
-  std::vector<char> buf(len);
-  EXPECT_EQ(66u, FPDFAnnot_GetStringValue(annot, kHashKey, buf.data(), len));
-  EXPECT_STREQ(L"395fbcb98d558681742f30683a62a2ad",
-               BufferToWString(buf).c_str());
-
-  // Check that the string value of the modified date is correct.
   static constexpr char kDateKey[] = "M";
-  EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot, kHashKey));
-  len = FPDFAnnot_GetStringValue(annot, kDateKey, nullptr, 0);
-  buf.clear();
-  buf.resize(len);
-  EXPECT_EQ(44u, FPDFAnnot_GetStringValue(annot, kDateKey, buf.data(), len));
-  EXPECT_STREQ(L"D:201706071721Z00'00'", BufferToWString(buf).c_str());
+  static constexpr wchar_t kNewDate[] = L"D:201706282359Z00'00'";
 
-  // Update the date entry for the annotation.
-  const wchar_t new_date[] = L"D:201706282359Z00'00'";
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
-      GetFPDFWideString(new_date);
-  EXPECT_TRUE(FPDFAnnot_SetStringValue(annot, kDateKey, text.get()));
+  {
+    // Retrieve the first annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // Check that a non-existent key does not exist.
+    EXPECT_FALSE(FPDFAnnot_HasKey(annot.get(), "none"));
+
+    // Check that the string value of a non-string dictionary entry is empty.
+    static constexpr char kApKey[] = "AP";
+    EXPECT_TRUE(FPDFAnnot_HasKey(annot.get(), kApKey));
+    EXPECT_EQ(FPDF_OBJECT_REFERENCE,
+              FPDFAnnot_GetValueType(annot.get(), kApKey));
+    EXPECT_EQ(2u, FPDFAnnot_GetStringValue(annot.get(), kApKey, nullptr, 0));
+
+    // Check that the string value of the hash is correct.
+    static constexpr char kHashKey[] = "AAPL:Hash";
+    EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot.get(), kHashKey));
+    unsigned long len =
+        FPDFAnnot_GetStringValue(annot.get(), kHashKey, nullptr, 0);
+    std::vector<char> buf(len);
+    EXPECT_EQ(66u,
+              FPDFAnnot_GetStringValue(annot.get(), kHashKey, buf.data(), len));
+    EXPECT_STREQ(L"395fbcb98d558681742f30683a62a2ad",
+                 BufferToWString(buf).c_str());
+
+    // Check that the string value of the modified date is correct.
+    EXPECT_EQ(FPDF_OBJECT_NAME, FPDFAnnot_GetValueType(annot.get(), kHashKey));
+    len = FPDFAnnot_GetStringValue(annot.get(), kDateKey, nullptr, 0);
+    buf.clear();
+    buf.resize(len);
+    EXPECT_EQ(44u,
+              FPDFAnnot_GetStringValue(annot.get(), kDateKey, buf.data(), len));
+    EXPECT_STREQ(L"D:201706071721Z00'00'", BufferToWString(buf).c_str());
+
+    // Update the date entry for the annotation.
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+        GetFPDFWideString(kNewDate);
+    EXPECT_TRUE(FPDFAnnot_SetStringValue(annot.get(), kDateKey, text.get()));
+  }
 
   // Save the document, closing the page and document.
-  FPDFPage_CloseAnnot(annot);
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
@@ -873,18 +940,21 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   OpenSavedDocument();
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 595, 842, md5);
-  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(page, 0);
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> new_annot(
+        FPDFPage_GetAnnot(page, 0));
 
-  // Check that the string value of the modified date is the newly-set value.
-  EXPECT_EQ(FPDF_OBJECT_STRING, FPDFAnnot_GetValueType(new_annot, kDateKey));
-  len = FPDFAnnot_GetStringValue(new_annot, kDateKey, nullptr, 0);
-  buf.clear();
-  buf.resize(len);
-  EXPECT_EQ(44u,
-            FPDFAnnot_GetStringValue(new_annot, kDateKey, buf.data(), len));
-  EXPECT_STREQ(new_date, BufferToWString(buf).c_str());
+    // Check that the string value of the modified date is the newly-set value.
+    EXPECT_EQ(FPDF_OBJECT_STRING,
+              FPDFAnnot_GetValueType(new_annot.get(), kDateKey));
+    unsigned long len =
+        FPDFAnnot_GetStringValue(new_annot.get(), kDateKey, nullptr, 0);
+    std::vector<char> buf(len);
+    EXPECT_EQ(44u, FPDFAnnot_GetStringValue(new_annot.get(), kDateKey,
+                                            buf.data(), len));
+    EXPECT_STREQ(kNewDate, BufferToWString(buf).c_str());
+  }
 
-  FPDFPage_CloseAnnot(new_annot);
   CloseSavedPage(page);
   CloseSavedDocument();
 }
@@ -895,111 +965,121 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
-  // Retrieve the first annotation.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the first annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
 
-  // Check that the string value of an AP returns the expected length.
-  unsigned long normal_len =
-      FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL, nullptr, 0);
-  EXPECT_EQ(73970u, normal_len);
+    // Check that the string value of an AP returns the expected length.
+    unsigned long normal_len = FPDFAnnot_GetAP(
+        annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL, nullptr, 0);
+    EXPECT_EQ(73970u, normal_len);
 
-  // Check that the string value of an AP is not returned if the buffer is too
-  // small. The result buffer should be overwritten with an empty string.
-  std::vector<char> buf(normal_len - 1);
-  // Write L"z" in the buffer to verify it's not overwritten.
-  wcscpy(reinterpret_cast<wchar_t*>(buf.data()), L"z");
-  EXPECT_EQ(73970u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL,
-                                    buf.data(), buf.size()));
-  std::string ap = BufferToString(buf);
-  EXPECT_STREQ("z", ap.c_str());
+    // Check that the string value of an AP is not returned if the buffer is too
+    // small. The result buffer should be overwritten with an empty string.
+    std::vector<char> buf(normal_len - 1);
+    // Write L"z" in the buffer to verify it's not overwritten.
+    wcscpy(reinterpret_cast<wchar_t*>(buf.data()), L"z");
+    EXPECT_EQ(73970u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                              buf.data(), buf.size()));
+    std::string ap = BufferToString(buf);
+    EXPECT_STREQ("z", ap.c_str());
 
-  // Check that the string value of an AP is returned through a buffer that is
-  // the right size.
-  buf.clear();
-  buf.resize(normal_len);
-  EXPECT_EQ(73970u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL,
-                                    buf.data(), buf.size()));
-  ap = BufferToString(buf);
-  EXPECT_THAT(ap, testing::StartsWith("q Q q 7.442786 w 2 J"));
-  EXPECT_THAT(ap, testing::EndsWith("c 716.5381 327.7156 l S Q Q"));
+    // Check that the string value of an AP is returned through a buffer that is
+    // the right size.
+    buf.clear();
+    buf.resize(normal_len);
+    EXPECT_EQ(73970u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                              buf.data(), buf.size()));
+    ap = BufferToString(buf);
+    EXPECT_THAT(ap, testing::StartsWith("q Q q 7.442786 w 2 J"));
+    EXPECT_THAT(ap, testing::EndsWith("c 716.5381 327.7156 l S Q Q"));
 
-  // Check that the string value of an AP is returned through a buffer that is
-  // larger than necessary.
-  buf.clear();
-  buf.resize(normal_len + 1);
-  EXPECT_EQ(73970u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL,
-                                    buf.data(), buf.size()));
-  ap = BufferToString(buf);
-  EXPECT_THAT(ap, testing::StartsWith("q Q q 7.442786 w 2 J"));
-  EXPECT_THAT(ap, testing::EndsWith("c 716.5381 327.7156 l S Q Q"));
+    // Check that the string value of an AP is returned through a buffer that is
+    // larger than necessary.
+    buf.clear();
+    buf.resize(normal_len + 1);
+    EXPECT_EQ(73970u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                              buf.data(), buf.size()));
+    ap = BufferToString(buf);
+    EXPECT_THAT(ap, testing::StartsWith("q Q q 7.442786 w 2 J"));
+    EXPECT_THAT(ap, testing::EndsWith("c 716.5381 327.7156 l S Q Q"));
 
-  // Check that getting an AP for a mode that does not have an AP returns an
-  // empty string.
-  unsigned long rollover_len =
-      FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_ROLLOVER, nullptr, 0);
-  EXPECT_EQ(2u, rollover_len);
+    // Check that getting an AP for a mode that does not have an AP returns an
+    // empty string.
+    unsigned long rollover_len = FPDFAnnot_GetAP(
+        annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER, nullptr, 0);
+    EXPECT_EQ(2u, rollover_len);
 
-  buf.clear();
-  buf.resize(1000);
-  EXPECT_EQ(2u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
-                                buf.data(), buf.size()));
-  EXPECT_STREQ("", BufferToString(buf).c_str());
+    buf.clear();
+    buf.resize(1000);
+    EXPECT_EQ(2u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+                              buf.data(), buf.size()));
+    EXPECT_STREQ("", BufferToString(buf).c_str());
 
-  // Check that setting the AP for an invalid appearance mode fails.
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
-      GetFPDFWideString(L"new test ap");
-  EXPECT_FALSE(FPDFAnnot_SetAP(annot, -1, apText.get()));
-  EXPECT_FALSE(
-      FPDFAnnot_SetAP(annot, FPDF_ANNOT_APPEARANCEMODE_COUNT, apText.get()));
-  EXPECT_FALSE(FPDFAnnot_SetAP(annot, FPDF_ANNOT_APPEARANCEMODE_COUNT + 1,
-                               apText.get()));
+    // Check that setting the AP for an invalid appearance mode fails.
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
+        GetFPDFWideString(L"new test ap");
+    EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), -1, apText.get()));
+    EXPECT_FALSE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_COUNT,
+                                 apText.get()));
+    EXPECT_FALSE(FPDFAnnot_SetAP(
+        annot.get(), FPDF_ANNOT_APPEARANCEMODE_COUNT + 1, apText.get()));
 
-  // Set the AP correctly now.
-  EXPECT_TRUE(
-      FPDFAnnot_SetAP(annot, FPDF_ANNOT_APPEARANCEMODE_ROLLOVER, apText.get()));
+    // Set the AP correctly now.
+    EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+                                apText.get()));
 
-  // Check that the new annotation value is equal to the value we just set.
-  rollover_len =
-      FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_ROLLOVER, nullptr, 0);
-  EXPECT_EQ(24u, rollover_len);
-  buf.clear();
-  buf.resize(rollover_len);
-  EXPECT_EQ(24u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
-                                 buf.data(), buf.size()));
-  EXPECT_STREQ(L"new test ap", BufferToWString(buf).c_str());
+    // Check that the new annotation value is equal to the value we just set.
+    rollover_len = FPDFAnnot_GetAP(
+        annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER, nullptr, 0);
+    EXPECT_EQ(24u, rollover_len);
+    buf.clear();
+    buf.resize(rollover_len);
+    EXPECT_EQ(24u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+                              buf.data(), buf.size()));
+    EXPECT_STREQ(L"new test ap", BufferToWString(buf).c_str());
 
-  // Check that the Normal AP was not touched when the Rollover AP was set.
-  buf.clear();
-  buf.resize(normal_len);
-  EXPECT_EQ(73970u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL,
-                                    buf.data(), buf.size()));
-  ap = BufferToString(buf);
-  EXPECT_THAT(ap, testing::StartsWith("q Q q 7.442786 w 2 J"));
-  EXPECT_THAT(ap, testing::EndsWith("c 716.5381 327.7156 l S Q Q"));
+    // Check that the Normal AP was not touched when the Rollover AP was set.
+    buf.clear();
+    buf.resize(normal_len);
+    EXPECT_EQ(73970u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                              buf.data(), buf.size()));
+    ap = BufferToString(buf);
+    EXPECT_THAT(ap, testing::StartsWith("q Q q 7.442786 w 2 J"));
+    EXPECT_THAT(ap, testing::EndsWith("c 716.5381 327.7156 l S Q Q"));
+  }
 
   // Save the modified document, then reopen it.
-  FPDFPage_CloseAnnot(annot);
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
   OpenSavedDocument();
   page = LoadSavedPage(0);
-  FPDF_ANNOTATION new_annot = FPDFPage_GetAnnot(page, 0);
+  {
+    std::unique_ptr<void, FPDFAnnotationDeleter> new_annot(
+        FPDFPage_GetAnnot(page, 0));
 
-  // Check that the new annotation value is equal to the value we set before
-  // saving.
-  rollover_len = FPDFAnnot_GetAP(new_annot, FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
-                                 nullptr, 0);
-  EXPECT_EQ(24u, rollover_len);
-  buf.clear();
-  buf.resize(rollover_len);
-  EXPECT_EQ(24u, FPDFAnnot_GetAP(new_annot, FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
-                                 buf.data(), buf.size()));
-  EXPECT_STREQ(L"new test ap", BufferToWString(buf).c_str());
+    // Check that the new annotation value is equal to the value we set before
+    // saving.
+    unsigned long rollover_len = FPDFAnnot_GetAP(
+        new_annot.get(), FPDF_ANNOT_APPEARANCEMODE_ROLLOVER, nullptr, 0);
+    EXPECT_EQ(24u, rollover_len);
+    std::vector<char> buf(rollover_len);
+    EXPECT_EQ(24u, FPDFAnnot_GetAP(new_annot.get(),
+                                   FPDF_ANNOT_APPEARANCEMODE_ROLLOVER,
+                                   buf.data(), buf.size()));
+    EXPECT_STREQ(L"new test ap", BufferToWString(buf).c_str());
+  }
 
   // Close saved document.
-  FPDFPage_CloseAnnot(new_annot);
   CloseSavedPage(page);
   CloseSavedDocument();
 }
@@ -1010,29 +1090,34 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveOptionalAP) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
-  // Retrieve the first annotation.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the first annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
 
-  // Set Down AP. Normal AP is already set.
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
-      GetFPDFWideString(L"new test ap");
-  EXPECT_TRUE(
-      FPDFAnnot_SetAP(annot, FPDF_ANNOT_APPEARANCEMODE_DOWN, apText.get()));
-  EXPECT_EQ(73970u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL,
-                                    nullptr, 0));
-  EXPECT_EQ(24u,
-            FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_DOWN, nullptr, 0));
+    // Set Down AP. Normal AP is already set.
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
+        GetFPDFWideString(L"new test ap");
+    EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
+                                apText.get()));
+    EXPECT_EQ(73970u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                              nullptr, 0));
+    EXPECT_EQ(24u, FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
+                                   nullptr, 0));
 
-  // Check that setting the Down AP to null removes the Down entry but keeps
-  // Normal intact.
-  EXPECT_TRUE(FPDFAnnot_SetAP(annot, FPDF_ANNOT_APPEARANCEMODE_DOWN, nullptr));
-  EXPECT_EQ(73970u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL,
-                                    nullptr, 0));
-  EXPECT_EQ(2u,
-            FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_DOWN, nullptr, 0));
+    // Check that setting the Down AP to null removes the Down entry but keeps
+    // Normal intact.
+    EXPECT_TRUE(
+        FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN, nullptr));
+    EXPECT_EQ(73970u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                              nullptr, 0));
+    EXPECT_EQ(2u, FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
+                                  nullptr, 0));
+  }
 
-  FPDFPage_CloseAnnot(annot);
   FPDF_ClosePage(page);
 }
 
@@ -1042,29 +1127,32 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveRequiredAP) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
-  // Retrieve the first annotation.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the first annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
 
-  // Set Down AP. Normal AP is already set.
-  std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
-      GetFPDFWideString(L"new test ap");
-  EXPECT_TRUE(
-      FPDFAnnot_SetAP(annot, FPDF_ANNOT_APPEARANCEMODE_DOWN, apText.get()));
-  EXPECT_EQ(73970u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL,
-                                    nullptr, 0));
-  EXPECT_EQ(24u,
-            FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_DOWN, nullptr, 0));
+    // Set Down AP. Normal AP is already set.
+    std::unique_ptr<unsigned short, pdfium::FreeDeleter> apText =
+        GetFPDFWideString(L"new test ap");
+    EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
+                                apText.get()));
+    EXPECT_EQ(73970u,
+              FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                              nullptr, 0));
+    EXPECT_EQ(24u, FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
+                                   nullptr, 0));
 
-  // Check that setting the Normal AP to null removes the whole AP dictionary.
-  EXPECT_TRUE(
-      FPDFAnnot_SetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL, nullptr));
-  EXPECT_EQ(
-      2u, FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_NORMAL, nullptr, 0));
-  EXPECT_EQ(2u,
-            FPDFAnnot_GetAP(annot, FPDF_ANNOT_APPEARANCEMODE_DOWN, nullptr, 0));
+    // Check that setting the Normal AP to null removes the whole AP dictionary.
+    EXPECT_TRUE(FPDFAnnot_SetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                                nullptr));
+    EXPECT_EQ(2u, FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
+                                  nullptr, 0));
+    EXPECT_EQ(2u, FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
+                                  nullptr, 0));
+  }
 
-  FPDFPage_CloseAnnot(annot);
   FPDF_ClosePage(page);
 }
 
@@ -1075,40 +1163,44 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
   ASSERT_TRUE(page);
   EXPECT_EQ(-1, FPDFPage_GetAnnotIndex(page, nullptr));
 
-  // Retrieve the highlight annotation which has its popup defined.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
-  EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot));
-  EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot));
-  static constexpr char kPopupKey[] = "Popup";
-  ASSERT_TRUE(FPDFAnnot_HasKey(annot, kPopupKey));
-  ASSERT_EQ(FPDF_OBJECT_REFERENCE, FPDFAnnot_GetValueType(annot, kPopupKey));
+  {
+    // Retrieve the highlight annotation which has its popup defined.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
+    EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot.get()));
+    static constexpr char kPopupKey[] = "Popup";
+    ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), kPopupKey));
+    ASSERT_EQ(FPDF_OBJECT_REFERENCE,
+              FPDFAnnot_GetValueType(annot.get(), kPopupKey));
 
-  // Retrieve and verify the popup of the highlight annotation.
-  FPDF_ANNOTATION popup = FPDFAnnot_GetLinkedAnnot(annot, kPopupKey);
-  ASSERT_TRUE(popup);
-  EXPECT_EQ(FPDF_ANNOT_POPUP, FPDFAnnot_GetSubtype(popup));
-  EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page, popup));
-  FS_RECTF rect;
-  ASSERT_TRUE(FPDFAnnot_GetRect(popup, &rect));
-  EXPECT_NEAR(612.0f, rect.left, 0.001f);
-  EXPECT_NEAR(578.792, rect.bottom, 0.001f);
+    // Retrieve and verify the popup of the highlight annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> popup(
+        FPDFAnnot_GetLinkedAnnot(annot.get(), kPopupKey));
+    ASSERT_TRUE(popup);
+    EXPECT_EQ(FPDF_ANNOT_POPUP, FPDFAnnot_GetSubtype(popup.get()));
+    EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page, popup.get()));
+    FS_RECTF rect;
+    ASSERT_TRUE(FPDFAnnot_GetRect(popup.get(), &rect));
+    EXPECT_NEAR(612.0f, rect.left, 0.001f);
+    EXPECT_NEAR(578.792, rect.bottom, 0.001f);
 
-  // Attempting to retrieve |annot|'s "IRT"-linked annotation would fail, since
-  // "IRT" is not a key in |annot|'s dictionary.
-  static constexpr char kIRTKey[] = "IRT";
-  ASSERT_FALSE(FPDFAnnot_HasKey(annot, kIRTKey));
-  EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot, kIRTKey));
+    // Attempting to retrieve |annot|'s "IRT"-linked annotation would fail,
+    // since "IRT" is not a key in |annot|'s dictionary.
+    static constexpr char kIRTKey[] = "IRT";
+    ASSERT_FALSE(FPDFAnnot_HasKey(annot.get(), kIRTKey));
+    EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), kIRTKey));
 
-  // Attempting to retrieve |annot|'s parent dictionary as an annotation would
-  // fail, since its parent is not an annotation.
-  static constexpr char kPKey[] = "P";
-  ASSERT_TRUE(FPDFAnnot_HasKey(annot, kPKey));
-  EXPECT_EQ(FPDF_OBJECT_REFERENCE, FPDFAnnot_GetValueType(annot, kPKey));
-  EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot, kPKey));
+    // Attempting to retrieve |annot|'s parent dictionary as an annotation
+    // would fail, since its parent is not an annotation.
+    static constexpr char kPKey[] = "P";
+    ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), kPKey));
+    EXPECT_EQ(FPDF_OBJECT_REFERENCE,
+              FPDFAnnot_GetValueType(annot.get(), kPKey));
+    EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), kPKey));
+  }
 
-  FPDFPage_CloseAnnot(popup);
-  FPDFPage_CloseAnnot(annot);
   UnloadPage(page);
 }
 
@@ -1118,23 +1210,27 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
-  // Retrieve the first annotation: user-editable text field.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the first annotation: user-editable text field.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
 
-  // Check that the flag values are as expected.
-  int flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
-  FPDFPage_CloseAnnot(annot);
+    // Check that the flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+  }
 
-  // Retrieve the second annotation: read-only text field.
-  annot = FPDFPage_GetAnnot(page, 1);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the second annotation: read-only text field.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
 
-  // Check that the flag values are as expected.
-  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
-  FPDFPage_CloseAnnot(annot);
+    // Check that the flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+  }
 
   UnloadPage(page);
 }
@@ -1145,38 +1241,44 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
-  // Retrieve the first annotation: user-editable combobox.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the first annotation: user-editable combobox.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
 
-  // Check that the flag values are as expected.
-  int flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
-  FPDFPage_CloseAnnot(annot);
+    // Check that the flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  }
 
-  // Retrieve the second annotation: regular combobox.
-  annot = FPDFPage_GetAnnot(page, 1);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the second annotation: regular combobox.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
 
-  // Check that the flag values are as expected.
-  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
-  FPDFPage_CloseAnnot(annot);
+    // Check that the flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  }
 
-  // Retrieve the third annotation: read-only combobox.
-  annot = FPDFPage_GetAnnot(page, 2);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve the third annotation: read-only combobox.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, 2));
+    ASSERT_TRUE(annot);
 
-  // Check that the flag values are as expected.
-  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
-  FPDFPage_CloseAnnot(annot);
+    // Check that the flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  }
 
   UnloadPage(page);
 }
@@ -1201,24 +1303,27 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsTextField) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  // Retrieve user-editable text field annotation.
-  FPDF_ANNOTATION annot =
-      FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 118);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve user-editable text field annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 118));
+    ASSERT_TRUE(annot);
 
-  // Check that interactive form annotation flag values are as expected.
-  int flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
-  FPDFPage_CloseAnnot(annot);
+    // Check that interactive form annotation flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+  }
 
-  // Retrieve read-only text field annotation.
-  annot = FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 202);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve read-only text field annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 202));
+    ASSERT_TRUE(annot);
 
-  // Check that interactive form annotation flag values are as expected.
-  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
-  FPDFPage_CloseAnnot(annot);
+    // Check that interactive form annotation flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+  }
 
   UnloadPage(page);
 }
@@ -1229,39 +1334,44 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  // Retrieve user-editable combobox annotation.
-  FPDF_ANNOTATION annot =
-      FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 63);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve user-editable combobox annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 63));
+    ASSERT_TRUE(annot);
 
-  // Check that interactive form annotation flag values are as expected.
-  int flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
-  FPDFPage_CloseAnnot(annot);
+    // Check that interactive form annotation flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  }
 
-  // Retrieve regular combobox annotation.
-  annot = FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 113);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve regular combobox annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 113));
+    ASSERT_TRUE(annot);
 
-  // Check that interactive form annotation flag values are as expected.
-  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
-  FPDFPage_CloseAnnot(annot);
+    // Check that interactive form annotation flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  }
 
-  // Retrieve read-only combobox annotation.
-  annot = FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 213);
-  ASSERT_TRUE(annot);
+  {
+    // Retrieve read-only combobox annotation.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 213));
+    ASSERT_TRUE(annot);
 
-  // Check that interactive form annotation flag values are as expected.
-  flags = FPDFAnnot_GetFormFieldFlags(page, annot);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
-  EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
-  EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
-  FPDFPage_CloseAnnot(annot);
+    // Check that interactive form annotation flag values are as expected.
+    int flags = FPDFAnnot_GetFormFieldFlags(page, annot.get());
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_READONLY);
+    EXPECT_TRUE(flags & FPDF_FORMFLAG_CHOICE_COMBO);
+    EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
+  }
 
   UnloadPage(page);
 }

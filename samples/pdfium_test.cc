@@ -352,26 +352,27 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
   for (int i = 0; i < annot_count; ++i) {
     // Retrieve the annotation object and its subtype.
     fprintf(fp, "Annotation #%d:\n", i + 1);
-    FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, i);
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_GetAnnot(page, i));
     if (!annot) {
       fprintf(fp, "Failed to retrieve annotation!\n\n");
       continue;
     }
-    FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
+    FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot.get());
     fprintf(fp, "Subtype: %s\n", AnnotSubtypeToCString(subtype));
 
     // Retrieve the annotation flags.
     fprintf(fp, "Flags set: %s\n",
-            AnnotFlagsToString(FPDFAnnot_GetFlags(annot)).c_str());
+            AnnotFlagsToString(FPDFAnnot_GetFlags(annot.get())).c_str());
 
     // Retrieve the annotation's object count and object types.
-    const int obj_count = FPDFAnnot_GetObjectCount(annot);
+    const int obj_count = FPDFAnnot_GetObjectCount(annot.get());
     fprintf(fp, "Number of objects: %d\n", obj_count);
     if (obj_count > 0) {
       fprintf(fp, "Object types: ");
       for (int j = 0; j < obj_count; ++j) {
         const char* type = PageObjectTypeToCString(
-            FPDFPageObj_GetType(FPDFAnnot_GetObject(annot, j)));
+            FPDFPageObj_GetType(FPDFAnnot_GetObject(annot.get(), j)));
         fprintf(fp, "%s  ", type);
       }
       fprintf(fp, "\n");
@@ -382,40 +383,41 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
     unsigned int G;
     unsigned int B;
     unsigned int A;
-    if (!FPDFAnnot_GetColor(annot, FPDFANNOT_COLORTYPE_Color, &R, &G, &B, &A)) {
-      fprintf(fp, "Failed to retrieve color.\n");
-    } else {
+    if (FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R, &G, &B,
+                           &A)) {
       fprintf(fp, "Color in RGBA: %d %d %d %d\n", R, G, B, A);
-    }
-    if (!FPDFAnnot_GetColor(annot, FPDFANNOT_COLORTYPE_InteriorColor, &R, &G,
-                            &B, &A)) {
-      fprintf(fp, "Failed to retrieve interior color.\n");
     } else {
+      fprintf(fp, "Failed to retrieve color.\n");
+    }
+    if (FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_InteriorColor, &R,
+                           &G, &B, &A)) {
       fprintf(fp, "Interior color in RGBA: %d %d %d %d\n", R, G, B, A);
+    } else {
+      fprintf(fp, "Failed to retrieve interior color.\n");
     }
 
     // Retrieve the annotation's contents and author.
     static constexpr char kContentsKey[] = "Contents";
     static constexpr char kAuthorKey[] = "T";
     unsigned long len =
-        FPDFAnnot_GetStringValue(annot, kContentsKey, nullptr, 0);
+        FPDFAnnot_GetStringValue(annot.get(), kContentsKey, nullptr, 0);
     std::vector<char> buf(len);
-    FPDFAnnot_GetStringValue(annot, kContentsKey, buf.data(), len);
+    FPDFAnnot_GetStringValue(annot.get(), kContentsKey, buf.data(), len);
     fprintf(fp, "Content: %ls\n",
             GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
                 .c_str());
-    len = FPDFAnnot_GetStringValue(annot, kAuthorKey, nullptr, 0);
+    len = FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, nullptr, 0);
     buf.clear();
     buf.resize(len);
-    FPDFAnnot_GetStringValue(annot, kAuthorKey, buf.data(), len);
+    FPDFAnnot_GetStringValue(annot.get(), kAuthorKey, buf.data(), len);
     fprintf(fp, "Author: %ls\n",
             GetPlatformWString(reinterpret_cast<unsigned short*>(buf.data()))
                 .c_str());
 
     // Retrieve the annotation's quadpoints if it is a markup annotation.
-    if (FPDFAnnot_HasAttachmentPoints(annot)) {
+    if (FPDFAnnot_HasAttachmentPoints(annot.get())) {
       FS_QUADPOINTSF quadpoints;
-      if (FPDFAnnot_GetAttachmentPoints(annot, &quadpoints)) {
+      if (FPDFAnnot_GetAttachmentPoints(annot.get(), &quadpoints)) {
         fprintf(fp,
                 "Quadpoints: (%.3f, %.3f), (%.3f, %.3f), (%.3f, %.3f), (%.3f, "
                 "%.3f)\n",
@@ -428,14 +430,12 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
 
     // Retrieve the annotation's rectangle coordinates.
     FS_RECTF rect;
-    if (FPDFAnnot_GetRect(annot, &rect)) {
+    if (FPDFAnnot_GetRect(annot.get(), &rect)) {
       fprintf(fp, "Rectangle: l - %.3f, b - %.3f, r - %.3f, t - %.3f\n\n",
               rect.left, rect.bottom, rect.right, rect.top);
     } else {
       fprintf(fp, "Failed to retrieve annotation rectangle.\n");
     }
-
-    FPDFPage_CloseAnnot(annot);
   }
 
   (void)fclose(fp);

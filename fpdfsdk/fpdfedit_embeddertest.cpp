@@ -928,15 +928,16 @@ TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
-  // Add an underline annotation to the page without specifying its rectangle.
-  FPDF_ANNOTATION annot = FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE);
-  ASSERT_TRUE(annot);
+  {
+    // Add an underline annotation to the page without specifying its rectangle.
+    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE));
+    ASSERT_TRUE(annot);
 
-  // FPDFPage_TransformAnnots() should run without errors when modifying
-  // annotation rectangles.
-  FPDFPage_TransformAnnots(page, 1, 2, 3, 4, 5, 6);
-
-  FPDFPage_CloseAnnot(annot);
+    // FPDFPage_TransformAnnots() should run without errors when modifying
+    // annotation rectangles.
+    FPDFPage_TransformAnnots(page, 1, 2, 3, 4, 5, 6);
+  }
   UnloadPage(page);
 }
 
