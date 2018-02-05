@@ -40,8 +40,8 @@ struct XFA_FMHtmlReserveCode {
   const wchar_t* m_htmlReserve;
 };
 
-// Sorted by m_htmlReserve
-XFA_FMHtmlReserveCode reservesForDecode[] = {
+// Sorted by |m_htmlReserve|.
+const XFA_FMHtmlReserveCode kReservesForDecode[] = {
     {198, L"AElig"},   {193, L"Aacute"},   {194, L"Acirc"},
     {192, L"Agrave"},  {913, L"Alpha"},    {197, L"Aring"},
     {195, L"Atilde"},  {196, L"Auml"},     {914, L"Beta"},
@@ -128,8 +128,8 @@ XFA_FMHtmlReserveCode reservesForDecode[] = {
     {950, L"zeta"},    {8205, L"zwj"},     {8204, L"zwnj"},
 };
 
-// Sorted by m_uCode
-const XFA_FMHtmlReserveCode reservesForEncode[] = {
+// Sorted by |m_uCode|.
+const XFA_FMHtmlReserveCode kReservesForEncode[] = {
     {34, L"quot"},     {38, L"amp"},      {39, L"apos"},
     {60, L"lt"},       {62, L"gt"},       {160, L"nbsp"},
     {161, L"iexcl"},   {162, L"cent"},    {163, L"pund"},
@@ -216,7 +216,7 @@ const XFA_FMHtmlReserveCode reservesForEncode[] = {
     {9827, L"clubs"},  {9829, L"hearts"}, {9830, L"diams"},
 };
 
-const FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
+const FXJSE_FUNCTION_DESCRIPTOR kFormCalcFM2JSFunctions[] = {
     {"Abs", CFXJSE_FormCalcContext::Abs},
     {"Avg", CFXJSE_FormCalcContext::Avg},
     {"Ceil", CFXJSE_FormCalcContext::Ceil},
@@ -310,31 +310,31 @@ const FXJSE_FUNCTION_DESCRIPTOR formcalc_fm2js_functions[] = {
     {"var_filter", CFXJSE_FormCalcContext::fm_var_filter},
 };
 
-const FXJSE_CLASS_DESCRIPTOR formcalc_fm2js_descriptor = {
-    "XFA_FM2JS_FormCalcClass",               // name
-    formcalc_fm2js_functions,                // methods
-    FX_ArraySize(formcalc_fm2js_functions),  // number of methods
-    nullptr,                                 // dynamic prop type
-    nullptr,                                 // dynamic prop getter
-    nullptr,                                 // dynamic prop setter
-    nullptr,                                 // dynamic prop method call
+const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
+    "XFA_FM2JS_FormCalcClass",              // name
+    kFormCalcFM2JSFunctions,                // methods
+    FX_ArraySize(kFormCalcFM2JSFunctions),  // number of methods
+    nullptr,                                // dynamic prop type
+    nullptr,                                // dynamic prop getter
+    nullptr,                                // dynamic prop setter
+    nullptr,                                // dynamic prop method call
 };
 
-const uint8_t g_sAltTable_Date[] = {
+const uint8_t kAltTableDate[] = {
     255, 255, 255, 3,   9,   255, 255, 255, 255, 255, 255,
     255, 2,   255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 1,   255, 255, 255, 255, 255, 255, 255, 255,
 };
-static_assert(FX_ArraySize(g_sAltTable_Date) == L'a' - L'A' + 1,
-              "Invalid g_sAltTable_Date size.");
+static_assert(FX_ArraySize(kAltTableDate) == L'a' - L'A' + 1,
+              "Invalid kAltTableDate size.");
 
-const uint8_t g_sAltTable_Time[] = {
+const uint8_t kAltTableTime[] = {
     14,  255, 255, 3,   9,   255, 255, 15,  255, 255, 255,
     255, 6,   255, 255, 255, 255, 255, 7,   255, 255, 255,
     255, 255, 1,   17,  255, 255, 255, 255, 255, 255, 255,
 };
-static_assert(FX_ArraySize(g_sAltTable_Time) == L'a' - L'A' + 1,
-              "Invalid g_sAltTable_Time size.");
+static_assert(FX_ArraySize(kAltTableTime) == L'a' - L'A' + 1,
+              "Invalid kAltTableTime size.");
 
 void AlternateDateTimeSymbols(WideString& wsPattern,
                               const WideString& wsAltSymbols,
@@ -2133,7 +2133,7 @@ ByteString CFXJSE_FormCalcContext::GetLocalDateFormat(
   WideString strRet = pLocale->GetDatePattern(SubCategoryFromInt(iStyle));
   if (!bStandard) {
     AlternateDateTimeSymbols(strRet, pLocale->GetDateTimeSymbols(),
-                             g_sAltTable_Date);
+                             kAltTableDate);
   }
   return strRet.UTF8Encode();
 }
@@ -2156,7 +2156,7 @@ ByteString CFXJSE_FormCalcContext::GetLocalTimeFormat(
   WideString strRet = pLocale->GetTimePattern(SubCategoryFromInt(iStyle));
   if (!bStandard) {
     AlternateDateTimeSymbols(strRet, pLocale->GetDateTimeSymbols(),
-                             g_sAltTable_Time);
+                             kAltTableTime);
   }
   return strRet.UTF8Encode();
 }
@@ -3721,9 +3721,9 @@ bool CFXJSE_FormCalcContext::HTMLSTR2Code(const WideStringView& pData,
     return wcscmp(val.unterminated_c_str(), iter.m_htmlReserve) > 0;
   };
   const XFA_FMHtmlReserveCode* result =
-      std::lower_bound(std::begin(reservesForDecode),
-                       std::end(reservesForDecode), pData, cmpFunc);
-  if (result != std::end(reservesForEncode) &&
+      std::lower_bound(std::begin(kReservesForDecode),
+                       std::end(kReservesForDecode), pData, cmpFunc);
+  if (result != std::end(kReservesForEncode) &&
       !wcscmp(pData.unterminated_c_str(), result->m_htmlReserve)) {
     *iCode = result->m_uCode;
     return true;
@@ -3738,9 +3738,9 @@ bool CFXJSE_FormCalcContext::HTMLCode2STR(uint32_t iCode,
     return iter.m_uCode < val;
   };
   const XFA_FMHtmlReserveCode* result =
-      std::lower_bound(std::begin(reservesForEncode),
-                       std::end(reservesForEncode), iCode, cmpFunc);
-  if (result != std::end(reservesForEncode) && result->m_uCode == iCode) {
+      std::lower_bound(std::begin(kReservesForEncode),
+                       std::end(kReservesForEncode), iCode, cmpFunc);
+  if (result != std::end(kReservesForEncode) && result->m_uCode == iCode) {
     *wsHTMLReserve = result->m_htmlReserve;
     return true;
   }
@@ -6194,7 +6194,7 @@ CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
     : CFXJSE_HostObject(kFM2JS),
       m_pIsolate(pScriptIsolate),
       m_pFMClass(CFXJSE_Class::Create(pScriptContext,
-                                      &formcalc_fm2js_descriptor,
+                                      &kFormCalcFM2JSDescriptor,
                                       false)),
       m_pValue(pdfium::MakeUnique<CFXJSE_Value>(pScriptIsolate)),
       m_pDocument(pDoc) {
