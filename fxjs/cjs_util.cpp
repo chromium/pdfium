@@ -65,24 +65,21 @@ const JSMethodSpec CJS_Util::MethodSpecs[] = {
     {"byteToChar", byteToChar_static}};
 
 int CJS_Util::ObjDefnID = -1;
+const char CJS_Util::kName[] = "util";
 
 // static
 void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("util", FXJSOBJTYPE_STATIC,
+  ObjDefnID = pEngine->DefineObj(CJS_Util::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Util>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Util::CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<util>(this);
-}
+CJS_Util::CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
 
-util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
+CJS_Util::~CJS_Util() = default;
 
-util::~util() = default;
-
-CJS_Return util::printf(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Util::printf(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 1)
     return CJS_Return(false);
@@ -143,8 +140,8 @@ CJS_Return util::printf(CJS_Runtime* pRuntime,
   return CJS_Return(pRuntime->NewString(c_strResult.c_str()));
 }
 
-CJS_Return util::printd(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 2)
     return CJS_Return(false);
@@ -253,8 +250,8 @@ CJS_Return util::printd(CJS_Runtime* pRuntime,
   return CJS_Return(JSGetStringFromID(JSMessage::kTypeError));
 }
 
-CJS_Return util::printx(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Util::printx(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -274,8 +271,8 @@ static wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
   return input;
 }
 
-WideString util::printx(const WideString& wsFormat,
-                        const WideString& wsSource) {
+WideString CJS_Util::printx(const WideString& wsFormat,
+                            const WideString& wsSource) {
   WideString wsResult;
   size_t iSourceIdx = 0;
   size_t iFormatIdx = 0;
@@ -362,8 +359,8 @@ WideString util::printx(const WideString& wsFormat,
   return wsResult;
 }
 
-CJS_Return util::scand(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Util::scand(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
     return CJS_Return(false);
 
@@ -378,8 +375,9 @@ CJS_Return util::scand(CJS_Runtime* pRuntime,
   return CJS_Return(pRuntime->NewDate(dDate));
 }
 
-CJS_Return util::byteToChar(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Util::byteToChar(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -395,7 +393,7 @@ CJS_Return util::byteToChar(CJS_Runtime* pRuntime,
 // directive which is safe to use with a single argument, and return the type
 // of argument expected, or -1 otherwise. If -1 is returned, it is NOT safe
 // to use sFormat with printf() and it must be copied byte-by-byte.
-int util::ParseDataType(std::wstring* sFormat) {
+int CJS_Util::ParseDataType(std::wstring* sFormat) {
   enum State { BEFORE, FLAGS, WIDTH, PRECISION, SPECIFIER, AFTER };
 
   int result = -1;

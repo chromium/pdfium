@@ -10,10 +10,24 @@
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fxjs/JS_Define.h"
 
-class Annot : public CJS_EmbedObj {
+class CJS_Annot : public CJS_Object {
  public:
-  explicit Annot(CJS_Object* pJSObject);
-  ~Annot() override;
+  static int GetObjDefnID();
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
+
+  explicit CJS_Annot(v8::Local<v8::Object> pObject);
+  ~CJS_Annot() override;
+
+  void SetSDKAnnot(CPDFSDK_BAAnnot* annot) { m_pAnnot.Reset(annot); }
+
+  JS_STATIC_PROP(hidden, hidden, CJS_Annot);
+  JS_STATIC_PROP(name, name, CJS_Annot);
+  JS_STATIC_PROP(type, type, CJS_Annot);
+
+ private:
+  static int ObjDefnID;
+  static const char kName[];
+  static const JSPropertySpec PropertySpecs[];
 
   CJS_Return get_hidden(CJS_Runtime* pRuntime);
   CJS_Return set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
@@ -24,27 +38,7 @@ class Annot : public CJS_EmbedObj {
   CJS_Return get_type(CJS_Runtime* pRuntime);
   CJS_Return set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  void SetSDKAnnot(CPDFSDK_BAAnnot* annot);
-
- private:
   CPDFSDK_Annot::ObservedPtr m_pAnnot;
-};
-
-class CJS_Annot : public CJS_Object {
- public:
-  static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
-
-  explicit CJS_Annot(v8::Local<v8::Object> pObject);
-  ~CJS_Annot() override = default;
-
-  JS_STATIC_PROP(hidden, hidden, Annot);
-  JS_STATIC_PROP(name, name, Annot);
-  JS_STATIC_PROP(type, type, Annot);
-
- private:
-  static int ObjDefnID;
-  static const JSPropertySpec PropertySpecs[];
 };
 
 #endif  // FXJS_CJS_ANNOT_H_

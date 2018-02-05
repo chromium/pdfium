@@ -10,6 +10,7 @@ const JSPropertySpec CJS_Icon::PropertySpecs[] = {
     {"name", get_name_static, set_name_static}};
 
 int CJS_Icon::ObjDefnID = -1;
+const char CJS_Icon::kName[] = "Icon";
 
 // static
 int CJS_Icon::GetObjDefnID() {
@@ -18,24 +19,20 @@ int CJS_Icon::GetObjDefnID() {
 
 // static
 void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("Icon", FXJSOBJTYPE_DYNAMIC,
+  ObjDefnID = pEngine->DefineObj(CJS_Icon::kName, FXJSOBJTYPE_DYNAMIC,
                                  JSConstructor<CJS_Icon>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
-CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<Icon>(this);
-}
+CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject)
+    : CJS_Object(pObject), m_swIconName(L"") {}
 
-Icon::Icon(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_swIconName(L"") {}
+CJS_Icon::~CJS_Icon() = default;
 
-Icon::~Icon() = default;
-
-CJS_Return Icon::get_name(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Icon::get_name(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewString(m_swIconName.c_str()));
 }
 
-CJS_Return Icon::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Icon::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }

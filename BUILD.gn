@@ -1213,8 +1213,6 @@ jumbo_static_library("fxjs") {
       "fxjs/cjs_display.h",
       "fxjs/cjs_document.cpp",
       "fxjs/cjs_document.h",
-      "fxjs/cjs_embedobj.cpp",
-      "fxjs/cjs_embedobj.h",
       "fxjs/cjs_event.cpp",
       "fxjs/cjs_event.h",
       "fxjs/cjs_event_context.cpp",

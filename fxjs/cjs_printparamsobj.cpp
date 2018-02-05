@@ -21,18 +21,6 @@ void CJS_PrintParamsObj::DefineJSObjects(CFXJS_Engine* pEngine) {
 }
 
 CJS_PrintParamsObj::CJS_PrintParamsObj(v8::Local<v8::Object> pObject)
-    : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<PrintParamsObj>(this);
-}
+    : CJS_Object(pObject) {}
 
-PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject) {
-  bUI = true;
-  nStart = 0;
-  nEnd = 0;
-  bSilent = false;
-  bShrinkToFit = false;
-  bPrintAsImage = false;
-  bReverse = false;
-  bAnnotations = true;
-}
+CJS_PrintParamsObj::~CJS_PrintParamsObj() = default;

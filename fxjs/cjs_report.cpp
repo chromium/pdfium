@@ -16,30 +16,28 @@ const JSMethodSpec CJS_Report::MethodSpecs[] = {
     {"writeText", writeText_static}};
 
 int CJS_Report::ObjDefnID = -1;
+const char CJS_Report::kName[] = "Report";
 
 // static
 void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID = pEngine->DefineObj("Report", eObjType, JSConstructor<CJS_Report>,
-                                 JSDestructor);
+  ObjDefnID = pEngine->DefineObj(CJS_Report::kName, eObjType,
+                                 JSConstructor<CJS_Report>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Report::CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<Report>(this);
-}
+CJS_Report::CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
 
-Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
+CJS_Report::~CJS_Report() = default;
 
-Report::~Report() = default;
-
-CJS_Return Report::writeText(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Report::writeText(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Report::save(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Report::save(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }

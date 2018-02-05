@@ -35,29 +35,27 @@ const JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"willCommit", get_will_commit_static, set_will_commit_static}};
 
 int CJS_Event::ObjDefnID = -1;
+const char CJS_Event::kName[] = "event";
 
 // static
 void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("event", FXJSOBJTYPE_STATIC,
+  ObjDefnID = pEngine->DefineObj(CJS_Event::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Event>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
-CJS_Event::CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<event>(this);
-}
+CJS_Event::CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
 
-event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
+CJS_Event::~CJS_Event() = default;
 
-event::~event() = default;
-
-CJS_Return event::get_change(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_change(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewString(pEvent->Change().c_str()));
 }
 
-CJS_Return event::set_change(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_change(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -68,31 +66,31 @@ CJS_Return event::set_change(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return event::get_change_ex(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_change_ex(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   return CJS_Return(pRuntime->NewString(pEvent->ChangeEx().c_str()));
 }
 
-CJS_Return event::set_change_ex(CJS_Runtime* pRuntime,
-                                v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_change_ex(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_commit_key(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_commit_key(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   return CJS_Return(pRuntime->NewNumber(pEvent->CommitKey()));
 }
 
-CJS_Return event::set_commit_key(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_commit_key(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_field_full(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_field_full(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -102,82 +100,84 @@ CJS_Return event::get_field_full(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewBoolean(pEvent->FieldFull()));
 }
 
-CJS_Return event::set_field_full(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_field_full(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_key_down(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_key_down(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewBoolean(pEvent->KeyDown()));
 }
 
-CJS_Return event::set_key_down(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_key_down(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_modifier(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_modifier(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewBoolean(pEvent->Modifier()));
 }
 
-CJS_Return event::set_modifier(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_modifier(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_name(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_name(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewString(pEvent->Name()));
 }
 
-CJS_Return event::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_rc(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_rc(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewBoolean(pEvent->Rc()));
 }
 
-CJS_Return event::set_rc(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_rc(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   pEvent->Rc() = pRuntime->ToBoolean(vp);
   return CJS_Return(true);
 }
 
-CJS_Return event::get_rich_change(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_rich_change(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return event::set_rich_change(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_rich_change(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return event::get_rich_change_ex(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_rich_change_ex(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return event::set_rich_change_ex(CJS_Runtime* pRuntime,
+CJS_Return CJS_Event::set_rich_change_ex(CJS_Runtime* pRuntime,
+                                         v8::Local<v8::Value> vp) {
+  return CJS_Return(true);
+}
+
+CJS_Return CJS_Event::get_rich_value(CJS_Runtime* pRuntime) {
+  return CJS_Return(true);
+}
+
+CJS_Return CJS_Event::set_rich_value(CJS_Runtime* pRuntime,
                                      v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return event::get_rich_value(CJS_Runtime* pRuntime) {
-  return CJS_Return(true);
-}
-
-CJS_Return event::set_rich_value(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
-  return CJS_Return(true);
-}
-
-CJS_Return event::get_sel_end(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_sel_end(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -187,7 +187,8 @@ CJS_Return event::get_sel_end(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewNumber(pEvent->SelEnd()));
 }
 
-CJS_Return event::set_sel_end(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_sel_end(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -198,7 +199,7 @@ CJS_Return event::set_sel_end(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return event::get_sel_start(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_sel_start(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -208,8 +209,8 @@ CJS_Return event::get_sel_start(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewNumber(pEvent->SelStart()));
 }
 
-CJS_Return event::set_sel_start(CJS_Runtime* pRuntime,
-                                v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_sel_start(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -220,58 +221,61 @@ CJS_Return event::set_sel_start(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return event::get_shift(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_shift(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewBoolean(pEvent->Shift()));
 }
 
-CJS_Return event::set_shift(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_shift(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_source(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_source(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  return CJS_Return(pEvent->Source()->GetJSObject()->ToV8Object());
+  return CJS_Return(pEvent->Source()->ToV8Object());
 }
 
-CJS_Return event::set_source(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_source(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_target(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_target(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  return CJS_Return(pEvent->Target_Field()->GetJSObject()->ToV8Object());
+  return CJS_Return(pEvent->Target_Field()->ToV8Object());
 }
 
-CJS_Return event::set_target(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_target(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_target_name(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_target_name(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewString(pEvent->TargetName().c_str()));
 }
 
-CJS_Return event::set_target_name(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_target_name(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_type(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_type(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewString(pEvent->Type()));
 }
 
-CJS_Return event::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }
 
-CJS_Return event::get_value(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_value(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -284,7 +288,8 @@ CJS_Return event::get_value(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewString(pEvent->Value().c_str()));
 }
 
-CJS_Return event::set_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_value(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -298,13 +303,13 @@ CJS_Return event::set_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return event::get_will_commit(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Event::get_will_commit(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pRuntime->NewBoolean(pEvent->WillCommit()));
 }
 
-CJS_Return event::set_will_commit(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Event::set_will_commit(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return CJS_Return(false);
 }

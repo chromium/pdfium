@@ -14,7 +14,7 @@
 
 class CPDF_FormControl;
 class CPDFSDK_Widget;
-class Document;
+class CJS_Document;
 struct CJS_DelayData;
 
 enum FIELD_PROP {
@@ -27,13 +27,159 @@ enum FIELD_PROP {
   FP_VALUE
 };
 
-class Field : public CJS_EmbedObj {
+class CJS_Field : public CJS_Object {
  public:
+  static int GetObjDefnID();
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
   static void DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                       CJS_DelayData* pData);
 
-  explicit Field(CJS_Object* pJSObject);
-  ~Field() override;
+  explicit CJS_Field(v8::Local<v8::Object> pObject);
+  ~CJS_Field() override;
+
+  // CJS_Object
+  void InitInstance(IJS_Runtime* pIRuntime) override;
+
+  bool AttachField(CJS_Document* pDocument, const WideString& csFieldName);
+
+  JS_STATIC_PROP(alignment, alignment, CJS_Field);
+  JS_STATIC_PROP(borderStyle, border_style, CJS_Field);
+  JS_STATIC_PROP(buttonAlignX, button_align_x, CJS_Field);
+  JS_STATIC_PROP(buttonAlignY, button_align_y, CJS_Field);
+  JS_STATIC_PROP(buttonFitBounds, button_fit_bounds, CJS_Field);
+  JS_STATIC_PROP(buttonPosition, button_position, CJS_Field);
+  JS_STATIC_PROP(buttonScaleHow, button_scale_how, CJS_Field);
+  JS_STATIC_PROP(ButtonScaleWhen, button_scale_when, CJS_Field);
+  JS_STATIC_PROP(calcOrderIndex, calc_order_index, CJS_Field);
+  JS_STATIC_PROP(charLimit, char_limit, CJS_Field);
+  JS_STATIC_PROP(comb, comb, CJS_Field);
+  JS_STATIC_PROP(commitOnSelChange, commit_on_sel_change, CJS_Field);
+  JS_STATIC_PROP(currentValueIndices, current_value_indices, CJS_Field);
+  JS_STATIC_PROP(defaultStyle, default_style, CJS_Field);
+  JS_STATIC_PROP(defaultValue, default_value, CJS_Field);
+  JS_STATIC_PROP(doNotScroll, do_not_scroll, CJS_Field);
+  JS_STATIC_PROP(doNotSpellCheck, do_not_spell_check, CJS_Field);
+  JS_STATIC_PROP(delay, delay, CJS_Field);
+  JS_STATIC_PROP(display, display, CJS_Field);
+  JS_STATIC_PROP(doc, doc, CJS_Field);
+  JS_STATIC_PROP(editable, editable, CJS_Field);
+  JS_STATIC_PROP(exportValues, export_values, CJS_Field);
+  JS_STATIC_PROP(fileSelect, file_select, CJS_Field);
+  JS_STATIC_PROP(fillColor, fill_color, CJS_Field);
+  JS_STATIC_PROP(hidden, hidden, CJS_Field);
+  JS_STATIC_PROP(highlight, highlight, CJS_Field);
+  JS_STATIC_PROP(lineWidth, line_width, CJS_Field);
+  JS_STATIC_PROP(multiline, multiline, CJS_Field);
+  JS_STATIC_PROP(multipleSelection, multiple_selection, CJS_Field);
+  JS_STATIC_PROP(name, name, CJS_Field);
+  JS_STATIC_PROP(numItems, num_items, CJS_Field);
+  JS_STATIC_PROP(page, page, CJS_Field);
+  JS_STATIC_PROP(password, password, CJS_Field);
+  JS_STATIC_PROP(print, print, CJS_Field);
+  JS_STATIC_PROP(radiosInUnison, radios_in_unison, CJS_Field);
+  JS_STATIC_PROP(readonly, readonly, CJS_Field);
+  JS_STATIC_PROP(rect, rect, CJS_Field);
+  JS_STATIC_PROP(required, required, CJS_Field);
+  JS_STATIC_PROP(richText, rich_text, CJS_Field);
+  JS_STATIC_PROP(richValue, rich_value, CJS_Field);
+  JS_STATIC_PROP(rotation, rotation, CJS_Field);
+  JS_STATIC_PROP(strokeColor, stroke_color, CJS_Field);
+  JS_STATIC_PROP(style, style, CJS_Field);
+  JS_STATIC_PROP(submitName, submit_name, CJS_Field);
+  JS_STATIC_PROP(textColor, text_color, CJS_Field);
+  JS_STATIC_PROP(textFont, text_font, CJS_Field);
+  JS_STATIC_PROP(textSize, text_size, CJS_Field);
+  JS_STATIC_PROP(type, type, CJS_Field);
+  JS_STATIC_PROP(userName, user_name, CJS_Field);
+  JS_STATIC_PROP(value, value, CJS_Field);
+  JS_STATIC_PROP(valueAsString, value_as_string, CJS_Field);
+  JS_STATIC_PROP(source, source, CJS_Field);
+
+  JS_STATIC_METHOD(browseForFileToSubmit, CJS_Field);
+  JS_STATIC_METHOD(buttonGetCaption, CJS_Field);
+  JS_STATIC_METHOD(buttonGetIcon, CJS_Field);
+  JS_STATIC_METHOD(buttonImportIcon, CJS_Field);
+  JS_STATIC_METHOD(buttonSetCaption, CJS_Field);
+  JS_STATIC_METHOD(buttonSetIcon, CJS_Field);
+  JS_STATIC_METHOD(checkThisBox, CJS_Field);
+  JS_STATIC_METHOD(clearItems, CJS_Field);
+  JS_STATIC_METHOD(defaultIsChecked, CJS_Field);
+  JS_STATIC_METHOD(deleteItemAt, CJS_Field);
+  JS_STATIC_METHOD(getArray, CJS_Field);
+  JS_STATIC_METHOD(getItemAt, CJS_Field);
+  JS_STATIC_METHOD(getLock, CJS_Field);
+  JS_STATIC_METHOD(insertItemAt, CJS_Field);
+  JS_STATIC_METHOD(isBoxChecked, CJS_Field);
+  JS_STATIC_METHOD(isDefaultChecked, CJS_Field);
+  JS_STATIC_METHOD(setAction, CJS_Field);
+  JS_STATIC_METHOD(setFocus, CJS_Field);
+  JS_STATIC_METHOD(setItems, CJS_Field);
+  JS_STATIC_METHOD(setLock, CJS_Field);
+  JS_STATIC_METHOD(signatureGetModifications, CJS_Field);
+  JS_STATIC_METHOD(signatureGetSeedValue, CJS_Field);
+  JS_STATIC_METHOD(signatureInfo, CJS_Field);
+  JS_STATIC_METHOD(signatureSetSeedValue, CJS_Field);
+  JS_STATIC_METHOD(signatureSign, CJS_Field);
+  JS_STATIC_METHOD(signatureValidate, CJS_Field);
+
+  CJS_Return get_text_color(CJS_Runtime* pRuntime);
+  CJS_Return set_text_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+
+ private:
+  static int ObjDefnID;
+  static const char kName[];
+  static const JSPropertySpec PropertySpecs[];
+  static const JSMethodSpec MethodSpecs[];
+
+  static void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                             const WideString& swFieldName,
+                             int nControlIndex,
+                             const ByteString& string);
+  static void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                                     const WideString& swFieldName,
+                                     int nControlIndex,
+                                     const std::vector<uint32_t>& array);
+  static void SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                         const WideString& swFieldName,
+                         int nControlIndex,
+                         int number);
+  static void SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                        const WideString& swFieldName,
+                        int nControlIndex,
+                        bool b);
+  static void SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                           const WideString& swFieldName,
+                           int nControlIndex,
+                           int number);
+  static void SetMultiline(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                           const WideString& swFieldName,
+                           int nControlIndex,
+                           bool b);
+  static void SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                      const WideString& swFieldName,
+                      int nControlIndex,
+                      const CFX_FloatRect& rect);
+  static void SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                       const WideString& swFieldName,
+                       int nControlIndex,
+                       const std::vector<WideString>& strArray);
+
+  static void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                              CPDF_FormField* pFormField,
+                              bool bChangeMark,
+                              bool bResetAP,
+                              bool bRefresh);
+  static void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                                CPDF_FormControl* pFormControl,
+                                bool bChangeMark,
+                                bool bResetAP,
+                                bool bRefresh);
+
+  static CPDFSDK_Widget* GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                                   CPDF_FormControl* pFormControl);
+  static std::vector<CPDF_FormField*> GetFormFields(
+      CPDFSDK_FormFillEnvironment* pFormFillEnv,
+      const WideString& csFieldName);
 
   CJS_Return get_alignment(CJS_Runtime* pRuntime);
   CJS_Return set_alignment(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
@@ -177,9 +323,6 @@ class Field : public CJS_EmbedObj {
   CJS_Return get_submit_name(CJS_Runtime* pRuntime);
   CJS_Return set_submit_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_text_color(CJS_Runtime* pRuntime);
-  CJS_Return set_text_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
-
   CJS_Return get_text_font(CJS_Runtime* pRuntime);
   CJS_Return set_text_font(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
@@ -259,59 +402,6 @@ class Field : public CJS_EmbedObj {
   CJS_Return signatureValidate(CJS_Runtime* pRuntime,
                                const std::vector<v8::Local<v8::Value>>& params);
 
-  bool AttachField(Document* pDocument, const WideString& csFieldName);
-
- private:
-  static void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                             const WideString& swFieldName,
-                             int nControlIndex,
-                             const ByteString& string);
-  static void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                     const WideString& swFieldName,
-                                     int nControlIndex,
-                                     const std::vector<uint32_t>& array);
-  static void SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const WideString& swFieldName,
-                         int nControlIndex,
-                         int number);
-  static void SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                        const WideString& swFieldName,
-                        int nControlIndex,
-                        bool b);
-  static void SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const WideString& swFieldName,
-                           int nControlIndex,
-                           int number);
-  static void SetMultiline(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const WideString& swFieldName,
-                           int nControlIndex,
-                           bool b);
-  static void SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                      const WideString& swFieldName,
-                      int nControlIndex,
-                      const CFX_FloatRect& rect);
-  static void SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                       const WideString& swFieldName,
-                       int nControlIndex,
-                       const std::vector<WideString>& strArray);
-
-  static void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                              CPDF_FormField* pFormField,
-                              bool bChangeMark,
-                              bool bResetAP,
-                              bool bRefresh);
-  static void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                CPDF_FormControl* pFormControl,
-                                bool bChangeMark,
-                                bool bResetAP,
-                                bool bRefresh);
-
-  static CPDFSDK_Widget* GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                   CPDF_FormControl* pFormControl);
-  static std::vector<CPDF_FormField*> GetFormFields(
-      CPDFSDK_FormFillEnvironment* pFormFillEnv,
-      const WideString& csFieldName);
-
   void SetDelay(bool bDelay);
   void ParseFieldName(const std::wstring& strFieldNameParsed,
                       std::wstring& strFieldName,
@@ -331,108 +421,12 @@ class Field : public CJS_EmbedObj {
 
   void DoDelay();
 
-  Document* m_pJSDoc;
+  CJS_Document* m_pJSDoc;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   WideString m_FieldName;
   int m_nFormControlIndex;
   bool m_bCanSet;
   bool m_bDelay;
-};
-
-class CJS_Field : public CJS_Object {
- public:
-  static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
-
-  explicit CJS_Field(v8::Local<v8::Object> pObject);
-  ~CJS_Field() override = default;
-
-  void InitInstance(IJS_Runtime* pIRuntime) override;
-
-  JS_STATIC_PROP(alignment, alignment, Field);
-  JS_STATIC_PROP(borderStyle, border_style, Field);
-  JS_STATIC_PROP(buttonAlignX, button_align_x, Field);
-  JS_STATIC_PROP(buttonAlignY, button_align_y, Field);
-  JS_STATIC_PROP(buttonFitBounds, button_fit_bounds, Field);
-  JS_STATIC_PROP(buttonPosition, button_position, Field);
-  JS_STATIC_PROP(buttonScaleHow, button_scale_how, Field);
-  JS_STATIC_PROP(ButtonScaleWhen, button_scale_when, Field);
-  JS_STATIC_PROP(calcOrderIndex, calc_order_index, Field);
-  JS_STATIC_PROP(charLimit, char_limit, Field);
-  JS_STATIC_PROP(comb, comb, Field);
-  JS_STATIC_PROP(commitOnSelChange, commit_on_sel_change, Field);
-  JS_STATIC_PROP(currentValueIndices, current_value_indices, Field);
-  JS_STATIC_PROP(defaultStyle, default_style, Field);
-  JS_STATIC_PROP(defaultValue, default_value, Field);
-  JS_STATIC_PROP(doNotScroll, do_not_scroll, Field);
-  JS_STATIC_PROP(doNotSpellCheck, do_not_spell_check, Field);
-  JS_STATIC_PROP(delay, delay, Field);
-  JS_STATIC_PROP(display, display, Field);
-  JS_STATIC_PROP(doc, doc, Field);
-  JS_STATIC_PROP(editable, editable, Field);
-  JS_STATIC_PROP(exportValues, export_values, Field);
-  JS_STATIC_PROP(fileSelect, file_select, Field);
-  JS_STATIC_PROP(fillColor, fill_color, Field);
-  JS_STATIC_PROP(hidden, hidden, Field);
-  JS_STATIC_PROP(highlight, highlight, Field);
-  JS_STATIC_PROP(lineWidth, line_width, Field);
-  JS_STATIC_PROP(multiline, multiline, Field);
-  JS_STATIC_PROP(multipleSelection, multiple_selection, Field);
-  JS_STATIC_PROP(name, name, Field);
-  JS_STATIC_PROP(numItems, num_items, Field);
-  JS_STATIC_PROP(page, page, Field);
-  JS_STATIC_PROP(password, password, Field);
-  JS_STATIC_PROP(print, print, Field);
-  JS_STATIC_PROP(radiosInUnison, radios_in_unison, Field);
-  JS_STATIC_PROP(readonly, readonly, Field);
-  JS_STATIC_PROP(rect, rect, Field);
-  JS_STATIC_PROP(required, required, Field);
-  JS_STATIC_PROP(richText, rich_text, Field);
-  JS_STATIC_PROP(richValue, rich_value, Field);
-  JS_STATIC_PROP(rotation, rotation, Field);
-  JS_STATIC_PROP(strokeColor, stroke_color, Field);
-  JS_STATIC_PROP(style, style, Field);
-  JS_STATIC_PROP(submitName, submit_name, Field);
-  JS_STATIC_PROP(textColor, text_color, Field);
-  JS_STATIC_PROP(textFont, text_font, Field);
-  JS_STATIC_PROP(textSize, text_size, Field);
-  JS_STATIC_PROP(type, type, Field);
-  JS_STATIC_PROP(userName, user_name, Field);
-  JS_STATIC_PROP(value, value, Field);
-  JS_STATIC_PROP(valueAsString, value_as_string, Field);
-  JS_STATIC_PROP(source, source, Field);
-
-  JS_STATIC_METHOD(browseForFileToSubmit, Field);
-  JS_STATIC_METHOD(buttonGetCaption, Field);
-  JS_STATIC_METHOD(buttonGetIcon, Field);
-  JS_STATIC_METHOD(buttonImportIcon, Field);
-  JS_STATIC_METHOD(buttonSetCaption, Field);
-  JS_STATIC_METHOD(buttonSetIcon, Field);
-  JS_STATIC_METHOD(checkThisBox, Field);
-  JS_STATIC_METHOD(clearItems, Field);
-  JS_STATIC_METHOD(defaultIsChecked, Field);
-  JS_STATIC_METHOD(deleteItemAt, Field);
-  JS_STATIC_METHOD(getArray, Field);
-  JS_STATIC_METHOD(getItemAt, Field);
-  JS_STATIC_METHOD(getLock, Field);
-  JS_STATIC_METHOD(insertItemAt, Field);
-  JS_STATIC_METHOD(isBoxChecked, Field);
-  JS_STATIC_METHOD(isDefaultChecked, Field);
-  JS_STATIC_METHOD(setAction, Field);
-  JS_STATIC_METHOD(setFocus, Field);
-  JS_STATIC_METHOD(setItems, Field);
-  JS_STATIC_METHOD(setLock, Field);
-  JS_STATIC_METHOD(signatureGetModifications, Field);
-  JS_STATIC_METHOD(signatureGetSeedValue, Field);
-  JS_STATIC_METHOD(signatureInfo, Field);
-  JS_STATIC_METHOD(signatureSetSeedValue, Field);
-  JS_STATIC_METHOD(signatureSign, Field);
-  JS_STATIC_METHOD(signatureValidate, Field);
-
- private:
-  static int ObjDefnID;
-  static const JSPropertySpec PropertySpecs[];
-  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJS_FIELD_H_

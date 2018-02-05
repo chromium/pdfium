@@ -11,28 +11,21 @@
 
 class GlobalTimer;
 
-class TimerObj : public CJS_EmbedObj {
- public:
-  explicit TimerObj(CJS_Object* pJSObject);
-  ~TimerObj() override;
-
-  void SetTimer(GlobalTimer* pTimer);
-  int GetTimerID() const { return m_nTimerID; }
-
- private:
-  int m_nTimerID;  // Weak reference to GlobalTimer through global map.
-};
-
 class CJS_TimerObj : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_TimerObj(v8::Local<v8::Object> pObject);
-  ~CJS_TimerObj() override = default;
+  ~CJS_TimerObj() override;
+
+  void SetTimer(GlobalTimer* pTimer);
+  int GetTimerID() const { return m_nTimerID; }
 
  private:
   static int ObjDefnID;
+
+  int m_nTimerID;  // Weak reference to GlobalTimer through global map.
 };
 
 #endif  // FXJS_CJS_TIMEROBJ_H_

@@ -11,12 +11,23 @@
 
 #include "fxjs/JS_Define.h"
 
-class console : public CJS_EmbedObj {
+class CJS_Console : public CJS_Object {
  public:
-  explicit console(CJS_Object* pJSObject);
-  ~console() override;
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
 
- public:
+  explicit CJS_Console(v8::Local<v8::Object> pObject);
+  ~CJS_Console() override;
+
+  JS_STATIC_METHOD(clear, CJS_Console);
+  JS_STATIC_METHOD(hide, CJS_Console);
+  JS_STATIC_METHOD(println, CJS_Console);
+  JS_STATIC_METHOD(show, CJS_Console);
+
+ private:
+  static int ObjDefnID;
+  static const char kName[];
+  static const JSMethodSpec MethodSpecs[];
+
   CJS_Return clear(CJS_Runtime* pRuntime,
                    const std::vector<v8::Local<v8::Value>>& params);
   CJS_Return hide(CJS_Runtime* pRuntime,
@@ -25,23 +36,6 @@ class console : public CJS_EmbedObj {
                      const std::vector<v8::Local<v8::Value>>& params);
   CJS_Return show(CJS_Runtime* pRuntime,
                   const std::vector<v8::Local<v8::Value>>& params);
-};
-
-class CJS_Console : public CJS_Object {
- public:
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
-
-  explicit CJS_Console(v8::Local<v8::Object> pObject);
-  ~CJS_Console() override = default;
-
-  JS_STATIC_METHOD(clear, console);
-  JS_STATIC_METHOD(hide, console);
-  JS_STATIC_METHOD(println, console);
-  JS_STATIC_METHOD(show, console);
-
- private:
-  static int ObjDefnID;
-  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJS_CONSOLE_H_

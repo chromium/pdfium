@@ -41,7 +41,7 @@ void JSSpecialPropQuery(const char*,
   if (!pJSObj)
     return;
 
-  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result =
       pObj->QueryProperty(PropFromV8Prop(info.GetIsolate(), property).c_str());
   info.GetReturnValue().Set(!result.HasError() ? 4 : 0);
@@ -60,7 +60,7 @@ void JSSpecialPropGet(const char* class_name,
   if (!pJSObj)
     return;
 
-  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result = pObj->GetProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
   if (result.HasError()) {
@@ -87,7 +87,7 @@ void JSSpecialPropPut(const char* class_name,
   if (!pJSObj)
     return;
 
-  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result = pObj->SetProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str(), value);
   if (result.HasError()) {
@@ -109,7 +109,7 @@ void JSSpecialPropDel(const char* class_name,
   if (!pJSObj)
     return;
 
-  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
+  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result = pObj->DelProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
   if (result.HasError()) {
@@ -119,57 +119,19 @@ void JSSpecialPropDel(const char* class_name,
   }
 }
 
-struct JSGlobalData {
-  JSGlobalData();
-  ~JSGlobalData();
-
-  JS_GlobalDataType nType;
-  double dData;
-  bool bData;
-  ByteString sData;
-  v8::Global<v8::Object> pData;
-  bool bPersistent;
-  bool bDeleted;
-};
-
-class JSGlobalAlternate : public CJS_EmbedObj {
- public:
-  explicit JSGlobalAlternate(CJS_Object* pJSObject);
-  ~JSGlobalAlternate() override;
-
-  CJS_Return setPersistent(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return QueryProperty(const wchar_t* propname);
-  CJS_Return GetProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
-  CJS_Return SetProperty(CJS_Runtime* pRuntime,
-                         const wchar_t* propname,
-                         v8::Local<v8::Value> vp);
-  CJS_Return DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
-  void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-
- private:
-  void UpdateGlobalPersistentVariables();
-  void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
-  void DestroyGlobalPersisitentVariables();
-  CJS_Return SetGlobalVariables(const ByteString& propname,
-                                JS_GlobalDataType nType,
-                                double dData,
-                                bool bData,
-                                const ByteString& sData,
-                                v8::Local<v8::Object> pData,
-                                bool bDefaultPersistent);
-  void ObjectToArray(CJS_Runtime* pRuntime,
-                     v8::Local<v8::Object> pObj,
-                     CJS_GlobalVariableArray& array);
-  void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
-
-  std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
-  WideString m_sFilePath;
-  CJS_GlobalData* m_pGlobalData;
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
-};
-
 }  // namespace
+
+CJS_Global::JSGlobalData::JSGlobalData()
+    : nType(JS_GlobalDataType::NUMBER),
+      dData(0),
+      bData(false),
+      sData(""),
+      bPersistent(false),
+      bDeleted(false) {}
+
+CJS_Global::JSGlobalData::~JSGlobalData() {
+  pData.Reset();
+}
 
 const JSMethodSpec CJS_Global::MethodSpecs[] = {
     {"setPersistent", setPersistent_static}};
@@ -179,22 +141,22 @@ int CJS_Global::ObjDefnID = -1;
 // static
 void CJS_Global::setPersistent_static(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  JSMethod<JSGlobalAlternate, &JSGlobalAlternate::setPersistent>(
-      "setPersistent", "global", info);
+  JSMethod<CJS_Global, &CJS_Global::setPersistent>("setPersistent", "global",
+                                                   info);
 }
 
 // static
 void CJS_Global::queryprop_static(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  JSSpecialPropQuery<JSGlobalAlternate>("global", property, info);
+  JSSpecialPropQuery<CJS_Global>("global", property, info);
 }
 
 // static
 void CJS_Global::getprop_static(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  JSSpecialPropGet<JSGlobalAlternate>("global", property, info);
+  JSSpecialPropGet<CJS_Global>("global", property, info);
 }
 
 // static
@@ -202,14 +164,14 @@ void CJS_Global::putprop_static(
     v8::Local<v8::String> property,
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  JSSpecialPropPut<JSGlobalAlternate>("global", property, value, info);
+  JSSpecialPropPut<CJS_Global>("global", property, value, info);
 }
 
 // static
 void CJS_Global::delprop_static(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  JSSpecialPropDel<JSGlobalAlternate>("global", property, info);
+  JSSpecialPropDel<CJS_Global>("global", property, info);
 }
 
 // static
@@ -227,49 +189,31 @@ void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineAllProperties(pEngine);
 }
 
-CJS_Global::CJS_Global(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<JSGlobalAlternate>(this);
-}
+CJS_Global::CJS_Global(v8::Local<v8::Object> pObject)
+    : CJS_Object(pObject), m_pFormFillEnv(nullptr) {}
 
-void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
-  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
-  JSGlobalAlternate* pGlobal =
-      static_cast<JSGlobalAlternate*>(GetEmbedObject());
-  pGlobal->Initial(pRuntime->GetFormFillEnv());
-}
-
-JSGlobalData::JSGlobalData()
-    : nType(JS_GlobalDataType::NUMBER),
-      dData(0),
-      bData(false),
-      sData(""),
-      bPersistent(false),
-      bDeleted(false) {}
-
-JSGlobalData::~JSGlobalData() {
-  pData.Reset();
-}
-
-JSGlobalAlternate::JSGlobalAlternate(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pFormFillEnv(nullptr) {}
-
-JSGlobalAlternate::~JSGlobalAlternate() {
+CJS_Global::~CJS_Global() {
   DestroyGlobalPersisitentVariables();
   m_pGlobalData->Release();
 }
 
-void JSGlobalAlternate::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
+  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
+  Initial(pRuntime->GetFormFillEnv());
+}
+
+void CJS_Global::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   m_pFormFillEnv.Reset(pFormFillEnv);
   m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pFormFillEnv);
   UpdateGlobalPersistentVariables();
 }
 
-CJS_Return JSGlobalAlternate::QueryProperty(const wchar_t* propname) {
+CJS_Return CJS_Global::QueryProperty(const wchar_t* propname) {
   return CJS_Return(WideString(propname) != L"setPersistent");
 }
 
-CJS_Return JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
-                                          const wchar_t* propname) {
+CJS_Return CJS_Global::DelProperty(CJS_Runtime* pRuntime,
+                                   const wchar_t* propname) {
   auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
   if (it == m_MapGlobal.end())
     return CJS_Return(false);
@@ -278,8 +222,8 @@ CJS_Return JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return JSGlobalAlternate::GetProperty(CJS_Runtime* pRuntime,
-                                          const wchar_t* propname) {
+CJS_Return CJS_Global::GetProperty(CJS_Runtime* pRuntime,
+                                   const wchar_t* propname) {
   auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
   if (it == m_MapGlobal.end())
     return CJS_Return(true);
@@ -307,9 +251,9 @@ CJS_Return JSGlobalAlternate::GetProperty(CJS_Runtime* pRuntime,
   return CJS_Return(false);
 }
 
-CJS_Return JSGlobalAlternate::SetProperty(CJS_Runtime* pRuntime,
-                                          const wchar_t* propname,
-                                          v8::Local<v8::Value> vp) {
+CJS_Return CJS_Global::SetProperty(CJS_Runtime* pRuntime,
+                                   const wchar_t* propname,
+                                   v8::Local<v8::Value> vp) {
   ByteString sPropName = ByteString::FromUnicode(propname);
   if (vp->IsNumber()) {
     return SetGlobalVariables(sPropName, JS_GlobalDataType::NUMBER,
@@ -342,7 +286,7 @@ CJS_Return JSGlobalAlternate::SetProperty(CJS_Runtime* pRuntime,
   return CJS_Return(false);
 }
 
-CJS_Return JSGlobalAlternate::setPersistent(
+CJS_Return CJS_Global::setPersistent(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
@@ -357,10 +301,10 @@ CJS_Return JSGlobalAlternate::setPersistent(
   return CJS_Return(true);
 }
 
-void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
+void CJS_Global::UpdateGlobalPersistentVariables() {
   CJS_Runtime* pRuntime =
       static_cast<CJS_Runtime*>(CFXJS_Engine::EngineFromIsolateCurrentContext(
-          m_pJSObject->ToV8Object()->GetIsolate()));
+          ToV8Object()->GetIsolate()));
 
   for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
     CJS_GlobalData_Element* pData = m_pGlobalData->GetAt(i);
@@ -369,8 +313,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
         SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::NUMBER,
                            pData->data.dData, false, "",
                            v8::Local<v8::Object>(), pData->bPersistent == 1);
-        pRuntime->PutObjectProperty(m_pJSObject->ToV8Object(),
-                                    pData->data.sKey.UTF8Decode(),
+        pRuntime->PutObjectProperty(ToV8Object(), pData->data.sKey.UTF8Decode(),
                                     pRuntime->NewNumber(pData->data.dData));
         break;
       case JS_GlobalDataType::BOOLEAN:
@@ -378,7 +321,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
                            pData->data.bData == 1, "", v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
         pRuntime->PutObjectProperty(
-            m_pJSObject->ToV8Object(), pData->data.sKey.UTF8Decode(),
+            ToV8Object(), pData->data.sKey.UTF8Decode(),
             pRuntime->NewBoolean(pData->data.bData == 1));
         break;
       case JS_GlobalDataType::STRING:
@@ -386,7 +329,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
                            false, pData->data.sData, v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
         pRuntime->PutObjectProperty(
-            m_pJSObject->ToV8Object(), pData->data.sKey.UTF8Decode(),
+            ToV8Object(), pData->data.sKey.UTF8Decode(),
             pRuntime->NewString(pData->data.sData.UTF8Decode().AsStringView()));
         break;
       case JS_GlobalDataType::OBJECT: {
@@ -395,7 +338,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
           PutObjectProperty(pObj, &pData->data);
           SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::OBJECT, 0,
                              false, "", pObj, pData->bPersistent == 1);
-          pRuntime->PutObjectProperty(m_pJSObject->ToV8Object(),
+          pRuntime->PutObjectProperty(ToV8Object(),
                                       pData->data.sKey.UTF8Decode(), pObj);
         }
       } break;
@@ -403,16 +346,14 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
         SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::NULLOBJ, 0,
                            false, "", v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
-        pRuntime->PutObjectProperty(m_pJSObject->ToV8Object(),
-                                    pData->data.sKey.UTF8Decode(),
+        pRuntime->PutObjectProperty(ToV8Object(), pData->data.sKey.UTF8Decode(),
                                     pRuntime->NewNull());
         break;
     }
   }
 }
 
-void JSGlobalAlternate::CommitGlobalPersisitentVariables(
-    CJS_Runtime* pRuntime) {
+void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
   for (const auto& iter : m_MapGlobal) {
     ByteString name = iter.first;
     JSGlobalData* pData = iter.second.get();
@@ -435,8 +376,8 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables(
         break;
       case JS_GlobalDataType::OBJECT: {
         CJS_GlobalVariableArray array;
-        v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
-            GetJSObject()->GetIsolate(), pData->pData);
+        v8::Local<v8::Object> obj =
+            v8::Local<v8::Object>::New(GetIsolate(), pData->pData);
         ObjectToArray(pRuntime, obj, array);
         m_pGlobalData->SetGlobalVariableObject(name, array);
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
@@ -449,9 +390,9 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables(
   }
 }
 
-void JSGlobalAlternate::ObjectToArray(CJS_Runtime* pRuntime,
-                                      v8::Local<v8::Object> pObj,
-                                      CJS_GlobalVariableArray& array) {
+void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
+                               v8::Local<v8::Object> pObj,
+                               CJS_GlobalVariableArray& array) {
   std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
     ByteString sKey = ws.UTF8Encode();
@@ -498,10 +439,10 @@ void JSGlobalAlternate::ObjectToArray(CJS_Runtime* pRuntime,
   }
 }
 
-void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
-                                          CJS_KeyValue* pData) {
-  CJS_Runtime* pRuntime = CJS_Runtime::RuntimeFromIsolateCurrentContext(
-      m_pJSObject->ToV8Object()->GetIsolate());
+void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
+                                   CJS_KeyValue* pData) {
+  CJS_Runtime* pRuntime =
+      CJS_Runtime::RuntimeFromIsolateCurrentContext(ToV8Object()->GetIsolate());
 
   for (int i = 0, sz = pData->objData.Count(); i < sz; i++) {
     CJS_KeyValue* pObjData = pData->objData.GetAt(i);
@@ -535,17 +476,17 @@ void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
   }
 }
 
-void JSGlobalAlternate::DestroyGlobalPersisitentVariables() {
+void CJS_Global::DestroyGlobalPersisitentVariables() {
   m_MapGlobal.clear();
 }
 
-CJS_Return JSGlobalAlternate::SetGlobalVariables(const ByteString& propname,
-                                                 JS_GlobalDataType nType,
-                                                 double dData,
-                                                 bool bData,
-                                                 const ByteString& sData,
-                                                 v8::Local<v8::Object> pData,
-                                                 bool bDefaultPersistent) {
+CJS_Return CJS_Global::SetGlobalVariables(const ByteString& propname,
+                                          JS_GlobalDataType nType,
+                                          double dData,
+                                          bool bData,
+                                          const ByteString& sData,
+                                          v8::Local<v8::Object> pData,
+                                          bool bDefaultPersistent) {
   if (propname.IsEmpty())
     return CJS_Return(false);
 

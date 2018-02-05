@@ -11,31 +11,25 @@
 
 #include "fxjs/JS_Define.h"
 
-class Report : public CJS_EmbedObj {
- public:
-  explicit Report(CJS_Object* pJSObject);
-  ~Report() override;
-
- public:
-  CJS_Return save(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return writeText(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params);
-};
-
 class CJS_Report : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   explicit CJS_Report(v8::Local<v8::Object> pObject);
-  ~CJS_Report() override = default;
+  ~CJS_Report() override;
 
-  JS_STATIC_METHOD(save, Report)
-  JS_STATIC_METHOD(writeText, Report);
+  JS_STATIC_METHOD(save, CJS_Report);
+  JS_STATIC_METHOD(writeText, CJS_Report);
 
  private:
   static int ObjDefnID;
+  static const char kName[];
   static const JSMethodSpec MethodSpecs[];
+
+  CJS_Return save(CJS_Runtime* pRuntime,
+                  const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return writeText(CJS_Runtime* pRuntime,
+                       const std::vector<v8::Local<v8::Value>>& params);
 };
 
 #endif  // FXJS_CJS_REPORT_H_

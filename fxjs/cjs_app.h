@@ -16,10 +16,58 @@
 class CJS_Runtime;
 class GlobalTimer;
 
-class app : public CJS_EmbedObj {
+class CJS_App : public CJS_Object {
  public:
-  explicit app(CJS_Object* pJSObject);
-  ~app() override;
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
+
+  explicit CJS_App(v8::Local<v8::Object> pObject);
+  ~CJS_App() override;
+
+  void TimerProc(GlobalTimer* pTimer);
+  void CancelProc(GlobalTimer* pTimer);
+
+  static WideString SysPathToPDFPath(const WideString& sOldPath);
+
+  JS_STATIC_PROP(activeDocs, active_docs, CJS_App);
+  JS_STATIC_PROP(calculate, calculate, CJS_App);
+  JS_STATIC_PROP(formsVersion, forms_version, CJS_App);
+  JS_STATIC_PROP(fs, fs, CJS_App);
+  JS_STATIC_PROP(fullscreen, fullscreen, CJS_App);
+  JS_STATIC_PROP(language, language, CJS_App);
+  JS_STATIC_PROP(media, media, CJS_App);
+  JS_STATIC_PROP(platform, platform, CJS_App);
+  JS_STATIC_PROP(runtimeHighlight, runtime_highlight, CJS_App);
+  JS_STATIC_PROP(viewerType, viewer_type, CJS_App);
+  JS_STATIC_PROP(viewerVariation, viewer_variation, CJS_App);
+  JS_STATIC_PROP(viewerVersion, viewer_version, CJS_App);
+
+  JS_STATIC_METHOD(alert, CJS_App);
+  JS_STATIC_METHOD(beep, CJS_App);
+  JS_STATIC_METHOD(browseForDoc, CJS_App);
+  JS_STATIC_METHOD(clearInterval, CJS_App);
+  JS_STATIC_METHOD(clearTimeOut, CJS_App);
+  JS_STATIC_METHOD(execDialog, CJS_App);
+  JS_STATIC_METHOD(execMenuItem, CJS_App);
+  JS_STATIC_METHOD(findComponent, CJS_App);
+  JS_STATIC_METHOD(goBack, CJS_App);
+  JS_STATIC_METHOD(goForward, CJS_App);
+  JS_STATIC_METHOD(launchURL, CJS_App);
+  JS_STATIC_METHOD(mailMsg, CJS_App);
+  JS_STATIC_METHOD(newFDF, CJS_App);
+  JS_STATIC_METHOD(newDoc, CJS_App);
+  JS_STATIC_METHOD(openDoc, CJS_App);
+  JS_STATIC_METHOD(openFDF, CJS_App);
+  JS_STATIC_METHOD(popUpMenuEx, CJS_App);
+  JS_STATIC_METHOD(popUpMenu, CJS_App);
+  JS_STATIC_METHOD(response, CJS_App);
+  JS_STATIC_METHOD(setInterval, CJS_App);
+  JS_STATIC_METHOD(setTimeOut, CJS_App);
+
+ private:
+  static int ObjDefnID;
+  static const char kName[];
+  static const JSPropertySpec PropertySpecs[];
+  static const JSMethodSpec MethodSpecs[];
 
   CJS_Return get_active_docs(CJS_Runtime* pRuntime);
   CJS_Return set_active_docs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
@@ -102,68 +150,12 @@ class app : public CJS_EmbedObj {
   CJS_Return setTimeOut(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
 
-  void TimerProc(GlobalTimer* pTimer);
-  void CancelProc(GlobalTimer* pTimer);
-
-  static WideString SysPathToPDFPath(const WideString& sOldPath);
-
- private:
-  // CJS_EmbedObj
   void RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript);
-
   void ClearTimerCommon(CJS_Runtime* pRuntime, v8::Local<v8::Value> param);
 
   bool m_bCalculate;
   bool m_bRuntimeHighLight;
   std::set<std::unique_ptr<GlobalTimer>> m_Timers;
-};
-
-class CJS_App : public CJS_Object {
- public:
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
-
-  explicit CJS_App(v8::Local<v8::Object> pObject);
-  ~CJS_App() override = default;
-
-  JS_STATIC_PROP(activeDocs, active_docs, app);
-  JS_STATIC_PROP(calculate, calculate, app);
-  JS_STATIC_PROP(formsVersion, forms_version, app);
-  JS_STATIC_PROP(fs, fs, app);
-  JS_STATIC_PROP(fullscreen, fullscreen, app);
-  JS_STATIC_PROP(language, language, app);
-  JS_STATIC_PROP(media, media, app);
-  JS_STATIC_PROP(platform, platform, app);
-  JS_STATIC_PROP(runtimeHighlight, runtime_highlight, app);
-  JS_STATIC_PROP(viewerType, viewer_type, app);
-  JS_STATIC_PROP(viewerVariation, viewer_variation, app);
-  JS_STATIC_PROP(viewerVersion, viewer_version, app);
-
-  JS_STATIC_METHOD(alert, app);
-  JS_STATIC_METHOD(beep, app);
-  JS_STATIC_METHOD(browseForDoc, app);
-  JS_STATIC_METHOD(clearInterval, app);
-  JS_STATIC_METHOD(clearTimeOut, app);
-  JS_STATIC_METHOD(execDialog, app);
-  JS_STATIC_METHOD(execMenuItem, app);
-  JS_STATIC_METHOD(findComponent, app);
-  JS_STATIC_METHOD(goBack, app);
-  JS_STATIC_METHOD(goForward, app);
-  JS_STATIC_METHOD(launchURL, app);
-  JS_STATIC_METHOD(mailMsg, app);
-  JS_STATIC_METHOD(newFDF, app);
-  JS_STATIC_METHOD(newDoc, app);
-  JS_STATIC_METHOD(openDoc, app);
-  JS_STATIC_METHOD(openFDF, app);
-  JS_STATIC_METHOD(popUpMenuEx, app);
-  JS_STATIC_METHOD(popUpMenu, app);
-  JS_STATIC_METHOD(response, app);
-  JS_STATIC_METHOD(setInterval, app);
-  JS_STATIC_METHOD(setTimeOut, app);
-
- private:
-  static int ObjDefnID;
-  static const JSPropertySpec PropertySpecs[];
-  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJS_APP_H_

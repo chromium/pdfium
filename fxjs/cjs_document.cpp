@@ -108,6 +108,7 @@ const JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"mailDoc", mailDoc_static}};
 
 int CJS_Document::ObjDefnID = -1;
+const char CJS_Document::kName[] = "Document";
 
 // static
 int CJS_Document::GetObjDefnID() {
@@ -116,33 +117,27 @@ int CJS_Document::GetObjDefnID() {
 
 // static
 void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("Document", FXJSOBJTYPE_GLOBAL,
+  ObjDefnID = pEngine->DefineObj(CJS_Document::kName, FXJSOBJTYPE_GLOBAL,
                                  JSConstructor<CJS_Document>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
 CJS_Document::CJS_Document(v8::Local<v8::Object> pObject)
-    : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<Document>(this);
-}
-
-void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
-  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
-  Document* pDoc = static_cast<Document*>(GetEmbedObject());
-  pDoc->SetFormFillEnv(pRuntime->GetFormFillEnv());
-}
-
-Document::Document(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject),
+    : CJS_Object(pObject),
       m_pFormFillEnv(nullptr),
       m_cwBaseURL(L""),
       m_bDelay(false) {}
 
-Document::~Document() = default;
+CJS_Document::~CJS_Document() = default;
+
+void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
+  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
+  SetFormFillEnv(pRuntime->GetFormFillEnv());
+}
 
 // The total number of fields in document.
-CJS_Return Document::get_num_fields(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_num_fields(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -152,18 +147,19 @@ CJS_Return Document::get_num_fields(CJS_Runtime* pRuntime) {
       static_cast<int>(pPDFForm->CountFields(WideString()))));
 }
 
-CJS_Return Document::set_num_fields(CJS_Runtime* pRuntime,
-                                    v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_num_fields(CJS_Runtime* pRuntime,
+                                        v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::get_dirty(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_dirty(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(pRuntime->NewBoolean(!!m_pFormFillEnv->GetChangeMark()));
 }
 
-CJS_Return Document::set_dirty(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_dirty(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -172,15 +168,16 @@ CJS_Return Document::set_dirty(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_ADBE(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_ADBE(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewUndefined());
 }
 
-CJS_Return Document::set_ADBE(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_ADBE(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_page_num(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_page_num(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -190,8 +187,8 @@ CJS_Return Document::get_page_num(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewNumber(pPageView->GetPageIndex()));
 }
 
-CJS_Return Document::set_page_num(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_page_num(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -207,41 +204,44 @@ CJS_Return Document::set_page_num(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return Document::addAnnot(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::addAnnot(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::addField(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::addField(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::exportAsText(
+CJS_Return CJS_Document::exportAsText(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::exportAsFDF(
+CJS_Return CJS_Document::exportAsFDF(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::exportAsXFDF(
+CJS_Return CJS_Document::exportAsXFDF(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::getField(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::getField(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   if (!m_pFormFillEnv)
@@ -260,8 +260,7 @@ CJS_Return Document::getField(CJS_Runtime* pRuntime,
 
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
-  Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
-  pField->AttachField(this, wideName);
+  pJSField->AttachField(this, wideName);
   if (!pJSField)
     return CJS_Return(false);
 
@@ -269,7 +268,7 @@ CJS_Return Document::getField(CJS_Runtime* pRuntime,
 }
 
 // Gets the name of the nth field in the document
-CJS_Return Document::getNthFieldName(
+CJS_Return CJS_Document::getNthFieldName(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
@@ -289,21 +288,21 @@ CJS_Return Document::getNthFieldName(
   return CJS_Return(pRuntime->NewString(pField->GetFullName().c_str()));
 }
 
-CJS_Return Document::importAnFDF(
+CJS_Return CJS_Document::importAnFDF(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::importAnXFDF(
+CJS_Return CJS_Document::importAnXFDF(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::importTextData(
+CJS_Return CJS_Document::importTextData(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
@@ -313,8 +312,9 @@ CJS_Return Document::importTextData(
 // exports the form data and mails the resulting fdf file as an attachment to
 // all recipients.
 // comment: need reader supports
-CJS_Return Document::mailForm(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::mailForm(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
@@ -346,8 +346,9 @@ CJS_Return Document::mailForm(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return Document::print(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::print(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -368,17 +369,16 @@ CJS_Return Document::print(CJS_Runtime* pRuntime,
         v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8]);
         CJS_Object* pJSObj = pRuntime->GetObjectPrivate(pObj);
         if (pJSObj) {
-          if (PrintParamsObj* pprintparamsObj =
-                  static_cast<PrintParamsObj*>(pJSObj->GetEmbedObject())) {
-            bUI = pprintparamsObj->bUI;
-            nStart = pprintparamsObj->nStart;
-            nEnd = pprintparamsObj->nEnd;
-            bSilent = pprintparamsObj->bSilent;
-            bShrinkToFit = pprintparamsObj->bShrinkToFit;
-            bPrintAsImage = pprintparamsObj->bPrintAsImage;
-            bReverse = pprintparamsObj->bReverse;
-            bAnnotations = pprintparamsObj->bAnnotations;
-          }
+          CJS_PrintParamsObj* printObj =
+              static_cast<CJS_PrintParamsObj*>(pJSObj);
+          bUI = printObj->GetUI();
+          nStart = printObj->GetStart();
+          nEnd = printObj->GetEnd();
+          bSilent = printObj->GetSilent();
+          bShrinkToFit = printObj->GetShrinkToFit();
+          bPrintAsImage = printObj->GetPrintAsImage();
+          bReverse = printObj->GetReverse();
+          bAnnotations = printObj->GetAnnotations();
         }
       }
     }
@@ -413,7 +413,7 @@ CJS_Return Document::print(CJS_Runtime* pRuntime,
 // comment:
 // note: if the filed name is not rational, adobe is dumb for it.
 
-CJS_Return Document::removeField(
+CJS_Return CJS_Document::removeField(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
@@ -467,7 +467,7 @@ CJS_Return Document::removeField(
 // comment:
 // note: if the fields names r not rational, aodbe is dumb for it.
 
-CJS_Return Document::resetForm(
+CJS_Return CJS_Document::resetForm(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
@@ -510,19 +510,20 @@ CJS_Return Document::resetForm(
   return CJS_Return(true);
 }
 
-CJS_Return Document::saveAs(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::saveAs(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::syncAnnotScan(
+CJS_Return CJS_Document::syncAnnotScan(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::submitForm(
+CJS_Return CJS_Document::submitForm(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   int nSize = params.size();
@@ -588,21 +589,22 @@ CJS_Return Document::submitForm(
   return CJS_Return(true);
 }
 
-void Document::SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+void CJS_Document::SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   m_pFormFillEnv.Reset(pFormFillEnv);
 }
 
-CJS_Return Document::get_bookmark_root(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_bookmark_root(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_bookmark_root(CJS_Runtime* pRuntime,
-                                       v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_bookmark_root(CJS_Runtime* pRuntime,
+                                           v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::mailDoc(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::mailDoc(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // TODO(tsepez): Check maximum number of allowed params.
   bool bUI = true;
   WideString cTo = L"";
@@ -643,16 +645,16 @@ CJS_Return Document::mailDoc(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_author(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_author(CJS_Runtime* pRuntime) {
   return getPropertyInternal(pRuntime, "Author");
 }
 
-CJS_Return Document::set_author(CJS_Runtime* pRuntime,
-                                v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_author(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp) {
   return setPropertyInternal(pRuntime, vp, "Author");
 }
 
-CJS_Return Document::get_info(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_info(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -711,12 +713,13 @@ CJS_Return Document::get_info(CJS_Runtime* pRuntime) {
   return CJS_Return(pObj);
 }
 
-CJS_Return Document::set_info(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_info(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::getPropertyInternal(CJS_Runtime* pRuntime,
-                                         const ByteString& propName) {
+CJS_Return CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
+                                             const ByteString& propName) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -727,9 +730,9 @@ CJS_Return Document::getPropertyInternal(CJS_Runtime* pRuntime,
       pRuntime->NewString(pDictionary->GetUnicodeTextFor(propName).c_str()));
 }
 
-CJS_Return Document::setPropertyInternal(CJS_Runtime* pRuntime,
-                                         v8::Local<v8::Value> vp,
-                                         const ByteString& propName) {
+CJS_Return CJS_Document::setPropertyInternal(CJS_Runtime* pRuntime,
+                                             v8::Local<v8::Value> vp,
+                                             const ByteString& propName) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -747,31 +750,32 @@ CJS_Return Document::setPropertyInternal(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_creation_date(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_creation_date(CJS_Runtime* pRuntime) {
   return getPropertyInternal(pRuntime, "CreationDate");
 }
 
-CJS_Return Document::set_creation_date(CJS_Runtime* pRuntime,
-                                       v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_creation_date(CJS_Runtime* pRuntime,
+                                           v8::Local<v8::Value> vp) {
   return setPropertyInternal(pRuntime, vp, "CreationDate");
 }
 
-CJS_Return Document::get_creator(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_creator(CJS_Runtime* pRuntime) {
   return getPropertyInternal(pRuntime, "Creator");
 }
 
-CJS_Return Document::set_creator(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_creator(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
   return setPropertyInternal(pRuntime, vp, "Creator");
 }
 
-CJS_Return Document::get_delay(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_delay(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(pRuntime->NewBoolean(m_bDelay));
 }
 
-CJS_Return Document::set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_delay(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   if (!m_pFormFillEnv->GetPermissions(FPDFPERM_MODIFY))
@@ -786,129 +790,131 @@ CJS_Return Document::set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   std::list<std::unique_ptr<CJS_DelayData>> DelayDataToProcess;
   DelayDataToProcess.swap(m_DelayData);
   for (const auto& pData : DelayDataToProcess)
-    Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
+    CJS_Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
 
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_keywords(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_keywords(CJS_Runtime* pRuntime) {
   return getPropertyInternal(pRuntime, "Keywords");
 }
 
-CJS_Return Document::set_keywords(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_keywords(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return setPropertyInternal(pRuntime, vp, "Keywords");
 }
 
-CJS_Return Document::get_mod_date(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_mod_date(CJS_Runtime* pRuntime) {
   return getPropertyInternal(pRuntime, "ModDate");
 }
 
-CJS_Return Document::set_mod_date(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_mod_date(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return setPropertyInternal(pRuntime, vp, "ModDate");
 }
 
-CJS_Return Document::get_producer(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_producer(CJS_Runtime* pRuntime) {
   return getPropertyInternal(pRuntime, "Producer");
 }
 
-CJS_Return Document::set_producer(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_producer(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return setPropertyInternal(pRuntime, vp, "Producer");
 }
 
-CJS_Return Document::get_subject(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_subject(CJS_Runtime* pRuntime) {
   return getPropertyInternal(pRuntime, "Subject");
 }
 
-CJS_Return Document::set_subject(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_subject(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
   return setPropertyInternal(pRuntime, vp, "Subject");
 }
 
-CJS_Return Document::get_title(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_title(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument())
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return getPropertyInternal(pRuntime, "Title");
 }
 
-CJS_Return Document::set_title(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_title(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
   if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument())
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return setPropertyInternal(pRuntime, vp, "Title");
 }
 
-CJS_Return Document::get_num_pages(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_num_pages(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(pRuntime->NewNumber(m_pFormFillEnv->GetPageCount()));
 }
 
-CJS_Return Document::set_num_pages(CJS_Runtime* pRuntime,
-                                   v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_num_pages(CJS_Runtime* pRuntime,
+                                       v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::get_external(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_external(CJS_Runtime* pRuntime) {
   // In Chrome case, should always return true.
   return CJS_Return(pRuntime->NewBoolean(true));
 }
 
-CJS_Return Document::set_external(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_external(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_filesize(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_filesize(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewNumber(0));
 }
 
-CJS_Return Document::set_filesize(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_filesize(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::get_mouse_x(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_mouse_x(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_mouse_x(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_mouse_x(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_mouse_y(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_mouse_y(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_mouse_y(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_mouse_y(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_URL(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_URL(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(
       pRuntime->NewString(m_pFormFillEnv->JS_docGetFilePath().c_str()));
 }
 
-CJS_Return Document::set_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_URL(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::get_base_URL(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_base_URL(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewString(m_cwBaseURL.c_str()));
 }
 
-CJS_Return Document::set_base_URL(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_base_URL(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   m_cwBaseURL = pRuntime->ToWideString(vp);
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_calculate(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_calculate(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -916,8 +922,8 @@ CJS_Return Document::get_calculate(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewBoolean(!!pInterForm->IsCalculateEnabled()));
 }
 
-CJS_Return Document::set_calculate(CJS_Runtime* pRuntime,
-                                   v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_calculate(CJS_Runtime* pRuntime,
+                                       v8::Local<v8::Value> vp) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -926,7 +932,7 @@ CJS_Return Document::set_calculate(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_document_file_name(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_document_file_name(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -944,58 +950,62 @@ CJS_Return Document::get_document_file_name(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewString(L""));
 }
 
-CJS_Return Document::set_document_file_name(CJS_Runtime* pRuntime,
-                                            v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_document_file_name(CJS_Runtime* pRuntime,
+                                                v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::get_path(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_path(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(pRuntime->NewString(
-      app::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()).c_str()));
+      CJS_App::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()).c_str()));
 }
 
-CJS_Return Document::set_path(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_path(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::get_page_window_rect(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_page_window_rect(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_page_window_rect(CJS_Runtime* pRuntime,
-                                          v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_page_window_rect(CJS_Runtime* pRuntime,
+                                              v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_layout(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_layout(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_layout(CJS_Runtime* pRuntime,
-                                v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_layout(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::addLink(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return(true);
-}
-
-CJS_Return Document::closeDoc(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return(true);
-}
-
-CJS_Return Document::getPageBox(
+CJS_Return CJS_Document::addLink(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::getAnnot(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::closeDoc(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
+
+CJS_Return CJS_Document::getPageBox(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  return CJS_Return(true);
+}
+
+CJS_Return CJS_Document::getAnnot(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   if (!m_pFormFillEnv)
@@ -1030,13 +1040,11 @@ CJS_Return Document::getAnnot(CJS_Runtime* pRuntime,
   if (!pJS_Annot)
     return CJS_Return(false);
 
-  Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
-  pAnnot->SetSDKAnnot(pSDKBAAnnot);
-
+  pJS_Annot->SetSDKAnnot(pSDKBAAnnot);
   return CJS_Return(pJS_Annot->ToV8Object());
 }
 
-CJS_Return Document::getAnnots(
+CJS_Return CJS_Document::getAnnots(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
@@ -1064,8 +1072,7 @@ CJS_Return Document::getAnnots(
 
       CJS_Annot* pJS_Annot =
           static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
-      Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
-      pAnnot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
+      pJS_Annot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
       pRuntime->PutArrayElement(
           annots, i,
           pJS_Annot ? v8::Local<v8::Value>(pJS_Annot->ToV8Object())
@@ -1075,35 +1082,39 @@ CJS_Return Document::getAnnots(
   return CJS_Return(annots);
 }
 
-CJS_Return Document::getAnnot3D(
+CJS_Return CJS_Document::getAnnot3D(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(pRuntime->NewUndefined());
 }
 
-CJS_Return Document::getAnnots3D(
+CJS_Return CJS_Document::getAnnots3D(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::getOCGs(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::getOCGs(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::getLinks(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::getLinks(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
-bool Document::IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect) {
+bool CJS_Document::IsEnclosedInRect(CFX_FloatRect rect,
+                                    CFX_FloatRect LinkRect) {
   return (rect.left <= LinkRect.left && rect.top <= LinkRect.top &&
           rect.right >= LinkRect.right && rect.bottom >= LinkRect.bottom);
 }
 
-CJS_Return Document::addIcon(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::addIcon(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -1117,14 +1128,14 @@ CJS_Return Document::addIcon(CJS_Runtime* pRuntime,
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(params[1]);
   CJS_Object* obj = pRuntime->GetObjectPrivate(pObj);
-  if (!obj->GetEmbedObject())
+  if (!obj)
     return CJS_Return(JSGetStringFromID(JSMessage::kTypeError));
 
   m_IconNames.push_back(swIconName);
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_icons(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_icons(CJS_Runtime* pRuntime) {
   if (m_IconNames.empty())
     return CJS_Return(pRuntime->NewUndefined());
 
@@ -1138,8 +1149,7 @@ CJS_Return Document::get_icons(CJS_Runtime* pRuntime) {
 
     CJS_Icon* pJS_Icon =
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-    Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
-    pIcon->SetIconName(name);
+    pJS_Icon->SetIconName(name);
     pRuntime->PutArrayElement(Icons, i++,
                               pJS_Icon
                                   ? v8::Local<v8::Value>(pJS_Icon->ToV8Object())
@@ -1148,12 +1158,14 @@ CJS_Return Document::get_icons(CJS_Runtime* pRuntime) {
   return CJS_Return(Icons);
 }
 
-CJS_Return Document::set_icons(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_icons(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
 }
 
-CJS_Return Document::getIcon(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::getIcon(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -1171,34 +1183,34 @@ CJS_Return Document::getIcon(CJS_Runtime* pRuntime,
   if (!pJS_Icon)
     return CJS_Return(false);
 
-  Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
-  pIcon->SetIconName(*it);
+  pJS_Icon->SetIconName(*it);
   return CJS_Return(pJS_Icon->ToV8Object());
 }
 
-CJS_Return Document::removeIcon(
+CJS_Return CJS_Document::removeIcon(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, no supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::createDataObject(
+CJS_Return CJS_Document::createDataObject(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not implemented.
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_media(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_media(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_media(CJS_Runtime* pRuntime,
+                                   v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::calculateNow(
+CJS_Return CJS_Document::calculateNow(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
@@ -1214,16 +1226,16 @@ CJS_Return Document::calculateNow(
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_collab(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_collab(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_collab(CJS_Runtime* pRuntime,
-                                v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_collab(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::getPageNthWord(
+CJS_Return CJS_Document::getPageNthWord(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
@@ -1270,7 +1282,7 @@ CJS_Return Document::getPageNthWord(
   return CJS_Return(pRuntime->NewString(swRet.c_str()));
 }
 
-CJS_Return Document::getPageNthWordQuads(
+CJS_Return CJS_Document::getPageNthWordQuads(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
@@ -1280,7 +1292,7 @@ CJS_Return Document::getPageNthWordQuads(
   return CJS_Return(false);
 }
 
-CJS_Return Document::getPageNumWords(
+CJS_Return CJS_Document::getPageNumWords(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!m_pFormFillEnv)
@@ -1309,7 +1321,7 @@ CJS_Return Document::getPageNumWords(
   return CJS_Return(pRuntime->NewNumber(nWords));
 }
 
-CJS_Return Document::getPrintParams(
+CJS_Return CJS_Document::getPrintParams(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   v8::Local<v8::Object> pRetObj =
@@ -1324,7 +1336,7 @@ CJS_Return Document::getPrintParams(
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 
-int Document::CountWords(CPDF_TextObject* pTextObj) {
+int CJS_Document::CountWords(CPDF_TextObject* pTextObj) {
   if (!pTextObj)
     return 0;
 
@@ -1358,7 +1370,8 @@ int Document::CountWords(CPDF_TextObject* pTextObj) {
   return nWords;
 }
 
-WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex) {
+WideString CJS_Document::GetObjWordStr(CPDF_TextObject* pTextObj,
+                                       int nWordIndex) {
   WideString swRet;
 
   CPDF_Font* pFont = pTextObj->GetFont();
@@ -1393,58 +1406,60 @@ WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex) {
   return swRet;
 }
 
-CJS_Return Document::get_zoom(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_zoom(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_zoom(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_zoom(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::get_zoom_type(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Document::get_zoom_type(CJS_Runtime* pRuntime) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::set_zoom_type(CJS_Runtime* pRuntime,
-                                   v8::Local<v8::Value> vp) {
+CJS_Return CJS_Document::set_zoom_type(CJS_Runtime* pRuntime,
+                                       v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Document::deletePages(
+CJS_Return CJS_Document::deletePages(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::extractPages(
+CJS_Return CJS_Document::extractPages(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::insertPages(
+CJS_Return CJS_Document::insertPages(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::replacePages(
+CJS_Return CJS_Document::replacePages(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::getURL(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Document::getURL(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
   return CJS_Return(true);
 }
 
-CJS_Return Document::gotoNamedDest(
+CJS_Return CJS_Document::gotoNamedDest(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
@@ -1477,11 +1492,12 @@ CJS_Return Document::gotoNamedDest(
   return CJS_Return(true);
 }
 
-void Document::AddDelayData(std::unique_ptr<CJS_DelayData> pData) {
+void CJS_Document::AddDelayData(std::unique_ptr<CJS_DelayData> pData) {
   m_DelayData.push_back(std::move(pData));
 }
 
-void Document::DoFieldDelay(const WideString& sFieldName, int nControlIndex) {
+void CJS_Document::DoFieldDelay(const WideString& sFieldName,
+                                int nControlIndex) {
   std::vector<std::unique_ptr<CJS_DelayData>> delayed_data;
   auto iter = m_DelayData.begin();
   while (iter != m_DelayData.end()) {
@@ -1494,9 +1510,5 @@ void Document::DoFieldDelay(const WideString& sFieldName, int nControlIndex) {
   }
 
   for (const auto& pData : delayed_data)
-    Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
-}
-
-CJS_Document* Document::GetCJSDoc() const {
-  return static_cast<CJS_Document*>(m_pJSObject.Get());
+    CJS_Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
 }

@@ -72,7 +72,7 @@ void JSPropGetter(const char* prop_name_string,
   if (!pJSObj)
     return;
 
-  C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
+  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
@@ -99,7 +99,7 @@ void JSPropSetter(const char* prop_name_string,
   if (!pJSObj)
     return;
 
-  C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
+  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime, value);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
@@ -126,7 +126,7 @@ void JSMethod(const char* method_name_string,
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
     parameters.push_back(info[i]);
 
-  C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
+  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime, parameters);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,
@@ -143,20 +143,20 @@ void JSMethod(const char* method_name_string,
       v8::Local<v8::String> property,                             \
       const v8::PropertyCallbackInfo<v8::Value>& info) {          \
     JSPropGetter<class_name, &class_name::get_##prop_name>(       \
-        #err_name, #class_name, property, info);                  \
+        #err_name, class_name::kName, property, info);            \
   }                                                               \
   static void set_##prop_name##_static(                           \
       v8::Local<v8::String> property, v8::Local<v8::Value> value, \
       const v8::PropertyCallbackInfo<void>& info) {               \
     JSPropSetter<class_name, &class_name::set_##prop_name>(       \
-        #err_name, #class_name, property, value, info);           \
+        #err_name, class_name::kName, property, value, info);     \
   }
 
-#define JS_STATIC_METHOD(method_name, class_name)                             \
-  static void method_name##_static(                                           \
-      const v8::FunctionCallbackInfo<v8::Value>& info) {                      \
-    JSMethod<class_name, &class_name::method_name>(#method_name, #class_name, \
-                                                   info);                     \
+#define JS_STATIC_METHOD(method_name, class_name)                            \
+  static void method_name##_static(                                          \
+      const v8::FunctionCallbackInfo<v8::Value>& info) {                     \
+    JSMethod<class_name, &class_name::method_name>(#method_name,             \
+                                                   class_name::kName, info); \
   }
 
 #endif  // FXJS_JS_DEFINE_H_

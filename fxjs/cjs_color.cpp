@@ -32,22 +32,19 @@ const JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
                                                {"equal", equal_static}};
 
 int CJS_Color::ObjDefnID = -1;
+const char CJS_Color::kName[] = "color";
 
 // static
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("color", FXJSOBJTYPE_STATIC,
+  ObjDefnID = pEngine->DefineObj(CJS_Color::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Color>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Color::CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<color>(this);
-}
-
 // static
-v8::Local<v8::Array> color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
-                                                   const CFX_Color& color) {
+v8::Local<v8::Array> CJS_Color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
+                                                       const CFX_Color& color) {
   v8::Local<v8::Array> array;
   switch (color.nColorType) {
     case CFX_Color::kTransparent:
@@ -79,8 +76,8 @@ v8::Local<v8::Array> color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
 }
 
 // static
-CFX_Color color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
-                                        v8::Local<v8::Array> array) {
+CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
+                                            v8::Local<v8::Array> array) {
   int nArrayLen = pRuntime->GetArrayLength(array);
   if (nArrayLen < 1)
     return CFX_Color();
@@ -124,132 +121,137 @@ CFX_Color color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
   return CFX_Color();
 }
 
-color::color(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {
-  m_crTransparent = CFX_Color(CFX_Color::kTransparent);
-  m_crBlack = CFX_Color(CFX_Color::kGray, 0);
-  m_crWhite = CFX_Color(CFX_Color::kGray, 1);
-  m_crRed = CFX_Color(CFX_Color::kRGB, 1, 0, 0);
-  m_crGreen = CFX_Color(CFX_Color::kRGB, 0, 1, 0);
-  m_crBlue = CFX_Color(CFX_Color::kRGB, 0, 0, 1);
-  m_crCyan = CFX_Color(CFX_Color::kCMYK, 1, 0, 0, 0);
-  m_crMagenta = CFX_Color(CFX_Color::kCMYK, 0, 1, 0, 0);
-  m_crYellow = CFX_Color(CFX_Color::kCMYK, 0, 0, 1, 0);
-  m_crDKGray = CFX_Color(CFX_Color::kGray, 0.25);
-  m_crGray = CFX_Color(CFX_Color::kGray, 0.5);
-  m_crLTGray = CFX_Color(CFX_Color::kGray, 0.75);
-}
+CJS_Color::CJS_Color(v8::Local<v8::Object> pObject)
+    : CJS_Object(pObject),
+      m_crTransparent(CFX_Color::kTransparent),
+      m_crBlack(CFX_Color::kGray, 0),
+      m_crWhite(CFX_Color::kGray, 1),
+      m_crRed(CFX_Color::kRGB, 1, 0, 0),
+      m_crGreen(CFX_Color::kRGB, 0, 1, 0),
+      m_crBlue(CFX_Color::kRGB, 0, 0, 1),
+      m_crCyan(CFX_Color::kCMYK, 1, 0, 0, 0),
+      m_crMagenta(CFX_Color::kCMYK, 0, 1, 0, 0),
+      m_crYellow(CFX_Color::kCMYK, 0, 0, 1, 0),
+      m_crDKGray(CFX_Color::kGray, 0.25),
+      m_crGray(CFX_Color::kGray, 0.5),
+      m_crLTGray(CFX_Color::kGray, 0.75) {}
 
-color::~color() {}
+CJS_Color::~CJS_Color() = default;
 
-CJS_Return color::get_transparent(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_transparent(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crTransparent);
 }
 
-CJS_Return color::set_transparent(CJS_Runtime* pRuntime,
-                                  v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_transparent(CJS_Runtime* pRuntime,
+                                      v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crTransparent);
 }
 
-CJS_Return color::get_black(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_black(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crBlack);
 }
 
-CJS_Return color::set_black(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_black(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crBlack);
 }
 
-CJS_Return color::get_white(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_white(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crWhite);
 }
 
-CJS_Return color::set_white(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_white(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crWhite);
 }
 
-CJS_Return color::get_red(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_red(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crRed);
 }
 
-CJS_Return color::set_red(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_red(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crRed);
 }
 
-CJS_Return color::get_green(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_green(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crGreen);
 }
 
-CJS_Return color::set_green(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_green(CJS_Runtime* pRuntime,
+                                v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crGreen);
 }
 
-CJS_Return color::get_blue(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_blue(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crBlue);
 }
 
-CJS_Return color::set_blue(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_blue(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crBlue);
 }
 
-CJS_Return color::get_cyan(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_cyan(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crCyan);
 }
 
-CJS_Return color::set_cyan(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_cyan(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crCyan);
 }
 
-CJS_Return color::get_magenta(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_magenta(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crMagenta);
 }
 
-CJS_Return color::set_magenta(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_magenta(CJS_Runtime* pRuntime,
+                                  v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crMagenta);
 }
 
-CJS_Return color::get_yellow(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_yellow(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crYellow);
 }
 
-CJS_Return color::set_yellow(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_yellow(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crYellow);
 }
 
-CJS_Return color::get_dark_gray(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_dark_gray(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crDKGray);
 }
 
-CJS_Return color::set_dark_gray(CJS_Runtime* pRuntime,
-                                v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_dark_gray(CJS_Runtime* pRuntime,
+                                    v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crDKGray);
 }
 
-CJS_Return color::get_gray(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_gray(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crGray);
 }
 
-CJS_Return color::set_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crGray);
 }
 
-CJS_Return color::get_light_gray(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Color::get_light_gray(CJS_Runtime* pRuntime) {
   return GetPropertyHelper(pRuntime, &m_crLTGray);
 }
 
-CJS_Return color::set_light_gray(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
+CJS_Return CJS_Color::set_light_gray(CJS_Runtime* pRuntime,
+                                     v8::Local<v8::Value> vp) {
   return SetPropertyHelper(pRuntime, vp, &m_crLTGray);
 }
 
-CJS_Return color::GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* var) {
+CJS_Return CJS_Color::GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* var) {
   v8::Local<v8::Value> array = ConvertPWLColorToArray(pRuntime, *var);
   if (array.IsEmpty())
     return CJS_Return(pRuntime->NewArray());
   return CJS_Return(array);
 }
 
-CJS_Return color::SetPropertyHelper(CJS_Runtime* pRuntime,
-                                    v8::Local<v8::Value> vp,
-                                    CFX_Color* var) {
+CJS_Return CJS_Color::SetPropertyHelper(CJS_Runtime* pRuntime,
+                                        v8::Local<v8::Value> vp,
+                                        CFX_Color* var) {
   if (vp.IsEmpty() || !vp->IsArray())
     return CJS_Return(false);
 
@@ -257,8 +259,8 @@ CJS_Return color::SetPropertyHelper(CJS_Runtime* pRuntime,
   return CJS_Return(true);
 }
 
-CJS_Return color::convert(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Color::convert(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
   int iSize = params.size();
   if (iSize < 2)
     return CJS_Return(false);
@@ -286,8 +288,8 @@ CJS_Return color::convert(CJS_Runtime* pRuntime,
   return CJS_Return(array);
 }
 
-CJS_Return color::equal(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Color::equal(CJS_Runtime* pRuntime,
+                            const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
     return CJS_Return(false);
   if (params[0].IsEmpty() || !params[0]->IsArray() || params[1].IsEmpty() ||

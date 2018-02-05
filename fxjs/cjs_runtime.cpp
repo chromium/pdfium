@@ -195,11 +195,7 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   if (!pJSDocument)
     return;
 
-  Document* pDocument = static_cast<Document*>(pJSDocument->GetEmbedObject());
-  if (!pDocument)
-    return;
-
-  pDocument->SetFormFillEnv(m_pFormFillEnv.Get());
+  pJSDocument->SetFormFillEnv(m_pFormFillEnv.Get());
 }
 
 CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {

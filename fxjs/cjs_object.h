@@ -11,7 +11,6 @@
 #include <utility>
 
 #include "fpdfsdk/fsdk_define.h"
-#include "fxjs/cjs_embedobj.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/fxjs_v8.h"
 
@@ -56,13 +55,9 @@ class CJS_Object {
   virtual void InitInstance(IJS_Runtime* pIRuntime);
 
   v8::Local<v8::Object> ToV8Object() { return m_pV8Object.Get(m_pIsolate); }
-
-  CJS_EmbedObj* GetEmbedObject() const { return m_pEmbedObj.get(); }
-
   v8::Isolate* GetIsolate() const { return m_pIsolate; }
 
  protected:
-  std::unique_ptr<CJS_EmbedObj> m_pEmbedObj;
   v8::Global<v8::Object> m_pV8Object;
   v8::Isolate* m_pIsolate;
 };

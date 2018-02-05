@@ -22,15 +22,10 @@ void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine) {
 }
 
 CJS_TimerObj::CJS_TimerObj(v8::Local<v8::Object> pObject)
-    : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<TimerObj>(this);
-}
+    : CJS_Object(pObject), m_nTimerID(0) {}
 
-TimerObj::TimerObj(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_nTimerID(0) {}
+CJS_TimerObj::~CJS_TimerObj() = default;
 
-TimerObj::~TimerObj() = default;
-
-void TimerObj::SetTimer(GlobalTimer* pTimer) {
+void CJS_TimerObj::SetTimer(GlobalTimer* pTimer) {
   m_nTimerID = pTimer->GetTimerID();
 }

@@ -13,10 +13,10 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
 class CJS_EventContext;
+class CJS_Field;
 class CPDFSDK_Annot;
 class CPDF_Bookmark;
 class CPDF_FormField;
-class Field;
 
 enum JS_EVENT_T {
   JET_UNKNOWN,
@@ -158,8 +158,8 @@ class CJS_EventHandler {
   void SetSelEnd(int value);
   void SetSelStart(int value);
   bool Shift() const;
-  Field* Source();
-  Field* Target_Field();
+  CJS_Field* Source();
+  CJS_Field* Target_Field();
   WideString& Value();
   bool WillCommit() const;
   const WideString& TargetName() const;

@@ -7,7 +7,14 @@
 #ifndef FXJS_CJS_GLOBAL_H_
 #define FXJS_CJS_GLOBAL_H_
 
+#include <map>
+#include <memory>
+#include <vector>
+
 #include "fxjs/JS_Define.h"
+#include "fxjs/cjs_keyvalue.h"
+
+class CJS_GlobalData;
 
 class CJS_Global : public CJS_Object {
  public:
@@ -29,14 +36,58 @@ class CJS_Global : public CJS_Object {
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
   explicit CJS_Global(v8::Local<v8::Object> pObject);
-  ~CJS_Global() override = default;
+  ~CJS_Global() override;
 
   // CJS_Object
   void InitInstance(IJS_Runtime* pIRuntime) override;
 
+  CJS_Return DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
+  void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+
+  CJS_Return setPersistent(CJS_Runtime* pRuntime,
+                           const std::vector<v8::Local<v8::Value>>& params);
+  CJS_Return QueryProperty(const wchar_t* propname);
+  CJS_Return GetProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
+  CJS_Return SetProperty(CJS_Runtime* pRuntime,
+                         const wchar_t* propname,
+                         v8::Local<v8::Value> vp);
+
  private:
+  struct JSGlobalData {
+    JSGlobalData();
+    ~JSGlobalData();
+
+    JS_GlobalDataType nType;
+    double dData;
+    bool bData;
+    ByteString sData;
+    v8::Global<v8::Object> pData;
+    bool bPersistent;
+    bool bDeleted;
+  };
+
   static int ObjDefnID;
   static const JSMethodSpec MethodSpecs[];
+
+  void UpdateGlobalPersistentVariables();
+  void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
+  void DestroyGlobalPersisitentVariables();
+  CJS_Return SetGlobalVariables(const ByteString& propname,
+                                JS_GlobalDataType nType,
+                                double dData,
+                                bool bData,
+                                const ByteString& sData,
+                                v8::Local<v8::Object> pData,
+                                bool bDefaultPersistent);
+  void ObjectToArray(CJS_Runtime* pRuntime,
+                     v8::Local<v8::Object> pObj,
+                     CJS_GlobalVariableArray& array);
+  void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
+
+  std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
+  WideString m_sFilePath;
+  CJS_GlobalData* m_pGlobalData;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
 };
 
 #endif  // FXJS_CJS_GLOBAL_H_

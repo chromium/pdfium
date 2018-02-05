@@ -26,6 +26,8 @@ const JSPropertySpec CJS_Annot::PropertySpecs[] = {
 
 int CJS_Annot::ObjDefnID = -1;
 
+const char CJS_Annot::kName[] = "Annot";
+
 // static
 int CJS_Annot::GetObjDefnID() {
   return ObjDefnID;
@@ -33,20 +35,16 @@ int CJS_Annot::GetObjDefnID() {
 
 // static
 void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("Annot", FXJSOBJTYPE_DYNAMIC,
+  ObjDefnID = pEngine->DefineObj(CJS_Annot::kName, FXJSOBJTYPE_DYNAMIC,
                                  JSConstructor<CJS_Annot>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
-CJS_Annot::CJS_Annot(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<Annot>(this);
-}
+CJS_Annot::CJS_Annot(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
 
-Annot::Annot(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
+CJS_Annot::~CJS_Annot() = default;
 
-Annot::~Annot() = default;
-
-CJS_Return Annot::get_hidden(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Annot::get_hidden(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
@@ -55,7 +53,8 @@ CJS_Return Annot::get_hidden(CJS_Runtime* pRuntime) {
       CPDF_Annot::IsAnnotationHidden(pPDFAnnot->GetAnnotDict())));
 }
 
-CJS_Return Annot::set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Annot::set_hidden(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
   // May invalidate m_pAnnot.
   bool bHidden = pRuntime->ToBoolean(vp);
   if (!m_pAnnot)
@@ -78,14 +77,14 @@ CJS_Return Annot::set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Annot::get_name(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Annot::get_name(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(
       pRuntime->NewString(ToBAAnnot(m_pAnnot.Get())->GetAnnotName().c_str()));
 }
 
-CJS_Return Annot::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Annot::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   // May invalidate m_pAnnot.
   WideString annotName = pRuntime->ToWideString(vp);
   if (!m_pAnnot)
@@ -95,7 +94,7 @@ CJS_Return Annot::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(true);
 }
 
-CJS_Return Annot::get_type(CJS_Runtime* pRuntime) {
+CJS_Return CJS_Annot::get_type(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return CJS_Return(pRuntime->NewString(
@@ -105,10 +104,6 @@ CJS_Return Annot::get_type(CJS_Runtime* pRuntime) {
           .c_str()));
 }
 
-CJS_Return Annot::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+CJS_Return CJS_Annot::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Return(JSGetStringFromID(JSMessage::kReadOnlyError));
-}
-
-void Annot::SetSDKAnnot(CPDFSDK_BAAnnot* annot) {
-  m_pAnnot.Reset(annot);
 }

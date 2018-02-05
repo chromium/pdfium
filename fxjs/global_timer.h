@@ -13,7 +13,7 @@
 
 class GlobalTimer {
  public:
-  GlobalTimer(app* pObj,
+  GlobalTimer(CJS_App* pObj,
               CPDFSDK_FormFillEnvironment* pFormFillEnv,
               CJS_Runtime* pRuntime,
               int nType,
@@ -36,7 +36,7 @@ class GlobalTimer {
   static TimerMap* GetGlobalTimerMap();
 
   uint32_t m_nTimerID;
-  app* const m_pEmbedObj;
+  CJS_App* const m_pEmbedApp;
   bool m_bProcessing;
 
   // data

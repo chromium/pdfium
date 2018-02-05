@@ -19,38 +19,36 @@ const JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
                                                  {"show", show_static}};
 
 int CJS_Console::ObjDefnID = -1;
+const char CJS_Console::kName[] = "console";
 
 // static
 void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("console", FXJSOBJTYPE_STATIC,
+  ObjDefnID = pEngine->DefineObj(CJS_Console::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Console>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Console::CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {
-  m_pEmbedObj = pdfium::MakeUnique<console>(this);
-}
+CJS_Console::CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
 
-console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
+CJS_Console::~CJS_Console() = default;
 
-console::~console() = default;
-
-CJS_Return console::clear(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Console::clear(CJS_Runtime* pRuntime,
+                              const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
-CJS_Return console::hide(CJS_Runtime* pRuntime,
-                         const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Console::hide(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
-CJS_Return console::println(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Console::println(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(params.size() > 0);
 }
 
-CJS_Return console::show(CJS_Runtime* pRuntime,
-                         const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Return CJS_Console::show(CJS_Runtime* pRuntime,
+                             const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }

@@ -6,7 +6,7 @@
 
 #include "fxjs/global_timer.h"
 
-GlobalTimer::GlobalTimer(app* pObj,
+GlobalTimer::GlobalTimer(CJS_App* pObj,
                          CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          CJS_Runtime* pRuntime,
                          int nType,
@@ -14,7 +14,7 @@ GlobalTimer::GlobalTimer(app* pObj,
                          uint32_t dwElapse,
                          uint32_t dwTimeOut)
     : m_nTimerID(0),
-      m_pEmbedObj(pObj),
+      m_pEmbedApp(pObj),
       m_bProcessing(false),
       m_nType(nType),
       m_dwTimeOut(dwTimeOut),
@@ -48,8 +48,8 @@ void GlobalTimer::Trigger(int nTimerID) {
     return;
 
   pTimer->m_bProcessing = true;
-  if (pTimer->m_pEmbedObj)
-    pTimer->m_pEmbedObj->TimerProc(pTimer);
+  if (pTimer->m_pEmbedApp)
+    pTimer->m_pEmbedApp->TimerProc(pTimer);
 
   // Timer proc may have destroyed timer, find it again.
   it = GetGlobalTimerMap()->find(nTimerID);
@@ -59,7 +59,7 @@ void GlobalTimer::Trigger(int nTimerID) {
   pTimer = it->second;
   pTimer->m_bProcessing = false;
   if (pTimer->IsOneShot())
-    pTimer->m_pEmbedObj->CancelProc(pTimer);
+    pTimer->m_pEmbedApp->CancelProc(pTimer);
 }
 
 // static
@@ -69,7 +69,7 @@ void GlobalTimer::Cancel(int nTimerID) {
     return;
 
   GlobalTimer* pTimer = it->second;
-  pTimer->m_pEmbedObj->CancelProc(pTimer);
+  pTimer->m_pEmbedApp->CancelProc(pTimer);
 }
 
 // static

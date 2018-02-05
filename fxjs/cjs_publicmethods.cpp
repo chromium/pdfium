@@ -936,7 +936,7 @@ CJS_Return CJS_PublicMethods::AFNumber_Format(
       Value += L')';
     }
     if (iNegStyle == 1 || iNegStyle == 3) {
-      if (Field* fTarget = pEvent->Target_Field()) {
+      if (CJS_Field* fTarget = pEvent->Target_Field()) {
         v8::Local<v8::Array> arColor = pRuntime->NewArray();
         pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString(L"RGB"));
         pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(1));
@@ -947,7 +947,7 @@ CJS_Return CJS_PublicMethods::AFNumber_Format(
     }
   } else {
     if (iNegStyle == 1 || iNegStyle == 3) {
-      if (Field* fTarget = pEvent->Target_Field()) {
+      if (CJS_Field* fTarget = pEvent->Target_Field()) {
         v8::Local<v8::Array> arColor = pRuntime->NewArray();
         pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString(L"RGB"));
         pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(0));
@@ -955,9 +955,10 @@ CJS_Return CJS_PublicMethods::AFNumber_Format(
         pRuntime->PutArrayElement(arColor, 3, pRuntime->NewNumber(0));
 
         CJS_Return result = fTarget->get_text_color(pRuntime);
-        CFX_Color crProp = color::ConvertArrayToPWLColor(
+        CFX_Color crProp = CJS_Color::ConvertArrayToPWLColor(
             pRuntime, pRuntime->ToArray(result.Return()));
-        CFX_Color crColor = color::ConvertArrayToPWLColor(pRuntime, arColor);
+        CFX_Color crColor =
+            CJS_Color::ConvertArrayToPWLColor(pRuntime, arColor);
         if (crColor != crProp)
           fTarget->set_text_color(pRuntime, arColor);
       }
@@ -1374,7 +1375,7 @@ CJS_Return CJS_PublicMethods::AFSpecial_Format(
       wsFormat = L"99999-9999";
       break;
     case 2:
-      if (util::printx(L"9999999999", wsSource).GetLength() >= 10)
+      if (CJS_Util::printx(L"9999999999", wsSource).GetLength() >= 10)
         wsFormat = L"(999) 999-9999";
       else
         wsFormat = L"999-9999";
@@ -1384,7 +1385,7 @@ CJS_Return CJS_PublicMethods::AFSpecial_Format(
       break;
   }
 
-  pEvent->Value() = util::printx(wsFormat, wsSource);
+  pEvent->Value() = CJS_Util::printx(wsFormat, wsSource);
   return CJS_Return(true);
 }
 

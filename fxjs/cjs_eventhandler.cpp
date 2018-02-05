@@ -587,7 +587,7 @@ bool CJS_EventHandler::Shift() const {
   return m_bShift;
 }
 
-Field* CJS_EventHandler::Source() {
+CJS_Field* CJS_EventHandler::Source() {
   CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
       pRuntime->NewFxDynamicObj(CJS_Document::GetObjDefnID());
@@ -604,17 +604,15 @@ Field* CJS_EventHandler::Source() {
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
 
-  Document* pDocument = static_cast<Document*>(pJSDocument->GetEmbedObject());
-  pDocument->SetFormFillEnv(m_pTargetFormFillEnv
-                                ? m_pTargetFormFillEnv.Get()
-                                : m_pJSEventContext->GetFormFillEnv());
+  pJSDocument->SetFormFillEnv(m_pTargetFormFillEnv
+                                  ? m_pTargetFormFillEnv.Get()
+                                  : m_pJSEventContext->GetFormFillEnv());
 
-  Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
-  pField->AttachField(pDocument, m_strSourceName);
-  return pField;
+  pJSField->AttachField(pJSDocument, m_strSourceName);
+  return pJSField;
 }
 
-Field* CJS_EventHandler::Target_Field() {
+CJS_Field* CJS_EventHandler::Target_Field() {
   CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
       pRuntime->NewFxDynamicObj(CJS_Document::GetObjDefnID());
@@ -631,14 +629,12 @@ Field* CJS_EventHandler::Target_Field() {
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
 
-  Document* pDocument = static_cast<Document*>(pJSDocument->GetEmbedObject());
-  pDocument->SetFormFillEnv(m_pTargetFormFillEnv
-                                ? m_pTargetFormFillEnv.Get()
-                                : m_pJSEventContext->GetFormFillEnv());
+  pJSDocument->SetFormFillEnv(m_pTargetFormFillEnv
+                                  ? m_pTargetFormFillEnv.Get()
+                                  : m_pJSEventContext->GetFormFillEnv());
 
-  Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
-  pField->AttachField(pDocument, m_strTargetName);
-  return pField;
+  pJSField->AttachField(pJSDocument, m_strTargetName);
+  return pJSField;
 }
 
 WideString& CJS_EventHandler::Value() {

@@ -18,10 +18,105 @@ class CPDF_TextObject;
 
 struct CJS_DelayData;
 
-class Document : public CJS_EmbedObj {
+class CJS_Document : public CJS_Object {
  public:
-  explicit Document(CJS_Object* pJSObject);
-  ~Document() override;
+  static int GetObjDefnID();
+  static void DefineJSObjects(CFXJS_Engine* pEngine);
+
+  explicit CJS_Document(v8::Local<v8::Object> pObject);
+  ~CJS_Document() override;
+
+  // CJS_Object
+  void InitInstance(IJS_Runtime* pIRuntime) override;
+
+  void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
+    return m_pFormFillEnv.Get();
+  }
+  void AddDelayData(std::unique_ptr<CJS_DelayData> pData);
+  void DoFieldDelay(const WideString& sFieldName, int nControlIndex);
+
+  JS_STATIC_PROP(ADBE, ADBE, CJS_Document);
+  JS_STATIC_PROP(author, author, CJS_Document);
+  JS_STATIC_PROP(baseURL, base_URL, CJS_Document);
+  JS_STATIC_PROP(bookmarkRoot, bookmark_root, CJS_Document);
+  JS_STATIC_PROP(calculate, calculate, CJS_Document);
+  JS_STATIC_PROP(Collab, collab, CJS_Document);
+  JS_STATIC_PROP(creationDate, creation_date, CJS_Document);
+  JS_STATIC_PROP(creator, creator, CJS_Document);
+  JS_STATIC_PROP(delay, delay, CJS_Document);
+  JS_STATIC_PROP(dirty, dirty, CJS_Document);
+  JS_STATIC_PROP(documentFileName, document_file_name, CJS_Document);
+  JS_STATIC_PROP(external, external, CJS_Document);
+  JS_STATIC_PROP(filesize, filesize, CJS_Document);
+  JS_STATIC_PROP(icons, icons, CJS_Document);
+  JS_STATIC_PROP(info, info, CJS_Document);
+  JS_STATIC_PROP(keywords, keywords, CJS_Document);
+  JS_STATIC_PROP(layout, layout, CJS_Document);
+  JS_STATIC_PROP(media, media, CJS_Document);
+  JS_STATIC_PROP(modDate, mod_date, CJS_Document);
+  JS_STATIC_PROP(mouseX, mouse_x, CJS_Document);
+  JS_STATIC_PROP(mouseY, mouse_y, CJS_Document);
+  JS_STATIC_PROP(numFields, num_fields, CJS_Document);
+  JS_STATIC_PROP(numPages, num_pages, CJS_Document);
+  JS_STATIC_PROP(pageNum, page_num, CJS_Document);
+  JS_STATIC_PROP(pageWindowRect, page_window_rect, CJS_Document);
+  JS_STATIC_PROP(path, path, CJS_Document);
+  JS_STATIC_PROP(producer, producer, CJS_Document);
+  JS_STATIC_PROP(subject, subject, CJS_Document);
+  JS_STATIC_PROP(title, title, CJS_Document);
+  JS_STATIC_PROP(URL, URL, CJS_Document);
+  JS_STATIC_PROP(zoom, zoom, CJS_Document);
+  JS_STATIC_PROP(zoomType, zoom_type, CJS_Document);
+
+  JS_STATIC_METHOD(addAnnot, CJS_Document);
+  JS_STATIC_METHOD(addField, CJS_Document);
+  JS_STATIC_METHOD(addLink, CJS_Document);
+  JS_STATIC_METHOD(addIcon, CJS_Document);
+  JS_STATIC_METHOD(calculateNow, CJS_Document);
+  JS_STATIC_METHOD(closeDoc, CJS_Document);
+  JS_STATIC_METHOD(createDataObject, CJS_Document);
+  JS_STATIC_METHOD(deletePages, CJS_Document);
+  JS_STATIC_METHOD(exportAsText, CJS_Document);
+  JS_STATIC_METHOD(exportAsFDF, CJS_Document);
+  JS_STATIC_METHOD(exportAsXFDF, CJS_Document);
+  JS_STATIC_METHOD(extractPages, CJS_Document);
+  JS_STATIC_METHOD(getAnnot, CJS_Document);
+  JS_STATIC_METHOD(getAnnots, CJS_Document);
+  JS_STATIC_METHOD(getAnnot3D, CJS_Document);
+  JS_STATIC_METHOD(getAnnots3D, CJS_Document);
+  JS_STATIC_METHOD(getField, CJS_Document);
+  JS_STATIC_METHOD(getIcon, CJS_Document);
+  JS_STATIC_METHOD(getLinks, CJS_Document);
+  JS_STATIC_METHOD(getNthFieldName, CJS_Document);
+  JS_STATIC_METHOD(getOCGs, CJS_Document);
+  JS_STATIC_METHOD(getPageBox, CJS_Document);
+  JS_STATIC_METHOD(getPageNthWord, CJS_Document);
+  JS_STATIC_METHOD(getPageNthWordQuads, CJS_Document);
+  JS_STATIC_METHOD(getPageNumWords, CJS_Document);
+  JS_STATIC_METHOD(getPrintParams, CJS_Document);
+  JS_STATIC_METHOD(getURL, CJS_Document);
+  JS_STATIC_METHOD(gotoNamedDest, CJS_Document);
+  JS_STATIC_METHOD(importAnFDF, CJS_Document);
+  JS_STATIC_METHOD(importAnXFDF, CJS_Document);
+  JS_STATIC_METHOD(importTextData, CJS_Document);
+  JS_STATIC_METHOD(insertPages, CJS_Document);
+  JS_STATIC_METHOD(mailForm, CJS_Document);
+  JS_STATIC_METHOD(print, CJS_Document);
+  JS_STATIC_METHOD(removeField, CJS_Document);
+  JS_STATIC_METHOD(replacePages, CJS_Document);
+  JS_STATIC_METHOD(removeIcon, CJS_Document);
+  JS_STATIC_METHOD(resetForm, CJS_Document);
+  JS_STATIC_METHOD(saveAs, CJS_Document);
+  JS_STATIC_METHOD(submitForm, CJS_Document);
+  JS_STATIC_METHOD(syncAnnotScan, CJS_Document);
+  JS_STATIC_METHOD(mailDoc, CJS_Document);
+
+ private:
+  static int ObjDefnID;
+  static const char kName[];
+  static const JSPropertySpec PropertySpecs[];
+  static const JSMethodSpec MethodSpecs[];
 
   CJS_Return get_ADBE(CJS_Runtime* pRuntime);
   CJS_Return set_ADBE(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
@@ -207,15 +302,6 @@ class Document : public CJS_EmbedObj {
   CJS_Return removeIcon(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
 
-  void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
-    return m_pFormFillEnv.Get();
-  }
-  void AddDelayData(std::unique_ptr<CJS_DelayData> pData);
-  void DoFieldDelay(const WideString& sFieldName, int nControlIndex);
-  CJS_Document* GetCJSDoc() const;
-
- private:
   bool IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect);
   int CountWords(CPDF_TextObject* pTextObj);
   WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
@@ -232,99 +318,6 @@ class Document : public CJS_EmbedObj {
   // Needs to be a std::list for iterator stability.
   std::list<WideString> m_IconNames;
   bool m_bDelay;
-};
-
-class CJS_Document : public CJS_Object {
- public:
-  static int GetObjDefnID();
-  static void DefineJSObjects(CFXJS_Engine* pEngine);
-
-  explicit CJS_Document(v8::Local<v8::Object> pObject);
-  ~CJS_Document() override = default;
-
-  // CJS_Object
-  void InitInstance(IJS_Runtime* pIRuntime) override;
-
-  JS_STATIC_PROP(ADBE, ADBE, Document);
-  JS_STATIC_PROP(author, author, Document);
-  JS_STATIC_PROP(baseURL, base_URL, Document);
-  JS_STATIC_PROP(bookmarkRoot, bookmark_root, Document);
-  JS_STATIC_PROP(calculate, calculate, Document);
-  JS_STATIC_PROP(Collab, collab, Document);
-  JS_STATIC_PROP(creationDate, creation_date, Document);
-  JS_STATIC_PROP(creator, creator, Document);
-  JS_STATIC_PROP(delay, delay, Document);
-  JS_STATIC_PROP(dirty, dirty, Document);
-  JS_STATIC_PROP(documentFileName, document_file_name, Document);
-  JS_STATIC_PROP(external, external, Document);
-  JS_STATIC_PROP(filesize, filesize, Document);
-  JS_STATIC_PROP(icons, icons, Document);
-  JS_STATIC_PROP(info, info, Document);
-  JS_STATIC_PROP(keywords, keywords, Document);
-  JS_STATIC_PROP(layout, layout, Document);
-  JS_STATIC_PROP(media, media, Document);
-  JS_STATIC_PROP(modDate, mod_date, Document);
-  JS_STATIC_PROP(mouseX, mouse_x, Document);
-  JS_STATIC_PROP(mouseY, mouse_y, Document);
-  JS_STATIC_PROP(numFields, num_fields, Document);
-  JS_STATIC_PROP(numPages, num_pages, Document);
-  JS_STATIC_PROP(pageNum, page_num, Document);
-  JS_STATIC_PROP(pageWindowRect, page_window_rect, Document);
-  JS_STATIC_PROP(path, path, Document);
-  JS_STATIC_PROP(producer, producer, Document);
-  JS_STATIC_PROP(subject, subject, Document);
-  JS_STATIC_PROP(title, title, Document);
-  JS_STATIC_PROP(URL, URL, Document);
-  JS_STATIC_PROP(zoom, zoom, Document);
-  JS_STATIC_PROP(zoomType, zoom_type, Document);
-
-  JS_STATIC_METHOD(addAnnot, Document);
-  JS_STATIC_METHOD(addField, Document);
-  JS_STATIC_METHOD(addLink, Document);
-  JS_STATIC_METHOD(addIcon, Document);
-  JS_STATIC_METHOD(calculateNow, Document);
-  JS_STATIC_METHOD(closeDoc, Document);
-  JS_STATIC_METHOD(createDataObject, Document);
-  JS_STATIC_METHOD(deletePages, Document);
-  JS_STATIC_METHOD(exportAsText, Document);
-  JS_STATIC_METHOD(exportAsFDF, Document);
-  JS_STATIC_METHOD(exportAsXFDF, Document);
-  JS_STATIC_METHOD(extractPages, Document);
-  JS_STATIC_METHOD(getAnnot, Document);
-  JS_STATIC_METHOD(getAnnots, Document);
-  JS_STATIC_METHOD(getAnnot3D, Document);
-  JS_STATIC_METHOD(getAnnots3D, Document);
-  JS_STATIC_METHOD(getField, Document);
-  JS_STATIC_METHOD(getIcon, Document);
-  JS_STATIC_METHOD(getLinks, Document);
-  JS_STATIC_METHOD(getNthFieldName, Document);
-  JS_STATIC_METHOD(getOCGs, Document);
-  JS_STATIC_METHOD(getPageBox, Document);
-  JS_STATIC_METHOD(getPageNthWord, Document);
-  JS_STATIC_METHOD(getPageNthWordQuads, Document);
-  JS_STATIC_METHOD(getPageNumWords, Document);
-  JS_STATIC_METHOD(getPrintParams, Document);
-  JS_STATIC_METHOD(getURL, Document);
-  JS_STATIC_METHOD(gotoNamedDest, Document);
-  JS_STATIC_METHOD(importAnFDF, Document);
-  JS_STATIC_METHOD(importAnXFDF, Document);
-  JS_STATIC_METHOD(importTextData, Document);
-  JS_STATIC_METHOD(insertPages, Document);
-  JS_STATIC_METHOD(mailForm, Document);
-  JS_STATIC_METHOD(print, Document);
-  JS_STATIC_METHOD(removeField, Document);
-  JS_STATIC_METHOD(replacePages, Document);
-  JS_STATIC_METHOD(removeIcon, Document);
-  JS_STATIC_METHOD(resetForm, Document);
-  JS_STATIC_METHOD(saveAs, Document);
-  JS_STATIC_METHOD(submitForm, Document);
-  JS_STATIC_METHOD(syncAnnotScan, Document);
-  JS_STATIC_METHOD(mailDoc, Document);
-
- private:
-  static int ObjDefnID;
-  static const JSPropertySpec PropertySpecs[];
-  static const JSMethodSpec MethodSpecs[];
 };
 
 #endif  // FXJS_CJS_DOCUMENT_H_
