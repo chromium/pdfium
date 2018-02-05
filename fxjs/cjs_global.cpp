@@ -37,8 +37,7 @@ void JSSpecialPropQuery(const char*,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
@@ -57,8 +56,7 @@ void JSSpecialPropGet(const char* class_name,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
@@ -85,8 +83,7 @@ void JSSpecialPropPut(const char* class_name,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
@@ -108,8 +105,7 @@ void JSSpecialPropDel(const char* class_name,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
@@ -227,7 +223,7 @@ void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
 void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("global", FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Global, JSGlobalAlternate>,
-                                 JSDestructor<CJS_Global>);
+                                 JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
   DefineAllProperties(pEngine);
 }

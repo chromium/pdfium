@@ -39,8 +39,7 @@ int CJS_Event::ObjDefnID = -1;
 // static
 void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("event", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_Event, event>,
-                                 JSDestructor<CJS_Event>);
+                                 JSConstructor<CJS_Event, event>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 

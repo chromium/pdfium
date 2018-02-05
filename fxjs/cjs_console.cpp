@@ -22,9 +22,9 @@ int CJS_Console::ObjDefnID = -1;
 
 // static
 void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("console", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_Console, console>,
-                                 JSDestructor<CJS_Console>);
+  ObjDefnID =
+      pEngine->DefineObj("console", FXJSOBJTYPE_STATIC,
+                         JSConstructor<CJS_Console, console>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 

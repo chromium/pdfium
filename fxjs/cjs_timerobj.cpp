@@ -17,9 +17,9 @@ int CJS_TimerObj::GetObjDefnID() {
 
 // static
 void CJS_TimerObj::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID = pEngine->DefineObj("TimerObj", FXJSOBJTYPE_DYNAMIC,
-                                 JSConstructor<CJS_TimerObj, TimerObj>,
-                                 JSDestructor<CJS_TimerObj>);
+  ObjDefnID =
+      pEngine->DefineObj("TimerObj", FXJSOBJTYPE_DYNAMIC,
+                         JSConstructor<CJS_TimerObj, TimerObj>, JSDestructor);
 }
 
 TimerObj::TimerObj(CJS_Object* pJSObject)

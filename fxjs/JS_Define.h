@@ -7,6 +7,7 @@
 #ifndef FXJS_JS_DEFINE_H_
 #define FXJS_JS_DEFINE_H_
 
+#include <utility>
 #include <vector>
 
 #include "fxjs/cjs_object.h"
@@ -49,16 +50,14 @@ std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
 
 template <class T, class A>
 static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-  CJS_Object* pObj = new T(obj);
-  pObj->SetEmbedObject(pdfium::MakeUnique<A>(pObj));
-  pEngine->SetObjectPrivate(obj, pObj);
+  auto pObj = pdfium::MakeUnique<T>(obj);
+  pObj->SetEmbedObject(pdfium::MakeUnique<A>(pObj.get()));
   pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));
+  pEngine->SetObjectPrivate(obj, std::move(pObj));
 }
 
-template <class T>
-static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
-  delete static_cast<T*>(pEngine->GetObjectPrivate(obj));
-}
+// CJS_Object has vitual dtor, template not required.
+void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
 
 template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,
@@ -70,8 +69,7 @@ void JSPropGetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
@@ -98,8 +96,7 @@ void JSPropSetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
@@ -122,8 +119,7 @@ void JSMethod(const char* method_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 

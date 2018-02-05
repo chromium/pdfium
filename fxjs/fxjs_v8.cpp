@@ -6,9 +6,12 @@
 
 #include "fxjs/fxjs_v8.h"
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 #include "fxjs/cfxjse_runtimedata.h"
+#include "fxjs/cjs_object.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 
 // Keep this consistent with the values defined in gin/public/context_holder.h
@@ -25,8 +28,9 @@ static wchar_t kPerObjectDataTag[] = L"CFXJS_PerObjectData";
 
 class CFXJS_PerObjectData {
  public:
-  explicit CFXJS_PerObjectData(int nObjDefID)
-      : m_ObjDefID(nObjDefID), m_pPrivate(nullptr) {}
+  explicit CFXJS_PerObjectData(int nObjDefID) : m_ObjDefID(nObjDefID) {}
+
+  ~CFXJS_PerObjectData() = default;
 
   static void SetInObject(CFXJS_PerObjectData* pData,
                           v8::Local<v8::Object> pObj) {
@@ -48,7 +52,7 @@ class CFXJS_PerObjectData {
   }
 
   const int m_ObjDefID;
-  void* m_pPrivate;
+  std::unique_ptr<CJS_Object> m_pPrivate;
 };
 
 class CFXJS_ObjDefinition {
@@ -540,15 +544,16 @@ void CFXJS_Engine::Error(const WideString& message) {
   GetIsolate()->ThrowException(NewString(message.AsStringView()));
 }
 
-void CFXJS_Engine::SetObjectPrivate(v8::Local<v8::Object> pObj, void* p) {
+void CFXJS_Engine::SetObjectPrivate(v8::Local<v8::Object> pObj,
+                                    std::unique_ptr<CJS_Object> p) {
   CFXJS_PerObjectData* pPerObjectData =
       CFXJS_PerObjectData::GetFromObject(pObj);
   if (!pPerObjectData)
     return;
-  pPerObjectData->m_pPrivate = p;
+  pPerObjectData->m_pPrivate = std::move(p);
 }
 
-void* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
+CJS_Object* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
   CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
   if (!pData && !pObj.IsEmpty()) {
     // It could be a global proxy object.
@@ -559,7 +564,7 @@ void* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
           v->ToObject(context).ToLocalChecked());
     }
   }
-  return pData ? pData->m_pPrivate : nullptr;
+  return pData ? pData->m_pPrivate.get() : nullptr;
 }
 
 v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const WideString& name) {

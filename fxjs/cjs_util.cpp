@@ -68,9 +68,8 @@ int CJS_Util::ObjDefnID = -1;
 
 // static
 void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID =
-      pEngine->DefineObj("util", FXJSOBJTYPE_STATIC,
-                         JSConstructor<CJS_Util, util>, JSDestructor<CJS_Util>);
+  ObjDefnID = pEngine->DefineObj("util", FXJSOBJTYPE_STATIC,
+                                 JSConstructor<CJS_Util, util>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 

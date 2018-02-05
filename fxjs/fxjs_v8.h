@@ -29,6 +29,7 @@ class CFXJSE_RuntimeData;
 #endif  // PDF_ENABLE_XFA
 
 class CFXJS_ObjDefinition;
+class CJS_Object;
 
 // FXJS_V8 places no restrictions on this class; it merely passes it
 // on to caller-provided methods.
@@ -178,9 +179,10 @@ class CFXJS_Engine : public CJS_V8 {
   v8::Local<v8::Object> NewFxDynamicObj(int nObjDefnID, bool bStatic = false);
 
   // Native object binding.
-  void SetObjectPrivate(v8::Local<v8::Object> pObj, void* p);
-  void* GetObjectPrivate(v8::Local<v8::Object> pObj);
-  static void FreeObjectPrivate(void* p);
+  void SetObjectPrivate(v8::Local<v8::Object> pObj,
+                        std::unique_ptr<CJS_Object> p);
+  CJS_Object* GetObjectPrivate(v8::Local<v8::Object> pObj);
+  static void FreeObjectPrivate(void* pPerObjectData);
   static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
 
   void Error(const WideString& message);

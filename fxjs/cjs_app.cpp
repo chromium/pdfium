@@ -77,9 +77,8 @@ int CJS_App::ObjDefnID = -1;
 
 // static
 void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID =
-      pEngine->DefineObj("app", FXJSOBJTYPE_STATIC, JSConstructor<CJS_App, app>,
-                         JSDestructor<CJS_App>);
+  ObjDefnID = pEngine->DefineObj("app", FXJSOBJTYPE_STATIC,
+                                 JSConstructor<CJS_App, app>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
@@ -376,8 +375,7 @@ void app::ClearTimerCommon(CJS_Runtime* pRuntime, v8::Local<v8::Value> param) {
   if (CFXJS_Engine::GetObjDefnID(pObj) != CJS_TimerObj::GetObjDefnID())
     return;
 
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(pObj));
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(pObj);
   if (!pJSObj)
     return;
 

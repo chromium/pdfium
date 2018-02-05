@@ -19,9 +19,8 @@ int CJS_Report::ObjDefnID = -1;
 
 // static
 void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
-  ObjDefnID =
-      pEngine->DefineObj("Report", eObjType, JSConstructor<CJS_Report, Report>,
-                         JSDestructor<CJS_Report>);
+  ObjDefnID = pEngine->DefineObj(
+      "Report", eObjType, JSConstructor<CJS_Report, Report>, JSDestructor);
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 

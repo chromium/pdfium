@@ -165,8 +165,7 @@ int CJS_Field::GetObjDefnID() {
 // static
 void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Field", FXJSOBJTYPE_DYNAMIC,
-                                 JSConstructor<CJS_Field, Field>,
-                                 JSDestructor<CJS_Field>);
+                                 JSConstructor<CJS_Field, Field>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }

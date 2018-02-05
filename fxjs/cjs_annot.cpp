@@ -34,8 +34,7 @@ int CJS_Annot::GetObjDefnID() {
 // static
 void CJS_Annot::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("Annot", FXJSOBJTYPE_DYNAMIC,
-                                 JSConstructor<CJS_Annot, Annot>,
-                                 JSDestructor<CJS_Annot>);
+                                 JSConstructor<CJS_Annot, Annot>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 

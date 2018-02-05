@@ -36,8 +36,7 @@ int CJS_Color::ObjDefnID = -1;
 // static
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("color", FXJSOBJTYPE_STATIC,
-                                 JSConstructor<CJS_Color, color>,
-                                 JSDestructor<CJS_Color>);
+                                 JSConstructor<CJS_Color, color>, JSDestructor);
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }

@@ -15,10 +15,9 @@ int CJS_PrintParamsObj::GetObjDefnID() {
 
 // static
 void CJS_PrintParamsObj::DefineJSObjects(CFXJS_Engine* pEngine) {
-  ObjDefnID =
-      pEngine->DefineObj("PrintParamsObj", FXJSOBJTYPE_DYNAMIC,
-                         JSConstructor<CJS_PrintParamsObj, PrintParamsObj>,
-                         JSDestructor<CJS_PrintParamsObj>);
+  ObjDefnID = pEngine->DefineObj(
+      "PrintParamsObj", FXJSOBJTYPE_DYNAMIC,
+      JSConstructor<CJS_PrintParamsObj, PrintParamsObj>, JSDestructor);
 }
 
 PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
