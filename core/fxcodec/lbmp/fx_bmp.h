@@ -75,40 +75,40 @@ class BMPDecompressor {
   void SetInputBuffer(uint8_t* src_buf, uint32_t src_size);
   uint32_t GetAvailInput(uint8_t** avail_buf);
 
-  jmp_buf jmpbuf;
+  jmp_buf jmpbuf_;
 
-  void* context_ptr;
+  void* context_ptr_;
 
-  std::vector<uint8_t> out_row_buffer;
-  std::vector<uint32_t> palette;
-  uint8_t* next_in;
+  std::vector<uint8_t> out_row_buffer_;
+  std::vector<uint32_t> palette_;
+  uint8_t* next_in_;
 
-  uint32_t header_offset;
-  uint32_t width;
-  uint32_t height;
-  uint32_t compress_flag;
-  int32_t components;
-  size_t src_row_bytes;
-  size_t out_row_bytes;
-  uint16_t bitCounts;
-  uint32_t color_used;
-  bool imgTB_flag;
-  int32_t pal_num;
-  int32_t pal_type;
-  uint32_t data_size;
-  uint32_t img_data_offset;
-  uint32_t img_ifh_size;
-  size_t row_num;
-  size_t col_num;
-  int32_t dpi_x;
-  int32_t dpi_y;
-  uint32_t mask_red;
-  uint32_t mask_green;
-  uint32_t mask_blue;
+  uint32_t header_offset_;
+  uint32_t width_;
+  uint32_t height_;
+  uint32_t compress_flag_;
+  int32_t components_;
+  size_t src_row_bytes_;
+  size_t out_row_bytes_;
+  uint16_t bit_counts_;
+  uint32_t color_used_;
+  bool imgTB_flag_;
+  int32_t pal_num_;
+  int32_t pal_type_;
+  uint32_t data_size_;
+  uint32_t img_data_offset_;
+  uint32_t img_ifh_size_;
+  size_t row_num_;
+  size_t col_num_;
+  int32_t dpi_x_;
+  int32_t dpi_y_;
+  uint32_t mask_red_;
+  uint32_t mask_green_;
+  uint32_t mask_blue_;
 
-  uint32_t avail_in;
-  uint32_t skip_size;
-  int32_t decode_status;
+  uint32_t avail_in_;
+  uint32_t skip_size_;
+  int32_t decode_status_;
 
  private:
   bool GetDataPosition(uint32_t cur_pos);
