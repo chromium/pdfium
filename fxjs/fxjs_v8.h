@@ -198,7 +198,7 @@ class CFXJS_Engine : public CJS_V8 {
 
  private:
   v8::Global<v8::Context> m_V8Context;
-  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
+  std::vector<v8::Global<v8::Object>> m_StaticObjects;
   std::map<WideString, v8::Global<v8::Array>> m_ConstArrays;
 };
 

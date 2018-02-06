@@ -417,9 +417,7 @@ void CFXJS_Engine::InitializeEngine() {
       v8::Local<v8::Object> obj = NewFxDynamicObj(i, true);
       if (!obj.IsEmpty()) {
         v8Context->Global()->Set(v8Context, pObjName, obj).FromJust();
-        m_StaticObjects[i] = new v8::Global<v8::Object>(GetIsolate(), obj);
-      } else {
-        m_StaticObjects[i] = nullptr;
+        m_StaticObjects[i] = v8::Global<v8::Object>(GetIsolate(), obj);
       }
     }
   }
@@ -444,10 +442,9 @@ void CFXJS_Engine::ReleaseEngine() {
     if (pObjDef->m_ObjType == FXJSOBJTYPE_GLOBAL) {
       pObj =
           context->Global()->GetPrototype()->ToObject(context).ToLocalChecked();
-    } else if (m_StaticObjects[i] && !m_StaticObjects[i]->IsEmpty()) {
-      pObj = v8::Local<v8::Object>::New(GetIsolate(), *m_StaticObjects[i]);
-      delete m_StaticObjects[i];
-      m_StaticObjects[i] = nullptr;
+    } else if (!m_StaticObjects[i].IsEmpty()) {
+      pObj = v8::Local<v8::Object>::New(GetIsolate(), m_StaticObjects[i]);
+      m_StaticObjects[i].Reset();
     }
 
     if (!pObj.IsEmpty()) {
