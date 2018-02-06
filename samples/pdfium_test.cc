@@ -987,15 +987,18 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
   if (iter != loaded_pages.end())
     return iter->second.get();
 
-  FPDF_PAGE page = FPDF_LoadPage(doc, index);
+  std::unique_ptr<void, FPDFPageDeleter> page(FPDF_LoadPage(doc, index));
   if (!page)
     return nullptr;
 
+  // Mark the page as loaded first to prevent infinite recursion.
+  FPDF_PAGE page_ptr = page.get();
+  loaded_pages[index] = std::move(page);
+
   FPDF_FORMHANDLE& form_handle = form_fill_info->form_handle;
-  FORM_OnAfterLoadPage(page, form_handle);
-  FORM_DoPageAAction(page, form_handle, FPDFPAGE_AACTION_OPEN);
-  loaded_pages[index].reset(page);
-  return page;
+  FORM_OnAfterLoadPage(page_ptr, form_handle);
+  FORM_DoPageAAction(page_ptr, form_handle, FPDFPAGE_AACTION_OPEN);
+  return page_ptr;
 }
 
 std::wstring ConvertToWString(const unsigned short* buf,
