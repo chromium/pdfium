@@ -30,6 +30,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
+#include "third_party/skia/include/core/SkColorPriv.h"
 #include "third_party/skia/include/core/SkImage.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
@@ -47,7 +48,6 @@
 
 #ifdef _SKIA_SUPPORT_
 #include "third_party/skia/include/core/SkColorFilter.h"
-#include "third_party/skia/include/core/SkColorPriv.h"
 #include "third_party/skia/include/core/SkMaskFilter.h"
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 #endif  // _SKIA_SUPPORT_
