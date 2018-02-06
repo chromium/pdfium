@@ -44,12 +44,13 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 
   CFX_Font* pFxFont = pFont->GetDevFont();
   if (FontStyleIsItalic(pFont->GetFontStyles()) && !pFxFont->IsItalic()) {
+    FXTEXT_CHARPOS* pCharPosIter = pCharPos;
     for (int32_t i = 0; i < iCount; ++i) {
       static const float mc = 0.267949f;
-      float* pAM = pCharPos->m_AdjustMatrix;
+      float* pAM = pCharPosIter->m_AdjustMatrix;
       pAM[2] = mc * pAM[0] + pAM[2];
       pAM[3] = mc * pAM[1] + pAM[3];
-      ++pCharPos;
+      ++pCharPosIter;
     }
   }
 
@@ -67,11 +68,12 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
   RetainPtr<CFGAS_GEFont> pCurFont;
   FXTEXT_CHARPOS* pCurCP = nullptr;
   int32_t iCurCount = 0;
+  FXTEXT_CHARPOS* pCharPosIter = pCharPos;
   for (int32_t i = 0; i < iCount; ++i) {
     RetainPtr<CFGAS_GEFont> pSTFont =
-        pFont->GetSubstFont(static_cast<int32_t>(pCharPos->m_GlyphIndex));
-    pCharPos->m_GlyphIndex &= 0x00FFFFFF;
-    pCharPos->m_bFontStyle = false;
+        pFont->GetSubstFont(static_cast<int32_t>(pCharPosIter->m_GlyphIndex));
+    pCharPosIter->m_GlyphIndex &= 0x00FFFFFF;
+    pCharPosIter->m_bFontStyle = false;
     if (pCurFont != pSTFont) {
       if (pCurFont) {
         pFxFont = pCurFont->GetDevFont();
@@ -88,12 +90,12 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                                color, FXTEXT_CLEARTYPE);
       }
       pCurFont = pSTFont;
-      pCurCP = pCharPos;
+      pCurCP = pCharPosIter;
       iCurCount = 1;
     } else {
       ++iCurCount;
     }
-    ++pCharPos;
+    ++pCharPosIter;
   }
 
   bool bRet = true;
