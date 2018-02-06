@@ -7,11 +7,6 @@
 #ifndef CORE_FXCODEC_BMP_FX_BMP_H_
 #define CORE_FXCODEC_BMP_FX_BMP_H_
 
-#include <setjmp.h>
-
-#include <memory>
-#include <vector>
-
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
 
 #define BMP_WIDTHBYTES(width, bitCount) ((width * bitCount) + 31) / 32 * 4
@@ -63,75 +58,5 @@ typedef struct tagBmpInfoHeader {
   uint32_t biClrImportant;
 } BmpInfoHeader;
 #pragma pack()
-
-class CFX_BmpDecompressor {
- public:
-  CFX_BmpDecompressor();
-  ~CFX_BmpDecompressor();
-
-  void Error();
-  int32_t DecodeImage();
-  int32_t ReadHeader();
-  void SetInputBuffer(uint8_t* src_buf, uint32_t src_size);
-  uint32_t GetAvailInput(uint8_t** avail_buf);
-
-  jmp_buf jmpbuf_;
-
-  void* context_ptr_;
-
-  std::vector<uint8_t> out_row_buffer_;
-  std::vector<uint32_t> palette_;
-  uint8_t* next_in_;
-
-  uint32_t header_offset_;
-  uint32_t width_;
-  uint32_t height_;
-  uint32_t compress_flag_;
-  int32_t components_;
-  size_t src_row_bytes_;
-  size_t out_row_bytes_;
-  uint16_t bit_counts_;
-  uint32_t color_used_;
-  bool imgTB_flag_;
-  int32_t pal_num_;
-  int32_t pal_type_;
-  uint32_t data_size_;
-  uint32_t img_data_offset_;
-  uint32_t img_ifh_size_;
-  size_t row_num_;
-  size_t col_num_;
-  int32_t dpi_x_;
-  int32_t dpi_y_;
-  uint32_t mask_red_;
-  uint32_t mask_green_;
-  uint32_t mask_blue_;
-
-  uint32_t avail_in_;
-  uint32_t skip_size_;
-  int32_t decode_status_;
-
- private:
-  bool GetDataPosition(uint32_t cur_pos);
-  void ReadScanline(uint32_t row_num, const std::vector<uint8_t>& row_buf);
-  int32_t DecodeRGB();
-  int32_t DecodeRLE8();
-  int32_t DecodeRLE4();
-  uint8_t* ReadData(uint8_t** des_buf, uint32_t data_size);
-  void SaveDecodingStatus(int32_t status);
-  bool ValidateColorIndex(uint8_t val);
-  bool ValidateFlag() const;
-  void SetHeight(int32_t signed_height);
-};
-
-class CFX_BmpContext : public CCodec_BmpModule::Context {
- public:
-  CFX_BmpContext(CCodec_BmpModule* pModule,
-                 CCodec_BmpModule::Delegate* pDelegate);
-  ~CFX_BmpContext() override;
-
-  CFX_BmpDecompressor m_Bmp;
-  UnownedPtr<CCodec_BmpModule> const m_pModule;
-  UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
-};
 
 #endif  // CORE_FXCODEC_BMP_FX_BMP_H_

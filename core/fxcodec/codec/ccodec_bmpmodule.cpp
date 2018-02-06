@@ -6,18 +6,12 @@
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
 
-#include "core/fxcodec/bmp/fx_bmp.h"
+#include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
-
-CFX_BmpContext::CFX_BmpContext(CCodec_BmpModule* pModule,
-                               CCodec_BmpModule::Delegate* pDelegate)
-    : m_pModule(pModule), m_pDelegate(pDelegate) {}
-
-CFX_BmpContext::~CFX_BmpContext() {}
 
 CCodec_BmpModule::CCodec_BmpModule() {}
 
