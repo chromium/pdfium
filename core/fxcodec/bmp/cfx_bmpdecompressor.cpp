@@ -91,7 +91,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
       Error();
       NOTREACHED();
     }
-    if (avail_in_ < sizeof(uint32_t)) {
+    if (avail_in_ < skip_size_ + sizeof(uint32_t)) {
       skip_size_ = skip_size_org;
       return 2;
     }
