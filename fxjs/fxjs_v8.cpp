@@ -288,11 +288,6 @@ int CFXJS_Engine::GetObjDefnID(v8::Local<v8::Object> pObj) {
 }
 
 // static
-void CFXJS_Engine::FreeObjectPrivate(void* pPerObjectData) {
-  delete static_cast<CFXJS_PerObjectData*>(pPerObjectData);
-}
-
-// static
 void CFXJS_Engine::FreeObjectPrivate(v8::Local<v8::Object> pObj) {
   CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
   pObj->SetAlignedPointerInInternalField(0, nullptr);

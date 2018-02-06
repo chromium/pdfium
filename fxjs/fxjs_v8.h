@@ -182,7 +182,6 @@ class CFXJS_Engine : public CJS_V8 {
   void SetObjectPrivate(v8::Local<v8::Object> pObj,
                         std::unique_ptr<CJS_Object> p);
   CJS_Object* GetObjectPrivate(v8::Local<v8::Object> pObj);
-  static void FreeObjectPrivate(void* pPerObjectData);
   static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
 
   void Error(const WideString& message);
