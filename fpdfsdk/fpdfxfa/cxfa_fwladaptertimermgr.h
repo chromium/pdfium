@@ -18,7 +18,7 @@
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:
   explicit CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  ~CXFA_FWLAdapterTimerMgr();
+  ~CXFA_FWLAdapterTimerMgr() override;
 
   void Start(CFWL_Timer* pTimer,
              uint32_t dwElapse,

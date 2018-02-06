@@ -58,17 +58,21 @@ void CFWL_Caret::DrawWidget(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_Caret::ShowCaret() {
-  if (m_pTimerInfo)
-    m_pTimerInfo->StopTimer();
+  if (m_pTimerInfo) {
+    CFWL_TimerInfo* pOldTimerInfo = m_pTimerInfo.Release();
+    pOldTimerInfo->StopTimer();
+  }
+
   m_pTimerInfo = m_pTimer->StartTimer(kFrequency, true);
   RemoveStates(FWL_WGTSTATE_Invisible);
 }
 
 void CFWL_Caret::HideCaret() {
   if (m_pTimerInfo) {
-    m_pTimerInfo->StopTimer();
-    m_pTimerInfo = nullptr;
+    CFWL_TimerInfo* pOldTimerInfo = m_pTimerInfo.Release();
+    pOldTimerInfo->StopTimer();
   }
+
   SetStates(FWL_WGTSTATE_Invisible);
 }
 

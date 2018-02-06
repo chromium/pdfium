@@ -25,11 +25,13 @@ CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   if (!pAdapterNative)
     return nullptr;
 
-  IFWL_AdapterTimerMgr* pAdapterTimerMgr = pAdapterNative->GetTimerMgr();
-  if (!pAdapterTimerMgr)
+  if (!m_pTimeMgrAdapter)
+    m_pTimeMgrAdapter.reset(pAdapterNative->GetTimerMgr());
+
+  if (!m_pTimeMgrAdapter)
     return nullptr;
 
   CFWL_TimerInfo* pTimerInfo = nullptr;
-  pAdapterTimerMgr->Start(this, dwElapse, bImmediately, &pTimerInfo);
+  m_pTimeMgrAdapter->Start(this, dwElapse, bImmediately, &pTimerInfo);
   return pTimerInfo;
 }
