@@ -7,10 +7,10 @@
 #include "core/fxcodec/gif/cfx_lzwdecompressor.h"
 
 #include <algorithm>
+#include <cstring>
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/bmp/fx_bmp.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
