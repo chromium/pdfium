@@ -28,7 +28,7 @@ uint8_t HalfRoundUp(uint8_t value) {
 
 }  // namespace
 
-BMPDecompressor::BMPDecompressor()
+CFX_BmpDecompressor::CFX_BmpDecompressor()
     : context_ptr_(nullptr),
       next_in_(nullptr),
       header_offset_(0),
@@ -57,24 +57,24 @@ BMPDecompressor::BMPDecompressor()
       skip_size_(0),
       decode_status_(BMP_D_STATUS_HEADER) {}
 
-BMPDecompressor::~BMPDecompressor() {}
+CFX_BmpDecompressor::~CFX_BmpDecompressor() {}
 
-void BMPDecompressor::Error() {
+void CFX_BmpDecompressor::Error() {
   longjmp(jmpbuf_, 1);
 }
 
-void BMPDecompressor::ReadScanline(uint32_t row_num_,
-                                   const std::vector<uint8_t>& row_buf) {
-  auto* p = reinterpret_cast<CBmpContext*>(context_ptr_);
+void CFX_BmpDecompressor::ReadScanline(uint32_t row_num_,
+                                       const std::vector<uint8_t>& row_buf) {
+  auto* p = reinterpret_cast<CFX_BmpContext*>(context_ptr_);
   p->m_pDelegate->BmpReadScanline(row_num_, row_buf);
 }
 
-bool BMPDecompressor::GetDataPosition(uint32_t rcd_pos) {
-  auto* p = reinterpret_cast<CBmpContext*>(context_ptr_);
+bool CFX_BmpDecompressor::GetDataPosition(uint32_t rcd_pos) {
+  auto* p = reinterpret_cast<CFX_BmpContext*>(context_ptr_);
   return p->m_pDelegate->BmpInputImagePositionBuf(rcd_pos);
 }
 
-int32_t BMPDecompressor::ReadHeader() {
+int32_t CFX_BmpDecompressor::ReadHeader() {
   uint32_t skip_size_org = skip_size_;
   if (decode_status_ == BMP_D_STATUS_HEADER) {
     BmpFileHeader* pBmp_header = nullptr;
@@ -291,7 +291,7 @@ int32_t BMPDecompressor::ReadHeader() {
   return 1;
 }
 
-bool BMPDecompressor::ValidateFlag() const {
+bool CFX_BmpDecompressor::ValidateFlag() const {
   switch (compress_flag_) {
     case BMP_RGB:
     case BMP_BITFIELDS:
@@ -303,7 +303,7 @@ bool BMPDecompressor::ValidateFlag() const {
   }
 }
 
-int32_t BMPDecompressor::DecodeImage() {
+int32_t CFX_BmpDecompressor::DecodeImage() {
   if (decode_status_ == BMP_D_STATUS_DATA_PRE) {
     avail_in_ = 0;
     if (!GetDataPosition(header_offset_)) {
@@ -331,7 +331,7 @@ int32_t BMPDecompressor::DecodeImage() {
   }
 }
 
-bool BMPDecompressor::ValidateColorIndex(uint8_t val) {
+bool CFX_BmpDecompressor::ValidateColorIndex(uint8_t val) {
   if (val >= pal_num_) {
     Error();
     NOTREACHED();
@@ -339,7 +339,7 @@ bool BMPDecompressor::ValidateColorIndex(uint8_t val) {
   return true;
 }
 
-int32_t BMPDecompressor::DecodeRGB() {
+int32_t CFX_BmpDecompressor::DecodeRGB() {
   uint8_t* des_buf = nullptr;
   while (row_num_ < height_) {
     size_t idx = 0;
@@ -408,7 +408,7 @@ int32_t BMPDecompressor::DecodeRGB() {
   return 1;
 }
 
-int32_t BMPDecompressor::DecodeRLE8() {
+int32_t CFX_BmpDecompressor::DecodeRLE8() {
   uint8_t* first_byte_ptr = nullptr;
   uint8_t* second_byte_ptr = nullptr;
   col_num_ = 0;
@@ -511,7 +511,7 @@ int32_t BMPDecompressor::DecodeRLE8() {
   NOTREACHED();
 }
 
-int32_t BMPDecompressor::DecodeRLE4() {
+int32_t CFX_BmpDecompressor::DecodeRLE4() {
   uint8_t* first_byte_ptr = nullptr;
   uint8_t* second_byte_ptr = nullptr;
   col_num_ = 0;
@@ -630,7 +630,7 @@ int32_t BMPDecompressor::DecodeRLE4() {
   NOTREACHED();
 }
 
-uint8_t* BMPDecompressor::ReadData(uint8_t** des_buf, uint32_t data_size_) {
+uint8_t* CFX_BmpDecompressor::ReadData(uint8_t** des_buf, uint32_t data_size_) {
   if (avail_in_ < skip_size_ + data_size_)
     return nullptr;
 
@@ -639,20 +639,20 @@ uint8_t* BMPDecompressor::ReadData(uint8_t** des_buf, uint32_t data_size_) {
   return *des_buf;
 }
 
-void BMPDecompressor::SaveDecodingStatus(int32_t status) {
+void CFX_BmpDecompressor::SaveDecodingStatus(int32_t status) {
   decode_status_ = status;
   next_in_ += skip_size_;
   avail_in_ -= skip_size_;
   skip_size_ = 0;
 }
 
-void BMPDecompressor::SetInputBuffer(uint8_t* src_buf, uint32_t src_size) {
+void CFX_BmpDecompressor::SetInputBuffer(uint8_t* src_buf, uint32_t src_size) {
   next_in_ = src_buf;
   avail_in_ = src_size;
   skip_size_ = 0;
 }
 
-uint32_t BMPDecompressor::GetAvailInput(uint8_t** avail_buf) {
+uint32_t CFX_BmpDecompressor::GetAvailInput(uint8_t** avail_buf) {
   if (avail_buf) {
     *avail_buf = nullptr;
     if (avail_in_ > 0)
@@ -661,7 +661,7 @@ uint32_t BMPDecompressor::GetAvailInput(uint8_t** avail_buf) {
   return avail_in_;
 }
 
-void BMPDecompressor::SetHeight(int32_t signed_height) {
+void CFX_BmpDecompressor::SetHeight(int32_t signed_height) {
   if (signed_height >= 0) {
     height_ = signed_height;
     return;

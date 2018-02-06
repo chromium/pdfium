@@ -13,12 +13,11 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
-CBmpContext::CBmpContext(CCodec_BmpModule* pModule,
-                         CCodec_BmpModule::Delegate* pDelegate)
-    : m_pModule(pModule), m_pDelegate(pDelegate) {
-}
+CFX_BmpContext::CFX_BmpContext(CCodec_BmpModule* pModule,
+                               CCodec_BmpModule::Delegate* pDelegate)
+    : m_pModule(pModule), m_pDelegate(pDelegate) {}
 
-CBmpContext::~CBmpContext() {}
+CFX_BmpContext::~CFX_BmpContext() {}
 
 CCodec_BmpModule::CCodec_BmpModule() {}
 
@@ -26,7 +25,7 @@ CCodec_BmpModule::~CCodec_BmpModule() {}
 
 std::unique_ptr<CCodec_BmpModule::Context> CCodec_BmpModule::Start(
     Delegate* pDelegate) {
-  auto p = pdfium::MakeUnique<CBmpContext>(this, pDelegate);
+  auto p = pdfium::MakeUnique<CFX_BmpContext>(this, pDelegate);
   p->m_Bmp.context_ptr_ = p.get();
   return p;
 }
@@ -39,7 +38,7 @@ int32_t CCodec_BmpModule::ReadHeader(Context* pContext,
                                      int32_t* pal_num,
                                      std::vector<uint32_t>* palette,
                                      CFX_DIBAttribute* pAttribute) {
-  auto* ctx = static_cast<CBmpContext*>(pContext);
+  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   if (setjmp(ctx->m_Bmp.jmpbuf_))
     return 0;
 
@@ -63,7 +62,7 @@ int32_t CCodec_BmpModule::ReadHeader(Context* pContext,
 }
 
 int32_t CCodec_BmpModule::LoadImage(Context* pContext) {
-  auto* ctx = static_cast<CBmpContext*>(pContext);
+  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   if (setjmp(ctx->m_Bmp.jmpbuf_))
     return 0;
 
@@ -72,13 +71,13 @@ int32_t CCodec_BmpModule::LoadImage(Context* pContext) {
 
 uint32_t CCodec_BmpModule::GetAvailInput(Context* pContext,
                                          uint8_t** avail_buf_ptr) {
-  auto* ctx = static_cast<CBmpContext*>(pContext);
+  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   return ctx->m_Bmp.GetAvailInput(avail_buf_ptr);
 }
 
 void CCodec_BmpModule::Input(Context* pContext,
                              const uint8_t* src_buf,
                              uint32_t src_size) {
-  auto* ctx = static_cast<CBmpContext*>(pContext);
+  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   ctx->m_Bmp.SetInputBuffer(const_cast<uint8_t*>(src_buf), src_size);
 }

@@ -64,10 +64,10 @@ typedef struct tagBmpInfoHeader {
 } BmpInfoHeader;
 #pragma pack()
 
-class BMPDecompressor {
+class CFX_BmpDecompressor {
  public:
-  BMPDecompressor();
-  ~BMPDecompressor();
+  CFX_BmpDecompressor();
+  ~CFX_BmpDecompressor();
 
   void Error();
   int32_t DecodeImage();
@@ -123,12 +123,13 @@ class BMPDecompressor {
   void SetHeight(int32_t signed_height);
 };
 
-class CBmpContext : public CCodec_BmpModule::Context {
+class CFX_BmpContext : public CCodec_BmpModule::Context {
  public:
-  CBmpContext(CCodec_BmpModule* pModule, CCodec_BmpModule::Delegate* pDelegate);
-  ~CBmpContext() override;
+  CFX_BmpContext(CCodec_BmpModule* pModule,
+                 CCodec_BmpModule::Delegate* pDelegate);
+  ~CFX_BmpContext() override;
 
-  BMPDecompressor m_Bmp;
+  CFX_BmpDecompressor m_Bmp;
   UnownedPtr<CCodec_BmpModule> const m_pModule;
   UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
 };
