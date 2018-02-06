@@ -1,6 +1,8 @@
 // Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+#include <memory>
 #include <string>
 
 #include "public/cpp/fpdf_deleters.h"
@@ -59,7 +61,7 @@ TEST_F(FPDFPPOEmbeddertest, ImportPages) {
 }
 
 TEST_F(FPDFPPOEmbeddertest, ImportNPages) {
-  ASSERT_TRUE(OpenDocument("hello_world_multi_pages.pdf"));
+  ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
 
   std::unique_ptr<void, FPDFDocumentDeleter> output_doc_2up(
       FPDF_ImportNPagesToOne(document(), 612, 792, 2, 1));
@@ -80,7 +82,7 @@ TEST_F(FPDFPPOEmbeddertest, ImportNPages) {
 }
 
 TEST_F(FPDFPPOEmbeddertest, BadNupParams) {
-  ASSERT_TRUE(OpenDocument("hello_world_multi_pages.pdf"));
+  ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
 
   FPDF_DOCUMENT output_doc_zero_row =
       FPDF_ImportNPagesToOne(document(), 612, 792, 0, 3);
@@ -98,6 +100,26 @@ TEST_F(FPDFPPOEmbeddertest, BadNupParams) {
 
 // TODO(Xlou): Add more tests to check output doc content of
 // FPDF_ImportNPagesToOne()
+TEST_F(FPDFPPOEmbeddertest, NupRenderImage) {
+  ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
+  const int kPageCount = 2;
+  constexpr const char* kExpectedMD5s[kPageCount] = {
+      "4d225b961da0f1bced7c83273e64c9b6", "fb18142190d770cfbc329d2b071aee4d"};
+  std::unique_ptr<void, FPDFDocumentDeleter> output_doc_3up(
+      FPDF_ImportNPagesToOne(document(), 792, 612, 3, 1));
+  ASSERT_TRUE(output_doc_3up);
+  ASSERT_EQ(kPageCount, FPDF_GetPageCount(output_doc_3up.get()));
+  for (int i = 0; i < kPageCount; ++i) {
+    std::unique_ptr<void, FPDFPageDeleter> page(
+        FPDF_LoadPage(output_doc_3up.get(), i));
+    ASSERT_TRUE(page);
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
+        RenderPageWithFlags(page.get(), nullptr, 0));
+    EXPECT_EQ(792, FPDFBitmap_GetWidth(bitmap.get()));
+    EXPECT_EQ(612, FPDFBitmap_GetHeight(bitmap.get()));
+    EXPECT_EQ(kExpectedMD5s[i], HashBitmap(bitmap.get()));
+  }
+}
 
 TEST_F(FPDFPPOEmbeddertest, BadRepeatViewerPref) {
   ASSERT_TRUE(OpenDocument("repeat_viewer_ref.pdf"));
