@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/lbmp/fx_bmp.h"
+#include "core/fxcodec/bmp/fx_bmp.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

@@ -766,6 +766,8 @@ jumbo_static_library("fxcodec") {
 
   if (pdf_enable_xfa) {
     sources += [
+      "core/fxcodec/bmp/fx_bmp.cpp",
+      "core/fxcodec/bmp/fx_bmp.h",
       "core/fxcodec/codec/ccodec_bmpmodule.cpp",
       "core/fxcodec/codec/ccodec_bmpmodule.h",
       "core/fxcodec/codec/ccodec_gifmodule.cpp",
@@ -782,8 +784,6 @@ jumbo_static_library("fxcodec") {
       "core/fxcodec/gif/cfx_gifcontext.h",
       "core/fxcodec/gif/cfx_lzwdecompressor.cpp",
       "core/fxcodec/gif/cfx_lzwdecompressor.h",
-      "core/fxcodec/lbmp/fx_bmp.cpp",
-      "core/fxcodec/lbmp/fx_bmp.h",
     ]
     deps += [
       "third_party:fx_tiff",

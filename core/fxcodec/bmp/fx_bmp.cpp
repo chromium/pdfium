@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/lbmp/fx_bmp.h"
+#include "core/fxcodec/bmp/fx_bmp.h"
 
 #include <algorithm>
 #include <limits>

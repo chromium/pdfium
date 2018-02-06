@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCODEC_LBMP_FX_BMP_H_
-#define CORE_FXCODEC_LBMP_FX_BMP_H_
+#ifndef CORE_FXCODEC_BMP_FX_BMP_H_
+#define CORE_FXCODEC_BMP_FX_BMP_H_
 
 #include <setjmp.h>
 
@@ -133,4 +133,4 @@ class CBmpContext : public CCodec_BmpModule::Context {
   UnownedPtr<CCodec_BmpModule::Delegate> const m_pDelegate;
 };
 
-#endif  // CORE_FXCODEC_LBMP_FX_BMP_H_
+#endif  // CORE_FXCODEC_BMP_FX_BMP_H_
