@@ -181,7 +181,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetNextSibling() const { return m_pNext; }
   CXFA_Node* GetPrevSibling() const;
   CXFA_Node* GetFirstChild() const { return m_pChild; }
-  CXFA_Node* GetParent() const { return m_pParent; }
+  CXFA_Node* GetParent() const { return parent_.Get(); }
 
   CXFA_Node* GetNextContainerSibling() const;
   CXFA_Node* GetPrevContainerSibling() const;
@@ -495,7 +495,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pNext;
   CXFA_Node* m_pChild;
   CXFA_Node* m_pLastChild;
-  CXFA_Node* m_pParent;
+  UnownedPtr<CXFA_Node> parent_;
   CFX_XMLNode* m_pXMLNode;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
