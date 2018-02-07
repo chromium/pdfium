@@ -951,9 +951,14 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   ByteString bsHash = ByteString::Format("%d, %d", wCodePage, dwFontStyles);
   bsHash += FX_UTF8Encode(WideStringView(pszFontFamily));
   uint32_t dwHash = FX_HashCode_GetA(bsHash.AsStringView(), false);
-  std::vector<RetainPtr<CFGAS_GEFont>>* pFontArray = &m_Hash2Fonts[dwHash];
-  if (!pFontArray->empty())
-    return (*pFontArray)[0];
+  auto* pFontVector = &m_Hash2Fonts[dwHash];
+  if (!pFontVector->empty()) {
+    for (auto iter = pFontVector->begin(); iter != pFontVector->end(); ++iter) {
+      if (*iter != nullptr)
+        return *iter;
+    }
+    return nullptr;
+  }
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const FX_FONTDESCRIPTOR* pFD =
@@ -989,7 +994,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     return nullptr;
 
   pFont->SetLogicalFontStyle(dwFontStyles);
-  pFontArray->push_back(pFont);
+  pFontVector->push_back(pFont);
   return pFont;
 }
 
