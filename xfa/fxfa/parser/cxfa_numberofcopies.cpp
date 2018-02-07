@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kNumberOfCopiesAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"numberOfCopies";
+constexpr wchar_t kNumberOfCopiesName[] = L"numberOfCopies";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_NumberOfCopies::CXFA_NumberOfCopies(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::NumberOfCopies,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kNumberOfCopiesAttributeData,
+                kNumberOfCopiesName) {}
 
 CXFA_NumberOfCopies::~CXFA_NumberOfCopies() {}

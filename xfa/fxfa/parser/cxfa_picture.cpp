@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPictureAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"picture";
+constexpr wchar_t kPictureName[] = L"picture";
 
 }  // namespace
 
@@ -31,8 +31,8 @@ CXFA_Picture::CXFA_Picture(CXFA_Document* doc, XFA_PacketType packet)
           XFA_ObjectType::ContentNode,
           XFA_Element::Picture,
           nullptr,
-          kAttributeData,
-          kName,
+          kPictureAttributeData,
+          kPictureName,
           pdfium::MakeUnique<CJX_Picture>(this)) {}
 
 CXFA_Picture::~CXFA_Picture() {}

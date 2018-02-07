@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kDrawPropertyData[] = {
     {XFA_Element::Ui, 1, 0},     {XFA_Element::Margin, 1, 0},
     {XFA_Element::Para, 1, 0},   {XFA_Element::Border, 1, 0},
     {XFA_Element::Assist, 1, 0}, {XFA_Element::Traversal, 1, 0},
@@ -19,7 +19,7 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Desc, 1, 0},   {XFA_Element::Font, 1, 0},
     {XFA_Element::Value, 1, 0},  {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kDrawAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -46,7 +46,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::TopLeft},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"draw";
+constexpr wchar_t kDrawName[] = L"draw";
 
 }  // namespace
 
@@ -56,9 +56,9 @@ CXFA_Draw::CXFA_Draw(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::Draw,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kDrawPropertyData,
+                kDrawAttributeData,
+                kDrawName,
                 pdfium::MakeUnique<CJX_Draw>(this)) {}
 
 CXFA_Draw::~CXFA_Draw() {}

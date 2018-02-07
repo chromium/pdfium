@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPasswordAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"password";
+constexpr wchar_t kPasswordName[] = L"password";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Password::CXFA_Password(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Password,
                 nullptr,
-                kAttributeData,
-                kName,
+                kPasswordAttributeData,
+                kPasswordName,
                 pdfium::MakeUnique<CJX_Password>(this)) {}
 
 CXFA_Password::~CXFA_Password() {}

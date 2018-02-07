@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kMediumAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::TrayOut, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Auto},
@@ -27,7 +27,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Long, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"medium";
+constexpr wchar_t kMediumName[] = L"medium";
 
 }  // namespace
 
@@ -38,8 +38,8 @@ CXFA_Medium::CXFA_Medium(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Medium,
                 nullptr,
-                kAttributeData,
-                kName,
+                kMediumAttributeData,
+                kMediumName,
                 pdfium::MakeUnique<CJX_Medium>(this)) {}
 
 CXFA_Medium::~CXFA_Medium() {}

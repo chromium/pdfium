@@ -13,9 +13,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Edge, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kLinePropertyData[] = {
+    {XFA_Element::Edge, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kLineAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Slope, XFA_AttributeType::Enum,
@@ -25,7 +26,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"line";
+constexpr wchar_t kLineName[] = L"line";
 
 }  // namespace
 
@@ -35,9 +36,9 @@ CXFA_Line::CXFA_Line(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Line,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kLinePropertyData,
+                kLineAttributeData,
+                kLineName,
                 pdfium::MakeUnique<CJX_Line>(this)) {}
 
 CXFA_Line::~CXFA_Line() {}

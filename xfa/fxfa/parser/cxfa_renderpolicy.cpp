@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kRenderPolicyAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"renderPolicy";
+constexpr wchar_t kRenderPolicyName[] = L"renderPolicy";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_RenderPolicy::CXFA_RenderPolicy(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::RenderPolicy,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kRenderPolicyAttributeData,
+                kRenderPolicyName) {}
 
 CXFA_RenderPolicy::~CXFA_RenderPolicy() {}

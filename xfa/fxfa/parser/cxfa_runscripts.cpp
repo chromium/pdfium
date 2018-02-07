@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kRunScriptsAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"runScripts";
+constexpr wchar_t kRunScriptsName[] = L"runScripts";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_RunScripts::CXFA_RunScripts(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::RunScripts,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kRunScriptsAttributeData,
+                kRunScriptsName) {}
 
 CXFA_RunScripts::~CXFA_RunScripts() {}

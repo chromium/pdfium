@@ -8,11 +8,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kCurrencySymbolsPropertyData[] = {
     {XFA_Element::CurrencySymbol, 3, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kName[] = L"currencySymbols";
+constexpr wchar_t kCurrencySymbolsName[] = L"currencySymbols";
 
 }  // namespace
 
@@ -23,8 +23,8 @@ CXFA_CurrencySymbols::CXFA_CurrencySymbols(CXFA_Document* doc,
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::CurrencySymbols,
-                kPropertyData,
+                kCurrencySymbolsPropertyData,
                 nullptr,
-                kName) {}
+                kCurrencySymbolsName) {}
 
 CXFA_CurrencySymbols::~CXFA_CurrencySymbols() {}

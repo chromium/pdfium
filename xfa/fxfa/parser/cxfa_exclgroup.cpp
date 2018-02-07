@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kExclGroupPropertyData[] = {
     {XFA_Element::Margin, 1, 0},    {XFA_Element::Para, 1, 0},
     {XFA_Element::Border, 1, 0},    {XFA_Element::Assist, 1, 0},
     {XFA_Element::Traversal, 1, 0}, {XFA_Element::Validate, 1, 0},
     {XFA_Element::Caption, 1, 0},   {XFA_Element::Bind, 1, 0},
     {XFA_Element::Desc, 1, 0},      {XFA_Element::Calculate, 1, 0},
     {XFA_Element::Extras, 1, 0},    {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kExclGroupAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -48,7 +48,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::AccessKey, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"exclGroup";
+constexpr wchar_t kExclGroupName[] = L"exclGroup";
 
 }  // namespace
 
@@ -58,9 +58,9 @@ CXFA_ExclGroup::CXFA_ExclGroup(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::ExclGroup,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kExclGroupPropertyData,
+                kExclGroupAttributeData,
+                kExclGroupName,
                 pdfium::MakeUnique<CJX_ExclGroup>(this)) {}
 
 CXFA_ExclGroup::~CXFA_ExclGroup() {}

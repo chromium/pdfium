@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSubjectDNsAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"subjectDNs";
+constexpr wchar_t kSubjectDNsName[] = L"subjectDNs";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_SubjectDNs::CXFA_SubjectDNs(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::SubjectDNs,
                 nullptr,
-                kAttributeData,
-                kName,
+                kSubjectDNsAttributeData,
+                kSubjectDNsName,
                 pdfium::MakeUnique<CJX_SubjectDNs>(this)) {}
 
 CXFA_SubjectDNs::~CXFA_SubjectDNs() {}

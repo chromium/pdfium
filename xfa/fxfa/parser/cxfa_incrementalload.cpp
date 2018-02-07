@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kIncrementalLoadAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"incrementalLoad";
+constexpr wchar_t kIncrementalLoadName[] = L"incrementalLoad";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_IncrementalLoad::CXFA_IncrementalLoad(CXFA_Document* doc,
                 XFA_ObjectType::NodeV,
                 XFA_Element::IncrementalLoad,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kIncrementalLoadAttributeData,
+                kIncrementalLoadName) {}
 
 CXFA_IncrementalLoad::~CXFA_IncrementalLoad() {}

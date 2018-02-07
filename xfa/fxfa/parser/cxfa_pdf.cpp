@@ -8,7 +8,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kPdfPropertyData[] = {
     {XFA_Element::AdobeExtensionLevel, 1, 0},
     {XFA_Element::FontInfo, 1, 0},
     {XFA_Element::Xdc, 1, 0},
@@ -29,13 +29,13 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Linearized, 1, 0},
     {XFA_Element::Tagged, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPdfAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"pdf";
+constexpr wchar_t kPdfName[] = L"pdf";
 
 }  // namespace
 
@@ -45,8 +45,8 @@ CXFA_Pdf::CXFA_Pdf(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Pdf,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kPdfPropertyData,
+                kPdfAttributeData,
+                kPdfName) {}
 
 CXFA_Pdf::~CXFA_Pdf() {}

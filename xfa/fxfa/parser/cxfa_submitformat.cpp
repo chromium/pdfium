@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSubmitFormatAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"submitFormat";
+constexpr wchar_t kSubmitFormatName[] = L"submitFormat";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_SubmitFormat::CXFA_SubmitFormat(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::SubmitFormat,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kSubmitFormatAttributeData,
+                kSubmitFormatName) {}
 
 CXFA_SubmitFormat::~CXFA_SubmitFormat() {}

@@ -8,10 +8,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Meridiem, 2, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::PropertyData kMeridiemNamesPropertyData[] = {
+    {XFA_Element::Meridiem, 2, 0},
+    {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kName[] = L"meridiemNames";
+constexpr wchar_t kMeridiemNamesName[] = L"meridiemNames";
 
 }  // namespace
 
@@ -22,8 +23,8 @@ CXFA_MeridiemNames::CXFA_MeridiemNames(CXFA_Document* doc,
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::MeridiemNames,
-                kPropertyData,
+                kMeridiemNamesPropertyData,
                 nullptr,
-                kName) {}
+                kMeridiemNamesName) {}
 
 CXFA_MeridiemNames::~CXFA_MeridiemNames() {}

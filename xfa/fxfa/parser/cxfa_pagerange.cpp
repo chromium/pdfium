@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPageRangeAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"pageRange";
+constexpr wchar_t kPageRangeName[] = L"pageRange";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_PageRange::CXFA_PageRange(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PageRange,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kPageRangeAttributeData,
+                kPageRangeName) {}
 
 CXFA_PageRange::~CXFA_PageRange() {}

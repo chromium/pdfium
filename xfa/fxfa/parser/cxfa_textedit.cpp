@@ -11,12 +11,13 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
-                                                 {XFA_Element::Border, 1, 0},
-                                                 {XFA_Element::Comb, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kTextEditPropertyData[] = {
+    {XFA_Element::Margin, 1, 0},
+    {XFA_Element::Border, 1, 0},
+    {XFA_Element::Comb, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kTextEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::VScrollPolicy, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Auto},
@@ -28,7 +29,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"textEdit";
+constexpr wchar_t kTextEditName[] = L"textEdit";
 
 }  // namespace
 
@@ -38,9 +39,9 @@ CXFA_TextEdit::CXFA_TextEdit(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::TextEdit,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kTextEditPropertyData,
+                kTextEditAttributeData,
+                kTextEditName,
                 pdfium::MakeUnique<CJX_TextEdit>(this)) {}
 
 CXFA_TextEdit::~CXFA_TextEdit() {}

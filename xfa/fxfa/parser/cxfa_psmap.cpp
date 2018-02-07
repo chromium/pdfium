@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"psMap";
+constexpr wchar_t kPsMapName[] = L"psMap";
 
 }  // namespace
 
@@ -20,6 +20,6 @@ CXFA_PsMap::CXFA_PsMap(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::PsMap,
                 nullptr,
                 nullptr,
-                kName) {}
+                kPsMapName) {}
 
 CXFA_PsMap::~CXFA_PsMap() {}

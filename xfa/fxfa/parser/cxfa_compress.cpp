@@ -8,14 +8,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kCompressAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Scope, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::ImageOnly},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"compress";
+constexpr wchar_t kCompressName[] = L"compress";
 
 }  // namespace
 
@@ -26,7 +26,7 @@ CXFA_Compress::CXFA_Compress(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Compress,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kCompressAttributeData,
+                kCompressName) {}
 
 CXFA_Compress::~CXFA_Compress() {}

@@ -11,12 +11,13 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Medium, 1, 0},
-                                                 {XFA_Element::Desc, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Occur, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kPageAreaPropertyData[] = {
+    {XFA_Element::Medium, 1, 0},
+    {XFA_Element::Desc, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Occur, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kPageAreaAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -32,7 +33,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Any},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"pageArea";
+constexpr wchar_t kPageAreaName[] = L"pageArea";
 
 }  // namespace
 
@@ -42,9 +43,9 @@ CXFA_PageArea::CXFA_PageArea(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::PageArea,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kPageAreaPropertyData,
+                kPageAreaAttributeData,
+                kPageAreaName,
                 pdfium::MakeUnique<CJX_PageArea>(this)) {}
 
 CXFA_PageArea::~CXFA_PageArea() {}

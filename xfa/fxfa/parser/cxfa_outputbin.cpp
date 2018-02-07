@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kOutputBinAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"outputBin";
+constexpr wchar_t kOutputBinName[] = L"outputBin";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_OutputBin::CXFA_OutputBin(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::OutputBin,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kOutputBinAttributeData,
+                kOutputBinName) {}
 
 CXFA_OutputBin::~CXFA_OutputBin() {}

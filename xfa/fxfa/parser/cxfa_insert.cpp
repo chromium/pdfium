@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kInsertAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"insert";
+constexpr wchar_t kInsertName[] = L"insert";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Insert::CXFA_Insert(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Insert,
                 nullptr,
-                kAttributeData,
-                kName,
+                kInsertAttributeData,
+                kInsertName,
                 pdfium::MakeUnique<CJX_Insert>(this)) {}
 
 CXFA_Insert::~CXFA_Insert() {}

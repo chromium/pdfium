@@ -8,7 +8,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kVersionControlAttributeData[] = {
     {XFA_Attribute::SourceBelow, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Update},
     {XFA_Attribute::OutputBelow, XFA_AttributeType::Enum,
@@ -18,7 +18,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"versionControl";
+constexpr wchar_t kVersionControlName[] = L"versionControl";
 
 }  // namespace
 
@@ -30,7 +30,7 @@ CXFA_VersionControl::CXFA_VersionControl(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::VersionControl,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kVersionControlAttributeData,
+                kVersionControlName) {}
 
 CXFA_VersionControl::~CXFA_VersionControl() {}

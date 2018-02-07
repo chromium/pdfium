@@ -12,7 +12,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kBarcodeAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DataRowCount, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -40,7 +40,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::EndChar, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"barcode";
+constexpr wchar_t kBarcodeName[] = L"barcode";
 
 }  // namespace
 
@@ -51,8 +51,8 @@ CXFA_Barcode::CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Barcode,
                 nullptr,
-                kAttributeData,
-                kName,
+                kBarcodeAttributeData,
+                kBarcodeName,
                 pdfium::MakeUnique<CJX_Barcode>(this)) {}
 
 CXFA_Barcode::~CXFA_Barcode() {}

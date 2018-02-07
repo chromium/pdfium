@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kFormFieldFillingAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"formFieldFilling";
+constexpr wchar_t kFormFieldFillingName[] = L"formFieldFilling";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_FormFieldFilling::CXFA_FormFieldFilling(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::FormFieldFilling,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kFormFieldFillingAttributeData,
+                kFormFieldFillingName) {}
 
 CXFA_FormFieldFilling::~CXFA_FormFieldFilling() {}

@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPartAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"part";
+constexpr wchar_t kPartName[] = L"part";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Part::CXFA_Part(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Part,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kPartAttributeData,
+                kPartName) {}
 
 CXFA_Part::~CXFA_Part() {}

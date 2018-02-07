@@ -11,7 +11,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"dataModel";
+constexpr wchar_t kDataModelName[] = L"dataModel";
 
 }  // namespace
 
@@ -23,7 +23,7 @@ CXFA_DataModel::CXFA_DataModel(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::DataModel,
                 nullptr,
                 nullptr,
-                kName,
+                kDataModelName,
                 pdfium::MakeUnique<CJX_Model>(this)) {}
 
 CXFA_DataModel::~CXFA_DataModel() {}

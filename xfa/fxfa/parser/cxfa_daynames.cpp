@@ -8,13 +8,14 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Day, 7, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kDayNamesPropertyData[] = {
+    {XFA_Element::Day, 7, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kDayNamesAttributeData[] = {
     {XFA_Attribute::Abbr, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"dayNames";
+constexpr wchar_t kDayNamesName[] = L"dayNames";
 
 }  // namespace
 
@@ -24,8 +25,8 @@ CXFA_DayNames::CXFA_DayNames(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::DayNames,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kDayNamesPropertyData,
+                kDayNamesAttributeData,
+                kDayNamesName) {}
 
 CXFA_DayNames::~CXFA_DayNames() {}

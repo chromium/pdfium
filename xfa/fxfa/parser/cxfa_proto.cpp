@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"proto";
+constexpr wchar_t kProtoName[] = L"proto";
 
 }  // namespace
 
@@ -20,6 +20,6 @@ CXFA_Proto::CXFA_Proto(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Proto,
                 nullptr,
                 nullptr,
-                kName) {}
+                kProtoName) {}
 
 CXFA_Proto::~CXFA_Proto() {}

@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPickTrayByPDFSizeAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"pickTrayByPDFSize";
+constexpr wchar_t kPickTrayByPDFSizeName[] = L"pickTrayByPDFSize";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_PickTrayByPDFSize::CXFA_PickTrayByPDFSize(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PickTrayByPDFSize,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kPickTrayByPDFSizeAttributeData,
+                kPickTrayByPDFSizeName) {}
 
 CXFA_PickTrayByPDFSize::~CXFA_PickTrayByPDFSize() {}

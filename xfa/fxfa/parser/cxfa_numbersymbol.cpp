@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kNumberSymbolAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Decimal},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"numberSymbol";
+constexpr wchar_t kNumberSymbolName[] = L"numberSymbol";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_NumberSymbol::CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::NumberSymbol,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kNumberSymbolAttributeData,
+                kNumberSymbolName) {}
 
 CXFA_NumberSymbol::~CXFA_NumberSymbol() {}

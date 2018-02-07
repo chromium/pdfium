@@ -8,11 +8,11 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSharpxHTMLAttributeData[] = {
     {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"#xHTML";
+constexpr wchar_t kSharpxHTMLName[] = L"#xHTML";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_SharpxHTML::CXFA_SharpxHTML(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::SharpxHTML,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kSharpxHTMLAttributeData,
+                kSharpxHTMLName) {}
 
 CXFA_SharpxHTML::~CXFA_SharpxHTML() {}

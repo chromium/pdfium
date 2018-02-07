@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kDestinationAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"destination";
+constexpr wchar_t kDestinationName[] = L"destination";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Destination::CXFA_Destination(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Destination,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kDestinationAttributeData,
+                kDestinationName) {}
 
 CXFA_Destination::~CXFA_Destination() {}

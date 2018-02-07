@@ -11,10 +11,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Desc, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kContentAreaPropertyData[] = {
+    {XFA_Element::Desc, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kContentAreaAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -26,7 +27,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"contentArea";
+constexpr wchar_t kContentAreaName[] = L"contentArea";
 
 }  // namespace
 
@@ -36,9 +37,9 @@ CXFA_ContentArea::CXFA_ContentArea(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::ContentArea,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kContentAreaPropertyData,
+                kContentAreaAttributeData,
+                kContentAreaName,
                 pdfium::MakeUnique<CJX_ContentArea>(this)) {}
 
 CXFA_ContentArea::~CXFA_ContentArea() {}

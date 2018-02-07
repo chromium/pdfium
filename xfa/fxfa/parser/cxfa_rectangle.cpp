@@ -15,11 +15,12 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Edge, 4, 0},
-                                                 {XFA_Element::Corner, 4, 0},
-                                                 {XFA_Element::Fill, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kRectanglePropertyData[] = {
+    {XFA_Element::Edge, 4, 0},
+    {XFA_Element::Corner, 4, 0},
+    {XFA_Element::Fill, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kRectangleAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
@@ -27,7 +28,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"rectangle";
+constexpr wchar_t kRectangleName[] = L"rectangle";
 
 }  // namespace
 
@@ -37,9 +38,9 @@ CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* doc, XFA_PacketType packet)
                (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                XFA_ObjectType::Node,
                XFA_Element::Rectangle,
-               kPropertyData,
-               kAttributeData,
-               kName,
+               kRectanglePropertyData,
+               kRectangleAttributeData,
+               kRectangleName,
                pdfium::MakeUnique<CJX_Rectangle>(this)) {}
 
 CXFA_Rectangle::CXFA_Rectangle(CXFA_Document* pDoc,

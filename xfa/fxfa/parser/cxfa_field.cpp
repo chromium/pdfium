@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kFieldPropertyData[] = {
     {XFA_Element::Ui, 1, 0},        {XFA_Element::Margin, 1, 0},
     {XFA_Element::Para, 1, 0},      {XFA_Element::Format, 1, 0},
     {XFA_Element::Border, 1, 0},    {XFA_Element::Assist, 1, 0},
@@ -21,7 +21,7 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Font, 1, 0},      {XFA_Element::Value, 1, 0},
     {XFA_Element::Calculate, 1, 0}, {XFA_Element::Extras, 1, 0},
     {XFA_Element::Items, 2, 0},     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kFieldAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -51,7 +51,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::AccessKey, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"field";
+constexpr wchar_t kFieldName[] = L"field";
 
 }  // namespace
 
@@ -61,9 +61,9 @@ CXFA_Field::CXFA_Field(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::Field,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kFieldPropertyData,
+                kFieldAttributeData,
+                kFieldName,
                 pdfium::MakeUnique<CJX_Field>(this)) {}
 
 CXFA_Field::~CXFA_Field() {}

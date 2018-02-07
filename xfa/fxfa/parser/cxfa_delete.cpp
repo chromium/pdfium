@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kDeleteAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"delete";
+constexpr wchar_t kDeleteName[] = L"delete";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Delete::CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Delete,
                 nullptr,
-                kAttributeData,
-                kName,
+                kDeleteAttributeData,
+                kDeleteName,
                 pdfium::MakeUnique<CJX_Delete>(this)) {}
 
 CXFA_Delete::~CXFA_Delete() {}

@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kAutoSaveAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"autoSave";
+constexpr wchar_t kAutoSaveName[] = L"autoSave";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_AutoSave::CXFA_AutoSave(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::AutoSave,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kAutoSaveAttributeData,
+                kAutoSaveName) {}
 
 CXFA_AutoSave::~CXFA_AutoSave() {}

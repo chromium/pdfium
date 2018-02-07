@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kConnectStringAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"connectString";
+constexpr wchar_t kConnectStringName[] = L"connectString";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_ConnectString::CXFA_ConnectString(CXFA_Document* doc,
                 XFA_ObjectType::TextNode,
                 XFA_Element::ConnectString,
                 nullptr,
-                kAttributeData,
-                kName,
+                kConnectStringAttributeData,
+                kConnectStringName,
                 pdfium::MakeUnique<CJX_ConnectString>(this)) {}
 
 CXFA_ConnectString::~CXFA_ConnectString() {}

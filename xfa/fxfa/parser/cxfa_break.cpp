@@ -11,9 +11,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kBreakPropertyData[] = {
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kBreakAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::BeforeTarget, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -31,7 +32,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"break";
+constexpr wchar_t kBreakName[] = L"break";
 
 }  // namespace
 
@@ -41,9 +42,9 @@ CXFA_Break::CXFA_Break(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Break,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kBreakPropertyData,
+                kBreakAttributeData,
+                kBreakName,
                 pdfium::MakeUnique<CJX_Break>(this)) {}
 
 CXFA_Break::~CXFA_Break() {}

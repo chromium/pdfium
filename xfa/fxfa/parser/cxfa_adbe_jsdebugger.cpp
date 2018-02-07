@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kaDBE_JSDebuggerAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"ADBE_JSDebugger";
+constexpr wchar_t kaDBE_JSDebuggerName[] = L"ADBE_JSDebugger";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_aDBE_JSDebugger::CXFA_aDBE_JSDebugger(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ADBE_JSDebugger,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kaDBE_JSDebuggerAttributeData,
+                kaDBE_JSDebuggerName) {}
 
 CXFA_aDBE_JSDebugger::~CXFA_aDBE_JSDebugger() {}

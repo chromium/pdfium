@@ -11,10 +11,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Script, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kTraversePropertyData[] = {
+    {XFA_Element::Script, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kTraverseAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -23,7 +24,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"traverse";
+constexpr wchar_t kTraverseName[] = L"traverse";
 
 }  // namespace
 
@@ -33,9 +34,9 @@ CXFA_Traverse::CXFA_Traverse(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Traverse,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kTraversePropertyData,
+                kTraverseAttributeData,
+                kTraverseName,
                 pdfium::MakeUnique<CJX_Traverse>(this)) {}
 
 CXFA_Traverse::~CXFA_Traverse() {}

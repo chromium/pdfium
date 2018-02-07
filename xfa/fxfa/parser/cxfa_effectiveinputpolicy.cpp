@@ -8,14 +8,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kEffectiveInputPolicyAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"effectiveInputPolicy";
+constexpr wchar_t kEffectiveInputPolicyName[] = L"effectiveInputPolicy";
 
 }  // namespace
 
@@ -27,7 +27,7 @@ CXFA_EffectiveInputPolicy::CXFA_EffectiveInputPolicy(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::EffectiveInputPolicy,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kEffectiveInputPolicyAttributeData,
+                kEffectiveInputPolicyName) {}
 
 CXFA_EffectiveInputPolicy::~CXFA_EffectiveInputPolicy() {}

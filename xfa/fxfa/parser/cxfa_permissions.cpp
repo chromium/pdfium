@@ -8,7 +8,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kPermissionsPropertyData[] = {
     {XFA_Element::ModifyAnnots, 1, 0},
     {XFA_Element::ContentCopy, 1, 0},
     {XFA_Element::FormFieldFilling, 1, 0},
@@ -19,12 +19,12 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::PrintHighQuality, 1, 0},
     {XFA_Element::DocumentAssembly, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPermissionsAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"permissions";
+constexpr wchar_t kPermissionsName[] = L"permissions";
 
 }  // namespace
 
@@ -34,8 +34,8 @@ CXFA_Permissions::CXFA_Permissions(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Permissions,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kPermissionsPropertyData,
+                kPermissionsAttributeData,
+                kPermissionsName) {}
 
 CXFA_Permissions::~CXFA_Permissions() {}

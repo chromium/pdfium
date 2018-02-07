@@ -13,14 +13,14 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kEventPropertyData[] = {
     {XFA_Element::Execute, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Script, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::SignData, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Submit, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kEventAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
@@ -32,7 +32,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Click},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"event";
+constexpr wchar_t kEventName[] = L"event";
 
 }  // namespace
 
@@ -42,9 +42,9 @@ CXFA_Event::CXFA_Event(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Event,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kEventPropertyData,
+                kEventAttributeData,
+                kEventName,
                 pdfium::MakeUnique<CJX_Event>(this)) {}
 
 CXFA_Event::~CXFA_Event() {}

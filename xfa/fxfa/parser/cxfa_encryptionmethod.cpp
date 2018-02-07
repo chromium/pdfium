@@ -8,13 +8,13 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kEncryptionMethodAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"encryptionMethod";
+constexpr wchar_t kEncryptionMethodName[] = L"encryptionMethod";
 
 }  // namespace
 
@@ -26,7 +26,7 @@ CXFA_EncryptionMethod::CXFA_EncryptionMethod(CXFA_Document* doc,
                 XFA_ObjectType::NodeC,
                 XFA_Element::EncryptionMethod,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kEncryptionMethodAttributeData,
+                kEncryptionMethodName) {}
 
 CXFA_EncryptionMethod::~CXFA_EncryptionMethod() {}

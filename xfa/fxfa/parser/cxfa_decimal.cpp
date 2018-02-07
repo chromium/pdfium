@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kDecimalAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::LeadDigits, XFA_AttributeType::Integer, (void*)-1},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"decimal";
+constexpr wchar_t kDecimalName[] = L"decimal";
 
 }  // namespace
 
@@ -31,8 +31,8 @@ CXFA_Decimal::CXFA_Decimal(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Decimal,
                 nullptr,
-                kAttributeData,
-                kName,
+                kDecimalAttributeData,
+                kDecimalName,
                 pdfium::MakeUnique<CJX_Decimal>(this)) {}
 
 CXFA_Decimal::~CXFA_Decimal() {}

@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kReasonsAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"reasons";
+constexpr wchar_t kReasonsName[] = L"reasons";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_Reasons::CXFA_Reasons(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Reasons,
                 nullptr,
-                kAttributeData,
-                kName,
+                kReasonsAttributeData,
+                kReasonsName,
                 pdfium::MakeUnique<CJX_Reasons>(this)) {}
 
 CXFA_Reasons::~CXFA_Reasons() {}

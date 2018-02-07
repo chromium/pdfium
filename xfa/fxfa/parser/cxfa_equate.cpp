@@ -8,7 +8,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kEquateAttributeData[] = {
     {XFA_Attribute::To, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Force, XFA_AttributeType::Boolean, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
@@ -16,7 +16,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"equate";
+constexpr wchar_t kEquateName[] = L"equate";
 
 }  // namespace
 
@@ -27,7 +27,7 @@ CXFA_Equate::CXFA_Equate(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Equate,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kEquateAttributeData,
+                kEquateName) {}
 
 CXFA_Equate::~CXFA_Equate() {}

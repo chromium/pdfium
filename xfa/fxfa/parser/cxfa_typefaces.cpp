@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"typefaces";
+constexpr wchar_t kTypefacesName[] = L"typefaces";
 
 }  // namespace
 
@@ -20,6 +20,6 @@ CXFA_Typefaces::CXFA_Typefaces(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Typefaces,
                 nullptr,
                 nullptr,
-                kName) {}
+                kTypefacesName) {}
 
 CXFA_Typefaces::~CXFA_Typefaces() {}

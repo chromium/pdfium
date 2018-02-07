@@ -15,11 +15,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kCaptionPropertyData[] = {
     {XFA_Element::Margin, 1, 0}, {XFA_Element::Para, 1, 0},
     {XFA_Element::Font, 1, 0},   {XFA_Element::Value, 1, 0},
     {XFA_Element::Extras, 1, 0}, {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kCaptionAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Reserve, XFA_AttributeType::Measure, (void*)L"-1un"},
@@ -30,7 +30,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Left},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"caption";
+constexpr wchar_t kCaptionName[] = L"caption";
 
 }  // namespace
 
@@ -40,9 +40,9 @@ CXFA_Caption::CXFA_Caption(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Caption,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kCaptionPropertyData,
+                kCaptionAttributeData,
+                kCaptionName,
                 pdfium::MakeUnique<CJX_Caption>(this)) {}
 
 CXFA_Caption::~CXFA_Caption() {}

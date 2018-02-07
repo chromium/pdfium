@@ -8,11 +8,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kDatePatternsPropertyData[] = {
     {XFA_Element::DatePattern, 4, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kName[] = L"datePatterns";
+constexpr wchar_t kDatePatternsName[] = L"datePatterns";
 
 }  // namespace
 
@@ -22,8 +22,8 @@ CXFA_DatePatterns::CXFA_DatePatterns(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::DatePatterns,
-                kPropertyData,
+                kDatePatternsPropertyData,
                 nullptr,
-                kName) {}
+                kDatePatternsName) {}
 
 CXFA_DatePatterns::~CXFA_DatePatterns() {}

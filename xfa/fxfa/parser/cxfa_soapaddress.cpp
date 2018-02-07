@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSoapAddressAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"soapAddress";
+constexpr wchar_t kSoapAddressName[] = L"soapAddress";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_SoapAddress::CXFA_SoapAddress(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::SoapAddress,
                 nullptr,
-                kAttributeData,
-                kName,
+                kSoapAddressAttributeData,
+                kSoapAddressName,
                 pdfium::MakeUnique<CJX_SoapAddress>(this)) {}
 
 CXFA_SoapAddress::~CXFA_SoapAddress() {}

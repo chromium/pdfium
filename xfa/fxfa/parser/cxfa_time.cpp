@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kTimeAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"time";
+constexpr wchar_t kTimeName[] = L"time";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Time::CXFA_Time(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Time,
                 nullptr,
-                kAttributeData,
-                kName,
+                kTimeAttributeData,
+                kTimeName,
                 pdfium::MakeUnique<CJX_Time>(this)) {}
 
 CXFA_Time::~CXFA_Time() {}

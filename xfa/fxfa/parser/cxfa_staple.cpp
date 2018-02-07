@@ -8,14 +8,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kStapleAttributeData[] = {
     {XFA_Attribute::Mode, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::UsePrinterSetting},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"staple";
+constexpr wchar_t kStapleName[] = L"staple";
 
 }  // namespace
 
@@ -26,7 +26,7 @@ CXFA_Staple::CXFA_Staple(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Staple,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kStapleAttributeData,
+                kStapleName) {}
 
 CXFA_Staple::~CXFA_Staple() {}

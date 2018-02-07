@@ -11,12 +11,13 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
-                                                 {XFA_Element::Border, 1, 0},
-                                                 {XFA_Element::Comb, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kNumericEditPropertyData[] = {
+    {XFA_Element::Margin, 1, 0},
+    {XFA_Element::Border, 1, 0},
+    {XFA_Element::Comb, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kNumericEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
@@ -24,7 +25,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"numericEdit";
+constexpr wchar_t kNumericEditName[] = L"numericEdit";
 
 }  // namespace
 
@@ -34,9 +35,9 @@ CXFA_NumericEdit::CXFA_NumericEdit(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::NumericEdit,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kNumericEditPropertyData,
+                kNumericEditAttributeData,
+                kNumericEditName,
                 pdfium::MakeUnique<CJX_NumericEdit>(this)) {}
 
 CXFA_NumericEdit::~CXFA_NumericEdit() {}

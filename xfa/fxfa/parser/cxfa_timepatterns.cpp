@@ -8,11 +8,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kTimePatternsPropertyData[] = {
     {XFA_Element::TimePattern, 4, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kName[] = L"timePatterns";
+constexpr wchar_t kTimePatternsName[] = L"timePatterns";
 
 }  // namespace
 
@@ -22,8 +22,8 @@ CXFA_TimePatterns::CXFA_TimePatterns(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::TimePatterns,
-                kPropertyData,
+                kTimePatternsPropertyData,
                 nullptr,
-                kName) {}
+                kTimePatternsName) {}
 
 CXFA_TimePatterns::~CXFA_TimePatterns() {}

@@ -8,15 +8,16 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Uri, 1, 0},
-                                                 {XFA_Element::Xsl, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kXdcPropertyData[] = {
+    {XFA_Element::Uri, 1, 0},
+    {XFA_Element::Xsl, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kXdcAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"xdc";
+constexpr wchar_t kXdcName[] = L"xdc";
 
 }  // namespace
 
@@ -26,8 +27,8 @@ CXFA_Xdc::CXFA_Xdc(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Config | XFA_XDPPACKET_Xdc),
                 XFA_ObjectType::ModelNode,
                 XFA_Element::Xdc,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kXdcPropertyData,
+                kXdcAttributeData,
+                kXdcName) {}
 
 CXFA_Xdc::~CXFA_Xdc() {}

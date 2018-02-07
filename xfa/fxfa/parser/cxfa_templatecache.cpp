@@ -8,13 +8,13 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kTemplateCacheAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::MaxEntries, XFA_AttributeType::Integer, (void*)5},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"templateCache";
+constexpr wchar_t kTemplateCacheName[] = L"templateCache";
 
 }  // namespace
 
@@ -26,7 +26,7 @@ CXFA_TemplateCache::CXFA_TemplateCache(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::TemplateCache,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kTemplateCacheAttributeData,
+                kTemplateCacheName) {}
 
 CXFA_TemplateCache::~CXFA_TemplateCache() {}

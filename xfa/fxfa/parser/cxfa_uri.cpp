@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kUriAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"uri";
+constexpr wchar_t kUriName[] = L"uri";
 
 }  // namespace
 
@@ -31,8 +31,8 @@ CXFA_Uri::CXFA_Uri(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Uri,
                 nullptr,
-                kAttributeData,
-                kName,
+                kUriAttributeData,
+                kUriName,
                 pdfium::MakeUnique<CJX_Uri>(this)) {}
 
 CXFA_Uri::~CXFA_Uri() {}

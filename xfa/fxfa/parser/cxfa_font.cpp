@@ -13,10 +13,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Fill, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kFontPropertyData[] = {
+    {XFA_Element::Fill, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kFontAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::LineThrough, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Typeface, XFA_AttributeType::CData, (void*)L"Courier"},
@@ -48,7 +49,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Serif},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"font";
+constexpr wchar_t kFontName[] = L"font";
 
 }  // namespace
 
@@ -59,9 +60,9 @@ CXFA_Font::CXFA_Font(CXFA_Document* doc, XFA_PacketType packet)
           (XFA_XDPPACKET_Template | XFA_XDPPACKET_Config | XFA_XDPPACKET_Form),
           XFA_ObjectType::Node,
           XFA_Element::Font,
-          kPropertyData,
-          kAttributeData,
-          kName,
+          kFontPropertyData,
+          kFontAttributeData,
+          kFontName,
           pdfium::MakeUnique<CJX_Font>(this)) {}
 
 CXFA_Font::~CXFA_Font() {}

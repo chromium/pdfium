@@ -12,10 +12,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kParaPropertyData[] = {
     {XFA_Element::Hyphenation, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kParaAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::HAlign, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Left},
@@ -37,7 +37,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::SpaceAbove, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"para";
+constexpr wchar_t kParaName[] = L"para";
 
 }  // namespace
 
@@ -47,9 +47,9 @@ CXFA_Para::CXFA_Para(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Para,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kParaPropertyData,
+                kParaAttributeData,
+                kParaName,
                 pdfium::MakeUnique<CJX_Para>(this)) {}
 
 CXFA_Para::~CXFA_Para() {}

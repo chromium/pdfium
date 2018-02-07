@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kFloatAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"float";
+constexpr wchar_t kFloatName[] = L"float";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Float::CXFA_Float(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Float,
                 nullptr,
-                kAttributeData,
-                kName,
+                kFloatAttributeData,
+                kFloatName,
                 pdfium::MakeUnique<CJX_Float>(this)) {}
 
 CXFA_Float::~CXFA_Float() {}

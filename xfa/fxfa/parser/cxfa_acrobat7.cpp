@@ -8,15 +8,15 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kAcrobat7PropertyData[] = {
     {XFA_Element::DynamicRender, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kAcrobat7AttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"acrobat7";
+constexpr wchar_t kAcrobat7Name[] = L"acrobat7";
 
 }  // namespace
 
@@ -26,8 +26,8 @@ CXFA_Acrobat7::CXFA_Acrobat7(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Acrobat7,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kAcrobat7PropertyData,
+                kAcrobat7AttributeData,
+                kAcrobat7Name) {}
 
 CXFA_Acrobat7::~CXFA_Acrobat7() {}

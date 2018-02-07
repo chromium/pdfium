@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPrintScalingAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"printScaling";
+constexpr wchar_t kPrintScalingName[] = L"printScaling";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_PrintScaling::CXFA_PrintScaling(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PrintScaling,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kPrintScalingAttributeData,
+                kPrintScalingName) {}
 
 CXFA_PrintScaling::~CXFA_PrintScaling() {}

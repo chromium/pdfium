@@ -2134,8 +2134,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  # TODO(crbug.com/pdfium/964): Support jumbo builds.
-  static_library("xfa_fxfa_parser") {
+  jumbo_static_library("xfa_fxfa_parser") {
     sources = [
       "xfa/fxfa/parser/cscript_datawindow.cpp",
       "xfa/fxfa/parser/cscript_datawindow.h",

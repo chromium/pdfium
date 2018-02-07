@@ -8,7 +8,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kHyphenationAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::WordCharacterCount, XFA_AttributeType::Integer, (void*)7},
@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::ExcludeAllCaps, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"hyphenation";
+constexpr wchar_t kHyphenationName[] = L"hyphenation";
 
 }  // namespace
 
@@ -31,7 +31,7 @@ CXFA_Hyphenation::CXFA_Hyphenation(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Hyphenation,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kHyphenationAttributeData,
+                kHyphenationName) {}
 
 CXFA_Hyphenation::~CXFA_Hyphenation() {}

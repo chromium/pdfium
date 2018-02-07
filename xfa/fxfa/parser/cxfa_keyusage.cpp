@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kKeyUsageAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::NonRepudiation, XFA_AttributeType::CData, nullptr},
@@ -28,7 +28,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::DecipherOnly, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"keyUsage";
+constexpr wchar_t kKeyUsageName[] = L"keyUsage";
 
 }  // namespace
 
@@ -39,8 +39,8 @@ CXFA_KeyUsage::CXFA_KeyUsage(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::KeyUsage,
                 nullptr,
-                kAttributeData,
-                kName,
+                kKeyUsageAttributeData,
+                kKeyUsageName,
                 pdfium::MakeUnique<CJX_KeyUsage>(this)) {}
 
 CXFA_KeyUsage::~CXFA_KeyUsage() {}

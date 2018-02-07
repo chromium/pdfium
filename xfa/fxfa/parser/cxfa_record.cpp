@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kRecordAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"record";
+constexpr wchar_t kRecordName[] = L"record";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Record::CXFA_Record(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Record,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kRecordAttributeData,
+                kRecordName) {}
 
 CXFA_Record::~CXFA_Record() {}

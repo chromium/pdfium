@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"meridiem";
+constexpr wchar_t kMeridiemName[] = L"meridiem";
 
 }  // namespace
 
@@ -20,6 +20,6 @@ CXFA_Meridiem::CXFA_Meridiem(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Meridiem,
                 nullptr,
                 nullptr,
-                kName) {}
+                kMeridiemName) {}
 
 CXFA_Meridiem::~CXFA_Meridiem() {}

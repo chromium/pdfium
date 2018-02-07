@@ -11,9 +11,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kKeepPropertyData[] = {
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kKeepAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Next, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::None},
@@ -25,7 +26,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::None},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"keep";
+constexpr wchar_t kKeepName[] = L"keep";
 
 }  // namespace
 
@@ -35,9 +36,9 @@ CXFA_Keep::CXFA_Keep(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Keep,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kKeepPropertyData,
+                kKeepAttributeData,
+                kKeepName,
                 pdfium::MakeUnique<CJX_Keep>(this)) {}
 
 CXFA_Keep::~CXFA_Keep() {}

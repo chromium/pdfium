@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kBehaviorOverrideAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"behaviorOverride";
+constexpr wchar_t kBehaviorOverrideName[] = L"behaviorOverride";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_BehaviorOverride::CXFA_BehaviorOverride(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::BehaviorOverride,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kBehaviorOverrideAttributeData,
+                kBehaviorOverrideName) {}
 
 CXFA_BehaviorOverride::~CXFA_BehaviorOverride() {}

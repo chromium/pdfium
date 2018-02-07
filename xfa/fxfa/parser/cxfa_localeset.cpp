@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kLocaleSetAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"localeSet";
+constexpr wchar_t kLocaleSetName[] = L"localeSet";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_LocaleSet::CXFA_LocaleSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ModelNode,
                 XFA_Element::LocaleSet,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kLocaleSetAttributeData,
+                kLocaleSetName) {}
 
 CXFA_LocaleSet::~CXFA_LocaleSet() {}

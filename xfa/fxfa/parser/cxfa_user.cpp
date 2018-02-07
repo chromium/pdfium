@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kUserAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"user";
+constexpr wchar_t kUserName[] = L"user";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_User::CXFA_User(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::User,
                 nullptr,
-                kAttributeData,
-                kName,
+                kUserAttributeData,
+                kUserName,
                 pdfium::MakeUnique<CJX_User>(this)) {}
 
 CXFA_User::~CXFA_User() {}

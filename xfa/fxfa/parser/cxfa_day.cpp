@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"day";
+constexpr wchar_t kDayName[] = L"day";
 
 }  // namespace
 
@@ -20,6 +20,6 @@ CXFA_Day::CXFA_Day(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Day,
                 nullptr,
                 nullptr,
-                kName) {}
+                kDayName) {}
 
 CXFA_Day::~CXFA_Day() {}

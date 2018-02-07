@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kTimePatternAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Med},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"timePattern";
+constexpr wchar_t kTimePatternName[] = L"timePattern";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_TimePattern::CXFA_TimePattern(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::TimePattern,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kTimePatternAttributeData,
+                kTimePatternName) {}
 
 CXFA_TimePattern::~CXFA_TimePattern() {}

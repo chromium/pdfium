@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kExecuteAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Connection, XFA_AttributeType::CData, nullptr},
@@ -22,7 +22,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"execute";
+constexpr wchar_t kExecuteName[] = L"execute";
 
 }  // namespace
 
@@ -33,8 +33,8 @@ CXFA_Execute::CXFA_Execute(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Execute,
                 nullptr,
-                kAttributeData,
-                kName,
+                kExecuteAttributeData,
+                kExecuteName,
                 pdfium::MakeUnique<CJX_Execute>(this)) {}
 
 CXFA_Execute::~CXFA_Execute() {}

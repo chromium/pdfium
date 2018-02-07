@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kRecordSetAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Max, XFA_AttributeType::Integer, (void*)0},
@@ -29,7 +29,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Client},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"recordSet";
+constexpr wchar_t kRecordSetName[] = L"recordSet";
 
 }  // namespace
 
@@ -40,8 +40,8 @@ CXFA_RecordSet::CXFA_RecordSet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::RecordSet,
                 nullptr,
-                kAttributeData,
-                kName,
+                kRecordSetAttributeData,
+                kRecordSetName,
                 pdfium::MakeUnique<CJX_RecordSet>(this)) {}
 
 CXFA_RecordSet::~CXFA_RecordSet() {}

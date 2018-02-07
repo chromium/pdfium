@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kTextAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Rid, XFA_AttributeType::CData, nullptr},
@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"text";
+constexpr wchar_t kTextName[] = L"text";
 
 }  // namespace
 
@@ -32,8 +32,8 @@ CXFA_Text::CXFA_Text(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Text,
                 nullptr,
-                kAttributeData,
-                kName,
+                kTextAttributeData,
+                kTextName,
                 pdfium::MakeUnique<CJX_Text>(this)) {}
 
 CXFA_Text::~CXFA_Text() {}

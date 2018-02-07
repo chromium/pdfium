@@ -11,10 +11,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Color, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kEdgePropertyData[] = {
+    {XFA_Element::Color, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kEdgeAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Cap, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Square},
@@ -27,7 +28,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"edge";
+constexpr wchar_t kEdgeName[] = L"edge";
 
 }  // namespace
 
@@ -37,9 +38,9 @@ CXFA_Edge::CXFA_Edge(CXFA_Document* doc, XFA_PacketType packet)
                   (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                   XFA_ObjectType::Node,
                   XFA_Element::Edge,
-                  kPropertyData,
-                  kAttributeData,
-                  kName,
+                  kEdgePropertyData,
+                  kEdgeAttributeData,
+                  kEdgeName,
                   pdfium::MakeUnique<CJX_Edge>(this)) {}
 
 CXFA_Edge::~CXFA_Edge() {}

@@ -8,17 +8,18 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::To, 1, 0},
-                                                 {XFA_Element::Uri, 1, 0},
-                                                 {XFA_Element::Mode, 1, 0},
-                                                 {XFA_Element::Threshold, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kLogPropertyData[] = {
+    {XFA_Element::To, 1, 0},
+    {XFA_Element::Uri, 1, 0},
+    {XFA_Element::Mode, 1, 0},
+    {XFA_Element::Threshold, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kLogAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"log";
+constexpr wchar_t kLogName[] = L"log";
 
 }  // namespace
 
@@ -28,8 +29,8 @@ CXFA_Log::CXFA_Log(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Log,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kLogPropertyData,
+                kLogAttributeData,
+                kLogName) {}
 
 CXFA_Log::~CXFA_Log() {}

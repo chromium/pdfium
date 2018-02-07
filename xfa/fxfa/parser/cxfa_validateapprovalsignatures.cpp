@@ -8,12 +8,13 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kValidateApprovalSignaturesAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"validateApprovalSignatures";
+constexpr wchar_t kValidateApprovalSignaturesName[] =
+    L"validateApprovalSignatures";
 
 }  // namespace
 
@@ -26,7 +27,7 @@ CXFA_ValidateApprovalSignatures::CXFA_ValidateApprovalSignatures(
                 XFA_ObjectType::NodeV,
                 XFA_Element::ValidateApprovalSignatures,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kValidateApprovalSignaturesAttributeData,
+                kValidateApprovalSignaturesName) {}
 
 CXFA_ValidateApprovalSignatures::~CXFA_ValidateApprovalSignatures() {}

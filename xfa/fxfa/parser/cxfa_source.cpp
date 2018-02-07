@@ -11,16 +11,17 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Connect, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kSourcePropertyData[] = {
+    {XFA_Element::Connect, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kSourceAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"source";
+constexpr wchar_t kSourceName[] = L"source";
 
 }  // namespace
 
@@ -30,9 +31,9 @@ CXFA_Source::CXFA_Source(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_SourceSet,
                 XFA_ObjectType::Node,
                 XFA_Element::Source,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kSourcePropertyData,
+                kSourceAttributeData,
+                kSourceName,
                 pdfium::MakeUnique<CJX_Source>(this)) {}
 
 CXFA_Source::~CXFA_Source() {}

@@ -11,11 +11,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kBorderPropertyData[] = {
     {XFA_Element::Margin, 1, 0}, {XFA_Element::Edge, 4, 0},
     {XFA_Element::Corner, 4, 0}, {XFA_Element::Fill, 1, 0},
     {XFA_Element::Extras, 1, 0}, {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kBorderAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Break, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Close},
@@ -28,7 +28,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Even},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"border";
+constexpr wchar_t kBorderName[] = L"border";
 
 }  // namespace
 
@@ -38,9 +38,9 @@ CXFA_Border::CXFA_Border(CXFA_Document* doc, XFA_PacketType packet)
                      (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                      XFA_ObjectType::Node,
                      XFA_Element::Border,
-                     kPropertyData,
-                     kAttributeData,
-                     kName,
+                     kBorderPropertyData,
+                     kBorderAttributeData,
+                     kBorderName,
                      pdfium::MakeUnique<CJX_Border>(this)) {}
 
 CXFA_Border::~CXFA_Border() {}

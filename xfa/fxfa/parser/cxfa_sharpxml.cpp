@@ -8,11 +8,11 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSharpxmlAttributeData[] = {
     {XFA_Attribute::Value, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"#xml";
+constexpr wchar_t kSharpxmlName[] = L"#xml";
 
 }  // namespace
 
@@ -23,7 +23,7 @@ CXFA_Sharpxml::CXFA_Sharpxml(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Sharpxml,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kSharpxmlAttributeData,
+                kSharpxmlName) {}
 
 CXFA_Sharpxml::~CXFA_Sharpxml() {}

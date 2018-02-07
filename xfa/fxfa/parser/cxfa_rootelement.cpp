@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kRootElementAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"rootElement";
+constexpr wchar_t kRootElementName[] = L"rootElement";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_RootElement::CXFA_RootElement(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::RootElement,
                 nullptr,
-                kAttributeData,
-                kName,
+                kRootElementAttributeData,
+                kRootElementName,
                 pdfium::MakeUnique<CJX_RootElement>(this)) {}
 
 CXFA_RootElement::~CXFA_RootElement() {}

@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kScriptModelAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"scriptModel";
+constexpr wchar_t kScriptModelName[] = L"scriptModel";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_ScriptModel::CXFA_ScriptModel(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ScriptModel,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kScriptModelAttributeData,
+                kScriptModelName) {}
 
 CXFA_ScriptModel::~CXFA_ScriptModel() {}

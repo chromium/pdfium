@@ -11,7 +11,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"connectionSet";
+constexpr wchar_t kConnectionSetName[] = L"connectionSet";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_ConnectionSet::CXFA_ConnectionSet(CXFA_Document* doc,
                 XFA_Element::ConnectionSet,
                 nullptr,
                 nullptr,
-                kName,
+                kConnectionSetName,
                 pdfium::MakeUnique<CJX_Model>(this)) {}
 
 CXFA_ConnectionSet::~CXFA_ConnectionSet() {}

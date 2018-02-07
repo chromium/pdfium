@@ -14,11 +14,12 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Message, 1, 0},
-                                                 {XFA_Element::Script, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kCalculatePropertyData[] = {
+    {XFA_Element::Message, 1, 0},
+    {XFA_Element::Script, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kCalculateAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
@@ -26,7 +27,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Error},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"calculate";
+constexpr wchar_t kCalculateName[] = L"calculate";
 
 }  // namespace
 
@@ -36,9 +37,9 @@ CXFA_Calculate::CXFA_Calculate(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Calculate,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kCalculatePropertyData,
+                kCalculateAttributeData,
+                kCalculateName,
                 pdfium::MakeUnique<CJX_Calculate>(this)) {}
 
 CXFA_Calculate::~CXFA_Calculate() {}

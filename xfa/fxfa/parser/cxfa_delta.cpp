@@ -11,7 +11,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"delta";
+constexpr wchar_t kDeltaName[] = L"delta";
 
 }  // namespace
 
@@ -23,7 +23,7 @@ CXFA_Delta::CXFA_Delta(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Delta,
                 nullptr,
                 nullptr,
-                kName,
+                kDeltaName,
                 pdfium::MakeUnique<CJX_Delta>(this)) {}
 
 CXFA_Delta::~CXFA_Delta() {}

@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kMessagingAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"messaging";
+constexpr wchar_t kMessagingName[] = L"messaging";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Messaging::CXFA_Messaging(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Messaging,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kMessagingAttributeData,
+                kMessagingName) {}
 
 CXFA_Messaging::~CXFA_Messaging() {}

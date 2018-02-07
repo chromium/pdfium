@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"month";
+constexpr wchar_t kMonthName[] = L"month";
 
 }  // namespace
 
@@ -20,6 +20,6 @@ CXFA_Month::CXFA_Month(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Month,
                 nullptr,
                 nullptr,
-                kName) {}
+                kMonthName) {}
 
 CXFA_Month::~CXFA_Month() {}

@@ -11,13 +11,13 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSetPropertyAttributeData[] = {
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Connection, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Target, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"setProperty";
+constexpr wchar_t kSetPropertyName[] = L"setProperty";
 
 }  // namespace
 
@@ -28,8 +28,8 @@ CXFA_SetProperty::CXFA_SetProperty(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::SetProperty,
                 nullptr,
-                kAttributeData,
-                kName,
+                kSetPropertyAttributeData,
+                kSetPropertyName,
                 pdfium::MakeUnique<CJX_SetProperty>(this)) {}
 
 CXFA_SetProperty::~CXFA_SetProperty() {}

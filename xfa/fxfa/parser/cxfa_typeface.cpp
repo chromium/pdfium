@@ -8,11 +8,11 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kTypefaceAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"typeface";
+constexpr wchar_t kTypefaceName[] = L"typeface";
 
 }  // namespace
 
@@ -23,7 +23,7 @@ CXFA_Typeface::CXFA_Typeface(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Typeface,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kTypefaceAttributeData,
+                kTypefaceName) {}
 
 CXFA_Typeface::~CXFA_Typeface() {}

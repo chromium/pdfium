@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kAddViewerPreferencesAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"addViewerPreferences";
+constexpr wchar_t kAddViewerPreferencesName[] = L"addViewerPreferences";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_AddViewerPreferences::CXFA_AddViewerPreferences(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::AddViewerPreferences,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kAddViewerPreferencesAttributeData,
+                kAddViewerPreferencesName) {}
 
 CXFA_AddViewerPreferences::~CXFA_AddViewerPreferences() {}

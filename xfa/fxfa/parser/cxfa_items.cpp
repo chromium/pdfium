@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kItemsAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
@@ -22,7 +22,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"items";
+constexpr wchar_t kItemsName[] = L"items";
 
 }  // namespace
 
@@ -33,8 +33,8 @@ CXFA_Items::CXFA_Items(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Items,
                 nullptr,
-                kAttributeData,
-                kName,
+                kItemsAttributeData,
+                kItemsName,
                 pdfium::MakeUnique<CJX_Items>(this)) {}
 
 CXFA_Items::~CXFA_Items() {}

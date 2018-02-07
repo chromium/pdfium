@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kModeAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"mode";
+constexpr wchar_t kModeName[] = L"mode";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Mode::CXFA_Mode(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Mode,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kModeAttributeData,
+                kModeName) {}
 
 CXFA_Mode::~CXFA_Mode() {}

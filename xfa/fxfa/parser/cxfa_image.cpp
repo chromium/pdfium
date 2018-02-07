@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kImageAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -24,7 +24,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Href, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"image";
+constexpr wchar_t kImageName[] = L"image";
 
 }  // namespace
 
@@ -35,8 +35,8 @@ CXFA_Image::CXFA_Image(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Image,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kImageAttributeData,
+                kImageName) {}
 
 CXFA_Image::~CXFA_Image() {}
 

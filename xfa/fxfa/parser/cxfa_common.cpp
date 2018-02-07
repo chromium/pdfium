@@ -8,7 +8,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kCommonPropertyData[] = {
     {XFA_Element::SuppressBanner, 1, 0},
     {XFA_Element::VersionControl, 1, 0},
     {XFA_Element::LocaleSet, 1, 0},
@@ -18,12 +18,12 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Data, 1, 0},
     {XFA_Element::Messaging, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kCommonAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"common";
+constexpr wchar_t kCommonName[] = L"common";
 
 }  // namespace
 
@@ -33,8 +33,8 @@ CXFA_Common::CXFA_Common(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Common,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kCommonPropertyData,
+                kCommonAttributeData,
+                kCommonName) {}
 
 CXFA_Common::~CXFA_Common() {}

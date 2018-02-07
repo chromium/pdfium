@@ -8,10 +8,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Era, 2, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::PropertyData kEraNamesPropertyData[] = {
+    {XFA_Element::Era, 2, 0},
+    {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kName[] = L"eraNames";
+constexpr wchar_t kEraNamesName[] = L"eraNames";
 
 }  // namespace
 
@@ -21,8 +22,8 @@ CXFA_EraNames::CXFA_EraNames(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::EraNames,
-                kPropertyData,
+                kEraNamesPropertyData,
                 nullptr,
-                kName) {}
+                kEraNamesName) {}
 
 CXFA_EraNames::~CXFA_EraNames() {}

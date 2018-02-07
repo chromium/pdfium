@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"era";
+constexpr wchar_t kEraName[] = L"era";
 
 }  // namespace
 
@@ -20,6 +20,6 @@ CXFA_Era::CXFA_Era(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Era,
                 nullptr,
                 nullptr,
-                kName) {}
+                kEraName) {}
 
 CXFA_Era::~CXFA_Era() {}

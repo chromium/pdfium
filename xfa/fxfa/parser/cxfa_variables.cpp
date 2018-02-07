@@ -11,13 +11,13 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kVariablesAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"variables";
+constexpr wchar_t kVariablesName[] = L"variables";
 
 }  // namespace
 
@@ -28,8 +28,8 @@ CXFA_Variables::CXFA_Variables(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::Variables,
                 nullptr,
-                kAttributeData,
-                kName,
+                kVariablesAttributeData,
+                kVariablesName,
                 pdfium::MakeUnique<CJX_Variables>(this)) {}
 
 CXFA_Variables::~CXFA_Variables() {}

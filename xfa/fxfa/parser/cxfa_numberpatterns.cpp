@@ -8,11 +8,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kNumberPatternsPropertyData[] = {
     {XFA_Element::NumberPattern, 4, 0},
     {XFA_Element::Unknown, 0, 0}};
 
-constexpr wchar_t kName[] = L"numberPatterns";
+constexpr wchar_t kNumberPatternsName[] = L"numberPatterns";
 
 }  // namespace
 
@@ -23,8 +23,8 @@ CXFA_NumberPatterns::CXFA_NumberPatterns(CXFA_Document* doc,
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::NumberPatterns,
-                kPropertyData,
+                kNumberPatternsPropertyData,
                 nullptr,
-                kName) {}
+                kNumberPatternsName) {}
 
 CXFA_NumberPatterns::~CXFA_NumberPatterns() {}

@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kIncludeXDPContentAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"includeXDPContent";
+constexpr wchar_t kIncludeXDPContentName[] = L"includeXDPContent";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_IncludeXDPContent::CXFA_IncludeXDPContent(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::IncludeXDPContent,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kIncludeXDPContentAttributeData,
+                kIncludeXDPContentName) {}
 
 CXFA_IncludeXDPContent::~CXFA_IncludeXDPContent() {}

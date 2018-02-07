@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kWsdlAddressAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"wsdlAddress";
+constexpr wchar_t kWsdlAddressName[] = L"wsdlAddress";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_WsdlAddress::CXFA_WsdlAddress(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::WsdlAddress,
                 nullptr,
-                kAttributeData,
-                kName,
+                kWsdlAddressAttributeData,
+                kWsdlAddressName,
                 pdfium::MakeUnique<CJX_WsdlAddress>(this)) {}
 
 CXFA_WsdlAddress::~CXFA_WsdlAddress() {}

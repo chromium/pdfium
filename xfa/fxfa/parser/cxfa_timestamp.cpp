@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kTimeStampAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
@@ -20,7 +20,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"timeStamp";
+constexpr wchar_t kTimeStampName[] = L"timeStamp";
 
 }  // namespace
 
@@ -31,7 +31,7 @@ CXFA_TimeStamp::CXFA_TimeStamp(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::TimeStamp,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kTimeStampAttributeData,
+                kTimeStampName) {}
 
 CXFA_TimeStamp::~CXFA_TimeStamp() {}

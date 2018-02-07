@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kValidationMessagingAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"validationMessaging";
+constexpr wchar_t kValidationMessagingName[] = L"validationMessaging";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_ValidationMessaging::CXFA_ValidationMessaging(CXFA_Document* doc,
                 XFA_ObjectType::NodeV,
                 XFA_Element::ValidationMessaging,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kValidationMessagingAttributeData,
+                kValidationMessagingName) {}
 
 CXFA_ValidationMessaging::~CXFA_ValidationMessaging() {}

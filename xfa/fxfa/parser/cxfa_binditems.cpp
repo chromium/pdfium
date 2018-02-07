@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kBindItemsAttributeData[] = {
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Connection, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::LabelRef, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ValueRef, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"bindItems";
+constexpr wchar_t kBindItemsName[] = L"bindItems";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_BindItems::CXFA_BindItems(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::BindItems,
                 nullptr,
-                kAttributeData,
-                kName,
+                kBindItemsAttributeData,
+                kBindItemsName,
                 pdfium::MakeUnique<CJX_BindItems>(this)) {}
 
 CXFA_BindItems::~CXFA_BindItems() {}

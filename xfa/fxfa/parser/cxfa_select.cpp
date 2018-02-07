@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSelectAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"select";
+constexpr wchar_t kSelectName[] = L"select";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Select::CXFA_Select(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Select,
                 nullptr,
-                kAttributeData,
-                kName,
+                kSelectAttributeData,
+                kSelectName,
                 pdfium::MakeUnique<CJX_Select>(this)) {}
 
 CXFA_Select::~CXFA_Select() {}

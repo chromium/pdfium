@@ -17,7 +17,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kFillPropertyData[] = {
     {XFA_Element::Pattern, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Solid, 1,
      XFA_PROPERTYFLAG_OneOf | XFA_PROPERTYFLAG_DefaultOneOf},
@@ -27,7 +27,7 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Radial, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kFillAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Presence, XFA_AttributeType::Enum,
@@ -35,7 +35,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"fill";
+constexpr wchar_t kFillName[] = L"fill";
 
 }  // namespace
 
@@ -45,9 +45,9 @@ CXFA_Fill::CXFA_Fill(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Fill,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kFillPropertyData,
+                kFillAttributeData,
+                kFillName,
                 pdfium::MakeUnique<CJX_Fill>(this)) {}
 
 CXFA_Fill::~CXFA_Fill() {}

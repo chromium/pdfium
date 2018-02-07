@@ -11,12 +11,12 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kScriptPropertyData[] = {
     {XFA_Element::Exclude, 1, 0},
     {XFA_Element::CurrentPage, 1, 0},
     {XFA_Element::RunScripts, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kScriptAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -29,7 +29,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"script";
+constexpr wchar_t kScriptName[] = L"script";
 
 }  // namespace
 
@@ -40,9 +40,9 @@ CXFA_Script::CXFA_Script(CXFA_Document* doc, XFA_PacketType packet)
           (XFA_XDPPACKET_Config | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
           XFA_ObjectType::ContentNode,
           XFA_Element::Script,
-          kPropertyData,
-          kAttributeData,
-          kName,
+          kScriptPropertyData,
+          kScriptAttributeData,
+          kScriptName,
           pdfium::MakeUnique<CJX_Script>(this)) {}
 
 CXFA_Script::~CXFA_Script() {}

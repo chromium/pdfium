@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPrinterNameAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"printerName";
+constexpr wchar_t kPrinterNameName[] = L"printerName";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_PrinterName::CXFA_PrinterName(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::PrinterName,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kPrinterNameAttributeData,
+                kPrinterNameName) {}
 
 CXFA_PrinterName::~CXFA_PrinterName() {}

@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kHandlerAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"handler";
+constexpr wchar_t kHandlerName[] = L"handler";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_Handler::CXFA_Handler(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Handler,
                 nullptr,
-                kAttributeData,
-                kName,
+                kHandlerAttributeData,
+                kHandlerName,
                 pdfium::MakeUnique<CJX_Handler>(this)) {}
 
 CXFA_Handler::~CXFA_Handler() {}

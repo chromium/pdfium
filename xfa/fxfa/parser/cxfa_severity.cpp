@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSeverityAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"severity";
+constexpr wchar_t kSeverityName[] = L"severity";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Severity::CXFA_Severity(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Severity,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kSeverityAttributeData,
+                kSeverityName) {}
 
 CXFA_Severity::~CXFA_Severity() {}

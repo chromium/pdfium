@@ -8,17 +8,17 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kFontInfoPropertyData[] = {
     {XFA_Element::SubsetBelow, 1, 0},
     {XFA_Element::Map, 1, 0},
     {XFA_Element::Embed, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kFontInfoAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"fontInfo";
+constexpr wchar_t kFontInfoName[] = L"fontInfo";
 
 }  // namespace
 
@@ -28,8 +28,8 @@ CXFA_FontInfo::CXFA_FontInfo(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::FontInfo,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kFontInfoPropertyData,
+                kFontInfoAttributeData,
+                kFontInfoName) {}
 
 CXFA_FontInfo::~CXFA_FontInfo() {}

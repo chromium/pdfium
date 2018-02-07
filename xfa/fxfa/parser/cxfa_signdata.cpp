@@ -11,10 +11,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Filter, 1, 0},
-                                                 {XFA_Element::Manifest, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kSignDataPropertyData[] = {
+    {XFA_Element::Filter, 1, 0},
+    {XFA_Element::Manifest, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kSignDataAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
@@ -24,7 +25,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Target, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"signData";
+constexpr wchar_t kSignDataName[] = L"signData";
 
 }  // namespace
 
@@ -34,9 +35,9 @@ CXFA_SignData::CXFA_SignData(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::SignData,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kSignDataPropertyData,
+                kSignDataAttributeData,
+                kSignDataName,
                 pdfium::MakeUnique<CJX_SignData>(this)) {}
 
 CXFA_SignData::~CXFA_SignData() {}

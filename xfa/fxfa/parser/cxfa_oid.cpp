@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kOidAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"oid";
+constexpr wchar_t kOidName[] = L"oid";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Oid::CXFA_Oid(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Oid,
                 nullptr,
-                kAttributeData,
-                kName,
+                kOidAttributeData,
+                kOidName,
                 pdfium::MakeUnique<CJX_Oid>(this)) {}
 
 CXFA_Oid::~CXFA_Oid() {}

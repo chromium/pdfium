@@ -11,20 +11,20 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kDescPropertyData[] = {
     {XFA_Element::Text, 1, 0},     {XFA_Element::Time, 1, 0},
     {XFA_Element::DateTime, 1, 0}, {XFA_Element::Image, 1, 0},
     {XFA_Element::Decimal, 1, 0},  {XFA_Element::Boolean, 1, 0},
     {XFA_Element::Integer, 1, 0},  {XFA_Element::ExData, 1, 0},
     {XFA_Element::Date, 1, 0},     {XFA_Element::Float, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kDescAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"desc";
+constexpr wchar_t kDescName[] = L"desc";
 
 }  // namespace
 
@@ -34,9 +34,9 @@ CXFA_Desc::CXFA_Desc(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Desc,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kDescPropertyData,
+                kDescAttributeData,
+                kDescName,
                 pdfium::MakeUnique<CJX_Desc>(this)) {}
 
 CXFA_Desc::~CXFA_Desc() {}

@@ -11,11 +11,12 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
-                                                 {XFA_Element::Border, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kChoiceListPropertyData[] = {
+    {XFA_Element::Margin, 1, 0},
+    {XFA_Element::Border, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kChoiceListAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Open, XFA_AttributeType::Enum,
@@ -26,7 +27,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"choiceList";
+constexpr wchar_t kChoiceListName[] = L"choiceList";
 
 }  // namespace
 
@@ -36,9 +37,9 @@ CXFA_ChoiceList::CXFA_ChoiceList(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::ChoiceList,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kChoiceListPropertyData,
+                kChoiceListAttributeData,
+                kChoiceListName,
                 pdfium::MakeUnique<CJX_ChoiceList>(this)) {}
 
 CXFA_ChoiceList::~CXFA_ChoiceList() {}

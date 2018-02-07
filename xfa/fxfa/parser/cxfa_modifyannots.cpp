@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kModifyAnnotsAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"modifyAnnots";
+constexpr wchar_t kModifyAnnotsName[] = L"modifyAnnots";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_ModifyAnnots::CXFA_ModifyAnnots(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::ModifyAnnots,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kModifyAnnotsAttributeData,
+                kModifyAnnotsName) {}
 
 CXFA_ModifyAnnots::~CXFA_ModifyAnnots() {}

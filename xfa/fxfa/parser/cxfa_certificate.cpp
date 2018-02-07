@@ -11,14 +11,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kCertificateAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"certificate";
+constexpr wchar_t kCertificateName[] = L"certificate";
 
 }  // namespace
 
@@ -29,8 +29,8 @@ CXFA_Certificate::CXFA_Certificate(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::TextNode,
                 XFA_Element::Certificate,
                 nullptr,
-                kAttributeData,
-                kName,
+                kCertificateAttributeData,
+                kCertificateName,
                 pdfium::MakeUnique<CJX_Certificate>(this)) {}
 
 CXFA_Certificate::~CXFA_Certificate() {}

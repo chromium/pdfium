@@ -11,9 +11,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kOccurPropertyData[] = {
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kOccurAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Max, XFA_AttributeType::Integer, (void*)1},
     {XFA_Attribute::Min, XFA_AttributeType::Integer, (void*)1},
@@ -22,7 +23,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"occur";
+constexpr wchar_t kOccurName[] = L"occur";
 
 }  // namespace
 
@@ -32,9 +33,9 @@ CXFA_Occur::CXFA_Occur(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Occur,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kOccurPropertyData,
+                kOccurAttributeData,
+                kOccurName,
                 pdfium::MakeUnique<CJX_Occur>(this)) {}
 
 CXFA_Occur::~CXFA_Occur() {}

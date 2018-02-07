@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"dateTimeSymbols";
+constexpr wchar_t kDateTimeSymbolsName[] = L"dateTimeSymbols";
 
 }  // namespace
 
@@ -21,6 +21,6 @@ CXFA_DateTimeSymbols::CXFA_DateTimeSymbols(CXFA_Document* doc,
                 XFA_Element::DateTimeSymbols,
                 nullptr,
                 nullptr,
-                kName) {}
+                kDateTimeSymbolsName) {}
 
 CXFA_DateTimeSymbols::~CXFA_DateTimeSymbols() {}

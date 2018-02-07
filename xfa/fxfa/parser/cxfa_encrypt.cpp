@@ -11,10 +11,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kEncryptPropertyData[] = {
     {XFA_Element::Certificate, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kEncryptAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
@@ -22,7 +22,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"encrypt";
+constexpr wchar_t kEncryptName[] = L"encrypt";
 
 }  // namespace
 
@@ -33,9 +33,9 @@ CXFA_Encrypt::CXFA_Encrypt(CXFA_Document* doc, XFA_PacketType packet)
           (XFA_XDPPACKET_Template | XFA_XDPPACKET_Config | XFA_XDPPACKET_Form),
           XFA_ObjectType::ContentNode,
           XFA_Element::Encrypt,
-          kPropertyData,
-          kAttributeData,
-          kName,
+          kEncryptPropertyData,
+          kEncryptAttributeData,
+          kEncryptName,
           pdfium::MakeUnique<CJX_Encrypt>(this)) {}
 
 CXFA_Encrypt::~CXFA_Encrypt() {}

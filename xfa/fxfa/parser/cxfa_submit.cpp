@@ -11,9 +11,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Encrypt, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kSubmitPropertyData[] = {
+    {XFA_Element::Encrypt, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kSubmitAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Format, XFA_AttributeType::Enum,
@@ -25,7 +26,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::XdpContent, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"submit";
+constexpr wchar_t kSubmitName[] = L"submit";
 
 }  // namespace
 
@@ -35,9 +36,9 @@ CXFA_Submit::CXFA_Submit(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Submit,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kSubmitPropertyData,
+                kSubmitAttributeData,
+                kSubmitName,
                 pdfium::MakeUnique<CJX_Submit>(this)) {}
 
 CXFA_Submit::~CXFA_Submit() {}

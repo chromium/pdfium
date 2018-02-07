@@ -13,10 +13,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Color, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kPatternPropertyData[] = {
+    {XFA_Element::Color, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kPatternAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
@@ -24,7 +25,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"pattern";
+constexpr wchar_t kPatternName[] = L"pattern";
 
 }  // namespace
 
@@ -34,9 +35,9 @@ CXFA_Pattern::CXFA_Pattern(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Pattern,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kPatternPropertyData,
+                kPatternAttributeData,
+                kPatternName,
                 pdfium::MakeUnique<CJX_Pattern>(this)) {}
 
 CXFA_Pattern::~CXFA_Pattern() {}

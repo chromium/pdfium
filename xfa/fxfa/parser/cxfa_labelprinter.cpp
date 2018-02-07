@@ -8,20 +8,20 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kLabelPrinterPropertyData[] = {
     {XFA_Element::FontInfo, 1, 0},
     {XFA_Element::Xdc, 1, 0},
     {XFA_Element::BatchOutput, 1, 0},
     {XFA_Element::FlipLabel, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kLabelPrinterAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Zpl},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"labelPrinter";
+constexpr wchar_t kLabelPrinterName[] = L"labelPrinter";
 
 }  // namespace
 
@@ -31,8 +31,8 @@ CXFA_LabelPrinter::CXFA_LabelPrinter(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::LabelPrinter,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kLabelPrinterPropertyData,
+                kLabelPrinterAttributeData,
+                kLabelPrinterName) {}
 
 CXFA_LabelPrinter::~CXFA_LabelPrinter() {}

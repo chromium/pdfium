@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kAmdAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"amd";
+constexpr wchar_t kAmdName[] = L"amd";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Amd::CXFA_Amd(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ContentNode,
                 XFA_Element::Amd,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kAmdAttributeData,
+                kAmdName) {}
 
 CXFA_Amd::~CXFA_Amd() {}

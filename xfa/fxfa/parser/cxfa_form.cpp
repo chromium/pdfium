@@ -11,11 +11,11 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kFormAttributeData[] = {
     {XFA_Attribute::Checksum, XFA_AttributeType::CData, (void*)nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"form";
+constexpr wchar_t kFormName[] = L"form";
 
 }  // namespace
 
@@ -26,8 +26,8 @@ CXFA_Form::CXFA_Form(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::ModelNode,
                 XFA_Element::Form,
                 nullptr,
-                kAttributeData,
-                kName,
+                kFormAttributeData,
+                kFormName,
                 pdfium::MakeUnique<CJX_Form>(this)) {}
 
 CXFA_Form::~CXFA_Form() {}

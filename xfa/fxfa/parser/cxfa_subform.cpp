@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kSubformPropertyData[] = {
     {XFA_Element::Break, 1, 0},   {XFA_Element::Margin, 1, 0},
     {XFA_Element::Para, 1, 0},    {XFA_Element::Border, 1, 0},
     {XFA_Element::Assist, 1, 0},  {XFA_Element::Traversal, 1, 0},
@@ -21,7 +21,7 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Bookend, 1, 0}, {XFA_Element::Calculate, 1, 0},
     {XFA_Element::Extras, 1, 0},  {XFA_Element::Variables, 1, 0},
     {XFA_Element::Occur, 1, 0},   {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSubformAttributeData[] = {
     {XFA_Attribute::H, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::W, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
@@ -59,7 +59,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Name},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"subform";
+constexpr wchar_t kSubformName[] = L"subform";
 
 }  // namespace
 
@@ -69,9 +69,9 @@ CXFA_Subform::CXFA_Subform(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::ContainerNode,
                 XFA_Element::Subform,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kSubformPropertyData,
+                kSubformAttributeData,
+                kSubformName,
                 pdfium::MakeUnique<CJX_Subform>(this)) {}
 
 CXFA_Subform::~CXFA_Subform() {}

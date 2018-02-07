@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kWhitespaceAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"whitespace";
+constexpr wchar_t kWhitespaceName[] = L"whitespace";
 
 }  // namespace
 
@@ -24,7 +24,7 @@ CXFA_Whitespace::CXFA_Whitespace(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::NodeV,
                 XFA_Element::Whitespace,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kWhitespaceAttributeData,
+                kWhitespaceName) {}
 
 CXFA_Whitespace::~CXFA_Whitespace() {}

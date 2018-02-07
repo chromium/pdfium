@@ -11,12 +11,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSignaturePropertiesAttributeData[] = {
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"signatureProperties";
+constexpr wchar_t kSignaturePropertiesName[] = L"signatureProperties";
 
 }  // namespace
 
@@ -28,8 +28,8 @@ CXFA_SignatureProperties::CXFA_SignatureProperties(CXFA_Document* doc,
                 XFA_ObjectType::Node,
                 XFA_Element::SignatureProperties,
                 nullptr,
-                kAttributeData,
-                kName,
+                kSignaturePropertiesAttributeData,
+                kSignaturePropertiesName,
                 pdfium::MakeUnique<CJX_SignatureProperties>(this)) {}
 
 CXFA_SignatureProperties::~CXFA_SignatureProperties() {}

@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kSigningAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"signing";
+constexpr wchar_t kSigningName[] = L"signing";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_Signing::CXFA_Signing(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Signing,
                 nullptr,
-                kAttributeData,
-                kName,
+                kSigningAttributeData,
+                kSigningName,
                 pdfium::MakeUnique<CJX_Signing>(this)) {}
 
 CXFA_Signing::~CXFA_Signing() {}

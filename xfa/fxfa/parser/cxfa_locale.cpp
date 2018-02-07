@@ -8,19 +8,19 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kLocalePropertyData[] = {
     {XFA_Element::DatePatterns, 1, 0},    {XFA_Element::CalendarSymbols, 1, 0},
     {XFA_Element::CurrencySymbols, 1, 0}, {XFA_Element::Typefaces, 1, 0},
     {XFA_Element::DateTimeSymbols, 1, 0}, {XFA_Element::NumberPatterns, 1, 0},
     {XFA_Element::NumberSymbols, 1, 0},   {XFA_Element::TimePatterns, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kLocaleAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"locale";
+constexpr wchar_t kLocaleName[] = L"locale";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_Locale::CXFA_Locale(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Config | XFA_XDPPACKET_LocaleSet),
                 XFA_ObjectType::Node,
                 XFA_Element::Locale,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kLocalePropertyData,
+                kLocaleAttributeData,
+                kLocaleName) {}
 
 CXFA_Locale::~CXFA_Locale() {}

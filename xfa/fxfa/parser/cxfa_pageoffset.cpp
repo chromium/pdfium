@@ -8,14 +8,14 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kPageOffsetAttributeData[] = {
     {XFA_Attribute::X, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Y, XFA_AttributeType::Measure, (void*)L"0in"},
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"pageOffset";
+constexpr wchar_t kPageOffsetName[] = L"pageOffset";
 
 }  // namespace
 
@@ -26,7 +26,7 @@ CXFA_PageOffset::CXFA_PageOffset(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::PageOffset,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kPageOffsetAttributeData,
+                kPageOffsetName) {}
 
 CXFA_PageOffset::~CXFA_PageOffset() {}

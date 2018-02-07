@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kIncrementalMergeAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"incrementalMerge";
+constexpr wchar_t kIncrementalMergeName[] = L"incrementalMerge";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_IncrementalMerge::CXFA_IncrementalMerge(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::IncrementalMerge,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kIncrementalMergeAttributeData,
+                kIncrementalMergeName) {}
 
 CXFA_IncrementalMerge::~CXFA_IncrementalMerge() {}

@@ -11,7 +11,7 @@
 
 namespace {
 
-constexpr wchar_t kName[] = L"packet";
+constexpr wchar_t kPacketName[] = L"packet";
 
 }  // namespace
 
@@ -23,7 +23,7 @@ CXFA_Packet::CXFA_Packet(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_Element::Packet,
                 nullptr,
                 nullptr,
-                kName,
+                kPacketName,
                 pdfium::MakeUnique<CJX_Packet>(this)) {}
 
 CXFA_Packet::~CXFA_Packet() {}

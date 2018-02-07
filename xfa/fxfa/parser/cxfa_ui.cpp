@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kUiPropertyData[] = {
     {XFA_Element::CheckButton, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::ChoiceList, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::DefaultUi, 1, XFA_PROPERTYFLAG_OneOf},
@@ -26,13 +26,13 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::TextEdit, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Extras, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kUiAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"ui";
+constexpr wchar_t kUiName[] = L"ui";
 
 }  // namespace
 
@@ -42,15 +42,15 @@ CXFA_Ui::CXFA_Ui(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Ui,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kUiPropertyData,
+                kUiAttributeData,
+                kUiName,
                 pdfium::MakeUnique<CJX_Ui>(this)) {}
 
 CXFA_Ui::~CXFA_Ui() {}
 
 bool CXFA_Ui::IsAOneOfChild(CXFA_Node* child) const {
-  for (auto& prop : kPropertyData) {
+  for (auto& prop : kUiPropertyData) {
     if (prop.property != child->GetElementType())
       continue;
     if (!!(prop.flags & XFA_PROPERTYFLAG_OneOf))

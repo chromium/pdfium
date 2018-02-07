@@ -17,7 +17,7 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kValuePropertyData[] = {
     {XFA_Element::Arc, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Text, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Time, 1, XFA_PROPERTYFLAG_OneOf},
@@ -32,7 +32,7 @@ const CXFA_Node::PropertyData kPropertyData[] = {
     {XFA_Element::Float, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Line, 1, XFA_PROPERTYFLAG_OneOf},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kValueAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Relevant, XFA_AttributeType::CData, nullptr},
@@ -40,7 +40,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Override, XFA_AttributeType::Boolean, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"value";
+constexpr wchar_t kValueName[] = L"value";
 
 }  // namespace
 
@@ -50,9 +50,9 @@ CXFA_Value::CXFA_Value(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Value,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kValuePropertyData,
+                kValueAttributeData,
+                kValueName,
                 pdfium::MakeUnique<CJX_Value>(this)) {}
 
 CXFA_Value::~CXFA_Value() {}

@@ -8,16 +8,17 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::To, 1, 0},
-                                                 {XFA_Element::Uri, 1, 0},
-                                                 {XFA_Element::Type, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kOutputPropertyData[] = {
+    {XFA_Element::To, 1, 0},
+    {XFA_Element::Uri, 1, 0},
+    {XFA_Element::Type, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kOutputAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"output";
+constexpr wchar_t kOutputName[] = L"output";
 
 }  // namespace
 
@@ -27,8 +28,8 @@ CXFA_Output::CXFA_Output(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_XDPPACKET_Config,
                 XFA_ObjectType::Node,
                 XFA_Element::Output,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kOutputPropertyData,
+                kOutputAttributeData,
+                kOutputName) {}
 
 CXFA_Output::~CXFA_Output() {}

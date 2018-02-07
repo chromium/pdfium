@@ -8,18 +8,18 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kCalendarSymbolsPropertyData[] = {
     {XFA_Element::EraNames, 1, 0},
     {XFA_Element::DayNames, 2, 0},
     {XFA_Element::MeridiemNames, 1, 0},
     {XFA_Element::MonthNames, 2, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kCalendarSymbolsAttributeData[] = {
     {XFA_Attribute::Name, XFA_AttributeType::Enum,
      (void*)XFA_AttributeEnum::Gregorian},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"calendarSymbols";
+constexpr wchar_t kCalendarSymbolsName[] = L"calendarSymbols";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_CalendarSymbols::CXFA_CalendarSymbols(CXFA_Document* doc,
                 XFA_XDPPACKET_LocaleSet,
                 XFA_ObjectType::Node,
                 XFA_Element::CalendarSymbols,
-                kPropertyData,
-                kAttributeData,
-                kName) {}
+                kCalendarSymbolsPropertyData,
+                kCalendarSymbolsAttributeData,
+                kCalendarSymbolsName) {}
 
 CXFA_CalendarSymbols::~CXFA_CalendarSymbols() {}

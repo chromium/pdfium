@@ -11,9 +11,10 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Script, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kBreakAfterPropertyData[] = {
+    {XFA_Element::Script, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kBreakAfterAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::StartNew, XFA_AttributeType::Boolean, (void*)0},
@@ -25,7 +26,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Leader, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"breakAfter";
+constexpr wchar_t kBreakAfterName[] = L"breakAfter";
 
 }  // namespace
 
@@ -35,9 +36,9 @@ CXFA_BreakAfter::CXFA_BreakAfter(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::BreakAfter,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kBreakAfterPropertyData,
+                kBreakAfterAttributeData,
+                kBreakAfterName,
                 pdfium::MakeUnique<CJX_BreakAfter>(this)) {}
 
 CXFA_BreakAfter::~CXFA_BreakAfter() {}

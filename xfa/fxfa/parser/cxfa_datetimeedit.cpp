@@ -11,12 +11,13 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Margin, 1, 0},
-                                                 {XFA_Element::Border, 1, 0},
-                                                 {XFA_Element::Comb, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kDateTimeEditPropertyData[] = {
+    {XFA_Element::Margin, 1, 0},
+    {XFA_Element::Border, 1, 0},
+    {XFA_Element::Comb, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kDateTimeEditAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
@@ -26,7 +27,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
      (void*)XFA_AttributeEnum::Auto},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"dateTimeEdit";
+constexpr wchar_t kDateTimeEditName[] = L"dateTimeEdit";
 
 }  // namespace
 
@@ -36,9 +37,9 @@ CXFA_DateTimeEdit::CXFA_DateTimeEdit(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::DateTimeEdit,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kDateTimeEditPropertyData,
+                kDateTimeEditAttributeData,
+                kDateTimeEditName,
                 pdfium::MakeUnique<CJX_DateTimeEdit>(this)) {}
 
 CXFA_DateTimeEdit::~CXFA_DateTimeEdit() {}

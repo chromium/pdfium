@@ -11,13 +11,13 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {
+const CXFA_Node::PropertyData kConnectPropertyData[] = {
     {XFA_Element::Picture, 1, 0},
     {XFA_Element::ConnectString, 1, 0},
     {XFA_Element::User, 1, 0},
     {XFA_Element::Password, 1, 0},
     {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kConnectAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Name, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Ref, XFA_AttributeType::CData, nullptr},
@@ -30,7 +30,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::DelayedOpen, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"connect";
+constexpr wchar_t kConnectName[] = L"connect";
 
 }  // namespace
 
@@ -41,9 +41,9 @@ CXFA_Connect::CXFA_Connect(CXFA_Document* doc, XFA_PacketType packet)
                  XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Connect,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kConnectPropertyData,
+                kConnectAttributeData,
+                kConnectName,
                 pdfium::MakeUnique<CJX_Connect>(this)) {}
 
 CXFA_Connect::~CXFA_Connect() {}

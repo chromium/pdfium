@@ -11,7 +11,7 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kBookendAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Trailer, XFA_AttributeType::CData, nullptr},
@@ -19,7 +19,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Leader, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"bookend";
+constexpr wchar_t kBookendName[] = L"bookend";
 
 }  // namespace
 
@@ -30,8 +30,8 @@ CXFA_Bookend::CXFA_Bookend(CXFA_Document* doc, XFA_PacketType packet)
                 XFA_ObjectType::Node,
                 XFA_Element::Bookend,
                 nullptr,
-                kAttributeData,
-                kName,
+                kBookendAttributeData,
+                kBookendName,
                 pdfium::MakeUnique<CJX_Bookend>(this)) {}
 
 CXFA_Bookend::~CXFA_Bookend() {}

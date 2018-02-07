@@ -15,10 +15,11 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Color, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kRadialPropertyData[] = {
+    {XFA_Element::Color, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kRadialAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Type, XFA_AttributeType::Enum,
@@ -26,7 +27,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"radial";
+constexpr wchar_t kRadialName[] = L"radial";
 
 }  // namespace
 
@@ -36,9 +37,9 @@ CXFA_Radial::CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet)
                 (XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
                 XFA_ObjectType::Node,
                 XFA_Element::Radial,
-                kPropertyData,
-                kAttributeData,
-                kName,
+                kRadialPropertyData,
+                kRadialAttributeData,
+                kRadialName,
                 pdfium::MakeUnique<CJX_Radial>(this)) {}
 
 CXFA_Radial::~CXFA_Radial() {}

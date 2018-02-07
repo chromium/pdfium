@@ -8,12 +8,12 @@
 
 namespace {
 
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::AttributeData kCompressObjectStreamAttributeData[] = {
     {XFA_Attribute::Desc, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"compressObjectStream";
+constexpr wchar_t kCompressObjectStreamName[] = L"compressObjectStream";
 
 }  // namespace
 
@@ -25,7 +25,7 @@ CXFA_CompressObjectStream::CXFA_CompressObjectStream(CXFA_Document* doc,
                 XFA_ObjectType::ContentNode,
                 XFA_Element::CompressObjectStream,
                 nullptr,
-                kAttributeData,
-                kName) {}
+                kCompressObjectStreamAttributeData,
+                kCompressObjectStreamName) {}
 
 CXFA_CompressObjectStream::~CXFA_CompressObjectStream() {}

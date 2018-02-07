@@ -15,12 +15,13 @@
 
 namespace {
 
-const CXFA_Node::PropertyData kPropertyData[] = {{XFA_Element::Message, 1, 0},
-                                                 {XFA_Element::Picture, 1, 0},
-                                                 {XFA_Element::Script, 1, 0},
-                                                 {XFA_Element::Extras, 1, 0},
-                                                 {XFA_Element::Unknown, 0, 0}};
-const CXFA_Node::AttributeData kAttributeData[] = {
+const CXFA_Node::PropertyData kValidatePropertyData[] = {
+    {XFA_Element::Message, 1, 0},
+    {XFA_Element::Picture, 1, 0},
+    {XFA_Element::Script, 1, 0},
+    {XFA_Element::Extras, 1, 0},
+    {XFA_Element::Unknown, 0, 0}};
+const CXFA_Node::AttributeData kValidateAttributeData[] = {
     {XFA_Attribute::Id, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::Use, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::ScriptTest, XFA_AttributeType::Enum,
@@ -34,7 +35,7 @@ const CXFA_Node::AttributeData kAttributeData[] = {
     {XFA_Attribute::Lock, XFA_AttributeType::Integer, (void*)0},
     {XFA_Attribute::Unknown, XFA_AttributeType::Integer, nullptr}};
 
-constexpr wchar_t kName[] = L"validate";
+constexpr wchar_t kValidateName[] = L"validate";
 constexpr wchar_t kFormatTest[] = L"formatTest";
 constexpr wchar_t kNullTest[] = L"nullTest";
 constexpr wchar_t kScriptTest[] = L"scriptTest";
@@ -48,9 +49,9 @@ CXFA_Validate::CXFA_Validate(CXFA_Document* doc, XFA_PacketType packet)
           (XFA_XDPPACKET_Config | XFA_XDPPACKET_Template | XFA_XDPPACKET_Form),
           XFA_ObjectType::ContentNode,
           XFA_Element::Validate,
-          kPropertyData,
-          kAttributeData,
-          kName,
+          kValidatePropertyData,
+          kValidateAttributeData,
+          kValidateName,
           pdfium::MakeUnique<CJX_Validate>(this)) {}
 
 CXFA_Validate::~CXFA_Validate() {}
