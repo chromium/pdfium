@@ -269,19 +269,18 @@ bool ParserPageRangeString(ByteString rangstring,
   return true;
 }
 
-bool GetPageNumbers(ByteString pageRange,
-                    CPDF_Document* pSrcDoc,
-                    std::vector<uint32_t>* pageArray) {
-  uint32_t nCount = pSrcDoc->GetPageCount();
-  if (!pageRange.IsEmpty()) {
-    if (!ParserPageRangeString(pageRange, nCount, pageArray))
-      return false;
+std::vector<uint32_t> GetPageNumbers(const CPDF_Document& doc,
+                                     const ByteString& bsPageRange) {
+  std::vector<uint32_t> page_numbers;
+  uint32_t nCount = doc.GetPageCount();
+  if (bsPageRange.IsEmpty()) {
+    for (uint32_t i = 1; i <= nCount; ++i)
+      page_numbers.push_back(i);
   } else {
-    for (uint32_t i = 1; i <= nCount; ++i) {
-      pageArray->push_back(i);
-    }
+    if (!ParserPageRangeString(bsPageRange, nCount, &page_numbers))
+      page_numbers.clear();
   }
-  return true;
+  return page_numbers;
 }
 
 }  // namespace
@@ -735,8 +734,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   if (!pSrcDoc)
     return false;
 
-  std::vector<uint32_t> pageArray;
-  if (!GetPageNumbers(pagerange, pSrcDoc, &pageArray))
+  std::vector<uint32_t> page_numbers = GetPageNumbers(*pSrcDoc, pagerange);
+  if (page_numbers.empty())
     return false;
 
   CPDF_PageOrganizer pageOrg(pDestDoc, pSrcDoc);
@@ -744,7 +743,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   if (!pageOrg.PDFDocInit())
     return false;
 
-  return pageOrg.ExportPage(pageArray, index);
+  return pageOrg.ExportPage(page_numbers, index);
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
@@ -770,13 +769,13 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
   CPDF_Document* pDestDoc = CPDFDocumentFromFPDFDocument(output_doc.get());
   ASSERT(pDestDoc);
 
-  std::vector<uint32_t> pageArray;
-  if (!GetPageNumbers(nullptr, pSrcDoc, &pageArray))
+  std::vector<uint32_t> page_numbers = GetPageNumbers(*pSrcDoc, ByteString());
+  if (page_numbers.empty())
     return nullptr;
 
   CPDF_PageOrganizer pageOrg(pDestDoc, pSrcDoc);
   if (!pageOrg.PDFDocInit() ||
-      !pageOrg.ExportNPagesToOne(pageArray, output_width, output_height,
+      !pageOrg.ExportNPagesToOne(page_numbers, output_width, output_height,
                                  num_pages_on_x_axis, num_pages_on_y_axis)) {
     return nullptr;
   }
