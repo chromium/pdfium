@@ -12,6 +12,7 @@
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/logging.h"
+#include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -629,12 +630,14 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
   NOTREACHED();
 }
 
-uint8_t* CFX_BmpDecompressor::ReadData(uint8_t** des_buf, uint32_t data_size_) {
-  if (avail_in_ < skip_size_ + data_size_)
+uint8_t* CFX_BmpDecompressor::ReadData(uint8_t** des_buf, uint32_t data_size) {
+  pdfium::base::CheckedNumeric<uint32_t> request_size = data_size;
+  request_size += skip_size_;
+  if (!request_size.IsValid() || avail_in_ < request_size.ValueOrDie())
     return nullptr;
 
   *des_buf = next_in_ + skip_size_;
-  skip_size_ += data_size_;
+  skip_size_ += data_size;
   return *des_buf;
 }
 
