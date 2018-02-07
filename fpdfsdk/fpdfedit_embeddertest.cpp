@@ -197,7 +197,7 @@ TEST_F(FPDFEditEmbeddertest, RasterizePDF) {
     EXPECT_TRUE(OpenDocument("black.pdf"));
     FPDF_PAGE orig_page = LoadPage(0);
     EXPECT_NE(nullptr, orig_page);
-    orig_bitmap = RenderPage(orig_page);
+    orig_bitmap = RenderPageDeprecated(orig_page);
     CompareBitmap(orig_bitmap, 612, 792, kAllBlackMd5sum);
     UnloadPage(orig_page);
   }
@@ -241,7 +241,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
-  FPDF_BITMAP page_bitmap = RenderPage(page);
+  FPDF_BITMAP page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "66d02eaa6181e2c069ce2ea99beda497");
   FPDFBitmap_Destroy(page_bitmap);
 
@@ -302,7 +302,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
 
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_WINDING, 0));
   FPDFPage_InsertObject(page, green_rect);
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "7b0b87604594e773add528fae567a558");
   FPDFBitmap_Destroy(page_bitmap);
 
@@ -340,7 +340,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_EQ(nullptr, FPDFPath_GetPathSegment(black_path, 3));
 
   FPDFPage_InsertObject(page, black_path);
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "eadc8020a14dfcf091da2688733d8806");
   FPDFBitmap_Destroy(page_bitmap);
 
@@ -355,7 +355,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_TRUE(FPDFPath_BezierTo(blue_path, 375, 330, 390, 360, 400, 400));
   EXPECT_TRUE(FPDFPath_Close(blue_path));
   FPDFPage_InsertObject(page, blue_path);
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
   const char last_md5[] = "9823e1a21bd9b72b6a442ba4f12af946";
   CompareBitmap(page_bitmap, 612, 792, last_md5);
   FPDFBitmap_Destroy(page_bitmap);
@@ -418,7 +418,7 @@ TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
   FPDFPage_InsertObject(page, black_path);
 
   // Render and check the result. Text is slightly different on Mac.
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "f9e6fa74230f234286bfcada9f7606d8";
 #else
@@ -447,7 +447,7 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
 
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   CompareBitmap(bitmap, 612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
   FPDFBitmap_Destroy(bitmap);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
@@ -472,7 +472,8 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect2, 0, 255, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, green_rect2);
-  FPDF_BITMAP new_bitmap = RenderPageWithFlags(page, saved_form_handle_, 0);
+  FPDF_BITMAP new_bitmap =
+      RenderPageWithFlagsDeprecated(page, saved_form_handle_, 0);
   const char last_md5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
   CompareBitmap(new_bitmap, 612, 792, last_md5);
   FPDFBitmap_Destroy(new_bitmap);
@@ -499,7 +500,7 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_SetStrokeWidth(rect, 15.0f));
   EXPECT_TRUE(FPDFPath_SetDrawMode(rect, 0, 1));
   FPDFPage_InsertObject(page, rect);
-  FPDF_BITMAP page_bitmap = RenderPage(page);
+  FPDF_BITMAP page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "64bd31f862a89e0a9e505a5af6efd506");
   FPDFBitmap_Destroy(page_bitmap);
 
@@ -513,7 +514,7 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_SetStrokeWidth(check, 8.35f));
   EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
   FPDFPage_InsertObject(page, check);
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "4b6f3b9d25c4e194821217d5016c3724");
   FPDFBitmap_Destroy(page_bitmap);
 
@@ -528,7 +529,7 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_SetStrokeWidth(path, 10.5f));
   EXPECT_TRUE(FPDFPath_SetDrawMode(path, FPDF_FILLMODE_ALTERNATE, 1));
   FPDFPage_InsertObject(page, path);
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "ff3e6a22326754944cc6e56609acd73b");
   FPDFBitmap_Destroy(page_bitmap);
   FPDF_ClosePage(page);
@@ -547,7 +548,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   EXPECT_TRUE(FPDFText_SetText(text_object1, text1.get()));
   FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
   FPDFPage_InsertObject(page, text_object1);
-  FPDF_BITMAP page_bitmap = RenderPage(page);
+  FPDF_BITMAP page_bitmap = RenderPageDeprecated(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
 #else
@@ -565,7 +566,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   EXPECT_TRUE(FPDFText_SetText(text_object2, text2.get()));
   FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 600);
   FPDFPage_InsertObject(page, text_object2);
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -585,7 +586,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   EXPECT_TRUE(FPDFText_SetText(text_object3, text3.get()));
   FPDFPageObj_Transform(text_object3, 1, 1.5, 2, 0.5, 200, 200);
   FPDFPage_InsertObject(page, text_object3);
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_3[] = "40b3ef04f915ff4c4208948001763544";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -674,7 +675,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
 
   // Check the bitmap
-  FPDF_BITMAP page_bitmap = RenderPage(page);
+  FPDF_BITMAP page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "5384da3406d62360ffb5cac4476fff1c");
   FPDFBitmap_Destroy(page_bitmap);
 
@@ -684,14 +685,14 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
 
   // Check that bitmap displays changed content
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "2e51656f5073b0bee611d9cd086aa09c");
   FPDFBitmap_Destroy(page_bitmap);
 
   // And now generate, without changes
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
-  page_bitmap = RenderPage(page);
+  page_bitmap = RenderPageDeprecated(page);
   CompareBitmap(page_bitmap, 612, 792, "2e51656f5073b0bee611d9cd086aa09c");
   FPDFBitmap_Destroy(page_bitmap);
 
@@ -888,7 +889,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
     EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
     FPDFPage_InsertObject(page, text_object);
-    FPDF_BITMAP page_bitmap = RenderPage(page);
+    FPDF_BITMAP page_bitmap = RenderPageDeprecated(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
 #else
@@ -906,7 +907,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
     FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 200, 200);
     FPDFPage_InsertObject(page, text_object2);
   }
-  FPDF_BITMAP page_bitmap2 = RenderPage(page);
+  FPDF_BITMAP page_bitmap2 = RenderPageDeprecated(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_2[] = "8eded4193ff1f0f77b8b600a825e97ea";
 #else
@@ -985,7 +986,7 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   }
 
   // Check that the text renders properly.
-  FPDF_BITMAP page_bitmap = RenderPage(page);
+  FPDF_BITMAP page_bitmap = RenderPageDeprecated(page);
   const char md5[] = "c68cd79aa72bf83a7b25271370d46b21";
   CompareBitmap(page_bitmap, 612, 792, md5);
   FPDFBitmap_Destroy(page_bitmap);
@@ -1018,7 +1019,7 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
     EXPECT_TRUE(FPDFPath_BezierTo(green_path, 38, 33, 39, 36, 40, 40));
     EXPECT_TRUE(FPDFPath_Close(green_path));
     FPDFPage_InsertObject(page, green_path);
-    FPDF_BITMAP page_bitmap = RenderPage(page);
+    FPDF_BITMAP page_bitmap = RenderPageDeprecated(page);
     CompareBitmap(page_bitmap, 612, 792, md5);
     FPDFBitmap_Destroy(page_bitmap);
 

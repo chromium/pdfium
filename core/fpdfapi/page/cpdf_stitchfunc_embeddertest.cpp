@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
+
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -13,9 +15,8 @@ TEST_F(FPDFPageFuncEmbeddertest, Bug_551460) {
   // and trusted. The number of inputs has to be 1.
   EXPECT_TRUE(OpenDocument("bug_551460.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
-  FPDF_BITMAP bitmap = RenderPage(page);
-  CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
-  FPDFBitmap_Destroy(bitmap);
+  ASSERT_TRUE(page);
+  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   UnloadPage(page);
 }

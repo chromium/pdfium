@@ -28,7 +28,7 @@ TEST_F(CPDF_CreatorEmbedderTest, SavedDocsAreEqualAfterParse) {
     FPDF_PAGE page = FPDF_LoadPage(document(), 0);
     ASSERT_TRUE(page);
     FPDF_BITMAP new_bitmap =
-        RenderPageWithFlags(page, form_handle(), FPDF_ANNOT);
+        RenderPageWithFlagsDeprecated(page, form_handle(), FPDF_ANNOT);
     FPDFBitmap_Destroy(new_bitmap);
     UnloadPage(page);
   }

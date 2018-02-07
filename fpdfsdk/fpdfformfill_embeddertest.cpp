@@ -532,7 +532,7 @@ TEST_F(FPDFFormFillEmbeddertest, FormText) {
     EXPECT_TRUE(OpenDocument("text_form.pdf"));
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap1(RenderPage(page));
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap1 = RenderLoadedPage(page);
     CompareBitmap(bitmap1.get(), 300, 300, md5_1);
 
     // Click on the textfield
@@ -546,14 +546,14 @@ TEST_F(FPDFFormFillEmbeddertest, FormText) {
     FORM_OnChar(form_handle(), page, 65, 0);
     FORM_OnChar(form_handle(), page, 66, 0);
     FORM_OnChar(form_handle(), page, 67, 0);
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap2(RenderPage(page));
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap2 = RenderLoadedPage(page);
     CompareBitmap(bitmap2.get(), 300, 300, md5_2);
 
     // Take out focus by clicking out of the textfield
     FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonDown(form_handle(), page, 0, 15.0, 15.0);
     FORM_OnLButtonUp(form_handle(), page, 0, 15.0, 15.0);
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap3(RenderPage(page));
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap3 = RenderLoadedPage(page);
     CompareBitmap(bitmap3.get(), 300, 300, md5_3);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));

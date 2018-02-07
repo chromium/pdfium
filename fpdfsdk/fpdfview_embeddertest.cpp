@@ -429,14 +429,14 @@ TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
   EXPECT_EQ(200, page_width);
   EXPECT_EQ(300, page_height);
 
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   CompareBitmap(bitmap, page_width, page_height, kOriginalMD5);
   FPDFBitmap_Destroy(bitmap);
 
   FS_RECTF page_rect{0, 0, page_width, page_height};
 
   // Try rendering with an identity matrix. The output should be the same as
-  // the RenderPage() output.
+  // the RenderPageDeprecated() output.
   FS_MATRIX identity_matrix{1, 0, 0, 1, 0, 0};
   TestRenderPageBitmapWithMatrix(page, page_width, page_height, identity_matrix,
                                  page_rect, kOriginalMD5);

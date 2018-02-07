@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "public/fpdf_save.h"
-
+#include <memory>
 #include <string>
 
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ppo.h"
+#include "public/fpdf_save.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gmock/include/gmock/gmock-matchers.h"
@@ -66,7 +66,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   EXPECT_TRUE(OpenDocument("linearized.pdf"));
   for (int i = 0; i < kPageCount; ++i) {
     FPDF_PAGE page = LoadPage(i);
-    FPDF_BITMAP bitmap = RenderPage(page);
+    FPDF_BITMAP bitmap = RenderPageDeprecated(page);
     EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap));
     EXPECT_EQ(792, FPDFBitmap_GetHeight(bitmap));
     original_md5[i] = HashBitmap(bitmap);
@@ -84,9 +84,9 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   EXPECT_TRUE(OpenSavedDocument());
   for (int i = 0; i < kPageCount; ++i) {
     FPDF_PAGE page = LoadSavedPage(i);
-    FPDF_BITMAP bitmap = RenderSavedPage(page);
-    EXPECT_EQ(original_md5[i], HashBitmap(bitmap));
-    FPDFBitmap_Destroy(bitmap);
+    ASSERT_TRUE(page);
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderSavedPage(page);
+    EXPECT_EQ(original_md5[i], HashBitmap(bitmap.get()));
     CloseSavedPage(page);
   }
   CloseSavedDocument();

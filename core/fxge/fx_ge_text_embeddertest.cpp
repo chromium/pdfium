@@ -12,7 +12,7 @@ TEST_F(FXGETextEmbedderTest, BadItalic) {
   EXPECT_TRUE(OpenDocument("bug_601362.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }

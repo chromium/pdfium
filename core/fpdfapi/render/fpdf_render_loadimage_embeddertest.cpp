@@ -13,7 +13,7 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_554151) {
   EXPECT_TRUE(OpenDocument("bug_554151.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   CompareBitmap(bitmap, 612, 792, "a14d7ee573c1b2456d7bf6b7762823cf");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
@@ -24,7 +24,7 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_557223) {
   EXPECT_TRUE(OpenDocument("bug_557223.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   CompareBitmap(bitmap, 24, 24, "dc0ea1b743c2edb22c597cadc8537f7b");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
@@ -35,7 +35,7 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_603518) {
   EXPECT_TRUE(OpenDocument("bug_603518.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   CompareBitmap(bitmap, 749, 749, "b9e75190cdc5edf0069a408744ca07dc");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);

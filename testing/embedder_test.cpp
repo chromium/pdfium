@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <list>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -261,24 +262,6 @@ FPDF_PAGE EmbedderTest::LoadPage(int page_number) {
   return page;
 }
 
-FPDF_BITMAP EmbedderTest::RenderPage(FPDF_PAGE page) {
-  return RenderPageWithFlags(page, form_handle_, 0);
-}
-
-FPDF_BITMAP EmbedderTest::RenderPageWithFlags(FPDF_PAGE page,
-                                              FPDF_FORMHANDLE handle,
-                                              int flags) {
-  int width = static_cast<int>(FPDF_GetPageWidth(page));
-  int height = static_cast<int>(FPDF_GetPageHeight(page));
-  int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
-  FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, alpha);
-  FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, fill_color);
-  FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, flags);
-  FPDF_FFLDraw(handle, bitmap, page, 0, 0, width, height, 0, flags);
-  return bitmap;
-}
-
 void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   ASSERT(form_handle_);
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_CLOSE);
@@ -291,6 +274,55 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
 
   page_map_.erase(it->second);
   page_reverse_map_.erase(it);
+}
+
+FPDF_BITMAP EmbedderTest::RenderPageDeprecated(FPDF_PAGE page) {
+  return RenderPageWithFlagsDeprecated(page, form_handle_, 0);
+}
+
+std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderLoadedPage(
+    FPDF_PAGE page) {
+  return RenderLoadedPageWithFlags(page, 0);
+}
+
+std::unique_ptr<void, FPDFBitmapDeleter>
+EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page, int flags) {
+  return RenderPageWithFlags(page, form_handle_, flags);
+}
+
+std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPage(
+    FPDF_PAGE page) {
+  return RenderSavedPageWithFlags(page, 0);
+}
+
+std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPageWithFlags(
+    FPDF_PAGE page,
+    int flags) {
+  return RenderPageWithFlags(page, saved_form_handle_, flags);
+}
+
+// static
+FPDF_BITMAP EmbedderTest::RenderPageWithFlagsDeprecated(FPDF_PAGE page,
+                                                        FPDF_FORMHANDLE handle,
+                                                        int flags) {
+  return RenderPageWithFlags(page, handle, flags).release();
+}
+
+// static
+std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderPageWithFlags(
+    FPDF_PAGE page,
+    FPDF_FORMHANDLE handle,
+    int flags) {
+  int width = static_cast<int>(FPDF_GetPageWidth(page));
+  int height = static_cast<int>(FPDF_GetPageHeight(page));
+  int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
+  std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
+      FPDFBitmap_Create(width, height, alpha));
+  FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
+  FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, fill_color);
+  FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, width, height, 0, flags);
+  FPDF_FFLDraw(handle, bitmap.get(), page, 0, 0, width, height, 0, flags);
+  return bitmap;
 }
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocument(const char* password) {
@@ -330,10 +362,6 @@ FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
   return page;
 }
 
-FPDF_BITMAP EmbedderTest::RenderSavedPage(FPDF_PAGE page) {
-  return RenderPageWithFlags(page, saved_form_handle_, 0);
-}
-
 void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
   ASSERT(page);
   FPDF_ClosePage(page);
@@ -346,10 +374,9 @@ void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
   ASSERT(saved_document_);
   ASSERT(page);
 
-  FPDF_BITMAP new_bitmap =
-      RenderPageWithFlags(page, saved_form_handle_, FPDF_ANNOT);
-  CompareBitmap(new_bitmap, width, height, md5);
-  FPDFBitmap_Destroy(new_bitmap);
+  std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+      RenderSavedPageWithFlags(page, FPDF_ANNOT);
+  CompareBitmap(bitmap.get(), width, height, md5);
 }
 
 void EmbedderTest::VerifySavedDocument(int width, int height, const char* md5) {

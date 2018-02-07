@@ -93,7 +93,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_552046) {
   // crash when rendered.
   EXPECT_TRUE(OpenDocument("bug_552046.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
@@ -104,7 +104,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_555784) {
   // Should not cause a crash when rendered.
   EXPECT_TRUE(OpenDocument("bug_555784.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
   CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
@@ -115,7 +115,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_455199) {
   // Should open successfully.
   EXPECT_TRUE(OpenDocument("bug_455199.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char kExpectedMd5sum[] = "b90475ca64d1348c3bf5e2b77ad9187a";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
