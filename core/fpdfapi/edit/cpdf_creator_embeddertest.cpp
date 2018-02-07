@@ -25,11 +25,12 @@ TEST_F(CPDF_CreatorEmbedderTest, SavedDocsAreEqualAfterParse) {
   {
     // Do some read only operations.
     ASSERT_GE(1, FPDF_GetPageCount(document()));
-    FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+    FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
-    FPDF_BITMAP new_bitmap =
-        RenderPageWithFlagsDeprecated(page, form_handle(), FPDF_ANNOT);
-    FPDFBitmap_Destroy(new_bitmap);
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    EXPECT_EQ(595, FPDFBitmap_GetWidth(bitmap.get()));
+    EXPECT_EQ(842, FPDFBitmap_GetHeight(bitmap.get()));
     UnloadPage(page);
   }
 

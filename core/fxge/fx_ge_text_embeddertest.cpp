@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
+
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -11,8 +13,9 @@ TEST_F(FXGETextEmbedderTest, BadItalic) {
   // Shouldn't crash.
   EXPECT_TRUE(OpenDocument("bug_601362.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
-  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
-  FPDFBitmap_Destroy(bitmap);
+  ASSERT_TRUE(page);
+  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap.get()));
+  EXPECT_EQ(792, FPDFBitmap_GetHeight(bitmap.get()));
   UnloadPage(page);
 }
