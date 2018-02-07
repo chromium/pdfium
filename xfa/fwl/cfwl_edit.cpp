@@ -1075,10 +1075,15 @@ void CFWL_Edit::InitCaret() {
 }
 
 void CFWL_Edit::UpdateCursorRect() {
-  int32_t bidi_level = 0;
-  m_rtCaret = CFX_RectF();
-  std::tie(bidi_level, m_rtCaret) =
-      m_EdtEngine.GetCharacterInfo(m_CursorPosition);
+  int32_t bidi_level;
+  if (m_EdtEngine.GetLength() > 0) {
+    std::tie(bidi_level, m_rtCaret) =
+        m_EdtEngine.GetCharacterInfo(m_CursorPosition);
+  } else {
+    bidi_level = 0;
+    m_rtCaret = CFX_RectF();
+  }
+
   // TODO(dsinclair): This should handle bidi level  ...
 
   m_rtCaret.width = 1.0f;

@@ -1071,8 +1071,10 @@ std::pair<int32_t, CFX_RectF> CFDE_TextEditEngine::GetCharacterInfo(
     if (it->nStart <= start_idx && start_idx < it->nStart + it->nCount)
       break;
   }
-  if (it == text_piece_info_.end())
+  if (it == text_piece_info_.end()) {
+    NOTREACHED();
     return {0, CFX_RectF()};
+  }
 
   return {it->nBidiLevel, GetCharRects(*it)[start_idx - it->nStart]};
 }
