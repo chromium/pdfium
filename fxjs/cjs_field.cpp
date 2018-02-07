@@ -2284,7 +2284,7 @@ CJS_Return CJS_Field::buttonGetIcon(
     return CJS_Return(false);
 
   v8::Local<v8::Object> pObj =
-      pRuntime->NewFxDynamicObj(CJS_Icon::GetObjDefnID());
+      pRuntime->NewFXJSBoundObject(CJS_Icon::GetObjDefnID());
   if (pObj.IsEmpty())
     return CJS_Return(false);
 
@@ -2404,7 +2404,7 @@ CJS_Return CJS_Field::getArray(
   int j = 0;
   for (const auto& pStr : swSort) {
     v8::Local<v8::Object> pObj =
-        pRuntime->NewFxDynamicObj(CJS_Field::GetObjDefnID());
+        pRuntime->NewFXJSBoundObject(CJS_Field::GetObjDefnID());
     if (pObj.IsEmpty())
       return CJS_Return(false);
 

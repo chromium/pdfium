@@ -317,7 +317,7 @@ CJS_Return CJS_App::setInterval(
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
-      pRuntime->NewFxDynamicObj(CJS_TimerObj::GetObjDefnID());
+      pRuntime->NewFXJSBoundObject(CJS_TimerObj::GetObjDefnID());
   if (pRetObj.IsEmpty())
     return CJS_Return(false);
 
@@ -344,7 +344,7 @@ CJS_Return CJS_App::setTimeOut(
   m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
 
   v8::Local<v8::Object> pRetObj =
-      pRuntime->NewFxDynamicObj(CJS_TimerObj::GetObjDefnID());
+      pRuntime->NewFXJSBoundObject(CJS_TimerObj::GetObjDefnID());
   if (pRetObj.IsEmpty())
     return CJS_Return(false);
 

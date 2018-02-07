@@ -414,7 +414,7 @@ void CFXJS_Engine::InitializeEngine() {
       }
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
       v8::Local<v8::String> pObjName = NewString(pObjDef->m_ObjName);
-      v8::Local<v8::Object> obj = NewFxDynamicObj(i, true);
+      v8::Local<v8::Object> obj = NewFXJSBoundObject(i, true);
       if (!obj.IsEmpty()) {
         v8Context->Global()->Set(v8Context, pObjName, obj).FromJust();
         m_StaticObjects[i] = v8::Global<v8::Object>(GetIsolate(), obj);
@@ -484,19 +484,10 @@ int CFXJS_Engine::Execute(const WideString& script, FXJSErr* pError) {
   return 0;
 }
 
-v8::Local<v8::Object> CFXJS_Engine::NewFxDynamicObj(int nObjDefnID,
-                                                    bool bStatic) {
+v8::Local<v8::Object> CFXJS_Engine::NewFXJSBoundObject(int nObjDefnID,
+                                                       bool bStatic) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::Local<v8::Context> context = GetIsolate()->GetCurrentContext();
-  if (nObjDefnID == -1) {
-    v8::Local<v8::ObjectTemplate> objTempl =
-        v8::ObjectTemplate::New(GetIsolate());
-    v8::Local<v8::Object> obj;
-    if (!objTempl->NewInstance(context).ToLocal(&obj))
-      return v8::Local<v8::Object>();
-    return obj;
-  }
-
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(GetIsolate());
   if (!pData)
     return v8::Local<v8::Object>();

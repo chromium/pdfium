@@ -30,6 +30,7 @@ class CJS_V8 {
   v8::Local<v8::Value> NewNull();
   v8::Local<v8::Value> NewUndefined();
   v8::Local<v8::Array> NewArray();
+  v8::Local<v8::Object> NewObject();
   v8::Local<v8::Number> NewNumber(int number);
   v8::Local<v8::Number> NewNumber(double number);
   v8::Local<v8::Number> NewNumber(float number);

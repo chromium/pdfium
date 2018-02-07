@@ -60,6 +60,10 @@ v8::Local<v8::Array> CJS_V8::NewArray() {
   return v8::Array::New(m_isolate);
 }
 
+v8::Local<v8::Object> CJS_V8::NewObject() {
+  return v8::Object::New(m_isolate);
+}
+
 unsigned CJS_V8::PutArrayElement(v8::Local<v8::Array> pArray,
                                  unsigned index,
                                  v8::Local<v8::Value> pValue) {

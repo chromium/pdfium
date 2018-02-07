@@ -176,7 +176,8 @@ class CFXJS_Engine : public CJS_V8 {
   int Execute(const WideString& script, FXJSErr* perror);
 
   v8::Local<v8::Object> GetThisObj();
-  v8::Local<v8::Object> NewFxDynamicObj(int nObjDefnID, bool bStatic = false);
+  v8::Local<v8::Object> NewFXJSBoundObject(int nObjDefnID,
+                                           bool bStatic = false);
 
   // Native object binding.
   void SetObjectPrivate(v8::Local<v8::Object> pObj,

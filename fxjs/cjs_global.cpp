@@ -333,7 +333,7 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
             pRuntime->NewString(pData->data.sData.UTF8Decode().AsStringView()));
         break;
       case JS_GlobalDataType::OBJECT: {
-        v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
+        v8::Local<v8::Object> pObj = pRuntime->NewObject();
         if (!pObj.IsEmpty()) {
           PutObjectProperty(pObj, &pData->data);
           SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::OBJECT, 0,
@@ -461,7 +461,7 @@ void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
             pRuntime->NewString(pObjData->sData.UTF8Decode().AsStringView()));
         break;
       case JS_GlobalDataType::OBJECT: {
-        v8::Local<v8::Object> pNewObj = pRuntime->NewFxDynamicObj(-1);
+        v8::Local<v8::Object> pNewObj = pRuntime->NewObject();
         if (!pNewObj.IsEmpty()) {
           PutObjectProperty(pNewObj, pObjData);
           pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),

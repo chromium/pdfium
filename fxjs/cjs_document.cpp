@@ -254,7 +254,7 @@ CJS_Return CJS_Document::getField(
     return CJS_Return(pRuntime->NewUndefined());
 
   v8::Local<v8::Object> pFieldObj =
-      pRuntime->NewFxDynamicObj(CJS_Field::GetObjDefnID());
+      pRuntime->NewFXJSBoundObject(CJS_Field::GetObjDefnID());
   if (pFieldObj.IsEmpty())
     return CJS_Return(false);
 
@@ -672,7 +672,7 @@ CJS_Return CJS_Document::get_info(CJS_Runtime* pRuntime) {
   WideString cwModDate = pDictionary->GetUnicodeTextFor("ModDate");
   WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
 
-  v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
+  v8::Local<v8::Object> pObj = pRuntime->NewObject();
   pRuntime->PutObjectProperty(pObj, L"Author",
                               pRuntime->NewString(cwAuthor.AsStringView()));
   pRuntime->PutObjectProperty(pObj, L"Title",
@@ -1031,7 +1031,7 @@ CJS_Return CJS_Document::getAnnot(
     return CJS_Return(false);
 
   v8::Local<v8::Object> pObj =
-      pRuntime->NewFxDynamicObj(CJS_Annot::GetObjDefnID());
+      pRuntime->NewFXJSBoundObject(CJS_Annot::GetObjDefnID());
   if (pObj.IsEmpty())
     return CJS_Return(false);
 
@@ -1066,7 +1066,7 @@ CJS_Return CJS_Document::getAnnots(
         return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
 
       v8::Local<v8::Object> pObj =
-          pRuntime->NewFxDynamicObj(CJS_Annot::GetObjDefnID());
+          pRuntime->NewFXJSBoundObject(CJS_Annot::GetObjDefnID());
       if (pObj.IsEmpty())
         return CJS_Return(false);
 
@@ -1143,7 +1143,7 @@ CJS_Return CJS_Document::get_icons(CJS_Runtime* pRuntime) {
   int i = 0;
   for (const auto& name : m_IconNames) {
     v8::Local<v8::Object> pObj =
-        pRuntime->NewFxDynamicObj(CJS_Icon::GetObjDefnID());
+        pRuntime->NewFXJSBoundObject(CJS_Icon::GetObjDefnID());
     if (pObj.IsEmpty())
       return CJS_Return(false);
 
@@ -1175,7 +1175,7 @@ CJS_Return CJS_Document::getIcon(
     return CJS_Return(false);
 
   v8::Local<v8::Object> pObj =
-      pRuntime->NewFxDynamicObj(CJS_Icon::GetObjDefnID());
+      pRuntime->NewFXJSBoundObject(CJS_Icon::GetObjDefnID());
   if (pObj.IsEmpty())
     return CJS_Return(false);
 
@@ -1325,7 +1325,7 @@ CJS_Return CJS_Document::getPrintParams(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   v8::Local<v8::Object> pRetObj =
-      pRuntime->NewFxDynamicObj(CJS_PrintParamsObj::GetObjDefnID());
+      pRuntime->NewFXJSBoundObject(CJS_PrintParamsObj::GetObjDefnID());
   if (pRetObj.IsEmpty())
     return CJS_Return(false);
 
