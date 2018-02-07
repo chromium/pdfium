@@ -1567,14 +1567,14 @@ int main(int argc, const char* argv[]) {
   }
 
 #ifdef PDF_ENABLE_V8
-  std::unique_ptr<v8::Platform> platform;
+  v8::Platform* platform;
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   v8::StartupData natives;
   v8::StartupData snapshot;
-  platform = InitializeV8ForPDFiumWithStartupData(
-      options.exe_path, options.bin_directory, &natives, &snapshot);
+  InitializeV8ForPDFium(options.exe_path, options.bin_directory, &natives,
+                        &snapshot, &platform);
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
-  platform = InitializeV8ForPDFium(options.exe_path);
+  InitializeV8ForPDFium(options.exe_path, &platform);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 
@@ -1641,6 +1641,7 @@ int main(int argc, const char* argv[]) {
   FPDF_DestroyLibrary();
 #ifdef PDF_ENABLE_V8
   v8::V8::ShutdownPlatform();
+  delete platform;
 
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   free(const_cast<char*>(natives.data));
