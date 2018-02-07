@@ -172,9 +172,9 @@ class CXFA_Node : public CXFA_Object {
     return static_cast<T*>(GetChildInternal(index, eType, bOnlyChild));
   }
 
-  int32_t InsertChild(int32_t index, CXFA_Node* pNode);
-  bool InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode);
-  bool RemoveChild(CXFA_Node* pNode, bool bNotify);
+  void InsertChild(int32_t index, CXFA_Node* pNode);
+  void InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode);
+  void RemoveChild(CXFA_Node* pNode, bool bNotify);
 
   CXFA_Node* Clone(bool bRecursive);
 

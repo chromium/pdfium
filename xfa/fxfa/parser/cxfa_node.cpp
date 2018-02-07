@@ -1118,8 +1118,8 @@ CXFA_Node* CXFA_Node::GetChildInternal(size_t index,
   return nullptr;
 }
 
-int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
-  ASSERT(!pNode->m_pNext);
+void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
+  ASSERT(!pNode->parent_);
   pNode->parent_ = this;
 
   bool ret = m_pDocument->RemovePurgeNode(pNode);
@@ -1127,9 +1127,9 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   (void)ret;  // Avoid unused variable warning.
 
   if (!m_pChild || index == 0) {
-    if (index > 0) {
-      return -1;
-    }
+    if (index > 0)
+      return;
+
     pNode->m_pNext = m_pChild;
     m_pChild = pNode;
     index = 0;
@@ -1138,21 +1138,22 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   } else {
     CXFA_Node* pPrev = m_pChild;
     int32_t iCount = 0;
-    while (++iCount != index && pPrev->m_pNext) {
+    while (++iCount != index && pPrev->m_pNext)
       pPrev = pPrev->m_pNext;
-    }
-    if (index > 0 && index != iCount) {
-      return -1;
-    }
+
+    if (index > 0 && index != iCount)
+      return;
+
     pNode->m_pNext = pPrev->m_pNext;
     pPrev->m_pNext = pNode;
     index = iCount;
   }
-  if (!pNode->m_pNext) {
+  if (!pNode->m_pNext)
     m_pLastChild = pNode;
-  }
+
   ASSERT(m_pLastChild);
   ASSERT(!m_pLastChild->m_pNext);
+
   pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (pNotify)
@@ -1160,18 +1161,19 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
 
   if (IsNeedSavingXMLNode() && pNode->m_pXMLNode) {
     ASSERT(!pNode->m_pXMLNode->GetNodeItem(CFX_XMLNode::Parent));
+
     m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, index);
     pNode->ClearFlag(XFA_NodeFlag_OwnXMLNode);
   }
-  return index;
 }
 
-bool CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
+void CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   if (!pNode || pNode->parent_ ||
       (pBeforeNode && pBeforeNode->parent_ != this)) {
     NOTREACHED();
-    return false;
+    return;
   }
+
   bool ret = m_pDocument->RemovePurgeNode(pNode);
   ASSERT(ret);
   (void)ret;  // Avoid unused variable warning.
@@ -1198,8 +1200,10 @@ bool CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   if (!pNode->m_pNext) {
     m_pLastChild = pNode;
   }
+
   ASSERT(m_pLastChild);
   ASSERT(!m_pLastChild->m_pNext);
+
   pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (pNotify)
@@ -1210,7 +1214,6 @@ bool CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
     m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, nIndex);
     pNode->ClearFlag(XFA_NodeFlag_OwnXMLNode);
   }
-  return true;
 }
 
 CXFA_Node* CXFA_Node::Deprecated_GetPrevSibling() {
@@ -1226,10 +1229,10 @@ CXFA_Node* CXFA_Node::Deprecated_GetPrevSibling() {
   return nullptr;
 }
 
-bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
+void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   if (!pNode || pNode->parent_ != this) {
     NOTREACHED();
-    return false;
+    return;
   }
 
   if (m_pChild == pNode) {
@@ -1246,6 +1249,7 @@ bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   pNode->parent_ = nullptr;
 
   ASSERT(!m_pLastChild || !m_pLastChild->m_pNext);
+
   OnRemoved(bNotify);
   pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren, true);
   m_pDocument->AddPurgeNode(pNode);
@@ -1277,7 +1281,6 @@ bool CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
     }
     pNode->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
-  return true;
 }
 
 CXFA_Node* CXFA_Node::GetFirstChildByName(const WideStringView& wsName) const {

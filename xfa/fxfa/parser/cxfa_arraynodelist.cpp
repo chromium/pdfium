@@ -25,12 +25,11 @@ size_t CXFA_ArrayNodeList::GetLength() {
   return m_array.size();
 }
 
-bool CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
+void CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
   m_array.push_back(pNode);
-  return true;
 }
 
-bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
+void CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   if (!pBeforeNode) {
     m_array.push_back(pNewNode);
   } else {
@@ -38,14 +37,12 @@ bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
     if (it != m_array.end())
       m_array.insert(it, pNewNode);
   }
-  return true;
 }
 
-bool CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
+void CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
   auto it = std::find(m_array.begin(), m_array.end(), pNode);
   if (it != m_array.end())
     m_array.erase(it);
-  return true;
 }
 
 CXFA_Node* CXFA_ArrayNodeList::Item(size_t index) {
