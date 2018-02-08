@@ -926,7 +926,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
 TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {

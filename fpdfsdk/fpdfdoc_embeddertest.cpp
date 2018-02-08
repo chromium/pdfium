@@ -146,7 +146,7 @@ TEST_F(FPDFDocEmbeddertest, BUG_680376) {
 TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
   EXPECT_TRUE(OpenDocument("launch_action.pdf"));
 
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   // The target action is nearly the size of the whole page.
@@ -165,7 +165,7 @@ TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
   EXPECT_EQ(bufsize, FPDFAction_GetFilePath(action, buf, bufsize));
   EXPECT_EQ(std::string(kExpectedResult), std::string(buf));
 
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFDocEmbeddertest, NoBookmarks) {

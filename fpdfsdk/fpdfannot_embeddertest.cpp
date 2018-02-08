@@ -31,7 +31,7 @@ std::string BufferToString(const std::vector<char>& buf) {
 TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   // This annotation has a malformed appearance stream, which does not have its
@@ -48,6 +48,9 @@ TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
 TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
+  // TODO(thestig): This test should use LoadPage() and UnloadPage(), but one of
+  // the FORM API calls in LoadPage() makes this test fail. So use
+  // FPDF_LoadPage() and FPDF_ClosePage() for now.
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
@@ -66,7 +69,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
     unsigned int G;
     unsigned int B;
     unsigned int A;
-    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+    ASSERT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
                                    &G, &B, &A));
     EXPECT_EQ(255u, R);
     EXPECT_EQ(255u, G);
@@ -123,12 +126,15 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
     EXPECT_EQ(157.211182f, quadpoints.x4);
     EXPECT_EQ(706.264465f, quadpoints.y4);
   }
-  UnloadPage(page);
+  FPDF_ClosePage(page);
 }
 
 TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
   // Open a file with three annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  // TODO(thestig): This test should use LoadPage() and UnloadPage(), but one of
+  // the FORM API calls in LoadPage() makes this test fail. So use
+  // FPDF_LoadPage() and FPDF_ClosePage() for now.
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
 
@@ -147,7 +153,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
     unsigned int G;
     unsigned int B;
     unsigned int A;
-    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+    ASSERT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
                                    &G, &B, &A));
     EXPECT_EQ(0u, R);
     EXPECT_EQ(0u, G);
@@ -167,13 +173,13 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
     EXPECT_EQ(475.336090f, rect.right);
     EXPECT_EQ(681.535034f, rect.top);
   }
-  UnloadPage(page);
+  FPDF_ClosePage(page);
 }
 
 TEST_F(FPDFAnnotEmbeddertest, AddIllegalSubtypeAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   // Add an annotation with an illegal subtype.
@@ -185,7 +191,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddIllegalSubtypeAnnotation) {
 TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   // Open a file with no annotation and load its first page.
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
 
@@ -216,7 +222,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
     unsigned int G;
     unsigned int B;
     unsigned int A;
-    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+    ASSERT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
                                    &G, &B, &A));
     EXPECT_EQ(51u, R);
     EXPECT_EQ(102u, G);
@@ -227,7 +233,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
     ASSERT_TRUE(FPDFAnnot_SetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, 204,
                                    153, 102, 51));
     // Check that the color has been set correctly.
-    EXPECT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
+    ASSERT_TRUE(FPDFAnnot_GetColor(annot.get(), FPDFANNOT_COLORTYPE_Color, &R,
                                    &G, &B, &A));
     EXPECT_EQ(204u, R);
     EXPECT_EQ(153u, G);
@@ -272,7 +278,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
 TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   // Check that there is a total of one annotation on its first page, and verify
@@ -302,7 +308,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
 
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 
   // Open the saved document.
   const char md5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
@@ -351,7 +357,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   EXPECT_EQ(4, FPDFPage_GetAnnotCount(page));
 
@@ -449,6 +455,9 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   // Open a file with 3 annotations on its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
+  // TODO(thestig): This test should use LoadPage() and UnloadPage(), but one of
+  // the FORM API calls in LoadPage() makes this test fail. So use
+  // FPDF_LoadPage() and FPDF_ClosePage() for now.
   FPDF_PAGE page = FPDF_LoadPage(document(), 0);
   ASSERT_TRUE(page);
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
@@ -542,7 +551,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
@@ -635,7 +644,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 
   // Open the saved document.
   OpenSavedDocument();
@@ -667,7 +676,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
   // Open a file with an annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   // Check that the page renders correctly.
@@ -730,7 +739,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
@@ -792,7 +801,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  FPDF_ClosePage(page);
+  UnloadPage(page);
   FPDFBitmap_Destroy(image_bitmap);
 
   // Test that the saved document renders the modified image object correctly.
@@ -812,7 +821,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
@@ -884,7 +893,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   static constexpr char kDateKey[] = "M";
@@ -934,7 +943,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 
   // Save the document, closing the page and document.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 
   // Open the saved annotation.
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
@@ -967,7 +976,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -1064,7 +1073,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
 
   // Save the modified document, then reopen it.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 
   OpenSavedDocument();
   page = LoadSavedPage(0);
@@ -1092,7 +1101,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
 TEST_F(FPDFAnnotEmbeddertest, RemoveOptionalAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -1123,13 +1132,13 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveOptionalAP) {
                                   nullptr, 0));
   }
 
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbeddertest, RemoveRequiredAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -1158,13 +1167,13 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveRequiredAP) {
                                   nullptr, 0));
   }
 
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
   // Open a file with annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   EXPECT_EQ(-1, FPDFPage_GetAnnotIndex(page, nullptr));
 
@@ -1212,7 +1221,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
 TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -1243,7 +1252,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
 TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = FPDF_LoadPage(document(), 0);
+  FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {

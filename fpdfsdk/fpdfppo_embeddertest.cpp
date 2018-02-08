@@ -261,7 +261,7 @@ TEST_F(FPDFPPOEmbeddertest, ImportWithZeroLengthStream) {
 
   std::string digest = HashBitmap(bitmap);
   FPDFBitmap_Destroy(bitmap);
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 
   FPDF_DOCUMENT new_doc = FPDF_CreateNewDocument();
   EXPECT_TRUE(new_doc);

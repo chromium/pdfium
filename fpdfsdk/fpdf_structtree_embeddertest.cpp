@@ -71,7 +71,7 @@ TEST_F(FPDFStructTreeEmbeddertest, GetAltText) {
   EXPECT_EQ(nullptr, ggchild_element);
 
   FPDF_StructTree_Close(struct_tree);
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbeddertest, GetMarkedContentID) {
@@ -87,7 +87,7 @@ TEST_F(FPDFStructTreeEmbeddertest, GetMarkedContentID) {
   EXPECT_EQ(0, FPDF_StructElement_GetMarkedContentID(element));
 
   FPDF_StructTree_Close(struct_tree);
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 }
 
 TEST_F(FPDFStructTreeEmbeddertest, GetType) {
@@ -116,5 +116,5 @@ TEST_F(FPDFStructTreeEmbeddertest, GetType) {
             WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
 
   FPDF_StructTree_Close(struct_tree);
-  FPDF_ClosePage(page);
+  UnloadPage(page);
 }

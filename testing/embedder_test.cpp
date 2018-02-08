@@ -22,7 +22,9 @@
 #include "testing/image_diff/image_diff_png.h"
 #include "testing/test_support.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8-platform.h"
@@ -76,6 +78,10 @@ void EmbedderTest::SetUp() {
 }
 
 void EmbedderTest::TearDown() {
+  // Use an EXPECT_EQ() here and continue to let TearDown() finish as cleanly as
+  // possible. This can fail when an ASSERT test fails in a test case.
+  EXPECT_EQ(0U, page_map_.size());
+
   if (document_) {
     FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
     FPDFDOC_ExitFormFillEnvironment(form_handle_);
@@ -245,10 +251,8 @@ int EmbedderTest::GetPageCount() {
 
 FPDF_PAGE EmbedderTest::LoadPage(int page_number) {
   ASSERT(form_handle_);
-  // First check whether it is loaded already.
-  auto it = page_map_.find(page_number);
-  if (it != page_map_.end())
-    return it->second;
+  ASSERT(page_number >= 0);
+  ASSERT(!pdfium::ContainsKey(page_map_, page_number));
 
   FPDF_PAGE page = FPDF_LoadPage(document_, page_number);
   if (!page)
@@ -258,22 +262,23 @@ FPDF_PAGE EmbedderTest::LoadPage(int page_number) {
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_OPEN);
   // Cache the page.
   page_map_[page_number] = page;
-  page_reverse_map_[page] = page_number;
   return page;
 }
 
 void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   ASSERT(form_handle_);
+
+  int page_number = GetPageNumberForLoadedPage(page);
+  if (page_number < 0) {
+    NOTREACHED();
+    return;
+  }
+
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form_handle_);
   FPDF_ClosePage(page);
 
-  auto it = page_reverse_map_.find(page);
-  if (it == page_reverse_map_.end())
-    return;
-
-  page_map_.erase(it->second);
-  page_reverse_map_.erase(it);
+  page_map_.erase(page_number);
 }
 
 FPDF_BITMAP EmbedderTest::RenderPageDeprecated(FPDF_PAGE page) {
@@ -287,6 +292,10 @@ std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderLoadedPage(
 
 std::unique_ptr<void, FPDFBitmapDeleter>
 EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page, int flags) {
+  if (GetPageNumberForLoadedPage(page) < 0) {
+    NOTREACHED();
+    return nullptr;
+  }
   return RenderPageWithFlags(page, form_handle_, flags);
 }
 
@@ -520,4 +529,15 @@ int EmbedderTest::GetBlockFromString(void* param,
 
   memcpy(buf, new_file->data() + pos, size);
   return 1;
+}
+
+int EmbedderTest::GetPageNumberForLoadedPage(FPDF_PAGE page) const {
+  for (const auto& it : page_map_) {
+    if (it.second == page) {
+      int page_number = it.first;
+      ASSERT(page_number >= 0);
+      return page_number;
+    }
+  }
+  return -1;
 }

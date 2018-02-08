@@ -106,11 +106,17 @@ class EmbedderTest : public ::testing::Test,
   int GetFirstPageNum();
   int GetPageCount();
 
-  // Load a specific page of the open document.
+  // Load a specific page of the open document with a given non-negative
+  // |page_number|. On success, fire form events for the page and return a page
+  // handle. On failure, return nullptr.
+  // The caller does not own the returned page handle, but must call
+  // UnloadPage() on it when done.
+  // The caller cannot call this for a |page_number| if it already obtained and
+  // holds the page handle for that page.
   FPDF_PAGE LoadPage(int page_number);
 
-  // Release the resources obtained from LoadPage(). Further use of |page|
-  // is prohibited after this call is made.
+  // Fire form unload events and release the resources for a |page| obtained
+  // from LoadPage(). Further use of |page| is prohibited after calling this.
   void UnloadPage(FPDF_PAGE page);
 
   // Convert a loaded page into a bitmap.
@@ -215,7 +221,6 @@ class EmbedderTest : public ::testing::Test,
   size_t file_length_ = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   std::map<int, FPDF_PAGE> page_map_;
-  std::map<FPDF_PAGE, int> page_reverse_map_;
 
   FPDF_DOCUMENT saved_document_ = nullptr;
   FPDF_FORMHANDLE saved_form_handle_ = nullptr;
@@ -241,6 +246,10 @@ class EmbedderTest : public ::testing::Test,
   static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
                                 const void* data,
                                 unsigned long size);
+
+  // Find |page| inside |page_map_| and return the associated page number, or -1
+  // if |page| cannot be found.
+  int GetPageNumberForLoadedPage(FPDF_PAGE page) const;
 
   std::string data_string_;
 };
