@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <list>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -81,6 +82,7 @@ void EmbedderTest::TearDown() {
   // Use an EXPECT_EQ() here and continue to let TearDown() finish as cleanly as
   // possible. This can fail when an ASSERT test fails in a test case.
   EXPECT_EQ(0U, page_map_.size());
+  EXPECT_EQ(0U, saved_page_map_.size());
 
   if (document_) {
     FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
@@ -260,7 +262,6 @@ FPDF_PAGE EmbedderTest::LoadPage(int page_number) {
 
   FORM_OnAfterLoadPage(page, form_handle_);
   FORM_DoPageAAction(page, form_handle_, FPDFPAGE_AACTION_OPEN);
-  // Cache the page.
   page_map_[page_number] = page;
   return page;
 }
@@ -307,6 +308,10 @@ std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPage(
 std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPageWithFlags(
     FPDF_PAGE page,
     int flags) {
+  if (GetPageNumberForSavedPage(page) < 0) {
+    NOTREACHED();
+    return nullptr;
+  }
   return RenderPageWithFlags(page, saved_form_handle_, flags);
 }
 
@@ -362,18 +367,34 @@ void EmbedderTest::CloseSavedDocument() {
 }
 
 FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
-  ASSERT(saved_document_);
+  ASSERT(saved_form_handle_);
+  ASSERT(page_number >= 0);
+  ASSERT(!pdfium::ContainsKey(saved_page_map_, page_number));
 
-  EXPECT_LT(page_number, FPDF_GetPageCount(saved_document_));
   FPDF_PAGE page = FPDF_LoadPage(saved_document_, page_number);
+  if (!page)
+    return nullptr;
 
-  ASSERT(page);
+  FORM_OnAfterLoadPage(page, saved_form_handle_);
+  FORM_DoPageAAction(page, saved_form_handle_, FPDFPAGE_AACTION_OPEN);
+  saved_page_map_[page_number] = page;
   return page;
 }
 
 void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
-  ASSERT(page);
+  ASSERT(saved_form_handle_);
+
+  int page_number = GetPageNumberForSavedPage(page);
+  if (page_number < 0) {
+    NOTREACHED();
+    return;
+  }
+
+  FORM_DoPageAAction(page, saved_form_handle_, FPDFPAGE_AACTION_CLOSE);
+  FORM_OnBeforeClosePage(page, saved_form_handle_);
   FPDF_ClosePage(page);
+
+  saved_page_map_.erase(page_number);
 }
 
 void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
@@ -531,8 +552,10 @@ int EmbedderTest::GetBlockFromString(void* param,
   return 1;
 }
 
-int EmbedderTest::GetPageNumberForLoadedPage(FPDF_PAGE page) const {
-  for (const auto& it : page_map_) {
+// static
+int EmbedderTest::GetPageNumberForPage(const PageNumberToHandleMap& page_map,
+                                       FPDF_PAGE page) {
+  for (const auto& it : page_map) {
     if (it.second == page) {
       int page_number = it.first;
       ASSERT(page_number >= 0);
@@ -540,4 +563,12 @@ int EmbedderTest::GetPageNumberForLoadedPage(FPDF_PAGE page) const {
     }
   }
   return -1;
+}
+
+int EmbedderTest::GetPageNumberForLoadedPage(FPDF_PAGE page) const {
+  return GetPageNumberForPage(page_map_, page);
+}
+
+int EmbedderTest::GetPageNumberForSavedPage(FPDF_PAGE page) const {
+  return GetPageNumberForPage(saved_page_map_, page);
 }

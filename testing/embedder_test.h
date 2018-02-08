@@ -163,6 +163,8 @@ class EmbedderTest : public ::testing::Test,
   RenderPageWithFlags(FPDF_PAGE page, FPDF_FORMHANDLE handle, int flags);
 
  protected:
+  using PageNumberToHandleMap = std::map<int, FPDF_PAGE>;
+
   bool OpenDocumentHelper(const char* password,
                           bool must_linearize,
                           FakeFileAccess* network_simulator,
@@ -195,10 +197,12 @@ class EmbedderTest : public ::testing::Test,
                                 unsigned char* buf,
                                 unsigned long size);
 
+  // See comments in the respective non-Saved versions of these methods.
   FPDF_DOCUMENT OpenSavedDocument(const char* password = nullptr);
   void CloseSavedDocument();
   FPDF_PAGE LoadSavedPage(int page_number);
   void CloseSavedPage(FPDF_PAGE page);
+
   void VerifySavedRendering(FPDF_PAGE page,
                             int width,
                             int height,
@@ -220,7 +224,7 @@ class EmbedderTest : public ::testing::Test,
   TestLoader* loader_ = nullptr;
   size_t file_length_ = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
-  std::map<int, FPDF_PAGE> page_map_;
+  PageNumberToHandleMap page_map_;
 
   FPDF_DOCUMENT saved_document_ = nullptr;
   FPDF_FORMHANDLE saved_form_handle_ = nullptr;
@@ -228,6 +232,7 @@ class EmbedderTest : public ::testing::Test,
   FPDF_FILEACCESS saved_file_access_;  // must outlive |saved_avail_|.
   // must outlive |saved_avail_|.
   std::unique_ptr<FakeFileAccess> saved_fake_file_access_;
+  PageNumberToHandleMap saved_page_map_;
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);
@@ -247,9 +252,15 @@ class EmbedderTest : public ::testing::Test,
                                 const void* data,
                                 unsigned long size);
 
+  // Helper method for the methods below.
+  static int GetPageNumberForPage(const PageNumberToHandleMap& page_map,
+                                  FPDF_PAGE page);
   // Find |page| inside |page_map_| and return the associated page number, or -1
   // if |page| cannot be found.
   int GetPageNumberForLoadedPage(FPDF_PAGE page) const;
+
+  // Same as GetPageNumberForLoadedPage(), but with |saved_page_map_|.
+  int GetPageNumberForSavedPage(FPDF_PAGE page) const;
 
   std::string data_string_;
 };
