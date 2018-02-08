@@ -178,9 +178,9 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Node* Clone(bool bRecursive);
 
-  CXFA_Node* GetNextSibling() const;
+  CXFA_Node* GetNextSibling() const { return m_pNext; }
   CXFA_Node* GetPrevSibling() const;
-  CXFA_Node* GetFirstChild() const;
+  CXFA_Node* GetFirstChild() const { return m_pChild; }
   CXFA_Node* GetParent() const { return parent_.Get(); }
 
   CXFA_Node* GetNextContainerSibling() const;
@@ -420,6 +420,7 @@ class CXFA_Node : public CXFA_Object {
   WideString GetValidateMessage(bool bError, bool bVersionFlag);
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;
+  CXFA_Node* Deprecated_GetPrevSibling();
   const PropertyData* GetPropertyData(XFA_Element property) const;
   const AttributeData* GetAttributeData(XFA_Attribute attr) const;
   Optional<XFA_Element> GetFirstPropertyWithFlag(uint8_t flag);
@@ -488,15 +489,12 @@ class CXFA_Node : public CXFA_Object {
                        CXFA_Event* event,
                        CXFA_EventParam* pEventParam);
 
-  CXFA_Node* GetNodeBefore(const CXFA_Node* node) const;
-  CXFA_Node* GetNodeAfter(const CXFA_Node* node) const;
-  CXFA_Node* GetContainerBefore(const CXFA_Node* node) const;
-  CXFA_Node* GetContainerAfter(const CXFA_Node* node) const;
-
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;
   const uint32_t m_ValidPackets;
-  std::vector<CXFA_Node*> children_;
+  CXFA_Node* m_pNext;
+  CXFA_Node* m_pChild;
+  CXFA_Node* m_pLastChild;
   UnownedPtr<CXFA_Node> parent_;
   CFX_XMLNode* m_pXMLNode;
   const XFA_PacketType m_ePacket;
