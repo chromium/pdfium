@@ -257,9 +257,9 @@ FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
 FXJS_PerIsolateData::FXJS_PerIsolateData(v8::Isolate* pIsolate)
     : m_pDynamicObjsMap(new V8TemplateMap(pIsolate)) {}
 
-CFXJS_Engine::CFXJS_Engine() : CJS_V8(nullptr) {}
+CFXJS_Engine::CFXJS_Engine() : CFX_V8(nullptr) {}
 
-CFXJS_Engine::CFXJS_Engine(v8::Isolate* pIsolate) : CJS_V8(pIsolate) {}
+CFXJS_Engine::CFXJS_Engine(v8::Isolate* pIsolate) : CFX_V8(pIsolate) {}
 
 CFXJS_Engine::~CFXJS_Engine() = default;
 

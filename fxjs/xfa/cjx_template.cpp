@@ -28,7 +28,7 @@ CJX_Template::CJX_Template(CXFA_Template* tmpl) : CJX_Model(tmpl) {
 CJX_Template::~CJX_Template() {}
 
 CJS_Return CJX_Template::formNodes(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -36,7 +36,7 @@ CJS_Return CJX_Template::formNodes(
 }
 
 CJS_Return CJX_Template::remerge(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -46,7 +46,7 @@ CJS_Return CJX_Template::remerge(
 }
 
 CJS_Return CJX_Template::execInitialize(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -54,7 +54,7 @@ CJS_Return CJX_Template::execInitialize(
 }
 
 CJS_Return CJX_Template::recalculate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -62,7 +62,7 @@ CJS_Return CJX_Template::recalculate(
 }
 
 CJS_Return CJX_Template::execCalculate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -70,7 +70,7 @@ CJS_Return CJX_Template::execCalculate(
 }
 
 CJS_Return CJX_Template::execValidate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

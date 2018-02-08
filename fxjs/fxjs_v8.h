@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "fxjs/cjs_v8.h"
+#include "fxjs/cfx_v8.h"
 #include "v8/include/v8-util.h"
 #include "v8/include/v8.h"
 
@@ -127,7 +127,7 @@ bool FXJS_GetIsolate(v8::Isolate** pResultIsolate);
 // Get the global isolate's ref count.
 size_t FXJS_GlobalIsolateRefCount();
 
-class CFXJS_Engine : public CJS_V8 {
+class CFXJS_Engine : public CFX_V8 {
  public:
   explicit CFXJS_Engine(v8::Isolate* pIsolate);
   ~CFXJS_Engine() override;

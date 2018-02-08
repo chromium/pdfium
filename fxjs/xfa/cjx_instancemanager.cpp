@@ -133,7 +133,7 @@ int32_t CJX_InstanceManager::MoveInstance(int32_t iTo, int32_t iFrom) {
 }
 
 CJS_Return CJX_InstanceManager::moveInstance(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -160,7 +160,7 @@ CJS_Return CJX_InstanceManager::moveInstance(
 }
 
 CJS_Return CJX_InstanceManager::removeInstance(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -200,7 +200,7 @@ CJS_Return CJX_InstanceManager::removeInstance(
 }
 
 CJS_Return CJX_InstanceManager::setInstances(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -210,7 +210,7 @@ CJS_Return CJX_InstanceManager::setInstances(
 }
 
 CJS_Return CJX_InstanceManager::addInstance(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty() && params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -251,7 +251,7 @@ CJS_Return CJX_InstanceManager::addInstance(
 }
 
 CJS_Return CJX_InstanceManager::insertInstance(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1 && params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

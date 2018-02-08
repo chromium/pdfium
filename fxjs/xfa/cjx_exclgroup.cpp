@@ -31,7 +31,7 @@ CJX_ExclGroup::CJX_ExclGroup(CXFA_ExclGroup* group) : CJX_Node(group) {
 CJX_ExclGroup::~CJX_ExclGroup() {}
 
 CJS_Return CJX_ExclGroup::execEvent(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -42,7 +42,7 @@ CJS_Return CJX_ExclGroup::execEvent(
 }
 
 CJS_Return CJX_ExclGroup::execInitialize(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -55,7 +55,7 @@ CJS_Return CJX_ExclGroup::execInitialize(
 }
 
 CJS_Return CJX_ExclGroup::execCalculate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -68,7 +68,7 @@ CJS_Return CJX_ExclGroup::execCalculate(
 }
 
 CJS_Return CJX_ExclGroup::execValidate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -83,7 +83,7 @@ CJS_Return CJX_ExclGroup::execValidate(
 }
 
 CJS_Return CJX_ExclGroup::selectedMember(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

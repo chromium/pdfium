@@ -25,25 +25,25 @@ CJX_DataWindow::CJX_DataWindow(CScript_DataWindow* window)
 CJX_DataWindow::~CJX_DataWindow() {}
 
 CJS_Return CJX_DataWindow::moveCurrentRecord(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_DataWindow::record(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_DataWindow::gotoRecord(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_DataWindow::isRecordGroup(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }

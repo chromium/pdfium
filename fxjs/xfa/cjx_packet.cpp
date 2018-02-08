@@ -24,7 +24,7 @@ CJX_Packet::CJX_Packet(CXFA_Packet* packet) : CJX_Node(packet) {
 CJX_Packet::~CJX_Packet() {}
 
 CJS_Return CJX_Packet::getAttribute(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -40,7 +40,7 @@ CJS_Return CJX_Packet::getAttribute(
 }
 
 CJS_Return CJX_Packet::setAttribute(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -54,7 +54,7 @@ CJS_Return CJX_Packet::setAttribute(
 }
 
 CJS_Return CJX_Packet::removeAttribute(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

@@ -26,31 +26,31 @@ CJX_LogPseudoModel::CJX_LogPseudoModel(CScript_LogPseudoModel* model)
 CJX_LogPseudoModel::~CJX_LogPseudoModel() {}
 
 CJS_Return CJX_LogPseudoModel::message(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_LogPseudoModel::traceEnabled(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_LogPseudoModel::traceActivate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_LogPseudoModel::traceDeactivate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_LogPseudoModel::trace(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }

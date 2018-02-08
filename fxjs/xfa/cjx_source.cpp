@@ -37,7 +37,7 @@ CJX_Source::CJX_Source(CXFA_Source* src) : CJX_Node(src) {
 
 CJX_Source::~CJX_Source() {}
 
-CJS_Return CJX_Source::next(CJS_V8* runtime,
+CJS_Return CJX_Source::next(CFX_V8* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -45,14 +45,14 @@ CJS_Return CJX_Source::next(CJS_V8* runtime,
 }
 
 CJS_Return CJX_Source::cancelBatch(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::first(CJS_V8* runtime,
+CJS_Return CJX_Source::first(CFX_V8* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -60,7 +60,7 @@ CJS_Return CJX_Source::first(CJS_V8* runtime,
 }
 
 CJS_Return CJX_Source::updateBatch(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -68,42 +68,42 @@ CJS_Return CJX_Source::updateBatch(
 }
 
 CJS_Return CJX_Source::previous(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::isBOF(CJS_V8* runtime,
+CJS_Return CJX_Source::isBOF(CFX_V8* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::isEOF(CJS_V8* runtime,
+CJS_Return CJX_Source::isEOF(CFX_V8* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::cancel(CJS_V8* runtime,
+CJS_Return CJX_Source::cancel(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::update(CJS_V8* runtime,
+CJS_Return CJX_Source::update(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::open(CJS_V8* runtime,
+CJS_Return CJX_Source::open(CFX_V8* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -111,14 +111,14 @@ CJS_Return CJX_Source::open(CJS_V8* runtime,
 }
 
 CJS_Return CJX_Source::deleteItem(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::addNew(CJS_V8* runtime,
+CJS_Return CJX_Source::addNew(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -126,28 +126,28 @@ CJS_Return CJX_Source::addNew(CJS_V8* runtime,
 }
 
 CJS_Return CJX_Source::requery(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::resync(CJS_V8* runtime,
+CJS_Return CJX_Source::resync(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::close(CJS_V8* runtime,
+CJS_Return CJX_Source::close(CFX_V8* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
   return CJS_Return(true);
 }
 
-CJS_Return CJX_Source::last(CJS_V8* runtime,
+CJS_Return CJX_Source::last(CFX_V8* runtime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -155,7 +155,7 @@ CJS_Return CJX_Source::last(CJS_V8* runtime,
 }
 
 CJS_Return CJX_Source::hasDataChanged(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

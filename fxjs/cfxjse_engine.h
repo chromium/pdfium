@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
+#include "fxjs/cfx_v8.h"
 #include "fxjs/cfxjse_formcalc_context.h"
-#include "fxjs/cjs_v8.h"
 #include "v8/include/v8.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -25,7 +25,7 @@ class CFXJSE_ResolveProcessor;
 class CFXJS_Engine;
 class CXFA_List;
 
-class CFXJSE_Engine : public CJS_V8 {
+class CFXJSE_Engine : public CFX_V8 {
  public:
   static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
   static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);

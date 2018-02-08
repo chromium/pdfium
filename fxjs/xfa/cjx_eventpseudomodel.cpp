@@ -151,7 +151,7 @@ void CJX_EventPseudoModel::target(CFXJSE_Value* pValue,
 }
 
 CJS_Return CJX_EventPseudoModel::emit(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
@@ -174,7 +174,7 @@ CJS_Return CJX_EventPseudoModel::emit(
 }
 
 CJS_Return CJX_EventPseudoModel::reset(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)

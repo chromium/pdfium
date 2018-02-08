@@ -29,7 +29,7 @@ CJX_Subform::CJX_Subform(CXFA_Node* node) : CJX_Container(node) {
 CJX_Subform::~CJX_Subform() {}
 
 CJS_Return CJX_Subform::execEvent(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -40,7 +40,7 @@ CJS_Return CJX_Subform::execEvent(
 }
 
 CJS_Return CJX_Subform::execInitialize(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -53,7 +53,7 @@ CJS_Return CJX_Subform::execInitialize(
 }
 
 CJS_Return CJX_Subform::execCalculate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -66,7 +66,7 @@ CJS_Return CJX_Subform::execCalculate(
 }
 
 CJS_Return CJX_Subform::execValidate(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

@@ -26,13 +26,13 @@ CJX_Model::CJX_Model(CXFA_Node* node) : CJX_Node(node) {
 CJX_Model::~CJX_Model() {}
 
 CJS_Return CJX_Model::clearErrorList(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_Model::createNode(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -70,7 +70,7 @@ CJS_Return CJX_Model::createNode(
 }
 
 CJS_Return CJX_Model::isCompatibleNS(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

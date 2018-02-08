@@ -94,7 +94,7 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue,
 
 CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
                              CFXJS_Engine* fxjs_engine)
-    : CJS_V8(fxjs_engine->GetIsolate()),
+    : CFX_V8(fxjs_engine->GetIsolate()),
       m_pDocument(pDocument),
       m_JsContext(CFXJSE_Context::Create(fxjs_engine->GetIsolate(),
                                          fxjs_engine,

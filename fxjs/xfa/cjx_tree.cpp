@@ -30,7 +30,7 @@ CJX_Tree::CJX_Tree(CXFA_Object* obj) : CJX_Object(obj) {
 CJX_Tree::~CJX_Tree() {}
 
 CJS_Return CJX_Tree::resolveNode(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
@@ -79,7 +79,7 @@ CJS_Return CJX_Tree::resolveNode(
 }
 
 CJS_Return CJX_Tree::resolveNodes(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

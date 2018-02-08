@@ -52,15 +52,15 @@ class CJX_LayoutPseudoModel : public CJX_Object {
   JS_PROP(ready);
 
  private:
-  CJS_Return NumberedPageCount(CJS_V8* runtime, bool bNumbered);
-  CJS_Return HWXY(CJS_V8* runtime,
+  CJS_Return NumberedPageCount(CFX_V8* runtime, bool bNumbered);
+  CJS_Return HWXY(CFX_V8* runtime,
                   const std::vector<v8::Local<v8::Value>>& params,
                   XFA_LAYOUTMODEL_HWXY layoutModel);
   std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                       int32_t iPageNo,
                                       const WideString& wsType,
                                       bool bOnPageArea);
-  CJS_Return PageInternals(CJS_V8* runtime,
+  CJS_Return PageInternals(CFX_V8* runtime,
                            const std::vector<v8::Local<v8::Value>>& params,
                            bool bAbsPage);
 

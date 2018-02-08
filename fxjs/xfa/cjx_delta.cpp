@@ -20,7 +20,7 @@ CJX_Delta::CJX_Delta(CXFA_Delta* delta) : CJX_Object(delta) {
 
 CJX_Delta::~CJX_Delta() {}
 
-CJS_Return CJX_Delta::restore(CJS_V8* runtime,
+CJS_Return CJX_Delta::restore(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

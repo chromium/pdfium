@@ -20,7 +20,7 @@
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFXJSE_Value;
-class CJS_V8;
+class CFX_V8;
 class CXFA_CalcData;
 class CXFA_Document;
 class CXFA_LayoutItem;
@@ -30,7 +30,7 @@ struct XFA_MAPMODULEDATA;
 
 typedef CJS_Return (*CJX_MethodCall)(
     CJX_Object* obj,
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params);
 struct CJX_MethodSpec {
   const char* pName;

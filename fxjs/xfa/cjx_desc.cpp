@@ -20,7 +20,7 @@ CJX_Desc::CJX_Desc(CXFA_Desc* desc) : CJX_Node(desc) {
 
 CJX_Desc::~CJX_Desc() {}
 
-CJS_Return CJX_Desc::metadata(CJS_V8* runtime,
+CJS_Return CJX_Desc::metadata(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 0 && params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

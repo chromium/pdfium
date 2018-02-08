@@ -23,7 +23,7 @@ CJX_WsdlConnection::CJX_WsdlConnection(CXFA_WsdlConnection* connection)
 CJX_WsdlConnection::~CJX_WsdlConnection() {}
 
 CJS_Return CJX_WsdlConnection::execute(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty() && params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

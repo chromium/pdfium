@@ -29,7 +29,7 @@ CXFA_TreeList* CJX_TreeList::GetXFATreeList() {
 }
 
 CJS_Return CJX_TreeList::namedItem(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));

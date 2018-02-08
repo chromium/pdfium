@@ -25,13 +25,13 @@ CJX_Container::CJX_Container(CXFA_Node* node) : CJX_Node(node) {
 CJX_Container::~CJX_Container() {}
 
 CJS_Return CJX_Container::getDelta(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Return(true);
 }
 
 CJS_Return CJX_Container::getDeltas(
-    CJS_V8* runtime,
+    CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(GetDocument());
   return CJS_Return(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
