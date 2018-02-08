@@ -37,7 +37,8 @@ CJS_Return CJX_Form::formNodes(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_Node* pDataNode = ToNode(runtime->ToXFAObject(params[0]));
+  CXFA_Node* pDataNode =
+      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pDataNode)
     return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 

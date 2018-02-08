@@ -34,7 +34,7 @@ CJS_Return CJX_Container::getDeltas(
     CJS_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(GetDocument());
-  return CJS_Return(runtime->NewXFAObject(
+  return CJS_Return(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
       pFormNodes,
       GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
 }

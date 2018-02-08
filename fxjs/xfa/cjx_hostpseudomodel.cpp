@@ -279,7 +279,8 @@ CJS_Return CJX_HostPseudoModel::openList(
 
   CXFA_Node* pNode = nullptr;
   if (params[0]->IsObject()) {
-    pNode = ToNode(runtime->ToXFAObject(params[0]));
+    pNode =
+        ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   } else if (params[0]->IsString()) {
     CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
     if (!pScriptContext)
@@ -439,7 +440,8 @@ CJS_Return CJX_HostPseudoModel::setFocus(
   CXFA_Node* pNode = nullptr;
   if (params.size() >= 1) {
     if (params[0]->IsObject()) {
-      pNode = ToNode(runtime->ToXFAObject(params[0]));
+      pNode =
+          ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
     } else if (params[0]->IsString()) {
       CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
       if (!pScriptContext)

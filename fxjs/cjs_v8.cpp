@@ -6,11 +6,6 @@
 
 #include "fxjs/cjs_v8.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fxjs/cfxjse_context.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
-#endif  // PDF_ENABLE_XFA
-
 CJS_V8::CJS_V8(v8::Isolate* isolate) : m_isolate(isolate) {}
 
 CJS_V8::~CJS_V8() = default;
@@ -199,29 +194,3 @@ v8::Local<v8::Array> CJS_V8::ToArray(v8::Local<v8::Value> pValue) {
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
 }
-
-#ifdef PDF_ENABLE_XFA
-CXFA_Object* CJS_V8::ToXFAObject(v8::Local<v8::Value> obj) {
-  ASSERT(!obj.IsEmpty());
-
-  if (!obj->IsObject())
-    return nullptr;
-
-  CFXJSE_HostObject* hostObj =
-      FXJSE_RetrieveObjectBinding(obj.As<v8::Object>(), nullptr);
-  if (!hostObj || hostObj->type() != CFXJSE_HostObject::kXFA)
-    return nullptr;
-  return static_cast<CXFA_Object*>(hostObj);
-}
-
-v8::Local<v8::Value> CJS_V8::NewXFAObject(
-    CXFA_Object* obj,
-    v8::Global<v8::FunctionTemplate>& tmpl) {
-  v8::EscapableHandleScope scope(m_isolate);
-  v8::Local<v8::FunctionTemplate> klass =
-      v8::Local<v8::FunctionTemplate>::New(m_isolate, tmpl);
-  v8::Local<v8::Object> object = klass->InstanceTemplate()->NewInstance();
-  FXJSE_UpdateObjectBinding(object, obj);
-  return scope.Escape(object);
-}
-#endif  // PDF_ENABLE_XFA

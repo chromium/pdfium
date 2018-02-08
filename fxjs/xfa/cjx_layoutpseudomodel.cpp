@@ -75,7 +75,8 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
   if (params.empty() || params.size() > 3)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_Node* pNode = ToNode(runtime->ToXFAObject(params[0]));
+  CXFA_Node* pNode =
+      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
     return CJS_Return(true);
 
@@ -185,7 +186,8 @@ CJS_Return CJX_LayoutPseudoModel::pageSpan(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_Node* pNode = ToNode(runtime->ToXFAObject(params[0]));
+  CXFA_Node* pNode =
+      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
     return CJS_Return(true);
 
@@ -374,7 +376,7 @@ CJS_Return CJX_LayoutPseudoModel::pageContent(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
 
   // TODO(dsinclair): Who owns the array once we release it? Won't this leak?
-  return CJS_Return(runtime->NewXFAObject(
+  return CJS_Return(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
       pArrayNodeList.release(),
       GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
 }
@@ -465,7 +467,8 @@ CJS_Return CJX_LayoutPseudoModel::PageInternals(
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  CXFA_Node* pNode = ToNode(runtime->ToXFAObject(params[0]));
+  CXFA_Node* pNode =
+      ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
     return CJS_Return(runtime->NewNumber(0));
 

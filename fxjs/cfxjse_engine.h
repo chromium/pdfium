@@ -13,6 +13,7 @@
 
 #include "fxjs/cfxjse_formcalc_context.h"
 #include "fxjs/cjs_v8.h"
+#include "v8/include/v8.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
@@ -83,6 +84,10 @@ class CFXJSE_Engine : public CJS_V8 {
   CXFA_Script::Type GetType();
   std::vector<CXFA_Node*>* GetUpObjectArray() { return &m_upObjectArray; }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
+
+  CXFA_Object* ToXFAObject(v8::Local<v8::Value> obj);
+  v8::Local<v8::Value> NewXFAObject(CXFA_Object* obj,
+                                    v8::Global<v8::FunctionTemplate>& tmpl);
 
  private:
   CFXJSE_Context* CreateVariablesContext(CXFA_Node* pScriptNode,

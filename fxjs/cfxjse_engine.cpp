@@ -756,3 +756,27 @@ void CFXJSE_Engine::AddNodesOfRunScript(CXFA_Node* pNode) {
   if (m_pScriptNodeArray && !pdfium::ContainsValue(*m_pScriptNodeArray, pNode))
     m_pScriptNodeArray->push_back(pNode);
 }
+
+CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {
+  ASSERT(!obj.IsEmpty());
+
+  if (!obj->IsObject())
+    return nullptr;
+
+  CFXJSE_HostObject* hostObj =
+      FXJSE_RetrieveObjectBinding(obj.As<v8::Object>(), nullptr);
+  if (!hostObj || hostObj->type() != CFXJSE_HostObject::kXFA)
+    return nullptr;
+  return static_cast<CXFA_Object*>(hostObj);
+}
+
+v8::Local<v8::Value> CFXJSE_Engine::NewXFAObject(
+    CXFA_Object* obj,
+    v8::Global<v8::FunctionTemplate>& tmpl) {
+  v8::EscapableHandleScope scope(GetIsolate());
+  v8::Local<v8::FunctionTemplate> klass =
+      v8::Local<v8::FunctionTemplate>::New(GetIsolate(), tmpl);
+  v8::Local<v8::Object> object = klass->InstanceTemplate()->NewInstance();
+  FXJSE_UpdateObjectBinding(object, obj);
+  return scope.Escape(object);
+}
