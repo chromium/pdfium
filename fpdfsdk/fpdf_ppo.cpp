@@ -328,8 +328,14 @@ class CPDF_PageOrganizer {
                   const ByteString& bsContent,
                   XObjectNameNumberMap* pXObjNameNumberMap);
 
-  UnownedPtr<CPDF_Document> m_pDestPDFDoc;
-  UnownedPtr<CPDF_Document> m_pSrcPDFDoc;
+  CPDF_Document* dest() { return m_pDestPDFDoc.Get(); }
+  const CPDF_Document* dest() const { return m_pDestPDFDoc.Get(); }
+
+  CPDF_Document* src() { return m_pSrcPDFDoc.Get(); }
+  const CPDF_Document* src() const { return m_pSrcPDFDoc.Get(); }
+
+  UnownedPtr<CPDF_Document> const m_pDestPDFDoc;
+  UnownedPtr<CPDF_Document> const m_pSrcPDFDoc;
   uint32_t m_xobjectNum = 0;
   CFX_SizeF m_pageSize;
   // Mapping of XObject name and XObject object number of the entire document.
@@ -347,11 +353,11 @@ bool CPDF_PageOrganizer::PDFDocInit() {
   ASSERT(m_pDestPDFDoc);
   ASSERT(m_pSrcPDFDoc);
 
-  CPDF_Dictionary* pNewRoot = m_pDestPDFDoc->GetRoot();
+  CPDF_Dictionary* pNewRoot = dest()->GetRoot();
   if (!pNewRoot)
     return false;
 
-  CPDF_Dictionary* pDocInfoDict = m_pDestPDFDoc->GetInfo();
+  CPDF_Dictionary* pDocInfoDict = dest()->GetInfo();
   if (!pDocInfoDict)
     return false;
 
@@ -365,8 +371,8 @@ bool CPDF_PageOrganizer::PDFDocInit() {
   CPDF_Dictionary* pNewPages =
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
-    pNewPages = m_pDestPDFDoc->NewIndirect<CPDF_Dictionary>();
-    pNewRoot->SetNewFor<CPDF_Reference>("Pages", m_pDestPDFDoc.Get(),
+    pNewPages = dest()->NewIndirect<CPDF_Dictionary>();
+    pNewRoot->SetNewFor<CPDF_Reference>("Pages", dest(),
                                         pNewPages->GetObjNum());
   }
 
@@ -377,8 +383,7 @@ bool CPDF_PageOrganizer::PDFDocInit() {
   if (!pNewPages->GetArrayFor("Kids")) {
     pNewPages->SetNewFor<CPDF_Number>("Count", 0);
     pNewPages->SetNewFor<CPDF_Reference>(
-        "Kids", m_pDestPDFDoc.Get(),
-        m_pDestPDFDoc->NewIndirect<CPDF_Array>()->GetObjNum());
+        "Kids", dest(), dest()->NewIndirect<CPDF_Array>()->GetObjNum());
   }
 
   return true;
@@ -400,8 +405,7 @@ void CPDF_PageOrganizer::AddSubPage(CPDF_Dictionary* pPageDict,
     ++m_xobjectNum;
     // TODO(Xlou): A better name schema to avoid possible object name collision.
     bsXObjectName = ByteString::Format("X%d", m_xobjectNum);
-    m_xobjs[bsXObjectName] =
-        MakeXObject(pPageDict, pObjNumberMap, m_pDestPDFDoc.Get());
+    m_xobjs[bsXObjectName] = MakeXObject(pPageDict, pObjNumberMap, dest());
     (*pPageXObjectMap)[dwPageObjnum] = bsXObjectName;
   }
   (*pXObjNameNumberMap)[bsXObjectName] = m_xobjs[bsXObjectName];
@@ -483,8 +487,8 @@ bool CPDF_PageOrganizer::ExportPage(const std::vector<uint32_t>& pageNums,
   int curpage = nIndex;
   auto pObjNumberMap = pdfium::MakeUnique<ObjectNumberMap>();
   for (size_t i = 0; i < pageNums.size(); ++i) {
-    CPDF_Dictionary* pCurPageDict = m_pDestPDFDoc->CreateNewPage(curpage);
-    CPDF_Dictionary* pSrcPageDict = m_pSrcPDFDoc->GetPage(pageNums[i] - 1);
+    CPDF_Dictionary* pCurPageDict = dest()->CreateNewPage(curpage);
+    CPDF_Dictionary* pSrcPageDict = src()->GetPage(pageNums[i] - 1);
     if (!pSrcPageDict || !pCurPageDict)
       return false;
 
@@ -555,16 +559,14 @@ void CPDF_PageOrganizer::FinishPage(CPDF_Dictionary* pCurPageDict,
     pPageXObject = pRes->SetNewFor<CPDF_Dictionary>("XObject");
 
   for (auto& it : *pXObjNameNumberMap) {
-    pPageXObject->SetNewFor<CPDF_Reference>(it.first, m_pDestPDFDoc.Get(),
-                                            it.second);
+    pPageXObject->SetNewFor<CPDF_Reference>(it.first, dest(), it.second);
   }
 
-  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(
-      m_pDestPDFDoc.Get()->GetByteStringPool());
-  CPDF_Stream* pStream = m_pDestPDFDoc.Get()->NewIndirect<CPDF_Stream>(
-      nullptr, 0, std::move(pDict));
+  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(dest()->GetByteStringPool());
+  CPDF_Stream* pStream =
+      dest()->NewIndirect<CPDF_Stream>(nullptr, 0, std::move(pDict));
   pStream->SetData(bsContent.raw_str(), bsContent.GetLength());
-  pCurPageDict->SetNewFor<CPDF_Reference>("Contents", m_pDestPDFDoc.Get(),
+  pCurPageDict->SetNewFor<CPDF_Reference>("Contents", dest(),
                                           pStream->GetObjNum());
 }
 
@@ -598,7 +600,7 @@ bool CPDF_PageOrganizer::ExportNPagesToOne(
   for (size_t outerPage = 0; outerPage < pageNums.size();
        outerPage += numPagesPerSheet) {
     // Create a new page
-    CPDF_Dictionary* pCurPageDict = m_pDestPDFDoc->CreateNewPage(curpage);
+    CPDF_Dictionary* pCurPageDict = dest()->CreateNewPage(curpage);
     if (!pCurPageDict)
       return false;
 
@@ -609,12 +611,11 @@ bool CPDF_PageOrganizer::ExportNPagesToOne(
     // Mapping of XObject name and XObject object number of one page.
     XObjectNameNumberMap xObjectNameNumberMap;
     for (size_t innerPage = outerPage; innerPage < innerPageMax; ++innerPage) {
-      CPDF_Dictionary* pSrcPageDict =
-          m_pSrcPDFDoc->GetPage(pageNums[innerPage] - 1);
+      CPDF_Dictionary* pSrcPageDict = src()->GetPage(pageNums[innerPage] - 1);
       if (!pSrcPageDict)
         return false;
 
-      CPDF_Page srcPage(m_pSrcPDFDoc.Get(), pSrcPageDict, true);
+      CPDF_Page srcPage(src(), pSrcPageDict, true);
       NupPageSettings pgEdit;
       nupState.CalculateNewPagePosition(srcPage.GetPageWidth(),
                                         srcPage.GetPageHeight(), &pgEdit);
@@ -639,7 +640,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       uint32_t newobjnum = GetNewObjId(pObjNumberMap, pReference);
       if (newobjnum == 0)
         return false;
-      pReference->SetRef(m_pDestPDFDoc.Get(), newobjnum);
+      pReference->SetRef(dest(), newobjnum);
       break;
     }
     case CPDF_Object::DICTIONARY: {
@@ -712,8 +713,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(ObjectNumberMap* pObjNumberMap,
         return 0;
     }
   }
-  CPDF_Object* pUnownedClone =
-      m_pDestPDFDoc->AddIndirectObject(std::move(pClone));
+  CPDF_Object* pUnownedClone = dest()->AddIndirectObject(std::move(pClone));
   dwNewObjNum = pUnownedClone->GetObjNum();
   (*pObjNumberMap)[dwObjnum] = dwNewObjNum;
   if (!UpdateReference(pUnownedClone, pObjNumberMap))
