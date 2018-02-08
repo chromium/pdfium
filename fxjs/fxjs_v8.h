@@ -14,6 +14,7 @@
 #ifndef FXJS_FXJS_V8_H_
 #define FXJS_FXJS_V8_H_
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <vector>
@@ -131,16 +132,20 @@ class CFXJS_Engine : public CJS_V8 {
   explicit CFXJS_Engine(v8::Isolate* pIsolate);
   ~CFXJS_Engine() override;
 
-  using Constructor = void (*)(CFXJS_Engine* pEngine,
-                               v8::Local<v8::Object> obj);
-  using Destructor = void (*)(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+  using Constructor =
+      std::function<void(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj)>;
+  using Destructor = std::function<void(v8::Local<v8::Object> obj)>;
 
   static CFXJS_Engine* EngineFromIsolateCurrentContext(v8::Isolate* pIsolate);
   static CFXJS_Engine* EngineFromContext(v8::Local<v8::Context> pContext);
-  static void SetEngineInContext(CFXJS_Engine* pEngine,
-                                 v8::Local<v8::Context> pContext);
 
   static int GetObjDefnID(v8::Local<v8::Object> pObj);
+
+  static void SetObjectPrivate(v8::Local<v8::Object> pObj,
+                               std::unique_ptr<CJS_Object> p);
+  static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
+
+  void SetIntoContext(v8::Local<v8::Context> pContext);
 
   // Always returns a valid, newly-created objDefnID.
   int DefineObj(const char* sObjName,
@@ -178,12 +183,8 @@ class CFXJS_Engine : public CJS_V8 {
   v8::Local<v8::Object> GetThisObj();
   v8::Local<v8::Object> NewFXJSBoundObject(int nObjDefnID,
                                            bool bStatic = false);
-
-  // Native object binding.
-  void SetObjectPrivate(v8::Local<v8::Object> pObj,
-                        std::unique_ptr<CJS_Object> p);
+  // Retrieve native object binding.
   CJS_Object* GetObjectPrivate(v8::Local<v8::Object> pObj);
-  static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
 
   void Error(const WideString& message);
 

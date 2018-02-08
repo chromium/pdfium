@@ -56,7 +56,7 @@ static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
 }
 
 // CJS_Object has vitual dtor, template not required.
-void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);
+void JSDestructor(v8::Local<v8::Object> obj);
 
 template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,

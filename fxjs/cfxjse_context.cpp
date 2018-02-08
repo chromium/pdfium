@@ -194,7 +194,7 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
   v8::Local<v8::Object> hGlobalObject = GetGlobalObjectFromContext(hNewContext);
   FXJSE_UpdateObjectBinding(hGlobalObject, pGlobalObject);
   if (pOptionalEngineToSet)
-    CFXJS_Engine::SetEngineInContext(pOptionalEngineToSet, hNewContext);
+    pOptionalEngineToSet->SetIntoContext(hNewContext);
 
   pContext->m_hContext.Reset(pIsolate, hNewContext);
   return pContext;
