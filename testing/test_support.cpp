@@ -60,17 +60,18 @@ bool GetExternalData(const std::string& exe_path,
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 
-void InitializeV8Common(const char* exe_path, v8::Platform** platform) {
-  v8::V8::InitializeICUDefaultLocation(exe_path);
+std::unique_ptr<v8::Platform> InitializeV8Common(const std::string& exe_path) {
+  v8::V8::InitializeICUDefaultLocation(exe_path.c_str());
 
-  *platform = v8::platform::CreateDefaultPlatform();
-  v8::V8::InitializePlatform(*platform);
+  std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();
+  v8::V8::InitializePlatform(platform.get());
 
   // By enabling predictable mode, V8 won't post any background tasks.
   // By enabling GC, it makes it easier to chase use-after-free.
   const char v8_flags[] = "--predictable --expose-gc";
   v8::V8::SetFlagsFromString(v8_flags, static_cast<int>(strlen(v8_flags)));
   v8::V8::Initialize();
+  return platform;
 }
 #endif  // PDF_ENABLE_V8
 
@@ -177,26 +178,48 @@ std::string GenerateMD5Base16(const uint8_t* data, uint32_t size) {
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
+std::unique_ptr<v8::Platform> InitializeV8ForPDFiumWithStartupData(
+    const std::string& exe_path,
+    const std::string& bin_dir,
+    v8::StartupData* natives_blob,
+    v8::StartupData* snapshot_blob) {
+  std::unique_ptr<v8::Platform> platform = InitializeV8Common(exe_path);
+  if (natives_blob && snapshot_blob) {
+    if (!GetExternalData(exe_path, bin_dir, "natives_blob.bin", natives_blob))
+      return nullptr;
+    if (!GetExternalData(exe_path, bin_dir, "snapshot_blob.bin", snapshot_blob))
+      return nullptr;
+    v8::V8::SetNativesDataBlob(natives_blob);
+    v8::V8::SetSnapshotDataBlob(snapshot_blob);
+  }
+  return platform;
+}
+
 bool InitializeV8ForPDFium(const std::string& exe_path,
                            const std::string& bin_dir,
                            v8::StartupData* natives_blob,
                            v8::StartupData* snapshot_blob,
                            v8::Platform** platform) {
-  InitializeV8Common(exe_path.c_str(), platform);
-  if (natives_blob && snapshot_blob) {
-    if (!GetExternalData(exe_path, bin_dir, "natives_blob.bin", natives_blob))
-      return false;
-    if (!GetExternalData(exe_path, bin_dir, "snapshot_blob.bin", snapshot_blob))
-      return false;
-    v8::V8::SetNativesDataBlob(natives_blob);
-    v8::V8::SetSnapshotDataBlob(snapshot_blob);
-  }
+  std::unique_ptr<v8::Platform> new_platform =
+      InitializeV8ForPDFiumWithStartupData(exe_path, bin_dir, natives_blob,
+                                           snapshot_blob);
+  if (!new_platform)
+    return false;
+  *platform = new_platform.release();
   return true;
 }
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
+std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
+    const std::string& exe_path) {
+  return InitializeV8Common(exe_path);
+}
+
 bool InitializeV8ForPDFium(const std::string& exe_path,
                            v8::Platform** platform) {
-  InitializeV8Common(exe_path.c_str(), platform);
+  std::unique_ptr<v8::Platform> new_platform = InitializeV8ForPDFium(exe_path);
+  if (!new_platform)
+    return false;
+  *platform = new_platform.release();
   return true;
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
