@@ -7,7 +7,7 @@
 #ifndef FXJS_CJS_RETURN_H_
 #define FXJS_CJS_RETURN_H_
 
-#include "fxjs/fxjs_v8.h"
+#include "fxjs/cfxjs_engine.h"
 
 class CJS_Return {
  public:

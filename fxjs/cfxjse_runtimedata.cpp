@@ -8,8 +8,8 @@
 
 #include <utility>
 
+#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cfxjse_isolatetracker.h"
-#include "fxjs/fxjs_v8.h"
 
 CFXJSE_RuntimeData::CFXJSE_RuntimeData(v8::Isolate* pIsolate)
     : m_pIsolate(pIsolate) {}

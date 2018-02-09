@@ -8,8 +8,8 @@
 #include <memory>
 #include <string>
 
+#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cfxjse_value.h"
-#include "fxjs/fxjs_v8.h"
 #include "testing/embedder_test.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

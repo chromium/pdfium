@@ -8,9 +8,9 @@
 
 #include <utility>
 
+#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"
-#include "fxjs/fxjs_v8.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

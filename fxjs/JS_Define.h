@@ -10,9 +10,9 @@
 #include <utility>
 #include <vector>
 
+#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_return.h"
-#include "fxjs/fxjs_v8.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/ptr_util.h"
 

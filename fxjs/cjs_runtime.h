@@ -15,8 +15,8 @@
 
 #include "core/fxcrt/observable.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_eventhandler.h"
-#include "fxjs/fxjs_v8.h"
 #include "fxjs/ijs_runtime.h"
 
 class CJS_EventContext;

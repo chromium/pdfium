@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/fxjs_v8.h"
+#include "fxjs/cfxjs_engine.h"
 
 #include <memory>
 #include <utility>
@@ -24,6 +24,50 @@ static size_t g_isolate_ref_count = 0;
 static CFX_V8ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 static wchar_t kPerObjectDataTag[] = L"CFXJS_PerObjectData";
+
+// Global weak map to save dynamic objects.
+class V8TemplateMapTraits : public v8::StdMapTraits<void*, v8::Object> {
+ public:
+  typedef v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits> MapType;
+  typedef void WeakCallbackDataType;
+
+  static WeakCallbackDataType*
+  WeakCallbackParameter(MapType* map, void* key, v8::Local<v8::Object> value) {
+    return key;
+  }
+  static MapType* MapFromWeakCallbackInfo(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>&);
+
+  static void* KeyFromWeakCallbackInfo(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
+    return data.GetParameter();
+  }
+  static const v8::PersistentContainerCallbackType kCallbackType =
+      v8::kWeakWithInternalFields;
+  static void DisposeWeak(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {}
+  static void OnWeakCallback(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {}
+  static void Dispose(v8::Isolate* isolate,
+                      v8::Global<v8::Object> value,
+                      void* key);
+  static void DisposeCallbackData(WeakCallbackDataType* callbackData) {}
+};
+
+class V8TemplateMap {
+ public:
+  typedef v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits> MapType;
+
+  explicit V8TemplateMap(v8::Isolate* isolate);
+  ~V8TemplateMap();
+
+  void set(void* key, v8::Local<v8::Object> handle);
+
+  friend class V8TemplateMapTraits;
+
+ private:
+  MapType m_map;
+};
 
 class CFXJS_PerObjectData {
  public:

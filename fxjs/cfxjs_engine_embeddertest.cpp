@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "fxjs/cfxjs_engine.h"
+
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/js_embedder_test.h"
 
@@ -17,7 +19,7 @@ const wchar_t kScript2[] = L"fred = 8";
 
 }  // namespace
 
-class FXJSV8EmbedderTest : public JSEmbedderTest {
+class CFXJSEngineEmbedderTest : public JSEmbedderTest {
  public:
   void ExecuteInCurrentContext(const WideString& script) {
     FXJSErr error;
@@ -32,7 +34,7 @@ class FXJSV8EmbedderTest : public JSEmbedderTest {
   }
 };
 
-TEST_F(FXJSV8EmbedderTest, Getters) {
+TEST_F(CFXJSEngineEmbedderTest, Getters) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
@@ -41,7 +43,7 @@ TEST_F(FXJSV8EmbedderTest, Getters) {
   CheckAssignmentInCurrentContext(kExpected1);
 }
 
-TEST_F(FXJSV8EmbedderTest, MultipleEngines) {
+TEST_F(CFXJSEngineEmbedderTest, MultipleEngines) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
 

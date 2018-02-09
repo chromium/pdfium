@@ -1203,6 +1203,8 @@ jumbo_static_library("fxjs") {
       "fxjs/JS_Define.h",
       "fxjs/cfx_v8.cpp",
       "fxjs/cfx_v8.h",
+      "fxjs/cfxjs_engine.cpp",
+      "fxjs/cfxjs_engine.h",
       "fxjs/cjs_annot.cpp",
       "fxjs/cjs_annot.h",
       "fxjs/cjs_app.cpp",
@@ -1271,8 +1273,6 @@ jumbo_static_library("fxjs") {
       "fxjs/cjs_util.h",
       "fxjs/cjs_zoomtype.cpp",
       "fxjs/cjs_zoomtype.h",
-      "fxjs/fxjs_v8.cpp",
-      "fxjs/fxjs_v8.h",
       "fxjs/global_timer.cpp",
       "fxjs/global_timer.h",
       "fxjs/js_resources.cpp",
@@ -3028,8 +3028,8 @@ test("pdfium_embeddertests") {
 
   if (pdf_enable_v8) {
     sources += [
+      "fxjs/cfxjs_engine_embeddertest.cpp",
       "fxjs/cjs_publicmethods_embeddertest.cpp",
-      "fxjs/fxjs_v8_embeddertest.cpp",
       "testing/js_embedder_test.cpp",
       "testing/js_embedder_test.h",
     ]

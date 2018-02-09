@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-// FXJS_V8 is a layer that makes it easier to define native objects in V8, but
-// has no knowledge of PDF-specific native objects. It could in theory be used
-// to implement other sets of native objects.
+// CFXJS_ENGINE is a layer that makes it easier to define native objects in V8,
+// but has no knowledge of PDF-specific native objects. It could in theory be
+// used to implement other sets of native objects.
 
 // PDFium code should include this file rather than including V8 headers
 // directly.
 
-#ifndef FXJS_FXJS_V8_H_
-#define FXJS_FXJS_V8_H_
+#ifndef FXJS_CFXJS_ENGINE_H_
+#define FXJS_CFXJS_ENGINE_H_
 
 #include <functional>
 #include <map>
@@ -25,14 +25,15 @@
 #include "v8/include/v8.h"
 
 #ifdef PDF_ENABLE_XFA
-// FXJS_V8 doesn't interpret this class, it is just passed along to XFA.
+// CFXJS_ENGINE doesn't interpret this class, it is just passed along to XFA.
 class CFXJSE_RuntimeData;
 #endif  // PDF_ENABLE_XFA
 
 class CFXJS_ObjDefinition;
 class CJS_Object;
+class V8TemplateMap;
 
-// FXJS_V8 places no restrictions on this class; it merely passes it
+// CFXJS_ENGINE places no restrictions on this class; it merely passes it
 // on to caller-provided methods.
 class IJS_EventContext;  // A description of the event that caused JS execution.
 
@@ -46,50 +47,6 @@ struct FXJSErr {
   const wchar_t* message;
   const wchar_t* srcline;
   unsigned linnum;
-};
-
-// Global weak map to save dynamic objects.
-class V8TemplateMapTraits : public v8::StdMapTraits<void*, v8::Object> {
- public:
-  typedef v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits> MapType;
-  typedef void WeakCallbackDataType;
-
-  static WeakCallbackDataType*
-  WeakCallbackParameter(MapType* map, void* key, v8::Local<v8::Object> value) {
-    return key;
-  }
-  static MapType* MapFromWeakCallbackInfo(
-      const v8::WeakCallbackInfo<WeakCallbackDataType>&);
-
-  static void* KeyFromWeakCallbackInfo(
-      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
-    return data.GetParameter();
-  }
-  static const v8::PersistentContainerCallbackType kCallbackType =
-      v8::kWeakWithInternalFields;
-  static void DisposeWeak(
-      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {}
-  static void OnWeakCallback(
-      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {}
-  static void Dispose(v8::Isolate* isolate,
-                      v8::Global<v8::Object> value,
-                      void* key);
-  static void DisposeCallbackData(WeakCallbackDataType* callbackData) {}
-};
-
-class V8TemplateMap {
- public:
-  typedef v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits> MapType;
-
-  explicit V8TemplateMap(v8::Isolate* isolate);
-  ~V8TemplateMap();
-
-  void set(void* key, v8::Local<v8::Object> handle);
-
-  friend class V8TemplateMapTraits;
-
- private:
-  MapType m_map;
 };
 
 class FXJS_PerIsolateData {
@@ -197,4 +154,4 @@ class CFXJS_Engine : public CFX_V8 {
   std::map<WideString, v8::Global<v8::Array>> m_ConstArrays;
 };
 
-#endif  // FXJS_FXJS_V8_H_
+#endif  // FXJS_CFXJS_ENGINE_H_

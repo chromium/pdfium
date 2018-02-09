@@ -11,8 +11,8 @@
 #include <utility>
 
 #include "fpdfsdk/fsdk_define.h"
+#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_runtime.h"
-#include "fxjs/fxjs_v8.h"
 
 struct JSConstSpec {
   enum Type { Number = 0, String = 1 };
