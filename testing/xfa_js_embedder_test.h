@@ -38,7 +38,7 @@ class XFAJSEmbedderTest : public EmbedderTest {
   CFXJSE_Value* GetValue() const { return value_.get(); }
 
  private:
-  std::unique_ptr<FXJS_ArrayBufferAllocator> array_buffer_allocator_;
+  std::unique_ptr<CFX_V8ArrayBufferAllocator> array_buffer_allocator_;
   std::unique_ptr<CFXJSE_Value> value_;
   v8::Isolate* isolate_ = nullptr;
   CFXJSE_Engine* script_context_ = nullptr;

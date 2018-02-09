@@ -65,4 +65,11 @@ class CFX_V8 {
   v8::Isolate* m_isolate;
 };
 
+class CFX_V8ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+  static const size_t kMaxAllowedBytes = 0x10000000;
+  void* Allocate(size_t length) override;
+  void* AllocateUninitialized(size_t length) override;
+  void Free(void* data, size_t length) override;
+};
+
 #endif  // FXJS_CFX_V8_H_

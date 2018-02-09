@@ -12,7 +12,6 @@
 
 #include "fxjs/cfxjse_runtimedata.h"
 #include "fxjs/cjs_object.h"
-#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 
 // Keep this consistent with the values defined in gin/public/context_holder.h
 // (without actually requiring a dependency on gin itself for the standalone
@@ -22,7 +21,7 @@ static const unsigned int kPerContextDataIndex = 3u;
 static unsigned int g_embedderDataSlot = 1u;
 static v8::Isolate* g_isolate = nullptr;
 static size_t g_isolate_ref_count = 0;
-static FXJS_ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
+static CFX_V8ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 static wchar_t kPerObjectDataTag[] = L"CFXJS_PerObjectData";
 
@@ -148,27 +147,6 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
   return g_DefaultGlobalObjectTemplate->Get(pIsolate);
 }
 
-void* FXJS_ArrayBufferAllocator::Allocate(size_t length) {
-  if (length > kMaxAllowedBytes)
-    return nullptr;
-  void* p = AllocateUninitialized(length);
-  if (p)
-    memset(p, 0, length);
-  return p;
-}
-
-void* FXJS_ArrayBufferAllocator::AllocateUninitialized(size_t length) {
-  if (length > kMaxAllowedBytes)
-    return nullptr;
-  return pdfium::base::PartitionAllocGeneric(
-      gArrayBufferPartitionAllocator.root(), length, "FXJS_ArrayBuffer");
-}
-
-void FXJS_ArrayBufferAllocator::Free(void* data, size_t length) {
-  pdfium::base::PartitionFreeGeneric(gArrayBufferPartitionAllocator.root(),
-                                     data);
-}
-
 void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
                                   v8::Global<v8::Object> value,
                                   void* key) {
@@ -220,7 +198,7 @@ bool FXJS_GetIsolate(v8::Isolate** pResultIsolate) {
   }
   // Provide backwards compatibility when no external isolate.
   if (!g_arrayBufferAllocator)
-    g_arrayBufferAllocator = new FXJS_ArrayBufferAllocator();
+    g_arrayBufferAllocator = new CFX_V8ArrayBufferAllocator();
   v8::Isolate::CreateParams params;
   params.array_buffer_allocator = g_arrayBufferAllocator;
   *pResultIsolate = v8::Isolate::New(params);

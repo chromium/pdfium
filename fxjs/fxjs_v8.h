@@ -109,13 +109,6 @@ class FXJS_PerIsolateData {
   explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);
 };
 
-class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
-  static const size_t kMaxAllowedBytes = 0x10000000;
-  void* Allocate(size_t length) override;
-  void* AllocateUninitialized(size_t length) override;
-  void Free(void* data, size_t length) override;
-};
-
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
 void FXJS_Release();
 

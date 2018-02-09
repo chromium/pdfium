@@ -13,8 +13,8 @@
 #include "third_party/base/ptr_util.h"
 
 XFAJSEmbedderTest::XFAJSEmbedderTest()
-    : array_buffer_allocator_(pdfium::MakeUnique<FXJS_ArrayBufferAllocator>()) {
-}
+    : array_buffer_allocator_(
+          pdfium::MakeUnique<CFX_V8ArrayBufferAllocator>()) {}
 
 XFAJSEmbedderTest::~XFAJSEmbedderTest() {}
 

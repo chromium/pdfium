@@ -6,6 +6,9 @@
 
 #include "fxjs/cfx_v8.h"
 
+#include "core/fxcrt/fx_memory.h"
+#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
+
 CFX_V8::CFX_V8(v8::Isolate* isolate) : m_isolate(isolate) {}
 
 CFX_V8::~CFX_V8() = default;
@@ -193,4 +196,25 @@ v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> pValue) {
     return v8::Local<v8::Array>();
   v8::Local<v8::Context> context = m_isolate->GetCurrentContext();
   return v8::Local<v8::Array>::Cast(pValue->ToObject(context).ToLocalChecked());
+}
+
+void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
+  if (length > kMaxAllowedBytes)
+    return nullptr;
+  void* p = AllocateUninitialized(length);
+  if (p)
+    memset(p, 0, length);
+  return p;
+}
+
+void* CFX_V8ArrayBufferAllocator::AllocateUninitialized(size_t length) {
+  if (length > kMaxAllowedBytes)
+    return nullptr;
+  return pdfium::base::PartitionAllocGeneric(
+      gArrayBufferPartitionAllocator.root(), length, "CFX_V8ArrayBuffer");
+}
+
+void CFX_V8ArrayBufferAllocator::Free(void* data, size_t length) {
+  pdfium::base::PartitionFreeGeneric(gArrayBufferPartitionAllocator.root(),
+                                     data);
 }
