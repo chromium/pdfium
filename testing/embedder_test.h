@@ -119,10 +119,6 @@ class EmbedderTest : public ::testing::Test,
   // from LoadPage(). Further use of |page| is prohibited after calling this.
   void UnloadPage(FPDF_PAGE page);
 
-  // Convert a loaded page into a bitmap.
-  // DEPRECATED. Use some one of the methods below instead.
-  FPDF_BITMAP RenderPageDeprecated(FPDF_PAGE page);
-
   // RenderLoadedPageWithFlags() with no flags.
   std::unique_ptr<void, FPDFBitmapDeleter> RenderLoadedPage(FPDF_PAGE page);
 

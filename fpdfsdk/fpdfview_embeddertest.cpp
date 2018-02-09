@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <limits>
+#include <memory>
 #include <string>
 
 #include "fpdfsdk/fpdfview_c_api_test.h"
@@ -423,20 +424,19 @@ TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
 
   EXPECT_TRUE(OpenDocument("rectangles.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_NE(nullptr, page);
+  ASSERT_TRUE(page);
   const int page_width = static_cast<int>(FPDF_GetPageWidth(page));
   const int page_height = static_cast<int>(FPDF_GetPageHeight(page));
   EXPECT_EQ(200, page_width);
   EXPECT_EQ(300, page_height);
 
-  FPDF_BITMAP bitmap = RenderPageDeprecated(page);
-  CompareBitmap(bitmap, page_width, page_height, kOriginalMD5);
-  FPDFBitmap_Destroy(bitmap);
+  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  CompareBitmap(bitmap.get(), page_width, page_height, kOriginalMD5);
 
   FS_RECTF page_rect{0, 0, page_width, page_height};
 
   // Try rendering with an identity matrix. The output should be the same as
-  // the RenderPageDeprecated() output.
+  // the RenderLoadedPage() output.
   FS_MATRIX identity_matrix{1, 0, 0, 1, 0, 0};
   TestRenderPageBitmapWithMatrix(page, page_width, page_height, identity_matrix,
                                  page_rect, kOriginalMD5);

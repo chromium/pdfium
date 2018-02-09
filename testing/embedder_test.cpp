@@ -282,10 +282,6 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   page_map_.erase(page_number);
 }
 
-FPDF_BITMAP EmbedderTest::RenderPageDeprecated(FPDF_PAGE page) {
-  return RenderPageWithFlagsDeprecated(page, form_handle_, 0);
-}
-
 std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderLoadedPage(
     FPDF_PAGE page) {
   return RenderLoadedPageWithFlags(page, 0);
