@@ -214,48 +214,42 @@ bool CopyInheritable(CPDF_Dictionary* pCurPageDict,
   return true;
 }
 
-bool ParserPageRangeString(ByteString rangstring,
-                           uint32_t nCount,
-                           std::vector<uint32_t>* pageArray) {
-  if (rangstring.IsEmpty())
+bool ParsePageRangeString(const ByteString& bsPageRange,
+                          uint32_t nCount,
+                          std::vector<uint32_t>* pageArray) {
+  ByteString bsStrippedPageRange = bsPageRange;
+  bsStrippedPageRange.Remove(' ');
+  size_t nLength = bsStrippedPageRange.GetLength();
+  if (nLength == 0)
     return true;
 
-  rangstring.Remove(' ');
-  size_t nLength = rangstring.GetLength();
-  ByteString cbCompareString("0123456789-,");
+  static const ByteString cbCompareString("0123456789-,");
   for (size_t i = 0; i < nLength; ++i) {
-    if (!cbCompareString.Contains(rangstring[i]))
+    if (!cbCompareString.Contains(bsStrippedPageRange[i]))
       return false;
   }
 
   ByteString cbMidRange;
   size_t nStringFrom = 0;
-  Optional<size_t> nStringTo = 0;
+  size_t nStringTo = 0;
   while (nStringTo < nLength) {
-    nStringTo = rangstring.Find(',', nStringFrom);
-    if (!nStringTo.has_value())
-      nStringTo = nLength;
-    cbMidRange = rangstring.Mid(nStringFrom, nStringTo.value() - nStringFrom);
-    auto nMid = cbMidRange.Find('-');
-    if (!nMid.has_value()) {
-      uint32_t pageNum =
-          pdfium::base::checked_cast<uint32_t>(atoi(cbMidRange.c_str()));
-      if (pageNum <= 0 || pageNum > nCount)
-        return false;
-      pageArray->push_back(pageNum);
-    } else {
+    nStringTo = bsStrippedPageRange.Find(',', nStringFrom).value_or(nLength);
+    cbMidRange = bsStrippedPageRange.Mid(nStringFrom, nStringTo - nStringFrom);
+    Optional<size_t> nDashPosition = cbMidRange.Find('-');
+    if (nDashPosition) {
+      size_t nMid = nDashPosition.value();
       uint32_t nStartPageNum = pdfium::base::checked_cast<uint32_t>(
-          atoi(cbMidRange.Left(nMid.value()).c_str()));
+          atoi(cbMidRange.Left(nMid).c_str()));
       if (nStartPageNum == 0)
         return false;
 
-      nMid = nMid.value() + 1;
-      size_t nEnd = cbMidRange.GetLength() - nMid.value();
+      ++nMid;
+      size_t nEnd = cbMidRange.GetLength() - nMid;
       if (nEnd == 0)
         return false;
 
       uint32_t nEndPageNum = pdfium::base::checked_cast<uint32_t>(
-          atoi(cbMidRange.Mid(nMid.value(), nEnd).c_str()));
+          atoi(cbMidRange.Mid(nMid, nEnd).c_str()));
       if (nStartPageNum < 0 || nStartPageNum > nEndPageNum ||
           nEndPageNum > nCount) {
         return false;
@@ -263,8 +257,14 @@ bool ParserPageRangeString(ByteString rangstring,
       for (uint32_t i = nStartPageNum; i <= nEndPageNum; ++i) {
         pageArray->push_back(i);
       }
+    } else {
+      uint32_t nPageNum =
+          pdfium::base::checked_cast<uint32_t>(atoi(cbMidRange.c_str()));
+      if (nPageNum <= 0 || nPageNum > nCount)
+        return false;
+      pageArray->push_back(nPageNum);
     }
-    nStringFrom = nStringTo.value() + 1;
+    nStringFrom = nStringTo + 1;
   }
   return true;
 }
@@ -277,7 +277,7 @@ std::vector<uint32_t> GetPageNumbers(const CPDF_Document& doc,
     for (uint32_t i = 1; i <= nCount; ++i)
       page_numbers.push_back(i);
   } else {
-    if (!ParserPageRangeString(bsPageRange, nCount, &page_numbers))
+    if (!ParsePageRangeString(bsPageRange, nCount, &page_numbers))
       page_numbers.clear();
   }
   return page_numbers;
