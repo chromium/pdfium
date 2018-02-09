@@ -26,15 +26,8 @@ namespace {
 
 void SetBoundingBox(CPDF_Page* page,
                     const ByteString& key,
-                    float left,
-                    float bottom,
-                    float right,
-                    float top) {
-  CPDF_Array* pBoundingBoxArray = page->m_pFormDict->SetNewFor<CPDF_Array>(key);
-  pBoundingBoxArray->AddNew<CPDF_Number>(left);
-  pBoundingBoxArray->AddNew<CPDF_Number>(bottom);
-  pBoundingBoxArray->AddNew<CPDF_Number>(right);
-  pBoundingBoxArray->AddNew<CPDF_Number>(top);
+                    const CFX_FloatRect& rect) {
+  page->m_pFormDict->SetRectFor(key, rect);
 }
 
 bool GetBoundingBox(CPDF_Page* page,
@@ -69,7 +62,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetMediaBox(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  SetBoundingBox(pPage, "MediaBox", left, bottom, right, top);
+  SetBoundingBox(pPage, "MediaBox", CFX_FloatRect(left, bottom, right, top));
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
@@ -81,7 +74,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  SetBoundingBox(pPage, "CropBox", left, bottom, right, top);
+  SetBoundingBox(pPage, "CropBox", CFX_FloatRect(left, bottom, right, top));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetMediaBox(FPDF_PAGE page,

@@ -35,9 +35,9 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
                               const uint8_t* data,
                               uint32_t size,
                               int font_type) {
-  CPDF_Dictionary* fontDesc = pDoc->NewIndirect<CPDF_Dictionary>();
-  fontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
-  fontDesc->SetNewFor<CPDF_Name>("FontName", font_name);
+  CPDF_Dictionary* pFontDesc = pDoc->NewIndirect<CPDF_Dictionary>();
+  pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
+  pFontDesc->SetNewFor<CPDF_Name>("FontName", font_name);
   int flags = 0;
   if (FXFT_Is_Face_fixedwidth(pFont->GetFace()))
     flags |= FXFONT_FIXED_PITCH;
@@ -51,25 +51,20 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   // TODO(npm): How do I know if a  font is symbolic, script, allcap, smallcap
   flags |= FXFONT_NONSYMBOLIC;
 
-  fontDesc->SetNewFor<CPDF_Number>("Flags", flags);
+  pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);
   FX_RECT bbox;
   pFont->GetBBox(bbox);
-  auto pBBox = pdfium::MakeUnique<CPDF_Array>();
-  pBBox->AddNew<CPDF_Number>(bbox.left);
-  pBBox->AddNew<CPDF_Number>(bbox.top);
-  pBBox->AddNew<CPDF_Number>(bbox.right);
-  pBBox->AddNew<CPDF_Number>(bbox.bottom);
-  fontDesc->SetFor("FontBBox", std::move(pBBox));
+  pFontDesc->SetRectFor("FontBBox", CFX_FloatRect(bbox));
 
   // TODO(npm): calculate italic angle correctly
-  fontDesc->SetNewFor<CPDF_Number>("ItalicAngle", pFont->IsItalic() ? -12 : 0);
+  pFontDesc->SetNewFor<CPDF_Number>("ItalicAngle", pFont->IsItalic() ? -12 : 0);
 
-  fontDesc->SetNewFor<CPDF_Number>("Ascent", pFont->GetAscent());
-  fontDesc->SetNewFor<CPDF_Number>("Descent", pFont->GetDescent());
+  pFontDesc->SetNewFor<CPDF_Number>("Ascent", pFont->GetAscent());
+  pFontDesc->SetNewFor<CPDF_Number>("Descent", pFont->GetDescent());
 
   // TODO(npm): calculate the capheight, stemV correctly
-  fontDesc->SetNewFor<CPDF_Number>("CapHeight", pFont->GetAscent());
-  fontDesc->SetNewFor<CPDF_Number>("StemV", pFont->IsBold() ? 120 : 70);
+  pFontDesc->SetNewFor<CPDF_Number>("CapHeight", pFont->GetAscent());
+  pFontDesc->SetNewFor<CPDF_Number>("StemV", pFont->IsBold() ? 120 : 70);
 
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
   pStream->SetData(data, size);
@@ -79,8 +74,8 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
                                                static_cast<int>(size));
   }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
-  fontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
-  return fontDesc;
+  pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
+  return pFontDesc;
 }
 
 const char ToUnicodeStart[] =
@@ -276,11 +271,11 @@ void* LoadSimpleFont(CPDF_Document* pDoc,
   }
   fontDict->SetNewFor<CPDF_Number>("LastChar", static_cast<int>(currentChar));
   fontDict->SetNewFor<CPDF_Reference>("Widths", pDoc, widthsArray->GetObjNum());
-  CPDF_Dictionary* fontDesc =
+  CPDF_Dictionary* pFontDesc =
       LoadFontDesc(pDoc, name, pFont.get(), data, size, font_type);
 
   fontDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
-                                      fontDesc->GetObjNum());
+                                      pFontDesc->GetObjNum());
   return pDoc->LoadFont(fontDict);
 }
 
@@ -319,10 +314,10 @@ void* LoadCompositeFont(CPDF_Document* pDoc,
   pCIDFont->SetNewFor<CPDF_Reference>("CIDSystemInfo", pDoc,
                                       pCIDSystemInfo->GetObjNum());
 
-  CPDF_Dictionary* fontDesc =
+  CPDF_Dictionary* pFontDesc =
       LoadFontDesc(pDoc, name, pFont.get(), data, size, font_type);
   pCIDFont->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
-                                      fontDesc->GetObjNum());
+                                      pFontDesc->GetObjNum());
 
   uint32_t glyphIndex;
   uint32_t currentChar = FXFT_Get_First_Char(pFont->GetFace(), &glyphIndex);

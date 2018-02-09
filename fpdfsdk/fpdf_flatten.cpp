@@ -269,21 +269,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   else
     rcOriginalCB = rcOriginalMB;
 
-  if (!rcOriginalMB.IsEmpty()) {
-    CPDF_Array* pMediaBox = pPageDict->SetNewFor<CPDF_Array>("MediaBox");
-    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.left);
-    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.bottom);
-    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.right);
-    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.top);
-  }
+  if (!rcOriginalMB.IsEmpty())
+    pPageDict->SetRectFor("MediaBox", rcOriginalMB);
 
-  if (!rcOriginalCB.IsEmpty()) {
-    CPDF_Array* pCropBox = pPageDict->SetNewFor<CPDF_Array>("ArtBox");
-    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.left);
-    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.bottom);
-    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.right);
-    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.top);
-  }
+  if (!rcOriginalCB.IsEmpty())
+    pPageDict->SetRectFor("ArtBox", rcOriginalCB);
 
   CPDF_Dictionary* pRes = pPageDict->GetDictFor("Resources");
   if (!pRes)

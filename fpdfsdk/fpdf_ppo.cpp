@@ -490,11 +490,8 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
         pCurPageDict->SetFor("MediaBox", pInheritable->Clone());
       } else {
         // Make the default size letter size (8.5"x11")
-        CPDF_Array* pArray = pCurPageDict->SetNewFor<CPDF_Array>("MediaBox");
-        pArray->AddNew<CPDF_Number>(0);
-        pArray->AddNew<CPDF_Number>(0);
-        pArray->AddNew<CPDF_Number>(612);
-        pArray->AddNew<CPDF_Number>(792);
+        static const CFX_FloatRect kDefaultLetterRect(0, 0, 612, 792);
+        pCurPageDict->SetRectFor("MediaBox", kDefaultLetterRect);
       }
     }
 
@@ -546,9 +543,6 @@ class CPDF_NPageToOneExporter : public CPDF_PageOrganizer {
   using PageXObjectMap = std::map<uint32_t, ByteString>;
   // Map XObject's object name to it's object number.
   using XObjectNameNumberMap = std::map<ByteString, uint32_t>;
-
-  static void SetMediaBox(CPDF_Dictionary* pDestPageDict,
-                          const CFX_SizeF& pagesize);
 
   // Creates a xobject from the source page dictionary, and appends the
   // bsContent string with the xobject reference surrounded by the
@@ -602,6 +596,8 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   NupState nupState(destPageSize, numPagesOnXAxis, numPagesOnYAxis);
 
   size_t curpage = 0;
+  const CFX_FloatRect destPageRect(0, 0, destPageSize.width,
+                                   destPageSize.height);
   for (size_t outerPage = 0; outerPage < pageNums.size();
        outerPage += numPagesPerSheet) {
     // Create a new page
@@ -609,7 +605,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
     if (!pCurPageDict)
       return false;
 
-    SetMediaBox(pCurPageDict, destPageSize);
+    pCurPageDict->SetRectFor("MediaBox", destPageRect);
     ByteString bsContent;
     size_t innerPageMax =
         std::min(outerPage + numPagesPerSheet, pageNums.size());
@@ -633,16 +629,6 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   }
 
   return true;
-}
-
-// static
-void CPDF_NPageToOneExporter::SetMediaBox(CPDF_Dictionary* pDestPageDict,
-                                          const CFX_SizeF& pagesize) {
-  CPDF_Array* pArray = pDestPageDict->SetNewFor<CPDF_Array>("MediaBox");
-  pArray->AddNew<CPDF_Number>(0);
-  pArray->AddNew<CPDF_Number>(0);
-  pArray->AddNew<CPDF_Number>(pagesize.width);
-  pArray->AddNew<CPDF_Number>(pagesize.height);
 }
 
 void CPDF_NPageToOneExporter::AddSubPage(

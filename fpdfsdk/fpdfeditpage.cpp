@@ -142,11 +142,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   if (!pPageDict)
     return nullptr;
 
-  CPDF_Array* pMediaBoxArray = pPageDict->SetNewFor<CPDF_Array>("MediaBox");
-  pMediaBoxArray->AddNew<CPDF_Number>(0);
-  pMediaBoxArray->AddNew<CPDF_Number>(0);
-  pMediaBoxArray->AddNew<CPDF_Number>(static_cast<float>(width));
-  pMediaBoxArray->AddNew<CPDF_Number>(static_cast<float>(height));
+  pPageDict->SetRectFor("MediaBox", CFX_FloatRect(0, 0, width, height));
   pPageDict->SetNewFor<CPDF_Number>("Rotate", 0);
   pPageDict->SetNewFor<CPDF_Dictionary>("Resources");
 
