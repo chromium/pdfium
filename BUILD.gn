@@ -2968,6 +2968,7 @@ test("pdfium_unittests") {
       "//v8",
       "//v8/include",
     ]
+    deps += [ ":fxjs" ]
     configs += [ "//v8:external_startup_data" ]
   }
   configs += [ ":pdfium_core_config" ]
