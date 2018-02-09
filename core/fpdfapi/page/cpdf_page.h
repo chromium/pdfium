@@ -28,7 +28,7 @@ class CPDF_Page : public CPDF_PageObjectHolder {
             bool bPageCache);
   ~CPDF_Page() override;
 
-  // CPDF_PageObjectHolder
+  // CPDF_PageObjectHolder:
   bool IsPage() const override;
 
   void ParseContent();
@@ -39,9 +39,11 @@ class CPDF_Page : public CPDF_PageObjectHolder {
                               int ySize,
                               int iRotate) const;
 
-  float GetPageWidth() const { return m_PageWidth; }
-  float GetPageHeight() const { return m_PageHeight; }
-  CFX_FloatRect GetPageBBox() const { return m_BBox; }
+  float GetPageWidth() const { return m_PageSize.width; }
+  float GetPageHeight() const { return m_PageSize.height; }
+  const CFX_SizeF& GetPageSize() const { return m_PageSize; }
+
+  const CFX_FloatRect& GetPageBBox() const { return m_BBox; }
   int GetPageRotation() const;
   CPDF_PageRenderCache* GetRenderCache() const { return m_pPageRender.get(); }
 
@@ -59,10 +61,9 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   CPDF_Object* GetPageAttr(const ByteString& name) const;
   CFX_FloatRect GetBox(const ByteString& name) const;
 
-  float m_PageWidth;
-  float m_PageHeight;
+  CFX_SizeF m_PageSize;
   CFX_Matrix m_PageMatrix;
-  View* m_pView;
+  View* m_pView = nullptr;
   std::unique_ptr<CPDF_PageRenderCache> m_pPageRender;
   std::unique_ptr<CPDF_PageRenderContext> m_pRenderContext;
 };

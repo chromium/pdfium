@@ -22,10 +22,7 @@
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
                      CPDF_Dictionary* pPageDict,
                      bool bPageCache)
-    : CPDF_PageObjectHolder(pDocument, pPageDict),
-      m_PageWidth(100),
-      m_PageHeight(100),
-      m_pView(nullptr) {
+    : CPDF_PageObjectHolder(pDocument, pPageDict), m_PageSize(100, 100) {
   if (bPageCache)
     m_pPageRender = pdfium::MakeUnique<CPDF_PageRenderCache>(this);
   if (!pPageDict)
@@ -45,12 +42,12 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
   else
     m_BBox.Intersect(mediabox);
 
-  m_PageWidth = m_BBox.Width();
-  m_PageHeight = m_BBox.Height();
+  m_PageSize.width = m_BBox.Width();
+  m_PageSize.height = m_BBox.Height();
 
   int rotate = GetPageRotation();
   if (rotate % 2)
-    std::swap(m_PageWidth, m_PageHeight);
+    std::swap(m_PageSize.width, m_PageSize.height);
 
   switch (rotate) {
     case 0:
@@ -126,7 +123,7 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
                                        int xSize,
                                        int ySize,
                                        int iRotate) const {
-  if (m_PageWidth == 0 || m_PageHeight == 0)
+  if (m_PageSize.width == 0 || m_PageSize.height == 0)
     return CFX_Matrix();
 
   float x0 = 0;
@@ -171,9 +168,9 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
       break;
   }
   CFX_Matrix matrix = m_PageMatrix;
-  matrix.Concat(CFX_Matrix((x2 - x0) / m_PageWidth, (y2 - y0) / m_PageWidth,
-                           (x1 - x0) / m_PageHeight, (y1 - y0) / m_PageHeight,
-                           x0, y0));
+  matrix.Concat(CFX_Matrix(
+      (x2 - x0) / m_PageSize.width, (y2 - y0) / m_PageSize.width,
+      (x1 - x0) / m_PageSize.height, (y1 - y0) / m_PageSize.height, x0, y0));
   return matrix;
 }
 
