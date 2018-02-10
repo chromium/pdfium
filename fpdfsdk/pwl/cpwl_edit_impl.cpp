@@ -23,6 +23,7 @@
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -1817,6 +1818,7 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
           break;
         case 0x09:
           word = 0x20;
+          FX_FALLTHROUGH;
         default:
           wp =
               m_pVT->InsertWord(wp, word, GetCharSetFromUnicode(word, charset));

@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/fx_extension.h"
 
+#include "core/fxcrt/fx_fallthrough.h"
+
 #include <algorithm>
 #include <cwctype>
 
@@ -21,6 +23,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   switch (pwsStr[iUsedLen]) {
     case '-':
       bNegtive = true;
+      FX_FALLTHROUGH;
     case '+':
       iUsedLen++;
       break;

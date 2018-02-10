@@ -14,6 +14,7 @@
 #include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "core/fxcrt/xml/cxml_content.h"
 #include "core/fxcrt/xml/cxml_element.h"
 #include "core/fxcrt/xml/cxml_parser.h"
@@ -200,6 +201,7 @@ uint32_t CXML_Parser::GetCharRef() {
             break;
           }
           iState = 1;
+          FX_FALLTHROUGH;
         case 1:
           m_dwIndex++;
           if (ch == ';') {
@@ -226,6 +228,7 @@ uint32_t CXML_Parser::GetCharRef() {
             break;
           }
           iState = 3;
+          FX_FALLTHROUGH;
         case 3:
           m_dwIndex++;
           if (ch == ';') {

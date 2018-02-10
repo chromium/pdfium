@@ -297,7 +297,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
             case JS_GlobalDataType::NULLOBJ: {
               SetGlobalVariableNull(sEntry);
               SetGlobalVariablePersistent(sEntry, true);
-            }
+            } break;
             case JS_GlobalDataType::OBJECT:
               break;
           }

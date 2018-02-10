@@ -15,6 +15,14 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
+#include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
+
+// Ignore fallthrough warnings in agg23 headers.
+#if defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
 #include "third_party/agg23/agg_conv_dash.h"
 #include "third_party/agg23/agg_conv_stroke.h"
 #include "third_party/agg23/agg_curves.h"
@@ -23,8 +31,9 @@
 #include "third_party/agg23/agg_rasterizer_scanline_aa.h"
 #include "third_party/agg23/agg_renderer_scanline.h"
 #include "third_party/agg23/agg_scanline_u.h"
-#include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
+#if defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 namespace {
 

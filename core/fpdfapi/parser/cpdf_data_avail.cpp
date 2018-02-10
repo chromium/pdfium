@@ -26,6 +26,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
@@ -133,6 +134,7 @@ bool CPDF_DataAvail::CheckDocStatus() {
       return LoadAllFile();
     case PDF_DATAAVAIL_PAGE_LATERLOAD:
       m_docStatus = PDF_DATAAVAIL_PAGE;
+      FX_FALLTHROUGH;
     default:
       m_bDocAvail = true;
       return true;
