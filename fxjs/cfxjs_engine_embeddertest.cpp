@@ -22,15 +22,20 @@ const wchar_t kScript2[] = L"fred = 8";
 class CFXJSEngineEmbedderTest : public JSEmbedderTest {
  public:
   void ExecuteInCurrentContext(const WideString& script) {
+    auto* current_engine =
+        CFXJS_Engine::EngineFromIsolateCurrentContext(isolate());
     FXJSErr error;
-    int sts = engine()->Execute(script, &error);
+    int sts = current_engine->Execute(script, &error);
     EXPECT_EQ(0, sts);
   }
   void CheckAssignmentInCurrentContext(double expected) {
-    v8::Local<v8::Object> This = engine()->GetThisObj();
-    v8::Local<v8::Value> fred = engine()->GetObjectProperty(This, L"fred");
+    auto* current_engine =
+        CFXJS_Engine::EngineFromIsolateCurrentContext(isolate());
+    v8::Local<v8::Object> This = current_engine->GetThisObj();
+    v8::Local<v8::Value> fred =
+        current_engine->GetObjectProperty(This, L"fred");
     EXPECT_TRUE(fred->IsNumber());
-    EXPECT_EQ(expected, engine()->ToDouble(fred));
+    EXPECT_EQ(expected, current_engine->ToDouble(fred));
   }
 };
 

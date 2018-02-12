@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "fxjs/cfx_v8.h"
+#include "fxjs/cfx_v8_unittest.h"
 
 #include <memory>
 
@@ -10,37 +10,23 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
-namespace {
+void FXV8UnitTest::V8IsolateDeleter::operator()(v8::Isolate* ptr) const {
+  ptr->Dispose();
+}
 
-struct V8IsolateDeleter {
-  inline void operator()(v8::Isolate* ptr) const { ptr->Dispose(); }
-};
+FXV8UnitTest::FXV8UnitTest() = default;
 
-}  // namespace
+FXV8UnitTest::~FXV8UnitTest() = default;
 
-class FXV8UnitTest : public ::testing::Test {
- public:
-  FXV8UnitTest() = default;
-  ~FXV8UnitTest() override = default;
+void FXV8UnitTest::SetUp() {
+  array_buffer_allocator_ = pdfium::MakeUnique<CFX_V8ArrayBufferAllocator>();
 
-  void SetUp() override {
-    array_buffer_allocator_ = pdfium::MakeUnique<CFX_V8ArrayBufferAllocator>();
+  v8::Isolate::CreateParams params;
+  params.array_buffer_allocator = array_buffer_allocator_.get();
+  isolate_.reset(v8::Isolate::New(params));
 
-    v8::Isolate::CreateParams params;
-    params.array_buffer_allocator = array_buffer_allocator_.get();
-    isolate_.reset(v8::Isolate::New(params));
-
-    cfx_v8_ = pdfium::MakeUnique<CFX_V8>(isolate_.get());
-  }
-
-  v8::Isolate* isolate() const { return isolate_.get(); }
-  CFX_V8* cfx_v8() const { return cfx_v8_.get(); }
-
- protected:
-  std::unique_ptr<CFX_V8ArrayBufferAllocator> array_buffer_allocator_;
-  std::unique_ptr<v8::Isolate, V8IsolateDeleter> isolate_;
-  std::unique_ptr<CFX_V8> cfx_v8_;
-};
+  cfx_v8_ = pdfium::MakeUnique<CFX_V8>(isolate_.get());
+}
 
 TEST_F(FXV8UnitTest, EmptyLocal) {
   v8::Isolate::Scope isolate_scope(isolate());
