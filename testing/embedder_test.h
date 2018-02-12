@@ -141,14 +141,6 @@ class EmbedderTest : public ::testing::Test,
       FPDF_PAGE page,
       int flags);
 
-  // DEPRECATED. Use RenderPageWithFlags() instead.
-  // Caller takes ownership of the returned bitmap.
-  //
-  // See public/fpdfview.h for a list of page rendering flags.
-  static FPDF_BITMAP RenderPageWithFlagsDeprecated(FPDF_PAGE page,
-                                                   FPDF_FORMHANDLE handle,
-                                                   int flags);
-
   // Convert |page| into a bitmap with the specified page rendering |flags|.
   // The form handle associated with |page| should be passed in via |handle|.
   // If |handle| is nullptr, then forms on the page will not be rendered.

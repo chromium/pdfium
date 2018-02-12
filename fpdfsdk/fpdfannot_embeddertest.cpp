@@ -362,10 +362,11 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   EXPECT_EQ(4, FPDFPage_GetAnnotCount(page));
 
   // Check that the original file renders correctly.
-  FPDF_BITMAP bitmap =
-      RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 612, 792, md5_original);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, md5_original);
+  }
 
   FS_RECTF rect;
   FS_RECTF new_rect;
@@ -403,9 +404,11 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
     EXPECT_EQ(quadpoints.y4, new_quadpoints.y4);
 
     // Check that updating quadpoints does not change the annotation's position.
-    bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-    CompareBitmap(bitmap, 612, 792, md5_original);
-    FPDFBitmap_Destroy(bitmap);
+    {
+      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      CompareBitmap(bitmap.get(), 612, 792, md5_original);
+    }
 
     // Verify its annotation rectangle.
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
@@ -423,9 +426,11 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   }
 
   // Check that updating the rectangle changes the annotation's position.
-  bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 612, 792, md5_modified_highlight);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, md5_modified_highlight);
+  }
 
   {
     // Retrieve the square annotation which has its AP stream already defined.
@@ -444,9 +449,9 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
     // Check that updating the rectangle changes the square annotation's
     // position.
-    bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-    CompareBitmap(bitmap, 612, 792, md5_modified_square);
-    FPDFBitmap_Destroy(bitmap);
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, md5_modified_square);
   }
 
   UnloadPage(page);
@@ -556,10 +561,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
   // Check that the page renders correctly.
-  FPDF_BITMAP bitmap =
-      RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_original);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+  }
 
   {
     // Retrieve the stamp annotation which has its AP stream already defined.
@@ -580,9 +586,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
     EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), path));
 
     // Check that the page with the modified annotation renders correctly.
-    bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-    CompareBitmap(bitmap, 595, 842, md5_modified_path);
-    FPDFBitmap_Destroy(bitmap);
+    {
+      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
+    }
 
     // Add a second path object to the same annotation.
     FPDF_PAGEOBJECT dot = FPDFPageObj_CreateNewPath(7, 84);
@@ -594,9 +602,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
     EXPECT_EQ(2, FPDFAnnot_GetObjectCount(annot.get()));
 
     // Check that the page with an annotation with two paths renders correctly.
-    bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-    CompareBitmap(bitmap, 595, 842, md5_two_paths);
-    FPDFBitmap_Destroy(bitmap);
+    {
+      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      CompareBitmap(bitmap.get(), 595, 842, md5_two_paths);
+    }
 
     // Delete the newly added path object.
     EXPECT_TRUE(FPDFAnnot_RemoveObject(annot.get(), 1));
@@ -604,9 +614,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   }
 
   // Check that the page renders the same as before.
-  bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_modified_path);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
+  }
 
   FS_RECTF rect;
 
@@ -680,10 +692,11 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
   ASSERT_TRUE(page);
 
   // Check that the page renders correctly.
-  FPDF_BITMAP bitmap =
-      RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
+  }
 
   {
     // Retrieve the annotation.
@@ -704,9 +717,11 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
     EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
 
     // Check that the page renders correctly without rendering the annotation.
-    bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-    CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
-    FPDFBitmap_Destroy(bitmap);
+    {
+      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
+    }
 
     // Unset the HIDDEN flag.
     EXPECT_TRUE(FPDFAnnot_SetFlags(annot.get(), FPDF_ANNOT_FLAG_NONE));
@@ -718,9 +733,11 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
     EXPECT_TRUE(flags & FPDF_ANNOT_FLAG_PRINT);
 
     // Check that the page renders correctly as before.
-    bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-    CompareBitmap(bitmap, 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
-    FPDFBitmap_Destroy(bitmap);
+    {
+      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
+    }
   }
 
   UnloadPage(page);
@@ -744,10 +761,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
   // Check that the page renders correctly.
-  FPDF_BITMAP bitmap =
-      RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_original);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+  }
 
   constexpr int kBitmapSize = 200;
   FPDF_BITMAP image_bitmap;
@@ -779,9 +797,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
   }
 
   // Check that the page renders correctly with the new image object.
-  bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_new_image);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_new_image);
+  }
 
   {
     // Retrieve the newly added stamp annotation and its image object.
@@ -826,10 +846,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
 
   // Check that the page renders correctly.
-  FPDF_BITMAP bitmap =
-      RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_original);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+  }
 
   {
     // Create a stamp annotation and set its annotation rectangle.
@@ -856,9 +877,11 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   }
 
   // Check that the page renders correctly with the new text object.
-  bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_new_text);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_new_text);
+  }
 
   {
     // Retrieve the newly added stamp annotation and its text object.
@@ -877,15 +900,19 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
   }
 
   // Check that the page renders correctly with the modified text object.
-  bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_modified_text);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_modified_text);
+  }
 
   // Remove the new annotation, and check that the page renders as before.
   EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 2));
-  bitmap = RenderPageWithFlagsDeprecated(page, form_handle_, FPDF_ANNOT);
-  CompareBitmap(bitmap, 595, 842, md5_original);
-  FPDFBitmap_Destroy(bitmap);
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
+        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 595, 842, md5_original);
+  }
 
   UnloadPage(page);
 }

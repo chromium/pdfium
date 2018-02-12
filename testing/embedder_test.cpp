@@ -312,13 +312,6 @@ std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPageWithFlags(
 }
 
 // static
-FPDF_BITMAP EmbedderTest::RenderPageWithFlagsDeprecated(FPDF_PAGE page,
-                                                        FPDF_FORMHANDLE handle,
-                                                        int flags) {
-  return RenderPageWithFlags(page, handle, flags).release();
-}
-
-// static
 std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderPageWithFlags(
     FPDF_PAGE page,
     FPDF_FORMHANDLE handle,

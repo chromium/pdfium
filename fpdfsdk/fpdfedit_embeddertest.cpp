@@ -483,11 +483,12 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect2, 0, 255, 0, 100));
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect2, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(saved_page, green_rect2);
-  FPDF_BITMAP new_bitmap =
-      RenderPageWithFlagsDeprecated(saved_page, saved_form_handle_, 0);
-  const char last_md5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
-  CompareBitmap(new_bitmap, 612, 792, last_md5);
-  FPDFBitmap_Destroy(new_bitmap);
+  const char kLastMD5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> new_bitmap =
+        RenderSavedPage(saved_page);
+    CompareBitmap(new_bitmap.get(), 612, 792, kLastMD5);
+  }
   EXPECT_TRUE(FPDFPage_GenerateContent(saved_page));
 
   // Now save the result, closing the page and document
@@ -497,7 +498,7 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   CloseSavedDocument();
 
   // Render the saved result
-  VerifySavedDocument(612, 792, last_md5);
+  VerifySavedDocument(612, 792, kLastMD5);
 }
 
 TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
