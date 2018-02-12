@@ -53,9 +53,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   uint32_t HTLOW;
   uint32_t HTHIGH;
   if (pStream->readInteger(&HTLOW) == -1 ||
-      pStream->readInteger(&HTHIGH) == -1 ||
-      HTLOW > static_cast<uint32_t>(std::numeric_limits<int>::max()) ||
-      HTHIGH > static_cast<uint32_t>(std::numeric_limits<int>::max())) {
+      pStream->readInteger(&HTHIGH) == -1) {
     return false;
   }
 
@@ -87,6 +85,9 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     return false;
 
   RANGELEN[NTEMP] = 32;
+  if (low == std::numeric_limits<int>::min())
+    return false;
+
   RANGELOW[NTEMP] = low - 1;
   ExtendBuffers(true);
 
