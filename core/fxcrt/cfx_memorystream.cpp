@@ -148,6 +148,14 @@ bool CFX_MemoryStream::WriteBlock(const void* buffer,
   return true;
 }
 
+bool CFX_MemoryStream::Seek(size_t pos) {
+  if (pos > m_nCurSize)
+    return false;
+
+  m_nCurPos = pos;
+  return true;
+}
+
 void CFX_MemoryStream::EstimateSize(size_t nInitSize, size_t nGrowSize) {
   if (m_dwFlags & Type::kConsecutive) {
     if (m_Blocks.empty()) {

@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_memorystream.h"
+
 class CFX_BmpDecompressor {
  public:
   CFX_BmpDecompressor();
@@ -31,7 +33,6 @@ class CFX_BmpDecompressor {
 
   std::vector<uint8_t> out_row_buffer_;
   std::vector<uint32_t> palette_;
-  uint8_t* next_in_;
 
   uint32_t header_offset_;
   uint32_t width_;
@@ -56,8 +57,6 @@ class CFX_BmpDecompressor {
   uint32_t mask_green_;
   uint32_t mask_blue_;
 
-  uint32_t avail_in_;
-  uint32_t skip_size_;
   int32_t decode_status_;
 
  private:
@@ -66,11 +65,13 @@ class CFX_BmpDecompressor {
   int32_t DecodeRGB();
   int32_t DecodeRLE8();
   int32_t DecodeRLE4();
-  uint8_t* ReadData(uint8_t** des_buf, uint32_t data_size);
+  bool ReadData(uint8_t* destination, uint32_t size);
   void SaveDecodingStatus(int32_t status);
   bool ValidateColorIndex(uint8_t val);
   bool ValidateFlag() const;
   void SetHeight(int32_t signed_height);
+
+  RetainPtr<CFX_MemoryStream> input_buffer_;
 };
 
 #endif  // CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_

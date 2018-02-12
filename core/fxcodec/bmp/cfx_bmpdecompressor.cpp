@@ -29,7 +29,6 @@ uint8_t HalfRoundUp(uint8_t value) {
 
 CFX_BmpDecompressor::CFX_BmpDecompressor()
     : context_ptr_(nullptr),
-      next_in_(nullptr),
       header_offset_(0),
       width_(0),
       height_(0),
@@ -52,8 +51,6 @@ CFX_BmpDecompressor::CFX_BmpDecompressor()
       mask_red_(0),
       mask_green_(0),
       mask_blue_(0),
-      avail_in_(0),
-      skip_size_(0),
       decode_status_(BMP_D_STATUS_HEADER) {}
 
 CFX_BmpDecompressor::~CFX_BmpDecompressor() {}
@@ -74,30 +71,31 @@ bool CFX_BmpDecompressor::GetDataPosition(uint32_t rcd_pos) {
 }
 
 int32_t CFX_BmpDecompressor::ReadHeader() {
-  uint32_t skip_size_org = skip_size_;
   if (decode_status_ == BMP_D_STATUS_HEADER) {
-    BmpFileHeader* pBmp_header = nullptr;
-    if (!ReadData(reinterpret_cast<uint8_t**>(&pBmp_header),
+    BmpFileHeader bmp_header;
+    if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_header),
                   sizeof(BmpFileHeader))) {
       return 2;
     }
 
-    pBmp_header->bfType =
-        FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&pBmp_header->bfType));
-    pBmp_header->bfOffBits = FXDWORD_GET_LSBFIRST(
-        reinterpret_cast<uint8_t*>(&pBmp_header->bfOffBits));
+    bmp_header.bfType =
+        FXWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&bmp_header.bfType));
+    bmp_header.bfOffBits =
+        FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&bmp_header.bfOffBits));
     data_size_ =
-        FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&pBmp_header->bfSize));
-    if (pBmp_header->bfType != BMP_SIGNATURE) {
+        FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&bmp_header.bfSize));
+    if (bmp_header.bfType != BMP_SIGNATURE) {
       Error();
       NOTREACHED();
     }
-    if (avail_in_ < skip_size_ + sizeof(uint32_t)) {
-      skip_size_ = skip_size_org;
+
+    if (!ReadData(reinterpret_cast<uint8_t*>(&img_ifh_size_),
+                  sizeof(img_ifh_size_))) {
       return 2;
     }
+
     img_ifh_size_ =
-        FXDWORD_GET_LSBFIRST(static_cast<uint8_t*>(next_in_ + skip_size_));
+        FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_ifh_size_));
     pal_type_ = 0;
     static_assert(sizeof(BmpCoreHeader) == kBmpCoreHeaderSize,
                   "BmpCoreHeader has wrong size");
@@ -106,71 +104,71 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
     switch (img_ifh_size_) {
       case kBmpCoreHeaderSize: {
         pal_type_ = 1;
-        BmpCoreHeader* pBmp_core_header = nullptr;
-        if (!ReadData(reinterpret_cast<uint8_t**>(&pBmp_core_header),
+        BmpCoreHeader bmp_core_header;
+        if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_core_header),
                       img_ifh_size_)) {
-          skip_size_ = skip_size_org;
           return 2;
         }
+
         width_ = FXWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_core_header->bcWidth));
+            reinterpret_cast<uint8_t*>(&bmp_core_header.bcWidth));
         height_ = FXWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_core_header->bcHeight));
+            reinterpret_cast<uint8_t*>(&bmp_core_header.bcHeight));
         bit_counts_ = FXWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_core_header->bcBitCount));
+            reinterpret_cast<uint8_t*>(&bmp_core_header.bcBitCount));
         compress_flag_ = BMP_RGB;
         imgTB_flag_ = false;
       } break;
       case kBmpInfoHeaderSize: {
-        BmpInfoHeader* pBmp_info_header = nullptr;
-        if (!ReadData(reinterpret_cast<uint8_t**>(&pBmp_info_header),
+        BmpInfoHeader bmp_info_header;
+        if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
                       img_ifh_size_)) {
-          skip_size_ = skip_size_org;
           return 2;
         }
+
         width_ = FXDWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_info_header->biWidth));
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biWidth));
         int32_t signed_height = FXDWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_info_header->biHeight));
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biHeight));
         bit_counts_ = FXWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_info_header->biBitCount));
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biBitCount));
         compress_flag_ = FXDWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_info_header->biCompression));
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biCompression));
         color_used_ = FXDWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_info_header->biClrUsed));
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biClrUsed));
         dpi_x_ = static_cast<int32_t>(FXDWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_info_header->biXPelsPerMeter)));
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biXPelsPerMeter)));
         dpi_y_ = static_cast<int32_t>(FXDWORD_GET_LSBFIRST(
-            reinterpret_cast<uint8_t*>(&pBmp_info_header->biYPelsPerMeter)));
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biYPelsPerMeter)));
         SetHeight(signed_height);
       } break;
       default: {
         if (img_ifh_size_ >
             std::min(kBmpInfoHeaderSize,
                      static_cast<size_t>(sizeof(BmpInfoHeader)))) {
-          BmpInfoHeader* pBmp_info_header = nullptr;
-          if (!ReadData(reinterpret_cast<uint8_t**>(&pBmp_info_header),
+          BmpInfoHeader bmp_info_header;
+          if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
                         img_ifh_size_)) {
-            skip_size_ = skip_size_org;
             return 2;
           }
+
           uint16_t biPlanes;
           width_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biWidth));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biWidth));
           int32_t signed_height = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biHeight));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biHeight));
           bit_counts_ = FXWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biBitCount));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biBitCount));
           compress_flag_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biCompression));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biCompression));
           color_used_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biClrUsed));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biClrUsed));
           biPlanes = FXWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biPlanes));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biPlanes));
           dpi_x_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biXPelsPerMeter));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biXPelsPerMeter));
           dpi_y_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&pBmp_info_header->biYPelsPerMeter));
+              reinterpret_cast<uint8_t*>(&bmp_info_header.biYPelsPerMeter));
           SetHeight(signed_height);
           if (compress_flag_ == BMP_RGB && biPlanes == 1 && color_used_ == 0)
             break;
@@ -229,21 +227,19 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
     SaveDecodingStatus(BMP_D_STATUS_PAL);
   }
   if (decode_status_ == BMP_D_STATUS_PAL) {
-    skip_size_org = skip_size_;
     if (compress_flag_ == BMP_BITFIELDS) {
       if (bit_counts_ != 16 && bit_counts_ != 32) {
         Error();
         NOTREACHED();
       }
-      uint32_t* mask;
-      if (ReadData(reinterpret_cast<uint8_t**>(&mask), 3 * sizeof(uint32_t)) ==
-          nullptr) {
-        skip_size_ = skip_size_org;
+
+      uint32_t masks[3];
+      if (!ReadData(reinterpret_cast<uint8_t*>(masks), sizeof(masks)))
         return 2;
-      }
-      mask_red_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&mask[0]));
-      mask_green_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&mask[1]));
-      mask_blue_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&mask[2]));
+
+      mask_red_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[0]));
+      mask_green_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[1]));
+      mask_blue_ = FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&masks[2]));
       if (mask_red_ & mask_green_ || mask_red_ & mask_blue_ ||
           mask_green_ & mask_blue_) {
         Error();
@@ -262,25 +258,27 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
       pal_num_ = 1 << bit_counts_;
       if (color_used_ != 0)
         pal_num_ = color_used_;
-      uint8_t* src_pal_ptr = nullptr;
       uint32_t src_pal_size = pal_num_ * (pal_type_ ? 3 : 4);
-      if (ReadData(&src_pal_ptr, src_pal_size) == nullptr) {
-        skip_size_ = skip_size_org;
+      std::vector<uint8_t> src_pal(src_pal_size);
+      uint8_t* src_pal_data = src_pal.data();
+      if (!ReadData(src_pal_data, src_pal_size)) {
         return 2;
       }
+
       palette_.resize(pal_num_);
       int32_t src_pal_index = 0;
       if (pal_type_ == BMP_PAL_OLD) {
         while (src_pal_index < pal_num_) {
           palette_[src_pal_index++] = BMP_PAL_ENCODE(
-              0x00, src_pal_ptr[2], src_pal_ptr[1], src_pal_ptr[0]);
-          src_pal_ptr += 3;
+              0x00, src_pal_data[2], src_pal_data[1], src_pal_data[0]);
+          src_pal_data += 3;
         }
       } else {
         while (src_pal_index < pal_num_) {
-          palette_[src_pal_index++] = BMP_PAL_ENCODE(
-              src_pal_ptr[3], src_pal_ptr[2], src_pal_ptr[1], src_pal_ptr[0]);
-          src_pal_ptr += 4;
+          palette_[src_pal_index++] =
+              BMP_PAL_ENCODE(src_pal_data[3], src_pal_data[2], src_pal_data[1],
+                             src_pal_data[0]);
+          src_pal_data += 4;
         }
       }
     }
@@ -305,12 +303,13 @@ bool CFX_BmpDecompressor::ValidateFlag() const {
 
 int32_t CFX_BmpDecompressor::DecodeImage() {
   if (decode_status_ == BMP_D_STATUS_DATA_PRE) {
-    avail_in_ = 0;
+    input_buffer_->Seek(0);
     if (!GetDataPosition(header_offset_)) {
       decode_status_ = BMP_D_STATUS_TAIL;
       Error();
       NOTREACHED();
     }
+
     row_num_ = 0;
     SaveDecodingStatus(BMP_D_STATUS_DATA);
   }
@@ -318,6 +317,7 @@ int32_t CFX_BmpDecompressor::DecodeImage() {
     Error();
     NOTREACHED();
   }
+
   switch (compress_flag_) {
     case BMP_RGB:
     case BMP_BITFIELDS:
@@ -336,14 +336,15 @@ bool CFX_BmpDecompressor::ValidateColorIndex(uint8_t val) {
     Error();
     NOTREACHED();
   }
+
   return true;
 }
 
 int32_t CFX_BmpDecompressor::DecodeRGB() {
-  uint8_t* des_buf = nullptr;
+  std::vector<uint8_t> des_buf(src_row_bytes_);
   while (row_num_ < height_) {
     size_t idx = 0;
-    if (!ReadData(&des_buf, src_row_bytes_))
+    if (!ReadData(des_buf.data(), src_row_bytes_))
       return 2;
 
     SaveDecodingStatus(BMP_D_STATUS_DATA);
@@ -361,7 +362,7 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
         }
       } break;
       case 16: {
-        uint16_t* buf = (uint16_t*)des_buf;
+        uint16_t* buf = reinterpret_cast<uint16_t*>(des_buf.data());
         uint8_t blue_bits = 0;
         uint8_t green_bits = 0;
         uint8_t red_bits = 0;
@@ -393,7 +394,9 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
       case 8:
       case 24:
       case 32:
-        std::copy(des_buf, des_buf + src_row_bytes_, out_row_buffer_.begin());
+        uint8_t* des_buf_data = des_buf.data();
+        std::copy(des_buf_data, des_buf_data + src_row_bytes_,
+                  out_row_buffer_.begin());
         idx += src_row_bytes_;
         break;
     }
@@ -409,27 +412,25 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
 }
 
 int32_t CFX_BmpDecompressor::DecodeRLE8() {
-  uint8_t* first_byte_ptr = nullptr;
-  uint8_t* second_byte_ptr = nullptr;
+  uint8_t first_part;
   col_num_ = 0;
   while (true) {
-    uint32_t skip_size_org = skip_size_;
-    if (!ReadData(&first_byte_ptr, 1))
+    if (!ReadData(&first_part, sizeof(first_part)))
       return 2;
 
-    switch (*first_byte_ptr) {
+    switch (first_part) {
       case RLE_MARKER: {
-        if (!ReadData(&first_byte_ptr, 1)) {
-          skip_size_ = skip_size_org;
+        if (!ReadData(&first_part, sizeof(first_part)))
           return 2;
-        }
-        switch (*first_byte_ptr) {
+
+        switch (first_part) {
           case RLE_EOL: {
             if (row_num_ >= height_) {
               SaveDecodingStatus(BMP_D_STATUS_TAIL);
               Error();
               NOTREACHED();
             }
+
             ReadScanline(imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                          out_row_buffer_);
             col_num_ = 0;
@@ -447,17 +448,17 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
             return 1;
           }
           case RLE_DELTA: {
-            uint8_t* delta_ptr;
-            if (!ReadData(&delta_ptr, 2)) {
-              skip_size_ = skip_size_org;
+            uint8_t delta[2];
+            if (!ReadData(delta, sizeof(delta)))
               return 2;
-            }
-            col_num_ += delta_ptr[0];
-            size_t bmp_row_num__next = row_num_ + delta_ptr[1];
+
+            col_num_ += delta[0];
+            size_t bmp_row_num__next = row_num_ + delta[1];
             if (col_num_ >= out_row_bytes_ || bmp_row_num__next >= height_) {
               Error();
               NOTREACHED();
             }
+
             while (row_num_ < bmp_row_num__next) {
               std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
               ReadScanline(
@@ -467,43 +468,44 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
           } break;
           default: {
             int32_t avail_size = out_row_bytes_ - col_num_;
-            if (!avail_size ||
-                static_cast<int32_t>(*first_byte_ptr) > avail_size) {
+            if (!avail_size || static_cast<int32_t>(first_part) > avail_size) {
               Error();
               NOTREACHED();
             }
-            if (!ReadData(&second_byte_ptr, *first_byte_ptr & 1
-                                                ? *first_byte_ptr + 1
-                                                : *first_byte_ptr)) {
-              skip_size_ = skip_size_org;
+
+            size_t second_part_size =
+                first_part & 1 ? first_part + 1 : first_part;
+            std::vector<uint8_t> second_part(second_part_size);
+            uint8_t* second_part_data = second_part.data();
+            if (!ReadData(second_part_data, second_part_size))
               return 2;
-            }
-            std::copy(second_byte_ptr, second_byte_ptr + *first_byte_ptr,
+
+            std::copy(second_part_data, second_part_data + first_part,
                       out_row_buffer_.begin() + col_num_);
-            for (size_t i = col_num_; i < col_num_ + *first_byte_ptr; ++i) {
+            for (size_t i = col_num_; i < col_num_ + first_part; ++i) {
               if (!ValidateColorIndex(out_row_buffer_[i]))
                 return 0;
             }
-            col_num_ += *first_byte_ptr;
+            col_num_ += first_part;
           }
         }
       } break;
       default: {
         int32_t avail_size = out_row_bytes_ - col_num_;
-        if (!avail_size || static_cast<int32_t>(*first_byte_ptr) > avail_size) {
+        if (!avail_size || static_cast<int32_t>(first_part) > avail_size) {
           Error();
           NOTREACHED();
         }
-        if (!ReadData(&second_byte_ptr, 1)) {
-          skip_size_ = skip_size_org;
+
+        uint8_t second_part;
+        if (!ReadData(&second_part, sizeof(second_part)))
           return 2;
-        }
+
         std::fill(out_row_buffer_.begin() + col_num_,
-                  out_row_buffer_.begin() + col_num_ + *first_byte_ptr,
-                  *second_byte_ptr);
+                  out_row_buffer_.begin() + col_num_ + first_part, second_part);
         if (!ValidateColorIndex(out_row_buffer_[col_num_]))
           return 0;
-        col_num_ += *first_byte_ptr;
+        col_num_ += first_part;
       }
     }
   }
@@ -512,27 +514,25 @@ int32_t CFX_BmpDecompressor::DecodeRLE8() {
 }
 
 int32_t CFX_BmpDecompressor::DecodeRLE4() {
-  uint8_t* first_byte_ptr = nullptr;
-  uint8_t* second_byte_ptr = nullptr;
+  uint8_t first_part;
   col_num_ = 0;
   while (true) {
-    uint32_t skip_size_org = skip_size_;
-    if (!ReadData(&first_byte_ptr, 1))
+    if (!ReadData(&first_part, sizeof(first_part)))
       return 2;
 
-    switch (*first_byte_ptr) {
+    switch (first_part) {
       case RLE_MARKER: {
-        if (!ReadData(&first_byte_ptr, 1)) {
-          skip_size_ = skip_size_org;
+        if (!ReadData(&first_part, sizeof(first_part))) {
           return 2;
         }
-        switch (*first_byte_ptr) {
+        switch (first_part) {
           case RLE_EOL: {
             if (row_num_ >= height_) {
               SaveDecodingStatus(BMP_D_STATUS_TAIL);
               Error();
               NOTREACHED();
             }
+
             ReadScanline(imgTB_flag_ ? row_num_++ : (height_ - 1 - row_num_++),
                          out_row_buffer_);
             col_num_ = 0;
@@ -550,17 +550,17 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
             return 1;
           }
           case RLE_DELTA: {
-            uint8_t* delta_ptr;
-            if (!ReadData(&delta_ptr, 2)) {
-              skip_size_ = skip_size_org;
+            uint8_t delta[2];
+            if (!ReadData(delta, sizeof(delta)))
               return 2;
-            }
-            col_num_ += delta_ptr[0];
-            size_t bmp_row_num__next = row_num_ + delta_ptr[1];
+
+            col_num_ += delta[0];
+            size_t bmp_row_num__next = row_num_ + delta[1];
             if (col_num_ >= out_row_bytes_ || bmp_row_num__next >= height_) {
               Error();
               NOTREACHED();
             }
+
             while (row_num_ < bmp_row_num__next) {
               std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
               ReadScanline(
@@ -574,21 +574,24 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
               Error();
               NOTREACHED();
             }
-            uint8_t size = HalfRoundUp(*first_byte_ptr);
-            if (static_cast<int32_t>(*first_byte_ptr) > avail_size) {
+            uint8_t size = HalfRoundUp(first_part);
+            if (static_cast<int32_t>(first_part) > avail_size) {
               if (size + (col_num_ >> 1) > src_row_bytes_) {
                 Error();
                 NOTREACHED();
               }
-              *first_byte_ptr = avail_size - 1;
+
+              first_part = avail_size - 1;
             }
-            if (!ReadData(&second_byte_ptr, size & 1 ? size + 1 : size)) {
-              skip_size_ = skip_size_org;
+            size_t second_part_size = size & 1 ? size + 1 : size;
+            std::vector<uint8_t> second_part(second_part_size);
+            uint8_t* second_part_data = second_part.data();
+            if (!ReadData(second_part_data, second_part_size))
               return 2;
-            }
-            for (uint8_t i = 0; i < *first_byte_ptr; i++) {
-              uint8_t color = (i & 0x01) ? (*second_byte_ptr++ & 0x0F)
-                                         : (*second_byte_ptr & 0xF0) >> 4;
+
+            for (uint8_t i = 0; i < first_part; i++) {
+              uint8_t color = (i & 0x01) ? (*second_part_data++ & 0x0F)
+                                         : (*second_part_data & 0xF0) >> 4;
               if (!ValidateColorIndex(color))
                 return 0;
 
@@ -603,24 +606,27 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
           Error();
           NOTREACHED();
         }
-        if (static_cast<int32_t>(*first_byte_ptr) > avail_size) {
-          uint8_t size = HalfRoundUp(*first_byte_ptr);
+
+        if (static_cast<int32_t>(first_part) > avail_size) {
+          uint8_t size = HalfRoundUp(first_part);
           if (size + (col_num_ >> 1) > src_row_bytes_) {
             Error();
             NOTREACHED();
           }
-          *first_byte_ptr = avail_size - 1;
+
+          first_part = avail_size - 1;
         }
-        if (!ReadData(&second_byte_ptr, 1)) {
-          skip_size_ = skip_size_org;
+        uint8_t second_part;
+        if (!ReadData(&second_part, sizeof(second_part)))
           return 2;
-        }
-        for (uint8_t i = 0; i < *first_byte_ptr; i++) {
-          uint8_t second_byte = *second_byte_ptr;
+
+        for (uint8_t i = 0; i < first_part; i++) {
+          uint8_t second_byte = second_part;
           second_byte =
               i & 0x01 ? (second_byte & 0x0F) : (second_byte & 0xF0) >> 4;
           if (!ValidateColorIndex(second_byte))
             return 0;
+
           out_row_buffer_[col_num_++] = second_byte;
         }
       }
@@ -630,37 +636,32 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
   NOTREACHED();
 }
 
-uint8_t* CFX_BmpDecompressor::ReadData(uint8_t** des_buf, uint32_t data_size) {
-  pdfium::base::CheckedNumeric<uint32_t> request_size = data_size;
-  request_size += skip_size_;
-  if (!request_size.IsValid() || avail_in_ < request_size.ValueOrDie())
-    return nullptr;
-
-  *des_buf = next_in_ + skip_size_;
-  skip_size_ += data_size;
-  return *des_buf;
+bool CFX_BmpDecompressor::ReadData(uint8_t* destination, uint32_t size) {
+  return input_buffer_ && input_buffer_->ReadBlock(destination, size);
 }
 
 void CFX_BmpDecompressor::SaveDecodingStatus(int32_t status) {
   decode_status_ = status;
-  next_in_ += skip_size_;
-  avail_in_ -= skip_size_;
-  skip_size_ = 0;
 }
 
 void CFX_BmpDecompressor::SetInputBuffer(uint8_t* src_buf, uint32_t src_size) {
-  next_in_ = src_buf;
-  avail_in_ = src_size;
-  skip_size_ = 0;
+  input_buffer_ =
+      pdfium::MakeRetain<CFX_MemoryStream>(src_buf, src_size, false);
 }
 
 uint32_t CFX_BmpDecompressor::GetAvailInput(uint8_t** avail_buf) {
+  if (!input_buffer_)
+    return 0;
+
+  FX_FILESIZE available =
+      input_buffer_->GetSize() - input_buffer_->GetPosition();
   if (avail_buf) {
     *avail_buf = nullptr;
-    if (avail_in_ > 0)
-      *avail_buf = next_in_;
+    if (available > 0)
+      *avail_buf = input_buffer_->GetBuffer() + available;
   }
-  return avail_in_;
+
+  return available;
 }
 
 void CFX_BmpDecompressor::SetHeight(int32_t signed_height) {
