@@ -178,10 +178,10 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_Node* Clone(bool bRecursive);
 
-  CXFA_Node* GetNextSibling() const { return m_pNext; }
+  CXFA_Node* GetNextSibling() const { return next_sibling_; }
   CXFA_Node* GetPrevSibling() const;
-  CXFA_Node* GetFirstChild() const { return m_pChild; }
-  CXFA_Node* GetParent() const { return parent_.Get(); }
+  CXFA_Node* GetFirstChild() const { return first_child_; }
+  CXFA_Node* GetParent() const { return parent_; }
 
   CXFA_Node* GetNextContainerSibling() const;
   CXFA_Node* GetPrevContainerSibling() const;
@@ -492,10 +492,15 @@ class CXFA_Node : public CXFA_Object {
   const PropertyData* const m_Properties;
   const AttributeData* const m_Attributes;
   const uint32_t m_ValidPackets;
-  CXFA_Node* m_pNext;
-  CXFA_Node* m_pChild;
-  CXFA_Node* m_pLastChild;
-  UnownedPtr<CXFA_Node> parent_;
+
+  // These nodes are responsible for building the CXFA_Node tree. We don't use
+  // unowned ptrs here because the cleanup process will remove the nodes in an
+  // order that doesn't necessarily match up to the tree structure.
+  CXFA_Node* parent_;
+  CXFA_Node* next_sibling_;
+  CXFA_Node* first_child_;
+  CXFA_Node* last_child_;
+
   CFX_XMLNode* m_pXMLNode;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
