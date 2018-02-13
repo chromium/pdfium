@@ -99,20 +99,9 @@ std::unique_ptr<v8::Platform> InitializeV8ForPDFiumWithStartupData(
     const std::string& bin_dir,
     v8::StartupData* natives_blob,
     v8::StartupData* snapshot_blob);
-
-// TODO(thestig): Remove this in the near future once it has no callers.
-bool InitializeV8ForPDFium(const std::string& exe_path,
-                           const std::string& bin_dir,
-                           v8::StartupData* natives_blob,
-                           v8::StartupData* snapshot_blob,
-                           v8::Platform** platform);
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
 std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
     const std::string& exe_path);
-
-// TODO(thestig): Remove this in the near future once it has no callers.
-bool InitializeV8ForPDFium(const std::string& exe_path,
-                           v8::Platform** platform);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 

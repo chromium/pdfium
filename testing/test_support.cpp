@@ -194,33 +194,10 @@ std::unique_ptr<v8::Platform> InitializeV8ForPDFiumWithStartupData(
   }
   return platform;
 }
-
-bool InitializeV8ForPDFium(const std::string& exe_path,
-                           const std::string& bin_dir,
-                           v8::StartupData* natives_blob,
-                           v8::StartupData* snapshot_blob,
-                           v8::Platform** platform) {
-  std::unique_ptr<v8::Platform> new_platform =
-      InitializeV8ForPDFiumWithStartupData(exe_path, bin_dir, natives_blob,
-                                           snapshot_blob);
-  if (!new_platform)
-    return false;
-  *platform = new_platform.release();
-  return true;
-}
 #else   // V8_USE_EXTERNAL_STARTUP_DATA
 std::unique_ptr<v8::Platform> InitializeV8ForPDFium(
     const std::string& exe_path) {
   return InitializeV8Common(exe_path);
-}
-
-bool InitializeV8ForPDFium(const std::string& exe_path,
-                           v8::Platform** platform) {
-  std::unique_ptr<v8::Platform> new_platform = InitializeV8ForPDFium(exe_path);
-  if (!new_platform)
-    return false;
-  *platform = new_platform.release();
-  return true;
 }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
