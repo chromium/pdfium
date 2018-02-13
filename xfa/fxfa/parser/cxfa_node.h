@@ -469,7 +469,7 @@ class CXFA_Node : public CXFA_Object {
   void SetImageEdit(const WideString& wsContentType,
                     const WideString& wsHref,
                     const WideString& wsData);
-  bool IsOwnXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }
+  bool IsOwnedXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }
   CXFA_Node* GetBindingNode() const {
     if (binding_nodes_.empty())
       return nullptr;

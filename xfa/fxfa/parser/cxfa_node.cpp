@@ -537,16 +537,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Node::~CXFA_Node() {
-  ASSERT(!parent_);
-
-  CXFA_Node* pNode = first_child_;
-  while (pNode) {
-    CXFA_Node* pNext = pNode->next_sibling_;
-    pNode->parent_ = nullptr;
-    delete pNode;
-    pNode = pNext;
-  }
-  if (m_pXMLNode && IsOwnXMLNode())
+  if (m_pXMLNode && IsOwnedXMLNode())
     delete m_pXMLNode;
 }
 
@@ -1119,10 +1110,6 @@ void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   pNode->parent_ = this;
   pNode->ClearFlag(XFA_NodeFlag_HasRemovedChildren);
 
-  bool ret = m_pDocument->RemovePurgeNode(pNode);
-  ASSERT(ret);
-  (void)ret;  // Avoid unused variable warning.
-
   if (!first_child_) {
     ASSERT(!last_child_);
 
@@ -1220,8 +1207,6 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   pNode->parent_ = nullptr;
 
   OnRemoved(bNotify);
-
-  m_pDocument->AddPurgeNode(pNode);
 
   if (!IsNeedSavingXMLNode() || !pNode->m_pXMLNode)
     return;

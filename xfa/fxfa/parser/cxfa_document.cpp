@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_document.h"
 
+#include <set>
+
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_engine.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -87,7 +89,8 @@ void MergeNode(CXFA_Document* pDocument,
 }  // namespace
 
 CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)
-    : m_pParser(pParser),
+    : CXFA_NodeOwner(),
+      m_pParser(pParser),
       m_pRootNode(nullptr),
       m_eCurVersionMode(XFA_VERSION_DEFAULT),
       m_dwDocFlags(0) {
@@ -98,12 +101,6 @@ CXFA_Document::~CXFA_Document() {
   // Remove all the bindings before freeing the node as the ownership is wonky.
   if (m_pRootNode)
     m_pRootNode->ReleaseBindingNodes();
-
-  delete m_pRootNode;
-
-  for (CXFA_Node* pNode : m_PurgeNodes)
-    delete pNode;
-  m_PurgeNodes.clear();
 }
 
 CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
@@ -126,14 +123,6 @@ void CXFA_Document::ClearLayoutData() {
   m_pScriptLog.reset();
   m_pScriptLayout.reset();
   m_pScriptSignature.reset();
-}
-
-void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
-  if (m_pRootNode)
-    AddPurgeNode(m_pRootNode);
-
-  m_pRootNode = pNewRoot;
-  RemovePurgeNode(pNewRoot);
 }
 
 CFX_XMLDoc* CXFA_Document::GetXMLDoc() const {
@@ -221,22 +210,7 @@ CXFA_Node* CXFA_Document::CreateNode(XFA_PacketType packet,
                                      XFA_Element eElement) {
   if (eElement == XFA_Element::Unknown)
     return nullptr;
-
-  std::unique_ptr<CXFA_Node> pNode = CXFA_Node::Create(this, eElement, packet);
-  if (!pNode)
-    return nullptr;
-
-  // TODO(dsinclair): AddPrugeNode should take ownership of the pointer.
-  AddPurgeNode(pNode.get());
-  return pNode.release();
-}
-
-void CXFA_Document::AddPurgeNode(CXFA_Node* pNode) {
-  m_PurgeNodes.insert(pNode);
-}
-
-bool CXFA_Document::RemovePurgeNode(CXFA_Node* pNode) {
-  return !!m_PurgeNodes.erase(pNode);
+  return AddOwnedNode(CXFA_Node::Create(this, eElement, packet));
 }
 
 void CXFA_Document::SetFlag(uint32_t dwFlag, bool bOn) {

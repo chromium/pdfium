@@ -2521,6 +2521,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h",
       "xfa/fxfa/parser/cxfa_nodelocale.cpp",
       "xfa/fxfa/parser/cxfa_nodelocale.h",
+      "xfa/fxfa/parser/cxfa_nodeowner.cpp",
+      "xfa/fxfa/parser/cxfa_nodeowner.h",
       "xfa/fxfa/parser/cxfa_numberofcopies.cpp",
       "xfa/fxfa/parser/cxfa_numberofcopies.h",
       "xfa/fxfa/parser/cxfa_numberpattern.cpp",

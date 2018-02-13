@@ -1261,7 +1261,7 @@ void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
     pHeadChild = pSibling;
   }
 
-  std::unique_ptr<CXFA_Node> pProtoForm(pProtoNode->CloneTemplateToForm(true));
+  CXFA_Node* pProtoForm = pProtoNode->CloneTemplateToForm(true);
   pHeadChild = pProtoForm->GetFirstChild();
   while (pHeadChild) {
     CXFA_Node* pSibling = pHeadChild->GetNextSibling();
@@ -1269,8 +1269,8 @@ void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
     ToNode(GetXFAObject())->InsertChild(pHeadChild, nullptr);
     pHeadChild = pSibling;
   }
-
-  GetDocument()->RemovePurgeNode(pProtoForm.get());
+  GetDocument()->FreeOwnedNode(pProtoForm);
+  pProtoForm = nullptr;
 }
 
 void CJX_Object::Script_Attribute_BOOL(CFXJSE_Value* pValue,
