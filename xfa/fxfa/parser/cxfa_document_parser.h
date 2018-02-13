@@ -26,7 +26,6 @@ class CXFA_DocumentParser {
                      XFA_PacketType ePacketID);
   int32_t DoParse();
 
-  CFX_XMLDoc* GetXMLDoc() const;
   CXFA_FFNotify* GetNotify() const;
   CXFA_Document* GetDocument() const;
 

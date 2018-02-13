@@ -32,7 +32,6 @@ class CXFA_SimpleParser {
   CFX_XMLNode* ParseXMLData(const ByteString& wsXML);
   void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
   CXFA_Node* GetRootNode() const;
-  CFX_XMLDoc* GetXMLDoc() const;
   void CloseParser();
 
   // Called later for the ctor with no parameters.

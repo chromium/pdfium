@@ -7,18 +7,8 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_document_parser.h"
 
 namespace {
-
-class CXFA_DocumentMock : public CXFA_Document {
- public:
-  explicit CXFA_DocumentMock(CXFA_DocumentParser* parser)
-      : CXFA_Document(parser) {}
-  ~CXFA_DocumentMock() override = default;
-
-  CXFA_FFNotify* GetNotify() const override { return nullptr; }
-};
 
 class TestNode : public CXFA_Node {
  public:
@@ -40,23 +30,20 @@ class TestNode : public CXFA_Node {
 class CXFANodeTest : public testing::Test {
  public:
   void SetUp() override {
-    doc_parser_ = pdfium::MakeUnique<CXFA_DocumentParser>(nullptr);
-    doc_ = pdfium::MakeUnique<CXFA_DocumentMock>(doc_parser_.get());
+    doc_ = pdfium::MakeUnique<CXFA_Document>(nullptr);
     node_ = pdfium::MakeUnique<TestNode>(doc_.get());
   }
 
   void TearDown() override {
     node_ = nullptr;
     doc_ = nullptr;
-    doc_parser_ = nullptr;
   }
 
   CXFA_Document* GetDoc() const { return doc_.get(); }
   CXFA_Node* GetNode() const { return node_.get(); }
 
  private:
-  std::unique_ptr<CXFA_DocumentParser> doc_parser_;
-  std::unique_ptr<CXFA_DocumentMock> doc_;
+  std::unique_ptr<CXFA_Document> doc_;
   std::unique_ptr<TestNode> node_;
 };
 

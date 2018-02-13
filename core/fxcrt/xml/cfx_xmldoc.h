@@ -24,8 +24,6 @@ class CFX_XMLDoc {
   void CloseXML();
 
   CFX_XMLNode* GetRoot() const { return m_pRoot.get(); }
-  void SaveXMLNode(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
-                   CFX_XMLNode* pNode);
 
  private:
   int32_t m_iStatus;

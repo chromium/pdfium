@@ -88,14 +88,12 @@ void MergeNode(CXFA_Document* pDocument,
 
 }  // namespace
 
-CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)
+CXFA_Document::CXFA_Document(CXFA_FFNotify* notify)
     : CXFA_NodeOwner(),
-      m_pParser(pParser),
+      notify_(notify),
       m_pRootNode(nullptr),
       m_eCurVersionMode(XFA_VERSION_DEFAULT),
-      m_dwDocFlags(0) {
-  ASSERT(m_pParser);
-}
+      m_dwDocFlags(0) {}
 
 CXFA_Document::~CXFA_Document() {
   // Remove all the bindings before freeing the node as the ownership is wonky.
@@ -123,14 +121,6 @@ void CXFA_Document::ClearLayoutData() {
   m_pScriptLog.reset();
   m_pScriptLayout.reset();
   m_pScriptSignature.reset();
-}
-
-CFX_XMLDoc* CXFA_Document::GetXMLDoc() const {
-  return m_pParser->GetXMLDoc();
-}
-
-CXFA_FFNotify* CXFA_Document::GetNotify() const {
-  return m_pParser->GetNotify();
 }
 
 CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {

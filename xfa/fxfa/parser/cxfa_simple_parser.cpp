@@ -468,10 +468,6 @@ CXFA_Node* CXFA_SimpleParser::GetRootNode() const {
   return m_pRootNode;
 }
 
-CFX_XMLDoc* CXFA_SimpleParser::GetXMLDoc() const {
-  return m_pXMLDoc.get();
-}
-
 CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
                                                XFA_PacketType ePacketID) {
   switch (ePacketID) {

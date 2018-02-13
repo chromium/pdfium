@@ -44,7 +44,6 @@ bool CXFA_DataExporter::Export(
     CXFA_Node* pNode,
     uint32_t dwFlag,
     const char* pChecksum) {
-  CFX_XMLDoc* pXMLDoc = m_pDocument->GetXMLDoc();
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketType()) {
       case XFA_PacketType::Xdp: {
@@ -66,7 +65,7 @@ bool CXFA_DataExporter::Export(
         CXFA_Node* pDataNode = pNode->GetFirstChild();
         ASSERT(pDataNode);
         XFA_DataExporter_DealWithDataGroupNode(pDataNode);
-        pXMLDoc->SaveXMLNode(pStream, pElement);
+        pElement->SaveXMLNode(pStream);
         break;
       }
       case XFA_PacketType::Form: {
@@ -80,7 +79,7 @@ bool CXFA_DataExporter::Export(
         if (!pElement || pElement->GetType() != FX_XMLNODE_Element)
           return false;
 
-        pXMLDoc->SaveXMLNode(pStream, pElement);
+        pElement->SaveXMLNode(pStream);
         break;
       }
     }
@@ -103,7 +102,7 @@ bool CXFA_DataExporter::Export(
 
   XFA_DataExporter_DealWithDataGroupNode(pExportNode);
   pElement->SetString(L"xmlns:xfa", L"http://www.xfa.org/schema/xfa-data/1.0/");
-  pXMLDoc->SaveXMLNode(pStream, pElement);
+  pElement->SaveXMLNode(pStream);
   pElement->RemoveAttribute(L"xmlns:xfa");
 
   return true;
