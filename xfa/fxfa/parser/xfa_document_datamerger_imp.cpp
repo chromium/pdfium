@@ -1375,7 +1375,7 @@ void CXFA_Document::DoDataMerge() {
         CreateNode(XFA_PacketType::Datasets, XFA_Element::DataModel);
     pDatasetsRoot->JSObject()->SetCData(XFA_Attribute::Name, L"datasets", false,
                                         false);
-    m_pRootNode->GetXMLMappingNode()->InsertChildNode(pDatasetsXMLNode);
+    m_pRootNode->GetXMLMappingNode()->AppendChild(pDatasetsXMLNode);
     m_pRootNode->InsertChild(pDatasetsRoot, nullptr);
     pDatasetsRoot->SetXMLMappingNode(pDatasetsXMLNode);
   }

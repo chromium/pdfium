@@ -87,7 +87,7 @@ int32_t CFX_XMLParser::DoParser() {
         m_ws1 = m_pParser->GetTargetName();
         if (m_ws1 == L"originalXFAVersion" || m_ws1 == L"acrobat") {
           m_pChild = new CFX_XMLInstruction(m_ws1);
-          m_pParent->InsertChildNode(m_pChild);
+          m_pParent->AppendChild(m_pChild);
         } else {
           m_pChild = nullptr;
         }
@@ -96,7 +96,7 @@ int32_t CFX_XMLParser::DoParser() {
       case FX_XmlSyntaxResult::TagName:
         m_ws1 = m_pParser->GetTagName();
         m_pChild = new CFX_XMLElement(m_ws1);
-        m_pParent->InsertChildNode(m_pChild);
+        m_pParent->AppendChild(m_pChild);
         m_NodeStack.push(m_pChild);
         m_pParent = m_pChild;
 
@@ -130,13 +130,13 @@ int32_t CFX_XMLParser::DoParser() {
       case FX_XmlSyntaxResult::Text:
         m_ws1 = m_pParser->GetTextData();
         m_pChild = new CFX_XMLText(m_ws1);
-        m_pParent->InsertChildNode(m_pChild);
+        m_pParent->AppendChild(m_pChild);
         m_pChild = m_pParent;
         break;
       case FX_XmlSyntaxResult::CData:
         m_ws1 = m_pParser->GetTextData();
         m_pChild = new CFX_XMLCharData(m_ws1);
-        m_pParent->InsertChildNode(m_pChild);
+        m_pParent->AppendChild(m_pChild);
         m_pChild = m_pParent;
         break;
       case FX_XmlSyntaxResult::TargetData:

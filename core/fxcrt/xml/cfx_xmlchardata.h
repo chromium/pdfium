@@ -17,6 +17,7 @@ class CFX_XMLCharData : public CFX_XMLText {
   explicit CFX_XMLCharData(const WideString& wsCData);
   ~CFX_XMLCharData() override;
 
+  // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
 };

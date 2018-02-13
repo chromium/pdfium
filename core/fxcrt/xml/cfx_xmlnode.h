@@ -30,16 +30,8 @@ class CFX_XMLNode {
   enum NodeItem {
     Root = 0,
     Parent,
-    FirstSibling,
-    PriorSibling,
     NextSibling,
-    LastSibling,
-    FirstNeighbor,
-    PriorNeighbor,
-    NextNeighbor,
-    LastNeighbor,
     FirstChild,
-    LastChild
   };
 
   CFX_XMLNode();
@@ -48,21 +40,12 @@ class CFX_XMLNode {
   virtual FX_XMLNODETYPE GetType() const;
   virtual std::unique_ptr<CFX_XMLNode> Clone();
 
-  int32_t CountChildNodes() const;
-  CFX_XMLNode* GetChildNode(int32_t index) const;
-  int32_t GetChildNodeIndex(CFX_XMLNode* pNode) const;
-  int32_t InsertChildNode(CFX_XMLNode* pNode, int32_t index = -1);
+  void AppendChild(CFX_XMLNode* pNode);
+  void InsertChildNode(CFX_XMLNode* pNode, int32_t index);
   void RemoveChildNode(CFX_XMLNode* pNode);
   void DeleteChildren();
 
-  CFX_XMLNode* GetPath(const wchar_t* pPath,
-                       int32_t iLength = -1,
-                       bool bQualifiedName = true) const;
-
-  int32_t GetNodeLevel() const;
   CFX_XMLNode* GetNodeItem(CFX_XMLNode::NodeItem eItem) const;
-  bool InsertNodeItem(CFX_XMLNode::NodeItem eItem, CFX_XMLNode* pNode);
-  CFX_XMLNode* RemoveNodeItem(CFX_XMLNode::NodeItem eItem);
 
   void SaveXMLNode(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream);
 

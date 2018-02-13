@@ -99,5 +99,5 @@ WideString CFX_XMLElement::GetTextData() const {
 void CFX_XMLElement::SetTextData(const WideString& wsText) {
   if (wsText.GetLength() < 1)
     return;
-  InsertChildNode(new CFX_XMLText(wsText));
+  AppendChild(new CFX_XMLText(wsText));
 }

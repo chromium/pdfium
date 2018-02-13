@@ -768,7 +768,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(
       static_cast<CFX_XMLElement*>(pXMLDocumentNode)
           ->RemoveAttribute(L"xmlns:xfa");
     }
-    pDataElement->InsertChildNode(pXMLDocumentNode);
+    pDataElement->AppendChild(pXMLDocumentNode);
     pDataXMLNode = pDataElement;
   }
 

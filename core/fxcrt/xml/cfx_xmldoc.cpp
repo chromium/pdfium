@@ -20,7 +20,7 @@
 
 CFX_XMLDoc::CFX_XMLDoc()
     : m_iStatus(0), m_pRoot(pdfium::MakeUnique<CFX_XMLNode>()) {
-  m_pRoot->InsertChildNode(new CFX_XMLInstruction(L"xml"));
+  m_pRoot->AppendChild(new CFX_XMLInstruction(L"xml"));
 }
 
 CFX_XMLDoc::~CFX_XMLDoc() {}
