@@ -181,6 +181,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetNextSibling() const { return next_sibling_; }
   CXFA_Node* GetPrevSibling() const;
   CXFA_Node* GetFirstChild() const { return first_child_; }
+  CXFA_Node* GetLastChild() const { return last_child_; }
   CXFA_Node* GetParent() const { return parent_; }
 
   CXFA_Node* GetNextContainerSibling() const;

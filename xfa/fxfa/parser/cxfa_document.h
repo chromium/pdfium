@@ -60,14 +60,15 @@ class CXFA_Object;
 class CXFA_Document {
  public:
   explicit CXFA_Document(CXFA_DocumentParser* pParser);
-  ~CXFA_Document();
+  virtual ~CXFA_Document();
+
+  virtual CXFA_FFNotify* GetNotify() const;
 
   CFXJSE_Engine* InitScriptContext(CFXJS_Engine* fxjs_engine);
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
-
   CFX_XMLDoc* GetXMLDoc() const;
-  CXFA_FFNotify* GetNotify() const;
+
   CXFA_LocaleMgr* GetLocalMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const WideStringView& wsID);

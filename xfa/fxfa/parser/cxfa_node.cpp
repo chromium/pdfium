@@ -1149,9 +1149,6 @@ void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
     while (++iCount != index && pPrev->next_sibling_)
       pPrev = pPrev->next_sibling_;
 
-    if (index > 0 && index != iCount)
-      return;
-
     pNode->next_sibling_ = pPrev->next_sibling_;
     pPrev->next_sibling_ = pNode;
     index = iCount;
