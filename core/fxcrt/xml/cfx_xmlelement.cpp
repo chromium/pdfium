@@ -29,7 +29,7 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
   pClone->SetAttributes(GetAttributes());
 
   WideString wsText;
-  CFX_XMLNode* pChild = m_pChild;
+  CFX_XMLNode* pChild = GetFirstChild();
   while (pChild) {
     switch (pChild->GetType()) {
       case FX_XMLNODE_Text:
@@ -38,7 +38,7 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
       default:
         break;
     }
-    pChild = pChild->m_pNext;
+    pChild = pChild->GetNextSibling();
   }
   pClone->SetTextData(wsText);
   return std::move(pClone);
@@ -71,7 +71,7 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
 
     auto* pElement = static_cast<const CFX_XMLElement*>(pNode);
     if (!pElement->HasAttribute(wsAttri)) {
-      pNode = pNode->GetNodeItem(CFX_XMLNode::Parent);
+      pNode = pNode->GetParent();
       continue;
     }
     return pElement->GetString(wsAttri);
@@ -81,7 +81,7 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
 
 WideString CFX_XMLElement::GetTextData() const {
   CFX_WideTextBuf buffer;
-  CFX_XMLNode* pChild = m_pChild;
+  CFX_XMLNode* pChild = GetFirstChild();
   while (pChild) {
     switch (pChild->GetType()) {
       case FX_XMLNODE_Text:
@@ -91,7 +91,7 @@ WideString CFX_XMLElement::GetTextData() const {
       default:
         break;
     }
-    pChild = pChild->m_pNext;
+    pChild = pChild->GetNextSibling();
   }
   return buffer.MakeString();
 }

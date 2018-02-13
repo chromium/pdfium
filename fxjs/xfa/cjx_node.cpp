@@ -246,16 +246,15 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   }
 
   if (bIgnoreRoot) {
-    CFX_XMLNode* pXMLChild = pXMLNode->GetNodeItem(CFX_XMLNode::FirstChild);
+    CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild();
     while (pXMLChild) {
-      CFX_XMLNode* pXMLSibling =
-          pXMLChild->GetNodeItem(CFX_XMLNode::NextSibling);
+      CFX_XMLNode* pXMLSibling = pXMLChild->GetNextSibling();
       pXMLNode->RemoveChildNode(pXMLChild);
       pFakeXMLRoot->AppendChild(pXMLChild);
       pXMLChild = pXMLSibling;
     }
   } else {
-    CFX_XMLNode* pXMLParent = pXMLNode->GetNodeItem(CFX_XMLNode::Parent);
+    CFX_XMLNode* pXMLParent = pXMLNode->GetParent();
     if (pXMLParent)
       pXMLParent->RemoveChildNode(pXMLNode);
 
@@ -291,7 +290,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
       CFX_XMLNode* pTempXMLNode = GetXFANode()->GetXMLMappingNode();
       GetXFANode()->SetXMLMappingNode(pFakeXMLRoot.release());
       GetXFANode()->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
-      if (pTempXMLNode && !pTempXMLNode->GetNodeItem(CFX_XMLNode::Parent))
+      if (pTempXMLNode && !pTempXMLNode->GetParent())
         pFakeXMLRoot.reset(pTempXMLNode);
       else
         pFakeXMLRoot = nullptr;

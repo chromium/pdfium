@@ -15,28 +15,25 @@
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/stl_util.h"
 
-CFX_XMLNode::CFX_XMLNode()
-    : m_pParent(nullptr),
-      m_pChild(nullptr),
-      m_pPrior(nullptr),
-      m_pNext(nullptr) {}
-
-FX_XMLNODETYPE CFX_XMLNode::GetType() const {
-  return FX_XMLNODE_Unknown;
-}
+CFX_XMLNode::CFX_XMLNode() = default;
 
 CFX_XMLNode::~CFX_XMLNode() {
   DeleteChildren();
 }
 
+FX_XMLNODETYPE CFX_XMLNode::GetType() const {
+  return FX_XMLNODE_Unknown;
+}
+
 void CFX_XMLNode::DeleteChildren() {
-  CFX_XMLNode* pChild = m_pChild;
+  CFX_XMLNode* pChild = first_child_;
+  first_child_ = nullptr;
+
   while (pChild) {
-    CFX_XMLNode* pNext = pChild->m_pNext;
+    CFX_XMLNode* pNext = pChild->next_sibling_;
     delete pChild;
     pChild = pNext;
   }
-  m_pChild = nullptr;
 }
 
 void CFX_XMLNode::AppendChild(CFX_XMLNode* pNode) {
@@ -44,68 +41,57 @@ void CFX_XMLNode::AppendChild(CFX_XMLNode* pNode) {
 }
 
 void CFX_XMLNode::InsertChildNode(CFX_XMLNode* pNode, int32_t index) {
-  ASSERT(!pNode->m_pParent);
+  ASSERT(!pNode->parent_);
 
-  pNode->m_pParent = this;
-  if (!m_pChild) {
-    m_pChild = pNode;
-    pNode->m_pPrior = nullptr;
-    pNode->m_pNext = nullptr;
+  pNode->parent_ = this;
+  if (!first_child_) {
+    first_child_ = pNode;
+    pNode->prev_sibling_ = nullptr;
+    pNode->next_sibling_ = nullptr;
     return;
   }
   if (index == 0) {
-    pNode->m_pNext = m_pChild;
-    pNode->m_pPrior = nullptr;
-    m_pChild->m_pPrior = pNode;
-    m_pChild = pNode;
+    pNode->next_sibling_ = first_child_;
+    pNode->prev_sibling_ = nullptr;
+    first_child_->prev_sibling_ = pNode;
+    first_child_ = pNode;
     return;
   }
 
   int32_t iCount = 0;
-  CFX_XMLNode* pFind = m_pChild;
-  while (++iCount != index && pFind->m_pNext)
-    pFind = pFind->m_pNext;
+  CFX_XMLNode* pFind = first_child_;
+  while (++iCount != index && pFind->next_sibling_)
+    pFind = pFind->next_sibling_;
 
-  pNode->m_pPrior = pFind;
-  pNode->m_pNext = pFind->m_pNext;
-  if (pFind->m_pNext)
-    pFind->m_pNext->m_pPrior = pNode;
-  pFind->m_pNext = pNode;
+  pNode->prev_sibling_ = pFind;
+  pNode->next_sibling_ = pFind->next_sibling_;
+  if (pFind->next_sibling_)
+    pFind->next_sibling_->prev_sibling_ = pNode;
+  pFind->next_sibling_ = pNode;
 }
 
 void CFX_XMLNode::RemoveChildNode(CFX_XMLNode* pNode) {
-  ASSERT(m_pChild && pNode);
+  ASSERT(first_child_ && pNode);
 
-  if (m_pChild == pNode)
-    m_pChild = pNode->m_pNext;
+  if (first_child_ == pNode)
+    first_child_ = pNode->next_sibling_;
   else
-    pNode->m_pPrior->m_pNext = pNode->m_pNext;
+    pNode->prev_sibling_->next_sibling_ = pNode->next_sibling_;
 
-  if (pNode->m_pNext)
-    pNode->m_pNext->m_pPrior = pNode->m_pPrior;
+  if (pNode->next_sibling_)
+    pNode->next_sibling_->prev_sibling_ = pNode->prev_sibling_;
 
-  pNode->m_pParent = nullptr;
-  pNode->m_pNext = nullptr;
-  pNode->m_pPrior = nullptr;
+  pNode->parent_ = nullptr;
+  pNode->next_sibling_ = nullptr;
+  pNode->prev_sibling_ = nullptr;
 }
 
-CFX_XMLNode* CFX_XMLNode::GetNodeItem(CFX_XMLNode::NodeItem eItem) const {
-  switch (eItem) {
-    case CFX_XMLNode::Root: {
-      CFX_XMLNode* pParent = (CFX_XMLNode*)this;
-      while (pParent->m_pParent)
-        pParent = pParent->m_pParent;
+CFX_XMLNode* CFX_XMLNode::GetRoot() {
+  CFX_XMLNode* pParent = this;
+  while (pParent->parent_)
+    pParent = pParent->parent_;
 
-      return pParent;
-    }
-    case CFX_XMLNode::Parent:
-      return m_pParent;
-    case CFX_XMLNode::NextSibling:
-      return m_pNext;
-    case CFX_XMLNode::FirstChild:
-      return m_pChild;
-  }
-  return nullptr;
+  return pParent;
 }
 
 std::unique_ptr<CFX_XMLNode> CFX_XMLNode::Clone() {
@@ -183,13 +169,13 @@ void CFX_XMLNode::SaveXMLNode(
         ws += L"\"";
         pXMLStream->WriteString(ws.AsStringView());
       }
-      if (pNode->m_pChild) {
+      if (pNode->first_child_) {
         ws = L"\n>";
         pXMLStream->WriteString(ws.AsStringView());
-        CFX_XMLNode* pChild = pNode->m_pChild;
+        CFX_XMLNode* pChild = pNode->first_child_;
         while (pChild) {
           pChild->SaveXMLNode(pXMLStream);
-          pChild = pChild->m_pNext;
+          pChild = pChild->next_sibling_;
         }
         ws = L"</";
         ws += static_cast<CFX_XMLElement*>(pNode)->GetName();

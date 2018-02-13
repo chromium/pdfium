@@ -55,7 +55,7 @@ bool CXFA_DataImporter::ImportData(
     }
   } else {
     CFX_XMLNode* pXMLNode = pImportDataRoot->GetXMLMappingNode();
-    CFX_XMLNode* pParentXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::Parent);
+    CFX_XMLNode* pParentXMLNode = pXMLNode->GetParent();
     if (pParentXMLNode)
       pParentXMLNode->RemoveChildNode(pXMLNode);
     pDataModel->InsertChild(pImportDataRoot, nullptr);

@@ -1154,7 +1154,7 @@ void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   if (!IsNeedSavingXMLNode() || !pNode->m_pXMLNode)
     return;
 
-  ASSERT(!pNode->m_pXMLNode->GetNodeItem(CFX_XMLNode::Parent));
+  ASSERT(!pNode->m_pXMLNode->GetParent());
 
   m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, index);
   pNode->ClearFlag(XFA_NodeFlag_OwnXMLNode);

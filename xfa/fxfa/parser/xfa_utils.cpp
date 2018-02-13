@@ -211,8 +211,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (!pExDataXML)
           break;
 
-        CFX_XMLNode* pRichTextXML =
-            pExDataXML->GetNodeItem(CFX_XMLNode::FirstChild);
+        CFX_XMLNode* pRichTextXML = pExDataXML->GetFirstChild();
         if (!pRichTextXML)
           break;
 
@@ -464,7 +463,7 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
   if (!pNode)
     return false;
 
-  CFX_XMLNode* pFakeRoot = pNode->GetNodeItem(CFX_XMLNode::Root);
+  CFX_XMLNode* pFakeRoot = pNode->GetRoot();
   WideString wsNSAttribute;
   bool bRet = false;
   if (wsQualifier.IsEmpty()) {
@@ -474,7 +473,7 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
     wsNSAttribute = L"xmlns:" + wsQualifier;
   }
   for (CFX_XMLNode* pParent = pNode; pParent != pFakeRoot;
-       pParent = pParent->GetNodeItem(CFX_XMLNode::Parent)) {
+       pParent = pParent->GetParent()) {
     if (pParent->GetType() != FX_XMLNODE_Element)
       continue;
 

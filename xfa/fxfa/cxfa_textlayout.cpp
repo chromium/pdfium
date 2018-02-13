@@ -78,9 +78,8 @@ CFX_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
     return nullptr;
 
   CFX_XMLNode* pXMLContainer = nullptr;
-  for (CFX_XMLNode* pXMLChild = pXMLRoot->GetNodeItem(CFX_XMLNode::FirstChild);
-       pXMLChild;
-       pXMLChild = pXMLChild->GetNodeItem(CFX_XMLNode::NextSibling)) {
+  for (CFX_XMLNode* pXMLChild = pXMLRoot->GetFirstChild(); pXMLChild;
+       pXMLChild = pXMLChild->GetNextSibling()) {
     if (pXMLChild->GetType() == FX_XMLNODE_Element) {
       CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
       WideString wsTag = pXMLElement->GetLocalTagName();
@@ -463,15 +462,14 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
         return true;
 
       CFX_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
-      for (; pXMLNode;
-           pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+      for (; pXMLNode; pXMLNode = pXMLNode->GetNextSibling()) {
         if (!LoadRichText(pXMLNode, szText.width, fLinePos,
                           m_pLoader->m_pParentStyle, true, nullptr)) {
           break;
         }
       }
       while (!pXMLNode) {
-        pXMLNode = pSaveXMLNode->GetNodeItem(CFX_XMLNode::Parent);
+        pXMLNode = pSaveXMLNode->GetParent();
         if (pXMLNode == pContainerNode)
           break;
         if (!LoadRichText(pXMLNode, szText.width, fLinePos,
@@ -479,11 +477,10 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
           break;
         }
         pSaveXMLNode = pXMLNode;
-        pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling);
+        pXMLNode = pXMLNode->GetNextSibling();
         if (!pXMLNode)
           continue;
-        for (; pXMLNode;
-             pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+        for (; pXMLNode; pXMLNode = pXMLNode->GetNextSibling()) {
           if (!LoadRichText(pXMLNode, szText.width, fLinePos,
                             m_pLoader->m_pParentStyle, true, nullptr)) {
             break;
@@ -824,10 +821,8 @@ bool CXFA_TextLayout::LoadRichText(
       }
     }
 
-    for (CFX_XMLNode* pChildNode =
-             pXMLNode->GetNodeItem(CFX_XMLNode::FirstChild);
-         pChildNode;
-         pChildNode = pChildNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+    for (CFX_XMLNode* pChildNode = pXMLNode->GetFirstChild(); pChildNode;
+         pChildNode = pChildNode->GetNextSibling()) {
       if (bCurOl)
         iLiCount++;
 
@@ -861,8 +856,7 @@ bool CXFA_TextLayout::LoadRichText(
       }
       if (IsEnd(bSavePieces)) {
         if (m_pLoader && m_pLoader->m_iTotalLines > -1) {
-          m_pLoader->m_pXMLNode =
-              pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling);
+          m_pLoader->m_pXMLNode = pXMLNode->GetNextSibling();
           m_pLoader->m_pParentStyle = pParentStyle;
         }
         return false;

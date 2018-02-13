@@ -175,9 +175,8 @@ bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,
                                   uint8_t*& pByteBuffer,
                                   int32_t& iBufferSize) {
   CFX_XMLElement* pDocumentElement = nullptr;
-  for (CFX_XMLNode* pXMLNode =
-           pPDFElement->GetNodeItem(CFX_XMLNode::FirstChild);
-       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+  for (CFX_XMLNode* pXMLNode = pPDFElement->GetFirstChild(); pXMLNode;
+       pXMLNode = pXMLNode->GetNextSibling()) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element) {
       CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
       WideString wsTagName = pXMLElement->GetName();
@@ -191,9 +190,8 @@ bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,
     return false;
   }
   CFX_XMLElement* pChunkElement = nullptr;
-  for (CFX_XMLNode* pXMLNode =
-           pDocumentElement->GetNodeItem(CFX_XMLNode::FirstChild);
-       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+  for (CFX_XMLNode* pXMLNode = pDocumentElement->GetFirstChild(); pXMLNode;
+       pXMLNode = pXMLNode->GetNextSibling()) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element) {
       CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
       WideString wsTagName = pXMLElement->GetName();
