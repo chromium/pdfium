@@ -179,7 +179,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* Clone(bool bRecursive);
 
   CXFA_Node* GetNextSibling() const { return next_sibling_; }
-  CXFA_Node* GetPrevSibling() const;
+  CXFA_Node* GetPrevSibling() const { return prev_sibling_; }
   CXFA_Node* GetFirstChild() const { return first_child_; }
   CXFA_Node* GetLastChild() const { return last_child_; }
   CXFA_Node* GetParent() const { return parent_; }
@@ -499,6 +499,7 @@ class CXFA_Node : public CXFA_Object {
   // order that doesn't necessarily match up to the tree structure.
   CXFA_Node* parent_;
   CXFA_Node* next_sibling_;
+  CXFA_Node* prev_sibling_;
   CXFA_Node* first_child_;
   CXFA_Node* last_child_;
 
