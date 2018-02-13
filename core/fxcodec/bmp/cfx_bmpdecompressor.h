@@ -25,7 +25,7 @@ class CFX_BmpDecompressor {
   int32_t DecodeImage();
   int32_t ReadHeader();
   void SetInputBuffer(uint8_t* src_buf, uint32_t src_size);
-  uint32_t GetAvailInput(uint8_t** avail_buf);
+  FX_FILESIZE GetAvailInput(uint8_t** avail_buf);
 
   jmp_buf jmpbuf_;
 

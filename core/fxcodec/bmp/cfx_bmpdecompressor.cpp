@@ -649,7 +649,7 @@ void CFX_BmpDecompressor::SetInputBuffer(uint8_t* src_buf, uint32_t src_size) {
       pdfium::MakeRetain<CFX_MemoryStream>(src_buf, src_size, false);
 }
 
-uint32_t CFX_BmpDecompressor::GetAvailInput(uint8_t** avail_buf) {
+FX_FILESIZE CFX_BmpDecompressor::GetAvailInput(uint8_t** avail_buf) {
   if (!input_buffer_)
     return 0;
 

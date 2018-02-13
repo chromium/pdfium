@@ -63,8 +63,8 @@ int32_t CCodec_BmpModule::LoadImage(Context* pContext) {
   return ctx->m_Bmp.DecodeImage();
 }
 
-uint32_t CCodec_BmpModule::GetAvailInput(Context* pContext,
-                                         uint8_t** avail_buf_ptr) {
+FX_FILESIZE CCodec_BmpModule::GetAvailInput(Context* pContext,
+                                            uint8_t** avail_buf_ptr) {
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
   return ctx->m_Bmp.GetAvailInput(avail_buf_ptr);
 }

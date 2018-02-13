@@ -836,7 +836,12 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
     return false;
 
   dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pBmpModule->GetAvailInput(m_pBmpContext.get(), nullptr);
+  FX_SAFE_UINT32 avail_input =
+      pBmpModule->GetAvailInput(m_pBmpContext.get(), nullptr);
+  if (!avail_input.IsValid())
+    return false;
+
+  uint32_t dwAvail = avail_input.ValueOrDie();
   if (dwAvail == m_SrcSize) {
     if (dwSize > FXCODEC_BLOCK_SIZE) {
       dwSize = FXCODEC_BLOCK_SIZE;
