@@ -20,6 +20,7 @@ class CFX_XMLText : public CFX_XMLNode {
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
+  void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
 
   WideString GetText() const { return m_wsText; }
   void SetText(const WideString& wsText) { m_wsText = wsText; }

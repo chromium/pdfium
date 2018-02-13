@@ -21,6 +21,7 @@ class CFX_XMLInstruction : public CFX_XMLAttributeNode {
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
+  void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
 
   const std::vector<WideString>& GetTargetData() const { return m_TargetData; }
   void AppendData(const WideString& wsData);

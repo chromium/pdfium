@@ -101,3 +101,31 @@ void CFX_XMLElement::SetTextData(const WideString& wsText) {
     return;
   AppendChild(new CFX_XMLText(wsText));
 }
+
+void CFX_XMLElement::Save(
+    const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
+  WideString ws(L"<");
+  ws += GetName();
+  pXMLStream->WriteString(ws.AsStringView());
+
+  for (auto it : GetAttributes()) {
+    pXMLStream->WriteString(
+        AttributeToString(it.first, it.second).AsStringView());
+  }
+
+  if (GetFirstChild()) {
+    ws = L"\n>";
+    pXMLStream->WriteString(ws.AsStringView());
+    CFX_XMLNode* pChild = GetFirstChild();
+    while (pChild) {
+      pChild->Save(pXMLStream);
+      pChild = pChild->GetNextSibling();
+    }
+    ws = L"</";
+    ws += GetName();
+    ws += L"\n>";
+  } else {
+    ws = L"\n/>";
+  }
+  pXMLStream->WriteString(ws.AsStringView());
+}

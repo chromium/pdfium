@@ -21,6 +21,7 @@ class CFX_XMLElement : public CFX_XMLAttributeNode {
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
+  void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
 
   WideString GetLocalTagName() const;
   WideString GetNamespacePrefix() const;

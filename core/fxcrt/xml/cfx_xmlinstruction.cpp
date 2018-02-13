@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -35,4 +36,38 @@ void CFX_XMLInstruction::AppendData(const WideString& wsData) {
 void CFX_XMLInstruction::RemoveData(int32_t index) {
   if (pdfium::IndexInBounds(m_TargetData, index))
     m_TargetData.erase(m_TargetData.begin() + index);
+}
+
+void CFX_XMLInstruction::Save(
+    const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
+  if (GetName().CompareNoCase(L"xml") == 0) {
+    WideString ws = L"<?xml version=\"1.0\" encoding=\"";
+    uint16_t wCodePage = pXMLStream->GetCodePage();
+    if (wCodePage == FX_CODEPAGE_UTF16LE)
+      ws += L"UTF-16";
+    else if (wCodePage == FX_CODEPAGE_UTF16BE)
+      ws += L"UTF-16be";
+    else
+      ws += L"UTF-8";
+
+    ws += L"\"?>";
+    pXMLStream->WriteString(ws.AsStringView());
+    return;
+  }
+
+  pXMLStream->WriteString(
+      WideString::Format(L"<?%ls", GetName().c_str()).AsStringView());
+  for (auto it : GetAttributes()) {
+    pXMLStream->WriteString(
+        AttributeToString(it.first, it.second).AsStringView());
+  }
+
+  for (auto target : m_TargetData) {
+    WideString ws = L" \"";
+    ws += target;
+    ws += L"\"";
+    pXMLStream->WriteString(ws.AsStringView());
+  }
+
+  pXMLStream->WriteString(WideStringView(L"?>"));
 }

@@ -32,6 +32,7 @@ class CFX_XMLNode {
 
   virtual FX_XMLNODETYPE GetType() const;
   virtual std::unique_ptr<CFX_XMLNode> Clone();
+  virtual void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream);
 
   CFX_XMLNode* GetRoot();
   CFX_XMLNode* GetParent() const { return parent_; }
@@ -43,7 +44,9 @@ class CFX_XMLNode {
   void RemoveChildNode(CFX_XMLNode* pNode);
   void DeleteChildren();
 
-  void SaveXMLNode(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream);
+ protected:
+  WideString AttributeToString(WideString name, WideString value);
+  WideString EncodeEntities(WideString value);
 
  private:
   CFX_XMLNode* parent_ = nullptr;
