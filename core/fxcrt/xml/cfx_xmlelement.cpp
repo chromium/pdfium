@@ -29,16 +29,10 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
   pClone->SetAttributes(GetAttributes());
 
   WideString wsText;
-  CFX_XMLNode* pChild = GetFirstChild();
-  while (pChild) {
-    switch (pChild->GetType()) {
-      case FX_XMLNODE_Text:
-        wsText += static_cast<CFX_XMLText*>(pChild)->GetText();
-        break;
-      default:
-        break;
-    }
-    pChild = pChild->GetNextSibling();
+  for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    if (pChild->GetType() == FX_XMLNODE_Text)
+      wsText += static_cast<CFX_XMLText*>(pChild)->GetText();
   }
   pClone->SetTextData(wsText);
   return std::move(pClone);
@@ -81,17 +75,13 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
 
 WideString CFX_XMLElement::GetTextData() const {
   CFX_WideTextBuf buffer;
-  CFX_XMLNode* pChild = GetFirstChild();
-  while (pChild) {
-    switch (pChild->GetType()) {
-      case FX_XMLNODE_Text:
-      case FX_XMLNODE_CharData:
-        buffer << static_cast<CFX_XMLText*>(pChild)->GetText();
-        break;
-      default:
-        break;
+
+  for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    if (pChild->GetType() == FX_XMLNODE_Text ||
+        pChild->GetType() == FX_XMLNODE_CharData) {
+      buffer << static_cast<CFX_XMLText*>(pChild)->GetText();
     }
-    pChild = pChild->GetNextSibling();
   }
   return buffer.MakeString();
 }
@@ -116,10 +106,10 @@ void CFX_XMLElement::Save(
   if (GetFirstChild()) {
     ws = L"\n>";
     pXMLStream->WriteString(ws.AsStringView());
-    CFX_XMLNode* pChild = GetFirstChild();
-    while (pChild) {
+
+    for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
+         pChild = pChild->GetNextSibling()) {
       pChild->Save(pXMLStream);
-      pChild = pChild->GetNextSibling();
     }
     ws = L"</";
     ws += GetName();

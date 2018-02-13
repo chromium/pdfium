@@ -101,8 +101,7 @@ const PacketInfo* GetPacketByName(const WideStringView& wsName) {
   return nullptr;
 }
 
-CFX_XMLNode* GetDocumentNode(CFX_XMLDoc* pXMLDoc,
-                             bool bVerifyWellFormness = false) {
+CFX_XMLNode* GetDocumentNode(CFX_XMLDoc* pXMLDoc) {
   if (!pXMLDoc)
     return nullptr;
 
@@ -111,14 +110,6 @@ CFX_XMLNode* GetDocumentNode(CFX_XMLDoc* pXMLDoc,
     if (pXMLNode->GetType() != FX_XMLNODE_Element)
       continue;
 
-    if (!bVerifyWellFormness)
-      return pXMLNode;
-
-    for (CFX_XMLNode* pNextNode = pXMLNode->GetNextSibling(); pNextNode;
-         pNextNode = pNextNode->GetNextSibling()) {
-      if (pNextNode->GetType() == FX_XMLNODE_Element)
-        return nullptr;
-    }
     return pXMLNode;
   }
   return nullptr;

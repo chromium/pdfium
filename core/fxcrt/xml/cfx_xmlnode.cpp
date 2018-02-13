@@ -27,6 +27,7 @@ FX_XMLNODETYPE CFX_XMLNode::GetType() const {
 void CFX_XMLNode::DeleteChildren() {
   CFX_XMLNode* pChild = first_child_;
   first_child_ = nullptr;
+  last_child_ = nullptr;
 
   while (pChild) {
     CFX_XMLNode* pNext = pChild->next_sibling_;
@@ -44,11 +45,15 @@ void CFX_XMLNode::InsertChildNode(CFX_XMLNode* pNode, int32_t index) {
 
   pNode->parent_ = this;
   if (!first_child_) {
+    ASSERT(!last_child_);
+
     first_child_ = pNode;
+    last_child_ = pNode;
     pNode->prev_sibling_ = nullptr;
     pNode->next_sibling_ = nullptr;
     return;
   }
+
   if (index == 0) {
     pNode->next_sibling_ = first_child_;
     pNode->prev_sibling_ = nullptr;
@@ -66,7 +71,10 @@ void CFX_XMLNode::InsertChildNode(CFX_XMLNode* pNode, int32_t index) {
   pNode->next_sibling_ = pFind->next_sibling_;
   if (pFind->next_sibling_)
     pFind->next_sibling_->prev_sibling_ = pNode;
+
   pFind->next_sibling_ = pNode;
+  if (pFind == last_child_)
+    last_child_ = pNode;
 }
 
 void CFX_XMLNode::RemoveChildNode(CFX_XMLNode* pNode) {
@@ -76,6 +84,9 @@ void CFX_XMLNode::RemoveChildNode(CFX_XMLNode* pNode) {
     first_child_ = pNode->next_sibling_;
   else
     pNode->prev_sibling_->next_sibling_ = pNode->next_sibling_;
+
+  if (last_child_ == pNode)
+    last_child_ = pNode->prev_sibling_;
 
   if (pNode->next_sibling_)
     pNode->next_sibling_->prev_sibling_ = pNode->prev_sibling_;

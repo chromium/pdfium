@@ -50,9 +50,10 @@ class CFX_XMLNode {
 
  private:
   CFX_XMLNode* parent_ = nullptr;
-  CFX_XMLNode* first_child_ = nullptr;
-  CFX_XMLNode* prev_sibling_ = nullptr;
   CFX_XMLNode* next_sibling_ = nullptr;
+  CFX_XMLNode* prev_sibling_ = nullptr;
+  CFX_XMLNode* first_child_ = nullptr;
+  CFX_XMLNode* last_child_ = nullptr;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLNODE_H_
