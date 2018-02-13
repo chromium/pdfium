@@ -13,6 +13,8 @@
 #include "fxjs/cfxjse_runtimedata.h"
 #include "fxjs/cjs_object.h"
 
+class CFXJS_PerObjectData;
+
 // Keep this consistent with the values defined in gin/public/context_holder.h
 // (without actually requiring a dependency on gin itself for the standalone
 // embedders of PDFIum). The value we want to use is:
@@ -26,44 +28,48 @@ static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 static wchar_t kPerObjectDataTag[] = L"CFXJS_PerObjectData";
 
 // Global weak map to save dynamic objects.
-class V8TemplateMapTraits : public v8::StdMapTraits<void*, v8::Object> {
+class V8TemplateMapTraits
+    : public v8::StdMapTraits<CFXJS_PerObjectData*, v8::Object> {
  public:
-  using MapType = v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits>;
-  using WeakCallbackDataType = void;
+  using WeakCallbackDataType = CFXJS_PerObjectData;
+  using MapType = v8::
+      GlobalValueMap<WeakCallbackDataType*, v8::Object, V8TemplateMapTraits>;
 
   static const v8::PersistentContainerCallbackType kCallbackType =
       v8::kWeakWithInternalFields;
 
-  static WeakCallbackDataType*
-  WeakCallbackParameter(MapType* map, void* key, v8::Local<v8::Object> value) {
+  static WeakCallbackDataType* WeakCallbackParameter(
+      MapType* map,
+      WeakCallbackDataType* key,
+      v8::Local<v8::Object> value) {
     return key;
   }
   static MapType* MapFromWeakCallbackInfo(
       const v8::WeakCallbackInfo<WeakCallbackDataType>&);
-  static void* KeyFromWeakCallbackInfo(
+  static WeakCallbackDataType* KeyFromWeakCallbackInfo(
       const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
     return data.GetParameter();
   }
   static void OnWeakCallback(
       const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {}
   static void DisposeWeak(
-      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
-    // TODO(tsepez): this is expected be called during GC.
-  }
+      const v8::WeakCallbackInfo<WeakCallbackDataType>& data);
   static void Dispose(v8::Isolate* isolate,
                       v8::Global<v8::Object> value,
-                      void* key);
+                      WeakCallbackDataType* key);
   static void DisposeCallbackData(WeakCallbackDataType* callbackData) {}
 };
 
 class V8TemplateMap {
  public:
-  using MapType = v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits>;
+  using WeakCallbackDataType = CFXJS_PerObjectData;
+  using MapType = v8::
+      GlobalValueMap<WeakCallbackDataType*, v8::Object, V8TemplateMapTraits>;
 
   explicit V8TemplateMap(v8::Isolate* isolate) : m_map(isolate) {}
   ~V8TemplateMap() = default;
 
-  void SetAndMakeWeak(void* key, v8::Local<v8::Object> handle) {
+  void SetAndMakeWeak(WeakCallbackDataType* key, v8::Local<v8::Object> handle) {
     ASSERT(!m_map.Contains(key));
 
     // Inserting an object into a GlobalValueMap with the appropriate traits
@@ -202,7 +208,7 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
 
 void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
                                   v8::Global<v8::Object> value,
-                                  void* key) {
+                                  WeakCallbackDataType* key) {
   v8::Local<v8::Object> obj = value.Get(isolate);
   if (obj.IsEmpty())
     return;
@@ -217,10 +223,15 @@ void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
   CFXJS_Engine::FreeObjectPrivate(obj);
 }
 
+void V8TemplateMapTraits::DisposeWeak(
+    const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
+  // TODO(tsepez): this is expected be called during GC.
+}
+
 V8TemplateMapTraits::MapType* V8TemplateMapTraits::MapFromWeakCallbackInfo(
     const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
   V8TemplateMap* pMap =
-      (FXJS_PerIsolateData::Get(data.GetIsolate()))->m_pDynamicObjsMap.get();
+      FXJS_PerIsolateData::Get(data.GetIsolate())->m_pDynamicObjsMap.get();
   return pMap ? &pMap->m_map : nullptr;
 }
 
