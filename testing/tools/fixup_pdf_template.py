@@ -13,12 +13,19 @@ script replaces {{name}}-style variables in the input with calculated results
   {{trailer}}    - expands to a standard trailer with "1 0 R" as the /Root.
   {{startxref}   - expands to a startxref directive followed by correct offset.
   {{object x y}} - expands to |x y obj| declaration, noting the offset.
+  {{streamlen}}  - expands to |/Length n|.
 """
 
+import cStringIO
 import optparse
 import os
 import re
 import sys
+
+class StreamLenState:
+  START = 1
+  FIND_STREAM = 2
+  FIND_ENDSTREAM = 3
 
 class TemplateProcessor:
   HEADER_TOKEN = '{{header}}'
@@ -41,7 +48,12 @@ class TemplateProcessor:
   OBJECT_PATTERN = r'\{\{object\s+(\d+)\s+(\d+)\}\}'
   OBJECT_REPLACEMENT = r'\1 \2 obj'
 
+  STREAMLEN_TOKEN = '{{streamlen}}'
+  STREAMLEN_REPLACEMENT = '/Length %d'
+
   def __init__(self):
+    self.streamlen_state = StreamLenState.START
+    self.streamlens = []
     self.offset = 0
     self.xref_offset = 0
     self.max_object_number = 0
@@ -60,9 +72,30 @@ class TemplateProcessor:
         result += self.XREF_REPLACEMENT_F
     return result
 
+  def preprocess_line(self, line):
+    if self.STREAMLEN_TOKEN in line:
+      assert(self.streamlen_state == StreamLenState.START)
+      self.streamlen_state = StreamLenState.FIND_STREAM
+      self.streamlens.append(0)
+      return
+
+    if (self.streamlen_state == StreamLenState.FIND_STREAM and
+        line.rstrip() == 'stream'):
+      self.streamlen_state = StreamLenState.FIND_ENDSTREAM
+      return
+
+    if self.streamlen_state == StreamLenState.FIND_ENDSTREAM:
+      if line.rstrip() == 'endstream':
+        self.streamlen_state = StreamLenState.START
+      else:
+        self.streamlens[-1] += len(line)
+
   def process_line(self, line):
     if self.HEADER_TOKEN in line:
       line = line.replace(self.HEADER_TOKEN, self.HEADER_REPLACEMENT)
+    if self.STREAMLEN_TOKEN in line:
+      sub = self.STREAMLEN_REPLACEMENT % self.streamlens.pop(0)
+      line = re.sub(self.STREAMLEN_TOKEN, sub, line)
     if self.XREF_TOKEN in line:
       self.xref_offset = self.offset
       line = self.generate_xref_table()
@@ -76,6 +109,7 @@ class TemplateProcessor:
     if match:
       self.insert_xref_entry(int(match.group(1)), int(match.group(2)))
       line = re.sub(self.OBJECT_PATTERN, self.OBJECT_REPLACEMENT, line)
+
     self.offset += len(line)
     return line
 
@@ -85,7 +119,12 @@ def expand_file(input_path, output_path):
   try:
     with open(input_path, 'rb') as infile:
       with open(output_path, 'wb') as outfile:
+        preprocessed = cStringIO.StringIO()
         for line in infile:
+          preprocessed.write(line)
+          processor.preprocess_line(line)
+        preprocessed.seek(0)
+        for line in preprocessed:
           outfile.write(processor.process_line(line))
   except IOError:
     print >> sys.stderr, 'failed to process %s' % input_path
