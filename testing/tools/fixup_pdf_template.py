@@ -35,7 +35,7 @@ class TemplateProcessor:
   TRAILER_TOKEN = '{{trailer}}'
   TRAILER_REPLACEMENT = 'trailer<< /Root 1 0 R /Size %d >>'
 
-  STARTXREF_TOKEN= '{{startxref}}'
+  STARTXREF_TOKEN = '{{startxref}}'
   STARTXREF_REPLACEMENT = 'startxref\n%d'
 
   OBJECT_PATTERN = r'\{\{object\s+(\d+)\s+(\d+)\}\}'
@@ -45,7 +45,7 @@ class TemplateProcessor:
     self.offset = 0
     self.xref_offset = 0
     self.max_object_number = 0
-    self.objects = { }
+    self.objects = {}
 
   def insert_xref_entry(self, object_number, generation_number):
     self.objects[object_number] = (self.offset, generation_number)
@@ -86,7 +86,7 @@ def expand_file(input_path, output_path):
     with open(input_path, 'rb') as infile:
       with open(output_path, 'wb') as outfile:
         for line in infile:
-           outfile.write(processor.process_line(line))
+          outfile.write(processor.process_line(line))
   except IOError:
     print >> sys.stderr, 'failed to process %s' % input_path
 
