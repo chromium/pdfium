@@ -274,7 +274,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
       CXFA_Node* pItem = pNewChild->GetNextSibling();
       pFakeRoot->RemoveChild(pNewChild, true);
       GetXFANode()->InsertChild(index++, pNewChild);
-      pNewChild->SetFlag(XFA_NodeFlag_Initialized, true);
+      pNewChild->SetFlagAndNotify(XFA_NodeFlag_Initialized);
       pNewChild = pItem;
     }
 
@@ -289,7 +289,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
         GetXFANode()->GetElementType() == XFA_Element::ExData) {
       CFX_XMLNode* pTempXMLNode = GetXFANode()->GetXMLMappingNode();
       GetXFANode()->SetXMLMappingNode(pFakeXMLRoot.release());
-      GetXFANode()->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+      GetXFANode()->SetFlag(XFA_NodeFlag_OwnXMLNode);
       if (pTempXMLNode && !pTempXMLNode->GetParent())
         pFakeXMLRoot.reset(pTempXMLNode);
       else
@@ -302,16 +302,16 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
       CXFA_Node* pItem = pChild->GetNextSibling();
       pFakeRoot->RemoveChild(pChild, true);
       GetXFANode()->InsertChild(pChild, nullptr);
-      pChild->SetFlag(XFA_NodeFlag_Initialized, true);
+      pChild->SetFlagAndNotify(XFA_NodeFlag_Initialized);
       pChild = pItem;
     }
   }
 
   if (pFakeXMLRoot) {
     pFakeRoot->SetXMLMappingNode(pFakeXMLRoot.release());
-    pFakeRoot->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+    pFakeRoot->SetFlag(XFA_NodeFlag_OwnXMLNode);
   }
-  pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren, false);
+  pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren);
 
   return CJS_Return(true);
 }

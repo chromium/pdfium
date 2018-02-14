@@ -69,7 +69,7 @@ void MergeNode(CXFA_Document* pDocument,
     CXFA_NodeIterator sIterator(pDestNode);
     for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
          pNode = sIterator.MoveToNext()) {
-      pNode->SetFlag(XFA_NodeFlag_UnusedNode, true);
+      pNode->SetFlag(XFA_NodeFlag_UnusedNode);
     }
   }
   pDestNode->SetTemplateNode(pProtoNode);

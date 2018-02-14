@@ -942,7 +942,7 @@ CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
       return nullptr;
 
     xfaNode->InsertChild(pNewNode, nullptr);
-    pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);
+    pNewNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
   }
   return pNewNode;
 }

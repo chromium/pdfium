@@ -115,7 +115,8 @@ class CXFA_Node : public CXFA_Object {
 
   XFA_PacketType GetPacketType() const { return m_ePacket; }
 
-  void SetFlag(uint32_t dwFlag, bool bNotify);
+  void SetFlag(uint32_t dwFlag);
+  void SetFlagAndNotify(uint32_t dwFlag);
   void ClearFlag(uint32_t dwFlag);
 
   CXFA_Node* CreateInstanceIfPossible(bool bDataMerge);

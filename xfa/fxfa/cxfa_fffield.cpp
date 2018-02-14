@@ -697,7 +697,7 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
       wsMessage += L"Are you sure you want to modify this field?";
       if (pAppProvider->MsgBox(wsMessage, L"Calculate Override",
                                XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
-        pNode->SetFlag(XFA_NodeFlag_UserInteractive, false);
+        pNode->SetFlag(XFA_NodeFlag_UserInteractive);
         return 1;
       }
       return 0;
@@ -705,7 +705,7 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
     case XFA_AttributeEnum::Ignore:
       return 0;
     case XFA_AttributeEnum::Disabled:
-      pNode->SetFlag(XFA_NodeFlag_UserInteractive, false);
+      pNode->SetFlag(XFA_NodeFlag_UserInteractive);
       return 1;
     default:
       return 1;

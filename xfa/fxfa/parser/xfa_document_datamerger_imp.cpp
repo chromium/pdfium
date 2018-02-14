@@ -729,7 +729,7 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
         pOccurNode->ClearFlag(XFA_NodeFlag_UnusedNode);
     }
     if (pInstMgrNode) {
-      pInstMgrNode->SetFlag(XFA_NodeFlag_Initialized, true);
+      pInstMgrNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
       pSearchArray = &subformArray;
       if (pFormParentNode->GetElementType() == XFA_Element::PageArea) {
         bOneInstance = true;
@@ -1029,7 +1029,7 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
     pDataNode->JSObject()->SetCData(XFA_Attribute::Name, wsName, false, false);
     pDataNode->CreateXMLMappingNode();
     pDataParent->InsertChild(pDataNode, nullptr);
-    pDataNode->SetFlag(XFA_NodeFlag_Initialized, false);
+    pDataNode->SetFlag(XFA_NodeFlag_Initialized);
     return pDataNode;
   }
 
@@ -1065,7 +1065,7 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
     }
     pDataParent->InsertChild(pDataNode, nullptr);
     pDataNode->SetDataDescriptionNode(pDDNode);
-    pDataNode->SetFlag(XFA_NodeFlag_Initialized, false);
+    pDataNode->SetFlag(XFA_NodeFlag_Initialized);
     return pDataNode;
   }
   return nullptr;
@@ -1285,7 +1285,7 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
         }
       }
     }
-    pExistingNode->SetFlag(XFA_NodeFlag_Initialized, true);
+    pExistingNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
     return pExistingNode;
   }
 
@@ -1448,7 +1448,7 @@ void CXFA_Document::DoDataMerge() {
         sIterator(pFormRoot);
     for (CXFA_Node* pNode = sIterator.MoveToNext(); pNode;
          pNode = sIterator.MoveToNext()) {
-      pNode->SetFlag(XFA_NodeFlag_UnusedNode, true);
+      pNode->SetFlag(XFA_NodeFlag_UnusedNode);
     }
   }
 
@@ -1513,11 +1513,11 @@ void CXFA_Document::DoDataMerge() {
         pNode = pNext;
       } else {
         pNode->ClearFlag(XFA_NodeFlag_UnusedNode);
-        pNode->SetFlag(XFA_NodeFlag_Initialized, true);
+        pNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
         pNode = sIterator.MoveToNext();
       }
     } else {
-      pNode->SetFlag(XFA_NodeFlag_Initialized, true);
+      pNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
       pNode = sIterator.MoveToNext();
     }
   }

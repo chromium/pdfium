@@ -566,7 +566,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       pCloneXML = m_pXMLNode->Clone();
     }
     pClone->SetXMLMappingNode(pCloneXML.release());
-    pClone->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+    pClone->SetFlag(XFA_NodeFlag_OwnXMLNode);
   }
   if (bRecursive) {
     for (CXFA_Node* pChild = GetFirstChild(); pChild;
@@ -574,7 +574,7 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       pClone->InsertChild(pChild->Clone(bRecursive), nullptr);
     }
   }
-  pClone->SetFlag(XFA_NodeFlag_Initialized, true);
+  pClone->SetFlagAndNotify(XFA_NodeFlag_Initialized);
   pClone->SetBindingNode(nullptr);
   return pClone;
 }
@@ -748,7 +748,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   CXFA_Node* pNewNode = m_pDocument->CreateNode(GetPacketType(), *property);
   if (pNewNode) {
     InsertChild(pNewNode, nullptr);
-    pNewNode->SetFlag(XFA_NodeFlag_Initialized, true);
+    pNewNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
     nodes.push_back(pNewNode);
   }
   return nodes;
@@ -756,7 +756,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
 
 CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
   CXFA_Node* pNode = m_pDocument->CreateNode(m_ePacket, eType);
-  pNode->SetFlag(XFA_NodeFlag_Initialized, true);
+  pNode->SetFlagAndNotify(XFA_NodeFlag_Initialized);
   return pNode;
 }
 
@@ -776,7 +776,7 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
       pClone->InsertChild(pChild->CloneTemplateToForm(bRecursive), nullptr);
     }
   }
-  pClone->SetFlag(XFA_NodeFlag_Initialized, true);
+  pClone->SetFlagAndNotify(XFA_NodeFlag_Initialized);
   return pClone;
 }
 
@@ -1186,7 +1186,7 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
     PDFIUM_IMMEDIATE_CRASH();
   }
 
-  pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren, true);
+  pNode->SetFlag(XFA_NodeFlag_HasRemovedChildren);
 
   if (first_child_ == pNode && last_child_ == pNode) {
     first_child_ = nullptr;
@@ -1236,7 +1236,7 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
   } else {
     m_pXMLNode->RemoveChildNode(pNode->m_pXMLNode);
   }
-  pNode->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+  pNode->SetFlag(XFA_NodeFlag_OwnXMLNode);
 }
 
 CXFA_Node* CXFA_Node::GetFirstChildByName(const WideStringView& wsName) const {
@@ -1325,13 +1325,19 @@ bool CXFA_Node::HasFlag(XFA_NodeFlag dwFlag) const {
   return false;
 }
 
-void CXFA_Node::SetFlag(uint32_t dwFlag, bool bNotify) {
-  if (dwFlag == XFA_NodeFlag_Initialized && bNotify && !IsInitialized()) {
+void CXFA_Node::SetFlagAndNotify(uint32_t dwFlag) {
+  ASSERT(dwFlag == XFA_NodeFlag_Initialized);
+
+  if (!IsInitialized()) {
     CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
     if (pNotify) {
       pNotify->OnNodeReady(this);
     }
   }
+  m_uNodeFlags |= dwFlag;
+}
+
+void CXFA_Node::SetFlag(uint32_t dwFlag) {
   m_uNodeFlags |= dwFlag;
 }
 
@@ -1372,7 +1378,7 @@ CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
   if (!m_pXMLNode) {
     WideString wsTag(JSObject()->GetCData(XFA_Attribute::Name));
     m_pXMLNode = new CFX_XMLElement(wsTag);
-    SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+    SetFlag(XFA_NodeFlag_OwnXMLNode);
   }
   return m_pXMLNode;
 }
@@ -2010,7 +2016,7 @@ void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* docView,
     }
     if (pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
                              XFA_MB_YesNo) == XFA_IDYes) {
-      SetFlag(XFA_NodeFlag_UserInteractive, false);
+      SetFlag(XFA_NodeFlag_UserInteractive);
     }
     return;
   }
@@ -2061,7 +2067,7 @@ int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
       }
       if (pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
                                XFA_MB_YesNo) == XFA_IDYes) {
-        SetFlag(XFA_NodeFlag_UserInteractive, false);
+        SetFlag(XFA_NodeFlag_UserInteractive);
       }
       return XFA_EVENTERROR_Success;
     }
@@ -2128,7 +2134,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
       }
       if (pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Warning,
                                XFA_MB_YesNo) == XFA_IDYes) {
-        SetFlag(XFA_NodeFlag_UserInteractive, false);
+        SetFlag(XFA_NodeFlag_UserInteractive);
       }
       return XFA_EVENTERROR_Error;
     }
