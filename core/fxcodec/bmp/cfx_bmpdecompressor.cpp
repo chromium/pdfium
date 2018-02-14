@@ -637,7 +637,7 @@ int32_t CFX_BmpDecompressor::DecodeRLE4() {
 }
 
 bool CFX_BmpDecompressor::ReadData(uint8_t* destination, uint32_t size) {
-  return input_buffer_ && input_buffer_->ReadBlock(destination, size);
+  return input_buffer_ && input_buffer_->ReadBlock(destination, size) == size;
 }
 
 void CFX_BmpDecompressor::SaveDecodingStatus(int32_t status) {
