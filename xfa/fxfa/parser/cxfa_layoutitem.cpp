@@ -18,7 +18,7 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
   CXFA_FFNotify* pNotify = pLayoutItem->m_pFormNode->GetDocument()->GetNotify();
   CXFA_LayoutProcessor* pDocLayout =
-      pLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
+      pLayoutItem->m_pFormNode->GetDocument()->GetLayoutProcessor();
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
     pNode->m_pParent = nullptr;

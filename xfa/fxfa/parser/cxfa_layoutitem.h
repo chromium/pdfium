@@ -13,8 +13,6 @@ class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
 class CXFA_LayoutProcessor;
 
-void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
-
 class CXFA_LayoutItem {
  public:
   virtual ~CXFA_LayoutItem();
@@ -52,5 +50,7 @@ class CXFA_LayoutItem {
 
   bool m_bIsContentLayoutItem;
 };
+
+void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
 #endif  // XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_

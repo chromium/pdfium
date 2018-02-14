@@ -432,7 +432,7 @@ bool FindBreakNode(CXFA_Node* pContainerNode,
 void DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   CXFA_FFNotify* pNotify = pGenerateNode->GetDocument()->GetNotify();
   CXFA_LayoutProcessor* pDocLayout =
-      pGenerateNode->GetDocument()->GetDocLayout();
+      pGenerateNode->GetDocument()->GetLayoutProcessor();
   CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode> sIterator(
       pGenerateNode);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
@@ -819,7 +819,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
   CXFA_FFNotify* pNotify =
       m_pOldLayoutItem->m_pFormNode->GetDocument()->GetNotify();
   CXFA_LayoutProcessor* pDocLayout =
-      m_pOldLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
+      m_pOldLayoutItem->m_pFormNode->GetDocument()->GetLayoutProcessor();
   CXFA_ContentLayoutItem* pOldLayoutItem = m_pOldLayoutItem;
   while (pOldLayoutItem) {
     CXFA_ContentLayoutItem* pNextOldLayoutItem = pOldLayoutItem->m_pNext;

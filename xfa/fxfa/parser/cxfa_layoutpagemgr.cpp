@@ -1626,7 +1626,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
         CXFA_FFNotify* pNotify =
             m_pTemplatePageSetRoot->GetDocument()->GetNotify();
         CXFA_LayoutProcessor* pDocLayout =
-            m_pTemplatePageSetRoot->GetDocument()->GetDocLayout();
+            m_pTemplatePageSetRoot->GetDocument()->GetLayoutProcessor();
         if (pCurLayoutItem->m_pFirstChild)
           SyncRemoveLayoutItem(pCurLayoutItem, pNotify, pDocLayout);
 
@@ -1687,7 +1687,7 @@ CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(CXFA_Node* pFormNode) {
 void CXFA_LayoutPageMgr::MergePageSetContents() {
   CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
-  CXFA_LayoutProcessor* pDocLayout = pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = pDocument->GetLayoutProcessor();
   CXFA_ContainerLayoutItem* pRootLayout = GetRootLayoutItem();
   for (CXFA_Node* pPageNode : pDocument->m_pPendingPageSet) {
     CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>

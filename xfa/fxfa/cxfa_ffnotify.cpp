@@ -97,7 +97,7 @@ CXFA_ContainerLayoutItem* CXFA_FFNotify::OnCreateContainerLayoutItem(
   ASSERT(type == XFA_Element::ContentArea || type == XFA_Element::PageArea);
 
   if (type == XFA_Element::PageArea) {
-    CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
+    CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetLayoutProcessor();
     return new CXFA_FFPageView(m_pDoc->GetDocView(pLayout), pNode);
   }
   return new CXFA_ContainerLayoutItem(pNode);
@@ -187,7 +187,7 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
   }
   ASSERT(pWidget);
 
-  CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetDocLayout();
+  CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetLayoutProcessor();
   pWidget->SetDocView(m_pDoc->GetDocView(pLayout));
 
   return pWidget;

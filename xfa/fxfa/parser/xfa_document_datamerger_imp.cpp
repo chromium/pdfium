@@ -1356,7 +1356,7 @@ void CXFA_Document::DataMerge_UpdateBindingRelations(
 }
 
 CXFA_Node* CXFA_Document::GetNotBindNode(
-    const std::vector<CXFA_Object*>& arrayObjects) {
+    const std::vector<CXFA_Object*>& arrayObjects) const {
   for (CXFA_Object* pObject : arrayObjects) {
     CXFA_Node* pNode = pObject->AsNode();
     if (pNode && !pNode->HasBindItem())

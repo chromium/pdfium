@@ -107,10 +107,6 @@ CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
   return m_pLayoutProcessor.get();
 }
 
-CXFA_LayoutProcessor* CXFA_Document::GetDocLayout() {
-  return GetLayoutProcessor();
-}
-
 void CXFA_Document::ClearLayoutData() {
   m_pLayoutProcessor.reset();
   m_pScriptContext.reset();
@@ -258,7 +254,7 @@ CFXJSE_Engine* CXFA_Document::InitScriptContext(CFXJS_Engine* fxjs_engine) {
 
 // We have to call |InitScriptContext| before any calls to |GetScriptContext|
 // or the context won't have an isolate set into it.
-CFXJSE_Engine* CXFA_Document::GetScriptContext() {
+CFXJSE_Engine* CXFA_Document::GetScriptContext() const {
   ASSERT(m_pScriptContext);
   return m_pScriptContext.get();
 }
@@ -291,7 +287,7 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
 }
 
 CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
-                                      const WideStringView& wsID) {
+                                      const WideStringView& wsID) const {
   if (!pRoot || wsID.IsEmpty())
     return nullptr;
 

@@ -88,7 +88,7 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
   }
   int32_t iIndex = params.size() >= 3 ? runtime->ToInt32(params[2]) : 0;
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
     return CJS_Return(true);
 
@@ -152,7 +152,7 @@ CJS_Return CJX_LayoutPseudoModel::y(
 
 CJS_Return CJX_LayoutPseudoModel::NumberedPageCount(CFX_V8* runtime,
                                                     bool bNumbered) {
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
     return CJS_Return(true);
 
@@ -191,7 +191,7 @@ CJS_Return CJX_LayoutPseudoModel::pageSpan(
   if (!pNode)
     return CJS_Return(true);
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
     return CJS_Return(true);
 
@@ -367,7 +367,7 @@ CJS_Return CJX_LayoutPseudoModel::pageContent(
   if (!pNotify)
     return CJS_Return(true);
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
     return CJS_Return(true);
 
@@ -472,7 +472,7 @@ CJS_Return CJX_LayoutPseudoModel::PageInternals(
   if (!pNode)
     return CJS_Return(runtime->NewNumber(0));
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
     return CJS_Return(true);
 

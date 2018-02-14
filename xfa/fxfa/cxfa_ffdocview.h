@@ -16,6 +16,7 @@
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CXFA_BindItems;
+class CXFA_ContainerLayoutItem;
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;

@@ -42,16 +42,13 @@ enum XFA_DocFlag {
 
 class CFXJSE_Engine;
 class CFXJS_Engine;
-class CFX_XMLDoc;
 class CScript_DataWindow;
 class CScript_EventPseudoModel;
 class CScript_HostPseudoModel;
 class CScript_LayoutPseudoModel;
 class CScript_LogPseudoModel;
 class CScript_SignaturePseudoModel;
-class CXFA_ContainerLayoutItem;
 class CXFA_FFNotify;
-class CXFA_LayoutItem;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_Object;
@@ -67,15 +64,16 @@ class CXFA_Document : public CXFA_NodeOwner {
   CXFA_FFNotify* GetNotify() const { return notify_.Get(); }
   CXFA_LocaleMgr* GetLocalMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
-  CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const WideStringView& wsID);
-  CXFA_Node* GetNotBindNode(const std::vector<CXFA_Object*>& arrayNodes);
+  CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const WideStringView& wsID) const;
+  CXFA_Node* GetNotBindNode(const std::vector<CXFA_Object*>& arrayNodes) const;
   CXFA_LayoutProcessor* GetLayoutProcessor();
-  CXFA_LayoutProcessor* GetDocLayout();
-  CFXJSE_Engine* GetScriptContext();
+  CFXJSE_Engine* GetScriptContext() const;
 
   void SetRoot(CXFA_Node* pNewRoot) { m_pRootNode = pNewRoot; }
 
-  bool HasFlag(uint32_t dwFlag) { return (m_dwDocFlags & dwFlag) == dwFlag; }
+  bool HasFlag(uint32_t dwFlag) const {
+    return (m_dwDocFlags & dwFlag) == dwFlag;
+  }
   void SetFlag(uint32_t dwFlag, bool bOn);
 
   bool IsInteractive();

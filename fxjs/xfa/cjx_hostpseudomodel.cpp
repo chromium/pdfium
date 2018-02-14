@@ -302,7 +302,7 @@ CJS_Return CJX_HostPseudoModel::openList(
     pNode = resolveNodeRS.objects.front()->AsNode();
   }
 
-  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
     return CJS_Return(true);
 

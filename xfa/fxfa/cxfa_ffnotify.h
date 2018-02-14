@@ -13,6 +13,7 @@
 class CXFA_FFWidgetHandler;
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
+class CXFA_LayoutItem;
 class CXFA_Script;
 
 class CXFA_FFNotify {
