@@ -67,10 +67,9 @@ enum XFA_NodeFlag {
   XFA_NodeFlag_NeedsInitApp = 1 << 2,
   XFA_NodeFlag_BindFormItems = 1 << 3,
   XFA_NodeFlag_UserInteractive = 1 << 4,
-  XFA_NodeFlag_SkipDataBinding = 1 << 5,
-  XFA_NodeFlag_OwnXMLNode = 1 << 6,
-  XFA_NodeFlag_UnusedNode = 1 << 7,
-  XFA_NodeFlag_LayoutGeneratedNode = 1 << 8
+  XFA_NodeFlag_OwnXMLNode = 1 << 5,
+  XFA_NodeFlag_UnusedNode = 1 << 6,
+  XFA_NodeFlag_LayoutGeneratedNode = 1 << 7
 };
 
 class CXFA_Node : public CXFA_Object {
@@ -470,7 +469,6 @@ class CXFA_Node : public CXFA_Object {
   void SetImageEdit(const WideString& wsContentType,
                     const WideString& wsHref,
                     const WideString& wsData);
-  bool IsOwnedXMLNode() const { return HasFlag(XFA_NodeFlag_OwnXMLNode); }
   CXFA_Node* GetBindingNode() const {
     if (binding_nodes_.empty())
       return nullptr;

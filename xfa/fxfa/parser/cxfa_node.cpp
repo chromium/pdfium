@@ -537,7 +537,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
 CXFA_Node::~CXFA_Node() {
-  if (m_pXMLNode && IsOwnedXMLNode())
+  if (m_pXMLNode && HasFlag(XFA_NodeFlag_OwnXMLNode))
     delete m_pXMLNode;
 }
 
