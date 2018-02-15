@@ -13,6 +13,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 #include "third_party/base/optional.h"
@@ -21,7 +23,6 @@
 
 class CFGAS_GEFont;
 class CFX_DIBitmap;
-class CFX_XMLNode;
 class CXFA_Bind;
 class CXFA_Border;
 class CXFA_Calculate;
@@ -67,9 +68,8 @@ enum XFA_NodeFlag {
   XFA_NodeFlag_NeedsInitApp = 1 << 2,
   XFA_NodeFlag_BindFormItems = 1 << 3,
   XFA_NodeFlag_UserInteractive = 1 << 4,
-  XFA_NodeFlag_OwnXMLNode = 1 << 5,
-  XFA_NodeFlag_UnusedNode = 1 << 6,
-  XFA_NodeFlag_LayoutGeneratedNode = 1 << 7
+  XFA_NodeFlag_UnusedNode = 1 << 5,
+  XFA_NodeFlag_LayoutGeneratedNode = 1 << 6
 };
 
 class CXFA_Node : public CXFA_Object {
@@ -156,10 +156,19 @@ class CXFA_Node : public CXFA_Object {
   bool IsFormContainer() const {
     return m_ePacket == XFA_PacketType::Form && IsContainerNode();
   }
-  void SetXMLMappingNode(CFX_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
-  CFX_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
+
+  void ReleaseXMLNodeIfUnowned();
+  void SetXMLMappingNode(MaybeOwned<CFX_XMLNode> node) {
+    xml_node_ = std::move(node);
+  }
+  void SetXMLMappingNode(std::unique_ptr<CFX_XMLNode> node) {
+    xml_node_.Reset(std::move(node));
+  }
+  void SetXMLMappingNode(CFX_XMLNode* node) { xml_node_.Reset(node); }
+  CFX_XMLNode* GetXMLMappingNode() const { return xml_node_.Get(); }
   CFX_XMLNode* CreateXMLMappingNode();
   bool IsNeedSavingXMLNode();
+
   uint32_t GetNameHash() const { return m_dwNameHash; }
   bool IsUnnamed() const { return m_dwNameHash == 0; }
   CXFA_Node* GetModelNode();
@@ -502,7 +511,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* first_child_;
   CXFA_Node* last_child_;
 
-  CFX_XMLNode* m_pXMLNode;
+  MaybeOwned<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
   uint16_t m_uNodeFlags;

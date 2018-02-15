@@ -724,13 +724,13 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(
     return pNode;
   }
 
-  CFX_XMLNode* pDataXMLNode = nullptr;
+  MaybeOwned<CFX_XMLNode> pDataXMLNode;
   if (MatchNodeName(pXMLDocumentNode, L"data", packet->uri, packet->flags)) {
     static_cast<CFX_XMLElement*>(pXMLDocumentNode)
         ->RemoveAttribute(L"xmlns:xfa");
-    pDataXMLNode = pXMLDocumentNode;
+    pDataXMLNode.Reset(pXMLDocumentNode);
   } else {
-    CFX_XMLElement* pDataElement = new CFX_XMLElement(L"xfa:data");
+    auto pDataElement = pdfium::MakeUnique<CFX_XMLElement>(L"xfa:data");
     CFX_XMLNode* pParentXMLNode = pXMLDocumentNode->GetParent();
     if (pParentXMLNode)
       pParentXMLNode->RemoveChildNode(pXMLDocumentNode);
@@ -741,29 +741,24 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(
           ->RemoveAttribute(L"xmlns:xfa");
     }
     pDataElement->AppendChild(pXMLDocumentNode);
-    pDataXMLNode = pDataElement;
+    pDataXMLNode.Reset(std::move(pDataElement));
   }
+  if (!pDataXMLNode)
+    return nullptr;
 
-  if (pDataXMLNode) {
-    CXFA_Node* pNode = m_pFactory->CreateNode(XFA_PacketType::Datasets,
-                                              XFA_Element::DataGroup);
-    if (!pNode) {
-      if (pDataXMLNode != pXMLDocumentNode)
-        delete pDataXMLNode;
-      return nullptr;
-    }
-    WideString wsLocalName =
-        static_cast<CFX_XMLElement*>(pDataXMLNode)->GetLocalTagName();
-    pNode->JSObject()->SetCData(XFA_Attribute::Name, wsLocalName, false, false);
-    if (!DataLoader(pNode, pDataXMLNode, true))
-      return nullptr;
+  CXFA_Node* pNode =
+      m_pFactory->CreateNode(XFA_PacketType::Datasets, XFA_Element::DataGroup);
+  if (!pNode)
+    return nullptr;
 
-    pNode->SetXMLMappingNode(pDataXMLNode);
-    if (pDataXMLNode != pXMLDocumentNode)
-      pNode->SetFlag(XFA_NodeFlag_OwnXMLNode);
-    return pNode;
-  }
-  return nullptr;
+  WideString wsLocalName =
+      static_cast<CFX_XMLElement*>(pDataXMLNode.Get())->GetLocalTagName();
+  pNode->JSObject()->SetCData(XFA_Attribute::Name, wsLocalName, false, false);
+  if (!DataLoader(pNode, pDataXMLNode.Get(), true))
+    return nullptr;
+
+  pNode->SetXMLMappingNode(std::move(pDataXMLNode));
+  return pNode;
 }
 
 CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_LocaleConnectionSourceSet(

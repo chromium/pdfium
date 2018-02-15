@@ -7,6 +7,7 @@
 #include "fxjs/xfa/cjx_node.h"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/cfx_memorystream.h"
@@ -288,8 +289,8 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
     if (GetXFANode()->GetPacketType() == XFA_PacketType::Form &&
         GetXFANode()->GetElementType() == XFA_Element::ExData) {
       CFX_XMLNode* pTempXMLNode = GetXFANode()->GetXMLMappingNode();
-      GetXFANode()->SetXMLMappingNode(pFakeXMLRoot.release());
-      GetXFANode()->SetFlag(XFA_NodeFlag_OwnXMLNode);
+      GetXFANode()->SetXMLMappingNode(std::move(pFakeXMLRoot));
+
       if (pTempXMLNode && !pTempXMLNode->GetParent())
         pFakeXMLRoot.reset(pTempXMLNode);
       else
@@ -308,8 +309,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   }
 
   if (pFakeXMLRoot) {
-    pFakeRoot->SetXMLMappingNode(pFakeXMLRoot.release());
-    pFakeRoot->SetFlag(XFA_NodeFlag_OwnXMLNode);
+    pFakeRoot->SetXMLMappingNode(std::move(pFakeXMLRoot));
   }
   pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren);
 

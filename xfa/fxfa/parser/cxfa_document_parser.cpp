@@ -15,6 +15,7 @@ CXFA_DocumentParser::CXFA_DocumentParser(CXFA_FFNotify* pNotify)
     : m_pNotify(pNotify) {}
 
 CXFA_DocumentParser::~CXFA_DocumentParser() {
+  m_pDocument->ReleaseXMLNodesIfNeeded();
 }
 
 int32_t CXFA_DocumentParser::StartParse(

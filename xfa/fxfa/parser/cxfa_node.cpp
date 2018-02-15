@@ -510,7 +510,6 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
       prev_sibling_(nullptr),
       first_child_(nullptr),
       last_child_(nullptr),
-      m_pXMLNode(nullptr),
       m_ePacket(ePacket),
       m_uNodeFlags(XFA_NodeFlag_None),
       m_dwNameHash(0),
@@ -536,9 +535,12 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
                 elementName,
                 pdfium::MakeUnique<CJX_Node>(this)) {}
 
-CXFA_Node::~CXFA_Node() {
-  if (m_pXMLNode && HasFlag(XFA_NodeFlag_OwnXMLNode))
-    delete m_pXMLNode;
+CXFA_Node::~CXFA_Node() = default;
+
+void CXFA_Node::ReleaseXMLNodeIfUnowned() {
+  // Note, this is intentionally non-recursive. The caller is responsible for
+  // triggering this on all the nodes which need it.
+  xml_node_.ResetIfUnowned();
 }
 
 CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
@@ -563,10 +565,9 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
       pClone->JSObject()->SetEnum(XFA_Attribute::Contains,
                                   XFA_AttributeEnum::Unknown, false);
     } else {
-      pCloneXML = m_pXMLNode->Clone();
+      pCloneXML = xml_node_->Clone();
     }
-    pClone->SetXMLMappingNode(pCloneXML.release());
-    pClone->SetFlag(XFA_NodeFlag_OwnXMLNode);
+    pClone->SetXMLMappingNode(std::move(pCloneXML));
   }
   if (bRecursive) {
     for (CXFA_Node* pChild = GetFirstChild(); pChild;
@@ -1151,13 +1152,18 @@ void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   if (pNotify)
     pNotify->OnChildAdded(this);
 
-  if (!IsNeedSavingXMLNode() || !pNode->m_pXMLNode)
+  if (!IsNeedSavingXMLNode() || !pNode->xml_node_)
     return;
 
-  ASSERT(!pNode->m_pXMLNode->GetParent());
+  ASSERT(!pNode->xml_node_->GetParent());
 
-  m_pXMLNode->InsertChildNode(pNode->m_pXMLNode, index);
-  pNode->ClearFlag(XFA_NodeFlag_OwnXMLNode);
+  xml_node_->InsertChildNode(pNode->xml_node_.Get(), index);
+  if (pNode->xml_node_.IsOwned()) {
+    // We remove ownership of the XML node from pNode and transfer the ownership
+    // into the XML tree, the pNode still has an unowned pointer to the XML
+    // node.
+    pNode->xml_node_.Release().release();
+  }
 }
 
 void CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
@@ -1208,35 +1214,41 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
 
   OnRemoved(bNotify);
 
-  if (!IsNeedSavingXMLNode() || !pNode->m_pXMLNode)
+  if (!IsNeedSavingXMLNode() || !pNode->xml_node_)
     return;
 
-  if (pNode->IsAttributeInXML()) {
-    ASSERT(pNode->m_pXMLNode == m_pXMLNode &&
-           m_pXMLNode->GetType() == FX_XMLNODE_Element);
-    if (pNode->m_pXMLNode->GetType() == FX_XMLNODE_Element) {
-      CFX_XMLElement* pXMLElement =
-          static_cast<CFX_XMLElement*>(pNode->m_pXMLNode);
-      WideString wsAttributeName =
-          pNode->JSObject()->GetCData(XFA_Attribute::QualifiedName);
-      pXMLElement->RemoveAttribute(wsAttributeName.c_str());
-    }
-
-    WideString wsName = pNode->JSObject()
-                            ->TryAttribute(XFA_Attribute::Name, false)
-                            .value_or(WideString());
-    CFX_XMLElement* pNewXMLElement = new CFX_XMLElement(wsName);
-    WideString wsValue = JSObject()->GetCData(XFA_Attribute::Value);
-    if (!wsValue.IsEmpty())
-      pNewXMLElement->SetTextData(WideString(wsValue));
-
-    pNode->m_pXMLNode = pNewXMLElement;
-    pNode->JSObject()->SetEnum(XFA_Attribute::Contains,
-                               XFA_AttributeEnum::Unknown, false);
-  } else {
-    m_pXMLNode->RemoveChildNode(pNode->m_pXMLNode);
+  if (!pNode->IsAttributeInXML()) {
+    // This XML node _must_ be in the xml tree if we arrived here, so it is
+    // unowned by the XFA_Node. We turn the nodes pointer into a unique_ptr,
+    // remove from the XML tree and then assign the owned pointer back onto the
+    // XFA_Node.
+    auto node = pdfium::WrapUnique<CFX_XMLNode>(pNode->xml_node_.Get());
+    xml_node_->RemoveChildNode(node.get());
+    pNode->xml_node_.Reset(std::move(node));
+    return;
   }
-  pNode->SetFlag(XFA_NodeFlag_OwnXMLNode);
+
+  ASSERT(pNode->xml_node_.Get() == xml_node_.Get() &&
+         xml_node_->GetType() == FX_XMLNODE_Element);
+  if (pNode->xml_node_->GetType() == FX_XMLNODE_Element) {
+    CFX_XMLElement* pXMLElement =
+        static_cast<CFX_XMLElement*>(pNode->xml_node_.Get());
+    WideString wsAttributeName =
+        pNode->JSObject()->GetCData(XFA_Attribute::QualifiedName);
+    pXMLElement->RemoveAttribute(wsAttributeName.c_str());
+  }
+
+  WideString wsName = pNode->JSObject()
+                          ->TryAttribute(XFA_Attribute::Name, false)
+                          .value_or(WideString());
+  auto pNewXMLElement = pdfium::MakeUnique<CFX_XMLElement>(wsName);
+  WideString wsValue = JSObject()->GetCData(XFA_Attribute::Value);
+  if (!wsValue.IsEmpty())
+    pNewXMLElement->SetTextData(WideString(wsValue));
+
+  pNode->xml_node_.Reset(std::move(pNewXMLElement));
+  pNode->JSObject()->SetEnum(XFA_Attribute::Contains,
+                             XFA_AttributeEnum::Unknown, false);
 }
 
 CXFA_Node* CXFA_Node::GetFirstChildByName(const WideStringView& wsName) const {
@@ -1375,17 +1387,16 @@ void CXFA_Node::UpdateNameHash() {
 }
 
 CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
-  if (!m_pXMLNode) {
-    WideString wsTag(JSObject()->GetCData(XFA_Attribute::Name));
-    m_pXMLNode = new CFX_XMLElement(wsTag);
-    SetFlag(XFA_NodeFlag_OwnXMLNode);
+  if (!xml_node_) {
+    xml_node_ = pdfium::MakeUnique<CFX_XMLElement>(
+        JSObject()->GetCData(XFA_Attribute::Name));
   }
-  return m_pXMLNode;
+  return xml_node_.Get();
 }
 
 bool CXFA_Node::IsNeedSavingXMLNode() {
-  return m_pXMLNode && (GetPacketType() == XFA_PacketType::Datasets ||
-                        GetElementType() == XFA_Element::Xfa);
+  return xml_node_ && (GetPacketType() == XFA_PacketType::Datasets ||
+                       GetElementType() == XFA_Element::Xfa);
 }
 
 CXFA_Node* CXFA_Node::GetItemIfExists(int32_t iIndex) {
