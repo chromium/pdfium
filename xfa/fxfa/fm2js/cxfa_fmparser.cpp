@@ -15,8 +15,9 @@
 
 namespace {
 
-const unsigned int kMaxAssignmentChainLength = 12;
-const unsigned int kMaxParseDepth = 1250;
+constexpr unsigned int kMaxAssignmentChainLength = 12;
+constexpr unsigned int kMaxParseDepth = 1250;
+constexpr unsigned int kMaxPostExpressions = 16384;
 
 }  // namespace
 
@@ -669,7 +670,15 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
     return nullptr;
 
   uint32_t line = m_token->m_line_num;
+  size_t expr_count = 0;
   while (1) {
+    ++expr_count;
+    // Limit the number of expressions allowed in the post expression statement.
+    // If we don't do this then its possible to generate a stack overflow
+    // by having a very large number of things like .. expressions.
+    if (expr_count > kMaxPostExpressions)
+      return nullptr;
+
     switch (m_token->m_type) {
       case TOKlparen: {
         if (!NextToken())
