@@ -20,6 +20,11 @@ namespace {
 const size_t kBmpCoreHeaderSize = 12;
 const size_t kBmpInfoHeaderSize = 40;
 
+static_assert(sizeof(BmpCoreHeader) == kBmpCoreHeaderSize,
+              "BmpCoreHeader has wrong size");
+static_assert(sizeof(BmpInfoHeader) == kBmpInfoHeaderSize,
+              "BmpInfoHeader has wrong size");
+
 uint8_t HalfRoundUp(uint8_t value) {
   uint16_t value16 = value;
   return static_cast<uint8_t>((value16 + 1) / 2);
@@ -97,16 +102,12 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
     img_ifh_size_ =
         FXDWORD_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_ifh_size_));
     pal_type_ = 0;
-    static_assert(sizeof(BmpCoreHeader) == kBmpCoreHeaderSize,
-                  "BmpCoreHeader has wrong size");
-    static_assert(sizeof(BmpInfoHeader) == kBmpInfoHeaderSize,
-                  "BmpInfoHeader has wrong size");
     switch (img_ifh_size_) {
       case kBmpCoreHeaderSize: {
         pal_type_ = 1;
         BmpCoreHeader bmp_core_header;
         if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_core_header),
-                      img_ifh_size_)) {
+                      sizeof(BmpCoreHeader))) {
           return 2;
         }
 
@@ -122,7 +123,7 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
       case kBmpInfoHeaderSize: {
         BmpInfoHeader bmp_info_header;
         if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
-                      img_ifh_size_)) {
+                      sizeof(BmpInfoHeader))) {
           return 2;
         }
 
@@ -143,44 +144,57 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
         SetHeight(signed_height);
       } break;
       default: {
-        if (img_ifh_size_ >
-            std::min(kBmpInfoHeaderSize,
-                     static_cast<size_t>(sizeof(BmpInfoHeader)))) {
-          BmpInfoHeader bmp_info_header;
-          if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
-                        img_ifh_size_)) {
-            return 2;
-          }
-
-          uint16_t biPlanes;
-          width_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biWidth));
-          int32_t signed_height = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biHeight));
-          bit_counts_ = FXWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biBitCount));
-          compress_flag_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biCompression));
-          color_used_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biClrUsed));
-          biPlanes = FXWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biPlanes));
-          dpi_x_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biXPelsPerMeter));
-          dpi_y_ = FXDWORD_GET_LSBFIRST(
-              reinterpret_cast<uint8_t*>(&bmp_info_header.biYPelsPerMeter));
-          SetHeight(signed_height);
-          if (compress_flag_ == BMP_RGB && biPlanes == 1 && color_used_ == 0)
-            break;
+        if (img_ifh_size_ <= sizeof(BmpInfoHeader)) {
+          Error();
+          NOTREACHED();
         }
-        Error();
-        NOTREACHED();
+
+        FX_SAFE_SIZE_T new_pos = input_buffer_->GetPosition();
+        BmpInfoHeader bmp_info_header;
+        if (!ReadData(reinterpret_cast<uint8_t*>(&bmp_info_header),
+                      sizeof(bmp_info_header))) {
+          return 2;
+        }
+
+        new_pos += img_ifh_size_;
+        if (!new_pos.IsValid()) {
+          Error();
+          NOTREACHED();
+        }
+
+        if (!input_buffer_->Seek(new_pos.ValueOrDie()))
+          return 2;
+
+        uint16_t biPlanes;
+        width_ = FXDWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biWidth));
+        int32_t signed_height = FXDWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biHeight));
+        bit_counts_ = FXWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biBitCount));
+        compress_flag_ = FXDWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biCompression));
+        color_used_ = FXDWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biClrUsed));
+        biPlanes = FXWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biPlanes));
+        dpi_x_ = FXDWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biXPelsPerMeter));
+        dpi_y_ = FXDWORD_GET_LSBFIRST(
+            reinterpret_cast<uint8_t*>(&bmp_info_header.biYPelsPerMeter));
+        SetHeight(signed_height);
+        if (compress_flag_ != BMP_RGB || biPlanes != 1 || color_used_ != 0) {
+          Error();
+          NOTREACHED();
+        }
       }
     }
+
     if (width_ > BMP_MAX_WIDTH || compress_flag_ > BMP_BITFIELDS) {
       Error();
       NOTREACHED();
     }
+
     switch (bit_counts_) {
       case 1:
       case 4:
