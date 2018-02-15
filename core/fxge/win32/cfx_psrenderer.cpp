@@ -6,6 +6,7 @@
 
 #include "core/fxge/win32/cfx_psrenderer.h"
 
+#include <algorithm>
 #include <memory>
 #include <sstream>
 
@@ -644,14 +645,18 @@ bool CFX_PSRenderer::DrawText(int nChars,
                               const CFX_Matrix* pObject2Device,
                               float font_size,
                               uint32_t color) {
-  // Do not send zero or negative font sizes to printers. See crbug.com/767343.
-  if (font_size <= 0.0)
-    return true;
-
+  // Check object to device matrix first, since it can scale the font size.
   if ((pObject2Device->a == 0 && pObject2Device->b == 0) ||
       (pObject2Device->c == 0 && pObject2Device->d == 0)) {
     return true;
   }
+
+  // Do not send near zero font sizes to printers. See crbug.com/767343.
+  float scale =
+      std::min(pObject2Device->GetXUnit(), pObject2Device->GetYUnit());
+  static constexpr float kEpsilon = 0.01f;
+  if (std::fabs(font_size * scale) < kEpsilon)
+    return true;
 
   StartRendering();
   int alpha = FXARGB_A(color);
