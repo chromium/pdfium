@@ -15,10 +15,10 @@ vars = {
 
   'android_ndk_revision': 'e951c37287c7d8cd915bf8d4149fd4a06d808b55',
   'binutils_revision': 'e146228c20af6af922887d0be2d3641cbffb33c5',
-  'build_revision': 'b1bf4b84cb5db309fda657ebd19a6c3d2ebdcb66',
+  'build_revision': 'c7a79acbd202c85ddafbacdcde0f7926a53ae792',
   'buildtools_revision': 'f115f4786771afdfacb18a2299541b23e21f4792',
   'catapult_revision': 'd624b3ced2c81d4fb4ea98a8dbb4532272cc1e0a',
-  'clang_revision': 'ac1e5f78c39dc2a262af149404dd36c140eecdc1',
+  'clang_revision': 'a695c30c8618b948d714a2a8161ee6a2ab98d0ce',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'depot_tools_revision': '2e8d8348b8574f06c26dbf3ef959b5df11ba5148',
   'freetype_revision': '4a03f17449ae45f0dacf4de4694ccd6e5e1b24d1',
@@ -237,13 +237,39 @@ hooks = [
     ],
   },
   {
-    # Downloads the current stable linux sysroot to build/linux/ if needed.
-    # This sysroot updates at about the same rate that the chrome build deps
-    # change.
-    'name': 'sysroot',
+    'name': 'sysroot_arm',
     'pattern': '.',
+    'condition': 'checkout_linux and checkout_arm',
     'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
-               '--running-as-hook'],
+               '--arch=arm'],
+  },
+  {
+    'name': 'sysroot_arm64',
+    'pattern': '.',
+    'condition': 'checkout_linux and checkout_arm64',
+    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+               '--arch=arm64'],
+  },
+  {
+    'name': 'sysroot_x86',
+    'pattern': '.',
+    'condition': 'checkout_linux and (checkout_x86 or checkout_x64)',
+    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+               '--arch=x86'],
+  },
+  {
+    'name': 'sysroot_mips',
+    'pattern': '.',
+    'condition': 'checkout_linux and checkout_mips',
+    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+               '--arch=mips'],
+  },
+  {
+    'name': 'sysroot_x64',
+    'pattern': '.',
+    'condition': 'checkout_linux and checkout_x64',
+    'action': ['python', 'pdfium/build/linux/sysroot_scripts/install-sysroot.py',
+               '--arch=x64'],
   },
   {
     # Update the Windows toolchain if necessary.
