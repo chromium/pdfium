@@ -32,6 +32,7 @@ size_t CPDF_TextObject::CountItems() const {
 
 void CPDF_TextObject::GetItemInfo(size_t index,
                                   CPDF_TextObjectItem* pInfo) const {
+  ASSERT(index < m_CharCodes.size());
   pInfo->m_CharCode = m_CharCodes[index];
   pInfo->m_Origin = CFX_PointF(index > 0 ? m_CharPos[index - 1] : 0, 0);
   if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode)
@@ -160,8 +161,10 @@ void CPDF_TextObject::SetSegments(const ByteString* pStrs,
     const char* segment = pStrs[i].c_str();
     int len = pStrs[i].GetLength();
     int offset = 0;
-    while (offset < len)
+    while (offset < len) {
+      ASSERT(static_cast<size_t>(index) < m_CharCodes.size());
       m_CharCodes[index++] = pFont->GetNextChar(segment, len, offset);
+    }
     if (i != nsegs - 1) {
       m_CharPos[index - 1] = pKerning[i];
       m_CharCodes[index++] = CPDF_Font::kInvalidCharCode;
