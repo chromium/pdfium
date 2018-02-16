@@ -25,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "third_party/skia_shared/SkFloatToDecimal.h"
 
 namespace {
 
@@ -221,7 +222,13 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
     for (size_t i = 0; i < pPoints.size(); i++) {
       if (i > 0)
         *buf << " ";
-      *buf << pPoints[i].m_Point.x << " " << pPoints[i].m_Point.y;
+
+      char buffer[kMaximumSkFloatToDecimalLength];
+      unsigned size = SkFloatToDecimal(pPoints[i].m_Point.x, buffer);
+      buf->write(buffer, size) << " ";
+      size = SkFloatToDecimal(pPoints[i].m_Point.y, buffer);
+      buf->write(buffer, size);
+
       FXPT_TYPE pointType = pPoints[i].m_Type;
       if (pointType == FXPT_TYPE::MoveTo) {
         *buf << " m";

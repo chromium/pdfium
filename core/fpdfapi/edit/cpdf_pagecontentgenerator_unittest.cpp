@@ -103,8 +103,9 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   std::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ(
-      "q 1 0 0 1 0 0 cm 3.102 4.67 m 5.45 0.29 l 4.24 3.15 4.65 2.98 3.456 0.24"
-      " c 10.6 11.15 l 11 12.5 l 11.46 12.67 11.84 12.96 12 13.64 c h f Q\n",
+      "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4499998 .28999999 l 4.2399998 "
+      "3.1500001 4.65 2.98 3.456 0.24 c 10.6000004 11.1499996 l 11 12.5 "
+      "l 11.46 12.6700001 11.84 12.96 12 13.64 c h f Q\n",
       ByteString(buf));
 }
 
@@ -312,8 +313,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   pDoc->CreateNewDoc();
   auto pDict = pdfium::MakeUnique<CPDF_Dictionary>();
   const char content[] =
-      "q 1 0 0 1 0 0 cm 3.102 4.67 m 5.45 0.29 l 4.24 3.15 4.65 2.98 3.456 "
-      "0.24 c 3.102 4.67 l h f Q\n";
+      "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4500012 .28999999 "
+      "l 4.2399998 3.1499999 4.65 2.98 3.456 0.24 c 3.102 4.6700001 l h f Q\n";
   size_t buf_len = FX_ArraySize(content);
   std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_len));
   memcpy(buf.get(), content, buf_len);
@@ -329,5 +330,5 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   CPDF_PageContentGenerator generator(pTestForm.get());
   std::ostringstream process_buf;
   generator.ProcessPageObjects(&process_buf);
-  EXPECT_EQ(content, ByteString(process_buf));
+  EXPECT_STREQ(content, ByteString(process_buf).c_str());
 }

@@ -544,14 +544,14 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
 TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_original[] = "c35408717759562d1f8bf33d317483d2";
-  const char md5_modified_path[] = "cf3cea74bd46497520ff6c4d1ea228c8";
-  const char md5_two_paths[] = "e8994452fc4385337bae5522354e10ff";
-  const char md5_new_annot[] = "ee5372b31fede117fc83b9384598aa25";
+  const char md5_modified_path[] = "873b92ea83ccf006e58415d866ce145b";
+  const char md5_two_paths[] = "6f1f1c91f50240e9cc9d7c87c48b93a7";
+  const char md5_new_annot[] = "078bf58f939645ac305854f31ee9a828";
 #else
   const char md5_original[] = "964f89bbe8911e540a465cf1a64b7f7e";
-  const char md5_modified_path[] = "3f77b88ce6048e08e636c9a03921b2e5";
-  const char md5_two_paths[] = "bffbf5ecd15862b9fe553c795400ff8e";
-  const char md5_new_annot[] = "e020534c7eeea76be537c70d6e359a40";
+  const char md5_modified_path[] = "5a4a6091cff648a4ece3ce7e245e3e38";
+  const char md5_two_paths[] = "d6e4072a4415cfc6ec17201fb6be0ee0";
+  const char md5_new_annot[] = "fc338b97bf66a656916c6198697a8a28";
 #endif
 
   // Open a file with two annotations and load its first page.

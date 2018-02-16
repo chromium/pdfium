@@ -200,6 +200,7 @@ jumbo_static_library("pdfium") {
     ":pwl",
     "third_party:bigint",
     "third_party:pdfium_base",
+    "third_party:skia_shared",
   ]
 
   public_deps = [
