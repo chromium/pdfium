@@ -200,12 +200,11 @@ void EnumGdiFonts(std::deque<FX_FONTDESCRIPTOR>* fonts,
 
 }  // namespace
 
-CFGAS_FontMgr::CFGAS_FontMgr() : m_pEnumerator(EnumGdiFonts), m_FontFaces(100) {
-  if (m_pEnumerator)
-    m_pEnumerator(&m_FontFaces, nullptr, 0xFEFF);
+CFGAS_FontMgr::CFGAS_FontMgr() : m_FontFaces(100) {
+  EnumGdiFonts(&m_FontFaces, nullptr, 0xFEFF);
 }
 
-CFGAS_FontMgr::~CFGAS_FontMgr() {}
+CFGAS_FontMgr::~CFGAS_FontMgr() = default;
 
 bool CFGAS_FontMgr::EnumFonts() {
   return true;
@@ -229,11 +228,11 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
   if (pDesc)
     return pDesc;
 
-  if (!pszFontFamily || !m_pEnumerator)
+  if (!pszFontFamily)
     return nullptr;
 
   std::deque<FX_FONTDESCRIPTOR> namedFonts;
-  m_pEnumerator(&namedFonts, pszFontFamily, wUnicode);
+  EnumGdiFonts(&namedFonts, pszFontFamily, wUnicode);
   params.pwsFamily = nullptr;
   pDesc = MatchDefaultFont(&params, namedFonts);
   if (!pDesc)

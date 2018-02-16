@@ -63,10 +63,6 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
          wcscmp(left.wsFontFace, right.wsFontFace) == 0;
 }
 
-typedef void (*FX_LPEnumAllFonts)(std::deque<FX_FONTDESCRIPTOR>* fonts,
-                                  const wchar_t* pwsFaceName,
-                                  wchar_t wUnicode);
-
 #else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 class CFX_FontDescriptor {
@@ -153,7 +149,6 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
                                     uint32_t dwUSB,
                                     wchar_t wUnicode);
 
-  FX_LPEnumAllFonts m_pEnumerator;
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
 #else   // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   bool EnumFontsFromFontMapper();
