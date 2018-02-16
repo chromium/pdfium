@@ -253,7 +253,10 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
 
   CXFA_FFWidget* pXFAAnnot;
   while ((pXFAAnnot = pWidgetIterator->MoveToNext()) != nullptr) {
-    CFX_RectF rcBBox = pXFAAnnot->GetBBox(0);
+    if (pXFAAnnot->GetFormFieldType() == FormFieldType::kXFA)
+      continue;
+
+    CFX_RectF rcBBox = pXFAAnnot->GetWidgetRect();
     CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                            rcBBox.top + rcBBox.height);
     rcWidget.Inflate(1.0f, 1.0f);
