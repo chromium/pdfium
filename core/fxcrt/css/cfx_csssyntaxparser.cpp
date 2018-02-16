@@ -12,6 +12,7 @@
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "third_party/base/logging.h"
 
 namespace {
@@ -73,6 +74,7 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
                 SwitchMode(CFX_CSSSyntaxMode::Comment);
                 break;
               }
+              FX_FALLTHROUGH;
             default:
               if (wch <= ' ') {
                 m_TextPlane.MoveNext();
@@ -109,6 +111,7 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
                   return CFX_CSSSyntaxStatus::Selector;
                 break;
               }
+              FX_FALLTHROUGH;
             default:
               AppendChar(wch);
               break;
@@ -133,6 +136,7 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
                   return CFX_CSSSyntaxStatus::PropertyName;
                 break;
               }
+              FX_FALLTHROUGH;
             default:
               AppendChar(wch);
               break;
@@ -142,6 +146,7 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
           switch (wch) {
             case ';':
               m_TextPlane.MoveNext();
+              FX_FALLTHROUGH;
             case '}':
               SwitchMode(CFX_CSSSyntaxMode::PropertyName);
               return CFX_CSSSyntaxStatus::PropertyValue;
@@ -151,6 +156,7 @@ CFX_CSSSyntaxStatus CFX_CSSSyntaxParser::DoSyntaxParse() {
                   return CFX_CSSSyntaxStatus::PropertyValue;
                 break;
               }
+              FX_FALLTHROUGH;
             default:
               AppendChar(wch);
               break;

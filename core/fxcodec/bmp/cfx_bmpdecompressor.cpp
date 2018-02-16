@@ -205,12 +205,14 @@ int32_t CFX_BmpDecompressor::ReadHeader() {
           Error();
           NOTREACHED();
         }
+        break;
       }
       case 32:
         break;
       default:
         Error();
         NOTREACHED();
+        break;
     }
     src_row_bytes_ = BMP_WIDTHBYTES(width_, bit_counts_);
     switch (bit_counts_) {

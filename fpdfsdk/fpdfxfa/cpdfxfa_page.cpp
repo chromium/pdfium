@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "fpdfsdk/fsdk_define.h"
@@ -95,9 +96,11 @@ float CPDFXFA_Page::GetPageWidth() const {
     case FormType::kXFAForeground:
       if (m_pPDFPage)
         return m_pPDFPage->GetPageWidth();
+      FX_FALLTHROUGH;
     case FormType::kXFAFull:
       if (m_pXFAPageView)
         return m_pXFAPageView->GetPageViewRect().width;
+      break;
   }
 
   return 0.0f;
@@ -113,9 +116,11 @@ float CPDFXFA_Page::GetPageHeight() const {
     case FormType::kXFAForeground:
       if (m_pPDFPage)
         return m_pPDFPage->GetPageHeight();
+      FX_FALLTHROUGH;
     case FormType::kXFAFull:
       if (m_pXFAPageView)
         return m_pXFAPageView->GetPageViewRect().height;
+      break;
   }
 
   return 0.0f;
@@ -178,10 +183,12 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(int xPos,
     case FormType::kXFAForeground:
       if (m_pPDFPage)
         return m_pPDFPage->GetDisplayMatrix(xPos, yPos, xSize, ySize, iRotate);
+      FX_FALLTHROUGH;
     case FormType::kXFAFull:
       if (m_pXFAPageView)
         return m_pXFAPageView->GetDisplayMatrix(
             CFX_Rect(xPos, yPos, xSize, ySize), iRotate);
+      break;
   }
 
   return CFX_Matrix();

@@ -48,6 +48,7 @@ void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       }
       FillSoildRect(pParams->m_pGraphics, color, &pParams->m_rtPart,
                     &pParams->m_matrix);
+      break;
     }
     default:
       break;

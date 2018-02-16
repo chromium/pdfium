@@ -18,6 +18,7 @@
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
@@ -2622,6 +2623,7 @@ void CXFA_Node::ResetData() {
     }
     case XFA_FFWidgetType::kChoiceList:
       ClearAllSelections();
+      FX_FALLTHROUGH;
     default: {
       CXFA_Value* defValue = GetDefaultValueIfExists();
       if (defValue)
@@ -2762,6 +2764,7 @@ bool CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
       case XFA_AttributeEnum::Bottom: {
         size.height += szCap.height;
         size.width = std::max(size.width, szCap.width);
+        break;
       }
       default:
         break;
@@ -2858,6 +2861,7 @@ bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
         case XFA_AttributeEnum::Right:
         case XFA_AttributeEnum::Inline: {
           size.width -= szCap.width;
+          break;
         }
         default:
           break;
@@ -2881,6 +2885,7 @@ bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
         case XFA_AttributeEnum::Top:
         case XFA_AttributeEnum::Bottom: {
           size.height += szCap.height;
+          break;
         }
         default:
           break;

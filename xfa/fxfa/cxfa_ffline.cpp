@@ -44,6 +44,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
         break;
       case XFA_AttributeEnum::Right:
         rect.top += fHalfWidth;
+        break;
       case XFA_AttributeEnum::Even:
         break;
       default:

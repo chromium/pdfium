@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
@@ -847,6 +848,7 @@ Optional<WideString> CJX_Object::TryContent(bool bScriptModify, bool bProto) {
     case XFA_ObjectType::NodeV:
     case XFA_ObjectType::TextNode:
       pNode = ToNode(GetXFAObject());
+      FX_FALLTHROUGH;
     default:
       if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::DataValue)
         pNode = ToNode(GetXFAObject());

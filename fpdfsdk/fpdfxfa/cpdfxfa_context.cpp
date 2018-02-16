@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/fx_fallthrough.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -135,9 +136,11 @@ int CPDFXFA_Context::GetPageCount() const {
     case FormType::kXFAForeground:
       if (m_pPDFDoc)
         return m_pPDFDoc->GetPageCount();
+      FX_FALLTHROUGH;
     case FormType::kXFAFull:
       if (m_pXFADoc)
         return m_pXFADocView->CountPageViews();
+      break;
   }
   return 0;
 }

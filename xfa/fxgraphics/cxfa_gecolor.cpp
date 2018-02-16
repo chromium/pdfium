@@ -39,6 +39,7 @@ CXFA_GEColor& CXFA_GEColor::operator=(const CXFA_GEColor& that) {
       case Shading:
         m_argb = 0;
         m_pointer.shading = that.m_pointer.shading;
+        break;
       default:
         break;
     }
