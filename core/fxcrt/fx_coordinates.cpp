@@ -201,11 +201,11 @@ FX_RECT CFX_FloatRect::ToRoundedFxRect() const {
 
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, const CFX_FloatRect& rect) {
-  os << "rect[" << rect.Width() << "x" << rect.Height() << " (" << rect.left
-     << ", " << rect.bottom << ")]";
+  os << "rect[w " << rect.Width() << " x h " << rect.Height() << " (left "
+     << rect.left << ", bot " << rect.bottom << ")]";
   return os;
 }
-#endif
+#endif  // NDEBUG
 
 CFX_Matrix CFX_Matrix::GetInverse() const {
   CFX_Matrix inverse;
