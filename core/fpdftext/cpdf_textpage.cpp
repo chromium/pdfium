@@ -181,7 +181,8 @@ void CPDF_TextPage::ParseTextPage() {
     int indexSize = pdfium::CollectionSize<int>(m_CharIndex);
     const PAGECHAR_INFO& charinfo = m_CharList[i];
     if (charinfo.m_Flag == FPDFTEXT_CHAR_GENERATED ||
-        (charinfo.m_Unicode != 0 && !IsControlChar(charinfo))) {
+        (charinfo.m_Unicode != 0 && !IsControlChar(charinfo)) ||
+        (charinfo.m_Unicode == 0 && charinfo.m_CharCode != 0)) {
       if (indexSize % 2) {
         m_CharIndex.push_back(1);
       } else {
