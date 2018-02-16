@@ -71,10 +71,6 @@ config("pdfium_common_config") {
     # Assume UTF-8 by default to avoid code page dependencies.
     cflags += [ "/utf-8" ]
   }
-  if (is_clang) {
-    # TODO(thakis): Consider enabling this, https://crbug.com/807632
-    cflags += [ "-Wno-implicit-fallthrough" ]
-  }
 }
 
 config("pdfium_core_config") {
