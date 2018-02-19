@@ -6180,7 +6180,7 @@ bool CFXJSE_FormCalcContext::Translate(const WideStringView& wsFormcalc,
     return false;
 
   CXFA_FMToJavaScriptDepth::Reset();
-  if (!func->ToJavaScript(*wsJavascript))
+  if (!func->ToJavaScript(*wsJavascript, ReturnType::kInfered))
     return false;
 
   wsJavascript->AppendChar(0);
