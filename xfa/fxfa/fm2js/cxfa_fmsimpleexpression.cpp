@@ -201,8 +201,7 @@ bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   } else if (tempStr == L"$template") {
     tempStr = L"xfa.template";
   } else if (tempStr[0] == L'!') {
-    tempStr =
-        EXCLAMATION_IN_IDENTIFIER + tempStr.Right(tempStr.GetLength() - 1);
+    tempStr = L"pfm__excl__" + tempStr.Right(tempStr.GetLength() - 1);
   }
   javascript << tempStr;
   return !CXFA_IsTooBig(javascript);
@@ -261,10 +260,8 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   javascript << tempExp1;
   javascript << L"))\n{\n";
 
-  if (type == ReturnType::kImplied) {
-    javascript << RUNTIMEFUNCTIONRETURNVALUE;
-    javascript << L" = ";
-  }
+  if (type == ReturnType::kImplied)
+    javascript << L"pfm_ret = ";
 
   javascript << gs_lpStrExpFuncName[ASSIGN];
   javascript << L"(";
@@ -279,10 +276,8 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (m_pExp1->GetOperatorToken() == TOKidentifier &&
       tempExp1.AsStringView() != L"this") {
     javascript << L"else\n{\n";
-    if (type == ReturnType::kImplied) {
-      javascript << RUNTIMEFUNCTIONRETURNVALUE;
-      javascript << L" = ";
-    }
+    if (type == ReturnType::kImplied)
+      javascript << L"pfm_ret = ";
 
     javascript << tempExp1;
     javascript << L" = ";

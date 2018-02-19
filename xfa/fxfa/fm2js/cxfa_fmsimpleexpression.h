@@ -12,9 +12,6 @@
 
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
-#define RUNTIMEFUNCTIONRETURNVALUE L"pfm_ret"
-#define EXCLAMATION_IN_IDENTIFIER L"pfm__excl__"
-
 enum XFA_FM_SimpleExpressionType {
   ASSIGN,
   LOGICALOR,
