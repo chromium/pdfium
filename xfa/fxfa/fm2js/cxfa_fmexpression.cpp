@@ -14,10 +14,6 @@
 
 namespace {
 
-const wchar_t RUNTIMEBLOCKTEMPARRAY[] = L"pfm_ary";
-
-const wchar_t RUNTIMEBLOCKTEMPARRAYINDEX[] = L"pfm_ary_idx";
-
 const wchar_t kLessEqual[] = L" <= ";
 const wchar_t kGreaterEqual[] = L" >= ";
 const wchar_t kPlusEqual[] = L" += ";
@@ -103,12 +99,11 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript,
       return false;
   }
   javascript << L"return ";
-  if (m_isGlobal) {
-    javascript << XFA_FM_EXPTypeToString(GETFMVALUE);
-    javascript << L"(pfm_ret)";
-  } else {
+  if (m_isGlobal)
+    javascript << L"pfm_rt.get_val(pfm_ret)";
+  else
     javascript << L"pfm_ret";
-  }
+
   javascript << L";\n}\n";
   if (m_isGlobal) {
     javascript << L").call(this);\n";
@@ -143,9 +138,7 @@ bool CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& javascript,
     if (!m_pInit->ToJavaScript(javascript, ReturnType::kInfered))
       return false;
     javascript << tempName;
-    javascript << L" = ";
-    javascript << XFA_FM_EXPTypeToString(VARFILTER);
-    javascript << L"(";
+    javascript << L" = pfm_rt.var_filter(";
     javascript << tempName;
     javascript << L");\n";
   } else {
@@ -189,9 +182,7 @@ bool CXFA_FMExpExpression::ToJavaScript(CFX_WideTextBuf& javascript,
       m_pExpression->GetOperatorToken() == TOKdotscream ||
       m_pExpression->GetOperatorToken() == TOKdotdot ||
       m_pExpression->GetOperatorToken() == TOKdot) {
-    javascript << L"pfm_ret = ";
-    javascript << XFA_FM_EXPTypeToString(GETFMVALUE);
-    javascript << L"(";
+    javascript << L"pfm_ret = pfm_rt.get_val(";
     if (!m_pExpression->ToJavaScript(javascript, ReturnType::kInfered))
       return false;
     javascript << L");\n";
@@ -278,8 +269,7 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& javascript,
 
   javascript << L"if (";
   if (m_pExpression) {
-    javascript << XFA_FM_EXPTypeToString(GETFMVALUE);
-    javascript << L"(";
+    javascript << L"pfm_rt.get_val(";
     if (!m_pExpression->ToJavaScript(javascript, ReturnType::kInfered))
       return false;
     javascript << L")";
@@ -422,17 +412,14 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   javascript << L" = null;\n";
   javascript << L"for (";
   javascript << tempVariant;
-  javascript << L" = ";
-  javascript << XFA_FM_EXPTypeToString(GETFMVALUE);
-  javascript << L"(";
+  javascript << L" = pfm_rt.get_val(";
   if (!m_pAssignment->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
   javascript << L"); ";
   javascript << tempVariant;
 
   javascript << (m_bDirection ? kLessEqual : kGreaterEqual);
-  javascript << XFA_FM_EXPTypeToString(GETFMVALUE);
-  javascript << L"(";
+  javascript << L"pfm_rt.get_val(";
   if (!m_pAccessor->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
   javascript << L"); ";
@@ -443,8 +430,7 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& javascript,
     return false;
 
   if (m_pStep) {
-    javascript << XFA_FM_EXPTypeToString(GETFMVALUE);
-    javascript << L"(";
+    javascript << L"pfm_rt.get_val(";
     if (!m_pStep->ToJavaScript(javascript, ReturnType::kInfered))
       return false;
     javascript << L")";
@@ -492,11 +478,7 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript,
     javascript << m_wsIdentifier;
   }
   javascript << L" = null;\n";
-  javascript << L"var ";
-  javascript << RUNTIMEBLOCKTEMPARRAY;
-  javascript << L" = ";
-  javascript << XFA_FM_EXPTypeToString(CONCATFMOBJECT);
-  javascript << L"(";
+  javascript << L"var pfm_ary = pfm_rt.concat_obj(";
 
   for (const auto& expr : m_pAccessors) {
     if (!expr->ToJavaScript(javascript, ReturnType::kInfered))
@@ -505,14 +487,8 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript,
       javascript << L", ";
   }
   javascript << L");\n";
-  javascript << L"var ";
-  javascript << RUNTIMEBLOCKTEMPARRAYINDEX;
-  javascript << (L" = 0;\n");
-  javascript << L"while(";
-  javascript << RUNTIMEBLOCKTEMPARRAYINDEX;
-  javascript << L" < ";
-  javascript << RUNTIMEBLOCKTEMPARRAY;
-  javascript << L".length)\n{\n";
+  javascript << L"var pfm_ary_idx = 0;\n";
+  javascript << L"while(pfm_ary_idx < pfm_ary.length)\n{\n";
   if (m_wsIdentifier[0] == L'!') {
     WideString tempIdentifier =
         L"pfm__excl__" + m_wsIdentifier.Right(m_wsIdentifier.GetLength() - 1);
@@ -520,11 +496,7 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   } else {
     javascript << m_wsIdentifier;
   }
-  javascript << L" = ";
-  javascript << RUNTIMEBLOCKTEMPARRAY;
-  javascript << L"[";
-  javascript << RUNTIMEBLOCKTEMPARRAYINDEX;
-  javascript << L"++];\n";
+  javascript << L" = pfm_ary[pfm_ary_idx++];\n";
   if (!m_pList->ToJavaScript(javascript, type))
     return false;
   javascript << L"}\n";

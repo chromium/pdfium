@@ -18,19 +18,6 @@
 
 namespace {
 
-// Indexed by XFA_FM_SimpleExpressionType
-const wchar_t* const gs_lpStrExpFuncName[] = {
-    L"pfm_rt.asgn_val_op", L"pfm_rt.log_or_op",  L"pfm_rt.log_and_op",
-    L"pfm_rt.eq_op",       L"pfm_rt.neq_op",     L"pfm_rt.lt_op",
-    L"pfm_rt.le_op",       L"pfm_rt.gt_op",      L"pfm_rt.ge_op",
-    L"pfm_rt.plus_op",     L"pfm_rt.minus_op",   L"pfm_rt.mul_op",
-    L"pfm_rt.div_op",      L"pfm_rt.pos_op",     L"pfm_rt.neg_op",
-    L"pfm_rt.log_not_op",  L"pfm_rt.",           L"pfm_rt.dot_acc",
-    L"pfm_rt.dotdot_acc",  L"pfm_rt.concat_obj", L"pfm_rt.is_obj",
-    L"pfm_rt.is_ary",      L"pfm_rt.get_val",    L"pfm_rt.get_jsobj",
-    L"pfm_rt.var_filter",
-};
-
 const wchar_t* const g_BuiltInFuncs[] = {
     L"Abs",          L"Apr",       L"At",       L"Avg",
     L"Ceil",         L"Choose",    L"Concat",   L"Count",
@@ -83,11 +70,6 @@ const XFA_FMSOMMethod gs_FMSomMethods[] = {
 };
 
 }  // namespace
-
-WideStringView XFA_FM_EXPTypeToString(
-    XFA_FM_SimpleExpressionType simpleExpType) {
-  return gs_lpStrExpFuncName[simpleExpType];
-}
 
 CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(uint32_t line, XFA_FM_TOKEN op)
     : m_line(line), m_op(op) {}
@@ -251,9 +233,7 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << L"if (";
-  javascript << gs_lpStrExpFuncName[ISFMOBJECT];
-  javascript << L"(";
+  javascript << L"if (pfm_rt.is_obj(";
   CFX_WideTextBuf tempExp1;
   if (!m_pExp1->ToJavaScript(tempExp1, ReturnType::kInfered))
     return false;
@@ -263,8 +243,7 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (type == ReturnType::kImplied)
     javascript << L"pfm_ret = ";
 
-  javascript << gs_lpStrExpFuncName[ASSIGN];
-  javascript << L"(";
+  javascript << L"pfm_rt.asgn_val_op(";
   javascript << tempExp1;
   javascript << L", ";
 
@@ -280,9 +259,7 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript,
       javascript << L"pfm_ret = ";
 
     javascript << tempExp1;
-    javascript << L" = ";
-    javascript << gs_lpStrExpFuncName[ASSIGN];
-    javascript << L"(";
+    javascript << L" = pfm_rt.asgn_val_op(";
     javascript << tempExp1;
     javascript << L", ";
     javascript << tempExp2;
@@ -304,8 +281,7 @@ bool CXFA_FMLogicalOrExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << gs_lpStrExpFuncName[LOGICALOR];
-  javascript << L"(";
+  javascript << L"pfm_rt.log_or_op(";
   if (!m_pExp1->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
   javascript << L", ";
@@ -328,8 +304,7 @@ bool CXFA_FMLogicalAndExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << gs_lpStrExpFuncName[LOGICALAND];
-  javascript << L"(";
+  javascript << L"pfm_rt.log_and_op(";
   if (!m_pExp1->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
   javascript << L", ";
@@ -355,11 +330,11 @@ bool CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   switch (m_op) {
     case TOKeq:
     case TOKkseq:
-      javascript << gs_lpStrExpFuncName[EQUALITY];
+      javascript << L"pfm_rt.eq_op";
       break;
     case TOKne:
     case TOKksne:
-      javascript << gs_lpStrExpFuncName[NOTEQUALITY];
+      javascript << L"pfm_rt.neq_op";
       break;
     default:
       NOTREACHED();
@@ -391,19 +366,19 @@ bool CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   switch (m_op) {
     case TOKlt:
     case TOKkslt:
-      javascript << gs_lpStrExpFuncName[LESS];
+      javascript << L"pfm_rt.lt_op";
       break;
     case TOKgt:
     case TOKksgt:
-      javascript << gs_lpStrExpFuncName[GREATER];
+      javascript << L"pfm_rt.gt_op";
       break;
     case TOKle:
     case TOKksle:
-      javascript << gs_lpStrExpFuncName[LESSEQUAL];
+      javascript << L"pfm_rt.le_op";
       break;
     case TOKge:
     case TOKksge:
-      javascript << gs_lpStrExpFuncName[GREATEREQUAL];
+      javascript << L"pfm_rt.ge_op";
       break;
     default:
       NOTREACHED();
@@ -434,10 +409,10 @@ bool CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& javascript,
 
   switch (m_op) {
     case TOKplus:
-      javascript << gs_lpStrExpFuncName[PLUS];
+      javascript << L"pfm_rt.plus_op";
       break;
     case TOKminus:
-      javascript << gs_lpStrExpFuncName[MINUS];
+      javascript << L"pfm_rt.minus_op";
       break;
     default:
       NOTREACHED();
@@ -468,10 +443,10 @@ bool CXFA_FMMultiplicativeExpression::ToJavaScript(CFX_WideTextBuf& javascript,
 
   switch (m_op) {
     case TOKmul:
-      javascript << gs_lpStrExpFuncName[MULTIPLE];
+      javascript << L"pfm_rt.mul_op";
       break;
     case TOKdiv:
-      javascript << gs_lpStrExpFuncName[DIVIDE];
+      javascript << L"pfm_rt.div_op";
       break;
     default:
       NOTREACHED();
@@ -498,7 +473,7 @@ bool CXFA_FMPosExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << gs_lpStrExpFuncName[POSITIVE];
+  javascript << L"pfm_rt.pos_op";
   javascript << L"(";
   if (!m_pExp->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
@@ -517,7 +492,7 @@ bool CXFA_FMNegExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << gs_lpStrExpFuncName[NEGATIVE];
+  javascript << L"pfm_rt.neg_op";
   javascript << L"(";
   if (!m_pExp->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
@@ -536,7 +511,7 @@ bool CXFA_FMNotExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << gs_lpStrExpFuncName[NOT];
+  javascript << L"pfm_rt.log_not_op";
   javascript << L"(";
   if (!m_pExp->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
@@ -608,9 +583,9 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript,
         // the 6th. Make sure we don't overflow the shift when doing this
         // check. If we ever need more the 32 object params we can revisit.
         if (i < 32 && (methodPara & (0x01 << i)) > 0) {
-          javascript << gs_lpStrExpFuncName[GETFMJSOBJ];
+          javascript << L"pfm_rt.get_jsobj";
         } else {
-          javascript << gs_lpStrExpFuncName[GETFMVALUE];
+          javascript << L"pfm_rt.get_val";
         }
         javascript << L"(";
         const auto& expr = m_Arguments[i];
@@ -623,7 +598,7 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript,
       }
     } else {
       for (const auto& expr : m_Arguments) {
-        javascript << gs_lpStrExpFuncName[GETFMVALUE];
+        javascript << L"pfm_rt.get_val";
         javascript << L"(";
         if (!expr->ToJavaScript(javascript, ReturnType::kInfered))
           return false;
@@ -639,15 +614,13 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript,
     if (IsBuiltInFunc(&funcName)) {
       if (funcName.AsStringView() == L"Eval") {
         isEvalFunc = true;
-        javascript << L"eval.call(this, ";
-        javascript << gs_lpStrExpFuncName[CALL];
-        javascript << L"Translate";
+        javascript << L"eval.call(this, pfm_rt.Translate";
       } else if (funcName.AsStringView() == L"Exists") {
         isExistsFunc = true;
-        javascript << gs_lpStrExpFuncName[CALL];
+        javascript << L"pfm_rt.";
         javascript << funcName;
       } else {
-        javascript << gs_lpStrExpFuncName[CALL];
+        javascript << L"pfm_rt.";
         javascript << funcName;
       }
     } else {
@@ -707,7 +680,7 @@ bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << gs_lpStrExpFuncName[DOT];
+  javascript << L"pfm_rt.dot_acc";
   javascript << L"(";
   CFX_WideTextBuf tempExp1;
   if (m_pExp1) {
@@ -805,7 +778,7 @@ bool CXFA_FMDotDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (CXFA_IsTooBig(javascript) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  javascript << gs_lpStrExpFuncName[DOTDOT];
+  javascript << L"pfm_rt.dotdot_acc";
   javascript << L"(";
   CFX_WideTextBuf tempExp1;
   if (!m_pExp1->ToJavaScript(tempExp1, ReturnType::kInfered))
@@ -847,9 +820,7 @@ bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf& javascript,
   if (!m_pExp1->ToJavaScript(javascript, ReturnType::kInfered))
     return false;
   javascript << L";\n";
-  javascript << L"if (";
-  javascript << gs_lpStrExpFuncName[ISFMARRAY];
-  javascript << L"(accessor_object))\n{\n";
+  javascript << L"if (pfm_rt.is_ary(accessor_object))\n{\n";
   javascript << L"for(var index = accessor_object.length - 1; index > 1; "
                 L"index--)\n{\n";
   javascript << L"method_return_value = accessor_object[index].";

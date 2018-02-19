@@ -12,39 +12,6 @@
 
 #include "xfa/fxfa/fm2js/cxfa_fmlexer.h"
 
-enum XFA_FM_SimpleExpressionType {
-  ASSIGN,
-  LOGICALOR,
-  LOGICALAND,
-  EQUALITY,
-  NOTEQUALITY,
-  LESS,
-  LESSEQUAL,
-  GREATER,
-  GREATEREQUAL,
-  PLUS,
-  MINUS,
-  MULTIPLE,
-  DIVIDE,
-  POSITIVE,
-  NEGATIVE,
-  NOT,
-  CALL,
-  DOT,
-  DOTDOT,
-  CONCATFMOBJECT,
-  ISFMOBJECT,
-  ISFMARRAY,
-  GETFMVALUE,
-  GETFMJSOBJ,
-  VARFILTER
-};
-
-class CFX_WideTextBuf;
-
-WideStringView XFA_FM_EXPTypeToString(
-    XFA_FM_SimpleExpressionType simpleExpType);
-
 enum XFA_FM_AccessorIndex {
   ACCESSOR_NO_INDEX,
   ACCESSOR_NO_RELATIVEINDEX,
@@ -53,6 +20,8 @@ enum XFA_FM_AccessorIndex {
 };
 
 enum class ReturnType { kImplied, kInfered };
+
+class CFX_WideTextBuf;
 
 class CXFA_FMSimpleExpression {
  public:
