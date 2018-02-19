@@ -663,9 +663,6 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  if (HasError())
-    return nullptr;
-
   uint32_t line = m_lexer->GetCurrentLine();
   size_t expr_count = 0;
   while (1) {
@@ -947,9 +944,6 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseBlockExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  if (HasError())
-    return nullptr;
-
   uint32_t line = m_lexer->GetCurrentLine();
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
   while (1) {
@@ -1082,9 +1076,6 @@ CXFA_FMParser::ParseSubassignmentInForExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  if (HasError())
-    return nullptr;
-
   if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
@@ -1169,9 +1160,6 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  if (HasError())
-    return nullptr;
-
   std::unique_ptr<CXFA_FMExpression> expr;
   WideStringView wsIdentifier;
   std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> pAccessors;
@@ -1216,9 +1204,6 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
-    return nullptr;
-
-  if (HasError())
     return nullptr;
 
   uint32_t line = m_lexer->GetCurrentLine();
