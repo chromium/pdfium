@@ -29,6 +29,8 @@ class IFWL_AdapterTimerMgr;
 
 class CXFA_FFApp {
  public:
+  static void SkipFontLoadForTesting(bool skip);
+
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp();
 

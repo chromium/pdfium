@@ -22,6 +22,17 @@
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 #include "xfa/fxfa/cxfa_fwltheme.h"
 
+namespace {
+
+static bool kSkipFontLoadForTesting = false;
+
+}  // namespace
+
+// static
+void CXFA_FFApp::SkipFontLoadForTesting(bool skip) {
+  kSkipFontLoadForTesting = skip;
+}
+
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
   // Ensure fully initialized before making an app based on |this|.
   m_pFWLApp = pdfium::MakeUnique<CFWL_App>(this);
@@ -56,8 +67,10 @@ CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() const {
 CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {
     m_pFDEFontMgr = pdfium::MakeUnique<CFGAS_FontMgr>();
-    if (!m_pFDEFontMgr->EnumFonts())
-      m_pFDEFontMgr = nullptr;
+    if (!kSkipFontLoadForTesting) {
+      if (!m_pFDEFontMgr->EnumFonts())
+        m_pFDEFontMgr = nullptr;
+    }
   }
   return m_pFDEFontMgr.get();
 }
