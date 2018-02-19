@@ -27,11 +27,6 @@ CXFA_FMExpression::CXFA_FMExpression(uint32_t line)
 CXFA_FMExpression::CXFA_FMExpression(uint32_t line, XFA_FM_EXPTYPE type)
     : m_type(type), m_line(line) {}
 
-bool CXFA_FMExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  return !CXFA_IsTooBig(js) && depthManager.IsWithinMaxDepth();
-}
-
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     uint32_t line,
     bool isGlobal,
@@ -291,18 +286,11 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   return !CXFA_IsTooBig(js);
 }
 
-CXFA_FMLoopExpression::~CXFA_FMLoopExpression() {}
-
-bool CXFA_FMLoopExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  return !CXFA_IsTooBig(js) && depthManager.IsWithinMaxDepth();
-}
-
 CXFA_FMWhileExpression::CXFA_FMWhileExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pCondition,
     std::unique_ptr<CXFA_FMExpression> pExpression)
-    : CXFA_FMLoopExpression(line),
+    : CXFA_FMExpression(line),
       m_pCondition(std::move(pCondition)),
       m_pExpression(std::move(pExpression)) {}
 
@@ -369,7 +357,7 @@ CXFA_FMForExpression::CXFA_FMForExpression(
     int32_t iDirection,
     std::unique_ptr<CXFA_FMSimpleExpression> pStep,
     std::unique_ptr<CXFA_FMExpression> pList)
-    : CXFA_FMLoopExpression(line),
+    : CXFA_FMExpression(line),
       m_wsVariant(wsVariant),
       m_pAssignment(std::move(pAssignment)),
       m_pAccessor(std::move(pAccessor)),
@@ -434,7 +422,7 @@ CXFA_FMForeachExpression::CXFA_FMForeachExpression(
     const WideStringView& wsIdentifier,
     std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
     std::unique_ptr<CXFA_FMExpression> pList)
-    : CXFA_FMLoopExpression(line),
+    : CXFA_FMExpression(line),
       m_wsIdentifier(wsIdentifier),
       m_pAccessors(std::move(pAccessors)),
       m_pList(std::move(pList)) {}

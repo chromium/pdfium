@@ -27,13 +27,15 @@ class CFX_WideTextBuf;
 
 class CXFA_FMExpression {
  public:
-  explicit CXFA_FMExpression(uint32_t line);
-  CXFA_FMExpression(uint32_t line, XFA_FM_EXPTYPE type);
   virtual ~CXFA_FMExpression() {}
+  virtual bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) = 0;
 
-  virtual bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type);
   uint32_t GetLine() { return m_line; }
   XFA_FM_EXPTYPE GetExpType() const { return m_type; }
+
+ protected:
+  explicit CXFA_FMExpression(uint32_t line);
+  CXFA_FMExpression(uint32_t line, XFA_FM_EXPTYPE type);
 
  private:
   XFA_FM_EXPTYPE m_type;
@@ -126,15 +128,7 @@ class CXFA_FMIfExpression : public CXFA_FMExpression {
   std::unique_ptr<CXFA_FMExpression> m_pElseExpression;
 };
 
-class CXFA_FMLoopExpression : public CXFA_FMExpression {
- public:
-  explicit CXFA_FMLoopExpression(uint32_t line) : CXFA_FMExpression(line) {}
-  ~CXFA_FMLoopExpression() override;
-
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
-};
-
-class CXFA_FMWhileExpression : public CXFA_FMLoopExpression {
+class CXFA_FMWhileExpression : public CXFA_FMExpression {
  public:
   CXFA_FMWhileExpression(uint32_t line,
                          std::unique_ptr<CXFA_FMSimpleExpression> pCodition,
@@ -164,7 +158,7 @@ class CXFA_FMContinueExpression : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
 };
 
-class CXFA_FMForExpression : public CXFA_FMLoopExpression {
+class CXFA_FMForExpression : public CXFA_FMExpression {
  public:
   CXFA_FMForExpression(uint32_t line,
                        const WideStringView& wsVariant,
@@ -186,7 +180,7 @@ class CXFA_FMForExpression : public CXFA_FMLoopExpression {
   std::unique_ptr<CXFA_FMExpression> m_pList;
 };
 
-class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
+class CXFA_FMForeachExpression : public CXFA_FMExpression {
  public:
   // Takes ownership of |pAccessors|.
   CXFA_FMForeachExpression(

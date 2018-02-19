@@ -74,11 +74,6 @@ const XFA_FMSOMMethod gs_FMSomMethods[] = {
 CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(uint32_t line, XFA_FM_TOKEN op)
     : m_line(line), m_op(op) {}
 
-bool CXFA_FMSimpleExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                           ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  return !CXFA_IsTooBig(js) && depthManager.IsWithinMaxDepth();
-}
 XFA_FM_TOKEN CXFA_FMSimpleExpression::GetOperatorToken() const {
   return m_op;
 }
@@ -195,13 +190,7 @@ CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
     : CXFA_FMSimpleExpression(line, op), m_pExp(std::move(pExp)) {}
 
-CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() {}
-
-bool CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                          ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  return !CXFA_IsTooBig(js) && depthManager.IsWithinMaxDepth();
-}
+CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() = default;
 
 CXFA_FMBinExpression::CXFA_FMBinExpression(
     uint32_t line,
@@ -212,12 +201,7 @@ CXFA_FMBinExpression::CXFA_FMBinExpression(
       m_pExp1(std::move(pExp1)),
       m_pExp2(std::move(pExp2)) {}
 
-CXFA_FMBinExpression::~CXFA_FMBinExpression() {}
-
-bool CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  return !CXFA_IsTooBig(js) && depthManager.IsWithinMaxDepth();
-}
+CXFA_FMBinExpression::~CXFA_FMBinExpression() = default;
 
 CXFA_FMAssignExpression::CXFA_FMAssignExpression(
     uint32_t line,
