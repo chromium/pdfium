@@ -42,8 +42,9 @@ std::unique_ptr<CXFA_FMFunctionDefinition> CXFA_FMParser::Parse() {
 bool CXFA_FMParser::NextToken() {
   if (HasError())
     return false;
+
   m_token = m_lexer->NextToken();
-  while (!HasError() && m_token->m_type == TOKreserver)
+  while (!HasError() && m_token.m_type == TOKreserver)
     m_token = m_lexer->NextToken();
   return !HasError();
 }
@@ -52,7 +53,7 @@ bool CXFA_FMParser::CheckThenNext(XFA_FM_TOKEN op) {
   if (HasError())
     return false;
 
-  if (m_token->m_type != op) {
+  if (m_token.m_type != op) {
     m_error = true;
     return false;
   }
@@ -72,13 +73,13 @@ CXFA_FMParser::ParseTopExpression() {
   std::unique_ptr<CXFA_FMExpression> expr;
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
   while (!HasError()) {
-    if (m_token->m_type == TOKeof || m_token->m_type == TOKendfunc ||
-        m_token->m_type == TOKendif || m_token->m_type == TOKelseif ||
-        m_token->m_type == TOKelse || m_token->m_type == TOKreserver) {
+    if (m_token.m_type == TOKeof || m_token.m_type == TOKendfunc ||
+        m_token.m_type == TOKendif || m_token.m_type == TOKelseif ||
+        m_token.m_type == TOKelse || m_token.m_type == TOKreserver) {
       return expressions;
     }
 
-    expr = m_token->m_type == TOKfunc ? ParseFunction() : ParseExpression();
+    expr = m_token.m_type == TOKfunc ? ParseFunction() : ParseExpression();
     if (!expr) {
       m_error = true;
       break;
@@ -96,37 +97,37 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   WideStringView ident;
   std::vector<WideStringView> arguments;
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   if (!NextToken())
     return nullptr;
-  if (m_token->m_type != TOKidentifier) {
+  if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
   } else {
-    ident = m_token->m_string;
+    ident = m_token.m_string;
     if (!NextToken())
       return nullptr;
   }
   if (!CheckThenNext(TOKlparen))
     return nullptr;
-  if (m_token->m_type == TOKrparen) {
+  if (m_token.m_type == TOKrparen) {
     if (!NextToken())
       return nullptr;
   } else {
     while (1) {
-      if (m_token->m_type != TOKidentifier) {
+      if (m_token.m_type != TOKidentifier) {
         m_error = true;
         return nullptr;
       }
-      arguments.push_back(m_token->m_string);
+      arguments.push_back(m_token.m_string);
       if (!NextToken())
         return nullptr;
-      if (m_token->m_type == TOKcomma) {
+      if (m_token.m_type == TOKcomma) {
         if (!NextToken())
           return nullptr;
         continue;
       }
-      if (m_token->m_type == TOKrparen) {
+      if (m_token.m_type == TOKrparen) {
         if (!NextToken())
           return nullptr;
       } else {
@@ -138,7 +139,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   }
   if (!CheckThenNext(TOKdo))
     return nullptr;
-  if (m_token->m_type == TOKendfunc) {
+  if (m_token.m_type == TOKendfunc) {
     if (!NextToken())
       return nullptr;
   } else {
@@ -157,8 +158,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
     return nullptr;
 
   std::unique_ptr<CXFA_FMExpression> expr;
-  uint32_t line = m_token->m_line_num;
-  switch (m_token->m_type) {
+  uint32_t line = m_lexer->GetCurrentLine();
+  switch (m_token.m_type) {
     case TOKvar:
       expr = ParseVarExpression();
       break;
@@ -210,20 +211,20 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseVarExpression() {
     return nullptr;
 
   WideStringView ident;
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   if (!NextToken())
     return nullptr;
-  if (m_token->m_type != TOKidentifier) {
+  if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
   }
 
-  ident = m_token->m_string;
+  ident = m_token.m_string;
   if (!NextToken())
     return nullptr;
 
   std::unique_ptr<CXFA_FMExpression> expr;
-  if (m_token->m_type == TOKassign) {
+  if (m_token.m_type == TOKassign) {
     if (!NextToken())
       return nullptr;
 
@@ -240,12 +241,12 @@ CXFA_FMParser::ParseSimpleExpression() {
   if (HasError())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseLogicalOrExpression();
   if (!pExp1)
     return nullptr;
   int level = 1;
-  while (m_token->m_type == TOKassign) {
+  while (m_token.m_type == TOKassign) {
     if (!NextToken())
       return nullptr;
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseLogicalOrExpression();
@@ -266,7 +267,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseSimpleExpression();
   if (!pExp1)
     return nullptr;
@@ -279,13 +280,13 @@ CXFA_FMParser::ParseLogicalOrExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseLogicalAndExpression();
   if (!e1)
     return nullptr;
 
   for (;;) {
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKor:
       case TOKksor: {
         if (!NextToken())
@@ -314,13 +315,13 @@ CXFA_FMParser::ParseLogicalAndExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseEqualityExpression();
   if (!e1)
     return nullptr;
 
   for (;;) {
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKand:
       case TOKksand: {
         if (!NextToken())
@@ -348,13 +349,13 @@ CXFA_FMParser::ParseEqualityExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseRelationalExpression();
   if (!e1)
     return nullptr;
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKeq:
       case TOKkseq:
         if (!NextToken())
@@ -393,14 +394,14 @@ CXFA_FMParser::ParseRelationalExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseAddtiveExpression();
   if (!e1)
     return nullptr;
 
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKlt:
       case TOKkslt:
         if (!NextToken())
@@ -463,14 +464,14 @@ CXFA_FMParser::ParseAddtiveExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseMultiplicativeExpression();
   if (!e1)
     return nullptr;
 
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKplus:
         if (!NextToken())
           return nullptr;
@@ -507,14 +508,14 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseUnaryExpression();
   if (!e1)
     return nullptr;
 
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKmul:
         if (!NextToken())
           return nullptr;
@@ -551,8 +552,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseUnaryExpression() {
     return nullptr;
 
   std::unique_ptr<CXFA_FMSimpleExpression> expr;
-  uint32_t line = m_token->m_line_num;
-  switch (m_token->m_type) {
+  uint32_t line = m_lexer->GetCurrentLine();
+  switch (m_token.m_type) {
     case TOKplus:
       if (!NextToken())
         return nullptr;
@@ -599,25 +600,25 @@ CXFA_FMParser::ParsePrimaryExpression() {
     return nullptr;
 
   std::unique_ptr<CXFA_FMSimpleExpression> expr;
-  uint32_t line = m_token->m_line_num;
-  switch (m_token->m_type) {
+  uint32_t line = m_lexer->GetCurrentLine();
+  switch (m_token.m_type) {
     case TOKnumber:
       expr =
-          pdfium::MakeUnique<CXFA_FMNumberExpression>(line, m_token->m_string);
+          pdfium::MakeUnique<CXFA_FMNumberExpression>(line, m_token.m_string);
       if (!NextToken())
         return nullptr;
       break;
     case TOKstring:
       expr =
-          pdfium::MakeUnique<CXFA_FMStringExpression>(line, m_token->m_string);
+          pdfium::MakeUnique<CXFA_FMStringExpression>(line, m_token.m_string);
       if (!NextToken())
         return nullptr;
       break;
     case TOKidentifier: {
-      WideStringView wsIdentifier(m_token->m_string);
+      WideStringView wsIdentifier(m_token.m_string);
       if (!NextToken())
         return nullptr;
-      if (m_token->m_type == TOKlbracket) {
+      if (m_token.m_type == TOKlbracket) {
         std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
         if (!s)
           return nullptr;
@@ -636,7 +637,7 @@ CXFA_FMParser::ParsePrimaryExpression() {
     }
     case TOKif:
       expr = pdfium::MakeUnique<CXFA_FMIdentifierExpression>(line,
-                                                             m_token->m_string);
+                                                             m_token.m_string);
       if (!expr || !NextToken())
         return nullptr;
       break;
@@ -669,7 +670,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
   if (HasError())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   size_t expr_count = 0;
   while (1) {
     ++expr_count;
@@ -679,28 +680,28 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
     if (expr_count > kMaxPostExpressions)
       return nullptr;
 
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKlparen: {
         if (!NextToken())
           return nullptr;
         std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> expressions;
-        if (m_token->m_type != TOKrparen) {
-          while (m_token->m_type != TOKrparen) {
+        if (m_token.m_type != TOKrparen) {
+          while (m_token.m_type != TOKrparen) {
             std::unique_ptr<CXFA_FMSimpleExpression> simple_expr =
                 ParseSimpleExpression();
             if (!simple_expr)
               return nullptr;
 
             expressions.push_back(std::move(simple_expr));
-            if (m_token->m_type == TOKcomma) {
+            if (m_token.m_type == TOKcomma) {
               if (!NextToken())
                 return nullptr;
-            } else if (m_token->m_type == TOKeof ||
-                       m_token->m_type == TOKreserver) {
+            } else if (m_token.m_type == TOKeof ||
+                       m_token.m_type == TOKreserver) {
               break;
             }
           }
-          if (m_token->m_type != TOKrparen) {
+          if (m_token.m_type != TOKrparen) {
             m_error = true;
             return nullptr;
           }
@@ -709,7 +710,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
             line, std::move(expr), std::move(expressions), false);
         if (!NextToken())
           return nullptr;
-        if (m_token->m_type != TOKlbracket)
+        if (m_token.m_type != TOKlbracket)
           continue;
 
         std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
@@ -723,37 +724,37 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
       case TOKdot: {
         if (!NextToken())
           return nullptr;
-        if (m_token->m_type != TOKidentifier) {
+        if (m_token.m_type != TOKidentifier) {
           m_error = true;
           return nullptr;
         }
-        WideStringView tempStr = m_token->m_string;
-        uint32_t tempLine = m_token->m_line_num;
+        WideStringView tempStr = m_token.m_string;
+        uint32_t tempLine = m_lexer->GetCurrentLine();
         if (!NextToken())
           return nullptr;
-        if (m_token->m_type == TOKlparen) {
+        if (m_token.m_type == TOKlparen) {
           std::unique_ptr<CXFA_FMSimpleExpression> pExpCall;
           if (!NextToken())
             return nullptr;
 
           std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> expressions;
-          if (m_token->m_type != TOKrparen) {
-            while (m_token->m_type != TOKrparen) {
+          if (m_token.m_type != TOKrparen) {
+            while (m_token.m_type != TOKrparen) {
               std::unique_ptr<CXFA_FMSimpleExpression> exp =
                   ParseSimpleExpression();
               if (!exp)
                 return nullptr;
 
               expressions.push_back(std::move(exp));
-              if (m_token->m_type == TOKcomma) {
+              if (m_token.m_type == TOKcomma) {
                 if (!NextToken())
                   return nullptr;
-              } else if (m_token->m_type == TOKeof ||
-                         m_token->m_type == TOKreserver) {
+              } else if (m_token.m_type == TOKeof ||
+                         m_token.m_type == TOKreserver) {
                 break;
               }
             }
-            if (m_token->m_type != TOKrparen) {
+            if (m_token.m_type != TOKrparen) {
               m_error = true;
               return nullptr;
             }
@@ -767,7 +768,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
               line, std::move(expr), std::move(pExpCall));
           if (!NextToken())
             return nullptr;
-          if (m_token->m_type != TOKlbracket)
+          if (m_token.m_type != TOKlbracket)
             continue;
 
           std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
@@ -776,7 +777,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
 
           expr = pdfium::MakeUnique<CXFA_FMDotAccessorExpression>(
               line, std::move(expr), TOKcall, L"", std::move(s));
-        } else if (m_token->m_type == TOKlbracket) {
+        } else if (m_token.m_type == TOKlbracket) {
           std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
           if (!s)
             return nullptr;
@@ -795,15 +796,15 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
       case TOKdotdot: {
         if (!NextToken())
           return nullptr;
-        if (m_token->m_type != TOKidentifier) {
+        if (m_token.m_type != TOKidentifier) {
           m_error = true;
           return nullptr;
         }
-        WideStringView tempStr = m_token->m_string;
-        uint32_t tempLine = m_token->m_line_num;
+        WideStringView tempStr = m_token.m_string;
+        uint32_t tempLine = m_lexer->GetCurrentLine();
         if (!NextToken())
           return nullptr;
-        if (m_token->m_type == TOKlbracket) {
+        if (m_token.m_type == TOKlbracket) {
           std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
           if (!s)
             return nullptr;
@@ -822,15 +823,15 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
       case TOKdotscream: {
         if (!NextToken())
           return nullptr;
-        if (m_token->m_type != TOKidentifier) {
+        if (m_token.m_type != TOKidentifier) {
           m_error = true;
           return nullptr;
         }
-        WideStringView tempStr = m_token->m_string;
-        uint32_t tempLine = m_token->m_line_num;
+        WideStringView tempStr = m_token.m_string;
+        uint32_t tempLine = m_lexer->GetCurrentLine();
         if (!NextToken())
           return nullptr;
-        if (m_token->m_type != TOKlbracket) {
+        if (m_token.m_type != TOKlbracket) {
           std::unique_ptr<CXFA_FMSimpleExpression> s =
               pdfium::MakeUnique<CXFA_FMIndexExpression>(
                   tempLine, ACCESSOR_NO_INDEX, nullptr, false);
@@ -868,29 +869,29 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   if (!NextToken())
     return nullptr;
 
   std::unique_ptr<CXFA_FMSimpleExpression> s;
   XFA_FM_AccessorIndex accessorIndex = ACCESSOR_NO_RELATIVEINDEX;
   std::unique_ptr<CXFA_FMSimpleExpression> pExp;
-  if (m_token->m_type == TOKmul) {
+  if (m_token.m_type == TOKmul) {
     pExp = pdfium::MakeUnique<CXFA_FMIndexExpression>(line, accessorIndex,
                                                       std::move(s), true);
     if (!pExp || !NextToken())
       return nullptr;
-    if (m_token->m_type != TOKrbracket) {
+    if (m_token.m_type != TOKrbracket) {
       m_error = true;
       return nullptr;
     }
     return pExp;
   }
-  if (m_token->m_type == TOKplus) {
+  if (m_token.m_type == TOKplus) {
     accessorIndex = ACCESSOR_POSITIVE_INDEX;
     if (!NextToken())
       return nullptr;
-  } else if (m_token->m_type == TOKminus) {
+  } else if (m_token.m_type == TOKminus) {
     accessorIndex = ACCESSOR_NEGATIVE_INDEX;
     if (!NextToken())
       return nullptr;
@@ -898,7 +899,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
   s = ParseSimpleExpression();
   if (!s)
     return nullptr;
-  if (m_token->m_type != TOKrbracket) {
+  if (m_token.m_type != TOKrbracket) {
     m_error = true;
     return nullptr;
   }
@@ -914,18 +915,18 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
   if (!CheckThenNext(TOKlparen))
     return nullptr;
 
-  if (m_token->m_type == TOKrparen) {
+  if (m_token.m_type == TOKrparen) {
     m_error = true;
     return nullptr;
   }
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseLogicalOrExpression();
   if (!pExp1)
     return nullptr;
 
   int level = 1;
-  while (m_token->m_type == TOKassign) {
+  while (m_token.m_type == TOKassign) {
     if (!NextToken())
       return nullptr;
 
@@ -953,11 +954,11 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseBlockExpression() {
   if (HasError())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
   while (1) {
     std::unique_ptr<CXFA_FMExpression> expr;
-    switch (m_token->m_type) {
+    switch (m_token.m_type) {
       case TOKeof:
       case TOKendif:
       case TOKelseif:
@@ -994,29 +995,28 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   const wchar_t* pStartPos = m_lexer->GetPos();
   if (!NextToken() || !CheckThenNext(TOKlparen))
     return nullptr;
 
   std::unique_ptr<CXFA_FMSimpleExpression> pExpression;
-  while (m_token->m_type != TOKrparen) {
+  while (m_token.m_type != TOKrparen) {
     pExpression = ParseSimpleExpression();
     if (!pExpression)
       return nullptr;
-    if (m_token->m_type != TOKcomma)
+    if (m_token.m_type != TOKcomma)
       break;
     if (!NextToken())
       return nullptr;
   }
   if (!CheckThenNext(TOKrparen))
     return nullptr;
-  if (m_token->m_type != TOKthen) {
+  if (m_token.m_type != TOKthen) {
     m_lexer->SetCurrentLine(line);
-    auto pNewToken = pdfium::MakeUnique<CXFA_FMToken>(line);
-    m_token = std::move(pNewToken);
-    m_token->m_type = TOKidentifier;
-    m_token->m_string = L"if";
+
+    m_token = CXFA_FMToken(TOKidentifier);
+    m_token.m_string = L"if";
     m_lexer->SetPos(pStartPos);
     return ParseExpExpression();
   }
@@ -1028,7 +1028,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
     return nullptr;
 
   std::unique_ptr<CXFA_FMExpression> pElseExpression;
-  switch (m_token->m_type) {
+  switch (m_token.m_type) {
     case TOKeof:
     case TOKendif:
       if (!CheckThenNext(TOKendif))
@@ -1065,7 +1065,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   if (!NextToken())
     return nullptr;
 
@@ -1089,7 +1089,7 @@ CXFA_FMParser::ParseSubassignmentInForExpression() {
   if (HasError())
     return nullptr;
 
-  if (m_token->m_type != TOKidentifier) {
+  if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
   }
@@ -1105,18 +1105,18 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
     return nullptr;
 
   WideStringView wsVariant;
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   if (!NextToken())
     return nullptr;
-  if (m_token->m_type != TOKidentifier) {
+  if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
   }
 
-  wsVariant = m_token->m_string;
+  wsVariant = m_token.m_string;
   if (!NextToken())
     return nullptr;
-  if (m_token->m_type != TOKassign) {
+  if (m_token.m_type != TOKassign) {
     m_error = true;
     return nullptr;
   }
@@ -1129,9 +1129,9 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
     return nullptr;
 
   int32_t iDirection = 0;
-  if (m_token->m_type == TOKupto) {
+  if (m_token.m_type == TOKupto) {
     iDirection = 1;
-  } else if (m_token->m_type == TOKdownto) {
+  } else if (m_token.m_type == TOKdownto) {
     iDirection = -1;
   } else {
     m_error = true;
@@ -1146,7 +1146,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
     return nullptr;
 
   std::unique_ptr<CXFA_FMSimpleExpression> pStep;
-  if (m_token->m_type == TOKstep) {
+  if (m_token.m_type == TOKstep) {
     if (!NextToken())
       return nullptr;
     pStep = ParseSimpleExpression();
@@ -1180,29 +1180,29 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
   WideStringView wsIdentifier;
   std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> pAccessors;
   std::unique_ptr<CXFA_FMExpression> pList;
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   if (!NextToken())
     return nullptr;
-  if (m_token->m_type != TOKidentifier) {
+  if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
   }
 
-  wsIdentifier = m_token->m_string;
+  wsIdentifier = m_token.m_string;
   if (!NextToken() || !CheckThenNext(TOKin) || !CheckThenNext(TOKlparen))
     return nullptr;
-  if (m_token->m_type == TOKrparen) {
+  if (m_token.m_type == TOKrparen) {
     m_error = true;
     return nullptr;
   }
 
-  while (m_token->m_type != TOKrparen) {
+  while (m_token.m_type != TOKrparen) {
     std::unique_ptr<CXFA_FMSimpleExpression> s = ParseSimpleExpression();
     if (!s)
       return nullptr;
 
     pAccessors.push_back(std::move(s));
-    if (m_token->m_type != TOKcomma)
+    if (m_token.m_type != TOKcomma)
       break;
     if (!NextToken())
       return nullptr;
@@ -1225,7 +1225,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
   if (HasError())
     return nullptr;
 
-  uint32_t line = m_token->m_line_num;
+  uint32_t line = m_lexer->GetCurrentLine();
   if (!NextToken())
     return nullptr;
 
@@ -1236,5 +1236,5 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
 }
 
 bool CXFA_FMParser::HasError() const {
-  return m_error || m_token == nullptr;
+  return m_error || m_token.m_type == TOKreserver;
 }

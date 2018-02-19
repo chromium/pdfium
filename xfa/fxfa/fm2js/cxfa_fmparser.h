@@ -57,7 +57,7 @@ class CXFA_FMParser {
   std::unique_ptr<CXFA_FMSimpleExpression> ParseIndexExpression();
 
   std::unique_ptr<CXFA_FMLexer> m_lexer;
-  std::unique_ptr<CXFA_FMToken> m_token;
+  CXFA_FMToken m_token;
   bool m_error;
   unsigned long m_parse_depth;
   unsigned long m_max_parse_depth;

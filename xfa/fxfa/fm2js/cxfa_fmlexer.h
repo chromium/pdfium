@@ -91,7 +91,8 @@ struct XFA_FMKeyword {
 class CXFA_FMToken {
  public:
   CXFA_FMToken();
-  explicit CXFA_FMToken(uint32_t line_num);
+  explicit CXFA_FMToken(XFA_FM_TOKEN token);
+  CXFA_FMToken(const CXFA_FMToken&);
   ~CXFA_FMToken();
 
 #ifndef NDEBUG
@@ -100,7 +101,6 @@ class CXFA_FMToken {
 
   WideStringView m_string;
   XFA_FM_TOKEN m_type;
-  uint32_t m_line_num;
 };
 
 class CXFA_FMLexer {
@@ -108,27 +108,24 @@ class CXFA_FMLexer {
   explicit CXFA_FMLexer(const WideStringView& wsFormcalc);
   ~CXFA_FMLexer();
 
-  std::unique_ptr<CXFA_FMToken> NextToken();
+  CXFA_FMToken NextToken();
 
+  uint32_t GetCurrentLine() const { return m_current_line; }
   void SetCurrentLine(uint32_t line) { m_current_line = line; }
   const wchar_t* GetPos() { return m_cursor; }
   void SetPos(const wchar_t* pos) { m_cursor = pos; }
 
  private:
-  void AdvanceForNumber();
-  void AdvanceForString();
-  void AdvanceForIdentifier();
+  CXFA_FMToken AdvanceForNumber();
+  CXFA_FMToken AdvanceForString();
+  CXFA_FMToken AdvanceForIdentifier();
   void AdvanceForComment();
 
-  void RaiseError() {
-    m_token.reset();
-    m_lexer_error = true;
-  }
+  void RaiseError() { m_lexer_error = true; }
 
   const wchar_t* m_cursor;
   const wchar_t* const m_end;
   uint32_t m_current_line;
-  std::unique_ptr<CXFA_FMToken> m_token;
   bool m_lexer_error;
 };
 
