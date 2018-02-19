@@ -85,7 +85,6 @@ enum XFA_FM_TOKEN {
 
 struct XFA_FMKeyword {
   XFA_FM_TOKEN m_type;
-  uint32_t m_hash;
   const wchar_t* m_keyword;
 };
 
@@ -95,7 +94,9 @@ class CXFA_FMToken {
   explicit CXFA_FMToken(uint32_t line_num);
   ~CXFA_FMToken();
 
+#ifndef NDEBUG
   WideString ToDebugString() const;
+#endif  // NDEBUG
 
   WideStringView m_string;
   XFA_FM_TOKEN m_type;

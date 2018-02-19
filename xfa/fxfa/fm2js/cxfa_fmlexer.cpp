@@ -38,70 +38,46 @@ bool IsWhitespaceCharacter(wchar_t c) {
 }
 
 const XFA_FMKeyword keyWords[] = {
-    {TOKand, 0x00000026, L"&"},
-    {TOKlparen, 0x00000028, L"("},
-    {TOKrparen, 0x00000029, L")"},
-    {TOKmul, 0x0000002a, L"*"},
-    {TOKplus, 0x0000002b, L"+"},
-    {TOKcomma, 0x0000002c, L","},
-    {TOKminus, 0x0000002d, L"-"},
-    {TOKdot, 0x0000002e, L"."},
-    {TOKdiv, 0x0000002f, L"/"},
-    {TOKlt, 0x0000003c, L"<"},
-    {TOKassign, 0x0000003d, L"="},
-    {TOKgt, 0x0000003e, L">"},
-    {TOKlbracket, 0x0000005b, L"["},
-    {TOKrbracket, 0x0000005d, L"]"},
-    {TOKor, 0x0000007c, L"|"},
-    {TOKdotscream, 0x0000ec11, L".#"},
-    {TOKdotstar, 0x0000ec18, L".*"},
-    {TOKdotdot, 0x0000ec1c, L".."},
-    {TOKle, 0x000133f9, L"<="},
-    {TOKne, 0x000133fa, L"<>"},
-    {TOKeq, 0x0001391a, L"=="},
-    {TOKge, 0x00013e3b, L">="},
-    {TOKdo, 0x00020153, L"do"},
-    {TOKkseq, 0x00020676, L"eq"},
-    {TOKksge, 0x000210ac, L"ge"},
-    {TOKksgt, 0x000210bb, L"gt"},
-    {TOKif, 0x00021aef, L"if"},
-    {TOKin, 0x00021af7, L"in"},
-    {TOKksle, 0x00022a51, L"le"},
-    {TOKkslt, 0x00022a60, L"lt"},
-    {TOKksne, 0x00023493, L"ne"},
-    {TOKksor, 0x000239c1, L"or"},
-    {TOKnull, 0x052931bb, L"null"},
-    {TOKbreak, 0x05518c25, L"break"},
-    {TOKksand, 0x09f9db33, L"and"},
-    {TOKend, 0x0a631437, L"end"},
-    {TOKeof, 0x0a63195a, L"eof"},
-    {TOKfor, 0x0a7d67a7, L"for"},
-    {TOKnan, 0x0b4f91dd, L"nan"},
-    {TOKksnot, 0x0b4fd9b1, L"not"},
-    {TOKvar, 0x0c2203e9, L"var"},
-    {TOKthen, 0x2d5738cf, L"then"},
-    {TOKelse, 0x45f65ee9, L"else"},
-    {TOKexit, 0x4731d6ba, L"exit"},
-    {TOKdownto, 0x4caadc3b, L"downto"},
-    {TOKreturn, 0x4db8bd60, L"return"},
-    {TOKinfinity, 0x5c0a010a, L"infinity"},
-    {TOKendwhile, 0x5c64bff0, L"endwhile"},
-    {TOKforeach, 0x67e31f38, L"foreach"},
-    {TOKendfunc, 0x68f984a3, L"endfunc"},
-    {TOKelseif, 0x78253218, L"elseif"},
-    {TOKwhile, 0x84229259, L"while"},
-    {TOKendfor, 0x8ab49d7e, L"endfor"},
-    {TOKthrow, 0x8db05c94, L"throw"},
-    {TOKstep, 0xa7a7887c, L"step"},
-    {TOKupto, 0xb5155328, L"upto"},
-    {TOKcontinue, 0xc0340685, L"continue"},
-    {TOKfunc, 0xcdce60ec, L"func"},
-    {TOKendif, 0xe0e8fee6, L"endif"},
+    {TOKdo, L"do"},
+    {TOKkseq, L"eq"},
+    {TOKksge, L"ge"},
+    {TOKksgt, L"gt"},
+    {TOKif, L"if"},
+    {TOKin, L"in"},
+    {TOKksle, L"le"},
+    {TOKkslt, L"lt"},
+    {TOKksne, L"ne"},
+    {TOKksor, L"or"},
+    {TOKnull, L"null"},
+    {TOKbreak, L"break"},
+    {TOKksand, L"and"},
+    {TOKend, L"end"},
+    {TOKeof, L"eof"},
+    {TOKfor, L"for"},
+    {TOKnan, L"nan"},
+    {TOKksnot, L"not"},
+    {TOKvar, L"var"},
+    {TOKthen, L"then"},
+    {TOKelse, L"else"},
+    {TOKexit, L"exit"},
+    {TOKdownto, L"downto"},
+    {TOKreturn, L"return"},
+    {TOKinfinity, L"infinity"},
+    {TOKendwhile, L"endwhile"},
+    {TOKforeach, L"foreach"},
+    {TOKendfunc, L"endfunc"},
+    {TOKelseif, L"elseif"},
+    {TOKwhile, L"while"},
+    {TOKendfor, L"endfor"},
+    {TOKthrow, L"throw"},
+    {TOKstep, L"step"},
+    {TOKupto, L"upto"},
+    {TOKcontinue, L"continue"},
+    {TOKfunc, L"func"},
+    {TOKendif, L"endif"},
 };
 
-const XFA_FM_TOKEN KEYWORD_START = TOKdo;
-const XFA_FM_TOKEN KEYWORD_END = TOKendif;
-
+#ifndef NDEBUG
 const wchar_t* tokenStrings[] = {
     L"TOKand",        L"TOKlparen",     L"TOKrparen",   L"TOKmul",
     L"TOKplus",       L"TOKcomma",      L"TOKminus",    L"TOKdot",
@@ -121,17 +97,13 @@ const wchar_t* tokenStrings[] = {
     L"TOKidentifier", L"TOKunderscore", L"TOKdollar",   L"TOKexclamation",
     L"TOKcall",       L"TOKstring",     L"TOKnumber",   L"TOKreserver",
 };
+#endif  // NDEBUG
 
 XFA_FM_TOKEN TokenizeIdentifier(const WideStringView& str) {
-  uint32_t key = FX_HashCode_GetW(str, true);
-
-  const XFA_FMKeyword* end = std::begin(keyWords) + KEYWORD_END + 1;
-  const XFA_FMKeyword* result =
-      std::lower_bound(std::begin(keyWords) + KEYWORD_START, end, key,
-                       [](const XFA_FMKeyword& iter, const uint32_t& val) {
-                         return iter.m_hash < val;
-                       });
-  if (result != end && result->m_hash == key)
+  const XFA_FMKeyword* result = std::find_if(
+      std::begin(keyWords), std::end(keyWords),
+      [&str](const XFA_FMKeyword& iter) { return iter.m_keyword == str; });
+  if (result != std::end(keyWords) && result->m_keyword == str)
     return result->m_type;
   return TOKidentifier;
 }
@@ -145,6 +117,7 @@ CXFA_FMToken::CXFA_FMToken(uint32_t line_num)
 
 CXFA_FMToken::~CXFA_FMToken() {}
 
+#ifndef NDEBUG
 WideString CXFA_FMToken::ToDebugString() const {
   WideString str(L"type = ");
   str += tokenStrings[m_type];
@@ -154,6 +127,7 @@ WideString CXFA_FMToken::ToDebugString() const {
   str += std::to_wstring(m_line_num).c_str();
   return str;
 }
+#endif  // NDEBUG
 
 CXFA_FMLexer::CXFA_FMLexer(const WideStringView& wsFormCalc)
     : m_cursor(wsFormCalc.unterminated_c_str()),
@@ -401,9 +375,9 @@ void CXFA_FMLexer::AdvanceForString() {
       // If the next character is not a " then the end of the string has been
       // found.
       if (*m_cursor != '"') {
-        if (!IsFormCalcCharacter(*m_cursor)) {
+        if (!IsFormCalcCharacter(*m_cursor))
           break;
-        }
+
         m_token->m_string = WideStringView(start, (m_cursor - start));
         return;
       }
@@ -423,10 +397,9 @@ void CXFA_FMLexer::AdvanceForIdentifier() {
       RaiseError();
       return;
     }
-
-    if (!IsIdentifierCharacter(*m_cursor)) {
+    if (!IsIdentifierCharacter(*m_cursor))
       break;
-    }
+
     ++m_cursor;
   }
   m_token->m_string =
@@ -441,7 +414,6 @@ void CXFA_FMLexer::AdvanceForComment() {
       RaiseError();
       return;
     }
-
     if (*m_cursor == L'\r') {
       ++m_cursor;
       return;
