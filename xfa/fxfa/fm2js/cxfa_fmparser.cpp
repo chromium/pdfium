@@ -365,7 +365,7 @@ CXFA_FMParser::ParseEqualityExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMEqualityExpression>(
+        e1 = pdfium::MakeUnique<CXFA_FMEqualExpression>(
             line, TOKeq, std::move(e1), std::move(e2));
         continue;
       case TOKne:
@@ -377,7 +377,7 @@ CXFA_FMParser::ParseEqualityExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMEqualityExpression>(
+        e1 = pdfium::MakeUnique<CXFA_FMNotEqualExpression>(
             line, TOKne, std::move(e1), std::move(e2));
         continue;
       default:
@@ -411,8 +411,8 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMRelationalExpression>(
-            line, TOKlt, std::move(e1), std::move(e2));
+        e1 = pdfium::MakeUnique<CXFA_FMLtExpression>(line, TOKlt, std::move(e1),
+                                                     std::move(e2));
         continue;
       case TOKgt:
       case TOKksgt:
@@ -423,8 +423,8 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMRelationalExpression>(
-            line, TOKgt, std::move(e1), std::move(e2));
+        e1 = pdfium::MakeUnique<CXFA_FMGtExpression>(line, TOKgt, std::move(e1),
+                                                     std::move(e2));
         continue;
       case TOKle:
       case TOKksle:
@@ -435,8 +435,8 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMRelationalExpression>(
-            line, TOKle, std::move(e1), std::move(e2));
+        e1 = pdfium::MakeUnique<CXFA_FMLeExpression>(line, TOKle, std::move(e1),
+                                                     std::move(e2));
         continue;
       case TOKge:
       case TOKksge:
@@ -447,8 +447,8 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMRelationalExpression>(
-            line, TOKge, std::move(e1), std::move(e2));
+        e1 = pdfium::MakeUnique<CXFA_FMGeExpression>(line, TOKge, std::move(e1),
+                                                     std::move(e2));
         continue;
       default:
         break;
@@ -480,7 +480,7 @@ CXFA_FMParser::ParseAddtiveExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMAdditiveExpression>(
+        e1 = pdfium::MakeUnique<CXFA_FMPlusExpression>(
             line, TOKplus, std::move(e1), std::move(e2));
         continue;
       case TOKminus:
@@ -491,7 +491,7 @@ CXFA_FMParser::ParseAddtiveExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMAdditiveExpression>(
+        e1 = pdfium::MakeUnique<CXFA_FMMinusExpression>(
             line, TOKminus, std::move(e1), std::move(e2));
         continue;
       default:
@@ -524,7 +524,7 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMMultiplicativeExpression>(
+        e1 = pdfium::MakeUnique<CXFA_FMMulExpression>(
             line, TOKmul, std::move(e1), std::move(e2));
         continue;
       case TOKdiv:
@@ -535,7 +535,7 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
         if (!e2)
           return nullptr;
 
-        e1 = pdfium::MakeUnique<CXFA_FMMultiplicativeExpression>(
+        e1 = pdfium::MakeUnique<CXFA_FMDivExpression>(
             line, TOKdiv, std::move(e1), std::move(e2));
         continue;
       default:

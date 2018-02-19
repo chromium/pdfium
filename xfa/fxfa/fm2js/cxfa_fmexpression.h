@@ -44,7 +44,6 @@ class CXFA_FMExpression {
 
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
  public:
-  // Takes ownership of |arguments| and |expressions|.
   CXFA_FMFunctionDefinition(
       uint32_t line,
       bool isGlobal,

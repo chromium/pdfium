@@ -184,15 +184,7 @@ bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& js,
   return !CXFA_IsTooBig(js);
 }
 
-CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(
-    uint32_t line,
-    XFA_FM_TOKEN op,
-    std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMSimpleExpression(line, op), m_pExp(std::move(pExp)) {}
-
-CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() = default;
-
-CXFA_FMBinExpression::CXFA_FMBinExpression(
+CXFA_FMAssignExpression::CXFA_FMAssignExpression(
     uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -201,14 +193,7 @@ CXFA_FMBinExpression::CXFA_FMBinExpression(
       m_pExp1(std::move(pExp1)),
       m_pExp2(std::move(pExp2)) {}
 
-CXFA_FMBinExpression::~CXFA_FMBinExpression() = default;
-
-CXFA_FMAssignExpression::CXFA_FMAssignExpression(
-    uint32_t line,
-    XFA_FM_TOKEN op,
-    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
-    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
+CXFA_FMAssignExpression::~CXFA_FMAssignExpression() = default;
 
 bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& js,
                                            ReturnType type) {
@@ -243,15 +228,20 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& js,
   return !CXFA_IsTooBig(js);
 }
 
-CXFA_FMLogicalOrExpression::CXFA_FMLogicalOrExpression(
+CXFA_FMBinExpression::CXFA_FMBinExpression(
+    const WideString& opName,
     uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
+    : CXFA_FMSimpleExpression(line, op),
+      m_OpName(opName),
+      m_pExp1(std::move(pExp1)),
+      m_pExp2(std::move(pExp2)) {}
 
-bool CXFA_FMLogicalOrExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                              ReturnType type) {
+CXFA_FMBinExpression::~CXFA_FMBinExpression() = default;
+
+bool CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   CXFA_FMToJavaScriptDepth depthManager;
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
@@ -264,255 +254,189 @@ bool CXFA_FMLogicalOrExpression::ToJavaScript(CFX_WideTextBuf& js,
   if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
     return false;
 
-  js << L"pfm_rt.log_or_op(" << exp1_txt << L", " << exp2_txt << L")";
+  js << L"pfm_rt." << m_OpName << L"(" << exp1_txt << L", " << exp2_txt << L")";
   return !CXFA_IsTooBig(js);
 }
+
+CXFA_FMLogicalOrExpression::CXFA_FMLogicalOrExpression(
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMBinExpression(L"log_or_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
 
 CXFA_FMLogicalAndExpression::CXFA_FMLogicalAndExpression(
     uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"log_and_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
 
-bool CXFA_FMLogicalAndExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                               ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
-    return false;
-
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
-    return false;
-
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"pfm_rt.log_and_op(" << exp1_txt << L", " << exp2_txt << L")";
-  return !CXFA_IsTooBig(js);
-}
-
-CXFA_FMEqualityExpression::CXFA_FMEqualityExpression(
+CXFA_FMEqualExpression::CXFA_FMEqualExpression(
     uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"eq_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
 
-bool CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                             ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
-    return false;
-
-  switch (m_op) {
-    case TOKeq:
-    case TOKkseq:
-      js << L"pfm_rt.eq_op";
-      break;
-    case TOKne:
-    case TOKksne:
-      js << L"pfm_rt.neq_op";
-      break;
-    default:
-      NOTREACHED();
-      break;
-  }
-
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
-    return false;
-
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"(" << exp1_txt << L", " << exp2_txt << L")";
-  return !CXFA_IsTooBig(js);
-}
-
-CXFA_FMRelationalExpression::CXFA_FMRelationalExpression(
+CXFA_FMNotEqualExpression::CXFA_FMNotEqualExpression(
     uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"neq_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
 
-bool CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                               ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
-    return false;
-
-  switch (m_op) {
-    case TOKlt:
-    case TOKkslt:
-      js << L"pfm_rt.lt_op";
-      break;
-    case TOKgt:
-    case TOKksgt:
-      js << L"pfm_rt.gt_op";
-      break;
-    case TOKle:
-    case TOKksle:
-      js << L"pfm_rt.le_op";
-      break;
-    case TOKge:
-    case TOKksge:
-      js << L"pfm_rt.ge_op";
-      break;
-    default:
-      NOTREACHED();
-      break;
-  }
-
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
-    return false;
-
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"(" << exp1_txt << L", " << exp2_txt << L")";
-  return !CXFA_IsTooBig(js);
-}
-
-CXFA_FMAdditiveExpression::CXFA_FMAdditiveExpression(
+CXFA_FMGtExpression::CXFA_FMGtExpression(
     uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"gt_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
 
-bool CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                             ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
-    return false;
-
-  switch (m_op) {
-    case TOKplus:
-      js << L"pfm_rt.plus_op";
-      break;
-    case TOKminus:
-      js << L"pfm_rt.minus_op";
-      break;
-    default:
-      NOTREACHED();
-      break;
-  }
-
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
-    return false;
-
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"(" << exp1_txt << L", " << exp2_txt << L")";
-  return !CXFA_IsTooBig(js);
-}
-
-CXFA_FMMultiplicativeExpression::CXFA_FMMultiplicativeExpression(
+CXFA_FMGeExpression::CXFA_FMGeExpression(
     uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMBinExpression(line, op, std::move(pExp1), std::move(pExp2)) {}
+    : CXFA_FMBinExpression(L"ge_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
 
-bool CXFA_FMMultiplicativeExpression::ToJavaScript(CFX_WideTextBuf& js,
-                                                   ReturnType type) {
+CXFA_FMLtExpression::CXFA_FMLtExpression(
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMBinExpression(L"lt_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
+
+CXFA_FMLeExpression::CXFA_FMLeExpression(
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMBinExpression(L"le_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
+
+CXFA_FMPlusExpression::CXFA_FMPlusExpression(
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMBinExpression(L"plus_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
+
+CXFA_FMMinusExpression::CXFA_FMMinusExpression(
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMBinExpression(L"minus_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
+
+CXFA_FMMulExpression::CXFA_FMMulExpression(
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMBinExpression(L"mul_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
+
+CXFA_FMDivExpression::CXFA_FMDivExpression(
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
+    : CXFA_FMBinExpression(L"div_op",
+                           line,
+                           op,
+                           std::move(pExp1),
+                           std::move(pExp2)) {}
+
+CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(
+    const WideString& opName,
+    uint32_t line,
+    XFA_FM_TOKEN op,
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp)
+    : CXFA_FMSimpleExpression(line, op),
+      m_OpName(opName),
+      m_pExp(std::move(pExp)) {}
+
+CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() = default;
+
+bool CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& js,
+                                          ReturnType type) {
   CXFA_FMToJavaScriptDepth depthManager;
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  switch (m_op) {
-    case TOKmul:
-      js << L"pfm_rt.mul_op";
-      break;
-    case TOKdiv:
-      js << L"pfm_rt.div_op";
-      break;
-    default:
-      NOTREACHED();
-      break;
-  }
-
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
+  CFX_WideTextBuf exp_txt;
+  if (!m_pExp->ToJavaScript(exp_txt, ReturnType::kInfered))
     return false;
 
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"(" << exp1_txt << L", " << exp2_txt << L")";
+  js << L"pfm_rt." << m_OpName.c_str() << L"(" << exp_txt << L")";
   return !CXFA_IsTooBig(js);
 }
 
 CXFA_FMPosExpression::CXFA_FMPosExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMUnaryExpression(line, TOKplus, std::move(pExp)) {}
-
-bool CXFA_FMPosExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
-    return false;
-
-  CFX_WideTextBuf exp_txt;
-  if (!m_pExp->ToJavaScript(exp_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"pfm_rt.pos_op(" << exp_txt << L")";
-  return !CXFA_IsTooBig(js);
-}
+    : CXFA_FMUnaryExpression(L"pos_op", line, TOKplus, std::move(pExp)) {}
 
 CXFA_FMNegExpression::CXFA_FMNegExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMUnaryExpression(line, TOKminus, std::move(pExp)) {}
-
-bool CXFA_FMNegExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
-    return false;
-
-  CFX_WideTextBuf exp_txt;
-  if (!m_pExp->ToJavaScript(exp_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"pfm_rt.neg_op(" << exp_txt << L")";
-  return !CXFA_IsTooBig(js);
-}
+    : CXFA_FMUnaryExpression(L"neg_op", line, TOKminus, std::move(pExp)) {}
 
 CXFA_FMNotExpression::CXFA_FMNotExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMUnaryExpression(line, TOKksnot, std::move(pExp)) {}
-
-bool CXFA_FMNotExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
-  CXFA_FMToJavaScriptDepth depthManager;
-  if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
-    return false;
-
-  CFX_WideTextBuf exp_txt;
-  if (!m_pExp->ToJavaScript(exp_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"pfm_rt.log_not_op(" << exp_txt << L")";
-  return !CXFA_IsTooBig(js);
-}
+    : CXFA_FMUnaryExpression(L"log_not_op", line, TOKksnot, std::move(pExp)) {}
 
 CXFA_FMCallExpression::CXFA_FMCallExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp,
     std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pArguments,
     bool bIsSomMethod)
-    : CXFA_FMUnaryExpression(line, TOKcall, std::move(pExp)),
+    : CXFA_FMSimpleExpression(line, TOKcall),
+      m_pExp(std::move(pExp)),
       m_bIsSomMethod(bIsSomMethod),
       m_Arguments(std::move(pArguments)) {}
 
@@ -650,11 +574,10 @@ CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
     XFA_FM_TOKEN op,
     WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
-    : CXFA_FMBinExpression(line,
-                           op,
-                           std::move(pAccessor),
-                           std::move(pIndexExp)),
-      m_wsIdentifier(wsIdentifier) {}
+    : CXFA_FMSimpleExpression(line, op),
+      m_wsIdentifier(wsIdentifier),
+      m_pExp1(std::move(pAccessor)),
+      m_pExp2(std::move(pIndexExp)) {}
 
 CXFA_FMDotAccessorExpression::~CXFA_FMDotAccessorExpression() {}
 
@@ -702,9 +625,12 @@ CXFA_FMIndexExpression::CXFA_FMIndexExpression(
     XFA_FM_AccessorIndex accessorIndex,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp,
     bool bIsStarIndex)
-    : CXFA_FMUnaryExpression(line, TOKlbracket, std::move(pIndexExp)),
+    : CXFA_FMSimpleExpression(line, TOKlbracket),
+      m_pExp(std::move(pIndexExp)),
       m_accessorIndex(accessorIndex),
       m_bIsStarIndex(bIsStarIndex) {}
+
+CXFA_FMIndexExpression::~CXFA_FMIndexExpression() = default;
 
 bool CXFA_FMIndexExpression::ToJavaScript(CFX_WideTextBuf& js,
                                           ReturnType type) {
@@ -747,11 +673,10 @@ CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
     XFA_FM_TOKEN op,
     WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
-    : CXFA_FMBinExpression(line,
-                           op,
-                           std::move(pAccessor),
-                           std::move(pIndexExp)),
-      m_wsIdentifier(wsIdentifier) {}
+    : CXFA_FMSimpleExpression(line, op),
+      m_wsIdentifier(wsIdentifier),
+      m_pExp1(std::move(pAccessor)),
+      m_pExp2(std::move(pIndexExp)) {}
 
 CXFA_FMDotDotAccessorExpression::~CXFA_FMDotDotAccessorExpression() {}
 
@@ -781,10 +706,11 @@ CXFA_FMMethodCallExpression::CXFA_FMMethodCallExpression(
     uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessorExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pCallExp)
-    : CXFA_FMBinExpression(line,
-                           TOKdot,
-                           std::move(pAccessorExp1),
-                           std::move(pCallExp)) {}
+    : CXFA_FMSimpleExpression(line, TOKdot),
+      m_pExp1(std::move(pAccessorExp1)),
+      m_pExp2(std::move(pCallExp)) {}
+
+CXFA_FMMethodCallExpression::~CXFA_FMMethodCallExpression() = default;
 
 bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf& js,
                                                ReturnType type) {
