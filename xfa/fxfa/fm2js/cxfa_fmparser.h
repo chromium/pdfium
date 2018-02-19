@@ -30,10 +30,10 @@ class CXFA_FMParser {
   bool CheckThenNext(XFA_FM_TOKEN op);
   bool IncrementParseDepthAndCheck();
 
-  std::vector<std::unique_ptr<CXFA_FMExpression>> ParseTopExpression();
+  std::vector<std::unique_ptr<CXFA_FMExpression>> ParseExpressionList();
   std::unique_ptr<CXFA_FMExpression> ParseFunction();
   std::unique_ptr<CXFA_FMExpression> ParseExpression();
-  std::unique_ptr<CXFA_FMExpression> ParseVarExpression();
+  std::unique_ptr<CXFA_FMExpression> ParseDeclarationExpression();
   std::unique_ptr<CXFA_FMExpression> ParseExpExpression();
   std::unique_ptr<CXFA_FMExpression> ParseBlockExpression();
   std::unique_ptr<CXFA_FMExpression> ParseIfExpression();
