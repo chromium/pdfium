@@ -119,10 +119,10 @@ void CFWL_WidgetTP::DrawBorder(CXFA_Graphics* pGraphics,
 void CFWL_WidgetTP::FillBackground(CXFA_Graphics* pGraphics,
                                    const CFX_RectF* pRect,
                                    CFX_Matrix* pMatrix) {
-  FillSoildRect(pGraphics, FWLTHEME_COLOR_Background, pRect, pMatrix);
+  FillSolidRect(pGraphics, FWLTHEME_COLOR_Background, pRect, pMatrix);
 }
 
-void CFWL_WidgetTP::FillSoildRect(CXFA_Graphics* pGraphics,
+void CFWL_WidgetTP::FillSolidRect(CXFA_Graphics* pGraphics,
                                   FX_ARGB fillColor,
                                   const CFX_RectF* pRect,
                                   CFX_Matrix* pMatrix) {

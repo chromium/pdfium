@@ -60,7 +60,7 @@ class CFWL_WidgetTP {
   void FillBackground(CXFA_Graphics* pGraphics,
                       const CFX_RectF* pRect,
                       CFX_Matrix* pMatrix = nullptr);
-  void FillSoildRect(CXFA_Graphics* pGraphics,
+  void FillSolidRect(CXFA_Graphics* pGraphics,
                      FX_ARGB fillColor,
                      const CFX_RectF* pRect,
                      CFX_Matrix* pMatrix = nullptr);
