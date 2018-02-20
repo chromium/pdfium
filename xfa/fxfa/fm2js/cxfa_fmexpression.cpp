@@ -21,16 +21,14 @@ const wchar_t kMinusEqual[] = L" -= ";
 
 }  // namespace
 
-CXFA_FMExpression::CXFA_FMExpression() : m_type(XFA_FM_EXPTYPE_UNKNOWN) {}
-
-CXFA_FMExpression::CXFA_FMExpression(XFA_FM_EXPTYPE type) : m_type(type) {}
+CXFA_FMExpression::CXFA_FMExpression() = default;
 
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     bool isGlobal,
     const WideStringView& wsName,
     std::vector<WideStringView>&& arguments,
     std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions)
-    : CXFA_FMExpression(XFA_FM_EXPTYPE_FUNC),
+    : CXFA_FMExpression(),
       m_wsName(wsName),
       m_pArguments(std::move(arguments)),
       m_pExpressions(std::move(expressions)),
@@ -103,9 +101,7 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& js,
 CXFA_FMVarExpression::CXFA_FMVarExpression(
     const WideStringView& wsName,
     std::unique_ptr<CXFA_FMSimpleExpression> pInit)
-    : CXFA_FMExpression(XFA_FM_EXPTYPE_VAR),
-      m_wsName(wsName),
-      m_pInit(std::move(pInit)) {}
+    : CXFA_FMExpression(), m_wsName(wsName), m_pInit(std::move(pInit)) {}
 
 CXFA_FMVarExpression::~CXFA_FMVarExpression() {}
 
@@ -136,8 +132,7 @@ bool CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
 
 CXFA_FMExpExpression::CXFA_FMExpExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> pExpression)
-    : CXFA_FMExpression(XFA_FM_EXPTYPE_EXP),
-      m_pExpression(std::move(pExpression)) {}
+    : CXFA_FMExpression(), m_pExpression(std::move(pExpression)) {}
 
 CXFA_FMExpExpression::~CXFA_FMExpExpression() {}
 
@@ -180,8 +175,7 @@ bool CXFA_FMExpExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
 
 CXFA_FMBlockExpression::CXFA_FMBlockExpression(
     std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressionList)
-    : CXFA_FMExpression(XFA_FM_EXPTYPE_BLOCK),
-      m_ExpressionList(std::move(pExpressionList)) {}
+    : CXFA_FMExpression(), m_ExpressionList(std::move(pExpressionList)) {}
 
 CXFA_FMBlockExpression::~CXFA_FMBlockExpression() {}
 
@@ -227,7 +221,7 @@ CXFA_FMIfExpression::CXFA_FMIfExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
     std::unique_ptr<CXFA_FMExpression> pIfExpression,
     std::unique_ptr<CXFA_FMExpression> pElseExpression)
-    : CXFA_FMExpression(XFA_FM_EXPTYPE_IF),
+    : CXFA_FMExpression(),
       m_pExpression(std::move(pExpression)),
       m_pIfExpression(std::move(pIfExpression)),
       m_pElseExpression(std::move(pElseExpression)) {}
@@ -303,8 +297,7 @@ bool CXFA_FMWhileExpression::ToJavaScript(CFX_WideTextBuf& js,
   return !CXFA_IsTooBig(js);
 }
 
-CXFA_FMBreakExpression::CXFA_FMBreakExpression()
-    : CXFA_FMExpression(XFA_FM_EXPTYPE_BREAK) {}
+CXFA_FMBreakExpression::CXFA_FMBreakExpression() : CXFA_FMExpression() {}
 
 CXFA_FMBreakExpression::~CXFA_FMBreakExpression() {}
 
@@ -318,8 +311,7 @@ bool CXFA_FMBreakExpression::ToJavaScript(CFX_WideTextBuf& js,
   return !CXFA_IsTooBig(js);
 }
 
-CXFA_FMContinueExpression::CXFA_FMContinueExpression()
-    : CXFA_FMExpression(XFA_FM_EXPTYPE_CONTINUE) {}
+CXFA_FMContinueExpression::CXFA_FMContinueExpression() : CXFA_FMExpression() {}
 
 CXFA_FMContinueExpression::~CXFA_FMContinueExpression() {}
 

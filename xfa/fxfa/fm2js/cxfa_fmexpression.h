@@ -12,17 +12,6 @@
 
 #include "xfa/fxfa/fm2js/cxfa_fmsimpleexpression.h"
 
-enum XFA_FM_EXPTYPE {
-  XFA_FM_EXPTYPE_UNKNOWN,
-  XFA_FM_EXPTYPE_FUNC,
-  XFA_FM_EXPTYPE_VAR,
-  XFA_FM_EXPTYPE_EXP,
-  XFA_FM_EXPTYPE_BLOCK,
-  XFA_FM_EXPTYPE_IF,
-  XFA_FM_EXPTYPE_BREAK,
-  XFA_FM_EXPTYPE_CONTINUE,
-};
-
 class CFX_WideTextBuf;
 
 class CXFA_FMExpression {
@@ -30,14 +19,8 @@ class CXFA_FMExpression {
   virtual ~CXFA_FMExpression() {}
   virtual bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) = 0;
 
-  XFA_FM_EXPTYPE GetExpType() const { return m_type; }
-
  protected:
   CXFA_FMExpression();
-  explicit CXFA_FMExpression(XFA_FM_EXPTYPE type);
-
- private:
-  XFA_FM_EXPTYPE m_type;
 };
 
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
