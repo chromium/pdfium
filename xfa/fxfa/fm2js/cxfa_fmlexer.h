@@ -110,9 +110,6 @@ class CXFA_FMLexer {
 
   CXFA_FMToken NextToken();
 
-  const wchar_t* GetPos() { return m_cursor; }
-  void SetPos(const wchar_t* pos) { m_cursor = pos; }
-
  private:
   CXFA_FMToken AdvanceForNumber();
   CXFA_FMToken AdvanceForString();

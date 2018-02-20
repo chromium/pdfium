@@ -938,8 +938,6 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
-
-  const wchar_t* pStartPos = m_lexer->GetPos();
   if (!NextToken() || !CheckThenNext(TOKlparen))
     return nullptr;
 
@@ -955,13 +953,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
   }
   if (!CheckThenNext(TOKrparen))
     return nullptr;
+
   if (m_token.m_type != TOKthen) {
-    m_token = CXFA_FMToken(TOKidentifier);
-    m_token.m_string = L"if";
-    m_lexer->SetPos(pStartPos);
-    return ParseExpExpression();
+    m_error = true;
+    return nullptr;
   }
-  if (!CheckThenNext(TOKthen))
+  if (!NextToken())
     return nullptr;
 
   std::unique_ptr<CXFA_FMExpression> pIfExpression = ParseBlockExpression();
