@@ -24,13 +24,13 @@
 
 namespace {
 
-static bool kSkipFontLoadForTesting = false;
+bool g_skipFontLoadForTesting = false;
 
 }  // namespace
 
 // static
 void CXFA_FFApp::SkipFontLoadForTesting(bool skip) {
-  kSkipFontLoadForTesting = skip;
+  g_skipFontLoadForTesting = skip;
 }
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider) : m_pProvider(pProvider) {
@@ -67,7 +67,7 @@ CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() const {
 CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {
     m_pFDEFontMgr = pdfium::MakeUnique<CFGAS_FontMgr>();
-    if (!kSkipFontLoadForTesting) {
+    if (!g_skipFontLoadForTesting) {
       if (!m_pFDEFontMgr->EnumFonts())
         m_pFDEFontMgr = nullptr;
     }
