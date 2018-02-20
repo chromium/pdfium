@@ -263,17 +263,10 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   }
 
   if (m_pElseExpression) {
-    if (m_pElseExpression->GetExpType() == XFA_FM_EXPTYPE_IF) {
-      js << L"else\n{\n";
-      if (!m_pElseExpression->ToJavaScript(js, type))
-        return false;
-
-      js << L"}\n";
-    } else {
-      js << L"else\n";
-      if (!m_pElseExpression->ToJavaScript(js, type))
-        return false;
-    }
+    js << L"else\n{\n";
+    if (!m_pElseExpression->ToJavaScript(js, type))
+      return false;
+    js << L"}\n";
   }
   return !CXFA_IsTooBig(js);
 }
