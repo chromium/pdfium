@@ -628,12 +628,6 @@ CXFA_FMParser::ParsePrimaryExpression() {
       }
       break;
     }
-    case TOKif:
-      expr = pdfium::MakeUnique<CXFA_FMIdentifierExpression>(line,
-                                                             m_token.m_string);
-      if (!expr || !NextToken())
-        return nullptr;
-      break;
     case TOKnull:
       expr = pdfium::MakeUnique<CXFA_FMNullExpression>(line);
       if (!expr || !NextToken())
