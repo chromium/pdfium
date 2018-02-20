@@ -65,14 +65,14 @@ class CXFA_FMVarExpression : public CXFA_FMExpression {
  public:
   CXFA_FMVarExpression(uint32_t line,
                        const WideStringView& wsName,
-                       std::unique_ptr<CXFA_FMExpression> pInit);
+                       std::unique_ptr<CXFA_FMSimpleExpression> pInit);
   ~CXFA_FMVarExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
 
  private:
   WideStringView m_wsName;
-  std::unique_ptr<CXFA_FMExpression> m_pInit;
+  std::unique_ptr<CXFA_FMSimpleExpression> m_pInit;
 };
 
 class CXFA_FMExpExpression : public CXFA_FMExpression {

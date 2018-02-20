@@ -106,7 +106,7 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& js,
 CXFA_FMVarExpression::CXFA_FMVarExpression(
     uint32_t line,
     const WideStringView& wsName,
-    std::unique_ptr<CXFA_FMExpression> pInit)
+    std::unique_ptr<CXFA_FMSimpleExpression> pInit)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_VAR),
       m_wsName(wsName),
       m_pInit(std::move(pInit)) {}

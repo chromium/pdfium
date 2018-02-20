@@ -15,7 +15,6 @@
 
 namespace {
 
-constexpr unsigned int kMaxAssignmentChainLength = 12;
 constexpr unsigned int kMaxParseDepth = 1250;
 constexpr unsigned int kMaxPostExpressions = 16384;
 
@@ -223,12 +222,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDeclarationExpression() {
   if (!NextToken())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMExpression> expr;
+  std::unique_ptr<CXFA_FMSimpleExpression> expr;
   if (m_token.m_type == TOKassign) {
     if (!NextToken())
       return nullptr;
 
-    expr = ParseExpExpression();
+    expr = ParseSimpleExpression();
     if (!expr)
       return nullptr;
   }
@@ -253,17 +252,15 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseSimpleExpression();
   if (!pExp1)
     return nullptr;
-  int level = 1;
-  while (m_token.m_type == TOKassign) {
+
+  if (m_token.m_type == TOKassign) {
     if (!NextToken())
       return nullptr;
-    std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseLogicalOrExpression();
+
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseSimpleExpression();
     if (!pExp2)
       return nullptr;
-    if (level++ == kMaxAssignmentChainLength) {
-      m_error = true;
-      return nullptr;
-    }
+
     pExp1 = pdfium::MakeUnique<CXFA_FMAssignExpression>(
         line, TOKassign, std::move(pExp1), std::move(pExp2));
   }
@@ -913,27 +910,10 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
     return nullptr;
   }
 
-  uint32_t line = m_lexer->GetCurrentLine();
-  std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseLogicalOrExpression();
+  std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseSimpleExpression();
   if (!pExp1)
     return nullptr;
 
-  int level = 1;
-  while (m_token.m_type == TOKassign) {
-    if (!NextToken())
-      return nullptr;
-
-    std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseLogicalOrExpression();
-    if (!pExp2)
-      return nullptr;
-    if (level++ == kMaxAssignmentChainLength) {
-      m_error = true;
-      return nullptr;
-    }
-
-    pExp1 = pdfium::MakeUnique<CXFA_FMAssignExpression>(
-        line, TOKassign, std::move(pExp1), std::move(pExp2));
-  }
   if (!CheckThenNext(TOKrparen))
     return nullptr;
   return pExp1;

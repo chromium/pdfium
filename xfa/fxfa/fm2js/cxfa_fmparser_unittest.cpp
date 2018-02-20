@@ -129,3 +129,11 @@ TEST(CFXA_FMParserTest, chromium752201) {
   EXPECT_EQ(nullptr, parser->Parse());
   EXPECT_TRUE(parser->HasError());
 }
+
+TEST(CXFA_FMParserTest, MultipleAssignmentIsNotAllowed) {
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(L"(a=(b=t))=u");
+
+  std::unique_ptr<CXFA_FMFunctionDefinition> ast = parser->Parse();
+  ASSERT(ast == nullptr);
+  EXPECT_TRUE(parser->HasError());
+}
