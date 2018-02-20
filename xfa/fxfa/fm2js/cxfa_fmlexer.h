@@ -110,8 +110,6 @@ class CXFA_FMLexer {
 
   CXFA_FMToken NextToken();
 
-  uint32_t GetCurrentLine() const { return m_current_line; }
-  void SetCurrentLine(uint32_t line) { m_current_line = line; }
   const wchar_t* GetPos() { return m_cursor; }
   void SetPos(const wchar_t* pos) { m_cursor = pos; }
 
@@ -125,7 +123,6 @@ class CXFA_FMLexer {
 
   const wchar_t* m_cursor;
   const wchar_t* const m_end;
-  uint32_t m_current_line;
   bool m_lexer_error;
 };
 

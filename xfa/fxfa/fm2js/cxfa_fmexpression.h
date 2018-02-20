@@ -30,22 +30,19 @@ class CXFA_FMExpression {
   virtual ~CXFA_FMExpression() {}
   virtual bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) = 0;
 
-  uint32_t GetLine() { return m_line; }
   XFA_FM_EXPTYPE GetExpType() const { return m_type; }
 
  protected:
-  explicit CXFA_FMExpression(uint32_t line);
-  CXFA_FMExpression(uint32_t line, XFA_FM_EXPTYPE type);
+  CXFA_FMExpression();
+  explicit CXFA_FMExpression(XFA_FM_EXPTYPE type);
 
  private:
   XFA_FM_EXPTYPE m_type;
-  uint32_t m_line;
 };
 
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
  public:
   CXFA_FMFunctionDefinition(
-      uint32_t line,
       bool isGlobal,
       const WideStringView& wsName,
       std::vector<WideStringView>&& arguments,
@@ -63,8 +60,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
 
 class CXFA_FMVarExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMVarExpression(uint32_t line,
-                       const WideStringView& wsName,
+  CXFA_FMVarExpression(const WideStringView& wsName,
                        std::unique_ptr<CXFA_FMSimpleExpression> pInit);
   ~CXFA_FMVarExpression() override;
 
@@ -77,8 +73,8 @@ class CXFA_FMVarExpression : public CXFA_FMExpression {
 
 class CXFA_FMExpExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMExpExpression(uint32_t line,
-                       std::unique_ptr<CXFA_FMSimpleExpression> pExpression);
+  explicit CXFA_FMExpExpression(
+      std::unique_ptr<CXFA_FMSimpleExpression> pExpression);
   ~CXFA_FMExpExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
@@ -90,7 +86,6 @@ class CXFA_FMExpExpression : public CXFA_FMExpression {
 class CXFA_FMBlockExpression : public CXFA_FMExpression {
  public:
   CXFA_FMBlockExpression(
-      uint32_t line,
       std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressionList);
   ~CXFA_FMBlockExpression() override;
 
@@ -102,7 +97,7 @@ class CXFA_FMBlockExpression : public CXFA_FMExpression {
 
 class CXFA_FMDoExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMDoExpression(uint32_t line, std::unique_ptr<CXFA_FMExpression> pList);
+  explicit CXFA_FMDoExpression(std::unique_ptr<CXFA_FMExpression> pList);
   ~CXFA_FMDoExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
@@ -113,8 +108,7 @@ class CXFA_FMDoExpression : public CXFA_FMExpression {
 
 class CXFA_FMIfExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMIfExpression(uint32_t line,
-                      std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
+  CXFA_FMIfExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
                       std::unique_ptr<CXFA_FMExpression> pIfExpression,
                       std::unique_ptr<CXFA_FMExpression> pElseExpression);
   ~CXFA_FMIfExpression() override;
@@ -129,8 +123,7 @@ class CXFA_FMIfExpression : public CXFA_FMExpression {
 
 class CXFA_FMWhileExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMWhileExpression(uint32_t line,
-                         std::unique_ptr<CXFA_FMSimpleExpression> pCodition,
+  CXFA_FMWhileExpression(std::unique_ptr<CXFA_FMSimpleExpression> pCodition,
                          std::unique_ptr<CXFA_FMExpression> pExpression);
   ~CXFA_FMWhileExpression() override;
 
@@ -143,7 +136,7 @@ class CXFA_FMWhileExpression : public CXFA_FMExpression {
 
 class CXFA_FMBreakExpression : public CXFA_FMExpression {
  public:
-  explicit CXFA_FMBreakExpression(uint32_t line);
+  CXFA_FMBreakExpression();
   ~CXFA_FMBreakExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
@@ -151,7 +144,7 @@ class CXFA_FMBreakExpression : public CXFA_FMExpression {
 
 class CXFA_FMContinueExpression : public CXFA_FMExpression {
  public:
-  explicit CXFA_FMContinueExpression(uint32_t line);
+  CXFA_FMContinueExpression();
   ~CXFA_FMContinueExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
@@ -159,8 +152,7 @@ class CXFA_FMContinueExpression : public CXFA_FMExpression {
 
 class CXFA_FMForExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMForExpression(uint32_t line,
-                       const WideStringView& wsVariant,
+  CXFA_FMForExpression(const WideStringView& wsVariant,
                        std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
                        std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
                        int32_t iDirection,
@@ -183,7 +175,6 @@ class CXFA_FMForeachExpression : public CXFA_FMExpression {
  public:
   // Takes ownership of |pAccessors|.
   CXFA_FMForeachExpression(
-      uint32_t line,
       const WideStringView& wsIdentifier,
       std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
       std::unique_ptr<CXFA_FMExpression> pList);

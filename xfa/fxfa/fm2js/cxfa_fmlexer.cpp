@@ -131,7 +131,6 @@ WideString CXFA_FMToken::ToDebugString() const {
 CXFA_FMLexer::CXFA_FMLexer(const WideStringView& wsFormCalc)
     : m_cursor(wsFormCalc.unterminated_c_str()),
       m_end(m_cursor + wsFormCalc.GetLength() - 1),
-      m_current_line(1),
       m_lexer_error(false) {}
 
 CXFA_FMLexer::~CXFA_FMLexer() {}
@@ -148,7 +147,6 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
 
     switch (*m_cursor) {
       case '\n':
-        ++m_current_line;
         ++m_cursor;
         break;
       case '\r':
@@ -389,7 +387,6 @@ void CXFA_FMLexer::AdvanceForComment() {
       return;
     }
     if (*m_cursor == L'\n') {
-      ++m_current_line;
       ++m_cursor;
       return;
     }

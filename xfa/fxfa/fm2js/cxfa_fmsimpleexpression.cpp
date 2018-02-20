@@ -71,15 +71,14 @@ const XFA_FMSOMMethod gs_FMSomMethods[] = {
 
 }  // namespace
 
-CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(uint32_t line, XFA_FM_TOKEN op)
-    : m_line(line), m_op(op) {}
+CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(XFA_FM_TOKEN op) : m_op(op) {}
 
 XFA_FM_TOKEN CXFA_FMSimpleExpression::GetOperatorToken() const {
   return m_op;
 }
 
-CXFA_FMNullExpression::CXFA_FMNullExpression(uint32_t line)
-    : CXFA_FMSimpleExpression(line, TOKnull) {}
+CXFA_FMNullExpression::CXFA_FMNullExpression()
+    : CXFA_FMSimpleExpression(TOKnull) {}
 
 bool CXFA_FMNullExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   CXFA_FMToJavaScriptDepth depthManager;
@@ -90,9 +89,8 @@ bool CXFA_FMNullExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   return !CXFA_IsTooBig(js);
 }
 
-CXFA_FMNumberExpression::CXFA_FMNumberExpression(uint32_t line,
-                                                 WideStringView wsNumber)
-    : CXFA_FMSimpleExpression(line, TOKnumber), m_wsNumber(wsNumber) {}
+CXFA_FMNumberExpression::CXFA_FMNumberExpression(WideStringView wsNumber)
+    : CXFA_FMSimpleExpression(TOKnumber), m_wsNumber(wsNumber) {}
 
 CXFA_FMNumberExpression::~CXFA_FMNumberExpression() {}
 
@@ -106,9 +104,8 @@ bool CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& js,
   return !CXFA_IsTooBig(js);
 }
 
-CXFA_FMStringExpression::CXFA_FMStringExpression(uint32_t line,
-                                                 WideStringView wsString)
-    : CXFA_FMSimpleExpression(line, TOKstring), m_wsString(wsString) {}
+CXFA_FMStringExpression::CXFA_FMStringExpression(WideStringView wsString)
+    : CXFA_FMSimpleExpression(TOKstring), m_wsString(wsString) {}
 
 CXFA_FMStringExpression::~CXFA_FMStringExpression() {}
 
@@ -147,10 +144,8 @@ bool CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& js,
 }
 
 CXFA_FMIdentifierExpression::CXFA_FMIdentifierExpression(
-    uint32_t line,
     WideStringView wsIdentifier)
-    : CXFA_FMSimpleExpression(line, TOKidentifier),
-      m_wsIdentifier(wsIdentifier) {}
+    : CXFA_FMSimpleExpression(TOKidentifier), m_wsIdentifier(wsIdentifier) {}
 
 CXFA_FMIdentifierExpression::~CXFA_FMIdentifierExpression() {}
 
@@ -185,11 +180,10 @@ bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& js,
 }
 
 CXFA_FMAssignExpression::CXFA_FMAssignExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMSimpleExpression(line, op),
+    : CXFA_FMSimpleExpression(op),
       m_pExp1(std::move(pExp1)),
       m_pExp2(std::move(pExp2)) {}
 
@@ -230,11 +224,10 @@ bool CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& js,
 
 CXFA_FMBinExpression::CXFA_FMBinExpression(
     const WideString& opName,
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
-    : CXFA_FMSimpleExpression(line, op),
+    : CXFA_FMSimpleExpression(op),
       m_OpName(opName),
       m_pExp1(std::move(pExp1)),
       m_pExp2(std::move(pExp2)) {}
@@ -259,145 +252,118 @@ bool CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
 }
 
 CXFA_FMLogicalOrExpression::CXFA_FMLogicalOrExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"log_or_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMLogicalAndExpression::CXFA_FMLogicalAndExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"log_and_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMEqualExpression::CXFA_FMEqualExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"eq_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMNotEqualExpression::CXFA_FMNotEqualExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"neq_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMGtExpression::CXFA_FMGtExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"gt_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMGeExpression::CXFA_FMGeExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"ge_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMLtExpression::CXFA_FMLtExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"lt_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMLeExpression::CXFA_FMLeExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"le_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMPlusExpression::CXFA_FMPlusExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"plus_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMMinusExpression::CXFA_FMMinusExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"minus_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMMulExpression::CXFA_FMMulExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"mul_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMDivExpression::CXFA_FMDivExpression(
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2)
     : CXFA_FMBinExpression(L"div_op",
-                           line,
                            op,
                            std::move(pExp1),
                            std::move(pExp2)) {}
 
 CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(
     const WideString& opName,
-    uint32_t line,
     XFA_FM_TOKEN op,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMSimpleExpression(line, op),
-      m_OpName(opName),
-      m_pExp(std::move(pExp)) {}
+    : CXFA_FMSimpleExpression(op), m_OpName(opName), m_pExp(std::move(pExp)) {}
 
 CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() = default;
 
@@ -416,26 +382,22 @@ bool CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& js,
 }
 
 CXFA_FMPosExpression::CXFA_FMPosExpression(
-    uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMUnaryExpression(L"pos_op", line, TOKplus, std::move(pExp)) {}
+    : CXFA_FMUnaryExpression(L"pos_op", TOKplus, std::move(pExp)) {}
 
 CXFA_FMNegExpression::CXFA_FMNegExpression(
-    uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMUnaryExpression(L"neg_op", line, TOKminus, std::move(pExp)) {}
+    : CXFA_FMUnaryExpression(L"neg_op", TOKminus, std::move(pExp)) {}
 
 CXFA_FMNotExpression::CXFA_FMNotExpression(
-    uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp)
-    : CXFA_FMUnaryExpression(L"log_not_op", line, TOKksnot, std::move(pExp)) {}
+    : CXFA_FMUnaryExpression(L"log_not_op", TOKksnot, std::move(pExp)) {}
 
 CXFA_FMCallExpression::CXFA_FMCallExpression(
-    uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pExp,
     std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pArguments,
     bool bIsSomMethod)
-    : CXFA_FMSimpleExpression(line, TOKcall),
+    : CXFA_FMSimpleExpression(TOKcall),
       m_pExp(std::move(pExp)),
       m_bIsSomMethod(bIsSomMethod),
       m_Arguments(std::move(pArguments)) {}
@@ -569,12 +531,11 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
 }
 
 CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
-    uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
     XFA_FM_TOKEN op,
     WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
-    : CXFA_FMSimpleExpression(line, op),
+    : CXFA_FMSimpleExpression(op),
       m_wsIdentifier(wsIdentifier),
       m_pExp1(std::move(pAccessor)),
       m_pExp2(std::move(pIndexExp)) {}
@@ -621,11 +582,10 @@ bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& js,
 }
 
 CXFA_FMIndexExpression::CXFA_FMIndexExpression(
-    uint32_t line,
     XFA_FM_AccessorIndex accessorIndex,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp,
     bool bIsStarIndex)
-    : CXFA_FMSimpleExpression(line, TOKlbracket),
+    : CXFA_FMSimpleExpression(TOKlbracket),
       m_pExp(std::move(pIndexExp)),
       m_accessorIndex(accessorIndex),
       m_bIsStarIndex(bIsStarIndex) {}
@@ -668,12 +628,11 @@ bool CXFA_FMIndexExpression::ToJavaScript(CFX_WideTextBuf& js,
 }
 
 CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
-    uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
     XFA_FM_TOKEN op,
     WideStringView wsIdentifier,
     std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp)
-    : CXFA_FMSimpleExpression(line, op),
+    : CXFA_FMSimpleExpression(op),
       m_wsIdentifier(wsIdentifier),
       m_pExp1(std::move(pAccessor)),
       m_pExp2(std::move(pIndexExp)) {}
@@ -703,10 +662,9 @@ bool CXFA_FMDotDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& js,
 }
 
 CXFA_FMMethodCallExpression::CXFA_FMMethodCallExpression(
-    uint32_t line,
     std::unique_ptr<CXFA_FMSimpleExpression> pAccessorExp1,
     std::unique_ptr<CXFA_FMSimpleExpression> pCallExp)
-    : CXFA_FMSimpleExpression(line, TOKdot),
+    : CXFA_FMSimpleExpression(TOKdot),
       m_pExp1(std::move(pAccessorExp1)),
       m_pExp2(std::move(pCallExp)) {}
 
