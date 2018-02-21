@@ -35,7 +35,6 @@ class CXFA_FMParser {
   std::unique_ptr<CXFA_FMExpression> ParseExpression();
   std::unique_ptr<CXFA_FMExpression> ParseDeclarationExpression();
   std::unique_ptr<CXFA_FMExpression> ParseExpExpression();
-  std::unique_ptr<CXFA_FMExpression> ParseBlockExpression();
   std::unique_ptr<CXFA_FMExpression> ParseIfExpression();
   std::unique_ptr<CXFA_FMExpression> ParseWhileExpression();
   std::unique_ptr<CXFA_FMExpression> ParseForExpression();
