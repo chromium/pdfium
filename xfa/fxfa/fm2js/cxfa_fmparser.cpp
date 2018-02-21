@@ -89,15 +89,17 @@ CXFA_FMParser::ParseExpressionList() {
   return expressions;
 }
 
+// Func := 'func' Identifier '(' ParameterList ')' do ExpressionList 'endfunc'
+// ParamterList := (Not actually defined in the grammar) .....
+//                 (Identifier (',' Identifier)*)?
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
   WideStringView ident;
-  std::vector<WideStringView> arguments;
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
-  if (!NextToken())
+  if (!CheckThenNext(TOKfunc))
     return nullptr;
   if (m_token.m_type != TOKidentifier) {
     m_error = true;
@@ -109,6 +111,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   }
   if (!CheckThenNext(TOKlparen))
     return nullptr;
+
+  std::vector<WideStringView> arguments;
   if (m_token.m_type == TOKrparen) {
     if (!NextToken())
       return nullptr;
@@ -126,16 +130,13 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
           return nullptr;
         continue;
       }
-      if (m_token.m_type == TOKrparen) {
-        if (!NextToken())
-          return nullptr;
-      } else {
-        if (!CheckThenNext(TOKrparen))
-          return nullptr;
-      }
+      if (!CheckThenNext(TOKrparen))
+        return nullptr;
+
       break;
     }
   }
+
   if (!CheckThenNext(TOKdo))
     return nullptr;
   if (m_token.m_type == TOKendfunc) {
@@ -151,6 +152,9 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
       false, ident, std::move(arguments), std::move(expressions));
 }
 
+// Expression := IfExpression | WhileExpression | ForExpression |
+//               ForEachExpression | AssignmentExpression |
+//               DeclarationExpression | SimpleExpression
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
@@ -203,6 +207,9 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpression() {
   return expr;
 }
 
+// Declaration := 'var' Variable | 'var' Variable '=' SimpleExpression |
+//           'Func' Identifier '(' ParameterList ')' do ExpressionList 'EndFunc'
+// TODO(dsinclair): We appear to be handling the 'func' case elsewhere.
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDeclarationExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
@@ -233,6 +240,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDeclarationExpression() {
   return pdfium::MakeUnique<CXFA_FMVarExpression>(ident, std::move(expr));
 }
 
+// SimpleExpression := LogicalOrExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseSimpleExpression() {
   if (HasError())
@@ -241,6 +249,7 @@ CXFA_FMParser::ParseSimpleExpression() {
   return ParseLogicalOrExpression();
 }
 
+// Exp := SimpleExpression ( '=' SimpleExpression )?
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
@@ -264,6 +273,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseExpExpression() {
   return pdfium::MakeUnique<CXFA_FMExpExpression>(std::move(pExp1));
 }
 
+// LogicalOr := LogicalAndExpression |
+//              LogicalOrExpression LogicalOrOperator LogicalAndExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseLogicalOrExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -274,6 +285,7 @@ CXFA_FMParser::ParseLogicalOrExpression() {
   if (!e1)
     return nullptr;
 
+  // TODO(dsinclair): Is this for() needed?
   for (;;) {
     switch (m_token.m_type) {
       case TOKor:
@@ -298,6 +310,8 @@ CXFA_FMParser::ParseLogicalOrExpression() {
   return e1;
 }
 
+// LogicalAnd := EqualityExpression |
+//               LogicalAndExpression LogicalAndOperator EqualityExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseLogicalAndExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -308,6 +322,7 @@ CXFA_FMParser::ParseLogicalAndExpression() {
   if (!e1)
     return nullptr;
 
+  // TODO(dsinclair): Is this for() needed?
   for (;;) {
     switch (m_token.m_type) {
       case TOKand:
@@ -331,6 +346,8 @@ CXFA_FMParser::ParseLogicalAndExpression() {
   return e1;
 }
 
+// Equality := RelationExpression |
+//             EqualityExpression EqulaityOperator RelationalExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseEqualityExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -340,6 +357,8 @@ CXFA_FMParser::ParseEqualityExpression() {
   std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseRelationalExpression();
   if (!e1)
     return nullptr;
+
+  // TODO(dsinclair): Is this for() needed?
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
@@ -375,6 +394,8 @@ CXFA_FMParser::ParseEqualityExpression() {
   return e1;
 }
 
+// Relational := AdditiveExpression |
+//               RelationalExpression RelationalOperator AdditiveExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseRelationalExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -385,6 +406,7 @@ CXFA_FMParser::ParseRelationalExpression() {
   if (!e1)
     return nullptr;
 
+  // TODO(dsinclair): Is this for() needed?
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
@@ -444,6 +466,8 @@ CXFA_FMParser::ParseRelationalExpression() {
   return e1;
 }
 
+// Additive := MultiplicativeExpression |
+//             AdditiveExpression AdditiveOperator MultiplicativeExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseAddtiveExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -454,6 +478,7 @@ CXFA_FMParser::ParseAddtiveExpression() {
   if (!e1)
     return nullptr;
 
+  // TODO(dsinclair): Is this for() needed?
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
@@ -487,6 +512,8 @@ CXFA_FMParser::ParseAddtiveExpression() {
   return e1;
 }
 
+// Multiplicative := UnaryExpression |
+//                 MultiplicateExpression MultiplicativeOperator UnaryExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParseMultiplicativeExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -497,6 +524,7 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
   if (!e1)
     return nullptr;
 
+  // TODO(dsinclair): Is this for() needed?
   for (;;) {
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
@@ -530,6 +558,7 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
   return e1;
 }
 
+// Unary := PrimaryExpression | UnaryOperator UnaryExpression
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseUnaryExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
@@ -576,6 +605,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseUnaryExpression() {
   return expr;
 }
 
+// Primary := Literal | FunctionCall | Accessor ('.*' )? |
+//           '(' SimpleExpression ')'
 std::unique_ptr<CXFA_FMSimpleExpression>
 CXFA_FMParser::ParsePrimaryExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -636,6 +667,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseLiteral() {
   }
 }
 
+// TODO(dsinclair): Make this match up to the grammar
+// I believe this is parsing the accessor ( '.' | '..' | '.#' )
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> expr) {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
@@ -833,27 +866,30 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
   return expr;
 }
 
+// Index := '[' ('*' | '+' SimpleExpression | '-' SimpleExpression) ']'
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
-  if (!NextToken())
+  if (!CheckThenNext(TOKlbracket))
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> s;
-  XFA_FM_AccessorIndex accessorIndex = ACCESSOR_NO_RELATIVEINDEX;
-  std::unique_ptr<CXFA_FMSimpleExpression> pExp;
   if (m_token.m_type == TOKmul) {
-    pExp = pdfium::MakeUnique<CXFA_FMIndexExpression>(accessorIndex,
-                                                      std::move(s), true);
+    auto pExp = pdfium::MakeUnique<CXFA_FMIndexExpression>(
+        ACCESSOR_NO_RELATIVEINDEX, nullptr, true);
     if (!pExp || !NextToken())
       return nullptr;
+
+    // TODO(dsinclair): This should CheckThenNext(TOKrbracket) but need to clean
+    // up the callsites.
     if (m_token.m_type != TOKrbracket) {
       m_error = true;
       return nullptr;
     }
     return pExp;
   }
+
+  XFA_FM_AccessorIndex accessorIndex = ACCESSOR_NO_RELATIVEINDEX;
   if (m_token.m_type == TOKplus) {
     accessorIndex = ACCESSOR_POSITIVE_INDEX;
     if (!NextToken())
@@ -863,7 +899,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
     if (!NextToken())
       return nullptr;
   }
-  s = ParseSimpleExpression();
+
+  std::unique_ptr<CXFA_FMSimpleExpression> s = ParseSimpleExpression();
   if (!s)
     return nullptr;
   if (m_token.m_type != TOKrbracket) {
@@ -874,6 +911,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseIndexExpression() {
                                                     false);
 }
 
+// Paren := '(' SimpleExpression ')'
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
@@ -896,26 +934,20 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParseParenExpression() {
   return pExp1;
 }
 
+// If := 'if' '(' SimpleExpression ')' 'then' ExpressionList
+//       ('elseif' '(' SimpleExpression ')' 'then' ExpressionList)*
+//       ('else' ExpressionList)?
+//       'endif'
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
-  if (!NextToken() || !CheckThenNext(TOKlparen))
+
+  // This should be CheckThenNext(TOKif) but we come in here for elseif as well.
+  if (!NextToken())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pExpression;
-  while (m_token.m_type != TOKrparen) {
-    pExpression = ParseSimpleExpression();
-    if (!pExpression)
-      return nullptr;
-    if (m_token.m_type != TOKcomma)
-      break;
-    if (!NextToken())
-      return nullptr;
-  }
-  if (!CheckThenNext(TOKrparen))
-    return nullptr;
-
+  std::unique_ptr<CXFA_FMSimpleExpression> pExpression = ParseParenExpression();
   if (m_token.m_type != TOKthen) {
     m_error = true;
     return nullptr;
@@ -980,11 +1012,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
                                                  std::move(pElseExpression));
 }
 
+// While := 'while' '(' SimpleExpression ')' 'do' ExpressionList 'endwhile'
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
-  if (!NextToken())
+  if (!CheckThenNext(TOKwhile))
     return nullptr;
 
   std::unique_ptr<CXFA_FMSimpleExpression> pCondition = ParseParenExpression();
@@ -1000,39 +1033,25 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
       std::move(pCondition),
       pdfium::MakeUnique<CXFA_FMBlockExpression>(std::move(exprs)));
 }
-
-std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseSubassignmentInForExpression() {
-  AutoRestorer<unsigned long> restorer(&m_parse_depth);
-  if (HasError() || !IncrementParseDepthAndCheck())
-    return nullptr;
-
-  if (m_token.m_type != TOKidentifier) {
-    m_error = true;
-    return nullptr;
-  }
-  std::unique_ptr<CXFA_FMSimpleExpression> expr = ParseSimpleExpression();
-  if (!expr)
-    return nullptr;
-  return expr;
-}
-
+// For := 'for' Assignment 'upto' Accessor ('step' SimpleExpression)?
+//            'do' ExpressionList 'endfor' |
+//         'for' Assignment 'downto' Accessor ('step' SimpleExpression)?
+//            'do' ExpressionList 'endfor'
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
-
-  WideStringView wsVariant;
-  if (!NextToken())
+  if (!CheckThenNext(TOKfor))
     return nullptr;
+
   if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
   }
-
-  wsVariant = m_token.m_string;
+  WideStringView wsVariant = m_token.m_string;
   if (!NextToken())
     return nullptr;
+
   if (m_token.m_type != TOKassign) {
     m_error = true;
     return nullptr;
@@ -1094,7 +1113,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
-  if (!NextToken())
+  if (!CheckThenNext(TOKforeach))
     return nullptr;
 
   if (m_token.m_type != TOKidentifier) {
@@ -1145,7 +1164,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
-  if (!NextToken())
+  if (!CheckThenNext(TOKdo))
     return nullptr;
 
   auto exprs = ParseExpressionList();
