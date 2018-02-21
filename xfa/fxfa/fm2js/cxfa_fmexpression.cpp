@@ -220,11 +220,15 @@ bool CXFA_FMDoExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
 CXFA_FMIfExpression::CXFA_FMIfExpression(
     std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
     std::unique_ptr<CXFA_FMExpression> pIfExpression,
+    std::vector<std::unique_ptr<CXFA_FMIfExpression>> pElseIfExpressions,
     std::unique_ptr<CXFA_FMExpression> pElseExpression)
     : CXFA_FMExpression(),
       m_pExpression(std::move(pExpression)),
       m_pIfExpression(std::move(pIfExpression)),
-      m_pElseExpression(std::move(pElseExpression)) {}
+      m_pElseIfExpressions(std::move(pElseIfExpressions)),
+      m_pElseExpression(std::move(pElseExpression)) {
+  ASSERT(m_pExpression);
+}
 
 CXFA_FMIfExpression::~CXFA_FMIfExpression() = default;
 
@@ -236,15 +240,10 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   if (type == ReturnType::kImplied)
     js << L"pfm_ret = 0;\n";
 
-  js << L"if (";
-  if (m_pExpression) {
-    js << L"pfm_rt.get_val(";
-    if (!m_pExpression->ToJavaScript(js, ReturnType::kInfered))
-      return false;
-
-    js << L")";
-  }
-  js << L")\n";
+  js << L"if (pfm_rt.get_val(";
+  if (!m_pExpression->ToJavaScript(js, ReturnType::kInfered))
+    return false;
+  js << L"))\n";
 
   if (CXFA_IsTooBig(js))
     return false;
@@ -256,11 +255,16 @@ bool CXFA_FMIfExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
       return false;
   }
 
+  for (auto& expr : m_pElseIfExpressions) {
+    js << L"else ";
+    if (!expr->ToJavaScript(js, ReturnType::kInfered))
+      return false;
+  }
+
   if (m_pElseExpression) {
-    js << L"else\n{\n";
+    js << L"else ";
     if (!m_pElseExpression->ToJavaScript(js, type))
       return false;
-    js << L"}\n";
   }
   return !CXFA_IsTooBig(js);
 }

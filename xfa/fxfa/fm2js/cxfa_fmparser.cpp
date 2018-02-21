@@ -943,73 +943,46 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  // This should be CheckThenNext(TOKif) but we come in here for elseif as well.
-  if (!NextToken())
+  if (!CheckThenNext(TOKif))
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> pExpression = ParseParenExpression();
-  if (m_token.m_type != TOKthen) {
-    m_error = true;
-    return nullptr;
-  }
-  if (!NextToken())
+  std::unique_ptr<CXFA_FMSimpleExpression> pCondition = ParseParenExpression();
+  if (!CheckThenNext(TOKthen))
     return nullptr;
 
-  auto exprs = ParseExpressionList();
-  if (exprs.empty()) {
-    m_error = true;
-    return nullptr;
+  auto pIfExpressions =
+      pdfium::MakeUnique<CXFA_FMBlockExpression>(ParseExpressionList());
+
+  std::vector<std::unique_ptr<CXFA_FMIfExpression>> pElseIfExpressions;
+  while (m_token.m_type == TOKelseif) {
+    if (!NextToken())
+      return nullptr;
+
+    auto elseIfCondition = ParseParenExpression();
+    if (!CheckThenNext(TOKthen))
+      return nullptr;
+
+    auto elseIfExprs = ParseExpressionList();
+    pElseIfExpressions.push_back(pdfium::MakeUnique<CXFA_FMIfExpression>(
+        std::move(elseIfCondition),
+        pdfium::MakeUnique<CXFA_FMBlockExpression>(std::move(elseIfExprs)),
+        std::vector<std::unique_ptr<CXFA_FMIfExpression>>(), nullptr));
   }
-  if (m_token.m_type != TOKelseif && m_token.m_type != TOKelse &&
-      m_token.m_type != TOKendif) {
-    m_error = true;
-    return nullptr;
-  }
-  auto pIfExpression =
-      pdfium::MakeUnique<CXFA_FMBlockExpression>(std::move(exprs));
 
   std::unique_ptr<CXFA_FMExpression> pElseExpression;
-  switch (m_token.m_type) {
-    case TOKeof:
-    case TOKendif:
-      if (!CheckThenNext(TOKendif))
-        return nullptr;
-      break;
-    case TOKif:
-      pElseExpression = ParseIfExpression();
-      if (!pElseExpression || !CheckThenNext(TOKendif)) {
-        m_error = true;
-        return nullptr;
-      }
-      break;
-    case TOKelseif:
-      pElseExpression = ParseIfExpression();
-      if (!pElseExpression) {
-        m_error = true;
-        return nullptr;
-      }
-      break;
-    case TOKelse: {
-      if (!NextToken())
-        return nullptr;
-
-      auto else_exprs = ParseExpressionList();
-      if (else_exprs.empty() || !CheckThenNext(TOKendif)) {
-        m_error = true;
-        return nullptr;
-      }
-
-      pElseExpression =
-          pdfium::MakeUnique<CXFA_FMBlockExpression>(std::move(else_exprs));
-      break;
-    }
-    default:
-      m_error = true;
+  if (m_token.m_type == TOKelse) {
+    if (!NextToken())
       return nullptr;
+
+    pElseExpression =
+        pdfium::MakeUnique<CXFA_FMBlockExpression>(ParseExpressionList());
   }
-  return pdfium::MakeUnique<CXFA_FMIfExpression>(std::move(pExpression),
-                                                 std::move(pIfExpression),
-                                                 std::move(pElseExpression));
+  if (!CheckThenNext(TOKendif))
+    return nullptr;
+
+  return pdfium::MakeUnique<CXFA_FMIfExpression>(
+      std::move(pCondition), std::move(pIfExpressions),
+      std::move(pElseIfExpressions), std::move(pElseExpression));
 }
 
 // While := 'while' '(' SimpleExpression ')' 'do' ExpressionList 'endwhile'

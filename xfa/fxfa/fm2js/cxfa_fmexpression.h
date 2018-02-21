@@ -91,9 +91,11 @@ class CXFA_FMDoExpression : public CXFA_FMExpression {
 
 class CXFA_FMIfExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMIfExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
-                      std::unique_ptr<CXFA_FMExpression> pIfExpression,
-                      std::unique_ptr<CXFA_FMExpression> pElseExpression);
+  CXFA_FMIfExpression(
+      std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
+      std::unique_ptr<CXFA_FMExpression> pIfExpression,
+      std::vector<std::unique_ptr<CXFA_FMIfExpression>> pElseIfExpressions,
+      std::unique_ptr<CXFA_FMExpression> pElseExpression);
   ~CXFA_FMIfExpression() override;
 
   bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
@@ -101,6 +103,7 @@ class CXFA_FMIfExpression : public CXFA_FMExpression {
  private:
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExpression;
   std::unique_ptr<CXFA_FMExpression> m_pIfExpression;
+  std::vector<std::unique_ptr<CXFA_FMIfExpression>> m_pElseIfExpressions;
   std::unique_ptr<CXFA_FMExpression> m_pElseExpression;
 };
 
