@@ -92,7 +92,7 @@ bool CXFA_FMNullExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
 CXFA_FMNumberExpression::CXFA_FMNumberExpression(WideStringView wsNumber)
     : CXFA_FMSimpleExpression(TOKnumber), m_wsNumber(wsNumber) {}
 
-CXFA_FMNumberExpression::~CXFA_FMNumberExpression() {}
+CXFA_FMNumberExpression::~CXFA_FMNumberExpression() = default;
 
 bool CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& js,
                                            ReturnType type) {
@@ -107,7 +107,7 @@ bool CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& js,
 CXFA_FMStringExpression::CXFA_FMStringExpression(WideStringView wsString)
     : CXFA_FMSimpleExpression(TOKstring), m_wsString(wsString) {}
 
-CXFA_FMStringExpression::~CXFA_FMStringExpression() {}
+CXFA_FMStringExpression::~CXFA_FMStringExpression() = default;
 
 bool CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& js,
                                            ReturnType type) {
@@ -147,7 +147,7 @@ CXFA_FMIdentifierExpression::CXFA_FMIdentifierExpression(
     WideStringView wsIdentifier)
     : CXFA_FMSimpleExpression(TOKidentifier), m_wsIdentifier(wsIdentifier) {}
 
-CXFA_FMIdentifierExpression::~CXFA_FMIdentifierExpression() {}
+CXFA_FMIdentifierExpression::~CXFA_FMIdentifierExpression() = default;
 
 bool CXFA_FMIdentifierExpression::ToJavaScript(CFX_WideTextBuf& js,
                                                ReturnType type) {
@@ -540,7 +540,7 @@ CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
       m_pExp1(std::move(pAccessor)),
       m_pExp2(std::move(pIndexExp)) {}
 
-CXFA_FMDotAccessorExpression::~CXFA_FMDotAccessorExpression() {}
+CXFA_FMDotAccessorExpression::~CXFA_FMDotAccessorExpression() = default;
 
 bool CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& js,
                                                 ReturnType type) {
@@ -637,7 +637,7 @@ CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
       m_pExp1(std::move(pAccessor)),
       m_pExp2(std::move(pIndexExp)) {}
 
-CXFA_FMDotDotAccessorExpression::~CXFA_FMDotDotAccessorExpression() {}
+CXFA_FMDotDotAccessorExpression::~CXFA_FMDotDotAccessorExpression() = default;
 
 bool CXFA_FMDotDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& js,
                                                    ReturnType type) {
