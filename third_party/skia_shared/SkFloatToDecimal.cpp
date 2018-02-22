@@ -48,6 +48,8 @@ static double pow10(int e) {
     }
 }
 
+namespace pdfium {
+namespace skia {
 /** Write a string into result, includeing a terminating '\0' (for
     unit testing).  Return strlen(result) (for SkWStream::write) The
     resulting string will be in the form /[-]?([0-9]*.)?[0-9]+/ and
@@ -172,3 +174,5 @@ unsigned SkFloatToDecimal(float value, char result[kMaximumSkFloatToDecimalLengt
     *output = '\0';
     return static_cast<unsigned>(output - result);
 }
+}  // namespace skia
+}  // namespace pdfium

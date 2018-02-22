@@ -223,10 +223,11 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
       if (i > 0)
         *buf << " ";
 
-      char buffer[kMaximumSkFloatToDecimalLength];
-      unsigned size = SkFloatToDecimal(pPoints[i].m_Point.x, buffer);
+      char buffer[pdfium::skia::kMaximumSkFloatToDecimalLength];
+      unsigned size =
+          pdfium::skia::SkFloatToDecimal(pPoints[i].m_Point.x, buffer);
       buf->write(buffer, size) << " ";
-      size = SkFloatToDecimal(pPoints[i].m_Point.y, buffer);
+      size = pdfium::skia::SkFloatToDecimal(pPoints[i].m_Point.y, buffer);
       buf->write(buffer, size);
 
       FXPT_TYPE pointType = pPoints[i].m_Type;
