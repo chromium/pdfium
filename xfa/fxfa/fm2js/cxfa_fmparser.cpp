@@ -28,14 +28,12 @@ CXFA_FMParser::CXFA_FMParser(const WideStringView& wsFormcalc)
 
 CXFA_FMParser::~CXFA_FMParser() {}
 
-std::unique_ptr<CXFA_FMFunctionDefinition> CXFA_FMParser::Parse() {
+std::unique_ptr<CXFA_FMAST> CXFA_FMParser::Parse() {
   auto expressions = ParseExpressionList();
   if (HasError())
     return nullptr;
 
-  std::vector<WideStringView> arguments;
-  return pdfium::MakeUnique<CXFA_FMFunctionDefinition>(
-      true, L"", std::move(arguments), std::move(expressions));
+  return pdfium::MakeUnique<CXFA_FMAST>(std::move(expressions));
 }
 
 bool CXFA_FMParser::NextToken() {
@@ -101,14 +99,15 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
   if (!CheckThenNext(TOKfunc))
     return nullptr;
+
   if (m_token.m_type != TOKidentifier) {
     m_error = true;
     return nullptr;
-  } else {
-    ident = m_token.m_string;
-    if (!NextToken())
-      return nullptr;
   }
+
+  ident = m_token.m_string;
+  if (!NextToken())
+    return nullptr;
   if (!CheckThenNext(TOKlparen))
     return nullptr;
 
@@ -149,7 +148,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
   }
 
   return pdfium::MakeUnique<CXFA_FMFunctionDefinition>(
-      false, ident, std::move(arguments), std::move(expressions));
+      ident, std::move(arguments), std::move(expressions));
 }
 
 // Expression := IfExpression | WhileExpression | ForExpression |

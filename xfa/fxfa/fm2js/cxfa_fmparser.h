@@ -18,7 +18,7 @@ class CXFA_FMParser {
   explicit CXFA_FMParser(const WideStringView& wsFormcalc);
   ~CXFA_FMParser();
 
-  std::unique_ptr<CXFA_FMFunctionDefinition> Parse();
+  std::unique_ptr<CXFA_FMAST> Parse();
   bool HasError() const;
 
   void SetMaxParseDepthForTest(unsigned long max_depth) {

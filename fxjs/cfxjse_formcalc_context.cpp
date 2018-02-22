@@ -6175,12 +6175,12 @@ bool CFXJSE_FormCalcContext::Translate(const WideStringView& wsFormcalc,
   }
 
   CXFA_FMParser parser(wsFormcalc);
-  std::unique_ptr<CXFA_FMFunctionDefinition> func = parser.Parse();
-  if (!func || parser.HasError())
+  std::unique_ptr<CXFA_FMAST> ast = parser.Parse();
+  if (!ast || parser.HasError())
     return false;
 
   CXFA_FMToJavaScriptDepth::Reset();
-  if (!func->ToJavaScript(*wsJavascript, ReturnType::kInfered))
+  if (!ast->ToJavaScript(*wsJavascript))
     return false;
 
   wsJavascript->AppendChar(0);

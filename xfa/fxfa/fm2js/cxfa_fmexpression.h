@@ -26,7 +26,6 @@ class CXFA_FMExpression {
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
  public:
   CXFA_FMFunctionDefinition(
-      bool isGlobal,
       const WideStringView& wsName,
       std::vector<WideStringView>&& arguments,
       std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions);
@@ -38,7 +37,18 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
   WideStringView m_wsName;
   std::vector<WideStringView> m_pArguments;
   std::vector<std::unique_ptr<CXFA_FMExpression>> m_pExpressions;
-  bool m_isGlobal;
+};
+
+class CXFA_FMAST {
+ public:
+  explicit CXFA_FMAST(
+      std::vector<std::unique_ptr<CXFA_FMExpression>> expressions);
+  ~CXFA_FMAST();
+
+  bool ToJavaScript(CFX_WideTextBuf& javascript);
+
+ private:
+  std::vector<std::unique_ptr<CXFA_FMExpression>> expressions_;
 };
 
 class CXFA_FMVarExpression : public CXFA_FMExpression {

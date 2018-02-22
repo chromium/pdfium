@@ -19,63 +19,48 @@ const wchar_t kGreaterEqual[] = L" >= ";
 const wchar_t kPlusEqual[] = L" += ";
 const wchar_t kMinusEqual[] = L" -= ";
 
+WideString IdentifierToName(WideStringView ident) {
+  if (ident.IsEmpty())
+    return L"";
+  if (ident[0] != L'!')
+    return WideString(ident);
+  return L"pfm__excl__" + ident.Right(ident.GetLength() - 1);
+}
+
 }  // namespace
 
 CXFA_FMExpression::CXFA_FMExpression() = default;
 
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
-    bool isGlobal,
     const WideStringView& wsName,
     std::vector<WideStringView>&& arguments,
     std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions)
     : CXFA_FMExpression(),
       m_wsName(wsName),
       m_pArguments(std::move(arguments)),
-      m_pExpressions(std::move(expressions)),
-      m_isGlobal(isGlobal) {}
+      m_pExpressions(std::move(expressions)) {
+  ASSERT(!wsName.IsEmpty());
+}
 
 CXFA_FMFunctionDefinition::~CXFA_FMFunctionDefinition() = default;
 
 bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& js,
                                              ReturnType type) {
   CXFA_FMToJavaScriptDepth depthManager;
-  if (type == ReturnType::kImplied)
-    return !CXFA_IsTooBig(js) && depthManager.IsWithinMaxDepth();
-
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  if (m_isGlobal && m_pExpressions.empty()) {
-    js << L"// comments only";
-    return !CXFA_IsTooBig(js);
-  }
-  if (m_isGlobal)
-    js << L"(\n";
+  if (m_wsName.IsEmpty())
+    return false;
 
-  js << L"function ";
-  if (!m_wsName.IsEmpty() && m_wsName[0] == L'!') {
-    WideString tempName =
-        L"pfm__excl__" + m_wsName.Right(m_wsName.GetLength() - 1);
-    js << tempName;
-  } else {
-    js << m_wsName;
-  }
-
-  js << L"(";
-  bool bNeedComma = false;
+  js << L"function " << IdentifierToName(m_wsName) << L"(";
   for (const auto& identifier : m_pArguments) {
-    if (bNeedComma)
+    if (identifier != m_pArguments.front())
       js << L", ";
-    if (identifier[0] == L'!') {
-      WideString tempIdentifier =
-          L"pfm__excl__" + identifier.Right(identifier.GetLength() - 1);
-      js << tempIdentifier;
-    } else {
-      js << identifier;
-    }
-    bNeedComma = true;
+
+    js << IdentifierToName(identifier);
   }
-  js << L")\n{\n";
+  js << L") {\n";
 
   js << L"var pfm_ret = null;\n";
   for (const auto& expr : m_pExpressions) {
@@ -85,15 +70,36 @@ bool CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& js,
       return false;
   }
 
-  js << L"return ";
-  if (m_isGlobal)
-    js << L"pfm_rt.get_val(pfm_ret);\n";
-  else
-    js << L"pfm_ret;\n";
-
+  js << L"return pfm_ret;\n";
   js << L"}\n";
-  if (m_isGlobal)
-    js << L").call(this);\n";
+
+  return !CXFA_IsTooBig(js);
+}
+
+CXFA_FMAST::CXFA_FMAST(
+    std::vector<std::unique_ptr<CXFA_FMExpression>> expressions)
+    : expressions_(std::move(expressions)) {}
+
+CXFA_FMAST::~CXFA_FMAST() = default;
+
+bool CXFA_FMAST::ToJavaScript(CFX_WideTextBuf& js) {
+  if (expressions_.empty()) {
+    js << L"// comments only";
+    return !CXFA_IsTooBig(js);
+  }
+
+  js << L"(function() {\n";
+  js << L"var pfm_ret = null;\n";
+
+  for (const auto& expr : expressions_) {
+    ReturnType ret_type = expr == expressions_.back() ? ReturnType::kImplied
+                                                      : ReturnType::kInfered;
+    if (!expr->ToJavaScript(js, ret_type))
+      return false;
+  }
+
+  js << L"return pfm_rt.get_val(pfm_ret);\n";
+  js << L"}).call(this);";
 
   return !CXFA_IsTooBig(js);
 }
@@ -110,10 +116,7 @@ bool CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  WideString tempName(m_wsName);
-  if (m_wsName[0] == L'!')
-    tempName = L"pfm__excl__" + m_wsName.Right(m_wsName.GetLength() - 1);
-
+  WideString tempName = IdentifierToName(m_wsName);
   js << L"var " << tempName << L" = ";
   if (m_pInit) {
     if (!m_pInit->ToJavaScript(js, ReturnType::kInfered))
@@ -356,12 +359,7 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
 
   js << L"{\n";
 
-  WideString tmpName;
-  if (m_wsVariant[0] == L'!')
-    tmpName = L"pfm__excl__" + m_wsVariant.Right(m_wsVariant.GetLength() - 1);
-  else
-    tmpName = m_wsVariant;
-
+  WideString tmpName = IdentifierToName(m_wsVariant);
   js << L"var " << tmpName << L" = null;\n";
 
   CFX_WideTextBuf assign_txt;
@@ -418,14 +416,7 @@ bool CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& js,
 
   js << L"{\n";
 
-  WideString tmpName;
-  if (m_wsIdentifier[0] == L'!') {
-    tmpName =
-        L"pfm__excl__" + m_wsIdentifier.Right(m_wsIdentifier.GetLength() - 1);
-  } else {
-    tmpName = m_wsIdentifier;
-  }
-
+  WideString tmpName = IdentifierToName(m_wsIdentifier);
   js << L"var " << tmpName << L" = null;\n";
   js << L"var pfm_ary = pfm_rt.concat_obj(";
   for (const auto& expr : m_pAccessors) {
