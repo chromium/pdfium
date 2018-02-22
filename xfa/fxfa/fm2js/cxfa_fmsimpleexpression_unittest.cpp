@@ -25,6 +25,7 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CXFA_FMCallExpression callExp(std::move(exp), std::move(args), true);
+
   CFX_WideTextBuf js;
   callExp.ToJavaScript(js, ReturnType::kInfered);
 
@@ -49,8 +50,7 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
 TEST(FMStringExpressionTest, Empty) {
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
-  CXFA_FMStringExpression(WideStringView())
-      .ToJavaScript(accumulator, ReturnType::kInfered);
+  CXFA_FMStringExpression(L"").ToJavaScript(accumulator, ReturnType::kInfered);
   EXPECT_EQ(L"", accumulator.AsStringView());
 }
 
