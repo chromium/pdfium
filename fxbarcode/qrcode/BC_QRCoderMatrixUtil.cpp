@@ -28,23 +28,21 @@
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "fxbarcode/utils.h"
 
-const int32_t CBC_QRCoderMatrixUtil::POSITION_DETECTION_PATTERN[7][7] = {
+namespace {
+
+const uint8_t POSITION_DETECTION_PATTERN[7][7] = {
     {1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 0, 0, 0, 1}, {1, 0, 1, 1, 1, 0, 1},
     {1, 0, 1, 1, 1, 0, 1}, {1, 0, 1, 1, 1, 0, 1}, {1, 0, 0, 0, 0, 0, 1},
     {1, 1, 1, 1, 1, 1, 1}};
-const int32_t CBC_QRCoderMatrixUtil::HORIZONTAL_SEPARATION_PATTERN[1][8] = {
-    {0, 0, 0, 0, 0, 0, 0, 0}};
-const int32_t CBC_QRCoderMatrixUtil::VERTICAL_SEPARATION_PATTERN[7][1] = {
-    {0}, {0}, {0}, {0}, {0}, {0}, {0}};
-const int32_t CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN[5][5] = {
-    {1, 1, 1, 1, 1},
-    {1, 0, 0, 0, 1},
-    {1, 0, 1, 0, 1},
-    {1, 0, 0, 0, 1},
-    {1, 1, 1, 1, 1}};
-const int32_t
-    CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[40][7] =
-        // NOLINTNEXTLINE
+
+const uint8_t POSITION_ADJUSTMENT_PATTERN[5][5] = {{1, 1, 1, 1, 1},
+                                                   {1, 0, 0, 0, 1},
+                                                   {1, 0, 1, 0, 1},
+                                                   {1, 0, 0, 0, 1},
+                                                   {1, 1, 1, 1, 1}};
+
+const int16_t POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[40][7] =
+    // NOLINTNEXTLINE
     {
         {-1, -1, -1, -1, -1, -1, -1},   {6, 18, -1, -1, -1, -1, -1},
         {6, 22, -1, -1, -1, -1, -1},    {6, 26, -1, -1, -1, -1, -1},
@@ -67,13 +65,17 @@ const int32_t
         {6, 28, 54, 80, 106, 132, 158}, {6, 32, 58, 84, 110, 136, 162},
         {6, 26, 54, 82, 110, 138, 166}, {6, 30, 58, 86, 114, 142, 170},
 };
-const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_COORDINATES[15][2] = {
+
+const uint8_t TYPE_INFO_COORDINATES[15][2] = {
     {8, 0}, {8, 1}, {8, 2}, {8, 3}, {8, 4}, {8, 5}, {8, 7}, {8, 8},
     {7, 8}, {5, 8}, {4, 8}, {3, 8}, {2, 8}, {1, 8}, {0, 8},
 };
-const int32_t CBC_QRCoderMatrixUtil::VERSION_INFO_POLY = 0x1f25;
-const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_POLY = 0x0537;
-const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_MASK_PATTERN = 0x5412;
+
+const int32_t VERSION_INFO_POLY = 0x1f25;
+const int32_t TYPE_INFO_POLY = 0x0537;
+const int32_t TYPE_INFO_MASK_PATTERN = 0x5412;
+
+}  // namespace
 
 void CBC_QRCoderMatrixUtil::ClearMatrix(CBC_CommonByteMatrix* matrix,
                                         int32_t& e) {
@@ -352,7 +354,7 @@ void CBC_QRCoderMatrixUtil::EmbedHorizontalSeparationPattern(
       e = BCExceptionInvalidateData;
       return;
     }
-    matrix->Set(xStart + x, yStart, HORIZONTAL_SEPARATION_PATTERN[0][x]);
+    matrix->Set(xStart + x, yStart, 0);
   }
 }
 void CBC_QRCoderMatrixUtil::EmbedVerticalSeparationPattern(
@@ -369,7 +371,7 @@ void CBC_QRCoderMatrixUtil::EmbedVerticalSeparationPattern(
       e = BCExceptionInvalidateData;
       return;
     }
-    matrix->Set(xStart, yStart + y, VERTICAL_SEPARATION_PATTERN[y][0]);
+    matrix->Set(xStart, yStart + y, 0);
   }
 }
 void CBC_QRCoderMatrixUtil::EmbedPositionAdjustmentPattern(
@@ -464,8 +466,8 @@ void CBC_QRCoderMatrixUtil::MaybeEmbedPositionAdjustmentPatterns(
     return;
   }
   int32_t index = version - 1;
-  int32_t const* coordinates =
-      &(POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[index][0]);
+  const auto* coordinates =
+      &POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[index][0];
   int32_t numCoordinate = 7;
   for (int32_t i = 0; i < numCoordinate; i++) {
     for (int32_t j = 0; j < numCoordinate; j++) {

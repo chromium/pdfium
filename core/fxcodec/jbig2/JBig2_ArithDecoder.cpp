@@ -12,10 +12,10 @@
 namespace {
 
 struct JBig2ArithQe {
-  unsigned int Qe;
-  unsigned int NMPS;
-  unsigned int NLPS;
-  unsigned int nSwitch;
+  uint16_t Qe;
+  uint8_t NMPS;
+  uint8_t NLPS;
+  uint8_t nSwitch;
 };
 
 const JBig2ArithQe kQeTable[] = {

@@ -430,8 +430,8 @@ bool CXFA_LocaleValue::ValidateCanonicalValue(const WideString& wsValue,
 
 bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
                                              CFX_DateTime* unDate) {
-  static const uint16_t LastDay[12] = {31, 28, 31, 30, 31, 30,
-                                       31, 31, 30, 31, 30, 31};
+  static const uint8_t LastDay[12] = {31, 28, 31, 30, 31, 30,
+                                      31, 31, 30, 31, 30, 31};
   static const uint16_t wCountY = 4;
   static const uint16_t wCountM = 2;
   static const uint16_t wCountD = 2;

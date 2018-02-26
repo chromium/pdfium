@@ -95,7 +95,7 @@ enum XFA_XDPPACKET_FLAGS {
   XFA_XDPPACKET_FLAGS_SUPPORTMANY = 16,
 };
 
-enum class XFA_AttributeEnum : uint32_t {
+enum class XFA_AttributeEnum : uint16_t {
   Asterisk,
   Slash,
   Backslash,
@@ -611,7 +611,7 @@ enum class XFA_Attribute : uint8_t {
   Unknown = 255,
 };
 
-enum class XFA_Element : int32_t {
+enum class XFA_Element : int16_t {
   Unknown = -1,
 
   Ps,
