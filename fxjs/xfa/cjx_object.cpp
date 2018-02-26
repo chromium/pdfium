@@ -51,8 +51,8 @@ void XFA_CopyWideString(void*& pData) {
   pData = new WideString(*reinterpret_cast<WideString*>(pData));
 }
 
-XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {XFA_DeleteWideString,
-                                                         XFA_CopyWideString};
+const XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {
+    XFA_DeleteWideString, XFA_CopyWideString};
 
 enum XFA_KEYTYPE {
   XFA_KEYTYPE_Custom,
@@ -72,8 +72,8 @@ void* GetMapKey_Element(XFA_Element eType, XFA_Attribute eAttribute) {
 
 void XFA_DefaultFreeData(void* pData) {}
 
-XFA_MAPDATABLOCKCALLBACKINFO gs_XFADefaultFreeData = {XFA_DefaultFreeData,
-                                                      nullptr};
+const XFA_MAPDATABLOCKCALLBACKINFO gs_XFADefaultFreeData = {XFA_DefaultFreeData,
+                                                            nullptr};
 
 std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
   int32_t r = 0;
@@ -111,7 +111,7 @@ std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
 struct XFA_MAPDATABLOCK {
   uint8_t* GetData() const { return (uint8_t*)this + sizeof(XFA_MAPDATABLOCK); }
 
-  XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
+  const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
   int32_t iBytes;
 };
 
@@ -949,9 +949,10 @@ CXFA_Node* CJX_Object::GetOrCreatePropertyInternal(int32_t index,
   return pNewNode;
 }
 
-bool CJX_Object::SetUserData(void* pKey,
-                             void* pData,
-                             XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
+bool CJX_Object::SetUserData(
+    void* pKey,
+    void* pData,
+    const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
   SetMapModuleBuffer(pKey, &pData, sizeof(void*),
                      pCallbackInfo ? pCallbackInfo : &gs_XFADefaultFreeData);
   return true;
@@ -1004,7 +1005,7 @@ void CJX_Object::SetMapModuleBuffer(
     void* pKey,
     void* pValue,
     int32_t iBytes,
-    XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
+    const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
   XFA_MAPDATABLOCK*& pBuffer = CreateMapModuleData()->m_BufferMap[pKey];
   if (!pBuffer) {
     pBuffer = reinterpret_cast<XFA_MAPDATABLOCK*>(

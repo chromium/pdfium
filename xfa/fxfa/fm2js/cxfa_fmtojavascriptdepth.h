@@ -10,13 +10,17 @@ class CXFA_FMToJavaScriptDepth {
   CXFA_FMToJavaScriptDepth() { depth_++; }
   ~CXFA_FMToJavaScriptDepth() { depth_--; }
 
-  bool IsWithinMaxDepth() const { return depth_ <= max_depth_; }
+  bool IsWithinMaxDepth() const { return depth_ <= kMaxDepth; }
 
   static void Reset();
 
  private:
+  // Arbitarily picked by looking at how deep a translation got before hitting
+  // the getting fuzzer memory limits. Should be larger then |kMaxParseDepth| in
+  // cxfa_fmparser.cpp.
+  const unsigned long kMaxDepth = 5000;
+
   static unsigned long depth_;
-  static unsigned long max_depth_;
 };
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMTOJAVASCRIPTDEPTH_H_

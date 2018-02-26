@@ -243,7 +243,7 @@ class CJX_Object {
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
   bool SetUserData(void* pKey,
                    void* pData,
-                   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
+                   const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
 
   // Returns a pointer to the XML node that needs to be updated with the new
   // attribute value. |nullptr| if no update is needed.
@@ -261,7 +261,7 @@ class CJX_Object {
   void SetMapModuleBuffer(void* pKey,
                           void* pValue,
                           int32_t iBytes,
-                          XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
+                          const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
   bool GetMapModuleBuffer(void* pKey,
                           void*& pValue,
                           int32_t& iBytes,

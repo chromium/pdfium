@@ -22,19 +22,21 @@ class CBC_PDF417HighLevelEncoder {
   static void Finalize();
 
  private:
-  static int32_t TEXT_COMPACTION;
-  static int32_t BYTE_COMPACTION;
-  static int32_t NUMERIC_COMPACTION;
-  static int32_t SUBMODE_PUNCTUATION;
-  static int32_t LATCH_TO_TEXT;
-  static int32_t LATCH_TO_BYTE_PADDED;
-  static int32_t LATCH_TO_NUMERIC;
-  static int32_t SHIFT_TO_BYTE;
-  static int32_t LATCH_TO_BYTE;
-  static uint8_t TEXT_MIXED_RAW[];
-  static uint8_t TEXT_PUNCTUATION_RAW[];
+  static const int32_t TEXT_COMPACTION;
+  static const int32_t BYTE_COMPACTION;
+  static const int32_t NUMERIC_COMPACTION;
+  static const int32_t SUBMODE_PUNCTUATION;
+  static const int32_t LATCH_TO_TEXT;
+  static const int32_t LATCH_TO_BYTE_PADDED;
+  static const int32_t LATCH_TO_NUMERIC;
+  static const int32_t SHIFT_TO_BYTE;
+  static const int32_t LATCH_TO_BYTE;
+  static const uint8_t TEXT_MIXED_RAW[];
+  static const uint8_t TEXT_PUNCTUATION_RAW[];
+
   static int32_t MIXED[128];
   static int32_t PUNCTUATION[128];
+
   static int32_t encodeText(WideString msg,
                             int32_t startpos,
                             int32_t count,

@@ -318,7 +318,9 @@ namespace {
 struct ElementNameInfo {
   uint32_t hash;
   XFA_Element element;
-} ElementNameToEnum[] = {
+};
+
+const ElementNameInfo ElementNameToEnum[] = {
     {0x23ee3 /* ps */, XFA_Element::Ps},
     {0x25363 /* to */, XFA_Element::To},
     {0x2587e /* ui */, XFA_Element::Ui},
@@ -631,7 +633,9 @@ struct ElementNameInfo {
 struct AttributeNameInfo {
   uint32_t hash;
   XFA_Attribute attribute;
-} AttributeNameInfoToEnum[] = {
+};
+
+const AttributeNameInfo AttributeNameInfoToEnum[] = {
     {0x68 /* h */, XFA_Attribute::H},
     {0x77 /* w */, XFA_Attribute::W},
     {0x78 /* x */, XFA_Attribute::X},

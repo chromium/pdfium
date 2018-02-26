@@ -78,7 +78,7 @@ const XFA_FMKeyword keyWords[] = {
 };
 
 #ifndef NDEBUG
-const wchar_t* tokenStrings[] = {
+const wchar_t* const tokenStrings[] = {
     L"TOKand",        L"TOKlparen",     L"TOKrparen",   L"TOKmul",
     L"TOKplus",       L"TOKcomma",      L"TOKminus",    L"TOKdot",
     L"TOKdiv",        L"TOKlt",         L"TOKassign",   L"TOKgt",

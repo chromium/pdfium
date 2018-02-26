@@ -102,9 +102,9 @@ const uint8_t* const FACTORS[16] = {
 
 }  // namespace
 
-int32_t CBC_ErrorCorrection::MODULO_VALUE = 0x12D;
 int32_t CBC_ErrorCorrection::LOG[256] = {0};
 int32_t CBC_ErrorCorrection::ALOG[256] = {0};
+
 void CBC_ErrorCorrection::Initialize() {
   int32_t p = 1;
   for (int32_t i = 0; i < 255; i++) {

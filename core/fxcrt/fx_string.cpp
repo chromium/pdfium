@@ -37,7 +37,7 @@ class CFX_UTF8Encoder {
       else
         nbytes = 6;
 
-      static uint8_t prefix[] = {0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
+      static const uint8_t prefix[] = {0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
       int order = 1 << ((nbytes - 1) * 6);
       int code = unicodeAsWchar;
       m_Buffer.push_back(prefix[nbytes - 2] | (code / order));

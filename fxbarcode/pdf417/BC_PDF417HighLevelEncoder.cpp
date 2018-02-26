@@ -31,21 +31,22 @@
 #define SUBMODE_LOWER 1
 #define SUBMODE_MIXED 2
 
-int32_t CBC_PDF417HighLevelEncoder::TEXT_COMPACTION = 0;
-int32_t CBC_PDF417HighLevelEncoder::BYTE_COMPACTION = 1;
-int32_t CBC_PDF417HighLevelEncoder::NUMERIC_COMPACTION = 2;
-int32_t CBC_PDF417HighLevelEncoder::SUBMODE_PUNCTUATION = 3;
-int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_TEXT = 900;
-int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_BYTE_PADDED = 901;
-int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_NUMERIC = 902;
-int32_t CBC_PDF417HighLevelEncoder::SHIFT_TO_BYTE = 913;
-int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_BYTE = 924;
-uint8_t CBC_PDF417HighLevelEncoder::TEXT_MIXED_RAW[] = {
+const int32_t CBC_PDF417HighLevelEncoder::TEXT_COMPACTION = 0;
+const int32_t CBC_PDF417HighLevelEncoder::BYTE_COMPACTION = 1;
+const int32_t CBC_PDF417HighLevelEncoder::NUMERIC_COMPACTION = 2;
+const int32_t CBC_PDF417HighLevelEncoder::SUBMODE_PUNCTUATION = 3;
+const int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_TEXT = 900;
+const int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_BYTE_PADDED = 901;
+const int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_NUMERIC = 902;
+const int32_t CBC_PDF417HighLevelEncoder::SHIFT_TO_BYTE = 913;
+const int32_t CBC_PDF417HighLevelEncoder::LATCH_TO_BYTE = 924;
+const uint8_t CBC_PDF417HighLevelEncoder::TEXT_MIXED_RAW[] = {
     48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 38, 13, 9, 44, 58,
     35, 45, 46, 36, 47, 43, 37, 42, 61, 94, 0,  32, 0, 0,  0};
-uint8_t CBC_PDF417HighLevelEncoder::TEXT_PUNCTUATION_RAW[] = {
+const uint8_t CBC_PDF417HighLevelEncoder::TEXT_PUNCTUATION_RAW[] = {
     59, 60, 62, 64, 91, 92, 93,  95, 96, 126, 33, 13,  9,   44, 58,
     10, 45, 46, 36, 47, 34, 124, 42, 40, 41,  63, 123, 125, 39, 0};
+
 int32_t CBC_PDF417HighLevelEncoder::MIXED[128] = {0};
 int32_t CBC_PDF417HighLevelEncoder::PUNCTUATION[128] = {0};
 

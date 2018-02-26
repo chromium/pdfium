@@ -12,8 +12,8 @@
 
 class CFX_GifContext;
 
-extern const char* kGifSignature87;
-extern const char* kGifSignature89;
+extern const char kGifSignature87[];
+extern const char kGifSignature89[];
 
 #define GIF_SIG_EXTENSION 0x21
 #define GIF_SIG_IMAGE 0x2C

@@ -24,7 +24,7 @@
 
 namespace {
 
-char kPDFiumKey_HasGeneratedAP[] = "PDFIUM_HasGeneratedAP";
+const char kPDFiumKey_HasGeneratedAP[] = "PDFIUM_HasGeneratedAP";
 
 bool IsTextMarkupAnnotation(CPDF_Annot::Subtype type) {
   return type == CPDF_Annot::Subtype::HIGHLIGHT ||

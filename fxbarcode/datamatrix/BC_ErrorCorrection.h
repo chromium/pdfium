@@ -23,11 +23,11 @@ class CBC_ErrorCorrection {
                                  int32_t& e);
 
  private:
-  static int32_t MODULO_VALUE;
+  static const int32_t MODULO_VALUE = 0x12D;
+
   static int32_t LOG[256];
   static int32_t ALOG[256];
 
- private:
   static WideString createECCBlock(WideString codewords,
                                    int32_t numECWords,
                                    int32_t& e);
