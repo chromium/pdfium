@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 #include <cmath>
+#include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_publicmethods.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/js_embedder_test.h"
@@ -159,4 +161,38 @@ TEST_F(CJS_PublicMethodsEmbedderTest, MakeFormatDate) {
   formatted_date =
       CJS_PublicMethods::MakeFormatDate(3947356800000.0, L"mmddyyyy");
   EXPECT_STREQ(L"02012095", formatted_date.c_str());
+}
+
+TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
+  v8::Isolate::Scope isolate_scope(isolate());
+  v8::HandleScope handle_scope(isolate());
+  v8::Context::Scope context_scope(GetV8Context());
+
+  EXPECT_TRUE(OpenDocument("calculate.pdf"));
+  auto* page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  CJS_Runtime runtime(static_cast<CPDFSDK_FormFillEnvironment*>(form_handle()));
+  runtime.NewEventContext();
+
+  WideString result;
+  runtime.GetCurrentEventContext()->GetEventHandler()->m_pValue = &result;
+
+  auto ary = runtime.NewArray();
+
+  runtime.PutArrayElement(ary, 0, runtime.NewString(L"Calc1_A"));
+  runtime.PutArrayElement(ary, 1, runtime.NewString(L"Calc1_B"));
+
+  std::vector<v8::Local<v8::Value>> params;
+  params.push_back(runtime.NewString("SUM"));
+  params.push_back(ary);
+
+  CJS_Return ret = CJS_PublicMethods::AFSimple_Calculate(&runtime, params);
+  UnloadPage(page);
+
+  runtime.GetCurrentEventContext()->GetEventHandler()->m_pValue = nullptr;
+
+  ASSERT_TRUE(!ret.HasError());
+  ASSERT_TRUE(!ret.HasReturn());
+  ASSERT_EQ(L"7", result);
 }
