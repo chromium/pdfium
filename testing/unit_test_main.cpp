@@ -64,9 +64,9 @@ int main(int argc, char** argv) {
 
 #ifdef PDF_ENABLE_V8
   std::unique_ptr<v8::Platform> platform;
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
   static v8::StartupData* natives = new v8::StartupData;
   static v8::StartupData* snapshot = new v8::StartupData;
-#ifdef V8_USE_EXTERNAL_STARTUP_DATA
   platform = InitializeV8ForPDFiumWithStartupData(argv[0], std::string(),
                                                   natives, snapshot);
 #else  // V8_USE_EXTERNAL_STARTUP_DATA
