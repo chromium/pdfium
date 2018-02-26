@@ -189,9 +189,10 @@ bool CPDF_LinkExtract::CheckWebLink(WideString* strBeCheck,
                                     int32_t* nStart,
                                     int32_t* nCount) {
   static const wchar_t kHttpScheme[] = L"http";
-  static const size_t kHttpSchemeLen = FXSYS_len(kHttpScheme);
   static const wchar_t kWWWAddrStart[] = L"www.";
-  static const size_t kWWWAddrStartLen = FXSYS_len(kWWWAddrStart);
+
+  const size_t kHttpSchemeLen = FXSYS_len(kHttpScheme);
+  const size_t kWWWAddrStartLen = FXSYS_len(kWWWAddrStart);
 
   WideString str = *strBeCheck;
   str.MakeLower();

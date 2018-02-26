@@ -521,7 +521,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
 }
 
 void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
-  static const ByteStringView OBJ_NAME[2] = {"Number", "Date"};
+  const ByteStringView OBJ_NAME[2] = {"Number", "Date"};
   std::unique_ptr<CFXJSE_Value> pObject = pContext->GetGlobalObject();
   auto hProp = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
   for (int i = 0; i < 2; ++i) {

@@ -211,7 +211,7 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
     if (year < 0)
       return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
-    static const TbConvertAdditional cTableAd[] = {
+    const TbConvertAdditional cTableAd[] = {
         {L"m", month}, {L"d", day},
         {L"H", hour},  {L"h", hour > 12 ? hour - 12 : hour},
         {L"M", min},   {L"s", sec},

@@ -444,8 +444,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
   FX_COLORREF crOldFill = crCurFill;
 
   bool bSelect = false;
-  static const FX_COLORREF crWhite = ArgbEncode(255, 255, 255, 255);
-  static const FX_COLORREF crSelBK = ArgbEncode(255, 0, 51, 113);
+  const FX_COLORREF crWhite = ArgbEncode(255, 255, 255, 255);
+  const FX_COLORREF crSelBK = ArgbEncode(255, 0, 51, 113);
 
   std::ostringstream sTextBuf;
   int32_t nFontIndex = -1;

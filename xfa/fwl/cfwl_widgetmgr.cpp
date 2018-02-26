@@ -525,10 +525,10 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
   bool bChildIntersectWithDirty = false;
   bool bOrginPtIntersectWidthChild = false;
   bool bOrginPtIntersectWidthDirty = rtDirty.Contains(rtWidget.TopLeft());
-  static FWL_NEEDREPAINTHITDATA hitPoint[kNeedRepaintHitPoints];
-  memset(hitPoint, 0, sizeof(hitPoint));
   float fxPiece = rtWidget.width / kNeedRepaintHitPiece;
   float fyPiece = rtWidget.height / kNeedRepaintHitPiece;
+  FWL_NEEDREPAINTHITDATA hitPoint[kNeedRepaintHitPoints];
+  memset(hitPoint, 0, sizeof(hitPoint));
   hitPoint[2].hitPoint.x = hitPoint[6].hitPoint.x = rtWidget.left;
   hitPoint[0].hitPoint.x = hitPoint[3].hitPoint.x = hitPoint[7].hitPoint.x =
       hitPoint[10].hitPoint.x = fxPiece + rtWidget.left;
