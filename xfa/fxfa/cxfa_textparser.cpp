@@ -434,9 +434,11 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
 void CXFA_TextParser::GetLinethrough(CXFA_TextProvider* pTextProvider,
                                      CFX_CSSComputedStyle* pStyle,
                                      int32_t& iLinethrough) const {
+  iLinethrough = 0;
   if (pStyle) {
     uint32_t dwDecoration = pStyle->GetTextDecoration();
-    iLinethrough = (dwDecoration & CFX_CSSTEXTDECORATION_LineThrough) ? 1 : 0;
+    if (dwDecoration & CFX_CSSTEXTDECORATION_LineThrough)
+      iLinethrough = 1;
     return;
   }
 
