@@ -1586,7 +1586,7 @@ CJS_Return CJS_PublicMethods::AFSimple_Calculate(
   double dValue = wcscmp(sFunction.c_str(), L"PRD") == 0 ? 1.0 : 0.0;
 
   v8::Local<v8::Array> FieldNameArray =
-      AF_MakeArrayFromList(pRuntime, params[0]);
+      AF_MakeArrayFromList(pRuntime, params[1]);
   int nFieldsCount = 0;
   for (size_t i = 0; i < pRuntime->GetArrayLength(FieldNameArray); ++i) {
     WideString wsFieldName =
