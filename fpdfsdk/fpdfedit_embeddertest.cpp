@@ -1122,6 +1122,26 @@ TEST_F(FPDFEditEmbeddertest, ExtractImageBitmap) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbeddertest, ExtractJBigImageBitmap) {
+  ASSERT_TRUE(OpenDocument("bug_631912.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(1, FPDFPage_CountObjects(page));
+
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 0);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  {
+    // TODO(bug_945): This should return a valid bitmap. This test should be
+    // able to successfully check |bitmap| using FPDFBitmap_GetFormat() and
+    // CompareBitmap().
+    std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
+        FPDFImageObj_GetBitmap(obj));
+    ASSERT_FALSE(bitmap);
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbeddertest, GetImageData) {
   EXPECT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
