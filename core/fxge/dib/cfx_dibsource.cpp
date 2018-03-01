@@ -105,16 +105,15 @@ void ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf,
                                  const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                  int src_left,
                                  int src_top) {
-  uint8_t set_gray, reset_gray;
-  set_gray = 0xff;
-  reset_gray = 0x00;
+  static constexpr uint8_t kSetGray = 0xff;
+  static constexpr uint8_t kResetGray = 0x00;
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
-    memset(dest_scan, reset_gray, width);
+    memset(dest_scan, kResetGray, width);
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
     for (int col = src_left; col < src_left + width; ++col) {
       if (src_scan[col / 8] & (1 << (7 - col % 8)))
-        *dest_scan = set_gray;
+        *dest_scan = kSetGray;
       ++dest_scan;
     }
   }
@@ -931,25 +930,21 @@ RetainPtr<CFX_DIBitmap> CFX_DIBSource::CloneConvert(FXDIB_Format dest_format) {
 
   RetainPtr<CFX_DIBitmap> pSrcAlpha;
   if (HasAlpha()) {
-    if (GetFormat() == FXDIB_Argb)
-      pSrcAlpha = CloneAlphaMask();
-    else
-      pSrcAlpha = m_pAlphaMask;
-
+    pSrcAlpha = (GetFormat() == FXDIB_Argb) ? CloneAlphaMask() : m_pAlphaMask;
     if (!pSrcAlpha)
       return nullptr;
   }
-  bool ret = true;
   if (dest_format & 0x0200) {
+    bool ret;
     if (dest_format == FXDIB_Argb) {
       ret = pSrcAlpha ? pClone->LoadChannel(FXDIB_Alpha, pSrcAlpha, FXDIB_Alpha)
                       : pClone->LoadChannel(FXDIB_Alpha, 0xff);
     } else {
       ret = pClone->SetAlphaMask(pSrcAlpha, nullptr);
     }
+    if (!ret)
+      return nullptr;
   }
-  if (!ret)
-    return nullptr;
 
   RetainPtr<CFX_DIBSource> holder(this);
   std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
