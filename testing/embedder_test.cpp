@@ -480,8 +480,15 @@ void EmbedderTest::WriteBitmapToPng(FPDF_BITMAP bitmap,
       static_cast<const unsigned char*>(FPDFBitmap_GetBuffer(bitmap));
 
   std::vector<unsigned char> png_encoding;
-  bool encoded = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
-                                               false, &png_encoding);
+  bool encoded;
+  if (FPDFBitmap_GetFormat(bitmap) == FPDFBitmap_Gray) {
+    encoded = image_diff_png::EncodeGrayPNG(buffer, width, height, stride,
+                                            &png_encoding);
+  } else {
+    encoded = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
+                                            /*discard_transparency=*/false,
+                                            &png_encoding);
+  }
 
   ASSERT_TRUE(encoded);
   ASSERT_LT(filename.size(), 256u);
