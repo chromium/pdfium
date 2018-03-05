@@ -460,7 +460,7 @@ int CPDF_DIBSource::CreateDecoder() {
     return 0;
 
   if (decoder == "JPXDecode") {
-    LoadJpxBitmap();
+    m_pCachedBitmap = LoadJpxBitmap();
     return m_pCachedBitmap ? 1 : 0;
   }
   if (decoder == "JBIG2Decode") {
@@ -580,25 +580,25 @@ bool CPDF_DIBSource::CreateDCTDecoder(const uint8_t* src_data,
   return true;
 }
 
-void CPDF_DIBSource::LoadJpxBitmap() {
+RetainPtr<CFX_DIBitmap> CPDF_DIBSource::LoadJpxBitmap() {
   CCodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
   auto context = pdfium::MakeUnique<JpxBitMapContext>(pJpxModule);
   context->set_decoder(pJpxModule->CreateDecoder(
       m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(), m_pColorSpace));
   if (!context->decoder())
-    return;
+    return nullptr;
 
   uint32_t width = 0;
   uint32_t height = 0;
   uint32_t components = 0;
   pJpxModule->GetImageInfo(context->decoder(), &width, &height, &components);
   if (static_cast<int>(width) < m_Width || static_cast<int>(height) < m_Height)
-    return;
+    return nullptr;
 
   bool bSwapRGB = false;
   if (m_pColorSpace) {
     if (components != m_pColorSpace->CountComponents())
-      return;
+      return nullptr;
 
     if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
       bSwapRGB = true;
@@ -625,12 +625,11 @@ void CPDF_DIBSource::LoadJpxBitmap() {
     format = FXDIB_Rgb;
   }
 
-  m_pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!m_pCachedBitmap->Create(width, height, format)) {
-    m_pCachedBitmap.Reset();
-    return;
-  }
-  m_pCachedBitmap->Clear(0xFFFFFFFF);
+  auto pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!pCachedBitmap->Create(width, height, format))
+    return nullptr;
+
+  pCachedBitmap->Clear(0xFFFFFFFF);
   std::vector<uint8_t> output_offsets(components);
   for (uint32_t i = 0; i < components; ++i)
     output_offsets[i] = i;
@@ -638,17 +637,15 @@ void CPDF_DIBSource::LoadJpxBitmap() {
     output_offsets[0] = 2;
     output_offsets[2] = 0;
   }
-  if (!pJpxModule->Decode(context->decoder(), m_pCachedBitmap->GetBuffer(),
-                          m_pCachedBitmap->GetPitch(), output_offsets)) {
-    m_pCachedBitmap.Reset();
-    return;
+  if (!pJpxModule->Decode(context->decoder(), pCachedBitmap->GetBuffer(),
+                          pCachedBitmap->GetPitch(), output_offsets)) {
+    return nullptr;
   }
   if (m_pColorSpace && m_pColorSpace->GetFamily() == PDFCS_INDEXED &&
       m_bpc < 8) {
     int scale = 8 - m_bpc;
     for (uint32_t row = 0; row < height; ++row) {
-      uint8_t* scanline =
-          const_cast<uint8_t*>(m_pCachedBitmap->GetScanline(row));
+      uint8_t* scanline = const_cast<uint8_t*>(pCachedBitmap->GetScanline(row));
       for (uint32_t col = 0; col < width; ++col) {
         *scanline = (*scanline) >> scale;
         ++scanline;
@@ -656,6 +653,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
     }
   }
   m_bpc = 8;
+  return pCachedBitmap;
 }
 
 int CPDF_DIBSource::StartLoadMask() {
