@@ -30,12 +30,12 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Stream;
 
-typedef struct {
+struct DIB_COMP_DATA {
   float m_DecodeMin;
   float m_DecodeStep;
   int m_ColorKeyMin;
   int m_ColorKeyMax;
-} DIB_COMP_DATA;
+};
 
 #define FPDF_HUGE_IMAGE_SIZE 60000000
 
