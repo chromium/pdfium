@@ -15,7 +15,7 @@
 TEST(CXFA_FMParserTest, Empty) {
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(L"");
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
-  ASSERT(ast != nullptr);
+  ASSERT_TRUE(ast);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
@@ -28,7 +28,7 @@ TEST(CXFA_FMParserTest, Empty) {
 TEST(CXFA_FMParserTest, CommentOnlyIsError) {
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(L"; Just comment");
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
-  ASSERT(ast != nullptr);
+  ASSERT_TRUE(ast);
   // TODO(dsinclair): This isn't allowed per the spec.
   EXPECT_FALSE(parser->HasError());
   // EXPECT_TRUE(parser->HasError());
@@ -49,7 +49,7 @@ TEST(CXFA_FMParserTest, CommentThenValue) {
 
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(L"; Just comment\n12");
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
-  ASSERT(ast != nullptr);
+  ASSERT_TRUE(ast);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
@@ -118,7 +118,7 @@ TEST(CXFA_FMParserTest, Parse) {
 
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
-  ASSERT(ast != nullptr);
+  ASSERT_TRUE(ast);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
@@ -147,7 +147,7 @@ TEST(CXFA_FMParserTest, MultipleAssignmentIsNotAllowed) {
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(L"(a=(b=t))=u");
 
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
-  ASSERT(ast == nullptr);
+  ASSERT_TRUE(!ast);
   EXPECT_TRUE(parser->HasError());
 }
 
@@ -170,7 +170,7 @@ TEST(CXFA_FMParserTest, ParseFuncWithParams) {
 
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
-  ASSERT(ast != nullptr);
+  ASSERT_TRUE(ast);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
@@ -198,7 +198,7 @@ TEST(CXFA_FMParserTest, ParseFuncWithoutParams) {
 
   auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
   std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
-  ASSERT(ast != nullptr);
+  ASSERT_TRUE(ast);
   EXPECT_FALSE(parser->HasError());
 
   CXFA_FMToJavaScriptDepth::Reset();
