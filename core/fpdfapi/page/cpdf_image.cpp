@@ -351,7 +351,7 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
   int ret = source->StartLoadDIBSource(m_pDocument.Get(), m_pStream.Get(), true,
                                        pFormResource, pPageResource, bStdCS,
                                        GroupFamily, bLoadMask);
-  if (!ret) {
+  if (ret == 0) {
     m_pDIBSource.Reset();
     return false;
   }
@@ -367,14 +367,14 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
 bool CPDF_Image::Continue(IFX_PauseIndicator* pPause) {
   RetainPtr<CPDF_DIBSource> pSource = m_pDIBSource.As<CPDF_DIBSource>();
   int ret = pSource->ContinueLoadDIBSource(pPause);
-  if (!ret) {
-    m_pDIBSource.Reset();
-    return false;
-  }
   if (ret == 2)
     return true;
 
-  m_pMask = pSource->DetachMask();
-  m_MatteColor = pSource->GetMatteColor();
+  if (ret == 1) {
+    m_pMask = pSource->DetachMask();
+    m_MatteColor = pSource->GetMatteColor();
+  } else {
+    m_pDIBSource.Reset();
+  }
   return false;
 }

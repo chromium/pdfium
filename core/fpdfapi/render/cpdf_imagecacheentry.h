@@ -9,11 +9,11 @@
 
 #include <memory>
 
+#include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_DIBSource;
 class CFX_DIBitmap;
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -31,13 +31,18 @@ class CPDF_ImageCacheEntry {
   uint32_t EstimateSize() const { return m_dwCacheSize; }
   uint32_t GetTimeCount() const { return m_dwTimeCount; }
   CPDF_Image* GetImage() const { return m_pImage.Get(); }
-  int StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
-                           CPDF_Dictionary* pPageResources,
-                           bool bStdCS,
-                           uint32_t GroupFamily,
-                           bool bLoadMask,
-                           CPDF_RenderStatus* pRenderStatus);
-  int Continue(IFX_PauseIndicator* pPause, CPDF_RenderStatus* pRenderStatus);
+
+  CPDF_DIBSource::LoadState StartGetCachedBitmap(
+      CPDF_Dictionary* pFormResources,
+      CPDF_Dictionary* pPageResources,
+      bool bStdCS,
+      uint32_t GroupFamily,
+      bool bLoadMask,
+      CPDF_RenderStatus* pRenderStatus);
+
+  // Returns whether to Continue() or not.
+  bool Continue(IFX_PauseIndicator* pPause, CPDF_RenderStatus* pRenderStatus);
+
   RetainPtr<CFX_DIBSource> DetachBitmap();
   RetainPtr<CFX_DIBSource> DetachMask();
 

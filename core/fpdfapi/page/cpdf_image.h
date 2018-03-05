@@ -48,12 +48,17 @@ class CPDF_Image : public Retainable {
   void SetJpegImageInline(const RetainPtr<IFX_SeekableReadStream>& pFile);
 
   void ResetCache(CPDF_Page* pPage, const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+
+  // Returns whether to Continue() or not.
   bool StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                           CPDF_Dictionary* pPageResource,
                           bool bStdCS = false,
                           uint32_t GroupFamily = 0,
                           bool bLoadMask = false);
+
+  // Returns whether to Continue() or not.
   bool Continue(IFX_PauseIndicator* pPause);
+
   RetainPtr<CFX_DIBSource> DetachBitmap();
   RetainPtr<CFX_DIBSource> DetachMask();
 

@@ -52,7 +52,7 @@ RetainPtr<CFX_DIBSource> CPDF_ImageCacheEntry::DetachMask() {
   return std::move(m_pCurMask);
 }
 
-int CPDF_ImageCacheEntry::StartGetCachedBitmap(
+CPDF_DIBSource::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
     CPDF_Dictionary* pFormResources,
     CPDF_Dictionary* pPageResources,
     bool bStdCS,
@@ -64,7 +64,7 @@ int CPDF_ImageCacheEntry::StartGetCachedBitmap(
   if (m_pCachedBitmap) {
     m_pCurBitmap = m_pCachedBitmap;
     m_pCurMask = m_pCachedMask;
-    return 1;
+    return CPDF_DIBSource::LoadState::kSuccess;
   }
 
   m_pCurBitmap = pdfium::MakeRetain<CPDF_DIBSource>();
@@ -72,14 +72,26 @@ int CPDF_ImageCacheEntry::StartGetCachedBitmap(
       m_pDocument.Get(), m_pImage->GetStream(), true, pFormResources,
       pPageResources, bStdCS, GroupFamily, bLoadMask);
   if (ret == 2)
-    return ret;
+    return CPDF_DIBSource::LoadState::kContinue;
 
-  if (!ret) {
+  if (ret == 1)
+    ContinueGetCachedBitmap(pRenderStatus);
+  else
     m_pCurBitmap.Reset();
-    return 0;
-  }
-  ContinueGetCachedBitmap(pRenderStatus);
-  return 0;
+  return CPDF_DIBSource::LoadState::kFail;
+}
+
+bool CPDF_ImageCacheEntry::Continue(IFX_PauseIndicator* pPause,
+                                    CPDF_RenderStatus* pRenderStatus) {
+  int ret = m_pCurBitmap.As<CPDF_DIBSource>()->ContinueLoadDIBSource(pPause);
+  if (ret == 2)
+    return true;
+
+  if (ret == 1)
+    ContinueGetCachedBitmap(pRenderStatus);
+  else
+    m_pCurBitmap.Reset();
+  return false;
 }
 
 void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
@@ -103,20 +115,6 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
   m_pCurBitmap = m_pCachedBitmap;
   m_pCurMask = m_pCachedMask;
   CalcSize();
-}
-
-int CPDF_ImageCacheEntry::Continue(IFX_PauseIndicator* pPause,
-                                   CPDF_RenderStatus* pRenderStatus) {
-  int ret = m_pCurBitmap.As<CPDF_DIBSource>()->ContinueLoadDIBSource(pPause);
-  if (!ret) {
-    m_pCurBitmap.Reset();
-    return 0;
-  }
-  if (ret == 2)
-    return ret;
-
-  ContinueGetCachedBitmap(pRenderStatus);
-  return 0;
 }
 
 void CPDF_ImageCacheEntry::CalcSize() {
