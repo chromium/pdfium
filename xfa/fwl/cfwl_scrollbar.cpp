@@ -385,7 +385,8 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
 }
 
 void CFWL_ScrollBar::OnLButtonUp(const CFX_PointF& point) {
-  m_pTimerInfo->StopTimer();
+  if (m_pTimerInfo)
+    m_pTimerInfo->StopTimer();
   m_bMouseDown = false;
   DoMouseUp(0, m_rtMinBtn, m_iMinButtonState, point);
   DoMouseUp(1, m_rtThumb, m_iThumbButtonState, point);
