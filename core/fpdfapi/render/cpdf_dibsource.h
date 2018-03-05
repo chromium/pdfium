@@ -76,6 +76,8 @@ class CPDF_DIBSource : public CFX_DIBSource {
   LoadState ContinueLoadDIBSource(IFX_PauseIndicator* pPause);
   RetainPtr<CPDF_DIBSource> DetachMask();
 
+  bool IsJBigImage() const;
+
  private:
   CPDF_DIBSource();
 

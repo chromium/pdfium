@@ -331,7 +331,13 @@ RetainPtr<CFX_DIBSource> CPDF_Image::LoadDIBSource() const {
   if (!source->Load(m_pDocument.Get(), m_pStream.Get()))
     return nullptr;
 
-  return source;
+  if (!source->IsJBigImage())
+    return source;
+
+  CPDF_DIBSource::LoadState ret = CPDF_DIBSource::LoadState::kContinue;
+  while (ret == CPDF_DIBSource::LoadState::kContinue)
+    ret = source->ContinueLoadDIBSource(nullptr);
+  return ret == CPDF_DIBSource::LoadState::kSuccess ? source : nullptr;
 }
 
 RetainPtr<CFX_DIBSource> CPDF_Image::DetachBitmap() {

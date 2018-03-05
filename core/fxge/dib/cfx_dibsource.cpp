@@ -1225,12 +1225,13 @@ bool CFX_DIBSource::ConvertBuffer(
     }
     case FXDIB_8bppRgb:
     case FXDIB_8bppRgba: {
-      if (bpp == 8 && !pSrcBitmap->GetPalette()) {
+      const bool bpp_1_or_8 = (bpp == 1 || bpp == 8);
+      if (bpp_1_or_8 && !pSrcBitmap->GetPalette()) {
         return ConvertBuffer(FXDIB_8bppMask, dest_buf, dest_pitch, width,
                              height, pSrcBitmap, src_left, src_top, p_pal);
       }
       p_pal->reset(FX_Alloc(uint32_t, 256));
-      if ((bpp == 1 || bpp == 8) && pSrcBitmap->GetPalette()) {
+      if (bpp_1_or_8 && pSrcBitmap->GetPalette()) {
         ConvertBuffer_Plt2PltRgb8(dest_buf, dest_pitch, width, height,
                                   pSrcBitmap, src_left, src_top, p_pal->get());
         return true;
