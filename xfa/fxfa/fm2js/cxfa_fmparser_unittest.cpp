@@ -206,3 +206,15 @@ TEST(CXFA_FMParserTest, ParseFuncWithoutParams) {
   EXPECT_TRUE(ast->ToJavaScript(buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }
+
+TEST(CXFA_FMParserTest, ParseFuncWithBadParamsList) {
+  const wchar_t input[] = {
+      L"func MyFunction(param1,) do\n"
+      L"  param1 * param2\n"
+      L"endfunc"};
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  ASSERT_TRUE(ast == nullptr);
+  EXPECT_TRUE(parser->HasError());
+}
