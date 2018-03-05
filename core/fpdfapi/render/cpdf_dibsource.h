@@ -65,30 +65,30 @@ class CPDF_DIBSource : public CFX_DIBSource {
   const CPDF_ColorSpace* GetColorSpace() const { return m_pColorSpace; }
   uint32_t GetMatteColor() const { return m_MatteColor; }
 
-  int StartLoadDIBSource(CPDF_Document* pDoc,
-                         const CPDF_Stream* pStream,
-                         bool bHasMask,
-                         CPDF_Dictionary* pFormResources,
-                         CPDF_Dictionary* pPageResources,
-                         bool bStdCS = false,
-                         uint32_t GroupFamily = 0,
-                         bool bLoadMask = false);
-  int ContinueLoadDIBSource(IFX_PauseIndicator* pPause);
+  LoadState StartLoadDIBSource(CPDF_Document* pDoc,
+                               const CPDF_Stream* pStream,
+                               bool bHasMask,
+                               CPDF_Dictionary* pFormResources,
+                               CPDF_Dictionary* pPageResources,
+                               bool bStdCS = false,
+                               uint32_t GroupFamily = 0,
+                               bool bLoadMask = false);
+  LoadState ContinueLoadDIBSource(IFX_PauseIndicator* pPause);
   RetainPtr<CPDF_DIBSource> DetachMask();
 
  private:
   CPDF_DIBSource();
 
-  int StartLoadMask();
-  int StartLoadMaskDIB();
+  LoadState StartLoadMask();
+  LoadState StartLoadMaskDIB();
   bool ContinueToLoadMask();
-  int ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
+  LoadState ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
   DIB_COMP_DATA* GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey);
   RetainPtr<CFX_DIBitmap> LoadJpxBitmap();
   void LoadPalette();
-  int CreateDecoder();
+  LoadState CreateDecoder();
   bool CreateDCTDecoder(const uint8_t* src_data,
                         uint32_t src_size,
                         const CPDF_Dictionary* pParams);

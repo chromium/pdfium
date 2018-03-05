@@ -290,11 +290,11 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
     return true;
 
   auto pSource = pdfium::MakeRetain<CPDF_DIBSource>();
-  if (!pSource->StartLoadDIBSource(pPage->m_pDocument.Get(), pImg->GetStream(),
-                                   false, nullptr,
-                                   pPage->m_pPageResources.Get())) {
+  CPDF_DIBSource::LoadState ret = pSource->StartLoadDIBSource(
+      pPage->m_pDocument.Get(), pImg->GetStream(), false, nullptr,
+      pPage->m_pPageResources.Get());
+  if (ret == CPDF_DIBSource::LoadState::kFail)
     return true;
-  }
 
   metadata->bits_per_pixel = pSource->GetBPP();
   if (pSource->GetColorSpace())

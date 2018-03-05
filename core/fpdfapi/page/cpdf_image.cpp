@@ -348,15 +348,15 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                                     uint32_t GroupFamily,
                                     bool bLoadMask) {
   auto source = pdfium::MakeRetain<CPDF_DIBSource>();
-  int ret = source->StartLoadDIBSource(m_pDocument.Get(), m_pStream.Get(), true,
-                                       pFormResource, pPageResource, bStdCS,
-                                       GroupFamily, bLoadMask);
-  if (ret == 0) {
+  CPDF_DIBSource::LoadState ret = source->StartLoadDIBSource(
+      m_pDocument.Get(), m_pStream.Get(), true, pFormResource, pPageResource,
+      bStdCS, GroupFamily, bLoadMask);
+  if (ret == CPDF_DIBSource::LoadState::kFail) {
     m_pDIBSource.Reset();
     return false;
   }
   m_pDIBSource = source;
-  if (ret == 2)
+  if (ret == CPDF_DIBSource::LoadState::kContinue)
     return true;
 
   m_pMask = source->DetachMask();
@@ -366,11 +366,11 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
 
 bool CPDF_Image::Continue(IFX_PauseIndicator* pPause) {
   RetainPtr<CPDF_DIBSource> pSource = m_pDIBSource.As<CPDF_DIBSource>();
-  int ret = pSource->ContinueLoadDIBSource(pPause);
-  if (ret == 2)
+  CPDF_DIBSource::LoadState ret = pSource->ContinueLoadDIBSource(pPause);
+  if (ret == CPDF_DIBSource::LoadState::kContinue)
     return true;
 
-  if (ret == 1) {
+  if (ret == CPDF_DIBSource::LoadState::kSuccess) {
     m_pMask = pSource->DetachMask();
     m_MatteColor = pSource->GetMatteColor();
   } else {

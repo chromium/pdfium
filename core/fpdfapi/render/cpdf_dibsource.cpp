@@ -156,7 +156,7 @@ bool CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return false;
 
-  if (!CreateDecoder())
+  if (CreateDecoder() == LoadState::kFail)
     return false;
 
   if (m_bImageMask) {
@@ -227,16 +227,17 @@ bool CPDF_DIBSource::ContinueToLoadMask() {
   return true;
 }
 
-int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
-                                       const CPDF_Stream* pStream,
-                                       bool bHasMask,
-                                       CPDF_Dictionary* pFormResources,
-                                       CPDF_Dictionary* pPageResources,
-                                       bool bStdCS,
-                                       uint32_t GroupFamily,
-                                       bool bLoadMask) {
+CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadDIBSource(
+    CPDF_Document* pDoc,
+    const CPDF_Stream* pStream,
+    bool bHasMask,
+    CPDF_Dictionary* pFormResources,
+    CPDF_Dictionary* pPageResources,
+    bool bStdCS,
+    uint32_t GroupFamily,
+    bool bLoadMask) {
   if (!pStream)
-    return 0;
+    return LoadState::kFail;
 
   m_pDocument = pDoc;
   m_pDict = pStream->GetDict();
@@ -247,55 +248,58 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   m_Height = m_pDict->GetIntegerFor("Height");
   if (m_Width <= 0 || m_Height <= 0 || m_Width > kMaxImageDimension ||
       m_Height > kMaxImageDimension) {
-    return 0;
+    return LoadState::kFail;
   }
   m_GroupFamily = GroupFamily;
   m_bLoadMask = bLoadMask;
   if (!LoadColorInfo(m_pStream->IsInline() ? pFormResources : nullptr,
                      pPageResources)) {
-    return 0;
+    return LoadState::kFail;
   }
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
-    return 0;
+    return LoadState::kFail;
 
   FX_SAFE_UINT32 src_size =
       CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
   if (!src_size.IsValid())
-    return 0;
+    return LoadState::kFail;
 
   m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   m_pStreamAcc->LoadAllData(false, src_size.ValueOrDie(), true);
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
-    return 0;
+    return LoadState::kFail;
 
-  int iCreatedDecoder = CreateDecoder();
-  if (!iCreatedDecoder)
-    return 0;
+  LoadState iCreatedDecoder = CreateDecoder();
+  if (iCreatedDecoder == LoadState::kFail)
+    return LoadState::kFail;
 
   if (!ContinueToLoadMask())
-    return 0;
+    return LoadState::kFail;
 
-  int iLoadedMask = m_bHasMask ? StartLoadMask() : 1;
-  if (iCreatedDecoder == 2 || iLoadedMask == 2)
-    return 2;
+  LoadState iLoadedMask = m_bHasMask ? StartLoadMask() : LoadState::kSuccess;
+  if (iCreatedDecoder == LoadState::kContinue ||
+      iLoadedMask == LoadState::kContinue) {
+    return LoadState::kContinue;
+  }
 
-  ASSERT(iCreatedDecoder == 1);
-  ASSERT(iLoadedMask == 1);
+  ASSERT(iCreatedDecoder == LoadState::kSuccess);
+  ASSERT(iLoadedMask == LoadState::kSuccess);
   if (m_pColorSpace && m_bStdCS)
     m_pColorSpace->EnableStdConversion(false);
-  return 1;
+  return LoadState::kSuccess;
 }
 
-int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
+CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadDIBSource(
+    IFX_PauseIndicator* pPause) {
   if (m_Status == LoadState::kContinue)
     return ContinueLoadMaskDIB(pPause);
 
   if (m_Status == LoadState::kFail)
-    return 0;
+    return LoadState::kFail;
 
   const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder == "JPXDecode")
-    return 0;
+    return LoadState::kFail;
 
   FXCODEC_STATUS iDecodeStatus;
   CCodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
@@ -321,18 +325,18 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
     m_pJbig2Context.reset();
     m_pCachedBitmap.Reset();
     m_pGlobalStream.Reset();
-    return 0;
+    return LoadState::kFail;
   }
   if (iDecodeStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-    return 2;
+    return LoadState::kContinue;
 
-  int iContinueStatus = 1;
+  LoadState iContinueStatus = LoadState::kSuccess;
   if (m_bHasMask) {
     iContinueStatus = ContinueLoadMaskDIB(pPause);
     m_Status = LoadState::kContinue;
   }
-  if (iContinueStatus == 2)
-    return 2;
+  if (iContinueStatus == LoadState::kContinue)
+    return LoadState::kContinue;
 
   if (m_pColorSpace && m_bStdCS)
     m_pColorSpace->EnableStdConversion(false);
@@ -451,27 +455,28 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool* bDefaultDecode,
   return pCompData;
 }
 
-int CPDF_DIBSource::CreateDecoder() {
+CPDF_DIBSource::LoadState CPDF_DIBSource::CreateDecoder() {
   const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder.IsEmpty())
-    return 1;
+    return LoadState::kSuccess;
 
   if (m_bDoBpcCheck && m_bpc == 0)
-    return 0;
+    return LoadState::kFail;
 
   if (decoder == "JPXDecode") {
     m_pCachedBitmap = LoadJpxBitmap();
-    return m_pCachedBitmap ? 1 : 0;
+    return m_pCachedBitmap ? LoadState::kSuccess : LoadState::kFail;
   }
+
   if (decoder == "JBIG2Decode") {
     m_pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!m_pCachedBitmap->Create(
             m_Width, m_Height, m_bImageMask ? FXDIB_1bppMask : FXDIB_1bppRgb)) {
       m_pCachedBitmap.Reset();
-      return 0;
+      return LoadState::kFail;
     }
     m_Status = LoadState::kSuccess;
-    return 2;
+    return LoadState::kContinue;
   }
 
   const uint8_t* src_data = m_pStreamAcc->GetData();
@@ -489,22 +494,22 @@ int CPDF_DIBSource::CreateDecoder() {
         src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
     if (!CreateDCTDecoder(src_data, src_size, pParams))
-      return 0;
+      return LoadState::kFail;
   }
   if (!m_pDecoder)
-    return 0;
+    return LoadState::kFail;
 
   FX_SAFE_UINT32 requested_pitch =
       CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!requested_pitch.IsValid())
-    return 0;
+    return LoadState::kFail;
   FX_SAFE_UINT32 provided_pitch = CalculatePitch8(
       m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
   if (!provided_pitch.IsValid())
-    return 0;
+    return LoadState::kFail;
   if (provided_pitch.ValueOrDie() < requested_pitch.ValueOrDie())
-    return 0;
-  return 1;
+    return LoadState::kFail;
+  return LoadState::kSuccess;
 }
 
 bool CPDF_DIBSource::CreateDCTDecoder(const uint8_t* src_data,
@@ -641,6 +646,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBSource::LoadJpxBitmap() {
                           pCachedBitmap->GetPitch(), output_offsets)) {
     return nullptr;
   }
+
   if (m_pColorSpace && m_pColorSpace->GetFamily() == PDFCS_INDEXED &&
       m_bpc < 8) {
     int scale = 8 - m_bpc;
@@ -656,7 +662,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBSource::LoadJpxBitmap() {
   return pCachedBitmap;
 }
 
-int CPDF_DIBSource::StartLoadMask() {
+CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
   m_pMaskStream = m_pDict->GetStreamFor("SMask");
   if (m_pMaskStream) {
@@ -676,45 +682,44 @@ int CPDF_DIBSource::StartLoadMask() {
   }
 
   m_pMaskStream = ToStream(m_pDict->GetDirectObjectFor("Mask"));
-  return m_pMaskStream ? StartLoadMaskDIB() : 1;
+  return m_pMaskStream ? StartLoadMaskDIB() : LoadState::kSuccess;
 }
 
-int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_PauseIndicator* pPause) {
+CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadMaskDIB(
+    IFX_PauseIndicator* pPause) {
   if (!m_pMask)
-    return 1;
+    return LoadState::kSuccess;
 
-  int ret = m_pMask->ContinueLoadDIBSource(pPause);
-  if (ret == 2)
-    return 2;
+  LoadState ret = m_pMask->ContinueLoadDIBSource(pPause);
+  if (ret == LoadState::kContinue)
+    return LoadState::kContinue;
 
   if (m_pColorSpace && m_bStdCS)
     m_pColorSpace->EnableStdConversion(false);
 
-  if (!ret) {
+  if (ret == LoadState::kFail) {
     m_pMask.Reset();
-    return 0;
+    return LoadState::kFail;
   }
-  return 1;
+  return LoadState::kSuccess;
 }
 
 RetainPtr<CPDF_DIBSource> CPDF_DIBSource::DetachMask() {
   return std::move(m_pMask);
 }
 
-int CPDF_DIBSource::StartLoadMaskDIB() {
+CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadMaskDIB() {
   m_pMask = pdfium::MakeRetain<CPDF_DIBSource>();
-  int ret = m_pMask->StartLoadDIBSource(m_pDocument.Get(), m_pMaskStream.Get(),
-                                        false, nullptr, nullptr, true);
-  if (ret == 2) {
+  LoadState ret = m_pMask->StartLoadDIBSource(
+      m_pDocument.Get(), m_pMaskStream.Get(), false, nullptr, nullptr, true);
+  if (ret == LoadState::kContinue) {
     if (m_Status == LoadState::kFail)
       m_Status = LoadState::kContinue;
-    return 2;
+    return LoadState::kContinue;
   }
-  if (!ret) {
+  if (ret == LoadState::kFail)
     m_pMask.Reset();
-    return 1;
-  }
-  return 1;
+  return LoadState::kSuccess;
 }
 
 void CPDF_DIBSource::LoadPalette() {
