@@ -108,30 +108,7 @@ const int kMaxImageDimension = 0x01FFFF;
 
 }  // namespace
 
-CPDF_DIBSource::CPDF_DIBSource()
-    : m_pDocument(nullptr),
-      m_pStream(nullptr),
-      m_pDict(nullptr),
-      m_pColorSpace(nullptr),
-      m_Family(0),
-      m_bpc(0),
-      m_bpc_orig(0),
-      m_nComponents(0),
-      m_GroupFamily(0),
-      m_MatteColor(0),
-      m_bLoadMask(false),
-      m_bDefaultDecode(true),
-      m_bImageMask(false),
-      m_bDoBpcCheck(true),
-      m_bColorKey(false),
-      m_bHasMask(false),
-      m_bStdCS(false),
-      m_pCompData(nullptr),
-      m_pLineBuf(nullptr),
-      m_pMaskedLine(nullptr),
-      m_pMask(nullptr),
-      m_pMaskStream(nullptr),
-      m_Status(0) {}
+CPDF_DIBSource::CPDF_DIBSource() {}
 
 CPDF_DIBSource::~CPDF_DIBSource() {
   FX_Free(m_pMaskedLine);
@@ -310,10 +287,10 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
 }
 
 int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
-  if (m_Status == 2)
+  if (m_Status == LoadState::kContinue)
     return ContinueLoadMaskDIB(pPause);
 
-  if (m_Status != 1)
+  if (m_Status == LoadState::kFail)
     return 0;
 
   const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
@@ -352,7 +329,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_PauseIndicator* pPause) {
   int iContinueStatus = 1;
   if (m_bHasMask) {
     iContinueStatus = ContinueLoadMaskDIB(pPause);
-    m_Status = 2;
+    m_Status = LoadState::kContinue;
   }
   if (iContinueStatus == 2)
     return 2;
@@ -493,7 +470,7 @@ int CPDF_DIBSource::CreateDecoder() {
       m_pCachedBitmap.Reset();
       return 0;
     }
-    m_Status = 1;
+    m_Status = LoadState::kSuccess;
     return 2;
   }
 
@@ -731,8 +708,8 @@ int CPDF_DIBSource::StartLoadMaskDIB() {
   int ret = m_pMask->StartLoadDIBSource(m_pDocument.Get(), m_pMaskStream.Get(),
                                         false, nullptr, nullptr, true);
   if (ret == 2) {
-    if (m_Status == 0)
-      m_Status = 2;
+    if (m_Status == LoadState::kFail)
+      m_Status = LoadState::kContinue;
     return 2;
   }
   if (!ret) {

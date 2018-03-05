@@ -44,6 +44,8 @@ class CPDF_DIBSource : public CFX_DIBSource {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  enum class LoadState : uint8_t { kFail, kSuccess, kContinue };
+
   ~CPDF_DIBSource() override;
 
   bool Load(CPDF_Document* pDoc, const CPDF_Stream* pStream);
@@ -126,30 +128,30 @@ class CPDF_DIBSource : public CFX_DIBSource {
   UnownedPtr<const CPDF_Stream> m_pStream;
   UnownedPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
-  CPDF_ColorSpace* m_pColorSpace;
-  uint32_t m_Family;
-  uint32_t m_bpc;
-  uint32_t m_bpc_orig;
-  uint32_t m_nComponents;
-  uint32_t m_GroupFamily;
-  uint32_t m_MatteColor;
-  bool m_bLoadMask;
-  bool m_bDefaultDecode;
-  bool m_bImageMask;
-  bool m_bDoBpcCheck;
-  bool m_bColorKey;
-  bool m_bHasMask;
-  bool m_bStdCS;
-  DIB_COMP_DATA* m_pCompData;
-  uint8_t* m_pLineBuf;
-  uint8_t* m_pMaskedLine;
+  CPDF_ColorSpace* m_pColorSpace = nullptr;
+  uint32_t m_Family = 0;
+  uint32_t m_bpc = 0;
+  uint32_t m_bpc_orig = 0;
+  uint32_t m_nComponents = 0;
+  uint32_t m_GroupFamily = 0;
+  uint32_t m_MatteColor = 0;
+  bool m_bLoadMask = false;
+  bool m_bDefaultDecode = true;
+  bool m_bImageMask = false;
+  bool m_bDoBpcCheck = true;
+  bool m_bColorKey = false;
+  bool m_bHasMask = false;
+  bool m_bStdCS = false;
+  DIB_COMP_DATA* m_pCompData = nullptr;
+  uint8_t* m_pLineBuf = nullptr;
+  uint8_t* m_pMaskedLine = nullptr;
   RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
   RetainPtr<CPDF_DIBSource> m_pMask;
   RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
   std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
   UnownedPtr<CPDF_Stream> m_pMaskStream;
-  int m_Status;
+  LoadState m_Status = LoadState::kFail;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DIBSOURCE_H_
