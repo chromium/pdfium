@@ -61,11 +61,8 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                             rtInner.height);
 
       int32_t iColor = GetColorID(pParams->m_dwStates);
-      DrawAxialShading(pGraphics, rect.left + PUSHBUTTON_SIZE_Corner, rect.top,
-                       rect.left + PUSHBUTTON_SIZE_Corner, rect.bottom(),
-                       m_pThemeData->clrStart[iColor],
-                       m_pThemeData->clrEnd[iColor], &fillPath,
-                       FXFILL_ALTERNATE, &pParams->m_matrix);
+      FillSolidRect(pGraphics, m_pThemeData->clrEnd[iColor], &rect,
+                    &pParams->m_matrix);
 
       pGraphics->SetStrokeColor(CXFA_GEColor(m_pThemeData->clrBorder[iColor]));
       pGraphics->StrokePath(&strokePath, &pParams->m_matrix);

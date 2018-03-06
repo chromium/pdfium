@@ -64,16 +64,6 @@ class CFWL_WidgetTP {
                      FX_ARGB fillColor,
                      const CFX_RectF* pRect,
                      CFX_Matrix* pMatrix = nullptr);
-  void DrawAxialShading(CXFA_Graphics* pGraphics,
-                        float fx1,
-                        float fy1,
-                        float fx2,
-                        float fy2,
-                        FX_ARGB beginColor,
-                        FX_ARGB endColor,
-                        CXFA_GEPath* path,
-                        int32_t fillMode = FXFILL_WINDING,
-                        CFX_Matrix* pMatrix = nullptr);
   void DrawFocus(CXFA_Graphics* pGraphics,
                  const CFX_RectF* pRect,
                  CFX_Matrix* pMatrix = nullptr);

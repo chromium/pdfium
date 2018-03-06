@@ -80,39 +80,26 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CXFA_Graphics* pGraphics,
   if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
     return;
 
-  CXFA_GEPath path;
   CFX_RectF rect(*pRect);
-  if (bVert) {
+  if (bVert)
     rect.Deflate(1, 0);
-    if (rect.IsEmpty(0.1f))
-      return;
-
-    path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-    DrawAxialShading(pGraphics, rect.left, rect.top, rect.right(), rect.top,
-                     m_pThemeData->clrBtnBK[eState - 1][0],
-                     m_pThemeData->clrBtnBK[eState - 1][1], &path,
-                     FXFILL_WINDING, pMatrix);
-    pGraphics->SaveGraphState();
-    pGraphics->SetStrokeColor(
-        CXFA_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
-    pGraphics->StrokePath(&path, pMatrix);
-    pGraphics->RestoreGraphState();
-  } else {
+  else
     rect.Deflate(0, 1);
-    if (rect.IsEmpty(0.1f))
-      return;
 
-    path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
-    DrawAxialShading(pGraphics, rect.left, rect.top, rect.left, rect.bottom(),
-                     m_pThemeData->clrBtnBK[eState - 1][0],
-                     m_pThemeData->clrBtnBK[eState - 1][1], &path,
-                     FXFILL_WINDING, pMatrix);
-    pGraphics->SaveGraphState();
-    pGraphics->SetStrokeColor(
-        CXFA_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
-    pGraphics->StrokePath(&path, pMatrix);
-    pGraphics->RestoreGraphState();
-  }
+  if (rect.IsEmpty(0.1f))
+    return;
+
+  FillSolidRect(pGraphics, m_pThemeData->clrBtnBK[eState - 1][1], &rect,
+                pMatrix);
+
+  pGraphics->SaveGraphState();
+
+  CXFA_GEPath path;
+  path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
+  pGraphics->SetStrokeColor(
+      CXFA_GEColor(m_pThemeData->clrBtnBorder[eState - 1]));
+  pGraphics->StrokePath(&path, pMatrix);
+  pGraphics->RestoreGraphState();
 }
 
 void CFWL_ScrollBarTP::DrawPaw(CXFA_Graphics* pGraphics,
@@ -223,13 +210,8 @@ void CFWL_ScrollBarTP::DrawTrack(CXFA_Graphics* pGraphics,
   path.Clear();
   path.AddRectangle(pRect->left + 1, pRect->top, pRect->width - 2,
                     pRect->height);
-  float x1 = bVert ? pRect->left + 1 : pRect->left;
-  float y1 = bVert ? pRect->top : pRect->top + 1;
-  float x2 = bVert ? fRight - 1 : pRect->left;
-  float y2 = bVert ? pRect->top : fBottom - 1;
   pGraphics->RestoreGraphState();
-  DrawAxialShading(pGraphics, x1, y1, x2, y2, m_pThemeData->clrTrackBKStart,
-                   m_pThemeData->clrTrackBKEnd, &path, FXFILL_WINDING, pMatrix);
+  FillSolidRect(pGraphics, m_pThemeData->clrTrackBKEnd, pRect, pMatrix);
 }
 
 void CFWL_ScrollBarTP::DrawMaxMinBtn(CXFA_Graphics* pGraphics,

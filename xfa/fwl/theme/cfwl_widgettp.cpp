@@ -137,29 +137,6 @@ void CFWL_WidgetTP::FillSolidRect(CXFA_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_WidgetTP::DrawAxialShading(CXFA_Graphics* pGraphics,
-                                     float fx1,
-                                     float fy1,
-                                     float fx2,
-                                     float fy2,
-                                     FX_ARGB beginColor,
-                                     FX_ARGB endColor,
-                                     CXFA_GEPath* path,
-                                     int32_t fillMode,
-                                     CFX_Matrix* pMatrix) {
-  if (!pGraphics || !path)
-    return;
-
-  CFX_PointF begPoint(fx1, fy1);
-  CFX_PointF endPoint(fx2, fy2);
-  CXFA_GEShading shading(begPoint, endPoint, false, false, beginColor,
-                         endColor);
-  pGraphics->SaveGraphState();
-  pGraphics->SetFillColor(CXFA_GEColor(&shading));
-  pGraphics->FillPath(path, fillMode, pMatrix);
-  pGraphics->RestoreGraphState();
-}
-
 void CFWL_WidgetTP::DrawFocus(CXFA_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               CFX_Matrix* pMatrix) {
@@ -236,15 +213,10 @@ void CFWL_WidgetTP::DrawBtn(CXFA_Graphics* pGraphics,
                             CFX_Matrix* pMatrix) {
   InitializeArrowColorData();
 
-  CXFA_GEPath path;
-  float fRight = pRect->right();
-  float fBottom = pRect->bottom();
-  path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
-  DrawAxialShading(pGraphics, pRect->left, pRect->top, fRight, fBottom,
-                   m_pColorData->clrStart[eState - 1],
-                   m_pColorData->clrEnd[eState - 1], &path, FXFILL_WINDING,
-                   pMatrix);
+  FillSolidRect(pGraphics, m_pColorData->clrEnd[eState - 1], pRect, pMatrix);
 
+  CXFA_GEPath path;
+  path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   pGraphics->SetStrokeColor(CXFA_GEColor(m_pColorData->clrBorder[eState - 1]));
   pGraphics->StrokePath(&path, pMatrix);
 }
