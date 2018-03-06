@@ -131,11 +131,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseFunction() {
     return nullptr;
 
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
-  if (m_token.m_type != TOKendfunc) {
+  if (m_token.m_type != TOKendfunc)
     expressions = ParseExpressionList();
-    if (expressions.empty())
-      return nullptr;
-  }
 
   if (!CheckThenNext(TOKendfunc))
     return nullptr;
@@ -965,7 +962,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
     return nullptr;
 
   auto exprs = ParseExpressionList();
-  if (exprs.empty() || !CheckThenNext(TOKendwhile))
+  if (!CheckThenNext(TOKendwhile))
     return nullptr;
 
   return pdfium::MakeUnique<CXFA_FMWhileExpression>(
@@ -1023,7 +1020,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForExpression() {
     return nullptr;
 
   auto exprs = ParseExpressionList();
-  if (exprs.empty() || !CheckThenNext(TOKendfor))
+  if (!CheckThenNext(TOKendfor))
     return nullptr;
 
   return pdfium::MakeUnique<CXFA_FMForExpression>(
@@ -1069,7 +1066,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseForeachExpression() {
     return nullptr;
 
   auto exprs = ParseExpressionList();
-  if (exprs.empty() || !CheckThenNext(TOKendfor))
+  if (!CheckThenNext(TOKendfor))
     return nullptr;
 
   return pdfium::MakeUnique<CXFA_FMForeachExpression>(
@@ -1089,7 +1086,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseDoExpression() {
     return nullptr;
 
   auto exprs = ParseExpressionList();
-  if (exprs.empty() || !CheckThenNext(TOKend))
+  if (!CheckThenNext(TOKend))
     return nullptr;
 
   return pdfium::MakeUnique<CXFA_FMDoExpression>(
