@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_IFX_PAUSEINDICATOR_H_
-#define CORE_FXCRT_IFX_PAUSEINDICATOR_H_
+#ifndef CORE_FXCRT_PAUSEINDICATOR_IFACE_H_
+#define CORE_FXCRT_PAUSEINDICATOR_IFACE_H_
 
-class IFX_PauseIndicator {
+class PauseIndicatorIface {
  public:
-  virtual ~IFX_PauseIndicator() {}
+  virtual ~PauseIndicatorIface() {}
   virtual bool NeedToPauseNow() = 0;
 };
 
-#endif  // CORE_FXCRT_IFX_PAUSEINDICATOR_H_
+#endif  // CORE_FXCRT_PAUSEINDICATOR_IFACE_H_

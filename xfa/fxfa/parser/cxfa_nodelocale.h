@@ -9,19 +9,19 @@
 
 #include <memory>
 
-#include "core/fxcrt/ifx_locale.h"
+#include "core/fxcrt/locale_iface.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Node;
 
 WideString XFA_PatternToString(FX_LOCALENUMSUBCATEGORY category);
 
-class CXFA_NodeLocale : public IFX_Locale {
+class CXFA_NodeLocale : public LocaleIface {
  public:
   explicit CXFA_NodeLocale(CXFA_Node* pLocale);
   ~CXFA_NodeLocale() override;
 
-  // IFX_Locale
+  // LocaleIface
   WideString GetName() const override;
   WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
 

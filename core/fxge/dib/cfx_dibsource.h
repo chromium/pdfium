@@ -27,7 +27,7 @@ enum FXDIB_Channel {
 
 class CFX_ClipRgn;
 class CFX_DIBitmap;
-class IFX_PauseIndicator;
+class PauseIndicatorIface;
 
 class CFX_DIBSource : public Retainable {
  public:
@@ -35,7 +35,7 @@ class CFX_DIBSource : public Retainable {
 
   virtual uint8_t* GetBuffer() const;
   virtual const uint8_t* GetScanline(int line) const = 0;
-  virtual bool SkipToScanline(int line, IFX_PauseIndicator* pPause) const;
+  virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
   virtual void DownSampleScanline(int line,
                                   uint8_t* dest_scan,
                                   int dest_bpp,

@@ -726,7 +726,8 @@ uint8_t* CFX_DIBSource::GetBuffer() const {
   return nullptr;
 }
 
-bool CFX_DIBSource::SkipToScanline(int line, IFX_PauseIndicator* pPause) const {
+bool CFX_DIBSource::SkipToScanline(int line,
+                                   PauseIndicatorIface* pPause) const {
   return false;
 }
 

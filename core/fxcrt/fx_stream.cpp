@@ -11,8 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/ifx_fileaccess.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -40,11 +40,11 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
   bool Flush() override { return m_pFile->Flush(); }
 
  private:
-  explicit CFX_CRTFileStream(std::unique_ptr<IFX_FileAccess> pFA)
+  explicit CFX_CRTFileStream(std::unique_ptr<FileAccessIface> pFA)
       : m_pFile(std::move(pFA)) {}
   ~CFX_CRTFileStream() override {}
 
-  std::unique_ptr<IFX_FileAccess> m_pFile;
+  std::unique_ptr<FileAccessIface> m_pFile;
 };
 
 }  // namespace
@@ -53,7 +53,7 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const char* filename,
     uint32_t dwModes) {
-  std::unique_ptr<IFX_FileAccess> pFA = IFX_FileAccess::Create();
+  std::unique_ptr<FileAccessIface> pFA = FileAccessIface::Create();
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));
@@ -63,7 +63,7 @@ RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
 RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const wchar_t* filename,
     uint32_t dwModes) {
-  std::unique_ptr<IFX_FileAccess> pFA = IFX_FileAccess::Create();
+  std::unique_ptr<FileAccessIface> pFA = FileAccessIface::Create();
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));

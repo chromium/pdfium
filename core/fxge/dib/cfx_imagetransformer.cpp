@@ -265,7 +265,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBSource>& pSrc,
 
 CFX_ImageTransformer::~CFX_ImageTransformer() {}
 
-bool CFX_ImageTransformer::Continue(IFX_PauseIndicator* pPause) {
+bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
   if (m_Status == 1) {
     if (m_Stretcher->Continue(pPause))
       return true;

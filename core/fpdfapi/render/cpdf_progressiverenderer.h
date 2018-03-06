@@ -17,7 +17,7 @@
 class CPDF_RenderOptions;
 class CPDF_RenderStatus;
 class CFX_RenderDevice;
-class IFX_PauseIndicator;
+class PauseIndicatorIface;
 
 class CPDF_ProgressiveRenderer {
  public:
@@ -39,8 +39,8 @@ class CPDF_ProgressiveRenderer {
   ~CPDF_ProgressiveRenderer();
 
   Status GetStatus() const { return m_Status; }
-  void Start(IFX_PauseIndicator* pPause);
-  void Continue(IFX_PauseIndicator* pPause);
+  void Start(PauseIndicatorIface* pPause);
+  void Continue(PauseIndicatorIface* pPause);
 
  private:
   // Maximum page objects to render before checking for pause.

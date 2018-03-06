@@ -301,7 +301,7 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadDIBSource(
 }
 
 CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadDIBSource(
-    IFX_PauseIndicator* pPause) {
+    PauseIndicatorIface* pPause) {
   if (m_Status == LoadState::kContinue)
     return ContinueLoadMaskDIB(pPause);
 
@@ -697,7 +697,7 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadMask() {
 }
 
 CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadMaskDIB(
-    IFX_PauseIndicator* pPause) {
+    PauseIndicatorIface* pPause) {
   if (!m_pMask)
     return LoadState::kSuccess;
 
@@ -1087,7 +1087,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
 }
 
 bool CPDF_DIBSource::SkipToScanline(int line,
-                                    IFX_PauseIndicator* pPause) const {
+                                    PauseIndicatorIface* pPause) const {
   return m_pDecoder && m_pDecoder->SkipToScanline(line, pPause);
 }
 

@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class IFX_Locale;
+class LocaleIface;
 class CFX_DateTime;
 class CXFA_LocaleMgr;
 
@@ -36,25 +36,25 @@ class CXFA_LocaleValue {
   CXFA_LocaleValue(uint32_t dwType,
                    const WideString& wsValue,
                    const WideString& wsFormat,
-                   IFX_Locale* pLocale,
+                   LocaleIface* pLocale,
                    CXFA_LocaleMgr* pLocaleMgr);
   ~CXFA_LocaleValue();
   CXFA_LocaleValue& operator=(const CXFA_LocaleValue& value);
 
   bool ValidateValue(const WideString& wsValue,
                      const WideString& wsPattern,
-                     IFX_Locale* pLocale,
+                     LocaleIface* pLocale,
                      WideString* pMatchFormat);
 
   bool FormatPatterns(WideString& wsResult,
                       const WideString& wsFormat,
-                      IFX_Locale* pLocale,
+                      LocaleIface* pLocale,
                       XFA_VALUEPICTURE eValueType) const;
 
   void GetNumericFormat(WideString& wsFormat, int32_t nIntLen, int32_t nDecLen);
   bool ValidateNumericTemp(const WideString& wsNumeric,
                            const WideString& wsFormat,
-                           IFX_Locale* pLocale);
+                           LocaleIface* pLocale);
 
   WideString GetValue() const { return m_wsValue; }
   uint32_t GetType() const { return m_dwType; }
@@ -68,7 +68,7 @@ class CXFA_LocaleValue {
  private:
   bool FormatSinglePattern(WideString& wsResult,
                            const WideString& wsFormat,
-                           IFX_Locale* pLocale,
+                           LocaleIface* pLocale,
                            XFA_VALUEPICTURE eValueType) const;
   bool ValidateCanonicalValue(const WideString& wsValue, uint32_t dwVType);
   bool ValidateCanonicalDate(const WideString& wsDate, CFX_DateTime* unDate);
@@ -79,7 +79,7 @@ class CXFA_LocaleValue {
 
   bool ParsePatternValue(const WideString& wsValue,
                          const WideString& wsPattern,
-                         IFX_Locale* pLocale);
+                         LocaleIface* pLocale);
 
   CXFA_LocaleMgr* m_pLocaleMgr;
   WideString m_wsValue;

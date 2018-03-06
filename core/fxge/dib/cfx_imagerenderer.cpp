@@ -87,7 +87,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
 
 CFX_ImageRenderer::~CFX_ImageRenderer() {}
 
-bool CFX_ImageRenderer::Continue(IFX_PauseIndicator* pPause) {
+bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
   if (m_Status == 1)
     return m_Stretcher->Continue(pPause);
   if (m_Status != 2)

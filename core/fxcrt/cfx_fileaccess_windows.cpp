@@ -32,7 +32,7 @@ void GetFileMode(uint32_t dwMode,
 }  // namespace
 
 // static
-std::unique_ptr<IFX_FileAccess> IFX_FileAccess::Create() {
+std::unique_ptr<FileAccessIface> FileAccessIface::Create() {
   return pdfium::MakeUnique<CFX_FileAccess_Windows>();
 }
 

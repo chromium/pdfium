@@ -913,7 +913,7 @@ CXFA_Node* CXFA_Node::GetContainerNode() {
   return pParentOfValueNode ? pParentOfValueNode->GetContainerNode() : nullptr;
 }
 
-IFX_Locale* CXFA_Node::GetLocale() {
+LocaleIface* CXFA_Node::GetLocale() {
   Optional<WideString> localeName = GetLocaleName();
   if (!localeName)
     return nullptr;
@@ -951,7 +951,7 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
       return localeName;
   }
 
-  IFX_Locale* pLocale = GetDocument()->GetLocalMgr()->GetDefLocale();
+  LocaleIface* pLocale = GetDocument()->GetLocalMgr()->GetDefLocale();
   if (!pLocale)
     return {};
 
@@ -2047,7 +2047,7 @@ int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
     if (wsPicture.IsEmpty())
       return XFA_EVENTERROR_NotExist;
 
-    IFX_Locale* pLocale = GetLocale();
+    LocaleIface* pLocale = GetLocale();
     if (!pLocale)
       return XFA_EVENTERROR_NotExist;
 
@@ -4269,7 +4269,7 @@ bool CXFA_Node::SetValue(XFA_VALUEPICTURE eValueType,
   XFA_Element eType = pNode->GetElementType();
   if (!wsPicture.IsEmpty()) {
     CXFA_LocaleMgr* pLocalMgr = GetDocument()->GetLocalMgr();
-    IFX_Locale* pLocale = GetLocale();
+    LocaleIface* pLocale = GetLocale();
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
     bValidate =
         widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture);
@@ -4312,7 +4312,7 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
         }
       }
 
-      IFX_Locale* pLocale = GetLocale();
+      LocaleIface* pLocale = GetLocale();
       if (!pLocale)
         return L"";
 
@@ -4344,7 +4344,7 @@ WideString CXFA_Node::GetPictureContent(XFA_VALUEPICTURE ePicture) {
         }
       }
 
-      IFX_Locale* pLocale = GetLocale();
+      LocaleIface* pLocale = GetLocale();
       if (!pLocale)
         return L"";
 
@@ -4398,7 +4398,7 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
     }
     case XFA_Element::NumericEdit:
       if (eValueType != XFA_VALUEPICTURE_Raw && wsPicture.IsEmpty()) {
-        IFX_Locale* pLocale = GetLocale();
+        LocaleIface* pLocale = GetLocale();
         if (eValueType == XFA_VALUEPICTURE_Display && pLocale)
           wsValue = FormatNumStr(NormalizeNumStr(wsValue), pLocale);
       }
@@ -4409,7 +4409,7 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
   if (wsPicture.IsEmpty())
     return wsValue;
 
-  if (IFX_Locale* pLocale = GetLocale()) {
+  if (LocaleIface* pLocale = GetLocale()) {
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
     CXFA_LocaleMgr* pLocalMgr = GetDocument()->GetLocalMgr();
     switch (widgetValue.GetType()) {
@@ -4448,7 +4448,7 @@ WideString CXFA_Node::GetNormalizeDataValue(const WideString& wsValue) {
     return wsValue;
 
   CXFA_LocaleMgr* pLocalMgr = GetDocument()->GetLocalMgr();
-  IFX_Locale* pLocale = GetLocale();
+  LocaleIface* pLocale = GetLocale();
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
   if (widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture)) {
     widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsValue, wsPicture,
@@ -4467,7 +4467,7 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
     return wsValue;
 
   WideString wsFormattedValue = wsValue;
-  if (IFX_Locale* pLocale = GetLocale()) {
+  if (LocaleIface* pLocale = GetLocale()) {
     CXFA_Value* pNodeValue = GetChild<CXFA_Value>(0, XFA_Element::Value, false);
     if (!pNodeValue)
       return wsValue;
@@ -4558,7 +4558,7 @@ WideString CXFA_Node::NormalizeNumStr(const WideString& wsValue) {
 }
 
 WideString CXFA_Node::FormatNumStr(const WideString& wsValue,
-                                   IFX_Locale* pLocale) {
+                                   LocaleIface* pLocale) {
   if (wsValue.IsEmpty())
     return L"";
 

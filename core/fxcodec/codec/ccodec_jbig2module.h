@@ -15,7 +15,7 @@
 class CJBig2_Context;
 class CJBig2_Image;
 class CPDF_StreamAcc;
-class IFX_PauseIndicator;
+class PauseIndicatorIface;
 class JBig2_DocumentContext;
 
 class CCodec_Jbig2Context {
@@ -46,9 +46,9 @@ class CCodec_Jbig2Module {
       const RetainPtr<CPDF_StreamAcc>& global_stream,
       uint8_t* dest_buf,
       uint32_t dest_pitch,
-      IFX_PauseIndicator* pPause);
+      PauseIndicatorIface* pPause);
   FXCODEC_STATUS ContinueDecode(CCodec_Jbig2Context* pJbig2Context,
-                                IFX_PauseIndicator* pPause);
+                                PauseIndicatorIface* pPause);
 
  private:
   FXCODEC_STATUS Decode(CCodec_Jbig2Context* pJbig2Context, int result);

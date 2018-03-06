@@ -1065,8 +1065,8 @@ const uint8_t g_ruRU_Locale[] = {
     0xB3, 0x85, 0xFA, 0x59, 0x2A, 0x7A, 0xFF, 0x3D, 0xC4, 0x3F, 0xDE, 0xCB,
     0x8B, 0xC4};
 
-static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
-                                                           int nBufLen) {
+static std::unique_ptr<LocaleIface> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
+                                                            int nBufLen) {
   if (!pBuf || nBufLen <= 0)
     return nullptr;
 
@@ -1146,7 +1146,7 @@ uint16_t CXFA_LocaleMgr::GetDefLocaleID() const {
   return m_dwDeflcid;
 }
 
-IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
+LocaleIface* CXFA_LocaleMgr::GetDefLocale() {
   if (m_pDefLocale)
     return m_pDefLocale;
 
@@ -1156,7 +1156,7 @@ IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
   if (!m_XMLLocaleArray.empty())
     return m_XMLLocaleArray[0].get();
 
-  std::unique_ptr<IFX_Locale> locale(GetLocale(m_dwDeflcid));
+  std::unique_ptr<LocaleIface> locale(GetLocale(m_dwDeflcid));
   m_pDefLocale = locale.get();
   if (locale)
     m_XMLLocaleArray.push_back(std::move(locale));
@@ -1164,7 +1164,7 @@ IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
   return m_pDefLocale;
 }
 
-std::unique_ptr<IFX_Locale> CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
+std::unique_ptr<LocaleIface> CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   switch (lcid) {
     case FX_LANG_zh_CN:
       return XFA_GetLocaleFromBuffer(g_zhCN_Locale, sizeof(g_zhCN_Locale));
@@ -1200,28 +1200,29 @@ std::unique_ptr<IFX_Locale> CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   }
 }
 
-IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(const WideString& wsLocaleName) {
+LocaleIface* CXFA_LocaleMgr::GetLocaleByName(const WideString& wsLocaleName) {
   for (size_t i = 0; i < m_LocaleArray.size(); i++) {
-    IFX_Locale* pLocale = m_LocaleArray[i].get();
+    LocaleIface* pLocale = m_LocaleArray[i].get();
     if (pLocale->GetName() == wsLocaleName)
       return pLocale;
   }
   if (wsLocaleName.GetLength() < 2)
     return nullptr;
   for (size_t i = 0; i < m_XMLLocaleArray.size(); i++) {
-    IFX_Locale* pLocale = m_XMLLocaleArray[i].get();
+    LocaleIface* pLocale = m_XMLLocaleArray[i].get();
     if (pLocale->GetName() == wsLocaleName)
       return pLocale;
   }
 
-  std::unique_ptr<IFX_Locale> pLocale(GetLocale(XFA_GetLanguage(wsLocaleName)));
-  IFX_Locale* pRetLocale = pLocale.get();
+  std::unique_ptr<LocaleIface> pLocale(
+      GetLocale(XFA_GetLanguage(wsLocaleName)));
+  LocaleIface* pRetLocale = pLocale.get();
   if (pLocale)
     m_XMLLocaleArray.push_back(std::move(pLocale));
   return pRetLocale;
 }
 
-void CXFA_LocaleMgr::SetDefLocale(IFX_Locale* pLocale) {
+void CXFA_LocaleMgr::SetDefLocale(LocaleIface* pLocale) {
   m_pDefLocale = pLocale;
 }
 

@@ -2395,7 +2395,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
 }
 
 bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
-                                          IFX_PauseIndicator* pPause) {
+                                          PauseIndicatorIface* pPause) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
   return false;

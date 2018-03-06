@@ -124,7 +124,7 @@ bool CFX_ImageStretcher::Start() {
   return StartStretch();
 }
 
-bool CFX_ImageStretcher::Continue(IFX_PauseIndicator* pPause) {
+bool CFX_ImageStretcher::Continue(PauseIndicatorIface* pPause) {
   if (m_Flags & FXDIB_DOWNSAMPLE)
     return ContinueQuickStretch(pPause);
   return ContinueStretch(pPause);
@@ -142,7 +142,7 @@ bool CFX_ImageStretcher::StartStretch() {
   return true;
 }
 
-bool CFX_ImageStretcher::ContinueStretch(IFX_PauseIndicator* pPause) {
+bool CFX_ImageStretcher::ContinueStretch(PauseIndicatorIface* pPause) {
   return m_pStretchEngine && m_pStretchEngine->Continue(pPause);
 }
 
@@ -171,7 +171,7 @@ bool CFX_ImageStretcher::StartQuickStretch() {
   return true;
 }
 
-bool CFX_ImageStretcher::ContinueQuickStretch(IFX_PauseIndicator* pPause) {
+bool CFX_ImageStretcher::ContinueQuickStretch(PauseIndicatorIface* pPause) {
   if (!m_pScanline)
     return false;
 

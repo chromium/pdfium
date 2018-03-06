@@ -121,7 +121,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                    int blend_type) override;
 
   bool ContinueDIBits(CFX_ImageRenderer* handle,
-                      IFX_PauseIndicator* pPause) override;
+                      PauseIndicatorIface* pPause) override;
 
   bool DrawBitsWithMask(const RetainPtr<CFX_DIBSource>& pBitmap,
                         const RetainPtr<CFX_DIBSource>& pMask,

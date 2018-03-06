@@ -516,7 +516,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
   return false;
 }
 
-bool CPDF_ImageRenderer::Continue(IFX_PauseIndicator* pPause) {
+bool CPDF_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
   if (m_Status == 2) {
     if (m_pTransformer->Continue(pPause))
       return true;

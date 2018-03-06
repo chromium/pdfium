@@ -43,7 +43,7 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
   return ret;
 }
 
-bool CPDF_ImageLoader::Continue(IFX_PauseIndicator* pPause,
+bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause,
                                 CPDF_RenderStatus* pRenderStatus) {
   bool ret = m_pCache ? m_pCache->Continue(pPause, pRenderStatus)
                       : m_pImageObject->GetImage()->Continue(pPause);

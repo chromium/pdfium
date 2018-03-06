@@ -223,7 +223,7 @@ bool ExtractCountDigitsWithOptional(const wchar_t* str,
 
 bool ParseLocaleDate(const WideString& wsDate,
                      const WideString& wsDatePattern,
-                     IFX_Locale* pLocale,
+                     LocaleIface* pLocale,
                      CFX_DateTime* datetime,
                      int32_t* cc) {
   uint32_t year = 1900;
@@ -321,7 +321,7 @@ bool ParseLocaleDate(const WideString& wsDate,
 }
 
 void ResolveZone(FX_TIMEZONE tzDiff,
-                 IFX_Locale* pLocale,
+                 LocaleIface* pLocale,
                  uint32_t* wHour,
                  uint32_t* wMinute) {
   int32_t iMinuteDiff = *wHour * 60 + *wMinute;
@@ -341,7 +341,7 @@ void ResolveZone(FX_TIMEZONE tzDiff,
 
 bool ParseLocaleTime(const WideString& wsTime,
                      const WideString& wsTimePattern,
-                     IFX_Locale* pLocale,
+                     LocaleIface* pLocale,
                      CFX_DateTime* datetime,
                      int32_t* cc) {
   uint32_t hour = 0;
@@ -560,7 +560,7 @@ WideString NumToString(size_t fmt_size, int32_t value) {
 }
 
 WideString DateFormat(const WideString& wsDatePattern,
-                      IFX_Locale* pLocale,
+                      LocaleIface* pLocale,
                       const CFX_DateTime& datetime) {
   WideString wsResult;
   int32_t year = datetime.GetYear();
@@ -622,7 +622,7 @@ WideString DateFormat(const WideString& wsDatePattern,
 }
 
 WideString TimeFormat(const WideString& wsTimePattern,
-                      IFX_Locale* pLocale,
+                      LocaleIface* pLocale,
                       const CFX_DateTime& datetime) {
   WideString wsResult;
   uint8_t hour = datetime.GetHour();
@@ -696,7 +696,7 @@ WideString FormatDateTimeInternal(const CFX_DateTime& dt,
                                   const WideString& wsDatePattern,
                                   const WideString& wsTimePattern,
                                   bool bDateFirst,
-                                  IFX_Locale* pLocale) {
+                                  LocaleIface* pLocale) {
   WideString wsDateOut;
   if (!wsDatePattern.IsEmpty())
     wsDateOut = DateFormat(wsDatePattern, pLocale, dt);
@@ -761,7 +761,7 @@ bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime) {
 
 bool FX_TimeFromCanonical(const WideStringView& wsTime,
                           CFX_DateTime* datetime,
-                          IFX_Locale* pLocale) {
+                          LocaleIface* pLocale) {
   if (wsTime.GetLength() == 0)
     return false;
 
@@ -960,12 +960,12 @@ WideString CFGAS_FormatString::GetTextFormat(const WideString& wsPattern,
   return wsPurgePattern;
 }
 
-IFX_Locale* CFGAS_FormatString::GetNumericFormat(const WideString& wsPattern,
-                                                 int32_t* iDotIndex,
-                                                 uint32_t* dwStyle,
-                                                 WideString* wsPurgePattern) {
+LocaleIface* CFGAS_FormatString::GetNumericFormat(const WideString& wsPattern,
+                                                  int32_t* iDotIndex,
+                                                  uint32_t* dwStyle,
+                                                  WideString* wsPurgePattern) {
   *dwStyle = 0;
-  IFX_Locale* pLocale = nullptr;
+  LocaleIface* pLocale = nullptr;
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
   const wchar_t* pStr = wsPattern.c_str();
@@ -1146,7 +1146,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
   int32_t dot_index_f = -1;
   uint32_t dwFormatStyle = 0;
   WideString wsNumFormat;
-  IFX_Locale* pLocale =
+  LocaleIface* pLocale =
       GetNumericFormat(wsPattern, &dot_index_f, &dwFormatStyle, &wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
@@ -1545,7 +1545,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
 
 FX_DATETIMETYPE CFGAS_FormatString::GetDateTimeFormat(
     const WideString& wsPattern,
-    IFX_Locale** pLocale,
+    LocaleIface** pLocale,
     WideString* wsDatePattern,
     WideString* wsTimePattern) {
   *pLocale = nullptr;
@@ -1691,7 +1691,7 @@ bool CFGAS_FormatString::ParseDateTime(const WideString& wsSrcDateTime,
 
   WideString wsDatePattern;
   WideString wsTimePattern;
-  IFX_Locale* pLocale = nullptr;
+  LocaleIface* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, &pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)
@@ -1861,7 +1861,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
   int32_t dot_index_f = -1;
   uint32_t dwNumStyle = 0;
   WideString wsNumFormat;
-  IFX_Locale* pLocale =
+  LocaleIface* pLocale =
       GetNumericFormat(wsPattern, &dot_index_f, &dwNumStyle, &wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty())
     return false;
@@ -2256,7 +2256,7 @@ bool CFGAS_FormatString::FormatDateTime(const WideString& wsSrcDateTime,
 
   WideString wsDatePattern;
   WideString wsTimePattern;
-  IFX_Locale* pLocale = nullptr;
+  LocaleIface* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, &pLocale, &wsDatePattern, &wsTimePattern);
   if (!pLocale)

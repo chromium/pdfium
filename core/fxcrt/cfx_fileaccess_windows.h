@@ -7,15 +7,15 @@
 #ifndef CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_
 #define CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_
 
-#include "core/fxcrt/ifx_fileaccess.h"
+#include "core/fxcrt/fileaccess_iface.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-class CFX_FileAccess_Windows : public IFX_FileAccess {
+class CFX_FileAccess_Windows : public FileAccessIface {
  public:
   CFX_FileAccess_Windows();
   ~CFX_FileAccess_Windows() override;
 
-  // IFX_FileAccess
+  // FileAccessIface
   bool Open(const ByteStringView& fileName, uint32_t dwMode) override;
   bool Open(const WideStringView& fileName, uint32_t dwMode) override;
   void Close() override;

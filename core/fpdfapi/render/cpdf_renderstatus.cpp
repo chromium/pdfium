@@ -1124,7 +1124,7 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
 
 bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
                                              const CFX_Matrix* pObj2Device,
-                                             IFX_PauseIndicator* pPause) {
+                                             PauseIndicatorIface* pPause) {
   if (m_pImageRenderer) {
     if (m_pImageRenderer->Continue(pPause))
       return true;

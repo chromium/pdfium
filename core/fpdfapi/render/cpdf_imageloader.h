@@ -16,7 +16,7 @@
 class CPDF_ImageObject;
 class CPDF_PageRenderCache;
 class CPDF_RenderStatus;
-class IFX_PauseIndicator;
+class PauseIndicatorIface;
 
 class CPDF_ImageLoader {
  public:
@@ -29,7 +29,7 @@ class CPDF_ImageLoader {
              uint32_t GroupFamily,
              bool bLoadMask,
              CPDF_RenderStatus* pRenderStatus);
-  bool Continue(IFX_PauseIndicator* pPause, CPDF_RenderStatus* pRenderStatus);
+  bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
 
   RetainPtr<CFX_DIBSource> m_pBitmap;
   RetainPtr<CFX_DIBSource> m_pMask;

@@ -82,7 +82,7 @@ CPDF_DIBSource::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
   return CPDF_DIBSource::LoadState::kFail;
 }
 
-bool CPDF_ImageCacheEntry::Continue(IFX_PauseIndicator* pPause,
+bool CPDF_ImageCacheEntry::Continue(PauseIndicatorIface* pPause,
                                     CPDF_RenderStatus* pRenderStatus) {
   CPDF_DIBSource::LoadState ret =
       m_pCurBitmap.As<CPDF_DIBSource>()->ContinueLoadDIBSource(pPause);

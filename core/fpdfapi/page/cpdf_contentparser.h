@@ -37,7 +37,7 @@ class CPDF_ContentParser {
     return m_pParser ? m_pParser->GetCurStates() : nullptr;
   }
   // Returns whether to continue or not.
-  bool Continue(IFX_PauseIndicator* pPause);
+  bool Continue(PauseIndicatorIface* pPause);
 
  private:
   enum InternalStage {

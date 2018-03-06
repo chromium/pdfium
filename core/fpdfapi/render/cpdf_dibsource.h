@@ -51,7 +51,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   bool Load(CPDF_Document* pDoc, const CPDF_Stream* pStream);
 
   // CFX_DIBSource
-  bool SkipToScanline(int line, IFX_PauseIndicator* pPause) const override;
+  bool SkipToScanline(int line, PauseIndicatorIface* pPause) const override;
   uint8_t* GetBuffer() const override;
   const uint8_t* GetScanline(int line) const override;
   void DownSampleScanline(int line,
@@ -73,7 +73,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
                                bool bStdCS = false,
                                uint32_t GroupFamily = 0,
                                bool bLoadMask = false);
-  LoadState ContinueLoadDIBSource(IFX_PauseIndicator* pPause);
+  LoadState ContinueLoadDIBSource(PauseIndicatorIface* pPause);
   RetainPtr<CPDF_DIBSource> DetachMask();
 
   bool IsJBigImage() const;
@@ -84,7 +84,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   LoadState StartLoadMask();
   LoadState StartLoadMaskDIB();
   bool ContinueToLoadMask();
-  LoadState ContinueLoadMaskDIB(IFX_PauseIndicator* pPause);
+  LoadState ContinueLoadMaskDIB(PauseIndicatorIface* pPause);
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
   DIB_COMP_DATA* GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey);

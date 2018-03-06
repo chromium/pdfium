@@ -26,7 +26,7 @@ class CFX_ImageTransformer {
                        const FX_RECT* pClip);
   ~CFX_ImageTransformer();
 
-  bool Continue(IFX_PauseIndicator* pPause);
+  bool Continue(PauseIndicatorIface* pPause);
 
   const FX_RECT& result() const { return m_result; }
   RetainPtr<CFX_DIBitmap> DetachBitmap();

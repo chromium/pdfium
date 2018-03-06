@@ -9,13 +9,13 @@
 
 #include <vector>
 
-#include "core/fxcrt/ifx_locale.h"
+#include "core/fxcrt/locale_iface.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime);
 bool FX_TimeFromCanonical(const WideStringView& wsTime,
                           CFX_DateTime* datetime,
-                          IFX_Locale* pLocale);
+                          LocaleIface* pLocale);
 
 class CFGAS_FormatString {
  public:
@@ -55,15 +55,15 @@ class CFGAS_FormatString {
  private:
   WideString GetTextFormat(const WideString& wsPattern,
                            const WideStringView& wsCategory);
-  IFX_Locale* GetNumericFormat(const WideString& wsPattern,
-                               int32_t* iDotIndex,
-                               uint32_t* dwStyle,
-                               WideString* wsPurgePattern);
+  LocaleIface* GetNumericFormat(const WideString& wsPattern,
+                                int32_t* iDotIndex,
+                                uint32_t* dwStyle,
+                                WideString* wsPurgePattern);
   bool FormatStrNum(const WideStringView& wsInputNum,
                     const WideString& wsPattern,
                     WideString* wsOutput);
   FX_DATETIMETYPE GetDateTimeFormat(const WideString& wsPattern,
-                                    IFX_Locale** pLocale,
+                                    LocaleIface** pLocale,
                                     WideString* wsDatePattern,
                                     WideString* wsTimePattern);
 

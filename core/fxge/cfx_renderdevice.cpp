@@ -844,7 +844,7 @@ bool CFX_RenderDevice::StartDIBitsWithBlend(
 }
 
 bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
-                                      IFX_PauseIndicator* pPause) {
+                                      PauseIndicatorIface* pPause) {
   return m_pDeviceDriver->ContinueDIBits(handle, pPause);
 }
 

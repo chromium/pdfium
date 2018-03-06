@@ -87,7 +87,7 @@ CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,
 CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,
                                    const WideString& wsValue,
                                    const WideString& wsFormat,
-                                   IFX_Locale* pLocale,
+                                   LocaleIface* pLocale,
                                    CXFA_LocaleMgr* pLocaleMgr)
     : m_pLocaleMgr(pLocaleMgr),
       m_dwType(dwType),
@@ -105,10 +105,10 @@ CXFA_LocaleValue::~CXFA_LocaleValue() {}
 
 bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
                                      const WideString& wsPattern,
-                                     IFX_Locale* pLocale,
+                                     LocaleIface* pLocale,
                                      WideString* pMatchFormat) {
   WideString wsOutput;
-  IFX_Locale* locale = m_pLocaleMgr->GetDefLocale();
+  LocaleIface* locale = m_pLocaleMgr->GetDefLocale();
   if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
 
@@ -318,7 +318,7 @@ bool CXFA_LocaleValue::SetDateTime(const CFX_DateTime& dt) {
 
 bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
                                       const WideString& wsFormat,
-                                      IFX_Locale* pLocale,
+                                      LocaleIface* pLocale,
                                       XFA_VALUEPICTURE eValueType) const {
   auto pFormat = pdfium::MakeUnique<CFGAS_FormatString>(m_pLocaleMgr);
   std::vector<WideString> wsPatterns;
@@ -334,9 +334,9 @@ bool CXFA_LocaleValue::FormatPatterns(WideString& wsResult,
 
 bool CXFA_LocaleValue::FormatSinglePattern(WideString& wsResult,
                                            const WideString& wsFormat,
-                                           IFX_Locale* pLocale,
+                                           LocaleIface* pLocale,
                                            XFA_VALUEPICTURE eValueType) const {
-  IFX_Locale* locale = m_pLocaleMgr->GetDefLocale();
+  LocaleIface* locale = m_pLocaleMgr->GetDefLocale();
   if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
 
@@ -602,8 +602,8 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
 
 bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
                                          const WideString& wsPattern,
-                                         IFX_Locale* pLocale) {
-  IFX_Locale* locale = m_pLocaleMgr->GetDefLocale();
+                                         LocaleIface* pLocale) {
+  LocaleIface* locale = m_pLocaleMgr->GetDefLocale();
   if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
 
@@ -715,7 +715,7 @@ void CXFA_LocaleValue::GetNumericFormat(WideString& wsFormat,
 
 bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
                                            const WideString& wsFormat,
-                                           IFX_Locale* pLocale) {
+                                           LocaleIface* pLocale) {
   if (wsFormat.IsEmpty() || wsNumeric.IsEmpty())
     return true;
 

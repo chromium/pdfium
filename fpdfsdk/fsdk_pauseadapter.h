@@ -8,11 +8,11 @@
 #define FPDFSDK_FSDK_PAUSEADAPTER_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/ifx_pauseindicator.h"
+#include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_progressive.h"
 
-class IFSDK_PAUSE_Adapter : public IFX_PauseIndicator {
+class IFSDK_PAUSE_Adapter : public PauseIndicatorIface {
  public:
   explicit IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause);
   ~IFSDK_PAUSE_Adapter() override;

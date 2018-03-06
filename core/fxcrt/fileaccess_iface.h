@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_IFX_FILEACCESS_H_
-#define CORE_FXCRT_IFX_FILEACCESS_H_
+#ifndef CORE_FXCRT_FILEACCESS_IFACE_H_
+#define CORE_FXCRT_FILEACCESS_IFACE_H_
 
 #include <algorithm>
 #include <memory>
@@ -14,10 +14,10 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_string.h"
 
-class IFX_FileAccess {
+class FileAccessIface {
  public:
-  static std::unique_ptr<IFX_FileAccess> Create();
-  virtual ~IFX_FileAccess() {}
+  static std::unique_ptr<FileAccessIface> Create();
+  virtual ~FileAccessIface() {}
 
   virtual bool Open(const ByteStringView& fileName, uint32_t dwMode) = 0;
   virtual bool Open(const WideStringView& fileName, uint32_t dwMode) = 0;
@@ -35,4 +35,4 @@ class IFX_FileAccess {
   virtual bool Truncate(FX_FILESIZE szFile) = 0;
 };
 
-#endif  // CORE_FXCRT_IFX_FILEACCESS_H_
+#endif  // CORE_FXCRT_FILEACCESS_IFACE_H_

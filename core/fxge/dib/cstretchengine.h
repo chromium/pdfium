@@ -14,7 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
-class IFX_PauseIndicator;
+class PauseIndicatorIface;
 class IFX_ScanlineComposer;
 
 class CStretchEngine {
@@ -28,10 +28,10 @@ class CStretchEngine {
                  int flags);
   ~CStretchEngine();
 
-  bool Continue(IFX_PauseIndicator* pPause);
+  bool Continue(PauseIndicatorIface* pPause);
 
   bool StartStretchHorz();
-  bool ContinueStretchHorz(IFX_PauseIndicator* pPause);
+  bool ContinueStretchHorz(PauseIndicatorIface* pPause);
   void StretchVert();
 
   class CWeightTable {

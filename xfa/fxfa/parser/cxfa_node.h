@@ -42,7 +42,7 @@ class CXFA_Ui;
 class CXFA_Validate;
 class CXFA_Value;
 class CXFA_WidgetLayoutData;
-class IFX_Locale;
+class LocaleIface;
 
 #define XFA_NODEFILTER_Children 0x01
 #define XFA_NODEFILTER_Properties 0x02
@@ -212,7 +212,7 @@ class CXFA_Node : public CXFA_Object {
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
   bool HasBindItem();
   CXFA_Node* GetContainerNode();
-  IFX_Locale* GetLocale();
+  LocaleIface* GetLocale();
   Optional<WideString> GetLocaleName();
   XFA_AttributeEnum GetIntact();
 
@@ -468,7 +468,7 @@ class CXFA_Node : public CXFA_Object {
   void InsertListTextItem(CXFA_Node* pItems,
                           const WideString& wsText,
                           int32_t nIndex);
-  WideString FormatNumStr(const WideString& wsValue, IFX_Locale* pLocale);
+  WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale);
   void GetItemLabel(const WideStringView& wsValue, WideString& wsLabel);
 
   std::pair<XFA_FFWidgetType, CXFA_Ui*> CreateChildUIAndValueNodesIfNeeded();

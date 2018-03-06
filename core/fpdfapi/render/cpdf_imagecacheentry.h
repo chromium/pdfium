@@ -19,7 +19,7 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Image;
 class CPDF_RenderStatus;
-class IFX_PauseIndicator;
+class PauseIndicatorIface;
 
 class CPDF_ImageCacheEntry {
  public:
@@ -41,7 +41,7 @@ class CPDF_ImageCacheEntry {
       CPDF_RenderStatus* pRenderStatus);
 
   // Returns whether to Continue() or not.
-  bool Continue(IFX_PauseIndicator* pPause, CPDF_RenderStatus* pRenderStatus);
+  bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
 
   RetainPtr<CFX_DIBSource> DetachBitmap();
   RetainPtr<CFX_DIBSource> DetachMask();

@@ -6,7 +6,7 @@
 
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 
-#include "core/fxcrt/ifx_pauseindicator.h"
+#include "core/fxcrt/pauseindicator_iface.h"
 
 CCodec_ScanlineDecoder::CCodec_ScanlineDecoder()
     : CCodec_ScanlineDecoder(0, 0, 0, 0, 0, 0, 0) {}
@@ -49,7 +49,7 @@ const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
 }
 
 bool CCodec_ScanlineDecoder::SkipToScanline(int line,
-                                            IFX_PauseIndicator* pPause) {
+                                            PauseIndicatorIface* pPause) {
   if (m_NextLine == line || m_NextLine == line + 1)
     return false;
 

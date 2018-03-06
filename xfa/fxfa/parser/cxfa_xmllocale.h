@@ -9,16 +9,16 @@
 
 #include <memory>
 
-#include "core/fxcrt/ifx_locale.h"
+#include "core/fxcrt/locale_iface.h"
 
 class CXML_Element;
 
-class CXFA_XMLLocale : public IFX_Locale {
+class CXFA_XMLLocale : public LocaleIface {
  public:
   explicit CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData);
   ~CXFA_XMLLocale() override;
 
-  // IFX_Locale
+  // LocaleIface
   WideString GetName() const override;
   WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
 

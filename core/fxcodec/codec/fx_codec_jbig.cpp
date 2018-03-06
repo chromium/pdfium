@@ -48,7 +48,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
     const RetainPtr<CPDF_StreamAcc>& global_stream,
     uint8_t* dest_buf,
     uint32_t dest_pitch,
-    IFX_PauseIndicator* pPause) {
+    PauseIndicatorIface* pPause) {
   if (!pJbig2Context)
     return FXCODEC_STATUS_ERR_PARAMS;
 
@@ -71,7 +71,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
 
 FXCODEC_STATUS CCodec_Jbig2Module::ContinueDecode(
     CCodec_Jbig2Context* pJbig2Context,
-    IFX_PauseIndicator* pPause) {
+    PauseIndicatorIface* pPause) {
   int ret = pJbig2Context->m_pContext->Continue(pPause);
   return Decode(pJbig2Context, ret);
 }

@@ -17,7 +17,7 @@
 std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
-    IFX_PauseIndicator* pPause) {
+    PauseIndicatorIface* pPause) {
   std::unique_ptr<CJBig2_Image> HSKIP;
   if (HENABLESKIP == 1) {
     HSKIP = pdfium::MakeUnique<CJBig2_Image>(HGW, HGH);

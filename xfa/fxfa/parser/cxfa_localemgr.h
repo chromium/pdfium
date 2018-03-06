@@ -11,11 +11,11 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_datetime.h"
-#include "core/fxcrt/ifx_locale.h"
+#include "core/fxcrt/locale_iface.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 class CXFA_Node;
-class IFX_Locale;
+class LocaleIface;
 
 class CXFA_LocaleMgr {
  public:
@@ -23,18 +23,18 @@ class CXFA_LocaleMgr {
   ~CXFA_LocaleMgr();
 
   uint16_t GetDefLocaleID() const;
-  IFX_Locale* GetDefLocale();
-  IFX_Locale* GetLocaleByName(const WideString& wsLocaleName);
+  LocaleIface* GetDefLocale();
+  LocaleIface* GetLocaleByName(const WideString& wsLocaleName);
 
-  void SetDefLocale(IFX_Locale* pLocale);
+  void SetDefLocale(LocaleIface* pLocale);
   WideStringView GetConfigLocaleName(CXFA_Node* pConfig);
 
  private:
-  std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid);
+  std::unique_ptr<LocaleIface> GetLocale(uint16_t lcid);
 
-  std::vector<std::unique_ptr<IFX_Locale>> m_LocaleArray;
-  std::vector<std::unique_ptr<IFX_Locale>> m_XMLLocaleArray;
-  IFX_Locale* m_pDefLocale;  // owned by m_LocaleArray or m_XMLLocaleArray.
+  std::vector<std::unique_ptr<LocaleIface>> m_LocaleArray;
+  std::vector<std::unique_ptr<LocaleIface>> m_XMLLocaleArray;
+  LocaleIface* m_pDefLocale;  // owned by m_LocaleArray or m_XMLLocaleArray.
   WideString m_wsConfigLocale;
   uint16_t m_dwDeflcid;
   uint16_t m_dwLocaleFlags;

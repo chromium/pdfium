@@ -19,7 +19,7 @@ class CFX_DIBSource;
 class CFX_DIBitmap;
 class CPDF_Document;
 class CPDF_Page;
-class IFX_PauseIndicator;
+class PauseIndicatorIface;
 class IFX_SeekableReadStream;
 
 class CPDF_Image : public Retainable {
@@ -57,7 +57,7 @@ class CPDF_Image : public Retainable {
                           bool bLoadMask = false);
 
   // Returns whether to Continue() or not.
-  bool Continue(IFX_PauseIndicator* pPause);
+  bool Continue(PauseIndicatorIface* pPause);
 
   RetainPtr<CFX_DIBSource> DetachBitmap();
   RetainPtr<CFX_DIBSource> DetachMask();

@@ -370,7 +370,7 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
   return false;
 }
 
-bool CPDF_Image::Continue(IFX_PauseIndicator* pPause) {
+bool CPDF_Image::Continue(PauseIndicatorIface* pPause) {
   RetainPtr<CPDF_DIBSource> pSource = m_pDIBSource.As<CPDF_DIBSource>();
   CPDF_DIBSource::LoadState ret = pSource->ContinueLoadDIBSource(pPause);
   if (ret == CPDF_DIBSource::LoadState::kContinue)

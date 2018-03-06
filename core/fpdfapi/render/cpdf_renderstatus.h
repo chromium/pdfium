@@ -61,7 +61,7 @@ class CPDF_RenderStatus {
   void RenderSingleObject(CPDF_PageObject* pObj, const CFX_Matrix* pObj2Device);
   bool ContinueSingleObject(CPDF_PageObject* pObj,
                             const CFX_Matrix* pObj2Device,
-                            IFX_PauseIndicator* pPause);
+                            PauseIndicatorIface* pPause);
   void ProcessClipPath(const CPDF_ClipPath& ClipPath,
                        const CFX_Matrix* pObj2Device);
 

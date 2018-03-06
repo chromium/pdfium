@@ -7,17 +7,17 @@
 #ifndef CORE_FXCRT_CFX_FILEACCESS_POSIX_H_
 #define CORE_FXCRT_CFX_FILEACCESS_POSIX_H_
 
-#include "core/fxcrt/ifx_fileaccess.h"
+#include "core/fxcrt/fileaccess_iface.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_ || \
     _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
     _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
-class CFX_FileAccess_Posix : public IFX_FileAccess {
+class CFX_FileAccess_Posix : public FileAccessIface {
  public:
   CFX_FileAccess_Posix();
   ~CFX_FileAccess_Posix() override;
 
-  // IFX_FileAccess:
+  // FileAccessIface:
   bool Open(const ByteStringView& fileName, uint32_t dwMode) override;
   bool Open(const WideStringView& fileName, uint32_t dwMode) override;
   void Close() override;
