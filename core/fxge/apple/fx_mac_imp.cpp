@@ -12,7 +12,7 @@
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -120,7 +120,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
 
 }  // namespace
 
-std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
+std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUnused) {
   auto pInfo = pdfium::MakeUnique<CFX_MacFontInfo>();
   pInfo->AddPath("~/Library/Fonts");
@@ -131,7 +131,7 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
 
 void CFX_GEModule::InitPlatform() {
   m_pPlatformData = new CApplePlatform;
-  m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault(nullptr));
+  m_pFontMgr->SetSystemFontInfo(SystemFontInfoIface::CreateDefault(nullptr));
 }
 
 void CFX_GEModule::DestroyPlatform() {

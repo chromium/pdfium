@@ -17,7 +17,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -287,7 +287,7 @@ CFX_FontMapper::~CFX_FontMapper() {
 }
 
 void CFX_FontMapper::SetSystemFontInfo(
-    std::unique_ptr<IFX_SystemFontInfo> pFontInfo) {
+    std::unique_ptr<SystemFontInfoIface> pFontInfo) {
   if (!pFontInfo)
     return;
 

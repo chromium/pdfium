@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_DIB_IFX_SCANLINECOMPOSER_H_
-#define CORE_FXGE_DIB_IFX_SCANLINECOMPOSER_H_
+#ifndef CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_
+#define CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_
 
 #include "core/fxge/fx_dib.h"
 
-class IFX_ScanlineComposer {
+class ScanlineComposerIface {
  public:
-  virtual ~IFX_ScanlineComposer() {}
+  virtual ~ScanlineComposerIface() {}
 
   virtual void ComposeScanline(int line,
                                const uint8_t* scanline,
@@ -23,4 +23,4 @@ class IFX_ScanlineComposer {
                        uint32_t* pSrcPalette) = 0;
 };
 
-#endif  // CORE_FXGE_DIB_IFX_SCANLINECOMPOSER_H_
+#endif  // CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_

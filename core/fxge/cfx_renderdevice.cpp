@@ -20,7 +20,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
-#include "core/fxge/ifx_renderdevicedriver.h"
+#include "core/fxge/renderdevicedriver_iface.h"
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 #include "third_party/skia/include/core/SkTypes.h"
@@ -391,7 +391,7 @@ void CFX_RenderDevice::Flush(bool release) {
 #endif
 
 void CFX_RenderDevice::SetDeviceDriver(
-    std::unique_ptr<IFX_RenderDeviceDriver> pDriver) {
+    std::unique_ptr<RenderDeviceDriverIface> pDriver) {
   m_pDeviceDriver = std::move(pDriver);
   InitDeviceInfo();
 }

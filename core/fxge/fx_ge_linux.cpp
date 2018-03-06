@@ -11,7 +11,7 @@
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/ptr_util.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
@@ -142,7 +142,7 @@ bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
 
 }  // namespace
 
-std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
+std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUserPaths) {
   auto pInfo = pdfium::MakeUnique<CFX_LinuxFontInfo>();
   if (!pInfo->ParseFontCfg(pUserPaths)) {
@@ -156,7 +156,7 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
 
 void CFX_GEModule::InitPlatform() {
   m_pFontMgr->SetSystemFontInfo(
-      IFX_SystemFontInfo::CreateDefault(m_pUserFontPaths));
+      SystemFontInfoIface::CreateDefault(m_pUserFontPaths));
 }
 
 void CFX_GEModule::DestroyPlatform() {}

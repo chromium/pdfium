@@ -12,7 +12,7 @@
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
-#include "core/fxge/dib/ifx_scanlinecomposer.h"
+#include "core/fxge/dib/scanlinecomposer_iface.h"
 #include "core/fxge/fx_dib.h"
 
 namespace {
@@ -217,7 +217,7 @@ int* CStretchEngine::CWeightTable::GetValueFromPixelWeight(PixelWeight* pWeight,
   return idx < GetPixelWeightSize() ? &pWeight->m_Weights[idx] : nullptr;
 }
 
-CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
+CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
                                FXDIB_Format dest_format,
                                int dest_width,
                                int dest_height,

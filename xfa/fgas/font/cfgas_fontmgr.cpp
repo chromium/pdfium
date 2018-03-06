@@ -17,7 +17,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -527,7 +527,7 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
   if (!pFontMapper)
     return false;
 
-  IFX_SystemFontInfo* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
+  SystemFontInfoIface* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
   if (!pSystemFontInfo)
     return false;
 
@@ -593,7 +593,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const WideString& wsFaceName,
   if (!pFontMapper)
     return nullptr;
 
-  IFX_SystemFontInfo* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
+  SystemFontInfoIface* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
   if (!pSystemFontInfo)
     return nullptr;
 
@@ -661,7 +661,7 @@ FXFT_Face CFGAS_FontMgr::LoadFace(
 
 RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
     CFX_FontMapper* pFontMapper,
-    IFX_SystemFontInfo* pSystemFontInfo,
+    SystemFontInfoIface* pSystemFontInfo,
     uint32_t index) {
   void* hFont = pSystemFontInfo->MapFont(
       0, 0, FX_CHARSET_Default, 0, pFontMapper->GetFaceName(index).c_str());
@@ -685,7 +685,7 @@ RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
   if (!pFontMapper)
     return nullptr;
 
-  IFX_SystemFontInfo* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
+  SystemFontInfoIface* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
   if (!pSystemFontInfo)
     return nullptr;
 

@@ -15,15 +15,15 @@
 
 class CFX_FontMgr;
 class CFX_SubstFont;
-class IFX_SystemFontInfo;
+class SystemFontInfoIface;
 
 class CFX_FontMapper {
  public:
   explicit CFX_FontMapper(CFX_FontMgr* mgr);
   ~CFX_FontMapper();
 
-  void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
-  IFX_SystemFontInfo* GetSystemFontInfo() { return m_pFontInfo.get(); }
+  void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
+  SystemFontInfoIface* GetSystemFontInfo() { return m_pFontInfo.get(); }
   void AddInstalledFont(const ByteString& name, int charset);
   void LoadInstalledFonts();
 
@@ -77,7 +77,7 @@ class CFX_FontMapper {
   FXFT_Face m_MMFaces[MM_FACE_COUNT];
   ByteString m_LastFamily;
   std::vector<FaceData> m_FaceArray;
-  std::unique_ptr<IFX_SystemFontInfo> m_pFontInfo;
+  std::unique_ptr<SystemFontInfoIface> m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
   UnownedPtr<CFX_FontMgr> const m_pFontMgr;
 };

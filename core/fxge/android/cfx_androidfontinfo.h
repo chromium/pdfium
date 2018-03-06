@@ -10,18 +10,18 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 
 class CFPF_SkiaFontMgr;
 
-class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
+class CFX_AndroidFontInfo : public SystemFontInfoIface {
  public:
   CFX_AndroidFontInfo();
   ~CFX_AndroidFontInfo() override;
 
   bool Init(CFPF_SkiaFontMgr* pFontMgr);
 
-  // IFX_SystemFontInfo:
+  // SystemFontInfoIface:
   bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,

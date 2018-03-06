@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_IFX_SYSTEMFONTINFO_H_
-#define CORE_FXGE_IFX_SYSTEMFONTINFO_H_
+#ifndef CORE_FXGE_SYSTEMFONTINFO_IFACE_H_
+#define CORE_FXGE_SYSTEMFONTINFO_IFACE_H_
 
 #include <memory>
 
@@ -14,12 +14,12 @@
 const uint32_t kTableNAME = FXDWORD_GET_MSBFIRST("name");
 const uint32_t kTableTTCF = FXDWORD_GET_MSBFIRST("ttcf");
 
-class IFX_SystemFontInfo {
+class SystemFontInfoIface {
  public:
-  static std::unique_ptr<IFX_SystemFontInfo> CreateDefault(
+  static std::unique_ptr<SystemFontInfoIface> CreateDefault(
       const char** pUserPaths);
 
-  virtual ~IFX_SystemFontInfo() = default;
+  virtual ~SystemFontInfoIface() = default;
 
   virtual bool EnumFontList(CFX_FontMapper* pMapper) = 0;
   virtual void* MapFont(int weight,
@@ -46,4 +46,4 @@ class IFX_SystemFontInfo {
   virtual void DeleteFont(void* hFont) = 0;
 };
 
-#endif  // CORE_FXGE_IFX_SYSTEMFONTINFO_H_
+#endif  // CORE_FXGE_SYSTEMFONTINFO_IFACE_H_

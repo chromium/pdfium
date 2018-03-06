@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "core/fxge/cfx_fontmapper.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 
 static ByteString GetStringFromTable(const uint8_t* string_ptr,
                                      uint32_t string_ptr_length,
@@ -52,15 +52,15 @@ ByteString GetNameFromTT(const uint8_t* name_table,
   return ByteString();
 }
 #ifdef PDF_ENABLE_XFA
-void* IFX_SystemFontInfo::MapFontByUnicode(uint32_t dwUnicode,
-                                           int weight,
-                                           bool bItalic,
-                                           int pitch_family) {
+void* SystemFontInfoIface::MapFontByUnicode(uint32_t dwUnicode,
+                                            int weight,
+                                            bool bItalic,
+                                            int pitch_family) {
   return nullptr;
 }
 #endif  // PDF_ENABLE_XFA
 
-int IFX_SystemFontInfo::GetFaceIndex(void* hFont) {
+int SystemFontInfoIface::GetFaceIndex(void* hFont) {
   return 0;
 }
 
@@ -73,7 +73,7 @@ void _FTStreamClose(FXFT_Stream stream);
 };
 
 #if _FX_OS_ == _FX_OS_ANDROID_
-std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
+std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUnused) {
   return nullptr;
 }

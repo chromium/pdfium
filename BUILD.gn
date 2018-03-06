@@ -1044,7 +1044,7 @@ jumbo_static_library("fxge") {
     "core/fxge/dib/cstretchengine.cpp",
     "core/fxge/dib/cstretchengine.h",
     "core/fxge/dib/fx_dib_main.cpp",
-    "core/fxge/dib/ifx_scanlinecomposer.h",
+    "core/fxge/dib/scanlinecomposer_iface.h",
     "core/fxge/fontdata/chromefontdata/FoxitDingbats.cpp",
     "core/fxge/fontdata/chromefontdata/FoxitFixed.cpp",
     "core/fxge/fontdata/chromefontdata/FoxitFixedBold.cpp",
@@ -1069,9 +1069,9 @@ jumbo_static_library("fxge") {
     "core/fxge/fx_ge_fontmap.cpp",
     "core/fxge/fx_ge_linux.cpp",
     "core/fxge/fx_ge_text.cpp",
-    "core/fxge/ifx_renderdevicedriver.cpp",
-    "core/fxge/ifx_renderdevicedriver.h",
-    "core/fxge/ifx_systemfontinfo.h",
+    "core/fxge/renderdevicedriver_iface.cpp",
+    "core/fxge/renderdevicedriver_iface.h",
+    "core/fxge/systemfontinfo_iface.h",
     "core/fxge/win32/cfx_windowsdib.h",
   ]
 

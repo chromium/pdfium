@@ -15,7 +15,7 @@
 class CFX_FontMapper;
 class CFX_SubstFont;
 class CTTFontDesc;
-class IFX_SystemFontInfo;
+class SystemFontInfoIface;
 
 class CFX_FontMgr {
  public:
@@ -46,7 +46,7 @@ class CFX_FontMgr {
   FXFT_Face GetFileFace(const char* filename, int face_index);
   FXFT_Face GetFixedFace(const uint8_t* pData, uint32_t size, int face_index);
   void ReleaseFace(FXFT_Face face);
-  void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
+  void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
   FXFT_Face FindSubstFont(const ByteString& face_name,
                           bool bTrueType,
                           uint32_t flags,

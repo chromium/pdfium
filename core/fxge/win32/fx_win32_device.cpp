@@ -23,7 +23,7 @@
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/dwrite_int.h"
 #include "core/fxge/win32/win32_int.h"
@@ -326,12 +326,12 @@ class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
                 const char* family) override;
 };
 
-class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
+class CFX_Win32FontInfo final : public SystemFontInfoIface {
  public:
   CFX_Win32FontInfo();
   ~CFX_Win32FontInfo() override;
 
-  // IFX_SystemFontInfo
+  // SystemFontInfoIface
   bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
@@ -679,10 +679,10 @@ bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int* charset) {
 
 int g_pdfium_print_mode = WindowsPrintMode::kModeEmf;
 
-std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
+std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUnused) {
   if (IsGDIEnabled())
-    return std::unique_ptr<IFX_SystemFontInfo>(new CFX_Win32FontInfo);
+    return std::unique_ptr<SystemFontInfoIface>(new CFX_Win32FontInfo);
 
   // Select the fallback font information class if GDI is disabled.
   CFX_Win32FallbackFontInfo* pInfoFallback = new CFX_Win32FallbackFontInfo;
@@ -695,7 +695,7 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     fonts_path += "\\Fonts";
     pInfoFallback->AddPath(fonts_path);
   }
-  return std::unique_ptr<IFX_SystemFontInfo>(pInfoFallback);
+  return std::unique_ptr<SystemFontInfoIface>(pInfoFallback);
 }
 
 void CFX_GEModule::InitPlatform() {
@@ -707,7 +707,7 @@ void CFX_GEModule::InitPlatform() {
   if (IsGDIEnabled())
     pPlatformData->m_GdiplusExt.Load();
   m_pPlatformData = pPlatformData;
-  m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault(nullptr));
+  m_pFontMgr->SetSystemFontInfo(SystemFontInfoIface::CreateDefault(nullptr));
 }
 
 void CFX_GEModule::DestroyPlatform() {
@@ -1350,7 +1350,7 @@ CFX_WindowsRenderDevice::CFX_WindowsRenderDevice(HDC hDC) {
 CFX_WindowsRenderDevice::~CFX_WindowsRenderDevice() {}
 
 // static
-IFX_RenderDeviceDriver* CFX_WindowsRenderDevice::CreateDriver(HDC hDC) {
+RenderDeviceDriverIface* CFX_WindowsRenderDevice::CreateDriver(HDC hDC) {
   int device_type = ::GetDeviceCaps(hDC, TECHNOLOGY);
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||

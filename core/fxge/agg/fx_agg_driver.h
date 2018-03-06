@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxge/ifx_renderdevicedriver.h"
+#include "core/fxge/renderdevicedriver_iface.h"
 #include "third_party/agg23/agg_clip_liang_barsky.h"
 #include "third_party/agg23/agg_path_storage.h"
 #include "third_party/agg23/agg_rasterizer_scanline_aa.h"
@@ -30,7 +30,7 @@ class CAgg_PathData {
   agg::path_storage m_PathData;
 };
 
-class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
+class CFX_AggDeviceDriver : public RenderDeviceDriverIface {
  public:
   CFX_AggDeviceDriver(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       bool bRgbByteOrder,
@@ -41,7 +41,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   void InitPlatform();
   void DestroyPlatform();
 
-  // IFX_RenderDeviceDriver
+  // RenderDeviceDriverIface
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;

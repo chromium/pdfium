@@ -15,11 +15,11 @@
 #include "core/fxge/fx_dib.h"
 
 class PauseIndicatorIface;
-class IFX_ScanlineComposer;
+class ScanlineComposerIface;
 
 class CStretchEngine {
  public:
-  CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
+  CStretchEngine(ScanlineComposerIface* pDestBitmap,
                  FXDIB_Format dest_format,
                  int dest_width,
                  int dest_height,
@@ -61,7 +61,7 @@ class CStretchEngine {
   int m_DestBpp;
   int m_SrcBpp;
   int m_bHasAlpha;
-  UnownedPtr<IFX_ScanlineComposer> m_pDestBitmap;
+  UnownedPtr<ScanlineComposerIface> m_pDestBitmap;
   int m_DestWidth;
   int m_DestHeight;
   FX_RECT m_DestClip;

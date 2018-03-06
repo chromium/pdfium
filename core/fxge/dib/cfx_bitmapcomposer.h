@@ -13,12 +13,12 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
-#include "core/fxge/dib/ifx_scanlinecomposer.h"
+#include "core/fxge/dib/scanlinecomposer_iface.h"
 
 class CFX_ClipRgn;
 class CFX_DIBitmap;
 
-class CFX_BitmapComposer : public IFX_ScanlineComposer {
+class CFX_BitmapComposer : public ScanlineComposerIface {
  public:
   CFX_BitmapComposer();
   ~CFX_BitmapComposer() override;
@@ -35,7 +35,7 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
                int alpha_flag,
                int blend_type);
 
-  // IFX_ScanlineComposer
+  // ScanlineComposerIface
   bool SetInfo(int width,
                int height,
                FXDIB_Format src_format,

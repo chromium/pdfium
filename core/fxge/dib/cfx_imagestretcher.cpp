@@ -42,7 +42,7 @@ std::tuple<int, int, int, int> CmykDecode(const uint32_t cmyk) {
 
 }  // namespace
 
-CFX_ImageStretcher::CFX_ImageStretcher(IFX_ScanlineComposer* pDest,
+CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
                                        const RetainPtr<CFX_DIBSource>& pSource,
                                        int dest_width,
                                        int dest_height,

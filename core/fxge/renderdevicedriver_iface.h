@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_
-#define CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_
+#ifndef CORE_FXGE_RENDERDEVICEDRIVER_IFACE_H_
+#define CORE_FXGE_RENDERDEVICEDRIVER_IFACE_H_
 
 #include <memory>
 
@@ -25,9 +25,9 @@ class FXTEXT_CHARPOS;
 class PauseIndicatorIface;
 struct FX_RECT;
 
-class IFX_RenderDeviceDriver {
+class RenderDeviceDriverIface {
  public:
-  virtual ~IFX_RenderDeviceDriver();
+  virtual ~RenderDeviceDriverIface();
 
   virtual int GetDeviceCaps(int caps_id) const = 0;
   virtual CFX_Matrix GetCTM() const;
@@ -112,4 +112,4 @@ class IFX_RenderDeviceDriver {
 #endif
 };
 
-#endif  // CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_
+#endif  // CORE_FXGE_RENDERDEVICEDRIVER_IFACE_H_

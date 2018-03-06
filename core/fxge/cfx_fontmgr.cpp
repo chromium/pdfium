@@ -14,7 +14,7 @@
 #include "core/fxge/cttfontdesc.h"
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "core/fxge/fx_font.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -99,7 +99,7 @@ void CFX_FontMgr::InitFTLibrary() {
 }
 
 void CFX_FontMgr::SetSystemFontInfo(
-    std::unique_ptr<IFX_SystemFontInfo> pFontInfo) {
+    std::unique_ptr<SystemFontInfoIface> pFontInfo) {
   m_pBuiltinMapper->SetSystemFontInfo(std::move(pFontInfo));
 }
 

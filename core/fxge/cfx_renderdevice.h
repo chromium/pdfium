@@ -18,7 +18,7 @@ class CFX_Font;
 class CFX_GraphStateData;
 class CFX_ImageRenderer;
 class PauseIndicatorIface;
-class IFX_RenderDeviceDriver;
+class RenderDeviceDriverIface;
 
 #define FXDC_DEVICE_CLASS 1
 #define FXDC_PIXEL_WIDTH 2
@@ -100,8 +100,8 @@ class CFX_RenderDevice {
   virtual ~CFX_RenderDevice();
 
   // Take ownership of |pDriver|.
-  void SetDeviceDriver(std::unique_ptr<IFX_RenderDeviceDriver> pDriver);
-  IFX_RenderDeviceDriver* GetDeviceDriver() const {
+  void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
+  RenderDeviceDriverIface* GetDeviceDriver() const {
     return m_pDeviceDriver.get();
   }
 
@@ -299,7 +299,7 @@ class CFX_RenderDevice {
   int m_RenderCaps;
   int m_DeviceClass;
   FX_RECT m_ClipBox;
-  std::unique_ptr<IFX_RenderDeviceDriver> m_pDeviceDriver;
+  std::unique_ptr<RenderDeviceDriverIface> m_pDeviceDriver;
 };
 
 #endif  // CORE_FXGE_CFX_RENDERDEVICE_H_

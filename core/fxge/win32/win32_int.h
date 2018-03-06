@@ -14,7 +14,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_pathdata.h"
-#include "core/fxge/ifx_renderdevicedriver.h"
+#include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/dwrite_int.h"
@@ -129,12 +129,12 @@ class CWin32Platform {
   CDWriteExt m_DWriteExt;
 };
 
-class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
+class CGdiDeviceDriver : public RenderDeviceDriverIface {
  protected:
   CGdiDeviceDriver(HDC hDC, int device_class);
   ~CGdiDeviceDriver() override;
 
-  // IFX_RenderDeviceDriver
+  // RenderDeviceDriverIface
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override;
   void RestoreState(bool bKeepSaved) override;
@@ -270,13 +270,13 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
   const int m_VertSize;
 };
 
-class CPSPrinterDriver : public IFX_RenderDeviceDriver {
+class CPSPrinterDriver : public RenderDeviceDriverIface {
  public:
   CPSPrinterDriver(HDC hDC, int ps_level, bool bCmykOutput);
   ~CPSPrinterDriver() override;
 
  protected:
-  // IFX_RenderDeviceDriver
+  // RenderDeviceDriverIface
   int GetDeviceCaps(int caps_id) const override;
   bool StartRendering() override;
   void EndRendering() override;
@@ -335,13 +335,13 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
   CFX_PSRenderer m_PSRenderer;
 };
 
-class CTextOnlyPrinterDriver : public IFX_RenderDeviceDriver {
+class CTextOnlyPrinterDriver : public RenderDeviceDriverIface {
  public:
   explicit CTextOnlyPrinterDriver(HDC hDC);
   ~CTextOnlyPrinterDriver() override;
 
  protected:
-  // IFX_RenderDeviceDriver
+  // RenderDeviceDriverIface
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override{};
   void RestoreState(bool bKeepSaved) override{};

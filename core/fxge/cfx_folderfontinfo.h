@@ -13,9 +13,9 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 
-class CFX_FolderFontInfo : public IFX_SystemFontInfo {
+class CFX_FolderFontInfo : public SystemFontInfoIface {
  public:
   CFX_FolderFontInfo();
   ~CFX_FolderFontInfo() override;

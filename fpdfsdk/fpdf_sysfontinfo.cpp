@@ -13,7 +13,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
-#include "core/fxge/ifx_systemfontinfo.h"
+#include "core/fxge/systemfontinfo_iface.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/pwl/cpwl_font_map.h"
 #include "third_party/base/ptr_util.h"
@@ -31,7 +31,7 @@ static_assert(FXFONT_GB2312_CHARSET == FX_CHARSET_ChineseSimplified,
 static_assert(FXFONT_CHINESEBIG5_CHARSET == FX_CHARSET_ChineseTraditional,
               "Charset must match");
 
-class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
+class CFX_ExternalFontInfo final : public SystemFontInfoIface {
  public:
   explicit CFX_ExternalFontInfo(FPDF_SYSFONTINFO* pInfo) : m_pInfo(pInfo) {}
   ~CFX_ExternalFontInfo() override {
@@ -126,7 +126,7 @@ FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap() {
 }
 
 struct FPDF_SYSFONTINFO_DEFAULT : public FPDF_SYSFONTINFO {
-  UnownedPtr<IFX_SystemFontInfo> m_pFontInfo;
+  UnownedPtr<SystemFontInfoIface> m_pFontInfo;
 };
 
 static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {
@@ -195,8 +195,8 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
 }
 
 FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo() {
-  std::unique_ptr<IFX_SystemFontInfo> pFontInfo =
-      IFX_SystemFontInfo::CreateDefault(nullptr);
+  std::unique_ptr<SystemFontInfoIface> pFontInfo =
+      SystemFontInfoIface::CreateDefault(nullptr);
   if (!pFontInfo)
     return nullptr;
 
