@@ -911,6 +911,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
     return nullptr;
 
   std::unique_ptr<CXFA_FMSimpleExpression> pCondition = ParseParenExpression();
+  if (!pCondition)
+    return nullptr;
   if (!CheckThenNext(TOKthen))
     return nullptr;
 
@@ -923,6 +925,8 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseIfExpression() {
       return nullptr;
 
     auto elseIfCondition = ParseParenExpression();
+    if (!elseIfCondition)
+      return nullptr;
     if (!CheckThenNext(TOKthen))
       return nullptr;
 
@@ -969,6 +973,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParser::ParseWhileExpression() {
       std::move(pCondition),
       pdfium::MakeUnique<CXFA_FMBlockExpression>(std::move(exprs)));
 }
+
 // For := 'for' Assignment 'upto' Accessor ('step' SimpleExpression)?
 //            'do' ExpressionList 'endfor' |
 //         'for' Assignment 'downto' Accessor ('step' SimpleExpression)?

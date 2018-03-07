@@ -218,3 +218,23 @@ TEST(CXFA_FMParserTest, ParseFuncWithBadParamsList) {
   ASSERT_TRUE(ast == nullptr);
   EXPECT_TRUE(parser->HasError());
 }
+
+TEST(CXFA_FMParserTest, ParseBadIfExpression) {
+  const wchar_t input[] = {L"if ( then"};
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  ASSERT_TRUE(ast == nullptr);
+  EXPECT_TRUE(parser->HasError());
+}
+
+TEST(CXFA_FMParserTest, ParseBadElseIfExpression) {
+  const wchar_t input[] = {
+      L"if ($ ne -1) then\n"
+      L"elseif( then"};
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  ASSERT_TRUE(ast == nullptr);
+  EXPECT_TRUE(parser->HasError());
+}
