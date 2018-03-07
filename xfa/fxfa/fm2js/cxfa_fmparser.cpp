@@ -273,6 +273,9 @@ CXFA_FMParser::ParseLogicalOrExpression() {
 
   // TODO(dsinclair): Is this for() needed?
   for (;;) {
+    if (!IncrementParseDepthAndCheck())
+      return nullptr;
+
     switch (m_token.m_type) {
       case TOKor:
       case TOKksor: {
@@ -310,6 +313,9 @@ CXFA_FMParser::ParseLogicalAndExpression() {
 
   // TODO(dsinclair): Is this for() needed?
   for (;;) {
+    if (!IncrementParseDepthAndCheck())
+      return nullptr;
+
     switch (m_token.m_type) {
       case TOKand:
       case TOKksand: {
@@ -346,32 +352,38 @@ CXFA_FMParser::ParseEqualityExpression() {
 
   // TODO(dsinclair): Is this for() needed?
   for (;;) {
-    std::unique_ptr<CXFA_FMSimpleExpression> e2;
+    if (!IncrementParseDepthAndCheck())
+      return nullptr;
+
     switch (m_token.m_type) {
       case TOKeq:
-      case TOKkseq:
+      case TOKkseq: {
         if (!NextToken())
           return nullptr;
 
-        e2 = ParseRelationalExpression();
+        std::unique_ptr<CXFA_FMSimpleExpression> e2 =
+            ParseRelationalExpression();
         if (!e2)
           return nullptr;
 
         e1 = pdfium::MakeUnique<CXFA_FMEqualExpression>(TOKeq, std::move(e1),
                                                         std::move(e2));
         continue;
+      }
       case TOKne:
-      case TOKksne:
+      case TOKksne: {
         if (!NextToken())
           return nullptr;
 
-        e2 = ParseRelationalExpression();
+        std::unique_ptr<CXFA_FMSimpleExpression> e2 =
+            ParseRelationalExpression();
         if (!e2)
           return nullptr;
 
         e1 = pdfium::MakeUnique<CXFA_FMNotEqualExpression>(TOKne, std::move(e1),
                                                            std::move(e2));
         continue;
+      }
       default:
         break;
     }
@@ -394,6 +406,9 @@ CXFA_FMParser::ParseRelationalExpression() {
 
   // TODO(dsinclair): Is this for() needed?
   for (;;) {
+    if (!IncrementParseDepthAndCheck())
+      return nullptr;
+
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
       case TOKlt:
@@ -466,6 +481,9 @@ CXFA_FMParser::ParseAddtiveExpression() {
 
   // TODO(dsinclair): Is this for() needed?
   for (;;) {
+    if (!IncrementParseDepthAndCheck())
+      return nullptr;
+
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
       case TOKplus:
@@ -512,6 +530,9 @@ CXFA_FMParser::ParseMultiplicativeExpression() {
 
   // TODO(dsinclair): Is this for() needed?
   for (;;) {
+    if (!IncrementParseDepthAndCheck())
+      return nullptr;
+
     std::unique_ptr<CXFA_FMSimpleExpression> e2;
     switch (m_token.m_type) {
       case TOKmul:
