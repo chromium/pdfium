@@ -27,7 +27,6 @@ class CPDF_SyntaxParser {
   enum class ParseType { kStrict, kLoose };
 
   CPDF_SyntaxParser();
-  explicit CPDF_SyntaxParser(const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_SyntaxParser();
 
   void InitParser(const RetainPtr<IFX_SeekableReadStream>& pFileAccess,

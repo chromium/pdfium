@@ -41,13 +41,9 @@ enum class ReadStatus { Normal, Backslash, Octal, FinishOctal, CarriageReturn };
 int CPDF_SyntaxParser::s_CurrentRecursionDepth = 0;
 
 CPDF_SyntaxParser::CPDF_SyntaxParser()
-    : CPDF_SyntaxParser(WeakPtr<ByteStringPool>()) {}
+    : m_pFileAccess(nullptr), m_pPool(WeakPtr<ByteStringPool>()) {}
 
-CPDF_SyntaxParser::CPDF_SyntaxParser(const WeakPtr<ByteStringPool>& pPool)
-    : m_pFileAccess(nullptr), m_pPool(pPool) {}
-
-CPDF_SyntaxParser::~CPDF_SyntaxParser() {
-}
+CPDF_SyntaxParser::~CPDF_SyntaxParser() = default;
 
 bool CPDF_SyntaxParser::GetCharAt(FX_FILESIZE pos, uint8_t& ch) {
   AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);

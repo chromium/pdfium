@@ -198,10 +198,11 @@ class CPDF_Parser {
   bool InitSyntaxParser(const RetainPtr<IFX_SeekableReadStream>& file_access);
   bool ParseFileVersion();
 
-  UnownedPtr<CPDF_Document> m_pDocument;
   ObjectType GetObjectType(uint32_t objnum) const;
   ObjectType GetObjectTypeFromCrossRefStreamType(
       int cross_ref_stream_type) const;
+
+  UnownedPtr<CPDF_Document> m_pDocument;
 
   bool m_bHasParsed;
   bool m_bXRefStream;
