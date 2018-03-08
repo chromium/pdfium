@@ -102,11 +102,11 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
 
  private:
   // IPDF_FormNotify:
-  int BeforeValueChange(CPDF_FormField* pField,
-                        const WideString& csValue) override;
+  bool BeforeValueChange(CPDF_FormField* pField,
+                         const WideString& csValue) override;
   void AfterValueChange(CPDF_FormField* pField) override;
-  int BeforeSelectionChange(CPDF_FormField* pField,
-                            const WideString& csValue) override;
+  bool BeforeSelectionChange(CPDF_FormField* pField,
+                             const WideString& csValue) override;
   void AfterSelectionChange(CPDF_FormField* pField) override;
   void AfterCheckedStatusChange(CPDF_FormField* pField) override;
   void AfterFormReset(CPDF_InterForm* pForm) override;

@@ -622,16 +622,14 @@ std::vector<CPDF_FormField*> CPDFSDK_InterForm::GetFieldFromObjects(
   return fields;
 }
 
-int CPDFSDK_InterForm::BeforeValueChange(CPDF_FormField* pField,
-                                         const WideString& csValue) {
+bool CPDFSDK_InterForm::BeforeValueChange(CPDF_FormField* pField,
+                                          const WideString& csValue) {
   FormFieldType fieldType = pField->GetFieldType();
   if (!IsFormFieldTypeComboOrText(fieldType))
-    return 0;
+    return true;
   if (!OnKeyStrokeCommit(pField, csValue))
-    return -1;
-  if (!OnValidate(pField, csValue))
-    return -1;
-  return 1;
+    return false;
+  return OnValidate(pField, csValue);
 }
 
 void CPDFSDK_InterForm::AfterValueChange(CPDF_FormField* pField) {
@@ -650,15 +648,13 @@ void CPDFSDK_InterForm::AfterValueChange(CPDF_FormField* pField) {
   UpdateField(pField);
 }
 
-int CPDFSDK_InterForm::BeforeSelectionChange(CPDF_FormField* pField,
-                                             const WideString& csValue) {
+bool CPDFSDK_InterForm::BeforeSelectionChange(CPDF_FormField* pField,
+                                              const WideString& csValue) {
   if (pField->GetFieldType() != FormFieldType::kListBox)
-    return 0;
+    return true;
   if (!OnKeyStrokeCommit(pField, csValue))
-    return -1;
-  if (!OnValidate(pField, csValue))
-    return -1;
-  return 1;
+    return false;
+  return OnValidate(pField, csValue);
 }
 
 void CPDFSDK_InterForm::AfterSelectionChange(CPDF_FormField* pField) {

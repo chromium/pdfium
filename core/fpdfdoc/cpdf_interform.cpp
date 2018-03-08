@@ -1203,11 +1203,11 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   FormFieldType fieldType = pField->GetFieldType();
   if (bNotify && m_pFormNotify) {
     if (fieldType == FormFieldType::kListBox) {
-      if (m_pFormNotify->BeforeSelectionChange(pField, csWValue) < 0)
+      if (!m_pFormNotify->BeforeSelectionChange(pField, csWValue))
         return;
     } else if (fieldType == FormFieldType::kComboBox ||
                fieldType == FormFieldType::kTextField) {
-      if (m_pFormNotify->BeforeValueChange(pField, csWValue) < 0)
+      if (!m_pFormNotify->BeforeValueChange(pField, csWValue))
         return;
     }
   }

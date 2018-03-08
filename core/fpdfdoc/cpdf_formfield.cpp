@@ -928,7 +928,7 @@ void CPDF_FormField::LoadDA() {
 bool CPDF_FormField::NotifyBeforeSelectionChange(const WideString& value) {
   if (!m_pForm->GetFormNotify())
     return true;
-  return m_pForm->GetFormNotify()->BeforeSelectionChange(this, value) >= 0;
+  return m_pForm->GetFormNotify()->BeforeSelectionChange(this, value);
 }
 
 void CPDF_FormField::NotifyAfterSelectionChange() {
@@ -940,7 +940,7 @@ void CPDF_FormField::NotifyAfterSelectionChange() {
 bool CPDF_FormField::NotifyBeforeValueChange(const WideString& value) {
   if (!m_pForm->GetFormNotify())
     return true;
-  return m_pForm->GetFormNotify()->BeforeValueChange(this, value) >= 0;
+  return m_pForm->GetFormNotify()->BeforeValueChange(this, value);
 }
 
 void CPDF_FormField::NotifyAfterValueChange() {
