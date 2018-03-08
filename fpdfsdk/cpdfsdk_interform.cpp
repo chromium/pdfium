@@ -680,16 +680,8 @@ void CPDFSDK_InterForm::AfterCheckedStatusChange(CPDF_FormField* pField) {
   UpdateField(pField);
 }
 
-int CPDFSDK_InterForm::BeforeFormReset(CPDF_InterForm* pForm) {
-  return 0;
-}
-
 void CPDFSDK_InterForm::AfterFormReset(CPDF_InterForm* pForm) {
   OnCalculate(nullptr);
-}
-
-int CPDFSDK_InterForm::BeforeFormImportData(CPDF_InterForm* pForm) {
-  return 0;
 }
 
 bool CPDFSDK_InterForm::IsNeedHighLight(FormFieldType fieldType) {

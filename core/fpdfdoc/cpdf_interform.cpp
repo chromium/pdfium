@@ -901,9 +901,6 @@ int CPDF_InterForm::GetFormAlignment() const {
 bool CPDF_InterForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
                                bool bIncludeOrExclude,
                                bool bNotify) {
-  if (bNotify && m_pFormNotify && m_pFormNotify->BeforeFormReset(this) < 0)
-    return false;
-
   size_t nCount = m_pFieldTree->m_Root.CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
@@ -919,9 +916,6 @@ bool CPDF_InterForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
 }
 
 bool CPDF_InterForm::ResetForm(bool bNotify) {
-  if (bNotify && m_pFormNotify && m_pFormNotify->BeforeFormReset(this) < 0)
-    return false;
-
   size_t nCount = m_pFieldTree->m_Root.CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
