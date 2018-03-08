@@ -604,3 +604,24 @@ void CFWL_DateTimePicker::DisForm_OnFocusChanged(CFWL_Message* pMsg,
   rtInvalidate.Inflate(2, 2);
   RepaintRect(rtInvalidate);
 }
+
+void CFWL_DateTimePicker::GetPopupPos(float fMinHeight,
+                                      float fMaxHeight,
+                                      const CFX_RectF& rtAnchor,
+                                      CFX_RectF& rtPopup) {
+  if (m_pWidgetMgr->IsFormDisabled()) {
+    m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight, rtAnchor,
+                                     rtPopup);
+    return;
+  }
+
+  CFX_PointF point = TransformTo(nullptr, CFX_PointF());
+  if (rtAnchor.bottom() + point.y > 0.0f) {
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
+                        rtPopup.width, rtPopup.height);
+  } else {
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
+                        rtPopup.height);
+  }
+  rtPopup.Offset(point.x, point.y);
+}

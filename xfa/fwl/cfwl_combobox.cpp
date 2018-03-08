@@ -1014,3 +1014,32 @@ void CFWL_ComboBox::DisForm_OnKey(CFWL_MessageKey* pMsg) {
   if (m_pEdit)
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
 }
+
+void CFWL_ComboBox::GetPopupPos(float fMinHeight,
+                                float fMaxHeight,
+                                const CFX_RectF& rtAnchor,
+                                CFX_RectF& rtPopup) {
+  if (m_pWidgetMgr->IsFormDisabled()) {
+    m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight, rtAnchor,
+                                     rtPopup);
+    return;
+  }
+
+  float fPopHeight = rtPopup.height;
+  if (rtPopup.height > fMaxHeight)
+    fPopHeight = fMaxHeight;
+  else if (rtPopup.height < fMinHeight)
+    fPopHeight = fMinHeight;
+
+  float fWidth = std::max(rtAnchor.width, rtPopup.width);
+  float fBottom = rtAnchor.bottom() + fPopHeight;
+  CFX_PointF point = TransformTo(nullptr, CFX_PointF());
+  if (fBottom + point.y > 0.0f) {
+    rtPopup =
+        CFX_RectF(rtAnchor.left, rtAnchor.top - fPopHeight, fWidth, fPopHeight);
+  } else {
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), fWidth, fPopHeight);
+  }
+
+  rtPopup.Offset(point.x, point.y);
+}

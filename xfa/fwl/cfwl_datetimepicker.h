@@ -75,6 +75,10 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   WideString FormatDateString(int32_t iYear, int32_t iMonth, int32_t iDay);
   void ResetEditAlignment();
   void InitProxyForm();
+  void GetPopupPos(float fMinHeight,
+                   float fMaxHeight,
+                   const CFX_RectF& rtAnchor,
+                   CFX_RectF& rtPopup);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);

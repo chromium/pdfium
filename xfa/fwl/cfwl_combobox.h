@@ -116,6 +116,11 @@ class CFWL_ComboBox : public CFWL_Widget {
   void ResetEditAlignment();
   void ResetListItemAlignment();
   void InitProxyForm();
+  void GetPopupPos(float fMinHeight,
+                   float fMaxHeight,
+                   const CFX_RectF& rtAnchor,
+                   CFX_RectF& rtPopup);
+
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);

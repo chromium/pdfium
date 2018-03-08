@@ -136,10 +136,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                     FDE_TextAlignment iTTOAlign,
                     CFX_RectF& rect);
   void SetGrab(bool bSet);
-  void GetPopupPos(float fMinHeight,
-                   float fMaxHeight,
-                   const CFX_RectF& rtAnchor,
-                   CFX_RectF& rtPopup);
   void RegisterEventTarget(CFWL_Widget* pEventSource);
   void UnregisterEventTarget();
   void DispatchEvent(CFWL_Event* pEvent);
@@ -163,18 +159,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   bool IsPopup() const;
   bool IsChild() const;
   CFWL_Widget* GetRootOuter();
-  bool GetPopupPosMenu(float fMinHeight,
-                       float fMaxHeight,
-                       const CFX_RectF& rtAnchor,
-                       CFX_RectF& rtPopup);
-  bool GetPopupPosComboBox(float fMinHeight,
-                           float fMaxHeight,
-                           const CFX_RectF& rtAnchor,
-                           CFX_RectF& rtPopup);
-  bool GetPopupPosGeneral(float fMinHeight,
-                          float fMaxHeight,
-                          const CFX_RectF& rtAnchor,
-                          CFX_RectF& rtPopup);
   void DrawBackground(CXFA_Graphics* pGraphics,
                       CFWL_Part iPartBk,
                       IFWL_ThemeProvider* pTheme,
