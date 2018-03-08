@@ -385,8 +385,11 @@ void CFWL_ScrollBar::OnLButtonDown(const CFX_PointF& point) {
 }
 
 void CFWL_ScrollBar::OnLButtonUp(const CFX_PointF& point) {
-  if (m_pTimerInfo)
+  if (m_pTimerInfo) {
     m_pTimerInfo->StopTimer();
+    m_pTimerInfo = nullptr;
+  }
+
   m_bMouseDown = false;
   DoMouseUp(0, m_rtMinBtn, m_iMinButtonState, point);
   DoMouseUp(1, m_rtThumb, m_iThumbButtonState, point);
@@ -487,8 +490,10 @@ CFWL_ScrollBar::Timer::Timer(CFWL_ScrollBar* pToolTip) : CFWL_Timer(pToolTip) {}
 
 void CFWL_ScrollBar::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   CFWL_ScrollBar* pScrollBar = static_cast<CFWL_ScrollBar*>(m_pWidget.Get());
-  if (pScrollBar->m_pTimerInfo)
+  if (pScrollBar->m_pTimerInfo) {
     pScrollBar->m_pTimerInfo->StopTimer();
+    pScrollBar->m_pTimerInfo = nullptr;
+  }
 
   if (!pScrollBar->SendEvent())
     pScrollBar->m_pTimerInfo = StartTimer(0, true);
