@@ -692,10 +692,6 @@ int CPDFSDK_InterForm::BeforeFormImportData(CPDF_InterForm* pForm) {
   return 0;
 }
 
-void CPDFSDK_InterForm::AfterFormImportData(CPDF_InterForm* pForm) {
-  OnCalculate(nullptr);
-}
-
 bool CPDFSDK_InterForm::IsNeedHighLight(FormFieldType fieldType) {
   if (fieldType == FormFieldType::kUnknown)
     return false;

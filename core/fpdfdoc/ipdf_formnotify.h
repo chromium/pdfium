@@ -26,7 +26,6 @@ class IPDF_FormNotify {
   virtual int BeforeFormReset(CPDF_InterForm* pForm) = 0;
   virtual void AfterFormReset(CPDF_InterForm* pForm) = 0;
   virtual int BeforeFormImportData(CPDF_InterForm* pForm) = 0;
-  virtual void AfterFormImportData(CPDF_InterForm* pForm) = 0;
 };
 
 #endif  // CORE_FPDFDOC_IPDF_FORMNOTIFY_H_
