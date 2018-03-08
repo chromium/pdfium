@@ -77,7 +77,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
 
   bool DoAction_Hide(const CPDF_Action& action);
   bool DoAction_SubmitForm(const CPDF_Action& action);
-  bool DoAction_ResetForm(const CPDF_Action& action);
+  void DoAction_ResetForm(const CPDF_Action& action);
 
   std::vector<CPDF_FormField*> GetFieldFromObjects(
       const std::vector<CPDF_Object*>& objects) const;

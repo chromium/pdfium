@@ -515,11 +515,11 @@ bool CPDFSDK_ActionHandler::DoAction_SubmitForm(
   return pInterForm->DoAction_SubmitForm(action);
 }
 
-bool CPDFSDK_ActionHandler::DoAction_ResetForm(
+void CPDFSDK_ActionHandler::DoAction_ResetForm(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-  return pInterForm->DoAction_ResetForm(action);
+  pInterForm->DoAction_ResetForm(action);
 }
 
 void CPDFSDK_ActionHandler::RunScriptForAction(

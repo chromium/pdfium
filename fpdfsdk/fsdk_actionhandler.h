@@ -120,7 +120,7 @@ class CPDFSDK_ActionHandler {
                      CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_SubmitForm(const CPDF_Action& action,
                            CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  bool DoAction_ResetForm(const CPDF_Action& action,
+  void DoAction_ResetForm(const CPDF_Action& action,
                           CPDFSDK_FormFillEnvironment* pFormFillEnv);
 };
 

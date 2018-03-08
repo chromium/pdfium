@@ -592,19 +592,21 @@ ByteString CPDFSDK_InterForm::ExportFormToFDFTextBuf() {
   return pFDF ? pFDF->WriteToString() : ByteString();
 }
 
-bool CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
+void CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
   CPDF_Dictionary* pActionDict = action.GetDict();
-  if (!pActionDict->KeyExist("Fields"))
-    return m_pInterForm->ResetForm(true);
+  if (!pActionDict->KeyExist("Fields")) {
+    m_pInterForm->ResetForm(true);
+    return;
+  }
 
   CPDF_ActionFields af(&action);
   uint32_t dwFlags = action.GetFlags();
 
   std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
   std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
-  return m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), true);
+  m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), true);
 }
 
 std::vector<CPDF_FormField*> CPDFSDK_InterForm::GetFieldFromObjects(

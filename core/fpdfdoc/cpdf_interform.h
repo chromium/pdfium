@@ -80,10 +80,10 @@ class CPDF_InterForm {
       bool bIncludeOrExclude,
       bool bSimpleFileSpec) const;
 
-  bool ResetForm(const std::vector<CPDF_FormField*>& fields,
+  void ResetForm(const std::vector<CPDF_FormField*>& fields,
                  bool bIncludeOrExclude,
                  bool bNotify);
-  bool ResetForm(bool bNotify);
+  void ResetForm(bool bNotify);
 
   void SetFormNotify(IPDF_FormNotify* pNotify);
   bool HasXFAForm() const;
