@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 
+#include <vector>
+
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
 CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, uint32_t dwSize)
@@ -18,9 +20,12 @@ std::pair<const uint8_t*, uint32_t> CPDF_SimpleParser::ParseWord() {
   const uint8_t* pStart = nullptr;
   uint8_t dwSize = 0;
   uint8_t ch;
+
+  // Skip whitespace and comment lines.
   while (1) {
     if (m_dwSize <= m_dwCurPos)
       return std::make_pair(pStart, dwSize);
+
     ch = m_pData[m_dwCurPos++];
     while (PDFCharIsWhitespace(ch)) {
       if (m_dwSize <= m_dwCurPos)
@@ -34,6 +39,7 @@ std::pair<const uint8_t*, uint32_t> CPDF_SimpleParser::ParseWord() {
     while (1) {
       if (m_dwSize <= m_dwCurPos)
         return std::make_pair(pStart, dwSize);
+
       ch = m_pData[m_dwCurPos++];
       if (PDFCharIsLineEnding(ch))
         break;
@@ -43,36 +49,41 @@ std::pair<const uint8_t*, uint32_t> CPDF_SimpleParser::ParseWord() {
   uint32_t start_pos = m_dwCurPos - 1;
   pStart = m_pData + start_pos;
   if (PDFCharIsDelimiter(ch)) {
+    // Find names
     if (ch == '/') {
       while (1) {
         if (m_dwSize <= m_dwCurPos)
-          return std::make_pair(pStart, dwSize);
+          break;
+
         ch = m_pData[m_dwCurPos++];
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_dwCurPos--;
           dwSize = m_dwCurPos - start_pos;
-          return std::make_pair(pStart, dwSize);
+          break;
         }
       }
-    } else {
-      dwSize = 1;
-      if (ch == '<') {
-        if (m_dwSize <= m_dwCurPos)
-          return std::make_pair(pStart, dwSize);
-        ch = m_pData[m_dwCurPos++];
-        if (ch == '<')
-          dwSize = 2;
-        else
-          m_dwCurPos--;
-      } else if (ch == '>') {
-        if (m_dwSize <= m_dwCurPos)
-          return std::make_pair(pStart, dwSize);
-        ch = m_pData[m_dwCurPos++];
-        if (ch == '>')
-          dwSize = 2;
-        else
-          m_dwCurPos--;
-      }
+      return std::make_pair(pStart, dwSize);
+    }
+
+    dwSize = 1;
+    if (ch == '<') {
+      if (m_dwSize <= m_dwCurPos)
+        return std::make_pair(pStart, dwSize);
+
+      ch = m_pData[m_dwCurPos++];
+      if (ch == '<')
+        dwSize = 2;
+      else
+        m_dwCurPos--;
+    } else if (ch == '>') {
+      if (m_dwSize <= m_dwCurPos)
+        return std::make_pair(pStart, dwSize);
+
+      ch = m_pData[m_dwCurPos++];
+      if (ch == '>')
+        dwSize = 2;
+      else
+        m_dwCurPos--;
     }
     return std::make_pair(pStart, dwSize);
   }
@@ -96,41 +107,46 @@ ByteStringView CPDF_SimpleParser::GetWord() {
   const uint8_t* pStart;
   uint32_t dwSize;
   std::tie(pStart, dwSize) = ParseWord();
-  if (dwSize == 1 && pStart[0] == '<') {
-    while (m_dwCurPos < m_dwSize && m_pData[m_dwCurPos] != '>') {
+
+  if (dwSize != 1)
+    return ByteStringView(pStart, dwSize);
+
+  if (pStart[0] == '<') {
+    while (m_dwCurPos < m_dwSize && m_pData[m_dwCurPos] != '>')
       m_dwCurPos++;
-    }
-    if (m_dwCurPos < m_dwSize) {
+
+    if (m_dwCurPos < m_dwSize)
       m_dwCurPos++;
-    }
+
     return ByteStringView(pStart,
                           static_cast<size_t>(m_dwCurPos - (pStart - m_pData)));
   }
-  if (dwSize == 1 && pStart[0] == '(') {
+
+  if (pStart[0] == '(') {
     int level = 1;
     while (m_dwCurPos < m_dwSize) {
       if (m_pData[m_dwCurPos] == ')') {
         level--;
-        if (level == 0) {
+        if (level == 0)
           break;
-        }
       }
+
       if (m_pData[m_dwCurPos] == '\\') {
-        if (m_dwSize <= m_dwCurPos) {
+        if (m_dwSize <= m_dwCurPos)
           break;
-        }
+
         m_dwCurPos++;
       } else if (m_pData[m_dwCurPos] == '(') {
         level++;
       }
-      if (m_dwSize <= m_dwCurPos) {
+      if (m_dwSize <= m_dwCurPos)
         break;
-      }
+
       m_dwCurPos++;
     }
-    if (m_dwCurPos < m_dwSize) {
+    if (m_dwCurPos < m_dwSize)
       m_dwCurPos++;
-    }
+
     return ByteStringView(pStart,
                           static_cast<size_t>(m_dwCurPos - (pStart - m_pData)));
   }
@@ -140,30 +156,29 @@ ByteStringView CPDF_SimpleParser::GetWord() {
 bool CPDF_SimpleParser::FindTagParamFromStart(const ByteStringView& token,
                                               int nParams) {
   nParams++;
-  uint32_t* pBuf = FX_Alloc(uint32_t, nParams);
+
+  std::vector<uint32_t> pBuf(nParams);
   int buf_index = 0;
   int buf_count = 0;
   m_dwCurPos = 0;
   while (1) {
     pBuf[buf_index++] = m_dwCurPos;
-    if (buf_index == nParams) {
+    if (buf_index == nParams)
       buf_index = 0;
-    }
+
     buf_count++;
-    if (buf_count > nParams) {
+    if (buf_count > nParams)
       buf_count = nParams;
-    }
+
     ByteStringView word = GetWord();
-    if (word.IsEmpty()) {
-      FX_Free(pBuf);
+    if (word.IsEmpty())
       return false;
-    }
+
     if (word == token) {
-      if (buf_count < nParams) {
+      if (buf_count < nParams)
         continue;
-      }
+
       m_dwCurPos = pBuf[buf_index];
-      FX_Free(pBuf);
       return true;
     }
   }
