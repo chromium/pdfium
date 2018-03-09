@@ -30,13 +30,9 @@ class CPDF_DefaultAppearance {
   bool HasFont();
   ByteString GetFont(float* fFontSize);
 
-  bool HasColor(PaintOperation nOperation = PaintOperation::FILL);
-  void GetColor(int& iColorType,
-                float fc[4],
-                PaintOperation nOperation = PaintOperation::FILL);
-  void GetColor(FX_ARGB& color,
-                int& iColorType,
-                PaintOperation nOperation = PaintOperation::FILL);
+  bool HasColor();
+  void GetColor(int& iColorType, float fc[4]);
+  void GetColor(FX_ARGB& color, int& iColorType);
 
  private:
   ByteString m_csDA;
