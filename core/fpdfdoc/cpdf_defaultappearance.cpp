@@ -20,22 +20,6 @@ bool CPDF_DefaultAppearance::HasFont() {
   return syntax.FindTagParamFromStart("Tf", 2);
 }
 
-ByteString CPDF_DefaultAppearance::GetFontString() {
-  ByteString csFont;
-  if (m_csDA.IsEmpty())
-    return csFont;
-
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (syntax.FindTagParamFromStart("Tf", 2)) {
-    csFont += syntax.GetWord();
-    csFont += " ";
-    csFont += syntax.GetWord();
-    csFont += " ";
-    csFont += syntax.GetWord();
-  }
-  return csFont;
-}
-
 ByteString CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
@@ -66,45 +50,6 @@ bool CPDF_DefaultAppearance::HasColor(PaintOperation nOperation) {
   }
   return syntax.FindTagParamFromStart(
       (nOperation == PaintOperation::STROKE ? "K" : "k"), 4);
-}
-
-ByteString CPDF_DefaultAppearance::GetColorString(PaintOperation nOperation) {
-  ByteString csColor;
-  if (m_csDA.IsEmpty())
-    return csColor;
-
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (syntax.FindTagParamFromStart(
-          (nOperation == PaintOperation::STROKE ? "G" : "g"), 1)) {
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-    return csColor;
-  }
-  if (syntax.FindTagParamFromStart(
-          (nOperation == PaintOperation::STROKE ? "RG" : "rg"), 3)) {
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-    return csColor;
-  }
-  if (syntax.FindTagParamFromStart(
-          (nOperation == PaintOperation::STROKE ? "K" : "k"), 4)) {
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-    csColor += " ";
-    csColor += syntax.GetWord();
-  }
-  return csColor;
 }
 
 void CPDF_DefaultAppearance::GetColor(int& iColorType,
@@ -180,42 +125,4 @@ void CPDF_DefaultAppearance::GetColor(FX_ARGB& color,
     color = ArgbEncode(255, (int)(r * 255 + 0.5f), (int)(g * 255 + 0.5f),
                        (int)(b * 255 + 0.5f));
   }
-}
-
-bool CPDF_DefaultAppearance::HasTextMatrix() {
-  if (m_csDA.IsEmpty())
-    return false;
-
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  return syntax.FindTagParamFromStart("Tm", 6);
-}
-
-ByteString CPDF_DefaultAppearance::GetTextMatrixString() {
-  ByteString csTM;
-  if (m_csDA.IsEmpty())
-    return csTM;
-
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (syntax.FindTagParamFromStart("Tm", 6)) {
-    for (int i = 0; i < 6; i++) {
-      csTM += syntax.GetWord();
-      csTM += " ";
-    }
-    csTM += syntax.GetWord();
-  }
-  return csTM;
-}
-
-CFX_Matrix CPDF_DefaultAppearance::GetTextMatrix() {
-  if (m_csDA.IsEmpty())
-    return CFX_Matrix();
-
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (!syntax.FindTagParamFromStart("Tm", 6))
-    return CFX_Matrix();
-
-  float f[6];
-  for (int i = 0; i < 6; i++)
-    f[i] = FX_atof(syntax.GetWord());
-  return CFX_Matrix(f);
 }

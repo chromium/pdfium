@@ -28,21 +28,15 @@ class CPDF_DefaultAppearance {
   ByteString GetStr() const { return m_csDA; }
 
   bool HasFont();
-  ByteString GetFontString();
   ByteString GetFont(float* fFontSize);
 
   bool HasColor(PaintOperation nOperation = PaintOperation::FILL);
-  ByteString GetColorString(PaintOperation nOperation = PaintOperation::FILL);
   void GetColor(int& iColorType,
                 float fc[4],
                 PaintOperation nOperation = PaintOperation::FILL);
   void GetColor(FX_ARGB& color,
                 int& iColorType,
                 PaintOperation nOperation = PaintOperation::FILL);
-
-  bool HasTextMatrix();
-  ByteString GetTextMatrixString();
-  CFX_Matrix GetTextMatrix();
 
  private:
   ByteString m_csDA;
