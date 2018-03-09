@@ -283,9 +283,9 @@ bool CJS_PublicMethods::MaskSatisfied(wchar_t c_Change, wchar_t c_Mask) {
     case L'9':
       return !!std::iswdigit(c_Change);
     case L'A':
-      return FXSYS_iswalpha(c_Change);
+      return FXSYS_iswASCIIalpha(c_Change);
     case L'O':
-      return FXSYS_iswalnum(c_Change);
+      return FXSYS_iswASCIIalnum(c_Change);
     case L'X':
       return true;
     default:

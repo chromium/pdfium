@@ -97,7 +97,7 @@ FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
   int cc = 0;
   const wchar_t* str = wsValue.unterminated_c_str();
   int len = wsValue.GetLength();
-  while (FXSYS_iswspace(str[cc]) && cc < len)
+  while (FXSYS_iswASCIIspace(str[cc]) && cc < len)
     cc++;
 
   if (cc >= len)
@@ -112,7 +112,7 @@ FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
   }
   if (cc < len && str[cc] == ',') {
     cc++;
-    while (FXSYS_iswspace(str[cc]) && cc < len)
+    while (FXSYS_iswASCIIspace(str[cc]) && cc < len)
       cc++;
 
     while (cc < len) {
@@ -124,7 +124,7 @@ FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
     }
     if (cc < len && str[cc] == ',') {
       cc++;
-      while (FXSYS_iswspace(str[cc]) && cc < len)
+      while (FXSYS_iswASCIIspace(str[cc]) && cc < len)
         cc++;
 
       while (cc < len) {

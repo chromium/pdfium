@@ -246,7 +246,7 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
   size_t pPos = aPos.value();  // Used to track the position of '@' or '.'.
   for (size_t i = aPos.value(); i > 0; i--) {
     wchar_t ch = (*str)[i - 1];
-    if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch))
+    if (ch == L'_' || ch == L'-' || FXSYS_iswASCIIalnum(ch))
       continue;
 
     if (ch != L'.' || i == pPos || i == 1) {
@@ -282,7 +282,7 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
   pPos = 0;  // Used to track the position of '.'.
   for (size_t i = aPos.value() + 1; i < nLen; i++) {
     wchar_t wch = (*str)[i];
-    if (wch == L'-' || FXSYS_iswalnum(wch))
+    if (wch == L'-' || FXSYS_iswASCIIalnum(wch))
       continue;
 
     if (wch != L'.' || i == pPos + 1) {

@@ -264,9 +264,9 @@ CJS_Return CJS_Util::printx(CJS_Runtime* pRuntime,
 enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
 
 static wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
-  if (eMode == kLowerCase && FXSYS_isupper(input))
+  if (eMode == kLowerCase && FXSYS_isASCIIupper(input))
     return input | 0x20;
-  if (eMode == kUpperCase && FXSYS_islower(input))
+  if (eMode == kUpperCase && FXSYS_isASCIIlower(input))
     return input & ~0x20;
   return input;
 }
@@ -311,7 +311,7 @@ WideString CJS_Util::printx(const WideString& wsFormat,
       } break;
       case 'X': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (FXSYS_iswalnum(wsSource[iSourceIdx])) {
+          if (FXSYS_iswASCIIalnum(wsSource[iSourceIdx])) {
             wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
             ++iFormatIdx;
           }
@@ -322,7 +322,7 @@ WideString CJS_Util::printx(const WideString& wsFormat,
       } break;
       case 'A': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (FXSYS_iswalpha(wsSource[iSourceIdx])) {
+          if (FXSYS_iswASCIIalpha(wsSource[iSourceIdx])) {
             wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
             ++iFormatIdx;
           }

@@ -306,7 +306,7 @@ CXFA_FMToken CXFA_FMLexer::AdvanceForNumber() {
   wchar_t* end = nullptr;
   if (m_cursor)
     wcstod(const_cast<wchar_t*>(m_cursor), &end);
-  if (!end || FXSYS_iswalpha(*end)) {
+  if (!end || FXSYS_iswASCIIalpha(*end)) {
     RaiseError();
     return CXFA_FMToken();
   }

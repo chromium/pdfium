@@ -1892,7 +1892,7 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(const char* pData,
     iIndex += kSubSecondLength;
   }
 
-  if (iIndex < iLength && FXSYS_tolower(pData[iIndex]) == 'z')
+  if (iIndex < iLength && FXSYS_toASCIIlower(pData[iIndex]) == 'z')
     return true;
 
   int32_t iSign = 1;

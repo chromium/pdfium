@@ -18,7 +18,7 @@
 namespace {
 
 bool IsSelectorStart(wchar_t wch) {
-  return wch == '.' || wch == '#' || wch == '*' || FXSYS_iswalpha(wch);
+  return wch == '.' || wch == '#' || wch == '*' || FXSYS_iswASCIIalpha(wch);
 }
 
 }  // namespace

@@ -25,31 +25,31 @@ float FXSYS_wcstof(const wchar_t* pwsStr,
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count);
 int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count);
 
-inline bool FXSYS_islower(int32_t ch) {
+inline bool FXSYS_isASCIIlower(int32_t ch) {
   return ch >= 'a' && ch <= 'z';
 }
 
-inline bool FXSYS_isupper(int32_t ch) {
+inline bool FXSYS_isASCIIupper(int32_t ch) {
   return ch >= 'A' && ch <= 'Z';
 }
 
-inline int32_t FXSYS_tolower(int32_t ch) {
+inline int32_t FXSYS_toASCIIlower(int32_t ch) {
   return ch < 'A' || ch > 'Z' ? ch : (ch + 0x20);
 }
 
-inline int32_t FXSYS_toupper(int32_t ch) {
+inline int32_t FXSYS_toASCIIupper(int32_t ch) {
   return ch < 'a' || ch > 'z' ? ch : (ch - 0x20);
 }
 
-inline bool FXSYS_iswalpha(wchar_t wch) {
-  return FXSYS_isupper(wch) || FXSYS_islower(wch);
+inline bool FXSYS_iswASCIIalpha(wchar_t wch) {
+  return FXSYS_isASCIIupper(wch) || FXSYS_isASCIIlower(wch);
 }
 
-inline bool FXSYS_iswalnum(wchar_t wch) {
-  return FXSYS_iswalpha(wch) || std::iswdigit(wch);
+inline bool FXSYS_iswASCIIalnum(wchar_t wch) {
+  return FXSYS_iswASCIIalpha(wch) || std::iswdigit(wch);
 }
 
-inline bool FXSYS_iswspace(wchar_t c) {
+inline bool FXSYS_iswASCIIspace(wchar_t c) {
   return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
 }
 

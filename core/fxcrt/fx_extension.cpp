@@ -68,8 +68,8 @@ int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count) {
   ASSERT(s1 && s2 && count > 0);
   wchar_t wch1 = 0, wch2 = 0;
   while (count-- > 0) {
-    wch1 = static_cast<wchar_t>(FXSYS_tolower(*s1++));
-    wch2 = static_cast<wchar_t>(FXSYS_tolower(*s2++));
+    wch1 = static_cast<wchar_t>(FXSYS_toASCIIlower(*s1++));
+    wch2 = static_cast<wchar_t>(FXSYS_toASCIIlower(*s2++));
     if (wch1 != wch2)
       break;
   }
@@ -80,7 +80,7 @@ uint32_t FX_HashCode_GetA(const ByteStringView& str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     for (const auto& c : str)
-      dwHashCode = 31 * dwHashCode + FXSYS_tolower(c);
+      dwHashCode = 31 * dwHashCode + FXSYS_toASCIIlower(c);
   } else {
     for (const auto& c : str)
       dwHashCode = 31 * dwHashCode + c;
@@ -92,7 +92,7 @@ uint32_t FX_HashCode_GetW(const WideStringView& str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
     for (const auto& c : str)
-      dwHashCode = 1313 * dwHashCode + FXSYS_tolower(c);
+      dwHashCode = 1313 * dwHashCode + FXSYS_toASCIIlower(c);
   } else {
     for (const auto& c : str)
       dwHashCode = 1313 * dwHashCode + c;
