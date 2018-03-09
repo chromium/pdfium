@@ -79,35 +79,29 @@ void CPDF_DefaultAppearance::GetColor(int& iColorType, float fc[4]) {
 
 void CPDF_DefaultAppearance::GetColor(FX_ARGB& color, int& iColorType) {
   color = 0;
-  iColorType = CFX_Color::kTransparent;
-  if (m_csDA.IsEmpty())
+  float values[4];
+  GetColor(iColorType, values);
+  if (iColorType == CFX_Color::kTransparent)
     return;
 
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (syntax.FindTagParamFromStart("g", 1)) {
-    iColorType = CFX_Color::kGray;
-    float g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
-    color = ArgbEncode(255, (int)g, (int)g, (int)g);
+  if (iColorType == CFX_Color::kGray) {
+    int g = static_cast<int>(values[0] * 255 + 0.5f);
+    color = ArgbEncode(255, g, g, g);
     return;
   }
-  if (syntax.FindTagParamFromStart("rg", 3)) {
-    iColorType = CFX_Color::kRGB;
-    float r = FX_atof(syntax.GetWord()) * 255 + 0.5f;
-    float g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
-    float b = FX_atof(syntax.GetWord()) * 255 + 0.5f;
-    color = ArgbEncode(255, (int)r, (int)g, (int)b);
+  if (iColorType == CFX_Color::kRGB) {
+    int r = static_cast<int>(values[0] * 255 + 0.5f);
+    int g = static_cast<int>(values[1] * 255 + 0.5f);
+    int b = static_cast<int>(values[2] * 255 + 0.5f);
+    color = ArgbEncode(255, r, g, b);
     return;
   }
-  if (syntax.FindTagParamFromStart("k", 4)) {
-    iColorType = CFX_Color::kCMYK;
-    float c = FX_atof(syntax.GetWord());
-    float m = FX_atof(syntax.GetWord());
-    float y = FX_atof(syntax.GetWord());
-    float k = FX_atof(syntax.GetWord());
-    float r = 1.0f - std::min(1.0f, c + k);
-    float g = 1.0f - std::min(1.0f, m + k);
-    float b = 1.0f - std::min(1.0f, y + k);
-    color = ArgbEncode(255, (int)(r * 255 + 0.5f), (int)(g * 255 + 0.5f),
-                       (int)(b * 255 + 0.5f));
+  if (iColorType == CFX_Color::kCMYK) {
+    float r = 1.0f - std::min(1.0f, values[0] + values[3]);
+    float g = 1.0f - std::min(1.0f, values[1] + values[3]);
+    float b = 1.0f - std::min(1.0f, values[2] + values[3]);
+    color = ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
+                       static_cast<int>(g * 255 + 0.5f),
+                       static_cast<int>(b * 255 + 0.5f));
   }
 }

@@ -14,18 +14,13 @@
 #include "core/fxge/fx_dib.h"
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
-enum class PaintOperation { STROKE, FILL };
 
 class CPDF_DefaultAppearance {
  public:
   CPDF_DefaultAppearance() {}
   explicit CPDF_DefaultAppearance(const ByteString& csDA) : m_csDA(csDA) {}
-
-  CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA) {
-    m_csDA = cDA.GetStr();
-  }
-
-  ByteString GetStr() const { return m_csDA; }
+  CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA)
+      : m_csDA(cDA.m_csDA) {}
 
   bool HasFont();
   ByteString GetFont(float* fFontSize);

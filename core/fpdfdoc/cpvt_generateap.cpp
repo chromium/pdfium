@@ -40,6 +40,8 @@ struct CPVT_Dash {
 
 namespace {
 
+enum class PaintOperation { STROKE, FILL };
+
 ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                             int32_t nFontIndex,
                             uint16_t Word,
