@@ -641,3 +641,45 @@ TEST_F(FPDFTextEmbeddertest, ControlCharacters) {
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
 }
+
+// Testing that hyphen makers (0x0002) are replacing hard hyphens when
+// the word contains non-ASCII characters.
+TEST_F(FPDFTextEmbeddertest, bug_1029) {
+  EXPECT_TRUE(OpenDocument("bug_1029.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  EXPECT_TRUE(textpage);
+
+  constexpr int page_range_offset = 171;
+  constexpr int page_range_length = 56;
+
+  // This text is:
+  // 'METADATA table. When the split has committed, it noti' followed
+  // by a 'soft hyphen' (0x0002) and then 'fi'.
+  //
+  // The original text has a fi ligature, but that is broken up into
+  // two characters when the PDF is processed.
+  constexpr unsigned int expected[] = {
+      0x004d, 0x0045, 0x0054, 0x0041, 0x0044, 0x0041, 0x0054, 0x0041,
+      0x0020, 0x0074, 0x0061, 0x0062, 0x006c, 0x0065, 0x002e, 0x0020,
+      0x0057, 0x0068, 0x0065, 0x006e, 0x0020, 0x0074, 0x0068, 0x0065,
+      0x0020, 0x0073, 0x0070, 0x006c, 0x0069, 0x0074, 0x0020, 0x0068,
+      0x0061, 0x0073, 0x0020, 0x0063, 0x006f, 0x006d, 0x006d, 0x0069,
+      0x0074, 0x0074, 0x0065, 0x0064, 0x002c, 0x0020, 0x0069, 0x0074,
+      0x0020, 0x006e, 0x006f, 0x0074, 0x0069, 0x0002, 0x0066, 0x0069};
+  static_assert(page_range_length == FX_ArraySize(expected),
+                "Expected should be the same size as the range being "
+                "extracted from page.");
+  EXPECT_LT(page_range_offset + page_range_length,
+            FPDFText_CountChars(textpage));
+
+  for (int i = 0; i < page_range_length; ++i) {
+    EXPECT_EQ(expected[i],
+              FPDFText_GetUnicode(textpage, page_range_offset + i));
+  }
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
