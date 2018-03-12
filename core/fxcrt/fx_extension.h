@@ -50,8 +50,8 @@ inline bool FXSYS_iswalnum(wchar_t c) {
   return u_isalnum(c);
 }
 
-inline bool FXSYS_iswASCIIspace(wchar_t c) {
-  return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
+inline bool FXSYS_iswspace(wchar_t c) {
+  return u_isspace(c);
 }
 
 inline bool FXSYS_isHexDigit(const char c) {

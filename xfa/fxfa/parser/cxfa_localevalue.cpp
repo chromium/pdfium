@@ -202,7 +202,7 @@ double CXFA_LocaleValue::GetDoubleNum() const {
     bool bExpSign = false;
     const wchar_t* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
-    while (FXSYS_iswASCIIspace(str[cc]) && cc < len)
+    while (FXSYS_iswspace(str[cc]) && cc < len)
       cc++;
 
     if (cc >= len)
