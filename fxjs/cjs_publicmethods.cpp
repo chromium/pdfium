@@ -285,7 +285,7 @@ bool CJS_PublicMethods::MaskSatisfied(wchar_t c_Change, wchar_t c_Mask) {
     case L'A':
       return FXSYS_iswASCIIalpha(c_Change);
     case L'O':
-      return FXSYS_iswASCIIalnum(c_Change);
+      return isascii(c_Change) && isalnum(c_Change);
     case L'X':
       return true;
     default:

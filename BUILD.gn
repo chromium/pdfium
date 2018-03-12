@@ -883,6 +883,7 @@ jumbo_static_library("fxcrt") {
   public_deps = [
     ":freetype_common",
     "third_party:pdfium_base",
+    "//third_party/icu:icuuc",
   ]
 
   if (pdf_enable_xfa) {

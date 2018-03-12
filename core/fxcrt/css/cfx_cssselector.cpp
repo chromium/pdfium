@@ -16,9 +16,9 @@ namespace {
 int32_t GetCSSNameLen(const wchar_t* psz, const wchar_t* pEnd) {
   const wchar_t* pStart = psz;
   while (psz < pEnd) {
-    wchar_t wch = *psz;
-    if (!FXSYS_iswASCIIalnum(wch) && wch != '_' && wch != '-')
+    if (!isascii(*psz) || (!isalnum(*psz) && *psz != '_' && *psz != '-')) {
       break;
+    }
     ++psz;
   }
   return psz - pStart;

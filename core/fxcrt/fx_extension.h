@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
+#include "third_party/icu/source/common/unicode/uchar.h"
 
 #define FX_INVALID_OFFSET static_cast<uint32_t>(-1)
 
@@ -45,8 +46,8 @@ inline bool FXSYS_iswASCIIalpha(wchar_t wch) {
   return FXSYS_isASCIIupper(wch) || FXSYS_isASCIIlower(wch);
 }
 
-inline bool FXSYS_iswASCIIalnum(wchar_t wch) {
-  return FXSYS_iswASCIIalpha(wch) || std::iswdigit(wch);
+inline bool FXSYS_iswalnum(wchar_t c) {
+  return u_isalnum(c);
 }
 
 inline bool FXSYS_iswASCIIspace(wchar_t c) {
