@@ -819,7 +819,10 @@ bool CFX_DIBitmap::CalculatePitchAndSize(int height,
   if (width <= 0 || height <= 0)
     return false;
 
-  if ((INT_MAX - 31) / width < (format & 0xFF))
+  if (!(format & 0xff))
+    return false;
+
+  if ((INT_MAX - 31) / width < (format & 0xff))
     return false;
 
   if (!*pitch)
