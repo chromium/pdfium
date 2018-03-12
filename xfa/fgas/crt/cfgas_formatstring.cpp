@@ -1096,7 +1096,7 @@ bool CFGAS_FormatString::ParseText(const WideString& wsSrcText,
         break;
       }
       case 'A':
-        if (FXSYS_iswASCIIalpha(pStrText[iText])) {
+        if (FXSYS_iswalpha(pStrText[iText])) {
           *wsValue += pStrText[iText];
           iText++;
         }
@@ -1110,7 +1110,7 @@ bool CFGAS_FormatString::ParseText(const WideString& wsSrcText,
       case 'O':
       case '0':
         if (FXSYS_isDecimalDigit(pStrText[iText]) ||
-            FXSYS_iswASCIIalpha(pStrText[iText])) {
+            FXSYS_iswalpha(pStrText[iText])) {
           *wsValue += pStrText[iText];
           iText++;
         }
@@ -1815,7 +1815,7 @@ bool CFGAS_FormatString::FormatText(const WideString& wsSrcText,
         break;
       }
       case 'A':
-        if (iText >= iLenText || !FXSYS_iswASCIIalpha(pStrText[iText]))
+        if (iText >= iLenText || !FXSYS_iswalpha(pStrText[iText]))
           return false;
 
         *wsOutput += pStrText[iText++];
@@ -1831,7 +1831,7 @@ bool CFGAS_FormatString::FormatText(const WideString& wsSrcText,
       case 'O':
       case '0':
         if (iText >= iLenText || (!FXSYS_isDecimalDigit(pStrText[iText]) &&
-                                  !FXSYS_iswASCIIalpha(pStrText[iText]))) {
+                                  !FXSYS_iswalpha(pStrText[iText]))) {
           return false;
         }
         *wsOutput += pStrText[iText++];

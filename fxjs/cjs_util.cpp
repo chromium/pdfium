@@ -322,7 +322,7 @@ WideString CJS_Util::printx(const WideString& wsFormat,
       } break;
       case 'A': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (FXSYS_iswASCIIalpha(wsSource[iSourceIdx])) {
+          if (isascii(wsSource[iSourceIdx]) && isalpha(wsSource[iSourceIdx])) {
             wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
             ++iFormatIdx;
           }

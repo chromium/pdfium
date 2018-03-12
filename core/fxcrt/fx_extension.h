@@ -42,8 +42,8 @@ inline int32_t FXSYS_toASCIIupper(int32_t ch) {
   return ch < 'a' || ch > 'z' ? ch : (ch - 0x20);
 }
 
-inline bool FXSYS_iswASCIIalpha(wchar_t wch) {
-  return FXSYS_isASCIIupper(wch) || FXSYS_isASCIIlower(wch);
+inline bool FXSYS_iswalpha(wchar_t c) {
+  return u_isalpha(c);
 }
 
 inline bool FXSYS_iswalnum(wchar_t c) {

@@ -67,7 +67,7 @@ std::unique_ptr<CFX_CSSSelector> CFX_CSSSelector::FromString(
   std::unique_ptr<CFX_CSSSelector> pFirst = nullptr;
   for (psz = pStart; psz < pEnd;) {
     wchar_t wch = *psz;
-    if (FXSYS_iswASCIIalpha(wch) || wch == '*') {
+    if ((isascii(wch) && isalpha(wch)) || wch == '*') {
       int32_t iNameLen = wch == '*' ? 1 : GetCSSNameLen(psz, pEnd);
       auto p = pdfium::MakeUnique<CFX_CSSSelector>(CFX_CSSSelectorType::Element,
                                                    psz, iNameLen, true);
