@@ -118,7 +118,7 @@ char* FXSYS_strlwr(char* str) {
   }
   char* s = str;
   while (*str) {
-    *str = FXSYS_toASCIIlower(*str);
+    *str = tolower(*str);
     str++;
   }
   return s;
@@ -129,7 +129,7 @@ char* FXSYS_strupr(char* str) {
   }
   char* s = str;
   while (*str) {
-    *str = FXSYS_toASCIIupper(*str);
+    *str = toupper(*str);
     str++;
   }
   return s;
@@ -140,7 +140,7 @@ wchar_t* FXSYS_wcslwr(wchar_t* str) {
   }
   wchar_t* s = str;
   while (*str) {
-    *str = FXSYS_toASCIIlower(*str);
+    *str = FXSYS_towlower(*str);
     str++;
   }
   return s;
@@ -151,7 +151,7 @@ wchar_t* FXSYS_wcsupr(wchar_t* str) {
   }
   wchar_t* s = str;
   while (*str) {
-    *str = FXSYS_toASCIIupper(*str);
+    *str = FXSYS_towupper(*str);
     str++;
   }
   return s;
@@ -161,8 +161,8 @@ int FXSYS_stricmp(const char* dst, const char* src) {
   int f;
   int l;
   do {
-    f = FXSYS_toASCIIupper(*dst);
-    l = FXSYS_toASCIIupper(*src);
+    f = toupper(*dst);
+    l = toupper(*src);
     ++dst;
     ++src;
   } while (f && f == l);
@@ -173,8 +173,8 @@ int FXSYS_wcsicmp(const wchar_t* dst, const wchar_t* src) {
   wchar_t f;
   wchar_t l;
   do {
-    f = FXSYS_toASCIIupper(*dst);
-    l = FXSYS_toASCIIupper(*src);
+    f = FXSYS_towupper(*dst);
+    l = FXSYS_towupper(*src);
     ++dst;
     ++src;
   } while (f && f == l);

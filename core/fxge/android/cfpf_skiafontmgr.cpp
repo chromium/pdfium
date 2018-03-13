@@ -97,7 +97,7 @@ uint32_t FPF_GetHashCode_StringA(const char* pStr, int32_t iLength) {
   const char* pStrEnd = pStr + iLength;
   uint32_t uHashCode = 0;
   while (pStr < pStrEnd)
-    uHashCode = 31 * uHashCode + FXSYS_toASCIIlower(*pStr++);
+    uHashCode = 31 * uHashCode + tolower(*pStr++);
   return uHashCode;
 }
 
@@ -167,7 +167,7 @@ uint32_t FPF_SKIANormalizeFontName(const ByteStringView& bsfamily) {
     char ch = pBuffer[i];
     if (ch == ' ' || ch == '-' || ch == ',')
       continue;
-    dwHash = 31 * dwHash + FXSYS_toASCIIlower(ch);
+    dwHash = 31 * dwHash + tolower(ch);
   }
   return dwHash;
 }
