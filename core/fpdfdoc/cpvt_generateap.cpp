@@ -470,14 +470,14 @@ std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
     const ByteString& sBlendMode) {
   auto pGSDict =
       pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
-  pGSDict->SetNewFor<CPDF_String>("Type", "ExtGState", false);
+  pGSDict->SetNewFor<CPDF_Name>("Type", "ExtGState");
 
   float fOpacity =
       pAnnotDict.KeyExist("CA") ? pAnnotDict.GetNumberFor("CA") : 1;
   pGSDict->SetNewFor<CPDF_Number>("CA", fOpacity);
   pGSDict->SetNewFor<CPDF_Number>("ca", fOpacity);
   pGSDict->SetNewFor<CPDF_Boolean>("AIS", false);
-  pGSDict->SetNewFor<CPDF_String>("BM", sBlendMode, false);
+  pGSDict->SetNewFor<CPDF_Name>("BM", sBlendMode);
 
   auto pExtGStateDict =
       pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
@@ -514,7 +514,8 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
 
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
   pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
-  pStreamDict->SetNewFor<CPDF_String>("Subtype", "Form", false);
+  pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
+  pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
   pStreamDict->SetMatrixFor("Matrix", CFX_Matrix());
 
   CFX_FloatRect rect = bIsTextMarkupAnnotation
