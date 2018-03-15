@@ -924,7 +924,7 @@ int WideString::Compare(const WideString& str) const {
     return result;
   if (this_len == that_len)
     return 0;
-  return this_len < that_len;
+  return this_len < that_len ? -1 : 1;
 }
 
 int WideString::CompareNoCase(const wchar_t* lpsz) const {
