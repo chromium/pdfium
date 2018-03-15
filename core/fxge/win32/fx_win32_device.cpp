@@ -882,7 +882,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(
   bmi.bmiColors[0] = 0xffffff;
   bmi.bmiColors[1] = 0;
 
-  HBRUSH hPattern = CreateSolidBrush(bitmap_color & 0xffffff);
+  HBRUSH hPattern = CreateBrush(bitmap_color);
   HBRUSH hOld = (HBRUSH)SelectObject(m_hDC, hPattern);
 
   // In PDF, when image mask is 1, use device bitmap; when mask is 0, use brush
