@@ -1357,8 +1357,8 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
   if (MissingFillColor(pColorState))
     pColorState = &m_InitialStates.m_ColorState;
 
-  FX_COLORREF rgb = pColorState->GetFillRGB();
-  if (rgb == (uint32_t)-1)
+  FX_COLORREF bgr = pColorState->GetFillRGB();
+  if (bgr == 0xFFFFFFFF)
     return 0;
 
   int32_t alpha =
@@ -1369,9 +1369,9 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
           GetTransferFunc(pObj->m_GeneralState.GetTR()));
     }
     if (pObj->m_GeneralState.GetTransferFunc())
-      rgb = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(rgb);
+      bgr = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(bgr);
   }
-  return m_Options.TranslateColor(ArgbEncode(alpha, rgb));
+  return m_Options.TranslateColor(ArgbEncode(alpha, bgr));
 }
 
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
@@ -1382,8 +1382,8 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
   if (MissingStrokeColor(pColorState))
     pColorState = &m_InitialStates.m_ColorState;
 
-  FX_COLORREF rgb = pColorState->GetStrokeRGB();
-  if (rgb == (uint32_t)-1)
+  FX_COLORREF bgr = pColorState->GetStrokeRGB();
+  if (bgr == 0xFFFFFFFF)
     return 0;
 
   int32_t alpha = static_cast<int32_t>(pObj->m_GeneralState.GetStrokeAlpha() *
@@ -1394,9 +1394,9 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
           GetTransferFunc(pObj->m_GeneralState.GetTR()));
     }
     if (pObj->m_GeneralState.GetTransferFunc())
-      rgb = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(rgb);
+      bgr = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(bgr);
   }
-  return m_Options.TranslateColor(ArgbEncode(alpha, rgb));
+  return m_Options.TranslateColor(ArgbEncode(alpha, bgr));
 }
 
 void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,

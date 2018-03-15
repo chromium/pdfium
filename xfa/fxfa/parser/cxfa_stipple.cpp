@@ -62,9 +62,9 @@ void CXFA_Stipple::Draw(CXFA_Graphics* pGS,
   FX_ARGB crColor = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
 
   int32_t a;
-  FX_COLORREF rgb;
-  std::tie(a, rgb) = ArgbToColorRef(crColor);
-  FX_ARGB cr = ArgbEncode(iRate * a / 100, rgb);
+  FX_COLORREF bgr;
+  std::tie(a, bgr) = ArgbToColorRef(crColor);
+  FX_ARGB cr = ArgbEncode(iRate * a / 100, bgr);
 
   pGS->SaveGraphState();
   pGS->SetFillColor(CXFA_GEColor(cr));

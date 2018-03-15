@@ -281,9 +281,9 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
 
   // Color
   int iUnusedAlpha;
-  FX_COLORREF rgb;
-  std::tie(iUnusedAlpha, rgb) = ArgbToColorRef(color);
-  SetTextColor(m_hDC, rgb);
+  FX_COLORREF bgr;
+  std::tie(iUnusedAlpha, bgr) = ArgbToColorRef(color);
+  SetTextColor(m_hDC, bgr);
   SetBkMode(m_hDC, TRANSPARENT);
 
   // Text

@@ -54,6 +54,7 @@ class CPDF_ColorState {
 
     void SetDefault();
 
+    // TODO(thestig): Rename these to BGR.
     uint32_t m_FillRGB;
     uint32_t m_StrokeRGB;
     CPDF_Color m_FillColor;

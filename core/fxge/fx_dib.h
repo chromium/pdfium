@@ -70,7 +70,9 @@ extern const int16_t SDP_Table[513];
 #define FXDIB_BLEND_LUMINOSITY 24
 #define FXDIB_BLEND_UNSUPPORTED -1
 
+// TODO(thestig): Rename to FXSYS_BGR() and check callers.
 #define FXSYS_RGB(r, g, b) ((r) | ((g) << 8) | ((b) << 16))
+// TODO(thestig): Rename parameter to |bgr| and check callers.
 #define FXSYS_GetRValue(rgb) ((rgb)&0xff)
 #define FXSYS_GetGValue(rgb) (((rgb) >> 8) & 0xff)
 #define FXSYS_GetBValue(rgb) (((rgb) >> 16) & 0xff)
@@ -93,7 +95,8 @@ std::pair<int, FX_COLORREF> ArgbToColorRef(FX_ARGB argb);
 inline FX_ARGB ArgbEncode(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
 }
-FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
+// TODO(thestig): Rename to AlphaAndColorRefToArgb().
+FX_ARGB ArgbEncode(int a, FX_COLORREF bgr);
 
 FX_ARGB StringToFXARGB(const WideStringView& view);
 

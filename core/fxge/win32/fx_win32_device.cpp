@@ -133,10 +133,10 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
   }
 
   int a;
-  FX_COLORREF rgb;
-  std::tie(a, rgb) = ArgbToColorRef(argb);
+  FX_COLORREF bgr;
+  std::tie(a, bgr) = ArgbToColorRef(argb);
   LOGBRUSH lb;
-  lb.lbColor = rgb;
+  lb.lbColor = bgr;
   lb.lbStyle = BS_SOLID;
   lb.lbHatch = 0;
   std::vector<uint32_t> dashes;
@@ -156,9 +156,9 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
 
 HBRUSH CreateBrush(uint32_t argb) {
   int a;
-  FX_COLORREF rgb;
-  std::tie(a, rgb) = ArgbToColorRef(argb);
-  return CreateSolidBrush(rgb);
+  FX_COLORREF bgr;
+  std::tie(a, bgr) = ArgbToColorRef(argb);
+  return CreateSolidBrush(bgr);
 }
 
 void SetPathToDC(HDC hDC,
@@ -1073,15 +1073,15 @@ bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
     return false;
 
   int alpha;
-  FX_COLORREF rgb;
-  std::tie(alpha, rgb) = ArgbToColorRef(fill_color);
+  FX_COLORREF bgr;
+  std::tie(alpha, bgr) = ArgbToColorRef(fill_color);
   if (alpha == 0)
     return true;
 
   if (alpha < 255)
     return false;
 
-  HBRUSH hBrush = CreateSolidBrush(rgb);
+  HBRUSH hBrush = CreateSolidBrush(bgr);
   ::FillRect(m_hDC, (RECT*)pRect, hBrush);
   DeleteObject(hBrush);
   return true;
@@ -1127,12 +1127,12 @@ bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
     return false;
 
   int a;
-  FX_COLORREF rgb;
-  std::tie(a, rgb) = ArgbToColorRef(color);
+  FX_COLORREF bgr;
+  std::tie(a, bgr) = ArgbToColorRef(color);
   if (a == 0)
     return true;
 
-  HPEN hPen = CreatePen(PS_SOLID, 1, rgb);
+  HPEN hPen = CreatePen(PS_SOLID, 1, bgr);
   hPen = (HPEN)SelectObject(m_hDC, hPen);
   MoveToEx(m_hDC, FXSYS_round(ptMoveTo.x), FXSYS_round(ptMoveTo.y), nullptr);
   LineTo(m_hDC, FXSYS_round(ptLineTo.x), FXSYS_round(ptLineTo.y));

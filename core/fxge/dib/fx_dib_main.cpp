@@ -84,9 +84,9 @@ std::pair<int, FX_COLORREF> ArgbToColorRef(FX_ARGB argb) {
           FXSYS_RGB(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb))};
 }
 
-uint32_t ArgbEncode(int a, FX_COLORREF rgb) {
-  return FXARGB_MAKE(a, FXSYS_GetRValue(rgb), FXSYS_GetGValue(rgb),
-                     FXSYS_GetBValue(rgb));
+uint32_t ArgbEncode(int a, FX_COLORREF bgr) {
+  return FXARGB_MAKE(a, FXSYS_GetRValue(bgr), FXSYS_GetGValue(bgr),
+                     FXSYS_GetBValue(bgr));
 }
 
 FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
