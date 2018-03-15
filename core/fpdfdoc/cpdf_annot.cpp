@@ -485,11 +485,12 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
       graph_state.m_DashArray[0] = graph_state.m_DashArray[1] = 3 * 1.0f;
     }
   }
+
   CFX_FloatRect rect = GetRect();
+  rect.Deflate(width / 2, width / 2);
   CFX_PathData path;
-  width /= 2;
-  path.AppendRect(rect.left + width, rect.bottom + width, rect.right - width,
-                  rect.top - width);
+  path.AppendRect(rect);
+
   int fill_type = 0;
   if (pOptions && (pOptions->HasFlag(RENDER_NOPATHSMOOTH)))
     fill_type |= FXFILL_NOPATHSMOOTH;

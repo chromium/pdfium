@@ -679,16 +679,11 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
        fieldType == FormFieldType::kRadioButton) &&
       mode == CPDF_Annot::Normal &&
       !IsWidgetAppearanceValid(CPDF_Annot::Normal)) {
-    CFX_PathData pathData;
-
-    CFX_FloatRect rcAnnot = GetRect();
-
-    pathData.AppendRect(rcAnnot.left, rcAnnot.bottom, rcAnnot.right,
-                        rcAnnot.top);
-
     CFX_GraphStateData gsd;
     gsd.m_LineWidth = 0.0f;
 
+    CFX_PathData pathData;
+    pathData.AppendRect(GetRect());
     pDevice->DrawPath(&pathData, &mtUser2Device, &gsd, 0, 0xFFAAAAAA,
                       FXFILL_ALTERNATE);
   } else {
