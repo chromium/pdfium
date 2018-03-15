@@ -32,49 +32,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void SetRect(const CFX_FloatRect& rect) override;
   CFX_FloatRect GetRect() const override;
   CPDF_Annot* GetPDFAnnot() const override;
-
-  CPDF_Dictionary* GetAnnotDict() const;
-  CPDF_Annot* GetPDFPopupAnnot() const;
-
-  CPDF_Dictionary* GetAPDict() const;
-
-  void SetContents(const WideString& sContents);
-  WideString GetContents() const;
-
-  void SetAnnotName(const WideString& sName);
-  WideString GetAnnotName() const;
-
-  void SetModifiedDate(const FX_SYSTEMTIME& st);
-  FX_SYSTEMTIME GetModifiedDate() const;
-
-  void SetFlags(uint32_t nFlags);
-  uint32_t GetFlags() const;
-
-  void SetAppState(const ByteString& str);
-  ByteString GetAppState() const;
-
-  void SetStructParent(int key);
-  int GetStructParent() const;
-
-  void SetBorderWidth(int nWidth);
-  int GetBorderWidth() const;
-
-  void SetBorderStyle(BorderStyle nStyle);
-  BorderStyle GetBorderStyle() const;
-
-  void SetColor(FX_COLORREF color);
-  void RemoveColor();
-  bool GetColor(FX_COLORREF& color) const;
-
-  bool IsVisible() const;
-
-  CPDF_Action GetAction() const;
-  void SetAction(const CPDF_Action& a);
-  void RemoveAction();
-
-  CPDF_AAction GetAAction() const;
-  void SetAAction(const CPDF_AAction& aa);
-  void RemoveAAction();
+  int GetLayoutOrder() const override;
 
   virtual CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT);
   virtual bool IsAppearanceValid();
@@ -84,15 +42,33 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
                               CPDF_Annot::AppearanceMode mode,
                               const CPDF_RenderOptions* pOptions);
 
-  void DrawBorder(CFX_RenderDevice* pDevice,
-                  const CFX_Matrix* pUser2Device,
-                  const CPDF_RenderOptions* pOptions);
+  CPDF_Dictionary* GetAnnotDict() const;
+  CPDF_Annot* GetPDFPopupAnnot() const;
 
-  void ClearCachedAP();
+  CPDF_Dictionary* GetAPDict() const;
+
+  void SetAnnotName(const WideString& sName);
+  WideString GetAnnotName() const;
+
+  void SetFlags(uint32_t nFlags);
+  uint32_t GetFlags() const;
+
+  void SetAppState(const ByteString& str);
+  ByteString GetAppState() const;
+
+  void SetBorderWidth(int nWidth);
+  int GetBorderWidth() const;
+
+  void SetBorderStyle(BorderStyle nStyle);
+  BorderStyle GetBorderStyle() const;
+
+  bool IsVisible() const;
+
+  CPDF_Action GetAction() const;
+
+  CPDF_AAction GetAAction() const;
 
   void SetOpenState(bool bState);
-
-  int GetLayoutOrder() const override;
 
  protected:
   UnownedPtr<CPDF_Annot> const m_pAnnot;
