@@ -744,8 +744,8 @@ CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
 
 CFX_FloatRect CPDFSDK_Widget::GetRotatedRect() const {
   CFX_FloatRect rectAnnot = GetRect();
-  float fWidth = rectAnnot.right - rectAnnot.left;
-  float fHeight = rectAnnot.top - rectAnnot.bottom;
+  float fWidth = rectAnnot.Width();
+  float fHeight = rectAnnot.Height();
 
   CPDF_FormControl* pControl = GetFormControl();
   CFX_FloatRect rcPDFWindow;
@@ -768,8 +768,8 @@ CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
   CFX_Matrix mt;
   CPDF_FormControl* pControl = GetFormControl();
   CFX_FloatRect rcAnnot = GetRect();
-  float fWidth = rcAnnot.right - rcAnnot.left;
-  float fHeight = rcAnnot.top - rcAnnot.bottom;
+  float fWidth = rcAnnot.Width();
+  float fHeight = rcAnnot.Height();
 
   switch (abs(pControl->GetRotation() % 360)) {
     default:

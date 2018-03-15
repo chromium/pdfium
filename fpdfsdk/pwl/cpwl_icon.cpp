@@ -67,8 +67,8 @@ std::pair<float, float> CPWL_Icon::GetScale() {
     return {fHScale, fVScale};
 
   CFX_FloatRect rcPlate = GetClientRect();
-  float fPlateWidth = rcPlate.right - rcPlate.left;
-  float fPlateHeight = rcPlate.top - rcPlate.bottom;
+  float fPlateWidth = rcPlate.Width();
+  float fPlateHeight = rcPlate.Height();
 
   float fImageWidth;
   float fImageHeight;
@@ -123,8 +123,8 @@ std::pair<float, float> CPWL_Icon::GetImageOffset() {
   float fImageFactHeight = fImageHeight * fVScale;
 
   CFX_FloatRect rcPlate = GetClientRect();
-  float fPlateWidth = rcPlate.right - rcPlate.left;
-  float fPlateHeight = rcPlate.top - rcPlate.bottom;
+  float fPlateWidth = rcPlate.Width();
+  float fPlateHeight = rcPlate.Height();
 
   return {(fPlateWidth - fImageFactWidth) * fLeft,
           (fPlateHeight - fImageFactHeight) * fBottom};

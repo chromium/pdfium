@@ -833,10 +833,10 @@ CFX_FloatRect CPWL_ScrollBar::GetScrollArea() const {
   CFX_FloatRect rcMin = m_pMinButton->GetWindowRect();
   CFX_FloatRect rcMax = m_pMaxButton->GetWindowRect();
 
-  float fMinWidth = rcMin.right - rcMin.left;
-  float fMinHeight = rcMin.top - rcMin.bottom;
-  float fMaxWidth = rcMax.right - rcMax.left;
-  float fMaxHeight = rcMax.top - rcMax.bottom;
+  float fMinWidth = rcMin.Width();
+  float fMinHeight = rcMin.Height();
+  float fMaxWidth = rcMax.Width();
+  float fMaxHeight = rcMax.Height();
 
   switch (m_sbType) {
     case SBT_HSCROLL:

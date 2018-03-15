@@ -136,8 +136,8 @@ FX_RECT CFX_FloatRect::GetClosestRect() const {
 }
 
 CFX_FloatRect CFX_FloatRect::GetCenterSquare() const {
-  float fWidth = right - left;
-  float fHeight = top - bottom;
+  float fWidth = Width();
+  float fHeight = Height();
   float fHalfWidth = (fWidth > fHeight) ? fHeight / 2 : fWidth / 2;
 
   float fCenterX = (left + right) / 2.0f;

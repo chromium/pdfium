@@ -416,8 +416,8 @@ CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
 CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
   CFX_FloatRect rectAnnot = m_pWidget->GetPDFAnnot()->GetRect();
 
-  float fWidth = rectAnnot.right - rectAnnot.left;
-  float fHeight = rectAnnot.top - rectAnnot.bottom;
+  float fWidth = rectAnnot.Width();
+  float fHeight = rectAnnot.Height();
   if ((m_pWidget->GetRotate() / 90) & 0x01)
     std::swap(fWidth, fHeight);
   return CFX_FloatRect(0, 0, fWidth, fHeight);
