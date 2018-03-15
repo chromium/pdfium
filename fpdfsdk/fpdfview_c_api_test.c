@@ -129,6 +129,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_GetRotation);
     CHK(FPDFPage_SetRotation);
     CHK(FPDFPage_InsertObject);
+    CHK(FPDFPage_RemoveObject);
     CHK(FPDFPage_CountObject);
     CHK(FPDFPage_CountObjects);
     CHK(FPDFPage_GetObject);

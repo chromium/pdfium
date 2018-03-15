@@ -575,6 +575,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
     // Check that this annotation has one path object and retrieve it.
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
+    ASSERT_EQ(32, FPDFPage_CountObjects(page));
     FPDF_PAGEOBJECT path = FPDFAnnot_GetObject(annot.get(), 1);
     EXPECT_FALSE(path);
     path = FPDFAnnot_GetObject(annot.get(), 0);
@@ -601,6 +602,10 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
     EXPECT_TRUE(FPDFAnnot_AppendObject(annot.get(), dot));
     EXPECT_EQ(2, FPDFAnnot_GetObjectCount(annot.get()));
 
+    // The object is in the annontation, not in the page, so the page object
+    // array should not change.
+    ASSERT_EQ(32, FPDFPage_CountObjects(page));
+
     // Check that the page with an annotation with two paths renders correctly.
     {
       std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
@@ -611,6 +616,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
     // Delete the newly added path object.
     EXPECT_TRUE(FPDFAnnot_RemoveObject(annot.get(), 1));
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
+    ASSERT_EQ(32, FPDFPage_CountObjects(page));
   }
 
   // Check that the page renders the same as before.

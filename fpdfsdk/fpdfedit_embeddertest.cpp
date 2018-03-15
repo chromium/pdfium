@@ -381,6 +381,96 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   VerifySavedDocument(612, 792, kLastMD5);
 }
 
+TEST_F(FPDFEditEmbeddertest, RemovePageObject) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+// Show how the original file looks like.
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+  const char kOriginalMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  const char kOriginalMD5[] = "e5a6fa28298db07484cd922f3e210c88";
+#else
+  const char kOriginalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
+#endif
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
+        RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
+  }
+
+  // Get the "Hello, world!" text object and remove it.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(page_object);
+  EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object));
+
+// Verify the "Hello, world!" text is gone.
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+  const char kRemovedMD5[] = "af760c4702467cb1492a57fb8215efaa";
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  const char kRemovedMD5[] = "72be917349bf7004a5c39661fe1fc433";
+#else
+  const char kRemovedMD5[] = "b76df015fe88009c3c342395df96abf1";
+#endif
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
+        RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kRemovedMD5);
+  }
+  ASSERT_EQ(1, FPDFPage_CountObjects(page));
+
+  UnloadPage(page);
+  FPDFPageObj_Destroy(page_object);
+}
+
+TEST_F(FPDFEditEmbeddertest, AddAndRemovePaths) {
+  // Start with a blank page.
+  FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
+  ASSERT_TRUE(page);
+
+  // Render the blank page and verify it's a blank bitmap.
+  const char kBlankMD5[] = "1940568c9ba33bac5d0b1ee9558c76b3";
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
+        RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 612, 792, kBlankMD5);
+  }
+  ASSERT_EQ(0, FPDFPage_CountObjects(page));
+
+  // Add a red rectangle.
+  FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
+  ASSERT_TRUE(red_rect);
+  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(page, red_rect);
+  const char kRedRectangleMD5[] = "66d02eaa6181e2c069ce2ea99beda497";
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
+        RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 612, 792, kRedRectangleMD5);
+  }
+  EXPECT_EQ(1, FPDFPage_CountObjects(page));
+
+  // Remove rectangle and verify it does not render anymore and the bitmap is
+  // back to a blank one.
+  EXPECT_TRUE(FPDFPage_RemoveObject(page, red_rect));
+  {
+    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
+        RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 612, 792, kBlankMD5);
+  }
+  EXPECT_EQ(0, FPDFPage_CountObjects(page));
+
+  // Trying to remove an object not in the page should return false.
+  EXPECT_FALSE(FPDFPage_RemoveObject(page, red_rect));
+
+  FPDF_ClosePage(page);
+  FPDFPageObj_Destroy(red_rect);
+}
+
 TEST_F(FPDFEditEmbeddertest, PathsPoints) {
   CreateNewDocument();
   FPDF_PAGEOBJECT img = FPDFPageObj_NewImageObj(document_);

@@ -148,6 +148,19 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page, int rotate);
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertObject(FPDF_PAGE page,
                                                      FPDF_PAGEOBJECT page_obj);
 
+// Experimental API.
+// Remove |page_obj| from |page|.
+//
+//   page     - handle to a page
+//   page_obj - handle to a page object to be removed.
+//
+// Returns TRUE on success.
+//
+// Ownership is transferred to the caller. Call FPDFPageObj_Destroy() to free
+// it.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_obj);
+
 // Get number of page objects inside |page|.
 //
 //   page - handle to a page.
