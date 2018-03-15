@@ -19,6 +19,10 @@ namespace {
 
 const int kMaxDestValue = 16711680;
 
+int GetPitchRoundUpTo4Bytes(int bits_per_pixel) {
+  return (bits_per_pixel + 31) / 32 * 4;
+}
+
 }  // namespace
 
 CStretchEngine::CWeightTable::CWeightTable()
@@ -223,17 +227,19 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
                                int dest_height,
                                const FX_RECT& clip_rect,
                                const RetainPtr<CFX_DIBSource>& pSrcBitmap,
-                               int flags) {
-  m_State = 0;
-  m_DestFormat = dest_format;
-  m_DestBpp = dest_format & 0xff;
-  m_SrcBpp = pSrcBitmap->GetFormat() & 0xff;
-  m_bHasAlpha = pSrcBitmap->GetFormat() & 0x200;
-  m_pSrcPalette = pSrcBitmap->GetPalette();
-  m_pDestBitmap = pDestBitmap;
-  m_DestWidth = dest_width;
-  m_DestHeight = dest_height;
-  m_DestClip = clip_rect;
+                               int flags)
+    : m_DestFormat(dest_format),
+      m_DestBpp(dest_format & 0xff),
+      m_SrcBpp(pSrcBitmap->GetFormat() & 0xff),
+      m_bHasAlpha(pSrcBitmap->GetFormat() & 0x200),
+      m_pSource(pSrcBitmap),
+      m_pSrcPalette(pSrcBitmap->GetPalette()),
+      m_SrcWidth(pSrcBitmap->GetWidth()),
+      m_SrcHeight(pSrcBitmap->GetHeight()),
+      m_pDestBitmap(pDestBitmap),
+      m_DestWidth(dest_width),
+      m_DestHeight(dest_height),
+      m_DestClip(clip_rect) {
   uint32_t size = clip_rect.Width();
   if (size && m_DestBpp > static_cast<int>(INT_MAX / size))
     return;
@@ -242,17 +248,12 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
   if (size > INT_MAX - 31)
     return;
 
-  size += 31;
-  size = size / 32 * 4;
+  size = GetPitchRoundUpTo4Bytes(size);
   m_DestScanline.resize(size);
   if (dest_format == FXDIB_Rgb32)
     std::fill(m_DestScanline.begin(), m_DestScanline.end(), 255);
-  m_InterPitch = (m_DestClip.Width() * m_DestBpp + 31) / 32 * 4;
-  m_ExtraMaskPitch = (m_DestClip.Width() * 8 + 31) / 32 * 4;
-  m_pSource = pSrcBitmap;
-  m_SrcWidth = pSrcBitmap->GetWidth();
-  m_SrcHeight = pSrcBitmap->GetHeight();
-  m_SrcPitch = (m_SrcWidth * m_SrcBpp + 31) / 32 * 4;
+  m_InterPitch = GetPitchRoundUpTo4Bytes(m_DestClip.Width() * m_DestBpp);
+  m_ExtraMaskPitch = GetPitchRoundUpTo4Bytes(m_DestClip.Width() * 8);
   if ((flags & FXDIB_NOSMOOTH) == 0) {
     bool bInterpol = flags & FXDIB_INTERPOL || flags & FXDIB_BICUBIC_INTERPOL;
     if (!bInterpol && abs(dest_width) != 0 &&
@@ -284,39 +285,36 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
   m_SrcClip.bottom = static_cast<int>(ceil(src_bottom));
   FX_RECT src_rect(0, 0, m_SrcWidth, m_SrcHeight);
   m_SrcClip.Intersect(src_rect);
-  if (m_SrcBpp == 1) {
-    if (m_DestBpp == 8)
-      m_TransMethod = 1;
-    else
-      m_TransMethod = 2;
-  } else if (m_SrcBpp == 8) {
-    if (m_DestBpp == 8) {
-      if (!m_bHasAlpha)
-        m_TransMethod = 3;
-      else
-        m_TransMethod = 4;
-    } else {
-      if (!m_bHasAlpha)
-        m_TransMethod = 5;
-      else
-        m_TransMethod = 6;
-    }
-  } else {
-    if (!m_bHasAlpha)
-      m_TransMethod = 7;
-    else
-      m_TransMethod = 8;
+
+  switch (m_SrcBpp) {
+    case 1:
+      m_TransMethod = m_DestBpp == 8 ? TransformMethod::k1BppTo8Bpp
+                                     : TransformMethod::k1BppToManyBpp;
+      break;
+    case 8:
+      if (m_DestBpp == 8) {
+        m_TransMethod = m_bHasAlpha ? TransformMethod::k8BppTo8BppWithAlpha
+                                    : TransformMethod::k8BppTo8Bpp;
+      } else {
+        m_TransMethod = m_bHasAlpha ? TransformMethod::k8BppToManyBppWithAlpha
+                                    : TransformMethod::k8BppToManyBpp;
+      }
+      break;
+    default:
+      m_TransMethod = m_bHasAlpha ? TransformMethod::kManyBpptoManyBppWithAlpha
+                                  : TransformMethod::kManyBpptoManyBpp;
+      break;
   }
 }
 
 CStretchEngine::~CStretchEngine() {}
 
 bool CStretchEngine::Continue(PauseIndicatorIface* pPause) {
-  while (m_State == 1) {
+  while (m_State == State::kHorizontal) {
     if (ContinueStretchHorz(pPause))
       return true;
 
-    m_State = 2;
+    m_State = State::kVertical;
     StretchVert();
   }
   return false;
@@ -334,8 +332,7 @@ bool CStretchEngine::StartStretchHorz() {
   m_InterBuf.resize(m_SrcClip.Height() * m_InterPitch);
   if (m_pSource && m_bHasAlpha && m_pSource->m_pAlphaMask) {
     m_ExtraAlphaBuf.resize(m_SrcClip.Height(), m_ExtraMaskPitch);
-    uint32_t size = (m_DestClip.Width() * 8 + 31) / 32 * 4;
-    m_DestMaskScanline.resize(size);
+    m_DestMaskScanline.resize(m_ExtraMaskPitch);
   }
   bool ret =
       m_WeightTable.Calc(m_DestWidth, m_DestClip.left, m_DestClip.right,
@@ -344,7 +341,7 @@ bool CStretchEngine::StartStretchHorz() {
     return false;
 
   m_CurRow = m_SrcClip.top;
-  m_State = 1;
+  m_State = State::kHorizontal;
   return true;
 }
 
@@ -377,8 +374,8 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
     }
     // TODO(npm): reduce duplicated code here
     switch (m_TransMethod) {
-      case 1:
-      case 2: {
+      case TransformMethod::k1BppTo8Bpp:
+      case TransformMethod::k1BppToManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_a = 0;
@@ -397,7 +394,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         }
         break;
       }
-      case 3: {
+      case TransformMethod::k8BppTo8Bpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_a = 0;
@@ -415,7 +412,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         }
         break;
       }
-      case 4: {
+      case TransformMethod::k8BppTo8BppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_a = 0;
@@ -439,7 +436,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         }
         break;
       }
-      case 5: {
+      case TransformMethod::k8BppToManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_r_y = 0;
@@ -473,7 +470,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         }
         break;
       }
-      case 6: {
+      case TransformMethod::k8BppToManyBppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_a = 0;
@@ -512,7 +509,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         }
         break;
       }
-      case 7: {
+      case TransformMethod::kManyBpptoManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_r_y = 0;
@@ -541,7 +538,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
         }
         break;
       }
-      case 8: {
+      case TransformMethod::kManyBpptoManyBppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           PixelWeight* pWeights = m_WeightTable.GetPixelWeight(col);
           int dest_a = 0;
@@ -604,9 +601,9 @@ void CStretchEngine::StretchVert() {
     unsigned char* dest_scan_mask = m_DestMaskScanline.data();
     PixelWeight* pWeights = table.GetPixelWeight(row);
     switch (m_TransMethod) {
-      case 1:
-      case 2:
-      case 3: {
+      case TransformMethod::k1BppTo8Bpp:
+      case TransformMethod::k1BppToManyBpp:
+      case TransformMethod::k8BppTo8Bpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           unsigned char* src_scan =
               m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
@@ -627,7 +624,7 @@ void CStretchEngine::StretchVert() {
         }
         break;
       }
-      case 4: {
+      case TransformMethod::k8BppTo8BppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           unsigned char* src_scan =
               m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
@@ -656,8 +653,8 @@ void CStretchEngine::StretchVert() {
         }
         break;
       }
-      case 5:
-      case 7: {
+      case TransformMethod::k8BppToManyBpp:
+      case TransformMethod::kManyBpptoManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           unsigned char* src_scan =
               m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
@@ -688,8 +685,8 @@ void CStretchEngine::StretchVert() {
         }
         break;
       }
-      case 6:
-      case 8: {
+      case TransformMethod::k8BppToManyBppWithAlpha:
+      case TransformMethod::kManyBpptoManyBppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           unsigned char* src_scan =
               m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;

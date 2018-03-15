@@ -57,31 +57,43 @@ class CStretchEngine {
     size_t m_dwWeightTablesSize;
   };
 
-  FXDIB_Format m_DestFormat;
-  int m_DestBpp;
-  int m_SrcBpp;
-  int m_bHasAlpha;
-  UnownedPtr<ScanlineComposerIface> m_pDestBitmap;
-  int m_DestWidth;
-  int m_DestHeight;
-  FX_RECT m_DestClip;
+  enum class State : uint8_t { kInitial, kHorizontal, kVertical };
+
+  enum class TransformMethod : uint8_t {
+    k1BppTo8Bpp,
+    k1BppToManyBpp,
+    k8BppTo8Bpp,
+    k8BppTo8BppWithAlpha,
+    k8BppToManyBpp,
+    k8BppToManyBppWithAlpha,
+    kManyBpptoManyBpp,
+    kManyBpptoManyBppWithAlpha
+  };
+
+  const FXDIB_Format m_DestFormat;
+  const int m_DestBpp;
+  const int m_SrcBpp;
+  const int m_bHasAlpha;
+  RetainPtr<CFX_DIBSource> const m_pSource;
+  const uint32_t* m_pSrcPalette;
+  const int m_SrcWidth;
+  const int m_SrcHeight;
+  UnownedPtr<ScanlineComposerIface> const m_pDestBitmap;
+  const int m_DestWidth;
+  const int m_DestHeight;
+  const FX_RECT m_DestClip;
   std::vector<uint8_t> m_DestScanline;
   std::vector<uint8_t> m_DestMaskScanline;
-  FX_RECT m_SrcClip;
-  RetainPtr<CFX_DIBSource> m_pSource;
-  uint32_t* m_pSrcPalette;
-  int m_SrcWidth;
-  int m_SrcHeight;
-  int m_SrcPitch;
-  int m_InterPitch;
-  int m_ExtraMaskPitch;
   std::vector<uint8_t> m_InterBuf;
   std::vector<uint8_t> m_ExtraAlphaBuf;
-  int m_TransMethod;
+  FX_RECT m_SrcClip;
+  int m_InterPitch;
+  int m_ExtraMaskPitch;
   int m_Flags;
-  CWeightTable m_WeightTable;
+  TransformMethod m_TransMethod;
+  State m_State = State::kInitial;
   int m_CurRow;
-  int m_State;
+  CWeightTable m_WeightTable;
 };
 
 #endif  // CORE_FXGE_DIB_CSTRETCHENGINE_H_
