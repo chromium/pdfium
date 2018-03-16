@@ -45,8 +45,8 @@ class CFX_XMLNode {
   void DeleteChildren();
 
  protected:
-  WideString AttributeToString(WideString name, WideString value);
-  WideString EncodeEntities(WideString value);
+  WideString AttributeToString(const WideString& name, const WideString& value);
+  WideString EncodeEntities(const WideString& value);
 
  private:
   CFX_XMLNode* parent_ = nullptr;

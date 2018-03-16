@@ -525,7 +525,7 @@ void CPDFSDK_ActionHandler::DoAction_ResetForm(
 void CPDFSDK_ActionHandler::RunScriptForAction(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    std::function<void(IJS_EventContext* context)> cb) {
+    const RunScriptCallback& cb) {
   if (!pFormFillEnv->IsJSPlatformPresent())
     return;
 
@@ -536,10 +536,9 @@ void CPDFSDK_ActionHandler::RunScriptForAction(
   RunScript(pFormFillEnv, swJS, cb);
 }
 
-void CPDFSDK_ActionHandler::RunScript(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv,
-    const WideString& script,
-    std::function<void(IJS_EventContext* context)> cb) {
+void CPDFSDK_ActionHandler::RunScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                                      const WideString& script,
+                                      const RunScriptCallback& cb) {
   IJS_Runtime* pRuntime = pFormFillEnv->GetIJSRuntime();
   IJS_EventContext* pContext = pRuntime->NewEventContext();
 

@@ -57,12 +57,14 @@ class CPDFSDK_ActionHandler {
                                 PDFSDK_FieldAction* data);
 
  private:
+  using RunScriptCallback = std::function<void(IJS_EventContext* context)>;
+
   void RunScriptForAction(const CPDF_Action& action,
                           CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                          std::function<void(IJS_EventContext* context)> cb);
+                          const RunScriptCallback& cb);
   void RunScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                  const WideString& script,
-                 std::function<void(IJS_EventContext* context)> cb);
+                 const RunScriptCallback& cb);
 
   bool ExecuteDocumentOpenAction(const CPDF_Action& action,
                                  CPDFSDK_FormFillEnvironment* pFormFillEnv,

@@ -110,16 +110,18 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLNode::Clone() {
 
 void CFX_XMLNode::Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {}
 
-WideString CFX_XMLNode::EncodeEntities(WideString value) {
-  value.Replace(L"&", L"&amp;");
-  value.Replace(L"<", L"&lt;");
-  value.Replace(L">", L"&gt;");
-  value.Replace(L"\'", L"&apos;");
-  value.Replace(L"\"", L"&quot;");
-  return value;
+WideString CFX_XMLNode::EncodeEntities(const WideString& value) {
+  WideString ret = value;
+  ret.Replace(L"&", L"&amp;");
+  ret.Replace(L"<", L"&lt;");
+  ret.Replace(L">", L"&gt;");
+  ret.Replace(L"\'", L"&apos;");
+  ret.Replace(L"\"", L"&quot;");
+  return ret;
 }
 
-WideString CFX_XMLNode::AttributeToString(WideString name, WideString value) {
+WideString CFX_XMLNode::AttributeToString(const WideString& name,
+                                          const WideString& value) {
   WideString ret = L" ";
   ret += name;
   ret += L"=\"";

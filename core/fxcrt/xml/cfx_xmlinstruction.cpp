@@ -62,7 +62,7 @@ void CFX_XMLInstruction::Save(
         AttributeToString(it.first, it.second).AsStringView());
   }
 
-  for (auto target : m_TargetData) {
+  for (const WideString& target : m_TargetData) {
     WideString ws = L" \"";
     ws += target;
     ws += L"\"";
