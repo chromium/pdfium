@@ -60,11 +60,11 @@ class NupState {
   // use.
   std::pair<size_t, size_t> ConvertPageOrder() const;
 
-  // Given the |subx| and |suby| subpage position within a page, and a source
+  // Given the |subX| and |subY| subpage position within a page, and a source
   // page with dimensions of |pagesize|, calculate the sub page's origin and
   // scale.
-  NupPageSettings CalculatePageEdit(size_t subx,
-                                    size_t suby,
+  NupPageSettings CalculatePageEdit(size_t subX,
+                                    size_t subY,
                                     const CFX_SizeF& pagesize) const;
 
   const CFX_SizeF m_destPageSize;
@@ -103,12 +103,12 @@ std::pair<size_t, size_t> NupState::ConvertPageOrder() const {
   return {subX, subY};
 }
 
-NupPageSettings NupState::CalculatePageEdit(size_t subXPos,
-                                            size_t subYPos,
+NupPageSettings NupState::CalculatePageEdit(size_t subX,
+                                            size_t subY,
                                             const CFX_SizeF& pagesize) const {
   NupPageSettings settings;
-  settings.subPageStartPoint.x = subXPos * m_subPageSize.width;
-  settings.subPageStartPoint.y = subYPos * m_subPageSize.height;
+  settings.subPageStartPoint.x = subX * m_subPageSize.width;
+  settings.subPageStartPoint.y = subY * m_subPageSize.height;
 
   const float xScale = m_subPageSize.width / pagesize.width;
   const float yScale = m_subPageSize.height / pagesize.height;

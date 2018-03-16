@@ -200,29 +200,29 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST pDest) {
-  if (!pDest)
+FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST dest) {
+  if (!dest)
     return 0;
 
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
 
-  CPDF_Dest dest(static_cast<CPDF_Array*>(pDest));
-  return dest.GetPageIndexDeprecated(pDoc);
+  CPDF_Dest destination(static_cast<CPDF_Array*>(dest));
+  return destination.GetPageIndexDeprecated(pDoc);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
-                                                        FPDF_DEST pDest) {
-  if (!pDest)
+                                                        FPDF_DEST dest) {
+  if (!dest)
     return -1;
 
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return -1;
 
-  CPDF_Dest dest(static_cast<CPDF_Array*>(pDest));
-  return dest.GetDestPageIndex(pDoc);
+  CPDF_Dest destination(static_cast<CPDF_Array*>(dest));
+  return destination.GetDestPageIndex(pDoc);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

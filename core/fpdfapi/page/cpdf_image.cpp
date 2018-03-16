@@ -49,13 +49,13 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
 
 CPDF_Image::~CPDF_Image() {}
 
-void CPDF_Image::FinishInitialization(CPDF_Dictionary* pDict) {
-  m_pOC = pDict->GetDictFor("OC");
-  m_bIsMask =
-      !pDict->KeyExist("ColorSpace") || pDict->GetIntegerFor("ImageMask");
-  m_bInterpolate = !!pDict->GetIntegerFor("Interpolate");
-  m_Height = pDict->GetIntegerFor("Height");
-  m_Width = pDict->GetIntegerFor("Width");
+void CPDF_Image::FinishInitialization(CPDF_Dictionary* pStreamDict) {
+  m_pOC = pStreamDict->GetDictFor("OC");
+  m_bIsMask = !pStreamDict->KeyExist("ColorSpace") ||
+              pStreamDict->GetIntegerFor("ImageMask");
+  m_bInterpolate = !!pStreamDict->GetIntegerFor("Interpolate");
+  m_Height = pStreamDict->GetIntegerFor("Height");
+  m_Width = pStreamDict->GetIntegerFor("Width");
 }
 
 void CPDF_Image::ConvertStreamToIndirectObject() {
