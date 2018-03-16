@@ -31,12 +31,12 @@ bool check_unsigned_shorts(const char* expected,
 class FPDFTextEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFTextEmbeddertest, Text) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   static const char kExpected[] = "Hello, world!\r\nGoodbye, world!";
   unsigned short buffer[128];
@@ -185,12 +185,12 @@ TEST_F(FPDFTextEmbeddertest, Text) {
 }
 
 TEST_F(FPDFTextEmbeddertest, TextSearch) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   std::unique_ptr<unsigned short, pdfium::FreeDeleter> nope =
       GetFPDFWideString(L"nope");
@@ -296,12 +296,12 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 
 // Test that the page has characters despite a bad stream length.
 TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
-  EXPECT_TRUE(OpenDocument("bug_57.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_57.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
   EXPECT_EQ(13, FPDFText_CountChars(textpage));
 
   FPDFText_ClosePage(textpage);
@@ -309,12 +309,12 @@ TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
 }
 
 TEST_F(FPDFTextEmbeddertest, WebLinks) {
-  EXPECT_TRUE(OpenDocument("weblinks.pdf"));
+  ASSERT_TRUE(OpenDocument("weblinks.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
   EXPECT_TRUE(pagelink);
@@ -414,12 +414,12 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
 }
 
 TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLines) {
-  EXPECT_TRUE(OpenDocument("weblinks_across_lines.pdf"));
+  ASSERT_TRUE(OpenDocument("weblinks_across_lines.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
   EXPECT_TRUE(pagelink);
@@ -453,12 +453,12 @@ TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLines) {
 }
 
 TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLinesBug) {
-  EXPECT_TRUE(OpenDocument("bug_650.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_650.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
   EXPECT_TRUE(pagelink);
@@ -480,12 +480,12 @@ TEST_F(FPDFTextEmbeddertest, WebLinksAcrossLinesBug) {
 }
 
 TEST_F(FPDFTextEmbeddertest, GetFontSize) {
-  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   const double kExpectedFontsSizes[] = {12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
                                         12, 12, 12, 1,  1,  16, 16, 16, 16, 16,
@@ -501,12 +501,12 @@ TEST_F(FPDFTextEmbeddertest, GetFontSize) {
 }
 
 TEST_F(FPDFTextEmbeddertest, ToUnicode) {
-  EXPECT_TRUE(OpenDocument("bug_583.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_583.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   ASSERT_EQ(1, FPDFText_CountChars(textpage));
   EXPECT_EQ(static_cast<unsigned int>(0), FPDFText_GetUnicode(textpage, 0));
@@ -516,12 +516,12 @@ TEST_F(FPDFTextEmbeddertest, ToUnicode) {
 }
 
 TEST_F(FPDFTextEmbeddertest, Bug_921) {
-  EXPECT_TRUE(OpenDocument("bug_921.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_921.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   static constexpr unsigned int kData[] = {
       1095, 1077, 1083, 1086, 1074, 1077, 1095, 1077, 1089, 1082, 1086, 1077,
@@ -547,12 +547,12 @@ TEST_F(FPDFTextEmbeddertest, Bug_921) {
 }
 
 TEST_F(FPDFTextEmbeddertest, GetTextWithHyphen) {
-  EXPECT_TRUE(OpenDocument("bug_781804.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_781804.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   // Check that soft hyphens are not included
   // Expecting 'Veritaserum', except there is a \uFFFE where the hyphen was in
@@ -595,22 +595,22 @@ TEST_F(FPDFTextEmbeddertest, GetTextWithHyphen) {
 
 TEST_F(FPDFTextEmbeddertest, bug_782596) {
   // If there is a regression in this test, it will only fail under ASAN
-  EXPECT_TRUE(OpenDocument("bug_782596.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_782596.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
 }
 
 TEST_F(FPDFTextEmbeddertest, ControlCharacters) {
-  EXPECT_TRUE(OpenDocument("control_characters.pdf"));
+  ASSERT_TRUE(OpenDocument("control_characters.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   // Should not include the control characters in the output
   static const char expected[] = "Hello, world!\r\nGoodbye, world!";
@@ -642,12 +642,12 @@ TEST_F(FPDFTextEmbeddertest, ControlCharacters) {
 // Testing that hyphen makers (0x0002) are replacing hard hyphens when
 // the word contains non-ASCII characters.
 TEST_F(FPDFTextEmbeddertest, bug_1029) {
-  EXPECT_TRUE(OpenDocument("bug_1029.pdf"));
+  ASSERT_TRUE(OpenDocument("bug_1029.pdf"));
   FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
+  ASSERT_TRUE(page);
 
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  EXPECT_TRUE(textpage);
+  ASSERT_TRUE(textpage);
 
   constexpr int page_range_offset = 171;
   constexpr int page_range_length = 56;
@@ -676,6 +676,85 @@ TEST_F(FPDFTextEmbeddertest, bug_1029) {
     EXPECT_EQ(expected[i],
               FPDFText_GetUnicode(textpage, page_range_offset + i));
   }
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbeddertest, CountRects) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  ASSERT_TRUE(textpage);
+
+  // Sanity check hello_world.pdf.
+  // |num_chars| check includes the terminating NUL that is provided.
+  static const char kExpected[] = "Hello, world!\r\nGoodbye, world!";
+  {
+    unsigned short buffer[128];
+    int num_chars = FPDFText_GetText(textpage, 0, 128, buffer);
+    ASSERT_GE(num_chars, 0);
+    EXPECT_EQ(sizeof(kExpected), static_cast<size_t>(num_chars));
+    EXPECT_TRUE(check_unsigned_shorts(kExpected, buffer, sizeof(kExpected)));
+  }
+
+  // Now test FPDFText_CountRects().
+  static const int kHelloWorldEnd = strlen("Hello, world!");
+  static const int kGoodbyeWorldStart = kHelloWorldEnd + 2;  // "\r\n"
+  for (int start = 0; start < kHelloWorldEnd; ++start) {
+    // Always grab some part of "hello world" and some part of "goodbye world"
+    // Since -1 means "all".
+    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -1));
+
+    // No characters always means 0 rects.
+    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 0));
+
+    // 1 character stays within "hello world"
+    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 1));
+
+    // When |start| is 0, Having |kGoodbyeWorldStart| char count does not reach
+    // "goodbye world".
+    int expected_value = start ? 2 : 1;
+    EXPECT_EQ(expected_value,
+              FPDFText_CountRects(textpage, start, kGoodbyeWorldStart));
+
+    // Extremely large character count will always return 2 rects because
+    // |start| starts inside "hello world".
+    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, 500));
+  }
+
+#if 0
+  // TODO(thestig): This crashes. Fix and enable.
+  // Now test negative counts.
+  for (int start = 0; start < kHelloWorldEnd; ++start) {
+    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -100));
+    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -2));
+  }
+#endif
+
+  // Now test larger start values.
+  const int kExpectedLength = strlen(kExpected);
+  for (int start = kGoodbyeWorldStart + 1; start < kExpectedLength; ++start) {
+    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, -1));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 0));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 1));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 2));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 500));
+  }
+
+#if 0
+  // TODO(thestig): This crashes. Fix and enable.
+  // Now test start values that starts beyond the end of the text.
+  for (int start = kExpectedLength; start < 100; ++start) {
+    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, -1));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 0));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 1));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 2));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 500));
+  }
+#endif
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
