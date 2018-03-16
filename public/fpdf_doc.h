@@ -195,7 +195,7 @@ FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST dest);
 //   document - handle to the document.
 //   dest     - handle to the destination.
 //
-// Returns the -based page index containing |dest|. Returns -1 on error.
+// Returns the 0-based page index containing |dest|. Returns -1 on error.
 FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
                                                         FPDF_DEST dest);
 
