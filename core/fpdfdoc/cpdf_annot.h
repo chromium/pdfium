@@ -16,6 +16,7 @@
 #include "core/fxcrt/maybe_owned.h"
 
 class CFX_RenderDevice;
+class CPDF_Array;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Form;
@@ -66,7 +67,12 @@ class CPDF_Annot {
   static bool IsAnnotationHidden(CPDF_Dictionary* pAnnotDict);
   static CPDF_Annot::Subtype StringToAnnotSubtype(const ByteString& sSubtype);
   static ByteString AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype);
-  static CFX_FloatRect RectFromQuadPoints(CPDF_Dictionary* pAnnotDict);
+  static CFX_FloatRect RectFromQuadPointsArray(const CPDF_Array* pArray,
+                                               size_t nIndex);
+  static CFX_FloatRect BoundingRectFromQuadPoints(CPDF_Dictionary* pAnnotDict);
+  static CFX_FloatRect RectFromQuadPoints(CPDF_Dictionary* pAnnotDict,
+                                          size_t nIndex);
+  static size_t QuadPointCount(const CPDF_Array* pArray);
 
   // The second constructor does not take ownership of the dictionary.
   CPDF_Annot(std::unique_ptr<CPDF_Dictionary> pDict, CPDF_Document* pDocument);

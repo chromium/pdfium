@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_annot.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_form.h"
@@ -158,7 +159,7 @@ CFX_FloatRect CPDF_Annot::RectForDrawing() const {
   bool bShouldUseQuadPointsCoords =
       m_bIsTextMarkupAnnotation && m_bHasGeneratedAP;
   if (bShouldUseQuadPointsCoords)
-    return RectFromQuadPoints(m_pAnnotDict.Get());
+    return BoundingRectFromQuadPoints(m_pAnnotDict.Get());
 
   return m_pAnnotDict->GetRectFor("Rect");
 }
@@ -205,11 +206,8 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
 }
 
 // Static.
-CFX_FloatRect CPDF_Annot::RectFromQuadPoints(CPDF_Dictionary* pAnnotDict) {
-  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  if (!pArray)
-    return CFX_FloatRect();
-
+CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
+                                                  size_t nIndex) {
   // QuadPoints are defined with 4 pairs of numbers
   // ([ pair0, pair1, pair2, pair3 ]), where
   // pair0 = top_left
@@ -217,11 +215,40 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPoints(CPDF_Dictionary* pAnnotDict) {
   // pair2 = bottom_left
   // pair3 = bottom_right
   //
-  // On the other hand, /Rect is define as 2 pairs [pair0, pair1] where:
+  // On the other hand, /Rect is defined as 2 pairs [pair0, pair1] where:
   // pair0 = bottom_left
   // pair1 = top_right.
-  return CFX_FloatRect(pArray->GetNumberAt(4), pArray->GetNumberAt(5),
-                       pArray->GetNumberAt(2), pArray->GetNumberAt(3));
+
+  return CFX_FloatRect(
+      pArray->GetNumberAt(4 + nIndex * 8), pArray->GetNumberAt(5 + nIndex * 8),
+      pArray->GetNumberAt(2 + nIndex * 8), pArray->GetNumberAt(3 + nIndex * 8));
+}
+
+// Static.
+CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
+    CPDF_Dictionary* pAnnotDict) {
+  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
+  if (!pArray)
+    return CFX_FloatRect();
+
+  CFX_FloatRect ret = RectFromQuadPointsArray(pArray, 0);
+  size_t nQuadPointCount = QuadPointCount(pArray);
+  for (size_t i = 1; i < nQuadPointCount; ++i) {
+    CFX_FloatRect rect = RectFromQuadPointsArray(pArray, i);
+    ret.Union(rect);
+  }
+  return ret;
+}
+
+// Static.
+CFX_FloatRect CPDF_Annot::RectFromQuadPoints(CPDF_Dictionary* pAnnotDict,
+                                             size_t nIndex) {
+  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
+
+  if (!pArray)
+    return CFX_FloatRect();
+
+  return RectFromQuadPointsArray(pArray, nIndex);
 }
 
 // Static.
@@ -346,6 +373,11 @@ ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
   if (nSubtype == CPDF_Annot::Subtype::XFAWIDGET)
     return "XFAWidget";
   return "";
+}
+
+// Static.
+size_t CPDF_Annot::QuadPointCount(const CPDF_Array* pArray) {
+  return pArray->GetCount() / 8;
 }
 
 bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,

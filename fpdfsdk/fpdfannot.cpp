@@ -614,7 +614,7 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
   CPDF_Stream* pStream =
       FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
   if (pStream) {
-    CFX_FloatRect newRect = CPDF_Annot::RectFromQuadPoints(pAnnotDict);
+    CFX_FloatRect newRect = CPDF_Annot::BoundingRectFromQuadPoints(pAnnotDict);
     if (newRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
       pStream->GetDict()->SetRectFor("BBox", newRect);
   }
