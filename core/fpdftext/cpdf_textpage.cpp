@@ -173,7 +173,7 @@ void CPDF_TextPage::ParseTextPage() {
 
   m_bIsParsed = true;
   m_CharIndex.clear();
-  int nCount = pdfium::CollectionSize<int>(m_CharList);
+  const int nCount = CountChars();
   if (nCount)
     m_CharIndex.push_back(0);
 
@@ -320,7 +320,8 @@ int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
   int NearPos = -1;
   double xdif = 5000;
   double ydif = 5000;
-  while (pos < pdfium::CollectionSize<int>(m_CharList)) {
+  const int nCount = CountChars();
+  while (pos < nCount) {
     PAGECHAR_INFO charinfo = m_CharList[pos];
     CFX_FloatRect charrect = charinfo.m_CharBox;
     if (charrect.Contains(point))
@@ -349,7 +350,7 @@ int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
     }
     ++pos;
   }
-  return pos < pdfium::CollectionSize<int>(m_CharList) ? pos : NearPos;
+  return pos < nCount ? pos : NearPos;
 }
 
 WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
@@ -467,10 +468,6 @@ int CPDF_TextPage::CountRects(int start, int nCount) {
   if (!m_bIsParsed || start < 0)
     return -1;
 
-  if (nCount == -1 ||
-      nCount + start > pdfium::CollectionSize<int>(m_CharList)) {
-    nCount = pdfium::CollectionSize<int>(m_CharList) - start;
-  }
   m_SelRects = GetRectArray(start, nCount);
   return pdfium::CollectionSize<int>(m_SelRects);
 }
