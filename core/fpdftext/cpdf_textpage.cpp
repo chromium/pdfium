@@ -237,15 +237,14 @@ int CPDF_TextPage::TextIndexFromCharIndex(int CharIndex) const {
 
 std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
                                                        int nCount) const {
+  std::vector<CFX_FloatRect> rects;
   if (start < 0 || nCount == 0 || !m_bIsParsed)
-    return std::vector<CFX_FloatRect>();
+    return rects;
 
-  if (nCount + start > pdfium::CollectionSize<int>(m_CharList) ||
-      nCount == -1) {
-    nCount = pdfium::CollectionSize<int>(m_CharList) - start;
-  }
+  const int nCharListSize = CountChars();
+  if (nCount < 0 || start + nCount > nCharListSize)
+    nCount = nCharListSize - start;
 
-  std::vector<CFX_FloatRect> rectArray;
   CPDF_TextObject* pCurObj = nullptr;
   CFX_FloatRect rect;
   int curPos = start;
@@ -261,7 +260,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
     if (!pCurObj)
       pCurObj = info_curchar.m_pTextObj.Get();
     if (pCurObj != info_curchar.m_pTextObj) {
-      rectArray.push_back(rect);
+      rects.push_back(rect);
       pCurObj = info_curchar.m_pTextObj.Get();
       bFlagNewRect = true;
     }
@@ -304,8 +303,8 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
       rect.bottom = std::min(rect.bottom, info_curchar.m_CharBox.bottom);
     }
   }
-  rectArray.push_back(rect);
-  return rectArray;
+  rects.push_back(rect);
+  return rects;
 }
 
 int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,

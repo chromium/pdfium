@@ -725,14 +725,11 @@ TEST_F(FPDFTextEmbeddertest, CountRects) {
     EXPECT_EQ(2, FPDFText_CountRects(textpage, start, 500));
   }
 
-#if 0
-  // TODO(thestig): This crashes. Fix and enable.
   // Now test negative counts.
   for (int start = 0; start < kHelloWorldEnd; ++start) {
     EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -100));
     EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -2));
   }
-#endif
 
   // Now test larger start values.
   const int kExpectedLength = strlen(kExpected);
