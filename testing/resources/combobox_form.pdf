@@ -15,7 +15,7 @@ endobj
   /Type /Page
   /Parent 2 0 R
   /Resources 4 0 R
-  /MediaBox [ 0 0 300 300 ]
+  /MediaBox [ 0 0 300 600 ]
   /Contents 7 0 R
   /Annots [ 8 0 R 9 0 R 10 0 R ]
 >>
@@ -39,7 +39,7 @@ stream
 BT
 0 0 0 rg
 /F1 12 Tf
-100 150 Td
+100 450 Td
 (Test Form) Tj
 ET
 endstream
@@ -51,7 +51,7 @@ endobj
   /Ff 393216
   /T (Combo_Editable)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 50 200 80 ]
+  /Rect [ 100 350 200 380 ]
   /Subtype /Widget
   /Opt [[(foo) (Foo)] [(bar) (Bar)] [(qux) (Qux)]]
 >>
@@ -63,9 +63,12 @@ endobj
   /Ff 131072
   /T (Combo1)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 100 200 130 ]
+  /Rect [ 100 400 200 430 ]
   /Subtype /Widget
-  /Opt [(Apple) (Banana) (Cherry)]
+  /Opt [(Apple) (Banana) (Cherry) (Date) (Elderberry) (Fig) (Guava) (Honeydew)
+        (Indian Fig) (Jackfruit) (Kiwi) (Lemon) (Mango) (Nectarine) (Orange)
+        (Persimmon) (Quince) (Raspberry) (Strawberry) (Tamarind) (Ugli Fruit)
+        (Voavanga) (Wolfberry) (Xigua) (Yangmei) (Zucchini)]
   /V (Banana)
 >>
 endobj
@@ -76,7 +79,7 @@ endobj
   /Ff 131073
   /T (Combo_ReadOnly)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 200 200 230 ]
+  /Rect [ 100 500 200 530 ]
   /Subtype /Widget
   /Opt [(Dog) (Elephant) (Frog)]
 >>
@@ -92,9 +95,9 @@ xref
 0000000399 00000 n 
 0000000475 00000 n 
 0000000575 00000 n 
-0000000779 00000 n 
-0000000975 00000 n 
+0000000781 00000 n 
+0000001237 00000 n 
 trailer<< /Root 1 0 R /Size 11 >>
 startxref
-1164
+1426
 %%EOF

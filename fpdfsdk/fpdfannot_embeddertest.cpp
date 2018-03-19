@@ -1384,7 +1384,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
   {
     // Retrieve user-editable combobox annotation.
     std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 63));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 363));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -1397,7 +1397,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
   {
     // Retrieve regular combobox annotation.
     std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 113));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 413));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -1410,7 +1410,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
   {
     // Retrieve read-only combobox annotation.
     std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 213));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 513));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.

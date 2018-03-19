@@ -224,10 +224,14 @@ class FPDFFormFillComboBoxFormEmbeddertest
   }
 
   void SelectEditableFormOption(int item_index) {
+    ASSERT(item_index >= 0);
+    ASSERT(item_index < 3);
     SelectOption(item_index, EditableFormDropDown());
   }
 
   void SelectNonEditableFormOption(int item_index) {
+    ASSERT(item_index >= 0);
+    ASSERT(item_index < 26);
     SelectOption(item_index, NonEditableFormDropDown());
   }
 
@@ -281,10 +285,6 @@ class FPDFFormFillComboBoxFormEmbeddertest
   // Selects one of the pre-selected values from a combobox with three options.
   // Options are specified by |item_index|, which is 0-based.
   void SelectOption(int item_index, const CFX_PointF& point) {
-    // Only relevant for comboboxes with three choices and the same dimensions
-    // as those in combobox_form.pdf.
-    ASSERT(item_index >= 0);
-    ASSERT(item_index < 3);
 
     // Navigate to button for drop down and click mouse to reveal options.
     ClickOnFormFieldAtPoint(point);
@@ -294,6 +294,9 @@ class FPDFFormFillComboBoxFormEmbeddertest
     CFX_PointF option_point = point;
     option_point.y -= kChoiceHeight * (item_index + 1);
 
+    // Move left to avoid scrollbar.
+    option_point.x -= 20;
+
     // Navigate to option and click mouse to select it.
     ClickOnFormFieldAtPoint(option_point);
   }
@@ -301,8 +304,8 @@ class FPDFFormFillComboBoxFormEmbeddertest
   static constexpr float kFormBeginX = 102.0;
   static constexpr float kFormEndX = 183.0;
   static constexpr float kFormDropDownX = 192.0;
-  static constexpr float kEditableFormY = 60.0;
-  static constexpr float kNonEditableFormY = 110.0;
+  static constexpr float kEditableFormY = 360.0;
+  static constexpr float kNonEditableFormY = 410.0;
 };
 
 TEST_F(FPDFFormFillEmbeddertest, FirstTest) {
