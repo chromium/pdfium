@@ -33,7 +33,7 @@ vars = {
   'skia_revision': '40ca2087ef0752d78fd2e0995471102fe96fe9fe',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '0e9a47d74970bee1bbfc063c47215406f8918699',
-  'v8_revision': '6353d168d0010be3933c39f122ecae26e0568e44',
+  'v8_revision': '9cf8abb7ce7e3a3152fb71d0e87678e64f7ab0c8',
   'yasm_source_revision': 'b98114e18d8b9b84586b10d24353ab8616d4c5fc',
   'zlib_revision': '91155b5d0737713fc7f0499cf0ba2c4f2af24014',
 }
