@@ -242,8 +242,12 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
     return rects;
 
   const int nCharListSize = CountChars();
+  if (start >= nCharListSize)
+    return rects;
+
   if (nCount < 0 || start + nCount > nCharListSize)
     nCount = nCharListSize - start;
+  ASSERT(nCount > 0);
 
   CPDF_TextObject* pCurObj = nullptr;
   CFX_FloatRect rect;

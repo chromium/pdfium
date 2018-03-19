@@ -741,7 +741,6 @@ TEST_F(FPDFTextEmbeddertest, CountRects) {
     EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 500));
   }
 
-#if 0
   // TODO(thestig): This crashes. Fix and enable.
   // Now test start values that starts beyond the end of the text.
   for (int start = kExpectedLength; start < 100; ++start) {
@@ -751,7 +750,6 @@ TEST_F(FPDFTextEmbeddertest, CountRects) {
     EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 2));
     EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 500));
   }
-#endif
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
