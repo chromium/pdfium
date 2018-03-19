@@ -405,8 +405,10 @@ void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
   info->m_Matrix = charinfo.m_Matrix;
 }
 
-void CPDF_TextPage::CheckMarkedContentObject(int32_t& start,
-                                             int32_t& nCount) const {
+void CPDF_TextPage::CheckMarkedContentObject(int32_t* pStart,
+                                             int32_t* pCount) const {
+  int start = *pStart;
+  const int nCount = *pCount;
   PAGECHAR_INFO charinfo = m_CharList[start];
   PAGECHAR_INFO charinfo2 = m_CharList[start + nCount - 1];
   if (FPDFTEXT_CHAR_PIECE != charinfo.m_Flag &&
@@ -415,29 +417,29 @@ void CPDF_TextPage::CheckMarkedContentObject(int32_t& start,
   }
   if (FPDFTEXT_CHAR_PIECE == charinfo.m_Flag) {
     PAGECHAR_INFO charinfo1 = charinfo;
-    int startIndex = start;
     while (FPDFTEXT_CHAR_PIECE == charinfo1.m_Flag &&
            charinfo1.m_Index == charinfo.m_Index) {
-      startIndex--;
-      if (startIndex < 0)
+      start--;
+      if (start < 0)
         break;
-      charinfo1 = m_CharList[startIndex];
+      charinfo1 = m_CharList[start];
     }
-    startIndex++;
-    start = startIndex;
+    start++;
+    *pStart = start;
   }
   if (FPDFTEXT_CHAR_PIECE == charinfo2.m_Flag) {
     PAGECHAR_INFO charinfo3 = charinfo2;
     int endIndex = start + nCount - 1;
+    const int nCount = CountChars();
     while (FPDFTEXT_CHAR_PIECE == charinfo3.m_Flag &&
            charinfo3.m_Index == charinfo2.m_Index) {
       endIndex++;
-      if (endIndex >= pdfium::CollectionSize<int>(m_CharList))
+      if (endIndex >= nCount)
         break;
       charinfo3 = m_CharList[endIndex];
     }
     endIndex--;
-    nCount = endIndex - start + 1;
+    *pCount = endIndex - start + 1;
   }
 }
 
@@ -542,14 +544,14 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
 
 void CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,
                                              const CFX_Matrix& formMatrix) {
-  PAGECHAR_INFO generateChar;
-  if (!GenerateCharInfo(unicode, generateChar))
+  Optional<PAGECHAR_INFO> pGenerateChar = GenerateCharInfo(unicode);
+  if (!pGenerateChar)
     return;
 
   m_TextBuf.AppendChar(unicode);
   if (!formMatrix.IsIdentity())
-    generateChar.m_Matrix = formMatrix;
-  m_CharList.push_back(generateChar);
+    pGenerateChar->m_Matrix = formMatrix;
+  m_CharList.push_back(*pGenerateChar);
 }
 
 void CPDF_TextPage::ProcessObject() {
@@ -963,12 +965,13 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       case GenerateCharacter::None:
         break;
       case GenerateCharacter::Space: {
-        PAGECHAR_INFO generateChar;
-        if (GenerateCharInfo(TEXT_SPACE_CHAR, generateChar)) {
+        Optional<PAGECHAR_INFO> pGenerateChar =
+            GenerateCharInfo(TEXT_SPACE_CHAR);
+        if (pGenerateChar) {
           if (!formMatrix.IsIdentity())
-            generateChar.m_Matrix = formMatrix;
+            pGenerateChar->m_Matrix = formMatrix;
           m_TempTextBuf.AppendChar(TEXT_SPACE_CHAR);
-          m_TempCharList.push_back(generateChar);
+          m_TempCharList.push_back(*pGenerateChar);
         }
         break;
       }
@@ -1451,15 +1454,16 @@ bool CPDF_TextPage::IsSameAsPreTextObject(
   return false;
 }
 
-bool CPDF_TextPage::GenerateCharInfo(wchar_t unicode, PAGECHAR_INFO& info) {
+Optional<PAGECHAR_INFO> CPDF_TextPage::GenerateCharInfo(wchar_t unicode) {
   const PAGECHAR_INFO* preChar;
   if (!m_TempCharList.empty())
     preChar = &m_TempCharList.back();
   else if (!m_CharList.empty())
     preChar = &m_CharList.back();
   else
-    return false;
+    return {};
 
+  PAGECHAR_INFO info;
   info.m_Index = m_TextBuf.GetLength();
   info.m_Unicode = unicode;
   info.m_pTextObj = nullptr;
@@ -1481,7 +1485,7 @@ bool CPDF_TextPage::GenerateCharInfo(wchar_t unicode, PAGECHAR_INFO& info) {
       preChar->m_Origin.x + preWidth * (fFontSize) / 1000, preChar->m_Origin.y);
   info.m_CharBox = CFX_FloatRect(info.m_Origin.x, info.m_Origin.y,
                                  info.m_Origin.x, info.m_Origin.y);
-  return true;
+  return info;
 }
 
 bool CPDF_TextPage::IsRectIntersect(const CFX_FloatRect& rect1,

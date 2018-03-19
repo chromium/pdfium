@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/optional.h"
 
 class CPDF_Font;
 class CPDF_FormObject;
@@ -142,7 +143,7 @@ class CPDF_TextPage {
                          CPDF_PageObjectList::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& formMatrix);
-  bool GenerateCharInfo(wchar_t unicode, PAGECHAR_INFO& info);
+  Optional<PAGECHAR_INFO> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectList* pObjList,
                              CPDF_PageObjectList::const_iterator ObjPos);
@@ -151,7 +152,7 @@ class CPDF_TextPage {
   void CloseTempLine();
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
-  void CheckMarkedContentObject(int32_t& start, int32_t& nCount) const;
+  void CheckMarkedContentObject(int32_t* pStart, int32_t* pCount) const;
   void FindPreviousTextObject();
   void AddCharInfoByLRDirection(wchar_t wChar, PAGECHAR_INFO info);
   void AddCharInfoByRLDirection(wchar_t wChar, PAGECHAR_INFO info);
