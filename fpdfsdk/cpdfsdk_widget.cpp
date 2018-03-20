@@ -41,17 +41,6 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #endif  // PDF_ENABLE_XFA
 
-namespace {
-
-// Convert a FX_ARGB to a FX_COLORREF.
-FX_COLORREF ARGBToColorRef(FX_ARGB argb) {
-  return (((static_cast<uint32_t>(argb) & 0x00FF0000) >> 16) |
-          (static_cast<uint32_t>(argb) & 0x0000FF00) |
-          ((static_cast<uint32_t>(argb) & 0x000000FF) << 16));
-}
-
-}  // namespace
-
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_PageView* pPageView,
                                CPDFSDK_InterForm* pInterForm)
@@ -428,14 +417,14 @@ WideString CPDFSDK_Widget::GetName() const {
 bool CPDFSDK_Widget::GetFillColor(FX_COLORREF& color) const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   int iColorType = 0;
-  color = ARGBToColorRef(pFormCtrl->GetBackgroundColor(iColorType));
+  color = ArgbToColorRef(pFormCtrl->GetBackgroundColor(iColorType));
   return iColorType != CFX_Color::kTransparent;
 }
 
 bool CPDFSDK_Widget::GetBorderColor(FX_COLORREF& color) const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   int iColorType = 0;
-  color = ARGBToColorRef(pFormCtrl->GetBorderColor(iColorType));
+  color = ArgbToColorRef(pFormCtrl->GetBorderColor(iColorType));
   return iColorType != CFX_Color::kTransparent;
 }
 
@@ -448,7 +437,7 @@ bool CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const {
   FX_ARGB argb;
   int iColorType = CFX_Color::kTransparent;
   da.GetColor(argb, iColorType);
-  color = ARGBToColorRef(argb);
+  color = ArgbToColorRef(argb);
   return iColorType != CFX_Color::kTransparent;
 }
 

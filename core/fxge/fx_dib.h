@@ -37,9 +37,13 @@ struct PixelWeight {
   int m_Weights[1];
 };
 
-typedef uint32_t FX_ARGB;
-typedef uint32_t FX_COLORREF;
-typedef uint32_t FX_CMYK;
+using FX_ARGB = uint32_t;
+
+// FX_COLORREF, like win32 COLORREF, is BGR.
+using FX_COLORREF = uint32_t;
+
+using FX_CMYK = uint32_t;
+
 class CFX_ClipRgn;
 class CFX_DIBSource;
 class CStretchEngine;
@@ -86,11 +90,14 @@ inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
   return (c << 24) | (m << 16) | (y << 8) | k;
 }
 
-// Returns tuple a, r, g, b
+// Returns (a, r, g, b)
 std::tuple<int, int, int, int> ArgbDecode(FX_ARGB argb);
 
-// Returns pair a, rgb
-std::pair<int, FX_COLORREF> ArgbToColorRef(FX_ARGB argb);
+// Returns (a, FX_COLORREF)
+std::pair<int, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb);
+
+// Returns FX_COLORREF.
+FX_COLORREF ArgbToColorRef(FX_ARGB argb);
 
 inline FX_ARGB ArgbEncode(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;

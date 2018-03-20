@@ -79,9 +79,12 @@ std::tuple<int, int, int, int> ArgbDecode(FX_ARGB argb) {
                          FXARGB_B(argb));
 }
 
-std::pair<int, FX_COLORREF> ArgbToColorRef(FX_ARGB argb) {
-  return {FXARGB_A(argb),
-          FXSYS_RGB(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb))};
+std::pair<int, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb) {
+  return {FXARGB_A(argb), ArgbToColorRef(argb)};
+}
+
+FX_COLORREF ArgbToColorRef(FX_ARGB argb) {
+  return FXSYS_RGB(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
 }
 
 uint32_t ArgbEncode(int a, FX_COLORREF bgr) {

@@ -280,10 +280,8 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
   ModifyWorldTransform(m_hDC, &xform, MWT_LEFTMULTIPLY);
 
   // Color
-  int iUnusedAlpha;
-  FX_COLORREF bgr;
-  std::tie(iUnusedAlpha, bgr) = ArgbToColorRef(color);
-  SetTextColor(m_hDC, bgr);
+  FX_COLORREF colorref = ArgbToColorRef(color);
+  SetTextColor(m_hDC, colorref);
   SetBkMode(m_hDC, TRANSPARENT);
 
   // Text
