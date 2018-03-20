@@ -10,6 +10,7 @@
 #include "core/fpdfapi/page/cpdf_color.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/shared_copy_on_write.h"
+#include "core/fxge/fx_dib.h"
 
 class CPDF_Color;
 class CPDF_ColorSpace;
@@ -24,11 +25,11 @@ class CPDF_ColorState {
   void Emplace();
   void SetDefault();
 
-  uint32_t GetFillRGB() const;
-  void SetFillRGB(uint32_t rgb);
+  FX_COLORREF GetFillColorRef() const;
+  void SetFillColorRef(FX_COLORREF colorref);
 
-  uint32_t GetStrokeRGB() const;
-  void SetStrokeRGB(uint32_t rgb);
+  FX_COLORREF GetStrokeColorRef() const;
+  void SetStrokeColorRef(FX_COLORREF colorref);
 
   const CPDF_Color* GetFillColor() const;
   CPDF_Color* GetMutableFillColor();
@@ -54,15 +55,14 @@ class CPDF_ColorState {
 
     void SetDefault();
 
-    // TODO(thestig): Rename these to BGR.
-    uint32_t m_FillRGB;
-    uint32_t m_StrokeRGB;
+    FX_COLORREF m_FillColorRef;
+    FX_COLORREF m_StrokeColorRef;
     CPDF_Color m_FillColor;
     CPDF_Color m_StrokeColor;
   };
 
   void SetColor(CPDF_Color& color,
-                uint32_t& rgb,
+                FX_COLORREF* colorref,
                 CPDF_ColorSpace* pCS,
                 float* pValue,
                 uint32_t nValues);

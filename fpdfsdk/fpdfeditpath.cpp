@@ -35,6 +35,14 @@ static_assert(static_cast<int>(FXPT_TYPE::BezierTo) == FPDF_SEGMENT_BEZIERTO,
 static_assert(static_cast<int>(FXPT_TYPE::MoveTo) == FPDF_SEGMENT_MOVETO,
               "FXPT_TYPE::MoveTo value mismatch");
 
+namespace {
+
+unsigned int GetAlphaAsUnsignedInt(float alpha) {
+  return static_cast<unsigned int>(alpha * 255.f + 0.5f);
+}
+
+}  // namespace
+
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewPath(float x,
                                                                     float y) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
@@ -81,12 +89,11 @@ FPDFPath_GetStrokeColor(FPDF_PAGEOBJECT path,
   if (!pPathObj || !R || !G || !B || !A)
     return false;
 
-  uint32_t strokeRGB = pPathObj->m_ColorState.GetStrokeRGB();
-  *R = FXSYS_GetRValue(strokeRGB);
-  *G = FXSYS_GetGValue(strokeRGB);
-  *B = FXSYS_GetBValue(strokeRGB);
-  *A = static_cast<unsigned int>(
-      (pPathObj->m_GeneralState.GetStrokeAlpha() * 255.f) + 0.5f);
+  FX_COLORREF strokeColor = pPathObj->m_ColorState.GetStrokeColorRef();
+  *R = FXSYS_GetRValue(strokeColor);
+  *G = FXSYS_GetGValue(strokeColor);
+  *B = FXSYS_GetBValue(strokeColor);
+  *A = GetAlphaAsUnsignedInt(pPathObj->m_GeneralState.GetStrokeAlpha());
   return true;
 }
 
@@ -118,12 +125,11 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
   if (!pPathObj || !R || !G || !B || !A)
     return false;
 
-  uint32_t fillRGB = pPathObj->m_ColorState.GetFillRGB();
-  *R = FXSYS_GetRValue(fillRGB);
-  *G = FXSYS_GetGValue(fillRGB);
-  *B = FXSYS_GetBValue(fillRGB);
-  *A = static_cast<unsigned int>(
-      (pPathObj->m_GeneralState.GetFillAlpha() * 255.f) + 0.5f);
+  FX_COLORREF fillColor = pPathObj->m_ColorState.GetFillColorRef();
+  *R = FXSYS_GetRValue(fillColor);
+  *G = FXSYS_GetGValue(fillColor);
+  *B = FXSYS_GetBValue(fillColor);
+  *A = GetAlphaAsUnsignedInt(pPathObj->m_GeneralState.GetFillAlpha());
   return true;
 }
 

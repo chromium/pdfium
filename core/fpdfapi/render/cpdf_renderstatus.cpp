@@ -1046,14 +1046,14 @@ bool CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
     m_InitialStates.CopyStates(*pInitialStates);
     if (pParentState) {
       if (!m_InitialStates.m_ColorState.HasFillColor()) {
-        m_InitialStates.m_ColorState.SetFillRGB(
-            pParentState->m_InitialStates.m_ColorState.GetFillRGB());
+        m_InitialStates.m_ColorState.SetFillColorRef(
+            pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
         m_InitialStates.m_ColorState.GetMutableFillColor()->Copy(
             pParentState->m_InitialStates.m_ColorState.GetFillColor());
       }
       if (!m_InitialStates.m_ColorState.HasStrokeColor()) {
-        m_InitialStates.m_ColorState.SetStrokeRGB(
-            pParentState->m_InitialStates.m_ColorState.GetFillRGB());
+        m_InitialStates.m_ColorState.SetStrokeColorRef(
+            pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
         m_InitialStates.m_ColorState.GetMutableStrokeColor()->Copy(
             pParentState->m_InitialStates.m_ColorState.GetStrokeColor());
       }
@@ -1357,8 +1357,8 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
   if (MissingFillColor(pColorState))
     pColorState = &m_InitialStates.m_ColorState;
 
-  FX_COLORREF bgr = pColorState->GetFillRGB();
-  if (bgr == 0xFFFFFFFF)
+  FX_COLORREF colorref = pColorState->GetFillColorRef();
+  if (colorref == 0xFFFFFFFF)
     return 0;
 
   int32_t alpha =
@@ -1368,10 +1368,12 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj,
       pObj->m_GeneralState.SetTransferFunc(
           GetTransferFunc(pObj->m_GeneralState.GetTR()));
     }
-    if (pObj->m_GeneralState.GetTransferFunc())
-      bgr = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(bgr);
+    if (pObj->m_GeneralState.GetTransferFunc()) {
+      colorref =
+          pObj->m_GeneralState.GetTransferFunc()->TranslateColor(colorref);
+    }
   }
-  return m_Options.TranslateColor(ArgbEncode(alpha, bgr));
+  return m_Options.TranslateColor(ArgbEncode(alpha, colorref));
 }
 
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
@@ -1382,8 +1384,8 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
   if (MissingStrokeColor(pColorState))
     pColorState = &m_InitialStates.m_ColorState;
 
-  FX_COLORREF bgr = pColorState->GetStrokeRGB();
-  if (bgr == 0xFFFFFFFF)
+  FX_COLORREF colorref = pColorState->GetStrokeColorRef();
+  if (colorref == 0xFFFFFFFF)
     return 0;
 
   int32_t alpha = static_cast<int32_t>(pObj->m_GeneralState.GetStrokeAlpha() *
@@ -1393,10 +1395,12 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
       pObj->m_GeneralState.SetTransferFunc(
           GetTransferFunc(pObj->m_GeneralState.GetTR()));
     }
-    if (pObj->m_GeneralState.GetTransferFunc())
-      bgr = pObj->m_GeneralState.GetTransferFunc()->TranslateColor(bgr);
+    if (pObj->m_GeneralState.GetTransferFunc()) {
+      colorref =
+          pObj->m_GeneralState.GetTransferFunc()->TranslateColor(colorref);
+    }
   }
-  return m_Options.TranslateColor(ArgbEncode(alpha, bgr));
+  return m_Options.TranslateColor(ArgbEncode(alpha, colorref));
 }
 
 void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
@@ -1710,10 +1714,11 @@ std::unique_ptr<CPDF_GraphicStates> CPDF_RenderStatus::CloneObjStates(
                                     ? pSrcStates->m_ColorState.GetStrokeColor()
                                     : pSrcStates->m_ColorState.GetFillColor();
   if (!pObjColor->IsNull()) {
-    pStates->m_ColorState.SetFillRGB(
-        bStroke ? pSrcStates->m_ColorState.GetStrokeRGB()
-                : pSrcStates->m_ColorState.GetFillRGB());
-    pStates->m_ColorState.SetStrokeRGB(pStates->m_ColorState.GetFillRGB());
+    pStates->m_ColorState.SetFillColorRef(
+        bStroke ? pSrcStates->m_ColorState.GetStrokeColorRef()
+                : pSrcStates->m_ColorState.GetFillColorRef());
+    pStates->m_ColorState.SetStrokeColorRef(
+        pStates->m_ColorState.GetFillColorRef());
   }
   return pStates;
 }
