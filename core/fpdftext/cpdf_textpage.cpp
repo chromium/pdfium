@@ -31,12 +31,14 @@ const uint16_t* const g_UnicodeData_Normalization_Maps[5] = {
     nullptr, g_UnicodeData_Normalization_Map1, g_UnicodeData_Normalization_Map2,
     g_UnicodeData_Normalization_Map3, g_UnicodeData_Normalization_Map4};
 
-float NormalizeThreshold(float threshold) {
-  if (threshold < 300)
+float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
+  ASSERT(t1 < t2);
+  ASSERT(t2 < t3);
+  if (threshold < t1)
     return threshold / 2.0f;
-  if (threshold < 500)
+  if (threshold < t2)
     return threshold / 4.0f;
-  if (threshold < 700)
+  if (threshold < t3)
     return threshold / 5.0f;
   return threshold / 6.0f;
 }
@@ -316,39 +318,38 @@ int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
   if (!m_bIsParsed)
     return -3;
 
-  int pos = 0;
+  int pos;
   int NearPos = -1;
   double xdif = 5000;
   double ydif = 5000;
   const int nCount = CountChars();
-  while (pos < nCount) {
+  for (pos = 0; pos < nCount; ++pos) {
     PAGECHAR_INFO charinfo = m_CharList[pos];
     CFX_FloatRect charrect = charinfo.m_CharBox;
     if (charrect.Contains(point))
       break;
-    if (tolerance.width > 0 || tolerance.height > 0) {
-      CFX_FloatRect charRectExt;
-      charrect.Normalize();
-      charRectExt.left = charrect.left - tolerance.width / 2;
-      charRectExt.right = charrect.right + tolerance.width / 2;
-      charRectExt.top = charrect.top + tolerance.height / 2;
-      charRectExt.bottom = charrect.bottom - tolerance.height / 2;
-      if (charRectExt.Contains(point)) {
-        double curXdif, curYdif;
-        curXdif = fabs(point.x - charrect.left) < fabs(point.x - charrect.right)
-                      ? fabs(point.x - charrect.left)
-                      : fabs(point.x - charrect.right);
-        curYdif = fabs(point.y - charrect.bottom) < fabs(point.y - charrect.top)
-                      ? fabs(point.y - charrect.bottom)
-                      : fabs(point.y - charrect.top);
-        if (curYdif + curXdif < xdif + ydif) {
-          ydif = curYdif;
-          xdif = curXdif;
-          NearPos = pos;
-        }
-      }
+
+    if (tolerance.width <= 0 && tolerance.height <= 0)
+      continue;
+
+    CFX_FloatRect charRectExt;
+    charrect.Normalize();
+    charRectExt.left = charrect.left - tolerance.width / 2;
+    charRectExt.right = charrect.right + tolerance.width / 2;
+    charRectExt.top = charrect.top + tolerance.height / 2;
+    charRectExt.bottom = charrect.bottom - tolerance.height / 2;
+    if (!charRectExt.Contains(point))
+      continue;
+
+    double curXdif =
+        std::min(fabs(point.x - charrect.left), fabs(point.x - charrect.right));
+    double curYdif =
+        std::min(fabs(point.y - charrect.bottom), fabs(point.y - charrect.top));
+    if (curYdif + curXdif < xdif + ydif) {
+      ydif = curYdif;
+      xdif = curXdif;
+      NearPos = pos;
     }
-    ++pos;
   }
   return pos < nCount ? pos : NearPos;
 }
@@ -1063,7 +1064,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         threshold /= 2;
       if (threshold == 0) {
         threshold = static_cast<float>(GetCharWidth(item.m_CharCode, pFont));
-        threshold = NormalizeThreshold(threshold);
+        threshold = NormalizeThreshold(threshold, 300, 500, 700);
         threshold = fontsize_h * threshold / 1000;
       }
       if (threshold && (spacing && spacing >= threshold)) {
@@ -1130,7 +1131,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     bool bDel = false;
     const int count = std::min(pdfium::CollectionSize<int>(m_TempCharList), 7);
     float threshold = charinfo.m_Matrix.TransformXDistance(
-        (float)TEXT_CHARRATIO_GAPDELTA * pTextObj->GetFontSize());
+        static_cast<float>(TEXT_CHARRATIO_GAPDELTA) * pTextObj->GetFontSize());
     for (int n = pdfium::CollectionSize<int>(m_TempCharList);
          n > pdfium::CollectionSize<int>(m_TempCharList) - count; n--) {
       const PAGECHAR_INFO& charinfo1 = m_TempCharList[n - 1];
@@ -1344,12 +1345,8 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   CFX_Matrix matrix = pObj->GetTextMatrix();
   matrix.Concat(formMatrix);
 
-  threshold = (float)(nLastWidth > nThisWidth ? nLastWidth : nThisWidth);
-  threshold = threshold > 400
-                  ? (threshold < 700
-                         ? threshold / 4
-                         : (threshold > 800 ? threshold / 6 : threshold / 5))
-                  : (threshold / 2);
+  threshold = static_cast<float>(std::max(nLastWidth, nThisWidth));
+  threshold = NormalizeThreshold(threshold, 400, 700, 800);
   if (nLastWidth >= nThisWidth) {
     threshold *= fabs(m_pPreTextObj->GetFontSize());
   } else {
@@ -1430,11 +1427,8 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
   float char_size = GetCharWidth(itemPer.m_CharCode, pTextObj2->GetFont());
   float max_pre_size =
       std::max(std::max(rcPreObj.Height(), rcPreObj.Width()), font_size);
-  if (fabs(diff.x) > char_size * font_size / 1000 * 0.9 ||
-      fabs(diff.y) > max_pre_size / 8) {
-    return false;
-  }
-  return true;
+  return fabs(diff.x) <= 0.9 * char_size * font_size / 1000 &&
+         fabs(diff.y) <= max_pre_size / 8;
 }
 
 bool CPDF_TextPage::IsSameAsPreTextObject(
