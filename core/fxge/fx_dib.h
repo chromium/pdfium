@@ -76,10 +76,18 @@ extern const int16_t SDP_Table[513];
 
 // TODO(thestig): Rename to FXSYS_BGR() and check callers.
 #define FXSYS_RGB(r, g, b) ((r) | ((g) << 8) | ((b) << 16))
-// TODO(thestig): Rename parameter to |bgr| and check callers.
-#define FXSYS_GetRValue(rgb) ((rgb)&0xff)
-#define FXSYS_GetGValue(rgb) (((rgb) >> 8) & 0xff)
-#define FXSYS_GetBValue(rgb) (((rgb) >> 16) & 0xff)
+
+constexpr uint8_t FXSYS_GetRValue(uint32_t bgr) {
+  return bgr & 0xff;
+}
+
+constexpr uint8_t FXSYS_GetGValue(uint32_t bgr) {
+  return (bgr >> 8) & 0xff;
+}
+
+constexpr uint8_t FXSYS_GetBValue(uint32_t bgr) {
+  return (bgr >> 16) & 0xff;
+}
 
 #define FXSYS_GetCValue(cmyk) ((uint8_t)((cmyk) >> 24) & 0xff)
 #define FXSYS_GetMValue(cmyk) ((uint8_t)((cmyk) >> 16) & 0xff)

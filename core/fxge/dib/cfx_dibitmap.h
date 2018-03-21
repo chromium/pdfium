@@ -122,7 +122,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
 #endif
 
  private:
-  void ConvertRGBColorScale(uint32_t forecolor, uint32_t backcolor);
+  void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
   void ConvertCMYKColorScale(uint32_t forecolor, uint32_t backcolor);
 };
 

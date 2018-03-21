@@ -682,7 +682,7 @@ void CFX_DIBitmap::DownSampleScanline(int line,
   }
 }
 
-void CFX_DIBitmap::ConvertRGBColorScale(uint32_t forecolor,
+void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
                                         uint32_t backcolor) {
   int fr = FXSYS_GetRValue(forecolor);
   int fg = FXSYS_GetGValue(forecolor);
@@ -807,7 +807,7 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
   if (IsCmykImage())
     ConvertCMYKColorScale(forecolor, backcolor);
   else
-    ConvertRGBColorScale(forecolor, backcolor);
+    ConvertBGRColorScale(forecolor, backcolor);
   return true;
 }
 
