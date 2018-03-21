@@ -230,6 +230,7 @@ jumbo_static_library("pdfium") {
 
   if (pdf_is_complete_lib) {
     complete_static_lib = true
+    configs -= [ "//build/config/compiler:thin_archive" ]
   }
 }
 
