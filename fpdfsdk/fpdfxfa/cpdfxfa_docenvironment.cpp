@@ -596,8 +596,9 @@ FX_ARGB CPDFXFA_DocEnvironment::GetHighlightColor(CXFA_FFDoc* hDoc) {
   if (!pInterForm)
     return 0;
 
-  return ArgbEncode(pInterForm->GetHighlightAlpha(),
-                    pInterForm->GetHighlightColor(FormFieldType::kXFA));
+  return AlphaAndColorRefToArgb(
+      pInterForm->GetHighlightAlpha(),
+      pInterForm->GetHighlightColor(FormFieldType::kXFA));
 }
 
 bool CPDFXFA_DocEnvironment::NotifySubmit(bool bPrevOrPost) {

@@ -64,7 +64,7 @@ void CXFA_Stipple::Draw(CXFA_Graphics* pGS,
   int32_t alpha;
   FX_COLORREF colorref;
   std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(crColor);
-  FX_ARGB cr = ArgbEncode(iRate * alpha / 100, colorref);
+  FX_ARGB cr = AlphaAndColorRefToArgb(iRate * alpha / 100, colorref);
 
   pGS->SaveGraphState();
   pGS->SetFillColor(CXFA_GEColor(cr));
