@@ -75,6 +75,14 @@ ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 
+CPDF_Array* CPDFArrayFromDest(FPDF_DEST dest);
+
+CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action);
+
+CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark);
+
+CPDF_Dictionary* CPDFDictionaryFromFPDFLink(FPDF_LINK link);
+
 CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect);
 void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect);
 
