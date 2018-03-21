@@ -46,6 +46,8 @@
 
 namespace {
 
+constexpr uint32_t kWhiteBGR = FXSYS_BGR(255, 255, 255);
+
 bool IsFormFieldTypeComboOrText(FormFieldType fieldType) {
   switch (fieldType) {
     case FormFieldType::kComboBox:
@@ -699,7 +701,7 @@ bool CPDFSDK_InterForm::IsNeedHighLight(FormFieldType fieldType) {
 
 void CPDFSDK_InterForm::RemoveAllHighLights() {
   std::fill(m_HighlightColor, m_HighlightColor + kFormFieldTypeCount,
-            FXSYS_RGB(255, 255, 255));
+            kWhiteBGR);
   std::fill(m_NeedsHighlight, m_NeedsHighlight + kFormFieldTypeCount, false);
 }
 
@@ -721,7 +723,7 @@ void CPDFSDK_InterForm::SetAllHighlightColors(FX_COLORREF clr) {
 
 FX_COLORREF CPDFSDK_InterForm::GetHighlightColor(FormFieldType fieldType) {
   if (fieldType == FormFieldType::kUnknown)
-    return FXSYS_RGB(255, 255, 255);
+    return kWhiteBGR;
 
 #ifdef PDF_ENABLE_XFA
   // For the XFA fields, we need to return the specific field type highlight

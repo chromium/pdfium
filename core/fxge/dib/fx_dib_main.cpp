@@ -84,7 +84,7 @@ std::pair<int, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb) {
 }
 
 FX_COLORREF ArgbToColorRef(FX_ARGB argb) {
-  return FXSYS_RGB(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
+  return FXSYS_BGR(FXARGB_B(argb), FXARGB_G(argb), FXARGB_R(argb));
 }
 
 FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {

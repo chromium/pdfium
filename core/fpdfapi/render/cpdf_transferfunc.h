@@ -19,7 +19,7 @@ class CPDF_TransferFunc : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  FX_COLORREF TranslateColor(FX_COLORREF bgr) const;
+  FX_COLORREF TranslateColor(FX_COLORREF colorref) const;
   RetainPtr<CFX_DIBSource> TranslateImage(const RetainPtr<CFX_DIBSource>& pSrc);
 
   const CPDF_Document* GetDocument() const { return m_pPDFDoc.Get(); }

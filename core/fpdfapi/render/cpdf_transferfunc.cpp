@@ -14,10 +14,10 @@ CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc) : m_pPDFDoc(pDoc) {}
 
 CPDF_TransferFunc::~CPDF_TransferFunc() {}
 
-FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF bgr) const {
-  return FXSYS_RGB(m_Samples[FXSYS_GetRValue(bgr)],
-                   m_Samples[256 + FXSYS_GetGValue(bgr)],
-                   m_Samples[512 + FXSYS_GetBValue(bgr)]);
+FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF colorref) const {
+  return FXSYS_BGR(m_Samples[512 + FXSYS_GetBValue(colorref)],
+                   m_Samples[256 + FXSYS_GetGValue(colorref)],
+                   m_Samples[FXSYS_GetRValue(colorref)]);
 }
 
 RetainPtr<CFX_DIBSource> CPDF_TransferFunc::TranslateImage(

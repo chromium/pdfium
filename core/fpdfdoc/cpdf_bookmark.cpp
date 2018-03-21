@@ -14,6 +14,12 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxge/fx_dib.h"
 
+namespace {
+
+constexpr uint32_t kBlackBGR = FXSYS_BGR(0, 0, 0);
+
+}  // namespace
+
 CPDF_Bookmark::CPDF_Bookmark() {}
 
 CPDF_Bookmark::CPDF_Bookmark(const CPDF_Bookmark& that) = default;
@@ -24,16 +30,16 @@ CPDF_Bookmark::~CPDF_Bookmark() {}
 
 uint32_t CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict)
-    return FXSYS_RGB(0, 0, 0);
+    return kBlackBGR;
 
   CPDF_Array* pColor = m_pDict->GetArrayFor("C");
   if (!pColor)
-    return FXSYS_RGB(0, 0, 0);
+    return kBlackBGR;
 
   int r = FXSYS_round(pColor->GetNumberAt(0) * 255);
   int g = FXSYS_round(pColor->GetNumberAt(1) * 255);
   int b = FXSYS_round(pColor->GetNumberAt(2) * 255);
-  return FXSYS_RGB(r, g, b);
+  return FXSYS_BGR(b, g, r);
 }
 
 uint32_t CPDF_Bookmark::GetFontStyle() const {
