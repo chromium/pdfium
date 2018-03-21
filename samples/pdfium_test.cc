@@ -1354,27 +1354,8 @@ void RenderPdf(const std::string& name,
                size_t len,
                const Options& options,
                const std::string& events) {
-  IPDF_JSPLATFORM platform_callbacks = {};
-  platform_callbacks.version = 3;
-  platform_callbacks.app_alert = ExampleAppAlert;
-  platform_callbacks.app_response = ExampleAppResponse;
-  platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
-  platform_callbacks.Doc_mail = ExampleDocMail;
-
-  // The pdf_avail must outlive doc.
-  std::unique_ptr<void, FPDFAvailDeleter> pdf_avail;
-  // The document must outlive |form_callbacks.loaded_pages|.
-  std::unique_ptr<void, FPDFDocumentDeleter> doc;
-  FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
-#ifdef PDF_ENABLE_XFA
-  form_callbacks.version = 2;
-#else   // PDF_ENABLE_XFA
-  form_callbacks.version = 1;
-#endif  // PDF_ENABLE_XFA
-  form_callbacks.FFI_GetPage = GetPageForIndex;
-  form_callbacks.m_pJsPlatform = &platform_callbacks;
-
   TestLoader loader(pBuf, len);
+
   FPDF_FILEACCESS file_access = {};
   file_access.m_FileLen = static_cast<unsigned long>(len);
   file_access.m_GetBlock = TestLoader::GetBlock;
@@ -1388,10 +1369,15 @@ void RenderPdf(const std::string& name,
   hints.version = 1;
   hints.AddSegment = Add_Segment;
 
+  // The pdf_avail must outlive doc.
+  std::unique_ptr<void, FPDFAvailDeleter> pdf_avail(
+      FPDFAvail_Create(&file_avail, &file_access));
+
+  // The document must outlive |form_callbacks.loaded_pages|.
+  std::unique_ptr<void, FPDFDocumentDeleter> doc;
+
   int nRet = PDF_DATA_NOTAVAIL;
   bool bIsLinearized = false;
-  pdf_avail.reset(FPDFAvail_Create(&file_avail, &file_access));
-
   if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
     doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), nullptr));
     if (doc) {
@@ -1427,6 +1413,22 @@ void RenderPdf(const std::string& name,
 
   if (options.save_attachments)
     SaveAttachments(doc.get(), name);
+
+  IPDF_JSPLATFORM platform_callbacks = {};
+  platform_callbacks.version = 3;
+  platform_callbacks.app_alert = ExampleAppAlert;
+  platform_callbacks.app_response = ExampleAppResponse;
+  platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
+  platform_callbacks.Doc_mail = ExampleDocMail;
+
+  FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
+#ifdef PDF_ENABLE_XFA
+  form_callbacks.version = 2;
+#else   // PDF_ENABLE_XFA
+  form_callbacks.version = 1;
+#endif  // PDF_ENABLE_XFA
+  form_callbacks.FFI_GetPage = GetPageForIndex;
+  form_callbacks.m_pJsPlatform = &platform_callbacks;
 
   std::unique_ptr<void, FPDFFormHandleDeleter> form(
       FPDFDOC_InitFormFillEnvironment(doc.get(), &form_callbacks));
