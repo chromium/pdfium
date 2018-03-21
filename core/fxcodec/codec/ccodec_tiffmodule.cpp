@@ -439,24 +439,24 @@ bool CTiffContext::Decode24bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
 }
 
 bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  uint32_t img_wid = pDIBitmap->GetWidth();
-  uint32_t img_hei = pDIBitmap->GetHeight();
+  uint32_t img_width = pDIBitmap->GetWidth();
+  uint32_t img_height = pDIBitmap->GetHeight();
   uint32_t width = 0;
   uint32_t height = 0;
   TIFFGetField(m_tif_ctx, TIFFTAG_IMAGEWIDTH, &width);
   TIFFGetField(m_tif_ctx, TIFFTAG_IMAGELENGTH, &height);
-  if (img_wid != width || img_hei != height)
+  if (img_width != width || img_height != height)
     return false;
 
   if (pDIBitmap->GetBPP() == 32) {
     uint16_t rotation = ORIENTATION_TOPLEFT;
     TIFFGetField(m_tif_ctx, TIFFTAG_ORIENTATION, &rotation);
-    if (TIFFReadRGBAImageOriented(m_tif_ctx, img_wid, img_hei,
+    if (TIFFReadRGBAImageOriented(m_tif_ctx, img_width, img_height,
                                   (uint32*)pDIBitmap->GetBuffer(), rotation,
                                   1)) {
-      for (uint32_t row = 0; row < img_hei; row++) {
+      for (uint32_t row = 0; row < img_height; row++) {
         uint8_t* row_buf = (uint8_t*)pDIBitmap->GetScanline(row);
-        TiffBGRA2RGBA(row_buf, img_wid, 4);
+        TiffBGRA2RGBA(row_buf, img_width, 4);
       }
       return true;
     }

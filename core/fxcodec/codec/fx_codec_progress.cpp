@@ -392,7 +392,7 @@ bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
     return false;
   }
   if (line >= m_clipBox.top && line < m_clipBox.bottom) {
-    double scale_y = (double)m_sizeY / (double)m_clipBox.Height();
+    double scale_y = static_cast<double>(m_sizeY) / m_clipBox.Height();
     int32_t row = (int32_t)((line - m_clipBox.top) * scale_y) + m_startY;
     uint8_t* src_scan = (uint8_t*)pDIBitmap->GetScanline(row);
     uint8_t* dest_scan = m_pDecodeBuf;
@@ -542,13 +542,13 @@ void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
   int dest_top = m_startY;
-  int src_hei = m_clipBox.Height();
-  int dest_hei = m_sizeY;
+  int src_height = m_clipBox.Height();
+  int dest_height = m_sizeY;
   if (line >= src_top && line < src_bottom) {
-    double scale_y = (double)dest_hei / (double)src_hei;
+    double scale_y = static_cast<double>(dest_height) / src_height;
     int src_row = line - src_top;
     int dest_row = (int)(src_row * scale_y) + dest_top;
-    if (dest_row >= dest_top + dest_hei) {
+    if (dest_row >= dest_top + dest_height) {
       return;
     }
     PngOneOneMapResampleHorz(pDIBitmap, dest_row, m_pDecodeBuf, m_SrcFormat);
@@ -720,15 +720,15 @@ void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
   int dest_top = m_startY;
-  int src_hei = m_clipBox.Height();
-  int dest_hei = m_sizeY;
+  int src_height = m_clipBox.Height();
+  int dest_height = m_sizeY;
   if (line < src_top || line >= src_bottom)
     return;
 
-  double scale_y = (double)dest_hei / (double)src_hei;
+  double scale_y = static_cast<double>(dest_height) / src_height;
   int src_row = line - src_top;
   int dest_row = (int)(src_row * scale_y) + dest_top;
-  if (dest_row >= dest_top + dest_hei)
+  if (dest_row >= dest_top + dest_height)
     return;
 
   ReSampleScanline(pDIBitmap, dest_row, m_pDecodeBuf, m_SrcFormat);
@@ -901,17 +901,17 @@ void CCodec_ProgressiveDecoder::BmpReadScanline(
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
   int dest_top = m_startY;
-  int src_hei = m_clipBox.Height();
-  int dest_hei = m_sizeY;
+  int src_height = m_clipBox.Height();
+  int dest_height = m_sizeY;
   if ((src_top >= 0 && row_num < static_cast<uint32_t>(src_top)) ||
       src_bottom < 0 || row_num >= static_cast<uint32_t>(src_bottom)) {
     return;
   }
 
-  double scale_y = (double)dest_hei / (double)src_hei;
+  double scale_y = static_cast<double>(dest_height) / src_height;
   int src_row = row_num - src_top;
   int dest_row = (int)(src_row * scale_y) + dest_top;
-  if (dest_row >= dest_top + dest_hei)
+  if (dest_row >= dest_top + dest_height)
     return;
 
   ReSampleScanline(pDIBitmap, dest_row, m_pDecodeBuf, m_SrcFormat);
@@ -1826,13 +1826,13 @@ void CCodec_ProgressiveDecoder::Resample(
     FXCodec_Format src_format) {
   int src_top = m_clipBox.top;
   int dest_top = m_startY;
-  int src_hei = m_clipBox.Height();
-  int dest_hei = m_sizeY;
+  int src_height = m_clipBox.Height();
+  int dest_height = m_sizeY;
   if (src_line >= src_top) {
-    double scale_y = (double)dest_hei / (double)src_hei;
+    double scale_y = static_cast<double>(dest_height) / src_height;
     int src_row = src_line - src_top;
     int dest_row = (int)(src_row * scale_y) + dest_top;
-    if (dest_row >= dest_top + dest_hei) {
+    if (dest_row >= dest_top + dest_height) {
       return;
     }
     ReSampleScanline(pDeviceBitmap, dest_row, m_pDecodeBuf, src_format);
