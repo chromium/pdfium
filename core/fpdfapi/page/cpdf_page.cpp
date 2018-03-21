@@ -133,6 +133,12 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
   float x2 = 0;
   float y2 = 0;
   iRotate %= 4;
+  // This code implicitly inverts the y-axis to account for page coordinates
+  // pointing up and bitmap coordinates pointing down. (x0, y0) is the base
+  // point, (x1, y1) is that point translated on y and (x2, y2) is the point
+  // translated on x. On iRotate = 0, y0 is (yPos + ySize) and the translation
+  // to get y1 is performed as negative. This results in the desired
+  // transformation.
   switch (iRotate) {
     case 0:
       x0 = xPos;
