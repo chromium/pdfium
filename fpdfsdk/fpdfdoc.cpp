@@ -332,9 +332,9 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDFLink_GetAction(FPDF_LINK pDict) {
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
-                                                       int* startPos,
-                                                       FPDF_LINK* linkAnnot) {
-  if (!startPos || !linkAnnot)
+                                                       int* start_pos,
+                                                       FPDF_LINK* link_annot) {
+  if (!start_pos || !link_annot)
     return false;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict)
@@ -342,35 +342,35 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
   CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
   if (!pAnnots)
     return false;
-  for (size_t i = *startPos; i < pAnnots->GetCount(); i++) {
+  for (size_t i = *start_pos; i < pAnnots->GetCount(); i++) {
     CPDF_Dictionary* pDict =
         ToDictionary(static_cast<CPDF_Object*>(pAnnots->GetDirectObjectAt(i)));
     if (!pDict)
       continue;
     if (pDict->GetStringFor("Subtype") == "Link") {
-      *startPos = static_cast<int>(i + 1);
-      *linkAnnot = static_cast<FPDF_LINK>(pDict);
+      *start_pos = static_cast<int>(i + 1);
+      *link_annot = static_cast<FPDF_LINK>(pDict);
       return true;
     }
   }
   return false;
 }
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK linkAnnot,
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
                                                           FS_RECTF* rect) {
-  if (!linkAnnot || !rect)
+  if (!link_annot || !rect)
     return false;
   CPDF_Dictionary* pAnnotDict =
-      ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
+      ToDictionary(static_cast<CPDF_Object*>(link_annot));
   FSRECTFFromCFXFloatRect(pAnnotDict->GetRectFor("Rect"), rect);
   return true;
 }
 
-FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK linkAnnot) {
-  if (!linkAnnot)
+FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK link_annot) {
+  if (!link_annot)
     return 0;
   CPDF_Dictionary* pAnnotDict =
-      ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
+      ToDictionary(static_cast<CPDF_Object*>(link_annot));
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (!pArray)
     return 0;
@@ -378,31 +378,31 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK linkAnnot) {
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot,
-                       int quadIndex,
-                       FS_QUADPOINTSF* quadPoints) {
-  if (!linkAnnot || !quadPoints)
+FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
+                       int quad_index,
+                       FS_QUADPOINTSF* quad_points) {
+  if (!link_annot || !quad_points)
     return false;
   CPDF_Dictionary* pAnnotDict =
-      ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
+      ToDictionary(static_cast<CPDF_Object*>(link_annot));
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (!pArray)
     return false;
 
-  if (quadIndex < 0 ||
-      static_cast<size_t>(quadIndex) >= pArray->GetCount() / 8 ||
-      (static_cast<size_t>(quadIndex * 8 + 7) >= pArray->GetCount())) {
+  if (quad_index < 0 ||
+      static_cast<size_t>(quad_index) >= pArray->GetCount() / 8 ||
+      (static_cast<size_t>(quad_index * 8 + 7) >= pArray->GetCount())) {
     return false;
   }
 
-  quadPoints->x1 = pArray->GetNumberAt(quadIndex * 8);
-  quadPoints->y1 = pArray->GetNumberAt(quadIndex * 8 + 1);
-  quadPoints->x2 = pArray->GetNumberAt(quadIndex * 8 + 2);
-  quadPoints->y2 = pArray->GetNumberAt(quadIndex * 8 + 3);
-  quadPoints->x3 = pArray->GetNumberAt(quadIndex * 8 + 4);
-  quadPoints->y3 = pArray->GetNumberAt(quadIndex * 8 + 5);
-  quadPoints->x4 = pArray->GetNumberAt(quadIndex * 8 + 6);
-  quadPoints->y4 = pArray->GetNumberAt(quadIndex * 8 + 7);
+  quad_points->x1 = pArray->GetNumberAt(quad_index * 8);
+  quad_points->y1 = pArray->GetNumberAt(quad_index * 8 + 1);
+  quad_points->x2 = pArray->GetNumberAt(quad_index * 8 + 2);
+  quad_points->y2 = pArray->GetNumberAt(quad_index * 8 + 3);
+  quad_points->x3 = pArray->GetNumberAt(quad_index * 8 + 4);
+  quad_points->y3 = pArray->GetNumberAt(quad_index * 8 + 5);
+  quad_points->x4 = pArray->GetNumberAt(quad_index * 8 + 6);
+  quad_points->y4 = pArray->GetNumberAt(quad_index * 8 + 7);
   return true;
 }
 

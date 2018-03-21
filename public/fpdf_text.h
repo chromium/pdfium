@@ -222,9 +222,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
 //          bottom boundary.
 // Return Value:
 //          On success, return TRUE and fill in |left|, |top|, |right|, and
-//          |bottom|. If |link_page| is invalid then return FALSE, and the out
-//          parameters remain unmodified. If |link_page| is valid but
-//          |link_index| is out of bounds, then return FALSE and set the out
+//          |bottom|. If |text_page| is invalid then return FALSE, and the out
+//          parameters remain unmodified. If |text_page| is valid but
+//          |rect_index| is out of bounds, then return FALSE and set the out
 //          parameters to 0.
 //
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,

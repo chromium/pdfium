@@ -93,7 +93,7 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
 //
 // Returns the handle to the bookmark, or NULL if |title| can't be found.
 //
-// |FPDFBookmark_Find| will always return the first bookmark found even if
+// FPDFBookmark_Find() will always return the first bookmark found even if
 // multiple bookmarks have the same |title|.
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title);
@@ -113,7 +113,7 @@ FPDFBookmark_GetDest(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark);
 //   bookmark - handle to the bookmark.
 //
 // Returns the handle to the action data, or NULL if no action is associated
-// with |bookmark|. When NULL is returned, |FPDFBookmark_GetDest| should be
+// with |bookmark|. When NULL is returned, FPDFBookmark_GetDest() should be
 // called to get the |bookmark| destination data.
 FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV
 FPDFBookmark_GetAction(FPDF_BOOKMARK bookmark);
@@ -139,8 +139,8 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action);
 // Returns a handle to the destination data.
 //
 // In the case of |PDFACTION_REMOTEGOTO|, you should first call
-// |FPDFAction_GetFilePath| then load that document, the document handle from
-// that document should pass as |document| to |FPDFAction_GetDest|.
+// FPDFAction_GetFilePath() then load that document, the document handle from
+// that document should pass as |document| to FPDFAction_GetDest().
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                        FPDF_ACTION action);
 
@@ -243,7 +243,7 @@ FPDFDest_GetLocationInPage(FPDF_DEST dest,
 // Returns a handle to the link, or NULL if no link found at the given point.
 //
 // You can convert coordinates from screen coordinates to page coordinates using
-// |FPDF_DeviceToPage|.
+// FPDF_DeviceToPage().
 FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
                                                             double x,
                                                             double y);
@@ -258,7 +258,7 @@ FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
 // Larger Z-order numbers are closer to the front.
 //
 // You can convert coordinates from screen coordinates to page coordinates using
-// |FPDF_DeviceToPage|.
+// FPDF_DeviceToPage().
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,
                                                             double x,
                                                             double y);
@@ -269,7 +269,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,
 //   link     - handle to the link.
 //
 // Returns a handle to the destination, or NULL if there is no destination
-// associated with the link. In this case, you should call |FPDFLink_GetAction|
+// associated with the link. In this case, you should call FPDFLink_GetAction()
 // to retrieve the action associated with |link|.
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFLink_GetDest(FPDF_DOCUMENT document,
                                                      FPDF_LINK link);
@@ -283,43 +283,43 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDFLink_GetAction(FPDF_LINK link);
 
 // Enumerates all the link annotations in |page|.
 //
-//   page      - handle to the page.
-//   startPos  - the start position, should initially be 0 and is updated with
-//               the next start position on return.
-//   linkAnnot - the link handle for |startPos|.
+//   page       - handle to the page.
+//   start_pos  - the start position, should initially be 0 and is updated with
+//                the next start position on return.
+//   link_annot - the link handle for |startPos|.
 //
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
-                                                       int* startPos,
-                                                       FPDF_LINK* linkAnnot);
+                                                       int* start_pos,
+                                                       FPDF_LINK* link_annot);
 
-// Get the rectangle for |linkAnnot|.
+// Get the rectangle for |link_annot|.
 //
-//   linkAnnot - handle to the link annotation.
-//   rect      - the annotation rectangle.
+//   link_annot - handle to the link annotation.
+//   rect       - the annotation rectangle.
 //
 // Returns true on success.
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK linkAnnot,
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
                                                           FS_RECTF* rect);
 
-// Get the count of quadrilateral points to the |linkAnnot|.
+// Get the count of quadrilateral points to the |link_annot|.
 //
-//   linkAnnot - handle to the link annotation.
+//   link_annot - handle to the link annotation.
 //
 // Returns the count of quadrilateral points.
-FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK linkAnnot);
+FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK link_annot);
 
-// Get the quadrilateral points for the specified |quadIndex| in |linkAnnot|.
+// Get the quadrilateral points for the specified |quad_index| in |link_annot|.
 //
-//   linkAnnot  - handle to the link annotation.
-//   quadIndex  - the specified quad point index.
-//   quadPoints - receives the quadrilateral points.
+//   link_annot  - handle to the link annotation.
+//   quad_index  - the specified quad point index.
+//   quad_points - receives the quadrilateral points.
 //
 // Returns true on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot,
-                       int quadIndex,
-                       FS_QUADPOINTSF* quadPoints);
+FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
+                       int quad_index,
+                       FS_QUADPOINTSF* quad_points);
 
 // Get meta-data |tag| content from |document|.
 //

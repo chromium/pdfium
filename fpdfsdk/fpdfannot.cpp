@@ -582,8 +582,8 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot) {
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
-                              const FS_QUADPOINTSF* quadPoints) {
-  if (!annot || !quadPoints || !FPDFAnnot_HasAttachmentPoints(annot))
+                              const FS_QUADPOINTSF* quad_points) {
+  if (!annot || !quad_points || !FPDFAnnot_HasAttachmentPoints(annot))
     return false;
 
   CPDF_Dictionary* pAnnotDict =
@@ -598,14 +598,14 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
   else
     pQuadPoints = pAnnotDict->SetNewFor<CPDF_Array>("QuadPoints");
 
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x1);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y1);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x2);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y2);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x3);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y3);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->x4);
-  pQuadPoints->AddNew<CPDF_Number>(quadPoints->y4);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->x1);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->y1);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->x2);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->y2);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->x3);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->y3);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->x4);
+  pQuadPoints->AddNew<CPDF_Number>(quad_points->y4);
 
   // If the annotation's appearance stream is defined, and the new quadpoints
   // defines a bigger bounding box than the appearance stream currently
@@ -623,8 +623,8 @@ FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
-                              FS_QUADPOINTSF* quadPoints) {
-  if (!annot || !FPDFAnnot_HasAttachmentPoints(annot) || !quadPoints)
+                              FS_QUADPOINTSF* quad_points) {
+  if (!annot || !quad_points || !FPDFAnnot_HasAttachmentPoints(annot))
     return false;
 
   CPDF_Dictionary* pAnnotDict =
@@ -636,14 +636,14 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
   if (!pArray)
     return false;
 
-  quadPoints->x1 = pArray->GetNumberAt(0);
-  quadPoints->y1 = pArray->GetNumberAt(1);
-  quadPoints->x2 = pArray->GetNumberAt(2);
-  quadPoints->y2 = pArray->GetNumberAt(3);
-  quadPoints->x3 = pArray->GetNumberAt(4);
-  quadPoints->y3 = pArray->GetNumberAt(5);
-  quadPoints->x4 = pArray->GetNumberAt(6);
-  quadPoints->y4 = pArray->GetNumberAt(7);
+  quad_points->x1 = pArray->GetNumberAt(0);
+  quad_points->y1 = pArray->GetNumberAt(1);
+  quad_points->x2 = pArray->GetNumberAt(2);
+  quad_points->y2 = pArray->GetNumberAt(3);
+  quad_points->x3 = pArray->GetNumberAt(4);
+  quad_points->y3 = pArray->GetNumberAt(5);
+  quad_points->x4 = pArray->GetNumberAt(6);
+  quad_points->y4 = pArray->GetNumberAt(7);
   return true;
 }
 
