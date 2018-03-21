@@ -22,14 +22,14 @@ class CJS_Global : public CJS_Object {
   static void DefineAllProperties(CFXJS_Engine* pEngine);
 
   static void queryprop_static(
-      v8::Local<v8::String> property,
+      v8::Local<v8::Name> property,
       const v8::PropertyCallbackInfo<v8::Integer>& info);
-  static void getprop_static(v8::Local<v8::String> property,
+  static void getprop_static(v8::Local<v8::Name> property,
                              const v8::PropertyCallbackInfo<v8::Value>& info);
-  static void putprop_static(v8::Local<v8::String> property,
+  static void putprop_static(v8::Local<v8::Name> property,
                              v8::Local<v8::Value> value,
                              const v8::PropertyCallbackInfo<v8::Value>& info);
-  static void delprop_static(v8::Local<v8::String> property,
+  static void delprop_static(v8::Local<v8::Name> property,
                              const v8::PropertyCallbackInfo<v8::Boolean>& info);
 
   static void setPersistent_static(
