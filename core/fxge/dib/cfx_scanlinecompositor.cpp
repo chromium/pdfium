@@ -2833,7 +2833,7 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   m_DestFormat = dest_format;
   m_BlendType = blend_type;
   m_bRgbByteOrder = bRgbByteOrder;
-  if ((dest_format & 0xff) == 1)
+  if (GetBppFromFormat(dest_format) == 1)
     return false;
   if (m_SrcFormat == FXDIB_1bppMask || m_SrcFormat == FXDIB_8bppMask) {
     InitSourceMask(alpha_flag, mask_color);
@@ -2846,9 +2846,10 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
       return true;
 
     InitSourcePalette(src_format, dest_format, pSrcPalette);
-    m_iTransparency =
-        (dest_format == FXDIB_Argb ? 1 : 0) + (dest_format & 0x0200 ? 2 : 0) +
-        (dest_format & 0x0400 ? 4 : 0) + ((src_format & 0xff) == 1 ? 8 : 0);
+    m_iTransparency = (dest_format == FXDIB_Argb ? 1 : 0) +
+                      (dest_format & 0x0200 ? 2 : 0) +
+                      (dest_format & 0x0400 ? 4 : 0) +
+                      (GetBppFromFormat(src_format) == 1 ? 8 : 0);
     return true;
   }
   m_iTransparency =
@@ -2907,15 +2908,16 @@ void CFX_ScanlineCompositor::InitSourceMask(int alpha_flag,
 void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
                                                FXDIB_Format dest_format,
                                                const uint32_t* pSrcPalette) {
-  bool isSrcCmyk = !!(src_format & 0x0400);
-  bool isDstCmyk = !!(dest_format & 0x0400);
+  bool bIsSrcCmyk = !!(src_format & 0x0400);
+  bool bIsDstCmyk = !!(dest_format & 0x0400);
+  bool bIsDestBpp8 = GetBppFromFormat(dest_format) == 8;
+  int pal_count = 1 << GetBppFromFormat(src_format);
   m_pSrcPalette = nullptr;
   if (pSrcPalette) {
-    if ((dest_format & 0xff) == 8) {
-      int pal_count = 1 << (src_format & 0xff);
+    if (bIsDestBpp8) {
       uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
       m_pSrcPalette.reset(reinterpret_cast<uint32_t*>(gray_pal));
-      if (isSrcCmyk) {
+      if (bIsSrcCmyk) {
         for (int i = 0; i < pal_count; ++i) {
           FX_CMYK cmyk = pSrcPalette[i];
           uint8_t r;
@@ -2935,13 +2937,12 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
       }
       return;
     }
-    int palsize = 1 << (src_format & 0xff);
-    m_pSrcPalette.reset(FX_Alloc(uint32_t, palsize));
+    m_pSrcPalette.reset(FX_Alloc(uint32_t, pal_count));
     uint32_t* pPalette = m_pSrcPalette.get();
-    if (isDstCmyk == isSrcCmyk) {
-      memcpy(pPalette, pSrcPalette, palsize * sizeof(uint32_t));
+    if (bIsDstCmyk == bIsSrcCmyk) {
+      memcpy(pPalette, pSrcPalette, pal_count * sizeof(uint32_t));
     } else {
-      for (int i = 0; i < palsize; ++i) {
+      for (int i = 0; i < pal_count; ++i) {
         FX_CMYK cmyk = pSrcPalette[i];
         uint8_t r;
         uint8_t g;
@@ -2954,8 +2955,7 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
     }
     return;
   }
-  if ((dest_format & 0xff) == 8) {
-    int pal_count = 1 << (src_format & 0xff);
+  if (bIsDestBpp8) {
     uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
     if (pal_count == 2) {
       gray_pal[0] = 0;
@@ -2967,18 +2967,17 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
     m_pSrcPalette.reset(reinterpret_cast<uint32_t*>(gray_pal));
     return;
   }
-  int palsize = 1 << (src_format & 0xff);
-  m_pSrcPalette.reset(FX_Alloc(uint32_t, palsize));
+  m_pSrcPalette.reset(FX_Alloc(uint32_t, pal_count));
   uint32_t* pPalette = m_pSrcPalette.get();
-  if (palsize == 2) {
-    pPalette[0] = isSrcCmyk ? 255 : 0xff000000;
-    pPalette[1] = isSrcCmyk ? 0 : 0xffffffff;
+  if (pal_count == 2) {
+    pPalette[0] = bIsSrcCmyk ? 255 : 0xff000000;
+    pPalette[1] = bIsSrcCmyk ? 0 : 0xffffffff;
   } else {
-    for (int i = 0; i < palsize; ++i)
-      pPalette[i] = isSrcCmyk ? FX_CCOLOR(i) : (i * 0x10101);
+    for (int i = 0; i < pal_count; ++i)
+      pPalette[i] = bIsSrcCmyk ? FX_CCOLOR(i) : (i * 0x10101);
   }
-  if (isSrcCmyk != isDstCmyk) {
-    for (int i = 0; i < palsize; ++i) {
+  if (bIsSrcCmyk != bIsDstCmyk) {
+    for (int i = 0; i < pal_count; ++i) {
       FX_CMYK cmyk = pPalette[i];
       uint8_t r;
       uint8_t g;

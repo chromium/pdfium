@@ -95,6 +95,14 @@ constexpr uint8_t FXSYS_GetBValue(uint32_t bgr) {
 #define FXSYS_GetYValue(cmyk) ((uint8_t)((cmyk) >> 8) & 0xff)
 #define FXSYS_GetKValue(cmyk) ((uint8_t)(cmyk)&0xff)
 
+inline int GetBppFromFormat(FXDIB_Format format) {
+  return format & 0xff;
+}
+
+inline int GetCompsFromFormat(FXDIB_Format format) {
+  return (format & 0xff) / 8;
+}
+
 inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
   return (c << 24) | (m << 16) | (y << 8) | k;
 }
@@ -149,7 +157,7 @@ FX_ARGB StringToFXARGB(const WideStringView& view);
   ((uint8_t)(argb >> 16) | ((uint8_t)(argb >> 8)) << 8 | \
    ((uint8_t)(argb)) << 16 | ((uint8_t)(argb >> 24) << 24))
 
-FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
+FX_RECT FXDIB_SwapClipBox(const FX_RECT& clip,
                           int width,
                           int height,
                           bool bFlipX,

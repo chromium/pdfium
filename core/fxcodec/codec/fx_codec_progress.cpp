@@ -1478,12 +1478,10 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
   int des_left = m_startX;
   uint8_t* des_scan =
       pDeviceBitmap->GetBuffer() + des_line * pDeviceBitmap->GetPitch();
-  int src_bpp = src_format & 0xff;
-  int des_bpp = pDeviceBitmap->GetBPP();
-  int src_Bpp = src_bpp >> 3;
-  int des_Bpp = des_bpp >> 3;
-  src_scan += src_left * src_Bpp;
-  des_scan += des_left * des_Bpp;
+  int src_bytes_per_pixel = (src_format & 0xff) / 8;
+  int dest_bytes_per_pixel = pDeviceBitmap->GetBPP() / 8;
+  src_scan += src_left * src_bytes_per_pixel;
+  des_scan += des_left * dest_bytes_per_pixel;
   for (int des_col = 0; des_col < m_sizeX; des_col++) {
     PixelWeight* pPixelWeights = m_WeightHorz.GetPixelWeight(des_col);
     switch (m_TransMethod) {
@@ -1523,7 +1521,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          const uint8_t* src_pixel = src_scan + j * src_Bpp;
+          const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
           des_b += pixel_weight * (*src_pixel++);
           des_g += pixel_weight * (*src_pixel++);
           des_r += pixel_weight * (*src_pixel);
@@ -1537,7 +1535,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          const uint8_t* src_pixel = src_scan + j * src_Bpp;
+          const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
           uint8_t src_b = 0;
           uint8_t src_g = 0;
           uint8_t src_r = 0;
@@ -1562,7 +1560,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
           des_g += pixel_weight * src_scan[j];
         }
         memset(des_scan, (uint8_t)(des_g >> 16), 3);
-        des_scan += des_Bpp;
+        des_scan += dest_bytes_per_pixel;
       } break;
       case 8: {
         int des_r = 0, des_g = 0, des_b = 0;
@@ -1578,7 +1576,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
         *des_scan++ = (uint8_t)((des_b) >> 16);
         *des_scan++ = (uint8_t)((des_g) >> 16);
         *des_scan++ = (uint8_t)((des_r) >> 16);
-        des_scan += des_Bpp - 3;
+        des_scan += dest_bytes_per_pixel - 3;
       } break;
       case 12: {
         if (m_pBmpContext) {
@@ -1620,7 +1618,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          const uint8_t* src_pixel = src_scan + j * src_Bpp;
+          const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
           des_b += pixel_weight * (*src_pixel++);
           des_g += pixel_weight * (*src_pixel++);
           des_r += pixel_weight * (*src_pixel);
@@ -1628,7 +1626,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
         *des_scan++ = (uint8_t)((des_b) >> 16);
         *des_scan++ = (uint8_t)((des_g) >> 16);
         *des_scan++ = (uint8_t)((des_r) >> 16);
-        des_scan += des_Bpp - 3;
+        des_scan += dest_bytes_per_pixel - 3;
       } break;
       case 10: {
         uint32_t des_b = 0, des_g = 0, des_r = 0;
@@ -1636,7 +1634,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          const uint8_t* src_pixel = src_scan + j * src_Bpp;
+          const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
           uint8_t src_b = 0;
           uint8_t src_g = 0;
           uint8_t src_r = 0;
@@ -1650,7 +1648,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
         *des_scan++ = (uint8_t)((des_b) >> 16);
         *des_scan++ = (uint8_t)((des_g) >> 16);
         *des_scan++ = (uint8_t)((des_r) >> 16);
-        des_scan += des_Bpp - 3;
+        des_scan += dest_bytes_per_pixel - 3;
       } break;
       case 11: {
         uint32_t des_alpha = 0, des_r = 0, des_g = 0, des_b = 0;
@@ -1658,7 +1656,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          const uint8_t* src_pixel = src_scan + j * src_Bpp;
+          const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
           pixel_weight = pixel_weight * src_pixel[3] / 255;
           des_b += pixel_weight * (*src_pixel++);
           des_g += pixel_weight * (*src_pixel++);

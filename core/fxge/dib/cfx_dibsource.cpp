@@ -22,23 +22,6 @@
 
 namespace {
 
-class CFX_Palette {
- public:
-  explicit CFX_Palette(const RetainPtr<CFX_DIBSource>& pBitmap);
-  ~CFX_Palette();
-
-  const uint32_t* GetPalette() { return m_Palette.data(); }
-  const std::pair<uint32_t, uint32_t>* GetLuts() const { return m_Luts.data(); }
-  int32_t GetLutCount() const { return m_lut; }
-  void SetAmountLut(int row, uint32_t value) { m_Luts[row].first = value; }
-
- private:
-  std::vector<uint32_t> m_Palette;
-  // (Amount, Color) pairs
-  std::vector<std::pair<uint32_t, uint32_t>> m_Luts;
-  int m_lut;
-};
-
 void ColorDecode(uint32_t pal_v, uint8_t* r, uint8_t* g, uint8_t* b) {
   *r = static_cast<uint8_t>((pal_v & 0xf00) >> 4);
   *g = static_cast<uint8_t>(pal_v & 0x0f0);
@@ -63,6 +46,23 @@ void Obtain_Pal(std::pair<uint32_t, uint32_t>* luts,
     luts[lut_offset].first = row;
   }
 }
+
+class CFX_Palette {
+ public:
+  explicit CFX_Palette(const RetainPtr<CFX_DIBSource>& pBitmap);
+  ~CFX_Palette();
+
+  const uint32_t* GetPalette() { return m_Palette.data(); }
+  const std::pair<uint32_t, uint32_t>* GetLuts() const { return m_Luts.data(); }
+  int32_t GetLutCount() const { return m_lut; }
+  void SetAmountLut(int row, uint32_t value) { m_Luts[row].first = value; }
+
+ private:
+  std::vector<uint32_t> m_Palette;
+  // (Amount, Color) pairs
+  std::vector<std::pair<uint32_t, uint32_t>> m_Luts;
+  int m_lut;
+};
 
 CFX_Palette::CFX_Palette(const RetainPtr<CFX_DIBSource>& pBitmap)
     : m_Palette(256), m_Luts(4096), m_lut(0) {
@@ -368,7 +368,7 @@ void ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
   memcpy(dst_plt, pal, sizeof(uint32_t) * 256);
 }
 
-void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dst_format,
+void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
                                 uint8_t* dest_buf,
                                 int dest_pitch,
                                 int width,
@@ -376,29 +376,28 @@ void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dst_format,
                                 const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
-  int comps = (dst_format & 0xff) / 8;
-  uint8_t set_gray, reset_gray;
-  set_gray = 0xff;
-  reset_gray = 0x00;
+  int comps = GetCompsFromFormat(dest_format);
+  static constexpr uint8_t kSetGray = 0xff;
+  static constexpr uint8_t kResetGray = 0x00;
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
     for (int col = src_left; col < src_left + width; ++col) {
       if (src_scan[col / 8] & (1 << (7 - col % 8))) {
-        dest_scan[0] = set_gray;
-        dest_scan[1] = set_gray;
-        dest_scan[2] = set_gray;
+        dest_scan[0] = kSetGray;
+        dest_scan[1] = kSetGray;
+        dest_scan[2] = kSetGray;
       } else {
-        dest_scan[0] = reset_gray;
-        dest_scan[1] = reset_gray;
-        dest_scan[2] = reset_gray;
+        dest_scan[0] = kResetGray;
+        dest_scan[1] = kResetGray;
+        dest_scan[2] = kResetGray;
       }
       dest_scan += comps;
     }
   }
 }
 
-void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dst_format,
+void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dest_format,
                                 uint8_t* dest_buf,
                                 int dest_pitch,
                                 int width,
@@ -406,7 +405,7 @@ void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dst_format,
                                 const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
-  int comps = (dst_format & 0xff) / 8;
+  int comps = GetCompsFromFormat(dest_format);
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row) + src_left;
@@ -421,7 +420,7 @@ void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dst_format,
   }
 }
 
-void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format,
+void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dest_format,
                                uint8_t* dest_buf,
                                int dest_pitch,
                                int width,
@@ -429,7 +428,7 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format,
                                const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                int src_left,
                                int src_top) {
-  int comps = (dst_format & 0xff) / 8;
+  int comps = GetCompsFromFormat(dest_format);
   uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint32_t plt[2];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
@@ -472,7 +471,7 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format,
   }
 }
 
-void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format,
+void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
                                uint8_t* dest_buf,
                                int dest_pitch,
                                int width,
@@ -480,7 +479,7 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format,
                                const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                int src_left,
                                int src_top) {
-  int comps = (dst_format & 0xff) / 8;
+  int comps = GetCompsFromFormat(dest_format);
   uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint32_t plt[256];
   uint8_t* bgr_ptr = reinterpret_cast<uint8_t*>(plt);
@@ -1218,7 +1217,7 @@ bool CFX_DIBSource::ConvertBuffer(
     int src_top,
     std::unique_ptr<uint32_t, FxFreeDeleter>* p_pal) {
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
-  const int bpp = src_format & 0xff;
+  const int bpp = GetBppFromFormat(src_format);
   switch (dest_format) {
     case FXDIB_8bppMask: {
       return ConvertBuffer_8bppMask(bpp, dest_buf, dest_pitch, width, height,

@@ -50,7 +50,7 @@ const int16_t SDP_Table[513] = {
     0,   0,   0,
 };
 
-FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
+FX_RECT FXDIB_SwapClipBox(const FX_RECT& clip,
                           int width,
                           int height,
                           bool bFlipX,
@@ -93,9 +93,9 @@ FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
 }
 
 FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
-  uint8_t r = 0, g = 0, b = 0;
+  static constexpr FX_ARGB kDefaultValue = 0xff000000;
   if (wsValue.GetLength() == 0)
-    return 0xff000000;
+    return kDefaultValue;
 
   int cc = 0;
   const wchar_t* str = wsValue.unterminated_c_str();
@@ -104,8 +104,11 @@ FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
     cc++;
 
   if (cc >= len)
-    return 0xff000000;
+    return kDefaultValue;
 
+  uint8_t r = 0;
+  uint8_t g = 0;
+  uint8_t b = 0;
   while (cc < len) {
     if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
       break;
