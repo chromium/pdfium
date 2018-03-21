@@ -143,6 +143,61 @@ TEST_F(FPDFDocEmbeddertest, BUG_680376) {
   EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), dest));
 }
 
+TEST_F(FPDFDocEmbeddertest, BUG_821454) {
+  EXPECT_TRUE(OpenDocument("bug_821454.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_LINK link1 = FPDFLink_GetLinkAtPoint(page, 150, 360);
+  ASSERT_TRUE(link1);
+  FPDF_LINK link2 = FPDFLink_GetLinkAtPoint(page, 150, 420);
+  ASSERT_TRUE(link2);
+
+  FPDF_DEST dest1 = FPDFLink_GetDest(document(), link1);
+  ASSERT_TRUE(dest1);
+  FPDF_DEST dest2 = FPDFLink_GetDest(document(), link2);
+  ASSERT_TRUE(dest2);
+
+  EXPECT_EQ(0, FPDFDest_GetDestPageIndex(document(), dest1));
+  EXPECT_EQ(0, FPDFDest_GetDestPageIndex(document(), dest2));
+
+  {
+    FPDF_BOOL has_x_coord;
+    FPDF_BOOL has_y_coord;
+    FPDF_BOOL has_zoom;
+    FS_FLOAT x;
+    FS_FLOAT y;
+    FS_FLOAT zoom;
+    FPDF_BOOL success = FPDFDest_GetLocationInPage(
+        dest1, &has_x_coord, &has_y_coord, &has_zoom, &x, &y, &zoom);
+    ASSERT_TRUE(success);
+    EXPECT_TRUE(has_x_coord);
+    EXPECT_TRUE(has_y_coord);
+    EXPECT_FALSE(has_zoom);
+    EXPECT_FLOAT_EQ(100.0f, x);
+    EXPECT_FLOAT_EQ(200.0f, y);
+  }
+  {
+    FPDF_BOOL has_x_coord;
+    FPDF_BOOL has_y_coord;
+    FPDF_BOOL has_zoom;
+    FS_FLOAT x;
+    FS_FLOAT y;
+    FS_FLOAT zoom;
+    FPDF_BOOL success = FPDFDest_GetLocationInPage(
+        dest2, &has_x_coord, &has_y_coord, &has_zoom, &x, &y, &zoom);
+    ASSERT_TRUE(success);
+    EXPECT_TRUE(has_x_coord);
+    EXPECT_TRUE(has_y_coord);
+    EXPECT_FALSE(has_zoom);
+    EXPECT_FLOAT_EQ(150.0f, x);
+    EXPECT_FLOAT_EQ(250.0f, y);
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
   EXPECT_TRUE(OpenDocument("launch_action.pdf"));
 
