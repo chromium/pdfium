@@ -28,18 +28,18 @@ class CPDF_ContentMarkItem {
 
   ByteString GetName() const { return m_MarkName; }
   ParamType GetParamType() const { return m_ParamType; }
-  CPDF_Dictionary* GetParam() const;
+  const CPDF_Dictionary* GetParam() const;
   bool HasMCID() const;
 
   void SetName(const ByteString& name) { m_MarkName = name; }
   void SetDirectDict(std::unique_ptr<CPDF_Dictionary> pDict);
-  void SetPropertiesDict(CPDF_Dictionary* pDict);
+  void SetPropertiesDict(const CPDF_Dictionary* pDict);
 
  private:
   ByteString m_MarkName;
-  ParamType m_ParamType;
-  UnownedPtr<CPDF_Dictionary> m_pPropertiesDict;
-  std::unique_ptr<CPDF_Dictionary> m_pDirectDict;
+  ParamType m_ParamType = None;
+  UnownedPtr<const CPDF_Dictionary> m_pPropertiesDict;
+  std::unique_ptr<const CPDF_Dictionary> m_pDirectDict;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKITEM_H_

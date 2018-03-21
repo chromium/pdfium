@@ -586,10 +586,10 @@ void CPDF_StreamContentParser::Handle_EOFillStrokePath() {
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
   ByteString tag = GetString(1);
-  CPDF_Object* pProperty = GetObject(0);
-  if (!pProperty) {
+  const CPDF_Object* pProperty = GetObject(0);
+  if (!pProperty)
     return;
-  }
+
   bool bDirect = true;
   if (pProperty->IsName()) {
     pProperty = FindResourceObj("Properties", pProperty->GetString());
@@ -597,7 +597,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
       return;
     bDirect = false;
   }
-  if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
+  if (const CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
     m_CurContentMark.AddMark(tag, pDict, bDirect);
   }
 }

@@ -10,8 +10,7 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 
-CPDF_ContentMarkItem::CPDF_ContentMarkItem()
-    : m_ParamType(None), m_pPropertiesDict(nullptr) {}
+CPDF_ContentMarkItem::CPDF_ContentMarkItem() {}
 
 CPDF_ContentMarkItem::CPDF_ContentMarkItem(const CPDF_ContentMarkItem& that)
     : m_MarkName(that.m_MarkName),
@@ -23,7 +22,7 @@ CPDF_ContentMarkItem::CPDF_ContentMarkItem(const CPDF_ContentMarkItem& that)
 
 CPDF_ContentMarkItem::~CPDF_ContentMarkItem() {}
 
-CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
+const CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
   switch (m_ParamType) {
     case PropertiesDict:
       return m_pPropertiesDict.Get();
@@ -36,7 +35,7 @@ CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
 }
 
 bool CPDF_ContentMarkItem::HasMCID() const {
-  CPDF_Dictionary* pDict = GetParam();
+  const CPDF_Dictionary* pDict = GetParam();
   return pDict && pDict->KeyExist("MCID");
 }
 
@@ -46,7 +45,7 @@ void CPDF_ContentMarkItem::SetDirectDict(
   m_pDirectDict = std::move(pDict);
 }
 
-void CPDF_ContentMarkItem::SetPropertiesDict(CPDF_Dictionary* pDict) {
+void CPDF_ContentMarkItem::SetPropertiesDict(const CPDF_Dictionary* pDict) {
   m_ParamType = PropertiesDict;
   m_pPropertiesDict = pDict;
 }
