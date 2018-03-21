@@ -389,8 +389,6 @@ void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
   double right;
   double bottom;
   m_pInfo->FFI_GetPageViewRect(m_pInfo, page, &left, &top, &right, &bottom);
-  if (top < bottom)
-    std::swap(top, bottom);
 
   dstRect.left = static_cast<float>(left);
   dstRect.top = static_cast<float>(top);
