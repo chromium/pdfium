@@ -23,13 +23,13 @@ void LZWFuzz(const uint8_t* src_buf,
 
   for (uint32_t compressions_ratio = kMinCompressionRatio;
        compressions_ratio <= kMaxCompressionRatio; compressions_ratio++) {
-    std::vector<uint8_t> des_buf(compressions_ratio * src_size);
+    std::vector<uint8_t> dest_buf(compressions_ratio * src_size);
     // This cast should be safe since the caller is checking for overflow on
     // the initial data.
-    uint32_t des_size = static_cast<uint32_t>(des_buf.size());
+    uint32_t dest_size = static_cast<uint32_t>(dest_buf.size());
     if (CFX_GifDecodeStatus::InsufficientDestSize !=
         decompressor->Decode(const_cast<uint8_t*>(src_buf), src_size,
-                             des_buf.data(), &des_size))
+                             dest_buf.data(), &dest_size))
       return;
   }
 }

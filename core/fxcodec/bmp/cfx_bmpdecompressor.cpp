@@ -357,10 +357,10 @@ bool CFX_BmpDecompressor::ValidateColorIndex(uint8_t val) {
 }
 
 int32_t CFX_BmpDecompressor::DecodeRGB() {
-  std::vector<uint8_t> des_buf(src_row_bytes_);
+  std::vector<uint8_t> dest_buf(src_row_bytes_);
   while (row_num_ < height_) {
     size_t idx = 0;
-    if (!ReadData(des_buf.data(), src_row_bytes_))
+    if (!ReadData(dest_buf.data(), src_row_bytes_))
       return 2;
 
     SaveDecodingStatus(BMP_D_STATUS_DATA);
@@ -368,17 +368,17 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
       case 1: {
         for (uint32_t col = 0; col < width_; ++col)
           out_row_buffer_[idx++] =
-              des_buf[col >> 3] & (0x80 >> (col % 8)) ? 0x01 : 0x00;
+              dest_buf[col >> 3] & (0x80 >> (col % 8)) ? 0x01 : 0x00;
       } break;
       case 4: {
         for (uint32_t col = 0; col < width_; ++col) {
           out_row_buffer_[idx++] = (col & 0x01)
-                                       ? (des_buf[col >> 1] & 0x0F)
-                                       : ((des_buf[col >> 1] & 0xF0) >> 4);
+                                       ? (dest_buf[col >> 1] & 0x0F)
+                                       : ((dest_buf[col >> 1] & 0xF0) >> 4);
         }
       } break;
       case 16: {
-        uint16_t* buf = reinterpret_cast<uint16_t*>(des_buf.data());
+        uint16_t* buf = reinterpret_cast<uint16_t*>(dest_buf.data());
         uint8_t blue_bits = 0;
         uint8_t green_bits = 0;
         uint8_t red_bits = 0;
@@ -410,8 +410,8 @@ int32_t CFX_BmpDecompressor::DecodeRGB() {
       case 8:
       case 24:
       case 32:
-        uint8_t* des_buf_data = des_buf.data();
-        std::copy(des_buf_data, des_buf_data + src_row_bytes_,
+        uint8_t* dest_buf_data = dest_buf.data();
+        std::copy(dest_buf_data, dest_buf_data + src_row_bytes_,
                   out_row_buffer_.begin());
         idx += src_row_bytes_;
         break;

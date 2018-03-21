@@ -26,12 +26,12 @@ class CFX_LZWDecompressor {
 
   CFX_GifDecodeStatus Decode(uint8_t* src_buf,
                              uint32_t src_size,
-                             uint8_t* des_buf,
-                             uint32_t* des_size);
+                             uint8_t* dest_buf,
+                             uint32_t* dest_size);
 
   // Used by unittests, should not be called in production code.
-  uint32_t ExtractDataForTest(uint8_t* des_buf, uint32_t des_size) {
-    return ExtractData(des_buf, des_size);
+  uint32_t ExtractDataForTest(uint8_t* dest_buf, uint32_t dest_size) {
+    return ExtractData(dest_buf, dest_size);
   }
 
   std::vector<uint8_t>* DecompressedForTest() { return &decompressed_; }
@@ -43,7 +43,7 @@ class CFX_LZWDecompressor {
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
   bool DecodeString(uint16_t code);
-  uint32_t ExtractData(uint8_t* des_buf, uint32_t des_size);
+  uint32_t ExtractData(uint8_t* dest_buf, uint32_t dest_size);
 
   uint8_t code_size_;
   uint8_t code_size_cur_;

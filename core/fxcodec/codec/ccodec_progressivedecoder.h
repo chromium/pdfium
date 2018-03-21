@@ -158,7 +158,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
                         FXCODEC_STATUS& err_status);
   void PngOneOneMapResampleHorz(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-                                int32_t des_line,
+                                int32_t dest_line,
                                 uint8_t* src_scan,
                                 FXCodec_Format src_format);
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
@@ -170,10 +170,10 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   bool TifDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
 
   void GetDownScale(int& down_scale);
-  void GetTransMethod(FXDIB_Format des_format, FXCodec_Format src_format);
+  void GetTransMethod(FXDIB_Format dest_format, FXCodec_Format src_format);
 
   void ReSampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-                        int32_t des_line,
+                        int32_t dest_line,
                         uint8_t* src_scan,
                         FXCodec_Format src_format);
   void Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
@@ -182,13 +182,13 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
                 FXCodec_Format src_format);
   void ResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                     double scale_y,
-                    int des_row);
+                    int dest_row);
   void ResampleVertBT(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                       double scale_y,
-                      int des_row);
+                      int dest_row);
   void GifDoubleLineResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                                  double scale_y,
-                                 int des_row);
+                                 int dest_row);
 
   FXCODEC_STATUS JpegStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS PngStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);

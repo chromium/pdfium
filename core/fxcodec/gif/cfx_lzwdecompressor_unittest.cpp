@@ -24,12 +24,12 @@ TEST(CFX_LZWDecompressor, ExtractData) {
     std::vector<uint8_t>* decompressed = decompressor->DecompressedForTest();
     *decompressed = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
-    uint8_t des_buf[20];
-    memset(des_buf, static_cast<uint8_t>(-1), sizeof(des_buf));
+    uint8_t dest_buf[20];
+    memset(dest_buf, static_cast<uint8_t>(-1), sizeof(dest_buf));
 
-    EXPECT_EQ(0u, decompressor->ExtractDataForTest(des_buf, 0));
-    for (size_t i = 0; i < FX_ArraySize(des_buf); ++i)
-      EXPECT_EQ(static_cast<uint8_t>(-1), des_buf[i]);
+    EXPECT_EQ(0u, decompressor->ExtractDataForTest(dest_buf, 0));
+    for (size_t i = 0; i < FX_ArraySize(dest_buf); ++i)
+      EXPECT_EQ(static_cast<uint8_t>(-1), dest_buf[i]);
 
     EXPECT_EQ(10u, *(decompressor->DecompressedNextForTest()));
     for (size_t i = 0; i < *(decompressor->DecompressedNextForTest()); ++i)
@@ -41,15 +41,15 @@ TEST(CFX_LZWDecompressor, ExtractData) {
     std::vector<uint8_t>* decompressed = decompressor->DecompressedForTest();
     *decompressed = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
-    uint8_t des_buf[20];
-    memset(des_buf, static_cast<uint8_t>(-1), sizeof(des_buf));
+    uint8_t dest_buf[20];
+    memset(dest_buf, static_cast<uint8_t>(-1), sizeof(dest_buf));
 
-    EXPECT_EQ(5u, decompressor->ExtractDataForTest(des_buf, 5));
+    EXPECT_EQ(5u, decompressor->ExtractDataForTest(dest_buf, 5));
     size_t i = 0;
     for (; i < 5; ++i)
-      EXPECT_EQ(9 - i, des_buf[i]);
-    for (; i < FX_ArraySize(des_buf); ++i)
-      EXPECT_EQ(static_cast<uint8_t>(-1), des_buf[i]);
+      EXPECT_EQ(9 - i, dest_buf[i]);
+    for (; i < FX_ArraySize(dest_buf); ++i)
+      EXPECT_EQ(static_cast<uint8_t>(-1), dest_buf[i]);
 
     EXPECT_EQ(5u, *(decompressor->DecompressedNextForTest()));
     for (i = 0; i < *(decompressor->DecompressedNextForTest()); ++i)
@@ -61,16 +61,16 @@ TEST(CFX_LZWDecompressor, ExtractData) {
     std::vector<uint8_t>* decompressed = decompressor->DecompressedForTest();
     *decompressed = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
-    uint8_t des_buf[20];
-    memset(des_buf, static_cast<uint8_t>(-1), sizeof(des_buf));
+    uint8_t dest_buf[20];
+    memset(dest_buf, static_cast<uint8_t>(-1), sizeof(dest_buf));
 
-    EXPECT_EQ(10u,
-              decompressor->ExtractDataForTest(des_buf, FX_ArraySize(des_buf)));
+    EXPECT_EQ(10u, decompressor->ExtractDataForTest(dest_buf,
+                                                    FX_ArraySize(dest_buf)));
     size_t i = 0;
     for (; i < 10; ++i)
-      EXPECT_EQ(9 - i, des_buf[i]);
-    for (; i < FX_ArraySize(des_buf); ++i)
-      EXPECT_EQ(static_cast<uint8_t>(-1), des_buf[i]);
+      EXPECT_EQ(9 - i, dest_buf[i]);
+    for (; i < FX_ArraySize(dest_buf); ++i)
+      EXPECT_EQ(static_cast<uint8_t>(-1), dest_buf[i]);
 
     EXPECT_EQ(0u, *(decompressor->DecompressedNextForTest()));
   }
