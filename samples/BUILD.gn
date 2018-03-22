@@ -51,6 +51,12 @@ executable("pdfium_test") {
   testonly = true
   sources = [
     "pdfium_test.cc",
+    "pdfium_test_dump_helper.cc",
+    "pdfium_test_dump_helper.h",
+    "pdfium_test_event_helper.cc",
+    "pdfium_test_event_helper.h",
+    "pdfium_test_write_helper.cc",
+    "pdfium_test_write_helper.h",
   ]
   deps = [
     "../:image_diff",
