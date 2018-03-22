@@ -22,8 +22,7 @@ vars = {
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'depot_tools_revision': '2e8d8348b8574f06c26dbf3ef959b5df11ba5148',
   'freetype_revision': '713d68ee9f47cc8df56e47fa2f54b191bb8c3186',
-  'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
-  'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
+  'gtest_revision': 'a325ad2db5deb623eab740527e559b81c0f39d65',
   'icu_revision': 'e3b480d3be4446ea17011c0cdc9c4cd380a5c58f',
   'instrumented_lib_revision': '323cf32193caecbf074d1a0cb5b02b905f163e0f',
   'jinja2_revision': 'd34383206fa42d52faa10bb9931d6d538f3a57e0',
@@ -53,12 +52,6 @@ deps = {
   "testing/corpus":
     Var('pdfium_git') + "/pdfium_tests@" + Var('pdfium_tests_revision'),
 
-  "testing/gmock":
-    Var('chromium_git') + "/external/googlemock.git@" + Var('gmock_revision'),
-
-  "testing/gtest":
-    Var('chromium_git') + "/external/googletest.git@" + Var('gtest_revision'),
-
   "third_party/binutils":
     Var('chromium_git') + "/chromium/src/third_party/binutils.git@" +
         Var('binutils_revision'),
@@ -70,6 +63,10 @@ deps = {
   "third_party/freetype/src":
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
         Var('freetype_revision'),
+
+  "third_party/googletest/src":
+    Var('chromium_git') + '/external/github.com/google/googletest.git' + '@' +
+        Var('gtest_revision'),
 
   "third_party/icu":
     Var('chromium_git') + "/chromium/deps/icu.git@" + Var('icu_revision'),
