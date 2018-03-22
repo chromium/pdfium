@@ -205,9 +205,12 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   return pResult;
 }
 
-// Static.
+// static
 CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
                                                   size_t nIndex) {
+  ASSERT(pArray);
+  ASSERT(nIndex < pArray->GetCount() / 8);
+
   // QuadPoints are defined with 4 pairs of numbers
   // ([ pair0, pair1, pair2, pair3 ]), where
   // pair0 = top_left
@@ -224,7 +227,7 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
       pArray->GetNumberAt(2 + nIndex * 8), pArray->GetNumberAt(3 + nIndex * 8));
 }
 
-// Static.
+// static
 CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
     CPDF_Dictionary* pAnnotDict) {
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
@@ -240,23 +243,21 @@ CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
   return ret;
 }
 
-// Static.
+// static
 CFX_FloatRect CPDF_Annot::RectFromQuadPoints(CPDF_Dictionary* pAnnotDict,
                                              size_t nIndex) {
   CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-
   if (!pArray)
     return CFX_FloatRect();
-
   return RectFromQuadPointsArray(pArray, nIndex);
 }
 
-// Static.
+// static
 bool CPDF_Annot::IsAnnotationHidden(CPDF_Dictionary* pAnnotDict) {
   return !!(pAnnotDict->GetIntegerFor("F") & ANNOTFLAG_HIDDEN);
 }
 
-// Static.
+// static
 CPDF_Annot::Subtype CPDF_Annot::StringToAnnotSubtype(
     const ByteString& sSubtype) {
   if (sSubtype == "Text")
@@ -316,7 +317,7 @@ CPDF_Annot::Subtype CPDF_Annot::StringToAnnotSubtype(
   return CPDF_Annot::Subtype::UNKNOWN;
 }
 
-// Static.
+// static
 ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
   if (nSubtype == CPDF_Annot::Subtype::TEXT)
     return "Text";
@@ -375,7 +376,7 @@ ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
   return "";
 }
 
-// Static.
+// static
 size_t CPDF_Annot::QuadPointCount(const CPDF_Array* pArray) {
   return pArray->GetCount() / 8;
 }

@@ -78,6 +78,31 @@ CPDF_Dictionary* CPDFDictionaryFromFPDFLink(FPDF_LINK link) {
   return ToDictionary(static_cast<CPDF_Object*>(link));
 }
 
+const CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict) {
+  return dict ? dict->GetArrayFor("QuadPoints") : nullptr;
+}
+
+bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,
+                                 size_t quad_index,
+                                 FS_QUADPOINTSF* quad_points) {
+  ASSERT(quad_points);
+
+  const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(dict);
+  if (!pArray || quad_index >= pArray->GetCount() / 8)
+    return false;
+
+  quad_index *= 8;
+  quad_points->x1 = pArray->GetNumberAt(quad_index);
+  quad_points->y1 = pArray->GetNumberAt(quad_index + 1);
+  quad_points->x2 = pArray->GetNumberAt(quad_index + 2);
+  quad_points->y2 = pArray->GetNumberAt(quad_index + 3);
+  quad_points->x3 = pArray->GetNumberAt(quad_index + 4);
+  quad_points->y3 = pArray->GetNumberAt(quad_index + 5);
+  quad_points->x4 = pArray->GetNumberAt(quad_index + 6);
+  quad_points->y4 = pArray->GetNumberAt(quad_index + 7);
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
@@ -379,41 +404,20 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK link_annot) {
-  if (!link_annot)
-    return 0;
-  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFLink(link_annot);
-  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  if (!pArray)
-    return 0;
-  return static_cast<int>(pArray->GetCount() / 8);
+  const CPDF_Array* pArray =
+      GetQuadPointsArrayFromDictionary(CPDFDictionaryFromFPDFLink(link_annot));
+  return pArray ? static_cast<int>(pArray->GetCount() / 8) : 0;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
                        int quad_index,
                        FS_QUADPOINTSF* quad_points) {
-  if (!link_annot || !quad_points)
+  if (!quad_points || quad_index < 0)
     return false;
-  CPDF_Dictionary* pAnnotDict = CPDFDictionaryFromFPDFLink(link_annot);
-  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  if (!pArray)
-    return false;
-
-  if (quad_index < 0 ||
-      static_cast<size_t>(quad_index) >= pArray->GetCount() / 8 ||
-      (static_cast<size_t>(quad_index * 8 + 7) >= pArray->GetCount())) {
-    return false;
-  }
-
-  quad_points->x1 = pArray->GetNumberAt(quad_index * 8);
-  quad_points->y1 = pArray->GetNumberAt(quad_index * 8 + 1);
-  quad_points->x2 = pArray->GetNumberAt(quad_index * 8 + 2);
-  quad_points->y2 = pArray->GetNumberAt(quad_index * 8 + 3);
-  quad_points->x3 = pArray->GetNumberAt(quad_index * 8 + 4);
-  quad_points->y3 = pArray->GetNumberAt(quad_index * 8 + 5);
-  quad_points->x4 = pArray->GetNumberAt(quad_index * 8 + 6);
-  quad_points->y4 = pArray->GetNumberAt(quad_index * 8 + 7);
-  return true;
+  return GetQuadPointsFromDictionary(CPDFDictionaryFromFPDFLink(link_annot),
+                                     static_cast<size_t>(quad_index),
+                                     quad_points);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,

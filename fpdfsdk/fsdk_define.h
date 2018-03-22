@@ -10,6 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
+#include "public/fpdf_doc.h"
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -82,6 +83,11 @@ CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action);
 CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark);
 
 CPDF_Dictionary* CPDFDictionaryFromFPDFLink(FPDF_LINK link);
+
+const CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict);
+bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,
+                                 size_t quad_index,
+                                 FS_QUADPOINTSF* quad_points);
 
 CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect);
 void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect);

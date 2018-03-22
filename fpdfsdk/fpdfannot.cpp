@@ -627,24 +627,9 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
   if (!annot || !quad_points || !FPDFAnnot_HasAttachmentPoints(annot))
     return false;
 
-  CPDF_Dictionary* pAnnotDict =
-      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  if (!pAnnotDict)
-    return false;
-
-  CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  if (!pArray)
-    return false;
-
-  quad_points->x1 = pArray->GetNumberAt(0);
-  quad_points->y1 = pArray->GetNumberAt(1);
-  quad_points->x2 = pArray->GetNumberAt(2);
-  quad_points->y2 = pArray->GetNumberAt(3);
-  quad_points->x3 = pArray->GetNumberAt(4);
-  quad_points->y3 = pArray->GetNumberAt(5);
-  quad_points->x4 = pArray->GetNumberAt(6);
-  quad_points->y4 = pArray->GetNumberAt(7);
-  return true;
+  return GetQuadPointsFromDictionary(
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict(), 0,
+      quad_points);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
