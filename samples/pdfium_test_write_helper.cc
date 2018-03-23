@@ -4,6 +4,9 @@
 
 #include "samples/pdfium_test_write_helper.h"
 
+#include <memory>
+#include <vector>
+
 #include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
