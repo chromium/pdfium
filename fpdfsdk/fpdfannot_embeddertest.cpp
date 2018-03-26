@@ -47,7 +47,7 @@ TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
 
 TEST_F(FPDFAnnotEmbeddertest, RenderMultilineMarkupAnnotWithoutAP) {
   const char md5_hash[] = "76512832d88017668d9acc7aacd13dae";
-  // Open a file with multiline markup annotations.
+  // Open a file with two multiline markup annotations.
   ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -469,25 +469,6 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
   }
 
   UnloadPage(page);
-}
-
-TEST_F(FPDFAnnotEmbeddertest, CountAttachmentPoints) {
-  // Open a file with multiline markup annotations.
-  ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  ASSERT_TRUE(page);
-  {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
-    ASSERT_TRUE(annot);
-
-    // This is a three line annotation.
-    EXPECT_EQ(3u, FPDFAnnot_CountAttachmentPoints(annot.get()));
-  }
-  UnloadPage(page);
-
-  // null annotation should return 0
-  EXPECT_EQ(0u, FPDFAnnot_CountAttachmentPoints(nullptr));
 }
 
 TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {

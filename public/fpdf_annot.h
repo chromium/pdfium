@@ -5,8 +5,6 @@
 #ifndef PUBLIC_FPDF_ANNOT_H_
 #define PUBLIC_FPDF_ANNOT_H_
 
-#include <stddef.h>
-
 // NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
@@ -311,15 +309,6 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot);
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
                               const FS_QUADPOINTSF* quad_points);
-
-// Experimental API.
-// Get the number of sets of quadpoints of an annotation.
-//
-//   annot  - handle to an annotation.
-//
-// Returns the number of sets of quadpoints, or 0 on failure.
-FPDF_EXPORT size_t FPDF_CALLCONV
-FPDFAnnot_CountAttachmentPoints(FPDF_ANNOTATION annot);
 
 // Experimental API.
 // Get the attachment points (i.e. quadpoints) of an annotation.
