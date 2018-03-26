@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_allstates.h"
 #include "core/fpdfapi/page/cpdf_contentparser.h"
@@ -90,4 +91,31 @@ void CPDF_PageObjectHolder::LoadTransInfo() {
   if (pGroup->GetIntegerFor("K")) {
     m_iTransparency |= PDFTRANS_KNOCKOUT;
   }
+}
+
+size_t CPDF_PageObjectHolder::GetPageObjectCount() const {
+  return pdfium::CollectionSize<size_t>(m_PageObjectList);
+}
+
+CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
+    size_t index) const {
+  return m_PageObjectList.GetPageObjectByIndex(index);
+}
+
+void CPDF_PageObjectHolder::AppendPageObject(
+    std::unique_ptr<CPDF_PageObject> pPageObj) {
+  m_PageObjectList.push_back(std::move(pPageObj));
+}
+
+bool CPDF_PageObjectHolder::RemovePageObject(CPDF_PageObject* pPageObj) {
+  pdfium::FakeUniquePtr<CPDF_PageObject> p(pPageObj);
+
+  auto it =
+      std::find(std::begin(m_PageObjectList), std::end(m_PageObjectList), p);
+  if (it == std::end(m_PageObjectList))
+    return false;
+
+  it->release();
+  m_PageObjectList.erase(it);
+  return true;
 }

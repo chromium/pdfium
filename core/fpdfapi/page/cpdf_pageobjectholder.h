@@ -56,6 +56,12 @@ class CPDF_PageObjectHolder {
   const CPDF_PageObjectList* GetPageObjectList() const {
     return &m_PageObjectList;
   }
+
+  size_t GetPageObjectCount() const;
+  CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
+  void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
+  bool RemovePageObject(CPDF_PageObject* pPageObj);
+
   const CFX_Matrix& GetLastCTM() const { return m_LastCTM; }
 
   bool BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }

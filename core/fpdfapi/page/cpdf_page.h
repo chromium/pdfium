@@ -54,7 +54,6 @@ class CPDF_Page : public CPDF_PageObjectHolder {
 
   View* GetView() const { return m_pView; }
   void SetView(View* pView) { m_pView = pView; }
-  bool RemoveObject(CPDF_PageObject* pPageObj);
 
  private:
   void StartParse();

@@ -8,6 +8,6 @@
 
 #include "third_party/base/stl_util.h"
 
-CPDF_PageObject* CPDF_PageObjectList::GetPageObjectByIndex(int index) {
+CPDF_PageObject* CPDF_PageObjectList::GetPageObjectByIndex(int index) const {
   return pdfium::IndexInBounds(*this, index) ? (*this)[index].get() : nullptr;
 }

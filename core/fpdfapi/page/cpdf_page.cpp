@@ -186,20 +186,6 @@ int CPDF_Page::GetPageRotation() const {
   return (rotate < 0) ? (rotate + 4) : rotate;
 }
 
-bool CPDF_Page::RemoveObject(CPDF_PageObject* pPageObj) {
-  pdfium::FakeUniquePtr<CPDF_PageObject> p(pPageObj);
-
-  auto* pPageObjectList = GetPageObjectList();
-  auto it =
-      std::find(std::begin(*pPageObjectList), std::end(*pPageObjectList), p);
-  if (it == std::end(*pPageObjectList))
-    return false;
-
-  it->release();
-  pPageObjectList->erase(it);
-  return true;
-}
-
 bool GraphicsData::operator<(const GraphicsData& other) const {
   if (fillAlpha != other.fillAlpha)
     return fillAlpha < other.fillAlpha;

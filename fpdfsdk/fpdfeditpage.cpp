@@ -175,8 +175,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertObject(FPDF_PAGE page,
     return;
   pPageObj->SetDirty(true);
 
-  // TODO(hnakashima): Move into CPDF_Page.
-  pPage->GetPageObjectList()->push_back(std::move(pPageObjHolder));
+  pPage->AppendPageObject(std::move(pPageObjHolder));
   CalcBoundingBox(pPageObj);
 }
 
@@ -190,7 +189,7 @@ FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_obj) {
   if (!IsPageObject(pPage))
     return false;
 
-  return pPage->RemoveObject(pPageObj);
+  return pPage->RemovePageObject(pPageObj);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_CountObject(FPDF_PAGE page) {
@@ -202,8 +201,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_CountObjects(FPDF_PAGE page) {
   if (!IsPageObject(pPage))
     return -1;
 
-  // TODO(hnakashima): Move into CPDF_Page.
-  return pdfium::CollectionSize<int>(*pPage->GetPageObjectList());
+  return pPage->GetPageObjectCount();
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPage_GetObject(FPDF_PAGE page,
@@ -212,8 +210,7 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPage_GetObject(FPDF_PAGE page,
   if (!IsPageObject(pPage))
     return nullptr;
 
-  // TODO(hnakashima): Move into CPDF_Page.
-  return pPage->GetPageObjectList()->GetPageObjectByIndex(index);
+  return pPage->GetPageObjectByIndex(index);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_HasTransparency(FPDF_PAGE page) {
