@@ -40,7 +40,6 @@ CPDFXFA_Context::CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc)
     : m_pPDFDoc(std::move(pPDFDoc)),
       m_pXFAApp(pdfium::MakeUnique<CXFA_FFApp>(this)),
       m_DocEnv(this) {
-  m_pXFAApp->SetDefaultFontMgr(pdfium::MakeUnique<CFGAS_DefaultFontManager>());
 }
 
 CPDFXFA_Context::~CPDFXFA_Context() {

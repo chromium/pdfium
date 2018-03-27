@@ -29,10 +29,9 @@ class CXFA_FontMgr {
   RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
                                   const WideStringView& wsFontFamily,
                                   uint32_t dwFontStyles);
-  void SetDefFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
  private:
-  std::unique_ptr<CFGAS_DefaultFontManager> m_pDefFontMgr;
+  CFGAS_DefaultFontManager m_pDefFontMgr;
   std::map<ByteString, RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 

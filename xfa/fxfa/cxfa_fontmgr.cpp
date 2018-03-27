@@ -19,9 +19,9 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
-CXFA_FontMgr::CXFA_FontMgr() {}
+CXFA_FontMgr::CXFA_FontMgr() = default;
 
-CXFA_FontMgr::~CXFA_FontMgr() {}
+CXFA_FontMgr::~CXFA_FontMgr() = default;
 
 RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     CXFA_FFDoc* hDoc,
@@ -44,9 +44,9 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     if (pFont)
       return pFont;
   }
-  if (!pFont && m_pDefFontMgr)
-    pFont = m_pDefFontMgr->GetFont(hDoc->GetApp()->GetFDEFontMgr(),
-                                   wsFontFamily, dwFontStyles);
+  if (!pFont)
+    pFont = m_pDefFontMgr.GetFont(hDoc->GetApp()->GetFDEFontMgr(), wsFontFamily,
+                                  dwFontStyles);
 
   if (!pFont && pMgr) {
     pPDFFont = nullptr;
@@ -55,9 +55,9 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     if (pFont)
       return pFont;
   }
-  if (!pFont && m_pDefFontMgr) {
-    pFont = m_pDefFontMgr->GetDefaultFont(hDoc->GetApp()->GetFDEFontMgr(),
-                                          wsFontFamily, dwFontStyles);
+  if (!pFont) {
+    pFont = m_pDefFontMgr.GetDefaultFont(hDoc->GetApp()->GetFDEFontMgr(),
+                                         wsFontFamily, dwFontStyles);
   }
 
   if (pFont) {
@@ -68,9 +68,4 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     m_FontMap[bsKey] = pFont;
   }
   return pFont;
-}
-
-void CXFA_FontMgr::SetDefFontMgr(
-    std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr) {
-  m_pDefFontMgr = std::move(pFontMgr);
 }
