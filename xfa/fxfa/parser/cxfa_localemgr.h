@@ -10,9 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_datetime.h"
-#include "core/fxcrt/locale_iface.h"
-#include "xfa/fxfa/parser/cxfa_localemgr.h"
+#include "core/fxcrt/widestring.h"
 
 class CXFA_Node;
 class LocaleIface;
@@ -22,12 +20,11 @@ class CXFA_LocaleMgr {
   CXFA_LocaleMgr(CXFA_Node* pLocaleSet, WideString wsDeflcid);
   ~CXFA_LocaleMgr();
 
-  uint16_t GetDefLocaleID() const;
   LocaleIface* GetDefLocale();
   LocaleIface* GetLocaleByName(const WideString& wsLocaleName);
 
   void SetDefLocale(LocaleIface* pLocale);
-  WideStringView GetConfigLocaleName(CXFA_Node* pConfig);
+  WideString GetConfigLocaleName(CXFA_Node* pConfig);
 
  private:
   std::unique_ptr<LocaleIface> GetLocale(uint16_t lcid);
@@ -37,7 +34,7 @@ class CXFA_LocaleMgr {
   LocaleIface* m_pDefLocale;  // owned by m_LocaleArray or m_XMLLocaleArray.
   WideString m_wsConfigLocale;
   uint16_t m_dwDeflcid;
-  uint16_t m_dwLocaleFlags;
+  bool m_hasSetLocaleName = false;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_

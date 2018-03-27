@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/cfx_datetime.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffarc.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"

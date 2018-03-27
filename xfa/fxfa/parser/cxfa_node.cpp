@@ -19,6 +19,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_fallthrough.h"
+#include "core/fxcrt/locale_iface.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
@@ -940,7 +941,7 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
 
   CXFA_Node* pConfig = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
   Optional<WideString> localeName = {
-      WideString(GetDocument()->GetLocalMgr()->GetConfigLocaleName(pConfig))};
+      GetDocument()->GetLocalMgr()->GetConfigLocaleName(pConfig)};
   if (localeName && !localeName->IsEmpty())
     return localeName;
 
