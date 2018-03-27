@@ -22,6 +22,17 @@ class CFGAS_GEFont;
 class CFX_RenderDevice;
 class CFX_TxtBreak;
 
+struct FDE_TTOPIECE {
+  FDE_TTOPIECE();
+  FDE_TTOPIECE(const FDE_TTOPIECE& that);
+  ~FDE_TTOPIECE();
+
+  int32_t iStartChar;
+  int32_t iChars;
+  uint32_t dwCharStyles;
+  CFX_RectF rtPiece;
+};
+
 class CFDE_TextOut {
  public:
   static bool DrawString(CFX_RenderDevice* device,

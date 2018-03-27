@@ -17,9 +17,8 @@ enum class FDE_TextAlignment : uint8_t {
 };
 
 struct FDE_TextStyle {
-  FDE_TextStyle()
-      : single_line_(false), line_wrap_(false), last_line_height_(false) {}
-  ~FDE_TextStyle() {}
+  FDE_TextStyle() = default;
+  ~FDE_TextStyle() = default;
 
   void Reset() {
     single_line_ = false;
@@ -27,20 +26,9 @@ struct FDE_TextStyle {
     last_line_height_ = false;
   }
 
-  bool single_line_;
-  bool line_wrap_;
-  bool last_line_height_;
-};
-
-struct FDE_TTOPIECE {
-  FDE_TTOPIECE();
-  FDE_TTOPIECE(const FDE_TTOPIECE& that);
-  ~FDE_TTOPIECE();
-
-  int32_t iStartChar;
-  int32_t iChars;
-  uint32_t dwCharStyles;
-  CFX_RectF rtPiece;
+  bool single_line_ = false;
+  bool line_wrap_ = false;
+  bool last_line_height_ = false;
 };
 
 #endif  // XFA_FDE_CFDE_DATA_H_
