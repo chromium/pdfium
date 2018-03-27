@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
+#include "core/fpdfapi/page/cpdf_contentmarkitem.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -343,6 +344,11 @@ CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
 
 CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
   return static_cast<CPDF_PageObject*>(page_object);
+}
+
+const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
+    FPDF_PAGEOBJECTMARK mark) {
+  return static_cast<const CPDF_ContentMarkItem*>(mark);
 }
 
 CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment) {

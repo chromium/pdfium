@@ -23,6 +23,7 @@
 #endif
 
 class CPDF_Annot;
+class CPDF_ContentMarkItem;
 class CPDF_Page;
 class CPDF_PageObject;
 class CPDF_PageRenderContext;
@@ -69,6 +70,9 @@ CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page);
 CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
 
 CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
+
+const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
+    FPDF_PAGEOBJECTMARK mark);
 
 CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment);
 

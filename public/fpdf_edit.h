@@ -281,6 +281,40 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_NewImageObj(FPDF_DOCUMENT document);
 
+// Get number of content marks in |page_object|.
+//
+//   page_object - handle to a page object.
+//
+// Returns the number of content marks in |page_object|, or -1 in case of
+// failure.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObj_CountMarks(FPDF_PAGEOBJECT page_object);
+
+// Get content mark in |page_object| at |index|.
+//
+//   page_object - handle to a page object.
+//   index       - the index of a page object.
+//
+// Returns the handle to the content mark, or NULL on failure. The handle is
+// still owned by the library, and it should not be freed directly. It becomes
+// invalid if the page object is destroyed, either directly or indirectly by
+// unloading the page.
+FPDF_EXPORT FPDF_PAGEOBJECTMARK FPDF_CALLCONV
+FPDFPageObj_GetMark(FPDF_PAGEOBJECT page_object, unsigned long index);
+
+// Get name of a content mark. |buffer| is only modified if |buflen| is longer
+// than the length of the name.
+//
+//   mark   - handle to a content mark.
+//   buffer - buffer for holding the returned name in UTF16-LE.
+//   buflen - length of the buffer.
+//
+// Returns the length of the name.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
+                        void* buffer,
+                        unsigned long buflen);
+
 // Load an image from a JPEG image file and then set it into |image_object|.
 //
 //   pages        - pointer to the start of all loaded pages, may be NULL.

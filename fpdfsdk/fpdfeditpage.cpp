@@ -222,6 +222,47 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_obj) {
   delete CPDFPageObjectFromFPDFPageObject(page_obj);
 }
 
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObj_CountMarks(FPDF_PAGEOBJECT page_object) {
+  if (!page_object)
+    return -1;
+
+  const auto& mark =
+      CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
+  return mark.HasRef() ? mark.CountItems() : 0;
+}
+
+FPDF_EXPORT FPDF_PAGEOBJECTMARK FPDF_CALLCONV
+FPDFPageObj_GetMark(FPDF_PAGEOBJECT page_object, unsigned long index) {
+  if (!page_object)
+    return nullptr;
+
+  const auto& mark =
+      CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
+  if (!mark.HasRef())
+    return nullptr;
+
+  if (index >= mark.CountItems())
+    return nullptr;
+
+  return static_cast<FPDF_PAGEOBJECTMARK>(&mark.GetItem(index));
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
+                        void* buffer,
+                        unsigned long buflen) {
+  if (!mark)
+    return 0;
+
+  const CPDF_ContentMarkItem* pMarkItem =
+      CPDFContentMarkItemFromFPDFPageObjectMark(mark);
+
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      WideString::FromUTF8(pMarkItem->GetName().AsStringView()), buffer,
+      buflen);
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)

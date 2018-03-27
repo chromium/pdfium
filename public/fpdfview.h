@@ -46,6 +46,7 @@ typedef void* FPDF_LINK;
 typedef void* FPDF_PAGE;
 typedef void* FPDF_PAGELINK;
 typedef void* FPDF_PAGEOBJECT;  // Page object(text, path, etc)
+typedef void const* FPDF_PAGEOBJECTMARK;
 typedef void* FPDF_PAGERANGE;
 typedef void* FPDF_RECORDER;
 typedef void* FPDF_SCHHANDLE;
