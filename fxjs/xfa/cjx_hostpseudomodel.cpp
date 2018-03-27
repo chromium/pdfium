@@ -12,6 +12,7 @@
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
@@ -93,11 +94,11 @@ void CJX_HostPseudoModel::calculationsEnabled(CFXJSE_Value* pValue,
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocEnvironment()->SetCalculationsEnabled(hDoc,
-                                                         pValue->ToBoolean());
+    hDoc->GetDocEnvironment()->SetCalculationsEnabled(hDoc,
+                                                      pValue->ToBoolean());
     return;
   }
-  pValue->SetBoolean(pNotify->GetDocEnvironment()->IsCalculationsEnabled(hDoc));
+  pValue->SetBoolean(hDoc->GetDocEnvironment()->IsCalculationsEnabled(hDoc));
 }
 
 void CJX_HostPseudoModel::currentPage(CFXJSE_Value* pValue,
@@ -109,10 +110,10 @@ void CJX_HostPseudoModel::currentPage(CFXJSE_Value* pValue,
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, pValue->ToInteger());
+    hDoc->GetDocEnvironment()->SetCurrentPage(hDoc, pValue->ToInteger());
     return;
   }
-  pValue->SetInteger(pNotify->GetDocEnvironment()->GetCurrentPage(hDoc));
+  pValue->SetInteger(hDoc->GetDocEnvironment()->GetCurrentPage(hDoc));
 }
 
 void CJX_HostPseudoModel::language(CFXJSE_Value* pValue,
@@ -142,7 +143,7 @@ void CJX_HostPseudoModel::numPages(CFXJSE_Value* pValue,
     ThrowException(L"Unable to set numPages value.");
     return;
   }
-  pValue->SetInteger(pNotify->GetDocEnvironment()->CountPages(hDoc));
+  pValue->SetInteger(hDoc->GetDocEnvironment()->CountPages(hDoc));
 }
 
 void CJX_HostPseudoModel::platform(CFXJSE_Value* pValue,
@@ -172,12 +173,12 @@ void CJX_HostPseudoModel::title(CFXJSE_Value* pValue,
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocEnvironment()->SetTitle(hDoc, pValue->ToWideString());
+    hDoc->GetDocEnvironment()->SetTitle(hDoc, pValue->ToWideString());
     return;
   }
 
   WideString wsTitle;
-  pNotify->GetDocEnvironment()->GetTitle(hDoc, wsTitle);
+  hDoc->GetDocEnvironment()->GetTitle(hDoc, wsTitle);
   pValue->SetString(wsTitle.UTF8Encode().AsStringView());
 }
 
@@ -190,12 +191,11 @@ void CJX_HostPseudoModel::validationsEnabled(CFXJSE_Value* pValue,
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
-    pNotify->GetDocEnvironment()->SetValidationsEnabled(hDoc,
-                                                        pValue->ToBoolean());
+    hDoc->GetDocEnvironment()->SetValidationsEnabled(hDoc, pValue->ToBoolean());
     return;
   }
 
-  bool bEnabled = pNotify->GetDocEnvironment()->IsValidationsEnabled(hDoc);
+  bool bEnabled = hDoc->GetDocEnvironment()->IsValidationsEnabled(hDoc);
   pValue->SetBoolean(bEnabled);
 }
 
@@ -203,10 +203,6 @@ void CJX_HostPseudoModel::variation(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_Attribute eAttribute) {
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
-    return;
-
-  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
     return;
 
   if (bSetting) {
@@ -219,10 +215,6 @@ void CJX_HostPseudoModel::variation(CFXJSE_Value* pValue,
 void CJX_HostPseudoModel::version(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {
-  CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
-  if (!pNotify)
-    return;
-
   if (bSetting) {
     ThrowException(L"Unable to set version value.");
     return;
@@ -260,7 +252,7 @@ CJS_Return CJX_HostPseudoModel::gotoURL(
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   WideString URL = runtime->ToWideString(params[0]);
-  pNotify->GetDocEnvironment()->GotoURL(hDoc, URL);
+  hDoc->GetDocEnvironment()->GotoURL(hDoc, URL);
   return CJS_Return(true);
 }
 
@@ -307,11 +299,12 @@ CJS_Return CJX_HostPseudoModel::openList(
     return CJS_Return(true);
 
   CXFA_FFWidget* hWidget =
-      pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
+      XFA_GetWidgetFromLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!hWidget)
     return CJS_Return(true);
 
-  pNotify->GetDocEnvironment()->SetFocusWidget(pNotify->GetHDOC(), hWidget);
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  hDoc->GetDocEnvironment()->SetFocusWidget(hDoc, hWidget);
   pNotify->OpenDropDownList(hWidget);
   return CJS_Return(true);
 }
@@ -562,8 +555,8 @@ CJS_Return CJX_HostPseudoModel::print(
   int32_t nStartPage = runtime->ToInt32(params[1]);
   int32_t nEndPage = runtime->ToInt32(params[2]);
 
-  pNotify->GetDocEnvironment()->Print(pNotify->GetHDOC(), nStartPage, nEndPage,
-                                      dwOptions);
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  hDoc->GetDocEnvironment()->Print(hDoc, nStartPage, nEndPage, dwOptions);
   return CJS_Return(true);
 }
 
@@ -594,7 +587,8 @@ CJS_Return CJX_HostPseudoModel::exportData(
   if (params.size() >= 2)
     XDP = runtime->ToBoolean(params[1]);
 
-  pNotify->GetDocEnvironment()->ExportData(pNotify->GetHDOC(), filePath, XDP);
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  hDoc->GetDocEnvironment()->ExportData(hDoc, filePath, XDP);
   return CJS_Return(true);
 }
 
@@ -606,13 +600,13 @@ CJS_Return CJX_HostPseudoModel::pageUp(
     return CJS_Return(true);
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  int32_t nCurPage = pNotify->GetDocEnvironment()->GetCurrentPage(hDoc);
+  int32_t nCurPage = hDoc->GetDocEnvironment()->GetCurrentPage(hDoc);
   int32_t nNewPage = 0;
   if (nCurPage <= 1)
     return CJS_Return(true);
 
   nNewPage = nCurPage - 1;
-  pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
+  hDoc->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
   return CJS_Return(true);
 }
 
@@ -624,8 +618,8 @@ CJS_Return CJX_HostPseudoModel::pageDown(
     return CJS_Return(true);
 
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
-  int32_t nCurPage = pNotify->GetDocEnvironment()->GetCurrentPage(hDoc);
-  int32_t nPageCount = pNotify->GetDocEnvironment()->CountPages(hDoc);
+  int32_t nCurPage = hDoc->GetDocEnvironment()->GetCurrentPage(hDoc);
+  int32_t nPageCount = hDoc->GetDocEnvironment()->CountPages(hDoc);
   if (!nPageCount || nCurPage == nPageCount)
     return CJS_Return(true);
 
@@ -635,6 +629,6 @@ CJS_Return CJX_HostPseudoModel::pageDown(
   else
     nNewPage = nCurPage + 1;
 
-  pNotify->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
+  hDoc->GetDocEnvironment()->SetCurrentPage(hDoc, nNewPage);
   return CJS_Return(true);
 }

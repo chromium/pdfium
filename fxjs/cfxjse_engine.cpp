@@ -18,6 +18,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -202,8 +203,9 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
   if (!pNotify)
     return;
 
-  pNotify->GetDocEnvironment()->SetPropertyInNonXFAGlobalObject(
-      pNotify->GetHDOC(), szPropName, pValue);
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  hDoc->GetDocEnvironment()->SetPropertyInNonXFAGlobalObject(hDoc, szPropName,
+                                                             pValue);
 }
 
 void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
@@ -259,8 +261,9 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
   if (!pNotify)
     return;
 
-  pNotify->GetDocEnvironment()->GetPropertyFromNonXFAGlobalObject(
-      pNotify->GetHDOC(), szPropName, pValue);
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+  hDoc->GetDocEnvironment()->GetPropertyFromNonXFAGlobalObject(hDoc, szPropName,
+                                                               pValue);
 }
 
 int32_t CFXJSE_Engine::GlobalPropTypeGetter(CFXJSE_Value* pOriginalValue,

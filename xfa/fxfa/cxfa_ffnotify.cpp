@@ -233,14 +233,6 @@ void CXFA_FFNotify::AddCalcValidate(CXFA_Node* pNode) {
   pDocView->AddValidateNode(pNode);
 }
 
-CXFA_FFDoc* CXFA_FFNotify::GetHDOC() {
-  return m_pDoc.Get();
-}
-
-IXFA_DocEnvironment* CXFA_FFNotify::GetDocEnvironment() const {
-  return m_pDoc->GetDocEnvironment();
-}
-
 IXFA_AppProvider* CXFA_FFNotify::GetAppProvider() {
   return m_pDoc->GetApp()->GetAppProvider();
 }
@@ -248,10 +240,6 @@ IXFA_AppProvider* CXFA_FFNotify::GetAppProvider() {
 CXFA_FFWidgetHandler* CXFA_FFNotify::GetWidgetHandler() {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   return pDocView ? pDocView->GetWidgetHandler() : nullptr;
-}
-
-CXFA_FFWidget* CXFA_FFNotify::GetHWidget(CXFA_LayoutItem* pLayoutItem) {
-  return XFA_GetWidgetFromLayoutItem(pLayoutItem);
 }
 
 void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
