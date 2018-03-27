@@ -64,7 +64,6 @@ class CXFA_FFNotify {
   CXFA_FFWidgetHandler* GetWidgetHandler();
   CXFA_FFWidget* GetHWidget(CXFA_LayoutItem* pLayoutItem);
   void OpenDropDownList(CXFA_FFWidget* hWidget);
-  WideString GetCurrentDateTime();
   void ResetData(CXFA_Node* pNode);
   int32_t GetLayoutStatus();
   void RunNodeInitialize(CXFA_Node* pNode);

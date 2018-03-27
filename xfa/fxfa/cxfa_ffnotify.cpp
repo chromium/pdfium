@@ -9,7 +9,6 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/cfx_datetime.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffarc.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"
@@ -264,14 +263,6 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
   ToComboBox(hWidget)->OpenDropDownList();
   pDocView->UnlockUpdate();
   pDocView->UpdateDocView();
-}
-
-WideString CXFA_FFNotify::GetCurrentDateTime() {
-  CFX_DateTime dataTime = CFX_DateTime::Now();
-  return WideString::Format(L"%d%02d%02dT%02d%02d%02d", dataTime.GetYear(),
-                            dataTime.GetMonth(), dataTime.GetDay(),
-                            dataTime.GetHour(), dataTime.GetMinute(),
-                            dataTime.GetSecond());
 }
 
 void CXFA_FFNotify::ResetData(CXFA_Node* pNode) {
