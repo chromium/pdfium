@@ -40,7 +40,6 @@ struct FX_TXTRUN {
   ~FX_TXTRUN();
 
   CFDE_TextEditEngine* pEdtEngine;
-  const FDE_TEXTEDITPIECE* pIdentity;
   WideString wsStr;
   int32_t* pWidths;
   int32_t iLength;

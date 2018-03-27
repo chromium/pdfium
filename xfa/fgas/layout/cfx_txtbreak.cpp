@@ -983,7 +983,6 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 
 FX_TXTRUN::FX_TXTRUN()
     : pEdtEngine(nullptr),
-      pIdentity(nullptr),
       pWidths(nullptr),
       iLength(0),
       pFont(nullptr),
