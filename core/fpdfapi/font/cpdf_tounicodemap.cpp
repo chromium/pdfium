@@ -126,7 +126,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
   CIDSet cid_set = CIDSET_UNKNOWN;
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   pAcc->LoadAllDataFiltered();
-  CPDF_SimpleParser parser(pAcc->GetData(), pAcc->GetSize());
+  CPDF_SimpleParser parser(pAcc->GetDataView());
   while (1) {
     ByteStringView word = parser.GetWord();
     if (word.IsEmpty()) {

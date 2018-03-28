@@ -376,7 +376,7 @@ bool CPDF_CIDFont::Load() {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pAcc->LoadAllDataFiltered();
     m_pCMap = pdfium::MakeRetain<CPDF_CMap>();
-    m_pCMap->LoadEmbedded(pAcc->GetData(), pAcc->GetSize());
+    m_pCMap->LoadEmbedded(pAcc->GetDataView());
   } else {
     return false;
   }

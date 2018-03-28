@@ -109,7 +109,7 @@ class CPDF_PSEngine {
   CPDF_PSEngine();
   ~CPDF_PSEngine();
 
-  bool Parse(const char* str, int size);
+  bool Parse(const ByteStringView& str);
   bool Execute();
   bool DoOperator(PDF_PSOP op);
   void Reset() { m_StackCount = 0; }

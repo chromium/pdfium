@@ -30,6 +30,8 @@ class CPDF_StreamAcc : public Retainable {
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   CPDF_Dictionary* GetDict() const;
 
+  ByteStringView GetDataView() { return ByteStringView(GetData(), GetSize()); }
+
   const uint8_t* GetData() const;
   uint8_t* GetData();
   uint32_t GetSize() const;

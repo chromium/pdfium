@@ -290,10 +290,10 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
   m_bLoaded = true;
 }
 
-void CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
+void CPDF_CMap::LoadEmbedded(const ByteStringView& data) {
   m_DirectCharcodeToCIDTable = std::vector<uint16_t>(65536);
   CPDF_CMapParser parser(this);
-  CPDF_SimpleParser syntax(pData, size);
+  CPDF_SimpleParser syntax(data);
   while (1) {
     ByteStringView word = syntax.GetWord();
     if (word.IsEmpty()) {

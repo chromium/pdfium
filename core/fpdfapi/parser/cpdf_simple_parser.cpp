@@ -10,147 +10,124 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
-CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, uint32_t dwSize)
-    : m_pData(pData), m_dwSize(dwSize), m_dwCurPos(0) {}
+CPDF_SimpleParser::CPDF_SimpleParser(const ByteStringView& str) : data_(str) {}
 
-CPDF_SimpleParser::CPDF_SimpleParser(const ByteStringView& str)
-    : m_pData(str.raw_str()), m_dwSize(str.GetLength()), m_dwCurPos(0) {}
+CPDF_SimpleParser::~CPDF_SimpleParser() = default;
 
-std::pair<const uint8_t*, uint32_t> CPDF_SimpleParser::ParseWord() {
-  const uint8_t* pStart = nullptr;
-  uint8_t dwSize = 0;
+ByteStringView CPDF_SimpleParser::GetWord() {
   uint8_t ch;
 
   // Skip whitespace and comment lines.
   while (1) {
-    if (m_dwSize <= m_dwCurPos)
-      return std::make_pair(pStart, dwSize);
+    if (data_.GetLength() <= cur_pos_)
+      return ByteStringView();
 
-    ch = m_pData[m_dwCurPos++];
+    ch = data_[cur_pos_++];
     while (PDFCharIsWhitespace(ch)) {
-      if (m_dwSize <= m_dwCurPos)
-        return std::make_pair(pStart, dwSize);
-      ch = m_pData[m_dwCurPos++];
+      if (data_.GetLength() <= cur_pos_)
+        return ByteStringView();
+      ch = data_[cur_pos_++];
     }
 
     if (ch != '%')
       break;
 
     while (1) {
-      if (m_dwSize <= m_dwCurPos)
-        return std::make_pair(pStart, dwSize);
+      if (data_.GetLength() <= cur_pos_)
+        return ByteStringView();
 
-      ch = m_pData[m_dwCurPos++];
+      ch = data_[cur_pos_++];
       if (PDFCharIsLineEnding(ch))
         break;
     }
   }
 
-  uint32_t start_pos = m_dwCurPos - 1;
-  pStart = m_pData + start_pos;
+  uint8_t dwSize = 0;
+  uint32_t start_pos = cur_pos_ - 1;
   if (PDFCharIsDelimiter(ch)) {
     // Find names
     if (ch == '/') {
       while (1) {
-        if (m_dwSize <= m_dwCurPos)
+        if (data_.GetLength() <= cur_pos_)
           break;
 
-        ch = m_pData[m_dwCurPos++];
+        ch = data_[cur_pos_++];
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
-          m_dwCurPos--;
-          dwSize = m_dwCurPos - start_pos;
+          cur_pos_--;
+          dwSize = cur_pos_ - start_pos;
           break;
         }
       }
-      return std::make_pair(pStart, dwSize);
+      return data_.Mid(start_pos, dwSize);
     }
 
     dwSize = 1;
     if (ch == '<') {
-      if (m_dwSize <= m_dwCurPos)
-        return std::make_pair(pStart, dwSize);
+      if (data_.GetLength() <= cur_pos_)
+        return data_.Mid(start_pos, dwSize);
 
-      ch = m_pData[m_dwCurPos++];
-      if (ch == '<')
+      ch = data_[cur_pos_++];
+      if (ch == '<') {
         dwSize = 2;
-      else
-        m_dwCurPos--;
-    } else if (ch == '>') {
-      if (m_dwSize <= m_dwCurPos)
-        return std::make_pair(pStart, dwSize);
+      } else {
+        while (cur_pos_ < data_.GetLength() && data_[cur_pos_] != '>')
+          cur_pos_++;
 
-      ch = m_pData[m_dwCurPos++];
+        if (cur_pos_ < data_.GetLength())
+          cur_pos_++;
+
+        dwSize = cur_pos_ - start_pos;
+      }
+    } else if (ch == '>') {
+      if (data_.GetLength() <= cur_pos_)
+        return data_.Mid(start_pos, dwSize);
+
+      ch = data_[cur_pos_++];
       if (ch == '>')
         dwSize = 2;
       else
-        m_dwCurPos--;
+        cur_pos_--;
+    } else if (ch == '(') {
+      int level = 1;
+      while (cur_pos_ < data_.GetLength()) {
+        if (data_[cur_pos_] == ')') {
+          level--;
+          if (level == 0)
+            break;
+        }
+
+        if (data_[cur_pos_] == '\\') {
+          if (data_.GetLength() <= cur_pos_)
+            break;
+
+          cur_pos_++;
+        } else if (data_[cur_pos_] == '(') {
+          level++;
+        }
+        if (data_.GetLength() <= cur_pos_)
+          break;
+
+        cur_pos_++;
+      }
+      if (cur_pos_ < data_.GetLength())
+        cur_pos_++;
+
+      dwSize = cur_pos_ - start_pos;
     }
-    return std::make_pair(pStart, dwSize);
+    return data_.Mid(start_pos, dwSize);
   }
 
   dwSize = 1;
-  while (1) {
-    if (m_dwSize <= m_dwCurPos)
-      return std::make_pair(pStart, dwSize);
-    ch = m_pData[m_dwCurPos++];
+  while (cur_pos_ < data_.GetLength()) {
+    ch = data_[cur_pos_++];
 
     if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
-      m_dwCurPos--;
+      cur_pos_--;
       break;
     }
     dwSize++;
   }
-  return std::make_pair(pStart, dwSize);
-}
-
-ByteStringView CPDF_SimpleParser::GetWord() {
-  const uint8_t* pStart;
-  uint32_t dwSize;
-  std::tie(pStart, dwSize) = ParseWord();
-
-  if (dwSize != 1)
-    return ByteStringView(pStart, dwSize);
-
-  if (pStart[0] == '<') {
-    while (m_dwCurPos < m_dwSize && m_pData[m_dwCurPos] != '>')
-      m_dwCurPos++;
-
-    if (m_dwCurPos < m_dwSize)
-      m_dwCurPos++;
-
-    return ByteStringView(pStart,
-                          static_cast<size_t>(m_dwCurPos - (pStart - m_pData)));
-  }
-
-  if (pStart[0] == '(') {
-    int level = 1;
-    while (m_dwCurPos < m_dwSize) {
-      if (m_pData[m_dwCurPos] == ')') {
-        level--;
-        if (level == 0)
-          break;
-      }
-
-      if (m_pData[m_dwCurPos] == '\\') {
-        if (m_dwSize <= m_dwCurPos)
-          break;
-
-        m_dwCurPos++;
-      } else if (m_pData[m_dwCurPos] == '(') {
-        level++;
-      }
-      if (m_dwSize <= m_dwCurPos)
-        break;
-
-      m_dwCurPos++;
-    }
-    if (m_dwCurPos < m_dwSize)
-      m_dwCurPos++;
-
-    return ByteStringView(pStart,
-                          static_cast<size_t>(m_dwCurPos - (pStart - m_pData)));
-  }
-  return ByteStringView(pStart, dwSize);
+  return data_.Mid(start_pos, dwSize);
 }
 
 bool CPDF_SimpleParser::FindTagParamFromStart(const ByteStringView& token,
@@ -160,9 +137,9 @@ bool CPDF_SimpleParser::FindTagParamFromStart(const ByteStringView& token,
   std::vector<uint32_t> pBuf(nParams);
   int buf_index = 0;
   int buf_count = 0;
-  m_dwCurPos = 0;
+  cur_pos_ = 0;
   while (1) {
-    pBuf[buf_index++] = m_dwCurPos;
+    pBuf[buf_index++] = cur_pos_;
     if (buf_index == nParams)
       buf_index = 0;
 
@@ -178,7 +155,7 @@ bool CPDF_SimpleParser::FindTagParamFromStart(const ByteStringView& token,
       if (buf_count < nParams)
         continue;
 
-      m_dwCurPos = pBuf[buf_index];
+      cur_pos_ = pBuf[buf_index];
       return true;
     }
   }

@@ -53,7 +53,7 @@ class CPDF_CMap : public Retainable {
   void LoadPredefined(CPDF_CMapManager* pMgr,
                       const ByteString& name,
                       bool bPromptCJK);
-  void LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
+  void LoadEmbedded(const ByteStringView& data);
 
   bool IsLoaded() const { return m_bLoaded; }
   bool IsVertWriting() const { return m_bVertical; }

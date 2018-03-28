@@ -8,7 +8,6 @@
 #include "third_party/base/ptr_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  auto cmap = pdfium::MakeRetain<CPDF_CMap>();
-  cmap->LoadEmbedded(data, size);
+  pdfium::MakeRetain<CPDF_CMap>()->LoadEmbedded(ByteStringView(data, size));
   return 0;
 }

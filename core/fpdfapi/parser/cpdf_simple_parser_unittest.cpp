@@ -49,7 +49,7 @@ TEST(SimpleParserTest, GetWord) {
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     const pdfium::StrFuncTestData& data = test_data[i];
-    CPDF_SimpleParser parser(data.input, data.input_size);
+    CPDF_SimpleParser parser(ByteStringView(data.input, data.input_size));
     ByteStringView word = parser.GetWord();
     EXPECT_EQ(data.expected_size, word.GetLength()) << " for case " << i;
     if (data.expected_size != word.GetLength())
@@ -88,10 +88,10 @@ TEST(SimpleParserTest, FindTagParamFromStart) {
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     const FindTagTestStruct& data = test_data[i];
-    CPDF_SimpleParser parser(data.input, data.input_size);
+    CPDF_SimpleParser parser(ByteStringView(data.input, data.input_size));
     EXPECT_EQ(data.result,
               parser.FindTagParamFromStart(data.token, data.num_params))
         << " for case " << i;
-    EXPECT_EQ(data.result_pos, parser.GetCurPos()) << " for case " << i;
+    EXPECT_EQ(data.result_pos, parser.GetCurPosForTest()) << " for case " << i;
   }
 }
