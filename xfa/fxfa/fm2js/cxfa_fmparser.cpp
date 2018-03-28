@@ -16,7 +16,7 @@
 namespace {
 
 constexpr unsigned int kMaxParseDepth = 1250;
-constexpr unsigned int kMaxPostExpressions = 16384;
+constexpr unsigned int kMaxPostExpressions = 256;
 
 }  // namespace
 
@@ -688,6 +688,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
       case TOKlparen: {
         if (!NextToken())
           return nullptr;
+
         std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> expressions;
         if (m_token.m_type != TOKrparen) {
           while (m_token.m_type != TOKrparen) {
@@ -789,7 +790,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
               std::move(expr), TOKdot, tempStr, std::move(s));
           continue;
         }
-      } break;
+        break;
+      }
       case TOKdotdot: {
         if (!NextToken())
           return nullptr;
@@ -814,7 +816,8 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
               std::move(expr), TOKdotdot, tempStr, std::move(s));
           continue;
         }
-      } break;
+        break;
+      }
       case TOKdotscream: {
         if (!NextToken())
           return nullptr;
@@ -824,6 +827,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
         WideStringView tempStr = m_token.m_string;
         if (!NextToken())
           return nullptr;
+
         if (m_token.m_type != TOKlbracket) {
           std::unique_ptr<CXFA_FMSimpleExpression> s =
               pdfium::MakeUnique<CXFA_FMIndexExpression>(ACCESSOR_NO_INDEX,
@@ -832,6 +836,7 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
               std::move(expr), TOKdotscream, tempStr, std::move(s));
           continue;
         }
+
         std::unique_ptr<CXFA_FMSimpleExpression> s = ParseIndexExpression();
         if (!s)
           return nullptr;
