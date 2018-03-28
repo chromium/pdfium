@@ -60,8 +60,6 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
   return pHolder->get();
 }
 
-}  // namespace
-
 CPDF_Array* CPDFArrayFromDest(FPDF_DEST dest) {
   return static_cast<CPDF_Array*>(dest);
 }
@@ -78,30 +76,7 @@ CPDF_Dictionary* CPDFDictionaryFromFPDFLink(FPDF_LINK link) {
   return ToDictionary(static_cast<CPDF_Object*>(link));
 }
 
-const CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict) {
-  return dict ? dict->GetArrayFor("QuadPoints") : nullptr;
-}
-
-bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,
-                                 size_t quad_index,
-                                 FS_QUADPOINTSF* quad_points) {
-  ASSERT(quad_points);
-
-  const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(dict);
-  if (!pArray || quad_index >= pArray->GetCount() / 8)
-    return false;
-
-  quad_index *= 8;
-  quad_points->x1 = pArray->GetNumberAt(quad_index);
-  quad_points->y1 = pArray->GetNumberAt(quad_index + 1);
-  quad_points->x2 = pArray->GetNumberAt(quad_index + 2);
-  quad_points->y2 = pArray->GetNumberAt(quad_index + 3);
-  quad_points->x3 = pArray->GetNumberAt(quad_index + 4);
-  quad_points->y3 = pArray->GetNumberAt(quad_index + 5);
-  quad_points->x4 = pArray->GetNumberAt(quad_index + 6);
-  quad_points->y4 = pArray->GetNumberAt(quad_index + 7);
-  return true;
-}
+}  // namespace
 
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {

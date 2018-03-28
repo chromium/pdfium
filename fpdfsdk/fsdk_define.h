@@ -23,7 +23,6 @@
 #endif
 
 class CPDF_Annot;
-class CPDF_ContentMarkItem;
 class CPDF_Page;
 class CPDF_PageObject;
 class CPDF_PageRenderContext;
@@ -31,18 +30,6 @@ class CPDF_PathObject;
 class CPDF_Stream;
 class IFSDK_PAUSE_Adapter;
 class FX_PATHPOINT;
-
-// Layering prevents fxcrt from knowing about FPDF_FILEACCESS, so this can't
-// be a static method of IFX_SeekableReadStream.
-RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
-    FPDF_FILEACCESS* pFileAccess);
-
-#ifdef PDF_ENABLE_XFA
-// Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't
-// be a static method of IFX_SeekableStream.
-RetainPtr<IFX_SeekableStream> MakeSeekableStream(
-    FPDF_FILEHANDLER* pFileHandler);
-#endif  // PDF_ENABLE_XFA
 
 // Object types for public FPDF_ types; these correspond to next layer down
 // from fpdfsdk. For master, these are CPDF_ types, but for XFA, these are
@@ -57,7 +44,6 @@ using UnderlyingPageType = CPDFXFA_Page;
 
 // Conversions to/from underlying types.
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc);
-FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc);
 
 UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page);
 
@@ -66,27 +52,16 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);
 
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page);
-
-CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
-
 CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object);
-
-const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
-    FPDF_PAGEOBJECTMARK mark);
-
-CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment);
-
 ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
-
 CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap);
 
-CPDF_Array* CPDFArrayFromDest(FPDF_DEST dest);
-
-CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action);
-
-CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark);
-
-CPDF_Dictionary* CPDFDictionaryFromFPDFLink(FPDF_LINK link);
+#ifdef PDF_ENABLE_XFA
+// Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't
+// be a static method of IFX_SeekableStream.
+RetainPtr<IFX_SeekableStream> MakeSeekableStream(
+    FPDF_FILEHANDLER* pFileHandler);
+#endif  // PDF_ENABLE_XFA
 
 const CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict);
 bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,
@@ -96,18 +71,17 @@ bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,
 CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect);
 void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect);
 
-const FX_PATHPOINT* FXPathPointFromFPDFPathSegment(FPDF_PATHSEGMENT segment);
-
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen);
-
 unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
                                                    void* buffer,
                                                    unsigned long buflen);
 
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
+
+// TODO(dsinclair): Where should this live?
 void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             FPDF_PAGE page,
                             int start_x,
@@ -121,7 +95,15 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
 
 void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
+
+#ifndef _WIN32
+void SetLastError(int err);
+int GetLastError();
+#endif  // _WIN32
+
 void ProcessParseError(CPDF_Parser::Error err);
+
+// TODO(dsinclair): This seems like it should be a public API?
 FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
                                    unsigned int R,
                                    unsigned int G,

@@ -53,6 +53,11 @@ static_assert(FPDF_PAGEOBJ_SHADING == CPDF_PageObject::SHADING,
 static_assert(FPDF_PAGEOBJ_FORM == CPDF_PageObject::FORM,
               "FPDF_PAGEOBJ_FORM/CPDF_PageObject::FORM mismatch");
 
+const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
+    FPDF_PAGEOBJECTMARK mark) {
+  return static_cast<const CPDF_ContentMarkItem*>(mark);
+}
+
 bool IsPageObject(CPDF_Page* pPage) {
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type"))
     return false;

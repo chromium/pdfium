@@ -25,6 +25,10 @@ namespace {
 
 constexpr char kChecksumKey[] = "CheckSum";
 
+CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment) {
+  return static_cast<CPDF_Object*>(attachment);
+}
+
 ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
   uint8_t* result = nullptr;
   uint32_t size = 0;

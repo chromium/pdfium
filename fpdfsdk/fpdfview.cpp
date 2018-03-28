@@ -6,55 +6,49 @@
 
 #include "public/fpdfview.h"
 
-#include <memory>
 #include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
-#include "core/fpdfapi/page/cpdf_contentmarkitem.h"
-#include "core/fpdfapi/page/cpdf_image.h"
-#include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfapi/page/cpdf_pageobject.h"
-#include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
+#include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
-#include "core/fxcrt/fx_memory.h"
-#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_renderdevice.h"
+#include "fpdfsdk/cpdfsdk_customaccess.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "fpdfsdk/cpdfsdk_memoryaccess.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fsdk_pauseadapter.h"
 #include "fxjs/ijs_runtime.h"
-#include "public/fpdf_edit.h"
-#include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
-#include "public/fpdf_progressive.h"
-#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
-#include "third_party/base/numerics/safe_conversions_impl.h"
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
-#include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "fxbarcode/BC_Library.h"
 #endif  // PDF_ENABLE_XFA
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #include "core/fxge/cfx_windowsrenderdevice.h"
+#include "public/fpdf_edit.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(WindowsPrintMode::kModeEmf == FPDF_PRINTMODE_EMF,
@@ -132,149 +126,6 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
     pContext->m_pDevice->RestoreState(false);
 }
 
-class CPDF_CustomAccess final : public IFX_SeekableReadStream {
- public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  // IFX_SeekableReadStream
-  FX_FILESIZE GetSize() override;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-
- private:
-  explicit CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
-
-  FPDF_FILEACCESS m_FileAccess;
-};
-
-CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
-    : m_FileAccess(*pFileAccess) {}
-
-FX_FILESIZE CPDF_CustomAccess::GetSize() {
-  return m_FileAccess.m_FileLen;
-}
-
-bool CPDF_CustomAccess::ReadBlock(void* buffer,
-                                  FX_FILESIZE offset,
-                                  size_t size) {
-  if (offset < 0)
-    return false;
-
-  FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
-  newPos += offset;
-  if (!newPos.IsValid() ||
-      newPos.ValueOrDie() > static_cast<FX_FILESIZE>(m_FileAccess.m_FileLen)) {
-    return false;
-  }
-  return !!m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,
-                                   static_cast<uint8_t*>(buffer), size);
-}
-
-#ifdef PDF_ENABLE_XFA
-class FPDF_FileHandlerContext : public IFX_SeekableStream {
- public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  ~FPDF_FileHandlerContext() override;
-
-  // IFX_SeekableStream:
-  FX_FILESIZE GetSize() override;
-  bool IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-  size_t ReadBlock(void* buffer, size_t size) override;
-  bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
-  bool Flush() override;
-
-  void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
-
- protected:
-  explicit FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS);
-
-  FPDF_FILEHANDLER* m_pFS;
-  FX_FILESIZE m_nCurPos;
-};
-
-FPDF_FileHandlerContext::FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS) {
-  m_pFS = pFS;
-  m_nCurPos = 0;
-}
-
-FPDF_FileHandlerContext::~FPDF_FileHandlerContext() {
-  if (m_pFS && m_pFS->Release)
-    m_pFS->Release(m_pFS->clientData);
-}
-
-FX_FILESIZE FPDF_FileHandlerContext::GetSize() {
-  if (m_pFS && m_pFS->GetSize)
-    return (FX_FILESIZE)m_pFS->GetSize(m_pFS->clientData);
-  return 0;
-}
-
-bool FPDF_FileHandlerContext::IsEOF() {
-  return m_nCurPos >= GetSize();
-}
-
-FX_FILESIZE FPDF_FileHandlerContext::GetPosition() {
-  return m_nCurPos;
-}
-
-bool FPDF_FileHandlerContext::ReadBlock(void* buffer,
-                                        FX_FILESIZE offset,
-                                        size_t size) {
-  if (!buffer || !size || !m_pFS->ReadBlock)
-    return false;
-
-  if (m_pFS->ReadBlock(m_pFS->clientData, (FPDF_DWORD)offset, buffer,
-                       (FPDF_DWORD)size) == 0) {
-    m_nCurPos = offset + size;
-    return true;
-  }
-  return false;
-}
-
-size_t FPDF_FileHandlerContext::ReadBlock(void* buffer, size_t size) {
-  if (!buffer || !size || !m_pFS->ReadBlock)
-    return 0;
-
-  FX_FILESIZE nSize = GetSize();
-  if (m_nCurPos >= nSize)
-    return 0;
-  FX_FILESIZE dwAvail = nSize - m_nCurPos;
-  if (dwAvail < (FX_FILESIZE)size)
-    size = static_cast<size_t>(dwAvail);
-  if (m_pFS->ReadBlock(m_pFS->clientData, (FPDF_DWORD)m_nCurPos, buffer,
-                       (FPDF_DWORD)size) == 0) {
-    m_nCurPos += size;
-    return size;
-  }
-
-  return 0;
-}
-
-bool FPDF_FileHandlerContext::WriteBlock(const void* buffer,
-                                         FX_FILESIZE offset,
-                                         size_t size) {
-  if (!m_pFS || !m_pFS->WriteBlock)
-    return false;
-
-  if (m_pFS->WriteBlock(m_pFS->clientData, (FPDF_DWORD)offset, buffer,
-                        (FPDF_DWORD)size) == 0) {
-    m_nCurPos = offset + size;
-    return true;
-  }
-  return false;
-}
-
-bool FPDF_FileHandlerContext::Flush() {
-  if (!m_pFS || !m_pFS->Flush)
-    return true;
-
-  return m_pFS->Flush(m_pFS->clientData) == 0;
-}
-#endif  // PDF_ENABLE_XFA
-
 FPDF_DOCUMENT LoadDocumentImpl(
     const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     FPDF_BYTESTRING password) {
@@ -298,172 +149,6 @@ FPDF_DOCUMENT LoadDocumentImpl(
 }
 
 }  // namespace
-
-UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
-  return static_cast<UnderlyingDocumentType*>(doc);
-}
-
-FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc) {
-  return static_cast<FPDF_DOCUMENT>(doc);
-}
-
-UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
-  return static_cast<UnderlyingPageType*>(page);
-}
-
-CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
-#ifdef PDF_ENABLE_XFA
-  return doc ? UnderlyingFromFPDFDocument(doc)->GetPDFDoc() : nullptr;
-#else   // PDF_ENABLE_XFA
-  return UnderlyingFromFPDFDocument(doc);
-#endif  // PDF_ENABLE_XFA
-}
-
-FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
-#ifdef PDF_ENABLE_XFA
-  return doc ? FPDFDocumentFromUnderlying(
-                   new CPDFXFA_Context(pdfium::WrapUnique(doc)))
-             : nullptr;
-#else   // PDF_ENABLE_XFA
-  return FPDFDocumentFromUnderlying(doc);
-#endif  // PDF_ENABLE_XFA
-}
-
-CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
-#ifdef PDF_ENABLE_XFA
-  return page ? UnderlyingFromFPDFPage(page)->GetPDFPage() : nullptr;
-#else   // PDF_ENABLE_XFA
-  return UnderlyingFromFPDFPage(page);
-#endif  // PDF_ENABLE_XFA
-}
-
-CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
-  auto* obj = CPDFPageObjectFromFPDFPageObject(page_object);
-  return obj ? obj->AsPath() : nullptr;
-}
-
-CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
-  return static_cast<CPDF_PageObject*>(page_object);
-}
-
-const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
-    FPDF_PAGEOBJECTMARK mark) {
-  return static_cast<const CPDF_ContentMarkItem*>(mark);
-}
-
-CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment) {
-  return static_cast<CPDF_Object*>(attachment);
-}
-
-ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
-  return WideString::FromUTF16LE(wide_string,
-                                 WideString::WStringLength(wide_string))
-      .UTF8Encode();
-}
-
-CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
-  return static_cast<CFX_DIBitmap*>(bitmap);
-}
-
-CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect) {
-  return CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top);
-}
-
-void FSRECTFFromCFXFloatRect(const CFX_FloatRect& rect, FS_RECTF* out_rect) {
-  out_rect->left = rect.left;
-  out_rect->top = rect.top;
-  out_rect->right = rect.right;
-  out_rect->bottom = rect.bottom;
-}
-
-const FX_PATHPOINT* FXPathPointFromFPDFPathSegment(FPDF_PATHSEGMENT segment) {
-  return static_cast<const FX_PATHPOINT*>(segment);
-}
-
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
-                                                  void* buffer,
-                                                  unsigned long buflen) {
-  ByteString encoded_text = text.UTF16LE_Encode();
-  unsigned long len = encoded_text.GetLength();
-  if (buffer && len <= buflen)
-    memcpy(buffer, encoded_text.c_str(), len);
-  return len;
-}
-
-unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
-                                                   void* buffer,
-                                                   unsigned long buflen) {
-  ASSERT(stream);
-  uint8_t* data = stream->GetRawData();
-  uint32_t len = stream->GetRawSize();
-  CPDF_Dictionary* dict = stream->GetDict();
-  CPDF_Object* decoder = dict ? dict->GetDirectObjectFor("Filter") : nullptr;
-  if (decoder && (decoder->IsArray() || decoder->IsName())) {
-    // Decode the stream if one or more stream filters are specified.
-    uint8_t* decoded_data = nullptr;
-    uint32_t decoded_len = 0;
-    ByteString dummy_last_decoder;
-    CPDF_Dictionary* dummy_last_param;
-    if (PDF_DataDecode(data, len, dict, dict->GetIntegerFor("DL"), false,
-                       &decoded_data, &decoded_len, &dummy_last_decoder,
-                       &dummy_last_param)) {
-      if (buffer && buflen >= decoded_len)
-        memcpy(buffer, decoded_data, decoded_len);
-
-      // Free the buffer for the decoded data if it was allocated by
-      // PDF_DataDecode(). Note that for images with a single image-specific
-      // filter, |decoded_data| is directly assigned to be |data|, so
-      // |decoded_data| does not need to be freed.
-      if (decoded_data != data)
-        FX_Free(decoded_data);
-
-      return decoded_len;
-    }
-  }
-  // Copy the raw data and return its length if there is no valid filter
-  // specified or if decoding failed.
-  if (buffer && buflen >= len)
-    memcpy(buffer, data, len);
-
-  return len;
-}
-
-RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
-    FPDF_FILEACCESS* pFileAccess) {
-  return pdfium::MakeRetain<CPDF_CustomAccess>(pFileAccess);
-}
-
-#ifdef PDF_ENABLE_XFA
-RetainPtr<IFX_SeekableStream> MakeSeekableStream(
-    FPDF_FILEHANDLER* pFilehandler) {
-  return pdfium::MakeRetain<FPDF_FileHandlerContext>(pFilehandler);
-}
-#endif  // PDF_ENABLE_XFA
-
-// 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
-static uint32_t foxit_sandbox_policy = 0xFFFFFFFF;
-
-void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
-  switch (policy) {
-    case FPDF_POLICY_MACHINETIME_ACCESS: {
-      if (enable)
-        foxit_sandbox_policy |= 0x01;
-      else
-        foxit_sandbox_policy &= 0xFFFFFFFE;
-    } break;
-    default:
-      break;
-  }
-}
-
-FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
-  switch (policy) {
-    case FPDF_POLICY_MACHINETIME_ACCESS:
-      return !!(foxit_sandbox_policy & 0x01);
-    default:
-      return false;
-  }
-}
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_InitLibrary() {
   FPDF_InitLibraryWithConfig(nullptr);
@@ -505,40 +190,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
   IJS_Runtime::Destroy();
 
   g_bLibraryInitialized = false;
-}
-
-#ifndef _WIN32
-int g_LastError;
-void SetLastError(int err) {
-  g_LastError = err;
-}
-
-int GetLastError() {
-  return g_LastError;
-}
-#endif  // _WIN32
-
-void ProcessParseError(CPDF_Parser::Error err) {
-  uint32_t err_code = FPDF_ERR_SUCCESS;
-  // Translate FPDFAPI error code to FPDFVIEW error code
-  switch (err) {
-    case CPDF_Parser::SUCCESS:
-      err_code = FPDF_ERR_SUCCESS;
-      break;
-    case CPDF_Parser::FILE_ERROR:
-      err_code = FPDF_ERR_FILE;
-      break;
-    case CPDF_Parser::FORMAT_ERROR:
-      err_code = FPDF_ERR_FORMAT;
-      break;
-    case CPDF_Parser::PASSWORD_ERROR:
-      err_code = FPDF_ERR_PASSWORD;
-      break;
-    case CPDF_Parser::HANDLER_ERROR:
-      err_code = FPDF_ERR_SECURITY;
-      break;
-  }
-  SetLastError(err_code);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
@@ -606,44 +257,17 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
 }
 #endif  // PDF_ENABLE_XFA
 
-class CMemFile final : public IFX_SeekableReadStream {
- public:
-  static RetainPtr<CMemFile> Create(const uint8_t* pBuf, FX_FILESIZE size) {
-    return RetainPtr<CMemFile>(new CMemFile(pBuf, size));
-  }
-
-  FX_FILESIZE GetSize() override { return m_size; }
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-    if (offset < 0)
-      return false;
-
-    FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
-    newPos += offset;
-    if (!newPos.IsValid() || newPos.ValueOrDie() > m_size)
-      return false;
-
-    memcpy(buffer, m_pBuf + offset, size);
-    return true;
-  }
-
- private:
-  CMemFile(const uint8_t* pBuf, FX_FILESIZE size)
-      : m_pBuf(pBuf), m_size(size) {}
-
-  const uint8_t* const m_pBuf;
-  const FX_FILESIZE m_size;
-};
-
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {
-  return LoadDocumentImpl(
-      CMemFile::Create(static_cast<const uint8_t*>(data_buf), size), password);
+  return LoadDocumentImpl(pdfium::MakeRetain<CPDFSDK_MemoryAccess>(
+                              static_cast<const uint8_t*>(data_buf), size),
+                          password);
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
                         FPDF_BYTESTRING password) {
-  return LoadDocumentImpl(pdfium::MakeRetain<CPDF_CustomAccess>(pFileAccess),
+  return LoadDocumentImpl(pdfium::MakeRetain<CPDFSDK_CustomAccess>(pFileAccess),
                           password);
 }
 

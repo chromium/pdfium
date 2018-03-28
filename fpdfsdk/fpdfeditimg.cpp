@@ -14,6 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/render/cpdf_dibsource.h"
+#include "fpdfsdk/cpdfsdk_customaccess.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 
@@ -42,6 +43,11 @@ static_assert(PDFCS_INDEXED == FPDF_COLORSPACE_INDEXED,
               "PDFCS_INDEXED value mismatch");
 static_assert(PDFCS_PATTERN == FPDF_COLORSPACE_PATTERN,
               "PDFCS_PATTERN value mismatch");
+
+RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
+    FPDF_FILEACCESS* pFileAccess) {
+  return pdfium::MakeRetain<CPDFSDK_CustomAccess>(pFileAccess);
+}
 
 bool LoadJpegHelper(FPDF_PAGE* pages,
                     int nCount,
