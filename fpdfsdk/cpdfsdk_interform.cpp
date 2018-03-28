@@ -22,13 +22,13 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "fpdfsdk/cba_annotiterator.h"
+#include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
-#include "fpdfsdk/fsdk_actionhandler.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/ijs_runtime.h"
@@ -380,7 +380,7 @@ bool CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
     return true;
 
   CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHandler();
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = false;
   fa.bShift = false;
   fa.sValue = csValue;
@@ -400,7 +400,7 @@ bool CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
     return true;
 
   CPDFSDK_ActionHandler* pActionHandler = m_pFormFillEnv->GetActionHandler();
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = false;
   fa.bShift = false;
   fa.sValue = csValue;

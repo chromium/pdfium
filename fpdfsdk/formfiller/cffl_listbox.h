@@ -27,7 +27,7 @@ class CFFL_ListBox : public CFFL_TextObject {
   void SaveData(CPDFSDK_PageView* pPageView) override;
   void GetActionData(CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
-                     PDFSDK_FieldAction& fa) override;
+                     CPDFSDK_FieldAction& fa) override;
   void SaveState(CPDFSDK_PageView* pPageView) override;
   void RestoreState(CPDFSDK_PageView* pPageView) override;
 

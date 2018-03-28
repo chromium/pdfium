@@ -23,12 +23,12 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
-#include "fpdfsdk/fsdk_actionhandler.h"
 #include "fpdfsdk/pwl/cpwl_appstream.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
@@ -210,7 +210,7 @@ bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
 }
 
 bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
-                                  PDFSDK_FieldAction* data,
+                                  CPDFSDK_FieldAction* data,
                                   CPDFSDK_PageView* pPageView) {
   CPDFXFA_Context* pContext = m_pPageView->GetFormFillEnv()->GetXFAContext();
 
@@ -816,7 +816,7 @@ CFX_Color CPDFSDK_Widget::GetFillPWLColor() const {
 }
 
 bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
-                               PDFSDK_FieldAction* data,
+                               CPDFSDK_FieldAction* data,
                                CPDFSDK_PageView* pPageView) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pPageView->GetFormFillEnv();
 

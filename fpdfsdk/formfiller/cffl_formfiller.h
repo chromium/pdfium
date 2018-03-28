@@ -10,9 +10,9 @@
 #include <map>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/cpdfsdk_fieldaction.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
-#include "fpdfsdk/pdfsdk_fieldaction.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_FormFillEnvironment;
@@ -90,13 +90,13 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
 
   virtual void GetActionData(CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
-                             PDFSDK_FieldAction& fa);
+                             CPDFSDK_FieldAction& fa);
   virtual void SetActionData(CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
-                             const PDFSDK_FieldAction& fa);
+                             const CPDFSDK_FieldAction& fa);
   virtual bool IsActionDataChanged(CPDF_AAction::AActionType type,
-                                   const PDFSDK_FieldAction& faOld,
-                                   const PDFSDK_FieldAction& faNew);
+                                   const CPDFSDK_FieldAction& faOld,
+                                   const CPDFSDK_FieldAction& faNew);
 
   virtual void SaveState(CPDFSDK_PageView* pPageView);
   virtual void RestoreState(CPDFSDK_PageView* pPageView);

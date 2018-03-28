@@ -28,7 +28,7 @@ class CPDF_PageObject;
 class CPDF_PageRenderContext;
 class CPDF_PathObject;
 class CPDF_Stream;
-class IFSDK_PAUSE_Adapter;
+class IPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
 
 // Object types for public FPDF_ types; these correspond to next layer down
@@ -91,7 +91,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             int rotate,
                             int flags,
                             bool bNeedToRestore,
-                            IFSDK_PAUSE_Adapter* pause);
+                            IPDFSDK_PauseAdapter* pause);
 
 void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);

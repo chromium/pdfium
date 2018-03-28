@@ -156,7 +156,7 @@ void CFFL_TextField::SaveData(CPDFSDK_PageView* pPageView) {
 
 void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
-                                   PDFSDK_FieldAction& fa) {
+                                   CPDFSDK_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::KeyStroke:
       if (CPWL_Edit* pWnd = GetEdit(pPageView, false)) {
@@ -186,7 +186,7 @@ void CFFL_TextField::GetActionData(CPDFSDK_PageView* pPageView,
 
 void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
                                    CPDF_AAction::AActionType type,
-                                   const PDFSDK_FieldAction& fa) {
+                                   const CPDFSDK_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::KeyStroke:
       if (CPWL_Edit* pEdit = GetEdit(pPageView, false)) {
@@ -201,8 +201,8 @@ void CFFL_TextField::SetActionData(CPDFSDK_PageView* pPageView,
 }
 
 bool CFFL_TextField::IsActionDataChanged(CPDF_AAction::AActionType type,
-                                         const PDFSDK_FieldAction& faOld,
-                                         const PDFSDK_FieldAction& faNew) {
+                                         const CPDFSDK_FieldAction& faOld,
+                                         const CPDFSDK_FieldAction& faNew) {
   switch (type) {
     case CPDF_AAction::KeyStroke:
       return (!faOld.bFieldFull && faOld.nSelEnd != faNew.nSelEnd) ||

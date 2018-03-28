@@ -35,7 +35,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_memoryaccess.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "fpdfsdk/fsdk_pauseadapter.h"
+#include "fpdfsdk/ipdfsdk_pauseadapter.h"
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
@@ -71,7 +71,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
                     const FX_RECT& clipping_rect,
                     int flags,
                     bool bNeedToRestore,
-                    IFSDK_PAUSE_Adapter* pause) {
+                    IPDFSDK_PauseAdapter* pause) {
   if (!pContext->m_pOptions)
     pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
 
@@ -899,7 +899,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             int rotate,
                             int flags,
                             bool bNeedToRestore,
-                            IFSDK_PAUSE_Adapter* pause) {
+                            IPDFSDK_PauseAdapter* pause) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;

@@ -23,16 +23,16 @@ void CheckRect(const CFX_FloatRect& actual, const CFX_FloatRect& expected) {
 
 }  // namespace
 
-class FSDKBaseFormEmbeddertest : public EmbedderTest {};
+class CBA_AnnotIteratorTest : public EmbedderTest {};
 
-TEST_F(FSDKBaseFormEmbeddertest, CBA_AnnotIterator) {
+TEST_F(CBA_AnnotIteratorTest, CBA_AnnotIterator) {
   EXPECT_TRUE(OpenDocument("annotiter.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
   FPDF_PAGE page2 = LoadPage(2);
-  EXPECT_TRUE(page0);
-  EXPECT_TRUE(page1);
-  EXPECT_TRUE(page2);
+  ASSERT_TRUE(page0);
+  ASSERT_TRUE(page1);
+  ASSERT_TRUE(page2);
 
   CFX_FloatRect LeftBottom(200, 200, 220, 220);
   CFX_FloatRect RightBottom(400, 201, 420, 221);

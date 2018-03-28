@@ -126,7 +126,7 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
       pWidget->ClearAppModified();
       ASSERT(pPageView);
 
-      PDFSDK_FieldAction fa;
+      CPDFSDK_FieldAction fa;
       fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
       fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
       pWidget->OnAAction(CPDF_AAction::CursorEnter, &fa, pPageView);
@@ -159,7 +159,7 @@ void CFFL_InteractiveFormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
       pWidget->ClearAppModified();
       ASSERT(pPageView);
 
-      PDFSDK_FieldAction fa;
+      CPDFSDK_FieldAction fa;
       fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
       fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
       pWidget->OnAAction(CPDF_AAction::CursorExit, &fa, pPageView);
@@ -195,7 +195,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
       pWidget->ClearAppModified();
       ASSERT(pPageView);
 
-      PDFSDK_FieldAction fa;
+      CPDFSDK_FieldAction fa;
       fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlags);
       fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlags);
       pWidget->OnAAction(CPDF_AAction::ButtonDown, &fa, pPageView);
@@ -273,7 +273,7 @@ bool CFFL_InteractiveFormFiller::OnButtonUp(CPDFSDK_Annot::ObservedPtr* pAnnot,
   uint32_t nValueAge = pWidget->GetValueAge();
   ASSERT(pPageView);
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
   pWidget->OnAAction(CPDF_AAction::ButtonUp, &fa, pPageView);
@@ -385,7 +385,7 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
       CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();
       ASSERT(pPageView);
 
-      PDFSDK_FieldAction fa;
+      CPDFSDK_FieldAction fa;
       fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
       fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
       pFormFiller->GetActionData(pPageView, CPDF_AAction::GetFocus, fa);
@@ -436,7 +436,7 @@ bool CFFL_InteractiveFormFiller::OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
   CPDFSDK_PageView* pPageView = pWidget->GetPageView();
   ASSERT(pPageView);
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
   pFormFiller->GetActionData(pPageView, CPDF_AAction::LoseFocus, fa);
@@ -611,7 +611,7 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
   m_bNotifying = true;
   pWidget->ClearAppModified();
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
   fa.bWillCommit = true;
@@ -643,7 +643,7 @@ bool CFFL_InteractiveFormFiller::OnValidate(CPDFSDK_Annot::ObservedPtr* pAnnot,
   m_bNotifying = true;
   pWidget->ClearAppModified();
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
   fa.bKeyDown = true;
@@ -712,7 +712,7 @@ bool CFFL_InteractiveFormFiller::OnClick(CPDFSDK_Annot::ObservedPtr* pAnnot,
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
 
@@ -742,7 +742,7 @@ bool CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
 
@@ -795,7 +795,7 @@ bool CFFL_InteractiveFormFiller::OnPreOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
 
@@ -826,7 +826,7 @@ bool CFFL_InteractiveFormFiller::OnPostOpen(CPDFSDK_Annot::ObservedPtr* pAnnot,
   uint32_t nAge = pWidget->GetAppearanceAge();
   uint32_t nValueAge = pWidget->GetValueAge();
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
 
@@ -884,7 +884,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       privateData.pPageView->GetFormFillEnv();
 
-  PDFSDK_FieldAction fa;
+  CPDFSDK_FieldAction fa;
   fa.bModifier = CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);
   fa.bShift = CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(nFlag);
   fa.sChange = strChange;

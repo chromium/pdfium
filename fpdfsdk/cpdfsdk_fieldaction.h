@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_PDFSDK_FIELDACTION_H_
-#define FPDFSDK_PDFSDK_FIELDACTION_H_
+#ifndef FPDFSDK_CPDFSDK_FIELDACTION_H_
+#define FPDFSDK_CPDFSDK_FIELDACTION_H_
 
 #include "core/fxcrt/fx_string.h"
 
@@ -18,9 +18,9 @@ typedef enum {
 } PDFSDK_XFAAActionType;
 #endif  // PDF_ENABLE_XFA
 
-struct PDFSDK_FieldAction {
-  PDFSDK_FieldAction();
-  PDFSDK_FieldAction(const PDFSDK_FieldAction& other) = delete;
+struct CPDFSDK_FieldAction {
+  CPDFSDK_FieldAction();
+  CPDFSDK_FieldAction(const CPDFSDK_FieldAction& other) = delete;
 
   bool bModifier;
   bool bShift;
@@ -35,4 +35,4 @@ struct PDFSDK_FieldAction {
   bool bRC;
 };
 
-#endif  // FPDFSDK_PDFSDK_FIELDACTION_H_
+#endif  // FPDFSDK_CPDFSDK_FIELDACTION_H_

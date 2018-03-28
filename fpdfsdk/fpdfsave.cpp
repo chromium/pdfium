@@ -18,8 +18,8 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
+#include "fpdfsdk/cpdfsdk_filewriteadapter.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "fpdfsdk/fsdk_filewriteadapter.h"
 #include "public/fpdf_edit.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -254,8 +254,8 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY)
     flags = 0;
 
-  CPDF_Creator fileMaker(pPDFDoc,
-                         pdfium::MakeRetain<FSDK_FileWriteAdapter>(pFileWrite));
+  CPDF_Creator fileMaker(
+      pPDFDoc, pdfium::MakeRetain<CPDFSDK_FileWriteAdapter>(pFileWrite));
   if (bSetVersion)
     fileMaker.SetFileVersion(fileVerion);
   if (flags == FPDF_REMOVE_SECURITY) {

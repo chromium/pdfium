@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fsdk_pauseadapter.h"
+#include "fpdfsdk/ipdfsdk_pauseadapter.h"
 
-IFSDK_PAUSE_Adapter::IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause)
+IPDFSDK_PauseAdapter::IPDFSDK_PauseAdapter(IFSDK_PAUSE* IPause)
     : m_IPause(IPause) {}
 
-IFSDK_PAUSE_Adapter::~IFSDK_PAUSE_Adapter() {}
+IPDFSDK_PauseAdapter::~IPDFSDK_PauseAdapter() {}
 
-bool IFSDK_PAUSE_Adapter::NeedToPauseNow() {
+bool IPDFSDK_PauseAdapter::NeedToPauseNow() {
   return m_IPause->NeedToPauseNow && m_IPause->NeedToPauseNow(m_IPause.Get());
 }

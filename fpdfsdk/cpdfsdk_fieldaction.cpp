@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/pdfsdk_fieldaction.h"
+#include "fpdfsdk/cpdfsdk_fieldaction.h"
 
-PDFSDK_FieldAction::PDFSDK_FieldAction()
+CPDFSDK_FieldAction::CPDFSDK_FieldAction()
     : bModifier(false),
       bShift(false),
       bKeyDown(false),

@@ -134,7 +134,7 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
 
 void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
                                  CPDF_AAction::AActionType type,
-                                 PDFSDK_FieldAction& fa) {
+                                 CPDFSDK_FieldAction& fa) {
   switch (type) {
     case CPDF_AAction::Validate:
       if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {

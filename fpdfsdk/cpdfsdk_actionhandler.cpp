@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fsdk_actionhandler.h"
+#include "fpdfsdk/cpdfsdk_actionhandler.h"
 
 #include <set>
 #include <vector>
@@ -47,7 +47,7 @@ bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    PDFSDK_FieldAction* data) {
+    CPDFSDK_FieldAction* data) {
   ASSERT(pFormFillEnv);
   if (pFormFillEnv->IsJSPlatformPresent() &&
       JsAction.GetType() == CPDF_Action::JavaScript) {
@@ -106,7 +106,7 @@ bool CPDFSDK_ActionHandler::DoAction_Field(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    PDFSDK_FieldAction* data) {
+    CPDFSDK_FieldAction* data) {
   std::set<CPDF_Dictionary*> visited;
   return ExecuteFieldAction(action, type, pFormFillEnv, pFormField, data,
                             &visited);
@@ -219,7 +219,7 @@ bool CPDFSDK_ActionHandler::ExecuteFieldAction(
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
-    PDFSDK_FieldAction* data,
+    CPDFSDK_FieldAction* data,
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
@@ -396,7 +396,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_FormField* pFormField,
     CPDF_AAction::AActionType type,
-    PDFSDK_FieldAction* data,
+    CPDFSDK_FieldAction* data,
     const WideString& script) {
   ASSERT(type != CPDF_AAction::Calculate);
   ASSERT(type != CPDF_AAction::Format);
