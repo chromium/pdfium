@@ -110,10 +110,6 @@ ByteString PDF_NameDecode(const ByteStringView& bstr) {
   return result;
 }
 
-ByteString PDF_NameDecode(const ByteString& orig) {
-  return orig.Contains("#") ? PDF_NameDecode(orig.AsStringView()) : orig;
-}
-
 ByteString PDF_NameEncode(const ByteString& orig) {
   uint8_t* src_buf = (uint8_t*)orig.c_str();
   int src_len = orig.GetLength();

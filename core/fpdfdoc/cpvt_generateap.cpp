@@ -925,7 +925,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
   CPDF_SimpleParser syntax(DA.AsStringView());
   syntax.FindTagParamFromStart("Tf", 2);
   ByteString sFontName(syntax.GetWord());
-  sFontName = PDF_NameDecode(sFontName);
+  sFontName = PDF_NameDecode(sFontName.AsStringView());
   if (sFontName.IsEmpty())
     return;
 

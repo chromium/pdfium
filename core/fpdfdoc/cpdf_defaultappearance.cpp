@@ -32,7 +32,7 @@ ByteString CPDF_DefaultAppearance::GetFont(float* fFontSize) {
     csFontNameTag.Delete(0, 1);
     *fFontSize = FX_atof(syntax.GetWord());
   }
-  return PDF_NameDecode(csFontNameTag);
+  return PDF_NameDecode(csFontNameTag.AsStringView());
 }
 
 bool CPDF_DefaultAppearance::HasColor() {
