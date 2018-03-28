@@ -21,7 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/stl_util.h"
 
 enum FPDF_TYPE { MAX, MIN };

@@ -13,7 +13,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
 class CFFL_FormFiller;

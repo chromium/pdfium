@@ -15,7 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "fpdfsdk/cpdfsdk_customaccess.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

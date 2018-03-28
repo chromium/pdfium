@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FSDK_DEFINE_H_
-#define FPDFSDK_FSDK_DEFINE_H_
+#ifndef FPDFSDK_CPDFSDK_HELPERS_H_
+#define FPDFSDK_CPDFSDK_HELPERS_H_
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -110,4 +110,4 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
                                    unsigned int B,
                                    unsigned int A);
 
-#endif  // FPDFSDK_FSDK_DEFINE_H_
+#endif  // FPDFSDK_CPDFSDK_HELPERS_H_

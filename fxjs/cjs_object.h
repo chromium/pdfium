@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_runtime.h"
 

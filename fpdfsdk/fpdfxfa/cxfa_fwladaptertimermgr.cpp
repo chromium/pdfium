@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 
 namespace {
 

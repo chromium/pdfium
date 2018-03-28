@@ -25,7 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_deleters.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

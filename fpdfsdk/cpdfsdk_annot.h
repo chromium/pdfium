@@ -13,8 +13,8 @@
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cfx_systemhandler.h"
-#include "fpdfsdk/fsdk_common.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_common.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 
 class CFX_Matrix;
 class CFX_RenderDevice;

@@ -18,7 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fsdk_filewriteadapter.h"
 #include "public/fpdf_edit.h"
 

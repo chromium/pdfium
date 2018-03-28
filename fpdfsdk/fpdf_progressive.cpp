@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "fpdfsdk/fsdk_define.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fsdk_pauseadapter.h"
 #include "public/fpdfview.h"
 #include "third_party/base/ptr_util.h"
