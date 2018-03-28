@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 #define CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 
+#include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
@@ -28,6 +29,10 @@ class CPDF_DefaultAppearance {
   bool HasColor();
   void GetColor(int& iColorType, float fc[4]);
   void GetColor(FX_ARGB& color, int& iColorType);
+
+  bool FindTagParamFromStartForTesting(CPDF_SimpleParser* parser,
+                                       const ByteStringView& token,
+                                       int nParams);
 
  private:
   ByteString m_csDA;

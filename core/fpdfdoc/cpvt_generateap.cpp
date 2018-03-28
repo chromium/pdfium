@@ -19,11 +19,11 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
-#include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_annot.h"
+#include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
 #include "core/fpdfdoc/cpvt_word.h"
@@ -922,14 +922,17 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
   if (DA.IsEmpty())
     return;
 
-  CPDF_SimpleParser syntax(DA.AsStringView());
-  syntax.FindTagParamFromStart("Tf", 2);
-  ByteString sFontName(syntax.GetWord());
-  sFontName = PDF_NameDecode(sFontName.AsStringView());
+  CPDF_DefaultAppearance appearance(DA);
+  if (!appearance.HasFont())
+    return;
+
+  ASSERT(appearance.HasFont());
+  float fFontSize = 0;
+  ByteString sFontName =
+      PDF_NameDecode(appearance.GetFont(&fFontSize).AsStringView());
   if (sFontName.IsEmpty())
     return;
 
-  float fFontSize = FX_atof(syntax.GetWord());
   CFX_Color crText = CFX_Color::ParseColor(DA);
   CPDF_Dictionary* pDRDict = pFormDict->GetDictFor("DR");
   if (!pDRDict)

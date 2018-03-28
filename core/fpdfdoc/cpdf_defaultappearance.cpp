@@ -7,17 +7,58 @@
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxge/cfx_color.h"
+
+namespace {
+
+// Find the token and its |nParams| parameters from the start of data,
+// and move the current position to the start of those parameters.
+bool FindTagParamFromStart(CPDF_SimpleParser* parser,
+                           const ByteStringView& token,
+                           int nParams) {
+  nParams++;
+
+  std::vector<uint32_t> pBuf(nParams);
+  int buf_index = 0;
+  int buf_count = 0;
+
+  parser->SetCurPos(0);
+  while (1) {
+    pBuf[buf_index++] = parser->GetCurPos();
+    if (buf_index == nParams)
+      buf_index = 0;
+
+    buf_count++;
+    if (buf_count > nParams)
+      buf_count = nParams;
+
+    ByteStringView word = parser->GetWord();
+    if (word.IsEmpty())
+      return false;
+
+    if (word == token) {
+      if (buf_count < nParams)
+        continue;
+
+      parser->SetCurPos(pBuf[buf_index]);
+      return true;
+    }
+  }
+  return false;
+}
+
+}  // namespace
 
 bool CPDF_DefaultAppearance::HasFont() {
   if (m_csDA.IsEmpty())
     return false;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  return syntax.FindTagParamFromStart("Tf", 2);
+  return FindTagParamFromStart(&syntax, "Tf", 2);
 }
 
 ByteString CPDF_DefaultAppearance::GetFont(float* fFontSize) {
@@ -27,7 +68,7 @@ ByteString CPDF_DefaultAppearance::GetFont(float* fFontSize) {
 
   ByteString csFontNameTag;
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (syntax.FindTagParamFromStart("Tf", 2)) {
+  if (FindTagParamFromStart(&syntax, "Tf", 2)) {
     csFontNameTag = ByteString(syntax.GetWord());
     csFontNameTag.Delete(0, 1);
     *fFontSize = FX_atof(syntax.GetWord());
@@ -40,11 +81,11 @@ bool CPDF_DefaultAppearance::HasColor() {
     return false;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (syntax.FindTagParamFromStart("g", 1))
+  if (FindTagParamFromStart(&syntax, "g", 1))
     return true;
-  if (syntax.FindTagParamFromStart("rg", 3))
+  if (FindTagParamFromStart(&syntax, "rg", 3))
     return true;
-  return syntax.FindTagParamFromStart("k", 4);
+  return FindTagParamFromStart(&syntax, "k", 4);
 }
 
 void CPDF_DefaultAppearance::GetColor(int& iColorType, float fc[4]) {
@@ -56,19 +97,19 @@ void CPDF_DefaultAppearance::GetColor(int& iColorType, float fc[4]) {
     return;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  if (syntax.FindTagParamFromStart("g", 1)) {
+  if (FindTagParamFromStart(&syntax, "g", 1)) {
     iColorType = CFX_Color::kGray;
     fc[0] = FX_atof(syntax.GetWord());
     return;
   }
-  if (syntax.FindTagParamFromStart("rg", 3)) {
+  if (FindTagParamFromStart(&syntax, "rg", 3)) {
     iColorType = CFX_Color::kRGB;
     fc[0] = FX_atof(syntax.GetWord());
     fc[1] = FX_atof(syntax.GetWord());
     fc[2] = FX_atof(syntax.GetWord());
     return;
   }
-  if (syntax.FindTagParamFromStart("k", 4)) {
+  if (FindTagParamFromStart(&syntax, "k", 4)) {
     iColorType = CFX_Color::kCMYK;
     fc[0] = FX_atof(syntax.GetWord());
     fc[1] = FX_atof(syntax.GetWord());
@@ -104,4 +145,12 @@ void CPDF_DefaultAppearance::GetColor(FX_ARGB& color, int& iColorType) {
                        static_cast<int>(g * 255 + 0.5f),
                        static_cast<int>(b * 255 + 0.5f));
   }
+  NOTREACHED();
+}
+
+bool CPDF_DefaultAppearance::FindTagParamFromStartForTesting(
+    CPDF_SimpleParser* parser,
+    const ByteStringView& token,
+    int nParams) {
+  return FindTagParamFromStart(parser, token, nParams);
 }

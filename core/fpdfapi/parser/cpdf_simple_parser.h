@@ -19,11 +19,8 @@ class CPDF_SimpleParser {
 
   ByteStringView GetWord();
 
-  // Find the token and its |nParams| parameters from the start of data,
-  // and move the current position to the start of those parameters.
-  bool FindTagParamFromStart(const ByteStringView& token, int nParams);
-
-  uint32_t GetCurPosForTest() const { return cur_pos_; }
+  void SetCurPos(uint32_t pos) { cur_pos_ = pos; }
+  uint32_t GetCurPos() const { return cur_pos_; }
 
  private:
   const ByteStringView data_;

@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
-#include "core/fpdfapi/parser/cpdf_simple_parser.h"
+#include "core/fpdfdoc/cpdf_defaultappearance.h"
 
 namespace {
 
@@ -84,23 +84,25 @@ CFX_Color CFX_Color::ParseColor(const CPDF_Array& array) {
 
 // Static.
 CFX_Color CFX_Color::ParseColor(const ByteString& str) {
-  CPDF_SimpleParser syntax(str.AsStringView());
-  if (syntax.FindTagParamFromStart("g", 1))
-    return CFX_Color(CFX_Color::kGray, FX_atof(syntax.GetWord()));
+  CPDF_DefaultAppearance appearance(str);
+  ASSERT(appearance.HasColor());
 
-  if (syntax.FindTagParamFromStart("rg", 3)) {
-    float f1 = FX_atof(syntax.GetWord());
-    float f2 = FX_atof(syntax.GetWord());
-    float f3 = FX_atof(syntax.GetWord());
-    return CFX_Color(CFX_Color::kRGB, f1, f2, f3);
+  int color_type;
+  float values[4];
+  appearance.GetColor(color_type, values);
+
+  if (color_type == CFX_Color::kTransparent)
+    return CFX_Color(CFX_Color::kTransparent);
+  if (color_type == CFX_Color::kGray)
+    return CFX_Color(CFX_Color::kGray, values[0]);
+  if (color_type == CFX_Color::kRGB)
+    return CFX_Color(CFX_Color::kRGB, values[0], values[1], values[2]);
+  if (color_type == CFX_Color::kCMYK) {
+    return CFX_Color(CFX_Color::kCMYK, values[0], values[1], values[2],
+                     values[3]);
   }
-  if (syntax.FindTagParamFromStart("k", 4)) {
-    float f1 = FX_atof(syntax.GetWord());
-    float f2 = FX_atof(syntax.GetWord());
-    float f3 = FX_atof(syntax.GetWord());
-    float f4 = FX_atof(syntax.GetWord());
-    return CFX_Color(CFX_Color::kCMYK, f1, f2, f3, f4);
-  }
+
+  NOTREACHED();
   return CFX_Color(CFX_Color::kTransparent);
 }
 
