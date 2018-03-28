@@ -88,64 +88,61 @@ bool CPDF_DefaultAppearance::HasColor() {
   return FindTagParamFromStart(&syntax, "k", 4);
 }
 
-void CPDF_DefaultAppearance::GetColor(int& iColorType, float fc[4]) {
-  iColorType = CFX_Color::kTransparent;
+CFX_Color::Type CPDF_DefaultAppearance::GetColor(float fc[4]) {
   for (int c = 0; c < 4; c++)
     fc[c] = 0;
 
   if (m_csDA.IsEmpty())
-    return;
+    return CFX_Color::kTransparent;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
   if (FindTagParamFromStart(&syntax, "g", 1)) {
-    iColorType = CFX_Color::kGray;
     fc[0] = FX_atof(syntax.GetWord());
-    return;
+    return CFX_Color::kGray;
   }
   if (FindTagParamFromStart(&syntax, "rg", 3)) {
-    iColorType = CFX_Color::kRGB;
     fc[0] = FX_atof(syntax.GetWord());
     fc[1] = FX_atof(syntax.GetWord());
     fc[2] = FX_atof(syntax.GetWord());
-    return;
+    return CFX_Color::kRGB;
   }
   if (FindTagParamFromStart(&syntax, "k", 4)) {
-    iColorType = CFX_Color::kCMYK;
     fc[0] = FX_atof(syntax.GetWord());
     fc[1] = FX_atof(syntax.GetWord());
     fc[2] = FX_atof(syntax.GetWord());
     fc[3] = FX_atof(syntax.GetWord());
+    return CFX_Color::kCMYK;
   }
+
+  return CFX_Color::kTransparent;
 }
 
-void CPDF_DefaultAppearance::GetColor(FX_ARGB& color, int& iColorType) {
-  color = 0;
+std::pair<CFX_Color::Type, FX_ARGB> CPDF_DefaultAppearance::GetColor() {
   float values[4];
-  GetColor(iColorType, values);
-  if (iColorType == CFX_Color::kTransparent)
-    return;
+  CFX_Color::Type type = GetColor(values);
+  if (type == CFX_Color::kTransparent)
+    return {type, 0};
 
-  if (iColorType == CFX_Color::kGray) {
+  if (type == CFX_Color::kGray) {
     int g = static_cast<int>(values[0] * 255 + 0.5f);
-    color = ArgbEncode(255, g, g, g);
-    return;
+    return {type, ArgbEncode(255, g, g, g)};
   }
-  if (iColorType == CFX_Color::kRGB) {
+  if (type == CFX_Color::kRGB) {
     int r = static_cast<int>(values[0] * 255 + 0.5f);
     int g = static_cast<int>(values[1] * 255 + 0.5f);
     int b = static_cast<int>(values[2] * 255 + 0.5f);
-    color = ArgbEncode(255, r, g, b);
-    return;
+    return {type, ArgbEncode(255, r, g, b)};
   }
-  if (iColorType == CFX_Color::kCMYK) {
+  if (type == CFX_Color::kCMYK) {
     float r = 1.0f - std::min(1.0f, values[0] + values[3]);
     float g = 1.0f - std::min(1.0f, values[1] + values[3]);
     float b = 1.0f - std::min(1.0f, values[2] + values[3]);
-    color = ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
-                       static_cast<int>(g * 255 + 0.5f),
-                       static_cast<int>(b * 255 + 0.5f));
+    return {type, ArgbEncode(255, static_cast<int>(r * 255 + 0.5f),
+                             static_cast<int>(g * 255 + 0.5f),
+                             static_cast<int>(b * 255 + 0.5f))};
   }
   NOTREACHED();
+  return {CFX_Color::kTransparent, 0};
 }
 
 bool CPDF_DefaultAppearance::FindTagParamFromStartForTesting(

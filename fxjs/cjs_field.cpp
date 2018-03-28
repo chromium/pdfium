@@ -1888,7 +1888,7 @@ CJS_Return CJS_Field::get_text_color(CJS_Runtime* pRuntime) {
   int iColorType;
   FX_ARGB color;
   CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
-  FieldAppearance.GetColor(color, iColorType);
+  std::tie(iColorType, color) = FieldAppearance.GetColor();
 
   int32_t a;
   int32_t r;

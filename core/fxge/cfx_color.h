@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_CFX_COLOR_H_
 #define CORE_FXGE_CFX_COLOR_H_
 
-#include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fxge/fx_dib.h"
 
 struct CFX_Color {

@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/fx_dib.h"

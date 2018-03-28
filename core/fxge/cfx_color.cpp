@@ -87,10 +87,8 @@ CFX_Color CFX_Color::ParseColor(const ByteString& str) {
   CPDF_DefaultAppearance appearance(str);
   ASSERT(appearance.HasColor());
 
-  int color_type;
   float values[4];
-  appearance.GetColor(color_type, values);
-
+  int color_type = appearance.GetColor(values);
   if (color_type == CFX_Color::kTransparent)
     return CFX_Color(CFX_Color::kTransparent);
   if (color_type == CFX_Color::kGray)

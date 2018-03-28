@@ -1181,7 +1181,7 @@ void CPWL_AppStream::SetAsPushButton() {
   ByteString csNameTag;
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
-    da.GetColor(iColorType, fc);
+    iColorType = da.GetColor(fc);
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
   float fFontSize = 12.0f;
@@ -1355,7 +1355,7 @@ void CPWL_AppStream::SetAsCheckBox() {
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
-    da.GetColor(iColorType, fc);
+    iColorType = da.GetColor(fc);
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 
@@ -1471,7 +1471,7 @@ void CPWL_AppStream::SetAsRadioButton() {
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
-    da.GetColor(iColorType, fc);
+    iColorType = da.GetColor(fc);
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 

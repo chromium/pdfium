@@ -7,11 +7,13 @@
 #ifndef CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 #define CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
-#include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_color.h"
 #include "core/fxge/fx_dib.h"
 
 enum class BorderStyle { SOLID, DASH, BEVELED, INSET, UNDERLINE };
@@ -27,8 +29,8 @@ class CPDF_DefaultAppearance {
   ByteString GetFont(float* fFontSize);
 
   bool HasColor();
-  void GetColor(int& iColorType, float fc[4]);
-  void GetColor(FX_ARGB& color, int& iColorType);
+  CFX_Color::Type GetColor(float fc[4]);
+  std::pair<CFX_Color::Type, FX_ARGB> GetColor();
 
   bool FindTagParamFromStartForTesting(CPDF_SimpleParser* parser,
                                        const ByteStringView& token,

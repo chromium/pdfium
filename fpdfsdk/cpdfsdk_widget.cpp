@@ -435,8 +435,8 @@ bool CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const {
     return false;
 
   FX_ARGB argb;
-  int iColorType = CFX_Color::kTransparent;
-  da.GetColor(argb, iColorType);
+  int iColorType;
+  std::tie(iColorType, argb) = da.GetColor();
   color = ArgbToColorRef(argb);
   return iColorType != CFX_Color::kTransparent;
 }
@@ -780,9 +780,8 @@ CFX_Color CPDFSDK_Widget::GetTextPWLColor() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
   if (da.HasColor()) {
-    int32_t iColorType;
     float fc[4];
-    da.GetColor(iColorType, fc);
+    int iColorType = da.GetColor(fc);
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 

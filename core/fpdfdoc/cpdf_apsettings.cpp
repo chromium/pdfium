@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxge/cfx_color.h"
 
 CPDF_ApSettings::CPDF_ApSettings(CPDF_Dictionary* pDict) : m_pDict(pDict) {}

@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"
 #include "core/fxcrt/fx_coordinates.h"
