@@ -285,7 +285,6 @@ class FPDFFormFillComboBoxFormEmbeddertest
   // Selects one of the pre-selected values from a combobox with three options.
   // Options are specified by |item_index|, which is 0-based.
   void SelectOption(int item_index, const CFX_PointF& point) {
-
     // Navigate to button for drop down and click mouse to reveal options.
     ClickOnFormFieldAtPoint(point);
 

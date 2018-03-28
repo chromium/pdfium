@@ -7,7 +7,7 @@
 
 This script gathers a list of functions from public/*.h that contain
 FPDF_EXPORT. It then gathers a list of functions from
-fpdfsdk/fpdfview_c_api_test.c. It then verifies both lists do not contain
+fpdfsdk/fpdf_view_c_api_test.c. It then verifies both lists do not contain
 duplicates, and they match each other.
 
 """

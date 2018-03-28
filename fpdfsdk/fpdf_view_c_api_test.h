@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FPDFSDK_FPDFVIEW_C_API_TEST_H_
-#define FPDFSDK_FPDFVIEW_C_API_TEST_H_
+#ifndef FPDFSDK_FPDF_VIEW_C_API_TEST_H_
+#define FPDFSDK_FPDF_VIEW_C_API_TEST_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,4 +17,4 @@ int CheckPDFiumCApi();
 }
 #endif
 
-#endif  // FPDFSDK_FPDFVIEW_C_API_TEST_H_
+#endif  // FPDFSDK_FPDF_VIEW_C_API_TEST_H_

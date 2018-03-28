@@ -106,8 +106,8 @@ class FPDFEditEmbeddertest : public EmbedderTest {
         size_t inner_idx = 0;
         for (cur_cid = cid; cur_cid < cid + cnt; cur_cid++) {
           uint32_t width = arr->GetNumberAt(inner_idx++);
-          EXPECT_EQ(width, typed_font->GetCharWidthF(cur_cid)) << " at cid "
-                                                               << cur_cid;
+          EXPECT_EQ(width, typed_font->GetCharWidthF(cur_cid))
+              << " at cid " << cur_cid;
         }
         num_cids_checked += cnt;
         continue;
@@ -118,8 +118,8 @@ class FPDFEditEmbeddertest : public EmbedderTest {
       ASSERT_FALSE(++idx == widths_array->GetCount());
       uint32_t width = widths_array->GetNumberAt(idx);
       for (cur_cid = cid; cur_cid <= last_cid; cur_cid++) {
-        EXPECT_EQ(width, typed_font->GetCharWidthF(cur_cid)) << " at cid "
-                                                             << cur_cid;
+        EXPECT_EQ(width, typed_font->GetCharWidthF(cur_cid))
+            << " at cid " << cur_cid;
       }
       num_cids_checked += last_cid - cid + 1;
     }
@@ -390,11 +390,11 @@ TEST_F(FPDFEditEmbeddertest, RemovePageObject) {
   // Show what the original file looks like.
   {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char kOriginalMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+    const char kOriginalMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char kOriginalMD5[] = "e5a6fa28298db07484cd922f3e210c88";
+    const char kOriginalMD5[] = "e5a6fa28298db07484cd922f3e210c88";
 #else
-  const char kOriginalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
+    const char kOriginalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
 #endif
     std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
         RenderPageWithFlags(page, nullptr, 0);
@@ -410,11 +410,11 @@ TEST_F(FPDFEditEmbeddertest, RemovePageObject) {
   // Verify the "Hello, world!" text is gone.
   {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char kRemovedMD5[] = "af760c4702467cb1492a57fb8215efaa";
+    const char kRemovedMD5[] = "af760c4702467cb1492a57fb8215efaa";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char kRemovedMD5[] = "72be917349bf7004a5c39661fe1fc433";
+    const char kRemovedMD5[] = "72be917349bf7004a5c39661fe1fc433";
 #else
-  const char kRemovedMD5[] = "b76df015fe88009c3c342395df96abf1";
+    const char kRemovedMD5[] = "b76df015fe88009c3c342395df96abf1";
 #endif
     std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
         RenderPageWithFlags(page, nullptr, 0);
@@ -766,13 +766,13 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
     std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
         RenderPageWithFlags(page, nullptr, 0);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-  const char md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
+    const char md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  const char md5_2[] = "2587eac9a787e97a37636d54d11bd28d";
+    const char md5_2[] = "2587eac9a787e97a37636d54d11bd28d";
 #else
-  const char md5_2[] = "76fcc7d08aa15445efd2e2ceb7c6cc3b";
+    const char md5_2[] = "76fcc7d08aa15445efd2e2ceb7c6cc3b";
 #endif
-  CompareBitmap(page_bitmap.get(), 612, 792, md5_2);
+    CompareBitmap(page_bitmap.get(), 612, 792, md5_2);
   }
 
   // And some randomly transformed text

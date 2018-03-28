@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-#include "fpdfsdk/fpdfview_c_api_test.h"
+#include "fpdfsdk/fpdf_view_c_api_test.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"

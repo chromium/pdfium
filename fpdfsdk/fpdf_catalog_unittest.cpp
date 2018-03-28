@@ -4,6 +4,8 @@
 
 #include "public/fpdf_catalog.h"
 
+#include <memory>
+
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
