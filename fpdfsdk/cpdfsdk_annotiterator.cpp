@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/cba_annotiterator.h"
+#include "fpdfsdk/cpdfsdk_annotiterator.h"
 
 #include <algorithm>
 
@@ -28,8 +28,8 @@ bool CompareByTopDescending(const CPDFSDK_Annot* p1, const CPDFSDK_Annot* p2) {
 
 }  // namespace
 
-CBA_AnnotIterator::CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
-                                     CPDF_Annot::Subtype nAnnotSubtype)
+CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
+                                             CPDF_Annot::Subtype nAnnotSubtype)
     : m_eTabOrder(STRUCTURE),
       m_pPageView(pPageView),
       m_nAnnotSubtype(nAnnotSubtype) {
@@ -43,17 +43,17 @@ CBA_AnnotIterator::CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
   GenerateResults();
 }
 
-CBA_AnnotIterator::~CBA_AnnotIterator() {}
+CPDFSDK_AnnotIterator::~CPDFSDK_AnnotIterator() {}
 
-CPDFSDK_Annot* CBA_AnnotIterator::GetFirstAnnot() {
+CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetFirstAnnot() {
   return m_Annots.empty() ? nullptr : m_Annots.front();
 }
 
-CPDFSDK_Annot* CBA_AnnotIterator::GetLastAnnot() {
+CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetLastAnnot() {
   return m_Annots.empty() ? nullptr : m_Annots.back();
 }
 
-CPDFSDK_Annot* CBA_AnnotIterator::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
+CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
   auto iter = std::find(m_Annots.begin(), m_Annots.end(), pAnnot);
   if (iter == m_Annots.end())
     return nullptr;
@@ -63,7 +63,7 @@ CPDFSDK_Annot* CBA_AnnotIterator::GetNextAnnot(CPDFSDK_Annot* pAnnot) {
   return *iter;
 }
 
-CPDFSDK_Annot* CBA_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
+CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
   auto iter = std::find(m_Annots.begin(), m_Annots.end(), pAnnot);
   if (iter == m_Annots.end())
     return nullptr;
@@ -72,7 +72,7 @@ CPDFSDK_Annot* CBA_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
   return *(--iter);
 }
 
-void CBA_AnnotIterator::CollectAnnots(std::vector<CPDFSDK_Annot*>* pArray) {
+void CPDFSDK_AnnotIterator::CollectAnnots(std::vector<CPDFSDK_Annot*>* pArray) {
   for (auto* pAnnot : m_pPageView->GetAnnotList()) {
     if (pAnnot->GetAnnotSubtype() == m_nAnnotSubtype &&
         !pAnnot->IsSignatureWidget()) {
@@ -81,7 +81,7 @@ void CBA_AnnotIterator::CollectAnnots(std::vector<CPDFSDK_Annot*>* pArray) {
   }
 }
 
-CFX_FloatRect CBA_AnnotIterator::AddToAnnotsList(
+CFX_FloatRect CPDFSDK_AnnotIterator::AddToAnnotsList(
     std::vector<CPDFSDK_Annot*>* sa,
     size_t idx) {
   CPDFSDK_Annot* pLeftTopAnnot = sa->at(idx);
@@ -91,8 +91,8 @@ CFX_FloatRect CBA_AnnotIterator::AddToAnnotsList(
   return rcLeftTop;
 }
 
-void CBA_AnnotIterator::AddSelectedToAnnots(std::vector<CPDFSDK_Annot*>* sa,
-                                            std::vector<size_t>* aSelect) {
+void CPDFSDK_AnnotIterator::AddSelectedToAnnots(std::vector<CPDFSDK_Annot*>* sa,
+                                                std::vector<size_t>* aSelect) {
   for (size_t i = 0; i < aSelect->size(); ++i)
     m_Annots.push_back(sa->at(aSelect->at(i)));
 
@@ -100,7 +100,7 @@ void CBA_AnnotIterator::AddSelectedToAnnots(std::vector<CPDFSDK_Annot*>* sa,
     sa->erase(sa->begin() + aSelect->at(i));
 }
 
-void CBA_AnnotIterator::GenerateResults() {
+void CPDFSDK_AnnotIterator::GenerateResults() {
   switch (m_eTabOrder) {
     case STRUCTURE:
       CollectAnnots(&m_Annots);

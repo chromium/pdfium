@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "testing/embedder_test.h"
@@ -23,9 +23,9 @@ void CheckRect(const CFX_FloatRect& actual, const CFX_FloatRect& expected) {
 
 }  // namespace
 
-class CBA_AnnotIteratorTest : public EmbedderTest {};
+class CPDFSDK_AnnotIteratorTest : public EmbedderTest {};
 
-TEST_F(CBA_AnnotIteratorTest, CBA_AnnotIterator) {
+TEST_F(CPDFSDK_AnnotIteratorTest, CPDFSDK_AnnotIterator) {
   EXPECT_TRUE(OpenDocument("annotiter.pdf"));
   FPDF_PAGE page0 = LoadPage(0);
   FPDF_PAGE page1 = LoadPage(1);
@@ -44,8 +44,8 @@ TEST_F(CBA_AnnotIteratorTest, CBA_AnnotIterator) {
 
   {
     // Page 0 specifies "row order".
-    CBA_AnnotIterator iter(pFormFillEnv->GetPageView(0),
-                           CPDF_Annot::Subtype::WIDGET);
+    CPDFSDK_AnnotIterator iter(pFormFillEnv->GetPageView(0),
+                               CPDF_Annot::Subtype::WIDGET);
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), RightTop);
     pAnnot = iter.GetNextAnnot(pAnnot);
@@ -70,8 +70,8 @@ TEST_F(CBA_AnnotIteratorTest, CBA_AnnotIterator) {
   }
   {
     // Page 1 specifies "column order"
-    CBA_AnnotIterator iter(pFormFillEnv->GetPageView(1),
-                           CPDF_Annot::Subtype::WIDGET);
+    CPDFSDK_AnnotIterator iter(pFormFillEnv->GetPageView(1),
+                               CPDF_Annot::Subtype::WIDGET);
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), RightTop);
     pAnnot = iter.GetNextAnnot(pAnnot);
@@ -96,8 +96,8 @@ TEST_F(CBA_AnnotIteratorTest, CBA_AnnotIterator) {
   }
   {
     // Page 2 specifies "struct order"
-    CBA_AnnotIterator iter(pFormFillEnv->GetPageView(2),
-                           CPDF_Annot::Subtype::WIDGET);
+    CPDFSDK_AnnotIterator iter(pFormFillEnv->GetPageView(2),
+                               CPDF_Annot::Subtype::WIDGET);
     CPDFSDK_Annot* pAnnot = iter.GetFirstAnnot();
     CheckRect(pAnnot->GetRect(), LeftBottom);
     pAnnot = iter.GetNextAnnot(pAnnot);

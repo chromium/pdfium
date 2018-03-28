@@ -21,9 +21,9 @@
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
-#include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -106,7 +106,7 @@ bool CPDFSDK_InterForm::HighlightWidgets() {
 
 CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget,
                                               bool bNext) const {
-  auto pIterator = pdfium::MakeUnique<CBA_AnnotIterator>(
+  auto pIterator = pdfium::MakeUnique<CPDFSDK_AnnotIterator>(
       pWidget->GetPageView(), CPDF_Annot::Subtype::WIDGET);
 
   if (bNext)

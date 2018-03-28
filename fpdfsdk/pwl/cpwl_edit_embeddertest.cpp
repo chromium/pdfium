@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
@@ -29,8 +29,8 @@ class CPWLEditEmbeddertest : public EmbedderTest {
     ASSERT_TRUE(m_page);
 
     m_pFormFillEnv = static_cast<CPDFSDK_FormFillEnvironment*>(form_handle());
-    CBA_AnnotIterator iter(m_pFormFillEnv->GetPageView(0),
-                           CPDF_Annot::Subtype::WIDGET);
+    CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageView(0),
+                               CPDF_Annot::Subtype::WIDGET);
     // Normal text field.
     m_pAnnot = iter.GetFirstAnnot();
     ASSERT_TRUE(m_pAnnot);

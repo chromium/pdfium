@@ -9,8 +9,8 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
-#include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
+#include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/cpdfsdk_baannothandler.h"
 #include "fpdfsdk/cpdfsdk_datetime.h"
@@ -292,8 +292,8 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
   if (!pPage)
     return nullptr;
   if (pPage->GetPDFPage()) {  // for pdf annots.
-    CBA_AnnotIterator ai(pSDKAnnot->GetPageView(),
-                         pSDKAnnot->GetAnnotSubtype());
+    CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
+                             pSDKAnnot->GetAnnotSubtype());
     CPDFSDK_Annot* pNext =
         bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
     return pNext;
@@ -315,7 +315,8 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
 
   return pPageView->GetAnnotByXFAWidget(hNextFocus);
 #else   // PDF_ENABLE_XFA
-  CBA_AnnotIterator ai(pSDKAnnot->GetPageView(), CPDF_Annot::Subtype::WIDGET);
+  CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
+                           CPDF_Annot::Subtype::WIDGET);
   return bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
 #endif  // PDF_ENABLE_XFA
 }

@@ -103,8 +103,6 @@ config("xfa_warnings") {
 
 jumbo_static_library("pdfium") {
   sources = [
-    "fpdfsdk/cba_annotiterator.cpp",
-    "fpdfsdk/cba_annotiterator.h",
     "fpdfsdk/cfx_systemhandler.cpp",
     "fpdfsdk/cfx_systemhandler.h",
     "fpdfsdk/cpdfsdk_actionhandler.cpp",
@@ -115,6 +113,8 @@ jumbo_static_library("pdfium") {
     "fpdfsdk/cpdfsdk_annothandlermgr.h",
     "fpdfsdk/cpdfsdk_annotiteration.cpp",
     "fpdfsdk/cpdfsdk_annotiteration.h",
+    "fpdfsdk/cpdfsdk_annotiterator.cpp",
+    "fpdfsdk/cpdfsdk_annotiterator.h",
     "fpdfsdk/cpdfsdk_baannot.cpp",
     "fpdfsdk/cpdfsdk_baannot.h",
     "fpdfsdk/cpdfsdk_baannothandler.cpp",
@@ -2989,7 +2989,7 @@ test("pdfium_embeddertests") {
     "core/fpdfapi/render/fpdf_render_pattern_embeddertest.cpp",
     "core/fxcodec/codec/fx_codec_embeddertest.cpp",
     "core/fxge/fx_ge_text_embeddertest.cpp",
-    "fpdfsdk/cba_annotiterator_embeddertest.cpp",
+    "fpdfsdk/cpdfsdk_annotiterator_embeddertest.cpp",
     "fpdfsdk/fpdf_annot_embeddertest.cpp",
     "fpdfsdk/fpdf_attachment_embeddertest.cpp",
     "fpdfsdk/fpdf_dataavail_embeddertest.cpp",

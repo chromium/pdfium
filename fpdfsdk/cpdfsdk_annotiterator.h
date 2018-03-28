@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_CBA_ANNOTITERATOR_H_
-#define FPDFSDK_CBA_ANNOTITERATOR_H_
+#ifndef FPDFSDK_CPDFSDK_ANNOTITERATOR_H_
+#define FPDFSDK_CPDFSDK_ANNOTITERATOR_H_
 
 #include <vector>
 
@@ -17,13 +17,13 @@
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 
-class CBA_AnnotIterator {
+class CPDFSDK_AnnotIterator {
  public:
   enum TabOrder { STRUCTURE = 0, ROW, COLUMN };
 
-  CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
-                    CPDF_Annot::Subtype nAnnotSubtype);
-  ~CBA_AnnotIterator();
+  CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
+                        CPDF_Annot::Subtype nAnnotSubtype);
+  ~CPDFSDK_AnnotIterator();
 
   CPDFSDK_Annot* GetFirstAnnot();
   CPDFSDK_Annot* GetLastAnnot();
@@ -43,4 +43,4 @@ class CBA_AnnotIterator {
   std::vector<CPDFSDK_Annot*> m_Annots;
 };
 
-#endif  // FPDFSDK_CBA_ANNOTITERATOR_H_
+#endif  // FPDFSDK_CPDFSDK_ANNOTITERATOR_H_
