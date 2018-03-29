@@ -4,6 +4,8 @@
 
 #include "samples/pdfium_test_write_helper.h"
 
+#include <limits.h>
+
 #include <memory>
 #include <vector>
 
