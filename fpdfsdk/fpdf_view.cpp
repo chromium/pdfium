@@ -209,11 +209,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
 }
 #endif  // PDFIUM_PRINT_TEXT_WITH_GDI
 
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDF_SetPrintPostscriptLevel(int postscript_level) {
-  return postscript_level != 1 && FPDF_SetPrintMode(postscript_level);
-}
-
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode) {
   if (mode < FPDF_PRINTMODE_EMF || mode > FPDF_PRINTMODE_POSTSCRIPT3)
     return FALSE;

@@ -325,7 +325,6 @@ int CheckPDFiumCApi() {
     CHK(FPDF_SetTypefaceAccessibleFunc);
     CHK(FPDF_SetPrintTextWithGDI);
 #endif
-    CHK(FPDF_SetPrintPostscriptLevel);
     CHK(FPDF_SetPrintMode);
 #endif
     CHK(FPDF_LoadDocument);
