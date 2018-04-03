@@ -1180,8 +1180,9 @@ void CPWL_AppStream::SetAsPushButton() {
   CFX_Color crText(CFX_Color::kGray, 0);
   ByteString csNameTag;
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
-  if (da.HasColor()) {
-    iColorType = da.GetColor(fc);
+  Optional<CFX_Color::Type> color = da.GetColor(fc);
+  if (color) {
+    iColorType = *color;
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 
@@ -1358,8 +1359,9 @@ void CPWL_AppStream::SetAsCheckBox() {
   CFX_FloatRect rcWindow = widget_->GetRotatedRect();
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
-  if (da.HasColor()) {
-    iColorType = da.GetColor(fc);
+  Optional<CFX_Color::Type> color = da.GetColor(fc);
+  if (color) {
+    iColorType = *color;
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 
@@ -1474,8 +1476,9 @@ void CPWL_AppStream::SetAsRadioButton() {
   CFX_FloatRect rcWindow = widget_->GetRotatedRect();
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
-  if (da.HasColor()) {
-    iColorType = da.GetColor(fc);
+  Optional<CFX_Color::Type> color = da.GetColor(fc);
+  if (color) {
+    iColorType = *color;
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
 

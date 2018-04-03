@@ -1885,22 +1885,22 @@ CJS_Return CJS_Field::get_text_color(CJS_Runtime* pRuntime) {
   if (!pFormControl)
     return CJS_Return(false);
 
-  int iColorType;
+  Optional<CFX_Color::Type> iColorType;
   FX_ARGB color;
   CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
   std::tie(iColorType, color) = FieldAppearance.GetColor();
 
-  int32_t a;
-  int32_t r;
-  int32_t g;
-  int32_t b;
-  std::tie(a, r, g, b) = ArgbDecode(color);
-
-  CFX_Color crRet =
-      CFX_Color(CFX_Color::kRGB, r / 255.0f, g / 255.0f, b / 255.0f);
-
-  if (iColorType == CFX_Color::kTransparent)
+  CFX_Color crRet;
+  if (!iColorType || *iColorType == CFX_Color::kTransparent) {
     crRet = CFX_Color(CFX_Color::kTransparent);
+  } else {
+    int32_t a;
+    int32_t r;
+    int32_t g;
+    int32_t b;
+    std::tie(a, r, g, b) = ArgbDecode(color);
+    crRet = CFX_Color(CFX_Color::kRGB, r / 255.0f, g / 255.0f, b / 255.0f);
+  }
 
   v8::Local<v8::Value> array =
       CJS_Color::ConvertPWLColorToArray(pRuntime, crRet);

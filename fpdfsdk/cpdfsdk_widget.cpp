@@ -431,14 +431,14 @@ bool CPDFSDK_Widget::GetBorderColor(FX_COLORREF& color) const {
 bool CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
-  if (!da.HasColor())
+  FX_ARGB argb;
+  Optional<CFX_Color::Type> iColorType;
+  std::tie(iColorType, argb) = da.GetColor();
+  if (!iColorType)
     return false;
 
-  FX_ARGB argb;
-  int iColorType;
-  std::tie(iColorType, argb) = da.GetColor();
   color = ArgbToColorRef(argb);
-  return iColorType != CFX_Color::kTransparent;
+  return *iColorType != CFX_Color::kTransparent;
 }
 
 float CPDFSDK_Widget::GetFontSize() const {
@@ -779,11 +779,11 @@ CFX_Color CPDFSDK_Widget::GetTextPWLColor() const {
 
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
-  if (da.HasColor()) {
-    float fc[4];
-    int iColorType = da.GetColor(fc);
-    crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
-  }
+
+  float fc[4];
+  Optional<CFX_Color::Type> iColorType = da.GetColor(fc);
+  if (iColorType)
+    crText = CFX_Color(*iColorType, fc[0], fc[1], fc[2], fc[3]);
 
   return crText;
 }
