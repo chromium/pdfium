@@ -73,3 +73,10 @@ TEST_F(CPDFParserEmbeddertest, LoadMainCrossRefTable) {
   FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
+
+TEST_F(CPDFParserEmbeddertest, Bug_828049) {
+  EXPECT_TRUE(OpenDocument("bug_828049.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  UnloadPage(page);
+}
