@@ -21,12 +21,12 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
 
  protected:
   struct SBThemeData {
+    FX_ARGB clrTrackBKStart;
+    FX_ARGB clrTrackBKEnd;
     FX_ARGB clrPawColorLight[4];
     FX_ARGB clrPawColorDark[4];
     FX_ARGB clrBtnBK[4][2];
     FX_ARGB clrBtnBorder[4];
-    FX_ARGB clrTrackBKStart;
-    FX_ARGB clrTrackBKEnd;
   };
 
   void DrawThumbBtn(CXFA_Graphics* pGraphics,

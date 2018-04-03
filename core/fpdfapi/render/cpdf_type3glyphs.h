@@ -24,10 +24,10 @@ class CPDF_Type3Glyphs {
   void AdjustBlue(float top, float bottom, int& top_line, int& bottom_line);
 
   std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>> m_GlyphMap;
-  int m_TopBlue[TYPE3_MAX_BLUES];
-  int m_BottomBlue[TYPE3_MAX_BLUES];
   int m_TopBlueCount;
   int m_BottomBlueCount;
+  int m_TopBlue[TYPE3_MAX_BLUES];
+  int m_BottomBlue[TYPE3_MAX_BLUES];
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_

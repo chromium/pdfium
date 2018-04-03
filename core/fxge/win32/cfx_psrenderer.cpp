@@ -89,8 +89,8 @@ struct PSGlyph {
 
 class CPSFont {
  public:
-  PSGlyph m_Glyphs[256];
   int m_nGlyphs;
+  PSGlyph m_Glyphs[256];
 };
 
 CFX_PSRenderer::CFX_PSRenderer()

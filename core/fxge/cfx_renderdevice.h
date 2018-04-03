@@ -73,7 +73,6 @@ class FXTEXT_CHARPOS {
   FXTEXT_CHARPOS(const FXTEXT_CHARPOS&);
   ~FXTEXT_CHARPOS();
 
-  float m_AdjustMatrix[4];
   CFX_PointF m_Origin;
   uint32_t m_Unicode;
   uint32_t m_GlyphIndex;
@@ -84,6 +83,7 @@ class FXTEXT_CHARPOS {
   int32_t m_FallbackFontPosition;
   bool m_bGlyphAdjust;
   bool m_bFontStyle;
+  float m_AdjustMatrix[4];
 };
 
 class CFX_RenderDevice {

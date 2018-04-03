@@ -37,10 +37,10 @@ class CBC_ReedSolomonGF256 {
   static CBC_ReedSolomonGF256* DataMatrixField;
 
  private:
-  int32_t m_expTable[256];
-  int32_t m_logTable[256];
   std::unique_ptr<CBC_ReedSolomonGF256Poly> m_zero;
   std::unique_ptr<CBC_ReedSolomonGF256Poly> m_one;
+  int32_t m_expTable[256];
+  int32_t m_logTable[256];
 };
 
 #endif  // FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_

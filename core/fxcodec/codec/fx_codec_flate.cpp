@@ -40,7 +40,7 @@ static void my_free_func(void* opaque, void* address) {
 
 namespace {
 
-constexpr const static uint32_t kMaxTotalOutSize = 1024 * 1024 * 1024;  // 1 GiB
+static constexpr uint32_t kMaxTotalOutSize = 1024 * 1024 * 1024;  // 1 GiB
 
 uint32_t FlateGetPossiblyTruncatedTotalOut(void* context) {
   return std::min(pdfium::base::saturated_cast<uint32_t>(
@@ -121,11 +121,11 @@ class CLZWDecoder {
   uint8_t* m_pOutput;
   const uint8_t* m_pInput;
   bool m_Early;
-  uint32_t m_CodeArray[5021];
   uint32_t m_nCodes;
-  uint8_t m_DecodeStack[4000];
   uint32_t m_StackLen;
   int m_CodeLen;
+  uint32_t m_CodeArray[5021];
+  uint8_t m_DecodeStack[4000];
 };
 
 void CLZWDecoder::AddCode(uint32_t prefix_code, uint8_t append_char) {

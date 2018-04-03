@@ -21,8 +21,9 @@ namespace {
 
 struct CPDF_UniqueKeyGen {
   void Generate(int count, ...);
-  char m_Key[128];
+
   int m_KeyLen;
+  char m_Key[128];
 };
 
 void CPDF_UniqueKeyGen::Generate(int count, ...) {

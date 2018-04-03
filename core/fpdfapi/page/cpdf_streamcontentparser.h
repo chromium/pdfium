@@ -201,7 +201,6 @@ class CPDF_StreamContentParser {
   UnownedPtr<std::set<const uint8_t*>> const m_ParsedSet;
   CFX_Matrix m_mtContentToUser;
   const CFX_FloatRect m_BBox;
-  ContentParam m_ParamBuf[kParamBufSize];
   uint32_t m_ParamStartPos;
   uint32_t m_ParamCount;
   CPDF_StreamParser* m_pSyntax;
@@ -219,9 +218,10 @@ class CPDF_StreamContentParser {
   ByteString m_LastImageName;
   RetainPtr<CPDF_Image> m_pLastImage;
   bool m_bColored;
-  float m_Type3Data[6];
   bool m_bResourceMissing;
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
+  float m_Type3Data[6];
+  ContentParam m_ParamBuf[kParamBufSize];
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_

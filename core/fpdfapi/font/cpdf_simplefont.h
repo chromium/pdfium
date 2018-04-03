@@ -39,13 +39,13 @@ class CPDF_SimpleFont : public CPDF_Font {
   void LoadCharMetrics(int charcode);
 
   CPDF_FontEncoding m_Encoding;
+  int m_BaseEncoding;
+  bool m_bUseFontWidth;
+  std::vector<ByteString> m_CharNames;
   uint16_t m_GlyphIndex[256];
   uint16_t m_ExtGID[256];
-  std::vector<ByteString> m_CharNames;
-  int m_BaseEncoding;
   uint16_t m_CharWidth[256];
   FX_RECT m_CharBBox[256];
-  bool m_bUseFontWidth;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_SIMPLEFONT_H_

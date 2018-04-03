@@ -88,14 +88,14 @@ class CPDF_SecurityHandler {
 
   int m_Version;
   int m_Revision;
-  UnownedPtr<const CPDF_Dictionary> m_pEncryptDict;
   ByteString m_FileId;
   uint32_t m_Permissions;
   int m_Cipher;
-  uint8_t m_EncryptKey[32];
   int m_KeyLen;
   bool m_bOwnerUnlocked;
+  UnownedPtr<const CPDF_Dictionary> m_pEncryptDict;
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
+  uint8_t m_EncryptKey[32];
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_

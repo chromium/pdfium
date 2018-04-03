@@ -24,8 +24,8 @@ class CFX_FixedBufGrow {
   operator DataType*() { return m_pGrowData ? m_pGrowData.get() : m_FixedData; }
 
  private:
-  DataType m_FixedData[FixedSize];
   std::unique_ptr<DataType, FxFreeDeleter> m_pGrowData;
+  DataType m_FixedData[FixedSize];
 };
 
 #endif  // CORE_FXCRT_CFX_FIXEDBUFGROW_H_

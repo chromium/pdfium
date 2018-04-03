@@ -120,9 +120,10 @@ class CPDF_PSEngine {
 
  private:
   static constexpr uint32_t kPSEngineStackSize = 100;
-  float m_Stack[kPSEngineStackSize];
+
   uint32_t m_StackCount;
   CPDF_PSProc m_MainProc;
+  float m_Stack[kPSEngineStackSize];
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PSENGINE_H_

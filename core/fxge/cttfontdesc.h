@@ -40,13 +40,12 @@ class CTTFontDesc {
 
  private:
   const bool m_bIsTTC;
-
+  int m_RefCount = 1;
+  uint8_t* const m_pFontData;
   union {
     const FXFT_Face m_SingleFace;
     FXFT_Face m_TTCFaces[16];
   };
-  uint8_t* const m_pFontData;
-  int m_RefCount = 1;
 };
 
 #endif  // CORE_FXGE_CTTFONTDESC_H_

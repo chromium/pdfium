@@ -25,7 +25,6 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
 
  protected:
   struct CKBThemeData {
-    FX_ARGB clrBoxBk[13][2];
     FX_ARGB clrSignBorderNormal;
     FX_ARGB clrSignBorderDisable;
     FX_ARGB clrSignCheck;
@@ -33,6 +32,7 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
     FX_ARGB clrSignNeutralNormal;
     FX_ARGB clrSignNeutralHover;
     FX_ARGB clrSignNeutralPressed;
+    FX_ARGB clrBoxBk[13][2];
   };
 
   void DrawCheckSign(CFWL_Widget* pWidget,

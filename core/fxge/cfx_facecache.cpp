@@ -40,8 +40,8 @@ constexpr int kMaxGlyphDimension = 2048;
 struct UniqueKeyGen {
   void Generate(int count, ...);
 
-  char key_[128];
   int key_len_;
+  char key_[128];
 };
 
 void UniqueKeyGen::Generate(int count, ...) {

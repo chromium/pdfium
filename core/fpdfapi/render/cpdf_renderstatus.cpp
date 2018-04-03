@@ -696,7 +696,6 @@ int BiInterpolImpl(int c0,
 
 struct Coon_Color {
   Coon_Color() { memset(comp, 0, sizeof(int) * 3); }
-  int comp[3];
 
   // Returns true if successful, false if overflow detected.
   bool BiInterpol(Coon_Color colors[4],
@@ -717,16 +716,12 @@ struct Coon_Color {
     return std::max({abs(comp[0] - o.comp[0]), abs(comp[1] - o.comp[1]),
                      abs(comp[2] - o.comp[2])});
   }
+
+  int comp[3];
 };
 
 #define COONCOLOR_THRESHOLD 4
 struct CPDF_PatchDrawer {
-  Coon_Color patch_colors[4];
-  int max_delta;
-  CFX_PathData path;
-  CFX_RenderDevice* pDevice;
-  int fill_mode;
-  int alpha;
   void Draw(int x_scale,
             int y_scale,
             int left,
@@ -825,6 +820,13 @@ struct CPDF_PatchDrawer {
       }
     }
   }
+
+  int max_delta;
+  CFX_PathData path;
+  CFX_RenderDevice* pDevice;
+  int fill_mode;
+  int alpha;
+  Coon_Color patch_colors[4];
 };
 
 void DrawCoonPatchMeshes(

@@ -81,13 +81,13 @@ class CPDF_CIDFont : public CPDF_Font {
   uint16_t m_DefaultWidth;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   bool m_bAnsiWidthsFixed;
-  FX_RECT m_CharBBox[256];
   std::vector<uint32_t> m_WidthList;
   short m_DefaultVY;
   short m_DefaultW1;
   std::vector<uint32_t> m_VertMetrics;
   bool m_bAdobeCourierStd;
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
+  FX_RECT m_CharBBox[256];
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CIDFONT_H_

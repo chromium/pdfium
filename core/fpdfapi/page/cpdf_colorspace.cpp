@@ -89,9 +89,9 @@ class CPDF_CalGray : public CPDF_ColorSpace {
                           bool bTransMask) const override;
 
  private:
+  float m_Gamma;
   float m_WhitePoint[3];
   float m_BlackPoint[3];
-  float m_Gamma;
 };
 
 class CPDF_CalRGB : public CPDF_ColorSpace {
@@ -112,12 +112,12 @@ class CPDF_CalRGB : public CPDF_ColorSpace {
                           int image_height,
                           bool bTransMask) const override;
 
+  bool m_bGamma;
+  bool m_bMatrix;
   float m_WhitePoint[3];
   float m_BlackPoint[3];
   float m_Gamma[3];
   float m_Matrix[9];
-  bool m_bGamma;
-  bool m_bMatrix;
 };
 
 class CPDF_LabCS : public CPDF_ColorSpace {

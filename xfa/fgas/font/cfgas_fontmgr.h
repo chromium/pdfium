@@ -71,9 +71,9 @@ class CFX_FontDescriptor {
   ~CFX_FontDescriptor();
 
   int32_t m_nFaceIndex;
+  uint32_t m_dwFontStyles;
   WideString m_wsFaceName;
   std::vector<WideString> m_wsFamilyNames;
-  uint32_t m_dwFontStyles;
   uint32_t m_dwUsb[4];
   uint32_t m_dwCsb[2];
 };

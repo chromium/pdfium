@@ -92,14 +92,14 @@ class CPDF_SyntaxParser {
       ParseType parse_type);
 
   FX_FILESIZE m_Pos;
-  RetainPtr<CPDF_ReadValidator> m_pFileAccess;
   FX_FILESIZE m_HeaderOffset;
   FX_FILESIZE m_FileLen;
-  std::vector<uint8_t> m_pFileBuf;
-  FX_FILESIZE m_BufOffset;
-  uint8_t m_WordBuffer[257];
-  uint32_t m_WordSize;
   WeakPtr<ByteStringPool> m_pPool;
+  std::vector<uint8_t> m_pFileBuf;
+  RetainPtr<CPDF_ReadValidator> m_pFileAccess;
+  FX_FILESIZE m_BufOffset;
+  uint32_t m_WordSize;
+  uint8_t m_WordBuffer[257];
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_

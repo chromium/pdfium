@@ -82,9 +82,9 @@ class CFX_Break {
   int32_t m_iDefChar;
   wchar_t m_wDefChar;
   RetainPtr<CFGAS_GEFont> m_pFont;
-  CFX_BreakLine m_Line[2];
   CFX_BreakLine* m_pCurLine;
   int8_t m_iReadyLineIndex;
+  CFX_BreakLine m_Line[2];
 
  private:
   void FontChanged();

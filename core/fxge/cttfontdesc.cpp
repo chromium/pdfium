@@ -10,7 +10,7 @@
 #include "third_party/base/stl_util.h"
 
 CTTFontDesc::CTTFontDesc(uint8_t* pData, FXFT_Face face)
-    : m_bIsTTC(false), m_SingleFace(face), m_pFontData(pData) {}
+    : m_bIsTTC(false), m_pFontData(pData), m_SingleFace(face) {}
 
 CTTFontDesc::CTTFontDesc(uint8_t* pData, size_t index, FXFT_Face face)
     : m_bIsTTC(true), m_pFontData(pData) {

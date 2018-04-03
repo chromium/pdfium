@@ -69,10 +69,10 @@ class CPDF_CryptoHandler {
                    bool bEncrypt);
   bool CryptFinish(void* context, CFX_BinaryBuf& dest_buf, bool bEncrypt);
 
-  uint8_t m_EncryptKey[32];
   int m_KeyLen;
   int m_Cipher;
   std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> m_pAESContext;
+  uint8_t m_EncryptKey[32];
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_

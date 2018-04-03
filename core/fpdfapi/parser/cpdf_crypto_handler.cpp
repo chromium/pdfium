@@ -110,9 +110,9 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
 
 struct AESCryptContext {
   bool m_bIV;
-  uint8_t m_Block[16];
   uint32_t m_BlockOffset;
   CRYPT_aes_context m_Context;
+  uint8_t m_Block[16];
 };
 
 void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,

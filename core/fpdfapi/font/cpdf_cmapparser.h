@@ -40,10 +40,10 @@ class CPDF_CMapParser {
   UnownedPtr<CPDF_CMap> const m_pCMap;
   int m_Status;
   int m_CodeSeq;
-  uint32_t m_CodePoints[4];
   std::vector<CPDF_CMap::CodeRange> m_CodeRanges;
   std::vector<CPDF_CMap::CIDRange> m_AdditionalCharcodeToCIDMappings;
   ByteString m_LastWord;
+  uint32_t m_CodePoints[4];
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CMAPPARSER_H_

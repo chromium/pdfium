@@ -54,12 +54,12 @@ class CFX_LZWDecompressor {
   uint8_t code_first_;
   std::vector<uint8_t> decompressed_;
   size_t decompressed_next_;
-  CodeEntry code_table_[GIF_MAX_LZW_CODE];
   uint16_t code_old_;
   uint8_t* next_in_;
   uint32_t avail_in_;
   uint8_t bits_left_;
   uint32_t code_store_;
+  CodeEntry code_table_[GIF_MAX_LZW_CODE];
 };
 
 #endif  // CORE_FXCODEC_GIF_CFX_LZWDECOMPRESSOR_H_
