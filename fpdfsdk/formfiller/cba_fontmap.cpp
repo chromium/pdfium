@@ -217,12 +217,14 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
     return nullptr;
 
   CPDF_DefaultAppearance appearance(sDA);
-  ASSERT(appearance.HasFont());
-
   float font_size;
-  ByteString sDecodedFontName =
-      PDF_NameDecode(appearance.GetFont(&font_size).AsStringView());
-  *sAlias = sDecodedFontName.Right(sDecodedFontName.GetLength() - 1);
+  Optional<ByteString> font = appearance.GetFont(&font_size);
+  if (font) {
+    ByteString sDecodedFontName = PDF_NameDecode(font->AsStringView());
+    *sAlias = sDecodedFontName.Right(sDecodedFontName.GetLength() - 1);
+  } else {
+    *sAlias = ByteString();
+  }
 
   CPDF_Dictionary* pFontDict = nullptr;
   if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP")) {

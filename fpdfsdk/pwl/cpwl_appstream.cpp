@@ -1184,9 +1184,13 @@ void CPWL_AppStream::SetAsPushButton() {
     iColorType = da.GetColor(fc);
     crText = CFX_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
-  float fFontSize = 12.0f;
-  if (da.HasFont())
-    csNameTag = da.GetFont(&fFontSize);
+
+  float fFontSize;
+  Optional<ByteString> font = da.GetFont(&fFontSize);
+  if (font)
+    csNameTag = *font;
+  else
+    fFontSize = 12.0f;
 
   WideString csWCaption;
   WideString csNormalCaption;

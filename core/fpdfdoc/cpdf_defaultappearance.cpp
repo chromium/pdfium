@@ -53,18 +53,10 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
 
 }  // namespace
 
-bool CPDF_DefaultAppearance::HasFont() {
-  if (m_csDA.IsEmpty())
-    return false;
-
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
-  return FindTagParamFromStart(&syntax, "Tf", 2);
-}
-
-ByteString CPDF_DefaultAppearance::GetFont(float* fFontSize) {
+Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
   *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
-    return ByteString();
+    return {};
 
   ByteString csFontNameTag;
   CPDF_SimpleParser syntax(m_csDA.AsStringView());
@@ -73,7 +65,7 @@ ByteString CPDF_DefaultAppearance::GetFont(float* fFontSize) {
     csFontNameTag.Delete(0, 1);
     *fFontSize = FX_atof(syntax.GetWord());
   }
-  return PDF_NameDecode(csFontNameTag.AsStringView());
+  return {PDF_NameDecode(csFontNameTag.AsStringView())};
 }
 
 bool CPDF_DefaultAppearance::HasColor() {

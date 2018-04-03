@@ -923,13 +923,13 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
     return;
 
   CPDF_DefaultAppearance appearance(DA);
-  if (!appearance.HasFont())
+
+  float fFontSize = 0;
+  Optional<ByteString> font = appearance.GetFont(&fFontSize);
+  if (!font)
     return;
 
-  ASSERT(appearance.HasFont());
-  float fFontSize = 0;
-  ByteString sFontName =
-      PDF_NameDecode(appearance.GetFont(&fFontSize).AsStringView());
+  ByteString sFontName = PDF_NameDecode(font->AsStringView());
   if (sFontName.IsEmpty())
     return;
 

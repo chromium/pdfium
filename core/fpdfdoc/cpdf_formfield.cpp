@@ -915,11 +915,11 @@ void CPDF_FormField::LoadDA() {
     return;
 
   CPDF_DefaultAppearance appearance(DA);
-  if (!appearance.HasFont())
+  Optional<ByteString> font_name = appearance.GetFont(&m_FontSize);
+  if (!font_name)
     return;
 
-  ByteString font_name = appearance.GetFont(&m_FontSize);
-  CPDF_Dictionary* pFontDict = pFont->GetDictFor(font_name);
+  CPDF_Dictionary* pFontDict = pFont->GetDictFor(*font_name);
   if (!pFontDict)
     return;
 

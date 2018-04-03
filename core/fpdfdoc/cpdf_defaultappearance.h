@@ -25,8 +25,7 @@ class CPDF_DefaultAppearance {
   CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA)
       : m_csDA(cDA.m_csDA) {}
 
-  bool HasFont();
-  ByteString GetFont(float* fFontSize);
+  Optional<ByteString> GetFont(float* fFontSize);
 
   bool HasColor();
   CFX_Color::Type GetColor(float fc[4]);
