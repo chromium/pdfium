@@ -559,7 +559,7 @@ double CJS_PublicMethods::MakeRegularDate(const WideString& value,
         } else if (remaining == 1 || format[i + 2] != c) {
           switch (c) {
             case 'y':
-              nYear = ParseStringInteger(value, j, &nSkip, 4);
+              nYear = ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;

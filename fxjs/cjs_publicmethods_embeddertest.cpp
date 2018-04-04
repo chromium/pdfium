@@ -99,6 +99,14 @@ TEST_F(CJS_PublicMethodsEmbedderTest, MakeRegularDate) {
   date = RoundDownDate(date);
   EXPECT_DOUBLE_EQ(1107216000000.0, date);
   EXPECT_FALSE(bWrongFormat);
+
+  // 2005 in a different format. https://crbug.com/436572
+  bWrongFormat = false;
+  date =
+      CJS_PublicMethods::MakeRegularDate(L"050201", L"yymmdd", &bWrongFormat);
+  date = RoundDownDate(date);
+  EXPECT_DOUBLE_EQ(1107216000000.0, date);
+  EXPECT_FALSE(bWrongFormat);
 }
 
 TEST_F(CJS_PublicMethodsEmbedderTest, MakeFormatDate) {
