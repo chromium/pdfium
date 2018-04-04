@@ -34,6 +34,7 @@
 #include "samples/pdfium_test_write_helper.h"
 #include "testing/test_support.h"
 #include "third_party/base/logging.h"
+#include "third_party/base/optional.h"
 
 #ifdef _WIN32
 #include <io.h>
@@ -55,6 +56,16 @@
 #define snprintf _snprintf
 #define R_OK 4
 #endif
+
+// wordexp is a POSIX function that is only available on OSX and non-Android
+// Linux platforms.
+#if defined(__APPLE__) || (defined(__linux__) && !defined(__ANDROID__))
+#define WORDEXP_AVAILABLE
+#endif
+
+#ifdef WORDEXP_AVAILABLE
+#include <wordexp.h>
+#endif  // WORDEXP_AVAILABLE
 
 enum OutputFormat {
   OUTPUT_NONE,
@@ -112,6 +123,23 @@ struct Options {
   int first_page;
   int last_page;
 };
+
+Optional<std::string> ExpandDirectoryPath(const std::string& path) {
+#if defined(WORDEXP_AVAILABLE)
+  wordexp_t expansion;
+  if (wordexp(path.c_str(), &expansion, 0) != 0 || expansion.we_wordc < 1) {
+    wordfree(&expansion);
+    return {};
+  }
+  // Need to contruct the return value before hand, since wordfree will
+  // deallocate |expansion|.
+  Optional<std::string> ret_val = {expansion.we_wordv[0]};
+  wordfree(&expansion);
+  return ret_val;
+#else
+  return {path};
+#endif  // WORDEXP_AVAILABLE
+}
 
 struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
   // Hold a map of the currently loaded pages in order to avoid them
@@ -300,7 +328,14 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         fprintf(stderr, "Duplicate --font-dir argument\n");
         return false;
       }
-      options->font_directory = cur_arg.substr(11);
+      std::string path = cur_arg.substr(11);
+      auto expanded_path = ExpandDirectoryPath(path);
+      if (!expanded_path) {
+        fprintf(stderr, "Failed to expand --font-dir, %s\n", path.c_str());
+        return false;
+      }
+      options->font_directory = expanded_path.value();
+
 #ifdef _WIN32
     } else if (cur_arg == "--emf") {
       if (options->output_format != OUTPUT_NONE) {
@@ -336,7 +371,13 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         fprintf(stderr, "Duplicate --bin-dir argument\n");
         return false;
       }
-      options->bin_directory = cur_arg.substr(10);
+      std::string path = cur_arg.substr(10);
+      auto expanded_path = ExpandDirectoryPath(path);
+      if (!expanded_path) {
+        fprintf(stderr, "Failed to expand --bin-dir, %s\n", path.c_str());
+        return false;
+      }
+      options->bin_directory = expanded_path.value();
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 
