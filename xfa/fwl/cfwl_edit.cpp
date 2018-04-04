@@ -1098,7 +1098,7 @@ void CFWL_Edit::SetCursorPosition(size_t position) {
   if (m_CursorPosition == position)
     return;
 
-  m_CursorPosition = position;
+  m_CursorPosition = std::min(position, m_EdtEngine.GetLength());
   UpdateCursorRect();
   OnCaretChanged();
 }
