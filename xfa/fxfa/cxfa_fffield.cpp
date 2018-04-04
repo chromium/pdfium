@@ -505,7 +505,7 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   CFWL_MessageSetFocus ms(nullptr, m_pNormalWidget.get());
   TranslateFWLMessage(&ms);
   m_dwStatus |= XFA_WidgetStatus_Focused;
-  AddInvalidateRect();
+  InvalidateRect();
   return true;
 }
 
@@ -516,7 +516,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   CFWL_MessageKillFocus ms(nullptr, m_pNormalWidget.get());
   TranslateFWLMessage(&ms);
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
-  AddInvalidateRect();
+  InvalidateRect();
   CXFA_FFWidget::OnKillFocus(pNewWidget);
   return true;
 }

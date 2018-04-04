@@ -157,7 +157,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();
   IXFA_AppProvider* GetAppProvider();
-  void AddInvalidateRect();
+  void InvalidateRect();
   bool IsFocused() const { return !!(m_dwStatus & XFA_WidgetStatus_Focused); }
   CFX_PointF Rotate2Normal(const CFX_PointF& point);
   CFX_Matrix GetRotateMatrix();

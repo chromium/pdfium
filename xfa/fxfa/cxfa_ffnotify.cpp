@@ -333,7 +333,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender, XFA_Attribute eAttr) {
   CXFA_FFWidget* pWidget = m_pDoc->GetDocView()->GetWidgetForNode(pSender);
   for (; pWidget; pWidget = pSender->GetNextWidget(pWidget)) {
     if (pWidget->IsLoaded())
-      pWidget->AddInvalidateRect();
+      pWidget->InvalidateRect();
   }
 }
 
@@ -397,7 +397,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
     if (bUpdateProperty)
       pWidget->UpdateWidgetProperty();
     pWidget->PerformLayout();
-    pWidget->AddInvalidateRect();
+    pWidget->InvalidateRect();
   }
 }
 
@@ -461,7 +461,7 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
   } else {
     pWidget->LoadWidget();
   }
-  pWidget->AddInvalidateRect();
+  pWidget->InvalidateRect();
 }
 
 void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
@@ -476,5 +476,5 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_LayoutProcessor* pLayout,
 
   pDocView->DeleteLayoutItem(pWidget);
   m_pDoc->GetDocEnvironment()->WidgetPreRemove(pWidget);
-  pWidget->AddInvalidateRect();
+  pWidget->InvalidateRect();
 }

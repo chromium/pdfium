@@ -21,7 +21,7 @@ void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget) {
   if (!pFFWidget)
     return;
 
-  pFFWidget->AddInvalidateRect();
+  pFFWidget->InvalidateRect();
 }
 
 bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(CFWL_Widget* pWidget,

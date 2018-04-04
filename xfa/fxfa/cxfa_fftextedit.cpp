@@ -114,7 +114,7 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!IsFocused()) {
     m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
-    AddInvalidateRect();
+    InvalidateRect();
   }
 
   SetButtonDown(true);
@@ -134,7 +134,7 @@ bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!IsFocused()) {
     m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
-    AddInvalidateRect();
+    InvalidateRect();
   }
 
   SetButtonDown(true);
@@ -159,7 +159,7 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (!IsFocused()) {
     m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
-    AddInvalidateRect();
+    InvalidateRect();
   }
   CXFA_FFWidget::OnSetFocus(pOldWidget);
   CFWL_MessageSetFocus ms(nullptr, m_pNormalWidget.get());
@@ -175,7 +175,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   SetEditScrollOffset();
   ProcessCommittedData();
   UpdateFWLData();
-  AddInvalidateRect();
+  InvalidateRect();
   CXFA_FFWidget::OnKillFocus(pNewWidget);
 
   m_dwStatus &= ~XFA_WidgetStatus_TextEditValueChanged;

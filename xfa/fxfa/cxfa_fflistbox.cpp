@@ -167,14 +167,14 @@ void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {
   auto* pListBox = ToListBox(m_pNormalWidget.get());
   pListBox->SetSelItem(pListBox->GetSelItem(nIndex), bSelected);
   m_pNormalWidget->Update();
-  AddInvalidateRect();
+  InvalidateRect();
 }
 
 void CXFA_FFListBox::InsertItem(const WideStringView& wsLabel, int32_t nIndex) {
   WideString wsTemp(wsLabel);
   ToListBox(m_pNormalWidget.get())->AddString(wsTemp.AsStringView());
   m_pNormalWidget->Update();
-  AddInvalidateRect();
+  InvalidateRect();
 }
 
 void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
@@ -185,7 +185,7 @@ void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
     pListBox->DeleteString(pListBox->GetItem(nullptr, nIndex));
 
   pListBox->Update();
-  AddInvalidateRect();
+  InvalidateRect();
 }
 
 void CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {

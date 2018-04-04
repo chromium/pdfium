@@ -2680,7 +2680,7 @@ void CXFA_Node::UpdateUIDisplay(CXFA_FFDocView* docView,
       continue;
     }
     pWidget->UpdateFWLData();
-    pWidget->AddInvalidateRect();
+    pWidget->InvalidateRect();
   }
 }
 

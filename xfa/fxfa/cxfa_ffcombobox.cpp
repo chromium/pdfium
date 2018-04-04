@@ -266,14 +266,14 @@ FormFieldType CXFA_FFComboBox::GetFormFieldType() {
 void CXFA_FFComboBox::SetItemState(int32_t nIndex, bool bSelected) {
   ToComboBox(m_pNormalWidget.get())->SetCurSel(bSelected ? nIndex : -1);
   m_pNormalWidget->Update();
-  AddInvalidateRect();
+  InvalidateRect();
 }
 
 void CXFA_FFComboBox::InsertItem(const WideStringView& wsLabel,
                                  int32_t nIndex) {
   ToComboBox(m_pNormalWidget.get())->AddString(wsLabel);
   m_pNormalWidget->Update();
-  AddInvalidateRect();
+  InvalidateRect();
 }
 
 void CXFA_FFComboBox::DeleteItem(int32_t nIndex) {
@@ -283,7 +283,7 @@ void CXFA_FFComboBox::DeleteItem(int32_t nIndex) {
     ToComboBox(m_pNormalWidget.get())->RemoveAt(nIndex);
 
   m_pNormalWidget->Update();
-  AddInvalidateRect();
+  InvalidateRect();
 }
 
 void CXFA_FFComboBox::OnTextChanged(CFWL_Widget* pWidget,

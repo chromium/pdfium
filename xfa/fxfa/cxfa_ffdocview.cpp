@@ -185,7 +185,6 @@ void CXFA_FFDocView::UpdateDocView() {
 
   m_bLayoutEvent = false;
   m_CalculateNodes.clear();
-  RunInvalidate();
   UnlockUpdate();
 }
 
@@ -442,22 +441,9 @@ void CXFA_FFDocView::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
   m_pDoc->GetDocEnvironment()->PageViewEvent(pFFPageView, dwEvent);
 }
 
-
-void CXFA_FFDocView::AddInvalidateRect(CXFA_FFPageView* pPageView,
-                                       const CFX_RectF& rtInvalidate) {
-  if (m_mapPageInvalidate[pPageView]) {
-    m_mapPageInvalidate[pPageView]->Union(rtInvalidate);
-    return;
-  }
-
-  m_mapPageInvalidate[pPageView] = pdfium::MakeUnique<CFX_RectF>(rtInvalidate);
-}
-
-void CXFA_FFDocView::RunInvalidate() {
-  for (const auto& pair : m_mapPageInvalidate)
-    m_pDoc->GetDocEnvironment()->InvalidateRect(pair.first, *pair.second);
-
-  m_mapPageInvalidate.clear();
+void CXFA_FFDocView::InvalidateRect(CXFA_FFPageView* pPageView,
+                                    const CFX_RectF& rtInvalidate) {
+  m_pDoc->GetDocEnvironment()->InvalidateRect(pPageView, rtInvalidate);
 }
 
 bool CXFA_FFDocView::RunLayout() {

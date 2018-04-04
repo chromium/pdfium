@@ -72,7 +72,6 @@ bool CXFA_FFWidgetHandler::OnLButtonDblClk(CXFA_FFWidget* hWidget,
                                            uint32_t dwFlags,
                                            const CFX_PointF& point) {
   bool bRet = hWidget->OnLButtonDblClk(dwFlags, hWidget->Rotate2Normal(point));
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 
@@ -80,7 +79,6 @@ bool CXFA_FFWidgetHandler::OnMouseMove(CXFA_FFWidget* hWidget,
                                        uint32_t dwFlags,
                                        const CFX_PointF& point) {
   bool bRet = hWidget->OnMouseMove(dwFlags, hWidget->Rotate2Normal(point));
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 
@@ -90,7 +88,6 @@ bool CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
                                         const CFX_PointF& point) {
   bool bRet =
       hWidget->OnMouseWheel(dwFlags, zDelta, hWidget->Rotate2Normal(point));
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 
@@ -102,7 +99,6 @@ bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
     m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
         m_pDocView->GetDoc(), hWidget);
   }
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 
@@ -110,7 +106,6 @@ bool CXFA_FFWidgetHandler::OnRButtonUp(CXFA_FFWidget* hWidget,
                                        uint32_t dwFlags,
                                        const CFX_PointF& point) {
   bool bRet = hWidget->OnRButtonUp(dwFlags, hWidget->Rotate2Normal(point));
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 
@@ -118,7 +113,6 @@ bool CXFA_FFWidgetHandler::OnRButtonDblClk(CXFA_FFWidget* hWidget,
                                            uint32_t dwFlags,
                                            const CFX_PointF& point) {
   bool bRet = hWidget->OnRButtonDblClk(dwFlags, hWidget->Rotate2Normal(point));
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 
@@ -126,7 +120,6 @@ bool CXFA_FFWidgetHandler::OnKeyDown(CXFA_FFWidget* hWidget,
                                      uint32_t dwKeyCode,
                                      uint32_t dwFlags) {
   bool bRet = hWidget->OnKeyDown(dwKeyCode, dwFlags);
-  m_pDocView->RunInvalidate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
@@ -135,7 +128,6 @@ bool CXFA_FFWidgetHandler::OnKeyUp(CXFA_FFWidget* hWidget,
                                    uint32_t dwKeyCode,
                                    uint32_t dwFlags) {
   bool bRet = hWidget->OnKeyUp(dwKeyCode, dwFlags);
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 
@@ -143,7 +135,6 @@ bool CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
                                   uint32_t dwChar,
                                   uint32_t dwFlags) {
   bool bRet = hWidget->OnChar(dwChar, dwFlags);
-  m_pDocView->RunInvalidate();
   return bRet;
 }
 

@@ -346,10 +346,10 @@ void CXFA_FFWidget::DrawBorderWithFlag(CXFA_Graphics* pGS,
     box->Draw(pGS, rtBorder, matrix, forceRound);
 }
 
-void CXFA_FFWidget::AddInvalidateRect() {
+void CXFA_FFWidget::InvalidateRect() {
   CFX_RectF rtWidget = GetBBox(XFA_WidgetStatus_Focused);
   rtWidget.Inflate(2, 2);
-  m_pDocView->AddInvalidateRect(m_pPageView, rtWidget);
+  m_pDocView->InvalidateRect(m_pPageView, rtWidget);
 }
 
 bool CXFA_FFWidget::OnMouseEnter() {
