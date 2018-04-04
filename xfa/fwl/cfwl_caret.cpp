@@ -17,7 +17,7 @@
 
 namespace {
 
-const uint32_t kFrequency = 400;
+const uint32_t kBlinkPeriodMs = 600;
 
 constexpr int kStateHighlight = (1 << 0);
 
@@ -63,7 +63,7 @@ void CFWL_Caret::ShowCaret() {
     pOldTimerInfo->StopTimer();
   }
 
-  m_pTimerInfo = m_pTimer->StartTimer(kFrequency, true);
+  m_pTimerInfo = m_pTimer->StartTimer(kBlinkPeriodMs, true);
   RemoveStates(FWL_WGTSTATE_Invisible);
 }
 
