@@ -196,3 +196,47 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   ASSERT_TRUE(!ret.HasReturn());
   ASSERT_EQ(L"7", result);
 }
+
+TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
+  v8::Isolate::Scope isolate_scope(isolate());
+  v8::HandleScope handle_scope(isolate());
+  v8::Context::Scope context_scope(GetV8Context());
+
+  EXPECT_TRUE(OpenDocument("calculate.pdf"));
+  auto* page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  CJS_Runtime runtime(static_cast<CPDFSDK_FormFillEnvironment*>(form_handle()));
+  runtime.NewEventContext();
+
+  auto* handler = runtime.GetCurrentEventContext()->GetEventHandler();
+
+  bool valid = true;
+  WideString result = L"-10";
+  WideString change = L"";
+
+  handler->m_pValue = &result;
+  handler->m_pbRc = &valid;
+  handler->m_pWideStrChange = &change;
+
+  handler->m_bWillCommit = 0;
+  handler->SetSelStart(0);
+  handler->SetSelEnd(0);
+
+  std::vector<v8::Local<v8::Value>> params;
+  params.push_back(runtime.NewString(L"-10"));
+  params.push_back(runtime.NewString(L""));
+
+  CJS_Return ret = CJS_PublicMethods::AFNumber_Keystroke(&runtime, params);
+  EXPECT_TRUE(valid);
+  EXPECT_TRUE(!ret.HasError());
+  EXPECT_TRUE(!ret.HasReturn());
+
+  UnloadPage(page);
+
+  // Keep the *SAN bots happy. One of these is an UnownedPtr, another seems to
+  // used during destruction. Clear them all to be safe and consistent.
+  handler->m_pValue = nullptr;
+  handler->m_pbRc = nullptr;
+  handler->m_pWideStrChange = nullptr;
+}
