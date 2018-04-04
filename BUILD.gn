@@ -796,7 +796,7 @@ jumbo_static_library("fxcodec") {
       "third_party:png",
     ]
   }
-  if (is_posix) {
+  if (is_posix || is_fuchsia) {
     # core/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int
     # conversion to check that an address is 16-bit aligned (benign).
     cflags_c = [ "-Wno-pointer-to-int-cast" ]
