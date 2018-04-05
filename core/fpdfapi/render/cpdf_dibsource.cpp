@@ -857,57 +857,39 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
   float R = 0.0f;
   float G = 0.0f;
   float B = 0.0f;
-  if (m_bpc == 8) {
-    uint64_t src_byte_pos = 0;
-    size_t dest_byte_pos = 0;
-    for (int column = 0; column < m_Width; column++) {
-      for (uint32_t color = 0; color < m_nComponents; color++) {
+  uint64_t src_bit_pos = 0;
+  uint64_t src_byte_pos = 0;
+  size_t dest_byte_pos = 0;
+  const bool bpp8 = m_bpc == 8;
+  for (int column = 0; column < m_Width; column++) {
+    for (uint32_t color = 0; color < m_nComponents; color++) {
+      if (bpp8) {
         uint8_t data = src_scan[src_byte_pos++];
         color_values[color] = m_pCompData[color].m_DecodeMin +
                               m_pCompData[color].m_DecodeStep * data;
-      }
-      if (TransMask()) {
-        float k = 1.0f - color_values[3];
-        R = (1.0f - color_values[0]) * k;
-        G = (1.0f - color_values[1]) * k;
-        B = (1.0f - color_values[2]) * k;
-      } else if (m_Family != PDFCS_PATTERN) {
-        m_pColorSpace->GetRGB(color_values, &R, &G, &B);
-      }
-      R = pdfium::clamp(R, 0.0f, 1.0f);
-      G = pdfium::clamp(G, 0.0f, 1.0f);
-      B = pdfium::clamp(B, 0.0f, 1.0f);
-      dest_scan[dest_byte_pos] = static_cast<uint8_t>(B * 255);
-      dest_scan[dest_byte_pos + 1] = static_cast<uint8_t>(G * 255);
-      dest_scan[dest_byte_pos + 2] = static_cast<uint8_t>(R * 255);
-      dest_byte_pos += 3;
-    }
-  } else {
-    uint64_t src_bit_pos = 0;
-    size_t dest_byte_pos = 0;
-    for (int column = 0; column < m_Width; column++) {
-      for (uint32_t color = 0; color < m_nComponents; color++) {
+      } else {
         unsigned int data = GetBits8(src_scan, src_bit_pos, m_bpc);
         color_values[color] = m_pCompData[color].m_DecodeMin +
                               m_pCompData[color].m_DecodeStep * data;
         src_bit_pos += m_bpc;
       }
-      if (TransMask()) {
-        float k = 1.0f - color_values[3];
-        R = (1.0f - color_values[0]) * k;
-        G = (1.0f - color_values[1]) * k;
-        B = (1.0f - color_values[2]) * k;
-      } else if (m_Family != PDFCS_PATTERN) {
-        m_pColorSpace->GetRGB(color_values, &R, &G, &B);
-      }
-      R = pdfium::clamp(R, 0.0f, 1.0f);
-      G = pdfium::clamp(G, 0.0f, 1.0f);
-      B = pdfium::clamp(B, 0.0f, 1.0f);
-      dest_scan[dest_byte_pos] = static_cast<uint8_t>(B * 255);
-      dest_scan[dest_byte_pos + 1] = static_cast<uint8_t>(G * 255);
-      dest_scan[dest_byte_pos + 2] = static_cast<uint8_t>(R * 255);
-      dest_byte_pos += 3;
     }
+
+    if (TransMask()) {
+      float k = 1.0f - color_values[3];
+      R = (1.0f - color_values[0]) * k;
+      G = (1.0f - color_values[1]) * k;
+      B = (1.0f - color_values[2]) * k;
+    } else if (m_Family != PDFCS_PATTERN) {
+      m_pColorSpace->GetRGB(color_values, &R, &G, &B);
+    }
+    R = pdfium::clamp(R, 0.0f, 1.0f);
+    G = pdfium::clamp(G, 0.0f, 1.0f);
+    B = pdfium::clamp(B, 0.0f, 1.0f);
+    dest_scan[dest_byte_pos] = static_cast<uint8_t>(B * 255);
+    dest_scan[dest_byte_pos + 1] = static_cast<uint8_t>(G * 255);
+    dest_scan[dest_byte_pos + 2] = static_cast<uint8_t>(R * 255);
+    dest_byte_pos += 3;
   }
 }
 
