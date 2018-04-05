@@ -9,6 +9,10 @@
 
 #include <stdint.h>
 
+#include <memory>
+
+#include "core/fxcrt/fx_memory.h"
+
 class CPDF_CryptoHandler;
 
 class CPDF_Encryptor {
@@ -20,12 +24,12 @@ class CPDF_Encryptor {
   ~CPDF_Encryptor();
 
   uint32_t GetSize() const { return m_dwSize; }
-  uint8_t* GetData() const { return m_pData; }
+  const uint8_t* GetData() const { return m_pData; }
 
  private:
-  uint8_t* m_pData;
-  uint32_t m_dwSize;
-  bool m_bNewBuf;
+  const uint8_t* m_pData = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pNewBuf;
+  uint32_t m_dwSize = 0;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_ENCRYPTOR_H_
