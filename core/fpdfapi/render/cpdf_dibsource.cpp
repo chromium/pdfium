@@ -849,60 +849,8 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
   if (m_bpc == 0)
     return;
 
-  unsigned int max_data = (1 << m_bpc) - 1;
-  if (m_bDefaultDecode) {
-    if (m_Family == PDFCS_DEVICERGB || m_Family == PDFCS_CALRGB) {
-      if (m_nComponents != 3)
-        return;
-
-      const uint8_t* src_pos = src_scan;
-      switch (m_bpc) {
-        case 8:
-          for (int column = 0; column < m_Width; column++) {
-            *dest_scan++ = src_pos[2];
-            *dest_scan++ = src_pos[1];
-            *dest_scan++ = *src_pos;
-            src_pos += 3;
-          }
-          break;
-        case 16:
-          for (int col = 0; col < m_Width; col++) {
-            *dest_scan++ = src_pos[4];
-            *dest_scan++ = src_pos[2];
-            *dest_scan++ = *src_pos;
-            src_pos += 6;
-          }
-          break;
-        default:
-          uint64_t src_bit_pos = 0;
-          size_t dest_byte_pos = 0;
-          for (int column = 0; column < m_Width; column++) {
-            unsigned int R = GetBits8(src_scan, src_bit_pos, m_bpc);
-            src_bit_pos += m_bpc;
-            unsigned int G = GetBits8(src_scan, src_bit_pos, m_bpc);
-            src_bit_pos += m_bpc;
-            unsigned int B = GetBits8(src_scan, src_bit_pos, m_bpc);
-            src_bit_pos += m_bpc;
-            R = std::min(R, max_data);
-            G = std::min(G, max_data);
-            B = std::min(B, max_data);
-            dest_scan[dest_byte_pos] = B * 255 / max_data;
-            dest_scan[dest_byte_pos + 1] = G * 255 / max_data;
-            dest_scan[dest_byte_pos + 2] = R * 255 / max_data;
-            dest_byte_pos += 3;
-          }
-          break;
-      }
-      return;
-    }
-    if (m_bpc == 8) {
-      if (m_nComponents == m_pColorSpace->CountComponents()) {
-        m_pColorSpace->TranslateImageLine(dest_scan, src_scan, m_Width, m_Width,
-                                          m_Height, TransMask());
-      }
-      return;
-    }
-  }
+  if (TranslateScanline24bppDefaultDecode(dest_scan, src_scan))
+    return;
 
   CFX_FixedBufGrow<float, 16> color_values1(m_nComponents);
   float* color_values = color_values1;
@@ -961,6 +909,68 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
       dest_byte_pos += 3;
     }
   }
+}
+
+bool CPDF_DIBSource::TranslateScanline24bppDefaultDecode(
+    uint8_t* dest_scan,
+    const uint8_t* src_scan) const {
+  if (!m_bDefaultDecode)
+    return false;
+
+  if (m_Family != PDFCS_DEVICERGB && m_Family != PDFCS_CALRGB) {
+    if (m_bpc != 8)
+      return false;
+
+    if (m_nComponents == m_pColorSpace->CountComponents()) {
+      m_pColorSpace->TranslateImageLine(dest_scan, src_scan, m_Width, m_Width,
+                                        m_Height, TransMask());
+    }
+    return true;
+  }
+
+  if (m_nComponents != 3)
+    return true;
+
+  const uint8_t* src_pos = src_scan;
+  switch (m_bpc) {
+    case 8:
+      for (int column = 0; column < m_Width; column++) {
+        *dest_scan++ = src_pos[2];
+        *dest_scan++ = src_pos[1];
+        *dest_scan++ = *src_pos;
+        src_pos += 3;
+      }
+      break;
+    case 16:
+      for (int col = 0; col < m_Width; col++) {
+        *dest_scan++ = src_pos[4];
+        *dest_scan++ = src_pos[2];
+        *dest_scan++ = *src_pos;
+        src_pos += 6;
+      }
+      break;
+    default:
+      const unsigned int max_data = (1 << m_bpc) - 1;
+      uint64_t src_bit_pos = 0;
+      size_t dest_byte_pos = 0;
+      for (int column = 0; column < m_Width; column++) {
+        unsigned int R = GetBits8(src_scan, src_bit_pos, m_bpc);
+        src_bit_pos += m_bpc;
+        unsigned int G = GetBits8(src_scan, src_bit_pos, m_bpc);
+        src_bit_pos += m_bpc;
+        unsigned int B = GetBits8(src_scan, src_bit_pos, m_bpc);
+        src_bit_pos += m_bpc;
+        R = std::min(R, max_data);
+        G = std::min(G, max_data);
+        B = std::min(B, max_data);
+        dest_scan[dest_byte_pos] = B * 255 / max_data;
+        dest_scan[dest_byte_pos + 1] = G * 255 / max_data;
+        dest_scan[dest_byte_pos + 2] = R * 255 / max_data;
+        dest_byte_pos += 3;
+      }
+      break;
+  }
+  return true;
 }
 
 uint8_t* CPDF_DIBSource::GetBuffer() const {

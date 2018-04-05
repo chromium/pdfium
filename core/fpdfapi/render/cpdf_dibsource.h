@@ -96,6 +96,8 @@ class CPDF_DIBSource : public CFX_DIBSource {
                         const CPDF_Dictionary* pParams);
   void TranslateScanline24bpp(uint8_t* dest_scan,
                               const uint8_t* src_scan) const;
+  bool TranslateScanline24bppDefaultDecode(uint8_t* dest_scan,
+                                           const uint8_t* src_scan) const;
   void ValidateDictParam();
   void DownSampleScanline1Bit(int orig_Bpp,
                               int dest_Bpp,
