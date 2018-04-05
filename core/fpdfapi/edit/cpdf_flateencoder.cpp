@@ -12,7 +12,8 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
-CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
+CPDF_FlateEncoder::CPDF_FlateEncoder(const CPDF_Stream* pStream,
+                                     bool bFlateEncode)
     : m_dwSize(0), m_pAcc(pdfium::MakeRetain<CPDF_StreamAcc>(pStream)) {
   m_pAcc->LoadAllDataRaw();
 

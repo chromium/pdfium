@@ -17,7 +17,7 @@ class CPDF_Stream;
 
 class CPDF_FlateEncoder {
  public:
-  CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode);
+  CPDF_FlateEncoder(const CPDF_Stream* pStream, bool bFlateEncode);
   ~CPDF_FlateEncoder();
 
   void CloneDict();

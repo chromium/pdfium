@@ -162,8 +162,7 @@ CPDF_Creator::~CPDF_Creator() {}
 bool CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                                uint32_t objnum,
                                CPDF_CryptoHandler* pCrypto) {
-  CPDF_FlateEncoder encoder(const_cast<CPDF_Stream*>(pStream->AsStream()),
-                            pStream != m_pMetadata);
+  CPDF_FlateEncoder encoder(pStream->AsStream(), pStream != m_pMetadata);
   CPDF_Encryptor encryptor(pCrypto, objnum, encoder.GetData(),
                            encoder.GetSize());
   if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
@@ -233,8 +232,7 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
       break;
     }
     case CPDF_Object::STREAM: {
-      CPDF_FlateEncoder encoder(const_cast<CPDF_Stream*>(pObj->AsStream()),
-                                true);
+      CPDF_FlateEncoder encoder(pObj->AsStream(), true);
       CPDF_Encryptor encryptor(GetCryptoHandler(), objnum, encoder.GetData(),
                                encoder.GetSize());
       if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
