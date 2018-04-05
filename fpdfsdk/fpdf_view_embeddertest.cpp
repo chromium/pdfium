@@ -390,6 +390,15 @@ TEST_F(FPDFViewEmbeddertest, Hang_360) {
   EXPECT_FALSE(OpenDocument("bug_360.pdf"));
 }
 
+// Deliberately damaged version of linearized.pdf with bad data in the shared
+// object hint table.
+TEST_F(FPDFViewEmbeddertest, Hang_1055) {
+  EXPECT_TRUE(OpenDocumentLinearized("linearized_bug_1055.pdf"));
+  int version;
+  EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
+  EXPECT_EQ(16, version);
+}
+
 void FPDFViewEmbeddertest::TestRenderPageBitmapWithMatrix(
     FPDF_PAGE page,
     const int bitmap_width,

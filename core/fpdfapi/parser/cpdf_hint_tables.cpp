@@ -418,8 +418,9 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
     return CPDF_DataAvail::DataError;
 
   if (!m_pValidator->CheckDataRangeAndRequestIfUnavailable(
-          m_szPageOffsetArray[index], dwLength))
+          m_szPageOffsetArray[index], dwLength)) {
     return CPDF_DataAvail::DataNotAvailable;
+  }
 
   // Download data of shared objects in the page.
   uint32_t offset = 0;
@@ -435,7 +436,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
   for (uint32_t j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
     dwIndex = m_dwIdentifierArray[offset + j];
     if (dwIndex >= m_dwSharedObjNumArray.size())
-      return CPDF_DataAvail::DataNotAvailable;
+      continue;
 
     dwObjNum = m_dwSharedObjNumArray[dwIndex];
     if (dwObjNum >= static_cast<uint32_t>(nFirstPageObjNum) &&
