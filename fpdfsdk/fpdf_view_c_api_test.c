@@ -227,12 +227,6 @@ int CheckPDFiumCApi() {
     CHK(FPDF_GetFormType);
 #ifdef PDF_ENABLE_XFA
     CHK(FPDF_LoadXFA);
-    CHK(FPDF_Widget_Undo);
-    CHK(FPDF_Widget_Redo);
-    CHK(FPDF_Widget_SelectAll);
-    CHK(FPDF_Widget_Copy);
-    CHK(FPDF_Widget_Cut);
-    CHK(FPDF_Widget_Paste);
 #endif
 
     // fpdf_ppo.h
