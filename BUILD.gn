@@ -1904,8 +1904,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/cfwl_edit.h",
       "xfa/fwl/cfwl_event.cpp",
       "xfa/fwl/cfwl_event.h",
-      "xfa/fwl/cfwl_eventcheckword.cpp",
-      "xfa/fwl/cfwl_eventcheckword.h",
       "xfa/fwl/cfwl_eventmouse.cpp",
       "xfa/fwl/cfwl_eventmouse.h",
       "xfa/fwl/cfwl_eventscroll.cpp",

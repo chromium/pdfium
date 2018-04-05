@@ -39,7 +39,6 @@ class CXFA_FFTextEdit : public CXFA_FFField {
                      const WideString& wsChanged,
                      const WideString& wsPrevText);
   void OnTextFull(CFWL_Widget* pWidget);
-  bool CheckWord(const ByteStringView& sWord);
 
   // CXFA_FFWidget
   bool CanUndo() override;

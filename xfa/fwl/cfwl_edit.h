@@ -114,7 +114,6 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void DrawContent(CXFA_Graphics* pGraphics,
                    IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
-  void DrawSpellCheck(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
 
   void UpdateEditEngine();
   void UpdateEditParams();
@@ -134,11 +133,6 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   bool ValidateNumberChar(wchar_t cNum);
   bool IsShowScrollBar(bool bVert);
   bool IsContentHeightOverflow();
-  void AddSpellCheckObj(CXFA_GEPath& PathData,
-                        int32_t nStart,
-                        int32_t nCount,
-                        float fOffSetX,
-                        float fOffSetY);
   void SetCursorPosition(size_t position);
   void UpdateCursorRect();
 

@@ -233,12 +233,6 @@ int CheckPDFiumCApi() {
     CHK(FPDF_Widget_Copy);
     CHK(FPDF_Widget_Cut);
     CHK(FPDF_Widget_Paste);
-    CHK(FPDF_Widget_ReplaceSpellCheckWord);
-    CHK(FPDF_Widget_GetSpellCheckWords);
-    CHK(FPDF_StringHandleCounts);
-    CHK(FPDF_StringHandleGetStringByIndex);
-    CHK(FPDF_StringHandleRelease);
-    CHK(FPDF_StringHandleAddString);
 #endif
 
     // fpdf_ppo.h

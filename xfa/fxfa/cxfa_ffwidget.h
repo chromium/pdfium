@@ -138,11 +138,6 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
 
   virtual FormFieldType GetFormFieldType();
 
-  // TODO(tsepez): Implement or remove.
-  void GetSuggestWords(CFX_PointF pointf, std::vector<ByteString>* pWords);
-  bool ReplaceSpellCheckWord(CFX_PointF pointf,
-                             const ByteStringView& bsReplace);
-
   CXFA_FFPageView* GetPageView() const { return m_pPageView; }
   void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
   const CFX_RectF& GetWidgetRect() const;

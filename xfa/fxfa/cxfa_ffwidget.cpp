@@ -501,16 +501,6 @@ FormFieldType CXFA_FFWidget::GetFormFieldType() {
   return FormFieldType::kXFA;
 }
 
-void CXFA_FFWidget::GetSuggestWords(CFX_PointF pointf,
-                                    std::vector<ByteString>* pWords) {
-  pWords->clear();
-}
-
-bool CXFA_FFWidget::ReplaceSpellCheckWord(CFX_PointF pointf,
-                                          const ByteStringView& bsReplace) {
-  return false;
-}
-
 CFX_PointF CXFA_FFWidget::Rotate2Normal(const CFX_PointF& point) {
   CFX_Matrix mt = GetRotateMatrix();
   if (mt.IsIdentity())

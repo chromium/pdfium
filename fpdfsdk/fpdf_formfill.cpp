@@ -120,16 +120,6 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
   return pFormFillEnv ? pFormFillEnv->GetPageView(pPage, true) : nullptr;
 }
 
-#ifdef PDF_ENABLE_XFA
-std::vector<ByteString>* FromFPDFStringHandle(FPDF_STRINGHANDLE handle) {
-  return static_cast<std::vector<ByteString>*>(handle);
-}
-
-FPDF_STRINGHANDLE ToFPDFStringHandle(std::vector<ByteString>* strings) {
-  return static_cast<FPDF_STRINGHANDLE>(strings);
-}
-#endif  // PDF_ENABLE_XFA
-
 void FFLCommon(FPDF_FORMHANDLE hHandle,
                FPDF_BITMAP bitmap,
                FPDF_RECORDER recorder,
@@ -618,98 +608,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_Widget_Paste(FPDF_DOCUMENT document,
 
   WideString wstr = WideString::FromUTF16LE(wsText, size);
   static_cast<CXFA_FFWidget*>(hWidget)->Paste(wstr);
-}
-
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
-                                  FPDF_WIDGET hWidget,
-                                  float x,
-                                  float y,
-                                  FPDF_BYTESTRING bsText) {
-  if (!hWidget || !document)
-    return;
-
-  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (!pContext->ContainsXFAForm())
-    return;
-
-  CFX_PointF ptPopup;
-  ptPopup.x = x;
-  ptPopup.y = y;
-  ByteStringView bs(bsText);
-  static_cast<CXFA_FFWidget*>(hWidget)->ReplaceSpellCheckWord(ptPopup, bs);
-}
-
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
-                               FPDF_WIDGET hWidget,
-                               float x,
-                               float y,
-                               FPDF_STRINGHANDLE* stringHandle) {
-  if (!hWidget || !document)
-    return;
-
-  auto* pContext = static_cast<CPDFXFA_Context*>(document);
-  if (!pContext->ContainsXFAForm())
-    return;
-
-  CFX_PointF ptPopup;
-  ptPopup.x = x;
-  ptPopup.y = y;
-  auto sSuggestWords = pdfium::MakeUnique<std::vector<ByteString>>();
-  static_cast<CXFA_FFWidget*>(hWidget)->GetSuggestWords(ptPopup,
-                                                        sSuggestWords.get());
-
-  // Caller takes ownership.
-  *stringHandle = ToFPDFStringHandle(sSuggestWords.release());
-}
-
-FPDF_EXPORT int FPDF_CALLCONV
-FPDF_StringHandleCounts(FPDF_STRINGHANDLE sHandle) {
-  std::vector<ByteString>* sSuggestWords = FromFPDFStringHandle(sHandle);
-  return sSuggestWords ? pdfium::CollectionSize<int>(*sSuggestWords) : -1;
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE sHandle,
-                                  int index,
-                                  FPDF_BYTESTRING bsText,
-                                  FPDF_DWORD* size) {
-  if (!sHandle || !size)
-    return false;
-
-  int count = FPDF_StringHandleCounts(sHandle);
-  if (index < 0 || index >= count)
-    return false;
-
-  std::vector<ByteString>* sSuggestWords = FromFPDFStringHandle(sHandle);
-  uint32_t len = (*sSuggestWords)[index].GetLength();
-  if (!bsText) {
-    *size = len;
-    return true;
-  }
-
-  uint32_t real_size = len < *size ? len : *size;
-  if (real_size > 0)
-    memcpy((void*)bsText, (*sSuggestWords)[index].c_str(), real_size);
-  *size = real_size;
-  return true;
-}
-
-FPDF_EXPORT void FPDF_CALLCONV
-FPDF_StringHandleRelease(FPDF_STRINGHANDLE stringHandle) {
-  delete FromFPDFStringHandle(stringHandle);
-}
-
-FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDF_StringHandleAddString(FPDF_STRINGHANDLE stringHandle,
-                           FPDF_BYTESTRING bsText,
-                           FPDF_DWORD size) {
-  if (!stringHandle || !bsText || size == 0)
-    return false;
-
-  FromFPDFStringHandle(stringHandle)->push_back(ByteString(bsText, size));
-  return true;
 }
 #endif  // PDF_ENABLE_XFA
 

@@ -10,7 +10,6 @@
 
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_edit.h"
-#include "xfa/fwl/cfwl_eventcheckword.h"
 #include "xfa/fwl/cfwl_eventtarget.h"
 #include "xfa/fwl/cfwl_eventtextchanged.h"
 #include "xfa/fwl/cfwl_messagekillfocus.h"
@@ -327,11 +326,6 @@ void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Full, &eParam);
 }
 
-bool CXFA_FFTextEdit::CheckWord(const ByteStringView& sWord) {
-  return sWord.IsEmpty() ||
-         m_pNode->GetFFWidgetType() != XFA_FFWidgetType::kTextEdit;
-}
-
 void CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {
   m_pOldDelegate->OnProcessMessage(pMessage);
 }
@@ -348,12 +342,6 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     }
     case CFWL_Event::Type::TextFull: {
       OnTextFull(m_pNormalWidget.get());
-      break;
-    }
-    case CFWL_Event::Type::CheckWord: {
-      WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
-      CFWL_EventCheckWord* event = static_cast<CFWL_EventCheckWord*>(pEvent);
-      event->bCheckWord = CheckWord(event->bsWord.AsStringView());
       break;
     }
     default:

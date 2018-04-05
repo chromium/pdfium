@@ -20,7 +20,6 @@ class CFWL_Event {
  public:
   enum class Type {
     CheckStateChanged,
-    CheckWord,
     Click,
     Close,
     EditChanged,

@@ -19,7 +19,6 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_caret.h"
 #include "xfa/fwl/cfwl_event.h"
-#include "xfa/fwl/cfwl_eventcheckword.h"
 #include "xfa/fwl/cfwl_eventtextchanged.h"
 #include "xfa/fwl/cfwl_eventvalidate.h"
 #include "xfa/fwl/cfwl_messagekey.h"
@@ -42,23 +41,6 @@ constexpr int kEditingModifier = FWL_KEYFLAG_Command;
 #else
 constexpr int kEditingModifier = FWL_KEYFLAG_Ctrl;
 #endif
-
-bool FxEditIsLatinWord(wchar_t c) {
-  return c == 0x2D || (c <= 0x005A && c >= 0x0041) ||
-         (c <= 0x007A && c >= 0x0061) || (c <= 0x02AF && c >= 0x00C0) ||
-         c == 0x0027;
-}
-
-void AddSquigglyPath(CXFA_GEPath* pPathData,
-                     float fStartX,
-                     float fEndX,
-                     float fY,
-                     float fStep) {
-  pPathData->MoveTo(CFX_PointF(fStartX, fY));
-  int i = 1;
-  for (float fx = fStartX + fStep; fx < fEndX; fx += fStep, ++i)
-    pPathData->LineTo(CFX_PointF(fx, fY + (i & 1) * fStep));
-}
 
 }  // namespace
 
@@ -162,80 +144,6 @@ FWL_WidgetHit CFWL_Edit::HitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_Edit::AddSpellCheckObj(CXFA_GEPath& PathData,
-                                 int32_t nStart,
-                                 int32_t nCount,
-                                 float fOffSetX,
-                                 float fOffSetY) {
-  float fStep = m_EdtEngine.GetFontSize() / 16.0f;
-  float font_ascent = m_EdtEngine.GetFontAscent();
-
-  std::vector<CFX_RectF> rects =
-      m_EdtEngine.GetCharacterRectsInRange(nStart, nCount);
-  for (const auto& rect : rects) {
-    float fY = rect.top + font_ascent + fOffSetY;
-    float fStartX = rect.left + fOffSetX;
-    float fEndX = fStartX + rect.Width();
-
-    AddSquigglyPath(&PathData, fStartX, fEndX, fY, fStep);
-  }
-}
-
-void CFWL_Edit::DrawSpellCheck(CXFA_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix) {
-  pGraphics->SaveGraphState();
-  if (pMatrix)
-    pGraphics->ConcatMatrix(pMatrix);
-
-  CFWL_EventCheckWord checkWordEvent(this);
-  ByteString sLatinWord;
-  CXFA_GEPath pathSpell;
-  int32_t nStart = 0;
-  float fOffSetX = m_rtEngine.left - m_fScrollOffsetX;
-  float fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
-  WideString wsSpell = GetText();
-  int32_t nContentLen = wsSpell.GetLength();
-  for (int i = 0; i < nContentLen; i++) {
-    if (FxEditIsLatinWord(wsSpell[i])) {
-      if (sLatinWord.IsEmpty())
-        nStart = i;
-      sLatinWord += (char)wsSpell[i];
-      continue;
-    }
-    checkWordEvent.bsWord = sLatinWord;
-    checkWordEvent.bCheckWord = true;
-    DispatchEvent(&checkWordEvent);
-
-    if (!sLatinWord.IsEmpty() && !checkWordEvent.bCheckWord) {
-      AddSpellCheckObj(pathSpell, nStart, sLatinWord.GetLength(), fOffSetX,
-                       fOffSetY);
-    }
-    sLatinWord.clear();
-  }
-
-  checkWordEvent.bsWord = sLatinWord;
-  checkWordEvent.bCheckWord = true;
-  DispatchEvent(&checkWordEvent);
-
-  if (!sLatinWord.IsEmpty() && !checkWordEvent.bCheckWord) {
-    AddSpellCheckObj(pathSpell, nStart, sLatinWord.GetLength(), fOffSetX,
-                     fOffSetY);
-  }
-  if (!pathSpell.IsEmpty()) {
-    CFX_RectF rtClip = m_rtEngine;
-    CFX_Matrix mt(1, 0, 0, 1, fOffSetX, fOffSetY);
-    if (pMatrix) {
-      rtClip = pMatrix->TransformRect(rtClip);
-      mt.Concat(*pMatrix);
-    }
-    pGraphics->SetClipRect(rtClip);
-    pGraphics->SetStrokeColor(CXFA_GEColor(0xFFFF0000));
-    pGraphics->SetLineWidth(0);
-    pGraphics->StrokePath(&pathSpell, nullptr);
-  }
-  pGraphics->RestoreGraphState();
-}
-
 void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
@@ -249,10 +157,6 @@ void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
     DrawTextBk(pGraphics, pTheme, &matrix);
   DrawContent(pGraphics, pTheme, &matrix);
 
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) &&
-      !(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly)) {
-    DrawSpellCheck(pGraphics, &matrix);
-  }
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 }
