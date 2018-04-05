@@ -95,12 +95,15 @@ class CXFA_Document : public CXFA_NodeOwner {
 
   void ClearLayoutData();
 
-  std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
+  CXFA_Node* GetGlobalBinding(uint32_t dwNameHash);
+  void RegisterGlobalBinding(uint32_t dwNameHash, CXFA_Node* pDataNode);
+
   std::vector<CXFA_Node*> m_pPendingPageSet;
 
  private:
   UnownedPtr<CXFA_FFNotify> notify_;
   CXFA_Node* m_pRootNode;
+  std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
   std::unique_ptr<CXFA_LayoutProcessor> m_pLayoutProcessor;
   std::unique_ptr<CXFA_LocaleMgr> m_pLocalMgr;

@@ -131,11 +131,6 @@ bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
   return true;
 }
 
-CXFA_Node* GetGlobalBinding(CXFA_Document* pDocument, uint32_t dwNameHash) {
-  auto it = pDocument->m_rgGlobalBinding.find(dwNameHash);
-  return it != pDocument->m_rgGlobalBinding.end() ? it->second : nullptr;
-}
-
 void MergeNodeRecurse(CXFA_Node* pDestNodeParent, CXFA_Node* pProtoNode) {
   CXFA_Node* pExistingNode = nullptr;
   for (CXFA_Node* pFormChild = pDestNodeParent->GetFirstChild(); pFormChild;
@@ -298,12 +293,6 @@ CXFA_Node* ScopeMatchGlobalBinding(CXFA_Node* pDataScope,
   return nullptr;
 }
 
-void RegisterGlobalBinding(CXFA_Document* pDocument,
-                           uint32_t dwNameHash,
-                           CXFA_Node* pDataNode) {
-  pDocument->m_rgGlobalBinding[dwNameHash] = pDataNode;
-}
-
 CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
                               const WideString& wsName,
                               CXFA_Node* pDataScope,
@@ -312,12 +301,12 @@ CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
     return nullptr;
 
   uint32_t dwNameHash = FX_HashCode_GetW(wsName.AsStringView(), false);
-  CXFA_Node* pBounded = GetGlobalBinding(pDocument, dwNameHash);
+  CXFA_Node* pBounded = pDocument->GetGlobalBinding(dwNameHash);
   if (!pBounded) {
     pBounded =
         ScopeMatchGlobalBinding(pDataScope, dwNameHash, eMatchNodeType, true);
     if (pBounded)
-      RegisterGlobalBinding(pDocument, dwNameHash, pBounded);
+      pDocument->RegisterGlobalBinding(dwNameHash, pBounded);
   }
   return pBounded;
 }
@@ -1175,7 +1164,7 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
         if (!bDataRef || bParentDataRef) {
           uint32_t dwNameHash = pFormNode->GetNameHash();
           if (dwNameHash != 0 && !pDataNode) {
-            pDataNode = GetGlobalBinding(pDocument, dwNameHash);
+            pDataNode = pDocument->GetGlobalBinding(dwNameHash);
             if (!pDataNode) {
               XFA_Element eDataNodeType = (eType == XFA_Element::Subform ||
                                            XFA_FieldIsMultiListBox(pFormNode))
@@ -1189,8 +1178,8 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
                       pFormNode->JSObject()->GetCData(XFA_Attribute::Name)));
               if (pDataNode) {
                 CreateDataBinding(pFormNode, pDataNode, false);
-                RegisterGlobalBinding(pDocument, pFormNode->GetNameHash(),
-                                      pDataNode);
+                pDocument->RegisterGlobalBinding(pFormNode->GetNameHash(),
+                                                 pDataNode);
               }
             } else {
               CreateDataBinding(pFormNode, pDataNode, true);
@@ -1809,4 +1798,14 @@ void CXFA_Document::DoDataRemerge(bool bDoDataMerge) {
 
   CXFA_LayoutProcessor* pLayoutProcessor = GetLayoutProcessor();
   pLayoutProcessor->SetForceReLayout(true);
+}
+
+CXFA_Node* CXFA_Document::GetGlobalBinding(uint32_t dwNameHash) {
+  auto it = m_rgGlobalBinding.find(dwNameHash);
+  return it != m_rgGlobalBinding.end() ? it->second : nullptr;
+}
+
+void CXFA_Document::RegisterGlobalBinding(uint32_t dwNameHash,
+                                          CXFA_Node* pDataNode) {
+  m_rgGlobalBinding[dwNameHash] = pDataNode;
 }
