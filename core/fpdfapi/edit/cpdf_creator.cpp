@@ -224,7 +224,8 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
         break;
       }
       CPDF_Encryptor encryptor(GetCryptoHandler(), objnum,
-                               (uint8_t*)str.c_str(), str.GetLength());
+                               reinterpret_cast<const uint8_t*>(str.c_str()),
+                               str.GetLength());
       ByteString content = PDF_EncodeString(
           ByteString(encryptor.GetData(), encryptor.GetSize()), bHex);
       if (!m_Archive->WriteString(content.AsStringView()))

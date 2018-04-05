@@ -23,7 +23,7 @@ class CPDF_FlateEncoder {
   void CloneDict();
 
   uint32_t GetSize() const { return m_dwSize; }
-  uint8_t* GetData() const { return m_pData.Get(); }
+  const uint8_t* GetData() const { return m_pData.Get(); }
 
   CPDF_Dictionary* GetDict() { return m_pDict.Get(); }
 

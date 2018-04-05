@@ -15,7 +15,7 @@ class CPDF_Encryptor {
  public:
   CPDF_Encryptor(CPDF_CryptoHandler* pHandler,
                  int objnum,
-                 uint8_t* src_data,
+                 const uint8_t* src_data,
                  uint32_t src_size);
   ~CPDF_Encryptor();
 

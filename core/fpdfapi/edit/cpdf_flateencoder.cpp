@@ -29,7 +29,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(const CPDF_Stream* pStream,
     return;
   }
   if (bHasFilter || !bFlateEncode) {
-    m_pData = const_cast<uint8_t*>(m_pAcc->GetData());
+    m_pData = m_pAcc->GetData();
     m_dwSize = m_pAcc->GetSize();
     m_pDict = pStream->GetDict();
     return;

@@ -9,7 +9,7 @@
 
 CPDF_Encryptor::CPDF_Encryptor(CPDF_CryptoHandler* pHandler,
                                int objnum,
-                               uint8_t* src_data,
+                               const uint8_t* src_data,
                                uint32_t src_size)
     : m_pData(nullptr), m_dwSize(0), m_bNewBuf(false) {
   if (src_size == 0)
