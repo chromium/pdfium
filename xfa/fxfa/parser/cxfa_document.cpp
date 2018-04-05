@@ -136,9 +136,7 @@ CXFA_Node* GetGlobalBinding(CXFA_Document* pDocument, uint32_t dwNameHash) {
   return it != pDocument->m_rgGlobalBinding.end() ? it->second : nullptr;
 }
 
-void MergeNodeRecurse(CXFA_Document* pDocument,
-                      CXFA_Node* pDestNodeParent,
-                      CXFA_Node* pProtoNode) {
+void MergeNodeRecurse(CXFA_Node* pDestNodeParent, CXFA_Node* pProtoNode) {
   CXFA_Node* pExistingNode = nullptr;
   for (CXFA_Node* pFormChild = pDestNodeParent->GetFirstChild(); pFormChild;
        pFormChild = pFormChild->GetNextSibling()) {
@@ -155,7 +153,7 @@ void MergeNodeRecurse(CXFA_Document* pDocument,
     pExistingNode->SetTemplateNode(pProtoNode);
     for (CXFA_Node* pTemplateChild = pProtoNode->GetFirstChild();
          pTemplateChild; pTemplateChild = pTemplateChild->GetNextSibling()) {
-      MergeNodeRecurse(pDocument, pExistingNode, pTemplateChild);
+      MergeNodeRecurse(pExistingNode, pTemplateChild);
     }
     return;
   }
@@ -164,9 +162,7 @@ void MergeNodeRecurse(CXFA_Document* pDocument,
   pDestNodeParent->InsertChild(pNewNode, nullptr);
 }
 
-void MergeNode(CXFA_Document* pDocument,
-               CXFA_Node* pDestNode,
-               CXFA_Node* pProtoNode) {
+void MergeNode(CXFA_Node* pDestNode, CXFA_Node* pProtoNode) {
   {
     CXFA_NodeIterator sIterator(pDestNode);
     for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
@@ -177,7 +173,7 @@ void MergeNode(CXFA_Document* pDocument,
   pDestNode->SetTemplateNode(pProtoNode);
   for (CXFA_Node* pTemplateChild = pProtoNode->GetFirstChild(); pTemplateChild;
        pTemplateChild = pTemplateChild->GetNextSibling()) {
-    MergeNodeRecurse(pDocument, pDestNode, pTemplateChild);
+    MergeNodeRecurse(pDestNode, pTemplateChild);
   }
   {
     CXFA_NodeIterator sIterator(pDestNode);
@@ -326,8 +322,7 @@ CXFA_Node* FindGlobalDataNode(CXFA_Document* pDocument,
   return pBounded;
 }
 
-CXFA_Node* FindOnceDataNode(CXFA_Document* pDocument,
-                            const WideString& wsName,
+CXFA_Node* FindOnceDataNode(const WideString& wsName,
                             CXFA_Node* pDataScope,
                             XFA_Element eMatchNodeType) {
   if (wsName.IsEmpty())
@@ -463,7 +458,6 @@ CXFA_Node* FindMatchingDataNode(
       case XFA_AttributeEnum::Once: {
         bAccessedDataDOM = true;
         CXFA_Node* pOnceBindNode = FindOnceDataNode(
-            pDocument,
             pCurTemplateNode->JSObject()->GetCData(XFA_Attribute::Name),
             pDataScope, eMatchNodeType);
         if (!pOnceBindNode) {
@@ -1584,7 +1578,7 @@ void CXFA_Document::DoProtoMerge() {
     if (!pProtoNode)
       continue;
 
-    MergeNode(this, pUseHrefNode, pProtoNode);
+    MergeNode(pUseHrefNode, pProtoNode);
   }
 }
 
