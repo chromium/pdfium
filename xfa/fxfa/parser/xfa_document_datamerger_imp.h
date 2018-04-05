@@ -14,6 +14,8 @@
 class CXFA_Document;
 class CXFA_Node;
 
+bool XFA_DataMerge_NeedGenerateForm(CXFA_Node* pTemplateChild,
+                                    bool bUseInstanceManager);
 CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
     CXFA_Document* pDocument,
     CXFA_Node* pFormParent,
