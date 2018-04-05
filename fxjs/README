@@ -28,6 +28,8 @@ tag and contains either:
     formcalc_fm2js_descriptor
 
 Slot 1's contents are determined by these tags:
-  kPerObjectDataTag means to expect a CFXJS_PerObjectData.
-  g_FXJSETagString means to expect a CFXJSE_HostObject.
-  A FXJSE_CLASS_DESCRIPTOR pointer means to expect a v8 function.
+  kPerObjectDataTag means an aligned pointer to CFXJS_PerObjectData.
+  g_FXJSETagString means an aligned pointer to CFXJSE_HostObject.
+  A FXJSE_CLASS_DESCRIPTOR pointer means to expect an actual v8 function
+  object, and not an aligned pointer.
+

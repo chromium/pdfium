@@ -93,20 +93,20 @@ class CFXJS_PerObjectData {
   static void SetInObject(CFXJS_PerObjectData* pData,
                           v8::Local<v8::Object> pObj) {
     if (pObj->InternalFieldCount() == 2) {
-      pObj->SetAlignedPointerInInternalField(0, pData);
       pObj->SetAlignedPointerInInternalField(
-          1, static_cast<void*>(kPerObjectDataTag));
+          0, static_cast<void*>(kPerObjectDataTag));
+      pObj->SetAlignedPointerInInternalField(1, pData);
     }
   }
 
   static CFXJS_PerObjectData* GetFromObject(v8::Local<v8::Object> pObj) {
     if (pObj.IsEmpty() || pObj->InternalFieldCount() != 2 ||
-        pObj->GetAlignedPointerFromInternalField(1) !=
+        pObj->GetAlignedPointerFromInternalField(0) !=
             static_cast<void*>(kPerObjectDataTag)) {
       return nullptr;
     }
     return static_cast<CFXJS_PerObjectData*>(
-        pObj->GetAlignedPointerFromInternalField(0));
+        pObj->GetAlignedPointerFromInternalField(1));
   }
 
   const int m_ObjDefID;

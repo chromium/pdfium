@@ -311,16 +311,6 @@ const FXJSE_FUNCTION_DESCRIPTOR kFormCalcFM2JSFunctions[] = {
     {"var_filter", CFXJSE_FormCalcContext::fm_var_filter},
 };
 
-const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
-    "XFA_FM2JS_FormCalcClass",              // name
-    kFormCalcFM2JSFunctions,                // methods
-    FX_ArraySize(kFormCalcFM2JSFunctions),  // number of methods
-    nullptr,                                // dynamic prop type
-    nullptr,                                // dynamic prop getter
-    nullptr,                                // dynamic prop setter
-    nullptr,                                // dynamic prop method call
-};
-
 const uint8_t kAltTableDate[] = {
     255, 255, 255, 3,   9,   255, 255, 255, 255, 255, 255,
     255, 2,   255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -614,6 +604,16 @@ double ByteStringToDouble(const ByteStringView& szStringVal) {
 }
 
 }  // namespace
+
+const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
+    "XFA_FM2JS_FormCalcClass",              // name
+    kFormCalcFM2JSFunctions,                // methods
+    FX_ArraySize(kFormCalcFM2JSFunctions),  // number of methods
+    nullptr,                                // dynamic prop type
+    nullptr,                                // dynamic prop getter
+    nullptr,                                // dynamic prop setter
+    nullptr,                                // dynamic prop method call
+};
 
 // static
 void CFXJSE_FormCalcContext::Abs(CFXJSE_Value* pThis,

@@ -31,8 +31,6 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-namespace {
-
 const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor = {
     "Root",   // name
     nullptr,  // methods
@@ -62,6 +60,8 @@ const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor = {
     CFXJSE_Engine::GlobalPropertySetter,
     CFXJSE_Engine::NormalMethodCall,
 };
+
+namespace {
 
 const char kFormCalcRuntime[] = "pfm_rt";
 

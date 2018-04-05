@@ -47,8 +47,9 @@ void V8ConstructorCallback_Wrapper(
   if (!lpClassDefinition)
     return;
 
-  ASSERT(info.Holder()->InternalFieldCount());
+  ASSERT(info.Holder()->InternalFieldCount() == 2);
   info.Holder()->SetAlignedPointerInInternalField(0, nullptr);
+  info.Holder()->SetAlignedPointerInInternalField(1, nullptr);
 }
 
 void Context_GlobalObjToString(
@@ -75,11 +76,19 @@ void Context_GlobalObjToString(
 void DynPropGetterAdapter_MethodCallback(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Local<v8::Object> hCallBackInfo = info.Data().As<v8::Object>();
-  FXJSE_CLASS_DESCRIPTOR* lpClass = static_cast<FXJSE_CLASS_DESCRIPTOR*>(
-      hCallBackInfo->GetAlignedPointerFromInternalField(0));
+  ASSERT(hCallBackInfo->InternalFieldCount() == 2);
+
+  const FXJSE_CLASS_DESCRIPTOR* lpClass =
+      static_cast<const FXJSE_CLASS_DESCRIPTOR*>(
+          hCallBackInfo->GetAlignedPointerFromInternalField(0));
+  ASSERT(lpClass == &GlobalClassDescriptor ||
+         lpClass == &NormalClassDescriptor ||
+         lpClass == &VariablesClassDescriptor ||
+         lpClass == &kFormCalcFM2JSDescriptor);
+
   v8::Local<v8::String> hPropName =
       hCallBackInfo->GetInternalField(1).As<v8::String>();
-  ASSERT(lpClass && !hPropName.IsEmpty());
+  ASSERT(!hPropName.IsEmpty());
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), hPropName);
   WideString szFxPropName = WideString::FromUTF8(*szPropName);

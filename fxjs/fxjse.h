@@ -65,6 +65,11 @@ struct FXJSE_CLASS_DESCRIPTOR {
   FXJSE_MethodCallback dynMethodCall;
 };
 
+extern const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor;
+extern const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor;
+extern const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor;
+extern const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor;
+
 void FXJSE_ThrowMessage(const ByteStringView& utf8Message);
 
 #endif  // FXJS_FXJSE_H_
