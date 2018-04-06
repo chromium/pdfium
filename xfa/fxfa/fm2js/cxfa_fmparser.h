@@ -46,7 +46,7 @@ class CXFA_FMParser {
   std::unique_ptr<CXFA_FMSimpleExpression> ParseLogicalAndExpression();
   std::unique_ptr<CXFA_FMSimpleExpression> ParseEqualityExpression();
   std::unique_ptr<CXFA_FMSimpleExpression> ParseRelationalExpression();
-  std::unique_ptr<CXFA_FMSimpleExpression> ParseAddtiveExpression();
+  std::unique_ptr<CXFA_FMSimpleExpression> ParseAdditiveExpression();
   std::unique_ptr<CXFA_FMSimpleExpression> ParseMultiplicativeExpression();
   std::unique_ptr<CXFA_FMSimpleExpression> ParseUnaryExpression();
   std::unique_ptr<CXFA_FMSimpleExpression> ParsePrimaryExpression();

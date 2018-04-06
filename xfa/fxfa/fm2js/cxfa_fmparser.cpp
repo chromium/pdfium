@@ -400,7 +400,7 @@ CXFA_FMParser::ParseRelationalExpression() {
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
 
-  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseAddtiveExpression();
+  std::unique_ptr<CXFA_FMSimpleExpression> e1 = ParseAdditiveExpression();
   if (!e1)
     return nullptr;
 
@@ -416,7 +416,7 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!NextToken())
           return nullptr;
 
-        e2 = ParseAddtiveExpression();
+        e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
 
@@ -428,7 +428,7 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!NextToken())
           return nullptr;
 
-        e2 = ParseAddtiveExpression();
+        e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
 
@@ -440,7 +440,7 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!NextToken())
           return nullptr;
 
-        e2 = ParseAddtiveExpression();
+        e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
 
@@ -452,7 +452,7 @@ CXFA_FMParser::ParseRelationalExpression() {
         if (!NextToken())
           return nullptr;
 
-        e2 = ParseAddtiveExpression();
+        e2 = ParseAdditiveExpression();
         if (!e2)
           return nullptr;
 
@@ -470,7 +470,7 @@ CXFA_FMParser::ParseRelationalExpression() {
 // Additive := MultiplicativeExpression |
 //             AdditiveExpression AdditiveOperator MultiplicativeExpression
 std::unique_ptr<CXFA_FMSimpleExpression>
-CXFA_FMParser::ParseAddtiveExpression() {
+CXFA_FMParser::ParseAdditiveExpression() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return nullptr;
