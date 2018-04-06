@@ -32,7 +32,8 @@
 //
 // The array indexing operation [] is not supported on an unowned ptr,
 // because an unowned ptr expresses a one to one relationship with some
-// other heap object.
+// other heap object. Use pdfium::span<> for the cases where indexing
+// into an unowned array is desired, which performs the same checks.
 
 namespace fxcrt {
 

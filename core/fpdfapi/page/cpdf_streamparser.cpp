@@ -101,13 +101,12 @@ uint32_t DecodeInlineStream(const uint8_t* src_buf,
 
 }  // namespace
 
-CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize)
-    : m_Size(dwSize), m_Pos(0), m_WordSize(0), m_pBuf(pData) {}
+CPDF_StreamParser::CPDF_StreamParser(pdfium::span<const uint8_t> span)
+    : m_pBuf(span) {}
 
-CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData,
-                                     uint32_t dwSize,
+CPDF_StreamParser::CPDF_StreamParser(pdfium::span<const uint8_t> span,
                                      const WeakPtr<ByteStringPool>& pPool)
-    : m_Size(dwSize), m_Pos(0), m_WordSize(0), m_pBuf(pData), m_pPool(pPool) {}
+    : m_pPool(pPool), m_pBuf(span) {}
 
 CPDF_StreamParser::~CPDF_StreamParser() {}
 
@@ -115,7 +114,7 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
     std::unique_ptr<CPDF_Dictionary> pDict,
     CPDF_Object* pCSObj) {
-  if (m_Pos == m_Size)
+  if (m_Pos == m_pBuf.size())
     return nullptr;
 
   if (PDFCharIsWhitespace(m_pBuf[m_Pos]))
@@ -176,17 +175,17 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   std::unique_ptr<uint8_t, FxFreeDeleter> pData;
   uint32_t dwStreamSize;
   if (Decoder.IsEmpty()) {
-    if (OrigSize > m_Size - m_Pos)
-      OrigSize = m_Size - m_Pos;
+    if (OrigSize > m_pBuf.size() - m_Pos)
+      OrigSize = m_pBuf.size() - m_Pos;
     pData.reset(FX_Alloc(uint8_t, OrigSize));
-    memcpy(pData.get(), m_pBuf + m_Pos, OrigSize);
+    memcpy(pData.get(), &m_pBuf[m_Pos], OrigSize);
     dwStreamSize = OrigSize;
     m_Pos += OrigSize;
   } else {
     uint8_t* pIgnore = nullptr;
     uint32_t dwDestSize = OrigSize;
     dwStreamSize =
-        DecodeInlineStream(m_pBuf + m_Pos, m_Size - m_Pos, width, height,
+        DecodeInlineStream(&m_pBuf[m_Pos], m_pBuf.size() - m_Pos, width, height,
                            Decoder, pParam, &pIgnore, &dwDestSize);
     FX_Free(pIgnore);
     if (static_cast<int>(dwStreamSize) < 0)
@@ -212,7 +211,7 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     }
     m_Pos = dwSavePos;
     pData.reset(FX_Alloc(uint8_t, dwStreamSize));
-    memcpy(pData.get(), m_pBuf + m_Pos, dwStreamSize);
+    memcpy(pData.get(), &m_pBuf[m_Pos], dwStreamSize);
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(dwStreamSize));
@@ -603,5 +602,5 @@ ByteString CPDF_StreamParser::ReadHexString() {
 }
 
 bool CPDF_StreamParser::PositionIsInBounds() const {
-  return m_Pos < m_Size;
+  return m_Pos < m_pBuf.size();
 }

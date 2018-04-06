@@ -37,6 +37,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -1515,7 +1516,8 @@ uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
                                                           pData);
 
   uint32_t InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
-  CPDF_StreamParser syntax(pData, dwSize, m_pDocument->GetByteStringPool());
+  CPDF_StreamParser syntax(pdfium::make_span(pData, dwSize),
+                           m_pDocument->GetByteStringPool());
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   while (1) {
     uint32_t cost = m_pObjectHolder->GetPageObjectList()->size() - InitObjCount;
