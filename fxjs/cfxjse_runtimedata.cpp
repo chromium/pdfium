@@ -24,6 +24,7 @@ std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
 
   v8::Local<v8::FunctionTemplate> hFuncTemplate =
       v8::FunctionTemplate::New(pIsolate);
+
   v8::Local<v8::ObjectTemplate> hGlobalTemplate =
       hFuncTemplate->InstanceTemplate();
   hGlobalTemplate->Set(
@@ -33,8 +34,14 @@ std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
 
   v8::Local<v8::Context> hContext =
       v8::Context::New(pIsolate, 0, hGlobalTemplate);
-  hContext->SetSecurityToken(v8::External::New(pIsolate, pIsolate));
 
+  ASSERT(hContext->Global()->InternalFieldCount() == 0);
+  ASSERT(hContext->Global()
+             ->GetPrototype()
+             .As<v8::Object>()
+             ->InternalFieldCount() == 0);
+
+  hContext->SetSecurityToken(v8::External::New(pIsolate, pIsolate));
   pRuntimeData->m_hRootContextGlobalTemplate.Reset(pIsolate, hFuncTemplate);
   pRuntimeData->m_hRootContext.Reset(pIsolate, hContext);
   return pRuntimeData;

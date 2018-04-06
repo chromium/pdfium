@@ -187,6 +187,16 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
   v8::Local<v8::Context> hNewContext =
       v8::Context::New(pIsolate, nullptr, hObjectTemplate);
 
+  v8::Local<v8::Object> pThisProxy = hNewContext->Global();
+  ASSERT(pThisProxy->InternalFieldCount() == 2);
+  pThisProxy->SetAlignedPointerInInternalField(0, nullptr);
+  pThisProxy->SetAlignedPointerInInternalField(1, nullptr);
+
+  v8::Local<v8::Object> pThis = pThisProxy->GetPrototype().As<v8::Object>();
+  ASSERT(pThis->InternalFieldCount() == 2);
+  pThis->SetAlignedPointerInInternalField(0, nullptr);
+  pThis->SetAlignedPointerInInternalField(1, nullptr);
+
   v8::Local<v8::Context> hRootContext = v8::Local<v8::Context>::New(
       pIsolate, CFXJSE_RuntimeData::Get(pIsolate)->m_hRootContext);
   hNewContext->SetSecurityToken(hRootContext->GetSecurityToken());
