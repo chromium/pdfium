@@ -58,9 +58,7 @@ class CXFA_FFDoc {
   }
   FormType GetFormType() const { return m_FormType; }
 
-  int32_t StartLoad();
-  int32_t DoLoad();
-  void StopLoad();
+  int32_t Load();
 
   CXFA_FFDocView* CreateDocView();
 

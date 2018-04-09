@@ -96,14 +96,13 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
-  m_pXFADoc->StartLoad();
-  int iStatus = m_pXFADoc->DoLoad();
+  int iStatus = m_pXFADoc->Load();
   if (iStatus != XFA_PARSESTATUS_Done) {
     CloseXFADoc();
     SetLastError(FPDF_ERR_XFALOAD);
     return false;
   }
-  m_pXFADoc->StopLoad();
+
   m_pXFADoc->GetXFADoc()->InitScriptContext(GetCJSRuntime());
 
   if (m_pXFADoc->GetFormType() == FormType::kXFAFull)
