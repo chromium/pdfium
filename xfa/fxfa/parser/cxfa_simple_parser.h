@@ -16,7 +16,6 @@ class CXFA_Node;
 class CFX_XMLDoc;
 class CFX_XMLInstruction;
 class CFX_XMLNode;
-class CFX_XMLParser;
 class IFX_SeekableStream;
 class CFX_SeekableStreamProxy;
 
@@ -73,7 +72,6 @@ class CXFA_SimpleParser {
                         XFA_PacketType ePacketID);
 
   std::unique_ptr<CFX_XMLDoc> m_pXMLDoc;
-  UnownedPtr<CFX_XMLParser> m_pXMLParser;  // Owned by |m_pXMLDoc|
   RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   RetainPtr<IFX_SeekableStream> m_pFileRead;
   UnownedPtr<CXFA_Document> m_pFactory;

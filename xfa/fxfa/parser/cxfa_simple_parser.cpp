@@ -350,12 +350,8 @@ int32_t CXFA_SimpleParser::StartParse(
       wCodePage != FX_CODEPAGE_UTF8) {
     m_pStream->SetCodePage(FX_CODEPAGE_UTF8);
   }
-  m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>();
-  auto pNewParser =
-      pdfium::MakeUnique<CFX_XMLParser>(m_pXMLDoc->GetRoot(), m_pStream);
-  m_pXMLParser = pNewParser.get();
-  if (!m_pXMLDoc->LoadXML(std::move(pNewParser)))
-    return XFA_PARSESTATUS_StatusErr;
+
+  m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>(m_pStream);
 
   m_bParseStarted = true;
   m_ePacketID = ePacketID;
@@ -373,7 +369,6 @@ int32_t CXFA_SimpleParser::DoParse() {
     return iRet / 2;
 
   m_pRootNode = ParseAsXDPPacket(GetDocumentNode(m_pXMLDoc.get()), m_ePacketID);
-  m_pXMLParser.Release();
   m_pXMLDoc->CloseXML();
   m_pStream.Reset();
 
@@ -385,15 +380,11 @@ int32_t CXFA_SimpleParser::DoParse() {
 
 CFX_XMLNode* CXFA_SimpleParser::ParseXMLData(const ByteString& wsXML) {
   CloseParser();
-  m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>();
 
   auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
       const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength());
-  auto pParser =
-      pdfium::MakeUnique<CFX_XMLParser>(m_pXMLDoc->GetRoot(), pStream);
-  pParser->m_dwCheckStatus = 0x03;
-  if (!m_pXMLDoc->LoadXML(std::move(pParser)))
-    return nullptr;
+  m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>(pStream);
+  m_pXMLDoc->GetParser()->m_dwCheckStatus = 0x03;
 
   int32_t iRet = m_pXMLDoc->DoLoad();
   if (iRet < 0 || iRet >= 100)
@@ -662,16 +653,17 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Form(
   CFX_XMLElement* pXMLDocumentElement =
       static_cast<CFX_XMLElement*>(pXMLDocumentNode);
   WideString wsChecksum = pXMLDocumentElement->GetString(L"checksum");
-  if (wsChecksum.GetLength() != 28 || m_pXMLParser->m_dwCheckStatus != 0x03) {
+  if (wsChecksum.GetLength() != 28 ||
+      m_pXMLDoc->GetParser()->m_dwCheckStatus != 0x03) {
     return nullptr;
   }
 
   auto pChecksum = pdfium::MakeUnique<CFX_ChecksumContext>();
   pChecksum->StartChecksum();
-  pChecksum->UpdateChecksum(m_pFileRead, m_pXMLParser->m_nStart[0],
-                            m_pXMLParser->m_nSize[0]);
-  pChecksum->UpdateChecksum(m_pFileRead, m_pXMLParser->m_nStart[1],
-                            m_pXMLParser->m_nSize[1]);
+  pChecksum->UpdateChecksum(m_pFileRead, m_pXMLDoc->GetParser()->m_nStart[0],
+                            m_pXMLDoc->GetParser()->m_nSize[0]);
+  pChecksum->UpdateChecksum(m_pFileRead, m_pXMLDoc->GetParser()->m_nStart[1],
+                            m_pXMLDoc->GetParser()->m_nSize[1]);
   pChecksum->FinishChecksum();
   ByteString bsCheck = pChecksum->GetChecksum();
   if (bsCheck != wsChecksum.UTF8Encode())
