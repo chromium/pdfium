@@ -258,6 +258,7 @@ class TestRunner:
               if os.path.isfile(input_path):
                 self.test_cases.append((input_filename, file_dir))
 
+    self.test_cases.sort()
     self.failures = []
     self.surprises = []
     self.result_suppressed_cases = []
