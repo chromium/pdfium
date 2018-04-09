@@ -123,7 +123,7 @@ class CPDF_RenderStatus {
                       const CFX_Matrix* pObj2Device);
   void DrawShading(const CPDF_ShadingPattern* pPattern,
                    CFX_Matrix* pMatrix,
-                   FX_RECT& clip_rect,
+                   const FX_RECT& clip_rect,
                    int alpha,
                    bool bAlphaMode);
   bool ProcessType3Text(CPDF_TextObject* textobj,

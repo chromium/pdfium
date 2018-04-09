@@ -25,7 +25,7 @@ class CPDF_DeviceBuffer {
 
   bool Initialize(CPDF_RenderContext* pContext,
                   CFX_RenderDevice* pDevice,
-                  FX_RECT* pRect,
+                  const FX_RECT& rect,
                   const CPDF_PageObject* pObj,
                   int max_dpi);
   void OutputToDevice();

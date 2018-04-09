@@ -21,14 +21,14 @@ CPDF_DeviceBuffer::~CPDF_DeviceBuffer() {}
 
 bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
                                    CFX_RenderDevice* pDevice,
-                                   FX_RECT* pRect,
+                                   const FX_RECT& rect,
                                    const CPDF_PageObject* pObj,
                                    int max_dpi) {
   m_pDevice = pDevice;
   m_pContext = pContext;
-  m_Rect = *pRect;
+  m_Rect = rect;
   m_pObject = pObj;
-  m_Matrix.Translate(-pRect->left, -pRect->top);
+  m_Matrix.Translate(-rect.left, -rect.top);
 #if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
   int horz_size = pDevice->GetDeviceCaps(FXDC_HORZ_SIZE);
   int vert_size = pDevice->GetDeviceCaps(FXDC_VERT_SIZE);
@@ -44,7 +44,7 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   }
 #endif
   FX_RECT bitmap_rect =
-      m_Matrix.TransformRect(CFX_FloatRect(*pRect)).GetOuterRect();
+      m_Matrix.TransformRect(CFX_FloatRect(rect)).GetOuterRect();
   m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(), FXDIB_Argb);
   return true;

@@ -2035,7 +2035,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
 
 void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
                                     CFX_Matrix* pMatrix,
-                                    FX_RECT& clip_rect,
+                                    const FX_RECT& clip_rect,
                                     int alpha,
                                     bool bAlphaMode) {
   const auto& funcs = pPattern->GetFuncs();
@@ -2060,17 +2060,19 @@ void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
                               (int32_t)(B * 255));
     }
   }
+  FX_RECT clip_rect_bbox = clip_rect;
   if (pDict->KeyExist("BBox")) {
-    clip_rect.Intersect(
+    clip_rect_bbox.Intersect(
         pMatrix->TransformRect(pDict->GetRectFor("BBox")).GetOuterRect());
   }
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING &&
-      m_pDevice->GetDeviceDriver()->DrawShading(pPattern, pMatrix, clip_rect,
-                                                alpha, bAlphaMode)) {
+      m_pDevice->GetDeviceDriver()->DrawShading(
+          pPattern, pMatrix, clip_rect_bbox, alpha, bAlphaMode)) {
     return;
   }
   CPDF_DeviceBuffer buffer;
-  buffer.Initialize(m_pContext.Get(), m_pDevice, &clip_rect, m_pCurObj, 150);
+  buffer.Initialize(m_pContext.Get(), m_pDevice, clip_rect_bbox, m_pCurObj,
+                    150);
   CFX_Matrix FinalMatrix = *pMatrix;
   FinalMatrix.Concat(*buffer.GetMatrix());
   RetainPtr<CFX_DIBitmap> pBitmap = buffer.GetBitmap();
