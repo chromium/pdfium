@@ -4678,10 +4678,8 @@ void CXFA_Node::SetToXML(const WideString& value) {
           }
         }
       }
-      if (bDeleteChildren) {
-        while (auto* child = GetLastChild())
-          RemoveChild(child, false);
-      }
+      if (bDeleteChildren)
+        elem->DeleteChildren();
 
       elem->SetTextData(value);
       break;
