@@ -1167,17 +1167,7 @@ FX_RECT CPDF_RenderStatus::GetObjectClippedRect(
     const CPDF_PageObject* pObj,
     const CFX_Matrix* pObj2Device) const {
   FX_RECT rect = pObj->GetBBox(pObj2Device);
-  FX_RECT rtClip = m_pDevice->GetClipBox();
-  CFX_Matrix dCTM = m_pDevice->GetCTM();
-  float a = fabs(dCTM.a);
-  float d = fabs(dCTM.d);
-  if (a != 1.0f || d != 1.0f) {
-    rect.right = rect.left + (int32_t)ceil((float)rect.Width() * a);
-    rect.bottom = rect.top + (int32_t)ceil((float)rect.Height() * d);
-    rtClip.right = rtClip.left + (int32_t)ceil((float)rtClip.Width() * a);
-    rtClip.bottom = rtClip.top + (int32_t)ceil((float)rtClip.Height() * d);
-  }
-  rect.Intersect(rtClip);
+  rect.Intersect(m_pDevice->GetClipBox());
   return rect;
 }
 
@@ -1213,27 +1203,16 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
 
 bool CPDF_RenderStatus::DrawObjWithBlend(CPDF_PageObject* pObj,
                                          const CFX_Matrix* pObj2Device) {
-  bool bRet = false;
   switch (pObj->GetType()) {
     case CPDF_PageObject::PATH:
-      bRet = ProcessPath(pObj->AsPath(), pObj2Device);
-      break;
+      return ProcessPath(pObj->AsPath(), pObj2Device);
     case CPDF_PageObject::IMAGE:
-      bRet = ProcessImage(pObj->AsImage(), pObj2Device);
-      break;
+      return ProcessImage(pObj->AsImage(), pObj2Device);
     case CPDF_PageObject::FORM:
-      bRet = ProcessForm(pObj->AsForm(), pObj2Device);
-      break;
+      return ProcessForm(pObj->AsForm(), pObj2Device);
     default:
-      break;
+      return false;
   }
-  return bRet;
-}
-
-void CPDF_RenderStatus::GetScaledMatrix(CFX_Matrix& matrix) const {
-  CFX_Matrix dCTM = m_pDevice->GetCTM();
-  matrix.a *= fabs(dCTM.a);
-  matrix.d *= fabs(dCTM.d);
 }
 
 void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
@@ -1254,7 +1233,6 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   }
   CFX_Matrix matrix = *pObj2Device;
   matrix.Concat(*buffer.GetMatrix());
-  GetScaledMatrix(matrix);
   CPDF_Dictionary* pFormResource = nullptr;
   const CPDF_FormObject* pFormObj = pObj->AsForm();
   if (pFormObj) {
@@ -1569,11 +1547,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (rect.IsEmpty())
     return true;
 
-  CFX_Matrix deviceCTM = m_pDevice->GetCTM();
-  float scaleX = fabs(deviceCTM.a);
-  float scaleY = fabs(deviceCTM.d);
-  int width = FXSYS_round((float)rect.Width() * scaleX);
-  int height = FXSYS_round((float)rect.Height() * scaleY);
+  int width = rect.Width();
+  int height = rect.Height();
   CFX_DefaultRenderDevice bitmap_device;
   RetainPtr<CFX_DIBitmap> oriDevice;
   if (!isolated && (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
@@ -1590,7 +1565,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
 
   CFX_Matrix new_matrix = *pObj2Device;
   new_matrix.Translate(-rect.left, -rect.top);
-  new_matrix.Scale(scaleX, scaleY);
 
   RetainPtr<CFX_DIBitmap> pTextMask;
   if (bTextClip) {
@@ -1666,11 +1640,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   bbox.Intersect(m_pDevice->GetClipBox());
   *left = bbox.left;
   *top = bbox.top;
-  CFX_Matrix deviceCTM = m_pDevice->GetCTM();
-  float scaleX = fabs(deviceCTM.a);
-  float scaleY = fabs(deviceCTM.d);
-  int width = FXSYS_round(bbox.Width() * scaleX);
-  int height = FXSYS_round(bbox.Height() * scaleY);
+  int width = bbox.Width();
+  int height = bbox.Height();
   auto pBackdrop = pdfium::MakeRetain<CFX_DIBitmap>();
   if (bBackAlphaRequired && !m_bDropObjects)
     pBackdrop->Create(width, height, FXDIB_Argb);
@@ -1692,7 +1663,6 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   }
   CFX_Matrix FinalMatrix = m_DeviceMatrix;
   FinalMatrix.Translate(-*left, -*top);
-  FinalMatrix.Scale(scaleX, scaleY);
   pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
 
   CFX_DefaultRenderDevice device;
@@ -1853,9 +1823,6 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   if (pdfium::ContainsValue(m_Type3FontCache, pType3Font))
     return true;
 
-  CFX_Matrix dCTM = m_pDevice->GetCTM();
-  float sa = fabs(dCTM.a);
-  float sd = fabs(dCTM.d);
   CFX_Matrix text_matrix = textobj->GetTextMatrix();
   CFX_Matrix char_matrix = pType3Font->GetFontMatrix();
   float font_size = textobj->m_TextState.GetFontSize();
@@ -1927,8 +1894,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
             matrix.TransformRect(pType3Char->form()->CalcBoundingBox())
                 .GetOuterRect();
         CFX_DefaultRenderDevice bitmap_device;
-        if (!bitmap_device.Create((int)(rect.Width() * sa),
-                                  (int)(rect.Height() * sd), FXDIB_Argb,
+        if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Argb,
                                   nullptr)) {
           return true;
         }
@@ -1941,7 +1907,6 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
         matrix.Translate(-rect.left, -rect.top);
-        matrix.Scale(sa, sd);
         status.RenderObjectList(pType3Char->form(), &matrix);
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
       }
@@ -1949,7 +1914,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       if (device_class == FXDC_DISPLAY) {
         RetainPtr<CPDF_Type3Cache> pCache = GetCachedType3(pType3Font);
         refTypeCache.m_dwCount++;
-        CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix, sa, sd);
+        CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix);
         if (!pBitmap)
           continue;
 
@@ -1978,12 +1943,11 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   if (glyphs.empty())
     return true;
 
-  FX_RECT rect = FXGE_GetGlyphsBBox(glyphs, 0, sa, sd);
+  FX_RECT rect = FXGE_GetGlyphsBBox(glyphs, 0);
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pBitmap->Create(static_cast<int>(rect.Width() * sa),
-                       static_cast<int>(rect.Height() * sd), FXDIB_8bppMask)) {
+  if (!pBitmap->Create(rect.Width(), rect.Height(), FXDIB_8bppMask))
     return true;
-  }
+
   pBitmap->Clear(0);
   for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
     if (!glyph.m_pGlyph)
@@ -1992,14 +1956,12 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     pdfium::base::CheckedNumeric<int> left = glyph.m_Origin.x;
     left += glyph.m_pGlyph->m_Left;
     left -= rect.left;
-    left *= sa;
     if (!left.IsValid())
       continue;
 
     pdfium::base::CheckedNumeric<int> top = glyph.m_Origin.y;
     top -= glyph.m_pGlyph->m_Top;
     top -= rect.top;
-    top *= sd;
     if (!top.IsValid())
       continue;
 
@@ -2187,7 +2149,6 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
 
   CFX_Matrix matrix = *pattern->pattern_to_form();
   matrix.Concat(*pObj2Device);
-  GetScaledMatrix(matrix);
   int alpha =
       FXSYS_round(255 * (bStroke ? pPageObj->m_GeneralState.GetStrokeAlpha()
                                  : pPageObj->m_GeneralState.GetFillAlpha()));
@@ -2231,15 +2192,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   if (clip_box.IsEmpty())
     return;
 
-  CFX_Matrix dCTM = m_pDevice->GetCTM();
-  float sa = fabs(dCTM.a);
-  float sd = fabs(dCTM.d);
-  clip_box.right = clip_box.left + (int32_t)ceil(clip_box.Width() * sa);
-  clip_box.bottom = clip_box.top + (int32_t)ceil(clip_box.Height() * sd);
-
   CFX_Matrix mtPattern2Device = *pPattern->pattern_to_form();
   mtPattern2Device.Concat(*pObj2Device);
-  GetScaledMatrix(mtPattern2Device);
 
   bool bAligned =
       pPattern->bbox().left == 0 && pPattern->bbox().bottom == 0 &&

@@ -12,10 +12,6 @@
 
 RenderDeviceDriverIface::~RenderDeviceDriverIface() {}
 
-CFX_Matrix RenderDeviceDriverIface::GetCTM() const {
-  return CFX_Matrix();
-}
-
 bool RenderDeviceDriverIface::StartRendering() {
   return true;
 }

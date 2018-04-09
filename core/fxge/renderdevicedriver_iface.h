@@ -30,7 +30,6 @@ class RenderDeviceDriverIface {
   virtual ~RenderDeviceDriverIface();
 
   virtual int GetDeviceCaps(int caps_id) const = 0;
-  virtual CFX_Matrix GetCTM() const;
 
   virtual bool StartRendering();
   virtual void EndRendering();

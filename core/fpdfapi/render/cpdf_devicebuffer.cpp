@@ -43,9 +43,6 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
       m_Matrix.Scale(1.0f, (float)(max_dpi) / (float)dpiv);
   }
 #endif
-  CFX_Matrix ctm = m_pDevice->GetCTM();
-  m_Matrix.Concat(CFX_Matrix(fabs(ctm.a), 0, 0, fabs(ctm.d), 0, 0));
-
   FX_RECT bitmap_rect =
       m_Matrix.TransformRect(CFX_FloatRect(*pRect)).GetOuterRect();
   m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();

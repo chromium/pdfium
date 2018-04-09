@@ -425,10 +425,6 @@ int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
   return m_pDeviceDriver->GetDeviceCaps(caps_id);
 }
 
-CFX_Matrix CFX_RenderDevice::GetCTM() const {
-  return m_pDeviceDriver->GetCTM();
-}
-
 RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() const {
   return m_pBitmap;
 }
@@ -634,16 +630,12 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
   if (pObject2Device)
     bbox = pObject2Device->TransformRect(bbox);
 
-  CFX_Matrix ctm = GetCTM();
-  float fScaleX = fabs(ctm.a);
-  float fScaleY = fabs(ctm.d);
   FX_RECT rect = bbox.GetOuterRect();
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   auto Backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!CreateCompatibleBitmap(bitmap, FXSYS_round(rect.Width() * fScaleX),
-                              FXSYS_round(rect.Height() * fScaleY))) {
+  if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height()))
     return false;
-  }
+
   if (bitmap->HasAlpha()) {
     bitmap->Clear(0);
     Backdrop->Copy(bitmap);
@@ -659,7 +651,6 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
   if (pObject2Device)
     matrix = *pObject2Device;
   matrix.Translate(-rect.left, -rect.top);
-  matrix.Concat(CFX_Matrix(fScaleX, 0, 0, fScaleY, 0, 0));
   if (!bitmap_device.GetDeviceDriver()->DrawPath(
           pPathData, &matrix, pGraphState, fill_color, stroke_color, fill_mode,
           blend_type)) {
@@ -668,8 +659,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   bitmap_device.GetDeviceDriver()->Flush();
 #endif
-  FX_RECT src_rect(0, 0, FXSYS_round(rect.Width() * fScaleX),
-                   FXSYS_round(rect.Height() * fScaleY));
+  FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
   return m_pDeviceDriver->SetDIBits(bitmap, 0, &src_rect, rect.left, rect.top,
                                     FXDIB_BLEND_NORMAL);
 }
@@ -734,12 +724,8 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
     int top,
     int blend_mode) {
   ASSERT(!pBitmap->IsAlphaMask());
-  CFX_Matrix ctm = GetCTM();
-  float fScaleX = fabs(ctm.a);
-  float fScaleY = fabs(ctm.d);
-  FX_RECT dest_rect(left, top,
-                    FXSYS_round(left + pBitmap->GetWidth() / fScaleX),
-                    FXSYS_round(top + pBitmap->GetHeight() / fScaleY));
+  FX_RECT dest_rect(left, top, left + pBitmap->GetWidth(),
+                    top + pBitmap->GetHeight());
   dest_rect.Intersect(m_ClipBox);
   if (dest_rect.IsEmpty())
     return true;
@@ -747,10 +733,6 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
   FX_RECT src_rect(dest_rect.left - left, dest_rect.top - top,
                    dest_rect.left - left + dest_rect.Width(),
                    dest_rect.top - top + dest_rect.Height());
-  src_rect.left = FXSYS_round(src_rect.left * fScaleX);
-  src_rect.top = FXSYS_round(src_rect.top * fScaleY);
-  src_rect.right = FXSYS_round(src_rect.right * fScaleX);
-  src_rect.bottom = FXSYS_round(src_rect.bottom * fScaleY);
   if ((blend_mode == FXDIB_BLEND_NORMAL || (m_RenderCaps & FXRC_BLEND_MODE)) &&
       (!pBitmap->HasAlpha() || (m_RenderCaps & FXRC_ALPHA_IMAGE))) {
     return m_pDeviceDriver->SetDIBits(pBitmap, 0, &src_rect, dest_rect.left,
@@ -759,8 +741,8 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
   if (!(m_RenderCaps & FXRC_GET_BITS))
     return false;
 
-  int bg_pixel_width = FXSYS_round(dest_rect.Width() * fScaleX);
-  int bg_pixel_height = FXSYS_round(dest_rect.Height() * fScaleY);
+  int bg_pixel_width = dest_rect.Width();
+  int bg_pixel_height = dest_rect.Height();
   auto background = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!background->Create(
           bg_pixel_width, bg_pixel_height,
@@ -934,13 +916,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     }
   }
   std::vector<FXTEXT_GLYPHPOS> glyphs(nChars);
-  CFX_Matrix matrixCTM = GetCTM();
-  float scale_x = fabs(matrixCTM.a);
-  float scale_y = fabs(matrixCTM.d);
   CFX_Matrix deviceCtm = char2device;
-  CFX_Matrix m(scale_x, 0, 0, scale_y, 0, 0);
-  deviceCtm.Concat(m);
-  text2Device.Concat(m);
 
   for (size_t i = 0; i < glyphs.size(); ++i) {
     FXTEXT_GLYPHPOS& glyph = glyphs[i];
@@ -970,25 +946,15 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   if (anti_alias < FXFT_RENDER_MODE_LCD && glyphs.size() > 1)
     AdjustGlyphSpace(&glyphs);
 
-  FX_RECT bmp_rect1 = FXGE_GetGlyphsBBox(glyphs, anti_alias, 1.0f, 1.0f);
-  if (scale_x > 1 && scale_y > 1) {
-    --bmp_rect1.left;
-    --bmp_rect1.top;
-    ++bmp_rect1.right;
-    ++bmp_rect1.bottom;
-  }
-  FX_RECT bmp_rect(FXSYS_round((float)(bmp_rect1.left) / scale_x),
-                   FXSYS_round((float)(bmp_rect1.top) / scale_y),
-                   FXSYS_round((float)bmp_rect1.right / scale_x),
-                   FXSYS_round((float)bmp_rect1.bottom / scale_y));
+  FX_RECT bmp_rect = FXGE_GetGlyphsBBox(glyphs, anti_alias);
   bmp_rect.Intersect(m_ClipBox);
   if (bmp_rect.IsEmpty())
     return true;
 
-  int pixel_width = FXSYS_round(bmp_rect.Width() * scale_x);
-  int pixel_height = FXSYS_round(bmp_rect.Height() * scale_y);
-  int pixel_left = FXSYS_round(bmp_rect.left * scale_x);
-  int pixel_top = FXSYS_round(bmp_rect.top * scale_y);
+  int pixel_width = bmp_rect.Width();
+  int pixel_height = bmp_rect.Height();
+  int pixel_left = bmp_rect.left;
+  int pixel_top = bmp_rect.top;
   if (anti_alias == FXFT_RENDER_MODE_MONO) {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!bitmap->Create(pixel_width, pixel_height, FXDIB_1bppMask))

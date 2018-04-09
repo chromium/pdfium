@@ -85,9 +85,7 @@ CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
 CPDF_Type3Cache::~CPDF_Type3Cache() {}
 
 CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
-                                            const CFX_Matrix* pMatrix,
-                                            float retinaScaleX,
-                                            float retinaScaleY) {
+                                            const CFX_Matrix* pMatrix) {
   CPDF_UniqueKeyGen keygen;
   keygen.Generate(
       4, FXSYS_round(pMatrix->a * 10000), FXSYS_round(pMatrix->b * 10000),
@@ -107,7 +105,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
     return it2->second.get();
 
   std::unique_ptr<CFX_GlyphBitmap> pNewBitmap =
-      RenderGlyph(pSizeCache, charcode, pMatrix, retinaScaleX, retinaScaleY);
+      RenderGlyph(pSizeCache, charcode, pMatrix);
   CFX_GlyphBitmap* pGlyphBitmap = pNewBitmap.get();
   pSizeCache->m_GlyphMap[charcode] = std::move(pNewBitmap);
   return pGlyphBitmap;
@@ -116,9 +114,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
 std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     CPDF_Type3Glyphs* pSize,
     uint32_t charcode,
-    const CFX_Matrix* pMatrix,
-    float retinaScaleX,
-    float retinaScaleY) {
+    const CFX_Matrix* pMatrix) {
   const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
   if (!pChar || !pChar->GetBitmap())
     return nullptr;
@@ -146,24 +142,19 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
       }
       pSize->AdjustBlue(top_y, bottom_y, top_line, bottom_line);
       pResBitmap = pBitmap->StretchTo(
-          static_cast<int>(FXSYS_round(image_matrix.a) * retinaScaleX),
-          static_cast<int>(
-              (bFlipped ? top_line - bottom_line : bottom_line - top_line) *
-              retinaScaleY),
+          static_cast<int>(image_matrix.a),
+          static_cast<int>(bFlipped ? top_line - bottom_line
+                                    : bottom_line - top_line),
           0, nullptr);
       top = top_line;
-      if (image_matrix.a < 0) {
-        image_matrix.Scale(retinaScaleX, retinaScaleY);
+      if (image_matrix.a < 0)
         left = FXSYS_round(image_matrix.e + image_matrix.a);
-      } else {
+      else
         left = FXSYS_round(image_matrix.e);
-      }
     }
   }
-  if (!pResBitmap) {
-    image_matrix.Scale(retinaScaleX, retinaScaleY);
+  if (!pResBitmap)
     pResBitmap = pBitmap->TransformTo(&image_matrix, &left, &top);
-  }
   if (!pResBitmap)
     return nullptr;
 

@@ -155,7 +155,6 @@ class CPDF_RenderStatus {
   FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,
                                const CFX_Matrix* pObj2Device) const;
-  void GetScaledMatrix(CFX_Matrix& matrix) const;
 
   static const int kRenderMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;

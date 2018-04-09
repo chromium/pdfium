@@ -95,9 +95,7 @@ class FXTEXT_GLYPHPOS {
 };
 
 FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
-                           int anti_alias,
-                           float retinaScaleX,
-                           float retinaScaleY);
+                           int anti_alias);
 
 ByteString GetNameFromTT(const uint8_t* name_table,
                          uint32_t name_table_size,
