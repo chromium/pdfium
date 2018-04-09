@@ -68,12 +68,10 @@ CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
   return m_pStream ? m_pStream->GetDict() : nullptr;
 }
 
-const uint8_t* CPDF_StreamAcc::GetData() const {
-  return GetDataHelper();
-}
-
-uint8_t* CPDF_StreamAcc::GetData() {
-  return GetDataHelper();
+uint8_t* CPDF_StreamAcc::GetData() const {
+  if (m_bNewBuf)
+    return m_pData;
+  return m_pStream ? m_pStream->GetRawData() : nullptr;
 }
 
 uint32_t CPDF_StreamAcc::GetSize() const {
@@ -92,10 +90,4 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CPDF_StreamAcc::DetachData() {
   std::unique_ptr<uint8_t, FxFreeDeleter> p(FX_Alloc(uint8_t, m_dwSize));
   memcpy(p.get(), m_pData, m_dwSize);
   return p;
-}
-
-uint8_t* CPDF_StreamAcc::GetDataHelper() const {
-  if (m_bNewBuf)
-    return m_pData;
-  return m_pStream ? m_pStream->GetRawData() : nullptr;
 }

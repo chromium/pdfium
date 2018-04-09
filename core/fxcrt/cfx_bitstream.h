@@ -10,10 +10,11 @@
 #include <stdint.h>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_BitStream {
  public:
-  CFX_BitStream(const uint8_t* pData, uint32_t dwSize);
+  explicit CFX_BitStream(pdfium::span<const uint8_t> pData);
   ~CFX_BitStream();
 
   void ByteAlign();

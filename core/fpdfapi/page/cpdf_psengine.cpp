@@ -190,8 +190,8 @@ int CPDF_PSEngine::PopInt() {
   return static_cast<int>(Pop());
 }
 
-bool CPDF_PSEngine::Parse(const ByteStringView& view) {
-  CPDF_SimpleParser parser(view);
+bool CPDF_PSEngine::Parse(pdfium::span<const uint8_t> input) {
+  CPDF_SimpleParser parser(input);
   return parser.GetWord() == "{" && m_MainProc.Parse(&parser, 0);
 }
 

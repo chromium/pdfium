@@ -10,9 +10,9 @@
 
 #include "core/fxcrt/fx_system.h"
 
-CFX_BitStream::CFX_BitStream(const uint8_t* pData, uint32_t dwSize)
-    : m_BitPos(0), m_BitSize(dwSize * 8), m_pData(pData) {
-  ASSERT(dwSize <= std::numeric_limits<uint32_t>::max() / 8);
+CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
+    : m_BitPos(0), m_BitSize(pData.size() * 8), m_pData(pData.data()) {
+  ASSERT(pData.size() <= std::numeric_limits<uint32_t>::max() / 8);
 }
 
 CFX_BitStream::~CFX_BitStream() {}

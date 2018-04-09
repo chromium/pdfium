@@ -16,7 +16,7 @@ CPDF_PSFunc::~CPDF_PSFunc() {}
 bool CPDF_PSFunc::v_Init(CPDF_Object* pObj) {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pObj->AsStream());
   pAcc->LoadAllDataFiltered();
-  return m_PS.Parse(pAcc->GetDataView());
+  return m_PS.Parse(pAcc->GetSpan());
 }
 
 bool CPDF_PSFunc::v_Call(float* inputs, float* results) const {

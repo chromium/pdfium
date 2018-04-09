@@ -59,7 +59,7 @@ Optional<ByteString> CPDF_DefaultAppearance::GetFont(float* fFontSize) {
     return {};
 
   ByteString csFontNameTag;
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
+  CPDF_SimpleParser syntax(m_csDA.AsStringView().span());
   if (FindTagParamFromStart(&syntax, "Tf", 2)) {
     csFontNameTag = ByteString(syntax.GetWord());
     csFontNameTag.Delete(0, 1);
@@ -75,7 +75,7 @@ Optional<CFX_Color::Type> CPDF_DefaultAppearance::GetColor(float fc[4]) {
   if (m_csDA.IsEmpty())
     return {};
 
-  CPDF_SimpleParser syntax(m_csDA.AsStringView());
+  CPDF_SimpleParser syntax(m_csDA.AsStringView().span());
   if (FindTagParamFromStart(&syntax, "g", 1)) {
     fc[0] = FX_atof(syntax.GetWord());
     return {CFX_Color::kGray};

@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class CPDF_StreamAcc : public Retainable {
  public:
@@ -30,11 +31,11 @@ class CPDF_StreamAcc : public Retainable {
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   CPDF_Dictionary* GetDict() const;
 
-  ByteStringView GetDataView() { return ByteStringView(GetData(), GetSize()); }
-
-  const uint8_t* GetData() const;
-  uint8_t* GetData();
+  uint8_t* GetData() const;
   uint32_t GetSize() const;
+  pdfium::span<uint8_t> GetSpan() const {
+    return pdfium::make_span(GetData(), GetSize());
+  }
   const ByteString& GetImageDecoder() const { return m_ImageDecoder; }
   const CPDF_Dictionary* GetImageParam() const { return m_pImageParam; }
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachData();
@@ -44,8 +45,6 @@ class CPDF_StreamAcc : public Retainable {
   ~CPDF_StreamAcc() override;
 
  private:
-  uint8_t* GetDataHelper() const;
-
   uint8_t* m_pData = nullptr;
   uint32_t m_dwSize = 0;
   bool m_bNewBuf = false;

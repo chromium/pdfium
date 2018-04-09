@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/span.h"
 
 class CPDF_PSEngine;
 class CPDF_PSProc;
@@ -109,7 +110,7 @@ class CPDF_PSEngine {
   CPDF_PSEngine();
   ~CPDF_PSEngine();
 
-  bool Parse(const ByteStringView& str);
+  bool Parse(pdfium::span<const uint8_t> input);
   bool Execute();
   bool DoOperator(PDF_PSOP op);
   void Reset() { m_StackCount = 0; }

@@ -6,6 +6,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/span.h"
 
 TEST(CPDFDefaultAppearanceTest, FindTagParamFromStart) {
   static const struct FindTagTestStruct {
@@ -37,7 +38,7 @@ TEST(CPDFDefaultAppearanceTest, FindTagParamFromStart) {
   CPDF_DefaultAppearance da;
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     CPDF_SimpleParser parser(
-        ByteStringView(test_data[i].input, test_data[i].input_size));
+        pdfium::make_span(test_data[i].input, test_data[i].input_size));
     EXPECT_EQ(test_data[i].result,
               da.FindTagParamFromStartForTesting(&parser, test_data[i].token,
                                                  test_data[i].num_params))

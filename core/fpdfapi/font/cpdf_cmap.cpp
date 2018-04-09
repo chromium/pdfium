@@ -290,7 +290,7 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
   m_bLoaded = true;
 }
 
-void CPDF_CMap::LoadEmbedded(const ByteStringView& data) {
+void CPDF_CMap::LoadEmbedded(pdfium::span<const uint8_t> data) {
   m_DirectCharcodeToCIDTable = std::vector<uint16_t>(65536);
   CPDF_CMapParser parser(this);
   CPDF_SimpleParser syntax(data);

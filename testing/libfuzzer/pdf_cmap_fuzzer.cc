@@ -6,8 +6,9 @@
 
 #include "core/fpdfapi/font/cpdf_cmap.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  pdfium::MakeRetain<CPDF_CMap>()->LoadEmbedded(ByteStringView(data, size));
+  pdfium::MakeRetain<CPDF_CMap>()->LoadEmbedded(pdfium::make_span(data, size));
   return 0;
 }

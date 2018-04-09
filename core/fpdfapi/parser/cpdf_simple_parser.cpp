@@ -8,7 +8,8 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
-CPDF_SimpleParser::CPDF_SimpleParser(const ByteStringView& str) : data_(str) {}
+CPDF_SimpleParser::CPDF_SimpleParser(pdfium::span<const uint8_t> input)
+    : data_(input) {}
 
 CPDF_SimpleParser::~CPDF_SimpleParser() = default;
 
@@ -17,12 +18,12 @@ ByteStringView CPDF_SimpleParser::GetWord() {
 
   // Skip whitespace and comment lines.
   while (1) {
-    if (data_.GetLength() <= cur_pos_)
+    if (data_.size() <= cur_pos_)
       return ByteStringView();
 
     ch = data_[cur_pos_++];
     while (PDFCharIsWhitespace(ch)) {
-      if (data_.GetLength() <= cur_pos_)
+      if (data_.size() <= cur_pos_)
         return ByteStringView();
       ch = data_[cur_pos_++];
     }
@@ -31,7 +32,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
       break;
 
     while (1) {
-      if (data_.GetLength() <= cur_pos_)
+      if (data_.size() <= cur_pos_)
         return ByteStringView();
 
       ch = data_[cur_pos_++];
@@ -46,7 +47,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
     // Find names
     if (ch == '/') {
       while (1) {
-        if (data_.GetLength() <= cur_pos_)
+        if (data_.size() <= cur_pos_)
           break;
 
         ch = data_[cur_pos_++];
@@ -56,29 +57,29 @@ ByteStringView CPDF_SimpleParser::GetWord() {
           break;
         }
       }
-      return data_.Mid(start_pos, dwSize);
+      return data_.subspan(start_pos, dwSize);
     }
 
     dwSize = 1;
     if (ch == '<') {
-      if (data_.GetLength() <= cur_pos_)
-        return data_.Mid(start_pos, dwSize);
+      if (data_.size() <= cur_pos_)
+        return data_.subspan(start_pos, dwSize);
 
       ch = data_[cur_pos_++];
       if (ch == '<') {
         dwSize = 2;
       } else {
-        while (cur_pos_ < data_.GetLength() && data_[cur_pos_] != '>')
+        while (cur_pos_ < data_.size() && data_[cur_pos_] != '>')
           cur_pos_++;
 
-        if (cur_pos_ < data_.GetLength())
+        if (cur_pos_ < data_.size())
           cur_pos_++;
 
         dwSize = cur_pos_ - start_pos;
       }
     } else if (ch == '>') {
-      if (data_.GetLength() <= cur_pos_)
-        return data_.Mid(start_pos, dwSize);
+      if (data_.size() <= cur_pos_)
+        return data_.subspan(start_pos, dwSize);
 
       ch = data_[cur_pos_++];
       if (ch == '>')
@@ -87,7 +88,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         cur_pos_--;
     } else if (ch == '(') {
       int level = 1;
-      while (cur_pos_ < data_.GetLength()) {
+      while (cur_pos_ < data_.size()) {
         if (data_[cur_pos_] == ')') {
           level--;
           if (level == 0)
@@ -95,28 +96,28 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         }
 
         if (data_[cur_pos_] == '\\') {
-          if (data_.GetLength() <= cur_pos_)
+          if (data_.size() <= cur_pos_)
             break;
 
           cur_pos_++;
         } else if (data_[cur_pos_] == '(') {
           level++;
         }
-        if (data_.GetLength() <= cur_pos_)
+        if (data_.size() <= cur_pos_)
           break;
 
         cur_pos_++;
       }
-      if (cur_pos_ < data_.GetLength())
+      if (cur_pos_ < data_.size())
         cur_pos_++;
 
       dwSize = cur_pos_ - start_pos;
     }
-    return data_.Mid(start_pos, dwSize);
+    return data_.subspan(start_pos, dwSize);
   }
 
   dwSize = 1;
-  while (cur_pos_ < data_.GetLength()) {
+  while (cur_pos_ < data_.size()) {
     ch = data_[cur_pos_++];
 
     if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
@@ -125,5 +126,5 @@ ByteStringView CPDF_SimpleParser::GetWord() {
     }
     dwSize++;
   }
-  return data_.Mid(start_pos, dwSize);
+  return data_.subspan(start_pos, dwSize);
 }

@@ -9,6 +9,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/span.h"
 
 TEST(SimpleParserTest, GetWord) {
   static const pdfium::StrFuncTestData test_data[] = {
@@ -49,7 +50,7 @@ TEST(SimpleParserTest, GetWord) {
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     const pdfium::StrFuncTestData& data = test_data[i];
-    CPDF_SimpleParser parser(ByteStringView(data.input, data.input_size));
+    CPDF_SimpleParser parser(pdfium::make_span(data.input, data.input_size));
     ByteStringView word = parser.GetWord();
     EXPECT_EQ(data.expected_size, word.GetLength()) << " for case " << i;
     if (data.expected_size != word.GetLength())
