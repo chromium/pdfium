@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 
 namespace fxcrt {
@@ -347,45 +348,6 @@ TEST(ByteString, OperatorNE) {
   EXPECT_TRUE(c_string1 != byte_string);
   EXPECT_TRUE(c_string2 != byte_string);
   EXPECT_TRUE(c_string3 != byte_string);
-}
-
-TEST(ByteStringView, Null) {
-  ByteStringView null_string;
-  EXPECT_FALSE(null_string.raw_str());
-  EXPECT_EQ(0u, null_string.GetLength());
-  EXPECT_TRUE(null_string.IsEmpty());
-
-  ByteStringView another_null_string;
-  EXPECT_EQ(null_string, another_null_string);
-
-  ByteStringView copied_null_string(null_string);
-  EXPECT_FALSE(copied_null_string.raw_str());
-  EXPECT_EQ(0u, copied_null_string.GetLength());
-  EXPECT_TRUE(copied_null_string.IsEmpty());
-  EXPECT_EQ(null_string, copied_null_string);
-
-  ByteStringView empty_string("");  // Pointer to NUL, not NULL pointer.
-  EXPECT_TRUE(empty_string.raw_str());
-  EXPECT_EQ(0u, empty_string.GetLength());
-  EXPECT_TRUE(empty_string.IsEmpty());
-  EXPECT_EQ(null_string, empty_string);
-
-  ByteStringView assigned_null_string("initially not nullptr");
-  assigned_null_string = null_string;
-  EXPECT_FALSE(assigned_null_string.raw_str());
-  EXPECT_EQ(0u, assigned_null_string.GetLength());
-  EXPECT_TRUE(assigned_null_string.IsEmpty());
-  EXPECT_EQ(null_string, assigned_null_string);
-
-  ByteStringView assigned_nullptr_string("initially not nullptr");
-  assigned_nullptr_string = nullptr;
-  EXPECT_FALSE(assigned_nullptr_string.raw_str());
-  EXPECT_EQ(0u, assigned_nullptr_string.GetLength());
-  EXPECT_TRUE(assigned_nullptr_string.IsEmpty());
-  EXPECT_EQ(null_string, assigned_nullptr_string);
-
-  ByteStringView non_null_string("a");
-  EXPECT_NE(null_string, non_null_string);
 }
 
 TEST(ByteString, Concat) {
@@ -1001,16 +963,71 @@ TEST(ByteString, MultiCharReverseIterator) {
   EXPECT_TRUE(iter == multi_str.rbegin());
 }
 
+TEST(ByteStringView, Null) {
+  ByteStringView null_string;
+  EXPECT_FALSE(null_string.raw_str());
+  EXPECT_EQ(0u, null_string.GetLength());
+  EXPECT_TRUE(null_string.IsEmpty());
+
+  ByteStringView another_null_string;
+  EXPECT_EQ(null_string, another_null_string);
+
+  ByteStringView copied_null_string(null_string);
+  EXPECT_FALSE(copied_null_string.raw_str());
+  EXPECT_EQ(0u, copied_null_string.GetLength());
+  EXPECT_TRUE(copied_null_string.IsEmpty());
+  EXPECT_EQ(null_string, copied_null_string);
+
+  ByteStringView span_null_string = pdfium::span<const uint8_t>();
+  EXPECT_FALSE(span_null_string.raw_str());
+  EXPECT_EQ(0u, span_null_string.GetLength());
+  EXPECT_TRUE(span_null_string.IsEmpty());
+  EXPECT_EQ(null_string, span_null_string);
+
+  ByteStringView empty_string("");  // Pointer to NUL, not NULL pointer.
+  EXPECT_TRUE(empty_string.raw_str());
+  EXPECT_EQ(0u, empty_string.GetLength());
+  EXPECT_TRUE(empty_string.IsEmpty());
+  EXPECT_EQ(null_string, empty_string);
+
+  ByteStringView assigned_null_string("initially not nullptr");
+  assigned_null_string = null_string;
+  EXPECT_FALSE(assigned_null_string.raw_str());
+  EXPECT_EQ(0u, assigned_null_string.GetLength());
+  EXPECT_TRUE(assigned_null_string.IsEmpty());
+  EXPECT_EQ(null_string, assigned_null_string);
+
+  ByteStringView assigned_nullptr_string("initially not nullptr");
+  assigned_nullptr_string = nullptr;
+  EXPECT_FALSE(assigned_nullptr_string.raw_str());
+  EXPECT_EQ(0u, assigned_nullptr_string.GetLength());
+  EXPECT_TRUE(assigned_nullptr_string.IsEmpty());
+  EXPECT_EQ(null_string, assigned_nullptr_string);
+
+  ByteStringView assigned_span_null_string("initially not null span");
+  assigned_span_null_string = pdfium::span<const uint8_t>();
+  EXPECT_FALSE(assigned_span_null_string.raw_str());
+  EXPECT_EQ(0u, assigned_span_null_string.GetLength());
+  EXPECT_TRUE(assigned_span_null_string.IsEmpty());
+  EXPECT_EQ(null_string, assigned_span_null_string);
+
+  ByteStringView non_null_string("a");
+  EXPECT_NE(null_string, non_null_string);
+}
+
 TEST(ByteStringView, NotNull) {
   ByteStringView string3("abc");
   ByteStringView string6("abcdef");
   ByteStringView alternate_string3("abcdef", 3);
+  ByteStringView span_string4(
+      pdfium::span<const uint8_t>(reinterpret_cast<const uint8_t*>("abcd"), 4));
   ByteStringView embedded_nul_string7("abc\0def", 7);
   ByteStringView illegal_string7("abcdef", 7);
 
   EXPECT_EQ(3u, string3.GetLength());
   EXPECT_EQ(6u, string6.GetLength());
   EXPECT_EQ(3u, alternate_string3.GetLength());
+  EXPECT_EQ(4u, span_string4.GetLength());
   EXPECT_EQ(7u, embedded_nul_string7.GetLength());
   EXPECT_EQ(7u, illegal_string7.GetLength());
 
@@ -1296,6 +1313,10 @@ TEST(ByteStringView, OperatorEQ) {
   EXPECT_FALSE(c_string1 == byte_string_c);
   EXPECT_FALSE(c_string2 == byte_string_c);
   EXPECT_FALSE(c_string3 == byte_string_c);
+
+  pdfium::span<const uint8_t> span5(reinterpret_cast<const uint8_t*>("hello"),
+                                    5);
+  EXPECT_EQ(byte_string_c.span(), span5);
 }
 
 TEST(ByteStringView, OperatorNE) {
