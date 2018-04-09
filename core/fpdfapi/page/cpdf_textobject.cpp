@@ -152,18 +152,17 @@ void CPDF_TextObject::SetSegments(const ByteString* pStrs,
   CPDF_Font* pFont = m_TextState.GetFont();
   int nChars = 0;
   for (int i = 0; i < nsegs; ++i)
-    nChars += pFont->CountChar(pStrs[i].c_str(), pStrs[i].GetLength());
+    nChars += pFont->CountChar(pStrs[i].AsStringView());
   nChars += nsegs - 1;
   m_CharCodes.resize(nChars);
   m_CharPos.resize(nChars - 1);
-  int index = 0;
+  size_t index = 0;
   for (int i = 0; i < nsegs; ++i) {
-    const char* segment = pStrs[i].c_str();
-    int len = pStrs[i].GetLength();
-    int offset = 0;
-    while (offset < len) {
-      ASSERT(static_cast<size_t>(index) < m_CharCodes.size());
-      m_CharCodes[index++] = pFont->GetNextChar(segment, len, offset);
+    ByteStringView segment = pStrs[i].AsStringView();
+    size_t offset = 0;
+    while (offset < segment.GetLength()) {
+      ASSERT(index < m_CharCodes.size());
+      m_CharCodes[index++] = pFont->GetNextChar(segment, offset);
     }
     if (i != nsegs - 1) {
       m_CharPos[index - 1] = pKerning[i];

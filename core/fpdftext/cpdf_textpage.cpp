@@ -610,7 +610,7 @@ uint32_t CPDF_TextPage::GetCharWidth(uint32_t charCode,
 
   ByteString str;
   pFont->AppendChar(&str, charCode);
-  w = pFont->GetStringWidth(str.c_str(), 1);
+  w = pFont->GetStringWidth(str.AsStringView());
   if (w > 0)
     return w;
 

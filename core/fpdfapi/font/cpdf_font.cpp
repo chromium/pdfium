@@ -122,8 +122,8 @@ bool CPDF_Font::IsUnicodeCompatible() const {
   return false;
 }
 
-int CPDF_Font::CountChar(const char* pString, int size) const {
-  return size;
+size_t CPDF_Font::CountChar(const ByteStringView& pString) const {
+  return pString.GetLength();
 }
 
 int CPDF_Font::GlyphFromCharCodeExt(uint32_t charcode) {
@@ -278,20 +278,18 @@ void CPDF_Font::CheckFontMetrics() {
 void CPDF_Font::LoadUnicodeMap() const {
   m_bToUnicodeLoaded = true;
   CPDF_Stream* pStream = m_pFontDict->GetStreamFor("ToUnicode");
-  if (!pStream) {
+  if (!pStream)
     return;
-  }
+
   m_pToUnicodeMap = pdfium::MakeUnique<CPDF_ToUnicodeMap>();
   m_pToUnicodeMap->Load(pStream);
 }
 
-uint32_t CPDF_Font::GetStringWidth(const char* pString, int size) {
-  int offset = 0;
+uint32_t CPDF_Font::GetStringWidth(const ByteStringView& pString) {
+  size_t offset = 0;
   uint32_t width = 0;
-  while (offset < size) {
-    uint32_t charcode = GetNextChar(pString, size, offset);
-    width += GetCharWidthF(charcode);
-  }
+  while (offset < pString.GetLength())
+    width += GetCharWidthF(GetNextChar(pString, offset));
   return width;
 }
 
@@ -346,13 +344,13 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   return pFont->Load() ? std::move(pFont) : nullptr;
 }
 
-uint32_t CPDF_Font::GetNextChar(const char* pString,
-                                int nStrLen,
-                                int& offset) const {
-  if (offset < 0 || nStrLen < 1) {
+uint32_t CPDF_Font::GetNextChar(const ByteStringView& pString,
+                                size_t& offset) const {
+  if (pString.IsEmpty())
     return 0;
-  }
-  uint8_t ch = offset < nStrLen ? pString[offset++] : pString[nStrLen - 1];
+
+  uint8_t ch = offset < pString.GetLength() ? pString[offset++]
+                                            : pString[pString.GetLength() - 1];
   return static_cast<uint32_t>(ch);
 }
 

@@ -337,10 +337,9 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   return it->m_StartCID + charcode - it->m_StartCode;
 }
 
-uint32_t CPDF_CMap::GetNextChar(const char* pString,
-                                int nStrLen,
-                                int& offset) const {
-  auto* pBytes = reinterpret_cast<const uint8_t*>(pString);
+uint32_t CPDF_CMap::GetNextChar(const ByteStringView& pString,
+                                size_t& offset) const {
+  auto pBytes = pString.span();
   switch (m_CodingScheme) {
     case OneByte: {
       return pBytes[offset++];
@@ -370,7 +369,7 @@ uint32_t CPDF_CMap::GetNextChar(const char* pString,
             charcode = (charcode << 8) + codes[i];
           return charcode;
         }
-        if (char_size == 4 || offset == nStrLen)
+        if (char_size == 4 || offset == pBytes.size())
           return 0;
         codes[char_size++] = pBytes[offset++];
       }
@@ -402,33 +401,32 @@ int CPDF_CMap::GetCharSize(uint32_t charcode) const {
   return 1;
 }
 
-int CPDF_CMap::CountChar(const char* pString, int size) const {
+size_t CPDF_CMap::CountChar(const ByteStringView& pString) const {
   switch (m_CodingScheme) {
     case OneByte:
-      return size;
+      return pString.GetLength();
     case TwoBytes:
-      return (size + 1) / 2;
+      return (pString.GetLength() + 1) / 2;
     case MixedTwoBytes: {
-      int count = 0;
-      for (int i = 0; i < size; i++) {
+      size_t count = 0;
+      for (size_t i = 0; i < pString.GetLength(); i++) {
         count++;
-        if (m_MixedTwoByteLeadingBytes[reinterpret_cast<const uint8_t*>(
-                pString)[i]]) {
+        if (m_MixedTwoByteLeadingBytes[pString[i]])
           i++;
-        }
       }
       return count;
     }
     case MixedFourBytes: {
-      int count = 0, offset = 0;
-      while (offset < size) {
-        GetNextChar(pString, size, offset);
+      size_t count = 0;
+      size_t offset = 0;
+      while (offset < pString.GetLength()) {
+        GetNextChar(pString, offset);
         count++;
       }
       return count;
     }
   }
-  return size;
+  return pString.GetLength();
 }
 
 int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
