@@ -18,23 +18,18 @@ CXFA_DocumentParser::~CXFA_DocumentParser() {
   m_pDocument->ReleaseXMLNodesIfNeeded();
 }
 
-int32_t CXFA_DocumentParser::StartParse(
-    const RetainPtr<IFX_SeekableStream>& pStream,
-    XFA_PacketType ePacketID) {
+int32_t CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
+                                   XFA_PacketType ePacketID) {
   m_pDocument.reset();
   m_nodeParser.CloseParser();
 
-  int32_t nRetStatus = m_nodeParser.StartParse(pStream, ePacketID);
-  if (nRetStatus == XFA_PARSESTATUS_Ready) {
-    m_pDocument = pdfium::MakeUnique<CXFA_Document>(GetNotify());
-    m_nodeParser.SetFactory(m_pDocument.get());
-  }
-  return nRetStatus;
-}
+  m_nodeParser.StartParse(pStream, ePacketID);
 
-int32_t CXFA_DocumentParser::DoParse() {
+  m_pDocument = pdfium::MakeUnique<CXFA_Document>(GetNotify());
+  m_nodeParser.SetFactory(m_pDocument.get());
+
   int32_t nRetStatus = m_nodeParser.DoParse();
-  if (nRetStatus >= XFA_PARSESTATUS_Done) {
+  if (nRetStatus == XFA_PARSESTATUS_Done) {
     ASSERT(m_pDocument);
     m_pDocument->SetRoot(m_nodeParser.GetRootNode());
   }

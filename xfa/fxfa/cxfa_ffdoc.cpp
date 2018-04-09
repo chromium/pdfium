@@ -168,9 +168,8 @@ CXFA_FFDoc::~CXFA_FFDoc() {
 int32_t CXFA_FFDoc::Load() {
   m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
   m_pDocumentParser = pdfium::MakeUnique<CXFA_DocumentParser>(m_pNotify.get());
-  m_pDocumentParser->StartParse(m_pStream, XFA_PacketType::Xdp);
 
-  int32_t iStatus = m_pDocumentParser->DoParse();
+  int32_t iStatus = m_pDocumentParser->Parse(m_pStream, XFA_PacketType::Xdp);
   if (iStatus != XFA_PARSESTATUS_Done)
     return iStatus;
   if (!m_pPDFDoc)

@@ -339,9 +339,8 @@ void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
   m_pFactory = pFactory;
 }
 
-int32_t CXFA_SimpleParser::StartParse(
-    const RetainPtr<IFX_SeekableStream>& pStream,
-    XFA_PacketType ePacketID) {
+void CXFA_SimpleParser::StartParse(const RetainPtr<IFX_SeekableStream>& pStream,
+                                   XFA_PacketType ePacketID) {
   CloseParser();
   m_pFileRead = pStream;
   m_pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
@@ -355,7 +354,6 @@ int32_t CXFA_SimpleParser::StartParse(
 
   m_bParseStarted = true;
   m_ePacketID = ePacketID;
-  return XFA_PARSESTATUS_Ready;
 }
 
 int32_t CXFA_SimpleParser::DoParse() {
