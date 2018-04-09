@@ -1163,25 +1163,22 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
   return ContinueSingleObject(pObj, pObj2Device, pPause);
 }
 
-bool CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,
-                                             const CFX_Matrix* pObj2Device,
-                                             bool bLogical,
-                                             FX_RECT& rect) const {
-  rect = pObj->GetBBox(pObj2Device);
+FX_RECT CPDF_RenderStatus::GetObjectClippedRect(
+    const CPDF_PageObject* pObj,
+    const CFX_Matrix* pObj2Device) const {
+  FX_RECT rect = pObj->GetBBox(pObj2Device);
   FX_RECT rtClip = m_pDevice->GetClipBox();
-  if (!bLogical) {
-    CFX_Matrix dCTM = m_pDevice->GetCTM();
-    float a = fabs(dCTM.a);
-    float d = fabs(dCTM.d);
-    if (a != 1.0f || d != 1.0f) {
-      rect.right = rect.left + (int32_t)ceil((float)rect.Width() * a);
-      rect.bottom = rect.top + (int32_t)ceil((float)rect.Height() * d);
-      rtClip.right = rtClip.left + (int32_t)ceil((float)rtClip.Width() * a);
-      rtClip.bottom = rtClip.top + (int32_t)ceil((float)rtClip.Height() * d);
-    }
+  CFX_Matrix dCTM = m_pDevice->GetCTM();
+  float a = fabs(dCTM.a);
+  float d = fabs(dCTM.d);
+  if (a != 1.0f || d != 1.0f) {
+    rect.right = rect.left + (int32_t)ceil((float)rect.Width() * a);
+    rect.bottom = rect.top + (int32_t)ceil((float)rect.Height() * d);
+    rtClip.right = rtClip.left + (int32_t)ceil((float)rtClip.Width() * a);
+    rtClip.bottom = rtClip.top + (int32_t)ceil((float)rtClip.Height() * d);
   }
   rect.Intersect(rtClip);
-  return rect.IsEmpty();
+  return rect;
 }
 
 void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
@@ -1241,10 +1238,10 @@ void CPDF_RenderStatus::GetScaledMatrix(CFX_Matrix& matrix) const {
 
 void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
                                               const CFX_Matrix* pObj2Device) {
-  FX_RECT rect;
-  if (GetObjectClippedRect(pObj, pObj2Device, false, rect)) {
+  FX_RECT rect = GetObjectClippedRect(pObj, pObj2Device);
+  if (rect.IsEmpty())
     return;
-  }
+
   int res = 300;
   if (pObj->IsImage() &&
       m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
@@ -2184,8 +2181,8 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   } else {
     return;
   }
-  FX_RECT rect;
-  if (GetObjectClippedRect(pPageObj, pObj2Device, false, rect))
+  FX_RECT rect = GetObjectClippedRect(pPageObj, pObj2Device);
+  if (rect.IsEmpty())
     return;
 
   CFX_Matrix matrix = *pattern->pattern_to_form();
