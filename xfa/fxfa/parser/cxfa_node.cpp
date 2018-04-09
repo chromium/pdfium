@@ -4656,3 +4656,38 @@ bool CXFA_Node::PresenceRequiresSpace() const {
   return ePresence == XFA_AttributeEnum::Visible ||
          ePresence == XFA_AttributeEnum::Invisible;
 }
+
+void CXFA_Node::SetToXML(const WideString& value) {
+  auto* elem = static_cast<CFX_XMLElement*>(GetXMLMappingNode());
+  FX_XMLNODETYPE eXMLType = elem->GetType();
+  switch (eXMLType) {
+    case FX_XMLNODE_Element: {
+      if (IsAttributeInXML()) {
+        elem->SetString(JSObject()->GetCData(XFA_Attribute::QualifiedName),
+                        value);
+        return;
+      }
+
+      bool bDeleteChildren = true;
+      if (GetPacketType() == XFA_PacketType::Datasets) {
+        for (CXFA_Node* pChildDataNode = GetFirstChild(); pChildDataNode;
+             pChildDataNode = pChildDataNode->GetNextSibling()) {
+          if (!pChildDataNode->GetBindItems()->empty()) {
+            bDeleteChildren = false;
+            break;
+          }
+        }
+      }
+      if (bDeleteChildren)
+        elem->DeleteChildren();
+
+      elem->SetTextData(value);
+      break;
+    }
+    case FX_XMLNODE_Text:
+      static_cast<CFX_XMLText*>(GetXMLMappingNode())->SetText(value);
+      break;
+    default:
+      NOTREACHED();
+  }
+}

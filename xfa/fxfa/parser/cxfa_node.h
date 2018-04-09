@@ -169,6 +169,8 @@ class CXFA_Node : public CXFA_Object {
   CFX_XMLNode* CreateXMLMappingNode();
   bool IsNeedSavingXMLNode();
 
+  void SetToXML(const WideString& value);
+
   uint32_t GetNameHash() const { return m_dwNameHash; }
   bool IsUnnamed() const { return m_dwNameHash == 0; }
   CXFA_Node* GetModelNode();

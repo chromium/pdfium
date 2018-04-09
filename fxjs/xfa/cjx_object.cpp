@@ -475,41 +475,12 @@ bool CJX_Object::SetCData(XFA_Attribute eAttr,
     return true;
   }
 
-  auto* elem = static_cast<CFX_XMLElement*>(xfaObj->GetXMLMappingNode());
   if (eAttr == XFA_Attribute::Value) {
-    FX_XMLNODETYPE eXMLType = elem->GetType();
-    switch (eXMLType) {
-      case FX_XMLNODE_Element:
-        if (xfaObj->IsAttributeInXML()) {
-          elem->SetString(WideString(GetCData(XFA_Attribute::QualifiedName)),
-                          wsValue);
-        } else {
-          bool bDeleteChildren = true;
-          if (xfaObj->GetPacketType() == XFA_PacketType::Datasets) {
-            for (CXFA_Node* pChildDataNode = xfaObj->GetFirstChild();
-                 pChildDataNode;
-                 pChildDataNode = pChildDataNode->GetNextSibling()) {
-              if (!pChildDataNode->GetBindItems()->empty()) {
-                bDeleteChildren = false;
-                break;
-              }
-            }
-          }
-          if (bDeleteChildren)
-            elem->DeleteChildren();
-
-          elem->SetTextData(wsValue);
-        }
-        break;
-      case FX_XMLNODE_Text:
-        static_cast<CFX_XMLText*>(xfaObj->GetXMLMappingNode())
-            ->SetText(wsValue);
-        break;
-      default:
-        NOTREACHED();
-    }
+    xfaObj->SetToXML(wsValue);
     return true;
   }
+
+  auto* elem = static_cast<CFX_XMLElement*>(xfaObj->GetXMLMappingNode());
   ASSERT(elem->GetType() == FX_XMLNODE_Element);
 
   WideString wsAttrName = CXFA_Node::AttributeToName(eAttr);
@@ -525,48 +496,19 @@ void CJX_Object::SetAttributeValue(const WideString& wsValue,
                                    bool bNotify,
                                    bool bScriptModify) {
   auto* xfaObj = ToNode(GetXFAObject());
-
   void* pKey =
       GetMapKey_Element(xfaObj->GetElementType(), XFA_Attribute::Value);
+
   OnChanging(XFA_Attribute::Value, bNotify);
   WideString* pClone = new WideString(wsValue);
+
   SetUserData(pKey, pClone, &deleteWideStringCallBack);
   OnChanged(XFA_Attribute::Value, bNotify, bScriptModify);
+
   if (!xfaObj->IsNeedSavingXMLNode())
     return;
 
-  auto* elem = static_cast<CFX_XMLElement*>(xfaObj->GetXMLMappingNode());
-  FX_XMLNODETYPE eXMLType = elem->GetType();
-  switch (eXMLType) {
-    case FX_XMLNODE_Element:
-      if (xfaObj->IsAttributeInXML()) {
-        elem->SetString(WideString(GetCData(XFA_Attribute::QualifiedName)),
-                        wsXMLValue);
-      } else {
-        bool bDeleteChildren = true;
-        if (xfaObj->GetPacketType() == XFA_PacketType::Datasets) {
-          for (CXFA_Node* pChildDataNode = xfaObj->GetFirstChild();
-               pChildDataNode;
-               pChildDataNode = pChildDataNode->GetNextSibling()) {
-            if (!pChildDataNode->GetBindItems()->empty()) {
-              bDeleteChildren = false;
-              break;
-            }
-          }
-        }
-        if (bDeleteChildren)
-          elem->DeleteChildren();
-
-        elem->SetTextData(wsXMLValue);
-      }
-      break;
-    case FX_XMLNODE_Text:
-      static_cast<CFX_XMLText*>(xfaObj->GetXMLMappingNode())
-          ->SetText(wsXMLValue);
-      break;
-    default:
-      ASSERT(0);
-  }
+  xfaObj->SetToXML(wsXMLValue);
 }
 
 Optional<WideString> CJX_Object::TryCData(XFA_Attribute eAttr,
