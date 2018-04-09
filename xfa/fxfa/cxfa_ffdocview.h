@@ -60,7 +60,7 @@ class CXFA_FFDocView {
   CXFA_FFWidgetHandler* GetWidgetHandler();
   std::unique_ptr<CXFA_ReadyNodeIterator> CreateReadyNodeIterator();
   CXFA_FFWidget* GetFocusWidget() const { return m_pFocusWidget.Get(); }
-  bool SetFocus(CXFA_FFWidget* hWidget);
+  bool SetFocus(CXFA_FFWidget* pNewFocus);
   CXFA_FFWidget* GetWidgetForNode(CXFA_Node* node);
   CXFA_FFWidget* GetWidgetByName(const WideString& wsName,
                                  CXFA_FFWidget* pRefWidget);
@@ -118,7 +118,6 @@ class CXFA_FFDocView {
   CXFA_LayoutProcessor* m_pXFADocLayout = nullptr;  // Not owned.
   UnownedPtr<CXFA_Node> m_pFocusNode;
   UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
-  UnownedPtr<CXFA_FFWidget> m_pOldFocusWidget;
   std::vector<CXFA_Node*> m_ValidateNodes;
   std::vector<CXFA_Node*> m_CalculateNodes;
   std::vector<CXFA_BindItems*> m_BindItems;
