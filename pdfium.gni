@@ -69,3 +69,6 @@ declare_args() {
 if (pdf_use_skia && pdf_use_skia_paths) {
   assert(false, "Enable at most ONE of pdf_use_skia and pdf_use_skia_paths")
 }
+
+assert(!pdf_is_complete_lib || !is_component_build,
+       "pdf_is_complete_lib=true requires is_component_build=false")
