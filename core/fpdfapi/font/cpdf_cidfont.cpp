@@ -407,20 +407,13 @@ bool CPDF_CIDFont::Load() {
   if (!IsEmbedded())
     LoadSubstFont();
 
-  if (m_pFontFile) {
-    CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
-    if (pmap) {
-      if (CPDF_Stream* pStream = pmap->AsStream()) {
-        m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-        m_pStreamAcc->LoadAllDataFiltered();
-      } else if (pmap->GetString() == "Identity") {
-#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-        if (m_pFontFile)
-          m_bCIDIsGID = true;
-#else
-        m_bCIDIsGID = true;
-#endif
-      }
+  CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
+  if (pmap) {
+    if (CPDF_Stream* pStream = pmap->AsStream()) {
+      m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+      m_pStreamAcc->LoadAllDataFiltered();
+    } else if (m_pFontFile && pmap->GetString() == "Identity") {
+      m_bCIDIsGID = true;
     }
   }
 
