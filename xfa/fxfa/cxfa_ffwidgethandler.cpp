@@ -47,10 +47,14 @@ bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
                                          uint32_t dwFlags,
                                          const CFX_PointF& point) {
   m_pDocView->LockUpdate();
-  bool bRet = hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
-  if (bRet && m_pDocView->SetFocus(hWidget)) {
-    m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
-        m_pDocView->GetDoc(), hWidget);
+  bool bRet = hWidget->AcceptsFocusOnButtonDown(
+      dwFlags, hWidget->Rotate2Normal(point), FWL_MouseCommand::LeftButtonDown);
+  if (bRet) {
+    if (m_pDocView->SetFocus(hWidget)) {
+      m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
+          m_pDocView->GetDoc(), hWidget);
+    }
+    hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
   }
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
@@ -94,10 +98,15 @@ bool CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
 bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
                                          uint32_t dwFlags,
                                          const CFX_PointF& point) {
-  bool bRet = hWidget->OnRButtonDown(dwFlags, hWidget->Rotate2Normal(point));
-  if (bRet && m_pDocView->SetFocus(hWidget)) {
-    m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
-        m_pDocView->GetDoc(), hWidget);
+  bool bRet =
+      hWidget->AcceptsFocusOnButtonDown(dwFlags, hWidget->Rotate2Normal(point),
+                                        FWL_MouseCommand::RightButtonDown);
+  if (bRet) {
+    if (m_pDocView->SetFocus(hWidget)) {
+      m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
+          m_pDocView->GetDoc(), hWidget);
+    }
+    hWidget->OnRButtonDown(dwFlags, hWidget->Rotate2Normal(point));
   }
   return bRet;
 }

@@ -99,8 +99,9 @@ class CXFA_FFBarcode : public CXFA_FFTextEdit {
                     const CFX_Matrix& matrix,
                     uint32_t dwStatus) override;
   void UpdateWidgetProperty() override;
-  bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
-  bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                const CFX_PointF& point,
+                                FWL_MouseCommand command) override;
 
  private:
   UnownedPtr<CXFA_Barcode> barcode_;

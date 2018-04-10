@@ -35,14 +35,17 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool PerformLayout() override;
   bool OnMouseEnter() override;
   bool OnMouseExit() override;
-  bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                const CFX_PointF& point,
+                                FWL_MouseCommand command) override;
+  void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnMouseWheel(uint32_t dwFlags,
                     int16_t zDelta,
                     const CFX_PointF& point) override;
-  bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  void OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) override;
 

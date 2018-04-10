@@ -107,9 +107,18 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
 
-bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFTextEdit::AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                               const CFX_PointF& point,
+                                               FWL_MouseCommand command) {
+  if (command == FWL_MouseCommand::RightButtonDown && !m_pNode->IsOpenAccess())
+    return false;
   if (!PtInActiveRect(point))
     return false;
+
+  return true;
+}
+
+void CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!IsFocused()) {
     m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
@@ -122,14 +131,9 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   ms.m_dwFlags = dwFlags;
   ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
-  return true;
 }
 
-bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!m_pNode->IsOpenAccess())
-    return false;
-  if (!PtInActiveRect(point))
-    return false;
+void CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!IsFocused()) {
     m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
@@ -142,7 +146,6 @@ bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   ms.m_dwFlags = dwFlags;
   ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
-  return true;
 }
 
 bool CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {

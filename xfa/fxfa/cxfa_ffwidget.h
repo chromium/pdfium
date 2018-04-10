@@ -13,6 +13,7 @@
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "xfa/fwl/cfwl_app.h"
+#include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 
@@ -101,14 +102,18 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual void UpdateWidgetProperty();
   virtual bool OnMouseEnter();
   virtual bool OnMouseExit();
-  virtual bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point);
+  // |command| must be LeftButtonDown or RightButtonDown.
+  virtual bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                        const CFX_PointF& point,
+                                        FWL_MouseCommand command);
+  virtual void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnMouseWheel(uint32_t dwFlags,
                             int16_t zDelta,
                             const CFX_PointF& point);
-  virtual bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point);
+  virtual void OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
 

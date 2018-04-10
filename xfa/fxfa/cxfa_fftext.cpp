@@ -99,7 +99,12 @@ bool CXFA_FFText::PerformLayout() {
   return true;
 }
 
-bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFText::AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                           const CFX_PointF& point,
+                                           FWL_MouseCommand command) {
+  if (command != FWL_MouseCommand::LeftButtonDown)
+    return false;
+
   if (!GetRectWithoutRotate().Contains(point))
     return false;
 
@@ -107,8 +112,11 @@ bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!wsURLContent)
     return false;
 
-  SetButtonDown(true);
   return true;
+}
+
+void CXFA_FFText::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  SetButtonDown(true);
 }
 
 bool CXFA_FFText::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {

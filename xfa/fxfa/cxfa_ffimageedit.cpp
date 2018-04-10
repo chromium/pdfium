@@ -96,13 +96,22 @@ void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
                 iImageYDpi, iHorzAlign, iVertAlign);
 }
 
-bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
-                                     const CFX_PointF& point) {
+bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                                const CFX_PointF& point,
+                                                FWL_MouseCommand command) {
+  if (command != FWL_MouseCommand::LeftButtonDown)
+    return CXFA_FFField::AcceptsFocusOnButtonDown(dwFlags, point, command);
+
   if (!m_pNode->IsOpenAccess())
     return false;
   if (!PtInActiveRect(point))
     return false;
 
+  return true;
+}
+
+void CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
+                                     const CFX_PointF& point) {
   SetButtonDown(true);
 
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget.get());
@@ -110,7 +119,6 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
   ms.m_dwFlags = dwFlags;
   ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
-  return true;
 }
 
 void CXFA_FFImageEdit::SetFWLRect() {

@@ -382,7 +382,9 @@ CFX_PointF CXFA_FFField::FWLToClient(const CFX_PointF& point) {
                          : point;
 }
 
-bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+bool CXFA_FFField::AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                            const CFX_PointF& point,
+                                            FWL_MouseCommand command) {
   if (!m_pNormalWidget)
     return false;
   if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
@@ -390,13 +392,16 @@ bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!PtInActiveRect(point))
     return false;
 
+  return true;
+}
+
+void CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget.get());
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
-  return true;
 }
 
 bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
@@ -452,14 +457,7 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
   return true;
 }
 
-bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
-  if (!m_pNormalWidget)
-    return false;
-  if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
-    return false;
-  if (!PtInActiveRect(point))
-    return false;
-
+void CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   SetButtonDown(true);
 
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget.get());
@@ -467,7 +465,6 @@ bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   ms.m_dwFlags = dwFlags;
   ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
-  return true;
 }
 
 bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {

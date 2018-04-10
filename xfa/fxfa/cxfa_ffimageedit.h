@@ -20,7 +20,10 @@ class CXFA_FFImageEdit : public CXFA_FFField {
                     uint32_t dwStatus) override;
   bool LoadWidget() override;
   void UnloadWidget() override;
-  bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                const CFX_PointF& point,
+                                FWL_MouseCommand command) override;
+  void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CXFA_Graphics* pGraphics,

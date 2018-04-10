@@ -15,7 +15,10 @@ class CXFA_FFText : public CXFA_FFWidget {
   ~CXFA_FFText() override;
 
   // CXFA_FFWidget
-  bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                const CFX_PointF& point,
+                                FWL_MouseCommand command) override;
+  void OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) override;
   FWL_WidgetHit OnHitTest(const CFX_PointF& point) override;

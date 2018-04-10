@@ -44,10 +44,14 @@ bool CXFA_FFSignature::OnMouseExit() {
   return false;
 }
 
-bool CXFA_FFSignature::OnLButtonDown(uint32_t dwFlags,
-                                     const CFX_PointF& point) {
+bool CXFA_FFSignature::AcceptsFocusOnButtonDown(uint32_t dwFlags,
+                                                const CFX_PointF& point,
+                                                FWL_MouseCommand command) {
   return false;
 }
+
+void CXFA_FFSignature::OnLButtonDown(uint32_t dwFlags,
+                                     const CFX_PointF& point) {}
 
 bool CXFA_FFSignature::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
@@ -68,10 +72,8 @@ bool CXFA_FFSignature::OnMouseWheel(uint32_t dwFlags,
   return false;
 }
 
-bool CXFA_FFSignature::OnRButtonDown(uint32_t dwFlags,
-                                     const CFX_PointF& point) {
-  return false;
-}
+void CXFA_FFSignature::OnRButtonDown(uint32_t dwFlags,
+                                     const CFX_PointF& point) {}
 
 bool CXFA_FFSignature::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
