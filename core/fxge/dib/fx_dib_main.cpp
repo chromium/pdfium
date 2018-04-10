@@ -12,6 +12,11 @@
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"
 
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
+              "FX_COLORREF vs. COLORREF mismatch");
+#endif
+
 const int16_t SDP_Table[513] = {
     256, 256, 256, 256, 256, 256, 256, 256, 256, 255, 255, 255, 255, 255, 255,
     254, 254, 254, 254, 253, 253, 253, 252, 252, 252, 251, 251, 251, 250, 250,

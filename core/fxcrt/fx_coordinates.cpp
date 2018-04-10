@@ -6,7 +6,6 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 
-#include <algorithm>
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
@@ -23,6 +22,26 @@ void MatchFloatRange(float f1, float f2, int* i1, int* i2) {
   *i1 = error1 > error2 ? i1_2 : i1_1;
   *i2 = *i1 + length;
 }
+
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+static_assert(sizeof(FX_RECT) == sizeof(RECT), "FX_RECT vs. RECT mismatch");
+static_assert(offsetof(FX_RECT, left) == offsetof(RECT, left),
+              "FX_RECT vs. RECT mismatch");
+static_assert(offsetof(FX_RECT, top) == offsetof(RECT, top),
+              "FX_RECT vs. RECT mismatch");
+static_assert(offsetof(FX_RECT, right) == offsetof(RECT, right),
+              "FX_RECT vs. RECT mismatch");
+static_assert(offsetof(FX_RECT, bottom) == offsetof(RECT, bottom),
+              "FX_RECT vs. RECT mismatch");
+static_assert(sizeof(FX_RECT::left) == sizeof(RECT::left),
+              "FX_RECT vs. RECT mismatch");
+static_assert(sizeof(FX_RECT::top) == sizeof(RECT::top),
+              "FX_RECT vs. RECT mismatch");
+static_assert(sizeof(FX_RECT::right) == sizeof(RECT::right),
+              "FX_RECT vs. RECT mismatch");
+static_assert(sizeof(FX_RECT::bottom) == sizeof(RECT::bottom),
+              "FX_RECT vs. RECT mismatch");
+#endif
 
 }  // namespace
 
