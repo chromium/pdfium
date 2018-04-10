@@ -23,12 +23,10 @@ int32_t CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
   m_pDocument.reset();
   m_nodeParser.CloseParser();
 
-  m_nodeParser.StartParse(pStream, ePacketID);
-
   m_pDocument = pdfium::MakeUnique<CXFA_Document>(GetNotify());
   m_nodeParser.SetFactory(m_pDocument.get());
 
-  int32_t nRetStatus = m_nodeParser.DoParse();
+  int32_t nRetStatus = m_nodeParser.Parse(pStream, ePacketID);
   if (nRetStatus == XFA_PARSESTATUS_Done) {
     ASSERT(m_pDocument);
     m_pDocument->SetRoot(m_nodeParser.GetRootNode());

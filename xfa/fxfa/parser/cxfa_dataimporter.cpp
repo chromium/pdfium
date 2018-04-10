@@ -26,13 +26,12 @@ CXFA_DataImporter::~CXFA_DataImporter() {}
 
 bool CXFA_DataImporter::ImportData(
     const RetainPtr<IFX_SeekableStream>& pDataDocument) {
-  auto pDataDocumentParser =
-      pdfium::MakeUnique<CXFA_SimpleParser>(m_pDocument.Get());
-  pDataDocumentParser->StartParse(pDataDocument, XFA_PacketType::Datasets);
-  if (pDataDocumentParser->DoParse() < XFA_PARSESTATUS_Done)
+  CXFA_SimpleParser parser(m_pDocument.Get());
+  int status = parser.Parse(pDataDocument, XFA_PacketType::Datasets);
+  if (status < XFA_PARSESTATUS_Done)
     return false;
 
-  CXFA_Node* pImportDataRoot = pDataDocumentParser->GetRootNode();
+  CXFA_Node* pImportDataRoot = parser.GetRootNode();
   if (!pImportDataRoot)
     return false;
 

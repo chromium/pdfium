@@ -25,9 +25,9 @@ class CXFA_SimpleParser {
   explicit CXFA_SimpleParser(CXFA_Document* pFactory);
   ~CXFA_SimpleParser();
 
-  void StartParse(const RetainPtr<IFX_SeekableStream>& pStream,
-                  XFA_PacketType ePacketID);
-  int32_t DoParse();
+  int32_t Parse(const RetainPtr<IFX_SeekableStream>& pStream,
+                XFA_PacketType ePacketID);
+
   CFX_XMLNode* ParseXMLData(const ByteString& wsXML);
   void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
   CXFA_Node* GetRootNode() const;
@@ -77,8 +77,6 @@ class CXFA_SimpleParser {
   UnownedPtr<CXFA_Document> m_pFactory;
   // TODO(dsinclair): Figure out who owns this.
   CXFA_Node* m_pRootNode = nullptr;
-  XFA_PacketType m_ePacketID = XFA_PacketType::User;
-  bool m_bParseStarted = false;
   const bool m_bDocumentParser;
 };
 
