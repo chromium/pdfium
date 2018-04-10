@@ -28,7 +28,7 @@
 namespace {
 
 CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
-                         const CFX_Rect& devicePageRect,
+                         const FX_RECT& devicePageRect,
                          int32_t iRotate,
                          uint32_t dwCoordinatesType) {
   ASSERT(iRotate >= 0 && iRotate <= 3);
@@ -37,29 +37,29 @@ CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
   bool bFlipY = (dwCoordinatesType & 0x02) != 0;
   CFX_Matrix m((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
   if (iRotate == 0 || iRotate == 2) {
-    m.a *= (float)devicePageRect.width / docPageRect.width;
-    m.d *= (float)devicePageRect.height / docPageRect.height;
+    m.a *= (float)devicePageRect.Width() / docPageRect.width;
+    m.d *= (float)devicePageRect.Height() / docPageRect.height;
   } else {
-    m.a *= (float)devicePageRect.height / docPageRect.width;
-    m.d *= (float)devicePageRect.width / docPageRect.height;
+    m.a *= (float)devicePageRect.Height() / docPageRect.width;
+    m.d *= (float)devicePageRect.Width() / docPageRect.height;
   }
   m.Rotate(iRotate * 1.57079632675f);
   switch (iRotate) {
     case 0:
-      m.e = bFlipX ? (float)devicePageRect.right() : (float)devicePageRect.left;
-      m.f = bFlipY ? (float)devicePageRect.bottom() : (float)devicePageRect.top;
+      m.e = bFlipX ? devicePageRect.right : devicePageRect.left;
+      m.f = bFlipY ? devicePageRect.bottom : devicePageRect.top;
       break;
     case 1:
-      m.e = bFlipY ? (float)devicePageRect.left : (float)devicePageRect.right();
-      m.f = bFlipX ? (float)devicePageRect.bottom() : (float)devicePageRect.top;
+      m.e = bFlipY ? devicePageRect.left : devicePageRect.right;
+      m.f = bFlipX ? devicePageRect.bottom : devicePageRect.top;
       break;
     case 2:
-      m.e = bFlipX ? (float)devicePageRect.left : (float)devicePageRect.right();
-      m.f = bFlipY ? (float)devicePageRect.top : (float)devicePageRect.bottom();
+      m.e = bFlipX ? devicePageRect.left : devicePageRect.right;
+      m.f = bFlipY ? devicePageRect.top : devicePageRect.bottom;
       break;
     case 3:
-      m.e = bFlipY ? (float)devicePageRect.right() : (float)devicePageRect.left;
-      m.f = bFlipX ? (float)devicePageRect.top : (float)devicePageRect.bottom();
+      m.e = bFlipY ? devicePageRect.right : devicePageRect.left;
+      m.f = bFlipX ? devicePageRect.top : devicePageRect.bottom;
       break;
     default:
       break;
@@ -122,7 +122,7 @@ CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
   return CFX_RectF(0, 0, GetPageSize());
 }
 
-CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const CFX_Rect& rtDisp,
+CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
                                              int32_t iRotate) const {
   return GetPageMatrix(CFX_RectF(0, 0, GetPageSize()), rtDisp, iRotate, 0);
 }

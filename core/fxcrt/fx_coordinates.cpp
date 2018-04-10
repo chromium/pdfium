@@ -205,6 +205,12 @@ std::ostream& operator<<(std::ostream& os, const CFX_FloatRect& rect) {
      << rect.left << ", bot " << rect.bottom << ")]";
   return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const CFX_RectF& rect) {
+  os << "rect[w " << rect.Width() << " x h " << rect.Height() << " (left "
+     << rect.left << ", top " << rect.top << ")]";
+  return os;
+}
 #endif  // NDEBUG
 
 CFX_Matrix CFX_Matrix::GetInverse() const {

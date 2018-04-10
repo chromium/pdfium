@@ -43,8 +43,8 @@ class CFGAS_GEFont : public Retainable {
   int32_t GetAscent() const;
   int32_t GetDescent() const;
 
-  bool GetCharBBox(wchar_t wUnicode, CFX_Rect* bbox);
-  bool GetBBox(CFX_Rect* bbox);
+  bool GetCharBBox(wchar_t wUnicode, FX_RECT* bbox);
+  bool GetBBox(FX_RECT* bbox);
 
   RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
   CFX_Font* GetDevFont() const { return m_pFont; }
@@ -89,7 +89,7 @@ class CFGAS_GEFont : public Retainable {
   RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;
-  std::map<wchar_t, CFX_Rect> m_BBoxMap;
+  std::map<wchar_t, FX_RECT> m_BBoxMap;
   std::vector<RetainPtr<CFGAS_GEFont>> m_SubstFonts;
   std::map<wchar_t, RetainPtr<CFGAS_GEFont>> m_FontMapper;
 };

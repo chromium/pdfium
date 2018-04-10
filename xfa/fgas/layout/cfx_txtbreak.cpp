@@ -851,19 +851,18 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
         }
 
         if (chartype == FX_CHARTYPE_Combination) {
-          CFX_Rect rtBBox;
+          FX_RECT rtBBox;
           if (pFont->GetCharBBox(wForm, &rtBBox)) {
             pCharPos->m_Origin.y =
-                fYBase + fFontSize -
-                fFontSize * (float)rtBBox.height / (float)iMaxHeight;
+                fYBase + fFontSize - fFontSize * rtBBox.Height() / iMaxHeight;
           }
           if (wForm == wch && wLast != 0xFEFF) {
             uint32_t dwLastProps = FX_GetUnicodeProperties(wLast);
             if ((dwLastProps & FX_CHARTYPEBITSMASK) ==
                 FX_CHARTYPE_Combination) {
-              CFX_Rect rtBox;
+              FX_RECT rtBox;
               if (pFont->GetCharBBox(wLast, &rtBox))
-                pCharPos->m_Origin.y -= fFontSize * rtBox.height / iMaxHeight;
+                pCharPos->m_Origin.y -= fFontSize * rtBox.Height() / iMaxHeight;
             }
           }
         }
@@ -915,12 +914,12 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   if (!pFont)
     bCharBBox = false;
 
-  CFX_Rect bbox;
+  FX_RECT bbox;
   if (bCharBBox)
     bCharBBox = pFont->GetBBox(&bbox);
 
   float fLeft = std::max(0.0f, bbox.left * fScale);
-  float fHeight = fabs(bbox.height * fScale);
+  float fHeight = fabs(bbox.Height() * fScale);
   bool bRTLPiece = !!(pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel);
   bool bSingleLine = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_SingleLine);
   bool bCombText = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_CombText);

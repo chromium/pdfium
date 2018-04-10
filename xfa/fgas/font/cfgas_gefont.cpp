@@ -185,7 +185,7 @@ bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode, int32_t& iWidth) {
   return iWidth > 0;
 }
 
-bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode, CFX_Rect* bbox) {
+bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode, FX_RECT* bbox) {
   auto it = m_BBoxMap.find(wUnicode);
   if (it != m_BBoxMap.end()) {
     *bbox = it->second;
@@ -205,21 +205,18 @@ bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode, CFX_Rect* bbox) {
   if (!m_pFont->GetGlyphBBox(iGlyph, rtBBox))
     return false;
 
-  CFX_Rect rt(rtBBox.left, rtBBox.top, rtBBox.Width(), rtBBox.Height());
-  m_BBoxMap[wUnicode] = rt;
-  *bbox = rt;
+  m_BBoxMap[wUnicode] = rtBBox;
+  *bbox = rtBBox;
   return true;
 }
 
-bool CFGAS_GEFont::GetBBox(CFX_Rect* bbox) {
-  FX_RECT rt(0, 0, 0, 0);
+bool CFGAS_GEFont::GetBBox(FX_RECT* bbox) {
+  // TODO(thestig): Pass directly into GetBBox().
+  FX_RECT rt;
   if (!m_pFont->GetBBox(rt))
     return false;
 
-  bbox->left = rt.left;
-  bbox->width = rt.Width();
-  bbox->top = rt.bottom;
-  bbox->height = -rt.Height();
+  *bbox = rt;
   return true;
 }
 

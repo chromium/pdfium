@@ -185,9 +185,10 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(int xPos,
         return m_pPDFPage->GetDisplayMatrix(xPos, yPos, xSize, ySize, iRotate);
       FX_FALLTHROUGH;
     case FormType::kXFAFull:
-      if (m_pXFAPageView)
-        return m_pXFAPageView->GetDisplayMatrix(
-            CFX_Rect(xPos, yPos, xSize, ySize), iRotate);
+      if (m_pXFAPageView) {
+        FX_RECT rect = FX_RECT(xPos, yPos, xPos + xSize, yPos + ySize);
+        return m_pXFAPageView->GetDisplayMatrix(rect, iRotate);
+      }
       break;
   }
 

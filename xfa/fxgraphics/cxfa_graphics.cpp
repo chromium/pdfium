@@ -214,7 +214,7 @@ CFX_RectF CXFA_Graphics::GetClipRect() const {
     return CFX_RectF();
 
   FX_RECT r = m_renderDevice->GetClipBox();
-  return CFX_Rect(r.left, r.top, r.Width(), r.Height()).As<float>();
+  return CFX_RectF(r.left, r.top, r.Width(), r.Height());
 }
 
 void CXFA_Graphics::SetClipRect(const CFX_RectF& rect) {

@@ -210,18 +210,6 @@ TEST(CFX_FloatRect, Print) {
   EXPECT_STREQ("rect[w 4.25 x h 3.25 (left 10.5, bot 20.5)]", os.str().c_str());
 }
 
-TEST(CFX_Rect, Print) {
-  std::ostringstream os;
-  CFX_Rect rect;
-  os << rect;
-  EXPECT_STREQ("rect[w 0 x h 0 (left 0, top 0)]", os.str().c_str());
-
-  os.str("");
-  rect = CFX_Rect(10, 20, 4, 3);
-  os << rect;
-  EXPECT_STREQ("rect[w 4 x h 3 (left 10, top 20)]", os.str().c_str());
-}
-
 TEST(CFX_RectF, Print) {
   std::ostringstream os;
   CFX_RectF rect;
