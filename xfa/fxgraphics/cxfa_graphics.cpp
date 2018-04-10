@@ -282,14 +282,13 @@ void CXFA_Graphics::FillPathWithPattern(const CXFA_GEPath* path,
   auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
   mask->Create(data.width, data.height, FXDIB_1bppMask);
   memcpy(mask->GetBuffer(), data.maskBits, mask->GetPitch() * data.height);
-  CFX_FloatRect rectf =
+  const CFX_FloatRect rectf =
       matrix.TransformRect(path->GetPathData()->GetBoundingBox());
+  const FX_RECT rect = rectf.ToRoundedFxRect();
 
-  FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
-               FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
   CFX_DefaultRenderDevice device;
   device.Attach(bmp, false, nullptr, false);
-  device.FillRect(&rect, m_info.fillColor.GetPattern()->m_backArgb);
+  device.FillRect(rect, m_info.fillColor.GetPattern()->m_backArgb);
   for (int32_t j = rect.bottom; j < rect.top; j += mask->GetHeight()) {
     for (int32_t i = rect.left; i < rect.right; i += mask->GetWidth())
       device.SetBitMask(mask, i, j, m_info.fillColor.GetPattern()->m_foreArgb);

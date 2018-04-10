@@ -706,8 +706,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   rcDevice.top = tmp.y;
   rcDevice.Normalize();
 
-  FX_RECT rcDev = rcDevice.ToFxRect();
-  pDevice->FillRect(&rcDev,
+  pDevice->FillRect(rcDevice.ToFxRect(),
                     AlphaAndColorRefToArgb(
                         static_cast<int>(m_pInterForm->GetHighlightAlpha()),
                         m_pInterForm->GetHighlightColor(fieldType)));

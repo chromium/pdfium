@@ -38,8 +38,8 @@ void CPDF_RenderContext::GetBackground(const RetainPtr<CFX_DIBitmap>& pBuffer,
   CFX_DefaultRenderDevice device;
   device.Attach(pBuffer, false, nullptr, false);
 
-  FX_RECT rect(0, 0, device.GetWidth(), device.GetHeight());
-  device.FillRect(&rect, 0xffffffff);
+  device.FillRect(FX_RECT(0, 0, device.GetWidth(), device.GetHeight()),
+                  0xffffffff);
   Render(&device, pObj, pOptions, pFinalMatrix);
 }
 

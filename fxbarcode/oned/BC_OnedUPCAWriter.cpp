@@ -128,7 +128,7 @@ bool CBC_OnedUPCAWriter::ShowChars(const WideStringView& contents,
                      (float)(leftPosition + strWidth - 0.5), (float)m_Height);
   matr.Concat(*matrix);
   FX_RECT re = matr.TransformRect(rect).GetOuterRect();
-  device->FillRect(&re, m_backgroundColor);
+  device->FillRect(re, m_backgroundColor);
   CFX_Matrix matr1(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect1((float)(leftPosition + 40 * multiple),
                       (float)(m_Height - iTextHeight),
@@ -136,14 +136,14 @@ bool CBC_OnedUPCAWriter::ShowChars(const WideStringView& contents,
                       (float)m_Height);
   matr1.Concat(*matrix);
   re = matr1.TransformRect(rect1).GetOuterRect();
-  device->FillRect(&re, m_backgroundColor);
+  device->FillRect(re, m_backgroundColor);
   float strWidth1 = (float)multiple * 7;
   CFX_Matrix matr2(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect2(0.0, (float)(m_Height - iTextHeight),
                       (float)strWidth1 - 1, (float)m_Height);
   matr2.Concat(*matrix);
   re = matr2.TransformRect(rect2).GetOuterRect();
-  device->FillRect(&re, m_backgroundColor);
+  device->FillRect(re, m_backgroundColor);
   CFX_Matrix matr3(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect3((float)(leftPosition + 85 * multiple),
                       (float)(m_Height - iTextHeight),
@@ -151,7 +151,7 @@ bool CBC_OnedUPCAWriter::ShowChars(const WideStringView& contents,
                       (float)m_Height);
   matr3.Concat(*matrix);
   re = matr3.TransformRect(rect3).GetOuterRect();
-  device->FillRect(&re, m_backgroundColor);
+  device->FillRect(re, m_backgroundColor);
   strWidth = strWidth * m_outputHScale;
 
   CalcTextInfo(tempStr, &charpos[1], m_pFont.Get(), strWidth, iFontSize, blank);
