@@ -50,7 +50,7 @@ class RenderDeviceDriverIface {
                         int fill_mode,
                         int blend_type) = 0;
   virtual bool SetPixel(int x, int y, uint32_t color);
-  virtual bool FillRectWithBlend(const FX_RECT* pRect,
+  virtual bool FillRectWithBlend(const FX_RECT& rect,
                                  uint32_t fill_color,
                                  int blend_type);
   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,

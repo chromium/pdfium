@@ -1960,7 +1960,7 @@ bool CFX_SkiaDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
   return false;
 }
 
-bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
+bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                              uint32_t fill_color,
                                              int blend_type) {
   m_pCache->FlushForDraw();
@@ -1968,11 +1968,10 @@ bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
   spaint.setAntiAlias(true);
   spaint.setColor(fill_color);
   spaint.setBlendMode(GetSkiaBlendMode(blend_type));
-  SkRect rect =
-      SkRect::MakeLTRB(pRect->left, SkTMin(pRect->top, pRect->bottom),
-                       pRect->right, SkTMax(pRect->bottom, pRect->top));
-  DebugShowSkiaDrawRect(this, m_pCanvas, spaint, rect);
-  m_pCanvas->drawRect(rect, spaint);
+  SkRect srect = SkRect::MakeLTRB(rect.left, SkTMin(rect.top, rect.bottom),
+                                  rect.right, SkTMax(rect.bottom, rect.top));
+  DebugShowSkiaDrawRect(this, m_pCanvas, spaint, srect);
+  m_pCanvas->drawRect(srect, spaint);
   return true;
 }
 

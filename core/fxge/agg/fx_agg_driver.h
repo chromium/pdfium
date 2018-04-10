@@ -59,7 +59,7 @@ class CFX_AggDeviceDriver : public RenderDeviceDriverIface {
                 int fill_mode,
                 int blend_type) override;
   bool SetPixel(int x, int y, uint32_t color) override;
-  bool FillRectWithBlend(const FX_RECT* pRect,
+  bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t fill_color,
                          int blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;

@@ -29,7 +29,7 @@ bool RenderDeviceDriverIface::SetPixel(int x, int y, uint32_t color) {
   return false;
 }
 
-bool RenderDeviceDriverIface::FillRectWithBlend(const FX_RECT* pRect,
+bool RenderDeviceDriverIface::FillRectWithBlend(const FX_RECT& rect,
                                                 uint32_t fill_color,
                                                 int blend_type) {
   return false;

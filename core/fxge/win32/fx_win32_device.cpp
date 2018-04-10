@@ -1061,7 +1061,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   return true;
 }
 
-bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
+bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                          uint32_t fill_color,
                                          int blend_type) {
   if (blend_type != FXDIB_BLEND_NORMAL)
@@ -1077,7 +1077,8 @@ bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
     return false;
 
   HBRUSH hBrush = CreateSolidBrush(colorref);
-  ::FillRect(m_hDC, (RECT*)pRect, hBrush);
+  const RECT* pRect = reinterpret_cast<const RECT*>(&rect);
+  ::FillRect(m_hDC, pRect, hBrush);
   DeleteObject(hBrush);
   return true;
 }

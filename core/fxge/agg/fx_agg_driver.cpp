@@ -1407,7 +1407,7 @@ bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
   return DibSetPixel(m_pBitmap, x, y, color);
 }
 
-bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
+bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                             uint32_t fill_color,
                                             int blend_type) {
   if (blend_type != FXDIB_BLEND_NORMAL)
@@ -1419,8 +1419,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
   FX_RECT clip_rect;
   GetClipBox(&clip_rect);
   FX_RECT draw_rect = clip_rect;
-  if (pRect)
-    draw_rect.Intersect(*pRect);
+  draw_rect.Intersect(rect);
   if (draw_rect.IsEmpty())
     return true;
 

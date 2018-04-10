@@ -178,6 +178,7 @@ using CFX_VectorF = CFX_VTemplate<float>;
 // TODO(tsepez): Consolidate all these different rectangle classes.
 
 // LTRB rectangles (y-axis runs downwards).
+// Struct layout is compatible with win32 RECT.
 struct FX_RECT {
   FX_RECT() : left(0), top(0), right(0), bottom(0) {}
   FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}

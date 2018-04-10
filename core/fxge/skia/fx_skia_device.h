@@ -64,7 +64,7 @@ class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
                 int fill_mode,
                 int blend_type) override;
 
-  bool FillRectWithBlend(const FX_RECT* pRect,
+  bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t fill_color,
                          int blend_type) override;
 
