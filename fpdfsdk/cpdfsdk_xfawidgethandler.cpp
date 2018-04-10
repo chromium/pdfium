@@ -302,6 +302,15 @@ bool CPDFSDK_XFAWidgetHandler::OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
 bool CPDFSDK_XFAWidgetHandler::OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot,
                                            uint32_t nFlag) {
+  CXFA_FFWidget* hWidget = *pAnnot ? (*pAnnot)->GetXFAWidget() : nullptr;
+  if (!hWidget)
+    return true;
+
+  CXFA_FFPageView* pXFAPageView = hWidget->GetPageView();
+  if (!pXFAPageView)
+    return true;
+
+  pXFAPageView->GetDocView()->SetFocus(nullptr);
   return true;
 }
 
