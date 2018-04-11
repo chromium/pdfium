@@ -219,13 +219,22 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceGuarded(
     CPDF_Object* pCSObj,
     const CPDF_Dictionary* pResources,
     std::set<CPDF_Object*>* pVisited) {
+  std::set<CPDF_Object*> visitedLocal;
+  return GetColorSpaceInternal(pCSObj, pResources, pVisited, &visitedLocal);
+}
+
+CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
+    CPDF_Object* pCSObj,
+    const CPDF_Dictionary* pResources,
+    std::set<CPDF_Object*>* pVisited,
+    std::set<CPDF_Object*>* pVisitedInternal) {
   if (!pCSObj)
     return nullptr;
 
-  if (pdfium::ContainsKey(*pVisited, pCSObj))
+  if (pdfium::ContainsKey(*pVisitedInternal, pCSObj))
     return nullptr;
 
-  pdfium::ScopedSetInsertion<CPDF_Object*> insertion(pVisited, pCSObj);
+  pdfium::ScopedSetInsertion<CPDF_Object*> insertion(pVisitedInternal, pCSObj);
 
   if (pCSObj->IsName()) {
     ByteString name = pCSObj->GetString();
@@ -233,8 +242,8 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceGuarded(
     if (!pCS && pResources) {
       CPDF_Dictionary* pList = pResources->GetDictFor("ColorSpace");
       if (pList) {
-        return GetColorSpaceGuarded(pList->GetDirectObjectFor(name), nullptr,
-                                    pVisited);
+        return GetColorSpaceInternal(pList->GetDirectObjectFor(name), nullptr,
+                                     pVisited, pVisitedInternal);
       }
     }
     if (!pCS || !pResources)
@@ -259,7 +268,8 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceGuarded(
     if (!pDefaultCS)
       return pCS;
 
-    return GetColorSpaceGuarded(pDefaultCS, nullptr, pVisited);
+    return GetColorSpaceInternal(pDefaultCS, nullptr, pVisited,
+                                 pVisitedInternal);
   }
 
   CPDF_Array* pArray = pCSObj->AsArray();
@@ -267,8 +277,8 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceGuarded(
     return nullptr;
 
   if (pArray->GetCount() == 1) {
-    return GetColorSpaceGuarded(pArray->GetDirectObjectAt(0), pResources,
-                                pVisited);
+    return GetColorSpaceInternal(pArray->GetDirectObjectAt(0), pResources,
+                                 pVisited, pVisitedInternal);
   }
 
   CPDF_CountedColorSpace* csData = nullptr;

@@ -39,8 +39,13 @@ class CPDF_DocPageData {
                              CPDF_FontEncoding* pEncoding);
   void ReleaseFont(const CPDF_Dictionary* pFontDict);
 
+  // Loads a colorspace.
   CPDF_ColorSpace* GetColorSpace(CPDF_Object* pCSObj,
                                  const CPDF_Dictionary* pResources);
+
+  // Loads a colorspace in a context that might be while loading another
+  // colorspace. |pVisited| is passed recursively to avoid circular calls
+  // involving CPDF_ColorSpace::Load().
   CPDF_ColorSpace* GetColorSpaceGuarded(CPDF_Object* pCSObj,
                                         const CPDF_Dictionary* pResources,
                                         std::set<CPDF_Object*>* pVisited);
@@ -67,6 +72,17 @@ class CPDF_DocPageData {
 
  private:
   using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
+
+  // Loads a colorspace in a context that might be while loading another
+  // colorspace, or even in a recursive call from this method itself. |pVisited|
+  // is passed recursively to avoid circular calls involving
+  // CPDF_ColorSpace::Load() and |pVisitedInternal| is also passed recursively
+  // to avoid circular calls with this method calling itself.
+  CPDF_ColorSpace* GetColorSpaceInternal(
+      CPDF_Object* pCSObj,
+      const CPDF_Dictionary* pResources,
+      std::set<CPDF_Object*>* pVisited,
+      std::set<CPDF_Object*>* pVisitedInternal);
 
   bool m_bForceClear;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
