@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_PAGE_CPDF_STITCHFUNC_H_
 
 #include <memory>
+#include <set>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_function.h"
@@ -18,7 +19,7 @@ class CPDF_StitchFunc : public CPDF_Function {
   ~CPDF_StitchFunc() override;
 
   // CPDF_Function
-  bool v_Init(CPDF_Object* pObj) override;
+  bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) override;
   bool v_Call(float* inputs, float* results) const override;
 
   const std::vector<std::unique_ptr<CPDF_Function>>& GetSubFunctions() const {

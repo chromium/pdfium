@@ -20,7 +20,8 @@ CPDF_ExpIntFunc::~CPDF_ExpIntFunc() {
   FX_Free(m_pEndValues);
 }
 
-bool CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj) {
+bool CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj,
+                             std::set<CPDF_Object*>* pVisited) {
   CPDF_Dictionary* pDict = pObj->GetDict();
   if (!pDict)
     return false;

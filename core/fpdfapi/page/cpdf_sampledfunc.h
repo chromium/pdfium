@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_SAMPLEDFUNC_H_
 #define CORE_FPDFAPI_PAGE_CPDF_SAMPLEDFUNC_H_
 
+#include <set>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_function.h"
@@ -30,7 +31,7 @@ class CPDF_SampledFunc : public CPDF_Function {
   ~CPDF_SampledFunc() override;
 
   // CPDF_Function
-  bool v_Init(CPDF_Object* pObj) override;
+  bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) override;
   bool v_Call(float* inputs, float* results) const override;
 
   const std::vector<SampleEncodeInfo>& GetEncodeInfo() const {

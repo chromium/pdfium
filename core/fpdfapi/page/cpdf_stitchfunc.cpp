@@ -22,7 +22,8 @@ CPDF_StitchFunc::~CPDF_StitchFunc() {
   FX_Free(m_pEncode);
 }
 
-bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
+bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj,
+                             std::set<CPDF_Object*>* pVisited) {
   CPDF_Dictionary* pDict = pObj->GetDict();
   if (!pDict) {
     return false;
@@ -42,7 +43,7 @@ bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
     CPDF_Object* pSub = pArray->GetDirectObjectAt(i);
     if (pSub == pObj)
       return false;
-    std::unique_ptr<CPDF_Function> pFunc(CPDF_Function::Load(pSub));
+    std::unique_ptr<CPDF_Function> pFunc(CPDF_Function::Load(pSub, pVisited));
     if (!pFunc)
       return false;
     // Check that the input dimensionality is 1, and that all output

@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_PAGE_CPDF_FUNCTION_H_
 
 #include <memory>
+#include <set>
 
 class CPDF_ExpIntFunc;
 class CPDF_Object;
@@ -50,8 +51,10 @@ class CPDF_Function {
  protected:
   explicit CPDF_Function(Type type);
 
-  bool Init(CPDF_Object* pObj);
-  virtual bool v_Init(CPDF_Object* pObj) = 0;
+  static std::unique_ptr<CPDF_Function> Load(CPDF_Object* pFuncObj,
+                                             std::set<CPDF_Object*>* pVisited);
+  bool Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited);
+  virtual bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) = 0;
   virtual bool v_Call(float* inputs, float* results) const = 0;
 
   uint32_t m_nInputs;

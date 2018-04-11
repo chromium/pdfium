@@ -36,7 +36,8 @@ CPDF_SampledFunc::CPDF_SampledFunc() : CPDF_Function(Type::kType0Sampled) {}
 
 CPDF_SampledFunc::~CPDF_SampledFunc() {}
 
-bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
+bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj,
+                              std::set<CPDF_Object*>* pVisited) {
   CPDF_Stream* pStream = pObj->AsStream();
   if (!pStream)
     return false;

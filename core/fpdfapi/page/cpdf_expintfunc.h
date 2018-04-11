@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
 #define CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
 
+#include <set>
+
 #include "core/fpdfapi/page/cpdf_function.h"
 
 class CPDF_ExpIntFunc : public CPDF_Function {
@@ -15,7 +17,7 @@ class CPDF_ExpIntFunc : public CPDF_Function {
   ~CPDF_ExpIntFunc() override;
 
   // CPDF_Function
-  bool v_Init(CPDF_Object* pObj) override;
+  bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) override;
   bool v_Call(float* inputs, float* results) const override;
 
   uint32_t m_nOrigOutputs;
