@@ -2905,6 +2905,7 @@ test("pdfium_unittests") {
     "core/fxcrt/fx_system_unittest.cpp",
     "core/fxcrt/maybe_owned_unittest.cpp",
     "core/fxcrt/observable_unittest.cpp",
+    "core/fxcrt/pdfium_span_unittest.cpp",
     "core/fxcrt/retain_ptr_unittest.cpp",
     "core/fxcrt/shared_copy_on_write_unittest.cpp",
     "core/fxcrt/string_pool_template_unittest.cpp",

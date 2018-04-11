@@ -195,6 +195,7 @@ class span {
   // [span.cons], span constructors, copy, assignment, and destructor
   constexpr span() noexcept : data_(nullptr), size_(0) {}
   constexpr span(T* data, size_t size) noexcept : data_(data), size_(size) {}
+
   // TODO(dcheng): Implement construction from a |begin| and |end| pointer.
   template <size_t N>
   constexpr span(T (&array)[N]) noexcept : span(array, N) {}
@@ -215,12 +216,18 @@ class span {
   template <typename U, typename = internal::EnableIfLegalSpanConversion<U, T>>
   constexpr span(const span<U>& other) : span(other.data(), other.size()) {}
   span& operator=(const span& other) noexcept = default;
-  ~span() noexcept = default;
+  ~span() noexcept {
+    if (!size_) {
+      // Empty spans might point to byte N+1 of a N-byte object, legal for
+      // C pointers but not UnownedPtrs.
+      data_.ReleaseBadPointer();
+    }
+  }
 
   // [span.sub], span subviews
   const span first(size_t count) const {
     CHECK(count <= size_);
-    return span(data_, count);
+    return span(data_.Get(), count);
   }
 
   const span last(size_t count) const {
@@ -240,7 +247,7 @@ class span {
   constexpr bool empty() const noexcept { return size_ == 0; }
 
   // [span.elem], span element access
-  const T& operator[](size_t index) const noexcept {
+  T& operator[](size_t index) const noexcept {
     CHECK(index < size_);
     return data_.Get()[index];
   }

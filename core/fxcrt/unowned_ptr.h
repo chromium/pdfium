@@ -35,6 +35,13 @@
 // other heap object. Use pdfium::span<> for the cases where indexing
 // into an unowned array is desired, which performs the same checks.
 
+namespace pdfium {
+
+template <typename T>
+class span;
+
+}  // namespace pdfium
+
 namespace fxcrt {
 
 template <class T>
@@ -95,10 +102,18 @@ class UnownedPtr {
   T* operator->() const { return m_pObj; }
 
  private:
+  friend class pdfium::span<T>;
+
   inline void ProbeForLowSeverityLifetimeIssue() {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
     if (m_pObj)
       reinterpret_cast<const volatile uint8_t*>(m_pObj)[0];
+#endif
+  }
+
+  inline void ReleaseBadPointer() {
+#if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+    m_pObj = nullptr;
 #endif
   }
 
