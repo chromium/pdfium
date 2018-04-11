@@ -10,6 +10,13 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
+TEST(CXFA_FMLexerTest, NullString) {
+  WideStringView null_string;
+  CXFA_FMLexer lexer(null_string);
+  CXFA_FMToken token = lexer.NextToken();
+  EXPECT_EQ(TOKeof, token.m_type);
+}
+
 TEST(CXFA_FMLexerTest, EmptyString) {
   CXFA_FMLexer lexer(L"");
   CXFA_FMToken token = lexer.NextToken();

@@ -130,7 +130,7 @@ WideString CXFA_FMToken::ToDebugString() const {
 
 CXFA_FMLexer::CXFA_FMLexer(const WideStringView& wsFormCalc)
     : m_cursor(wsFormCalc.unterminated_c_str()),
-      m_end(m_cursor + wsFormCalc.GetLength() - 1),
+      m_end(m_cursor + wsFormCalc.GetLength()),
       m_lexer_error(false) {}
 
 CXFA_FMLexer::~CXFA_FMLexer() {}
@@ -139,7 +139,7 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
   if (m_lexer_error)
     return CXFA_FMToken();
 
-  while (m_cursor <= m_end && *m_cursor) {
+  while (m_cursor < m_end && *m_cursor) {
     if (!IsFormCalcCharacter(*m_cursor)) {
       RaiseError();
       return CXFA_FMToken();
@@ -170,7 +170,7 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
         return AdvanceForNumber();
       case '=':
         ++m_cursor;
-        if (m_cursor > m_end)
+        if (m_cursor >= m_end)
           return CXFA_FMToken(TOKassign);
 
         if (!IsFormCalcCharacter(*m_cursor)) {
@@ -184,7 +184,7 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
         return CXFA_FMToken(TOKassign);
       case '<':
         ++m_cursor;
-        if (m_cursor > m_end)
+        if (m_cursor >= m_end)
           return CXFA_FMToken(TOKlt);
 
         if (!IsFormCalcCharacter(*m_cursor)) {
@@ -202,7 +202,7 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
         return CXFA_FMToken(TOKlt);
       case '>':
         ++m_cursor;
-        if (m_cursor > m_end)
+        if (m_cursor >= m_end)
           return CXFA_FMToken(TOKgt);
 
         if (!IsFormCalcCharacter(*m_cursor)) {
@@ -246,7 +246,7 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
         return CXFA_FMToken(TOKmul);
       case '/': {
         ++m_cursor;
-        if (m_cursor > m_end)
+        if (m_cursor >= m_end)
           return CXFA_FMToken(TOKdiv);
 
         if (!IsFormCalcCharacter(*m_cursor)) {
@@ -261,7 +261,7 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
       }
       case '.':
         ++m_cursor;
-        if (m_cursor > m_end)
+        if (m_cursor >= m_end)
           return CXFA_FMToken(TOKdot);
 
         if (!IsFormCalcCharacter(*m_cursor)) {
@@ -323,7 +323,7 @@ CXFA_FMToken CXFA_FMLexer::AdvanceForString() {
 
   const wchar_t* start = m_cursor;
   ++m_cursor;
-  while (m_cursor <= m_end && *m_cursor) {
+  while (m_cursor < m_end && *m_cursor) {
     if (!IsFormCalcCharacter(*m_cursor))
       break;
 
@@ -331,7 +331,7 @@ CXFA_FMToken CXFA_FMLexer::AdvanceForString() {
       // Check for escaped "s, i.e. "".
       ++m_cursor;
       // If the end of the input has been reached it was not escaped.
-      if (m_cursor > m_end) {
+      if (m_cursor >= m_end) {
         token.m_string =
             WideStringView(start, static_cast<size_t>(m_cursor - start));
         return token;
@@ -357,7 +357,7 @@ CXFA_FMToken CXFA_FMLexer::AdvanceForString() {
 CXFA_FMToken CXFA_FMLexer::AdvanceForIdentifier() {
   const wchar_t* start = m_cursor;
   ++m_cursor;
-  while (m_cursor <= m_end && *m_cursor) {
+  while (m_cursor < m_end && *m_cursor) {
     if (!IsFormCalcCharacter(*m_cursor)) {
       RaiseError();
       return CXFA_FMToken();
@@ -377,7 +377,7 @@ CXFA_FMToken CXFA_FMLexer::AdvanceForIdentifier() {
 
 void CXFA_FMLexer::AdvanceForComment() {
   m_cursor++;
-  while (m_cursor <= m_end && *m_cursor) {
+  while (m_cursor < m_end && *m_cursor) {
     if (!IsFormCalcCharacter(*m_cursor)) {
       RaiseError();
       return;
