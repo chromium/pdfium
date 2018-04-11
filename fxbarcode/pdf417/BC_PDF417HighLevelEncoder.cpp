@@ -61,8 +61,9 @@ WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(WideString wideMsg,
                                                        int32_t& e) {
   ByteString bytes;
   CBC_UtilCodingConvert::UnicodeToUTF8(wideMsg, bytes);
-  WideString msg;
   int32_t len = bytes.GetLength();
+  WideString msg;
+  msg.Reserve(len);
   for (int32_t i = 0; i < len; i++) {
     wchar_t ch = (wchar_t)(bytes[i] & 0xff);
     if (ch == '?' && bytes[i] != '?') {
@@ -72,8 +73,9 @@ WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(WideString wideMsg,
     msg += ch;
   }
   std::vector<uint8_t> byteArr(bytes.begin(), bytes.end());
-  WideString sb;
   len = msg.GetLength();
+  WideString sb;
+  sb.Reserve(len);
   int32_t p = 0;
   int32_t textSubMode = SUBMODE_ALPHA;
   if (compaction == TEXT) {
