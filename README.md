@@ -141,6 +141,13 @@ checkout to see if the same failures appear.
 Code coverage reports for PDFium can be generated in Linux development
 environments. Details can be found [here](/docs/code-coverage.md).
 
+## Profiling
+
+Valgrind and other profiling tools do not work correctly with the standard build
+setup that PDFium uses. You will need to add
+`ro_segment_workaround_for_valgrind=true` to `args.gn` to get symbols to
+correctly appear.
+
 ## Waterfall
 
 The current health of the source tree can be found at
