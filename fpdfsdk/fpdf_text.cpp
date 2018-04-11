@@ -193,7 +193,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
   int ret_count = byte_str_len / kBytesPerCharacter;
 
   ASSERT(ret_count <= char_count + 1);  // +1 to account for the NUL terminator.
-  memcpy(result, byte_str.GetBuffer(byte_str_len), byte_str_len);
+  memcpy(result, byte_str.c_str(), byte_str_len);
   return ret_count;
 }
 
@@ -247,8 +247,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
   ByteString cbUTF16Str = str.UTF16LE_Encode();
   int len = cbUTF16Str.GetLength() / sizeof(unsigned short);
   int size = buflen > len ? len : buflen;
-  memcpy(buffer, cbUTF16Str.GetBuffer(size * sizeof(unsigned short)),
-         size * sizeof(unsigned short));
+  memcpy(buffer, cbUTF16Str.c_str(), size * sizeof(unsigned short));
   cbUTF16Str.ReleaseBuffer(size * sizeof(unsigned short));
 
   return size;
@@ -352,7 +351,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetURL(FPDF_PAGELINK link_page,
   int size = std::min(required, buflen);
   if (size > 0) {
     int buf_size = size * sizeof(unsigned short);
-    memcpy(buffer, cbUTF16URL.GetBuffer(buf_size), buf_size);
+    memcpy(buffer, cbUTF16URL.c_str(), buf_size);
   }
   return size;
 }

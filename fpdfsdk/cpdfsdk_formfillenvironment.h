@@ -29,6 +29,10 @@ class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class IJS_Runtime;
 
+// NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
+// since modifying the result would impact |bsUTF16LE|.
+FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE);
+
 // The CPDFSDK_FormFillEnvironment is "owned" by the embedder across the
 // C API as a FPDF_FormHandle, and may pop out of existence at any time,
 // so long as the associated embedder-owned FPDF_Document outlives it.

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 
-CXFA_LinkUserData::CXFA_LinkUserData(wchar_t* pszText)
+CXFA_LinkUserData::CXFA_LinkUserData(const wchar_t* pszText)
     : m_wsURLContent(pszText) {}
 
 CXFA_LinkUserData::~CXFA_LinkUserData() {}

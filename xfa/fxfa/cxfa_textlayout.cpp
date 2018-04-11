@@ -746,9 +746,8 @@ bool CXFA_TextLayout::LoadRichText(
           ASSERT(pElement);
           WideString wsLinkContent = pElement->GetString(L"href");
           if (!wsLinkContent.IsEmpty()) {
-            pLinkData = pdfium::MakeRetain<CXFA_LinkUserData>(
-                wsLinkContent.GetBuffer(wsLinkContent.GetLength()));
-            wsLinkContent.ReleaseBuffer(wsLinkContent.GetLength());
+            pLinkData =
+                pdfium::MakeRetain<CXFA_LinkUserData>(wsLinkContent.c_str());
           }
         }
 

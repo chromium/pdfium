@@ -19,7 +19,7 @@ class CXFA_LinkUserData : public Retainable {
   const wchar_t* GetLinkURL() const { return m_wsURLContent.c_str(); }
 
  private:
-  explicit CXFA_LinkUserData(wchar_t* pszText);
+  explicit CXFA_LinkUserData(const wchar_t* pszText);
   ~CXFA_LinkUserData() override;
 
   WideString m_wsURLContent;

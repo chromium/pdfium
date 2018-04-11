@@ -20,16 +20,13 @@
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/ptr_util.h"
 
-namespace {
-
-// NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
-// since modifying the result would impact |bsUTF16LE|.
 FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
+  // Force a private version of the string, since we're about to hand it off
+  // to the embedder. Should the embedder modify it by accident, it won't
+  // corrupt other shares of the string beyond |bsUTF16LE|.
   return reinterpret_cast<FPDF_WIDESTRING>(
       bsUTF16LE->GetBuffer(bsUTF16LE->GetLength()));
 }
-
-}  // namespace
 
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     UnderlyingDocumentType* pDoc,
@@ -374,9 +371,7 @@ void CPDFSDK_FormFillEnvironment::GotoURL(CPDFXFA_Context* document,
     return;
 
   ByteString bsTo = WideString(wsURL).UTF16LE_Encode();
-  FPDF_WIDESTRING pTo = (FPDF_WIDESTRING)bsTo.GetBuffer(wsURL.GetLength());
-  m_pInfo->FFI_GotoURL(m_pInfo, document, pTo);
-  bsTo.ReleaseBuffer(bsTo.GetStringLength());
+  m_pInfo->FFI_GotoURL(m_pInfo, document, AsFPDFWideString(&bsTo));
 }
 
 void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
@@ -445,10 +440,9 @@ RetainPtr<IFX_SeekableReadStream> CPDFSDK_FormFillEnvironment::DownloadFromURL(
     return nullptr;
 
   ByteString bstrURL = WideString(url).UTF16LE_Encode();
-  FPDF_WIDESTRING wsURL =
-      (FPDF_WIDESTRING)bstrURL.GetBuffer(bstrURL.GetLength());
+  FPDF_LPFILEHANDLER fileHandler =
+      m_pInfo->FFI_DownloadFromURL(m_pInfo, AsFPDFWideString(&bstrURL));
 
-  FPDF_LPFILEHANDLER fileHandler = m_pInfo->FFI_DownloadFromURL(m_pInfo, wsURL);
   return MakeSeekableStream(fileHandler);
 }
 
@@ -462,32 +456,23 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
     return L"";
 
   ByteString bsURL = WideString(wsURL).UTF16LE_Encode();
-  FPDF_WIDESTRING URL = (FPDF_WIDESTRING)bsURL.GetBuffer(bsURL.GetLength());
-
   ByteString bsData = WideString(wsData).UTF16LE_Encode();
-  FPDF_WIDESTRING data = (FPDF_WIDESTRING)bsData.GetBuffer(bsData.GetLength());
-
   ByteString bsContentType = WideString(wsContentType).UTF16LE_Encode();
-  FPDF_WIDESTRING contentType =
-      (FPDF_WIDESTRING)bsContentType.GetBuffer(bsContentType.GetLength());
-
   ByteString bsEncode = WideString(wsEncode).UTF16LE_Encode();
-  FPDF_WIDESTRING encode =
-      (FPDF_WIDESTRING)bsEncode.GetBuffer(bsEncode.GetLength());
-
   ByteString bsHeader = WideString(wsHeader).UTF16LE_Encode();
-  FPDF_WIDESTRING header =
-      (FPDF_WIDESTRING)bsHeader.GetBuffer(bsHeader.GetLength());
 
   FPDF_BSTR response;
   FPDF_BStr_Init(&response);
-  m_pInfo->FFI_PostRequestURL(m_pInfo, URL, data, contentType, encode, header,
-                              &response);
+  m_pInfo->FFI_PostRequestURL(
+      m_pInfo, AsFPDFWideString(&bsURL), AsFPDFWideString(&bsData),
+      AsFPDFWideString(&bsContentType), AsFPDFWideString(&bsEncode),
+      AsFPDFWideString(&bsHeader), &response);
 
-  WideString wsRet = WideString::FromUTF16LE(
-      (FPDF_WIDESTRING)response.str, response.len / sizeof(FPDF_WIDESTRING));
+  WideString wsRet =
+      WideString::FromUTF16LE(reinterpret_cast<FPDF_WIDESTRING>(response.str),
+                              response.len / sizeof(FPDF_WIDESTRING));
+
   FPDF_BStr_Clear(&response);
-
   return wsRet;
 }
 
@@ -498,16 +483,12 @@ FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(const wchar_t* wsURL,
     return false;
 
   ByteString bsURL = WideString(wsURL).UTF16LE_Encode();
-  FPDF_WIDESTRING URL = (FPDF_WIDESTRING)bsURL.GetBuffer(bsURL.GetLength());
-
   ByteString bsData = WideString(wsData).UTF16LE_Encode();
-  FPDF_WIDESTRING data = (FPDF_WIDESTRING)bsData.GetBuffer(bsData.GetLength());
-
   ByteString bsEncode = WideString(wsEncode).UTF16LE_Encode();
-  FPDF_WIDESTRING encode =
-      (FPDF_WIDESTRING)bsEncode.GetBuffer(bsEncode.GetLength());
 
-  return m_pInfo->FFI_PutRequestURL(m_pInfo, URL, data, encode);
+  return m_pInfo->FFI_PutRequestURL(m_pInfo, AsFPDFWideString(&bsURL),
+                                    AsFPDFWideString(&bsData),
+                                    AsFPDFWideString(&bsEncode));
 }
 
 WideString CPDFSDK_FormFillEnvironment::GetLanguage() {

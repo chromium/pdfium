@@ -521,12 +521,7 @@ bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
     ByteString csBValue = pField->GetStringFor("V");
     WideString csWValue = PDF_DecodeText(csBValue);
     ByteString csValue_b = ByteString::FromUnicode(csWValue);
-
-    fdfEncodedData << name_b.GetBuffer(name_b.GetLength());
-    name_b.ReleaseBuffer(name_b.GetStringLength());
-    fdfEncodedData << "=";
-    fdfEncodedData << csValue_b.GetBuffer(csValue_b.GetLength());
-    csValue_b.ReleaseBuffer(csValue_b.GetStringLength());
+    fdfEncodedData << name_b.c_str() << "=" << csValue_b.c_str();
     if (i != pFields->GetCount() - 1)
       fdfEncodedData << "&";
   }
