@@ -75,26 +75,9 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
                  &icc_proflen);
 #endif
 #if defined(PNG_TEXT_SUPPORTED)
-    int i;
-    size_t len;
-    const char* buf;
     int num_text;
     png_textp text = nullptr;
     png_get_text(png_ptr, info_ptr, &text, &num_text);
-    for (i = 0; i < num_text; i++) {
-      len = strlen(text[i].key);
-      buf = "Time";
-      if (memcmp(buf, text[i].key, std::min(len, strlen(buf)))) {
-        buf = "Author";
-        if (!memcmp(buf, text[i].key, std::min(len, strlen(buf)))) {
-          pAttribute->m_strAuthor =
-              text[i].text_length > 0
-                  ? ByteString(reinterpret_cast<uint8_t*>(text[i].text),
-                               static_cast<size_t>(text[i].text_length))
-                  : ByteString();
-        }
-      }
-    }
 #endif
   }
 }
