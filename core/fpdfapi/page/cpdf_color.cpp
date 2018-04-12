@@ -60,6 +60,7 @@ bool CPDF_Color::IsPatternInternal() const {
 }
 
 void CPDF_Color::SetColorSpace(CPDF_ColorSpace* pCS) {
+  ASSERT(pCS);
   if (m_pCS == pCS) {
     if (!m_pBuffer)
       m_pBuffer = pCS->CreateBuf();
@@ -72,10 +73,10 @@ void CPDF_Color::SetColorSpace(CPDF_ColorSpace* pCS) {
   ReleaseColorSpace();
 
   m_pCS = pCS;
-  if (pCS) {
+  if (IsPatternInternal())
     m_pBuffer = pCS->CreateBuf();
-    pCS->GetDefaultColor(m_pBuffer);
-  }
+  else
+    m_pBuffer = pCS->CreateBufAndSetDefaultColor();
 }
 
 void CPDF_Color::SetValue(const float* comps) {

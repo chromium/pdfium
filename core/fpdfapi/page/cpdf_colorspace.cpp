@@ -485,25 +485,25 @@ void CPDF_ColorSpace::Release() {
   delete this;
 }
 
-int CPDF_ColorSpace::GetBufSize() const {
+size_t CPDF_ColorSpace::GetBufSize() const {
   if (m_Family == PDFCS_PATTERN)
     return sizeof(PatternValue);
   return m_nComponents * sizeof(float);
 }
 
-float* CPDF_ColorSpace::CreateBuf() {
-  int size = GetBufSize();
-  return reinterpret_cast<float*>(FX_Alloc(uint8_t, size));
+float* CPDF_ColorSpace::CreateBuf() const {
+  return reinterpret_cast<float*>(FX_Alloc(uint8_t, GetBufSize()));
 }
 
-void CPDF_ColorSpace::GetDefaultColor(float* buf) const {
-  if (!buf || m_Family == PDFCS_PATTERN)
-    return;
+float* CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
+  ASSERT(m_Family != PDFCS_PATTERN);
 
+  float* buf = CreateBuf();
   float min;
   float max;
   for (uint32_t i = 0; i < m_nComponents; i++)
     GetDefaultValue(i, &buf[i], &min, &max);
+  return buf;
 }
 
 uint32_t CPDF_ColorSpace::CountComponents() const {
