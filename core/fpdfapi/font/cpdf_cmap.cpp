@@ -342,22 +342,24 @@ uint32_t CPDF_CMap::GetNextChar(const ByteStringView& pString,
   auto pBytes = pString.span();
   switch (m_CodingScheme) {
     case OneByte: {
-      return pBytes[offset++];
+      return offset < pBytes.size() ? pBytes[offset++] : 0;
     }
     case TwoBytes: {
-      uint8_t byte1 = pBytes[offset++];
-      return 256 * byte1 + pBytes[offset++];
+      uint8_t byte1 = offset < pBytes.size() ? pBytes[offset++] : 0;
+      uint8_t byte2 = offset < pBytes.size() ? pBytes[offset++] : 0;
+      return 256 * byte1 + byte2;
     }
     case MixedTwoBytes: {
-      uint8_t byte1 = pBytes[offset++];
+      uint8_t byte1 = offset < pBytes.size() ? pBytes[offset++] : 0;
       if (!m_MixedTwoByteLeadingBytes[byte1])
         return byte1;
-      return 256 * byte1 + pBytes[offset++];
+      uint8_t byte2 = offset < pBytes.size() ? pBytes[offset++] : 0;
+      return 256 * byte1 + byte2;
     }
     case MixedFourBytes: {
       uint8_t codes[4];
       int char_size = 1;
-      codes[0] = pBytes[offset++];
+      codes[0] = offset < pBytes.size() ? pBytes[offset++] : 0;
       while (1) {
         int ret = CheckFourByteCodeRange(codes, char_size,
                                          m_MixedFourByteLeadingRanges);
