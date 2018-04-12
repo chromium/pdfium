@@ -14,8 +14,8 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_simple_parser.h"
 
 CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {
@@ -26,7 +26,7 @@ CXFA_DataImporter::~CXFA_DataImporter() {}
 
 bool CXFA_DataImporter::ImportData(
     const RetainPtr<IFX_SeekableStream>& pDataDocument) {
-  CXFA_SimpleParser parser(m_pDocument.Get());
+  CXFA_DocumentParser parser(m_pDocument.Get());
   if (!parser.Parse(pDataDocument, XFA_PacketType::Datasets))
     return false;
 

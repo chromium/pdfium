@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
-#define XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
+#ifndef XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_
+#define XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_
 
 #include <memory>
 #include <utility>
@@ -20,11 +20,11 @@ class CFX_XMLInstruction;
 class IFX_SeekableStream;
 class CFX_SeekableStreamProxy;
 
-class CXFA_SimpleParser {
+class CXFA_DocumentParser {
  public:
-  CXFA_SimpleParser();
-  explicit CXFA_SimpleParser(CXFA_Document* pFactory);
-  ~CXFA_SimpleParser();
+  CXFA_DocumentParser();
+  explicit CXFA_DocumentParser(CXFA_Document* pFactory);
+  ~CXFA_DocumentParser();
 
   bool Parse(const RetainPtr<IFX_SeekableStream>& pStream,
              XFA_PacketType ePacketID);
@@ -80,4 +80,4 @@ class CXFA_SimpleParser {
   const bool m_bDocumentParser;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
+#endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_

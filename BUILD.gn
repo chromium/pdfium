@@ -2319,6 +2319,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_digestmethods.h",
       "xfa/fxfa/parser/cxfa_document.cpp",
       "xfa/fxfa/parser/cxfa_document.h",
+      "xfa/fxfa/parser/cxfa_document_parser.cpp",
+      "xfa/fxfa/parser/cxfa_document_parser.h",
       "xfa/fxfa/parser/cxfa_documentassembly.cpp",
       "xfa/fxfa/parser/cxfa_documentassembly.h",
       "xfa/fxfa/parser/cxfa_draw.cpp",
@@ -2664,8 +2666,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_signing.h",
       "xfa/fxfa/parser/cxfa_silentprint.cpp",
       "xfa/fxfa/parser/cxfa_silentprint.h",
-      "xfa/fxfa/parser/cxfa_simple_parser.cpp",
-      "xfa/fxfa/parser/cxfa_simple_parser.h",
       "xfa/fxfa/parser/cxfa_soapaction.cpp",
       "xfa/fxfa/parser/cxfa_soapaction.h",
       "xfa/fxfa/parser/cxfa_soapaddress.cpp",
@@ -3031,7 +3031,7 @@ test("pdfium_embeddertests") {
       "testing/xfa_js_embedder_test.cpp",
       "testing/xfa_js_embedder_test.h",
       "xfa/fwl/cfwl_edit_embeddertest.cpp",
-      "xfa/fxfa/parser/cxfa_simple_parser_embeddertest.cpp",
+      "xfa/fxfa/parser/cxfa_document_parser_embeddertest.cpp",
     ]
   }
   if (is_android) {

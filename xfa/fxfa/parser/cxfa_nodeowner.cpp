@@ -21,7 +21,7 @@ void CXFA_NodeOwner::ReleaseXMLNodesIfNeeded() {
   // it. This will cause the ProbeForLowSeverityLifetimeIssue to fire.
   //
   // This doesn't happen in the destructor because of the ownership semantics
-  // between the CXFA_Document and CXFA_SimpleParser. It has to happen before
+  // between the CXFA_Document and CXFA_DocumentParser. It has to happen before
   // the simple parser is destroyed, but the document has to live longer then
   // the simple parser.
   for (auto& it : nodes_)

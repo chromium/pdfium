@@ -18,8 +18,8 @@
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_simple_parser.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
@@ -215,7 +215,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   if (params.size() >= 3)
     bOverwrite = runtime->ToBoolean(params[2]);
 
-  auto pParser = pdfium::MakeUnique<CXFA_SimpleParser>(GetDocument());
+  auto pParser = pdfium::MakeUnique<CXFA_DocumentParser>(GetDocument());
   if (!pParser)
     return CJS_Return(true);
 

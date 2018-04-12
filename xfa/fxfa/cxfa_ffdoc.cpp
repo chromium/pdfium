@@ -33,9 +33,9 @@
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 #include "xfa/fxfa/parser/cxfa_dataimporter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/cxfa_dynamicrender.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_simple_parser.h"
 
 namespace {
 
@@ -211,7 +211,7 @@ bool CXFA_FFDoc::Load() {
 bool CXFA_FFDoc::ParseDoc() {
   // Note, we don't pass the document into the constructor as currently that
   // triggers different behaviour in the parser.
-  CXFA_SimpleParser parser;
+  CXFA_DocumentParser parser;
   parser.SetFactory(m_pDocument.get());
   if (!parser.Parse(m_pStream, XFA_PacketType::Xdp))
     return false;
