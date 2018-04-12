@@ -23,7 +23,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       pdfium::MakeRetain<CFX_SeekableStreamProxy>(const_cast<uint8_t*>(data),
                                                   size);
   auto doc = pdfium::MakeUnique<CFX_XMLDoc>(stream);
-  if (doc->DoLoad() < 100)
+  if (doc->Load() < 100)
     return 0;
 
   CFX_XMLNode* pXMLFakeRoot = doc->GetRoot();

@@ -19,14 +19,13 @@ class CFX_XMLDoc {
   explicit CFX_XMLDoc(const RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFX_XMLDoc();
 
-  int32_t DoLoad();
+  int32_t Load();
   void CloseXML();
 
   CFX_XMLNode* GetRoot() const { return m_pRoot.get(); }
   CFX_XMLParser* GetParser() const { return m_pXMLParser.get(); }
 
  private:
-  int32_t m_iStatus;
   std::unique_ptr<CFX_XMLNode> m_pRoot;
   std::unique_ptr<CFX_XMLParser> m_pXMLParser;
 };

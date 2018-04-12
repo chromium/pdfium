@@ -341,6 +341,7 @@ void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
 int32_t CXFA_SimpleParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
                                  XFA_PacketType ePacketID) {
   CloseParser();
+
   m_pFileRead = pStream;
   m_pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
   uint16_t wCodePage = m_pStream->GetCodePage();
@@ -353,7 +354,7 @@ int32_t CXFA_SimpleParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
   if (!m_pXMLDoc)
     return XFA_PARSESTATUS_StatusErr;
 
-  int32_t iRet = m_pXMLDoc->DoLoad();
+  int32_t iRet = m_pXMLDoc->Load();
   if (iRet < 0)
     return XFA_PARSESTATUS_SyntaxErr;
   if (iRet < 100)
@@ -376,7 +377,7 @@ CFX_XMLNode* CXFA_SimpleParser::ParseXMLData(const ByteString& wsXML) {
       const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength());
   m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>(pStream);
 
-  int32_t iRet = m_pXMLDoc->DoLoad();
+  int32_t iRet = m_pXMLDoc->Load();
   if (iRet < 0 || iRet >= 100)
     m_pXMLDoc->CloseXML();
   return iRet < 100 ? nullptr : GetDocumentNode(m_pXMLDoc.get());

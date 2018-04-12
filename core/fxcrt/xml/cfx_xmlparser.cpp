@@ -15,58 +15,46 @@
 
 CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
                              const RetainPtr<CFX_SeekableStreamProxy>& pStream)
-    : m_pStream(pStream),
-      m_pParser(pdfium::MakeUnique<CFX_XMLSyntaxParser>(m_pStream)),
+    : m_pParser(pdfium::MakeUnique<CFX_XMLSyntaxParser>(pStream)),
       m_pParent(pParent),
-      m_pChild(nullptr),
-      m_syntaxParserResult(FX_XmlSyntaxResult::None) {
-  ASSERT(m_pParent && m_pStream);
+      m_pChild(nullptr) {
+  ASSERT(m_pParent && pStream);
   m_NodeStack.push(m_pParent);
 }
 
 CFX_XMLParser::~CFX_XMLParser() {}
 
-int32_t CFX_XMLParser::DoParser() {
-  if (m_syntaxParserResult == FX_XmlSyntaxResult::Error)
-    return -1;
-  if (m_syntaxParserResult == FX_XmlSyntaxResult::EndOfString)
-    return 100;
-
+int32_t CFX_XMLParser::Parse() {
   int32_t iCount = 0;
   while (true) {
-    m_syntaxParserResult = m_pParser->DoSyntaxParse();
-    switch (m_syntaxParserResult) {
-      case FX_XmlSyntaxResult::InstructionOpen:
-        break;
+    FX_XmlSyntaxResult result = m_pParser->DoSyntaxParse();
+    if (result == FX_XmlSyntaxResult::Error)
+      return -1;
+    if (result == FX_XmlSyntaxResult::EndOfString)
+      break;
+
+    switch (result) {
       case FX_XmlSyntaxResult::InstructionClose:
-        if (m_pChild) {
-          if (m_pChild->GetType() != FX_XMLNODE_Instruction) {
-            m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-            break;
-          }
-        }
+        if (m_pChild && m_pChild->GetType() != FX_XMLNODE_Instruction)
+          return -1;
+
         m_pChild = m_pParent;
         break;
-      case FX_XmlSyntaxResult::ElementOpen:
-      case FX_XmlSyntaxResult::ElementBreak:
-        break;
       case FX_XmlSyntaxResult::ElementClose:
-        if (m_pChild->GetType() != FX_XMLNODE_Element) {
-          m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-          break;
-        }
+        if (m_pChild->GetType() != FX_XMLNODE_Element)
+          return -1;
+
         m_ws1 = m_pParser->GetTagName();
-        m_ws2 = static_cast<CFX_XMLElement*>(m_pChild)->GetName();
-        if (m_ws1.GetLength() > 0 && m_ws1 != m_ws2) {
-          m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-          break;
+        if (m_ws1.GetLength() > 0 &&
+            m_ws1 != static_cast<CFX_XMLElement*>(m_pChild)->GetName()) {
+          return -1;
         }
+
         if (!m_NodeStack.empty())
           m_NodeStack.pop();
-        if (m_NodeStack.empty()) {
-          m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-          break;
-        }
+        if (m_NodeStack.empty())
+          return -1;
+
         m_pParent = m_NodeStack.top();
         m_pChild = m_pParent;
         iCount++;
@@ -92,10 +80,9 @@ int32_t CFX_XMLParser::DoParser() {
         m_ws1 = m_pParser->GetAttributeName();
         break;
       case FX_XmlSyntaxResult::AttriValue:
-        if (m_pChild) {
-          m_ws2 = m_pParser->GetAttributeName();
-          if (m_pChild->GetType() == FX_XMLNODE_Element)
-            static_cast<CFX_XMLElement*>(m_pChild)->SetString(m_ws1, m_ws2);
+        if (m_pChild && m_pChild->GetType() == FX_XMLNODE_Element) {
+          static_cast<CFX_XMLElement*>(m_pChild)->SetString(
+              m_ws1, m_pParser->GetAttributeName());
         }
         m_ws1.clear();
         break;
@@ -113,27 +100,23 @@ int32_t CFX_XMLParser::DoParser() {
         break;
       case FX_XmlSyntaxResult::TargetData:
         if (m_pChild) {
-          if (m_pChild->GetType() != FX_XMLNODE_Instruction) {
-            m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-            break;
-          }
+          if (m_pChild->GetType() != FX_XMLNODE_Instruction)
+            return -1;
+
           auto* instruction = static_cast<CFX_XMLInstruction*>(m_pChild);
           if (!m_ws1.IsEmpty())
             instruction->AppendData(m_ws1);
+
           instruction->AppendData(m_pParser->GetTargetData());
         }
         m_ws1.clear();
         break;
+      case FX_XmlSyntaxResult::ElementOpen:
+      case FX_XmlSyntaxResult::ElementBreak:
+      case FX_XmlSyntaxResult::InstructionOpen:
       default:
         break;
     }
-    if (m_syntaxParserResult == FX_XmlSyntaxResult::Error ||
-        m_syntaxParserResult == FX_XmlSyntaxResult::EndOfString) {
-      break;
-    }
   }
-  return (m_syntaxParserResult == FX_XmlSyntaxResult::Error ||
-          m_NodeStack.size() != 1)
-             ? -1
-             : m_pParser->GetStatus();
+  return m_NodeStack.size() != 1 ? -1 : m_pParser->GetStatus();
 }

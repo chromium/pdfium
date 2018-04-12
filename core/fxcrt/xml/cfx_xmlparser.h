@@ -24,17 +24,14 @@ class CFX_XMLParser {
                 const RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFX_XMLParser();
 
-  int32_t DoParser();
+  int32_t Parse();
 
  private:
-  RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   std::unique_ptr<CFX_XMLSyntaxParser> m_pParser;
   CFX_XMLNode* m_pParent;
   CFX_XMLNode* m_pChild;
   std::stack<CFX_XMLNode*> m_NodeStack;
   WideString m_ws1;
-  WideString m_ws2;
-  FX_XmlSyntaxResult m_syntaxParserResult;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLPARSER_H_
