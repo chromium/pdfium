@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -477,12 +476,14 @@ bool CFX_RenderDevice::SetClip_PathStroke(
   return true;
 }
 
+#ifdef PDF_ENABLE_XFA
 bool CFX_RenderDevice::SetClip_Rect(const CFX_RectF& rtClip) {
   return SetClip_Rect(FX_RECT(static_cast<int32_t>(floor(rtClip.left)),
                               static_cast<int32_t>(floor(rtClip.top)),
                               static_cast<int32_t>(ceil(rtClip.right())),
                               static_cast<int32_t>(ceil(rtClip.bottom()))));
 }
+#endif
 
 bool CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
   CFX_PathData path;
@@ -1104,19 +1105,19 @@ void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
   DrawPath(&path, pUser2Device, nullptr, color, 0, FXFILL_WINDING);
 }
 
-void CFX_RenderDevice::DrawFillArea(const CFX_Matrix* pUser2Device,
-                                    const CFX_PointF* pPts,
-                                    int32_t nCount,
+void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
+                                    const std::vector<CFX_PointF>& points,
                                     const FX_COLORREF& color) {
+  ASSERT(!points.empty());
   CFX_PathData path;
-  path.AppendPoint(pPts[0], FXPT_TYPE::MoveTo, false);
-  for (int32_t i = 1; i < nCount; i++)
-    path.AppendPoint(pPts[i], FXPT_TYPE::LineTo, false);
+  path.AppendPoint(points[0], FXPT_TYPE::MoveTo, false);
+  for (size_t i = 1; i < points.size(); ++i)
+    path.AppendPoint(points[i], FXPT_TYPE::LineTo, false);
 
-  DrawPath(&path, pUser2Device, nullptr, color, 0, FXFILL_ALTERNATE);
+  DrawPath(&path, &mtUser2Device, nullptr, color, 0, FXFILL_ALTERNATE);
 }
 
-void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix* pUser2Device,
+void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix& mtUser2Device,
                                       const CFX_FloatRect& rect,
                                       const FX_COLORREF& color,
                                       float fWidth) {
@@ -1125,7 +1126,7 @@ void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix* pUser2Device,
 
   CFX_PathData path;
   path.AppendRect(rect);
-  DrawPath(&path, pUser2Device, &gsd, 0, color, FXFILL_ALTERNATE);
+  DrawPath(&path, &mtUser2Device, &gsd, 0, color, FXFILL_ALTERNATE);
 }
 
 void CFX_RenderDevice::DrawStrokeLine(const CFX_Matrix* pUser2Device,
@@ -1150,10 +1151,10 @@ void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
   DrawFillRect(pUser2Device, rect, color.ToFXColor(nTransparency));
 }
 
-void CFX_RenderDevice::DrawShadow(const CFX_Matrix* pUser2Device,
+void CFX_RenderDevice::DrawShadow(const CFX_Matrix& mtUser2Device,
                                   bool bVertical,
                                   bool bHorizontal,
-                                  CFX_FloatRect rect,
+                                  const CFX_FloatRect& rect,
                                   int32_t nTransparency,
                                   int32_t nStartGray,
                                   int32_t nEndGray) {
@@ -1164,7 +1165,7 @@ void CFX_RenderDevice::DrawShadow(const CFX_Matrix* pUser2Device,
 
     for (float fy = rect.bottom + 0.5f; fy <= rect.top - 0.5f; fy += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fy - rect.bottom));
-      DrawStrokeLine(pUser2Device, CFX_PointF(rect.left, fy),
+      DrawStrokeLine(&mtUser2Device, CFX_PointF(rect.left, fy),
                      CFX_PointF(rect.right, fy),
                      ArgbEncode(nTransparency, nGray, nGray, nGray), 1.5f);
     }
@@ -1175,7 +1176,7 @@ void CFX_RenderDevice::DrawShadow(const CFX_Matrix* pUser2Device,
 
     for (float fx = rect.left + 0.5f; fx <= rect.right - 0.5f; fx += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fx - rect.left));
-      DrawStrokeLine(pUser2Device, CFX_PointF(fx, rect.bottom),
+      DrawStrokeLine(&mtUser2Device, CFX_PointF(fx, rect.bottom),
                      CFX_PointF(fx, rect.top),
                      ArgbEncode(nTransparency, nGray, nGray, nGray), 1.5f);
     }

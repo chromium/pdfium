@@ -8,6 +8,7 @@
 #define CORE_FXGE_CFX_RENDERDEVICE_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -123,7 +124,9 @@ class CFX_RenderDevice {
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
                         int fill_mode);
-  bool SetClip_Rect(const CFX_RectF& pRect);
+#ifdef PDF_ENABLE_XFA
+  bool SetClip_Rect(const CFX_RectF& rtClip);
+#endif
   bool SetClip_Rect(const FX_RECT& pRect);
   bool SetClip_PathStroke(const CFX_PathData* pPathData,
                           const CFX_Matrix* pObject2Device,
@@ -233,7 +236,7 @@ class CFX_RenderDevice {
   void DrawFillRect(const CFX_Matrix* pUser2Device,
                     const CFX_FloatRect& rect,
                     const FX_COLORREF& color);
-  void DrawStrokeRect(const CFX_Matrix* pUser2Device,
+  void DrawStrokeRect(const CFX_Matrix& mtUser2Device,
                       const CFX_FloatRect& rect,
                       const FX_COLORREF& color,
                       float fWidth);
@@ -250,14 +253,13 @@ class CFX_RenderDevice {
                   const CFX_Color& crRightBottom,
                   BorderStyle nStyle,
                   int32_t nTransparency);
-  void DrawFillArea(const CFX_Matrix* pUser2Device,
-                    const CFX_PointF* pPts,
-                    int32_t nCount,
+  void DrawFillArea(const CFX_Matrix& mtUser2Device,
+                    const std::vector<CFX_PointF>& points,
                     const FX_COLORREF& color);
-  void DrawShadow(const CFX_Matrix* pUser2Device,
+  void DrawShadow(const CFX_Matrix& mtUser2Device,
                   bool bVertical,
                   bool bHorizontal,
-                  CFX_FloatRect rect,
+                  const CFX_FloatRect& rect,
                   int32_t nTransparency,
                   int32_t nStartGray,
                   int32_t nEndGray);

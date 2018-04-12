@@ -187,15 +187,15 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 
   // draw border
-  pDevice->DrawStrokeRect(&mtUser2Device, rectWnd,
+  pDevice->DrawStrokeRect(mtUser2Device, rectWnd,
                           ArgbEncode(nTransparency, 100, 100, 100), 0.0f);
-  pDevice->DrawStrokeRect(&mtUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
+  pDevice->DrawStrokeRect(mtUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
                           ArgbEncode(nTransparency, 255, 255, 255), 1.0f);
 
   if (m_eSBButtonType != PSBT_POS) {
     // draw background
     if (IsEnabled()) {
-      pDevice->DrawShadow(&mtUser2Device, true, false,
+      pDevice->DrawShadow(mtUser2Device, true, false,
                           rectWnd.GetDeflated(1.0f, 1.0f), nTransparency, 80,
                           220);
     } else {
@@ -208,24 +208,21 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       float fX = rectWnd.left + 1.5f;
       float fY = rectWnd.bottom;
       std::vector<CFX_PointF> pts;
-      if (m_eSBButtonType == PSBT_MIN) {
-        pts.push_back(CFX_PointF(fX + 2.5f, fY + 4.0f));
-        pts.push_back(CFX_PointF(fX + 2.5f, fY + 3.0f));
-        pts.push_back(CFX_PointF(fX + 4.5f, fY + 5.0f));
-        pts.push_back(CFX_PointF(fX + 6.5f, fY + 3.0f));
-        pts.push_back(CFX_PointF(fX + 6.5f, fY + 4.0f));
-        pts.push_back(CFX_PointF(fX + 4.5f, fY + 6.0f));
-        pts.push_back(CFX_PointF(fX + 2.5f, fY + 4.0f));
-      } else {
-        pts.push_back(CFX_PointF(fX + 2.5f, fY + 5.0f));
-        pts.push_back(CFX_PointF(fX + 2.5f, fY + 6.0f));
-        pts.push_back(CFX_PointF(fX + 4.5f, fY + 4.0f));
-        pts.push_back(CFX_PointF(fX + 6.5f, fY + 6.0f));
-        pts.push_back(CFX_PointF(fX + 6.5f, fY + 5.0f));
-        pts.push_back(CFX_PointF(fX + 4.5f, fY + 3.0f));
-        pts.push_back(CFX_PointF(fX + 2.5f, fY + 5.0f));
-      }
-      pDevice->DrawFillArea(&mtUser2Device, pts.data(), 7,
+      static constexpr float kOffsetsX[] = {2.5f, 2.5f, 4.5f, 6.5f,
+                                            6.5f, 4.5f, 2.5f};
+      static constexpr float kOffsetsY[] = {5.0f, 6.0f, 4.0f, 6.0f,
+                                            5.0f, 3.0f, 5.0f};
+      static constexpr float kOffsetsMinY[] = {4.0f, 3.0f, 5.0f, 3.0f,
+                                               4.0f, 6.0f, 4.0f};
+      static_assert(FX_ArraySize(kOffsetsX) == FX_ArraySize(kOffsetsY),
+                    "Wrong offset count");
+      static_assert(FX_ArraySize(kOffsetsX) == FX_ArraySize(kOffsetsMinY),
+                    "Wrong offset count");
+      const float* pOffsetsY =
+          m_eSBButtonType == PSBT_MIN ? kOffsetsMinY : kOffsetsY;
+      for (size_t i = 0; i < FX_ArraySize(kOffsetsX); ++i)
+        pts.push_back(CFX_PointF(fX + kOffsetsX[i], fY + pOffsetsY[i]));
+      pDevice->DrawFillArea(mtUser2Device, pts,
                             IsEnabled()
                                 ? ArgbEncode(nTransparency, 255, 255, 255)
                                 : PWL_DEFAULT_HEAVYGRAYCOLOR.ToFXColor(255));
