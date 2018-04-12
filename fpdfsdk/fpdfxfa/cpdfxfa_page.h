@@ -44,8 +44,7 @@ class CPDFXFA_Page : public Retainable {
                                     const CFX_PointF& device_point) const;
   Optional<CFX_PointF> PageToDevice(const FX_RECT& rect,
                                     int rotate,
-                                    double page_x,
-                                    double page_y) const;
+                                    const CFX_PointF& page_point) const;
 
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int iRotate) const;
 

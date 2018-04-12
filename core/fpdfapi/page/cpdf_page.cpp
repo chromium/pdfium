@@ -126,13 +126,12 @@ Optional<CFX_PointF> CPDF_Page::DeviceToPage(
   return page2device.GetInverse().Transform(device_point);
 }
 
-Optional<CFX_PointF> CPDF_Page::PageToDevice(const FX_RECT& rect,
-                                             int rotate,
-                                             double page_x,
-                                             double page_y) const {
+Optional<CFX_PointF> CPDF_Page::PageToDevice(
+    const FX_RECT& rect,
+    int rotate,
+    const CFX_PointF& page_point) const {
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
-  return page2device.Transform(
-      CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
+  return page2device.Transform(page_point);
 }
 
 CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {

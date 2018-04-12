@@ -771,7 +771,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  Optional<CFX_PointF> pos = pPage->PageToDevice(rect, rotate, page_x, page_y);
+  CFX_PointF page_point(static_cast<float>(page_x), static_cast<float>(page_y));
+  Optional<CFX_PointF> pos = pPage->PageToDevice(rect, rotate, page_point);
   if (!pos)
     return false;
 

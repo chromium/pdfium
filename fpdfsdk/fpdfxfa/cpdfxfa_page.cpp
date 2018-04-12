@@ -138,16 +138,15 @@ Optional<CFX_PointF> CPDFXFA_Page::DeviceToPage(
   return pos;
 }
 
-Optional<CFX_PointF> CPDFXFA_Page::PageToDevice(const FX_RECT& rect,
-                                                int rotate,
-                                                double page_x,
-                                                double page_y) const {
+Optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
+    const FX_RECT& rect,
+    int rotate,
+    const CFX_PointF& page_point) const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return {};
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
-  return page2device.Transform(
-      CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
+  return page2device.Transform(page_point);
 }
 
 CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
