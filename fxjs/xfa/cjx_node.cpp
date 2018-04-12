@@ -356,7 +356,7 @@ CJS_Return CJX_Node::saveXML(CFX_V8* runtime,
   pStream->WriteString(bsXMLHeader.AsStringView());
 
   if (GetXFANode()->GetPacketType() == XFA_PacketType::Form)
-    XFA_DataExporter_RegenerateFormFile(GetXFANode(), pStream, nullptr, true);
+    XFA_DataExporter_RegenerateFormFile(GetXFANode(), pStream, true);
   else
     pElement->Save(pStream);
 

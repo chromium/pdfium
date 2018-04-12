@@ -9,7 +9,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_checksumcontext.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -376,7 +375,6 @@ CFX_XMLNode* CXFA_SimpleParser::ParseXMLData(const ByteString& wsXML) {
   auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
       const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength());
   m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>(pStream);
-  m_pXMLDoc->GetParser()->m_dwCheckStatus = 0x03;
 
   int32_t iRet = m_pXMLDoc->DoLoad();
   if (iRet < 0 || iRet >= 100)
@@ -642,33 +640,12 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Form(
     return nullptr;
   }
 
-  CFX_XMLElement* pXMLDocumentElement =
-      static_cast<CFX_XMLElement*>(pXMLDocumentNode);
-  WideString wsChecksum = pXMLDocumentElement->GetString(L"checksum");
-  if (wsChecksum.GetLength() != 28 ||
-      m_pXMLDoc->GetParser()->m_dwCheckStatus != 0x03) {
-    return nullptr;
-  }
-
-  auto pChecksum = pdfium::MakeUnique<CFX_ChecksumContext>();
-  pChecksum->StartChecksum();
-  pChecksum->UpdateChecksum(m_pFileRead, m_pXMLDoc->GetParser()->m_nStart[0],
-                            m_pXMLDoc->GetParser()->m_nSize[0]);
-  pChecksum->UpdateChecksum(m_pFileRead, m_pXMLDoc->GetParser()->m_nStart[1],
-                            m_pXMLDoc->GetParser()->m_nSize[1]);
-  pChecksum->FinishChecksum();
-  ByteString bsCheck = pChecksum->GetChecksum();
-  if (bsCheck != wsChecksum.UTF8Encode())
-    return nullptr;
-
   CXFA_Node* pNode =
       m_pFactory->CreateNode(XFA_PacketType::Form, XFA_Element::Form);
   if (!pNode)
     return nullptr;
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name, packet->name, false, false);
-  pNode->JSObject()->SetAttribute(XFA_Attribute::Checksum,
-                                  wsChecksum.AsStringView(), false);
   CXFA_Template* pTemplateRoot =
       m_pRootNode->GetFirstChildByClass<CXFA_Template>(XFA_Element::Template);
   CXFA_Subform* pTemplateChosen =

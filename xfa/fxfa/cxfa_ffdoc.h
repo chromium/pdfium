@@ -76,8 +76,7 @@ class CXFA_FFDoc {
   CFGAS_PDFFontMgr* GetPDFFontMgr() const { return m_pPDFFontMgr.get(); }
 
   bool SavePackage(CXFA_Node* pNode,
-                   const RetainPtr<IFX_SeekableStream>& pFile,
-                   CFX_ChecksumContext* pCSContext);
+                   const RetainPtr<IFX_SeekableStream>& pFile);
   bool ImportData(const RetainPtr<IFX_SeekableStream>& pStream,
                   bool bXDP = true);
 

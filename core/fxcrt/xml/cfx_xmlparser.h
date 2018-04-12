@@ -26,12 +26,6 @@ class CFX_XMLParser {
 
   int32_t DoParser();
 
-  FX_FILESIZE m_nStart[2];
-  size_t m_nSize[2];
-  FX_FILESIZE m_nElementStart;
-  uint16_t m_dwCheckStatus;
-  uint16_t m_dwCurrentCheckStatus;
-
  private:
   RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   std::unique_ptr<CFX_XMLSyntaxParser> m_pParser;

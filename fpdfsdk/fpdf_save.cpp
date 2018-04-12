@@ -23,7 +23,6 @@
 #include "public/fpdf_edit.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "core/fxcrt/cfx_checksumcontext.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "public/fpdf_formfill.h"
@@ -79,7 +78,6 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   int size = pArray->GetCount();
   int iFormIndex = -1;
   int iDataSetsIndex = -1;
-  int iTemplate = -1;
   int iLast = size - 2;
   for (int i = 0; i < size - 1; i++) {
     CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
@@ -89,22 +87,8 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       iFormIndex = i + 1;
     else if (pPDFObj->GetString() == "datasets")
       iDataSetsIndex = i + 1;
-    else if (pPDFObj->GetString() == "template")
-      iTemplate = i + 1;
   }
-  auto pChecksum = pdfium::MakeUnique<CFX_ChecksumContext>();
-  pChecksum->StartChecksum();
 
-  // template
-  if (iTemplate > -1) {
-    CPDF_Stream* pTemplateStream = pArray->GetStreamAt(iTemplate);
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pTemplateStream);
-    pAcc->LoadAllDataFiltered();
-    RetainPtr<IFX_SeekableStream> pTemplate =
-        pdfium::MakeRetain<CFX_MemoryStream>(
-            const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize(), false);
-    pChecksum->UpdateChecksum(pTemplate);
-  }
   CPDF_Stream* pFormStream = nullptr;
   CPDF_Stream* pDataSetsStream = nullptr;
   if (iFormIndex != -1) {
@@ -140,11 +124,8 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     CXFA_FFDoc* ffdoc = pXFADocView->GetDoc();
     if (ffdoc->SavePackage(
             ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Datasets)),
-            pDsfileWrite, nullptr) &&
+            pDsfileWrite) &&
         pDsfileWrite->GetSize() > 0) {
-      // Datasets
-      pChecksum->UpdateChecksum(pDsfileWrite);
-      pChecksum->FinishChecksum();
       auto pDataDict = pdfium::MakeUnique<CPDF_Dictionary>(
           pPDFDocument->GetByteStringPool());
       if (iDataSetsIndex != -1) {
@@ -171,7 +152,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     CXFA_FFDoc* ffdoc = pXFADocView->GetDoc();
     if (ffdoc->SavePackage(
             ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form)),
-            pfileWrite, pChecksum.get()) &&
+            pfileWrite) &&
         pfileWrite->GetSize() > 0) {
       auto pDataDict = pdfium::MakeUnique<CPDF_Dictionary>(
           pPDFDocument->GetByteStringPool());

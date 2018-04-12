@@ -14,7 +14,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "core/fxcrt/cfx_checksumcontext.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/cfx_seekablemultistream.h"
 #include "core/fxcrt/fx_extension.h"
@@ -390,18 +389,11 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
 }
 
 bool CXFA_FFDoc::SavePackage(CXFA_Node* pNode,
-                             const RetainPtr<IFX_SeekableStream>& pFile,
-                             CFX_ChecksumContext* pCSContext) {
-  auto pExport = pdfium::MakeUnique<CXFA_DataExporter>(GetXFADoc());
-  if (!pNode)
-    return !!pExport->Export(pFile);
+                             const RetainPtr<IFX_SeekableStream>& pFile) {
+  ASSERT(pNode || GetXFADoc()->GetRoot());
 
-  ByteString bsChecksum;
-  if (pCSContext)
-    bsChecksum = pCSContext->GetChecksum();
-
-  return !!pExport->Export(
-      pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
+  CXFA_DataExporter exporter;
+  return exporter.Export(pFile, pNode ? pNode : GetXFADoc()->GetRoot());
 }
 
 bool CXFA_FFDoc::ImportData(const RetainPtr<IFX_SeekableStream>& pStream,

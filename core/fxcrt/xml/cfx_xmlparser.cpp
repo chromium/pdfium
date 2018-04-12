@@ -15,10 +15,7 @@
 
 CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
                              const RetainPtr<CFX_SeekableStreamProxy>& pStream)
-    : m_nElementStart(0),
-      m_dwCheckStatus(0),
-      m_dwCurrentCheckStatus(0),
-      m_pStream(pStream),
+    : m_pStream(pStream),
       m_pParser(pdfium::MakeUnique<CFX_XMLSyntaxParser>(m_pStream)),
       m_pParent(pParent),
       m_pChild(nullptr),
@@ -51,9 +48,6 @@ int32_t CFX_XMLParser::DoParser() {
         m_pChild = m_pParent;
         break;
       case FX_XmlSyntaxResult::ElementOpen:
-        if (m_dwCheckStatus != 0x03 && m_NodeStack.size() == 2)
-          m_nElementStart = m_pParser->GetCurrentPos() - 1;
-        break;
       case FX_XmlSyntaxResult::ElementBreak:
         break;
       case FX_XmlSyntaxResult::ElementClose:
@@ -72,12 +66,6 @@ int32_t CFX_XMLParser::DoParser() {
         if (m_NodeStack.empty()) {
           m_syntaxParserResult = FX_XmlSyntaxResult::Error;
           break;
-        }
-        if (m_dwCurrentCheckStatus != 0 && m_NodeStack.size() == 2) {
-          m_nSize[m_dwCurrentCheckStatus - 1] =
-              m_pParser->GetCurrentBinaryPos() -
-              m_nStart[m_dwCurrentCheckStatus - 1];
-          m_dwCurrentCheckStatus = 0;
         }
         m_pParent = m_NodeStack.top();
         m_pChild = m_pParent;
@@ -99,22 +87,6 @@ int32_t CFX_XMLParser::DoParser() {
         m_pParent->AppendChild(m_pChild);
         m_NodeStack.push(m_pChild);
         m_pParent = m_pChild;
-
-        if (m_dwCheckStatus != 0x03 && m_NodeStack.size() == 3) {
-          WideString wsTag =
-              static_cast<CFX_XMLElement*>(m_pChild)->GetLocalTagName();
-          if (wsTag == L"template") {
-            m_dwCheckStatus |= 0x01;
-            m_dwCurrentCheckStatus = 0x01;
-            m_nStart[0] = m_pParser->GetCurrentBinaryPos() -
-                          (m_pParser->GetCurrentPos() - m_nElementStart);
-          } else if (wsTag == L"datasets") {
-            m_dwCheckStatus |= 0x02;
-            m_dwCurrentCheckStatus = 0x02;
-            m_nStart[1] = m_pParser->GetCurrentBinaryPos() -
-                          (m_pParser->GetCurrentPos() - m_nElementStart);
-          }
-        }
         break;
       case FX_XmlSyntaxResult::AttriName:
         m_ws1 = m_pParser->GetAttributeName();

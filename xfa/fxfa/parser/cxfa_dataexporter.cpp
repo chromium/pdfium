@@ -15,35 +15,24 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
-    : m_pDocument(pDocument) {
-  ASSERT(m_pDocument);
-}
+CXFA_DataExporter::CXFA_DataExporter() = default;
 
-CXFA_DataExporter::~CXFA_DataExporter() {}
-
-bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pWrite) {
-  return Export(pWrite, m_pDocument->GetRoot(), 0, nullptr);
-}
+CXFA_DataExporter::~CXFA_DataExporter() = default;
 
 bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pWrite,
-                               CXFA_Node* pNode,
-                               uint32_t dwFlag,
-                               const char* pChecksum) {
+                               CXFA_Node* pNode) {
   ASSERT(pWrite);
   if (!pWrite)
     return false;
 
   auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pWrite, true);
   pStream->SetCodePage(FX_CODEPAGE_UTF8);
-  return Export(pStream, pNode, dwFlag, pChecksum);
+  return Export(pStream, pNode);
 }
 
 bool CXFA_DataExporter::Export(
     const RetainPtr<CFX_SeekableStreamProxy>& pStream,
-    CXFA_Node* pNode,
-    uint32_t dwFlag,
-    const char* pChecksum) {
+    CXFA_Node* pNode) {
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketType()) {
       case XFA_PacketType::Xdp: {
@@ -51,7 +40,7 @@ bool CXFA_DataExporter::Export(
             L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">");
         for (CXFA_Node* pChild = pNode->GetFirstChild(); pChild;
              pChild = pChild->GetNextSibling()) {
-          Export(pStream, pChild, dwFlag, pChecksum);
+          Export(pStream, pChild);
         }
         pStream->WriteString(L"</xdp:xdp\n>");
         break;
@@ -69,7 +58,7 @@ bool CXFA_DataExporter::Export(
         break;
       }
       case XFA_PacketType::Form: {
-        XFA_DataExporter_RegenerateFormFile(pNode, pStream, pChecksum, false);
+        XFA_DataExporter_RegenerateFormFile(pNode, pStream, false);
         break;
       }
       case XFA_PacketType::Template:

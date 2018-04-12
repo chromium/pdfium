@@ -520,17 +520,9 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
     const RetainPtr<CFX_SeekableStreamProxy>& pStream,
-    const char* pChecksum,
     bool bSaveXML) {
   if (pNode->IsModelNode()) {
-    pStream->WriteString(L"<form");
-    if (pChecksum) {
-      WideString wsChecksum = WideString::FromUTF8(pChecksum);
-      pStream->WriteString(L" checksum=\"");
-      pStream->WriteString(wsChecksum.AsStringView());
-      pStream->WriteString(L"\"");
-    }
-    pStream->WriteString(L" xmlns=\"");
+    pStream->WriteString(L"<form xmlns=\"");
     pStream->WriteString(WideStringView(kFormNS));
 
     WideString wsVersionNumber = RecognizeXFAVersionNumber(

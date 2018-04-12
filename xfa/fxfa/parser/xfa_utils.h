@@ -32,7 +32,6 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
     const RetainPtr<CFX_SeekableStreamProxy>& pStream,
-    const char* pChecksum,
     bool bSaveXML);
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
