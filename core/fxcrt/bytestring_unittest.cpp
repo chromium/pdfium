@@ -23,6 +23,10 @@ TEST(ByteString, ElementAccess) {
   EXPECT_DEATH({ abc[3]; }, ".*");
 #endif
 
+  pdfium::span<const char> abc_span = abc.AsSpan();
+  EXPECT_EQ(3u, abc_span.size());
+  EXPECT_EQ(0, memcmp(abc_span.data(), "abc", 3));
+
   ByteString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
   EXPECT_EQ('a', mutable_abc[0]);
