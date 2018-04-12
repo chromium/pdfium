@@ -696,7 +696,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
   return FX_XmlSyntaxResult::Text;
 }
 
-int32_t CFX_XMLParser::GetStatus() const {
+bool CFX_XMLParser::GetStatus() const {
   if (!m_pStream)
     return false;
 

@@ -94,7 +94,7 @@ class CFX_XMLParser {
 
   void ParseTextChar(wchar_t ch);
 
-  int32_t GetStatus() const;
+  bool GetStatus() const;
   FX_FILESIZE GetCurrentPos() const { return m_ParsedChars + m_Start; }
   FX_FILESIZE GetCurrentBinaryPos() const;
   int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
