@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/xml/cfx_xmlsyntaxparser.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 
 #include <memory>
 
@@ -11,7 +11,30 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-TEST(CFX_XMLSyntaxParserTest, CData) {
+class CFX_XMLTestParser : public CFX_XMLParser {
+ public:
+  CFX_XMLTestParser(CFX_XMLNode* pParent,
+                    const RetainPtr<CFX_SeekableStreamProxy>& pStream)
+      : CFX_XMLParser(pParent, pStream) {}
+
+  ~CFX_XMLTestParser() override = default;
+
+  FX_XmlSyntaxResult DoSyntaxParse() { return CFX_XMLParser::DoSyntaxParse(); }
+
+  WideString GetTagName() const { return CFX_XMLParser::GetTagName(); }
+
+  WideString GetAttributeName() const {
+    return CFX_XMLParser::GetAttributeName();
+  }
+
+  WideString GetAttributeValue() const {
+    return CFX_XMLParser::GetAttributeValue();
+  }
+
+  WideString GetTextData() const { return CFX_XMLParser::GetTextData(); }
+};
+
+TEST(CFX_XMLParserTest, CData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -31,7 +54,8 @@ TEST(CFX_XMLSyntaxParserTest, CData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -57,7 +81,7 @@ TEST(CFX_XMLSyntaxParserTest, CData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, CDataWithInnerScript) {
+TEST(CFX_XMLParserTest, CDataWithInnerScript) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -79,7 +103,8 @@ TEST(CFX_XMLSyntaxParserTest, CDataWithInnerScript) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -105,7 +130,7 @@ TEST(CFX_XMLSyntaxParserTest, CDataWithInnerScript) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, ArrowBangArrow) {
+TEST(CFX_XMLParserTest, ArrowBangArrow) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!>\n"
@@ -116,7 +141,8 @@ TEST(CFX_XMLSyntaxParserTest, ArrowBangArrow) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
 
@@ -140,7 +166,7 @@ TEST(CFX_XMLSyntaxParserTest, ArrowBangArrow) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, ArrowBangBracketArrow) {
+TEST(CFX_XMLParserTest, ArrowBangBracketArrow) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![>\n"
@@ -151,7 +177,8 @@ TEST(CFX_XMLSyntaxParserTest, ArrowBangBracketArrow) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -170,7 +197,7 @@ TEST(CFX_XMLSyntaxParserTest, ArrowBangBracketArrow) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, IncompleteCData) {
+TEST(CFX_XMLParserTest, IncompleteCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA>\n"
@@ -181,7 +208,8 @@ TEST(CFX_XMLSyntaxParserTest, IncompleteCData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -200,7 +228,7 @@ TEST(CFX_XMLSyntaxParserTest, IncompleteCData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, UnClosedCData) {
+TEST(CFX_XMLParserTest, UnClosedCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -211,7 +239,8 @@ TEST(CFX_XMLSyntaxParserTest, UnClosedCData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -230,7 +259,7 @@ TEST(CFX_XMLSyntaxParserTest, UnClosedCData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, EmptyCData) {
+TEST(CFX_XMLParserTest, EmptyCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[]]>\n"
@@ -241,7 +270,8 @@ TEST(CFX_XMLSyntaxParserTest, EmptyCData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -267,7 +297,7 @@ TEST(CFX_XMLSyntaxParserTest, EmptyCData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, Comment) {
+TEST(CFX_XMLParserTest, Comment) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!-- A Comment -->\n"
@@ -278,7 +308,8 @@ TEST(CFX_XMLSyntaxParserTest, Comment) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -301,7 +332,7 @@ TEST(CFX_XMLSyntaxParserTest, Comment) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, IncorrectCommentStart) {
+TEST(CFX_XMLParserTest, IncorrectCommentStart) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!- A Comment -->\n"
@@ -312,7 +343,8 @@ TEST(CFX_XMLSyntaxParserTest, IncorrectCommentStart) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -335,7 +367,7 @@ TEST(CFX_XMLSyntaxParserTest, IncorrectCommentStart) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, CommentEmpty) {
+TEST(CFX_XMLParserTest, CommentEmpty) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!---->\n"
@@ -346,7 +378,8 @@ TEST(CFX_XMLSyntaxParserTest, CommentEmpty) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -369,7 +402,7 @@ TEST(CFX_XMLSyntaxParserTest, CommentEmpty) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, CommentThreeDash) {
+TEST(CFX_XMLParserTest, CommentThreeDash) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!--->\n"
@@ -380,7 +413,8 @@ TEST(CFX_XMLSyntaxParserTest, CommentThreeDash) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -397,7 +431,7 @@ TEST(CFX_XMLSyntaxParserTest, CommentThreeDash) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, CommentTwoDash) {
+TEST(CFX_XMLParserTest, CommentTwoDash) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!-->\n"
@@ -408,7 +442,8 @@ TEST(CFX_XMLSyntaxParserTest, CommentTwoDash) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -425,7 +460,7 @@ TEST(CFX_XMLSyntaxParserTest, CommentTwoDash) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, Entities) {
+TEST(CFX_XMLParserTest, Entities) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#66;"
@@ -440,7 +475,8 @@ TEST(CFX_XMLSyntaxParserTest, Entities) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -460,7 +496,7 @@ TEST(CFX_XMLSyntaxParserTest, Entities) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, EntityOverflowHex) {
+TEST(CFX_XMLParserTest, EntityOverflowHex) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#xaDBDFFFFF;"
@@ -472,7 +508,8 @@ TEST(CFX_XMLSyntaxParserTest, EntityOverflowHex) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -492,7 +529,7 @@ TEST(CFX_XMLSyntaxParserTest, EntityOverflowHex) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
+TEST(CFX_XMLParserTest, EntityOverflowDecimal) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#2914910205;"
@@ -504,7 +541,8 @@ TEST(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFX_XMLSyntaxParser parser(stream);
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
@@ -524,19 +562,19 @@ TEST(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFX_XMLSyntaxParserTest, IsXMLNameChar) {
-  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(L'-', true));
-  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(L'-', false));
+TEST(CFX_XMLParserTest, IsXMLNameChar) {
+  EXPECT_FALSE(CFX_XMLTestParser::IsXMLNameChar(L'-', true));
+  EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(L'-', false));
 
-  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2069, true));
-  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2070, true));
-  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2073, true));
-  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0x218F, true));
-  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2190, true));
+  EXPECT_FALSE(CFX_XMLTestParser::IsXMLNameChar(0x2069, true));
+  EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(0x2070, true));
+  EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(0x2073, true));
+  EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(0x218F, true));
+  EXPECT_FALSE(CFX_XMLTestParser::IsXMLNameChar(0x2190, true));
 
-  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFDEF, true));
-  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFDF0, true));
-  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFDF1, true));
-  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFFFD, true));
-  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFFFE, true));
+  EXPECT_FALSE(CFX_XMLTestParser::IsXMLNameChar(0xFDEF, true));
+  EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(0xFDF0, true));
+  EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(0xFDF1, true));
+  EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(0xFFFD, true));
+  EXPECT_FALSE(CFX_XMLTestParser::IsXMLNameChar(0xFFFE, true));
 }

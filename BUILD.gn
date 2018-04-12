@@ -963,8 +963,6 @@ jumbo_static_library("fxcrt") {
       "core/fxcrt/xml/cfx_xmlnode.h",
       "core/fxcrt/xml/cfx_xmlparser.cpp",
       "core/fxcrt/xml/cfx_xmlparser.h",
-      "core/fxcrt/xml/cfx_xmlsyntaxparser.cpp",
-      "core/fxcrt/xml/cfx_xmlsyntaxparser.h",
       "core/fxcrt/xml/cfx_xmltext.cpp",
       "core/fxcrt/xml/cfx_xmltext.h",
     ]
@@ -2925,7 +2923,7 @@ test("pdfium_unittests") {
       "core/fxcrt/css/cfx_cssdeclaration_unittest.cpp",
       "core/fxcrt/css/cfx_cssstylesheet_unittest.cpp",
       "core/fxcrt/css/cfx_cssvaluelistparser_unittest.cpp",
-      "core/fxcrt/xml/cfx_xmlsyntaxparser_unittest.cpp",
+      "core/fxcrt/xml/cfx_xmlparser_unittest.cpp",
       "fxbarcode/oned/BC_OnedCodaBarWriter_unittest.cpp",
       "fxbarcode/oned/BC_OnedCode128Writer_unittest.cpp",
       "fxbarcode/oned/BC_OnedCode39Writer_unittest.cpp",
