@@ -383,7 +383,7 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
   return nullptr;
 }
 
-ByteString CPDF_StreamContentParser::GetString(uint32_t index) {
+ByteString CPDF_StreamContentParser::GetString(uint32_t index) const {
   if (index >= m_ParamCount) {
     return ByteString();
   }
@@ -391,7 +391,7 @@ ByteString CPDF_StreamContentParser::GetString(uint32_t index) {
   if (real_index >= kParamBufSize) {
     real_index -= kParamBufSize;
   }
-  ContentParam& param = m_ParamBuf[real_index];
+  const ContentParam& param = m_ParamBuf[real_index];
   if (param.m_Type == ContentParam::NAME) {
     return ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len);
   }
@@ -401,7 +401,7 @@ ByteString CPDF_StreamContentParser::GetString(uint32_t index) {
   return ByteString();
 }
 
-float CPDF_StreamContentParser::GetNumber(uint32_t index) {
+float CPDF_StreamContentParser::GetNumber(uint32_t index) const {
   if (index >= m_ParamCount) {
     return 0;
   }
@@ -409,7 +409,7 @@ float CPDF_StreamContentParser::GetNumber(uint32_t index) {
   if (real_index >= kParamBufSize) {
     real_index -= kParamBufSize;
   }
-  ContentParam& param = m_ParamBuf[real_index];
+  const ContentParam& param = m_ParamBuf[real_index];
   if (param.m_Type == ContentParam::NUMBER) {
     return param.m_Number.m_bInteger
                ? static_cast<float>(param.m_Number.m_Integer)
