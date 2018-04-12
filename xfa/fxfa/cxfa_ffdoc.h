@@ -10,10 +10,11 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_document_parser.h"
 
 class CFGAS_PDFFontMgr;
 class CFX_ChecksumContext;
@@ -62,10 +63,11 @@ class CXFA_FFDoc {
 
   CXFA_FFDocView* CreateDocView();
 
+  bool ParseDoc();
   bool OpenDoc(CPDF_Document* pPDFDoc);
   void CloseDoc();
 
-  CXFA_Document* GetXFADoc() const { return m_pDocumentParser->GetDocument(); }
+  CXFA_Document* GetXFADoc() const { return m_pDocument.get(); }
   CXFA_FFApp* GetApp() const { return m_pApp.Get(); }
   CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
@@ -82,7 +84,8 @@ class CXFA_FFDoc {
 
  private:
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
-  std::unique_ptr<CXFA_DocumentParser> m_pDocumentParser;
+  std::unique_ptr<CFX_XMLNode> m_pXMLRoot;
+  std::unique_ptr<CXFA_Document> m_pDocument;
   RetainPtr<IFX_SeekableStream> m_pStream;
   UnownedPtr<CXFA_FFApp> const m_pApp;
   std::unique_ptr<CXFA_FFNotify> m_pNotify;

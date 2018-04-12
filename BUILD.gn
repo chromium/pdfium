@@ -2319,8 +2319,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_digestmethods.h",
       "xfa/fxfa/parser/cxfa_document.cpp",
       "xfa/fxfa/parser/cxfa_document.h",
-      "xfa/fxfa/parser/cxfa_document_parser.cpp",
-      "xfa/fxfa/parser/cxfa_document_parser.h",
       "xfa/fxfa/parser/cxfa_documentassembly.cpp",
       "xfa/fxfa/parser/cxfa_documentassembly.h",
       "xfa/fxfa/parser/cxfa_draw.cpp",

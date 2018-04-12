@@ -35,6 +35,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_dynamicrender.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_simple_parser.h"
 
 namespace {
 
@@ -165,11 +166,12 @@ CXFA_FFDoc::~CXFA_FFDoc() {
 }
 
 bool CXFA_FFDoc::Load() {
-  m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
-  m_pDocumentParser = pdfium::MakeUnique<CXFA_DocumentParser>(m_pNotify.get());
-  if (!m_pDocumentParser->Parse(m_pStream, XFA_PacketType::Xdp))
-    return false;
   if (!m_pPDFDoc)
+    return false;
+
+  m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
+  m_pDocument = pdfium::MakeUnique<CXFA_Document>(m_pNotify.get());
+  if (!ParseDoc())
     return false;
 
   // At this point we've got an XFA document and we want to always return
@@ -179,8 +181,7 @@ bool CXFA_FFDoc::Load() {
       GetPDFDoc(), GetApp()->GetFDEFontMgr());
 
   m_FormType = FormType::kXFAForeground;
-  CXFA_Node* pConfig = ToNode(
-      m_pDocumentParser->GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
+  CXFA_Node* pConfig = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig)
     return true;
 
@@ -204,6 +205,19 @@ bool CXFA_FFDoc::Load() {
   if (wsType == L"required")
     m_FormType = FormType::kXFAFull;
 
+  return true;
+}
+
+bool CXFA_FFDoc::ParseDoc() {
+  // Note, we don't pass the document into the constructor as currently that
+  // triggers different behaviour in the parser.
+  CXFA_SimpleParser parser;
+  parser.SetFactory(m_pDocument.get());
+  if (!parser.Parse(m_pStream, XFA_PacketType::Xdp))
+    return false;
+
+  m_pXMLRoot = parser.GetXMLRoot();
+  m_pDocument->SetRoot(parser.GetRootNode());
   return true;
 }
 
@@ -320,12 +334,13 @@ void CXFA_FFDoc::CloseDoc() {
     m_DocView->RunDocClose();
     m_DocView.reset();
   }
-  CXFA_Document* doc =
-      m_pDocumentParser ? m_pDocumentParser->GetDocument() : nullptr;
-  if (doc)
-    doc->ClearLayoutData();
+  if (m_pDocument) {
+    m_pDocument->ReleaseXMLNodesIfNeeded();
+    m_pDocument->ClearLayoutData();
+  }
 
-  m_pDocumentParser.reset();
+  m_pDocument.reset();
+  m_pXMLRoot.reset();
   m_pNotify.reset();
   m_pPDFFontMgr.reset();
   m_HashToDibDpiMap.clear();
@@ -399,7 +414,6 @@ bool CXFA_FFDoc::SavePackage(CXFA_Node* pNode,
 
 bool CXFA_FFDoc::ImportData(const RetainPtr<IFX_SeekableStream>& pStream,
                             bool bXDP) {
-  auto importer =
-      pdfium::MakeUnique<CXFA_DataImporter>(m_pDocumentParser->GetDocument());
+  auto importer = pdfium::MakeUnique<CXFA_DataImporter>(m_pDocument.get());
   return importer->ImportData(pStream);
 }
