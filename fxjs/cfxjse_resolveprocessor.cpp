@@ -499,66 +499,69 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(const WideStringView& wsExpression,
 
   WideString& wsName = rnd.m_wsName;
   WideString& wsCondition = rnd.m_wsCondition;
-  wchar_t* pNameBuf = wsName.GetBuffer(iLength - nStart);
-  wchar_t* pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
   int32_t nNameCount = 0;
   int32_t nConditionCount = 0;
-  std::vector<int32_t> stack;
-  int32_t nType = -1;
-  const wchar_t* pSrc = wsExpression.unterminated_c_str();
-  wchar_t wPrev = 0;
-  wchar_t wCur;
-  bool bIsCondition = false;
-  while (nStart < iLength) {
-    wCur = pSrc[nStart++];
-    if (wCur == '.') {
-      if (wPrev == '\\') {
-        pNameBuf[nNameCount - 1] = wPrev = '.';
-        continue;
-      }
-      if (nNameCount == 0) {
-        rnd.m_dwStyles |= XFA_RESOLVENODE_AnyChild;
-        continue;
-      }
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<wchar_t> pNameBuf = wsName.GetBuffer(iLength - nStart);
+    pdfium::span<wchar_t> pConditionBuf =
+        wsCondition.GetBuffer(iLength - nStart);
+    std::vector<int32_t> stack;
+    int32_t nType = -1;
+    const wchar_t* pSrc = wsExpression.unterminated_c_str();
+    wchar_t wPrev = 0;
+    wchar_t wCur;
+    bool bIsCondition = false;
+    while (nStart < iLength) {
+      wCur = pSrc[nStart++];
+      if (wCur == '.') {
+        if (wPrev == '\\') {
+          pNameBuf[nNameCount - 1] = wPrev = '.';
+          continue;
+        }
+        if (nNameCount == 0) {
+          rnd.m_dwStyles |= XFA_RESOLVENODE_AnyChild;
+          continue;
+        }
 
-      wchar_t wLookahead = nStart < iLength ? pSrc[nStart] : 0;
-      if (wLookahead != '[' && wLookahead != '(' && nType < 0)
-        break;
-    }
-    if (wCur == '[' || wCur == '(') {
-      bIsCondition = true;
-    } else if (wCur == '.' && nStart < iLength &&
-               (pSrc[nStart] == '[' || pSrc[nStart] == '(')) {
-      bIsCondition = true;
-    }
-    if (bIsCondition)
-      pConditionBuf[nConditionCount++] = wCur;
-    else
-      pNameBuf[nNameCount++] = wCur;
+        wchar_t wLookahead = nStart < iLength ? pSrc[nStart] : 0;
+        if (wLookahead != '[' && wLookahead != '(' && nType < 0)
+          break;
+      }
+      if (wCur == '[' || wCur == '(') {
+        bIsCondition = true;
+      } else if (wCur == '.' && nStart < iLength &&
+                 (pSrc[nStart] == '[' || pSrc[nStart] == '(')) {
+        bIsCondition = true;
+      }
+      if (bIsCondition)
+        pConditionBuf[nConditionCount++] = wCur;
+      else
+        pNameBuf[nNameCount++] = wCur;
 
-    if ((nType == 0 && wCur == ']') || (nType == 1 && wCur == ')') ||
-        (nType == 2 && wCur == '"')) {
-      nType = stack.empty() ? -1 : stack.back();
-      if (!stack.empty())
-        stack.pop_back();
-    } else if (wCur == '[') {
-      stack.push_back(nType);
-      nType = 0;
-    } else if (wCur == '(') {
-      stack.push_back(nType);
-      nType = 1;
-    } else if (wCur == '"') {
-      stack.push_back(nType);
-      nType = 2;
+      if ((nType == 0 && wCur == ']') || (nType == 1 && wCur == ')') ||
+          (nType == 2 && wCur == '"')) {
+        nType = stack.empty() ? -1 : stack.back();
+        if (!stack.empty())
+          stack.pop_back();
+      } else if (wCur == '[') {
+        stack.push_back(nType);
+        nType = 0;
+      } else if (wCur == '(') {
+        stack.push_back(nType);
+        nType = 1;
+      } else if (wCur == '"') {
+        stack.push_back(nType);
+        nType = 2;
+      }
+      wPrev = wCur;
     }
-    wPrev = wCur;
+    if (!stack.empty())
+      return -1;
   }
-  if (!stack.empty())
-    return -1;
-
   wsName.ReleaseBuffer(nNameCount);
-  wsName.Trim();
   wsCondition.ReleaseBuffer(nConditionCount);
+  wsName.Trim();
   wsCondition.Trim();
   rnd.m_uHashName =
       static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView(), false));
