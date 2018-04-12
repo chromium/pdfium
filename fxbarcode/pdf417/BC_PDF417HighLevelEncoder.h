@@ -38,18 +38,18 @@ class CBC_PDF417HighLevelEncoder {
   static int32_t PUNCTUATION[128];
 
   static int32_t encodeText(WideString msg,
-                            int32_t startpos,
-                            int32_t count,
+                            size_t startpos,
+                            size_t count,
                             WideString& sb,
                             int32_t initialSubmode);
   static void encodeBinary(std::vector<uint8_t>* bytes,
-                           int32_t startpos,
-                           int32_t count,
+                           size_t startpos,
+                           size_t count,
                            int32_t startmode,
                            WideString& sb);
   static void encodeNumeric(WideString msg,
-                            int32_t startpos,
-                            int32_t count,
+                            size_t startpos,
+                            size_t count,
                             WideString& sb);
   static bool isDigit(wchar_t ch);
   static bool isAlphaUpper(wchar_t ch);
@@ -57,14 +57,12 @@ class CBC_PDF417HighLevelEncoder {
   static bool isMixed(wchar_t ch);
   static bool isPunctuation(wchar_t ch);
   static bool isText(wchar_t ch);
-  static int32_t determineConsecutiveDigitCount(WideString msg,
-                                                int32_t startpos);
-  static int32_t determineConsecutiveTextCount(WideString msg,
-                                               int32_t startpos);
-  static int32_t determineConsecutiveBinaryCount(WideString msg,
-                                                 std::vector<uint8_t>* bytes,
-                                                 int32_t startpos,
-                                                 int32_t& e);
+  static size_t determineConsecutiveDigitCount(WideString msg, size_t startpos);
+  static size_t determineConsecutiveTextCount(WideString msg, size_t startpos);
+  static Optional<size_t> determineConsecutiveBinaryCount(
+      WideString msg,
+      std::vector<uint8_t>* bytes,
+      size_t startpos);
 
   friend class PDF417HighLevelEncoder_EncodeNumeric_Test;
   friend class PDF417HighLevelEncoder_EncodeBinary_Test;
