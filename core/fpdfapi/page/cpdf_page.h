@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/optional.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;
@@ -33,17 +34,13 @@ class CPDF_Page : public CPDF_PageObjectHolder {
 
   void ParseContent();
 
-  void DeviceToPage(const FX_RECT& rect,
-                    int rotate,
-                    const CFX_PointF& device_point,
-                    double* page_x,
-                    double* page_y) const;
-  void PageToDevice(const FX_RECT& rect,
-                    int rotate,
-                    double page_x,
-                    double page_y,
-                    int* device_x,
-                    int* device_y) const;
+  Optional<CFX_PointF> DeviceToPage(const FX_RECT& rect,
+                                    int rotate,
+                                    const CFX_PointF& device_point) const;
+  Optional<CFX_PointF> PageToDevice(const FX_RECT& rect,
+                                    int rotate,
+                                    double page_x,
+                                    double page_y) const;
 
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int iRotate) const;
 

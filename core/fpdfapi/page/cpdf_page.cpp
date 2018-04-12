@@ -118,30 +118,21 @@ CFX_FloatRect CPDF_Page::GetBox(const ByteString& name) const {
   return box;
 }
 
-void CPDF_Page::DeviceToPage(const FX_RECT& rect,
-                             int rotate,
-                             const CFX_PointF& device_point,
-                             double* page_x,
-                             double* page_y) const {
+Optional<CFX_PointF> CPDF_Page::DeviceToPage(
+    const FX_RECT& rect,
+    int rotate,
+    const CFX_PointF& device_point) const {
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
-  CFX_PointF pos = page2device.GetInverse().Transform(device_point);
-
-  *page_x = pos.x;
-  *page_y = pos.y;
+  return page2device.GetInverse().Transform(device_point);
 }
 
-void CPDF_Page::PageToDevice(const FX_RECT& rect,
-                             int rotate,
-                             double page_x,
-                             double page_y,
-                             int* device_x,
-                             int* device_y) const {
+Optional<CFX_PointF> CPDF_Page::PageToDevice(const FX_RECT& rect,
+                                             int rotate,
+                                             double page_x,
+                                             double page_y) const {
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
-  CFX_PointF pos = page2device.Transform(
+  return page2device.Transform(
       CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
-
-  *device_x = FXSYS_round(pos.x);
-  *device_y = FXSYS_round(pos.y);
 }
 
 CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {

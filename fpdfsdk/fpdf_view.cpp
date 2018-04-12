@@ -731,41 +731,53 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetLastError() {
   return GetLastError();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_DeviceToPage(FPDF_PAGE page,
-                                                 int start_x,
-                                                 int start_y,
-                                                 int size_x,
-                                                 int size_y,
-                                                 int rotate,
-                                                 int device_x,
-                                                 int device_y,
-                                                 double* page_x,
-                                                 double* page_y) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_DeviceToPage(FPDF_PAGE page,
+                                                      int start_x,
+                                                      int start_y,
+                                                      int size_x,
+                                                      int size_y,
+                                                      int rotate,
+                                                      int device_x,
+                                                      int device_y,
+                                                      double* page_x,
+                                                      double* page_y) {
   if (!page || !page_x || !page_y)
-    return;
+    return false;
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  pPage->DeviceToPage(rect, rotate, CFX_PointF(device_x, device_y), page_x,
-                      page_y);
+  Optional<CFX_PointF> pos =
+      pPage->DeviceToPage(rect, rotate, CFX_PointF(device_x, device_y));
+  if (!pos)
+    return false;
+
+  *page_x = pos->x;
+  *page_y = pos->y;
+  return true;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
-                                                 int start_x,
-                                                 int start_y,
-                                                 int size_x,
-                                                 int size_y,
-                                                 int rotate,
-                                                 double page_x,
-                                                 double page_y,
-                                                 int* device_x,
-                                                 int* device_y) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
+                                                      int start_x,
+                                                      int start_y,
+                                                      int size_x,
+                                                      int size_y,
+                                                      int rotate,
+                                                      double page_x,
+                                                      double page_y,
+                                                      int* device_x,
+                                                      int* device_y) {
   if (!page || !device_x || !device_y)
-    return;
+    return false;
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  pPage->PageToDevice(rect, rotate, page_x, page_y, device_x, device_y);
+  Optional<CFX_PointF> pos = pPage->PageToDevice(rect, rotate, page_x, page_y);
+  if (!pos)
+    return false;
+
+  *device_x = FXSYS_round(pos->x);
+  *device_y = FXSYS_round(pos->y);
+  return true;
 }
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_Create(int width,
