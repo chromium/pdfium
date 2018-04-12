@@ -25,7 +25,7 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
   uint32_t v_Load(CPDF_Document* pDoc,
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
 
  private:
   CPDF_ColorSpace* m_pBaseCS;

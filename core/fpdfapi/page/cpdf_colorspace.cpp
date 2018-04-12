@@ -80,7 +80,7 @@ class CPDF_CalGray : public CPDF_ColorSpace {
   uint32_t v_Load(CPDF_Document* pDoc,
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
                           int pixels,
@@ -103,7 +103,7 @@ class CPDF_CalRGB : public CPDF_ColorSpace {
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
 
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
 
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
@@ -133,7 +133,7 @@ class CPDF_LabCS : public CPDF_ColorSpace {
                        float* value,
                        float* min,
                        float* max) const override;
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
 
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
@@ -156,7 +156,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
   uint32_t v_Load(CPDF_Document* pDoc,
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   void EnableStdConversion(bool bEnabled) override;
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
@@ -193,7 +193,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
 
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
 
   void EnableStdConversion(bool bEnabled) override;
 
@@ -218,7 +218,7 @@ class CPDF_SeparationCS : public CPDF_ColorSpace {
   uint32_t v_Load(CPDF_Document* pDoc,
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   void EnableStdConversion(bool bEnabled) override;
 
   std::unique_ptr<CPDF_ColorSpace> m_pAltCS;
@@ -239,7 +239,7 @@ class CPDF_DeviceNCS : public CPDF_ColorSpace {
   uint32_t v_Load(CPDF_Document* pDoc,
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   void EnableStdConversion(bool bEnabled) override;
 
   std::unique_ptr<CPDF_ColorSpace> m_pAltCS;
@@ -582,7 +582,10 @@ uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
   return 1;
 }
 
-bool CPDF_CalGray::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_CalGray::GetRGB(const float* pBuf,
+                          float* R,
+                          float* G,
+                          float* B) const {
   *R = *pBuf;
   *G = *pBuf;
   *B = *pBuf;
@@ -640,7 +643,10 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   return 3;
 }
 
-bool CPDF_CalRGB::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_CalRGB::GetRGB(const float* pBuf,
+                         float* R,
+                         float* G,
+                         float* B) const {
   float A_ = pBuf[0];
   float B_ = pBuf[1];
   float C_ = pBuf[2];
@@ -735,7 +741,7 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   return 3;
 }
 
-bool CPDF_LabCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_LabCS::GetRGB(const float* pBuf, float* R, float* G, float* B) const {
   float Lstar = pBuf[0];
   float astar = pBuf[1];
   float bstar = pBuf[2];
@@ -843,7 +849,10 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
   return nComponents;
 }
 
-bool CPDF_ICCBasedCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_ICCBasedCS::GetRGB(const float* pBuf,
+                             float* R,
+                             float* G,
+                             float* B) const {
   ASSERT(m_pProfile);
   if (IsSRGB()) {
     *R = pBuf[0];
@@ -1066,7 +1075,10 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   return 1;
 }
 
-bool CPDF_IndexedCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_IndexedCS::GetRGB(const float* pBuf,
+                            float* R,
+                            float* G,
+                            float* B) const {
   int32_t index = static_cast<int32_t>(*pBuf);
   if (index < 0 || index > m_MaxIndex)
     return false;
@@ -1143,7 +1155,7 @@ uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
   return 1;
 }
 
-bool CPDF_SeparationCS::GetRGB(float* pBuf,
+bool CPDF_SeparationCS::GetRGB(const float* pBuf,
                                float* R,
                                float* G,
                                float* B) const {
@@ -1221,7 +1233,10 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
   return pObj->GetCount();
 }
 
-bool CPDF_DeviceNCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_DeviceNCS::GetRGB(const float* pBuf,
+                            float* R,
+                            float* G,
+                            float* B) const {
   if (!m_pFunc)
     return false;
 

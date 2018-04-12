@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_function.h"
 
+#include <vector>
+
 #include "core/fpdfapi/page/cpdf_expintfunc.h"
 #include "core/fpdfapi/page/cpdf_psfunc.h"
 #include "core/fpdfapi/page/cpdf_sampledfunc.h"
@@ -113,7 +115,7 @@ bool CPDF_Function::Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
   return true;
 }
 
-bool CPDF_Function::Call(float* inputs,
+bool CPDF_Function::Call(const float* inputs,
                          uint32_t ninputs,
                          float* results,
                          int* nresults) const {
@@ -121,11 +123,12 @@ bool CPDF_Function::Call(float* inputs,
     return false;
 
   *nresults = m_nOutputs;
+  std::vector<float> clamped_inputs(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {
-    inputs[i] =
+    clamped_inputs[i] =
         pdfium::clamp(inputs[i], m_pDomains[i * 2], m_pDomains[i * 2 + 1]);
   }
-  v_Call(inputs, results);
+  v_Call(clamped_inputs.data(), results);
   if (!m_pRanges)
     return true;
 

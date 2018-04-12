@@ -71,7 +71,10 @@ uint32_t CPDF_DeviceCS::v_Load(CPDF_Document* pDoc,
   return 0;
 }
 
-bool CPDF_DeviceCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_DeviceCS::GetRGB(const float* pBuf,
+                           float* R,
+                           float* G,
+                           float* B) const {
   switch (m_Family) {
     case PDFCS_DEVICEGRAY:
       *R = NormalizeChannel(*pBuf);

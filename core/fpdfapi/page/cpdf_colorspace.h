@@ -68,7 +68,10 @@ class CPDF_ColorSpace {
                                float* min,
                                float* max) const;
 
-  virtual bool GetRGB(float* pBuf, float* R, float* G, float* B) const = 0;
+  virtual bool GetRGB(const float* pBuf,
+                      float* R,
+                      float* G,
+                      float* B) const = 0;
 
   virtual void TranslateImageLine(uint8_t* dest_buf,
                                   const uint8_t* src_buf,

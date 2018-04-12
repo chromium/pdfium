@@ -20,7 +20,7 @@ class CPDF_DeviceCS : public CPDF_ColorSpace {
   uint32_t v_Load(CPDF_Document* pDoc,
                   CPDF_Array* pArray,
                   std::set<CPDF_Object*>* pVisited) override;
-  bool GetRGB(float* pBuf, float* R, float* G, float* B) const override;
+  bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
                           int pixels,

@@ -30,7 +30,7 @@ class CPDF_Function {
 
   virtual ~CPDF_Function();
 
-  bool Call(float* inputs,
+  bool Call(const float* inputs,
             uint32_t ninputs,
             float* results,
             int* nresults) const;

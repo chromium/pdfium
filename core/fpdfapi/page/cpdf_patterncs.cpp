@@ -50,10 +50,13 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
   return m_pBaseCS->CountComponents() + 1;
 }
 
-bool CPDF_PatternCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
+bool CPDF_PatternCS::GetRGB(const float* pBuf,
+                            float* R,
+                            float* G,
+                            float* B) const {
   if (m_pBaseCS) {
     ASSERT(m_pBaseCS->GetFamily() != PDFCS_PATTERN);
-    PatternValue* pvalue = reinterpret_cast<PatternValue*>(pBuf);
+    const auto* pvalue = reinterpret_cast<const PatternValue*>(pBuf);
     if (m_pBaseCS->GetRGB(pvalue->m_Comps, R, G, B))
       return true;
   }
