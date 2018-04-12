@@ -78,8 +78,6 @@ class CXFA_FFDoc {
 
   bool SavePackage(CXFA_Node* pNode,
                    const RetainPtr<IFX_SeekableStream>& pFile);
-  bool ImportData(const RetainPtr<IFX_SeekableStream>& pStream,
-                  bool bXDP = true);
 
  private:
   bool ParseDoc(CPDF_Object* pElementXFA);

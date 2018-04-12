@@ -2271,8 +2271,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_dataexporter.h",
       "xfa/fxfa/parser/cxfa_datagroup.cpp",
       "xfa/fxfa/parser/cxfa_datagroup.h",
-      "xfa/fxfa/parser/cxfa_dataimporter.cpp",
-      "xfa/fxfa/parser/cxfa_dataimporter.h",
       "xfa/fxfa/parser/cxfa_datamodel.cpp",
       "xfa/fxfa/parser/cxfa_datamodel.h",
       "xfa/fxfa/parser/cxfa_datavalue.cpp",

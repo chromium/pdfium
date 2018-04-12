@@ -22,7 +22,6 @@ class CFX_SeekableStreamProxy;
 
 class CXFA_DocumentParser {
  public:
-  CXFA_DocumentParser();
   explicit CXFA_DocumentParser(CXFA_Document* pFactory);
   ~CXFA_DocumentParser();
 
@@ -34,9 +33,6 @@ class CXFA_DocumentParser {
 
   std::unique_ptr<CFX_XMLNode> GetXMLRoot() { return std::move(m_pNodeTree); }
   CXFA_Node* GetRootNode() const;
-
-  // Called later for the ctor with no parameters.
-  void SetFactory(CXFA_Document* pFactory);
 
  private:
   std::unique_ptr<CFX_XMLNode> LoadXML(
@@ -80,7 +76,6 @@ class CXFA_DocumentParser {
   std::unique_ptr<CFX_XMLNode> m_pNodeTree;
   // TODO(dsinclair): Figure out who owns this.
   CXFA_Node* m_pRootNode = nullptr;
-  const bool m_bDocumentParser;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_PARSER_H_

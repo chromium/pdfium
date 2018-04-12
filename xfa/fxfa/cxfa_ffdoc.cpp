@@ -31,7 +31,6 @@
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_acrobat7.h"
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
-#include "xfa/fxfa/parser/cxfa_dataimporter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 #include "xfa/fxfa/parser/cxfa_dynamicrender.h"
@@ -181,10 +180,7 @@ bool CXFA_FFDoc::ParseDoc(CPDF_Object* pElementXFA) {
 
   auto stream = pdfium::MakeRetain<CFX_SeekableMultiStream>(xfaStreams);
 
-  // Note, we don't pass the document into the constructor as currently that
-  // triggers different behaviour in the parser.
-  CXFA_DocumentParser parser;
-  parser.SetFactory(m_pDocument.get());
+  CXFA_DocumentParser parser(m_pDocument.get());
   if (!parser.Parse(stream, XFA_PacketType::Xdp))
     return false;
 
@@ -405,10 +401,4 @@ bool CXFA_FFDoc::SavePackage(CXFA_Node* pNode,
 
   CXFA_DataExporter exporter;
   return exporter.Export(pFile, pNode ? pNode : GetXFADoc()->GetRoot());
-}
-
-bool CXFA_FFDoc::ImportData(const RetainPtr<IFX_SeekableStream>& pStream,
-                            bool bXDP) {
-  auto importer = pdfium::MakeUnique<CXFA_DataImporter>(m_pDocument.get());
-  return importer->ImportData(pStream);
 }

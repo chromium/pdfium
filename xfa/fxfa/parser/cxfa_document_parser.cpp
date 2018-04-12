@@ -322,17 +322,10 @@ bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
                                  L"http://www.w3.org/1999/xhtml";
 }
 
-CXFA_DocumentParser::CXFA_DocumentParser() : m_bDocumentParser(true) {}
-
 CXFA_DocumentParser::CXFA_DocumentParser(CXFA_Document* pFactory)
-    : m_pFactory(pFactory), m_bDocumentParser(false) {}
+    : m_pFactory(pFactory) {}
 
 CXFA_DocumentParser::~CXFA_DocumentParser() {}
-
-void CXFA_DocumentParser::SetFactory(CXFA_Document* pFactory) {
-  ASSERT(m_bDocumentParser);
-  m_pFactory = pFactory;
-}
 
 bool CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
                                 XFA_PacketType ePacketID) {
@@ -604,15 +597,15 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_Template(
     return nullptr;
 
   pNode->JSObject()->SetCData(XFA_Attribute::Name, packet->name, false, false);
-  if (m_bDocumentParser) {
-    CFX_XMLElement* pXMLDocumentElement =
-        static_cast<CFX_XMLElement*>(pXMLDocumentNode);
-    WideString wsNamespaceURI = pXMLDocumentElement->GetNamespaceURI();
-    if (wsNamespaceURI.IsEmpty())
-      wsNamespaceURI = pXMLDocumentElement->GetString(L"xmlns:xfa");
 
-    pNode->GetDocument()->RecognizeXFAVersionNumber(wsNamespaceURI);
-  }
+  CFX_XMLElement* pXMLDocumentElement =
+      static_cast<CFX_XMLElement*>(pXMLDocumentNode);
+  WideString wsNamespaceURI = pXMLDocumentElement->GetNamespaceURI();
+  if (wsNamespaceURI.IsEmpty())
+    wsNamespaceURI = pXMLDocumentElement->GetString(L"xmlns:xfa");
+
+  pNode->GetDocument()->RecognizeXFAVersionNumber(wsNamespaceURI);
+
   if (!NormalLoader(pNode, pXMLDocumentNode, XFA_PacketType::Template, true))
     return nullptr;
 
@@ -1148,9 +1141,6 @@ void CXFA_DocumentParser::ParseDataValue(CXFA_Node* pXFANode,
 void CXFA_DocumentParser::ParseInstruction(CXFA_Node* pXFANode,
                                            CFX_XMLInstruction* pXMLInstruction,
                                            XFA_PacketType ePacketID) {
-  if (!m_bDocumentParser)
-    return;
-
   WideString wsTargetName = pXMLInstruction->GetName();
   const std::vector<WideString>& target_data = pXMLInstruction->GetTargetData();
   if (wsTargetName == L"originalXFAVersion") {
