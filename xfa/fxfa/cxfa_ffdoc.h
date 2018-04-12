@@ -58,7 +58,7 @@ class CXFA_FFDoc {
   }
   FormType GetFormType() const { return m_FormType; }
 
-  int32_t Load();
+  bool Load();
 
   CXFA_FFDocView* CreateDocView();
 

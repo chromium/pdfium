@@ -8,14 +8,15 @@
 #define XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_
 
 #include <memory>
+#include <utility>
 
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Document;
 class CXFA_Node;
 class CFX_XMLDoc;
 class CFX_XMLInstruction;
-class CFX_XMLNode;
 class IFX_SeekableStream;
 class CFX_SeekableStreamProxy;
 
@@ -30,6 +31,8 @@ class CXFA_SimpleParser {
 
   CFX_XMLNode* ParseXMLData(const ByteString& wsXML);
   void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
+
+  std::unique_ptr<CFX_XMLNode> GetXMLRoot() { return std::move(m_pNodeTree); }
   CXFA_Node* GetRootNode() const;
 
   // Called later for the ctor with no parameters.

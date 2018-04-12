@@ -27,8 +27,7 @@ CXFA_DataImporter::~CXFA_DataImporter() {}
 bool CXFA_DataImporter::ImportData(
     const RetainPtr<IFX_SeekableStream>& pDataDocument) {
   CXFA_SimpleParser parser(m_pDocument.Get());
-  int status = parser.Parse(pDataDocument, XFA_PacketType::Datasets);
-  if (status < XFA_PARSESTATUS_Done)
+  if (!parser.Parse(pDataDocument, XFA_PacketType::Datasets))
     return false;
 
   CXFA_Node* pImportDataRoot = parser.GetRootNode();

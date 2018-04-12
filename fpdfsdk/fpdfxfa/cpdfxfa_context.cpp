@@ -96,8 +96,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
-  int iStatus = m_pXFADoc->Load();
-  if (iStatus != XFA_PARSESTATUS_Done) {
+  if (!m_pXFADoc->Load()) {
     CloseXFADoc();
     SetLastError(FPDF_ERR_XFALOAD);
     return false;
