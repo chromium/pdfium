@@ -33,6 +33,18 @@ class CPDF_Page : public CPDF_PageObjectHolder {
 
   void ParseContent();
 
+  void DeviceToPage(const FX_RECT& rect,
+                    int rotate,
+                    const CFX_PointF& device_point,
+                    double* page_x,
+                    double* page_y) const;
+  void PageToDevice(const FX_RECT& rect,
+                    int rotate,
+                    double page_x,
+                    double page_y,
+                    int* device_x,
+                    int* device_y) const;
+
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int iRotate) const;
 
   float GetPageWidth() const { return m_PageSize.width; }

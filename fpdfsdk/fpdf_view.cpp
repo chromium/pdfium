@@ -746,18 +746,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DeviceToPage(FPDF_PAGE page,
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-#ifdef PDF_ENABLE_XFA
   pPage->DeviceToPage(rect, rotate, CFX_PointF(device_x, device_y), page_x,
                       page_y);
-#else   // PDF_ENABLE_XFA
-  CFX_Matrix page2device = pPage->GetDisplayMatrix(rect, rotate);
-
-  CFX_PointF pos = page2device.GetInverse().Transform(
-      CFX_PointF(static_cast<float>(device_x), static_cast<float>(device_y)));
-
-  *page_x = pos.x;
-  *page_y = pos.y;
-#endif  // PDF_ENABLE_XFA
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
@@ -775,16 +765,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-#ifdef PDF_ENABLE_XFA
   pPage->PageToDevice(rect, rotate, page_x, page_y, device_x, device_y);
-#else   // PDF_ENABLE_XFA
-  CFX_Matrix page2device = pPage->GetDisplayMatrix(rect, rotate);
-  CFX_PointF pos = page2device.Transform(
-      CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
-
-  *device_x = FXSYS_round(pos.x);
-  *device_y = FXSYS_round(pos.y);
-#endif  // PDF_ENABLE_XFA
 }
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_Create(int width,

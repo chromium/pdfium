@@ -130,7 +130,7 @@ void CPDFXFA_Page::DeviceToPage(const FX_RECT& rect,
                                 int rotate,
                                 const CFX_PointF& device_point,
                                 double* page_x,
-                                double* page_y) {
+                                double* page_y) const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
@@ -145,7 +145,7 @@ void CPDFXFA_Page::PageToDevice(const FX_RECT& rect,
                                 double page_x,
                                 double page_y,
                                 int* device_x,
-                                int* device_y) {
+                                int* device_y) const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
