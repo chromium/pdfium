@@ -20,14 +20,17 @@ class CPDF_Color {
   bool IsNull() const { return !m_pBuffer; }
   bool IsPattern() const;
 
-  void Copy(const CPDF_Color* pSrc);
+  void Copy(const CPDF_Color& src);
 
   void SetColorSpace(CPDF_ColorSpace* pCS);
   void SetValue(const float* comp);
   void SetValue(CPDF_Pattern* pPattern, const float* comp, uint32_t ncomps);
 
   bool GetRGB(int* R, int* G, int* B) const;
+
+  // Should only be called if IsPattern() returns true.
   CPDF_Pattern* GetPattern() const;
+
   const CPDF_ColorSpace* GetColorSpace() const { return m_pCS; }
 
  protected:

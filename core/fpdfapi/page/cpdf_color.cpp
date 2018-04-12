@@ -119,10 +119,10 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern,
   }
 }
 
-void CPDF_Color::Copy(const CPDF_Color* pSrc) {
+void CPDF_Color::Copy(const CPDF_Color& src) {
   ReleaseBuffer();
   ReleaseColorSpace();
-  m_pCS = pSrc->m_pCS;
+  m_pCS = src.m_pCS;
   if (!m_pCS)
     return;
 
@@ -134,7 +134,7 @@ void CPDF_Color::Copy(const CPDF_Color* pSrc) {
       return;
   }
   m_pBuffer = m_pCS->CreateBuf();
-  memcpy(m_pBuffer, pSrc->m_pBuffer, m_pCS->GetBufSize());
+  memcpy(m_pBuffer, src.m_pBuffer, m_pCS->GetBufSize());
   if (!IsPatternInternal())
     return;
 
@@ -164,7 +164,9 @@ bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
 }
 
 CPDF_Pattern* CPDF_Color::GetPattern() const {
-  if (!m_pBuffer || !IsPatternInternal())
+  ASSERT(IsPattern());
+
+  if (!m_pBuffer)
     return nullptr;
 
   PatternValue* pvalue = reinterpret_cast<PatternValue*>(m_pBuffer);

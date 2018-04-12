@@ -147,8 +147,8 @@ CPDF_ColorState::ColorData::ColorData()
 CPDF_ColorState::ColorData::ColorData(const ColorData& src)
     : m_FillColorRef(src.m_FillColorRef),
       m_StrokeColorRef(src.m_StrokeColorRef) {
-  m_FillColor.Copy(&src.m_FillColor);
-  m_StrokeColor.Copy(&src.m_StrokeColor);
+  m_FillColor.Copy(src.m_FillColor);
+  m_StrokeColor.Copy(src.m_StrokeColor);
 }
 
 CPDF_ColorState::ColorData::~ColorData() {}

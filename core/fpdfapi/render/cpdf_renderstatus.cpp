@@ -1051,13 +1051,13 @@ bool CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
         m_InitialStates.m_ColorState.SetFillColorRef(
             pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
         m_InitialStates.m_ColorState.GetMutableFillColor()->Copy(
-            pParentState->m_InitialStates.m_ColorState.GetFillColor());
+            *pParentState->m_InitialStates.m_ColorState.GetFillColor());
       }
       if (!m_InitialStates.m_ColorState.HasStrokeColor()) {
         m_InitialStates.m_ColorState.SetStrokeColorRef(
             pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
         m_InitialStates.m_ColorState.GetMutableStrokeColor()->Copy(
-            pParentState->m_InitialStates.m_ColorState.GetStrokeColor());
+            *pParentState->m_InitialStates.m_ColorState.GetStrokeColor());
       }
     }
   } else {
