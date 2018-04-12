@@ -322,7 +322,8 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
                           &img_row_avail_size_)
                     : CFX_GifDecodeStatus::Error;
         }
-        if (ret == CFX_GifDecodeStatus::Error) {
+        if (ret == CFX_GifDecodeStatus::InsufficientDestSize ||
+            ret == CFX_GifDecodeStatus::Error) {
           DecodingFailureAtTailCleanup(gif_image);
           return CFX_GifDecodeStatus::Error;
         }
