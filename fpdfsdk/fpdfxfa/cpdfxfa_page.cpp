@@ -126,32 +126,21 @@ float CPDFXFA_Page::GetPageHeight() const {
   return 0.0f;
 }
 
-void CPDFXFA_Page::DeviceToPage(int start_x,
-                                int start_y,
-                                int size_x,
-                                int size_y,
+void CPDFXFA_Page::DeviceToPage(const FX_RECT& rect,
                                 int rotate,
-                                int device_x,
-                                int device_y,
+                                const CFX_PointF& device_point,
                                 double* page_x,
                                 double* page_y) {
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  CFX_PointF pos = GetDisplayMatrix(rect, rotate)
-                       .GetInverse()
-                       .Transform(CFX_PointF(static_cast<float>(device_x),
-                                             static_cast<float>(device_y)));
-
+  CFX_PointF pos =
+      GetDisplayMatrix(rect, rotate).GetInverse().Transform(device_point);
   *page_x = pos.x;
   *page_y = pos.y;
 }
 
-void CPDFXFA_Page::PageToDevice(int start_x,
-                                int start_y,
-                                int size_x,
-                                int size_y,
+void CPDFXFA_Page::PageToDevice(const FX_RECT& rect,
                                 int rotate,
                                 double page_x,
                                 double page_y,
@@ -160,12 +149,9 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
-
   CFX_PointF pos = page2device.Transform(
       CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
-
   *device_x = FXSYS_round(pos.x);
   *device_y = FXSYS_round(pos.y);
 }
