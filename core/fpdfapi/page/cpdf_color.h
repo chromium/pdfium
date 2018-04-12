@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_COLOR_H_
 #define CORE_FPDFAPI_PAGE_CPDF_COLOR_H_
 
+#include <vector>
+
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -24,7 +26,8 @@ class CPDF_Color {
 
   void SetColorSpace(CPDF_ColorSpace* pCS);
   void SetValue(const float* comp);
-  void SetValue(CPDF_Pattern* pPattern, const float* comp, uint32_t ncomps);
+  void SetValueForPattern(CPDF_Pattern* pPattern,
+                          const std::vector<float>& values);
 
   bool GetRGB(int* R, int* G, int* B) const;
 

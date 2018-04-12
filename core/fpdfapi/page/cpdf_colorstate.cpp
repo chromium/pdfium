@@ -85,10 +85,9 @@ void CPDF_ColorState::SetStrokeColor(CPDF_ColorSpace* pCS,
 }
 
 void CPDF_ColorState::SetFillPattern(CPDF_Pattern* pPattern,
-                                     float* pValue,
-                                     uint32_t nValues) {
+                                     const std::vector<float>& values) {
   ColorData* pData = m_Ref.GetPrivateCopy();
-  pData->m_FillColor.SetValue(pPattern, pValue, nValues);
+  pData->m_FillColor.SetValueForPattern(pPattern, values);
   int R;
   int G;
   int B;
@@ -103,10 +102,9 @@ void CPDF_ColorState::SetFillPattern(CPDF_Pattern* pPattern,
 }
 
 void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern,
-                                       float* pValue,
-                                       uint32_t nValues) {
+                                       const std::vector<float>& values) {
   ColorData* pData = m_Ref.GetPrivateCopy();
-  pData->m_StrokeColor.SetValue(pPattern, pValue, nValues);
+  pData->m_StrokeColor.SetValueForPattern(pPattern, values);
   int R;
   int G;
   int B;

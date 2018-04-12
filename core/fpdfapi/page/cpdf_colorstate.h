@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_COLORSTATE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_COLORSTATE_H_
 
+#include <vector>
+
 #include "core/fpdfapi/page/cpdf_color.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/shared_copy_on_write.h"
@@ -41,8 +43,9 @@ class CPDF_ColorState {
 
   void SetFillColor(CPDF_ColorSpace* pCS, float* pValue, uint32_t nValues);
   void SetStrokeColor(CPDF_ColorSpace* pCS, float* pValue, uint32_t nValues);
-  void SetFillPattern(CPDF_Pattern* pattern, float* pValue, uint32_t nValues);
-  void SetStrokePattern(CPDF_Pattern* pattern, float* pValue, uint32_t nValues);
+  void SetFillPattern(CPDF_Pattern* pattern, const std::vector<float>& values);
+  void SetStrokePattern(CPDF_Pattern* pattern,
+                        const std::vector<float>& values);
 
   bool HasRef() const { return !!m_Ref; }
 

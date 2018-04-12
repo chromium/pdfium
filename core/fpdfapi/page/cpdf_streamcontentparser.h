@@ -122,6 +122,9 @@ class CPDF_StreamContentParser {
   // Takes ownership of |pImageObj|, returns unowned pointer to it.
   CPDF_ImageObject* AddImageObject(std::unique_ptr<CPDF_ImageObject> pImageObj);
 
+  std::vector<float> GetColors() const;
+  std::vector<float> GetNamedColors() const;
+
   void Handle_CloseFillStrokePath();
   void Handle_FillStrokePath();
   void Handle_CloseEOFillStrokePath();

@@ -86,10 +86,9 @@ void CPDF_Color::SetValue(const float* comps) {
     memcpy(m_pBuffer, comps, m_pCS->CountComponents() * sizeof(float));
 }
 
-void CPDF_Color::SetValue(CPDF_Pattern* pPattern,
-                          const float* comps,
-                          uint32_t ncomps) {
-  if (ncomps > kMaxPatternColorComps)
+void CPDF_Color::SetValueForPattern(CPDF_Pattern* pPattern,
+                                    const std::vector<float>& values) {
+  if (values.size() > kMaxPatternColorComps)
     return;
 
   if (!IsPattern()) {
@@ -104,10 +103,10 @@ void CPDF_Color::SetValue(CPDF_Pattern* pPattern,
     pDocPageData = pvalue->m_pPattern->document()->GetPageData();
     pDocPageData->ReleasePattern(pvalue->m_pPattern->pattern_obj());
   }
-  pvalue->m_nComps = ncomps;
+  pvalue->m_nComps = values.size();
   pvalue->m_pPattern = pPattern;
-  if (ncomps)
-    memcpy(pvalue->m_Comps, comps, ncomps * sizeof(float));
+  if (!values.empty())
+    memcpy(pvalue->m_Comps, values.data(), values.size() * sizeof(float));
 
   pvalue->m_pCountedPattern = nullptr;
   if (pPattern) {
