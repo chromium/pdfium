@@ -53,7 +53,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
 
   pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);
   FX_RECT bbox;
-  pFont->GetBBox(bbox);
+  pFont->GetBBox(&bbox);
   pFontDesc->SetRectFor("FontBBox", CFX_FloatRect(bbox));
 
   // TODO(npm): calculate italic angle correctly

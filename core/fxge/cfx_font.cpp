@@ -349,7 +349,7 @@ int CFX_Font::GetDescent() const {
   return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face), descender);
 }
 
-bool CFX_Font::GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox) {
+bool CFX_Font::GetGlyphBBox(uint32_t glyph_index, FX_RECT* pBBox) {
   if (!m_Face)
     return false;
 
@@ -373,20 +373,20 @@ bool CFX_Font::GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox) {
     int pixel_size_x = m_Face->size->metrics.x_ppem,
         pixel_size_y = m_Face->size->metrics.y_ppem;
     if (pixel_size_x == 0 || pixel_size_y == 0) {
-      bbox.left = cbox.xMin;
-      bbox.right = cbox.xMax;
-      bbox.top = cbox.yMax;
-      bbox.bottom = cbox.yMin;
+      pBBox->left = cbox.xMin;
+      pBBox->right = cbox.xMax;
+      pBBox->top = cbox.yMax;
+      pBBox->bottom = cbox.yMin;
     } else {
-      bbox.left = cbox.xMin * 1000 / pixel_size_x;
-      bbox.right = cbox.xMax * 1000 / pixel_size_x;
-      bbox.top = cbox.yMax * 1000 / pixel_size_y;
-      bbox.bottom = cbox.yMin * 1000 / pixel_size_y;
+      pBBox->left = cbox.xMin * 1000 / pixel_size_x;
+      pBBox->right = cbox.xMax * 1000 / pixel_size_x;
+      pBBox->top = cbox.yMax * 1000 / pixel_size_y;
+      pBBox->bottom = cbox.yMin * 1000 / pixel_size_y;
     }
-    bbox.top = std::min(bbox.top,
-                        static_cast<int32_t>(FXFT_Get_Face_Ascender(m_Face)));
-    bbox.bottom = std::max(
-        bbox.bottom, static_cast<int32_t>(FXFT_Get_Face_Descender(m_Face)));
+    pBBox->top = std::min(pBBox->top,
+                          static_cast<int32_t>(FXFT_Get_Face_Ascender(m_Face)));
+    pBBox->bottom = std::max(
+        pBBox->bottom, static_cast<int32_t>(FXFT_Get_Face_Descender(m_Face)));
     FT_Done_Glyph(glyph);
     return FXFT_Set_Pixel_Sizes(m_Face, 0, 64) == 0;
   }
@@ -397,19 +397,19 @@ bool CFX_Font::GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox) {
   }
   int em = FXFT_Get_Face_UnitsPerEM(m_Face);
   if (em == 0) {
-    bbox.left = FXFT_Get_Glyph_HoriBearingX(m_Face);
-    bbox.bottom = FXFT_Get_Glyph_HoriBearingY(m_Face);
-    bbox.top = bbox.bottom - FXFT_Get_Glyph_Height(m_Face);
-    bbox.right = bbox.left + FXFT_Get_Glyph_Width(m_Face);
+    pBBox->left = FXFT_Get_Glyph_HoriBearingX(m_Face);
+    pBBox->bottom = FXFT_Get_Glyph_HoriBearingY(m_Face);
+    pBBox->top = pBBox->bottom - FXFT_Get_Glyph_Height(m_Face);
+    pBBox->right = pBBox->left + FXFT_Get_Glyph_Width(m_Face);
   } else {
-    bbox.left = FXFT_Get_Glyph_HoriBearingX(m_Face) * 1000 / em;
-    bbox.top =
+    pBBox->left = FXFT_Get_Glyph_HoriBearingX(m_Face) * 1000 / em;
+    pBBox->top =
         (FXFT_Get_Glyph_HoriBearingY(m_Face) - FXFT_Get_Glyph_Height(m_Face)) *
         1000 / em;
-    bbox.right =
+    pBBox->right =
         (FXFT_Get_Glyph_HoriBearingX(m_Face) + FXFT_Get_Glyph_Width(m_Face)) *
         1000 / em;
-    bbox.bottom = (FXFT_Get_Glyph_HoriBearingY(m_Face)) * 1000 / em;
+    pBBox->bottom = (FXFT_Get_Glyph_HoriBearingY(m_Face)) * 1000 / em;
   }
   return true;
 }
@@ -467,21 +467,21 @@ ByteString CFX_Font::GetFaceName() const {
   return m_pSubstFont->m_Family;
 }
 
-bool CFX_Font::GetBBox(FX_RECT& bbox) {
+bool CFX_Font::GetBBox(FX_RECT* pBBox) {
   if (!m_Face)
     return false;
 
   int em = FXFT_Get_Face_UnitsPerEM(m_Face);
   if (em == 0) {
-    bbox.left = FXFT_Get_Face_xMin(m_Face);
-    bbox.bottom = FXFT_Get_Face_yMax(m_Face);
-    bbox.top = FXFT_Get_Face_yMin(m_Face);
-    bbox.right = FXFT_Get_Face_xMax(m_Face);
+    pBBox->left = FXFT_Get_Face_xMin(m_Face);
+    pBBox->bottom = FXFT_Get_Face_yMax(m_Face);
+    pBBox->top = FXFT_Get_Face_yMin(m_Face);
+    pBBox->right = FXFT_Get_Face_xMax(m_Face);
   } else {
-    bbox.left = FXFT_Get_Face_xMin(m_Face) * 1000 / em;
-    bbox.top = FXFT_Get_Face_yMin(m_Face) * 1000 / em;
-    bbox.right = FXFT_Get_Face_xMax(m_Face) * 1000 / em;
-    bbox.bottom = FXFT_Get_Face_yMax(m_Face) * 1000 / em;
+    pBBox->left = FXFT_Get_Face_xMin(m_Face) * 1000 / em;
+    pBBox->top = FXFT_Get_Face_yMin(m_Face) * 1000 / em;
+    pBBox->right = FXFT_Get_Face_xMax(m_Face) * 1000 / em;
+    pBBox->bottom = FXFT_Get_Face_yMax(m_Face) * 1000 / em;
   }
   return true;
 }
