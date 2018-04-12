@@ -18,20 +18,14 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CFX_XMLDoc::CFX_XMLDoc(const RetainPtr<CFX_SeekableStreamProxy>& pStream)
-    : m_pRoot(pdfium::MakeUnique<CFX_XMLNode>()),
-      m_pXMLParser(pdfium::MakeUnique<CFX_XMLParser>(m_pRoot.get(), pStream)) {
-  ASSERT(pStream);
-
+CFX_XMLDoc::CFX_XMLDoc() : m_pRoot(pdfium::MakeUnique<CFX_XMLNode>()) {
   m_pRoot->AppendChild(new CFX_XMLInstruction(L"xml"));
 }
 
 CFX_XMLDoc::~CFX_XMLDoc() {}
 
-int32_t CFX_XMLDoc::Load() {
-  return m_pXMLParser->Parse();
-}
-
-void CFX_XMLDoc::CloseXML() {
-  m_pXMLParser.reset();
+bool CFX_XMLDoc::Load(const RetainPtr<CFX_SeekableStreamProxy>& pStream) {
+  ASSERT(pStream);
+  CFX_XMLParser parser(m_pRoot.get(), pStream);
+  return parser.Parse();
 }

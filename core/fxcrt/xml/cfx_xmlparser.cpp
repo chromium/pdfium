@@ -132,36 +132,36 @@ CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
 
 CFX_XMLParser::~CFX_XMLParser() {}
 
-int32_t CFX_XMLParser::Parse() {
+bool CFX_XMLParser::Parse() {
   int32_t iCount = 0;
   while (true) {
     FX_XmlSyntaxResult result = DoSyntaxParse();
     if (result == FX_XmlSyntaxResult::Error)
-      return -1;
+      return false;
     if (result == FX_XmlSyntaxResult::EndOfString)
       break;
 
     switch (result) {
       case FX_XmlSyntaxResult::InstructionClose:
         if (m_pChild && m_pChild->GetType() != FX_XMLNODE_Instruction)
-          return -1;
+          return false;
 
         m_pChild = m_pParent;
         break;
       case FX_XmlSyntaxResult::ElementClose:
         if (m_pChild->GetType() != FX_XMLNODE_Element)
-          return -1;
+          return false;
 
         m_ws1 = GetTagName();
         if (m_ws1.GetLength() > 0 &&
             m_ws1 != static_cast<CFX_XMLElement*>(m_pChild)->GetName()) {
-          return -1;
+          return false;
         }
 
         if (!m_NodeStack.empty())
           m_NodeStack.pop();
         if (m_NodeStack.empty())
-          return -1;
+          return false;
 
         m_pParent = m_NodeStack.top();
         m_pChild = m_pParent;
@@ -209,7 +209,7 @@ int32_t CFX_XMLParser::Parse() {
       case FX_XmlSyntaxResult::TargetData:
         if (m_pChild) {
           if (m_pChild->GetType() != FX_XMLNODE_Instruction)
-            return -1;
+            return false;
 
           auto* instruction = static_cast<CFX_XMLInstruction*>(m_pChild);
           if (!m_ws1.IsEmpty())
@@ -226,7 +226,7 @@ int32_t CFX_XMLParser::Parse() {
         break;
     }
   }
-  return m_NodeStack.size() != 1 ? -1 : GetStatus();
+  return m_NodeStack.size() != 1 ? false : GetStatus();
 }
 
 FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
@@ -698,18 +698,12 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
 
 int32_t CFX_XMLParser::GetStatus() const {
   if (!m_pStream)
-    return -1;
+    return false;
 
   int32_t iStreamLength = m_pStream->GetLength();
   if (iStreamLength < 1)
-    return 100;
-
-  if (m_syntaxParserResult == FX_XmlSyntaxResult::Error)
-    return -1;
-
-  if (m_syntaxParserResult == FX_XmlSyntaxResult::EndOfString)
-    return 100;
-  return m_iParsedBytes * 100 / iStreamLength;
+    return true;
+  return m_syntaxParserResult != FX_XmlSyntaxResult::Error;
 }
 
 FX_FILESIZE CFX_XMLParser::GetCurrentBinaryPos() const {

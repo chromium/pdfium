@@ -100,11 +100,8 @@ const PacketInfo* GetPacketByName(const WideStringView& wsName) {
   return nullptr;
 }
 
-CFX_XMLNode* GetDocumentNode(CFX_XMLDoc* pXMLDoc) {
-  if (!pXMLDoc)
-    return nullptr;
-
-  for (CFX_XMLNode* pXMLNode = pXMLDoc->GetRoot()->GetFirstChild(); pXMLNode;
+CFX_XMLNode* GetDocumentNode(CFX_XMLNode* pRootNode) {
+  for (CFX_XMLNode* pXMLNode = pRootNode->GetFirstChild(); pXMLNode;
        pXMLNode = pXMLNode->GetNextSibling()) {
     if (pXMLNode->GetType() != FX_XMLNODE_Element)
       continue;
@@ -338,49 +335,33 @@ void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
   m_pFactory = pFactory;
 }
 
-int32_t CXFA_SimpleParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
-                                 XFA_PacketType ePacketID) {
-  CloseParser();
-
-  m_pFileRead = pStream;
-  m_pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
-  uint16_t wCodePage = m_pStream->GetCodePage();
+bool CXFA_SimpleParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
+                              XFA_PacketType ePacketID) {
+  auto pStreamProxy =
+      pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
+  uint16_t wCodePage = pStreamProxy->GetCodePage();
   if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
       wCodePage != FX_CODEPAGE_UTF8) {
-    m_pStream->SetCodePage(FX_CODEPAGE_UTF8);
+    pStreamProxy->SetCodePage(FX_CODEPAGE_UTF8);
   }
 
-  m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>(m_pStream);
-  if (!m_pXMLDoc)
-    return XFA_PARSESTATUS_StatusErr;
+  CFX_XMLDoc doc;
+  if (!doc.Load(pStreamProxy))
+    return false;
 
-  int32_t iRet = m_pXMLDoc->Load();
-  if (iRet < 0)
-    return XFA_PARSESTATUS_SyntaxErr;
-  if (iRet < 100)
-    return iRet / 2;
-
-  m_pRootNode = ParseAsXDPPacket(GetDocumentNode(m_pXMLDoc.get()), ePacketID);
-  m_pXMLDoc->CloseXML();
-  m_pStream.Reset();
-
-  if (!m_pRootNode)
-    return XFA_PARSESTATUS_StatusErr;
-
-  return XFA_PARSESTATUS_Done;
+  m_pNodeTree = doc.GetTree();
+  m_pRootNode = ParseAsXDPPacket(GetDocumentNode(m_pNodeTree.get()), ePacketID);
+  return !!m_pRootNode;
 }
 
 CFX_XMLNode* CXFA_SimpleParser::ParseXMLData(const ByteString& wsXML) {
-  CloseParser();
-
   auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
       const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength());
-  m_pXMLDoc = pdfium::MakeUnique<CFX_XMLDoc>(pStream);
+  CFX_XMLDoc doc;
+  if (doc.Load(pStream))
+    m_pNodeTree = doc.GetTree();
 
-  int32_t iRet = m_pXMLDoc->Load();
-  if (iRet < 0 || iRet >= 100)
-    m_pXMLDoc->CloseXML();
-  return iRet < 100 ? nullptr : GetDocumentNode(m_pXMLDoc.get());
+  return m_pNodeTree ? GetDocumentNode(m_pNodeTree.get()) : nullptr;
 }
 
 void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
@@ -1179,9 +1160,4 @@ void CXFA_SimpleParser::ParseInstruction(CXFA_Node* pXFANode,
       pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_StrictScoping, true);
     }
   }
-}
-
-void CXFA_SimpleParser::CloseParser() {
-  m_pXMLDoc.reset();
-  m_pStream.Reset();
 }

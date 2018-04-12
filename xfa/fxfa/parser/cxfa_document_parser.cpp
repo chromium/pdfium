@@ -20,18 +20,15 @@ CXFA_DocumentParser::~CXFA_DocumentParser() {
 
 int32_t CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
                                    XFA_PacketType ePacketID) {
-  m_pDocument.reset();
-  m_nodeParser.CloseParser();
-
   m_pDocument = pdfium::MakeUnique<CXFA_Document>(GetNotify());
   m_nodeParser.SetFactory(m_pDocument.get());
 
-  int32_t nRetStatus = m_nodeParser.Parse(pStream, ePacketID);
-  if (nRetStatus == XFA_PARSESTATUS_Done) {
-    ASSERT(m_pDocument);
-    m_pDocument->SetRoot(m_nodeParser.GetRootNode());
-  }
-  return nRetStatus;
+  if (!m_nodeParser.Parse(pStream, ePacketID))
+    return XFA_PARSESTATUS_StatusErr;
+
+  ASSERT(m_pDocument);
+  m_pDocument->SetRoot(m_nodeParser.GetRootNode());
+  return XFA_PARSESTATUS_Done;
 }
 
 CXFA_FFNotify* CXFA_DocumentParser::GetNotify() const {

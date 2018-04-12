@@ -47,7 +47,7 @@ class CFX_XMLParser {
                 const RetainPtr<CFX_SeekableStreamProxy>& pStream);
   virtual ~CFX_XMLParser();
 
-  int32_t Parse();
+  bool Parse();
 
  protected:
   FX_XmlSyntaxResult DoSyntaxParse();

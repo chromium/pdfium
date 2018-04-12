@@ -22,12 +22,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   RetainPtr<CFX_SeekableStreamProxy> stream =
       pdfium::MakeRetain<CFX_SeekableStreamProxy>(const_cast<uint8_t*>(data),
                                                   size);
-  auto doc = pdfium::MakeUnique<CFX_XMLDoc>(stream);
-  if (doc->Load() < 100)
+  CFX_XMLDoc doc;
+  if (!doc.Load(stream))
     return 0;
 
-  CFX_XMLNode* pXMLFakeRoot = doc->GetRoot();
-  for (CFX_XMLNode* pXMLNode = pXMLFakeRoot->GetFirstChild(); pXMLNode;
+  auto root = doc.GetTree();
+  for (CFX_XMLNode* pXMLNode = root->GetFirstChild(); pXMLNode;
        pXMLNode = pXMLNode->GetNextSibling()) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element)
       break;
