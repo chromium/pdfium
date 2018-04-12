@@ -7,7 +7,6 @@
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/xml/cfx_xmldoc.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "third_party/base/stl_util.h"

@@ -953,8 +953,6 @@ jumbo_static_library("fxcrt") {
       "core/fxcrt/xml/cfx_xmlattributenode.h",
       "core/fxcrt/xml/cfx_xmlchardata.cpp",
       "core/fxcrt/xml/cfx_xmlchardata.h",
-      "core/fxcrt/xml/cfx_xmldoc.cpp",
-      "core/fxcrt/xml/cfx_xmldoc.h",
       "core/fxcrt/xml/cfx_xmlelement.cpp",
       "core/fxcrt/xml/cfx_xmlelement.h",
       "core/fxcrt/xml/cfx_xmlinstruction.cpp",

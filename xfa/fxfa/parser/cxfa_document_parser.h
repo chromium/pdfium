@@ -39,6 +39,9 @@ class CXFA_DocumentParser {
   void SetFactory(CXFA_Document* pFactory);
 
  private:
+  std::unique_ptr<CFX_XMLNode> LoadXML(
+      const RetainPtr<CFX_SeekableStreamProxy>& pStream);
+
   CXFA_Node* ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
                               XFA_PacketType ePacketID);
   CXFA_Node* ParseAsXDPPacket_XDP(CFX_XMLNode* pXMLDocumentNode);

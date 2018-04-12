@@ -9,7 +9,6 @@
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/xml/cfx_xmldoc.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "third_party/base/ptr_util.h"
@@ -22,11 +21,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   RetainPtr<CFX_SeekableStreamProxy> stream =
       pdfium::MakeRetain<CFX_SeekableStreamProxy>(const_cast<uint8_t*>(data),
                                                   size);
-  CFX_XMLDoc doc;
-  if (!doc.Load(stream))
+
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  CFX_XMLParser parser(root.get(), stream);
+  if (!parser.Parse())
     return 0;
 
-  auto root = doc.GetTree();
   for (CFX_XMLNode* pXMLNode = root->GetFirstChild(); pXMLNode;
        pXMLNode = pXMLNode->GetNextSibling()) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element)

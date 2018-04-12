@@ -14,7 +14,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
-#include "core/fxcrt/xml/cfx_xmldoc.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
@@ -345,11 +344,10 @@ bool CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
     pStreamProxy->SetCodePage(FX_CODEPAGE_UTF8);
   }
 
-  CFX_XMLDoc doc;
-  if (!doc.Load(pStreamProxy))
+  m_pNodeTree = LoadXML(pStreamProxy);
+  if (!m_pNodeTree)
     return false;
 
-  m_pNodeTree = doc.GetTree();
   m_pRootNode = ParseAsXDPPacket(GetDocumentNode(m_pNodeTree.get()), ePacketID);
   return !!m_pRootNode;
 }
@@ -357,11 +355,19 @@ bool CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
 CFX_XMLNode* CXFA_DocumentParser::ParseXMLData(const ByteString& wsXML) {
   auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
       const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength());
-  CFX_XMLDoc doc;
-  if (doc.Load(pStream))
-    m_pNodeTree = doc.GetTree();
-
+  m_pNodeTree = LoadXML(pStream);
   return m_pNodeTree ? GetDocumentNode(m_pNodeTree.get()) : nullptr;
+}
+
+std::unique_ptr<CFX_XMLNode> CXFA_DocumentParser::LoadXML(
+    const RetainPtr<CFX_SeekableStreamProxy>& pStream) {
+  ASSERT(pStream);
+
+  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  root->AppendChild(new CFX_XMLInstruction(L"xml"));
+
+  CFX_XMLParser parser(root.get(), pStream);
+  return parser.Parse() ? std::move(root) : nullptr;
 }
 
 void CXFA_DocumentParser::ConstructXFANode(CXFA_Node* pXFANode,
