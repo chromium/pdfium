@@ -19,6 +19,8 @@
 
 namespace {
 
+constexpr char kQuadPoints[] = "QuadPoints";
+
 FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc) {
   return static_cast<FPDF_DOCUMENT>(doc);
 }
@@ -429,8 +431,39 @@ CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect) {
   return CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top);
 }
 
-const CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict) {
+CPDF_Array* GetQuadPointsArrayFromDictionary(const CPDF_Dictionary* dict) {
   return dict ? dict->GetArrayFor("QuadPoints") : nullptr;
+}
+
+CPDF_Array* AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict) {
+  if (!dict)
+    return nullptr;
+  return dict->SetNewFor<CPDF_Array>(kQuadPoints);
+}
+
+bool IsValidQuadPointsIndex(const CPDF_Array* array, size_t index) {
+  return array && index < array->GetCount() / 8;
+}
+
+bool GetQuadPointsAtIndex(const CPDF_Array* array,
+                          size_t quad_index,
+                          FS_QUADPOINTSF* quad_points) {
+  ASSERT(quad_points);
+  ASSERT(array);
+
+  if (!IsValidQuadPointsIndex(array, quad_index))
+    return false;
+
+  quad_index *= 8;
+  quad_points->x1 = array->GetNumberAt(quad_index);
+  quad_points->y1 = array->GetNumberAt(quad_index + 1);
+  quad_points->x2 = array->GetNumberAt(quad_index + 2);
+  quad_points->y2 = array->GetNumberAt(quad_index + 3);
+  quad_points->x3 = array->GetNumberAt(quad_index + 4);
+  quad_points->y3 = array->GetNumberAt(quad_index + 5);
+  quad_points->x4 = array->GetNumberAt(quad_index + 6);
+  quad_points->y4 = array->GetNumberAt(quad_index + 7);
+  return true;
 }
 
 bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,

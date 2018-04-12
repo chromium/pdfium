@@ -55,6 +55,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetColor);
     CHK(FPDFAnnot_HasAttachmentPoints);
     CHK(FPDFAnnot_SetAttachmentPoints);
+    CHK(FPDFAnnot_AppendAttachmentPoints);
     CHK(FPDFAnnot_CountAttachmentPoints);
     CHK(FPDFAnnot_GetAttachmentPoints);
     CHK(FPDFAnnot_SetRect);

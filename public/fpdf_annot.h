@@ -285,7 +285,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
 
 // Experimental API.
 // Check if the annotation is of a type that has attachment points
-// (i.e. quadpoints). Quadpoints are the vertices of the rectange that
+// (i.e. quadpoints). Quadpoints are the vertices of the rectangle that
 // encompasses the texts affected by the annotation. They provide the
 // coordinates in the page where the annotation is attached. Only text markup
 // annotations (i.e. highlight, strikeout, squiggly, and underline) and link
@@ -299,9 +299,27 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot);
 
 // Experimental API.
-// Set the attachment points (i.e. quadpoints) of an annotation. If the
-// annotation's appearance stream is defined and this annotation is of a type
-// with quadpoints, then update the bounding box too if the new quadpoints
+// Replace the attachment points (i.e. quadpoints) set of an annotation at
+// |quad_index|. This index needs to be within the result of
+// FPDFAnnot_CountAttachmentPoints().
+// If the annotation's appearance stream is defined and this annotation is of a
+// type with quadpoints, then update the bounding box too if the new quadpoints
+// define a bigger one.
+//
+//   annot       - handle to an annotation.
+//   quad_index  - index of the set of quadpoints.
+//   quad_points - the quadpoints to be set.
+//
+// Returns true if successful.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
+                              size_t quad_index,
+                              const FS_QUADPOINTSF* quad_points);
+
+// Experimental API.
+// Append to the list of attachment points (i.e. quadpoints) of an annotation.
+// If the annotation's appearance stream is defined and this annotation is of a
+// type with quadpoints, then update the bounding box too if the new quadpoints
 // define a bigger one.
 //
 //   annot       - handle to an annotation.
@@ -309,8 +327,8 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot);
 //
 // Returns true if successful.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
-                              const FS_QUADPOINTSF* quad_points);
+FPDFAnnot_AppendAttachmentPoints(FPDF_ANNOTATION annot,
+                                 const FS_QUADPOINTSF* quad_points);
 
 // Experimental API.
 // Get the number of sets of quadpoints of an annotation.
@@ -325,11 +343,13 @@ FPDFAnnot_CountAttachmentPoints(FPDF_ANNOTATION annot);
 // Get the attachment points (i.e. quadpoints) of an annotation.
 //
 //   annot       - handle to an annotation.
+//   quad_index  - index of the set of quadpoints.
 //   quad_points - receives the quadpoints; must not be NULL.
 //
 // Returns true if successful.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
+                              size_t quad_index,
                               FS_QUADPOINTSF* quad_points);
 
 // Experimental API.

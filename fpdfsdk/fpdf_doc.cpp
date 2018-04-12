@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_bookmarktree.h"
 #include "core/fpdfdoc/cpdf_dest.h"
@@ -390,9 +391,17 @@ FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
                        FS_QUADPOINTSF* quad_points) {
   if (!quad_points || quad_index < 0)
     return false;
-  return GetQuadPointsFromDictionary(CPDFDictionaryFromFPDFLink(link_annot),
-                                     static_cast<size_t>(quad_index),
-                                     quad_points);
+
+  CPDF_Dictionary* pLinkDict = CPDFDictionaryFromFPDFLink(link_annot);
+  if (!pLinkDict)
+    return false;
+
+  const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pLinkDict);
+  if (!pArray)
+    return false;
+
+  return GetQuadPointsAtIndex(pArray, static_cast<size_t>(quad_index),
+                              quad_points);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,

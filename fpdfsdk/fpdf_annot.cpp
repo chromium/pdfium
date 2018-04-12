@@ -194,6 +194,51 @@ void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
   pStream->SetDataAndRemoveFilter(&buf);
 }
 
+void SetQuadPointsAtIndex(CPDF_Array* array,
+                          size_t quad_index,
+                          const FS_QUADPOINTSF* quad_points) {
+  ASSERT(array);
+  ASSERT(quad_points);
+  ASSERT(IsValidQuadPointsIndex(array, quad_index));
+
+  size_t nIndex = quad_index * 8;
+  array->SetNewAt<CPDF_Number>(nIndex, quad_points->x1);
+  array->SetNewAt<CPDF_Number>(++nIndex, quad_points->y1);
+  array->SetNewAt<CPDF_Number>(++nIndex, quad_points->x2);
+  array->SetNewAt<CPDF_Number>(++nIndex, quad_points->y2);
+  array->SetNewAt<CPDF_Number>(++nIndex, quad_points->x3);
+  array->SetNewAt<CPDF_Number>(++nIndex, quad_points->y3);
+  array->SetNewAt<CPDF_Number>(++nIndex, quad_points->x4);
+  array->SetNewAt<CPDF_Number>(++nIndex, quad_points->y4);
+}
+
+void AppendQuadPoints(CPDF_Array* array, const FS_QUADPOINTSF* quad_points) {
+  ASSERT(quad_points);
+  ASSERT(array);
+
+  array->AddNew<CPDF_Number>(quad_points->x1);
+  array->AddNew<CPDF_Number>(quad_points->y1);
+  array->AddNew<CPDF_Number>(quad_points->x2);
+  array->AddNew<CPDF_Number>(quad_points->y2);
+  array->AddNew<CPDF_Number>(quad_points->x3);
+  array->AddNew<CPDF_Number>(quad_points->y3);
+  array->AddNew<CPDF_Number>(quad_points->x4);
+  array->AddNew<CPDF_Number>(quad_points->y4);
+}
+
+void UpdateBBox(const CPDF_Dictionary* annot_dict) {
+  // Update BBox entry in appearance stream based on the bounding rectangle
+  // of the annotation's quadpoints.
+  CPDF_Stream* pStream =
+      FPDFDOC_GetAnnotAP(annot_dict, CPDF_Annot::AppearanceMode::Normal);
+  if (pStream) {
+    CFX_FloatRect boundingRect =
+        CPDF_Annot::BoundingRectFromQuadPoints(annot_dict);
+    if (boundingRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
+      pStream->GetDict()->SetRectFor("BBox", boundingRect);
+  }
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -582,42 +627,35 @@ FPDFAnnot_HasAttachmentPoints(FPDF_ANNOTATION annot) {
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_SetAttachmentPoints(FPDF_ANNOTATION annot,
+                              size_t quad_index,
                               const FS_QUADPOINTSF* quad_points) {
   if (!FPDFAnnot_HasAttachmentPoints(annot) || !quad_points)
     return false;
 
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  if (!pAnnotDict)
+  CPDF_Array* pQuadPointsArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
+  if (!IsValidQuadPointsIndex(pQuadPointsArray, quad_index))
     return false;
 
-  // Update the "QuadPoints" entry in the annotation dictionary.
-  CPDF_Array* pQuadPoints = pAnnotDict->GetArrayFor("QuadPoints");
-  if (pQuadPoints)
-    pQuadPoints->Clear();
-  else
-    pQuadPoints = pAnnotDict->SetNewFor<CPDF_Array>("QuadPoints");
+  SetQuadPointsAtIndex(pQuadPointsArray, quad_index, quad_points);
+  UpdateBBox(pAnnotDict);
+  return true;
+}
 
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->x1);
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->y1);
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->x2);
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->y2);
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->x3);
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->y3);
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->x4);
-  pQuadPoints->AddNew<CPDF_Number>(quad_points->y4);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_AppendAttachmentPoints(FPDF_ANNOTATION annot,
+                                 const FS_QUADPOINTSF* quad_points) {
+  if (!FPDFAnnot_HasAttachmentPoints(annot) || !quad_points)
+    return false;
 
-  // If the annotation's appearance stream is defined, and the new quadpoints
-  // defines a bigger bounding box than the appearance stream currently
-  // specifies, then update the "BBox" entry in the AP dictionary too, since it
-  // comes from annotation dictionary's "QuadPoints" entry.
-  CPDF_Stream* pStream =
-      FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
-  if (pStream) {
-    CFX_FloatRect newRect = CPDF_Annot::BoundingRectFromQuadPoints(pAnnotDict);
-    if (newRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
-      pStream->GetDict()->SetRectFor("BBox", newRect);
-  }
+  CPDF_Dictionary* pAnnotDict =
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
+  CPDF_Array* pQuadPointsArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
+  if (!pQuadPointsArray)
+    pQuadPointsArray = AddQuadPointsArrayToDictionary(pAnnotDict);
+  AppendQuadPoints(pQuadPointsArray, quad_points);
+  UpdateBBox(pAnnotDict);
   return true;
 }
 
@@ -634,13 +672,21 @@ FPDFAnnot_CountAttachmentPoints(FPDF_ANNOTATION annot) {
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
+                              size_t quad_index,
                               FS_QUADPOINTSF* quad_points) {
   if (!FPDFAnnot_HasAttachmentPoints(annot) || !quad_points)
     return false;
 
-  return GetQuadPointsFromDictionary(
-      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict(), 0,
-      quad_points);
+  CPDF_Dictionary* pAnnotDict =
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
+  if (!pAnnotDict)
+    return false;
+
+  const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
+  if (!pArray)
+    return false;
+
+  return GetQuadPointsAtIndex(pArray, quad_index, quad_points);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
