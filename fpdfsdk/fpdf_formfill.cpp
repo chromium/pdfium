@@ -150,9 +150,8 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     return;
 #endif  // PDF_ENABLE_XFA
 
-  CFX_Matrix matrix =
-      pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
-  FX_RECT clip(start_x, start_y, start_x + size_x, start_y + size_y);
+  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  CFX_Matrix matrix = pPage->GetDisplayMatrix(rect, rotate);
 
   auto pDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
 #ifdef _SKIA_SUPPORT_
@@ -162,7 +161,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   pDevice->Attach(holder, false, nullptr, false);
   {
     CFX_RenderDevice::StateRestorer restorer(pDevice.get());
-    pDevice->SetClip_Rect(clip);
+    pDevice->SetClip_Rect(rect);
 
     CPDF_RenderOptions options;
     uint32_t option_flags = options.GetFlags();
@@ -182,7 +181,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     options.SetOCContext(
         pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View));
     if (CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true))
-      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
+      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, rect);
 #else   // PDF_ENABLE_XFA
     options.SetOCContext(pdfium::MakeRetain<CPDF_OCContext>(
         pPage->m_pDocument.Get(), CPDF_OCContext::View));

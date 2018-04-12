@@ -138,7 +138,8 @@ void CPDFXFA_Page::DeviceToPage(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  CFX_PointF pos = GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate)
+  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  CFX_PointF pos = GetDisplayMatrix(rect, rotate)
                        .GetInverse()
                        .Transform(CFX_PointF(static_cast<float>(device_x),
                                              static_cast<float>(device_y)));
@@ -159,8 +160,8 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  CFX_Matrix page2device =
-      GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
+  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
 
   CFX_PointF pos = page2device.Transform(
       CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
@@ -169,10 +170,7 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   *device_y = FXSYS_round(pos.y);
 }
 
-CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(int xPos,
-                                          int yPos,
-                                          int xSize,
-                                          int ySize,
+CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
                                           int iRotate) const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return CFX_Matrix();
@@ -182,13 +180,11 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(int xPos,
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
       if (m_pPDFPage)
-        return m_pPDFPage->GetDisplayMatrix(xPos, yPos, xSize, ySize, iRotate);
+        return m_pPDFPage->GetDisplayMatrix(rect, iRotate);
       FX_FALLTHROUGH;
     case FormType::kXFAFull:
-      if (m_pXFAPageView) {
-        FX_RECT rect = FX_RECT(xPos, yPos, xPos + xSize, yPos + ySize);
+      if (m_pXFAPageView)
         return m_pXFAPageView->GetDisplayMatrix(rect, iRotate);
-      }
       break;
   }
 

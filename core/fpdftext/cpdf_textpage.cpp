@@ -143,9 +143,9 @@ CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags)
       m_bIsParsed(false),
       m_TextlineDir(TextOrientation::Unknown) {
   m_TextBuf.EstimateSize(0, 10240);
-  m_DisplayMatrix =
-      pPage->GetDisplayMatrix(0, 0, static_cast<int>(pPage->GetPageWidth()),
-                              static_cast<int>(pPage->GetPageHeight()), 0);
+  const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
+                     static_cast<int>(pPage->GetPageHeight()));
+  m_DisplayMatrix = pPage->GetDisplayMatrix(rect, 0);
 }
 
 CPDF_TextPage::~CPDF_TextPage() {}

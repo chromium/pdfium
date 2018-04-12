@@ -118,11 +118,7 @@ CFX_FloatRect CPDF_Page::GetBox(const ByteString& name) const {
   return box;
 }
 
-CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
-                                       int yPos,
-                                       int xSize,
-                                       int ySize,
-                                       int iRotate) const {
+CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
   if (m_PageSize.width == 0 || m_PageSize.height == 0)
     return CFX_Matrix();
 
@@ -136,41 +132,41 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
   // This code implicitly inverts the y-axis to account for page coordinates
   // pointing up and bitmap coordinates pointing down. (x0, y0) is the base
   // point, (x1, y1) is that point translated on y and (x2, y2) is the point
-  // translated on x. On iRotate = 0, y0 is (yPos + ySize) and the translation
+  // translated on x. On iRotate = 0, y0 is rect.bottom and the translation
   // to get y1 is performed as negative. This results in the desired
   // transformation.
   switch (iRotate) {
     case 0:
-      x0 = xPos;
-      y0 = yPos + ySize;
-      x1 = xPos;
-      y1 = yPos;
-      x2 = xPos + xSize;
-      y2 = yPos + ySize;
+      x0 = rect.left;
+      y0 = rect.bottom;
+      x1 = rect.left;
+      y1 = rect.top;
+      x2 = rect.right;
+      y2 = rect.bottom;
       break;
     case 1:
-      x0 = xPos;
-      y0 = yPos;
-      x1 = xPos + xSize;
-      y1 = yPos;
-      x2 = xPos;
-      y2 = yPos + ySize;
+      x0 = rect.left;
+      y0 = rect.top;
+      x1 = rect.right;
+      y1 = rect.top;
+      x2 = rect.left;
+      y2 = rect.bottom;
       break;
     case 2:
-      x0 = xPos + xSize;
-      y0 = yPos;
-      x1 = xPos + xSize;
-      y1 = yPos + ySize;
-      x2 = xPos;
-      y2 = yPos;
+      x0 = rect.right;
+      y0 = rect.top;
+      x1 = rect.right;
+      y1 = rect.bottom;
+      x2 = rect.left;
+      y2 = rect.top;
       break;
     case 3:
-      x0 = xPos + xSize;
-      y0 = yPos + ySize;
-      x1 = xPos;
-      y1 = yPos + ySize;
-      x2 = xPos + xSize;
-      y2 = yPos;
+      x0 = rect.right;
+      y0 = rect.bottom;
+      x1 = rect.left;
+      y1 = rect.bottom;
+      x2 = rect.right;
+      y2 = rect.top;
       break;
   }
   CFX_Matrix matrix = m_PageMatrix;

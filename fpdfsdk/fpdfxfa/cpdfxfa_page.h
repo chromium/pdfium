@@ -18,6 +18,7 @@ class CPDFXFA_Context;
 class CPDF_Dictionary;
 class CPDF_Page;
 class CXFA_FFPageView;
+struct FX_RECT;
 
 class CPDFXFA_Page : public Retainable {
  public:
@@ -57,11 +58,7 @@ class CPDFXFA_Page : public Retainable {
                     int* device_x,
                     int* device_y);
 
-  CFX_Matrix GetDisplayMatrix(int xPos,
-                              int yPos,
-                              int xSize,
-                              int ySize,
-                              int iRotate) const;
+  CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int iRotate) const;
 
  protected:
   // Refcounted class.

@@ -657,8 +657,8 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
     clipping_rect = CFXFloatRectFromFSRECTF(*clipping);
   FX_RECT clip_rect = clipping_rect.ToFxRect();
 
-  CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(
-      0, 0, pPage->GetPageWidth(), pPage->GetPageHeight(), 0);
+  const FX_RECT rect(0, 0, pPage->GetPageWidth(), pPage->GetPageHeight());
+  CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(rect, 0);
 
   if (matrix) {
     transform_matrix.Concat(CFX_Matrix(matrix->a, matrix->b, matrix->c,
@@ -748,8 +748,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DeviceToPage(FPDF_PAGE page,
   pPage->DeviceToPage(start_x, start_y, size_x, size_y, rotate, device_x,
                       device_y, page_x, page_y);
 #else   // PDF_ENABLE_XFA
-  CFX_Matrix page2device =
-      pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
+  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  CFX_Matrix page2device = pPage->GetDisplayMatrix(rect, rotate);
 
   CFX_PointF pos = page2device.GetInverse().Transform(
       CFX_PointF(static_cast<float>(device_x), static_cast<float>(device_y)));
@@ -778,8 +778,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
   pPage->PageToDevice(start_x, start_y, size_x, size_y, rotate, page_x, page_y,
                       device_x, device_y);
 #else   // PDF_ENABLE_XFA
-  CFX_Matrix page2device =
-      pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
+  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  CFX_Matrix page2device = pPage->GetDisplayMatrix(rect, rotate);
   CFX_PointF pos = page2device.Transform(
       CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)));
 
@@ -898,11 +898,9 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
   if (!pPage)
     return;
 
-  RenderPageImpl(
-      pContext, pPage,
-      pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate),
-      FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y), flags,
-      bNeedToRestore, pause);
+  const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  RenderPageImpl(pContext, pPage, pPage->GetDisplayMatrix(rect, rotate), rect,
+                 flags, bNeedToRestore, pause);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
