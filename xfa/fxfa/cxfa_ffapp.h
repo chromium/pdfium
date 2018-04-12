@@ -34,8 +34,6 @@ class CXFA_FFApp {
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp();
 
-  std::unique_ptr<CXFA_FFDoc> CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
-                                        CPDF_Document* pPDFDoc);
   void SetDefaultFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
   CXFA_FWLAdapterWidgetMgr* GetFWLAdapterWidgetMgr();

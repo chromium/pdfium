@@ -90,14 +90,8 @@ bool CPDFXFA_Context::LoadXFADoc() {
   if (!pApp)
     return false;
 
-  m_pXFADoc = pApp->CreateDoc(&m_DocEnv, m_pPDFDoc.get());
-  if (!m_pXFADoc) {
-    SetLastError(FPDF_ERR_XFALOAD);
-    return false;
-  }
-
-  if (!m_pXFADoc->Load()) {
-    CloseXFADoc();
+  m_pXFADoc = pdfium::MakeUnique<CXFA_FFDoc>(pApp, &m_DocEnv);
+  if (!m_pXFADoc->OpenDoc(m_pPDFDoc.get())) {
     SetLastError(FPDF_ERR_XFALOAD);
     return false;
   }

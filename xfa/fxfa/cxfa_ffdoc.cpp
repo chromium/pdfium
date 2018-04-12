@@ -165,55 +165,27 @@ CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
 }
 
-bool CXFA_FFDoc::Load() {
-  if (!m_pPDFDoc)
+bool CXFA_FFDoc::ParseDoc(CPDF_Object* pElementXFA) {
+  std::vector<CPDF_Stream*> xfaStreams;
+  if (pElementXFA->IsArray()) {
+    CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
+    for (size_t i = 0; i < pXFAArray->GetCount() / 2; i++) {
+      if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
+        xfaStreams.push_back(pStream);
+    }
+  } else if (pElementXFA->IsStream()) {
+    xfaStreams.push_back(pElementXFA->AsStream());
+  }
+  if (xfaStreams.empty())
     return false;
 
-  m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
-  m_pDocument = pdfium::MakeUnique<CXFA_Document>(m_pNotify.get());
-  if (!ParseDoc())
-    return false;
+  auto stream = pdfium::MakeRetain<CFX_SeekableMultiStream>(xfaStreams);
 
-  // At this point we've got an XFA document and we want to always return
-  // true to signify the load succeeded.
-
-  m_pPDFFontMgr = pdfium::MakeUnique<CFGAS_PDFFontMgr>(
-      GetPDFDoc(), GetApp()->GetFDEFontMgr());
-
-  m_FormType = FormType::kXFAForeground;
-  CXFA_Node* pConfig = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
-  if (!pConfig)
-    return true;
-
-  CXFA_Acrobat* pAcrobat =
-      pConfig->GetFirstChildByClass<CXFA_Acrobat>(XFA_Element::Acrobat);
-  if (!pAcrobat)
-    return true;
-
-  CXFA_Acrobat7* pAcrobat7 =
-      pAcrobat->GetFirstChildByClass<CXFA_Acrobat7>(XFA_Element::Acrobat7);
-  if (!pAcrobat7)
-    return true;
-
-  CXFA_DynamicRender* pDynamicRender =
-      pAcrobat7->GetFirstChildByClass<CXFA_DynamicRender>(
-          XFA_Element::DynamicRender);
-  if (!pDynamicRender)
-    return true;
-
-  WideString wsType = pDynamicRender->JSObject()->GetContent(false);
-  if (wsType == L"required")
-    m_FormType = FormType::kXFAFull;
-
-  return true;
-}
-
-bool CXFA_FFDoc::ParseDoc() {
   // Note, we don't pass the document into the constructor as currently that
   // triggers different behaviour in the parser.
   CXFA_DocumentParser parser;
   parser.SetFactory(m_pDocument.get());
-  if (!parser.Parse(m_pStream, XFA_PacketType::Xdp))
+  if (!parser.Parse(stream, XFA_PacketType::Xdp))
     return false;
 
   m_pXMLRoot = parser.GetXMLRoot();
@@ -311,21 +283,44 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (!pElementXFA)
     return false;
 
-  std::vector<CPDF_Stream*> xfaStreams;
-  if (pElementXFA->IsArray()) {
-    CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
-    for (size_t i = 0; i < pXFAArray->GetCount() / 2; i++) {
-      if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
-        xfaStreams.push_back(pStream);
-    }
-  } else if (pElementXFA->IsStream()) {
-    xfaStreams.push_back((CPDF_Stream*)pElementXFA);
-  }
-  if (xfaStreams.empty())
+  m_pPDFDoc = pPDFDoc;
+
+  m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
+  m_pDocument = pdfium::MakeUnique<CXFA_Document>(m_pNotify.get());
+  if (!ParseDoc(pElementXFA))
     return false;
 
-  m_pPDFDoc = pPDFDoc;
-  m_pStream = pdfium::MakeRetain<CFX_SeekableMultiStream>(xfaStreams);
+  // At this point we've got an XFA document and we want to always return
+  // true to signify the load succeeded.
+
+  m_pPDFFontMgr = pdfium::MakeUnique<CFGAS_PDFFontMgr>(
+      GetPDFDoc(), GetApp()->GetFDEFontMgr());
+
+  m_FormType = FormType::kXFAForeground;
+  CXFA_Node* pConfig = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
+  if (!pConfig)
+    return true;
+
+  CXFA_Acrobat* pAcrobat =
+      pConfig->GetFirstChildByClass<CXFA_Acrobat>(XFA_Element::Acrobat);
+  if (!pAcrobat)
+    return true;
+
+  CXFA_Acrobat7* pAcrobat7 =
+      pAcrobat->GetFirstChildByClass<CXFA_Acrobat7>(XFA_Element::Acrobat7);
+  if (!pAcrobat7)
+    return true;
+
+  CXFA_DynamicRender* pDynamicRender =
+      pAcrobat7->GetFirstChildByClass<CXFA_DynamicRender>(
+          XFA_Element::DynamicRender);
+  if (!pDynamicRender)
+    return true;
+
+  WideString wsType = pDynamicRender->JSObject()->GetContent(false);
+  if (wsType == L"required")
+    m_FormType = FormType::kXFAFull;
+
   return true;
 }
 
