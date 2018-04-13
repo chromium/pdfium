@@ -2965,6 +2965,7 @@ test("pdfium_embeddertests") {
   sources = [
     "core/fpdfapi/edit/cpdf_creator_embeddertest.cpp",
     "core/fpdfapi/page/cpdf_docpagedata_embeddertest.cpp",
+    "core/fpdfapi/page/cpdf_function_embeddertest.cpp",
     "core/fpdfapi/page/cpdf_stitchfunc_embeddertest.cpp",
     "core/fpdfapi/parser/cpdf_parser_embeddertest.cpp",
     "core/fpdfapi/parser/cpdf_security_handler_embeddertest.cpp",
