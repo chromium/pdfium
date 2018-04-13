@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 #include "core/fpdfapi/page/cpdf_form.h"
@@ -399,11 +400,11 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
   if (!page_object || R > 255 || G > 255 || B > 255 || A > 255)
     return false;
 
-  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
+  std::vector<float> rgb = {R / 255.f, G / 255.f, B / 255.f};
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   pPageObj->m_GeneralState.SetFillAlpha(A / 255.f);
   pPageObj->m_ColorState.SetFillColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb);
   pPageObj->SetDirty(true);
   return true;
 }

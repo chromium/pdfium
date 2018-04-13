@@ -79,11 +79,11 @@ void CPDF_Color::SetColorSpace(CPDF_ColorSpace* pCS) {
     m_pBuffer = pCS->CreateBufAndSetDefaultColor();
 }
 
-void CPDF_Color::SetValue(const float* comps) {
-  if (!m_pBuffer)
-    return;
-  if (!IsPatternInternal())
-    memcpy(m_pBuffer, comps, m_pCS->CountComponents() * sizeof(float));
+void CPDF_Color::SetValueForNonPattern(const std::vector<float>& values) {
+  ASSERT(m_pBuffer);
+  ASSERT(!IsPatternInternal());
+  ASSERT(m_pCS->CountComponents() <= values.size());
+  memcpy(m_pBuffer, values.data(), m_pCS->CountComponents() * sizeof(float));
 }
 
 void CPDF_Color::SetValueForPattern(CPDF_Pattern* pPattern,

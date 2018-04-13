@@ -92,6 +92,9 @@ class CPDF_StreamContentParser {
   CPDF_Object* GetObject(uint32_t index);
   ByteString GetString(uint32_t index) const;
   float GetNumber(uint32_t index) const;
+  // Calls GetNumber() |count| times and returns the values in reverse order.
+  // e.g. for |count| = 3, returns [GetNumber(2), GetNumber(1), GetNumber(0)].
+  std::vector<float> GetNumbers(size_t count) const;
   int GetInteger(uint32_t index) const {
     return static_cast<int>(GetNumber(index));
   }

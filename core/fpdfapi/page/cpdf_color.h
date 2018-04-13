@@ -25,7 +25,7 @@ class CPDF_Color {
   void Copy(const CPDF_Color& src);
 
   void SetColorSpace(CPDF_ColorSpace* pCS);
-  void SetValue(const float* comp);
+  void SetValueForNonPattern(const std::vector<float>& values);
   void SetValueForPattern(CPDF_Pattern* pPattern,
                           const std::vector<float>& values);
 

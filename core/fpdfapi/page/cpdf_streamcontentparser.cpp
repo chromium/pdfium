@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 
+#include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -418,6 +419,13 @@ float CPDF_StreamContentParser::GetNumber(uint32_t index) const {
   if (param.m_Type == 0 && param.m_pObject)
     return param.m_pObject->GetNumber();
   return 0;
+}
+
+std::vector<float> CPDF_StreamContentParser::GetNumbers(size_t count) const {
+  std::vector<float> values(count);
+  for (size_t i = 0; i < count; ++i)
+    values[i] = GetNumber(count - i - 1);
+  return values;
 }
 
 void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
@@ -834,10 +842,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImageObject(
 
 std::vector<float> CPDF_StreamContentParser::GetColors() const {
   ASSERT(m_ParamCount > 0);
-  std::vector<float> values(m_ParamCount);
-  for (size_t i = 0; i < m_ParamCount; ++i)
-    values[i] = GetNumber(m_ParamCount - i - 1);
-  return values;
+  return GetNumbers(m_ParamCount);
 }
 
 std::vector<float> CPDF_StreamContentParser::GetNamedColors() const {
@@ -881,15 +886,13 @@ void CPDF_StreamContentParser::Handle_EOFillPath() {
 }
 
 void CPDF_StreamContentParser::Handle_SetGray_Fill() {
-  float value = GetNumber(0);
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
-  m_pCurStates->m_ColorState.SetFillColor(pCS, &value, 1);
+  m_pCurStates->m_ColorState.SetFillColor(pCS, GetNumbers(1));
 }
 
 void CPDF_StreamContentParser::Handle_SetGray_Stroke() {
-  float value = GetNumber(0);
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
-  m_pCurStates->m_ColorState.SetStrokeColor(pCS, &value, 1);
+  m_pCurStates->m_ColorState.SetStrokeColor(pCS, GetNumbers(1));
 }
 
 void CPDF_StreamContentParser::Handle_SetExtendGraphState() {
@@ -932,24 +935,16 @@ void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
   if (m_ParamCount != 4)
     return;
 
-  float values[4];
-  for (int i = 0; i < 4; i++) {
-    values[i] = GetNumber(3 - i);
-  }
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-  m_pCurStates->m_ColorState.SetFillColor(pCS, values, 4);
+  m_pCurStates->m_ColorState.SetFillColor(pCS, GetNumbers(4));
 }
 
 void CPDF_StreamContentParser::Handle_SetCMYKColor_Stroke() {
   if (m_ParamCount != 4)
     return;
 
-  float values[4];
-  for (int i = 0; i < 4; i++) {
-    values[i] = GetNumber(3 - i);
-  }
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
-  m_pCurStates->m_ColorState.SetStrokeColor(pCS, values, 4);
+  m_pCurStates->m_ColorState.SetStrokeColor(pCS, GetNumbers(4));
 }
 
 void CPDF_StreamContentParser::Handle_LineTo() {
@@ -1009,24 +1004,16 @@ void CPDF_StreamContentParser::Handle_SetRGBColor_Fill() {
   if (m_ParamCount != 3)
     return;
 
-  float values[3];
-  for (int i = 0; i < 3; i++) {
-    values[i] = GetNumber(2 - i);
-  }
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
-  m_pCurStates->m_ColorState.SetFillColor(pCS, values, 3);
+  m_pCurStates->m_ColorState.SetFillColor(pCS, GetNumbers(3));
 }
 
 void CPDF_StreamContentParser::Handle_SetRGBColor_Stroke() {
   if (m_ParamCount != 3)
     return;
 
-  float values[3];
-  for (int i = 0; i < 3; i++) {
-    values[i] = GetNumber(2 - i);
-  }
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
-  m_pCurStates->m_ColorState.SetStrokeColor(pCS, values, 3);
+  m_pCurStates->m_ColorState.SetStrokeColor(pCS, GetNumbers(3));
 }
 
 void CPDF_StreamContentParser::Handle_SetRenderIntent() {}
@@ -1041,27 +1028,13 @@ void CPDF_StreamContentParser::Handle_StrokePath() {
 }
 
 void CPDF_StreamContentParser::Handle_SetColor_Fill() {
-  float values[4];
-  int nargs = m_ParamCount;
-  if (nargs > 4) {
-    nargs = 4;
-  }
-  for (int i = 0; i < nargs; i++) {
-    values[i] = GetNumber(nargs - i - 1);
-  }
-  m_pCurStates->m_ColorState.SetFillColor(nullptr, values, nargs);
+  int nargs = std::min(m_ParamCount, 4U);
+  m_pCurStates->m_ColorState.SetFillColor(nullptr, GetNumbers(nargs));
 }
 
 void CPDF_StreamContentParser::Handle_SetColor_Stroke() {
-  float values[4];
-  int nargs = m_ParamCount;
-  if (nargs > 4) {
-    nargs = 4;
-  }
-  for (int i = 0; i < nargs; i++) {
-    values[i] = GetNumber(nargs - i - 1);
-  }
-  m_pCurStates->m_ColorState.SetStrokeColor(nullptr, values, nargs);
+  int nargs = std::min(m_ParamCount, 4U);
+  m_pCurStates->m_ColorState.SetStrokeColor(nullptr, GetNumbers(nargs));
 }
 
 void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
@@ -1070,9 +1043,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
     return;
 
   if (!pLastParam->IsName()) {
-    std::vector<float> values = GetColors();
-    m_pCurStates->m_ColorState.SetFillColor(nullptr, values.data(),
-                                            values.size());
+    m_pCurStates->m_ColorState.SetFillColor(nullptr, GetColors());
     return;
   }
 
@@ -1089,9 +1060,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
     return;
 
   if (!pLastParam->IsName()) {
-    std::vector<float> values = GetColors();
-    m_pCurStates->m_ColorState.SetStrokeColor(nullptr, values.data(),
-                                              values.size());
+    m_pCurStates->m_ColorState.SetStrokeColor(nullptr, GetColors());
     return;
   }
 

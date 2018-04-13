@@ -80,10 +80,10 @@ FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
   if (!pPathObj || R > 255 || G > 255 || B > 255 || A > 255)
     return false;
 
-  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
+  std::vector<float> rgb = {R / 255.f, G / 255.f, B / 255.f};
   pPathObj->m_GeneralState.SetStrokeAlpha(A / 255.f);
   pPathObj->m_ColorState.SetStrokeColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb);
   pPathObj->SetDirty(true);
   return true;
 }
