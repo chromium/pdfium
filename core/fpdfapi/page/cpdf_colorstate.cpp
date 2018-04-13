@@ -84,36 +84,13 @@ void CPDF_ColorState::SetStrokeColor(CPDF_ColorSpace* pCS,
 void CPDF_ColorState::SetFillPattern(CPDF_Pattern* pPattern,
                                      const std::vector<float>& values) {
   ColorData* pData = m_Ref.GetPrivateCopy();
-  pData->m_FillColor.SetValueForPattern(pPattern, values);
-  int R;
-  int G;
-  int B;
-  bool ret = pData->m_FillColor.GetRGB(&R, &G, &B);
-  if (CPDF_TilingPattern* pTilingPattern = pPattern->AsTilingPattern()) {
-    if (!ret && pTilingPattern->colored()) {
-      pData->m_FillColorRef = 0x00BFBFBF;
-      return;
-    }
-  }
-  pData->m_FillColorRef = ret ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
+  SetPattern(pPattern, values, &pData->m_FillColor, &pData->m_FillColorRef);
 }
 
 void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern,
                                        const std::vector<float>& values) {
   ColorData* pData = m_Ref.GetPrivateCopy();
-  pData->m_StrokeColor.SetValueForPattern(pPattern, values);
-  int R;
-  int G;
-  int B;
-  bool ret = pData->m_StrokeColor.GetRGB(&R, &G, &B);
-  if (CPDF_TilingPattern* pTilingPattern = pPattern->AsTilingPattern()) {
-    if (!ret && pTilingPattern->colored()) {
-      pData->m_StrokeColorRef = 0x00BFBFBF;
-      return;
-    }
-  }
-  pData->m_StrokeColorRef =
-      pData->m_StrokeColor.GetRGB(&R, &G, &B) ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
+  SetPattern(pPattern, values, &pData->m_StrokeColor, &pData->m_StrokeColorRef);
 }
 
 void CPDF_ColorState::SetColor(CPDF_ColorSpace* pCS,
@@ -137,6 +114,27 @@ void CPDF_ColorState::SetColor(CPDF_ColorSpace* pCS,
   int G;
   int B;
   *colorref = color->GetRGB(&R, &G, &B) ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
+}
+
+void CPDF_ColorState::SetPattern(CPDF_Pattern* pPattern,
+                                 const std::vector<float>& values,
+                                 CPDF_Color* color,
+                                 FX_COLORREF* colorref) {
+  ASSERT(color);
+  ASSERT(colorref);
+
+  color->SetValueForPattern(pPattern, values);
+  int R;
+  int G;
+  int B;
+  bool ret = color->GetRGB(&R, &G, &B);
+  if (CPDF_TilingPattern* pTilingPattern = pPattern->AsTilingPattern()) {
+    if (!ret && pTilingPattern->colored()) {
+      *colorref = 0x00BFBFBF;
+      return;
+    }
+  }
+  *colorref = ret ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
 }
 
 CPDF_ColorState::ColorData::ColorData()

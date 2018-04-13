@@ -68,6 +68,10 @@ class CPDF_ColorState {
                 const std::vector<float>& values,
                 CPDF_Color* color,
                 FX_COLORREF* colorref);
+  void SetPattern(CPDF_Pattern* pPattern,
+                  const std::vector<float>& values,
+                  CPDF_Color* color,
+                  FX_COLORREF* colorref);
 
   SharedCopyOnWrite<ColorData> m_Ref;
 };
