@@ -452,9 +452,11 @@ const char* CPDF_Font::GetAdobeCharName(
 uint32_t CPDF_Font::FallbackFontFromCharcode(uint32_t charcode) {
   if (m_FontFallbacks.empty()) {
     m_FontFallbacks.push_back(pdfium::MakeUnique<CFX_Font>());
+    pdfium::base::CheckedNumeric<int> safeWeight = m_StemV;
+    safeWeight *= 5;
     m_FontFallbacks[0]->LoadSubst("Arial", IsTrueTypeFont(), m_Flags,
-                                  m_StemV * 5, m_ItalicAngle, 0,
-                                  IsVertWriting());
+                                  safeWeight.ValueOrDefault(FXFONT_FW_NORMAL),
+                                  m_ItalicAngle, 0, IsVertWriting());
   }
   return 0;
 }
