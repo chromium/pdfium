@@ -128,7 +128,7 @@ void CPDF_ColorState::SetColor(CPDF_ColorSpace* pCS,
   else if (color->IsNull())
     color->SetColorSpace(CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY));
 
-  if (color->GetColorSpace()->CountComponents() > values.size())
+  if (color->CountComponents() > values.size())
     return;
 
   if (!color->IsPattern())

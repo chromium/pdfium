@@ -37,8 +37,7 @@ std::ostream& operator<<(std::ostream& ar, const CFX_Matrix& matrix) {
 
 bool GetColor(const CPDF_Color* pColor, float* rgb) {
   int intRGB[3];
-  if (!pColor ||
-      pColor->GetColorSpace() != CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB) ||
+  if (!pColor || !pColor->IsColorSpaceRGB() ||
       !pColor->GetRGB(&intRGB[0], &intRGB[1], &intRGB[2])) {
     return false;
   }

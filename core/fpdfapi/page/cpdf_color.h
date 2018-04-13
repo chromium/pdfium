@@ -29,12 +29,12 @@ class CPDF_Color {
   void SetValueForPattern(CPDF_Pattern* pPattern,
                           const std::vector<float>& values);
 
+  uint32_t CountComponents() const;
+  bool IsColorSpaceRGB() const;
   bool GetRGB(int* R, int* G, int* B) const;
 
   // Should only be called if IsPattern() returns true.
   CPDF_Pattern* GetPattern() const;
-
-  const CPDF_ColorSpace* GetColorSpace() const { return m_pCS; }
 
  protected:
   void ReleaseBuffer();

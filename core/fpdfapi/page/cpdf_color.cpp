@@ -146,6 +146,14 @@ void CPDF_Color::Copy(const CPDF_Color& src) {
       pPattern->pattern_obj(), false, pPattern->parent_matrix());
 }
 
+uint32_t CPDF_Color::CountComponents() const {
+  return m_pCS->CountComponents();
+}
+
+bool CPDF_Color::IsColorSpaceRGB() const {
+  return m_pCS == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
+}
+
 bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
   if (!m_pCS || !m_pBuffer)
     return false;
