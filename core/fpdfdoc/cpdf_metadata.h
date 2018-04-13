@@ -8,19 +8,40 @@
 #define CORE_FPDFDOC_CPDF_METADATA_H_
 
 #include <memory>
+#include <vector>
 
-class CPDF_Document;
-class CXML_Element;
+#include "core/fxcrt/unowned_ptr.h"
+
+class CPDF_Stream;
+
+enum class UnsupportedFeature : uint8_t {
+  kDocumentXFAForm = 1,
+  kDocumentPortableCollection = 2,
+  kDocumentAttachment = 3,
+  kDocumentSecurity = 4,
+  kDocumentSharedReview = 5,
+  kDocumentSharedFormAcrobat = 6,
+  kDocumentSharedFormFilesystem = 7,
+  kDocumentSharedFormEmail = 8,
+
+  kAnnotation3d = 11,
+  kAnnotationMovie = 12,
+  kAnnotationSound = 13,
+  kAnnotationScreenMedia = 14,
+  kAnnotationScreenRichMedia = 15,
+  kAnnotationAttachment = 16,
+  kAnnotationSignature = 17
+};
 
 class CPDF_Metadata {
  public:
-  explicit CPDF_Metadata(const CPDF_Document* pDoc);
+  explicit CPDF_Metadata(const CPDF_Stream* pStream);
   ~CPDF_Metadata();
 
-  const CXML_Element* GetRoot() const;
+  std::vector<UnsupportedFeature> CheckForSharedForm() const;
 
  private:
-  std::unique_ptr<CXML_Element> m_pXmlElement;
+  UnownedPtr<const CPDF_Stream> stream_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_METADATA_H_

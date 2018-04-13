@@ -9,11 +9,62 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_metadata.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #endif  // PDF_ENABLE_XFA
+
+static_assert(static_cast<int>(UnsupportedFeature::kDocumentXFAForm) ==
+                  FPDF_UNSP_DOC_XFAFORM,
+              "UnsupportedFeature::kDocumentXFAForm value mismatch");
+static_assert(
+    static_cast<int>(UnsupportedFeature::kDocumentPortableCollection) ==
+        FPDF_UNSP_DOC_PORTABLECOLLECTION,
+    "UnsupportedFeature::kDocumentPortableCollection value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kDocumentAttachment) ==
+                  FPDF_UNSP_DOC_ATTACHMENT,
+              "UnsupportedFeature::kDocumentAttachment value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kDocumentSecurity) ==
+                  FPDF_UNSP_DOC_SECURITY,
+              "UnsupportedFeature::kDocumentSecurity value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kDocumentSharedReview) ==
+                  FPDF_UNSP_DOC_SHAREDREVIEW,
+              "UnsupportedFeature::kDocumentSharedReview value mismatch");
+static_assert(
+    static_cast<int>(UnsupportedFeature::kDocumentSharedFormAcrobat) ==
+        FPDF_UNSP_DOC_SHAREDFORM_ACROBAT,
+    "UnsupportedFeature::kDocumentSharedFormAcrobat value mismatch");
+static_assert(
+    static_cast<int>(UnsupportedFeature::kDocumentSharedFormFilesystem) ==
+        FPDF_UNSP_DOC_SHAREDFORM_FILESYSTEM,
+    "UnsupportedFeature::kDocumentSharedFormFilesystem value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kDocumentSharedFormEmail) ==
+                  FPDF_UNSP_DOC_SHAREDFORM_EMAIL,
+              "UnsupportedFeature::kDocumentSharedFormEmail value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kAnnotation3d) ==
+                  FPDF_UNSP_ANNOT_3DANNOT,
+              "UnsupportedFeature::kAnnotation3d value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kAnnotationMovie) ==
+                  FPDF_UNSP_ANNOT_MOVIE,
+              "UnsupportedFeature::kAnnotationMovie value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kAnnotationSound) ==
+                  FPDF_UNSP_ANNOT_SOUND,
+              "UnsupportedFeature::kAnnotationSound value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kAnnotationScreenMedia) ==
+                  FPDF_UNSP_ANNOT_SCREEN_MEDIA,
+              "UnsupportedFeature::kAnnotationScreenMedia value mismatch");
+static_assert(
+    static_cast<int>(UnsupportedFeature::kAnnotationScreenRichMedia) ==
+        FPDF_UNSP_ANNOT_SCREEN_RICHMEDIA,
+    "UnsupportedFeature::kAnnotationScreenRichMedia value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kAnnotationAttachment) ==
+                  FPDF_UNSP_ANNOT_ATTACHMENT,
+              "UnsupportedFeature::kAnnotationAttachment value mismatch");
+static_assert(static_cast<int>(UnsupportedFeature::kAnnotationSignature) ==
+                  FPDF_UNSP_ANNOT_SIG,
+              "UnsupportedFeature::kAnnotationSignature value mismatch");
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {

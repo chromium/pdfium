@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "core/fxcrt/xml/cxml_element.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_calendarsymbols.h"
 #include "xfa/fxfa/parser/cxfa_datetimesymbols.h"
