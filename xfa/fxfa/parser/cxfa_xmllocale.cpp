@@ -16,6 +16,15 @@
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+// static
+std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
+    pdfium::span<uint8_t> data) {
+  std::unique_ptr<CXML_Element> pLocale =
+      CXML_Element::Parse(data.data(), data.size());
+  return pLocale ? pdfium::MakeUnique<CXFA_XMLLocale>(std::move(pLocale))
+                 : nullptr;
+}
+
 CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData)
     : m_pLocaleData(std::move(pLocaleData)) {}
 

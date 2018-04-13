@@ -14,7 +14,6 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fxcodec/codec/ccodec_flatemodule.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/xml/cxml_element.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
@@ -1080,10 +1079,9 @@ std::unique_ptr<LocaleIface> GetLocaleFromBuffer(const uint8_t* pBuf,
   if (!pOut)
     return nullptr;
 
-  std::unique_ptr<CXML_Element> pLocale = CXML_Element::Parse(pOut, dwSize);
+  auto locale = CXFA_XMLLocale::Create(pdfium::make_span(pOut, dwSize));
   FX_Free(pOut);
-  return pLocale ? pdfium::MakeUnique<CXFA_XMLLocale>(std::move(pLocale))
-                 : nullptr;
+  return locale;
 }
 
 uint16_t GetLanguage(WideString wsLanguage) {
