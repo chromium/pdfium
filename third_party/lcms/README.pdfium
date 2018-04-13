@@ -41,3 +41,4 @@ Local Modifications:
 0027-changes-from-beginning-of-time.patch: commented changes from initial commit.
 0028-do-not-quickfloor.patch: flooring errors may cause heap-buffer-overflow.
 0029-drop-register-keyword.patch: Remove deprecated 'register' keyword.
+0030-const-data.patch: Mark many data structures as const.
