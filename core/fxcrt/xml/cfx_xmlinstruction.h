@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/xml/cfx_xmlattributenode.h"
 
-class CFX_XMLInstruction : public CFX_XMLAttributeNode {
+class CFX_XMLInstruction : public CFX_XMLNode {
  public:
   explicit CFX_XMLInstruction(const WideString& wsTarget);
   ~CFX_XMLInstruction() override;
@@ -23,11 +23,14 @@ class CFX_XMLInstruction : public CFX_XMLAttributeNode {
   std::unique_ptr<CFX_XMLNode> Clone() override;
   void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
 
+  bool IsOriginalXFAVersion() const;
+  bool IsAcrobat() const;
+
   const std::vector<WideString>& GetTargetData() const { return m_TargetData; }
   void AppendData(const WideString& wsData);
-  void RemoveData(int32_t index);
 
  private:
+  WideString name_;
   std::vector<WideString> m_TargetData;
 };
 

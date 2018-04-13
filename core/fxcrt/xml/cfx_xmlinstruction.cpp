@@ -14,17 +14,16 @@
 #include "third_party/base/stl_util.h"
 
 CFX_XMLInstruction::CFX_XMLInstruction(const WideString& wsTarget)
-    : CFX_XMLAttributeNode(wsTarget) {}
+    : CFX_XMLNode(), name_(wsTarget) {}
 
-CFX_XMLInstruction::~CFX_XMLInstruction() {}
+CFX_XMLInstruction::~CFX_XMLInstruction() = default;
 
 FX_XMLNODETYPE CFX_XMLInstruction::GetType() const {
   return FX_XMLNODE_Instruction;
 }
 
 std::unique_ptr<CFX_XMLNode> CFX_XMLInstruction::Clone() {
-  auto pClone = pdfium::MakeUnique<CFX_XMLInstruction>(GetName());
-  pClone->SetAttributes(GetAttributes());
+  auto pClone = pdfium::MakeUnique<CFX_XMLInstruction>(name_);
   pClone->m_TargetData = m_TargetData;
   return std::move(pClone);
 }
@@ -33,14 +32,17 @@ void CFX_XMLInstruction::AppendData(const WideString& wsData) {
   m_TargetData.push_back(wsData);
 }
 
-void CFX_XMLInstruction::RemoveData(int32_t index) {
-  if (pdfium::IndexInBounds(m_TargetData, index))
-    m_TargetData.erase(m_TargetData.begin() + index);
+bool CFX_XMLInstruction::IsOriginalXFAVersion() const {
+  return name_ == L"originalXFAVersion";
+}
+
+bool CFX_XMLInstruction::IsAcrobat() const {
+  return name_ == L"acrobat";
 }
 
 void CFX_XMLInstruction::Save(
     const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
-  if (GetName().CompareNoCase(L"xml") == 0) {
+  if (name_.CompareNoCase(L"xml") == 0) {
     WideString ws = L"<?xml version=\"1.0\" encoding=\"";
     uint16_t wCodePage = pXMLStream->GetCodePage();
     if (wCodePage == FX_CODEPAGE_UTF16LE)
@@ -56,17 +58,12 @@ void CFX_XMLInstruction::Save(
   }
 
   pXMLStream->WriteString(
-      WideString::Format(L"<?%ls", GetName().c_str()).AsStringView());
-  for (auto it : GetAttributes()) {
-    pXMLStream->WriteString(
-        AttributeToString(it.first, it.second).AsStringView());
-  }
+      WideString::Format(L"<?%ls", name_.c_str()).AsStringView());
 
   for (const WideString& target : m_TargetData) {
-    WideString ws = L" \"";
-    ws += target;
-    ws += L"\"";
-    pXMLStream->WriteString(ws.AsStringView());
+    pXMLStream->WriteString(L"\"");
+    pXMLStream->WriteString(target.AsStringView());
+    pXMLStream->WriteString(L"\"");
   }
 
   pXMLStream->WriteString(WideStringView(L"?>"));

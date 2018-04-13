@@ -1141,16 +1141,18 @@ void CXFA_DocumentParser::ParseDataValue(CXFA_Node* pXFANode,
 void CXFA_DocumentParser::ParseInstruction(CXFA_Node* pXFANode,
                                            CFX_XMLInstruction* pXMLInstruction,
                                            XFA_PacketType ePacketID) {
-  WideString wsTargetName = pXMLInstruction->GetName();
   const std::vector<WideString>& target_data = pXMLInstruction->GetTargetData();
-  if (wsTargetName == L"originalXFAVersion") {
+  if (pXMLInstruction->IsOriginalXFAVersion()) {
     if (target_data.size() > 1 &&
         (pXFANode->GetDocument()->RecognizeXFAVersionNumber(target_data[0]) !=
          XFA_VERSION_UNKNOWN) &&
         target_data[1] == L"v2.7-scripting:1") {
       pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_Scripting, true);
     }
-  } else if (wsTargetName == L"acrobat") {
+    return;
+  }
+
+  if (pXMLInstruction->IsAcrobat()) {
     if (target_data.size() > 1 && target_data[0] == L"JavaScript" &&
         target_data[1] == L"strictScoping") {
       pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_StrictScoping, true);
