@@ -460,7 +460,9 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
 
   // Create a new bitmap to transfer part of the page bitmap to.
   RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
-  pDst->Create(bitmap_area->Width(), bitmap_area->Height(), FXDIB_Argb);
+  if (!pDst->Create(bitmap_area->Width(), bitmap_area->Height(), FXDIB_Argb))
+    return nullptr;
+
   pDst->Clear(0x00ffffff);
   pDst->TransferBitmap(0, 0, bitmap_area->Width(), bitmap_area->Height(), pSrc,
                        bitmap_area->left, bitmap_area->top);
@@ -477,7 +479,9 @@ void RenderBitmap(CFX_RenderDevice* device,
 
   // Create a new bitmap from the old one
   RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
-  pDst->Create(size_x_bm, size_y_bm, FXDIB_Rgb32);
+  if (!pDst->Create(size_x_bm, size_y_bm, FXDIB_Rgb32))
+    return;
+
   pDst->Clear(0xffffffff);
   pDst->CompositeBitmap(0, 0, size_x_bm, size_y_bm, pSrc, 0, 0,
                         FXDIB_BLEND_NORMAL, nullptr, false);
@@ -520,6 +524,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
   if (bNewBitmap || bHasMask) {
     pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+    // Create will probably work fine even if it fails here: we will just attach
+    // a zero-sized bitmap to |pDevice|.
     pBitmap->Create(size_x, size_y, FXDIB_Argb);
     pBitmap->Clear(0x00ffffff);
     CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
@@ -580,17 +586,19 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     }
   } else if (bNewBitmap) {
     CFX_WindowsRenderDevice WinDC(dc);
+    bool bitsStretched = false;
     if (WinDC.GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
       auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();
-      int pitch = pBitmap->GetPitch();
-      pDst->Create(size_x, size_y, FXDIB_Rgb32);
-      memset(pDst->GetBuffer(), -1, pitch * size_y);
-      pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
-                            FXDIB_BLEND_NORMAL, nullptr, false);
-      WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
-    } else {
-      WinDC.SetDIBits(pBitmap, 0, 0);
+      if (pDst->Create(size_x, size_y, FXDIB_Rgb32)) {
+        memset(pDst->GetBuffer(), -1, pBitmap->GetPitch() * size_y);
+        pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
+                              FXDIB_BLEND_NORMAL, nullptr, false);
+        WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
+        bitsStretched = true;
+      }
     }
+    if (!bitsStretched)
+      WinDC.SetDIBits(pBitmap, 0, 0);
   }
 
   pPage->SetRenderContext(nullptr);
@@ -814,8 +822,10 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
       return nullptr;
   }
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  pBitmap->Create(width, height, fx_format, static_cast<uint8_t*>(first_scan),
-                  stride);
+  if (!pBitmap->Create(width, height, fx_format,
+                       static_cast<uint8_t*>(first_scan), stride)) {
+    return nullptr;
+  }
   return pBitmap.Leak();
 }
 
