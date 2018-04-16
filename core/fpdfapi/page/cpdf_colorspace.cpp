@@ -346,9 +346,12 @@ void XYZ_to_sRGB_WhitePoint(float X,
   // The following RGB_xyz is based on
   // sRGB value {Rx,Ry}={0.64, 0.33}, {Gx,Gy}={0.30, 0.60}, {Bx,By}={0.15, 0.06}
 
-  float Rx = 0.64f, Ry = 0.33f;
-  float Gx = 0.30f, Gy = 0.60f;
-  float Bx = 0.15f, By = 0.06f;
+  constexpr float Rx = 0.64f;
+  constexpr float Ry = 0.33f;
+  constexpr float Gx = 0.30f;
+  constexpr float Gy = 0.60f;
+  constexpr float Bx = 0.15f;
+  constexpr float By = 0.06f;
   Matrix_3by3 RGB_xyz(Rx, Gx, Bx, Ry, Gy, By, 1 - Rx - Ry, 1 - Gx - Gy,
                       1 - Bx - By);
   Vector_3by1 whitePoint(Xw, Yw, Zw);
@@ -405,10 +408,9 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
 
   pdfium::ScopedSetInsertion<CPDF_Object*> insertion(pVisited, pObj);
 
-  if (pObj->IsName()) {
-    return std::unique_ptr<CPDF_ColorSpace>(
-        ColorspaceFromName(pObj->GetString()));
-  }
+  if (pObj->IsName())
+    return pdfium::WrapUnique(ColorspaceFromName(pObj->GetString()));
+
   if (CPDF_Stream* pStream = pObj->AsStream()) {
     CPDF_Dictionary* pDict = pStream->GetDict();
     if (!pDict)
@@ -435,7 +437,7 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
 
   ByteString familyname = pFamilyObj->GetString();
   if (pArray->GetCount() == 1)
-    return std::unique_ptr<CPDF_ColorSpace>(ColorspaceFromName(familyname));
+    return pdfium::WrapUnique(ColorspaceFromName(familyname));
 
   std::unique_ptr<CPDF_ColorSpace> pCS;
   switch (familyname.GetID()) {
