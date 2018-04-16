@@ -23,8 +23,11 @@ class CXFA_NodeLocale : public LocaleIface {
 
   // LocaleIface
   WideString GetName() const override;
-  WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
-
+  WideString GetDecimalSymbol() const override;
+  WideString GetGroupingSymbol() const override;
+  WideString GetPercentSymbol() const override;
+  WideString GetMinusSymbol() const override;
+  WideString GetCurrencySymbol() const override;
   WideString GetDateTimeSymbols() const override;
   WideString GetMonthName(int32_t nMonth, bool bAbbr) const override;
   WideString GetDayName(int32_t nWeek, bool bAbbr) const override;

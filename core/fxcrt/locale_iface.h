@@ -10,16 +10,6 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
 
-enum FX_LOCALENUMSYMBOL {
-  FX_LOCALENUMSYMBOL_Decimal,
-  FX_LOCALENUMSYMBOL_Grouping,
-  FX_LOCALENUMSYMBOL_Percent,
-  FX_LOCALENUMSYMBOL_Minus,
-  FX_LOCALENUMSYMBOL_Zero,
-  FX_LOCALENUMSYMBOL_CurrencySymbol,
-  FX_LOCALENUMSYMBOL_CurrencyName,
-};
-
 enum FX_LOCALEDATETIMESUBCATEGORY {
   FX_LOCALEDATETIMESUBCATEGORY_Default,
   FX_LOCALEDATETIMESUBCATEGORY_Short,
@@ -59,7 +49,11 @@ class LocaleIface {
   virtual ~LocaleIface() {}
 
   virtual WideString GetName() const = 0;
-  virtual WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const = 0;
+  virtual WideString GetDecimalSymbol() const = 0;
+  virtual WideString GetGroupingSymbol() const = 0;
+  virtual WideString GetPercentSymbol() const = 0;
+  virtual WideString GetMinusSymbol() const = 0;
+  virtual WideString GetCurrencySymbol() const = 0;
   virtual WideString GetDateTimeSymbols() const = 0;
   virtual WideString GetMonthName(int32_t nMonth, bool bAbbr) const = 0;
   virtual WideString GetDayName(int32_t nWeek, bool bAbbr) const = 0;

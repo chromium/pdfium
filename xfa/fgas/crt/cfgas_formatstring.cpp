@@ -1151,12 +1151,10 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
     return false;
 
   int32_t iExponent = 0;
-  WideString wsDotSymbol =
-      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
-  WideString wsGroupSymbol =
-      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping);
+  WideString wsDotSymbol = pLocale->GetDecimalSymbol();
+  WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
   int32_t iGroupLen = wsGroupSymbol.GetLength();
-  WideString wsMinus = pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus);
+  WideString wsMinus = pLocale->GetMinusSymbol();
   int32_t iMinusLen = wsMinus.GetLength();
   const wchar_t* str = wsSrcNum.c_str();
   int len = wsSrcNum.GetLength();
@@ -1259,8 +1257,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
         break;
       }
       case '$': {
-        WideString wsSymbol =
-            pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_CurrencySymbol);
+        WideString wsSymbol = pLocale->GetCurrencySymbol();
         int32_t iSymbolLen = wsSymbol.GetLength();
         cc -= iSymbolLen - 1;
         if (cc < 0 || wcsncmp(str + cc, wsSymbol.c_str(), iSymbolLen))
@@ -1301,8 +1298,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
         }
         break;
       case '%': {
-        WideString wsSymbol =
-            pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent);
+        WideString wsSymbol = pLocale->GetPercentSymbol();
         int32_t iSysmbolLen = wsSymbol.GetLength();
         cc -= iSysmbolLen - 1;
         if (cc < 0 || wcsncmp(str + cc, wsSymbol.c_str(), iSysmbolLen))
@@ -1435,8 +1431,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
           break;
         }
         case '$': {
-          WideString wsSymbol =
-              pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_CurrencySymbol);
+          WideString wsSymbol = pLocale->GetCurrencySymbol();
           int32_t iSymbolLen = wsSymbol.GetLength();
           if (cc + iSymbolLen > len ||
               wcsncmp(str + cc, wsSymbol.c_str(), iSymbolLen)) {
@@ -1477,8 +1472,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
         case 'v':
           return false;
         case '%': {
-          WideString wsSymbol =
-              pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent);
+          WideString wsSymbol = pLocale->GetPercentSymbol();
           int32_t iSysmbolLen = wsSymbol.GetLength();
           if (cc + iSysmbolLen <= len &&
               !wcsncmp(str + cc, wsSymbol.c_str(), iSysmbolLen)) {
@@ -1932,8 +1926,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
     wsSrcNum.TrimRight(L".");
   }
 
-  WideString wsGroupSymbol =
-      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping);
+  WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
   bool bNeg = false;
   if (wsSrcNum[0] == '-') {
     bNeg = true;
@@ -1988,8 +1981,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       case 'S':
         if (bNeg) {
-          *wsOutput =
-              pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + *wsOutput;
+          *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
           bAddNeg = true;
         } else {
           wsOutput->InsertAtFront(L' ');
@@ -1998,8 +1990,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       case 's':
         if (bNeg) {
-          *wsOutput =
-              pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + *wsOutput;
+          *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
           bAddNeg = true;
         }
         ccf--;
@@ -2010,9 +2001,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       }
       case '$': {
-        *wsOutput =
-            pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_CurrencySymbol) +
-            *wsOutput;
+        *wsOutput = pLocale->GetCurrencySymbol() + *wsOutput;
         ccf--;
         break;
       }
@@ -2049,8 +2038,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         }
         break;
       case '%': {
-        *wsOutput =
-            pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent) + *wsOutput;
+        *wsOutput = pLocale->GetPercentSymbol() + *wsOutput;
         ccf--;
         break;
       }
@@ -2089,26 +2077,23 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
       *wsOutput += wsSrcNum[i];
     }
     if (pdfium::base::checked_cast<int32_t>(dot_index.value()) < len) {
-      *wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
+      *wsOutput += pLocale->GetDecimalSymbol();
       *wsOutput += wsSrcNum.Right(len - dot_index.value() - 1);
     }
-    if (bNeg) {
-      *wsOutput =
-          pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + *wsOutput;
-    }
+    if (bNeg)
+      *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
+
     return false;
   }
   if (dot_index_f ==
       pdfium::base::checked_cast<int32_t>(wsNumFormat.GetLength())) {
-    if (!bAddNeg && bNeg) {
-      *wsOutput =
-          pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + *wsOutput;
-    }
+    if (!bAddNeg && bNeg)
+      *wsOutput = pLocale->GetMinusSymbol() + *wsOutput;
+
     return true;
   }
 
-  WideString wsDotSymbol =
-      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
+  WideString wsDotSymbol = pLocale->GetDecimalSymbol();
   if (strf[dot_index_f] == 'V') {
     *wsOutput += wsDotSymbol;
   } else if (strf[dot_index_f] == '.') {
@@ -2166,8 +2151,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       }
       case '$':
-        *wsOutput +=
-            pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_CurrencySymbol);
+        *wsOutput += pLocale->GetCurrencySymbol();
         ccf++;
         break;
       case 'c':
@@ -2203,7 +2187,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         }
         break;
       case '%':
-        *wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent);
+        *wsOutput += pLocale->GetPercentSymbol();
         ccf++;
         break;
       case '8':
@@ -2232,8 +2216,8 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
     }
   }
   if (!bAddNeg && bNeg) {
-    *wsOutput = pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) +
-                (*wsOutput)[0] + wsOutput->Right(wsOutput->GetLength() - 1);
+    *wsOutput = pLocale->GetMinusSymbol() + (*wsOutput)[0] +
+                wsOutput->Right(wsOutput->GetLength() - 1);
   }
   return true;
 }

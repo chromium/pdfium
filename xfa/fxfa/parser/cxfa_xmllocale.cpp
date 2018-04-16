@@ -17,6 +17,15 @@
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+namespace {
+
+constexpr wchar_t kNumberSymbols[] = L"numberSymbols";
+constexpr wchar_t kNumberSymbol[] = L"numberSymbol";
+constexpr wchar_t kCurrencySymbols[] = L"currencySymbols";
+constexpr wchar_t kCurrencySymbol[] = L"currencySymbol";
+
+}  // namespace
+
 // static
 std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
     pdfium::span<uint8_t> data) {
@@ -59,54 +68,29 @@ WideString CXFA_XMLLocale::GetName() const {
   return locale_->GetString(L"name");
 }
 
-WideString CXFA_XMLLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const {
-  WideStringView bsSymbols;
-  WideStringView bsSymbol;
-  WideStringView wsName;
-  switch (eType) {
-    case FX_LOCALENUMSYMBOL_Decimal:
-      bsSymbols = L"numberSymbols";
-      bsSymbol = L"numberSymbol";
-      wsName = L"decimal";
-      break;
-    case FX_LOCALENUMSYMBOL_Grouping:
-      bsSymbols = L"numberSymbols";
-      bsSymbol = L"numberSymbol";
-      wsName = L"grouping";
-      break;
-    case FX_LOCALENUMSYMBOL_Percent:
-      bsSymbols = L"numberSymbols";
-      bsSymbol = L"numberSymbol";
-      wsName = L"percent";
-      break;
-    case FX_LOCALENUMSYMBOL_Minus:
-      bsSymbols = L"numberSymbols";
-      bsSymbol = L"numberSymbol";
-      wsName = L"minus";
-      break;
-    case FX_LOCALENUMSYMBOL_Zero:
-      bsSymbols = L"numberSymbols";
-      bsSymbol = L"numberSymbol";
-      wsName = L"zero";
-      break;
-    case FX_LOCALENUMSYMBOL_CurrencySymbol:
-      bsSymbols = L"currencySymbols";
-      bsSymbol = L"currencySymbol";
-      wsName = L"symbol";
-      break;
-    case FX_LOCALENUMSYMBOL_CurrencyName:
-      bsSymbols = L"currencySymbols";
-      bsSymbol = L"currencySymbol";
-      wsName = L"isoname";
-      break;
-    default:
-      return L"";
-  }
-  CFX_XMLElement* patterns = locale_->GetFirstChildNamed(bsSymbols);
-  if (!patterns)
-    return L"";
+WideString CXFA_XMLLocale::GetDecimalSymbol() const {
+  CFX_XMLElement* patterns = locale_->GetFirstChildNamed(kNumberSymbols);
+  return patterns ? GetPattern(patterns, kNumberSymbol, L"decimal") : L"";
+}
 
-  return GetPattern(patterns, bsSymbol, wsName);
+WideString CXFA_XMLLocale::GetGroupingSymbol() const {
+  CFX_XMLElement* patterns = locale_->GetFirstChildNamed(kNumberSymbols);
+  return patterns ? GetPattern(patterns, kNumberSymbol, L"grouping") : L"";
+}
+
+WideString CXFA_XMLLocale::GetPercentSymbol() const {
+  CFX_XMLElement* patterns = locale_->GetFirstChildNamed(kNumberSymbols);
+  return patterns ? GetPattern(patterns, kNumberSymbol, L"percent") : L"";
+}
+
+WideString CXFA_XMLLocale::GetMinusSymbol() const {
+  CFX_XMLElement* patterns = locale_->GetFirstChildNamed(kNumberSymbols);
+  return patterns ? GetPattern(patterns, kNumberSymbol, L"minus") : L"";
+}
+
+WideString CXFA_XMLLocale::GetCurrencySymbol() const {
+  CFX_XMLElement* patterns = locale_->GetFirstChildNamed(kCurrencySymbols);
+  return patterns ? GetPattern(patterns, kCurrencySymbol, L"symbol") : L"";
 }
 
 WideString CXFA_XMLLocale::GetDateTimeSymbols() const {

@@ -108,20 +108,18 @@ TEST(CXFA_XMLLocaleTest, GetName) {
   EXPECT_EQ(L"en_US", locale->GetName());
 }
 
-TEST(CXFA_XMLLocaleTest, GetNumbericSymbol) {
+TEST(CXFA_XMLLocaleTest, GetNumericSymbols) {
   auto span =
       pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
                         strlen(xml_data));
   auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
-  EXPECT_EQ(L".", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal));
-  EXPECT_EQ(L",", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping));
-  EXPECT_EQ(L"%", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent));
-  EXPECT_EQ(L"-", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus));
-  EXPECT_EQ(L"0", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Zero));
-  EXPECT_EQ(L"$", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_CurrencySymbol));
-  EXPECT_EQ(L"USD", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_CurrencyName));
+  EXPECT_EQ(L".", locale->GetDecimalSymbol());
+  EXPECT_EQ(L",", locale->GetGroupingSymbol());
+  EXPECT_EQ(L"%", locale->GetPercentSymbol());
+  EXPECT_EQ(L"-", locale->GetMinusSymbol());
+  EXPECT_EQ(L"$", locale->GetCurrencySymbol());
 }
 
 TEST(CXFA_XMLLocaleTest, GetDateTimeSymbols) {

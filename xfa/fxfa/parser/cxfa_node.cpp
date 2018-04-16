@@ -4564,8 +4564,7 @@ WideString CXFA_Node::FormatNumStr(const WideString& wsValue,
     return L"";
 
   WideString wsSrcNum = wsValue;
-  WideString wsGroupSymbol =
-      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping);
+  WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
   bool bNeg = false;
   if (wsSrcNum[0] == '-') {
     bNeg = true;
@@ -4587,11 +4586,11 @@ WideString CXFA_Node::FormatNumStr(const WideString& wsValue,
     wsOutput += wsSrcNum[i];
   }
   if (dot_index.value() < wsSrcNum.GetLength()) {
-    wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
+    wsOutput += pLocale->GetDecimalSymbol();
     wsOutput += wsSrcNum.Right(wsSrcNum.GetLength() - dot_index.value() - 1);
   }
   if (bNeg)
-    return pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + wsOutput;
+    return pLocale->GetMinusSymbol() + wsOutput;
 
   return wsOutput;
 }

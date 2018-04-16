@@ -50,24 +50,24 @@ WideString CXFA_NodeLocale::GetName() const {
                         : nullptr);
 }
 
-WideString CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const {
-  switch (eType) {
-    case FX_LOCALENUMSYMBOL_Decimal:
-      return GetSymbol(XFA_Element::NumberSymbols, L"decimal");
-    case FX_LOCALENUMSYMBOL_Grouping:
-      return GetSymbol(XFA_Element::NumberSymbols, L"grouping");
-    case FX_LOCALENUMSYMBOL_Percent:
-      return GetSymbol(XFA_Element::NumberSymbols, L"percent");
-    case FX_LOCALENUMSYMBOL_Minus:
-      return GetSymbol(XFA_Element::NumberSymbols, L"minus");
-    case FX_LOCALENUMSYMBOL_Zero:
-      return GetSymbol(XFA_Element::NumberSymbols, L"zero");
-    case FX_LOCALENUMSYMBOL_CurrencySymbol:
-      return GetSymbol(XFA_Element::CurrencySymbols, L"symbol");
-    case FX_LOCALENUMSYMBOL_CurrencyName:
-      return GetSymbol(XFA_Element::CurrencySymbols, L"isoname");
-  }
-  return WideString();
+WideString CXFA_NodeLocale::GetDecimalSymbol() const {
+  return GetSymbol(XFA_Element::NumberSymbols, L"decimal");
+}
+
+WideString CXFA_NodeLocale::GetGroupingSymbol() const {
+  return GetSymbol(XFA_Element::NumberSymbols, L"grouping");
+}
+
+WideString CXFA_NodeLocale::GetPercentSymbol() const {
+  return GetSymbol(XFA_Element::NumberSymbols, L"percent");
+}
+
+WideString CXFA_NodeLocale::GetMinusSymbol() const {
+  return GetSymbol(XFA_Element::NumberSymbols, L"minus");
+}
+
+WideString CXFA_NodeLocale::GetCurrencySymbol() const {
+  return GetSymbol(XFA_Element::CurrencySymbols, L"symbol");
 }
 
 WideString CXFA_NodeLocale::GetDateTimeSymbols() const {

@@ -760,7 +760,7 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
 
   WideString wsDecimalSymbol;
   if (pLocale)
-    wsDecimalSymbol = pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
+    wsDecimalSymbol = pLocale->GetDecimalSymbol();
   else
     wsDecimalSymbol = WideString(L'.');
 
