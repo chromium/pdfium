@@ -602,7 +602,7 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_Template(
       static_cast<CFX_XMLElement*>(pXMLDocumentNode);
   WideString wsNamespaceURI = pXMLDocumentElement->GetNamespaceURI();
   if (wsNamespaceURI.IsEmpty())
-    wsNamespaceURI = pXMLDocumentElement->GetString(L"xmlns:xfa");
+    wsNamespaceURI = pXMLDocumentElement->GetAttribute(L"xmlns:xfa");
 
   pNode->GetDocument()->RecognizeXFAVersionNumber(wsNamespaceURI);
 

@@ -875,8 +875,6 @@ jumbo_static_library("fxcrt") {
     "core/fxcrt/weak_ptr.h",
     "core/fxcrt/widestring.cpp",
     "core/fxcrt/widestring.h",
-    "core/fxcrt/xml/cfx_xmlattributenode.cpp",
-    "core/fxcrt/xml/cfx_xmlattributenode.h",
     "core/fxcrt/xml/cfx_xmlchardata.cpp",
     "core/fxcrt/xml/cfx_xmlchardata.h",
     "core/fxcrt/xml/cfx_xmlelement.cpp",

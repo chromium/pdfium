@@ -16,17 +16,19 @@
 #include "third_party/base/stl_util.h"
 
 CFX_XMLElement::CFX_XMLElement(const WideString& wsTag)
-    : CFX_XMLAttributeNode(wsTag) {}
+    : CFX_XMLNode(), name_(wsTag) {
+  ASSERT(!name_.IsEmpty());
+}
 
-CFX_XMLElement::~CFX_XMLElement() {}
+CFX_XMLElement::~CFX_XMLElement() = default;
 
 FX_XMLNODETYPE CFX_XMLElement::GetType() const {
   return FX_XMLNODE_Element;
 }
 
 std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
-  auto pClone = pdfium::MakeUnique<CFX_XMLElement>(GetName());
-  pClone->SetAttributes(GetAttributes());
+  auto pClone = pdfium::MakeUnique<CFX_XMLElement>(name_);
+  pClone->attrs_ = attrs_;
 
   WideString wsText;
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
@@ -39,15 +41,14 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
 }
 
 WideString CFX_XMLElement::GetLocalTagName() const {
-  auto pos = GetName().Find(L':');
-  return pos.has_value()
-             ? GetName().Right(GetName().GetLength() - pos.value() - 1)
-             : GetName();
+  auto pos = name_.Find(L':');
+  return pos.has_value() ? name_.Right(name_.GetLength() - pos.value() - 1)
+                         : name_;
 }
 
 WideString CFX_XMLElement::GetNamespacePrefix() const {
-  auto pos = GetName().Find(L':');
-  return pos.has_value() ? GetName().Left(pos.value()) : WideString();
+  auto pos = name_.Find(L':');
+  return pos.has_value() ? name_.Left(pos.value()) : WideString();
 }
 
 WideString CFX_XMLElement::GetNamespaceURI() const {
@@ -68,7 +69,7 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
       pNode = pNode->GetParent();
       continue;
     }
-    return pElement->GetString(wsAttri);
+    return pElement->GetAttribute(wsAttri);
   }
   return WideString();
 }
@@ -94,30 +95,28 @@ void CFX_XMLElement::SetTextData(const WideString& wsText) {
 
 void CFX_XMLElement::Save(
     const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
-  WideString ws(L"<");
-  ws += GetName();
-  pXMLStream->WriteString(ws.AsStringView());
+  pXMLStream->WriteString(L"<");
+  pXMLStream->WriteString(name_.AsStringView());
 
-  for (auto it : GetAttributes()) {
+  for (auto it : attrs_) {
     pXMLStream->WriteString(
         AttributeToString(it.first, it.second).AsStringView());
   }
 
-  if (GetFirstChild()) {
-    ws = L"\n>";
-    pXMLStream->WriteString(ws.AsStringView());
-
-    for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
-         pChild = pChild->GetNextSibling()) {
-      pChild->Save(pXMLStream);
-    }
-    ws = L"</";
-    ws += GetName();
-    ws += L"\n>";
-  } else {
-    ws = L"\n/>";
+  if (!GetFirstChild()) {
+    pXMLStream->WriteString(L" />");
+    return;
   }
-  pXMLStream->WriteString(ws.AsStringView());
+
+  pXMLStream->WriteString(L">");
+
+  for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
+    pChild->Save(pXMLStream);
+  }
+  pXMLStream->WriteString(L"</");
+  pXMLStream->WriteString(name_.AsStringView());
+  pXMLStream->WriteString(L"\n>");
 }
 
 CFX_XMLElement* CFX_XMLElement::GetFirstChildNamed(
@@ -132,7 +131,7 @@ CFX_XMLElement* CFX_XMLElement::GetNthChildNamed(const WideStringView& name,
       continue;
 
     CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child);
-    if (elem->GetName() != name)
+    if (elem->name_ != name)
       continue;
     if (idx == 0)
       return elem;
@@ -140,4 +139,32 @@ CFX_XMLElement* CFX_XMLElement::GetNthChildNamed(const WideStringView& name,
     --idx;
   }
   return nullptr;
+}
+
+bool CFX_XMLElement::HasAttribute(const WideString& name) const {
+  return attrs_.find(name) != attrs_.end();
+}
+
+WideString CFX_XMLElement::GetAttribute(const WideString& name) const {
+  auto it = attrs_.find(name);
+  return it != attrs_.end() ? it->second : L"";
+}
+
+void CFX_XMLElement::SetAttribute(const WideString& name,
+                                  const WideString& value) {
+  attrs_[name] = value;
+}
+
+void CFX_XMLElement::RemoveAttribute(const WideString& name) {
+  attrs_.erase(name);
+}
+
+WideString CFX_XMLElement::AttributeToString(const WideString& name,
+                                             const WideString& value) {
+  WideString ret = L" ";
+  ret += name;
+  ret += L"=\"";
+  ret += EncodeEntities(value);
+  ret += L"\"";
+  return ret;
 }

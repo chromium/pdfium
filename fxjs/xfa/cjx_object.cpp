@@ -343,7 +343,7 @@ bool CJX_Object::SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify) {
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Boolean,
                                   (void*)(uintptr_t)bValue, bNotify);
   if (elem)
-    elem->SetString(CXFA_Node::AttributeToName(eAttr), bValue ? L"1" : L"0");
+    elem->SetAttribute(CXFA_Node::AttributeToName(eAttr), bValue ? L"1" : L"0");
   return true;
 }
 
@@ -355,8 +355,8 @@ bool CJX_Object::SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify) {
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Integer,
                                   (void*)(uintptr_t)iValue, bNotify);
   if (elem) {
-    elem->SetString(CXFA_Node::AttributeToName(eAttr),
-                    WideString::Format(L"%d", iValue));
+    elem->SetAttribute(CXFA_Node::AttributeToName(eAttr),
+                       WideString::Format(L"%d", iValue));
   }
   return true;
 }
@@ -397,8 +397,8 @@ bool CJX_Object::SetEnum(XFA_Attribute eAttr,
   CFX_XMLElement* elem = SetValue(eAttr, XFA_AttributeType::Enum,
                                   (void*)(uintptr_t)eValue, bNotify);
   if (elem) {
-    elem->SetString(CXFA_Node::AttributeToName(eAttr),
-                    CXFA_Node::AttributeEnumToName(eValue));
+    elem->SetAttribute(CXFA_Node::AttributeToName(eAttr),
+                       CXFA_Node::AttributeEnumToName(eValue));
   }
   return true;
 }
@@ -487,7 +487,7 @@ bool CJX_Object::SetCData(XFA_Attribute eAttr,
   if (eAttr == XFA_Attribute::ContentType)
     wsAttrName = L"xfa:" + wsAttrName;
 
-  elem->SetString(wsAttrName, wsValue);
+  elem->SetAttribute(wsAttrName, wsValue);
   return true;
 }
 

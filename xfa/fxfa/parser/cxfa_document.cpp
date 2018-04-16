@@ -514,7 +514,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         pDataNode->JSObject()->SetCData(XFA_Attribute::ContentType,
                                         wsContentType, false, false);
         if (!wsHref.IsEmpty())
-          pXMLDataElement->SetString(L"href", wsHref);
+          pXMLDataElement->SetAttribute(L"href", wsHref);
 
         break;
       }
@@ -537,8 +537,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           } else {
             CFX_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
             ASSERT(pXMLNode->GetType() == FX_XMLNODE_Element);
-            static_cast<CFX_XMLElement*>(pXMLNode)->SetString(L"xfa:dataNode",
-                                                              L"dataGroup");
+            static_cast<CFX_XMLElement*>(pXMLNode)->SetAttribute(
+                L"xfa:dataNode", L"dataGroup");
           }
         } else if (!wsValue.IsEmpty()) {
           pDataNode->JSObject()->SetAttributeValue(
@@ -657,14 +657,14 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         ASSERT(pXMLDataElement);
 
         WideString wsContentType =
-            pXMLDataElement->GetString(L"xfa:contentType");
+            pXMLDataElement->GetAttribute(L"xfa:contentType");
         if (!wsContentType.IsEmpty()) {
           pDataNode->JSObject()->SetCData(XFA_Attribute::ContentType,
                                           wsContentType, false, false);
           image->SetContentType(wsContentType);
         }
 
-        WideString wsHref = pXMLDataElement->GetString(L"href");
+        WideString wsHref = pXMLDataElement->GetAttribute(L"href");
         if (!wsHref.IsEmpty())
           image->SetHref(wsHref);
       }
@@ -1625,8 +1625,8 @@ void CXFA_Document::DoDataMerge() {
   if (!pDatasetsRoot) {
     // Ownership will be passed in the AppendChild below to the XML tree.
     auto pDatasetsXMLNode = pdfium::MakeUnique<CFX_XMLElement>(L"xfa:datasets");
-    pDatasetsXMLNode->SetString(L"xmlns:xfa",
-                                L"http://www.xfa.org/schema/xfa-data/1.0/");
+    pDatasetsXMLNode->SetAttribute(L"xmlns:xfa",
+                                   L"http://www.xfa.org/schema/xfa-data/1.0/");
     pDatasetsRoot =
         CreateNode(XFA_PacketType::Datasets, XFA_Element::DataModel);
     pDatasetsRoot->JSObject()->SetCData(XFA_Attribute::Name, L"datasets", false,

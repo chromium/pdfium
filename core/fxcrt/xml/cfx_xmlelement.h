@@ -7,13 +7,14 @@
 #ifndef CORE_FXCRT_XML_CFX_XMLELEMENT_H_
 #define CORE_FXCRT_XML_CFX_XMLELEMENT_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/xml/cfx_xmlattributenode.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 
-class CFX_XMLElement : public CFX_XMLAttributeNode {
+class CFX_XMLElement : public CFX_XMLNode {
  public:
   explicit CFX_XMLElement(const WideString& wsTag);
   ~CFX_XMLElement() override;
@@ -22,6 +23,17 @@ class CFX_XMLElement : public CFX_XMLAttributeNode {
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
   void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
+
+  WideString GetName() const { return name_; }
+
+  const std::map<WideString, WideString>& GetAttributes() const {
+    return attrs_;
+  }
+  bool HasAttribute(const WideString& name) const;
+  void SetAttribute(const WideString& name, const WideString& value);
+  WideString GetAttribute(const WideString& name) const;
+
+  void RemoveAttribute(const WideString& name);
 
   CFX_XMLElement* GetFirstChildNamed(const WideStringView& name) const;
   CFX_XMLElement* GetNthChildNamed(const WideStringView& name,
@@ -33,6 +45,12 @@ class CFX_XMLElement : public CFX_XMLAttributeNode {
 
   WideString GetTextData() const;
   void SetTextData(const WideString& wsText);
+
+ private:
+  WideString AttributeToString(const WideString& name, const WideString& value);
+
+  WideString name_;
+  std::map<WideString, WideString> attrs_;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLELEMENT_H_

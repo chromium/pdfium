@@ -2662,7 +2662,7 @@ void CXFA_Node::SetImageEdit(const WideString& wsContentType,
   } else {
     CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element);
-    static_cast<CFX_XMLElement*>(pXMLNode)->SetString(L"href", wsHref);
+    static_cast<CFX_XMLElement*>(pXMLNode)->SetAttribute(L"href", wsHref);
   }
 }
 
@@ -4662,8 +4662,8 @@ void CXFA_Node::SetToXML(const WideString& value) {
   switch (eXMLType) {
     case FX_XMLNODE_Element: {
       if (IsAttributeInXML()) {
-        elem->SetString(JSObject()->GetCData(XFA_Attribute::QualifiedName),
-                        value);
+        elem->SetAttribute(JSObject()->GetCData(XFA_Attribute::QualifiedName),
+                           value);
         return;
       }
 

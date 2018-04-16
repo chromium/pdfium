@@ -16,12 +16,8 @@ namespace {
 
 void CheckForSharedFormInternal(CFX_XMLElement* element,
                                 std::vector<UnsupportedFeature>* unsupported) {
-  for (const auto& pair : element->GetAttributes()) {
-    if (pair.first != L"xmlns:adhocwf" ||
-        pair.second != L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
-      continue;
-    }
-
+  WideString attr = element->GetAttribute(L"xmlns:adhocwf");
+  if (attr == L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
     for (const auto* child = element->GetFirstChild(); child;
          child = child->GetNextSibling()) {
       if (child->GetType() != FX_XMLNODE_Element)

@@ -32,7 +32,7 @@ CJS_Return CJX_Packet::getAttribute(
   WideString attributeValue;
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
-    attributeValue = static_cast<CFX_XMLElement*>(pXMLNode)->GetString(
+    attributeValue = static_cast<CFX_XMLElement*>(pXMLNode)->GetAttribute(
         runtime->ToWideString(params[0]).c_str());
   }
   return CJS_Return(
@@ -47,7 +47,7 @@ CJS_Return CJX_Packet::setAttribute(
 
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
-    static_cast<CFX_XMLElement*>(pXMLNode)->SetString(
+    static_cast<CFX_XMLElement*>(pXMLNode)->SetAttribute(
         runtime->ToWideString(params[1]), runtime->ToWideString(params[0]));
   }
   return CJS_Return(runtime->NewNull());

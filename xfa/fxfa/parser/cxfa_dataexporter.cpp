@@ -89,7 +89,8 @@ bool CXFA_DataExporter::Export(
     return false;
 
   XFA_DataExporter_DealWithDataGroupNode(pExportNode);
-  pElement->SetString(L"xmlns:xfa", L"http://www.xfa.org/schema/xfa-data/1.0/");
+  pElement->SetAttribute(L"xmlns:xfa",
+                         L"http://www.xfa.org/schema/xfa-data/1.0/");
   pElement->Save(pStream);
   pElement->RemoveAttribute(L"xmlns:xfa");
 

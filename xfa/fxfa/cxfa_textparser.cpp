@@ -284,7 +284,7 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
     tagProvider->SetTagName(wsName);
     tagProvider->m_bTagAvailable = TagValidate(wsName);
 
-    WideString wsValue = pXMLElement->GetString(L"style");
+    WideString wsValue = pXMLElement->GetAttribute(L"style");
     if (!wsValue.IsEmpty())
       tagProvider->SetAttribute(L"style", wsValue);
   } else if (pXMLNode->GetType() == FX_XMLNODE_Text) {
@@ -505,13 +505,13 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
   bool bRet = false;
   if (pXMLNode->GetType() == FX_XMLNODE_Element) {
     CFX_XMLElement* pElement = static_cast<CFX_XMLElement*>(pXMLNode);
-    WideString wsAttr = pElement->GetString(L"xfa:embed");
+    WideString wsAttr = pElement->GetAttribute(L"xfa:embed");
     if (wsAttr.IsEmpty())
       return false;
     if (wsAttr[0] == L'#')
       wsAttr.Delete(0);
 
-    WideString ws = pElement->GetString(L"xfa:embedType");
+    WideString ws = pElement->GetAttribute(L"xfa:embedType");
     if (ws.IsEmpty())
       ws = L"som";
     else
@@ -521,7 +521,7 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
     if (!bURI && ws != L"som")
       return false;
 
-    ws = pElement->GetString(L"xfa:embedMode");
+    ws = pElement->GetAttribute(L"xfa:embedMode");
     if (ws.IsEmpty())
       ws = L"formatted";
     else

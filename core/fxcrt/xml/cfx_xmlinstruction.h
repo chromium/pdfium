@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/xml/cfx_xmlattributenode.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 
 class CFX_XMLInstruction : public CFX_XMLNode {
  public:

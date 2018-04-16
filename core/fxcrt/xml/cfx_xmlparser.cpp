@@ -189,8 +189,8 @@ bool CFX_XMLParser::Parse() {
         break;
       case FX_XmlSyntaxResult::AttriValue:
         if (m_pChild && m_pChild->GetType() == FX_XMLNODE_Element) {
-          static_cast<CFX_XMLElement*>(m_pChild)->SetString(m_ws1,
-                                                            GetAttributeName());
+          static_cast<CFX_XMLElement*>(m_pChild)->SetAttribute(
+              m_ws1, GetAttributeName());
         }
         m_ws1.clear();
         break;

@@ -119,13 +119,3 @@ WideString CFX_XMLNode::EncodeEntities(const WideString& value) {
   ret.Replace(L"\"", L"&quot;");
   return ret;
 }
-
-WideString CFX_XMLNode::AttributeToString(const WideString& name,
-                                          const WideString& value) {
-  WideString ret = L" ";
-  ret += name;
-  ret += L"=\"";
-  ret += EncodeEntities(value);
-  ret += L"\"";
-  return ret;
-}

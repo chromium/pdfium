@@ -479,7 +479,7 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
 
     auto* pElement = static_cast<CFX_XMLElement*>(pParent);
     if (pElement->HasAttribute(wsNSAttribute.c_str())) {
-      *wsNamespaceURI = pElement->GetString(wsNSAttribute.c_str());
+      *wsNamespaceURI = pElement->GetAttribute(wsNSAttribute.c_str());
       return true;
     }
   }
@@ -513,8 +513,8 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
 
   CFX_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
   ASSERT(pXMLNode->GetType() == FX_XMLNODE_Element);
-  static_cast<CFX_XMLElement*>(pXMLNode)->SetString(L"xfa:dataNode",
-                                                    L"dataGroup");
+  static_cast<CFX_XMLElement*>(pXMLNode)->SetAttribute(L"xfa:dataNode",
+                                                       L"dataGroup");
 }
 
 void XFA_DataExporter_RegenerateFormFile(
