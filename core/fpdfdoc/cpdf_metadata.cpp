@@ -8,53 +8,54 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/xml/cxml_content.h"
-#include "core/fxcrt/xml/cxml_element.h"
+#include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 
 namespace {
 
-void CheckForSharedFormInternal(CXML_Element* element,
+void CheckForSharedFormInternal(CFX_XMLElement* element,
                                 std::vector<UnsupportedFeature>* unsupported) {
-  size_t count = element->CountAttrs();
-  for (size_t i = 0; i < count; ++i) {
-    ByteString space;
-    ByteString name;
-    WideString value;
-    element->GetAttrByIndex(i, &space, &name, &value);
-    if (space != "xmlns" || name != "adhocwf" ||
-        value != L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
+  for (const auto& pair : element->GetAttributes()) {
+    if (pair.first != L"xmlns:adhocwf" ||
+        pair.second != L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
       continue;
     }
 
-    CXML_Element* pVersion = element->GetElement("adhocwf", "workflowType", 0);
-    if (!pVersion)
-      continue;
+    for (const auto* child = element->GetFirstChild(); child;
+         child = child->GetNextSibling()) {
+      if (child->GetType() != FX_XMLNODE_Element)
+        continue;
 
-    CXML_Content* pContent = ToContent(pVersion->GetChild(0));
-    if (!pContent)
-      continue;
+      const auto* child_elem = static_cast<const CFX_XMLElement*>(child);
+      if (child_elem->GetName() != L"adhocwf:workflowType")
+        continue;
 
-    switch (pContent->m_Content.GetInteger()) {
-      case 0:
-        unsupported->push_back(UnsupportedFeature::kDocumentSharedFormEmail);
-        break;
-      case 1:
-        unsupported->push_back(UnsupportedFeature::kDocumentSharedFormAcrobat);
-        break;
-      case 2:
-        unsupported->push_back(
-            UnsupportedFeature::kDocumentSharedFormFilesystem);
-        break;
+      switch (child_elem->GetTextData().GetInteger()) {
+        case 0:
+          unsupported->push_back(UnsupportedFeature::kDocumentSharedFormEmail);
+          break;
+        case 1:
+          unsupported->push_back(
+              UnsupportedFeature::kDocumentSharedFormAcrobat);
+          break;
+        case 2:
+          unsupported->push_back(
+              UnsupportedFeature::kDocumentSharedFormFilesystem);
+          break;
+      }
+      // We only care about the first one we find.
+      break;
     }
   }
 
-  count = element->CountChildren();
-  for (size_t i = 0; i < count; ++i) {
-    CXML_Element* child = ToElement(element->GetChild(i));
-    if (!child)
+  for (auto* child = element->GetFirstChild(); child;
+       child = child->GetNextSibling()) {
+    if (child->GetType() != FX_XMLNODE_Element)
       continue;
 
-    CheckForSharedFormInternal(child, unsupported);
+    CheckForSharedFormInternal(static_cast<CFX_XMLElement*>(child),
+                               unsupported);
   }
 }
 
@@ -70,12 +71,16 @@ std::vector<UnsupportedFeature> CPDF_Metadata::CheckForSharedForm() const {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(stream_.Get());
   pAcc->LoadAllDataFiltered();
 
-  std::unique_ptr<CXML_Element> xml_root =
-      CXML_Element::Parse(pAcc->GetData(), pAcc->GetSize());
-  if (!xml_root)
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"root");
+  auto proxy = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pAcc->GetData(),
+                                                           pAcc->GetSize());
+  proxy->SetCodePage(FX_CODEPAGE_UTF8);
+
+  CFX_XMLParser parser(root.get(), proxy);
+  if (!parser.Parse())
     return {};
 
   std::vector<UnsupportedFeature> unsupported;
-  CheckForSharedFormInternal(xml_root.get(), &unsupported);
+  CheckForSharedFormInternal(root.get(), &unsupported);
   return unsupported;
 }

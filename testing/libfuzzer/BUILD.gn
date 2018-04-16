@@ -34,6 +34,7 @@ group("libfuzzer") {
     ":pdf_jpx_fuzzer",
     ":pdf_psengine_fuzzer",
     ":pdf_streamparser_fuzzer",
+    ":pdf_xml_fuzzer",
   ]
   if (pdf_enable_xfa) {
     deps += [
@@ -47,7 +48,6 @@ group("libfuzzer") {
       ":pdf_fm2js_fuzzer",
       ":pdf_formcalc_fuzzer",
       ":pdf_lzw_fuzzer",
-      ":pdf_xml_fuzzer",
     ]
   }
 }
@@ -135,12 +135,6 @@ if (pdf_enable_xfa) {
       "pdf_lzw_fuzzer.cc",
     ]
   }
-
-  pdfium_fuzzer("pdf_xml_fuzzer") {
-    sources = [
-      "pdf_xml_fuzzer.cc",
-    ]
-  }
 }
 
 pdfium_fuzzer("pdf_cmap_fuzzer") {
@@ -209,5 +203,11 @@ pdfium_fuzzer("pdf_psengine_fuzzer") {
 pdfium_fuzzer("pdf_streamparser_fuzzer") {
   sources = [
     "pdf_streamparser_fuzzer.cc",
+  ]
+}
+
+pdfium_fuzzer("pdf_xml_fuzzer") {
+  sources = [
+    "pdf_xml_fuzzer.cc",
   ]
 }
