@@ -889,18 +889,6 @@ jumbo_static_library("fxcrt") {
     "core/fxcrt/xml/cfx_xmlparser.h",
     "core/fxcrt/xml/cfx_xmltext.cpp",
     "core/fxcrt/xml/cfx_xmltext.h",
-    "core/fxcrt/xml/cxml_attritem.cpp",
-    "core/fxcrt/xml/cxml_attritem.h",
-    "core/fxcrt/xml/cxml_content.cpp",
-    "core/fxcrt/xml/cxml_content.h",
-    "core/fxcrt/xml/cxml_databufacc.cpp",
-    "core/fxcrt/xml/cxml_databufacc.h",
-    "core/fxcrt/xml/cxml_element.cpp",
-    "core/fxcrt/xml/cxml_element.h",
-    "core/fxcrt/xml/cxml_object.cpp",
-    "core/fxcrt/xml/cxml_object.h",
-    "core/fxcrt/xml/cxml_parser.cpp",
-    "core/fxcrt/xml/cxml_parser.h",
   ]
   configs += [ ":pdfium_core_config" ]
   visibility += [ "third_party:*" ]
@@ -963,6 +951,18 @@ jumbo_static_library("fxcrt") {
       "core/fxcrt/fx_arabic.cpp",
       "core/fxcrt/fx_arabic.h",
       "core/fxcrt/locale_iface.h",
+      "core/fxcrt/xml/cxml_attritem.cpp",
+      "core/fxcrt/xml/cxml_attritem.h",
+      "core/fxcrt/xml/cxml_content.cpp",
+      "core/fxcrt/xml/cxml_content.h",
+      "core/fxcrt/xml/cxml_databufacc.cpp",
+      "core/fxcrt/xml/cxml_databufacc.h",
+      "core/fxcrt/xml/cxml_element.cpp",
+      "core/fxcrt/xml/cxml_element.h",
+      "core/fxcrt/xml/cxml_object.cpp",
+      "core/fxcrt/xml/cxml_object.h",
+      "core/fxcrt/xml/cxml_parser.cpp",
+      "core/fxcrt/xml/cxml_parser.h",
     ]
   }
 }
