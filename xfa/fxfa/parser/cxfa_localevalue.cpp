@@ -682,34 +682,32 @@ void CXFA_LocaleValue::GetNumericFormat(WideString& wsFormat,
                                         int32_t nDecLen) {
   ASSERT(wsFormat.IsEmpty());
   ASSERT(nIntLen >= -1 && nDecLen >= -1);
+
   int32_t nTotalLen = (nIntLen >= 0 ? nIntLen : 2) + 1 +
                       (nDecLen >= 0 ? nDecLen : 2) + (nDecLen == 0 ? 0 : 1);
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> lpBuf = wsFormat.GetBuffer(nTotalLen);
-    int32_t nPos = 0;
-    lpBuf[nPos++] = L's';
+  wchar_t* lpBuf = wsFormat.GetBuffer(nTotalLen);
+  int32_t nPos = 0;
+  lpBuf[nPos++] = L's';
 
-    if (nIntLen == -1) {
+  if (nIntLen == -1) {
+    lpBuf[nPos++] = L'z';
+    lpBuf[nPos++] = L'*';
+  } else {
+    while (nIntLen) {
       lpBuf[nPos++] = L'z';
-      lpBuf[nPos++] = L'*';
-    } else {
-      while (nIntLen) {
-        lpBuf[nPos++] = L'z';
-        nIntLen--;
-      }
+      nIntLen--;
     }
-    if (nDecLen != 0) {
-      lpBuf[nPos++] = L'.';
-    }
-    if (nDecLen == -1) {
+  }
+  if (nDecLen != 0) {
+    lpBuf[nPos++] = L'.';
+  }
+  if (nDecLen == -1) {
+    lpBuf[nPos++] = L'z';
+    lpBuf[nPos++] = L'*';
+  } else {
+    while (nDecLen) {
       lpBuf[nPos++] = L'z';
-      lpBuf[nPos++] = L'*';
-    } else {
-      while (nDecLen) {
-        lpBuf[nPos++] = L'z';
-        nDecLen--;
-      }
+      nDecLen--;
     }
   }
   wsFormat.ReleaseBuffer(nTotalLen);

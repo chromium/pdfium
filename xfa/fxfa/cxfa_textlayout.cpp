@@ -911,23 +911,21 @@ void CXFA_TextLayout::ProcessText(WideString& wsText) {
   if (iLen == 0)
     return;
 
+  wchar_t* psz = wsText.GetBuffer(iLen);
   int32_t iTrimLeft = 0;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> psz = wsText.GetBuffer(iLen);
-    wchar_t wPrev = 0;
-    for (int32_t i = 0; i < iLen; i++) {
-      wchar_t wch = psz[i];
-      if (wch < 0x20)
-        wch = 0x20;
-      if (wch == 0x20 && wPrev == 0x20)
-        continue;
+  wchar_t wch = 0, wPrev = 0;
+  for (int32_t i = 0; i < iLen; i++) {
+    wch = psz[i];
+    if (wch < 0x20)
+      wch = 0x20;
+    if (wch == 0x20 && wPrev == 0x20)
+      continue;
 
-      wPrev = wch;
-      psz[iTrimLeft++] = wch;
-    }
+    wPrev = wch;
+    psz[iTrimLeft++] = wch;
   }
-  wsText.ReleaseBuffer(iTrimLeft);
+  wsText.ReleaseBuffer(iLen);
+  wsText = wsText.Left(iTrimLeft);
 }
 
 void CXFA_TextLayout::EndBreak(CFX_BreakType dwStatus,
