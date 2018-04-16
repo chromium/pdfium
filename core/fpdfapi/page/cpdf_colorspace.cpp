@@ -96,6 +96,16 @@ void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
   }
 }
 
+bool GetWhitePoint(const CPDF_Dictionary* pDict, float* pPoints) {
+  const CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
+  if (!pParam || pParam->GetCount() != kBlackWhitePointCount)
+    return false;
+
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
+    pPoints[i] = pParam->GetNumberAt(i);
+  return pPoints[0] > 0.0f && pPoints[1] == 1.0f && pPoints[2] > 0.0f;
+}
+
 class CPDF_CalGray : public CPDF_ColorSpace {
  public:
   explicit CPDF_CalGray(CPDF_Document* pDoc);
@@ -607,9 +617,8 @@ uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
   if (!pDict)
     return 0;
 
-  CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
-  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
-    m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
+  if (!GetWhitePoint(pDict, m_WhitePoint))
+    return 0;
 
   GetBlackPoint(pDict, m_BlackPoint);
 
@@ -652,13 +661,12 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   if (!pDict)
     return 0;
 
-  CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
-  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
-    m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
+  if (!GetWhitePoint(pDict, m_WhitePoint))
+    return 0;
 
   GetBlackPoint(pDict, m_BlackPoint);
 
-  pParam = pDict->GetArrayFor("Gamma");
+  CPDF_Array* pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
     m_bGamma = true;
     for (size_t i = 0; i < FX_ArraySize(m_Gamma); ++i)
@@ -757,13 +765,12 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   if (!pDict)
     return 0;
 
-  CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
-  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
-    m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
+  if (!GetWhitePoint(pDict, m_WhitePoint))
+    return 0;
 
   GetBlackPoint(pDict, m_BlackPoint);
 
-  pParam = pDict->GetArrayFor("Range");
+  CPDF_Array* pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
                                                          -100.0f, 100.0f};
   static_assert(FX_ArraySize(kDefaultRanges) == FX_ArraySize(m_Ranges),
