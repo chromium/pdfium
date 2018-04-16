@@ -71,6 +71,8 @@ const uint8_t g_sRGBSamples2[] = {
     250, 250, 251, 251, 251, 252, 252, 253, 253, 254, 254, 255, 255,
 };
 
+constexpr size_t kBlackWhitePointCount = 3;
+
 class CPDF_CalGray : public CPDF_ColorSpace {
  public:
   explicit CPDF_CalGray(CPDF_Document* pDoc);
@@ -92,8 +94,8 @@ class CPDF_CalGray : public CPDF_ColorSpace {
   static constexpr float kDefaultGamma = 1.0f;
 
   float m_Gamma = kDefaultGamma;
-  float m_WhitePoint[3];
-  float m_BlackPoint[3];
+  float m_WhitePoint[kBlackWhitePointCount];
+  float m_BlackPoint[kBlackWhitePointCount];
 };
 
 class CPDF_CalRGB : public CPDF_ColorSpace {
@@ -118,8 +120,8 @@ class CPDF_CalRGB : public CPDF_ColorSpace {
   static constexpr size_t kGammaCount = 3;
   static constexpr size_t kMatrixCount = 9;
 
-  float m_WhitePoint[3];
-  float m_BlackPoint[3];
+  float m_WhitePoint[kBlackWhitePointCount];
+  float m_BlackPoint[kBlackWhitePointCount];
   float m_Gamma[kGammaCount];
   float m_Matrix[kMatrixCount];
   bool m_bGamma = false;
@@ -151,8 +153,8 @@ class CPDF_LabCS : public CPDF_ColorSpace {
  private:
   static constexpr size_t kRangesCount = 4;
 
-  float m_WhitePoint[3];
-  float m_BlackPoint[3];
+  float m_WhitePoint[kBlackWhitePointCount];
+  float m_BlackPoint[kBlackWhitePointCount];
   float m_Ranges[kRangesCount];
 };
 
@@ -583,11 +585,11 @@ uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
     return 0;
 
   CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
-  for (int i = 0; i < 3; i++)
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
   pParam = pDict->GetArrayFor("BlackPoint");
-  for (int i = 0; i < 3; i++)
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
   m_Gamma = pDict->GetNumberFor("Gamma");
@@ -630,11 +632,11 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
     return 0;
 
   CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
-  for (int i = 0; i < 3; i++)
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
   pParam = pDict->GetArrayFor("BlackPoint");
-  for (int i = 0; i < 3; i++)
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
   pParam = pDict->GetArrayFor("Gamma");
@@ -737,11 +739,11 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
-  for (int i = 0; i < 3; i++)
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
   pParam = pDict->GetArrayFor("BlackPoint");
-  for (int i = 0; i < 3; i++)
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
   pParam = pDict->GetArrayFor("Range");
