@@ -73,6 +73,29 @@ const uint8_t g_sRGBSamples2[] = {
 
 constexpr size_t kBlackWhitePointCount = 3;
 
+void GetDefaultBlackPoint(float* pPoints) {
+  static constexpr float kDefaultValue = 0.0f;
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
+    pPoints[i] = kDefaultValue;
+}
+
+void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
+  const CPDF_Array* pParam = pDict->GetArrayFor("BlackPoint");
+  if (!pParam || pParam->GetCount() != kBlackWhitePointCount) {
+    GetDefaultBlackPoint(pPoints);
+    return;
+  }
+
+  // Check to make sure all values are non-negative.
+  for (size_t i = 0; i < kBlackWhitePointCount; ++i) {
+    pPoints[i] = pParam->GetNumberAt(i);
+    if (pPoints[i] < 0) {
+      GetDefaultBlackPoint(pPoints);
+      return;
+    }
+  }
+}
+
 class CPDF_CalGray : public CPDF_ColorSpace {
  public:
   explicit CPDF_CalGray(CPDF_Document* pDoc);
@@ -588,9 +611,7 @@ uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
   for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayFor("BlackPoint");
-  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
-    m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
+  GetBlackPoint(pDict, m_BlackPoint);
 
   m_Gamma = pDict->GetNumberFor("Gamma");
   if (m_Gamma == 0)
@@ -635,9 +656,7 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayFor("BlackPoint");
-  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
-    m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
+  GetBlackPoint(pDict, m_BlackPoint);
 
   pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
@@ -742,9 +761,7 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
-  pParam = pDict->GetArrayFor("BlackPoint");
-  for (size_t i = 0; i < kBlackWhitePointCount; ++i)
-    m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
+  GetBlackPoint(pDict, m_BlackPoint);
 
   pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
