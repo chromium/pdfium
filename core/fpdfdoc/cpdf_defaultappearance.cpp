@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
-#include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxge/cfx_color.h"
 
 namespace {

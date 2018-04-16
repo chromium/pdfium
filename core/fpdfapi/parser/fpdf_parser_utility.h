@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 
+#include <ostream>
+
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 
@@ -42,6 +44,9 @@ constexpr int32_t kInvalidHeaderOffset = -1;
 int32_t GetHeaderOffset(const RetainPtr<IFX_SeekableReadStream>& pFile);
 
 int32_t GetDirectInteger(CPDF_Dictionary* pDict, const ByteString& key);
+
+ByteString PDF_NameDecode(const ByteStringView& orig);
+ByteString PDF_NameEncode(const ByteString& orig);
 
 std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj);
 
