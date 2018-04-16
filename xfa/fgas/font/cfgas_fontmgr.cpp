@@ -229,8 +229,12 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
   if (!pszFontFamily)
     return nullptr;
 
+  // Use a named object to store the returned value of EnumGdiFonts() instead
+  // of using a temporary object. This can prevent use-after-free issues since
+  // pDesc may point to one of std::deque object's elements.
+  std::deque<FX_FONTDESCRIPTOR> namedFonts = EnumGdiFonts(pszFontFamily, wUnicode);
   params.pwsFamily = nullptr;
-  pDesc = MatchDefaultFont(&params, EnumGdiFonts(pszFontFamily, wUnicode));
+  pDesc = MatchDefaultFont(&params, namedFonts);
   if (!pDesc)
     return nullptr;
 
