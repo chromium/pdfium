@@ -89,7 +89,9 @@ class CPDF_CalGray : public CPDF_ColorSpace {
                           bool bTransMask) const override;
 
  private:
-  float m_Gamma;
+  static constexpr float kDefaultGamma = 1.0f;
+
+  float m_Gamma = kDefaultGamma;
   float m_WhitePoint[3];
   float m_BlackPoint[3];
 };
@@ -112,12 +114,16 @@ class CPDF_CalRGB : public CPDF_ColorSpace {
                           int image_height,
                           bool bTransMask) const override;
 
-  bool m_bGamma;
-  bool m_bMatrix;
+ private:
+  static constexpr size_t kGammaCount = 3;
+  static constexpr size_t kMatrixCount = 9;
+
   float m_WhitePoint[3];
   float m_BlackPoint[3];
-  float m_Gamma[3];
-  float m_Matrix[9];
+  float m_Gamma[kGammaCount];
+  float m_Matrix[kMatrixCount];
+  bool m_bGamma = false;
+  bool m_bMatrix = false;
 };
 
 class CPDF_LabCS : public CPDF_ColorSpace {
@@ -142,9 +148,12 @@ class CPDF_LabCS : public CPDF_ColorSpace {
                           int image_height,
                           bool bTransMask) const override;
 
+ private:
+  static constexpr size_t kRangesCount = 4;
+
   float m_WhitePoint[3];
   float m_BlackPoint[3];
-  float m_Ranges[4];
+  float m_Ranges[kRangesCount];
 };
 
 class CPDF_ICCBasedCS : public CPDF_ColorSpace {
@@ -197,6 +206,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
 
   void EnableStdConversion(bool bEnabled) override;
 
+ private:
   CPDF_ColorSpace* m_pBaseCS = nullptr;
   UnownedPtr<CPDF_CountedColorSpace> m_pCountedBaseCS;
   uint32_t m_nBaseComponents = 0;
@@ -221,6 +231,7 @@ class CPDF_SeparationCS : public CPDF_ColorSpace {
   bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   void EnableStdConversion(bool bEnabled) override;
 
+ private:
   std::unique_ptr<CPDF_ColorSpace> m_pAltCS;
   std::unique_ptr<CPDF_Function> m_pFunc;
   enum { None, All, Colorant } m_Type;
@@ -242,6 +253,7 @@ class CPDF_DeviceNCS : public CPDF_ColorSpace {
   bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   void EnableStdConversion(bool bEnabled) override;
 
+ private:
   std::unique_ptr<CPDF_ColorSpace> m_pAltCS;
   std::unique_ptr<CPDF_Function> m_pFunc;
 };
@@ -580,7 +592,7 @@ uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
 
   m_Gamma = pDict->GetNumberFor("Gamma");
   if (m_Gamma == 0)
-    m_Gamma = 1.0f;
+    m_Gamma = kDefaultGamma;
   return 1;
 }
 
@@ -628,19 +640,15 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
     m_bGamma = true;
-    for (int i = 0; i < 3; i++)
+    for (size_t i = 0; i < FX_ArraySize(m_Gamma); ++i)
       m_Gamma[i] = pParam->GetNumberAt(i);
-  } else {
-    m_bGamma = false;
   }
 
   pParam = pDict->GetArrayFor("Matrix");
   if (pParam) {
     m_bMatrix = true;
-    for (int i = 0; i < 9; i++)
+    for (size_t i = 0; i < FX_ArraySize(m_Matrix); ++i)
       m_Matrix[i] = pParam->GetNumberAt(i);
-  } else {
-    m_bMatrix = false;
   }
   return 3;
 }
@@ -737,8 +745,11 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
     m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
 
   pParam = pDict->GetArrayFor("Range");
-  const float kDefaultRanges[4] = {-100.0f, 100.0f, -100.0f, 100.0f};
-  for (size_t i = 0; i < FX_ArraySize(kDefaultRanges); i++)
+  static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
+                                                         -100.0f, 100.0f};
+  static_assert(FX_ArraySize(kDefaultRanges) == FX_ArraySize(m_Ranges),
+                "Range size mismatch");
+  for (size_t i = 0; i < FX_ArraySize(kDefaultRanges); ++i)
     m_Ranges[i] = pParam ? pParam->GetNumberAt(i) : kDefaultRanges[i];
   return 3;
 }
