@@ -119,3 +119,11 @@ bool CPDF_PageObjectHolder::RemovePageObject(CPDF_PageObject* pPageObj) {
   m_PageObjectList.erase(it);
   return true;
 }
+
+bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
+  if (index >= m_PageObjectList.size())
+    return false;
+
+  m_PageObjectList.erase(m_PageObjectList.begin() + index);
+  return true;
+}

@@ -793,7 +793,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   }
   pFormObj->CalcBoundingBox();
   SetGraphicStates(pFormObj.get(), true, true, true);
-  m_pObjectHolder->GetPageObjectList()->push_back(std::move(pFormObj));
+  m_pObjectHolder->AppendPageObject(std::move(pFormObj));
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
@@ -836,7 +836,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImageObject(
   pImageObj->CalcBoundingBox();
 
   CPDF_ImageObject* pRet = pImageObj.get();
-  m_pObjectHolder->GetPageObjectList()->push_back(std::move(pImageObj));
+  m_pObjectHolder->AppendPageObject(std::move(pImageObj));
   return pRet;
 }
 
@@ -1095,7 +1095,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   pObj->m_Right = bbox.right;
   pObj->m_Top = bbox.top;
   pObj->m_Bottom = bbox.bottom;
-  m_pObjectHolder->GetPageObjectList()->push_back(std::move(pObj));
+  m_pObjectHolder->AppendPageObject(std::move(pObj));
 }
 
 void CPDF_StreamContentParser::Handle_SetCharSpace() {
@@ -1242,7 +1242,7 @@ void CPDF_StreamContentParser::AddTextObject(ByteString* pStrs,
       m_ClipTextList.push_back(
           std::unique_ptr<CPDF_TextObject>(pText->Clone()));
     }
-    m_pObjectHolder->GetPageObjectList()->push_back(std::move(pText));
+    m_pObjectHolder->AppendPageObject(std::move(pText));
   }
   if (pKerning && pKerning[nsegs - 1] != 0) {
     if (!pFont->IsVertWriting()) {
@@ -1463,7 +1463,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
     pPathObj->m_Matrix = matrix;
     SetGraphicStates(pPathObj.get(), true, false, true);
     pPathObj->CalcBoundingBox();
-    m_pObjectHolder->GetPageObjectList()->push_back(std::move(pPathObj));
+    m_pObjectHolder->AppendPageObject(std::move(pPathObj));
   }
   if (PathClipType) {
     if (!matrix.IsIdentity()) {

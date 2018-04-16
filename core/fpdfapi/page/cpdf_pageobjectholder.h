@@ -52,7 +52,6 @@ class CPDF_PageObjectHolder {
   void ContinueParse(PauseIndicatorIface* pPause);
   bool IsParsed() const { return m_ParseState == CONTENT_PARSED; }
 
-  CPDF_PageObjectList* GetPageObjectList() { return &m_PageObjectList; }
   const CPDF_PageObjectList* GetPageObjectList() const {
     return &m_PageObjectList;
   }
@@ -61,6 +60,7 @@ class CPDF_PageObjectHolder {
   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
   void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
   bool RemovePageObject(CPDF_PageObject* pPageObj);
+  bool ErasePageObjectAtIndex(size_t index);
 
   const CFX_Matrix& GetLastCTM() const { return m_LastCTM; }
 

@@ -381,7 +381,7 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // Check that the object is already in this annotation's object list.
   CPDF_Form* pForm = pAnnot->GetForm();
-  CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
+  const CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
   auto it =
       std::find_if(pObjList->begin(), pObjList->end(),
                    [pObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
@@ -432,7 +432,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   // Note that an object that came from a different annotation must not be
   // passed here, since an object cannot belong to more than one annotation.
   CPDF_Form* pForm = pAnnot->GetForm();
-  CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
+  const CPDF_PageObjectList* pObjList = pForm->GetPageObjectList();
   auto it =
       std::find_if(pObjList->begin(), pObjList->end(),
                    [pObj](const std::unique_ptr<CPDF_PageObject>& candidate) {
@@ -442,8 +442,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
     return false;
 
   // Append the object to the object list.
-  std::unique_ptr<CPDF_PageObject> pPageObjHolder(pObj);
-  pObjList->push_back(std::move(pPageObjHolder));
+  pForm->AppendPageObject(pdfium::WrapUnique(pObj));
 
   // Set the content stream data in the annotation's AP stream.
   UpdateContentStream(pForm, pStream);
@@ -481,7 +480,7 @@ FPDFAnnot_GetObject(FPDF_ANNOTATION annot, int index) {
     pAnnot->SetForm(pStream);
   }
 
-  return pAnnot->GetForm()->GetPageObjectList()->GetPageObjectByIndex(index);
+  return pAnnot->GetForm()->GetPageObjectByIndex(index);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -501,11 +500,9 @@ FPDFAnnot_RemoveObject(FPDF_ANNOTATION annot, int index) {
   if (!pStream)
     return false;
 
-  CPDF_PageObjectList* pObjList = pAnnot->GetForm()->GetPageObjectList();
-  if (static_cast<size_t>(index) >= pObjList->size())
+  if (!pAnnot->GetForm()->ErasePageObjectAtIndex(index))
     return false;
 
-  pObjList->erase(pObjList->begin() + index);
   UpdateContentStream(pAnnot->GetForm(), pStream);
   return true;
 }
