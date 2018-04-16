@@ -469,22 +469,20 @@ ByteString PDF_EncodeText(const wchar_t* pString, int len) {
   if (len == -1)
     len = wcslen(pString);
 
-  int i;
   ByteString result;
-  {
-    pdfium::span<char> dest_buf = result.GetBuffer(len);
-    for (i = 0; i < len; ++i) {
-      int code;
-      for (code = 0; code < 256; ++code) {
-        if (PDFDocEncoding[code] == pString[i])
-          break;
-      }
-
-      if (code == 256)
+  char* dest_buf1 = result.GetBuffer(len);
+  int i;
+  for (i = 0; i < len; ++i) {
+    int code;
+    for (code = 0; code < 256; ++code) {
+      if (PDFDocEncoding[code] == pString[i])
         break;
-
-      dest_buf[i] = code;
     }
+
+    if (code == 256)
+      break;
+
+    dest_buf1[i] = code;
   }
   result.ReleaseBuffer(i);
   if (i == len)
@@ -495,18 +493,15 @@ ByteString PDF_EncodeText(const wchar_t* pString, int len) {
     return result;
   }
 
-  size_t dest_index = 0;
-  size_t encLen = len * 2 + 2;
-  {
-    pdfium::span<char> cspan = result.GetBuffer(encLen);
-    auto dest_buf = pdfium::make_span(reinterpret_cast<uint8_t*>(cspan.data()),
-                                      cspan.size());
-    dest_buf[dest_index++] = 0xfe;
-    dest_buf[dest_index++] = 0xff;
-    for (int j = 0; j < len; ++j) {
-      dest_buf[dest_index++] = pString[j] >> 8;
-      dest_buf[dest_index++] = static_cast<uint8_t>(pString[j]);
-    }
+  int encLen = len * 2 + 2;
+
+  uint8_t* dest_buf2 = reinterpret_cast<uint8_t*>(result.GetBuffer(encLen));
+  dest_buf2[0] = 0xfe;
+  dest_buf2[1] = 0xff;
+  dest_buf2 += 2;
+  for (int j = 0; j < len; ++j) {
+    *dest_buf2++ = pString[j] >> 8;
+    *dest_buf2++ = static_cast<uint8_t>(pString[j]);
   }
   result.ReleaseBuffer(encLen);
   return result;

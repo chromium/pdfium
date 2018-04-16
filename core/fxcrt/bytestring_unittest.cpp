@@ -843,23 +843,22 @@ TEST(ByteString, Reserve) {
 }
 
 TEST(ByteString, GetBuffer) {
-  ByteString str1;
   {
-    pdfium::span<char> buffer = str1.GetBuffer(12);
+    ByteString str;
+    char* buffer = str.GetBuffer(12);
     // NOLINTNEXTLINE(runtime/printf)
-    strcpy(buffer.data(), "clams");
+    strcpy(buffer, "clams");
+    str.ReleaseBuffer(str.GetStringLength());
+    EXPECT_EQ("clams", str);
   }
-  str1.ReleaseBuffer(str1.GetStringLength());
-  EXPECT_EQ("clams", str1);
-
-  ByteString str2("cl");
   {
-    pdfium::span<char> buffer = str2.GetBuffer(12);
+    ByteString str("cl");
+    char* buffer = str.GetBuffer(12);
     // NOLINTNEXTLINE(runtime/printf)
-    strcpy(&buffer[2], "ams");
+    strcpy(buffer + 2, "ams");
+    str.ReleaseBuffer(str.GetStringLength());
+    EXPECT_EQ("clams", str);
   }
-  str2.ReleaseBuffer(str2.GetStringLength());
-  EXPECT_EQ("clams", str2);
 }
 
 TEST(ByteString, ReleaseBuffer) {

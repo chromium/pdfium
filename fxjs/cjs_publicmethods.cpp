@@ -10,7 +10,6 @@
 #include <cmath>
 #include <cwctype>
 #include <iomanip>
-#include <iterator>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -1095,12 +1094,10 @@ CJS_Return CJS_PublicMethods::AFPercent_Format(
 
   if (iDec2 < 0) {
     ByteString zeros;
-    {
-      pdfium::span<char> zeros_ptr = zeros.GetBuffer(abs(iDec2));
-      std::fill(std::begin(zeros_ptr), std::end(zeros_ptr), '0');
-    }
-    zeros.ReleaseBuffer(abs(iDec2));
+    char* zeros_ptr = zeros.GetBuffer(abs(iDec2));
+    memset(zeros_ptr, '0', abs(iDec2));
     strValue = zeros + strValue;
+
     iDec2 = 0;
   }
   int iMax = strValue.GetLength();

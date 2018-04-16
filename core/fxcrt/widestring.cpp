@@ -667,21 +667,18 @@ ByteString WideString::UTF8Encode() const {
 }
 
 ByteString WideString::UTF16LE_Encode() const {
-  if (!m_pData)
+  if (!m_pData) {
     return ByteString("\0\0", 2);
-
-  ByteString result;
-  int len = m_pData->m_nDataLength;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<char> buffer = result.GetBuffer(len * 2 + 2);
-    for (int i = 0; i < len; i++) {
-      buffer[i * 2] = m_pData->m_String[i] & 0xff;
-      buffer[i * 2 + 1] = m_pData->m_String[i] >> 8;
-    }
-    buffer[len * 2] = 0;
-    buffer[len * 2 + 1] = 0;
   }
+  int len = m_pData->m_nDataLength;
+  ByteString result;
+  char* buffer = result.GetBuffer(len * 2 + 2);
+  for (int i = 0; i < len; i++) {
+    buffer[i * 2] = m_pData->m_String[i] & 0xff;
+    buffer[i * 2 + 1] = m_pData->m_String[i] >> 8;
+  }
+  buffer[len * 2] = 0;
+  buffer[len * 2 + 1] = 0;
   result.ReleaseBuffer(len * 2 + 2);
   return result;
 }
