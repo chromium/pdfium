@@ -2937,6 +2937,7 @@ test("pdfium_unittests") {
       "xfa/fxfa/fm2js/cxfa_fmsimpleexpression_unittest.cpp",
       "xfa/fxfa/parser/cxfa_node_unittest.cpp",
       "xfa/fxfa/parser/cxfa_nodeiteratortemplate_unittest.cpp",
+      "xfa/fxfa/parser/cxfa_xmllocale_unittest.cpp",
       "xfa/fxfa/parser/xfa_utils_unittest.cpp",
     ]
   }
