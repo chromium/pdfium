@@ -129,7 +129,6 @@ class CPDF_FormField {
 
   uint32_t GetFieldFlags() const;
   ByteString GetDefaultStyle() const;
-  WideString GetRichTextString() const;
 
   WideString GetValue() const;
   WideString GetDefaultValue() const;

@@ -14,8 +14,6 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/xml/cxml_content.h"
-#include "core/fxcrt/xml/cxml_element.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -40,43 +38,7 @@ ByteString CPWL_Edit::GetClassName() const {
 }
 
 void CPWL_Edit::SetText(const WideString& csText) {
-  WideString swText = csText;
-  if (!HasFlag(PES_RICH)) {
-    m_pEdit->SetText(swText);
-    return;
-  }
-
-  ByteString sValue = ByteString::FromUnicode(swText);
-  std::unique_ptr<CXML_Element> pXML(
-      CXML_Element::Parse(sValue.c_str(), sValue.GetLength()));
-  if (!pXML) {
-    m_pEdit->SetText(swText);
-    return;
-  }
-  swText.clear();
-
-  bool bFirst = true;
-  size_t nCount = pXML->CountChildren();
-  for (size_t i = 0; i < nCount; ++i) {
-    CXML_Element* pSubElement = ToElement(pXML->GetChild(i));
-    if (!pSubElement || !pSubElement->GetTagName().EqualNoCase("p"))
-      continue;
-
-    WideString swSection;
-    size_t nSubChild = pSubElement->CountChildren();
-    for (size_t j = 0; j < nSubChild; ++j) {
-      CXML_Content* pSubContent = ToContent(pSubElement->GetChild(j));
-      if (pSubContent)
-        swSection += pSubContent->m_Content;
-    }
-    if (bFirst)
-      bFirst = false;
-    else
-      swText += FWL_VKEY_Return;
-    swText += swSection;
-  }
-
-  m_pEdit->SetText(swText);
+  m_pEdit->SetText(csText);
 }
 
 bool CPWL_Edit::RePosChildWnd() {

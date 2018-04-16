@@ -289,11 +289,6 @@ ByteString CPDF_FormField::GetDefaultStyle() const {
   return pObj ? pObj->GetString() : "";
 }
 
-WideString CPDF_FormField::GetRichTextString() const {
-  CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict.Get(), "RV");
-  return pObj ? pObj->GetUnicodeText() : L"";
-}
-
 WideString CPDF_FormField::GetValue(bool bDefault) const {
   if (GetType() == CheckBox || GetType() == RadioButton)
     return GetCheckValue(bDefault);

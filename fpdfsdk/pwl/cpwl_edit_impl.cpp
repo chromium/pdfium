@@ -1808,16 +1808,16 @@ CPVT_WordPlace CPWL_EditImpl::DoInsertText(const CPVT_WordPlace& place,
     for (int32_t i = 0, sz = sText.GetLength(); i < sz; i++) {
       uint16_t word = sText[i];
       switch (word) {
-        case 0x0D:
+        case '\r':
           wp = m_pVT->InsertSection(wp);
-          if (i + 1 < sz && sText[i + 1] == 0x0A)
+          if (i + 1 < sz && sText[i + 1] == '\n')
             i++;
           break;
-        case 0x0A:
+        case '\n':
           wp = m_pVT->InsertSection(wp);
           break;
-        case 0x09:
-          word = 0x20;
+        case '\t':
+          word = ' ';
           FX_FALLTHROUGH;
         default:
           wp =
