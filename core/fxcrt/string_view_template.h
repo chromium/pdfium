@@ -81,7 +81,10 @@ class StringViewTemplate {
     return *this;
   }
 
-  StringViewTemplate& operator=(const StringViewTemplate& src) = default;
+  StringViewTemplate& operator=(const StringViewTemplate& src) {
+    m_Span = src.m_Span;
+    return *this;
+  }
 
   const_iterator begin() const {
     return reinterpret_cast<const_iterator>(m_Span.begin());
