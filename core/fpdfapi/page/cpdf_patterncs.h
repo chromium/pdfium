@@ -18,7 +18,8 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
   explicit CPDF_PatternCS(CPDF_Document* pDoc);
   ~CPDF_PatternCS() override;
 
-  // Called for the stock pattern, since it is initialized via Load().
+  // Called for the stock pattern, since it is not initialized via
+  // CPDF_ColorSpace::Load().
   void InitializeStockPattern();
 
   // CPDF_ColorSpace:
