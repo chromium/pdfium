@@ -7,109 +7,89 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-namespace {
-
-const char* xml_data =
+static const char* xml_data =
     "<locale name=\"en_US\" desc=\"English(America)\">"
-    " <calendarSymbols name=\"gregorian\">"
-    "  <monthNames>"
-    "   <month>January</month>"
-    "   <month>February</month>"
-    "   <month>March</month>"
-    "   <month>April</month>"
-    "   <month>May</month>"
-    "   <month>June</month>"
-    "   <month>July</month>"
-    "   <month>August</month>"
-    "   <month>September</month>"
-    "   <month>October</month>"
-    "   <month>November</month>"
-    "   <month>December</month>"
-    "  </monthNames>"
-    "  <monthNames abbr=\"1\">"
-    "   <month>Jan</month>"
-    "   <month>Feb</month>"
-    "   <month>Mar</month>"
-    "   <month>Apr</month>"
-    "   <month>May</month>"
-    "   <month>Jun</month>"
-    "   <month>Jul</month>"
-    "   <month>Aug</month>"
-    "   <month>Sep</month>"
-    "   <month>Oct</month>"
-    "   <month>Nov</month>"
-    "   <month>Dec</month>"
-    "  </monthNames>"
-    "  <dayNames>"
-    "   <day>Sunday</day>"
-    "   <day>Monday</day>"
-    "   <day>Tuesday</day>"
-    "   <day>Wednesday</day>"
-    "   <day>Thursday</day>"
-    "   <day>Friday</day>"
-    "   <day>Saturday</day>"
-    "  </dayNames>"
-    "  <dayNames abbr=\"1\">"
-    "   <day>Sun</day>"
-    "   <day>Mon</day>"
-    "   <day>Tue</day>"
-    "   <day>Wed</day>"
-    "   <day>Thu</day>"
-    "   <day>Fri</day>"
-    "   <day>Sat</day>"
-    "  </dayNames>"
-    "  <meridiemNames>"
-    "   <meridiem>AM</meridiem>"
-    "   <meridiem>PM</meridiem>"
-    "  </meridiemNames>"
-    "  <eraNames>"
-    "   <era>BC</era>"
-    "   <era>AD</era>"
-    "  </eraNames>"
-    " </calendarSymbols>"
-    " <datePatterns>"
-    "  <datePattern name=\"full\">EEEE, MMMM D, YYYY</datePattern>"
-    "  <datePattern name=\"long\">MMMM D, YYYY</datePattern>"
-    "  <datePattern name=\"med\">MMM D, YYYY</datePattern>"
-    "  <datePattern name=\"short\">M/D/YY</datePattern>"
-    " </datePatterns>"
-    " <timePatterns>"
-    "  <timePattern name=\"full\">h:MM:SS A Z</timePattern>"
-    "  <timePattern name=\"long\">h:MM:SS A Z</timePattern>"
-    "  <timePattern name=\"med\">h:MM:SS A</timePattern>"
-    "  <timePattern name=\"short\">h:MM A</timePattern>"
-    " </timePatterns>"
-    " <dateTimeSymbols>GyMdkHmsSEDFwWahKzZ</dateTimeSymbols>"
-    " <numberPatterns>"
-    "  <numberPattern name=\"numeric\">z,zz9.zzz</numberPattern>"
-    "  <numberPattern name=\"currency\">$z,zz9.99|($z,zz9.99)</numberPattern>"
-    "  <numberPattern name=\"percent\">z,zz9%</numberPattern>"
-    " </numberPatterns>"
-    " <numberSymbols>"
-    "  <numberSymbol name=\"decimal\">.</numberSymbol>"
-    "  <numberSymbol name=\"grouping\">,</numberSymbol>"
-    "  <numberSymbol name=\"percent\">%</numberSymbol>"
-    "  <numberSymbol name=\"minus\">-</numberSymbol>"
-    "  <numberSymbol name=\"zero\">0</numberSymbol>"
-    " </numberSymbols>"
-    " <currencySymbols>"
-    "  <currencySymbol name=\"symbol\">$</currencySymbol>"
-    "  <currencySymbol name=\"isoname\">USD</currencySymbol>"
-    "  <currencySymbol name=\"decimal\">.</currencySymbol>"
-    " </currencySymbols>"
+    "<calendarSymbols name=\"gregorian\"><monthNames><month>January</month>"
+    "<month>February</month>"
+    "<month>March</month>"
+    "<month>April</month>"
+    "<month>May</month>"
+    "<month>June</month>"
+    "<month>July</month>"
+    "<month>August</month>"
+    "<month>September</month>"
+    "<month>October</month>"
+    "<month>November</month>"
+    "<month>December</month>"
+    "</monthNames>"
+    "<monthNames abbr=\"1\"><month>Jan</month>"
+    "<month>Feb</month>"
+    "<month>Mar</month>"
+    "<month>Apr</month>"
+    "<month>May</month>"
+    "<month>Jun</month>"
+    "<month>Jul</month>"
+    "<month>Aug</month>"
+    "<month>Sep</month>"
+    "<month>Oct</month>"
+    "<month>Nov</month>"
+    "<month>Dec</month>"
+    "</monthNames>"
+    "<dayNames><day>Sunday</day>"
+    "<day>Monday</day>"
+    "<day>Tuesday</day>"
+    "<day>Wednesday</day>"
+    "<day>Thursday</day>"
+    "<day>Friday</day>"
+    "<day>Saturday</day>"
+    "</dayNames>"
+    "<dayNames abbr=\"1\"><day>Sun</day>"
+    "<day>Mon</day>"
+    "<day>Tue</day>"
+    "<day>Wed</day>"
+    "<day>Thu</day>"
+    "<day>Fri</day>"
+    "<day>Sat</day>"
+    "</dayNames>"
+    "<meridiemNames><meridiem>AM</meridiem>"
+    "<meridiem>PM</meridiem>"
+    "</meridiemNames>"
+    "<eraNames><era>BC</era>"
+    "<era>AD</era>"
+    "</eraNames>"
+    "</calendarSymbols>"
+    "<datePatterns><datePattern name=\"full\">EEEE, MMMM D, YYYY</datePattern>"
+    "<datePattern name=\"long\">MMMM D, YYYY</datePattern>"
+    "<datePattern name=\"med\">MMM D, YYYY</datePattern>"
+    "<datePattern name=\"short\">M/D/YY</datePattern>"
+    "</datePatterns>"
+    "<timePatterns><timePattern name=\"full\">h:MM:SS A Z</timePattern>"
+    "<timePattern name=\"long\">h:MM:SS A Z</timePattern>"
+    "<timePattern name=\"med\">h:MM:SS A</timePattern>"
+    "<timePattern name=\"short\">h:MM A</timePattern>"
+    "</timePatterns>"
+    "<dateTimeSymbols>GyMdkHmsSEDFwWahKzZ</dateTimeSymbols>"
+    "<numberPatterns><numberPattern name=\"numeric\">z,zz9.zzz</numberPattern>"
+    "<numberPattern name=\"currency\">$z,zz9.99|($z,zz9.99)</numberPattern>"
+    "<numberPattern name=\"percent\">z,zz9%</numberPattern>"
+    "</numberPatterns>"
+    "<numberSymbols><numberSymbol name=\"decimal\">.</numberSymbol>"
+    "<numberSymbol name=\"grouping\">,</numberSymbol>"
+    "<numberSymbol name=\"percent\">%</numberSymbol>"
+    "<numberSymbol name=\"minus\">-</numberSymbol>"
+    "<numberSymbol name=\"zero\">0</numberSymbol>"
+    "</numberSymbols>"
+    "<currencySymbols><currencySymbol name=\"symbol\">$</currencySymbol>"
+    "<currencySymbol name=\"isoname\">USD</currencySymbol>"
+    "<currencySymbol name=\"decimal\">.</currencySymbol>"
+    "</currencySymbols>"
     "</locale>";
 
-std::unique_ptr<CXFA_XMLLocale> LoadLocale() {
+TEST(CXFA_XMLLocaleTest, Create) {
   auto span =
       pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
                         strlen(xml_data));
-  return CXFA_XMLLocale::Create(span);
-}
-
-}  // namespace
-
-TEST(CXFA_XMLLocaleTest, Create) {
-  auto locale = LoadLocale();
+  auto locale = CXFA_XMLLocale::Create(span);
   EXPECT_TRUE(locale != nullptr);
 }
 
@@ -119,14 +99,20 @@ TEST(CXFA_XMLLocaleTest, CreateBadXML) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetName) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"en_US", locale->GetName());
 }
 
 TEST(CXFA_XMLLocaleTest, GetNumbericSymbol) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L".", locale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal));
@@ -139,14 +125,20 @@ TEST(CXFA_XMLLocaleTest, GetNumbericSymbol) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetDateTimeSymbols) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"GyMdkHmsSEDFwWahKzZ", locale->GetDateTimeSymbols());
 }
 
 TEST(CXFA_XMLLocaleTest, GetMonthName) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"", locale->GetMonthName(24, false));
@@ -156,7 +148,10 @@ TEST(CXFA_XMLLocaleTest, GetMonthName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetDayName) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"", locale->GetDayName(24, false));
@@ -166,7 +161,10 @@ TEST(CXFA_XMLLocaleTest, GetDayName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetMeridiemName) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"AM", locale->GetMeridiemName(true));
@@ -174,7 +172,10 @@ TEST(CXFA_XMLLocaleTest, GetMeridiemName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetEraName) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"AD", locale->GetEraName(true));
@@ -182,7 +183,10 @@ TEST(CXFA_XMLLocaleTest, GetEraName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetDatePattern) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"M/D/YY",
@@ -198,7 +202,10 @@ TEST(CXFA_XMLLocaleTest, GetDatePattern) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetTimePattern) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"h:MM A",
@@ -214,7 +221,10 @@ TEST(CXFA_XMLLocaleTest, GetTimePattern) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetNumPattern) {
-  auto locale = LoadLocale();
+  auto span =
+      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
+                        strlen(xml_data));
+  auto locale = CXFA_XMLLocale::Create(span);
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"z,zzz,zzz,zzz,zzz,zzz%",

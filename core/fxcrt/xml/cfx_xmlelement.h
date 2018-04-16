@@ -23,6 +23,10 @@ class CFX_XMLElement : public CFX_XMLAttributeNode {
   std::unique_ptr<CFX_XMLNode> Clone() override;
   void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
 
+  CFX_XMLElement* GetFirstChildNamed(const WideStringView& name) const;
+  CFX_XMLElement* GetNthChildNamed(const WideStringView& name,
+                                   size_t idx) const;
+
   WideString GetLocalTagName() const;
   WideString GetNamespacePrefix() const;
   WideString GetNamespaceURI() const;

@@ -13,13 +13,14 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
-class CXML_Element;
+class CFX_XMLElement;
 
 class CXFA_XMLLocale : public LocaleIface {
  public:
   static std::unique_ptr<CXFA_XMLLocale> Create(pdfium::span<uint8_t> data);
 
-  explicit CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData);
+  explicit CXFA_XMLLocale(std::unique_ptr<CFX_XMLElement> root,
+                          CFX_XMLElement* locale);
   ~CXFA_XMLLocale() override;
 
   // LocaleIface
@@ -38,14 +39,15 @@ class CXFA_XMLLocale : public LocaleIface {
   WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
 
  private:
-  WideString GetPattern(CXML_Element* pElement,
-                        const ByteStringView& bsTag,
+  WideString GetPattern(CFX_XMLElement* pElement,
+                        const WideStringView& bsTag,
                         const WideStringView& wsName) const;
-  WideString GetCalendarSymbol(const ByteStringView& symbol,
-                               int index,
+  WideString GetCalendarSymbol(const WideStringView& symbol,
+                               size_t index,
                                bool bAbbr) const;
 
-  std::unique_ptr<CXML_Element> m_pLocaleData;
+  std::unique_ptr<CFX_XMLElement> xml_root_;
+  UnownedPtr<CFX_XMLElement> locale_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_XMLLOCALE_H_

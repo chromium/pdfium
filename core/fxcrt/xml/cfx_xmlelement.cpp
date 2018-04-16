@@ -119,3 +119,25 @@ void CFX_XMLElement::Save(
   }
   pXMLStream->WriteString(ws.AsStringView());
 }
+
+CFX_XMLElement* CFX_XMLElement::GetFirstChildNamed(
+    const WideStringView& name) const {
+  return GetNthChildNamed(name, 0);
+}
+
+CFX_XMLElement* CFX_XMLElement::GetNthChildNamed(const WideStringView& name,
+                                                 size_t idx) const {
+  for (auto* child = GetFirstChild(); child; child = child->GetNextSibling()) {
+    if (child->GetType() != FX_XMLNODE_Element)
+      continue;
+
+    CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child);
+    if (elem->GetName() != name)
+      continue;
+    if (idx == 0)
+      return elem;
+
+    --idx;
+  }
+  return nullptr;
+}
