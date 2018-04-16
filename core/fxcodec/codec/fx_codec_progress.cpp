@@ -305,7 +305,7 @@ bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
     }
     m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
                 FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
-    m_pSrcBuf = FX_Realloc(uint8_t, m_pSrcBuf, m_SrcSize);
+    m_pSrcBuf = FX_TryRealloc(uint8_t, m_pSrcBuf, m_SrcSize);
     if (!m_pSrcBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
@@ -576,7 +576,7 @@ bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
     }
     m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
                 FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
-    m_pSrcBuf = FX_Realloc(uint8_t, m_pSrcBuf, m_SrcSize);
+    m_pSrcBuf = FX_TryRealloc(uint8_t, m_pSrcBuf, m_SrcSize);
     if (!m_pSrcBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
@@ -863,7 +863,7 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
     }
     m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
                 FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
-    m_pSrcBuf = FX_Realloc(uint8_t, m_pSrcBuf, m_SrcSize);
+    m_pSrcBuf = FX_TryRealloc(uint8_t, m_pSrcBuf, m_SrcSize);
     if (!m_pSrcBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;

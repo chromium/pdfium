@@ -105,12 +105,11 @@ bool CPDF_Function::Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
   uint32_t old_outputs = m_nOutputs;
   if (!v_Init(pObj, pVisited))
     return false;
+
   if (m_pRanges && m_nOutputs > old_outputs) {
     m_pRanges = FX_Realloc(float, m_pRanges, m_nOutputs * 2);
-    if (m_pRanges) {
-      memset(m_pRanges + (old_outputs * 2), 0,
-             sizeof(float) * (m_nOutputs - old_outputs) * 2);
-    }
+    memset(m_pRanges + (old_outputs * 2), 0,
+           sizeof(float) * (m_nOutputs - old_outputs) * 2);
   }
   return true;
 }
