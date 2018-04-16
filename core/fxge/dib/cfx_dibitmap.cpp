@@ -197,48 +197,85 @@ bool CFX_DIBitmap::TransferBitmap(int dest_left,
 
   FXDIB_Format dest_format = GetFormat();
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
-  if (dest_format == src_format) {
-    if (GetBPP() == 1) {
-      for (int row = 0; row < height; row++) {
-        uint8_t* dest_scan = m_pBuffer.Get() + (dest_top + row) * m_Pitch;
-        const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
-        for (int col = 0; col < width; col++) {
-          if (src_scan[(src_left + col) / 8] &
-              (1 << (7 - (src_left + col) % 8))) {
-            dest_scan[(dest_left + col) / 8] |= 1
-                                                << (7 - (dest_left + col) % 8);
-          } else {
-            dest_scan[(dest_left + col) / 8] &=
-                ~(1 << (7 - (dest_left + col) % 8));
-          }
-        }
-      }
-    } else {
-      int Bpp = GetBPP() / 8;
-      for (int row = 0; row < height; row++) {
-        uint8_t* dest_scan =
-            m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * Bpp;
-        const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
-        memcpy(dest_scan, src_scan, width * Bpp);
-      }
-    }
-  } else {
-    if (m_pPalette)
-      return false;
+  if (dest_format != src_format) {
+    return TransferWithUnequalFormats(dest_format, dest_left, dest_top, width,
+                                      height, pSrcBitmap, src_left, src_top);
+  }
 
-    if (m_bpp == 8)
-      dest_format = FXDIB_8bppMask;
+  if (GetBPP() != 1) {
+    TransferWithMultipleBPP(dest_left, dest_top, width, height, pSrcBitmap,
+                            src_left, src_top);
+    return true;
+  }
 
-    uint8_t* dest_buf =
-        m_pBuffer.Get() + dest_top * m_Pitch + dest_left * GetBPP() / 8;
-    std::unique_ptr<uint32_t, FxFreeDeleter> d_plt;
-    if (!ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height,
-                       pSrcBitmap, src_left, src_top, &d_plt)) {
-      return false;
-    }
+  TransferEqualFormatsOneBPP(dest_left, dest_top, width, height, pSrcBitmap,
+                             src_left, src_top);
+  return true;
+}
+
+bool CFX_DIBitmap::TransferWithUnequalFormats(
+    FXDIB_Format dest_format,
+    int dest_left,
+    int dest_top,
+    int width,
+    int height,
+    const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+    int src_left,
+    int src_top) {
+  if (m_pPalette)
+    return false;
+
+  if (m_bpp == 8)
+    dest_format = FXDIB_8bppMask;
+
+  uint8_t* dest_buf =
+      m_pBuffer.Get() + dest_top * m_Pitch + dest_left * GetBPP() / 8;
+  std::unique_ptr<uint32_t, FxFreeDeleter> d_plt;
+  if (!ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height, pSrcBitmap,
+                     src_left, src_top, &d_plt)) {
+    return false;
   }
   return true;
+}
+
+void CFX_DIBitmap::TransferWithMultipleBPP(
+    int dest_left,
+    int dest_top,
+    int width,
+    int height,
+    const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+    int src_left,
+    int src_top) {
+  int Bpp = GetBPP() / 8;
+  for (int row = 0; row < height; ++row) {
+    uint8_t* dest_scan =
+        m_pBuffer.Get() + (dest_top + row) * m_Pitch + dest_left * Bpp;
+    const uint8_t* src_scan =
+        pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
+    memcpy(dest_scan, src_scan, width * Bpp);
+  }
+}
+
+void CFX_DIBitmap::TransferEqualFormatsOneBPP(
+    int dest_left,
+    int dest_top,
+    int width,
+    int height,
+    const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+    int src_left,
+    int src_top) {
+  for (int row = 0; row < height; ++row) {
+    uint8_t* dest_scan = m_pBuffer.Get() + (dest_top + row) * m_Pitch;
+    const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
+    for (int col = 0; col < width; ++col) {
+      int src_idx = src_left + col;
+      int dest_idx = dest_left + col;
+      if (src_scan[(src_idx) / 8] & (1 << (7 - (src_idx) % 8)))
+        dest_scan[(dest_idx) / 8] |= 1 << (7 - (dest_idx) % 8);
+      else
+        dest_scan[(dest_idx) / 8] &= ~(1 << (7 - (dest_idx) % 8));
+    }
+  }
 }
 
 bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,

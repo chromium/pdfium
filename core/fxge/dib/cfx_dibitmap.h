@@ -124,6 +124,28 @@ class CFX_DIBitmap : public CFX_DIBSource {
  private:
   void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
   void ConvertCMYKColorScale(uint32_t forecolor, uint32_t backcolor);
+  bool TransferWithUnequalFormats(FXDIB_Format dest_format,
+                                  int dest_left,
+                                  int dest_top,
+                                  int width,
+                                  int height,
+                                  const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                  int src_left,
+                                  int src_top);
+  void TransferWithMultipleBPP(int dest_left,
+                               int dest_top,
+                               int width,
+                               int height,
+                               const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                               int src_left,
+                               int src_top);
+  void TransferEqualFormatsOneBPP(int dest_left,
+                                  int dest_top,
+                                  int width,
+                                  int height,
+                                  const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                  int src_left,
+                                  int src_top);
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_
