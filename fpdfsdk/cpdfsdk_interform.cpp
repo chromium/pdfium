@@ -472,7 +472,6 @@ bool CPDFSDK_InterForm::SubmitFields(const WideString& csDestination,
                                      bool bIncludeOrExclude,
                                      bool bUrlEncoded) {
   ByteString textBuf = ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude);
-
   size_t nBufSize = textBuf.GetLength();
   if (nBufSize == 0)
     return false;
@@ -486,7 +485,7 @@ bool CPDFSDK_InterForm::SubmitFields(const WideString& csDestination,
     return false;
   }
 
-  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination.c_str());
+  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination);
 
   if (pBuffer != pLocalBuffer)
     FX_Free(pBuffer);
@@ -564,15 +563,15 @@ bool CPDFSDK_InterForm::SubmitForm(const WideString& sDestination,
 
   uint8_t* pLocalBuffer = FX_Alloc(uint8_t, fdfBuffer.GetLength());
   memcpy(pLocalBuffer, fdfBuffer.c_str(), fdfBuffer.GetLength());
-  uint8_t* pBuffer = pLocalBuffer;
 
+  uint8_t* pBuffer = pLocalBuffer;
   size_t nBufSize = fdfBuffer.GetLength();
   if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize)) {
     FX_Free(pLocalBuffer);
     return false;
   }
 
-  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
+  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination);
 
   if (pBuffer != pLocalBuffer)
     FX_Free(pBuffer);

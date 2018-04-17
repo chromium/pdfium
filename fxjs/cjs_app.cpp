@@ -263,9 +263,8 @@ CJS_Return CJS_App::alert(CJS_Runtime* pRuntime,
 
   pRuntime->BeginBlock();
   pFormFillEnv->KillFocusAnnot(0);
-
   v8::Local<v8::Value> ret = pRuntime->NewNumber(
-      pFormFillEnv->JS_appAlert(swMsg.c_str(), swTitle.c_str(), iType, iIcon));
+      pFormFillEnv->JS_appAlert(swMsg, swTitle, iType, iIcon));
   pRuntime->EndBlock();
 
   return CJS_Return(ret);
@@ -466,9 +465,8 @@ CJS_Return CJS_App::mailMsg(CJS_Runtime* pRuntime,
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  pRuntime->GetFormFillEnv()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
-                                             cSubject.c_str(), cCc.c_str(),
-                                             cBcc.c_str(), cMsg.c_str());
+  pRuntime->GetFormFillEnv()->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject,
+                                             cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Return(true);
 }
@@ -558,8 +556,8 @@ CJS_Return CJS_App::response(CJS_Runtime* pRuntime,
   const int MAX_INPUT_BYTES = 2048;
   std::vector<uint8_t> pBuff(MAX_INPUT_BYTES + 2);
   int nLengthBytes = pRuntime->GetFormFillEnv()->JS_appResponse(
-      swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
-      bPassword, pBuff.data(), MAX_INPUT_BYTES);
+      swQuestion, swTitle, swDefault, swLabel, bPassword, pBuff.data(),
+      MAX_INPUT_BYTES);
 
   if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamTooLongError));

@@ -338,9 +338,8 @@ CJS_Return CJS_Document::mailForm(
 
   pRuntime->BeginBlock();
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
-  pFormFillEnv->JS_docmailForm(pMutableBuf, nBufSize, bUI, cTo.c_str(),
-                               cSubject.c_str(), cCc.c_str(), cBcc.c_str(),
-                               cMsg.c_str());
+  pFormFillEnv->JS_docmailForm(pMutableBuf, nBufSize, bUI, cTo, cSubject, cCc,
+                               cBcc, cMsg);
   pRuntime->EndBlock();
   FX_Free(pMutableBuf);
   return CJS_Return(true);
@@ -639,8 +638,7 @@ CJS_Return CJS_Document::mailDoc(
 
   pRuntime->BeginBlock();
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
-  pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(), cSubject.c_str(),
-                               cCc.c_str(), cBcc.c_str(), cMsg.c_str());
+  pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject, cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Return(true);
 }

@@ -258,8 +258,9 @@ int32_t CPDFXFA_Context::MsgBox(const WideString& wsMessage,
       iButtonType |= 3;
       break;
   }
-  int32_t iRet = m_pFormFillEnv->JS_appAlert(wsMessage.c_str(), wsTitle.c_str(),
-                                             iButtonType, iconType);
+  int32_t iRet =
+      m_pFormFillEnv->JS_appAlert(wsMessage, wsTitle, iButtonType, iconType);
+
   switch (iRet) {
     case 1:
       return XFA_IDOK;
@@ -282,9 +283,9 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
 
   int nLength = 2048;
   std::vector<uint8_t> pBuff(nLength);
-  nLength = m_pFormFillEnv->JS_appResponse(wsQuestion.c_str(), wsTitle.c_str(),
-                                           wsDefaultAnswer.c_str(), nullptr,
-                                           bMark, pBuff.data(), nLength);
+  nLength = m_pFormFillEnv->JS_appResponse(wsQuestion, wsTitle, wsDefaultAnswer,
+                                           WideString(), bMark, pBuff.data(),
+                                           nLength);
   if (nLength <= 0)
     return WideString();
 
@@ -297,8 +298,7 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
 
 RetainPtr<IFX_SeekableReadStream> CPDFXFA_Context::DownloadURL(
     const WideString& wsURL) {
-  return m_pFormFillEnv ? m_pFormFillEnv->DownloadFromURL(wsURL.c_str())
-                        : nullptr;
+  return m_pFormFillEnv ? m_pFormFillEnv->DownloadFromURL(wsURL) : nullptr;
 }
 
 bool CPDFXFA_Context::PostRequestURL(const WideString& wsURL,
@@ -310,9 +310,8 @@ bool CPDFXFA_Context::PostRequestURL(const WideString& wsURL,
   if (!m_pFormFillEnv)
     return false;
 
-  wsResponse = m_pFormFillEnv->PostRequestURL(
-      wsURL.c_str(), wsData.c_str(), wsContentType.c_str(), wsEncode.c_str(),
-      wsHeader.c_str());
+  wsResponse = m_pFormFillEnv->PostRequestURL(wsURL, wsData, wsContentType,
+                                              wsEncode, wsHeader);
   return true;
 }
 
@@ -320,8 +319,7 @@ bool CPDFXFA_Context::PutRequestURL(const WideString& wsURL,
                                     const WideString& wsData,
                                     const WideString& wsEncode) {
   return m_pFormFillEnv &&
-         m_pFormFillEnv->PutRequestURL(wsURL.c_str(), wsData.c_str(),
-                                       wsEncode.c_str());
+         m_pFormFillEnv->PutRequestURL(wsURL, wsData, wsEncode);
 }
 
 IFWL_AdapterTimerMgr* CPDFXFA_Context::GetTimerMgr() {

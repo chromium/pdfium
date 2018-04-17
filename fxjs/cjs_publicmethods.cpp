@@ -81,7 +81,7 @@ T StrTrim(const T& str) {
 void AlertIfPossible(CJS_EventContext* pContext, const wchar_t* swMsg) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pContext->GetFormFillEnv();
   if (pFormFillEnv)
-    pFormFillEnv->JS_appAlert(swMsg, nullptr, 0, 3);
+    pFormFillEnv->JS_appAlert(swMsg, WideString(), 0, 3);
 }
 
 #if _FX_OS_ != _FX_OS_ANDROID_

@@ -160,15 +160,15 @@ class CPDFSDK_FormFillEnvironment
   FPDF_FILEHANDLER* OpenFile(int fileType,
                              FPDF_WIDESTRING wsURL,
                              const char* mode);
-  RetainPtr<IFX_SeekableReadStream> DownloadFromURL(const wchar_t* url);
-  WideString PostRequestURL(const wchar_t* wsURL,
-                            const wchar_t* wsData,
-                            const wchar_t* wsContentType,
-                            const wchar_t* wsEncode,
-                            const wchar_t* wsHeader);
-  FPDF_BOOL PutRequestURL(const wchar_t* wsURL,
-                          const wchar_t* wsData,
-                          const wchar_t* wsEncode);
+  RetainPtr<IFX_SeekableReadStream> DownloadFromURL(const WideString& url);
+  WideString PostRequestURL(const WideString& wsURL,
+                            const WideString& wsData,
+                            const WideString& wsContentType,
+                            const WideString& wsEncode,
+                            const WideString& wsHeader);
+  FPDF_BOOL PutRequestURL(const WideString& wsURL,
+                          const WideString& wsData,
+                          const WideString& wsEncode);
   WideString GetLanguage();
 
   void PageEvent(int iPageCount, uint32_t dwEventType) const;
@@ -176,29 +176,29 @@ class CPDFSDK_FormFillEnvironment
   CPDF_Document* GetPDFDocument() const { return m_pUnderlyingDoc.Get(); }
 #endif  // PDF_ENABLE_XFA
 
-  int JS_appAlert(const wchar_t* Msg,
-                  const wchar_t* Title,
+  int JS_appAlert(const WideString& Msg,
+                  const WideString& Title,
                   uint32_t Type,
                   uint32_t Icon);
-  int JS_appResponse(const wchar_t* Question,
-                     const wchar_t* Title,
-                     const wchar_t* Default,
-                     const wchar_t* cLabel,
+  int JS_appResponse(const WideString& Question,
+                     const WideString& Title,
+                     const WideString& Default,
+                     const WideString& cLabel,
                      FPDF_BOOL bPassword,
                      void* response,
                      int length);
   void JS_appBeep(int nType);
   WideString JS_fieldBrowse();
   WideString JS_docGetFilePath();
-  void JS_docSubmitForm(void* formData, int length, const wchar_t* URL);
+  void JS_docSubmitForm(void* formData, int length, const WideString& URL);
   void JS_docmailForm(void* mailData,
                       int length,
                       FPDF_BOOL bUI,
-                      const wchar_t* To,
-                      const wchar_t* Subject,
-                      const wchar_t* CC,
-                      const wchar_t* BCC,
-                      const wchar_t* Msg);
+                      const WideString& To,
+                      const WideString& Subject,
+                      const WideString& CC,
+                      const WideString& BCC,
+                      const WideString& Msg);
   void JS_docprint(FPDF_BOOL bUI,
                    int nStart,
                    int nEnd,
