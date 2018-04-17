@@ -35,12 +35,12 @@ class CFX_XMLNode {
   virtual void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream);
 
   CFX_XMLNode* GetRoot();
-  CFX_XMLNode* GetParent() const { return parent_; }
-  CFX_XMLNode* GetFirstChild() const { return first_child_; }
-  CFX_XMLNode* GetNextSibling() const { return next_sibling_; }
+  CFX_XMLNode* GetParent() const { return parent_.Get(); }
+  CFX_XMLNode* GetFirstChild() const { return first_child_.get(); }
+  CFX_XMLNode* GetNextSibling() const { return next_sibling_.get(); }
 
-  void AppendChild(CFX_XMLNode* pNode);
-  void InsertChildNode(CFX_XMLNode* pNode, int32_t index);
+  void AppendChild(std::unique_ptr<CFX_XMLNode> pNode);
+  void InsertChildNode(std::unique_ptr<CFX_XMLNode> pNode, int32_t index);
   void RemoveChildNode(CFX_XMLNode* pNode);
   void DeleteChildren();
 
@@ -48,11 +48,13 @@ class CFX_XMLNode {
   WideString EncodeEntities(const WideString& value);
 
  private:
-  CFX_XMLNode* parent_ = nullptr;
-  CFX_XMLNode* next_sibling_ = nullptr;
-  CFX_XMLNode* prev_sibling_ = nullptr;
-  CFX_XMLNode* first_child_ = nullptr;
-  CFX_XMLNode* last_child_ = nullptr;
+  // A node owns it's first child and it owns it's next sibling. The rest
+  // are unowned pointers.
+  UnownedPtr<CFX_XMLNode> parent_;
+  UnownedPtr<CFX_XMLNode> last_child_;
+  UnownedPtr<CFX_XMLNode> prev_sibling_;
+  std::unique_ptr<CFX_XMLNode> first_child_;
+  std::unique_ptr<CFX_XMLNode> next_sibling_;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLNODE_H_

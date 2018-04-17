@@ -349,7 +349,7 @@ std::unique_ptr<CFX_XMLNode> CXFA_DocumentParser::LoadXML(
   ASSERT(pStream);
 
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
-  root->AppendChild(new CFX_XMLInstruction(L"xml"));
+  root->AppendChild(pdfium::MakeUnique<CFX_XMLInstruction>(L"xml"));
 
   CFX_XMLParser parser(root.get(), pStream);
   return parser.Parse() ? std::move(root) : nullptr;
@@ -674,7 +674,10 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_Data(
       static_cast<CFX_XMLElement*>(pXMLDocumentNode)
           ->RemoveAttribute(L"xmlns:xfa");
     }
-    pDataElement->AppendChild(pXMLDocumentNode);
+    // The node was either removed from the parent above, or already has no
+    // parent so we can take ownership.
+    pDataElement->AppendChild(
+        pdfium::WrapUnique<CFX_XMLNode>(pXMLDocumentNode));
     pDataXMLNode.Reset(std::move(pDataElement));
   }
   if (!pDataXMLNode)

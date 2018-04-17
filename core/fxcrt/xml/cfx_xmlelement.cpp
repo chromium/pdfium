@@ -90,7 +90,7 @@ WideString CFX_XMLElement::GetTextData() const {
 void CFX_XMLElement::SetTextData(const WideString& wsText) {
   if (wsText.GetLength() < 1)
     return;
-  AppendChild(new CFX_XMLText(wsText));
+  AppendChild(pdfium::MakeUnique<CFX_XMLText>(wsText));
 }
 
 void CFX_XMLElement::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {

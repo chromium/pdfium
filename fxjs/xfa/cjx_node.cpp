@@ -251,7 +251,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
     while (pXMLChild) {
       CFX_XMLNode* pXMLSibling = pXMLChild->GetNextSibling();
       pXMLNode->RemoveChildNode(pXMLChild);
-      pFakeXMLRoot->AppendChild(pXMLChild);
+      pFakeXMLRoot->AppendChild(pdfium::WrapUnique<CFX_XMLNode>(pXMLChild));
       pXMLChild = pXMLSibling;
     }
   } else {
@@ -259,7 +259,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
     if (pXMLParent)
       pXMLParent->RemoveChildNode(pXMLNode);
 
-    pFakeXMLRoot->AppendChild(pXMLNode);
+    pFakeXMLRoot->AppendChild(pdfium::WrapUnique<CFX_XMLNode>(pXMLNode));
   }
 
   pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot.get());

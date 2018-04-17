@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 #include <set>
+#include <utility>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_fallthrough.h"
@@ -1633,7 +1634,7 @@ void CXFA_Document::DoDataMerge() {
                                         false);
 
     CFX_XMLElement* ref = pDatasetsXMLNode.get();
-    m_pRootNode->GetXMLMappingNode()->AppendChild(pDatasetsXMLNode.release());
+    m_pRootNode->GetXMLMappingNode()->AppendChild(std::move(pDatasetsXMLNode));
     m_pRootNode->InsertChild(pDatasetsRoot, nullptr);
     pDatasetsRoot->SetXMLMappingNode(ref);
   }

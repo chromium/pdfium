@@ -1158,14 +1158,8 @@ void CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
     return;
 
   ASSERT(!pNode->xml_node_->GetParent());
-
-  xml_node_->InsertChildNode(pNode->xml_node_.Get(), index);
-  if (pNode->xml_node_.IsOwned()) {
-    // We remove ownership of the XML node from pNode and transfer the ownership
-    // into the XML tree, the pNode still has an unowned pointer to the XML
-    // node.
-    pNode->xml_node_.Release().release();
-  }
+  ASSERT(pNode->xml_node_.IsOwned());
+  xml_node_->InsertChildNode(pNode->xml_node_.Release(), index);
 }
 
 void CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {

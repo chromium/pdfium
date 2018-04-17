@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cwctype>
 #include <iterator>
+#include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -177,20 +178,23 @@ bool CFX_XMLParser::Parse() {
       case FX_XmlSyntaxResult::TargetName:
         m_ws1 = GetTargetName();
         if (m_ws1 == L"originalXFAVersion" || m_ws1 == L"acrobat") {
-          m_pChild = new CFX_XMLInstruction(m_ws1);
-          m_pParent->AppendChild(m_pChild);
+          auto child = pdfium::MakeUnique<CFX_XMLInstruction>(m_ws1);
+          m_pChild = child.get();
+          m_pParent->AppendChild(std::move(child));
         } else {
           m_pChild = nullptr;
         }
         m_ws1.clear();
         break;
-      case FX_XmlSyntaxResult::TagName:
+      case FX_XmlSyntaxResult::TagName: {
         m_ws1 = GetTagName();
-        m_pChild = new CFX_XMLElement(m_ws1);
-        m_pParent->AppendChild(m_pChild);
+        auto child = pdfium::MakeUnique<CFX_XMLElement>(m_ws1);
+        m_pChild = child.get();
+        m_pParent->AppendChild(std::move(child));
         m_NodeStack.push(m_pChild);
         m_pParent = m_pChild;
         break;
+      }
       case FX_XmlSyntaxResult::AttriName:
         m_ws1 = GetAttributeName();
         break;
@@ -201,18 +205,22 @@ bool CFX_XMLParser::Parse() {
         }
         m_ws1.clear();
         break;
-      case FX_XmlSyntaxResult::Text:
+      case FX_XmlSyntaxResult::Text: {
         m_ws1 = GetTextData();
-        m_pChild = new CFX_XMLText(m_ws1);
-        m_pParent->AppendChild(m_pChild);
+        auto child = pdfium::MakeUnique<CFX_XMLText>(m_ws1);
+        m_pChild = child.get();
+        m_pParent->AppendChild(std::move(child));
         m_pChild = m_pParent;
         break;
-      case FX_XmlSyntaxResult::CData:
+      }
+      case FX_XmlSyntaxResult::CData: {
         m_ws1 = GetTextData();
-        m_pChild = new CFX_XMLCharData(m_ws1);
-        m_pParent->AppendChild(m_pChild);
+        auto child = pdfium::MakeUnique<CFX_XMLCharData>(m_ws1);
+        m_pChild = child.get();
+        m_pParent->AppendChild(std::move(child));
         m_pChild = m_pParent;
         break;
+      }
       case FX_XmlSyntaxResult::TargetData:
         if (m_pChild) {
           if (m_pChild->GetType() != FX_XMLNODE_Instruction)
