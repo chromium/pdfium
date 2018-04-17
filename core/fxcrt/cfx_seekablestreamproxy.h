@@ -36,7 +36,6 @@ class CFX_SeekableStreamProxy : public Retainable {
 
  private:
   explicit CFX_SeekableStreamProxy(const RetainPtr<IFX_SeekableStream>& stream);
-  CFX_SeekableStreamProxy(uint8_t* data, size_t size);
   ~CFX_SeekableStreamProxy() override;
 
   size_t ReadData(uint8_t* pBuffer, size_t iBufferSize);

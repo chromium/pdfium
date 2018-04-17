@@ -167,11 +167,7 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
   Seek(From::Begin, static_cast<FX_FILESIZE>(m_wBOMLength));
 }
 
-CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(uint8_t* data, size_t size)
-    : CFX_SeekableStreamProxy(
-          pdfium::MakeRetain<CFX_MemoryStream>(data, size, false)) {}
-
-CFX_SeekableStreamProxy::~CFX_SeekableStreamProxy() {}
+CFX_SeekableStreamProxy::~CFX_SeekableStreamProxy() = default;
 
 void CFX_SeekableStreamProxy::Seek(From eSeek, FX_FILESIZE iOffset) {
   switch (eSeek) {
