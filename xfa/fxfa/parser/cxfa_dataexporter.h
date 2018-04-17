@@ -13,7 +13,6 @@
 class CXFA_Document;
 class CXFA_Node;
 class IFX_SeekableStream;
-class CFX_SeekableStreamProxy;
 
 class CXFA_DataExporter {
  public:
@@ -21,10 +20,6 @@ class CXFA_DataExporter {
   ~CXFA_DataExporter();
 
   bool Export(const RetainPtr<IFX_SeekableStream>& pWrite, CXFA_Node* pNode);
-
- private:
-  bool Export(const RetainPtr<CFX_SeekableStreamProxy>& pStream,
-              CXFA_Node* pNode);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_
