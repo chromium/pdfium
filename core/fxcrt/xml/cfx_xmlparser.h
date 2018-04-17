@@ -19,7 +19,7 @@
 
 class CFX_XMLElement;
 class CFX_XMLNode;
-class CFX_SeekableStreamProxy;
+class IFX_SeekableStream;
 
 enum class FX_XmlSyntaxResult {
   None,
@@ -44,7 +44,7 @@ class CFX_XMLParser {
   static bool IsXMLNameChar(wchar_t ch, bool bFirstChar);
 
   CFX_XMLParser(CFX_XMLNode* pParent,
-                const RetainPtr<CFX_SeekableStreamProxy>& pStream);
+                const RetainPtr<IFX_SeekableStream>& pStream);
   virtual ~CFX_XMLParser();
 
   bool Parse();

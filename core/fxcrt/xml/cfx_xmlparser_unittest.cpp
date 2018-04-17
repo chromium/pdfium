@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -18,7 +18,7 @@ namespace {
 class CFX_XMLTestParser : public CFX_XMLParser {
  public:
   CFX_XMLTestParser(CFX_XMLNode* pParent,
-                    const RetainPtr<CFX_SeekableStreamProxy>& pStream)
+                    const RetainPtr<IFX_SeekableStream>& pStream)
       : CFX_XMLParser(pParent, pStream) {}
 
   ~CFX_XMLTestParser() override = default;
@@ -38,10 +38,10 @@ class CFX_XMLTestParser : public CFX_XMLParser {
   WideString GetTextData() const { return CFX_XMLParser::GetTextData(); }
 };
 
-RetainPtr<CFX_SeekableStreamProxy> MakeProxy(const char* input) {
-  auto stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
+RetainPtr<CFX_MemoryStream> MakeProxy(const char* input) {
+  auto stream = pdfium::MakeRetain<CFX_MemoryStream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
+      false);
   return stream;
 }
 

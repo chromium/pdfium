@@ -10,6 +10,7 @@
 #include <cwctype>
 #include <iterator>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
@@ -81,10 +82,10 @@ bool CFX_XMLParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
 }
 
 CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
-                             const RetainPtr<CFX_SeekableStreamProxy>& pStream)
+                             const RetainPtr<IFX_SeekableStream>& pStream)
     : m_pParent(pParent),
       m_pChild(nullptr),
-      m_pStream(pStream),
+      m_pStream(pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream)),
       m_iXMLPlaneSize(1024),
       m_iCurrentPos(0),
       m_iCurrentNodeNum(-1),
@@ -105,6 +106,12 @@ CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
       m_iEntityStart(-1) {
   ASSERT(m_pParent);
   ASSERT(pStream);
+
+  uint16_t wCodePage = m_pStream->GetCodePage();
+  if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
+      wCodePage != FX_CODEPAGE_UTF8) {
+    m_pStream->SetCodePage(FX_CODEPAGE_UTF8);
+  }
 
   m_NodeStack.push(m_pParent);
 

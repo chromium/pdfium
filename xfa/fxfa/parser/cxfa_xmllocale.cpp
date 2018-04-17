@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
@@ -30,11 +31,9 @@ constexpr wchar_t kCurrencySymbol[] = L"currencySymbol";
 std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
     pdfium::span<uint8_t> data) {
   auto root = pdfium::MakeUnique<CFX_XMLElement>(L"root");
-  auto proxy =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(data.data(), data.size());
-  proxy->SetCodePage(FX_CODEPAGE_UTF8);
-
-  CFX_XMLParser parser(root.get(), proxy);
+  auto stream =
+      pdfium::MakeRetain<CFX_MemoryStream>(data.data(), data.size(), false);
+  CFX_XMLParser parser(root.get(), stream);
   if (!parser.Parse())
     return nullptr;
 
