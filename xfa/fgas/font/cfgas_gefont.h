@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"

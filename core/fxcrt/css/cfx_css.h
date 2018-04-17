@@ -7,7 +7,6 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSS_H_
 #define CORE_FXCRT_CSS_CFX_CSS_H_
 
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxge/fx_dib.h"
 
 enum CFX_CSSVALUETYPE {

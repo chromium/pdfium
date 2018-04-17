@@ -14,7 +14,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/retain_ptr.h"

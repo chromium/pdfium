@@ -13,6 +13,8 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
+namespace {
+
 class CFX_XMLTestParser : public CFX_XMLParser {
  public:
   CFX_XMLTestParser(CFX_XMLNode* pParent,
@@ -36,6 +38,15 @@ class CFX_XMLTestParser : public CFX_XMLParser {
   WideString GetTextData() const { return CFX_XMLParser::GetTextData(); }
 };
 
+RetainPtr<CFX_SeekableStreamProxy> MakeProxy(const char* input) {
+  auto stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
+  stream->SetCodePage(FX_CODEPAGE_UTF8);
+  return stream;
+}
+
+}  // namespace
+
 TEST(CFX_XMLParserTest, CData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
@@ -51,11 +62,7 @@ TEST(CFX_XMLParserTest, CData) {
       L"      app.alert(\"Tclams\");\n"
       L"  ";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -100,11 +107,7 @@ TEST(CFX_XMLParserTest, CDataWithInnerScript) {
       L"    </script>\n"
       L"  ";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -138,11 +141,7 @@ TEST(CFX_XMLParserTest, ArrowBangArrow) {
       "  <!>\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -174,11 +173,7 @@ TEST(CFX_XMLParserTest, ArrowBangBracketArrow) {
       "  <![>\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -205,11 +200,7 @@ TEST(CFX_XMLParserTest, IncompleteCData) {
       "  <![CDATA>\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -236,11 +227,7 @@ TEST(CFX_XMLParserTest, UnClosedCData) {
       "  <![CDATA[\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -267,11 +254,7 @@ TEST(CFX_XMLParserTest, EmptyCData) {
       "  <![CDATA[]]>\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -305,11 +288,7 @@ TEST(CFX_XMLParserTest, Comment) {
       "  <!-- A Comment -->\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -340,11 +319,7 @@ TEST(CFX_XMLParserTest, IncorrectCommentStart) {
       "  <!- A Comment -->\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -375,11 +350,7 @@ TEST(CFX_XMLParserTest, CommentEmpty) {
       "  <!---->\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -410,11 +381,7 @@ TEST(CFX_XMLParserTest, CommentThreeDash) {
       "  <!--->\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -439,11 +406,7 @@ TEST(CFX_XMLParserTest, CommentTwoDash) {
       "  <!-->\n"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -472,11 +435,7 @@ TEST(CFX_XMLParserTest, Entities) {
       "&#x0000000000000000000;"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -505,11 +464,7 @@ TEST(CFX_XMLParserTest, EntityOverflowHex) {
       "&#xafffffffffffffffffffffffffffffffff;"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -538,11 +493,7 @@ TEST(CFX_XMLParserTest, EntityOverflowDecimal) {
       "&#29149102052342342134521341234512351234213452315;"
       "</script>";
 
-  RetainPtr<CFX_SeekableStreamProxy> stream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
-  stream->SetCodePage(FX_CODEPAGE_UTF8);
-
+  auto stream = MakeProxy(input);
   auto root = pdfium::MakeUnique<CFX_XMLNode>();
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());

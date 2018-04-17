@@ -4,7 +4,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 #include "core/fxcrt/fx_string.h"
