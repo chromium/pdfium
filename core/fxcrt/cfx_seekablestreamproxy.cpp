@@ -134,19 +134,12 @@ void SwapByteOrder(wchar_t* pStr, size_t iLength) {
 #define BOM_UTF16_LE 0x0000FEFF
 
 CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
-    const RetainPtr<IFX_SeekableStream>& stream,
-    bool isWriteStream)
-    : m_IsWriteStream(isWriteStream),
-      m_wCodePage(FX_CODEPAGE_DefANSI),
+    const RetainPtr<IFX_SeekableStream>& stream)
+    : m_wCodePage(FX_CODEPAGE_DefANSI),
       m_wBOMLength(0),
       m_iPosition(0),
       m_pStream(stream) {
   ASSERT(m_pStream);
-
-  if (isWriteStream) {
-    m_iPosition = m_pStream->GetSize();
-    return;
-  }
 
   Seek(From::Begin, 0);
 
@@ -176,8 +169,7 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
 
 CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(uint8_t* data, size_t size)
     : CFX_SeekableStreamProxy(
-          pdfium::MakeRetain<CFX_MemoryStream>(data, size, false),
-          false) {}
+          pdfium::MakeRetain<CFX_MemoryStream>(data, size, false)) {}
 
 CFX_SeekableStreamProxy::~CFX_SeekableStreamProxy() {}
 
@@ -206,9 +198,6 @@ void CFX_SeekableStreamProxy::SetCodePage(uint16_t wCodePage) {
 size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
   ASSERT(pBuffer && iBufferSize > 0);
 
-  if (m_IsWriteStream)
-    return 0;
-
   iBufferSize =
       std::min(iBufferSize, static_cast<size_t>(GetLength() - m_iPosition));
   if (iBufferSize <= 0)
@@ -227,9 +216,6 @@ size_t CFX_SeekableStreamProxy::ReadString(wchar_t* pStr,
                                            size_t iMaxLength,
                                            bool* bEOS) {
   if (!pStr || iMaxLength == 0)
-    return 0;
-
-  if (m_IsWriteStream)
     return 0;
 
   if (m_wCodePage == FX_CODEPAGE_UTF16LE ||
@@ -266,21 +252,4 @@ size_t CFX_SeekableStreamProxy::ReadString(wchar_t* pStr,
 
   *bEOS = IsEOF();
   return iMaxLength;
-}
-
-void CFX_SeekableStreamProxy::WriteString(const WideStringView& str) {
-  if (!m_IsWriteStream || str.GetLength() == 0 ||
-      m_wCodePage != FX_CODEPAGE_UTF8) {
-    return;
-  }
-  if (!m_pStream->WriteBlock(str.unterminated_c_str(), m_iPosition,
-                             str.GetLength() * sizeof(wchar_t))) {
-    return;
-  }
-
-  pdfium::base::CheckedNumeric<FX_FILESIZE> new_pos = m_iPosition;
-  new_pos += str.GetLength() * sizeof(wchar_t);
-  m_iPosition = new_pos.ValueOrDefault(std::numeric_limits<FX_FILESIZE>::max());
-  m_iPosition =
-      pdfium::clamp(m_iPosition, static_cast<FX_FILESIZE>(0), GetLength());
 }

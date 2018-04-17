@@ -329,8 +329,7 @@ CXFA_DocumentParser::~CXFA_DocumentParser() {}
 
 bool CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
                                 XFA_PacketType ePacketID) {
-  auto pStreamProxy =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
+  auto pStreamProxy = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream);
   uint16_t wCodePage = pStreamProxy->GetCodePage();
   if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
       wCodePage != FX_CODEPAGE_UTF8) {

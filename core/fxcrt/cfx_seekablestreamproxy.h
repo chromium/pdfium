@@ -31,20 +31,16 @@ class CFX_SeekableStreamProxy : public Retainable {
   void Seek(From eSeek, FX_FILESIZE iOffset);
   size_t ReadString(wchar_t* pStr, size_t iMaxLength, bool* bEOS);
 
-  void WriteString(const WideStringView& str);
-
   uint16_t GetCodePage() const { return m_wCodePage; }
   void SetCodePage(uint16_t wCodePage);
 
  private:
-  CFX_SeekableStreamProxy(const RetainPtr<IFX_SeekableStream>& stream,
-                          bool isWriteSteam);
+  explicit CFX_SeekableStreamProxy(const RetainPtr<IFX_SeekableStream>& stream);
   CFX_SeekableStreamProxy(uint8_t* data, size_t size);
   ~CFX_SeekableStreamProxy() override;
 
   size_t ReadData(uint8_t* pBuffer, size_t iBufferSize);
 
-  bool m_IsWriteStream;
   uint16_t m_wCodePage;
   size_t m_wBOMLength;
   FX_FILESIZE m_iPosition;
