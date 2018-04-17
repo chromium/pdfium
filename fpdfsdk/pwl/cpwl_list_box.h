@@ -56,6 +56,7 @@ class CPWL_ListBox : public CPWL_Wnd {
                     const CFX_PointF& point,
                     uint32_t nFlag) override;
   void KillFocus() override;
+  WideString GetText() override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
   void ScrollWindowVertically(float pos) override;
@@ -63,8 +64,6 @@ class CPWL_ListBox : public CPWL_Wnd {
   CFX_FloatRect GetFocusRect() const override;
   void SetFontSize(float fFontSize) override;
   float GetFontSize() const override;
-
-  virtual WideString GetText() const;
 
   bool OnNotifySelectionChanged(bool bKeyDown, uint32_t nFlag);
 

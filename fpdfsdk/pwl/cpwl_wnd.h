@@ -181,6 +181,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual void SetFontSize(float fFontSize);
   virtual float GetFontSize() const;
 
+  virtual WideString GetText();
   virtual WideString GetSelectedText();
   virtual void ReplaceSelection(const WideString& text);
   virtual CFX_FloatRect GetFocusRect() const;

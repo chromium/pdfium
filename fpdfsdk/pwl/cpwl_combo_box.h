@@ -60,12 +60,12 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CFX_FloatRect GetFocusRect() const override;
   void SetFocus() override;
   void KillFocus() override;
+  WideString GetText() override;
   WideString GetSelectedText() override;
   void ReplaceSelection(const WideString& text) override;
 
   void SetFillerNotify(IPWL_Filler_Notify* pNotify);
 
-  WideString GetText() const;
   void SetText(const WideString& text);
   void AddString(const WideString& str);
   int32_t GetSelect() const;

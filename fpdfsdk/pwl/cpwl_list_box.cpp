@@ -294,7 +294,7 @@ void CPWL_ListBox::AddString(const WideString& str) {
   m_pList->AddString(str);
 }
 
-WideString CPWL_ListBox::GetText() const {
+WideString CPWL_ListBox::GetText() {
   return m_pList->GetText();
 }
 
