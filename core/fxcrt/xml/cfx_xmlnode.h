@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 
 enum FX_XMLNODETYPE {
@@ -32,7 +32,7 @@ class CFX_XMLNode {
 
   virtual FX_XMLNODETYPE GetType() const;
   virtual std::unique_ptr<CFX_XMLNode> Clone();
-  virtual void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream);
+  virtual void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream);
 
   CFX_XMLNode* GetRoot();
   CFX_XMLNode* GetParent() const { return parent_; }

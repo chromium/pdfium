@@ -40,31 +40,20 @@ bool CFX_XMLInstruction::IsAcrobat() const {
   return name_ == L"acrobat";
 }
 
-void CFX_XMLInstruction::Save(
-    const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
+void CFX_XMLInstruction::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {
   if (name_.CompareNoCase(L"xml") == 0) {
-    WideString ws = L"<?xml version=\"1.0\" encoding=\"";
-    uint16_t wCodePage = pXMLStream->GetCodePage();
-    if (wCodePage == FX_CODEPAGE_UTF16LE)
-      ws += L"UTF-16";
-    else if (wCodePage == FX_CODEPAGE_UTF16BE)
-      ws += L"UTF-16be";
-    else
-      ws += L"UTF-8";
-
-    ws += L"\"?>";
-    pXMLStream->WriteString(ws.AsStringView());
+    pXMLStream->WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     return;
   }
 
-  pXMLStream->WriteString(
-      WideString::Format(L"<?%ls", name_.c_str()).AsStringView());
+  pXMLStream->WriteString("<?");
+  pXMLStream->WriteString(name_.UTF8Encode().AsStringView());
 
   for (const WideString& target : m_TargetData) {
-    pXMLStream->WriteString(L"\"");
-    pXMLStream->WriteString(target.AsStringView());
-    pXMLStream->WriteString(L"\"");
+    pXMLStream->WriteString("\"");
+    pXMLStream->WriteString(target.UTF8Encode().AsStringView());
+    pXMLStream->WriteString("\"");
   }
 
-  pXMLStream->WriteString(WideStringView(L"?>"));
+  pXMLStream->WriteString("?>");
 }

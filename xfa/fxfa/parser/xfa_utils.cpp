@@ -216,11 +216,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
           break;
 
         auto pMemStream = pdfium::MakeRetain<CFX_MemoryStream>(true);
-        auto pTempStream =
-            pdfium::MakeRetain<CFX_SeekableStreamProxy>(pMemStream, true);
-
-        pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
-        pRichTextXML->Save(pTempStream);
+        pRichTextXML->Save(pMemStream);
         wsChildren += WideString::FromUTF8(
             ByteStringView(pMemStream->GetBuffer(), pMemStream->GetSize()));
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&

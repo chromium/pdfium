@@ -332,7 +332,7 @@ CJS_Return CJX_Node::saveXML(CFX_V8* runtime,
 
   // TODO(weili): Check whether we need to save pretty print XML, pdfium:501.
 
-  WideString bsXMLHeader = L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+  ByteString bsXMLHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   if (GetXFANode()->GetPacketType() != XFA_PacketType::Form &&
       GetXFANode()->GetPacketType() != XFA_PacketType::Datasets) {
     return CJS_Return(runtime->NewString(""));
@@ -342,23 +342,23 @@ CJS_Return CJX_Node::saveXML(CFX_V8* runtime,
   if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
     pElement = GetXFANode()->GetXMLMappingNode();
     if (!pElement || pElement->GetType() != FX_XMLNODE_Element) {
-      return CJS_Return(
-          runtime->NewString(bsXMLHeader.UTF8Encode().AsStringView()));
+      return CJS_Return(runtime->NewString(bsXMLHeader.AsStringView()));
     }
 
     XFA_DataExporter_DealWithDataGroupNode(GetXFANode());
   }
 
   auto pMemoryStream = pdfium::MakeRetain<CFX_MemoryStream>(true);
-  auto pStream =
-      pdfium::MakeRetain<CFX_SeekableStreamProxy>(pMemoryStream, true);
-  pStream->SetCodePage(FX_CODEPAGE_UTF8);
-  pStream->WriteString(bsXMLHeader.AsStringView());
+  pMemoryStream->WriteString(bsXMLHeader.AsStringView());
 
-  if (GetXFANode()->GetPacketType() == XFA_PacketType::Form)
-    XFA_DataExporter_RegenerateFormFile(GetXFANode(), pStream, true);
-  else
-    pElement->Save(pStream);
+  if (GetXFANode()->GetPacketType() == XFA_PacketType::Form) {
+    auto proxy =
+        pdfium::MakeRetain<CFX_SeekableStreamProxy>(pMemoryStream, true);
+    proxy->SetCodePage(FX_CODEPAGE_UTF8);
+    XFA_DataExporter_RegenerateFormFile(GetXFANode(), proxy, true);
+  } else {
+    pElement->Save(pMemoryStream);
+  }
 
   return CJS_Return(runtime->NewString(
       ByteStringView(pMemoryStream->GetBuffer(), pMemoryStream->GetSize())));

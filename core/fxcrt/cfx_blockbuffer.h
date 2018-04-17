@@ -21,7 +21,6 @@ class CFX_BlockBuffer {
   ~CFX_BlockBuffer();
 
   bool InitBuffer();
-  bool IsInitialized() { return m_BufferSize / GetAllocStep() >= 1; }
 
   std::pair<wchar_t*, size_t> GetAvailableBlock();
   size_t GetAllocStep() const;

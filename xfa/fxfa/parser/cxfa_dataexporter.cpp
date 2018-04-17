@@ -18,30 +18,23 @@ CXFA_DataExporter::CXFA_DataExporter() = default;
 
 CXFA_DataExporter::~CXFA_DataExporter() = default;
 
-bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pWrite,
+bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pStream,
                                CXFA_Node* pNode) {
-  ASSERT(pWrite);
-  if (!pWrite)
+  ASSERT(pStream);
+
+  if (!pStream)
     return false;
 
-  auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pWrite, true);
-  pStream->SetCodePage(FX_CODEPAGE_UTF8);
-  return Export(pStream, pNode);
-}
-
-bool CXFA_DataExporter::Export(
-    const RetainPtr<CFX_SeekableStreamProxy>& pStream,
-    CXFA_Node* pNode) {
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketType()) {
       case XFA_PacketType::Xdp: {
         pStream->WriteString(
-            L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">");
+            "<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">");
         for (CXFA_Node* pChild = pNode->GetFirstChild(); pChild;
              pChild = pChild->GetNextSibling()) {
           Export(pStream, pChild);
         }
-        pStream->WriteString(L"</xdp:xdp\n>");
+        pStream->WriteString("</xdp:xdp\n>");
         break;
       }
       case XFA_PacketType::Datasets: {
@@ -57,7 +50,10 @@ bool CXFA_DataExporter::Export(
         break;
       }
       case XFA_PacketType::Form: {
-        XFA_DataExporter_RegenerateFormFile(pNode, pStream, false);
+        auto proxy =
+            pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
+        proxy->SetCodePage(FX_CODEPAGE_UTF8);
+        XFA_DataExporter_RegenerateFormFile(pNode, proxy, false);
         break;
       }
       case XFA_PacketType::Template:

@@ -21,7 +21,7 @@ class CFX_XMLInstruction : public CFX_XMLNode {
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
-  void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
+  void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) override;
 
   bool IsOriginalXFAVersion() const;
   bool IsAcrobat() const;

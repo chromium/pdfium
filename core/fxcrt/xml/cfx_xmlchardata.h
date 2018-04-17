@@ -20,7 +20,7 @@ class CFX_XMLCharData : public CFX_XMLText {
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
   std::unique_ptr<CFX_XMLNode> Clone() override;
-  void Save(const RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) override;
+  void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) override;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLCHARDATA_H_
