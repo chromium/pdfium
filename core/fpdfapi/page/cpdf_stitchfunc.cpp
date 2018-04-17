@@ -77,7 +77,7 @@ bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj,
   return true;
 }
 
-bool CPDF_StitchFunc::v_Call(float* inputs, float* outputs) const {
+bool CPDF_StitchFunc::v_Call(const float* inputs, float* results) const {
   float input = inputs[0];
   size_t i;
   for (i = 0; i < m_pSubFunctions.size() - 1; i++) {
@@ -87,6 +87,6 @@ bool CPDF_StitchFunc::v_Call(float* inputs, float* outputs) const {
   input = Interpolate(input, m_pBounds[i], m_pBounds[i + 1], m_pEncode[i * 2],
                       m_pEncode[i * 2 + 1]);
   int nresults;
-  m_pSubFunctions[i]->Call(&input, kRequiredNumInputs, outputs, &nresults);
-  return true;
+  return m_pSubFunctions[i]->Call(&input, kRequiredNumInputs, results,
+                                  &nresults);
 }

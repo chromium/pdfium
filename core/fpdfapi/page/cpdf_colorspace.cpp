@@ -1214,8 +1214,7 @@ bool CPDF_SeparationCS::GetRGB(const float* pBuf,
 
   CFX_FixedBufGrow<float, 16> results(m_pFunc->CountOutputs());
   int nresults = 0;
-  m_pFunc->Call(pBuf, 1, results, &nresults);
-  if (nresults == 0)
+  if (!m_pFunc->Call(pBuf, 1, results, &nresults) || nresults == 0)
     return false;
 
   if (m_pAltCS)
@@ -1281,9 +1280,10 @@ bool CPDF_DeviceNCS::GetRGB(const float* pBuf,
 
   CFX_FixedBufGrow<float, 16> results(m_pFunc->CountOutputs());
   int nresults = 0;
-  m_pFunc->Call(pBuf, CountComponents(), results, &nresults);
-  if (nresults == 0)
+  if (!m_pFunc->Call(pBuf, CountComponents(), results, &nresults) ||
+      nresults == 0) {
     return false;
+  }
 
   return m_pAltCS->GetRGB(results, R, G, B);
 }

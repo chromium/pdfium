@@ -18,7 +18,7 @@ class CPDF_ExpIntFunc : public CPDF_Function {
 
   // CPDF_Function
   bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) override;
-  bool v_Call(float* inputs, float* results) const override;
+  bool v_Call(const float* inputs, float* results) const override;
 
   uint32_t m_nOrigOutputs;
   float m_Exponent;

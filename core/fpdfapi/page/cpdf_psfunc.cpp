@@ -19,7 +19,7 @@ bool CPDF_PSFunc::v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
   return m_PS.Parse(pAcc->GetSpan());
 }
 
-bool CPDF_PSFunc::v_Call(float* inputs, float* results) const {
+bool CPDF_PSFunc::v_Call(const float* inputs, float* results) const {
   CPDF_PSEngine& PS = const_cast<CPDF_PSEngine&>(m_PS);
   PS.Reset();
   for (uint32_t i = 0; i < m_nInputs; i++)

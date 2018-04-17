@@ -55,12 +55,14 @@ class CPDF_Function {
                                              std::set<CPDF_Object*>* pVisited);
   bool Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited);
   virtual bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) = 0;
-  virtual bool v_Call(float* inputs, float* results) const = 0;
+  virtual bool v_Call(const float* inputs, float* results) const = 0;
 
   uint32_t m_nInputs;
   uint32_t m_nOutputs;
   float* m_pDomains;
   float* m_pRanges;
+
+ private:
   const Type m_Type;
 };
 

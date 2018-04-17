@@ -50,7 +50,7 @@ bool CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj,
   return true;
 }
 
-bool CPDF_ExpIntFunc::v_Call(float* inputs, float* results) const {
+bool CPDF_ExpIntFunc::v_Call(const float* inputs, float* results) const {
   for (uint32_t i = 0; i < m_nInputs; i++)
     for (uint32_t j = 0; j < m_nOrigOutputs; j++) {
       results[i * m_nOrigOutputs + j] =

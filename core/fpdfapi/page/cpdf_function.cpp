@@ -27,9 +27,8 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(CPDF_Object* pFuncObj) {
 std::unique_ptr<CPDF_Function> CPDF_Function::Load(
     CPDF_Object* pFuncObj,
     std::set<CPDF_Object*>* pVisited) {
-  std::unique_ptr<CPDF_Function> pFunc;
   if (!pFuncObj)
-    return pFunc;
+    return nullptr;
 
   if (pdfium::ContainsKey(*pVisited, pFuncObj))
     return nullptr;
@@ -41,6 +40,7 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(
   else if (CPDF_Dictionary* pDict = pFuncObj->AsDictionary())
     iType = pDict->GetIntegerFor("FunctionType");
 
+  std::unique_ptr<CPDF_Function> pFunc;
   Type type = IntegerToFunctionType(iType);
   if (type == Type::kType0Sampled)
     pFunc = pdfium::MakeUnique<CPDF_SampledFunc>();
@@ -90,16 +90,20 @@ bool CPDF_Function::Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
   if (m_nInputs == 0)
     return false;
 
-  m_pDomains = FX_Alloc2D(float, m_nInputs, 2);
-  for (uint32_t i = 0; i < m_nInputs * 2; i++) {
-    m_pDomains[i] = pDomains->GetFloatAt(i);
+  {
+    size_t nInputs = m_nInputs * 2;
+    m_pDomains = FX_Alloc(float, nInputs);
+    for (size_t i = 0; i < nInputs; ++i)
+      m_pDomains[i] = pDomains->GetFloatAt(i);
   }
+
   CPDF_Array* pRanges = pDict->GetArrayFor("Range");
   m_nOutputs = 0;
   if (pRanges) {
     m_nOutputs = pRanges->GetCount() / 2;
-    m_pRanges = FX_Alloc2D(float, m_nOutputs, 2);
-    for (uint32_t i = 0; i < m_nOutputs * 2; i++)
+    size_t nOutputs = m_nOutputs * 2;
+    m_pRanges = FX_Alloc(float, nOutputs);
+    for (size_t i = 0; i < nOutputs; ++i)
       m_pRanges[i] = pRanges->GetFloatAt(i);
   }
   uint32_t old_outputs = m_nOutputs;
@@ -107,7 +111,9 @@ bool CPDF_Function::Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
     return false;
 
   if (m_pRanges && m_nOutputs > old_outputs) {
-    m_pRanges = FX_Realloc(float, m_pRanges, m_nOutputs * 2);
+    FX_SAFE_SIZE_T nOutputs = m_nOutputs;
+    nOutputs *= 2;
+    m_pRanges = FX_Realloc(float, m_pRanges, nOutputs.ValueOrDie());
     memset(m_pRanges + (old_outputs * 2), 0,
            sizeof(float) * (m_nOutputs - old_outputs) * 2);
   }
@@ -127,7 +133,9 @@ bool CPDF_Function::Call(const float* inputs,
     clamped_inputs[i] =
         pdfium::clamp(inputs[i], m_pDomains[i * 2], m_pDomains[i * 2 + 1]);
   }
-  v_Call(clamped_inputs.data(), results);
+  if (!v_Call(clamped_inputs.data(), results))
+    return false;
+
   if (!m_pRanges)
     return true;
 

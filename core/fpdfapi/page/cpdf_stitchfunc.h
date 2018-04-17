@@ -20,7 +20,7 @@ class CPDF_StitchFunc : public CPDF_Function {
 
   // CPDF_Function
   bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) override;
-  bool v_Call(float* inputs, float* results) const override;
+  bool v_Call(const float* inputs, float* results) const override;
 
   const std::vector<std::unique_ptr<CPDF_Function>>& GetSubFunctions() const {
     return m_pSubFunctions;
