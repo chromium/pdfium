@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_XFA_UTILS_H_
 #define XFA_FXFA_PARSER_XFA_UTILS_H_
 
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/fx_stream.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFX_XMLElement;
@@ -31,7 +31,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
-    const RetainPtr<CFX_SeekableStreamProxy>& pStream,
+    const RetainPtr<IFX_SeekableStream>& pStream,
     bool bSaveXML);
 
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(

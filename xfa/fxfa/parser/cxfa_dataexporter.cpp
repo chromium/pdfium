@@ -49,13 +49,9 @@ bool CXFA_DataExporter::Export(const RetainPtr<IFX_SeekableStream>& pStream,
         pElement->Save(pStream);
         break;
       }
-      case XFA_PacketType::Form: {
-        auto proxy =
-            pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
-        proxy->SetCodePage(FX_CODEPAGE_UTF8);
-        XFA_DataExporter_RegenerateFormFile(pNode, proxy, false);
+      case XFA_PacketType::Form:
+        XFA_DataExporter_RegenerateFormFile(pNode, pStream, false);
         break;
-      }
       case XFA_PacketType::Template:
       default: {
         CFX_XMLElement* pElement =

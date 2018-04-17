@@ -352,10 +352,7 @@ CJS_Return CJX_Node::saveXML(CFX_V8* runtime,
   pMemoryStream->WriteString(bsXMLHeader.AsStringView());
 
   if (GetXFANode()->GetPacketType() == XFA_PacketType::Form) {
-    auto proxy =
-        pdfium::MakeRetain<CFX_SeekableStreamProxy>(pMemoryStream, true);
-    proxy->SetCodePage(FX_CODEPAGE_UTF8);
-    XFA_DataExporter_RegenerateFormFile(GetXFANode(), proxy, true);
+    XFA_DataExporter_RegenerateFormFile(GetXFANode(), pMemoryStream, true);
   } else {
     pElement->Save(pMemoryStream);
   }
