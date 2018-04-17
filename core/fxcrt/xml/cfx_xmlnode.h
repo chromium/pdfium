@@ -20,19 +20,14 @@ enum FX_XMLNODETYPE {
   FX_XMLNODE_CharData,
 };
 
-struct FX_XMLNODE {
-  int32_t iNodeNum;
-  FX_XMLNODETYPE eNodeType;
-};
-
 class CFX_XMLNode {
  public:
   CFX_XMLNode();
   virtual ~CFX_XMLNode();
 
-  virtual FX_XMLNODETYPE GetType() const;
-  virtual std::unique_ptr<CFX_XMLNode> Clone();
-  virtual void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream);
+  virtual FX_XMLNODETYPE GetType() const = 0;
+  virtual std::unique_ptr<CFX_XMLNode> Clone() = 0;
+  virtual void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) = 0;
 
   CFX_XMLNode* GetRoot();
   CFX_XMLNode* GetParent() const { return parent_.Get(); }
@@ -48,7 +43,7 @@ class CFX_XMLNode {
   WideString EncodeEntities(const WideString& value);
 
  private:
-  // A node owns it's first child and it owns it's next sibling. The rest
+  // A node owns its first child and it owns its next sibling. The rest
   // are unowned pointers.
   UnownedPtr<CFX_XMLNode> parent_;
   UnownedPtr<CFX_XMLNode> last_child_;

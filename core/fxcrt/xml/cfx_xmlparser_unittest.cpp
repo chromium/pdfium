@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
@@ -63,7 +63,8 @@ TEST(CFX_XMLParserTest, CData) {
       L"  ";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -108,7 +109,8 @@ TEST(CFX_XMLParserTest, CDataWithInnerScript) {
       L"  ";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -142,7 +144,8 @@ TEST(CFX_XMLParserTest, ArrowBangArrow) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -174,7 +177,8 @@ TEST(CFX_XMLParserTest, ArrowBangBracketArrow) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -201,7 +205,8 @@ TEST(CFX_XMLParserTest, IncompleteCData) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -228,7 +233,8 @@ TEST(CFX_XMLParserTest, UnClosedCData) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -255,7 +261,8 @@ TEST(CFX_XMLParserTest, EmptyCData) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -289,7 +296,8 @@ TEST(CFX_XMLParserTest, Comment) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -320,7 +328,8 @@ TEST(CFX_XMLParserTest, IncorrectCommentStart) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -351,7 +360,8 @@ TEST(CFX_XMLParserTest, CommentEmpty) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -382,7 +392,8 @@ TEST(CFX_XMLParserTest, CommentThreeDash) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -407,7 +418,8 @@ TEST(CFX_XMLParserTest, CommentTwoDash) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -436,7 +448,8 @@ TEST(CFX_XMLParserTest, Entities) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -465,7 +478,8 @@ TEST(CFX_XMLParserTest, EntityOverflowHex) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -494,7 +508,8 @@ TEST(CFX_XMLParserTest, EntityOverflowDecimal) {
       "</script>";
 
   auto stream = MakeProxy(input);
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());

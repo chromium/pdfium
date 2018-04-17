@@ -348,7 +348,7 @@ std::unique_ptr<CFX_XMLNode> CXFA_DocumentParser::LoadXML(
     const RetainPtr<IFX_SeekableStream>& pStream) {
   ASSERT(pStream);
 
-  auto root = pdfium::MakeUnique<CFX_XMLNode>();
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
   root->AppendChild(pdfium::MakeUnique<CFX_XMLInstruction>(L"xml"));
 
   CFX_XMLParser parser(root.get(), pStream);

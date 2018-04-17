@@ -30,6 +30,8 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
   auto pClone = pdfium::MakeUnique<CFX_XMLElement>(name_);
   pClone->attrs_ = attrs_;
 
+  // TODO(dsinclair): This clone is wrong. It doesn't clone child nodes just
+  // copies text nodes?
   WideString wsText;
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
@@ -52,26 +54,26 @@ WideString CFX_XMLElement::GetNamespacePrefix() const {
 }
 
 WideString CFX_XMLElement::GetNamespaceURI() const {
-  WideString wsAttri(L"xmlns");
+  WideString attr(L"xmlns");
   WideString wsPrefix = GetNamespacePrefix();
-  if (wsPrefix.GetLength() > 0) {
-    wsAttri += L":";
-    wsAttri += wsPrefix;
+  if (!wsPrefix.IsEmpty()) {
+    attr += L":";
+    attr += wsPrefix;
   }
 
-  auto* pNode = static_cast<const CFX_XMLNode*>(this);
+  const CFX_XMLNode* pNode = this;
   while (pNode) {
     if (pNode->GetType() != FX_XMLNODE_Element)
       break;
 
     auto* pElement = static_cast<const CFX_XMLElement*>(pNode);
-    if (!pElement->HasAttribute(wsAttri)) {
+    if (!pElement->HasAttribute(attr)) {
       pNode = pNode->GetParent();
       continue;
     }
-    return pElement->GetAttribute(wsAttri);
+    return pElement->GetAttribute(attr);
   }
-  return WideString();
+  return L"";
 }
 
 WideString CFX_XMLElement::GetTextData() const {
@@ -88,7 +90,8 @@ WideString CFX_XMLElement::GetTextData() const {
 }
 
 void CFX_XMLElement::SetTextData(const WideString& wsText) {
-  if (wsText.GetLength() < 1)
+  // TODO(dsinclair): Shouldn't this remove the children if you set blank text?
+  if (wsText.IsEmpty())
     return;
   AppendChild(pdfium::MakeUnique<CFX_XMLText>(wsText));
 }
@@ -100,6 +103,8 @@ void CFX_XMLElement::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {
   pXMLStream->WriteString(name_encoded);
 
   for (auto it : attrs_) {
+    // Note, the space between attributes is added by AttributeToString which
+    // writes a blank as the first character.
     pXMLStream->WriteString(
         AttributeToString(it.first, it.second).UTF8Encode().AsStringView());
   }

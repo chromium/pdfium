@@ -93,20 +93,7 @@ class CFX_XMLParser {
   };
 
   void ParseTextChar(wchar_t ch);
-
   bool GetStatus() const;
-  FX_FILESIZE GetCurrentPos() const { return m_ParsedChars + m_Start; }
-  FX_FILESIZE GetCurrentBinaryPos() const;
-  int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
-  int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
-
-  WideString GetTargetName() const {
-    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
-  }
-
-  WideString GetTargetData() const {
-    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
-  }
 
   CFX_XMLNode* m_pParent;
   CFX_XMLNode* m_pChild;
@@ -116,21 +103,15 @@ class CFX_XMLParser {
   RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   size_t m_iXMLPlaneSize;
   FX_FILESIZE m_iCurrentPos;
-  int32_t m_iCurrentNodeNum;
-  int32_t m_iLastNodeNum;
-  int32_t m_iParsedBytes;
-  FX_FILESIZE m_ParsedChars;
   std::vector<wchar_t> m_Buffer;
-  size_t m_iBufferChars;
   bool m_bEOS;
   FX_FILESIZE m_Start;  // Start position in m_Buffer
   FX_FILESIZE m_End;    // End position in m_Buffer
-  FX_XMLNODE m_CurNode;
-  std::stack<FX_XMLNODE> m_XMLNodeStack;
+  FX_XMLNODETYPE m_CurNodeType;
+  std::stack<FX_XMLNODETYPE> m_XMLNodeTypeStack;
   CFX_BlockBuffer m_BlockBuffer;
-  int32_t m_iAllocStep;
   wchar_t* m_pCurrentBlock;  // Pointer into CFX_BlockBuffer
-  int32_t m_iIndexInBlock;
+  size_t m_iIndexInBlock;
   int32_t m_iTextDataLength;
   FX_XmlSyntaxResult m_syntaxParserResult;
   FDE_XmlSyntaxState m_syntaxParserState;

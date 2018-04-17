@@ -11,7 +11,7 @@
 CFX_XMLCharData::CFX_XMLCharData(const WideString& wsCData)
     : CFX_XMLText(wsCData) {}
 
-CFX_XMLCharData::~CFX_XMLCharData() {}
+CFX_XMLCharData::~CFX_XMLCharData() = default;
 
 FX_XMLNODETYPE CFX_XMLCharData::GetType() const {
   return FX_XMLNODE_CharData;

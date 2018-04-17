@@ -21,10 +21,6 @@ CFX_XMLNode::~CFX_XMLNode() {
   DeleteChildren();
 }
 
-FX_XMLNODETYPE CFX_XMLNode::GetType() const {
-  return FX_XMLNODE_Unknown;
-}
-
 void CFX_XMLNode::DeleteChildren() {
   CFX_XMLNode* child = last_child_.Get();
   // Clear last child early as it will have been deleted already.
@@ -112,12 +108,6 @@ CFX_XMLNode* CFX_XMLNode::GetRoot() {
 
   return pParent;
 }
-
-std::unique_ptr<CFX_XMLNode> CFX_XMLNode::Clone() {
-  return nullptr;
-}
-
-void CFX_XMLNode::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {}
 
 WideString CFX_XMLNode::EncodeEntities(const WideString& value) {
   WideString ret = value;
