@@ -406,7 +406,7 @@ bool AddSamples(const CPDF_SampledFunc* pFunc,
     colorsMin[i] = pFunc->GetRange(i * 2);
     colorsMax[i] = pFunc->GetRange(i * 2 + 1);
   }
-  const uint8_t* pSampleData = pFunc->GetSampleStream()->GetData();
+  pdfium::span<const uint8_t> pSampleData = pFunc->GetSampleStream()->GetSpan();
   for (uint32_t i = 0; i < sampleCount; ++i) {
     float floatColors[3];
     for (uint32_t j = 0; j < 3; ++j) {
