@@ -68,23 +68,6 @@ bool CXFA_FFDoc::ParseDoc(CPDF_Object* pElementXFA) {
   return true;
 }
 
-void XFA_XPDPacket_MergeRootNode(CXFA_Node* pOriginRoot, CXFA_Node* pNewRoot) {
-  CXFA_Node* pChildNode = pNewRoot->GetFirstChild();
-  while (pChildNode) {
-    CXFA_Node* pOriginChild =
-        pOriginRoot->GetFirstChildByName(pChildNode->GetNameHash());
-    if (pOriginChild) {
-      pChildNode = pChildNode->GetNextSibling();
-    } else {
-      CXFA_Node* pNextSibling = pChildNode->GetNextSibling();
-      pNewRoot->RemoveChild(pChildNode, true);
-      pOriginRoot->InsertChild(pChildNode, nullptr);
-      pChildNode = pNextSibling;
-      pNextSibling = nullptr;
-    }
-  }
-}
-
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
   if (!m_DocView)
     m_DocView = pdfium::MakeUnique<CXFA_FFDocView>(this);
