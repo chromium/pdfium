@@ -468,11 +468,14 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
           GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Prime") {
         prime_count++;
+        EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
         primes.push_back(page_object);
       } else if (name == L"Square") {
         square_count++;
+        EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
       } else if (name == L"GreaterThanTen") {
         greater_than_ten_count++;
+        EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
       } else {
         FAIL();
       }

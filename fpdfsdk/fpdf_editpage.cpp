@@ -269,6 +269,21 @@ FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
       buflen);
 }
 
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark) {
+  if (!mark)
+    return -1;
+
+  const CPDF_ContentMarkItem* pMarkItem =
+      CPDFContentMarkItemFromFPDFPageObjectMark(mark);
+
+  const CPDF_Dictionary* pParams = pMarkItem->GetParam();
+  if (!pParams)
+    return 0;
+
+  return pParams->GetCount();
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
