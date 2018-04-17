@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
@@ -94,8 +95,8 @@ WideString CPDF_FileSpec::GetFileName() const {
   if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
     csFileName = pDict->GetUnicodeTextFor("UF");
     if (csFileName.IsEmpty()) {
-      csFileName =
-          WideString::FromLocal(pDict->GetStringFor("F").AsStringView());
+      csFileName = WideString::FromLocal(
+          pDict->GetStringFor(pdfium::stream::kF).AsStringView());
     }
     if (pDict->GetStringFor("FS") == "URL")
       return csFileName;
@@ -187,7 +188,8 @@ void CPDF_FileSpec::SetFileName(const WideString& wsFileName) {
   if (m_pObj->IsString()) {
     m_pObj->SetString(ByteString::FromUnicode(wsStr));
   } else if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    pDict->SetNewFor<CPDF_String>("F", ByteString::FromUnicode(wsStr), false);
+    pDict->SetNewFor<CPDF_String>(pdfium::stream::kF,
+                                  ByteString::FromUnicode(wsStr), false);
     pDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsStr), false);
   }
 }

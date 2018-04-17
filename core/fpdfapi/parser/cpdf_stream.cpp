@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -96,7 +97,7 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
 void CPDF_Stream::SetDataAndRemoveFilter(const uint8_t* pData, uint32_t size) {
   SetData(pData, size);
   m_pDict->RemoveFor("Filter");
-  m_pDict->RemoveFor("DecodeParms");
+  m_pDict->RemoveFor(pdfium::stream::kDecodeParms);
 }
 
 void CPDF_Stream::SetDataAndRemoveFilter(std::ostringstream* stream) {

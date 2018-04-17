@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_action.h"
 
+#include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
@@ -70,14 +71,15 @@ WideString CPDF_Action::GetFilePath() const {
     return WideString();
   }
 
-  CPDF_Object* pFile = m_pDict->GetDirectObjectFor("F");
+  CPDF_Object* pFile = m_pDict->GetDirectObjectFor(pdfium::stream::kF);
   if (pFile)
     return CPDF_FileSpec(pFile).GetFileName();
 
   if (type == "Launch") {
     CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
     if (pWinDict) {
-      return WideString::FromLocal(pWinDict->GetStringFor("F").AsStringView());
+      return WideString::FromLocal(
+          pWinDict->GetStringFor(pdfium::stream::kF).AsStringView());
     }
   }
   return WideString();

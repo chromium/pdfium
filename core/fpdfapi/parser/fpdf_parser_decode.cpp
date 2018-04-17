@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/stream_dict_common.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -344,7 +345,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     return false;
 
   CPDF_Object* pParams =
-      pDict ? pDict->GetDirectObjectFor("DecodeParms") : nullptr;
+      pDict ? pDict->GetDirectObjectFor(pdfium::stream::kDecodeParms) : nullptr;
 
   std::vector<std::pair<ByteString, CPDF_Object*>> DecoderArray;
   if (CPDF_Array* pDecoders = pDecoder->AsArray()) {

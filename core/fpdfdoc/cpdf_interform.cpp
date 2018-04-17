@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/stream_dict_common.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -1117,7 +1118,7 @@ std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
     if (bSimpleFileSpec) {
       WideString wsFilePath = CPDF_FileSpec::EncodeFileName(pdf_path);
       pMainDict->SetNewFor<CPDF_String>(
-          "F", ByteString::FromUnicode(wsFilePath), false);
+          pdfium::stream::kF, ByteString::FromUnicode(wsFilePath), false);
       pMainDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsFilePath),
                                         false);
     } else {

@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/stream_dict_common.h"
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -105,7 +106,8 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
   pDict->SetNewFor<CPDF_Number>("BitsPerComponent", bits);
   pDict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
   if (!color_trans) {
-    CPDF_Dictionary* pParms = pDict->SetNewFor<CPDF_Dictionary>("DecodeParms");
+    CPDF_Dictionary* pParms =
+        pDict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
     pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
   }
   m_bIsMask = false;

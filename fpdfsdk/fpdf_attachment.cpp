@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "constants/stream_dict_common.h"
 #include "core/fdrm/crypto/fx_crypt.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -90,7 +91,7 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   CPDF_Dictionary* pFile = pDoc->NewIndirect<CPDF_Dictionary>();
   pFile->SetNewFor<CPDF_Name>("Type", "Filespec");
   pFile->SetNewFor<CPDF_String>("UF", wsName);
-  pFile->SetNewFor<CPDF_String>("F", wsName);
+  pFile->SetNewFor<CPDF_String>(pdfium::stream::kF, wsName);
 
   // Add the new attachment name and filespec into the document's EmbeddedFiles.
   CPDF_NameTree nameTree(pDoc, "EmbeddedFiles");
@@ -230,7 +231,8 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
       pFileStreamDict->SetNewFor<CPDF_Dictionary>("Params");
 
   // Set the size of the new file in the dictionary.
-  pFileStreamDict->SetNewFor<CPDF_Number>("DL", static_cast<int>(len));
+  pFileStreamDict->SetNewFor<CPDF_Number>(pdfium::stream::kDL,
+                                          static_cast<int>(len));
   pParamsDict->SetNewFor<CPDF_Number>("Size", static_cast<int>(len));
 
   // Set the creation date of the new attachment in the dictionary.

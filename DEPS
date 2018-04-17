@@ -138,6 +138,7 @@ recursedeps = [
 include_rules = [
   # Basic stuff that everyone can use.
   # Note: public is not here because core cannot depend on public.
+  '+constants',
   '+testing',
   '+third_party/base',
 ]

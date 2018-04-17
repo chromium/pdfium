@@ -192,6 +192,7 @@ jumbo_static_library("pdfium") {
   configs += [ ":pdfium_core_config" ]
 
   deps = [
+    ":constants",
     ":fdrm",
     ":formfiller",
     ":fpdfapi",
@@ -290,6 +291,12 @@ visibility = [
   ":*",
   "//:gn_visibility",
 ]
+
+source_set("constants") {
+  sources = [
+    "constants/stream_dict_common.h",
+  ]
+}
 
 jumbo_static_library("fdrm") {
   sources = [

@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
@@ -43,7 +44,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(const CPDF_Stream* pStream,
   m_pDict = ToDictionary(pStream->GetDict()->Clone());
   m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
   m_pDict->SetNewFor<CPDF_Name>("Filter", "FlateDecode");
-  m_pDict->RemoveFor("DecodeParms");
+  m_pDict->RemoveFor(pdfium::stream::kDecodeParms);
 }
 
 CPDF_FlateEncoder::~CPDF_FlateEncoder() {}
