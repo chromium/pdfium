@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/cfgas_formatstring.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -192,83 +193,71 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
 }
 
 double CXFA_LocaleValue::GetDoubleNum() const {
-  if (m_bValid && (m_dwType == XFA_VT_BOOLEAN || m_dwType == XFA_VT_INTEGER ||
-                   m_dwType == XFA_VT_DECIMAL || m_dwType == XFA_VT_FLOAT)) {
-    int64_t nIntegral = 0;
-    uint32_t dwFractional = 0;
-    int32_t nExponent = 0;
-    int32_t cc = 0;
-    bool bNegative = false;
-    bool bExpSign = false;
-    const wchar_t* str = m_wsValue.c_str();
-    int len = m_wsValue.GetLength();
-    while (FXSYS_iswspace(str[cc]) && cc < len)
-      cc++;
-
-    if (cc >= len)
-      return 0;
-    if (str[0] == '+') {
-      cc++;
-    } else if (str[0] == '-') {
-      bNegative = true;
-      cc++;
-    }
-
-    int32_t nIntegralLen = 0;
-    while (cc < len) {
-      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]) ||
-          nIntegralLen > 17) {
-        break;
-      }
-      nIntegral = nIntegral * 10 + str[cc] - '0';
-      cc++;
-      nIntegralLen++;
-    }
-
-    nIntegral = bNegative ? -nIntegral : nIntegral;
-    int32_t scale = 0;
-    double fraction = 0.0;
-    if (cc < len && str[cc] == '.') {
-      cc++;
-      while (cc < len) {
-        fraction += XFA_GetFractionalScale(scale) * (str[cc] - '0');
-        scale++;
-        cc++;
-        if (scale == XFA_GetMaxFractionalScale() ||
-            !FXSYS_isDecimalDigit(str[cc])) {
-          break;
-        }
-      }
-      dwFractional = static_cast<uint32_t>(fraction * 4294967296.0);
-    }
-    if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
-      cc++;
-      if (cc < len) {
-        if (str[cc] == '+') {
-          cc++;
-        } else if (str[cc] == '-') {
-          bExpSign = true;
-          cc++;
-        }
-      }
-      while (cc < len) {
-        if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]))
-          break;
-
-        nExponent = nExponent * 10 + str[cc] - '0';
-        cc++;
-      }
-      nExponent = bExpSign ? -nExponent : nExponent;
-    }
-
-    double dValue = dwFractional / 4294967296.0;
-    dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
-    if (nExponent != 0)
-      dValue *= FXSYS_pow(10, static_cast<float>(nExponent));
-
-    return dValue;
+  if (!m_bValid || (m_dwType != XFA_VT_BOOLEAN && m_dwType != XFA_VT_INTEGER &&
+                    m_dwType != XFA_VT_DECIMAL && m_dwType != XFA_VT_FLOAT)) {
+    return 0;
   }
-  return 0;
+
+  size_t cc = 0;
+  pdfium::span<const wchar_t> str = m_wsValue.AsSpan();
+  while (cc < str.size() && FXSYS_iswspace(str[cc]))
+    cc++;
+
+  if (cc >= str.size())
+    return 0;
+
+  bool bNegative = false;
+  if (str[cc] == '+') {
+    cc++;
+  } else if (str[cc] == '-') {
+    bNegative = true;
+    cc++;
+  }
+
+  int64_t nIntegral = 0;
+  size_t nIntegralLen = 0;
+  while (cc < str.size()) {
+    if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]) || nIntegralLen > 17)
+      break;
+
+    nIntegral = nIntegral * 10 + str[cc++] - '0';
+    nIntegralLen++;
+  }
+  nIntegral = bNegative ? -nIntegral : nIntegral;
+
+  int32_t scale = 0;
+  int32_t nExponent = 0;
+  double fraction = 0.0;
+  if (cc < str.size() && str[cc] == '.') {
+    cc++;
+    while (cc < str.size() && FXSYS_isDecimalDigit(str[cc])) {
+      fraction += XFA_GetFractionalScale(scale) * (str[cc++] - '0');
+      if (++scale == XFA_GetMaxFractionalScale())
+        break;
+    }
+  }
+  if (cc < str.size() && (str[cc] == 'E' || str[cc] == 'e')) {
+    cc++;
+    bool bExpSign = false;
+    if (cc < str.size()) {
+      if (str[cc] == '+') {
+        cc++;
+      } else if (str[cc] == '-') {
+        bExpSign = true;
+        cc++;
+      }
+    }
+    while (cc < str.size() && FXSYS_isDecimalDigit(str[cc]))
+      nExponent = nExponent * 10 + str[cc++] - '0';
+
+    nExponent = bExpSign ? -nExponent : nExponent;
+  }
+
+  double dValue = nIntegral + (bNegative ? -fraction : fraction);
+  if (nExponent != 0)
+    dValue *= FXSYS_pow(10, static_cast<float>(nExponent));
+
+  return dValue;
 }
 
 CFX_DateTime CXFA_LocaleValue::GetDate() const {
