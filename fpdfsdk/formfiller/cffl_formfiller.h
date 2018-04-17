@@ -75,6 +75,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                          uint32_t nFlags);
   virtual bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
 
+  WideString GetText(CPDFSDK_Annot* pAnnot);
   WideString GetSelectedText(CPDFSDK_Annot* pAnnot);
   void ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
 

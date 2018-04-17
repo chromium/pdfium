@@ -499,6 +499,10 @@ void CXFA_FFWidget::Delete() {}
 
 void CXFA_FFWidget::DeSelect() {}
 
+WideString CXFA_FFWidget::GetText() {
+  return WideString();
+}
+
 FormFieldType CXFA_FFWidget::GetFormFieldType() {
   return FormFieldType::kXFA;
 }

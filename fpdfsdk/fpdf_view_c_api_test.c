@@ -213,6 +213,7 @@ int CheckPDFiumCApi() {
     CHK(FORM_OnKeyDown);
     CHK(FORM_OnKeyUp);
     CHK(FORM_OnChar);
+    CHK(FORM_GetFocusedText);
     CHK(FORM_GetSelectedText);
     CHK(FORM_ReplaceSelection);
     CHK(FORM_ForceToKillFocus);

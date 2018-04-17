@@ -116,14 +116,7 @@ bool CXFA_FFComboBox::CommitData() {
 }
 
 bool CXFA_FFComboBox::IsDataChanged() {
-  auto* pFWLcombobox = ToComboBox(m_pNormalWidget.get());
-  WideString wsText = pFWLcombobox->GetEditText();
-  int32_t iCursel = pFWLcombobox->GetCurSel();
-  if (iCursel >= 0) {
-    WideString wsSel = pFWLcombobox->GetTextByIndex(iCursel);
-    if (wsSel == wsText)
-      wsText = m_pNode->GetChoiceListItem(iCursel, true).value_or(L"");
-  }
+  WideString wsText = GetCurrentText();
   if (m_pNode->GetValue(XFA_VALUEPICTURE_Raw) == wsText)
     return false;
 
@@ -136,6 +129,18 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
   pParam->m_pTarget = m_pNode.Get();
   pParam->m_wsNewText = ToComboBox(m_pNormalWidget.get())->GetEditText();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, pParam);
+}
+
+WideString CXFA_FFComboBox::GetCurrentText() const {
+  auto* pFWLcombobox = ToComboBox(m_pNormalWidget.get());
+  WideString wsText = pFWLcombobox->GetEditText();
+  int32_t iCursel = pFWLcombobox->GetCurSel();
+  if (iCursel >= 0) {
+    WideString wsSel = pFWLcombobox->GetTextByIndex(iCursel);
+    if (wsSel == wsText)
+      wsText = m_pNode->GetChoiceListItem(iCursel, true).value_or(L"");
+  }
+  return wsText;
 }
 
 uint32_t CXFA_FFComboBox::GetAlignment() {
@@ -257,6 +262,10 @@ void CXFA_FFComboBox::Delete() {
 
 void CXFA_FFComboBox::DeSelect() {
   ToComboBox(m_pNormalWidget.get())->EditDeSelect();
+}
+
+WideString CXFA_FFComboBox::GetText() {
+  return GetCurrentText();
 }
 
 FormFieldType CXFA_FFComboBox::GetFormFieldType() {

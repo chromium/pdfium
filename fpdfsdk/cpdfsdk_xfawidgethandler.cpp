@@ -100,6 +100,14 @@ CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   return rcWidget;
 }
 
+WideString CPDFSDK_XFAWidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot)
+    return WideString();
+
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  return pWidgetHandler->GetText(pAnnot->GetXFAWidget());
+}
+
 WideString CPDFSDK_XFAWidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
   if (!pAnnot)
     return WideString();

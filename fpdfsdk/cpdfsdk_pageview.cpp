@@ -240,6 +240,16 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* hWidget) {
 }
 #endif  // PDF_ENABLE_XFA
 
+WideString CPDFSDK_PageView::GetFocusedFormText() {
+  if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
+    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
+        m_pFormFillEnv->GetAnnotHandlerMgr();
+    return pAnnotHandlerMgr->Annot_GetText(pAnnot);
+  }
+
+  return WideString();
+}
+
 WideString CPDFSDK_PageView::GetSelectedText() {
   if (CPDFSDK_Annot* pAnnot = GetFocusAnnot()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =

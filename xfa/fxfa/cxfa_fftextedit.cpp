@@ -63,7 +63,7 @@ bool CXFA_FFTextEdit::LoadWidget() {
 }
 
 void CXFA_FFTextEdit::UpdateWidgetProperty() {
-  CFWL_Edit* pWidget = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
+  CFWL_Edit* pWidget = ToEdit(m_pNormalWidget.get());
   if (!pWidget)
     return;
 
@@ -185,7 +185,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
 }
 
 bool CXFA_FFTextEdit::CommitData() {
-  WideString wsText = static_cast<CFWL_Edit*>(m_pNormalWidget.get())->GetText();
+  WideString wsText = ToEdit(m_pNormalWidget.get())->GetText();
   if (m_pNode->SetValue(XFA_VALUEPICTURE_Edit, wsText)) {
     m_pNode->UpdateUIDisplay(GetDoc()->GetDocView(), this);
     return true;
@@ -255,7 +255,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   if (!m_pNormalWidget)
     return false;
 
-  CFWL_Edit* pEdit = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
+  CFWL_Edit* pEdit = ToEdit(m_pNormalWidget.get());
   XFA_VALUEPICTURE eType = XFA_VALUEPICTURE_Display;
   if (IsFocused())
     eType = XFA_VALUEPICTURE_Edit;
@@ -305,7 +305,7 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   eParam.m_wsChange = wsChanged;
   eParam.m_pTarget = m_pNode.Get();
   eParam.m_wsPrevText = wsPrevText;
-  CFWL_Edit* pEdit = static_cast<CFWL_Edit*>(m_pNormalWidget.get());
+  CFWL_Edit* pEdit = ToEdit(m_pNormalWidget.get());
   if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kDateTimeEdit) {
     CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)pEdit;
     eParam.m_wsNewText = pDateTime->GetEditText();
@@ -415,6 +415,10 @@ void CXFA_FFTextEdit::Delete() {
 
 void CXFA_FFTextEdit::DeSelect() {
   ToEdit(m_pNormalWidget.get())->ClearSelection();
+}
+
+WideString CXFA_FFTextEdit::GetText() {
+  return ToEdit(m_pNormalWidget.get())->GetText();
 }
 
 FormFieldType CXFA_FFTextEdit::GetFormFieldType() {

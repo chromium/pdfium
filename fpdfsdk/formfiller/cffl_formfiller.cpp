@@ -219,6 +219,17 @@ bool CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
   return pWnd && pWnd->OnChar(nChar, nFlags);
 }
 
+WideString CFFL_FormFiller::GetText(CPDFSDK_Annot* pAnnot) {
+  if (!IsValid())
+    return WideString();
+
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
+
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  return pWnd ? pWnd->GetText() : WideString();
+}
+
 WideString CFFL_FormFiller::GetSelectedText(CPDFSDK_Annot* pAnnot) {
   if (!IsValid())
     return WideString();

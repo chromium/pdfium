@@ -37,6 +37,7 @@ class CXFA_FFComboBox : public CXFA_FFDropDown {
   void SelectAll() override;
   void Delete() override;
   void DeSelect() override;
+  WideString GetText() override;
   FormFieldType GetFormFieldType() override;
 
   // IFWL_WidgetDelegate
@@ -66,6 +67,8 @@ class CXFA_FFComboBox : public CXFA_FFDropDown {
 
   uint32_t GetAlignment();
   void FWLEventSelChange(CXFA_EventParam* pParam);
+
+  WideString GetCurrentText() const;
 
   WideString m_wsNewValue;
   IFWL_WidgetDelegate* m_pOldDelegate;

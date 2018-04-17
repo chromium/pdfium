@@ -281,10 +281,15 @@ CFX_FloatRect CPDFSDK_WidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
   return CFX_FloatRect();
 }
 
+WideString CPDFSDK_WidgetHandler::GetText(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
+    return m_pFormFiller->GetText(pAnnot);
+  return WideString();
+}
+
 WideString CPDFSDK_WidgetHandler::GetSelectedText(CPDFSDK_Annot* pAnnot) {
   if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
     return m_pFormFiller->GetSelectedText(pAnnot);
-
   return WideString();
 }
 

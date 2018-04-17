@@ -54,6 +54,7 @@ class CXFA_FFWidgetHandler {
                        uint32_t dwFlags,
                        const CFX_PointF& point);
 
+  WideString GetText(CXFA_FFWidget* widget);
   WideString GetSelectedText(CXFA_FFWidget* widget);
   void PasteText(CXFA_FFWidget* widget, const WideString& text);
 

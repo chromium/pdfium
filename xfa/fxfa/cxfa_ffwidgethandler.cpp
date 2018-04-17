@@ -147,6 +147,10 @@ bool CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
   return bRet;
 }
 
+WideString CXFA_FFWidgetHandler::GetText(CXFA_FFWidget* widget) {
+  return widget->GetText();
+}
+
 WideString CXFA_FFWidgetHandler::GetSelectedText(CXFA_FFWidget* widget) {
   if (!widget->CanCopy())
     return WideString();

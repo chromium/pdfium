@@ -61,6 +61,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
     return m_pFormFillEnv.Get();
   }
 
+  WideString GetFocusedFormText();
   WideString GetSelectedText();
   void ReplaceSelection(const WideString& text);
 

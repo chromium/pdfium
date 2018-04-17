@@ -42,6 +42,7 @@ class CPDFSDK_AnnotHandlerMgr {
   void Annot_OnCreate(CPDFSDK_Annot* pAnnot);
   void Annot_OnLoad(CPDFSDK_Annot* pAnnot);
 
+  WideString Annot_GetText(CPDFSDK_Annot* pAnnot);
   WideString Annot_GetSelectedText(CPDFSDK_Annot* pAnnot);
   void Annot_ReplaceSelection(CPDFSDK_Annot* pAnnot, const WideString& text);
 

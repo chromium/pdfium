@@ -140,6 +140,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual void SelectAll();
   virtual void Delete();
   virtual void DeSelect();
+  virtual WideString GetText();
 
   virtual FormFieldType GetFormFieldType();
 

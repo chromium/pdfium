@@ -58,6 +58,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   void SelectAll() override;
   void Delete() override;
   void DeSelect() override;
+  WideString GetText() override;
   FormFieldType GetFormFieldType() override;
 
  protected:
