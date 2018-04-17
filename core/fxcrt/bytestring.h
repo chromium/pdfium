@@ -17,6 +17,7 @@
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/optional.h"
+#include "third_party/base/span.h"
 
 namespace fxcrt {
 
@@ -153,7 +154,10 @@ class ByteString {
   size_t Delete(size_t index, size_t count = 1);
 
   void Reserve(size_t len);
-  char* GetBuffer(size_t len);
+
+  // Note: any modification of the string (including ReleaseBuffer()) may
+  // invalidate the span, which must not outlive its buffer.
+  pdfium::span<char> GetBuffer(size_t len);
   void ReleaseBuffer(size_t len);
 
   ByteString Mid(size_t first, size_t count) const;

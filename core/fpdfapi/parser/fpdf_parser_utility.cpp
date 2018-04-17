@@ -93,20 +93,23 @@ ByteString PDF_NameDecode(const ByteStringView& bstr) {
   if (!bstr.Contains('#'))
     return ByteString(bstr);
 
-  int size = bstr.GetLength();
+  size_t src_size = bstr.GetLength();
+  size_t out_index = 0;
   ByteString result;
-  char* pDestStart = result.GetBuffer(size);
-  char* pDest = pDestStart;
-  for (int i = 0; i < size; i++) {
-    if (bstr[i] == '#' && i < size - 2) {
-      *pDest++ = FXSYS_HexCharToInt(bstr[i + 1]) * 16 +
-                 FXSYS_HexCharToInt(bstr[i + 2]);
-      i += 2;
-    } else {
-      *pDest++ = bstr[i];
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<char> pDest = result.GetBuffer(src_size);
+    for (size_t i = 0; i < src_size; i++) {
+      if (bstr[i] == '#' && i + 2 < src_size) {
+        pDest[out_index++] = FXSYS_HexCharToInt(bstr[i + 1]) * 16 +
+                             FXSYS_HexCharToInt(bstr[i + 2]);
+        i += 2;
+      } else {
+        pDest[out_index++] = bstr[i];
+      }
     }
   }
-  result.ReleaseBuffer(static_cast<size_t>(pDest - pDestStart));
+  result.ReleaseBuffer(out_index);
   return result;
 }
 
@@ -128,21 +131,23 @@ ByteString PDF_NameEncode(const ByteString& orig) {
     return orig;
 
   ByteString res;
-  char* dest_buf = res.GetBuffer(dest_len);
-  dest_len = 0;
-  for (i = 0; i < src_len; i++) {
-    uint8_t ch = src_buf[i];
-    if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
-        PDFCharIsDelimiter(ch)) {
-      dest_buf[dest_len++] = '#';
-      FXSYS_IntToTwoHexChars(ch, dest_buf + dest_len);
-      dest_len += 2;
-    } else {
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<char> dest_buf = res.GetBuffer(dest_len);
+    dest_len = 0;
+    for (i = 0; i < src_len; i++) {
+      uint8_t ch = src_buf[i];
+      if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
+          PDFCharIsDelimiter(ch)) {
+        dest_buf[dest_len++] = '#';
+        FXSYS_IntToTwoHexChars(ch, &dest_buf[dest_len]);
+        dest_len += 2;
+        continue;
+      }
       dest_buf[dest_len++] = ch;
     }
   }
-  dest_buf[dest_len] = 0;
-  res.ReleaseBuffer(res.GetStringLength());
+  res.ReleaseBuffer(dest_len);
   return res;
 }
 
