@@ -25,7 +25,7 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
   // to the embedder. Should the embedder modify it by accident, it won't
   // corrupt other shares of the string beyond |bsUTF16LE|.
   return reinterpret_cast<FPDF_WIDESTRING>(
-      bsUTF16LE->GetBuffer(bsUTF16LE->GetLength()).data());
+      bsUTF16LE->GetBuffer(bsUTF16LE->GetLength()));
 }
 
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(

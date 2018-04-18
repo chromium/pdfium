@@ -509,16 +509,12 @@ ByteString GUIDString(bool bSeparator) {
   data[6] = (data[6] & 0x0F) | 0x40;
 
   ByteString bsStr;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<char> pBuf = bsStr.GetBuffer(40);
-    size_t out_index = 0;
-    for (size_t i = 0; i < 16; ++i, out_index += 2) {
-      if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10))
-        pBuf[out_index++] = L'-';
+  char* pBuf = bsStr.GetBuffer(40);
+  for (int32_t i = 0; i < 16; ++i, pBuf += 2) {
+    if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10))
+      *pBuf++ = L'-';
 
-      FXSYS_IntToTwoHexChars(data[i], &pBuf[out_index]);
-    }
+    FXSYS_IntToTwoHexChars(data[i], pBuf);
   }
   bsStr.ReleaseBuffer(bSeparator ? 36 : 32);
   return bsStr;

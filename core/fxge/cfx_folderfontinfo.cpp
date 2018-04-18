@@ -44,15 +44,11 @@ const struct {
 };
 
 ByteString FPDF_ReadStringFromFile(FILE* pFile, uint32_t size) {
-  ByteString result;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<char> buffer = result.GetBuffer(size);
-    if (!fread(buffer.data(), size, 1, pFile))
-      return ByteString();
-  }
-  result.ReleaseBuffer(size);
-  return result;
+  ByteString buffer;
+  if (!fread(buffer.GetBuffer(size), size, 1, pFile))
+    return ByteString();
+  buffer.ReleaseBuffer(size);
+  return buffer;
 }
 
 ByteString FPDF_LoadTableFromTT(FILE* pFile,
