@@ -252,27 +252,22 @@ Optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
 Optional<WideString> TryVSWPrintf(size_t size,
                                   const wchar_t* pFormat,
                                   va_list argList) {
-  if (!size)
+  WideString str;
+  wchar_t* buffer = str.GetBuffer(size);
+
+  // In the following two calls, there's always space in the buffer for
+  // a terminating NUL that's not included in nMaxLen.
+  // For vswprintf(), MSAN won't untaint the buffer on a truncated write's
+  // -1 return code even though the buffer is written. Probably just as well
+  // not to trust the vendor's implementation to write anything anyways.
+  // See https://crbug.com/705912.
+  memset(buffer, 0, (size + 1) * sizeof(wchar_t));
+  int ret = vswprintf(buffer, size + 1, pFormat, argList);
+
+  bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
+  if (!bSufficientBuffer)
     return {};
 
-  WideString str;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> buffer = str.GetBuffer(size);
-
-    // In the following two calls, there's always space in the WideString
-    // for a terminating NUL that's not included in the span.
-    // For vswprintf(), MSAN won't untaint the buffer on a truncated write's
-    // -1 return code even though the buffer is written. Probably just as well
-    // not to trust the vendor's implementation to write anything anyways.
-    // See https://crbug.com/705912.
-    memset(buffer.data(), 0, (size + 1) * sizeof(wchar_t));
-    int ret = vswprintf(buffer.data(), size + 1, pFormat, argList);
-
-    bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
-    if (!bSufficientBuffer)
-      return {};
-  }
   str.ReleaseBuffer(str.GetStringLength());
   return {str};
 }
@@ -304,12 +299,9 @@ WideString GetWideString(uint16_t codepage, const ByteStringView& bstr) {
     return WideString();
 
   WideString wstr;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> dest_buf = wstr.GetBuffer(dest_len);
-    FXSYS_MultiByteToWideChar(codepage, 0, bstr.unterminated_c_str(), src_len,
-                              dest_buf.data(), dest_len);
-  }
+  wchar_t* dest_buf = wstr.GetBuffer(dest_len);
+  FXSYS_MultiByteToWideChar(codepage, 0, bstr.unterminated_c_str(), src_len,
+                            dest_buf, dest_len);
   wstr.ReleaseBuffer(dest_len);
   return wstr;
 }
@@ -594,29 +586,29 @@ void WideString::Reserve(size_t len) {
   GetBuffer(len);
 }
 
-pdfium::span<wchar_t> WideString::GetBuffer(size_t nMinBufLength) {
+wchar_t* WideString::GetBuffer(size_t nMinBufLength) {
   if (!m_pData) {
     if (nMinBufLength == 0)
-      return pdfium::span<wchar_t>();
+      return nullptr;
 
     m_pData.Reset(StringData::Create(nMinBufLength));
     m_pData->m_nDataLength = 0;
     m_pData->m_String[0] = 0;
-    return pdfium::span<wchar_t>(m_pData->m_String, m_pData->m_nAllocLength);
+    return m_pData->m_String;
   }
 
   if (m_pData->CanOperateInPlace(nMinBufLength))
-    return pdfium::span<wchar_t>(m_pData->m_String, m_pData->m_nAllocLength);
+    return m_pData->m_String;
 
   nMinBufLength = std::max(nMinBufLength, m_pData->m_nDataLength);
   if (nMinBufLength == 0)
-    return pdfium::span<wchar_t>();
+    return nullptr;
 
   RetainPtr<StringData> pNewData(StringData::Create(nMinBufLength));
   pNewData->CopyContents(*m_pData);
   pNewData->m_nDataLength = m_pData->m_nDataLength;
   m_pData.Swap(pNewData);
-  return pdfium::span<wchar_t>(m_pData->m_String, m_pData->m_nAllocLength);
+  return m_pData->m_String;
 }
 
 size_t WideString::Delete(size_t index, size_t count) {
@@ -893,15 +885,14 @@ WideString WideString::FromUTF8(const ByteStringView& str) {
 
 // static
 WideString WideString::FromUTF16LE(const unsigned short* wstr, size_t wlen) {
-  if (!wstr || wlen == 0)
+  if (!wstr || wlen == 0) {
     return WideString();
+  }
 
   WideString result;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> buf = result.GetBuffer(wlen);
-    for (size_t i = 0; i < wlen; i++)
-      buf[i] = wstr[i];
+  wchar_t* buf = result.GetBuffer(wlen);
+  for (size_t i = 0; i < wlen; i++) {
+    buf[i] = wstr[i];
   }
   result.ReleaseBuffer(wlen);
   return result;

@@ -813,21 +813,20 @@ TEST(WideString, Reserve) {
 }
 
 TEST(WideString, GetBuffer) {
-  WideString str1;
   {
-    pdfium::span<wchar_t> buffer = str1.GetBuffer(12);
-    wcscpy(buffer.data(), L"clams");
+    WideString str;
+    wchar_t* buffer = str.GetBuffer(12);
+    wcscpy(buffer, L"clams");
+    str.ReleaseBuffer(str.GetStringLength());
+    EXPECT_EQ(L"clams", str);
   }
-  str1.ReleaseBuffer(str1.GetStringLength());
-  EXPECT_EQ(L"clams", str1);
-
-  WideString str2(L"cl");
   {
-    pdfium::span<wchar_t> buffer = str2.GetBuffer(12);
-    wcscpy(buffer.data() + 2, L"ams");
+    WideString str(L"cl");
+    wchar_t* buffer = str.GetBuffer(12);
+    wcscpy(buffer + 2, L"ams");
+    str.ReleaseBuffer(str.GetStringLength());
+    EXPECT_EQ(L"clams", str);
   }
-  str2.ReleaseBuffer(str2.GetStringLength());
-  EXPECT_EQ(L"clams", str2);
 }
 
 TEST(WideString, ReleaseBuffer) {
