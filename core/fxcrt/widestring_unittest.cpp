@@ -1353,8 +1353,14 @@ TEST(WideString, Empty) {
   WideString empty_str;
   EXPECT_TRUE(empty_str.IsEmpty());
   EXPECT_EQ(0u, empty_str.GetLength());
+
   const wchar_t* cstr = empty_str.c_str();
+  EXPECT_NE(nullptr, cstr);
   EXPECT_EQ(0u, wcslen(cstr));
+
+  pdfium::span<const wchar_t> cspan = empty_str.AsSpan();
+  EXPECT_TRUE(cspan.empty());
+  EXPECT_EQ(nullptr, cspan.data());
 }
 
 TEST(CFX_WidString, InitializerList) {

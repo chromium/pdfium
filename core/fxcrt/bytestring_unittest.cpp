@@ -27,6 +27,10 @@ TEST(ByteString, ElementAccess) {
   EXPECT_EQ(3u, abc_span.size());
   EXPECT_EQ(0, memcmp(abc_span.data(), "abc", 3));
 
+  pdfium::span<const uint8_t> abc_raw_span = abc.AsRawSpan();
+  EXPECT_EQ(3u, abc_raw_span.size());
+  EXPECT_EQ(0, memcmp(abc_raw_span.data(), "abc", 3));
+
   ByteString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
   EXPECT_EQ('a', mutable_abc[0]);
@@ -1527,8 +1531,21 @@ TEST(ByteString, Empty) {
   ByteString empty_str;
   EXPECT_TRUE(empty_str.IsEmpty());
   EXPECT_EQ(0u, empty_str.GetLength());
+
   const char* cstr = empty_str.c_str();
+  EXPECT_NE(nullptr, cstr);
   EXPECT_EQ(0u, strlen(cstr));
+
+  const uint8_t* rstr = empty_str.raw_str();
+  EXPECT_EQ(nullptr, rstr);
+
+  pdfium::span<const char> cspan = empty_str.AsSpan();
+  EXPECT_TRUE(cspan.empty());
+  EXPECT_EQ(nullptr, cspan.data());
+
+  pdfium::span<const uint8_t> rspan = empty_str.AsRawSpan();
+  EXPECT_TRUE(rspan.empty());
+  EXPECT_EQ(nullptr, rspan.data());
 }
 
 TEST(ByteString, InitializerList) {

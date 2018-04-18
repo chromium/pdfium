@@ -82,9 +82,8 @@ class WideString {
   // Explicit conversion to span.
   // Note: Any subsequent modification of |this| will invalidate the result.
   pdfium::span<const wchar_t> AsSpan() const {
-    return m_pData ? pdfium::span<const wchar_t>(m_pData->m_String,
-                                                 m_pData->m_nDataLength)
-                   : pdfium::span<const wchar_t>();
+    return pdfium::make_span(m_pData ? m_pData->m_String : nullptr,
+                             GetLength());
   }
 
   // Note: Any subsequent modification of |this| will invalidate iterators.
