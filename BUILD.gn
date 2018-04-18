@@ -1172,7 +1172,12 @@ jumbo_static_library("pwl") {
 
 jumbo_static_library("fxjs") {
   sources = [
+    "fxjs/cjs_event_context_stub.cpp",
+    "fxjs/cjs_event_context_stub.h",
+    "fxjs/cjs_runtimestub.cpp",
+    "fxjs/cjs_runtimestub.h",
     "fxjs/ijs_event_context.h",
+    "fxjs/ijs_runtime.cpp",
     "fxjs/ijs_runtime.h",
   ]
   configs += [ ":pdfium_core_config" ]
@@ -1595,12 +1600,6 @@ jumbo_static_library("fxjs") {
         "fxjs/xfa/cjx_xsdconnection.h",
       ]
     }
-  } else {
-    sources += [
-      "fxjs/cjs_event_context_stub.cpp",
-      "fxjs/cjs_event_context_stub.h",
-      "fxjs/cjs_runtimestub.cpp",
-    ]
   }
 }
 

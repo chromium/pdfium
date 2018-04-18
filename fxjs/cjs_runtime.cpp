@@ -47,22 +47,6 @@
 #endif  // PDF_ENABLE_XFA
 
 // static
-void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
-  FXJS_Initialize(slot, reinterpret_cast<v8::Isolate*>(isolate));
-}
-
-// static
-void IJS_Runtime::Destroy() {
-  FXJS_Release();
-}
-
-// static
-std::unique_ptr<IJS_Runtime> IJS_Runtime::Create(
-    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  return pdfium::MakeUnique<CJS_Runtime>(pFormFillEnv);
-}
-
-// static
 CJS_Runtime* CJS_Runtime::RuntimeFromIsolateCurrentContext(
     v8::Isolate* pIsolate) {
   return static_cast<CJS_Runtime*>(
