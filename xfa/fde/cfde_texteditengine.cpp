@@ -899,12 +899,19 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
 
   size_t start_it_idx = start_it->nStart;
   for (; start_it <= end_it; ++start_it) {
-    if (!start_it->rtPiece.Contains(point))
+    // We need to handle clicking off the end of the line. Using Contains()
+    // would constrain the detection to the text on the line.
+    bool piece_contains_point_vertically =
+        (point.y >= start_it->rtPiece.top &&
+         point.y < start_it->rtPiece.bottom());
+    if (!piece_contains_point_vertically)
       continue;
 
     std::vector<CFX_RectF> rects = GetCharRects(*start_it);
     for (size_t i = 0; i < rects.size(); ++i) {
-      if (!rects[i].Contains(point))
+      bool character_contains_point_horizontally =
+          (point.x >= rects[i].left && point.x < rects[i].right());
+      if (!character_contains_point_horizontally)
         continue;
       size_t pos = start_it->nStart + i;
       if (pos >= text_length_)
@@ -920,6 +927,13 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
       // TODO(dsinclair): Old code had a before flag set based on bidi?
       return pos;
     }
+
+    // Point is not within the horizontal range of any characters, it's
+    // afterwards. Return the position after the the last character.
+    // The last line has nCount equal to the number of characters + 1 (sentinel
+    // character maybe?). Restrict to the text_length_ to account for that.
+    return std::min(static_cast<size_t>(start_it->nStart + start_it->nCount),
+                    text_length_);
   }
 
   if (start_it == text_piece_info_.end())
