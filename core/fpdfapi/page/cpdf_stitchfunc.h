@@ -29,10 +29,8 @@ class CPDF_StitchFunc : public CPDF_Function {
 
  private:
   std::vector<std::unique_ptr<CPDF_Function>> m_pSubFunctions;
-  float* m_pBounds;
-  float* m_pEncode;
-
-  static const uint32_t kRequiredNumInputs = 1;
+  float* m_pBounds = nullptr;
+  float* m_pEncode = nullptr;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STITCHFUNC_H_

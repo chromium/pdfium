@@ -12,10 +12,13 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_memory.h"
 
-CPDF_StitchFunc::CPDF_StitchFunc()
-    : CPDF_Function(Type::kType3Stitching),
-      m_pBounds(nullptr),
-      m_pEncode(nullptr) {}
+namespace {
+
+constexpr uint32_t kRequiredNumInputs = 1;
+
+}  // namespace
+
+CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {}
 
 CPDF_StitchFunc::~CPDF_StitchFunc() {
   FX_Free(m_pBounds);
@@ -24,56 +27,86 @@ CPDF_StitchFunc::~CPDF_StitchFunc() {
 
 bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj,
                              std::set<CPDF_Object*>* pVisited) {
+  if (m_nInputs != kRequiredNumInputs)
+    return false;
+
   CPDF_Dictionary* pDict = pObj->GetDict();
-  if (!pDict) {
+  if (!pDict)
     return false;
-  }
-  if (m_nInputs != kRequiredNumInputs) {
+
+  const CPDF_Array* pFunctionsArray = pDict->GetArrayFor("Functions");
+  if (!pFunctionsArray)
     return false;
-  }
-  CPDF_Array* pArray = pDict->GetArrayFor("Functions");
-  if (!pArray) {
+
+  const CPDF_Array* pBoundsArray = pDict->GetArrayFor("Bounds");
+  if (!pBoundsArray)
     return false;
-  }
-  uint32_t nSubs = pArray->GetCount();
+
+  const CPDF_Array* pEncodeArray = pDict->GetArrayFor("Encode");
+  if (!pEncodeArray)
+    return false;
+
+  const uint32_t nSubs = pFunctionsArray->GetCount();
   if (nSubs == 0)
     return false;
-  m_nOutputs = 0;
-  for (uint32_t i = 0; i < nSubs; i++) {
-    CPDF_Object* pSub = pArray->GetDirectObjectAt(i);
-    if (pSub == pObj)
+
+  // Check array sizes. The checks are slightly relaxed to allow the "Bounds"
+  // and "Encode" arrays to have more than the required number of elements.
+  {
+    if (pBoundsArray->GetCount() < nSubs - 1)
       return false;
-    std::unique_ptr<CPDF_Function> pFunc(CPDF_Function::Load(pSub, pVisited));
-    if (!pFunc)
+
+    FX_SAFE_UINT32 nExpectedEncodeSize = nSubs;
+    nExpectedEncodeSize *= 2;
+    if (!nExpectedEncodeSize.IsValid())
       return false;
-    // Check that the input dimensionality is 1, and that all output
-    // dimensionalities are the same.
-    if (pFunc->CountInputs() != kRequiredNumInputs)
+
+    if (pEncodeArray->GetCount() < nExpectedEncodeSize.ValueOrDie())
       return false;
-    if (pFunc->CountOutputs() != m_nOutputs) {
-      if (m_nOutputs)
+  }
+
+  // Check sub-functions.
+  {
+    Optional<uint32_t> nOutputs;
+    for (uint32_t i = 0; i < nSubs; ++i) {
+      CPDF_Object* pSub = pFunctionsArray->GetDirectObjectAt(i);
+      if (pSub == pObj)
         return false;
 
-      m_nOutputs = pFunc->CountOutputs();
-    }
+      std::unique_ptr<CPDF_Function> pFunc(CPDF_Function::Load(pSub, pVisited));
+      if (!pFunc)
+        return false;
 
-    m_pSubFunctions.push_back(std::move(pFunc));
+      // Check that the input dimensionality is 1, and that all output
+      // dimensionalities are the same.
+      if (pFunc->CountInputs() != kRequiredNumInputs)
+        return false;
+
+      uint32_t nFuncOutputs = pFunc->CountOutputs();
+      if (nFuncOutputs == 0)
+        return false;
+
+      if (nOutputs) {
+        if (nFuncOutputs != *nOutputs)
+          return false;
+      } else {
+        nOutputs = nFuncOutputs;
+      }
+
+      m_pSubFunctions.push_back(std::move(pFunc));
+    }
+    m_nOutputs = *nOutputs;
   }
+
   m_pBounds = FX_Alloc(float, nSubs + 1);
   m_pBounds[0] = m_pDomains[0];
-  pArray = pDict->GetArrayFor("Bounds");
-  if (!pArray)
-    return false;
   for (uint32_t i = 0; i < nSubs - 1; i++)
-    m_pBounds[i + 1] = pArray->GetFloatAt(i);
+    m_pBounds[i + 1] = pBoundsArray->GetFloatAt(i);
   m_pBounds[nSubs] = m_pDomains[1];
-  m_pEncode = FX_Alloc2D(float, nSubs, 2);
-  pArray = pDict->GetArrayFor("Encode");
-  if (!pArray)
-    return false;
 
+  m_pEncode = FX_Alloc2D(float, nSubs, 2);
   for (uint32_t i = 0; i < nSubs * 2; i++)
-    m_pEncode[i] = pArray->GetFloatAt(i);
+    m_pEncode[i] = pEncodeArray->GetFloatAt(i);
   return true;
 }
 
