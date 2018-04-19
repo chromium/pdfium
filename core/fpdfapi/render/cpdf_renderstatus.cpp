@@ -65,9 +65,9 @@
 #include "core/fxge/skia/fx_skia_device.h"
 #endif
 
-#define SHADING_STEPS 256
-
 namespace {
+
+constexpr int kShadingSteps = 256;
 
 void ReleaseCachedType3(CPDF_Type3Font* pFont) {
   CPDF_Document* pDoc = pFont->GetDocument();
@@ -152,9 +152,9 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   CFX_FixedBufGrow<float, 16> result_array(total_results);
   float* pResults = result_array;
   memset(pResults, 0, total_results * sizeof(float));
-  uint32_t rgb_array[SHADING_STEPS];
-  for (int i = 0; i < SHADING_STEPS; i++) {
-    float input = (t_max - t_min) * i / SHADING_STEPS + t_min;
+  uint32_t rgb_array[kShadingSteps];
+  for (int i = 0; i < kShadingSteps; i++) {
+    float input = (t_max - t_min) * i / kShadingSteps + t_min;
     int offset = 0;
     for (const auto& func : funcs) {
       if (func) {
@@ -181,17 +181,17 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float scale =
           (((pos.x - start_x) * x_span) + ((pos.y - start_y) * y_span)) /
           axis_len_square;
-      int index = (int32_t)(scale * (SHADING_STEPS - 1));
+      int index = (int32_t)(scale * (kShadingSteps - 1));
       if (index < 0) {
         if (!bStartExtend)
           continue;
 
         index = 0;
-      } else if (index >= SHADING_STEPS) {
+      } else if (index >= kShadingSteps) {
         if (!bEndExtend)
           continue;
 
-        index = SHADING_STEPS - 1;
+        index = kShadingSteps - 1;
       }
       dib_buf[column] = rgb_array[index];
     }
@@ -238,9 +238,9 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   CFX_FixedBufGrow<float, 16> result_array(total_results);
   float* pResults = result_array;
   memset(pResults, 0, total_results * sizeof(float));
-  uint32_t rgb_array[SHADING_STEPS];
-  for (int i = 0; i < SHADING_STEPS; i++) {
-    float input = (t_max - t_min) * i / SHADING_STEPS + t_min;
+  uint32_t rgb_array[kShadingSteps];
+  for (int i = 0; i < kShadingSteps; i++) {
+    float input = (t_max - t_min) * i / kShadingSteps + t_min;
     int offset = 0;
     for (const auto& func : funcs) {
       if (func) {
@@ -316,18 +316,18 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
           continue;
         }
       }
-      int index = (int32_t)(s * (SHADING_STEPS - 1));
+      int index = (int32_t)(s * (kShadingSteps - 1));
       if (index < 0) {
         if (!bStartExtend) {
           continue;
         }
         index = 0;
       }
-      if (index >= SHADING_STEPS) {
+      if (index >= kShadingSteps) {
         if (!bEndExtend) {
           continue;
         }
-        index = SHADING_STEPS - 1;
+        index = kShadingSteps - 1;
       }
       dib_buf[column] = rgb_array[index];
     }
