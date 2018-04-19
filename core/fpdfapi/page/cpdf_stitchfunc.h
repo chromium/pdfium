@@ -25,12 +25,12 @@ class CPDF_StitchFunc : public CPDF_Function {
   const std::vector<std::unique_ptr<CPDF_Function>>& GetSubFunctions() const {
     return m_pSubFunctions;
   }
-  float GetBound(size_t i) const { return m_pBounds[i]; }
+  float GetBound(size_t i) const { return m_bounds[i]; }
 
  private:
   std::vector<std::unique_ptr<CPDF_Function>> m_pSubFunctions;
-  float* m_pBounds = nullptr;
-  float* m_pEncode = nullptr;
+  std::vector<float> m_bounds;
+  std::vector<float> m_encode;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STITCHFUNC_H_

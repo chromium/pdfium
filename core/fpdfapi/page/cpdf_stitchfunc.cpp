@@ -20,10 +20,7 @@ constexpr uint32_t kRequiredNumInputs = 1;
 
 CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {}
 
-CPDF_StitchFunc::~CPDF_StitchFunc() {
-  FX_Free(m_pBounds);
-  FX_Free(m_pEncode);
-}
+CPDF_StitchFunc::~CPDF_StitchFunc() {}
 
 bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj,
                              std::set<CPDF_Object*>* pVisited) {
@@ -98,15 +95,15 @@ bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj,
     m_nOutputs = *nOutputs;
   }
 
-  m_pBounds = FX_Alloc(float, nSubs + 1);
-  m_pBounds[0] = m_pDomains[0];
+  m_bounds.reserve(nSubs + 1);
+  m_bounds.push_back(m_pDomains[0]);
   for (uint32_t i = 0; i < nSubs - 1; i++)
-    m_pBounds[i + 1] = pBoundsArray->GetFloatAt(i);
-  m_pBounds[nSubs] = m_pDomains[1];
+    m_bounds.push_back(pBoundsArray->GetFloatAt(i));
+  m_bounds.push_back(m_pDomains[1]);
 
-  m_pEncode = FX_Alloc2D(float, nSubs, 2);
+  m_encode.reserve(nSubs * 2);
   for (uint32_t i = 0; i < nSubs * 2; i++)
-    m_pEncode[i] = pEncodeArray->GetFloatAt(i);
+    m_encode.push_back(pEncodeArray->GetFloatAt(i));
   return true;
 }
 
@@ -114,11 +111,11 @@ bool CPDF_StitchFunc::v_Call(const float* inputs, float* results) const {
   float input = inputs[0];
   size_t i;
   for (i = 0; i < m_pSubFunctions.size() - 1; i++) {
-    if (input < m_pBounds[i + 1])
+    if (input < m_bounds[i + 1])
       break;
   }
-  input = Interpolate(input, m_pBounds[i], m_pBounds[i + 1], m_pEncode[i * 2],
-                      m_pEncode[i * 2 + 1]);
+  input = Interpolate(input, m_bounds[i], m_bounds[i + 1], m_encode[i * 2],
+                      m_encode[i * 2 + 1]);
   int nresults;
   return m_pSubFunctions[i]->Call(&input, kRequiredNumInputs, results,
                                   &nresults);
