@@ -98,14 +98,24 @@ bool CPDF_Function::Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
   }
 
   CPDF_Array* pRanges = pDict->GetArrayFor("Range");
-  m_nOutputs = 0;
-  if (pRanges) {
-    m_nOutputs = pRanges->GetCount() / 2;
+  m_nOutputs = pRanges ? pRanges->GetCount() / 2 : 0;
+
+  // Ranges are required for type 0 and type 4 functions. A non-zero
+  // |m_nOutputs| here implied Ranges meets the requirements.
+  {
+    bool bRangeRequired =
+        m_Type == Type::kType0Sampled || m_Type == Type::kType4PostScript;
+    if (bRangeRequired && m_nOutputs == 0)
+      return false;
+  }
+
+  if (m_nOutputs > 0) {
     size_t nOutputs = m_nOutputs * 2;
     m_pRanges = FX_Alloc(float, nOutputs);
     for (size_t i = 0; i < nOutputs; ++i)
       m_pRanges[i] = pRanges->GetFloatAt(i);
   }
+
   uint32_t old_outputs = m_nOutputs;
   if (!v_Init(pObj, pVisited))
     return false;
