@@ -1077,7 +1077,7 @@ void CFWL_Edit::DoRButtonDown(CFWL_MessageMouse* pMsg) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
     SetFocus(true);
 
-  m_CursorPosition = m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
+  SetCursorPosition(m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos)));
 }
 
 void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
@@ -1135,7 +1135,7 @@ void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     m_EdtEngine.SetSelection(start, end - start);
     bRepaint = true;
   } else {
-    m_CursorPosition = index_at_click;
+    SetCursorPosition(index_at_click);
   }
 
   if (bRepaint)
