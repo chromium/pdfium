@@ -953,6 +953,7 @@ std::vector<CFX_RectF> CFDE_TextEditEngine::GetCharRects(
 
   FX_TXTRUN tr;
   tr.pEdtEngine = this;
+  tr.iStart = piece.nStart;
   tr.iLength = piece.nCount;
   tr.pFont = font_;
   tr.fFontSize = font_size_;
@@ -969,6 +970,7 @@ std::vector<FXTEXT_CHARPOS> CFDE_TextEditEngine::GetDisplayPos(
 
   FX_TXTRUN tr;
   tr.pEdtEngine = this;
+  tr.iStart = piece.nStart;
   tr.iLength = piece.nCount;
   tr.pFont = font_;
   tr.fFontSize = font_size_;

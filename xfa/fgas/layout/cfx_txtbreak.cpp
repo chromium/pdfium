@@ -686,11 +686,12 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   bool bShadda = false;
   bool bLam = false;
   for (int32_t i = 0; i <= iLength; i++) {
+    int32_t iAbsolute = i + pTxtRun->iStart;
     int32_t iWidth;
     wchar_t wch;
     if (pEngine) {
-      wch = pEngine->GetChar(i);
-      iWidth = pEngine->GetWidthOfChar(i);
+      wch = pEngine->GetChar(iAbsolute);
+      iWidth = pEngine->GetWidthOfChar(iAbsolute);
     } else {
       wch = *pStr++;
       iWidth = *pWidths++;
@@ -709,7 +710,8 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
         if (pEngine) {
           iNext = i + 1;
           while (iNext <= iLength) {
-            wNext = pEngine->GetChar(iNext);
+            int32_t iNextAbsolute = iNext + pTxtRun->iStart;
+            wNext = pEngine->GetChar(iNextAbsolute);
             dwProps = FX_GetUnicodeProperties(wNext);
             if ((dwProps & FX_CHARTYPEBITSMASK) != FX_CHARTYPE_Combination)
               break;
@@ -747,8 +749,10 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
           wNext = 0xFEFF;
           if (pEngine) {
             iNext = i + 1;
-            if (iNext <= iLength)
-              wNext = pEngine->GetChar(iNext);
+            if (iNext <= iLength) {
+              int32_t iNextAbsolute = iNext + pTxtRun->iStart;
+              wNext = pEngine->GetChar(iNextAbsolute);
+            }
           } else {
             if (i < iLength)
               wNext = *pStr;
@@ -930,9 +934,10 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 
   std::vector<CFX_RectF> rtArray(iLength);
   for (int32_t i = 0; i < iLength; i++) {
+    int32_t iAbsolute = i + pTxtRun->iStart;
     if (pEngine) {
-      wch = pEngine->GetChar(i);
-      iCharSize = pEngine->GetWidthOfChar(i);
+      wch = pEngine->GetChar(iAbsolute);
+      iCharSize = pEngine->GetWidthOfChar(iAbsolute);
     } else {
       wch = *pStr++;
       iCharSize = *pWidths++;

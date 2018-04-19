@@ -42,6 +42,7 @@ struct FX_TXTRUN {
   CFDE_TextEditEngine* pEdtEngine;
   WideString wsStr;
   int32_t* pWidths;
+  int32_t iStart;
   int32_t iLength;
   RetainPtr<CFGAS_GEFont> pFont;
   float fFontSize;
