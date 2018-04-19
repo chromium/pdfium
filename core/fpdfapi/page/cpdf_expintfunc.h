@@ -20,10 +20,10 @@ class CPDF_ExpIntFunc : public CPDF_Function {
   bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) override;
   bool v_Call(const float* inputs, float* results) const override;
 
-  uint32_t m_nOrigOutputs;
-  float m_Exponent;
-  float* m_pBeginValues;
-  float* m_pEndValues;
+  uint32_t m_nOrigOutputs = 0;
+  float m_Exponent = 0.0f;
+  float* m_pBeginValues = nullptr;
+  float* m_pEndValues = nullptr;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_

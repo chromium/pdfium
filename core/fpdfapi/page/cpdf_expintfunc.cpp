@@ -8,12 +8,11 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fxcrt/fx_memory.h"
 
 CPDF_ExpIntFunc::CPDF_ExpIntFunc()
-    : CPDF_Function(Type::kType2ExpotentialInterpolation),
-      m_pBeginValues(nullptr),
-      m_pEndValues(nullptr) {}
+    : CPDF_Function(Type::kType2ExpotentialInterpolation) {}
 
 CPDF_ExpIntFunc::~CPDF_ExpIntFunc() {
   FX_Free(m_pBeginValues);
@@ -26,14 +25,21 @@ bool CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj,
   if (!pDict)
     return false;
 
-  CPDF_Array* pArray0 = pDict->GetArrayFor("C0");
-  if (m_nOutputs == 0) {
-    m_nOutputs = 1;
-    if (pArray0)
-      m_nOutputs = pArray0->GetCount();
+  {
+    CPDF_Number* pExponent = ToNumber(pDict->GetObjectFor("N"));
+    if (!pExponent)
+      return false;
+
+    m_Exponent = pExponent->GetNumber();
   }
 
-  CPDF_Array* pArray1 = pDict->GetArrayFor("C1");
+  const CPDF_Array* pArray0 = pDict->GetArrayFor("C0");
+  if (pArray0 && m_nOutputs == 0)
+    m_nOutputs = pArray0->GetCount();
+  if (m_nOutputs == 0)
+    m_nOutputs = 1;
+
+  const CPDF_Array* pArray1 = pDict->GetArrayFor("C1");
   m_pBeginValues = FX_Alloc2D(float, m_nOutputs, 2);
   m_pEndValues = FX_Alloc2D(float, m_nOutputs, 2);
   for (uint32_t i = 0; i < m_nOutputs; i++) {
@@ -41,12 +47,13 @@ bool CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj,
     m_pEndValues[i] = pArray1 ? pArray1->GetFloatAt(i) : 1.0f;
   }
 
-  m_Exponent = pDict->GetFloatFor("N");
-  m_nOrigOutputs = m_nOutputs;
-  if (m_nOutputs && m_nInputs > INT_MAX / m_nOutputs)
+  FX_SAFE_UINT32 nOutputs = m_nOutputs;
+  nOutputs *= m_nInputs;
+  if (!nOutputs.IsValid())
     return false;
 
-  m_nOutputs *= m_nInputs;
+  m_nOrigOutputs = m_nOutputs;
+  m_nOutputs = nOutputs.ValueOrDie();
   return true;
 }
 
