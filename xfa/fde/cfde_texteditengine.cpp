@@ -899,8 +899,6 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
 
   size_t start_it_idx = start_it->nStart;
   for (; start_it <= end_it; ++start_it) {
-    // We need to handle clicking off the end of the line. Using Contains()
-    // would constrain the detection to the text on the line.
     bool piece_contains_point_vertically =
         (point.y >= start_it->rtPiece.top &&
          point.y < start_it->rtPiece.bottom());
@@ -913,7 +911,14 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
           (point.x >= rects[i].left && point.x < rects[i].right());
       if (!character_contains_point_horizontally)
         continue;
-      size_t pos = start_it->nStart + i;
+
+      // When clicking on the left half of a character, the cursor should be
+      // moved before it. If the click was on the right half of that character,
+      // move the cursor after it.
+      bool closer_to_left =
+          (point.x - rects[i].left < rects[i].right() - point.x);
+      int caret_pos = (closer_to_left ? i : i + 1);
+      size_t pos = start_it->nStart + caret_pos;
       if (pos >= text_length_)
         return text_length_;
 
