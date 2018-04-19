@@ -97,10 +97,10 @@ void CFX_XMLElement::SetTextData(const WideString& wsText) {
 }
 
 void CFX_XMLElement::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {
-  ByteStringView name_encoded = name_.UTF8Encode().AsStringView();
+  ByteString bsNameEncoded = name_.UTF8Encode();
 
   pXMLStream->WriteString("<");
-  pXMLStream->WriteString(name_encoded);
+  pXMLStream->WriteString(bsNameEncoded.AsStringView());
 
   for (auto it : attrs_) {
     // Note, the space between attributes is added by AttributeToString which
@@ -121,7 +121,7 @@ void CFX_XMLElement::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {
     pChild->Save(pXMLStream);
   }
   pXMLStream->WriteString("</");
-  pXMLStream->WriteString(name_encoded);
+  pXMLStream->WriteString(bsNameEncoded.AsStringView());
   pXMLStream->WriteString(">\n");
 }
 
