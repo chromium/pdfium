@@ -196,6 +196,22 @@ void CPWL_ComboBox::ReplaceSelection(const WideString& text) {
     m_pEdit->ReplaceSelection(text);
 }
 
+bool CPWL_ComboBox::CanUndo() {
+  return m_pEdit && m_pEdit->CanUndo();
+}
+
+bool CPWL_ComboBox::CanRedo() {
+  return m_pEdit && m_pEdit->CanRedo();
+}
+
+bool CPWL_ComboBox::Undo() {
+  return m_pEdit && m_pEdit->Undo();
+}
+
+bool CPWL_ComboBox::Redo() {
+  return m_pEdit && m_pEdit->Redo();
+}
+
 WideString CPWL_ComboBox::GetText() {
   return m_pEdit ? m_pEdit->GetText() : WideString();
 }

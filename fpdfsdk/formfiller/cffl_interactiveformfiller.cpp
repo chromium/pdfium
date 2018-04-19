@@ -533,6 +533,30 @@ void CFFL_InteractiveFormFiller::ReplaceSelection(CPDFSDK_Annot* pAnnot,
   pFormFiller->ReplaceSelection(pAnnot, text);
 }
 
+bool CFFL_InteractiveFormFiller::CanUndo(CPDFSDK_Annot* pAnnot) {
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
+  CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
+  return pFormFiller && pFormFiller->CanUndo(pAnnot);
+}
+
+bool CFFL_InteractiveFormFiller::CanRedo(CPDFSDK_Annot* pAnnot) {
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
+  CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
+  return pFormFiller && pFormFiller->CanRedo(pAnnot);
+}
+
+bool CFFL_InteractiveFormFiller::Undo(CPDFSDK_Annot* pAnnot) {
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
+  CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
+  return pFormFiller && pFormFiller->Undo(pAnnot);
+}
+
+bool CFFL_InteractiveFormFiller::Redo(CPDFSDK_Annot* pAnnot) {
+  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
+  CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
+  return pFormFiller && pFormFiller->Redo(pAnnot);
+}
+
 void CFFL_InteractiveFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
   auto it = m_Maps.find(pAnnot);
   if (it == m_Maps.end())

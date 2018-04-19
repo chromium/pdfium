@@ -184,6 +184,12 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual WideString GetText();
   virtual WideString GetSelectedText();
   virtual void ReplaceSelection(const WideString& text);
+
+  virtual bool CanUndo();
+  virtual bool CanRedo();
+  virtual bool Undo();
+  virtual bool Redo();
+
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 

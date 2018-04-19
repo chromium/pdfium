@@ -1452,6 +1452,64 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
                                                      FPDF_WIDESTRING wsText);
 
 /**
+ * Function: FORM_CanUndo
+ *          Find out if it is possible for the current focused widget in a given
+ *          form to perform an undo operation.
+ * Parameters:
+ *          hHandle     -   Handle to the form fill module. Returned by
+ *                          FPDFDOC_InitFormFillEnvironment.
+ *          page        -   Handle to the page. Returned by FPDF_LoadPage
+ *                          function.
+ * Return Value:
+ *          True if it is possible to undo.
+ **/
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_CanUndo(FPDF_FORMHANDLE hHandle,
+                                                 FPDF_PAGE page);
+
+/**
+ * Function: FORM_CanRedo
+ *          Find out if it is possible for the current focused widget in a given
+ *          form to perform a redo operation.
+ * Parameters:
+ *          hHandle     -   Handle to the form fill module. Returned by
+ *                          FPDFDOC_InitFormFillEnvironment.
+ *          page        -   Handle to the page. Returned by FPDF_LoadPage
+ *                          function.
+ * Return Value:
+ *          True if it is possible to redo.
+ **/
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_CanRedo(FPDF_FORMHANDLE hHandle,
+                                                 FPDF_PAGE page);
+
+/**
+ * Function: FORM_Undo
+ *          Make the current focussed widget perform an undo operation.
+ * Parameters:
+ *          hHandle     -   Handle to the form fill module. Returned by
+ *                          FPDFDOC_InitFormFillEnvironment.
+ *          page        -   Handle to the page. Returned by FPDF_LoadPage
+ *                          function.
+ * Return Value:
+ *          True if the undo operation succeeded.
+ **/
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_Undo(FPDF_FORMHANDLE hHandle,
+                                              FPDF_PAGE page);
+
+/**
+ * Function: FORM_Redo
+ *          Make the current focussed widget perform a redo operation.
+ * Parameters:
+ *          hHandle     -   Handle to the form fill module. Returned by
+ *                          FPDFDOC_InitFormFillEnvironment.
+ *          page        -   Handle to the page. Returned by FPDF_LoadPage
+ *                          function.
+ * Return Value:
+ *          True if the redo operation succeeded.
+ **/
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_Redo(FPDF_FORMHANDLE hHandle,
+                                              FPDF_PAGE page);
+
+/**
  * Function: FORM_ForceToKillFocus.
  *          You can call this member function to force to kill the focus of the
  *form field which got focus.

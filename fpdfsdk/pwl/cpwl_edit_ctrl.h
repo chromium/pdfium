@@ -36,10 +36,10 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void SetCharSet(uint8_t nCharSet) { m_nCharSet = nCharSet; }
   int32_t GetCharSet() const;
 
-  bool CanUndo() const;
-  bool CanRedo() const;
-  void Redo();
-  void Undo();
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
 
   void SetReadyToInput();
 

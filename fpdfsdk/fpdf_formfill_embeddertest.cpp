@@ -134,6 +134,18 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
     EXPECT_EQ(expected_string, WideString::FromUTF16LE(buf.data(), num_chars));
   }
 
+  void CheckCanUndo(bool expected_result) {
+    EXPECT_EQ(expected_result, !!FORM_CanUndo(form_handle(), page_));
+  }
+
+  void CheckCanRedo(bool expected_result) {
+    EXPECT_EQ(expected_result, !!FORM_CanRedo(form_handle(), page_));
+  }
+
+  void PerformUndo() { EXPECT_TRUE(FORM_Undo(form_handle(), page_)); }
+
+  void PerformRedo() { EXPECT_TRUE(FORM_Redo(form_handle(), page_)); }
+
  private:
   FPDF_PAGE page_ = nullptr;
 };
@@ -1543,4 +1555,69 @@ TEST_F(FPDFFormFillComboBoxFormEmbeddertest, FocusChanges) {
   CheckFocusedFieldText(L"AFoo");
   SelectEditableFormOption(0);
   CheckFocusedFieldText(L"Foo");
+}
+
+TEST_F(FPDFFormFillTextFormEmbeddertest, UndoRedo) {
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckFocusedFieldText(L"");
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  TypeTextIntoTextField(5, RegularFormBegin());
+  CheckFocusedFieldText(L"ABCDE");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"ABCD");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+  PerformUndo();
+  CheckFocusedFieldText(L"ABC");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+
+  PerformRedo();
+  CheckFocusedFieldText(L"ABCD");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+  PerformRedo();
+  CheckFocusedFieldText(L"ABCDE");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+}
+
+TEST_F(FPDFFormFillComboBoxFormEmbeddertest, UndoRedo) {
+  ClickOnFormFieldAtPoint(NonEditableFormBegin());
+  CheckFocusedFieldText(L"Banana");
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  ClickOnFormFieldAtPoint(EditableFormBegin());
+  CheckFocusedFieldText(L"");
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  TypeTextIntoTextField(3, EditableFormBegin());
+  CheckFocusedFieldText(L"ABC");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"AB");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+  PerformUndo();
+  CheckFocusedFieldText(L"A");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+  PerformUndo();
+  CheckFocusedFieldText(L"");
+  CheckCanUndo(false);
+  CheckCanRedo(true);
+
+  PerformRedo();
+  CheckFocusedFieldText(L"A");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
 }

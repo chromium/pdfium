@@ -401,22 +401,20 @@ void CPWL_EditCtrl::Backspace() {
     m_pEdit->Backspace();
 }
 
-bool CPWL_EditCtrl::CanUndo() const {
+bool CPWL_EditCtrl::CanUndo() {
   return !IsReadOnly() && m_pEdit->CanUndo();
 }
 
-bool CPWL_EditCtrl::CanRedo() const {
+bool CPWL_EditCtrl::CanRedo() {
   return !IsReadOnly() && m_pEdit->CanRedo();
 }
 
-void CPWL_EditCtrl::Redo() {
-  if (CanRedo())
-    m_pEdit->Redo();
+bool CPWL_EditCtrl::Undo() {
+  return CanUndo() && m_pEdit->Undo();
 }
 
-void CPWL_EditCtrl::Undo() {
-  if (CanUndo())
-    m_pEdit->Undo();
+bool CPWL_EditCtrl::Redo() {
+  return CanRedo() && m_pEdit->Redo();
 }
 
 int32_t CPWL_EditCtrl::GetCharSet() const {

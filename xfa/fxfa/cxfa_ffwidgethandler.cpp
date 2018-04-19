@@ -166,6 +166,22 @@ void CXFA_FFWidgetHandler::PasteText(CXFA_FFWidget* widget,
   widget->Paste(text);
 }
 
+bool CXFA_FFWidgetHandler::CanUndo(CXFA_FFWidget* widget) {
+  return widget->CanUndo();
+}
+
+bool CXFA_FFWidgetHandler::CanRedo(CXFA_FFWidget* widget) {
+  return widget->CanRedo();
+}
+
+bool CXFA_FFWidgetHandler::Undo(CXFA_FFWidget* widget) {
+  return widget->Undo();
+}
+
+bool CXFA_FFWidgetHandler::Redo(CXFA_FFWidget* widget) {
+  return widget->Redo();
+}
+
 FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
                                               const CFX_PointF& point) {
   if (!(hWidget->GetStatus() & XFA_WidgetStatus_Visible))

@@ -299,6 +299,30 @@ void CPDFSDK_WidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
     m_pFormFiller->ReplaceSelection(pAnnot, text);
 }
 
+bool CPDFSDK_WidgetHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
+    return m_pFormFiller->CanUndo(pAnnot);
+  return false;
+}
+
+bool CPDFSDK_WidgetHandler::CanRedo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
+    return m_pFormFiller->CanRedo(pAnnot);
+  return false;
+}
+
+bool CPDFSDK_WidgetHandler::Undo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
+    return m_pFormFiller->Undo(pAnnot);
+  return false;
+}
+
+bool CPDFSDK_WidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot->IsSignatureWidget() && m_pFormFiller)
+    return m_pFormFiller->Redo(pAnnot);
+  return false;
+}
+
 bool CPDFSDK_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     const CFX_PointF& point) {

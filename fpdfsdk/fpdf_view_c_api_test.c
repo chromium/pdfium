@@ -217,6 +217,10 @@ int CheckPDFiumCApi() {
     CHK(FORM_GetFocusedText);
     CHK(FORM_GetSelectedText);
     CHK(FORM_ReplaceSelection);
+    CHK(FORM_CanUndo);
+    CHK(FORM_CanRedo);
+    CHK(FORM_Undo);
+    CHK(FORM_Redo);
     CHK(FORM_ForceToKillFocus);
     CHK(FPDFPage_HasFormFieldAtPoint);
     CHK(FPDFPage_FormFieldZOrderAtPoint);

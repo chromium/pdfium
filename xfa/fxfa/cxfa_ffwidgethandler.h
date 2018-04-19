@@ -58,6 +58,11 @@ class CXFA_FFWidgetHandler {
   WideString GetSelectedText(CXFA_FFWidget* widget);
   void PasteText(CXFA_FFWidget* widget, const WideString& text);
 
+  bool CanUndo(CXFA_FFWidget* widget);
+  bool CanRedo(CXFA_FFWidget* widget);
+  bool Undo(CXFA_FFWidget* widget);
+  bool Redo(CXFA_FFWidget* widget);
+
   bool OnKeyDown(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnKeyUp(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);

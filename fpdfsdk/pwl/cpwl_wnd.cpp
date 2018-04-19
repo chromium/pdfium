@@ -365,6 +365,22 @@ WideString CPWL_Wnd::GetSelectedText() {
 
 void CPWL_Wnd::ReplaceSelection(const WideString& text) {}
 
+bool CPWL_Wnd::CanUndo() {
+  return false;
+}
+
+bool CPWL_Wnd::CanRedo() {
+  return false;
+}
+
+bool CPWL_Wnd::Undo() {
+  return false;
+}
+
+bool CPWL_Wnd::Redo() {
+  return false;
+}
+
 bool CPWL_Wnd::OnMouseWheel(short zDelta,
                             const CFX_PointF& point,
                             uint32_t nFlag) {

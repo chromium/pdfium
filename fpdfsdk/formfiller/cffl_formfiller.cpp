@@ -256,6 +256,50 @@ void CFFL_FormFiller::ReplaceSelection(CPDFSDK_Annot* pAnnot,
   pWnd->ReplaceSelection(text);
 }
 
+bool CFFL_FormFiller::CanUndo(CPDFSDK_Annot* pAnnot) {
+  if (!IsValid())
+    return false;
+
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
+
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  return pWnd && pWnd->CanUndo();
+}
+
+bool CFFL_FormFiller::CanRedo(CPDFSDK_Annot* pAnnot) {
+  if (!IsValid())
+    return false;
+
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
+
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  return pWnd && pWnd->CanRedo();
+}
+
+bool CFFL_FormFiller::Undo(CPDFSDK_Annot* pAnnot) {
+  if (!IsValid())
+    return false;
+
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
+
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  return pWnd && pWnd->Undo();
+}
+
+bool CFFL_FormFiller::Redo(CPDFSDK_Annot* pAnnot) {
+  if (!IsValid())
+    return false;
+
+  CPDFSDK_PageView* pPageView = GetCurPageView(true);
+  ASSERT(pPageView);
+
+  CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false);
+  return pWnd && pWnd->Redo();
+}
+
 void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();

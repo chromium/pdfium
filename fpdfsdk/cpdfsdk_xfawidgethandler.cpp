@@ -125,6 +125,34 @@ void CPDFSDK_XFAWidgetHandler::ReplaceSelection(CPDFSDK_Annot* pAnnot,
   return pWidgetHandler->PasteText(pAnnot->GetXFAWidget(), text);
 }
 
+bool CPDFSDK_XFAWidgetHandler::CanUndo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot)
+    return false;
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  return pWidgetHandler->CanUndo(pAnnot->GetXFAWidget());
+}
+
+bool CPDFSDK_XFAWidgetHandler::CanRedo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot)
+    return false;
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  return pWidgetHandler->CanRedo(pAnnot->GetXFAWidget());
+}
+
+bool CPDFSDK_XFAWidgetHandler::Undo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot)
+    return false;
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  return pWidgetHandler->Undo(pAnnot->GetXFAWidget());
+}
+
+bool CPDFSDK_XFAWidgetHandler::Redo(CPDFSDK_Annot* pAnnot) {
+  if (!pAnnot)
+    return false;
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  return pWidgetHandler->Redo(pAnnot->GetXFAWidget());
+}
+
 bool CPDFSDK_XFAWidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot,
                                        const CFX_PointF& point) {
