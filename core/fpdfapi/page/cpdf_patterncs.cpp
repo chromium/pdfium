@@ -54,12 +54,25 @@ bool CPDF_PatternCS::GetRGB(const float* pBuf,
                             float* R,
                             float* G,
                             float* B) const {
-  if (m_pBaseCS) {
-    ASSERT(m_pBaseCS->GetFamily() != PDFCS_PATTERN);
-    const auto* pvalue = reinterpret_cast<const PatternValue*>(pBuf);
-    if (m_pBaseCS->GetRGB(pvalue->m_Comps, R, G, B))
-      return true;
-  }
+  NOTREACHED();
+  return false;
+}
+
+CPDF_PatternCS* CPDF_PatternCS::AsPatternCS() {
+  return this;
+}
+
+const CPDF_PatternCS* CPDF_PatternCS::AsPatternCS() const {
+  return this;
+}
+
+bool CPDF_PatternCS::GetPatternRGB(const PatternValue& value,
+                                   float* R,
+                                   float* G,
+                                   float* B) const {
+  if (m_pBaseCS && m_pBaseCS->GetRGB(value.m_Comps, R, G, B))
+    return true;
+
   *R = 0.75f;
   *G = 0.75f;
   *B = 0.75f;

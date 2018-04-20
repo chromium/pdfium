@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_color.h"
 
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
+#include "core/fpdfapi/page/cpdf_patterncs.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
@@ -155,13 +156,21 @@ bool CPDF_Color::IsColorSpaceRGB() const {
 }
 
 bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
-  if (!m_pCS || !m_pBuffer)
+  if (!m_pBuffer)
     return false;
 
   float r = 0.0f;
   float g = 0.0f;
   float b = 0.0f;
-  if (!m_pCS->GetRGB(m_pBuffer, &r, &g, &b))
+  bool result;
+  if (IsPatternInternal()) {
+    const CPDF_PatternCS* pPatternCS = m_pCS->AsPatternCS();
+    const auto* pValue = reinterpret_cast<const PatternValue*>(m_pBuffer);
+    result = pPatternCS->GetPatternRGB(*pValue, &r, &g, &b);
+  } else {
+    result = m_pCS->GetRGB(m_pBuffer, &r, &g, &b);
+  }
+  if (!result)
     return false;
 
   *R = static_cast<int32_t>(r * 255 + 0.5f);

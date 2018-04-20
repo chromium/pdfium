@@ -597,6 +597,24 @@ void CPDF_ColorSpace::EnableStdConversion(bool bEnabled) {
     m_dwStdConversion--;
 }
 
+CPDF_PatternCS* CPDF_ColorSpace::AsPatternCS() {
+  NOTREACHED();
+  return nullptr;
+}
+
+const CPDF_PatternCS* CPDF_ColorSpace::AsPatternCS() const {
+  NOTREACHED();
+  return nullptr;
+}
+
+bool CPDF_ColorSpace::GetPatternRGB(const PatternValue& value,
+                                    float* R,
+                                    float* G,
+                                    float* B) const {
+  NOTREACHED();
+  return false;
+}
+
 CPDF_ColorSpace::CPDF_ColorSpace(CPDF_Document* pDoc, int family)
     : m_pDocument(pDoc), m_Family(family) {}
 

@@ -30,6 +30,7 @@
 class CPDF_Array;
 class CPDF_Document;
 class CPDF_Object;
+class CPDF_PatternCS;
 
 constexpr size_t kMaxPatternColorComps = 16;
 
@@ -83,6 +84,18 @@ class CPDF_ColorSpace {
                                   int image_height,
                                   bool bTransMask) const;
   virtual void EnableStdConversion(bool bEnabled);
+
+  // Only call these 3 methods below if GetFamily() returns |PDFCS_PATTERN|.
+
+  // Returns |this| as a CPDF_PatternCS* if |this| is a pattern.
+  virtual CPDF_PatternCS* AsPatternCS();
+  virtual const CPDF_PatternCS* AsPatternCS() const;
+
+  // Use instead of GetRGB() for patterns.
+  virtual bool GetPatternRGB(const PatternValue& value,
+                             float* R,
+                             float* G,
+                             float* B) const;
 
   CPDF_Array* GetArray() const { return m_pArray.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
