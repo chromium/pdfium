@@ -33,9 +33,10 @@ std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
   // TODO(dsinclair): This clone is wrong. It doesn't clone child nodes just
   // copies text nodes?
   WideString wsText;
-  for (const auto& pChild : *this) {
+  for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
     if (pChild->GetType() == FX_XMLNODE_Text)
-      wsText += static_cast<CFX_XMLText*>(pChild.get())->GetText();
+      wsText += static_cast<CFX_XMLText*>(pChild)->GetText();
   }
   pClone->SetTextData(wsText);
   return std::move(pClone);
@@ -78,10 +79,11 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
 WideString CFX_XMLElement::GetTextData() const {
   CFX_WideTextBuf buffer;
 
-  for (const auto& pChild : *this) {
+  for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
     if (pChild->GetType() == FX_XMLNODE_Text ||
         pChild->GetType() == FX_XMLNODE_CharData) {
-      buffer << static_cast<CFX_XMLText*>(pChild.get())->GetText();
+      buffer << static_cast<CFX_XMLText*>(pChild)->GetText();
     }
   }
   return buffer.MakeString();
@@ -94,8 +96,7 @@ void CFX_XMLElement::SetTextData(const WideString& wsText) {
   AppendChild(pdfium::MakeUnique<CFX_XMLText>(wsText));
 }
 
-void CFX_XMLElement::Save(
-    const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) {
+void CFX_XMLElement::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {
   ByteString bsNameEncoded = name_.UTF8Encode();
 
   pXMLStream->WriteString("<");
@@ -108,16 +109,17 @@ void CFX_XMLElement::Save(
         AttributeToString(it.first, it.second).UTF8Encode().AsStringView());
   }
 
-  if (HasChildren()) {
+  if (!GetFirstChild()) {
     pXMLStream->WriteString(" />\n");
     return;
   }
 
   pXMLStream->WriteString(">\n");
 
-  for (const auto& pChild : *this)
+  for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
+       pChild = pChild->GetNextSibling()) {
     pChild->Save(pXMLStream);
-
+  }
   pXMLStream->WriteString("</");
   pXMLStream->WriteString(bsNameEncoded.AsStringView());
   pXMLStream->WriteString(">\n");
@@ -130,11 +132,11 @@ CFX_XMLElement* CFX_XMLElement::GetFirstChildNamed(
 
 CFX_XMLElement* CFX_XMLElement::GetNthChildNamed(const WideStringView& name,
                                                  size_t idx) const {
-  for (const auto& child : *this) {
+  for (auto* child = GetFirstChild(); child; child = child->GetNextSibling()) {
     if (child->GetType() != FX_XMLNODE_Element)
       continue;
 
-    CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child.get());
+    CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child);
     if (elem->name_ != name)
       continue;
     if (idx == 0)

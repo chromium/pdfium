@@ -8,7 +8,6 @@
 #define CORE_FXCRT_XML_CFX_XMLNODE_H_
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -23,39 +22,34 @@ enum FX_XMLNODETYPE {
 
 class CFX_XMLNode {
  public:
-  using const_iterator =
-      std::vector<std::unique_ptr<CFX_XMLNode>>::const_iterator;
-
   CFX_XMLNode();
   virtual ~CFX_XMLNode();
 
   virtual FX_XMLNODETYPE GetType() const = 0;
   virtual std::unique_ptr<CFX_XMLNode> Clone() = 0;
-  virtual void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) = 0;
+  virtual void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) = 0;
 
   CFX_XMLNode* GetRoot();
   CFX_XMLNode* GetParent() const { return parent_.Get(); }
-  CFX_XMLNode* GetNextSibling() const { return next_sibling_; }
-  bool HasChildren() const { return !children_.empty(); }
-  const_iterator begin() const { return children_.begin(); }
-  const_iterator end() const { return children_.end(); }
+  CFX_XMLNode* GetFirstChild() const { return first_child_.get(); }
+  CFX_XMLNode* GetNextSibling() const { return next_sibling_.get(); }
 
   void AppendChild(std::unique_ptr<CFX_XMLNode> pNode);
   void InsertChildNode(std::unique_ptr<CFX_XMLNode> pNode, int32_t index);
   void RemoveChildNode(CFX_XMLNode* pNode);
   void DeleteChildren();
-  // Note |root| must not have any children.
-  void MoveChildrenTo(CFX_XMLNode* root);
 
  protected:
   WideString EncodeEntities(const WideString& value);
 
  private:
+  // A node owns its first child and it owns its next sibling. The rest
+  // are unowned pointers.
   UnownedPtr<CFX_XMLNode> parent_;
-  // The next_sibling is owned by the vector. We don't use an UnownedPtr
-  // because we don't know the destruction order of the vector.
-  CFX_XMLNode* next_sibling_;
-  std::vector<std::unique_ptr<CFX_XMLNode>> children_;
+  UnownedPtr<CFX_XMLNode> last_child_;
+  UnownedPtr<CFX_XMLNode> prev_sibling_;
+  std::unique_ptr<CFX_XMLNode> first_child_;
+  std::unique_ptr<CFX_XMLNode> next_sibling_;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLNODE_H_

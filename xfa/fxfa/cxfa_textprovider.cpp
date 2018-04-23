@@ -62,10 +62,10 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     CXFA_Node* pBind = m_pNode->GetBindData();
     CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode);
-    for (const auto& pXMLChild : *pXMLNode) {
+    for (CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild(); pXMLChild;
+         pXMLChild = pXMLChild->GetNextSibling()) {
       if (pXMLChild->GetType() == FX_XMLNODE_Element) {
-        CFX_XMLElement* pElement =
-            static_cast<CFX_XMLElement*>(pXMLChild.get());
+        CFX_XMLElement* pElement = static_cast<CFX_XMLElement*>(pXMLChild);
         if (XFA_RecognizeRichText(pElement))
           bRichText = true;
       }

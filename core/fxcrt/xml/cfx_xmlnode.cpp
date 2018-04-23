@@ -6,8 +6,8 @@
 
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 
-#include <algorithm>
 #include <utility>
+#include <vector>
 
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
@@ -22,7 +22,15 @@ CFX_XMLNode::~CFX_XMLNode() {
 }
 
 void CFX_XMLNode::DeleteChildren() {
-  children_.clear();
+  CFX_XMLNode* child = last_child_.Get();
+  // Clear last child early as it will have been deleted already.
+  last_child_ = nullptr;
+  while (child) {
+    child = child->prev_sibling_.Get();
+    if (child)
+      child->next_sibling_ = nullptr;
+  }
+  first_child_ = nullptr;
 }
 
 void CFX_XMLNode::AppendChild(std::unique_ptr<CFX_XMLNode> pNode) {
@@ -34,38 +42,63 @@ void CFX_XMLNode::InsertChildNode(std::unique_ptr<CFX_XMLNode> pNode,
   ASSERT(!pNode->parent_);
 
   pNode->parent_ = this;
-  if (static_cast<size_t>(index) >= children_.size()) {
-    if (!children_.empty())
-      children_.back()->next_sibling_ = pNode.get();
-    children_.push_back(std::move(pNode));
+  // No existing children, add node as first child.
+  if (!first_child_) {
+    ASSERT(!last_child_);
+
+    first_child_ = std::move(pNode);
+    last_child_ = first_child_.get();
+    first_child_->prev_sibling_ = nullptr;
+    first_child_->next_sibling_ = nullptr;
     return;
   }
-  index = std::max(index, 0);
 
-  pNode->next_sibling_ = children_[index].get();
-  children_.insert(children_.begin() + index, std::move(pNode));
-  if (index > 0)
-    children_[index - 1]->next_sibling_ = children_[index].get();
+  if (index == 0) {
+    first_child_->prev_sibling_ = pNode.get();
+    pNode->next_sibling_ = std::move(first_child_);
+    pNode->prev_sibling_ = nullptr;
+    first_child_ = std::move(pNode);
+    return;
+  }
+
+  int32_t iCount = 0;
+  CFX_XMLNode* pFind = first_child_.get();
+  // Note, negative indexes, and indexes after the end of the list will result
+  // in appending to the list.
+  while (++iCount != index && pFind->next_sibling_)
+    pFind = pFind->next_sibling_.get();
+
+  pNode->prev_sibling_ = pFind;
+  if (pFind->next_sibling_)
+    pFind->next_sibling_->prev_sibling_ = pNode.get();
+  pNode->next_sibling_ = std::move(pFind->next_sibling_);
+
+  pFind->next_sibling_ = std::move(pNode);
+  if (pFind == last_child_.Get())
+    last_child_ = pFind->next_sibling_.get();
 }
 
 void CFX_XMLNode::RemoveChildNode(CFX_XMLNode* pNode) {
+  ASSERT(first_child_);
   ASSERT(pNode);
 
-  auto it = std::find(children_.begin(), children_.end(),
-                      pdfium::FakeUniquePtr<CFX_XMLNode>(pNode));
-  if (it != children_.end()) {
-    if (it != children_.begin()) {
-      CFX_XMLNode* prev = (*(it - 1)).get();
-      prev->next_sibling_ = (*it)->next_sibling_;
-    }
-
-    children_.erase(it);
+  if (first_child_.get() == pNode) {
+    first_child_.release();
+    first_child_ = std::move(pNode->next_sibling_);
+  } else {
+    CFX_XMLNode* prev = pNode->prev_sibling_.Get();
+    prev->next_sibling_.release();  // Release pNode
+    prev->next_sibling_ = std::move(pNode->next_sibling_);
   }
-}
 
-void CFX_XMLNode::MoveChildrenTo(CFX_XMLNode* root) {
-  ASSERT(root->children_.empty());
-  std::swap(root->children_, children_);
+  if (last_child_.Get() == pNode)
+    last_child_ = pNode->prev_sibling_.Get();
+
+  if (pNode->next_sibling_)
+    pNode->next_sibling_->prev_sibling_ = pNode->prev_sibling_;
+
+  pNode->parent_ = nullptr;
+  pNode->prev_sibling_ = nullptr;
 }
 
 CFX_XMLNode* CFX_XMLNode::GetRoot() {

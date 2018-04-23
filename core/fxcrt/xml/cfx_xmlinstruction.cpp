@@ -40,8 +40,7 @@ bool CFX_XMLInstruction::IsAcrobat() const {
   return name_ == L"acrobat";
 }
 
-void CFX_XMLInstruction::Save(
-    const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) {
+void CFX_XMLInstruction::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {
   if (name_.CompareNoCase(L"xml") == 0) {
     pXMLStream->WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     return;

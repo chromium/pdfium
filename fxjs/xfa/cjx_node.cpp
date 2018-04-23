@@ -247,7 +247,13 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   }
 
   if (bIgnoreRoot) {
-    pXMLNode->MoveChildrenTo(pFakeXMLRoot.get());
+    CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild();
+    while (pXMLChild) {
+      CFX_XMLNode* pXMLSibling = pXMLChild->GetNextSibling();
+      pXMLNode->RemoveChildNode(pXMLChild);
+      pFakeXMLRoot->AppendChild(pdfium::WrapUnique<CFX_XMLNode>(pXMLChild));
+      pXMLChild = pXMLSibling;
+    }
   } else {
     CFX_XMLNode* pXMLParent = pXMLNode->GetParent();
     if (pXMLParent)

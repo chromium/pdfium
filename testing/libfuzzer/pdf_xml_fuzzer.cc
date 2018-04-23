@@ -25,7 +25,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!parser.Parse())
     return 0;
 
-  for (const auto& pXMLNode : *root) {
+  for (CFX_XMLNode* pXMLNode = root->GetFirstChild(); pXMLNode;
+       pXMLNode = pXMLNode->GetNextSibling()) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element)
       break;
   }
