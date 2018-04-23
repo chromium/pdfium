@@ -38,9 +38,9 @@ namespace {
 
 const struct {
   const char* m_pFaceName;
-  const char* m_pVariantName;
+  const char* m_pVariantName;  // Note: UTF16-LE terminator required.
 } g_VariantNames[] = {
-    {"DFKai-SB", "\x19\x6A\x77\x69\xD4\x9A"},
+    {"DFKai-SB", "\x19\x6A\x77\x69\xD4\x9A\x00\x00"},
 };
 
 const struct {
