@@ -132,8 +132,7 @@ CJS_Document::CJS_Document(v8::Local<v8::Object> pObject)
 CJS_Document::~CJS_Document() = default;
 
 void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
-  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
-  SetFormFillEnv(pRuntime->GetFormFillEnv());
+  SetFormFillEnv(pIRuntime->GetFormFillEnv());
 }
 
 // The total number of fields in document.

@@ -88,40 +88,32 @@ enum OutputFormat {
 namespace {
 
 struct Options {
-  Options()
-      : show_config(false),
-        show_metadata(false),
-        send_events(false),
-        render_oneshot(false),
-        save_attachments(false),
-        save_images(false),
-#ifdef ENABLE_CALLGRIND
-        callgrind_delimiters(false),
-#endif  // ENABLE_CALLGRIND
-        pages(false),
-        md5(false),
-        output_format(OUTPUT_NONE) {
-  }
+  Options() = default;
 
-  bool show_config;
-  bool show_metadata;
-  bool send_events;
-  bool render_oneshot;
-  bool save_attachments;
-  bool save_images;
+  bool show_config = false;
+  bool show_metadata = false;
+  bool send_events = false;
+  bool render_oneshot = false;
+  bool save_attachments = false;
+  bool save_images = false;
+#ifdef PDF_ENABLE_V8
+  bool disable_javascript = false;
+#ifdef PDF_ENABLE_XFA
+  bool disable_xfa = false;
+#endif  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_V8
+  bool pages = false;
+  bool md5 = false;
 #ifdef ENABLE_CALLGRIND
-  bool callgrind_delimiters;
+  bool callgrind_delimiters = false;
 #endif  // ENABLE_CALLGRIND
-  bool pages;
-  bool md5;
-  OutputFormat output_format;
+  OutputFormat output_format = OUTPUT_NONE;
   std::string scale_factor_as_string;
   std::string exe_path;
   std::string bin_directory;
   std::string font_directory;
-  // 0-based page numbers to be rendered.
-  int first_page;
-  int last_page;
+  int first_page = 0;  // First 0-based page number to renderer.
+  int last_page = 0;   // Last 0-based page number to renderer.
 };
 
 Optional<std::string> ExpandDirectoryPath(const std::string& path) {
@@ -286,6 +278,14 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       options->save_attachments = true;
     } else if (cur_arg == "--save-images") {
       options->save_images = true;
+#if PDF_ENABLE_V8
+    } else if (cur_arg == "--disable-javascript") {
+      options->disable_javascript = true;
+#ifdef PDF_ENABLE_XFA
+    } else if (cur_arg == "--disable-xfa") {
+      options->disable_xfa = true;
+#endif  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_V8
 #ifdef ENABLE_CALLGRIND
     } else if (cur_arg == "--callgrind-delim") {
       options->callgrind_delimiters = true;
@@ -695,17 +695,23 @@ void RenderPdf(const std::string& name,
   form_callbacks.version = 1;
 #endif  // PDF_ENABLE_XFA
   form_callbacks.FFI_GetPage = GetPageForIndex;
-  form_callbacks.m_pJsPlatform = &platform_callbacks;
+
+#ifdef PDF_ENABLE_V8
+  if (!options.disable_javascript)
+    form_callbacks.m_pJsPlatform = &platform_callbacks;
+#endif  // PDF_ENABLE_V8
 
   std::unique_ptr<void, FPDFFormHandleDeleter> form(
       FPDFDOC_InitFormFillEnvironment(doc.get(), &form_callbacks));
   form_callbacks.form_handle = form.get();
 
 #ifdef PDF_ENABLE_XFA
-  int doc_type = FPDF_GetFormType(doc.get());
-  if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND) {
-    if (!FPDF_LoadXFA(doc.get()))
-      fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
+  if (!options.disable_xfa && !options.disable_javascript) {
+    int doc_type = FPDF_GetFormType(doc.get());
+    if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND) {
+      if (!FPDF_LoadXFA(doc.get()))
+        fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
+    }
   }
 #endif  // PDF_ENABLE_XFA
 
@@ -789,6 +795,12 @@ constexpr char kUsageString[] =
     "<pdf-name>.attachment.<attachment-name>\n"
     "  --save-images       - write embedded images "
     "<pdf-name>.<page-number>.<object-number>.png\n"
+#ifdef PDF_ENABLE_V8
+    "  --disable-javascript- do not execute JS in PDF files"
+#ifdef PDF_ENABLE_XFA
+    "  --disable-xfa       - do not process XFA forms"
+#endif  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_V8
 #ifdef ENABLE_CALLGRIND
     "  --callgrind-delim   - delimit interesting section when using callgrind\n"
 #endif  // ENABLE_CALLGRIND

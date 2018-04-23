@@ -16,18 +16,22 @@
 #include "fxjs/fxjse.h"
 #endif  // PDF_ENABLE_XFA
 
+class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 class IJS_EventContext;
 
-// Owns the FJXS objects needed to actually execute JS.
+// Owns the FJXS objects needed to actually execute JS, if possible. This
+// virtual interface is backed by either an actual JS runtime, or a stub,
+// when JS is not present.
 class IJS_Runtime {
  public:
   static void Initialize(unsigned int slot, void* isolate);
   static void Destroy();
   static std::unique_ptr<IJS_Runtime> Create(
       CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  virtual ~IJS_Runtime() {}
+  virtual ~IJS_Runtime();
 
+  virtual CJS_Runtime* AsCJSRuntime() = 0;
   virtual IJS_EventContext* NewEventContext() = 0;
   virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;

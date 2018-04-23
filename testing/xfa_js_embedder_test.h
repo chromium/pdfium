@@ -27,7 +27,8 @@ class XFAJSEmbedderTest : public EmbedderTest {
   void TearDown() override;
   bool OpenDocumentWithOptions(const std::string& filename,
                                const char* password,
-                               bool must_linearize) override;
+                               LinearizeOption linearize_option,
+                               JavaScriptOption javascript_option) override;
 
   v8::Isolate* GetIsolate() const { return isolate_; }
   CXFA_Document* GetXFADocument();

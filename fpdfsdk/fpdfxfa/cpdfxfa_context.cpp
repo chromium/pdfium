@@ -81,10 +81,10 @@ void CPDFXFA_Context::SetFormFillEnv(
 
 bool CPDFXFA_Context::LoadXFADoc() {
   m_nLoadStatus = FXFA_LOADSTATUS_LOADING;
+  m_XFAPageList.clear();
+
   if (!m_pPDFDoc)
     return false;
-
-  m_XFAPageList.clear();
 
   CXFA_FFApp* pApp = GetXFAApp();
   if (!pApp)
@@ -96,8 +96,13 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
   }
 
-  m_pXFADoc->GetXFADoc()->InitScriptContext(GetCJSRuntime());
+  CJS_Runtime* actual_runtime = GetCJSRuntime();  // Null if a stub.
+  if (!actual_runtime) {
+    SetLastError(FPDF_ERR_XFALOAD);
+    return false;
+  }
 
+  m_pXFADoc->GetXFADoc()->InitScriptContext(actual_runtime);
   if (m_pXFADoc->GetFormType() == FormType::kXFAFull)
     m_FormType = FormType::kXFAFull;
   else
@@ -113,7 +118,6 @@ bool CPDFXFA_Context::LoadXFADoc() {
   m_pXFADocView->DoLayout();
   m_pXFADocView->StopLayout();
   m_nLoadStatus = FXFA_LOADSTATUS_LOADED;
-
   return true;
 }
 
@@ -196,8 +200,7 @@ CJS_Runtime* CPDFXFA_Context::GetCJSRuntime() const {
   if (!m_pFormFillEnv)
     return nullptr;
 
-  // XFA requires V8, if we have V8 then we have a CJS_Runtime and not the stub.
-  return static_cast<CJS_Runtime*>(m_pFormFillEnv->GetIJSRuntime());
+  return m_pFormFillEnv->GetIJSRuntime()->AsCJSRuntime();
 }
 
 WideString CPDFXFA_Context::GetAppTitle() const {

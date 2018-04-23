@@ -33,6 +33,7 @@ class CJS_Runtime : public IJS_Runtime,
   ~CJS_Runtime() override;
 
   // IJS_Runtime
+  CJS_Runtime* AsCJSRuntime() override;
   IJS_EventContext* NewEventContext() override;
   void ReleaseEventContext(IJS_EventContext* pContext) override;
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override;

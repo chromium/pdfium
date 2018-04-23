@@ -47,21 +47,24 @@ CXFA_Document* XFAJSEmbedderTest::GetXFADocument() {
   return UnderlyingFromFPDFDocument(document())->GetXFADoc()->GetXFADoc();
 }
 
-bool XFAJSEmbedderTest::OpenDocumentWithOptions(const std::string& filename,
-                                                const char* password,
-                                                bool must_linearize) {
-  if (!EmbedderTest::OpenDocumentWithOptions(filename, password,
-                                             must_linearize))
+bool XFAJSEmbedderTest::OpenDocumentWithOptions(
+    const std::string& filename,
+    const char* password,
+    LinearizeOption linearize_option,
+    JavaScriptOption javascript_option) {
+  // JS required for XFA.
+  ASSERT(javascript_option == JavaScriptOption::kEnableJavaScript);
+  if (!EmbedderTest::OpenDocumentWithOptions(
+          filename, password, linearize_option, javascript_option)) {
     return false;
-
+  }
   script_context_ = GetXFADocument()->GetScriptContext();
   return true;
 }
 
 bool XFAJSEmbedderTest::Execute(const ByteStringView& input) {
-  if (ExecuteHelper(input)) {
+  if (ExecuteHelper(input))
     return true;
-  }
 
   CFXJSE_Value msg(GetIsolate());
   value_->GetObjectPropertyByIdx(1, &msg);

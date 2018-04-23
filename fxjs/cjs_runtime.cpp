@@ -143,6 +143,10 @@ void CJS_Runtime::DefineJSObjects() {
   CJS_Annot::DefineJSObjects(this);
 }
 
+CJS_Runtime* CJS_Runtime::AsCJSRuntime() {
+  return this;
+}
+
 IJS_EventContext* CJS_Runtime::NewEventContext() {
   m_EventContextArray.push_back(pdfium::MakeUnique<CJS_EventContext>(this));
   return m_EventContextArray.back().get();

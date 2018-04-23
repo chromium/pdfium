@@ -100,29 +100,44 @@ bool EmbedderTest::CreateEmptyDocument() {
   if (!document_)
     return false;
 
-  form_handle_ = SetupFormFillEnvironment(document_);
+  form_handle_ =
+      SetupFormFillEnvironment(document_, JavaScriptOption::kEnableJavaScript);
   return true;
 }
 
 bool EmbedderTest::OpenDocument(const std::string& filename) {
-  return OpenDocumentWithOptions(filename, nullptr, false);
+  return OpenDocumentWithOptions(filename, nullptr,
+                                 LinearizeOption::kDefaultLinearize,
+                                 JavaScriptOption::kEnableJavaScript);
 }
 
 bool EmbedderTest::OpenDocumentLinearized(const std::string& filename) {
-  return OpenDocumentWithOptions(filename, nullptr, true);
+  return OpenDocumentWithOptions(filename, nullptr,
+                                 LinearizeOption::kMustLinearize,
+                                 JavaScriptOption::kEnableJavaScript);
 }
 
 bool EmbedderTest::OpenDocumentWithPassword(const std::string& filename,
                                             const char* password) {
-  return OpenDocumentWithOptions(filename, password, false);
+  return OpenDocumentWithOptions(filename, password,
+                                 LinearizeOption::kDefaultLinearize,
+                                 JavaScriptOption::kEnableJavaScript);
+}
+
+bool EmbedderTest::OpenDocumentWithoutJavaScript(const std::string& filename) {
+  return OpenDocumentWithOptions(filename, nullptr,
+                                 LinearizeOption::kDefaultLinearize,
+                                 JavaScriptOption::kDisableJavaScript);
 }
 
 bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
                                            const char* password,
-                                           bool must_linearize) {
+                                           LinearizeOption linearize_option,
+                                           JavaScriptOption javascript_option) {
   std::string file_path;
   if (!PathService::GetTestFilePath(filename, &file_path))
     return false;
+
   file_contents_ = GetFileContents(file_path.c_str(), &file_length_);
   if (!file_contents_)
     return false;
@@ -136,12 +151,14 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
   file_access_.m_Param = loader_;
 
   fake_file_access_ = pdfium::MakeUnique<FakeFileAccess>(&file_access_);
-  return OpenDocumentHelper(password, must_linearize, fake_file_access_.get(),
-                            &document_, &avail_, &form_handle_);
+  return OpenDocumentHelper(password, linearize_option, javascript_option,
+                            fake_file_access_.get(), &document_, &avail_,
+                            &form_handle_);
 }
 
 bool EmbedderTest::OpenDocumentHelper(const char* password,
-                                      bool must_linearize,
+                                      LinearizeOption linearize_option,
+                                      JavaScriptOption javascript_option,
                                       FakeFileAccess* network_simulator,
                                       FPDF_DOCUMENT* document,
                                       FPDF_AVAIL* avail,
@@ -186,7 +203,7 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
         return false;
     }
   } else {
-    if (must_linearize)
+    if (linearize_option == LinearizeOption::kMustLinearize)
       return false;
     network_simulator->SetWholeFileAvailable();
     *document =
@@ -194,17 +211,21 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
     if (!*document)
       return false;
   }
-  *form_handle = SetupFormFillEnvironment(*document);
+  *form_handle = SetupFormFillEnvironment(*document, javascript_option);
+
 #ifdef PDF_ENABLE_XFA
   int doc_type = FPDF_GetFormType(*document);
   if (doc_type == FORMTYPE_XFA_FULL || doc_type == FORMTYPE_XFA_FOREGROUND)
     FPDF_LoadXFA(*document);
 #endif  // PDF_ENABLE_XFA
+
   (void)FPDF_GetDocPermissions(*document);
   return true;
 }
 
-FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(FPDF_DOCUMENT doc) {
+FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
+    FPDF_DOCUMENT doc,
+    JavaScriptOption javascript_option) {
   IPDF_JSPLATFORM* platform = static_cast<IPDF_JSPLATFORM*>(this);
   memset(platform, '\0', sizeof(IPDF_JSPLATFORM));
   platform->version = 2;
@@ -221,7 +242,9 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(FPDF_DOCUMENT doc) {
   formfillinfo->FFI_SetTimer = SetTimerTrampoline;
   formfillinfo->FFI_KillTimer = KillTimerTrampoline;
   formfillinfo->FFI_GetPage = GetPageTrampoline;
-  formfillinfo->m_pJsPlatform = platform;
+  if (javascript_option == JavaScriptOption::kEnableJavaScript)
+    formfillinfo->m_pJsPlatform = platform;
+
   FPDF_FORMHANDLE form_handle =
       FPDFDOC_InitFormFillEnvironment(doc, formfillinfo);
   FPDF_SetFormFieldHighlightColor(form_handle, FPDF_FORMFIELD_UNKNOWN,
@@ -337,9 +360,10 @@ FPDF_DOCUMENT EmbedderTest::OpenSavedDocument(const char* password) {
   saved_fake_file_access_ =
       pdfium::MakeUnique<FakeFileAccess>(&saved_file_access_);
 
-  EXPECT_TRUE(OpenDocumentHelper(password, false, saved_fake_file_access_.get(),
-                                 &saved_document_, &saved_avail_,
-                                 &saved_form_handle_));
+  EXPECT_TRUE(OpenDocumentHelper(
+      password, LinearizeOption::kDefaultLinearize,
+      JavaScriptOption::kEnableJavaScript, saved_fake_file_access_.get(),
+      &saved_document_, &saved_avail_, &saved_form_handle_));
   return saved_document_;
 }
 

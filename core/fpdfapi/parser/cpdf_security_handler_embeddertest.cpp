@@ -51,7 +51,9 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
   const char md5[] = "a5dde3c6c37b8716b9b369a03752a728";
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   {
-    ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678", true));
+    ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678",
+                                        LinearizeOption::kMustLinearize,
+                                        JavaScriptOption::kEnableJavaScript));
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
     FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);

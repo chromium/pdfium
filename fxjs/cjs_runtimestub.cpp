@@ -14,6 +14,10 @@ CJS_RuntimeStub::CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv)
 
 CJS_RuntimeStub::~CJS_RuntimeStub() = default;
 
+CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {
+  return nullptr;
+}
+
 IJS_EventContext* CJS_RuntimeStub::NewEventContext() {
   if (!m_pContext)
     m_pContext = pdfium::MakeUnique<CJS_EventContextStub>();

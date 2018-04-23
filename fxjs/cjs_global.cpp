@@ -214,8 +214,7 @@ CJS_Global::~CJS_Global() {
 }
 
 void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
-  CJS_Runtime* pRuntime = static_cast<CJS_Runtime*>(pIRuntime);
-  Initial(pRuntime->GetFormFillEnv());
+  Initial(pIRuntime->GetFormFillEnv());
 }
 
 void CJS_Global::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
