@@ -11,7 +11,6 @@
 #include <iterator>
 #include <utility>
 
-#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -58,10 +57,13 @@ bool CFX_XMLParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
 }
 
 CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
-                             const RetainPtr<IFX_SeekableReadStream>& pStream)
+                             const RetainPtr<IFX_SeekableStream>& pStream)
     : m_pParent(pParent),
       m_pChild(nullptr),
+      m_pStream(pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream)),
       m_iXMLPlaneSize(1024),
+      m_iCurrentPos(0),
+      m_bEOS(false),
       m_Start(0),
       m_End(0),
       m_CurNodeType(FX_XMLNODE_Unknown),
@@ -75,19 +77,18 @@ CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
   ASSERT(m_pParent);
   ASSERT(pStream);
 
-  auto proxy = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream);
-  uint16_t wCodePage = proxy->GetCodePage();
+  uint16_t wCodePage = m_pStream->GetCodePage();
   if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
       wCodePage != FX_CODEPAGE_UTF8) {
-    proxy->SetCodePage(FX_CODEPAGE_UTF8);
+    m_pStream->SetCodePage(FX_CODEPAGE_UTF8);
   }
-  m_pStream = proxy;
 
   m_NodeStack.push(m_pParent);
 
   m_iXMLPlaneSize =
       std::min(m_iXMLPlaneSize,
-               pdfium::base::checked_cast<size_t>(m_pStream->GetSize()));
+               pdfium::base::checked_cast<size_t>(m_pStream->GetLength()));
+  m_iCurrentPos = m_pStream->GetBOMLength();
 
   FX_SAFE_SIZE_T alloc_size_safe = m_iXMLPlaneSize;
   alloc_size_safe += 1;  // For NUL.
@@ -216,20 +217,28 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
     return m_syntaxParserResult;
   }
 
+  FX_FILESIZE iStreamLength = m_pStream->GetLength();
+  FX_FILESIZE iPos;
+
   FX_XmlSyntaxResult syntaxParserResult = FX_XmlSyntaxResult::None;
   while (true) {
     if (m_Start >= m_End) {
-      if (m_pStream->IsEOF()) {
+      if (m_bEOS || m_iCurrentPos >= iStreamLength) {
         m_syntaxParserResult = FX_XmlSyntaxResult::EndOfString;
         return m_syntaxParserResult;
       }
+      if (m_pStream->GetPosition() != m_iCurrentPos)
+        m_pStream->Seek(CFX_SeekableStreamProxy::From::Begin, m_iCurrentPos);
 
       size_t buffer_chars =
-          m_pStream->ReadBlock(m_Buffer.data(), m_iXMLPlaneSize);
+          m_pStream->ReadString(m_Buffer.data(), m_iXMLPlaneSize, &m_bEOS);
+      iPos = m_pStream->GetPosition();
       if (buffer_chars == 0) {
+        m_iCurrentPos = iStreamLength;
         m_syntaxParserResult = FX_XmlSyntaxResult::EndOfString;
         return m_syntaxParserResult;
       }
+      m_iCurrentPos = iPos;
       m_Start = 0;
       m_End = buffer_chars;
     }
@@ -656,7 +665,13 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
 }
 
 bool CFX_XMLParser::GetStatus() const {
-  return m_pStream && m_syntaxParserResult != FX_XmlSyntaxResult::Error;
+  if (!m_pStream)
+    return false;
+
+  int32_t iStreamLength = m_pStream->GetLength();
+  if (iStreamLength < 1)
+    return true;
+  return m_syntaxParserResult != FX_XmlSyntaxResult::Error;
 }
 
 void CFX_XMLParser::ParseTextChar(wchar_t character) {
