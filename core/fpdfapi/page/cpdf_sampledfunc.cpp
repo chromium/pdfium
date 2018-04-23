@@ -42,10 +42,10 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj,
   if (!pStream)
     return false;
 
-  CPDF_Dictionary* pDict = pStream->GetDict();
-  CPDF_Array* pSize = pDict->GetArrayFor("Size");
-  CPDF_Array* pEncode = pDict->GetArrayFor("Encode");
-  CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
+  const CPDF_Dictionary* pDict = pStream->GetDict();
+  const CPDF_Array* pSize = pDict->GetArrayFor("Size");
+  const CPDF_Array* pEncode = pDict->GetArrayFor("Encode");
+  const CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
   m_nBitsPerSample = pDict->GetIntegerFor("BitsPerSample");
   if (!IsValidBitsPerSample(m_nBitsPerSample))
     return false;
@@ -66,7 +66,7 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj,
     } else {
       m_EncodeInfo[i].encode_min = 0;
       m_EncodeInfo[i].encode_max =
-          m_EncodeInfo[i].sizes == 1 ? 1 : (float)m_EncodeInfo[i].sizes - 1;
+          m_EncodeInfo[i].sizes == 1 ? 1 : m_EncodeInfo[i].sizes - 1;
     }
   }
   nTotalSampleBits *= m_nBitsPerSample;
@@ -132,11 +132,11 @@ bool CPDF_SampledFunc::v_Call(const float* inputs, float* results) const {
   for (uint32_t j = 0; j < m_nOutputs; j++, bitpos += m_nBitsPerSample) {
     uint32_t sample =
         GetBits32(pSampleData, bitpos.ValueOrDie(), m_nBitsPerSample);
-    float encoded = (float)sample;
+    float encoded = sample;
     for (uint32_t i = 0; i < m_nInputs; i++) {
       if (index[i] == m_EncodeInfo[i].sizes - 1) {
         if (index[i] == 0)
-          encoded = encoded_input[i] * (float)sample;
+          encoded = encoded_input[i] * sample;
       } else {
         FX_SAFE_INT32 bitpos2 = blocksize[i];
         bitpos2 += pos;
@@ -147,12 +147,12 @@ bool CPDF_SampledFunc::v_Call(const float* inputs, float* results) const {
           return false;
         uint32_t sample1 =
             GetBits32(pSampleData, bitpos2.ValueOrDie(), m_nBitsPerSample);
-        encoded +=
-            (encoded_input[i] - index[i]) * ((float)sample1 - (float)sample);
+        encoded += (encoded_input[i] - index[i]) *
+                   (static_cast<float>(sample1) - sample);
       }
     }
     results[j] =
-        Interpolate(encoded, 0, (float)m_SampleMax, m_DecodeInfo[j].decode_min,
+        Interpolate(encoded, 0, m_SampleMax, m_DecodeInfo[j].decode_min,
                     m_DecodeInfo[j].decode_max);
   }
   return true;
