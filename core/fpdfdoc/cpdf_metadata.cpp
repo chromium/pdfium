@@ -19,12 +19,11 @@ void CheckForSharedFormInternal(CFX_XMLElement* element,
                                 std::vector<UnsupportedFeature>* unsupported) {
   WideString attr = element->GetAttribute(L"xmlns:adhocwf");
   if (attr == L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
-    for (const auto* child = element->GetFirstChild(); child;
-         child = child->GetNextSibling()) {
+    for (const auto& child : *element) {
       if (child->GetType() != FX_XMLNODE_Element)
         continue;
 
-      const auto* child_elem = static_cast<const CFX_XMLElement*>(child);
+      const auto* child_elem = static_cast<const CFX_XMLElement*>(child.get());
       if (child_elem->GetName() != L"adhocwf:workflowType")
         continue;
 
@@ -46,12 +45,11 @@ void CheckForSharedFormInternal(CFX_XMLElement* element,
     }
   }
 
-  for (auto* child = element->GetFirstChild(); child;
-       child = child->GetNextSibling()) {
+  for (const auto& child : *element) {
     if (child->GetType() != FX_XMLNODE_Element)
       continue;
 
-    CheckForSharedFormInternal(static_cast<CFX_XMLElement*>(child),
+    CheckForSharedFormInternal(static_cast<CFX_XMLElement*>(child.get()),
                                unsupported);
   }
 }

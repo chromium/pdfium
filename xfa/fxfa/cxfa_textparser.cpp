@@ -245,10 +245,8 @@ void CXFA_TextParser::ParseRichText(CFX_XMLNode* pXMLNode,
     m_mapXMLNodeToParseContext[pXMLNode] = std::move(pTextContext);
   }
 
-  for (CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild(); pXMLChild;
-       pXMLChild = pXMLChild->GetNextSibling()) {
-    ParseRichText(pXMLChild, pNewStyle.Get());
-  }
+  for (const auto& pXMLChild : *pXMLNode)
+    ParseRichText(pXMLChild.get(), pNewStyle.Get());
 }
 
 bool CXFA_TextParser::TagValidate(const WideString& wsName) const {

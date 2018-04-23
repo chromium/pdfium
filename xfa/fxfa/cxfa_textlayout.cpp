@@ -78,13 +78,13 @@ CFX_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
     return nullptr;
 
   CFX_XMLNode* pXMLContainer = nullptr;
-  for (CFX_XMLNode* pXMLChild = pXMLRoot->GetFirstChild(); pXMLChild;
-       pXMLChild = pXMLChild->GetNextSibling()) {
+  for (const auto& pXMLChild : *pXMLRoot) {
     if (pXMLChild->GetType() == FX_XMLNODE_Element) {
-      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
+      CFX_XMLElement* pXMLElement =
+          static_cast<CFX_XMLElement*>(pXMLChild.get());
       WideString wsTag = pXMLElement->GetLocalTagName();
       if (wsTag == L"body" || wsTag == L"html") {
-        pXMLContainer = pXMLChild;
+        pXMLContainer = pXMLChild.get();
         break;
       }
     }
@@ -820,15 +820,15 @@ bool CXFA_TextLayout::LoadRichText(
       }
     }
 
-    for (CFX_XMLNode* pChildNode = pXMLNode->GetFirstChild(); pChildNode;
-         pChildNode = pChildNode->GetNextSibling()) {
+    for (const auto& pChildNode : *pXMLNode) {
       if (bCurOl)
         iLiCount++;
 
-      if (!LoadRichText(pChildNode, textWidth, fLinePos,
+      if (!LoadRichText(pChildNode.get(), textWidth, fLinePos,
                         pContext ? pStyle : pParentStyle, bSavePieces,
-                        pLinkData, true, bIsOl, iLiCount))
+                        pLinkData, true, bIsOl, iLiCount)) {
         return false;
+      }
     }
 
     if (m_pLoader) {

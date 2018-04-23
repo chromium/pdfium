@@ -38,11 +38,10 @@ std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
     return nullptr;
 
   CFX_XMLElement* locale = nullptr;
-  for (auto* child = root->GetFirstChild(); child;
-       child = child->GetNextSibling()) {
+  for (const auto& child : *(root.get())) {
     if (child->GetType() != FX_XMLNODE_Element)
       continue;
-    CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child);
+    CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child.get());
     if (elem->GetName() == L"locale") {
       locale = elem;
       break;
@@ -126,12 +125,11 @@ WideString CXFA_XMLLocale::GetCalendarSymbol(const WideStringView& symbol,
 
   WideString pstrSymbolNames = symbol + L"Names";
   CFX_XMLElement* name_child = nullptr;
-  for (auto* name = child->GetFirstChild(); name;
-       name = name->GetNextSibling()) {
+  for (const auto& name : *child) {
     if (name->GetType() != FX_XMLNODE_Element)
       continue;
 
-    auto* elem = static_cast<CFX_XMLElement*>(name);
+    auto* elem = static_cast<CFX_XMLElement*>(name.get());
     if (elem->GetName() != pstrSymbolNames)
       continue;
 
@@ -210,12 +208,11 @@ WideString CXFA_XMLLocale::GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const {
 WideString CXFA_XMLLocale::GetPattern(CFX_XMLElement* patterns,
                                       const WideStringView& bsTag,
                                       const WideStringView& wsName) const {
-  for (auto* child = patterns->GetFirstChild(); child;
-       child = child->GetNextSibling()) {
+  for (const auto& child : *patterns) {
     if (child->GetType() != FX_XMLNODE_Element)
       continue;
 
-    CFX_XMLElement* pattern = static_cast<CFX_XMLElement*>(child);
+    CFX_XMLElement* pattern = static_cast<CFX_XMLElement*>(child.get());
     if (pattern->GetName() != bsTag)
       continue;
     if (pattern->GetAttribute(L"name") != wsName)

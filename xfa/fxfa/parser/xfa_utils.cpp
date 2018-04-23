@@ -211,7 +211,10 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (!pExDataXML)
           break;
 
-        CFX_XMLNode* pRichTextXML = pExDataXML->GetFirstChild();
+        if (pExDataXML->begin() == pExDataXML->end())
+          return;
+
+        CFX_XMLNode* pRichTextXML = pExDataXML->begin()->get();
         if (!pRichTextXML)
           break;
 
