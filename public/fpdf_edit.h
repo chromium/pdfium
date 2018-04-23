@@ -281,6 +281,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_NewImageObj(FPDF_DOCUMENT document);
 
+// Experimental API.
 // Get number of content marks in |page_object|.
 //
 //   page_object - handle to a page object.
@@ -290,6 +291,7 @@ FPDFPageObj_NewImageObj(FPDF_DOCUMENT document);
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObj_CountMarks(FPDF_PAGEOBJECT page_object);
 
+// Experimental API.
 // Get content mark in |page_object| at |index|.
 //
 //   page_object - handle to a page object.
@@ -302,6 +304,7 @@ FPDFPageObj_CountMarks(FPDF_PAGEOBJECT page_object);
 FPDF_EXPORT FPDF_PAGEOBJECTMARK FPDF_CALLCONV
 FPDFPageObj_GetMark(FPDF_PAGEOBJECT page_object, unsigned long index);
 
+// Experimental API.
 // Get name of a content mark. |buffer| is only modified if |buflen| is longer
 // than the length of the name.
 //
@@ -315,6 +318,7 @@ FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
                         void* buffer,
                         unsigned long buflen);
 
+// Experimental API.
 // Get number of key/value pair parameters in |mark|.
 //
 //   mark   - handle to a content mark.
@@ -323,6 +327,45 @@ FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
 // failure.
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark);
+
+// Experimental API.
+// Get the key of a property in a content mark. |buffer| is only modified if
+// |buflen| is longer than the length of the key.
+//
+//   mark   - handle to a content mark.
+//   index  - index of the property.
+//   buffer - buffer for holding the returned key in UTF16-LE.
+//   buflen - length of the buffer.
+//
+// Returns the length of the key.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFPageObjMark_GetParamKey(FPDF_PAGEOBJECTMARK mark,
+                            unsigned long index,
+                            void* buffer,
+                            unsigned long buflen);
+
+// Experimental API.
+// Get type of the value of a property in a content mark.
+//
+//   mark   - handle to a content mark.
+//   index  - index of the property.
+//
+// Returns the type of the value, or FPDF_OBJECT_UNKNOWN in case of failure.
+FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
+FPDFPageObjMark_GetParamValueType(FPDF_PAGEOBJECTMARK mark,
+                                  unsigned long index);
+
+// Experimental API.
+// Get value of an int property in a content mark.
+// FPDFPageObjMark_GetParamValueType() should have returned FPDF_OBJECT_NUMBER
+// for this property.
+//
+//   mark   - handle to a content mark.
+//   index  - index of the property.
+//
+// Returns the int value, 0 in case of failure.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark, unsigned long index);
 
 // Load an image from a JPEG image file and then set it into |image_object|.
 //
