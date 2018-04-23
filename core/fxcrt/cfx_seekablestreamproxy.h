@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CFX_SeekableStreamProxy : public Retainable {
+class CFX_SeekableStreamProxy : public IFX_SeekableReadStream {
  public:
   enum class From {
     Begin = 0,
@@ -23,27 +23,28 @@ class CFX_SeekableStreamProxy : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  FX_FILESIZE GetLength() const { return m_pStream->GetSize(); }
-  FX_FILESIZE GetPosition() { return m_iPosition; }
-  size_t GetBOMLength() const { return m_wBOMLength; }
-  bool IsEOF() const { return m_iPosition >= GetLength(); }
+  FX_FILESIZE GetSize() override;
+  FX_FILESIZE GetPosition() override;
+  bool IsEOF() override;
 
-  void Seek(From eSeek, FX_FILESIZE iOffset);
-  size_t ReadString(wchar_t* pStr, size_t iMaxLength, bool* bEOS);
+  size_t ReadBlock(void* pStr, size_t size) override;
+  bool ReadBlock(void* pStr, FX_FILESIZE offset, size_t size) override;
 
   uint16_t GetCodePage() const { return m_wCodePage; }
   void SetCodePage(uint16_t wCodePage);
 
  private:
-  explicit CFX_SeekableStreamProxy(const RetainPtr<IFX_SeekableStream>& stream);
+  explicit CFX_SeekableStreamProxy(
+      const RetainPtr<IFX_SeekableReadStream>& stream);
   ~CFX_SeekableStreamProxy() override;
 
+  void Seek(From eSeek, FX_FILESIZE iOffset);
   size_t ReadData(uint8_t* pBuffer, size_t iBufferSize);
 
   uint16_t m_wCodePage;
   size_t m_wBOMLength;
   FX_FILESIZE m_iPosition;
-  RetainPtr<IFX_SeekableStream> m_pStream;
+  RetainPtr<IFX_SeekableReadStream> m_pStream;
 };
 
 #endif  // CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_
