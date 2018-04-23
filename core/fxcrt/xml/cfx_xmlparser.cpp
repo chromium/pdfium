@@ -59,19 +59,7 @@ bool CFX_XMLParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
 
 CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
                              const RetainPtr<IFX_SeekableReadStream>& pStream)
-    : m_pParent(pParent),
-      m_pChild(nullptr),
-      m_iXMLPlaneSize(1024),
-      m_Start(0),
-      m_End(0),
-      m_CurNodeType(FX_XMLNODE_Unknown),
-      m_pCurrentBlock(nullptr),
-      m_iIndexInBlock(0),
-      m_iTextDataLength(0),
-      m_syntaxParserResult(FX_XmlSyntaxResult::None),
-      m_syntaxParserState(FDE_XmlSyntaxState::Text),
-      m_wQuotationMark(0),
-      m_iEntityStart(-1) {
+    : m_pParent(pParent) {
   ASSERT(m_pParent);
   ASSERT(pStream);
 

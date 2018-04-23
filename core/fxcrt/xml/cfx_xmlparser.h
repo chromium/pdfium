@@ -95,27 +95,26 @@ class CFX_XMLParser {
   bool GetStatus() const;
 
   CFX_XMLNode* m_pParent;
-  CFX_XMLNode* m_pChild;
-  std::stack<CFX_XMLNode*> m_NodeStack;
+  CFX_XMLNode* m_pChild = nullptr;
   WideString m_ws1;
-
   RetainPtr<IFX_SeekableReadStream> m_pStream;
-  size_t m_iXMLPlaneSize;
-  std::vector<wchar_t> m_Buffer;
-  FX_FILESIZE m_Start;  // Start position in m_Buffer
-  FX_FILESIZE m_End;    // End position in m_Buffer
-  FX_XMLNODETYPE m_CurNodeType;
+  FX_FILESIZE m_Start = 0;  // Start position in m_Buffer
+  FX_FILESIZE m_End = 0;    // End position in m_Buffer
+  FX_XMLNODETYPE m_CurNodeType = FX_XMLNODE_Unknown;
+  FX_XmlSyntaxResult m_syntaxParserResult = FX_XmlSyntaxResult::None;
+  FDE_XmlSyntaxState m_syntaxParserState = FDE_XmlSyntaxState::Text;
+  std::stack<CFX_XMLNode*> m_NodeStack;
   std::stack<FX_XMLNODETYPE> m_XMLNodeTypeStack;
-  CFX_BlockBuffer m_BlockBuffer;
-  wchar_t* m_pCurrentBlock;  // Pointer into CFX_BlockBuffer
-  size_t m_iIndexInBlock;
-  int32_t m_iTextDataLength;
-  FX_XmlSyntaxResult m_syntaxParserResult;
-  FDE_XmlSyntaxState m_syntaxParserState;
-  wchar_t m_wQuotationMark;
-  int32_t m_iEntityStart;
   std::stack<wchar_t> m_SkipStack;
-  wchar_t m_SkipChar;
+  std::vector<wchar_t> m_Buffer;
+  CFX_BlockBuffer m_BlockBuffer;
+  wchar_t* m_pCurrentBlock = nullptr;  // Pointer into CFX_BlockBuffer
+  size_t m_iIndexInBlock = 0;
+  size_t m_iXMLPlaneSize = 1024;
+  int32_t m_iTextDataLength = 0;
+  int32_t m_iEntityStart = -1;
+  wchar_t m_wQuotationMark = 0;
+  wchar_t m_SkipChar = 0;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLPARSER_H_
