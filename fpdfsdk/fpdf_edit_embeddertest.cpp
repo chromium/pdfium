@@ -484,6 +484,20 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
       } else if (name == L"GreaterThanTen") {
         greater_than_ten_count++;
         EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
+      } else if (name == L"Bounds") {
+        EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
+        ASSERT_GT(FPDFPageObjMark_GetParamKey(mark, 0, buffer, 256), 0u);
+        std::wstring key =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+        EXPECT_EQ(L"Position", key);
+        EXPECT_EQ(FPDF_OBJECT_STRING,
+                  FPDFPageObjMark_GetParamValueType(mark, 0));
+        ASSERT_GT(FPDFPageObjMark_GetParamStringValue(mark, 0, buffer, 256),
+                  0u);
+        std::wstring value =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+        EXPECT_EQ(L"Last", value);
+        EXPECT_EQ(18, i);
       } else {
         FAIL();
       }

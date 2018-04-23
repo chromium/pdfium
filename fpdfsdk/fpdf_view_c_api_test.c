@@ -152,6 +152,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObjMark_GetParamKey);
     CHK(FPDFPageObjMark_GetParamValueType);
     CHK(FPDFPageObjMark_GetParamIntValue);
+    CHK(FPDFPageObjMark_GetParamStringValue);
     CHK(FPDFImageObj_LoadJpegFile);
     CHK(FPDFImageObj_LoadJpegFileInline);
     CHK(FPDFImageObj_SetMatrix);

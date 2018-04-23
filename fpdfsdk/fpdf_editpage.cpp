@@ -339,6 +339,20 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
   return param_pair->second->GetInteger();
 }
 
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
+                                    unsigned long index,
+                                    void* buffer,
+                                    unsigned long buflen) {
+  auto* param_pair = GetMarkParamPairAtIndex(mark, index);
+  if (!param_pair)
+    return 0;
+
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      WideString::FromUTF8(param_pair->second->GetString().AsStringView()),
+      buffer, buflen);
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
