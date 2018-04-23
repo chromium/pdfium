@@ -44,6 +44,9 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj,
 
   const CPDF_Dictionary* pDict = pStream->GetDict();
   const CPDF_Array* pSize = pDict->GetArrayFor("Size");
+  if (!pSize || pSize->IsEmpty())
+    return false;
+
   const CPDF_Array* pEncode = pDict->GetArrayFor("Encode");
   const CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
   m_nBitsPerSample = pDict->GetIntegerFor("BitsPerSample");
@@ -56,9 +59,11 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj,
   FX_SAFE_UINT32 nTotalSampleBits = 1;
   m_EncodeInfo.resize(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {
-    m_EncodeInfo[i].sizes = pSize ? pSize->GetIntegerAt(i) : 0;
-    if (!pSize && i == 0)
-      m_EncodeInfo[i].sizes = pDict->GetIntegerFor("Size");
+    int size = pSize->GetIntegerAt(i);
+    if (size <= 0)
+      return false;
+
+    m_EncodeInfo[i].sizes = size;
     nTotalSampleBits *= m_EncodeInfo[i].sizes;
     if (pEncode) {
       m_EncodeInfo[i].encode_min = pEncode->GetFloatAt(i * 2);
