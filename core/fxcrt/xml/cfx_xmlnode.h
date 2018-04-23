@@ -27,7 +27,7 @@ class CFX_XMLNode {
 
   virtual FX_XMLNODETYPE GetType() const = 0;
   virtual std::unique_ptr<CFX_XMLNode> Clone() = 0;
-  virtual void Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) = 0;
+  virtual void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) = 0;
 
   CFX_XMLNode* GetRoot();
   CFX_XMLNode* GetParent() const { return parent_.Get(); }

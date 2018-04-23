@@ -96,7 +96,8 @@ void CFX_XMLElement::SetTextData(const WideString& wsText) {
   AppendChild(pdfium::MakeUnique<CFX_XMLText>(wsText));
 }
 
-void CFX_XMLElement::Save(const RetainPtr<IFX_SeekableStream>& pXMLStream) {
+void CFX_XMLElement::Save(
+    const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) {
   ByteString bsNameEncoded = name_.UTF8Encode();
 
   pXMLStream->WriteString("<");
