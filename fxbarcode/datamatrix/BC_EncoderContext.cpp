@@ -33,8 +33,9 @@ CBC_EncoderContext::CBC_EncoderContext(const WideString& msg,
                                        int32_t& e) {
   ByteString dststr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, dststr);
-  WideString sb;
   size_t c = dststr.GetLength();
+  WideString sb;
+  sb.Reserve(c);
   for (size_t i = 0; i < c; i++) {
     wchar_t ch = static_cast<wchar_t>(dststr[i] & 0xff);
     if (ch == '?' && dststr[i] != '?') {
