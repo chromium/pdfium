@@ -13,8 +13,7 @@
 #include "core/fxcrt/retain_ptr.h"
 
 enum FX_XMLNODETYPE {
-  FX_XMLNODE_Unknown = 0,
-  FX_XMLNODE_Instruction,
+  FX_XMLNODE_Instruction = 0,
   FX_XMLNODE_Element,
   FX_XMLNODE_Text,
   FX_XMLNODE_CharData,

@@ -542,3 +542,30 @@ TEST(CFX_XMLParserTest, IsXMLNameChar) {
   EXPECT_TRUE(CFX_XMLTestParser::IsXMLNameChar(0xFFFD, true));
   EXPECT_FALSE(CFX_XMLTestParser::IsXMLNameChar(0xFFFE, true));
 }
+
+TEST(CFX_XMLParserTest, BadElementClose) {
+  const char* input = "</endtag>";
+
+  auto stream = MakeProxy(input);
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
+  CFX_XMLTestParser parser(root.get(), stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::Error, parser.DoSyntaxParse());
+}
+
+TEST(CFX_XMLParserTest, DoubleElementClose) {
+  const char* input = "<p></p></p>";
+
+  auto stream = MakeProxy(input);
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
+  CFX_XMLTestParser parser(root.get(), stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  ASSERT_EQ(L"p", parser.GetTextData());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(L"", parser.GetTextData());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(L"p", parser.GetTextData());
+  ASSERT_EQ(FX_XmlSyntaxResult::Error, parser.DoSyntaxParse());
+}

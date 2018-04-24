@@ -84,7 +84,6 @@ class CFX_XMLParser {
   RetainPtr<IFX_SeekableReadStream> m_pStream;
   FX_FILESIZE m_Start = 0;  // Start position in m_Buffer
   FX_FILESIZE m_End = 0;    // End position in m_Buffer
-  FX_XMLNODETYPE m_CurNodeType = FX_XMLNODE_Unknown;
   FX_XmlSyntaxResult m_syntaxParserResult = FX_XmlSyntaxResult::None;
   FDE_XmlSyntaxState m_syntaxParserState = FDE_XmlSyntaxState::Text;
   std::stack<CFX_XMLNode*> m_NodeStack;
