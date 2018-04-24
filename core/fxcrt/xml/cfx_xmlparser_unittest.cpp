@@ -429,11 +429,18 @@ TEST(CFX_XMLParserTest, CommentTwoDash) {
 TEST(CFX_XMLParserTest, Entities) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
-      "&#66;"
-      "&#x54;"
-      "&#x00000000000000000048;"
-      "&#x0000000000000000AB48;"
+      "&#66;"                     // B
+      "&#x54;"                    // T
+      "&#x6a;"                    // j
+      "&#x00000000000000000048;"  // H
+      "&#x0000000000000000AB48;"  // \xab48
       "&#x0000000000000000000;"
+      "&amp;"
+      "&lt;"
+      "&gt;"
+      "&apos;"
+      "&quot;"
+      "&something_else;"
       "</script>";
 
   auto stream = MakeProxy(input);
@@ -451,7 +458,7 @@ TEST(CFX_XMLParserTest, Entities) {
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  ASSERT_EQ(L"BTH\xab48", parser.GetTextData());
+  ASSERT_EQ(L"BTjH\xab48&<>'\"", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTextData());

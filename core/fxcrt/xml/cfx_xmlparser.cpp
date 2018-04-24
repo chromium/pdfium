@@ -661,26 +661,17 @@ void CFX_XMLParser::ParseTextChar(wchar_t character) {
     if (iLen > 0) {
       if (csEntity[0] == L'#') {
         uint32_t ch = 0;
-        wchar_t w;
         if (iLen > 1 && csEntity[1] == L'x') {
           for (int32_t i = 2; i < iLen; i++) {
-            w = csEntity[i];
-            if (std::iswdigit(w))
-              ch = (ch << 4) + w - L'0';
-            else if (w >= L'A' && w <= L'F')
-              ch = (ch << 4) + w - 55;
-            else if (w >= L'a' && w <= L'f')
-              ch = (ch << 4) + w - 87;
-            else
+            if (!FXSYS_isHexDigit(csEntity[i]))
               break;
+            ch = (ch << 4) + FXSYS_HexCharToInt(csEntity[i]);
           }
         } else {
           for (int32_t i = 1; i < iLen; i++) {
-            w = csEntity[i];
-            if (!std::iswdigit(w))
+            if (!FXSYS_isDecimalDigit(csEntity[i]))
               break;
-
-            ch = ch * 10 + w - L'0';
+            ch = ch * 10 + FXSYS_DecimalCharToInt(csEntity[i]);
           }
         }
         if (ch > kMaxCharRange)
