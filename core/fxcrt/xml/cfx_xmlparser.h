@@ -50,22 +50,7 @@ class CFX_XMLParser {
 
  protected:
   FX_XmlSyntaxResult DoSyntaxParse();
-
-  WideString GetTagName() const {
-    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
-  }
-
-  WideString GetAttributeName() const {
-    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
-  }
-
-  WideString GetAttributeValue() const {
-    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
-  }
-
-  WideString GetTextData() const {
-    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
-  }
+  WideString GetTextData() const;
 
  private:
   enum class FDE_XmlSyntaxState {

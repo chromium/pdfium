@@ -24,17 +24,6 @@ class CFX_XMLTestParser : public CFX_XMLParser {
   ~CFX_XMLTestParser() override = default;
 
   FX_XmlSyntaxResult DoSyntaxParse() { return CFX_XMLParser::DoSyntaxParse(); }
-
-  WideString GetTagName() const { return CFX_XMLParser::GetTagName(); }
-
-  WideString GetAttributeName() const {
-    return CFX_XMLParser::GetAttributeName();
-  }
-
-  WideString GetAttributeValue() const {
-    return CFX_XMLParser::GetAttributeValue();
-  }
-
   WideString GetTextData() const { return CFX_XMLParser::GetTextData(); }
 };
 
@@ -68,12 +57,12 @@ TEST(CFX_XMLParserTest, CData) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -86,7 +75,7 @@ TEST(CFX_XMLParserTest, CData) {
   ASSERT_EQ(L"\n", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -114,12 +103,12 @@ TEST(CFX_XMLParserTest, CDataWithInnerScript) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -132,7 +121,7 @@ TEST(CFX_XMLParserTest, CDataWithInnerScript) {
   ASSERT_EQ(L"\n", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -150,12 +139,12 @@ TEST(CFX_XMLParserTest, ArrowBangArrow) {
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
 
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -165,7 +154,7 @@ TEST(CFX_XMLParserTest, ArrowBangArrow) {
   ASSERT_EQ(L"\n", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -182,12 +171,12 @@ TEST(CFX_XMLParserTest, ArrowBangBracketArrow) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -210,12 +199,12 @@ TEST(CFX_XMLParserTest, IncompleteCData) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -238,12 +227,12 @@ TEST(CFX_XMLParserTest, UnClosedCData) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -266,12 +255,12 @@ TEST(CFX_XMLParserTest, EmptyCData) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -284,7 +273,7 @@ TEST(CFX_XMLParserTest, EmptyCData) {
   ASSERT_EQ(L"\n", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -301,12 +290,12 @@ TEST(CFX_XMLParserTest, Comment) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -316,7 +305,7 @@ TEST(CFX_XMLParserTest, Comment) {
   ASSERT_EQ(L"\n", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -333,12 +322,12 @@ TEST(CFX_XMLParserTest, IncorrectCommentStart) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -348,7 +337,7 @@ TEST(CFX_XMLParserTest, IncorrectCommentStart) {
   ASSERT_EQ(L"\n", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -365,12 +354,12 @@ TEST(CFX_XMLParserTest, CommentEmpty) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -380,7 +369,7 @@ TEST(CFX_XMLParserTest, CommentEmpty) {
   ASSERT_EQ(L"\n", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -397,12 +386,12 @@ TEST(CFX_XMLParserTest, CommentThreeDash) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -423,12 +412,12 @@ TEST(CFX_XMLParserTest, CommentTwoDash) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
@@ -453,19 +442,19 @@ TEST(CFX_XMLParserTest, Entities) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"BTH\xab48", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -483,19 +472,19 @@ TEST(CFX_XMLParserTest, EntityOverflowHex) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"  ", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -513,19 +502,19 @@ TEST(CFX_XMLParserTest, EntityOverflowDecimal) {
   CFX_XMLTestParser parser(root.get(), stream);
   ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  ASSERT_EQ(L"contentType", parser.GetAttributeName());
+  ASSERT_EQ(L"contentType", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
+  ASSERT_EQ(L"application/x-javascript", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"  ", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  ASSERT_EQ(L"script", parser.GetTagName());
+  ASSERT_EQ(L"script", parser.GetTextData());
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }

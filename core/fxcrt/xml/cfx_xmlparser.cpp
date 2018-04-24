@@ -113,7 +113,7 @@ bool CFX_XMLParser::Parse() {
         if (m_pChild->GetType() != FX_XMLNODE_Element)
           return false;
 
-        m_ws1 = GetTagName();
+        m_ws1 = GetTextData();
         if (m_ws1.GetLength() > 0 &&
             m_ws1 != static_cast<CFX_XMLElement*>(m_pChild)->GetName()) {
           return false;
@@ -129,7 +129,7 @@ bool CFX_XMLParser::Parse() {
         iCount++;
         break;
       case FX_XmlSyntaxResult::TargetName:
-        m_ws1 = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
+        m_ws1 = GetTextData();
         if (m_ws1 == L"originalXFAVersion" || m_ws1 == L"acrobat") {
           auto child = pdfium::MakeUnique<CFX_XMLInstruction>(m_ws1);
           m_pChild = child.get();
@@ -140,7 +140,7 @@ bool CFX_XMLParser::Parse() {
         m_ws1.clear();
         break;
       case FX_XmlSyntaxResult::TagName: {
-        m_ws1 = GetTagName();
+        m_ws1 = GetTextData();
         auto child = pdfium::MakeUnique<CFX_XMLElement>(m_ws1);
         m_pChild = child.get();
         m_pParent->AppendChild(std::move(child));
@@ -149,12 +149,12 @@ bool CFX_XMLParser::Parse() {
         break;
       }
       case FX_XmlSyntaxResult::AttriName:
-        m_ws1 = GetAttributeName();
+        m_ws1 = GetTextData();
         break;
       case FX_XmlSyntaxResult::AttriValue:
         if (m_pChild && m_pChild->GetType() == FX_XMLNODE_Element) {
-          static_cast<CFX_XMLElement*>(m_pChild)->SetAttribute(
-              m_ws1, GetAttributeName());
+          static_cast<CFX_XMLElement*>(m_pChild)->SetAttribute(m_ws1,
+                                                               GetTextData());
         }
         m_ws1.clear();
         break;
@@ -183,8 +183,7 @@ bool CFX_XMLParser::Parse() {
           if (!m_ws1.IsEmpty())
             instruction->AppendData(m_ws1);
 
-          instruction->AppendData(
-              m_BlockBuffer.GetTextData(0, m_iTextDataLength));
+          instruction->AppendData(GetTextData());
         }
         m_ws1.clear();
         break;
@@ -549,9 +548,6 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
                 if (ch == m_SkipChar) {
                   m_SkipStack.pop();
                   if (m_SkipStack.empty()) {
-                    if (m_BlockBuffer.GetDataLength() >= 9)
-                      (void)m_BlockBuffer.GetTextData(0, 7);
-
                     m_iTextDataLength = m_BlockBuffer.GetDataLength();
                     m_BlockBuffer.Reset(true);
                     std::tie(m_pCurrentBlock, m_iIndexInBlock) =
@@ -726,4 +722,8 @@ void CFX_XMLParser::ParseTextChar(wchar_t character) {
     m_iEntityStart = m_BlockBuffer.GetDataLength() - 1;
   }
   m_Start++;
+}
+
+WideString CFX_XMLParser::GetTextData() const {
+  return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
 }
