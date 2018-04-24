@@ -1511,12 +1511,13 @@ void CXFA_Document::DoProtoMerge() {
   }
 
   for (CXFA_Node* pUseHrefNode : sUseNodes) {
+    // Must outlive the WideStringViews below.
+    WideString wsUseVal =
+        pUseHrefNode->JSObject()->GetCData(XFA_Attribute::Usehref);
     WideStringView wsURI;
     WideStringView wsID;
     WideStringView wsSOM;
 
-    WideString wsUseVal =
-        pUseHrefNode->JSObject()->GetCData(XFA_Attribute::Usehref);
     if (!wsUseVal.IsEmpty()) {
       auto uSharpPos = wsUseVal.Find('#');
       if (!uSharpPos.has_value()) {
