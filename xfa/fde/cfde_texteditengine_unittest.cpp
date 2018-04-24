@@ -427,9 +427,18 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointMultiline) {
                    L"getting indexes on multi-line edits.");
   EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
   EXPECT_EQ(87U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
-  EXPECT_EQ(12U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
+  EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
+  EXPECT_EQ(12U, engine()->GetIndexForPoint({1.0f, 10.0f}));
   EXPECT_EQ(1U, engine()->GetIndexForPoint({5.0f, 5.0f}));
   EXPECT_EQ(2U, engine()->GetIndexForPoint({10.0f, 5.0f}));
+}
+
+TEST_F(CFDE_TextEditEngineTest, GetIndexForPointSpaceAtEnd) {
+  engine()->SetFontSize(10.0f);
+  engine()->Insert(0, L"Hello World ");
+  EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
+  EXPECT_EQ(12U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
+  EXPECT_EQ(12U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
 }
 
 TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {

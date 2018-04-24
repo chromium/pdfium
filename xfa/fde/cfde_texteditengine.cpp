@@ -937,8 +937,18 @@ size_t CFDE_TextEditEngine::GetIndexForPoint(const CFX_PointF& point) {
     // afterwards. Return the position after the the last character.
     // The last line has nCount equal to the number of characters + 1 (sentinel
     // character maybe?). Restrict to the text_length_ to account for that.
-    return std::min(static_cast<size_t>(start_it->nStart + start_it->nCount),
-                    text_length_);
+    size_t pos = std::min(
+        static_cast<size_t>(start_it->nStart + start_it->nCount), text_length_);
+
+    // The line is not the last one and it was broken right after a space, the
+    // cursor should not be placed after the space, but before it. If the
+    // cursor is moved after the space, it goes to the beginning of the next
+    // line.
+    bool is_last_line = (std::next(start_it) == text_piece_info_.end());
+    if (!is_last_line && pos > 0 && GetChar(pos - 1) == L' ')
+      --pos;
+
+    return pos;
   }
 
   if (start_it == text_piece_info_.end())
