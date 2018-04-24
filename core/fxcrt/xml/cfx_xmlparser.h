@@ -11,7 +11,6 @@
 #include <stack>
 #include <vector>
 
-#include "core/fxcrt/cfx_blockbuffer.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
@@ -50,7 +49,7 @@ class CFX_XMLParser {
 
  protected:
   FX_XmlSyntaxResult DoSyntaxParse();
-  WideString GetTextData() const;
+  WideString GetTextData();
 
  private:
   enum class FDE_XmlSyntaxState {
@@ -81,7 +80,7 @@ class CFX_XMLParser {
 
   CFX_XMLNode* m_pParent;
   CFX_XMLNode* m_pChild = nullptr;
-  WideString m_ws1;
+  WideString current_attribute_name_;
   RetainPtr<IFX_SeekableReadStream> m_pStream;
   FX_FILESIZE m_Start = 0;  // Start position in m_Buffer
   FX_FILESIZE m_End = 0;    // End position in m_Buffer
@@ -92,11 +91,8 @@ class CFX_XMLParser {
   std::stack<FX_XMLNODETYPE> m_XMLNodeTypeStack;
   std::stack<wchar_t> m_SkipStack;
   std::vector<wchar_t> m_Buffer;
-  CFX_BlockBuffer m_BlockBuffer;
-  wchar_t* m_pCurrentBlock = nullptr;  // Pointer into CFX_BlockBuffer
-  size_t m_iIndexInBlock = 0;
+  std::vector<wchar_t> current_text_;
   size_t m_iXMLPlaneSize = 1024;
-  int32_t m_iTextDataLength = 0;
   int32_t m_iEntityStart = -1;
   wchar_t m_wQuotationMark = 0;
   wchar_t m_SkipChar = 0;

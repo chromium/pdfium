@@ -24,7 +24,7 @@ class CFX_XMLTestParser : public CFX_XMLParser {
   ~CFX_XMLTestParser() override = default;
 
   FX_XmlSyntaxResult DoSyntaxParse() { return CFX_XMLParser::DoSyntaxParse(); }
-  WideString GetTextData() const { return CFX_XMLParser::GetTextData(); }
+  WideString GetTextData() { return CFX_XMLParser::GetTextData(); }
 };
 
 RetainPtr<CFX_MemoryStream> MakeProxy(const char* input) {
