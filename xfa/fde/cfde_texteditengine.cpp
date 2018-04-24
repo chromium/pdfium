@@ -821,6 +821,7 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   gap_size_ += length;
 
   text_length_ -= length;
+  is_dirty_ = true;
   ClearSelection();
 
   if (delegate_)
