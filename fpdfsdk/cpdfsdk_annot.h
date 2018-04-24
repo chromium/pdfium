@@ -22,6 +22,10 @@ class CPDF_Page;
 class CPDF_RenderOptions;
 class CPDFSDK_PageView;
 
+#ifdef PDF_ENABLE_XFA
+class CXFA_FFWidget;
+#endif  // PDF_ENABLE_XFA
+
 class CPDFSDK_Annot : public Observable<CPDFSDK_Annot> {
  public:
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);

@@ -14,7 +14,7 @@
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
+#include "core/fxcrt/fx_stream.h"
 #endif  // PDF_ENABLE_XFA
 
 #ifdef _WIN32
@@ -30,6 +30,11 @@ class CPDF_PathObject;
 class CPDF_Stream;
 class IPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
+
+#ifdef PDF_ENABLE_XFA
+class CPDFXFA_Context;
+class CPDFXFA_Page;
+#endif  // PDF_ENABLE_XFA
 
 // Object types for public FPDF_ types; these correspond to next layer down
 // from fpdfsdk. For master, these are CPDF_ types, but for XFA, these are

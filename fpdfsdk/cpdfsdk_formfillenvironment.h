@@ -81,7 +81,7 @@ class CPDFSDK_FormFillEnvironment
                     const CPDF_Document* pSrcDoc,
                     const std::vector<uint16_t>& arrSrcPages);
 
-  int GetPageCount() const { return m_pUnderlyingDoc->GetPageCount(); }
+  int GetPageCount() const;
   bool GetPermissions(int nFlag) const;
 
   bool GetChangeMark() const { return m_bChangeMask; }
@@ -118,9 +118,7 @@ class CPDFSDK_FormFillEnvironment
   }
 
 #ifdef PDF_ENABLE_XFA
-  CPDF_Document* GetPDFDocument() const {
-    return m_pUnderlyingDoc ? m_pUnderlyingDoc->GetPDFDoc() : nullptr;
-  }
+  CPDF_Document* GetPDFDocument() const;
 
   CPDFXFA_Context* GetXFAContext() const { return m_pUnderlyingDoc.Get(); }
   void ResetXFADocument() { m_pUnderlyingDoc = nullptr; }

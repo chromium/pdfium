@@ -20,6 +20,10 @@
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/ptr_util.h"
 
+#ifdef PDF_ENABLE_XFA
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
+#endif
+
 FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
   // Force a private version of the string, since we're about to hand it off
   // to the embedder. Should the embedder modify it by accident, it won't
@@ -702,6 +706,16 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
     }
   }
   return !m_pFocusAnnot;
+}
+
+#ifdef PDF_ENABLE_XFA
+CPDF_Document* CPDFSDK_FormFillEnvironment::GetPDFDocument() const {
+  return m_pUnderlyingDoc ? m_pUnderlyingDoc->GetPDFDoc() : nullptr;
+}
+#endif  // PDF_ENABLE_XFA
+
+int CPDFSDK_FormFillEnvironment::GetPageCount() const {
+  return m_pUnderlyingDoc->GetPageCount();
 }
 
 bool CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) const {

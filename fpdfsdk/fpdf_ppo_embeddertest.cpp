@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ppo.h"

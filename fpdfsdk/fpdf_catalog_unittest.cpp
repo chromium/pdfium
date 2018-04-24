@@ -11,6 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

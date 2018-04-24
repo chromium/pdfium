@@ -13,6 +13,10 @@
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/js_resources.h"
 
+#ifdef PDF_ENABLE_XFA
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
+#endif  // PDF_ENABLE_XFA
+
 namespace {
 
 bool IsTypeKnown(v8::Local<v8::Value> value) {
