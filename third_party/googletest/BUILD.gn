@@ -14,13 +14,12 @@ config("gtest_config") {
     # In order to allow regex matches in gtest to be shared between Windows
     # and other systems, we tell gtest to always use its internal engine.
     "GTEST_HAS_POSIX_RE=0",
+
+    # Enables C++11 features.
     "GTEST_LANG_CXX11=1",
 
-    # ::testing::Combine, which is heavily used in Chromium, is gated on
-    # tr1::tuple. Upstream avoids using tr1::tuple on Visual Studio 2017+,
-    # because it causes warnings. We'll take (and ignore) the warnings to keep
-    # our ::testing::Combine.
-    "GTEST_HAS_TR1_TUPLE=1",
+    # Prevents gtest from including both <tr1/tuple> and <tuple>.
+    "GTEST_HAS_TR1_TUPLE=0",
   ]
 
   # Gtest headers need to be able to find themselves.
