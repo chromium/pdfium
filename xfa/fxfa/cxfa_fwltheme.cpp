@@ -60,18 +60,24 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
       m_pCalendarFont(nullptr),
       m_pApp(pApp) {
   m_Rect.Reset();
+}
 
+bool CXFA_FWLTheme::LoadCalendarFont() {
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
        ++i) {
     m_pCalendarFont = CFGAS_GEFont::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,
                                              m_pApp->GetFDEFontMgr());
   }
+
   if (!m_pCalendarFont) {
-    m_pCalendarFont = m_pApp->GetFDEFontMgr()->GetFontByCodePage(
-        FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
+    CFGAS_FontMgr* font_mgr = m_pApp->GetFDEFontMgr();
+    if (font_mgr) {
+      m_pCalendarFont = font_mgr->GetFontByCodePage(
+          FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
+    }
   }
 
-  ASSERT(m_pCalendarFont);
+  return m_pCalendarFont != nullptr;
 }
 
 CXFA_FWLTheme::~CXFA_FWLTheme() {

@@ -29,6 +29,8 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   explicit CXFA_FWLTheme(CXFA_FFApp* pApp);
   ~CXFA_FWLTheme() override;
 
+  bool LoadCalendarFont();
+
   // IFWL_ThemeProvider:
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
   void DrawText(CFWL_ThemeText* pParams) override;

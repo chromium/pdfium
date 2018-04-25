@@ -52,8 +52,11 @@ CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
 }
 
 CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme() {
-  if (!m_pFWLTheme)
+  if (!m_pFWLTheme) {
     m_pFWLTheme = pdfium::MakeUnique<CXFA_FWLTheme>(this);
+    if (!m_pFWLTheme->LoadCalendarFont())
+      m_pFWLTheme = nullptr;
+  }
   return m_pFWLTheme.get();
 }
 
