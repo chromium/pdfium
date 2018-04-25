@@ -48,7 +48,7 @@ const uint8_t ZeroLeadPos[256] = {
 // Limit of image dimension, an arbitrary large number.
 const int kMaxImageDimension = 0x01FFFF;
 
-int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, int bit) {
+int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
   ASSERT(start_pos >= 0);
   if (start_pos >= max_pos)
     return max_pos;
@@ -87,8 +87,7 @@ void FaxG4FindB1B2(const std::vector<uint8_t>& ref_buf,
                    bool a0color,
                    int* b1,
                    int* b2) {
-  uint8_t first_bit =
-      (a0 < 0) ? 1 : ((ref_buf[a0 / 8] & (1 << (7 - a0 % 8))) != 0);
+  bool first_bit = a0 < 0 || (ref_buf[a0 / 8] & (1 << (7 - a0 % 8))) != 0;
   *b1 = FindBit(ref_buf.data(), columns, a0 + 1, !first_bit);
   if (*b1 >= columns) {
     *b1 = *b2 = columns;
