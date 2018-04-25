@@ -141,6 +141,7 @@ void CLZWDecoder::AddCode(uint32_t prefix_code, uint8_t append_char) {
     m_CodeLen = 12;
   }
 }
+
 void CLZWDecoder::DecodeString(uint32_t code) {
   while (1) {
     int index = code - 258;
@@ -159,6 +160,7 @@ void CLZWDecoder::DecodeString(uint32_t code) {
   }
   m_DecodeStack[m_StackLen++] = (uint8_t)code;
 }
+
 int CLZWDecoder::Decode(uint8_t* dest_buf,
                         uint32_t& dest_size,
                         const uint8_t* src_buf,
@@ -554,6 +556,15 @@ void FlateUncompress(const uint8_t* src_buf,
   FlateEnd(context);
 }
 
+enum class PredictorType : uint8_t { kNone, kFlate, kPng };
+static PredictorType GetPredictor(int predictor) {
+  if (predictor >= 10)
+    return PredictorType::kPng;
+  if (predictor == 2)
+    return PredictorType::kFlate;
+  return PredictorType::kNone;
+}
+
 class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
  public:
   CCodec_FlateScanlineDecoder(const uint8_t* src_buf,
@@ -574,15 +585,6 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
   uint32_t GetSrcOffset() override;
 
  private:
-  enum class PredictorType : uint8_t { kNone, kFlate, kPng };
-  static PredictorType GetPredictor(int predictor) {
-    if (predictor >= 10)
-      return PredictorType::kPng;
-    if (predictor == 2)
-      return PredictorType::kFlate;
-    return PredictorType::kNone;
-  }
-
   void* m_pFlate = nullptr;
   const uint8_t* const m_SrcBuf;
   const uint32_t m_SrcSize;
@@ -672,6 +674,7 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
                         m_BitsPerComponent, m_Colors, m_Columns);
         memcpy(m_pLastLine, m_pScanline, m_PredictPitch);
       } else {
+        ASSERT(m_Predictor == PredictorType::kFlate);
         FlateOutput(m_pFlate, m_pScanline, m_Pitch);
         TIFF_PredictLine(m_pScanline, m_PredictPitch, m_bpc, m_nComps,
                          m_OutputWidth);
@@ -693,6 +696,7 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
                           m_BitsPerComponent, m_Colors, m_Columns);
           memcpy(m_pLastLine, m_pPredictBuffer, m_PredictPitch);
         } else {
+          ASSERT(m_Predictor == PredictorType::kFlate);
           FlateOutput(m_pFlate, m_pPredictBuffer, m_PredictPitch);
           TIFF_PredictLine(m_pPredictBuffer, m_PredictPitch, m_BitsPerComponent,
                            m_Colors, m_Columns);
@@ -746,13 +750,8 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
                                               uint32_t* dest_size) {
   *dest_buf = nullptr;
   uint32_t offset = 0;
-  int predictor_type = 0;
-  if (predictor) {
-    if (predictor >= 10)
-      predictor_type = 2;
-    else if (predictor == 2)
-      predictor_type = 1;
-  }
+  PredictorType predictor_type = GetPredictor(predictor);
+
   if (bLZW) {
     auto decoder = pdfium::MakeUnique<CLZWDecoder>();
     *dest_size = 0xFFFFFFFF;
@@ -770,14 +769,15 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
     FlateUncompress(src_buf, src_size, estimated_size, *dest_buf, *dest_size,
                     offset);
   }
-  if (predictor_type == 0)
+  if (predictor_type == PredictorType::kNone)
     return offset;
 
-  bool ret = true;
-  if (predictor_type == 2) {
+  bool ret;
+  if (predictor_type == PredictorType::kPng) {
     ret =
         PNG_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent, Columns);
-  } else if (predictor_type == 1) {
+  } else {
+    ASSERT(predictor_type == PredictorType::kFlate);
     ret = TIFF_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent,
                          Columns);
   }
