@@ -265,32 +265,6 @@ uint8_t PathPredictor(int a, int b, int c) {
   return (uint8_t)c;
 }
 
-void PNG_PredictorEncode(uint8_t** data_buf, uint32_t* data_size) {
-  const int row_size = 7;
-  const int row_count = (*data_size + row_size - 1) / row_size;
-  const int last_row_size = *data_size % row_size;
-  uint8_t* dest_buf = FX_Alloc2D(uint8_t, row_size + 1, row_count);
-  int byte_cnt = 0;
-  uint8_t* pSrcData = *data_buf;
-  uint8_t* pDestData = dest_buf;
-  for (int row = 0; row < row_count; row++) {
-    for (int byte = 0; byte < row_size && byte_cnt < (int)*data_size; byte++) {
-      pDestData[0] = 2;
-      uint8_t up = 0;
-      if (row)
-        up = pSrcData[byte - row_size];
-      pDestData[byte + 1] = pSrcData[byte] - up;
-      ++byte_cnt;
-    }
-    pDestData += (row_size + 1);
-    pSrcData += row_size;
-  }
-  FX_Free(*data_buf);
-  *data_buf = dest_buf;
-  *data_size = (row_size + 1) * row_count -
-               (last_row_size > 0 ? (row_size - last_row_size) : 0);
-}
-
 void PNG_PredictLine(uint8_t* pDestData,
                      const uint8_t* pSrcData,
                      const uint8_t* pLastLine,
@@ -826,16 +800,4 @@ bool CCodec_FlateModule::Encode(const uint8_t* src_buf,
 
   *dest_size = (uint32_t)temp_size;
   return true;
-}
-
-bool CCodec_FlateModule::PngEncode(const uint8_t* src_buf,
-                                   uint32_t src_size,
-                                   uint8_t** dest_buf,
-                                   uint32_t* dest_size) {
-  uint8_t* pSrcBuf = FX_Alloc(uint8_t, src_size);
-  memcpy(pSrcBuf, src_buf, src_size);
-  PNG_PredictorEncode(&pSrcBuf, &src_size);
-  bool ret = Encode(pSrcBuf, src_size, dest_buf, dest_size);
-  FX_Free(pSrcBuf);
-  return ret;
 }

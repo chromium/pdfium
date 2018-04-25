@@ -28,14 +28,6 @@ bool FlateEncode(const uint8_t* src_buf,
                  uint8_t** dest_buf,
                  uint32_t* dest_size);
 
-// This used to have more parameters like the predictor and bpc, but there was
-// only one caller, so the interface has been simplified, the values are hard
-// coded, and dead code has been removed.
-bool PngEncode(const uint8_t* src_buf,
-               uint32_t src_size,
-               uint8_t** dest_buf,
-               uint32_t* dest_size);
-
 uint32_t FlateDecode(const uint8_t* src_buf,
                      uint32_t src_size,
                      uint8_t** dest_buf,

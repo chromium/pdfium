@@ -41,11 +41,6 @@ class CCodec_FlateModule {
               uint32_t src_size,
               uint8_t** dest_buf,
               uint32_t* dest_size);
-
-  bool PngEncode(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 uint8_t** dest_buf,
-                 uint32_t* dest_size);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FLATEMODULE_H_
