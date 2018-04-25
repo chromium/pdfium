@@ -1224,10 +1224,7 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
         break;
       }
 
-      if (m_CursorPosition > 0) {
-        SetCursorPosition(m_EdtEngine.GetIndexBefore(m_CursorPosition));
-        m_EdtEngine.Delete(m_CursorPosition, 1);
-      }
+      m_EdtEngine.Delete(m_CursorPosition, 1);
       break;
     }
     case FWL_VKEY_Insert:
@@ -1253,20 +1250,21 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
 
   wchar_t c = static_cast<wchar_t>(pMsg->m_dwKeyCode);
   switch (c) {
-    case FWL_VKEY_Back:
+    case L'\b':
       if (m_CursorPosition > 0) {
         SetCursorPosition(m_EdtEngine.GetIndexBefore(m_CursorPosition));
         m_EdtEngine.Delete(m_CursorPosition, 1);
       }
       break;
-    case FWL_VKEY_NewLine:
-    case FWL_VKEY_Escape:
+    case L'\n':
+    case 27:   // Esc
+    case 127:  // Delete
       break;
-    case FWL_VKEY_Tab:
+    case L'\t':
       m_EdtEngine.Insert(m_CursorPosition, L"\t");
       SetCursorPosition(m_CursorPosition + 1);
       break;
-    case FWL_VKEY_Return:
+    case L'\r':
       if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_WantReturn) {
         m_EdtEngine.Insert(m_CursorPosition, L"\n");
         SetCursorPosition(m_CursorPosition + 1);
