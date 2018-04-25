@@ -6,6 +6,7 @@
 #include <string>
 
 #include "core/fxcrt/fx_system.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_save.h"
 #include "public/fpdfview.h"
@@ -61,7 +62,7 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
     EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
     EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
     FPDFPage_InsertObject(page, red_rect);
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
     CompareBitmap(bitmap.get(), 612, 792, md5);
     EXPECT_TRUE(FPDFPage_GenerateContent(page));
     SetWholeFileAvailable();

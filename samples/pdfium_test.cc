@@ -18,7 +18,7 @@
 #define _SKIA_SUPPORT_
 #endif
 
-#include "public/cpp/fpdf_deleters.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
 #include "public/fpdf_dataavail.h"
@@ -136,7 +136,7 @@ Optional<std::string> ExpandDirectoryPath(const std::string& path) {
 struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
   // Hold a map of the currently loaded pages in order to avoid them
   // to get loaded twice.
-  std::map<int, std::unique_ptr<void, FPDFPageDeleter>> loaded_pages;
+  std::map<int, ScopedFPDFPage> loaded_pages;
 
   // Hold a pointer of FPDF_FORMHANDLE so that PDFium app hooks can
   // make use of it.
@@ -473,7 +473,7 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
   if (iter != loaded_pages.end())
     return iter->second.get();
 
-  std::unique_ptr<void, FPDFPageDeleter> page(FPDF_LoadPage(doc, index));
+  ScopedFPDFPage page(FPDF_LoadPage(doc, index));
   if (!page)
     return nullptr;
 
@@ -513,8 +513,7 @@ bool RenderPage(const std::string& name,
     return true;
   }
 
-  std::unique_ptr<void, FPDFTextPageDeleter> text_page(FPDFText_LoadPage(page));
-
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
   double scale = 1.0;
   if (!options.scale_factor_as_string.empty())
     std::stringstream(options.scale_factor_as_string) >> scale;
@@ -522,8 +521,7 @@ bool RenderPage(const std::string& name,
   auto width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
   auto height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
-      FPDFBitmap_Create(width, height, alpha));
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(width, height, alpha));
 
   if (bitmap) {
     FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
@@ -637,11 +635,10 @@ void RenderPdf(const std::string& name,
   hints.AddSegment = Add_Segment;
 
   // The pdf_avail must outlive doc.
-  std::unique_ptr<void, FPDFAvailDeleter> pdf_avail(
-      FPDFAvail_Create(&file_avail, &file_access));
+  ScopedFPDFAvail pdf_avail(FPDFAvail_Create(&file_avail, &file_access));
 
   // The document must outlive |form_callbacks.loaded_pages|.
-  std::unique_ptr<void, FPDFDocumentDeleter> doc;
+  ScopedFPDFDocument doc;
 
   int nRet = PDF_DATA_NOTAVAIL;
   bool bIsLinearized = false;
@@ -701,7 +698,7 @@ void RenderPdf(const std::string& name,
     form_callbacks.m_pJsPlatform = &platform_callbacks;
 #endif  // PDF_ENABLE_V8
 
-  std::unique_ptr<void, FPDFFormHandleDeleter> form(
+  ScopedFPDFFormHandle form(
       FPDFDOC_InitFormFillEnvironment(doc.get(), &form_callbacks));
   form_callbacks.form_handle = form.get();
 

@@ -167,6 +167,7 @@ jumbo_static_library("pdfium") {
     "fpdfsdk/ipdfsdk_pauseadapter.cpp",
     "fpdfsdk/ipdfsdk_pauseadapter.h",
     "public/cpp/fpdf_deleters.h",
+    "public/cpp/fpdf_scopers.h",
     "public/fpdf_annot.h",
     "public/fpdf_attachment.h",
     "public/fpdf_catalog.h",

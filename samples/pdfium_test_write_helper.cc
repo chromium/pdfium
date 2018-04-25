@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-#include "public/cpp/fpdf_deleters.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
 #include "public/fpdf_edit.h"
@@ -215,7 +215,7 @@ void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
     return;
   }
 
-  std::unique_ptr<void, FPDFTextPageDeleter> textpage(FPDFText_LoadPage(page));
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
   for (int i = 0; i < FPDFText_CountChars(textpage.get()); i++) {
     uint32_t c = FPDFText_GetUnicode(textpage.get(), i);
     if (fwrite(&c, sizeof(c), 1, fp) != 1) {
@@ -250,8 +250,7 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
   for (int i = 0; i < annot_count; ++i) {
     // Retrieve the annotation object and its subtype.
     fprintf(fp, "Annotation #%d:\n", i + 1);
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, i));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, i));
     if (!annot) {
       fprintf(fp, "Failed to retrieve annotation!\n\n");
       continue;
@@ -579,8 +578,7 @@ void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
     if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE)
       continue;
 
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
-        FPDFImageObj_GetBitmap(obj));
+    ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
     if (!bitmap) {
       fprintf(stderr, "Image object #%d on page #%d has an empty bitmap.\n",
               i + 1, page_num + 1);

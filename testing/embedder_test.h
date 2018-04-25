@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-#include "public/cpp/fpdf_deleters.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
@@ -126,26 +126,22 @@ class EmbedderTest : public ::testing::Test,
   void UnloadPage(FPDF_PAGE page);
 
   // RenderLoadedPageWithFlags() with no flags.
-  std::unique_ptr<void, FPDFBitmapDeleter> RenderLoadedPage(FPDF_PAGE page);
+  ScopedFPDFBitmap RenderLoadedPage(FPDF_PAGE page);
 
   // Convert |page| loaded via LoadPage() into a bitmap with the specified page
   // rendering |flags|.
   //
   // See public/fpdfview.h for a list of page rendering flags.
-  std::unique_ptr<void, FPDFBitmapDeleter> RenderLoadedPageWithFlags(
-      FPDF_PAGE page,
-      int flags);
+  ScopedFPDFBitmap RenderLoadedPageWithFlags(FPDF_PAGE page, int flags);
 
   // RenderSavedPageWithFlags() with no flags.
-  std::unique_ptr<void, FPDFBitmapDeleter> RenderSavedPage(FPDF_PAGE page);
+  ScopedFPDFBitmap RenderSavedPage(FPDF_PAGE page);
 
   // Convert |page| loaded via LoadSavedPage() into a bitmap with the specified
   // page rendering |flags|.
   //
   // See public/fpdfview.h for a list of page rendering flags.
-  std::unique_ptr<void, FPDFBitmapDeleter> RenderSavedPageWithFlags(
-      FPDF_PAGE page,
-      int flags);
+  ScopedFPDFBitmap RenderSavedPageWithFlags(FPDF_PAGE page, int flags);
 
   // Convert |page| into a bitmap with the specified page rendering |flags|.
   // The form handle associated with |page| should be passed in via |handle|.
@@ -153,8 +149,9 @@ class EmbedderTest : public ::testing::Test,
   //
   // See public/fpdfview.h for a list of page rendering flags.
   // If none of the above Render methods are appropriate, then use this one.
-  static std::unique_ptr<void, FPDFBitmapDeleter>
-  RenderPageWithFlags(FPDF_PAGE page, FPDF_FORMHANDLE handle, int flags);
+  static ScopedFPDFBitmap RenderPageWithFlags(FPDF_PAGE page,
+                                              FPDF_FORMHANDLE handle,
+                                              int flags);
 
  protected:
   using PageNumberToHandleMap = std::map<int, FPDF_PAGE>;

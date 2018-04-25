@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "public/cpp/fpdf_deleters.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
@@ -38,8 +38,7 @@ TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
   // normal appearance defined, only its rollover appearance. In this case, its
   // normal appearance should be generated, allowing the highlight annotation to
   // still display.
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-      RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
 
   UnloadPage(page);
@@ -52,8 +51,7 @@ TEST_F(FPDFAnnotEmbeddertest, RenderMultilineMarkupAnnotWithoutAP) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-      RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 595, 842, md5_hash);
 
   UnloadPage(page);
@@ -73,8 +71,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractHighlightLongContent) {
 
   // Check that the annotation is of type "highlight".
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -157,8 +154,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
 
   {
     // Check that the third annotation is of type "ink".
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_INK, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -211,8 +207,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
 
   {
     // Add a text annotation to the page.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
     ASSERT_TRUE(annot);
 
     // Check that there is now 1 annotations on this page.
@@ -223,8 +218,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddFirstTextAnnotation) {
   }
 
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -300,8 +294,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
   FS_QUADPOINTSF quadpoints;
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
     ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), 0, &quadpoints));
     EXPECT_EQ(115.802643f, quadpoints.x1);
@@ -312,7 +305,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
 
   // Add an underline annotation to the page and set its quadpoints.
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+    ScopedFPDFAnnotation annot(
         FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE));
     ASSERT_TRUE(annot);
     quadpoints.x1 = 140.802643f;
@@ -337,8 +330,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   {
     // Check that the second annotation is an underline annotation and verify
     // its quadpoints.
-    std::unique_ptr<void, FPDFAnnotationDeleter> new_annot(
-        FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 1));
     ASSERT_TRUE(new_annot);
     EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot.get()));
     FS_QUADPOINTSF new_quadpoints;
@@ -462,8 +454,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
   // Check that the original file renders correctly.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_original);
   }
 
@@ -472,8 +463,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
   // Retrieve the highlight annotation which has its AP stream already defined.
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -504,8 +494,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
     // Check that updating quadpoints does not change the annotation's position.
     {
-      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, md5_original);
     }
 
@@ -526,15 +515,13 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
   // Check that updating the rectangle changes the annotation's position.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_modified_highlight);
   }
 
   {
     // Retrieve the square annotation which has its AP stream already defined.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -548,8 +535,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyRectQuadpointsWithAP) {
 
     // Check that updating the rectangle changes the square annotation's
     // position.
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_modified_square);
   }
 
@@ -562,8 +548,7 @@ TEST_F(FPDFAnnotEmbeddertest, CountAttachmentPoints) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // This is a three line annotation.
@@ -589,22 +574,19 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
 
   // Check that the annotations have the expected rectangle coordinates.
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
     EXPECT_NEAR(86.1971f, rect.left, 0.001f);
   }
 
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
     EXPECT_NEAR(149.8127f, rect.left, 0.001f);
   }
 
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
     EXPECT_NEAR(351.8204f, rect.left, 0.001f);
   }
@@ -643,15 +625,13 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveAnnotation) {
   // Check that the remaining 2 annotations are the original 1st and 3rd ones
   // by verifying their rectangle coordinates.
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(new_page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(new_page, 0));
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
     EXPECT_NEAR(86.1971f, rect.left, 0.001f);
   }
 
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(new_page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(new_page, 1));
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
     EXPECT_NEAR(351.8204f, rect.left, 0.001f);
   }
@@ -680,15 +660,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   // Check that the page renders correctly.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_original);
   }
 
   {
     // Retrieve the stamp annotation which has its AP stream already defined.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Check that this annotation has one path object and retrieve it.
@@ -706,8 +684,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
     // Check that the page with the modified annotation renders correctly.
     {
-      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
     }
 
@@ -726,8 +703,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
     // Check that the page with an annotation with two paths renders correctly.
     {
-      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 595, 842, md5_two_paths);
     }
 
@@ -739,8 +715,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   // Check that the page renders the same as before.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
   }
 
@@ -748,8 +723,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
 
   {
     // Create another stamp annotation and set its annotation rectangle.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
     ASSERT_TRUE(annot);
     rect.left = 200.f;
     rect.bottom = 400.f;
@@ -791,8 +765,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
 
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
 
@@ -817,15 +790,13 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
 
   // Check that the page renders correctly.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
   }
 
   {
     // Retrieve the annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Check that the original flag values are as expected.
@@ -842,8 +813,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
 
     // Check that the page renders correctly without rendering the annotation.
     {
-      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
     }
 
@@ -858,8 +828,7 @@ TEST_F(FPDFAnnotEmbeddertest, ModifyAnnotationFlags) {
 
     // Check that the page renders correctly as before.
     {
-      std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-          RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
     }
   }
@@ -886,8 +855,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
   // Check that the page renders correctly.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_original);
   }
 
@@ -896,8 +864,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
   {
     // Create a stamp annotation and set its annotation rectangle.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
     ASSERT_TRUE(annot);
     FS_RECTF rect;
     rect.left = 200.f;
@@ -922,15 +889,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyImage) {
 
   // Check that the page renders correctly with the new image object.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_new_image);
   }
 
   {
     // Retrieve the newly added stamp annotation and its image object.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
     FPDF_PAGEOBJECT image_object = FPDFAnnot_GetObject(annot.get(), 0);
@@ -971,15 +936,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 
   // Check that the page renders correctly.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_original);
   }
 
   {
     // Create a stamp annotation and set its annotation rectangle.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
     ASSERT_TRUE(annot);
     FS_RECTF rect;
     rect.left = 200.f;
@@ -1002,15 +965,13 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 
   // Check that the page renders correctly with the new text object.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_new_text);
   }
 
   {
     // Retrieve the newly added stamp annotation and its text object.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
     FPDF_PAGEOBJECT text_object = FPDFAnnot_GetObject(annot.get(), 0);
@@ -1025,16 +986,14 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyText) {
 
   // Check that the page renders correctly with the modified text object.
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_modified_text);
   }
 
   // Remove the new annotation, and check that the page renders as before.
   EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 2));
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-        RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_original);
   }
 
@@ -1052,8 +1011,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 
   {
     // Retrieve the first annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Check that a non-existent key does not exist.
@@ -1107,8 +1065,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 595, 842, md5);
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> new_annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
 
     // Check that the string value of the modified date is the newly-set value.
     EXPECT_EQ(FPDF_OBJECT_STRING,
@@ -1133,8 +1090,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
 
   {
     // Retrieve the first annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Check that the string value of an AP returns the expected length.
@@ -1230,8 +1186,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
   OpenSavedDocument();
   page = LoadSavedPage(0);
   {
-    std::unique_ptr<void, FPDFAnnotationDeleter> new_annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
 
     // Check that the new annotation value is equal to the value we set before
     // saving.
@@ -1258,8 +1213,7 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveOptionalAP) {
 
   {
     // Retrieve the first annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
@@ -1295,8 +1249,7 @@ TEST_F(FPDFAnnotEmbeddertest, RemoveRequiredAP) {
 
   {
     // Retrieve the first annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
@@ -1331,8 +1284,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
 
   {
     // Retrieve the highlight annotation which has its popup defined.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
     EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot.get()));
@@ -1342,7 +1294,7 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractLinkedAnnotations) {
               FPDFAnnot_GetValueType(annot.get(), kPopupKey));
 
     // Retrieve and verify the popup of the highlight annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> popup(
+    ScopedFPDFAnnotation popup(
         FPDFAnnot_GetLinkedAnnot(annot.get(), kPopupKey));
     ASSERT_TRUE(popup);
     EXPECT_EQ(FPDF_ANNOT_POPUP, FPDFAnnot_GetSubtype(popup.get()));
@@ -1378,8 +1330,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
 
   {
     // Retrieve the first annotation: user-editable text field.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -1389,8 +1340,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsTextField) {
 
   {
     // Retrieve the second annotation: read-only text field.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -1409,8 +1359,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
 
   {
     // Retrieve the first annotation: user-editable combobox.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -1422,8 +1371,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
 
   {
     // Retrieve the second annotation: regular combobox.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -1435,8 +1383,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormFieldFlagsComboBox) {
 
   {
     // Retrieve the third annotation: read-only combobox.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
-        FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -1471,7 +1418,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsTextField) {
 
   {
     // Retrieve user-editable text field annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+    ScopedFPDFAnnotation annot(
         FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 118));
     ASSERT_TRUE(annot);
 
@@ -1482,7 +1429,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsTextField) {
 
   {
     // Retrieve read-only text field annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+    ScopedFPDFAnnotation annot(
         FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 105, 202));
     ASSERT_TRUE(annot);
 
@@ -1502,7 +1449,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
 
   {
     // Retrieve user-editable combobox annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+    ScopedFPDFAnnotation annot(
         FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 363));
     ASSERT_TRUE(annot);
 
@@ -1515,7 +1462,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
 
   {
     // Retrieve regular combobox annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+    ScopedFPDFAnnotation annot(
         FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 413));
     ASSERT_TRUE(annot);
 
@@ -1528,7 +1475,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotAndCheckFlagsComboBox) {
 
   {
     // Retrieve read-only combobox annotation.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+    ScopedFPDFAnnotation annot(
         FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 102, 513));
     ASSERT_TRUE(annot);
 

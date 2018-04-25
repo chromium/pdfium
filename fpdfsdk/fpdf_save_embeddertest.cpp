@@ -6,6 +6,7 @@
 #include <string>
 
 #include "core/fxcrt/fx_string.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ppo.h"
 #include "public/fpdf_save.h"
@@ -67,7 +68,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   for (int i = 0; i < kPageCount; ++i) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
     EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap.get()));
     EXPECT_EQ(792, FPDFBitmap_GetHeight(bitmap.get()));
     original_md5[i] = HashBitmap(bitmap.get());
@@ -85,7 +86,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   for (int i = 0; i < kPageCount; ++i) {
     FPDF_PAGE page = LoadSavedPage(i);
     ASSERT_TRUE(page);
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderSavedPage(page);
+    ScopedFPDFBitmap bitmap = RenderSavedPage(page);
     EXPECT_EQ(original_md5[i], HashBitmap(bitmap.get()));
     CloseSavedPage(page);
   }

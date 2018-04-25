@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_text.h"
@@ -305,13 +306,12 @@ void EmbedderTest::UnloadPage(FPDF_PAGE page) {
   page_map_.erase(page_number);
 }
 
-std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderLoadedPage(
-    FPDF_PAGE page) {
+ScopedFPDFBitmap EmbedderTest::RenderLoadedPage(FPDF_PAGE page) {
   return RenderLoadedPageWithFlags(page, 0);
 }
 
-std::unique_ptr<void, FPDFBitmapDeleter>
-EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page, int flags) {
+ScopedFPDFBitmap EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page,
+                                                         int flags) {
   if (GetPageNumberForLoadedPage(page) < 0) {
     NOTREACHED();
     return nullptr;
@@ -319,14 +319,12 @@ EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page, int flags) {
   return RenderPageWithFlags(page, form_handle_, flags);
 }
 
-std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPage(
-    FPDF_PAGE page) {
+ScopedFPDFBitmap EmbedderTest::RenderSavedPage(FPDF_PAGE page) {
   return RenderSavedPageWithFlags(page, 0);
 }
 
-std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPageWithFlags(
-    FPDF_PAGE page,
-    int flags) {
+ScopedFPDFBitmap EmbedderTest::RenderSavedPageWithFlags(FPDF_PAGE page,
+                                                        int flags) {
   if (GetPageNumberForSavedPage(page) < 0) {
     NOTREACHED();
     return nullptr;
@@ -335,15 +333,13 @@ std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderSavedPageWithFlags(
 }
 
 // static
-std::unique_ptr<void, FPDFBitmapDeleter> EmbedderTest::RenderPageWithFlags(
-    FPDF_PAGE page,
-    FPDF_FORMHANDLE handle,
-    int flags) {
+ScopedFPDFBitmap EmbedderTest::RenderPageWithFlags(FPDF_PAGE page,
+                                                   FPDF_FORMHANDLE handle,
+                                                   int flags) {
   int width = static_cast<int>(FPDF_GetPageWidth(page));
   int height = static_cast<int>(FPDF_GetPageHeight(page));
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
-      FPDFBitmap_Create(width, height, alpha));
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(width, height, alpha));
   FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
   FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, fill_color);
   FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, width, height, 0, flags);
@@ -417,8 +413,7 @@ void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
   ASSERT(saved_document_);
   ASSERT(page);
 
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap =
-      RenderSavedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderSavedPageWithFlags(page, FPDF_ANNOT);
   CompareBitmap(bitmap.get(), width, height, md5);
 }
 

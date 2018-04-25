@@ -7,6 +7,7 @@
 #include <string>
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
@@ -94,7 +95,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_552046) {
   EXPECT_TRUE(OpenDocument("bug_552046.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
   CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   UnloadPage(page);
 }
@@ -105,7 +106,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_555784) {
   EXPECT_TRUE(OpenDocument("bug_555784.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
   CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   UnloadPage(page);
 }
@@ -116,7 +117,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_455199) {
   EXPECT_TRUE(OpenDocument("bug_455199.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char kExpectedMd5sum[] = "b90475ca64d1348c3bf5e2b77ad9187a";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

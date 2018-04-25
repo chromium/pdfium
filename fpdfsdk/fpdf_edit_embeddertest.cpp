@@ -15,7 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "public/cpp/fpdf_deleters.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
@@ -192,7 +192,7 @@ TEST_F(FPDFEditEmbeddertest, RasterizePDF) {
   const char kAllBlackMd5sum[] = "5708fc5c4a8bd0abde99c8e8f0390615";
 
   // Get the bitmap for the original document/
-  std::unique_ptr<void, FPDFBitmapDeleter> orig_bitmap;
+  ScopedFPDFBitmap orig_bitmap;
   {
     EXPECT_TRUE(OpenDocument("black.pdf"));
     FPDF_PAGE orig_page = LoadPage(0);
@@ -243,8 +243,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "66d02eaa6181e2c069ce2ea99beda497");
   }
@@ -307,8 +306,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_WINDING, 0));
   FPDFPage_InsertObject(page, green_rect);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "7b0b87604594e773add528fae567a558");
   }
@@ -348,8 +346,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
 
   FPDFPage_InsertObject(page, black_path);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "eadc8020a14dfcf091da2688733d8806");
   }
@@ -367,8 +364,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   FPDFPage_InsertObject(page, blue_path);
   const char kLastMD5[] = "9823e1a21bd9b72b6a442ba4f12af946";
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792, kLastMD5);
   }
 
@@ -396,8 +392,7 @@ TEST_F(FPDFEditEmbeddertest, RemovePageObject) {
 #else
     const char kOriginalMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
 #endif
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
   }
 
@@ -416,8 +411,7 @@ TEST_F(FPDFEditEmbeddertest, RemovePageObject) {
 #else
     const char kRemovedMD5[] = "b76df015fe88009c3c342395df96abf1";
 #endif
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 200, 200, kRemovedMD5);
   }
   ASSERT_EQ(1, FPDFPage_CountObjects(page));
@@ -441,8 +435,7 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
 #else
     const char kOriginalMD5[] = "2edc6e70d54889aa0c0b7bdf3e168f86";
 #endif
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
   }
 
@@ -526,8 +519,7 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
 #else
     const char kNonPrimesMD5[] = "33d9c45bec41ead92a295e252f6b7922";
 #endif
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 200, 200, kNonPrimesMD5);
   }
 
@@ -601,8 +593,7 @@ TEST_F(FPDFEditEmbeddertest, AddAndRemovePaths) {
   // Render the blank page and verify it's a blank bitmap.
   const char kBlankMD5[] = "1940568c9ba33bac5d0b1ee9558c76b3";
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792, kBlankMD5);
   }
   ASSERT_EQ(0, FPDFPage_CountObjects(page));
@@ -615,8 +606,7 @@ TEST_F(FPDFEditEmbeddertest, AddAndRemovePaths) {
   FPDFPage_InsertObject(page, red_rect);
   const char kRedRectangleMD5[] = "66d02eaa6181e2c069ce2ea99beda497";
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792, kRedRectangleMD5);
   }
   EXPECT_EQ(1, FPDFPage_CountObjects(page));
@@ -625,8 +615,7 @@ TEST_F(FPDFEditEmbeddertest, AddAndRemovePaths) {
   // back to a blank one.
   EXPECT_TRUE(FPDFPage_RemoveObject(page, red_rect));
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792, kBlankMD5);
   }
   EXPECT_EQ(0, FPDFPage_CountObjects(page));
@@ -687,7 +676,7 @@ TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
   FPDFPage_InsertObject(page, black_path);
 
   // Render and check the result. Text is slightly different on Mac.
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "f9e6fa74230f234286bfcada9f7606d8";
 #else
@@ -715,7 +704,7 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
   FPDFPage_InsertObject(page, red_rect);
 
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
   CompareBitmap(bitmap.get(), 612, 792, "ad04e5bd0f471a9a564fb034bd0fb073");
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
@@ -742,8 +731,7 @@ TEST_F(FPDFEditEmbeddertest, EditOverExistingContent) {
   FPDFPage_InsertObject(saved_page, green_rect2);
   const char kLastMD5[] = "4b5b00f824620f8c9b8801ebb98e1cdd";
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> new_bitmap =
-        RenderSavedPage(saved_page);
+    ScopedFPDFBitmap new_bitmap = RenderSavedPage(saved_page);
     CompareBitmap(new_bitmap.get(), 612, 792, kLastMD5);
   }
   EXPECT_TRUE(FPDFPage_GenerateContent(saved_page));
@@ -770,8 +758,7 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(rect, 0, 1));
   FPDFPage_InsertObject(page, rect);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "64bd31f862a89e0a9e505a5af6efd506");
   }
@@ -787,8 +774,7 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
   FPDFPage_InsertObject(page, check);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "4b6f3b9d25c4e194821217d5016c3724");
   }
@@ -805,8 +791,7 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_SetDrawMode(path, FPDF_FILLMODE_ALTERNATE, 1));
   FPDFPage_InsertObject(page, path);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "ff3e6a22326754944cc6e56609acd73b");
   }
@@ -827,8 +812,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFPageObj_Transform(text_object1, 1, 0, 0, 1, 20, 20);
   FPDFPage_InsertObject(page, text_object1);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
 #else
@@ -847,8 +831,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 100, 600);
   FPDFPage_InsertObject(page, text_object2);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     const char md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -869,8 +852,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDFPageObj_Transform(text_object3, 1, 1.5, 2, 0.5, 200, 200);
   FPDFPage_InsertObject(page, text_object3);
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     const char md5_3[] = "40b3ef04f915ff4c4208948001763544";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -888,8 +870,7 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
 
 TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   // New page
-  std::unique_ptr<void, FPDFPageDeleter> page(
-      FPDFPage_New(CreateNewDocument(), 0, 612, 792));
+  ScopedFPDFPage page(FPDFPage_New(CreateNewDocument(), 0, 612, 792));
 
   // Create a rect with nontrivial graphics
   FPDF_PAGEOBJECT rect1 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
@@ -958,8 +939,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
 
   // Check the bitmap
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "5384da3406d62360ffb5cac4476fff1c");
   }
@@ -971,8 +951,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
 
   // Check that bitmap displays changed content
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "2e51656f5073b0bee611d9cd086aa09c");
   }
@@ -981,8 +960,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_EQ(3, static_cast<int>(graphics_dict->GetCount()));
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "2e51656f5073b0bee611d9cd086aa09c");
   }
@@ -1014,7 +992,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Bold");
   const uint8_t* data = stock_font->GetFont()->GetFontData();
   const uint32_t size = stock_font->GetFont()->GetSize();
-  std::unique_ptr<void, FPDFFontDeleter> font(
+  ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, false));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
@@ -1043,7 +1021,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Courier");
   const uint8_t* data = stock_font->GetFont()->GetFontData();
   const uint32_t size = stock_font->GetFont()->GetSize();
-  std::unique_ptr<void, FPDFFontDeleter> font(
+  ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, false));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
@@ -1073,7 +1051,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Roman");
   const uint8_t* data = stock_font->GetFont()->GetFontData();
   const uint32_t size = stock_font->GetFont()->GetSize();
-  std::unique_ptr<void, FPDFFontDeleter> font(
+  ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, 1));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
@@ -1115,7 +1093,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   const uint8_t* data = stock_font->GetFont()->GetFontData();
   const uint32_t size = stock_font->GetFont()->GetSize();
 
-  std::unique_ptr<void, FPDFFontDeleter> font(
+  ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
@@ -1167,7 +1145,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
     const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Arial");
     const uint8_t* data = stock_font->GetFont()->GetFontData();
     const uint32_t size = stock_font->GetFont()->GetSize();
-    std::unique_ptr<void, FPDFFontDeleter> font(
+    ScopedFPDFFont font(
         FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 0));
     ASSERT_TRUE(font.get());
 
@@ -1180,8 +1158,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
     EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
     FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 400, 400);
     FPDFPage_InsertObject(page, text_object);
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     const char md5[] = "17d2b6cd574cf66170b09c8927529a94";
 #else
@@ -1198,8 +1175,7 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
     FPDFPageObj_Transform(text_object2, 1, 0, 0, 1, 200, 200);
     FPDFPage_InsertObject(page, text_object2);
   }
-  std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap2 =
-      RenderPageWithFlags(page, nullptr, 0);
+  ScopedFPDFBitmap page_bitmap2 = RenderPageWithFlags(page, nullptr, 0);
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5_2[] = "8eded4193ff1f0f77b8b600a825e97ea";
 #else
@@ -1222,7 +1198,7 @@ TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
 
   {
     // Add an underline annotation to the page without specifying its rectangle.
-    std::unique_ptr<void, FPDFAnnotationDeleter> annot(
+    ScopedFPDFAnnotation annot(
         FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE));
     ASSERT_TRUE(annot);
 
@@ -1247,7 +1223,7 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
     const uint32_t size = CIDfont.GetSize();
 
     // Load the data into a FPDF_Font.
-    std::unique_ptr<void, FPDFFontDeleter> font(
+    ScopedFPDFFont font(
         FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
     ASSERT_TRUE(font.get());
 
@@ -1279,8 +1255,7 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   // Check that the text renders properly.
   const char md5[] = "c68cd79aa72bf83a7b25271370d46b21";
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderPageWithFlags(page, nullptr, 0);
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
   }
 
@@ -1312,8 +1287,7 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
     EXPECT_TRUE(FPDFPath_BezierTo(green_path, 38, 33, 39, 36, 40, 40));
     EXPECT_TRUE(FPDFPath_Close(green_path));
     FPDFPage_InsertObject(page, green_path);
-    std::unique_ptr<void, FPDFBitmapDeleter> page_bitmap =
-        RenderLoadedPage(page);
+    ScopedFPDFBitmap page_bitmap = RenderLoadedPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
 
     // Now save the result, closing the page and document
@@ -1388,8 +1362,7 @@ TEST_F(FPDFEditEmbeddertest, ExtractJBigImageBitmap) {
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 0);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
   {
-    std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
-        FPDFImageObj_GetBitmap(obj));
+    ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
     ASSERT_TRUE(bitmap);
     EXPECT_EQ(FPDFBitmap_Gray, FPDFBitmap_GetFormat(bitmap.get()));
     CompareBitmap(bitmap.get(), 1152, 720, "3f6a48e2b3e91b799bf34567f55cb4de");

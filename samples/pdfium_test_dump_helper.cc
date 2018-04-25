@@ -11,7 +11,7 @@
 #include <string>
 #include <utility>
 
-#include "public/cpp/fpdf_deleters.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "testing/test_support.h"
 
 namespace {
@@ -55,8 +55,7 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
 }
 
 void DumpPageStructure(FPDF_PAGE page, const int page_idx) {
-  std::unique_ptr<void, FPDFStructTreeDeleter> tree(
-      FPDF_StructTree_GetForPage(page));
+  ScopedFPDFStructTree tree(FPDF_StructTree_GetForPage(page));
   if (!tree) {
     fprintf(stderr, "Failed to load struct tree for page %d\n", page_idx);
     return;

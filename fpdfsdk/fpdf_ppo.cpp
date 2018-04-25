@@ -26,7 +26,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "public/cpp/fpdf_deleters.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -778,8 +778,7 @@ FPDF_ImportNPagesToOne(FPDF_DOCUMENT src_doc,
     return nullptr;
   }
 
-  std::unique_ptr<void, FPDFDocumentDeleter> output_doc(
-      FPDF_CreateNewDocument());
+  ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   if (!output_doc)
     return nullptr;
 

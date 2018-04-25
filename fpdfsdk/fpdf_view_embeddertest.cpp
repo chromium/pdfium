@@ -8,6 +8,7 @@
 #include <string>
 
 #include "fpdfsdk/fpdf_view_c_api_test.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -439,7 +440,7 @@ TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
   EXPECT_EQ(200, page_width);
   EXPECT_EQ(300, page_height);
 
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
   CompareBitmap(bitmap.get(), page_width, page_height, kOriginalMD5);
 
   FS_RECTF page_rect{0, 0, page_width, page_height};

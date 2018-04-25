@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "public/cpp/fpdf_scopers.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -14,7 +15,7 @@ TEST_F(FXGETextEmbedderTest, BadItalic) {
   EXPECT_TRUE(OpenDocument("bug_601362.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
-  std::unique_ptr<void, FPDFBitmapDeleter> bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
   EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap.get()));
   EXPECT_EQ(792, FPDFBitmap_GetHeight(bitmap.get()));
   UnloadPage(page);
