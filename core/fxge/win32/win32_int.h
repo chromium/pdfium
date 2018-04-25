@@ -17,7 +17,6 @@
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
-#include "core/fxge/win32/dwrite_int.h"
 
 class CFX_ImageRenderer;
 class FXTEXT_CHARPOS;
@@ -126,7 +125,6 @@ class CWin32Platform {
  public:
   bool m_bHalfTone;
   CGdiplusExt m_GdiplusExt;
-  CDWriteExt m_DWriteExt;
 };
 
 class CGdiDeviceDriver : public RenderDeviceDriverIface {

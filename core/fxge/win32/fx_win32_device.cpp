@@ -25,7 +25,6 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
-#include "core/fxge/win32/dwrite_int.h"
 #include "core/fxge/win32/win32_int.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
