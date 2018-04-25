@@ -424,7 +424,7 @@ Optional<CXFA_Measurement> CJX_Object::TryMeasure(XFA_Attribute eAttr,
   int32_t iBytes;
   if (GetMapModuleBuffer(pKey, pValue, iBytes, true) &&
       iBytes == sizeof(CXFA_Measurement)) {
-    return {*reinterpret_cast<CXFA_Measurement*>(pValue)};
+    return {*static_cast<CXFA_Measurement*>(pValue)};
   }
   if (!bUseDefault)
     return {};

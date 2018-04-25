@@ -66,7 +66,7 @@ void CFX_BmpDecompressor::Error() {
 
 void CFX_BmpDecompressor::ReadScanline(uint32_t row_num_,
                                        const std::vector<uint8_t>& row_buf) {
-  auto* p = reinterpret_cast<CFX_BmpContext*>(context_ptr_);
+  auto* p = static_cast<CFX_BmpContext*>(context_ptr_);
   p->m_pDelegate->BmpReadScanline(row_num_, row_buf);
 }
 

@@ -70,7 +70,7 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
 void CPDFSDK_XFAWidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {}
 
 void CPDFSDK_XFAWidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
-  CPDFSDK_XFAWidget* pWidget = reinterpret_cast<CPDFSDK_XFAWidget*>(pAnnot);
+  CPDFSDK_XFAWidget* pWidget = static_cast<CPDFSDK_XFAWidget*>(pAnnot);
   CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
   pInterForm->RemoveXFAMap(pWidget->GetXFAWidget());
 

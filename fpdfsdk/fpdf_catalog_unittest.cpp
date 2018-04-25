@@ -36,7 +36,7 @@ class CPDF_TestXFAContext : public CPDFXFA_Context {
       : CPDFXFA_Context(pdfium::MakeUnique<CPDF_TestDocument>()) {}
 
   void SetRoot(CPDF_Dictionary* root) {
-    reinterpret_cast<CPDF_TestDocument*>(GetPDFDoc())->SetRoot(root);
+    static_cast<CPDF_TestDocument*>(GetPDFDoc())->SetRoot(root);
   }
 
   CPDF_IndirectObjectHolder* GetHolder() { return GetPDFDoc(); }

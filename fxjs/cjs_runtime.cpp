@@ -64,7 +64,7 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     unsigned int embedderDataSlot = 0;
     v8::Isolate* pExternalIsolate = nullptr;
     if (pPlatform->version == 2) {
-      pExternalIsolate = reinterpret_cast<v8::Isolate*>(pPlatform->m_isolate);
+      pExternalIsolate = static_cast<v8::Isolate*>(pPlatform->m_isolate);
       embedderDataSlot = pPlatform->m_v8EmbedderSlot;
     }
     FXJS_Initialize(embedderDataSlot, pExternalIsolate);

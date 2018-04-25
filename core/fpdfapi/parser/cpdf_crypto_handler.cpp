@@ -180,11 +180,11 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
   if (m_Cipher == FXCIPHER_RC4) {
     int old_size = dest_buf.GetSize();
     dest_buf.AppendBlock(src_buf, src_size);
-    CRYPT_ArcFourCrypt(reinterpret_cast<CRYPT_rc4_context*>(context),
+    CRYPT_ArcFourCrypt(static_cast<CRYPT_rc4_context*>(context),
                        dest_buf.GetBuffer() + old_size, src_size);
     return true;
   }
-  AESCryptContext* pContext = reinterpret_cast<AESCryptContext*>(context);
+  AESCryptContext* pContext = static_cast<AESCryptContext*>(context);
   if (pContext->m_bIV && bEncrypt) {
     dest_buf.AppendBlock(pContext->m_Block, 16);
     pContext->m_bIV = false;

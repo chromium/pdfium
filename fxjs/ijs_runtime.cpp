@@ -16,7 +16,7 @@
 // static
 void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
 #ifdef PDF_ENABLE_V8
-  FXJS_Initialize(slot, reinterpret_cast<v8::Isolate*>(isolate));
+  FXJS_Initialize(slot, static_cast<v8::Isolate*>(isolate));
 #endif
 }
 

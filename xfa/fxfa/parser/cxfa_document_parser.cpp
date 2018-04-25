@@ -127,7 +127,7 @@ bool MatchNodeName(CFX_XMLNode* pNode,
   if (!pNode || pNode->GetType() != FX_XMLNODE_Element)
     return false;
 
-  CFX_XMLElement* pElement = reinterpret_cast<CFX_XMLElement*>(pNode);
+  CFX_XMLElement* pElement = static_cast<CFX_XMLElement*>(pNode);
   WideString wsNodeStr = pElement->GetLocalTagName();
   if (wsNodeStr != wsLocalTagName)
     return false;
@@ -487,7 +487,7 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_XDP(
     if (pChildItem == pXMLConfigDOMRoot)
       continue;
 
-    CFX_XMLElement* pElement = reinterpret_cast<CFX_XMLElement*>(pChildItem);
+    CFX_XMLElement* pElement = static_cast<CFX_XMLElement*>(pChildItem);
     WideString wsPacketName = pElement->GetLocalTagName();
     const PacketInfo* pPacketInfo =
         GetPacketByName(wsPacketName.AsStringView());

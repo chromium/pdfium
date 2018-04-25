@@ -1158,5 +1158,5 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   } else {
     *buflen = -1;
   }
-  return (FPDF_DEST)pDestObj;
+  return pDestObj;
 }
