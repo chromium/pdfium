@@ -19,6 +19,8 @@ enum WindowsPrintMode {
   kModeTextOnly = 1,
   kModePostScript2 = 2,
   kModePostScript3 = 3,
+  kModePostScript2PassThrough = 4,
+  kModePostScript3PassThrough = 5,
 };
 
 class RenderDeviceDriverIface;

@@ -334,8 +334,18 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
     : m_hDC(hDC), m_bCmykOutput(bCmykOutput) {
   // |mode| should be PostScript.
   ASSERT(mode == WindowsPrintMode::kModePostScript2 ||
-         mode == WindowsPrintMode::kModePostScript3);
-  int pslevel = mode == WindowsPrintMode::kModePostScript2 ? 2 : 3;
+         mode == WindowsPrintMode::kModePostScript3 ||
+         mode == WindowsPrintMode::kModePostScript2PassThrough ||
+         mode == WindowsPrintMode::kModePostScript3PassThrough);
+  int pslevel = (mode == WindowsPrintMode::kModePostScript2 ||
+                 mode == WindowsPrintMode::kModePostScript2PassThrough)
+                    ? 2
+                    : 3;
+  CPSOutput::OutputMode output_mode =
+      (mode == WindowsPrintMode::kModePostScript2 ||
+       mode == WindowsPrintMode::kModePostScript3)
+          ? CPSOutput::OutputMode::kGdiComment
+          : CPSOutput::OutputMode::kExtEscape;
 
   m_HorzSize = ::GetDeviceCaps(m_hDC, HORZSIZE);
   m_VertSize = ::GetDeviceCaps(m_hDC, VERTSIZE);
@@ -343,8 +353,8 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
   m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
   m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
 
-  m_PSRenderer.Init(pdfium::MakeRetain<CPSOutput>(m_hDC), pslevel, m_Width,
-                    m_Height, bCmykOutput);
+  m_PSRenderer.Init(pdfium::MakeRetain<CPSOutput>(m_hDC, output_mode), pslevel,
+                    m_Width, m_Height, bCmykOutput);
   HRGN hRgn = ::CreateRectRgn(0, 0, 1, 1);
   int ret = ::GetClipRgn(hDC, hRgn);
   if (ret == 1) {

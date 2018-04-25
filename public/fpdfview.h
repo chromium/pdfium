@@ -274,8 +274,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
 //          mode - FPDF_PRINTMODE_EMF to output EMF (default)
 //                 FPDF_PRINTMODE_TEXTONLY to output text only (for charstream
 //                 devices)
-//                 FPDF_PRINTMODE_POSTSCRIPT2 to output level 2 postscript
-//                 FPDF_PRINTMODE_POSTSCRIPT3 to output level 3 postscript
+//                 FPDF_PRINTMODE_POSTSCRIPT2 to output level 2 PostScript into
+//                 EMF as a series of GDI comments.
+//                 FPDF_PRINTMODE_POSTSCRIPT3 to output level 3 PostScript into
+//                 EMF as a series of GDI comments.
+//                 FPDF_PRINTMODE_POSTSCRIPT2_PASSTHROUGH to output level 2
+//                 PostScript via ExtEscape() in PASSTHROUGH mode.
+//                 FPDF_PRINTMODE_POSTSCRIPT3_PASSTHROUGH to output level 3
+//                 PostScript via ExtEscape() in PASSTHROUGH mode.
 // Return value:
 //          True if successful, false if unsuccessful (typically invalid input).
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode);

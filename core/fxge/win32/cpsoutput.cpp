@@ -10,7 +10,7 @@
 
 #include "core/fxcrt/fx_system.h"
 
-CPSOutput::CPSOutput(HDC hDC) : m_hDC(hDC) {}
+CPSOutput::CPSOutput(HDC hDC, OutputMode mode) : m_hDC(hDC), m_mode(mode) {}
 
 CPSOutput::~CPSOutput() {}
 
@@ -22,9 +22,14 @@ bool CPSOutput::WriteBlock(const void* str, size_t len) {
     *(reinterpret_cast<uint16_t*>(buffer)) = send_len;
     memcpy(buffer + 2, static_cast<const char*>(str) + sent_len, send_len);
 
-    // TODO(thestig/rbpotter): Do PASSTHROUGH for non-Chromium usage.
-    // ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, buffer, 0, nullptr);
-    ::GdiComment(m_hDC, send_len + 2, reinterpret_cast<const BYTE*>(buffer));
+    switch (m_mode) {
+      case OutputMode::kExtEscape:
+        ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, buffer, 0, nullptr);
+        break;
+      case OutputMode::kGdiComment:
+        GdiComment(m_hDC, send_len + 2, reinterpret_cast<const BYTE*>(buffer));
+        break;
+    }
     sent_len += send_len;
     len -= send_len;
   }

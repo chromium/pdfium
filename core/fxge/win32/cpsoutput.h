@@ -14,7 +14,9 @@
 
 class CPSOutput : public IFX_WriteStream {
  public:
-  explicit CPSOutput(HDC hDC);
+  enum class OutputMode { kExtEscape, kGdiComment };
+
+  CPSOutput(HDC hDC, OutputMode mode);
   ~CPSOutput() override;
 
   // IFX_Writestream
@@ -23,6 +25,7 @@ class CPSOutput : public IFX_WriteStream {
 
  private:
   HDC m_hDC;
+  const OutputMode m_mode;
 };
 
 #endif  // CORE_FXGE_WIN32_CPSOUTPUT_H_
