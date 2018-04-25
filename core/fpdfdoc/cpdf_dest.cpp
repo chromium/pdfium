@@ -32,9 +32,9 @@ static_assert(FX_ArraySize(g_sZoomModes) ==
 
 CPDF_Dest::CPDF_Dest() {}
 
-CPDF_Dest::CPDF_Dest(const CPDF_Dest& pObj) = default;
+CPDF_Dest::CPDF_Dest(const CPDF_Dest& that) = default;
 
-CPDF_Dest::CPDF_Dest(CPDF_Object* pObj) : m_pObj(pObj) {}
+CPDF_Dest::CPDF_Dest(CPDF_Array* pObj) : m_pObj(pObj) {}
 
 CPDF_Dest::~CPDF_Dest() {}
 

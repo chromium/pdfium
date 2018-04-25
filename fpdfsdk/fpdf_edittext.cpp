@@ -235,11 +235,11 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
 
 const uint32_t kMaxSimpleFontChar = 0xFF;
 
-void* LoadSimpleFont(CPDF_Document* pDoc,
-                     std::unique_ptr<CFX_Font> pFont,
-                     const uint8_t* data,
-                     uint32_t size,
-                     int font_type) {
+CPDF_Font* LoadSimpleFont(CPDF_Document* pDoc,
+                          std::unique_ptr<CFX_Font> pFont,
+                          const uint8_t* data,
+                          uint32_t size,
+                          int font_type) {
   CPDF_Dictionary* fontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   fontDict->SetNewFor<CPDF_Name>("Type", "Font");
   fontDict->SetNewFor<CPDF_Name>(
@@ -281,11 +281,11 @@ void* LoadSimpleFont(CPDF_Document* pDoc,
 
 const uint32_t kMaxUnicode = 0x10FFFF;
 
-void* LoadCompositeFont(CPDF_Document* pDoc,
-                        std::unique_ptr<CFX_Font> pFont,
-                        const uint8_t* data,
-                        uint32_t size,
-                        int font_type) {
+CPDF_Font* LoadCompositeFont(CPDF_Document* pDoc,
+                             std::unique_ptr<CFX_Font> pFont,
+                             const uint8_t* data,
+                             uint32_t size,
+                             int font_type) {
   CPDF_Dictionary* fontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   fontDict->SetNewFor<CPDF_Name>("Type", "Font");
   fontDict->SetNewFor<CPDF_Name>("Subtype", "Type0");
