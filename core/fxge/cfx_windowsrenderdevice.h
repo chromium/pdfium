@@ -32,7 +32,7 @@ extern bool g_pdfium_print_text_with_gdi;
 extern PDFiumEnsureTypefaceCharactersAccessible
     g_pdfium_typeface_accessible_func;
 #endif
-extern int g_pdfium_print_mode;
+extern WindowsPrintMode g_pdfium_print_mode;
 
 class CFX_WindowsRenderDevice : public CFX_RenderDevice {
  public:

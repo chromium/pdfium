@@ -671,7 +671,7 @@ bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int* charset) {
 
 }  // namespace
 
-int g_pdfium_print_mode = WindowsPrintMode::kModeEmf;
+WindowsPrintMode g_pdfium_print_mode = WindowsPrintMode::kModeEmf;
 
 std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUnused) {
@@ -1361,8 +1361,5 @@ RenderDeviceDriverIface* CFX_WindowsRenderDevice::CreateDriver(HDC hDC) {
   if (g_pdfium_print_mode == WindowsPrintMode::kModeTextOnly)
     return new CTextOnlyPrinterDriver(hDC);
 
-  // Should be PostScript
-  ASSERT(g_pdfium_print_mode == WindowsPrintMode::kModePostScript2 ||
-         g_pdfium_print_mode == WindowsPrintMode::kModePostScript3);
   return new CPSPrinterDriver(hDC, g_pdfium_print_mode, false);
 }

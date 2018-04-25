@@ -212,7 +212,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_SetPrintMode(int mode) {
   if (mode < FPDF_PRINTMODE_EMF || mode > FPDF_PRINTMODE_POSTSCRIPT3)
     return FALSE;
-  g_pdfium_print_mode = mode;
+  g_pdfium_print_mode = static_cast<WindowsPrintMode>(mode);
   return TRUE;
 }
 #endif  // defined(_WIN32)

@@ -14,6 +14,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/win32/cfx_psrenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
@@ -270,7 +271,7 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
 
 class CPSPrinterDriver : public RenderDeviceDriverIface {
  public:
-  CPSPrinterDriver(HDC hDC, int ps_level, bool bCmykOutput);
+  CPSPrinterDriver(HDC hDC, WindowsPrintMode mode, bool bCmykOutput);
   ~CPSPrinterDriver() override;
 
  protected:
