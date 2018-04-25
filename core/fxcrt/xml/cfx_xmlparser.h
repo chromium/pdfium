@@ -61,14 +61,10 @@ class CFX_XMLParser {
     AttriEqualSign,
     AttriQuotation,
     AttriValue,
-    Entity,
-    EntityDecimal,
-    EntityHex,
     CloseInstruction,
     BreakElement,
     CloseElement,
     SkipDeclNode,
-    DeclCharData,
     SkipComment,
     SkipCommentOrDecl,
     SkipCData,
@@ -86,7 +82,6 @@ class CFX_XMLParser {
   FX_FILESIZE m_End = 0;    // End position in m_Buffer
   FX_XmlSyntaxResult m_syntaxParserResult = FX_XmlSyntaxResult::None;
   FDE_XmlSyntaxState m_syntaxParserState = FDE_XmlSyntaxState::Text;
-  std::stack<CFX_XMLNode*> m_NodeStack;
   std::stack<FX_XMLNODETYPE> m_XMLNodeTypeStack;
   std::stack<wchar_t> m_SkipStack;
   std::vector<wchar_t> m_Buffer;

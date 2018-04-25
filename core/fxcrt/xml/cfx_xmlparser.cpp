@@ -72,8 +72,6 @@ CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
   }
   m_pStream = proxy;
 
-  m_NodeStack.push(m_pParent);
-
   m_iXMLPlaneSize =
       std::min(m_iXMLPlaneSize,
                pdfium::base::checked_cast<size_t>(m_pStream->GetSize()));
@@ -117,12 +115,10 @@ bool CFX_XMLParser::Parse() {
           return false;
         }
 
-        if (!m_NodeStack.empty())
-          m_NodeStack.pop();
-        if (m_NodeStack.empty())
+        if (!m_pChild || !m_pChild->GetParent())
           return false;
 
-        m_pParent = m_NodeStack.top();
+        m_pParent = m_pChild->GetParent();
         m_pChild = m_pParent;
         iCount++;
         break;
@@ -142,7 +138,6 @@ bool CFX_XMLParser::Parse() {
         auto child = pdfium::MakeUnique<CFX_XMLElement>(GetTextData());
         m_pChild = child.get();
         m_pParent->AppendChild(std::move(child));
-        m_NodeStack.push(m_pChild);
         m_pParent = m_pChild;
         break;
       }
@@ -192,7 +187,7 @@ bool CFX_XMLParser::Parse() {
         break;
     }
   }
-  return m_NodeStack.size() != 1 ? false : GetStatus();
+  return !m_pParent || m_pParent->GetParent() ? false : GetStatus();
 }
 
 FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
