@@ -52,7 +52,6 @@ class CFX_GifContext : public CCodec_GifModule::Context {
   uint32_t avail_in_;
   int32_t decode_status_;
   uint32_t skip_size_;
-  ByteString cmt_data_;
   std::unique_ptr<CFX_GifGraphicControlExtension> graphic_control_extension_;
   uint8_t* next_in_;
   std::vector<std::unique_ptr<CFX_GifImage>> images_;

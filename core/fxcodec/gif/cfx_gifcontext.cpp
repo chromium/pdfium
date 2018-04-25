@@ -436,15 +436,11 @@ CFX_GifDecodeStatus CFX_GifContext::DecodeExtension() {
         return CFX_GifDecodeStatus::Unfinished;
       }
 
-      cmt_data_.clear();
       while (*data_size != GIF_BLOCK_TERMINAL) {
-        uint8_t block_size = *data_size;
         if (!ReadData(&data_buf, *data_size) || !ReadData(&data_size, 1)) {
           skip_size_ = skip_size_org;
           return CFX_GifDecodeStatus::Unfinished;
         }
-
-        cmt_data_ += ByteString(data_buf, block_size);
       }
       break;
     }
