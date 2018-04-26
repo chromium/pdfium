@@ -301,7 +301,7 @@ bool CFFL_FormFiller::Redo(CPDFSDK_Annot* pAnnot) {
 }
 
 void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
-  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+  auto* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
   UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
   CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage, true);
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true))

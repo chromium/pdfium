@@ -46,7 +46,7 @@ CXFA_FFDoc::~CXFA_FFDoc() {
 bool CXFA_FFDoc::ParseDoc(CPDF_Object* pElementXFA) {
   std::vector<CPDF_Stream*> xfaStreams;
   if (pElementXFA->IsArray()) {
-    CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
+    CPDF_Array* pXFAArray = pElementXFA->AsArray();
     for (size_t i = 0; i < pXFAArray->GetCount() / 2; i++) {
       if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
         xfaStreams.push_back(pStream);

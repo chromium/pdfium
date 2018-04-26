@@ -30,7 +30,8 @@ void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
                     &pParams->m_rtPart, &pParams->m_matrix);
       if (pParams->m_pData) {
         FillSolidRect(pParams->m_pGraphics, FWLTHEME_COLOR_Background,
-                      (CFX_RectF*)pParams->m_pData, &pParams->m_matrix);
+                      static_cast<CFX_RectF*>(pParams->m_pData),
+                      &pParams->m_matrix);
       }
       break;
     }
@@ -74,5 +75,5 @@ void CFWL_ListBoxTP::DrawListBoxItem(CXFA_Graphics* pGraphics,
     pGraphics->RestoreGraphState();
   }
   if (dwStates & CFWL_PartState_Focused && pData)
-    DrawFocus(pGraphics, (CFX_RectF*)pData, pMatrix);
+    DrawFocus(pGraphics, static_cast<CFX_RectF*>(pData), pMatrix);
 }

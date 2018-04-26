@@ -152,7 +152,7 @@ void CJS_EventHandler::OnField_Focus(bool bModifier,
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
-  m_pValue = (WideString*)&Value;
+  m_pValue = const_cast<WideString*>(&Value);
 }
 
 void CJS_EventHandler::OnField_Blur(bool bModifier,
@@ -164,7 +164,7 @@ void CJS_EventHandler::OnField_Blur(bool bModifier,
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_strTargetName = pTarget->GetFullName();
-  m_pValue = (WideString*)&Value;
+  m_pValue = const_cast<WideString*>(&Value);
 }
 
 void CJS_EventHandler::OnField_Keystroke(WideString& strChange,

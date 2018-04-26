@@ -51,7 +51,7 @@ FPDF_EXPORT FPDF_TEXTPAGE FPDF_CALLCONV FPDFText_LoadPage(FPDF_PAGE page) {
     return nullptr;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
+  CPDFXFA_Page* pPage = UnderlyingFromFPDFPage(page);
   CPDFXFA_Context* pContext = pPage->GetContext();
   CPDF_ViewerPreferences viewRef(pContext->GetPDFDoc());
 #else  // PDF_ENABLE_XFA

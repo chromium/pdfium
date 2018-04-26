@@ -246,7 +246,7 @@ bool CJX_Object::SetAttribute(XFA_Attribute eAttr,
 }
 
 void CJX_Object::SetMapModuleString(void* pKey, const WideStringView& wsValue) {
-  SetMapModuleBuffer(pKey, (void*)wsValue.unterminated_c_str(),
+  SetMapModuleBuffer(pKey, const_cast<wchar_t*>(wsValue.unterminated_c_str()),
                      wsValue.GetLength() * sizeof(wchar_t), nullptr);
 }
 

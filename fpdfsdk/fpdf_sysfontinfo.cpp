@@ -136,7 +136,7 @@ static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {
 
 static void DefaultEnumFonts(struct _FPDF_SYSFONTINFO* pThis, void* pMapper) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  pDefault->m_pFontInfo->EnumFontList((CFX_FontMapper*)pMapper);
+  pDefault->m_pFontInfo->EnumFontList(static_cast<CFX_FontMapper*>(pMapper));
 }
 
 static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,

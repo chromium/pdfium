@@ -238,7 +238,7 @@ bool CPDF_CryptoHandler::CryptFinish(void* context,
     FX_Free(context);
     return true;
   }
-  AESCryptContext* pContext = (AESCryptContext*)context;
+  auto* pContext = static_cast<AESCryptContext*>(context);
   if (bEncrypt) {
     uint8_t block_buf[16];
     if (pContext->m_BlockOffset == 16) {

@@ -81,7 +81,7 @@ bool CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
 }
 
 bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
-  CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, false);
+  auto* pListBox = static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, false));
   if (!pListBox)
     return false;
 
@@ -140,8 +140,9 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
       if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
         fa.sValue = L"";
       } else {
-        if (CPWL_ListBox* pListBox =
-                (CPWL_ListBox*)GetPDFWindow(pPageView, false)) {
+        auto* pListBox =
+            static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, false));
+        if (pListBox) {
           int32_t nCurSel = pListBox->GetCurSel();
           if (nCurSel >= 0)
             fa.sValue = m_pWidget->GetOptionLabel(nCurSel);

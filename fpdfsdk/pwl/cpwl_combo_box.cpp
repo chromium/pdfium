@@ -88,7 +88,7 @@ bool CPWL_CBListBox::IsChar(uint16_t nChar, uint32_t nFlag) const {
 }
 
 bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {
-  if (CPWL_ComboBox* pComboBox = (CPWL_ComboBox*)GetParentWindow())
+  if (auto* pComboBox = static_cast<CPWL_ComboBox*>(GetParentWindow()))
     pComboBox->SetSelectText();
 
   return OnNotifySelectionChanged(true, nFlag);
@@ -99,7 +99,6 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CPWL_Wnd::DrawThisAppearance(pDevice, mtUser2Device);
 
   CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
-
   if (!IsVisible() || rectWnd.IsEmpty())
     return;
 
