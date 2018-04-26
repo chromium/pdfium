@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import itertools
 import os
 import shutil
 import sys
@@ -18,35 +19,37 @@ class PNGDiffer():
     actual_paths = []
     path_templates = PathTemplates(input_filename, source_dir, working_dir)
 
-    i = 0
-    while True:
-      actual_path = path_templates.GetActualPath(i)
-      expected_path = path_templates.GetExpectedPath(i)
+    for page in itertools.count():
+      actual_path = path_templates.GetActualPath(page)
+      expected_path = path_templates.GetExpectedPath(page)
       platform_expected_path = path_templates.GetPlatformExpectedPath(
-          self.os_name, i)
+          self.os_name, page)
       if os.path.exists(platform_expected_path):
         expected_path = platform_expected_path
       elif not os.path.exists(expected_path):
         break
       actual_paths.append(actual_path)
-      i += 1
+
     return actual_paths
 
   def HasDifferences(self, input_filename, source_dir, working_dir):
     path_templates = PathTemplates(input_filename, source_dir, working_dir)
 
-    i = 0
-    while True:
-      actual_path = path_templates.GetActualPath(i)
-      expected_path = path_templates.GetExpectedPath(i)
+    for page in itertools.count():
+      actual_path = path_templates.GetActualPath(page)
+      expected_path = path_templates.GetExpectedPath(page)
       # PDFium tests should be platform independent. Platform based results are
       # used to capture platform dependent implementations.
       platform_expected_path = path_templates.GetPlatformExpectedPath(
-          self.os_name, i)
+          self.os_name, page)
       if (not os.path.exists(expected_path) and
           not os.path.exists(platform_expected_path)):
-        if i == 0:
+        if page == 0:
           print "WARNING: no expected results files for " + input_filename
+        if os.path.exists(actual_path):
+          print ('FAILURE: Missing expected result for 0-based page %d of %s'
+                 % (page, input_filename))
+          return True
         break
       print "Checking " + actual_path
       sys.stdout.flush()
@@ -63,14 +66,13 @@ class PNGDiffer():
         if error:
           print "FAILURE: " + input_filename + "; " + str(error)
           return True
-      i += 1
+
     return False
 
   def Regenerate(self, input_filename, source_dir, working_dir, platform_only):
     path_templates = PathTemplates(input_filename, source_dir, working_dir)
 
-    page = 0
-    while True:
+    for page in itertools.count():
       # Loop through the generated page images. Stop when there is a page
       # missing a png, which means the document ended.
       actual_path = path_templates.GetActualPath(page)
@@ -88,12 +90,9 @@ class PNGDiffer():
       elif not platform_only:
         expected_path = path_templates.GetExpectedPath(page)
       else:
-        expected_path = None
+        continue
 
-      if expected_path is not None and os.path.exists(expected_path):
-        shutil.copyfile(actual_path, expected_path)
-
-      page += 1
+      shutil.copyfile(actual_path, expected_path)
 
 
 ACTUAL_TEMPLATE = '.pdf.%d.png'
