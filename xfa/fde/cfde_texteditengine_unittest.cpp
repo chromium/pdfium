@@ -420,7 +420,7 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPoint) {
   EXPECT_EQ(1U, engine()->GetIndexForPoint({10.0f, 5.0f}));
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetIndexForPointMultiline) {
+TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineWrap) {
   engine()->SetFontSize(10.0f);
   engine()->Insert(0,
                    L"A text long enough to span multiple lines and test "
@@ -439,6 +439,18 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointSpaceAtEnd) {
   EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
   EXPECT_EQ(12U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
   EXPECT_EQ(12U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
+}
+
+TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineBreaks) {
+  engine()->SetFontSize(10.0f);
+  engine()->Insert(0, L"Hello\nWorld");
+  EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
+
+  // TODO(hnakashima): Should be 5U, caret is moving to next line.
+  EXPECT_EQ(6U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
+
+  EXPECT_EQ(6U, engine()->GetIndexForPoint({0.0f, 10.0f}));
+  EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
 }
 
 TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {

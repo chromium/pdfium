@@ -227,6 +227,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
     // don't get matched as control characters so we go into AppendChar_other
     // and never detect the new paragraph ...
     dwRet2 = CFX_BreakType::Paragraph;
+    EndBreak(dwRet2);
   } else {
     switch (chartype) {
       case FX_CHARTYPE_Tab:
