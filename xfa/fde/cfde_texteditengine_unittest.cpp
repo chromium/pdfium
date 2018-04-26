@@ -445,10 +445,7 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineBreaks) {
   engine()->SetFontSize(10.0f);
   engine()->Insert(0, L"Hello\nWorld");
   EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
-
-  // TODO(hnakashima): Should be 5U, caret is moving to next line.
-  EXPECT_EQ(6U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
-
+  EXPECT_EQ(5U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
   EXPECT_EQ(6U, engine()->GetIndexForPoint({0.0f, 10.0f}));
   EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
 }
