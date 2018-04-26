@@ -569,3 +569,35 @@ TEST(CFX_XMLParserTest, DoubleElementClose) {
   ASSERT_EQ(L"p", parser.GetTextData());
   ASSERT_EQ(FX_XmlSyntaxResult::Error, parser.DoSyntaxParse());
 }
+
+TEST(CFX_XMLParserTest, BadEntity) {
+  const char* input =
+      "<script>"
+      "Test &<p>; thing"
+      "</script>";
+
+  auto stream = MakeProxy(input);
+  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
+
+  CFX_XMLTestParser parser(root.get(), stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  ASSERT_EQ(L"script", parser.GetTextData());
+
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(L"Test &", parser.GetTextData());
+
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  ASSERT_EQ(L"p", parser.GetTextData());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(L"; thing", parser.GetTextData());
+
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(L"script", parser.GetTextData());
+
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+}
