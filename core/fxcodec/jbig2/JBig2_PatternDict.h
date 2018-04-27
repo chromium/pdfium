@@ -16,7 +16,6 @@
 class CJBig2_PatternDict {
  public:
   explicit CJBig2_PatternDict(uint32_t dict_size);
-
   ~CJBig2_PatternDict();
 
   uint32_t NUMPATS;

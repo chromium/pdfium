@@ -64,7 +64,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
   pJbig2Context->m_pContext = pdfium::MakeUnique<CJBig2_Context>(
       global_stream, src_stream, pJBig2DocumentContext->GetSymbolDictCache(),
       false);
-  int ret = pJbig2Context->m_pContext->getFirstPage(dest_buf, width, height,
+  int ret = pJbig2Context->m_pContext->GetFirstPage(dest_buf, width, height,
                                                     dest_pitch, pPause);
   return Decode(pJbig2Context, ret);
 }

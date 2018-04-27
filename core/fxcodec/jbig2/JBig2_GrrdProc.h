@@ -17,7 +17,7 @@ struct JBig2ArithCtx;
 
 class CJBig2_GRRDProc {
  public:
-  std::unique_ptr<CJBig2_Image> decode(CJBig2_ArithDecoder* pArithDecoder,
+  std::unique_ptr<CJBig2_Image> Decode(CJBig2_ArithDecoder* pArithDecoder,
                                        JBig2ArithCtx* grContext);
 
   uint32_t GRW;
@@ -30,28 +30,28 @@ class CJBig2_GRRDProc {
   int8_t GRAT[4];
 
  private:
-  std::unique_ptr<CJBig2_Image> decode_Template0_unopt(
+  std::unique_ptr<CJBig2_Image> DecodeTemplate0Unopt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* grContext);
-  uint32_t decode_Template0_unopt_CalculateContext(const CJBig2_Image& GRREG,
-                                                   const uint32_t* lines,
-                                                   uint32_t w,
-                                                   uint32_t h) const;
-  void decode_Template0_unopt_SetPixel(CJBig2_Image* GRREG,
-                                       uint32_t* lines,
-                                       uint32_t w,
-                                       uint32_t h,
-                                       int bVal);
+  uint32_t DecodeTemplate0UnoptCalculateContext(const CJBig2_Image& GRREG,
+                                                const uint32_t* lines,
+                                                uint32_t w,
+                                                uint32_t h) const;
+  void DecodeTemplate0UnoptSetPixel(CJBig2_Image* GRREG,
+                                    uint32_t* lines,
+                                    uint32_t w,
+                                    uint32_t h,
+                                    int bVal);
 
-  std::unique_ptr<CJBig2_Image> decode_Template0_opt(
-      CJBig2_ArithDecoder* pArithDecoder,
-      JBig2ArithCtx* grContext);
-
-  std::unique_ptr<CJBig2_Image> decode_Template1_unopt(
+  std::unique_ptr<CJBig2_Image> DecodeTemplate0Opt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* grContext);
 
-  std::unique_ptr<CJBig2_Image> decode_Template1_opt(
+  std::unique_ptr<CJBig2_Image> DecodeTemplate1Unopt(
+      CJBig2_ArithDecoder* pArithDecoder,
+      JBig2ArithCtx* grContext);
+
+  std::unique_ptr<CJBig2_Image> DecodeTemplate1Opt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* grContext);
 };

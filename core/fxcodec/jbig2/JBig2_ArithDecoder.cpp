@@ -67,7 +67,7 @@ CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
 
 CJBig2_ArithDecoder::~CJBig2_ArithDecoder() {}
 
-int CJBig2_ArithDecoder::DECODE(JBig2ArithCtx* pCX) {
+int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
   if (!pCX || pCX->I >= FX_ArraySize(kQeTable))
     return 0;
 

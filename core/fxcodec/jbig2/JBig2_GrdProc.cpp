@@ -43,7 +43,7 @@ bool CJBig2_GRDProc::UseTemplate23Opt3() const {
   return (GBAT[0] == 2) && (GBAT[1] == -1);
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   if (!CJBig2_Image::IsValidImageSize(GBW, GBH))
@@ -51,24 +51,24 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith(
 
   if (GBTEMPLATE == 0) {
     if (UseTemplate0Opt3())
-      return decode_Arith_Template0_opt3(pArithDecoder, gbContext);
-    return decode_Arith_Template0_unopt(pArithDecoder, gbContext);
+      return DecodeArithTemplate0Opt3(pArithDecoder, gbContext);
+    return DecodeArithTemplate0Unopt(pArithDecoder, gbContext);
   } else if (GBTEMPLATE == 1) {
     if (UseTemplate1Opt3())
-      return decode_Arith_Template1_opt3(pArithDecoder, gbContext);
-    return decode_Arith_Template1_unopt(pArithDecoder, gbContext);
+      return DecodeArithTemplate1Opt3(pArithDecoder, gbContext);
+    return DecodeArithTemplate1Unopt(pArithDecoder, gbContext);
   } else if (GBTEMPLATE == 2) {
     if (UseTemplate23Opt3())
-      return decode_Arith_Template2_opt3(pArithDecoder, gbContext);
-    return decode_Arith_Template2_unopt(pArithDecoder, gbContext);
+      return DecodeArithTemplate2Opt3(pArithDecoder, gbContext);
+    return DecodeArithTemplate2Unopt(pArithDecoder, gbContext);
   } else {
     if (UseTemplate23Opt3())
-      return decode_Arith_Template3_opt3(pArithDecoder, gbContext);
-    return decode_Arith_Template3_unopt(pArithDecoder, gbContext);
+      return DecodeArithTemplate3Opt3(pArithDecoder, gbContext);
+    return DecodeArithTemplate3Unopt(pArithDecoder, gbContext);
   }
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
@@ -87,7 +87,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x9b25]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
     }
     if (LTP) {
       GBREG->copyLine(h, h - 1);
@@ -106,7 +106,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
                        ((line1 >> k) & 0x0800) | ((line2 >> k) & 0x0010));
@@ -120,7 +120,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               (((CONTEXT & 0x7bf7) << 1) | bVal |
@@ -140,7 +140,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT =
                 (((CONTEXT & 0x7bf7) << 1) | bVal | ((line2 >> k) & 0x0010));
@@ -153,7 +153,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
                      (((line2 >> (7 - k))) & 0x0010));
@@ -166,7 +166,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_opt3(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_unopt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
@@ -177,7 +177,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_unopt(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x9b25]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
     }
     if (LTP) {
       GBREG->copyLine(h, h - 1);
@@ -203,7 +203,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_unopt(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           GBREG->setPixel(w, h, bVal);
@@ -217,7 +217,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template0_unopt(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate1Opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
@@ -235,7 +235,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x0795]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
     }
     if (LTP) {
       GBREG->copyLine(h, h - 1);
@@ -254,7 +254,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                       ((line1 >> k) & 0x0200) | ((line2 >> (k + 1)) & 0x0008);
@@ -268,7 +268,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                     ((line1 >> (7 - k)) & 0x0200) |
@@ -288,7 +288,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                       ((line2 >> (k + 1)) & 0x0008);
@@ -301,7 +301,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               ((CONTEXT & 0x0efb) << 1) | bVal | ((line2 >> (8 - k)) & 0x0008);
@@ -314,7 +314,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_opt3(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_unopt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate1Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
@@ -325,7 +325,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_unopt(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x0795]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
     }
     if (LTP) {
       GBREG->copyLine(h, h - 1);
@@ -349,7 +349,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_unopt(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           GBREG->setPixel(w, h, bVal);
@@ -363,7 +363,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template1_unopt(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate2Opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
@@ -381,7 +381,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x00e5]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
     }
     if (LTP) {
       GBREG->copyLine(h, h - 1);
@@ -400,7 +400,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                       ((line1 >> k) & 0x0080) | ((line2 >> (k + 3)) & 0x0004);
@@ -414,7 +414,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                     ((line1 >> (7 - k)) & 0x0080) |
@@ -434,7 +434,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                       ((line2 >> (k + 3)) & 0x0004);
@@ -447,7 +447,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                     (((line2 >> (10 - k))) & 0x0004);
@@ -460,7 +460,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_opt3(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_unopt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate2Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
@@ -471,7 +471,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_unopt(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x00e5]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
     }
     if (LTP) {
       GBREG->copyLine(h, h - 1);
@@ -493,7 +493,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_unopt(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           GBREG->setPixel(w, h, bVal);
@@ -507,7 +507,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template2_unopt(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
@@ -525,7 +525,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x0195]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x0195]);
     }
 
     if (LTP) {
@@ -542,7 +542,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
                       ((line1 >> (k + 1)) & 0x0010);
@@ -555,7 +555,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               ((CONTEXT & 0x01f7) << 1) | bVal | ((line1 >> (8 - k)) & 0x0010);
@@ -569,7 +569,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
           }
@@ -580,7 +580,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
         }
@@ -592,7 +592,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_opt3(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_unopt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
@@ -603,7 +603,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_unopt(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->DECODE(&gbContext[0x0195]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x0195]);
     }
     if (LTP == 1) {
       GBREG->copyLine(h, h - 1);
@@ -622,7 +622,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_unopt(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           GBREG->setPixel(w, h, bVal);
@@ -635,7 +635,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith_Template3_unopt(
   return GBREG;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
+FXCODEC_STATUS CJBig2_GRDProc::StartDecodeArith(
     std::unique_ptr<CJBig2_Image>* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -659,44 +659,43 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
   m_LTP = 0;
   m_pLine = nullptr;
   m_loopIndex = 0;
-  return decode_Arith(pPause, pArithDecoder);
+  return DecodeArith(pPause, pArithDecoder);
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(
-    PauseIndicatorIface* pPause,
-    CJBig2_ArithDecoder* pArithDecoder) {
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArith(PauseIndicatorIface* pPause,
+                                           CJBig2_ArithDecoder* pArithDecoder) {
   int iline = m_loopIndex;
   if (GBTEMPLATE == 0) {
     if (UseTemplate0Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template0_opt3(m_pImage, pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate0Opt3(m_pImage, pArithDecoder,
+                                                  m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template0_unopt(m_pImage, pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate0Unopt(m_pImage, pArithDecoder,
+                                                   m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 1) {
     if (UseTemplate1Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template1_opt3(m_pImage, pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate1Opt3(m_pImage, pArithDecoder,
+                                                  m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template1_unopt(m_pImage, pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate1Unopt(m_pImage, pArithDecoder,
+                                                   m_gbContext, pPause);
     }
   } else if (GBTEMPLATE == 2) {
     if (UseTemplate23Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template2_opt3(m_pImage, pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate2Opt3(m_pImage, pArithDecoder,
+                                                  m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template2_unopt(m_pImage, pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate2Unopt(m_pImage, pArithDecoder,
+                                                   m_gbContext, pPause);
     }
   } else {
     if (UseTemplate23Opt3()) {
-      m_ProssiveStatus = decode_Arith_Template3_opt3(m_pImage, pArithDecoder,
-                                                     m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate3Opt3(m_pImage, pArithDecoder,
+                                                  m_gbContext, pPause);
     } else {
-      m_ProssiveStatus = decode_Arith_Template3_unopt(m_pImage, pArithDecoder,
-                                                      m_gbContext, pPause);
+      m_ProssiveStatus = DecodeArithTemplate3Unopt(m_pImage, pArithDecoder,
+                                                   m_gbContext, pPause);
     }
   }
   m_ReplaceRect.left = 0;
@@ -709,7 +708,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith(
   return m_ProssiveStatus;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(
+FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
     std::unique_ptr<CJBig2_Image>* pImage,
     CJBig2_BitStream* pStream) {
   int bitpos, i;
@@ -730,7 +729,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(
   return m_ProssiveStatus;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::Continue_decode(
+FXCODEC_STATUS CJBig2_GRDProc::ContinueDecode(
     PauseIndicatorIface* pPause,
     CJBig2_ArithDecoder* pArithDecoder) {
   if (m_ProssiveStatus != FXCODEC_STATUS_DECODE_TOBECONTINUE)
@@ -740,10 +739,10 @@ FXCODEC_STATUS CJBig2_GRDProc::Continue_decode(
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return m_ProssiveStatus;
   }
-  return decode_Arith(pPause, pArithDecoder);
+  return DecodeArith(pPause, pArithDecoder);
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate0Opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -761,7 +760,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x9b25]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
     }
     if (m_LTP) {
       pImage->copyLine(m_loopIndex, m_loopIndex - 1);
@@ -780,7 +779,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
                        ((line1 >> k) & 0x0800) | ((line2 >> k) & 0x0010));
@@ -794,7 +793,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               (((CONTEXT & 0x7bf7) << 1) | bVal |
@@ -814,7 +813,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT =
                 (((CONTEXT & 0x7bf7) << 1) | bVal | ((line2 >> k) & 0x0010));
@@ -827,7 +826,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
                      ((line2 >> (7 - k)) & 0x0010));
@@ -846,7 +845,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
   return FXCODEC_STATUS_DECODE_FINISH;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate0Unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -856,7 +855,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x9b25]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
     }
     if (m_LTP) {
       pImage->copyLine(m_loopIndex, m_loopIndex - 1);
@@ -882,7 +881,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           pImage->setPixel(w, m_loopIndex, bVal);
@@ -904,7 +903,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
   return FXCODEC_STATUS_DECODE_FINISH;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate1Opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -920,7 +919,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x0795]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
     }
     if (m_LTP) {
       pImage->copyLine(m_loopIndex, m_loopIndex - 1);
@@ -939,7 +938,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                       ((line1 >> k) & 0x0200) | ((line2 >> (k + 1)) & 0x0008);
@@ -953,7 +952,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                     ((line1 >> (7 - k)) & 0x0200) |
@@ -973,7 +972,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                       ((line2 >> (k + 1)) & 0x0008);
@@ -986,7 +985,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               ((CONTEXT & 0x0efb) << 1) | bVal | ((line2 >> (8 - k)) & 0x0008);
@@ -1005,7 +1004,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
   return FXCODEC_STATUS_DECODE_FINISH;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate1Unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -1015,7 +1014,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x0795]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
     }
     if (m_LTP) {
       pImage->copyLine(h, h - 1);
@@ -1039,7 +1038,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           pImage->setPixel(w, h, bVal);
@@ -1059,7 +1058,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
   return FXCODEC_STATUS_DECODE_FINISH;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate2Opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -1075,7 +1074,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x00e5]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
     }
     if (m_LTP) {
       pImage->copyLine(m_loopIndex, m_loopIndex - 1);
@@ -1094,7 +1093,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                       ((line1 >> k) & 0x0080) | ((line2 >> (k + 3)) & 0x0004);
@@ -1108,7 +1107,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                     ((line1 >> (7 - k)) & 0x0080) |
@@ -1128,7 +1127,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                       ((line2 >> (k + 3)) & 0x0004);
@@ -1141,7 +1140,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                     (((line2 >> (10 - k))) & 0x0004);
@@ -1160,7 +1159,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
   return FXCODEC_STATUS_DECODE_FINISH;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate2Unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -1170,7 +1169,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x00e5]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
     }
     if (m_LTP) {
       pImage->copyLine(m_loopIndex, m_loopIndex - 1);
@@ -1192,7 +1191,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           pImage->setPixel(w, m_loopIndex, bVal);
@@ -1214,7 +1213,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
   return FXCODEC_STATUS_DECODE_FINISH;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate3Opt3(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -1229,7 +1228,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x0195]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0195]);
     }
     if (m_LTP) {
       pImage->copyLine(m_loopIndex, m_loopIndex - 1);
@@ -1245,7 +1244,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
                       ((line1 >> (k + 1)) & 0x0010);
@@ -1258,7 +1257,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               ((CONTEXT & 0x01f7) << 1) | bVal | ((line1 >> (8 - k)) & 0x0010);
@@ -1272,7 +1271,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
           }
@@ -1283,7 +1282,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
         }
@@ -1301,7 +1300,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
   return FXCODEC_STATUS_DECODE_FINISH;
 }
 
-FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_unopt(
+FXCODEC_STATUS CJBig2_GRDProc::DecodeArithTemplate3Unopt(
     CJBig2_Image* pImage,
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
@@ -1311,7 +1310,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_unopt(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->DECODE(&gbContext[0x0195]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0195]);
     }
     if (m_LTP) {
       pImage->copyLine(m_loopIndex, m_loopIndex - 1);
@@ -1330,7 +1329,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_unopt(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->DECODE(&gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
           pImage->setPixel(w, m_loopIndex, bVal);

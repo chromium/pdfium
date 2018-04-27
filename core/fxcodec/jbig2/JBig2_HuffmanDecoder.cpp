@@ -13,7 +13,7 @@ CJBig2_HuffmanDecoder::CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream)
 
 CJBig2_HuffmanDecoder::~CJBig2_HuffmanDecoder() {}
 
-int CJBig2_HuffmanDecoder::decodeAValue(CJBig2_HuffmanTable* pTable,
+int CJBig2_HuffmanDecoder::DecodeAValue(CJBig2_HuffmanTable* pTable,
                                         int* nResult) {
   int nVal = 0;
   int nBits = 0;

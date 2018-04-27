@@ -14,10 +14,9 @@
 class CJBig2_HuffmanDecoder {
  public:
   explicit CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream);
-
   ~CJBig2_HuffmanDecoder();
 
-  int decodeAValue(CJBig2_HuffmanTable* pTable, int* nResult);
+  int DecodeAValue(CJBig2_HuffmanTable* pTable, int* nResult);
 
  private:
   UnownedPtr<CJBig2_BitStream> const m_pStream;

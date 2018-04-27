@@ -13,7 +13,7 @@
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
 #include "third_party/base/ptr_util.h"
 
-std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_Arith(
+std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     PauseIndicatorIface* pPause) {
@@ -39,9 +39,9 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_Arith(
     pGRD->GBAT[7] = -2;
   }
   FXCODEC_STATUS status =
-      pGRD->Start_decode_Arith(&BHDC, pArithDecoder, gbContext, nullptr);
+      pGRD->StartDecodeArith(&BHDC, pArithDecoder, gbContext, nullptr);
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-    status = pGRD->Continue_decode(pPause, pArithDecoder);
+    status = pGRD->ContinueDecode(pPause, pArithDecoder);
   if (!BHDC)
     return nullptr;
 
@@ -53,7 +53,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_Arith(
   return pDict;
 }
 
-std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_MMR(
+std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
     CJBig2_BitStream* pStream) {
   uint32_t GRAY;
   std::unique_ptr<CJBig2_Image> BHDC;
@@ -63,7 +63,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::decode_MMR(
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
-  pGRD->Start_decode_MMR(&BHDC, pStream);
+  pGRD->StartDecodeMMR(&BHDC, pStream);
   if (!BHDC)
     return nullptr;
 

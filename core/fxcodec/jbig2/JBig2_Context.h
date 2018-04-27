@@ -45,7 +45,7 @@ class CJBig2_Context {
                  bool bIsGlobal);
   ~CJBig2_Context();
 
-  int32_t getFirstPage(uint8_t* pBuf,
+  int32_t GetFirstPage(uint8_t* pBuf,
                        int32_t width,
                        int32_t height,
                        int32_t stride,
@@ -55,37 +55,37 @@ class CJBig2_Context {
   FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
 
  private:
-  int32_t decodeSequential(PauseIndicatorIface* pPause);
-  int32_t decodeRandomFirstPage(PauseIndicatorIface* pPause);
-  int32_t decodeRandom(PauseIndicatorIface* pPause);
+  int32_t DecodeSequential(PauseIndicatorIface* pPause);
+  int32_t DecodeRandomFirstPage(PauseIndicatorIface* pPause);
+  int32_t DecodeRandom(PauseIndicatorIface* pPause);
 
-  CJBig2_Segment* findSegmentByNumber(uint32_t dwNumber);
-  CJBig2_Segment* findReferredSegmentByTypeAndIndex(CJBig2_Segment* pSegment,
+  CJBig2_Segment* FindSegmentByNumber(uint32_t dwNumber);
+  CJBig2_Segment* FindReferredSegmentByTypeAndIndex(CJBig2_Segment* pSegment,
                                                     uint8_t cType,
                                                     int32_t nIndex);
 
-  int32_t parseSegmentHeader(CJBig2_Segment* pSegment);
-  int32_t parseSegmentData(CJBig2_Segment* pSegment,
+  int32_t ParseSegmentHeader(CJBig2_Segment* pSegment);
+  int32_t ParseSegmentData(CJBig2_Segment* pSegment,
                            PauseIndicatorIface* pPause);
   int32_t ProcessingParseSegmentData(CJBig2_Segment* pSegment,
                                      PauseIndicatorIface* pPause);
-  int32_t parseSymbolDict(CJBig2_Segment* pSegment);
-  int32_t parseTextRegion(CJBig2_Segment* pSegment);
-  int32_t parsePatternDict(CJBig2_Segment* pSegment,
+  int32_t ParseSymbolDict(CJBig2_Segment* pSegment);
+  int32_t ParseTextRegion(CJBig2_Segment* pSegment);
+  int32_t ParsePatternDict(CJBig2_Segment* pSegment,
                            PauseIndicatorIface* pPause);
-  int32_t parseHalftoneRegion(CJBig2_Segment* pSegment,
+  int32_t ParseHalftoneRegion(CJBig2_Segment* pSegment,
                               PauseIndicatorIface* pPause);
-  int32_t parseGenericRegion(CJBig2_Segment* pSegment,
+  int32_t ParseGenericRegion(CJBig2_Segment* pSegment,
                              PauseIndicatorIface* pPause);
-  int32_t parseGenericRefinementRegion(CJBig2_Segment* pSegment);
-  int32_t parseTable(CJBig2_Segment* pSegment);
-  int32_t parseRegionInfo(JBig2RegionInfo* pRI);
+  int32_t ParseGenericRefinementRegion(CJBig2_Segment* pSegment);
+  int32_t ParseTable(CJBig2_Segment* pSegment);
+  int32_t ParseRegionInfo(JBig2RegionInfo* pRI);
 
-  std::vector<JBig2HuffmanCode> decodeSymbolIDHuffmanTable(
+  std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(
       CJBig2_BitStream* pStream,
       uint32_t SBNUMSYMS);
 
-  void huffman_assign_code(JBig2HuffmanCode* SBSYMCODES, int NTEMP);
+  void HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES, int NTEMP);
 
   std::unique_ptr<CJBig2_Context> m_pGlobalContext;
   std::unique_ptr<CJBig2_BitStream> m_pStream;

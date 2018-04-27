@@ -19,12 +19,12 @@ struct JBig2ArithCtx;
 
 class CJBig2_PDDProc {
  public:
-  std::unique_ptr<CJBig2_PatternDict> decode_Arith(
+  std::unique_ptr<CJBig2_PatternDict> DecodeArith(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext,
       PauseIndicatorIface* pPause);
 
-  std::unique_ptr<CJBig2_PatternDict> decode_MMR(CJBig2_BitStream* pStream);
+  std::unique_ptr<CJBig2_PatternDict> DecodeMMR(CJBig2_BitStream* pStream);
 
  public:
   bool HDMMR;

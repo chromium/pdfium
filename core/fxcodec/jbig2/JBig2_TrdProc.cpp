@@ -19,14 +19,14 @@ CJBig2_TRDProc::CJBig2_TRDProc() {}
 
 CJBig2_TRDProc::~CJBig2_TRDProc() {}
 
-std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
+std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
     CJBig2_BitStream* pStream,
     JBig2ArithCtx* grContext) {
   auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
   auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
   SBREG->fill(SBDEFPIXEL);
   int32_t INITIAL_STRIPT;
-  if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &INITIAL_STRIPT) != 0)
+  if (pHuffmanDecoder->DecodeAValue(SBHUFFDT, &INITIAL_STRIPT) != 0)
     return nullptr;
 
   FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
@@ -36,7 +36,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
   uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     int32_t INITIAL_DT;
-    if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &INITIAL_DT) != 0)
+    if (pHuffmanDecoder->DecodeAValue(SBHUFFDT, &INITIAL_DT) != 0)
       return nullptr;
 
     FX_SAFE_INT32 DT = INITIAL_DT;
@@ -47,7 +47,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
     for (;;) {
       if (bFirst) {
         int32_t DFS;
-        if (pHuffmanDecoder->decodeAValue(SBHUFFFS, &DFS) != 0)
+        if (pHuffmanDecoder->DecodeAValue(SBHUFFFS, &DFS) != 0)
           return nullptr;
 
         FIRSTS += DFS;
@@ -55,7 +55,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
         bFirst = false;
       } else {
         int32_t IDS;
-        int32_t nVal = pHuffmanDecoder->decodeAValue(SBHUFFDS, &IDS);
+        int32_t nVal = pHuffmanDecoder->DecodeAValue(SBHUFFDS, &IDS);
         if (nVal == JBIG2_OOB)
           break;
 
@@ -117,11 +117,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
         int32_t RDXI;
         int32_t RDYI;
         int32_t HUFFRSIZE;
-        if ((pHuffmanDecoder->decodeAValue(SBHUFFRDW, &RDWI) != 0) ||
-            (pHuffmanDecoder->decodeAValue(SBHUFFRDH, &RDHI) != 0) ||
-            (pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDXI) != 0) ||
-            (pHuffmanDecoder->decodeAValue(SBHUFFRDY, &RDYI) != 0) ||
-            (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &HUFFRSIZE) != 0)) {
+        if ((pHuffmanDecoder->DecodeAValue(SBHUFFRDW, &RDWI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRDH, &RDHI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRDX, &RDXI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRDY, &RDYI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRSIZE, &HUFFRSIZE) != 0)) {
           return nullptr;
         }
         pStream->alignByte();
@@ -151,7 +151,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
         pGRRD->GRAT[3] = SBRAT[3];
 
         auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(pStream);
-        IBI = pGRRD->decode(pArithDecoder.get(), grContext);
+        IBI = pGRRD->Decode(pArithDecoder.get(), grContext);
         if (!IBI)
           return nullptr;
 
@@ -220,7 +220,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Huffman(
   return SBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
+std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext,
     JBig2IntDecoderState* pIDS) {
@@ -260,7 +260,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
   auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
   SBREG->fill(SBDEFPIXEL);
   int32_t INITIAL_STRIPT;
-  if (!pIADT->decode(pArithDecoder, &INITIAL_STRIPT))
+  if (!pIADT->Decode(pArithDecoder, &INITIAL_STRIPT))
     return nullptr;
 
   FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
@@ -271,7 +271,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
   while (NINSTANCES < SBNUMINSTANCES) {
     FX_SAFE_INT32 CURS = 0;
     int32_t INITIAL_DT;
-    if (!pIADT->decode(pArithDecoder, &INITIAL_DT))
+    if (!pIADT->Decode(pArithDecoder, &INITIAL_DT))
       return nullptr;
 
     FX_SAFE_INT32 DT = INITIAL_DT;
@@ -281,13 +281,13 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
     for (;;) {
       if (bFirst) {
         int32_t DFS;
-        pIAFS->decode(pArithDecoder, &DFS);
+        pIAFS->Decode(pArithDecoder, &DFS);
         FIRSTS += DFS;
         CURS = FIRSTS;
         bFirst = false;
       } else {
         int32_t IDS;
-        if (!pIADS->decode(pArithDecoder, &IDS))
+        if (!pIADS->Decode(pArithDecoder, &IDS))
           break;
 
         CURS += IDS;
@@ -298,7 +298,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
 
       int CURT = 0;
       if (SBSTRIPS != 1)
-        pIAIT->decode(pArithDecoder, &CURT);
+        pIAIT->Decode(pArithDecoder, &CURT);
 
       FX_SAFE_INT32 SAFE_TI = STRIPT + CURT;
       if (!SAFE_TI.IsValid())
@@ -306,7 +306,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
 
       int32_t TI = SAFE_TI.ValueOrDie();
       uint32_t IDI;
-      pIAID->decode(pArithDecoder, &IDI);
+      pIAID->Decode(pArithDecoder, &IDI);
       if (IDI >= SBNUMSYMS)
         return nullptr;
 
@@ -314,7 +314,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
       if (SBREFINE == 0)
         RI = 0;
       else
-        pIARI->decode(pArithDecoder, &RI);
+        pIARI->Decode(pArithDecoder, &RI);
 
       MaybeOwned<CJBig2_Image> pIBI;
       if (RI == 0) {
@@ -324,10 +324,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
         int32_t RDHI;
         int32_t RDXI;
         int32_t RDYI;
-        pIARDW->decode(pArithDecoder, &RDWI);
-        pIARDH->decode(pArithDecoder, &RDHI);
-        pIARDX->decode(pArithDecoder, &RDXI);
-        pIARDY->decode(pArithDecoder, &RDYI);
+        pIARDW->Decode(pArithDecoder, &RDWI);
+        pIARDH->Decode(pArithDecoder, &RDHI);
+        pIARDX->Decode(pArithDecoder, &RDXI);
+        pIARDY->Decode(pArithDecoder, &RDYI);
         CJBig2_Image* IBOI = SBSYMS[IDI];
         if (!IBOI)
           return nullptr;
@@ -351,7 +351,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::decode_Arith(
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
-        pIBI = pGRRD->decode(pArithDecoder, grContext);
+        pIBI = pGRRD->Decode(pArithDecoder, grContext);
       }
       if (!pIBI)
         return nullptr;

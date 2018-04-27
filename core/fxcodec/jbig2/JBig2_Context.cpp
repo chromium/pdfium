@@ -70,7 +70,7 @@ CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
 
 CJBig2_Context::~CJBig2_Context() {}
 
-int32_t CJBig2_Context::decodeSequential(PauseIndicatorIface* pPause) {
+int32_t CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
   int32_t nRet;
   if (m_pStream->getByteLeft() <= 0)
     return JBIG2_END_OF_FILE;
@@ -78,14 +78,14 @@ int32_t CJBig2_Context::decodeSequential(PauseIndicatorIface* pPause) {
   while (m_pStream->getByteLeft() >= JBIG2_MIN_SEGMENT_SIZE) {
     if (!m_pSegment) {
       m_pSegment = pdfium::MakeUnique<CJBig2_Segment>();
-      nRet = parseSegmentHeader(m_pSegment.get());
+      nRet = ParseSegmentHeader(m_pSegment.get());
       if (nRet != JBIG2_SUCCESS) {
         m_pSegment.reset();
         return nRet;
       }
       m_dwOffset = m_pStream->getOffset();
     }
-    nRet = parseSegmentData(m_pSegment.get(), pPause);
+    nRet = ParseSegmentData(m_pSegment.get(), pPause);
     if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       m_PauseStep = 2;
@@ -119,11 +119,11 @@ int32_t CJBig2_Context::decodeSequential(PauseIndicatorIface* pPause) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::decodeRandomFirstPage(PauseIndicatorIface* pPause) {
+int32_t CJBig2_Context::DecodeRandomFirstPage(PauseIndicatorIface* pPause) {
   int32_t nRet;
   while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
     auto pSegment = pdfium::MakeUnique<CJBig2_Segment>();
-    nRet = parseSegmentHeader(pSegment.get());
+    nRet = ParseSegmentHeader(pSegment.get());
     if (nRet != JBIG2_SUCCESS)
       return nRet;
 
@@ -138,13 +138,13 @@ int32_t CJBig2_Context::decodeRandomFirstPage(PauseIndicatorIface* pPause) {
     }
   }
   m_nSegmentDecoded = 0;
-  return decodeRandom(pPause);
+  return DecodeRandom(pPause);
 }
 
-int32_t CJBig2_Context::decodeRandom(PauseIndicatorIface* pPause) {
+int32_t CJBig2_Context::DecodeRandom(PauseIndicatorIface* pPause) {
   for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
     int32_t nRet =
-        parseSegmentData(m_SegmentList[m_nSegmentDecoded].get(), pPause);
+        ParseSegmentData(m_SegmentList[m_nSegmentDecoded].get(), pPause);
     if (nRet == JBIG2_END_OF_PAGE || nRet == JBIG2_END_OF_FILE)
       return JBIG2_SUCCESS;
 
@@ -160,14 +160,14 @@ int32_t CJBig2_Context::decodeRandom(PauseIndicatorIface* pPause) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
+int32_t CJBig2_Context::GetFirstPage(uint8_t* pBuf,
                                      int32_t width,
                                      int32_t height,
                                      int32_t stride,
                                      PauseIndicatorIface* pPause) {
   int32_t nRet = 0;
   if (m_pGlobalContext) {
-    nRet = m_pGlobalContext->decodeSequential(pPause);
+    nRet = m_pGlobalContext->DecodeSequential(pPause);
     if (nRet != JBIG2_SUCCESS) {
       m_ProcessingStatus = FXCODEC_STATUS_ERROR;
       return nRet;
@@ -188,11 +188,11 @@ int32_t CJBig2_Context::Continue(PauseIndicatorIface* pPause) {
   m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
   int32_t nRet = 0;
   if (m_PauseStep <= 2) {
-    nRet = decodeSequential(pPause);
+    nRet = DecodeSequential(pPause);
   } else if (m_PauseStep == 3) {
-    nRet = decodeRandomFirstPage(pPause);
+    nRet = DecodeRandomFirstPage(pPause);
   } else if (m_PauseStep == 4) {
-    nRet = decodeRandom(pPause);
+    nRet = DecodeRandom(pPause);
   } else if (m_PauseStep == 5) {
     m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
     return JBIG2_SUCCESS;
@@ -210,9 +210,9 @@ int32_t CJBig2_Context::Continue(PauseIndicatorIface* pPause) {
   return nRet;
 }
 
-CJBig2_Segment* CJBig2_Context::findSegmentByNumber(uint32_t dwNumber) {
+CJBig2_Segment* CJBig2_Context::FindSegmentByNumber(uint32_t dwNumber) {
   if (m_pGlobalContext) {
-    CJBig2_Segment* pSeg = m_pGlobalContext->findSegmentByNumber(dwNumber);
+    CJBig2_Segment* pSeg = m_pGlobalContext->FindSegmentByNumber(dwNumber);
     if (pSeg)
       return pSeg;
   }
@@ -223,14 +223,14 @@ CJBig2_Segment* CJBig2_Context::findSegmentByNumber(uint32_t dwNumber) {
   return nullptr;
 }
 
-CJBig2_Segment* CJBig2_Context::findReferredSegmentByTypeAndIndex(
+CJBig2_Segment* CJBig2_Context::FindReferredSegmentByTypeAndIndex(
     CJBig2_Segment* pSegment,
     uint8_t cType,
     int32_t nIndex) {
   int32_t count = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
-        findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
+        FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg && pSeg->m_cFlags.s.type == cType) {
       if (count == nIndex)
         return pSeg;
@@ -240,7 +240,7 @@ CJBig2_Segment* CJBig2_Context::findReferredSegmentByTypeAndIndex(
   return nullptr;
 }
 
-int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
+int32_t CJBig2_Context::ParseSegmentHeader(CJBig2_Segment* pSegment) {
   if (m_pStream->readInteger(&pSegment->m_dwNumber) != 0 ||
       m_pStream->read1Byte(&pSegment->m_cFlags.c) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
@@ -316,7 +316,7 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseSegmentData(CJBig2_Segment* pSegment,
+int32_t CJBig2_Context::ParseSegmentData(CJBig2_Segment* pSegment,
                                          PauseIndicatorIface* pPause) {
   int32_t ret = ProcessingParseSegmentData(pSegment, pPause);
   while (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE &&
@@ -331,33 +331,33 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(
     PauseIndicatorIface* pPause) {
   switch (pSegment->m_cFlags.s.type) {
     case 0:
-      return parseSymbolDict(pSegment);
+      return ParseSymbolDict(pSegment);
     case 4:
     case 6:
     case 7:
       if (!m_bInPage)
         return JBIG2_ERROR_FATAL;
-      return parseTextRegion(pSegment);
+      return ParseTextRegion(pSegment);
     case 16:
-      return parsePatternDict(pSegment, pPause);
+      return ParsePatternDict(pSegment, pPause);
     case 20:
     case 22:
     case 23:
       if (!m_bInPage)
         return JBIG2_ERROR_FATAL;
-      return parseHalftoneRegion(pSegment, pPause);
+      return ParseHalftoneRegion(pSegment, pPause);
     case 36:
     case 38:
     case 39:
       if (!m_bInPage)
         return JBIG2_ERROR_FATAL;
-      return parseGenericRegion(pSegment, pPause);
+      return ParseGenericRegion(pSegment, pPause);
     case 40:
     case 42:
     case 43:
       if (!m_bInPage)
         return JBIG2_ERROR_FATAL;
-      return parseGenericRefinementRegion(pSegment);
+      return ParseGenericRefinementRegion(pSegment);
     case 48: {
       uint16_t wTemp;
       auto pPageInfo = pdfium::MakeUnique<JBig2PageInfo>();
@@ -404,7 +404,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(
       m_pStream->offset(pSegment->m_dwData_length);
       break;
     case 53:
-      return parseTable(pSegment);
+      return ParseTable(pSegment);
     case 62:
       m_pStream->offset(pSegment->m_dwData_length);
       break;
@@ -414,7 +414,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
+int32_t CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   uint16_t wFlags;
   if (m_pStream->readShortInteger(&wFlags) != 0)
     return JBIG2_ERROR_TOO_SHORT;
@@ -450,14 +450,14 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     return JBIG2_ERROR_LIMIT;
   }
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
-    if (!findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
+    if (!FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
       return JBIG2_ERROR_FATAL;
   }
   CJBig2_Segment* pLRSeg = nullptr;
   pSymbolDictDecoder->SDNUMINSYMS = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
-        findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
+        FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
       pSymbolDictDecoder->SDNUMINSYMS += pSeg->m_SymbolDict->NumImages();
       pLRSeg = pSeg;
@@ -470,7 +470,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     uint32_t dwTemp = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
-          findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
+          FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict.get();
         for (size_t j = 0; j < dict.NumImages(); ++j)
@@ -501,7 +501,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
       pSymbolDictDecoder->SDHUFFDH = Table_B5.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pSymbolDictDecoder->SDHUFFDH = pSeg->m_HuffmanTable.get();
@@ -516,7 +516,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
       pSymbolDictDecoder->SDHUFFDW = Table_B3.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pSymbolDictDecoder->SDHUFFDW = pSeg->m_HuffmanTable.get();
@@ -527,7 +527,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
       pSymbolDictDecoder->SDHUFFBMSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->m_HuffmanTable.get();
@@ -541,7 +541,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
         pSymbolDictDecoder->SDHUFFAGGINST = Table_B1.get();
       } else {
         CJBig2_Segment* pSeg =
-            findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+            FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
         if (!pSeg)
           return JBIG2_ERROR_FATAL;
         pSymbolDictDecoder->SDHUFFAGGINST = pSeg->m_HuffmanTable.get();
@@ -596,7 +596,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
     if (bUseGbContext) {
       auto pArithDecoder =
           pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
-      pSegment->m_SymbolDict = pSymbolDictDecoder->decode_Arith(
+      pSegment->m_SymbolDict = pSymbolDictDecoder->DecodeArith(
           pArithDecoder.get(), &gbContext, &grContext);
       if (!pSegment->m_SymbolDict)
         return JBIG2_ERROR_FATAL;
@@ -604,7 +604,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
       m_pStream->alignByte();
       m_pStream->offset(2);
     } else {
-      pSegment->m_SymbolDict = pSymbolDictDecoder->decode_Huffman(
+      pSegment->m_SymbolDict = pSymbolDictDecoder->DecodeHuffman(
           m_pStream.get(), &gbContext, &grContext);
       if (!pSegment->m_SymbolDict)
         return JBIG2_ERROR_FATAL;
@@ -630,10 +630,10 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
+int32_t CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   uint16_t wFlags;
   JBig2RegionInfo ri;
-  if (parseRegionInfo(&ri) != JBIG2_SUCCESS ||
+  if (ParseRegionInfo(&ri) != JBIG2_SUCCESS ||
       m_pStream->readShortInteger(&wFlags) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
   }
@@ -698,14 +698,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     return JBIG2_ERROR_FATAL;
 
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
-    if (!findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
+    if (!FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
       return JBIG2_ERROR_FATAL;
   }
 
   pTRD->SBNUMSYMS = 0;
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     CJBig2_Segment* pSeg =
-        findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
+        FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
     if (pSeg->m_cFlags.s.type == 0) {
       pTRD->SBNUMSYMS += pSeg->m_SymbolDict->NumImages();
     }
@@ -717,7 +717,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     dwTemp = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
-          findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
+          FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]);
       if (pSeg->m_cFlags.s.type == 0) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict.get();
         for (size_t j = 0; j < dict.NumImages(); ++j)
@@ -732,7 +732,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
 
   if (pTRD->SBHUFF == 1) {
     std::vector<JBig2HuffmanCode> SBSYMCODES =
-        decodeSymbolIDHuffmanTable(m_pStream.get(), pTRD->SBNUMSYMS);
+        DecodeSymbolIDHuffmanTable(m_pStream.get(), pTRD->SBNUMSYMS);
     if (SBSYMCODES.empty())
       return JBIG2_ERROR_FATAL;
 
@@ -773,7 +773,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFFS = Table_B7.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFFS = pSeg->m_HuffmanTable.get();
@@ -792,7 +792,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDS = Table_B10.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFDS = pSeg->m_HuffmanTable.get();
@@ -811,7 +811,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDT = Table_B13.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFDT = pSeg->m_HuffmanTable.get();
@@ -826,7 +826,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDW = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDW = pSeg->m_HuffmanTable.get();
@@ -845,7 +845,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDH = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDH = pSeg->m_HuffmanTable.get();
@@ -864,7 +864,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDX = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDX = pSeg->m_HuffmanTable.get();
@@ -883,7 +883,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDY = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDY = pSeg->m_HuffmanTable.get();
@@ -894,7 +894,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
+          FindReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRSIZE = pSeg->m_HuffmanTable.get();
@@ -911,14 +911,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
     pSegment->m_Image =
-        pTRD->decode_Arith(pArithDecoder.get(), grContext.get(), nullptr);
+        pTRD->DecodeArith(pArithDecoder.get(), grContext.get(), nullptr);
     if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
-    pSegment->m_Image = pTRD->decode_Huffman(m_pStream.get(), grContext.get());
+    pSegment->m_Image = pTRD->DecodeHuffman(m_pStream.get(), grContext.get());
     if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
@@ -938,7 +938,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
+int32_t CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
                                          PauseIndicatorIface* pPause) {
   uint8_t cFlags;
   auto pPDD = pdfium::MakeUnique<CJBig2_PDDProc>();
@@ -962,14 +962,14 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
     auto pArithDecoder =
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_PatternDict =
-        pPDD->decode_Arith(pArithDecoder.get(), gbContext.get(), pPause);
+        pPDD->DecodeArith(pArithDecoder.get(), gbContext.get(), pPause);
     if (!pSegment->m_PatternDict)
       return JBIG2_ERROR_FATAL;
 
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    pSegment->m_PatternDict = pPDD->decode_MMR(m_pStream.get());
+    pSegment->m_PatternDict = pPDD->DecodeMMR(m_pStream.get());
     if (!pSegment->m_PatternDict)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
@@ -977,12 +977,12 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
+int32_t CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
                                             PauseIndicatorIface* pPause) {
   uint8_t cFlags;
   JBig2RegionInfo ri;
   auto pHRD = pdfium::MakeUnique<CJBig2_HTRDProc>();
-  if (parseRegionInfo(&ri) != JBIG2_SUCCESS ||
+  if (ParseRegionInfo(&ri) != JBIG2_SUCCESS ||
       m_pStream->read1Byte(&cFlags) != 0 ||
       m_pStream->readInteger(&pHRD->HGW) != 0 ||
       m_pStream->readInteger(&pHRD->HGH) != 0 ||
@@ -1010,7 +1010,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     return JBIG2_ERROR_FATAL;
 
   CJBig2_Segment* pSeg =
-      findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
+      FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
   if (!pSeg || (pSeg->m_cFlags.s.type != 16))
     return JBIG2_ERROR_FATAL;
 
@@ -1031,14 +1031,14 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     auto pArithDecoder =
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_Image =
-        pHRD->decode_Arith(pArithDecoder.get(), gbContext.get(), pPause);
+        pHRD->DecodeArith(pArithDecoder.get(), gbContext.get(), pPause);
     if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
 
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    pSegment->m_Image = pHRD->decode_MMR(m_pStream.get());
+    pSegment->m_Image = pHRD->DecodeMMR(m_pStream.get());
     if (!pSegment->m_Image)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();
@@ -1058,12 +1058,12 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
+int32_t CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
                                            PauseIndicatorIface* pPause) {
   if (!m_pGRD) {
     auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
     uint8_t cFlags;
-    if (parseRegionInfo(&m_ri) != JBIG2_SUCCESS ||
+    if (ParseRegionInfo(&m_ri) != JBIG2_SUCCESS ||
         m_pStream->read1Byte(&cFlags) != 0) {
       return JBIG2_ERROR_TOO_SHORT;
     }
@@ -1097,11 +1097,11 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     if (!m_pArithDecoder) {
       m_pArithDecoder =
           pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
-      m_ProcessingStatus = m_pGRD->Start_decode_Arith(
+      m_ProcessingStatus = m_pGRD->StartDecodeArith(
           &pSegment->m_Image, m_pArithDecoder.get(), &m_gbContext[0], pPause);
     } else {
       m_ProcessingStatus =
-          m_pGRD->Continue_decode(pPause, m_pArithDecoder.get());
+          m_pGRD->ContinueDecode(pPause, m_pArithDecoder.get());
     }
     if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       if (pSegment->m_cFlags.s.type != 36) {
@@ -1130,7 +1130,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
-    m_pGRD->Start_decode_MMR(&pSegment->m_Image, m_pStream.get());
+    m_pGRD->StartDecodeMMR(&pSegment->m_Image, m_pStream.get());
     if (!pSegment->m_Image) {
       m_pGRD.reset();
       return JBIG2_ERROR_FATAL;
@@ -1156,10 +1156,10 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
+int32_t CJBig2_Context::ParseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   JBig2RegionInfo ri;
   uint8_t cFlags;
-  if (parseRegionInfo(&ri) != JBIG2_SUCCESS ||
+  if (ParseRegionInfo(&ri) != JBIG2_SUCCESS ||
       m_pStream->read1Byte(&cFlags) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
   }
@@ -1181,7 +1181,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   if (pSegment->m_nReferred_to_segment_count > 0) {
     int32_t i;
     for (i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
-      pSeg = findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
+      pSeg = FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
 
@@ -1205,7 +1205,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
   auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
-  pSegment->m_Image = pGRRD->decode(pArithDecoder.get(), grContext.get());
+  pSegment->m_Image = pGRRD->Decode(pArithDecoder.get(), grContext.get());
   if (!pSegment->m_Image)
     return JBIG2_ERROR_FATAL;
 
@@ -1226,7 +1226,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseTable(CJBig2_Segment* pSegment) {
+int32_t CJBig2_Context::ParseTable(CJBig2_Segment* pSegment) {
   pSegment->m_nResultType = JBIG2_HUFFMAN_TABLE_POINTER;
   pSegment->m_HuffmanTable.reset();
   auto pHuff = pdfium::MakeUnique<CJBig2_HuffmanTable>(m_pStream.get());
@@ -1238,7 +1238,7 @@ int32_t CJBig2_Context::parseTable(CJBig2_Segment* pSegment) {
   return JBIG2_SUCCESS;
 }
 
-int32_t CJBig2_Context::parseRegionInfo(JBig2RegionInfo* pRI) {
+int32_t CJBig2_Context::ParseRegionInfo(JBig2RegionInfo* pRI) {
   if (m_pStream->readInteger((uint32_t*)&pRI->width) != 0 ||
       m_pStream->readInteger((uint32_t*)&pRI->height) != 0 ||
       m_pStream->readInteger((uint32_t*)&pRI->x) != 0 ||
@@ -1249,7 +1249,7 @@ int32_t CJBig2_Context::parseRegionInfo(JBig2RegionInfo* pRI) {
   return JBIG2_SUCCESS;
 }
 
-std::vector<JBig2HuffmanCode> CJBig2_Context::decodeSymbolIDHuffmanTable(
+std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
     CJBig2_BitStream* pStream,
     uint32_t SBNUMSYMS) {
   const size_t kRunCodesSize = 35;
@@ -1258,7 +1258,7 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::decodeSymbolIDHuffmanTable(
     if (pStream->readNBits(4, &huffman_codes[i].codelen) != 0)
       return std::vector<JBig2HuffmanCode>();
   }
-  huffman_assign_code(huffman_codes, kRunCodesSize);
+  HuffmanAssignCode(huffman_codes, kRunCodesSize);
 
   std::vector<JBig2HuffmanCode> SBSYMCODES(SBNUMSYMS);
   int32_t run = 0;
@@ -1314,13 +1314,13 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::decodeSymbolIDHuffmanTable(
       ++i;
     }
   }
-  huffman_assign_code(SBSYMCODES.data(), SBNUMSYMS);
+  HuffmanAssignCode(SBSYMCODES.data(), SBNUMSYMS);
   return SBSYMCODES;
 }
 
-void CJBig2_Context::huffman_assign_code(JBig2HuffmanCode* SBSYMCODES,
-                                         int NTEMP) {
-  // TODO(thestig) CJBig2_HuffmanTable::parseFromCodedBuffer() has similar code.
+void CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
+                                       int NTEMP) {
+  // TODO(thestig) CJBig2_HuffmanTable::ParseFromCodedBuffer() has similar code.
   int LENMAX = 0;
   for (int i = 0; i < NTEMP; ++i)
     LENMAX = std::max(LENMAX, SBSYMCODES[i].codelen);

@@ -15,24 +15,25 @@
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 
-typedef enum {
+enum JBig2_SegmentState {
   JBIG2_SEGMENT_HEADER_UNPARSED,
   JBIG2_SEGMENT_DATA_UNPARSED,
   JBIG2_SEGMENT_PARSE_COMPLETE,
   JBIG2_SEGMENT_PAUSED,
   JBIG2_SEGMENT_ERROR
-} JBig2_SegmentState;
-typedef enum {
+};
+
+enum JBig2_ResultType {
   JBIG2_VOID_POINTER = 0,
   JBIG2_IMAGE_POINTER,
   JBIG2_SYMBOL_DICT_POINTER,
   JBIG2_PATTERN_DICT_POINTER,
   JBIG2_HUFFMAN_TABLE_POINTER
-} JBig2_ResultType;
+};
+
 class CJBig2_Segment {
  public:
   CJBig2_Segment();
-
   ~CJBig2_Segment();
 
   uint32_t m_dwNumber;

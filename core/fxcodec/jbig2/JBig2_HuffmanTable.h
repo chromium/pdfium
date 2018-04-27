@@ -19,9 +19,7 @@ class CJBig2_HuffmanTable {
   CJBig2_HuffmanTable(const JBig2TableLine* pTable,
                       uint32_t nLines,
                       bool bHTOOB);
-
   explicit CJBig2_HuffmanTable(CJBig2_BitStream* pStream);
-
   ~CJBig2_HuffmanTable();
 
   bool IsHTOOB() const { return HTOOB; }

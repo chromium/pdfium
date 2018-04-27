@@ -23,10 +23,9 @@ struct JBig2ArithCtx {
 class CJBig2_ArithDecoder {
  public:
   explicit CJBig2_ArithDecoder(CJBig2_BitStream* pStream);
-
   ~CJBig2_ArithDecoder();
 
-  int DECODE(JBig2ArithCtx* pCX);
+  int Decode(JBig2ArithCtx* pCX);
 
   bool IsComplete() const { return m_Complete; }
 

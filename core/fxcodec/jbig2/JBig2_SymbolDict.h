@@ -22,7 +22,6 @@ class CJBig2_SymbolDict {
 
   std::unique_ptr<CJBig2_SymbolDict> DeepCopy() const;
 
-  // Takes ownership of |image|.
   void AddImage(std::unique_ptr<CJBig2_Image> image) {
     m_SDEXSYMS.push_back(std::move(image));
   }

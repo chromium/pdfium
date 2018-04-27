@@ -20,12 +20,12 @@ class CJBig2_SymbolDict;
 
 class CJBig2_SDDProc {
  public:
-  std::unique_ptr<CJBig2_SymbolDict> decode_Arith(
+  std::unique_ptr<CJBig2_SymbolDict> DecodeArith(
       CJBig2_ArithDecoder* pArithDecoder,
       std::vector<JBig2ArithCtx>* gbContext,
       std::vector<JBig2ArithCtx>* grContext);
 
-  std::unique_ptr<CJBig2_SymbolDict> decode_Huffman(
+  std::unique_ptr<CJBig2_SymbolDict> DecodeHuffman(
       CJBig2_BitStream* pStream,
       std::vector<JBig2ArithCtx>* gbContext,
       std::vector<JBig2ArithCtx>* grContext);
