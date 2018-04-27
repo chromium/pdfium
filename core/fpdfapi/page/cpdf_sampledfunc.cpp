@@ -47,16 +47,13 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj,
   if (!pSize || pSize->IsEmpty())
     return false;
 
-  const CPDF_Array* pEncode = pDict->GetArrayFor("Encode");
-  const CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
   m_nBitsPerSample = pDict->GetIntegerFor("BitsPerSample");
   if (!IsValidBitsPerSample(m_nBitsPerSample))
     return false;
 
-  m_SampleMax = 0xffffffff >> (32 - m_nBitsPerSample);
-  m_pSampleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-  m_pSampleStream->LoadAllDataFiltered();
-  FX_SAFE_UINT32 nTotalSampleBits = 1;
+  FX_SAFE_UINT32 nTotalSampleBits = m_nBitsPerSample;
+  nTotalSampleBits *= m_nOutputs;
+  const CPDF_Array* pEncode = pDict->GetArrayFor("Encode");
   m_EncodeInfo.resize(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {
     int size = pSize->GetIntegerAt(i);
@@ -74,15 +71,17 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj,
           m_EncodeInfo[i].sizes == 1 ? 1 : m_EncodeInfo[i].sizes - 1;
     }
   }
-  nTotalSampleBits *= m_nBitsPerSample;
-  nTotalSampleBits *= m_nOutputs;
-  FX_SAFE_UINT32 nTotalSampleBytes = nTotalSampleBits;
-  nTotalSampleBytes += 7;
-  nTotalSampleBytes /= 8;
-  if (!nTotalSampleBytes.IsValid() || nTotalSampleBytes.ValueOrDie() == 0 ||
-      nTotalSampleBytes.ValueOrDie() > m_pSampleStream->GetSize()) {
+  FX_SAFE_UINT32 nTotalSampleBytes = (nTotalSampleBits + 7) / 8;
+  if (!nTotalSampleBytes.IsValid() || nTotalSampleBytes.ValueOrDie() == 0)
     return false;
-  }
+
+  m_SampleMax = 0xffffffff >> (32 - m_nBitsPerSample);
+  m_pSampleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  m_pSampleStream->LoadAllDataFiltered();
+  if (nTotalSampleBytes.ValueOrDie() > m_pSampleStream->GetSize())
+    return false;
+
+  const CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
   m_DecodeInfo.resize(m_nOutputs);
   for (uint32_t i = 0; i < m_nOutputs; i++) {
     if (pDecode) {
