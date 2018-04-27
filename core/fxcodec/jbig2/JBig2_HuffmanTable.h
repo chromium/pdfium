@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcrt/fx_system.h"
 
 class CJBig2_BitStream;
@@ -24,8 +25,7 @@ class CJBig2_HuffmanTable {
 
   bool IsHTOOB() const { return HTOOB; }
   uint32_t Size() const { return NTEMP; }
-  const std::vector<int>& GetCODES() const { return CODES; }
-  const std::vector<int>& GetPREFLEN() const { return PREFLEN; }
+  const std::vector<JBig2HuffmanCode>& GetCODES() const { return CODES; }
   const std::vector<int>& GetRANGELEN() const { return RANGELEN; }
   const std::vector<int>& GetRANGELOW() const { return RANGELOW; }
   bool IsOK() const { return m_bOK; }
@@ -39,8 +39,7 @@ class CJBig2_HuffmanTable {
   bool m_bOK;
   bool HTOOB;
   uint32_t NTEMP;
-  std::vector<int> CODES;
-  std::vector<int> PREFLEN;
+  std::vector<JBig2HuffmanCode> CODES;
   std::vector<int> RANGELEN;
   std::vector<int> RANGELOW;
 };

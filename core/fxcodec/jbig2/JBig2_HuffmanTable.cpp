@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
-#include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/numerics/safe_math.h"
@@ -31,11 +30,11 @@ CJBig2_HuffmanTable::CJBig2_HuffmanTable(CJBig2_BitStream* pStream)
 CJBig2_HuffmanTable::~CJBig2_HuffmanTable() {}
 
 void CJBig2_HuffmanTable::ParseFromStandardTable(const JBig2TableLine* pTable) {
-  PREFLEN.resize(NTEMP);
+  CODES.resize(NTEMP);
   RANGELEN.resize(NTEMP);
   RANGELOW.resize(NTEMP);
   for (uint32_t i = 0; i < NTEMP; ++i) {
-    PREFLEN[i] = pTable[i].PREFLEN;
+    CODES[i].codelen = pTable[i].PREFLEN;
     RANGELEN[i] = pTable[i].RANDELEN;
     RANGELOW[i] = pTable[i].RANGELOW;
   }
@@ -65,7 +64,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   ExtendBuffers(false);
   pdfium::base::CheckedNumeric<int> cur_low = low;
   do {
-    if ((pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) ||
+    if ((pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1) ||
         (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1) ||
         (static_cast<size_t>(RANGELEN[NTEMP]) >= 8 * sizeof(cur_low))) {
       return false;
@@ -81,7 +80,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     ExtendBuffers(true);
   } while (cur_low.ValueOrDie() < high);
 
-  if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
+  if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1)
     return false;
 
   RANGELEN[NTEMP] = 32;
@@ -91,7 +90,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   RANGELOW[NTEMP] = low - 1;
   ExtendBuffers(true);
 
-  if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
+  if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1)
     return false;
 
   RANGELEN[NTEMP] = 32;
@@ -99,7 +98,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   ExtendBuffers(true);
 
   if (HTOOB) {
-    if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
+    if (pStream->readNBits(HTPS, &CODES[NTEMP].codelen) == -1)
       return false;
 
     ++NTEMP;
@@ -111,13 +110,12 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
 bool CJBig2_HuffmanTable::InitCodes() {
   int lenmax = 0;
   for (uint32_t i = 0; i < NTEMP; ++i)
-    lenmax = std::max(PREFLEN[i], lenmax);
+    lenmax = std::max(CODES[i].codelen, lenmax);
 
-  CODES.resize(NTEMP);
   std::vector<int> LENCOUNT(lenmax + 1);
   std::vector<int> FIRSTCODE(lenmax + 1);
-  for (int len : PREFLEN)
-    ++LENCOUNT[len];
+  for (uint32_t i = 0; i < NTEMP; ++i)
+    ++LENCOUNT[CODES[i].codelen];
 
   FIRSTCODE[0] = 0;
   LENCOUNT[0] = 0;
@@ -131,8 +129,8 @@ bool CJBig2_HuffmanTable::InitCodes() {
     FIRSTCODE[i] = shifted.ValueOrDie();
     int CURCODE = FIRSTCODE[i];
     for (uint32_t j = 0; j < NTEMP; ++j) {
-      if (PREFLEN[j] == i)
-        CODES[j] = CURCODE++;
+      if (CODES[j].codelen == i)
+        CODES[j].code = CURCODE++;
     }
   }
 
@@ -143,13 +141,13 @@ void CJBig2_HuffmanTable::ExtendBuffers(bool increment) {
   if (increment)
     ++NTEMP;
 
-  size_t size = PREFLEN.size();
+  size_t size = CODES.size();
   if (NTEMP < size)
     return;
 
   size += 16;
   ASSERT(NTEMP < size);
-  PREFLEN.resize(size);
+  CODES.resize(size);
   RANGELEN.resize(size);
   RANGELOW.resize(size);
 }

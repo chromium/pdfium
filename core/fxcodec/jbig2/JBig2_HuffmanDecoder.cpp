@@ -25,20 +25,22 @@ int CJBig2_HuffmanDecoder::DecodeAValue(CJBig2_HuffmanTable* pTable,
     nVal = (nVal << 1) | nTmp;
     ++nBits;
     for (uint32_t i = 0; i < pTable->Size(); ++i) {
-      if (pTable->GetPREFLEN()[i] == nBits && pTable->GetCODES()[i] == nVal) {
-        if (pTable->IsHTOOB() && i == pTable->Size() - 1)
-          return JBIG2_OOB;
+      const JBig2HuffmanCode& code = pTable->GetCODES()[i];
+      if (code.codelen != nBits || code.code != nVal)
+        continue;
 
-        if (m_pStream->readNBits(pTable->GetRANGELEN()[i], &nTmp) == -1)
-          return -1;
+      if (pTable->IsHTOOB() && i == pTable->Size() - 1)
+        return JBIG2_OOB;
 
-        uint32_t offset = pTable->IsHTOOB() ? 3 : 2;
-        if (i == pTable->Size() - offset)
-          *nResult = pTable->GetRANGELOW()[i] - nTmp;
-        else
-          *nResult = pTable->GetRANGELOW()[i] + nTmp;
-        return 0;
-      }
+      if (m_pStream->readNBits(pTable->GetRANGELEN()[i], &nTmp) == -1)
+        return -1;
+
+      uint32_t offset = pTable->IsHTOOB() ? 3 : 2;
+      if (i == pTable->Size() - offset)
+        *nResult = pTable->GetRANGELOW()[i] - nTmp;
+      else
+        *nResult = pTable->GetRANGELOW()[i] + nTmp;
+      return 0;
     }
   }
   return -1;
