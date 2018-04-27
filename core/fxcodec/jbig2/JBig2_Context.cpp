@@ -1257,7 +1257,8 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
     if (m_pStream->readNBits(4, &huffman_codes[i].codelen) != 0)
       return std::vector<JBig2HuffmanCode>();
   }
-  HuffmanAssignCode(huffman_codes, kRunCodesSize);
+  if (!HuffmanAssignCode(huffman_codes, kRunCodesSize))
+    return std::vector<JBig2HuffmanCode>();
 
   std::vector<JBig2HuffmanCode> SBSYMCODES(SBNUMSYMS);
   int32_t run = 0;
@@ -1313,29 +1314,38 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
       ++i;
     }
   }
-  HuffmanAssignCode(SBSYMCODES.data(), SBNUMSYMS);
+  if (!HuffmanAssignCode(SBSYMCODES.data(), SBNUMSYMS))
+    return std::vector<JBig2HuffmanCode>();
   return SBSYMCODES;
 }
 
-void CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
-                                       int NTEMP) {
-  // TODO(thestig) CJBig2_HuffmanTable::ParseFromCodedBuffer() has similar code.
+bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
+                                       uint32_t NTEMP) {
+  // TODO(thestig): CJBig2_HuffmanTable::InitCodes() has similar code.
   int LENMAX = 0;
-  for (int i = 0; i < NTEMP; ++i)
-    LENMAX = std::max(LENMAX, SBSYMCODES[i].codelen);
+  for (uint32_t i = 0; i < NTEMP; ++i)
+    LENMAX = std::max(SBSYMCODES[i].codelen, LENMAX);
+
   std::vector<int> LENCOUNT(LENMAX + 1);
   std::vector<int> FIRSTCODE(LENMAX + 1);
-  for (int i = 0; i < NTEMP; ++i)
+  for (uint32_t i = 0; i < NTEMP; ++i)
     ++LENCOUNT[SBSYMCODES[i].codelen];
+
   LENCOUNT[0] = 0;
-  for (int CURLEN = 1; CURLEN <= LENMAX; ++CURLEN) {
-    FIRSTCODE[CURLEN] = (FIRSTCODE[CURLEN - 1] + LENCOUNT[CURLEN - 1]) << 1;
-    int CURCODE = FIRSTCODE[CURLEN];
-    for (int CURTEMP = 0; CURTEMP < NTEMP; ++CURTEMP) {
-      if (SBSYMCODES[CURTEMP].codelen == CURLEN) {
-        SBSYMCODES[CURTEMP].code = CURCODE;
-        CURCODE = CURCODE + 1;
+  for (int i = 1; i <= LENMAX; ++i) {
+    pdfium::base::CheckedNumeric<int> shifted = FIRSTCODE[i - 1];
+    shifted += LENCOUNT[i - 1];
+    shifted <<= 1;
+    if (!shifted.IsValid())
+      return false;
+
+    FIRSTCODE[i] = shifted.ValueOrDie();
+    int CURCODE = FIRSTCODE[i];
+    for (uint32_t j = 0; j < NTEMP; ++j) {
+      if (SBSYMCODES[j].codelen == i) {
+        SBSYMCODES[j].code = CURCODE++;
       }
     }
   }
+  return true;
 }

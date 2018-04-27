@@ -122,8 +122,8 @@ bool CJBig2_HuffmanTable::InitCodes() {
   FIRSTCODE[0] = 0;
   LENCOUNT[0] = 0;
   for (int i = 1; i <= lenmax; ++i) {
-    pdfium::base::CheckedNumeric<int> shifted;
-    shifted = FIRSTCODE[i - 1] + LENCOUNT[i - 1];
+    pdfium::base::CheckedNumeric<int> shifted = FIRSTCODE[i - 1];
+    shifted += LENCOUNT[i - 1];
     shifted <<= 1;
     if (!shifted.IsValid())
       return false;
