@@ -236,7 +236,9 @@ Optional<WideString> CFWL_Edit::Cut() {
   if (!m_EdtEngine.HasSelection())
     return {};
 
-  return {m_EdtEngine.DeleteSelectedText()};
+  WideString cut_text = m_EdtEngine.DeleteSelectedText();
+  UpdateCaret();
+  return {cut_text};
 }
 
 bool CFWL_Edit::Paste(const WideString& wsPaste) {
@@ -1225,6 +1227,7 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
       }
 
       m_EdtEngine.Delete(m_CursorPosition, 1);
+      UpdateCaret();
       break;
     }
     case FWL_VKEY_Insert:
@@ -1254,6 +1257,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
       if (m_CursorPosition > 0) {
         SetCursorPosition(m_CursorPosition - 1);
         m_EdtEngine.Delete(m_CursorPosition, 1);
+        UpdateCaret();
       }
       break;
     case L'\n':
