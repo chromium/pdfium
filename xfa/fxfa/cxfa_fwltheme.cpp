@@ -107,7 +107,7 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
         !(pParams->m_dwStates & FWL_ITEMSTATE_MCD_Flag) &&
         (pParams->m_dwStates &
          (CFWL_PartState_Hovered | CFWL_PartState_Selected))) {
-      m_pTextOut->SetTextColor(0xFFFFFFFF);
+      m_pTextOut->SetTextColor(0xFF888888);
     }
     if (pParams->m_iPart == CFWL_Part::Caption)
       m_pTextOut->SetTextColor(ArgbEncode(0xff, 0, 153, 255));
