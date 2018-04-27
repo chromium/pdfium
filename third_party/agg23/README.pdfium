@@ -16,3 +16,5 @@ Possibly more?
 non-enumeral type in conditional.
 0002-ubsan-error-fixes.path: Fix UBSan errors for overflows.
 0003-ubsan-render-line-error.patch: Fix UBSan overflow error in render_line.
+0004-ubsan-sweep-scanline-error.patch: Fix UBSan left shift of negative value
+error in sweep_scanline.

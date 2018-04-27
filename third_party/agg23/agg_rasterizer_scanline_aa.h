@@ -349,14 +349,14 @@ public:
                     cover += cur_cell->cover;
                 }
                 if(area) {
-                    alpha = calculate_alpha((cover << (poly_base_shift + 1)) - area, no_smooth);
+                    alpha = calculate_alpha(calculate_area(cover, poly_base_shift + 1) - area, no_smooth);
                     if(alpha) {
                         sl.add_cell(x, alpha);
                     }
                     x++;
                 }
                 if(num_cells && cur_cell->x > x) {
-                    alpha = calculate_alpha(cover << (poly_base_shift + 1), no_smooth);
+                    alpha = calculate_alpha(calculate_area(cover, poly_base_shift + 1), no_smooth);
                     if(alpha) {
                         sl.add_span(x, cur_cell->x - x, alpha);
                     }
@@ -457,6 +457,11 @@ private:
         m_prev_flags = flags;
         m_prev_x = x;
         m_prev_y = y;
+    }
+    static int calculate_area(int cover, int shift) {
+        unsigned int result = cover;
+        result <<= shift;
+        return result;
     }
 private:
     outline_aa     m_outline;
