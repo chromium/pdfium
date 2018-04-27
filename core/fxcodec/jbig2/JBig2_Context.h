@@ -60,9 +60,8 @@ class CJBig2_Context {
   int32_t DecodeRandom(PauseIndicatorIface* pPause);
 
   CJBig2_Segment* FindSegmentByNumber(uint32_t dwNumber);
-  CJBig2_Segment* FindReferredSegmentByTypeAndIndex(CJBig2_Segment* pSegment,
-                                                    uint8_t cType,
-                                                    int32_t nIndex);
+  CJBig2_Segment* FindReferredTableSegmentByIndex(CJBig2_Segment* pSegment,
+                                                  int32_t nIndex);
 
   int32_t ParseSegmentHeader(CJBig2_Segment* pSegment);
   int32_t ParseSegmentData(CJBig2_Segment* pSegment,
