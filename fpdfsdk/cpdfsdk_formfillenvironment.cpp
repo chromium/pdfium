@@ -334,17 +334,15 @@ void CPDFSDK_FormFillEnvironment::DisplayCaret(CPDFXFA_Page* page,
   }
 }
 
-int CPDFSDK_FormFillEnvironment::GetCurrentPageIndex(
-    CPDFXFA_Context* document) {
+int CPDFSDK_FormFillEnvironment::GetCurrentPageIndex() const {
   if (!m_pInfo || !m_pInfo->FFI_GetCurrentPageIndex)
     return -1;
-  return m_pInfo->FFI_GetCurrentPageIndex(m_pInfo, document);
+  return m_pInfo->FFI_GetCurrentPageIndex(m_pInfo, m_pUnderlyingDoc.Get());
 }
 
-void CPDFSDK_FormFillEnvironment::SetCurrentPage(CPDFXFA_Context* document,
-                                                 int iCurPage) {
+void CPDFSDK_FormFillEnvironment::SetCurrentPage(int iCurPage) {
   if (m_pInfo && m_pInfo->FFI_SetCurrentPage)
-    m_pInfo->FFI_SetCurrentPage(m_pInfo, document, iCurPage);
+    m_pInfo->FFI_SetCurrentPage(m_pInfo, m_pUnderlyingDoc.Get(), iCurPage);
 }
 
 WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
@@ -365,13 +363,13 @@ WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
                                  nActualLen / sizeof(uint16_t));
 }
 
-void CPDFSDK_FormFillEnvironment::GotoURL(CPDFXFA_Context* document,
-                                          const WideStringView& wsURL) {
+void CPDFSDK_FormFillEnvironment::GotoURL(const WideString& wsURL) {
   if (!m_pInfo || !m_pInfo->FFI_GotoURL)
     return;
 
-  ByteString bsTo = WideString(wsURL).UTF16LE_Encode();
-  m_pInfo->FFI_GotoURL(m_pInfo, document, AsFPDFWideString(&bsTo));
+  ByteString bsTo = wsURL.UTF16LE_Encode();
+  m_pInfo->FFI_GotoURL(m_pInfo, m_pUnderlyingDoc.Get(),
+                       AsFPDFWideString(&bsTo));
 }
 
 void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,

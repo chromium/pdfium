@@ -351,14 +351,12 @@ int32_t CPDFXFA_DocEnvironment::CountPages(CXFA_FFDoc* hDoc) {
 int32_t CPDFXFA_DocEnvironment::GetCurrentPage(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return -1;
+
   if (m_pContext->GetFormType() != FormType::kXFAFull)
     return -1;
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
-  if (!pFormFillEnv)
-    return -1;
-
-  return pFormFillEnv->GetCurrentPageIndex(m_pContext.Get());
+  return pFormFillEnv ? pFormFillEnv->GetCurrentPageIndex() : -1;
 }
 
 void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
@@ -372,7 +370,8 @@ void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
   if (!pFormFillEnv)
     return;
-  pFormFillEnv->SetCurrentPage(m_pContext.Get(), iCurPage);
+
+  pFormFillEnv->SetCurrentPage(iCurPage);
 }
 
 bool CPDFXFA_DocEnvironment::IsCalculationsEnabled(CXFA_FFDoc* hDoc) {
@@ -517,7 +516,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
 }
 
 void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
-                                     const WideString& bsURL) {
+                                     const WideString& wsURL) {
   if (hDoc != m_pContext->GetXFADoc())
     return;
 
@@ -528,8 +527,7 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
   if (!pFormFillEnv)
     return;
 
-  WideStringView str(bsURL.c_str());
-  pFormFillEnv->GotoURL(m_pContext.Get(), str);
+  pFormFillEnv->GotoURL(wsURL);
 }
 
 bool CPDFXFA_DocEnvironment::IsValidationsEnabled(CXFA_FFDoc* hDoc) {

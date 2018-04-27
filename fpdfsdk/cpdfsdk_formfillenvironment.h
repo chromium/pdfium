@@ -130,14 +130,14 @@ class CPDFSDK_FormFillEnvironment
                     double top,
                     double right,
                     double bottom);
-  int GetCurrentPageIndex(CPDFXFA_Context* document);
-  void SetCurrentPage(CPDFXFA_Context* document, int iCurPage);
+  int GetCurrentPageIndex() const;
+  void SetCurrentPage(int iCurPage);
 
   // TODO(dsinclair): This should probably change to PDFium?
   WideString FFI_GetAppName() const { return WideString(L"Acrobat"); }
 
   WideString GetPlatform();
-  void GotoURL(CPDFXFA_Context* document, const WideStringView& wsURL);
+  void GotoURL(const WideString& wsURL);
   void GetPageViewRect(CPDFXFA_Page* page, FS_RECTF& dstRect);
   bool PopupMenu(CPDFXFA_Page* page,
                  FPDF_WIDGET hWidget,
