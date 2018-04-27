@@ -6,6 +6,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
 
+#include <functional>
 #include <memory>
 #include <utility>
 
@@ -49,23 +50,28 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArith(
   if (!CJBig2_Image::IsValidImageSize(GBW, GBH))
     return pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
 
-  if (GBTEMPLATE == 0) {
-    if (UseTemplate0Opt3())
-      return DecodeArithTemplate0Opt3(pArithDecoder, gbContext);
-    return DecodeArithTemplate0Unopt(pArithDecoder, gbContext);
-  } else if (GBTEMPLATE == 1) {
-    if (UseTemplate1Opt3())
-      return DecodeArithTemplate1Opt3(pArithDecoder, gbContext);
-    return DecodeArithTemplate1Unopt(pArithDecoder, gbContext);
-  } else if (GBTEMPLATE == 2) {
-    if (UseTemplate23Opt3())
-      return DecodeArithTemplate2Opt3(pArithDecoder, gbContext);
-    return DecodeArithTemplate2Unopt(pArithDecoder, gbContext);
-  } else {
-    if (UseTemplate23Opt3())
-      return DecodeArithTemplate3Opt3(pArithDecoder, gbContext);
-    return DecodeArithTemplate3Unopt(pArithDecoder, gbContext);
+  using DecodeFunction = std::function<std::unique_ptr<CJBig2_Image>(
+      CJBig2_GRDProc&, CJBig2_ArithDecoder*, JBig2ArithCtx*)>;
+  DecodeFunction func;
+  switch (GBTEMPLATE) {
+    case 0:
+      func = UseTemplate0Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate0Opt3
+                                : &CJBig2_GRDProc::DecodeArithTemplate0Unopt;
+      break;
+    case 1:
+      func = UseTemplate1Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate1Opt3
+                                : &CJBig2_GRDProc::DecodeArithTemplate1Unopt;
+      break;
+    case 2:
+      func = UseTemplate23Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate2Opt3
+                                 : &CJBig2_GRDProc::DecodeArithTemplate2Unopt;
+      break;
+    default:
+      func = UseTemplate23Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate3Opt3
+                                 : &CJBig2_GRDProc::DecodeArithTemplate3Unopt;
+      break;
   }
+  return func(*this, pArithDecoder, gbContext);
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Opt3(
@@ -666,39 +672,33 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArith(
     PauseIndicatorIface* pPause,
     CJBig2_ArithDecoder* pArithDecoder) {
   int iline = m_loopIndex;
-  if (GBTEMPLATE == 0) {
-    if (UseTemplate0Opt3()) {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate0Opt3(pArithDecoder, pPause);
-    } else {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate0Unopt(pArithDecoder, pPause);
-    }
-  } else if (GBTEMPLATE == 1) {
-    if (UseTemplate1Opt3()) {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate1Opt3(pArithDecoder, pPause);
-    } else {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate1Unopt(pArithDecoder, pPause);
-    }
-  } else if (GBTEMPLATE == 2) {
-    if (UseTemplate23Opt3()) {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate2Opt3(pArithDecoder, pPause);
-    } else {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate2Unopt(pArithDecoder, pPause);
-    }
-  } else {
-    if (UseTemplate23Opt3()) {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate3Opt3(pArithDecoder, pPause);
-    } else {
-      m_ProssiveStatus =
-          ProgressiveDecodeArithTemplate3Unopt(pArithDecoder, pPause);
-    }
+
+  using DecodeFunction = std::function<FXCODEC_STATUS(
+      CJBig2_GRDProc&, CJBig2_ArithDecoder*, PauseIndicatorIface*)>;
+  DecodeFunction func;
+  switch (GBTEMPLATE) {
+    case 0:
+      func = UseTemplate0Opt3()
+                 ? &CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3
+                 : &CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Unopt;
+      break;
+    case 1:
+      func = UseTemplate1Opt3()
+                 ? &CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3
+                 : &CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt;
+      break;
+    case 2:
+      func = UseTemplate23Opt3()
+                 ? &CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3
+                 : &CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Unopt;
+      break;
+    default:
+      func = UseTemplate23Opt3()
+                 ? &CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3
+                 : &CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Unopt;
+      break;
   }
+  m_ProssiveStatus = func(*this, pArithDecoder, pPause);
   m_ReplaceRect.left = 0;
   m_ReplaceRect.right = m_pImage->width();
   m_ReplaceRect.top = iline;
