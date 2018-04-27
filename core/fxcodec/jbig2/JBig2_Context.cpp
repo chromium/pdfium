@@ -637,10 +637,8 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       m_pStream->readShortInteger(&wFlags) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
   }
-  if (ri.width <= 0 || ri.width > JBIG2_MAX_IMAGE_SIZE || ri.height <= 0 ||
-      ri.height > JBIG2_MAX_IMAGE_SIZE) {
+  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
     return JBIG2_ERROR_FATAL;
-  }
 
   auto pTRD = pdfium::MakeUnique<CJBig2_TRDProc>();
   pTRD->SBW = ri.width;
@@ -995,15 +993,11 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     return JBIG2_ERROR_TOO_SHORT;
   }
 
-  if (pHRD->HGW == 0 || pHRD->HGW > JBIG2_MAX_IMAGE_SIZE || pHRD->HGH == 0 ||
-      pHRD->HGH > JBIG2_MAX_IMAGE_SIZE) {
+  if (!CJBig2_Image::IsValidImageSize(pHRD->HGW, pHRD->HGH))
     return JBIG2_ERROR_FATAL;
-  }
 
-  if (ri.width <= 0 || ri.width > JBIG2_MAX_IMAGE_SIZE || ri.height <= 0 ||
-      ri.height > JBIG2_MAX_IMAGE_SIZE) {
+  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
     return JBIG2_ERROR_FATAL;
-  }
 
   pHRD->HBW = ri.width;
   pHRD->HBH = ri.height;
@@ -1169,10 +1163,8 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
       m_pStream->read1Byte(&cFlags) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
   }
-  if (ri.width <= 0 || ri.width > JBIG2_MAX_IMAGE_SIZE || ri.height <= 0 ||
-      ri.height > JBIG2_MAX_IMAGE_SIZE) {
+  if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
     return JBIG2_ERROR_FATAL;
-  }
 
   auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
   pGRRD->GRW = ri.width;

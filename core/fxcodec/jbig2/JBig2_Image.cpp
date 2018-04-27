@@ -68,6 +68,12 @@ CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
 
 CJBig2_Image::~CJBig2_Image() {}
 
+// static
+bool CJBig2_Image::IsValidImageSize(int32_t w, int32_t h) {
+  return w > 0 && w <= JBIG2_MAX_IMAGE_SIZE && h > 0 &&
+         h <= JBIG2_MAX_IMAGE_SIZE;
+}
+
 int CJBig2_Image::getPixel(int32_t x, int32_t y) const {
   if (!m_pData)
     return 0;

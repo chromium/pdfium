@@ -46,10 +46,8 @@ bool CJBig2_GRDProc::UseTemplate23Opt3() const {
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
-  if (GBW == 0 || GBW > JBIG2_MAX_IMAGE_SIZE || GBH == 0 ||
-      GBH > JBIG2_MAX_IMAGE_SIZE) {
+  if (!CJBig2_Image::IsValidImageSize(GBW, GBH))
     return pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  }
 
   if (GBTEMPLATE == 0) {
     if (UseTemplate0Opt3())
@@ -642,8 +640,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     PauseIndicatorIface* pPause) {
-  if (GBW == 0 || GBW > JBIG2_MAX_IMAGE_SIZE || GBH == 0 ||
-      GBH > JBIG2_MAX_IMAGE_SIZE) {
+  if (!CJBig2_Image::IsValidImageSize(GBW, GBH)) {
     m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
     return FXCODEC_STATUS_DECODE_FINISH;
   }

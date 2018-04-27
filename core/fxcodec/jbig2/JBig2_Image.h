@@ -29,6 +29,8 @@ class CJBig2_Image {
   CJBig2_Image(const CJBig2_Image& im);
   ~CJBig2_Image();
 
+  static bool IsValidImageSize(int32_t w, int32_t h);
+
   int32_t width() const { return m_nWidth; }
   int32_t height() const { return m_nHeight; }
   int32_t stride() const { return m_nStride; }
