@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -32,7 +33,8 @@ enum LoadStatus {
   FXFA_LOADSTATUS_CLOSED
 };
 
-class CPDFXFA_Context : public IXFA_AppProvider {
+class CPDFXFA_Context : public CPDF_Document::Extension,
+                        public IXFA_AppProvider {
  public:
   explicit CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc);
   ~CPDFXFA_Context() override;
