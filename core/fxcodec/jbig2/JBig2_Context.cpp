@@ -732,7 +732,7 @@ int32_t CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
 
   if (pTRD->SBHUFF == 1) {
     std::vector<JBig2HuffmanCode> SBSYMCODES =
-        DecodeSymbolIDHuffmanTable(m_pStream.get(), pTRD->SBNUMSYMS);
+        DecodeSymbolIDHuffmanTable(pTRD->SBNUMSYMS);
     if (SBSYMCODES.empty())
       return JBIG2_ERROR_FATAL;
 
@@ -1250,12 +1250,11 @@ int32_t CJBig2_Context::ParseRegionInfo(JBig2RegionInfo* pRI) {
 }
 
 std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
-    CJBig2_BitStream* pStream,
     uint32_t SBNUMSYMS) {
   const size_t kRunCodesSize = 35;
   JBig2HuffmanCode huffman_codes[kRunCodesSize];
   for (size_t i = 0; i < kRunCodesSize; ++i) {
-    if (pStream->readNBits(4, &huffman_codes[i].codelen) != 0)
+    if (m_pStream->readNBits(4, &huffman_codes[i].codelen) != 0)
       return std::vector<JBig2HuffmanCode>();
   }
   HuffmanAssignCode(huffman_codes, kRunCodesSize);
@@ -1270,7 +1269,7 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
     uint32_t nTemp;
     while (true) {
       if (nVal > std::numeric_limits<int32_t>::max() / 2 ||
-          pStream->read1Bit(&nTemp) != 0) {
+          m_pStream->read1Bit(&nTemp) != 0) {
         return std::vector<JBig2HuffmanCode>();
       }
 
@@ -1288,15 +1287,15 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
       SBSYMCODES[i].codelen = runcode;
       run = 0;
     } else if (runcode == 32) {
-      if (pStream->readNBits(2, &nTemp) != 0)
+      if (m_pStream->readNBits(2, &nTemp) != 0)
         return std::vector<JBig2HuffmanCode>();
       run = nTemp + 3;
     } else if (runcode == 33) {
-      if (pStream->readNBits(3, &nTemp) != 0)
+      if (m_pStream->readNBits(3, &nTemp) != 0)
         return std::vector<JBig2HuffmanCode>();
       run = nTemp + 3;
     } else if (runcode == 34) {
-      if (pStream->readNBits(7, &nTemp) != 0)
+      if (m_pStream->readNBits(7, &nTemp) != 0)
         return std::vector<JBig2HuffmanCode>();
       run = nTemp + 11;
     }

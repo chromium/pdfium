@@ -80,9 +80,7 @@ class CJBig2_Context {
   int32_t ParseTable(CJBig2_Segment* pSegment);
   int32_t ParseRegionInfo(JBig2RegionInfo* pRI);
 
-  std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(
-      CJBig2_BitStream* pStream,
-      uint32_t SBNUMSYMS);
+  std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(uint32_t SBNUMSYMS);
 
   void HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES, int NTEMP);
 
