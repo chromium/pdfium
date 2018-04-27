@@ -689,6 +689,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   if (m_pStream->readInteger(&pTRD->SBNUMINSTANCES) != 0)
     return JBIG2_ERROR_TOO_SHORT;
 
+  // Assume each instance takes at least 4 bits. That means for a stream of
+  // length N, there can be at most 2N instances. This is an extremely
+  // conservative estimate just to sanitize the |SBNUMINSTANCES| value.
+  // Use FX_SAFE_INT32 to be safe, though it should never overflow because PDFs
+  // have a maximum size of roughly 11 GB.
+  FX_SAFE_INT32 nMaxStripInstances = m_pStream->getLength();
+  nMaxStripInstances *= 2;
+  if (pTRD->SBNUMINSTANCES > nMaxStripInstances.ValueOrDie())
+    return JBIG2_ERROR_FATAL;
+
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     if (!findSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
       return JBIG2_ERROR_FATAL;
