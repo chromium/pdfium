@@ -1165,7 +1165,8 @@ LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
 void CGdiplusExt::DeleteMemFont(LPVOID pCollection) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipDeletePrivateFontCollection)((GpFontCollection**)&pCollection);
+  auto* pActualType = static_cast<GpFontCollection*>(pCollection);
+  CallFunc(GdipDeletePrivateFontCollection)(&pActualType);
 }
 bool CGdiplusExt::GdipCreateBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                    void** bitmap) {
