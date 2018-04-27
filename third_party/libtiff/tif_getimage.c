@@ -1,4 +1,4 @@
-/* $Id: tif_getimage.c,v 1.106 2017-05-20 11:29:02 erouault Exp $ */
+/* $Id: tif_getimage.c,v 1.114 2017-11-17 20:21:00 erouault Exp $ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -139,7 +139,7 @@ TIFFRGBAImageOK(TIFF* tif, char emsg[1024])
 			/*
 			 * TODO: if at all meaningful and useful, make more complete
 			 * support check here, or better still, refactor to let supporting
-			 * code decide whether there is support and what meaningfull
+			 * code decide whether there is support and what meaningful
 			 * error to return
 			 */
 			break;
@@ -417,7 +417,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 			/*
 			 * TODO: if at all meaningful and useful, make more complete
 			 * support check here, or better still, refactor to let supporting
-			 * code decide whether there is support and what meaningfull
+			 * code decide whether there is support and what meaningful
 			 * error to return
 			 */
 			break;
@@ -962,14 +962,14 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	tmsize_t scanline;
 	int32 fromskew, toskew;
 	int ret = 1, flip;
-	tmsize_t maxstripsize;
+        tmsize_t maxstripsize;
 
 	TIFFGetFieldDefaulted(tif, TIFFTAG_YCBCRSUBSAMPLING, &subsamplinghor, &subsamplingver);
 	if( subsamplingver == 0 ) {
 		TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "Invalid vertical YCbCr subsampling");
 		return (0);
 	}
-
+	
 	maxstripsize = TIFFStripSize(tif);
 
 	flip = setorientation(img);
@@ -995,7 +995,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 		if (_TIFFReadEncodedStripAndAllocBuffer(tif,
 		    TIFFComputeStrip(tif,row+img->row_offset, 0),
 		    (void**)(&buf),
-		    maxstripsize,
+                    maxstripsize,
 		    ((row + img->row_offset)%rowsperstrip + nrowsub) * scanline)==(tmsize_t)(-1)
 		    && (buf == NULL || img->stoponerr))
 		{
@@ -1273,8 +1273,8 @@ DECLAREContigPutFunc(put8bitcmaptile)
     int samplesperpixel = img->samplesperpixel;
 
     (void) y;
-    while (h-- > 0) {
-	for (x = w; x-- > 0;)
+    for( ; h > 0; --h) {
+	for (x = w; x > 0; --x)
         {
 	    *cp++ = PALmap[*pp][0];
             pp += samplesperpixel;
@@ -1293,7 +1293,7 @@ DECLAREContigPutFunc(put4bitcmaptile)
 
     (void) x; (void) y;
     fromskew /= 2;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	uint32* bw;
 	UNROLL2(w, bw = PALmap[*pp++], *cp++ = *bw++);
 	cp += toskew;
@@ -1310,7 +1310,7 @@ DECLAREContigPutFunc(put2bitcmaptile)
 
     (void) x; (void) y;
     fromskew /= 4;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	uint32* bw;
 	UNROLL4(w, bw = PALmap[*pp++], *cp++ = *bw++);
 	cp += toskew;
@@ -1327,7 +1327,7 @@ DECLAREContigPutFunc(put1bitcmaptile)
 
     (void) x; (void) y;
     fromskew /= 8;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	uint32* bw;
 	UNROLL8(w, bw = PALmap[*pp++], *cp++ = *bw++);
 	cp += toskew;
@@ -1344,8 +1344,8 @@ DECLAREContigPutFunc(putgreytile)
     uint32** BWmap = img->BWmap;
 
     (void) y;
-    while (h-- > 0) {
-	for (x = w; x-- > 0;)
+    for( ; h > 0; --h) {
+	for (x = w; x > 0; --x)
         {
 	    *cp++ = BWmap[*pp][0];
             pp += samplesperpixel;
@@ -1364,8 +1364,8 @@ DECLAREContigPutFunc(putagreytile)
     uint32** BWmap = img->BWmap;
 
     (void) y;
-    while (h-- > 0) {
-	for (x = w; x-- > 0;)
+    for( ; h > 0; --h) {
+	for (x = w; x > 0; --x)
         {
             *cp++ = BWmap[*pp][0] & ((uint32)*(pp+1) << 24 | ~A1);
             pp += samplesperpixel;
@@ -1384,10 +1384,10 @@ DECLAREContigPutFunc(put16bitbwtile)
     uint32** BWmap = img->BWmap;
 
     (void) y;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
         uint16 *wp = (uint16 *) pp;
 
-	for (x = w; x-- > 0;)
+	for (x = w; x > 0; --x)
         {
             /* use high order byte of 16bit value */
 
@@ -1409,7 +1409,7 @@ DECLAREContigPutFunc(put1bitbwtile)
 
     (void) x; (void) y;
     fromskew /= 8;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	uint32* bw;
 	UNROLL8(w, bw = BWmap[*pp++], *cp++ = *bw++);
 	cp += toskew;
@@ -1426,7 +1426,7 @@ DECLAREContigPutFunc(put2bitbwtile)
 
     (void) x; (void) y;
     fromskew /= 4;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	uint32* bw;
 	UNROLL4(w, bw = BWmap[*pp++], *cp++ = *bw++);
 	cp += toskew;
@@ -1443,7 +1443,7 @@ DECLAREContigPutFunc(put4bitbwtile)
 
     (void) x; (void) y;
     fromskew /= 2;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	uint32* bw;
 	UNROLL2(w, bw = BWmap[*pp++], *cp++ = *bw++);
 	cp += toskew;
@@ -1460,7 +1460,7 @@ DECLAREContigPutFunc(putRGBcontig8bittile)
 
     (void) x; (void) y;
     fromskew *= samplesperpixel;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	UNROLL8(w, NOP,
 	    *cp++ = PACK(pp[0], pp[1], pp[2]);
 	    pp += samplesperpixel);
@@ -1479,7 +1479,7 @@ DECLAREContigPutFunc(putRGBAAcontig8bittile)
 
     (void) x; (void) y;
     fromskew *= samplesperpixel;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	UNROLL8(w, NOP,
 	    *cp++ = PACK4(pp[0], pp[1], pp[2], pp[3]);
 	    pp += samplesperpixel);
@@ -1497,10 +1497,10 @@ DECLAREContigPutFunc(putRGBUAcontig8bittile)
 	int samplesperpixel = img->samplesperpixel;
 	(void) y;
 	fromskew *= samplesperpixel;
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		uint32 r, g, b, a;
 		uint8* m;
-		for (x = w; x-- > 0;) {
+		for (x = w; x > 0; --x) {
 			a = pp[3];
 			m = img->UaToAa+((size_t) a<<8);
 			r = m[pp[0]];
@@ -1523,8 +1523,8 @@ DECLAREContigPutFunc(putRGBcontig16bittile)
 	uint16 *wp = (uint16 *)pp;
 	(void) y;
 	fromskew *= samplesperpixel;
-	while (h-- > 0) {
-		for (x = w; x-- > 0;) {
+	for( ; h > 0; --h) {
+		for (x = w; x > 0; --x) {
 			*cp++ = PACK(img->Bitdepth16To8[wp[0]],
 			    img->Bitdepth16To8[wp[1]],
 			    img->Bitdepth16To8[wp[2]]);
@@ -1545,8 +1545,8 @@ DECLAREContigPutFunc(putRGBAAcontig16bittile)
 	uint16 *wp = (uint16 *)pp;
 	(void) y;
 	fromskew *= samplesperpixel;
-	while (h-- > 0) {
-		for (x = w; x-- > 0;) {
+	for( ; h > 0; --h) {
+		for (x = w; x > 0; --x) {
 			*cp++ = PACK4(img->Bitdepth16To8[wp[0]],
 			    img->Bitdepth16To8[wp[1]],
 			    img->Bitdepth16To8[wp[2]],
@@ -1568,10 +1568,10 @@ DECLAREContigPutFunc(putRGBUAcontig16bittile)
 	uint16 *wp = (uint16 *)pp;
 	(void) y;
 	fromskew *= samplesperpixel;
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		uint32 r,g,b,a;
 		uint8* m;
-		for (x = w; x-- > 0;) {
+		for (x = w; x > 0; --x) {
 			a = img->Bitdepth16To8[wp[3]];
 			m = img->UaToAa+((size_t) a<<8);
 			r = m[img->Bitdepth16To8[wp[0]]];
@@ -1597,7 +1597,7 @@ DECLAREContigPutFunc(putRGBcontig8bitCMYKtile)
 
     (void) x; (void) y;
     fromskew *= samplesperpixel;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	UNROLL8(w, NOP,
 	    k = 255 - pp[3];
 	    r = (k*(255-pp[0]))/255;
@@ -1623,8 +1623,8 @@ DECLAREContigPutFunc(putRGBcontig8bitCMYKMaptile)
 
     (void) y;
     fromskew *= samplesperpixel;
-    while (h-- > 0) {
-	for (x = w; x-- > 0;) {
+    for( ; h > 0; --h) {
+	for (x = w; x > 0; --x) {
 	    k = 255 - pp[3];
 	    r = (k*(255-pp[0]))/255;
 	    g = (k*(255-pp[1]))/255;
@@ -1653,7 +1653,7 @@ static void name(\
 DECLARESepPutFunc(putRGBseparate8bittile)
 {
     (void) img; (void) x; (void) y; (void) a;
-    while (h-- > 0) {
+    for( ; h > 0; --h) {
 	UNROLL8(w, NOP, *cp++ = PACK(*r++, *g++, *b++));
 	SKEW(r, g, b, fromskew);
 	cp += toskew;
@@ -1666,7 +1666,7 @@ DECLARESepPutFunc(putRGBseparate8bittile)
 DECLARESepPutFunc(putRGBAAseparate8bittile)
 {
 	(void) img; (void) x; (void) y; 
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		UNROLL8(w, NOP, *cp++ = PACK4(*r++, *g++, *b++, *a++));
 		SKEW4(r, g, b, a, fromskew);
 		cp += toskew;
@@ -1679,9 +1679,9 @@ DECLARESepPutFunc(putRGBAAseparate8bittile)
 DECLARESepPutFunc(putCMYKseparate8bittile)
 {
 	(void) img; (void) y;
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		uint32 rv, gv, bv, kv;
-		for (x = w; x-- > 0;) {
+		for (x = w; x > 0; --x) {
 			kv = 255 - *a++;
 			rv = (kv*(255-*r++))/255;
 			gv = (kv*(255-*g++))/255;
@@ -1699,10 +1699,10 @@ DECLARESepPutFunc(putCMYKseparate8bittile)
 DECLARESepPutFunc(putRGBUAseparate8bittile)
 {
 	(void) img; (void) y;
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		uint32 rv, gv, bv, av;
 		uint8* m;
-		for (x = w; x-- > 0;) {
+		for (x = w; x > 0; --x) {
 			av = *a++;
 			m = img->UaToAa+((size_t) av<<8);
 			rv = m[*r++];
@@ -1724,7 +1724,7 @@ DECLARESepPutFunc(putRGBseparate16bittile)
 	uint16 *wg = (uint16*) g;
 	uint16 *wb = (uint16*) b;
 	(void) img; (void) y; (void) a;
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		for (x = 0; x < w; x++)
 			*cp++ = PACK(img->Bitdepth16To8[*wr++],
 			    img->Bitdepth16To8[*wg++],
@@ -1744,7 +1744,7 @@ DECLARESepPutFunc(putRGBAAseparate16bittile)
 	uint16 *wb = (uint16*) b;
 	uint16 *wa = (uint16*) a;
 	(void) img; (void) y;
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		for (x = 0; x < w; x++)
 			*cp++ = PACK4(img->Bitdepth16To8[*wr++],
 			    img->Bitdepth16To8[*wg++],
@@ -1765,10 +1765,10 @@ DECLARESepPutFunc(putRGBUAseparate16bittile)
 	uint16 *wb = (uint16*) b;
 	uint16 *wa = (uint16*) a;
 	(void) img; (void) y;
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		uint32 r2,g2,b2,a2;
 		uint8* m;
-		for (x = w; x-- > 0;) {
+		for (x = w; x > 0; --x) {
 			a2 = img->Bitdepth16To8[*wa++];
 			m = img->UaToAa+((size_t) a2<<8);
 			r2 = m[img->Bitdepth16To8[*wr++]];
@@ -1790,8 +1790,8 @@ DECLAREContigPutFunc(putcontig8bitCIELab)
 	uint32 r, g, b;
 	(void) y;
 	fromskew *= 3;
-	while (h-- > 0) {
-		for (x = w; x-- > 0;) {
+	for( ; h > 0; --h) {
+		for (x = w; x > 0; --x) {
 			TIFFCIELabToXYZ(img->cielab,
 					(unsigned char)pp[0],
 					(signed char)pp[1],
@@ -1904,7 +1904,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr44tile)
 
     (void) y;
     /* adjust fromskew */
-    fromskew = (fromskew * 18) / 4;
+    fromskew = (fromskew / 4) * (4*2+2);
     if ((h & 3) == 0 && (w & 3) == 0) {				        
         for (; h >= 4; h -= 4) {
             x = w>>2;
@@ -2007,7 +2007,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr42tile)
     int32 incr = 2*toskew+w;
 
     (void) y;
-    fromskew = (fromskew * 10) / 4;
+    fromskew = (fromskew / 4) * (4*2+2);
     if ((w & 3) == 0 && (h & 1) == 0) {
         for (; h >= 2; h -= 2) {
             x = w>>2;
@@ -2085,7 +2085,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr42tile)
 DECLAREContigPutFunc(putcontig8bitYCbCr41tile)
 {
     (void) y;
-    /* XXX adjust fromskew */
+    fromskew = (fromskew / 4) * (4*1+2);
     do {
 	x = w>>2;
 	while(x>0) {
@@ -2132,7 +2132,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
 	uint32* cp2;
 	int32 incr = 2*toskew+w;
 	(void) y;
-	fromskew = (fromskew / 2) * 6;
+	fromskew = (fromskew / 2) * (2*2+2);
 	cp2 = cp+w+toskew;
 	while (h>=2) {
 		x = w;
@@ -2188,7 +2188,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr22tile)
 DECLAREContigPutFunc(putcontig8bitYCbCr21tile)
 {
 	(void) y;
-	fromskew = (fromskew * 4) / 2;
+	fromskew = (fromskew / 2) * (2*1+2);
 	do {
 		x = w>>1;
 		while(x>0) {
@@ -2227,7 +2227,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr12tile)
 	uint32* cp2;
 	int32 incr = 2*toskew+w;
 	(void) y;
-	fromskew = (fromskew / 2) * 4;
+	fromskew = (fromskew / 1) * (1 * 2 + 2);
 	cp2 = cp+w+toskew;
 	while (h>=2) {
 		x = w;
@@ -2263,7 +2263,7 @@ DECLAREContigPutFunc(putcontig8bitYCbCr12tile)
 DECLAREContigPutFunc(putcontig8bitYCbCr11tile)
 {
 	(void) y;
-	fromskew *= 3;
+	fromskew = (fromskew / 1) * (1 * 1 + 2);
 	do {
 		x = w; /* was x = w>>1; patched 2000/09/25 warmerda@home.com */
 		do {
@@ -2287,7 +2287,7 @@ DECLARESepPutFunc(putseparate8bitYCbCr11tile)
 	(void) y;
 	(void) a;
 	/* TODO: naming of input vars is still off, change obfuscating declaration inside define, or resolve obfuscation */
-	while (h-- > 0) {
+	for( ; h > 0; --h) {
 		x = w;
 		do {
 			uint32 dr, dg, db;
@@ -2302,7 +2302,7 @@ DECLARESepPutFunc(putseparate8bitYCbCr11tile)
 
 static int isInRefBlackWhiteRange(float f)
 {
-    return f >= (float)(-0x7FFFFFFF + 128) && f <= (float)0x7FFFFFFF;
+    return f > (float)(-0x7FFFFFFF + 128) && f < (float)0x7FFFFFFF;
 }
 
 static int
@@ -2367,6 +2367,13 @@ initCIELabConversion(TIFFRGBAImage* img)
 	float   *whitePoint;
 	float   refWhite[3];
 
+	TIFFGetFieldDefaulted(img->tif, TIFFTAG_WHITEPOINT, &whitePoint);
+	if (whitePoint[1] == 0.0f ) {
+		TIFFErrorExt(img->tif->tif_clientdata, module,
+		    "Invalid value for WhitePoint tag.");
+		return NULL;
+        }
+
 	if (!img->cielab) {
 		img->cielab = (TIFFCIELabToRGB *)
 			_TIFFmalloc(sizeof(TIFFCIELabToRGB));
@@ -2377,7 +2384,6 @@ initCIELabConversion(TIFFRGBAImage* img)
 		}
 	}
 
-	TIFFGetFieldDefaulted(img->tif, TIFFTAG_WHITEPOINT, &whitePoint);
 	refWhite[1] = 100.0F;
 	refWhite[0] = whitePoint[0] / whitePoint[1] * refWhite[1];
 	refWhite[2] = (1.0F - whitePoint[0] - whitePoint[1])

@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_system.h"
 
 //NOTE: The tiff codec requires an ANSI C compiler environment for building and 
-//		presumes an ANSI C environment for use.
+//    presumes an ANSI C environment for use.
 
 # define HAVE_SYS_TYPES_H 1
 # define HAVE_FCNTL_H 1
@@ -80,7 +80,7 @@
 /* Unsigned 32-bit type formatter */
 #define TIFF_UINT32_FORMAT "%u"
 
-#ifdef _MSC_VER		// windows
+#ifdef _MSC_VER   // windows
 
 /* Signed 64-bit type formatter */
 #define TIFF_INT64_FORMAT "%I64d"
@@ -94,9 +94,9 @@
 /* Unsigned 64-bit type */
 #define TIFF_UINT64_T unsigned __int64
 
-#else						// linux/unix
+#else           // linux/unix
 
-#if 0 //_FX_CPU_ == _FX_X64_	// linux/unix 64
+#if 0 //_FX_CPU_ == _FX_X64_  // linux/unix 64
 
 /* Signed 64-bit type formatter */
 #define TIFF_INT64_FORMAT "%ld"
@@ -107,7 +107,7 @@
 /* Signed 64-bit type */
 #define TIFF_INT64_T signed long
 
-#else						// linux/unix 32
+#else           // linux/unix 32
 
 /* Signed 64-bit type formatter */
 #define TIFF_INT64_FORMAT "%lld"
@@ -118,7 +118,7 @@
 /* Signed 64-bit type */
 #define TIFF_INT64_T signed long long
 
-#endif						// end _FX_CPU_
+#endif            // end _FX_CPU_
 
 /* Unsigned 64-bit type */
 #define TIFF_UINT64_T unsigned long long
@@ -201,7 +201,7 @@
 
 /* Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation
    fails with unpatched IJG JPEG library) */
-#define  OJPEG_SUPPORT	1
+#define  OJPEG_SUPPORT  1
 
 /* Support Macintosh PackBits algorithm */
 #define PACKBITS_SUPPORT 1

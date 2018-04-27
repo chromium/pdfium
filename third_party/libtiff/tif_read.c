@@ -1,4 +1,4 @@
-/* $Id: tif_read.c,v 1.59 2017-05-13 15:34:06 erouault Exp $ */
+/* $Id: tif_read.c,v 1.66 2017-11-17 20:21:00 erouault Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -262,6 +262,7 @@ TIFFFillStripPartial( TIFF *tif, int strip, tmsize_t read_ahead, int restart )
         tif->tif_rawdataoff = tif->tif_rawdataoff + tif->tif_rawdataloaded - unused_data ;
         tif->tif_rawdataloaded = unused_data + to_read;
 
+        tif->tif_rawcc = tif->tif_rawdataloaded;
         tif->tif_rawcp = tif->tif_rawdata;
                         
         if (!isFillOrder(tif, td->td_fillorder) &&
@@ -275,10 +276,28 @@ TIFFFillStripPartial( TIFF *tif, int strip, tmsize_t read_ahead, int restart )
         ** restart the decoder.
         */
         if( restart )
-                return TIFFStartStrip(tif, strip);
+        {
+
+#ifdef JPEG_SUPPORT
+            /* A bit messy since breaks the codec abstraction. Ultimately */
+            /* there should be a function pointer for that, but it seems */
+            /* only JPEG is affected. */
+            /* For JPEG, if there are multiple scans (can generally be known */
+            /* with the  read_ahead used), we need to read the whole strip */
+            if( tif->tif_dir.td_compression==COMPRESSION_JPEG &&
+                (uint64)tif->tif_rawcc < td->td_stripbytecount[strip] )
+            {
+                if( TIFFJPEGIsFullStripRequired(tif) )
+                {
+                    return TIFFFillStrip(tif, strip);
+                }
+            }
+#endif
+
+            return TIFFStartStrip(tif, strip);
+        }
         else
         {
-                tif->tif_rawcc = tif->tif_rawdataloaded;
                 return 1;
         }
 }
@@ -477,7 +496,7 @@ static tmsize_t TIFFReadEncodedStripGetStripSize(TIFF* tif, uint32 strip, uint16
 	stripsize=TIFFVStripSize(tif,rows);
 	if (stripsize==0)
 		return((tmsize_t)(-1));
-    return stripsize;
+	return stripsize;
 }
 
 /*
@@ -487,14 +506,14 @@ static tmsize_t TIFFReadEncodedStripGetStripSize(TIFF* tif, uint32 strip, uint16
 tmsize_t
 TIFFReadEncodedStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 {
-  static const char module[] = "TIFFReadEncodedStrip";
-  TIFFDirectory *td = &tif->tif_dir;
-  tmsize_t stripsize;
-  uint16 plane;
+	static const char module[] = "TIFFReadEncodedStrip";
+	TIFFDirectory *td = &tif->tif_dir;
+	tmsize_t stripsize;
+	uint16 plane;
 
-  stripsize=TIFFReadEncodedStripGetStripSize(tif, strip, &plane);
-  if (stripsize==((tmsize_t)(-1)))
-      return((tmsize_t)(-1));
+	stripsize=TIFFReadEncodedStripGetStripSize(tif, strip, &plane);
+	if (stripsize==((tmsize_t)(-1)))
+		return((tmsize_t)(-1));
 
     /* shortcut to avoid an extra memcpy() */
     if( td->td_compression == COMPRESSION_NONE &&
@@ -525,7 +544,7 @@ TIFFReadEncodedStrip(TIFF* tif, uint32 strip, void* buf, tmsize_t size)
 
 /* Variant of TIFFReadEncodedStrip() that does 
  * * if *buf == NULL, *buf = _TIFFmalloc(bufsizetoalloc) only after TIFFFillStrip() has
- *   suceeded. This avoid excessive memory allocation in case of truncated
+ *   succeeded. This avoid excessive memory allocation in case of truncated
  *   file.
  * * calls regular TIFFReadEncodedStrip() if *buf != NULL
  */
@@ -565,7 +584,6 @@ _TIFFReadEncodedStripAndAllocBuffer(TIFF* tif, uint32 strip,
 
 
 }
-
 
 static tmsize_t
 TIFFReadRawStrip1(TIFF* tif, uint32 strip, void* buf, tmsize_t size,
@@ -798,26 +816,7 @@ TIFFFillStrip(TIFF* tif, uint32 strip)
 			}
 		}
 
-		if (isMapped(tif) &&
-		    (isFillOrder(tif, td->td_fillorder)
-		    || (tif->tif_flags & TIFF_NOBITREV))) {
-			/*
-			 * The image is mapped into memory and we either don't
-			 * need to flip bits or the compression routine is
-			 * going to handle this operation itself.  In this
-			 * case, avoid copying the raw data and instead just
-			 * reference the data from the memory mapped file
-			 * image.  This assumes that the decompression
-			 * routines do not modify the contents of the raw data
-			 * buffer (if they try to, the application will get a
-			 * fault since the file is mapped read-only).
-			 */
-			if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
-				_TIFFfree(tif->tif_rawdata);
-				tif->tif_rawdata = NULL;
-				tif->tif_rawdatasize = 0;
-			}
-			tif->tif_flags &= ~TIFF_MYBUFFER;
+		if (isMapped(tif)) {
 			/*
 			 * We must check for overflow, potentially causing
 			 * an OOB read. Instead of simple
@@ -854,6 +853,28 @@ TIFFFillStrip(TIFF* tif, uint32 strip)
 				tif->tif_curstrip = NOSTRIP;
 				return (0);
 			}
+		}
+
+		if (isMapped(tif) &&
+		    (isFillOrder(tif, td->td_fillorder)
+		    || (tif->tif_flags & TIFF_NOBITREV))) {
+			/*
+			 * The image is mapped into memory and we either don't
+			 * need to flip bits or the compression routine is
+			 * going to handle this operation itself.  In this
+			 * case, avoid copying the raw data and instead just
+			 * reference the data from the memory mapped file
+			 * image.  This assumes that the decompression
+			 * routines do not modify the contents of the raw data
+			 * buffer (if they try to, the application will get a
+			 * fault since the file is mapped read-only).
+			 */
+			if ((tif->tif_flags & TIFF_MYBUFFER) && tif->tif_rawdata) {
+				_TIFFfree(tif->tif_rawdata);
+				tif->tif_rawdata = NULL;
+				tif->tif_rawdatasize = 0;
+			}
+			tif->tif_flags &= ~TIFF_MYBUFFER;
 			tif->tif_rawdatasize = (tmsize_t)bytecount;
 			tif->tif_rawdata = tif->tif_base + (tmsize_t)td->td_stripoffset[strip];
                         tif->tif_rawdataoff = 0;
@@ -998,7 +1019,7 @@ TIFFReadEncodedTile(TIFF* tif, uint32 tile, void* buf, tmsize_t size)
 
 /* Variant of TIFFReadTile() that does 
  * * if *buf == NULL, *buf = _TIFFmalloc(bufsizetoalloc) only after TIFFFillTile() has
- *   suceeded. This avoid excessive memory allocation in case of truncated
+ *   succeeded. This avoid excessive memory allocation in case of truncated
  *   file.
  * * calls regular TIFFReadEncodedTile() if *buf != NULL
  */
@@ -1017,7 +1038,7 @@ _TIFFReadTileAndAllocBuffer(TIFF* tif,
 
 /* Variant of TIFFReadEncodedTile() that does 
  * * if *buf == NULL, *buf = _TIFFmalloc(bufsizetoalloc) only after TIFFFillTile() has
- *   suceeded. This avoid excessive memory allocation in case of truncated
+ *   succeeded. This avoid excessive memory allocation in case of truncated
  *   file.
  * * calls regular TIFFReadEncodedTile() if *buf != NULL
  */
@@ -1066,7 +1087,6 @@ _TIFFReadEncodedTileAndAllocBuffer(TIFF* tif, uint32 tile,
     } else
         return ((tmsize_t)(-1));
 }
-
 
 static tmsize_t
 TIFFReadRawTile1(TIFF* tif, uint32 tile, void* buf, tmsize_t size, const char* module)
@@ -1210,6 +1230,56 @@ TIFFFillTile(TIFF* tif, uint32 tile)
 #endif
 			return (0);
 		}
+
+		/* To avoid excessive memory allocations: */
+		/* Byte count should normally not be larger than a number of */
+		/* times the uncompressed size plus some margin */
+                if( bytecount > 1024 * 1024 )
+                {
+			/* 10 and 4096 are just values that could be adjusted. */
+			/* Hopefully they are safe enough for all codecs */
+			tmsize_t stripsize = TIFFTileSize(tif);
+			if( stripsize != 0 &&
+			    (bytecount - 4096) / 10 > (uint64)stripsize  )
+			{
+				uint64 newbytecount = (uint64)stripsize * 10 + 4096;
+				if( (int64)newbytecount >= 0 )
+				{
+#if defined(__WIN32__) && (defined(_MSC_VER) || defined(__MINGW32__))
+					TIFFWarningExt(tif->tif_clientdata, module,
+					  "Too large tile byte count %I64u, tile %lu. Limiting to %I64u",
+					     (unsigned __int64) bytecount,
+					     (unsigned long) tile,
+					     (unsigned __int64) newbytecount);
+#else
+					TIFFErrorExt(tif->tif_clientdata, module,
+					  "Too large tile byte count %llu, tile %lu. Limiting to %llu",
+					     (unsigned long long) bytecount,
+					     (unsigned long) tile,
+					     (unsigned long long) newbytecount);
+#endif
+					bytecount = newbytecount;
+				}
+			}
+		}
+
+		if (isMapped(tif)) {
+			/*
+			 * We must check for overflow, potentially causing
+			 * an OOB read. Instead of simple
+			 *
+			 *  td->td_stripoffset[tile]+bytecount > tif->tif_size
+			 *
+			 * comparison (which can overflow) we do the following
+			 * two comparisons:
+			 */
+			if (bytecount > (uint64)tif->tif_size ||
+			    td->td_stripoffset[tile] > (uint64)tif->tif_size - bytecount) {
+				tif->tif_curtile = NOTILE;
+				return (0);
+			}
+		}
+
 		if (isMapped(tif) &&
 		    (isFillOrder(tif, td->td_fillorder)
 		     || (tif->tif_flags & TIFF_NOBITREV))) {
@@ -1230,20 +1300,7 @@ TIFFFillTile(TIFF* tif, uint32 tile)
 				tif->tif_rawdatasize = 0;
 			}
 			tif->tif_flags &= ~TIFF_MYBUFFER;
-			/*
-			 * We must check for overflow, potentially causing
-			 * an OOB read. Instead of simple
-			 *
-			 *  td->td_stripoffset[tile]+bytecount > tif->tif_size
-			 *
-			 * comparison (which can overflow) we do the following
-			 * two comparisons:
-			 */
-			if (bytecount > (uint64)tif->tif_size ||
-			    td->td_stripoffset[tile] > (uint64)tif->tif_size - bytecount) {
-				tif->tif_curtile = NOTILE;
-				return (0);
-			}
+
 			tif->tif_rawdatasize = (tmsize_t)bytecount;
 			tif->tif_rawdata =
 				tif->tif_base + (tmsize_t)td->td_stripoffset[tile];
@@ -1442,7 +1499,10 @@ TIFFStartTile(TIFF* tif, uint32 tile)
 	else
 	{
 		tif->tif_rawcp = tif->tif_rawdata;
-		tif->tif_rawcc = (tmsize_t)td->td_stripbytecount[tile];
+		if( tif->tif_rawdataloaded > 0 )
+			tif->tif_rawcc = tif->tif_rawdataloaded;
+		else
+			tif->tif_rawcc = (tmsize_t)td->td_stripbytecount[tile];
 	}
 	return ((*tif->tif_predecode)(tif,
 			(uint16)(tile/td->td_stripsperimage)));

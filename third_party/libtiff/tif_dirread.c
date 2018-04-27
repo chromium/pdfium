@@ -1,4 +1,4 @@
-/* $Id: tif_dirread.c,v 1.208 2017-04-27 15:46:22 erouault Exp $ */
+/* $Id: tif_dirread.c,v 1.218 2017-09-09 21:44:42 erouault Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -42,6 +42,7 @@
 #include "tiffiop.h"
 #include <float.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #define IGNORE 0          /* tag placeholder used below */
 #define FAILED_FII    ((uint32) -1)
@@ -637,6 +638,8 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryFloat(TIFF* tif, TIFFDirEntry* d
 				err=TIFFReadDirEntryCheckedDouble(tif,direntry,&m);
 				if (err!=TIFFReadDirEntryErrOk)
 					return(err);
+				if ((m > FLT_MAX) || (m < FLT_MIN))
+					return(TIFFReadDirEntryErrRange);
 				*value=(float)m;
 				return(TIFFReadDirEntryErrOk);
 			}
@@ -766,13 +769,80 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryIfd8(TIFF* tif, TIFFDirEntry* di
 	}
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* direntry, uint32* count, uint32 desttypesize, void** value)
+
+#define INITIAL_THRESHOLD (1024 * 1024)
+#define THRESHOLD_MULTIPLIER 10
+#define MAX_THRESHOLD (THRESHOLD_MULTIPLIER * THRESHOLD_MULTIPLIER * THRESHOLD_MULTIPLIER * INITIAL_THRESHOLD)
+
+static enum TIFFReadDirEntryErr TIFFReadDirEntryDataAndRealloc(
+                    TIFF* tif, uint64 offset, tmsize_t size, void** pdest)
+{
+#if SIZEOF_VOIDP == 8 || SIZEOF_SIZE_T == 8
+        tmsize_t threshold = INITIAL_THRESHOLD;
+#endif
+        tmsize_t already_read = 0;
+
+        assert( !isMapped(tif) );
+
+        if (!SeekOK(tif,offset))
+                return(TIFFReadDirEntryErrIo);
+
+        /* On 64 bit processes, read first a maximum of 1 MB, then 10 MB, etc */
+        /* so as to avoid allocating too much memory in case the file is too */
+        /* short. We could ask for the file size, but this might be */
+        /* expensive with some I/O layers (think of reading a gzipped file) */
+        /* Restrict to 64 bit processes, so as to avoid reallocs() */
+        /* on 32 bit processes where virtual memory is scarce.  */
+        while( already_read < size )
+        {
+            void* new_dest;
+            tmsize_t bytes_read;
+            tmsize_t to_read = size - already_read;
+#if SIZEOF_VOIDP == 8 || SIZEOF_SIZE_T == 8
+            if( to_read >= threshold && threshold < MAX_THRESHOLD )
+            {
+                to_read = threshold;
+                threshold *= THRESHOLD_MULTIPLIER;
+            }
+#endif
+
+            new_dest = (uint8*) _TIFFrealloc(
+                            *pdest, already_read + to_read);
+            if( new_dest == NULL )
+            {
+                TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+                            "Failed to allocate memory for %s "
+                            "(%ld elements of %ld bytes each)",
+                            "TIFFReadDirEntryArray",
+                             (long) 1, (long) (already_read + to_read));
+                return TIFFReadDirEntryErrAlloc;
+            }
+            *pdest = new_dest;
+
+            bytes_read = TIFFReadFile(tif,
+                (char*)*pdest + already_read, to_read);
+            already_read += bytes_read;
+            if (bytes_read != to_read) {
+                return TIFFReadDirEntryErrIo;
+            }
+        }
+        return TIFFReadDirEntryErrOk;
+}
+
+static enum TIFFReadDirEntryErr TIFFReadDirEntryArrayWithLimit(
+    TIFF* tif, TIFFDirEntry* direntry, uint32* count, uint32 desttypesize,
+    void** value, uint64 maxcount)
 {
 	int typesize;
 	uint32 datasize;
 	void* data;
+        uint64 target_count64;
 	typesize=TIFFDataWidth(direntry->tdir_type);
-	if ((direntry->tdir_count==0)||(typesize==0))
+
+        target_count64 = (direntry->tdir_count > maxcount) ?
+                maxcount : direntry->tdir_count;
+
+	if ((target_count64==0)||(typesize==0))
 	{
 		*value=0;
 		return(TIFFReadDirEntryErrOk);
@@ -784,17 +854,30 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
          * in either the current data type or the dest data type.  This also
          * avoids problems with overflow of tmsize_t on 32bit systems.
          */
-	if ((uint64)(2147483647/typesize)<direntry->tdir_count)
+	if ((uint64)(2147483647/typesize)<target_count64)
 		return(TIFFReadDirEntryErrSizesan);
-	if ((uint64)(2147483647/desttypesize)<direntry->tdir_count)
+	if ((uint64)(2147483647/desttypesize)<target_count64)
 		return(TIFFReadDirEntryErrSizesan);
 
-	*count=(uint32)direntry->tdir_count;
+	*count=(uint32)target_count64;
 	datasize=(*count)*typesize;
 	assert((tmsize_t)datasize>0);
-	data=_TIFFCheckMalloc(tif, *count, typesize, "ReadDirEntryArray");
-	if (data==0)
-		return(TIFFReadDirEntryErrAlloc);
+
+	if( isMapped(tif) && datasize > (uint32)tif->tif_size )
+		return TIFFReadDirEntryErrIo;
+
+	if( !isMapped(tif) &&
+		(((tif->tif_flags&TIFF_BIGTIFF) && datasize > 8) ||
+		(!(tif->tif_flags&TIFF_BIGTIFF) && datasize > 4)) )
+	{
+		data = NULL;
+	}
+	else
+	{
+		data=_TIFFCheckMalloc(tif, *count, typesize, "ReadDirEntryArray");
+		if (data==0)
+			return(TIFFReadDirEntryErrAlloc);
+	}
 	if (!(tif->tif_flags&TIFF_BIGTIFF))
 	{
 		if (datasize<=4)
@@ -805,7 +888,10 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 			uint32 offset = direntry->tdir_offset.toff_long;
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong(&offset);
-			err=TIFFReadDirEntryData(tif,(uint64)offset,(tmsize_t)datasize,data);
+			if( isMapped(tif) )
+				err=TIFFReadDirEntryData(tif,(uint64)offset,(tmsize_t)datasize,data);
+			else
+				err=TIFFReadDirEntryDataAndRealloc(tif,(uint64)offset,(tmsize_t)datasize,&data);
 			if (err!=TIFFReadDirEntryErrOk)
 			{
 				_TIFFfree(data);
@@ -823,7 +909,10 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 			uint64 offset = direntry->tdir_offset.toff_long8;
 			if (tif->tif_flags&TIFF_SWAB)
 				TIFFSwabLong8(&offset);
-			err=TIFFReadDirEntryData(tif,offset,(tmsize_t)datasize,data);
+			if( isMapped(tif) )
+				err=TIFFReadDirEntryData(tif,(uint64)offset,(tmsize_t)datasize,data);
+			else
+				err=TIFFReadDirEntryDataAndRealloc(tif,(uint64)offset,(tmsize_t)datasize,&data);
 			if (err!=TIFFReadDirEntryErrOk)
 			{
 				_TIFFfree(data);
@@ -833,6 +922,12 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* d
 	}
 	*value=data;
 	return(TIFFReadDirEntryErrOk);
+}
+
+static enum TIFFReadDirEntryErr TIFFReadDirEntryArray(TIFF* tif, TIFFDirEntry* direntry, uint32* count, uint32 desttypesize, void** value)
+{
+    return TIFFReadDirEntryArrayWithLimit(tif, direntry, count,
+                                          desttypesize, value, ~((uint64)0));
 }
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntryByteArray(TIFF* tif, TIFFDirEntry* direntry, uint8** value)
@@ -1864,7 +1959,8 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntrySlongArray(TIFF* tif, TIFFDirEnt
 	return(TIFFReadDirEntryErrOk);
 }
 
-static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEntry* direntry, uint64** value)
+static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8ArrayWithLimit(
+        TIFF* tif, TIFFDirEntry* direntry, uint64** value, uint64 maxcount)
 {
 	enum TIFFReadDirEntryErr err;
 	uint32 count;
@@ -1884,7 +1980,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEnt
 		default:
 			return(TIFFReadDirEntryErrType);
 	}
-	err=TIFFReadDirEntryArray(tif,direntry,&count,8,&origdata);
+	err=TIFFReadDirEntryArrayWithLimit(tif,direntry,&count,8,&origdata,maxcount);
 	if ((err!=TIFFReadDirEntryErrOk)||(origdata==0))
 	{
 		*value=0;
@@ -2028,6 +2124,11 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEnt
 	}
 	*value=data;
 	return(TIFFReadDirEntryErrOk);
+}
+
+static enum TIFFReadDirEntryErr TIFFReadDirEntryLong8Array(TIFF* tif, TIFFDirEntry* direntry, uint64** value)
+{
+    return TIFFReadDirEntryLong8ArrayWithLimit(tif, direntry, value, ~((uint64)0));
 }
 
 static enum TIFFReadDirEntryErr TIFFReadDirEntrySlong8Array(TIFF* tif, TIFFDirEntry* direntry, int64** value)
@@ -2732,7 +2833,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryPersampleShort(TIFF* tif, TIFFDi
 	if (direntry->tdir_count<(uint64)tif->tif_dir.td_samplesperpixel)
 		return(TIFFReadDirEntryErrCount);
 	err=TIFFReadDirEntryShortArray(tif,direntry,&m);
-	if (err!=TIFFReadDirEntryErrOk)
+	if (err!=TIFFReadDirEntryErrOk || m == NULL)
 		return(err);
 	na=m;
 	nb=tif->tif_dir.td_samplesperpixel;
@@ -3581,6 +3682,10 @@ TIFFReadDirectory(TIFF* tif)
 							goto bad;
 						dp->tdir_tag=IGNORE;
 						break;
+                                        default:
+                                            if( !_TIFFCheckFieldIsValidForCodec(tif, dp->tdir_tag) )
+                                                dp->tdir_tag=IGNORE;
+                                            break;
 				}
 			}
 		}
@@ -3987,12 +4092,14 @@ TIFFReadDirectory(TIFF* tif)
 		#define	BYTECOUNTLOOKSBAD \
 		    ( (tif->tif_dir.td_stripbytecount[0] == 0 && tif->tif_dir.td_stripoffset[0] != 0) || \
 		      (tif->tif_dir.td_compression == COMPRESSION_NONE && \
-		       tif->tif_dir.td_stripbytecount[0] > TIFFGetFileSize(tif) - tif->tif_dir.td_stripoffset[0]) || \
+		       (tif->tif_dir.td_stripoffset[0] <= TIFFGetFileSize(tif) && \
+		        tif->tif_dir.td_stripbytecount[0] > TIFFGetFileSize(tif) - tif->tif_dir.td_stripoffset[0])) || \
 		      (tif->tif_mode == O_RDONLY && \
 		       tif->tif_dir.td_compression == COMPRESSION_NONE && \
 		       tif->tif_dir.td_stripbytecount[0] < TIFFScanlineSize64(tif) * tif->tif_dir.td_imagelength) )
 
 		} else if (tif->tif_dir.td_nstrips == 1
+                           && !(tif->tif_flags&TIFF_ISTILED)
                            && _TIFFFillStriles(tif)
 			   && tif->tif_dir.td_stripoffset[0] != 0
 			   && BYTECOUNTLOOKSBAD) {
@@ -4370,7 +4477,11 @@ EstimateStripByteCounts(TIFF* tif, TIFFDirEntry* dir, uint16 dircount)
 			}
 			space+=datasize;
 		}
-		space = filesize - space;
+		if( filesize < space )
+                    /* we should perhaps return in error ? */
+                    space = filesize;
+                else
+                    space = filesize - space;
 		if (td->td_planarconfig == PLANARCONFIG_SEPARATE)
 			space /= td->td_samplesperpixel;
 		for (strip = 0; strip < td->td_nstrips; strip++)
@@ -5437,28 +5548,39 @@ TIFFFetchStripThing(TIFF* tif, TIFFDirEntry* dir, uint32 nstrips, uint64** lpp)
 	static const char module[] = "TIFFFetchStripThing";
 	enum TIFFReadDirEntryErr err;
 	uint64* data;
-	err=TIFFReadDirEntryLong8Array(tif,dir,&data);
+	err=TIFFReadDirEntryLong8ArrayWithLimit(tif,dir,&data,nstrips);
 	if (err!=TIFFReadDirEntryErrOk)
 	{
 		const TIFFField* fip = TIFFFieldWithTag(tif,dir->tdir_tag); 
 		TIFFReadDirEntryOutputErr(tif,err,module,fip ? fip->field_name : "unknown tagname",0);
 		return(0);
 	}
-	if (dir->tdir_count!=(uint64)nstrips)
+	if (dir->tdir_count<(uint64)nstrips)
 	{
 		uint64* resizeddata;
+		const TIFFField* fip = TIFFFieldWithTag(tif,dir->tdir_tag);
+		const char* pszMax = getenv("LIBTIFF_STRILE_ARRAY_MAX_RESIZE_COUNT");
+		uint32 max_nstrips = 1000000;
+		if( pszMax )
+			max_nstrips = (uint32) atoi(pszMax);
+		TIFFReadDirEntryOutputErr(tif,TIFFReadDirEntryErrCount,
+		            module,
+		            fip ? fip->field_name : "unknown tagname",
+		            ( nstrips <= max_nstrips ) );
+
+		if( nstrips > max_nstrips )
+		{
+			_TIFFfree(data);
+			return(0);
+		}
+
 		resizeddata=(uint64*)_TIFFCheckMalloc(tif,nstrips,sizeof(uint64),"for strip array");
 		if (resizeddata==0) {
 			_TIFFfree(data);
 			return(0);
 		}
-		if (dir->tdir_count<(uint64)nstrips)
-		{
-			_TIFFmemcpy(resizeddata,data,(uint32)dir->tdir_count*sizeof(uint64));
-			_TIFFmemset(resizeddata+(uint32)dir->tdir_count,0,(nstrips-(uint32)dir->tdir_count)*sizeof(uint64));
-		}
-		else
-			_TIFFmemcpy(resizeddata,data,nstrips*sizeof(uint64));
+                _TIFFmemcpy(resizeddata,data,(uint32)dir->tdir_count*sizeof(uint64));
+                _TIFFmemset(resizeddata+(uint32)dir->tdir_count,0,(nstrips-(uint32)dir->tdir_count)*sizeof(uint64));
 		_TIFFfree(data);
 		data=resizeddata;
 	}
@@ -5546,6 +5668,11 @@ ChopUpSingleUncompressedStrip(TIFF* tif)
 	uint64* newoffsets;
 
 	bytecount = td->td_stripbytecount[0];
+        /* On a newly created file, just re-opened to be filled, we */
+        /* don't want strip chop to trigger as it is going to cause issues */
+        /* later ( StripOffsets and StripByteCounts improperly filled) . */
+        if( bytecount == 0 && tif->tif_mode != O_RDONLY )
+            return;
 	offset = td->td_stripoffset[0];
 	assert(td->td_planarconfig == PLANARCONFIG_CONTIG);
 	if ((td->td_photometric == PHOTOMETRIC_YCBCR)&&
