@@ -97,12 +97,11 @@ class CPDFSDK_FormFillEnvironment
   void SetCursor(int nCursorType);
   int SetTimer(int uElapse, TimerCallback lpTimerFunc);
   void KillTimer(int nTimerID);
+
   FX_SYSTEMTIME GetLocalTime() const;
+  FPDF_PAGE GetCurrentPage() const;
 
   void OnChange();
-
-  FPDF_PAGE GetCurrentPage(UnderlyingDocumentType* document);
-
   void ExecuteNamedAction(const char* namedAction);
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
                             FPDF_DWORD nTextLen,

@@ -287,10 +287,9 @@ void CPDFSDK_FormFillEnvironment::OnChange() {
     m_pInfo->FFI_OnChange(m_pInfo);
 }
 
-FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage(
-    UnderlyingDocumentType* document) {
+FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
   if (m_pInfo && m_pInfo->FFI_GetCurrentPage)
-    return m_pInfo->FFI_GetCurrentPage(m_pInfo, document);
+    return m_pInfo->FFI_GetCurrentPage(m_pInfo, m_pUnderlyingDoc.Get());
   return nullptr;
 }
 
@@ -545,8 +544,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
 }
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
-  UnderlyingPageType* pPage =
-      UnderlyingFromFPDFPage(GetCurrentPage(m_pUnderlyingDoc.Get()));
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(GetCurrentPage());
   return pPage ? GetPageView(pPage, true) : nullptr;
 }
 
