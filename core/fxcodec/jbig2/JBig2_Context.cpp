@@ -995,8 +995,10 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     return JBIG2_ERROR_TOO_SHORT;
   }
 
-  if (pHRD->HGW == 0 || pHRD->HGH == 0)
+  if (pHRD->HGW == 0 || pHRD->HGW > JBIG2_MAX_IMAGE_SIZE || pHRD->HGH == 0 ||
+      pHRD->HGH > JBIG2_MAX_IMAGE_SIZE) {
     return JBIG2_ERROR_FATAL;
+  }
 
   if (ri.width <= 0 || ri.width > JBIG2_MAX_IMAGE_SIZE || ri.height <= 0 ||
       ri.height > JBIG2_MAX_IMAGE_SIZE) {
