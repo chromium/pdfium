@@ -1252,7 +1252,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
   switch (c) {
     case L'\b':
       if (m_CursorPosition > 0) {
-        SetCursorPosition(m_EdtEngine.GetIndexBefore(m_CursorPosition));
+        SetCursorPosition(m_CursorPosition - 1);
         m_EdtEngine.Delete(m_CursorPosition, 1);
       }
       break;
