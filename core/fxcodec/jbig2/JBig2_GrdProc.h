@@ -52,69 +52,54 @@ class CJBig2_GRDProc {
   bool UseTemplate1Opt3() const;
   bool UseTemplate23Opt3() const;
 
-  FXCODEC_STATUS DecodeArith(PauseIndicatorIface* pPause,
-                             CJBig2_ArithDecoder* pArithDecoder);
-  FXCODEC_STATUS DecodeArithTemplate0Opt3(CJBig2_Image* pImage,
-                                          CJBig2_ArithDecoder* pArithDecoder,
-                                          JBig2ArithCtx* gbContext,
-                                          PauseIndicatorIface* pPause);
-  FXCODEC_STATUS DecodeArithTemplate0Unopt(CJBig2_Image* pImage,
-                                           CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext,
-                                           PauseIndicatorIface* pPause);
-  FXCODEC_STATUS DecodeArithTemplate1Opt3(CJBig2_Image* pImage,
-                                          CJBig2_ArithDecoder* pArithDecoder,
-                                          JBig2ArithCtx* gbContext,
-                                          PauseIndicatorIface* pPause);
-  FXCODEC_STATUS DecodeArithTemplate1Unopt(CJBig2_Image* pImage,
-                                           CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext,
-                                           PauseIndicatorIface* pPause);
-  FXCODEC_STATUS DecodeArithTemplate2Opt3(CJBig2_Image* pImage,
-                                          CJBig2_ArithDecoder* pArithDecoder,
-                                          JBig2ArithCtx* gbContext,
-                                          PauseIndicatorIface* pPause);
-  FXCODEC_STATUS DecodeArithTemplate2Unopt(CJBig2_Image* pImage,
-                                           CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext,
-                                           PauseIndicatorIface* pPause);
-  FXCODEC_STATUS DecodeArithTemplate3Opt3(CJBig2_Image* pImage,
-                                          CJBig2_ArithDecoder* pArithDecoder,
-                                          JBig2ArithCtx* gbContext,
-                                          PauseIndicatorIface* pPause);
-  FXCODEC_STATUS DecodeArithTemplate3Unopt(CJBig2_Image* pImage,
-                                           CJBig2_ArithDecoder* pArithDecoder,
-                                           JBig2ArithCtx* gbContext,
-                                           PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArith(PauseIndicatorIface* pPause,
+                                        CJBig2_ArithDecoder* pArithDecoder);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate0Opt3(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate0Unopt(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate1Opt3(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate1Unopt(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate2Opt3(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate2Unopt(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate3Opt3(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
+  FXCODEC_STATUS ProgressiveDecodeArithTemplate3Unopt(
+      CJBig2_ArithDecoder* pArithDecoder,
+      PauseIndicatorIface* pPause);
 
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate0Opt3(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
-
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate0Unopt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
-
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate1Opt3(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
-
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate1Unopt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
-
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate2Opt3(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
-
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate2Unopt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
-
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate3Opt3(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
-
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate3Unopt(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
