@@ -137,7 +137,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                  const FX_RECT& img_rc,
                                  int32_t pal_num,
-                                 void* pal_ptr,
+                                 CFX_GifPalette* pal_ptr,
                                  int32_t delay_time,
                                  bool user_input,
                                  int32_t trans_index,
@@ -236,7 +236,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   size_t m_FrameNumber;
   size_t m_FrameCur;
   int m_GifBgIndex;
-  uint8_t* m_pGifPalette;
+  CFX_GifPalette* m_pGifPalette;
   int32_t m_GifPltNumber;
   int m_GifTransIndex;
   FX_RECT m_GifFrameRect;

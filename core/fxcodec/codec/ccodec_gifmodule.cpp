@@ -26,7 +26,7 @@ CFX_GifDecodeStatus CCodec_GifModule::ReadHeader(Context* pContext,
                                                  int* width,
                                                  int* height,
                                                  int* pal_num,
-                                                 void** pal_pp,
+                                                 CFX_GifPalette** pal_pp,
                                                  int* bg_index,
                                                  CFX_DIBAttribute* pAttribute) {
   auto* context = static_cast<CFX_GifContext*>(pContext);

@@ -29,7 +29,7 @@ class CCodec_GifModule {
     virtual bool GifInputRecordPositionBuf(uint32_t rcd_pos,
                                            const FX_RECT& img_rc,
                                            int32_t pal_num,
-                                           void* pal_ptr,
+                                           CFX_GifPalette* pal_ptr,
                                            int32_t delay_time,
                                            bool user_input,
                                            int32_t trans_index,
@@ -48,7 +48,7 @@ class CCodec_GifModule {
                                  int* width,
                                  int* height,
                                  int* pal_num,
-                                 void** pal_pp,
+                                 CFX_GifPalette** pal_pp,
                                  int* bg_index,
                                  CFX_DIBAttribute* pAttribute);
   std::pair<CFX_GifDecodeStatus, size_t> LoadFrameInfo(Context* context);

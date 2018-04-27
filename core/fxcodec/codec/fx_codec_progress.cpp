@@ -609,7 +609,7 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
     uint32_t rcd_pos,
     const FX_RECT& img_rc,
     int32_t pal_num,
-    void* pal_ptr,
+    CFX_GifPalette* pal_ptr,
     int32_t delay_time,
     bool user_input,
     int32_t trans_index,
@@ -620,9 +620,9 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
   if (!GifReadMoreData(m_pCodecMgr->GetGifModule(), error_status)) {
     return false;
   }
-  uint8_t* pPalette = nullptr;
+  CFX_GifPalette* pPalette = nullptr;
   if (pal_num != 0 && pal_ptr) {
-    pPalette = (uint8_t*)pal_ptr;
+    pPalette = pal_ptr;
   } else {
     if (!m_pGifPalette)
       return false;
@@ -638,9 +638,8 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
 
   m_SrcPaletteNumber = pal_num;
   for (int i = 0; i < pal_num; i++) {
-    uint32_t j = i * 3;
     m_pSrcPalette[i] =
-        ArgbEncode(0xff, pPalette[j], pPalette[j + 1], pPalette[j + 2]);
+        ArgbEncode(0xff, pPalette[i].r, pPalette[i].g, pPalette[i].b);
   }
   m_GifTransIndex = trans_index;
   m_GifFrameRect = img_rc;
@@ -1250,7 +1249,7 @@ bool CCodec_ProgressiveDecoder::GifDetectImageType(CFX_DIBAttribute* pAttribute,
   m_SrcComponents = 1;
   CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
       m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
-      (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
+      &m_pGifPalette, &m_GifBgIndex, nullptr);
   while (readResult == CFX_GifDecodeStatus::Unfinished) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
     if (!GifReadMoreData(pGifModule, error_status)) {
@@ -1258,9 +1257,9 @@ bool CCodec_ProgressiveDecoder::GifDetectImageType(CFX_DIBAttribute* pAttribute,
       m_status = error_status;
       return false;
     }
-    readResult = pGifModule->ReadHeader(
-        m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
-        (void**)&m_pGifPalette, &m_GifBgIndex, nullptr);
+    readResult = pGifModule->ReadHeader(m_pGifContext.get(), &m_SrcWidth,
+                                        &m_SrcHeight, &m_GifPltNumber,
+                                        &m_pGifPalette, &m_GifBgIndex, nullptr);
   }
   if (readResult == CFX_GifDecodeStatus::Success) {
     m_SrcBPC = 8;
