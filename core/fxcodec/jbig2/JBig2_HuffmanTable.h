@@ -31,9 +31,8 @@ class CJBig2_HuffmanTable {
   bool IsOK() const { return m_bOK; }
 
  private:
-  void ParseFromStandardTable(const JBig2TableLine* pTable);
+  bool ParseFromStandardTable(const JBig2TableLine* pTable);
   bool ParseFromCodedBuffer(CJBig2_BitStream* pStream);
-  bool InitCodes();
   void ExtendBuffers(bool increment);
 
   bool m_bOK;

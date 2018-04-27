@@ -45,6 +45,8 @@ class CJBig2_Context {
                  bool bIsGlobal);
   ~CJBig2_Context();
 
+  static bool HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES, uint32_t NTEMP);
+
   int32_t GetFirstPage(uint8_t* pBuf,
                        int32_t width,
                        int32_t height,
@@ -81,8 +83,6 @@ class CJBig2_Context {
   int32_t ParseRegionInfo(JBig2RegionInfo* pRI);
 
   std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(uint32_t SBNUMSYMS);
-
-  bool HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES, uint32_t NTEMP);
 
   std::unique_ptr<CJBig2_Context> m_pGlobalContext;
   std::unique_ptr<CJBig2_BitStream> m_pStream;

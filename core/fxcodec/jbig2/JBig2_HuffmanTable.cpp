@@ -6,11 +6,11 @@
 
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
 
-#include <algorithm>
 #include <limits>
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
+#include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/numerics/safe_math.h"
@@ -18,8 +18,9 @@
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(const JBig2TableLine* pTable,
                                          uint32_t nLines,
                                          bool bHTOOB)
-    : m_bOK(true), HTOOB(bHTOOB), NTEMP(nLines) {
-  ParseFromStandardTable(pTable);
+    : HTOOB(bHTOOB), NTEMP(nLines) {
+  m_bOK = ParseFromStandardTable(pTable);
+  ASSERT(m_bOK);
 }
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(CJBig2_BitStream* pStream)
@@ -29,7 +30,7 @@ CJBig2_HuffmanTable::CJBig2_HuffmanTable(CJBig2_BitStream* pStream)
 
 CJBig2_HuffmanTable::~CJBig2_HuffmanTable() {}
 
-void CJBig2_HuffmanTable::ParseFromStandardTable(const JBig2TableLine* pTable) {
+bool CJBig2_HuffmanTable::ParseFromStandardTable(const JBig2TableLine* pTable) {
   CODES.resize(NTEMP);
   RANGELEN.resize(NTEMP);
   RANGELOW.resize(NTEMP);
@@ -38,7 +39,7 @@ void CJBig2_HuffmanTable::ParseFromStandardTable(const JBig2TableLine* pTable) {
     RANGELEN[i] = pTable[i].RANDELEN;
     RANGELOW[i] = pTable[i].RANGELOW;
   }
-  InitCodes();
+  return CJBig2_Context::HuffmanAssignCode(CODES.data(), NTEMP);
 }
 
 bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
@@ -104,37 +105,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     ++NTEMP;
   }
 
-  return InitCodes();
-}
-
-bool CJBig2_HuffmanTable::InitCodes() {
-  int lenmax = 0;
-  for (uint32_t i = 0; i < NTEMP; ++i)
-    lenmax = std::max(CODES[i].codelen, lenmax);
-
-  std::vector<int> LENCOUNT(lenmax + 1);
-  std::vector<int> FIRSTCODE(lenmax + 1);
-  for (uint32_t i = 0; i < NTEMP; ++i)
-    ++LENCOUNT[CODES[i].codelen];
-
-  FIRSTCODE[0] = 0;
-  LENCOUNT[0] = 0;
-  for (int i = 1; i <= lenmax; ++i) {
-    pdfium::base::CheckedNumeric<int> shifted = FIRSTCODE[i - 1];
-    shifted += LENCOUNT[i - 1];
-    shifted <<= 1;
-    if (!shifted.IsValid())
-      return false;
-
-    FIRSTCODE[i] = shifted.ValueOrDie();
-    int CURCODE = FIRSTCODE[i];
-    for (uint32_t j = 0; j < NTEMP; ++j) {
-      if (CODES[j].codelen == i)
-        CODES[j].code = CURCODE++;
-    }
-  }
-
-  return true;
+  return CJBig2_Context::HuffmanAssignCode(CODES.data(), NTEMP);
 }
 
 void CJBig2_HuffmanTable::ExtendBuffers(bool increment) {

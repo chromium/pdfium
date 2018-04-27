@@ -1319,9 +1319,9 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
   return SBSYMCODES;
 }
 
+// static
 bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
                                        uint32_t NTEMP) {
-  // TODO(thestig): CJBig2_HuffmanTable::InitCodes() has similar code.
   int LENMAX = 0;
   for (uint32_t i = 0; i < NTEMP; ++i)
     LENMAX = std::max(SBSYMCODES[i].codelen, LENMAX);
@@ -1331,7 +1331,6 @@ bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
   for (uint32_t i = 0; i < NTEMP; ++i)
     ++LENCOUNT[SBSYMCODES[i].codelen];
 
-  LENCOUNT[0] = 0;
   for (int i = 1; i <= LENMAX; ++i) {
     pdfium::base::CheckedNumeric<int> shifted = FIRSTCODE[i - 1];
     shifted += LENCOUNT[i - 1];
@@ -1342,9 +1341,8 @@ bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
     FIRSTCODE[i] = shifted.ValueOrDie();
     int CURCODE = FIRSTCODE[i];
     for (uint32_t j = 0; j < NTEMP; ++j) {
-      if (SBSYMCODES[j].codelen == i) {
+      if (SBSYMCODES[j].codelen == i)
         SBSYMCODES[j].code = CURCODE++;
-      }
     }
   }
   return true;
