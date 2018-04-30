@@ -28,9 +28,9 @@
 namespace {
 
 const float kDefaultFontSize = 1.0f;
-const uint16_t* const g_UnicodeData_Normalization_Maps[5] = {
-    nullptr, g_UnicodeData_Normalization_Map1, g_UnicodeData_Normalization_Map2,
-    g_UnicodeData_Normalization_Map3, g_UnicodeData_Normalization_Map4};
+const uint16_t* const g_UnicodeData_Normalization_Maps[] = {
+    g_UnicodeData_Normalization_Map2, g_UnicodeData_Normalization_Map3,
+    g_UnicodeData_Normalization_Map4};
 
 float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
   ASSERT(t1 < t2);
@@ -78,15 +78,18 @@ size_t Unicode_GetNormalization(wchar_t wch, wchar_t* pDst) {
     return 1;
   }
   if (wFind >= 0x8000) {
-    wch = wFind - 0x8000;
-    wFind = 1;
-  } else {
-    wch = wFind & 0x0FFF;
-    wFind >>= 12;
+    const uint16_t* pMap = g_UnicodeData_Normalization_Map1 + (wFind - 0x8000);
+    if (pDst)
+      *pDst = *pMap;
+    return 1;
   }
-  const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind] + wch;
+
+  wch = wFind & 0x0FFF;
+  wFind >>= 12;
+  const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind - 2] + wch;
   if (wFind == 4)
     wFind = (wchar_t)(*pMap++);
+
   if (pDst) {
     wchar_t n = wFind;
     while (n--)
