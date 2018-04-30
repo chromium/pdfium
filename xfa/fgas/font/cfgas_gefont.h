@@ -38,7 +38,7 @@ class CFGAS_GEFont : public Retainable {
       CFGAS_FontMgr* pFontMgr);
 
   uint32_t GetFontStyles() const;
-  bool GetCharWidth(wchar_t wUnicode, int32_t& iWidth);
+  bool GetCharWidth(wchar_t wUnicode, int32_t* pWidth);
   int32_t GetGlyphIndex(wchar_t wUnicode);
   int32_t GetAscent() const;
   int32_t GetDescent() const;

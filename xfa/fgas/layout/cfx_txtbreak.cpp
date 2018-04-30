@@ -79,7 +79,7 @@ void CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
       }
     }
     int32_t iCharWidthOut;
-    if (m_pFont->GetCharWidth(wForm, iCharWidthOut))
+    if (m_pFont->GetCharWidth(wForm, &iCharWidthOut))
       iCharWidth = iCharWidthOut;
     else
       iCharWidth = 0;
@@ -144,7 +144,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
       int32_t iCharWidthOut;
-      m_pFont->GetCharWidth(wForm, iCharWidthOut);
+      m_pFont->GetCharWidth(wForm, &iCharWidthOut);
       iCharWidth = iCharWidthOut;
 
       if (wForm == 0xFEFF)
@@ -169,7 +169,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
     iCharWidth = m_iCombWidth;
   } else {
     int32_t iCharWidthOut;
-    m_pFont->GetCharWidth(wForm, iCharWidthOut);
+    m_pFont->GetCharWidth(wForm, &iCharWidthOut);
     iCharWidth = iCharWidthOut;
 
     if (wForm == 0xFEFF)
@@ -201,7 +201,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
     iCharWidth = m_iCombWidth;
   } else {
     int32_t iCharWidthOut;
-    if (m_pFont->GetCharWidth(wForm, iCharWidthOut))
+    if (m_pFont->GetCharWidth(wForm, &iCharWidthOut))
       iCharWidth = iCharWidthOut;
     else
       iCharWidth = m_iDefChar;
@@ -838,11 +838,11 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
     if (bLam) {
       formChars[1].wForm = 0x0651;
       iCharWidth = 0;
-      pFont->GetCharWidth(0x0651, iCharWidth);
+      pFont->GetCharWidth(0x0651, &iCharWidth);
       formChars[1].iWidth = iCharWidth;
       formChars[2].wForm = 0x0670;
       iCharWidth = 0;
-      pFont->GetCharWidth(0x0670, iCharWidth);
+      pFont->GetCharWidth(0x0670, &iCharWidth);
       formChars[2].iWidth = iCharWidth;
     }
 
@@ -873,7 +873,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 
         if ((dwStyles & FX_LAYOUTSTYLE_CombText) != 0) {
           int32_t iFormWidth = iCharWidth;
-          pFont->GetCharWidth(wForm, iFormWidth);
+          pFont->GetCharWidth(wForm, &iFormWidth);
           float fOffset = fFontSize * (iCharWidth - iFormWidth) / 2000.0f;
           pCharPos->m_Origin.x += fOffset;
         }
@@ -987,7 +987,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 
     if (bCharBBox && !bRet) {
       int32_t iCharWidth = 1000;
-      pFont->GetCharWidth(wch, iCharWidth);
+      pFont->GetCharWidth(wch, &iCharWidth);
       float fRTLeft = 0, fCharWidth = 0;
       if (iCharWidth > 0) {
         fCharWidth = iCharWidth * fScale;

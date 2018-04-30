@@ -155,34 +155,34 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   return dwStyles;
 }
 
-bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode, int32_t& iWidth) {
+bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode, int32_t* pWidth) {
   auto it = m_CharWidthMap.find(wUnicode);
-  iWidth = it != m_CharWidthMap.end() ? it->second : 0;
-  if (iWidth == 65535)
+  *pWidth = it != m_CharWidthMap.end() ? it->second : 0;
+  if (*pWidth == 65535)
     return false;
 
-  if (iWidth > 0)
+  if (*pWidth > 0)
     return true;
 
   if (!m_pProvider || !m_pProvider->GetCharWidth(RetainPtr<CFGAS_GEFont>(this),
-                                                 wUnicode, &iWidth)) {
+                                                 wUnicode, pWidth)) {
     RetainPtr<CFGAS_GEFont> pFont;
     int32_t iGlyph;
     std::tie(iGlyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
     if (iGlyph != 0xFFFF && pFont) {
       if (pFont.Get() == this) {
-        iWidth = m_pFont->GetGlyphWidth(iGlyph);
-        if (iWidth < 0)
-          iWidth = -1;
-      } else if (pFont->GetCharWidth(wUnicode, iWidth)) {
+        *pWidth = m_pFont->GetGlyphWidth(iGlyph);
+        if (*pWidth < 0)
+          *pWidth = -1;
+      } else if (pFont->GetCharWidth(wUnicode, pWidth)) {
         return true;
       }
     } else {
-      iWidth = -1;
+      *pWidth = -1;
     }
   }
-  m_CharWidthMap[wUnicode] = iWidth;
-  return iWidth > 0;
+  m_CharWidthMap[wUnicode] = *pWidth;
+  return *pWidth > 0;
 }
 
 bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode, FX_RECT* bbox) {
