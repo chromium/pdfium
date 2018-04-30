@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_font.h"
 
 class CFX_FontMapper;
@@ -31,7 +32,7 @@ class CFX_FontMgr {
   FXFT_Face AddCachedFace(const ByteString& face_name,
                           int weight,
                           bool bItalic,
-                          uint8_t* pData,
+                          std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                           uint32_t size,
                           int face_index);
   FXFT_Face GetCachedTTCFace(int ttc_size,
@@ -40,7 +41,7 @@ class CFX_FontMgr {
                              uint8_t** pFontData);
   FXFT_Face AddCachedTTCFace(int ttc_size,
                              uint32_t checksum,
-                             uint8_t* pData,
+                             std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                              uint32_t size,
                              int font_offset);
   FXFT_Face GetFileFace(const char* filename, int face_index);

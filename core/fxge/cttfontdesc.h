@@ -7,6 +7,9 @@
 #ifndef CORE_FXGE_CTTFONTDESC_H_
 #define CORE_FXGE_CTTFONTDESC_H_
 
+#include <memory>
+
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
 
@@ -18,34 +21,23 @@ class CTTFontDesc {
     kNotReleased  // Object still alive.
   };
 
-  // Single face ctor.
-  CTTFontDesc(uint8_t* pData, FXFT_Face face);
-
-  // TTC face ctor.
-  CTTFontDesc(uint8_t* pData, size_t index, FXFT_Face face);
-
+  explicit CTTFontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData);
   ~CTTFontDesc();
 
-  void SetTTCFace(size_t index, FXFT_Face face);
+  void SetFace(size_t index, FXFT_Face face);
 
   void AddRef();
 
   // May not decrement refcount, depending on the value of |face|.
   ReleaseStatus ReleaseFace(FXFT_Face face);
 
-  uint8_t* FontData() const { return m_pFontData; }
-
-  FXFT_Face SingleFace() const;
-  FXFT_Face TTCFace(size_t index) const;
+  uint8_t* FontData() const { return m_pFontData.get(); }
+  FXFT_Face GetFace(size_t index) const;
 
  private:
-  const bool m_bIsTTC;
   int m_RefCount = 1;
-  uint8_t* const m_pFontData;
-  union {
-    const FXFT_Face m_SingleFace;
-    FXFT_Face m_TTCFaces[16];
-  };
+  std::unique_ptr<uint8_t, FxFreeDeleter> const m_pFontData;
+  FXFT_Face m_TTCFaces[16];
 };
 
 #endif  // CORE_FXGE_CTTFONTDESC_H_
