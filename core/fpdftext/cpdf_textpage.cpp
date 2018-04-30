@@ -7,6 +7,7 @@
 #include "core/fpdftext/cpdf_textpage.h"
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -83,13 +84,9 @@ size_t Unicode_GetNormalization(wchar_t wch, wchar_t* pDst) {
     wch = wFind & 0x0FFF;
     wFind >>= 12;
   }
-  const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind];
-  if (pMap == g_UnicodeData_Normalization_Map4) {
-    pMap = g_UnicodeData_Normalization_Map4 + wch;
+  const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind] + wch;
+  if (wFind == 4)
     wFind = (wchar_t)(*pMap++);
-  } else {
-    pMap += wch;
-  }
   if (pDst) {
     wchar_t n = wFind;
     while (n--)
@@ -628,18 +625,16 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
 
   info2.m_Index = m_TextBuf.GetLength();
   if (wChar >= 0xFB00 && wChar <= 0xFB06) {
-    wchar_t* pDst = nullptr;
-    size_t nCount = Unicode_GetNormalization(wChar, pDst);
+    size_t nCount = Unicode_GetNormalization(wChar, nullptr);
     if (nCount >= 1) {
-      pDst = FX_Alloc(wchar_t, nCount);
-      Unicode_GetNormalization(wChar, pDst);
+      std::unique_ptr<wchar_t, FxFreeDeleter> pDst(FX_Alloc(wchar_t, nCount));
+      Unicode_GetNormalization(wChar, pDst.get());
       for (size_t nIndex = 0; nIndex < nCount; nIndex++) {
-        info2.m_Unicode = pDst[nIndex];
+        info2.m_Unicode = pDst.get()[nIndex];
         info2.m_Flag = FPDFTEXT_CHAR_PIECE;
         m_TextBuf.AppendChar(info2.m_Unicode);
         m_CharList.push_back(info2);
       }
-      FX_Free(pDst);
       return;
     }
   }
@@ -658,18 +653,16 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
 
   info2.m_Index = m_TextBuf.GetLength();
   wChar = FX_GetMirrorChar(wChar);
-  wchar_t* pDst = nullptr;
-  size_t nCount = Unicode_GetNormalization(wChar, pDst);
+  size_t nCount = Unicode_GetNormalization(wChar, nullptr);
   if (nCount >= 1) {
-    pDst = FX_Alloc(wchar_t, nCount);
-    Unicode_GetNormalization(wChar, pDst);
+    std::unique_ptr<wchar_t, FxFreeDeleter> pDst(FX_Alloc(wchar_t, nCount));
+    Unicode_GetNormalization(wChar, pDst.get());
     for (size_t nIndex = 0; nIndex < nCount; nIndex++) {
-      info2.m_Unicode = pDst[nIndex];
+      info2.m_Unicode = pDst.get()[nIndex];
       info2.m_Flag = FPDFTEXT_CHAR_PIECE;
       m_TextBuf.AppendChar(info2.m_Unicode);
       m_CharList.push_back(info2);
     }
-    FX_Free(pDst);
     return;
   }
   info2.m_Unicode = wChar;
