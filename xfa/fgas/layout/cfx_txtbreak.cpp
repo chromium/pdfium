@@ -175,7 +175,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
 CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
-  int32_t iCharWidth = 0;
+  FX_SAFE_INT32 iCharWidth = 0;
   m_eCharType = chartype;
   wchar_t wch = pCurChar->char_code();
   wchar_t wForm = wch;
@@ -183,16 +183,24 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
   } else {
-    if (!m_pFont->GetCharWidth(wForm, iCharWidth))
+    int32_t iCharWidthOut;
+    if (m_pFont->GetCharWidth(wForm, iCharWidthOut))
+      iCharWidth = iCharWidthOut;
+    else
       iCharWidth = m_iDefChar;
 
     iCharWidth *= m_iFontSize;
-    iCharWidth = iCharWidth * m_iHorizontalScale / 100;
+    iCharWidth *= m_iHorizontalScale;
+    iCharWidth /= 100;
   }
 
   iCharWidth += m_iCharSpace;
-  pCurChar->m_iCharWidth = iCharWidth;
-  iLineWidth += iCharWidth;
+  if (!iCharWidth.IsValid())
+    return CFX_BreakType::None;
+
+  int32_t iCharWidthValid = iCharWidth.ValueOrDie();
+  pCurChar->m_iCharWidth = iCharWidthValid;
+  iLineWidth += iCharWidthValid;
   if (!m_bSingleLine && chartype != FX_CHARTYPE_Space &&
       iLineWidth > m_iLineWidth + m_iTolerance) {
     return EndBreak(CFX_BreakType::Line);
