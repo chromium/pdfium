@@ -50,7 +50,7 @@ void CFX_TxtBreak::SetCombWidth(float fCombWidth) {
 void CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
   wchar_t wch = pCurChar->char_code();
   wchar_t wForm;
-  int32_t iCharWidth = 0;
+  FX_SAFE_INT32 iCharWidth = 0;
   pCurChar->m_iCharWidth = -1;
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
@@ -78,13 +78,19 @@ void CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
         pCurChar->m_dwCharStyles |= FX_TXTCHARSTYLE_ArabicShadda;
       }
     }
-    if (!m_pFont->GetCharWidth(wForm, iCharWidth))
+    int32_t iCharWidthOut;
+    if (m_pFont->GetCharWidth(wForm, iCharWidthOut))
+      iCharWidth = iCharWidthOut;
+    else
       iCharWidth = 0;
 
     iCharWidth *= m_iFontSize;
-    iCharWidth = iCharWidth * m_iHorizontalScale / 100;
+    iCharWidth *= m_iHorizontalScale;
+    iCharWidth /= 100;
   }
-  pCurChar->m_iCharWidth = -iCharWidth;
+
+  iCharWidth *= -1;
+  pCurChar->m_iCharWidth = iCharWidth.ValueOrDefault(0);
 }
 
 void CFX_TxtBreak::AppendChar_Tab(CFX_Char* pCurChar) {
@@ -122,50 +128,61 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
   wchar_t wForm;
-  int32_t iCharWidth = 0;
   CFX_Char* pLastChar = nullptr;
   bool bAlef = false;
   if (!m_bCombText && m_eCharType >= FX_CHARTYPE_ArabicAlef &&
       m_eCharType <= FX_CHARTYPE_ArabicDistortion) {
+    FX_SAFE_INT32 iCharWidth = 0;
     pLastChar = GetLastChar(1, true, false);
     if (pLastChar) {
+      if (pLastChar->m_iCharWidth > 0)
+        iLineWidth -= pLastChar->m_iCharWidth;
       iCharWidth = pLastChar->m_iCharWidth;
-      if (iCharWidth > 0)
-        iLineWidth -= iCharWidth;
 
       CFX_Char* pPrevChar = GetLastChar(2, true, false);
       wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
-      m_pFont->GetCharWidth(wForm, iCharWidth);
+      int32_t iCharWidthOut;
+      m_pFont->GetCharWidth(wForm, iCharWidthOut);
+      iCharWidth = iCharWidthOut;
 
       if (wForm == 0xFEFF)
         iCharWidth = m_iDefChar;
 
       iCharWidth *= m_iFontSize;
-      iCharWidth = iCharWidth * m_iHorizontalScale / 100;
-      pLastChar->m_iCharWidth = iCharWidth;
-      iLineWidth += iCharWidth;
-      iCharWidth = 0;
+      iCharWidth *= m_iHorizontalScale;
+      iCharWidth /= 100;
+
+      int32_t iCharWidthValid = iCharWidth.ValueOrDefault(0);
+
+      pLastChar->m_iCharWidth = iCharWidthValid;
+      iLineWidth += iCharWidthValid;
     }
   }
 
   m_eCharType = chartype;
   wForm = pdfium::arabic::GetFormChar(pCurChar, bAlef ? nullptr : pLastChar,
                                       nullptr);
+  FX_SAFE_INT32 iCharWidth;
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
   } else {
-    m_pFont->GetCharWidth(wForm, iCharWidth);
+    int32_t iCharWidthOut;
+    m_pFont->GetCharWidth(wForm, iCharWidthOut);
+    iCharWidth = iCharWidthOut;
 
     if (wForm == 0xFEFF)
       iCharWidth = m_iDefChar;
 
     iCharWidth *= m_iFontSize;
-    iCharWidth = iCharWidth * m_iHorizontalScale / 100;
+    iCharWidth *= m_iHorizontalScale;
+    iCharWidth /= 100;
   }
-  pCurChar->m_iCharWidth = iCharWidth;
-  iLineWidth += iCharWidth;
+
+  int32_t iCharWidthValid = iCharWidth.ValueOrDefault(0);
+  pCurChar->m_iCharWidth = iCharWidthValid;
+  iLineWidth += iCharWidthValid;
   m_pCurLine->m_iArabicChars++;
   if (!m_bSingleLine && iLineWidth > m_iLineWidth + m_iTolerance)
     return EndBreak(CFX_BreakType::Line);
@@ -195,10 +212,8 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
   }
 
   iCharWidth += m_iCharSpace;
-  if (!iCharWidth.IsValid())
-    return CFX_BreakType::None;
 
-  int32_t iCharWidthValid = iCharWidth.ValueOrDie();
+  int32_t iCharWidthValid = iCharWidth.ValueOrDefault(0);
   pCurChar->m_iCharWidth = iCharWidthValid;
   iLineWidth += iCharWidthValid;
   if (!m_bSingleLine && chartype != FX_CHARTYPE_Space &&
