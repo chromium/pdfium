@@ -95,22 +95,20 @@ bool CBC_OnedCode128Writer::CheckContentValidity(
 
 WideString CBC_OnedCode128Writer::FilterContents(
     const WideStringView& contents) {
-  WideString filterChineseChar;
+  const wchar_t limit = m_codeFormat == BC_CODE128_B ? 126 : 106;
+
+  WideString filtered;
+  filtered.Reserve(contents.GetLength());
   for (size_t i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
     if (ch > 175) {
       i++;
       continue;
     }
-    filterChineseChar += ch;
-  }
-  const wchar_t limit = m_codeFormat == BC_CODE128_B ? 126 : 106;
-  WideString filtercontents;
-  for (const auto& ch : filterChineseChar) {
     if (ch >= 32 && ch <= limit)
-      filtercontents += ch;
+      filtered += ch;
   }
-  return filtercontents;
+  return filtered;
 }
 
 bool CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
