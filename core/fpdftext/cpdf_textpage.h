@@ -143,6 +143,7 @@ class CPDF_TextPage {
                          CPDF_PageObjectList::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& formMatrix);
+  const PAGECHAR_INFO* GetPrevCharInfo() const;
   Optional<PAGECHAR_INFO> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectList* pObjList,

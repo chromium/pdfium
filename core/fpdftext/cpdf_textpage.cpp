@@ -887,14 +887,12 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
 }
 
 void CPDF_TextPage::FindPreviousTextObject() {
-  if (m_TempCharList.empty() && m_CharList.empty())
+  const PAGECHAR_INFO* pPrevCharInfo = GetPrevCharInfo();
+  if (!pPrevCharInfo)
     return;
 
-  PAGECHAR_INFO preChar =
-      m_TempCharList.empty() ? m_CharList.back() : m_TempCharList.back();
-
-  if (preChar.m_pTextObj)
-    m_pPreTextObj = preChar.m_pTextObj;
+  if (pPrevCharInfo->m_pTextObj)
+    m_pPreTextObj = pPrevCharInfo->m_pTextObj;
 }
 
 void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
@@ -1209,16 +1207,15 @@ bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
       return true;
   }
 
-  const PAGECHAR_INFO* preInfo;
-  if (!m_TempCharList.empty())
-    preInfo = &m_TempCharList.back();
-  else if (!m_CharList.empty())
-    preInfo = &m_CharList.back();
-  else
-    return false;
+  const PAGECHAR_INFO* pPrevCharInfo = GetPrevCharInfo();
+  return pPrevCharInfo && pPrevCharInfo->m_Flag == FPDFTEXT_CHAR_PIECE &&
+         IsHyphenCode(pPrevCharInfo->m_Unicode);
+}
 
-  return FPDFTEXT_CHAR_PIECE == preInfo->m_Flag &&
-         IsHyphenCode(preInfo->m_Unicode);
+const PAGECHAR_INFO* CPDF_TextPage::GetPrevCharInfo() const {
+  if (!m_TempCharList.empty())
+    return &m_TempCharList.back();
+  return !m_CharList.empty() ? &m_CharList.back() : nullptr;
 }
 
 CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
@@ -1440,12 +1437,8 @@ bool CPDF_TextPage::IsSameAsPreTextObject(
 }
 
 Optional<PAGECHAR_INFO> CPDF_TextPage::GenerateCharInfo(wchar_t unicode) {
-  const PAGECHAR_INFO* preChar;
-  if (!m_TempCharList.empty())
-    preChar = &m_TempCharList.back();
-  else if (!m_CharList.empty())
-    preChar = &m_CharList.back();
-  else
+  const PAGECHAR_INFO* pPrevCharInfo = GetPrevCharInfo();
+  if (!pPrevCharInfo)
     return {};
 
   PAGECHAR_INFO info;
@@ -1456,18 +1449,20 @@ Optional<PAGECHAR_INFO> CPDF_TextPage::GenerateCharInfo(wchar_t unicode) {
   info.m_Flag = FPDFTEXT_CHAR_GENERATED;
 
   int preWidth = 0;
-  if (preChar->m_pTextObj && preChar->m_CharCode != -1) {
-    preWidth =
-        GetCharWidth(preChar->m_CharCode, preChar->m_pTextObj->GetFont());
+  if (pPrevCharInfo->m_pTextObj && pPrevCharInfo->m_CharCode != -1) {
+    preWidth = GetCharWidth(pPrevCharInfo->m_CharCode,
+                            pPrevCharInfo->m_pTextObj->GetFont());
   }
 
-  float fFontSize = preChar->m_pTextObj ? preChar->m_pTextObj->GetFontSize()
-                                        : preChar->m_CharBox.Height();
+  float fFontSize = pPrevCharInfo->m_pTextObj
+                        ? pPrevCharInfo->m_pTextObj->GetFontSize()
+                        : pPrevCharInfo->m_CharBox.Height();
   if (!fFontSize)
     fFontSize = kDefaultFontSize;
 
-  info.m_Origin = CFX_PointF(
-      preChar->m_Origin.x + preWidth * (fFontSize) / 1000, preChar->m_Origin.y);
+  info.m_Origin =
+      CFX_PointF(pPrevCharInfo->m_Origin.x + preWidth * (fFontSize) / 1000,
+                 pPrevCharInfo->m_Origin.y);
   info.m_CharBox = CFX_FloatRect(info.m_Origin.x, info.m_Origin.y,
                                  info.m_Origin.x, info.m_Origin.y);
   return info;
