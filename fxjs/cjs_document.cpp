@@ -829,14 +829,14 @@ CJS_Return CJS_Document::set_subject(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Document::get_title(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument())
+  if (!m_pFormFillEnv || !m_pFormFillEnv->GetPDFDocument())
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return getPropertyInternal(pRuntime, "Title");
 }
 
 CJS_Return CJS_Document::set_title(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  if (!m_pFormFillEnv || !m_pFormFillEnv->GetUnderlyingDocument())
+  if (!m_pFormFillEnv || !m_pFormFillEnv->GetPDFDocument())
     return CJS_Return(JSGetStringFromID(JSMessage::kBadObjectError));
   return setPropertyInternal(pRuntime, vp, "Title");
 }

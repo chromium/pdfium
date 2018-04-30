@@ -299,8 +299,8 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     return pDocument->GetFormFillEnv();
 #endif
 
-  auto pFormFillEnv =
-      pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(pDocument, formInfo);
+  auto pFormFillEnv = pdfium::MakeUnique<CPDFSDK_FormFillEnvironment>(
+      CPDFDocumentFromFPDFDocument(document), formInfo);
 
 #ifdef PDF_ENABLE_XFA
   pDocument->SetFormFillEnv(pFormFillEnv.get());

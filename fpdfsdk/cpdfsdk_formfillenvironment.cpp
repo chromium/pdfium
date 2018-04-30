@@ -33,10 +33,10 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE) {
 }
 
 CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
-    UnderlyingDocumentType* pDoc,
+    CPDF_Document* pDoc,
     FPDF_FORMFILLINFO* pFFinfo)
     : m_pInfo(pFFinfo),
-      m_pUnderlyingDoc(pDoc),
+      m_pCPDFDoc(pDoc),
       m_pSysHandler(pdfium::MakeUnique<CFX_SystemHandler>(this)),
       m_bChangeMask(false),
       m_bBeingDestroyed(false) {}
@@ -288,8 +288,10 @@ void CPDFSDK_FormFillEnvironment::OnChange() {
 }
 
 FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
-  if (m_pInfo && m_pInfo->FFI_GetCurrentPage)
-    return m_pInfo->FFI_GetCurrentPage(m_pInfo, m_pUnderlyingDoc.Get());
+  if (m_pInfo && m_pInfo->FFI_GetCurrentPage) {
+    return m_pInfo->FFI_GetCurrentPage(
+        m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()));
+  }
   return nullptr;
 }
 
@@ -337,12 +339,15 @@ void CPDFSDK_FormFillEnvironment::DisplayCaret(CPDFXFA_Page* page,
 int CPDFSDK_FormFillEnvironment::GetCurrentPageIndex() const {
   if (!m_pInfo || !m_pInfo->FFI_GetCurrentPageIndex)
     return -1;
-  return m_pInfo->FFI_GetCurrentPageIndex(m_pInfo, m_pUnderlyingDoc.Get());
+  return m_pInfo->FFI_GetCurrentPageIndex(
+      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()));
 }
 
 void CPDFSDK_FormFillEnvironment::SetCurrentPage(int iCurPage) {
-  if (m_pInfo && m_pInfo->FFI_SetCurrentPage)
-    m_pInfo->FFI_SetCurrentPage(m_pInfo, m_pUnderlyingDoc.Get(), iCurPage);
+  if (!m_pInfo || !m_pInfo->FFI_SetCurrentPage)
+    return;
+  m_pInfo->FFI_SetCurrentPage(
+      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()), iCurPage);
 }
 
 WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
@@ -368,7 +373,7 @@ void CPDFSDK_FormFillEnvironment::GotoURL(const WideString& wsURL) {
     return;
 
   ByteString bsTo = wsURL.UTF16LE_Encode();
-  m_pInfo->FFI_GotoURL(m_pInfo, m_pUnderlyingDoc.Get(),
+  m_pInfo->FFI_GotoURL(m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()),
                        AsFPDFWideString(&bsTo));
 }
 
@@ -556,8 +561,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
 }
 
 void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
-  CPDF_Document* pPDFDoc = GetPDFDocument();
-  CPDF_DocJSActions docJS(pPDFDoc);
+  CPDF_DocJSActions docJS(m_pCPDFDoc.Get());
   int iCount = docJS.CountJSActions();
   for (int i = 0; i < iCount; i++) {
     WideString csJSName;
@@ -567,10 +571,10 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
 }
 
 bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
-  if (!m_pUnderlyingDoc)
+  if (!m_pCPDFDoc)
     return false;
 
-  const CPDF_Dictionary* pRoot = GetPDFDocument()->GetRoot();
+  const CPDF_Dictionary* pRoot = m_pCPDFDoc->GetRoot();
   if (!pRoot)
     return false;
 
@@ -622,8 +626,8 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(
 UnderlyingPageType* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
   if (!m_pInfo || !m_pInfo->FFI_GetPage)
     return nullptr;
-  return UnderlyingFromFPDFPage(
-      m_pInfo->FFI_GetPage(m_pInfo, m_pUnderlyingDoc.Get(), nIndex));
+  return UnderlyingFromFPDFPage(m_pInfo->FFI_GetPage(
+      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()), nIndex));
 }
 
 CPDFSDK_InterForm* CPDFSDK_FormFillEnvironment::GetInterForm() {
@@ -703,17 +707,22 @@ bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
   }
   return !m_pFocusAnnot;
 }
-
 #ifdef PDF_ENABLE_XFA
-CPDF_Document* CPDFSDK_FormFillEnvironment::GetPDFDocument() const {
-  return m_pUnderlyingDoc ? m_pUnderlyingDoc->GetPDFDoc() : nullptr;
+CPDFXFA_Context* CPDFSDK_FormFillEnvironment::GetXFAContext() const {
+  if (!m_pCPDFDoc)
+    return nullptr;
+  return static_cast<CPDFXFA_Context*>(m_pCPDFDoc->GetExtension());
 }
 #endif  // PDF_ENABLE_XFA
 
 int CPDFSDK_FormFillEnvironment::GetPageCount() const {
-  return m_pUnderlyingDoc->GetPageCount();
+#ifdef PDF_ENABLE_XFA
+  return GetXFAContext()->GetPageCount();
+#else
+  return m_pCPDFDoc->GetPageCount();
+#endif
 }
 
 bool CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) const {
-  return !!(GetPDFDocument()->GetUserPermissions() & nFlag);
+  return !!(m_pCPDFDoc->GetUserPermissions() & nFlag);
 }

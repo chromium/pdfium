@@ -52,7 +52,7 @@ CPDFXFA_Context::~CPDFXFA_Context() {
     m_pFormFillEnv->ClearAllFocusedAnnots();
     // Once we're deleted the FormFillEnvironment will point at a bad underlying
     // doc so we need to reset it ...
-    m_pFormFillEnv->ResetXFADocument();
+    m_pFormFillEnv->GetPDFDocument()->SetExtension(nullptr);
     m_pFormFillEnv.Reset();
   }
 

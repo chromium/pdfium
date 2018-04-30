@@ -47,8 +47,7 @@ FPDF_WIDESTRING AsFPDFWideString(ByteString* bsUTF16LE);
 class CPDFSDK_FormFillEnvironment
     : public Observable<CPDFSDK_FormFillEnvironment> {
  public:
-  CPDFSDK_FormFillEnvironment(UnderlyingDocumentType* pDoc,
-                              FPDF_FORMFILLINFO* pFFinfo);
+  CPDFSDK_FormFillEnvironment(CPDF_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFSDK_FormFillEnvironment();
 
   static bool IsSHIFTKeyDown(uint32_t nFlag) {
@@ -112,16 +111,10 @@ class CPDFSDK_FormFillEnvironment
                     float* fPosArray,
                     int sizeOfArray);
 
-  UnderlyingDocumentType* GetUnderlyingDocument() const {
-    return m_pUnderlyingDoc.Get();
-  }
+  CPDF_Document* GetPDFDocument() const { return m_pCPDFDoc.Get(); }
 
 #ifdef PDF_ENABLE_XFA
-  CPDF_Document* GetPDFDocument() const;
-
-  CPDFXFA_Context* GetXFAContext() const { return m_pUnderlyingDoc.Get(); }
-  void ResetXFADocument() { m_pUnderlyingDoc = nullptr; }
-
+  CPDFXFA_Context* GetXFAContext() const;
   int GetPageViewCount() const { return m_PageMap.size(); }
 
   void DisplayCaret(CPDFXFA_Page* page,
@@ -169,8 +162,6 @@ class CPDFSDK_FormFillEnvironment
   WideString GetLanguage();
 
   void PageEvent(int iPageCount, uint32_t dwEventType) const;
-#else   // PDF_ENABLE_XFA
-  CPDF_Document* GetPDFDocument() const { return m_pUnderlyingDoc.Get(); }
 #endif  // PDF_ENABLE_XFA
 
   int JS_appAlert(const WideString& Msg,
@@ -228,7 +219,7 @@ class CPDFSDK_FormFillEnvironment
   std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
-  UnownedPtr<UnderlyingDocumentType> m_pUnderlyingDoc;
+  UnownedPtr<CPDF_Document> const m_pCPDFDoc;
   std::unique_ptr<CFFL_InteractiveFormFiller> m_pFormFiller;
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
   bool m_bChangeMask;
