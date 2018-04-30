@@ -154,8 +154,8 @@ class CPDF_TextPage {
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void CheckMarkedContentObject(int32_t* pStart, int32_t* pCount) const;
   void FindPreviousTextObject();
-  void AddCharInfoByLRDirection(wchar_t wChar, PAGECHAR_INFO info);
-  void AddCharInfoByRLDirection(wchar_t wChar, PAGECHAR_INFO info);
+  void AddCharInfoByLRDirection(wchar_t wChar, const PAGECHAR_INFO& info);
+  void AddCharInfoByRLDirection(wchar_t wChar, const PAGECHAR_INFO& info);
   TextOrientation GetTextObjectWritingMode(
       const CPDF_TextObject* pTextObj) const;
   TextOrientation FindTextlineFlowOrientation() const;

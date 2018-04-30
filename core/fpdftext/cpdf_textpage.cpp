@@ -399,10 +399,9 @@ void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
   info->m_Flag = charinfo.m_Flag;
   info->m_CharBox = charinfo.m_CharBox;
   info->m_pTextObj = charinfo.m_pTextObj;
-  if (charinfo.m_pTextObj && charinfo.m_pTextObj->GetFont())
-    info->m_FontSize = charinfo.m_pTextObj->GetFontSize();
-  else
-    info->m_FontSize = kDefaultFontSize;
+  bool bHasFont = charinfo.m_pTextObj && charinfo.m_pTextObj->GetFont();
+  info->m_FontSize =
+      bHasFont ? charinfo.m_pTextObj->GetFontSize() : kDefaultFontSize;
   info->m_Matrix = charinfo.m_Matrix;
 }
 
@@ -619,14 +618,15 @@ uint32_t CPDF_TextPage::GetCharWidth(uint32_t charCode,
 }
 
 void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
-                                             PAGECHAR_INFO info) {
-  if (IsControlChar(info)) {
-    info.m_Index = -1;
-    m_CharList.push_back(info);
+                                             const PAGECHAR_INFO& info) {
+  PAGECHAR_INFO info2 = info;
+  if (IsControlChar(info2)) {
+    info2.m_Index = -1;
+    m_CharList.push_back(info2);
     return;
   }
 
-  info.m_Index = m_TextBuf.GetLength();
+  info2.m_Index = m_TextBuf.GetLength();
   if (wChar >= 0xFB00 && wChar <= 0xFB06) {
     wchar_t* pDst = nullptr;
     size_t nCount = Unicode_GetNormalization(wChar, pDst);
@@ -634,7 +634,6 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
       pDst = FX_Alloc(wchar_t, nCount);
       Unicode_GetNormalization(wChar, pDst);
       for (size_t nIndex = 0; nIndex < nCount; nIndex++) {
-        PAGECHAR_INFO info2 = info;
         info2.m_Unicode = pDst[nIndex];
         info2.m_Flag = FPDFTEXT_CHAR_PIECE;
         m_TextBuf.AppendChar(info2.m_Unicode);
@@ -645,18 +644,19 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
     }
   }
   m_TextBuf.AppendChar(wChar);
-  m_CharList.push_back(info);
+  m_CharList.push_back(info2);
 }
 
 void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
-                                             PAGECHAR_INFO info) {
-  if (IsControlChar(info)) {
-    info.m_Index = -1;
-    m_CharList.push_back(info);
+                                             const PAGECHAR_INFO& info) {
+  PAGECHAR_INFO info2 = info;
+  if (IsControlChar(info2)) {
+    info2.m_Index = -1;
+    m_CharList.push_back(info2);
     return;
   }
 
-  info.m_Index = m_TextBuf.GetLength();
+  info2.m_Index = m_TextBuf.GetLength();
   wChar = FX_GetMirrorChar(wChar);
   wchar_t* pDst = nullptr;
   size_t nCount = Unicode_GetNormalization(wChar, pDst);
@@ -664,7 +664,6 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
     pDst = FX_Alloc(wchar_t, nCount);
     Unicode_GetNormalization(wChar, pDst);
     for (size_t nIndex = 0; nIndex < nCount; nIndex++) {
-      PAGECHAR_INFO info2 = info;
       info2.m_Unicode = pDst[nIndex];
       info2.m_Flag = FPDFTEXT_CHAR_PIECE;
       m_TextBuf.AppendChar(info2.m_Unicode);
@@ -673,9 +672,9 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
     FX_Free(pDst);
     return;
   }
-  info.m_Unicode = wChar;
-  m_TextBuf.AppendChar(info.m_Unicode);
-  m_CharList.push_back(info);
+  info2.m_Unicode = wChar;
+  m_TextBuf.AppendChar(info2.m_Unicode);
+  m_CharList.push_back(info2);
 }
 
 void CPDF_TextPage::CloseTempLine() {
@@ -1180,20 +1179,19 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::GetTextObjectWritingMode(
   first.m_Origin = textMatrix.Transform(first.m_Origin);
   last.m_Origin = textMatrix.Transform(last.m_Origin);
 
+  static constexpr float kEpsilon = 0.0001f;
   float dX = fabs(last.m_Origin.x - first.m_Origin.x);
   float dY = fabs(last.m_Origin.y - first.m_Origin.y);
-  if (dX <= 0.0001f && dY <= 0.0001f)
+  if (dX <= kEpsilon && dY <= kEpsilon)
     return TextOrientation::Unknown;
 
+  static constexpr float kThreshold = 0.0872f;
   CFX_VectorF v(dX, dY);
   v.Normalize();
-  if (v.y <= 0.0872f)
-    return v.x <= 0.0872f ? m_TextlineDir : TextOrientation::Horizontal;
-
-  if (v.x <= 0.0872f)
-    return TextOrientation::Vertical;
-
-  return m_TextlineDir;
+  bool bXUnderThreshold = v.x <= kThreshold;
+  if (v.y <= kThreshold)
+    return bXUnderThreshold ? m_TextlineDir : TextOrientation::Horizontal;
+  return bXUnderThreshold ? TextOrientation::Vertical : m_TextlineDir;
 }
 
 bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
