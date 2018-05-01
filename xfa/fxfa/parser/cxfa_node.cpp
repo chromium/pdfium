@@ -3041,31 +3041,31 @@ float CXFA_Node::GetHeightWithoutMargin(float fHeightCalc) {
 }
 
 void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
-                                  float& fCalcWidth,
-                                  float& fCalcHeight) {
+                                  float* pCalcWidth,
+                                  float* pCalcHeight) {
   InitLayoutData();
 
   if (GetFFWidgetType() == XFA_FFWidgetType::kText) {
     m_pLayoutData->m_fWidgetHeight = TryHeight().value_or(-1);
-    StartTextLayout(doc, fCalcWidth, fCalcHeight);
+    StartTextLayout(doc, pCalcWidth, pCalcHeight);
     return;
   }
-  if (fCalcWidth > 0 && fCalcHeight > 0)
+  if (*pCalcWidth > 0 && *pCalcHeight > 0)
     return;
 
   m_pLayoutData->m_fWidgetHeight = -1;
   float fWidth = 0;
-  if (fCalcWidth > 0 && fCalcHeight < 0) {
+  if (*pCalcWidth > 0 && *pCalcHeight < 0) {
     Optional<float> height = TryHeight();
     if (height)
-      fCalcHeight = *height;
+      *pCalcHeight = *height;
     else
-      CalculateAccWidthAndHeight(doc, fCalcWidth, fCalcHeight);
+      CalculateAccWidthAndHeight(doc, pCalcWidth, pCalcHeight);
 
-    m_pLayoutData->m_fWidgetHeight = fCalcHeight;
+    m_pLayoutData->m_fWidgetHeight = *pCalcHeight;
     return;
   }
-  if (fCalcWidth < 0 && fCalcHeight < 0) {
+  if (*pCalcWidth < 0 && *pCalcHeight < 0) {
     Optional<float> height;
     Optional<float> width = TryWidth();
     if (width) {
@@ -3073,20 +3073,20 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
 
       height = TryHeight();
       if (height)
-        fCalcHeight = *height;
+        *pCalcHeight = *height;
     }
     if (!width || !height)
-      CalculateAccWidthAndHeight(doc, fWidth, fCalcHeight);
+      CalculateAccWidthAndHeight(doc, &fWidth, pCalcHeight);
 
-    fCalcWidth = fWidth;
+    *pCalcWidth = fWidth;
   }
-  m_pLayoutData->m_fWidgetHeight = fCalcHeight;
+  m_pLayoutData->m_fWidgetHeight = *pCalcHeight;
 }
 
 void CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
-                                           float& fWidth,
-                                           float& fCalcHeight) {
-  CFX_SizeF sz(fWidth, m_pLayoutData->m_fWidgetHeight);
+                                           float* pWidth,
+                                           float* pCalcHeight) {
+  CFX_SizeF sz(*pWidth, m_pLayoutData->m_fWidgetHeight);
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode:
     case XFA_FFWidgetType::kChoiceList:
@@ -3123,14 +3123,14 @@ void CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
       break;
   }
 
-  fWidth = sz.width;
+  *pWidth = sz.width;
   m_pLayoutData->m_fWidgetHeight = sz.height;
-  fCalcHeight = sz.height;
+  *pCalcHeight = sz.height;
 }
 
 bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
                              int32_t iBlockIndex,
-                             float& fCalcHeight) {
+                             float* pCalcHeight) {
   if (GetFFWidgetType() == XFA_FFWidgetType::kSubform)
     return false;
 
@@ -3141,7 +3141,7 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     case XFA_FFWidgetType::kPasswordEdit:
       break;
     default:
-      fCalcHeight = 0;
+      *pCalcHeight = 0;
       return true;
   }
 
@@ -3159,22 +3159,21 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     fBottomInset += rtUIMargin.width;
   }
   if (GetFFWidgetType() == XFA_FFWidgetType::kText) {
-    float fHeight = fCalcHeight;
+    float fHeight = *pCalcHeight;
     if (iBlockIndex == 0) {
-      fCalcHeight = fCalcHeight - fTopInset;
-      if (fCalcHeight < 0)
-        fCalcHeight = 0;
+      *pCalcHeight -= fTopInset;
+      *pCalcHeight = std::max(*pCalcHeight, 0.0f);
     }
 
     CXFA_TextLayout* pTextLayout =
         static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->GetTextLayout();
-    fCalcHeight =
-        pTextLayout->DoLayout(iBlockIndex, fCalcHeight, fCalcHeight,
+    *pCalcHeight =
+        pTextLayout->DoLayout(iBlockIndex, *pCalcHeight, *pCalcHeight,
                               m_pLayoutData->m_fWidgetHeight - fTopInset);
-    if (fCalcHeight != 0) {
+    if (*pCalcHeight != 0) {
       if (iBlockIndex == 0)
-        fCalcHeight = fCalcHeight + fTopInset;
-      if (fabs(fHeight - fCalcHeight) < XFA_FLOAT_PERCISION)
+        *pCalcHeight += fTopInset;
+      if (fabs(fHeight - *pCalcHeight) < XFA_FLOAT_PERCISION)
         return false;
     }
     return true;
@@ -3189,13 +3188,13 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
       fCapReserve = caption->GetReserve();
     }
     if (iCapPlacement == XFA_AttributeEnum::Top &&
-        fCalcHeight < fCapReserve + fTopInset) {
-      fCalcHeight = 0;
+        *pCalcHeight < fCapReserve + fTopInset) {
+      *pCalcHeight = 0;
       return true;
     }
     if (iCapPlacement == XFA_AttributeEnum::Bottom &&
         m_pLayoutData->m_fWidgetHeight - fCapReserve - fBottomInset) {
-      fCalcHeight = 0;
+      *pCalcHeight = 0;
       return true;
     }
     if (iCapPlacement != XFA_AttributeEnum::Top)
@@ -3210,9 +3209,9 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
   } else {
     if (!pFieldData->m_pTextOut) {
       // TODO(dsinclair): Inline fWidth when the 2nd param of
-      // CalculateAccWidthAndHeight isn't a ref-param.
+      // CalculateAccWidthAndHeight isn't an in/out param.
       float fWidth = TryWidth().value_or(0);
-      CalculateAccWidthAndHeight(docView->GetDoc(), fWidth, fHeight);
+      CalculateAccWidthAndHeight(docView->GetDoc(), &fWidth, &fHeight);
     }
     iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
   }
@@ -3283,58 +3282,58 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
        eLayoutMode == XFA_AttributeEnum::Row ||
        eLayoutMode == XFA_AttributeEnum::Table) &&
       version <= XFA_VERSION_208) {
-    if (fStartOffset < fCalcHeight) {
+    if (fStartOffset < *pCalcHeight) {
       bCanSplitNoContent = true;
     } else {
-      fCalcHeight = 0;
+      *pCalcHeight = 0;
       return true;
     }
   }
   if (bCanSplitNoContent) {
-    if ((fCalcHeight - fTopInset - fSpaceAbove < fLineHeight)) {
-      fCalcHeight = 0;
+    if ((*pCalcHeight - fTopInset - fSpaceAbove < fLineHeight)) {
+      *pCalcHeight = 0;
       return true;
     }
-    if (fStartOffset + XFA_FLOAT_PERCISION >= fCalcHeight) {
+    if (fStartOffset + XFA_FLOAT_PERCISION >= *pCalcHeight) {
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
         (*pFieldArray)[iBlockIndex * 3 + 1] = 0;
-        (*pFieldArray)[iBlockIndex * 3 + 2] = fCalcHeight;
+        (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
       } else {
         pFieldArray->push_back(0);
-        pFieldArray->push_back(fCalcHeight);
+        pFieldArray->push_back(*pCalcHeight);
       }
       return false;
     }
-    if (fCalcHeight - fStartOffset < fLineHeight) {
-      fCalcHeight = fStartOffset;
+    if (*pCalcHeight - fStartOffset < fLineHeight) {
+      *pCalcHeight = fStartOffset;
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
         (*pFieldArray)[iBlockIndex * 3 + 1] = 0;
-        (*pFieldArray)[iBlockIndex * 3 + 2] = fCalcHeight;
+        (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
       } else {
         pFieldArray->push_back(0);
-        pFieldArray->push_back(fCalcHeight);
+        pFieldArray->push_back(*pCalcHeight);
       }
       return true;
     }
     float fTextNum =
-        fCalcHeight + XFA_FLOAT_PERCISION - fCapReserve - fStartOffset;
+        *pCalcHeight + XFA_FLOAT_PERCISION - fCapReserve - fStartOffset;
     int32_t iLineNum =
         (int32_t)((fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
     if (iLineNum >= iLinesCount) {
-      if (fCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
+      if (*pCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
         if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
           (*pFieldArray)[iBlockIndex * 3 + 1] = (float)iLinesCount;
-          (*pFieldArray)[iBlockIndex * 3 + 2] = fCalcHeight;
+          (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
         } else {
           pFieldArray->push_back((float)iLinesCount);
-          pFieldArray->push_back(fCalcHeight);
+          pFieldArray->push_back(*pCalcHeight);
         }
         return false;
       }
       if (fHeight - fStartOffset - fTextHeight < fFontSize) {
         iLineNum -= 1;
         if (iLineNum == 0) {
-          fCalcHeight = 0;
+          *pCalcHeight = 0;
           return true;
         }
       } else {
@@ -3350,14 +3349,14 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
         pFieldArray->push_back((float)iLineNum);
         pFieldArray->push_back(fSplitHeight);
       }
-      if (fabs(fSplitHeight - fCalcHeight) < XFA_FLOAT_PERCISION)
+      if (fabs(fSplitHeight - *pCalcHeight) < XFA_FLOAT_PERCISION)
         return false;
 
-      fCalcHeight = fSplitHeight;
+      *pCalcHeight = fSplitHeight;
       return true;
     }
   }
-  fCalcHeight = 0;
+  *pCalcHeight = 0;
   return true;
 }
 
@@ -3389,36 +3388,36 @@ void CXFA_Node::InitLayoutData() {
 }
 
 void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
-                                float& fCalcWidth,
-                                float& fCalcHeight) {
+                                float* pCalcWidth,
+                                float* pCalcHeight) {
   InitLayoutData();
   static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->LoadText(doc, this);
 
   CXFA_TextLayout* pTextLayout =
       static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->GetTextLayout();
   float fTextHeight = 0;
-  if (fCalcWidth > 0 && fCalcHeight > 0) {
-    float fWidth = GetWidthWithoutMargin(fCalcWidth);
+  if (*pCalcWidth > 0 && *pCalcHeight > 0) {
+    float fWidth = GetWidthWithoutMargin(*pCalcWidth);
     pTextLayout->StartLayout(fWidth);
-    fTextHeight = fCalcHeight;
+    fTextHeight = *pCalcHeight;
     fTextHeight = GetHeightWithoutMargin(fTextHeight);
     pTextLayout->DoLayout(0, fTextHeight, -1, fTextHeight);
     return;
   }
-  if (fCalcWidth > 0 && fCalcHeight < 0) {
-    float fWidth = GetWidthWithoutMargin(fCalcWidth);
+  if (*pCalcWidth > 0 && *pCalcHeight < 0) {
+    float fWidth = GetWidthWithoutMargin(*pCalcWidth);
     pTextLayout->StartLayout(fWidth);
   }
 
-  if (fCalcWidth < 0 && fCalcHeight < 0) {
+  if (*pCalcWidth < 0 && *pCalcHeight < 0) {
     Optional<float> width = TryWidth();
     if (width) {
       pTextLayout->StartLayout(GetWidthWithoutMargin(*width));
-      fCalcWidth = *width;
+      *pCalcWidth = *width;
     } else {
       float fMaxWidth = CalculateWidgetAutoWidth(pTextLayout->StartLayout(-1));
       pTextLayout->StartLayout(GetWidthWithoutMargin(fMaxWidth));
-      fCalcWidth = fMaxWidth;
+      *pCalcWidth = fMaxWidth;
     }
   }
 
@@ -3430,7 +3429,7 @@ void CXFA_Node::StartTextLayout(CXFA_FFDoc* doc,
   fTextHeight = m_pLayoutData->m_fWidgetHeight;
   fTextHeight = GetHeightWithoutMargin(fTextHeight);
   pTextLayout->DoLayout(0, fTextHeight, -1, fTextHeight);
-  fCalcHeight = m_pLayoutData->m_fWidgetHeight;
+  *pCalcHeight = m_pLayoutData->m_fWidgetHeight;
 }
 
 bool CXFA_Node::LoadCaption(CXFA_FFDoc* doc) {

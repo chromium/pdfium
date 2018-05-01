@@ -300,11 +300,11 @@ class CXFA_Node : public CXFA_Object {
 
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
   void StartWidgetLayout(CXFA_FFDoc* doc,
-                         float& fCalcWidth,
-                         float& fCalcHeight);
+                         float* pCalcWidth,
+                         float* pCalcHeight);
   bool FindSplitPos(CXFA_FFDocView* docView,
                     int32_t iBlockIndex,
-                    float& fCalcHeight);
+                    float* pCalcHeight);
 
   bool LoadCaption(CXFA_FFDoc* doc);
   CXFA_TextLayout* GetCaptionTextLayout();
@@ -462,10 +462,10 @@ class CXFA_Node : public CXFA_Object {
   float GetHeightWithoutMargin(float fHeightCalc);
   void CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
   void CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
-                                  float& fWidth,
-                                  float& fCalcHeight);
+                                  float* pWidth,
+                                  float* pCalcHeight);
   void InitLayoutData();
-  void StartTextLayout(CXFA_FFDoc* doc, float& fCalcWidth, float& fCalcHeight);
+  void StartTextLayout(CXFA_FFDoc* doc, float* pCalcWidth, float* pCalcHeight);
 
   void InsertListTextItem(CXFA_Node* pItems,
                           const WideString& wsText,

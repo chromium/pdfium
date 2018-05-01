@@ -60,24 +60,24 @@ std::vector<WideString> SeparateStringW(const wchar_t* pStr,
 }
 
 void UpdateWidgetSize(CXFA_ContentLayoutItem* pLayoutItem,
-                      float* fWidth,
-                      float* fHeight) {
+                      float* pWidth,
+                      float* pHeight) {
   CXFA_Node* pNode = pLayoutItem->m_pFormNode;
   switch (pNode->GetElementType()) {
     case XFA_Element::Subform:
     case XFA_Element::Area:
     case XFA_Element::ExclGroup:
     case XFA_Element::SubformSet: {
-      if (*fWidth < -XFA_LAYOUT_FLOAT_PERCISION)
-        *fWidth = pLayoutItem->m_sSize.width;
-      if (*fHeight < -XFA_LAYOUT_FLOAT_PERCISION)
-        *fHeight = pLayoutItem->m_sSize.height;
+      if (*pWidth < -XFA_LAYOUT_FLOAT_PERCISION)
+        *pWidth = pLayoutItem->m_sSize.width;
+      if (*pHeight < -XFA_LAYOUT_FLOAT_PERCISION)
+        *pHeight = pLayoutItem->m_sSize.height;
       break;
     }
     case XFA_Element::Draw:
     case XFA_Element::Field: {
-      pNode->GetDocument()->GetNotify()->StartFieldDrawLayout(pNode, *fWidth,
-                                                              *fHeight);
+      pNode->GetDocument()->GetNotify()->StartFieldDrawLayout(pNode, pWidth,
+                                                              pHeight);
       break;
     }
     default:
@@ -494,7 +494,7 @@ bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
         {
           float fRelSplitPos = *fProposedSplitPos - fCurVerticalOffset;
           if (pFormNode->FindSplitPos(pNotify->GetHDOC()->GetDocView(),
-                                      pLayoutItem->GetIndex(), fRelSplitPos)) {
+                                      pLayoutItem->GetIndex(), &fRelSplitPos)) {
             bAnyChanged = true;
             bChanged = true;
             *fProposedSplitPos = fCurVerticalOffset + fRelSplitPos;
@@ -2187,7 +2187,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutField() {
   CXFA_Document* pDocument = m_pFormNode->GetDocument();
   CXFA_FFNotify* pNotify = pDocument->GetNotify();
   CFX_SizeF size(-1, -1);
-  pNotify->StartFieldDrawLayout(m_pFormNode, size.width, size.height);
+  pNotify->StartFieldDrawLayout(m_pFormNode, &size.width, &size.height);
 
   int32_t nRotate = XFA_MapRotation(
       m_pFormNode->JSObject()->GetInteger(XFA_Attribute::Rotate));

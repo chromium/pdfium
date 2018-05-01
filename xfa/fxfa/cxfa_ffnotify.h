@@ -50,8 +50,8 @@ class CXFA_FFNotify {
                             CXFA_LayoutItem* pSender);
 
   void StartFieldDrawLayout(CXFA_Node* pItem,
-                            float& fCalcWidth,
-                            float& fCalcHeight);
+                            float* pCalcWidth,
+                            float* pCalcHeight);
   bool RunScript(CXFA_Script* pScript, CXFA_Node* pFormItem);
   int32_t ExecEventByDeepFirst(CXFA_Node* pFormNode,
                                XFA_EVENTTYPE eEventType,

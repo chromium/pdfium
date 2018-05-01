@@ -194,9 +194,9 @@ CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
 }
 
 void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node* pItem,
-                                         float& fCalcWidth,
-                                         float& fCalcHeight) {
-  pItem->StartWidgetLayout(m_pDoc.Get(), fCalcWidth, fCalcHeight);
+                                         float* pCalcWidth,
+                                         float* pCalcHeight) {
+  pItem->StartWidgetLayout(m_pDoc.Get(), pCalcWidth, pCalcHeight);
 }
 
 bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
