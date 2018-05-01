@@ -9,24 +9,25 @@
 
 #include <memory>
 
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
-class CPDFXFA_Context;
 class CPDF_Dictionary;
-class CPDF_Page;
+class CPDFXFA_Context;
 class CXFA_FFPageView;
 
-class CPDFXFA_Page : public Retainable {
+class CPDFXFA_Page : public CPDF_Page::Extension {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool LoadPage();
   bool LoadPDFPage(CPDF_Dictionary* pageDict);
+
   CPDFXFA_Context* GetContext() const { return m_pContext.Get(); }
   int GetPageIndex() const { return m_iPageIndex; }
   CPDF_Page* GetPDFPage() const { return m_pPDFPage.get(); }

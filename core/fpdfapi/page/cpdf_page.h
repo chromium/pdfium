@@ -12,6 +12,8 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
 class CPDF_Dictionary;
@@ -23,6 +25,7 @@ class CPDF_PageRenderContext;
 class CPDF_Page : public CPDF_PageObjectHolder {
  public:
   class View {};  // Caller implements as desired, empty here due to layering.
+  class Extension : public Retainable {};  // XFA page parent class, layering.
 
   CPDF_Page(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageDict,
@@ -56,8 +59,11 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   }
   void SetRenderContext(std::unique_ptr<CPDF_PageRenderContext> pContext);
 
+  void* GetPDFDocument() const { return m_pPDFDocument.Get(); }
   View* GetView() const { return m_pView; }
   void SetView(View* pView) { m_pView = pView; }
+  Extension* GetPageExtension() const { return m_pPageExtension.Get(); }
+  void SetPageExtension(Extension* pExt) { m_pPageExtension = pExt; }
 
  private:
   void StartParse();
@@ -68,6 +74,8 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   CFX_SizeF m_PageSize;
   CFX_Matrix m_PageMatrix;
   View* m_pView = nullptr;
+  UnownedPtr<Extension> m_pPageExtension;
+  UnownedPtr<CPDF_Document> m_pPDFDocument;
   std::unique_ptr<CPDF_PageRenderCache> m_pPageRender;
   std::unique_ptr<CPDF_PageRenderContext> m_pRenderContext;
 };

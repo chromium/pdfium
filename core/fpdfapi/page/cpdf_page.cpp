@@ -22,7 +22,9 @@
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
                      CPDF_Dictionary* pPageDict,
                      bool bPageCache)
-    : CPDF_PageObjectHolder(pDocument, pPageDict), m_PageSize(100, 100) {
+    : CPDF_PageObjectHolder(pDocument, pPageDict),
+      m_PageSize(100, 100),
+      m_pPDFDocument(pDocument) {
   if (bPageCache)
     m_pPageRender = pdfium::MakeUnique<CPDF_PageRenderCache>(this);
   if (!pPageDict)
