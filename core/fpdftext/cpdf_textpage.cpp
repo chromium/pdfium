@@ -702,11 +702,11 @@ void CPDF_TextPage::CloseTempLine() {
          eCurrentDirection == CFX_BidiChar::RIGHT)) {
       eCurrentDirection = CFX_BidiChar::RIGHT;
       for (int m = segment.start + segment.count; m > segment.start; --m)
-        AddCharInfoByRLDirection(bidi.CharAt(m - 1), m_TempCharList[m - 1]);
+        AddCharInfoByRLDirection(str[m - 1], m_TempCharList[m - 1]);
     } else {
       eCurrentDirection = CFX_BidiChar::LEFT;
       for (int m = segment.start; m < segment.start + segment.count; m++)
-        AddCharInfoByLRDirection(bidi.CharAt(m), m_TempCharList[m]);
+        AddCharInfoByLRDirection(str[m], m_TempCharList[m]);
     }
   }
   m_TempCharList.clear();
