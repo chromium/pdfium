@@ -57,10 +57,12 @@ class CPDFXFA_Context : public CPDF_Document::Extension,
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   int GetPageCount() const;
-  void DeletePage(int page_index);
   RetainPtr<CPDFXFA_Page> GetXFAPage(int page_index);
   RetainPtr<CPDFXFA_Page> GetXFAPage(CXFA_FFPageView* pPage) const;
   void ClearChangeMark();
+
+  // CPDF_Document::Extension:
+  void DeletePage(int page_index) override;
 
   // IFXA_AppProvider:
   WideString GetLanguage() override;

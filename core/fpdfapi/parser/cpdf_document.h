@@ -45,6 +45,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   class Extension {
    public:
     virtual ~Extension() {}
+    virtual void DeletePage(int page_index) = 0;
   };
 
   explicit CPDF_Document(std::unique_ptr<CPDF_Parser> pParser);

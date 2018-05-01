@@ -157,14 +157,11 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
   if (!pDoc)
     return;
 
-#ifdef PDF_ENABLE_XFA
-  CPDFXFA_Context* pContext =
-      static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
-  if (pContext) {
-    pContext->DeletePage(page_index);
+  CPDF_Document::Extension* pExtension = pDoc->GetExtension();
+  if (pExtension) {
+    pExtension->DeletePage(page_index);
     return;
   }
-#endif  // PDF_ENABLE_XFA
 
   pDoc->DeletePage(page_index);
 }
