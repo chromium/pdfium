@@ -552,11 +552,11 @@ void CFWL_MonthCalendar::GetCapValue() {
 }
 
 void CFWL_MonthCalendar::InitDate() {
-  // TODO(dsinclair): These should pull the real today values instead of
-  // pretending it's 2011-01-01.
-  m_iYear = 2011;
-  m_iMonth = 1;
-  m_iDay = 1;
+  CFX_DateTime now = CFX_DateTime::Now();
+
+  m_iYear = now.GetYear();
+  m_iMonth = now.GetMonth();
+  m_iDay = now.GetDay();
   m_iCurYear = m_iYear;
   m_iCurMonth = m_iMonth;
 
