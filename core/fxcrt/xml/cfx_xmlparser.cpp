@@ -175,8 +175,8 @@ bool CFX_XMLParser::Parse() {
           auto* instruction = static_cast<CFX_XMLInstruction*>(m_pChild);
           if (!target_data.IsEmpty())
             instruction->AppendData(target_data);
-
-          instruction->AppendData(GetTextData());
+          if (!GetTextData().IsEmpty())
+            instruction->AppendData(GetTextData());
         }
         break;
       }

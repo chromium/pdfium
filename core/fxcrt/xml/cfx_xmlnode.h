@@ -38,6 +38,9 @@ class CFX_XMLNode {
   void RemoveChildNode(CFX_XMLNode* pNode);
   void DeleteChildren();
 
+  CFX_XMLNode* GetLastChildForTesting() const { return last_child_.Get(); }
+  CFX_XMLNode* GetPrevSiblingForTesting() const { return prev_sibling_.Get(); }
+
  protected:
   WideString EncodeEntities(const WideString& value);
 

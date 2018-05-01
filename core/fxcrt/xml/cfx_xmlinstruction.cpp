@@ -49,12 +49,12 @@ void CFX_XMLInstruction::Save(
 
   pXMLStream->WriteString("<?");
   pXMLStream->WriteString(name_.UTF8Encode().AsStringView());
+  pXMLStream->WriteString(" ");
 
   for (const WideString& target : m_TargetData) {
-    pXMLStream->WriteString("\"");
     pXMLStream->WriteString(target.UTF8Encode().AsStringView());
-    pXMLStream->WriteString("\"");
+    pXMLStream->WriteString(" ");
   }
 
-  pXMLStream->WriteString("?>");
+  pXMLStream->WriteString("?>\n");
 }
