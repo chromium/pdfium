@@ -35,8 +35,10 @@ bool CPDF_PageObjectHolder::IsPage() const {
 }
 
 void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
-  if (!m_pParser)
+  if (!m_pParser) {
+    m_ParseState = CONTENT_PARSED;
     return;
+  }
 
   if (m_pParser->Continue(pPause))
     return;
