@@ -2837,7 +2837,7 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
 
     pTextOut->SetStyles(dwStyles);
   }
-  layoutData->m_pTextOut->CalcLogicSize(wsText, size);
+  layoutData->m_pTextOut->CalcLogicSize(wsText, &size);
 }
 
 bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {

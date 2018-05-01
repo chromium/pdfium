@@ -332,7 +332,7 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
   calPart.m_iTTOAlign = FDE_TextAlignment::kTopLeft;
   float fWidth = bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
   CFX_RectF rect(0, 0, fWidth, FWL_WGT_CalcHeight);
-  pTheme->CalcTextRect(&calPart, rect);
+  pTheme->CalcTextRect(&calPart, &rect);
   return CFX_SizeF(rect.width, rect.height);
 }
 
@@ -340,13 +340,13 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
                                IFWL_ThemeProvider* pTheme,
                                const FDE_TextStyle& dwTTOStyles,
                                FDE_TextAlignment iTTOAlign,
-                               CFX_RectF& rect) {
+                               CFX_RectF* pRect) {
   CFWL_ThemeText calPart;
   calPart.m_pWidget = this;
   calPart.m_wsText = wsText;
   calPart.m_dwTTOStyles = dwTTOStyles;
   calPart.m_iTTOAlign = iTTOAlign;
-  pTheme->CalcTextRect(&calPart, rect);
+  pTheme->CalcTextRect(&calPart, pRect);
 }
 
 void CFWL_Widget::SetFocus(bool bFocus) {

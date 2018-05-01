@@ -246,7 +246,7 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
   for (size_t i = 0; i < num_to_check; i++) {
     // This does a lot of string copying ....
     // TODO(dsinclair): make CalcLogicSize take a WideStringC instead.
-    text_out->CalcLogicSize(WideString(temp), text_rect);
+    text_out->CalcLogicSize(WideString(temp), &text_rect);
 
     if (limit_horizontal_area_ && text_rect.width <= available_width_)
       break;

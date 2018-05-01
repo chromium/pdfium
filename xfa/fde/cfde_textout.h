@@ -55,8 +55,8 @@ class CFDE_TextOut {
   void SetMatrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
   void SetLineBreakTolerance(float fTolerance);
 
-  void CalcLogicSize(const WideString& str, CFX_SizeF& size);
-  void CalcLogicSize(const WideString& str, CFX_RectF& rect);
+  void CalcLogicSize(const WideString& str, CFX_SizeF* pSize);
+  void CalcLogicSize(const WideString& str, CFX_RectF* pRect);
   void DrawLogicText(CFX_RenderDevice* device,
                      const WideStringView& str,
                      const CFX_RectF& rect);

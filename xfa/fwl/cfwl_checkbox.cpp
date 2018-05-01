@@ -137,7 +137,7 @@ void CFWL_CheckBox::Layout() {
                     m_rtCaption.height);
 
   CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider, m_dwTTOStyles,
-               m_iTTOAlign, rtFocus);
+               m_iTTOAlign, &rtFocus);
 
   m_rtFocus = CFX_RectF(m_rtCaption.TopLeft(),
                         std::max(m_rtCaption.width, rtFocus.width),

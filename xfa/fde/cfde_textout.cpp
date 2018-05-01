@@ -194,32 +194,32 @@ void CFDE_TextOut::SetLineBreakTolerance(float fTolerance) {
   m_pTxtBreak->SetLineBreakTolerance(m_fTolerance);
 }
 
-void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_SizeF& size) {
-  CFX_RectF rtText(0.0f, 0.0f, size.width, size.height);
-  CalcLogicSize(str, rtText);
-  size = rtText.Size();
+void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_SizeF* pSize) {
+  CFX_RectF rtText(0.0f, 0.0f, pSize->width, pSize->height);
+  CalcLogicSize(str, &rtText);
+  *pSize = rtText.Size();
 }
 
-void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_RectF& rect) {
+void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_RectF* pRect) {
   if (str.IsEmpty()) {
-    rect.width = 0.0f;
-    rect.height = 0.0f;
+    pRect->width = 0.0f;
+    pRect->height = 0.0f;
     return;
   }
 
   ASSERT(m_pFont && m_fFontSize >= 1.0f);
 
   if (!m_Styles.single_line_) {
-    if (rect.Width() < 1.0f)
-      rect.width = m_fFontSize * 1000.0f;
+    if (pRect->Width() < 1.0f)
+      pRect->width = m_fFontSize * 1000.0f;
 
-    m_pTxtBreak->SetLineWidth(rect.Width());
+    m_pTxtBreak->SetLineWidth(pRect->Width());
   }
 
   m_iTotalLines = 0;
   float fWidth = 0.0f;
   float fHeight = 0.0f;
-  float fStartPos = rect.right();
+  float fStartPos = pRect->right();
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   bool break_char_is_set = false;
   for (const wchar_t& wch : str) {
@@ -237,18 +237,18 @@ void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_RectF& rect) {
     RetrieveLineWidth(dwBreakStatus, fStartPos, fWidth, fHeight);
 
   m_pTxtBreak->Reset();
-  float fInc = rect.Height() - fHeight;
+  float fInc = pRect->Height() - fHeight;
   if (TextAlignmentVerticallyCentered(m_iAlignment))
     fInc /= 2.0f;
   else if (IsTextAlignmentTop(m_iAlignment))
     fInc = 0.0f;
 
-  rect.left += fStartPos;
-  rect.top += fInc;
-  rect.width = std::min(fWidth, rect.Width());
-  rect.height = fHeight;
+  pRect->left += fStartPos;
+  pRect->top += fInc;
+  pRect->width = std::min(fWidth, pRect->Width());
+  pRect->height = fHeight;
   if (m_Styles.last_line_height_)
-    rect.height -= m_fLineSpace - m_fFontSize;
+    pRect->height -= m_fLineSpace - m_fFontSize;
 }
 
 bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,

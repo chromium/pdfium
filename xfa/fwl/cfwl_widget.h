@@ -134,7 +134,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                     IFWL_ThemeProvider* pTheme,
                     const FDE_TextStyle& dwTTOStyles,
                     FDE_TextAlignment iTTOAlign,
-                    CFX_RectF& rect);
+                    CFX_RectF* pRect);
   void SetGrab(bool bSet);
   void RegisterEventTarget(CFWL_Widget* pEventSource);
   void UnregisterEventTarget();

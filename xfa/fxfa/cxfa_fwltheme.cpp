@@ -227,7 +227,7 @@ CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
   return sizeAboveBelow;
 }
 
-void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
+void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF* pRect) {
   if (pParams->m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);
     if (!pWidget || !pParams || !m_pTextOut)
@@ -238,7 +238,7 @@ void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
     m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
     m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-    m_pTextOut->CalcLogicSize(pParams->m_wsText, rect);
+    m_pTextOut->CalcLogicSize(pParams->m_wsText, pRect);
     return;
   }
 
@@ -255,7 +255,7 @@ void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
 
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
-  m_pTextOut->CalcLogicSize(pParams->m_wsText, rect);
+  m_pTextOut->CalcLogicSize(pParams->m_wsText, pRect);
 }
 
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) const {
