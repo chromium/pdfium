@@ -2678,7 +2678,7 @@ void CXFA_Node::UpdateUIDisplay(CXFA_FFDocView* docView,
   }
 }
 
-void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
+void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap) {
   CXFA_Caption* caption = GetCaptionIfExists();
   if (!caption || !caption->IsVisible())
     return;
@@ -2695,12 +2695,12 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
           ->m_pCapTextLayout.get();
   if (pCapTextLayout) {
     if (!bVert && GetFFWidgetType() != XFA_FFWidgetType::kButton)
-      szCap.width = fCapReserve;
+      pszCap->width = fCapReserve;
 
     CFX_SizeF minSize;
-    szCap = pCapTextLayout->CalcSize(minSize, szCap);
+    *pszCap = pCapTextLayout->CalcSize(minSize, *pszCap);
     if (bReserveExit)
-      bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
+      bVert ? pszCap->height = fCapReserve : pszCap->width = fCapReserve;
   } else {
     float fFontSize = 10.0f;
     CXFA_Font* font = caption->GetFontIfExists();
@@ -2713,10 +2713,10 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
     }
 
     if (bVert) {
-      szCap.height = fCapReserve > 0 ? fCapReserve : fFontSize;
+      pszCap->height = fCapReserve > 0 ? fCapReserve : fFontSize;
     } else {
-      szCap.width = fCapReserve > 0 ? fCapReserve : 0;
-      szCap.height = fFontSize;
+      pszCap->width = fCapReserve > 0 ? fCapReserve : 0;
+      pszCap->height = fFontSize;
     }
   }
 
@@ -2729,21 +2729,21 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap) {
   float fRightInset = captionMargin->GetRightInset();
   float fBottomInset = captionMargin->GetBottomInset();
   if (bReserveExit) {
-    bVert ? (szCap.width += fLeftInset + fRightInset)
-          : (szCap.height += fTopInset + fBottomInset);
+    bVert ? (pszCap->width += fLeftInset + fRightInset)
+          : (pszCap->height += fTopInset + fBottomInset);
   } else {
-    szCap.width += fLeftInset + fRightInset;
-    szCap.height += fTopInset + fBottomInset;
+    pszCap->width += fLeftInset + fRightInset;
+    pszCap->height += fTopInset + fBottomInset;
   }
 }
 
-bool CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
+bool CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   CFX_SizeF szCap;
-  CalcCaptionSize(doc, szCap);
+  CalcCaptionSize(doc, &szCap);
 
   CFX_RectF rtUIMargin = GetUIMargin();
-  size.width += rtUIMargin.left + rtUIMargin.width;
-  size.height += rtUIMargin.top + rtUIMargin.height;
+  pSize->width += rtUIMargin.left + rtUIMargin.width;
+  pSize->height += rtUIMargin.top + rtUIMargin.height;
   if (szCap.width > 0 && szCap.height > 0) {
     CXFA_Caption* caption = GetCaptionIfExists();
     XFA_AttributeEnum placement = caption ? caption->GetPlacementType()
@@ -2752,66 +2752,66 @@ bool CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
       case XFA_AttributeEnum::Left:
       case XFA_AttributeEnum::Right:
       case XFA_AttributeEnum::Inline: {
-        size.width += szCap.width;
-        size.height = std::max(size.height, szCap.height);
+        pSize->width += szCap.width;
+        pSize->height = std::max(pSize->height, szCap.height);
       } break;
       case XFA_AttributeEnum::Top:
       case XFA_AttributeEnum::Bottom: {
-        size.height += szCap.height;
-        size.width = std::max(size.width, szCap.width);
+        pSize->height += szCap.height;
+        pSize->width = std::max(pSize->width, szCap.width);
         break;
       }
       default:
         break;
     }
   }
-  return CalculateWidgetAutoSize(size);
+  return CalculateWidgetAutoSize(pSize);
 }
 
-bool CXFA_Node::CalculateWidgetAutoSize(CFX_SizeF& size) {
+bool CXFA_Node::CalculateWidgetAutoSize(CFX_SizeF* pSize) {
   CXFA_Margin* margin = GetMarginIfExists();
   if (margin) {
-    size.width += margin->GetLeftInset() + margin->GetRightInset();
-    size.height += margin->GetTopInset() + margin->GetBottomInset();
+    pSize->width += margin->GetLeftInset() + margin->GetRightInset();
+    pSize->height += margin->GetTopInset() + margin->GetBottomInset();
   }
 
   CXFA_Para* para = GetParaIfExists();
   if (para)
-    size.width += para->GetMarginLeft() + para->GetTextIndent();
+    pSize->width += para->GetMarginLeft() + para->GetTextIndent();
 
   Optional<float> width = TryWidth();
   if (width) {
-    size.width = *width;
+    pSize->width = *width;
   } else {
     Optional<float> min = TryMinWidth();
     if (min)
-      size.width = std::max(size.width, *min);
+      pSize->width = std::max(pSize->width, *min);
 
     Optional<float> max = TryMaxWidth();
     if (max && *max > 0)
-      size.width = std::min(size.width, *max);
+      pSize->width = std::min(pSize->width, *max);
   }
 
   Optional<float> height = TryHeight();
   if (height) {
-    size.height = *height;
+    pSize->height = *height;
   } else {
     Optional<float> min = TryMinHeight();
     if (min)
-      size.height = std::max(size.height, *min);
+      pSize->height = std::max(pSize->height, *min);
 
     Optional<float> max = TryMaxHeight();
     if (max && *max > 0)
-      size.height = std::min(size.height, *max);
+      pSize->height = std::min(pSize->height, *max);
   }
   return true;
 }
 
-void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
+void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   float fFontSize = GetFontSize();
   WideString wsText = GetValue(XFA_VALUEPICTURE_Display);
   if (wsText.IsEmpty()) {
-    size.height += fFontSize;
+    pSize->height += fFontSize;
     return;
   }
 
@@ -2837,14 +2837,14 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
 
     pTextOut->SetStyles(dwStyles);
   }
-  layoutData->m_pTextOut->CalcLogicSize(wsText, &size);
+  layoutData->m_pTextOut->CalcLogicSize(wsText, pSize);
 }
 
-bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
-  if (size.width > 0) {
-    CFX_SizeF szOrz = size;
+bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
+  if (pSize->width > 0) {
+    CFX_SizeF szOrz = *pSize;
     CFX_SizeF szCap;
-    CalcCaptionSize(doc, szCap);
+    CalcCaptionSize(doc, &szCap);
     bool bCapExit = szCap.width > 0.01 && szCap.height > 0.01;
     XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
     if (bCapExit) {
@@ -2855,7 +2855,7 @@ bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
         case XFA_AttributeEnum::Left:
         case XFA_AttributeEnum::Right:
         case XFA_AttributeEnum::Inline: {
-          size.width -= szCap.width;
+          pSize->width -= szCap.width;
           break;
         }
         default:
@@ -2863,45 +2863,46 @@ bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
       }
     }
     CFX_RectF rtUIMargin = GetUIMargin();
-    size.width -= rtUIMargin.left + rtUIMargin.width;
+    pSize->width -= rtUIMargin.left + rtUIMargin.width;
     CXFA_Margin* margin = GetMarginIfExists();
     if (margin)
-      size.width -= margin->GetLeftInset() + margin->GetRightInset();
+      pSize->width -= margin->GetLeftInset() + margin->GetRightInset();
 
-    CalculateTextContentSize(doc, size);
-    size.height += rtUIMargin.top + rtUIMargin.height;
+    CalculateTextContentSize(doc, pSize);
+    pSize->height += rtUIMargin.top + rtUIMargin.height;
     if (bCapExit) {
       switch (iCapPlacement) {
         case XFA_AttributeEnum::Left:
         case XFA_AttributeEnum::Right:
         case XFA_AttributeEnum::Inline: {
-          size.height = std::max(size.height, szCap.height);
+          pSize->height = std::max(pSize->height, szCap.height);
         } break;
         case XFA_AttributeEnum::Top:
         case XFA_AttributeEnum::Bottom: {
-          size.height += szCap.height;
+          pSize->height += szCap.height;
           break;
         }
         default:
           break;
       }
     }
-    size.width = szOrz.width;
-    return CalculateWidgetAutoSize(size);
+    pSize->width = szOrz.width;
+    return CalculateWidgetAutoSize(pSize);
   }
-  CalculateTextContentSize(doc, size);
-  return CalculateFieldAutoSize(doc, size);
+  CalculateTextContentSize(doc, pSize);
+  return CalculateFieldAutoSize(doc, pSize);
 }
 
-bool CXFA_Node::CalculateCheckButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
+bool CXFA_Node::CalculateCheckButtonAutoSize(CXFA_FFDoc* doc,
+                                             CFX_SizeF* pSize) {
   float fCheckSize = GetCheckButtonSize();
-  size = CFX_SizeF(fCheckSize, fCheckSize);
-  return CalculateFieldAutoSize(doc, size);
+  *pSize = CFX_SizeF(fCheckSize, fCheckSize);
+  return CalculateFieldAutoSize(doc, pSize);
 }
 
-bool CXFA_Node::CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
-  CalcCaptionSize(doc, size);
-  return CalculateWidgetAutoSize(size);
+bool CXFA_Node::CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
+  CalcCaptionSize(doc, pSize);
+  return CalculateWidgetAutoSize(pSize);
 }
 
 CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
@@ -2931,40 +2932,40 @@ CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
   return rtFit.Size();
 }
 
-bool CXFA_Node::CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
+bool CXFA_Node::CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!GetImageImage())
     LoadImageImage(doc);
 
-  size.clear();
+  pSize->clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetImageImage();
   if (!pBitmap)
-    return CalculateWidgetAutoSize(size);
+    return CalculateWidgetAutoSize(pSize);
 
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
   GetImageDpi(iImageXDpi, iImageYDpi);
 
-  size = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
-                            iImageXDpi, iImageYDpi);
-  return CalculateWidgetAutoSize(size);
+  *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
+                              iImageXDpi, iImageYDpi);
+  return CalculateWidgetAutoSize(pSize);
 }
 
-bool CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size) {
+bool CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!GetImageEditImage())
     LoadImageEditImage(doc);
 
-  size.clear();
+  pSize->clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetImageEditImage();
   if (!pBitmap)
-    return CalculateFieldAutoSize(doc, size);
+    return CalculateFieldAutoSize(doc, pSize);
 
   int32_t iImageXDpi = 0;
   int32_t iImageYDpi = 0;
   GetImageEditDpi(iImageXDpi, iImageYDpi);
 
-  size = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
-                            iImageXDpi, iImageYDpi);
-  return CalculateFieldAutoSize(doc, size);
+  *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
+                              iImageXDpi, iImageYDpi);
+  return CalculateFieldAutoSize(doc, pSize);
 }
 
 bool CXFA_Node::LoadImageImage(CXFA_FFDoc* doc) {
@@ -3090,32 +3091,32 @@ void CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
     case XFA_FFWidgetType::kBarcode:
     case XFA_FFWidgetType::kChoiceList:
     case XFA_FFWidgetType::kSignature:
-      CalculateFieldAutoSize(doc, sz);
+      CalculateFieldAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kImageEdit:
-      CalculateImageEditAutoSize(doc, sz);
+      CalculateImageEditAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kButton:
-      CalculatePushButtonAutoSize(doc, sz);
+      CalculatePushButtonAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kCheckButton:
-      CalculateCheckButtonAutoSize(doc, sz);
+      CalculateCheckButtonAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kDateTimeEdit:
     case XFA_FFWidgetType::kNumericEdit:
     case XFA_FFWidgetType::kPasswordEdit:
     case XFA_FFWidgetType::kTextEdit:
-      CalculateTextEditAutoSize(doc, sz);
+      CalculateTextEditAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kImage:
-      CalculateImageAutoSize(doc, sz);
+      CalculateImageAutoSize(doc, &sz);
       break;
     case XFA_FFWidgetType::kArc:
     case XFA_FFWidgetType::kLine:
     case XFA_FFWidgetType::kRectangle:
     case XFA_FFWidgetType::kSubform:
     case XFA_FFWidgetType::kExclGroup:
-      CalculateWidgetAutoSize(sz);
+      CalculateWidgetAutoSize(&sz);
       break;
     case XFA_FFWidgetType::kText:
     case XFA_FFWidgetType::kNone:

@@ -444,23 +444,23 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetNextSameNameSiblingInternal(
       const WideStringView& wsNodeName) const;
   CXFA_Node* GetNextSameClassSiblingInternal(XFA_Element eType) const;
-  void CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF& szCap);
-  bool CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
-  bool CalculateWidgetAutoSize(CFX_SizeF& size);
-  bool CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
-  bool CalculateCheckButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
-  bool CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
+  void CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap);
+  bool CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
+  bool CalculateWidgetAutoSize(CFX_SizeF* pSize);
+  bool CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
+  bool CalculateCheckButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
+  bool CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
   CFX_SizeF CalculateImageSize(float img_width,
                                float img_height,
                                float dpi_x,
                                float dpi_y);
-  bool CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
-  bool CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF& size);
+  bool CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
+  bool CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
   float CalculateWidgetAutoHeight(float fHeightCalc);
   float CalculateWidgetAutoWidth(float fWidthCalc);
   float GetWidthWithoutMargin(float fWidthCalc);
   float GetHeightWithoutMargin(float fHeightCalc);
-  void CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF& size);
+  void CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
   void CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
                                   float& fWidth,
                                   float& fCalcHeight);
