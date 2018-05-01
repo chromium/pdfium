@@ -64,11 +64,15 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
   std::vector<std::unique_ptr<CJBig2_Image>> GSPLANES(GSBPP);
   for (int32_t i = GSBPP - 1; i >= 0; --i) {
     std::unique_ptr<CJBig2_Image> pImage;
-    FXCODEC_STATUS status =
-        GRD.StartDecodeArith(&pImage, pArithDecoder, gbContext, nullptr);
+    CJBig2_GRDProc::ProgressiveArithDecodeState state;
+    state.pImage = &pImage;
+    state.pArithDecoder = pArithDecoder;
+    state.gbContext = gbContext;
+    state.pPause = nullptr;
+    FXCODEC_STATUS status = GRD.StartDecodeArith(&state);
+    state.pPause = pPause;
     while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-      status = GRD.ContinueDecode(pPause, pArithDecoder);
-
+      status = GRD.ContinueDecode(&state);
     if (!pImage)
       return nullptr;
 

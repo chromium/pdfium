@@ -38,10 +38,16 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     pGRD->GBAT[6] = -2;
     pGRD->GBAT[7] = -2;
   }
-  FXCODEC_STATUS status =
-      pGRD->StartDecodeArith(&BHDC, pArithDecoder, gbContext, nullptr);
+  CJBig2_GRDProc::ProgressiveArithDecodeState state;
+  state.pImage = &BHDC;
+  state.pArithDecoder = pArithDecoder;
+  state.gbContext = gbContext;
+  state.pPause = nullptr;
+
+  FXCODEC_STATUS status = pGRD->StartDecodeArith(&state);
+  state.pPause = pPause;
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-    status = pGRD->ContinueDecode(pPause, pArithDecoder);
+    status = pGRD->ContinueDecode(&state);
   if (!BHDC)
     return nullptr;
 

@@ -1094,15 +1094,19 @@ int32_t CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
   if (m_pGRD->MMR == 0) {
     if (m_gbContext.empty())
       m_gbContext.resize(GetHuffContextSize(m_pGRD->GBTEMPLATE));
-    if (!m_pArithDecoder) {
+
+    bool bStart = !m_pArithDecoder;
+    if (bStart) {
       m_pArithDecoder =
           pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
-      m_ProcessingStatus = m_pGRD->StartDecodeArith(
-          &pSegment->m_Image, m_pArithDecoder.get(), &m_gbContext[0], pPause);
-    } else {
-      m_ProcessingStatus =
-          m_pGRD->ContinueDecode(pPause, m_pArithDecoder.get());
     }
+    CJBig2_GRDProc::ProgressiveArithDecodeState state;
+    state.pImage = &pSegment->m_Image;
+    state.pArithDecoder = m_pArithDecoder.get();
+    state.gbContext = m_gbContext.data();
+    state.pPause = pPause;
+    m_ProcessingStatus = bStart ? m_pGRD->StartDecodeArith(&state)
+                                : m_pGRD->ContinueDecode(&state);
     if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       if (pSegment->m_cFlags.s.type != 36) {
         if (!m_bBufSpecified) {

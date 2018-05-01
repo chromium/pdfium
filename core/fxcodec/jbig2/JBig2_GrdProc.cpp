@@ -17,12 +17,7 @@
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "third_party/base/ptr_util.h"
 
-CJBig2_GRDProc::CJBig2_GRDProc()
-    : m_loopIndex(0),
-      m_pLine(nullptr),
-      m_DecodeType(0),
-      m_LTP(0) {
-}
+CJBig2_GRDProc::CJBig2_GRDProc() {}
 
 CJBig2_GRDProc::~CJBig2_GRDProc() {}
 
@@ -638,15 +633,13 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Unopt(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::StartDecodeArith(
-    std::unique_ptr<CJBig2_Image>* pImage,
-    CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
   if (!CJBig2_Image::IsValidImageSize(GBW, GBH)) {
     m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
     return FXCODEC_STATUS_DECODE_FINISH;
   }
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_READY;
+  std::unique_ptr<CJBig2_Image>* pImage = pState->pImage;
   if (!*pImage)
     *pImage = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!(*pImage)->data()) {
@@ -654,23 +647,20 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeArith(
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return FXCODEC_STATUS_ERROR;
   }
+  pImage->get()->fill(0);
   m_DecodeType = 1;
-  m_pImage = pImage->get();
-  m_pImage->fill(0);
-  m_gbContext = gbContext;
   m_LTP = 0;
   m_pLine = nullptr;
   m_loopIndex = 0;
-  return ProgressiveDecodeArith(pPause, pArithDecoder);
+  return ProgressiveDecodeArith(pState);
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArith(
-    PauseIndicatorIface* pPause,
-    CJBig2_ArithDecoder* pArithDecoder) {
+    ProgressiveArithDecodeState* pState) {
   int iline = m_loopIndex;
 
   using DecodeFunction = std::function<FXCODEC_STATUS(
-      CJBig2_GRDProc&, CJBig2_ArithDecoder*, PauseIndicatorIface*)>;
+      CJBig2_GRDProc&, ProgressiveArithDecodeState*)>;
   DecodeFunction func;
   switch (GBTEMPLATE) {
     case 0:
@@ -694,9 +684,10 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArith(
                  : &CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Unopt;
       break;
   }
-  m_ProssiveStatus = func(*this, pArithDecoder, pPause);
+  CJBig2_Image* pImage = pState->pImage->get();
+  m_ProssiveStatus = func(*this, pState);
   m_ReplaceRect.left = 0;
-  m_ReplaceRect.right = m_pImage->width();
+  m_ReplaceRect.right = pImage->width();
   m_ReplaceRect.top = iline;
   m_ReplaceRect.bottom = m_loopIndex;
   if (m_ProssiveStatus == FXCODEC_STATUS_DECODE_FINISH)
@@ -727,8 +718,7 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ContinueDecode(
-    PauseIndicatorIface* pPause,
-    CJBig2_ArithDecoder* pArithDecoder) {
+    ProgressiveArithDecodeState* pState) {
   if (m_ProssiveStatus != FXCODEC_STATUS_DECODE_TOBECONTINUE)
     return m_ProssiveStatus;
 
@@ -736,15 +726,17 @@ FXCODEC_STATUS CJBig2_GRDProc::ContinueDecode(
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return m_ProssiveStatus;
   }
-  return ProgressiveDecodeArith(pPause, pArithDecoder);
+  return ProgressiveDecodeArith(pState);
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   if (!m_pLine)
-    m_pLine = m_pImage->data();
-  int32_t nStride = m_pImage->stride();
+    m_pLine = pImage->data();
+  int32_t nStride = pImage->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
@@ -755,10 +747,10 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x9b25]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(m_loopIndex, m_loopIndex - 1);
+      pImage->copyLine(m_loopIndex, m_loopIndex - 1);
     } else {
       if (m_loopIndex > 1) {
         uint8_t* pLine1 = m_pLine - nStride2;
@@ -774,7 +766,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
                        ((line1 >> k) & 0x0800) | ((line2 >> k) & 0x0010));
@@ -788,7 +780,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               (((CONTEXT & 0x7bf7) << 1) | bVal |
@@ -808,7 +800,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT =
                 (((CONTEXT & 0x7bf7) << 1) | bVal | ((line2 >> k) & 0x0010));
@@ -821,7 +813,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
                      ((line2 >> (7 - k)) & 0x0010));
@@ -830,7 +822,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
       }
     }
     m_pLine += nStride;
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -841,23 +833,25 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Unopt(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x9b25]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(m_loopIndex, m_loopIndex - 1);
+      pImage->copyLine(m_loopIndex, m_loopIndex - 1);
     } else {
-      uint32_t line1 = m_pImage->getPixel(1, m_loopIndex - 2);
-      line1 |= m_pImage->getPixel(0, m_loopIndex - 2) << 1;
-      uint32_t line2 = m_pImage->getPixel(2, m_loopIndex - 1);
-      line2 |= m_pImage->getPixel(1, m_loopIndex - 1) << 1;
-      line2 |= m_pImage->getPixel(0, m_loopIndex - 1) << 2;
+      uint32_t line1 = pImage->getPixel(1, m_loopIndex - 2);
+      line1 |= pImage->getPixel(0, m_loopIndex - 2) << 1;
+      uint32_t line2 = pImage->getPixel(2, m_loopIndex - 1);
+      line2 |= pImage->getPixel(1, m_loopIndex - 1) << 1;
+      line2 |= pImage->getPixel(0, m_loopIndex - 1) << 2;
       uint32_t line3 = 0;
       for (uint32_t w = 0; w < GBW; w++) {
         int bVal;
@@ -865,32 +859,28 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Unopt(
           bVal = 0;
         } else {
           uint32_t CONTEXT = line3;
-          CONTEXT |= m_pImage->getPixel(w + GBAT[0], m_loopIndex + GBAT[1])
-                     << 4;
+          CONTEXT |= pImage->getPixel(w + GBAT[0], m_loopIndex + GBAT[1]) << 4;
           CONTEXT |= line2 << 5;
-          CONTEXT |= m_pImage->getPixel(w + GBAT[2], m_loopIndex + GBAT[3])
-                     << 10;
-          CONTEXT |= m_pImage->getPixel(w + GBAT[4], m_loopIndex + GBAT[5])
-                     << 11;
+          CONTEXT |= pImage->getPixel(w + GBAT[2], m_loopIndex + GBAT[3]) << 10;
+          CONTEXT |= pImage->getPixel(w + GBAT[4], m_loopIndex + GBAT[5]) << 11;
           CONTEXT |= line1 << 12;
-          CONTEXT |= m_pImage->getPixel(w + GBAT[6], m_loopIndex + GBAT[7])
-                     << 15;
+          CONTEXT |= pImage->getPixel(w + GBAT[6], m_loopIndex + GBAT[7]) << 15;
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
-          m_pImage->setPixel(w, m_loopIndex, bVal);
+          pImage->setPixel(w, m_loopIndex, bVal);
         }
         line1 =
-            ((line1 << 1) | m_pImage->getPixel(w + 2, m_loopIndex - 2)) & 0x07;
+            ((line1 << 1) | pImage->getPixel(w + 2, m_loopIndex - 2)) & 0x07;
         line2 =
-            ((line2 << 1) | m_pImage->getPixel(w + 3, m_loopIndex - 1)) & 0x1f;
+            ((line2 << 1) | pImage->getPixel(w + 3, m_loopIndex - 1)) & 0x1f;
         line3 = ((line3 << 1) | bVal) & 0x0f;
       }
     }
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -901,11 +891,13 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Unopt(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   if (!m_pLine)
-    m_pLine = m_pImage->data();
-  int32_t nStride = m_pImage->stride();
+    m_pLine = pImage->data();
+  int32_t nStride = pImage->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
@@ -914,10 +906,10 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x0795]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(m_loopIndex, m_loopIndex - 1);
+      pImage->copyLine(m_loopIndex, m_loopIndex - 1);
     } else {
       if (m_loopIndex > 1) {
         uint8_t* pLine1 = m_pLine - nStride2;
@@ -933,7 +925,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                       ((line1 >> k) & 0x0200) | ((line2 >> (k + 1)) & 0x0008);
@@ -947,7 +939,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                     ((line1 >> (7 - k)) & 0x0200) |
@@ -967,7 +959,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
                       ((line2 >> (k + 1)) & 0x0008);
@@ -980,7 +972,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               ((CONTEXT & 0x0efb) << 1) | bVal | ((line2 >> (8 - k)) & 0x0008);
@@ -989,7 +981,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
       }
     }
     m_pLine += nStride;
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1000,24 +992,26 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x0795]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(h, h - 1);
+      pImage->copyLine(h, h - 1);
     } else {
-      uint32_t line1 = m_pImage->getPixel(2, h - 2);
-      line1 |= m_pImage->getPixel(1, h - 2) << 1;
-      line1 |= m_pImage->getPixel(0, h - 2) << 2;
-      uint32_t line2 = m_pImage->getPixel(2, h - 1);
-      line2 |= m_pImage->getPixel(1, h - 1) << 1;
-      line2 |= m_pImage->getPixel(0, h - 1) << 2;
+      uint32_t line1 = pImage->getPixel(2, h - 2);
+      line1 |= pImage->getPixel(1, h - 2) << 1;
+      line1 |= pImage->getPixel(0, h - 2) << 2;
+      uint32_t line2 = pImage->getPixel(2, h - 1);
+      line2 |= pImage->getPixel(1, h - 1) << 1;
+      line2 |= pImage->getPixel(0, h - 1) << 2;
       uint32_t line3 = 0;
       for (uint32_t w = 0; w < GBW; w++) {
         int bVal;
@@ -1025,23 +1019,23 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt(
           bVal = 0;
         } else {
           uint32_t CONTEXT = line3;
-          CONTEXT |= m_pImage->getPixel(w + GBAT[0], h + GBAT[1]) << 3;
+          CONTEXT |= pImage->getPixel(w + GBAT[0], h + GBAT[1]) << 3;
           CONTEXT |= line2 << 4;
           CONTEXT |= line1 << 9;
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
-          m_pImage->setPixel(w, h, bVal);
+          pImage->setPixel(w, h, bVal);
         }
-        line1 = ((line1 << 1) | m_pImage->getPixel(w + 3, h - 2)) & 0x0f;
-        line2 = ((line2 << 1) | m_pImage->getPixel(w + 3, h - 1)) & 0x1f;
+        line1 = ((line1 << 1) | pImage->getPixel(w + 3, h - 2)) & 0x0f;
+        line2 = ((line2 << 1) | pImage->getPixel(w + 3, h - 1)) & 0x1f;
         line3 = ((line3 << 1) | bVal) & 0x07;
       }
     }
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1052,11 +1046,13 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   if (!m_pLine)
-    m_pLine = m_pImage->data();
-  int32_t nStride = m_pImage->stride();
+    m_pLine = pImage->data();
+  int32_t nStride = pImage->stride();
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
@@ -1065,10 +1061,10 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x00e5]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(m_loopIndex, m_loopIndex - 1);
+      pImage->copyLine(m_loopIndex, m_loopIndex - 1);
     } else {
       if (m_loopIndex > 1) {
         uint8_t* pLine1 = m_pLine - nStride2;
@@ -1084,7 +1080,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                       ((line1 >> k) & 0x0080) | ((line2 >> (k + 3)) & 0x0004);
@@ -1098,7 +1094,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                     ((line1 >> (7 - k)) & 0x0080) |
@@ -1118,7 +1114,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                       ((line2 >> (k + 3)) & 0x0004);
@@ -1131,7 +1127,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
                     (((line2 >> (10 - k))) & 0x0004);
@@ -1140,7 +1136,8 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
       }
     }
     m_pLine += nStride;
-    if (pPause && m_loopIndex % 50 == 0 && pPause->NeedToPauseNow()) {
+    if (pState->pPause && m_loopIndex % 50 == 0 &&
+        pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1151,22 +1148,24 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Unopt(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x00e5]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(m_loopIndex, m_loopIndex - 1);
+      pImage->copyLine(m_loopIndex, m_loopIndex - 1);
     } else {
-      uint32_t line1 = m_pImage->getPixel(1, m_loopIndex - 2);
-      line1 |= m_pImage->getPixel(0, m_loopIndex - 2) << 1;
-      uint32_t line2 = m_pImage->getPixel(1, m_loopIndex - 1);
-      line2 |= m_pImage->getPixel(0, m_loopIndex - 1) << 1;
+      uint32_t line1 = pImage->getPixel(1, m_loopIndex - 2);
+      line1 |= pImage->getPixel(0, m_loopIndex - 2) << 1;
+      uint32_t line2 = pImage->getPixel(1, m_loopIndex - 1);
+      line2 |= pImage->getPixel(0, m_loopIndex - 1) << 1;
       uint32_t line3 = 0;
       for (uint32_t w = 0; w < GBW; w++) {
         int bVal;
@@ -1174,26 +1173,25 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Unopt(
           bVal = 0;
         } else {
           uint32_t CONTEXT = line3;
-          CONTEXT |= m_pImage->getPixel(w + GBAT[0], m_loopIndex + GBAT[1])
-                     << 2;
+          CONTEXT |= pImage->getPixel(w + GBAT[0], m_loopIndex + GBAT[1]) << 2;
           CONTEXT |= line2 << 3;
           CONTEXT |= line1 << 7;
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
-          m_pImage->setPixel(w, m_loopIndex, bVal);
+          pImage->setPixel(w, m_loopIndex, bVal);
         }
         line1 =
-            ((line1 << 1) | m_pImage->getPixel(w + 2, m_loopIndex - 2)) & 0x07;
+            ((line1 << 1) | pImage->getPixel(w + 2, m_loopIndex - 2)) & 0x07;
         line2 =
-            ((line2 << 1) | m_pImage->getPixel(w + 2, m_loopIndex - 1)) & 0x0f;
+            ((line2 << 1) | pImage->getPixel(w + 2, m_loopIndex - 1)) & 0x0f;
         line3 = ((line3 << 1) | bVal) & 0x03;
       }
     }
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1204,11 +1202,13 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Unopt(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   if (!m_pLine)
-    m_pLine = m_pImage->data();
-  int32_t nStride = m_pImage->stride();
+    m_pLine = pImage->data();
+  int32_t nStride = pImage->stride();
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
   for (; m_loopIndex < GBH; m_loopIndex++) {
@@ -1216,10 +1216,10 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x0195]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0195]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(m_loopIndex, m_loopIndex - 1);
+      pImage->copyLine(m_loopIndex, m_loopIndex - 1);
     } else {
       if (m_loopIndex > 0) {
         uint8_t* pLine1 = m_pLine - nStride;
@@ -1232,7 +1232,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
                       ((line1 >> (k + 1)) & 0x0010);
@@ -1245,7 +1245,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT =
               ((CONTEXT & 0x01f7) << 1) | bVal | ((line1 >> (8 - k)) & 0x0010);
@@ -1259,7 +1259,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS_ERROR;
 
-            int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
           }
@@ -1270,7 +1270,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          int bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
         }
@@ -1278,7 +1278,7 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
       }
     }
     m_pLine += nStride;
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1289,20 +1289,22 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Unopt(
-    CJBig2_ArithDecoder* pArithDecoder,
-    PauseIndicatorIface* pPause) {
+    ProgressiveArithDecodeState* pState) {
+  CJBig2_Image* pImage = pState->pImage->get();
+  JBig2ArithCtx* gbContext = pState->gbContext;
+  CJBig2_ArithDecoder* pArithDecoder = pState->pArithDecoder;
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
         return FXCODEC_STATUS_ERROR;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&m_gbContext[0x0195]);
+      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContext[0x0195]);
     }
     if (m_LTP) {
-      m_pImage->copyLine(m_loopIndex, m_loopIndex - 1);
+      pImage->copyLine(m_loopIndex, m_loopIndex - 1);
     } else {
-      uint32_t line1 = m_pImage->getPixel(1, m_loopIndex - 1);
-      line1 |= m_pImage->getPixel(0, m_loopIndex - 1) << 1;
+      uint32_t line1 = pImage->getPixel(1, m_loopIndex - 1);
+      line1 |= pImage->getPixel(0, m_loopIndex - 1) << 1;
       uint32_t line2 = 0;
       for (uint32_t w = 0; w < GBW; w++) {
         int bVal;
@@ -1310,23 +1312,22 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Unopt(
           bVal = 0;
         } else {
           uint32_t CONTEXT = line2;
-          CONTEXT |= m_pImage->getPixel(w + GBAT[0], m_loopIndex + GBAT[1])
-                     << 4;
+          CONTEXT |= pImage->getPixel(w + GBAT[0], m_loopIndex + GBAT[1]) << 4;
           CONTEXT |= line1 << 5;
           if (pArithDecoder->IsComplete())
             return FXCODEC_STATUS_ERROR;
 
-          bVal = pArithDecoder->Decode(&m_gbContext[CONTEXT]);
+          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
         if (bVal) {
-          m_pImage->setPixel(w, m_loopIndex, bVal);
+          pImage->setPixel(w, m_loopIndex, bVal);
         }
         line1 =
-            ((line1 << 1) | m_pImage->getPixel(w + 2, m_loopIndex - 1)) & 0x1f;
+            ((line1 << 1) | pImage->getPixel(w + 2, m_loopIndex - 1)) & 0x1f;
         line2 = ((line2 << 1) | bVal) & 0x0f;
       }
     }
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
       m_loopIndex++;
       m_ProssiveStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return FXCODEC_STATUS_DECODE_TOBECONTINUE;

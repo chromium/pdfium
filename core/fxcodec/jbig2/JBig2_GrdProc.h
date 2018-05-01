@@ -22,20 +22,23 @@ struct JBig2ArithCtx;
 
 class CJBig2_GRDProc {
  public:
+  struct ProgressiveArithDecodeState {
+    std::unique_ptr<CJBig2_Image>* pImage;
+    CJBig2_ArithDecoder* pArithDecoder;
+    JBig2ArithCtx* gbContext;
+    PauseIndicatorIface* pPause;
+  };
+
   CJBig2_GRDProc();
   ~CJBig2_GRDProc();
 
   std::unique_ptr<CJBig2_Image> DecodeArith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext);
 
-  FXCODEC_STATUS StartDecodeArith(std::unique_ptr<CJBig2_Image>* pImage,
-                                  CJBig2_ArithDecoder* pArithDecoder,
-                                  JBig2ArithCtx* gbContext,
-                                  PauseIndicatorIface* pPause);
+  FXCODEC_STATUS StartDecodeArith(ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS StartDecodeMMR(std::unique_ptr<CJBig2_Image>* pImage,
                                 CJBig2_BitStream* pStream);
-  FXCODEC_STATUS ContinueDecode(PauseIndicatorIface* pPause,
-                                CJBig2_ArithDecoder* pArithDecoder);
+  FXCODEC_STATUS ContinueDecode(ProgressiveArithDecodeState* pState);
   const FX_RECT& GetReplaceRect() const { return m_ReplaceRect; }
 
   bool MMR;
@@ -52,32 +55,23 @@ class CJBig2_GRDProc {
   bool UseTemplate1Opt3() const;
   bool UseTemplate23Opt3() const;
 
-  FXCODEC_STATUS ProgressiveDecodeArith(PauseIndicatorIface* pPause,
-                                        CJBig2_ArithDecoder* pArithDecoder);
+  FXCODEC_STATUS ProgressiveDecodeArith(ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate0Opt3(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate0Unopt(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate1Opt3(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate1Unopt(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate2Opt3(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate2Unopt(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate3Opt3(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
   FXCODEC_STATUS ProgressiveDecodeArithTemplate3Unopt(
-      CJBig2_ArithDecoder* pArithDecoder,
-      PauseIndicatorIface* pPause);
+      ProgressiveArithDecodeState* pState);
 
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate0Opt3(
       CJBig2_ArithDecoder* pArithDecoder,
@@ -104,13 +98,11 @@ class CJBig2_GRDProc {
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);
 
-  uint32_t m_loopIndex;
-  uint8_t* m_pLine;
+  uint32_t m_loopIndex = 0;
+  uint8_t* m_pLine = nullptr;
   FXCODEC_STATUS m_ProssiveStatus;
-  CJBig2_Image* m_pImage;
-  JBig2ArithCtx* m_gbContext;
-  uint16_t m_DecodeType;
-  int m_LTP;
+  uint16_t m_DecodeType = 0;
+  int m_LTP = 0;
   FX_RECT m_ReplaceRect;
 };
 
