@@ -42,29 +42,12 @@ class CJBig2_Image {
   void copyLine(int32_t hTo, int32_t hFrom);
   void fill(bool v);
 
-  bool composeTo(CJBig2_Image* pDst, int32_t x, int32_t y, JBig2ComposeOp op);
-  bool composeTo(CJBig2_Image* pDst,
-                 int32_t x,
-                 int32_t y,
-                 JBig2ComposeOp op,
-                 const FX_RECT* pSrcRect);
-
-  bool composeTo_opt2(CJBig2_Image* pDst,
-                      int32_t x,
-                      int32_t y,
-                      JBig2ComposeOp op);
-  bool composeTo_opt2(CJBig2_Image* pDst,
-                      int32_t x,
-                      int32_t y,
-                      JBig2ComposeOp op,
-                      const FX_RECT* pSrcRect);
-
-  bool composeFrom(int32_t x, int32_t y, CJBig2_Image* pSrc, JBig2ComposeOp op);
-  bool composeFrom(int32_t x,
-                   int32_t y,
-                   CJBig2_Image* pSrc,
-                   JBig2ComposeOp op,
-                   const FX_RECT* pSrcRect);
+  bool ComposeFrom(int32_t x, int32_t y, CJBig2_Image* pSrc, JBig2ComposeOp op);
+  bool ComposeFromWithRect(int32_t x,
+                           int32_t y,
+                           CJBig2_Image* pSrc,
+                           const FX_RECT& rtSrc,
+                           JBig2ComposeOp op);
 
   std::unique_ptr<CJBig2_Image> subImage(int32_t x,
                                          int32_t y,
@@ -74,6 +57,22 @@ class CJBig2_Image {
 
 
  private:
+  bool ComposeTo(CJBig2_Image* pDst, int32_t x, int32_t y, JBig2ComposeOp op);
+  bool ComposeToWithRect(CJBig2_Image* pDst,
+                         int32_t x,
+                         int32_t y,
+                         const FX_RECT& rtSrc,
+                         JBig2ComposeOp op);
+  bool ComposeToOpt2(CJBig2_Image* pDst,
+                     int32_t x,
+                     int32_t y,
+                     JBig2ComposeOp op);
+  bool ComposeToOpt2WithRect(CJBig2_Image* pDst,
+                             int32_t x,
+                             int32_t y,
+                             JBig2ComposeOp op,
+                             const FX_RECT& rtSrc);
+
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   int32_t m_nWidth;   // 1-bit pixels
   int32_t m_nHeight;  // lines

@@ -36,7 +36,7 @@ class CJBig2_GRDProc {
                                 CJBig2_BitStream* pStream);
   FXCODEC_STATUS ContinueDecode(PauseIndicatorIface* pPause,
                                 CJBig2_ArithDecoder* pArithDecoder);
-  FX_RECT GetReplaceRect() const { return m_ReplaceRect; }
+  const FX_RECT& GetReplaceRect() const { return m_ReplaceRect; }
 
   bool MMR;
   uint32_t GBW;

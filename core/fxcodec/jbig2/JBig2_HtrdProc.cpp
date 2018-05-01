@@ -74,7 +74,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeArith(
 
     GSPLANES[i] = std::move(pImage);
     if (i < GSBPP - 1)
-      GSPLANES[i]->composeFrom(0, 0, GSPLANES[i + 1].get(), JBIG2_COMPOSE_XOR);
+      GSPLANES[i]->ComposeFrom(0, 0, GSPLANES[i + 1].get(), JBIG2_COMPOSE_XOR);
   }
   return DecodeImage(GSPLANES);
 }
@@ -105,7 +105,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeMMR(
 
     pStream->alignByte();
     pStream->offset(3);
-    GSPLANES[J]->composeFrom(0, 0, GSPLANES[J + 1].get(), JBIG2_COMPOSE_XOR);
+    GSPLANES[J]->ComposeFrom(0, 0, GSPLANES[J + 1].get(), JBIG2_COMPOSE_XOR);
   }
   return DecodeImage(GSPLANES);
 }
@@ -126,7 +126,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
       int32_t x = (HGX + mg * HRY + ng * HRX) >> 8;
       int32_t y = (HGY + mg * HRX - ng * HRY) >> 8;
       uint32_t pat_index = std::min(GSVALS[mg * HGW + ng], HNUMPATS - 1);
-      HTREG->composeFrom(x, y, (*HPATS)[pat_index].get(), HCOMBOP);
+      HTREG->ComposeFrom(x, y, (*HPATS)[pat_index].get(), HCOMBOP);
     }
   }
   return HTREG;

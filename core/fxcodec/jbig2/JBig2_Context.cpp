@@ -931,7 +931,7 @@ int32_t CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
-    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Image.get(),
+    m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
                          (JBig2ComposeOp)(ri.flags & 0x03));
     pSegment->m_Image.reset();
   }
@@ -1051,7 +1051,7 @@ int32_t CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
-    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Image.get(),
+    m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
                          (JBig2ComposeOp)(ri.flags & 0x03));
     pSegment->m_Image.reset();
   }
@@ -1113,10 +1113,10 @@ int32_t CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
                             (pPageInfo->m_cFlags & 4) ? 1 : 0);
           }
         }
-        FX_RECT Rect = m_pGRD->GetReplaceRect();
-        m_pPage->composeFrom(m_ri.x + Rect.left, m_ri.y + Rect.top,
-                             pSegment->m_Image.get(),
-                             (JBig2ComposeOp)(m_ri.flags & 0x03), &Rect);
+        const FX_RECT& rect = m_pGRD->GetReplaceRect();
+        m_pPage->ComposeFromWithRect(m_ri.x + rect.left, m_ri.y + rect.top,
+                                     pSegment->m_Image.get(), rect,
+                                     (JBig2ComposeOp)(m_ri.flags & 0x03));
       }
       return JBIG2_SUCCESS;
     }
@@ -1146,10 +1146,10 @@ int32_t CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
                         (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
-    FX_RECT Rect = m_pGRD->GetReplaceRect();
-    m_pPage->composeFrom(m_ri.x + Rect.left, m_ri.y + Rect.top,
-                         pSegment->m_Image.get(),
-                         (JBig2ComposeOp)(m_ri.flags & 0x03), &Rect);
+    const FX_RECT& rect = m_pGRD->GetReplaceRect();
+    m_pPage->ComposeFromWithRect(m_ri.x + rect.left, m_ri.y + rect.top,
+                                 pSegment->m_Image.get(), rect,
+                                 (JBig2ComposeOp)(m_ri.flags & 0x03));
     pSegment->m_Image.reset();
   }
   m_pGRD.reset();
@@ -1219,7 +1219,7 @@ int32_t CJBig2_Context::ParseGenericRefinementRegion(CJBig2_Segment* pSegment) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
-    m_pPage->composeFrom(ri.x, ri.y, pSegment->m_Image.get(),
+    m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
                          (JBig2ComposeOp)(ri.flags & 0x03));
     pSegment->m_Image.reset();
   }

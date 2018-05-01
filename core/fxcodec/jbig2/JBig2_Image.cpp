@@ -126,44 +126,37 @@ void CJBig2_Image::fill(bool v) {
 
   JBIG2_memset(data(), v ? 0xff : 0, m_nStride * m_nHeight);
 }
-bool CJBig2_Image::composeTo(CJBig2_Image* pDst,
+bool CJBig2_Image::ComposeTo(CJBig2_Image* pDst,
                              int32_t x,
                              int32_t y,
                              JBig2ComposeOp op) {
+  return m_pData ? ComposeToOpt2(pDst, x, y, op) : false;
+}
+bool CJBig2_Image::ComposeToWithRect(CJBig2_Image* pDst,
+                                     int32_t x,
+                                     int32_t y,
+                                     const FX_RECT& rtSrc,
+                                     JBig2ComposeOp op) {
   if (!m_pData)
     return false;
 
-  return composeTo_opt2(pDst, x, y, op);
-}
-bool CJBig2_Image::composeTo(CJBig2_Image* pDst,
-                             int32_t x,
-                             int32_t y,
-                             JBig2ComposeOp op,
-                             const FX_RECT* pSrcRect) {
-  if (!m_pData)
-    return false;
-
-  if (!pSrcRect || *pSrcRect == FX_RECT(0, 0, m_nWidth, m_nHeight))
-    return composeTo_opt2(pDst, x, y, op);
-
-  return composeTo_opt2(pDst, x, y, op, pSrcRect);
+  if (rtSrc == FX_RECT(0, 0, m_nWidth, m_nHeight))
+    return ComposeToOpt2(pDst, x, y, op);
+  return ComposeToOpt2WithRect(pDst, x, y, op, rtSrc);
 }
 
-bool CJBig2_Image::composeFrom(int32_t x,
+bool CJBig2_Image::ComposeFrom(int32_t x,
                                int32_t y,
                                CJBig2_Image* pSrc,
                                JBig2ComposeOp op) {
-  if (!m_pData)
-    return false;
-
-  return pSrc->composeTo(this, x, y, op);
+  return m_pData ? pSrc->ComposeTo(this, x, y, op) : false;
 }
-bool CJBig2_Image::composeFrom(int32_t x,
-                               int32_t y,
-                               CJBig2_Image* pSrc,
-                               JBig2ComposeOp op,
-                               const FX_RECT* pSrcRect) {
-  return m_pData ? pSrc->composeTo(this, x, y, op, pSrcRect) : false;
+bool CJBig2_Image::ComposeFromWithRect(int32_t x,
+                                       int32_t y,
+                                       CJBig2_Image* pSrc,
+                                       const FX_RECT& rtSrc,
+                                       JBig2ComposeOp op) {
+  return m_pData ? pSrc->ComposeToWithRect(this, x, y, rtSrc, op) : false;
 }
 
 #define JBIG2_GETDWORD(buf) \
@@ -253,12 +246,11 @@ void CJBig2_Image::expand(int32_t h, bool v) {
   m_nHeight = h;
 }
 
-bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
-                                  int32_t x,
-                                  int32_t y,
-                                  JBig2ComposeOp op) {
-  if (!m_pData)
-    return false;
+bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
+                                 int32_t x,
+                                 int32_t y,
+                                 JBig2ComposeOp op) {
+  ASSERT(m_pData);
 
   if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576)
     return false;
@@ -686,20 +678,19 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
   return true;
 }
 
-bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
-                                  int32_t x,
-                                  int32_t y,
-                                  JBig2ComposeOp op,
-                                  const FX_RECT* pSrcRect) {
-  if (!m_pData)
-    return false;
+bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
+                                         int32_t x,
+                                         int32_t y,
+                                         JBig2ComposeOp op,
+                                         const FX_RECT& rtSrc) {
+  ASSERT(m_pData);
 
   // TODO(weili): Check whether the range check is correct. Should x>=1048576?
   if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576) {
     return false;
   }
-  int32_t sw = pSrcRect->Width();
-  int32_t sh = pSrcRect->Height();
+  int32_t sw = rtSrc.Width();
+  int32_t sh = rtSrc.Height();
   int32_t ys0 = y < 0 ? -y : 0;
   int32_t ys1 = y + sh > pDst->m_nHeight ? pDst->m_nHeight - y : sh;
   int32_t xs0 = x < 0 ? -x : 0;
@@ -719,8 +710,8 @@ bool CJBig2_Image::composeTo_opt2(CJBig2_Image* pDst,
   int32_t maskL = 0xffffffff >> d1;
   int32_t maskR = 0xffffffff << ((32 - (xd1 & 31)) % 32);
   int32_t maskM = maskL & maskR;
-  uint8_t* lineSrc = data() + (pSrcRect->top + ys0) * m_nStride +
-                     (((xs0 + pSrcRect->left) >> 5) << 2);
+  uint8_t* lineSrc =
+      data() + (rtSrc.top + ys0) * m_nStride + (((xs0 + rtSrc.left) >> 5) << 2);
   int32_t lineLeft = m_nStride - ((xs0 >> 5) << 2);
   uint8_t* lineDst = pDst->data() + yd0 * pDst->m_nStride + ((xd0 >> 5) << 2);
   if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {

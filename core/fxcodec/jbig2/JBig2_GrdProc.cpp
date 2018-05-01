@@ -22,10 +22,6 @@ CJBig2_GRDProc::CJBig2_GRDProc()
       m_pLine(nullptr),
       m_DecodeType(0),
       m_LTP(0) {
-  m_ReplaceRect.left = 0;
-  m_ReplaceRect.bottom = 0;
-  m_ReplaceRect.top = 0;
-  m_ReplaceRect.right = 0;
 }
 
 CJBig2_GRDProc::~CJBig2_GRDProc() {}
