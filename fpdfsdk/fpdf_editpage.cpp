@@ -156,14 +156,17 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
   auto* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return;
+
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* pContext =
       static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
-  if (pContext)
+  if (pContext) {
     pContext->DeletePage(page_index);
-#else
+    return;
+  }
+#endif  // PDF_ENABLE_XFA
+
   pDoc->DeletePage(page_index);
-#endif
 }
 
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
@@ -184,14 +187,18 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   pPageDict->SetNewFor<CPDF_Dictionary>("Resources");
 
 #ifdef PDF_ENABLE_XFA
-  auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(
-      static_cast<CPDFXFA_Context*>(pDoc->GetExtension()), page_index);
-  pXFAPage->LoadPDFPage(pPageDict);
-  return pXFAPage.Leak();  // Caller takes ownership.
+  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  if (pContext) {
+    auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(pContext, page_index);
+    pXFAPage->LoadPDFPage(pPageDict);
+    return FPDFPageFromUnderlying(pXFAPage.Leak());  // Caller takes ownership.
+  }
+  // Eventually, fallthru into non-XFA case once page type is consistent.
+  return nullptr;
 #else  // PDF_ENABLE_XFA
   auto pPage = pdfium::MakeUnique<CPDF_Page>(pDoc, pPageDict, true);
   pPage->ParseContent();
-  return pPage.release();  // Caller takes ownership.
+  return FPDFPageFromUnderlying(pPage.release());  // Caller takes ownership.
 #endif  // PDF_ENABLE_XFA
 }
 

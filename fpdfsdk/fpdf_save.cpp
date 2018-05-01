@@ -227,10 +227,11 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
     return 0;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Context* pContext =
-      static_cast<CPDFXFA_Context*>(pPDFDoc->GetExtension());
-  std::vector<RetainPtr<IFX_SeekableStream>> fileList;
-  SendPreSaveToXFADoc(pContext, &fileList);
+  auto* pContext = static_cast<CPDFXFA_Context*>(pPDFDoc->GetExtension());
+  if (pContext) {
+    std::vector<RetainPtr<IFX_SeekableStream>> fileList;
+    SendPreSaveToXFADoc(pContext, &fileList);
+  }
 #endif  // PDF_ENABLE_XFA
 
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY)
@@ -246,9 +247,11 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
   }
 
   bool bRet = fileMaker.Create(flags);
+
 #ifdef PDF_ENABLE_XFA
   SendPostSaveToXFADoc(pContext);
 #endif  // PDF_ENABLE_XFA
+
   return bRet;
 }
 

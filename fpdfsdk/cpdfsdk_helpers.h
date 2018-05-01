@@ -47,6 +47,7 @@ using UnderlyingPageType = CPDFXFA_Page;
 
 // Conversions to/from underlying types.
 UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page);
+FPDF_PAGE FPDFPageFromUnderlying(UnderlyingPageType* page);
 
 // Conversions to/from FPDF_ types.
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);

@@ -43,17 +43,17 @@ typedef void* FPDF_DEST;
 typedef struct fpdf_document_t__* FPDF_DOCUMENT;
 typedef void* FPDF_FONT;
 typedef void* FPDF_LINK;
-typedef void* FPDF_PAGE;
+typedef struct fpdf_page_t__* FPDF_PAGE;
 typedef void* FPDF_PAGELINK;
 typedef void* FPDF_PAGEOBJECT;  // Page object(text, path, etc)
-typedef void const* FPDF_PAGEOBJECTMARK;
+typedef const void* FPDF_PAGEOBJECTMARK;
 typedef void* FPDF_PAGERANGE;
 typedef void* FPDF_RECORDER;
 typedef void* FPDF_SCHHANDLE;
 typedef void* FPDF_STRUCTELEMENT;
 typedef void* FPDF_STRUCTTREE;
 typedef void* FPDF_TEXTPAGE;
-typedef void const* FPDF_PATHSEGMENT;
+typedef const void* FPDF_PATHSEGMENT;
 
 #ifdef PDF_ENABLE_XFA
 typedef void* FPDF_WIDGET;

@@ -234,8 +234,8 @@ CPDFSDK_FormFillEnvironment::GetInteractiveFormFiller() {
 void CPDFSDK_FormFillEnvironment::Invalidate(UnderlyingPageType* page,
                                              const FX_RECT& rect) {
   if (m_pInfo && m_pInfo->FFI_Invalidate) {
-    m_pInfo->FFI_Invalidate(m_pInfo, page, rect.left, rect.top, rect.right,
-                            rect.bottom);
+    m_pInfo->FFI_Invalidate(m_pInfo, FPDFPageFromUnderlying(page), rect.left,
+                            rect.top, rect.right, rect.bottom);
   }
 }
 
@@ -243,8 +243,9 @@ void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
     UnderlyingPageType* page,
     const CFX_FloatRect& rect) {
   if (m_pInfo && m_pInfo->FFI_OutputSelectedRect) {
-    m_pInfo->FFI_OutputSelectedRect(m_pInfo, page, rect.left, rect.top,
-                                    rect.right, rect.bottom);
+    m_pInfo->FFI_OutputSelectedRect(m_pInfo, FPDFPageFromUnderlying(page),
+                                    rect.left, rect.top, rect.right,
+                                    rect.bottom);
   }
 }
 
@@ -331,8 +332,8 @@ void CPDFSDK_FormFillEnvironment::DisplayCaret(CPDFXFA_Page* page,
                                                double right,
                                                double bottom) {
   if (m_pInfo && m_pInfo->FFI_DisplayCaret) {
-    m_pInfo->FFI_DisplayCaret(m_pInfo, page, bVisible, left, top, right,
-                              bottom);
+    m_pInfo->FFI_DisplayCaret(m_pInfo, FPDFPageFromUnderlying(page), bVisible,
+                              left, top, right, bottom);
   }
 }
 
@@ -386,7 +387,8 @@ void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
   double top;
   double right;
   double bottom;
-  m_pInfo->FFI_GetPageViewRect(m_pInfo, page, &left, &top, &right, &bottom);
+  m_pInfo->FFI_GetPageViewRect(m_pInfo, FPDFPageFromUnderlying(page), &left,
+                               &top, &right, &bottom);
 
   dstRect.left = static_cast<float>(left);
   dstRect.top = static_cast<float>(top);
@@ -399,7 +401,8 @@ bool CPDFSDK_FormFillEnvironment::PopupMenu(CPDFXFA_Page* page,
                                             int menuFlag,
                                             CFX_PointF pt) {
   return m_pInfo && m_pInfo->FFI_PopupMenu &&
-         m_pInfo->FFI_PopupMenu(m_pInfo, page, hWidget, menuFlag, pt.x, pt.y);
+         m_pInfo->FFI_PopupMenu(m_pInfo, FPDFPageFromUnderlying(page), hWidget,
+                                menuFlag, pt.x, pt.y);
 }
 
 void CPDFSDK_FormFillEnvironment::Alert(FPDF_WIDESTRING Msg,

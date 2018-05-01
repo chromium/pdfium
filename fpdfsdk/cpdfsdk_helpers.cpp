@@ -145,7 +145,11 @@ bool FPDF_FileHandlerContext::Flush() {
 }  // namespace
 
 UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
-  return static_cast<UnderlyingPageType*>(page);
+  return reinterpret_cast<UnderlyingPageType*>(page);
+}
+
+FPDF_PAGE FPDFPageFromUnderlying(UnderlyingPageType* page) {
+  return reinterpret_cast<FPDF_PAGE>(page);
 }
 
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
