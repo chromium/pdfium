@@ -153,8 +153,17 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
                                                int page_index) {
-  if (UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document))
-    pDoc->DeletePage(page_index);
+  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return;
+#ifdef PDF_ENABLE_XFA
+  CPDFXFA_Context* pContext =
+      static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  if (pContext)
+    pContext->DeletePage(page_index);
+#else
+  pDoc->DeletePage(page_index);
+#endif
 }
 
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
@@ -176,7 +185,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
 
 #ifdef PDF_ENABLE_XFA
   auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(
-      static_cast<CPDFXFA_Context*>(document), page_index);
+      static_cast<CPDFXFA_Context*>(pDoc->GetExtension()), page_index);
   pXFAPage->LoadPDFPage(pPageDict);
   return pXFAPage.Leak();  // Caller takes ownership.
 #else  // PDF_ENABLE_XFA

@@ -40,7 +40,7 @@ typedef void* FPDF_BITMAP;
 typedef void* FPDF_BOOKMARK;
 typedef void* FPDF_CLIPPATH;
 typedef void* FPDF_DEST;
-typedef void* FPDF_DOCUMENT;
+typedef struct fpdf_document_t__* FPDF_DOCUMENT;
 typedef void* FPDF_FONT;
 typedef void* FPDF_LINK;
 typedef void* FPDF_PAGE;

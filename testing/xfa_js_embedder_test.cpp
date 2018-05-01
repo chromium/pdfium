@@ -44,7 +44,9 @@ void XFAJSEmbedderTest::TearDown() {
 }
 
 CXFA_Document* XFAJSEmbedderTest::GetXFADocument() {
-  return UnderlyingFromFPDFDocument(document())->GetXFADoc()->GetXFADoc();
+  auto* pDoc = CPDFDocumentFromFPDFDocument(document());
+  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  return pContext->GetXFADoc()->GetXFADoc();
 }
 
 bool XFAJSEmbedderTest::OpenDocumentWithOptions(

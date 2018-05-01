@@ -256,7 +256,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
 
 #ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
-  return document && static_cast<CPDFXFA_Context*>(document)->LoadXFADoc();
+  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
+  return pDoc &&
+         static_cast<CPDFXFA_Context*>(pDoc->GetExtension())->LoadXFADoc();
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -320,21 +322,30 @@ FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document) {
-  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
-  return pDoc ? pDoc->GetPageCount() : 0;
+  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return 0;
+#ifdef PDF_ENABLE_XFA
+  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
+  return pContext ? pContext->GetPageCount() : 0;
+#else
+  return pDoc->GetPageCount();
+#endif
 }
 
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
                                                   int page_index) {
-  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
+  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 
-  if (page_index < 0 || page_index >= pDoc->GetPageCount())
+  if (page_index < 0 || page_index >= FPDF_GetPageCount(document))
     return nullptr;
 
 #ifdef PDF_ENABLE_XFA
-  return pDoc->GetXFAPage(page_index).Leak();
+  return static_cast<CPDFXFA_Context*>(pDoc->GetExtension())
+      ->GetXFAPage(page_index)
+      .Leak();
 #else   // PDF_ENABLE_XFA
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
   if (!pDict)
@@ -740,7 +751,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_CloseDocument(FPDF_DOCUMENT document) {
-  delete UnderlyingFromFPDFDocument(document);
+  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
+#if PDF_ENABLE_XFA
+  // Deleting the extension will delete the document
+  if (pDoc)
+    delete pDoc->GetExtension();
+#else
+  delete pDoc;
+#endif
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetLastError() {
@@ -918,15 +936,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                                       int page_index,
                                                       double* width,
                                                       double* height) {
-  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
+  auto* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return false;
 
 #ifdef PDF_ENABLE_XFA
-  int count = pDoc->GetPageCount();
-  if (page_index < 0 || page_index >= count)
+  if (page_index < 0 || page_index >= FPDF_GetPageCount(document))
     return false;
-  RetainPtr<CPDFXFA_Page> pPage = pDoc->GetXFAPage(page_index);
+  RetainPtr<CPDFXFA_Page> pPage =
+      static_cast<CPDFXFA_Context*>(pDoc->GetExtension())
+          ->GetXFAPage(page_index);
   if (!pPage)
     return false;
   *width = pPage->GetPageWidth();

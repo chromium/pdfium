@@ -25,10 +25,6 @@ namespace {
 
 constexpr char kQuadPoints[] = "QuadPoints";
 
-FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc) {
-  return static_cast<FPDF_DOCUMENT>(doc);
-}
-
 bool RaiseUnSupportError(int nError) {
   CFSDK_UnsupportInfo_Adapter* pAdapter =
       CPDF_ModuleMgr::Get()->GetUnsupportInfoAdapter();
@@ -148,33 +144,20 @@ bool FPDF_FileHandlerContext::Flush() {
 
 }  // namespace
 
-UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
-  return static_cast<UnderlyingDocumentType*>(doc);
-}
-
 UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
   return static_cast<UnderlyingPageType*>(page);
 }
 
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
-#ifdef PDF_ENABLE_XFA
-  return doc ? UnderlyingFromFPDFDocument(doc)->GetPDFDoc() : nullptr;
-#else   // PDF_ENABLE_XFA
-  return UnderlyingFromFPDFDocument(doc);
-#endif  // PDF_ENABLE_XFA
+  return reinterpret_cast<CPDF_Document*>(doc);
 }
 
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
 #ifdef PDF_ENABLE_XFA
-  if (!doc)
-    return nullptr;
-  if (!doc->GetExtension())
+  if (doc && !doc->GetExtension())
     doc->SetExtension(new CPDFXFA_Context(pdfium::WrapUnique(doc)));
-  return FPDFDocumentFromUnderlying(
-      static_cast<CPDFXFA_Context*>(doc->GetExtension()));
-#else   // PDF_ENABLE_XFA
-  return FPDFDocumentFromUnderlying(doc);
 #endif  // PDF_ENABLE_XFA
+  return reinterpret_cast<FPDF_DOCUMENT>(doc);
 }
 
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
