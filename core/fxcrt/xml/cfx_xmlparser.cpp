@@ -175,8 +175,6 @@ bool CFX_XMLParser::Parse() {
           auto* instruction = static_cast<CFX_XMLInstruction*>(m_pChild);
           if (!target_data.IsEmpty())
             instruction->AppendData(target_data);
-          if (!GetTextData().IsEmpty())
-            instruction->AppendData(GetTextData());
         }
         break;
       }
@@ -248,6 +246,19 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
           }
           break;
         case FDE_XmlSyntaxState::Target:
+          if (!IsXMLNameChar(ch, current_text_.empty())) {
+            if (current_text_.empty()) {
+              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
+              return m_syntaxParserResult;
+            }
+
+            syntaxParserResult = FX_XmlSyntaxResult::TargetName;
+            m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
+          } else {
+            current_text_.push_back(ch);
+            m_Start++;
+          }
+          break;
         case FDE_XmlSyntaxState::Tag:
           if (!IsXMLNameChar(ch, current_text_.empty())) {
             if (current_text_.empty()) {
@@ -255,11 +266,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
               return m_syntaxParserResult;
             }
 
-            if (m_syntaxParserState != FDE_XmlSyntaxState::Target)
-              syntaxParserResult = FX_XmlSyntaxResult::TagName;
-            else
-              syntaxParserResult = FX_XmlSyntaxResult::TargetName;
-
+            syntaxParserResult = FX_XmlSyntaxResult::TagName;
             m_syntaxParserState = FDE_XmlSyntaxState::AttriName;
           } else {
             current_text_.push_back(ch);
@@ -486,7 +493,6 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
               break;
             }
             if (m_wQuotationMark == 0) {
-              m_wQuotationMark = 0;
               m_Start++;
               syntaxParserResult = FX_XmlSyntaxResult::TargetData;
               break;

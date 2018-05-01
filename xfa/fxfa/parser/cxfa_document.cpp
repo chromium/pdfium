@@ -1447,17 +1447,19 @@ CFXJSE_Engine* CXFA_Document::GetScriptContext() const {
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
     const WideString& wsTemplateNS) {
   WideStringView wsTemplateURIPrefix(kTemplateNS);
-  size_t nPrefixLength = wsTemplateURIPrefix.GetLength();
-  if (WideStringView(wsTemplateNS.c_str(), wsTemplateNS.GetLength()) !=
-      wsTemplateURIPrefix) {
+  if (wsTemplateNS.GetLength() <= wsTemplateURIPrefix.GetLength())
     return XFA_VERSION_UNKNOWN;
-  }
-  auto nDotPos = wsTemplateNS.Find('.', nPrefixLength);
+
+  size_t prefixLength = wsTemplateURIPrefix.GetLength();
+  if (WideStringView(wsTemplateNS.c_str(), prefixLength) != wsTemplateURIPrefix)
+    return XFA_VERSION_UNKNOWN;
+
+  auto nDotPos = wsTemplateNS.Find('.', prefixLength);
   if (!nDotPos.has_value())
     return XFA_VERSION_UNKNOWN;
 
   int8_t iMajor = FXSYS_wtoi(
-      wsTemplateNS.Mid(nPrefixLength, nDotPos.value() - nPrefixLength).c_str());
+      wsTemplateNS.Mid(prefixLength, nDotPos.value() - prefixLength).c_str());
   int8_t iMinor =
       FXSYS_wtoi(wsTemplateNS
                      .Mid(nDotPos.value() + 1,

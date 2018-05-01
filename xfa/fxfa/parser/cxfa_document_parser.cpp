@@ -325,7 +325,7 @@ bool XFA_RecognizeRichText(CFX_XMLElement* pRichTextXMLNode) {
 CXFA_DocumentParser::CXFA_DocumentParser(CXFA_Document* pFactory)
     : m_pFactory(pFactory) {}
 
-CXFA_DocumentParser::~CXFA_DocumentParser() {}
+CXFA_DocumentParser::~CXFA_DocumentParser() = default;
 
 bool CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
                                 XFA_PacketType ePacketID) {
@@ -1137,6 +1137,7 @@ void CXFA_DocumentParser::ParseInstruction(CXFA_Node* pXFANode,
                                            CFX_XMLInstruction* pXMLInstruction,
                                            XFA_PacketType ePacketID) {
   const std::vector<WideString>& target_data = pXMLInstruction->GetTargetData();
+
   if (pXMLInstruction->IsOriginalXFAVersion()) {
     if (target_data.size() > 1 &&
         (pXFANode->GetDocument()->RecognizeXFAVersionNumber(target_data[0]) !=
