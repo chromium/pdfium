@@ -209,12 +209,12 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   return pBitmap;
 }
 
-void XFA_RectWithoutMargin(CFX_RectF& rt, const CXFA_Margin* margin, bool bUI) {
+void XFA_RectWithoutMargin(CFX_RectF* rt, const CXFA_Margin* margin) {
   if (!margin)
     return;
 
-  rt.Deflate(margin->GetLeftInset(), margin->GetTopInset(),
-             margin->GetRightInset(), margin->GetBottomInset());
+  rt->Deflate(margin->GetLeftInset(), margin->GetTopInset(),
+              margin->GetRightInset(), margin->GetBottomInset());
 }
 
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
@@ -298,8 +298,7 @@ void CXFA_FFWidget::RenderWidget(CXFA_Graphics* pGS,
 
   CFX_RectF rtBorder = GetRectWithoutRotate();
   CXFA_Margin* margin = border->GetMarginIfExists();
-  if (margin)
-    XFA_RectWithoutMargin(rtBorder, margin);
+  XFA_RectWithoutMargin(&rtBorder, margin);
 
   rtBorder.Normalize();
   DrawBorder(pGS, border, rtBorder, matrix);

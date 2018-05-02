@@ -44,7 +44,7 @@ void CXFA_FFText::RenderWidget(CXFA_Graphics* pGS,
   if (margin) {
     CXFA_LayoutItem* pItem = this;
     if (!pItem->GetPrev() && !pItem->GetNext()) {
-      XFA_RectWithoutMargin(rtText, margin);
+      XFA_RectWithoutMargin(&rtText, margin);
     } else {
       float fTopInset = 0;
       float fBottomInset = 0;

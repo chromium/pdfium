@@ -116,8 +116,7 @@ void CXFA_FFLine::RenderWidget(CXFA_Graphics* pGS,
 
   CFX_RectF rtLine = GetRectWithoutRotate();
   CXFA_Margin* margin = m_pNode->GetMarginIfExists();
-  if (margin)
-    XFA_RectWithoutMargin(rtLine, margin);
+  XFA_RectWithoutMargin(&rtLine, margin);
 
   GetRectFromHand(rtLine, line ? line->GetHand() : XFA_AttributeEnum::Left,
                   fLineWidth);

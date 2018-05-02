@@ -102,15 +102,13 @@ bool CXFA_FFPushButton::PerformLayout() {
 
   m_rtUI = rtWidget;
   CXFA_Margin* margin = m_pNode->GetMarginIfExists();
-  if (margin)
-    XFA_RectWithoutMargin(rtWidget, margin);
+  XFA_RectWithoutMargin(&rtWidget, margin);
 
   m_rtCaption = rtWidget;
 
   CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
   CXFA_Margin* captionMargin = caption ? caption->GetMarginIfExists() : nullptr;
-  if (captionMargin)
-    XFA_RectWithoutMargin(m_rtCaption, captionMargin);
+  XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
 
   LayoutHighlightCaption();
   SetFWLRect();

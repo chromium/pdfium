@@ -95,8 +95,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   float fCheckSize = m_pNode->GetCheckButtonSize();
   CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   CFX_RectF rtWidget = GetRectWithoutRotate();
-  if (margin)
-    XFA_RectWithoutMargin(rtWidget, margin);
+  XFA_RectWithoutMargin(&rtWidget, margin);
 
   XFA_AttributeEnum iCapPlacement = XFA_AttributeEnum::Unknown;
   float fCapReserve = 0;
@@ -135,7 +134,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
     }
     case XFA_AttributeEnum::Top: {
       m_rtCaption.height = fCapReserve;
-      XFA_RectWithoutMargin(m_rtCaption, captionMargin);
+      XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
       m_rtUI.height -= fCapReserve;
       m_rtUI.top += fCapReserve;
       break;
@@ -150,7 +149,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
     case XFA_AttributeEnum::Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
-      XFA_RectWithoutMargin(m_rtCaption, captionMargin);
+      XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
       m_rtUI.height -= fCapReserve;
       break;
     }
@@ -178,8 +177,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   CXFA_Border* borderUI = m_pNode->GetUIBorder();
   if (borderUI) {
     CXFA_Margin* borderMargin = borderUI->GetMarginIfExists();
-    if (borderMargin)
-      XFA_RectWithoutMargin(m_rtUI, borderMargin);
+    XFA_RectWithoutMargin(&m_rtUI, borderMargin);
   }
 
   m_rtUI.Normalize();
@@ -193,7 +191,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
 
 void CXFA_FFCheckButton::CapLeftRightPlacement(
     const CXFA_Margin* captionMargin) {
-  XFA_RectWithoutMargin(m_rtCaption, captionMargin);
+  XFA_RectWithoutMargin(&m_rtCaption, captionMargin);
   if (m_rtCaption.height < 0)
     m_rtCaption.top += m_rtCaption.height;
   if (m_rtCaption.width < 0) {

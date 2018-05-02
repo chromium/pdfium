@@ -25,8 +25,7 @@ void CXFA_FFRectangle::RenderWidget(CXFA_Graphics* pGS,
 
   CFX_RectF rect = GetRectWithoutRotate();
   CXFA_Margin* margin = m_pNode->GetMarginIfExists();
-  if (margin)
-    XFA_RectWithoutMargin(rect, margin);
+  XFA_RectWithoutMargin(&rect, margin);
 
   CFX_Matrix mtRotate = GetRotateMatrix();
   mtRotate.Concat(matrix);
