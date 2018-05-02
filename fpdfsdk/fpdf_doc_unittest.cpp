@@ -23,10 +23,6 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
-#endif  // PDF_ENABLE_XFA
-
 class CPDF_TestDocument : public CPDF_Document {
  public:
   CPDF_TestDocument() : CPDF_Document(nullptr) {}
