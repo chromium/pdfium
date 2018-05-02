@@ -71,7 +71,7 @@ class CFX_XMLParser {
     TargetData
   };
 
-  void ParseTextChar(wchar_t ch);
+  void ProcessTextChar(wchar_t ch);
   bool GetStatus() const;
 
   CFX_XMLNode* current_node_ = nullptr;

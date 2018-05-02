@@ -211,7 +211,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
               m_syntaxParserState = FDE_XmlSyntaxState::Node;
             }
           } else {
-            ParseTextChar(ch);
+            ProcessTextChar(ch);
           }
           break;
         case FDE_XmlSyntaxState::Node:
@@ -340,7 +340,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
             m_syntaxParserState = FDE_XmlSyntaxState::AttriName;
             syntaxParserResult = FX_XmlSyntaxResult::AttriValue;
           } else {
-            ParseTextChar(ch);
+            ProcessTextChar(ch);
           }
           break;
         case FDE_XmlSyntaxState::CloseInstruction:
@@ -519,7 +519,7 @@ bool CFX_XMLParser::GetStatus() const {
   return m_pStream && m_syntaxParserResult != FX_XmlSyntaxResult::Error;
 }
 
-void CFX_XMLParser::ParseTextChar(wchar_t character) {
+void CFX_XMLParser::ProcessTextChar(wchar_t character) {
   current_text_.push_back(character);
 
   if (m_iEntityStart > -1 && character == L';') {
@@ -578,8 +578,8 @@ void CFX_XMLParser::ParseTextChar(wchar_t character) {
 
 WideString CFX_XMLParser::GetTextData() {
   WideString ret(current_text_.data(), current_text_.size());
-  current_text_.clear();
   m_iEntityStart = -1;
+  current_text_.clear();
   current_text_.reserve(kCurrentTextReserve);
   return ret;
 }
