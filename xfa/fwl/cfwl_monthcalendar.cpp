@@ -333,7 +333,7 @@ void CFWL_MonthCalendar::DrawToday(CXFA_Graphics* pGraphics,
   params.m_pGraphics = pGraphics;
   params.m_dwStates = CFWL_PartState_Normal;
   params.m_iTTOAlign = FDE_TextAlignment::kCenterLeft;
-  params.m_wsText = L"Today" + GetTodayText(m_iYear, m_iMonth, m_iDay);
+  params.m_wsText = GetTodayText(m_iYear, m_iMonth, m_iDay);
 
   m_szToday =
       CalcTextSize(params.m_wsText, m_pProperties->m_pThemeProvider, false);
@@ -461,9 +461,8 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
       m_szHead.width + MONTHCAL_HEADER_BTN_HMARGIN * 2 + m_szCell.width * 2;
   fs.width = std::max(fs.width, fMonthMaxW);
 
-  WideString wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
-  m_wsToday = L"Today" + wsToday;
-  m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider, false);
+  m_wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
+  m_szToday = CalcTextSize(m_wsToday, m_pProperties->m_pThemeProvider, false);
   m_szToday.height = (m_szToday.height >= m_szCell.height) ? m_szToday.height
                                                            : m_szCell.height;
   fs.height = m_szCell.width + m_szCell.height * (MONTHCAL_ROWS - 2) +
@@ -683,7 +682,7 @@ WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
 WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,
                                             int32_t iMonth,
                                             int32_t iDay) {
-  return WideString::Format(L", %d/%d/%d", iDay, iMonth, iYear);
+  return WideString::Format(L"Today, %d/%d/%d", iDay, iMonth, iYear);
 }
 
 int32_t CFWL_MonthCalendar::GetDayAtPoint(const CFX_PointF& point) const {
