@@ -74,8 +74,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_Matrix& matrix,
                    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                    XFA_AttributeEnum iAspect,
-                   int32_t iImageXDpi,
-                   int32_t iImageYDpi,
+                   const CFX_Size& dpi,
                    XFA_AttributeEnum iHorzAlign,
                    XFA_AttributeEnum iVertAlign) {
   if (rtImage.IsEmpty())
@@ -83,10 +82,9 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
   if (!pDIBitmap || !pDIBitmap->GetBuffer())
     return;
 
-  CFX_RectF rtFit(
-      rtImage.TopLeft(),
-      XFA_UnitPx2Pt((float)pDIBitmap->GetWidth(), (float)iImageXDpi),
-      XFA_UnitPx2Pt((float)pDIBitmap->GetHeight(), (float)iImageYDpi));
+  CFX_RectF rtFit(rtImage.TopLeft(),
+                  XFA_UnitPx2Pt(pDIBitmap->GetWidth(), dpi.width),
+                  XFA_UnitPx2Pt(pDIBitmap->GetHeight(), dpi.height));
   switch (iAspect) {
     case XFA_AttributeEnum::Fit: {
       float f1 = rtImage.height / rtFit.height;

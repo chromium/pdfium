@@ -39,8 +39,7 @@ void XFA_DrawImage(CXFA_Graphics* pGS,
                    const CFX_Matrix& matrix,
                    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                    XFA_AttributeEnum iAspect,
-                   int32_t iImageXDpi,
-                   int32_t iImageYDpi,
+                   const CFX_Size& dpi,
                    XFA_AttributeEnum iHorzAlign = XFA_AttributeEnum::Left,
                    XFA_AttributeEnum iVertAlign = XFA_AttributeEnum::Top);
 
