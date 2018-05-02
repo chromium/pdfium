@@ -23,6 +23,7 @@
 #include "core/fxcodec/jbig2/JBig2_PddProc.h"
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "third_party/base/ptr_util.h"
 
@@ -1269,17 +1270,20 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
   int32_t i = 0;
   while (i < static_cast<int>(SBNUMSYMS)) {
     size_t j;
-    int32_t nVal = 0;
+    FX_SAFE_INT32 nSafeVal = 0;
     int32_t nBits = 0;
     uint32_t nTemp;
     while (true) {
-      if (nVal > std::numeric_limits<int32_t>::max() / 2 ||
-          m_pStream->read1Bit(&nTemp) != 0) {
+      if (m_pStream->read1Bit(&nTemp) != 0)
         return std::vector<JBig2HuffmanCode>();
-      }
 
-      nVal = (nVal << 1) | nTemp;
+      nSafeVal <<= 1;
+      if (!nSafeVal.IsValid())
+        return std::vector<JBig2HuffmanCode>();
+
+      nSafeVal |= nTemp;
       ++nBits;
+      const int32_t nVal = nSafeVal.ValueOrDie();
       for (j = 0; j < kRunCodesSize; ++j) {
         if (nBits == huffman_codes[j].codelen && nVal == huffman_codes[j].code)
           break;

@@ -7,6 +7,7 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 
 #include "core/fxcodec/jbig2/JBig2_Define.h"
+#include "core/fxcrt/fx_safe_types.h"
 
 CJBig2_HuffmanDecoder::CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream)
     : m_pStream(pStream) {}
@@ -15,15 +16,20 @@ CJBig2_HuffmanDecoder::~CJBig2_HuffmanDecoder() {}
 
 int CJBig2_HuffmanDecoder::DecodeAValue(CJBig2_HuffmanTable* pTable,
                                         int* nResult) {
-  int nVal = 0;
+  FX_SAFE_INT32 nSafeVal = 0;
   int nBits = 0;
   while (1) {
     uint32_t nTmp;
     if (m_pStream->read1Bit(&nTmp) == -1)
       break;
 
-    nVal = (nVal << 1) | nTmp;
+    nSafeVal <<= 1;
+    if (!nSafeVal.IsValid())
+      break;
+
+    nSafeVal |= nTmp;
     ++nBits;
+    const int32_t nVal = nSafeVal.ValueOrDie();
     for (uint32_t i = 0; i < pTable->Size(); ++i) {
       const JBig2HuffmanCode& code = pTable->GetCODES()[i];
       if (code.codelen != nBits || code.code != nVal)

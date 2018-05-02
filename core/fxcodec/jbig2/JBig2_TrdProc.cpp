@@ -12,6 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_GrrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "third_party/base/ptr_util.h"
 
@@ -81,7 +82,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         return nullptr;
 
       int32_t TI = SAFE_TI.ValueOrDie();
-      pdfium::base::CheckedNumeric<int32_t> nVal = 0;
+      FX_SAFE_INT32 nSafeVal = 0;
       int32_t nBits = 0;
       uint32_t IDI;
       for (;;) {
@@ -89,17 +90,16 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         if (pStream->read1Bit(&nTmp) != 0)
           return nullptr;
 
-        nVal <<= 1;
-        if (!nVal.IsValid())
+        nSafeVal <<= 1;
+        if (!nSafeVal.IsValid())
           return nullptr;
 
-        nVal |= nTmp;
+        nSafeVal |= nTmp;
         ++nBits;
+        const int32_t nVal = nSafeVal.ValueOrDie();
         for (IDI = 0; IDI < SBNUMSYMS; ++IDI) {
-          if ((nBits == SBSYMCODES[IDI].codelen) &&
-              (nVal.ValueOrDie() == SBSYMCODES[IDI].code)) {
+          if (nBits == SBSYMCODES[IDI].codelen && nVal == SBSYMCODES[IDI].code)
             break;
-          }
         }
         if (IDI < SBNUMSYMS)
           break;
