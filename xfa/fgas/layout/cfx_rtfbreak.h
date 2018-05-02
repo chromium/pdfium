@@ -75,9 +75,9 @@ class CFX_RTFBreak : public CFX_Break {
   bool GetPositionedTab(int32_t* iTabPos) const;
 
   int32_t GetBreakPos(std::vector<CFX_Char>& tca,
-                      int32_t& iEndPos,
                       bool bAllChars,
-                      bool bOnlyBrk);
+                      bool bOnlyBrk,
+                      int32_t* pEndPos);
   void SplitTextLine(CFX_BreakLine* pCurLine,
                      CFX_BreakLine* pNextLine,
                      bool bAllChars);

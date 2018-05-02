@@ -331,7 +331,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
   if (!m_bPagination) {
     if (bAllChars && !bDone) {
       int32_t endPos = m_pCurLine->GetLineEnd();
-      GetBreakPos(m_pCurLine->m_LineChars, endPos, bAllChars, true);
+      GetBreakPos(m_pCurLine->m_LineChars, bAllChars, true, &endPos);
     }
     return false;
   }
@@ -549,9 +549,9 @@ void CFX_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
 }
 
 int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
-                                  int32_t& iEndPos,
                                   bool bAllChars,
-                                  bool bOnlyBrk) {
+                                  bool bOnlyBrk,
+                                  int32_t* pEndPos) {
   int32_t iLength = pdfium::CollectionSize<int32_t>(tca) - 1;
   if (iLength < 1)
     return iLength;
@@ -562,12 +562,12 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
   int32_t iIndirectPos = -1;
   int32_t iLast = -1;
   int32_t iLastPos = -1;
-  if (iEndPos <= m_iLineWidth) {
+  if (*pEndPos <= m_iLineWidth) {
     if (!bAllChars)
       return iLength;
 
     iBreak = iLength;
-    iBreakPos = iEndPos;
+    iBreakPos = *pEndPos;
   }
 
   CFX_Char* pCharArray = tca.data();
@@ -580,7 +580,7 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
   uint32_t nNext = nCodeProp & 0x003F;
   int32_t iCharWidth = pCur->m_iCharWidth;
   if (iCharWidth > 0)
-    iEndPos -= iCharWidth;
+    *pEndPos -= iCharWidth;
 
   while (iLength >= 0) {
     pCur = pCharArray + iLength;
@@ -606,23 +606,23 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
 
     if (!bOnlyBrk) {
       iCharWidth = pCur->m_iCharWidth;
-      if (iEndPos <= m_iLineWidth || bNeedBreak) {
+      if (*pEndPos <= m_iLineWidth || bNeedBreak) {
         if (eType == FX_LBT_DIRECT_BRK && iBreak < 0) {
           iBreak = iLength;
-          iBreakPos = iEndPos;
+          iBreakPos = *pEndPos;
           if (!bAllChars)
             return iLength;
         } else if (eType == FX_LBT_INDIRECT_BRK && iIndirect < 0) {
           iIndirect = iLength;
-          iIndirectPos = iEndPos;
+          iIndirectPos = *pEndPos;
         }
         if (iLast < 0) {
           iLast = iLength;
-          iLastPos = iEndPos;
+          iLastPos = *pEndPos;
         }
       }
       if (iCharWidth > 0)
-        iEndPos -= iCharWidth;
+        *pEndPos -= iCharWidth;
     }
     nNext = nCodeProp & 0x003F;
     --iLength;
@@ -631,15 +631,15 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
     return 0;
 
   if (iBreak > -1) {
-    iEndPos = iBreakPos;
+    *pEndPos = iBreakPos;
     return iBreak;
   }
   if (iIndirect > -1) {
-    iEndPos = iIndirectPos;
+    *pEndPos = iIndirectPos;
     return iIndirect;
   }
   if (iLast > -1) {
-    iEndPos = iLastPos;
+    *pEndPos = iLastPos;
     return iLast;
   }
   return 0;
@@ -655,7 +655,7 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
 
   int32_t iEndPos = pCurLine->GetLineEnd();
   std::vector<CFX_Char>& curChars = pCurLine->m_LineChars;
-  int32_t iCharPos = GetBreakPos(curChars, iEndPos, bAllChars, false);
+  int32_t iCharPos = GetBreakPos(curChars, bAllChars, false, &iEndPos);
   if (iCharPos < 0)
     iCharPos = 0;
 
