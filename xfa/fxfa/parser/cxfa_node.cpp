@@ -2907,10 +2907,9 @@ bool CXFA_Node::CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
 
 CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
                                         float img_height,
-                                        float dpi_x,
-                                        float dpi_y) {
-  CFX_RectF rtImage(0, 0, XFA_UnitPx2Pt(img_width, dpi_x),
-                    XFA_UnitPx2Pt(img_height, dpi_y));
+                                        const CFX_Size& dpi) {
+  CFX_RectF rtImage(0, 0, XFA_UnitPx2Pt(img_width, dpi.width),
+                    XFA_UnitPx2Pt(img_height, dpi.height));
 
   CFX_RectF rtFit;
   Optional<float> width = TryWidth();
@@ -2941,12 +2940,8 @@ bool CXFA_Node::CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!pBitmap)
     return CalculateWidgetAutoSize(pSize);
 
-  int32_t iImageXDpi = 0;
-  int32_t iImageYDpi = 0;
-  GetImageDpi(iImageXDpi, iImageYDpi);
-
   *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
-                              iImageXDpi, iImageYDpi);
+                              GetImageDpi());
   return CalculateWidgetAutoSize(pSize);
 }
 
@@ -2959,12 +2954,8 @@ bool CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!pBitmap)
     return CalculateFieldAutoSize(doc, pSize);
 
-  int32_t iImageXDpi = 0;
-  int32_t iImageYDpi = 0;
-  GetImageEditDpi(iImageXDpi, iImageYDpi);
-
   *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
-                              iImageXDpi, iImageYDpi);
+                              GetImageEditDpi());
   return CalculateFieldAutoSize(doc, pSize);
 }
 
@@ -2980,18 +2971,16 @@ bool CXFA_Node::LoadImageEditImage(CXFA_FFDoc* doc) {
       ->LoadImageData(doc, this);
 }
 
-void CXFA_Node::GetImageDpi(int32_t& iImageXDpi, int32_t& iImageYDpi) {
+CFX_Size CXFA_Node::GetImageDpi() const {
   CXFA_ImageLayoutData* pData =
       static_cast<CXFA_ImageLayoutData*>(m_pLayoutData.get());
-  iImageXDpi = pData->m_iImageXDpi;
-  iImageYDpi = pData->m_iImageYDpi;
+  return CFX_Size(pData->m_iImageXDpi, pData->m_iImageYDpi);
 }
 
-void CXFA_Node::GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi) {
+CFX_Size CXFA_Node::GetImageEditDpi() const {
   CXFA_ImageEditData* pData =
       static_cast<CXFA_ImageEditData*>(m_pLayoutData.get());
-  iImageXDpi = pData->m_iImageXDpi;
-  iImageYDpi = pData->m_iImageYDpi;
+  return CFX_Size(pData->m_iImageXDpi, pData->m_iImageYDpi);
 }
 
 float CXFA_Node::CalculateWidgetAutoWidth(float fWidthCalc) {

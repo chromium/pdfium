@@ -312,8 +312,8 @@ class CXFA_Node : public CXFA_Object {
 
   bool LoadImageImage(CXFA_FFDoc* doc);
   bool LoadImageEditImage(CXFA_FFDoc* doc);
-  void GetImageDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
-  void GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
+  CFX_Size GetImageDpi() const;
+  CFX_Size GetImageEditDpi() const;
 
   RetainPtr<CFX_DIBitmap> GetImageImage();
   RetainPtr<CFX_DIBitmap> GetImageEditImage();
@@ -452,8 +452,7 @@ class CXFA_Node : public CXFA_Object {
   bool CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
   CFX_SizeF CalculateImageSize(float img_width,
                                float img_height,
-                               float dpi_x,
-                               float dpi_y);
+                               const CFX_Size& dpi);
   bool CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
   bool CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
   float CalculateWidgetAutoHeight(float fHeightCalc);
