@@ -13,6 +13,7 @@
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/gif/cfx_lzwdecompressor.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -49,11 +50,8 @@ class CFX_GifContext : public CCodec_GifModule::Context {
   uint8_t global_pal_exp_;
   uint32_t img_row_offset_;
   uint32_t img_row_avail_size_;
-  uint32_t avail_in_;
   int32_t decode_status_;
-  uint32_t skip_size_;
   std::unique_ptr<CFX_GifGraphicControlExtension> graphic_control_extension_;
-  uint8_t* next_in_;
   std::vector<std::unique_ptr<CFX_GifImage>> images_;
   std::unique_ptr<CFX_LZWDecompressor> lzw_decompressor_;
   int width_;
@@ -65,15 +63,17 @@ class CFX_GifContext : public CCodec_GifModule::Context {
   uint8_t img_pass_num_;
 
  protected:
-  uint8_t* ReadData(uint8_t** dest_buf_pp, uint32_t data_size);
+  bool ReadData(uint8_t* dest, uint32_t size);
   CFX_GifDecodeStatus ReadGifSignature();
   CFX_GifDecodeStatus ReadLogicalScreenDescriptor();
+  RetainPtr<CFX_MemoryStream> input_buffer_;
 
  private:
   void SaveDecodingStatus(int32_t status);
   CFX_GifDecodeStatus DecodeExtension();
   CFX_GifDecodeStatus DecodeImageInfo();
   void DecodingFailureAtTailCleanup(CFX_GifImage* gif_image);
+  bool ScanForTerminalMarker();
 };
 
 #endif  // CORE_FXCODEC_GIF_CFX_GIFCONTEXT_H_
