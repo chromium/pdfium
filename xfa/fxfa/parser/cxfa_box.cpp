@@ -230,7 +230,7 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
     else if (iHand == XFA_AttributeEnum::Right)
       rtWidget.Deflate(fHalf, fHalf);
 
-    GetPathArcOrRounded(rtWidget, fillPath, forceRound);
+    GetPathArcOrRounded(rtWidget, forceRound, &fillPath);
   } else if (type == XFA_Element::Rectangle || type == XFA_Element::Border) {
     ToRectangle(this)->GetFillPath(strokes, rtWidget, &fillPath);
   } else {
@@ -243,8 +243,8 @@ void CXFA_Box::DrawFill(const std::vector<CXFA_Stroke*>& strokes,
 }
 
 void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
-                                   CXFA_GEPath& fillPath,
-                                   bool forceRound) {
+                                   bool forceRound,
+                                   CXFA_GEPath* fillPath) {
   float a, b;
   a = rtDraw.width / 2.0f;
   b = rtDraw.height / 2.0f;
@@ -259,13 +259,13 @@ void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
   Optional<int32_t> startAngle = GetStartAngle();
   Optional<int32_t> sweepAngle = GetSweepAngle();
   if (!startAngle && !sweepAngle) {
-    fillPath.AddEllipse(rtDraw);
+    fillPath->AddEllipse(rtDraw);
     return;
   }
 
-  fillPath.AddArc(rtDraw.TopLeft(), rtDraw.Size(),
-                  -startAngle.value_or(0) * FX_PI / 180.0f,
-                  -sweepAngle.value_or(360) * FX_PI / 180.0f);
+  fillPath->AddArc(rtDraw.TopLeft(), rtDraw.Size(),
+                   -startAngle.value_or(0) * FX_PI / 180.0f,
+                   -sweepAngle.value_or(360) * FX_PI / 180.0f);
 }
 
 void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
@@ -302,7 +302,7 @@ void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
       return;
 
     CXFA_GEPath arcPath;
-    GetPathArcOrRounded(rtWidget, arcPath, forceRound);
+    GetPathArcOrRounded(rtWidget, forceRound, &arcPath);
     if (edge)
       edge->Stroke(&arcPath, pGS, matrix);
     return;

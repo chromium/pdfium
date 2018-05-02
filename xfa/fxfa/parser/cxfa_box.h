@@ -68,8 +68,8 @@ class CXFA_Box : public CXFA_Node {
                           const CFX_Matrix& matrix,
                           bool forceRound);
   void GetPathArcOrRounded(CFX_RectF rtDraw,
-                           CXFA_GEPath& fillPath,
-                           bool forceRound);
+                           bool forceRound,
+                           CXFA_GEPath* fillPath);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOX_H_
