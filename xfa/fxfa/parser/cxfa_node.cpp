@@ -3046,10 +3046,13 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
   float fWidth = 0;
   if (*pCalcWidth > 0 && *pCalcHeight < 0) {
     Optional<float> height = TryHeight();
-    if (height)
+    if (height) {
       *pCalcHeight = *height;
-    else
-      CalculateAccWidthAndHeight(doc, pCalcWidth, pCalcHeight);
+    } else {
+      CFX_SizeF size = CalculateAccWidthAndHeight(doc, *pCalcWidth);
+      *pCalcWidth = size.width;
+      *pCalcHeight = size.height;
+    }
 
     m_pLayoutData->m_fWidgetHeight = *pCalcHeight;
     return;
@@ -3064,18 +3067,19 @@ void CXFA_Node::StartWidgetLayout(CXFA_FFDoc* doc,
       if (height)
         *pCalcHeight = *height;
     }
-    if (!width || !height)
-      CalculateAccWidthAndHeight(doc, &fWidth, pCalcHeight);
-
-    *pCalcWidth = fWidth;
+    if (!width || !height) {
+      CFX_SizeF size = CalculateAccWidthAndHeight(doc, fWidth);
+      *pCalcWidth = size.width;
+      *pCalcHeight = size.height;
+    } else {
+      *pCalcWidth = fWidth;
+    }
   }
   m_pLayoutData->m_fWidgetHeight = *pCalcHeight;
 }
 
-void CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
-                                           float* pWidth,
-                                           float* pCalcHeight) {
-  CFX_SizeF sz(*pWidth, m_pLayoutData->m_fWidgetHeight);
+CFX_SizeF CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth) {
+  CFX_SizeF sz(fWidth, m_pLayoutData->m_fWidgetHeight);
   switch (GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode:
     case XFA_FFWidgetType::kChoiceList:
@@ -3112,9 +3116,8 @@ void CXFA_Node::CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
       break;
   }
 
-  *pWidth = sz.width;
   m_pLayoutData->m_fWidgetHeight = sz.height;
-  *pCalcHeight = sz.height;
+  return sz;
 }
 
 bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
@@ -3197,11 +3200,11 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     iLinesCount = 1;
   } else {
     if (!pFieldData->m_pTextOut) {
-      // TODO(dsinclair): Inline fWidth when the 2nd param of
-      // CalculateAccWidthAndHeight isn't an in/out param.
-      float fWidth = TryWidth().value_or(0);
-      CalculateAccWidthAndHeight(docView->GetDoc(), &fWidth, &fHeight);
+      CFX_SizeF size =
+          CalculateAccWidthAndHeight(docView->GetDoc(), TryWidth().value_or(0));
+      fHeight = size.height;
     }
+
     iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
   }
   std::vector<float>* pFieldArray = &pFieldData->m_FieldSplitArray;

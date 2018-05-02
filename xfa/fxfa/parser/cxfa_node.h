@@ -460,9 +460,7 @@ class CXFA_Node : public CXFA_Object {
   float GetWidthWithoutMargin(float fWidthCalc);
   float GetHeightWithoutMargin(float fHeightCalc);
   void CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize);
-  void CalculateAccWidthAndHeight(CXFA_FFDoc* doc,
-                                  float* pWidth,
-                                  float* pCalcHeight);
+  CFX_SizeF CalculateAccWidthAndHeight(CXFA_FFDoc* doc, float fWidth);
   void InitLayoutData();
   void StartTextLayout(CXFA_FFDoc* doc, float* pCalcWidth, float* pCalcHeight);
 
