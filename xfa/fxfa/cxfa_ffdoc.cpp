@@ -59,11 +59,18 @@ bool CXFA_FFDoc::ParseDoc(CPDF_Object* pElementXFA) {
     return false;
 
   auto stream = pdfium::MakeRetain<CFX_SeekableMultiStream>(xfaStreams);
+
   CXFA_DocumentParser parser(m_pDocument.get());
-  if (!parser.Parse(stream, XFA_PacketType::Xdp))
+  bool parsed = parser.Parse(stream, XFA_PacketType::Xdp);
+
+  // We have to set the XML document before we return so that we can clean
+  // up in the OpenDoc method. If we don't, the XMLDocument will get free'd
+  // when this method returns and UnownedPtrs get unhappy.
+  m_pXMLDoc = parser.GetXMLDoc();
+
+  if (!parsed)
     return false;
 
-  m_pXMLDoc = parser.GetXMLDoc();
   m_pDocument->SetRoot(parser.GetRootNode());
   return true;
 }
@@ -104,8 +111,10 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
 
   m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
   m_pDocument = pdfium::MakeUnique<CXFA_Document>(m_pNotify.get());
-  if (!ParseDoc(pElementXFA))
+  if (!ParseDoc(pElementXFA)) {
+    CloseDoc();
     return false;
+  }
 
   // At this point we've got an XFA document and we want to always return
   // true to signify the load succeeded.
