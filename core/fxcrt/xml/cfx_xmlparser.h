@@ -20,24 +20,6 @@ class CFX_XMLElement;
 class CFX_XMLNode;
 class IFX_SeekableReadStream;
 
-enum class FX_XmlSyntaxResult {
-  None,
-  InstructionOpen,
-  InstructionClose,
-  ElementOpen,
-  ElementBreak,
-  ElementClose,
-  TargetName,
-  TagName,
-  AttriName,
-  AttriValue,
-  Text,
-  CData,
-  TargetData,
-  Error,
-  EndOfString
-};
-
 class CFX_XMLParser {
  public:
   static bool IsXMLNameChar(wchar_t ch, bool bFirstChar);
@@ -46,10 +28,6 @@ class CFX_XMLParser {
   virtual ~CFX_XMLParser();
 
   std::unique_ptr<CFX_XMLDocument> Parse();
-
- protected:
-  FX_XmlSyntaxResult DoSyntaxParse();
-  WideString GetTextData();
 
  private:
   enum class FDE_XmlSyntaxState {
@@ -71,15 +49,16 @@ class CFX_XMLParser {
     TargetData
   };
 
+  bool DoSyntaxParse(CFX_XMLDocument* doc);
+  WideString GetTextData();
   void ProcessTextChar(wchar_t ch);
-  bool GetStatus() const;
+  void ProcessTargetData();
 
   CFX_XMLNode* current_node_ = nullptr;
   WideString current_attribute_name_;
   RetainPtr<IFX_SeekableReadStream> m_pStream;
   FX_FILESIZE m_Start = 0;  // Start position in m_Buffer
   FX_FILESIZE m_End = 0;    // End position in m_Buffer
-  FX_XmlSyntaxResult m_syntaxParserResult = FX_XmlSyntaxResult::None;
   FDE_XmlSyntaxState m_syntaxParserState = FDE_XmlSyntaxState::Text;
   std::stack<FX_XMLNODETYPE> m_XMLNodeTypeStack;
   std::stack<wchar_t> m_SkipStack;

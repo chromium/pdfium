@@ -74,14 +74,6 @@ CFX_XMLParser::CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream) {
       std::min(m_iXMLPlaneSize,
                pdfium::base::checked_cast<size_t>(m_pStream->GetSize()));
 
-  FX_SAFE_SIZE_T alloc_size_safe = m_iXMLPlaneSize;
-  alloc_size_safe += 1;  // For NUL.
-  if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0) {
-    m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-    return;
-  }
-
-  m_Buffer.resize(pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
   current_text_.reserve(kCurrentTextReserve);
 }
 
@@ -91,110 +83,28 @@ std::unique_ptr<CFX_XMLDocument> CFX_XMLParser::Parse() {
   auto doc = pdfium::MakeUnique<CFX_XMLDocument>();
   current_node_ = doc->GetRoot();
 
-  int32_t iCount = 0;
-  while (true) {
-    FX_XmlSyntaxResult result = DoSyntaxParse();
-    if (result == FX_XmlSyntaxResult::Error)
-      return nullptr;
-    if (result == FX_XmlSyntaxResult::EndOfString)
-      break;
+  FX_SAFE_SIZE_T alloc_size_safe = m_iXMLPlaneSize;
+  alloc_size_safe += 1;  // For NUL.
+  if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0)
+    return nullptr;
 
-    switch (result) {
-      case FX_XmlSyntaxResult::InstructionClose:
-        if (current_node_ && current_node_->GetType() == FX_XMLNODE_Instruction)
-          current_node_ = current_node_->GetParent();
-        break;
-      case FX_XmlSyntaxResult::ElementClose: {
-        if (current_node_->GetType() != FX_XMLNODE_Element)
-          return nullptr;
+  m_Buffer.resize(pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
 
-        WideString element_name = GetTextData();
-        if (element_name.GetLength() > 0 &&
-            element_name !=
-                static_cast<CFX_XMLElement*>(current_node_)->GetName()) {
-          return nullptr;
-        }
-
-        current_node_ = current_node_->GetParent();
-        iCount++;
-        break;
-      }
-      case FX_XmlSyntaxResult::TargetName: {
-        WideString target_name = GetTextData();
-        if (target_name == L"originalXFAVersion" || target_name == L"acrobat") {
-          auto* node = doc->CreateNode<CFX_XMLInstruction>(target_name);
-          current_node_->AppendChild(node);
-          current_node_ = node;
-        }
-        break;
-      }
-      case FX_XmlSyntaxResult::TagName: {
-        auto* child = doc->CreateNode<CFX_XMLElement>(GetTextData());
-        current_node_->AppendChild(child);
-        current_node_ = child;
-        break;
-      }
-      case FX_XmlSyntaxResult::AttriName: {
-        current_attribute_name_ = GetTextData();
-        break;
-      }
-      case FX_XmlSyntaxResult::AttriValue:
-        if (current_node_ && current_node_->GetType() == FX_XMLNODE_Element) {
-          static_cast<CFX_XMLElement*>(current_node_)
-              ->SetAttribute(current_attribute_name_, GetTextData());
-        }
-        current_attribute_name_.clear();
-        break;
-      case FX_XmlSyntaxResult::Text: {
-        current_node_->AppendChild(doc->CreateNode<CFX_XMLText>(GetTextData()));
-        break;
-      }
-      case FX_XmlSyntaxResult::CData: {
-        current_node_->AppendChild(
-            doc->CreateNode<CFX_XMLCharData>(GetTextData()));
-        break;
-      }
-      case FX_XmlSyntaxResult::TargetData: {
-        WideString target_data = GetTextData();
-        if (current_node_ &&
-            current_node_->GetType() == FX_XMLNODE_Instruction) {
-          if (target_data.IsEmpty())
-            break;
-          static_cast<CFX_XMLInstruction*>(current_node_)
-              ->AppendData(target_data);
-        }
-        break;
-      }
-      case FX_XmlSyntaxResult::ElementOpen:
-      case FX_XmlSyntaxResult::ElementBreak:
-      case FX_XmlSyntaxResult::InstructionOpen:
-      default:
-        break;
-    }
-  }
-  return doc;
+  return DoSyntaxParse(doc.get()) ? std::move(doc) : nullptr;
 }
 
-FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
-  if (m_syntaxParserResult == FX_XmlSyntaxResult::Error ||
-      m_syntaxParserResult == FX_XmlSyntaxResult::EndOfString) {
-    return m_syntaxParserResult;
-  }
-
-  FX_XmlSyntaxResult syntaxParserResult = FX_XmlSyntaxResult::None;
+bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
+  int32_t iCount = 0;
   while (true) {
     if (m_Start >= m_End) {
-      if (m_pStream->IsEOF()) {
-        m_syntaxParserResult = FX_XmlSyntaxResult::EndOfString;
-        return m_syntaxParserResult;
-      }
+      if (m_pStream->IsEOF())
+        return true;
 
       size_t buffer_chars =
           m_pStream->ReadBlock(m_Buffer.data(), m_iXMLPlaneSize);
-      if (buffer_chars == 0) {
-        m_syntaxParserResult = FX_XmlSyntaxResult::EndOfString;
-        return m_syntaxParserResult;
-      }
+      if (buffer_chars == 0)
+        return true;
+
       m_Start = 0;
       m_End = buffer_chars;
     }
@@ -205,7 +115,8 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
         case FDE_XmlSyntaxState::Text:
           if (ch == L'<') {
             if (!current_text_.empty()) {
-              syntaxParserResult = FX_XmlSyntaxResult::Text;
+              current_node_->AppendChild(
+                  doc->CreateNode<CFX_XMLText>(GetTextData()));
             } else {
               m_Start++;
               m_syntaxParserState = FDE_XmlSyntaxState::Node;
@@ -225,22 +136,25 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
             m_XMLNodeTypeStack.push(FX_XMLNODE_Instruction);
             m_Start++;
             m_syntaxParserState = FDE_XmlSyntaxState::Target;
-            syntaxParserResult = FX_XmlSyntaxResult::InstructionOpen;
           } else {
             m_XMLNodeTypeStack.push(FX_XMLNODE_Element);
             m_syntaxParserState = FDE_XmlSyntaxState::Tag;
-            syntaxParserResult = FX_XmlSyntaxResult::ElementOpen;
           }
           break;
         case FDE_XmlSyntaxState::Target:
           if (!IsXMLNameChar(ch, current_text_.empty())) {
-            if (current_text_.empty()) {
-              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-              return m_syntaxParserResult;
-            }
+            if (current_text_.empty())
+              return false;
 
-            syntaxParserResult = FX_XmlSyntaxResult::TargetName;
             m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
+
+            WideString target_name = GetTextData();
+            if (target_name == L"originalXFAVersion" ||
+                target_name == L"acrobat") {
+              auto* node = doc->CreateNode<CFX_XMLInstruction>(target_name);
+              current_node_->AppendChild(node);
+              current_node_ = node;
+            }
           } else {
             current_text_.push_back(ch);
             m_Start++;
@@ -248,13 +162,14 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
           break;
         case FDE_XmlSyntaxState::Tag:
           if (!IsXMLNameChar(ch, current_text_.empty())) {
-            if (current_text_.empty()) {
-              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-              return m_syntaxParserResult;
-            }
+            if (current_text_.empty())
+              return false;
 
-            syntaxParserResult = FX_XmlSyntaxResult::TagName;
             m_syntaxParserState = FDE_XmlSyntaxState::AttriName;
+
+            auto* child = doc->CreateNode<CFX_XMLElement>(GetTextData());
+            current_node_->AppendChild(child);
+            current_node_ = child;
           } else {
             current_text_.push_back(ch);
             m_Start++;
@@ -281,8 +196,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
                 }
                 break;
               }
-              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-              return m_syntaxParserResult;
+              return false;
             } else {
               if (m_XMLNodeTypeStack.top() == FX_XMLNODE_Instruction) {
                 if (ch != '=' && !IsXMLWhiteSpace(ch)) {
@@ -291,7 +205,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
                 }
               }
               m_syntaxParserState = FDE_XmlSyntaxState::AttriEqualSign;
-              syntaxParserResult = FX_XmlSyntaxResult::AttriName;
+              current_attribute_name_ = GetTextData();
             }
           } else {
             current_text_.push_back(ch);
@@ -308,8 +222,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
               m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
               break;
             }
-            m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-            return m_syntaxParserResult;
+            return false;
           } else {
             m_syntaxParserState = FDE_XmlSyntaxState::AttriQuotation;
             m_Start++;
@@ -321,8 +234,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
             break;
           }
           if (ch != L'\"' && ch != L'\'') {
-            m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-            return m_syntaxParserResult;
+            return false;
           }
 
           m_wQuotationMark = ch;
@@ -331,14 +243,19 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
           break;
         case FDE_XmlSyntaxState::AttriValue:
           if (ch == m_wQuotationMark) {
-            if (m_iEntityStart > -1) {
-              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-              return m_syntaxParserResult;
-            }
+            if (m_iEntityStart > -1)
+              return false;
+
             m_wQuotationMark = 0;
             m_Start++;
             m_syntaxParserState = FDE_XmlSyntaxState::AttriName;
-            syntaxParserResult = FX_XmlSyntaxResult::AttriValue;
+
+            if (current_node_ &&
+                current_node_->GetType() == FX_XMLNODE_Element) {
+              static_cast<CFX_XMLElement*>(current_node_)
+                  ->SetAttribute(current_attribute_name_, GetTextData());
+            }
+            current_attribute_name_.clear();
           } else {
             ProcessTextChar(ch);
           }
@@ -348,45 +265,53 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
             current_text_.push_back(ch);
             m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
           } else if (!current_text_.empty()) {
-            syntaxParserResult = FX_XmlSyntaxResult::TargetData;
+            ProcessTargetData();
           } else {
             m_Start++;
-            if (m_XMLNodeTypeStack.empty()) {
-              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-              return m_syntaxParserResult;
-            }
-            m_XMLNodeTypeStack.pop();
+            if (m_XMLNodeTypeStack.empty())
+              return false;
 
+            m_XMLNodeTypeStack.pop();
             m_syntaxParserState = FDE_XmlSyntaxState::Text;
-            syntaxParserResult = FX_XmlSyntaxResult::InstructionClose;
+
+            if (current_node_ &&
+                current_node_->GetType() == FX_XMLNODE_Instruction)
+              current_node_ = current_node_->GetParent();
           }
           break;
         case FDE_XmlSyntaxState::BreakElement:
           if (ch == L'>') {
             m_syntaxParserState = FDE_XmlSyntaxState::Text;
-            syntaxParserResult = FX_XmlSyntaxResult::ElementBreak;
           } else if (ch == L'/') {
             m_syntaxParserState = FDE_XmlSyntaxState::CloseElement;
           } else {
-            m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-            return m_syntaxParserResult;
+            return false;
           }
           m_Start++;
           break;
         case FDE_XmlSyntaxState::CloseElement:
           if (!IsXMLNameChar(ch, current_text_.empty())) {
             if (ch == L'>') {
-              if (m_XMLNodeTypeStack.empty()) {
-                m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-                return m_syntaxParserResult;
-              }
-              m_XMLNodeTypeStack.pop();
+              if (m_XMLNodeTypeStack.empty())
+                return false;
 
+              m_XMLNodeTypeStack.pop();
               m_syntaxParserState = FDE_XmlSyntaxState::Text;
-              syntaxParserResult = FX_XmlSyntaxResult::ElementClose;
+
+              if (current_node_->GetType() != FX_XMLNODE_Element)
+                return false;
+
+              WideString element_name = GetTextData();
+              if (element_name.GetLength() > 0 &&
+                  element_name !=
+                      static_cast<CFX_XMLElement*>(current_node_)->GetName()) {
+                return false;
+              }
+
+              current_node_ = current_node_->GetParent();
+              iCount++;
             } else if (!IsXMLWhiteSpace(ch)) {
-              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-              return m_syntaxParserResult;
+              return false;
             }
           } else {
             current_text_.push_back(ch);
@@ -410,8 +335,10 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
         case FDE_XmlSyntaxState::SkipCData: {
           if (FXSYS_wcsnicmp(m_Buffer.data() + m_Start, L"]]>", 3) == 0) {
             m_Start += 3;
-            syntaxParserResult = FX_XmlSyntaxResult::CData;
             m_syntaxParserState = FDE_XmlSyntaxState::Text;
+
+            current_node_->AppendChild(
+                doc->CreateNode<CFX_XMLCharData>(GetTextData()));
           } else {
             current_text_.push_back(ch);
             m_Start++;
@@ -481,7 +408,7 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
             }
             if (m_wQuotationMark == 0) {
               m_Start++;
-              syntaxParserResult = FX_XmlSyntaxResult::TargetData;
+              ProcessTargetData();
               break;
             }
           }
@@ -495,10 +422,9 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
             } else if (ch == m_wQuotationMark) {
               m_wQuotationMark = 0;
               m_Start++;
-              syntaxParserResult = FX_XmlSyntaxResult::TargetData;
+              ProcessTargetData();
             } else {
-              m_syntaxParserResult = FX_XmlSyntaxResult::Error;
-              return m_syntaxParserResult;
+              return false;
             }
           } else {
             current_text_.push_back(ch);
@@ -508,15 +434,11 @@ FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {
         default:
           break;
       }
-      if (syntaxParserResult != FX_XmlSyntaxResult::None)
-        return syntaxParserResult;
     }
   }
-  return FX_XmlSyntaxResult::Text;
-}
 
-bool CFX_XMLParser::GetStatus() const {
-  return m_pStream && m_syntaxParserResult != FX_XmlSyntaxResult::Error;
+  current_node_->AppendChild(doc->CreateNode<CFX_XMLText>(GetTextData()));
+  return true;
 }
 
 void CFX_XMLParser::ProcessTextChar(wchar_t character) {
@@ -574,6 +496,18 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
     m_iEntityStart = current_text_.size() - 1;
   }
   m_Start++;
+}
+
+void CFX_XMLParser::ProcessTargetData() {
+  WideString target_data = GetTextData();
+  if (target_data.IsEmpty())
+    return;
+  if (!current_node_)
+    return;
+  if (current_node_->GetType() != FX_XMLNODE_Instruction)
+    return;
+
+  static_cast<CFX_XMLInstruction*>(current_node_)->AppendData(target_data);
 }
 
 WideString CFX_XMLParser::GetTextData() {
