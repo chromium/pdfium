@@ -329,13 +329,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageCount(FPDF_DOCUMENT document) {
   if (!pDoc)
     return 0;
 
-#ifdef PDF_ENABLE_XFA
-  auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
-  if (pContext)
-    return pContext->GetPageCount();
-#endif  // PDF_ENABLE_XFA
-
-  return pDoc->GetPageCount();
+  auto* pExtension = pDoc->GetExtension();
+  return pExtension ? pExtension->GetPageCount() : pDoc->GetPageCount();
 }
 
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
