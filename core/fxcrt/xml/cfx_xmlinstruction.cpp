@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -22,10 +23,10 @@ FX_XMLNODETYPE CFX_XMLInstruction::GetType() const {
   return FX_XMLNODE_Instruction;
 }
 
-std::unique_ptr<CFX_XMLNode> CFX_XMLInstruction::Clone() {
-  auto pClone = pdfium::MakeUnique<CFX_XMLInstruction>(name_);
-  pClone->m_TargetData = m_TargetData;
-  return std::move(pClone);
+CFX_XMLNode* CFX_XMLInstruction::Clone(CFX_XMLDocument* doc) {
+  auto* node = doc->CreateNode<CFX_XMLInstruction>(name_);
+  node->m_TargetData = m_TargetData;
+  return node;
 }
 
 void CFX_XMLInstruction::AppendData(const WideString& wsData) {

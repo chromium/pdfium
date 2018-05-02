@@ -2,15 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <utility>
-
-#include "core/fxcrt/xml/cfx_xmlchardata.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlchardata.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/string_write_stream.h"
 #include "testing/test_support.h"
-#include "third_party/base/ptr_util.h"
 
 TEST(CFX_XMLElementTest, GetType) {
   CFX_XMLElement node(L"node");
@@ -74,19 +72,24 @@ TEST(CFX_XMLElementTest, Attributes) {
 }
 
 TEST(CFX_XMLElementTest, Clone) {
+  CFX_XMLDocument doc;
+
   CFX_XMLElement node(L"test:node");
   node.SetAttribute(L"first", L"one");
   node.SetAttribute(L"second", L"two");
   node.SetAttribute(L"xmlns:test", L"https://example.org/test");
 
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLText>(L"Text Child"));
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLElement>(L"Node child"));
+  CFX_XMLText text_child1(L"Text Child");
+  node.AppendChild(&text_child1);
 
-  auto clone = node.Clone();
+  CFX_XMLElement node_child1(L"Node child");
+  node.AppendChild(&node_child1);
+
+  CFX_XMLNode* clone = node.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
 
   ASSERT_EQ(FX_XMLNODE_Element, clone->GetType());
-  CFX_XMLElement* inst = static_cast<CFX_XMLElement*>(clone.get());
+  CFX_XMLElement* inst = static_cast<CFX_XMLElement*>(clone);
 
   EXPECT_EQ(L"test:node", inst->GetName());
   EXPECT_EQ(L"node", inst->GetLocalTagName());
@@ -129,14 +132,17 @@ TEST(CFX_XMLElementTest, SaveWithChildren) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLElement node(L"node");
 
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLText>(L"Text Child 1"));
+  CFX_XMLText text_child1(L"Text Child 1");
+  node.AppendChild(&text_child1);
 
-  auto child = pdfium::MakeUnique<CFX_XMLElement>(L"node-child");
-  CFX_XMLElement* node_child1 = child.get();
-  node.AppendChild(std::move(child));
+  CFX_XMLElement node_child1(L"node-child");
+  node.AppendChild(&node_child1);
 
-  node_child1->AppendChild(pdfium::MakeUnique<CFX_XMLText>(L"Text Child 2"));
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLCharData>(L"Char Data"));
+  CFX_XMLText text_child2(L"Text Child 2");
+  node_child1.AppendChild(&text_child2);
+
+  CFX_XMLCharData char_data1(L"Char Data");
+  node.AppendChild(&char_data1);
 
   node.Save(stream);
   EXPECT_EQ(
@@ -160,18 +166,18 @@ TEST(CFX_XMLElementTest, SaveWithNamespace) {
 
 TEST(CFX_XMLElementTest, GetFirstChildNamed) {
   CFX_XMLElement node(L"node");
-  auto child = pdfium::MakeUnique<CFX_XMLElement>(L"node-child");
-  CFX_XMLElement* node_child1 = child.get();
-  node.AppendChild(std::move(child));
+  CFX_XMLElement node_child1(L"node-child");
+  node.AppendChild(&node_child1);
 
   auto* found = node.GetFirstChildNamed(L"node-child");
   EXPECT_TRUE(found != nullptr);
-  EXPECT_EQ(node_child1, found);
+  EXPECT_EQ(&node_child1, found);
 }
 
 TEST(CFX_XMLElementTest, GetFirstChildNamedMissing) {
   CFX_XMLElement node(L"node");
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLElement>(L"node-child"));
+  CFX_XMLElement node_child1(L"node-child");
+  node.AppendChild(&node_child1);
 
   auto* found = node.GetFirstChildNamed(L"node-sibling");
   EXPECT_TRUE(found == nullptr);
@@ -179,23 +185,26 @@ TEST(CFX_XMLElementTest, GetFirstChildNamedMissing) {
 
 TEST(CFX_XMLElementTest, GetNthChildNamed) {
   CFX_XMLElement node(L"node");
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLElement>(L"node-child"));
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLElement>(L"node-child"));
-
-  auto child = pdfium::MakeUnique<CFX_XMLElement>(L"node-child");
-  CFX_XMLElement* node_child3 = child.get();
-  node.AppendChild(std::move(child));
+  CFX_XMLElement node_child1(L"node-child");
+  CFX_XMLElement node_child2(L"node-child");
+  CFX_XMLElement node_child3(L"node-child");
+  node.AppendChild(&node_child1);
+  node.AppendChild(&node_child2);
+  node.AppendChild(&node_child3);
 
   auto* found = node.GetNthChildNamed(L"node-child", 2);
   EXPECT_TRUE(found != nullptr);
-  EXPECT_EQ(node_child3, found);
+  EXPECT_EQ(&node_child3, found);
 }
 
 TEST(CFX_XMLElementTest, GetNthChildNamedMissingChild) {
   CFX_XMLElement node(L"node");
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLElement>(L"node-child"));
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLElement>(L"node-child"));
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLElement>(L"node-child"));
+  CFX_XMLElement node_child1(L"node-child");
+  CFX_XMLElement node_child2(L"node-child");
+  CFX_XMLElement node_child3(L"node-child");
+  node.AppendChild(&node_child1);
+  node.AppendChild(&node_child2);
+  node.AppendChild(&node_child3);
 
   auto* found = node.GetNthChildNamed(L"node-child", 5);
   EXPECT_TRUE(found == nullptr);
@@ -203,15 +212,18 @@ TEST(CFX_XMLElementTest, GetNthChildNamedMissingChild) {
 
 TEST(CFX_XMLElementTest, GetTextData) {
   CFX_XMLElement node(L"node");
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLText>(L"Text Child 1"));
 
-  auto child = pdfium::MakeUnique<CFX_XMLElement>(L"Node child");
-  CFX_XMLElement* node_child1 = child.get();
-  node.AppendChild(std::move(child));
+  CFX_XMLText text_child1(L"Text Child 1");
+  node.AppendChild(&text_child1);
 
-  node_child1->AppendChild(pdfium::MakeUnique<CFX_XMLText>(L"Text Child 2"));
+  CFX_XMLElement node_child1(L"Node child");
+  node.AppendChild(&node_child1);
 
-  node.AppendChild(pdfium::MakeUnique<CFX_XMLCharData>(L"Char Data"));
+  CFX_XMLText text_child2(L"Text Child 2");
+  node_child1.AppendChild(&text_child2);
+
+  CFX_XMLCharData char_data1(L"Char Data");
+  node.AppendChild(&char_data1);
 
   EXPECT_EQ(L"Text Child 1Char Data", node.GetTextData());
 }

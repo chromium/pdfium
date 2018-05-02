@@ -4,6 +4,7 @@
 
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -41,15 +42,17 @@ TEST(CFX_XMLInstructionTest, TargetData) {
 }
 
 TEST(CFX_XMLInstructionTest, Clone) {
+  CFX_XMLDocument doc;
+
   CFX_XMLInstruction node(L"acrobat");
   node.AppendData(L"firstString");
   node.AppendData(L"secondString");
 
-  auto clone = node.Clone();
+  CFX_XMLNode* clone = node.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
 
   ASSERT_EQ(FX_XMLNODE_Instruction, clone->GetType());
-  CFX_XMLInstruction* inst = static_cast<CFX_XMLInstruction*>(clone.get());
+  CFX_XMLInstruction* inst = static_cast<CFX_XMLInstruction*>(clone);
 
   EXPECT_TRUE(inst->IsAcrobat());
 
@@ -87,14 +90,16 @@ TEST(CFX_XMLInstructionTest, ParseAndReSave) {
       reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
       false);
 
-  CFX_XMLElement root(L"root");
-  CFX_XMLParser parser(&root, in_stream);
-  ASSERT_TRUE(parser.Parse());
-  ASSERT_TRUE(root.GetFirstChild() != nullptr);
-  ASSERT_EQ(FX_XMLNODE_Instruction, root.GetFirstChild()->GetType());
+  CFX_XMLParser parser(in_stream);
+  std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
+  ASSERT_TRUE(doc != nullptr);
+
+  CFX_XMLElement* root = doc->GetRoot();
+  ASSERT_TRUE(root->GetFirstChild() != nullptr);
+  ASSERT_EQ(FX_XMLNODE_Instruction, root->GetFirstChild()->GetType());
 
   CFX_XMLInstruction* node =
-      static_cast<CFX_XMLInstruction*>(root.GetFirstChild());
+      static_cast<CFX_XMLInstruction*>(root->GetFirstChild());
   ASSERT_TRUE(node != nullptr);
   EXPECT_TRUE(node->IsAcrobat());
 
@@ -107,5 +112,51 @@ TEST(CFX_XMLInstructionTest, ParseAndReSave) {
   node->Save(out_stream);
   EXPECT_EQ(
       "<?acrobat http://www.xfa.org/schema/xfa-template/3.3/ Display:1 ?>\n",
+      out_stream->ToString());
+}
+
+TEST(CFX_XMLInstructionTest, ParseAndReSaveInnerInstruction) {
+  const char* input =
+      "<node>\n"
+      "<?acrobat http://www.xfa.org/schema/xfa-template/3.3/ Display:1 ?>\n"
+      "</node>";
+
+  auto in_stream = pdfium::MakeRetain<CFX_MemoryStream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
+      false);
+
+  CFX_XMLParser parser(in_stream);
+  std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
+  ASSERT_TRUE(doc != nullptr);
+
+  CFX_XMLElement* root = doc->GetRoot();
+  ASSERT_TRUE(root->GetFirstChild() != nullptr);
+  ASSERT_TRUE(root->GetFirstChild()->GetType() == FX_XMLNODE_Element);
+
+  CFX_XMLElement* node = static_cast<CFX_XMLElement*>(root->GetFirstChild());
+  EXPECT_EQ(L"node", node->GetName());
+
+  CFX_XMLInstruction* instruction = nullptr;
+  for (auto* elem = node->GetFirstChild(); elem;
+       elem = elem->GetNextSibling()) {
+    if (elem->GetType() == FX_XMLNODE_Instruction) {
+      instruction = static_cast<CFX_XMLInstruction*>(elem);
+      break;
+    }
+  }
+  ASSERT_TRUE(instruction != nullptr);
+  EXPECT_TRUE(instruction->IsAcrobat());
+
+  auto& data = instruction->GetTargetData();
+  ASSERT_EQ(2U, data.size());
+  EXPECT_EQ(L"http://www.xfa.org/schema/xfa-template/3.3/", data[0]);
+  EXPECT_EQ(L"Display:1", data[1]);
+
+  auto out_stream = pdfium::MakeRetain<StringWriteStream>();
+  node->Save(out_stream);
+  EXPECT_EQ(
+      "<node>\n\n"
+      "<?acrobat http://www.xfa.org/schema/xfa-template/3.3/ Display:1 ?>\n\n"
+      "</node>\n",
       out_stream->ToString());
 }

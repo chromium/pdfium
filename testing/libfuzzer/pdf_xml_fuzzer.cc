@@ -9,6 +9,7 @@
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "third_party/base/ptr_util.h"
@@ -20,12 +21,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   auto stream = pdfium::MakeRetain<CFX_MemoryStream>(const_cast<uint8_t*>(data),
                                                      size, false);
-  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"ROOT");
-  CFX_XMLParser parser(root.get(), stream);
-  if (!parser.Parse())
+
+  CFX_XMLParser parser(stream);
+  std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
+  if (!doc || !doc->GetRoot())
     return 0;
 
-  for (CFX_XMLNode* pXMLNode = root->GetFirstChild(); pXMLNode;
+  for (CFX_XMLNode* pXMLNode = doc->GetRoot()->GetFirstChild(); pXMLNode;
        pXMLNode = pXMLNode->GetNextSibling()) {
     if (pXMLNode->GetType() == FX_XMLNODE_Element)
       break;

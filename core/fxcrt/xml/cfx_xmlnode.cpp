@@ -17,38 +17,26 @@
 
 CFX_XMLNode::CFX_XMLNode() = default;
 
-CFX_XMLNode::~CFX_XMLNode() {
-  DeleteChildren();
-}
+CFX_XMLNode::~CFX_XMLNode() = default;
 
 void CFX_XMLNode::DeleteChildren() {
-  CFX_XMLNode* child = last_child_.Get();
-  // Clear last child early as it will have been deleted already.
-  last_child_ = nullptr;
-  while (child) {
-    child = child->prev_sibling_.Get();
-    if (child) {
-      if (child->next_sibling_) {
-        child->next_sibling_->prev_sibling_ = nullptr;
-        child->next_sibling_->parent_ = nullptr;
-      }
-
-      child->next_sibling_ = nullptr;
-    }
-  }
-  if (first_child_) {
-    first_child_->next_sibling_ = nullptr;
+  while (first_child_) {
     first_child_->parent_ = nullptr;
+    first_child_->prev_sibling_ = nullptr;
+
+    CFX_XMLNode* child = first_child_;
+    first_child_ = child->next_sibling_;
+
+    child->next_sibling_ = nullptr;
   }
-  first_child_ = nullptr;
+  last_child_ = nullptr;
 }
 
-void CFX_XMLNode::AppendChild(std::unique_ptr<CFX_XMLNode> pNode) {
-  InsertChildNode(std::move(pNode), -1);
+void CFX_XMLNode::AppendChild(CFX_XMLNode* pNode) {
+  InsertChildNode(pNode, -1);
 }
 
-void CFX_XMLNode::InsertChildNode(std::unique_ptr<CFX_XMLNode> pNode,
-                                  int32_t index) {
+void CFX_XMLNode::InsertChildNode(CFX_XMLNode* pNode, int32_t index) {
   ASSERT(!pNode->parent_);
 
   pNode->parent_ = this;
@@ -56,36 +44,36 @@ void CFX_XMLNode::InsertChildNode(std::unique_ptr<CFX_XMLNode> pNode,
   if (!first_child_) {
     ASSERT(!last_child_);
 
-    first_child_ = std::move(pNode);
-    last_child_ = first_child_.get();
+    first_child_ = pNode;
+    last_child_ = first_child_;
     first_child_->prev_sibling_ = nullptr;
     first_child_->next_sibling_ = nullptr;
     return;
   }
 
   if (index == 0) {
-    first_child_->prev_sibling_ = pNode.get();
-    pNode->next_sibling_ = std::move(first_child_);
+    first_child_->prev_sibling_ = pNode;
+    pNode->next_sibling_ = first_child_;
     pNode->prev_sibling_ = nullptr;
-    first_child_ = std::move(pNode);
+    first_child_ = pNode;
     return;
   }
 
   int32_t iCount = 0;
-  CFX_XMLNode* pFind = first_child_.get();
+  CFX_XMLNode* pFind = first_child_;
   // Note, negative indexes, and indexes after the end of the list will result
   // in appending to the list.
   while (++iCount != index && pFind->next_sibling_)
-    pFind = pFind->next_sibling_.get();
+    pFind = pFind->next_sibling_;
 
   pNode->prev_sibling_ = pFind;
   if (pFind->next_sibling_)
-    pFind->next_sibling_->prev_sibling_ = pNode.get();
-  pNode->next_sibling_ = std::move(pFind->next_sibling_);
+    pFind->next_sibling_->prev_sibling_ = pNode;
+  pNode->next_sibling_ = pFind->next_sibling_;
 
-  pFind->next_sibling_ = std::move(pNode);
-  if (pFind == last_child_.Get())
-    last_child_ = pFind->next_sibling_.get();
+  pFind->next_sibling_ = pNode;
+  if (pFind == last_child_)
+    last_child_ = pFind->next_sibling_;
 }
 
 void CFX_XMLNode::RemoveChildNode(CFX_XMLNode* pNode) {
@@ -95,35 +83,25 @@ void CFX_XMLNode::RemoveChildNode(CFX_XMLNode* pNode) {
   if (pNode->GetParent() != this)
     return;
 
-  if (first_child_.get() == pNode) {
-    first_child_.release();
-    first_child_ = std::move(pNode->next_sibling_);
-    if (first_child_) {
-      first_child_->prev_sibling_ = nullptr;
+  if (first_child_ == pNode)
+    first_child_ = pNode->next_sibling_;
+  if (last_child_ == pNode)
+    last_child_ = pNode->prev_sibling_;
 
-      if (first_child_->next_sibling_)
-        first_child_->next_sibling_->prev_sibling_ = first_child_.get();
-    }
-  } else {
-    CFX_XMLNode* prev = pNode->prev_sibling_.Get();
-    prev->next_sibling_.release();  // Release pNode
-    prev->next_sibling_ = std::move(pNode->next_sibling_);
-
-    if (prev->next_sibling_)
-      prev->next_sibling_->prev_sibling_ = prev;
-  }
-
-  if (last_child_.Get() == pNode)
-    last_child_ = pNode->prev_sibling_.Get();
+  if (pNode->prev_sibling_)
+    pNode->prev_sibling_->next_sibling_ = pNode->next_sibling_;
+  if (pNode->next_sibling_)
+    pNode->next_sibling_->prev_sibling_ = pNode->prev_sibling_;
 
   pNode->parent_ = nullptr;
   pNode->prev_sibling_ = nullptr;
+  pNode->next_sibling_ = nullptr;
 }
 
 CFX_XMLNode* CFX_XMLNode::GetRoot() {
   CFX_XMLNode* pParent = this;
   while (pParent->parent_)
-    pParent = pParent->parent_.Get();
+    pParent = pParent->parent_;
 
   return pParent;
 }

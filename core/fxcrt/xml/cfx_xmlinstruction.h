@@ -13,6 +13,8 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 
+class CFX_XMLDocument;
+
 class CFX_XMLInstruction : public CFX_XMLNode {
  public:
   explicit CFX_XMLInstruction(const WideString& wsTarget);
@@ -20,7 +22,7 @@ class CFX_XMLInstruction : public CFX_XMLNode {
 
   // CFX_XMLNode
   FX_XMLNODETYPE GetType() const override;
-  std::unique_ptr<CFX_XMLNode> Clone() override;
+  CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
   void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
 
   bool IsOriginalXFAVersion() const;

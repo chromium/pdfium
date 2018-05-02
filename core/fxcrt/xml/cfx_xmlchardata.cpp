@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "third_party/base/ptr_util.h"
 
 CFX_XMLCharData::CFX_XMLCharData(const WideString& wsCData)
@@ -17,8 +18,8 @@ FX_XMLNODETYPE CFX_XMLCharData::GetType() const {
   return FX_XMLNODE_CharData;
 }
 
-std::unique_ptr<CFX_XMLNode> CFX_XMLCharData::Clone() {
-  return pdfium::MakeUnique<CFX_XMLCharData>(GetText());
+CFX_XMLNode* CFX_XMLCharData::Clone(CFX_XMLDocument* doc) {
+  return doc->CreateNode<CFX_XMLCharData>(GetText());
 }
 
 void CFX_XMLCharData::Save(

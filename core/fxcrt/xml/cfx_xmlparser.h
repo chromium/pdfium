@@ -15,6 +15,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 
+class CFX_XMLDocument;
 class CFX_XMLElement;
 class CFX_XMLNode;
 class IFX_SeekableReadStream;
@@ -41,11 +42,10 @@ class CFX_XMLParser {
  public:
   static bool IsXMLNameChar(wchar_t ch, bool bFirstChar);
 
-  CFX_XMLParser(CFX_XMLNode* pParent,
-                const RetainPtr<IFX_SeekableReadStream>& pStream);
+  explicit CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream);
   virtual ~CFX_XMLParser();
 
-  bool Parse();
+  std::unique_ptr<CFX_XMLDocument> Parse();
 
  protected:
   FX_XmlSyntaxResult DoSyntaxParse();
@@ -74,8 +74,7 @@ class CFX_XMLParser {
   void ParseTextChar(wchar_t ch);
   bool GetStatus() const;
 
-  CFX_XMLNode* m_pParent;
-  CFX_XMLNode* m_pChild = nullptr;
+  CFX_XMLNode* current_node_ = nullptr;
   WideString current_attribute_name_;
   RetainPtr<IFX_SeekableReadStream> m_pStream;
   FX_FILESIZE m_Start = 0;  // Start position in m_Buffer

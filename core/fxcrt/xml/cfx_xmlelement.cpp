@@ -11,6 +11,7 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -26,20 +27,18 @@ FX_XMLNODETYPE CFX_XMLElement::GetType() const {
   return FX_XMLNODE_Element;
 }
 
-std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
-  auto pClone = pdfium::MakeUnique<CFX_XMLElement>(name_);
-  pClone->attrs_ = attrs_;
+CFX_XMLNode* CFX_XMLElement::Clone(CFX_XMLDocument* doc) {
+  auto* node = doc->CreateNode<CFX_XMLElement>(name_);
+  node->attrs_ = attrs_;
 
-  // TODO(dsinclair): This clone is wrong. It doesn't clone child nodes just
-  // copies text nodes?
-  WideString wsText;
+  // TODO(dsinclair): This clone is wrong. It doesn't clone all child nodes just
+  // text nodes?
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
     if (pChild->GetType() == FX_XMLNODE_Text)
-      wsText += static_cast<CFX_XMLText*>(pChild)->GetText();
+      node->AppendChild(pChild->Clone(doc));
   }
-  pClone->SetTextData(wsText);
-  return std::move(pClone);
+  return node;
 }
 
 WideString CFX_XMLElement::GetLocalTagName() const {
@@ -60,7 +59,6 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
     attr += L":";
     attr += wsPrefix;
   }
-
   const CFX_XMLNode* pNode = this;
   while (pNode) {
     if (pNode->GetType() != FX_XMLNODE_Element)
@@ -87,13 +85,6 @@ WideString CFX_XMLElement::GetTextData() const {
     }
   }
   return buffer.MakeString();
-}
-
-void CFX_XMLElement::SetTextData(const WideString& wsText) {
-  // TODO(dsinclair): Shouldn't this remove the children if you set blank text?
-  if (wsText.IsEmpty())
-    return;
-  AppendChild(pdfium::MakeUnique<CFX_XMLText>(wsText));
 }
 
 void CFX_XMLElement::Save(

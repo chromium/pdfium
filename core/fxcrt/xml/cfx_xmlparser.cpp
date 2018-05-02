@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
@@ -58,10 +59,7 @@ bool CFX_XMLParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
          (!bFirstChar || it->bStartChar);
 }
 
-CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
-                             const RetainPtr<IFX_SeekableReadStream>& pStream)
-    : m_pParent(pParent) {
-  ASSERT(m_pParent);
+CFX_XMLParser::CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream) {
   ASSERT(pStream);
 
   auto proxy = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream);
@@ -89,56 +87,51 @@ CFX_XMLParser::CFX_XMLParser(CFX_XMLNode* pParent,
 
 CFX_XMLParser::~CFX_XMLParser() = default;
 
-bool CFX_XMLParser::Parse() {
+std::unique_ptr<CFX_XMLDocument> CFX_XMLParser::Parse() {
+  auto doc = pdfium::MakeUnique<CFX_XMLDocument>();
+  current_node_ = doc->GetRoot();
+
   int32_t iCount = 0;
   while (true) {
     FX_XmlSyntaxResult result = DoSyntaxParse();
     if (result == FX_XmlSyntaxResult::Error)
-      return false;
+      return nullptr;
     if (result == FX_XmlSyntaxResult::EndOfString)
       break;
 
     switch (result) {
       case FX_XmlSyntaxResult::InstructionClose:
-        if (m_pChild && m_pChild->GetType() != FX_XMLNODE_Instruction)
-          return false;
-
-        m_pChild = m_pParent;
+        if (current_node_ && current_node_->GetType() == FX_XMLNODE_Instruction)
+          current_node_ = current_node_->GetParent();
         break;
       case FX_XmlSyntaxResult::ElementClose: {
-        if (m_pChild->GetType() != FX_XMLNODE_Element)
-          return false;
+        if (current_node_->GetType() != FX_XMLNODE_Element)
+          return nullptr;
 
         WideString element_name = GetTextData();
         if (element_name.GetLength() > 0 &&
-            element_name != static_cast<CFX_XMLElement*>(m_pChild)->GetName()) {
-          return false;
+            element_name !=
+                static_cast<CFX_XMLElement*>(current_node_)->GetName()) {
+          return nullptr;
         }
 
-        if (!m_pChild || !m_pChild->GetParent())
-          return false;
-
-        m_pParent = m_pChild->GetParent();
-        m_pChild = m_pParent;
+        current_node_ = current_node_->GetParent();
         iCount++;
         break;
       }
       case FX_XmlSyntaxResult::TargetName: {
         WideString target_name = GetTextData();
         if (target_name == L"originalXFAVersion" || target_name == L"acrobat") {
-          auto child = pdfium::MakeUnique<CFX_XMLInstruction>(target_name);
-          m_pChild = child.get();
-          m_pParent->AppendChild(std::move(child));
-        } else {
-          m_pChild = nullptr;
+          auto* node = doc->CreateNode<CFX_XMLInstruction>(target_name);
+          current_node_->AppendChild(node);
+          current_node_ = node;
         }
         break;
       }
       case FX_XmlSyntaxResult::TagName: {
-        auto child = pdfium::MakeUnique<CFX_XMLElement>(GetTextData());
-        m_pChild = child.get();
-        m_pParent->AppendChild(std::move(child));
-        m_pParent = m_pChild;
+        auto* child = doc->CreateNode<CFX_XMLElement>(GetTextData());
+        current_node_->AppendChild(child);
+        current_node_ = child;
         break;
       }
       case FX_XmlSyntaxResult::AttriName: {
@@ -146,35 +139,29 @@ bool CFX_XMLParser::Parse() {
         break;
       }
       case FX_XmlSyntaxResult::AttriValue:
-        if (m_pChild && m_pChild->GetType() == FX_XMLNODE_Element) {
-          static_cast<CFX_XMLElement*>(m_pChild)->SetAttribute(
-              current_attribute_name_, GetTextData());
+        if (current_node_ && current_node_->GetType() == FX_XMLNODE_Element) {
+          static_cast<CFX_XMLElement*>(current_node_)
+              ->SetAttribute(current_attribute_name_, GetTextData());
         }
         current_attribute_name_.clear();
         break;
       case FX_XmlSyntaxResult::Text: {
-        auto child = pdfium::MakeUnique<CFX_XMLText>(GetTextData());
-        m_pChild = child.get();
-        m_pParent->AppendChild(std::move(child));
-        m_pChild = m_pParent;
+        current_node_->AppendChild(doc->CreateNode<CFX_XMLText>(GetTextData()));
         break;
       }
       case FX_XmlSyntaxResult::CData: {
-        auto child = pdfium::MakeUnique<CFX_XMLCharData>(GetTextData());
-        m_pChild = child.get();
-        m_pParent->AppendChild(std::move(child));
-        m_pChild = m_pParent;
+        current_node_->AppendChild(
+            doc->CreateNode<CFX_XMLCharData>(GetTextData()));
         break;
       }
       case FX_XmlSyntaxResult::TargetData: {
         WideString target_data = GetTextData();
-        if (m_pChild) {
-          if (m_pChild->GetType() != FX_XMLNODE_Instruction)
-            return false;
-
-          auto* instruction = static_cast<CFX_XMLInstruction*>(m_pChild);
-          if (!target_data.IsEmpty())
-            instruction->AppendData(target_data);
+        if (current_node_ &&
+            current_node_->GetType() == FX_XMLNODE_Instruction) {
+          if (target_data.IsEmpty())
+            break;
+          static_cast<CFX_XMLInstruction*>(current_node_)
+              ->AppendData(target_data);
         }
         break;
       }
@@ -185,7 +172,7 @@ bool CFX_XMLParser::Parse() {
         break;
     }
   }
-  return !m_pParent || m_pParent->GetParent() ? false : GetStatus();
+  return doc;
 }
 
 FX_XmlSyntaxResult CFX_XMLParser::DoSyntaxParse() {

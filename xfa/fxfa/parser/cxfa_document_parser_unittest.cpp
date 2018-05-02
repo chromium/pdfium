@@ -17,7 +17,7 @@ class CXFA_DocumentParserTest : public testing::Test {
 
   void TearDown() override {
     // Hold the XML tree until we cleanup the document.
-    std::unique_ptr<CFX_XMLNode> root = parser_->GetXMLRoot();
+    std::unique_ptr<CFX_XMLDocument> doc = parser_->GetXMLDoc();
     parser_ = nullptr;
     doc_ = nullptr;
   }
@@ -30,7 +30,7 @@ class CXFA_DocumentParserTest : public testing::Test {
   std::unique_ptr<CXFA_DocumentParser> parser_;
 };
 
-TEST_F(CXFA_DocumentParserTest, XMLInstructionScriptOff) {
+TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOff) {
   const char* input =
       "<config>\n"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "

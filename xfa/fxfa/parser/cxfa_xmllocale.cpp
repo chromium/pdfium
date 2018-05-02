@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -30,18 +31,19 @@ constexpr wchar_t kCurrencySymbol[] = L"currencySymbol";
 // static
 std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
     pdfium::span<uint8_t> data) {
-  auto root = pdfium::MakeUnique<CFX_XMLElement>(L"root");
   auto stream =
       pdfium::MakeRetain<CFX_MemoryStream>(data.data(), data.size(), false);
-  CFX_XMLParser parser(root.get(), stream);
-  if (!parser.Parse())
+  CFX_XMLParser parser(stream);
+  auto doc = parser.Parse();
+  if (!doc)
     return nullptr;
 
   CFX_XMLElement* locale = nullptr;
-  for (auto* child = root->GetFirstChild(); child;
+  for (auto* child = doc->GetRoot()->GetFirstChild(); child;
        child = child->GetNextSibling()) {
     if (child->GetType() != FX_XMLNODE_Element)
       continue;
+
     CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child);
     if (elem->GetName() == L"locale") {
       locale = elem;
@@ -50,14 +52,13 @@ std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
   }
   if (!locale)
     return nullptr;
-
-  return pdfium::MakeUnique<CXFA_XMLLocale>(std::move(root), locale);
+  return pdfium::MakeUnique<CXFA_XMLLocale>(std::move(doc), locale);
 }
 
-CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLElement> root,
+CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CFX_XMLDocument> doc,
                                CFX_XMLElement* locale)
-    : xml_root_(std::move(root)), locale_(locale) {
-  ASSERT(xml_root_);
+    : xml_doc_(std::move(doc)), locale_(locale) {
+  ASSERT(xml_doc_);
   ASSERT(locale_);
 }
 

@@ -10,12 +10,12 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Document;
 class CXFA_Node;
-class CFX_XMLDoc;
 class CFX_XMLInstruction;
 class IFX_SeekableStream;
 
@@ -30,11 +30,11 @@ class CXFA_DocumentParser {
   CFX_XMLNode* ParseXMLData(const ByteString& wsXML);
   void ConstructXFANode(CXFA_Node* pXFANode, CFX_XMLNode* pXMLNode);
 
-  std::unique_ptr<CFX_XMLNode> GetXMLRoot() { return std::move(m_pNodeTree); }
+  std::unique_ptr<CFX_XMLDocument> GetXMLDoc() { return std::move(xml_doc_); }
   CXFA_Node* GetRootNode() const;
 
  private:
-  std::unique_ptr<CFX_XMLNode> LoadXML(
+  std::unique_ptr<CFX_XMLDocument> LoadXML(
       const RetainPtr<IFX_SeekableStream>& pStream);
 
   CXFA_Node* ParseAsXDPPacket(CFX_XMLNode* pXMLDocumentNode,
@@ -72,7 +72,7 @@ class CXFA_DocumentParser {
                         XFA_PacketType ePacketID);
 
   UnownedPtr<CXFA_Document> m_pFactory;
-  std::unique_ptr<CFX_XMLNode> m_pNodeTree;
+  std::unique_ptr<CFX_XMLDocument> xml_doc_;
   // TODO(dsinclair): Figure out who owns this.
   CXFA_Node* m_pRootNode = nullptr;
 };

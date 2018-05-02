@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/string_write_stream.h"
 #include "testing/test_support.h"
@@ -18,11 +19,13 @@ TEST(CFX_XMLTextTest, GetText) {
 }
 
 TEST(CFX_XMLTextTest, Clone) {
+  CFX_XMLDocument doc;
+
   CFX_XMLText data(L"My Data");
-  auto clone = data.Clone();
+  CFX_XMLNode* clone = data.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
   ASSERT_EQ(FX_XMLNODE_Text, clone->GetType());
-  EXPECT_EQ(L"My Data", static_cast<CFX_XMLText*>(clone.get())->GetText());
+  EXPECT_EQ(L"My Data", static_cast<CFX_XMLText*>(clone)->GetText());
 }
 
 TEST(CFX_XMLTextTest, Save) {

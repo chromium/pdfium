@@ -16,8 +16,6 @@ class CXFA_NodeOwner {
  public:
   virtual ~CXFA_NodeOwner();
 
-  void ReleaseXMLNodesIfNeeded();
-
   CXFA_Node* AddOwnedNode(std::unique_ptr<CXFA_Node> node);
   void FreeOwnedNode(CXFA_Node* node);
 

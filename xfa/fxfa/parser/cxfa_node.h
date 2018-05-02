@@ -157,14 +157,7 @@ class CXFA_Node : public CXFA_Object {
     return m_ePacket == XFA_PacketType::Form && IsContainerNode();
   }
 
-  void ReleaseXMLNodeIfUnowned();
-  void SetXMLMappingNode(MaybeOwned<CFX_XMLNode> node) {
-    xml_node_ = std::move(node);
-  }
-  void SetXMLMappingNode(std::unique_ptr<CFX_XMLNode> node) {
-    xml_node_.Reset(std::move(node));
-  }
-  void SetXMLMappingNode(CFX_XMLNode* node) { xml_node_.Reset(node); }
+  void SetXMLMappingNode(CFX_XMLNode* node) { xml_node_ = node; }
   CFX_XMLNode* GetXMLMappingNode() const { return xml_node_.Get(); }
   CFX_XMLNode* CreateXMLMappingNode();
   bool IsNeedSavingXMLNode();
@@ -510,7 +503,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* first_child_;
   CXFA_Node* last_child_;
 
-  MaybeOwned<CFX_XMLNode> xml_node_;
+  UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
   uint16_t m_uNodeFlags;

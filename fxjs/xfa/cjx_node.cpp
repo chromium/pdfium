@@ -16,6 +16,7 @@
 #include "fxjs/js_resources.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
@@ -236,14 +237,26 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
                                     WideString(wsContentType), false, false);
   }
 
-  std::unique_ptr<CFX_XMLNode> pFakeXMLRoot(pFakeRoot->GetXMLMappingNode());
+  CFX_XMLNode* pFakeXMLRoot = pFakeRoot->GetXMLMappingNode();
   if (!pFakeXMLRoot) {
     CFX_XMLNode* pThisXMLRoot = GetXFANode()->GetXMLMappingNode();
-    pFakeXMLRoot = pThisXMLRoot ? pThisXMLRoot->Clone() : nullptr;
-  }
-  if (!pFakeXMLRoot) {
-    pFakeXMLRoot = pdfium::MakeUnique<CFX_XMLElement>(
-        WideString(GetXFANode()->GetClassName()));
+    CFX_XMLNode* clone;
+    if (pThisXMLRoot) {
+      clone = pThisXMLRoot->Clone(GetXFANode()
+                                      ->GetDocument()
+                                      ->GetNotify()
+                                      ->GetHDOC()
+                                      ->GetXMLDocument());
+    } else {
+      clone = GetXFANode()
+                  ->GetDocument()
+                  ->GetNotify()
+                  ->GetHDOC()
+                  ->GetXMLDocument()
+                  ->CreateNode<CFX_XMLElement>(
+                      WideString(GetXFANode()->GetClassName()));
+    }
+    pFakeXMLRoot = clone;
   }
 
   if (bIgnoreRoot) {
@@ -251,7 +264,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
     while (pXMLChild) {
       CFX_XMLNode* pXMLSibling = pXMLChild->GetNextSibling();
       pXMLNode->RemoveChildNode(pXMLChild);
-      pFakeXMLRoot->AppendChild(pdfium::WrapUnique<CFX_XMLNode>(pXMLChild));
+      pFakeXMLRoot->AppendChild(pXMLChild);
       pXMLChild = pXMLSibling;
     }
   } else {
@@ -259,10 +272,10 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
     if (pXMLParent)
       pXMLParent->RemoveChildNode(pXMLNode);
 
-    pFakeXMLRoot->AppendChild(pdfium::WrapUnique<CFX_XMLNode>(pXMLNode));
+    pFakeXMLRoot->AppendChild(pXMLNode);
   }
 
-  pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot.get());
+  pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot);
   pFakeRoot = pParser->GetRootNode();
   if (!pFakeRoot)
     return CJS_Return(true);
@@ -289,10 +302,10 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
     if (GetXFANode()->GetPacketType() == XFA_PacketType::Form &&
         GetXFANode()->GetElementType() == XFA_Element::ExData) {
       CFX_XMLNode* pTempXMLNode = GetXFANode()->GetXMLMappingNode();
-      GetXFANode()->SetXMLMappingNode(std::move(pFakeXMLRoot));
+      GetXFANode()->SetXMLMappingNode(pFakeXMLRoot);
 
       if (pTempXMLNode && !pTempXMLNode->GetParent())
-        pFakeXMLRoot.reset(pTempXMLNode);
+        pFakeXMLRoot = pTempXMLNode;
       else
         pFakeXMLRoot = nullptr;
     }

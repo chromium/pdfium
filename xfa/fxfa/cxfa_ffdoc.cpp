@@ -18,6 +18,7 @@
 #include "core/fxcrt/cfx_seekablemultistream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "fxjs/xfa/cjx_object.h"
@@ -58,12 +59,11 @@ bool CXFA_FFDoc::ParseDoc(CPDF_Object* pElementXFA) {
     return false;
 
   auto stream = pdfium::MakeRetain<CFX_SeekableMultiStream>(xfaStreams);
-
   CXFA_DocumentParser parser(m_pDocument.get());
   if (!parser.Parse(stream, XFA_PacketType::Xdp))
     return false;
 
-  m_pXMLRoot = parser.GetXMLRoot();
+  m_pXMLDoc = parser.GetXMLDoc();
   m_pDocument->SetRoot(parser.GetRootNode());
   return true;
 }
@@ -146,13 +146,11 @@ void CXFA_FFDoc::CloseDoc() {
     m_DocView->RunDocClose();
     m_DocView.reset();
   }
-  if (m_pDocument) {
-    m_pDocument->ReleaseXMLNodesIfNeeded();
+  if (m_pDocument)
     m_pDocument->ClearLayoutData();
-  }
 
   m_pDocument.reset();
-  m_pXMLRoot.reset();
+  m_pXMLDoc.reset();
   m_pNotify.reset();
   m_pPDFFontMgr.reset();
   m_HashToDibDpiMap.clear();
