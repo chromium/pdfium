@@ -332,7 +332,7 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
   m_rtList.width = std::max(m_rtList.width, m_rtClient.width);
   m_rtProxy = m_rtList;
 
-  GetPopupPos(0, m_rtProxy.height, rtAnchor, m_rtProxy);
+  GetPopupPos(0, m_rtProxy.height, rtAnchor, &m_rtProxy);
 
   m_pComboBoxProxy->SetWidgetRect(m_rtProxy);
   m_pComboBoxProxy->Update();
@@ -551,7 +551,7 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
 
     float fPopupMax = fItemHeight * iItems + fBorder * 2;
     CFX_RectF rtList(m_rtClient.left, 0, m_pProperties->m_rtWidget.width, 0);
-    GetPopupPos(fPopupMin, fPopupMax, m_pProperties->m_rtWidget, rtList);
+    GetPopupPos(fPopupMin, fPopupMax, m_pProperties->m_rtWidget, &rtList);
 
     m_pListBox->SetWidgetRect(rtList);
     m_pListBox->Update();
@@ -1018,28 +1018,22 @@ void CFWL_ComboBox::DisForm_OnKey(CFWL_MessageKey* pMsg) {
 void CFWL_ComboBox::GetPopupPos(float fMinHeight,
                                 float fMaxHeight,
                                 const CFX_RectF& rtAnchor,
-                                CFX_RectF& rtPopup) {
+                                CFX_RectF* pPopupRect) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight, rtAnchor,
-                                     rtPopup);
+                                     pPopupRect);
     return;
   }
 
-  float fPopHeight = rtPopup.height;
-  if (rtPopup.height > fMaxHeight)
-    fPopHeight = fMaxHeight;
-  else if (rtPopup.height < fMinHeight)
-    fPopHeight = fMinHeight;
-
-  float fWidth = std::max(rtAnchor.width, rtPopup.width);
-  float fBottom = rtAnchor.bottom() + fPopHeight;
   CFX_PointF point = TransformTo(nullptr, CFX_PointF());
-  if (fBottom + point.y > 0.0f) {
-    rtPopup =
-        CFX_RectF(rtAnchor.left, rtAnchor.top - fPopHeight, fWidth, fPopHeight);
-  } else {
-    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), fWidth, fPopHeight);
-  }
+  float fPopupHeight =
+      pdfium::clamp(pPopupRect->height, fMinHeight, fMaxHeight);
+  float fPopupWidth = std::max(rtAnchor.width, pPopupRect->width);
+  float fPopupBottom = rtAnchor.bottom() + fPopupHeight;
+  float fPopupTop = (fPopupBottom + point.y > 0.0f)
+                        ? rtAnchor.top - fPopupHeight
+                        : rtAnchor.bottom();
 
-  rtPopup.Offset(point.x, point.y);
+  *pPopupRect = CFX_RectF(rtAnchor.left, fPopupTop, fPopupWidth, fPopupHeight);
+  pPopupRect->Offset(point.x, point.y);
 }

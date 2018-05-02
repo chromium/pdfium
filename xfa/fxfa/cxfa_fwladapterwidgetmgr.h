@@ -22,7 +22,7 @@ class CXFA_FWLAdapterWidgetMgr {
                    float fMinHeight,
                    float fMaxHeight,
                    const CFX_RectF& rtAnchor,
-                   CFX_RectF& rtPopup);
+                   CFX_RectF* pPopupRect);
 };
 
 #endif  // XFA_FXFA_CXFA_FWLADAPTERWIDGETMGR_H_

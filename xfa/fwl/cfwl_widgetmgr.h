@@ -64,7 +64,7 @@ class CFWL_WidgetMgr {
                           float fMinHeight,
                           float fMaxHeight,
                           const CFX_RectF& rtAnchor,
-                          CFX_RectF& rtPopup) const;
+                          CFX_RectF* pPopupRect) const;
 
  private:
   class Item {

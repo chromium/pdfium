@@ -218,7 +218,7 @@ class IXFA_DocEnvironment {
                            float fMinPopup,
                            float fMaxPopup,
                            const CFX_RectF& rtAnchor,
-                           CFX_RectF& rtPopup) = 0;
+                           CFX_RectF* pPopupRect) = 0;
   virtual bool PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) = 0;
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
   virtual void WidgetPostAdd(CXFA_FFWidget* hWidget) = 0;

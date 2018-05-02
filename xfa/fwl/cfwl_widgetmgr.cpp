@@ -382,8 +382,9 @@ void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
                                         float fMinHeight,
                                         float fMaxHeight,
                                         const CFX_RectF& rtAnchor,
-                                        CFX_RectF& rtPopup) const {
-  m_pAdapter->GetPopupPos(pWidget, fMinHeight, fMaxHeight, rtAnchor, rtPopup);
+                                        CFX_RectF* pPopupRect) const {
+  m_pAdapter->GetPopupPos(pWidget, fMinHeight, fMaxHeight, rtAnchor,
+                          pPopupRect);
 }
 
 void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {

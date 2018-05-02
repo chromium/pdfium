@@ -241,7 +241,7 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
 
   CFX_RectF rtAnchor(0, 0, m_pProperties->m_rtWidget.width,
                      m_pProperties->m_rtWidget.height);
-  GetPopupPos(0, rtMonth.height, rtAnchor, rtMonth);
+  GetPopupPos(0, rtMonth.height, rtAnchor, &rtMonth);
   m_pForm->SetWidgetRect(rtMonth);
 
   rtMonth.left = rtMonth.top = 0;
@@ -356,7 +356,7 @@ void CFWL_DateTimePicker::DisForm_ShowMonthCalendar(bool bActivate) {
     rtAnchor.width = rtMonthCal.width;
     rtMonthCal.left = m_rtClient.left;
     rtMonthCal.top = rtAnchor.Height();
-    GetPopupPos(fPopupMin, fPopupMax, rtAnchor, rtMonthCal);
+    GetPopupPos(fPopupMin, fPopupMax, rtAnchor, &rtMonthCal);
     m_pMonthCal->SetWidgetRect(rtMonthCal);
     if (m_iYear > 0 && m_iMonth > 0 && m_iDay > 0)
       m_pMonthCal->SetSelect(m_iYear, m_iMonth, m_iDay);
@@ -608,20 +608,18 @@ void CFWL_DateTimePicker::DisForm_OnFocusChanged(CFWL_Message* pMsg,
 void CFWL_DateTimePicker::GetPopupPos(float fMinHeight,
                                       float fMaxHeight,
                                       const CFX_RectF& rtAnchor,
-                                      CFX_RectF& rtPopup) {
+                                      CFX_RectF* pPopupRect) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight, rtAnchor,
-                                     rtPopup);
+                                     pPopupRect);
     return;
   }
 
   CFX_PointF point = TransformTo(nullptr, CFX_PointF());
-  if (rtAnchor.bottom() + point.y > 0.0f) {
-    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
-                        rtPopup.width, rtPopup.height);
-  } else {
-    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
-                        rtPopup.height);
-  }
-  rtPopup.Offset(point.x, point.y);
+  float fPopupTop = (rtAnchor.bottom() + point.y > 0.0f)
+                        ? rtAnchor.top - pPopupRect->height
+                        : rtAnchor.bottom();
+  *pPopupRect = CFX_RectF(rtAnchor.left, fPopupTop, pPopupRect->width,
+                          pPopupRect->height);
+  pPopupRect->Offset(point.x, point.y);
 }

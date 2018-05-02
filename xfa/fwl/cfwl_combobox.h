@@ -119,7 +119,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void GetPopupPos(float fMinHeight,
                    float fMaxHeight,
                    const CFX_RectF& rtAnchor,
-                   CFX_RectF& rtPopup);
+                   CFX_RectF* pPopupRect);
 
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
