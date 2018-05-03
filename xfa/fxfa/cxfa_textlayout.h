@@ -67,14 +67,14 @@ class CXFA_TextLayout {
                  float fLineWidth,
                  CFX_XMLNode* pXMLNode,
                  CFX_CSSComputedStyle* pParentStyle);
-  bool Loader(float textWidth, float& fLinePos, bool bSavePieces);
+  bool Loader(float textWidth, float* pLinePos, bool bSavePieces);
   void LoadText(CXFA_Node* pNode,
                 float textWidth,
-                float& fLinePos,
+                float* pLinePos,
                 bool bSavePieces);
   bool LoadRichText(CFX_XMLNode* pXMLNode,
                     float textWidth,
-                    float& fLinePos,
+                    float* pLinePos,
                     const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,
                     RetainPtr<CXFA_LinkUserData> pLinkData,
@@ -82,14 +82,14 @@ class CXFA_TextLayout {
                     bool bIsOl = false,
                     int32_t iLiCount = 0);
   bool AppendChar(const WideString& wsText,
-                  float& fLinePos,
+                  float* pLinePos,
                   float fSpaceAbove,
                   bool bSavePieces);
   void AppendTextLine(CFX_BreakType dwStatus,
-                      float& fLinePos,
+                      float* pLinePos,
                       bool bSavePieces,
                       bool bEndBreak = false);
-  void EndBreak(CFX_BreakType dwStatus, float& fLinePos, bool bDefault);
+  void EndBreak(CFX_BreakType dwStatus, float* pLinePos, bool bDefault);
   bool IsEnd(bool bSavePieces);
   void ProcessText(WideString& wsText);
   void UpdateAlign(float fHeight, float fBottom);
