@@ -242,6 +242,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   FX_RECT m_GifFrameRect;
   bool m_BmpIsTopBottom;
   FXCODEC_STATUS m_status;
+  bool m_InvalidateGifBuffer;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_

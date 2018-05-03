@@ -283,6 +283,7 @@ CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
   m_GifTransIndex = -1;
   m_GifFrameRect = FX_RECT(0, 0, 0, 0);
   m_BmpIsTopBottom = false;
+  m_InvalidateGifBuffer = true;
 }
 
 CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
@@ -564,38 +565,45 @@ void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
 
 bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
                                                 FXCODEC_STATUS& err_status) {
-  uint32_t dwSize = (uint32_t)m_pFile->GetSize();
-  if (dwSize <= m_offSet) {
+  if (static_cast<uint32_t>(m_pFile->GetSize()) <= m_offSet)
     return false;
-  }
-  dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pGifModule->GetAvailInput(m_pGifContext.get(), nullptr);
-  if (dwAvail == m_SrcSize) {
-    if (dwSize > FXCODEC_BLOCK_SIZE) {
-      dwSize = FXCODEC_BLOCK_SIZE;
-    }
-    m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
-                FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
+
+  uint32_t dwFileRemaining = m_pFile->GetSize() - m_offSet;
+  uint32_t dwUnusedBuffer =
+      !m_InvalidateGifBuffer
+          ? pGifModule->GetAvailInput(m_pGifContext.get(), nullptr)
+          : 0;
+  uint32_t dwAmountToFetchFromFile = dwFileRemaining;
+  if (dwUnusedBuffer == m_SrcSize) {
+    if (dwFileRemaining > FXCODEC_BLOCK_SIZE)
+      dwAmountToFetchFromFile = FXCODEC_BLOCK_SIZE;
+    m_SrcSize = std::min(
+        (dwAmountToFetchFromFile + dwUnusedBuffer + FXCODEC_BLOCK_SIZE - 1) /
+            FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE,
+        static_cast<uint32_t>(m_pFile->GetSize()));
     m_pSrcBuf = FX_TryRealloc(uint8_t, m_pSrcBuf, m_SrcSize);
     if (!m_pSrcBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
     }
   } else {
-    uint32_t dwConsume = m_SrcSize - dwAvail;
-    if (dwAvail) {
-      memmove(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
-    }
-    if (dwSize > dwConsume) {
-      dwSize = dwConsume;
-    }
+    uint32_t dwConsumed = m_SrcSize - dwUnusedBuffer;
+    if (dwUnusedBuffer)
+      memmove(m_pSrcBuf, m_pSrcBuf + dwConsumed, dwUnusedBuffer);
+    if (dwFileRemaining > dwConsumed)
+      dwAmountToFetchFromFile = dwConsumed;
   }
-  if (!m_pFile->ReadBlock(m_pSrcBuf + dwAvail, m_offSet, dwSize)) {
+
+  if (!m_pFile->ReadBlock(m_pSrcBuf + dwUnusedBuffer, m_offSet,
+                          dwAmountToFetchFromFile)) {
     err_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
-  m_offSet += dwSize;
-  pGifModule->Input(m_pGifContext.get(), m_pSrcBuf, dwSize + dwAvail);
+
+  m_offSet += dwAmountToFetchFromFile;
+  pGifModule->Input(m_pGifContext.get(), m_pSrcBuf,
+                    dwAmountToFetchFromFile + dwUnusedBuffer);
+  m_InvalidateGifBuffer = false;
   return true;
 }
 
@@ -616,6 +624,8 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
     int32_t disposal_method,
     bool interlace) {
   m_offSet = rcd_pos;
+  m_InvalidateGifBuffer = true;
+
   FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
   if (!GifReadMoreData(m_pCodecMgr->GetGifModule(), error_status)) {
     return false;
@@ -1196,6 +1206,7 @@ bool CCodec_ProgressiveDecoder::PngDetectImageType(CFX_DIBAttribute* pAttribute,
     m_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
+
   m_offSet += size;
   bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, size, pAttribute);
   while (bResult) {
