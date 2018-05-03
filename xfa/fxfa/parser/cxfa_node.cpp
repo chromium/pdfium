@@ -3223,6 +3223,9 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
   }
   std::vector<float>* pFieldArray = &pFieldData->m_FieldSplitArray;
   int32_t iFieldSplitCount = pdfium::CollectionSize<int32_t>(*pFieldArray);
+  if (iFieldSplitCount < (iBlockIndex * 3))
+    return false;
+
   for (int32_t i = 0; i < iBlockIndex * 3; i += 3) {
     iLinesCount -= (int32_t)(*pFieldArray)[i + 1];
     fHeight -= (*pFieldArray)[i + 2];
