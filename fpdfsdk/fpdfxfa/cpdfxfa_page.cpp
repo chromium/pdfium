@@ -86,6 +86,10 @@ bool CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
   return true;
 }
 
+CPDF_Document::Extension* CPDFXFA_Page::GetDocumentExtension() const {
+  return m_pContext.Get();
+}
+
 float CPDFXFA_Page::GetPageWidth() const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return 0.0f;

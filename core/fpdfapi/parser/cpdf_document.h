@@ -45,6 +45,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   class Extension {
    public:
     virtual ~Extension() {}
+    virtual CPDF_Document* GetPDFDoc() const = 0;
     virtual int GetPageCount() const = 0;
     virtual void DeletePage(int page_index) = 0;
   };

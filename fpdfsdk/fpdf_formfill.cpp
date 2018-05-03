@@ -138,10 +138,10 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     return;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Context* pContext = pPage->GetContext();
-  if (!pContext)
+  CPDF_Document::Extension* pExtension = pPage->GetDocumentExtension();
+  if (!pExtension)
     return;
-  CPDF_Document* pPDFDoc = pContext->GetPDFDoc();
+  CPDF_Document* pPDFDoc = pExtension->GetPDFDoc();
   if (!pPDFDoc)
     return;
   CPDFSDK_FormFillEnvironment* pFormFillEnv =

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -28,7 +29,9 @@ class CPDFXFA_Page : public CPDF_Page::Extension {
   bool LoadPage();
   bool LoadPDFPage(CPDF_Dictionary* pageDict);
 
-  CPDFXFA_Context* GetContext() const { return m_pContext.Get(); }
+  // CPDF_Page::Extension:
+  CPDF_Document::Extension* GetDocumentExtension() const override;
+
   int GetPageIndex() const { return m_iPageIndex; }
   CPDF_Page* GetPDFPage() const { return m_pPDFPage.get(); }
   CXFA_FFPageView* GetXFAPageView() const { return m_pXFAPageView; }

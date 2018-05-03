@@ -89,7 +89,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   if (!pPage)
     return;
 
-  if (pPage->GetContext()->GetFormType() == FormType::kXFAFull) {
+  auto* pContext = static_cast<CPDFXFA_Context*>(pPage->GetDocumentExtension());
+  if (pContext->GetFormType() == FormType::kXFAFull) {
     CFX_RectF rectClip(
         static_cast<float>(pClip.left), static_cast<float>(pClip.top),
         static_cast<float>(pClip.Width()), static_cast<float>(pClip.Height()));
@@ -177,7 +178,11 @@ bool CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
     return false;
 
   CPDFXFA_Page* pPage = pAnnot->GetPDFXFAPage();
-  if (!pPage || !pPage->GetContext()->ContainsXFAForm())
+  if (!pPage)
+    return false;
+
+  auto* pContext = static_cast<CPDFXFA_Context*>(pPage->GetDocumentExtension());
+  if (!pContext->ContainsXFAForm())
     return false;
 
   CPDFSDK_Annot::ObservedPtr pObserved(pAnnot);
@@ -204,7 +209,7 @@ bool CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
 CPDF_Document* CPDFSDK_PageView::GetPDFDocument() {
   if (m_page) {
 #ifdef PDF_ENABLE_XFA
-    return m_page->GetContext()->GetPDFDoc();
+    return m_page->GetDocumentExtension()->GetPDFDoc();
 #else   // PDF_ENABLE_XFA
     return m_page->m_pDocument.Get();
 #endif  // PDF_ENABLE_XFA
@@ -530,7 +535,9 @@ int CPDFSDK_PageView::GetPageIndex() const {
     return -1;
 
 #ifdef PDF_ENABLE_XFA
-  switch (m_page->GetContext()->GetFormType()) {
+  auto* pContext =
+      static_cast<CPDFXFA_Context*>(m_page->GetDocumentExtension());
+  switch (pContext->GetFormType()) {
     case FormType::kXFAFull: {
       CXFA_FFPageView* pPageView = m_page->GetXFAPageView();
       return pPageView ? pPageView->GetPageIndex() : -1;

@@ -40,7 +40,6 @@ class CPDFXFA_Context : public CPDF_Document::Extension,
   ~CPDFXFA_Context() override;
 
   bool LoadXFADoc();
-  CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView.Get(); }
   FormType GetFormType() const { return m_FormType; }
@@ -48,7 +47,6 @@ class CPDFXFA_Context : public CPDF_Document::Extension,
     return m_FormType == FormType::kXFAFull ||
            m_FormType == FormType::kXFAForeground;
   }
-  CJS_Runtime* GetCJSRuntime() const;
   CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
@@ -61,6 +59,7 @@ class CPDFXFA_Context : public CPDF_Document::Extension,
   void ClearChangeMark();
 
   // CPDF_Document::Extension:
+  CPDF_Document* GetPDFDoc() const override;
   int GetPageCount() const override;
   void DeletePage(int page_index) override;
 
@@ -108,6 +107,7 @@ class CPDFXFA_Context : public CPDF_Document::Extension,
   }
 
  private:
+  CJS_Runtime* GetCJSRuntime() const;
   void CloseXFADoc();
 
   FormType m_FormType = FormType::kNone;

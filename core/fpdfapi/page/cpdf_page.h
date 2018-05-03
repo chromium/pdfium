@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -25,7 +26,11 @@ class CPDF_PageRenderContext;
 class CPDF_Page : public CPDF_PageObjectHolder {
  public:
   class View {};  // Caller implements as desired, empty here due to layering.
-  class Extension : public Retainable {};  // XFA page parent class, layering.
+
+  // XFA page parent class, layering.
+  class Extension : public Retainable {
+    virtual CPDF_Document::Extension* GetDocumentExtension() const = 0;
+  };
 
   CPDF_Page(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageDict,
