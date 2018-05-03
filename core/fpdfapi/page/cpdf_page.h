@@ -59,7 +59,7 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   }
   void SetRenderContext(std::unique_ptr<CPDF_PageRenderContext> pContext);
 
-  void* GetPDFDocument() const { return m_pPDFDocument.Get(); }
+  CPDF_Document* GetPDFDocument() const { return m_pPDFDocument.Get(); }
   View* GetView() const { return m_pView; }
   void SetView(View* pView) { m_pView = pView; }
   Extension* GetPageExtension() const { return m_pPageExtension.Get(); }
