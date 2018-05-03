@@ -54,11 +54,6 @@ static_assert(FPDF_PAGEOBJ_SHADING == CPDF_PageObject::SHADING,
 static_assert(FPDF_PAGEOBJ_FORM == CPDF_PageObject::FORM,
               "FPDF_PAGEOBJ_FORM/CPDF_PageObject::FORM mismatch");
 
-const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
-    FPDF_PAGEOBJECTMARK mark) {
-  return static_cast<const CPDF_ContentMarkItem*>(mark);
-}
-
 bool IsPageObject(CPDF_Page* pPage) {
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type"))
     return false;
@@ -251,7 +246,7 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPage_GetObject(FPDF_PAGE page,
   if (!IsPageObject(pPage))
     return nullptr;
 
-  return pPage->GetPageObjectByIndex(index);
+  return FPDFPageObjectFromCPDFPageObject(pPage->GetPageObjectByIndex(index));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_HasTransparency(FPDF_PAGE page) {
@@ -278,15 +273,14 @@ FPDFPageObj_GetMark(FPDF_PAGEOBJECT page_object, unsigned long index) {
   if (!page_object)
     return nullptr;
 
-  const auto& mark =
-      CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
-  if (!mark.HasRef())
+  auto* mark = &CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
+  if (!mark->HasRef())
     return nullptr;
 
-  if (index >= mark.CountItems())
+  if (index >= mark->CountItems())
     return nullptr;
 
-  return static_cast<FPDF_PAGEOBJECTMARK>(&mark.GetItem(index));
+  return FPDFPageObjectMarkFromCPDFContentMarkItem(&mark->GetItem(index));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

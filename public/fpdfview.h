@@ -32,31 +32,31 @@
 #define FPDF_OBJECT_NULLOBJ 8
 #define FPDF_OBJECT_REFERENCE 9
 
-// PDF types
-typedef void* FPDF_ACTION;
-typedef void* FPDF_ANNOTATION;
-typedef void* FPDF_ATTACHMENT;
-typedef void* FPDF_BITMAP;
-typedef void* FPDF_BOOKMARK;
-typedef void* FPDF_CLIPPATH;
-typedef void* FPDF_DEST;
+// PDF types - use incomplete types for type safety.
+typedef struct fpdf_action_t__* FPDF_ACTION;
+typedef struct fpdf_annotation_t__* FPDF_ANNOTATION;
+typedef struct fpdf_attachment_t__* FPDF_ATTACHMENT;
+typedef struct fpdf_bitmap_t__* FPDF_BITMAP;
+typedef struct fpdf_bookmark_t__* FPDF_BOOKMARK;
+typedef struct fpdf_clippath_t__* FPDF_CLIPPATH;
+typedef struct fpdf_dest_t__* FPDF_DEST;
 typedef struct fpdf_document_t__* FPDF_DOCUMENT;
-typedef void* FPDF_FONT;
-typedef void* FPDF_LINK;
+typedef struct fpdf_font_t__* FPDF_FONT;
+typedef struct fpdf_link_t__* FPDF_LINK;
 typedef struct fpdf_page_t__* FPDF_PAGE;
-typedef void* FPDF_PAGELINK;
-typedef void* FPDF_PAGEOBJECT;  // Page object(text, path, etc)
-typedef const void* FPDF_PAGEOBJECTMARK;
-typedef void* FPDF_PAGERANGE;
-typedef void* FPDF_RECORDER;
-typedef void* FPDF_SCHHANDLE;
-typedef void* FPDF_STRUCTELEMENT;
-typedef void* FPDF_STRUCTTREE;
-typedef void* FPDF_TEXTPAGE;
-typedef const void* FPDF_PATHSEGMENT;
+typedef struct fpdf_pagelink_t__* FPDF_PAGELINK;
+typedef struct fpdf_pageobject_t__* FPDF_PAGEOBJECT;  // (text, path, etc.)
+typedef const struct fpdf_pageobjectmark_t__* FPDF_PAGEOBJECTMARK;
+typedef struct fpdf_pagerange_t__* FPDF_PAGERANGE;
+typedef const struct fpdf_pathsegment_t* FPDF_PATHSEGMENT;
+typedef void* FPDF_RECORDER;  // Passed into skia.
+typedef struct fpdf_schhandle_t__* FPDF_SCHHANDLE;
+typedef struct fpdf_structelement_t__* FPDF_STRUCTELEMENT;
+typedef struct fpdf_structtree_t__* FPDF_STRUCTTREE;
+typedef struct fpdf_textpage_t__* FPDF_TEXTPAGE;
 
 #ifdef PDF_ENABLE_XFA
-typedef void* FPDF_WIDGET;
+typedef struct fpdf_widget_t__* FPDF_WIDGET;
 #endif  // PDF_ENABLE_XFA
 
 // Basic data types

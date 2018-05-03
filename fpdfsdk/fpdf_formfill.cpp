@@ -157,7 +157,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 #ifdef _SKIA_SUPPORT_
   pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
 #endif
-  RetainPtr<CFX_DIBitmap> holder(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(holder, false, nullptr, false);
   {
     CFX_RenderDevice::StateRestorer restorer(pDevice.get());

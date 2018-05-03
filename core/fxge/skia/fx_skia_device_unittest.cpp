@@ -125,7 +125,7 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
     return;
   FPDFBitmap_FillRect(bitmap, 0, 0, w, h, 0x00000000);
   CFX_DefaultRenderDevice geDevice;
-  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   geDevice.Attach(pBitmap, false, nullptr, false);
   CFX_SkiaDeviceDriver* driver =
       static_cast<CFX_SkiaDeviceDriver*>(geDevice.GetDeviceDriver());

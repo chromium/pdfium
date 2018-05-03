@@ -172,18 +172,10 @@ CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
 #endif  // PDF_ENABLE_XFA
 }
 
-CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
-  return static_cast<CPDF_PageObject*>(page_object);
-}
-
 ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
   return WideString::FromUTF16LE(wide_string,
                                  WideString::WStringLength(wide_string))
       .UTF8Encode();
-}
-
-CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
-  return static_cast<CFX_DIBitmap*>(bitmap);
 }
 
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {

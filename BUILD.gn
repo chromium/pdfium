@@ -105,6 +105,8 @@ jumbo_static_library("pdfium") {
   sources = [
     "fpdfsdk/cfx_systemhandler.cpp",
     "fpdfsdk/cfx_systemhandler.h",
+    "fpdfsdk/cpdf_annotcontext.cpp",
+    "fpdfsdk/cpdf_annotcontext.h",
     "fpdfsdk/cpdfsdk_actionhandler.cpp",
     "fpdfsdk/cpdfsdk_actionhandler.h",
     "fpdfsdk/cpdfsdk_annot.cpp",

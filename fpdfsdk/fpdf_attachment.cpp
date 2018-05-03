@@ -26,10 +26,6 @@ namespace {
 
 constexpr char kChecksumKey[] = "CheckSum";
 
-CPDF_Object* CPDFObjectFromFPDFAttachment(FPDF_ATTACHMENT attachment) {
-  return static_cast<CPDF_Object*>(attachment);
-}
-
 ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
   uint8_t* result = nullptr;
   uint32_t size = 0;
@@ -101,7 +97,7 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
     return nullptr;
   }
 
-  return pFile;
+  return FPDFAttachmentFromCPDFObject(pFile);
 }
 
 FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
@@ -115,7 +111,8 @@ FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
     return nullptr;
 
   WideString csName;
-  return nameTree.LookupValueAndName(index, &csName);
+  return FPDFAttachmentFromCPDFObject(
+      nameTree.LookupValueAndName(index, &csName));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

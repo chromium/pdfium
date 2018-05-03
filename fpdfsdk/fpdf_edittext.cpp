@@ -416,12 +416,18 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
   pTextObj->m_TextState.SetFont(pFont);
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
-  return pTextObj.release();  // Caller takes ownership.
+
+  // Caller takes ownership.
+  return FPDFPageObjectFromCPDFPageObject(pTextObj.release());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
-  auto* pTextObj = static_cast<CPDF_TextObject*>(text_object);
+  if (!text_object)
+    return false;
+
+  CPDF_TextObject* pTextObj =
+      CPDFPageObjectFromFPDFPageObject(text_object)->AsText();
   if (!pTextObj)
     return false;
 
@@ -455,8 +461,9 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
   if (!pFont->LoadEmbedded(data, size))
     return nullptr;
 
-  return cid ? LoadCompositeFont(pDoc, std::move(pFont), data, size, font_type)
-             : LoadSimpleFont(pDoc, std::move(pFont), data, size, font_type);
+  return FPDFFontFromCPDFFont(
+      cid ? LoadCompositeFont(pDoc, std::move(pFont), data, size, font_type)
+          : LoadSimpleFont(pDoc, std::move(pFont), data, size, font_type));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -469,7 +476,7 @@ FPDFText_SetFillColor(FPDF_PAGEOBJECT text_object,
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
-  CPDF_Font* pFont = static_cast<CPDF_Font*>(font);
+  CPDF_Font* pFont = CPDFFontFromFPDFFont(font);
   if (!pFont)
     return;
 
@@ -487,7 +494,7 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           FPDF_FONT font,
                           float font_size) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  CPDF_Font* pFont = static_cast<CPDF_Font*>(font);
+  CPDF_Font* pFont = CPDFFontFromFPDFFont(font);
   if (!pDoc || !pFont)
     return nullptr;
 
@@ -495,5 +502,5 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
   pTextObj->m_TextState.SetFont(pDoc->LoadFont(pFont->GetFontDict()));
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
-  return pTextObj.release();
+  return FPDFPageObjectFromCPDFPageObject(pTextObj.release());
 }

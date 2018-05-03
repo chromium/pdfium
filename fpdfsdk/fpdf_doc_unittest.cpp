@@ -127,11 +127,13 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 2");
-    EXPECT_EQ(bookmarks[2].obj, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj),
+              FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     // Title match is case insensitive.
     title = GetFPDFWideString(L"cHaPter 2");
-    EXPECT_EQ(bookmarks[2].obj, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj),
+              FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
   {
     // Circular bookmarks in depth.
@@ -166,7 +168,8 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 2");
-    EXPECT_EQ(bookmarks[2].obj, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj),
+              FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
   {
     // Circular bookmarks in breadth.
@@ -207,7 +210,8 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 3");
-    EXPECT_EQ(bookmarks[3].obj, FPDFBookmark_Find(m_pDoc.get(), title.get()));
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[3].obj),
+              FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
 }
 
@@ -226,8 +230,9 @@ TEST_F(PDFDocTest, GetLocationInPage) {
   FS_FLOAT y;
   FS_FLOAT zoom;
 
-  EXPECT_TRUE(FPDFDest_GetLocationInPage(array.get(), &hasX, &hasY, &hasZoom,
-                                         &x, &y, &zoom));
+  EXPECT_TRUE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.get()),
+                                         &hasX, &hasY, &hasZoom, &x, &y,
+                                         &zoom));
   EXPECT_TRUE(hasX);
   EXPECT_TRUE(hasY);
   EXPECT_TRUE(hasZoom);
@@ -238,13 +243,15 @@ TEST_F(PDFDocTest, GetLocationInPage) {
   array->SetNewAt<CPDF_Null>(2);
   array->SetNewAt<CPDF_Null>(3);
   array->SetNewAt<CPDF_Null>(4);
-  EXPECT_TRUE(FPDFDest_GetLocationInPage(array.get(), &hasX, &hasY, &hasZoom,
-                                         &x, &y, &zoom));
+  EXPECT_TRUE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.get()),
+                                         &hasX, &hasY, &hasZoom, &x, &y,
+                                         &zoom));
   EXPECT_FALSE(hasX);
   EXPECT_FALSE(hasY);
   EXPECT_FALSE(hasZoom);
 
   array = pdfium::MakeUnique<CPDF_Array>();
-  EXPECT_FALSE(FPDFDest_GetLocationInPage(array.get(), &hasX, &hasY, &hasZoom,
-                                          &x, &y, &zoom));
+  EXPECT_FALSE(FPDFDest_GetLocationInPage(FPDFDestFromCPDFArray(array.get()),
+                                          &hasX, &hasY, &hasZoom, &x, &y,
+                                          &zoom));
 }

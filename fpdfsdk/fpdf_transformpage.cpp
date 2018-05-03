@@ -211,12 +211,14 @@ FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV FPDF_CreateClipPath(float left,
 
   auto pNewClipPath = pdfium::MakeUnique<CPDF_ClipPath>();
   pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, false);
-  return pNewClipPath.release();  // Caller takes ownership.
+
+  // Caller takes ownership.
+  return FPDFClipPathFromCPDFClipPath(pNewClipPath.release());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
   // Take ownership back from caller and destroy.
-  std::unique_ptr<CPDF_ClipPath>(static_cast<CPDF_ClipPath*>(clipPath));
+  std::unique_ptr<CPDF_ClipPath>(CPDFClipPathFromFPDFClipPath(clipPath));
 }
 
 void OutputPath(std::ostringstream& buf, CPDF_Path path) {
@@ -268,7 +270,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
     return;
 
   std::ostringstream strClip;
-  auto* pClipPath = static_cast<CPDF_ClipPath*>(clipPath);
+  CPDF_ClipPath* pClipPath = CPDFClipPathFromFPDFClipPath(clipPath);
   for (size_t i = 0; i < pClipPath->GetPathCount(); ++i) {
     CPDF_Path path = pClipPath->GetPath(i);
     if (path.GetPoints().empty()) {

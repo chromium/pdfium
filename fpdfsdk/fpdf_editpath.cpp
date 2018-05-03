@@ -42,10 +42,6 @@ CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
   return obj ? obj->AsPath() : nullptr;
 }
 
-const FX_PATHPOINT* FXPathPointFromFPDFPathSegment(FPDF_PATHSEGMENT segment) {
-  return static_cast<const FX_PATHPOINT*>(segment);
-}
-
 unsigned int GetAlphaAsUnsignedInt(float alpha) {
   return static_cast<unsigned int>(alpha * 255.f + 0.5f);
 }
@@ -57,7 +53,9 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewPath(float x,
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
   pPathObj->DefaultStates();
-  return pPathObj.release();  // Caller takes ownership.
+
+  // Caller takes ownership.
+  return FPDFPageObjectFromCPDFPageObject(pPathObj.release());
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewRect(float x,
@@ -67,7 +65,9 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewRect(float x,
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendRect(x, y, x + w, y + h);
   pPathObj->DefaultStates();
-  return pPathObj.release();  // Caller takes ownership.
+
+  // Caller takes ownership.
+  return FPDFPageObjectFromCPDFPageObject(pPathObj.release());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -156,7 +156,10 @@ FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index) {
     return nullptr;
 
   const std::vector<FX_PATHPOINT>& points = pPathObj->m_Path.GetPoints();
-  return pdfium::IndexInBounds(points, index) ? &points[index] : nullptr;
+  if (!pdfium::IndexInBounds(points, index))
+    return nullptr;
+
+  return FPDFPathSegmentFromFXPathPoint(&points[index]);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,

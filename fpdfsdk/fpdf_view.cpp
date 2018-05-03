@@ -648,7 +648,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
   pContext->m_pDevice.reset(pDevice);
 
-  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, true, nullptr);
@@ -673,13 +673,15 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   if (!pPage)
     return;
 
-  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
+  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  pPage->SetRenderContext(std::move(pOwnedContext));
 
-  CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
-  pContext->m_pDevice.reset(pDevice);
+  auto pOwnedDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
+  CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
+  pContext->m_pDevice = std::move(pOwnedDevice);
 
-  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   CFX_FloatRect clipping_rect;
@@ -689,7 +691,6 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 
   const FX_RECT rect(0, 0, pPage->GetPageWidth(), pPage->GetPageHeight());
   CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(rect, 0);
-
   if (matrix) {
     transform_matrix.Concat(CFX_Matrix(matrix->a, matrix->b, matrix->c,
                                        matrix->d, matrix->e, matrix->f));
@@ -828,7 +829,7 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_Create(int width,
   if (!pBitmap->Create(width, height, alpha ? FXDIB_Argb : FXDIB_Rgb32))
     return nullptr;
 
-  return pBitmap.Leak();
+  return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
 }
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
@@ -858,14 +859,14 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
                        static_cast<uint8_t*>(first_scan), stride)) {
     return nullptr;
   }
-  return pBitmap.Leak();
+  return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetFormat(FPDF_BITMAP bitmap) {
   if (!bitmap)
     return FPDFBitmap_Unknown;
 
-  FXDIB_Format format = CFXBitmapFromFPDFBitmap(bitmap)->GetFormat();
+  FXDIB_Format format = CFXDIBitmapFromFPDFBitmap(bitmap)->GetFormat();
   switch (format) {
     case FXDIB_8bppRgb:
     case FXDIB_8bppMask:
@@ -891,7 +892,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
     return;
 
   CFX_DefaultRenderDevice device;
-  RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   device.Attach(pBitmap, false, nullptr, false);
   if (!pBitmap->HasAlpha())
     color |= 0xFF000000;
@@ -899,24 +900,24 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
 }
 
 FPDF_EXPORT void* FPDF_CALLCONV FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap) {
-  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetBuffer() : nullptr;
+  return bitmap ? CFXDIBitmapFromFPDFBitmap(bitmap)->GetBuffer() : nullptr;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetWidth(FPDF_BITMAP bitmap) {
-  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetWidth() : 0;
+  return bitmap ? CFXDIBitmapFromFPDFBitmap(bitmap)->GetWidth() : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetHeight(FPDF_BITMAP bitmap) {
-  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetHeight() : 0;
+  return bitmap ? CFXDIBitmapFromFPDFBitmap(bitmap)->GetHeight() : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetStride(FPDF_BITMAP bitmap) {
-  return bitmap ? CFXBitmapFromFPDFBitmap(bitmap)->GetPitch() : 0;
+  return bitmap ? CFXDIBitmapFromFPDFBitmap(bitmap)->GetPitch() : 0;
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {
   RetainPtr<CFX_DIBitmap> destroyer;
-  destroyer.Unleak(CFXBitmapFromFPDFBitmap(bitmap));
+  destroyer.Unleak(CFXDIBitmapFromFPDFBitmap(bitmap));
 }
 
 void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
@@ -996,7 +997,7 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
   if (!pDoc)
     return nullptr;
   CPDF_ViewerPreferences viewRef(pDoc);
-  return viewRef.PrintPageRange();
+  return FPDFPageRangeFromCPDFArray(viewRef.PrintPageRange());
 }
 
 FPDF_EXPORT FPDF_DUPLEXTYPE FPDF_CALLCONV
@@ -1067,7 +1068,8 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
     return nullptr;
 
   CPDF_NameTree name_tree(pDoc, "Dests");
-  return name_tree.LookupNamedDest(pDoc, PDF_DecodeText(ByteString(name)));
+  return FPDFDestFromCPDFArray(
+      name_tree.LookupNamedDest(pDoc, PDF_DecodeText(ByteString(name))));
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -1186,5 +1188,5 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   } else {
     *buflen = -1;
   }
-  return pDestObj;
+  return FPDFDestFromCPDFArray(pDestObj->AsArray());
 }

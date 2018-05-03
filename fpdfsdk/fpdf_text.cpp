@@ -7,6 +7,7 @@
 #include "public/fpdf_text.h"
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -16,6 +17,7 @@
 #include "core/fpdftext/cpdf_textpagefind.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -30,18 +32,6 @@
 namespace {
 
 constexpr size_t kBytesPerCharacter = sizeof(unsigned short);
-
-CPDF_TextPage* CPDFTextPageFromFPDFTextPage(FPDF_TEXTPAGE text_page) {
-  return static_cast<CPDF_TextPage*>(text_page);
-}
-
-CPDF_TextPageFind* CPDFTextPageFindFromFPDFSchHandle(FPDF_SCHHANDLE handle) {
-  return static_cast<CPDF_TextPageFind*>(handle);
-}
-
-CPDF_LinkExtract* CPDFLinkExtractFromFPDFPageLink(FPDF_PAGELINK link) {
-  return static_cast<CPDF_LinkExtract*>(link);
-}
 
 }  // namespace
 
@@ -62,7 +52,7 @@ FPDF_EXPORT FPDF_TEXTPAGE FPDF_CALLCONV FPDFText_LoadPage(FPDF_PAGE page) {
       pPDFPage, viewRef.IsDirectionR2L() ? FPDFText_Direction::Right
                                          : FPDFText_Direction::Left);
   textpage->ParseTextPage();
-  return textpage;
+  return FPDFTextPageFromCPDFTextPage(textpage);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFText_ClosePage(FPDF_TEXTPAGE text_page) {
@@ -269,7 +259,7 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
   textpageFind->FindFirst(
       WideString::FromUTF16LE(findwhat, len), flags,
       start_index >= 0 ? Optional<size_t>(start_index) : Optional<size_t>());
-  return textpageFind;
+  return FPDFSchHandleFromCPDFTextPageFind(textpageFind);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_FindNext(FPDF_SCHHANDLE handle) {
@@ -309,9 +299,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFText_FindClose(FPDF_SCHHANDLE handle) {
   if (!handle)
     return;
 
-  CPDF_TextPageFind* textpageFind = CPDFTextPageFindFromFPDFSchHandle(handle);
-  delete textpageFind;
-  handle = nullptr;
+  // Take ownership back from caller and destroy.
+  std::unique_ptr<CPDF_TextPageFind> textpageFind(
+      CPDFTextPageFindFromFPDFSchHandle(handle));
 }
 
 // web link
@@ -320,10 +310,12 @@ FPDFLink_LoadWebLinks(FPDF_TEXTPAGE text_page) {
   if (!text_page)
     return nullptr;
 
-  CPDF_LinkExtract* pageLink =
-      new CPDF_LinkExtract(CPDFTextPageFromFPDFTextPage(text_page));
+  CPDF_TextPage* pPage = CPDFTextPageFromFPDFTextPage(text_page);
+  auto pageLink = pdfium::MakeUnique<CPDF_LinkExtract>(pPage);
   pageLink->ExtractLinks();
-  return pageLink;
+
+  // Caller takes ownership.
+  return FPDFPageLinkFromCPDFLinkExtract(pageLink.release());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountWebLinks(FPDF_PAGELINK link_page) {

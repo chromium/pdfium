@@ -995,7 +995,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
   ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, false));
   ASSERT_TRUE(font.get());
-  CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
+  CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsType1Font());
 
   CPDF_Dictionary* font_dict = typed_font->GetFontDict();
@@ -1024,7 +1024,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, false));
   ASSERT_TRUE(font.get());
-  CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
+  CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsTrueTypeFont());
 
   CPDF_Dictionary* font_dict = typed_font->GetFontDict();
@@ -1054,7 +1054,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, 1));
   ASSERT_TRUE(font.get());
-  CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
+  CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
@@ -1096,7 +1096,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   ScopedFPDFFont font(
       FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
   ASSERT_TRUE(font.get());
-  CPDF_Font* typed_font = static_cast<CPDF_Font*>(font.get());
+  CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
