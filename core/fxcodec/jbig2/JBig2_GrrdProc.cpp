@@ -37,9 +37,12 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::Decode(
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
-  int LTP = 0;
   auto GRREG = pdfium::MakeUnique<CJBig2_Image>(GRW, GRH);
+  if (!GRREG->data())
+    return nullptr;
+
   GRREG->fill(0);
+  int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
       if (pArithDecoder->IsComplete())
@@ -278,9 +281,12 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
-  int LTP = 0;
   auto GRREG = pdfium::MakeUnique<CJBig2_Image>(GRW, GRH);
+  if (!GRREG->data())
+    return nullptr;
+
   GRREG->fill(0);
+  int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
       if (pArithDecoder->IsComplete())

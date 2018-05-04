@@ -117,6 +117,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeMMR(
 std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
     const std::vector<std::unique_ptr<CJBig2_Image>>& GSPLANES) {
   auto HTREG = pdfium::MakeUnique<CJBig2_Image>(HBW, HBH);
+  if (!HTREG->data())
+    return nullptr;
+
   HTREG->fill(HDEFPIXEL);
   std::vector<uint32_t> GSVALS(HGW * HGH);
   for (uint32_t y = 0; y < HGH; ++y) {

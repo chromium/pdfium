@@ -23,10 +23,13 @@ CJBig2_TRDProc::~CJBig2_TRDProc() {}
 std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
     CJBig2_BitStream* pStream,
     JBig2ArithCtx* grContext) {
-  auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
   auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
+  if (!SBREG->data())
+    return nullptr;
+
   SBREG->fill(SBDEFPIXEL);
   int32_t INITIAL_STRIPT;
+  auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
   if (pHuffmanDecoder->DecodeAValue(SBHUFFDT, &INITIAL_STRIPT) != 0)
     return nullptr;
 
@@ -224,7 +227,19 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext,
     JBig2IntDecoderState* pIDS) {
+  auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
+  if (!SBREG->data())
+    return nullptr;
+
   MaybeOwned<CJBig2_ArithIntDecoder> pIADT;
+  if (pIDS)
+    pIADT = pIDS->IADT;
+  else
+    pIADT = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
+  int32_t INITIAL_STRIPT;
+  if (!pIADT->Decode(pArithDecoder, &INITIAL_STRIPT))
+    return nullptr;
+
   MaybeOwned<CJBig2_ArithIntDecoder> pIAFS;
   MaybeOwned<CJBig2_ArithIntDecoder> pIADS;
   MaybeOwned<CJBig2_ArithIntDecoder> pIAIT;
@@ -235,7 +250,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
   MaybeOwned<CJBig2_ArithIntDecoder> pIARDY;
   MaybeOwned<CJBig2_ArithIaidDecoder> pIAID;
   if (pIDS) {
-    pIADT = pIDS->IADT;
     pIAFS = pIDS->IAFS;
     pIADS = pIDS->IADS;
     pIAIT = pIDS->IAIT;
@@ -246,7 +260,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     pIARDY = pIDS->IARDY;
     pIAID = pIDS->IAID;
   } else {
-    pIADT = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
     pIAFS = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
     pIADS = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
     pIAIT = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
@@ -257,11 +270,8 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     pIARDY = pdfium::MakeUnique<CJBig2_ArithIntDecoder>();
     pIAID = pdfium::MakeUnique<CJBig2_ArithIaidDecoder>(SBSYMCODELEN);
   }
-  auto SBREG = pdfium::MakeUnique<CJBig2_Image>(SBW, SBH);
+
   SBREG->fill(SBDEFPIXEL);
-  int32_t INITIAL_STRIPT;
-  if (!pIADT->Decode(pArithDecoder, &INITIAL_STRIPT))
-    return nullptr;
 
   FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
   STRIPT *= SBSTRIPS;
