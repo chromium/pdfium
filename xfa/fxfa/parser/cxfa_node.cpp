@@ -2355,10 +2355,8 @@ CXFA_Node::CreateChildUIAndValueNodesIfNeeded() {
     }
   }
 
-  XFA_FFWidgetType ff_widget_type =
-      pUIChild ? pUIChild->GetDefaultFFWidgetType() : XFA_FFWidgetType::kNone;
-  XFA_Element ui_child_type =
-      pUIChild ? pUIChild->GetElementType() : XFA_Element::Unknown;
+  XFA_FFWidgetType widget_type = XFA_FFWidgetType::kNone;
+  XFA_Element expected_ui_child_type = XFA_Element::Unknown;
 
   // Both Field and Draw nodes have a Value child. So, we should either always
   // have it, or always create it. If we don't get the Value child for some
@@ -2371,82 +2369,77 @@ CXFA_Node::CreateChildUIAndValueNodesIfNeeded() {
   // that child must be the type we want to use.
   CXFA_Node* child = value->GetFirstChild();
   if (child) {
-    XFA_FFWidgetType tmp_widget_type = XFA_FFWidgetType::kNone;
     switch (child->GetElementType()) {
       case XFA_Element::Boolean:
-        ui_child_type = XFA_Element::CheckButton;
-        tmp_widget_type = XFA_FFWidgetType::kCheckButton;
+        expected_ui_child_type = XFA_Element::CheckButton;
         break;
       case XFA_Element::Integer:
       case XFA_Element::Decimal:
       case XFA_Element::Float:
-        ui_child_type = XFA_Element::NumericEdit;
-        tmp_widget_type = XFA_FFWidgetType::kNumericEdit;
+        expected_ui_child_type = XFA_Element::NumericEdit;
         break;
       case XFA_Element::ExData:
       case XFA_Element::Text:
-        ui_child_type = XFA_Element::TextEdit;
-        tmp_widget_type = XFA_FFWidgetType::kTextEdit;
+        expected_ui_child_type = XFA_Element::TextEdit;
+        widget_type = XFA_FFWidgetType::kText;
         break;
       case XFA_Element::Date:
       case XFA_Element::Time:
       case XFA_Element::DateTime:
-        ui_child_type = XFA_Element::DateTimeEdit;
-        tmp_widget_type = XFA_FFWidgetType::kDateTimeEdit;
+        expected_ui_child_type = XFA_Element::DateTimeEdit;
         break;
       case XFA_Element::Image:
-        ui_child_type = XFA_Element::ImageEdit;
-        tmp_widget_type = XFA_FFWidgetType::kImageEdit;
+        expected_ui_child_type = XFA_Element::ImageEdit;
+        widget_type = XFA_FFWidgetType::kImage;
         break;
       case XFA_Element::Arc:
-        ui_child_type = XFA_Element::DefaultUi;
-        tmp_widget_type = XFA_FFWidgetType::kArc;
+        expected_ui_child_type = XFA_Element::DefaultUi;
+        widget_type = XFA_FFWidgetType::kArc;
         break;
       case XFA_Element::Line:
-        ui_child_type = XFA_Element::DefaultUi;
-        tmp_widget_type = XFA_FFWidgetType::kLine;
+        expected_ui_child_type = XFA_Element::DefaultUi;
+        widget_type = XFA_FFWidgetType::kLine;
         break;
       case XFA_Element::Rectangle:
-        ui_child_type = XFA_Element::DefaultUi;
-        tmp_widget_type = XFA_FFWidgetType::kRectangle;
+        expected_ui_child_type = XFA_Element::DefaultUi;
+        widget_type = XFA_FFWidgetType::kRectangle;
         break;
       default:
         NOTREACHED();
         break;
     }
+  }
 
-    // Only set the FFWidget if we didn't already set it from the UI child.
-    if (ff_widget_type == XFA_FFWidgetType::kNone)
-      ff_widget_type = tmp_widget_type;
+  if (eType == XFA_Element::Draw) {
+    if (pUIChild && pUIChild->GetElementType() == XFA_Element::TextEdit) {
+      widget_type = XFA_FFWidgetType::kText;
+    } else if (pUIChild &&
+               pUIChild->GetElementType() == XFA_Element::ImageEdit) {
+      widget_type = XFA_FFWidgetType::kImage;
+    } else if (widget_type == XFA_FFWidgetType::kNone) {
+      widget_type = XFA_FFWidgetType::kText;
+    }
+  } else if (eType == XFA_Element::Field) {
+    if (pUIChild && pUIChild->GetElementType() == XFA_Element::DefaultUi) {
+      widget_type = XFA_FFWidgetType::kTextEdit;
+    } else if (pUIChild) {
+      widget_type = pUIChild->GetDefaultFFWidgetType();
+    } else if (expected_ui_child_type == XFA_Element::Unknown) {
+      widget_type = XFA_FFWidgetType::kTextEdit;
+    }
+  } else {
+    NOTREACHED();
   }
 
   if (!pUIChild) {
-    if (ui_child_type == XFA_Element::Unknown)
-      ui_child_type = XFA_Element::TextEdit;
-
-    pUIChild = CreateUINodeIfNeeded(pUI, ui_child_type);
-    if (ff_widget_type == XFA_FFWidgetType::kNone)
-      ff_widget_type = pUIChild->GetDefaultFFWidgetType();
+    if (expected_ui_child_type == XFA_Element::Unknown)
+      expected_ui_child_type = XFA_Element::TextEdit;
+    pUIChild = pUI->JSObject()->GetOrCreateProperty<CXFA_Node>(
+        0, expected_ui_child_type);
   }
-
-  // When handling draw children, change the image and text edit items to
-  // be non-edit.
-  if (eType == XFA_Element::Draw) {
-    switch (pUIChild->GetElementType()) {
-      case XFA_Element::TextEdit:
-        ff_widget_type = XFA_FFWidgetType::kText;
-        break;
-      case XFA_Element::ImageEdit:
-        ff_widget_type = XFA_FFWidgetType::kImage;
-        break;
-      default:
-        break;
-    }
-  }
-  ASSERT(ff_widget_type != XFA_FFWidgetType::kNone);
 
   CreateValueNodeIfNeeded(value, pUIChild);
-  return {ff_widget_type, pUI};
+  return {widget_type, pUI};
 }
 
 XFA_FFWidgetType CXFA_Node::GetDefaultFFWidgetType() const {
