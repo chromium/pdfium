@@ -68,6 +68,8 @@
 namespace {
 
 constexpr int kShadingSteps = 256;
+constexpr int kRenderMaxRecursionDepth = 64;
+int g_CurrentRecursionDepth = 0;
 
 void ReleaseCachedType3(CPDF_Type3Font* pFont) {
   CPDF_Document* pDoc = pFont->GetDocument();
@@ -1010,26 +1012,7 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
 
 }  // namespace
 
-// static
-int CPDF_RenderStatus::s_CurrentRecursionDepth = 0;
-
-CPDF_RenderStatus::CPDF_RenderStatus()
-    : m_pFormResource(nullptr),
-      m_pPageResource(nullptr),
-      m_pContext(nullptr),
-      m_bStopped(false),
-      m_pDevice(nullptr),
-      m_pCurObj(nullptr),
-      m_pStopObj(nullptr),
-      m_bPrint(false),
-      m_iTransparency(0),
-      m_bDropObjects(false),
-      m_bStdCS(false),
-      m_GroupFamily(0),
-      m_bLoadMask(false),
-      m_pType3Char(nullptr),
-      m_T3FillColor(0),
-      m_curBlend(FXDIB_BLEND_NORMAL) {}
+CPDF_RenderStatus::CPDF_RenderStatus() {}
 
 CPDF_RenderStatus::~CPDF_RenderStatus() {}
 
@@ -1126,8 +1109,8 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
-  if (++s_CurrentRecursionDepth > kRenderMaxRecursionDepth) {
+  AutoRestorer<int> restorer(&g_CurrentRecursionDepth);
+  if (++g_CurrentRecursionDepth > kRenderMaxRecursionDepth) {
     return;
   }
   m_pCurObj = pObj;
