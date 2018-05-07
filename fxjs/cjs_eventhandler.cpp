@@ -15,96 +15,77 @@
 #include "fxjs/cjs_runtime.h"
 
 CJS_EventHandler::CJS_EventHandler(CJS_EventContext* pContext)
-    : m_pJSEventContext(pContext),
-      m_eEventType(JET_UNKNOWN),
-      m_bValid(false),
-      m_pWideStrChange(nullptr),
-      m_nCommitKey(-1),
-      m_bKeyDown(false),
-      m_bModifier(false),
-      m_bShift(false),
-      m_pISelEnd(nullptr),
-      m_nSelEndDu(0),
-      m_pISelStart(nullptr),
-      m_nSelStartDu(0),
-      m_bWillCommit(false),
-      m_pValue(nullptr),
-      m_bFieldFull(false),
-      m_pbRc(nullptr),
-      m_bRcDu(false),
-      m_pTargetBookMark(nullptr),
-      m_pTargetFormFillEnv(nullptr),
-      m_pTargetAnnot(nullptr) {}
+    : m_pJSEventContext(pContext) {}
 
 CJS_EventHandler::~CJS_EventHandler() {}
 
 void CJS_EventHandler::OnApp_Init() {
-  Initial(JET_APP_INIT);
+  Initialize(JET_APP_INIT);
 }
 
 void CJS_EventHandler::OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                   const WideString& strTargetName) {
-  Initial(JET_DOC_OPEN);
+  Initialize(JET_DOC_OPEN);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
   m_strTargetName = strTargetName;
 }
 
 void CJS_EventHandler::OnDoc_WillPrint(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_DOC_WILLPRINT);
+  Initialize(JET_DOC_WILLPRINT);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_DidPrint(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_DOC_DIDPRINT);
+  Initialize(JET_DOC_DIDPRINT);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_WillSave(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_DOC_WILLSAVE);
+  Initialize(JET_DOC_WILLSAVE);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_DidSave(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_DOC_DIDSAVE);
+  Initialize(JET_DOC_DIDSAVE);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_WillClose(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_DOC_WILLCLOSE);
+  Initialize(JET_DOC_WILLCLOSE);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_PAGE_OPEN);
+  Initialize(JET_PAGE_OPEN);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_PAGE_CLOSE);
+  Initialize(JET_PAGE_CLOSE);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_InView(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_PAGE_INVIEW);
+  Initialize(JET_PAGE_INVIEW);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_OutView(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  Initial(JET_PAGE_OUTVIEW);
+  Initialize(JET_PAGE_OUTVIEW);
   m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnField_MouseEnter(bool bModifier,
                                           bool bShift,
                                           CPDF_FormField* pTarget) {
-  Initial(JET_FIELD_MOUSEENTER);
+  Initialize(JET_FIELD_MOUSEENTER);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -115,7 +96,7 @@ void CJS_EventHandler::OnField_MouseEnter(bool bModifier,
 void CJS_EventHandler::OnField_MouseExit(bool bModifier,
                                          bool bShift,
                                          CPDF_FormField* pTarget) {
-  Initial(JET_FIELD_MOUSEEXIT);
+  Initialize(JET_FIELD_MOUSEEXIT);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -125,7 +106,7 @@ void CJS_EventHandler::OnField_MouseExit(bool bModifier,
 void CJS_EventHandler::OnField_MouseDown(bool bModifier,
                                          bool bShift,
                                          CPDF_FormField* pTarget) {
-  Initial(JET_FIELD_MOUSEDOWN);
+  Initialize(JET_FIELD_MOUSEDOWN);
   m_eEventType = JET_FIELD_MOUSEDOWN;
 
   m_bModifier = bModifier;
@@ -136,7 +117,7 @@ void CJS_EventHandler::OnField_MouseDown(bool bModifier,
 void CJS_EventHandler::OnField_MouseUp(bool bModifier,
                                        bool bShift,
                                        CPDF_FormField* pTarget) {
-  Initial(JET_FIELD_MOUSEUP);
+  Initialize(JET_FIELD_MOUSEUP);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -147,7 +128,7 @@ void CJS_EventHandler::OnField_Focus(bool bModifier,
                                      bool bShift,
                                      CPDF_FormField* pTarget,
                                      const WideString& Value) {
-  Initial(JET_FIELD_FOCUS);
+  Initialize(JET_FIELD_FOCUS);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -159,7 +140,7 @@ void CJS_EventHandler::OnField_Blur(bool bModifier,
                                     bool bShift,
                                     CPDF_FormField* pTarget,
                                     const WideString& Value) {
-  Initial(JET_FIELD_BLUR);
+  Initialize(JET_FIELD_BLUR);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -179,7 +160,7 @@ void CJS_EventHandler::OnField_Keystroke(WideString& strChange,
                                          bool bWillCommit,
                                          bool bFieldFull,
                                          bool& bRc) {
-  Initial(JET_FIELD_KEYSTROKE);
+  Initialize(JET_FIELD_KEYSTROKE);
 
   m_nCommitKey = 0;
   m_pWideStrChange = &strChange;
@@ -204,7 +185,7 @@ void CJS_EventHandler::OnField_Validate(WideString& strChange,
                                         CPDF_FormField* pTarget,
                                         WideString& Value,
                                         bool& bRc) {
-  Initial(JET_FIELD_VALIDATE);
+  Initialize(JET_FIELD_VALIDATE);
 
   m_pWideStrChange = &strChange;
   m_WideStrChangeEx = strChangeEx;
@@ -220,7 +201,7 @@ void CJS_EventHandler::OnField_Calculate(CPDF_FormField* pSource,
                                          CPDF_FormField* pTarget,
                                          WideString& Value,
                                          bool& bRc) {
-  Initial(JET_FIELD_CALCULATE);
+  Initialize(JET_FIELD_CALCULATE);
 
   if (pSource)
     m_strSourceName = pSource->GetFullName();
@@ -232,7 +213,7 @@ void CJS_EventHandler::OnField_Calculate(CPDF_FormField* pSource,
 void CJS_EventHandler::OnField_Format(CPDF_FormField* pTarget,
                                       WideString& Value,
                                       bool bWillCommit) {
-  Initial(JET_FIELD_FORMAT);
+  Initialize(JET_FIELD_FORMAT);
 
   m_nCommitKey = 0;
   m_strTargetName = pTarget->GetFullName();
@@ -243,7 +224,7 @@ void CJS_EventHandler::OnField_Format(CPDF_FormField* pTarget,
 void CJS_EventHandler::OnScreen_Focus(bool bModifier,
                                       bool bShift,
                                       CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_FOCUS);
+  Initialize(JET_SCREEN_FOCUS);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -253,7 +234,7 @@ void CJS_EventHandler::OnScreen_Focus(bool bModifier,
 void CJS_EventHandler::OnScreen_Blur(bool bModifier,
                                      bool bShift,
                                      CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_BLUR);
+  Initialize(JET_SCREEN_BLUR);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -263,7 +244,7 @@ void CJS_EventHandler::OnScreen_Blur(bool bModifier,
 void CJS_EventHandler::OnScreen_Open(bool bModifier,
                                      bool bShift,
                                      CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_OPEN);
+  Initialize(JET_SCREEN_OPEN);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -273,7 +254,7 @@ void CJS_EventHandler::OnScreen_Open(bool bModifier,
 void CJS_EventHandler::OnScreen_Close(bool bModifier,
                                       bool bShift,
                                       CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_CLOSE);
+  Initialize(JET_SCREEN_CLOSE);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -283,7 +264,7 @@ void CJS_EventHandler::OnScreen_Close(bool bModifier,
 void CJS_EventHandler::OnScreen_MouseDown(bool bModifier,
                                           bool bShift,
                                           CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_MOUSEDOWN);
+  Initialize(JET_SCREEN_MOUSEDOWN);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -293,7 +274,7 @@ void CJS_EventHandler::OnScreen_MouseDown(bool bModifier,
 void CJS_EventHandler::OnScreen_MouseUp(bool bModifier,
                                         bool bShift,
                                         CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_MOUSEUP);
+  Initialize(JET_SCREEN_MOUSEUP);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -303,7 +284,7 @@ void CJS_EventHandler::OnScreen_MouseUp(bool bModifier,
 void CJS_EventHandler::OnScreen_MouseEnter(bool bModifier,
                                            bool bShift,
                                            CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_MOUSEENTER);
+  Initialize(JET_SCREEN_MOUSEENTER);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -313,7 +294,7 @@ void CJS_EventHandler::OnScreen_MouseEnter(bool bModifier,
 void CJS_EventHandler::OnScreen_MouseExit(bool bModifier,
                                           bool bShift,
                                           CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_MOUSEEXIT);
+  Initialize(JET_SCREEN_MOUSEEXIT);
 
   m_bModifier = bModifier;
   m_bShift = bShift;
@@ -323,7 +304,7 @@ void CJS_EventHandler::OnScreen_MouseExit(bool bModifier,
 void CJS_EventHandler::OnScreen_InView(bool bModifier,
                                        bool bShift,
                                        CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_INVIEW);
+  Initialize(JET_SCREEN_INVIEW);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_pTargetAnnot.Reset(pScreen);
@@ -332,7 +313,7 @@ void CJS_EventHandler::OnScreen_InView(bool bModifier,
 void CJS_EventHandler::OnScreen_OutView(bool bModifier,
                                         bool bShift,
                                         CPDFSDK_Annot* pScreen) {
-  Initial(JET_SCREEN_OUTVIEW);
+  Initialize(JET_SCREEN_OUTVIEW);
   m_bModifier = bModifier;
   m_bShift = bShift;
   m_pTargetAnnot.Reset(pScreen);
@@ -340,38 +321,38 @@ void CJS_EventHandler::OnScreen_OutView(bool bModifier,
 
 void CJS_EventHandler::OnLink_MouseUp(
     CPDFSDK_FormFillEnvironment* pTargetFormFillEnv) {
-  Initial(JET_LINK_MOUSEUP);
+  Initialize(JET_LINK_MOUSEUP);
   m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
 }
 
 void CJS_EventHandler::OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) {
-  Initial(JET_BOOKMARK_MOUSEUP);
+  Initialize(JET_BOOKMARK_MOUSEUP);
   m_pTargetBookMark = pBookMark;
 }
 
 void CJS_EventHandler::OnMenu_Exec(
     CPDFSDK_FormFillEnvironment* pTargetFormFillEnv,
     const WideString& strTargetName) {
-  Initial(JET_MENU_EXEC);
+  Initialize(JET_MENU_EXEC);
   m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
   m_strTargetName = strTargetName;
 }
 
 void CJS_EventHandler::OnExternal_Exec() {
-  Initial(JET_EXTERNAL_EXEC);
+  Initialize(JET_EXTERNAL_EXEC);
 }
 
 void CJS_EventHandler::OnBatchExec(
     CPDFSDK_FormFillEnvironment* pTargetFormFillEnv) {
-  Initial(JET_BATCH_EXEC);
+  Initialize(JET_BATCH_EXEC);
   m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
 }
 
 void CJS_EventHandler::OnConsole_Exec() {
-  Initial(JET_CONSOLE_EXEC);
+  Initialize(JET_CONSOLE_EXEC);
 }
 
-void CJS_EventHandler::Initial(JS_EVENT_T type) {
+void CJS_EventHandler::Initialize(JS_EVENT_T type) {
   m_eEventType = type;
 
   m_strTargetName = L"";

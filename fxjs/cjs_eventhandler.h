@@ -140,7 +140,6 @@ class CJS_EventHandler {
   void OnConsole_Exec();
   void OnExternal_Exec();
 
-  void Initial(JS_EVENT_T type);
   void Destroy();
   bool IsValid() const;
 
@@ -166,28 +165,39 @@ class CJS_EventHandler {
 
   JS_EVENT_T EventType() const { return m_eEventType; }
 
+  void SetRCForTest(bool* pRC) { m_pbRc = pRC; }
+
+  void SetStrChangeForTest(WideString* pStrChange) {
+    m_pWideStrChange = pStrChange;
+  }
+
+  void ResetWillCommitForTest() { m_bWillCommit = false; }
+
+  UnownedPtr<WideString> m_pValue;
+
+ private:
+  void Initialize(JS_EVENT_T type);
   UnownedPtr<CJS_EventContext> const m_pJSEventContext;
-  JS_EVENT_T m_eEventType;
-  bool m_bValid;
+  JS_EVENT_T m_eEventType = JET_UNKNOWN;
+  bool m_bValid = false;
 
   WideString m_strTargetName;
   WideString m_strSourceName;
   UnownedPtr<WideString> m_pWideStrChange;
   WideString m_WideStrChangeDu;
   WideString m_WideStrChangeEx;
-  int m_nCommitKey;
-  bool m_bKeyDown;
-  bool m_bModifier;
-  bool m_bShift;
-  int* m_pISelEnd;
-  int m_nSelEndDu;
-  int* m_pISelStart;
-  int m_nSelStartDu;
-  bool m_bWillCommit;
-  UnownedPtr<WideString> m_pValue;
-  bool m_bFieldFull;
-  bool* m_pbRc;
-  bool m_bRcDu;
+  int m_nCommitKey = -1;
+  bool m_bKeyDown = false;
+  bool m_bModifier = false;
+  bool m_bShift = false;
+  int* m_pISelEnd = nullptr;
+  int m_nSelEndDu = 0;
+  int* m_pISelStart = nullptr;
+  int m_nSelStartDu = 0;
+  bool m_bWillCommit = false;
+  bool m_bFieldFull = false;
+  bool* m_pbRc = nullptr;
+  bool m_bRcDu = false;
 
   UnownedPtr<CPDF_Bookmark> m_pTargetBookMark;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pTargetFormFillEnv;

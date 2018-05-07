@@ -224,10 +224,10 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
   WideString change = L"";
 
   handler->m_pValue = &result;
-  handler->m_pbRc = &valid;
-  handler->m_pWideStrChange = &change;
+  handler->SetRCForTest(&valid);
+  handler->SetStrChangeForTest(&change);
 
-  handler->m_bWillCommit = 0;
+  handler->ResetWillCommitForTest();
   handler->SetSelStart(0);
   handler->SetSelEnd(0);
 
@@ -245,6 +245,6 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
   // Keep the *SAN bots happy. One of these is an UnownedPtr, another seems to
   // used during destruction. Clear them all to be safe and consistent.
   handler->m_pValue = nullptr;
-  handler->m_pbRc = nullptr;
-  handler->m_pWideStrChange = nullptr;
+  handler->SetRCForTest(nullptr);
+  handler->SetStrChangeForTest(nullptr);
 }
