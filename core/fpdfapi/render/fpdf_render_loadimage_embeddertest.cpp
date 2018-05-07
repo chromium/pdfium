@@ -17,7 +17,7 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_554151) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
   ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-  CompareBitmap(bitmap.get(), 612, 792, "a14d7ee573c1b2456d7bf6b7762823cf");
+  CompareBitmap(bitmap.get(), 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   UnloadPage(page);
 }
 

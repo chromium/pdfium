@@ -180,17 +180,28 @@ bool CFX_ImageStretcher::ContinueQuickStretch(PauseIndicatorIface* pPause) {
   int src_height = m_pSource->GetHeight();
   for (; m_LineIndex < result_height; ++m_LineIndex) {
     int dest_y;
-    int src_y;
+    FX_SAFE_INT64 calc_buf;
     if (m_bFlipY) {
       dest_y = result_height - m_LineIndex - 1;
-      src_y = (m_DestHeight - (dest_y + m_ClipRect.top) - 1) * src_height /
-              m_DestHeight;
+      calc_buf = m_DestHeight;
+      calc_buf -= dest_y;
+      calc_buf -= m_ClipRect.top;
+      calc_buf -= 1;
+      calc_buf *= src_height;
+      calc_buf /= m_DestHeight;
     } else {
       dest_y = m_LineIndex;
-      src_y = (dest_y + m_ClipRect.top) * src_height / m_DestHeight;
+      calc_buf = dest_y;
+      calc_buf += m_ClipRect.top;
+      calc_buf *= src_height;
+      calc_buf /= m_DestHeight;
     }
-    src_y = pdfium::clamp(src_y, 0, src_height - 1);
 
+    int src_y;
+    if (!calc_buf.AssignIfValid(&src_y))
+      return false;
+
+    src_y = pdfium::clamp(src_y, 0, src_height - 1);
     if (m_pSource->SkipToScanline(src_y, pPause))
       return true;
 

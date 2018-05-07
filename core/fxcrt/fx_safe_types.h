@@ -12,6 +12,7 @@
 
 typedef pdfium::base::CheckedNumeric<uint32_t> FX_SAFE_UINT32;
 typedef pdfium::base::CheckedNumeric<int32_t> FX_SAFE_INT32;
+typedef pdfium::base::CheckedNumeric<int64_t> FX_SAFE_INT64;
 typedef pdfium::base::CheckedNumeric<size_t> FX_SAFE_SIZE_T;
 typedef pdfium::base::CheckedNumeric<FX_FILESIZE> FX_SAFE_FILESIZE;
 
