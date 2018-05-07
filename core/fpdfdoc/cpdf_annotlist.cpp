@@ -120,11 +120,11 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }  // namespace
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
-    : m_pDocument(pPage->m_pDocument.Get()) {
-  if (!pPage->m_pFormDict)
+    : m_pDocument(pPage->GetDocument()) {
+  if (!pPage->GetFormDict())
     return;
 
-  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
+  CPDF_Array* pAnnots = pPage->GetFormDict()->GetArrayFor("Annots");
   if (!pAnnots)
     return;
 

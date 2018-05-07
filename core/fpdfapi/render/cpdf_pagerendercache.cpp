@@ -92,7 +92,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
     m_pCurImageCacheEntry = it->second;
   } else {
     m_pCurImageCacheEntry =
-        new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pImage);
+        new CPDF_ImageCacheEntry(m_pPage->GetDocument(), pImage);
   }
   CPDF_DIBSource::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       pRenderStatus->GetFormResource(), m_pPage->m_pPageResources.Get(), bStdCS,
@@ -134,7 +134,7 @@ void CPDF_PageRenderCache::ResetBitmap(const RetainPtr<CPDF_Image>& pImage,
     if (!pBitmap)
       return;
 
-    pEntry = new CPDF_ImageCacheEntry(m_pPage->m_pDocument.Get(), pImage);
+    pEntry = new CPDF_ImageCacheEntry(m_pPage->GetDocument(), pImage);
     m_ImageCache[pStream] = pEntry;
   } else {
     pEntry = it->second;

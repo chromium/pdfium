@@ -17,11 +17,11 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class PauseIndicatorIface;
-class CPDF_Dictionary;
-class CPDF_Stream;
-class CPDF_Document;
 class CPDF_ContentParser;
+class CPDF_Dictionary;
+class CPDF_Document;
+class CPDF_Stream;
+class PauseIndicatorIface;
 
 #define PDFTRANS_GROUP 0x0100
 #define PDFTRANS_ISOLATED 0x0200
@@ -52,6 +52,14 @@ class CPDF_PageObjectHolder {
   void ContinueParse(PauseIndicatorIface* pPause);
   bool IsParsed() const { return m_ParseState == CONTENT_PARSED; }
 
+  const CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
+  CPDF_Document* GetDocument() { return m_pDocument.Get(); }
+
+  // TODO(thestig): Can this return nullptr? If not, audit callers and simplify
+  // the ones that assume it can.
+  const CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
+  CPDF_Dictionary* GetFormDict() { return m_pFormDict.Get(); }
+
   const CPDF_PageObjectList* GetPageObjectList() const {
     return &m_PageObjectList;
   }
@@ -63,7 +71,9 @@ class CPDF_PageObjectHolder {
   bool ErasePageObjectAtIndex(size_t index);
 
   const CFX_Matrix& GetLastCTM() const { return m_LastCTM; }
+  const CFX_FloatRect& GetBBox() const { return m_BBox; }
 
+  int GetTransparency() const { return m_iTransparency; }
   bool BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
   void SetBackgroundAlphaNeeded(bool needed) {
     m_bBackgroundAlphaNeeded = needed;

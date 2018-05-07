@@ -142,7 +142,7 @@ bool CPDF_ImageRenderer::StartRenderDIBSource() {
   CPDF_Page* pPage = nullptr;
   if (auto* pPageCache = m_pRenderStatus->GetContext()->GetPageCache()) {
     pPage = pPageCache->GetPage();
-    pDocument = pPage->m_pDocument.Get();
+    pDocument = pPage->GetDocument();
   } else {
     pDocument = m_pImageObject->GetImage()->GetDocument();
   }

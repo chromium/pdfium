@@ -21,7 +21,7 @@
 #include "core/fxge/fx_dib.h"
 
 CPDF_RenderContext::CPDF_RenderContext(CPDF_Page* pPage)
-    : m_pDocument(pPage->m_pDocument.Get()),
+    : m_pDocument(pPage->GetDocument()),
       m_pPageResources(pPage->m_pPageResources.Get()),
       m_pPageCache(pPage->GetRenderCache()) {}
 
@@ -70,13 +70,13 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       CFX_Matrix FinalMatrix = layer.m_Matrix;
       FinalMatrix.Concat(*pLastMatrix);
       status.Initialize(this, pDevice, pLastMatrix, pStopObj, nullptr, nullptr,
-                        pOptions, layer.m_pObjectHolder->m_iTransparency, false,
-                        nullptr);
+                        pOptions, layer.m_pObjectHolder->GetTransparency(),
+                        false, nullptr);
       status.RenderObjectList(layer.m_pObjectHolder.Get(), &FinalMatrix);
     } else {
       status.Initialize(this, pDevice, nullptr, pStopObj, nullptr, nullptr,
-                        pOptions, layer.m_pObjectHolder->m_iTransparency, false,
-                        nullptr);
+                        pOptions, layer.m_pObjectHolder->GetTransparency(),
+                        false, nullptr);
       status.RenderObjectList(layer.m_pObjectHolder.Get(), &layer.m_Matrix);
     }
     if (status.GetRenderOptions()->HasFlag(RENDER_LIMITEDIMAGECACHE)) {
