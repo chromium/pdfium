@@ -3,9 +3,12 @@
 // found in the LICENSE file.
 
 #include <memory>
+#include <set>
 #include <string>
+#include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
@@ -14,6 +17,22 @@
 #include "testing/test_support.h"
 
 class FPDFDocEmbeddertest : public EmbedderTest {};
+
+TEST_F(FPDFDocEmbeddertest, MultipleSamePage) {
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+
+  std::set<FPDF_PAGE> unique_pages;
+  std::vector<ScopedFPDFPage> owned_pages(4);
+  for (auto& ref : owned_pages) {
+    ref.reset(FPDF_LoadPage(document(), 0));
+    unique_pages.insert(ref.get());
+  }
+#ifdef PDF_ENABLE_XFA
+  EXPECT_EQ(1u, unique_pages.size());
+#else   // PDF_ENABLE_XFA
+  EXPECT_EQ(4u, unique_pages.size());
+#endif  // PDF_ENABLE_XFA
+}
 
 TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
