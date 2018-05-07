@@ -108,9 +108,6 @@ class CPDF_TextPage {
   int CountRects(int start, int nCount);
   bool GetRect(int rectIndex, CFX_FloatRect* pRect) const;
 
-  static bool IsRectIntersect(const CFX_FloatRect& rect1,
-                              const CFX_FloatRect& rect2);
-
  private:
   enum class TextOrientation {
     Unknown,
@@ -143,7 +140,6 @@ class CPDF_TextPage {
                              const CPDF_PageObjectList* pObjList,
                              CPDF_PageObjectList::const_iterator ObjPos);
   bool IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
-  uint32_t GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const;
   void CloseTempLine();
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
@@ -155,11 +151,7 @@ class CPDF_TextPage {
       const CPDF_TextObject* pTextObj) const;
   TextOrientation FindTextlineFlowOrientation() const;
   void AppendGeneratedCharacter(wchar_t unicode, const CFX_Matrix& formMatrix);
-
   void SwapTempTextBuf(int32_t iCharListStartAppend, int32_t iBufStartAppend);
-  bool IsRightToLeft(const CPDF_TextObject* pTextObj,
-                     const CPDF_Font* pFont,
-                     size_t nItems) const;
 
   UnownedPtr<const CPDF_Page> const m_pPage;
   std::vector<uint16_t> m_CharIndex;

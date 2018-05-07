@@ -112,6 +112,49 @@ bool IsHyphenCode(wchar_t c) {
   return c == 0x2D || c == 0xAD;
 }
 
+bool IsRectIntersect(const CFX_FloatRect& rect1, const CFX_FloatRect& rect2) {
+  CFX_FloatRect rect = rect1;
+  rect.Intersect(rect2);
+  return !rect.IsEmpty();
+}
+
+bool IsRightToLeft(const CPDF_TextObject& text_obj, const CPDF_Font& font) {
+  const size_t nItems = text_obj.CountItems();
+  WideString str;
+  str.Reserve(nItems);
+  for (size_t i = 0; i < nItems; ++i) {
+    CPDF_TextObjectItem item;
+    text_obj.GetItemInfo(i, &item);
+    if (item.m_CharCode == static_cast<uint32_t>(-1))
+      continue;
+    WideString wstrItem = font.UnicodeFromCharCode(item.m_CharCode);
+    wchar_t wChar = !wstrItem.IsEmpty() ? wstrItem[0] : 0;
+    if (wChar == 0)
+      wChar = item.m_CharCode;
+    if (wChar)
+      str += wChar;
+  }
+  return CFX_BidiString(str).OverallDirection() == CFX_BidiChar::RIGHT;
+}
+
+uint32_t GetCharWidth(uint32_t charCode, CPDF_Font* pFont) {
+  if (charCode == CPDF_Font::kInvalidCharCode)
+    return 0;
+
+  uint32_t w = pFont->GetCharWidthF(charCode);
+  if (w > 0)
+    return w;
+
+  ByteString str;
+  pFont->AppendChar(&str, charCode);
+  w = pFont->GetStringWidth(str.AsStringView());
+  if (w > 0)
+    return w;
+
+  ASSERT(pFont->GetCharBBox(charCode).Width() >= 0);
+  return pFont->GetCharBBox(charCode).Width();
+}
+
 }  // namespace
 
 PDFTEXT_Obj::PDFTEXT_Obj() {}
@@ -588,25 +631,6 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
   }
 }
 
-uint32_t CPDF_TextPage::GetCharWidth(uint32_t charCode,
-                                     CPDF_Font* pFont) const {
-  if (charCode == CPDF_Font::kInvalidCharCode)
-    return 0;
-
-  uint32_t w = pFont->GetCharWidthF(charCode);
-  if (w > 0)
-    return w;
-
-  ByteString str;
-  pFont->AppendChar(&str, charCode);
-  w = pFont->GetStringWidth(str.AsStringView());
-  if (w > 0)
-    return w;
-
-  ASSERT(pFont->GetCharBBox(charCode).Width() >= 0);
-  return pFont->GetCharBBox(charCode).Width();
-}
-
 void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
                                              const PAGECHAR_INFO& info) {
   PAGECHAR_INFO info2 = info;
@@ -903,25 +927,6 @@ void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
     std::swap(pTempBuffer[i], pTempBuffer[j]);
 }
 
-bool CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
-                                  const CPDF_Font* pFont,
-                                  size_t nItems) const {
-  WideString str;
-  for (size_t i = 0; i < nItems; ++i) {
-    CPDF_TextObjectItem item;
-    pTextObj->GetItemInfo(i, &item);
-    if (item.m_CharCode == static_cast<uint32_t>(-1))
-      continue;
-    WideString wstrItem = pFont->UnicodeFromCharCode(item.m_CharCode);
-    wchar_t wChar = !wstrItem.IsEmpty() ? wstrItem[0] : 0;
-    if (wChar == 0)
-      wChar = item.m_CharCode;
-    if (wChar)
-      str += wChar;
-  }
-  return CFX_BidiString(str).OverallDirection() == CFX_BidiChar::RIGHT;
-}
-
 void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj.Get();
   if (fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
@@ -1003,10 +1008,9 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   }
   m_pPreTextObj = pTextObj;
   m_perMatrix = formMatrix;
-  size_t nItems = pTextObj->CountItems();
   float baseSpace = CalculateBaseSpace(pTextObj, matrix);
 
-  const bool bR2L = IsRightToLeft(pTextObj, pFont, nItems);
+  const bool bR2L = IsRightToLeft(*pTextObj, *pFont);
   const bool bIsBidiAndMirrorInverse =
       bR2L && (matrix.a * matrix.d - matrix.b * matrix.c) < 0;
   int32_t iBufStartAppend = m_TempTextBuf.GetLength();
@@ -1014,6 +1018,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       pdfium::CollectionSize<int32_t>(m_TempCharList);
 
   float spacing = 0;
+  const size_t nItems = pTextObj->CountItems();
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObjectItem item;
     PAGECHAR_INFO charinfo;
@@ -1458,11 +1463,4 @@ Optional<PAGECHAR_INFO> CPDF_TextPage::GenerateCharInfo(wchar_t unicode) {
   info.m_CharBox = CFX_FloatRect(info.m_Origin.x, info.m_Origin.y,
                                  info.m_Origin.x, info.m_Origin.y);
   return info;
-}
-
-bool CPDF_TextPage::IsRectIntersect(const CFX_FloatRect& rect1,
-                                    const CFX_FloatRect& rect2) {
-  CFX_FloatRect rect = rect1;
-  rect.Intersect(rect2);
-  return !rect.IsEmpty();
 }
