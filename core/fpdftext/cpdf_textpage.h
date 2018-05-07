@@ -49,19 +49,14 @@ class FPDF_CHAR_INFO {
   FPDF_CHAR_INFO();
   ~FPDF_CHAR_INFO();
 
-  wchar_t m_Unicode;
-  wchar_t m_Charcode;
-  int32_t m_Flag;
-  float m_FontSize;
+  wchar_t m_Unicode = 0;
+  wchar_t m_Charcode = 0;
+  int32_t m_Flag = 0;
+  float m_FontSize = 0;
   CFX_PointF m_Origin;
   CFX_FloatRect m_CharBox;
   UnownedPtr<CPDF_TextObject> m_pTextObj;
   CFX_Matrix m_Matrix;
-};
-
-struct FPDF_SEGMENT {
-  int m_Start;
-  int m_nCount;
 };
 
 class PAGECHAR_INFO {
@@ -70,10 +65,10 @@ class PAGECHAR_INFO {
   PAGECHAR_INFO(const PAGECHAR_INFO&);
   ~PAGECHAR_INFO();
 
-  int m_Index;
-  int m_CharCode;
-  wchar_t m_Unicode;
-  int32_t m_Flag;
+  int m_Index = 0;
+  int m_CharCode = 0;
+  wchar_t m_Unicode = 0;
+  int32_t m_Flag = 0;
   CFX_PointF m_Origin;
   CFX_FloatRect m_CharBox;
   UnownedPtr<CPDF_TextObject> m_pTextObj;
@@ -94,7 +89,6 @@ class CPDF_TextPage {
   CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags);
   ~CPDF_TextPage();
 
-  // IPDF_TextPage:
   void ParseTextPage();
   bool IsParsed() const { return m_bIsParsed; }
   int CharIndexFromTextIndex(int TextIndex) const;
@@ -106,7 +100,7 @@ class CPDF_TextPage {
   WideString GetTextByRect(const CFX_FloatRect& rect) const;
 
   // Returns string with the text from |m_TextBuf| that are covered by the input
-  // range. |start| and |count| are in terms of the m_CharIndex, so the range
+  // range. |start| and |count| are in terms of the |m_CharIndex|, so the range
   // will be converted into appropriate indices.
   WideString GetPageText(int start, int count) const;
   WideString GetAllPageText() const { return GetPageText(0, CountChars()); }
@@ -176,11 +170,11 @@ class CPDF_TextPage {
   const FPDFText_Direction m_parserflag;
   UnownedPtr<CPDF_TextObject> m_pPreTextObj;
   CFX_Matrix m_perMatrix;
-  bool m_bIsParsed;
+  bool m_bIsParsed = false;
   CFX_Matrix m_DisplayMatrix;
   std::vector<CFX_FloatRect> m_SelRects;
   std::vector<PDFTEXT_Obj> m_LineObj;
-  TextOrientation m_TextlineDir;
+  TextOrientation m_TextlineDir = TextOrientation::Unknown;
   CFX_FloatRect m_CurlineRect;
 };
 

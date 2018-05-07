@@ -120,28 +120,18 @@ PDFTEXT_Obj::PDFTEXT_Obj(const PDFTEXT_Obj& that) = default;
 
 PDFTEXT_Obj::~PDFTEXT_Obj() {}
 
-FPDF_CHAR_INFO::FPDF_CHAR_INFO()
-    : m_Unicode(0),
-      m_Charcode(0),
-      m_Flag(0),
-      m_FontSize(0),
-      m_pTextObj(nullptr) {}
+FPDF_CHAR_INFO::FPDF_CHAR_INFO() {}
 
 FPDF_CHAR_INFO::~FPDF_CHAR_INFO() {}
 
-PAGECHAR_INFO::PAGECHAR_INFO()
-    : m_Index(0), m_CharCode(0), m_Unicode(0), m_Flag(0), m_pTextObj(nullptr) {}
+PAGECHAR_INFO::PAGECHAR_INFO() {}
 
 PAGECHAR_INFO::PAGECHAR_INFO(const PAGECHAR_INFO&) = default;
 
 PAGECHAR_INFO::~PAGECHAR_INFO() {}
 
 CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags)
-    : m_pPage(pPage),
-      m_parserflag(flags),
-      m_pPreTextObj(nullptr),
-      m_bIsParsed(false),
-      m_TextlineDir(TextOrientation::Unknown) {
+    : m_pPage(pPage), m_parserflag(flags) {
   m_TextBuf.EstimateSize(0, 10240);
   const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
                      static_cast<int>(pPage->GetPageHeight()));
@@ -1446,9 +1436,8 @@ Optional<PAGECHAR_INFO> CPDF_TextPage::GenerateCharInfo(wchar_t unicode) {
 
   PAGECHAR_INFO info;
   info.m_Index = m_TextBuf.GetLength();
-  info.m_Unicode = unicode;
-  info.m_pTextObj = nullptr;
   info.m_CharCode = CPDF_Font::kInvalidCharCode;
+  info.m_Unicode = unicode;
   info.m_Flag = FPDFTEXT_CHAR_GENERATED;
 
   int preWidth = 0;
