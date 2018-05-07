@@ -52,7 +52,7 @@ bool GetColor(const CPDF_Color* pColor, float* rgb) {
 
 CPDF_PageContentGenerator::CPDF_PageContentGenerator(
     CPDF_PageObjectHolder* pObjHolder)
-    : m_pObjHolder(pObjHolder), m_pDocument(pObjHolder->m_pDocument.Get()) {
+    : m_pObjHolder(pObjHolder), m_pDocument(pObjHolder->GetDocument()) {
   for (const auto& pObj : *pObjHolder->GetPageObjectList()) {
     if (pObj)
       m_pageObjects.emplace_back(pObj.get());

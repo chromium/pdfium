@@ -89,18 +89,18 @@ class CPDF_PageObjectHolder {
 
   const UnownedPtr<CPDF_Dictionary> m_pFormDict;
   UnownedPtr<CPDF_Stream> m_pFormStream;
-  UnownedPtr<CPDF_Document> m_pDocument;
   UnownedPtr<CPDF_Dictionary> m_pPageResources;
   UnownedPtr<CPDF_Dictionary> m_pResources;
   std::map<GraphicsData, ByteString> m_GraphicsMap;
   std::map<FontData, ByteString> m_FontsMap;
-  CFX_FloatRect m_BBox;
 
  protected:
   enum ParseState { CONTENT_NOT_PARSED, CONTENT_PARSING, CONTENT_PARSED };
 
   void LoadTransInfo();
 
+  UnownedPtr<CPDF_Document> m_pDocument;
+  CFX_FloatRect m_BBox;
   int m_iTransparency = 0;
   bool m_bBackgroundAlphaNeeded = false;
   std::vector<CFX_FloatRect> m_MaskBoundingBoxes;

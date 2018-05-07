@@ -211,7 +211,7 @@ CPDF_Document* CPDFSDK_PageView::GetPDFDocument() {
 #ifdef PDF_ENABLE_XFA
     return m_page->GetDocumentExtension()->GetPDFDoc();
 #else   // PDF_ENABLE_XFA
-    return m_page->m_pDocument.Get();
+    return m_page->GetDocument();
 #endif  // PDF_ENABLE_XFA
   }
   return nullptr;

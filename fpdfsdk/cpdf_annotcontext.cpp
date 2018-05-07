@@ -30,6 +30,6 @@ void CPDF_AnnotContext::SetForm(CPDF_Stream* pStream) {
   pStream->GetDict()->SetMatrixFor("Matrix", CFX_Matrix());
 
   m_pAnnotForm = pdfium::MakeUnique<CPDF_Form>(
-      m_pPage->m_pDocument.Get(), m_pPage->m_pResources.Get(), pStream);
+      m_pPage->GetDocument(), m_pPage->m_pResources.Get(), pStream);
   m_pAnnotForm->ParseContent();
 }

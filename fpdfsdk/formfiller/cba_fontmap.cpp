@@ -28,7 +28,7 @@ CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
       m_sAPType("N") {
   CPDF_Page* pPage = pAnnot->GetPDFPage();
 
-  m_pDocument = pPage->m_pDocument.Get();
+  m_pDocument = pPage->GetDocument();
   m_pAnnotDict = pAnnot->GetPDFAnnot()->GetAnnotDict();
   Initialize();
 }

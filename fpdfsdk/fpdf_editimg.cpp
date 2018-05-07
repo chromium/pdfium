@@ -305,12 +305,12 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   metadata->colorspace = FPDF_COLORSPACE_UNKNOWN;
 
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage || !pPage->m_pDocument.Get() || !pImg->GetStream())
+  if (!pPage || !pPage->GetDocument() || !pImg->GetStream())
     return true;
 
   auto pSource = pdfium::MakeRetain<CPDF_DIBSource>();
   CPDF_DIBSource::LoadState ret = pSource->StartLoadDIBSource(
-      pPage->m_pDocument.Get(), pImg->GetStream(), false, nullptr,
+      pPage->GetDocument(), pImg->GetStream(), false, nullptr,
       pPage->m_pPageResources.Get());
   if (ret == CPDF_DIBSource::LoadState::kFail)
     return true;

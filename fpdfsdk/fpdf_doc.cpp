@@ -54,7 +54,7 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
   if (!page)
     return nullptr;
 
-  CPDF_Document* pDoc = page->m_pDocument.Get();
+  CPDF_Document* pDoc = page->GetDocument();
   std::unique_ptr<CPDF_LinkList>* pHolder = pDoc->LinksContext();
   if (!pHolder->get())
     *pHolder = pdfium::MakeUnique<CPDF_LinkList>();

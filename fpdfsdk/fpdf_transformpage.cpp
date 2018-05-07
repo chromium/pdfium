@@ -126,7 +126,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pContentObj)
     return false;
 
-  CPDF_Document* pDoc = pPage->m_pDocument.Get();
+  CPDF_Document* pDoc = pPage->GetDocument();
   if (!pDoc)
     return false;
 
@@ -284,7 +284,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
         strClip << "W* n\n";
     }
   }
-  CPDF_Document* pDoc = pPage->m_pDocument.Get();
+  CPDF_Document* pDoc = pPage->GetDocument();
   if (!pDoc)
     return;
 

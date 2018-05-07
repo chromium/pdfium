@@ -47,7 +47,7 @@ bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
     return true;
 
   CPDF_Page* pPage = pWidget->GetPDFPage();
-  uint32_t dwPermissions = pPage->m_pDocument->GetUserPermissions();
+  uint32_t dwPermissions = pPage->GetDocument()->GetUserPermissions();
   return (dwPermissions & FPDFPERM_FILL_FORM) ||
          (dwPermissions & FPDFPERM_ANNOT_FORM);
 }

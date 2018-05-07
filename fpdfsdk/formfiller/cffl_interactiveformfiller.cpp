@@ -459,7 +459,7 @@ bool CFFL_InteractiveFormFiller::IsFillingAllowed(CPDFSDK_Widget* pWidget) {
     return false;
 
   CPDF_Page* pPage = pWidget->GetPDFPage();
-  uint32_t dwPermissions = pPage->m_pDocument->GetUserPermissions();
+  uint32_t dwPermissions = pPage->GetDocument()->GetUserPermissions();
   return (dwPermissions & FPDFPERM_FILL_FORM) ||
          (dwPermissions & FPDFPERM_ANNOT_FORM) ||
          (dwPermissions & FPDFPERM_MODIFY);

@@ -184,7 +184,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
       pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, rect);
 #else   // PDF_ENABLE_XFA
     options.SetOCContext(pdfium::MakeRetain<CPDF_OCContext>(
-        pPage->m_pDocument.Get(), CPDF_OCContext::View));
+        pPage->GetDocument(), CPDF_OCContext::View));
     if (CPDFSDK_PageView* pPageView =
             FormHandleToPageView(hHandle, FPDFPageFromUnderlying(pPage)))
       pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
@@ -207,7 +207,7 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     return -1;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (pPage) {
-    CPDF_InterForm interform(pPage->m_pDocument.Get());
+    CPDF_InterForm interform(pPage->GetDocument());
     CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
         pPage,
         CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
@@ -269,7 +269,7 @@ FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return -1;
-  CPDF_InterForm interform(pPage->m_pDocument.Get());
+  CPDF_InterForm interform(pPage->GetDocument());
   int z_order = -1;
   (void)interform.GetControlAtPoint(
       pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),

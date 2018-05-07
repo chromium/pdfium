@@ -221,7 +221,7 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
     return nullptr;
 
   auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(
-      pPage->m_pDocument->GetByteStringPool());
+      pPage->GetDocument()->GetByteStringPool());
   pDict->SetNewFor<CPDF_Name>("Type", "Annot");
   pDict->SetNewFor<CPDF_Name>("Subtype",
                               CPDF_Annot::AnnotSubtypeToString(
@@ -380,7 +380,7 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
   CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(pAnnot->GetAnnotDict(),
                                             CPDF_Annot::AppearanceMode::Normal);
   if (!pStream) {
-    CPVT_GenerateAP::GenerateEmptyAP(pPage->m_pDocument.Get(), pAnnotDict);
+    CPVT_GenerateAP::GenerateEmptyAP(pPage->GetDocument(), pAnnotDict);
     pStream =
         FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
     if (!pStream)
@@ -873,7 +873,7 @@ FPDFAnnot_GetFormFieldFlags(FPDF_PAGE page, FPDF_ANNOTATION annot) {
   if (!pAnnotDict)
     return FPDF_FORMFLAG_NONE;
 
-  CPDF_InterForm interform(pPage->m_pDocument.Get());
+  CPDF_InterForm interform(pPage->GetDocument());
   CPDF_FormField* pFormField = interform.GetFieldByDict(pAnnotDict);
   return pFormField ? pFormField->GetFieldFlags() : FPDF_FORMFLAG_NONE;
 }
@@ -887,7 +887,7 @@ FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (!hHandle || !pPage)
     return nullptr;
 
-  CPDF_InterForm interform(pPage->m_pDocument.Get());
+  CPDF_InterForm interform(pPage->GetDocument());
   int annot_index = -1;
   CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
       pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
