@@ -65,7 +65,7 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   void SetRenderContext(std::unique_ptr<CPDF_PageRenderContext> pContext);
 
   CPDF_Document* GetPDFDocument() const { return m_pPDFDocument.Get(); }
-  View* GetView() const { return m_pView; }
+  View* GetView() const { return m_pView.Get(); }
   void SetView(View* pView) { m_pView = pView; }
   Extension* GetPageExtension() const { return m_pPageExtension.Get(); }
   void SetPageExtension(Extension* pExt) { m_pPageExtension = pExt; }
@@ -78,11 +78,11 @@ class CPDF_Page : public CPDF_PageObjectHolder {
 
   CFX_SizeF m_PageSize;
   CFX_Matrix m_PageMatrix;
-  View* m_pView = nullptr;
-  UnownedPtr<Extension> m_pPageExtension;
   UnownedPtr<CPDF_Document> m_pPDFDocument;
+  UnownedPtr<Extension> m_pPageExtension;
   std::unique_ptr<CPDF_PageRenderCache> m_pPageRender;
   std::unique_ptr<CPDF_PageRenderContext> m_pRenderContext;
+  UnownedPtr<View> m_pView;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGE_H_
