@@ -95,16 +95,16 @@ class CPDF_PageObjectHolder {
   std::map<GraphicsData, ByteString> m_GraphicsMap;
   std::map<FontData, ByteString> m_FontsMap;
   CFX_FloatRect m_BBox;
-  int m_iTransparency;
 
  protected:
   enum ParseState { CONTENT_NOT_PARSED, CONTENT_PARSING, CONTENT_PARSED };
 
   void LoadTransInfo();
 
-  bool m_bBackgroundAlphaNeeded;
+  int m_iTransparency = 0;
+  bool m_bBackgroundAlphaNeeded = false;
   std::vector<CFX_FloatRect> m_MaskBoundingBoxes;
-  ParseState m_ParseState;
+  ParseState m_ParseState = CONTENT_NOT_PARSED;
   std::unique_ptr<CPDF_ContentParser> m_pParser;
   CPDF_PageObjectList m_PageObjectList;
   CFX_Matrix m_LastCTM;

@@ -384,7 +384,7 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (pPageObj->IsForm()) {
     const CPDF_Form* pForm = pPageObj->AsForm()->form();
     if (pForm) {
-      int trans = pForm->m_iTransparency;
+      int trans = pForm->GetTransparency();
       if ((trans & PDFTRANS_ISOLATED) || (trans & PDFTRANS_GROUP))
         return true;
     }
