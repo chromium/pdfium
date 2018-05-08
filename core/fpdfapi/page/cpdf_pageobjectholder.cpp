@@ -83,9 +83,6 @@ void CPDF_PageObjectHolder::LoadTransInfo() {
   if (pGroup->GetIntegerFor("I")) {
     m_iTransparency |= PDFTRANS_ISOLATED;
   }
-  if (pGroup->GetIntegerFor("K")) {
-    m_iTransparency |= PDFTRANS_KNOCKOUT;
-  }
 }
 
 size_t CPDF_PageObjectHolder::GetPageObjectCount() const {

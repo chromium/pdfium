@@ -25,7 +25,6 @@ class PauseIndicatorIface;
 
 #define PDFTRANS_GROUP 0x0100
 #define PDFTRANS_ISOLATED 0x0200
-#define PDFTRANS_KNOCKOUT 0x0400
 
 // These structs are used to keep track of resources that have already been
 // generated in the page object holder.
