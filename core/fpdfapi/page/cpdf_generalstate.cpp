@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_generalstate.h"
 
+#include "constants/transparency.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
@@ -78,42 +79,43 @@ CPDF_GeneralState::~CPDF_GeneralState() {}
 void CPDF_GeneralState::SetRenderIntent(const ByteString& ri) {
   m_Ref.GetPrivateCopy()->m_RenderIntent = RI_StringToId(ri);
 }
+
 ByteString CPDF_GeneralState::GetBlendMode() const {
   switch (GetBlendType()) {
     case FXDIB_BLEND_NORMAL:
-      return ByteString("Normal");
+      return ByteString(pdfium::transparency::kNormal);
     case FXDIB_BLEND_MULTIPLY:
-      return ByteString("Multiply");
+      return ByteString(pdfium::transparency::kMultiply);
     case FXDIB_BLEND_SCREEN:
-      return ByteString("Screen");
+      return ByteString(pdfium::transparency::kScreen);
     case FXDIB_BLEND_OVERLAY:
-      return ByteString("Overlay");
+      return ByteString(pdfium::transparency::kOverlay);
     case FXDIB_BLEND_DARKEN:
-      return ByteString("Darken");
+      return ByteString(pdfium::transparency::kDarken);
     case FXDIB_BLEND_LIGHTEN:
-      return ByteString("Lighten");
+      return ByteString(pdfium::transparency::kLighten);
     case FXDIB_BLEND_COLORDODGE:
-      return ByteString("ColorDodge");
+      return ByteString(pdfium::transparency::kColorDodge);
     case FXDIB_BLEND_COLORBURN:
-      return ByteString("ColorBurn");
+      return ByteString(pdfium::transparency::kColorBurn);
     case FXDIB_BLEND_HARDLIGHT:
-      return ByteString("HardLight");
+      return ByteString(pdfium::transparency::kHardLight);
     case FXDIB_BLEND_SOFTLIGHT:
-      return ByteString("SoftLight");
+      return ByteString(pdfium::transparency::kSoftLight);
     case FXDIB_BLEND_DIFFERENCE:
-      return ByteString("Difference");
+      return ByteString(pdfium::transparency::kDifference);
     case FXDIB_BLEND_EXCLUSION:
-      return ByteString("Exclusion");
+      return ByteString(pdfium::transparency::kExclusion);
     case FXDIB_BLEND_HUE:
-      return ByteString("Hue");
+      return ByteString(pdfium::transparency::kHue);
     case FXDIB_BLEND_SATURATION:
-      return ByteString("Saturation");
+      return ByteString(pdfium::transparency::kSaturation);
     case FXDIB_BLEND_COLOR:
-      return ByteString("Color");
+      return ByteString(pdfium::transparency::kColor);
     case FXDIB_BLEND_LUMINOSITY:
-      return ByteString("Luminosity");
+      return ByteString(pdfium::transparency::kLuminosity);
   }
-  return ByteString("Normal");
+  return ByteString(pdfium::transparency::kNormal);
 }
 
 int CPDF_GeneralState::GetBlendType() const {
@@ -258,7 +260,7 @@ CFX_Matrix* CPDF_GeneralState::GetMutableMatrix() {
 }
 
 CPDF_GeneralState::StateData::StateData()
-    : m_BlendMode("Normal"),
+    : m_BlendMode(pdfium::transparency::kNormal),
       m_BlendType(0),
       m_pSoftMask(nullptr),
       m_StrokeAlpha(1.0),
