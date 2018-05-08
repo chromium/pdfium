@@ -362,24 +362,23 @@ bool CXFA_FMForExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   WideString tmpName = IdentifierToName(m_wsVariant);
   js << L"var " << tmpName << L" = null;\n";
 
-  CFX_WideTextBuf assign_txt;
-  if (!m_pAssignment->ToJavaScript(assign_txt, ReturnType::kInfered))
+  js << L"for (" << tmpName << L" = pfm_rt.get_val(";
+  if (!m_pAssignment->ToJavaScript(js, ReturnType::kInfered))
     return false;
+  js << L"); ";
 
-  CFX_WideTextBuf accessor_txt;
-  if (!m_pAccessor->ToJavaScript(accessor_txt, ReturnType::kInfered))
-    return false;
-
-  js << L"for (" << tmpName << L" = pfm_rt.get_val(" << assign_txt << L"); ";
   js << tmpName << (m_bDirection ? kLessEqual : kGreaterEqual);
-  js << L"pfm_rt.get_val(" << accessor_txt << L"); ";
+  js << L"pfm_rt.get_val(";
+  if (!m_pAccessor->ToJavaScript(js, ReturnType::kInfered))
+    return false;
+  js << L"); ";
+
   js << tmpName << (m_bDirection ? kPlusEqual : kMinusEqual);
   if (m_pStep) {
-    CFX_WideTextBuf step_txt;
-    if (!m_pStep->ToJavaScript(step_txt, ReturnType::kInfered))
+    js << L"pfm_rt.get_val(";
+    if (!m_pStep->ToJavaScript(js, ReturnType::kInfered))
       return false;
-
-    js << L"pfm_rt.get_val(" << step_txt << L")";
+    js << L")";
   } else {
     js << L"1";
   }

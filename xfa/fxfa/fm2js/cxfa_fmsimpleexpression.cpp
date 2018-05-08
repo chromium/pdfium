@@ -239,15 +239,13 @@ bool CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
+  js << L"pfm_rt." << m_OpName << L"(";
+  if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
     return false;
-
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
+  js << L", ";
+  if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
     return false;
-
-  js << L"pfm_rt." << m_OpName << L"(" << exp1_txt << L", " << exp2_txt << L")";
+  js << L")";
   return !CXFA_IsTooBig(js);
 }
 
@@ -373,11 +371,10 @@ bool CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  CFX_WideTextBuf exp_txt;
-  if (!m_pExp->ToJavaScript(exp_txt, ReturnType::kInfered))
+  js << L"pfm_rt." << m_OpName.c_str() << L"(";
+  if (!m_pExp->ToJavaScript(js, ReturnType::kInfered))
     return false;
-
-  js << L"pfm_rt." << m_OpName.c_str() << L"(" << exp_txt << L")";
+  js << L")";
   return !CXFA_IsTooBig(js);
 }
 
@@ -451,28 +448,28 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
     uint32_t methodPara = IsMethodWithObjParam(funcName.MakeString());
     if (methodPara > 0) {
       for (size_t i = 0; i < m_Arguments.size(); ++i) {
-        CFX_WideTextBuf expr_txt;
-        if (!m_Arguments[i]->ToJavaScript(expr_txt, ReturnType::kInfered))
-          return false;
-
         // Currently none of our expressions use objects for a parameter over
         // the 6th. Make sure we don't overflow the shift when doing this
         // check. If we ever need more the 32 object params we can revisit.
+        js << L"pfm_rt.get_";
         if (i < 32 && (methodPara & (0x01 << i)) > 0)
-          js << L"pfm_rt.get_jsobj(" << expr_txt << L")";
+          js << L"jsobj";
         else
-          js << L"pfm_rt.get_val(" << expr_txt << L")";
+          js << L"val";
 
+        js << L"(";
+        if (!m_Arguments[i]->ToJavaScript(js, ReturnType::kInfered))
+          return false;
+        js << L")";
         if (i + 1 < m_Arguments.size())
           js << L", ";
       }
     } else {
       for (const auto& expr : m_Arguments) {
-        CFX_WideTextBuf expr_txt;
-        if (!expr->ToJavaScript(expr_txt, ReturnType::kInfered))
+        js << L"pfm_rt.get_val(";
+        if (!expr->ToJavaScript(js, ReturnType::kInfered))
           return false;
-
-        js << L"pfm_rt.get_val(" << expr_txt << L")";
+        js << L")";
         if (expr != m_Arguments.back())
           js << L", ";
       }
@@ -505,11 +502,10 @@ bool CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& js, ReturnType type) {
   if (isExistsFunc) {
     js << L"\n(\nfunction ()\n{\ntry\n{\n";
     if (!m_Arguments.empty()) {
-      CFX_WideTextBuf expr_txt;
-      if (!m_Arguments[0]->ToJavaScript(expr_txt, ReturnType::kInfered))
+      js << L"return ";
+      if (!m_Arguments[0]->ToJavaScript(js, ReturnType::kInfered))
         return false;
-
-      js << L"return " << expr_txt << L";\n}\n";
+      js << L";\n}\n";
     } else {
       js << L"return 0;\n}\n";
     }
@@ -645,19 +641,19 @@ bool CXFA_FMDotDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
+  js << L"pfm_rt.dotdot_acc(";
+  if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
     return false;
+  js << L", " << L"\"";
+  if (m_pExp1->GetOperatorToken() == TOKidentifier) {
+    if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
+      return false;
+  }
 
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
+  js << L"\", \"" << m_wsIdentifier << L"\", ";
+  if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
     return false;
-
-  js << L"pfm_rt.dotdot_acc(" << exp1_txt << L", " << L"\"";
-  if (m_pExp1->GetOperatorToken() == TOKidentifier)
-    js << exp1_txt;
-
-  js << L"\", \"" << m_wsIdentifier << L"\", " << exp2_txt << L")";
+  js << L")";
   return !CXFA_IsTooBig(js);
 }
 
@@ -676,17 +672,16 @@ bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf& js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  CFX_WideTextBuf exp1_txt;
-  if (!m_pExp1->ToJavaScript(exp1_txt, ReturnType::kInfered))
-    return false;
-
   CFX_WideTextBuf exp2_txt;
   if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
     return false;
 
   js << L"(\nfunction ()\n{\n";
   js << L"var method_return_value = null;\n";
-  js << L"var accessor_object = " << exp1_txt << L";\n";
+  js << L"var accessor_object = ";
+  if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
+    return false;
+  js << L";\n";
   js << L"if (pfm_rt.is_ary(accessor_object))\n{\n";
   js << L"for(var index = accessor_object.length - 1; index > 1; "
         L"index--)\n{\n";

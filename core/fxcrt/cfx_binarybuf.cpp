@@ -12,7 +12,7 @@
 CFX_BinaryBuf::CFX_BinaryBuf()
     : m_AllocStep(0), m_AllocSize(0), m_DataSize(0) {}
 
-CFX_BinaryBuf::~CFX_BinaryBuf() {}
+CFX_BinaryBuf::~CFX_BinaryBuf() = default;
 
 void CFX_BinaryBuf::Delete(size_t start_index, size_t count) {
   if (!m_pBuffer || count > m_DataSize || start_index > m_DataSize - count)
