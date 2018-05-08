@@ -10,6 +10,8 @@
 #ifndef PUBLIC_FPDFVIEW_H_
 #define PUBLIC_FPDFVIEW_H_
 
+#include <stddef.h>
+
 #if defined(_WIN32) && !defined(__WINDOWS__)
 #include <windows.h>
 #endif
@@ -1013,6 +1015,28 @@ FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document);
 //          The print page range to be used for printing.
 FPDF_EXPORT FPDF_PAGERANGE FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document);
+
+// Function: FPDF_VIEWERREF_GetPrintPageRangeCount
+//          Returns the number of elements in a FPDF_PAGERANGE.
+//          Experimental API.
+// Parameters:
+//          pagerange   -   Handle to the page range.
+// Return value:
+//          The number of elements in the page range. Returns 0 on error.
+FPDF_EXPORT size_t FPDF_CALLCONV
+FPDF_VIEWERREF_GetPrintPageRangeCount(FPDF_PAGERANGE pagerange);
+
+// Function: FPDF_VIEWERREF_GetPrintPageRangeElement
+//          Returns an element from a FPDF_PAGERANGE.
+//          Experimental API.
+// Parameters:
+//          pagerange   -   Handle to the page range.
+//          index       -   Index of the element.
+// Return value:
+//          The value of the element in the page range at a given index.
+//          Returns -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_VIEWERREF_GetPrintPageRangeElement(FPDF_PAGERANGE pagerange, size_t index);
 
 // Function: FPDF_VIEWERREF_GetDuplex
 //          Returns the paper handling option to be used when printing from

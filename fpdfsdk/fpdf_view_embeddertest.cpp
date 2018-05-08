@@ -136,6 +136,9 @@ TEST_F(FPDFViewEmbeddertest, ViewerRefDummy) {
 
   FPDF_PAGERANGE page_range = FPDF_VIEWERREF_GetPrintPageRange(document());
   EXPECT_FALSE(page_range);
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetPrintPageRangeCount(page_range));
+  EXPECT_EQ(-1, FPDF_VIEWERREF_GetPrintPageRangeElement(page_range, 0));
+  EXPECT_EQ(-1, FPDF_VIEWERREF_GetPrintPageRangeElement(page_range, 1));
 }
 
 TEST_F(FPDFViewEmbeddertest, ViewerRef) {
@@ -178,6 +181,12 @@ TEST_F(FPDFViewEmbeddertest, ViewerRef) {
 
   FPDF_PAGERANGE page_range = FPDF_VIEWERREF_GetPrintPageRange(document());
   EXPECT_TRUE(page_range);
+  EXPECT_EQ(4U, FPDF_VIEWERREF_GetPrintPageRangeCount(page_range));
+  EXPECT_EQ(0, FPDF_VIEWERREF_GetPrintPageRangeElement(page_range, 0));
+  EXPECT_EQ(2, FPDF_VIEWERREF_GetPrintPageRangeElement(page_range, 1));
+  EXPECT_EQ(4, FPDF_VIEWERREF_GetPrintPageRangeElement(page_range, 2));
+  EXPECT_EQ(4, FPDF_VIEWERREF_GetPrintPageRangeElement(page_range, 3));
+  EXPECT_EQ(-1, FPDF_VIEWERREF_GetPrintPageRangeElement(page_range, 4));
 }
 
 TEST_F(FPDFViewEmbeddertest, NamedDests) {

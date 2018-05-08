@@ -1003,6 +1003,21 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
   return FPDFPageRangeFromCPDFArray(viewRef.PrintPageRange());
 }
 
+FPDF_EXPORT size_t FPDF_CALLCONV
+FPDF_VIEWERREF_GetPrintPageRangeCount(FPDF_PAGERANGE pagerange) {
+  const CPDF_Array* pArray = CPDFArrayFromFPDFPageRange(pagerange);
+  return pArray ? pArray->GetCount() : 0;
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_VIEWERREF_GetPrintPageRangeElement(FPDF_PAGERANGE pagerange,
+                                        size_t index) {
+  const CPDF_Array* pArray = CPDFArrayFromFPDFPageRange(pagerange);
+  if (!pArray || index >= pArray->GetCount())
+    return -1;
+  return pArray->GetIntegerAt(index);
+}
+
 FPDF_EXPORT FPDF_DUPLEXTYPE FPDF_CALLCONV
 FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
