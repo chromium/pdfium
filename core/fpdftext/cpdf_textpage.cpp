@@ -155,6 +155,26 @@ uint32_t GetCharWidth(uint32_t charCode, CPDF_Font* pFont) {
   return pFont->GetCharBBox(charCode).Width();
 }
 
+bool GenerateSpace(const CFX_PointF& pos,
+                   float last_pos,
+                   float this_width,
+                   float last_width,
+                   float threshold) {
+  if (fabs(last_pos + last_width - pos.x) > threshold) {
+    if ((pos.x - last_pos - last_width) > threshold ||
+        (last_pos - pos.x - last_width) > threshold) {
+      return true;
+    }
+    if (pos.x < 0 && (last_pos - pos.x - last_width) > threshold)
+      return true;
+    if ((pos.x - last_pos - last_width) > this_width ||
+        (pos.x - last_pos - this_width) > last_width) {
+      return true;
+    }
+  }
+  return false;
+}
+
 }  // namespace
 
 PDFTEXT_Obj::PDFTEXT_Obj() {}
@@ -311,22 +331,19 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
       rect.left = info_curchar.m_CharBox.left;
       rect.right = info_curchar.m_CharBox.right;
       if (pCurObj->GetFont()->GetTypeDescent()) {
-        rect.bottom = origin.y +
-                      pCurObj->GetFont()->GetTypeDescent() *
-                          pCurObj->GetFontSize() / 1000;
-
+        const float fFontSize = pCurObj->GetFontSize() / 1000;
+        rect.bottom =
+            origin.y + pCurObj->GetFont()->GetTypeDescent() * fFontSize;
         rect.bottom = matrix.Transform(CFX_PointF(origin.x, rect.bottom)).y;
       } else {
         rect.bottom = info_curchar.m_CharBox.bottom;
       }
       if (pCurObj->GetFont()->GetTypeAscent()) {
-        rect.top =
-            origin.y +
-            pCurObj->GetFont()->GetTypeAscent() * pCurObj->GetFontSize() / 1000;
+        const float fFontSize = pCurObj->GetFontSize() / 1000;
+        rect.top = origin.y + pCurObj->GetFont()->GetTypeAscent() * fFontSize;
         float xPosTemp =
-            origin.x +
-            GetCharWidth(info_curchar.m_CharCode, pCurObj->GetFont()) *
-                pCurObj->GetFontSize() / 1000;
+            GetCharWidth(info_curchar.m_CharCode, pCurObj->GetFont());
+        xPosTemp = xPosTemp * fFontSize + origin.x;
         rect.top = matrix.Transform(CFX_PointF(xPosTemp, rect.top)).y;
       } else {
         rect.top = info_curchar.m_CharBox.top;
@@ -1081,24 +1098,18 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     }
     charinfo.m_Index = -1;
     charinfo.m_CharCode = item.m_CharCode;
-    if (bNoUnicode)
-      charinfo.m_Flag = FPDFTEXT_CHAR_UNUNICODE;
-    else
-      charinfo.m_Flag = FPDFTEXT_CHAR_NORMAL;
-
+    charinfo.m_Flag =
+        bNoUnicode ? FPDFTEXT_CHAR_UNUNICODE : FPDFTEXT_CHAR_NORMAL;
     charinfo.m_pTextObj = pTextObj;
     charinfo.m_Origin = matrix.Transform(item.m_Origin);
 
-    FX_RECT rect =
+    const FX_RECT rect =
         charinfo.m_pTextObj->GetFont()->GetCharBBox(charinfo.m_CharCode);
-    charinfo.m_CharBox.top =
-        rect.top * pTextObj->GetFontSize() / 1000 + item.m_Origin.y;
-    charinfo.m_CharBox.left =
-        rect.left * pTextObj->GetFontSize() / 1000 + item.m_Origin.x;
-    charinfo.m_CharBox.right =
-        rect.right * pTextObj->GetFontSize() / 1000 + item.m_Origin.x;
-    charinfo.m_CharBox.bottom =
-        rect.bottom * pTextObj->GetFontSize() / 1000 + item.m_Origin.y;
+    const float fFontSize = pTextObj->GetFontSize() / 1000;
+    charinfo.m_CharBox.top = rect.top * fFontSize + item.m_Origin.y;
+    charinfo.m_CharBox.left = rect.left * fFontSize + item.m_Origin.x;
+    charinfo.m_CharBox.right = rect.right * fFontSize + item.m_Origin.x;
+    charinfo.m_CharBox.bottom = rect.bottom * fFontSize + item.m_Origin.y;
     if (fabsf(charinfo.m_CharBox.top - charinfo.m_CharBox.bottom) < 0.01f) {
       charinfo.m_CharBox.top =
           charinfo.m_CharBox.bottom + pTextObj->GetFontSize();
@@ -1345,22 +1356,11 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
       (threshold < 1.39001 && threshold > 1.38999)) {
     threshold *= 1.5;
   }
-  if (fabs(last_pos + last_width - pos.x) > threshold && curChar != L' ' &&
-      preChar != L' ') {
-    if (curChar != L' ' && preChar != L' ') {
-      if ((pos.x - last_pos - last_width) > threshold ||
-          (last_pos - pos.x - last_width) > threshold) {
-        return GenerateCharacter::Space;
-      }
-      if (pos.x < 0 && (last_pos - pos.x - last_width) > threshold)
-        return GenerateCharacter::Space;
-      if ((pos.x - last_pos - last_width) > this_width ||
-          (pos.x - last_pos - this_width) > last_width) {
-        return GenerateCharacter::Space;
-      }
-    }
-  }
-  return GenerateCharacter::None;
+  if (curChar == L' ' || preChar == L' ')
+    return GenerateCharacter::None;
+  return GenerateSpace(pos, last_pos, this_width, last_width, threshold)
+             ? GenerateCharacter::Space
+             : GenerateCharacter::None;
 }
 
 bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
