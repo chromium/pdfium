@@ -621,11 +621,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   if (!pDict)
     return;
 
-  CPDF_Dictionary* pActionDict = pDict->GetDictFor("AA");
-  if (!pActionDict)
-    return;
-
-  CPDF_AAction aa(pActionDict);
+  CPDF_AAction aa(pDict->GetDictFor("AA"));
   auto type = static_cast<CPDF_AAction::AActionType>(aaType);
   if (aa.ActionExist(type)) {
     CPDF_Action action = aa.GetAction(type);
@@ -645,22 +641,20 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
 
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
-  if (!pPDFPage || !pFormFillEnv->GetPageView(pPage, false))
+  if (!pPDFPage)
+    return;
+
+  if (!pFormFillEnv->GetPageView(pPage, false))
     return;
 
   CPDFSDK_ActionHandler* pActionHandler = pFormFillEnv->GetActionHandler();
   CPDF_Dictionary* pPageDict = pPDFPage->GetFormDict();
-  if (!pPageDict)
-    return;
-
-  CPDF_Dictionary* pActionDict = pPageDict->GetDictFor("AA");
-  if (!pActionDict)
-    return;
-
-  CPDF_AAction aa(pActionDict);
+  CPDF_AAction aa(pPageDict->GetDictFor("AA"));
   CPDF_AAction::AActionType type = aaType == FPDFPAGE_AACTION_OPEN
                                        ? CPDF_AAction::OpenPage
                                        : CPDF_AAction::ClosePage;
-  if (aa.ActionExist(type))
-    pActionHandler->DoAction_Page(aa.GetAction(type), type, pFormFillEnv);
+  if (aa.ActionExist(type)) {
+    CPDF_Action action = aa.GetAction(type);
+    pActionHandler->DoAction_Page(action, type, pFormFillEnv);
+  }
 }

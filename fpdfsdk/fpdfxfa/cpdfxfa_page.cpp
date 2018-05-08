@@ -18,25 +18,32 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 
 CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Context* pContext, int page_index)
-    : m_pXFAPageView(nullptr), m_pContext(pContext), m_iPageIndex(page_index) {
-  CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
-  CPDF_Dictionary* pDict = nullptr;
-  if (pPDFDoc && m_pContext->GetFormType() != FormType::kXFAFull)
-    pDict = pPDFDoc->GetPageDictionary(m_iPageIndex);
-  m_pPDFPage = pdfium::MakeUnique<CPDF_Page>(pPDFDoc, pDict, true);
-  m_pPDFPage->SetPageExtension(this);
-}
+    : m_pXFAPageView(nullptr), m_pContext(pContext), m_iPageIndex(page_index) {}
 
 CPDFXFA_Page::~CPDFXFA_Page() {}
 
-bool CPDFXFA_Page::LoadPage() {
-  if (!m_pContext || m_iPageIndex < 0)
+bool CPDFXFA_Page::LoadPDFPage() {
+  if (!m_pContext)
     return false;
 
-  if (m_pContext->GetFormType() != FormType::kXFAFull) {
+  CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
+  if (!pPDFDoc)
+    return false;
+
+  CPDF_Dictionary* pDict = pPDFDoc->GetPageDictionary(m_iPageIndex);
+  if (!pDict)
+    return false;
+
+  if (!m_pPDFPage || m_pPDFPage->GetFormDict() != pDict) {
+    m_pPDFPage = pdfium::MakeUnique<CPDF_Page>(pPDFDoc, pDict, true);
     m_pPDFPage->ParseContent();
-    return true;
   }
+  return true;
+}
+
+bool CPDFXFA_Page::LoadXFAPageView() {
+  if (!m_pContext)
+    return false;
 
   CXFA_FFDoc* pXFADoc = m_pContext->GetXFADoc();
   if (!pXFADoc)
@@ -51,6 +58,31 @@ bool CPDFXFA_Page::LoadPage() {
     return false;
 
   m_pXFAPageView = pPageView;
+  return true;
+}
+
+bool CPDFXFA_Page::LoadPage() {
+  if (!m_pContext || m_iPageIndex < 0)
+    return false;
+
+  switch (m_pContext->GetFormType()) {
+    case FormType::kNone:
+    case FormType::kAcroForm:
+    case FormType::kXFAForeground:
+      return LoadPDFPage();
+    case FormType::kXFAFull:
+      return LoadXFAPageView();
+  }
+  return false;
+}
+
+bool CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
+  if (!m_pContext || m_iPageIndex < 0 || !pageDict)
+    return false;
+
+  m_pPDFPage =
+      pdfium::MakeUnique<CPDF_Page>(m_pContext->GetPDFDoc(), pageDict, true);
+  m_pPDFPage->ParseContent();
   return true;
 }
 

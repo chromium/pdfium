@@ -27,6 +27,7 @@ class CPDFXFA_Page : public CPDF_Page::Extension {
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool LoadPage();
+  bool LoadPDFPage(CPDF_Dictionary* pageDict);
 
   // CPDF_Page::Extension:
   CPDF_Document::Extension* GetDocumentExtension() const override;
@@ -56,6 +57,7 @@ class CPDFXFA_Page : public CPDF_Page::Extension {
   CPDFXFA_Page(CPDFXFA_Context* pContext, int page_index);
   ~CPDFXFA_Page() override;
 
+  bool LoadPDFPage();
   bool LoadXFAPageView();
 
  private:

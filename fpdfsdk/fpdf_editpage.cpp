@@ -186,6 +186,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
   if (pContext) {
     auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(pContext, page_index);
+    pXFAPage->LoadPDFPage(pPageDict);
     return FPDFPageFromUnderlying(pXFAPage.Leak());  // Caller takes ownership.
   }
   // Eventually, fallthru into non-XFA case once page type is consistent.
