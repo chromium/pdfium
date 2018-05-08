@@ -133,6 +133,9 @@ TEST_F(FPDFViewEmbeddertest, ViewerRefDummy) {
   char buf[100];
   EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", nullptr, 0));
   EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", buf, sizeof(buf)));
+
+  FPDF_PAGERANGE page_range = FPDF_VIEWERREF_GetPrintPageRange(document());
+  EXPECT_FALSE(page_range);
 }
 
 TEST_F(FPDFViewEmbeddertest, ViewerRef) {
@@ -172,6 +175,9 @@ TEST_F(FPDFViewEmbeddertest, ViewerRef) {
   ASSERT_EQ(8U,
             FPDF_VIEWERREF_GetName(document(), "ViewArea", buf, sizeof(buf)));
   EXPECT_STREQ("CropBox", buf);
+
+  FPDF_PAGERANGE page_range = FPDF_VIEWERREF_GetPrintPageRange(document());
+  EXPECT_TRUE(page_range);
 }
 
 TEST_F(FPDFViewEmbeddertest, NamedDests) {

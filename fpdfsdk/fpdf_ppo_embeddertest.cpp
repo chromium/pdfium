@@ -151,7 +151,7 @@ TEST_F(FPDFPPOEmbeddertest, BadCircularViewerPref) {
 }
 
 TEST_F(FPDFPPOEmbeddertest, BadRanges) {
-  EXPECT_TRUE(OpenDocument("viewer_ref.pdf"));
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
@@ -183,8 +183,13 @@ TEST_F(FPDFPPOEmbeddertest, GoodRanges) {
   EXPECT_TRUE(output_doc);
   EXPECT_TRUE(FPDF_CopyViewerPreferences(output_doc, document()));
   EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "1,1,1,1", 0));
+  EXPECT_EQ(4, FPDF_GetPageCount(output_doc));
   EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "1-1", 0));
   EXPECT_EQ(5, FPDF_GetPageCount(output_doc));
+  EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "5-5", 0));
+  EXPECT_EQ(6, FPDF_GetPageCount(output_doc));
+  EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "2-4", 0));
+  EXPECT_EQ(9, FPDF_GetPageCount(output_doc));
   FPDF_CloseDocument(output_doc);
 
   UnloadPage(page);
