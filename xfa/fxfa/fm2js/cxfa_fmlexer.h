@@ -109,6 +109,7 @@ class CXFA_FMLexer {
   ~CXFA_FMLexer();
 
   CXFA_FMToken NextToken();
+  bool IsComplete() const { return m_cursor >= m_end; }
 
  private:
   CXFA_FMToken AdvanceForNumber();

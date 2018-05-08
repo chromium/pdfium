@@ -15,12 +15,14 @@ TEST(CXFA_FMLexerTest, NullString) {
   CXFA_FMLexer lexer(null_string);
   CXFA_FMToken token = lexer.NextToken();
   EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_TRUE(lexer.IsComplete());
 }
 
 TEST(CXFA_FMLexerTest, EmptyString) {
   CXFA_FMLexer lexer(L"");
   CXFA_FMToken token = lexer.NextToken();
   EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_TRUE(lexer.IsComplete());
 }
 
 TEST(CXFA_FMLexerTest, Numbers) {
@@ -67,6 +69,7 @@ TEST(CXFA_FMLexerTest, Numbers) {
   // prior to the exponent.
   // EXPECT_EQ(L"100000000000000000", token.m_string);
   EXPECT_EQ(L"99999999999999999", token.m_string);
+  EXPECT_TRUE(lexer->IsComplete());
 }
 
 // The quotes are stripped in CXFA_FMStringExpression::ToJavaScript.
@@ -99,6 +102,7 @@ TEST(CXFA_FMLexerTest, Strings) {
   EXPECT_EQ(
       L"\"\\u0047\\u006f\\u0066\\u0069\\u0073\\u0068\\u0021\\u000d\\u000a\"",
       token.m_string);
+  EXPECT_TRUE(lexer->IsComplete());
 }
 
 // Note, 'this' is a keyword but is not matched by the lexer.
@@ -170,6 +174,7 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
     auto lexer = pdfium::MakeUnique<CXFA_FMLexer>(op[i].op);
     CXFA_FMToken token = lexer->NextToken();
     EXPECT_EQ(op[i].token, token.m_type);
+    EXPECT_TRUE(lexer->IsComplete());
   }
 }
 
@@ -213,6 +218,7 @@ TEST(CXFA_FMLexerTest, Comments) {
 
   token = lexer->NextToken();
   EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_TRUE(lexer->IsComplete());
 }
 
 TEST(CXFA_FMLexerTest, ValidIdentifiers) {
@@ -223,6 +229,7 @@ TEST(CXFA_FMLexerTest, ValidIdentifiers) {
     CXFA_FMToken token = lexer->NextToken();
     EXPECT_EQ(TOKidentifier, token.m_type);
     EXPECT_EQ(ident, token.m_string);
+    EXPECT_TRUE(lexer->IsComplete());
   }
 }
 
@@ -248,6 +255,7 @@ TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
   EXPECT_NE(TOKreserver, token.m_type);
   token = lexer->NextToken();
   EXPECT_EQ(TOKreserver, token.m_type);
+  EXPECT_FALSE(lexer->IsComplete());
 }
 
 TEST(CXFA_FMLexerTest, Whitespace) {
@@ -266,4 +274,20 @@ TEST(CXFA_FMLexerTest, Whitespace) {
 
   token = lexer->NextToken();
   EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_TRUE(lexer->IsComplete());
+}
+
+TEST(CXFA_FMLexerTest, NullData) {
+  auto lexer = pdfium::MakeUnique<CXFA_FMLexer>(
+      WideStringView(L"\x2d\x32\x00\x2d\x32", 5));
+  CXFA_FMToken token = lexer->NextToken();
+  EXPECT_EQ(TOKminus, token.m_type);
+
+  token = lexer->NextToken();
+  EXPECT_EQ(TOKnumber, token.m_type);
+  EXPECT_EQ(L"2", token.m_string);
+
+  token = lexer->NextToken();
+  EXPECT_EQ(TOKeof, token.m_type);
+  EXPECT_FALSE(lexer->IsComplete());
 }

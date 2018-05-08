@@ -21,16 +21,24 @@ constexpr unsigned int kMaxPostExpressions = 256;
 }  // namespace
 
 CXFA_FMParser::CXFA_FMParser(const WideStringView& wsFormcalc)
-    : m_error(false), m_parse_depth(0), m_max_parse_depth(kMaxParseDepth) {
-  m_lexer = pdfium::MakeUnique<CXFA_FMLexer>(wsFormcalc);
-  m_token = m_lexer->NextToken();
-}
+    : m_lexer(pdfium::MakeUnique<CXFA_FMLexer>(wsFormcalc)),
+      m_error(false),
+      m_parse_depth(0),
+      m_max_parse_depth(kMaxParseDepth) {}
 
-CXFA_FMParser::~CXFA_FMParser() {}
+CXFA_FMParser::~CXFA_FMParser() = default;
 
 std::unique_ptr<CXFA_FMAST> CXFA_FMParser::Parse() {
+  m_token = m_lexer->NextToken();
+  if (HasError())
+    return nullptr;
+
   auto expressions = ParseExpressionList();
   if (HasError())
+    return nullptr;
+
+  // We failed to parse all of the input so something has gone wrong.
+  if (!m_lexer->IsComplete())
     return nullptr;
 
   return pdfium::MakeUnique<CXFA_FMAST>(std::move(expressions));
@@ -66,6 +74,7 @@ CXFA_FMParser::ParseExpressionList() {
   AutoRestorer<unsigned long> restorer(&m_parse_depth);
   if (HasError() || !IncrementParseDepthAndCheck())
     return std::vector<std::unique_ptr<CXFA_FMExpression>>();
+
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions;
   while (!HasError()) {
     if (m_token.m_type == TOKeof || m_token.m_type == TOKendfunc ||
