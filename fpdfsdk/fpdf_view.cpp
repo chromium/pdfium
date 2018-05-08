@@ -351,7 +351,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   // Eventually, fallthrough into non-xfa case once page type made consistent.
   return nullptr;
 #else   // PDF_ENABLE_XFA
-  CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
+  CPDF_Dictionary* pDict = pDoc->GetPageDictionary(page_index);
   if (!pDict)
     return nullptr;
 
@@ -966,7 +966,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   }
 #endif  // PDF_ENABLE_XFA
 
-  CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
+  CPDF_Dictionary* pDict = pDoc->GetPageDictionary(page_index);
   if (!pDict)
     return false;
 

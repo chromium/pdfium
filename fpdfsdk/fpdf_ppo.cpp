@@ -466,7 +466,7 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
   auto pObjNumberMap = pdfium::MakeUnique<ObjectNumberMap>();
   for (size_t i = 0; i < pageNums.size(); ++i) {
     CPDF_Dictionary* pDestPageDict = dest()->CreateNewPage(curpage);
-    const CPDF_Dictionary* pSrcPageDict = src()->GetPage(pageNums[i] - 1);
+    auto* pSrcPageDict = src()->GetPageDictionary(pageNums[i] - 1);
     if (!pSrcPageDict || !pDestPageDict)
       return false;
 
@@ -614,7 +614,7 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
     // Mapping of XObject name and XObject object number of one page.
     XObjectNameNumberMap xObjNameNumberMap;
     for (size_t innerPage = outerPage; innerPage < innerPageMax; ++innerPage) {
-      CPDF_Dictionary* pSrcPageDict = src()->GetPage(pageNums[innerPage] - 1);
+      auto* pSrcPageDict = src()->GetPageDictionary(pageNums[innerPage] - 1);
       if (!pSrcPageDict)
         return false;
 

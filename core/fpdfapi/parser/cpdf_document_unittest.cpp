@@ -164,22 +164,22 @@ TEST_F(cpdf_document_test, GetPages) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
   for (int i = 0; i < kNumTestPages; i++) {
-    CPDF_Dictionary* page = document->GetPage(i);
+    CPDF_Dictionary* page = document->GetPageDictionary(i);
     ASSERT_TRUE(page);
     ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
-  CPDF_Dictionary* page = document->GetPage(kNumTestPages);
+  CPDF_Dictionary* page = document->GetPageDictionary(kNumTestPages);
   EXPECT_FALSE(page);
 }
 
 TEST_F(cpdf_document_test, GetPageWithoutObjNumTwice) {
   auto document = pdfium::MakeUnique<CPDF_TestDocumentWithPageWithoutPageNum>();
-  const CPDF_Dictionary* page = document->GetPage(2);
+  CPDF_Dictionary* page = document->GetPageDictionary(2);
   ASSERT_TRUE(page);
   ASSERT_EQ(document->inlined_page(), page);
 
-  const CPDF_Dictionary* second_call_page = document->GetPage(2);
+  CPDF_Dictionary* second_call_page = document->GetPageDictionary(2);
   EXPECT_TRUE(second_call_page);
   EXPECT_EQ(page, second_call_page);
 }
@@ -188,12 +188,12 @@ TEST_F(cpdf_document_test, GetPagesReverseOrder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
   for (int i = 6; i >= 0; i--) {
-    CPDF_Dictionary* page = document->GetPage(i);
+    CPDF_Dictionary* page = document->GetPageDictionary(i);
     ASSERT_TRUE(page);
     ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
-  CPDF_Dictionary* page = document->GetPage(kNumTestPages);
+  CPDF_Dictionary* page = document->GetPageDictionary(kNumTestPages);
   EXPECT_FALSE(page);
 }
 
@@ -201,20 +201,20 @@ TEST_F(cpdf_document_test, GetPagesInDisorder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
 
-  CPDF_Dictionary* page = document->GetPage(1);
+  CPDF_Dictionary* page = document->GetPageDictionary(1);
   ASSERT_TRUE(page);
   ASSERT_TRUE(page->KeyExist("PageNumbering"));
   EXPECT_EQ(1, page->GetIntegerFor("PageNumbering"));
 
-  page = document->GetPage(3);
+  page = document->GetPageDictionary(3);
   ASSERT_TRUE(page);
   ASSERT_TRUE(page->KeyExist("PageNumbering"));
   EXPECT_EQ(3, page->GetIntegerFor("PageNumbering"));
 
-  page = document->GetPage(kNumTestPages);
+  page = document->GetPageDictionary(kNumTestPages);
   EXPECT_FALSE(page);
 
-  page = document->GetPage(6);
+  page = document->GetPageDictionary(6);
   ASSERT_TRUE(page);
   ASSERT_TRUE(page->KeyExist("PageNumbering"));
   EXPECT_EQ(6, page->GetIntegerFor("PageNumbering"));
@@ -237,11 +237,11 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   const int test_page_num = 33;
 
   EXPECT_FALSE(document.IsPageLoaded(test_page_num));
-  EXPECT_EQ(nullptr, document.GetPage(test_page_num));
+  EXPECT_EQ(nullptr, document.GetPageDictionary(test_page_num));
 
   document.SetPageObjNum(test_page_num, obj_num);
   EXPECT_TRUE(document.IsPageLoaded(test_page_num));
-  EXPECT_EQ(page_stub, document.GetPage(test_page_num));
+  EXPECT_EQ(page_stub, document.GetPageDictionary(test_page_num));
 }
 
 TEST_F(cpdf_document_test, CountGreaterThanPageTree) {
@@ -249,19 +249,19 @@ TEST_F(cpdf_document_test, CountGreaterThanPageTree) {
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
   document->SetTreeSize(kNumTestPages + 3);
   for (int i = 0; i < kNumTestPages; i++)
-    EXPECT_TRUE(document->GetPage(i));
+    EXPECT_TRUE(document->GetPageDictionary(i));
   for (int i = kNumTestPages; i < kNumTestPages + 4; i++)
-    EXPECT_FALSE(document->GetPage(i));
-  EXPECT_TRUE(document->GetPage(kNumTestPages - 1));
+    EXPECT_FALSE(document->GetPageDictionary(i));
+  EXPECT_TRUE(document->GetPageDictionary(kNumTestPages - 1));
 }
 
 TEST_F(cpdf_document_test, PagesWithoutKids) {
   // Set up a document with Pages dict without kids, and Count = 3
   auto pDoc = pdfium::MakeUnique<CPDF_TestDocPagesWithoutKids>();
-  EXPECT_TRUE(pDoc->GetPage(0));
+  EXPECT_TRUE(pDoc->GetPageDictionary(0));
   // Test GetPage does not fetch pages out of range
   for (int i = 1; i < 5; i++)
-    EXPECT_FALSE(pDoc->GetPage(i));
+    EXPECT_FALSE(pDoc->GetPageDictionary(i));
 
-  EXPECT_TRUE(pDoc->GetPage(0));
+  EXPECT_TRUE(pDoc->GetPageDictionary(0));
 }

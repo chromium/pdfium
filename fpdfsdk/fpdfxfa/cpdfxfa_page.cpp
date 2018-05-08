@@ -22,7 +22,7 @@ CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Context* pContext, int page_index)
   CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
   CPDF_Dictionary* pDict = nullptr;
   if (pPDFDoc && m_pContext->GetFormType() != FormType::kXFAFull)
-    pDict = pPDFDoc->GetPage(m_iPageIndex);
+    pDict = pPDFDoc->GetPageDictionary(m_iPageIndex);
   m_pPDFPage = pdfium::MakeUnique<CPDF_Page>(pPDFDoc, pDict, true);
   m_pPDFPage->SetPageExtension(this);
 }

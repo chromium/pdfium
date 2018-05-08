@@ -475,7 +475,7 @@ bool CPDF_DataAvail::CheckHintTables() {
 std::unique_ptr<CPDF_Object> CPDF_DataAvail::ParseIndirectObjectAt(
     FX_FILESIZE pos,
     uint32_t objnum,
-    CPDF_IndirectObjectHolder* pObjList) {
+    CPDF_IndirectObjectHolder* pObjList) const {
   const FX_FILESIZE SavedPos = GetSyntaxParser()->GetPos();
   GetSyntaxParser()->SetPos(pos);
   std::unique_ptr<CPDF_Object> result = GetSyntaxParser()->GetIndirectObject(
@@ -828,7 +828,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
 
   if (m_pLinearized) {
     if (dwPage == m_pLinearized->GetFirstPageNo()) {
-      CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
+      auto* pPageDict = m_pDocument->GetPageDictionary(safePage.ValueOrDie());
       if (!pPageDict)
         return DataError;
 
@@ -850,7 +850,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       nResult = m_pHintTables->CheckPage(dwPage);
       if (nResult != DataAvailable)
         return nResult;
-      if (GetPage(dwPage)) {
+      if (GetPageDictionary(dwPage)) {
         m_pagesLoadState.insert(dwPage);
         return DataAvailable;
       }
@@ -879,7 +879,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   if (CheckAcroForm() == DocFormStatus::FormNotAvailable)
     return DataNotAvailable;
 
-  CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
+  auto* pPageDict = m_pDocument->GetPageDictionary(safePage.ValueOrDie());
   if (!pPageDict)
     return DataError;
 
@@ -943,10 +943,10 @@ int CPDF_DataAvail::GetPageCount() const {
   return m_pDocument ? m_pDocument->GetPageCount() : 0;
 }
 
-CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
+CPDF_Dictionary* CPDF_DataAvail::GetPageDictionary(int index) const {
   if (!m_pDocument || index < 0 || index >= GetPageCount())
     return nullptr;
-  CPDF_Dictionary* page = m_pDocument->GetPage(index);
+  CPDF_Dictionary* page = m_pDocument->GetPageDictionary(index);
   if (page)
     return page;
   if (!m_pLinearized || !m_pHintTables)
@@ -970,7 +970,7 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
   }
   if (!ValidatePage(index))
     return nullptr;
-  return m_pDocument->GetPage(index);
+  return m_pDocument->GetPageDictionary(index);
 }
 
 CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
@@ -1016,9 +1016,9 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
   return DocFormStatus::FormError;
 }
 
-bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) {
+bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) const {
   FX_SAFE_INT32 safePage = pdfium::base::checked_cast<int32_t>(dwPage);
-  CPDF_Dictionary* pPageDict = m_pDocument->GetPage(safePage.ValueOrDie());
+  auto* pPageDict = m_pDocument->GetPageDictionary(safePage.ValueOrDie());
   if (!pPageDict)
     return false;
   CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument, pPageDict);

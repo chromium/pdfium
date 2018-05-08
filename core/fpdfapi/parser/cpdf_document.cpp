@@ -331,7 +331,7 @@ bool CPDF_Document::IsPageLoaded(int iPage) const {
   return !!m_PageList[iPage];
 }
 
-CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
+CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
   if (!pdfium::IndexInBounds(m_PageList, iPage))
     return nullptr;
 

@@ -1251,7 +1251,7 @@ CJS_Return CJS_Document::getPageNthWord(
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
     return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
-  CPDF_Dictionary* pPageDict = pDocument->GetPage(nPageNo);
+  CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(nPageNo);
   if (!pPageDict)
     return CJS_Return(false);
 
@@ -1300,7 +1300,7 @@ CJS_Return CJS_Document::getPageNumWords(
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
     return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
-  CPDF_Dictionary* pPageDict = pDocument->GetPage(nPageNo);
+  CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(nPageNo);
   if (!pPageDict)
     return CJS_Return(false);
 

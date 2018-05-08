@@ -176,7 +176,7 @@ int CPDFSDK_InterForm::GetPageIndexByAnnotDict(
   ASSERT(pAnnotDict);
 
   for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {
-    if (CPDF_Dictionary* pPageDict = pDocument->GetPage(i)) {
+    if (CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(i)) {
       if (CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots")) {
         for (int j = 0, jsz = pAnnots->GetCount(); j < jsz; j++) {
           CPDF_Object* pDict = pAnnots->GetDirectObjectAt(j);
