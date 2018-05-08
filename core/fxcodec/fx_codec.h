@@ -15,6 +15,7 @@
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
 
 class CCodec_BasicModule;
@@ -114,5 +115,8 @@ void FaxG4Decode(const uint8_t* src_buf,
                  int width,
                  int height,
                  int pitch);
+
+FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width);
+FX_SAFE_UINT32 CalculatePitch32(int bpp, int width);
 
 #endif  // CORE_FXCODEC_FX_CODEC_H_

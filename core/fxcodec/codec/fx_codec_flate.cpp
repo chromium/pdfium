@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcodec/fx_codec.h"
 
 #include <algorithm>
 #include <limits>
@@ -273,14 +273,14 @@ void PNG_PredictLine(uint8_t* pDestData,
                      int bpc,
                      int nColors,
                      int nPixels) {
-  int row_size = (nPixels * bpc * nColors + 7) / 8;
-  int BytesPerPixel = (bpc * nColors + 7) / 8;
+  const uint32_t row_size = CalculatePitch8(bpc, nColors, nPixels).ValueOrDie();
+  const uint32_t BytesPerPixel = (bpc * nColors + 7) / 8;
   uint8_t tag = pSrcData[0];
   if (tag == 0) {
     memmove(pDestData, pSrcData + 1, row_size);
     return;
   }
-  for (int byte = 0; byte < row_size; byte++) {
+  for (uint32_t byte = 0; byte < row_size; ++byte) {
     uint8_t raw_byte = pSrcData[byte + 1];
     switch (tag) {
       case 1: {
@@ -339,6 +339,7 @@ bool PNG_Predictor(uint8_t*& data_buf,
                    int Colors,
                    int BitsPerComponent,
                    int Columns) {
+  // TODO(thestig): Look into using CalculatePitch8() here.
   const int BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
   const int row_size = (Colors * BitsPerComponent * Columns + 7) / 8;
   if (row_size <= 0)
@@ -348,7 +349,7 @@ bool PNG_Predictor(uint8_t*& data_buf,
     return false;
   const int last_row_size = data_size % (row_size + 1);
   uint8_t* dest_buf = FX_Alloc2D(uint8_t, row_size, row_count);
-  int byte_cnt = 0;
+  uint32_t byte_cnt = 0;
   uint8_t* pSrcData = data_buf;
   uint8_t* pDestData = dest_buf;
   for (int row = 0; row < row_count; row++) {
@@ -365,7 +366,8 @@ bool PNG_Predictor(uint8_t*& data_buf,
       byte_cnt += move_size;
       continue;
     }
-    for (int byte = 0; byte < row_size && byte_cnt < (int)data_size; byte++) {
+    for (int byte = 0; byte < row_size && byte_cnt < data_size;
+         ++byte, ++byte_cnt) {
       uint8_t raw_byte = pSrcData[byte + 1];
       switch (tag) {
         case 1: {
@@ -416,7 +418,6 @@ bool PNG_Predictor(uint8_t*& data_buf,
           pDestData[byte] = raw_byte;
           break;
       }
-      byte_cnt++;
     }
     pSrcData += row_size + 1;
     pDestData += row_size;
@@ -613,14 +614,13 @@ CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder(const uint8_t* src_buf,
                                                          int Colors,
                                                          int BitsPerComponent,
                                                          int Columns)
-    : CCodec_ScanlineDecoder(
-          width,
-          height,
-          width,
-          height,
-          nComps,
-          bpc,
-          (static_cast<uint32_t>(width) * nComps * bpc + 7) / 8),
+    : CCodec_ScanlineDecoder(width,
+                             height,
+                             width,
+                             height,
+                             nComps,
+                             bpc,
+                             CalculatePitch8(bpc, nComps, width).ValueOrDie()),
       m_SrcBuf(src_buf),
       m_SrcSize(src_size),
       m_pScanline(FX_Alloc(uint8_t, m_Pitch)),
@@ -635,8 +635,7 @@ CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder(const uint8_t* src_buf,
     m_BitsPerComponent = BitsPerComponent;
     m_Columns = Columns;
     m_PredictPitch =
-        (static_cast<uint32_t>(m_BitsPerComponent) * m_Colors * m_Columns + 7) /
-        8;
+        CalculatePitch8(m_BitsPerComponent, m_Colors, m_Columns).ValueOrDie();
     m_pLastLine = FX_Alloc(uint8_t, m_PredictPitch);
     m_pPredictRaw = FX_Alloc(uint8_t, m_PredictPitch + 1);
     m_pPredictBuffer = FX_Alloc(uint8_t, m_PredictPitch);

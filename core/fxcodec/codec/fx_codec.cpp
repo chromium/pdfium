@@ -1839,3 +1839,21 @@ std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
   // more expensive.
   return std::make_tuple(r * (1.0f / 255), g * (1.0f / 255), b * (1.0f / 255));
 }
+
+FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width) {
+  FX_SAFE_UINT32 pitch = bpc;
+  pitch *= components;
+  pitch *= width;
+  pitch += 7;
+  pitch /= 8;
+  return pitch;
+}
+
+FX_SAFE_UINT32 CalculatePitch32(int bpp, int width) {
+  FX_SAFE_UINT32 pitch = bpp;
+  pitch *= width;
+  pitch += 31;
+  pitch /= 32;  // quantized to number of 32-bit words.
+  pitch *= 4;   // and then back to bytes, (not just /8 in one step).
+  return pitch;
+}

@@ -54,24 +54,6 @@ bool GetBitValue(const uint8_t* pSrc, uint32_t pos) {
   return pSrc[pos / 8] & (1 << (7 - pos % 8));
 }
 
-FX_SAFE_UINT32 CalculatePitch8(uint32_t bpc, uint32_t components, int width) {
-  FX_SAFE_UINT32 pitch = bpc;
-  pitch *= components;
-  pitch *= width;
-  pitch += 7;
-  pitch /= 8;
-  return pitch;
-}
-
-FX_SAFE_UINT32 CalculatePitch32(int bpp, int width) {
-  FX_SAFE_UINT32 pitch = bpp;
-  pitch *= width;
-  pitch += 31;
-  pitch /= 32;  // quantized to number of 32-bit words.
-  pitch *= 4;   // and then back to bytes, (not just /8 in one step).
-  return pitch;
-}
-
 bool IsAllowedBPCValue(int bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
 }
