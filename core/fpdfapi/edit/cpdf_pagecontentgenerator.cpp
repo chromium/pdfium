@@ -81,7 +81,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
   buf << "Q\n";
 
   // Add buffer to a stream in page's 'Contents'
-  CPDF_Dictionary* pPageDict = m_pObjHolder->m_pFormDict.Get();
+  CPDF_Dictionary* pPageDict = m_pObjHolder->GetFormDict();
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetObjectFor("Contents") : nullptr;
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
@@ -128,7 +128,7 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   ASSERT(dwResourceObjNum);
   if (!m_pObjHolder->m_pResources) {
     m_pObjHolder->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
-    m_pObjHolder->m_pFormDict->SetNewFor<CPDF_Reference>(
+    m_pObjHolder->GetFormDict()->SetNewFor<CPDF_Reference>(
         "Resources", m_pDocument.Get(),
         m_pObjHolder->m_pResources->GetObjNum());
   }

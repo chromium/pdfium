@@ -339,9 +339,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
   if (!start_pos || !link_annot)
     return false;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage || !pPage->m_pFormDict)
+  if (!pPage || !pPage->GetFormDict())
     return false;
-  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayFor("Annots");
+  CPDF_Array* pAnnots = pPage->GetFormDict()->GetArrayFor("Annots");
   if (!pAnnots)
     return false;
   for (size_t i = *start_pos; i < pAnnots->GetCount(); i++) {

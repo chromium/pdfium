@@ -27,7 +27,7 @@ namespace {
 void SetBoundingBox(CPDF_Page* page,
                     const ByteString& key,
                     const CFX_FloatRect& rect) {
-  page->m_pFormDict->SetRectFor(key, rect);
+  page->GetFormDict()->SetRectFor(key, rect);
 }
 
 bool GetBoundingBox(CPDF_Page* page,
@@ -36,7 +36,7 @@ bool GetBoundingBox(CPDF_Page* page,
                     float* bottom,
                     float* right,
                     float* top) {
-  CPDF_Array* pArray = page->m_pFormDict->GetArrayFor(key);
+  CPDF_Array* pArray = page->GetFormDict()->GetArrayFor(key);
   if (!pArray)
     return false;
 
@@ -121,7 +121,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
                                   matrix->c, matrix->d, matrix->e, matrix->f);
   }
 
-  CPDF_Dictionary* pPageDict = pPage->m_pFormDict.Get();
+  CPDF_Dictionary* pPageDict = pPage->GetFormDict();
   CPDF_Object* pContentObj = GetPageContent(pPageDict);
   if (!pContentObj)
     return false;
@@ -264,7 +264,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pPage)
     return;
 
-  CPDF_Dictionary* pPageDict = pPage->m_pFormDict.Get();
+  CPDF_Dictionary* pPageDict = pPage->GetFormDict();
   CPDF_Object* pContentObj = GetPageContent(pPageDict);
   if (!pContentObj)
     return;

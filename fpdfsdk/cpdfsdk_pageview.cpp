@@ -575,7 +575,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {
 }
 
 int CPDFSDK_PageView::GetPageIndexForStaticPDF() const {
-  CPDF_Dictionary* pDict = GetPDFPage()->m_pFormDict.Get();
+  const CPDF_Dictionary* pDict = GetPDFPage()->GetFormDict();
   CPDF_Document* pDoc = m_pFormFillEnv->GetPDFDocument();
   return (pDoc && pDict) ? pDoc->GetPageIndex(pDict->GetObjNum()) : -1;
 }

@@ -649,7 +649,7 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
     return;
 
   CPDFSDK_ActionHandler* pActionHandler = pFormFillEnv->GetActionHandler();
-  CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict.Get();
+  CPDF_Dictionary* pPageDict = pPDFPage->GetFormDict();
   if (!pPageDict)
     return;
 

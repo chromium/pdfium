@@ -55,10 +55,14 @@ static_assert(FPDF_PAGEOBJ_FORM == CPDF_PageObject::FORM,
               "FPDF_PAGEOBJ_FORM/CPDF_PageObject::FORM mismatch");
 
 bool IsPageObject(CPDF_Page* pPage) {
-  if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type"))
+  if (!pPage)
     return false;
 
-  CPDF_Object* pObject = pPage->m_pFormDict->GetObjectFor("Type")->GetDirect();
+  const CPDF_Dictionary* pFormDict = pPage->GetFormDict();
+  if (!pFormDict || !pFormDict->KeyExist("Type"))
+    return false;
+
+  const CPDF_Object* pObject = pFormDict->GetObjectFor("Type")->GetDirect();
   return pObject && !pObject->GetString().Compare("Page");
 }
 
@@ -479,7 +483,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page,
     return;
 
   rotate %= 4;
-  pPage->m_pFormDict->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
+  pPage->GetFormDict()->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
 }
 
 FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
