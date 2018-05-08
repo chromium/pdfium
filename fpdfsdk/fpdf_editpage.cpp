@@ -120,6 +120,10 @@ GetMarkParamPairAtIndex(FPDF_PAGEOBJECTMARK mark, unsigned long index) {
   return nullptr;
 }
 
+unsigned int GetUnsignedAlpha(float alpha) {
+  return static_cast<unsigned int>(alpha * 255.f + 0.5f);
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
@@ -505,6 +509,24 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetFillColor(FPDF_PAGEOBJECT page_object,
+                         unsigned int* R,
+                         unsigned int* G,
+                         unsigned int* B,
+                         unsigned int* A) {
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !R || !G || !B || !A)
+    return false;
+
+  FX_COLORREF fillColor = pPageObj->m_ColorState.GetFillColorRef();
+  *R = FXSYS_GetRValue(fillColor);
+  *G = FXSYS_GetGValue(fillColor);
+  *B = FXSYS_GetBValue(fillColor);
+  *A = GetUnsignedAlpha(pPageObj->m_GeneralState.GetFillAlpha());
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
                       float* left,
                       float* bottom,
@@ -519,5 +541,86 @@ FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
   *bottom = bbox.bottom;
   *right = bbox.right;
   *top = bbox.top;
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetStrokeColor(FPDF_PAGEOBJECT page_object,
+                           unsigned int R,
+                           unsigned int G,
+                           unsigned int B,
+                           unsigned int A) {
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || R > 255 || G > 255 || B > 255 || A > 255)
+    return false;
+
+  std::vector<float> rgb = {R / 255.f, G / 255.f, B / 255.f};
+  pPageObj->m_GeneralState.SetStrokeAlpha(A / 255.f);
+  pPageObj->m_ColorState.SetStrokeColor(
+      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb);
+  pPageObj->SetDirty(true);
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetStrokeColor(FPDF_PAGEOBJECT page_object,
+                           unsigned int* R,
+                           unsigned int* G,
+                           unsigned int* B,
+                           unsigned int* A) {
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !R || !G || !B || !A)
+    return false;
+
+  FX_COLORREF strokeColor = pPageObj->m_ColorState.GetStrokeColorRef();
+  *R = FXSYS_GetRValue(strokeColor);
+  *G = FXSYS_GetGValue(strokeColor);
+  *B = FXSYS_GetBValue(strokeColor);
+  *A = GetUnsignedAlpha(pPageObj->m_GeneralState.GetStrokeAlpha());
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetStrokeWidth(FPDF_PAGEOBJECT page_object, float width) {
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || width < 0.0f)
+    return false;
+
+  pPageObj->m_GraphState.SetLineWidth(width);
+  pPageObj->SetDirty(true);
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join) {
+  if (!page_object)
+    return false;
+  if (line_join <
+          static_cast<int>(CFX_GraphStateData::LineJoin::LineJoinMiter) ||
+      line_join >
+          static_cast<int>(CFX_GraphStateData::LineJoin::LineJoinBevel)) {
+    return false;
+  }
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  CFX_GraphStateData::LineJoin lineJoin =
+      static_cast<CFX_GraphStateData::LineJoin>(line_join);
+  pPageObj->m_GraphState.SetLineJoin(lineJoin);
+  pPageObj->SetDirty(true);
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_SetLineCap(FPDF_PAGEOBJECT page_object, int line_cap) {
+  if (!page_object)
+    return false;
+  if (line_cap < static_cast<int>(CFX_GraphStateData::LineCap::LineCapButt) ||
+      line_cap > static_cast<int>(CFX_GraphStateData::LineCap::LineCapSquare)) {
+    return false;
+  }
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  CFX_GraphStateData::LineCap lineCap =
+      static_cast<CFX_GraphStateData::LineCap>(line_cap);
+  pPageObj->m_GraphState.SetLineCap(lineCap);
+  pPageObj->SetDirty(true);
   return true;
 }

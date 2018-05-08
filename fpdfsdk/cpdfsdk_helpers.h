@@ -262,11 +262,4 @@ int GetLastError();
 
 void ProcessParseError(CPDF_Parser::Error err);
 
-// TODO(dsinclair): This seems like it should be a public API?
-FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
-                                   unsigned int R,
-                                   unsigned int G,
-                                   unsigned int B,
-                                   unsigned int A);
-
 #endif  // FPDFSDK_CPDFSDK_HELPERS_H_

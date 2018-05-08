@@ -166,10 +166,15 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObj_CreateNewPath);
     CHK(FPDFPageObj_CreateNewRect);
     CHK(FPDFPath_SetStrokeColor);
+    CHK(FPDFPageObj_SetStrokeColor);
     CHK(FPDFPath_GetStrokeColor);
+    CHK(FPDFPageObj_GetStrokeColor);
     CHK(FPDFPath_SetStrokeWidth);
+    CHK(FPDFPageObj_SetStrokeWidth);
     CHK(FPDFPath_SetFillColor);
+    CHK(FPDFPageObj_SetFillColor);
     CHK(FPDFPath_GetFillColor);
+    CHK(FPDFPageObj_GetFillColor);
     CHK(FPDFPath_CountSegments);
     CHK(FPDFPath_GetPathSegment);
     CHK(FPDFPathSegment_GetPoint);
@@ -181,7 +186,9 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_Close);
     CHK(FPDFPath_SetDrawMode);
     CHK(FPDFPath_SetLineCap);
+    CHK(FPDFPageObj_SetLineCap);
     CHK(FPDFPath_SetLineJoin);
+    CHK(FPDFPageObj_SetLineJoin);
     CHK(FPDFPageObj_NewTextObj);
     CHK(FPDFText_SetText);
     CHK(FPDFText_SetFillColor);
