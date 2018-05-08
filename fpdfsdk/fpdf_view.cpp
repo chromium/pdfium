@@ -243,11 +243,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
   if (!pRoot)
     return FORMTYPE_NONE;
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
     return FORMTYPE_NONE;
 
-  CPDF_Object* pXFA = pAcroForm->GetObjectFor("XFA");
+  const CPDF_Object* pXFA = pAcroForm->GetObjectFor("XFA");
   if (!pXFA)
     return FORMTYPE_ACRO_FORM;
 
@@ -978,7 +978,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return true;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -987,7 +987,7 @@ FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document) {
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 1;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -996,7 +996,7 @@ FPDF_VIEWERREF_GetNumCopies(FPDF_DOCUMENT document) {
 
 FPDF_EXPORT FPDF_PAGERANGE FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -1020,7 +1020,7 @@ FPDF_VIEWERREF_GetPrintPageRangeElement(FPDF_PAGERANGE pagerange,
 
 FPDF_EXPORT FPDF_DUPLEXTYPE FPDF_CALLCONV
 FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return DuplexUndefined;
   CPDF_ViewerPreferences viewRef(pDoc);
@@ -1039,18 +1039,18 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
                        FPDF_BYTESTRING key,
                        char* buffer,
                        unsigned long length) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  const CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
 
   CPDF_ViewerPreferences viewRef(pDoc);
-  ByteString bsVal;
-  if (!viewRef.GenericName(key, &bsVal))
+  Optional<ByteString> bsVal = viewRef.GenericName(key);
+  if (!bsVal)
     return 0;
 
-  unsigned long dwStringLen = bsVal.GetLength() + 1;
+  unsigned long dwStringLen = bsVal->GetLength() + 1;
   if (buffer && length >= dwStringLen)
-    memcpy(buffer, bsVal.c_str(), dwStringLen);
+    memcpy(buffer, bsVal->c_str(), dwStringLen);
   return dwStringLen;
 }
 
@@ -1066,7 +1066,7 @@ FPDF_CountNamedDests(FPDF_DOCUMENT document) {
 
   CPDF_NameTree nameTree(pDoc, "Dests");
   pdfium::base::CheckedNumeric<FPDF_DWORD> count = nameTree.GetCount();
-  CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
+  const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
   if (pDest)
     count += pDest->GetCount();
 
@@ -1161,7 +1161,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
   if (index >= count) {
-    CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
+    const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
     if (!pDest)
       return nullptr;
 

@@ -154,11 +154,11 @@ inline const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
   return reinterpret_cast<const CPDF_ContentMarkItem*>(mark);
 }
 
-inline FPDF_PAGERANGE FPDFPageRangeFromCPDFArray(CPDF_Array* range) {
+inline FPDF_PAGERANGE FPDFPageRangeFromCPDFArray(const CPDF_Array* range) {
   return reinterpret_cast<FPDF_PAGERANGE>(range);
 }
-inline CPDF_Array* CPDFArrayFromFPDFPageRange(FPDF_PAGERANGE range) {
-  return reinterpret_cast<CPDF_Array*>(range);
+inline const CPDF_Array* CPDFArrayFromFPDFPageRange(FPDF_PAGERANGE range) {
+  return reinterpret_cast<const CPDF_Array*>(range);
 }
 
 inline FPDF_PATHSEGMENT FPDFPathSegmentFromFXPathPoint(
