@@ -50,7 +50,7 @@ class CPDF_RenderStatus {
                   const CPDF_RenderOptions* pOptions,
                   int transparency,
                   bool bDropObjects,
-                  CPDF_Dictionary* pFormResource = nullptr,
+                  const CPDF_Dictionary* pFormResource = nullptr,
                   bool bStdCS = false,
                   CPDF_Type3Char* pType3Char = nullptr,
                   FX_ARGB fill_color = 0,
@@ -71,7 +71,9 @@ class CPDF_RenderStatus {
   bool IsPrint() const { return m_bPrint; }
   bool IsStopped() const { return m_bStopped; }
   CPDF_RenderContext* GetContext() const { return m_pContext.Get(); }
-  CPDF_Dictionary* GetFormResource() const { return m_pFormResource.Get(); }
+  const CPDF_Dictionary* GetFormResource() const {
+    return m_pFormResource.Get();
+  }
   CPDF_Dictionary* GetPageResource() const { return m_pPageResource.Get(); }
   CFX_RenderDevice* GetRenderDevice() const { return m_pDevice; }
   const CPDF_RenderOptions* GetRenderOptions() const { return &m_Options; }
@@ -80,7 +82,8 @@ class CPDF_RenderStatus {
   void DebugVerifyDeviceIsPreMultiplied() const;
 #endif
 
-  RetainPtr<CPDF_TransferFunc> GetTransferFunc(CPDF_Object* pObject) const;
+  RetainPtr<CPDF_TransferFunc> GetTransferFunc(
+      const CPDF_Object* pObject) const;
   FX_ARGB GetFillArgb(CPDF_PageObject* pObj, bool bType3 = false) const;
   void DrawTilingPattern(CPDF_TilingPattern* pPattern,
                          CPDF_PageObject* pPageObj,
@@ -145,7 +148,7 @@ class CPDF_RenderStatus {
                                       bool bBackAlphaRequired,
                                       int* left,
                                       int* top);
-  RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
+  RetainPtr<CFX_DIBitmap> LoadSMask(const CPDF_Dictionary* pSMaskDict,
                                     FX_RECT* pClipRect,
                                     const CFX_Matrix* pMatrix);
   // Optionally write the colorspace family value into |pCSFamily|.
@@ -161,7 +164,7 @@ class CPDF_RenderStatus {
                                const CFX_Matrix* pObj2Device) const;
 
   CPDF_RenderOptions m_Options;
-  UnownedPtr<CPDF_Dictionary> m_pFormResource;
+  UnownedPtr<const CPDF_Dictionary> m_pFormResource;
   UnownedPtr<CPDF_Dictionary> m_pPageResource;
   std::vector<CPDF_Type3Font*> m_Type3FontCache;
   UnownedPtr<CPDF_RenderContext> m_pContext;

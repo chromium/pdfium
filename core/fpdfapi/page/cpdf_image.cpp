@@ -353,7 +353,7 @@ RetainPtr<CFX_DIBSource> CPDF_Image::DetachMask() {
   return std::move(m_pMask);
 }
 
-bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
+bool CPDF_Image::StartLoadDIBSource(const CPDF_Dictionary* pFormResource,
                                     CPDF_Dictionary* pPageResource,
                                     bool bStdCS,
                                     uint32_t GroupFamily,

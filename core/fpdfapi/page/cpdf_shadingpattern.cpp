@@ -83,7 +83,7 @@ bool CPDF_ShadingPattern::Load() {
       m_pFunctions.push_back(CPDF_Function::Load(pFunc));
     }
   }
-  CPDF_Object* pCSObj = pShadingDict->GetDirectObjectFor("ColorSpace");
+  const CPDF_Object* pCSObj = pShadingDict->GetDirectObjectFor("ColorSpace");
   if (!pCSObj)
     return false;
 

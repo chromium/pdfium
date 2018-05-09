@@ -114,7 +114,7 @@ CPDF_StreamParser::~CPDF_StreamParser() {}
 std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
     std::unique_ptr<CPDF_Dictionary> pDict,
-    CPDF_Object* pCSObj) {
+    const CPDF_Object* pCSObj) {
   if (m_Pos < m_pBuf.size() && PDFCharIsWhitespace(m_pBuf[m_Pos]))
     m_Pos++;
 

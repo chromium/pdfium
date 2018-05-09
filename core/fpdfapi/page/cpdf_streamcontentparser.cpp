@@ -1161,7 +1161,7 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
   if (name == "DeviceGray" || name == "DeviceCMYK" || name == "DeviceRGB") {
     ByteString defname = "Default";
     defname += name.Right(name.GetLength() - 7);
-    CPDF_Object* pDefObj = FindResourceObj("ColorSpace", defname);
+    const CPDF_Object* pDefObj = FindResourceObj("ColorSpace", defname);
     if (!pDefObj) {
       if (name == "DeviceGray") {
         return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
@@ -1173,7 +1173,7 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
     }
     return m_pDocument->LoadColorSpace(pDefObj);
   }
-  CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
+  const CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
   if (!pCSObj) {
     m_bResourceMissing = true;
     return nullptr;

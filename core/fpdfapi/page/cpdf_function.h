@@ -25,7 +25,7 @@ class CPDF_Function {
     kType4PostScript = 4,
   };
 
-  static std::unique_ptr<CPDF_Function> Load(CPDF_Object* pFuncObj);
+  static std::unique_ptr<CPDF_Function> Load(const CPDF_Object* pFuncObj);
   static Type IntegerToFunctionType(int iType);
 
   virtual ~CPDF_Function();
@@ -51,10 +51,12 @@ class CPDF_Function {
  protected:
   explicit CPDF_Function(Type type);
 
-  static std::unique_ptr<CPDF_Function> Load(CPDF_Object* pFuncObj,
-                                             std::set<CPDF_Object*>* pVisited);
-  bool Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited);
-  virtual bool v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) = 0;
+  static std::unique_ptr<CPDF_Function> Load(
+      const CPDF_Object* pFuncObj,
+      std::set<const CPDF_Object*>* pVisited);
+  bool Init(const CPDF_Object* pObj, std::set<const CPDF_Object*>* pVisited);
+  virtual bool v_Init(const CPDF_Object* pObj,
+                      std::set<const CPDF_Object*>* pVisited) = 0;
   virtual bool v_Call(const float* inputs, float* results) const = 0;
 
   uint32_t m_nInputs;

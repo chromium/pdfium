@@ -127,7 +127,7 @@ void CPDF_Color::Copy(const CPDF_Color& src) {
     return;
 
   CPDF_Document* pDoc = m_pCS->GetDocument();
-  CPDF_Array* pArray = m_pCS->GetArray();
+  const CPDF_Array* pArray = m_pCS->GetArray();
   if (pDoc && pArray) {
     m_pCS = pDoc->GetPageData()->GetCopiedColorSpace(pArray);
     if (!m_pCS)

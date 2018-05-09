@@ -24,8 +24,8 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
 
   // CPDF_ColorSpace:
   uint32_t v_Load(CPDF_Document* pDoc,
-                  CPDF_Array* pArray,
-                  std::set<CPDF_Object*>* pVisited) override;
+                  const CPDF_Array* pArray,
+                  std::set<const CPDF_Object*>* pVisited) override;
   bool GetRGB(const float* pBuf, float* R, float* G, float* B) const override;
   CPDF_PatternCS* AsPatternCS() override;
   const CPDF_PatternCS* AsPatternCS() const override;
@@ -35,8 +35,8 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
                      float* B) const override;
 
  private:
-  CPDF_ColorSpace* m_pBaseCS;
-  CPDF_CountedColorSpace* m_pCountedBaseCS;
+  const CPDF_ColorSpace* m_pBaseCS;
+  const CPDF_CountedColorSpace* m_pCountedBaseCS;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PATTERNCS_H_

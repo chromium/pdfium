@@ -13,7 +13,8 @@ CPDF_PSFunc::CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
 
 CPDF_PSFunc::~CPDF_PSFunc() {}
 
-bool CPDF_PSFunc::v_Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
+bool CPDF_PSFunc::v_Init(const CPDF_Object* pObj,
+                         std::set<const CPDF_Object*>* pVisited) {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pObj->AsStream());
   pAcc->LoadAllDataFiltered();
   return m_PS.Parse(pAcc->GetSpan());

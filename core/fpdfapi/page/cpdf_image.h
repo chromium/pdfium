@@ -50,7 +50,7 @@ class CPDF_Image : public Retainable {
   void ResetCache(CPDF_Page* pPage, const RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
   // Returns whether to Continue() or not.
-  bool StartLoadDIBSource(CPDF_Dictionary* pFormResource,
+  bool StartLoadDIBSource(const CPDF_Dictionary* pFormResource,
                           CPDF_Dictionary* pPageResource,
                           bool bStdCS = false,
                           uint32_t GroupFamily = 0,

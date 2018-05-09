@@ -93,8 +93,8 @@ CPDF_MeshVertex::~CPDF_MeshVertex() = default;
 CPDF_MeshStream::CPDF_MeshStream(
     ShadingType type,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    CPDF_Stream* pShadingStream,
-    CPDF_ColorSpace* pCS)
+    const CPDF_Stream* pShadingStream,
+    const CPDF_ColorSpace* pCS)
     : m_type(type),
       m_funcs(funcs),
       m_pShadingStream(pShadingStream),
@@ -120,7 +120,7 @@ bool CPDF_MeshStream::Load() {
   m_pStream->LoadAllDataFiltered();
   m_BitStream = pdfium::MakeUnique<CFX_BitStream>(
       pdfium::make_span(m_pStream->GetData(), m_pStream->GetSize()));
-  CPDF_Dictionary* pDict = m_pShadingStream->GetDict();
+  const CPDF_Dictionary* pDict = m_pShadingStream->GetDict();
   m_nCoordBits = pDict->GetIntegerFor("BitsPerCoordinate");
   m_nComponentBits = pDict->GetIntegerFor("BitsPerComponent");
   if (ShouldCheckBPC(m_type)) {
@@ -139,7 +139,7 @@ bool CPDF_MeshStream::Load() {
     return false;
 
   m_nComponents = m_funcs.empty() ? nComponents : 1;
-  CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
+  const CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
   if (!pDecode || pDecode->GetCount() != 4 + m_nComponents * 2)
     return false;
 

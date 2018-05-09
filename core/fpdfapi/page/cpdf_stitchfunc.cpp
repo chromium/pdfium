@@ -22,8 +22,8 @@ CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {}
 
 CPDF_StitchFunc::~CPDF_StitchFunc() {}
 
-bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj,
-                             std::set<CPDF_Object*>* pVisited) {
+bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
+                             std::set<const CPDF_Object*>* pVisited) {
   if (m_nInputs != kRequiredNumInputs)
     return false;
 
@@ -66,7 +66,7 @@ bool CPDF_StitchFunc::v_Init(CPDF_Object* pObj,
   {
     Optional<uint32_t> nOutputs;
     for (uint32_t i = 0; i < nSubs; ++i) {
-      CPDF_Object* pSub = pFunctionsArray->GetDirectObjectAt(i);
+      const CPDF_Object* pSub = pFunctionsArray->GetDirectObjectAt(i);
       if (pSub == pObj)
         return false;
 

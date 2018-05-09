@@ -40,17 +40,17 @@ class CPDF_DocPageData {
   void ReleaseFont(const CPDF_Dictionary* pFontDict);
 
   // Loads a colorspace.
-  CPDF_ColorSpace* GetColorSpace(CPDF_Object* pCSObj,
+  CPDF_ColorSpace* GetColorSpace(const CPDF_Object* pCSObj,
                                  const CPDF_Dictionary* pResources);
 
   // Loads a colorspace in a context that might be while loading another
   // colorspace. |pVisited| is passed recursively to avoid circular calls
   // involving CPDF_ColorSpace::Load().
-  CPDF_ColorSpace* GetColorSpaceGuarded(CPDF_Object* pCSObj,
+  CPDF_ColorSpace* GetColorSpaceGuarded(const CPDF_Object* pCSObj,
                                         const CPDF_Dictionary* pResources,
-                                        std::set<CPDF_Object*>* pVisited);
+                                        std::set<const CPDF_Object*>* pVisited);
 
-  CPDF_ColorSpace* GetCopiedColorSpace(CPDF_Object* pCSObj);
+  CPDF_ColorSpace* GetCopiedColorSpace(const CPDF_Object* pCSObj);
   void ReleaseColorSpace(const CPDF_Object* pColorSpace);
 
   CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
@@ -67,7 +67,7 @@ class CPDF_DocPageData {
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(CPDF_Stream* pFontStream);
   void MaybePurgeFontFileStreamAcc(const CPDF_Stream* pFontStream);
 
-  CPDF_CountedColorSpace* FindColorSpacePtr(CPDF_Object* pCSObj) const;
+  CPDF_CountedColorSpace* FindColorSpacePtr(const CPDF_Object* pCSObj) const;
   CPDF_CountedPattern* FindPatternPtr(CPDF_Object* pPatternObj) const;
 
  private:
@@ -79,10 +79,10 @@ class CPDF_DocPageData {
   // CPDF_ColorSpace::Load() and |pVisitedInternal| is also passed recursively
   // to avoid circular calls with this method calling itself.
   CPDF_ColorSpace* GetColorSpaceInternal(
-      CPDF_Object* pCSObj,
+      const CPDF_Object* pCSObj,
       const CPDF_Dictionary* pResources,
-      std::set<CPDF_Object*>* pVisited,
-      std::set<CPDF_Object*>* pVisitedInternal);
+      std::set<const CPDF_Object*>* pVisited,
+      std::set<const CPDF_Object*>* pVisitedInternal);
 
   bool m_bForceClear;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;

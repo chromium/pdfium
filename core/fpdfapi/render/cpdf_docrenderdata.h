@@ -28,15 +28,15 @@ class CPDF_DocRenderData {
   RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
   void MaybePurgeCachedType3(CPDF_Type3Font* pFont);
 
-  RetainPtr<CPDF_TransferFunc> GetTransferFunc(CPDF_Object* pObj);
-  void MaybePurgeTransferFunc(CPDF_Object* pOb);
+  RetainPtr<CPDF_TransferFunc> GetTransferFunc(const CPDF_Object* pObj);
+  void MaybePurgeTransferFunc(const CPDF_Object* pObj);
 
   void Clear(bool bRelease);
 
  private:
   UnownedPtr<CPDF_Document> m_pPDFDoc;
   std::map<CPDF_Font*, RetainPtr<CPDF_Type3Cache>> m_Type3FaceMap;
-  std::map<CPDF_Object*, RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
+  std::map<const CPDF_Object*, RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DOCRENDERDATA_H_

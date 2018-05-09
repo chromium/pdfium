@@ -40,7 +40,7 @@ class CPDF_StreamParser {
   std::unique_ptr<CPDF_Stream> ReadInlineStream(
       CPDF_Document* pDoc,
       std::unique_ptr<CPDF_Dictionary> pDict,
-      CPDF_Object* pCSObj);
+      const CPDF_Object* pCSObj);
 
  private:
   friend class cpdf_streamparser_ReadHexString_Test;

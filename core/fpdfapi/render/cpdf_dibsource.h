@@ -68,7 +68,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   LoadState StartLoadDIBSource(CPDF_Document* pDoc,
                                const CPDF_Stream* pStream,
                                bool bHasMask,
-                               CPDF_Dictionary* pFormResources,
+                               const CPDF_Dictionary* pFormResources,
                                CPDF_Dictionary* pPageResources,
                                bool bStdCS = false,
                                uint32_t GroupFamily = 0,

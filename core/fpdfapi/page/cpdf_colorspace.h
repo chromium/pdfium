@@ -49,8 +49,8 @@ class CPDF_ColorSpace {
                                                CPDF_Object* pCSObj);
   static std::unique_ptr<CPDF_ColorSpace> Load(
       CPDF_Document* pDoc,
-      CPDF_Object* pCSObj,
-      std::set<CPDF_Object*>* pVisited);
+      const CPDF_Object* pCSObj,
+      std::set<const CPDF_Object*>* pVisited);
 
   void Release();
 
@@ -97,7 +97,7 @@ class CPDF_ColorSpace {
                              float* G,
                              float* B) const;
 
-  CPDF_Array* GetArray() const { return m_pArray.Get(); }
+  const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
  protected:
@@ -106,15 +106,15 @@ class CPDF_ColorSpace {
 
   // Returns the number of components, or 0 on failure.
   virtual uint32_t v_Load(CPDF_Document* pDoc,
-                          CPDF_Array* pArray,
-                          std::set<CPDF_Object*>* pVisited) = 0;
+                          const CPDF_Array* pArray,
+                          std::set<const CPDF_Object*>* pVisited) = 0;
 
   // Stock colorspaces are not loaded normally. This initializes their
   // components count.
   void SetComponentsForStockCS(uint32_t nComponents);
 
   UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<CPDF_Array> m_pArray;
+  UnownedPtr<const CPDF_Array> m_pArray;
   const int m_Family;
   uint32_t m_dwStdConversion = 0;
 

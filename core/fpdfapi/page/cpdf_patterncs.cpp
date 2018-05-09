@@ -16,7 +16,8 @@ CPDF_PatternCS::CPDF_PatternCS(CPDF_Document* pDoc)
       m_pCountedBaseCS(nullptr) {}
 
 CPDF_PatternCS::~CPDF_PatternCS() {
-  CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
+  const CPDF_ColorSpace* pCS =
+      m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
   if (pCS && m_pDocument) {
     auto* pPageData = m_pDocument->GetPageData();
     if (pPageData)
@@ -29,9 +30,9 @@ void CPDF_PatternCS::InitializeStockPattern() {
 }
 
 uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
-                                CPDF_Array* pArray,
-                                std::set<CPDF_Object*>* pVisited) {
-  CPDF_Object* pBaseCS = pArray->GetDirectObjectAt(1);
+                                const CPDF_Array* pArray,
+                                std::set<const CPDF_Object*>* pVisited) {
+  const CPDF_Object* pBaseCS = pArray->GetDirectObjectAt(1);
   if (pBaseCS == m_pArray)
     return 0;
 

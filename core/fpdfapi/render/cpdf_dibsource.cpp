@@ -224,7 +224,7 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadDIBSource(
     CPDF_Document* pDoc,
     const CPDF_Stream* pStream,
     bool bHasMask,
-    CPDF_Dictionary* pFormResources,
+    const CPDF_Dictionary* pFormResources,
     CPDF_Dictionary* pPageResources,
     bool bStdCS,
     uint32_t GroupFamily,
@@ -366,7 +366,7 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     return true;
   }
 
-  CPDF_Object* pCSObj = m_pDict->GetDirectObjectFor("ColorSpace");
+  const CPDF_Object* pCSObj = m_pDict->GetDirectObjectFor("ColorSpace");
   if (!pCSObj)
     return false;
 

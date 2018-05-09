@@ -37,8 +37,8 @@ class CPDF_MeshStream {
  public:
   CPDF_MeshStream(ShadingType type,
                   const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-                  CPDF_Stream* pShadingStream,
-                  CPDF_ColorSpace* pCS);
+                  const CPDF_Stream* pShadingStream,
+                  const CPDF_ColorSpace* pCS);
   ~CPDF_MeshStream();
 
   bool Load();
@@ -66,8 +66,8 @@ class CPDF_MeshStream {
 
   const ShadingType m_type;
   const std::vector<std::unique_ptr<CPDF_Function>>& m_funcs;
-  UnownedPtr<CPDF_Stream> const m_pShadingStream;
-  UnownedPtr<CPDF_ColorSpace> const m_pCS;
+  UnownedPtr<const CPDF_Stream> const m_pShadingStream;
+  UnownedPtr<const CPDF_ColorSpace> const m_pCS;
   uint32_t m_nCoordBits;
   uint32_t m_nComponentBits;
   uint32_t m_nFlagBits;

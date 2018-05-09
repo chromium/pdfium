@@ -53,7 +53,7 @@ RetainPtr<CFX_DIBSource> CPDF_ImageCacheEntry::DetachMask() {
 }
 
 CPDF_DIBSource::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
-    CPDF_Dictionary* pFormResources,
+    const CPDF_Dictionary* pFormResources,
     CPDF_Dictionary* pPageResources,
     bool bStdCS,
     uint32_t GroupFamily,

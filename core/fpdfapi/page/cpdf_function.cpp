@@ -18,26 +18,27 @@
 #include "third_party/base/ptr_util.h"
 
 // static
-std::unique_ptr<CPDF_Function> CPDF_Function::Load(CPDF_Object* pFuncObj) {
-  std::set<CPDF_Object*> visited;
+std::unique_ptr<CPDF_Function> CPDF_Function::Load(
+    const CPDF_Object* pFuncObj) {
+  std::set<const CPDF_Object*> visited;
   return Load(pFuncObj, &visited);
 }
 
 // static
 std::unique_ptr<CPDF_Function> CPDF_Function::Load(
-    CPDF_Object* pFuncObj,
-    std::set<CPDF_Object*>* pVisited) {
+    const CPDF_Object* pFuncObj,
+    std::set<const CPDF_Object*>* pVisited) {
   if (!pFuncObj)
     return nullptr;
 
   if (pdfium::ContainsKey(*pVisited, pFuncObj))
     return nullptr;
-  pdfium::ScopedSetInsertion<CPDF_Object*> insertion(pVisited, pFuncObj);
+  pdfium::ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pFuncObj);
 
   int iType = -1;
-  if (CPDF_Stream* pStream = pFuncObj->AsStream())
+  if (const CPDF_Stream* pStream = pFuncObj->AsStream())
     iType = pStream->GetDict()->GetIntegerFor("FunctionType");
-  else if (CPDF_Dictionary* pDict = pFuncObj->AsDictionary())
+  else if (const CPDF_Dictionary* pDict = pFuncObj->AsDictionary())
     iType = pDict->GetIntegerFor("FunctionType");
 
   std::unique_ptr<CPDF_Function> pFunc;
@@ -78,11 +79,13 @@ CPDF_Function::~CPDF_Function() {
   FX_Free(m_pRanges);
 }
 
-bool CPDF_Function::Init(CPDF_Object* pObj, std::set<CPDF_Object*>* pVisited) {
-  CPDF_Stream* pStream = pObj->AsStream();
-  CPDF_Dictionary* pDict = pStream ? pStream->GetDict() : pObj->AsDictionary();
+bool CPDF_Function::Init(const CPDF_Object* pObj,
+                         std::set<const CPDF_Object*>* pVisited) {
+  const CPDF_Stream* pStream = pObj->AsStream();
+  const CPDF_Dictionary* pDict =
+      pStream ? pStream->GetDict() : pObj->AsDictionary();
 
-  CPDF_Array* pDomains = pDict->GetArrayFor("Domain");
+  const CPDF_Array* pDomains = pDict->GetArrayFor("Domain");
   if (!pDomains)
     return false;
 
