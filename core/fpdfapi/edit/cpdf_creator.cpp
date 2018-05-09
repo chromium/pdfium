@@ -169,7 +169,7 @@ bool CPDF_Creator::WriteStream(const CPDF_Object* pStream,
   if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
       encryptor.GetSize()) {
     encoder.CloneDict();
-    encoder.GetDict()->SetNewFor<CPDF_Number>(
+    encoder.GetClonedDict()->SetNewFor<CPDF_Number>(
         "Length", static_cast<int>(encryptor.GetSize()));
   }
 
@@ -240,7 +240,7 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
       if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
           encryptor.GetSize()) {
         encoder.CloneDict();
-        encoder.GetDict()->SetNewFor<CPDF_Number>(
+        encoder.GetClonedDict()->SetNewFor<CPDF_Number>(
             "Length", static_cast<int>(encryptor.GetSize()));
       }
       if (!WriteDirectObj(objnum, encoder.GetDict(), true) ||

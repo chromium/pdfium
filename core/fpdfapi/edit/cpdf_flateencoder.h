@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_FLATEENCODER_H_
 #define CORE_FPDFAPI_EDIT_CPDF_FLATEENCODER_H_
 
+#include <memory>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_memory.h"
@@ -21,16 +23,22 @@ class CPDF_FlateEncoder {
   ~CPDF_FlateEncoder();
 
   void CloneDict();
+  CPDF_Dictionary* GetClonedDict();
+
+  // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
+  const CPDF_Dictionary* GetDict() const;
 
   uint32_t GetSize() const { return m_dwSize; }
   const uint8_t* GetData() const { return m_pData.Get(); }
 
-  CPDF_Dictionary* GetDict() { return m_pDict.Get(); }
-
  private:
   uint32_t m_dwSize;
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
-  MaybeOwned<CPDF_Dictionary> m_pDict;
+
+  // Only one of these two pointers is valid at any time.
+  UnownedPtr<const CPDF_Dictionary> m_pDict;
+  std::unique_ptr<CPDF_Dictionary> m_pClonedDict;
+
   RetainPtr<CPDF_StreamAcc> m_pAcc;
 };
 
