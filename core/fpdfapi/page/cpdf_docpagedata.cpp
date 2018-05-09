@@ -421,7 +421,7 @@ void CPDF_DocPageData::MaybePurgeImage(uint32_t dwStreamObjNum) {
 }
 
 RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
-    CPDF_Stream* pProfileStream) {
+    const CPDF_Stream* pProfileStream) {
   if (!pProfileStream)
     return nullptr;
 
@@ -449,7 +449,7 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
   return pProfile;
 }
 
-void CPDF_DocPageData::MaybePurgeIccProfile(CPDF_Stream* pProfileStream) {
+void CPDF_DocPageData::MaybePurgeIccProfile(const CPDF_Stream* pProfileStream) {
   ASSERT(pProfileStream);
   auto it = m_IccProfileMap.find(pProfileStream);
   if (it != m_IccProfileMap.end() && it->second->HasOneRef())

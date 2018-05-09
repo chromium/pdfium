@@ -61,8 +61,8 @@ class CPDF_DocPageData {
   RetainPtr<CPDF_Image> GetImage(uint32_t dwStreamObjNum);
   void MaybePurgeImage(uint32_t dwStreamObjNum);
 
-  RetainPtr<CPDF_IccProfile> GetIccProfile(CPDF_Stream* pProfileStream);
-  void MaybePurgeIccProfile(CPDF_Stream* pProfileStream);
+  RetainPtr<CPDF_IccProfile> GetIccProfile(const CPDF_Stream* pProfileStream);
+  void MaybePurgeIccProfile(const CPDF_Stream* pProfileStream);
 
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(CPDF_Stream* pFontStream);
   void MaybePurgeFontFileStreamAcc(const CPDF_Stream* pFontStream);
@@ -86,7 +86,7 @@ class CPDF_DocPageData {
 
   bool m_bForceClear;
   UnownedPtr<CPDF_Document> const m_pPDFDoc;
-  std::map<ByteString, CPDF_Stream*> m_HashProfileMap;
+  std::map<ByteString, const CPDF_Stream*> m_HashProfileMap;
   std::map<const CPDF_Object*, CPDF_CountedColorSpace*> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, RetainPtr<CPDF_StreamAcc>> m_FontFileMap;
   std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;

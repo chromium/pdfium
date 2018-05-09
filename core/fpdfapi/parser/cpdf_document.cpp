@@ -491,7 +491,8 @@ CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj,
   return m_pDocPage->GetPattern(pPatternObj, bShading, matrix);
 }
 
-RetainPtr<CPDF_IccProfile> CPDF_Document::LoadIccProfile(CPDF_Stream* pStream) {
+RetainPtr<CPDF_IccProfile> CPDF_Document::LoadIccProfile(
+    const CPDF_Stream* pStream) {
   return m_pDocPage->GetIccProfile(pStream);
 }
 

@@ -258,7 +258,7 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
 
       const CPDF_Array* p = pObj->AsArray();
       for (size_t i = 0; i < p->GetCount(); i++) {
-        CPDF_Object* pElement = p->GetObjectAt(i);
+        const CPDF_Object* pElement = p->GetObjectAt(i);
         if (!pElement->IsInline()) {
           if (!m_Archive->WriteString(" ") ||
               !m_Archive->WriteDWord(pElement->GetObjNum()) ||
@@ -773,7 +773,8 @@ void CPDF_Creator::InitID() {
   bool idArrayPreExisting = !!m_pIDArray;
   if (!idArrayPreExisting) {
     m_pIDArray = pdfium::MakeUnique<CPDF_Array>();
-    CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
+    const CPDF_Object* pID1 =
+        pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
     if (pID1) {
       m_pIDArray->Add(pID1->Clone());
     } else {
@@ -785,7 +786,7 @@ void CPDF_Creator::InitID() {
   }
 
   if (pOldIDArray) {
-    CPDF_Object* pID2 = pOldIDArray->GetObjectAt(1);
+    const CPDF_Object* pID2 = pOldIDArray->GetObjectAt(1);
     if (IsIncremental() && m_pEncryptDict && pID2) {
       m_pIDArray->Add(pID2->Clone());
       return;

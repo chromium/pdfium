@@ -854,7 +854,7 @@ CPDF_ICCBasedCS::CPDF_ICCBasedCS(CPDF_Document* pDoc)
 
 CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
   if (m_pProfile && m_pDocument) {
-    CPDF_Stream* pStream = m_pProfile->GetStream();
+    const CPDF_Stream* pStream = m_pProfile->GetStream();
     m_pProfile.Reset();  // Give up our reference first.
     auto* pPageData = m_pDocument->GetPageData();
     if (pPageData)
@@ -865,7 +865,7 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
 uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
                                  const CPDF_Array* pArray,
                                  std::set<const CPDF_Object*>* pVisited) {
-  CPDF_Stream* pStream = pArray->GetStreamAt(1);
+  const CPDF_Stream* pStream = pArray->GetStreamAt(1);
   if (!pStream)
     return 0;
 
@@ -1118,13 +1118,13 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   }
   m_MaxIndex = pArray->GetIntegerAt(2);
 
-  CPDF_Object* pTableObj = pArray->GetDirectObjectAt(3);
+  const CPDF_Object* pTableObj = pArray->GetDirectObjectAt(3);
   if (!pTableObj)
     return 0;
 
-  if (CPDF_String* pString = pTableObj->AsString()) {
+  if (const CPDF_String* pString = pTableObj->AsString()) {
     m_Table = pString->GetString();
-  } else if (CPDF_Stream* pStream = pTableObj->AsStream()) {
+  } else if (const CPDF_Stream* pStream = pTableObj->AsStream()) {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pAcc->LoadAllDataFiltered();
     m_Table = ByteStringView(pAcc->GetData(), pAcc->GetSize());

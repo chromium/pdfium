@@ -695,7 +695,7 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
   if (const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj)) {
     ByteString bsSrcContentStream;
     for (size_t i = 0; i < pSrcContentArray->GetCount(); ++i) {
-      CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
+      const CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
       pAcc->LoadAllDataFiltered();
       ByteString bsStream(pAcc->GetData(), pAcc->GetSize());

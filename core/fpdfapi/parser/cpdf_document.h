@@ -92,7 +92,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
 
   RetainPtr<CPDF_Image> LoadImageFromPageData(uint32_t dwStreamObjNum);
   RetainPtr<CPDF_StreamAcc> LoadFontFile(CPDF_Stream* pStream);
-  RetainPtr<CPDF_IccProfile> LoadIccProfile(CPDF_Stream* pStream);
+  RetainPtr<CPDF_IccProfile> LoadIccProfile(const CPDF_Stream* pStream);
 
   void LoadDoc();
   void LoadLinearizedDoc(const CPDF_LinearizedHeader* pLinearizationParams);

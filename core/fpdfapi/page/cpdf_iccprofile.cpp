@@ -18,7 +18,7 @@ bool DetectSRGB(const uint8_t* pData, uint32_t dwSize) {
 
 }  // namespace
 
-CPDF_IccProfile::CPDF_IccProfile(CPDF_Stream* pStream,
+CPDF_IccProfile::CPDF_IccProfile(const CPDF_Stream* pStream,
                                  const uint8_t* pData,
                                  uint32_t dwSize)
     : m_bsRGB(DetectSRGB(pData, dwSize)), m_pStream(pStream) {

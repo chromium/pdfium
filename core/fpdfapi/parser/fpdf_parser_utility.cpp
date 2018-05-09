@@ -180,7 +180,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       const CPDF_Array* p = pObj->AsArray();
       buf << "[";
       for (size_t i = 0; i < p->GetCount(); i++) {
-        CPDF_Object* pElement = p->GetObjectAt(i);
+        const CPDF_Object* pElement = p->GetObjectAt(i);
         if (pElement && !pElement->IsInline()) {
           buf << " " << pElement->GetObjNum() << " 0 R";
         } else {

@@ -37,15 +37,20 @@ class CPDF_Array : public CPDF_Object {
 
   bool IsEmpty() const { return m_Objects.empty(); }
   size_t GetCount() const { return m_Objects.size(); }
-  CPDF_Object* GetObjectAt(size_t index) const;
-  CPDF_Object* GetDirectObjectAt(size_t index) const;
+  CPDF_Object* GetObjectAt(size_t index);
+  const CPDF_Object* GetObjectAt(size_t index) const;
+  CPDF_Object* GetDirectObjectAt(size_t index);
+  const CPDF_Object* GetDirectObjectAt(size_t index) const;
   ByteString GetStringAt(size_t index) const;
   WideString GetUnicodeTextAt(size_t index) const;
   int GetIntegerAt(size_t index) const;
   float GetNumberAt(size_t index) const;
-  CPDF_Dictionary* GetDictAt(size_t index) const;
-  CPDF_Stream* GetStreamAt(size_t index) const;
-  CPDF_Array* GetArrayAt(size_t index) const;
+  CPDF_Dictionary* GetDictAt(size_t index);
+  const CPDF_Dictionary* GetDictAt(size_t index) const;
+  CPDF_Stream* GetStreamAt(size_t index);
+  const CPDF_Stream* GetStreamAt(size_t index) const;
+  CPDF_Array* GetArrayAt(size_t index);
+  const CPDF_Array* GetArrayAt(size_t index) const;
   float GetFloatAt(size_t index) const { return GetNumberAt(index); }
   CFX_Matrix GetMatrix() const;
   CFX_FloatRect GetRect() const;

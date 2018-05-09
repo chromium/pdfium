@@ -87,13 +87,25 @@ CFX_Matrix CPDF_Array::GetMatrix() const {
                     GetNumberAt(3), GetNumberAt(4), GetNumberAt(5));
 }
 
-CPDF_Object* CPDF_Array::GetObjectAt(size_t i) const {
+CPDF_Object* CPDF_Array::GetObjectAt(size_t i) {
   if (i >= m_Objects.size())
     return nullptr;
   return m_Objects[i].get();
 }
 
-CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) const {
+const CPDF_Object* CPDF_Array::GetObjectAt(size_t i) const {
+  if (i >= m_Objects.size())
+    return nullptr;
+  return m_Objects[i].get();
+}
+
+CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) {
+  if (i >= m_Objects.size())
+    return nullptr;
+  return m_Objects[i]->GetDirect();
+}
+
+const CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) const {
   if (i >= m_Objects.size())
     return nullptr;
   return m_Objects[i]->GetDirect();
@@ -123,7 +135,7 @@ float CPDF_Array::GetNumberAt(size_t i) const {
   return m_Objects[i]->GetNumber();
 }
 
-CPDF_Dictionary* CPDF_Array::GetDictAt(size_t i) const {
+CPDF_Dictionary* CPDF_Array::GetDictAt(size_t i) {
   CPDF_Object* p = GetDirectObjectAt(i);
   if (!p)
     return nullptr;
@@ -134,11 +146,30 @@ CPDF_Dictionary* CPDF_Array::GetDictAt(size_t i) const {
   return nullptr;
 }
 
-CPDF_Stream* CPDF_Array::GetStreamAt(size_t i) const {
+const CPDF_Dictionary* CPDF_Array::GetDictAt(size_t i) const {
+  const CPDF_Object* p = GetDirectObjectAt(i);
+  if (!p)
+    return nullptr;
+  if (const CPDF_Dictionary* pDict = p->AsDictionary())
+    return pDict;
+  if (const CPDF_Stream* pStream = p->AsStream())
+    return pStream->GetDict();
+  return nullptr;
+}
+
+CPDF_Stream* CPDF_Array::GetStreamAt(size_t i) {
   return ToStream(GetDirectObjectAt(i));
 }
 
-CPDF_Array* CPDF_Array::GetArrayAt(size_t i) const {
+const CPDF_Stream* CPDF_Array::GetStreamAt(size_t i) const {
+  return ToStream(GetDirectObjectAt(i));
+}
+
+CPDF_Array* CPDF_Array::GetArrayAt(size_t i) {
+  return ToArray(GetDirectObjectAt(i));
+}
+
+const CPDF_Array* CPDF_Array::GetArrayAt(size_t i) const {
   return ToArray(GetDirectObjectAt(i));
 }
 
@@ -204,7 +235,7 @@ bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive) const {
     return false;
 
   for (size_t i = 0; i < GetCount(); ++i) {
-    CPDF_Object* pElement = GetObjectAt(i);
+    const CPDF_Object* pElement = GetObjectAt(i);
     if (!pElement->IsInline()) {
       if (!archive->WriteString(" ") ||
           !archive->WriteDWord(pElement->GetObjNum()) ||
