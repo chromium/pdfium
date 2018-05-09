@@ -284,10 +284,7 @@ jumbo_static_library("image_diff") {
     "testing/image_diff/image_diff_png.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = []
-  if (!pdf_enable_xfa) {
-    deps += [ "third_party:png" ]
-  }
+  deps = [ "third_party:png" ]
 }
 
 # Targets below this are only visible within this file (and to the
@@ -791,8 +788,6 @@ jumbo_static_library("fxcodec") {
       "core/fxcodec/codec/ccodec_bmpmodule.h",
       "core/fxcodec/codec/ccodec_gifmodule.cpp",
       "core/fxcodec/codec/ccodec_gifmodule.h",
-      "core/fxcodec/codec/ccodec_pngmodule.cpp",
-      "core/fxcodec/codec/ccodec_pngmodule.h",
       "core/fxcodec/codec/ccodec_progressivedecoder.h",
       "core/fxcodec/codec/fx_codec_progress.cpp",
       "core/fxcodec/gif/cfx_gif.cpp",
@@ -802,7 +797,13 @@ jumbo_static_library("fxcodec") {
       "core/fxcodec/gif/cfx_lzwdecompressor.cpp",
       "core/fxcodec/gif/cfx_lzwdecompressor.h",
     ]
-    deps += [ "third_party:png" ]
+    if (pdf_enable_xfa_png) {
+      sources += [
+        "core/fxcodec/codec/ccodec_pngmodule.cpp",
+        "core/fxcodec/codec/ccodec_pngmodule.h",
+      ]
+      deps += [ "third_party:png" ]
+    }
     if (pdf_enable_xfa_tiff) {
       sources += [
         "core/fxcodec/codec/ccodec_tiffmodule.cpp",

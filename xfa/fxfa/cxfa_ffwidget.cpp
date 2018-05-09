@@ -52,7 +52,9 @@ FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
         dibFormat = FXDIB_Rgb;
       }
     } break;
+#ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
+#endif  // PDF_ENABLE_XFA_PNG
     default:
       break;
   }
