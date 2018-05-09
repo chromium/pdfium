@@ -458,7 +458,7 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
     return pdfium::WrapUnique(ColorspaceFromName(pObj->GetString()));
 
   if (const CPDF_Stream* pStream = pObj->AsStream()) {
-    CPDF_Dictionary* pDict = pStream->GetDict();
+    const CPDF_Dictionary* pDict = pStream->GetDict();
     if (!pDict)
       return nullptr;
 

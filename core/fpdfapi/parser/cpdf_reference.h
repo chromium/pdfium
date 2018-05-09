@@ -23,11 +23,13 @@ class CPDF_Reference : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
-  CPDF_Object* GetDirect() const override;
+  CPDF_Object* GetDirect() override;
+  const CPDF_Object* GetDirect() const override;
   ByteString GetString() const override;
   float GetNumber() const override;
   int GetInteger() const override;
-  CPDF_Dictionary* GetDict() const override;
+  CPDF_Dictionary* GetDict() override;
+  const CPDF_Dictionary* GetDict() const override;
   bool IsReference() const override;
   CPDF_Reference* AsReference() override;
   const CPDF_Reference* AsReference() const override;
@@ -41,7 +43,8 @@ class CPDF_Reference : public CPDF_Object {
   std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
-  CPDF_Object* SafeGetDirect() const;
+  CPDF_Object* SafeGetDirect();
+  const CPDF_Object* SafeGetDirect() const;
 
   UnownedPtr<CPDF_IndirectObjectHolder> m_pObjList;
   uint32_t m_RefObjNum;

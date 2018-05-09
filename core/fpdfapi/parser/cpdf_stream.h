@@ -19,7 +19,6 @@ class CPDF_Stream : public CPDF_Object {
  public:
   CPDF_Stream();
 
-  // Takes ownership of |pData|.
   CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
               uint32_t size,
               std::unique_ptr<CPDF_Dictionary> pDict);
@@ -29,7 +28,8 @@ class CPDF_Stream : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
-  CPDF_Dictionary* GetDict() const override;
+  CPDF_Dictionary* GetDict() override;
+  const CPDF_Dictionary* GetDict() const override;
   WideString GetUnicodeText() const override;
   bool IsStream() const override;
   CPDF_Stream* AsStream() override;

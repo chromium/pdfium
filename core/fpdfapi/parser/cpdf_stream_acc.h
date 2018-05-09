@@ -29,7 +29,7 @@ class CPDF_StreamAcc : public Retainable {
   void LoadAllDataRaw();
 
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
-  CPDF_Dictionary* GetDict() const;
+  const CPDF_Dictionary* GetDict() const;
 
   uint8_t* GetData() const;
   uint32_t GetSize() const;

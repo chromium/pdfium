@@ -168,7 +168,7 @@ const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
 CFX_FloatRect GetMediaBox(const CPDF_Dictionary* pPageDict) {
   const CPDF_Object* pMediaBox =
       PageDictGetInheritableTag(pPageDict, "MediaBox");
-  CPDF_Array* pArray = ToArray(pMediaBox->GetDirect());
+  const CPDF_Array* pArray = ToArray(pMediaBox->GetDirect());
   if (!pArray)
     return CFX_FloatRect();
   return pArray->GetRect();

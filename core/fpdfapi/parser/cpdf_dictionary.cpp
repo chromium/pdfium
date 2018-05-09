@@ -42,10 +42,12 @@ CPDF_Object::Type CPDF_Dictionary::GetType() const {
   return DICTIONARY;
 }
 
-CPDF_Dictionary* CPDF_Dictionary::GetDict() const {
-  // The method should be made non-const if we want to not be const.
-  // See bug #234.
-  return const_cast<CPDF_Dictionary*>(this);
+CPDF_Dictionary* CPDF_Dictionary::GetDict() {
+  return this;
+}
+
+const CPDF_Dictionary* CPDF_Dictionary::GetDict() const {
+  return this;
 }
 
 bool CPDF_Dictionary::IsDictionary() const {

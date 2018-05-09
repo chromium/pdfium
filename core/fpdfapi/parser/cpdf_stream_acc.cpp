@@ -64,7 +64,7 @@ void CPDF_StreamAcc::LoadAllDataRaw() {
   LoadAllData(true, 0, false);
 }
 
-CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
+const CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
   return m_pStream ? m_pStream->GetDict() : nullptr;
 }
 

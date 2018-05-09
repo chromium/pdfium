@@ -56,12 +56,14 @@ class CPDF_Object {
   // copied to the object it points to directly.
   virtual std::unique_ptr<CPDF_Object> CloneDirectObject() const;
 
-  virtual CPDF_Object* GetDirect() const;
+  virtual CPDF_Object* GetDirect();
+  virtual const CPDF_Object* GetDirect() const;
   virtual ByteString GetString() const;
   virtual WideString GetUnicodeText() const;
   virtual float GetNumber() const;
   virtual int GetInteger() const;
-  virtual CPDF_Dictionary* GetDict() const;
+  virtual CPDF_Dictionary* GetDict();
+  virtual const CPDF_Dictionary* GetDict() const;
 
   virtual void SetString(const ByteString& str);
 

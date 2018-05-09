@@ -27,7 +27,7 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
   if (m_nInputs != kRequiredNumInputs)
     return false;
 
-  CPDF_Dictionary* pDict = pObj->GetDict();
+  const CPDF_Dictionary* pDict = pObj->GetDict();
   if (!pDict)
     return false;
 

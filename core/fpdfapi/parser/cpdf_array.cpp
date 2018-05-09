@@ -66,7 +66,7 @@ std::unique_ptr<CPDF_Object> CPDF_Array::CloneNonCyclic(
   return std::move(pCopy);
 }
 
-CFX_FloatRect CPDF_Array::GetRect() {
+CFX_FloatRect CPDF_Array::GetRect() const {
   CFX_FloatRect rect;
   if (!IsArray() || m_Objects.size() != 4)
     return rect;
@@ -78,7 +78,7 @@ CFX_FloatRect CPDF_Array::GetRect() {
   return rect;
 }
 
-CFX_Matrix CPDF_Array::GetMatrix() {
+CFX_Matrix CPDF_Array::GetMatrix() const {
   CFX_Matrix matrix;
   if (!IsArray() || m_Objects.size() != 6)
     return CFX_Matrix();

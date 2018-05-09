@@ -47,8 +47,8 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Stream* GetStreamAt(size_t index) const;
   CPDF_Array* GetArrayAt(size_t index) const;
   float GetFloatAt(size_t index) const { return GetNumberAt(index); }
-  CFX_Matrix GetMatrix();
-  CFX_FloatRect GetRect();
+  CFX_Matrix GetMatrix() const;
+  CFX_FloatRect GetRect() const;
 
   // Takes ownership of |pObj|, returns unowned pointer to it.
   CPDF_Object* Add(std::unique_ptr<CPDF_Object> pObj);

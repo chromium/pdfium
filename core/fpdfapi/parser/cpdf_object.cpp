@@ -19,8 +19,12 @@
 
 CPDF_Object::~CPDF_Object() {}
 
-CPDF_Object* CPDF_Object::GetDirect() const {
-  return const_cast<CPDF_Object*>(this);
+CPDF_Object* CPDF_Object::GetDirect() {
+  return this;
+}
+
+const CPDF_Object* CPDF_Object::GetDirect() const {
+  return this;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Object::CloneObjectNonCyclic(
@@ -55,7 +59,11 @@ int CPDF_Object::GetInteger() const {
   return 0;
 }
 
-CPDF_Dictionary* CPDF_Object::GetDict() const {
+CPDF_Dictionary* CPDF_Object::GetDict() {
+  return nullptr;
+}
+
+const CPDF_Dictionary* CPDF_Object::GetDict() const {
   return nullptr;
 }
 
