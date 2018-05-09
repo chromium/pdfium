@@ -121,19 +121,15 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
     return nullptr;
 
   HTREG->fill(HDEFPIXEL);
-  std::vector<uint32_t> GSVALS(HGW * HGH);
   for (uint32_t y = 0; y < HGH; ++y) {
     for (uint32_t x = 0; x < HGW; ++x) {
-      for (uint8_t J = 0; J < GSPLANES.size(); ++J)
-        GSVALS[y * HGW + x] |= GSPLANES[J]->getPixel(x, y) << J;
-    }
-  }
-  for (uint32_t mg = 0; mg < HGH; ++mg) {
-    for (uint32_t ng = 0; ng < HGW; ++ng) {
-      int32_t x = (HGX + mg * HRY + ng * HRX) >> 8;
-      int32_t y = (HGY + mg * HRX - ng * HRY) >> 8;
-      uint32_t pat_index = std::min(GSVALS[mg * HGW + ng], HNUMPATS - 1);
-      HTREG->ComposeFrom(x, y, (*HPATS)[pat_index].get(), HCOMBOP);
+      uint32_t gsval = 0;
+      for (uint8_t i = 0; i < GSPLANES.size(); ++i)
+        gsval |= GSPLANES[i]->getPixel(x, y) << i;
+      uint32_t pat_index = std::min(gsval, HNUMPATS - 1);
+      int32_t out_x = (HGX + y * HRY + x * HRX) >> 8;
+      int32_t out_y = (HGY + y * HRX - x * HRY) >> 8;
+      HTREG->ComposeFrom(out_x, out_y, (*HPATS)[pat_index].get(), HCOMBOP);
     }
   }
   return HTREG;
