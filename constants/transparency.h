@@ -32,6 +32,22 @@ constexpr char kSaturation[] = "Saturation";
 constexpr char kColor[] = "Color";
 constexpr char kLuminosity[] = "Luminosity";
 
+// PDF 1.7 spec, table 7.10.
+// Entries in a soft-mask dictionary.
+
+constexpr char kSoftMaskSubType[] = "S";
+constexpr char kAlpha[] = "Alpha";
+constexpr char kG[] = "G";
+constexpr char kBC[] = "BC";
+constexpr char kTR[] = "TR";
+
+// PDF 1.7 spec, table 7.13.
+// Additional entries specific to a transparency group attributes dictionary.
+
+constexpr char kGroupSubType[] = "S";
+constexpr char kTransparency[] = "Transparency";
+constexpr char kI[] = "I";
+
 }  // namespace transparency
 }  // namespace pdfium
 

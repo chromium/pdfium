@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/transparency.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/font/cpdf_type3font.h"
@@ -2530,12 +2531,13 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (!pSMaskDict)
     return nullptr;
 
-  CPDF_Stream* pGroup = pSMaskDict->GetStreamFor("G");
+  CPDF_Stream* pGroup = pSMaskDict->GetStreamFor(pdfium::transparency::kG);
   if (!pGroup)
     return nullptr;
 
   std::unique_ptr<CPDF_Function> pFunc;
-  CPDF_Object* pFuncObj = pSMaskDict->GetDirectObjectFor("TR");
+  CPDF_Object* pFuncObj =
+      pSMaskDict->GetDirectObjectFor(pdfium::transparency::kTR);
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc = CPDF_Function::Load(pFuncObj);
 
@@ -2547,7 +2549,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   form.ParseContent();
 
   CFX_DefaultRenderDevice bitmap_device;
-  bool bLuminosity = pSMaskDict->GetStringFor("S") != "Alpha";
+  bool bLuminosity =
+      pSMaskDict->GetStringFor(pdfium::transparency::kSoftMaskSubType) !=
+      pdfium::transparency::kAlpha;
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
   FXDIB_Format format;
@@ -2629,7 +2633,7 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
                                         const CPDF_Dictionary* pGroupDict,
                                         int* pCSFamily) {
   static constexpr FX_ARGB kDefaultColor = ArgbEncode(255, 0, 0, 0);
-  CPDF_Array* pBC = pSMaskDict->GetArrayFor("BC");
+  const CPDF_Array* pBC = pSMaskDict->GetArrayFor(pdfium::transparency::kBC);
   if (!pBC)
     return kDefaultColor;
 
