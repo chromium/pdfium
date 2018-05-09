@@ -794,8 +794,6 @@ jumbo_static_library("fxcodec") {
       "core/fxcodec/codec/ccodec_pngmodule.cpp",
       "core/fxcodec/codec/ccodec_pngmodule.h",
       "core/fxcodec/codec/ccodec_progressivedecoder.h",
-      "core/fxcodec/codec/ccodec_tiffmodule.cpp",
-      "core/fxcodec/codec/ccodec_tiffmodule.h",
       "core/fxcodec/codec/fx_codec_progress.cpp",
       "core/fxcodec/gif/cfx_gif.cpp",
       "core/fxcodec/gif/cfx_gif.h",
@@ -804,10 +802,14 @@ jumbo_static_library("fxcodec") {
       "core/fxcodec/gif/cfx_lzwdecompressor.cpp",
       "core/fxcodec/gif/cfx_lzwdecompressor.h",
     ]
-    deps += [
-      "third_party:fx_tiff",
-      "third_party:png",
-    ]
+    deps += [ "third_party:png" ]
+    if (pdf_enable_xfa_tiff) {
+      sources += [
+        "core/fxcodec/codec/ccodec_tiffmodule.cpp",
+        "core/fxcodec/codec/ccodec_tiffmodule.h",
+      ]
+      deps += [ "third_party:fx_tiff" ]
+    }
   }
   if (is_posix || is_fuchsia) {
     # core/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int

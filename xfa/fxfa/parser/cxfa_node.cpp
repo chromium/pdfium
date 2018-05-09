@@ -171,8 +171,10 @@ FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
     return FXCODEC_IMAGE_GIF;
   if (wsContentType == L"image/bmp")
     return FXCODEC_IMAGE_BMP;
+#ifdef PDF_ENABLE_XFA_TIFF
   if (wsContentType == L"image/tif")
-    return FXCODEC_IMAGE_TIF;
+    return FXCODEC_IMAGE_TIFF;
+#endif  // PDF_ENABLE_XFA_TIFF
   return FXCODEC_IMAGE_UNKNOWN;
 }
 

@@ -43,12 +43,14 @@ group("libfuzzer") {
       ":pdf_codec_gif_fuzzer",
       ":pdf_codec_jpeg_fuzzer",
       ":pdf_codec_png_fuzzer",
-      ":pdf_codec_tiff_fuzzer",
       ":pdf_css_fuzzer",
       ":pdf_fm2js_fuzzer",
       ":pdf_formcalc_fuzzer",
       ":pdf_lzw_fuzzer",
     ]
+    if (pdf_enable_xfa_tiff) {
+      deps += [ ":pdf_codec_tiff_fuzzer" ]
+    }
   }
 }
 
@@ -105,11 +107,13 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  pdfium_fuzzer("pdf_codec_tiff_fuzzer") {
-    sources = [
-      "pdf_codec_tiff_fuzzer.cc",
-      "xfa_codec_fuzzer.h",
-    ]
+  if (pdf_enable_xfa_tiff) {
+    pdfium_fuzzer("pdf_codec_tiff_fuzzer") {
+      sources = [
+        "pdf_codec_tiff_fuzzer.cc",
+        "xfa_codec_fuzzer.h",
+      ]
+    }
   }
 
   pdfium_fuzzer("pdf_css_fuzzer") {

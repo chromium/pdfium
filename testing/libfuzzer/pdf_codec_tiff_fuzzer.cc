@@ -5,5 +5,5 @@
 #include "testing/libfuzzer/xfa_codec_fuzzer.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  return XFACodecFuzzer::Fuzz(data, size, FXCODEC_IMAGE_TIF);
+  return XFACodecFuzzer::Fuzz(data, size, FXCODEC_IMAGE_TIFF);
 }

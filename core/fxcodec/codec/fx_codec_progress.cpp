@@ -250,10 +250,6 @@ void CCodec_ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len,
 CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
     CCodec_ModuleMgr* pCodecMgr) {
   m_pFile = nullptr;
-  m_pJpegContext = nullptr;
-  m_pPngContext = nullptr;
-  m_pBmpContext = nullptr;
-  m_pTiffContext = nullptr;
   m_pCodecMgr = nullptr;
   m_pSrcBuf = nullptr;
   m_pDecodeBuf = nullptr;
@@ -1045,8 +1041,10 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       return PngDetectImageType(pAttribute, size);
     case FXCODEC_IMAGE_GIF:
       return GifDetectImageType(pAttribute, size);
-    case FXCODEC_IMAGE_TIF:
-      return TifDetectImageType(pAttribute, size);
+#ifdef PDF_ENABLE_XFA_TIFF
+    case FXCODEC_IMAGE_TIFF:
+      return TiffDetectImageType(pAttribute, size);
+#endif  // PDF_ENABLE_XFA_TIFF
     default:
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return false;
@@ -1282,8 +1280,10 @@ bool CCodec_ProgressiveDecoder::GifDetectImageType(CFX_DIBAttribute* pAttribute,
   return false;
 }
 
-bool CCodec_ProgressiveDecoder::TifDetectImageType(CFX_DIBAttribute* pAttribute,
-                                                   uint32_t size) {
+#ifdef PDF_ENABLE_XFA_TIFF
+bool CCodec_ProgressiveDecoder::TiffDetectImageType(
+    CFX_DIBAttribute* pAttribute,
+    uint32_t size) {
   CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
   if (!pTiffModule) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
@@ -1307,6 +1307,7 @@ bool CCodec_ProgressiveDecoder::TifDetectImageType(CFX_DIBAttribute* pAttribute,
   }
   return true;
 }
+#endif  // PDF_ENABLE_XFA_TIFF
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
     const RetainPtr<IFX_SeekableReadStream>& pFile,
@@ -1862,7 +1863,9 @@ std::pair<FXCODEC_STATUS, size_t> CCodec_ProgressiveDecoder::GetFrames() {
     case FXCODEC_IMAGE_JPG:
     case FXCODEC_IMAGE_BMP:
     case FXCODEC_IMAGE_PNG:
-    case FXCODEC_IMAGE_TIF:
+#ifdef PDF_ENABLE_XFA_TIFF
+    case FXCODEC_IMAGE_TIFF:
+#endif  // PDF_ENABLE_XFA_TIFF
       m_FrameNumber = 1;
       m_status = FXCODEC_STATUS_DECODE_READY;
       return {m_status, 1};
@@ -1960,9 +1963,11 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
       return GifStartDecode(pDIBitmap);
     case FXCODEC_IMAGE_BMP:
       return BmpStartDecode(pDIBitmap);
-    case FXCODEC_IMAGE_TIF:
+#ifdef PDF_ENABLE_XFA_TIFF
+    case FXCODEC_IMAGE_TIFF:
       m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       return m_status;
+#endif  // PDF_ENABLE_XFA_TIFF
     default:
       return FXCODEC_STATUS_ERROR;
   }
@@ -2125,8 +2130,10 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
       return GifContinueDecode();
     case FXCODEC_IMAGE_BMP:
       return BmpContinueDecode();
-    case FXCODEC_IMAGE_TIF:
-      return TifContinueDecode();
+#ifdef PDF_ENABLE_XFA_TIFF
+    case FXCODEC_IMAGE_TIFF:
+      return TiffContinueDecode();
+#endif  // PDF_ENABLE_XFA_TIFF
     default:
       return FXCODEC_STATUS_ERROR;
   }
@@ -2278,7 +2285,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
   }
 }
 
-FXCODEC_STATUS CCodec_ProgressiveDecoder::TifContinueDecode() {
+#ifdef PDF_ENABLE_XFA_TIFF
+FXCODEC_STATUS CCodec_ProgressiveDecoder::TiffContinueDecode() {
   CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
   if (!pTiffModule) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
@@ -2416,6 +2424,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::TifContinueDecode() {
   m_status = FXCODEC_STATUS_DECODE_FINISH;
   return m_status;
 }
+#endif  // PDF_ENABLE_XFA_TIFF
 
 std::unique_ptr<CCodec_ProgressiveDecoder>
 CCodec_ModuleMgr::CreateProgressiveDecoder() {

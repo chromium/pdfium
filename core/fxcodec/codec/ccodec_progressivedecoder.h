@@ -15,12 +15,16 @@
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/codec/ccodec_pngmodule.h"
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
+
+#ifdef PDF_ENABLE_XFA_TIFF
+#include "core/fxcodec/codec/ccodec_tiffmodule.h"
+#endif  // PDF_ENABLE_XFA_TIFF
 
 class CCodec_ModuleMgr;
 class CFX_DIBAttribute;
@@ -167,7 +171,9 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   bool JpegDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
   bool PngDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
   bool GifDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
-  bool TifDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
+#ifdef PDF_ENABLE_XFA_TIFF
+  bool TiffDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
+#endif  // PDF_ENABLE_XFA_TIFF
 
   void GetDownScale(int& down_scale);
   void GetTransMethod(FXDIB_Format dest_format, FXCodec_Format src_format);
@@ -199,7 +205,9 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   FXCODEC_STATUS PngContinueDecode();
   FXCODEC_STATUS GifContinueDecode();
   FXCODEC_STATUS BmpContinueDecode();
-  FXCODEC_STATUS TifContinueDecode();
+#ifdef PDF_ENABLE_XFA_TIFF
+  FXCODEC_STATUS TiffContinueDecode();
+#endif  // PDF_ENABLE_XFA_TIFF
 
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
@@ -208,7 +216,9 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   std::unique_ptr<CCodec_PngModule::Context> m_pPngContext;
   std::unique_ptr<CCodec_GifModule::Context> m_pGifContext;
   std::unique_ptr<CCodec_BmpModule::Context> m_pBmpContext;
+#ifdef PDF_ENABLE_XFA_TIFF
   std::unique_ptr<CCodec_TiffModule::Context> m_pTiffContext;
+#endif  // PDF_ENABLE_XFA_TIFF
   FXCODEC_IMAGE_TYPE m_imagType;
   uint32_t m_offSet;
   uint8_t* m_pSrcBuf;
