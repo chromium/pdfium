@@ -2561,35 +2561,10 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     return nullptr;
 
   CFX_DIBitmap& bitmap = *bitmap_device.GetBitmap();
-  int color_space_family = 0;
+  int nCSFamily = 0;
   if (bLuminosity) {
-    CPDF_Array* pBC = pSMaskDict->GetArrayFor("BC");
-    FX_ARGB back_color = 0xff000000;
-    if (pBC) {
-      CPDF_Object* pCSObj = nullptr;
-      CPDF_Dictionary* pDict = pGroup->GetDict();
-      if (pDict && pDict->GetDictFor("Group")) {
-        pCSObj = pDict->GetDictFor("Group")->GetDirectObjectFor("CS");
-      }
-      const CPDF_ColorSpace* pCS =
-          m_pContext->GetDocument()->LoadColorSpace(pCSObj);
-      if (pCS) {
-        // Store Color Space Family to use in CPDF_RenderStatus::Initialize.
-        color_space_family = pCS->GetFamily();
-
-        float R, G, B;
-        uint32_t comps = std::max(8u, pCS->CountComponents());
-        std::vector<float> floats(comps);
-        size_t count = std::min<size_t>(8, pBC->GetCount());
-        for (size_t i = 0; i < count; i++) {
-          floats[i] = pBC->GetNumberAt(i);
-        }
-        pCS->GetRGB(floats.data(), &R, &G, &B);
-        back_color = 0xff000000 | ((int32_t)(R * 255) << 16) |
-                     ((int32_t)(G * 255) << 8) | (int32_t)(B * 255);
-        m_pContext->GetDocument()->GetPageData()->ReleaseColorSpace(pCSObj);
-      }
-    }
+    FX_ARGB back_color =
+        GetBackColor(pSMaskDict, pGroup->GetDict(), &nCSFamily);
     bitmap.Clear(back_color);
   } else {
     bitmap.Clear(0);
@@ -2604,7 +2579,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr, nullptr,
                     nullptr, &options, 0, m_bDropObjects, pFormResource, true,
-                    nullptr, 0, color_space_family, bLuminosity);
+                    nullptr, 0, nCSFamily, bLuminosity);
   status.RenderObjectList(&form, &matrix);
 
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -2648,4 +2623,42 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     memcpy(dest_buf, src_buf, dest_pitch * height);
   }
   return pMask;
+}
+
+FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
+                                        const CPDF_Dictionary* pGroupDict,
+                                        int* pCSFamily) {
+  static constexpr FX_ARGB kDefaultColor = ArgbEncode(255, 0, 0, 0);
+  CPDF_Array* pBC = pSMaskDict->GetArrayFor("BC");
+  if (!pBC)
+    return kDefaultColor;
+
+  CPDF_Object* pCSObj = nullptr;
+  const CPDF_Dictionary* pGroup =
+      pGroupDict ? pGroupDict->GetDictFor("Group") : nullptr;
+  if (pGroup) {
+    // TODO(thestig): Check if "CS" is from PDF spec 1.7, table 13.
+    pCSObj = pGroup->GetDirectObjectFor("CS");
+  }
+  const CPDF_ColorSpace* pCS =
+      m_pContext->GetDocument()->LoadColorSpace(pCSObj);
+  if (!pCS)
+    return kDefaultColor;
+
+  // Store Color Space Family to use in CPDF_RenderStatus::Initialize().
+  *pCSFamily = pCS->GetFamily();
+
+  uint32_t comps = std::max(8u, pCS->CountComponents());
+  std::vector<float> floats(comps);
+  size_t count = std::min<size_t>(8, pBC->GetCount());
+  for (size_t i = 0; i < count; i++)
+    floats[i] = pBC->GetNumberAt(i);
+
+  float R;
+  float G;
+  float B;
+  pCS->GetRGB(floats.data(), &R, &G, &B);
+  m_pContext->GetDocument()->GetPageData()->ReleaseColorSpace(pCSObj);
+  return ArgbEncode(255, static_cast<int>(R * 255), static_cast<int>(G * 255),
+                    static_cast<int>(B * 255));
 }

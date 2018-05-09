@@ -148,6 +148,10 @@ class CPDF_RenderStatus {
   RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
                                     FX_RECT* pClipRect,
                                     const CFX_Matrix* pMatrix);
+  // Optionally write the colorspace family value into |pCSFamily|.
+  FX_ARGB GetBackColor(const CPDF_Dictionary* pSMaskDict,
+                       const CPDF_Dictionary* pGroupDict,
+                       int* pCSFamily);
   static RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
   static std::unique_ptr<CPDF_GraphicStates> CloneObjStates(
       const CPDF_GraphicStates* pPathObj,
