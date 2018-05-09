@@ -26,13 +26,6 @@
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
-#include "core/fxcodec/codec/ccodec_pngmodule.h"
-#include "core/fxcodec/codec/ccodec_tiffmodule.h"
-#endif  // PDF_ENABLE_XFA
-
 namespace {
 
 const uint8_t g_CMYK[81 * 81 * 3] = {
@@ -1364,25 +1357,6 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 
 CCodec_ModuleMgr::~CCodec_ModuleMgr() {}
 
-#ifdef PDF_ENABLE_XFA
-void CCodec_ModuleMgr::SetBmpModule(std::unique_ptr<CCodec_BmpModule> module) {
-  m_pBmpModule = std::move(module);
-}
-
-void CCodec_ModuleMgr::SetGifModule(std::unique_ptr<CCodec_GifModule> module) {
-  m_pGifModule = std::move(module);
-}
-
-void CCodec_ModuleMgr::SetPngModule(std::unique_ptr<CCodec_PngModule> module) {
-  m_pPngModule = std::move(module);
-}
-
-void CCodec_ModuleMgr::SetTiffModule(
-    std::unique_ptr<CCodec_TiffModule> module) {
-  m_pTiffModule = std::move(module);
-}
-#endif  // PDF_ENABLE_XFA
-
 bool CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,
                                          uint32_t src_size,
                                          uint8_t** dest_buf,
@@ -1540,11 +1514,14 @@ CFX_DIBAttribute::CFX_DIBAttribute()
       m_nYDPI(-1),
       m_fAspectRatio(-1.0f),
       m_wDPIUnit(0),
+#ifdef PDF_ENABLE_XFA_GIF
       m_nGifLeft(0),
       m_nGifTop(0),
       m_pGifLocalPalette(nullptr),
       m_nGifLocalPalNum(0),
-      m_nBmpCompressType(0) {}
+#endif  // PDF_ENABLE_XFA_GIF
+      m_nBmpCompressType(0) {
+}
 
 CFX_DIBAttribute::~CFX_DIBAttribute() {
   for (const auto& pair : m_Exif)

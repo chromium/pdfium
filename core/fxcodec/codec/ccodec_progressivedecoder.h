@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
-#include "core/fxcodec/codec/ccodec_gifmodule.h"
 #include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_system.h"
@@ -20,6 +19,10 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
+
+#ifdef PDF_ENABLE_XFA_GIF
+#include "core/fxcodec/codec/ccodec_gifmodule.h"
+#endif  // PDF_ENABLE_XFA_gif
 
 #ifdef PDF_ENABLE_XFA_PNG
 #include "core/fxcodec/codec/ccodec_pngmodule.h"
@@ -36,7 +39,9 @@ class IFX_SeekableReadStream;
 class CCodec_Dummy {};  // Placeholder to work around C++ syntax issues
 
 class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
+#ifdef PDF_ENABLE_XFA_GIF
                                   public CCodec_GifModule::Delegate,
+#endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
                                   public CCodec_PngModule::Delegate,
 #endif  // PDF_ENABLE_XFA_PNG
@@ -146,6 +151,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   void PngFillScanlineBufCompleted(int pass, int line) override;
 #endif  // PDF_ENABLE_XFA_PNG
 
+#ifdef PDF_ENABLE_XFA_GIF
   // CCodec_GifModule::Delegate
   void GifRecordCurrentPosition(uint32_t& cur_pos) override;
   bool GifInputRecordPositionBuf(uint32_t rcd_pos,
@@ -158,6 +164,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
                                  int32_t disposal_method,
                                  bool interlace) override;
   void GifReadScanline(int32_t row_num, uint8_t* row_buf) override;
+#endif  // PDF_ENABLE_XFA_GIF
 
   // CCodec_BmpModule::Delegate
   bool BmpInputImagePositionBuf(uint32_t rcd_pos) override;
@@ -171,6 +178,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   FXCODEC_STATUS BmpContinueDecode();
 
+#ifdef PDF_ENABLE_XFA_GIF
   bool GifReadMoreData(CCodec_GifModule* pGifModule,
                        FXCODEC_STATUS& err_status);
   bool GifDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
@@ -179,6 +187,7 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   void GifDoubleLineResampleVert(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                                  double scale_y,
                                  int dest_row);
+#endif  // PDF_ENABLE_XFA_GIF
 
   bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
                         FXCODEC_STATUS& err_status);
@@ -229,7 +238,9 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
 #ifdef PDF_ENABLE_XFA_PNG
   std::unique_ptr<CCodec_PngModule::Context> m_pPngContext;
 #endif  // PDF_ENABLE_XFA_PNG
+#ifdef PDF_ENABLE_XFA_GIF
   std::unique_ptr<CCodec_GifModule::Context> m_pGifContext;
+#endif  // PDF_ENABLE_XFA_GIF
   std::unique_ptr<CCodec_BmpModule::Context> m_pBmpContext;
 #ifdef PDF_ENABLE_XFA_TIFF
   std::unique_ptr<CCodec_TiffModule::Context> m_pTiffContext;
@@ -260,14 +271,16 @@ class CCodec_ProgressiveDecoder : public CCodec_BmpModule::Delegate,
   int m_SrcPassNumber;
   size_t m_FrameNumber;
   size_t m_FrameCur;
+#ifdef PDF_ENABLE_XFA_GIF
   int m_GifBgIndex;
   CFX_GifPalette* m_pGifPalette;
   int32_t m_GifPltNumber;
   int m_GifTransIndex;
   FX_RECT m_GifFrameRect;
+  bool m_InvalidateGifBuffer;
+#endif  // PDF_ENABLE_XFA_GIF
   bool m_BmpIsTopBottom;
   FXCODEC_STATUS m_status;
-  bool m_InvalidateGifBuffer;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_

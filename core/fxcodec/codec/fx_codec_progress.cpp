@@ -275,13 +275,15 @@ CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
   m_FrameNumber = 0;
   m_FrameCur = 0;
   m_SrcPaletteNumber = 0;
+#ifdef PDF_ENABLE_XFA_GIF
   m_GifPltNumber = 0;
   m_GifBgIndex = 0;
   m_pGifPalette = nullptr;
   m_GifTransIndex = -1;
   m_GifFrameRect = FX_RECT(0, 0, 0, 0);
-  m_BmpIsTopBottom = false;
   m_InvalidateGifBuffer = true;
+#endif  // PDF_ENABLE_XFA_GIF
+  m_BmpIsTopBottom = false;
 }
 
 CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
@@ -450,6 +452,7 @@ void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
 }
 #endif  // PDF_ENABLE_XFA_PNG
 
+#ifdef PDF_ENABLE_XFA_GIF
 void CCodec_ProgressiveDecoder::GifRecordCurrentPosition(uint32_t& cur_pos) {
   uint32_t remain_size =
       m_pCodecMgr->GetGifModule()->GetAvailInput(m_pGifContext.get());
@@ -608,6 +611,7 @@ void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
   if (bLastPass)
     GifDoubleLineResampleVert(pDIBitmap, scale_y, dest_row);
 }
+#endif  // PDF_ENABLE_XFA_GIF
 
 bool CCodec_ProgressiveDecoder::BmpInputImagePositionBuf(uint32_t rcd_pos) {
   m_offSet = rcd_pos;
@@ -923,6 +927,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
   }
 }
 
+#ifdef PDF_ENABLE_XFA_GIF
 bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
                                                 FXCODEC_STATUS& err_status) {
   if (static_cast<uint32_t>(m_pFile->GetSize()) <= m_offSet)
@@ -1151,6 +1156,7 @@ void CCodec_ProgressiveDecoder::GifDoubleLineResampleVert(
     GifDoubleLineResampleVert(pDeviceBitmap, scale_y, dest_row + (int)scale_y);
   }
 }
+#endif  // PDF_ENABLE_XFA_GIF
 
 bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
                                                  FXCODEC_STATUS& err_status) {
@@ -1735,8 +1741,10 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
     case FXCODEC_IMAGE_PNG:
       return PngDetectImageType(pAttribute, size);
 #endif  // PDF_ENABLE_XFA_PNG
+#ifdef PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_GIF:
       return GifDetectImageType(pAttribute, size);
+#endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_TIFF
     case FXCODEC_IMAGE_TIFF:
       return TiffDetectImageType(pAttribute, size);
@@ -2309,6 +2317,7 @@ std::pair<FXCODEC_STATUS, size_t> CCodec_ProgressiveDecoder::GetFrames() {
       m_FrameNumber = 1;
       m_status = FXCODEC_STATUS_DECODE_READY;
       return {m_status, 1};
+#ifdef PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_GIF: {
       CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
       if (!pGifModule) {
@@ -2336,6 +2345,7 @@ std::pair<FXCODEC_STATUS, size_t> CCodec_ProgressiveDecoder::GetFrames() {
         return {m_status, 0};
       }
     }
+#endif  // PDF_ENABLE_XFA_GIF
     default:
       return {FXCODEC_STATUS_ERROR, 0};
   }
@@ -2401,8 +2411,10 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
     case FXCODEC_IMAGE_PNG:
       return PngStartDecode(pDIBitmap);
 #endif  // PDF_ENABLE_XFA_PNG
+#ifdef PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_GIF:
       return GifStartDecode(pDIBitmap);
+#endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_BMP:
       return BmpStartDecode(pDIBitmap);
 #ifdef PDF_ENABLE_XFA_TIFF
@@ -2426,8 +2438,10 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
     case FXCODEC_IMAGE_PNG:
       return PngContinueDecode();
 #endif  // PDF_ENABLE_XFA_PNG
+#ifdef PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_GIF:
       return GifContinueDecode();
+#endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_BMP:
       return BmpContinueDecode();
 #ifdef PDF_ENABLE_XFA_TIFF

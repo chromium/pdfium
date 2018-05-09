@@ -284,7 +284,9 @@ jumbo_static_library("image_diff") {
     "testing/image_diff/image_diff_png.h",
   ]
   configs += [ ":pdfium_core_config" ]
-  deps = [ "third_party:png" ]
+  deps = [
+    "third_party:png",
+  ]
 }
 
 # Targets below this are only visible within this file (and to the
@@ -786,17 +788,21 @@ jumbo_static_library("fxcodec") {
       "core/fxcodec/bmp/fx_bmp.h",
       "core/fxcodec/codec/ccodec_bmpmodule.cpp",
       "core/fxcodec/codec/ccodec_bmpmodule.h",
-      "core/fxcodec/codec/ccodec_gifmodule.cpp",
-      "core/fxcodec/codec/ccodec_gifmodule.h",
       "core/fxcodec/codec/ccodec_progressivedecoder.h",
       "core/fxcodec/codec/fx_codec_progress.cpp",
-      "core/fxcodec/gif/cfx_gif.cpp",
-      "core/fxcodec/gif/cfx_gif.h",
-      "core/fxcodec/gif/cfx_gifcontext.cpp",
-      "core/fxcodec/gif/cfx_gifcontext.h",
-      "core/fxcodec/gif/cfx_lzwdecompressor.cpp",
-      "core/fxcodec/gif/cfx_lzwdecompressor.h",
     ]
+    if (pdf_enable_xfa_gif) {
+      sources += [
+        "core/fxcodec/codec/ccodec_gifmodule.cpp",
+        "core/fxcodec/codec/ccodec_gifmodule.h",
+        "core/fxcodec/gif/cfx_gif.cpp",
+        "core/fxcodec/gif/cfx_gif.h",
+        "core/fxcodec/gif/cfx_gifcontext.cpp",
+        "core/fxcodec/gif/cfx_gifcontext.h",
+        "core/fxcodec/gif/cfx_lzwdecompressor.cpp",
+        "core/fxcodec/gif/cfx_lzwdecompressor.h",
+      ]
+    }
     if (pdf_enable_xfa_png) {
       sources += [
         "core/fxcodec/codec/ccodec_pngmodule.cpp",
@@ -2921,8 +2927,6 @@ test("pdfium_unittests") {
   include_dirs = []
   if (pdf_enable_xfa) {
     sources += [
-      "core/fxcodec/gif/cfx_gifcontext_unittest.cpp",
-      "core/fxcodec/gif/cfx_lzwdecompressor_unittest.cpp",
       "core/fxcrt/css/cfx_cssdeclaration_unittest.cpp",
       "core/fxcrt/css/cfx_cssstylesheet_unittest.cpp",
       "core/fxcrt/css/cfx_cssvaluelistparser_unittest.cpp",
@@ -2949,6 +2953,12 @@ test("pdfium_unittests") {
       "xfa/fxfa/parser/cxfa_xmllocale_unittest.cpp",
       "xfa/fxfa/parser/xfa_utils_unittest.cpp",
     ]
+    if (pdf_enable_xfa_gif) {
+      sources += [
+        "core/fxcodec/gif/cfx_gifcontext_unittest.cpp",
+        "core/fxcodec/gif/cfx_lzwdecompressor_unittest.cpp",
+      ]
+    }
   }
   if (pdf_use_skia || pdf_use_skia_paths) {
     sources += [ "core/fxge/skia/fx_skia_device_unittest.cpp" ]
