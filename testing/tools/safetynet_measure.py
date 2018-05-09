@@ -105,8 +105,14 @@ class PerformanceRun(object):
   def _BuildTestHarnessCommand(self):
     """Builds command to run the test harness."""
     cmd = [self.pdfium_test_path, '--send-events']
+
     if self.args.interesting_section:
       cmd.append('--callgrind-delim')
+    if self.args.png:
+      cmd.append('--png')
+    if self.args.pages:
+      cmd.append('--pages=%s' % self.args.pages)
+
     cmd.append(self.args.pdf_path)
     return cmd
 
@@ -140,6 +146,14 @@ def main():
                            'Limiting to only the interesting section does not '
                            'work on Release since the delimiters are optimized '
                            'out. Callgrind only.')
+  parser.add_argument('--png', action='store_true',
+                      help='outputs a png image on the same location as the '
+                           'pdf file')
+  parser.add_argument('--pages',
+                      help='selects some pages to be rendered. Page numbers '
+                           'are 0-based. "--pages A" will render only page A. '
+                           '"--pages A-B" will render pages A to B '
+                           '(inclusive).')
   parser.add_argument('--output-path',
                       help='where to write the profile data output file')
   args = parser.parse_args()
