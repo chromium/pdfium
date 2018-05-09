@@ -51,7 +51,8 @@ class CCodec_Jbig2Module {
                                 PauseIndicatorIface* pPause);
 
  private:
-  FXCODEC_STATUS Decode(CCodec_Jbig2Context* pJbig2Context, int result);
+  FXCODEC_STATUS Decode(CCodec_Jbig2Context* pJbig2Context,
+                        bool decode_success);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_
