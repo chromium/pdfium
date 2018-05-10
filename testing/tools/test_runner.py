@@ -37,7 +37,12 @@ def TestOneFileParallel(this, test_case):
 
 class TestRunner:
   def __init__(self, dirname):
+    # Currently the only used directories are corpus, javascript, and pixel,
+    # which all correspond directly to the type for the test being run. In the
+    # future if there are tests that don't have this clean correspondence, then
+    # an argument for the type will need to be added.
     self.test_dir = dirname
+    self.test_type = dirname
     self.enforce_expected_images = False
     self.oneshot_renderer = False
 
@@ -272,7 +277,7 @@ class TestRunner:
     # Collect Gold results if an output directory was named.
     self.gold_results = None
     if self.options.gold_output_dir:
-      self.gold_results = gold.GoldResults('pdfium',
+      self.gold_results = gold.GoldResults(self.test_type,
                                            self.options.gold_output_dir,
                                            self.options.gold_properties,
                                            self.options.gold_key,
