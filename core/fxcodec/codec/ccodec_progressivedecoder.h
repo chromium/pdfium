@@ -244,13 +244,13 @@ class CCodec_ProgressiveDecoder :
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
+  std::unique_ptr<CCodec_JpegModule::Context> m_pJpegContext;
 #ifdef PDF_ENABLE_XFA_BMP
   std::unique_ptr<CCodec_BmpModule::Context> m_pBmpContext;
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
   std::unique_ptr<CCodec_GifModule::Context> m_pGifContext;
 #endif  // PDF_ENABLE_XFA_GIF
-  std::unique_ptr<CCodec_JpegModule::Context> m_pJpegContext;
 #ifdef PDF_ENABLE_XFA_PNG
   std::unique_ptr<CCodec_PngModule::Context> m_pPngContext;
 #endif  // PDF_ENABLE_XFA_PNG

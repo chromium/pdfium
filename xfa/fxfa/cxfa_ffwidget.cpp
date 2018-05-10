@@ -40,10 +40,10 @@ FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
                               int32_t iBitsPerComponent) {
   FXDIB_Format dibFormat = FXDIB_Argb;
   switch (type) {
+    case FXCODEC_IMAGE_JPG:
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
 #endif  // PDF_ENABLE_XFA_BMP
-    case FXCODEC_IMAGE_JPG:
 #ifdef PDF_ENABLE_XFA_TIFF
     case FXCODEC_IMAGE_TIFF:
 #endif  // PDF_ENABLE_XFA_TIFF

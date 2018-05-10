@@ -164,6 +164,9 @@ FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
   WideString wsContentType(wsType);
   wsContentType.MakeLower();
 
+  if (wsContentType == L"image/jpg")
+    return FXCODEC_IMAGE_JPG;
+
 #ifdef PDF_ENABLE_XFA_BMP
   if (wsContentType == L"image/bmp")
     return FXCODEC_IMAGE_BMP;
@@ -173,9 +176,6 @@ FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
   if (wsContentType == L"image/gif")
     return FXCODEC_IMAGE_GIF;
 #endif  // PDF_ENABLE_XFA_GIF
-
-  if (wsContentType == L"image/jpg")
-    return FXCODEC_IMAGE_JPG;
 
 #ifdef PDF_ENABLE_XFA_PNG
   if (wsContentType == L"image/png")

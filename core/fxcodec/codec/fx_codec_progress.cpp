@@ -1737,6 +1737,8 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   memset(m_pSrcBuf, 0, size);
   m_SrcSize = size;
   switch (imageType) {
+    case FXCODEC_IMAGE_JPG:
+      return JpegDetectImageType(pAttribute, size);
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
       return BmpDetectImageType(pAttribute, size);
@@ -1745,8 +1747,6 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
     case FXCODEC_IMAGE_GIF:
       return GifDetectImageType(pAttribute, size);
 #endif  // PDF_ENABLE_XFA_GIF
-    case FXCODEC_IMAGE_JPG:
-      return JpegDetectImageType(pAttribute, size);
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngDetectImageType(pAttribute, size);
@@ -2444,6 +2444,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
     return FXCODEC_STATUS_ERROR;
 
   switch (m_imagType) {
+    case FXCODEC_IMAGE_JPG:
+      return JpegContinueDecode();
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
       return BmpContinueDecode();
@@ -2452,8 +2454,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
     case FXCODEC_IMAGE_GIF:
       return GifContinueDecode();
 #endif  // PDF_ENABLE_XFA_GIF
-    case FXCODEC_IMAGE_JPG:
-      return JpegContinueDecode();
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngContinueDecode();

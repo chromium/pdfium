@@ -57,19 +57,19 @@ class CFX_DIBAttribute {
   ~CFX_DIBAttribute();
 
 #ifdef PDF_ENABLE_XFA_BMP
-  int32_t m_nBmpCompressType;
+  int32_t m_nBmpCompressType = 0;
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-  int32_t m_nGifLeft;
-  int32_t m_nGifTop;
-  uint32_t* m_pGifLocalPalette;
-  uint32_t m_nGifLocalPalNum;
+  int32_t m_nGifLeft = 0;
+  int32_t m_nGifTop = 0;
+  uint32_t* m_pGifLocalPalette = nullptr;
+  uint32_t m_nGifLocalPalNum = 0;
 #endif  // PDF_ENABLE_XFA_GIF
 
-  int32_t m_nXDPI;
-  int32_t m_nYDPI;
-  float m_fAspectRatio;
-  uint16_t m_wDPIUnit;
+  int32_t m_nXDPI = -1;
+  int32_t m_nYDPI = -1;
+  float m_fAspectRatio = -1.0f;
+  uint16_t m_wDPIUnit = 0;
   std::map<uint32_t, void*> m_Exif;
 };
 #endif  // PDF_ENABLE_XFA
