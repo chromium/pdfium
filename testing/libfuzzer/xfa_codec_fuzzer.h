@@ -7,12 +7,15 @@
 
 #include <memory>
 
-#include "core/fxcodec/codec/ccodec_bmpmodule.h"
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "testing/fx_string_testhelpers.h"
 #include "third_party/base/ptr_util.h"
+
+#ifdef PDF_ENABLE_XFA_BMP
+#include "core/fxcodec/codec/ccodec_bmpmodule.h"
+#endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
@@ -34,7 +37,9 @@ class XFACodecFuzzer {
  public:
   static int Fuzz(const uint8_t* data, size_t size, FXCODEC_IMAGE_TYPE type) {
     auto mgr = pdfium::MakeUnique<CCodec_ModuleMgr>();
+#ifdef PDF_ENABLE_XFA_BMP
     mgr->SetBmpModule(pdfium::MakeUnique<CCodec_BmpModule>());
+#endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
     mgr->SetGifModule(pdfium::MakeUnique<CCodec_GifModule>());
 #endif  // PDF_ENABLE_XFA_GIF

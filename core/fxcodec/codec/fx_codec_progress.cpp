@@ -283,7 +283,9 @@ CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
   m_GifFrameRect = FX_RECT(0, 0, 0, 0);
   m_InvalidateGifBuffer = true;
 #endif  // PDF_ENABLE_XFA_GIF
+#ifdef PDF_ENABLE_XFA_BMP
   m_BmpIsTopBottom = false;
+#endif  // PDF_ENABLE_XFA_BMP
 }
 
 CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
@@ -613,6 +615,7 @@ void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
 }
 #endif  // PDF_ENABLE_XFA_GIF
 
+#ifdef PDF_ENABLE_XFA_BMP
 bool CCodec_ProgressiveDecoder::BmpInputImagePositionBuf(uint32_t rcd_pos) {
   m_offSet = rcd_pos;
   FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
@@ -926,6 +929,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
     return m_status;
   }
 }
+#endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
 bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
@@ -1733,18 +1737,20 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   memset(m_pSrcBuf, 0, size);
   m_SrcSize = size;
   switch (imageType) {
+#ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
       return BmpDetectImageType(pAttribute, size);
+#endif  // PDF_ENABLE_XFA_BMP
+#ifdef PDF_ENABLE_XFA_GIF
+    case FXCODEC_IMAGE_GIF:
+      return GifDetectImageType(pAttribute, size);
+#endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_JPG:
       return JpegDetectImageType(pAttribute, size);
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngDetectImageType(pAttribute, size);
 #endif  // PDF_ENABLE_XFA_PNG
-#ifdef PDF_ENABLE_XFA_GIF
-    case FXCODEC_IMAGE_GIF:
-      return GifDetectImageType(pAttribute, size);
-#endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_TIFF
     case FXCODEC_IMAGE_TIFF:
       return TiffDetectImageType(pAttribute, size);
@@ -1794,9 +1800,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
   if (bSkipImageTypeCheck)
     return m_status;
 
-  for (int type = FXCODEC_IMAGE_BMP; type < FXCODEC_IMAGE_MAX; type++) {
-    if (DetectImageType((FXCODEC_IMAGE_TYPE)type, pAttribute)) {
-      m_imagType = (FXCODEC_IMAGE_TYPE)type;
+  for (int type = FXCODEC_IMAGE_UNKNOWN + 1; type < FXCODEC_IMAGE_MAX; type++) {
+    if (DetectImageType(static_cast<FXCODEC_IMAGE_TYPE>(type), pAttribute)) {
+      m_imagType = static_cast<FXCODEC_IMAGE_TYPE>(type);
       m_status = FXCODEC_STATUS_FRAME_READY;
       return m_status;
     }
@@ -2065,6 +2071,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
         dest_scan += dest_bytes_per_pixel - 3;
       } break;
       case 12: {
+#ifdef PDF_ENABLE_XFA_BMP
         if (m_pBmpContext) {
           int dest_r = 0;
           int dest_g = 0;
@@ -2082,26 +2089,27 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
           *dest_scan++ = (uint8_t)((dest_g) >> 16);
           *dest_scan++ = (uint8_t)((dest_r) >> 16);
           *dest_scan++ = 0xFF;
-        } else {
-          int dest_a = 0;
-          int dest_r = 0;
-          int dest_g = 0;
-          int dest_b = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
-               j++) {
-            int pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            unsigned long argb = m_pSrcPalette[src_scan[j]];
-            dest_a += pixel_weight * (uint8_t)(argb >> 24);
-            dest_r += pixel_weight * (uint8_t)(argb >> 16);
-            dest_g += pixel_weight * (uint8_t)(argb >> 8);
-            dest_b += pixel_weight * (uint8_t)argb;
-          }
-          *dest_scan++ = (uint8_t)((dest_b) >> 16);
-          *dest_scan++ = (uint8_t)((dest_g) >> 16);
-          *dest_scan++ = (uint8_t)((dest_r) >> 16);
-          *dest_scan++ = (uint8_t)((dest_a) >> 16);
+          break;
         }
+#endif  // PDF_ENABLE_XFA_BMP
+        int dest_a = 0;
+        int dest_r = 0;
+        int dest_g = 0;
+        int dest_b = 0;
+        for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
+             j++) {
+          int pixel_weight =
+              pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
+          unsigned long argb = m_pSrcPalette[src_scan[j]];
+          dest_a += pixel_weight * (uint8_t)(argb >> 24);
+          dest_r += pixel_weight * (uint8_t)(argb >> 16);
+          dest_g += pixel_weight * (uint8_t)(argb >> 8);
+          dest_b += pixel_weight * (uint8_t)argb;
+        }
+        *dest_scan++ = (uint8_t)((dest_b) >> 16);
+        *dest_scan++ = (uint8_t)((dest_g) >> 16);
+        *dest_scan++ = (uint8_t)((dest_r) >> 16);
+        *dest_scan++ = (uint8_t)((dest_a) >> 16);
       } break;
       case 9: {
         uint32_t dest_b = 0;
@@ -2306,8 +2314,10 @@ std::pair<FXCODEC_STATUS, size_t> CCodec_ProgressiveDecoder::GetFrames() {
   }
 
   switch (m_imagType) {
-    case FXCODEC_IMAGE_JPG:
+#ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
+#endif  // PDF_ENABLE_XFA_BMP
+    case FXCODEC_IMAGE_JPG:
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
 #endif  // PDF_ENABLE_XFA_PNG
@@ -2405,18 +2415,20 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
     return FXCODEC_STATUS_ERR_PARAMS;
   }
   switch (m_imagType) {
+#ifdef PDF_ENABLE_XFA_BMP
+    case FXCODEC_IMAGE_BMP:
+      return BmpStartDecode(pDIBitmap);
+#endif  // PDF_ENABLE_XFA_BMP
+#ifdef PDF_ENABLE_XFA_GIF
+    case FXCODEC_IMAGE_GIF:
+      return GifStartDecode(pDIBitmap);
+#endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_JPG:
       return JpegStartDecode(pDIBitmap);
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngStartDecode(pDIBitmap);
 #endif  // PDF_ENABLE_XFA_PNG
-#ifdef PDF_ENABLE_XFA_GIF
-    case FXCODEC_IMAGE_GIF:
-      return GifStartDecode(pDIBitmap);
-#endif  // PDF_ENABLE_XFA_GIF
-    case FXCODEC_IMAGE_BMP:
-      return BmpStartDecode(pDIBitmap);
 #ifdef PDF_ENABLE_XFA_TIFF
     case FXCODEC_IMAGE_TIFF:
       m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -2432,18 +2444,20 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
     return FXCODEC_STATUS_ERROR;
 
   switch (m_imagType) {
+#ifdef PDF_ENABLE_XFA_BMP
+    case FXCODEC_IMAGE_BMP:
+      return BmpContinueDecode();
+#endif  // PDF_ENABLE_XFA_BMP
+#ifdef PDF_ENABLE_XFA_GIF
+    case FXCODEC_IMAGE_GIF:
+      return GifContinueDecode();
+#endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_JPG:
       return JpegContinueDecode();
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngContinueDecode();
 #endif  // PDF_ENABLE_XFA_PNG
-#ifdef PDF_ENABLE_XFA_GIF
-    case FXCODEC_IMAGE_GIF:
-      return GifContinueDecode();
-#endif  // PDF_ENABLE_XFA_GIF
-    case FXCODEC_IMAGE_BMP:
-      return BmpContinueDecode();
 #ifdef PDF_ENABLE_XFA_TIFF
     case FXCODEC_IMAGE_TIFF:
       return TiffContinueDecode();

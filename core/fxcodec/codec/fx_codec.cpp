@@ -1510,17 +1510,20 @@ bool CCodec_BasicModule::A85Encode(const uint8_t* src_buf,
 
 #ifdef PDF_ENABLE_XFA
 CFX_DIBAttribute::CFX_DIBAttribute()
-    : m_nXDPI(-1),
-      m_nYDPI(-1),
-      m_fAspectRatio(-1.0f),
-      m_wDPIUnit(0),
+    :
+#ifdef PDF_ENABLE_XFA_BMP
+      m_nBmpCompressType(0),
+#endif  // PDF_ENABLE_BMP
 #ifdef PDF_ENABLE_XFA_GIF
       m_nGifLeft(0),
       m_nGifTop(0),
       m_pGifLocalPalette(nullptr),
       m_nGifLocalPalNum(0),
 #endif  // PDF_ENABLE_XFA_GIF
-      m_nBmpCompressType(0) {
+      m_nXDPI(-1),
+      m_nYDPI(-1),
+      m_fAspectRatio(-1.0f),
+      m_wDPIUnit(0) {
 }
 
 CFX_DIBAttribute::~CFX_DIBAttribute() {

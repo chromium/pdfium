@@ -163,22 +163,30 @@ int32_t XFA_Base64Decode(const char* pStr, uint8_t* pOutBuffer) {
 FXCODEC_IMAGE_TYPE XFA_GetImageType(const WideString& wsType) {
   WideString wsContentType(wsType);
   wsContentType.MakeLower();
-  if (wsContentType == L"image/jpg")
-    return FXCODEC_IMAGE_JPG;
-#ifdef PDF_ENABLE_XFA_PNG
-  if (wsContentType == L"image/png")
-    return FXCODEC_IMAGE_PNG;
-#endif  // PDF_ENABLE_XFA_PNG
+
+#ifdef PDF_ENABLE_XFA_BMP
+  if (wsContentType == L"image/bmp")
+    return FXCODEC_IMAGE_BMP;
+#endif  // PDF_ENABLE_XFA_BMP
+
 #ifdef PDF_ENABLE_XFA_GIF
   if (wsContentType == L"image/gif")
     return FXCODEC_IMAGE_GIF;
 #endif  // PDF_ENABLE_XFA_GIF
-  if (wsContentType == L"image/bmp")
-    return FXCODEC_IMAGE_BMP;
+
+  if (wsContentType == L"image/jpg")
+    return FXCODEC_IMAGE_JPG;
+
+#ifdef PDF_ENABLE_XFA_PNG
+  if (wsContentType == L"image/png")
+    return FXCODEC_IMAGE_PNG;
+#endif  // PDF_ENABLE_XFA_PNG
+
 #ifdef PDF_ENABLE_XFA_TIFF
   if (wsContentType == L"image/tif")
     return FXCODEC_IMAGE_TIFF;
 #endif  // PDF_ENABLE_XFA_TIFF
+
   return FXCODEC_IMAGE_UNKNOWN;
 }
 

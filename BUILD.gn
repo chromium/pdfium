@@ -780,17 +780,21 @@ jumbo_static_library("fxcodec") {
 
   if (pdf_enable_xfa) {
     sources += [
-      "core/fxcodec/bmp/cfx_bmpcontext.cpp",
-      "core/fxcodec/bmp/cfx_bmpcontext.h",
-      "core/fxcodec/bmp/cfx_bmpdecompressor.cpp",
-      "core/fxcodec/bmp/cfx_bmpdecompressor.h",
-      "core/fxcodec/bmp/fx_bmp.cpp",
-      "core/fxcodec/bmp/fx_bmp.h",
-      "core/fxcodec/codec/ccodec_bmpmodule.cpp",
-      "core/fxcodec/codec/ccodec_bmpmodule.h",
       "core/fxcodec/codec/ccodec_progressivedecoder.h",
       "core/fxcodec/codec/fx_codec_progress.cpp",
     ]
+    if (pdf_enable_xfa_bmp) {
+      sources += [
+        "core/fxcodec/bmp/cfx_bmpcontext.cpp",
+        "core/fxcodec/bmp/cfx_bmpcontext.h",
+        "core/fxcodec/bmp/cfx_bmpdecompressor.cpp",
+        "core/fxcodec/bmp/cfx_bmpdecompressor.h",
+        "core/fxcodec/bmp/fx_bmp.cpp",
+        "core/fxcodec/bmp/fx_bmp.h",
+        "core/fxcodec/codec/ccodec_bmpmodule.cpp",
+        "core/fxcodec/codec/ccodec_bmpmodule.h",
+      ]
+    }
     if (pdf_enable_xfa_gif) {
       sources += [
         "core/fxcodec/codec/ccodec_gifmodule.cpp",

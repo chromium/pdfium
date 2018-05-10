@@ -19,7 +19,9 @@
 #include "core/fxcrt/fx_string.h"
 
 #ifdef PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA_BMP
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
+#endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
@@ -54,17 +56,20 @@ class CFX_DIBAttribute {
   CFX_DIBAttribute();
   ~CFX_DIBAttribute();
 
-  int32_t m_nXDPI;
-  int32_t m_nYDPI;
-  float m_fAspectRatio;
-  uint16_t m_wDPIUnit;
+#ifdef PDF_ENABLE_XFA_BMP
+  int32_t m_nBmpCompressType;
+#endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
   int32_t m_nGifLeft;
   int32_t m_nGifTop;
   uint32_t* m_pGifLocalPalette;
   uint32_t m_nGifLocalPalNum;
 #endif  // PDF_ENABLE_XFA_GIF
-  int32_t m_nBmpCompressType;
+
+  int32_t m_nXDPI;
+  int32_t m_nYDPI;
+  float m_fAspectRatio;
+  uint16_t m_wDPIUnit;
   std::map<uint32_t, void*> m_Exif;
 };
 #endif  // PDF_ENABLE_XFA
@@ -84,10 +89,13 @@ class CCodec_ModuleMgr {
 
 #ifdef PDF_ENABLE_XFA
   std::unique_ptr<CCodec_ProgressiveDecoder> CreateProgressiveDecoder();
+
+#ifdef PDF_ENABLE_XFA_BMP
   CCodec_BmpModule* GetBmpModule() const { return m_pBmpModule.get(); }
   void SetBmpModule(std::unique_ptr<CCodec_BmpModule> module) {
     m_pBmpModule = std::move(module);
   }
+#endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
   CCodec_GifModule* GetGifModule() const { return m_pGifModule.get(); }
@@ -120,7 +128,9 @@ class CCodec_ModuleMgr {
   std::unique_ptr<CCodec_IccModule> m_pIccModule;
 
 #ifdef PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA_BMP
   std::unique_ptr<CCodec_BmpModule> m_pBmpModule;
+#endif  // PDF_ENABLE_XFA_BMP
 
 #ifdef PDF_ENABLE_XFA_GIF
   std::unique_ptr<CCodec_GifModule> m_pGifModule;
