@@ -81,9 +81,9 @@ void CPDF_PageObjectHolder::LoadTransInfo() {
       pdfium::transparency::kTransparency) {
     return;
   }
-  m_iTransparency |= PDFTRANS_GROUP;
+  m_Transparency.SetGroup();
   if (pGroup->GetIntegerFor(pdfium::transparency::kI))
-    m_iTransparency |= PDFTRANS_ISOLATED;
+    m_Transparency.SetIsolated();
 }
 
 size_t CPDF_PageObjectHolder::GetPageObjectCount() const {

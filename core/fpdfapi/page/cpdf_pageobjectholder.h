@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectlist.h"
+#include "core/fpdfapi/render/cpdf_transparency.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -22,9 +23,6 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Stream;
 class PauseIndicatorIface;
-
-#define PDFTRANS_GROUP 0x0100
-#define PDFTRANS_ISOLATED 0x0200
 
 // These structs are used to keep track of resources that have already been
 // generated in the page object holder.
@@ -72,7 +70,7 @@ class CPDF_PageObjectHolder {
   const CFX_Matrix& GetLastCTM() const { return m_LastCTM; }
   const CFX_FloatRect& GetBBox() const { return m_BBox; }
 
-  int GetTransparency() const { return m_iTransparency; }
+  const CPDF_Transparency& GetTransparency() const { return m_Transparency; }
   bool BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
   void SetBackgroundAlphaNeeded(bool needed) {
     m_bBackgroundAlphaNeeded = needed;
@@ -101,7 +99,7 @@ class CPDF_PageObjectHolder {
   const UnownedPtr<CPDF_Dictionary> m_pFormDict;
   UnownedPtr<CPDF_Document> m_pDocument;
   CFX_FloatRect m_BBox;
-  int m_iTransparency = 0;
+  CPDF_Transparency m_Transparency;
   bool m_bBackgroundAlphaNeeded = false;
   std::vector<CFX_FloatRect> m_MaskBoundingBoxes;
   ParseState m_ParseState = CONTENT_NOT_PARSED;

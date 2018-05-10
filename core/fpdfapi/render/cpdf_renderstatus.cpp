@@ -1017,7 +1017,7 @@ bool CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
                                    const CPDF_RenderStatus* pParentState,
                                    const CPDF_GraphicStates* pInitialStates,
                                    const CPDF_RenderOptions* pOptions,
-                                   int transparency,
+                                   const CPDF_Transparency& transparency,
                                    bool bDropObjects,
                                    const CPDF_Dictionary* pFormResource,
                                    bool bStdCS,
@@ -1063,7 +1063,7 @@ bool CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
     m_InitialStates.DefaultStates();
   }
   m_pImageRenderer.reset();
-  m_iTransparency = transparency;
+  m_Transparency = transparency;
   return true;
 }
 
@@ -1241,7 +1241,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   }
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), buffer.GetDevice(), buffer.GetMatrix(),
-                    nullptr, nullptr, nullptr, &m_Options, m_iTransparency,
+                    nullptr, nullptr, nullptr, &m_Options, m_Transparency,
                     m_bDropObjects, pFormResource);
   status.RenderSingleObject(pObj, &matrix);
   buffer.OutputToDevice();
@@ -1265,7 +1265,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
       pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), m_pDevice, nullptr, m_pStopObj, this,
-                    pFormObj, &m_Options, m_iTransparency, m_bDropObjects,
+                    pFormObj, &m_Options, m_Transparency, m_bDropObjects,
                     pResources, false);
   status.m_curBlend = m_curBlend;
   {
@@ -1477,13 +1477,13 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
   const CPDF_Dictionary* pFormResource = nullptr;
   float group_alpha = 1.0f;
-  int iTransparency = m_iTransparency;
+  CPDF_Transparency transparency = m_Transparency;
   bool bGroupTransparent = false;
   const CPDF_FormObject* pFormObj = pPageObj->AsForm();
   if (pFormObj) {
     group_alpha = pFormObj->m_GeneralState.GetFillAlpha();
-    iTransparency = pFormObj->form()->GetTransparency();
-    bGroupTransparent = !!(iTransparency & PDFTRANS_ISOLATED);
+    transparency = pFormObj->form()->GetTransparency();
+    bGroupTransparent = transparency.IsIsolated();
     const CPDF_Dictionary* pFormDict = pFormObj->form()->GetFormDict();
     if (pFormDict)
       pFormResource = pFormDict->GetDictFor("Resources");
@@ -1526,11 +1526,10 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       !bTextClip && !bGroupTransparent) {
     return false;
   }
-  bool isolated = !!(iTransparency & PDFTRANS_ISOLATED);
   if (m_bPrint) {
     bool bRet = false;
     int rendCaps = m_pDevice->GetRenderCaps();
-    if (!((iTransparency & PDFTRANS_ISOLATED) || pSMaskDict || bTextClip) &&
+    if (!(transparency.IsIsolated() || pSMaskDict || bTextClip) &&
         (rendCaps & FXRC_BLEND_MODE)) {
       int oldBlend = m_curBlend;
       m_curBlend = blend_type;
@@ -1551,7 +1550,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   int height = rect.Height();
   CFX_DefaultRenderDevice bitmap_device;
   RetainPtr<CFX_DIBitmap> oriDevice;
-  if (!isolated && (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
+  if (!transparency.IsIsolated() &&
+      (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
     oriDevice = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!m_pDevice->CreateCompatibleBitmap(oriDevice, width, height))
       return true;
@@ -1589,9 +1589,9 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     }
   }
   CPDF_RenderStatus bitmap_render;
-  bitmap_render.Initialize(m_pContext.Get(), &bitmap_device, nullptr,
-                           m_pStopObj, nullptr, nullptr, &m_Options, 0,
-                           m_bDropObjects, pFormResource, true);
+  bitmap_render.Initialize(
+      m_pContext.Get(), &bitmap_device, nullptr, m_pStopObj, nullptr, nullptr,
+      &m_Options, CPDF_Transparency(), m_bDropObjects, pFormResource, true);
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
 #if defined _SKIA_SUPPORT_PATHS_
   bitmap_device.Flush(true);
@@ -1611,19 +1611,19 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     pTextMask.Reset();
   }
   int32_t blitAlpha = 255;
-  if (iTransparency & PDFTRANS_GROUP && group_alpha != 1.0f) {
+  if (group_alpha != 1.0f && transparency.IsGroup()) {
     blitAlpha = (int32_t)(group_alpha * 255);
 #ifndef _SKIA_SUPPORT_
     bitmap->MultiplyAlpha(blitAlpha);
     blitAlpha = 255;
 #endif
   }
-  iTransparency = m_iTransparency;
+  transparency = m_Transparency;
   if (pPageObj->IsForm()) {
-    iTransparency |= PDFTRANS_GROUP;
+    transparency.SetGroup();
   }
   CompositeDIBitmap(bitmap, rect.left, rect.top, 0, blitAlpha, blend_type,
-                    iTransparency);
+                    transparency);
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
@@ -2358,7 +2358,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     }
   }
   CompositeDIBitmap(pScreen, clip_box.left, clip_box.top, 0, 255,
-                    FXDIB_BLEND_NORMAL, false);
+                    FXDIB_BLEND_NORMAL, CPDF_Transparency());
 }
 
 void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
@@ -2413,7 +2413,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     FX_ARGB mask_argb,
     int bitmap_alpha,
     int blend_mode,
-    int iTransparency) {
+    const CPDF_Transparency& transparency) {
   if (!pDIBitmap)
     return;
 
@@ -2447,15 +2447,14 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       }
     }
   }
-  bool bIsolated = !!(iTransparency & PDFTRANS_ISOLATED);
-  bool bGroup = !!(iTransparency & PDFTRANS_GROUP);
+  bool bIsolated = transparency.IsIsolated();
   bool bBackAlphaRequired = blend_mode && bIsolated && !m_bDropObjects;
   bool bGetBackGround =
       ((m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
       (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
        (m_pDevice->GetRenderCaps() & FXRC_GET_BITS) && !bBackAlphaRequired);
   if (bGetBackGround) {
-    if (bIsolated || !bGroup) {
+    if (bIsolated || !transparency.IsGroup()) {
       if (!pDIBitmap->IsAlphaMask())
         m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, blend_mode);
       return;
@@ -2583,8 +2582,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
                                    : CPDF_RenderOptions::kAlpha);
   CPDF_RenderStatus status;
   status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr, nullptr,
-                    nullptr, &options, 0, m_bDropObjects, pFormResource, true,
-                    nullptr, 0, nCSFamily, bLuminosity);
+                    nullptr, &options, CPDF_Transparency(), m_bDropObjects,
+                    pFormResource, true, nullptr, 0, nCSFamily, bLuminosity);
   status.RenderObjectList(&form, &matrix);
 
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();

@@ -67,7 +67,8 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
       break;
   }
 
-  m_iTransparency = PDFTRANS_ISOLATED;
+  m_Transparency = CPDF_Transparency();
+  m_Transparency.SetIsolated();
   LoadTransInfo();
 }
 

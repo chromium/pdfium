@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
+#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -48,7 +49,7 @@ class CPDF_RenderStatus {
                   const CPDF_RenderStatus* pParentStatus,
                   const CPDF_GraphicStates* pInitialStates,
                   const CPDF_RenderOptions* pOptions,
-                  int transparency,
+                  const CPDF_Transparency& transparency,
                   bool bDropObjects,
                   const CPDF_Dictionary* pFormResource = nullptr,
                   bool bStdCS = false,
@@ -99,7 +100,7 @@ class CPDF_RenderStatus {
                          FX_ARGB mask_argb,
                          int bitmap_alpha,
                          int blend_mode,
-                         int iTransparency);
+                         const CPDF_Transparency& transparency);
 
  private:
   bool ProcessTransparency(CPDF_PageObject* PageObj,
@@ -177,7 +178,7 @@ class CPDF_RenderStatus {
   CPDF_GraphicStates m_InitialStates;
   std::unique_ptr<CPDF_ImageRenderer> m_pImageRenderer;
   bool m_bPrint = false;
-  int m_iTransparency = 0;
+  CPDF_Transparency m_Transparency;
   bool m_bDropObjects = false;
   bool m_bStdCS = false;
   uint32_t m_GroupFamily = 0;

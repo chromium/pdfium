@@ -25,7 +25,7 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
     m_pResources = pParentResources;
   if (!m_pResources)
     m_pResources = pPageResources;
-  m_iTransparency = 0;
+  m_Transparency = CPDF_Transparency();
   LoadTransInfo();
 }
 
