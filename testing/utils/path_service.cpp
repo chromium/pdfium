@@ -8,14 +8,48 @@
 #include <Windows.h>
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
+#include <sys/stat.h>
 #else  // Linux
 #include <linux/limits.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #endif  // _WIN32
 
 #include <string>
 
 #include "core/fxcrt/fx_system.h"
+
+namespace {
+
+#if defined(__APPLE__) || (defined(ANDROID) && __ANDROID_API__ < 21)
+using stat_wrapper_t = struct stat;
+
+int CallStat(const char* path, stat_wrapper_t* sb) {
+  return stat(path, sb);
+}
+#elif !_WIN32
+using stat_wrapper_t = struct stat64;
+
+int CallStat(const char* path, stat_wrapper_t* sb) {
+  return stat64(path, sb);
+}
+#endif
+
+bool DirectoryExists(const std::string& path) {
+#ifdef _WIN32
+  DWORD fileattr = GetFileAttributesA(path.c_str());
+  if (fileattr != INVALID_FILE_ATTRIBUTES)
+    return (fileattr & FILE_ATTRIBUTE_DIRECTORY) != 0;
+  return false;
+#else
+  stat_wrapper_t file_info;
+  if (CallStat(path.c_str(), &file_info) != 0)
+    return false;
+  return S_ISDIR(file_info.st_mode);
+#endif
+}
+
+}  // namespace
 
 // static
 bool PathService::EndsWithSeparator(const std::string& path) {
@@ -88,10 +122,30 @@ bool PathService::GetTestDataDir(std::string* path) {
 
   if (!EndsWithSeparator(*path))
     path->push_back(PATH_SEPARATOR);
-  path->append("testing");
-  path->push_back(PATH_SEPARATOR);
-  path->append("resources");
-  return true;
+
+  std::string potential_path = *path;
+  potential_path.append("testing");
+  potential_path.push_back(PATH_SEPARATOR);
+  potential_path.append("resources");
+  if (DirectoryExists(potential_path)) {
+    *path = potential_path;
+    return true;
+  }
+
+  potential_path = *path;
+  potential_path.append("third_party");
+  potential_path.push_back(PATH_SEPARATOR);
+  potential_path.append("pdfium");
+  potential_path.push_back(PATH_SEPARATOR);
+  potential_path.append("testing");
+  potential_path.push_back(PATH_SEPARATOR);
+  potential_path.append("resources");
+  if (DirectoryExists(potential_path)) {
+    *path = potential_path;
+    return true;
+  }
+
+  return false;
 }
 
 // static
