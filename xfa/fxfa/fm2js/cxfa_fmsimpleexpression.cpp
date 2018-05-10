@@ -676,22 +676,14 @@ bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf& js,
   if (!m_pExp1->ToJavaScript(buf, ReturnType::kInfered))
     return false;
 
-  js << L"(function () {\n";
-  js << L"let pfm_cb = function(obj) {\n";
-  js << L"return obj.";
+  js << L"(function() {\n";
+  js << L"  return pfm_method_runner(" << buf << L", function(obj) {\n";
+  js << L"    return obj.";
   if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
     return false;
   js << L";\n";
-  js << L"};\n";
-  js << L"if (pfm_rt.is_ary(" << buf << L")) {\n";
-  js << L"let method_return_value = null;\n";
-  js << L"for (var index = " << buf << L".length - 1; index > 1; index--) {\n";
-  js << L"method_return_value = pfm_cb(" << buf << L"[index]);\n";
-  js << L"}\n";
-  js << L"return method_return_value;\n";
-  js << L"} else {\n";
-  js << L"return pfm_cb(" << buf << L");\n";
-  js << L"}}).call(this)";
+  js << L"  });\n";
+  js << L"}).call(this)";
   return !CXFA_IsTooBig(js);
 }
 

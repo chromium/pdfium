@@ -1444,3 +1444,14 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, InvalidFunctions) {
     EXPECT_FALSE(ExecuteSilenceFailure(tests[i]));
   }
 }
+
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, MethodCall) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  const char test[] = {"$form.form1.TextField11.getAttribute(\"h\")"};
+  EXPECT_TRUE(Execute(test));
+
+  CFXJSE_Value* value = GetValue();
+  EXPECT_TRUE(value->IsString());
+  EXPECT_STREQ("12.7mm", value->ToString().c_str());
+}

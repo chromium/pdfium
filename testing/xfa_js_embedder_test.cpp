@@ -76,7 +76,7 @@ bool XFAJSEmbedderTest::Execute(const ByteStringView& input) {
 
   CFXJSE_Value msg(GetIsolate());
   value_->GetObjectPropertyByIdx(1, &msg);
-  fprintf(stderr, "JS: %.*s\n", static_cast<int>(input.GetLength()),
+  fprintf(stderr, "FormCalc: %.*s\n", static_cast<int>(input.GetLength()),
           input.unterminated_c_str());
   // If the parsing of the input fails, then v8 will not run, so there will be
   // no value here to print.

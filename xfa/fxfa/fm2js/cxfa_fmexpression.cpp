@@ -89,6 +89,16 @@ bool CXFA_FMAST::ToJavaScript(CFX_WideTextBuf& js) {
   }
 
   js << L"(function() {\n";
+  js << L"let pfm_method_runner = function(obj, cb) {\n";
+  js << L"  if (pfm_rt.is_ary(obj)) {\n";
+  js << L"    let pfm_method_return = null;\n";
+  js << L"    for (var idx = obj.length -1; idx > 1; idx--) {\n";
+  js << L"      pfm_method_return = cb(obj[idx]);\n";
+  js << L"    }\n";
+  js << L"    return pfm_method_return;\n";
+  js << L"  }\n";
+  js << L"  return cb(obj);\n";
+  js << L"};\n";
   js << L"var pfm_ret = null;\n";
 
   for (const auto& expr : expressions_) {
@@ -100,7 +110,6 @@ bool CXFA_FMAST::ToJavaScript(CFX_WideTextBuf& js) {
 
   js << L"return pfm_rt.get_val(pfm_ret);\n";
   js << L"}).call(this);";
-
   return !CXFA_IsTooBig(js);
 }
 
