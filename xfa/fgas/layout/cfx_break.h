@@ -57,6 +57,7 @@ class CFX_Break {
   void ClearBreakPieces();
 
   CFX_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
+  const CFX_BreakLine* GetCurrentLineForTesting() const { return m_pCurLine; }
 
  protected:
   explicit CFX_Break(uint32_t dwLayoutStyles);

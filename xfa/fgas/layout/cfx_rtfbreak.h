@@ -63,8 +63,6 @@ class CFX_RTFBreak : public CFX_Break {
 
   CFX_BreakType AppendChar(wchar_t wch);
 
-  CFX_BreakLine* GetCurrentLineForTesting() const { return m_pCurLine; }
-
  private:
   void AppendChar_Combination(CFX_Char* pCurChar);
   void AppendChar_Tab(CFX_Char* pCurChar);

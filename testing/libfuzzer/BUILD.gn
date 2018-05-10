@@ -38,6 +38,7 @@ group("libfuzzer") {
   ]
   if (pdf_enable_xfa) {
     deps += [
+      ":pdf_bidi_fuzzer",
       ":pdf_cfx_barcode_fuzzer",
       ":pdf_codec_jpeg_fuzzer",
       ":pdf_css_fuzzer",
@@ -81,6 +82,12 @@ template("pdfium_fuzzer") {
 }
 
 if (pdf_enable_xfa) {
+  pdfium_fuzzer("pdf_bidi_fuzzer") {
+    sources = [
+      "pdf_bidi_fuzzer.cc",
+    ]
+  }
+
   pdfium_fuzzer("pdf_cfx_barcode_fuzzer") {
     sources = [
       "pdf_cfx_barcode_fuzzer.cc",

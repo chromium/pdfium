@@ -329,12 +329,11 @@ class CFX_BidiLine {
 
     int32_t iLevelCur = 0;
     int32_t iState = FX_BWSxl;
-    size_t i = 0;
     size_t iNum = 0;
     int32_t iClsCur;
     int32_t iClsRun;
     int32_t iClsNew;
-    int32_t iAction;
+    size_t i = 0;
     for (; i <= iCount; ++i) {
       CFX_Char* pTC = &(*chars)[i];
       iClsCur = pTC->m_iBidiClass;
@@ -365,9 +364,10 @@ class CFX_BidiLine {
           continue;
         }
       }
+      if (iClsCur > FX_BIDICLASS_BN)
+        continue;
 
-      ASSERT(iClsCur <= FX_BIDICLASS_BN);
-      iAction = gc_FX_BidiWeakActions[iState][iClsCur];
+      int32_t iAction = gc_FX_BidiWeakActions[iState][iClsCur];
       iClsRun = GetDeferredType(iAction);
       if (iClsRun != FX_BWAXX && iNum > 0) {
         SetDeferredRun(chars, true, i, iNum, iClsRun);
@@ -412,8 +412,9 @@ class CFX_BidiLine {
           ++iNum;
         continue;
       }
+      if (iClsCur >= FX_BIDICLASS_AL)
+        continue;
 
-      ASSERT(iClsCur < FX_BIDICLASS_AL);
       iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
       iClsRun = GetDeferredNeutrals(iAction, iLevel);
       if (iClsRun != FX_BIDICLASS_N && iNum > 0) {
@@ -445,8 +446,9 @@ class CFX_BidiLine {
       int32_t iCls = (*chars)[i].m_iBidiClass;
       if (iCls == FX_BIDICLASS_BN)
         continue;
+      if (iCls <= FX_BIDICLASS_ON || iCls >= FX_BIDICLASS_AL)
+        continue;
 
-      ASSERT(iCls > FX_BIDICLASS_ON && iCls < FX_BIDICLASS_AL);
       int32_t iLevel = (*chars)[i].m_iBidiLevel;
       iLevel += gc_FX_BidiAddLevel[FX_IsOdd(iLevel)][iCls - 1];
       (*chars)[i].m_iBidiLevel = (int16_t)iLevel;

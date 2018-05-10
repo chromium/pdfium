@@ -2946,6 +2946,7 @@ test("pdfium_unittests") {
       "xfa/fde/cfde_texteditengine_unittest.cpp",
       "xfa/fgas/crt/cfgas_formatstring_unittest.cpp",
       "xfa/fgas/layout/cfx_rtfbreak_unittest.cpp",
+      "xfa/fgas/layout/cfx_txtbreak_unittest.cpp",
       "xfa/fwl/cfx_barcode_unittest.cpp",
       "xfa/fxfa/cxfa_ffbarcode_unittest.cpp",
       "xfa/fxfa/cxfa_textparser_unittest.cpp",

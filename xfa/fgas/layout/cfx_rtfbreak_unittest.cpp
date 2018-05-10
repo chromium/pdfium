@@ -7,7 +7,10 @@
 #include "xfa/fgas/layout/cfx_rtfbreak.h"
 
 #include <memory>
+#include <utility>
 
+#include "core/fxcrt/fx_bidi.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
@@ -20,7 +23,7 @@ class CFX_RTFBreakTest : public testing::Test {
   void SetUp() override {
     font_ =
         CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0, GetGlobalFontManager());
-    ASSERT(font_.Get() != nullptr);
+    ASSERT(font_.Get());
   }
 
   std::unique_ptr<CFX_RTFBreak> CreateBreak(int32_t args) {
@@ -71,4 +74,18 @@ TEST_F(CFX_RTFBreakTest, ControlCharacters) {
 
   ASSERT_EQ(1, b->CountBreakPieces());
   EXPECT_EQ(L"\v", b->GetBreakPieceUnstable(0)->GetString());
+}
+
+TEST_F(CFX_RTFBreakTest, BidiLine) {
+  auto rtf_break = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
+  rtf_break->SetLineBreakTolerance(1);
+  rtf_break->SetFontSize(12);
+
+  WideString input = WideString::FromUTF8(ByteStringView("\xa\x0\xa\xa", 4));
+  for (auto& ch : input)
+    rtf_break->AppendChar(ch);
+
+  auto chars = rtf_break->GetCurrentLineForTesting()->m_LineChars;
+  FX_BidiLine(&chars, chars.size());
+  EXPECT_EQ(3u, chars.size());
 }
