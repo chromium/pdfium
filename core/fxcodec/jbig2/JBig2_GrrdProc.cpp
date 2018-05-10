@@ -207,9 +207,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
         }
         uint8_t cVal = 0;
         for (int32_t k = 0; k < nBits; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
           int bVal = pArithDecoder->Decode(&grContext[CONTEXT]);
           cVal |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x0cdb) << 1) | (bVal << 9) |
