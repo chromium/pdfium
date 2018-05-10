@@ -106,7 +106,6 @@ CPDF_DIBSource::CPDF_DIBSource() {}
 CPDF_DIBSource::~CPDF_DIBSource() {
   FX_Free(m_pMaskedLine);
   FX_Free(m_pLineBuf);
-  m_pCachedBitmap.Reset();  // TODO(tsepez): determine if required early here.
   FX_Free(m_pCompData);
   if (m_pColorSpace && m_pDocument) {
     auto* pPageData = m_pDocument->GetPageData();

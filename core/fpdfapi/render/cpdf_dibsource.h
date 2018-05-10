@@ -153,7 +153,10 @@ class CPDF_DIBSource : public CFX_DIBSource {
   RetainPtr<CPDF_DIBSource> m_pMask;
   RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
+
+  // Must come after |m_pCachedBitmap|.
   std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
+
   UnownedPtr<CPDF_Stream> m_pMaskStream;
   LoadState m_Status = LoadState::kFail;
 };
