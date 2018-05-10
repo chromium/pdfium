@@ -672,25 +672,26 @@ bool CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf& js,
   if (CXFA_IsTooBig(js) || !depthManager.IsWithinMaxDepth())
     return false;
 
-  CFX_WideTextBuf exp2_txt;
-  if (!m_pExp2->ToJavaScript(exp2_txt, ReturnType::kInfered))
+  CFX_WideTextBuf buf;
+  if (!m_pExp1->ToJavaScript(buf, ReturnType::kInfered))
     return false;
 
-  js << L"(\nfunction ()\n{\n";
-  js << L"var method_return_value = null;\n";
-  js << L"var accessor_object = ";
-  if (!m_pExp1->ToJavaScript(js, ReturnType::kInfered))
+  js << L"(function () {\n";
+  js << L"let pfm_cb = function(obj) {\n";
+  js << L"return obj.";
+  if (!m_pExp2->ToJavaScript(js, ReturnType::kInfered))
     return false;
   js << L";\n";
-  js << L"if (pfm_rt.is_ary(accessor_object))\n{\n";
-  js << L"for(var index = accessor_object.length - 1; index > 1; "
-        L"index--)\n{\n";
-  js << L"method_return_value = accessor_object[index]." << exp2_txt << L";\n";
-  js << L"}\n}\nelse\n{\n";
-  js << L"method_return_value = accessor_object." << exp2_txt << L";\n";
+  js << L"};\n";
+  js << L"if (pfm_rt.is_ary(" << buf << L")) {\n";
+  js << L"let method_return_value = null;\n";
+  js << L"for (var index = " << buf << L".length - 1; index > 1; index--) {\n";
+  js << L"method_return_value = pfm_cb(" << buf << L"[index]);\n";
   js << L"}\n";
   js << L"return method_return_value;\n";
-  js << L"}\n).call(this)";
+  js << L"} else {\n";
+  js << L"return pfm_cb(" << buf << L");\n";
+  js << L"}}).call(this)";
   return !CXFA_IsTooBig(js);
 }
 

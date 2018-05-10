@@ -257,3 +257,89 @@ TEST(CXFA_FMParserTest, ParseDepthWithWideTree) {
     EXPECT_TRUE(parser->HasError());
   }
 }
+
+TEST(CXFA_FMParserTest, ParseCallSmall) {
+  const wchar_t input[] = {L"i.f(O)"};
+  const wchar_t ret[] = {
+      L"(function() {\n"
+      L"var pfm_ret = null;\n"
+      L"pfm_ret = pfm_rt.get_val((function () {\n"
+      L"let pfm_cb = function(obj) {\n"
+      L"return obj.f(pfm_rt.get_val(O));\n"
+      L"};\n"
+      L"if (pfm_rt.is_ary(i)) {\n"
+      L"let method_return_value = null;\n"
+      L"for (var index = i.length - 1; index > 1; index--) {\n"
+      L"method_return_value = pfm_cb(i[index]);\n"
+      L"}\n"
+      L"return method_return_value;\n"
+      L"} else {\n"
+      L"return pfm_cb(i);\n"
+      L"}}).call(this));\n"
+      L"return pfm_rt.get_val(pfm_ret);\n"
+      L"}).call(this);"};
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  EXPECT_FALSE(parser->HasError());
+
+  CXFA_FMToJavaScriptDepth::Reset();
+  CFX_WideTextBuf buf;
+  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_EQ(ret, buf.AsStringView());
+}
+
+TEST(CXFA_FMParserTest, ParseCallBig) {
+  const wchar_t input[] = {L"i.f(O.e(O.e(O)))"};
+  const wchar_t ret[] = {
+      L"(function() {\n"
+      L"var pfm_ret = null;\n"
+      L"pfm_ret = pfm_rt.get_val((function () {\n"
+      L"let pfm_cb = function(obj) {\n"
+      L"return obj.f(pfm_rt.get_val((function () {\n"
+      L"let pfm_cb = function(obj) {\n"
+      L"return obj.e(pfm_rt.get_val((function () {\n"
+      L"let pfm_cb = function(obj) {\n"
+      L"return obj.e(pfm_rt.get_val(O));\n"
+      L"};\n"
+      L"if (pfm_rt.is_ary(O)) {\n"
+      L"let method_return_value = null;\n"
+      L"for (var index = O.length - 1; index > 1; index--) {\n"
+      L"method_return_value = pfm_cb(O[index]);\n"
+      L"}\n"
+      L"return method_return_value;\n"
+      L"} else {\n"
+      L"return pfm_cb(O);\n"
+      L"}}).call(this)));\n"
+      L"};\n"
+      L"if (pfm_rt.is_ary(O)) {\n"
+      L"let method_return_value = null;\n"
+      L"for (var index = O.length - 1; index > 1; index--) {\n"
+      L"method_return_value = pfm_cb(O[index]);\n"
+      L"}\n"
+      L"return method_return_value;\n"
+      L"} else {\n"
+      L"return pfm_cb(O);\n"
+      L"}}).call(this)));\n"
+      L"};\n"
+      L"if (pfm_rt.is_ary(i)) {\n"
+      L"let method_return_value = null;\n"
+      L"for (var index = i.length - 1; index > 1; index--) {\n"
+      L"method_return_value = pfm_cb(i[index]);\n"
+      L"}\n"
+      L"return method_return_value;\n"
+      L"} else {\n"
+      L"return pfm_cb(i);\n"
+      L"}}).call(this));\n"
+      L"return pfm_rt.get_val(pfm_ret);\n"
+      L"}).call(this);"};
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  EXPECT_FALSE(parser->HasError());
+
+  CXFA_FMToJavaScriptDepth::Reset();
+  CFX_WideTextBuf buf;
+  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_EQ(ret, buf.AsStringView());
+}
