@@ -111,7 +111,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   CXFA_FFWidget* GetLayoutItem() const { return m_pLayoutItem; }
   void SetLayoutItem(CXFA_FFWidget* pItem) { m_pLayoutItem = pItem; }
 
-  void SetFocus(bool bFocus);
   void RepaintRect(const CFX_RectF& pRect);
   void Repaint();
 

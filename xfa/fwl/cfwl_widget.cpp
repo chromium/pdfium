@@ -320,8 +320,6 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
   pTheme->CalcTextRect(&calPart, pRect);
 }
 
-void CFWL_Widget::SetFocus(bool bFocus) {}
-
 void CFWL_Widget::SetGrab(bool bSet) {
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)

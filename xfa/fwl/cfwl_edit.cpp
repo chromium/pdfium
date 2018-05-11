@@ -1074,9 +1074,6 @@ void CFWL_Edit::OnDrawWidget(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_Edit::DoRButtonDown(CFWL_MessageMouse* pMsg) {
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-    SetFocus(true);
-
   SetCursorPosition(m_EdtEngine.GetIndexForPoint(DeviceToEngine(pMsg->m_pos)));
 }
 
@@ -1114,9 +1111,6 @@ void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
   m_bLButtonDown = true;
   SetGrab(true);
-
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-    SetFocus(true);
 
   bool bRepaint = false;
   if (m_EdtEngine.HasSelection()) {

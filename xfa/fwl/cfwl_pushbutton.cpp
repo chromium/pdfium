@@ -151,9 +151,6 @@ void CFWL_PushButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
 }
 
 void CFWL_PushButton::OnLButtonDown(CFWL_MessageMouse* pMsg) {
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-    SetFocus(true);
-
   m_bBtnDown = true;
   m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
   m_pProperties->m_dwStates |= FWL_STATE_PSB_Pressed;

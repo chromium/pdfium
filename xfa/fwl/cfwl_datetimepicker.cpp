@@ -432,8 +432,6 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
 void CFWL_DateTimePicker::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   if (!pMsg)
     return;
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-    SetFocus(true);
   if (!m_rtBtn.Contains(pMsg->m_pos))
     return;
 

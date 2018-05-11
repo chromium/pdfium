@@ -62,7 +62,6 @@ void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
       if ((pMsg->m_dwCmd == FWL_MouseCommand::LeftButtonDown) &&
           ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)) {
         SetSelected();
-        m_pOuter->SetFocus(true);
       }
       break;
     }

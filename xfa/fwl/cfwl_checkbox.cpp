@@ -267,8 +267,6 @@ void CFWL_CheckBox::OnFocusChanged(bool bSet) {
 void CFWL_CheckBox::OnLButtonDown() {
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     return;
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-    SetFocus(true);
 
   m_bBtnDown = true;
   m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
