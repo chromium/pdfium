@@ -627,7 +627,8 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
       CPDF_Object* pValue = it.second.get();
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
-          key == "XRefStm" || key == "ID") {
+          key == "XRefStm" || key == "ID" || key == "DecodeParms" ||
+          key == "Type") {
         continue;
       }
       if (!m_Archive->WriteString(("/")) ||
