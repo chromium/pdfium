@@ -185,11 +185,7 @@ CFWL_NoteLoop* CFWL_NoteDriver::GetTopLoop() const {
 }
 
 void CFWL_NoteDriver::ProcessMessage(std::unique_ptr<CFWL_Message> pMessage) {
-  CFWL_WidgetMgr* pWidgetMgr =
-      pMessage->m_pDstTarget->GetOwnerApp()->GetWidgetMgr();
-  CFWL_Widget* pMessageForm = pWidgetMgr->IsFormDisabled()
-                                  ? pMessage->m_pDstTarget
-                                  : GetMessageForm(pMessage->m_pDstTarget);
+  CFWL_Widget* pMessageForm = pMessage->m_pDstTarget;
   if (!pMessageForm)
     return;
 
@@ -239,50 +235,15 @@ bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
 
 bool CFWL_NoteDriver::DoSetFocus(CFWL_Message* pMessage,
                                  CFWL_Widget* pMessageForm) {
-  CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
-  if (pWidgetMgr->IsFormDisabled()) {
-    m_pFocus = pMessage->m_pDstTarget;
-    return true;
-  }
-
-  CFWL_Widget* pWidget = pMessage->m_pDstTarget;
-  if (!pWidget)
-    return false;
-
-  CFWL_Form* pForm = static_cast<CFWL_Form*>(pWidget);
-  CFWL_Widget* pSubFocus = pForm->GetSubFocus();
-  if (pSubFocus && ((pSubFocus->GetStates() & FWL_WGTSTATE_Focused) == 0)) {
-    pMessage->m_pDstTarget = pSubFocus;
-    if (m_pFocus != pMessage->m_pDstTarget) {
-      m_pFocus = pMessage->m_pDstTarget;
-      return true;
-    }
-  }
-  return false;
+  m_pFocus = pMessage->m_pDstTarget;
+  return true;
 }
 
 bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
                                   CFWL_Widget* pMessageForm) {
-  CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
-  if (pWidgetMgr->IsFormDisabled()) {
-    if (m_pFocus == pMessage->m_pDstTarget)
-      m_pFocus = nullptr;
-    return true;
-  }
-
-  CFWL_Form* pForm = static_cast<CFWL_Form*>(pMessage->m_pDstTarget);
-  if (!pForm)
-    return false;
-
-  CFWL_Widget* pSubFocus = pForm->GetSubFocus();
-  if (pSubFocus && (pSubFocus->GetStates() & FWL_WGTSTATE_Focused)) {
-    pMessage->m_pDstTarget = pSubFocus;
-    if (m_pFocus == pMessage->m_pDstTarget) {
-      m_pFocus = nullptr;
-      return true;
-    }
-  }
-  return false;
+  if (m_pFocus == pMessage->m_pDstTarget)
+    m_pFocus = nullptr;
+  return true;
 }
 
 bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {

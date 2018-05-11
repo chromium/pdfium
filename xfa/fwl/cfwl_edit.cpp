@@ -153,8 +153,6 @@ void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
     return;
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  if (!m_pWidgetMgr->IsFormDisabled())
-    DrawTextBk(pGraphics, pTheme, &matrix);
   DrawContent(pGraphics, pTheme, &matrix);
 
   if (HasBorder())
@@ -1275,17 +1273,6 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
       }
       break;
     default: {
-      if (!m_pWidgetMgr->IsFormDisabled()) {
-        if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_Number) {
-          if (((pMsg->m_dwKeyCode < FWL_VKEY_0) &&
-               (pMsg->m_dwKeyCode != 0x2E && pMsg->m_dwKeyCode != 0x2D)) ||
-              pMsg->m_dwKeyCode > FWL_VKEY_9) {
-            break;
-          }
-          if (!ValidateNumberChar(c))
-            break;
-        }
-      }
       if (pMsg->m_dwFlags & kEditingModifier)
         break;
 

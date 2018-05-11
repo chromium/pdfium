@@ -56,10 +56,6 @@ class CFWL_WidgetMgr {
   CFWL_Widget* GetDefaultButton(CFWL_Widget* pParent) const;
   void AddRedrawCounts(CFWL_Widget* pWidget);
 
-  bool IsFormDisabled() const {
-    return !!(m_dwCapability & FWL_WGTMGR_DisableForm);
-  }
-
   void GetAdapterPopupPos(CFWL_Widget* pWidget,
                           float fMinHeight,
                           float fMaxHeight,
@@ -111,7 +107,6 @@ class CFWL_WidgetMgr {
 
   bool IsAbleNative(CFWL_Widget* pWidget) const;
 
-  uint32_t m_dwCapability;
   std::map<CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
   UnownedPtr<CXFA_FWLAdapterWidgetMgr> const m_pAdapter;
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

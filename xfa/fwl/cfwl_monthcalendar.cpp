@@ -765,47 +765,7 @@ void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
-  if (m_pWidgetMgr->IsFormDisabled())
-    return DisForm_OnLButtonUp(pMsg);
-
-  if (m_rtLBtn.Contains(pMsg->m_pos)) {
-    m_iLBtnPartStates = 0;
-    RepaintRect(m_rtLBtn);
-    return;
-  }
-  if (m_rtRBtn.Contains(pMsg->m_pos)) {
-    m_iRBtnPartStates = 0;
-    RepaintRect(m_rtRBtn);
-    return;
-  }
-  if (m_rtToday.Contains(pMsg->m_pos))
-    return;
-
-  int32_t iOldSel = 0;
-  if (!m_arrSelDays.empty())
-    iOldSel = m_arrSelDays[0];
-
-  int32_t iCurSel = GetDayAtPoint(pMsg->m_pos);
-  CFWL_DateTimePicker* pIPicker = static_cast<CFWL_DateTimePicker*>(m_pOuter);
-  if (iCurSel > 0) {
-    DATEINFO* lpDatesInfo = m_arrDates[iCurSel - 1].get();
-    CFX_RectF rtInvalidate(lpDatesInfo->rect);
-    if (iOldSel > 0 && iOldSel <= pdfium::CollectionSize<int32_t>(m_arrDates)) {
-      lpDatesInfo = m_arrDates[iOldSel - 1].get();
-      rtInvalidate.Union(lpDatesInfo->rect);
-    }
-    AddSelDay(iCurSel);
-    if (!m_pOuter)
-      return;
-
-    pIPicker->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
-    pIPicker->ShowMonthCalendar(false);
-  } else if (m_bFlag &&
-             (!CFX_RectF(0, 0, pIPicker->GetFormProxy()->GetWidgetRect().Size())
-                   .Contains(pMsg->m_pos))) {
-    pIPicker->ShowMonthCalendar(false);
-  }
-  m_bFlag = false;
+  return DisForm_OnLButtonUp(pMsg);
 }
 
 void CFWL_MonthCalendar::DisForm_OnLButtonUp(CFWL_MessageMouse* pMsg) {

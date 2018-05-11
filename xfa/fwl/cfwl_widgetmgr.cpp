@@ -29,8 +29,7 @@ struct FWL_NEEDREPAINTHITDATA {
 }  // namespace
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
-    : m_dwCapability(FWL_WGTMGR_DisableForm),
-      m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr()) {
+    : m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr()) {
   ASSERT(m_pAdapter);
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -147,24 +146,13 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
 
   CFWL_Widget* pNative = pWidget;
   CFX_RectF transformedRect = rect;
-  if (IsFormDisabled()) {
-    CFWL_Widget* pOuter = pWidget->GetOuter();
-    while (pOuter) {
-      CFX_RectF rtTemp = pNative->GetWidgetRect();
-      transformedRect.left += rtTemp.left;
-      transformedRect.top += rtTemp.top;
-      pNative = pOuter;
-      pOuter = pOuter->GetOuter();
-    }
-  } else if (!IsAbleNative(pWidget)) {
-    pNative = GetSystemFormWidget(pWidget);
-    if (!pNative)
-      return;
-
-    CFX_PointF pos = pWidget->TransformTo(
-        pNative, CFX_PointF(transformedRect.left, transformedRect.top));
-    transformedRect.left = pos.x;
-    transformedRect.top = pos.y;
+  CFWL_Widget* pOuter = pWidget->GetOuter();
+  while (pOuter) {
+    CFX_RectF rtTemp = pNative->GetWidgetRect();
+    transformedRect.left += rtTemp.left;
+    transformedRect.top += rtTemp.top;
+    pNative = pOuter;
+    pOuter = pOuter->GetOuter();
   }
   AddRedrawCounts(pNative);
   m_pAdapter->RepaintWidget(pNative);
@@ -403,10 +391,7 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   if (!pNoteDriver)
     return;
 
-  if (IsFormDisabled())
-    pNoteDriver->ProcessMessage(pMessage->Clone());
-  else
-    pNoteDriver->QueueMessage(pMessage->Clone());
+  pNoteDriver->ProcessMessage(pMessage->Clone());
 
 #if (_FX_OS_ == _FX_OS_MACOSX_)
   CFWL_NoteLoop* pTopLoop = pNoteDriver->GetTopLoop();
@@ -424,26 +409,10 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
   CFX_RectF clipCopy(0, 0, pWidget->GetWidgetRect().Size());
   CFX_RectF clipBounds;
 
-#if _FX_OS_ == _FX_OS_MACOSX_
-  if (IsFormDisabled()) {
-#endif  // _FX_OS_ == _FX_OS_MACOSX_
+  pWidget->GetDelegate()->OnDrawWidget(pGraphics, matrix);
+  clipBounds = pGraphics->GetClipRect();
+  clipCopy = clipBounds;
 
-    pWidget->GetDelegate()->OnDrawWidget(pGraphics, matrix);
-    clipBounds = pGraphics->GetClipRect();
-    clipCopy = clipBounds;
-
-#if _FX_OS_ == _FX_OS_MACOSX_
-  } else {
-    clipBounds = CFX_RectF(matrix.a, matrix.b, matrix.c, matrix.d);
-    // FIXME: const cast
-    CFX_Matrix* pMatrixHack = const_cast<CFX_Matrix*>(&matrix);
-    pMatrixHack->SetIdentity();
-    pWidget->GetDelegate()->OnDrawWidget(pGraphics, *pMatrixHack);
-  }
-#endif  // _FX_OS_ == _FX_OS_MACOSX_
-
-  if (!IsFormDisabled())
-    clipBounds.Intersect(pWidget->GetClientRect());
   if (!clipBounds.IsEmpty())
     DrawChild(pWidget, clipBounds, pGraphics, &matrix);
 
@@ -458,7 +427,6 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
   if (!parent)
     return;
 
-  bool bFormDisable = IsFormDisabled();
   CFWL_Widget* pNextChild = GetFirstChildWidget(parent);
   while (pNextChild) {
     CFWL_Widget* child = pNextChild;
@@ -472,33 +440,15 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
 
     CFX_Matrix widgetMatrix;
     CFX_RectF clipBounds(rtWidget);
-    if (!bFormDisable)
-      widgetMatrix = child->GetMatrix();
     if (pMatrix)
       widgetMatrix.Concat(*pMatrix);
 
-    if (!bFormDisable) {
-      CFX_PointF pos = widgetMatrix.Transform(clipBounds.TopLeft());
-      clipBounds.left = pos.x;
-      clipBounds.top = pos.y;
-      clipBounds.Intersect(rtClip);
-      if (clipBounds.IsEmpty())
-        continue;
-
-      pGraphics->SaveGraphState();
-      pGraphics->SetClipRect(clipBounds);
-    }
     widgetMatrix.Translate(rtWidget.left, rtWidget.top, true);
 
-    if (IFWL_WidgetDelegate* pDelegate = child->GetDelegate()) {
-      if (IsFormDisabled() || IsNeedRepaint(child, &widgetMatrix, rtClip))
-        pDelegate->OnDrawWidget(pGraphics, widgetMatrix);
-    }
-    if (!bFormDisable)
-      pGraphics->RestoreGraphState();
+    if (IFWL_WidgetDelegate* pDelegate = child->GetDelegate())
+      pDelegate->OnDrawWidget(pGraphics, widgetMatrix);
 
-    DrawChild(child, clipBounds, pGraphics,
-              bFormDisable ? &widgetMatrix : pMatrix);
+    DrawChild(child, clipBounds, pGraphics, &widgetMatrix);
     child = GetNextSiblingWidget(child);
   }
 }

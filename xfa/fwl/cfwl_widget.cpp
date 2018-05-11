@@ -161,44 +161,15 @@ FWL_WidgetHit CFWL_Widget::HitTest(const CFX_PointF& point) {
 
 CFX_PointF CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
                                     const CFX_PointF& point) {
-  if (m_pWidgetMgr->IsFormDisabled()) {
-    CFX_SizeF szOffset;
-    if (IsParent(pWidget)) {
-      szOffset = GetOffsetFromParent(pWidget);
-    } else {
-      szOffset = pWidget->GetOffsetFromParent(this);
-      szOffset.width = -szOffset.width;
-      szOffset.height = -szOffset.height;
-    }
-    return point + CFX_PointF(szOffset.width, szOffset.height);
+  CFX_SizeF szOffset;
+  if (IsParent(pWidget)) {
+    szOffset = GetOffsetFromParent(pWidget);
+  } else {
+    szOffset = pWidget->GetOffsetFromParent(this);
+    szOffset.width = -szOffset.width;
+    szOffset.height = -szOffset.height;
   }
-
-  CFX_PointF ret = point;
-  CFWL_Widget* parent = GetParent();
-  if (parent)
-    ret = GetMatrix().Transform(ret + GetWidgetRect().TopLeft());
-
-  CFWL_Widget* form1 = m_pWidgetMgr->GetSystemFormWidget(this);
-  if (!form1)
-    return ret;
-
-  if (!pWidget)
-    return ret + form1->GetWidgetRect().TopLeft();
-
-  CFWL_Widget* form2 = m_pWidgetMgr->GetSystemFormWidget(pWidget);
-  if (!form2)
-    return ret;
-  if (form1 != form2) {
-    ret += form1->GetWidgetRect().TopLeft();
-    ret -= form2->GetWidgetRect().TopLeft();
-  }
-
-  parent = pWidget->GetParent();
-  if (!parent)
-    return ret;
-
-  return pWidget->GetMatrix().GetInverse().Transform(ret) -
-         pWidget->GetWidgetRect().TopLeft();
+  return point + CFX_PointF(szOffset.width, szOffset.height);
 }
 
 CFX_Matrix CFWL_Widget::GetMatrix() {
@@ -349,25 +320,7 @@ void CFWL_Widget::CalcTextRect(const WideString& wsText,
   pTheme->CalcTextRect(&calPart, pRect);
 }
 
-void CFWL_Widget::SetFocus(bool bFocus) {
-  if (m_pWidgetMgr->IsFormDisabled())
-    return;
-
-  const CFWL_App* pApp = GetOwnerApp();
-  if (!pApp)
-    return;
-
-  CFWL_NoteDriver* pDriver =
-      static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
-  if (!pDriver)
-    return;
-
-  CFWL_Widget* curFocus = pDriver->GetFocus();
-  if (bFocus && curFocus != this)
-    pDriver->SetFocus(this);
-  else if (!bFocus && curFocus == this)
-    pDriver->SetFocus(nullptr);
-}
+void CFWL_Widget::SetFocus(bool bFocus) {}
 
 void CFWL_Widget::SetGrab(bool bSet) {
   const CFWL_App* pApp = GetOwnerApp();
