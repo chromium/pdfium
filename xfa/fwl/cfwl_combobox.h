@@ -113,14 +113,7 @@ class CFWL_ComboBox : public CFWL_Widget {
                    float fMaxHeight,
                    const CFX_RectF& rtAnchor,
                    CFX_RectF* pPopupRect);
-
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
-  void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
-  void OnMouseMove(CFWL_MessageMouse* pMsg);
-  void OnMouseLeave(CFWL_MessageMouse* pMsg);
-  void OnKey(CFWL_MessageKey* pMsg);
-  void DoSubCtrlKey(CFWL_MessageKey* pMsg);
 
   void InitComboList();
   void InitComboEdit();
@@ -134,12 +127,8 @@ class CFWL_ComboBox : public CFWL_Widget {
   CFX_RectF m_rtClient;
   CFX_RectF m_rtContent;
   CFX_RectF m_rtBtn;
-  CFX_RectF m_rtList;
-  CFX_RectF m_rtProxy;
-  CFX_RectF m_rtHandler;
   std::unique_ptr<CFWL_ComboEdit> m_pEdit;
   std::unique_ptr<CFWL_ComboList> m_pListBox;
-  bool m_bLButtonDown;
   int32_t m_iCurSel;
   int32_t m_iBtnState;
 };
