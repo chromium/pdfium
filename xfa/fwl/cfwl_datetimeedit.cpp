@@ -21,10 +21,6 @@ CFWL_DateTimeEdit::CFWL_DateTimeEdit(
     : CFWL_Edit(app, std::move(properties), pOuter) {}
 
 void CFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
-  DisForm_OnProcessMessage(pMessage);
-}
-
-void CFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
   if (pMessage->GetType() != CFWL_Message::Type::Mouse) {
     CFWL_Edit::OnProcessMessage(pMessage);
     return;

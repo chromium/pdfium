@@ -21,9 +21,6 @@ class CFWL_DateTimeEdit : public CFWL_Edit {
 
   // CFWL_Edit.
   void OnProcessMessage(CFWL_Message* pMessage) override;
-
- private:
-  void DisForm_OnProcessMessage(CFWL_Message* pMessage);
 };
 
 #endif  // XFA_FWL_CFWL_DATETIMEEDIT_H_

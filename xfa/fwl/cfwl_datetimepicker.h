@@ -85,14 +85,7 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   void OnMouseMove(CFWL_MessageMouse* pMsg);
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
 
-  bool DisForm_IsMonthCalendarVisible() const;
-  void DisForm_ShowMonthCalendar(bool bActivate);
-  FWL_WidgetHit DisForm_HitTest(const CFX_PointF& point) const;
-  bool DisForm_IsNeedShowButton() const;
-  void DisForm_Update();
-  CFX_RectF DisForm_GetBBox() const;
-  void DisForm_DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  bool NeedsToShowButton() const;
 
   CFX_RectF m_rtBtn;
   CFX_RectF m_rtClient;

@@ -765,10 +765,6 @@ void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
-  return DisForm_OnLButtonUp(pMsg);
-}
-
-void CFWL_MonthCalendar::DisForm_OnLButtonUp(CFWL_MessageMouse* pMsg) {
   if (m_rtLBtn.Contains(pMsg->m_pos)) {
     m_iLBtnPartStates = 0;
     RepaintRect(m_rtLBtn);

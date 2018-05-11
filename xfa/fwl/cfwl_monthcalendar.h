@@ -146,7 +146,6 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   CFX_RectF GetDayRect(int32_t iDay);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
-  void DisForm_OnLButtonUp(CFWL_MessageMouse* pMsg);
   void OnMouseMove(CFWL_MessageMouse* pMsg);
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
 

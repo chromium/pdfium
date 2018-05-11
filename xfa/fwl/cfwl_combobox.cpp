@@ -40,8 +40,8 @@ CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
   m_rtBtn.Reset();
   m_rtHandler.Reset();
 
-  DisForm_InitComboList();
-  DisForm_InitComboEdit();
+  InitComboList();
+  InitComboEdit();
 }
 
 CFWL_ComboBox::~CFWL_ComboBox() {}
@@ -64,15 +64,44 @@ void CFWL_ComboBox::RemoveAll() {
 
 void CFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
                                    uint32_t dwStylesExRemoved) {
-  DisForm_ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
+  if (!m_pEdit)
+    InitComboEdit();
+
+  bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
+  bool bDelDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
+
+  dwStylesExRemoved &= ~FWL_STYLEEXT_CMB_DropDown;
+  m_pProperties->m_dwStyleExes |= FWL_STYLEEXT_CMB_DropDown;
+
+  if (bAddDropDown)
+    m_pEdit->ModifyStylesEx(0, FWL_STYLEEXT_EDT_ReadOnly);
+  else if (bDelDropDown)
+    m_pEdit->ModifyStylesEx(FWL_STYLEEXT_EDT_ReadOnly, 0);
+  CFWL_Widget::ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
 void CFWL_ComboBox::Update() {
-  DisForm_Update();
+  if (m_iLock)
+    return;
+  if (m_pEdit)
+    ResetEditAlignment();
+  ResetTheme();
+  Layout();
 }
 
 FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
-  return DisForm_HitTest(point);
+  CFX_RectF rect(0, 0, m_pProperties->m_rtWidget.width - m_rtBtn.width,
+                 m_pProperties->m_rtWidget.height);
+  if (rect.Contains(point))
+    return FWL_WidgetHit::Edit;
+  if (m_rtBtn.Contains(point))
+    return FWL_WidgetHit::Client;
+  if (DisForm_IsDropListVisible()) {
+    rect = m_pListBox->GetWidgetRect();
+    if (rect.Contains(point))
+      return FWL_WidgetHit::Client;
+  }
+  return FWL_WidgetHit::Unknown;
 }
 
 void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
@@ -151,7 +180,14 @@ void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
 }
 
 CFX_RectF CFWL_ComboBox::GetBBox() const {
-  return DisForm_GetBBox();
+  CFX_RectF rect = m_pProperties->m_rtWidget;
+  if (!m_pListBox || !DisForm_IsDropListVisible())
+    return rect;
+
+  CFX_RectF rtList = m_pListBox->GetWidgetRect();
+  rtList.Offset(rect.left, rect.top);
+  rect.Union(rtList);
+  return rect;
 }
 
 void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
@@ -174,7 +210,48 @@ void CFWL_ComboBox::DrawStretchHandler(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_ComboBox::ShowDropList(bool bActivate) {
-  return DisForm_ShowDropList(bActivate);
+  if (DisForm_IsDropListVisible() == bActivate)
+    return;
+
+  if (bActivate) {
+    CFWL_Event preEvent(CFWL_Event::Type::PreDropDown, this);
+    DispatchEvent(&preEvent);
+
+    CFWL_ComboList* pComboList = m_pListBox.get();
+    int32_t iItems = pComboList->CountItems(nullptr);
+    if (iItems < 1)
+      return;
+
+    ResetListItemAlignment();
+    pComboList->ChangeSelected(m_iCurSel);
+
+    float fItemHeight = pComboList->CalcItemHeight();
+    float fBorder = GetBorderSize(true);
+    float fPopupMin = 0.0f;
+    if (iItems > 3)
+      fPopupMin = fItemHeight * 3 + fBorder * 2;
+
+    float fPopupMax = fItemHeight * iItems + fBorder * 2;
+    CFX_RectF rtList(m_rtClient.left, 0, m_pProperties->m_rtWidget.width, 0);
+    GetPopupPos(fPopupMin, fPopupMax, m_pProperties->m_rtWidget, &rtList);
+
+    m_pListBox->SetWidgetRect(rtList);
+    m_pListBox->Update();
+  } else {
+    SetFocus(true);
+  }
+
+  if (bActivate) {
+    m_pListBox->RemoveStates(FWL_WGTSTATE_Invisible);
+    CFWL_Event postEvent(CFWL_Event::Type::PostDropDown, this);
+    DispatchEvent(&postEvent);
+  } else {
+    m_pListBox->SetStates(FWL_WGTSTATE_Invisible);
+  }
+
+  CFX_RectF rect = m_pListBox->GetWidgetRect();
+  rect.Inflate(2, 2);
+  RepaintRect(rect);
 }
 
 void CFWL_ComboBox::MatchEditText() {
@@ -198,7 +275,40 @@ void CFWL_ComboBox::SyncEditText(int32_t iListItem) {
 }
 
 void CFWL_ComboBox::Layout() {
-  return DisForm_Layout();
+  m_rtClient = GetClientRect();
+  m_rtContent = m_rtClient;
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  if (!theme)
+    return;
+
+  float borderWidth = 1;
+  float fBtn = theme->GetScrollBarWidth();
+  if (!(GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
+    m_rtBtn =
+        CFX_RectF(m_rtClient.right() - fBtn, m_rtClient.top + borderWidth,
+                  fBtn - borderWidth, m_rtClient.height - 2 * borderWidth);
+  }
+
+  CFWL_ThemePart part;
+  part.m_pWidget = this;
+  CFX_RectF pUIMargin = theme->GetUIMargin(&part);
+  m_rtContent.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
+                      pUIMargin.height);
+
+  if (!IsDropDownStyle() || !m_pEdit)
+    return;
+
+  CFX_RectF rtEdit(m_rtContent.left, m_rtContent.top, m_rtContent.width - fBtn,
+                   m_rtContent.height);
+  m_pEdit->SetWidgetRect(rtEdit);
+
+  if (m_iCurSel >= 0) {
+    CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
+    m_pEdit->LockUpdate();
+    m_pEdit->SetText(hItem ? hItem->GetText() : L"");
+    m_pEdit->UnlockUpdate();
+  }
+  m_pEdit->Update();
 }
 
 void CFWL_ComboBox::ResetTheme() {
@@ -307,7 +417,7 @@ void CFWL_ComboBox::InitProxyForm() {
   m_pListBox->SetParent(m_pComboBoxProxy);
 }
 
-void CFWL_ComboBox::DisForm_InitComboList() {
+void CFWL_ComboBox::InitComboList() {
   if (m_pListBox)
     return;
 
@@ -320,7 +430,7 @@ void CFWL_ComboBox::DisForm_InitComboList() {
                                                   std::move(prop), this);
 }
 
-void CFWL_ComboBox::DisForm_InitComboEdit() {
+void CFWL_ComboBox::InitComboEdit() {
   if (m_pEdit)
     return;
 
@@ -331,93 +441,6 @@ void CFWL_ComboBox::DisForm_InitComboEdit() {
   m_pEdit = pdfium::MakeUnique<CFWL_ComboEdit>(m_pOwnerApp.Get(),
                                                std::move(prop), this);
   m_pEdit->SetOuter(this);
-}
-
-void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
-  if (DisForm_IsDropListVisible() == bActivate)
-    return;
-
-  if (bActivate) {
-    CFWL_Event preEvent(CFWL_Event::Type::PreDropDown, this);
-    DispatchEvent(&preEvent);
-
-    CFWL_ComboList* pComboList = m_pListBox.get();
-    int32_t iItems = pComboList->CountItems(nullptr);
-    if (iItems < 1)
-      return;
-
-    ResetListItemAlignment();
-    pComboList->ChangeSelected(m_iCurSel);
-
-    float fItemHeight = pComboList->CalcItemHeight();
-    float fBorder = GetBorderSize(true);
-    float fPopupMin = 0.0f;
-    if (iItems > 3)
-      fPopupMin = fItemHeight * 3 + fBorder * 2;
-
-    float fPopupMax = fItemHeight * iItems + fBorder * 2;
-    CFX_RectF rtList(m_rtClient.left, 0, m_pProperties->m_rtWidget.width, 0);
-    GetPopupPos(fPopupMin, fPopupMax, m_pProperties->m_rtWidget, &rtList);
-
-    m_pListBox->SetWidgetRect(rtList);
-    m_pListBox->Update();
-  } else {
-    SetFocus(true);
-  }
-
-  if (bActivate) {
-    m_pListBox->RemoveStates(FWL_WGTSTATE_Invisible);
-    CFWL_Event postEvent(CFWL_Event::Type::PostDropDown, this);
-    DispatchEvent(&postEvent);
-  } else {
-    m_pListBox->SetStates(FWL_WGTSTATE_Invisible);
-  }
-
-  CFX_RectF rect = m_pListBox->GetWidgetRect();
-  rect.Inflate(2, 2);
-  RepaintRect(rect);
-}
-
-void CFWL_ComboBox::DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
-                                           uint32_t dwStylesExRemoved) {
-  if (!m_pEdit)
-    DisForm_InitComboEdit();
-
-  bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
-  bool bDelDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
-
-  dwStylesExRemoved &= ~FWL_STYLEEXT_CMB_DropDown;
-  m_pProperties->m_dwStyleExes |= FWL_STYLEEXT_CMB_DropDown;
-
-  if (bAddDropDown)
-    m_pEdit->ModifyStylesEx(0, FWL_STYLEEXT_EDT_ReadOnly);
-  else if (bDelDropDown)
-    m_pEdit->ModifyStylesEx(FWL_STYLEEXT_EDT_ReadOnly, 0);
-  CFWL_Widget::ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
-}
-
-void CFWL_ComboBox::DisForm_Update() {
-  if (m_iLock)
-    return;
-  if (m_pEdit)
-    ResetEditAlignment();
-  ResetTheme();
-  Layout();
-}
-
-FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(const CFX_PointF& point) {
-  CFX_RectF rect(0, 0, m_pProperties->m_rtWidget.width - m_rtBtn.width,
-                 m_pProperties->m_rtWidget.height);
-  if (rect.Contains(point))
-    return FWL_WidgetHit::Edit;
-  if (m_rtBtn.Contains(point))
-    return FWL_WidgetHit::Client;
-  if (DisForm_IsDropListVisible()) {
-    rect = m_pListBox->GetWidgetRect();
-    if (rect.Contains(point))
-      return FWL_WidgetHit::Client;
-  }
-  return FWL_WidgetHit::Unknown;
 }
 
 void CFWL_ComboBox::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
@@ -452,54 +475,6 @@ void CFWL_ComboBox::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
     mt.Concat(mtOrg);
     m_pListBox->DrawWidget(pGraphics, mt);
   }
-}
-
-CFX_RectF CFWL_ComboBox::DisForm_GetBBox() const {
-  CFX_RectF rect = m_pProperties->m_rtWidget;
-  if (!m_pListBox || !DisForm_IsDropListVisible())
-    return rect;
-
-  CFX_RectF rtList = m_pListBox->GetWidgetRect();
-  rtList.Offset(rect.left, rect.top);
-  rect.Union(rtList);
-  return rect;
-}
-
-void CFWL_ComboBox::DisForm_Layout() {
-  m_rtClient = GetClientRect();
-  m_rtContent = m_rtClient;
-  IFWL_ThemeProvider* theme = GetAvailableTheme();
-  if (!theme)
-    return;
-
-  float borderWidth = 1;
-  float fBtn = theme->GetScrollBarWidth();
-  if (!(GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
-    m_rtBtn =
-        CFX_RectF(m_rtClient.right() - fBtn, m_rtClient.top + borderWidth,
-                  fBtn - borderWidth, m_rtClient.height - 2 * borderWidth);
-  }
-
-  CFWL_ThemePart part;
-  part.m_pWidget = this;
-  CFX_RectF pUIMargin = theme->GetUIMargin(&part);
-  m_rtContent.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
-                      pUIMargin.height);
-
-  if (!IsDropDownStyle() || !m_pEdit)
-    return;
-
-  CFX_RectF rtEdit(m_rtContent.left, m_rtContent.top, m_rtContent.width - fBtn,
-                   m_rtContent.height);
-  m_pEdit->SetWidgetRect(rtEdit);
-
-  if (m_iCurSel >= 0) {
-    CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
-    m_pEdit->LockUpdate();
-    m_pEdit->SetText(hItem ? hItem->GetText() : L"");
-    m_pEdit->UnlockUpdate();
-  }
-  m_pEdit->Update();
 }
 
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
@@ -719,12 +694,12 @@ void CFWL_ComboBox::DisForm_OnLButtonDown(CFWL_MessageMouse* pMsg) {
     return;
 
   if (DisForm_IsDropListVisible()) {
-    DisForm_ShowDropList(false);
+    ShowDropList(false);
     return;
   }
   if (m_pEdit)
     MatchEditText();
-  DisForm_ShowDropList(true);
+  ShowDropList(true);
 }
 
 void CFWL_ComboBox::DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
@@ -736,7 +711,7 @@ void CFWL_ComboBox::DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
     }
   } else {
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-    DisForm_ShowDropList(false);
+    ShowDropList(false);
     CFWL_MessageKillFocus msg(m_pEdit.get());
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
