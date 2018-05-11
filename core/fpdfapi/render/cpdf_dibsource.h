@@ -62,7 +62,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
                           int clip_left,
                           int clip_width) const override;
 
-  const CPDF_ColorSpace* GetColorSpace() const { return m_pColorSpace; }
+  const CPDF_ColorSpace* GetColorSpace() const { return m_pColorSpace.Get(); }
   uint32_t GetMatteColor() const { return m_MatteColor; }
 
   LoadState StartLoadDIBSource(CPDF_Document* pDoc,
@@ -87,7 +87,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   LoadState ContinueLoadMaskDIB(PauseIndicatorIface* pPause);
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
-  DIB_COMP_DATA* GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey);
+  bool GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey);
   RetainPtr<CFX_DIBitmap> LoadJpxBitmap();
   void LoadPalette();
   LoadState CreateDecoder();
@@ -132,7 +132,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   UnownedPtr<const CPDF_Stream> m_pStream;
   UnownedPtr<const CPDF_Dictionary> m_pDict;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
-  CPDF_ColorSpace* m_pColorSpace = nullptr;
+  UnownedPtr<CPDF_ColorSpace> m_pColorSpace;
   uint32_t m_Family = 0;
   uint32_t m_bpc = 0;
   uint32_t m_bpc_orig = 0;
@@ -146,9 +146,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
   bool m_bColorKey = false;
   bool m_bHasMask = false;
   bool m_bStdCS = false;
-  DIB_COMP_DATA* m_pCompData = nullptr;
-  uint8_t* m_pLineBuf = nullptr;
-  uint8_t* m_pMaskedLine = nullptr;
+  std::vector<DIB_COMP_DATA> m_CompData;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pLineBuf;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskedLine;
   RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
   RetainPtr<CPDF_DIBSource> m_pMask;
   RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
