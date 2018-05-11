@@ -35,10 +35,6 @@ CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
       m_bLButtonDown(false),
       m_iCurSel(-1),
       m_iBtnState(CFWL_PartState_Normal) {
-  m_rtClient.Reset();
-  m_rtBtn.Reset();
-  m_rtHandler.Reset();
-
   InitComboList();
   InitComboEdit();
 }
@@ -95,7 +91,7 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
     return FWL_WidgetHit::Edit;
   if (m_rtBtn.Contains(point))
     return FWL_WidgetHit::Client;
-  if (DisForm_IsDropListVisible()) {
+  if (IsDropListVisible()) {
     rect = m_pListBox->GetWidgetRect();
     if (rect.Contains(point))
       return FWL_WidgetHit::Client;
@@ -105,7 +101,33 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
 
 void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix& matrix) {
-  DisForm_DrawWidget(pGraphics, &matrix);
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
+
+  pGraphics->SaveGraphState();
+  pGraphics->ConcatMatrix(&matrix);
+  if (!m_rtBtn.IsEmpty(0.1f)) {
+    CFWL_ThemeBackground param;
+    param.m_pWidget = this;
+    param.m_iPart = CFWL_Part::DropDownButton;
+    param.m_dwStates = m_iBtnState;
+    param.m_pGraphics = pGraphics;
+    param.m_rtPart = m_rtBtn;
+    pTheme->DrawBackground(&param);
+  }
+  pGraphics->RestoreGraphState();
+
+  if (m_pEdit) {
+    CFX_RectF rtEdit = m_pEdit->GetWidgetRect();
+    CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);
+    mt.Concat(matrix);
+    m_pEdit->DrawWidget(pGraphics, mt);
+  }
+  if (m_pListBox && IsDropListVisible()) {
+    CFX_RectF rtList = m_pListBox->GetWidgetRect();
+    CFX_Matrix mt(1, 0, 0, 1, rtList.left, rtList.top);
+    mt.Concat(matrix);
+    m_pListBox->DrawWidget(pGraphics, mt);
+  }
 }
 
 void CFWL_ComboBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
@@ -180,7 +202,7 @@ void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
 
 CFX_RectF CFWL_ComboBox::GetBBox() const {
   CFX_RectF rect = m_pProperties->m_rtWidget;
-  if (!m_pListBox || !DisForm_IsDropListVisible())
+  if (!m_pListBox || !IsDropListVisible())
     return rect;
 
   CFX_RectF rtList = m_pListBox->GetWidgetRect();
@@ -209,7 +231,7 @@ void CFWL_ComboBox::DrawStretchHandler(CXFA_Graphics* pGraphics,
 }
 
 void CFWL_ComboBox::ShowDropList(bool bActivate) {
-  if (DisForm_IsDropListVisible() == bActivate)
+  if (IsDropListVisible() == bActivate)
     return;
 
   if (bActivate) {
@@ -424,42 +446,60 @@ void CFWL_ComboBox::InitComboEdit() {
   m_pEdit->SetOuter(this);
 }
 
-void CFWL_ComboBox::DisForm_DrawWidget(CXFA_Graphics* pGraphics,
-                                       const CFX_Matrix* pMatrix) {
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  CFX_Matrix mtOrg;
-  if (pMatrix)
-    mtOrg = *pMatrix;
-
-  pGraphics->SaveGraphState();
-  pGraphics->ConcatMatrix(&mtOrg);
-  if (!m_rtBtn.IsEmpty(0.1f)) {
-    CFWL_ThemeBackground param;
-    param.m_pWidget = this;
-    param.m_iPart = CFWL_Part::DropDownButton;
-    param.m_dwStates = m_iBtnState;
-    param.m_pGraphics = pGraphics;
-    param.m_rtPart = m_rtBtn;
-    pTheme->DrawBackground(&param);
-  }
-  pGraphics->RestoreGraphState();
-
-  if (m_pEdit) {
-    CFX_RectF rtEdit = m_pEdit->GetWidgetRect();
-    CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);
-    mt.Concat(mtOrg);
-    m_pEdit->DrawWidget(pGraphics, mt);
-  }
-  if (m_pListBox && DisForm_IsDropListVisible()) {
-    CFX_RectF rtList = m_pListBox->GetWidgetRect();
-    CFX_Matrix mt(1, 0, 0, 1, rtList.left, rtList.top);
-    mt.Concat(mtOrg);
-    m_pListBox->DrawWidget(pGraphics, mt);
-  }
-}
-
 void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
-  DisForm_OnProcessMessage(pMessage);
+  if (!pMessage)
+    return;
+
+  bool backDefault = true;
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus: {
+      backDefault = false;
+      DisForm_OnFocusChanged(pMessage, true);
+      break;
+    }
+    case CFWL_Message::Type::KillFocus: {
+      backDefault = false;
+      DisForm_OnFocusChanged(pMessage, false);
+      break;
+    }
+    case CFWL_Message::Type::Mouse: {
+      backDefault = false;
+      CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
+      switch (pMsg->m_dwCmd) {
+        case FWL_MouseCommand::LeftButtonDown:
+          DisForm_OnLButtonDown(pMsg);
+          break;
+        case FWL_MouseCommand::LeftButtonUp:
+          OnLButtonUp(pMsg);
+          break;
+        default:
+          break;
+      }
+      break;
+    }
+    case CFWL_Message::Type::Key: {
+      backDefault = false;
+      CFWL_MessageKey* pKey = static_cast<CFWL_MessageKey*>(pMessage);
+      if (pKey->m_dwCmd == FWL_KeyCommand::KeyUp)
+        break;
+      if (IsDropListVisible() && pKey->m_dwCmd == FWL_KeyCommand::KeyDown) {
+        bool bListKey = pKey->m_dwKeyCode == FWL_VKEY_Up ||
+                        pKey->m_dwKeyCode == FWL_VKEY_Down ||
+                        pKey->m_dwKeyCode == FWL_VKEY_Return ||
+                        pKey->m_dwKeyCode == FWL_VKEY_Escape;
+        if (bListKey) {
+          m_pListBox->GetDelegate()->OnProcessMessage(pMessage);
+          break;
+        }
+      }
+      DisForm_OnKey(pKey);
+      break;
+    }
+    default:
+      break;
+  }
+  if (backDefault)
+    CFWL_Widget::OnProcessMessage(pMessage);
 }
 
 void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
@@ -610,70 +650,13 @@ void CFWL_ComboBox::DoSubCtrlKey(CFWL_MessageKey* pMsg) {
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
 }
 
-void CFWL_ComboBox::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
-  bool backDefault = true;
-  switch (pMessage->GetType()) {
-    case CFWL_Message::Type::SetFocus: {
-      backDefault = false;
-      DisForm_OnFocusChanged(pMessage, true);
-      break;
-    }
-    case CFWL_Message::Type::KillFocus: {
-      backDefault = false;
-      DisForm_OnFocusChanged(pMessage, false);
-      break;
-    }
-    case CFWL_Message::Type::Mouse: {
-      backDefault = false;
-      CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-      switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown:
-          DisForm_OnLButtonDown(pMsg);
-          break;
-        case FWL_MouseCommand::LeftButtonUp:
-          OnLButtonUp(pMsg);
-          break;
-        default:
-          break;
-      }
-      break;
-    }
-    case CFWL_Message::Type::Key: {
-      backDefault = false;
-      CFWL_MessageKey* pKey = static_cast<CFWL_MessageKey*>(pMessage);
-      if (pKey->m_dwCmd == FWL_KeyCommand::KeyUp)
-        break;
-      if (DisForm_IsDropListVisible() &&
-          pKey->m_dwCmd == FWL_KeyCommand::KeyDown) {
-        bool bListKey = pKey->m_dwKeyCode == FWL_VKEY_Up ||
-                        pKey->m_dwKeyCode == FWL_VKEY_Down ||
-                        pKey->m_dwKeyCode == FWL_VKEY_Return ||
-                        pKey->m_dwKeyCode == FWL_VKEY_Escape;
-        if (bListKey) {
-          m_pListBox->GetDelegate()->OnProcessMessage(pMessage);
-          break;
-        }
-      }
-      DisForm_OnKey(pKey);
-      break;
-    }
-    default:
-      break;
-  }
-  if (backDefault)
-    CFWL_Widget::OnProcessMessage(pMessage);
-}
-
 void CFWL_ComboBox::DisForm_OnLButtonDown(CFWL_MessageMouse* pMsg) {
-  bool bDropDown = DisForm_IsDropListVisible();
+  bool bDropDown = IsDropListVisible();
   CFX_RectF& rtBtn = bDropDown ? m_rtBtn : m_rtClient;
   if (!rtBtn.Contains(pMsg->m_pos))
     return;
 
-  if (DisForm_IsDropListVisible()) {
+  if (IsDropListVisible()) {
     ShowDropList(false);
     return;
   }

@@ -124,11 +124,9 @@ class CFWL_ComboBox : public CFWL_Widget {
 
   void InitComboList();
   void InitComboEdit();
-  bool DisForm_IsDropListVisible() const {
+  bool IsDropListVisible() const {
     return !(m_pListBox->GetStates() & FWL_WGTSTATE_Invisible);
   }
-  void DisForm_DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DisForm_OnProcessMessage(CFWL_Message* pMessage);
   void DisForm_OnLButtonDown(CFWL_MessageMouse* pMsg);
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void DisForm_OnKey(CFWL_MessageKey* pMsg);
