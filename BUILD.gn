@@ -1890,8 +1890,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/cfwl_checkbox.h",
       "xfa/fwl/cfwl_combobox.cpp",
       "xfa/fwl/cfwl_combobox.h",
-      "xfa/fwl/cfwl_comboboxproxy.cpp",
-      "xfa/fwl/cfwl_comboboxproxy.h",
       "xfa/fwl/cfwl_comboedit.cpp",
       "xfa/fwl/cfwl_comboedit.h",
       "xfa/fwl/cfwl_combolist.cpp",

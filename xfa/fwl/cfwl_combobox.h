@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "xfa/fwl/cfwl_comboboxproxy.h"
 #include "xfa/fwl/cfwl_comboedit.h"
 #include "xfa/fwl/cfwl_combolist.h"
 #include "xfa/fwl/cfwl_form.h"
@@ -18,7 +17,6 @@
 
 class CFWL_WidgetProperties;
 class CFWL_ComboBox;
-class CFWL_ComboBoxProxy;
 class CFWL_FormProxy;
 class CFWL_ListBox;
 class CFWL_Widget;
@@ -94,10 +92,6 @@ class CFWL_ComboBox : public CFWL_Widget {
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   void DrawStretchHandler(CXFA_Graphics* pGraphics, const CFX_Matrix* pMatrix);
-  bool IsDropListVisible() const {
-    return m_pComboBoxProxy &&
-           !(m_pComboBoxProxy->GetStates() & FWL_WGTSTATE_Invisible);
-  }
   void ShowDropList(bool bActivate);
 
   CFWL_ComboEdit* GetComboEdit() const { return m_pEdit.get(); }
@@ -115,7 +109,6 @@ class CFWL_ComboBox : public CFWL_Widget {
   void ResetTheme();
   void ResetEditAlignment();
   void ResetListItemAlignment();
-  void InitProxyForm();
   void GetPopupPos(float fMinHeight,
                    float fMaxHeight,
                    const CFX_RectF& rtAnchor,
@@ -148,7 +141,6 @@ class CFWL_ComboBox : public CFWL_Widget {
   CFX_RectF m_rtHandler;
   std::unique_ptr<CFWL_ComboEdit> m_pEdit;
   std::unique_ptr<CFWL_ComboList> m_pListBox;
-  CFWL_ComboBoxProxy* m_pComboBoxProxy;  // Can this be a unique_ptr?
   bool m_bLButtonDown;
   int32_t m_iCurSel;
   int32_t m_iBtnState;

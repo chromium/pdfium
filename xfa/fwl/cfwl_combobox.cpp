@@ -32,7 +32,6 @@
 
 CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
     : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
-      m_pComboBoxProxy(nullptr),
       m_bLButtonDown(false),
       m_iCurSel(-1),
       m_iBtnState(CFWL_PartState_Normal) {
@@ -399,24 +398,6 @@ void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
   DispatchEvent(&ev);
 }
 
-void CFWL_ComboBox::InitProxyForm() {
-  if (m_pComboBoxProxy)
-    return;
-  if (!m_pListBox)
-    return;
-
-  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
-  prop->m_pOwner = this;
-  prop->m_dwStyles = FWL_WGTSTYLE_Popup;
-  prop->m_dwStates = FWL_WGTSTATE_Invisible;
-
-  // TODO(dsinclair): Does this leak? I don't see a delete, but I'm not sure
-  // if the SetParent call is going to transfer ownership.
-  m_pComboBoxProxy = new CFWL_ComboBoxProxy(this, m_pOwnerApp.Get(),
-                                            std::move(prop), m_pListBox.get());
-  m_pListBox->SetParent(m_pComboBoxProxy);
-}
-
 void CFWL_ComboBox::InitComboList() {
   if (m_pListBox)
     return;
@@ -572,8 +553,7 @@ void CFWL_ComboBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_ComboBox::OnMouseLeave(CFWL_MessageMouse* pMsg) {
-  if (!IsDropListVisible() &&
-      !((m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) ==
+  if (!((m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) ==
         FWL_WGTSTATE_Disabled)) {
     m_iBtnState = CFWL_PartState_Normal;
     RepaintRect(m_rtBtn);
