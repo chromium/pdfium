@@ -450,12 +450,12 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::SetFocus: {
       backDefault = false;
-      DisForm_OnFocusChanged(pMessage, true);
+      OnFocusChanged(pMessage, true);
       break;
     }
     case CFWL_Message::Type::KillFocus: {
       backDefault = false;
-      DisForm_OnFocusChanged(pMessage, false);
+      OnFocusChanged(pMessage, false);
       break;
     }
     case CFWL_Message::Type::Mouse: {
@@ -463,7 +463,7 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
-          DisForm_OnLButtonDown(pMsg);
+          OnLButtonDown(pMsg);
           break;
         case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
@@ -488,7 +488,7 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
           break;
         }
       }
-      DisForm_OnKey(pKey);
+      OnKey(pKey);
       break;
     }
     default:
@@ -526,7 +526,7 @@ void CFWL_ComboBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   RepaintRect(m_rtBtn);
 }
 
-void CFWL_ComboBox::DisForm_OnLButtonDown(CFWL_MessageMouse* pMsg) {
+void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   bool bDropDown = IsDropListVisible();
   CFX_RectF& rtBtn = bDropDown ? m_rtBtn : m_rtClient;
   if (!rtBtn.Contains(pMsg->m_pos))
@@ -541,7 +541,7 @@ void CFWL_ComboBox::DisForm_OnLButtonDown(CFWL_MessageMouse* pMsg) {
   ShowDropList(true);
 }
 
-void CFWL_ComboBox::DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
+void CFWL_ComboBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet) {
     m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
     if ((m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
@@ -556,7 +556,7 @@ void CFWL_ComboBox::DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   }
 }
 
-void CFWL_ComboBox::DisForm_OnKey(CFWL_MessageKey* pMsg) {
+void CFWL_ComboBox::OnKey(CFWL_MessageKey* pMsg) {
   uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   const bool bUp = dwKeyCode == FWL_VKEY_Up;
   const bool bDown = dwKeyCode == FWL_VKEY_Down;
