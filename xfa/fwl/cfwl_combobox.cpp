@@ -17,7 +17,6 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 #include "xfa/fwl/cfwl_eventtextchanged.h"
-#include "xfa/fwl/cfwl_formproxy.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagekillfocus.h"

@@ -1916,8 +1916,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/cfwl_eventvalidate.h",
       "xfa/fwl/cfwl_form.cpp",
       "xfa/fwl/cfwl_form.h",
-      "xfa/fwl/cfwl_formproxy.cpp",
-      "xfa/fwl/cfwl_formproxy.h",
       "xfa/fwl/cfwl_listbox.cpp",
       "xfa/fwl/cfwl_listbox.h",
       "xfa/fwl/cfwl_listitem.cpp",

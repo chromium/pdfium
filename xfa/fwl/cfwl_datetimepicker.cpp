@@ -12,7 +12,6 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
-#include "xfa/fwl/cfwl_formproxy.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_messagesetfocus.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -326,22 +325,6 @@ void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
   ev.iMonth = m_iMonth;
   ev.iDay = m_iDay;
   DispatchEvent(&ev);
-}
-
-void CFWL_DateTimePicker::InitProxyForm() {
-  if (m_pForm)
-    return;
-  if (!m_pMonthCal)
-    return;
-
-  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
-  prop->m_dwStyles = FWL_WGTSTYLE_Popup;
-  prop->m_dwStates = FWL_WGTSTATE_Invisible;
-  prop->m_pOwner = this;
-
-  m_pForm = pdfium::MakeUnique<CFWL_FormProxy>(
-      m_pOwnerApp.Get(), std::move(prop), m_pMonthCal.get());
-  m_pMonthCal->SetParent(m_pForm.get());
 }
 
 bool CFWL_DateTimePicker::NeedsToShowButton() const {

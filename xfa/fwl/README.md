@@ -5,7 +5,6 @@ classes are both controllers and renderers for each widget. The hierarchy is:
 
 * CFWL_Widget
     * CFWL_Form
-        * CFWL_FormProxy
     * CFWL_Caret
     * CFWL_CheckBox
     * CFWL_ComboBox

@@ -17,7 +17,6 @@
 
 class CFWL_WidgetProperties;
 class CFWL_ComboBox;
-class CFWL_FormProxy;
 class CFWL_ListBox;
 class CFWL_Widget;
 

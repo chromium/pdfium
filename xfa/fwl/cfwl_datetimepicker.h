@@ -29,7 +29,6 @@
 #define FWL_STYLEEXT_DTP_EditVAlignMask (3L << 6)
 
 class CFWL_DateTimeEdit;
-class CFWL_FormProxy;
 
 class CFWL_DateTimePicker : public CFWL_Widget {
  public:
@@ -66,15 +65,12 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   void ShowMonthCalendar(bool bActivate);
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
-  CFWL_FormProxy* GetFormProxy() const { return m_pForm.get(); }
-
  private:
   void DrawDropDownButton(CXFA_Graphics* pGraphics,
                           IFWL_ThemeProvider* pTheme,
                           const CFX_Matrix* pMatrix);
   WideString FormatDateString(int32_t iYear, int32_t iMonth, int32_t iDay);
   void ResetEditAlignment();
-  void InitProxyForm();
   void GetPopupPos(float fMinHeight,
                    float fMaxHeight,
                    const CFX_RectF& rtAnchor,
@@ -96,7 +92,6 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   bool m_bLBtnDown;
   std::unique_ptr<CFWL_DateTimeEdit> m_pEdit;
   std::unique_ptr<CFWL_MonthCalendar> m_pMonthCal;
-  std::unique_ptr<CFWL_FormProxy> m_pForm;
   float m_fBtn;
 };
 
