@@ -52,7 +52,7 @@ class ImageComparison(object):
     self.num_workers = num_workers
     self.threshold = threshold_fraction * 100
 
-  def Run(self):
+  def Run(self, open_in_browser):
     """Runs the comparison and generates an HTML with the results.
 
     Returns:
@@ -94,7 +94,9 @@ class ImageComparison(object):
       f.write('</table>')
       f.write('</body></html>')
 
-    webbrowser.open(html_path)
+    if open_in_browser:
+      webbrowser.open(html_path)
+
     return 0
 
   def _GenerateDiffs(self):

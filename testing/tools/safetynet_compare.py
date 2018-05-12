@@ -116,7 +116,7 @@ class CompareRun(object):
           ('before', 'after'),
           self.args.num_workers,
           self.args.png_threshold)
-      image_comparison.Run()
+      image_comparison.Run(open_in_browser=not self.args.machine_readable)
 
     return 0
 
