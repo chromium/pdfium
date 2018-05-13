@@ -19,6 +19,7 @@ from common import PrintErr
 
 CALLGRIND_PROFILER = 'callgrind'
 PERFSTAT_PROFILER = 'perfstat'
+NONE_PROFILER = 'none'
 
 PDFIUM_TEST = 'pdfium_test'
 
@@ -55,6 +56,8 @@ class PerformanceRun(object):
       time = self._RunCallgrind()
     elif self.args.profiler == PERFSTAT_PROFILER:
       time = self._RunPerfStat()
+    elif self.args.profiler == NONE_PROFILER:
+      time = self._RunWithoutProfiler()
     else:
       PrintErr('profiler=%s not supported, aborting' % self.args.profiler)
       return 1
@@ -102,6 +105,19 @@ class PerformanceRun(object):
     # '        12345      instructions'
     return self._ExtractIrCount(r'\b(\d+)\b.*\binstructions\b', output)
 
+  def _RunWithoutProfiler(self):
+    """Runs test harness and measures performance without a profiler.
+
+    Returns:
+      int with the result of the measurement, in instructions or time. In this
+      case, always return 1 since no profiler is being used.
+    """
+    cmd_to_run = self._BuildTestHarnessCommand()
+    output = subprocess.check_output(cmd_to_run, stderr=subprocess.STDOUT)
+
+    # Return 1 for every run.
+    return 1
+
   def _BuildTestHarnessCommand(self):
     """Builds command to run the test harness."""
     cmd = [self.pdfium_test_path, '--send-events']
@@ -135,8 +151,8 @@ def main():
                       help='relative path to the build directory with '
                            '%s' % PDFIUM_TEST)
   parser.add_argument('--profiler', default=CALLGRIND_PROFILER,
-                      help='which profiler to use. Supports callgrind and '
-                           'perfstat for now.')
+                      help='which profiler to use. Supports callgrind, '
+                           'perfstat, and none.')
   parser.add_argument('--interesting-section', action='store_true',
                       help='whether to measure just the interesting section or '
                            'the whole test harness. The interesting section is '
