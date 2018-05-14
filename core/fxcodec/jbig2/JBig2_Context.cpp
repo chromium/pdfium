@@ -73,14 +73,14 @@ CJBig2_Context::~CJBig2_Context() {}
 
 JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
   if (m_pStream->getByteLeft() <= 0)
-    return JBig2_Result::EndOfFile;
+    return JBig2_Result::kEndReached;
 
   while (m_pStream->getByteLeft() >= JBIG2_MIN_SEGMENT_SIZE) {
     JBig2_Result nRet;
     if (!m_pSegment) {
       m_pSegment = pdfium::MakeUnique<CJBig2_Segment>();
       nRet = ParseSegmentHeader(m_pSegment.get());
-      if (nRet != JBig2_Result::Success) {
+      if (nRet != JBig2_Result::kSuccess) {
         m_pSegment.reset();
         return nRet;
       }
@@ -90,20 +90,20 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
     if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       m_PauseStep = 2;
-      return JBig2_Result::Success;
+      return JBig2_Result::kSuccess;
     }
-    if (nRet == JBig2_Result::EndOfPage || nRet == JBig2_Result::EndOfFile) {
+    if (nRet == JBig2_Result::kEndReached) {
       m_pSegment.reset();
-      return JBig2_Result::Success;
+      return JBig2_Result::kSuccess;
     }
-    if (nRet != JBig2_Result::Success) {
+    if (nRet != JBig2_Result::kSuccess) {
       m_pSegment.reset();
       return nRet;
     }
     if (m_pSegment->m_dwData_length != 0xffffffff) {
       m_dwOffset += m_pSegment->m_dwData_length;
       if (!m_dwOffset.IsValid())
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
 
       m_pStream->setOffset(m_dwOffset.ValueOrDie());
     } else {
@@ -114,10 +114,10 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
         pPause->NeedToPauseNow()) {
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
       m_PauseStep = 2;
-      return JBig2_Result::Success;
+      return JBig2_Result::kSuccess;
     }
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::DecodeRandomFirstPage(
@@ -125,7 +125,7 @@ JBig2_Result CJBig2_Context::DecodeRandomFirstPage(
   while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
     auto pSegment = pdfium::MakeUnique<CJBig2_Segment>();
     JBig2_Result nRet = ParseSegmentHeader(pSegment.get());
-    if (nRet != JBig2_Result::Success)
+    if (nRet != JBig2_Result::kSuccess)
       return nRet;
 
     if (pSegment->m_cFlags.s.type == 51)
@@ -135,7 +135,7 @@ JBig2_Result CJBig2_Context::DecodeRandomFirstPage(
     if (pPause && pPause->NeedToPauseNow()) {
       m_PauseStep = 3;
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return JBig2_Result::Success;
+      return JBig2_Result::kSuccess;
     }
   }
   m_nSegmentDecoded = 0;
@@ -146,19 +146,19 @@ JBig2_Result CJBig2_Context::DecodeRandom(PauseIndicatorIface* pPause) {
   for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
     JBig2_Result nRet =
         ParseSegmentData(m_SegmentList[m_nSegmentDecoded].get(), pPause);
-    if (nRet == JBig2_Result::EndOfPage || nRet == JBig2_Result::EndOfFile)
-      return JBig2_Result::Success;
+    if (nRet == JBig2_Result::kEndReached)
+      return JBig2_Result::kSuccess;
 
-    if (nRet != JBig2_Result::Success)
+    if (nRet != JBig2_Result::kSuccess)
       return nRet;
 
     if (m_pPage && pPause && pPause->NeedToPauseNow()) {
       m_PauseStep = 4;
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
-      return JBig2_Result::Success;
+      return JBig2_Result::kSuccess;
     }
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 bool CJBig2_Context::GetFirstPage(uint8_t* pBuf,
@@ -168,9 +168,9 @@ bool CJBig2_Context::GetFirstPage(uint8_t* pBuf,
                                   PauseIndicatorIface* pPause) {
   if (m_pGlobalContext) {
     JBig2_Result nRet = m_pGlobalContext->DecodeSequential(pPause);
-    if (nRet != JBig2_Result::Success) {
+    if (nRet != JBig2_Result::kSuccess) {
       m_ProcessingStatus = FXCODEC_STATUS_ERROR;
-      return nRet == JBig2_Result::Success;
+      return nRet == JBig2_Result::kSuccess;
     }
   }
   m_PauseStep = 0;
@@ -186,7 +186,7 @@ bool CJBig2_Context::GetFirstPage(uint8_t* pBuf,
 
 bool CJBig2_Context::Continue(PauseIndicatorIface* pPause) {
   m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
-  JBig2_Result nRet = JBig2_Result::Success;
+  JBig2_Result nRet = JBig2_Result::kSuccess;
   if (m_PauseStep <= 2) {
     nRet = DecodeSequential(pPause);
   } else if (m_PauseStep == 3) {
@@ -198,17 +198,17 @@ bool CJBig2_Context::Continue(PauseIndicatorIface* pPause) {
     return true;
   }
   if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE)
-    return nRet == JBig2_Result::Success;
+    return nRet == JBig2_Result::kSuccess;
 
   m_PauseStep = 5;
-  if (!m_bBufSpecified && nRet == JBig2_Result::Success) {
+  if (!m_bBufSpecified && nRet == JBig2_Result::kSuccess) {
     m_ProcessingStatus = FXCODEC_STATUS_DECODE_FINISH;
     return true;
   }
-  m_ProcessingStatus = nRet == JBig2_Result::Success
+  m_ProcessingStatus = nRet == JBig2_Result::kSuccess
                            ? FXCODEC_STATUS_DECODE_FINISH
                            : FXCODEC_STATUS_ERROR;
-  return nRet == JBig2_Result::Success;
+  return nRet == JBig2_Result::kSuccess;
 }
 
 CJBig2_Segment* CJBig2_Context::FindSegmentByNumber(uint32_t dwNumber) {
@@ -244,23 +244,23 @@ CJBig2_Segment* CJBig2_Context::FindReferredTableSegmentByIndex(
 JBig2_Result CJBig2_Context::ParseSegmentHeader(CJBig2_Segment* pSegment) {
   if (m_pStream->readInteger(&pSegment->m_dwNumber) != 0 ||
       m_pStream->read1Byte(&pSegment->m_cFlags.c) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
 
   uint8_t cTemp = m_pStream->getCurByte();
   if ((cTemp >> 5) == 7) {
     if (m_pStream->readInteger(
             (uint32_t*)&pSegment->m_nReferred_to_segment_count) != 0) {
-      return JBig2_Result::ErrorTooShort;
+      return JBig2_Result::kFailure;
     }
     pSegment->m_nReferred_to_segment_count &= 0x1fffffff;
     if (pSegment->m_nReferred_to_segment_count >
         JBIG2_MAX_REFERRED_SEGMENT_COUNT) {
-      return JBig2_Result::ErrorLimit;
+      return JBig2_Result::kFailure;
     }
   } else {
     if (m_pStream->read1Byte(&cTemp) != 0)
-      return JBig2_Result::ErrorTooShort;
+      return JBig2_Result::kFailure;
 
     pSegment->m_nReferred_to_segment_count = cTemp >> 5;
   }
@@ -274,43 +274,43 @@ JBig2_Result CJBig2_Context::ParseSegmentHeader(CJBig2_Segment* pSegment) {
       switch (cSSize) {
         case 1:
           if (m_pStream->read1Byte(&cTemp) != 0)
-            return JBig2_Result::ErrorTooShort;
+            return JBig2_Result::kFailure;
 
           pSegment->m_Referred_to_segment_numbers[i] = cTemp;
           break;
         case 2:
           uint16_t wTemp;
           if (m_pStream->readShortInteger(&wTemp) != 0)
-            return JBig2_Result::ErrorTooShort;
+            return JBig2_Result::kFailure;
 
           pSegment->m_Referred_to_segment_numbers[i] = wTemp;
           break;
         case 4:
           uint32_t dwTemp;
           if (m_pStream->readInteger(&dwTemp) != 0)
-            return JBig2_Result::ErrorTooShort;
+            return JBig2_Result::kFailure;
 
           pSegment->m_Referred_to_segment_numbers[i] = dwTemp;
           break;
       }
       if (pSegment->m_Referred_to_segment_numbers[i] >= pSegment->m_dwNumber)
-        return JBig2_Result::ErrorTooShort;
+        return JBig2_Result::kFailure;
     }
   }
   if (cPSize == 1) {
     if (m_pStream->read1Byte(&cTemp) != 0)
-      return JBig2_Result::ErrorTooShort;
+      return JBig2_Result::kFailure;
     pSegment->m_dwPage_association = cTemp;
   } else if (m_pStream->readInteger(&pSegment->m_dwPage_association) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
   if (m_pStream->readInteger(&pSegment->m_dwData_length) != 0)
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
 
   pSegment->m_dwObjNum = m_pStream->getObjNum();
   pSegment->m_dwDataOffset = m_pStream->getOffset();
   pSegment->m_State = JBIG2_SEGMENT_DATA_UNPARSED;
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseSegmentData(CJBig2_Segment* pSegment,
@@ -333,7 +333,7 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
     case 6:
     case 7:
       if (!m_bInPage)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       return ParseTextRegion(pSegment);
     case 16:
       return ParsePatternDict(pSegment, pPause);
@@ -341,19 +341,19 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
     case 22:
     case 23:
       if (!m_bInPage)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       return ParseHalftoneRegion(pSegment, pPause);
     case 36:
     case 38:
     case 39:
       if (!m_bInPage)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       return ParseGenericRegion(pSegment, pPause);
     case 40:
     case 42:
     case 43:
       if (!m_bInPage)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       return ParseGenericRefinementRegion(pSegment);
     case 48: {
       uint16_t wTemp;
@@ -364,7 +364,7 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
           m_pStream->readInteger(&pPageInfo->m_dwResolutionY) != 0 ||
           m_pStream->read1Byte(&pPageInfo->m_cFlags) != 0 ||
           m_pStream->readShortInteger(&wTemp) != 0) {
-        return JBig2_Result::ErrorTooShort;
+        return JBig2_Result::kFailure;
       }
       pPageInfo->m_bIsStriped = !!(wTemp & 0x8000);
       pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
@@ -381,7 +381,7 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
 
       if (!m_pPage->data()) {
         m_ProcessingStatus = FXCODEC_STATUS_ERROR;
-        return JBig2_Result::ErrorTooShort;
+        return JBig2_Result::kFailure;
       }
 
       m_pPage->fill((pPageInfo->m_cFlags & 4) ? 1 : 0);
@@ -390,13 +390,13 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
     } break;
     case 49:
       m_bInPage = false;
-      return JBig2_Result::EndOfPage;
+      return JBig2_Result::kEndReached;
       break;
     case 50:
       m_pStream->offset(pSegment->m_dwData_length);
       break;
     case 51:
-      return JBig2_Result::EndOfFile;
+      return JBig2_Result::kEndReached;
     case 52:
       m_pStream->offset(pSegment->m_dwData_length);
       break;
@@ -408,13 +408,13 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
     default:
       break;
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   uint16_t wFlags;
   if (m_pStream->readShortInteger(&wFlags) != 0)
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
 
   auto pSymbolDictDecoder = pdfium::MakeUnique<CJBig2_SDDProc>();
   pSymbolDictDecoder->SDHUFF = wFlags & 0x0001;
@@ -429,26 +429,26 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
     const uint32_t dwTemp = (pSymbolDictDecoder->SDTEMPLATE == 0) ? 8 : 2;
     for (uint32_t i = 0; i < dwTemp; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pSymbolDictDecoder->SDAT[i]) != 0)
-        return JBig2_Result::ErrorTooShort;
+        return JBig2_Result::kFailure;
     }
   }
   if (pSymbolDictDecoder->SDREFAGG == 1 && !pSymbolDictDecoder->SDRTEMPLATE) {
     for (int32_t i = 0; i < 4; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pSymbolDictDecoder->SDRAT[i]) != 0)
-        return JBig2_Result::ErrorTooShort;
+        return JBig2_Result::kFailure;
     }
   }
   if (m_pStream->readInteger(&pSymbolDictDecoder->SDNUMEXSYMS) != 0 ||
       m_pStream->readInteger(&pSymbolDictDecoder->SDNUMNEWSYMS) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
   if (pSymbolDictDecoder->SDNUMEXSYMS > JBIG2_MAX_EXPORT_SYSMBOLS ||
       pSymbolDictDecoder->SDNUMNEWSYMS > JBIG2_MAX_NEW_SYSMBOLS) {
-    return JBig2_Result::ErrorLimit;
+    return JBig2_Result::kFailure;
   }
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     if (!FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
   }
   CJBig2_Segment* pLRSeg = nullptr;
   pSymbolDictDecoder->SDNUMINSYMS = 0;
@@ -485,7 +485,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   std::unique_ptr<CJBig2_HuffmanTable> Table_B5;
   if (pSymbolDictDecoder->SDHUFF == 1) {
     if (cSDHUFFDH == 2 || cSDHUFFDW == 2)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
 
     int32_t nIndex = 0;
     if (cSDHUFFDH == 0) {
@@ -500,7 +500,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pSymbolDictDecoder->SDHUFFDH = pSeg->m_HuffmanTable.get();
     }
     if (cSDHUFFDW == 0) {
@@ -515,7 +515,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pSymbolDictDecoder->SDHUFFDW = pSeg->m_HuffmanTable.get();
     }
     if (cSDHUFFBMSIZE == 0) {
@@ -526,7 +526,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->m_HuffmanTable.get();
     }
     if (pSymbolDictDecoder->SDREFAGG == 1) {
@@ -540,7 +540,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
         CJBig2_Segment* pSeg =
             FindReferredTableSegmentByIndex(pSegment, nIndex++);
         if (!pSeg)
-          return JBig2_Result::ErrorFatal;
+          return JBig2_Result::kFailure;
         pSymbolDictDecoder->SDHUFFAGGINST = pSeg->m_HuffmanTable.get();
       }
     }
@@ -558,12 +558,12 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
     if (bUseGbContext) {
       gbContext = pLRSeg->m_SymbolDict->GbContext();
       if (gbContext.size() != gbContextSize)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
     }
     if (bUseGrContext) {
       grContext = pLRSeg->m_SymbolDict->GrContext();
       if (grContext.size() != grContextSize)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
     }
   } else {
     if (bUseGbContext)
@@ -596,7 +596,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       pSegment->m_SymbolDict = pSymbolDictDecoder->DecodeArith(
           pArithDecoder.get(), &gbContext, &grContext);
       if (!pSegment->m_SymbolDict)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
 
       m_pStream->alignByte();
       m_pStream->offset(2);
@@ -604,7 +604,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       pSegment->m_SymbolDict = pSymbolDictDecoder->DecodeHuffman(
           m_pStream.get(), &gbContext, &grContext);
       if (!pSegment->m_SymbolDict)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       m_pStream->alignByte();
     }
     if (m_bIsGlobal) {
@@ -624,18 +624,18 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
     if (bUseGrContext)
       pSegment->m_SymbolDict->SetGrContext(grContext);
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   uint16_t wFlags;
   JBig2RegionInfo ri;
-  if (ParseRegionInfo(&ri) != JBig2_Result::Success ||
+  if (ParseRegionInfo(&ri) != JBig2_Result::kSuccess ||
       m_pStream->readShortInteger(&wFlags) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
   if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   auto pTRD = pdfium::MakeUnique<CJBig2_TRDProc>();
   pTRD->SBW = ri.width;
@@ -664,7 +664,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   uint8_t cSBHUFFRSIZE = 0;
   if (pTRD->SBHUFF == 1) {
     if (m_pStream->readShortInteger(&wFlags) != 0)
-      return JBig2_Result::ErrorTooShort;
+      return JBig2_Result::kFailure;
 
     cSBHUFFFS = wFlags & 0x0003;
     cSBHUFFDS = (wFlags >> 2) & 0x0003;
@@ -678,11 +678,11 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   if (pTRD->SBREFINE == 1 && !pTRD->SBRTEMPLATE) {
     for (int32_t i = 0; i < 4; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pTRD->SBRAT[i]) != 0)
-        return JBig2_Result::ErrorTooShort;
+        return JBig2_Result::kFailure;
     }
   }
   if (m_pStream->readInteger(&pTRD->SBNUMINSTANCES) != 0)
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
 
   // Assume each instance takes at least 4 bits. That means for a stream of
   // length N, there can be at most 2N instances. This is an extremely
@@ -692,11 +692,11 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   FX_SAFE_INT32 nMaxStripInstances = m_pStream->getLength();
   nMaxStripInstances *= 2;
   if (pTRD->SBNUMINSTANCES > nMaxStripInstances.ValueOrDie())
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
     if (!FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[i]))
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
   }
 
   pTRD->SBNUMSYMS = 0;
@@ -731,7 +731,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     std::vector<JBig2HuffmanCode> SBSYMCODES =
         DecodeSymbolIDHuffmanTable(pTRD->SBNUMSYMS);
     if (SBSYMCODES.empty())
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
 
     m_pStream->alignByte();
     pTRD->SBSYMCODES = std::move(SBSYMCODES);
@@ -757,7 +757,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   if (pTRD->SBHUFF == 1) {
     if (cSBHUFFFS == 2 || cSBHUFFRDW == 2 || cSBHUFFRDH == 2 ||
         cSBHUFFRDX == 2 || cSBHUFFRDY == 2) {
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
     }
     int32_t nIndex = 0;
     if (cSBHUFFFS == 0) {
@@ -772,7 +772,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFFS = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFDS == 0) {
@@ -791,7 +791,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFDS = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFDT == 0) {
@@ -810,7 +810,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFDT = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDW == 0) {
@@ -825,7 +825,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFRDW = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDH == 0) {
@@ -844,7 +844,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFRDH = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDX == 0) {
@@ -863,7 +863,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFRDX = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDY == 0) {
@@ -882,7 +882,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFRDY = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRSIZE == 0) {
@@ -893,7 +893,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
       pTRD->SBHUFFRSIZE = pSeg->m_HuffmanTable.get();
     }
   }
@@ -910,14 +910,14 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     pSegment->m_Image =
         pTRD->DecodeArith(pArithDecoder.get(), grContext.get(), nullptr);
     if (!pSegment->m_Image)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
     pSegment->m_Image = pTRD->DecodeHuffman(m_pStream.get(), grContext.get());
     if (!pSegment->m_Image)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
     m_pStream->alignByte();
   }
   if (pSegment->m_cFlags.s.type != 4) {
@@ -932,7 +932,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
                          (JBig2ComposeOp)(ri.flags & 0x03));
     pSegment->m_Image.reset();
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
@@ -943,10 +943,10 @@ JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
       m_pStream->read1Byte(&pPDD->HDPW) != 0 ||
       m_pStream->read1Byte(&pPDD->HDPH) != 0 ||
       m_pStream->readInteger(&pPDD->GRAYMAX) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
   if (pPDD->GRAYMAX > JBIG2_MAX_PATTERN_INDEX)
-    return JBig2_Result::ErrorLimit;
+    return JBig2_Result::kFailure;
 
   pPDD->HDMMR = cFlags & 0x01;
   pPDD->HDTEMPLATE = (cFlags >> 1) & 0x03;
@@ -961,17 +961,17 @@ JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
     pSegment->m_PatternDict =
         pPDD->DecodeArith(pArithDecoder.get(), gbContext.get(), pPause);
     if (!pSegment->m_PatternDict)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
 
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
     pSegment->m_PatternDict = pPDD->DecodeMMR(m_pStream.get());
     if (!pSegment->m_PatternDict)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
     m_pStream->alignByte();
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
@@ -979,7 +979,7 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
   uint8_t cFlags;
   JBig2RegionInfo ri;
   auto pHRD = pdfium::MakeUnique<CJBig2_HTRDProc>();
-  if (ParseRegionInfo(&ri) != JBig2_Result::Success ||
+  if (ParseRegionInfo(&ri) != JBig2_Result::kSuccess ||
       m_pStream->read1Byte(&cFlags) != 0 ||
       m_pStream->readInteger(&pHRD->HGW) != 0 ||
       m_pStream->readInteger(&pHRD->HGH) != 0 ||
@@ -987,14 +987,14 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
       m_pStream->readInteger((uint32_t*)&pHRD->HGY) != 0 ||
       m_pStream->readShortInteger(&pHRD->HRX) != 0 ||
       m_pStream->readShortInteger(&pHRD->HRY) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
 
   if (!CJBig2_Image::IsValidImageSize(pHRD->HGW, pHRD->HGH))
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   pHRD->HBW = ri.width;
   pHRD->HBH = ri.height;
@@ -1004,16 +1004,16 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
   pHRD->HCOMBOP = (JBig2ComposeOp)((cFlags >> 4) & 0x07);
   pHRD->HDEFPIXEL = (cFlags >> 7) & 0x01;
   if (pSegment->m_nReferred_to_segment_count != 1)
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   CJBig2_Segment* pSeg =
       FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
   if (!pSeg || (pSeg->m_cFlags.s.type != 16))
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   const CJBig2_PatternDict* pPatternDict = pSeg->m_PatternDict.get();
   if (!pPatternDict || (pPatternDict->NUMPATS == 0))
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   pHRD->HNUMPATS = pPatternDict->NUMPATS;
   pHRD->HPATS = &pPatternDict->HDPATS;
@@ -1030,14 +1030,14 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
     pSegment->m_Image =
         pHRD->DecodeArith(pArithDecoder.get(), gbContext.get(), pPause);
     if (!pSegment->m_Image)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
 
     m_pStream->alignByte();
     m_pStream->offset(2);
   } else {
     pSegment->m_Image = pHRD->DecodeMMR(m_pStream.get());
     if (!pSegment->m_Image)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
     m_pStream->alignByte();
   }
   if (pSegment->m_cFlags.s.type != 20) {
@@ -1052,7 +1052,7 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
                          (JBig2ComposeOp)(ri.flags & 0x03));
     pSegment->m_Image.reset();
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
@@ -1060,12 +1060,12 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
   if (!m_pGRD) {
     auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
     uint8_t cFlags;
-    if (ParseRegionInfo(&m_ri) != JBig2_Result::Success ||
+    if (ParseRegionInfo(&m_ri) != JBig2_Result::kSuccess ||
         m_pStream->read1Byte(&cFlags) != 0) {
-      return JBig2_Result::ErrorTooShort;
+      return JBig2_Result::kFailure;
     }
     if (m_ri.height < 0 || m_ri.width < 0)
-      return JBig2_Result::Failure;
+      return JBig2_Result::kFailure;
     pGRD->GBW = m_ri.width;
     pGRD->GBH = m_ri.height;
     pGRD->MMR = cFlags & 0x01;
@@ -1075,12 +1075,12 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
       if (pGRD->GBTEMPLATE == 0) {
         for (int32_t i = 0; i < 8; ++i) {
           if (m_pStream->read1Byte((uint8_t*)&pGRD->GBAT[i]) != 0)
-            return JBig2_Result::ErrorTooShort;
+            return JBig2_Result::kFailure;
         }
       } else {
         for (int32_t i = 0; i < 2; ++i) {
           if (m_pStream->read1Byte((uint8_t*)&pGRD->GBAT[i]) != 0)
-            return JBig2_Result::ErrorTooShort;
+            return JBig2_Result::kFailure;
         }
       }
     }
@@ -1119,14 +1119,14 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
                                      pSegment->m_Image.get(), rect,
                                      (JBig2ComposeOp)(m_ri.flags & 0x03));
       }
-      return JBig2_Result::Success;
+      return JBig2_Result::kSuccess;
     }
     m_pArithDecoder.reset();
     m_gbContext.clear();
     if (!pSegment->m_Image) {
       m_ProcessingStatus = FXCODEC_STATUS_ERROR;
       m_pGRD.reset();
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
     }
     m_pStream->alignByte();
     m_pStream->offset(2);
@@ -1134,7 +1134,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
     m_pGRD->StartDecodeMMR(&pSegment->m_Image, m_pStream.get());
     if (!pSegment->m_Image) {
       m_pGRD.reset();
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
     }
     m_pStream->alignByte();
   }
@@ -1154,19 +1154,19 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
     pSegment->m_Image.reset();
   }
   m_pGRD.reset();
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
     CJBig2_Segment* pSegment) {
   JBig2RegionInfo ri;
   uint8_t cFlags;
-  if (ParseRegionInfo(&ri) != JBig2_Result::Success ||
+  if (ParseRegionInfo(&ri) != JBig2_Result::kSuccess ||
       m_pStream->read1Byte(&cFlags) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
   if (!CJBig2_Image::IsValidImageSize(ri.width, ri.height))
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
   pGRRD->GRW = ri.width;
@@ -1176,7 +1176,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
   if (!pGRRD->GRTEMPLATE) {
     for (int32_t i = 0; i < 4; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pGRRD->GRAT[i]) != 0)
-        return JBig2_Result::ErrorTooShort;
+        return JBig2_Result::kFailure;
     }
   }
   CJBig2_Segment* pSeg = nullptr;
@@ -1185,7 +1185,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
     for (i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       pSeg = FindSegmentByNumber(pSegment->m_Referred_to_segment_numbers[0]);
       if (!pSeg)
-        return JBig2_Result::ErrorFatal;
+        return JBig2_Result::kFailure;
 
       if (pSeg->m_cFlags.s.type == 4 || pSeg->m_cFlags.s.type == 20 ||
           pSeg->m_cFlags.s.type == 36 || pSeg->m_cFlags.s.type == 40) {
@@ -1193,7 +1193,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
       }
     }
     if (i >= pSegment->m_nReferred_to_segment_count)
-      return JBig2_Result::ErrorFatal;
+      return JBig2_Result::kFailure;
 
     pGRRD->GRREFERENCE = pSeg->m_Image.get();
   } else {
@@ -1209,7 +1209,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   pSegment->m_Image = pGRRD->Decode(pArithDecoder.get(), grContext.get());
   if (!pSegment->m_Image)
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   m_pStream->alignByte();
   m_pStream->offset(2);
@@ -1225,7 +1225,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
                          (JBig2ComposeOp)(ri.flags & 0x03));
     pSegment->m_Image.reset();
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseTable(CJBig2_Segment* pSegment) {
@@ -1233,11 +1233,11 @@ JBig2_Result CJBig2_Context::ParseTable(CJBig2_Segment* pSegment) {
   pSegment->m_HuffmanTable.reset();
   auto pHuff = pdfium::MakeUnique<CJBig2_HuffmanTable>(m_pStream.get());
   if (!pHuff->IsOK())
-    return JBig2_Result::ErrorFatal;
+    return JBig2_Result::kFailure;
 
   pSegment->m_HuffmanTable = std::move(pHuff);
   m_pStream->alignByte();
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 JBig2_Result CJBig2_Context::ParseRegionInfo(JBig2RegionInfo* pRI) {
@@ -1246,9 +1246,9 @@ JBig2_Result CJBig2_Context::ParseRegionInfo(JBig2RegionInfo* pRI) {
       m_pStream->readInteger((uint32_t*)&pRI->x) != 0 ||
       m_pStream->readInteger((uint32_t*)&pRI->y) != 0 ||
       m_pStream->read1Byte(&pRI->flags) != 0) {
-    return JBig2_Result::ErrorTooShort;
+    return JBig2_Result::kFailure;
   }
-  return JBig2_Result::Success;
+  return JBig2_Result::kSuccess;
 }
 
 std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(

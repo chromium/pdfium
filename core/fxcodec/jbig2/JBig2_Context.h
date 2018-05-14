@@ -30,15 +30,7 @@ using CJBig2_CachePair =
 
 #define JBIG2_MIN_SEGMENT_SIZE 11
 
-enum class JBig2_Result {
-  Success,
-  Failure,
-  ErrorTooShort,
-  ErrorFatal,
-  ErrorLimit,
-  EndOfPage,
-  EndOfFile
-};
+enum class JBig2_Result { kSuccess, kFailure, kEndReached };
 
 class CJBig2_Context {
  public:
