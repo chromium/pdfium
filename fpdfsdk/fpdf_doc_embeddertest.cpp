@@ -441,3 +441,17 @@ TEST_F(FPDFDocEmbeddertest, GetPageLabels) {
   ASSERT_EQ(0u, FPDF_GetPageLabel(document(), 7, buf, sizeof(buf)));
   ASSERT_EQ(0u, FPDF_GetPageLabel(document(), 8, buf, sizeof(buf)));
 }
+
+#ifdef PDF_ENABLE_XFA
+TEST_F(FPDFDocEmbeddertest, GetXFALinks) {
+  EXPECT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  ScopedFPDFPage page(FPDF_LoadPage(document(), 0));
+  ASSERT_TRUE(page);
+
+  FPDFLink_GetLinkAtPoint(page.get(), 150, 360);
+  FPDFLink_GetLinkAtPoint(page.get(), 150, 420);
+
+  // Test passes if it doesn't crash. See https://crbug.com/840922
+}
+#endif  // PDF_ENABLE_XFA
