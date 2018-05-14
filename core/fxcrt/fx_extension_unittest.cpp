@@ -112,3 +112,40 @@ TEST(fxcrt, GetBits32) {
     }
   }
 }
+
+TEST(fxcrt, FXSYS_wcstof) {
+  int32_t used_len = 0;
+  EXPECT_FLOAT_EQ(-12.0f, FXSYS_wcstof(L"-12", 3, &used_len));
+  EXPECT_EQ(3, used_len);
+
+  used_len = 0;
+  EXPECT_FLOAT_EQ(1.5362f, FXSYS_wcstof(L"1.5362", 6, &used_len));
+  EXPECT_EQ(6, used_len);
+
+  used_len = 0;
+  EXPECT_FLOAT_EQ(0.875f, FXSYS_wcstof(L"0.875", 5, &used_len));
+  EXPECT_EQ(5, used_len);
+
+  used_len = 0;
+  EXPECT_FLOAT_EQ(5.56e-2f, FXSYS_wcstof(L"5.56e-2", 7, &used_len));
+  EXPECT_EQ(7, used_len);
+
+  used_len = 0;
+  EXPECT_FLOAT_EQ(1.234e10f, FXSYS_wcstof(L"1.234E10", 8, &used_len));
+  EXPECT_EQ(8, used_len);
+
+  // TODO(dsinclair): This should round as per IEEE 64-bit values.
+  // EXPECT_EQ(L"123456789.01234567", FXSYS_wcstof(L"123456789.012345678"));
+  used_len = 0;
+  EXPECT_FLOAT_EQ(123456789.012345678f,
+                  FXSYS_wcstof(L"123456789.012345678", 19, &used_len));
+  EXPECT_EQ(19, used_len);
+
+  // TODO(dsinclair): This is spec'd as rounding when > 16 significant digits
+  // prior to the exponent.
+  // EXPECT_EQ(100000000000000000, FXSYS_wcstof(L"99999999999999999"));
+  used_len = 0;
+  EXPECT_FLOAT_EQ(99999999999999999.0f,
+                  FXSYS_wcstof(L"99999999999999999", 17, &used_len));
+  EXPECT_EQ(17, used_len);
+}

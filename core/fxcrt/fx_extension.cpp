@@ -50,6 +50,38 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
       fPrecise *= 0.1f;
     }
   }
+
+  if (iUsedLen < iLength &&
+      (pwsStr[iUsedLen] == 'e' || pwsStr[iUsedLen] == 'E')) {
+    ++iUsedLen;
+
+    bool negative_exponent = false;
+    if (iUsedLen < iLength &&
+        (pwsStr[iUsedLen] == '-' || pwsStr[iUsedLen] == '+')) {
+      negative_exponent = pwsStr[iUsedLen] == '-';
+      ++iUsedLen;
+    }
+
+    size_t exp_value = 0;
+    while (iUsedLen < iLength) {
+      wchar_t wch = pwsStr[iUsedLen];
+      if (!std::iswdigit(wch))
+        break;
+
+      exp_value = exp_value * 10.0f + (wch - L'0');
+      ++iUsedLen;
+    }
+
+    for (size_t i = exp_value; i > 0; --i) {
+      if (exp_value > 0) {
+        if (negative_exponent)
+          fValue /= 10;
+        else
+          fValue *= 10;
+      }
+    }
+  }
+
   if (pUsedLen)
     *pUsedLen = iUsedLen;
 

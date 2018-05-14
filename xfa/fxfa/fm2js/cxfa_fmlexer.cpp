@@ -303,10 +303,12 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
 
 CXFA_FMToken CXFA_FMLexer::AdvanceForNumber() {
   // This will set end to the character after the end of the number.
-  wchar_t* end = nullptr;
+  int32_t used_length = 0;
   if (m_cursor)
-    wcstod(const_cast<wchar_t*>(m_cursor), &end);
-  if (!end || FXSYS_iswalpha(*end)) {
+    FXSYS_wcstof(const_cast<wchar_t*>(m_cursor), -1, &used_length);
+
+  const wchar_t* end = m_cursor + used_length;
+  if (used_length == 0 || !end || FXSYS_iswalpha(*end)) {
     RaiseError();
     return CXFA_FMToken();
   }
