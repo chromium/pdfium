@@ -15,26 +15,9 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_fwladapterwidgetmgr.h"
 
-namespace {
-
-const int kNeedRepaintHitPoints = 12;
-const int kNeedRepaintHitPiece = 3;
-
-struct FWL_NEEDREPAINTHITDATA {
-  CFX_PointF hitPoint;
-  bool bNotNeedRepaint;
-  bool bNotContainByDirty;
-};
-
-}  // namespace
-
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
     : m_pAdapter(pAdapterNative->GetFWLAdapterWidgetMgr()) {
-  ASSERT(m_pAdapter);
   m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  m_rtScreen.Reset();
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 }
 
 CFWL_WidgetMgr::~CFWL_WidgetMgr() {}
@@ -141,9 +124,6 @@ void CFWL_WidgetMgr::AppendWidget(CFWL_Widget* pWidget) {
 
 void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
                                    const CFX_RectF& rect) {
-  if (!m_pAdapter)
-    return;
-
   CFWL_Widget* pNative = pWidget;
   CFX_RectF transformedRect = rect;
   CFWL_Widget* pOuter = pWidget->GetOuter();
@@ -453,100 +433,6 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
   }
 }
 
-bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
-                                   CFX_Matrix* pMatrix,
-                                   const CFX_RectF& rtDirty) {
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  if (pItem && pItem->iRedrawCounter > 0) {
-    pItem->iRedrawCounter = 0;
-    return true;
-  }
-
-  CFX_RectF rtWidget =
-      pMatrix->TransformRect(CFX_RectF(0, 0, pWidget->GetWidgetRect().Size()));
-  if (!rtWidget.IntersectWith(rtDirty))
-    return false;
-
-  CFWL_Widget* pChild =
-      pWidget->GetOwnerApp()->GetWidgetMgr()->GetFirstChildWidget(pWidget);
-  if (!pChild)
-    return true;
-
-  CFX_RectF rtChilds;
-  bool bChildIntersectWithDirty = false;
-  bool bOrginPtIntersectWidthChild = false;
-  bool bOrginPtIntersectWidthDirty = rtDirty.Contains(rtWidget.TopLeft());
-  float fxPiece = rtWidget.width / kNeedRepaintHitPiece;
-  float fyPiece = rtWidget.height / kNeedRepaintHitPiece;
-  FWL_NEEDREPAINTHITDATA hitPoint[kNeedRepaintHitPoints];
-  memset(hitPoint, 0, sizeof(hitPoint));
-  hitPoint[2].hitPoint.x = hitPoint[6].hitPoint.x = rtWidget.left;
-  hitPoint[0].hitPoint.x = hitPoint[3].hitPoint.x = hitPoint[7].hitPoint.x =
-      hitPoint[10].hitPoint.x = fxPiece + rtWidget.left;
-  hitPoint[1].hitPoint.x = hitPoint[4].hitPoint.x = hitPoint[8].hitPoint.x =
-      hitPoint[11].hitPoint.x = fxPiece * 2 + rtWidget.left;
-  hitPoint[5].hitPoint.x = hitPoint[9].hitPoint.x =
-      rtWidget.width + rtWidget.left;
-  hitPoint[0].hitPoint.y = hitPoint[1].hitPoint.y = rtWidget.top;
-  hitPoint[2].hitPoint.y = hitPoint[3].hitPoint.y = hitPoint[4].hitPoint.y =
-      hitPoint[5].hitPoint.y = fyPiece + rtWidget.top;
-  hitPoint[6].hitPoint.y = hitPoint[7].hitPoint.y = hitPoint[8].hitPoint.y =
-      hitPoint[9].hitPoint.y = fyPiece * 2 + rtWidget.top;
-  hitPoint[10].hitPoint.y = hitPoint[11].hitPoint.y =
-      rtWidget.height + rtWidget.top;
-  do {
-    CFX_RectF rect = pChild->GetWidgetRect();
-    CFX_RectF r(rect.left + rtWidget.left, rect.top + rtWidget.top, rect.width,
-                rect.height);
-    if (r.IsEmpty())
-      continue;
-    if (r.Contains(rtDirty))
-      return false;
-    if (!bChildIntersectWithDirty && r.IntersectWith(rtDirty))
-      bChildIntersectWithDirty = true;
-    if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild)
-      bOrginPtIntersectWidthChild = rect.Contains(CFX_PointF(0, 0));
-
-    if (rtChilds.IsEmpty())
-      rtChilds = rect;
-    else if (!(pChild->GetStates() & FWL_WGTSTATE_Invisible))
-      rtChilds.Union(rect);
-
-    for (int32_t i = 0; i < kNeedRepaintHitPoints; i++) {
-      if (hitPoint[i].bNotContainByDirty || hitPoint[i].bNotNeedRepaint)
-        continue;
-      if (!rtDirty.Contains(hitPoint[i].hitPoint)) {
-        hitPoint[i].bNotContainByDirty = true;
-        continue;
-      }
-      if (r.Contains(hitPoint[i].hitPoint))
-        hitPoint[i].bNotNeedRepaint = true;
-    }
-    pChild =
-        pChild->GetOwnerApp()->GetWidgetMgr()->GetNextSiblingWidget(pChild);
-  } while (pChild);
-
-  if (!bChildIntersectWithDirty)
-    return true;
-  if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild)
-    return true;
-  if (rtChilds.IsEmpty())
-    return true;
-
-  int32_t repaintPoint = kNeedRepaintHitPoints;
-  for (int32_t i = 0; i < kNeedRepaintHitPoints; i++) {
-    if (hitPoint[i].bNotNeedRepaint)
-      repaintPoint--;
-  }
-  if (repaintPoint > 0)
-    return true;
-
-  rtChilds = pMatrix->TransformRect(rtChilds);
-  if (rtChilds.Contains(rtDirty) || rtChilds.Contains(rtWidget))
-    return false;
-  return true;
-}
-
 CFWL_WidgetMgr::Item::Item() : CFWL_WidgetMgr::Item(nullptr) {}
 
 CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget)
@@ -556,12 +442,6 @@ CFWL_WidgetMgr::Item::Item(CFWL_Widget* widget)
       pPrevious(nullptr),
       pNext(nullptr),
       pWidget(widget),
-      iRedrawCounter(0)
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-      ,
-      bOutsideChanged(false)
-#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-{
-}
+      iRedrawCounter(0) {}
 
 CFWL_WidgetMgr::Item::~Item() {}
