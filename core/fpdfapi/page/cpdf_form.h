@@ -27,18 +27,12 @@ class CPDF_Form : public CPDF_PageObjectHolder {
             CPDF_Dictionary* pParentResources = nullptr);
   ~CPDF_Form() override;
 
-  void ParseContent();
-  void ParseContentWithParams(CPDF_AllStates* pGraphicStates,
-                              const CFX_Matrix* pParentMatrix,
-                              CPDF_Type3Char* pType3Char,
-                              std::set<const uint8_t*>* parsedSet);
+  void ParseContent(CPDF_AllStates* pGraphicStates,
+                    const CFX_Matrix* pParentMatrix,
+                    CPDF_Type3Char* pType3Char,
+                    std::set<const uint8_t*>* parsedSet);
 
  private:
-  void StartParse(CPDF_AllStates* pGraphicStates,
-                  const CFX_Matrix* pParentMatrix,
-                  CPDF_Type3Char* pType3Char,
-                  std::set<const uint8_t*>* parsedSet);
-
   std::unique_ptr<std::set<const uint8_t*>> m_ParsedSet;
 };
 

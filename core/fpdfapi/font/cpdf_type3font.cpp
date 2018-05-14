@@ -115,8 +115,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   // can change as a result. Thus after it returns, check the cache again for
   // a cache hit.
   m_CharLoadingDepth++;
-  pNewChar->form()->ParseContentWithParams(nullptr, nullptr, pNewChar.get(),
-                                           nullptr);
+  pNewChar->form()->ParseContent(nullptr, nullptr, pNewChar.get(), nullptr);
   m_CharLoadingDepth--;
   it = m_CacheMap.find(charcode);
   if (it != m_CacheMap.end())

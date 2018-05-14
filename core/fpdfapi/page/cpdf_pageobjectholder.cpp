@@ -40,6 +40,7 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
   m_ParseState = CONTENT_PARSED;
   if (m_pParser->GetCurStates())
     m_LastCTM = m_pParser->GetCurStates()->m_CTM;
+
   m_pParser.reset();
 }
 

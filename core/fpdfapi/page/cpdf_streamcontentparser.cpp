@@ -781,7 +781,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   status.m_TextState = m_pCurStates->m_TextState;
   auto form = pdfium::MakeUnique<CPDF_Form>(
       m_pDocument.Get(), m_pPageResources.Get(), pStream, m_pResources.Get());
-  form->ParseContentWithParams(&status, nullptr, nullptr, m_ParsedSet.Get());
+  form->ParseContent(&status, nullptr, nullptr, m_ParsedSet.Get());
 
   CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
