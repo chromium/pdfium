@@ -46,6 +46,10 @@ class CPDF_ContentParser {
     STAGE_CHECKCLIP,
   };
 
+  void StageGetContent();
+  void StageParse();
+  void StageCheckClip();
+
   bool m_bIsDone = false;
   InternalStage m_InternalStage;
   UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;

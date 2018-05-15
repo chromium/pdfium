@@ -109,99 +109,119 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
 
 CPDF_ContentParser::~CPDF_ContentParser() {}
 
+// Returning |true| means that there is more content to be processed and
+// Continue() should be called again. Returning |false| means that we've
+// completed the parse and Continue() is complete.
 bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
   if (m_bIsDone)
     return false;
 
-  while (!m_bIsDone) {
-    if (m_InternalStage == STAGE_GETCONTENT) {
-      if (m_CurrentOffset == m_nStreams) {
-        if (!m_StreamArray.empty()) {
-          FX_SAFE_UINT32 safeSize = 0;
-          for (const auto& stream : m_StreamArray) {
-            safeSize += stream->GetSize();
-            safeSize += 1;
-          }
-          if (!safeSize.IsValid()) {
-            m_bIsDone = true;
-            return false;
-          }
-          m_Size = safeSize.ValueOrDie();
-          m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
-              FX_Alloc(uint8_t, m_Size)));
-          uint32_t pos = 0;
-          for (const auto& stream : m_StreamArray) {
-            memcpy(m_pData.Get() + pos, stream->GetData(), stream->GetSize());
-            pos += stream->GetSize();
-            m_pData.Get()[pos++] = ' ';
-          }
-          m_StreamArray.clear();
-        } else {
-          m_pData.Reset(m_pSingleStream->GetData());
-          m_Size = m_pSingleStream->GetSize();
-        }
-        m_InternalStage = STAGE_PARSE;
-        m_CurrentOffset = 0;
-      } else {
-        CPDF_Array* pContent =
-            m_pObjectHolder->GetFormDict()->GetArrayFor("Contents");
-        CPDF_Stream* pStreamObj = ToStream(
-            pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);
-        m_StreamArray[m_CurrentOffset] =
-            pdfium::MakeRetain<CPDF_StreamAcc>(pStreamObj);
-        m_StreamArray[m_CurrentOffset]->LoadAllDataFiltered();
-        m_CurrentOffset++;
-      }
+  while (true) {
+    switch (m_InternalStage) {
+      case STAGE_GETCONTENT:
+        StageGetContent();
+        break;
+      case STAGE_PARSE:
+        StageParse();
+        break;
+      case STAGE_CHECKCLIP:
+        StageCheckClip();
+        break;
     }
-    if (m_InternalStage == STAGE_PARSE) {
-      if (!m_pParser) {
-        m_parsedSet = pdfium::MakeUnique<std::set<const uint8_t*>>();
-        m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
-            m_pObjectHolder->GetDocument(),
-            m_pObjectHolder->m_pPageResources.Get(), nullptr, nullptr,
-            m_pObjectHolder.Get(), m_pObjectHolder->m_pResources.Get(),
-            m_pObjectHolder->GetBBox(), nullptr, m_parsedSet.get());
-        m_pParser->GetCurStates()->m_ColorState.SetDefault();
-      }
-      if (m_CurrentOffset >= m_Size) {
-        m_InternalStage = STAGE_CHECKCLIP;
-      } else {
-        m_CurrentOffset +=
-            m_pParser->Parse(m_pData.Get() + m_CurrentOffset,
-                             m_Size - m_CurrentOffset, PARSE_STEP_LIMIT);
-      }
-    }
-    if (m_InternalStage == STAGE_CHECKCLIP) {
-      if (m_pType3Char) {
-        m_pType3Char->InitializeFromStreamData(m_pParser->IsColored(),
-                                               m_pParser->GetType3Data());
-      }
 
-      for (auto& pObj : *m_pObjectHolder->GetPageObjectList()) {
-        if (!pObj->m_ClipPath.HasRef())
-          continue;
-        if (pObj->m_ClipPath.GetPathCount() != 1)
-          continue;
-        if (pObj->m_ClipPath.GetTextCount() > 0)
-          continue;
-
-        CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
-        if (!ClipPath.IsRect() || pObj->IsShading())
-          continue;
-
-        CFX_PointF point0 = ClipPath.GetPoint(0);
-        CFX_PointF point2 = ClipPath.GetPoint(2);
-        CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
-        CFX_FloatRect obj_rect(pObj->m_Left, pObj->m_Bottom, pObj->m_Right,
-                               pObj->m_Top);
-        if (old_rect.Contains(obj_rect))
-          pObj->m_ClipPath.SetNull();
-      }
-      m_bIsDone = true;
+    if (m_bIsDone)
       return false;
-    }
     if (pPause && pPause->NeedToPauseNow())
-      break;
+      return true;
   }
-  return true;
+}
+
+void CPDF_ContentParser::StageGetContent() {
+  if (m_CurrentOffset == m_nStreams) {
+    if (!m_StreamArray.empty()) {
+      FX_SAFE_UINT32 safeSize = 0;
+      for (const auto& stream : m_StreamArray) {
+        safeSize += stream->GetSize();
+        safeSize += 1;
+      }
+      if (!safeSize.IsValid()) {
+        m_bIsDone = true;
+        return;
+      }
+      m_Size = safeSize.ValueOrDie();
+      m_pData.Reset(
+          std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Alloc(uint8_t, m_Size)));
+      uint32_t pos = 0;
+      for (const auto& stream : m_StreamArray) {
+        memcpy(m_pData.Get() + pos, stream->GetData(), stream->GetSize());
+        pos += stream->GetSize();
+        m_pData.Get()[pos++] = ' ';
+      }
+      m_StreamArray.clear();
+    } else {
+      m_pData.Reset(m_pSingleStream->GetData());
+      m_Size = m_pSingleStream->GetSize();
+    }
+    m_InternalStage = STAGE_PARSE;
+    m_CurrentOffset = 0;
+    return;
+  }
+
+  CPDF_Array* pContent =
+      m_pObjectHolder->GetFormDict()->GetArrayFor("Contents");
+  CPDF_Stream* pStreamObj = ToStream(
+      pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);
+  m_StreamArray[m_CurrentOffset] =
+      pdfium::MakeRetain<CPDF_StreamAcc>(pStreamObj);
+  m_StreamArray[m_CurrentOffset]->LoadAllDataFiltered();
+  m_CurrentOffset++;
+}
+
+void CPDF_ContentParser::StageParse() {
+  if (!m_pParser) {
+    m_parsedSet = pdfium::MakeUnique<std::set<const uint8_t*>>();
+    m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
+        m_pObjectHolder->GetDocument(), m_pObjectHolder->m_pPageResources.Get(),
+        nullptr, nullptr, m_pObjectHolder.Get(),
+        m_pObjectHolder->m_pResources.Get(), m_pObjectHolder->GetBBox(),
+        nullptr, m_parsedSet.get());
+    m_pParser->GetCurStates()->m_ColorState.SetDefault();
+  }
+  if (m_CurrentOffset >= m_Size) {
+    m_InternalStage = STAGE_CHECKCLIP;
+    return;
+  }
+
+  m_CurrentOffset +=
+      m_pParser->Parse(m_pData.Get() + m_CurrentOffset,
+                       m_Size - m_CurrentOffset, PARSE_STEP_LIMIT);
+}
+
+void CPDF_ContentParser::StageCheckClip() {
+  if (m_pType3Char) {
+    m_pType3Char->InitializeFromStreamData(m_pParser->IsColored(),
+                                           m_pParser->GetType3Data());
+  }
+
+  for (auto& pObj : *m_pObjectHolder->GetPageObjectList()) {
+    if (!pObj->m_ClipPath.HasRef())
+      continue;
+    if (pObj->m_ClipPath.GetPathCount() != 1)
+      continue;
+    if (pObj->m_ClipPath.GetTextCount() > 0)
+      continue;
+
+    CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
+    if (!ClipPath.IsRect() || pObj->IsShading())
+      continue;
+
+    CFX_PointF point0 = ClipPath.GetPoint(0);
+    CFX_PointF point2 = ClipPath.GetPoint(2);
+    CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
+    CFX_FloatRect obj_rect(pObj->m_Left, pObj->m_Bottom, pObj->m_Right,
+                           pObj->m_Top);
+    if (old_rect.Contains(obj_rect))
+      pObj->m_ClipPath.SetNull();
+  }
+  m_bIsDone = true;
 }
