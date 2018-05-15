@@ -81,8 +81,6 @@ TestOneFormat("cl\\9ms", "-1Afp3.d33F$");
 endstream
 endobj
 {{xref}}
-trailer <<
-  /Root 1 0 R
->>
+{{trailer}}
 {{startxref}}
 %%EOF

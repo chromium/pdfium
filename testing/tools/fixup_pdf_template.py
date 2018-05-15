@@ -48,7 +48,7 @@ class TemplateProcessor:
   assert(len(XREF_REPLACEMENT_F) == 20)
 
   TRAILER_TOKEN = '{{trailer}}'
-  TRAILER_REPLACEMENT = 'trailer<< /Root 1 0 R /Size %d >>'
+  TRAILER_REPLACEMENT = 'trailer <<\n  /Root 1 0 R\n  /Size %d\n>>'
 
   STARTXREF_TOKEN = '{{startxref}}'
   STARTXREF_REPLACEMENT = 'startxref\n%d'

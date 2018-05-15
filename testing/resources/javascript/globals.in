@@ -152,8 +152,6 @@ dump_global("After Setup and Persist true");
 endstream
 endobj
 {{xref}}
-trailer <<
-  /Root 1 0 R
->>
+{{trailer}}
 {{startxref}}
 %%EOF

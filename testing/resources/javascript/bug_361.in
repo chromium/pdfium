@@ -105,8 +105,6 @@ testField("function(x) { return x+1; }");
 endstream
 endobj
 {{xref}}
-trailer <<
-  /Root 1 0 R
->>
+{{trailer}}
 {{startxref}}
 %%EOF

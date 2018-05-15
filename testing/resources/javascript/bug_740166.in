@@ -54,8 +54,6 @@ app.alert(util.printf("Values = %0.1000x .9999 %x", 1, 2));
 endstream
 endobj
 {{xref}}
-trailer <<
-  /Root 1 0 R
->>
+{{trailer}}
 {{startxref}}
 %%EOF
