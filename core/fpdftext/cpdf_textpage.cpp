@@ -160,19 +160,41 @@ bool GenerateSpace(const CFX_PointF& pos,
                    float this_width,
                    float last_width,
                    float threshold) {
-  if (fabs(last_pos + last_width - pos.x) > threshold) {
-    if ((pos.x - last_pos - last_width) > threshold ||
-        (last_pos - pos.x - last_width) > threshold) {
-      return true;
-    }
-    if (pos.x < 0 && (last_pos - pos.x - last_width) > threshold)
-      return true;
-    if ((pos.x - last_pos - last_width) > this_width ||
-        (pos.x - last_pos - this_width) > last_width) {
-      return true;
-    }
+  if (fabs(last_pos + last_width - pos.x) <= threshold)
+    return false;
+
+  float threshold_pos = threshold + last_width;
+  float pos_difference = pos.x - last_pos;
+  if (fabs(pos_difference) > threshold_pos)
+    return true;
+  if (pos.x < 0 && -threshold_pos > pos_difference)
+    return true;
+  return pos_difference > this_width + last_width;
+}
+
+bool EndHorizontalLine(const CFX_FloatRect& this_rect,
+                       const CFX_FloatRect& prev_rect) {
+  if (this_rect.Height() <= 4.5 || prev_rect.Height() <= 4.5)
+    return false;
+
+  float top = std::min(this_rect.top, prev_rect.top);
+  float bottom = std::max(this_rect.bottom, prev_rect.bottom);
+  return bottom >= top;
+}
+
+bool EndVerticalLine(const CFX_FloatRect& this_rect,
+                     const CFX_FloatRect& prev_rect,
+                     const CFX_FloatRect& curline_rect,
+                     float this_fontsize,
+                     float prev_fontsize) {
+  if (this_rect.Width() <= this_fontsize * 0.1f ||
+      prev_rect.Width() <= prev_fontsize * 0.1f) {
+    return false;
   }
-  return false;
+
+  float left = std::max(this_rect.left, curline_rect.left);
+  float right = std::min(this_rect.right, curline_rect.right);
+  return right <= left;
 }
 
 }  // namespace
@@ -788,7 +810,7 @@ void CPDF_TextPage::ProcessTextObject(
   this_matrix.Concat(formMatrix);
   this_width = this_matrix.TransformDistance(this_width);
 
-  float threshold = prev_width > this_width ? prev_width / 4 : this_width / 4;
+  float threshold = std::max(prev_width, this_width) / 4;
   CFX_PointF prev_pos = m_DisplayMatrix.Transform(
       prev_Obj.m_formMatrix.Transform(prev_Obj.m_pTextObj->GetPos()));
   CFX_PointF this_pos =
@@ -1253,26 +1275,15 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
     wstrItem += static_cast<wchar_t>(item.m_CharCode);
   wchar_t curChar = wstrItem[0];
   if (WritingMode == TextOrientation::Horizontal) {
-    if (this_rect.Height() > 4.5 && prev_rect.Height() > 4.5) {
-      float top = this_rect.top < prev_rect.top ? this_rect.top : prev_rect.top;
-      float bottom = this_rect.bottom > prev_rect.bottom ? this_rect.bottom
-                                                         : prev_rect.bottom;
-      if (bottom >= top) {
-        return IsHyphen(curChar) ? GenerateCharacter::Hyphen
-                                 : GenerateCharacter::LineBreak;
-      }
+    if (EndHorizontalLine(this_rect, prev_rect)) {
+      return IsHyphen(curChar) ? GenerateCharacter::Hyphen
+                               : GenerateCharacter::LineBreak;
     }
   } else if (WritingMode == TextOrientation::Vertical) {
-    if (this_rect.Width() > pObj->GetFontSize() * 0.1f &&
-        prev_rect.Width() > m_pPreTextObj->GetFontSize() * 0.1f) {
-      float left = this_rect.left > m_CurlineRect.left ? this_rect.left
-                                                       : m_CurlineRect.left;
-      float right = this_rect.right < m_CurlineRect.right ? this_rect.right
-                                                          : m_CurlineRect.right;
-      if (right <= left) {
-        return IsHyphen(curChar) ? GenerateCharacter::Hyphen
-                                 : GenerateCharacter::LineBreak;
-      }
+    if (EndVerticalLine(this_rect, prev_rect, m_CurlineRect,
+                        pObj->GetFontSize(), m_pPreTextObj->GetFontSize())) {
+      return IsHyphen(curChar) ? GenerateCharacter::Hyphen
+                               : GenerateCharacter::LineBreak;
     }
   }
 
@@ -1282,9 +1293,8 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   float last_width = nLastWidth * m_pPreTextObj->GetFontSize() / 1000;
   last_width = fabs(last_width);
   uint32_t nThisWidth = GetCharWidth(item.m_CharCode, pObj->GetFont());
-  float this_width = nThisWidth * pObj->GetFontSize() / 1000;
-  this_width = fabs(this_width);
-  float threshold = last_width > this_width ? last_width / 4 : this_width / 4;
+  float this_width = fabs(nThisWidth * pObj->GetFontSize() / 1000);
+  float threshold = std::max(last_width, this_width) / 4;
 
   CFX_Matrix prev_matrix = m_pPreTextObj->GetTextMatrix();
   prev_matrix.Concat(m_perMatrix);
@@ -1297,14 +1307,12 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
 
   bool bNewline = false;
   if (WritingMode == TextOrientation::Horizontal) {
-    CFX_FloatRect rect1(m_pPreTextObj->m_Left, pObj->m_Bottom,
-                        m_pPreTextObj->m_Right, pObj->m_Top);
-    CFX_FloatRect rect2 = m_pPreTextObj->GetRect();
-    CFX_FloatRect rect3 = rect1;
-    rect1.Intersect(rect2);
-    if ((rect1.IsEmpty() && rect2.Height() > 5 && rect3.Height() > 5) ||
+    CFX_FloatRect rect = m_pPreTextObj->GetRect();
+    float rect_height = rect.Height();
+    rect.Normalize();
+    if ((rect.IsEmpty() && rect_height > 5) ||
         ((pos.y > threshold * 2 || pos.y < threshold * -3) &&
-         (fabs(pos.y) < 1 ? fabs(pos.x) < fabs(pos.y) : true))) {
+         (fabs(pos.y) >= 1 || fabs(pos.y) > fabs(pos.x)))) {
       bNewline = true;
       if (nItem > 1) {
         CPDF_TextObjectItem tempItem;
@@ -1342,23 +1350,23 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   CFX_Matrix matrix = pObj->GetTextMatrix();
   matrix.Concat(formMatrix);
 
-  threshold = static_cast<float>(std::max(nLastWidth, nThisWidth));
-  threshold = NormalizeThreshold(threshold, 400, 700, 800);
+  float threshold2 = static_cast<float>(std::max(nLastWidth, nThisWidth));
+  threshold2 = NormalizeThreshold(threshold2, 400, 700, 800);
   if (nLastWidth >= nThisWidth) {
-    threshold *= fabs(m_pPreTextObj->GetFontSize());
+    threshold2 *= fabs(m_pPreTextObj->GetFontSize());
   } else {
-    threshold *= fabs(pObj->GetFontSize());
-    threshold = matrix.TransformDistance(threshold);
-    threshold = prev_reverse.TransformDistance(threshold);
+    threshold2 *= fabs(pObj->GetFontSize());
+    threshold2 = matrix.TransformDistance(threshold2);
+    threshold2 = prev_reverse.TransformDistance(threshold2);
   }
-  threshold /= 1000;
-  if ((threshold < 1.4881 && threshold > 1.4879) ||
-      (threshold < 1.39001 && threshold > 1.38999)) {
-    threshold *= 1.5;
+  threshold2 /= 1000;
+  if ((threshold2 < 1.4881 && threshold2 > 1.4879) ||
+      (threshold2 < 1.39001 && threshold2 > 1.38999)) {
+    threshold2 *= 1.5;
   }
   if (curChar == L' ' || preChar == L' ')
     return GenerateCharacter::None;
-  return GenerateSpace(pos, last_pos, this_width, last_width, threshold)
+  return GenerateSpace(pos, last_pos, this_width, last_width, threshold2)
              ? GenerateCharacter::Space
              : GenerateCharacter::None;
 }
