@@ -6,13 +6,15 @@
 
 #include "core/fxcrt/fx_extension.h"
 
-#include "core/fxcrt/fx_fallthrough.h"
-
 #include <algorithm>
 #include <cwctype>
+#include <limits>
+
+#include "core/fxcrt/fx_fallthrough.h"
 
 float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pwsStr);
+
   if (iLength < 0)
     iLength = static_cast<int32_t>(wcslen(pwsStr));
   if (iLength == 0)
@@ -62,13 +64,22 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
       ++iUsedLen;
     }
 
-    size_t exp_value = 0;
+    int32_t exp_value = 0;
     while (iUsedLen < iLength) {
       wchar_t wch = pwsStr[iUsedLen];
       if (!std::iswdigit(wch))
         break;
 
       exp_value = exp_value * 10.0f + (wch - L'0');
+      // Exponent is outside the valid range, fail.
+      if ((negative_exponent &&
+           -exp_value < std::numeric_limits<float>::min_exponent10) ||
+          (!negative_exponent &&
+           exp_value > std::numeric_limits<float>::max_exponent10)) {
+        *pUsedLen = 0;
+        return 0.0f;
+      }
+
       ++iUsedLen;
     }
 
