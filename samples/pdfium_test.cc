@@ -193,6 +193,10 @@ int ExampleAppResponse(IPDF_JSPLATFORM*,
   return 4;
 }
 
+void ExampleAppBeep(IPDF_JSPLATFORM*, int type) {
+  printf("BEEP!!! %d\n", type);
+}
+
 void ExampleDocGotoPage(IPDF_JSPLATFORM*, int page_number) {
   printf("Goto Page: %d\n", page_number);
 }
@@ -682,6 +686,7 @@ void RenderPdf(const std::string& name,
   platform_callbacks.version = 3;
   platform_callbacks.app_alert = ExampleAppAlert;
   platform_callbacks.app_response = ExampleAppResponse;
+  platform_callbacks.app_beep = ExampleAppBeep;
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
   platform_callbacks.Doc_mail = ExampleDocMail;
 
