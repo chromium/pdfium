@@ -66,9 +66,21 @@ int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
 
     start_pos += 7;
   }
-  uint8_t skip = bit ? 0x00 : 0xff;
+  const uint8_t skip = bit ? 0x00 : 0xff;
+  const int max_byte = (max_pos + 7) / 8;
   int byte_pos = start_pos / 8;
-  int max_byte = (max_pos + 7) / 8;
+
+  // Try reading in bigger chunks in case there are long runs to be skipped.
+  static constexpr int kBulkReadSize = 8;
+  if (max_byte >= kBulkReadSize && byte_pos < max_byte - kBulkReadSize) {
+    uint8_t skip_block[kBulkReadSize];
+    memset(skip_block, skip, kBulkReadSize);
+    while (byte_pos < max_byte - kBulkReadSize &&
+           memcmp(data_buf + byte_pos, skip_block, kBulkReadSize) == 0) {
+      byte_pos += kBulkReadSize;
+    }
+  }
+
   while (byte_pos < max_byte) {
     if (data_buf[byte_pos] != skip)
       break;
