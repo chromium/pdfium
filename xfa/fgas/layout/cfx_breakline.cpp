@@ -17,16 +17,6 @@ CFX_Char* CFX_BreakLine::GetChar(int32_t index) {
   return &m_LineChars[index];
 }
 
-const CFX_Char* CFX_BreakLine::GetChar(int32_t index) const {
-  ASSERT(pdfium::IndexInBounds(m_LineChars, index));
-  return &m_LineChars[index];
-}
-
-const CFX_BreakPiece* CFX_BreakLine::GetPiece(int32_t index) const {
-  ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LinePieces));
-  return &m_LinePieces[index];
-}
-
 int32_t CFX_BreakLine::GetLineEnd() const {
   return m_iStart + m_iWidth;
 }
