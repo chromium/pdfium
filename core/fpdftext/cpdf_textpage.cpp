@@ -1019,7 +1019,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
           if (wstrItem.IsEmpty())
             wstrItem += (wchar_t)item.m_CharCode;
           wchar_t curChar = wstrItem[0];
-          if (curChar == 0x2D || curChar == 0xAD)
+          if (IsHyphenCode(curChar))
             return;
         }
         while (m_TempTextBuf.GetSize() > 0 &&
@@ -1340,16 +1340,20 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
                              : GenerateCharacter::LineBreak;
   }
 
-  if (pObj->CountChars() == 1 && (0x2D == curChar || 0xAD == curChar) &&
-      IsHyphen(curChar)) {
+  if (pObj->CountChars() == 1 && IsHyphenCode(curChar) && IsHyphen(curChar))
     return GenerateCharacter::Hyphen;
-  }
+
+  if (curChar == L' ')
+    return GenerateCharacter::None;
+
   WideString PrevStr =
       m_pPreTextObj->GetFont()->UnicodeFromCharCode(PrevItem.m_CharCode);
   wchar_t preChar = PrevStr.Last();
+  if (preChar == L' ')
+    return GenerateCharacter::None;
+
   CFX_Matrix matrix = pObj->GetTextMatrix();
   matrix.Concat(formMatrix);
-
   float threshold2 = static_cast<float>(std::max(nLastWidth, nThisWidth));
   threshold2 = NormalizeThreshold(threshold2, 400, 700, 800);
   if (nLastWidth >= nThisWidth) {
@@ -1364,8 +1368,6 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
       (threshold2 < 1.39001 && threshold2 > 1.38999)) {
     threshold2 *= 1.5;
   }
-  if (curChar == L' ' || preChar == L' ')
-    return GenerateCharacter::None;
   return GenerateSpace(pos, last_pos, this_width, last_width, threshold2)
              ? GenerateCharacter::Space
              : GenerateCharacter::None;
