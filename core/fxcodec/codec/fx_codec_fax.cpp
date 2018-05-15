@@ -45,8 +45,8 @@ const uint8_t ZeroLeadPos[256] = {
     4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7, 8,
 };
 
-// Limit of image dimension, an arbitrary large number.
-const int kMaxImageDimension = 0x01FFFF;
+// Limit of image dimension. Use the same limit as the JBIG2 codecs.
+const int kMaxImageDimension = 65535;
 
 int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
   ASSERT(start_pos >= 0);
