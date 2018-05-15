@@ -22,12 +22,8 @@ const CFX_Char* CFX_BreakLine::GetChar(int32_t index) const {
   return &m_LineChars[index];
 }
 
-int32_t CFX_BreakLine::CountPieces() const {
-  return pdfium::CollectionSize<int32_t>(m_LinePieces);
-}
-
 const CFX_BreakPiece* CFX_BreakLine::GetPiece(int32_t index) const {
-  ASSERT(index >= 0 && index < CountPieces());
+  ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LinePieces));
   return &m_LinePieces[index];
 }
 
