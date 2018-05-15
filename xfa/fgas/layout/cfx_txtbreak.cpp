@@ -239,9 +239,8 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
       m_pCurLine->m_iWidth > m_iLineWidth + m_iTolerance && !m_bSingleLine &&
       (m_eCharType != FX_CHARTYPE_Space || chartype != FX_CHARTYPE_Control)) {
     dwRet1 = EndBreak(CFX_BreakType::Line);
-    int32_t iCount = m_pCurLine->CountChars();
-    if (iCount > 0)
-      pCurChar = &m_pCurLine->m_LineChars[iCount - 1];
+    if (!m_pCurLine->m_LineChars.empty())
+      pCurChar = &m_pCurLine->m_LineChars.back();
   }
 
   CFX_BreakType dwRet2 = CFX_BreakType::None;
@@ -284,11 +283,10 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
 
 bool CFX_TxtBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
                                       bool bAllChars) {
-  int32_t iCount = m_pCurLine->CountChars();
   bool bDone = false;
   CFX_Char* pTC;
   if (!m_bSingleLine && m_pCurLine->m_iWidth > m_iLineWidth + m_iTolerance) {
-    pTC = m_pCurLine->GetChar(iCount - 1);
+    pTC = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
     switch (pTC->GetCharType()) {
       case FX_CHARTYPE_Tab:
       case FX_CHARTYPE_Control:
@@ -301,7 +299,6 @@ bool CFX_TxtBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
     }
   }
 
-  iCount = m_pCurLine->CountChars();
   CFX_BreakPiece tp;
   if (bAllChars && !bDone) {
     int32_t iEndPos = m_pCurLine->m_iWidth;
@@ -316,13 +313,10 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
   FX_TPO tpo;
   CFX_Char* pTC;
   std::vector<CFX_Char>& chars = m_pCurLine->m_LineChars;
-  int32_t iCount = m_pCurLine->CountChars();
   bool bDone = m_pCurLine->m_iArabicChars > 0;
   if (bDone) {
-    ASSERT(iCount >= 0);
-
     size_t iBidiNum = 0;
-    for (size_t i = 0; i < static_cast<size_t>(iCount); ++i) {
+    for (size_t i = 0; i < m_pCurLine->m_LineChars.size(); ++i) {
       pTC = &chars[i];
       pTC->m_iBidiPos = static_cast<int32_t>(i);
       if (pTC->GetCharType() != FX_CHARTYPE_Control)
@@ -341,6 +335,7 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
     int32_t iCharWidth;
     int32_t i = 0;
     int32_t j = -1;
+    int32_t iCount = pdfium::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
     while (i < iCount) {
       pTC = &chars[i];
       if (iBidiLevel < 0) {
@@ -405,7 +400,7 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
     tp.m_iStartPos = m_pCurLine->m_iStart;
     tp.m_iWidth = m_pCurLine->m_iWidth;
     tp.m_iStartChar = 0;
-    tp.m_iChars = iCount;
+    tp.m_iChars = m_pCurLine->m_LineChars.size();
     tp.m_pChars = &m_pCurLine->m_LineChars;
     pTC = &chars[0];
     tp.m_dwCharStyles = pTC->m_dwCharStyles;
@@ -507,11 +502,10 @@ CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
     return CFX_BreakType::None;
   }
 
-  int32_t iCount = m_pCurLine->CountChars();
-  if (iCount < 1)
+  if (m_pCurLine->m_LineChars.empty())
     return CFX_BreakType::None;
 
-  m_pCurLine->GetChar(iCount - 1)->m_dwStatus = dwStatus;
+  m_pCurLine->m_LineChars.back().m_dwStatus = dwStatus;
   if (dwStatus == CFX_BreakType::Piece)
     return dwStatus;
 
@@ -623,8 +617,7 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
                                  CFX_BreakLine* pNextLine,
                                  bool bAllChars) {
   ASSERT(pCurLine && pNextLine);
-  int32_t iCount = pCurLine->CountChars();
-  if (iCount < 2)
+  if (pCurLine->m_LineChars.size() < 2)
     return;
 
   int32_t iEndPos = pCurLine->m_iWidth;
@@ -634,7 +627,7 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
     iCharPos = 0;
 
   iCharPos++;
-  if (iCharPos >= iCount) {
+  if (iCharPos >= pdfium::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
     pNextLine->Clear();
     CFX_Char* pTC = &curChars[iCharPos - 1];
     pTC->m_nBreakType = FX_LBT_UNKNOWN;
@@ -647,9 +640,8 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
   pCurLine->m_iWidth = iEndPos;
   CFX_Char* pTC = &curChars[iCharPos - 1];
   pTC->m_nBreakType = FX_LBT_UNKNOWN;
-  iCount = pdfium::CollectionSize<int>(pNextLine->m_LineChars);
   int32_t iWidth = 0;
-  for (int32_t i = 0; i < iCount; i++) {
+  for (size_t i = 0; i < pNextLine->m_LineChars.size(); ++i) {
     if (pNextLine->m_LineChars[i].GetCharType() >= FX_CHARTYPE_ArabicAlef) {
       pCurLine->m_iArabicChars--;
       pNextLine->m_iArabicChars++;

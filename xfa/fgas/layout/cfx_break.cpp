@@ -95,11 +95,10 @@ void CFX_Break::SetFontSize(float fFontSize) {
 
 void CFX_Break::SetBreakStatus() {
   ++m_dwIdentity;
-  int32_t iCount = m_pCurLine->CountChars();
-  if (iCount < 1)
+  if (m_pCurLine->m_LineChars.empty())
     return;
 
-  CFX_Char* tc = m_pCurLine->GetChar(iCount - 1);
+  CFX_Char* tc = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
   if (tc->m_dwStatus == CFX_BreakType::None)
     tc->m_dwStatus = CFX_BreakType::Piece;
 }

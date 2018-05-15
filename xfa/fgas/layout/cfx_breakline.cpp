@@ -12,10 +12,6 @@ CFX_BreakLine::CFX_BreakLine() : m_iStart(0), m_iWidth(0), m_iArabicChars(0) {}
 
 CFX_BreakLine::~CFX_BreakLine() {}
 
-int32_t CFX_BreakLine::CountChars() const {
-  return pdfium::CollectionSize<int32_t>(m_LineChars);
-}
-
 CFX_Char* CFX_BreakLine::GetChar(int32_t index) {
   ASSERT(pdfium::IndexInBounds(m_LineChars, index));
   return &m_LineChars[index];

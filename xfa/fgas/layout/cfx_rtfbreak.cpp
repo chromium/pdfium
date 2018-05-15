@@ -83,9 +83,8 @@ CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
       m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance &&
       (m_eCharType != FX_CHARTYPE_Space || chartype != FX_CHARTYPE_Control)) {
     dwRet1 = EndBreak(CFX_BreakType::Line);
-    int32_t iCount = m_pCurLine->CountChars();
-    if (iCount > 0)
-      pCurChar = &m_pCurLine->m_LineChars[iCount - 1];
+    if (!m_pCurLine->m_LineChars.empty())
+      pCurChar = &m_pCurLine->m_LineChars.back();
   }
 
   CFX_BreakType dwRet2 = CFX_BreakType::None;
@@ -282,11 +281,10 @@ CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
     return CFX_BreakType::None;
   }
 
-  int32_t iCount = m_pCurLine->CountChars();
-  if (iCount < 1)
+  if (m_pCurLine->m_LineChars.empty())
     return CFX_BreakType::None;
 
-  CFX_Char* tc = m_pCurLine->GetChar(iCount - 1);
+  CFX_Char* tc = m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
   tc->m_dwStatus = dwStatus;
   if (dwStatus == CFX_BreakType::Piece)
     return dwStatus;
@@ -315,7 +313,8 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
                                       CFX_BreakType dwStatus) {
   bool bDone = false;
   if (m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance) {
-    const CFX_Char* tc = m_pCurLine->GetChar(m_pCurLine->CountChars() - 1);
+    const CFX_Char* tc =
+        m_pCurLine->GetChar(m_pCurLine->m_LineChars.size() - 1);
     switch (tc->GetCharType()) {
       case FX_CHARTYPE_Tab:
       case FX_CHARTYPE_Control:
@@ -341,7 +340,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
   tp.m_pChars = &m_pCurLine->m_LineChars;
   bool bNew = true;
   uint32_t dwIdentity = static_cast<uint32_t>(-1);
-  int32_t iLast = m_pCurLine->CountChars() - 1;
+  int32_t iLast = pdfium::CollectionSize<int32_t>(m_pCurLine->m_LineChars) - 1;
   int32_t j = 0;
   for (int32_t i = 0; i <= iLast;) {
     const CFX_Char* pTC = pCurChars + i;
@@ -383,12 +382,9 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
                                      CFX_BreakType dwStatus) {
   CFX_Char* pTC;
   std::vector<CFX_Char>& chars = m_pCurLine->m_LineChars;
-  int32_t iCount = m_pCurLine->CountChars();
   if (!m_bPagination && m_pCurLine->m_iArabicChars > 0) {
-    ASSERT(iCount >= 0);
-
     size_t iBidiNum = 0;
-    for (size_t i = 0; i < static_cast<size_t>(iCount); ++i) {
+    for (size_t i = 0; i < m_pCurLine->m_LineChars.size(); ++i) {
       pTC = &chars[i];
       pTC->m_iBidiPos = static_cast<int32_t>(i);
       if (pTC->GetCharType() != FX_CHARTYPE_Control)
@@ -398,7 +394,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
     }
     FX_BidiLine(&chars, iBidiNum + 1);
   } else {
-    for (int32_t i = 0; i < iCount; ++i) {
+    for (size_t i = 0; i < m_pCurLine->m_LineChars.size(); ++i) {
       pTC = &chars[i];
       pTC->m_iBidiLevel = 0;
       pTC->m_iBidiPos = 0;
@@ -417,6 +413,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
   uint32_t dwIdentity = static_cast<uint32_t>(-1);
   int32_t i = 0;
   int32_t j = 0;
+  int32_t iCount = pdfium::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
   while (i < iCount) {
     pTC = &chars[i];
     if (iBidiLevel < 0) {
@@ -649,8 +646,8 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
                                  CFX_BreakLine* pNextLine,
                                  bool bAllChars) {
   ASSERT(pCurLine && pNextLine);
-  int32_t iCount = pCurLine->CountChars();
-  if (iCount < 2)
+
+  if (pCurLine->m_LineChars.size() < 2)
     return;
 
   int32_t iEndPos = pCurLine->GetLineEnd();
@@ -660,7 +657,7 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
     iCharPos = 0;
 
   ++iCharPos;
-  if (iCharPos >= iCount) {
+  if (iCharPos >= pdfium::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
     pNextLine->Clear();
     curChars[iCharPos - 1].m_nBreakType = FX_LBT_UNKNOWN;
     return;
