@@ -52,6 +52,7 @@ endobj
 endobj
 % JS program to exexute
 {{object 21 0}} <<
+  {{streamlen}}
 >>
 stream
   var annots = this.getAnnots();

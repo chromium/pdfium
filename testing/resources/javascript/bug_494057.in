@@ -89,6 +89,7 @@ endobj
 endobj
 % JS program to exexute
 {{object 11 0}} <<
+  {{streamlen}}
 >>
 stream
 function TestGetFieldWithDelay() {

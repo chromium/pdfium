@@ -88,6 +88,7 @@ endobj
 endobj
 % JS program to exexute
 {{object 11 0}} <<
+  {{streamlen}}
 >>
 stream
 var theName = "MyField";
@@ -111,19 +112,25 @@ Mangles();
 endstream
 endobj
 {{object 23 0}} <<
->>stream
+  {{streamlen}}
+>>
+stream
 <?xml version="1.0" encoding="UTF-8"?>
 <xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
 endstream
 endobj
 {{object 29 0}} <<
->>stream
+  {{streamlen}}
+>>
+stream
 <config></config>
 <template></template>
 endstream
 endobj
 {{object 30 0}} <<
->>stream
+  {{streamlen}}
+>>
+stream
 </xdp:xdp>
 endstream
 endobj

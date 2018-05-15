@@ -55,6 +55,7 @@ endobj
 >>
 % Contents of the page.
 {{object 8 0}} <<
+  {{streamlen}}
 >>
 stream
 BT
@@ -79,6 +80,7 @@ endobj
 endobj
 % JS program to exexute
 {{object 11 0}} <<
+  {{streamlen}}
 >>
 stream
 function expect(str, expected) {

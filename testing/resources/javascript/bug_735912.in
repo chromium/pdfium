@@ -55,6 +55,7 @@ endobj
 endobj
 % JS program to exexute
 {{object 31 0}} <<
+  {{streamlen}}
 >>
 stream
 this.getField("MyField").setFocus();
@@ -70,6 +71,7 @@ endobj
 endobj
 % JS program to exexute
 {{object 35 0}} <<
+  {{streamlen}}
 >>
 stream
 this.removeField("MyField");
@@ -85,25 +87,32 @@ endobj
 endobj
 % JS program to exexute
 {{object 37 0}} <<
+  {{streamlen}}
 >>
 stream
 this.removeField("MyField");
 endstream
 endobj
 {{object 43 0}} <<
->>stream
+  {{streamlen}}
+>>
+stream
 <?xml version="1.0" encoding="UTF-8"?>
 <xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/">
 endstream
 endobj
 {{object 49 0}} <<
->>stream
+  {{streamlen}}
+>>
+stream
 <config></config>
 <template></template>
 endstream
 endobj
 {{object 50 0}} <<
->>stream
+  {{streamlen}}
+>>
+stream
 </xdp:xdp>
 endstream
 endobj

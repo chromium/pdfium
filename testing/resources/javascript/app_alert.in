@@ -32,6 +32,7 @@ endobj
 endobj
 % JS program to exexute
 {{object 11 0}} <<
+  {{streamlen}}
 >>
 stream
 app.alert("This test passes if alert() logs output under the test utility.");
