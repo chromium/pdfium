@@ -20,7 +20,7 @@ TEST(CXFA_FMParserTest, Empty) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   // TODO(dsinclair): This is a little weird .....
   EXPECT_EQ(L"// comments only", buf.AsStringView());
 }
@@ -35,7 +35,7 @@ TEST(CXFA_FMParserTest, CommentOnlyIsError) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(L"// comments only", buf.AsStringView());
 }
 
@@ -64,7 +64,7 @@ TEST(CXFA_FMParserTest, CommentThenValue) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }
 
@@ -143,7 +143,7 @@ TEST(CXFA_FMParserTest, Parse) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }
 
@@ -205,7 +205,7 @@ TEST(CXFA_FMParserTest, ParseFuncWithParams) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }
 
@@ -243,7 +243,7 @@ TEST(CXFA_FMParserTest, ParseFuncWithoutParams) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }
 
@@ -327,7 +327,7 @@ TEST(CXFA_FMParserTest, ParseCallSmall) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }
 
@@ -368,6 +368,6 @@ TEST(CXFA_FMParserTest, ParseCallBig) {
 
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf buf;
-  EXPECT_TRUE(ast->ToJavaScript(buf));
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }

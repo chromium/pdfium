@@ -6185,12 +6185,12 @@ bool CFXJSE_FormCalcContext::Translate(const WideStringView& wsFormcalc,
     return false;
 
   CXFA_FMToJavaScriptDepth::Reset();
-  if (!ast->ToJavaScript(*wsJavascript))
+  if (!ast->ToJavaScript(wsJavascript))
     return false;
 
   wsJavascript->AppendChar(0);
 
-  return !CXFA_IsTooBig(*wsJavascript);
+  return !CXFA_IsTooBig(wsJavascript);
 }
 
 CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,

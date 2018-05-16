@@ -27,7 +27,7 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
   CXFA_FMCallExpression callExp(std::move(exp), std::move(args), true);
 
   CFX_WideTextBuf js;
-  callExp.ToJavaScript(js, ReturnType::kInfered);
+  callExp.ToJavaScript(&js, ReturnType::kInfered);
 
   // Generate the result javascript string.
   WideString result = L"sign(";
@@ -50,21 +50,22 @@ TEST(FMCallExpressionTest, more_than_32_arguments) {
 TEST(FMStringExpressionTest, Empty) {
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
-  CXFA_FMStringExpression(L"").ToJavaScript(accumulator, ReturnType::kInfered);
+  CXFA_FMStringExpression(L"").ToJavaScript(&accumulator, ReturnType::kInfered);
   EXPECT_EQ(L"", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Short) {
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
-  CXFA_FMStringExpression(L"a").ToJavaScript(accumulator, ReturnType::kInfered);
+  CXFA_FMStringExpression(L"a").ToJavaScript(&accumulator,
+                                             ReturnType::kInfered);
   EXPECT_EQ(L"a", accumulator.AsStringView());
 }
 
 TEST(FMStringExpressionTest, Medium) {
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
-  CXFA_FMStringExpression(L".abcd.").ToJavaScript(accumulator,
+  CXFA_FMStringExpression(L".abcd.").ToJavaScript(&accumulator,
                                                   ReturnType::kInfered);
   EXPECT_EQ(L"\"abcd\"", accumulator.AsStringView());
 }
@@ -74,7 +75,7 @@ TEST(FMStringExpressionTest, Long) {
   CFX_WideTextBuf accumulator;
   std::vector<WideStringView::UnsignedType> vec(140000, L'A');
   CXFA_FMStringExpression(WideStringView(vec))
-      .ToJavaScript(accumulator, ReturnType::kInfered);
+      .ToJavaScript(&accumulator, ReturnType::kInfered);
   EXPECT_EQ(140000u, accumulator.GetLength());
 }
 
@@ -82,6 +83,6 @@ TEST(FMStringExpressionTest, Quoted) {
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
   CXFA_FMStringExpression(L".Simon says \"\"run\"\".")
-      .ToJavaScript(accumulator, ReturnType::kInfered);
+      .ToJavaScript(&accumulator, ReturnType::kInfered);
   EXPECT_EQ(L"\"Simon says \\\"run\\\"\"", accumulator.AsStringView());
 }

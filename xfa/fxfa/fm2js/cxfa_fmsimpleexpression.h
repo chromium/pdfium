@@ -26,7 +26,7 @@ class CFX_WideTextBuf;
 class CXFA_FMSimpleExpression {
  public:
   virtual ~CXFA_FMSimpleExpression() {}
-  virtual bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) = 0;
+  virtual bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) = 0;
 
   XFA_FM_TOKEN GetOperatorToken() const;
 
@@ -41,7 +41,7 @@ class CXFA_FMNullExpression : public CXFA_FMSimpleExpression {
   CXFA_FMNullExpression();
   ~CXFA_FMNullExpression() override {}
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 };
 
 class CXFA_FMNumberExpression : public CXFA_FMSimpleExpression {
@@ -49,7 +49,7 @@ class CXFA_FMNumberExpression : public CXFA_FMSimpleExpression {
   explicit CXFA_FMNumberExpression(WideStringView wsNumber);
   ~CXFA_FMNumberExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   WideStringView m_wsNumber;
@@ -60,7 +60,7 @@ class CXFA_FMStringExpression : public CXFA_FMSimpleExpression {
   explicit CXFA_FMStringExpression(WideStringView wsString);
   ~CXFA_FMStringExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   WideStringView m_wsString;
@@ -71,7 +71,7 @@ class CXFA_FMIdentifierExpression : public CXFA_FMSimpleExpression {
   explicit CXFA_FMIdentifierExpression(WideStringView wsIdentifier);
   ~CXFA_FMIdentifierExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   WideStringView m_wsIdentifier;
@@ -84,7 +84,7 @@ class CXFA_FMAssignExpression : public CXFA_FMSimpleExpression {
                           std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMAssignExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp1;
@@ -95,7 +95,7 @@ class CXFA_FMBinExpression : public CXFA_FMSimpleExpression {
  public:
   ~CXFA_FMBinExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  protected:
   CXFA_FMBinExpression(const WideString& opName,
@@ -209,7 +209,7 @@ class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
  public:
   ~CXFA_FMUnaryExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  protected:
   CXFA_FMUnaryExpression(const WideString& opName,
@@ -249,7 +249,7 @@ class CXFA_FMCallExpression : public CXFA_FMSimpleExpression {
 
   bool IsBuiltInFunc(CFX_WideTextBuf* funcName);
   uint32_t IsMethodWithObjParam(const WideString& methodName);
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp;
@@ -266,7 +266,7 @@ class CXFA_FMDotAccessorExpression : public CXFA_FMSimpleExpression {
       std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp);
   ~CXFA_FMDotAccessorExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   WideStringView m_wsIdentifier;
@@ -281,7 +281,7 @@ class CXFA_FMIndexExpression : public CXFA_FMSimpleExpression {
                          bool bIsStarIndex);
   ~CXFA_FMIndexExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp;
@@ -298,7 +298,7 @@ class CXFA_FMDotDotAccessorExpression : public CXFA_FMSimpleExpression {
       std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp);
   ~CXFA_FMDotDotAccessorExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   WideStringView m_wsIdentifier;
@@ -313,13 +313,13 @@ class CXFA_FMMethodCallExpression : public CXFA_FMSimpleExpression {
       std::unique_ptr<CXFA_FMSimpleExpression> pCallExp);
   ~CXFA_FMMethodCallExpression() override;
 
-  bool ToJavaScript(CFX_WideTextBuf& javascript, ReturnType type) override;
+  bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 
  private:
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp1;
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp2;
 };
 
-bool CXFA_IsTooBig(const CFX_WideTextBuf& javascript);
+bool CXFA_IsTooBig(const CFX_WideTextBuf* js);
 
 #endif  // XFA_FXFA_FM2JS_CXFA_FMSIMPLEEXPRESSION_H_
