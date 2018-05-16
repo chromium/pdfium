@@ -9,9 +9,10 @@
 
 #include <stdint.h>
 
-#include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/span.h"
 
 class CPDF_CryptoHandler;
 
@@ -19,17 +20,14 @@ class CPDF_Encryptor {
  public:
   CPDF_Encryptor(CPDF_CryptoHandler* pHandler,
                  int objnum,
-                 const uint8_t* src_data,
-                 uint32_t src_size);
+                 pdfium::span<const uint8_t> src_data);
   ~CPDF_Encryptor();
 
-  uint32_t GetSize() const { return m_dwSize; }
-  const uint8_t* GetData() const { return m_pData; }
+  pdfium::span<const uint8_t> GetSpan() const { return m_Span; }
 
  private:
-  const uint8_t* m_pData = nullptr;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pNewBuf;
-  uint32_t m_dwSize = 0;
+  std::vector<uint8_t> m_NewBuf;
+  pdfium::span<const uint8_t> m_Span;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_ENCRYPTOR_H_
