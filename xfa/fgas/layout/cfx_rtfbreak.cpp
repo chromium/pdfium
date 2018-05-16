@@ -11,6 +11,7 @@
 #include "core/fxcrt/fx_arabic.h"
 #include "core/fxcrt/fx_bidi.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_linebreak.h"
@@ -254,7 +255,13 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
 
   int iCharWidthValid = iCharWidth.ValueOrDefault(0);
   pCurChar->m_iCharWidth = iCharWidthValid;
-  m_pCurLine->m_iWidth += iCharWidthValid;
+
+  pdfium::base::CheckedNumeric<int32_t> checked_width = m_pCurLine->m_iWidth;
+  checked_width += iCharWidthValid;
+  if (!checked_width.IsValid())
+    return CFX_BreakType::None;
+
+  m_pCurLine->m_iWidth = checked_width.ValueOrDie();
   if (chartype != FX_CHARTYPE_Space &&
       m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance) {
     return EndBreak(CFX_BreakType::Line);
