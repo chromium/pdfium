@@ -57,9 +57,9 @@ inline void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size) {
   if (!size.IsValid())
     return nullptr;
 
-  return pdfium::base::PartitionReallocGeneric(
-      gGeneralPartitionAllocator.root(), ptr, size.ValueOrDie(),
-      "GeneralPartition");
+  return pdfium::base::PartitionReallocGenericFlags(
+      gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
+      ptr, size.ValueOrDie(), "GeneralPartition");
 }
 
 inline void* FX_AllocOrDie(size_t num_members, size_t member_size) {

@@ -432,9 +432,15 @@ BASE_EXPORT NOINLINE void* PartitionAllocSlowPath(PartitionRootBase*,
                                                   size_t,
                                                   PartitionBucket*);
 BASE_EXPORT NOINLINE void PartitionFreeSlowPath(PartitionPage*);
-BASE_EXPORT NOINLINE void* PartitionReallocGeneric(PartitionRootGeneric*,
-                                                   void*,
-                                                   size_t,
+BASE_EXPORT NOINLINE void* PartitionReallocGenericFlags(
+    PartitionRootGeneric* root,
+    int flags,
+    void* ptr,
+    size_t new_size,
+    const char* type_name);
+BASE_EXPORT NOINLINE void* PartitionReallocGeneric(PartitionRootGeneric* root,
+                                                   void* ptr,
+                                                   size_t new_size,
                                                    const char* type_name);
 
 BASE_EXPORT void PartitionDumpStats(PartitionRoot*,

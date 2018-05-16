@@ -1021,22 +1021,29 @@ bool partitionReallocDirectMappedInPlace(PartitionRootGeneric* root,
   return true;
 }
 
-void* PartitionReallocGeneric(PartitionRootGeneric* root,
-                              void* ptr,
-                              size_t new_size,
-                              const char* type_name) {
+void* PartitionReallocGenericFlags(PartitionRootGeneric* root,
+                                   int flags,
+                                   void* ptr,
+                                   size_t new_size,
+                                   const char* type_name) {
 #if defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
-  return realloc(ptr, new_size);
+  void* result = realloc(ptr, new_size);
+  CHECK(result || flags & PartitionAllocReturnNull);
+  return result;
 #else
   if (UNLIKELY(!ptr))
-    return PartitionAllocGeneric(root, new_size, type_name);
+    return PartitionAllocGenericFlags(root, flags, new_size, type_name);
   if (UNLIKELY(!new_size)) {
     PartitionFreeGeneric(root, ptr);
-    return 0;
+    return nullptr;
   }
 
-  if (new_size > kGenericMaxDirectMapped)
-    PartitionExcessiveAllocationSize();
+  if (new_size > kGenericMaxDirectMapped) {
+    if (flags & PartitionAllocReturnNull)
+      return nullptr;
+    else
+      PartitionExcessiveAllocationSize();
+  }
 
   DCHECK(PartitionPointerIsValid(PartitionCookieFreePointerAdjust(ptr)));
 
@@ -1069,12 +1076,19 @@ void* PartitionReallocGeneric(PartitionRootGeneric* root,
     // |new_size| via the raw size pointer.
     if (PartitionPageGetRawSizePtr(page))
       PartitionCookieWriteValue(static_cast<char*>(ptr) + new_size);
-#endif
+#endif  // DCHECK_IS_ON()
     return ptr;
   }
 
   // This realloc cannot be resized in-place. Sadness.
-  void* ret = PartitionAllocGeneric(root, new_size, type_name);
+  void* ret = PartitionAllocGenericFlags(root, flags, new_size, type_name);
+  if (!ret) {
+    if (flags & PartitionAllocReturnNull)
+      return nullptr;
+    else
+      PartitionExcessiveAllocationSize();
+  }
+
   size_t copy_size = actual_old_size;
   if (new_size < copy_size)
     copy_size = new_size;
@@ -1082,7 +1096,14 @@ void* PartitionReallocGeneric(PartitionRootGeneric* root,
   memcpy(ret, ptr, copy_size);
   PartitionFreeGeneric(root, ptr);
   return ret;
-#endif
+#endif  // defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+}
+
+void* PartitionReallocGeneric(PartitionRootGeneric* root,
+                              void* ptr,
+                              size_t new_size,
+                              const char* type_name) {
+  return PartitionReallocGenericFlags(root, 0, ptr, new_size, type_name);
 }
 
 static size_t PartitionPurgePage(PartitionPage* page, bool discard) {

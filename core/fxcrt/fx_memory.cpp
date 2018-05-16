@@ -35,8 +35,9 @@ void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
 }
 
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size) {
-  return pdfium::base::PartitionReallocGeneric(
-      gGeneralPartitionAllocator.root(), pointer, new_size, "GeneralPartition");
+  return pdfium::base::PartitionReallocGenericFlags(
+      gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
+      pointer, new_size, "GeneralPartition");
 }
 
 void FXMEM_DefaultFree(void* pointer) {
