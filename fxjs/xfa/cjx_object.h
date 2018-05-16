@@ -74,10 +74,10 @@ class CJX_Object {
                        const std::vector<v8::Local<v8::Value>>& params);
 
   bool HasAttribute(XFA_Attribute eAttr);
-  bool SetAttribute(XFA_Attribute eAttr,
+  void SetAttribute(XFA_Attribute eAttr,
                     const WideStringView& wsValue,
                     bool bNotify);
-  bool SetAttribute(const WideStringView& wsAttr,
+  void SetAttribute(const WideStringView& wsAttr,
                     const WideStringView& wsValue,
                     bool bNotify);
   void RemoveAttribute(const WideStringView& wsAttr);
@@ -88,7 +88,7 @@ class CJX_Object {
   Optional<WideString> TryAttribute(XFA_Attribute eAttr, bool bUseDefault);
 
   Optional<WideString> TryContent(bool bScriptModify, bool bProto);
-  bool SetContent(const WideString& wsContent,
+  void SetContent(const WideString& wsContent,
                   const WideString& wsXMLValue,
                   bool bNotify,
                   bool bScriptModify,
@@ -177,11 +177,11 @@ class CJX_Object {
   Optional<WideString> TryNamespace();
 
   Optional<int32_t> TryInteger(XFA_Attribute eAttr, bool bUseDefault);
-  bool SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
+  void SetInteger(XFA_Attribute eAttr, int32_t iValue, bool bNotify);
   int32_t GetInteger(XFA_Attribute eAttr);
 
   Optional<WideString> TryCData(XFA_Attribute eAttr, bool bUseDefault);
-  bool SetCData(XFA_Attribute eAttr,
+  void SetCData(XFA_Attribute eAttr,
                 const WideString& wsValue,
                 bool bNotify,
                 bool bScriptModify);
@@ -189,17 +189,17 @@ class CJX_Object {
 
   Optional<XFA_AttributeEnum> TryEnum(XFA_Attribute eAttr,
                                       bool bUseDefault) const;
-  bool SetEnum(XFA_Attribute eAttr, XFA_AttributeEnum eValue, bool bNotify);
+  void SetEnum(XFA_Attribute eAttr, XFA_AttributeEnum eValue, bool bNotify);
   XFA_AttributeEnum GetEnum(XFA_Attribute eAttr) const;
 
   Optional<bool> TryBoolean(XFA_Attribute eAttr, bool bUseDefault);
-  bool SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
+  void SetBoolean(XFA_Attribute eAttr, bool bValue, bool bNotify);
   bool GetBoolean(XFA_Attribute eAttr);
 
   Optional<CXFA_Measurement> TryMeasure(XFA_Attribute eAttr,
                                         bool bUseDefault) const;
   Optional<float> TryMeasureAsFloat(XFA_Attribute attr) const;
-  bool SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
+  void SetMeasure(XFA_Attribute eAttr, CXFA_Measurement mValue, bool bNotify);
   CXFA_Measurement GetMeasure(XFA_Attribute eAttr) const;
 
   void MergeAllData(CXFA_Object* pDstModule);
@@ -241,7 +241,7 @@ class CJX_Object {
 
   void OnChanged(XFA_Attribute eAttr, bool bNotify, bool bScriptModify);
   void OnChanging(XFA_Attribute eAttr, bool bNotify);
-  bool SetUserData(void* pKey,
+  void SetUserData(void* pKey,
                    void* pData,
                    const XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo);
 
