@@ -531,8 +531,12 @@ class CFX_BidiLine {
   }
 
   void Position(std::vector<CFX_Char>* chars, size_t iCount) {
-    for (size_t i = 0; i < iCount; ++i)
+    for (size_t i = 0; i < iCount; ++i) {
+      if ((*chars)[i].m_iBidiPos > iCount)
+        continue;
+
       (*chars)[(*chars)[i].m_iBidiPos].m_iBidiOrder = i;
+    }
   }
 };
 
