@@ -31,19 +31,6 @@ const uint8_t OneLeadPos[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-const uint8_t ZeroLeadPos[256] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-    4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7, 8,
-};
 
 // Limit of image dimension. Use the same limit as the JBIG2 codecs.
 const int kMaxImageDimension = 65535;
@@ -53,20 +40,17 @@ int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
   if (start_pos >= max_pos)
     return max_pos;
 
-  const uint8_t* leading_pos = bit ? OneLeadPos : ZeroLeadPos;
-  if (start_pos % 8) {
-    uint8_t data = data_buf[start_pos / 8];
-    if (bit)
-      data &= 0xff >> (start_pos % 8);
-    else
-      data |= 0xff << (8 - start_pos % 8);
-
-    if (leading_pos[data] < 8)
-      return start_pos / 8 * 8 + leading_pos[data];
+  const uint8_t bit_xor = bit ? 0x00 : 0xff;
+  int bit_offset = start_pos % 8;
+  if (bit_offset) {
+    const int byte_pos = start_pos / 8;
+    uint8_t data = (data_buf[byte_pos] ^ bit_xor) & (0xff >> bit_offset);
+    if (data)
+      return byte_pos * 8 + OneLeadPos[data];
 
     start_pos += 7;
   }
-  const uint8_t skip = bit ? 0x00 : 0xff;
+
   const int max_byte = (max_pos + 7) / 8;
   int byte_pos = start_pos / 8;
 
@@ -85,15 +69,13 @@ int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
   }
 
   while (byte_pos < max_byte) {
-    if (data_buf[byte_pos] != skip)
-      break;
+    uint8_t data = data_buf[byte_pos] ^ bit_xor;
+    if (data)
+      return std::min(byte_pos * 8 + OneLeadPos[data], max_pos);
 
     ++byte_pos;
   }
-  if (byte_pos == max_byte)
-    return max_pos;
-
-  return std::min(leading_pos[data_buf[byte_pos]] + byte_pos * 8, max_pos);
+  return max_pos;
 }
 
 void FaxG4FindB1B2(const std::vector<uint8_t>& ref_buf,
