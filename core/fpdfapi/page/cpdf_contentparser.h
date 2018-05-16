@@ -40,24 +40,26 @@ class CPDF_ContentParser {
   bool Continue(PauseIndicatorIface* pPause);
 
  private:
-  enum InternalStage {
-    STAGE_GETCONTENT = 1,
-    STAGE_PARSE,
-    STAGE_CHECKCLIP,
+  enum class Stage : uint8_t {
+    kGetContent = 1,
+    kPrepareContent,
+    kParse,
+    kCheckClip,
+    kComplete,
   };
 
-  void StageGetContent();
-  void StageParse();
-  void StageCheckClip();
+  Stage GetContent();
+  Stage PrepareContent();
+  Stage Parse();
+  Stage CheckClip();
 
-  bool m_bIsDone = false;
-  InternalStage m_InternalStage;
+  Stage m_CurrentStage;
   UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
   UnownedPtr<CPDF_Type3Char> m_pType3Char;  // Only used when parsing forms.
-  uint32_t m_nStreams = 0;
   RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
+  uint32_t m_nStreams = 0;
   uint32_t m_Size = 0;
   uint32_t m_CurrentOffset = 0;
 
