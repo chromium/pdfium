@@ -99,9 +99,6 @@ static boolean _dest_empty(j_compress_ptr cinfo) {
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 }  // extern "C"
 
-#define JPEG_MARKER_ICC (JPEG_APP0 + 2)
-#define JPEG_MARKER_MAXSIZE 0xFFFF
-
 #ifdef PDF_ENABLE_XFA
 static void JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
                               CFX_DIBAttribute* pAttribute) {

@@ -24,7 +24,6 @@ extern const char kGifSignature89[];
 #define GIF_BLOCK_TERMINAL 0x00
 #define GIF_MAX_LZW_EXP 12
 #define GIF_MAX_LZW_CODE 4096
-#define GIF_DATA_BLOCK 255
 #define GIF_D_STATUS_SIG 0x01
 #define GIF_D_STATUS_TAIL 0x02
 #define GIF_D_STATUS_EXT 0x03

@@ -30,7 +30,6 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 
-#define FWL_STYLEEXT_MNU_Vert (1L << 0)
 #define FWL_WGT_CalcHeight 2048
 #define FWL_WGT_CalcWidth 2048
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f

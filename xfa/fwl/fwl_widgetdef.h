@@ -21,9 +21,6 @@
 #define FWL_WGTSTATE_Invisible (1L << 5)
 #define FWL_WGTSTATE_MAX (6)
 
-#define FWL_VKEY_LButton 0x01
-#define FWL_VKEY_RButton 0x02
-#define FWL_VKEY_MButton 0x04
 #define FWL_VKEY_Back 0x08
 #define FWL_VKEY_Tab 0x09
 #define FWL_VKEY_NewLine 0x0A

@@ -21,7 +21,6 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 #define MONTHCAL_HSEP_HEIGHT 1
-#define MONTHCAL_VSEP_WIDTH 1
 #define MONTHCAL_HMARGIN 3
 #define MONTHCAL_VMARGIN 2
 #define MONTHCAL_ROWS 9
