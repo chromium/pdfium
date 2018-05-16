@@ -18,7 +18,7 @@ CPDF_Encryptor::CPDF_Encryptor(CPDF_CryptoHandler* pHandler,
     return;
   }
 
-  uint32_t buf_size = pHandler->EncryptGetSize(objnum, 0, src_data);
+  uint32_t buf_size = pHandler->EncryptGetSize(src_data);
   m_NewBuf.resize(buf_size);
   pHandler->EncryptContent(objnum, 0, src_data, m_NewBuf.data(),
                            buf_size);  // Updates |buf_size| with actual.

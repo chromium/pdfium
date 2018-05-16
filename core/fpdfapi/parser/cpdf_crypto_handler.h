@@ -31,9 +31,7 @@ class CPDF_CryptoHandler {
   std::unique_ptr<CPDF_Object> DecryptObjectTree(
       std::unique_ptr<CPDF_Object> object);
 
-  uint32_t EncryptGetSize(uint32_t objnum,
-                          uint32_t version,
-                          pdfium::span<const uint8_t> source) const;
+  size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
   bool EncryptContent(uint32_t objnum,
                       uint32_t version,
                       pdfium::span<const uint8_t> source,
@@ -47,8 +45,7 @@ class CPDF_CryptoHandler {
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
   bool DecryptStream(void* context,
-                     const uint8_t* src_buf,
-                     uint32_t src_size,
+                     pdfium::span<const uint8_t> source,
                      CFX_BinaryBuf& dest_buf);
   bool DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
 
@@ -56,14 +53,12 @@ class CPDF_CryptoHandler {
   void CryptBlock(bool bEncrypt,
                   uint32_t objnum,
                   uint32_t gennum,
-                  const uint8_t* src_buf,
-                  uint32_t src_size,
+                  pdfium::span<const uint8_t> source,
                   uint8_t* dest_buf,
                   uint32_t& dest_size);
   void* CryptStart(uint32_t objnum, uint32_t gennum, bool bEncrypt);
   bool CryptStream(void* context,
-                   const uint8_t* src_buf,
-                   uint32_t src_size,
+                   pdfium::span<const uint8_t> source,
                    CFX_BinaryBuf& dest_buf,
                    bool bEncrypt);
   bool CryptFinish(void* context, CFX_BinaryBuf& dest_buf, bool bEncrypt);
