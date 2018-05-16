@@ -13,13 +13,10 @@
 #include "core/fxcrt/fx_system.h"
 
 class CJBig2_BitStream;
-struct JBig2TableLine;
 
 class CJBig2_HuffmanTable {
  public:
-  CJBig2_HuffmanTable(const JBig2TableLine* pTable,
-                      uint32_t nLines,
-                      bool bHTOOB);
+  explicit CJBig2_HuffmanTable(size_t idx);
   explicit CJBig2_HuffmanTable(CJBig2_BitStream* pStream);
   ~CJBig2_HuffmanTable();
 
@@ -31,7 +28,7 @@ class CJBig2_HuffmanTable {
   bool IsOK() const { return m_bOK; }
 
  private:
-  bool ParseFromStandardTable(const JBig2TableLine* pTable);
+  bool ParseFromStandardTable(size_t table_idx);
   bool ParseFromCodedBuffer(CJBig2_BitStream* pStream);
   void ExtendBuffers(bool increment);
 

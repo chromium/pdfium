@@ -16,7 +16,6 @@
 #include "core/fxcodec/jbig2/JBig2_GrrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable.h"
-#include "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
 #include "core/fxcodec/jbig2/JBig2_SymbolDict.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "third_party/base/ptr_util.h"
@@ -140,22 +139,14 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          auto SBHUFFFS = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B6, HuffmanTable_B6_Size, HuffmanTable_HTOOB_B6);
-          auto SBHUFFDS = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B8, HuffmanTable_B8_Size, HuffmanTable_HTOOB_B8);
-          auto SBHUFFDT = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B11, HuffmanTable_B11_Size, HuffmanTable_HTOOB_B11);
-          auto SBHUFFRDW = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRDH = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRDY = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1);
+          auto SBHUFFFS = pdfium::MakeUnique<CJBig2_HuffmanTable>(6);
+          auto SBHUFFDS = pdfium::MakeUnique<CJBig2_HuffmanTable>(8);
+          auto SBHUFFDT = pdfium::MakeUnique<CJBig2_HuffmanTable>(11);
+          auto SBHUFFRDW = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDH = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDY = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
           pDecoder->SBHUFFFS = SBHUFFFS.get();
           pDecoder->SBHUFFDS = SBHUFFDS.get();
           pDecoder->SBHUFFDT = SBHUFFDT.get();
@@ -360,22 +351,14 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          auto SBHUFFFS = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B6, HuffmanTable_B6_Size, HuffmanTable_HTOOB_B6);
-          auto SBHUFFDS = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B8, HuffmanTable_B8_Size, HuffmanTable_HTOOB_B8);
-          auto SBHUFFDT = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B11, HuffmanTable_B11_Size, HuffmanTable_HTOOB_B11);
-          auto SBHUFFRDW = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRDH = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRDY = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1);
+          auto SBHUFFFS = pdfium::MakeUnique<CJBig2_HuffmanTable>(6);
+          auto SBHUFFDS = pdfium::MakeUnique<CJBig2_HuffmanTable>(8);
+          auto SBHUFFDT = pdfium::MakeUnique<CJBig2_HuffmanTable>(11);
+          auto SBHUFFRDW = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDH = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRDY = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
           pDecoder->SBHUFFFS = SBHUFFFS.get();
           pDecoder->SBHUFFDS = SBHUFFDS.get();
           pDecoder->SBHUFFDT = SBHUFFDT.get();
@@ -413,10 +396,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
             if (IDI < SBNUMSYMS)
               break;
           }
-          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
-          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-              HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1);
+          auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
+          auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
           if ((pHuffmanDecoder->DecodeAValue(SBHUFFRDX.get(), &RDXI) != 0) ||
               (pHuffmanDecoder->DecodeAValue(SBHUFFRDX.get(), &RDYI) != 0) ||
               (pHuffmanDecoder->DecodeAValue(SBHUFFRSIZE.get(), &nVal) != 0)) {
@@ -494,8 +475,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
   }
   EXINDEX = 0;
   CUREXFLAG = 0;
-  pTable = pdfium::MakeUnique<CJBig2_HuffmanTable>(
-      HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1);
+  pTable = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
   EXFLAGS.resize(SDNUMINSYMS + SDNUMNEWSYMS);
   num_ex_syms = 0;
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
