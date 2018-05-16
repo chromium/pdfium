@@ -230,316 +230,313 @@ const int32_t gc_FX_BidiAddLevel[][4] = {
     {1, 0, 1, 1},
 };
 
-class CFX_BidiLine {
- public:
-  void BidiLine(std::vector<CFX_Char>* chars, size_t iCount) {
-    ASSERT(iCount <= chars->size());
-    if (iCount < 2)
-      return;
+int32_t Direction(int32_t val) {
+  return FX_IsOdd(val) ? FX_BIDICLASS_R : FX_BIDICLASS_L;
+}
 
-    Classify(chars, iCount, false);
-    ResolveExplicit(chars, iCount);
-    ResolveWeak(chars, iCount);
-    ResolveNeutrals(chars, iCount);
-    ResolveImplicit(chars, iCount);
-    Classify(chars, iCount, true);
-    ResolveWhitespace(chars, iCount);
-    Reorder(chars, iCount);
-    Position(chars, iCount);
+int32_t GetDeferredType(int32_t val) {
+  return (val >> 4) & 0x0F;
+}
+
+int32_t GetResolvedType(int32_t val) {
+  return val & 0x0F;
+}
+
+int32_t GetDeferredNeutrals(int32_t iAction, int32_t iLevel) {
+  iAction = (iAction >> 4) & 0xF;
+  if (iAction == (FX_BNAEn >> 4))
+    return Direction(iLevel);
+  return iAction;
+}
+
+int32_t GetResolvedNeutrals(int32_t iAction) {
+  iAction &= 0xF;
+  return iAction == FX_BNAIn ? 0 : iAction;
+}
+
+void ReverseString(std::vector<CFX_Char>* chars, size_t iStart, size_t iCount) {
+  ASSERT(pdfium::IndexInBounds(*chars, iStart));
+  ASSERT(iStart + iCount <= chars->size());
+
+  std::reverse(chars->begin() + iStart, chars->begin() + iStart + iCount);
+}
+
+void SetDeferredRun(std::vector<CFX_Char>* chars,
+                    bool bClass,
+                    size_t iStart,
+                    size_t iCount,
+                    int32_t iValue) {
+  ASSERT(iStart <= chars->size());
+  ASSERT(iStart >= iCount);
+
+  size_t iLast = iStart - iCount;
+  for (size_t i = iStart - 1; i >= iLast; --i) {
+    if (bClass)
+      (*chars)[i].m_iBidiClass = static_cast<int16_t>(iValue);
+    else
+      (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iValue);
+
+    if (i == 0)
+      break;
   }
+}
 
- private:
-  int32_t Direction(int32_t val) {
-    return FX_IsOdd(val) ? FX_BIDICLASS_R : FX_BIDICLASS_L;
-  }
-
-  int32_t GetDeferredType(int32_t val) { return (val >> 4) & 0x0F; }
-
-  int32_t GetResolvedType(int32_t val) { return val & 0x0F; }
-
-  int32_t GetDeferredNeutrals(int32_t iAction, int32_t iLevel) {
-    iAction = (iAction >> 4) & 0xF;
-    if (iAction == (FX_BNAEn >> 4))
-      return Direction(iLevel);
-    return iAction;
-  }
-
-  int32_t GetResolvedNeutrals(int32_t iAction) {
-    iAction &= 0xF;
-    return iAction == FX_BNAIn ? 0 : iAction;
-  }
-
-  void ReverseString(std::vector<CFX_Char>* chars,
-                     size_t iStart,
-                     size_t iCount) {
-    ASSERT(pdfium::IndexInBounds(*chars, iStart));
-    ASSERT(iStart + iCount <= chars->size());
-
-    std::reverse(chars->begin() + iStart, chars->begin() + iStart + iCount);
-  }
-
-  void SetDeferredRun(std::vector<CFX_Char>* chars,
-                      bool bClass,
-                      size_t iStart,
-                      size_t iCount,
-                      int32_t iValue) {
-    ASSERT(iStart <= chars->size());
-    ASSERT(iStart >= iCount);
-
-    size_t iLast = iStart - iCount;
-    for (size_t i = iStart - 1; i >= iLast; --i) {
-      if (bClass)
-        (*chars)[i].m_iBidiClass = static_cast<int16_t>(iValue);
-      else
-        (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iValue);
-
-      if (i == 0)
-        break;
-    }
-  }
-
-  void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
-    if (bWS) {
-      for (size_t i = 0; i < iCount; ++i) {
-        CFX_Char& cur = (*chars)[i];
-        cur.m_iBidiClass =
-            static_cast<int16_t>(cur.char_props() & FX_BIDICLASSBITSMASK) >>
-            FX_BIDICLASSBITS;
-      }
-      return;
-    }
-
+void Classify(std::vector<CFX_Char>* chars, size_t iCount, bool bWS) {
+  if (bWS) {
     for (size_t i = 0; i < iCount; ++i) {
       CFX_Char& cur = (*chars)[i];
-      cur.m_iBidiClass = static_cast<int16_t>(
-          gc_FX_BidiNTypes[(cur.char_props() & FX_BIDICLASSBITSMASK) >>
-                           FX_BIDICLASSBITS]);
+      cur.m_iBidiClass =
+          static_cast<int16_t>(cur.char_props() & FX_BIDICLASSBITSMASK) >>
+          FX_BIDICLASSBITS;
     }
+    return;
   }
 
-  void ResolveExplicit(std::vector<CFX_Char>* chars, size_t iCount) {
-    for (size_t i = 0; i < iCount; ++i)
-      (*chars)[i].m_iBidiLevel = 0;
+  for (size_t i = 0; i < iCount; ++i) {
+    CFX_Char& cur = (*chars)[i];
+    cur.m_iBidiClass = static_cast<int16_t>(
+        gc_FX_BidiNTypes[(cur.char_props() & FX_BIDICLASSBITSMASK) >>
+                         FX_BIDICLASSBITS]);
   }
+}
 
-  void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
-    if (iCount <= 1)
-      return;
-    --iCount;
+void ResolveExplicit(std::vector<CFX_Char>* chars, size_t iCount) {
+  for (size_t i = 0; i < iCount; ++i)
+    (*chars)[i].m_iBidiLevel = 0;
+}
 
-    int32_t iLevelCur = 0;
-    int32_t iState = FX_BWSxl;
-    size_t iNum = 0;
-    int32_t iClsCur;
-    int32_t iClsRun;
-    int32_t iClsNew;
-    size_t i = 0;
-    for (; i <= iCount; ++i) {
-      CFX_Char* pTC = &(*chars)[i];
-      iClsCur = pTC->m_iBidiClass;
-      if (iClsCur == FX_BIDICLASS_BN) {
-        pTC->m_iBidiLevel = (int16_t)iLevelCur;
-        if (i == iCount && iLevelCur != 0) {
-          iClsCur = Direction(iLevelCur);
-          pTC->m_iBidiClass = (int16_t)iClsCur;
-        } else if (i < iCount) {
-          CFX_Char* pTCNext = &(*chars)[i + 1];
-          int32_t iLevelNext, iLevelNew;
-          iClsNew = pTCNext->m_iBidiClass;
-          iLevelNext = pTCNext->m_iBidiLevel;
-          if (iClsNew != FX_BIDICLASS_BN && iLevelCur != iLevelNext) {
-            iLevelNew = std::max(iLevelNext, iLevelCur);
-            pTC->m_iBidiLevel = static_cast<int16_t>(iLevelNew);
-            iClsCur = Direction(iLevelNew);
-            pTC->m_iBidiClass = static_cast<int16_t>(iClsCur);
-            iLevelCur = iLevelNext;
-          } else {
-            if (iNum > 0)
-              ++iNum;
-            continue;
-          }
+void ResolveWeak(std::vector<CFX_Char>* chars, size_t iCount) {
+  if (iCount <= 1)
+    return;
+  --iCount;
+
+  int32_t iLevelCur = 0;
+  int32_t iState = FX_BWSxl;
+  size_t iNum = 0;
+  int32_t iClsCur;
+  int32_t iClsRun;
+  int32_t iClsNew;
+  size_t i = 0;
+  for (; i <= iCount; ++i) {
+    CFX_Char* pTC = &(*chars)[i];
+    iClsCur = pTC->m_iBidiClass;
+    if (iClsCur == FX_BIDICLASS_BN) {
+      pTC->m_iBidiLevel = (int16_t)iLevelCur;
+      if (i == iCount && iLevelCur != 0) {
+        iClsCur = Direction(iLevelCur);
+        pTC->m_iBidiClass = (int16_t)iClsCur;
+      } else if (i < iCount) {
+        CFX_Char* pTCNext = &(*chars)[i + 1];
+        int32_t iLevelNext, iLevelNew;
+        iClsNew = pTCNext->m_iBidiClass;
+        iLevelNext = pTCNext->m_iBidiLevel;
+        if (iClsNew != FX_BIDICLASS_BN && iLevelCur != iLevelNext) {
+          iLevelNew = std::max(iLevelNext, iLevelCur);
+          pTC->m_iBidiLevel = static_cast<int16_t>(iLevelNew);
+          iClsCur = Direction(iLevelNew);
+          pTC->m_iBidiClass = static_cast<int16_t>(iClsCur);
+          iLevelCur = iLevelNext;
         } else {
           if (iNum > 0)
             ++iNum;
           continue;
         }
-      }
-      if (iClsCur > FX_BIDICLASS_BN)
+      } else {
+        if (iNum > 0)
+          ++iNum;
         continue;
-
-      int32_t iAction = gc_FX_BidiWeakActions[iState][iClsCur];
-      iClsRun = GetDeferredType(iAction);
-      if (iClsRun != FX_BWAXX && iNum > 0) {
-        SetDeferredRun(chars, true, i, iNum, iClsRun);
-        iNum = 0;
       }
-      iClsNew = GetResolvedType(iAction);
-      if (iClsNew != FX_BWAXX)
-        pTC->m_iBidiClass = static_cast<int16_t>(iClsNew);
-      if (FX_BWAIX & iAction)
-        ++iNum;
-
-      iState = gc_FX_BidiWeakStates[iState][iClsCur];
     }
-    if (iNum == 0)
-      return;
+    if (iClsCur > FX_BIDICLASS_BN)
+      continue;
 
-    iClsCur = Direction(0);
-    iClsRun = GetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
-    if (iClsRun != FX_BWAXX)
+    int32_t iAction = gc_FX_BidiWeakActions[iState][iClsCur];
+    iClsRun = GetDeferredType(iAction);
+    if (iClsRun != FX_BWAXX && iNum > 0) {
       SetDeferredRun(chars, true, i, iNum, iClsRun);
+      iNum = 0;
+    }
+    iClsNew = GetResolvedType(iAction);
+    if (iClsNew != FX_BWAXX)
+      pTC->m_iBidiClass = static_cast<int16_t>(iClsNew);
+    if (FX_BWAIX & iAction)
+      ++iNum;
+
+    iState = gc_FX_BidiWeakStates[iState][iClsCur];
   }
+  if (iNum == 0)
+    return;
 
-  void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
-    if (iCount <= 1)
-      return;
-    --iCount;
+  iClsCur = Direction(0);
+  iClsRun = GetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
+  if (iClsRun != FX_BWAXX)
+    SetDeferredRun(chars, true, i, iNum, iClsRun);
+}
 
-    CFX_Char* pTC;
-    int32_t iLevel = 0;
-    int32_t iState = FX_BNSl;
-    size_t i = 0;
-    size_t iNum = 0;
-    int32_t iClsCur;
-    int32_t iClsRun;
-    int32_t iClsNew;
-    int32_t iAction;
-    for (; i <= iCount; ++i) {
-      pTC = &(*chars)[i];
-      iClsCur = pTC->m_iBidiClass;
-      if (iClsCur == FX_BIDICLASS_BN) {
-        if (iNum)
-          ++iNum;
-        continue;
-      }
-      if (iClsCur >= FX_BIDICLASS_AL)
-        continue;
+void ResolveNeutrals(std::vector<CFX_Char>* chars, size_t iCount) {
+  if (iCount <= 1)
+    return;
+  --iCount;
 
-      iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
-      iClsRun = GetDeferredNeutrals(iAction, iLevel);
-      if (iClsRun != FX_BIDICLASS_N && iNum > 0) {
-        SetDeferredRun(chars, true, i, iNum, iClsRun);
-        iNum = 0;
-      }
-
-      iClsNew = GetResolvedNeutrals(iAction);
-      if (iClsNew != FX_BIDICLASS_N)
-        pTC->m_iBidiClass = (int16_t)iClsNew;
-      if (FX_BNAIn & iAction)
+  CFX_Char* pTC;
+  int32_t iLevel = 0;
+  int32_t iState = FX_BNSl;
+  size_t i = 0;
+  size_t iNum = 0;
+  int32_t iClsCur;
+  int32_t iClsRun;
+  int32_t iClsNew;
+  int32_t iAction;
+  for (; i <= iCount; ++i) {
+    pTC = &(*chars)[i];
+    iClsCur = pTC->m_iBidiClass;
+    if (iClsCur == FX_BIDICLASS_BN) {
+      if (iNum)
         ++iNum;
-
-      iState = gc_FX_BidiNeutralStates[iState][iClsCur];
-      iLevel = pTC->m_iBidiLevel;
+      continue;
     }
-    if (iNum == 0)
-      return;
+    if (iClsCur >= FX_BIDICLASS_AL)
+      continue;
 
-    iClsCur = Direction(iLevel);
-    iClsRun =
-        GetDeferredNeutrals(gc_FX_BidiNeutralActions[iState][iClsCur], iLevel);
-    if (iClsRun != FX_BIDICLASS_N)
+    iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
+    iClsRun = GetDeferredNeutrals(iAction, iLevel);
+    if (iClsRun != FX_BIDICLASS_N && iNum > 0) {
       SetDeferredRun(chars, true, i, iNum, iClsRun);
-  }
-
-  void ResolveImplicit(std::vector<CFX_Char>* chars, size_t iCount) {
-    for (size_t i = 0; i < iCount; ++i) {
-      int32_t iCls = (*chars)[i].m_iBidiClass;
-      if (iCls == FX_BIDICLASS_BN)
-        continue;
-      if (iCls <= FX_BIDICLASS_ON || iCls >= FX_BIDICLASS_AL)
-        continue;
-
-      int32_t iLevel = (*chars)[i].m_iBidiLevel;
-      iLevel += gc_FX_BidiAddLevel[FX_IsOdd(iLevel)][iCls - 1];
-      (*chars)[i].m_iBidiLevel = (int16_t)iLevel;
+      iNum = 0;
     }
+
+    iClsNew = GetResolvedNeutrals(iAction);
+    if (iClsNew != FX_BIDICLASS_N)
+      pTC->m_iBidiClass = (int16_t)iClsNew;
+    if (FX_BNAIn & iAction)
+      ++iNum;
+
+    iState = gc_FX_BidiNeutralStates[iState][iClsCur];
+    iLevel = pTC->m_iBidiLevel;
   }
+  if (iNum == 0)
+    return;
 
-  void ResolveWhitespace(std::vector<CFX_Char>* chars, size_t iCount) {
-    if (iCount <= 1)
-      return;
-    iCount--;
+  iClsCur = Direction(iLevel);
+  iClsRun =
+      GetDeferredNeutrals(gc_FX_BidiNeutralActions[iState][iClsCur], iLevel);
+  if (iClsRun != FX_BIDICLASS_N)
+    SetDeferredRun(chars, true, i, iNum, iClsRun);
+}
 
-    int32_t iLevel = 0;
-    size_t i = 0;
-    size_t iNum = 0;
-    for (; i <= iCount; ++i) {
-      switch ((*chars)[i].m_iBidiClass) {
-        case FX_BIDICLASS_WS:
-          ++iNum;
-          break;
-        case FX_BIDICLASS_RLE:
-        case FX_BIDICLASS_LRE:
-        case FX_BIDICLASS_LRO:
-        case FX_BIDICLASS_RLO:
-        case FX_BIDICLASS_PDF:
-        case FX_BIDICLASS_BN:
-          (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iLevel);
-          ++iNum;
-          break;
-        case FX_BIDICLASS_S:
-        case FX_BIDICLASS_B:
-          if (iNum > 0)
-            SetDeferredRun(chars, false, i, iNum, 0);
+void ResolveImplicit(std::vector<CFX_Char>* chars, size_t iCount) {
+  for (size_t i = 0; i < iCount; ++i) {
+    int32_t iCls = (*chars)[i].m_iBidiClass;
+    if (iCls == FX_BIDICLASS_BN)
+      continue;
+    if (iCls <= FX_BIDICLASS_ON || iCls >= FX_BIDICLASS_AL)
+      continue;
 
-          (*chars)[i].m_iBidiLevel = 0;
-          iNum = 0;
-          break;
-        default:
-          iNum = 0;
-          break;
-      }
-      iLevel = (*chars)[i].m_iBidiLevel;
-    }
-    if (iNum > 0)
-      SetDeferredRun(chars, false, i, iNum, 0);
+    int32_t iLevel = (*chars)[i].m_iBidiLevel;
+    iLevel += gc_FX_BidiAddLevel[FX_IsOdd(iLevel)][iCls - 1];
+    (*chars)[i].m_iBidiLevel = (int16_t)iLevel;
   }
+}
 
-  size_t ReorderLevel(std::vector<CFX_Char>* chars,
-                      size_t iCount,
-                      int32_t iBaseLevel,
-                      size_t iStart,
-                      bool bReverse) {
-    ASSERT(iBaseLevel >= 0 && iBaseLevel <= kBidiMaxLevel);
-    ASSERT(iStart < iCount);
+void ResolveWhitespace(std::vector<CFX_Char>* chars, size_t iCount) {
+  if (iCount <= 1)
+    return;
+  iCount--;
 
-    if (iCount < 1)
-      return 0;
-
-    bReverse = bReverse || FX_IsOdd(iBaseLevel);
-    size_t i = iStart;
-    for (; i < iCount; ++i) {
-      int32_t iLevel = (*chars)[i].m_iBidiLevel;
-      if (iLevel == iBaseLevel)
-        continue;
-      if (iLevel < iBaseLevel)
+  int32_t iLevel = 0;
+  size_t i = 0;
+  size_t iNum = 0;
+  for (; i <= iCount; ++i) {
+    switch ((*chars)[i].m_iBidiClass) {
+      case FX_BIDICLASS_WS:
+        ++iNum;
         break;
+      case FX_BIDICLASS_RLE:
+      case FX_BIDICLASS_LRE:
+      case FX_BIDICLASS_LRO:
+      case FX_BIDICLASS_RLO:
+      case FX_BIDICLASS_PDF:
+      case FX_BIDICLASS_BN:
+        (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iLevel);
+        ++iNum;
+        break;
+      case FX_BIDICLASS_S:
+      case FX_BIDICLASS_B:
+        if (iNum > 0)
+          SetDeferredRun(chars, false, i, iNum, 0);
 
-      i += ReorderLevel(chars, iCount, iBaseLevel + 1, i, bReverse) - 1;
+        (*chars)[i].m_iBidiLevel = 0;
+        iNum = 0;
+        break;
+      default:
+        iNum = 0;
+        break;
     }
+    iLevel = (*chars)[i].m_iBidiLevel;
+  }
+  if (iNum > 0)
+    SetDeferredRun(chars, false, i, iNum, 0);
+}
 
-    size_t iNum = i - iStart;
-    if (bReverse && iNum > 1)
-      ReverseString(chars, iStart, iNum);
+size_t ReorderLevel(std::vector<CFX_Char>* chars,
+                    size_t iCount,
+                    int32_t iBaseLevel,
+                    size_t iStart,
+                    bool bReverse) {
+  ASSERT(iBaseLevel >= 0 && iBaseLevel <= kBidiMaxLevel);
+  ASSERT(iStart < iCount);
 
-    return iNum;
+  if (iCount < 1)
+    return 0;
+
+  bReverse = bReverse || FX_IsOdd(iBaseLevel);
+  size_t i = iStart;
+  for (; i < iCount; ++i) {
+    int32_t iLevel = (*chars)[i].m_iBidiLevel;
+    if (iLevel == iBaseLevel)
+      continue;
+    if (iLevel < iBaseLevel)
+      break;
+
+    i += ReorderLevel(chars, iCount, iBaseLevel + 1, i, bReverse) - 1;
   }
 
-  void Reorder(std::vector<CFX_Char>* chars, size_t iCount) {
-    for (size_t i = 0; i < iCount;)
-      i += ReorderLevel(chars, iCount, 0, i, false);
+  size_t iNum = i - iStart;
+  if (bReverse && iNum > 1)
+    ReverseString(chars, iStart, iNum);
+
+  return iNum;
+}
+
+void Reorder(std::vector<CFX_Char>* chars, size_t iCount) {
+  for (size_t i = 0; i < iCount;)
+    i += ReorderLevel(chars, iCount, 0, i, false);
+}
+
+void Position(std::vector<CFX_Char>* chars, size_t iCount) {
+  for (size_t i = 0; i < iCount; ++i) {
+    if ((*chars)[i].m_iBidiPos > iCount)
+      continue;
+
+    (*chars)[(*chars)[i].m_iBidiPos].m_iBidiOrder = i;
   }
+}
 
-  void Position(std::vector<CFX_Char>* chars, size_t iCount) {
-    for (size_t i = 0; i < iCount; ++i) {
-      if ((*chars)[i].m_iBidiPos > iCount)
-        continue;
+void BidiLine(std::vector<CFX_Char>* chars, size_t iCount) {
+  ASSERT(iCount <= chars->size());
+  if (iCount < 2)
+    return;
 
-      (*chars)[(*chars)[i].m_iBidiPos].m_iBidiOrder = i;
-    }
-  }
-};
-
+  Classify(chars, iCount, false);
+  ResolveExplicit(chars, iCount);
+  ResolveWeak(chars, iCount);
+  ResolveNeutrals(chars, iCount);
+  ResolveImplicit(chars, iCount);
+  Classify(chars, iCount, true);
+  ResolveWhitespace(chars, iCount);
+  Reorder(chars, iCount);
+  Position(chars, iCount);
+}
 #endif  // PDF_ENABLE_XFA
 
 }  // namespace
@@ -622,7 +619,6 @@ void CFX_BidiString::SetOverallDirectionRight() {
 
 #ifdef PDF_ENABLE_XFA
 void FX_BidiLine(std::vector<CFX_Char>* chars, size_t iCount) {
-  CFX_BidiLine blt;
-  blt.BidiLine(chars, iCount);
+  BidiLine(chars, iCount);
 }
 #endif  // PDF_ENABLE_XFA
