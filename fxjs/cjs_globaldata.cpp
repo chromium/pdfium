@@ -13,9 +13,6 @@
 #include "third_party/base/stl_util.h"
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
-
-#define READER_JS_GLOBALDATA_FILENAME L"Reader_JsGlobal.Data"
-#define PHANTOM_JS_GLOBALDATA_FILENAME L"Phantom_JsGlobal.Data"
 #define SDK_JS_GLOBALDATA_FILENAME L"SDK_JsGlobal.Data"
 
 namespace {
