@@ -375,23 +375,21 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
 bool CPDF_CryptoHandler::DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) {
   return CryptFinish(context, dest_buf, false);
 }
-uint32_t CPDF_CryptoHandler::EncryptGetSize(uint32_t objnum,
-                                            uint32_t version,
-                                            const uint8_t* src_buf,
-                                            uint32_t src_size) {
-  if (m_Cipher == FXCIPHER_AES) {
-    return src_size + 32;
-  }
-  return src_size;
+
+uint32_t CPDF_CryptoHandler::EncryptGetSize(
+    uint32_t objnum,
+    uint32_t version,
+    pdfium::span<const uint8_t> source) const {
+  return m_Cipher == FXCIPHER_AES ? source.size() + 32 : source.size();
 }
 
 bool CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                                         uint32_t gennum,
-                                        const uint8_t* src_buf,
-                                        uint32_t src_size,
+                                        pdfium::span<const uint8_t> source,
                                         uint8_t* dest_buf,
                                         uint32_t& dest_size) {
-  CryptBlock(true, objnum, gennum, src_buf, src_size, dest_buf, dest_size);
+  CryptBlock(true, objnum, gennum, source.data(), source.size(), dest_buf,
+             dest_size);
   return true;
 }
 

@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class CPDF_Stream;
 
@@ -28,8 +29,9 @@ class CPDF_FlateEncoder {
   // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
   const CPDF_Dictionary* GetDict() const;
 
-  uint32_t GetSize() const { return m_dwSize; }
-  const uint8_t* GetData() const { return m_pData.Get(); }
+  pdfium::span<const uint8_t> GetSpan() const {
+    return pdfium::make_span(m_pData.Get(), m_dwSize);
+  }
 
  private:
   uint32_t m_dwSize;

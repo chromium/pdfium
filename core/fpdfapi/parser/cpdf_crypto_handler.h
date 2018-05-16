@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class CPDF_Dictionary;
 class CPDF_Object;
@@ -32,12 +33,10 @@ class CPDF_CryptoHandler {
 
   uint32_t EncryptGetSize(uint32_t objnum,
                           uint32_t version,
-                          const uint8_t* src_buf,
-                          uint32_t src_size);
+                          pdfium::span<const uint8_t> source) const;
   bool EncryptContent(uint32_t objnum,
                       uint32_t version,
-                      const uint8_t* src_buf,
-                      uint32_t src_size,
+                      pdfium::span<const uint8_t> source,
                       uint8_t* dest_buf,
                       uint32_t& dest_size);
 

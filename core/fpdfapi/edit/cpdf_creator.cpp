@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -164,8 +165,7 @@ bool CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                                uint32_t objnum,
                                CPDF_CryptoHandler* pCrypto) {
   CPDF_FlateEncoder encoder(pStream->AsStream(), pStream != m_pMetadata);
-  CPDF_Encryptor encryptor(
-      pCrypto, objnum, pdfium::make_span(encoder.GetData(), encoder.GetSize()));
+  CPDF_Encryptor encryptor(pCrypto, objnum, encoder.GetSpan());
   if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
       encryptor.GetSpan().size()) {
     encoder.CloneDict();
@@ -238,9 +238,7 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
     }
     case CPDF_Object::STREAM: {
       CPDF_FlateEncoder encoder(pObj->AsStream(), true);
-      CPDF_Encryptor encryptor(
-          GetCryptoHandler(), objnum,
-          pdfium::make_span(encoder.GetData(), encoder.GetSize()));
+      CPDF_Encryptor encryptor(GetCryptoHandler(), objnum, encoder.GetSpan());
       if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
           encryptor.GetSpan().size()) {
         encoder.CloneDict();
