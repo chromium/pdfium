@@ -137,8 +137,14 @@ void CFX_RTFBreak::AppendChar_Combination(CFX_Char* pCurChar) {
 
   int32_t iCharWidthValid = iCharWidth.ValueOrDefault(0);
   pCurChar->m_iCharWidth = iCharWidthValid;
-  if (iCharWidthValid > 0)
-    m_pCurLine->m_iWidth += iCharWidthValid;
+  if (iCharWidthValid > 0) {
+    pdfium::base::CheckedNumeric<int32_t> checked_width = m_pCurLine->m_iWidth;
+    checked_width += iCharWidthValid;
+    if (!checked_width.IsValid())
+      return;
+
+    m_pCurLine->m_iWidth = checked_width.ValueOrDie();
+  }
 }
 
 void CFX_RTFBreak::AppendChar_Tab(CFX_Char* pCurChar) {
@@ -208,7 +214,14 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
 
       int iCharWidthValid = iCharWidth.ValueOrDefault(0);
       pLastChar->m_iCharWidth = iCharWidthValid;
-      m_pCurLine->m_iWidth += iCharWidthValid;
+
+      pdfium::base::CheckedNumeric<int32_t> checked_width =
+          m_pCurLine->m_iWidth;
+      checked_width += iCharWidthValid;
+      if (!checked_width.IsValid())
+        return CFX_BreakType::None;
+
+      m_pCurLine->m_iWidth = checked_width.ValueOrDie();
       iCharWidth = 0;
     }
   }
@@ -230,7 +243,13 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
 
   int iCharWidthValid = iCharWidth.ValueOrDefault(0);
   pCurChar->m_iCharWidth = iCharWidthValid;
-  m_pCurLine->m_iWidth += iCharWidthValid;
+
+  pdfium::base::CheckedNumeric<int32_t> checked_width = m_pCurLine->m_iWidth;
+  checked_width += iCharWidthValid;
+  if (!checked_width.IsValid())
+    return CFX_BreakType::None;
+
+  m_pCurLine->m_iWidth = checked_width.ValueOrDie();
   m_pCurLine->m_iArabicChars++;
 
   if (m_pCurLine->GetLineEnd() > m_iLineWidth + m_iTolerance)
