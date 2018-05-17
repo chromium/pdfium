@@ -35,7 +35,10 @@ int CallStat(const char* path, stat_wrapper_t* sb) {
 }
 #endif
 
-bool DirectoryExists(const std::string& path) {
+}  // namespace
+
+// static
+bool PathService::DirectoryExists(const std::string& path) {
 #ifdef _WIN32
   DWORD fileattr = GetFileAttributesA(path.c_str());
   if (fileattr != INVALID_FILE_ATTRIBUTES)
@@ -48,8 +51,6 @@ bool DirectoryExists(const std::string& path) {
   return S_ISDIR(file_info.st_mode);
 #endif
 }
-
-}  // namespace
 
 // static
 bool PathService::EndsWithSeparator(const std::string& path) {
@@ -127,7 +128,7 @@ bool PathService::GetTestDataDir(std::string* path) {
   potential_path.append("testing");
   potential_path.push_back(PATH_SEPARATOR);
   potential_path.append("resources");
-  if (DirectoryExists(potential_path)) {
+  if (PathService::DirectoryExists(potential_path)) {
     *path = potential_path;
     return true;
   }
@@ -140,7 +141,7 @@ bool PathService::GetTestDataDir(std::string* path) {
   potential_path.append("testing");
   potential_path.push_back(PATH_SEPARATOR);
   potential_path.append("resources");
-  if (DirectoryExists(potential_path)) {
+  if (PathService::DirectoryExists(potential_path)) {
     *path = potential_path;
     return true;
   }

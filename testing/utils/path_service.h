@@ -16,6 +16,9 @@
 // Get the various file directory and path information.
 class PathService {
  public:
+  // Return true when the path is a directory that exists.
+  static bool DirectoryExists(const std::string& path);
+
   // Return true when the path ends with a path separator.
   static bool EndsWithSeparator(const std::string& path);
 

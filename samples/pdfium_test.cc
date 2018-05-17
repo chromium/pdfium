@@ -33,6 +33,7 @@
 #include "samples/pdfium_test_event_helper.h"
 #include "samples/pdfium_test_write_helper.h"
 #include "testing/test_support.h"
+#include "testing/utils/path_service.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/optional.h"
 
@@ -325,7 +326,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_SKP;
-#endif
+#endif  // PDF_ENABLE_SKIA
     } else if (cur_arg.size() > 11 &&
                cur_arg.compare(0, 11, "--font-dir=") == 0) {
       if (!options->font_directory.empty()) {
@@ -338,6 +339,13 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         fprintf(stderr, "Failed to expand --font-dir, %s\n", path.c_str());
         return false;
       }
+
+      if (!PathService::DirectoryExists(expanded_path.value())) {
+        fprintf(stderr, "--font-dir, %s, appears to not be a directory\n",
+                path.c_str());
+        return false;
+      }
+
       options->font_directory = expanded_path.value();
 
 #ifdef _WIN32
@@ -763,7 +771,7 @@ void RenderPdf(const std::string& name,
 void ShowConfig() {
   std::string config;
   std::string maybe_comma;
-#if PDF_ENABLE_V8
+#ifdef PDF_ENABLE_V8
   config.append(maybe_comma);
   config.append("V8");
   maybe_comma = ",";
