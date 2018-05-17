@@ -179,45 +179,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         return nullptr;
 
       int32_t SI = CURS.ValueOrDie();
-      if (TRANSPOSED == 0) {
-        switch (REFCORNER) {
-          case JBIG2_CORNER_TOPLEFT:
-            SBREG->ComposeFrom(SI, TI, IBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_TOPRIGHT:
-            SBREG->ComposeFrom(SI - WI + 1, TI, IBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMLEFT:
-            SBREG->ComposeFrom(SI, TI - HI + 1, IBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMRIGHT:
-            SBREG->ComposeFrom(SI - WI + 1, TI - HI + 1, IBI.Get(), SBCOMBOP);
-            break;
-        }
-      } else {
-        switch (REFCORNER) {
-          case JBIG2_CORNER_TOPLEFT:
-            SBREG->ComposeFrom(TI, SI, IBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_TOPRIGHT:
-            SBREG->ComposeFrom(TI - WI + 1, SI, IBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMLEFT:
-            SBREG->ComposeFrom(TI, SI - HI + 1, IBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMRIGHT:
-            SBREG->ComposeFrom(TI - WI + 1, SI - HI + 1, IBI.Get(), SBCOMBOP);
-            break;
-        }
-      }
-      if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
-                              (REFCORNER == JBIG2_CORNER_BOTTOMLEFT))) {
-        CURS += WI - 1;
-      } else if (TRANSPOSED == 1 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
-                                     (REFCORNER == JBIG2_CORNER_TOPRIGHT))) {
-        CURS += HI - 1;
-      }
-      NINSTANCES = NINSTANCES + 1;
+      ComposeData compose = GetComposeData(SI, TI, WI, HI);
+      SBREG->ComposeFrom(compose.x, compose.y, IBI.Get(), SBCOMBOP);
+      if (compose.increment)
+        CURS += compose.increment;
+      ++NINSTANCES;
     }
   }
   return SBREG;
@@ -379,46 +345,63 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         return nullptr;
 
       int32_t SI = CURS.ValueOrDie();
-      if (TRANSPOSED == 0) {
-        switch (REFCORNER) {
-          case JBIG2_CORNER_TOPLEFT:
-            SBREG->ComposeFrom(SI, TI, pIBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_TOPRIGHT:
-            SBREG->ComposeFrom(SI - WI + 1, TI, pIBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMLEFT:
-            SBREG->ComposeFrom(SI, TI - HI + 1, pIBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMRIGHT:
-            SBREG->ComposeFrom(SI - WI + 1, TI - HI + 1, pIBI.Get(), SBCOMBOP);
-            break;
-        }
-      } else {
-        switch (REFCORNER) {
-          case JBIG2_CORNER_TOPLEFT:
-            SBREG->ComposeFrom(TI, SI, pIBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_TOPRIGHT:
-            SBREG->ComposeFrom(TI - WI + 1, SI, pIBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMLEFT:
-            SBREG->ComposeFrom(TI, SI - HI + 1, pIBI.Get(), SBCOMBOP);
-            break;
-          case JBIG2_CORNER_BOTTOMRIGHT:
-            SBREG->ComposeFrom(TI - WI + 1, SI - HI + 1, pIBI.Get(), SBCOMBOP);
-            break;
-        }
-      }
-      if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
-                              (REFCORNER == JBIG2_CORNER_BOTTOMLEFT))) {
-        CURS += WI - 1;
-      } else if (TRANSPOSED == 1 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
-                                     (REFCORNER == JBIG2_CORNER_TOPRIGHT))) {
-        CURS += HI - 1;
-      }
+      ComposeData compose = GetComposeData(SI, TI, WI, HI);
+      SBREG->ComposeFrom(compose.x, compose.y, pIBI.Get(), SBCOMBOP);
+      if (compose.increment)
+        CURS += compose.increment;
       ++NINSTANCES;
     }
   }
   return SBREG;
+}
+
+CJBig2_TRDProc::ComposeData CJBig2_TRDProc::GetComposeData(int32_t SI,
+                                                           int32_t TI,
+                                                           uint32_t WI,
+                                                           uint32_t HI) const {
+  ComposeData results;
+  if (TRANSPOSED == 0) {
+    switch (REFCORNER) {
+      case JBIG2_CORNER_TOPLEFT:
+        results.x = SI;
+        results.y = TI;
+        results.increment = WI - 1;
+        break;
+      case JBIG2_CORNER_TOPRIGHT:
+        results.x = SI - WI + 1;
+        results.y = TI;
+        break;
+      case JBIG2_CORNER_BOTTOMLEFT:
+        results.x = SI;
+        results.y = TI - HI + 1;
+        results.increment = WI - 1;
+        break;
+      case JBIG2_CORNER_BOTTOMRIGHT:
+        results.x = SI - WI + 1;
+        results.y = TI - HI + 1;
+        break;
+    }
+  } else {
+    switch (REFCORNER) {
+      case JBIG2_CORNER_TOPLEFT:
+        results.x = TI;
+        results.y = SI;
+        results.increment = HI - 1;
+        break;
+      case JBIG2_CORNER_TOPRIGHT:
+        results.x = TI - WI + 1;
+        results.y = SI;
+        results.increment = HI - 1;
+        break;
+      case JBIG2_CORNER_BOTTOMLEFT:
+        results.x = TI;
+        results.y = SI - HI + 1;
+        break;
+      case JBIG2_CORNER_BOTTOMRIGHT:
+        results.x = TI - WI + 1;
+        results.y = SI - HI + 1;
+        break;
+    }
+  }
+  return results;
 }

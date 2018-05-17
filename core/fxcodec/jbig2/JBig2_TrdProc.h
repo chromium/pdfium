@@ -82,6 +82,17 @@ class CJBig2_TRDProc {
   CJBig2_HuffmanTable* SBHUFFRSIZE;
   bool SBRTEMPLATE;
   int8_t SBRAT[4];
+
+ private:
+  struct ComposeData {
+    int32_t x;
+    int32_t y;
+    uint32_t increment = 0;
+  };
+  ComposeData GetComposeData(int32_t SI,
+                             int32_t TI,
+                             uint32_t WI,
+                             uint32_t HI) const;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_TRDPROC_H_
