@@ -1283,7 +1283,9 @@ CXFA_Document::CXFA_Document(CXFA_FFNotify* notify)
       m_dwDocFlags(0) {}
 
 CXFA_Document::~CXFA_Document() {
-  // Remove all the bindings before freeing the node as the ownership is wonky.
+  // The destruction order of the nodes is not known because they're stored in a
+  // list in the document. Therefore. the binding nodes must be released before
+  // freeing the nodes to avoid dangling UnownedPtrs.
   if (m_pRootNode)
     m_pRootNode->ReleaseBindingNodes();
 }
