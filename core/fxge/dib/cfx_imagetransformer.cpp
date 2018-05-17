@@ -12,6 +12,7 @@
 
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/compiler_specific.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 
@@ -488,7 +489,7 @@ void CFX_ImageTransformer::DoBilinearLoop(
       d.src_row_l = 0;
       matrix_fix.Transform(col, row, &d.src_col_l, &d.src_row_l, &d.res_x,
                            &d.res_y);
-      if (InStretchBounds(d.src_col_l, d.src_row_l)) {
+      if (LIKELY(InStretchBounds(d.src_col_l, d.src_row_l))) {
         AdjustCoords(&d.src_col_l, &d.src_row_l);
         d.src_col_r = d.src_col_l + 1;
         d.src_row_r = d.src_row_l + 1;
@@ -517,7 +518,7 @@ void CFX_ImageTransformer::DoBicubicLoop(
       d.src_row_l = 0;
       matrix_fix.Transform(col, row, &d.src_col_l, &d.src_row_l, &d.res_x,
                            &d.res_y);
-      if (InStretchBounds(d.src_col_l, d.src_row_l)) {
+      if (LIKELY(InStretchBounds(d.src_col_l, d.src_row_l))) {
         AdjustCoords(&d.src_col_l, &d.src_row_l);
         bicubic_get_pos_weight(d.pos_pixel, d.u_w, d.v_w, d.src_col_l,
                                d.src_row_l, d.res_x, d.res_y, stretch_width(),
@@ -541,7 +542,7 @@ void CFX_ImageTransformer::DoDownSampleLoop(
       d.src_col = 0;
       d.src_row = 0;
       matrix_fix.Transform(col, row, &d.src_col, &d.src_row);
-      if (InStretchBounds(d.src_col, d.src_row)) {
+      if (LIKELY(InStretchBounds(d.src_col, d.src_row))) {
         AdjustCoords(&d.src_col, &d.src_row);
         func(d, dest);
       }
