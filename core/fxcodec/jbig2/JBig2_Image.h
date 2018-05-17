@@ -56,13 +56,14 @@ class CJBig2_Image {
   void expand(int32_t h, bool v);
 
 
- private:
   bool ComposeTo(CJBig2_Image* pDst, int32_t x, int32_t y, JBig2ComposeOp op);
   bool ComposeToWithRect(CJBig2_Image* pDst,
                          int32_t x,
                          int32_t y,
                          const FX_RECT& rtSrc,
                          JBig2ComposeOp op);
+
+ private:
   bool ComposeToOpt2(CJBig2_Image* pDst,
                      int32_t x,
                      int32_t y,

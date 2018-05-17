@@ -180,7 +180,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
 
       int32_t SI = CURS.ValueOrDie();
       ComposeData compose = GetComposeData(SI, TI, WI, HI);
-      SBREG->ComposeFrom(compose.x, compose.y, IBI.Get(), SBCOMBOP);
+      IBI.Get()->ComposeTo(SBREG.get(), compose.x, compose.y, SBCOMBOP);
       if (compose.increment)
         CURS += compose.increment;
       ++NINSTANCES;
@@ -346,7 +346,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
 
       int32_t SI = CURS.ValueOrDie();
       ComposeData compose = GetComposeData(SI, TI, WI, HI);
-      SBREG->ComposeFrom(compose.x, compose.y, pIBI.Get(), SBCOMBOP);
+      pIBI.Get()->ComposeTo(SBREG.get(), compose.x, compose.y, SBCOMBOP);
       if (compose.increment)
         CURS += compose.increment;
       ++NINSTANCES;

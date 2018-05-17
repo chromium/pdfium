@@ -129,7 +129,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeImage(
       uint32_t pat_index = std::min(gsval, HNUMPATS - 1);
       int32_t out_x = (HGX + y * HRY + x * HRX) >> 8;
       int32_t out_y = (HGY + y * HRX - x * HRY) >> 8;
-      HTREG->ComposeFrom(out_x, out_y, (*HPATS)[pat_index].get(), HCOMBOP);
+      (*HPATS)[pat_index]->ComposeTo(HTREG.get(), out_x, out_y, HCOMBOP);
     }
   }
   return HTREG;
