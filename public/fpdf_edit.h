@@ -596,6 +596,9 @@ FPDF_EXPORT void FPDF_CALLCONV
 FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
                          FPDF_BYTESTRING blend_mode);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_SetStrokeColor instead.
+//
 // Set the stroke RGBA of a path. Range of values: 0 - 255.
 //
 // path   - the handle to the path object.
@@ -628,6 +631,9 @@ FPDFPageObj_SetStrokeColor(FPDF_PAGEOBJECT page_object,
                            unsigned int B,
                            unsigned int A);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_GetStrokeColor instead. Get the stroke RGBA of a path.
+//
 // Get the stroke RGBA of a path. Range of values: 0 - 255.
 //
 // path   - the handle to the path object.
@@ -660,6 +666,9 @@ FPDFPageObj_GetStrokeColor(FPDF_PAGEOBJECT page_object,
                            unsigned int* B,
                            unsigned int* A);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_SetStrokeWidth instead.
+//
 // Set the stroke width of a path.
 //
 // path   - the handle to the path object.
@@ -678,6 +687,9 @@ FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_SetStrokeWidth(FPDF_PAGEOBJECT page_object, float width);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_SetLineJoin instead.
+//
 // Set the line join of |page_object|.
 //
 // page_object  - handle to a page object.
@@ -698,6 +710,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineJoin(FPDF_PAGEOBJECT page_object,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_SetLineCap instead.
+//
 // Set the line cap of |page_object|.
 //
 // page_object - handle to a page object.
@@ -718,6 +733,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineCap(FPDF_PAGEOBJECT page_object,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_SetLineCap(FPDF_PAGEOBJECT page_object, int line_cap);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_SetFillColor instead.
+//
 // Set the fill RGBA of a path. Range of values: 0 - 255.
 //
 // path   - the handle to the path object.
@@ -749,6 +767,9 @@ FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
                          unsigned int B,
                          unsigned int A);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_GetFillColor instead.
+//
 // Get the fill RGBA of a path. Range of values: 0 - 255.
 //
 // path   - the handle to the path object.
@@ -938,6 +959,9 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
                                                       int font_type,
                                                       FPDF_BOOL cid);
 
+// DEPRECATED as of May 2018. This API will be removed in the future. Please
+// use FPDFPageObj_SetFillColor instead.
+//
 // Set the fill RGBA of a text object. Range of values: 0 - 255.
 //
 // text_object  - handle to the text object.
