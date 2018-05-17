@@ -188,8 +188,8 @@ class CFX_BilinearMatrix : public CPDF_FixedMatrix {
     *x1 = pdfium::base::saturated_cast<int>(val.first / kBase);
     *y1 = pdfium::base::saturated_cast<int>(val.second / kBase);
 
-    *res_x = static_cast<int>(fmodf(val.first, kBase));
-    *res_y = static_cast<int>(fmodf(val.second, kBase));
+    *res_x = static_cast<int>(val.first) % kBase;
+    *res_y = static_cast<int>(val.second) % kBase;
     if (*res_x < 0 && *res_x > -kBase)
       *res_x = kBase + *res_x;
     if (*res_y < 0 && *res_y > -kBase)
