@@ -73,8 +73,16 @@ void CPDFXFA_Context::SetFormFillEnv(
   // The layout data can have pointers back into the script context. That
   // context will be different if the form fill environment closes, so, force
   // the layout data to clear.
-  if (m_pXFADoc && m_pXFADoc->GetXFADoc())
+  if (m_pXFADoc && m_pXFADoc->GetXFADoc()) {
+    // The CPDF_XFADocView has a pointer to the CXFA_LayoutProcessor which is
+    // owned by the CXFA_Document. The Layout Processor will be freed with the
+    // ClearLayoutData() call. Make sure the doc view has already released the
+    // pointer.
+    if (m_pXFADocView)
+      m_pXFADocView->ResetLayoutProcessor();
+
     m_pXFADoc->GetXFADoc()->ClearLayoutData();
+  }
 
   m_pFormFillEnv.Reset(pFormFillEnv);
 }

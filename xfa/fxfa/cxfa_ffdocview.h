@@ -97,6 +97,8 @@ class CXFA_FFDocView {
   bool m_bInLayoutStatus = false;
   std::vector<WideString> m_arrNullTestMsg;
 
+  void ResetLayoutProcessor() { m_pXFADocLayout.Release(); }
+
  private:
   bool RunEventLayoutReady();
   void RunBindItems();
@@ -115,7 +117,7 @@ class CXFA_FFDocView {
 
   UnownedPtr<CXFA_FFDoc> const m_pDoc;
   std::unique_ptr<CXFA_FFWidgetHandler> m_pWidgetHandler;
-  CXFA_LayoutProcessor* m_pXFADocLayout = nullptr;  // Not owned.
+  UnownedPtr<CXFA_LayoutProcessor> m_pXFADocLayout;
   UnownedPtr<CXFA_Node> m_pFocusNode;
   UnownedPtr<CXFA_FFWidget> m_pFocusWidget;
   std::vector<CXFA_Node*> m_ValidateNodes;
