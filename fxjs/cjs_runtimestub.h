@@ -33,7 +33,8 @@ class CJS_RuntimeStub final : public IJS_Runtime {
                                     CFXJSE_Value*) override;
 #endif  // PDF_ENABLE_XFA
 
-  int ExecuteScript(const WideString& script, WideString* info) override;
+  Optional<IJS_Runtime::JS_Error> ExecuteScript(
+      const WideString& script) override;
 
  protected:
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;

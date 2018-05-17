@@ -415,8 +415,7 @@ void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
   if (!pRuntime->IsBlocking()) {
     IJS_EventContext* pContext = pRuntime->NewEventContext();
     pContext->OnExternal_Exec();
-    WideString wtInfo;
-    pContext->RunScript(wsScript, &wtInfo);
+    pContext->RunScript(wsScript);
     pRuntime->ReleaseEventContext(pContext);
   }
 }

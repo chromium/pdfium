@@ -42,6 +42,7 @@ bool CJS_RuntimeStub::SetValueByNameInGlobalObject(const ByteStringView&,
 }
 #endif  // PDF_ENABLE_XFA
 
-int CJS_RuntimeStub::ExecuteScript(const WideString& script, WideString* info) {
-  return 0;
+Optional<IJS_Runtime::JS_Error> CJS_RuntimeStub::ExecuteScript(
+    const WideString& script) {
+  return pdfium::nullopt;
 }

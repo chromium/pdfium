@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/optional.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fxjs/fxjse.h"
@@ -25,6 +26,14 @@ class IJS_EventContext;
 // when JS is not present.
 class IJS_Runtime {
  public:
+  struct JS_Error {
+    int line;
+    int column;
+    WideString exception;
+
+    JS_Error(int line, int column, const WideString& exception);
+  };
+
   static void Initialize(unsigned int slot, void* isolate);
   static void Destroy();
   static std::unique_ptr<IJS_Runtime> Create(
@@ -35,7 +44,7 @@ class IJS_Runtime {
   virtual IJS_EventContext* NewEventContext() = 0;
   virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;
-  virtual int ExecuteScript(const WideString& script, WideString* info) = 0;
+  virtual Optional<JS_Error> ExecuteScript(const WideString& script) = 0;
 
 #ifdef PDF_ENABLE_XFA
   virtual bool GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
@@ -45,7 +54,7 @@ class IJS_Runtime {
 #endif  // PDF_ENABLE_XFA
 
  protected:
-  IJS_Runtime() {}
+  IJS_Runtime() = default;
 };
 
 #endif  // FXJS_IJS_RUNTIME_H_

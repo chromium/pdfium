@@ -544,8 +544,7 @@ void CPDFSDK_ActionHandler::RunScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
   cb(pContext);
 
-  WideString csInfo;
-  pContext->RunScript(script, &csInfo);
+  pContext->RunScript(script);
   pRuntime->ReleaseEventContext(pContext);
-  // TODO(dsinclair): Return error if RunScript returns false.
+  // TODO(dsinclair): Return error if RunScript returns a IJS_Runtime::JS_Error.
 }

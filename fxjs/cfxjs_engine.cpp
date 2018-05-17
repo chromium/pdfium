@@ -520,7 +520,8 @@ void CFXJS_Engine::ReleaseEngine() {
   GetIsolate()->SetData(g_embedderDataSlot, nullptr);
 }
 
-int CFXJS_Engine::Execute(const WideString& script, FXJSErr* pError) {
+Optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
+    const WideString& script) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::TryCatch try_catch(GetIsolate());
   v8::Local<v8::Context> context = GetIsolate()->GetCurrentContext();
@@ -528,17 +529,22 @@ int CFXJS_Engine::Execute(const WideString& script, FXJSErr* pError) {
   if (!v8::Script::Compile(context, NewString(script.AsStringView()))
            .ToLocal(&compiled_script)) {
     v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
-    // TODO(tsepez): return error via pError->message.
-    return -1;
+    v8::Local<v8::Message> msg = try_catch.Message();
+    v8::Maybe<int> line = msg->GetLineNumber(context);
+
+    return IJS_Runtime::JS_Error(line.FromMaybe(-1), msg->GetStartColumn(),
+                                 WideString::FromUTF8(*error));
   }
 
   v8::Local<v8::Value> result;
   if (!compiled_script->Run(context).ToLocal(&result)) {
     v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
-    // TODO(tsepez): return error via pError->message.
-    return -1;
+    auto msg = try_catch.Message();
+    auto line = msg->GetLineNumber(context);
+    return IJS_Runtime::JS_Error(line.FromMaybe(-1), msg->GetStartColumn(),
+                                 WideString::FromUTF8(*error));
   }
-  return 0;
+  return pdfium::nullopt;
 }
 
 v8::Local<v8::Object> CFXJS_Engine::NewFXJSBoundObject(int nObjDefnID,

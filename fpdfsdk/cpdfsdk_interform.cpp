@@ -291,10 +291,9 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
     bool bRC = true;
     pContext->OnField_Calculate(pFormField, pField, sValue, bRC);
 
-    WideString sInfo;
-    bool bRet = pContext->RunScript(csJS, &sInfo);
+    Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(csJS);
     pRuntime->ReleaseEventContext(pContext);
-    if (bRet && bRC && sValue.Compare(sOldValue) != 0)
+    if (!err && bRC && sValue.Compare(sOldValue) != 0)
       pField->SetValue(sValue, true);
   }
   m_bBusy = false;
@@ -328,10 +327,10 @@ WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
 
         IJS_EventContext* pContext = pRuntime->NewEventContext();
         pContext->OnField_Format(pFormField, Value, true);
-        WideString sInfo;
-        bool bRet = pContext->RunScript(script, &sInfo);
+
+        Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(script);
         pRuntime->ReleaseEventContext(pContext);
-        if (bRet) {
+        if (!err) {
           sValue = Value;
           bFormatted = true;
         }

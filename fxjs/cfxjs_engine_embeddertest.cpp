@@ -21,13 +21,13 @@ const wchar_t kScript2[] = L"fred = 8";
 
 class CFXJSEngineEmbedderTest : public JSEmbedderTest {
  public:
-  void ExecuteInCurrentContext(const WideString& script) {
+  Optional<IJS_Runtime::JS_Error> ExecuteInCurrentContext(
+      const WideString& script) {
     auto* current_engine =
         CFXJS_Engine::EngineFromIsolateCurrentContext(isolate());
-    FXJSErr error;
-    int sts = current_engine->Execute(script, &error);
-    EXPECT_EQ(0, sts);
+    return current_engine->Execute(script);
   }
+
   void CheckAssignmentInCurrentContext(double expected) {
     auto* current_engine =
         CFXJS_Engine::EngineFromIsolateCurrentContext(isolate());
@@ -44,7 +44,9 @@ TEST_F(CFXJSEngineEmbedderTest, Getters) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 
-  ExecuteInCurrentContext(WideString(kScript1));
+  Optional<IJS_Runtime::JS_Error> err =
+      ExecuteInCurrentContext(WideString(kScript1));
+  EXPECT_FALSE(err);
   CheckAssignmentInCurrentContext(kExpected1);
 }
 
@@ -62,17 +64,23 @@ TEST_F(CFXJSEngineEmbedderTest, MultipleEngines) {
   v8::Local<v8::Context> context2 = engine2.GetV8Context();
 
   v8::Context::Scope context_scope(GetV8Context());
-  ExecuteInCurrentContext(WideString(kScript0));
+  Optional<IJS_Runtime::JS_Error> err =
+      ExecuteInCurrentContext(WideString(kScript0));
+  EXPECT_FALSE(err);
   CheckAssignmentInCurrentContext(kExpected0);
 
   {
     v8::Context::Scope context_scope1(context1);
-    ExecuteInCurrentContext(WideString(kScript1));
+    Optional<IJS_Runtime::JS_Error> err =
+        ExecuteInCurrentContext(WideString(kScript1));
+    EXPECT_FALSE(err);
     CheckAssignmentInCurrentContext(kExpected1);
   }
   {
     v8::Context::Scope context_scope2(context2);
-    ExecuteInCurrentContext(WideString(kScript2));
+    Optional<IJS_Runtime::JS_Error> err =
+        ExecuteInCurrentContext(WideString(kScript2));
+    EXPECT_FALSE(err);
     CheckAssignmentInCurrentContext(kExpected2);
   }
 
@@ -101,4 +109,31 @@ TEST_F(CFXJSEngineEmbedderTest, MultipleEngines) {
 
   engine1.ReleaseEngine();
   engine2.ReleaseEngine();
+}
+
+TEST_F(CFXJSEngineEmbedderTest, JSCompileError) {
+  v8::Isolate::Scope isolate_scope(isolate());
+  v8::HandleScope handle_scope(isolate());
+  v8::Context::Scope context_scope(GetV8Context());
+
+  Optional<IJS_Runtime::JS_Error> err =
+      ExecuteInCurrentContext(L"functoon(x) { return x+1; }");
+  EXPECT_TRUE(err);
+  EXPECT_EQ(L"SyntaxError: Unexpected token {", err->exception);
+  EXPECT_EQ(1, err->line);
+  EXPECT_EQ(12, err->column);
+}
+
+TEST_F(CFXJSEngineEmbedderTest, JSRuntimeError) {
+  v8::Isolate::Scope isolate_scope(isolate());
+  v8::HandleScope handle_scope(isolate());
+  v8::Context::Scope context_scope(GetV8Context());
+
+  Optional<IJS_Runtime::JS_Error> err =
+      ExecuteInCurrentContext(L"let a = 3;\nundefined.colour");
+  EXPECT_TRUE(err);
+  EXPECT_EQ(L"TypeError: Cannot read property 'colour' of undefined",
+            err->exception);
+  EXPECT_EQ(2, err->line);
+  EXPECT_EQ(10, err->column);
 }

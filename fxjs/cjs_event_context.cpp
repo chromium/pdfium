@@ -25,15 +25,16 @@ CPDFSDK_FormFillEnvironment* CJS_EventContext::GetFormFillEnv() {
   return m_pRuntime->GetFormFillEnv();
 }
 
-bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
+Optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
+    const WideString& script) {
   v8::Isolate::Scope isolate_scope(m_pRuntime->GetIsolate());
   v8::HandleScope handle_scope(m_pRuntime->GetIsolate());
   v8::Local<v8::Context> context = m_pRuntime->GetV8Context();
   v8::Context::Scope context_scope(context);
 
   if (m_bBusy) {
-    *info = JSGetStringFromID(JSMessage::kBusyError);
-    return false;
+    return IJS_Runtime::JS_Error(1, 1,
+                                 JSGetStringFromID(JSMessage::kBusyError));
   }
 
   AutoRestorer<bool> restorer(&m_bBusy);
@@ -43,23 +44,17 @@ bool CJS_EventContext::RunScript(const WideString& script, WideString* info) {
   CJS_Runtime::FieldEvent event(m_pEventHandler->TargetName(),
                                 m_pEventHandler->EventType());
   if (!m_pRuntime->AddEventToSet(event)) {
-    *info = JSGetStringFromID(JSMessage::kDuplicateEventError);
-    return false;
+    return IJS_Runtime::JS_Error(
+        1, 1, JSGetStringFromID(JSMessage::kDuplicateEventError));
   }
 
-  WideString sErrorMessage;
-  int nRet = 0;
+  Optional<IJS_Runtime::JS_Error> err;
   if (script.GetLength() > 0)
-    nRet = m_pRuntime->ExecuteScript(script.c_str(), &sErrorMessage);
-
-  if (nRet < 0)
-    *info += sErrorMessage;
-  else
-    *info = JSGetStringFromID(JSMessage::kRunSuccess);
+    err = m_pRuntime->ExecuteScript(script.c_str());
 
   m_pRuntime->RemoveEventFromSet(event);
   m_pEventHandler->Destroy();
-  return nRet >= 0;
+  return err;
 }
 
 void CJS_EventContext::OnApp_Init() {

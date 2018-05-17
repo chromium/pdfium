@@ -15,7 +15,7 @@ class CJS_EventContextStub final : public IJS_EventContext {
   ~CJS_EventContextStub() override {}
 
   // IJS_EventContext:
-  bool RunScript(const WideString& script, WideString* info) override;
+  Optional<IJS_Runtime::JS_Error> RunScript(const WideString& script) override;
 
   void OnApp_Init() override {}
   void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,

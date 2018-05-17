@@ -79,8 +79,9 @@ TEST_F(FXJSEngineUnitTest, GC) {
     EXPECT_FALSE(temp_destroyed);
   }
 
-  FXJSErr error;
-  engine()->Execute(L"gc();", &error);
+  Optional<IJS_Runtime::JS_Error> err = engine()->Execute(L"gc();");
+  EXPECT_FALSE(err);
+
   EXPECT_TRUE(perm_created);
   EXPECT_FALSE(perm_destroyed);
   EXPECT_TRUE(temp_created);

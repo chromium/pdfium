@@ -190,14 +190,9 @@ CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {
   return m_pFormFillEnv.Get();
 }
 
-int CJS_Runtime::ExecuteScript(const WideString& script, WideString* info) {
-  FXJSErr error = {};
-  int nRet = Execute(script, &error);
-  if (nRet < 0) {
-    *info = WideString::Format(L"[ Line: %05d { %ls } ] : %s", error.linnum - 1,
-                               error.srcline, error.message);
-  }
-  return nRet;
+Optional<IJS_Runtime::JS_Error> CJS_Runtime::ExecuteScript(
+    const WideString& script) {
+  return Execute(script);
 }
 
 bool CJS_Runtime::AddEventToSet(const FieldEvent& event) {

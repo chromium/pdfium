@@ -21,6 +21,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cfx_v8.h"
+#include "fxjs/ijs_runtime.h"
 #include "v8/include/v8-util.h"
 #include "v8/include/v8.h"
 
@@ -41,12 +42,6 @@ enum FXJSOBJTYPE {
   FXJSOBJTYPE_DYNAMIC = 0,  // Created by native method and returned to JS.
   FXJSOBJTYPE_STATIC,       // Created by init and hung off of global object.
   FXJSOBJTYPE_GLOBAL,       // The global object itself (may only appear once).
-};
-
-struct FXJSErr {
-  const wchar_t* message;
-  const wchar_t* srcline;
-  unsigned linnum;
 };
 
 class FXJS_PerIsolateData {
@@ -128,7 +123,7 @@ class CFXJS_Engine : public CFX_V8 {
   void ReleaseEngine();
 
   // Called after FXJS_InitializeEngine call made.
-  int Execute(const WideString& script, FXJSErr* perror);
+  Optional<IJS_Runtime::JS_Error> Execute(const WideString& script);
 
   v8::Local<v8::Object> GetThisObj();
   v8::Local<v8::Object> NewFXJSBoundObject(int nObjDefnID,

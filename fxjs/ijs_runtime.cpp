@@ -38,3 +38,8 @@ std::unique_ptr<IJS_Runtime> IJS_Runtime::Create(
 }
 
 IJS_Runtime::~IJS_Runtime() = default;
+
+IJS_Runtime::JS_Error::JS_Error(int line,
+                                int column,
+                                const WideString& exception)
+    : line(line), column(column), exception(exception) {}

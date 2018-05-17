@@ -24,7 +24,7 @@ class CJS_EventContext : public IJS_EventContext {
   ~CJS_EventContext() override;
 
   // IJS_EventContext
-  bool RunScript(const WideString& script, WideString* info) override;
+  Optional<IJS_Runtime::JS_Error> RunScript(const WideString& script) override;
   void OnApp_Init() override;
   void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                   const WideString& strTargetName) override;
