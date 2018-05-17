@@ -10,9 +10,9 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_fallthrough.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "fxjs/cfxjse_engine.h"
+#include "third_party/base/compiler_specific.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_datawindow.h"
@@ -445,7 +445,7 @@ CXFA_Node* FindMatchingDataNode(
           pResult = pGlobalBindNode;
           break;
         }
-        FX_FALLTHROUGH;
+        FALLTHROUGH;
       case XFA_AttributeEnum::Once: {
         bAccessedDataDOM = true;
         CXFA_Node* pOnceBindNode = FindOnceDataNode(

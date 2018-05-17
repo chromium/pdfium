@@ -16,7 +16,7 @@
 #include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_fallthrough.h"
+#include "third_party/base/compiler_specific.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -318,7 +318,7 @@ void CPDF_VariableText::SetText(const WideString& swText) {
         break;
       case 0x09:
         word = 0x20;
-        FX_FALLTHROUGH;
+        FALLTHROUGH;
       default:
         wp = InsertWord(wp, word, FX_CHARSET_Default);
         break;

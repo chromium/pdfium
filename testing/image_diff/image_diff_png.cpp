@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "core/fxcrt/fx_fallthrough.h"
+#include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"
 #include "third_party/zlib/zlib.h"
 
@@ -582,7 +582,7 @@ bool EncodeWithCompressionLevel(const unsigned char* input,
   switch (format) {
     case FORMAT_BGR:
       converter = ConvertBGRtoRGB;
-      FX_FALLTHROUGH;
+      FALLTHROUGH;
 
     case FORMAT_RGB:
       input_color_components = 3;

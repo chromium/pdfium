@@ -11,8 +11,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/fx_fallthrough.h"
 #include "fxjs/xfa/cjx_object.h"
+#include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -863,7 +863,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
     }
     case XFA_ItemLayoutProcessorStages::None: {
       pCurActionNode = XFA_LAYOUT_INVALIDNODE;
-      FX_FALLTHROUGH;
+      FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BookendLeader:
         for (CXFA_Node* pBookendNode = pCurActionNode == XFA_LAYOUT_INVALIDNODE
                                            ? pEntireContainer->GetFirstChild()
@@ -882,7 +882,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
     }
       {
         pCurActionNode = XFA_LAYOUT_INVALIDNODE;
-        FX_FALLTHROUGH;
+        FALLTHROUGH;
         case XFA_ItemLayoutProcessorStages::BreakBefore:
           if (pCurActionNode != XFA_LAYOUT_INVALIDNODE) {
             CXFA_Node* pBreakBeforeNode = pCurActionNode->GetNextSibling();
@@ -906,7 +906,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
       }
     case XFA_ItemLayoutProcessorStages::Container: {
       pCurActionNode = XFA_LAYOUT_INVALIDNODE;
-      FX_FALLTHROUGH;
+      FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BreakAfter: {
         if (pCurActionNode == XFA_LAYOUT_INVALIDNODE) {
           CXFA_Node* pBreakAfterNode = pChildContainer->GetFirstChild();
@@ -961,7 +961,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
 
     NoMoreChildContainer : {
       pCurActionNode = XFA_LAYOUT_INVALIDNODE;
-      FX_FALLTHROUGH;
+      FALLTHROUGH;
       case XFA_ItemLayoutProcessorStages::BookendTrailer:
         for (CXFA_Node* pBookendNode = pCurActionNode == XFA_LAYOUT_INVALIDNODE
                                            ? pEntireContainer->GetFirstChild()
@@ -978,7 +978,7 @@ void CXFA_ItemLayoutProcessor::GotoNextContainerNode(
           }
         }
     }
-      FX_FALLTHROUGH;
+      FALLTHROUGH;
     default:
       pCurActionNode = nullptr;
       *nCurStage = XFA_ItemLayoutProcessorStages::Done;
@@ -1958,10 +1958,10 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           switch (rs) {
             case XFA_ItemLayoutProcessorResult::ManualBreak:
               bIsManualBreak = true;
-              FX_FALLTHROUGH;
+              FALLTHROUGH;
             case XFA_ItemLayoutProcessorResult::PageFullBreak:
               bForceEndPage = true;
-              FX_FALLTHROUGH;
+              FALLTHROUGH;
             case XFA_ItemLayoutProcessorResult::RowFullBreak:
               goto SuspendAndCreateNewRow;
             case XFA_ItemLayoutProcessorResult::Done:

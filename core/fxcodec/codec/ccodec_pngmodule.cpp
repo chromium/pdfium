@@ -10,9 +10,9 @@
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/fx_fallthrough.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/compiler_specific.h"
 #include "third_party/base/ptr_util.h"
 
 #ifdef USE_SYSTEM_LIBPNG
@@ -139,7 +139,7 @@ static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
       if (color_type1 != PNG_COLOR_TYPE_PALETTE) {
         png_error(pContext->m_pPng, "Not Support Output Palette Now");
       }
-      FX_FALLTHROUGH;
+      FALLTHROUGH;
     case PNG_COLOR_TYPE_RGB:
     case PNG_COLOR_TYPE_RGB_ALPHA:
       if (!(color_type1 & PNG_COLOR_MASK_COLOR)) {

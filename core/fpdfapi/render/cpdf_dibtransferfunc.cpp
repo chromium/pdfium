@@ -10,7 +10,7 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
-#include "core/fxcrt/fx_fallthrough.h"
+#include "third_party/base/compiler_specific.h"
 
 CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
     const RetainPtr<CPDF_TransferFunc>& pTransferFunc)
@@ -120,7 +120,7 @@ void CPDF_DIBTransferFunc::TranslateScanline(
     }
     case FXDIB_Rgb32:
       bSkip = true;
-      FX_FALLTHROUGH;
+      FALLTHROUGH;
     case FXDIB_Argb: {
       int index = 0;
       for (int i = 0; i < m_Width; i++) {
