@@ -40,7 +40,7 @@ class CXFA_FFApp {
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
 
   CFGAS_FontMgr* GetFDEFontMgr();
-  CXFA_FWLTheme* GetFWLTheme();
+  CXFA_FWLTheme* GetFWLTheme(CXFA_FFDoc* doc);
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }

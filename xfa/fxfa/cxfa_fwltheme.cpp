@@ -62,11 +62,11 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
   m_Rect.Reset();
 }
 
-bool CXFA_FWLTheme::LoadCalendarFont() {
+bool CXFA_FWLTheme::LoadCalendarFont(CXFA_FFDoc* doc) {
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
        ++i) {
-    m_pCalendarFont = CFGAS_GEFont::LoadFont(g_FWLTheme_CalFonts[i], 0, 0,
-                                             m_pApp->GetFDEFontMgr());
+    m_pCalendarFont =
+        m_pApp->GetXFAFontMgr()->GetFont(doc, g_FWLTheme_CalFonts[i], 0);
   }
 
   if (!m_pCalendarFont) {

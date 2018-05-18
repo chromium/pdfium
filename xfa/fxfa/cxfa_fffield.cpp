@@ -119,7 +119,7 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
 
 void CXFA_FFField::SetFWLThemeProvider() {
   if (m_pNormalWidget)
-    m_pNormalWidget->SetThemeProvider(GetApp()->GetFWLTheme());
+    m_pNormalWidget->SetThemeProvider(GetApp()->GetFWLTheme(GetDoc()));
 }
 
 bool CXFA_FFField::IsLoaded() {
