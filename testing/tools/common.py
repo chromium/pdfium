@@ -141,7 +141,7 @@ def GetBooleanGnArg(arg_name, build_dir, verbose=False):
   os.chdir(cwd)
   arg_match_output = re.search('%s = (.*)' % arg_name, gn_args_output).group(1)
   if verbose:
-    print >> sys.stderr, "Found '%s' for value of %s" % (arg_match_output, arg)
+    print >> sys.stderr, "Found '%s' for value of %s" % (arg_match_output, arg_name)
   return arg_match_output == 'true'
 
 
