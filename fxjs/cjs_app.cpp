@@ -6,6 +6,8 @@
 
 #include "fxjs/cjs_app.h"
 
+#include <utility>
+
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_timerobj.h"
@@ -276,11 +278,11 @@ CJS_Return CJS_App::alert(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_App::beep(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params) {
-  if (params.size() == 1) {
-    pRuntime->GetFormFillEnv()->JS_appBeep(pRuntime->ToInt32(params[0]));
-    return CJS_Return(true);
-  }
-  return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+  if (params.size() != 1)
+    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+
+  pRuntime->GetFormFillEnv()->JS_appBeep(pRuntime->ToInt32(params[0]));
+  return CJS_Return(true);
 }
 
 CJS_Return CJS_App::findComponent(
@@ -306,18 +308,18 @@ CJS_Return CJS_App::set_fs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 CJS_Return CJS_App::setInterval(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  if (params.size() > 2 || params.size() == 0)
+  if (params.size() == 0 || params.size() > 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
-  WideString script =
-      params.size() > 0 ? pRuntime->ToWideString(params[0]) : L"";
+  WideString script = pRuntime->ToWideString(params[0]);
   if (script.IsEmpty())
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
   uint32_t dwInterval = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
-  GlobalTimer* timerRef = new GlobalTimer(this, pRuntime->GetFormFillEnv(),
-                                          pRuntime, 0, script, dwInterval, 0);
-  m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
+  auto timerRef = pdfium::MakeUnique<GlobalTimer>(
+      this, pRuntime->GetFormFillEnv(), pRuntime, 0, script, dwInterval, 0);
+  GlobalTimer* pTimerRef = timerRef.get();
+  m_Timers.insert(std::move(timerRef));
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFXJSBoundObject(CJS_TimerObj::GetObjDefnID());
@@ -326,14 +328,14 @@ CJS_Return CJS_App::setInterval(
 
   CJS_TimerObj* pJS_TimerObj =
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
-  pJS_TimerObj->SetTimer(timerRef);
+  pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Return(pRetObj);
 }
 
 CJS_Return CJS_App::setTimeOut(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  if (params.size() > 2 || params.size() == 0)
+  if (params.size() == 0 || params.size() > 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   WideString script = pRuntime->ToWideString(params[0]);
@@ -341,10 +343,11 @@ CJS_Return CJS_App::setTimeOut(
     return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
 
   uint32_t dwTimeOut = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 1000;
-  GlobalTimer* timerRef =
-      new GlobalTimer(this, pRuntime->GetFormFillEnv(), pRuntime, 1, script,
-                      dwTimeOut, dwTimeOut);
-  m_Timers.insert(std::unique_ptr<GlobalTimer>(timerRef));
+  auto timerRef = pdfium::MakeUnique<GlobalTimer>(
+      this, pRuntime->GetFormFillEnv(), pRuntime, 1, script, dwTimeOut,
+      dwTimeOut);
+  GlobalTimer* pTimerRef = timerRef.get();
+  m_Timers.insert(std::move(timerRef));
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFXJSBoundObject(CJS_TimerObj::GetObjDefnID());
@@ -353,8 +356,7 @@ CJS_Return CJS_App::setTimeOut(
 
   CJS_TimerObj* pJS_TimerObj =
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
-  pJS_TimerObj->SetTimer(timerRef);
-
+  pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Return(pRetObj);
 }
 
