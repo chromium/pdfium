@@ -55,7 +55,6 @@ class CPWL_ListBox : public CPWL_Wnd {
   bool OnMouseWheel(short zDelta,
                     const CFX_PointF& point,
                     uint32_t nFlag) override;
-  void KillFocus() override;
   WideString GetText() override;
   void SetScrollInfo(const PWL_SCROLL_INFO& info) override;
   void SetScrollPosition(float pos) override;
