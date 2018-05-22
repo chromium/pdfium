@@ -451,7 +451,6 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
       break;
   }
   int PitchFamily = 0;
-  bool bItalic = false;
   uint32_t nStyle = FXFONT_NORMAL;
   bool bStyleAvail = false;
   if (iBaseFont < 12) {
@@ -487,7 +486,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
     UpdatePitchFamily(flags, &PitchFamily);
   }
 
-  int old_weight = weight;
+  const int old_weight = weight;
   if (FontStyleIsBold(nStyle))
     weight = FXFONT_FW_BOLD;
 
@@ -537,23 +536,23 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
       i += buf.GetLength() + 1;
     }
   }
-  if (FontStyleIsItalic(nStyle))
-    bItalic = true;
+
+  if (!m_pFontInfo) {
+    return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
+                            PitchFamily);
+  }
 
   int Charset = FX_CHARSET_ANSI;
   if (WindowCP)
     Charset = GetCharsetFromCodePage(WindowCP);
   else if (iBaseFont == kNumStandardFonts && FontStyleIsSymbolic(flags))
     Charset = FX_CHARSET_Symbol;
+  const bool bCJK = (Charset == FX_CHARSET_ShiftJIS ||
+                     Charset == FX_CHARSET_ChineseSimplified ||
+                     Charset == FX_CHARSET_Hangul ||
+                     Charset == FX_CHARSET_ChineseTraditional);
+  bool bItalic = FontStyleIsItalic(nStyle);
 
-  bool bCJK = (Charset == FX_CHARSET_ShiftJIS ||
-               Charset == FX_CHARSET_ChineseSimplified ||
-               Charset == FX_CHARSET_Hangul ||
-               Charset == FX_CHARSET_ChineseTraditional);
-  if (!m_pFontInfo) {
-    return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
-                            PitchFamily);
-  }
   GetFontFamily(nStyle, &family);
   ByteString match = MatchInstalledFonts(TT_NormalizeName(family.c_str()));
   if (match.IsEmpty() && family != SubstName &&
