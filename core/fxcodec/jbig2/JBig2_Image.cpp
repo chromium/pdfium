@@ -89,24 +89,19 @@ int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
   return ((data()[m] >> (7 - n)) & 1);
 }
 
-int32_t CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
+void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
   if (!m_pData)
-    return 0;
+    return;
 
-  if (x < 0 || x >= m_nWidth)
-    return 0;
-
-  if (y < 0 || y >= m_nHeight)
-    return 0;
+  if (x < 0 || x >= m_nWidth || y < 0 || y >= m_nHeight)
+    return;
 
   int32_t m = y * m_nStride + (x >> 3);
-  int32_t n = x & 7;
+  int32_t n = 1 << (7 - (x & 7));
   if (v)
-    data()[m] |= 1 << (7 - n);
+    data()[m] |= n;
   else
-    data()[m] &= ~(1 << (7 - n));
-
-  return 1;
+    data()[m] &= ~n;
 }
 
 void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {

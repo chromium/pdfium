@@ -37,7 +37,7 @@ class CJBig2_Image {
   uint8_t* data() const { return m_pData.Get(); }
 
   int GetPixel(int32_t x, int32_t y) const;
-  int32_t SetPixel(int32_t x, int32_t y, int bVal);
+  void SetPixel(int32_t x, int32_t y, int bVal);
 
   void CopyLine(int32_t hTo, int32_t hFrom);
   void Fill(bool v);
