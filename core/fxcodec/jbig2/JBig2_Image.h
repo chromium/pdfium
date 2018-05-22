@@ -36,11 +36,11 @@ class CJBig2_Image {
   int32_t stride() const { return m_nStride; }
   uint8_t* data() const { return m_pData.Get(); }
 
-  int getPixel(int32_t x, int32_t y) const;
-  int32_t setPixel(int32_t x, int32_t y, int bVal);
+  int GetPixel(int32_t x, int32_t y) const;
+  int32_t SetPixel(int32_t x, int32_t y, int bVal);
 
-  void copyLine(int32_t hTo, int32_t hFrom);
-  void fill(bool v);
+  void CopyLine(int32_t hTo, int32_t hFrom);
+  void Fill(bool v);
 
   bool ComposeFrom(int32_t x, int32_t y, CJBig2_Image* pSrc, JBig2ComposeOp op);
   bool ComposeFromWithRect(int32_t x,
@@ -49,12 +49,11 @@ class CJBig2_Image {
                            const FX_RECT& rtSrc,
                            JBig2ComposeOp op);
 
-  std::unique_ptr<CJBig2_Image> subImage(int32_t x,
+  std::unique_ptr<CJBig2_Image> SubImage(int32_t x,
                                          int32_t y,
                                          int32_t w,
                                          int32_t h);
-  void expand(int32_t h, bool v);
-
+  void Expand(int32_t h, bool v);
 
   bool ComposeTo(CJBig2_Image* pDst, int32_t x, int32_t y, JBig2ComposeOp op);
   bool ComposeToWithRect(CJBig2_Image* pDst,

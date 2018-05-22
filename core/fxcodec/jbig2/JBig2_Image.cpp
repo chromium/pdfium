@@ -74,7 +74,7 @@ bool CJBig2_Image::IsValidImageSize(int32_t w, int32_t h) {
          h <= JBIG2_MAX_IMAGE_SIZE;
 }
 
-int CJBig2_Image::getPixel(int32_t x, int32_t y) const {
+int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
   if (!m_pData)
     return 0;
 
@@ -89,7 +89,7 @@ int CJBig2_Image::getPixel(int32_t x, int32_t y) const {
   return ((data()[m] >> (7 - n)) & 1);
 }
 
-int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, int v) {
+int32_t CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
   if (!m_pData)
     return 0;
 
@@ -109,7 +109,7 @@ int32_t CJBig2_Image::setPixel(int32_t x, int32_t y, int v) {
   return 1;
 }
 
-void CJBig2_Image::copyLine(int32_t hTo, int32_t hFrom) {
+void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
   if (!m_pData)
     return;
 
@@ -120,7 +120,7 @@ void CJBig2_Image::copyLine(int32_t hTo, int32_t hFrom) {
                  m_nStride);
   }
 }
-void CJBig2_Image::fill(bool v) {
+void CJBig2_Image::Fill(bool v) {
   if (!m_pData)
     return;
 
@@ -162,7 +162,7 @@ bool CJBig2_Image::ComposeFromWithRect(int32_t x,
 #define JBIG2_GETDWORD(buf) \
   ((uint32_t)(((buf)[0] << 24) | ((buf)[1] << 16) | ((buf)[2] << 8) | (buf)[3]))
 
-std::unique_ptr<CJBig2_Image> CJBig2_Image::subImage(int32_t x,
+std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
                                                      int32_t y,
                                                      int32_t w,
                                                      int32_t h) {
@@ -181,7 +181,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::subImage(int32_t x,
 
   auto pImage = pdfium::MakeUnique<CJBig2_Image>(w, h);
   if (!m_pData) {
-    pImage->fill(0);
+    pImage->Fill(0);
     return pImage;
   }
   if (!pImage->m_pData)
@@ -228,7 +228,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::subImage(int32_t x,
   return pImage;
 }
 
-void CJBig2_Image::expand(int32_t h, bool v) {
+void CJBig2_Image::Expand(int32_t h, bool v) {
   if (!m_pData || h <= m_nHeight || h > kMaxImageBytes / m_nStride)
     return;
 

@@ -468,7 +468,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         continue;
 
       for (I = HCFIRSTSYM; I < NSYMSDECODED; ++I) {
-        SDNEWSYMS[I] = BHC->subImage(nTmp, 0, SDNEWSYMWIDTHS[I], HCHEIGHT);
+        SDNEWSYMS[I] = BHC->SubImage(nTmp, 0, SDNEWSYMWIDTHS[I], HCHEIGHT);
         nTmp += SDNEWSYMWIDTHS[I];
       }
     }

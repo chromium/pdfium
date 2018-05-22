@@ -27,7 +27,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
   if (!SBREG->data())
     return nullptr;
 
-  SBREG->fill(SBDEFPIXEL);
+  SBREG->Fill(SBDEFPIXEL);
   int32_t INITIAL_STRIPT;
   auto pHuffmanDecoder = pdfium::MakeUnique<CJBig2_HuffmanDecoder>(pStream);
   if (pHuffmanDecoder->DecodeAValue(SBHUFFDT, &INITIAL_STRIPT) != 0)
@@ -237,7 +237,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     pIAID = pdfium::MakeUnique<CJBig2_ArithIaidDecoder>(SBSYMCODELEN);
   }
 
-  SBREG->fill(SBDEFPIXEL);
+  SBREG->Fill(SBDEFPIXEL);
 
   FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
   STRIPT *= SBSTRIPS;

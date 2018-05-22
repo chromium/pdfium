@@ -53,7 +53,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
 
   GRAY = 0;
   while (GRAY <= GRAYMAX) {
-    pDict->HDPATS[GRAY] = BHDC->subImage(HDPW * GRAY, 0, HDPW, HDPH);
+    pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
     GRAY = GRAY + 1;
   }
   return pDict;
@@ -75,7 +75,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
 
   GRAY = 0;
   while (GRAY <= GRAYMAX) {
-    pDict->HDPATS[GRAY] = BHDC->subImage(HDPW * GRAY, 0, HDPW, HDPH);
+    pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
     GRAY = GRAY + 1;
   }
   return pDict;

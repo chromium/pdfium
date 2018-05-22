@@ -383,7 +383,7 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
         return JBig2_Result::kFailure;
       }
 
-      m_pPage->fill((pPageInfo->m_cFlags & 4) ? 1 : 0);
+      m_pPage->Fill((pPageInfo->m_cFlags & 4) ? 1 : 0);
       m_PageInfoList.push_back(std::move(pPageInfo));
       m_bInPage = true;
     } break;
@@ -901,7 +901,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       const auto& pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->height())) {
-        m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
+        m_pPage->Expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
     m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
@@ -1021,7 +1021,7 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
       const auto& pPageInfo = m_PageInfoList.back();
       if (pPageInfo->m_bIsStriped == 1 &&
           ri.y + ri.height > m_pPage->height()) {
-        m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
+        m_pPage->Expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
     m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),
@@ -1086,7 +1086,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
           const auto& pPageInfo = m_PageInfoList.back();
           if ((pPageInfo->m_bIsStriped == 1) &&
               (m_ri.y + m_ri.height > m_pPage->height())) {
-            m_pPage->expand(m_ri.y + m_ri.height,
+            m_pPage->Expand(m_ri.y + m_ri.height,
                             (pPageInfo->m_cFlags & 4) ? 1 : 0);
           }
         }
@@ -1119,7 +1119,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
       JBig2PageInfo* pPageInfo = m_PageInfoList.back().get();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (m_ri.y + m_ri.height > m_pPage->height())) {
-        m_pPage->expand(m_ri.y + m_ri.height,
+        m_pPage->Expand(m_ri.y + m_ri.height,
                         (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
@@ -1194,7 +1194,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
       JBig2PageInfo* pPageInfo = m_PageInfoList.back().get();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->height())) {
-        m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
+        m_pPage->Expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
       }
     }
     m_pPage->ComposeFrom(ri.x, ri.y, pSegment->m_Image.get(),

@@ -22,12 +22,12 @@ const int32_t kTooLargeHeightLines = 40000000;
 
 TEST(fxcodec, JBig2ImageCreate) {
   CJBig2_Image img(kWidthPixels, kHeightLines);
-  img.setPixel(0, 0, true);
-  img.setPixel(kWidthPixels - 1, kHeightLines - 1, false);
+  img.SetPixel(0, 0, true);
+  img.SetPixel(kWidthPixels - 1, kHeightLines - 1, false);
   EXPECT_EQ(kWidthPixels, img.width());
   EXPECT_EQ(kHeightLines, img.height());
-  EXPECT_TRUE(img.getPixel(0, 0));
-  EXPECT_FALSE(img.getPixel(kWidthPixels - 1, kHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(0, 0));
+  EXPECT_FALSE(img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
 }
 
 TEST(fxcodec, JBig2ImageCreateTooBig) {
@@ -40,12 +40,12 @@ TEST(fxcodec, JBig2ImageCreateTooBig) {
 TEST(fxcodec, JBig2ImageCreateExternal) {
   uint8_t buf[kHeightLines * kStrideBytes];
   CJBig2_Image img(kWidthPixels, kHeightLines, kStrideBytes, buf);
-  img.setPixel(0, 0, true);
-  img.setPixel(kWidthPixels - 1, kHeightLines - 1, false);
+  img.SetPixel(0, 0, true);
+  img.SetPixel(kWidthPixels - 1, kHeightLines - 1, false);
   EXPECT_EQ(kWidthPixels, img.width());
   EXPECT_EQ(kHeightLines, img.height());
-  EXPECT_TRUE(img.getPixel(0, 0));
-  EXPECT_FALSE(img.getPixel(kWidthPixels - 1, kHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(0, 0));
+  EXPECT_FALSE(img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
 }
 
 TEST(fxcodec, JBig2ImageCreateExternalTooBig) {
@@ -58,48 +58,48 @@ TEST(fxcodec, JBig2ImageCreateExternalTooBig) {
 
 TEST(fxcodec, JBig2ImageExpand) {
   CJBig2_Image img(kWidthPixels, kHeightLines);
-  img.setPixel(0, 0, true);
-  img.setPixel(kWidthPixels - 1, kHeightLines - 1, false);
-  img.expand(kLargerHeightLines, true);
+  img.SetPixel(0, 0, true);
+  img.SetPixel(kWidthPixels - 1, kHeightLines - 1, false);
+  img.Expand(kLargerHeightLines, true);
   EXPECT_EQ(kWidthPixels, img.width());
   EXPECT_EQ(kLargerHeightLines, img.height());
-  EXPECT_TRUE(img.getPixel(0, 0));
-  EXPECT_FALSE(img.getPixel(kWidthPixels - 1, kHeightLines - 1));
-  EXPECT_TRUE(img.getPixel(kWidthPixels - 1, kLargerHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(0, 0));
+  EXPECT_FALSE(img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(kWidthPixels - 1, kLargerHeightLines - 1));
 }
 
 TEST(fxcodec, JBig2ImageExpandTooBig) {
   CJBig2_Image img(kWidthPixels, kHeightLines);
-  img.setPixel(0, 0, true);
-  img.setPixel(kWidthPixels - 1, kHeightLines - 1, false);
-  img.expand(kTooLargeHeightLines, true);
+  img.SetPixel(0, 0, true);
+  img.SetPixel(kWidthPixels - 1, kHeightLines - 1, false);
+  img.Expand(kTooLargeHeightLines, true);
   EXPECT_EQ(kWidthPixels, img.width());
   EXPECT_EQ(kHeightLines, img.height());
-  EXPECT_TRUE(img.getPixel(0, 0));
-  EXPECT_FALSE(img.getPixel(kWidthPixels - 1, kHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(0, 0));
+  EXPECT_FALSE(img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
 }
 
 TEST(fxcodec, JBig2ImageExpandExternal) {
   uint8_t buf[kHeightLines * kStrideBytes];
   CJBig2_Image img(kWidthPixels, kHeightLines, kStrideBytes, buf);
-  img.setPixel(0, 0, true);
-  img.setPixel(kWidthPixels - 1, kHeightLines - 1, false);
-  img.expand(kLargerHeightLines, true);
+  img.SetPixel(0, 0, true);
+  img.SetPixel(kWidthPixels - 1, kHeightLines - 1, false);
+  img.Expand(kLargerHeightLines, true);
   EXPECT_EQ(kWidthPixels, img.width());
   EXPECT_EQ(kLargerHeightLines, img.height());
-  EXPECT_TRUE(img.getPixel(0, 0));
-  EXPECT_FALSE(img.getPixel(kWidthPixels - 1, kHeightLines - 1));
-  EXPECT_TRUE(img.getPixel(kWidthPixels - 1, kLargerHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(0, 0));
+  EXPECT_FALSE(img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(kWidthPixels - 1, kLargerHeightLines - 1));
 }
 
 TEST(fxcodec, JBig2ImageExpandExternalTooBig) {
   uint8_t buf[kHeightLines * kStrideBytes];
   CJBig2_Image img(kWidthPixels, kHeightLines, kStrideBytes, buf);
-  img.setPixel(0, 0, true);
-  img.setPixel(kWidthPixels - 1, kHeightLines - 1, false);
-  img.expand(kTooLargeHeightLines, true);
+  img.SetPixel(0, 0, true);
+  img.SetPixel(kWidthPixels - 1, kHeightLines - 1, false);
+  img.Expand(kTooLargeHeightLines, true);
   EXPECT_EQ(kWidthPixels, img.width());
   EXPECT_EQ(kHeightLines, img.height());
-  EXPECT_TRUE(img.getPixel(0, 0));
-  EXPECT_FALSE(img.getPixel(kWidthPixels - 1, kHeightLines - 1));
+  EXPECT_TRUE(img.GetPixel(0, 0));
+  EXPECT_FALSE(img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
 }
