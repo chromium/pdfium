@@ -49,10 +49,6 @@ class CFGAS_GEFont : public Retainable {
   RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
   CFX_Font* GetDevFont() const { return m_pFont; }
 
-  void SetFontProvider(CFGAS_PDFFontMgr* pProvider) {
-    m_pProvider.Reset(pProvider);
-  }
-
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
     m_bUseLogFontStyle = true;
     m_dwLogFontStyle = dwLogFontStyle;
@@ -82,7 +78,6 @@ class CFGAS_GEFont : public Retainable {
   bool m_bExternalFont;
   RetainPtr<CFGAS_GEFont> m_pSrcFont;  // Only set by ctor, so no cycles.
   CFGAS_FontMgr::ObservedPtr m_pFontMgr;
-  CFGAS_PDFFontMgr::ObservedPtr m_pProvider;
   RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;

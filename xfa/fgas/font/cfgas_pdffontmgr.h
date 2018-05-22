@@ -30,9 +30,6 @@ class CFGAS_PDFFontMgr : public Observable<CFGAS_PDFFontMgr> {
                                   uint32_t dwFontStyles,
                                   CPDF_Font** pPDFFont,
                                   bool bStrictMatch);
-  bool GetCharWidth(const RetainPtr<CFGAS_GEFont>& pFont,
-                    wchar_t wUnicode,
-                    int32_t* pWidth);
 
  private:
   RetainPtr<CFGAS_GEFont> FindFont(const ByteString& strFamilyName,

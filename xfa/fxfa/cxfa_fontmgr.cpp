@@ -74,10 +74,9 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
   }
 
   if (pFont) {
-    if (pPDFFont) {
+    if (pPDFFont)
       pMgr->SetFont(pFont, pPDFFont);
-      pFont->SetFontProvider(pMgr);
-    }
+
     m_FontMap[bsKey] = pFont;
   }
   return pFont;

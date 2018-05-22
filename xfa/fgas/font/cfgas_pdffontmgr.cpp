@@ -183,24 +183,6 @@ bool CFGAS_PDFFontMgr::PsNameMatchDRFontName(const ByteStringView& bsPsName,
   return true;
 }
 
-bool CFGAS_PDFFontMgr::GetCharWidth(const RetainPtr<CFGAS_GEFont>& pFont,
-                                    wchar_t wUnicode,
-                                    int32_t* pWidth) {
-  if (wUnicode != 0x20)
-    return false;
-
-  auto it = m_FDE2PDFFont.find(pFont);
-  if (it == m_FDE2PDFFont.end())
-    return false;
-
-  CPDF_Font* pPDFFont = it->second;
-  // TODO(npm): CFGAS_GEFont::GetCharWidth currently uses -1 as a special value,
-  // so |pWidth| cannot be changed to unsigned until this behavior is changed.
-  *pWidth = static_cast<int32_t>(
-      pPDFFont->GetCharWidthF(pPDFFont->CharCodeFromUnicode(wUnicode)));
-  return true;
-}
-
 void CFGAS_PDFFontMgr::SetFont(const RetainPtr<CFGAS_GEFont>& pFont,
                                CPDF_Font* pPDFFont) {
   m_FDE2PDFFont[pFont] = pPDFFont;
