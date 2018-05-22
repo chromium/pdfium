@@ -587,6 +587,8 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
     }
   } else {
     italic_angle = 0;
+    if (nStyle == FXFONT_NORMAL)
+      weight = FXFONT_FW_NORMAL;
   }
 
   if (!match.IsEmpty() || iBaseFont < kNumStandardFonts) {
