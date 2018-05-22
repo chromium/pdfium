@@ -7,10 +7,8 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_DEFINE_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_DEFINE_H_
 
-#include "core/fxcrt/fx_system.h"
+#include <stdint.h>
 
-#define JBIG2_memset memset
-#define JBIG2_memcpy memcpy
 #define JBIG2_OOB 1
 
 struct JBig2RegionInfo {

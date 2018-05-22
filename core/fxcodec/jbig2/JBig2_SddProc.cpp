@@ -6,6 +6,8 @@
 
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 
+#include <string.h>
+
 #include <algorithm>
 #include <memory>
 #include <utility>
@@ -448,8 +450,8 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         if (pStream->getByteLeft() >= stride * HCHEIGHT) {
           BHC = pdfium::MakeUnique<CJBig2_Image>(TOTWIDTH, HCHEIGHT);
           for (I = 0; I < HCHEIGHT; I++) {
-            JBIG2_memcpy(BHC->data() + I * BHC->stride(), pStream->getPointer(),
-                         stride);
+            memcpy(BHC->data() + I * BHC->stride(), pStream->getPointer(),
+                   stride);
             pStream->offset(stride);
           }
         } else {

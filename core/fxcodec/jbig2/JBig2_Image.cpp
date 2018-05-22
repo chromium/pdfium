@@ -7,6 +7,7 @@
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 
 #include <limits.h>
+#include <string.h>
 
 #include <algorithm>
 #include <memory>
@@ -62,7 +63,7 @@ CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
   if (other.m_pData) {
     m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
         FX_Alloc2D(uint8_t, m_nStride, m_nHeight)));
-    JBIG2_memcpy(data(), other.data(), m_nStride * m_nHeight);
+    memcpy(data(), other.data(), m_nStride * m_nHeight);
   }
 }
 
@@ -109,17 +110,16 @@ void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
     return;
 
   if (hFrom < 0 || hFrom >= m_nHeight) {
-    JBIG2_memset(data() + hTo * m_nStride, 0, m_nStride);
+    memset(data() + hTo * m_nStride, 0, m_nStride);
   } else {
-    JBIG2_memcpy(data() + hTo * m_nStride, data() + hFrom * m_nStride,
-                 m_nStride);
+    memcpy(data() + hTo * m_nStride, data() + hFrom * m_nStride, m_nStride);
   }
 }
 void CJBig2_Image::Fill(bool v) {
   if (!m_pData)
     return;
 
-  JBIG2_memset(data(), v ? 0xff : 0, m_nStride * m_nHeight);
+  memset(data(), v ? 0xff : 0, m_nStride * m_nHeight);
 }
 bool CJBig2_Image::ComposeTo(CJBig2_Image* pDst,
                              int32_t x,
@@ -234,10 +234,10 @@ void CJBig2_Image::Expand(int32_t h, bool v) {
     uint8_t* pExternalBuffer = data();
     m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
         FX_Alloc(uint8_t, h * m_nStride)));
-    JBIG2_memcpy(data(), pExternalBuffer, m_nHeight * m_nStride);
+    memcpy(data(), pExternalBuffer, m_nHeight * m_nStride);
   }
-  JBIG2_memset(data() + m_nHeight * m_nStride, v ? 0xff : 0,
-               (h - m_nHeight) * m_nStride);
+  memset(data() + m_nHeight * m_nStride, v ? 0xff : 0,
+         (h - m_nHeight) * m_nStride);
   m_nHeight = h;
 }
 

@@ -6,6 +6,8 @@
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 
+#include <string.h>
+
 #include <algorithm>
 #include <limits>
 #include <list>
@@ -877,7 +879,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   if (pTRD->SBREFINE == 1) {
     const size_t size = GetRefAggContextSize(pTRD->SBRTEMPLATE);
     grContext.reset(FX_Alloc(JBig2ArithCtx, size));
-    JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
+    memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
   }
   if (pTRD->SBHUFF == 0) {
     auto pArithDecoder =
@@ -931,7 +933,7 @@ JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
     const size_t size = GetHuffContextSize(pPDD->HDTEMPLATE);
     std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> gbContext(
         FX_Alloc(JBig2ArithCtx, size));
-    JBIG2_memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
+    memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
     auto pArithDecoder =
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_PatternDict =
@@ -1000,7 +1002,7 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
     const size_t size = GetHuffContextSize(pHRD->HTEMPLATE);
     std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> gbContext(
         FX_Alloc(JBig2ArithCtx, size));
-    JBIG2_memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
+    memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
     auto pArithDecoder =
         pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_Image =
@@ -1180,7 +1182,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
   const size_t size = GetRefAggContextSize(pGRRD->GRTEMPLATE);
   std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> grContext(
       FX_Alloc(JBig2ArithCtx, size));
-  JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
+  memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
   auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   pSegment->m_Image = pGRRD->Decode(pArithDecoder.get(), grContext.get());
