@@ -87,7 +87,6 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 
   void SetCheck(bool bChecked, bool bNotify);
   void SetValue(const WideString& sValue, bool bNotify);
-  void SetDefaultValue(const WideString& sValue);
   void SetOptionSelection(int index, bool bSelected, bool bNotify);
   void ClearSelection(bool bNotify);
   void SetTopVisibleIndex(int index);

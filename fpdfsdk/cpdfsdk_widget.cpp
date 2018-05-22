@@ -559,7 +559,6 @@ void CPDFSDK_Widget::SetValue(const WideString& sValue, bool bNotify) {
 #endif  // PDF_ENABLE_XFA
 }
 
-void CPDFSDK_Widget::SetDefaultValue(const WideString& sValue) {}
 void CPDFSDK_Widget::SetOptionSelection(int index,
                                         bool bSelected,
                                         bool bNotify) {
