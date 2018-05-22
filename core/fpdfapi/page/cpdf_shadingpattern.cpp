@@ -19,8 +19,7 @@
 namespace {
 
 ShadingType ToShadingType(int type) {
-  return (type > static_cast<int>(kInvalidShading) &&
-          type < static_cast<int>(kMaxShading))
+  return (type > kInvalidShading && type < kMaxShading)
              ? static_cast<ShadingType>(type)
              : kInvalidShading;
 }
@@ -32,11 +31,8 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
                                          bool bShading,
                                          const CFX_Matrix& parentMatrix)
     : CPDF_Pattern(pDoc, bShading ? nullptr : pPatternObj, parentMatrix),
-      m_ShadingType(kInvalidShading),
       m_bShadingObj(bShading),
-      m_pShadingObj(pPatternObj),
-      m_pCS(nullptr),
-      m_pCountedCS(nullptr) {
+      m_pShadingObj(pPatternObj) {
   assert(document());
   if (!bShading) {
     m_pShadingObj = pattern_obj()->GetDict()->GetDirectObjectFor("Shading");
@@ -96,9 +92,7 @@ bool CPDF_ShadingPattern::Load() {
     return false;
 
   m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
-
   m_ShadingType = ToShadingType(pShadingDict->GetIntegerFor("ShadingType"));
-
   return Validate();
 }
 
@@ -137,39 +131,29 @@ bool CPDF_ShadingPattern::Validate() const {
   switch (m_ShadingType) {
     case kFunctionBasedShading: {
       // Either one 2-to-N function or N 2-to-1 functions.
-      if (!ValidateFunctions(1, 2, nNumColorSpaceComponents) &&
-          !ValidateFunctions(nNumColorSpaceComponents, 2, 1)) {
-        return false;
-      }
-      break;
+      return ValidateFunctions(1, 2, nNumColorSpaceComponents) ||
+             ValidateFunctions(nNumColorSpaceComponents, 2, 1);
     }
     case kAxialShading:
     case kRadialShading: {
       // Either one 1-to-N function or N 1-to-1 functions.
-      if (!ValidateFunctions(1, 1, nNumColorSpaceComponents) &&
-          !ValidateFunctions(nNumColorSpaceComponents, 1, 1)) {
-        return false;
-      }
-      break;
+      return ValidateFunctions(1, 1, nNumColorSpaceComponents) ||
+             ValidateFunctions(nNumColorSpaceComponents, 1, 1);
     }
     case kFreeFormGouraudTriangleMeshShading:
     case kLatticeFormGouraudTriangleMeshShading:
     case kCoonsPatchMeshShading:
     case kTensorProductPatchMeshShading: {
       // Either no function, one 1-to-N function, or N 1-to-1 functions.
-      if (!m_pFunctions.empty() &&
-          !ValidateFunctions(1, 1, nNumColorSpaceComponents) &&
-          !ValidateFunctions(nNumColorSpaceComponents, 1, 1)) {
-        return false;
-      }
+      return m_pFunctions.empty() ||
+             ValidateFunctions(1, 1, nNumColorSpaceComponents) ||
+             ValidateFunctions(nNumColorSpaceComponents, 1, 1);
+    }
+    default:
       break;
-    }
-    default: {
-      NOTREACHED();
-      return false;
-    }
   }
-  return true;
+  NOTREACHED();
+  return false;
 }
 
 bool CPDF_ShadingPattern::ValidateFunctions(

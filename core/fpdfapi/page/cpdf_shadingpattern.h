@@ -67,8 +67,8 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
                          uint32_t nExpectedNumInputs,
                          uint32_t nExpectedNumOutputs) const;
 
-  ShadingType m_ShadingType;
-  bool m_bShadingObj;
+  ShadingType m_ShadingType = kInvalidShading;
+  const bool m_bShadingObj;
   UnownedPtr<CPDF_Object> m_pShadingObj;
 
   // Still keep |m_pCS| as some CPDF_ColorSpace (name object) are not managed
