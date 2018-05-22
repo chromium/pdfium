@@ -687,6 +687,16 @@ FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_SetStrokeWidth(FPDF_PAGEOBJECT page_object, float width);
 
+// Experimental API.
+// Get the stroke width of a page object.
+//
+// path   - the handle to the page object.
+// width  - the width of the stroke.
+//
+// Returns TRUE on success
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetStrokeWidth(FPDF_PAGEOBJECT page_object, float* width);
+
 // DEPRECATED as of May 2018. This API will be removed in the future. Please
 // use FPDFPageObj_SetLineJoin instead.
 //

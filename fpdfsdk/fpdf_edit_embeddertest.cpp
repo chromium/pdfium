@@ -755,6 +755,11 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   EXPECT_TRUE(FPDFPath_SetFillColor(rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetStrokeColor(rect, 0, 255, 0, 255));
   EXPECT_TRUE(FPDFPath_SetStrokeWidth(rect, 15.0f));
+
+  float width = 0;
+  EXPECT_TRUE(FPDFPageObj_GetStrokeWidth(rect, &width));
+  EXPECT_EQ(15.0f, width);
+
   EXPECT_TRUE(FPDFPath_SetDrawMode(rect, 0, 1));
   FPDFPage_InsertObject(page, rect);
   {

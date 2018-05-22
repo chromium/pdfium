@@ -170,6 +170,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_GetStrokeColor);
     CHK(FPDFPageObj_GetStrokeColor);
     CHK(FPDFPath_SetStrokeWidth);
+    CHK(FPDFPageObj_GetStrokeWidth);
     CHK(FPDFPageObj_SetStrokeWidth);
     CHK(FPDFPath_SetFillColor);
     CHK(FPDFPageObj_SetFillColor);

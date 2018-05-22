@@ -592,6 +592,16 @@ FPDFPageObj_SetStrokeWidth(FPDF_PAGEOBJECT page_object, float width) {
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetStrokeWidth(FPDF_PAGEOBJECT page_object, float* width) {
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !width)
+    return false;
+
+  *width = pPageObj->m_GraphState.GetLineWidth();
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join) {
   if (!page_object)
     return false;
