@@ -55,6 +55,9 @@ class CFX_CSSComputedStyle : public Retainable {
     bool m_bHasPadding;
   };
 
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   int32_t CountFontFamilies() const;
   const WideString GetFontFamily(int32_t index) const;
   uint16_t GetFontWeight() const;
@@ -97,9 +100,6 @@ class CFX_CSSComputedStyle : public Retainable {
   NonInheritedData m_NonInheritedData;
 
  private:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
   CFX_CSSComputedStyle();
   ~CFX_CSSComputedStyle() override;
 

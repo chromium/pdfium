@@ -25,10 +25,10 @@ class CFX_InvalidSeekableReadStream : public IFX_SeekableReadStream {
   FX_FILESIZE GetSize() override { return data_size_; }
 
  private:
-  explicit CFX_InvalidSeekableReadStream(FX_FILESIZE data_size)
-      : data_size_(data_size) {}
+  explicit CFX_InvalidSeekableReadStream(FX_FILESIZE data_size);
+  ~CFX_InvalidSeekableReadStream() override;
 
-  FX_FILESIZE data_size_;
+  const FX_FILESIZE data_size_;
 };
 
 class CFX_BufferSeekableReadStream : public IFX_SeekableReadStream {
@@ -55,8 +55,8 @@ class CFX_BufferSeekableReadStream : public IFX_SeekableReadStream {
   }
 
  private:
-  CFX_BufferSeekableReadStream(const unsigned char* src, size_t src_size)
-      : data_(src), data_size_(src_size) {}
+  CFX_BufferSeekableReadStream(const unsigned char* src, size_t src_size);
+  ~CFX_BufferSeekableReadStream() override;
 
   const unsigned char* data_;
   size_t data_size_;

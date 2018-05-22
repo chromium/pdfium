@@ -20,8 +20,6 @@ class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~CPDF_DIBTransferFunc() override;
-
   // CFX_FilteredDIB
   FXDIB_Format GetDestFormat() override;
   FX_ARGB* GetDestPalette() override;
@@ -35,6 +33,7 @@ class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
  private:
   explicit CPDF_DIBTransferFunc(
       const RetainPtr<CPDF_TransferFunc>& pTransferFunc);
+  ~CPDF_DIBTransferFunc() override;
 
   RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
   const uint8_t* m_RampR;

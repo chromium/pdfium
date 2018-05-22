@@ -9,6 +9,8 @@
 CPDFSDK_CustomAccess::CPDFSDK_CustomAccess(FPDF_FILEACCESS* pFileAccess)
     : m_FileAccess(*pFileAccess) {}
 
+CPDFSDK_CustomAccess::~CPDFSDK_CustomAccess() = default;
+
 FX_FILESIZE CPDFSDK_CustomAccess::GetSize() {
   return m_FileAccess.m_FileLen;
 }

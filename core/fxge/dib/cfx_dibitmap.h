@@ -18,8 +18,6 @@ class CFX_DIBitmap : public CFX_DIBSource {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~CFX_DIBitmap() override;
-
   bool Create(int width,
               int height,
               FXDIB_Format format,
@@ -111,6 +109,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
  protected:
   CFX_DIBitmap();
   CFX_DIBitmap(const CFX_DIBitmap& src);
+  ~CFX_DIBitmap() override;
 
 #if defined _SKIA_SUPPORT_PATHS_
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };

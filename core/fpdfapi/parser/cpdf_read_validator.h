@@ -10,9 +10,6 @@
 
 class CPDF_ReadValidator : public IFX_SeekableReadStream {
  public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
   class Session {
    public:
     explicit Session(CPDF_ReadValidator* validator);
@@ -27,6 +24,9 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   void SetDownloadHints(CPDF_DataAvail::DownloadHints* hints) {
     hints_ = hints;
   }
+
+  template <typename T, typename... Args>
+  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool read_error() const { return read_error_; }
   bool has_unavailable_data() const { return has_unavailable_data_; }

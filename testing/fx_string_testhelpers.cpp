@@ -16,3 +16,16 @@ std::ostream& operator<<(std::ostream& os, const CFX_DateTime& dt) {
      << std::to_string(dt.GetMillisecond());
   return os;
 }
+
+CFX_InvalidSeekableReadStream::CFX_InvalidSeekableReadStream(
+    FX_FILESIZE data_size)
+    : data_size_(data_size) {}
+
+CFX_InvalidSeekableReadStream::~CFX_InvalidSeekableReadStream() = default;
+
+CFX_BufferSeekableReadStream::CFX_BufferSeekableReadStream(
+    const unsigned char* src,
+    size_t src_size)
+    : data_(src), data_size_(src_size) {}
+
+CFX_BufferSeekableReadStream::~CFX_BufferSeekableReadStream() = default;

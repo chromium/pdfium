@@ -64,8 +64,6 @@ class FPDF_FileAccessContext : public IFX_SeekableReadStream {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~FPDF_FileAccessContext() override {}
-
   void Set(FPDF_FILEACCESS* pFile) { m_pFileAccess = pFile; }
 
   // IFX_SeekableReadStream
@@ -73,11 +71,12 @@ class FPDF_FileAccessContext : public IFX_SeekableReadStream {
 
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
     return !!m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset,
-                                       (uint8_t*)buffer, size);
+                                       static_cast<uint8_t*>(buffer), size);
   }
 
  private:
   FPDF_FileAccessContext() : m_pFileAccess(nullptr) {}
+  ~FPDF_FileAccessContext() override = default;
 
   FPDF_FILEACCESS* m_pFileAccess;
 };

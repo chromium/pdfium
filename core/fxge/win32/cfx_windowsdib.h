@@ -32,8 +32,6 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~CFX_WindowsDIB() override;
-
   static ByteString GetBitmapInfo(const RetainPtr<CFX_DIBitmap>& pBitmap);
   static HBITMAP GetDDBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap, HDC hDC);
 
@@ -49,6 +47,7 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
 
  protected:
   CFX_WindowsDIB(HDC hDC, int width, int height);
+  ~CFX_WindowsDIB() override;
 
   HDC m_hMemDC;
   HBITMAP m_hBitmap;

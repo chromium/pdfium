@@ -43,8 +43,6 @@ class FPDF_FileHandlerContext : public IFX_SeekableStream {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~FPDF_FileHandlerContext() override;
-
   // IFX_SeekableStream:
   FX_FILESIZE GetSize() override;
   bool IsEOF() override;
@@ -58,6 +56,7 @@ class FPDF_FileHandlerContext : public IFX_SeekableStream {
 
  protected:
   explicit FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS);
+  ~FPDF_FileHandlerContext() override;
 
   FPDF_FILEHANDLER* m_pFS;
   FX_FILESIZE m_nCurPos;

@@ -17,8 +17,6 @@ class CFX_FilteredDIB : public CFX_DIBSource {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  ~CFX_FilteredDIB() override;
-
   virtual FXDIB_Format GetDestFormat() = 0;
   virtual uint32_t* GetDestPalette() = 0;
   virtual void TranslateScanline(const uint8_t* src_buf,
@@ -32,6 +30,7 @@ class CFX_FilteredDIB : public CFX_DIBSource {
 
  protected:
   CFX_FilteredDIB();
+  ~CFX_FilteredDIB() override;
 
   // CFX_DIBSource
   const uint8_t* GetScanline(int line) const override;

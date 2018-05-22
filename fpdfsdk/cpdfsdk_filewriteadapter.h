@@ -16,6 +16,7 @@ class CPDFSDK_FileWriteAdapter : public IFX_WriteStream {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  // IFX_WriteStream:
   bool WriteBlock(const void* data, size_t size) override;
   bool WriteString(const ByteStringView& str) override;
 

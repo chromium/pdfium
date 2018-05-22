@@ -22,8 +22,6 @@ class CFX_UnicodeEncoding;
 
 class CFGAS_GEFont : public Retainable {
  public:
-  template <typename T>
-  friend class RetainPtr;
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
