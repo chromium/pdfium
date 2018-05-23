@@ -22,29 +22,34 @@ void CFX_BitStream::ByteAlign() {
 }
 
 uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
-  if (nBits > m_BitSize || m_BitPos + nBits > m_BitSize)
+  ASSERT(nBits > 0);
+  ASSERT(nBits <= 32);
+  if (nBits > m_BitSize || m_BitPos > m_BitSize - nBits)
     return 0;
 
+  const uint32_t bit_pos = m_BitPos % 8;
+  uint32_t byte_pos = m_BitPos / 8;
   const uint8_t* data = m_pData.Get();
+  uint8_t current_byte = data[byte_pos];
 
   if (nBits == 1) {
-    int bit = (data[m_BitPos / 8] & (1 << (7 - m_BitPos % 8))) ? 1 : 0;
+    int bit = (current_byte & (1 << (7 - bit_pos))) ? 1 : 0;
     m_BitPos++;
     return bit;
   }
 
-  uint32_t byte_pos = m_BitPos / 8;
-  uint32_t bit_pos = m_BitPos % 8;
   uint32_t bit_left = nBits;
   uint32_t result = 0;
   if (bit_pos) {
-    if (8 - bit_pos >= bit_left) {
-      result = (data[byte_pos] & (0xff >> bit_pos)) >> (8 - bit_pos - bit_left);
+    uint32_t bits_readable = 8 - bit_pos;
+    if (bits_readable >= bit_left) {
+      result = (current_byte & (0xff >> bit_pos)) >> (bits_readable - bit_left);
       m_BitPos += bit_left;
       return result;
     }
-    bit_left -= 8 - bit_pos;
-    result = (data[byte_pos++] & ((1 << (8 - bit_pos)) - 1)) << bit_left;
+    bit_left -= bits_readable;
+    result = (current_byte & ((1 << bits_readable) - 1)) << bit_left;
+    ++byte_pos;
   }
   while (bit_left >= 8) {
     bit_left -= 8;
