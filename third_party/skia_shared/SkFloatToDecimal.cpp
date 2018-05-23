@@ -15,8 +15,12 @@
 #include <cassert>
 #define SkASSERT assert
 
+namespace pdfium {
+namespace skia {
+namespace {
+
 // Return pow(10.0, e), optimized for common cases.
-static double pow10(int e) {
+double pow10(int e) {
     switch (e) {
         case 0:  return 1.0;  // common cases
         case 1:  return 10.0;
@@ -48,8 +52,8 @@ static double pow10(int e) {
     }
 }
 
-namespace pdfium {
-namespace skia {
+}  // namespace
+
 /** Write a string into result, includeing a terminating '\0' (for
     unit testing).  Return strlen(result) (for SkWStream::write) The
     resulting string will be in the form /[-]?([0-9]*.)?[0-9]+/ and
