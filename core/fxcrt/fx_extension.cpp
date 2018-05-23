@@ -167,34 +167,3 @@ size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf) {
   FXSYS_IntToFourHexChars(0xDC00 + unicode % 0x400, buf + 4);
   return 8;
 }
-
-uint32_t GetBits32(pdfium::span<const uint8_t> pData, int bitpos, int nbits) {
-  ASSERT(0 < nbits && nbits <= 32);
-  size_t bytepos = bitpos / 8;
-  int bitShift;
-  int bitMask;
-  int dstShift;
-  int bitCount = bitpos & 0x07;
-  if (nbits < 8 && nbits + bitCount <= 8) {
-    bitShift = 8 - nbits - bitCount;
-    bitMask = (1 << nbits) - 1;
-    dstShift = 0;
-  } else {
-    bitShift = 0;
-    int bitOffset = 8 - bitCount;
-    bitMask = (1 << std::min(bitOffset, nbits)) - 1;
-    dstShift = nbits - bitOffset;
-  }
-  uint32_t result = static_cast<uint32_t>(
-      (pData[bytepos++] >> bitShift & bitMask) << dstShift);
-  while (dstShift >= 8) {
-    dstShift -= 8;
-    result |= pData[bytepos++] << dstShift;
-  }
-  if (dstShift > 0) {
-    bitShift = 8 - dstShift;
-    bitMask = (1 << dstShift) - 1;
-    result |= pData[bytepos++] >> bitShift & bitMask;
-  }
-  return result;
-}

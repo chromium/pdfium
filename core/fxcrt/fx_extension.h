@@ -92,6 +92,4 @@ void FXSYS_IntToFourHexChars(uint16_t c, char* buf);
 
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
 
-uint32_t GetBits32(pdfium::span<const uint8_t> pData, int bitpos, int nbits);
-
 #endif  // CORE_FXCRT_FX_EXTENSION_H_

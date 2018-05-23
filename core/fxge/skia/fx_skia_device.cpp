@@ -15,7 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
@@ -407,11 +407,12 @@ bool AddSamples(const CPDF_SampledFunc* pFunc,
     colorsMax[i] = pFunc->GetRange(i * 2 + 1);
   }
   pdfium::span<const uint8_t> pSampleData = pFunc->GetSampleStream()->GetSpan();
+  CFX_BitStream bitstream(pSampleData);
   for (uint32_t i = 0; i < sampleCount; ++i) {
     float floatColors[3];
     for (uint32_t j = 0; j < 3; ++j) {
-      int sample = GetBits32(pSampleData, (i * 3 + j) * sampleSize, sampleSize);
-      float interp = (float)sample / (sampleCount - 1);
+      float sample = static_cast<float>(bitstream.GetBits(sampleSize));
+      float interp = sample / (sampleCount - 1);
       floatColors[j] = colorsMin[j] + (colorsMax[j] - colorsMin[j]) * interp;
     }
     SkColor color =

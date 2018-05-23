@@ -3,8 +3,20 @@
 // found in the LICENSE file.
 
 #include "core/fxcrt/cfx_bitstream.h"
-#include "core/fxcrt/fx_extension.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+namespace {
+
+uint32_t ReferenceGetBits32(const uint8_t* pData, int bitpos, int nbits) {
+  int result = 0;
+  for (int i = 0; i < nbits; i++) {
+    if (pData[(bitpos + i) / 8] & (1 << (7 - (bitpos + i) % 8)))
+      result |= 1 << (nbits - i - 1);
+  }
+  return result;
+}
+
+}  // namespace
 
 TEST(fxcrt, BitStream) {
   static const uint8_t kData[] = {0x00, 0x11, 0x22, 0x33,
@@ -106,14 +118,15 @@ TEST(fxcrt, BitStream) {
   EXPECT_EQ(0U, bitstream.BitsRemaining());
 }
 
-TEST(fxcrt, BitStreamSameAsGetBit32) {
+TEST(fxcrt, BitStreamSameAsReferenceGetBits32) {
   unsigned char kData[] = {0xDE, 0x3F, 0xB1, 0x7C, 0x12, 0x9A, 0x04, 0x56};
   CFX_BitStream bitstream(kData);
-  for (uint32_t nbits = 1; nbits <= 32; ++nbits) {
+  for (int nbits = 1; nbits <= 32; ++nbits) {
     for (size_t bitpos = 0; bitpos < sizeof(kData) * 8 - nbits; ++bitpos) {
       bitstream.Rewind();
       bitstream.SkipBits(bitpos);
-      EXPECT_EQ(bitstream.GetBits(nbits), GetBits32(kData, bitpos, nbits));
+      EXPECT_EQ(bitstream.GetBits(nbits),
+                ReferenceGetBits32(kData, bitpos, nbits));
     }
   }
 }
