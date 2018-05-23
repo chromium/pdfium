@@ -274,7 +274,14 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   // If we're going to be too big we insert what we can and notify the
   // delegate we've filled the text after the insert is done.
   bool exceeded_limit = false;
-  if (has_character_limit_ && text_length_ + length > character_limit_) {
+
+  // Currently we allow inserting a number of characters over the text limit if
+  // the text edit is already empty. This allows supporting text fields which
+  // do formatting. Otherwise, if you enter 123456789 for an SSN into a field
+  // with a 9 character limit and we reformat to 123-45-6789 we'll truncate
+  // the 89 when inserting into the text edit. See https://crbug.com/pdfium/1089
+  if (has_character_limit_ && text_length_ > 0 &&
+      text_length_ + length > character_limit_) {
     exceeded_limit = true;
     length = character_limit_ - text_length_;
   }
