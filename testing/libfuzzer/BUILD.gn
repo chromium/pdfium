@@ -100,6 +100,9 @@ if (pdf_enable_xfa) {
         "pdf_codec_bmp_fuzzer.cc",
         "xfa_codec_fuzzer.h",
       ]
+      deps = [
+        "../../:test_support",
+      ]
     }
   }
 
@@ -108,6 +111,9 @@ if (pdf_enable_xfa) {
       sources = [
         "pdf_codec_gif_fuzzer.cc",
         "xfa_codec_fuzzer.h",
+      ]
+      deps = [
+        "../../:test_support",
       ]
     }
 
@@ -123,6 +129,9 @@ if (pdf_enable_xfa) {
       "pdf_codec_jpeg_fuzzer.cc",
       "xfa_codec_fuzzer.h",
     ]
+    deps = [
+      "../../:test_support",
+    ]
   }
 
   if (pdf_enable_xfa_png) {
@@ -130,6 +139,9 @@ if (pdf_enable_xfa) {
       sources = [
         "pdf_codec_png_fuzzer.cc",
         "xfa_codec_fuzzer.h",
+      ]
+      deps = [
+        "../../:test_support",
       ]
     }
   }
@@ -139,6 +151,9 @@ if (pdf_enable_xfa) {
       sources = [
         "pdf_codec_tiff_fuzzer.cc",
         "xfa_codec_fuzzer.h",
+      ]
+      deps = [
+        "../../:test_support",
       ]
     }
   }
