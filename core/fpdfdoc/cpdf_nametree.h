@@ -20,7 +20,7 @@ class CPDF_Object;
 class CPDF_NameTree {
  public:
   explicit CPDF_NameTree(CPDF_Dictionary* pRoot);
-  CPDF_NameTree(const CPDF_Document* pDoc, const ByteString& category);
+  CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category);
   ~CPDF_NameTree();
 
   bool AddValueAndName(std::unique_ptr<CPDF_Object> pObj,

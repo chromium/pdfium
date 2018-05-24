@@ -36,7 +36,7 @@ std::pair<WideString, WideString> GetNodeLimitsMaybeSwap(CPDF_Array* pLimits) {
 // Get the limit arrays that leaf array |pFind| is under in the tree with root
 // |pNode|. |pLimits| will hold all the limit arrays from the leaf up to before
 // the root. Return true if successful.
-bool GetNodeAncestorsLimits(const CPDF_Dictionary* pNode,
+bool GetNodeAncestorsLimits(CPDF_Dictionary* pNode,
                             const CPDF_Array* pFind,
                             int nLevel,
                             std::vector<CPDF_Array*>* pLimits) {
@@ -153,7 +153,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 // will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
 // will be the leaf array that |csName| should be added to, and |pFindIndex|
 // will be the index that it should be added at.
-CPDF_Object* SearchNameNodeByName(const CPDF_Dictionary* pNode,
+CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
                                   const WideString& csName,
                                   int nLevel,
                                   size_t* nIndex,
@@ -228,7 +228,7 @@ CPDF_Object* SearchNameNodeByName(const CPDF_Dictionary* pNode,
 // successful, return the value object; |csName| will be the key, |ppFind|
 // will be the leaf array that this pair is in, and |pFindIndex| will be the
 // index of the pair in |pFind|.
-CPDF_Object* SearchNameNodeByIndex(const CPDF_Dictionary* pNode,
+CPDF_Object* SearchNameNodeByIndex(CPDF_Dictionary* pNode,
                                    size_t nIndex,
                                    int nLevel,
                                    size_t* nCurIndex,
@@ -298,10 +298,8 @@ size_t CountNamesInternal(CPDF_Dictionary* pNode, int nLevel) {
 
 CPDF_NameTree::CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
 
-CPDF_NameTree::CPDF_NameTree(const CPDF_Document* pDoc,
-                             const ByteString& category)
-    : m_pRoot(nullptr) {
-  const CPDF_Dictionary* pRoot = pDoc->GetRoot();
+CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc, const ByteString& category) {
+  CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
     return;
 
