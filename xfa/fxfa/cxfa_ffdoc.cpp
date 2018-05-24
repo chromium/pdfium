@@ -44,12 +44,12 @@ CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
 }
 
-bool CXFA_FFDoc::ParseDoc(CPDF_Object* pElementXFA) {
-  std::vector<CPDF_Stream*> xfaStreams;
+bool CXFA_FFDoc::ParseDoc(const CPDF_Object* pElementXFA) {
+  std::vector<const CPDF_Stream*> xfaStreams;
   if (pElementXFA->IsArray()) {
-    CPDF_Array* pXFAArray = pElementXFA->AsArray();
+    const CPDF_Array* pXFAArray = pElementXFA->AsArray();
     for (size_t i = 0; i < pXFAArray->GetCount() / 2; i++) {
-      if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
+      if (const CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
         xfaStreams.push_back(pStream);
     }
   } else if (pElementXFA->IsStream()) {
@@ -99,11 +99,11 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (!pRoot)
     return false;
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
     return false;
 
-  CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectFor("XFA");
+  const CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectFor("XFA");
   if (!pElementXFA)
     return false;
 
@@ -183,7 +183,7 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
     return it->second.pDibSource.As<CFX_DIBitmap>();
   }
 
-  const CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
+  CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
   if (!pRoot)
     return nullptr;
 

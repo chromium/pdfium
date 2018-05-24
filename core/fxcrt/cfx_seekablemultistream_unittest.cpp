@@ -15,7 +15,7 @@
 #include "third_party/base/ptr_util.h"
 
 TEST(CFX_SeekableMultiStreamTest, NoStreams) {
-  std::vector<CPDF_Stream*> streams;
+  std::vector<const CPDF_Stream*> streams;
   auto fileread = pdfium::MakeRetain<CFX_SeekableMultiStream>(streams);
 
   uint8_t output_buffer[16];
@@ -25,7 +25,7 @@ TEST(CFX_SeekableMultiStreamTest, NoStreams) {
 }
 
 TEST(CXFAFileReadTest, EmptyStreams) {
-  std::vector<CPDF_Stream*> streams;
+  std::vector<const CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   streams.push_back(stream1.get());
   auto fileread = pdfium::MakeRetain<CFX_SeekableMultiStream>(streams);
@@ -37,7 +37,7 @@ TEST(CXFAFileReadTest, EmptyStreams) {
 }
 
 TEST(CXFAFileReadTest, NormalStreams) {
-  std::vector<CPDF_Stream*> streams;
+  std::vector<const CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   auto stream2 = pdfium::MakeUnique<CPDF_Stream>();
   auto stream3 = pdfium::MakeUnique<CPDF_Stream>();

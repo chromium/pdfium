@@ -13,8 +13,8 @@
 #include "third_party/base/stl_util.h"
 
 CFX_SeekableMultiStream::CFX_SeekableMultiStream(
-    const std::vector<CPDF_Stream*>& streams) {
-  for (CPDF_Stream* pStream : streams) {
+    const std::vector<const CPDF_Stream*>& streams) {
+  for (const CPDF_Stream* pStream : streams) {
     m_Data.push_back(pdfium::MakeRetain<CPDF_StreamAcc>(pStream));
     m_Data.back()->LoadAllDataFiltered();
   }

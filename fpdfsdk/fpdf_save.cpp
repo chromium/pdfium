@@ -59,7 +59,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   if (!pPDFDocument)
     return false;
 
-  const CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
+  CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
   if (!pRoot)
     return false;
 
@@ -80,7 +80,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   int iDataSetsIndex = -1;
   int iLast = size - 2;
   for (int i = 0; i < size - 1; i++) {
-    CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
+    const CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
     if (!pPDFObj->IsString())
       continue;
     if (pPDFObj->GetString() == "form")
@@ -90,7 +90,6 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   }
 
   CPDF_Stream* pFormStream = nullptr;
-  CPDF_Stream* pDataSetsStream = nullptr;
   if (iFormIndex != -1) {
     // Get form CPDF_Stream
     CPDF_Object* pFormPDFObj = pArray->GetObjectAt(iFormIndex);
@@ -104,6 +103,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     }
   }
 
+  CPDF_Stream* pDataSetsStream = nullptr;
   if (iDataSetsIndex != -1) {
     // Get datasets CPDF_Stream
     CPDF_Object* pDataSetsPDFObj = pArray->GetObjectAt(iDataSetsIndex);

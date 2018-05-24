@@ -81,7 +81,7 @@ class CXFA_FFDoc {
                    const RetainPtr<IFX_SeekableStream>& pFile);
 
  private:
-  bool ParseDoc(CPDF_Object* pElementXFA);
+  bool ParseDoc(const CPDF_Object* pElementXFA);
 
   UnownedPtr<IXFA_DocEnvironment> const m_pDocEnvironment;
   UnownedPtr<CXFA_FFApp> const m_pApp;

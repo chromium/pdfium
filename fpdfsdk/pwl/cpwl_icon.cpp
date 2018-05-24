@@ -49,7 +49,7 @@ std::pair<float, float> CPWL_Icon::GetIconPosition() {
   if (!m_pIconFit)
     return {0.0f, 0.0f};
 
-  CPDF_Array* pA =
+  const CPDF_Array* pA =
       m_pIconFit->GetDict() ? m_pIconFit->GetDict()->GetArrayFor("A") : nullptr;
   if (!pA)
     return {0.0f, 0.0f};

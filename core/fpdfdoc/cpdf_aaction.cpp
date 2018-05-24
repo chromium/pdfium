@@ -38,7 +38,7 @@ static_assert(FX_ArraySize(g_sAATypes) == CPDF_AAction::NumberOfActions,
 
 }  // namespace
 
-CPDF_AAction::CPDF_AAction(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_AAction::CPDF_AAction(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
 
