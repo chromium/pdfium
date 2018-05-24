@@ -294,8 +294,8 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   uint32_t dwDeltaGroupLen = hStream->GetBits(16);
 
   // Trying to decode more than 32 bits isn't going to work when we write into
-  // a uint32_t.
-  if (dwDeltaGroupLen > 31)
+  // a uint32_t. Decoding 0 bits also makes no sense.
+  if (!IsValidPageOffsetHintTableBitCount(dwDeltaGroupLen))
     return false;
 
   if (dwFirstSharedObjNum >= CPDF_Parser::kMaxObjectNumber ||
