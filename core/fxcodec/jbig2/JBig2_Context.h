@@ -79,11 +79,14 @@ class CJBig2_Context {
 
   std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(uint32_t SBNUMSYMS);
 
+  CJBig2_HuffmanTable* GetHuffmanTable(size_t idx);
+
   std::unique_ptr<CJBig2_Context> m_pGlobalContext;
   std::unique_ptr<CJBig2_BitStream> m_pStream;
   std::vector<std::unique_ptr<CJBig2_Segment>> m_SegmentList;
   std::vector<std::unique_ptr<JBig2PageInfo>> m_PageInfoList;
   std::unique_ptr<CJBig2_Image> m_pPage;
+  std::vector<std::unique_ptr<CJBig2_HuffmanTable>> m_HuffmanTables;
   size_t m_nSegmentDecoded;
   bool m_bInPage;
   bool m_bBufSpecified;

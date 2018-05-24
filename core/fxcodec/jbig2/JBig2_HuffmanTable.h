@@ -27,6 +27,8 @@ class CJBig2_HuffmanTable {
   const std::vector<int>& GetRANGELOW() const { return RANGELOW; }
   bool IsOK() const { return m_bOK; }
 
+  constexpr static size_t kNumHuffmanTables = 16;
+
  private:
   bool ParseFromStandardTable(size_t table_idx);
   bool ParseFromCodedBuffer(CJBig2_BitStream* pStream);

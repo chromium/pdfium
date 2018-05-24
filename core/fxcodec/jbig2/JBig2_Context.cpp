@@ -56,6 +56,7 @@ CJBig2_Context::CJBig2_Context(const RetainPtr<CPDF_StreamAcc>& pGlobalStream,
                                std::list<CJBig2_CachePair>* pSymbolDictCache,
                                bool bIsGlobal)
     : m_pStream(pdfium::MakeUnique<CJBig2_BitStream>(pSrcStream)),
+      m_HuffmanTables(CJBig2_HuffmanTable::kNumHuffmanTables),
       m_nSegmentDecoded(0),
       m_bInPage(false),
       m_bBufSpecified(false),
@@ -422,10 +423,6 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   pSymbolDictDecoder->SDREFAGG = (wFlags >> 1) & 0x0001;
   pSymbolDictDecoder->SDTEMPLATE = (wFlags >> 10) & 0x0003;
   pSymbolDictDecoder->SDRTEMPLATE = !!((wFlags >> 12) & 0x0003);
-  uint8_t cSDHUFFDH = (wFlags >> 2) & 0x0003;
-  uint8_t cSDHUFFDW = (wFlags >> 4) & 0x0003;
-  uint8_t cSDHUFFBMSIZE = (wFlags >> 6) & 0x0001;
-  uint8_t cSDHUFFAGGINST = (wFlags >> 7) & 0x0001;
   if (pSymbolDictDecoder->SDHUFF == 0) {
     const uint32_t dwTemp = (pSymbolDictDecoder->SDTEMPLATE == 0) ? 8 : 2;
     for (uint32_t i = 0; i < dwTemp; ++i) {
@@ -479,22 +476,17 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   }
   pSymbolDictDecoder->SDINSYMS = SDINSYMS.get();
 
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B1;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B2;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B3;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B4;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B5;
+  uint8_t cSDHUFFDH = (wFlags >> 2) & 0x0003;
+  uint8_t cSDHUFFDW = (wFlags >> 4) & 0x0003;
   if (pSymbolDictDecoder->SDHUFF == 1) {
     if (cSDHUFFDH == 2 || cSDHUFFDW == 2)
       return JBig2_Result::kFailure;
 
     int32_t nIndex = 0;
     if (cSDHUFFDH == 0) {
-      Table_B4 = pdfium::MakeUnique<CJBig2_HuffmanTable>(4);
-      pSymbolDictDecoder->SDHUFFDH = Table_B4.get();
+      pSymbolDictDecoder->SDHUFFDH = GetHuffmanTable(4);
     } else if (cSDHUFFDH == 1) {
-      Table_B5 = pdfium::MakeUnique<CJBig2_HuffmanTable>(5);
-      pSymbolDictDecoder->SDHUFFDH = Table_B5.get();
+      pSymbolDictDecoder->SDHUFFDH = GetHuffmanTable(5);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -503,11 +495,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       pSymbolDictDecoder->SDHUFFDH = pSeg->m_HuffmanTable.get();
     }
     if (cSDHUFFDW == 0) {
-      Table_B2 = pdfium::MakeUnique<CJBig2_HuffmanTable>(2);
-      pSymbolDictDecoder->SDHUFFDW = Table_B2.get();
+      pSymbolDictDecoder->SDHUFFDW = GetHuffmanTable(2);
     } else if (cSDHUFFDW == 1) {
-      Table_B3 = pdfium::MakeUnique<CJBig2_HuffmanTable>(3);
-      pSymbolDictDecoder->SDHUFFDW = Table_B3.get();
+      pSymbolDictDecoder->SDHUFFDW = GetHuffmanTable(3);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -515,9 +505,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
         return JBig2_Result::kFailure;
       pSymbolDictDecoder->SDHUFFDW = pSeg->m_HuffmanTable.get();
     }
+    uint8_t cSDHUFFBMSIZE = (wFlags >> 6) & 0x0001;
     if (cSDHUFFBMSIZE == 0) {
-      Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
-      pSymbolDictDecoder->SDHUFFBMSIZE = Table_B1.get();
+      pSymbolDictDecoder->SDHUFFBMSIZE = GetHuffmanTable(1);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -526,11 +516,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->m_HuffmanTable.get();
     }
     if (pSymbolDictDecoder->SDREFAGG == 1) {
+      uint8_t cSDHUFFAGGINST = (wFlags >> 7) & 0x0001;
       if (cSDHUFFAGGINST == 0) {
-        if (!Table_B1) {
-          Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
-        }
-        pSymbolDictDecoder->SDHUFFAGGINST = Table_B1.get();
+        pSymbolDictDecoder->SDHUFFAGGINST = GetHuffmanTable(1);
       } else {
         CJBig2_Segment* pSeg =
             FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -649,26 +637,8 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   }
   pTRD->SBRTEMPLATE = !!((wFlags >> 15) & 0x0001);
 
-  uint8_t cSBHUFFFS = 0;
-  uint8_t cSBHUFFDS = 0;
-  uint8_t cSBHUFFDT = 0;
-  uint8_t cSBHUFFRDW = 0;
-  uint8_t cSBHUFFRDH = 0;
-  uint8_t cSBHUFFRDX = 0;
-  uint8_t cSBHUFFRDY = 0;
-  uint8_t cSBHUFFRSIZE = 0;
-  if (pTRD->SBHUFF == 1) {
-    if (m_pStream->readShortInteger(&wFlags) != 0)
-      return JBig2_Result::kFailure;
-
-    cSBHUFFFS = wFlags & 0x0003;
-    cSBHUFFDS = (wFlags >> 2) & 0x0003;
-    cSBHUFFDT = (wFlags >> 4) & 0x0003;
-    cSBHUFFRDW = (wFlags >> 6) & 0x0003;
-    cSBHUFFRDH = (wFlags >> 8) & 0x0003;
-    cSBHUFFRDX = (wFlags >> 10) & 0x0003;
-    cSBHUFFRDY = (wFlags >> 12) & 0x0003;
-    cSBHUFFRSIZE = (wFlags >> 14) & 0x0001;
+  if (pTRD->SBHUFF == 1 && m_pStream->readShortInteger(&wFlags) != 0) {
+    return JBig2_Result::kFailure;
   }
   if (pTRD->SBREFINE == 1 && !pTRD->SBRTEMPLATE) {
     for (int32_t i = 0; i < 4; ++i) {
@@ -738,29 +708,24 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     pTRD->SBSYMCODELEN = (uint8_t)dwTemp;
   }
 
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B1;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B6;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B7;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B8;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B9;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B10;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B11;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B12;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B13;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B14;
-  std::unique_ptr<CJBig2_HuffmanTable> Table_B15;
   if (pTRD->SBHUFF == 1) {
+    uint8_t cSBHUFFFS = wFlags & 0x0003;
+    uint8_t cSBHUFFDS = (wFlags >> 2) & 0x0003;
+    uint8_t cSBHUFFDT = (wFlags >> 4) & 0x0003;
+    uint8_t cSBHUFFRDW = (wFlags >> 6) & 0x0003;
+    uint8_t cSBHUFFRDH = (wFlags >> 8) & 0x0003;
+    uint8_t cSBHUFFRDX = (wFlags >> 10) & 0x0003;
+    uint8_t cSBHUFFRDY = (wFlags >> 12) & 0x0003;
+    uint8_t cSBHUFFRSIZE = (wFlags >> 14) & 0x0001;
     if (cSBHUFFFS == 2 || cSBHUFFRDW == 2 || cSBHUFFRDH == 2 ||
         cSBHUFFRDX == 2 || cSBHUFFRDY == 2) {
       return JBig2_Result::kFailure;
     }
     int32_t nIndex = 0;
     if (cSBHUFFFS == 0) {
-      Table_B6 = pdfium::MakeUnique<CJBig2_HuffmanTable>(6);
-      pTRD->SBHUFFFS = Table_B6.get();
+      pTRD->SBHUFFFS = GetHuffmanTable(6);
     } else if (cSBHUFFFS == 1) {
-      Table_B7 = pdfium::MakeUnique<CJBig2_HuffmanTable>(7);
-      pTRD->SBHUFFFS = Table_B7.get();
+      pTRD->SBHUFFFS = GetHuffmanTable(7);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -769,14 +734,11 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFFS = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFDS == 0) {
-      Table_B8 = pdfium::MakeUnique<CJBig2_HuffmanTable>(8);
-      pTRD->SBHUFFDS = Table_B8.get();
+      pTRD->SBHUFFDS = GetHuffmanTable(8);
     } else if (cSBHUFFDS == 1) {
-      Table_B9 = pdfium::MakeUnique<CJBig2_HuffmanTable>(9);
-      pTRD->SBHUFFDS = Table_B9.get();
+      pTRD->SBHUFFDS = GetHuffmanTable(9);
     } else if (cSBHUFFDS == 2) {
-      Table_B10 = pdfium::MakeUnique<CJBig2_HuffmanTable>(10);
-      pTRD->SBHUFFDS = Table_B10.get();
+      pTRD->SBHUFFDS = GetHuffmanTable(10);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -785,14 +747,11 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDS = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFDT == 0) {
-      Table_B11 = pdfium::MakeUnique<CJBig2_HuffmanTable>(11);
-      pTRD->SBHUFFDT = Table_B11.get();
+      pTRD->SBHUFFDT = GetHuffmanTable(11);
     } else if (cSBHUFFDT == 1) {
-      Table_B12 = pdfium::MakeUnique<CJBig2_HuffmanTable>(12);
-      pTRD->SBHUFFDT = Table_B12.get();
+      pTRD->SBHUFFDT = GetHuffmanTable(12);
     } else if (cSBHUFFDT == 2) {
-      Table_B13 = pdfium::MakeUnique<CJBig2_HuffmanTable>(13);
-      pTRD->SBHUFFDT = Table_B13.get();
+      pTRD->SBHUFFDT = GetHuffmanTable(13);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -801,11 +760,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDT = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDW == 0) {
-      Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(14);
-      pTRD->SBHUFFRDW = Table_B14.get();
+      pTRD->SBHUFFRDW = GetHuffmanTable(14);
     } else if (cSBHUFFRDW == 1) {
-      Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-      pTRD->SBHUFFRDW = Table_B15.get();
+      pTRD->SBHUFFRDW = GetHuffmanTable(15);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -814,15 +771,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDW = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDH == 0) {
-      if (!Table_B14) {
-        Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(14);
-      }
-      pTRD->SBHUFFRDH = Table_B14.get();
+      pTRD->SBHUFFRDH = GetHuffmanTable(14);
     } else if (cSBHUFFRDH == 1) {
-      if (!Table_B15) {
-        Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-      }
-      pTRD->SBHUFFRDH = Table_B15.get();
+      pTRD->SBHUFFRDH = GetHuffmanTable(15);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -831,15 +782,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDH = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDX == 0) {
-      if (!Table_B14) {
-        Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(14);
-      }
-      pTRD->SBHUFFRDX = Table_B14.get();
+      pTRD->SBHUFFRDX = GetHuffmanTable(14);
     } else if (cSBHUFFRDX == 1) {
-      if (!Table_B15) {
-        Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-      }
-      pTRD->SBHUFFRDX = Table_B15.get();
+      pTRD->SBHUFFRDX = GetHuffmanTable(15);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -848,15 +793,9 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDX = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRDY == 0) {
-      if (!Table_B14) {
-        Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(14);
-      }
-      pTRD->SBHUFFRDY = Table_B14.get();
+      pTRD->SBHUFFRDY = GetHuffmanTable(14);
     } else if (cSBHUFFRDY == 1) {
-      if (!Table_B15) {
-        Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(15);
-      }
-      pTRD->SBHUFFRDY = Table_B15.get();
+      pTRD->SBHUFFRDY = GetHuffmanTable(15);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -865,8 +804,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDY = pSeg->m_HuffmanTable.get();
     }
     if (cSBHUFFRSIZE == 0) {
-      Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(1);
-      pTRD->SBHUFFRSIZE = Table_B1.get();
+      pTRD->SBHUFFRSIZE = GetHuffmanTable(1);
     } else {
       CJBig2_Segment* pSeg =
           FindReferredTableSegmentByIndex(pSegment, nIndex++);
@@ -1300,6 +1238,14 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
   if (!HuffmanAssignCode(SBSYMCODES.data(), SBNUMSYMS))
     return std::vector<JBig2HuffmanCode>();
   return SBSYMCODES;
+}
+
+CJBig2_HuffmanTable* CJBig2_Context::GetHuffmanTable(size_t idx) {
+  ASSERT(idx > 0);
+  ASSERT(idx < CJBig2_HuffmanTable::kNumHuffmanTables);
+  if (!m_HuffmanTables[idx].get())
+    m_HuffmanTables[idx] = pdfium::MakeUnique<CJBig2_HuffmanTable>(idx);
+  return m_HuffmanTables[idx].get();
 }
 
 // static

@@ -123,11 +123,15 @@ constexpr HuffmanTable kHuffmanTables[16] = {
     {false, kTableLine14, FX_ArraySize(kTableLine14)},
     {false, kTableLine15, FX_ArraySize(kTableLine15)}};
 
+static_assert(CJBig2_HuffmanTable::kNumHuffmanTables ==
+                  FX_ArraySize(kHuffmanTables),
+              "kNumHuffmanTables must be equal to the size of kHuffmanTables");
+
 }  // namespace
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(size_t idx) {
   ASSERT(idx > 0);
-  ASSERT(idx < FX_ArraySize(kHuffmanTables));
+  ASSERT(idx < kNumHuffmanTables);
   const HuffmanTable& table = kHuffmanTables[idx];
   HTOOB = table.HTOOB;
   NTEMP = table.size;
