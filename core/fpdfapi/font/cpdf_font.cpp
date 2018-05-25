@@ -277,7 +277,7 @@ void CPDF_Font::CheckFontMetrics() {
 
 void CPDF_Font::LoadUnicodeMap() const {
   m_bToUnicodeLoaded = true;
-  CPDF_Stream* pStream = m_pFontDict->GetStreamFor("ToUnicode");
+  const CPDF_Stream* pStream = m_pFontDict->GetStreamFor("ToUnicode");
   if (!pStream)
     return;
 

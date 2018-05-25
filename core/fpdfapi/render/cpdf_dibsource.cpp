@@ -297,7 +297,7 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadDIBSource(
   if (!m_pJbig2Context) {
     m_pJbig2Context = pdfium::MakeUnique<CCodec_Jbig2Context>();
     if (m_pStreamAcc->GetImageParam()) {
-      CPDF_Stream* pGlobals =
+      const CPDF_Stream* pGlobals =
           m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
       if (pGlobals) {
         m_pGlobalStream = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals);
@@ -653,24 +653,26 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBSource::LoadJpxBitmap() {
 CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
   m_pMaskStream = m_pDict->GetStreamFor("SMask");
-  if (m_pMaskStream) {
-    CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
-    if (pMatte && m_pColorSpace && m_Family != PDFCS_PATTERN &&
-        m_pColorSpace->CountComponents() <= m_nComponents) {
-      float R, G, B;
-      std::vector<float> colors(m_nComponents);
-      for (uint32_t i = 0; i < m_nComponents; i++)
-        colors[i] = pMatte->GetFloatAt(i);
-
-      m_pColorSpace->GetRGB(colors.data(), &R, &G, &B);
-      m_MatteColor = FXARGB_MAKE(0, FXSYS_round(R * 255), FXSYS_round(G * 255),
-                                 FXSYS_round(B * 255));
-    }
-    return StartLoadMaskDIB();
+  if (!m_pMaskStream) {
+    m_pMaskStream = ToStream(m_pDict->GetDirectObjectFor("Mask"));
+    return m_pMaskStream ? StartLoadMaskDIB() : LoadState::kSuccess;
   }
 
-  m_pMaskStream = ToStream(m_pDict->GetDirectObjectFor("Mask"));
-  return m_pMaskStream ? StartLoadMaskDIB() : LoadState::kSuccess;
+  CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
+  if (pMatte && m_pColorSpace && m_Family != PDFCS_PATTERN &&
+      m_pColorSpace->CountComponents() <= m_nComponents) {
+    std::vector<float> colors(m_nComponents);
+    for (uint32_t i = 0; i < m_nComponents; i++)
+      colors[i] = pMatte->GetFloatAt(i);
+
+    float R;
+    float G;
+    float B;
+    m_pColorSpace->GetRGB(colors.data(), &R, &G, &B);
+    m_MatteColor = FXARGB_MAKE(0, FXSYS_round(R * 255), FXSYS_round(G * 255),
+                               FXSYS_round(B * 255));
+  }
+  return StartLoadMaskDIB();
 }
 
 CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadMaskDIB(

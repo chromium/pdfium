@@ -156,7 +156,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   // Must come after |m_pCachedBitmap|.
   std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
 
-  UnownedPtr<CPDF_Stream> m_pMaskStream;
+  UnownedPtr<const CPDF_Stream> m_pMaskStream;
   LoadState m_Status = LoadState::kFail;
 };
 

@@ -20,7 +20,7 @@ class CPDF_ToUnicodeMap {
   CPDF_ToUnicodeMap();
   ~CPDF_ToUnicodeMap();
 
-  void Load(CPDF_Stream* pStream);
+  void Load(const CPDF_Stream* pStream);
 
   WideString Lookup(uint32_t charcode) const;
   uint32_t ReverseLookup(wchar_t unicode) const;

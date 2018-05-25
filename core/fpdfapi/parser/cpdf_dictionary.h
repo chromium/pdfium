@@ -52,7 +52,8 @@ class CPDF_Dictionary : public CPDF_Object {
   bool GetBooleanFor(const ByteString& key, bool bDefault = false) const;
   float GetNumberFor(const ByteString& key) const;
   CPDF_Dictionary* GetDictFor(const ByteString& key) const;
-  CPDF_Stream* GetStreamFor(const ByteString& key) const;
+  const CPDF_Stream* GetStreamFor(const ByteString& key) const;
+  CPDF_Stream* GetStreamFor(const ByteString& key);
   CPDF_Array* GetArrayFor(const ByteString& key) const;
   CFX_FloatRect GetRectFor(const ByteString& key) const;
   CFX_Matrix GetMatrixFor(const ByteString& key) const;

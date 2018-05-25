@@ -149,7 +149,7 @@ class CPDF_RenderStatus {
                                       bool bBackAlphaRequired,
                                       int* left,
                                       int* top);
-  RetainPtr<CFX_DIBitmap> LoadSMask(const CPDF_Dictionary* pSMaskDict,
+  RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
                                     FX_RECT* pClipRect,
                                     const CFX_Matrix* pMatrix);
   // Optionally write the colorspace family value into |pCSFamily|.

@@ -122,7 +122,7 @@ uint32_t CPDF_ToUnicodeMap::GetUnicode() {
   return uni.ValueOrDefault(0);
 }
 
-void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
+void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
   CIDSet cid_set = CIDSET_UNKNOWN;
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   pAcc->LoadAllDataFiltered();

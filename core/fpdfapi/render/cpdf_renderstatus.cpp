@@ -1467,7 +1467,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (blend_type == FXDIB_BLEND_UNSUPPORTED)
     return true;
 
-  const CPDF_Dictionary* pSMaskDict =
+  CPDF_Dictionary* pSMaskDict =
       ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
   if (pSMaskDict) {
     if (pPageObj->IsImage() &&
@@ -2525,7 +2525,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
-    const CPDF_Dictionary* pSMaskDict,
+    CPDF_Dictionary* pSMaskDict,
     FX_RECT* pClipRect,
     const CFX_Matrix* pMatrix) {
   if (!pSMaskDict)

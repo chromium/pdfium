@@ -145,7 +145,11 @@ CPDF_Array* CPDF_Dictionary::GetArrayFor(const ByteString& key) const {
   return ToArray(GetDirectObjectFor(key));
 }
 
-CPDF_Stream* CPDF_Dictionary::GetStreamFor(const ByteString& key) const {
+const CPDF_Stream* CPDF_Dictionary::GetStreamFor(const ByteString& key) const {
+  return ToStream(GetDirectObjectFor(key));
+}
+
+CPDF_Stream* CPDF_Dictionary::GetStreamFor(const ByteString& key) {
   return ToStream(GetDirectObjectFor(key));
 }
 

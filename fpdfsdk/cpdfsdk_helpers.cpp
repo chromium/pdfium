@@ -248,7 +248,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
   // SharedForm
   const CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (pRoot) {
-    CPDF_Stream* pStream = pRoot->GetStreamFor("Metadata");
+    const CPDF_Stream* pStream = pRoot->GetStreamFor("Metadata");
     if (pStream) {
       CPDF_Metadata metaData(pStream);
       for (const auto& err : metaData.CheckForSharedForm())
