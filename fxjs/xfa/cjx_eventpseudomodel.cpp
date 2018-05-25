@@ -56,6 +56,12 @@ CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
 
 CJX_EventPseudoModel::~CJX_EventPseudoModel() {}
 
+void CJX_EventPseudoModel::cancelAction(CFXJSE_Value* pValue,
+                                        bool bSetting,
+                                        XFA_Attribute eAttribute) {
+  Property(pValue, XFA_Event::CancelAction, bSetting);
+}
+
 void CJX_EventPseudoModel::change(CFXJSE_Value* pValue,
                                   bool bSetting,
                                   XFA_Attribute eAttribute) {

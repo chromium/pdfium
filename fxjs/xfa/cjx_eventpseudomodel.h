@@ -41,6 +41,7 @@ class CJX_EventPseudoModel : public CJX_Object {
   JS_METHOD(emit, CJX_EventPseudoModel);
   JS_METHOD(reset, CJX_EventPseudoModel);
 
+  JS_PROP(cancelAction);
   JS_PROP(change);
   JS_PROP(commitKey);
   JS_PROP(fullText);

@@ -1554,3 +1554,22 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
   EXPECT_EQ(4, context->GetEventParam()->m_iSelStart);
   EXPECT_EQ(4, context->GetEventParam()->m_iSelEnd);
 }
+
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  CXFA_EventParam params;
+  params.m_bCancelAction = false;
+
+  CFXJSE_Engine* context = GetScriptContext();
+  context->SetEventParam(params);
+
+  EXPECT_TRUE(Execute("xfa.event.cancelAction"));
+
+  CFXJSE_Value* value = GetValue();
+  EXPECT_TRUE(value->IsBoolean());
+  EXPECT_FALSE(value->ToBoolean());
+
+  EXPECT_TRUE(Execute("xfa.event.cancelAction = \"true\""));
+  EXPECT_TRUE(context->GetEventParam()->m_bCancelAction);
+}

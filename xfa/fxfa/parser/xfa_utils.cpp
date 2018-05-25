@@ -570,6 +570,7 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
   if (wsAttributeName.IsEmpty())
     return nullptr;
 
+  uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
   int32_t iElementIndex = static_cast<int32_t>(eElement);
   while (iElementIndex != -1) {
     const XFA_SCRIPTHIERARCHY* scriptIndex = g_XFAScriptIndex + iElementIndex;
@@ -579,7 +580,6 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
       continue;
     }
 
-    uint32_t uHash = FX_HashCode_GetW(wsAttributeName, false);
     size_t iStart = scriptIndex->wAttributeStart;
     size_t iEnd = iStart + iCount;
     for (size_t iter = iStart; iter < iEnd; ++iter) {
