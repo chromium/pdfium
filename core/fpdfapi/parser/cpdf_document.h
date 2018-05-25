@@ -91,7 +91,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                             const CFX_Matrix& matrix);
 
   RetainPtr<CPDF_Image> LoadImageFromPageData(uint32_t dwStreamObjNum);
-  RetainPtr<CPDF_StreamAcc> LoadFontFile(CPDF_Stream* pStream);
+  RetainPtr<CPDF_StreamAcc> LoadFontFile(const CPDF_Stream* pStream);
   RetainPtr<CPDF_IccProfile> LoadIccProfile(const CPDF_Stream* pStream);
 
   void LoadDoc();

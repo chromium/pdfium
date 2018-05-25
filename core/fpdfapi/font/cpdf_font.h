@@ -101,7 +101,7 @@ class CPDF_Font {
                        std::vector<ByteString>* pCharNames,
                        bool bEmbedded,
                        bool bTrueType);
-  void LoadFontDescriptor(CPDF_Dictionary* pDict);
+  void LoadFontDescriptor(const CPDF_Dictionary* pDict);
   void CheckFontMetrics();
 
   const char* GetAdobeCharName(int iBaseEncoding,

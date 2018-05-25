@@ -164,7 +164,7 @@ bool CPDF_Font::HasFontWidths() const {
   return true;
 }
 
-void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
+void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   m_Flags = pFontDesc->GetIntegerFor("Flags", FXFONT_NONSYMBOLIC);
   int ItalicAngle = 0;
   bool bExistItalicAngle = false;
@@ -200,7 +200,7 @@ void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
   }
   if (m_Descent > 10)
     m_Descent = -m_Descent;
-  CPDF_Array* pBBox = pFontDesc->GetArrayFor("FontBBox");
+  const CPDF_Array* pBBox = pFontDesc->GetArrayFor("FontBBox");
   if (pBBox) {
     m_FontBBox.left = pBBox->GetIntegerAt(0);
     m_FontBBox.bottom = pBBox->GetIntegerAt(1);
@@ -208,7 +208,7 @@ void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
     m_FontBBox.top = pBBox->GetIntegerAt(3);
   }
 
-  CPDF_Stream* pFontFile = pFontDesc->GetStreamFor("FontFile");
+  const CPDF_Stream* pFontFile = pFontDesc->GetStreamFor("FontFile");
   if (!pFontFile)
     pFontFile = pFontDesc->GetStreamFor("FontFile2");
   if (!pFontFile)

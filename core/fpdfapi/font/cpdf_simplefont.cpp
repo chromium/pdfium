@@ -104,11 +104,11 @@ FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
 }
 
 bool CPDF_SimpleFont::LoadCommon() {
-  CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
+  const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc) {
     LoadFontDescriptor(pFontDesc);
   }
-  CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
+  const CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
   m_bUseFontWidth = !pWidthArray;
   if (pWidthArray) {
     if (pFontDesc && pFontDesc->KeyExist("MissingWidth")) {
