@@ -1500,3 +1500,57 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
   EXPECT_TRUE(Execute(test));
   EXPECT_EQ(L"Original Full Text", context->GetEventParam()->m_wsFullText);
 }
+
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  CXFA_EventParam params;
+  params.m_wsPrevText = L"1234";
+  params.m_iSelStart = 1;
+  params.m_iSelEnd = 3;
+
+  CFXJSE_Engine* context = GetScriptContext();
+  context->SetEventParam(params);
+
+  // Moving end to start works fine.
+  EXPECT_TRUE(Execute("xfa.event.selEnd = \"1\""));
+  EXPECT_EQ(1, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(1, context->GetEventParam()->m_iSelEnd);
+
+  // Moving end before end, forces start to move in response.
+  EXPECT_TRUE(Execute("xfa.event.selEnd = \"0\""));
+  EXPECT_EQ(0, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(0, context->GetEventParam()->m_iSelEnd);
+
+  // Negatives not allowed
+  EXPECT_TRUE(Execute("xfa.event.selEnd = \"-1\""));
+  EXPECT_EQ(0, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(0, context->GetEventParam()->m_iSelEnd);
+
+  // Negatives not allowed
+  EXPECT_TRUE(Execute("xfa.event.selStart = \"-1\""));
+  EXPECT_EQ(0, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(0, context->GetEventParam()->m_iSelEnd);
+
+  context->GetEventParam()->m_iSelEnd = 1;
+
+  // Moving start to end works fine.
+  EXPECT_TRUE(Execute("xfa.event.selStart = \"1\""));
+  EXPECT_EQ(1, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(1, context->GetEventParam()->m_iSelEnd);
+
+  // Moving start after end moves end.
+  EXPECT_TRUE(Execute("xfa.event.selStart = \"2\""));
+  EXPECT_EQ(2, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(2, context->GetEventParam()->m_iSelEnd);
+
+  // Setting End past end of string clamps to string length;
+  EXPECT_TRUE(Execute("xfa.event.selEnd = \"20\""));
+  EXPECT_EQ(2, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(4, context->GetEventParam()->m_iSelEnd);
+
+  // Setting Start past end of string clamps to string length;
+  EXPECT_TRUE(Execute("xfa.event.selStart = \"20\""));
+  EXPECT_EQ(4, context->GetEventParam()->m_iSelStart);
+  EXPECT_EQ(4, context->GetEventParam()->m_iSelEnd);
+}

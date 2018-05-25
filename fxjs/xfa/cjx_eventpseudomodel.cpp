@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cjx_eventpseudomodel.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "fxjs/cfxjse_engine.h"
@@ -243,9 +244,25 @@ void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,
       break;
     case XFA_Event::SelectionEnd:
       InterProperty(pValue, &pEventParam->m_iSelEnd, bSetting);
+
+      pEventParam->m_iSelEnd = std::max(0, pEventParam->m_iSelEnd);
+      pEventParam->m_iSelEnd =
+          std::min(static_cast<size_t>(pEventParam->m_iSelEnd),
+                   pEventParam->m_wsPrevText.GetLength());
+      pEventParam->m_iSelStart =
+          std::min(pEventParam->m_iSelStart, pEventParam->m_iSelEnd);
+
       break;
     case XFA_Event::SelectionStart:
       InterProperty(pValue, &pEventParam->m_iSelStart, bSetting);
+
+      pEventParam->m_iSelStart = std::max(0, pEventParam->m_iSelStart);
+      pEventParam->m_iSelStart =
+          std::min(static_cast<size_t>(pEventParam->m_iSelStart),
+                   pEventParam->m_wsPrevText.GetLength());
+      pEventParam->m_iSelEnd =
+          std::max(pEventParam->m_iSelStart, pEventParam->m_iSelEnd);
+
       break;
     case XFA_Event::Shift:
       BooleanProperty(pValue, &pEventParam->m_bShift, bSetting);
