@@ -17,28 +17,29 @@
 
 namespace {
 
-void StringProperty(CFXJSE_Value* pValue, WideString* wsValue, bool bSetting) {
+void StringProperty(CFXJSE_Value* pReturn, WideString* wsValue, bool bSetting) {
   if (bSetting) {
-    *wsValue = pValue->ToWideString();
+    *wsValue = pReturn->ToWideString();
     return;
   }
-  pValue->SetString(wsValue->UTF8Encode().AsStringView());
+
+  pReturn->SetString(wsValue->UTF8Encode().AsStringView());
 }
 
-void InterProperty(CFXJSE_Value* pValue, int32_t* iValue, bool bSetting) {
+void InterProperty(CFXJSE_Value* pReturn, int32_t* iValue, bool bSetting) {
   if (bSetting) {
-    *iValue = pValue->ToInteger();
+    *iValue = pReturn->ToInteger();
     return;
   }
-  pValue->SetInteger(*iValue);
+  pReturn->SetInteger(*iValue);
 }
 
-void BooleanProperty(CFXJSE_Value* pValue, bool* bValue, bool bSetting) {
+void BooleanProperty(CFXJSE_Value* pReturn, bool* bValue, bool bSetting) {
   if (bSetting) {
-    *bValue = pValue->ToBoolean();
+    *bValue = pReturn->ToBoolean();
     return;
   }
-  pValue->SetBoolean(*bValue);
+  pReturn->SetBoolean(*bValue);
 }
 
 }  // namespace
