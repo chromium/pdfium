@@ -462,24 +462,24 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     if (!pRoot)
       return;
 
-    CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+    const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
     if (!pAcroForm)
       return;
 
-    CPDF_Array* pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
+    const CPDF_Array* pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
     if (!pArray)
       return;
 
     int size = pArray->GetCount();
     for (int i = 1; i < size; i += 2) {
-      CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
-      CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
+      const CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
+      const CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
       if (!pPrePDFObj->IsString())
         continue;
       if (!pPDFObj->IsReference())
         continue;
 
-      CPDF_Stream* pStream = ToStream(pPDFObj->GetDirect());
+      const CPDF_Stream* pStream = ToStream(pPDFObj->GetDirect());
       if (!pStream)
         continue;
       if (pPrePDFObj->GetString() == "form") {
@@ -761,13 +761,13 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     return false;
   }
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm) {
     fileStream->Flush();
     return false;
   }
 
-  CPDF_Array* pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
+  const CPDF_Array* pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
   if (!pArray) {
     fileStream->Flush();
     return false;
@@ -775,32 +775,33 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
 
   int size = pArray->GetCount();
   for (int i = 1; i < size; i += 2) {
-    CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
-    CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
+    const CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
+    const CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
     if (!pPrePDFObj->IsString())
       continue;
     if (!pPDFObj->IsReference())
       continue;
 
-    CPDF_Object* pDirectObj = pPDFObj->GetDirect();
+    const CPDF_Object* pDirectObj = pPDFObj->GetDirect();
     if (!pDirectObj->IsStream())
       continue;
-    if (pPrePDFObj->GetString() == "config" && !(flag & FXFA_CONFIG))
+    ByteString bsType = pPrePDFObj->GetString();
+    if (bsType == "config" && !(flag & FXFA_CONFIG))
       continue;
-    if (pPrePDFObj->GetString() == "template" && !(flag & FXFA_TEMPLATE))
+    if (bsType == "template" && !(flag & FXFA_TEMPLATE))
       continue;
-    if (pPrePDFObj->GetString() == "localeSet" && !(flag & FXFA_LOCALESET))
+    if (bsType == "localeSet" && !(flag & FXFA_LOCALESET))
       continue;
-    if (pPrePDFObj->GetString() == "datasets" && !(flag & FXFA_DATASETS))
+    if (bsType == "datasets" && !(flag & FXFA_DATASETS))
       continue;
-    if (pPrePDFObj->GetString() == "xmpmeta" && !(flag & FXFA_XMPMETA))
+    if (bsType == "xmpmeta" && !(flag & FXFA_XMPMETA))
       continue;
-    if (pPrePDFObj->GetString() == "xfdf" && !(flag & FXFA_XFDF))
+    if (bsType == "xfdf" && !(flag & FXFA_XFDF))
       continue;
-    if (pPrePDFObj->GetString() == "form" && !(flag & FXFA_FORM))
+    if (bsType == "form" && !(flag & FXFA_FORM))
       continue;
 
-    if (pPrePDFObj->GetString() == "form") {
+    if (bsType == "form") {
       ffdoc->SavePackage(
           ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form)),
           fileStream);

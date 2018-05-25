@@ -241,7 +241,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
     ByteString name = pCSObj->GetString();
     CPDF_ColorSpace* pCS = CPDF_ColorSpace::ColorspaceFromName(name);
     if (!pCS && pResources) {
-      CPDF_Dictionary* pList = pResources->GetDictFor("ColorSpace");
+      const CPDF_Dictionary* pList = pResources->GetDictFor("ColorSpace");
       if (pList) {
         return GetColorSpaceInternal(pList->GetDirectObjectFor(name), nullptr,
                                      pVisited, pVisitedInternal);
@@ -250,7 +250,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
     if (!pCS || !pResources)
       return pCS;
 
-    CPDF_Dictionary* pColorSpaces = pResources->GetDictFor("ColorSpace");
+    const CPDF_Dictionary* pColorSpaces = pResources->GetDictFor("ColorSpace");
     if (!pColorSpaces)
       return pCS;
 

@@ -38,7 +38,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
                            bool italic,
                            uint32_t size,
                            const uint8_t* data) {
-    CPDF_Dictionary* font_desc = font_dict->GetDictFor("FontDescriptor");
+    const CPDF_Dictionary* font_desc = font_dict->GetDictFor("FontDescriptor");
     ASSERT_TRUE(font_desc);
     EXPECT_EQ("FontDescriptor", font_desc->GetStringFor("Type"));
     EXPECT_EQ(font_dict->GetStringFor("BaseFont"),
@@ -54,7 +54,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     EXPECT_TRUE(FontStyleIsNonSymbolic(font_flags));
     ASSERT_TRUE(font_desc->KeyExist("FontBBox"));
 
-    CPDF_Array* fontBBox = font_desc->GetArrayFor("FontBBox");
+    const CPDF_Array* fontBBox = font_desc->GetArrayFor("FontBBox");
     ASSERT_TRUE(fontBBox);
     EXPECT_EQ(4U, fontBBox->GetCount());
     // Check that the coordinates are in the preferred order according to spec
@@ -75,7 +75,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     EXPECT_FALSE(font_desc->KeyExist(absent));
 
     // Check that the font stream is the one that was provided
-    CPDF_Stream* font_stream = font_desc->GetStreamFor(present);
+    const CPDF_Stream* font_stream = font_desc->GetStreamFor(present);
     ASSERT_EQ(size, font_stream->GetRawSize());
     if (font_type == FPDF_FONT_TRUETYPE) {
       ASSERT_EQ(static_cast<int>(size),
@@ -1078,7 +1078,8 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   EXPECT_EQ("Font", cidfont_dict->GetStringFor("Type"));
   EXPECT_EQ("CIDFontType0", cidfont_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Times New Roman", cidfont_dict->GetStringFor("BaseFont"));
-  CPDF_Dictionary* cidinfo_dict = cidfont_dict->GetDictFor("CIDSystemInfo");
+  const CPDF_Dictionary* cidinfo_dict =
+      cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
   EXPECT_EQ("Adobe", cidinfo_dict->GetStringFor("Registry"));
   EXPECT_EQ("Identity", cidinfo_dict->GetStringFor("Ordering"));
@@ -1121,7 +1122,8 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   EXPECT_EQ("Font", cidfont_dict->GetStringFor("Type"));
   EXPECT_EQ("CIDFontType2", cidfont_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Arial Italic", cidfont_dict->GetStringFor("BaseFont"));
-  CPDF_Dictionary* cidinfo_dict = cidfont_dict->GetDictFor("CIDSystemInfo");
+  const CPDF_Dictionary* cidinfo_dict =
+      cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
   EXPECT_EQ("Adobe", cidinfo_dict->GetStringFor("Registry"));
   EXPECT_EQ("Identity", cidinfo_dict->GetStringFor("Ordering"));

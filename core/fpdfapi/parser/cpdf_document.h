@@ -115,10 +115,10 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
 
  protected:
   // Retrieve page count information by getting count value from the tree nodes
-  int RetrievePageCount() const;
+  int RetrievePageCount();
   // When this method is called, m_pTreeTraversal[level] exists.
   CPDF_Dictionary* TraversePDFPages(int iPage, int* nPagesToGo, size_t level);
-  int FindPageIndex(CPDF_Dictionary* pNode,
+  int FindPageIndex(const CPDF_Dictionary* pNode,
                     uint32_t* skip_count,
                     uint32_t objnum,
                     int* index,
@@ -126,7 +126,8 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
   void LoadDocInternal();
   size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
-  CPDF_Dictionary* GetPagesDict() const;
+  const CPDF_Dictionary* GetPagesDict() const;
+  CPDF_Dictionary* GetPagesDict();
   CPDF_Dictionary* ProcessbCJK(
       CPDF_Dictionary* pBaseDict,
       int charset,

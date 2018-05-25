@@ -324,7 +324,8 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
     ByteString tag = pFontDict->GetStringFor("BaseFont").Left(4);
     for (size_t i = 0; i < FX_ArraySize(kChineseFontNames); ++i) {
       if (tag == ByteString(kChineseFontNames[i], 4)) {
-        CPDF_Dictionary* pFontDesc = pFontDict->GetDictFor("FontDescriptor");
+        const CPDF_Dictionary* pFontDesc =
+            pFontDict->GetDictFor("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))
           pFont = pdfium::MakeUnique<CPDF_CIDFont>();
         break;

@@ -93,11 +93,11 @@ CPDF_Font* CBA_FontMap::FindFontSameCharset(ByteString* sFontAlias,
   if (!pRootDict)
     return nullptr;
 
-  CPDF_Dictionary* pAcroFormDict = pRootDict->GetDictFor("AcroForm");
+  const CPDF_Dictionary* pAcroFormDict = pRootDict->GetDictFor("AcroForm");
   if (!pAcroFormDict)
     return nullptr;
 
-  CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictFor("DR");
+  const CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictFor("DR");
   if (!pDRDict)
     return nullptr;
 
@@ -108,13 +108,13 @@ CPDF_Document* CBA_FontMap::GetDocument() {
   return m_pDocument.Get();
 }
 
-CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
+CPDF_Font* CBA_FontMap::FindResFontSameCharset(const CPDF_Dictionary* pResDict,
                                                ByteString* sFontAlias,
                                                int32_t nCharset) {
   if (!pResDict)
     return nullptr;
 
-  CPDF_Dictionary* pFonts = pResDict->GetDictFor("Font");
+  const CPDF_Dictionary* pFonts = pResDict->GetDictFor("Font");
   if (!pFonts)
     return nullptr;
 
@@ -197,7 +197,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   CPDF_Dictionary* pAcroFormDict = nullptr;
   const bool bWidget = (m_pAnnotDict->GetStringFor("Subtype") == "Widget");
   if (bWidget) {
-    const CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
+    CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
     if (pRootDict)
       pAcroFormDict = pRootDict->GetDictFor("AcroForm");
   }

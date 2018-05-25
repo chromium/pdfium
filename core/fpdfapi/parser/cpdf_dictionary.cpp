@@ -130,7 +130,19 @@ bool CPDF_Dictionary::GetBooleanFor(const ByteString& key,
   return ToBoolean(p) ? p->GetInteger() != 0 : bDefault;
 }
 
-CPDF_Dictionary* CPDF_Dictionary::GetDictFor(const ByteString& key) const {
+const CPDF_Dictionary* CPDF_Dictionary::GetDictFor(
+    const ByteString& key) const {
+  CPDF_Object* p = GetDirectObjectFor(key);
+  if (!p)
+    return nullptr;
+  if (CPDF_Dictionary* pDict = p->AsDictionary())
+    return pDict;
+  if (CPDF_Stream* pStream = p->AsStream())
+    return pStream->GetDict();
+  return nullptr;
+}
+
+CPDF_Dictionary* CPDF_Dictionary::GetDictFor(const ByteString& key) {
   CPDF_Object* p = GetDirectObjectFor(key);
   if (!p)
     return nullptr;

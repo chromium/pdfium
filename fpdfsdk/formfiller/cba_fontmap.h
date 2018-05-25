@@ -30,7 +30,7 @@ class CBA_FontMap : public CPWL_FontMap {
                                  int32_t nCharset) override;
   void AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias) override;
 
-  CPDF_Font* FindResFontSameCharset(CPDF_Dictionary* pResDict,
+  CPDF_Font* FindResFontSameCharset(const CPDF_Dictionary* pResDict,
                                     ByteString* sFontAlias,
                                     int32_t nCharset);
   CPDF_Font* GetAnnotDefaultFont(ByteString* csNameTag);

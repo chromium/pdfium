@@ -130,17 +130,17 @@ static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
   cipher = FXCIPHER_RC4;
   keylen = 0;
   if (Version >= 4) {
-    CPDF_Dictionary* pCryptFilters = pEncryptDict->GetDictFor("CF");
-    if (!pCryptFilters) {
+    const CPDF_Dictionary* pCryptFilters = pEncryptDict->GetDictFor("CF");
+    if (!pCryptFilters)
       return false;
-    }
+
     if (name == "Identity") {
       cipher = FXCIPHER_NONE;
     } else {
-      CPDF_Dictionary* pDefFilter = pCryptFilters->GetDictFor(name);
-      if (!pDefFilter) {
+      const CPDF_Dictionary* pDefFilter = pCryptFilters->GetDictFor(name);
+      if (!pDefFilter)
         return false;
-      }
+
       int nKeyBits = 0;
       if (Version == 4) {
         nKeyBits = pDefFilter->GetIntegerFor("Length", 0);

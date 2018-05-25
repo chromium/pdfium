@@ -322,8 +322,13 @@ void CPDF_Document::ResetTraversal() {
   m_pTreeTraversal.clear();
 }
 
-CPDF_Dictionary* CPDF_Document::GetPagesDict() const {
+const CPDF_Dictionary* CPDF_Document::GetPagesDict() const {
   const CPDF_Dictionary* pRoot = GetRoot();
+  return pRoot ? pRoot->GetDictFor("Pages") : nullptr;
+}
+
+CPDF_Dictionary* CPDF_Document::GetPagesDict() {
+  CPDF_Dictionary* pRoot = GetRoot();
   return pRoot ? pRoot->GetDictFor("Pages") : nullptr;
 }
 
@@ -363,7 +368,7 @@ void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
   m_PageList[iPage] = objNum;
 }
 
-int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
+int CPDF_Document::FindPageIndex(const CPDF_Dictionary* pNode,
                                  uint32_t* skip_count,
                                  uint32_t objnum,
                                  int* index,
@@ -379,7 +384,7 @@ int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
     return -1;
   }
 
-  CPDF_Array* pKidList = pNode->GetArrayFor("Kids");
+  const CPDF_Array* pKidList = pNode->GetArrayFor("Kids");
   if (!pKidList)
     return -1;
 
@@ -395,14 +400,14 @@ int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
 
   if (count && count == pKidList->GetCount()) {
     for (size_t i = 0; i < count; i++) {
-      CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i));
+      const CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i));
       if (pKid && pKid->GetRefObjNum() == objnum)
         return static_cast<int>(*index + i);
     }
   }
 
   for (size_t i = 0; i < pKidList->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    const CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid || pKid == pNode)
       continue;
 
@@ -426,7 +431,7 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
       bSkipped = true;
     }
   }
-  CPDF_Dictionary* pPages = GetPagesDict();
+  const CPDF_Dictionary* pPages = GetPagesDict();
   if (!pPages)
     return -1;
 
@@ -445,7 +450,7 @@ int CPDF_Document::GetPageCount() const {
   return pdfium::CollectionSize<int>(m_PageList);
 }
 
-int CPDF_Document::RetrievePageCount() const {
+int CPDF_Document::RetrievePageCount() {
   CPDF_Dictionary* pPages = GetPagesDict();
   if (!pPages)
     return 0;
@@ -576,7 +581,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
 }
 
 bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
-  const CPDF_Dictionary* pRoot = GetRoot();
+  CPDF_Dictionary* pRoot = GetRoot();
   CPDF_Dictionary* pPages = pRoot ? pRoot->GetDictFor("Pages") : nullptr;
   if (!pPages)
     return false;
