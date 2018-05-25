@@ -32,15 +32,7 @@
 
 CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                    UnderlyingPageType* page)
-    : m_page(page),
-      m_pFormFillEnv(pFormFillEnv),
-#ifndef PDF_ENABLE_XFA
-      m_bOwnsPage(false),
-#endif  // PDF_ENABLE_XFA
-      m_bOnWidget(false),
-      m_bValid(false),
-      m_bLocked(false),
-      m_bBeingDestroyed(false) {
+    : m_page(page), m_pFormFillEnv(pFormFillEnv) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
 #ifdef PDF_ENABLE_XFA
@@ -67,11 +59,6 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
 
   m_SDKAnnotArray.clear();
   m_pAnnotList.reset();
-
-#ifndef PDF_ENABLE_XFA
-  if (m_bOwnsPage)
-    delete m_page;
-#endif  // PDF_ENABLE_XFA
 }
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,

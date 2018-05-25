@@ -35,7 +35,7 @@ bool CPDFXFA_Page::LoadPDFPage() {
     return false;
 
   if (!m_pPDFPage || m_pPDFPage->GetFormDict() != pDict) {
-    m_pPDFPage = pdfium::MakeUnique<CPDF_Page>(pPDFDoc, pDict, true);
+    m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(pPDFDoc, pDict, true);
     m_pPDFPage->ParseContent();
   }
   return true;
@@ -81,7 +81,7 @@ bool CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
     return false;
 
   m_pPDFPage =
-      pdfium::MakeUnique<CPDF_Page>(m_pContext->GetPDFDoc(), pageDict, true);
+      pdfium::MakeRetain<CPDF_Page>(m_pContext->GetPDFDoc(), pageDict, true);
   m_pPDFPage->ParseContent();
   return true;
 }

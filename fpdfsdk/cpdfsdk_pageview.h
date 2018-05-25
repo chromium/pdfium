@@ -102,8 +102,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
 
 #ifndef PDF_ENABLE_XFA
-  bool OwnsPage() const { return m_bOwnsPage; }
-  void TakePageOwnership() { m_bOwnsPage = true; }
+  void TakePageOwnership() { m_pOwnsPage.Reset(m_page); }
 #endif  // PDF_ENABLE_XFA
 
  private:
@@ -126,12 +125,12 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   CPDFSDK_Annot::ObservedPtr m_pCaptureWidget;
 #ifndef PDF_ENABLE_XFA
-  bool m_bOwnsPage;
+  RetainPtr<CPDF_Page> m_pOwnsPage;
 #endif  // PDF_ENABLE_XFA
-  bool m_bOnWidget;
-  bool m_bValid;
-  bool m_bLocked;
-  bool m_bBeingDestroyed;
+  bool m_bOnWidget = false;
+  bool m_bValid = false;
+  bool m_bLocked = false;
+  bool m_bBeingDestroyed = false;
 };
 
 #endif  // FPDFSDK_CPDFSDK_PAGEVIEW_H_

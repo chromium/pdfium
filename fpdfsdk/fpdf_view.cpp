@@ -355,9 +355,9 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   if (!pDict)
     return nullptr;
 
-  CPDF_Page* pPage = new CPDF_Page(pDoc, pDict, true);
+  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict, true);
   pPage->ParseContent();
-  return FPDFPageFromUnderlying(pPage);
+  return FPDFPageFromUnderlying(pPage.Leak());
 #endif  // PDF_ENABLE_XFA
 }
 
@@ -723,35 +723,28 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
 #endif
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
-  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!page)
     return;
-#ifdef PDF_ENABLE_XFA
-  // Take it back across the API and throw it away.
-  RetainPtr<CPDFXFA_Page>().Unleak(pPage);
-#else   // PDF_ENABLE_XFA
+
+  // Take it back across the API and hold for duration of this function.
+  RetainPtr<UnderlyingPageType> pPage;
+  pPage.Unleak(UnderlyingFromFPDFPage(page));
+
+#ifndef PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView =
       static_cast<CPDFSDK_PageView*>(pPage->GetView());
-  if (pPageView) {
-    // We're already destroying the pageview, so bail early.
-    if (pPageView->IsBeingDestroyed())
-      return;
+  if (!pPageView || pPageView->IsBeingDestroyed())
+    return;
 
-    if (pPageView->IsLocked()) {
-      pPageView->TakePageOwnership();
-      return;
-    }
-
-    bool owned = pPageView->OwnsPage();
-    // This will delete the |pPageView| object. We must cleanup the PageView
-    // first because it will attempt to reset the View on the |pPage| during
-    // destruction.
-    pPageView->GetFormFillEnv()->RemovePageView(pPage);
-    // If the page was owned then the pageview will have deleted the page.
-    if (owned)
-      return;
+  if (pPageView->IsLocked()) {
+    pPageView->TakePageOwnership();
+    return;
   }
-  delete pPage;
+
+  // This will delete the |pPageView| object. We must cleanup the PageView
+  // first because it will attempt to reset the View on the |pPage| during
+  // destruction.
+  pPageView->GetFormFillEnv()->RemovePageView(pPage.Get());
 #endif  // PDF_ENABLE_XFA
 }
 
@@ -970,9 +963,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   if (!pDict)
     return false;
 
-  CPDF_Page page(pDoc, pDict, true);
-  *width = page.GetPageWidth();
-  *height = page.GetPageHeight();
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict, true);
+  *width = page->GetPageWidth();
+  *height = page->GetPageHeight();
   return true;
 }
 

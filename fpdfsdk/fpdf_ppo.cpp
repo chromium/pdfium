@@ -618,9 +618,9 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
       if (!pSrcPageDict)
         return false;
 
-      CPDF_Page srcPage(src(), pSrcPageDict, true);
+      auto srcPage = pdfium::MakeRetain<CPDF_Page>(src(), pSrcPageDict, true);
       NupPageSettings settings =
-          nupState.CalculateNewPagePosition(srcPage.GetPageSize());
+          nupState.CalculateNewPagePosition(srcPage->GetPageSize());
       AddSubPage(pSrcPageDict, settings, &objectNumberMap, &pageXObjectMap,
                  &xObjNameNumberMap, &bsContent);
     }

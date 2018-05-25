@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_image.h"
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfdoc/cpdf_linklist.h"
@@ -165,7 +166,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
-  std::vector<uint32_t> m_PageList;
+  std::vector<uint32_t> m_PageList;  // Page number to page's dict objnum.
   UnownedPtr<Extension> m_pExtension;
 };
 

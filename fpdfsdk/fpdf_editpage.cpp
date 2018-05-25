@@ -196,9 +196,9 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   // Eventually, fallthru into non-XFA case once page type is consistent.
   return nullptr;
 #else  // PDF_ENABLE_XFA
-  auto pPage = pdfium::MakeUnique<CPDF_Page>(pDoc, pPageDict, true);
+  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pPageDict, true);
   pPage->ParseContent();
-  return FPDFPageFromUnderlying(pPage.release());  // Caller takes ownership.
+  return FPDFPageFromUnderlying(pPage.Leak());  // Caller takes ownership.
 #endif  // PDF_ENABLE_XFA
 }
 
