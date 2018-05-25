@@ -359,7 +359,7 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     }
     m_bImageMask = true;
     m_bpc = m_nComponents = 1;
-    CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
+    const CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
     m_bDefaultDecode = !pDecode || !pDecode->GetIntegerAt(0);
     return true;
   }
@@ -398,7 +398,7 @@ bool CPDF_DIBSource::GetDecodeAndMaskArray(bool* bDefaultDecode,
 
   m_CompData.resize(m_nComponents);
   int max_data = (1 << m_bpc) - 1;
-  CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
+  const CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
   if (pDecode) {
     for (uint32_t i = 0; i < m_nComponents; i++) {
       m_CompData[i].m_DecodeMin = pDecode->GetNumberAt(i * 2);
@@ -658,7 +658,7 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadMask() {
     return m_pMaskStream ? StartLoadMaskDIB() : LoadState::kSuccess;
   }
 
-  CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
+  const CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
   if (pMatte && m_pColorSpace && m_Family != PDFCS_PATTERN &&
       m_pColorSpace->CountComponents() <= m_nComponents) {
     std::vector<float> colors(m_nComponents);

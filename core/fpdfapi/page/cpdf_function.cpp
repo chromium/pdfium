@@ -100,7 +100,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
       m_pDomains[i] = pDomains->GetFloatAt(i);
   }
 
-  CPDF_Array* pRanges = pDict->GetArrayFor("Range");
+  const CPDF_Array* pRanges = pDict->GetArrayFor("Range");
   m_nOutputs = pRanges ? pRanges->GetCount() / 2 : 0;
 
   // Ranges are required for type 0 and type 4 functions. A non-zero

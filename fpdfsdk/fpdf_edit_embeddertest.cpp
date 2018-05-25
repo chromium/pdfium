@@ -86,7 +86,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
       EXPECT_EQ(data[j], stream_data[j]) << " at byte " << j;
   }
 
-  void CheckCompositeFontWidths(CPDF_Array* widths_array,
+  void CheckCompositeFontWidths(const CPDF_Array* widths_array,
                                 CPDF_Font* typed_font) {
     // Check that W array is in a format that conforms to PDF spec 1.7 section
     // "Glyph Metrics in CIDFonts" (these checks are not
@@ -98,10 +98,10 @@ class FPDFEditEmbeddertest : public EmbedderTest {
       int cid = widths_array->GetNumberAt(idx);
       EXPECT_GE(cid, cur_cid);
       ASSERT_FALSE(++idx == widths_array->GetCount());
-      CPDF_Object* next = widths_array->GetObjectAt(idx);
+      const CPDF_Object* next = widths_array->GetObjectAt(idx);
       if (next->IsArray()) {
         // We are in the c [w1 w2 ...] case
-        CPDF_Array* arr = next->AsArray();
+        const CPDF_Array* arr = next->AsArray();
         int cnt = static_cast<int>(arr->GetCount());
         size_t inner_idx = 0;
         for (cur_cid = cid; cur_cid < cid + cnt; cur_cid++) {
@@ -1012,7 +1012,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
   EXPECT_EQ(255, font_dict->GetIntegerFor("LastChar"));
 
-  CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
+  const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
   ASSERT_EQ(224U, widths_array->GetCount());
   EXPECT_EQ(250, widths_array->GetNumberAt(0));
@@ -1041,7 +1041,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
   EXPECT_EQ(255, font_dict->GetIntegerFor("LastChar"));
 
-  CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
+  const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
   ASSERT_EQ(224U, widths_array->GetCount());
   EXPECT_EQ(600, widths_array->GetNumberAt(33));
@@ -1068,12 +1068,13 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   EXPECT_EQ("Type0", font_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Times New Roman-Identity-H", font_dict->GetStringFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetStringFor("Encoding"));
-  CPDF_Array* descendant_array = font_dict->GetArrayFor("DescendantFonts");
+  const CPDF_Array* descendant_array =
+      font_dict->GetArrayFor("DescendantFonts");
   ASSERT_TRUE(descendant_array);
   EXPECT_EQ(1U, descendant_array->GetCount());
 
   // Check the CIDFontDict
-  CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
+  const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
   EXPECT_EQ("Font", cidfont_dict->GetStringFor("Type"));
   EXPECT_EQ("CIDFontType0", cidfont_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Times New Roman", cidfont_dict->GetStringFor("BaseFont"));
@@ -1085,7 +1086,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   CheckFontDescriptor(cidfont_dict, FPDF_FONT_TYPE1, false, false, size, data);
 
   // Check widths
-  CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
+  const CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
   EXPECT_GT(widths_array->GetCount(), 1U);
   CheckCompositeFontWidths(widths_array, typed_font);
@@ -1110,12 +1111,13 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   EXPECT_EQ("Type0", font_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Arial Italic", font_dict->GetStringFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetStringFor("Encoding"));
-  CPDF_Array* descendant_array = font_dict->GetArrayFor("DescendantFonts");
+  const CPDF_Array* descendant_array =
+      font_dict->GetArrayFor("DescendantFonts");
   ASSERT_TRUE(descendant_array);
   EXPECT_EQ(1U, descendant_array->GetCount());
 
   // Check the CIDFontDict
-  CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
+  const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
   EXPECT_EQ("Font", cidfont_dict->GetStringFor("Type"));
   EXPECT_EQ("CIDFontType2", cidfont_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Arial Italic", cidfont_dict->GetStringFor("BaseFont"));
@@ -1128,7 +1130,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
                       data);
 
   // Check widths
-  CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
+  const CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
   CheckCompositeFontWidths(widths_array, typed_font);
 }

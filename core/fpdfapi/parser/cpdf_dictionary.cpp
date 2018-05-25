@@ -141,7 +141,11 @@ CPDF_Dictionary* CPDF_Dictionary::GetDictFor(const ByteString& key) const {
   return nullptr;
 }
 
-CPDF_Array* CPDF_Dictionary::GetArrayFor(const ByteString& key) const {
+const CPDF_Array* CPDF_Dictionary::GetArrayFor(const ByteString& key) const {
+  return ToArray(GetDirectObjectFor(key));
+}
+
+CPDF_Array* CPDF_Dictionary::GetArrayFor(const ByteString& key) {
   return ToArray(GetDirectObjectFor(key));
 }
 
@@ -155,7 +159,7 @@ CPDF_Stream* CPDF_Dictionary::GetStreamFor(const ByteString& key) {
 
 CFX_FloatRect CPDF_Dictionary::GetRectFor(const ByteString& key) const {
   CFX_FloatRect rect;
-  CPDF_Array* pArray = GetArrayFor(key);
+  const CPDF_Array* pArray = GetArrayFor(key);
   if (pArray)
     rect = pArray->GetRect();
   return rect;
@@ -163,7 +167,7 @@ CFX_FloatRect CPDF_Dictionary::GetRectFor(const ByteString& key) const {
 
 CFX_Matrix CPDF_Dictionary::GetMatrixFor(const ByteString& key) const {
   CFX_Matrix matrix;
-  CPDF_Array* pArray = GetArrayFor(key);
+  const CPDF_Array* pArray = GetArrayFor(key);
   if (pArray)
     matrix = pArray->GetMatrix();
   return matrix;

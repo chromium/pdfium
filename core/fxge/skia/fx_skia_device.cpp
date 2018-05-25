@@ -2027,7 +2027,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       return false;
     }
   }
-  CPDF_Array* pArray = pDict->GetArrayFor("Extend");
+  const CPDF_Array* pArray = pDict->GetArrayFor("Extend");
   bool clipStart = !pArray || !pArray->GetIntegerAt(0);
   bool clipEnd = !pArray || !pArray->GetIntegerAt(1);
   SkPaint paint;
