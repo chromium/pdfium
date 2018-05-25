@@ -34,12 +34,7 @@ class CFX_FontMapper {
                           int italic_angle,
                           int CharsetCP,
                           CFX_SubstFont* pSubstFont);
-#ifdef PDF_ENABLE_XFA
-  FXFT_Face FindSubstFontByUnicode(uint32_t dwUnicode,
-                                   uint32_t flags,
-                                   int weight,
-                                   int italic_angle);
-#endif  // PDF_ENABLE_XFA
+
   bool IsBuiltinFace(const FXFT_Face face) const;
   int GetFaceSize() const;
   ByteString GetFaceName(int index) const { return m_FaceArray[index].name; }

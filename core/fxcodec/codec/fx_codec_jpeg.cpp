@@ -451,12 +451,6 @@ int CCodec_JpegModule::ReadHeader(Context* pContext,
                                   int* height,
                                   int* nComps,
                                   CFX_DIBAttribute* pAttribute) {
-#else   // PDF_ENABLE_XFA
-int CCodec_JpegModule::ReadHeader(Context* pContext,
-                                  int* width,
-                                  int* height,
-                                  int* nComps) {
-#endif  // PDF_ENABLE_XFA
   auto* ctx = static_cast<CJpegContext*>(pContext);
   int ret = jpeg_read_header(&ctx->m_Info, true);
   if (ret == JPEG_SUSPENDED)
@@ -467,11 +461,10 @@ int CCodec_JpegModule::ReadHeader(Context* pContext,
   *width = ctx->m_Info.image_width;
   *height = ctx->m_Info.image_height;
   *nComps = ctx->m_Info.num_components;
-#ifdef PDF_ENABLE_XFA
   JpegLoadAttribute(&ctx->m_Info, pAttribute);
-#endif
   return 0;
 }
+#endif  // PDF_ENABLE_XFA
 
 bool CCodec_JpegModule::StartScanline(Context* pContext, int down_scale) {
   auto* ctx = static_cast<CJpegContext*>(pContext);

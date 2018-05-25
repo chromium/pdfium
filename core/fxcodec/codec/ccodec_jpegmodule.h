@@ -45,9 +45,7 @@ class CCodec_JpegModule {
   std::unique_ptr<Context> Start();
   void Input(Context* pContext, const uint8_t* src_buf, uint32_t src_size);
 
-#ifndef PDF_ENABLE_XFA
-  int ReadHeader(Context* pContext, int* width, int* height, int* nComps);
-#else   // PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA
   int ReadHeader(Context* pContext,
                  int* width,
                  int* height,

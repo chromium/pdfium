@@ -464,15 +464,10 @@ int CPDF_Document::RetrievePageCount() {
 }
 
 uint32_t CPDF_Document::GetUserPermissions() const {
-  // https://bugs.chromium.org/p/pdfium/issues/detail?id=499
-  if (!m_pParser) {
-#ifndef PDF_ENABLE_XFA
-    return 0;
-#else  // PDF_ENABLE_XFA
-    return 0xFFFFFFFF;
-#endif
-  }
-  return m_pParser->GetPermissions();
+  if (m_pParser)
+    return m_pParser->GetPermissions();
+
+  return m_pExtension ? m_pExtension->GetUserPermissions() : 0;
 }
 
 CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict) {

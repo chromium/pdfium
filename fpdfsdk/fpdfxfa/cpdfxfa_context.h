@@ -62,6 +62,7 @@ class CPDFXFA_Context : public CPDF_Document::Extension,
   CPDF_Document* GetPDFDoc() const override;
   int GetPageCount() const override;
   void DeletePage(int page_index) override;
+  uint32_t GetUserPermissions() const override;
 
   // IFXA_AppProvider:
   WideString GetLanguage() override;

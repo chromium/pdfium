@@ -49,6 +49,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
     virtual CPDF_Document* GetPDFDoc() const = 0;
     virtual int GetPageCount() const = 0;
     virtual void DeletePage(int page_index) = 0;
+    virtual uint32_t GetUserPermissions() const = 0;
   };
 
   explicit CPDF_Document(std::unique_ptr<CPDF_Parser> pParser);

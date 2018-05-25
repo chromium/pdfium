@@ -719,11 +719,8 @@ CPDFXFA_Context* CPDFSDK_FormFillEnvironment::GetXFAContext() const {
 #endif  // PDF_ENABLE_XFA
 
 int CPDFSDK_FormFillEnvironment::GetPageCount() const {
-#ifdef PDF_ENABLE_XFA
-  return GetXFAContext()->GetPageCount();
-#else
-  return m_pCPDFDoc->GetPageCount();
-#endif
+  CPDF_Document::Extension* pExtension = m_pCPDFDoc->GetExtension();
+  return pExtension ? pExtension->GetPageCount() : m_pCPDFDoc->GetPageCount();
 }
 
 bool CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) const {

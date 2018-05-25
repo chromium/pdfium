@@ -611,10 +611,6 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
   void* hFont = m_pFontInfo->MapFont(weight, bItalic, Charset, PitchFamily,
                                      family.c_str());
   if (!hFont) {
-#ifdef PDF_ENABLE_XFA
-    if (flags & FXFONT_EXACTMATCH)
-      return nullptr;
-#endif  // PDF_ENABLE_XFA
     if (bCJK) {
       bItalic = italic_angle != 0;
       weight = old_weight;
@@ -696,41 +692,6 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
   m_pFontInfo->DeleteFont(hFont);
   return face;
 }
-
-#ifdef PDF_ENABLE_XFA
-FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(uint32_t dwUnicode,
-                                                 uint32_t flags,
-                                                 int weight,
-                                                 int italic_angle) {
-  if (!m_pFontInfo)
-    return nullptr;
-
-  bool bItalic = (flags & FXFONT_ITALIC) != 0;
-  int PitchFamily = 0;
-  UpdatePitchFamily(flags, &PitchFamily);
-  void* hFont =
-      m_pFontInfo->MapFontByUnicode(dwUnicode, weight, bItalic, PitchFamily);
-  if (!hFont)
-    return nullptr;
-
-  uint32_t ttc_size = m_pFontInfo->GetFontData(hFont, 0x74746366, nullptr, 0);
-  uint32_t font_size = m_pFontInfo->GetFontData(hFont, 0, nullptr, 0);
-  if (font_size == 0 && ttc_size == 0) {
-    m_pFontInfo->DeleteFont(hFont);
-    return nullptr;
-  }
-  FXFT_Face face = nullptr;
-  if (ttc_size) {
-    face = GetCachedTTCFace(hFont, 0x74746366, ttc_size, font_size);
-  } else {
-    ByteString SubstName;
-    m_pFontInfo->GetFaceName(hFont, &SubstName);
-    face = GetCachedFace(hFont, SubstName, weight, bItalic, font_size);
-  }
-  m_pFontInfo->DeleteFont(hFont);
-  return face;
-}
-#endif  // PDF_ENABLE_XFA
 
 int CFX_FontMapper::GetFaceSize() const {
   return pdfium::CollectionSize<int>(m_FaceArray);
