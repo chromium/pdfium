@@ -1546,10 +1546,10 @@ FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 #define FPDF_FORMFIELD_XFA_TEXTFIELD 15   // XFA text field type.
 #endif                                    // PDF_ENABLE_XFA
 
-#ifndef PDF_ENABLE_XFA
-#define FPDF_FORMFIELD_COUNT 8
-#else
+#ifdef PDF_ENABLE_XFA
 #define FPDF_FORMFIELD_COUNT 16
+#else
+#define FPDF_FORMFIELD_COUNT 8
 #endif  // PDF_ENABLE_XFA
 
 #ifdef PDF_ENABLE_XFA

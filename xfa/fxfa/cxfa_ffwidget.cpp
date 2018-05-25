@@ -65,9 +65,7 @@ FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
 
 bool IsFXCodecErrorStatus(FXCODEC_STATUS status) {
   return (status == FXCODEC_STATUS_ERROR ||
-#ifdef PDF_ENABLE_XFA
           status == FXCODEC_STATUS_ERR_MEMORY ||
-#endif  // PDF_ENABLE_XFA
           status == FXCODEC_STATUS_ERR_READ ||
           status == FXCODEC_STATUS_ERR_FLUSH ||
           status == FXCODEC_STATUS_ERR_FORMAT ||

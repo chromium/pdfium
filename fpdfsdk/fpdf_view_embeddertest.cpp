@@ -75,10 +75,10 @@ TEST_F(FPDFViewEmbeddertest, EmptyDocument) {
   }
 
   {
-#ifndef PDF_ENABLE_XFA
-    const unsigned long kExpected = 0;
-#else
+#ifdef PDF_ENABLE_XFA
     const unsigned long kExpected = static_cast<uint32_t>(-1);
+#else
+    const unsigned long kExpected = 0;
 #endif
     EXPECT_EQ(kExpected, FPDF_GetDocPermissions(document()));
   }

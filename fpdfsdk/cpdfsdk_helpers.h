@@ -50,10 +50,10 @@ class CXFA_FFWidget;
 // Object types for public FPDF_ types; these correspond to next layer down
 // from fpdfsdk. For master, these are CPDF_ types, but for XFA, these are
 // CPDFXFA_ types.
-#ifndef PDF_ENABLE_XFA
-using UnderlyingPageType = CPDF_Page;
-#else   // PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA
 using UnderlyingPageType = CPDFXFA_Page;
+#else   // PDF_ENABLE_XFA
+using UnderlyingPageType = CPDF_Page;
 #endif  // PDF_ENABLE_XFA
 
 // Conversions to/from underlying types.

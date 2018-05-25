@@ -94,14 +94,13 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
     option_flags |= RENDER_LIMITEDIMAGECACHE;
   if (flags & FPDF_RENDER_FORCEHALFTONE)
     option_flags |= RENDER_FORCE_HALFTONE;
-#ifndef PDF_ENABLE_XFA
   if (flags & FPDF_RENDER_NO_SMOOTHTEXT)
     option_flags |= RENDER_NOTEXTSMOOTH;
   if (flags & FPDF_RENDER_NO_SMOOTHIMAGE)
     option_flags |= RENDER_NOIMAGESMOOTH;
   if (flags & FPDF_RENDER_NO_SMOOTHPATH)
     option_flags |= RENDER_NOPATHSMOOTH;
-#endif  // PDF_ENABLE_XFA
+
   pContext->m_pOptions->SetFlags(option_flags);
 
   // Grayscale output
