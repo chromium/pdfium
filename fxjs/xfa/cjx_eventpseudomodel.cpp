@@ -192,6 +192,13 @@ CJS_Return CJX_EventPseudoModel::reset(
 void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,
                                     XFA_Event dwFlag,
                                     bool bSetting) {
+  // Only the cancelAction, selStart, selEnd and change properties are writable.
+  if (bSetting && dwFlag != XFA_Event::CancelAction &&
+      dwFlag != XFA_Event::SelectionStart &&
+      dwFlag != XFA_Event::SelectionEnd && dwFlag != XFA_Event::Change) {
+    return;
+  }
+
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
     return;

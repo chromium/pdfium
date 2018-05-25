@@ -1486,3 +1486,17 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
   EXPECT_TRUE(Execute(test));
   EXPECT_EQ(L"changed", context->GetEventParam()->m_wsChange);
 }
+
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  CXFA_EventParam params;
+  params.m_wsFullText = L"Original Full Text";
+
+  CFXJSE_Engine* context = GetScriptContext();
+  context->SetEventParam(params);
+
+  const char test[] = {"xfa.event.fullText = \"Changed Full Text\""};
+  EXPECT_TRUE(Execute(test));
+  EXPECT_EQ(L"Original Full Text", context->GetEventParam()->m_wsFullText);
+}
