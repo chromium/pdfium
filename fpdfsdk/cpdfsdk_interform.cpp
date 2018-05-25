@@ -412,7 +412,7 @@ bool CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
   CPDF_ActionFields af(&action);
-  std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
+  std::vector<const CPDF_Object*> fieldObjects = af.GetAllFields();
   std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
 
   bool bHide = action.GetHideStatus();
@@ -446,11 +446,11 @@ bool CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action) {
   if (sDestination.IsEmpty())
     return false;
 
-  CPDF_Dictionary* pActionDict = action.GetDict();
+  const CPDF_Dictionary* pActionDict = action.GetDict();
   if (pActionDict->KeyExist("Fields")) {
     CPDF_ActionFields af(&action);
     uint32_t dwFlags = action.GetFlags();
-    std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
+    std::vector<const CPDF_Object*> fieldObjects = af.GetAllFields();
     std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
     if (!fields.empty()) {
       bool bIncludeOrExclude = !(dwFlags & 0x01);
@@ -590,7 +590,7 @@ ByteString CPDFSDK_InterForm::ExportFormToFDFTextBuf() {
 void CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
   ASSERT(action.GetDict());
 
-  CPDF_Dictionary* pActionDict = action.GetDict();
+  const CPDF_Dictionary* pActionDict = action.GetDict();
   if (!pActionDict->KeyExist("Fields")) {
     m_pInterForm->ResetForm(true);
     return;
@@ -599,15 +599,15 @@ void CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
   CPDF_ActionFields af(&action);
   uint32_t dwFlags = action.GetFlags();
 
-  std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
+  std::vector<const CPDF_Object*> fieldObjects = af.GetAllFields();
   std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
   m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), true);
 }
 
 std::vector<CPDF_FormField*> CPDFSDK_InterForm::GetFieldFromObjects(
-    const std::vector<CPDF_Object*>& objects) const {
+    const std::vector<const CPDF_Object*>& objects) const {
   std::vector<CPDF_FormField*> fields;
-  for (CPDF_Object* pObject : objects) {
+  for (const CPDF_Object* pObject : objects) {
     if (!pObject || !pObject->IsString())
       continue;
 

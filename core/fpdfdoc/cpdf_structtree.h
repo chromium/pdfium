@@ -34,12 +34,14 @@ class CPDF_StructTree {
   const CPDF_Dictionary* GetTreeRoot() const { return m_pTreeRoot.Get(); }
 
  private:
+  using StructElementMap =
+      std::map<const CPDF_Dictionary*, RetainPtr<CPDF_StructElement>>;
+
   void LoadPageTree(const CPDF_Dictionary* pPageDict);
-  RetainPtr<CPDF_StructElement> AddPageNode(
-      CPDF_Dictionary* pElement,
-      std::map<CPDF_Dictionary*, RetainPtr<CPDF_StructElement>>* map,
-      int nLevel);
-  bool AddTopLevelNode(CPDF_Dictionary* pDict,
+  RetainPtr<CPDF_StructElement> AddPageNode(const CPDF_Dictionary* pElement,
+                                            StructElementMap* map,
+                                            int nLevel);
+  bool AddTopLevelNode(const CPDF_Dictionary* pDict,
                        const RetainPtr<CPDF_StructElement>& pElement);
 
   UnownedPtr<const CPDF_Dictionary> const m_pTreeRoot;

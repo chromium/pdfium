@@ -35,11 +35,11 @@
 #define FPDF_OBJECT_REFERENCE 9
 
 // PDF types - use incomplete types for type safety.
-typedef struct fpdf_action_t__* FPDF_ACTION;
+typedef const struct fpdf_action_t__* FPDF_ACTION;
 typedef struct fpdf_annotation_t__* FPDF_ANNOTATION;
 typedef struct fpdf_attachment_t__* FPDF_ATTACHMENT;
 typedef struct fpdf_bitmap_t__* FPDF_BITMAP;
-typedef struct fpdf_bookmark_t__* FPDF_BOOKMARK;
+typedef const struct fpdf_bookmark_t__* FPDF_BOOKMARK;
 typedef struct fpdf_clippath_t__* FPDF_CLIPPATH;
 typedef struct fpdf_dest_t__* FPDF_DEST;
 typedef struct fpdf_document_t__* FPDF_DOCUMENT;

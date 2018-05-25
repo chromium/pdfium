@@ -224,14 +224,15 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
       return;
     }
     if (pRootDict->KeyExist("Names")) {
-      CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
+      const CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
       if (pNameDict && pNameDict->KeyExist("EmbeddedFiles")) {
         RaiseUnSupportError(FPDF_UNSP_DOC_ATTACHMENT);
         return;
       }
       if (pNameDict && pNameDict->KeyExist("JavaScript")) {
-        CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
-        CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
+        const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
+        const CPDF_Array* pArray =
+            pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
         if (pArray) {
           for (size_t i = 0; i < pArray->GetCount(); i++) {
             ByteString cbStr = pArray->GetStringAt(i);
@@ -384,7 +385,12 @@ CFX_FloatRect CFXFloatRectFromFSRECTF(const FS_RECTF& rect) {
   return CFX_FloatRect(rect.left, rect.bottom, rect.right, rect.top);
 }
 
-CPDF_Array* GetQuadPointsArrayFromDictionary(const CPDF_Dictionary* dict) {
+const CPDF_Array* GetQuadPointsArrayFromDictionary(
+    const CPDF_Dictionary* dict) {
+  return dict ? dict->GetArrayFor("QuadPoints") : nullptr;
+}
+
+CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict) {
   return dict ? dict->GetArrayFor("QuadPoints") : nullptr;
 }
 

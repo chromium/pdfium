@@ -26,7 +26,7 @@ namespace {
 CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
                            CPDF_Bookmark bookmark,
                            const WideString& title,
-                           std::set<CPDF_Dictionary*>* visited) {
+                           std::set<const CPDF_Dictionary*>* visited) {
   // Return if already checked to avoid circular calling.
   if (pdfium::ContainsKey(*visited, bookmark.GetDict()))
     return CPDF_Bookmark();
@@ -107,7 +107,7 @@ FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
   CPDF_BookmarkTree tree(pDoc);
   size_t len = WideString::WStringLength(title);
   WideString encodedTitle = WideString::FromUTF16LE(title, len);
-  std::set<CPDF_Dictionary*> visited;
+  std::set<const CPDF_Dictionary*> visited;
   return FPDFBookmarkFromCPDFDictionary(
       FindBookmark(tree, CPDF_Bookmark(), encodedTitle, &visited).GetDict());
 }

@@ -24,7 +24,7 @@ CPDF_Bookmark::CPDF_Bookmark() {}
 
 CPDF_Bookmark::CPDF_Bookmark(const CPDF_Bookmark& that) = default;
 
-CPDF_Bookmark::CPDF_Bookmark(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_Bookmark::CPDF_Bookmark(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_Bookmark::~CPDF_Bookmark() {}
 
@@ -32,7 +32,7 @@ uint32_t CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict)
     return kBlackBGR;
 
-  CPDF_Array* pColor = m_pDict->GetArrayFor("C");
+  const CPDF_Array* pColor = m_pDict->GetArrayFor("C");
   if (!pColor)
     return kBlackBGR;
 

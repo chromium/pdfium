@@ -313,12 +313,12 @@ ByteString GetColorStringWithDefault(CPDF_Array* pColor,
 }
 
 float GetBorderWidth(const CPDF_Dictionary& pAnnotDict) {
-  if (CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictFor("BS")) {
+  if (const CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictFor("BS")) {
     if (pBorderStyleDict->KeyExist("W"))
       return pBorderStyleDict->GetNumberFor("W");
   }
 
-  if (CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
+  if (const CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
     if (pBorderArray->GetCount() > 2)
       return pBorderArray->GetNumberAt(2);
   }
@@ -326,13 +326,13 @@ float GetBorderWidth(const CPDF_Dictionary& pAnnotDict) {
   return 1;
 }
 
-CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
-  if (CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictFor("BS")) {
+const CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
+  if (const CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictFor("BS")) {
     if (pBorderStyleDict->GetStringFor("S") == "D")
       return pBorderStyleDict->GetArrayFor("D");
   }
 
-  if (CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
+  if (const CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
     if (pBorderArray->GetCount() == 4)
       return pBorderArray->GetArrayAt(3);
   }
@@ -341,7 +341,7 @@ CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
 }
 
 ByteString GetDashPatternString(const CPDF_Dictionary& pAnnotDict) {
-  CPDF_Array* pDashArray = GetDashArray(pAnnotDict);
+  const CPDF_Array* pDashArray = GetDashArray(pAnnotDict);
   if (!pDashArray || pDashArray->IsEmpty())
     return ByteString();
 
@@ -907,11 +907,11 @@ bool GenerateStrikeOutAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 void CPVT_GenerateAP::GenerateFormAP(Type type,
                                      CPDF_Document* pDoc,
                                      CPDF_Dictionary* pAnnotDict) {
-  const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
+  CPDF_Dictionary* pRootDict = pDoc->GetRoot();
   if (!pRootDict)
     return;
 
-  const CPDF_Dictionary* pFormDict = pRootDict->GetDictFor("AcroForm");
+  CPDF_Dictionary* pFormDict = pRootDict->GetDictFor("AcroForm");
   if (!pFormDict)
     return;
 

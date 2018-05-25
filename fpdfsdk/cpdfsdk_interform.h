@@ -80,7 +80,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   void DoAction_ResetForm(const CPDF_Action& action);
 
   std::vector<CPDF_FormField*> GetFieldFromObjects(
-      const std::vector<CPDF_Object*>& objects) const;
+      const std::vector<const CPDF_Object*>& objects) const;
   bool IsValidField(CPDF_Dictionary* pFieldDict);
   bool SubmitFields(const WideString& csDestination,
                     const std::vector<CPDF_FormField*>& fields,

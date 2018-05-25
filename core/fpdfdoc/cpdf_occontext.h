@@ -35,7 +35,7 @@ class CPDF_OCContext : public Retainable {
                               const CPDF_Dictionary* pOCGDict) const;
   bool LoadOCGState(const CPDF_Dictionary* pOCGDict) const;
   bool GetOCGVisible(const CPDF_Dictionary* pOCGDict);
-  bool GetOCGVE(CPDF_Array* pExpression, int nLevel);
+  bool GetOCGVE(const CPDF_Array* pExpression, int nLevel);
   bool LoadOCMDState(const CPDF_Dictionary* pOCMDDict);
 
   UnownedPtr<CPDF_Document> const m_pDocument;

@@ -22,8 +22,8 @@ class CPDF_ActionFields {
   ~CPDF_ActionFields();
 
   size_t GetFieldsCount() const;
-  std::vector<CPDF_Object*> GetAllFields() const;
-  CPDF_Object* GetField(size_t iIndex) const;
+  std::vector<const CPDF_Object*> GetAllFields() const;
+  const CPDF_Object* GetField(size_t iIndex) const;
 
  private:
   UnownedPtr<const CPDF_Action> const m_pAction;

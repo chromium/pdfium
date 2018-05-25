@@ -690,7 +690,7 @@ ByteString CPDF_InterForm::GenerateNewResourceName(
   if (!pResDict)
     return csTmp;
 
-  CPDF_Dictionary* pDict = pResDict->GetDictFor(csType);
+  const CPDF_Dictionary* pDict = pResDict->GetDictFor(csType);
   if (!pDict)
     return csTmp;
 
@@ -963,8 +963,8 @@ bool CPDF_InterForm::HasXFAForm() const {
   return m_pFormDict && m_pFormDict->GetArrayFor("XFA");
 }
 
-void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
-  const CPDF_Dictionary* pPageDict = pPage->GetFormDict();
+void CPDF_InterForm::FixPageFields(CPDF_Page* pPage) {
+  CPDF_Dictionary* pPageDict = pPage->GetFormDict();
   if (!pPageDict)
     return;
 

@@ -129,7 +129,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     return;
 
   const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   bool bRegenerateAP = pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances");
   for (size_t i = 0; i < pAnnots->GetCount(); ++i) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));

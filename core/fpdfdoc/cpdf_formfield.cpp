@@ -64,7 +64,7 @@ CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
   if (pAttr)
     return pAttr;
 
-  CPDF_Dictionary* pParent = pFieldDict->GetDictFor("Parent");
+  const CPDF_Dictionary* pParent = pFieldDict->GetDictFor("Parent");
   return pParent ? FPDF_GetFieldAttr(pParent, name, nLevel + 1) : nullptr;
 }
 

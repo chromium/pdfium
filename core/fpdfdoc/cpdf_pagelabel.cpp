@@ -89,12 +89,12 @@ Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!pPDFRoot)
     return {};
 
-  CPDF_Dictionary* pLabels = pPDFRoot->GetDictFor("PageLabels");
+  const CPDF_Dictionary* pLabels = pPDFRoot->GetDictFor("PageLabels");
   if (!pLabels)
     return {};
 
   CPDF_NumberTree numberTree(pLabels);
-  CPDF_Object* pValue = nullptr;
+  const CPDF_Object* pValue = nullptr;
   int n = nPage;
   while (n >= 0) {
     pValue = numberTree.LookupValue(n);
@@ -106,7 +106,7 @@ Optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   WideString label;
   if (pValue) {
     pValue = pValue->GetDirect();
-    if (CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
+    if (const CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
       if (pLabel->KeyExist("P"))
         label += pLabel->GetUnicodeTextFor("P");
 

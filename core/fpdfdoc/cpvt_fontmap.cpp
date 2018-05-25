@@ -25,8 +25,9 @@ CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
 
 CPVT_FontMap::~CPVT_FontMap() {}
 
+// static
 CPDF_Font* CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
-                                            const CPDF_Dictionary* pResDict,
+                                            CPDF_Dictionary* pResDict,
                                             ByteString* sSysFontAlias) {
   if (!pDoc || !pResDict)
     return nullptr;

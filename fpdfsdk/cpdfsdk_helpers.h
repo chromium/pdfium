@@ -64,11 +64,11 @@ FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
 
 // Conversions to/from incomplete FPDF_ API types.
-inline FPDF_ACTION FPDFActionFromCPDFDictionary(CPDF_Dictionary* action) {
+inline FPDF_ACTION FPDFActionFromCPDFDictionary(const CPDF_Dictionary* action) {
   return reinterpret_cast<FPDF_ACTION>(action);
 }
-inline CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action) {
-  return reinterpret_cast<CPDF_Dictionary*>(action);
+inline const CPDF_Dictionary* CPDFDictionaryFromFPDFAction(FPDF_ACTION action) {
+  return reinterpret_cast<const CPDF_Dictionary*>(action);
 }
 
 inline FPDF_ANNOTATION FPDFAnnotationFromCPDFAnnotContext(
@@ -94,11 +94,13 @@ inline CFX_DIBitmap* CFXDIBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
   return reinterpret_cast<CFX_DIBitmap*>(bitmap);
 }
 
-inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(CPDF_Dictionary* bookmark) {
+inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(
+    const CPDF_Dictionary* bookmark) {
   return reinterpret_cast<FPDF_BOOKMARK>(bookmark);
 }
-inline CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(FPDF_BOOKMARK bookmark) {
-  return reinterpret_cast<CPDF_Dictionary*>(bookmark);
+inline const CPDF_Dictionary* CPDFDictionaryFromFPDFBookmark(
+    FPDF_BOOKMARK bookmark) {
+  return reinterpret_cast<const CPDF_Dictionary*>(bookmark);
 }
 
 inline FPDF_CLIPPATH FPDFClipPathFromCPDFClipPath(CPDF_ClipPath* path) {
@@ -220,7 +222,8 @@ RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFileHandler);
 #endif  // PDF_ENABLE_XFA
 
-CPDF_Array* GetQuadPointsArrayFromDictionary(const CPDF_Dictionary* dict);
+const CPDF_Array* GetQuadPointsArrayFromDictionary(const CPDF_Dictionary* dict);
+CPDF_Array* GetQuadPointsArrayFromDictionary(CPDF_Dictionary* dict);
 CPDF_Array* AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict);
 bool IsValidQuadPointsIndex(const CPDF_Array* array, size_t index);
 bool GetQuadPointsAtIndex(const CPDF_Array* array,

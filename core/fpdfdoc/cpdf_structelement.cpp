@@ -17,7 +17,6 @@
 
 CPDF_StructKid::CPDF_StructKid()
     : m_Type(Invalid),
-      m_pDict(nullptr),
       m_PageObjNum(0),
       m_RefObjNum(0),
       m_ContentId(0) {}
@@ -28,7 +27,7 @@ CPDF_StructKid::~CPDF_StructKid() = default;
 
 CPDF_StructElement::CPDF_StructElement(CPDF_StructTree* pTree,
                                        CPDF_StructElement* pParent,
-                                       CPDF_Dictionary* pDict)
+                                       const CPDF_Dictionary* pDict)
     : m_pTree(pTree),
       m_pParent(pParent),
       m_pDict(pDict),
@@ -54,10 +53,10 @@ CPDF_StructElement* CPDF_StructElement::GetKidIfElement(size_t index) const {
              : nullptr;
 }
 
-void CPDF_StructElement::LoadKids(CPDF_Dictionary* pDict) {
-  CPDF_Object* pObj = pDict->GetObjectFor("Pg");
+void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
+  const CPDF_Object* pObj = pDict->GetObjectFor("Pg");
   uint32_t PageObjNum = 0;
-  if (CPDF_Reference* pRef = ToReference(pObj))
+  if (const CPDF_Reference* pRef = ToReference(pObj))
     PageObjNum = pRef->GetRefObjNum();
 
   CPDF_Object* pKids = pDict->GetDirectObjectFor("K");

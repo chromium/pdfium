@@ -28,7 +28,7 @@ class CPDF_StructKid {
   enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
 
   RetainPtr<CPDF_StructElement> m_pElement;      // For Element.
-  UnownedPtr<CPDF_Dictionary> m_pDict;           // For Element.
+  UnownedPtr<const CPDF_Dictionary> m_pDict;     // For Element.
   uint32_t m_PageObjNum;  // For PageContent, StreamContent, Object.
   uint32_t m_RefObjNum;   // For StreamContent, Object.
   uint32_t m_ContentId;   // For PageContent, StreamContent.
@@ -41,7 +41,7 @@ class CPDF_StructElement : public Retainable {
 
   const ByteString& GetType() const { return m_Type; }
   const ByteString& GetTitle() const { return m_Title; }
-  CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
   size_t CountKids() const;
   CPDF_StructElement* GetKidIfElement(size_t index) const;
@@ -50,15 +50,15 @@ class CPDF_StructElement : public Retainable {
  private:
   CPDF_StructElement(CPDF_StructTree* pTree,
                      CPDF_StructElement* pParent,
-                     CPDF_Dictionary* pDict);
+                     const CPDF_Dictionary* pDict);
   ~CPDF_StructElement() override;
 
-  void LoadKids(CPDF_Dictionary* pDict);
+  void LoadKids(const CPDF_Dictionary* pDict);
   void LoadKid(uint32_t PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
 
   UnownedPtr<CPDF_StructTree> const m_pTree;
   UnownedPtr<CPDF_StructElement> const m_pParent;
-  UnownedPtr<CPDF_Dictionary> const m_pDict;
+  UnownedPtr<const CPDF_Dictionary> const m_pDict;
   ByteString m_Type;
   ByteString m_Title;
   std::vector<CPDF_StructKid> m_Kids;

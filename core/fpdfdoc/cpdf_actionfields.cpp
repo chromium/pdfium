@@ -19,12 +19,12 @@ size_t CPDF_ActionFields::GetFieldsCount() const {
   if (!m_pAction)
     return 0;
 
-  CPDF_Dictionary* pDict = m_pAction->GetDict();
+  const CPDF_Dictionary* pDict = m_pAction->GetDict();
   if (!pDict)
     return 0;
 
   ByteString csType = pDict->GetStringFor("S");
-  CPDF_Object* pFields = nullptr;
+  const CPDF_Object* pFields;
   if (csType == "Hide")
     pFields = pDict->GetDirectObjectFor("T");
   else
@@ -36,22 +36,21 @@ size_t CPDF_ActionFields::GetFieldsCount() const {
     return 1;
   if (pFields->IsString())
     return 1;
-  if (CPDF_Array* pArray = pFields->AsArray())
-    return pArray->GetCount();
-  return 0;
+  const CPDF_Array* pArray = pFields->AsArray();
+  return pArray ? pArray->GetCount() : 0;
 }
 
-std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
-  std::vector<CPDF_Object*> fields;
+std::vector<const CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
+  std::vector<const CPDF_Object*> fields;
   if (!m_pAction)
     return fields;
 
-  CPDF_Dictionary* pDict = m_pAction->GetDict();
+  const CPDF_Dictionary* pDict = m_pAction->GetDict();
   if (!pDict)
     return fields;
 
   ByteString csType = pDict->GetStringFor("S");
-  CPDF_Object* pFields;
+  const CPDF_Object* pFields;
   if (csType == "Hide")
     pFields = pDict->GetDirectObjectFor("T");
   else
@@ -62,9 +61,9 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
 
   if (pFields->IsDictionary() || pFields->IsString()) {
     fields.push_back(pFields);
-  } else if (CPDF_Array* pArray = pFields->AsArray()) {
+  } else if (const CPDF_Array* pArray = pFields->AsArray()) {
     for (size_t i = 0; i < pArray->GetCount(); ++i) {
-      CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
+      const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
       if (pObj)
         fields.push_back(pObj);
     }
@@ -72,16 +71,16 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   return fields;
 }
 
-CPDF_Object* CPDF_ActionFields::GetField(size_t iIndex) const {
+const CPDF_Object* CPDF_ActionFields::GetField(size_t iIndex) const {
   if (!m_pAction)
     return nullptr;
 
-  CPDF_Dictionary* pDict = m_pAction->GetDict();
+  const CPDF_Dictionary* pDict = m_pAction->GetDict();
   if (!pDict)
     return nullptr;
 
   ByteString csType = pDict->GetStringFor("S");
-  CPDF_Object* pFields = nullptr;
+  const CPDF_Object* pFields;
   if (csType == "Hide")
     pFields = pDict->GetDirectObjectFor("T");
   else
@@ -90,11 +89,11 @@ CPDF_Object* CPDF_ActionFields::GetField(size_t iIndex) const {
   if (!pFields)
     return nullptr;
 
-  CPDF_Object* pFindObj = nullptr;
+  const CPDF_Object* pFindObj = nullptr;
   if (pFields->IsDictionary() || pFields->IsString()) {
     if (iIndex == 0)
       pFindObj = pFields;
-  } else if (CPDF_Array* pArray = pFields->AsArray()) {
+  } else if (const CPDF_Array* pArray = pFields->AsArray()) {
     pFindObj = pArray->GetDirectObjectAt(iIndex);
   }
   return pFindObj;

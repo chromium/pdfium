@@ -61,7 +61,7 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
 
   m_Kids.clear();
   m_Kids.resize(dwKids);
-  CPDF_Dictionary* pParentTree = m_pTreeRoot->GetDictFor("ParentTree");
+  const CPDF_Dictionary* pParentTree = m_pTreeRoot->GetDictFor("ParentTree");
   if (!pParentTree)
     return;
 
@@ -70,20 +70,20 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   if (parents_id < 0)
     return;
 
-  CPDF_Array* pParentArray = ToArray(parent_tree.LookupValue(parents_id));
+  const CPDF_Array* pParentArray = ToArray(parent_tree.LookupValue(parents_id));
   if (!pParentArray)
     return;
 
-  std::map<CPDF_Dictionary*, RetainPtr<CPDF_StructElement>> element_map;
+  StructElementMap element_map;
   for (size_t i = 0; i < pParentArray->GetCount(); i++) {
-    if (CPDF_Dictionary* pParent = pParentArray->GetDictAt(i))
+    if (const CPDF_Dictionary* pParent = pParentArray->GetDictAt(i))
       AddPageNode(pParent, &element_map, 0);
   }
 }
 
 RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
-    CPDF_Dictionary* pDict,
-    std::map<CPDF_Dictionary*, RetainPtr<CPDF_StructElement>>* map,
+    const CPDF_Dictionary* pDict,
+    StructElementMap* map,
     int nLevel) {
   static constexpr int kStructTreeMaxRecursion = 32;
   if (nLevel > kStructTreeMaxRecursion)
@@ -95,7 +95,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 
   auto pElement = pdfium::MakeRetain<CPDF_StructElement>(this, nullptr, pDict);
   (*map)[pDict] = pElement;
-  CPDF_Dictionary* pParent = pDict->GetDictFor("P");
+  const CPDF_Dictionary* pParent = pDict->GetDictFor("P");
   if (!pParent || pParent->GetStringFor("Type") == "StructTreeRoot") {
     if (!AddTopLevelNode(pDict, pElement))
       map->erase(pDict);
@@ -117,7 +117,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 }
 
 bool CPDF_StructTree::AddTopLevelNode(
-    CPDF_Dictionary* pDict,
+    const CPDF_Dictionary* pDict,
     const RetainPtr<CPDF_StructElement>& pElement) {
   CPDF_Object* pObj = m_pTreeRoot->GetDirectObjectFor("K");
   if (!pObj)

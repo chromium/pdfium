@@ -14,13 +14,13 @@ class CPDF_Object;
 
 class CPDF_NumberTree {
  public:
-  explicit CPDF_NumberTree(CPDF_Dictionary* pRoot);
+  explicit CPDF_NumberTree(const CPDF_Dictionary* pRoot);
   ~CPDF_NumberTree();
 
-  CPDF_Object* LookupValue(int num) const;
+  const CPDF_Object* LookupValue(int num) const;
 
  protected:
-  UnownedPtr<CPDF_Dictionary> const m_pRoot;
+  UnownedPtr<const CPDF_Dictionary> const m_pRoot;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_NUMBERTREE_H_

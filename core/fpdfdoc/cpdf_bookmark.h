@@ -19,10 +19,10 @@ class CPDF_Bookmark {
  public:
   CPDF_Bookmark();
   CPDF_Bookmark(const CPDF_Bookmark& that);
-  explicit CPDF_Bookmark(CPDF_Dictionary* pDict);
+  explicit CPDF_Bookmark(const CPDF_Dictionary* pDict);
   ~CPDF_Bookmark();
 
-  CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   uint32_t GetColorRef() const;
   uint32_t GetFontStyle() const;
   WideString GetTitle() const;
@@ -30,7 +30,7 @@ class CPDF_Bookmark {
   CPDF_Action GetAction() const;
 
  private:
-  UnownedPtr<CPDF_Dictionary> m_pDict;
+  UnownedPtr<const CPDF_Dictionary> m_pDict;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_BOOKMARK_H_

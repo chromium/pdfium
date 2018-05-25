@@ -22,7 +22,7 @@ const char* const g_sATypes[] = {
 
 }  // namespace
 
-CPDF_Action::CPDF_Action(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_Action::CPDF_Action(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
 
@@ -76,7 +76,7 @@ WideString CPDF_Action::GetFilePath() const {
     return CPDF_FileSpec(pFile).GetFileName();
 
   if (type == "Launch") {
-    CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
+    const CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
     if (pWinDict) {
       return WideString::FromLocal(
           pWinDict->GetStringFor(pdfium::stream::kF).AsStringView());
@@ -94,7 +94,7 @@ ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
 
   csURI = m_pDict->GetStringFor("URI");
   const CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  CPDF_Dictionary* pURI = pRoot->GetDictFor("URI");
+  const CPDF_Dictionary* pURI = pRoot->GetDictFor("URI");
   if (pURI) {
     auto result = csURI.Find(":");
     if (!result.has_value() || result.value() == 0)

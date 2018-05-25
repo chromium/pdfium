@@ -87,7 +87,7 @@ class CPDF_InterForm {
 
   void SetFormNotify(IPDF_FormNotify* pNotify);
   bool HasXFAForm() const;
-  void FixPageFields(const CPDF_Page* pPage);
+  void FixPageFields(CPDF_Page* pPage);
 
   IPDF_FormNotify* GetFormNotify() const { return m_pFormNotify.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
