@@ -67,12 +67,13 @@ class CXFA_EventParam {
   WideString m_wsChange;
   WideString m_wsFullText;
   WideString m_wsNewContentType;
-  WideString m_wsNewText;
   WideString m_wsPrevContentType;
   WideString m_wsPrevText;
   WideString m_wsSoapFaultCode;
   WideString m_wsSoapFaultString;
   bool m_bIsFormReady;
+
+  WideString GetNewText() const;
 };
 
 #endif  // XFA_FXFA_CXFA_EVENTPARAM_H_

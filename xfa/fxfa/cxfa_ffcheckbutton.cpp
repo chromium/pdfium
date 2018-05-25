@@ -306,7 +306,7 @@ void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
     case CFWL_Event::Type::CheckStateChanged: {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Change;
-      eParam.m_wsNewText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
+      eParam.m_wsPrevText = m_pNode->GetValue(XFA_VALUEPICTURE_Raw);
 
       CXFA_Node* exclNode = m_pNode->GetExclGroupIfExists();
       if (ProcessCommittedData()) {

@@ -307,7 +307,6 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   eParam.m_wsPrevText = wsPrevText;
   if (m_pNode->GetFFWidgetType() == XFA_FFWidgetType::kDateTimeEdit) {
     auto* pDateTime = static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
-    eParam.m_wsNewText = pDateTime->GetEditText();
     if (pDateTime->HasSelection()) {
       size_t count;
       std::tie(eParam.m_iSelStart, count) = pDateTime->GetSelection();
@@ -315,7 +314,6 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
     }
   } else {
     CFWL_Edit* pEdit = ToEdit(m_pNormalWidget.get());
-    eParam.m_wsNewText = pEdit->GetText();
     if (pEdit->HasSelection())
       std::tie(eParam.m_iSelStart, eParam.m_iSelEnd) = pEdit->GetSelection();
   }

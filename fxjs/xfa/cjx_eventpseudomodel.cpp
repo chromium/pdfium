@@ -101,7 +101,18 @@ void CJX_EventPseudoModel::newContentType(CFXJSE_Value* pValue,
 void CJX_EventPseudoModel::newText(CFXJSE_Value* pValue,
                                    bool bSetting,
                                    XFA_Attribute eAttribute) {
-  Property(pValue, XFA_Event::NewText, bSetting);
+  if (bSetting)
+    return;
+
+  CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
+  if (!pScriptContext)
+    return;
+
+  CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
+  if (!pEventParam)
+    return;
+
+  pValue->SetString(pEventParam->GetNewText().UTF8Encode().AsStringView());
 }
 
 void CJX_EventPseudoModel::prevContentType(CFXJSE_Value* pValue,
@@ -237,7 +248,7 @@ void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,
       StringProperty(pValue, &pEventParam->m_wsNewContentType, bSetting);
       break;
     case XFA_Event::NewText:
-      StringProperty(pValue, &pEventParam->m_wsNewText, bSetting);
+      NOTREACHED();
       break;
     case XFA_Event::PreviousContentType:
       StringProperty(pValue, &pEventParam->m_wsPrevContentType, bSetting);

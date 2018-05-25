@@ -127,7 +127,7 @@ bool CXFA_FFComboBox::IsDataChanged() {
 void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
   pParam->m_eType = XFA_EVENT_Change;
   pParam->m_pTarget = m_pNode.Get();
-  pParam->m_wsNewText = ToComboBox(m_pNormalWidget.get())->GetEditText();
+  pParam->m_wsPrevText = ToComboBox(m_pNormalWidget.get())->GetEditText();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeEnum::Change, pParam);
 }
 

@@ -33,7 +33,6 @@ void CXFA_EventParam::Reset() {
   m_bKeyDown = false;
   m_bModifier = false;
   m_wsNewContentType.clear();
-  m_wsNewText.clear();
   m_wsPrevContentType.clear();
   m_wsPrevText.clear();
   m_bReenter = false;
@@ -43,4 +42,9 @@ void CXFA_EventParam::Reset() {
   m_wsSoapFaultCode.clear();
   m_wsSoapFaultString.clear();
   m_bIsFormReady = false;
+}
+
+WideString CXFA_EventParam::GetNewText() const {
+  return m_wsPrevText.Left(m_iSelStart) + m_wsChange +
+         m_wsPrevText.Right(m_wsPrevText.GetLength() - m_iSelEnd);
 }
