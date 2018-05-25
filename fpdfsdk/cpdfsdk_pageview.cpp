@@ -63,12 +63,8 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                                        CFX_Matrix* pUser2Device,
-#ifdef PDF_ENABLE_XFA
                                        CPDF_RenderOptions* pOptions,
                                        const FX_RECT& pClip) {
-#else
-                                       CPDF_RenderOptions* pOptions) {
-#endif  // PDF_ENABLE_XFA
   m_curMatrix = *pUser2Device;
 
 #ifdef PDF_ENABLE_XFA

@@ -182,13 +182,14 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
         pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View));
 
 #ifdef PDF_ENABLE_XFA
-    if (CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true))
-      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, rect);
+    CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true);
 #else   // PDF_ENABLE_XFA
-    if (CPDFSDK_PageView* pPageView =
-            FormHandleToPageView(hHandle, FPDFPageFromUnderlying(pPage)))
-      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
+    CPDFSDK_PageView* pPageView =
+        FormHandleToPageView(hHandle, FPDFPageFromUnderlying(pPage));
 #endif  // PDF_ENABLE_XFA
+
+    if (pPageView)
+      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, rect);
   }
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush(true);
