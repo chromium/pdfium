@@ -32,7 +32,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     return document_;
   }
 
-  void CheckFontDescriptor(CPDF_Dictionary* font_dict,
+  void CheckFontDescriptor(const CPDF_Dictionary* font_dict,
                            int font_type,
                            bool bold,
                            bool italic,
@@ -1003,7 +1003,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsType1Font());
 
-  CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("Type1", font_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Times New Roman Bold", font_dict->GetStringFor("BaseFont"));
@@ -1032,7 +1032,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsTrueTypeFont());
 
-  CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("TrueType", font_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Courier New", font_dict->GetStringFor("BaseFont"));
@@ -1063,7 +1063,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
-  CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Times New Roman-Identity-H", font_dict->GetStringFor("BaseFont"));
@@ -1105,7 +1105,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
-  CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetStringFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetStringFor("Subtype"));
   EXPECT_EQ("Arial Italic", font_dict->GetStringFor("BaseFont"));

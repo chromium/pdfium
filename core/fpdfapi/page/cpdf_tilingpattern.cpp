@@ -35,7 +35,7 @@ bool CPDF_TilingPattern::Load() {
   if (m_pForm)
     return true;
 
-  CPDF_Dictionary* pDict = pattern_obj()->GetDict();
+  const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
   if (!pDict)
     return false;
 

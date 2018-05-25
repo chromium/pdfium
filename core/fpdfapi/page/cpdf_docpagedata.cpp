@@ -457,13 +457,13 @@ void CPDF_DocPageData::MaybePurgeIccProfile(const CPDF_Stream* pProfileStream) {
 }
 
 RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
-    CPDF_Stream* pFontStream) {
+    const CPDF_Stream* pFontStream) {
   ASSERT(pFontStream);
   auto it = m_FontFileMap.find(pFontStream);
   if (it != m_FontFileMap.end())
     return it->second;
 
-  CPDF_Dictionary* pFontDict = pFontStream->GetDict();
+  const CPDF_Dictionary* pFontDict = pFontStream->GetDict();
   int32_t org_size = pFontDict->GetIntegerFor("Length1") +
                      pFontDict->GetIntegerFor("Length2") +
                      pFontDict->GetIntegerFor("Length3");
@@ -495,7 +495,7 @@ CPDF_CountedColorSpace* CPDF_DocPageData::FindColorSpacePtr(
 }
 
 CPDF_CountedPattern* CPDF_DocPageData::FindPatternPtr(
-    CPDF_Object* pPatternObj) const {
+    const CPDF_Object* pPatternObj) const {
   if (!pPatternObj)
     return nullptr;
 

@@ -75,7 +75,7 @@ class CPDF_StreamParserAutoClearer {
 CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
                              const CFX_Matrix& matrix) {
   ShadingType type = pShading->GetShadingType();
-  CPDF_Stream* pStream = ToStream(pShading->GetShadingObject());
+  const CPDF_Stream* pStream = ToStream(pShading->GetShadingObject());
   CPDF_ColorSpace* pCS = pShading->GetCS();
   if (!pStream || !pCS)
     return CFX_FloatRect();

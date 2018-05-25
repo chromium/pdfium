@@ -315,6 +315,7 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
   return pFontGlobals->Set(pDoc, font_id, CPDF_Font::Create(nullptr, pDict));
 }
 
+// static
 std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
                                              CPDF_Dictionary* pFontDict) {
   ByteString type = pFontDict->GetStringFor("Subtype");

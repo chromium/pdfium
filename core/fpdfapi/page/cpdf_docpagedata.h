@@ -64,11 +64,12 @@ class CPDF_DocPageData {
   RetainPtr<CPDF_IccProfile> GetIccProfile(const CPDF_Stream* pProfileStream);
   void MaybePurgeIccProfile(const CPDF_Stream* pProfileStream);
 
-  RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(CPDF_Stream* pFontStream);
+  RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
+      const CPDF_Stream* pFontStream);
   void MaybePurgeFontFileStreamAcc(const CPDF_Stream* pFontStream);
 
   CPDF_CountedColorSpace* FindColorSpacePtr(const CPDF_Object* pCSObj) const;
-  CPDF_CountedPattern* FindPatternPtr(CPDF_Object* pPatternObj) const;
+  CPDF_CountedPattern* FindPatternPtr(const CPDF_Object* pPatternObj) const;
 
  private:
   using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
