@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef TESTING_LIBFUZZER_XFA_CODEC_FUZZER_H_
-#define TESTING_LIBFUZZER_XFA_CODEC_FUZZER_H_
+#ifndef TESTING_FUZZERS_XFA_CODEC_FUZZER_H_
+#define TESTING_FUZZERS_XFA_CODEC_FUZZER_H_
 
 #include <memory>
 
@@ -84,4 +84,4 @@ class XFACodecFuzzer {
   }
 };
 
-#endif  // TESTING_LIBFUZZER_XFA_CODEC_FUZZER_H_
+#endif  // TESTING_FUZZERS_XFA_CODEC_FUZZER_H_
