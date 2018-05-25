@@ -160,16 +160,8 @@ class CPDF_FormField {
 
   int GetSelectedOptionIndex(int index) const;
   bool IsOptionSelected(int iOptIndex) const;
-
   bool SelectOption(int iOptIndex, bool bSelected, bool bNotify = false);
-
   bool ClearSelectedOptions(bool bNotify = false);
-
-#ifdef PDF_ENABLE_XFA
-  bool ClearOptions(bool bNotify = false);
-
-  int InsertOption(WideString csOptLabel, int index = -1, bool bNotify = false);
-#endif  // PDF_ENABLE_XFA
 
   float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont.Get(); }

@@ -643,57 +643,6 @@ int CPDF_FormField::FindOptionValue(const WideString& csOptValue) const {
   return -1;
 }
 
-#ifdef PDF_ENABLE_XFA
-int CPDF_FormField::InsertOption(WideString csOptLabel,
-                                 int index,
-                                 bool bNotify) {
-  if (csOptLabel.IsEmpty())
-    return -1;
-
-  if (bNotify && !NotifyListOrComboBoxBeforeChange(csOptLabel))
-    return -1;
-
-  ByteString csStr = PDF_EncodeText(csOptLabel);
-  CPDF_Array* pOpt = ToArray(FPDF_GetFieldAttr(m_pDict.Get(), "Opt"));
-  if (!pOpt)
-    pOpt = m_pDict->SetNewFor<CPDF_Array>("Opt");
-
-  int iCount = pdfium::base::checked_cast<int>(pOpt->GetCount());
-  if (index >= iCount) {
-    pOpt->AddNew<CPDF_String>(csStr, false);
-    index = iCount;
-  } else {
-    pOpt->InsertNewAt<CPDF_String>(index, csStr, false);
-  }
-
-  if (bNotify)
-    NotifyListOrComboBoxAfterChange();
-  return index;
-}
-
-bool CPDF_FormField::ClearOptions(bool bNotify) {
-  if (bNotify && m_pForm->GetFormNotify()) {
-    WideString csValue;
-    int iIndex = GetSelectedIndex(0);
-    if (iIndex >= 0)
-      csValue = GetOptionLabel(iIndex);
-    if (!NotifyListOrComboBoxBeforeChange(csValue))
-      return false;
-  }
-
-  m_pDict->RemoveFor("Opt");
-  m_pDict->RemoveFor("V");
-  m_pDict->RemoveFor("DV");
-  m_pDict->RemoveFor("I");
-  m_pDict->RemoveFor("TI");
-
-  if (bNotify)
-    NotifyListOrComboBoxAfterChange();
-
-  return true;
-}
-#endif  // PDF_ENABLE_XFA
-
 bool CPDF_FormField::CheckControl(int iControlIndex,
                                   bool bChecked,
                                   bool bNotify) {
