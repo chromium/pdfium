@@ -36,6 +36,7 @@ class XFAJSEmbedderTest : public EmbedderTest {
   bool Execute(const ByteStringView& input);
   bool ExecuteSilenceFailure(const ByteStringView& input);
 
+  CFXJSE_Engine* GetScriptContext() { return script_context_; }
   CFXJSE_Value* GetValue() const { return value_.get(); }
 
  private:

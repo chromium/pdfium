@@ -325,6 +325,19 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
   if (pScriptObject) {
     bRet = lpScriptContext->QueryVariableValue(ToNode(pScriptObject),
                                                szPropName, pReturnValue, true);
+
+    if (!bRet) {
+      WideString wsPropName = WideString::FromUTF8(szPropName);
+      const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
+          XFA_GetScriptAttributeByName(pObject->GetElementType(),
+                                       wsPropName.AsStringView());
+      if (lpAttributeInfo) {
+        CJX_Object* jsObject = pObject->JSObject();
+        (jsObject->*(lpAttributeInfo->callback))(pReturnValue, false,
+                                                 lpAttributeInfo->attribute);
+        return;
+      }
+    }
   }
   if (!bRet)
     pReturnValue->SetUndefined();
@@ -510,6 +523,7 @@ bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,
     pObject->SetObjectOwnProperty(szPropName, pValue);
     return true;
   }
+
   if (pObject->HasObjectOwnProperty(szPropName, false)) {
     pObject->GetObjectProperty(szPropName, hVariableValue.get());
     if (hVariableValue->IsFunction())

@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "fxjs/cfxjse_engine.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
+#include "xfa/fxfa/cxfa_eventparam.h"
 
 class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {};
 
@@ -1454,4 +1456,33 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, MethodCall) {
   CFXJSE_Value* value = GetValue();
   EXPECT_TRUE(value->IsString());
   EXPECT_STREQ("12.7mm", value->ToString().c_str());
+}
+
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, GetXFAEventChange) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  CXFA_EventParam params;
+  params.m_wsChange = L"changed";
+
+  CFXJSE_Engine* context = GetScriptContext();
+  context->SetEventParam(params);
+
+  const char test[] = {"xfa.event.change"};
+  EXPECT_TRUE(Execute(test));
+
+  CFXJSE_Value* value = GetValue();
+  EXPECT_TRUE(value->IsString());
+  EXPECT_STREQ("changed", value->ToString().c_str());
+}
+
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  CXFA_EventParam params;
+  CFXJSE_Engine* context = GetScriptContext();
+  context->SetEventParam(params);
+
+  const char test[] = {"xfa.event.change = \"changed\""};
+  EXPECT_TRUE(Execute(test));
+  EXPECT_EQ(L"changed", context->GetEventParam()->m_wsChange);
 }
