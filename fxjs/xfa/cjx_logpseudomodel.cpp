@@ -28,6 +28,13 @@ CJX_LogPseudoModel::~CJX_LogPseudoModel() {}
 CJS_Return CJX_LogPseudoModel::message(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  // Uncomment to allow using xfa.log.message(""); from JS.
+  // fprintf(stderr, "LOG\n");
+  // for (auto& val : params) {
+  //   v8::String::Utf8Value str(runtime->GetIsolate(), val);
+  //   fprintf(stderr, "  %ls\n", WideString::FromUTF8(*str).c_str());
+  // }
+
   return CJS_Return(true);
 }
 
