@@ -308,7 +308,7 @@ std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
 uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
                                   const uint8_t* src_buf,
                                   uint32_t src_size,
-                                  CPDF_Dictionary* pParams,
+                                  const CPDF_Dictionary* pParams,
                                   uint32_t estimated_size,
                                   uint8_t** dest_buf,
                                   uint32_t* dest_size) {
@@ -339,17 +339,18 @@ bool PDF_DataDecode(const uint8_t* src_buf,
                     uint8_t** dest_buf,
                     uint32_t* dest_size,
                     ByteString* ImageEncoding,
-                    CPDF_Dictionary** pImageParms) {
-  CPDF_Object* pDecoder = pDict ? pDict->GetDirectObjectFor("Filter") : nullptr;
+                    const CPDF_Dictionary** pImageParms) {
+  const CPDF_Object* pDecoder =
+      pDict ? pDict->GetDirectObjectFor("Filter") : nullptr;
   if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
     return false;
 
-  CPDF_Object* pParams =
+  const CPDF_Object* pParams =
       pDict ? pDict->GetDirectObjectFor(pdfium::stream::kDecodeParms) : nullptr;
 
-  std::vector<std::pair<ByteString, CPDF_Object*>> DecoderArray;
-  if (CPDF_Array* pDecoders = pDecoder->AsArray()) {
-    CPDF_Array* pParamsArray = ToArray(pParams);
+  std::vector<std::pair<ByteString, const CPDF_Object*>> DecoderArray;
+  if (const CPDF_Array* pDecoders = pDecoder->AsArray()) {
+    const CPDF_Array* pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->GetCount(); ++i) {
       DecoderArray.push_back(
           {pDecoders->GetStringAt(i),
@@ -365,7 +366,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
   for (size_t i = 0; i < nSize; ++i) {
     int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
     ByteString decoder = DecoderArray[i].first;
-    CPDF_Dictionary* pParam = ToDictionary(DecoderArray[i].second);
+    const CPDF_Dictionary* pParam = ToDictionary(DecoderArray[i].second);
     uint8_t* new_buf = nullptr;
     uint32_t new_size = 0xFFFFFFFF;
     uint32_t offset = FX_INVALID_OFFSET;

@@ -85,7 +85,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   if (!pRoot)
     return PAGEMODE_UNKNOWN;
 
-  CPDF_Object* pName = pRoot->GetObjectFor("PageMode");
+  const CPDF_Object* pName = pRoot->GetObjectFor("PageMode");
   if (!pName)
     return PAGEMODE_USENONE;
 

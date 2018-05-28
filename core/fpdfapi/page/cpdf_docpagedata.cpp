@@ -254,7 +254,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
     if (!pColorSpaces)
       return pCS;
 
-    CPDF_Object* pDefaultCS = nullptr;
+    const CPDF_Object* pDefaultCS = nullptr;
     switch (pCS->GetFamily()) {
       case PDFCS_DEVICERGB:
         pDefaultCS = pColorSpaces->GetDirectObjectFor("DefaultRGB");

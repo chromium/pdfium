@@ -79,9 +79,13 @@ class CPDF_FormControl;
 class CPDF_InterForm;
 class CPDF_String;
 
-CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
+const CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
+                                     const char* name,
+                                     int nLevel = 0);
+CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
                                const char* name,
                                int nLevel = 0);
+
 WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict);
 
 class CPDF_FormField {
@@ -167,6 +171,8 @@ class CPDF_FormField {
   CPDF_Font* GetFont() const { return m_pFont.Get(); }
 
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  CPDF_Dictionary* GetDict() { return m_pDict.Get(); }
+
   const CPDF_InterForm* GetForm() const { return m_pForm.Get(); }
 
   WideString GetCheckValue(bool bDefault) const;

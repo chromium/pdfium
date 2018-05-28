@@ -1142,32 +1142,33 @@ std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
     if (dwFlags & 0x04)
       continue;
 
-    if (bIncludeOrExclude == pdfium::ContainsValue(fields, pField)) {
-      if ((dwFlags & 0x02) != 0 &&
-          pField->GetDict()->GetStringFor("V").IsEmpty()) {
-        continue;
-      }
+    if (bIncludeOrExclude != pdfium::ContainsValue(fields, pField))
+      continue;
 
-      WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
-      auto pFieldDict =
-          pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-      pFieldDict->SetNewFor<CPDF_String>("T", fullname);
-      if (pField->GetType() == CPDF_FormField::CheckBox ||
-          pField->GetType() == CPDF_FormField::RadioButton) {
-        WideString csExport = pField->GetCheckValue(false);
-        ByteString csBExport = PDF_EncodeText(csExport);
-        CPDF_Object* pOpt = FPDF_GetFieldAttr(pField->GetDict(), "Opt");
-        if (pOpt)
-          pFieldDict->SetNewFor<CPDF_String>("V", csBExport, false);
-        else
-          pFieldDict->SetNewFor<CPDF_Name>("V", csBExport);
-      } else {
-        CPDF_Object* pV = FPDF_GetFieldAttr(pField->GetDict(), "V");
-        if (pV)
-          pFieldDict->SetFor("V", pV->CloneDirectObject());
-      }
-      pFields->Add(std::move(pFieldDict));
+    if ((dwFlags & 0x02) != 0 &&
+        pField->GetDict()->GetStringFor("V").IsEmpty()) {
+      continue;
     }
+
+    WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
+    auto pFieldDict =
+        pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+    pFieldDict->SetNewFor<CPDF_String>("T", fullname);
+    if (pField->GetType() == CPDF_FormField::CheckBox ||
+        pField->GetType() == CPDF_FormField::RadioButton) {
+      WideString csExport = pField->GetCheckValue(false);
+      ByteString csBExport = PDF_EncodeText(csExport);
+      CPDF_Object* pOpt = FPDF_GetFieldAttr(pField->GetDict(), "Opt");
+      if (pOpt)
+        pFieldDict->SetNewFor<CPDF_String>("V", csBExport, false);
+      else
+        pFieldDict->SetNewFor<CPDF_Name>("V", csBExport);
+    } else {
+      CPDF_Object* pV = FPDF_GetFieldAttr(pField->GetDict(), "V");
+      if (pV)
+        pFieldDict->SetFor("V", pV->CloneDirectObject());
+    }
+    pFields->Add(std::move(pFieldDict));
   }
   return pDoc;
 }

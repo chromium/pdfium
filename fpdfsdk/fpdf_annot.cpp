@@ -142,7 +142,7 @@ static_assert(static_cast<int>(CPDF_Object::Type::REFERENCE) ==
                   FPDF_OBJECT_REFERENCE,
               "CPDF_Object::REFERENCE value mismatch");
 
-bool HasAPStream(const CPDF_Dictionary* pAnnotDict) {
+bool HasAPStream(CPDF_Dictionary* pAnnotDict) {
   return !!FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
 }
 
@@ -188,7 +188,7 @@ void AppendQuadPoints(CPDF_Array* array, const FS_QUADPOINTSF* quad_points) {
   array->AddNew<CPDF_Number>(quad_points->y4);
 }
 
-void UpdateBBox(const CPDF_Dictionary* annot_dict) {
+void UpdateBBox(CPDF_Dictionary* annot_dict) {
   // Update BBox entry in appearance stream based on the bounding rectangle
   // of the annotation's quadpoints.
   CPDF_Stream* pStream =

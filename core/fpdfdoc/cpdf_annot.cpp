@@ -61,10 +61,10 @@ CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
   return pForm;
 }
 
-CPDF_Stream* FPDFDOC_GetAnnotAPInternal(const CPDF_Dictionary* pAnnotDict,
+CPDF_Stream* FPDFDOC_GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
                                         CPDF_Annot::AppearanceMode eMode,
                                         bool bFallbackToNormal) {
-  const CPDF_Dictionary* pAP = pAnnotDict->GetDictFor("AP");
+  CPDF_Dictionary* pAP = pAnnotDict->GetDictFor("AP");
   if (!pAP)
     return nullptr;
 
@@ -177,12 +177,12 @@ uint32_t CPDF_Annot::GetFlags() const {
   return m_pAnnotDict->GetIntegerFor("F");
 }
 
-CPDF_Stream* FPDFDOC_GetAnnotAP(const CPDF_Dictionary* pAnnotDict,
+CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode eMode) {
   return FPDFDOC_GetAnnotAPInternal(pAnnotDict, eMode, true);
 }
 
-CPDF_Stream* FPDFDOC_GetAnnotAPNoFallback(const CPDF_Dictionary* pAnnotDict,
+CPDF_Stream* FPDFDOC_GetAnnotAPNoFallback(CPDF_Dictionary* pAnnotDict,
                                           CPDF_Annot::AppearanceMode eMode) {
   return FPDFDOC_GetAnnotAPInternal(pAnnotDict, eMode, false);
 }

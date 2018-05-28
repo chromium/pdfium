@@ -186,7 +186,7 @@ bool CPDF_CrossRefAvail::CheckCrossRefStream() {
     return false;
   }
 
-  CPDF_Name* type_name = ToName(trailer->GetObjectFor(kTypeFieldKey));
+  const CPDF_Name* type_name = ToName(trailer->GetObjectFor(kTypeFieldKey));
   if (type_name && type_name->GetString() == kXRefKeyword) {
     const int32_t xrefpos = trailer->GetIntegerFor(kPrevCrossRefFieldKey);
     if (xrefpos &&

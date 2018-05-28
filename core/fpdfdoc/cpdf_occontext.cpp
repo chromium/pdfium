@@ -26,12 +26,12 @@ int32_t FindGroup(const CPDF_Array* pArray, const CPDF_Dictionary* pGroupDict) {
 bool HasIntent(const CPDF_Dictionary* pDict,
                const ByteStringView& csElement,
                const ByteStringView& csDef) {
-  CPDF_Object* pIntent = pDict->GetDirectObjectFor("Intent");
+  const CPDF_Object* pIntent = pDict->GetDirectObjectFor("Intent");
   if (!pIntent)
     return csElement == csDef;
 
   ByteString bsIntent;
-  if (CPDF_Array* pArray = pIntent->AsArray()) {
+  if (const CPDF_Array* pArray = pIntent->AsArray()) {
     for (size_t i = 0; i < pArray->GetCount(); i++) {
       bsIntent = pArray->GetStringAt(i);
       if (bsIntent == "All" || bsIntent == csElement)
@@ -242,14 +242,14 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) {
     return GetOCGVE(pVE, 0);
 
   ByteString csP = pOCMDDict->GetStringFor("P", "AnyOn");
-  CPDF_Object* pOCGObj = pOCMDDict->GetDirectObjectFor("OCGs");
+  const CPDF_Object* pOCGObj = pOCMDDict->GetDirectObjectFor("OCGs");
   if (!pOCGObj)
     return true;
 
   if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary())
     return GetOCGVisible(pDict);
 
-  CPDF_Array* pArray = pOCGObj->AsArray();
+  const CPDF_Array* pArray = pOCGObj->AsArray();
   if (!pArray)
     return true;
 
@@ -259,7 +259,7 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) {
   bool bValidEntrySeen = false;
   for (size_t i = 0; i < pArray->GetCount(); i++) {
     bool bItem = true;
-    CPDF_Dictionary* pItemDict = pArray->GetDictAt(i);
+    const CPDF_Dictionary* pItemDict = pArray->GetDictAt(i);
     if (!pItemDict)
       continue;
 

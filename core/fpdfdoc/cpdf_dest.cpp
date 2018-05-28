@@ -34,16 +34,16 @@ CPDF_Dest::CPDF_Dest() {}
 
 CPDF_Dest::CPDF_Dest(const CPDF_Dest& that) = default;
 
-CPDF_Dest::CPDF_Dest(CPDF_Array* pObj) : m_pObj(pObj) {}
+CPDF_Dest::CPDF_Dest(const CPDF_Array* pObj) : m_pObj(pObj) {}
 
 CPDF_Dest::~CPDF_Dest() {}
 
 int CPDF_Dest::GetPageIndexDeprecated(CPDF_Document* pDoc) const {
-  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  const CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return 0;
 
-  CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
+  const CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
   if (!pPage)
     return 0;
 
@@ -57,11 +57,11 @@ int CPDF_Dest::GetPageIndexDeprecated(CPDF_Document* pDoc) const {
 }
 
 int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
-  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  const CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return -1;
 
-  CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
+  const CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
   if (!pPage)
     return -1;
 
@@ -75,11 +75,11 @@ int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
 }
 
 uint32_t CPDF_Dest::GetPageObjNum() const {
-  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  const CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return 0;
 
-  CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
+  const CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
   if (!pPage)
     return 0;
   if (pPage->IsNumber())
@@ -90,11 +90,11 @@ uint32_t CPDF_Dest::GetPageObjNum() const {
 }
 
 int CPDF_Dest::GetZoomMode() const {
-  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  const CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return 0;
 
-  CPDF_Object* pObj = pArray->GetDirectObjectAt(1);
+  const CPDF_Object* pObj = pArray->GetDirectObjectAt(1);
   if (!pObj)
     return 0;
 
@@ -117,7 +117,7 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   *pHasY = false;
   *pHasZoom = false;
 
-  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  const CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
     return false;
 
@@ -155,7 +155,7 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
 }
 
 unsigned long CPDF_Dest::GetNumParams() const {
-  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  const CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray || pArray->GetCount() < 2)
     return 0;
 
@@ -165,7 +165,7 @@ unsigned long CPDF_Dest::GetNumParams() const {
 }
 
 float CPDF_Dest::GetParam(int index) const {
-  CPDF_Array* pArray = ToArray(m_pObj.Get());
+  const CPDF_Array* pArray = ToArray(m_pObj.Get());
   return pArray ? pArray->GetNumberAt(2 + index) : 0;
 }
 

@@ -203,7 +203,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   }
 
   ByteString sDA;
-  CPDF_Object* pObj = FPDF_GetFieldAttr(m_pAnnotDict.Get(), "DA");
+  const CPDF_Object* pObj = FPDF_GetFieldAttr(m_pAnnotDict.Get(), "DA");
   if (pObj)
     sDA = pObj->GetString();
 

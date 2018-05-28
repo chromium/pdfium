@@ -54,7 +54,9 @@ class CPDF_StructElement : public Retainable {
   ~CPDF_StructElement() override;
 
   void LoadKids(const CPDF_Dictionary* pDict);
-  void LoadKid(uint32_t PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
+  void LoadKid(uint32_t PageObjNum,
+               const CPDF_Object* pObj,
+               CPDF_StructKid* pKid);
 
   UnownedPtr<CPDF_StructTree> const m_pTree;
   UnownedPtr<CPDF_StructElement> const m_pParent;

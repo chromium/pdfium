@@ -407,9 +407,9 @@ bool CPDF_CIDFont::Load() {
   if (!IsEmbedded())
     LoadSubstFont();
 
-  CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
+  const CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
   if (pmap) {
-    if (CPDF_Stream* pStream = pmap->AsStream()) {
+    if (const CPDF_Stream* pStream = pmap->AsStream()) {
       m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
       m_pStreamAcc->LoadAllDataFiltered();
     } else if (m_pFontFile && pmap->GetString() == "Identity") {

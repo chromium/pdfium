@@ -342,12 +342,12 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
 
   if (m_bImageMask || !m_pDict->KeyExist("ColorSpace")) {
     if (!m_bImageMask) {
-      CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
+      const CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
       if (pFilter) {
         ByteString filter;
         if (pFilter->IsName()) {
           filter = pFilter->GetString();
-        } else if (CPDF_Array* pArray = pFilter->AsArray()) {
+        } else if (const CPDF_Array* pArray = pFilter->AsArray()) {
           filter = pArray->GetStringAt(pArray->GetCount() - 1);
         }
 
@@ -427,11 +427,11 @@ bool CPDF_DIBSource::GetDecodeAndMaskArray(bool* bDefaultDecode,
   if (m_pDict->KeyExist("SMask"))
     return true;
 
-  CPDF_Object* pMask = m_pDict->GetDirectObjectFor("Mask");
+  const CPDF_Object* pMask = m_pDict->GetDirectObjectFor("Mask");
   if (!pMask)
     return true;
 
-  if (CPDF_Array* pArray = pMask->AsArray()) {
+  if (const CPDF_Array* pArray = pMask->AsArray()) {
     if (pArray->GetCount() >= m_nComponents * 2) {
       for (uint32_t i = 0; i < m_nComponents; i++) {
         int min_num = pArray->GetIntegerAt(i * 2);
@@ -791,7 +791,7 @@ void CPDF_DIBSource::LoadPalette() {
 
 void CPDF_DIBSource::ValidateDictParam() {
   m_bpc = m_bpc_orig;
-  CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
+  const CPDF_Object* pFilter = m_pDict->GetDirectObjectFor("Filter");
   if (pFilter) {
     if (pFilter->IsName()) {
       ByteString filter = pFilter->GetString();
@@ -805,7 +805,7 @@ void CPDF_DIBSource::ValidateDictParam() {
       } else if (filter == "DCTDecode") {
         m_bpc = 8;
       }
-    } else if (CPDF_Array* pArray = pFilter->AsArray()) {
+    } else if (const CPDF_Array* pArray = pFilter->AsArray()) {
       ByteString filter = pArray->GetStringAt(pArray->GetCount() - 1);
       if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
         m_bpc = 1;

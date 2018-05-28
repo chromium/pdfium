@@ -88,7 +88,7 @@ class CPDF_Creator {
   UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   uint32_t m_dwEncryptObjNum;
   fxcrt::MaybeOwned<CPDF_SecurityHandler> m_pSecurityHandler;
-  UnownedPtr<CPDF_Object> m_pMetadata;
+  UnownedPtr<const CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
   FX_FILESIZE m_SavedOffset;

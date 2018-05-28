@@ -110,11 +110,11 @@ inline CPDF_ClipPath* CPDFClipPathFromFPDFClipPath(FPDF_CLIPPATH path) {
   return reinterpret_cast<CPDF_ClipPath*>(path);
 }
 
-inline FPDF_DEST FPDFDestFromCPDFArray(CPDF_Array* dest) {
+inline FPDF_DEST FPDFDestFromCPDFArray(const CPDF_Array* dest) {
   return reinterpret_cast<FPDF_DEST>(dest);
 }
-inline CPDF_Array* CPDFArrayFromFPDFDest(FPDF_DEST dest) {
-  return reinterpret_cast<CPDF_Array*>(dest);
+inline const CPDF_Array* CPDFArrayFromFPDFDest(FPDF_DEST dest) {
+  return reinterpret_cast<const CPDF_Array*>(dest);
 }
 
 inline FPDF_FONT FPDFFontFromCPDFFont(CPDF_Font* font) {

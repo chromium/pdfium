@@ -47,14 +47,14 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   if (!m_pTreeRoot)
     return;
 
-  CPDF_Object* pKids = m_pTreeRoot->GetDirectObjectFor("K");
+  const CPDF_Object* pKids = m_pTreeRoot->GetDirectObjectFor("K");
   if (!pKids)
     return;
 
   uint32_t dwKids = 0;
   if (pKids->IsDictionary())
     dwKids = 1;
-  else if (CPDF_Array* pArray = pKids->AsArray())
+  else if (const CPDF_Array* pArray = pKids->AsArray())
     dwKids = pArray->GetCount();
   else
     return;
@@ -119,7 +119,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 bool CPDF_StructTree::AddTopLevelNode(
     const CPDF_Dictionary* pDict,
     const RetainPtr<CPDF_StructElement>& pElement) {
-  CPDF_Object* pObj = m_pTreeRoot->GetDirectObjectFor("K");
+  const CPDF_Object* pObj = m_pTreeRoot->GetDirectObjectFor("K");
   if (!pObj)
     return false;
 
@@ -129,13 +129,13 @@ bool CPDF_StructTree::AddTopLevelNode(
     m_Kids[0] = pElement;
   }
 
-  CPDF_Array* pTopKids = pObj->AsArray();
+  const CPDF_Array* pTopKids = pObj->AsArray();
   if (!pTopKids)
     return true;
 
   bool bSave = false;
   for (size_t i = 0; i < pTopKids->GetCount(); i++) {
-    CPDF_Reference* pKidRef = ToReference(pTopKids->GetObjectAt(i));
+    const CPDF_Reference* pKidRef = ToReference(pTopKids->GetObjectAt(i));
     if (pKidRef && pKidRef->GetRefObjNum() == pDict->GetObjNum()) {
       m_Kids[i] = pElement;
       bSave = true;

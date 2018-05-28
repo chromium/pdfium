@@ -67,7 +67,7 @@ uint32_t HexDecode(const uint8_t* src_buf,
 uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
                                   const uint8_t* src_buf,
                                   uint32_t src_size,
-                                  CPDF_Dictionary* pParams,
+                                  const CPDF_Dictionary* pParams,
                                   uint32_t estimated_size,
                                   uint8_t** dest_buf,
                                   uint32_t* dest_size);
@@ -80,6 +80,6 @@ bool PDF_DataDecode(const uint8_t* src_buf,
                     uint8_t** dest_buf,
                     uint32_t* dest_size,
                     ByteString* ImageEncoding,
-                    CPDF_Dictionary** pImageParms);
+                    const CPDF_Dictionary** pImageParms);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_

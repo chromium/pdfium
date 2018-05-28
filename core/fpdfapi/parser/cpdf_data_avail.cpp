@@ -279,7 +279,7 @@ bool CPDF_DataAvail::CheckRoot() {
 
 bool CPDF_DataAvail::PreparePageItem() {
   const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  CPDF_Reference* pRef =
+  const CPDF_Reference* pRef =
       ToReference(pRoot ? pRoot->GetObjectFor("Pages") : nullptr);
   if (!pRef) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
@@ -996,7 +996,7 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
     if (!pRoot)
       return FormAvailable;
 
-    CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
+    const CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
     if (!pAcroForm)
       return FormNotExist;
 

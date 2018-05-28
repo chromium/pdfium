@@ -18,10 +18,10 @@ class CPDF_Dest {
  public:
   CPDF_Dest();
   CPDF_Dest(const CPDF_Dest& that);
-  explicit CPDF_Dest(CPDF_Array* pObj);
+  explicit CPDF_Dest(const CPDF_Array* pObj);
   ~CPDF_Dest();
 
-  CPDF_Array* GetObject() const { return m_pObj.Get(); }
+  const CPDF_Array* GetObject() const { return m_pObj.Get(); }
   ByteString GetRemoteName() const;
 
   // Deprecated. Use GetDestPageIndex instead.
@@ -46,7 +46,7 @@ class CPDF_Dest {
               float* pZoom) const;
 
  private:
-  UnownedPtr<CPDF_Array> m_pObj;
+  UnownedPtr<const CPDF_Array> const m_pObj;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEST_H_

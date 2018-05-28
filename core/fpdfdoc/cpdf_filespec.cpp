@@ -19,6 +19,10 @@
 
 namespace {
 
+// List of keys to check for the file specification string.
+// Follows the same precedence order as GetFileName().
+constexpr const char* kKeys[] = {"UF", "F", "DOS", "Mac", "Unix"};
+
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
     _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 WideString ChangeSlashToPlatform(const wchar_t* str) {
@@ -54,7 +58,12 @@ WideString ChangeSlashToPDF(const wchar_t* str) {
 
 }  // namespace
 
-CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {
+CPDF_FileSpec::CPDF_FileSpec(const CPDF_Object* pObj) : m_pObj(pObj) {
+  ASSERT(m_pObj);
+}
+
+CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj)
+    : m_pObj(pObj), m_pWritableObj(pObj) {
   ASSERT(m_pObj);
 }
 
@@ -92,7 +101,7 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
 
 WideString CPDF_FileSpec::GetFileName() const {
   WideString csFileName;
-  if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
+  if (const CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
     csFileName = pDict->GetUnicodeTextFor("UF");
     if (csFileName.IsEmpty()) {
       csFileName = WideString::FromLocal(
@@ -117,8 +126,30 @@ WideString CPDF_FileSpec::GetFileName() const {
   return DecodeFileName(csFileName);
 }
 
-CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
-  CPDF_Dictionary* pDict = m_pObj->AsDictionary();
+const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
+  const CPDF_Dictionary* pDict = m_pObj->AsDictionary();
+  if (!pDict)
+    return nullptr;
+
+  // Get the embedded files dictionary.
+  const CPDF_Dictionary* pFiles = pDict->GetDictFor("EF");
+  if (!pFiles)
+    return nullptr;
+
+  size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(kKeys);
+  for (size_t i = 0; i < end; ++i) {
+    const ByteString& key = kKeys[i];
+    if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
+      const CPDF_Stream* pStream = pFiles->GetStreamFor(key);
+      if (pStream)
+        return pStream;
+    }
+  }
+  return nullptr;
+}
+
+CPDF_Stream* CPDF_FileSpec::GetFileStream() {
+  CPDF_Dictionary* pDict = m_pWritableObj->AsDictionary();
   if (!pDict)
     return nullptr;
 
@@ -127,12 +158,9 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
   if (!pFiles)
     return nullptr;
 
-  // Get the file stream of the highest precedence with its file specification
-  // string available. Follows the same precedence order as GetFileName().
-  constexpr const char* keys[] = {"UF", "F", "DOS", "Mac", "Unix"};
-  size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(keys);
+  size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(kKeys);
   for (size_t i = 0; i < end; ++i) {
-    const ByteString& key = keys[i];
+    const ByteString& key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       CPDF_Stream* pStream = pFiles->GetStreamFor(key);
       if (pStream)
@@ -142,16 +170,22 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
   return nullptr;
 }
 
-CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
+const CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
+  const CPDF_Stream* pStream = GetFileStream();
+  if (!pStream)
+    return nullptr;
+
+  const CPDF_Dictionary* pDict = pStream->GetDict();
+  return pDict ? pDict->GetDictFor("Params") : nullptr;
+}
+
+CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() {
   CPDF_Stream* pStream = GetFileStream();
   if (!pStream)
     return nullptr;
 
   CPDF_Dictionary* pDict = pStream->GetDict();
-  if (!pDict)
-    return nullptr;
-
-  return pDict->GetDictFor("Params");
+  return pDict ? pDict->GetDictFor("Params") : nullptr;
 }
 
 WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
@@ -184,10 +218,15 @@ WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
 }
 
 void CPDF_FileSpec::SetFileName(const WideString& wsFileName) {
+  if (!m_pWritableObj) {
+    NOTREACHED();
+    return;
+  }
+
   WideString wsStr = EncodeFileName(wsFileName);
   if (m_pObj->IsString()) {
-    m_pObj->SetString(ByteString::FromUnicode(wsStr));
-  } else if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
+    m_pWritableObj->SetString(ByteString::FromUnicode(wsStr));
+  } else if (CPDF_Dictionary* pDict = m_pWritableObj->AsDictionary()) {
     pDict->SetNewFor<CPDF_String>(pdfium::stream::kF,
                                   ByteString::FromUnicode(wsStr), false);
     pDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsStr), false);
