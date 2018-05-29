@@ -51,7 +51,7 @@ class CFX_Font {
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,
                                          bool bFontStyle,
-                                         const CFX_Matrix* pMatrix,
+                                         const CFX_Matrix& matrix,
                                          uint32_t dest_width,
                                          int anti_alias,
                                          int& text_flags) const;

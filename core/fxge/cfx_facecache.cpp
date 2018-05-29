@@ -72,17 +72,17 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
     const CFX_Font* pFont,
     uint32_t glyph_index,
     bool bFontStyle,
-    const CFX_Matrix* pMatrix,
+    const CFX_Matrix& matrix,
     uint32_t dest_width,
     int anti_alias) {
   if (!m_Face)
     return nullptr;
 
   FXFT_Matrix ft_matrix;
-  ft_matrix.xx = (signed long)(pMatrix->a / 64 * 65536);
-  ft_matrix.xy = (signed long)(pMatrix->c / 64 * 65536);
-  ft_matrix.yx = (signed long)(pMatrix->b / 64 * 65536);
-  ft_matrix.yy = (signed long)(pMatrix->d / 64 * 65536);
+  ft_matrix.xx = matrix.a / 64 * 65536;
+  ft_matrix.xy = matrix.c / 64 * 65536;
+  ft_matrix.yx = matrix.b / 64 * 65536;
+  ft_matrix.yy = matrix.d / 64 * 65536;
   bool bUseCJKSubFont = false;
   const CFX_SubstFont* pSubstFont = pFont->GetSubstFont();
   if (pSubstFont) {
@@ -215,7 +215,7 @@ const CFX_PathData* CFX_FaceCache::LoadGlyphPath(const CFX_Font* pFont,
 const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
                                                       uint32_t glyph_index,
                                                       bool bFontStyle,
-                                                      const CFX_Matrix* pMatrix,
+                                                      const CFX_Matrix& matrix,
                                                       uint32_t dest_width,
                                                       int anti_alias,
                                                       int& text_flags) {
@@ -223,10 +223,10 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
     return nullptr;
 
   UniqueKeyGen keygen;
-  int nMatrixA = static_cast<int>(pMatrix->a * 10000);
-  int nMatrixB = static_cast<int>(pMatrix->b * 10000);
-  int nMatrixC = static_cast<int>(pMatrix->c * 10000);
-  int nMatrixD = static_cast<int>(pMatrix->d * 10000);
+  int nMatrixA = static_cast<int>(matrix.a * 10000);
+  int nMatrixB = static_cast<int>(matrix.b * 10000);
+  int nMatrixC = static_cast<int>(matrix.c * 10000);
+  int nMatrixD = static_cast<int>(matrix.d * 10000);
 #if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_
   if (pFont->GetSubstFont()) {
     keygen.Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
@@ -262,11 +262,11 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
 #if _FX_PLATFORM_ != _FX_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_ || \
     defined _SKIA_SUPPORT_PATHS_
-  return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
+  return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey, glyph_index,
                            bFontStyle, dest_width, anti_alias);
 #else
   if (text_flags & FXTEXT_NO_NATIVETEXT) {
-    return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
+    return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey, glyph_index,
                              bFontStyle, dest_width, anti_alias);
   }
   std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap;
@@ -277,7 +277,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
     if (it2 != pSizeCache->end())
       return it2->second.get();
 
-    pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix,
+    pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, matrix,
                                           dest_width, anti_alias);
     if (pGlyphBitmap) {
       CFX_GlyphBitmap* pResult = pGlyphBitmap.get();
@@ -285,7 +285,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
       return pResult;
     }
   } else {
-    pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix,
+    pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, matrix,
                                           dest_width, anti_alias);
     if (pGlyphBitmap) {
       CFX_GlyphBitmap* pResult = pGlyphBitmap.get();
@@ -307,7 +307,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   }
   ByteString FaceGlyphsKey2(keygen.key_, keygen.key_len_);
   text_flags |= FXTEXT_NO_NATIVETEXT;
-  return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey2, glyph_index,
+  return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);
 #endif
 }
@@ -335,7 +335,7 @@ void CFX_FaceCache::InitPlatform() {}
 
 CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     const CFX_Font* pFont,
-    const CFX_Matrix* pMatrix,
+    const CFX_Matrix& matrix,
     const ByteString& FaceGlyphsKey,
     uint32_t glyph_index,
     bool bFontStyle,
@@ -355,7 +355,7 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     return it2->second.get();
 
   std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap = RenderGlyph(
-      pFont, glyph_index, bFontStyle, pMatrix, dest_width, anti_alias);
+      pFont, glyph_index, bFontStyle, matrix, dest_width, anti_alias);
   CFX_GlyphBitmap* pResult = pGlyphBitmap.get();
   (*pSizeCache)[glyph_index] = std::move(pGlyphBitmap);
   return pResult;

@@ -936,11 +936,11 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
           charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
       new_matrix.Concat(deviceCtm);
       glyph.m_pGlyph = pFont->LoadGlyphBitmap(
-          charpos.m_GlyphIndex, charpos.m_bFontStyle, &new_matrix,
+          charpos.m_GlyphIndex, charpos.m_bFontStyle, new_matrix,
           charpos.m_FontCharWidth, anti_alias, nativetext_flags);
     } else {
       glyph.m_pGlyph = pFont->LoadGlyphBitmap(
-          charpos.m_GlyphIndex, charpos.m_bFontStyle, &deviceCtm,
+          charpos.m_GlyphIndex, charpos.m_bFontStyle, deviceCtm,
           charpos.m_FontCharWidth, anti_alias, nativetext_flags);
     }
   }

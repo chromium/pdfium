@@ -612,11 +612,11 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
 
 const CFX_GlyphBitmap* CFX_Font::LoadGlyphBitmap(uint32_t glyph_index,
                                                  bool bFontStyle,
-                                                 const CFX_Matrix* pMatrix,
+                                                 const CFX_Matrix& matrix,
                                                  uint32_t dest_width,
                                                  int anti_alias,
                                                  int& text_flags) const {
-  return GetFaceCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle, pMatrix,
+  return GetFaceCache()->LoadGlyphBitmap(this, glyph_index, bFontStyle, matrix,
                                          dest_width, anti_alias, text_flags);
 }
 
