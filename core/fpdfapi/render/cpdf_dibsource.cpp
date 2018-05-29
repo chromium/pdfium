@@ -669,8 +669,8 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadMask() {
     float G;
     float B;
     m_pColorSpace->GetRGB(colors.data(), &R, &G, &B);
-    m_MatteColor = FXARGB_MAKE(0, FXSYS_round(R * 255), FXSYS_round(G * 255),
-                               FXSYS_round(B * 255));
+    m_MatteColor = ArgbEncode(0, FXSYS_round(R * 255), FXSYS_round(G * 255),
+                              FXSYS_round(B * 255));
   }
   return StartLoadMaskDIB();
 }
@@ -1257,7 +1257,7 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
   // last_src_x used to store the last seen src_x position which should be
   // in [0, src_width). Set the initial value to be an invalid src_x value.
   uint32_t last_src_x = src_width;
-  FX_ARGB last_argb = FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF);
+  FX_ARGB last_argb = ArgbEncode(0xFF, 0xFF, 0xFF, 0xFF);
   float unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
   for (int i = 0; i < clip_width; i++) {
     int dest_x = clip_left + i;
@@ -1311,9 +1311,9 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
         const uint8_t* pSrc =
             m_bDefaultDecode ? pSrcPixel : extracted_components;
         m_pColorSpace->TranslateImageLine(color, pSrc, 1, 0, 0, bTransMask);
-        argb = FXARGB_MAKE(0xFF, color[2], color[1], color[0]);
+        argb = ArgbEncode(0xFF, color[2], color[1], color[0]);
       } else {
-        argb = FXARGB_MAKE(0xFF, pSrcPixel[2], pSrcPixel[1], pSrcPixel[0]);
+        argb = ArgbEncode(0xFF, pSrcPixel[2], pSrcPixel[1], pSrcPixel[0]);
       }
       if (m_bColorKey) {
         int alpha = 0xFF;

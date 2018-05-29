@@ -84,8 +84,8 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
           (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * Bpp;
       if (Bpp == 4) {
         for (int col = 0; col < width; col++) {
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(src_scan[3], src_scan[0],
-                                               src_scan[1], src_scan[2]));
+          FXARGB_SETDIB(dest_scan, ArgbEncode(src_scan[3], src_scan[0],
+                                              src_scan[1], src_scan[2]));
           dest_scan += 4;
           src_scan += 4;
         }
@@ -128,8 +128,8 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
         uint8_t* src_scan =
             (uint8_t*)pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
         for (int col = 0; col < width; col++) {
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
-                                               src_scan[2]));
+          FXARGB_SETDIB(dest_scan, ArgbEncode(0xff, src_scan[0], src_scan[1],
+                                              src_scan[2]));
           dest_scan += 4;
           src_scan += 3;
         }
@@ -141,8 +141,8 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
         uint8_t* src_scan =
             (uint8_t*)(pSrcBitmap->GetScanline(src_top + row) + src_left * 4);
         for (int col = 0; col < width; col++) {
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[0], src_scan[1],
-                                               src_scan[2]));
+          FXARGB_SETDIB(dest_scan, ArgbEncode(0xff, src_scan[0], src_scan[1],
+                                              src_scan[2]));
           src_scan += 4;
           dest_scan += 4;
         }

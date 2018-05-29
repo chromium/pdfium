@@ -132,7 +132,7 @@ void WriteColorResult(std::function<uint8_t(int offset)> func,
   uint32_t* dest32 = reinterpret_cast<uint32_t*>(dest);
   if (bHasAlpha) {
     if (format == FXDIB_Argb) {
-      *dest32 = FXARGB_TODIB(FXARGB_MAKE(func(3), red_y, green_m, blue_c));
+      *dest32 = FXARGB_TODIB(ArgbEncode(func(3), red_y, green_m, blue_c));
     } else if (format == FXDIB_Rgba) {
       dest[0] = blue_c;
       dest[1] = green_m;
@@ -146,7 +146,7 @@ void WriteColorResult(std::function<uint8_t(int offset)> func,
   if (format == FXDIB_Cmyka) {
     *dest32 = FXCMYK_TODIB(CmykEncode(blue_c, green_m, red_y, func(3)));
   } else {
-    *dest32 = FXARGB_TODIB(FXARGB_MAKE(kOpaqueAlpha, red_y, green_m, blue_c));
+    *dest32 = FXARGB_TODIB(ArgbEncode(kOpaqueAlpha, red_y, green_m, blue_c));
   }
 }
 

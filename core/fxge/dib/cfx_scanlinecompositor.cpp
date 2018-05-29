@@ -394,8 +394,8 @@ void CompositeRow_Argb2Argb(uint8_t* dest_scan,
         if (!has_src)
           ++src_scan;
       } else {
-        FXARGB_SETDIB(dest_scan, FXARGB_MAKE((src_alpha << 24), src_scan[2],
-                                             src_scan[1], *src_scan));
+        FXARGB_SETDIB(dest_scan, ArgbEncode((src_alpha << 24), src_scan[2],
+                                            src_scan[1], *src_scan));
       }
       if (!has_dest) {
         dest_scan += dest_offset;
@@ -464,8 +464,8 @@ void CompositeRow_Rgb2Argb_Blend_NoClip(uint8_t* dest_scan,
         if (src_Bpp == 4) {
           FXARGB_SETDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
         } else {
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[2], src_scan[1],
-                                               src_scan[0]));
+          FXARGB_SETDIB(dest_scan, ArgbEncode(0xff, src_scan[2], src_scan[1],
+                                              src_scan[0]));
         }
         dest_scan += 4;
       }
@@ -637,7 +637,7 @@ void CompositeRow_Rgb2Argb_NoBlend_NoClip(uint8_t* dest_scan,
         FXARGB_SETDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
       } else {
         FXARGB_SETDIB(dest_scan,
-                      FXARGB_MAKE(0xff, src_scan[2], src_scan[1], src_scan[0]));
+                      ArgbEncode(0xff, src_scan[2], src_scan[1], src_scan[0]));
       }
       dest_scan += 4;
       src_scan += src_Bpp;
@@ -1322,10 +1322,10 @@ void CompositeRow_8bppRgb2Argb_NoBlend(uint8_t* dest_scan,
       if (back_alpha == 0) {
         if (clip_scan) {
           int src_alpha = clip_scan[col] * (*src_alpha_scan) / 255;
-          FXARGB_SETDIB(dest_scan, FXARGB_MAKE(src_alpha, src_r, src_g, src_b));
+          FXARGB_SETDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
         } else {
           FXARGB_SETDIB(dest_scan,
-                        FXARGB_MAKE(*src_alpha_scan, src_r, src_g, src_b));
+                        ArgbEncode(*src_alpha_scan, src_r, src_g, src_b));
         }
         dest_scan += 4;
         src_alpha_scan++;
@@ -1511,7 +1511,7 @@ void CompositeRow_ByteMask2Argb(uint8_t* dest_scan,
     }
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
-      FXARGB_SETDIB(dest_scan, FXARGB_MAKE(src_alpha, src_r, src_g, src_b));
+      FXARGB_SETDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;
     }
@@ -1769,7 +1769,7 @@ void CompositeRow_BitMask2Argb(uint8_t* dest_scan,
                                int blend_type,
                                const uint8_t* clip_scan) {
   if (blend_type == FXDIB_BLEND_NORMAL && !clip_scan && mask_alpha == 255) {
-    FX_ARGB argb = FXARGB_MAKE(0xff, src_r, src_g, src_b);
+    FX_ARGB argb = ArgbEncode(0xff, src_r, src_g, src_b);
     for (int col = 0; col < pixel_count; col++) {
       if (src_scan[(src_left + col) / 8] & (1 << (7 - (src_left + col) % 8))) {
         FXARGB_SETDIB(dest_scan, argb);
@@ -1791,7 +1791,7 @@ void CompositeRow_BitMask2Argb(uint8_t* dest_scan,
     }
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
-      FXARGB_SETDIB(dest_scan, FXARGB_MAKE(src_alpha, src_r, src_g, src_b));
+      FXARGB_SETDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;
     }
@@ -2072,8 +2072,8 @@ void CompositeRow_Rgb2Argb_Blend_NoClip_RgbByteOrder(uint8_t* dest_scan,
       if (src_Bpp == 4) {
         FXARGB_SETRGBORDERDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
       } else {
-        FXARGB_SETRGBORDERDIB(dest_scan, FXARGB_MAKE(0xff, src_scan[2],
-                                                     src_scan[1], src_scan[0]));
+        FXARGB_SETRGBORDERDIB(
+            dest_scan, ArgbEncode(0xff, src_scan[2], src_scan[1], src_scan[0]));
       }
       dest_scan += 4;
       src_scan += src_Bpp;
@@ -2151,7 +2151,7 @@ void CompositeRow_Rgb2Argb_NoBlend_NoClip_RgbByteOrder(uint8_t* dest_scan,
       FXARGB_SETRGBORDERDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
     } else {
       FXARGB_SETRGBORDERDIB(
-          dest_scan, FXARGB_MAKE(0xff, src_scan[2], src_scan[1], src_scan[0]));
+          dest_scan, ArgbEncode(0xff, src_scan[2], src_scan[1], src_scan[0]));
     }
     dest_scan += 4;
     src_scan += src_Bpp;
@@ -2578,7 +2578,7 @@ void CompositeRow_ByteMask2Argb_RgbByteOrder(uint8_t* dest_scan,
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
       FXARGB_SETRGBORDERDIB(dest_scan,
-                            FXARGB_MAKE(src_alpha, src_r, src_g, src_b));
+                            ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;
     }
@@ -2682,7 +2682,7 @@ void CompositeRow_BitMask2Argb_RgbByteOrder(uint8_t* dest_scan,
                                             int blend_type,
                                             const uint8_t* clip_scan) {
   if (blend_type == FXDIB_BLEND_NORMAL && !clip_scan && mask_alpha == 255) {
-    FX_ARGB argb = FXARGB_MAKE(0xff, src_r, src_g, src_b);
+    FX_ARGB argb = ArgbEncode(0xff, src_r, src_g, src_b);
     for (int col = 0; col < pixel_count; col++) {
       if (src_scan[(src_left + col) / 8] & (1 << (7 - (src_left + col) % 8))) {
         FXARGB_SETRGBORDERDIB(dest_scan, argb);
@@ -2705,7 +2705,7 @@ void CompositeRow_BitMask2Argb_RgbByteOrder(uint8_t* dest_scan,
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
       FXARGB_SETRGBORDERDIB(dest_scan,
-                            FXARGB_MAKE(src_alpha, src_r, src_g, src_b));
+                            ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;
     }
@@ -2950,7 +2950,7 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
         std::tie(r, g, b) =
             AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
                                FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
-        pPalette[i] = FXARGB_MAKE(0xff, r, g, b);
+        pPalette[i] = ArgbEncode(0xff, r, g, b);
       }
     }
     return;
@@ -2985,7 +2985,7 @@ void CFX_ScanlineCompositor::InitSourcePalette(FXDIB_Format src_format,
       std::tie(r, g, b) =
           AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
                              FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
-      pPalette[i] = FXARGB_MAKE(0xff, r, g, b);
+      pPalette[i] = ArgbEncode(0xff, r, g, b);
     }
   }
 }

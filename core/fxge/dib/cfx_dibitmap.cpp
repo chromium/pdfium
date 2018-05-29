@@ -738,8 +738,8 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
                             FXARGB_G(m_pPalette.get()[i]),
                             FXARGB_B(m_pPalette.get()[i]));
       m_pPalette.get()[i] =
-          FXARGB_MAKE(0xff, br + (fr - br) * gray / 255,
-                      bg + (fg - bg) * gray / 255, bb + (fb - bb) * gray / 255);
+          ArgbEncode(0xff, br + (fr - br) * gray / 255,
+                     bg + (fg - bg) * gray / 255, bb + (fb - bb) * gray / 255);
     }
     return;
   }
@@ -1153,8 +1153,8 @@ bool CFX_DIBitmap::CompositeRect(int left,
         for (int col = 0; col < width; col++) {
           uint8_t back_alpha = dest_scan[3];
           if (back_alpha == 0) {
-            FXARGB_SETDIB(dest_scan, FXARGB_MAKE(src_alpha, color_p[2],
-                                                 color_p[1], color_p[0]));
+            FXARGB_SETDIB(dest_scan, ArgbEncode(src_alpha, color_p[2],
+                                                color_p[1], color_p[0]));
             dest_scan += 4;
             continue;
           }

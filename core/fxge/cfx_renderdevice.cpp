@@ -148,7 +148,7 @@ void NormalizeArgb(int src_value,
                    int src_alpha) {
   uint8_t back_alpha = dest[3];
   if (back_alpha == 0)
-    FXARGB_SETDIB(dest, FXARGB_MAKE(src_alpha, r, g, b));
+    FXARGB_SETDIB(dest, ArgbEncode(src_alpha, r, g, b));
   else if (src_alpha != 0)
     ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
 }

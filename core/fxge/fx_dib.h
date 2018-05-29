@@ -128,8 +128,6 @@ FX_ARGB StringToFXARGB(const WideStringView& view);
 #define FXARGB_R(argb) ((uint8_t)((argb) >> 16))
 #define FXARGB_G(argb) ((uint8_t)((argb) >> 8))
 #define FXARGB_B(argb) ((uint8_t)(argb))
-#define FXARGB_MAKE(a, r, g, b) \
-  (((uint32_t)(a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define FXARGB_MUL_ALPHA(argb, alpha) \
   (((((argb) >> 24) * (alpha) / 255) << 24) | ((argb)&0xffffff))
 

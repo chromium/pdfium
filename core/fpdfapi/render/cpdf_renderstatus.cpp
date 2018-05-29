@@ -171,8 +171,8 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     float B = 0.0f;
     pCS->GetRGB(pResults, &R, &G, &B);
     rgb_array[i] =
-        FXARGB_TODIB(FXARGB_MAKE(alpha, FXSYS_round(R * 255),
-                                 FXSYS_round(G * 255), FXSYS_round(B * 255)));
+        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
+                                FXSYS_round(G * 255), FXSYS_round(B * 255)));
   }
   int pitch = pBitmap->GetPitch();
   CFX_Matrix matrix = pObject2Bitmap->GetInverse();
@@ -257,8 +257,8 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     float B = 0.0f;
     pCS->GetRGB(pResults, &R, &G, &B);
     rgb_array[i] =
-        FXARGB_TODIB(FXARGB_MAKE(alpha, FXSYS_round(R * 255),
-                                 FXSYS_round(G * 255), FXSYS_round(B * 255)));
+        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
+                                FXSYS_round(G * 255), FXSYS_round(B * 255)));
   }
   float a = ((start_x - end_x) * (start_x - end_x)) +
             ((start_y - end_y) * (start_y - end_y)) -
@@ -392,7 +392,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float G = 0.0f;
       float B = 0.0f;
       pCS->GetRGB(pResults, &R, &G, &B);
-      dib_buf[column] = FXARGB_TODIB(FXARGB_MAKE(
+      dib_buf[column] = FXARGB_TODIB(ArgbEncode(
           alpha, (int32_t)(R * 255), (int32_t)(G * 255), (int32_t)(B * 255)));
     }
   }
@@ -489,8 +489,8 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
       G += g_unit;
       B += b_unit;
       FXARGB_SETDIB(dib_buf,
-                    FXARGB_MAKE(alpha, (int32_t)(R * 255), (int32_t)(G * 255),
-                                (int32_t)(B * 255)));
+                    ArgbEncode(alpha, (int32_t)(R * 255), (int32_t)(G * 255),
+                               (int32_t)(B * 255)));
       dib_buf += 4;
     }
   }
@@ -799,8 +799,8 @@ struct CPDF_PatchDrawer {
       }
       pDevice->DrawPath(
           &path, nullptr, nullptr,
-          FXARGB_MAKE(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
-                      div_colors[0].comp[2]),
+          ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],
+                     div_colors[0].comp[2]),
           0, fillFlags);
     } else {
       if (d_bottom < COONCOLOR_THRESHOLD && d_top < COONCOLOR_THRESHOLD) {

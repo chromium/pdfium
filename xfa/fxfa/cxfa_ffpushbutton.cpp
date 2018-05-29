@@ -217,7 +217,7 @@ void CXFA_FFPushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
       rtFill.Deflate(fLineWith, fLineWith);
       CXFA_GEPath path;
       path.AddRectangle(rtFill.left, rtFill.top, rtFill.width, rtFill.height);
-      pGraphics->SetFillColor(CXFA_GEColor(FXARGB_MAKE(128, 128, 255, 255)));
+      pGraphics->SetFillColor(CXFA_GEColor(ArgbEncode(128, 128, 255, 255)));
       pGraphics->FillPath(&path, FXFILL_WINDING, &matrix);
     }
     return;
@@ -227,7 +227,7 @@ void CXFA_FFPushButton::OnDrawWidget(CXFA_Graphics* pGraphics,
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
       float fLineWidth = GetLineWidth();
-      pGraphics->SetStrokeColor(CXFA_GEColor(FXARGB_MAKE(255, 128, 255, 255)));
+      pGraphics->SetStrokeColor(CXFA_GEColor(ArgbEncode(255, 128, 255, 255)));
       pGraphics->SetLineWidth(fLineWidth);
 
       CXFA_GEPath path;

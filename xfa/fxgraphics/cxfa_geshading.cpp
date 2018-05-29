@@ -73,6 +73,6 @@ void CXFA_GEShading::InitArgbArray() {
 
     // TODO(dsinclair): Add overloads for FX_ARGB. pdfium:437
     m_argbArray[i] =
-        FXARGB_TODIB(FXARGB_MAKE(a1 + a3, r1 + r3, g1 + g3, b1 + b3));
+        FXARGB_TODIB(ArgbEncode(a1 + a3, r1 + r3, g1 + g3, b1 + b3));
   }
 }

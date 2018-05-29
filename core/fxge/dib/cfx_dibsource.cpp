@@ -302,7 +302,7 @@ void ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
       std::tie(r, g, b) = AdobeCMYK_to_sRGB1(
           FXSYS_GetCValue(src_plt[i]), FXSYS_GetMValue(src_plt[i]),
           FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]));
-      dst_plt[i] = FXARGB_MAKE(0xff, r, g, b);
+      dst_plt[i] = ArgbEncode(0xff, r, g, b);
     }
   } else {
     memcpy(dst_plt, src_plt, plt_size * 4);

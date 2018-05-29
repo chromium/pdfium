@@ -93,8 +93,8 @@ FX_COLORREF ArgbToColorRef(FX_ARGB argb) {
 }
 
 FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref) {
-  return FXARGB_MAKE(a, FXSYS_GetRValue(colorref), FXSYS_GetGValue(colorref),
-                     FXSYS_GetBValue(colorref));
+  return ArgbEncode(a, FXSYS_GetRValue(colorref), FXSYS_GetGValue(colorref),
+                    FXSYS_GetBValue(colorref));
 }
 
 FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
