@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <memory>
-#include <vector>
 
+#include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_system.h"
 
 #ifndef _SKIA_SUPPORT_
@@ -57,12 +57,11 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     if (!pFont->GetPlatformFont())
       return false;
   }
-  std::vector<uint16_t> glyph_indices;
-  glyph_indices.reserve(nChars);
-  std::vector<CGPoint> glyph_positions(nChars);
+  CFX_FixedBufGrow<uint16_t, 32> glyph_indices(nChars);
+  CFX_FixedBufGrow<CGPoint, 32> glyph_positions(nChars);
   for (int i = 0; i < nChars; i++) {
-    glyph_indices.push_back(pCharPos[i].m_ExtGID ? pCharPos[i].m_ExtGID
-                                                 : pCharPos[i].m_GlyphIndex);
+    glyph_indices[i] =
+        pCharPos[i].m_ExtGID ? pCharPos[i].m_ExtGID : pCharPos[i].m_GlyphIndex;
     if (bNegSize)
       glyph_positions[i].x = -pCharPos[i].m_Origin.x;
     else
@@ -77,9 +76,9 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.d = -new_matrix.d;
   }
   quartz2d.setGraphicsTextMatrix(pContext, &new_matrix);
-  return quartz2d.drawGraphicsString(
-      pContext, pFont->GetPlatformFont(), font_size, glyph_indices.data(),
-      glyph_positions.data(), nChars, argb, nullptr);
+  return quartz2d.drawGraphicsString(pContext, pFont->GetPlatformFont(),
+                                     font_size, glyph_indices, glyph_positions,
+                                     nChars, argb, nullptr);
 }
 
 }  // namespace

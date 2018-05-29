@@ -5,10 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcrt/cfx_fixedbufgrow.h"
 
 namespace {
 
@@ -124,16 +124,19 @@ void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
   uint32_t nSrcComponents = m_nComponents;
   uint8_t output[4];
   if (pTransform->m_bLab) {
-    std::vector<double> input(pSrcValues, pSrcValues + nSrcComponents);
-    cmsDoTransform(pTransform->m_hTransform, input.data(), output, 1);
+    CFX_FixedBufGrow<double, 16> inputs(nSrcComponents);
+    double* input = inputs;
+    for (uint32_t i = 0; i < nSrcComponents; ++i)
+      input[i] = pSrcValues[i];
+    cmsDoTransform(pTransform->m_hTransform, input, output, 1);
   } else {
-    std::vector<uint8_t> input;
-    input.reserve(nSrcComponents);
+    CFX_FixedBufGrow<uint8_t, 16> inputs(nSrcComponents);
+    uint8_t* input = inputs;
     for (uint32_t i = 0; i < nSrcComponents; ++i) {
-      input.push_back(
-          pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255));
+      input[i] =
+          pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
     }
-    cmsDoTransform(pTransform->m_hTransform, input.data(), output, 1);
+    cmsDoTransform(pTransform->m_hTransform, input, output, 1);
   }
   pDestValues[0] = output[2] / 255.0f;
   pDestValues[1] = output[1] / 255.0f;
