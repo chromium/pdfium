@@ -21,7 +21,7 @@ CXFA_EventParam::CXFA_EventParam()
       m_bShift(false),
       m_bIsFormReady(false) {}
 
-CXFA_EventParam::~CXFA_EventParam() {}
+CXFA_EventParam::~CXFA_EventParam() = default;
 
 CXFA_EventParam::CXFA_EventParam(const CXFA_EventParam& other) = default;
 

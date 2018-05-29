@@ -262,10 +262,34 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
 }
 
 void CFDE_TextEditEngine::Insert(size_t idx,
-                                 const WideString& text,
+                                 const WideString& request_text,
                                  RecordOperation add_operation) {
+  WideString text = request_text;
+  if (text.GetLength() == 0)
+    return;
   if (idx > text_length_)
     idx = text_length_;
+
+  TextChange change;
+  change.selection_start = idx;
+  change.selection_end = idx;
+  change.text = text;
+  change.previous_text = GetText();
+  change.cancelled = false;
+
+  if (delegate_ && (add_operation != RecordOperation::kSkipRecord &&
+                    add_operation != RecordOperation::kSkipNotify)) {
+    delegate_->OnTextWillChange(&change);
+    if (change.cancelled)
+      return;
+
+    text = change.text;
+    idx = change.selection_start;
+
+    // JS extended the selection, so delete it before we insert.
+    if (change.selection_end != change.selection_start)
+      DeleteSelectedText(RecordOperation::kSkipRecord);
+  }
 
   size_t length = text.GetLength();
   if (length == 0)
@@ -276,11 +300,11 @@ void CFDE_TextEditEngine::Insert(size_t idx,
   bool exceeded_limit = false;
 
   // Currently we allow inserting a number of characters over the text limit if
-  // the text edit is already empty. This allows supporting text fields which
-  // do formatting. Otherwise, if you enter 123456789 for an SSN into a field
+  // we're skipping notify. This means we're setting the formatted text into the
+  // engine. Otherwise, if you enter 123456789 for an SSN into a field
   // with a 9 character limit and we reformat to 123-45-6789 we'll truncate
   // the 89 when inserting into the text edit. See https://crbug.com/pdfium/1089
-  if (has_character_limit_ && text_length_ > 0 &&
+  if (has_character_limit_ && add_operation != RecordOperation::kSkipNotify &&
       text_length_ + length > character_limit_) {
     exceeded_limit = true;
     length = character_limit_ - text_length_;
@@ -348,7 +372,7 @@ void CFDE_TextEditEngine::Insert(size_t idx,
     if (exceeded_limit)
       delegate_->NotifyTextFull();
 
-    delegate_->OnTextChanged(previous_text);
+    delegate_->OnTextChanged();
   }
 }
 
@@ -811,6 +835,23 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   if (start_idx >= text_length_)
     return L"";
 
+  TextChange change;
+  change.text = L"";
+  change.cancelled = false;
+  if (delegate_ && (add_operation != RecordOperation::kSkipRecord &&
+                    add_operation != RecordOperation::kSkipNotify)) {
+    change.previous_text = GetText();
+    change.selection_start = start_idx;
+    change.selection_end = start_idx + length;
+
+    delegate_->OnTextWillChange(&change);
+    if (change.cancelled)
+      return L"";
+
+    start_idx = change.selection_start;
+    length = change.selection_end - change.selection_start;
+  }
+
   length = std::min(length, text_length_ - start_idx);
   AdjustGap(start_idx + length, 0);
 
@@ -831,15 +872,37 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   is_dirty_ = true;
   ClearSelection();
 
+  // The JS requested the insertion of text instead of just a deletion.
+  if (change.text != L"")
+    Insert(start_idx, change.text, RecordOperation::kSkipRecord);
+
   if (delegate_)
-    delegate_->OnTextChanged(previous_text);
+    delegate_->OnTextChanged();
 
   return ret;
 }
 
-void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& rep) {
-  size_t start_idx = selection_.start_idx;
+void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& requested_rep) {
+  WideString rep = requested_rep;
 
+  if (delegate_) {
+    TextChange change;
+    change.selection_start = selection_.start_idx;
+    change.selection_end = selection_.start_idx + selection_.count;
+    change.text = rep;
+    change.previous_text = GetText();
+    change.cancelled = false;
+
+    delegate_->OnTextWillChange(&change);
+    if (change.cancelled)
+      return;
+
+    rep = change.text;
+    selection_.start_idx = change.selection_start;
+    selection_.count = change.selection_end - change.selection_start;
+  }
+
+  size_t start_idx = selection_.start_idx;
   WideString txt = DeleteSelectedText(RecordOperation::kSkipRecord);
   Insert(gap_position_, rep, RecordOperation::kSkipRecord);
 
@@ -1079,13 +1142,7 @@ void CFDE_TextEditEngine::RebuildPieces() {
   if (IsAlignedRight() && bounds_smaller) {
     delta = available_width_ - contents_bounding_box_.width;
   } else if (IsAlignedCenter() && bounds_smaller) {
-    // TODO(dsinclair): Old code used CombText here and set the space to
-    // something unrelated to the available width .... Figure out if this is
-    // needed and what it should do.
-    // if (is_comb_text_) {
-    // } else {
     delta = (available_width_ - contents_bounding_box_.width) / 2.0f;
-    // }
   }
 
   if (delta != 0.0) {

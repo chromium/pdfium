@@ -65,7 +65,9 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
-  virtual void SetText(const WideString& wsText);
+  virtual void SetText(const WideString& wsText,
+                       CFDE_TextEditEngine::RecordOperation op =
+                           CFDE_TextEditEngine::RecordOperation::kInsertRecord);
 
   int32_t GetTextLength() const;
   WideString GetText() const;
@@ -93,7 +95,8 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   // CFDE_TextEditEngine::Delegate
   void NotifyTextFull() override;
   void OnCaretChanged() override;
-  void OnTextChanged(const WideString& prevText) override;
+  void OnTextWillChange(CFDE_TextEditEngine::TextChange* change) override;
+  void OnTextChanged() override;
   void OnSelChanged() override;
   bool OnValidate(const WideString& wsText) override;
   void SetScrollOffset(float fScrollOffset) override;

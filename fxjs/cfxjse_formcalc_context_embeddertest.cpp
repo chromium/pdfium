@@ -1465,7 +1465,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, GetXFAEventChange) {
   params.m_wsChange = L"changed";
 
   CFXJSE_Engine* context = GetScriptContext();
-  context->SetEventParam(params);
+  context->SetEventParam(&params);
 
   const char test[] = {"xfa.event.change"};
   EXPECT_TRUE(Execute(test));
@@ -1473,6 +1473,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, GetXFAEventChange) {
   CFXJSE_Value* value = GetValue();
   EXPECT_TRUE(value->IsString());
   EXPECT_STREQ("changed", value->ToString().c_str());
+  context->SetEventParam(nullptr);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
@@ -1480,11 +1481,12 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
 
   CXFA_EventParam params;
   CFXJSE_Engine* context = GetScriptContext();
-  context->SetEventParam(params);
+  context->SetEventParam(&params);
 
   const char test[] = {"xfa.event.change = \"changed\""};
   EXPECT_TRUE(Execute(test));
-  EXPECT_EQ(L"changed", context->GetEventParam()->m_wsChange);
+  EXPECT_EQ(L"changed", params.m_wsChange);
+  context->SetEventParam(nullptr);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
@@ -1494,11 +1496,12 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
   params.m_wsFullText = L"Original Full Text";
 
   CFXJSE_Engine* context = GetScriptContext();
-  context->SetEventParam(params);
+  context->SetEventParam(&params);
 
   const char test[] = {"xfa.event.fullText = \"Changed Full Text\""};
   EXPECT_TRUE(Execute(test));
-  EXPECT_EQ(L"Original Full Text", context->GetEventParam()->m_wsFullText);
+  EXPECT_EQ(L"Original Full Text", params.m_wsFullText);
+  context->SetEventParam(nullptr);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
@@ -1510,49 +1513,51 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
   params.m_iSelEnd = 3;
 
   CFXJSE_Engine* context = GetScriptContext();
-  context->SetEventParam(params);
+  context->SetEventParam(&params);
 
   // Moving end to start works fine.
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"1\""));
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(1, params.m_iSelStart);
+  EXPECT_EQ(1, params.m_iSelEnd);
 
   // Moving end before end, forces start to move in response.
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"0\""));
-  EXPECT_EQ(0, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(0, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(0, params.m_iSelStart);
+  EXPECT_EQ(0, params.m_iSelEnd);
 
   // Negatives not allowed
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"-1\""));
-  EXPECT_EQ(0, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(0, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(0, params.m_iSelStart);
+  EXPECT_EQ(0, params.m_iSelEnd);
 
   // Negatives not allowed
   EXPECT_TRUE(Execute("xfa.event.selStart = \"-1\""));
-  EXPECT_EQ(0, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(0, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(0, params.m_iSelStart);
+  EXPECT_EQ(0, params.m_iSelEnd);
 
-  context->GetEventParam()->m_iSelEnd = 1;
+  params.m_iSelEnd = 1;
 
   // Moving start to end works fine.
   EXPECT_TRUE(Execute("xfa.event.selStart = \"1\""));
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(1, params.m_iSelStart);
+  EXPECT_EQ(1, params.m_iSelEnd);
 
   // Moving start after end moves end.
   EXPECT_TRUE(Execute("xfa.event.selStart = \"2\""));
-  EXPECT_EQ(2, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(2, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(2, params.m_iSelStart);
+  EXPECT_EQ(2, params.m_iSelEnd);
 
   // Setting End past end of string clamps to string length;
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"20\""));
-  EXPECT_EQ(2, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(4, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(2, params.m_iSelStart);
+  EXPECT_EQ(4, params.m_iSelEnd);
 
   // Setting Start past end of string clamps to string length;
   EXPECT_TRUE(Execute("xfa.event.selStart = \"20\""));
-  EXPECT_EQ(4, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(4, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(4, params.m_iSelStart);
+  EXPECT_EQ(4, params.m_iSelEnd);
+
+  context->SetEventParam(nullptr);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
@@ -1562,7 +1567,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
   params.m_bCancelAction = false;
 
   CFXJSE_Engine* context = GetScriptContext();
-  context->SetEventParam(params);
+  context->SetEventParam(&params);
 
   EXPECT_TRUE(Execute("xfa.event.cancelAction"));
 
@@ -1571,7 +1576,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
   EXPECT_FALSE(value->ToBoolean());
 
   EXPECT_TRUE(Execute("xfa.event.cancelAction = \"true\""));
-  EXPECT_TRUE(context->GetEventParam()->m_bCancelAction);
+  EXPECT_TRUE(params.m_bCancelAction);
+
+  context->SetEventParam(nullptr);
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, ComplexTextChangeEvent) {
@@ -1584,29 +1591,31 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, ComplexTextChangeEvent) {
   params.m_iSelEnd = 3;
 
   CFXJSE_Engine* context = GetScriptContext();
-  context->SetEventParam(params);
+  context->SetEventParam(&params);
 
-  EXPECT_EQ(L"abcd", context->GetEventParam()->m_wsPrevText);
-  EXPECT_EQ(L"agd", context->GetEventParam()->GetNewText());
-  EXPECT_EQ(L"g", context->GetEventParam()->m_wsChange);
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(3, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(L"abcd", params.m_wsPrevText);
+  EXPECT_EQ(L"agd", params.GetNewText());
+  EXPECT_EQ(L"g", params.m_wsChange);
+  EXPECT_EQ(1, params.m_iSelStart);
+  EXPECT_EQ(3, params.m_iSelEnd);
 
   const char change_event[] = {"xfa.event.change = \"xyz\""};
   EXPECT_TRUE(Execute(change_event));
 
-  EXPECT_EQ(L"abcd", context->GetEventParam()->m_wsPrevText);
-  EXPECT_EQ(L"xyz", context->GetEventParam()->m_wsChange);
-  EXPECT_EQ(L"axyzd", context->GetEventParam()->GetNewText());
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(3, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(L"abcd", params.m_wsPrevText);
+  EXPECT_EQ(L"xyz", params.m_wsChange);
+  EXPECT_EQ(L"axyzd", params.GetNewText());
+  EXPECT_EQ(1, params.m_iSelStart);
+  EXPECT_EQ(3, params.m_iSelEnd);
 
   const char sel_event[] = {"xfa.event.selEnd = \"1\""};
   EXPECT_TRUE(Execute(sel_event));
 
-  EXPECT_EQ(L"abcd", context->GetEventParam()->m_wsPrevText);
-  EXPECT_EQ(L"xyz", context->GetEventParam()->m_wsChange);
-  EXPECT_EQ(L"axyzbcd", context->GetEventParam()->GetNewText());
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelStart);
-  EXPECT_EQ(1, context->GetEventParam()->m_iSelEnd);
+  EXPECT_EQ(L"abcd", params.m_wsPrevText);
+  EXPECT_EQ(L"xyz", params.m_wsChange);
+  EXPECT_EQ(L"axyzbcd", params.GetNewText());
+  EXPECT_EQ(1, params.m_iSelStart);
+  EXPECT_EQ(1, params.m_iSelEnd);
+
+  context->SetEventParam(nullptr);
 }

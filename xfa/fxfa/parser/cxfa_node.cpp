@@ -2290,7 +2290,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
 
   CXFA_FFDoc* pDoc = docView->GetDoc();
   CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
-  pContext->SetEventParam(*pEventParam);
+  pContext->SetEventParam(pEventParam);
   pContext->SetRunAtType(script->GetRunAt());
 
   std::vector<CXFA_Node*> refNodes;
@@ -2344,6 +2344,7 @@ std::pair<int32_t, bool> CXFA_Node::ExecuteBoolScript(
     }
   }
   pContext->SetNodesOfRunScript(nullptr);
+  pContext->SetEventParam(nullptr);
 
   return {iRet, pTmpRetValue->IsBoolean() ? pTmpRetValue->ToBoolean() : false};
 }

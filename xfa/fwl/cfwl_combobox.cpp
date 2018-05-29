@@ -16,7 +16,6 @@
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
-#include "xfa/fwl/cfwl_eventtextchanged.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagekillfocus.h"
@@ -505,7 +504,7 @@ void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
     pScrollEv.m_iScrollCode = pScrollEvent->m_iScrollCode;
     pScrollEv.m_fPos = pScrollEvent->m_fPos;
     DispatchEvent(&pScrollEv);
-  } else if (type == CFWL_Event::Type::TextChanged) {
+  } else if (type == CFWL_Event::Type::TextWillChange) {
     CFWL_Event pTemp(CFWL_Event::Type::EditChanged, this);
     DispatchEvent(&pTemp);
   }

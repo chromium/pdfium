@@ -12,6 +12,7 @@
 #include "xfa/fxfa/cxfa_fffield.h"
 
 class CFWL_Event;
+class CFWL_EventTextWillChange;
 class CFWL_Widget;
 class CFX_Matrix;
 class CXFA_FFWidget;
@@ -38,9 +39,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   void OnDrawWidget(CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
-  void OnTextChanged(CFWL_Widget* pWidget,
-                     const WideString& wsChanged,
-                     const WideString& wsPrevText);
+  void OnTextWillChange(CFWL_Widget* pWidget, CFWL_EventTextWillChange* change);
   void OnTextFull(CFWL_Widget* pWidget);
 
   // CXFA_FFWidget

@@ -28,7 +28,7 @@ class CFWL_Event {
     PreDropDown,
     Scroll,
     SelectChanged,
-    TextChanged,
+    TextWillChange,
     TextFull,
     Validate
   };

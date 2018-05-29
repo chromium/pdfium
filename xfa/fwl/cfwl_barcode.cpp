@@ -67,10 +67,11 @@ void CFWL_Barcode::SetType(BC_TYPE type) {
   m_dwStatus = XFA_BCS_NeedUpdate;
 }
 
-void CFWL_Barcode::SetText(const WideString& wsText) {
+void CFWL_Barcode::SetText(const WideString& wsText,
+                           CFDE_TextEditEngine::RecordOperation op) {
   m_pBarcodeEngine.reset();
   m_dwStatus = XFA_BCS_NeedUpdate;
-  CFWL_Edit::SetText(wsText);
+  CFWL_Edit::SetText(wsText, op);
 }
 
 bool CFWL_Barcode::IsProtectedType() const {
@@ -86,7 +87,7 @@ bool CFWL_Barcode::IsProtectedType() const {
 }
 
 void CFWL_Barcode::OnProcessEvent(CFWL_Event* pEvent) {
-  if (pEvent->GetType() == CFWL_Event::Type::TextChanged) {
+  if (pEvent->GetType() == CFWL_Event::Type::TextWillChange) {
     m_pBarcodeEngine.reset();
     m_dwStatus = XFA_BCS_NeedUpdate;
   }

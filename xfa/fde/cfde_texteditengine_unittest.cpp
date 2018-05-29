@@ -21,7 +21,8 @@ class CFDE_TextEditEngineTest : public testing::Test {
     void NotifyTextFull() override { text_is_full = true; }
 
     void OnCaretChanged() override {}
-    void OnTextChanged(const WideString& prevText) override {}
+    void OnTextWillChange(CFDE_TextEditEngine::TextChange* change) override {}
+    void OnTextChanged() override {}
     void OnSelChanged() override {}
     bool OnValidate(const WideString& wsText) override {
       return !fail_validation;

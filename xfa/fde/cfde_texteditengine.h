@@ -61,21 +61,27 @@ class CFDE_TextEditEngine {
     virtual void Undo() const = 0;
   };
 
+  struct TextChange {
+    WideString text;
+    WideString previous_text;
+    size_t selection_start;
+    size_t selection_end;
+    bool cancelled;
+  };
+
   class Delegate {
    public:
     virtual ~Delegate() = default;
     virtual void NotifyTextFull() = 0;
     virtual void OnCaretChanged() = 0;
-    virtual void OnTextChanged(const WideString& prevText) = 0;
+    virtual void OnTextWillChange(TextChange* change) = 0;
+    virtual void OnTextChanged() = 0;
     virtual void OnSelChanged() = 0;
     virtual bool OnValidate(const WideString& wsText) = 0;
     virtual void SetScrollOffset(float fScrollOffset) = 0;
   };
 
-  enum class RecordOperation {
-    kInsertRecord,
-    kSkipRecord,
-  };
+  enum class RecordOperation { kInsertRecord, kSkipRecord, kSkipNotify };
 
   CFDE_TextEditEngine();
   ~CFDE_TextEditEngine();

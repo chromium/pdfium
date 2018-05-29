@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/cfxjse_formcalc_context.h"
 #include "v8/include/v8.h"
@@ -54,8 +55,8 @@ class CFXJSE_Engine : public CFX_V8 {
   CFXJSE_Engine(CXFA_Document* pDocument, CFXJS_Engine* fxjs_engine);
   ~CFXJSE_Engine() override;
 
-  void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
-  CXFA_EventParam* GetEventParam() { return &m_eventParam; }
+  void SetEventParam(CXFA_EventParam* param) { m_eventParam = param; }
+  CXFA_EventParam* GetEventParam() { return m_eventParam.Get(); }
   bool RunScript(CXFA_Script::Type eScriptType,
                  const WideStringView& wsScript,
                  CFXJSE_Value* pRetValue,
@@ -113,7 +114,7 @@ class CFXJSE_Engine : public CFX_V8 {
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Context>>
       m_mapVariableToContext;
-  CXFA_EventParam m_eventParam;
+  UnownedPtr<CXFA_EventParam> m_eventParam;
   std::vector<CXFA_Node*> m_upObjectArray;
   // CacheList holds the List items so we can clean them up when we're done.
   std::vector<std::unique_ptr<CXFA_List>> m_CacheList;
