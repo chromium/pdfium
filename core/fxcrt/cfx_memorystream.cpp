@@ -156,41 +156,6 @@ bool CFX_MemoryStream::Seek(size_t pos) {
   return true;
 }
 
-void CFX_MemoryStream::EstimateSize(size_t nInitSize, size_t nGrowSize) {
-  if (m_dwFlags & Type::kConsecutive) {
-    if (m_Blocks.empty()) {
-      m_Blocks.push_back(
-          FX_Alloc(uint8_t, std::max(nInitSize, static_cast<size_t>(4096))));
-    }
-    m_nGrowSize = std::max(nGrowSize, static_cast<size_t>(4096));
-  } else if (m_Blocks.empty()) {
-    m_nGrowSize = std::max(nGrowSize, static_cast<size_t>(4096));
-  }
-}
-
-void CFX_MemoryStream::AttachBuffer(uint8_t* pBuffer, size_t nSize) {
-  if (!(m_dwFlags & Type::kConsecutive))
-    return;
-
-  m_Blocks.clear();
-  m_Blocks.push_back(pBuffer);
-  m_nTotalSize = nSize;
-  m_nCurSize = nSize;
-  m_nCurPos = 0;
-  m_dwFlags = Type::kConsecutive;
-}
-
-void CFX_MemoryStream::DetachBuffer() {
-  if (!(m_dwFlags & Type::kConsecutive))
-    return;
-
-  m_Blocks.clear();
-  m_nTotalSize = 0;
-  m_nCurSize = 0;
-  m_nCurPos = 0;
-  m_dwFlags = Type::kTakeOver;
-}
-
 bool CFX_MemoryStream::ExpandBlocks(size_t size) {
   m_nCurSize = std::max(m_nCurSize, size);
   if (size <= m_nTotalSize)
