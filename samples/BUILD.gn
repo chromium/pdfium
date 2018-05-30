@@ -62,7 +62,6 @@ executable("pdfium_test") {
     "../:image_diff",
     "../:pdfium",
     "../:test_support",
-    "//build/config:exe_and_shlib_deps",
     "//build/win:default_exe_manifest",
   ]
   configs += [ ":pdfium_samples_config" ]

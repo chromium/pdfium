@@ -227,10 +227,6 @@ template("test") {
       }
       extra_substitutions += [ "GTEST_BUNDLE_ID_SUFFIX=$_bundle_id_suffix" ]
 
-      if (!defined(deps)) {
-        deps = []
-      }
-      deps += [ "//build/config:exe_and_shlib_deps" ]
       if (!defined(bundle_deps)) {
         bundle_deps = []
       }
@@ -243,8 +239,6 @@ template("test") {
 
       testonly = true
       deps += [
-        "//build/config:exe_and_shlib_deps",
-
         # Give tests the default manifest on Windows (a no-op elsewhere).
         "//build/win:default_exe_manifest",
       ]
