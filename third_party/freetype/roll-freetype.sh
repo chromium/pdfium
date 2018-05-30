@@ -9,7 +9,7 @@ set -o pipefail
 set -u
 
 REVIEWERS=`paste -s -d, third_party/freetype/OWNERS`
-roll-dep -r "${REVIEWERS}" "$@" pdfium/third_party/freetype/src/
+roll-dep -r "${REVIEWERS}" "$@" third_party/freetype/src/
 FTVERSION=`git -C third_party/freetype/src/ describe --long`
 FTCOMMIT=`git -C third_party/freetype/src/ rev-parse HEAD`
 
