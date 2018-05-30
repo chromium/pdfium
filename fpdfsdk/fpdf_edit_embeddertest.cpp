@@ -241,6 +241,13 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   // Fill rectangle with red and insert to the page
   EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
   EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
+
+  int fillmode = FPDF_FILLMODE_NONE;
+  FPDF_BOOL stroke = true;
+  EXPECT_TRUE(FPDFPath_GetDrawMode(red_rect, &fillmode, &stroke));
+  EXPECT_EQ(FPDF_FILLMODE_ALTERNATE, fillmode);
+  EXPECT_FALSE(stroke);
+
   FPDFPage_InsertObject(page, red_rect);
   {
     ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);

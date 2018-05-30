@@ -218,6 +218,24 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
+                                                         int* fillmode,
+                                                         FPDF_BOOL* stroke) {
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj || !fillmode || !stroke)
+    return false;
+
+  if (pPathObj->m_FillType == FXFILL_ALTERNATE)
+    *fillmode = FPDF_FILLMODE_ALTERNATE;
+  else if (pPathObj->m_FillType == FXFILL_WINDING)
+    *fillmode = FPDF_FILLMODE_WINDING;
+  else
+    *fillmode = FPDF_FILLMODE_NONE;
+
+  *stroke = pPathObj->m_bStroke;
+  return true;
+}
+
 FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineJoin(FPDF_PAGEOBJECT path,
                                                     int line_join) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);

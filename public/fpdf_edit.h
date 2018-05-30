@@ -48,6 +48,7 @@
 #define FPDF_SEGMENT_BEZIERTO 1
 #define FPDF_SEGMENT_MOVETO 2
 
+#define FPDF_FILLMODE_NONE 0
 #define FPDF_FILLMODE_ALTERNATE 1
 #define FPDF_FILLMODE_WINDING 2
 
@@ -920,14 +921,25 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_Close(FPDF_PAGEOBJECT path);
 // Set the drawing mode of a path.
 //
 // path     - the handle to the path object.
-// fillmode - the filling mode to be set: 0 for no fill, 1 for alternate, 2 for
-// winding.
+// fillmode - the filling mode to be set: one of the FPDF_FILLMODE_* flags.
 // stroke   - a boolean specifying if the path should be stroked or not.
 //
 // Returns TRUE on success
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
                                                          int fillmode,
                                                          FPDF_BOOL stroke);
+
+// Experimental API.
+// Get the drawing mode of a path.
+//
+// path     - the handle to the path object.
+// fillmode - the filling mode of the path: one of the FPDF_FILLMODE_* flags.
+// stroke   - a boolean specifying if the path is stroked or not.
+//
+// Returns TRUE on success
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
+                                                         int* fillmode,
+                                                         FPDF_BOOL* stroke);
 
 // Create a new text object using one of the standard PDF fonts.
 //
