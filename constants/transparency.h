@@ -46,6 +46,7 @@ constexpr char kTR[] = "TR";
 
 constexpr char kGroupSubType[] = "S";
 constexpr char kTransparency[] = "Transparency";
+constexpr char kCS[] = "CS";
 constexpr char kI[] = "I";
 
 }  // namespace transparency

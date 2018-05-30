@@ -2646,17 +2646,19 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   const CPDF_Object* pCSObj = nullptr;
   const CPDF_Dictionary* pGroup =
       pGroupDict ? pGroupDict->GetDictFor("Group") : nullptr;
-  if (pGroup) {
-    // TODO(thestig): Check if "CS" is from PDF spec 1.7, table 13.
-    pCSObj = pGroup->GetDirectObjectFor("CS");
-  }
+  if (pGroup)
+    pCSObj = pGroup->GetDirectObjectFor(pdfium::transparency::kCS);
   const CPDF_ColorSpace* pCS =
       m_pContext->GetDocument()->LoadColorSpace(pCSObj);
   if (!pCS)
     return kDefaultColor;
 
+  int family = pCS->GetFamily();
+  if (family == PDFCS_LAB || family == PDFCS_ICCBASED || pCS->IsSpecial())
+    return kDefaultColor;
+
   // Store Color Space Family to use in CPDF_RenderStatus::Initialize().
-  *pCSFamily = pCS->GetFamily();
+  *pCSFamily = family;
 
   uint32_t comps = std::max(8u, pCS->CountComponents());
   std::vector<float> floats(comps);
