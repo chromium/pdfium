@@ -287,15 +287,8 @@ bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive) const {
       return false;
     }
 
-    if (!pValue->IsInline()) {
-      if (!archive->WriteString(" ") ||
-          !archive->WriteDWord(pValue->GetObjNum()) ||
-          !archive->WriteString(" 0 R")) {
-        return false;
-      }
-    } else if (!pValue->WriteTo(archive)) {
+    if (!pValue->WriteTo(archive))
       return false;
-    }
   }
   return archive->WriteString(">>");
 }

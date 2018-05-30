@@ -260,16 +260,8 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
 
       const CPDF_Array* p = pObj->AsArray();
       for (size_t i = 0; i < p->GetCount(); i++) {
-        const CPDF_Object* pElement = p->GetObjectAt(i);
-        if (!pElement->IsInline()) {
-          if (!m_Archive->WriteString(" ") ||
-              !m_Archive->WriteDWord(pElement->GetObjNum()) ||
-              !m_Archive->WriteString(" 0 R")) {
-            return false;
-          }
-        } else if (!WriteDirectObj(objnum, pElement, true)) {
+        if (!WriteDirectObj(objnum, p->GetObjectAt(i), true))
           return false;
-        }
       }
       if (!m_Archive->WriteString("]"))
         return false;
@@ -298,15 +290,8 @@ bool CPDF_Creator::WriteDirectObj(uint32_t objnum,
 
         if (bSignDict && key == "Contents")
           bSignValue = true;
-        if (!pValue->IsInline()) {
-          if (!m_Archive->WriteString(" ") ||
-              !m_Archive->WriteDWord(pValue->GetObjNum()) ||
-              !m_Archive->WriteString(" 0 R ")) {
-            return false;
-          }
-        } else if (!WriteDirectObj(objnum, pValue, !bSignValue)) {
+        if (!WriteDirectObj(objnum, pValue, !bSignValue))
           return false;
-        }
       }
       if (!m_Archive->WriteString(">>"))
         return false;
@@ -637,15 +622,8 @@ int32_t CPDF_Creator::WriteDoc_Stage4() {
           !m_Archive->WriteString(PDF_NameEncode(key).AsStringView())) {
         return -1;
       }
-      if (!pValue->IsInline()) {
-        if (!m_Archive->WriteString(" ") ||
-            !m_Archive->WriteDWord(pValue->GetObjNum()) ||
-            !m_Archive->WriteString(" 0 R ")) {
-          return -1;
-        }
-      } else if (!pValue->WriteTo(m_Archive.get())) {
+      if (!pValue->WriteTo(m_Archive.get()))
         return -1;
-      }
     }
   } else {
     if (!m_Archive->WriteString("\r\n/Root ") ||

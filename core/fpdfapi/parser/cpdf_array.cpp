@@ -235,16 +235,8 @@ bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive) const {
     return false;
 
   for (size_t i = 0; i < GetCount(); ++i) {
-    const CPDF_Object* pElement = GetObjectAt(i);
-    if (!pElement->IsInline()) {
-      if (!archive->WriteString(" ") ||
-          !archive->WriteDWord(pElement->GetObjNum()) ||
-          !archive->WriteString(" 0 R")) {
-        return false;
-      }
-    } else if (!pElement->WriteTo(archive)) {
+    if (!GetObjectAt(i)->WriteTo(archive))
       return false;
-    }
   }
   return archive->WriteString("]");
 }
