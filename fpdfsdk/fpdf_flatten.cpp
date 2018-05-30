@@ -47,9 +47,7 @@ bool IsValidRect(const CFX_FloatRect& rect, const CFX_FloatRect& rcPage) {
 void GetContentsRect(CPDF_Document* pDoc,
                      CPDF_Dictionary* pDict,
                      std::vector<CFX_FloatRect>* pRectArray) {
-  auto pPDFPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict, false);
-  pPDFPage->ParseContent();
-
+  RetainPtr<CPDF_Page> pPDFPage = pDoc->GetOrCreatePDFPage(pDict);
   for (const auto& pPageObject : *pPDFPage->GetPageObjectList()) {
     CFX_FloatRect rc;
     rc.left = pPageObject->m_Left;

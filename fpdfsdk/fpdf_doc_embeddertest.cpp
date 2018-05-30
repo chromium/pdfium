@@ -27,11 +27,7 @@ TEST_F(FPDFDocEmbeddertest, MultipleSamePage) {
     ref.reset(FPDF_LoadPage(document(), 0));
     unique_pages.insert(ref.get());
   }
-#ifdef PDF_ENABLE_XFA
   EXPECT_EQ(1u, unique_pages.size());
-#else   // PDF_ENABLE_XFA
-  EXPECT_EQ(4u, unique_pages.size());
-#endif  // PDF_ENABLE_XFA
 }
 
 TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {

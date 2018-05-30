@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/observable.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
@@ -22,7 +23,9 @@ class CPDF_Object;
 class CPDF_PageRenderCache;
 class CPDF_PageRenderContext;
 
-class CPDF_Page : public Retainable, public CPDF_PageObjectHolder {
+class CPDF_Page : public Retainable,
+                  public Observable<CPDF_Page>,
+                  public CPDF_PageObjectHolder {
  public:
   class View {};  // Caller implements as desired, empty here due to layering.
   class Extension : public Retainable {};  // XFA page parent class, layering.
@@ -66,7 +69,7 @@ class CPDF_Page : public Retainable, public CPDF_PageObjectHolder {
  private:
   CPDF_Page(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageDict,
-            bool bPageCache);
+            bool bUseRenderCache);
   ~CPDF_Page() override;
 
   void StartParse();

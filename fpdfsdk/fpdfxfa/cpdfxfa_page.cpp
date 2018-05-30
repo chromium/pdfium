@@ -34,10 +34,9 @@ bool CPDFXFA_Page::LoadPDFPage() {
   if (!pDict)
     return false;
 
-  if (!m_pPDFPage || m_pPDFPage->GetFormDict() != pDict) {
-    m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(pPDFDoc, pDict, true);
-    m_pPDFPage->ParseContent();
-  }
+  if (!m_pPDFPage || m_pPDFPage->GetFormDict() != pDict)
+    m_pPDFPage = pPDFDoc->GetOrCreatePDFPage(pDict);
+
   return true;
 }
 
@@ -80,9 +79,7 @@ bool CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
   if (!m_pContext || m_iPageIndex < 0 || !pageDict)
     return false;
 
-  m_pPDFPage =
-      pdfium::MakeRetain<CPDF_Page>(m_pContext->GetPDFDoc(), pageDict, true);
-  m_pPDFPage->ParseContent();
+  m_pPDFPage = m_pContext->GetPDFDoc()->GetOrCreatePDFPage(pageDict);
   return true;
 }
 
