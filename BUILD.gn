@@ -2981,6 +2981,10 @@ test("pdfium_unittests") {
   if (is_android) {
     use_raw_android_executable = true
   }
+  if (is_clang) {
+    # Suppress no override warning for overridden functions.
+    cflags = [ "-Wno-inconsistent-missing-override" ]
+  }
 }
 
 test("pdfium_embeddertests") {
