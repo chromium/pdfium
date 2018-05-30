@@ -46,6 +46,8 @@ class CFX_MacFontInfo : public CFX_FolderFontInfo {
                 int charset,
                 int pitch_family,
                 const char* family) override;
+
+  bool ParseFontCfg(const char** pUserPaths);
 };
 
 const char JAPAN_GOTHIC[] = "Hiragino Kaku Gothic Pro W6";
@@ -118,20 +120,31 @@ void* CFX_MacFontInfo::MapFont(int weight,
   return it != m_FontList.end() ? it->second.get() : nullptr;
 }
 
+bool CFX_MacFontInfo::ParseFontCfg(const char** pUserPaths) {
+  if (!pUserPaths)
+    return false;
+
+  for (const char** pPath = pUserPaths; *pPath; ++pPath)
+    AddPath(*pPath);
+  return true;
+}
 }  // namespace
 
 std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
-    const char** pUnused) {
+    const char** pUserPaths) {
   auto pInfo = pdfium::MakeUnique<CFX_MacFontInfo>();
-  pInfo->AddPath("~/Library/Fonts");
-  pInfo->AddPath("/Library/Fonts");
-  pInfo->AddPath("/System/Library/Fonts");
+  if (!pInfo->ParseFontCfg(pUserPaths)) {
+    pInfo->AddPath("~/Library/Fonts");
+    pInfo->AddPath("/Library/Fonts");
+    pInfo->AddPath("/System/Library/Fonts");
+  }
   return std::move(pInfo);
 }
 
 void CFX_GEModule::InitPlatform() {
   m_pPlatformData = new CApplePlatform;
-  m_pFontMgr->SetSystemFontInfo(SystemFontInfoIface::CreateDefault(nullptr));
+  m_pFontMgr->SetSystemFontInfo(
+      SystemFontInfoIface::CreateDefault(m_pUserFontPaths));
 }
 
 void CFX_GEModule::DestroyPlatform() {
