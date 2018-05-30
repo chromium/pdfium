@@ -293,9 +293,16 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
       ASSERT(!trycatch.HasCaught());
       if (lpRetValue)
         lpRetValue->m_hValue.Reset(m_pIsolate, hValue);
+
       return true;
     }
   }
+
+#ifndef NDEBUG
+  v8::String::Utf8Value error(GetIsolate(), trycatch.Exception());
+  fprintf(stderr, "JS Error: %ls\n", WideString::FromUTF8(*error).c_str());
+#endif  // NDEBUG
+
   if (lpRetValue) {
     lpRetValue->m_hValue.Reset(m_pIsolate,
                                CreateReturnValue(m_pIsolate, trycatch));
