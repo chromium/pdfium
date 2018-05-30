@@ -74,6 +74,26 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
 
 CPDF_Page::~CPDF_Page() {}
 
+CPDF_Page* CPDF_Page::AsPDFPage() {
+  return this;
+}
+
+CPDFXFA_Page* CPDF_Page::AsXFAPage() {
+  return nullptr;
+}
+
+CPDF_Document* CPDF_Page::GetDocument() const {
+  return GetPDFDocument();
+}
+
+float CPDF_Page::GetPageWidth() const {
+  return m_PageSize.width;
+}
+
+float CPDF_Page::GetPageHeight() const {
+  return m_PageSize.height;
+}
+
 bool CPDF_Page::IsPage() const {
   return true;
 }

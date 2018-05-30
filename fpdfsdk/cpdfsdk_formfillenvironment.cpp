@@ -231,19 +231,19 @@ CPDFSDK_FormFillEnvironment::GetInteractiveFormFiller() {
   return m_pFormFiller.get();
 }
 
-void CPDFSDK_FormFillEnvironment::Invalidate(UnderlyingPageType* page,
+void CPDFSDK_FormFillEnvironment::Invalidate(IPDF_Page* page,
                                              const FX_RECT& rect) {
   if (m_pInfo && m_pInfo->FFI_Invalidate) {
-    m_pInfo->FFI_Invalidate(m_pInfo, FPDFPageFromUnderlying(page), rect.left,
+    m_pInfo->FFI_Invalidate(m_pInfo, FPDFPageFromIPDFPage(page), rect.left,
                             rect.top, rect.right, rect.bottom);
   }
 }
 
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(
-    UnderlyingPageType* page,
+    IPDF_Page* page,
     const CFX_FloatRect& rect) {
   if (m_pInfo && m_pInfo->FFI_OutputSelectedRect) {
-    m_pInfo->FFI_OutputSelectedRect(m_pInfo, FPDFPageFromUnderlying(page),
+    m_pInfo->FFI_OutputSelectedRect(m_pInfo, FPDFPageFromIPDFPage(page),
                                     rect.left, rect.top, rect.right,
                                     rect.bottom);
   }
@@ -332,7 +332,7 @@ void CPDFSDK_FormFillEnvironment::DisplayCaret(CPDFXFA_Page* page,
                                                double right,
                                                double bottom) {
   if (m_pInfo && m_pInfo->FFI_DisplayCaret) {
-    m_pInfo->FFI_DisplayCaret(m_pInfo, FPDFPageFromUnderlying(page), bVisible,
+    m_pInfo->FFI_DisplayCaret(m_pInfo, FPDFPageFromIPDFPage(page), bVisible,
                               left, top, right, bottom);
   }
 }
@@ -387,8 +387,8 @@ void CPDFSDK_FormFillEnvironment::GetPageViewRect(CPDFXFA_Page* page,
   double top;
   double right;
   double bottom;
-  m_pInfo->FFI_GetPageViewRect(m_pInfo, FPDFPageFromUnderlying(page), &left,
-                               &top, &right, &bottom);
+  m_pInfo->FFI_GetPageViewRect(m_pInfo, FPDFPageFromIPDFPage(page), &left, &top,
+                               &right, &bottom);
 
   dstRect.left = static_cast<float>(left);
   dstRect.top = static_cast<float>(top);
@@ -401,7 +401,7 @@ bool CPDFSDK_FormFillEnvironment::PopupMenu(CPDFXFA_Page* page,
                                             int menuFlag,
                                             CFX_PointF pt) {
   return m_pInfo && m_pInfo->FFI_PopupMenu &&
-         m_pInfo->FFI_PopupMenu(m_pInfo, FPDFPageFromUnderlying(page), hWidget,
+         m_pInfo->FFI_PopupMenu(m_pInfo, FPDFPageFromIPDFPage(page), hWidget,
                                 menuFlag, pt.x, pt.y);
 }
 
@@ -531,7 +531,7 @@ void CPDFSDK_FormFillEnvironment::ClearAllFocusedAnnots() {
 }
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
-    UnderlyingPageType* pUnderlyingPage,
+    IPDF_Page* pUnderlyingPage,
     bool renew) {
   auto it = m_PageMap.find(pUnderlyingPage);
   if (it != m_PageMap.end())
@@ -550,12 +550,12 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(
 }
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
-  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(GetCurrentPage());
+  IPDF_Page* pPage = IPDFPageFromFPDFPage(GetCurrentPage());
   return pPage ? GetPageView(pPage, true) : nullptr;
 }
 
 CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageView(int nIndex) {
-  UnderlyingPageType* pTempPage = GetPage(nIndex);
+  IPDF_Page* pTempPage = GetPage(nIndex);
   if (!pTempPage)
     return nullptr;
 
@@ -599,8 +599,7 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   return true;
 }
 
-void CPDFSDK_FormFillEnvironment::RemovePageView(
-    UnderlyingPageType* pUnderlyingPage) {
+void CPDFSDK_FormFillEnvironment::RemovePageView(IPDF_Page* pUnderlyingPage) {
   auto it = m_PageMap.find(pUnderlyingPage);
   if (it == m_PageMap.end())
     return;
@@ -626,10 +625,10 @@ void CPDFSDK_FormFillEnvironment::RemovePageView(
   m_PageMap.erase(it);
 }
 
-UnderlyingPageType* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
+IPDF_Page* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) {
   if (!m_pInfo || !m_pInfo->FFI_GetPage)
     return nullptr;
-  return UnderlyingFromFPDFPage(m_pInfo->FFI_GetPage(
+  return IPDFPageFromFPDFPage(m_pInfo->FFI_GetPage(
       m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()), nIndex));
 }
 

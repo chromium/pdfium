@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_CPDFSDK_HELPERS_H_
 #define FPDFSDK_CPDFSDK_HELPERS_H_
 
+#include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
@@ -29,7 +30,6 @@ class CPDF_ContentMarkItem;
 class CPDF_Object;
 class CPDF_Font;
 class CPDF_LinkExtract;
-class CPDF_Page;
 class CPDF_PageObject;
 class CPDF_PageRenderContext;
 class CPDF_PathObject;
@@ -47,18 +47,9 @@ class CPDFXFA_Page;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
-// Object types for public FPDF_ types; these correspond to next layer down
-// from fpdfsdk. For master, these are CPDF_ types, but for XFA, these are
-// CPDFXFA_ types.
-#ifdef PDF_ENABLE_XFA
-using UnderlyingPageType = CPDFXFA_Page;
-#else   // PDF_ENABLE_XFA
-using UnderlyingPageType = CPDF_Page;
-#endif  // PDF_ENABLE_XFA
-
 // Conversions to/from underlying types.
-UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page);
-FPDF_PAGE FPDFPageFromUnderlying(UnderlyingPageType* page);
+IPDF_Page* IPDFPageFromFPDFPage(FPDF_PAGE page);
+FPDF_PAGE FPDFPageFromIPDFPage(IPDF_Page* page);
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page);
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);

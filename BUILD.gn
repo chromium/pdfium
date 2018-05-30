@@ -589,6 +589,7 @@ jumbo_static_library("fpdfapi") {
     "core/fpdfapi/page/cpdf_textstate.h",
     "core/fpdfapi/page/cpdf_tilingpattern.cpp",
     "core/fpdfapi/page/cpdf_tilingpattern.h",
+    "core/fpdfapi/page/ipdf_page.h",
     "core/fpdfapi/parser/cfdf_document.cpp",
     "core/fpdfapi/parser/cfdf_document.h",
     "core/fpdfapi/parser/cpdf_array.cpp",

@@ -442,7 +442,7 @@ CJS_Return CJS_Document::removeField(
     ++rcAnnot.top;
 
     std::vector<CFX_FloatRect> aRefresh(1, rcAnnot);
-    UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
+    IPDF_Page* pPage = pWidget->GetPage();
     ASSERT(pPage);
 
     // If there is currently no pageview associated with the page being used
