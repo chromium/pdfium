@@ -32,30 +32,6 @@ namespace {
 
 const int nMaxRecursion = 32;
 
-const struct SupportFieldEncoding {
-  const char* m_name;
-  uint16_t m_codePage;
-} g_fieldEncoding[] = {
-    {"BigFive", 950},
-    {"GBK", 936},
-    {"Shift-JIS", 932},
-    {"UHC", 949},
-};
-
-WideString GetFieldValue(const CPDF_Dictionary& pFieldDict,
-                         const ByteString& bsEncoding) {
-  const ByteString csBValue = pFieldDict.GetStringFor("V");
-  for (const auto& encoding : g_fieldEncoding) {
-    if (bsEncoding == encoding.m_name)
-      return WideString::FromCodePage(csBValue.AsStringView(),
-                                      encoding.m_codePage);
-  }
-  ByteString csTemp = csBValue.Left(2);
-  if (csTemp == "\xFF\xFE" || csTemp == "\xFE\xFF")
-    return PDF_DecodeText(csBValue);
-  return WideString::FromLocal(csBValue.AsStringView());
-}
-
 void AddFont(CPDF_Dictionary*& pFormDict,
              CPDF_Document* pDocument,
              const CPDF_Font* pFont,
@@ -1112,65 +1088,6 @@ std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
     pFields->Add(std::move(pFieldDict));
   }
   return pDoc;
-}
-
-void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
-                                     const WideString& parent_name,
-                                     bool bNotify,
-                                     int nLevel) {
-  WideString name;
-  if (!parent_name.IsEmpty())
-    name = parent_name + L".";
-
-  name += pFieldDict->GetUnicodeTextFor("T");
-  CPDF_Array* pKids = pFieldDict->GetArrayFor("Kids");
-  if (pKids) {
-    for (size_t i = 0; i < pKids->GetCount(); i++) {
-      CPDF_Dictionary* pKid = pKids->GetDictAt(i);
-      if (!pKid)
-        continue;
-      if (nLevel <= nMaxRecursion)
-        FDF_ImportField(pKid, name, bNotify, nLevel + 1);
-    }
-    return;
-  }
-  if (!pFieldDict->KeyExist("V"))
-    return;
-
-  CPDF_FormField* pField = m_pFieldTree->GetField(name);
-  if (!pField)
-    return;
-
-  WideString csWValue = GetFieldValue(*pFieldDict, m_bsEncoding);
-  FormFieldType fieldType = pField->GetFieldType();
-  if (bNotify && m_pFormNotify) {
-    if (fieldType == FormFieldType::kListBox) {
-      if (!m_pFormNotify->BeforeSelectionChange(pField, csWValue))
-        return;
-    } else if (fieldType == FormFieldType::kComboBox ||
-               fieldType == FormFieldType::kTextField) {
-      if (!m_pFormNotify->BeforeValueChange(pField, csWValue))
-        return;
-    }
-  }
-  pField->SetValue(csWValue);
-  CPDF_FormField::Type eType = pField->GetType();
-  if ((eType == CPDF_FormField::ListBox || eType == CPDF_FormField::ComboBox) &&
-      pFieldDict->KeyExist("Opt")) {
-    pField->SetOpt(pFieldDict->GetDirectObjectFor("Opt")->CloneDirectObject());
-  }
-
-  if (bNotify && m_pFormNotify) {
-    if (fieldType == FormFieldType::kCheckBox ||
-        fieldType == FormFieldType::kRadioButton) {
-      m_pFormNotify->AfterCheckedStatusChange(pField);
-    } else if (fieldType == FormFieldType::kListBox) {
-      m_pFormNotify->AfterSelectionChange(pField);
-    } else if (fieldType == FormFieldType::kComboBox ||
-               fieldType == FormFieldType::kTextField) {
-      m_pFormNotify->AfterValueChange(pField);
-    }
-  }
 }
 
 void CPDF_InterForm::SetFormNotify(IPDF_FormNotify* pNotify) {

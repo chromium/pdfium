@@ -98,10 +98,6 @@ class CPDF_InterForm {
   void AddTerminalField(CPDF_Dictionary* pFieldDict);
   CPDF_FormControl* AddControl(CPDF_FormField* pField,
                                CPDF_Dictionary* pWidgetDict);
-  void FDF_ImportField(CPDF_Dictionary* pField,
-                       const WideString& parent_name,
-                       bool bNotify = false,
-                       int nLevel = 0);
 
   static bool s_bUpdateAP;
 
