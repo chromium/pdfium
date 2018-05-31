@@ -33,3 +33,11 @@ Slot 1's contents are determined by these tags:
   A FXJSE_CLASS_DESCRIPTOR pointer means to expect an actual v8 function
   object, and not an aligned pointer.
 
+Because PDFium uses V8 for various unrelated purposes, there may be up to
+four v8::Contexts (JS Global Objects) associated with each document. One is
+used by FXJS and holds objects as described by the js_api_reference.pdf
+specification. The others are used by FXJSE.
+
+FXJS requires that it can find itself whatever the current context might
+be through a v8::Context's slot -- even if one of the FXJSE contexts is
+current.
