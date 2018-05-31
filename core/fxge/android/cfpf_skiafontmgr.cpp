@@ -187,9 +187,7 @@ uint32_t FPF_SKIAGetFamilyHash(const ByteStringView& bsFamily,
 }
 
 bool FPF_SkiaIsCJK(uint8_t uCharset) {
-  return (uCharset == FX_CHARSET_ChineseSimplified) ||
-         (uCharset == FX_CHARSET_ChineseTraditional) ||
-         (uCharset == FX_CHARSET_Hangul) || (uCharset == FX_CHARSET_ShiftJIS);
+  return FX_CharSetIsCJK(uCharset);
 }
 
 bool FPF_SkiaMaybeSymbol(const ByteStringView& bsFacename) {

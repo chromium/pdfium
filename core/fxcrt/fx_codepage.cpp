@@ -6,6 +6,9 @@
 
 #include "core/fxcrt/fx_codepage.h"
 
+#include <algorithm>
+#include <utility>
+
 namespace {
 
 const uint16_t g_FX_MSDOSThaiUnicodes[128] = {
@@ -152,6 +155,45 @@ const uint16_t g_FX_MSWinBalticUnicodes[128] = {
     0x017E, 0x02D9,
 };
 
+struct FX_CHARSET_MAP {
+  uint16_t charset;
+  uint16_t codepage;
+};
+
+const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
+    {FX_CHARSET_ANSI, FX_CODEPAGE_MSWin_WesternEuropean},
+    {FX_CHARSET_Default, FX_CODEPAGE_DefANSI},
+    {FX_CHARSET_Symbol, FX_CODEPAGE_Symbol},
+    {FX_CHARSET_MAC_Roman, FX_CODEPAGE_MAC_Roman},
+    {FX_CHARSET_MAC_ShiftJIS, FX_CODEPAGE_MAC_ShiftJIS},
+    {FX_CHARSET_MAC_Korean, FX_CODEPAGE_MAC_Korean},
+    {FX_CHARSET_MAC_ChineseSimplified, FX_CODEPAGE_MAC_ChineseSimplified},
+    {FX_CHARSET_MAC_ChineseTraditional, FX_CODEPAGE_MAC_ChineseTraditional},
+    {FX_CHARSET_MAC_Hebrew, FX_CODEPAGE_MAC_Hebrew},
+    {FX_CHARSET_MAC_Arabic, FX_CODEPAGE_MAC_Arabic},
+    {FX_CHARSET_MAC_Greek, FX_CODEPAGE_MAC_Greek},
+    {FX_CHARSET_MAC_Turkish, FX_CODEPAGE_MAC_Turkish},
+    {FX_CHARSET_MAC_Thai, FX_CODEPAGE_MAC_Thai},
+    {FX_CHARSET_MAC_EasternEuropean, FX_CODEPAGE_MAC_EasternEuropean},
+    {FX_CHARSET_MAC_Cyrillic, FX_CODEPAGE_MAC_Cyrillic},
+    {FX_CHARSET_ShiftJIS, FX_CODEPAGE_ShiftJIS},
+    {FX_CHARSET_Hangul, FX_CODEPAGE_Hangul},
+    {FX_CHARSET_Johab, FX_CODEPAGE_Johab},
+    {FX_CHARSET_ChineseSimplified, FX_CODEPAGE_ChineseSimplified},
+    {FX_CHARSET_ChineseTraditional, FX_CODEPAGE_ChineseTraditional},
+    {FX_CHARSET_MSWin_Greek, FX_CODEPAGE_MSWin_Greek},
+    {FX_CHARSET_MSWin_Turkish, FX_CODEPAGE_MSWin_Turkish},
+    {FX_CHARSET_MSWin_Vietnamese, FX_CODEPAGE_MSWin_Vietnamese},
+    {FX_CHARSET_MSWin_Hebrew, FX_CODEPAGE_MSWin_Hebrew},
+    {FX_CHARSET_MSWin_Arabic, FX_CODEPAGE_MSWin_Arabic},
+    {FX_CHARSET_MSWin_Baltic, FX_CODEPAGE_MSWin_Baltic},
+    {FX_CHARSET_MSWin_Cyrillic, FX_CODEPAGE_MSWin_Cyrillic},
+    {FX_CHARSET_Thai, FX_CODEPAGE_MSDOS_Thai},
+    {FX_CHARSET_MSWin_EasternEuropean, FX_CODEPAGE_MSWin_EasternEuropean},
+    {FX_CHARSET_US, FX_CODEPAGE_MSDOS_US},
+    {FX_CHARSET_OEM, FX_CODEPAGE_MSDOS_WesternEuropean},
+};
+
 }  // namespace
 
 const FX_CharsetUnicodes g_FX_CharsetUnicodes[8] = {
@@ -164,3 +206,31 @@ const FX_CharsetUnicodes g_FX_CharsetUnicodes[8] = {
     {FX_CHARSET_MSWin_Arabic, g_FX_MSWinArabicUnicodes},
     {FX_CHARSET_MSWin_Baltic, g_FX_MSWinBalticUnicodes},
 };
+
+uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
+  auto* result =
+      std::lower_bound(std::begin(g_FXCharset2CodePageTable),
+                       std::end(g_FXCharset2CodePageTable), charset,
+                       [](const FX_CHARSET_MAP& iter, const uint16_t& charset) {
+                         return iter.charset < charset;
+                       });
+  if (result != std::end(g_FXCharset2CodePageTable) &&
+      result->charset == charset) {
+    return result->codepage;
+  }
+  return 0xFFFF;
+}
+
+uint8_t FX_GetCharsetFromCodePage(uint16_t codepage) {
+  for (const auto& it : g_FXCharset2CodePageTable) {
+    if (it.codepage == codepage)
+      return it.charset;
+  }
+  return FX_CHARSET_ANSI;
+}
+
+bool FX_CharSetIsCJK(uint8_t uCharset) {
+  return (uCharset == FX_CHARSET_ChineseSimplified) ||
+         (uCharset == FX_CHARSET_ChineseTraditional) ||
+         (uCharset == FX_CHARSET_Hangul) || (uCharset == FX_CHARSET_ShiftJIS);
+}

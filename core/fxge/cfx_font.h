@@ -30,6 +30,11 @@ class CFX_Font {
   CFX_Font();
   ~CFX_Font();
 
+  static const char kDefaultAnsiFontName[];
+  static const char kUniversalDefaultFontName[];
+  static ByteString GetDefaultFontNameByCharset(uint8_t nCharset);
+  static uint8_t GetCharSetFromUnicode(uint16_t word);
+
   void LoadSubst(const ByteString& face_name,
                  bool bTrueType,
                  uint32_t flags,
@@ -95,6 +100,19 @@ class CFX_Font {
   static const uint8_t s_WeightPow[kWeightPowArraySize];
   static const uint8_t s_WeightPow_11[kWeightPowArraySize];
   static const uint8_t s_WeightPow_SHIFTJIS[kWeightPowArraySize];
+
+  // This struct shoub same as FPDF_CharsetFontMap
+  typedef struct {
+    int charset;           // Character Set Enum value, see FX_CHARSET_XXX.
+    const char* fontname;  // Name of default font to use with that charset.
+  } CharsetFontMap;
+
+  /**
+   *    Pointer to the default character set to TT Font name map. The
+   *    map is an array of CharsetFontMap structs, with its end indicated
+   *    by a { -1, NULL } entry.
+   **/
+  static const CharsetFontMap defaultTTFMap[];
 
 #ifdef PDF_ENABLE_XFA
  protected:

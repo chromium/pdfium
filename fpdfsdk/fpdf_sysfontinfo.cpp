@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -30,6 +31,8 @@ static_assert(FXFONT_GB2312_CHARSET == FX_CHARSET_ChineseSimplified,
               "Charset must match");
 static_assert(FXFONT_CHINESEBIG5_CHARSET == FX_CHARSET_ChineseTraditional,
               "Charset must match");
+static_assert(sizeof(CFX_Font::CharsetFontMap) == sizeof(FPDF_CharsetFontMap),
+              "CFX_Font::CharsetFontMap should be same as FPDF_CharsetFontMap");
 
 class CFX_ExternalFontInfo final : public SystemFontInfoIface {
  public:
@@ -122,7 +125,7 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
 }
 
 FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap() {
-  return CPWL_FontMap::defaultTTFMap;
+  return reinterpret_cast<const FPDF_CharsetFontMap*>(CFX_Font::defaultTTFMap);
 }
 
 struct FPDF_SYSFONTINFO_DEFAULT : public FPDF_SYSFONTINFO {

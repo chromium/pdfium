@@ -736,9 +736,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   if (!pFont)
     return nullptr;
 
-  bool bCJK = charset == FX_CHARSET_ChineseTraditional ||
-              charset == FX_CHARSET_ChineseSimplified ||
-              charset == FX_CHARSET_Hangul || charset == FX_CHARSET_ShiftJIS;
+  const bool bCJK = FX_CharSetIsCJK(charset);
   ByteString basefont = pFont->GetFamilyName();
   basefont.Replace(" ", "");
   int flags =
@@ -856,10 +854,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
                              (pLogFont->lfPitchAndFamily & 0xf8) == FF_SCRIPT,
                              pLogFont->lfCharSet == FX_CHARSET_Symbol);
 
-  bool bCJK = pLogFont->lfCharSet == FX_CHARSET_ChineseTraditional ||
-              pLogFont->lfCharSet == FX_CHARSET_ChineseSimplified ||
-              pLogFont->lfCharSet == FX_CHARSET_Hangul ||
-              pLogFont->lfCharSet == FX_CHARSET_ShiftJIS;
+  const bool bCJK = FX_CharSetIsCJK(pLogFont->lfCharSet);
   ByteString basefont;
   if (bTranslateName && bCJK)
     basefont = FPDF_GetPSNameFromTT(hDC);

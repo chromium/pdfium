@@ -27,59 +27,6 @@
 
 namespace {
 
-struct FX_CHARSET_MAP {
-  uint16_t charset;
-  uint16_t codepage;
-};
-
-const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
-    {FX_CHARSET_ANSI, FX_CODEPAGE_MSWin_WesternEuropean},
-    {FX_CHARSET_Default, FX_CODEPAGE_DefANSI},
-    {FX_CHARSET_Symbol, FX_CODEPAGE_Symbol},
-    {FX_CHARSET_MAC_Roman, FX_CODEPAGE_MAC_Roman},
-    {FX_CHARSET_MAC_ShiftJIS, FX_CODEPAGE_MAC_ShiftJIS},
-    {FX_CHARSET_MAC_Korean, FX_CODEPAGE_MAC_Korean},
-    {FX_CHARSET_MAC_ChineseSimplified, FX_CODEPAGE_MAC_ChineseSimplified},
-    {FX_CHARSET_MAC_ChineseTraditional, FX_CODEPAGE_MAC_ChineseTraditional},
-    {FX_CHARSET_MAC_Hebrew, FX_CODEPAGE_MAC_Hebrew},
-    {FX_CHARSET_MAC_Arabic, FX_CODEPAGE_MAC_Arabic},
-    {FX_CHARSET_MAC_Greek, FX_CODEPAGE_MAC_Greek},
-    {FX_CHARSET_MAC_Turkish, FX_CODEPAGE_MAC_Turkish},
-    {FX_CHARSET_MAC_Thai, FX_CODEPAGE_MAC_Thai},
-    {FX_CHARSET_MAC_EasternEuropean, FX_CODEPAGE_MAC_EasternEuropean},
-    {FX_CHARSET_MAC_Cyrillic, FX_CODEPAGE_MAC_Cyrillic},
-    {FX_CHARSET_ShiftJIS, FX_CODEPAGE_ShiftJIS},
-    {FX_CHARSET_Hangul, FX_CODEPAGE_Hangul},
-    {FX_CHARSET_Johab, FX_CODEPAGE_Johab},
-    {FX_CHARSET_ChineseSimplified, FX_CODEPAGE_ChineseSimplified},
-    {FX_CHARSET_ChineseTraditional, FX_CODEPAGE_ChineseTraditional},
-    {FX_CHARSET_MSWin_Greek, FX_CODEPAGE_MSWin_Greek},
-    {FX_CHARSET_MSWin_Turkish, FX_CODEPAGE_MSWin_Turkish},
-    {FX_CHARSET_MSWin_Vietnamese, FX_CODEPAGE_MSWin_Vietnamese},
-    {FX_CHARSET_MSWin_Hebrew, FX_CODEPAGE_MSWin_Hebrew},
-    {FX_CHARSET_MSWin_Arabic, FX_CODEPAGE_MSWin_Arabic},
-    {FX_CHARSET_MSWin_Baltic, FX_CODEPAGE_MSWin_Baltic},
-    {FX_CHARSET_MSWin_Cyrillic, FX_CODEPAGE_MSWin_Cyrillic},
-    {FX_CHARSET_Thai, FX_CODEPAGE_MSDOS_Thai},
-    {FX_CHARSET_MSWin_EasternEuropean, FX_CODEPAGE_MSWin_EasternEuropean},
-    {FX_CHARSET_US, FX_CODEPAGE_MSDOS_US},
-    {FX_CHARSET_OEM, FX_CODEPAGE_MSDOS_WesternEuropean},
-};
-
-uint16_t GetCodePageFromCharset(uint8_t charset) {
-  auto* result =
-      std::lower_bound(std::begin(g_FXCharset2CodePageTable),
-                       std::end(g_FXCharset2CodePageTable), charset,
-                       [](const FX_CHARSET_MAP& iter, const uint16_t& charset) {
-                         return iter.charset < charset;
-                       });
-  if (result != std::end(g_FXCharset2CodePageTable) &&
-      result->charset == charset) {
-    return result->codepage;
-  }
-  return 0xFFFF;
-}
-
 int32_t GetSimilarityScore(FX_FONTDESCRIPTOR const* pFont,
                            uint32_t dwFontStyles) {
   int32_t iValue = 0;
@@ -118,7 +65,7 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
     if (font.uCharSet == FX_CHARSET_Symbol)
       continue;
     if (pParams->wCodePage != 0xFFFF) {
-      if (GetCodePageFromCharset(font.uCharSet) != pParams->wCodePage)
+      if (FX_GetCodePageFromCharset(font.uCharSet) != pParams->wCodePage)
         continue;
     } else {
       if (pParams->dwUSB < 128) {
@@ -1033,7 +980,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
   if (!pFD)
     return nullptr;
 
-  uint16_t newCodePage = GetCodePageFromCharset(pFD->uCharSet);
+  uint16_t newCodePage = FX_GetCodePageFromCharset(pFD->uCharSet);
   const wchar_t* pFontFace = pFD->wsFontFace;
   RetainPtr<CFGAS_GEFont> pFont =
       CFGAS_GEFont::LoadFont(pFontFace, dwFontStyles, newCodePage, this);

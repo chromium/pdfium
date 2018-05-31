@@ -145,19 +145,6 @@ const struct AltFontFamily {
     {"ForteMT", "Forte"},
 };
 
-const struct CODEPAGE_MAP {
-  uint16_t codepage;
-  uint8_t charset;
-} g_Codepage2CharsetTable[] = {
-    {0, 1},      {42, 2},     {437, 254},  {850, 255},  {874, 222},
-    {932, 128},  {936, 134},  {949, 129},  {950, 136},  {1250, 238},
-    {1251, 204}, {1252, 0},   {1253, 161}, {1254, 162}, {1255, 177},
-    {1256, 178}, {1257, 186}, {1258, 163}, {1361, 130}, {10000, 77},
-    {10001, 78}, {10002, 81}, {10003, 79}, {10004, 84}, {10005, 83},
-    {10006, 85}, {10007, 89}, {10008, 80}, {10021, 87}, {10029, 88},
-    {10081, 86},
-};
-
 ByteString TT_NormalizeName(const char* family) {
   ByteString norm(family);
   norm.Remove(' ');
@@ -168,19 +155,6 @@ ByteString TT_NormalizeName(const char* family) {
     norm = norm.Left(pos.value());
   norm.MakeLower();
   return norm;
-}
-
-uint8_t GetCharsetFromCodePage(uint16_t codepage) {
-  const CODEPAGE_MAP* pEnd =
-      g_Codepage2CharsetTable + FX_ArraySize(g_Codepage2CharsetTable);
-  const CODEPAGE_MAP* pCharmap =
-      std::lower_bound(g_Codepage2CharsetTable, pEnd, codepage,
-                       [](const CODEPAGE_MAP& charset, uint16_t page) {
-                         return charset.codepage < page;
-                       });
-  if (pCharmap < pEnd && codepage == pCharmap->codepage)
-    return pCharmap->charset;
-  return FX_CHARSET_Default;
 }
 
 void GetFontFamily(uint32_t nStyle, ByteString* fontName) {
@@ -544,13 +518,10 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const ByteString& name,
 
   int Charset = FX_CHARSET_ANSI;
   if (WindowCP)
-    Charset = GetCharsetFromCodePage(WindowCP);
+    Charset = FX_GetCharsetFromCodePage(WindowCP);
   else if (iBaseFont == kNumStandardFonts && FontStyleIsSymbolic(flags))
     Charset = FX_CHARSET_Symbol;
-  const bool bCJK = (Charset == FX_CHARSET_ShiftJIS ||
-                     Charset == FX_CHARSET_ChineseSimplified ||
-                     Charset == FX_CHARSET_Hangul ||
-                     Charset == FX_CHARSET_ChineseTraditional);
+  const bool bCJK = FX_CharSetIsCJK(Charset);
   bool bItalic = FontStyleIsItalic(nStyle);
 
   GetFontFamily(nStyle, &family);

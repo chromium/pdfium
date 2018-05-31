@@ -1142,7 +1142,8 @@ CPDF_Font* CPDF_StreamContentParser::FindFont(const ByteString& name) {
   CPDF_Dictionary* pFontDict = ToDictionary(FindResourceObj("Font", name));
   if (!pFontDict) {
     m_bResourceMissing = true;
-    return CPDF_Font::GetStockFont(m_pDocument.Get(), "Helvetica");
+    return CPDF_Font::GetStockFont(m_pDocument.Get(),
+                                   CFX_Font::kDefaultAnsiFontName);
   }
 
   CPDF_Font* pFont = m_pDocument->LoadFont(pFontDict);

@@ -75,13 +75,14 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   if (!pFormDict->KeyExist("DR")) {
     ByteString csBaseName;
     uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
-    CPDF_Font* pFont = CPDF_InterForm::AddStandardFont(pDocument, "Helvetica");
+    CPDF_Font* pFont = CPDF_InterForm::AddStandardFont(
+        pDocument, CFX_Font::kDefaultAnsiFontName);
     if (pFont)
       AddFont(pFormDict, pDocument, pFont, &csBaseName);
 
     if (charSet != FX_CHARSET_ANSI) {
       ByteString csFontName = CPDF_InterForm::GetNativeFont(charSet, nullptr);
-      if (!pFont || csFontName != "Helvetica") {
+      if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
         pFont = CPDF_InterForm::AddNativeFont(pDocument);
         if (pFont) {
           csBaseName.clear();
@@ -564,63 +565,7 @@ CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
 
 // static
 uint8_t CPDF_InterForm::GetNativeCharSet() {
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  uint8_t charSet = FX_CHARSET_ANSI;
-  UINT iCodePage = ::GetACP();
-  switch (iCodePage) {
-    case FX_CODEPAGE_ShiftJIS:
-      charSet = FX_CHARSET_ShiftJIS;
-      break;
-    case FX_CODEPAGE_ChineseSimplified:
-      charSet = FX_CHARSET_ChineseSimplified;
-      break;
-    case FX_CODEPAGE_ChineseTraditional:
-      charSet = FX_CHARSET_ChineseTraditional;
-      break;
-    case FX_CODEPAGE_MSWin_WesternEuropean:
-      charSet = FX_CHARSET_ANSI;
-      break;
-    case FX_CODEPAGE_MSDOS_Thai:
-      charSet = FX_CHARSET_Thai;
-      break;
-    case FX_CODEPAGE_Hangul:
-      charSet = FX_CHARSET_Hangul;
-      break;
-    case FX_CODEPAGE_UTF16LE:
-      charSet = FX_CHARSET_ANSI;
-      break;
-    case FX_CODEPAGE_MSWin_EasternEuropean:
-      charSet = FX_CHARSET_MSWin_EasternEuropean;
-      break;
-    case FX_CODEPAGE_MSWin_Cyrillic:
-      charSet = FX_CHARSET_MSWin_Cyrillic;
-      break;
-    case FX_CODEPAGE_MSWin_Greek:
-      charSet = FX_CHARSET_MSWin_Greek;
-      break;
-    case FX_CODEPAGE_MSWin_Turkish:
-      charSet = FX_CHARSET_MSWin_Turkish;
-      break;
-    case FX_CODEPAGE_MSWin_Hebrew:
-      charSet = FX_CHARSET_MSWin_Hebrew;
-      break;
-    case FX_CODEPAGE_MSWin_Arabic:
-      charSet = FX_CHARSET_MSWin_Arabic;
-      break;
-    case FX_CODEPAGE_MSWin_Baltic:
-      charSet = FX_CHARSET_MSWin_Baltic;
-      break;
-    case FX_CODEPAGE_MSWin_Vietnamese:
-      charSet = FX_CHARSET_MSWin_Vietnamese;
-      break;
-    case FX_CODEPAGE_Johab:
-      charSet = FX_CHARSET_Johab;
-      break;
-  }
-  return charSet;
-#else
-  return 0;
-#endif
+  return FX_GetCharsetFromCodePage(FXSYS_GetACP());
 }
 
 CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
@@ -727,23 +672,19 @@ ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   LOGFONTA lf = {};
   if (charSet == FX_CHARSET_ANSI) {
-    csFontName = "Helvetica";
+    csFontName = CFX_Font::kDefaultAnsiFontName;
     return csFontName;
   }
   bool bRet = false;
-  if (charSet == FX_CHARSET_ShiftJIS) {
+  const ByteString default_font_name =
+      CFX_Font::GetDefaultFontNameByCharset(charSet);
+  if (!default_font_name.IsEmpty()) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
-                                "MS Mincho", lf);
-  } else if (charSet == FX_CHARSET_ChineseSimplified) {
-    bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, "SimSun",
-                                lf);
-  } else if (charSet == FX_CHARSET_ChineseTraditional) {
-    bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, "MingLiU",
-                                lf);
+                                default_font_name.c_str(), lf);
   }
   if (!bRet) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
-                                "Arial Unicode MS", lf);
+                                CFX_Font::kUniversalDefaultFontName, lf);
   }
   if (!bRet) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
@@ -773,7 +714,7 @@ CPDF_Font* CPDF_InterForm::AddNativeFont(uint8_t charSet,
   LOGFONTA lf;
   ByteString csFontName = GetNativeFont(charSet, &lf);
   if (!csFontName.IsEmpty()) {
-    if (csFontName == "Helvetica")
+    if (csFontName == CFX_Font::kDefaultAnsiFontName)
       return AddStandardFont(pDocument, csFontName);
     return pDocument->AddWindowsFont(&lf, false, true);
   }

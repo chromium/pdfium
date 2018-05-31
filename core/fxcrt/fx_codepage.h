@@ -98,4 +98,8 @@ struct FX_CharsetUnicodes {
 
 extern const FX_CharsetUnicodes g_FX_CharsetUnicodes[8];
 
+uint16_t FX_GetCodePageFromCharset(uint8_t charset);
+uint8_t FX_GetCharsetFromCodePage(uint16_t codepage);
+bool FX_CharSetIsCJK(uint8_t uCharset);
+
 #endif  // CORE_FXCRT_FX_CODEPAGE_H_

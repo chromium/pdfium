@@ -46,9 +46,6 @@ class CPWL_FontMap : public IPVT_FontMap {
   static int32_t GetNativeCharset();
   ByteString GetNativeFontName(int32_t nCharset);
 
-  static ByteString GetDefaultFontByCharset(int32_t nCharset);
-  static const FPDF_CharsetFontMap defaultTTFMap[];
-
  protected:
   virtual void Initialize();
   virtual CPDF_Document* GetDocument();

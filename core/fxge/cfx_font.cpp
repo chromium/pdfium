@@ -209,6 +209,88 @@ const uint8_t CFX_Font::s_WeightPow_SHIFTJIS[] = {
     59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60,
 };
 
+const CFX_Font::CharsetFontMap CFX_Font::defaultTTFMap[] = {
+    {FX_CHARSET_ANSI, kDefaultAnsiFontName},
+    {FX_CHARSET_ChineseSimplified, "SimSun"},
+    {FX_CHARSET_ChineseTraditional, "MingLiU"},
+    {FX_CHARSET_ShiftJIS, "MS Gothic"},
+    {FX_CHARSET_Hangul, "Batang"},
+    {FX_CHARSET_MSWin_Cyrillic, "Arial"},
+#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_ || _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+    {FX_CHARSET_MSWin_EasternEuropean, "Arial"},
+#else
+    {FX_CHARSET_MSWin_EasternEuropean, "Tahoma"},
+#endif
+    {FX_CHARSET_MSWin_Arabic, "Arial"},
+    {-1, nullptr}};
+
+// static
+const char CFX_Font::kDefaultAnsiFontName[] = "Helvetica";
+// static
+const char CFX_Font::kUniversalDefaultFontName[] = "Arial Unicode MS";
+
+// static
+ByteString CFX_Font::GetDefaultFontNameByCharset(uint8_t nCharset) {
+  int i = 0;
+  while (defaultTTFMap[i].charset != -1) {
+    if (nCharset == static_cast<uint8_t>(defaultTTFMap[i].charset))
+      return defaultTTFMap[i].fontname;
+    ++i;
+  }
+  return kUniversalDefaultFontName;
+}
+
+// static
+uint8_t CFX_Font::GetCharSetFromUnicode(uint16_t word) {
+  // to avoid CJK Font to show ASCII
+  if (word < 0x7F)
+    return FX_CHARSET_ANSI;
+
+  // find new charset
+  if ((word >= 0x4E00 && word <= 0x9FA5) ||
+      (word >= 0xE7C7 && word <= 0xE7F3) ||
+      (word >= 0x3000 && word <= 0x303F) ||
+      (word >= 0x2000 && word <= 0x206F)) {
+    return FX_CHARSET_ChineseSimplified;
+  }
+
+  if (((word >= 0x3040) && (word <= 0x309F)) ||
+      ((word >= 0x30A0) && (word <= 0x30FF)) ||
+      ((word >= 0x31F0) && (word <= 0x31FF)) ||
+      ((word >= 0xFF00) && (word <= 0xFFEF))) {
+    return FX_CHARSET_ShiftJIS;
+  }
+
+  if (((word >= 0xAC00) && (word <= 0xD7AF)) ||
+      ((word >= 0x1100) && (word <= 0x11FF)) ||
+      ((word >= 0x3130) && (word <= 0x318F))) {
+    return FX_CHARSET_Hangul;
+  }
+
+  if (word >= 0x0E00 && word <= 0x0E7F)
+    return FX_CHARSET_Thai;
+
+  if ((word >= 0x0370 && word <= 0x03FF) || (word >= 0x1F00 && word <= 0x1FFF))
+    return FX_CHARSET_MSWin_Greek;
+
+  if ((word >= 0x0600 && word <= 0x06FF) || (word >= 0xFB50 && word <= 0xFEFC))
+    return FX_CHARSET_MSWin_Arabic;
+
+  if (word >= 0x0590 && word <= 0x05FF)
+    return FX_CHARSET_MSWin_Hebrew;
+
+  if (word >= 0x0400 && word <= 0x04FF)
+    return FX_CHARSET_MSWin_Cyrillic;
+
+  if (word >= 0x0100 && word <= 0x024F)
+    return FX_CHARSET_MSWin_EasternEuropean;
+
+  if (word >= 0x1E00 && word <= 0x1EFF)
+    return FX_CHARSET_MSWin_Vietnamese;
+
+  return FX_CHARSET_ANSI;
+}
+
 CFX_Font::CFX_Font()
     :
       m_Face(nullptr),
