@@ -158,7 +158,7 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
 #ifdef PDF_ENABLE_XFA
   if (doc && !doc->GetExtension())
-    doc->SetExtension(new CPDFXFA_Context(pdfium::WrapUnique(doc)));
+    doc->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(doc));
 #endif  // PDF_ENABLE_XFA
   return reinterpret_cast<FPDF_DOCUMENT>(doc);
 }

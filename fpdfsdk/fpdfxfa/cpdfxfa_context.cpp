@@ -36,11 +36,10 @@ extern void SetLastError(int err);
 extern int GetLastError();
 #endif
 
-CPDFXFA_Context::CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc)
-    : m_pPDFDoc(std::move(pPDFDoc)),
+CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)
+    : m_pPDFDoc(pPDFDoc),
       m_pXFAApp(pdfium::MakeUnique<CXFA_FFApp>(this)),
-      m_DocEnv(this) {
-}
+      m_DocEnv(this) {}
 
 CPDFXFA_Context::~CPDFXFA_Context() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
@@ -99,7 +98,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
     return false;
 
   m_pXFADoc = pdfium::MakeUnique<CXFA_FFDoc>(pApp, &m_DocEnv);
-  if (!m_pXFADoc->OpenDoc(m_pPDFDoc.get())) {
+  if (!m_pXFADoc->OpenDoc(m_pPDFDoc.Get())) {
     SetLastError(FPDF_ERR_XFALOAD);
     return false;
   }
@@ -189,7 +188,7 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
 }
 
 CPDF_Document* CPDFXFA_Context::GetPDFDoc() const {
-  return m_pPDFDoc.get();
+  return m_pPDFDoc.Get();
 }
 
 void CPDFXFA_Context::DeletePage(int page_index) {
