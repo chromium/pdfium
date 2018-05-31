@@ -84,7 +84,7 @@ class CFX_Font {
 #endif
   uint8_t* GetFontData() const { return m_pFontData; }
   uint32_t GetSize() const { return m_dwSize; }
-  void AdjustMMParams(int glyph_index, uint32_t dest_width, int weight) const;
+  void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
 
   CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
                                   uint32_t dest_width) const;
