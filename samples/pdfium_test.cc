@@ -806,9 +806,9 @@ constexpr char kUsageString[] =
     "  --save-images       - write embedded images "
     "<pdf-name>.<page-number>.<object-number>.png\n"
 #ifdef PDF_ENABLE_V8
-    "  --disable-javascript- do not execute JS in PDF files"
+    "  --disable-javascript- do not execute JS in PDF files\n"
 #ifdef PDF_ENABLE_XFA
-    "  --disable-xfa       - do not process XFA forms"
+    "  --disable-xfa       - do not process XFA forms\n"
 #endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
 #ifdef ENABLE_CALLGRIND
