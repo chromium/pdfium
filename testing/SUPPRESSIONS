@@ -330,6 +330,8 @@ dynamic_list_box_allow_multiple_selection.pdf * * *
 dynamic_password_field_background_fill.pdf * * *
 resolve_nodes.pdf * * *
 standard_symbols.pdf * * *
-xfa_example.in * * *
+# TODO(rharrison): Remove after pdfium:1095 is fixed
+xfa_example.in win * *
 xfa_node_caption.pdf * * *
-xfa_textfield.in * * *
+# TODO(rharrison): Remove after pdfium:1095 is fixed
+xfa_textfield.in win * *

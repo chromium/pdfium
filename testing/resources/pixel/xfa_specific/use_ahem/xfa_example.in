@@ -1,6 +1,5 @@
 {{header}}
 
-%% Original object ID: 24 0
 {{object 1 0}}
 <<
   /AcroForm 2 0 R
@@ -15,7 +14,6 @@
 >>
 endobj
 
-%% Original object ID: 32 0
 {{object 2 0}}
 <<
   /XFA [
@@ -42,21 +40,20 @@ endobj
 >>
 stream
 <template xmlns="http://www.xfa.org/schema/xfa-template/3.3/">
-  <subform name="form1" layout="tb" locale="en_US" restoreState="auto">
+  <subform name="form1" layout="tb" locale="zh_CN" restoreState="auto">
     <pageSet>
       <pageArea name="Page1" id="Page1">
-        <contentArea x="18pt" y="18pt" w="612pt" h="792pt"/>
+        <contentArea x="0.25in" y="0.25in" w="7.75in" h="11.25in"/>
         <medium stock="default" short="612pt" long="792pt"/>
       </pageArea>
     </pageSet>
     <subform w="576pt" h="756pt" name="Page1">
-      <field name="TextField1" y="0pt" x="0pt" w="425pt" h="20pt">
-        <ui>
-          <textEdit>
-            <font typeface="Helvetica" size="16pt"/>
-          </textEdit>
-        </ui>
-      </field>
+      <draw name="HelloWorld" y="0.5in" x="0.5in" w="5in" h="2in">
+       <font typeface="Ahem" size="20pt"/>
+        <value>
+          <text>Hello, world.</text>
+        </value>
+      </draw>
     </subform>
   </subform>
 </template>

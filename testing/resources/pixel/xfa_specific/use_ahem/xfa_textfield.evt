@@ -1,4 +1,3 @@
-mousemove,20,20
 mousedown,left,20,20
 charcode,72
 charcode,101
@@ -6,3 +5,4 @@ charcode,108
 charcode,108
 charcode,111
 charcode,33
+mousedown,left,20,60

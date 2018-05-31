@@ -42,19 +42,39 @@ endobj
 >>
 stream
 <template xmlns="http://www.xfa.org/schema/xfa-template/3.3/">
-  <subform name="form1" layout="tb" locale="zh_CN" restoreState="auto">
+  <subform name="form1" layout="tb" locale="en_US" restoreState="auto">
     <pageSet>
       <pageArea name="Page1" id="Page1">
-        <contentArea x="0.25in" y="0.25in" w="7.75in" h="11.25in"/>
+        <contentArea x="18pt" y="18pt" w="612pt" h="792pt"/>
         <medium stock="default" short="612pt" long="792pt"/>
       </pageArea>
     </pageSet>
     <subform w="576pt" h="756pt" name="Page1">
-      <draw name="HelloWorld" y="0.5in" x="0.5in" w="5in" h="2in">
-        <value>
-          <text>Hello, world.</text>
-        </value>
-      </draw>
+      <field name="TextField1" y="0pt" x="0pt" w="200pt" h="32pt">
+        <font typeface="Ahem" size="20pt"/>
+        <ui>
+          <textEdit/>
+        </ui>
+        <para vAlign="middle"/>
+      </field>
+      <field name="Button1" y="42pt" x="0pt" w="100pt" h="32pt">
+        <ui>
+          <button highlight="inverted"/>
+        </ui>
+        <font typeface="Ahem" size="20pt"/>
+        <caption>
+          <value>
+            <text>Dummy</text>
+          </value>
+          <para vAlign="middle" hAlign="center"/>
+        </caption>
+        <border hand="right">
+          <edge stroke="raised"/>
+          <fill>
+            <color value="212,208,200"/>
+          </fill>
+        </border>
+      </field>
     </subform>
   </subform>
 </template>

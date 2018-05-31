@@ -83,8 +83,7 @@ bool CFX_SystemHandler::FindNativeTrueTypeFont(ByteString sFontFaceName) {
   if (!pFontMapper)
     return false;
 
-  if (pFontMapper->m_InstalledTTFonts.empty())
-    pFontMapper->LoadInstalledFonts();
+  pFontMapper->LoadInstalledFonts();
 
   for (const auto& font : pFontMapper->m_InstalledTTFonts) {
     if (font.Compare(sFontFaceName.AsStringView()))

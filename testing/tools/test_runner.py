@@ -51,6 +51,8 @@ class TestRunner:
   # tests and outputfiles is a list tuples:
   #          (path_to_image, md5_hash_of_pixelbuffer)
   def GenerateAndTest(self, input_filename, source_dir):
+    use_ahem = 'use_ahem' in source_dir
+
     input_root, _ = os.path.splitext(input_filename)
     expected_txt_path = os.path.join(source_dir, input_root + '_expected.txt')
 
@@ -76,7 +78,7 @@ class TestRunner:
     if os.path.exists(expected_txt_path):
       raised_exception = self.TestText(input_root, expected_txt_path, pdf_path)
     else:
-      raised_exception, results = self.TestPixel(input_root, pdf_path)
+      raised_exception, results = self.TestPixel(input_root, pdf_path, use_ahem)
 
     if raised_exception is not None:
       print 'FAILURE: %s; %s' % (input_filename, raised_exception)
@@ -136,10 +138,15 @@ class TestRunner:
     cmd = [sys.executable, self.text_diff_path, expected_txt_path, txt_path]
     return common.RunCommand(cmd)
 
-  def TestPixel(self, input_root, pdf_path):
+  def TestPixel(self, input_root, pdf_path, use_ahem):
     cmd_to_run = [self.pdfium_test_path, '--send-events', '--png', '--md5']
+
     if self.oneshot_renderer:
       cmd_to_run.append('--render-oneshot')
+
+    if use_ahem:
+      cmd_to_run.append('--font-dir=%s' % self.font_dir)
+
     cmd_to_run.append(pdf_path)
     return common.RunCommandExtractHashedFiles(cmd_to_run)
 
@@ -219,6 +226,7 @@ class TestRunner:
     finder = common.DirectoryFinder(self.options.build_dir)
     self.fixup_path = finder.ScriptPath('fixup_pdf_template.py')
     self.text_diff_path = finder.ScriptPath('text_diff.py')
+    self.font_dir = os.path.join(finder.TestingDir(), 'resources', 'fonts')
 
     self.source_dir = finder.TestingDir()
     if self.test_dir != 'corpus':
