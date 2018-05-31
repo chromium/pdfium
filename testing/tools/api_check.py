@@ -8,7 +8,8 @@
 This script gathers a list of functions from public/*.h that contain
 FPDF_EXPORT. It then gathers a list of functions from
 fpdfsdk/fpdf_view_c_api_test.c. It then verifies both lists do not contain
-duplicates, and they match each other.
+duplicates, and they match each other. It also checks that the order in
+fpdf_view_c_api_test.c is alphabetical within each section.
 
 """
 
@@ -69,16 +70,29 @@ def _GetFunctionsFromPublicHeaders(src_path):
       functions.extend(_GetExportsFromHeader(public_path, filename))
   return functions
 
+def _CheckSorted(functions, api_test_path):
+  unsorted_functions = set()
+  for i in range(len(functions) - 1):
+    if functions[i] > functions[i+1]:
+      unsorted_functions.add(functions[i])
+      unsorted_functions.add(functions[i+1])
+  return unsorted_functions
 
 def _GetFunctionsFromTest(api_test_path):
   chk_regex = re.compile('^    CHK\((.*)\);\n$')
+  file_regex = re.compile('^    //.*\.h\n$')
   with open(api_test_path) as f:
     contents = f.readlines()
     functions = []
+    functions_in_file = []
     for line in contents:
+      if (file_regex.match(line)):
+        functions.append(functions_in_file)
+        functions_in_file = []
       match = chk_regex.match(line)
       if match:
-        functions.append(match.groups()[0])
+        functions_in_file.append(match.groups()[0])
+    functions.append(functions_in_file)
     return functions
 
 
@@ -103,14 +117,23 @@ def main():
 
   api_test_relative_path = os.path.join('fpdfsdk', 'fpdf_view_c_api_test.c')
   api_test_path = os.path.join(src_path, api_test_relative_path)
-  test_functions = _GetFunctionsFromTest(api_test_path)
-
+  test_functions_per_section = _GetFunctionsFromTest(api_test_path)
   result = True
+  unsorted_functions = set()
+  for functions in test_functions_per_section:
+    unsorted_functions |= _CheckSorted(functions, api_test_path)
+  check = _CheckAndPrintFailures(unsorted_functions,
+      'Found CHKs that are not in alphabetical order within each section in %s'
+      % api_test_path)
+  result = result and check
+
   duplicate_public_functions = _FindDuplicates(public_functions)
   check = _CheckAndPrintFailures(duplicate_public_functions,
                                 'Found duplicate functions in public headers')
   result = result and check
 
+  test_functions = [function for functions in test_functions_per_section
+      for function in functions]
   duplicate_test_functions = _FindDuplicates(test_functions)
   check = _CheckAndPrintFailures(duplicate_test_functions,
                                 'Found duplicate functions in API test')
@@ -128,7 +151,7 @@ def main():
   if not result:
     print ('Some checks failed. Make sure %s is in sync with the public API '
            'headers.'
-           % api_test_relative_path);
+           % api_test_relative_path)
     return 1
 
   return 0
