@@ -107,6 +107,7 @@ class CFXJSE_Engine : public CFX_V8 {
                           bool bGetter);
   bool RunVariablesScript(CXFA_Node* pScriptNode);
 
+  UnownedPtr<CFXJS_Engine> const m_pSubordinateEngine;
   UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CFXJSE_Context> m_JsContext;
   CFXJSE_Class* m_pJsClass;
