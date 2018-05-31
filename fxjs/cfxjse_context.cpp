@@ -98,15 +98,9 @@ v8::Local<v8::Object> GetGlobalObjectFromContext(
 class CFXJSE_ScopeUtil_IsolateHandleContext {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext)
-      : m_context(pContext),
-        m_parent(pContext->m_pIsolate),
+      : m_parent(pContext->m_pIsolate),
         m_cscope(v8::Local<v8::Context>::New(pContext->m_pIsolate,
                                              pContext->m_hContext)) {}
-  v8::Isolate* GetIsolate() { return m_context->m_pIsolate; }
-  v8::Local<v8::Context> GetLocalContext() {
-    return v8::Local<v8::Context>::New(m_context->m_pIsolate,
-                                       m_context->m_hContext);
-  }
 
  private:
   CFXJSE_ScopeUtil_IsolateHandleContext(
@@ -115,7 +109,6 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
   void* operator new(size_t size) = delete;
   void operator delete(void*, size_t) = delete;
 
-  UnownedPtr<CFXJSE_Context> m_context;
   CFXJSE_ScopeUtil_IsolateHandle m_parent;
   v8::Context::Scope m_cscope;
 };
