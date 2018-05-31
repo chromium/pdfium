@@ -728,7 +728,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   RetainPtr<IPDF_Page> pPage;
   pPage.Unleak(IPDFPageFromFPDFPage(page));
 
-#ifndef PDF_ENABLE_XFA
+  if (pPage->AsXFAPage())
+    return;
+
   CPDFSDK_PageView* pPageView =
       static_cast<CPDFSDK_PageView*>(pPage->AsPDFPage()->GetView());
   if (!pPageView || pPageView->IsBeingDestroyed())
@@ -743,19 +745,18 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   // first because it will attempt to reset the View on the |pPage| during
   // destruction.
   pPageView->GetFormFillEnv()->RemovePageView(pPage.Get());
-#endif  // PDF_ENABLE_XFA
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_CloseDocument(FPDF_DOCUMENT document) {
   auto* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return;
 
-#if PDF_ENABLE_XFA
   // Deleting the extension will delete the document
-  if (pDoc && pDoc->GetExtension()) {
+  if (pDoc->GetExtension()) {
     delete pDoc->GetExtension();
     return;
   }
-#endif  // PDF_ENABLE_XFA
 
   delete pDoc;
 }

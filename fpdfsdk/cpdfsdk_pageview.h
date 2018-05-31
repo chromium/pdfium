@@ -92,10 +92,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   void SetBeingDestroyed() { m_bBeingDestroyed = true; }
   bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
-
-#ifndef PDF_ENABLE_XFA
   void TakePageOwnership() { m_pOwnsPage.Reset(ToPDFPage(m_page)); }
-#endif  // PDF_ENABLE_XFA
 
  private:
   CPDFSDK_Annot* GetFXAnnotAtPoint(const CFX_PointF& point);
@@ -116,9 +113,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   std::vector<CPDFSDK_Annot*> m_SDKAnnotArray;
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   CPDFSDK_Annot::ObservedPtr m_pCaptureWidget;
-#ifndef PDF_ENABLE_XFA
   RetainPtr<CPDF_Page> m_pOwnsPage;
-#endif  // PDF_ENABLE_XFA
   bool m_bOnWidget = false;
   bool m_bValid = false;
   bool m_bLocked = false;
