@@ -135,12 +135,9 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
       float top_y = image_matrix.d + image_matrix.f;
       float bottom_y = image_matrix.f;
       bool bFlipped = top_y > bottom_y;
-      if (bFlipped) {
-        float temp = top_y;
-        top_y = bottom_y;
-        bottom_y = temp;
-      }
-      pSize->AdjustBlue(top_y, bottom_y, top_line, bottom_line);
+      if (bFlipped)
+        std::swap(top_y, bottom_y);
+      std::tie(top_line, bottom_line) = pSize->AdjustBlue(top_y, bottom_y);
       pResBitmap = pBitmap->StretchTo(
           static_cast<int>(image_matrix.a),
           static_cast<int>(bFlipped ? top_line - bottom_line
