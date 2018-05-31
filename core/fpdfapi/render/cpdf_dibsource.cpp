@@ -323,8 +323,10 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadDIBSource(
 
   LoadState iContinueStatus = LoadState::kSuccess;
   if (m_bHasMask) {
-    iContinueStatus = ContinueLoadMaskDIB(pPause);
-    m_Status = LoadState::kContinue;
+    if (ContinueLoadMaskDIB(pPause) == LoadState::kContinue) {
+      iContinueStatus = LoadState::kContinue;
+      m_Status = LoadState::kContinue;
+    }
   }
   if (iContinueStatus == LoadState::kContinue)
     return LoadState::kContinue;

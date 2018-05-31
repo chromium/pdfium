@@ -40,3 +40,12 @@ TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_603518) {
   CompareBitmap(bitmap.get(), 749, 749, "b9e75190cdc5edf0069a408744ca07dc");
   UnloadPage(page);
 }
+
+TEST_F(FPDFRenderLoadImageEmbeddertest, Bug_1087) {
+  EXPECT_TRUE(OpenDocument("bug_1087.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+  CompareBitmap(bitmap.get(), 548, 238, "2aac40afa121feb0f38883cb04a55001");
+  UnloadPage(page);
+}
