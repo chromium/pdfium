@@ -439,7 +439,7 @@ size_t CFDE_TextEditEngine::GetIndexLeft(size_t pos) const {
     return 0;
   --pos;
 
-  wchar_t ch = GetChar(pos);
+  wchar_t ch;
   while (pos != 0) {
     // We want to be on the location just before the \r or \n
     ch = GetChar(pos - 1);
