@@ -17,6 +17,10 @@
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
 
+#ifdef PDF_ENABLE_XFA
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
+#endif  // PDF_ENABLE_XFA
+
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CPDF_DataAvail::DataError == PDF_DATA_ERROR,
               "CPDF_DataAvail::DataError value mismatch");
@@ -153,6 +157,11 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
     ProcessParseError(error);
     return nullptr;
   }
+
+#ifdef PDF_ENABLE_XFA
+  document->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(document.get()));
+#endif  // PDF_ENABLE_XFA
+
   CheckUnSupportError(document.get(), FPDF_ERR_SUCCESS);
   return FPDFDocumentFromCPDFDocument(document.release());
 }
