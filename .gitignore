@@ -28,6 +28,8 @@
 .DS_Store
 .gclient
 .gclient_entries
+.gdb_history
+.gdbinit
 *.aps
 *.filters
 *.opensdf
