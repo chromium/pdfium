@@ -44,8 +44,8 @@ class CXFA_FFApp {
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider.Get(); }
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
-  IFWL_AdapterTimerMgr* GetTimerMgr() const;
   CXFA_FontMgr* GetXFAFontMgr() { return &m_pFontMgr; }
+  std::unique_ptr<IFWL_AdapterTimerMgr> GetTimerMgr() const;
 
   void ClearEventTargets();
 

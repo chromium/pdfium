@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_FXFA_H_
 #define XFA_FXFA_FXFA_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
@@ -201,7 +202,7 @@ class IXFA_AppProvider {
                              const WideString& wsData,
                              const WideString& wsEncode) = 0;
 
-  virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
+  virtual std::unique_ptr<IFWL_AdapterTimerMgr> GetTimerMgr() = 0;
 };
 
 class IXFA_DocEnvironment {

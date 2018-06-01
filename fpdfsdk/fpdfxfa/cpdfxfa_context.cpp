@@ -341,9 +341,8 @@ bool CPDFXFA_Context::PutRequestURL(const WideString& wsURL,
          m_pFormFillEnv->PutRequestURL(wsURL, wsData, wsEncode);
 }
 
-IFWL_AdapterTimerMgr* CPDFXFA_Context::GetTimerMgr() {
-  CXFA_FWLAdapterTimerMgr* pAdapter = nullptr;
-  if (m_pFormFillEnv)
-    pAdapter = new CXFA_FWLAdapterTimerMgr(m_pFormFillEnv.Get());
-  return pAdapter;
+std::unique_ptr<IFWL_AdapterTimerMgr> CPDFXFA_Context::GetTimerMgr() {
+  if (!m_pFormFillEnv)
+    return nullptr;
+  return pdfium::MakeUnique<CXFA_FWLAdapterTimerMgr>(m_pFormFillEnv.Get());
 }

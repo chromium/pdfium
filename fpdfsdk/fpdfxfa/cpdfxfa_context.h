@@ -91,7 +91,7 @@ class CPDFXFA_Context : public CPDF_Document::Extension,
                      const WideString& wsData,
                      const WideString& wsEncode) override;
 
-  IFWL_AdapterTimerMgr* GetTimerMgr() override;
+  std::unique_ptr<IFWL_AdapterTimerMgr> GetTimerMgr() override;
 
  protected:
   friend class CPDFXFA_DocEnvironment;

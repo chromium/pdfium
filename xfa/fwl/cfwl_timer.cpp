@@ -26,7 +26,7 @@ CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
     return nullptr;
 
   if (!m_pTimeMgrAdapter)
-    m_pTimeMgrAdapter.reset(pAdapterNative->GetTimerMgr());
+    m_pTimeMgrAdapter = pAdapterNative->GetTimerMgr();
 
   if (!m_pTimeMgrAdapter)
     return nullptr;
