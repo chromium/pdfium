@@ -450,7 +450,7 @@ CJS_Return CJS_Document::removeField(
     // and creating a new pageview at this point will cause bad things.
     CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage, false);
     if (pPageView) {
-#if PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA
       pPageView->DeleteAnnot(pWidget);
 #endif  // PDF_ENABLE_XFA
       pPageView->UpdateRects(aRefresh);

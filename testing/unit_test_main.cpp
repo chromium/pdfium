@@ -15,7 +15,7 @@
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
 
-#if PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 
-#if PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA
   env_ = new Environment();
   // The env will be deleted by gtest.
   AddGlobalTestEnvironment(env_);

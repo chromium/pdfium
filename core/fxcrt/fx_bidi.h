@@ -72,7 +72,7 @@ class CFX_BidiString {
   CFX_BidiChar::Direction m_eOverallDirection = CFX_BidiChar::LEFT;
 };
 
-#if PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_XFA
 void FX_BidiLine(std::vector<CFX_Char>* chars, size_t iCount);
 #endif  // PDF_ENABLE_XFA
 
