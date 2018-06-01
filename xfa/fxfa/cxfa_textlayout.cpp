@@ -560,8 +560,8 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
       Layout(i);
   }
 
-  FXTEXT_CHARPOS* pCharPos = nullptr;
-  int32_t iCharCount = 0;
+  FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, 1);
+  int32_t iCharCount = 1;
   int32_t iLineStart = 0;
   int32_t iPieceLines = pdfium::CollectionSize<int32_t>(m_pieceLines);
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Blocks);
@@ -586,8 +586,7 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
       const CXFA_TextPiece* pPiece = pPieceLine->m_textPieces[j].get();
       int32_t iChars = pPiece->iChars;
       if (iCharCount < iChars) {
-        FX_Free(pCharPos);
-        pCharPos = FX_Alloc(FXTEXT_CHARPOS, iChars);
+        pCharPos = FX_Realloc(FXTEXT_CHARPOS, pCharPos, iChars);
         iCharCount = iChars;
       }
       memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
@@ -1045,10 +1044,6 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
         float fLineHeightTmp = fBaseLineTemp + pTP->rtPiece.height;
         if (fLineHeight < fLineHeightTmp)
           fLineHeight = fLineHeightTmp;
-        else
-          fBaseLineTemp = 0;
-      } else if (fBaseLine < -fBaseLineTemp) {
-        fBaseLine = -fBaseLineTemp;
       }
       fLineStep = std::max(fLineStep, fLineHeight);
       pTP->pLinkData = pUserData ? pUserData->m_pLinkData : nullptr;
