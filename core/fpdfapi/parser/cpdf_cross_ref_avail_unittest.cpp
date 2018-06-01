@@ -136,10 +136,8 @@ TEST(CPDF_CrossRefAvailTest, IncorrectData) {
 
 TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
   char int_buffer[100];
-  int prev_offset = 0;
   int cur_offset = 0;
   std::string table = "pdf blah blah blah\n";
-  prev_offset = cur_offset;
   cur_offset = static_cast<int>(table.size());
   table +=
       "xref \n"
@@ -150,7 +148,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
       "[<afbb0f593c2d2aea5b519cb61da1c17b><4f9bb2e7978401808f8f1f2a75c322c8>]"
       "/Info 15 0 R/Size 16>>\n";
   table += "Dummy Data jgwhughouiwbahng";
-  prev_offset = cur_offset;
+  int prev_offset = cur_offset;
   cur_offset = static_cast<int>(table.size());
   table += std::string(
                "xref \n"
@@ -188,10 +186,8 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
 
 TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
   char int_buffer[100];
-  int prev_offset = 0;
   int cur_offset = 0;
   std::string table = "pdf blah blah blah\n";
-  prev_offset = cur_offset;
   cur_offset = static_cast<int>(table.size());
   table +=
       "16 0 obj\n"
@@ -202,7 +198,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
       "endobj\n";
   table += "Dummy Data jgwhughouiwbahng";
 
-  prev_offset = cur_offset;
+  int prev_offset = cur_offset;
   cur_offset = static_cast<int>(table.size());
   table += std::string(
                "55 0 obj\n"
