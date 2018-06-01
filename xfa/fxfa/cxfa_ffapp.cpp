@@ -67,8 +67,8 @@ CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetFWLAdapterWidgetMgr() {
   return m_pAdapterWidgetMgr.get();
 }
 
-std::unique_ptr<IFWL_AdapterTimerMgr> CXFA_FFApp::GetTimerMgr() const {
-  return m_pProvider->GetTimerMgr();
+std::unique_ptr<IFWL_AdapterTimerMgr> CXFA_FFApp::NewTimerMgr() const {
+  return m_pProvider->NewTimerMgr();
 }
 
 void CXFA_FFApp::ClearEventTargets() {

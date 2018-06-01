@@ -26,7 +26,7 @@ class CFWL_Timer {
 
  protected:
   UnownedPtr<CFWL_Widget> m_pWidget;
-  std::unique_ptr<IFWL_AdapterTimerMgr> m_pTimeMgrAdapter;
+  std::unique_ptr<IFWL_AdapterTimerMgr> m_pAdapterTimerMgr;
 };
 
 #endif  // XFA_FWL_CFWL_TIMER_H_

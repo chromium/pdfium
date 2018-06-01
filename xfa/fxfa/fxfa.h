@@ -202,7 +202,7 @@ class IXFA_AppProvider {
                              const WideString& wsData,
                              const WideString& wsEncode) = 0;
 
-  virtual std::unique_ptr<IFWL_AdapterTimerMgr> GetTimerMgr() = 0;
+  virtual std::unique_ptr<IFWL_AdapterTimerMgr> NewTimerMgr() = 0;
 };
 
 class IXFA_DocEnvironment {
