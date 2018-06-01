@@ -327,10 +327,6 @@ void CFWL_Edit::OnSelChanged() {
 }
 
 bool CFWL_Edit::OnValidate(const WideString& wsText) {
-  CFWL_Widget* pDst = GetOuter();
-  if (!pDst)
-    pDst = this;
-
   CFWL_EventValidate event(this);
   event.wsInsert = wsText;
   event.bValidate = true;
