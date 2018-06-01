@@ -352,17 +352,14 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
   if (pContext)
     return FPDFPageFromIPDFPage(pContext->GetXFAPage(page_index).Leak());
+#endif  // PDF_ENABLE_XFA
 
-  // Eventually, fallthrough into non-xfa case once page type made consistent.
-  return nullptr;
-#else   // PDF_ENABLE_XFA
   CPDF_Dictionary* pDict = pDoc->GetPageDictionary(page_index);
   if (!pDict)
     return nullptr;
 
   RetainPtr<CPDF_Page> pPage = pDoc->GetOrCreatePDFPage(pDict);
   return FPDFPageFromIPDFPage(pPage.Leak());
-#endif  // PDF_ENABLE_XFA
 }
 
 FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageWidth(FPDF_PAGE page) {
