@@ -429,7 +429,6 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
       pDelegate->OnDrawWidget(pGraphics, widgetMatrix);
 
     DrawChild(child, clipBounds, pGraphics, &widgetMatrix);
-    child = GetNextSiblingWidget(child);
   }
 }
 
