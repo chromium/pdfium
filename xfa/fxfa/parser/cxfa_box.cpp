@@ -324,10 +324,6 @@ void CXFA_Box::StrokeArcOrRounded(CXFA_Graphics* pGS,
   rtWidget.width = a + a;
   rtWidget.height = b + b;
 
-  float startAngle = 0, sweepAngle = 360;
-  startAngle = startAngle * FX_PI / 180.0f;
-  sweepAngle = -sweepAngle * FX_PI / 180.0f;
-
   CXFA_GEPath arcPath;
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
                  FX_PI);
