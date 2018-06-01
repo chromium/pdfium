@@ -10,10 +10,10 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-#if PDF_ENABLE_V8
+#ifdef PDF_ENABLE_V8
 #include "v8/include/v8-platform.h"
 #include "v8/include/v8.h"
-#endif
+#endif  // PDF_ENABLE_V8
 
 #if PDF_ENABLE_XFA
 #include "core/fxge/cfx_fontmgr.h"
