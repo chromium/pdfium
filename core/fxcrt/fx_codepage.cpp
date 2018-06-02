@@ -7,6 +7,7 @@
 #include "core/fxcrt/fx_codepage.h"
 
 #include <algorithm>
+#include <iterator>
 #include <utility>
 
 namespace {
