@@ -317,14 +317,9 @@ void CFX_Font::SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
 #endif  // PDF_ENABLE_XFA
 
 CFX_Font::~CFX_Font() {
-  if (m_Face) {
-#ifndef PDF_ENABLE_XFA
-    if (FXFT_Get_Face_External_Stream(m_Face)) {
-      FXFT_Clear_Face_External_Stream(m_Face);
-    }
-#endif  // PDF_ENABLE_XFA
+  if (m_Face)
     DeleteFace();
-  }
+
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   ReleasePlatformResource();
 #endif
