@@ -216,6 +216,7 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
   CXFA_Document* pDoc = pOriginalObject->GetDocument();
   CFXJSE_Engine* lpScriptContext = pDoc->GetScriptContext();
   WideString wsPropName = WideString::FromUTF8(szPropName);
+
   if (lpScriptContext->GetType() == CXFA_Script::Type::Formcalc) {
     if (szPropName == kFormCalcRuntime) {
       lpScriptContext->m_FM2JSContext->GlobalPropertyGetter(pValue);
@@ -339,7 +340,20 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
         return;
       }
     }
+
+    CXFA_FFNotify* pNotify = pObject->GetDocument()->GetNotify();
+    if (!pNotify) {
+      pReturnValue->SetUndefined();
+      return;
+    }
+
+    CXFA_FFDoc* hDoc = pNotify->GetHDOC();
+    if (hDoc->GetDocEnvironment()->GetPropertyFromNonXFAGlobalObject(
+            hDoc, szPropName, pReturnValue)) {
+      return;
+    }
   }
+
   if (!bRet)
     pReturnValue->SetUndefined();
 }
