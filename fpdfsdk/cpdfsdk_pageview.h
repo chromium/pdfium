@@ -22,7 +22,8 @@ class CPDF_RenderOptions;
 
 class CPDFSDK_PageView final : public CPDF_Page::View {
  public:
-  CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv, IPDF_Page* page);
+  CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
+                   UnderlyingPageType* page);
   ~CPDFSDK_PageView();
 
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
@@ -44,7 +45,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool DeleteAnnot(CPDFSDK_Annot* pAnnot);
   CPDFSDK_Annot* AddAnnot(CXFA_FFWidget* pPDFAnnot);
   CPDFSDK_Annot* GetAnnotByXFAWidget(CXFA_FFWidget* hWidget);
-  CPDFXFA_Page* GetPDFXFAPage() { return ToXFAPage(m_page); }
+
+  CPDFXFA_Page* GetPDFXFAPage() { return m_page; }
 #endif  // PDF_ENABLE_XFA
 
   CPDF_Page* GetPDFPage() const;
@@ -94,7 +96,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
 
 #ifndef PDF_ENABLE_XFA
-  void TakePageOwnership() { m_pOwnsPage.Reset(ToPDFPage(m_page)); }
+  void TakePageOwnership() { m_pOwnsPage.Reset(m_page); }
 #endif  // PDF_ENABLE_XFA
 
  private:
@@ -111,7 +113,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
                   uint32_t nFlag);
 
   CFX_Matrix m_curMatrix;
-  IPDF_Page* const m_page;
+  UnderlyingPageType* const m_page;
   std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_SDKAnnotArray;
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;

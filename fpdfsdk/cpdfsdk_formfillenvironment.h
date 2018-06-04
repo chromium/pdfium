@@ -60,10 +60,10 @@ class CPDFSDK_FormFillEnvironment
     return !!(nFlag & FWL_EVENTFLAG_AltKey);
   }
 
-  CPDFSDK_PageView* GetPageView(IPDF_Page* pPage, bool renew);
+  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage, bool renew);
   CPDFSDK_PageView* GetPageView(int nIndex);
   CPDFSDK_PageView* GetCurrentView();
-  void RemovePageView(IPDF_Page* pPage);
+  void RemovePageView(UnderlyingPageType* pPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
   CPDFSDK_Annot* GetFocusAnnot() { return m_pFocusAnnot.Get(); }
@@ -90,8 +90,8 @@ class CPDFSDK_FormFillEnvironment
   void ProcJavascriptFun();
   bool ProcOpenAction();
 
-  void Invalidate(IPDF_Page* page, const FX_RECT& rect);
-  void OutputSelectedRect(IPDF_Page* page, const CFX_FloatRect& rect);
+  void Invalidate(UnderlyingPageType* page, const FX_RECT& rect);
+  void OutputSelectedRect(UnderlyingPageType* page, const CFX_FloatRect& rect);
 
   void SetCursor(int nCursorType);
   int SetTimer(int uElapse, TimerCallback lpTimerFunc);
@@ -210,13 +210,13 @@ class CPDFSDK_FormFillEnvironment
   CPDFSDK_InterForm* GetInterForm();              // Creates if not present.
 
  private:
-  IPDF_Page* GetPage(int nIndex);
+  UnderlyingPageType* GetPage(int nIndex);
 
   FPDF_FORMFILLINFO* const m_pInfo;
   std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   std::unique_ptr<IJS_Runtime> m_pIJSRuntime;
-  std::map<IPDF_Page*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
+  std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
   UnownedPtr<CPDF_Document> const m_pCPDFDoc;

@@ -28,7 +28,7 @@ CFX_SystemHandler::~CFX_SystemHandler() {}
 void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget,
                                        const CFX_FloatRect& rect) {
   CPDFSDK_PageView* pPageView = widget->GetPageView();
-  IPDF_Page* pPage = widget->GetPage();
+  UnderlyingPageType* pPage = widget->GetUnderlyingPage();
   if (!pPage || !pPageView)
     return;
 
@@ -55,7 +55,7 @@ void CFX_SystemHandler::OutputSelectedRect(CFFL_FormFiller* pFormFiller,
   CFX_PointF ptB = pFormFiller->PWLtoFFL(CFX_PointF(rect.right, rect.top));
 
   CPDFSDK_Annot* pAnnot = pFormFiller->GetSDKAnnot();
-  IPDF_Page* pPage = pAnnot->GetPage();
+  UnderlyingPageType* pPage = pAnnot->GetUnderlyingPage();
   ASSERT(pPage);
 
   m_pFormFillEnv->OutputSelectedRect(pPage,

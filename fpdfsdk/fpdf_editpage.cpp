@@ -195,13 +195,13 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   if (pContext) {
     auto pXFAPage = pdfium::MakeRetain<CPDFXFA_Page>(pContext, page_index);
     pXFAPage->LoadPDFPage(pPageDict);
-    return FPDFPageFromIPDFPage(pXFAPage.Leak());  // Caller takes ownership.
+    return FPDFPageFromUnderlying(pXFAPage.Leak());  // Caller takes ownership.
   }
   // Eventually, fallthru into non-XFA case once page type is consistent.
   return nullptr;
 #else  // PDF_ENABLE_XFA
   RetainPtr<CPDF_Page> pPage = pDoc->GetOrCreatePDFPage(pPageDict);
-  return FPDFPageFromIPDFPage(pPage.Leak());  // Caller takes ownership.
+  return FPDFPageFromUnderlying(pPage.Leak());  // Caller takes ownership.
 #endif  // PDF_ENABLE_XFA
 }
 

@@ -302,7 +302,7 @@ bool CFFL_FormFiller::Redo(CPDFSDK_Annot* pAnnot) {
 
 void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, uint32_t nFlag) {
   auto* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
-  IPDF_Page* pPage = pWidget->GetPage();
+  UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
   CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage, true);
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true))
     pWnd->SetFocus();
@@ -479,7 +479,7 @@ CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
 }
 
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView(bool renew) {
-  IPDF_Page* pPage = m_pWidget->GetPage();
+  UnderlyingPageType* pPage = m_pWidget->GetUnderlyingPage();
   return m_pFormFillEnv->GetPageView(pPage, renew);
 }
 
@@ -618,5 +618,5 @@ void CFFL_FormFiller::EscapeFiller(CPDFSDK_PageView* pPageView,
 }
 
 void CFFL_FormFiller::InvalidateRect(const FX_RECT& rect) {
-  m_pFormFillEnv->Invalidate(m_pWidget->GetPage(), rect);
+  m_pFormFillEnv->Invalidate(m_pWidget->GetUnderlyingPage(), rect);
 }

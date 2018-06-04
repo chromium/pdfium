@@ -351,7 +351,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
 #ifdef PDF_ENABLE_XFA
   auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
   if (pContext)
-    return FPDFPageFromIPDFPage(pContext->GetXFAPage(page_index).Leak());
+    return FPDFPageFromUnderlying(pContext->GetXFAPage(page_index).Leak());
 
   // Eventually, fallthrough into non-xfa case once page type made consistent.
   return nullptr;
@@ -361,17 +361,17 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
     return nullptr;
 
   RetainPtr<CPDF_Page> pPage = pDoc->GetOrCreatePDFPage(pDict);
-  return FPDFPageFromIPDFPage(pPage.Leak());
+  return FPDFPageFromUnderlying(pPage.Leak());
 #endif  // PDF_ENABLE_XFA
 }
 
 FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageWidth(FPDF_PAGE page) {
-  IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   return pPage ? pPage->GetPageWidth() : 0.0;
 }
 
 FPDF_EXPORT double FPDF_CALLCONV FPDF_GetPageHeight(FPDF_PAGE page) {
-  IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   return pPage ? pPage->GetPageHeight() : 0.0;
 }
 
@@ -731,12 +731,12 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
     return;
 
   // Take it back across the API and hold for duration of this function.
-  RetainPtr<IPDF_Page> pPage;
-  pPage.Unleak(IPDFPageFromFPDFPage(page));
+  RetainPtr<UnderlyingPageType> pPage;
+  pPage.Unleak(UnderlyingFromFPDFPage(page));
 
 #ifndef PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView =
-      static_cast<CPDFSDK_PageView*>(pPage->AsPDFPage()->GetView());
+      static_cast<CPDFSDK_PageView*>(pPage->GetView());
   if (!pPageView || pPageView->IsBeingDestroyed())
     return;
 
@@ -774,7 +774,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_DeviceToPage(FPDF_PAGE page,
   if (!page || !page_x || !page_y)
     return false;
 
-  IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
   Optional<CFX_PointF> pos =
       pPage->DeviceToPage(rect, rotate, CFX_PointF(device_x, device_y));
@@ -799,7 +799,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_PageToDevice(FPDF_PAGE page,
   if (!page || !device_x || !device_y)
     return false;
 
-  IPDF_Page* pPage = IPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   const FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
   CFX_PointF page_point(static_cast<float>(page_x), static_cast<float>(page_y));
   Optional<CFX_PointF> pos = pPage->PageToDevice(rect, rotate, page_point);
