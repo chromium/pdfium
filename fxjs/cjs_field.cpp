@@ -171,17 +171,10 @@ void CJS_Field::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Field::CJS_Field(v8::Local<v8::Object> pObject)
-    : CJS_Object(pObject),
-      m_pJSDoc(nullptr),
-      m_pFormFillEnv(nullptr),
-      m_nFormControlIndex(-1),
-      m_bCanSet(false),
-      m_bDelay(false) {}
+CJS_Field::CJS_Field(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime) {}
 
 CJS_Field::~CJS_Field() = default;
-
-void CJS_Field::InitInstance(IJS_Runtime* pIRuntime) {}
 
 // note: iControlNo = -1, means not a widget.
 void CJS_Field::ParseFieldName(const std::wstring& strFieldNameParsed,

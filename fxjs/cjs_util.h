@@ -21,7 +21,7 @@ class CJS_Util : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Util(v8::Local<v8::Object> pObject);
+  CJS_Util(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Util() override;
 
   static WideString printx(const WideString& cFormat,

@@ -123,16 +123,13 @@ void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Document::CJS_Document(v8::Local<v8::Object> pObject)
-    : CJS_Object(pObject),
-      m_pFormFillEnv(nullptr),
-      m_cwBaseURL(L""),
-      m_bDelay(false) {}
+CJS_Document::CJS_Document(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime) {}
 
 CJS_Document::~CJS_Document() = default;
 
-void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
-  SetFormFillEnv(pIRuntime->GetFormFillEnv());
+void CJS_Document::InitInstance() {
+  SetFormFillEnv(GetRuntime()->GetFormFillEnv());
 }
 
 // The total number of fields in document.

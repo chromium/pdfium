@@ -43,7 +43,7 @@ TEST_F(FXJSEngineUnitTest, GC) {
   engine()->DefineObj("perm", FXJSOBJTYPE_DYNAMIC,
                       [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
                         pEngine->SetObjectPrivate(
-                            obj, pdfium::MakeUnique<CJS_Object>(obj));
+                            obj, pdfium::MakeUnique<CJS_Object>(obj, nullptr));
                         perm_created = true;
                       },
                       [](v8::Local<v8::Object> obj) {
@@ -55,7 +55,7 @@ TEST_F(FXJSEngineUnitTest, GC) {
   engine()->DefineObj("temp", FXJSOBJTYPE_DYNAMIC,
                       [](CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
                         pEngine->SetObjectPrivate(
-                            obj, pdfium::MakeUnique<CJS_Object>(obj));
+                            obj, pdfium::MakeUnique<CJS_Object>(obj, nullptr));
                         temp_created = true;
                       },
                       [](v8::Local<v8::Object> obj) {

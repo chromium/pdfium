@@ -25,7 +25,8 @@ void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Report::CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+CJS_Report::CJS_Report(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime) {}
 
 CJS_Report::~CJS_Report() = default;
 

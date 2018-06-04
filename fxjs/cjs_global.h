@@ -35,11 +35,11 @@ class CJS_Global : public CJS_Object {
   static void setPersistent_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  explicit CJS_Global(v8::Local<v8::Object> pObject);
+  CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Global() override;
 
-  // CJS_Object
-  void InitInstance(IJS_Runtime* pIRuntime) override;
+  // CJS_Object:
+  void InitInstance() override;
 
   CJS_Return DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);

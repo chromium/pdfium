@@ -121,8 +121,8 @@ CFX_Color CJS_Color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
   return CFX_Color();
 }
 
-CJS_Color::CJS_Color(v8::Local<v8::Object> pObject)
-    : CJS_Object(pObject),
+CJS_Color::CJS_Color(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime),
       m_crTransparent(CFX_Color::kTransparent),
       m_crBlack(CFX_Color::kGray, 0),
       m_crWhite(CFX_Color::kGray, 1),

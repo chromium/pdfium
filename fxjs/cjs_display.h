@@ -13,8 +13,8 @@ class CJS_Display : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Display(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Display() override {}
+  CJS_Display(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
+  ~CJS_Display() override;
 
  private:
   static int ObjDefnID;

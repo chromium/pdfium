@@ -23,11 +23,11 @@ class CJS_Document : public CJS_Object {
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Document(v8::Local<v8::Object> pObject);
+  CJS_Document(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Document() override;
 
-  // CJS_Object
-  void InitInstance(IJS_Runtime* pIRuntime) override;
+  // CJS_Object:
+  void InitInstance() override;
 
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
@@ -312,12 +312,12 @@ class CJS_Document : public CJS_Object {
                                  v8::Local<v8::Value> vp,
                                  const ByteString& propName);
 
-  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   WideString m_cwBaseURL;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
   // Needs to be a std::list for iterator stability.
   std::list<WideString> m_IconNames;
-  bool m_bDelay;
+  bool m_bDelay = false;
 };
 
 #endif  // FXJS_CJS_DOCUMENT_H_

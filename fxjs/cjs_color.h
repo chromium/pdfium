@@ -20,7 +20,7 @@ class CJS_Color : public CJS_Object {
   static CFX_Color ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
                                           v8::Local<v8::Array> array);
 
-  explicit CJS_Color(v8::Local<v8::Object> pObject);
+  CJS_Color(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Color() override;
 
   JS_STATIC_PROP(black, black, CJS_Color);

@@ -74,7 +74,8 @@ void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Util::CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+CJS_Util::CJS_Util(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime) {}
 
 CJS_Util::~CJS_Util() = default;
 

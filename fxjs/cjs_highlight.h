@@ -13,8 +13,8 @@ class CJS_Highlight : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Highlight(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
-  ~CJS_Highlight() override {}
+  CJS_Highlight(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
+  ~CJS_Highlight() override;
 
  private:
   static int ObjDefnID;

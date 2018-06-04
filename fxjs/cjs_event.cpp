@@ -44,7 +44,8 @@ void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
-CJS_Event::CJS_Event(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+CJS_Event::CJS_Event(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime) {}
 
 CJS_Event::~CJS_Event() = default;
 

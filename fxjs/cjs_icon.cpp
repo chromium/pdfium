@@ -24,8 +24,8 @@ void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
 }
 
-CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject)
-    : CJS_Object(pObject), m_swIconName(L"") {}
+CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime) {}
 
 CJS_Icon::~CJS_Icon() = default;
 

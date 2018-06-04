@@ -40,11 +40,11 @@ void CJS_Object::DefineMethods(CFXJS_Engine* pEngine,
     pEngine->DefineObjMethod(objId, methods[i].pName, methods[i].pMethodCall);
 }
 
-CJS_Object::CJS_Object(v8::Local<v8::Object> pObject) {
-  m_pIsolate = pObject->GetIsolate();
-  m_pV8Object.Reset(m_pIsolate, pObject);
-}
+CJS_Object::CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : m_pIsolate(pObject->GetIsolate()),
+      m_pV8Object(GetIsolate(), pObject),
+      m_pRuntime(pRuntime) {}
 
 CJS_Object::~CJS_Object() {}
 
-void CJS_Object::InitInstance(IJS_Runtime* pIRuntime) {}
+void CJS_Object::InitInstance() {}

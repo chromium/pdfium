@@ -28,7 +28,8 @@ void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine) {
   DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
 }
 
-CJS_Console::CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+CJS_Console::CJS_Console(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
+    : CJS_Object(pObject, pRuntime) {}
 
 CJS_Console::~CJS_Console() = default;
 

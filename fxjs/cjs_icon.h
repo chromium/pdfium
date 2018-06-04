@@ -14,7 +14,7 @@ class CJS_Icon : public CJS_Object {
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  explicit CJS_Icon(v8::Local<v8::Object> pObject);
+  CJS_Icon(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Icon() override;
 
   WideString GetIconName() const { return m_swIconName; }

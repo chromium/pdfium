@@ -34,11 +34,8 @@ class CJS_Field : public CJS_Object {
   static void DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                       CJS_DelayData* pData);
 
-  explicit CJS_Field(v8::Local<v8::Object> pObject);
+  CJS_Field(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Field() override;
-
-  // CJS_Object
-  void InitInstance(IJS_Runtime* pIRuntime) override;
 
   bool AttachField(CJS_Document* pDocument, const WideString& csFieldName);
 
@@ -421,12 +418,12 @@ class CJS_Field : public CJS_Object {
 
   void DoDelay();
 
-  CJS_Document* m_pJSDoc;
+  CJS_Document* m_pJSDoc = nullptr;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   WideString m_FieldName;
-  int m_nFormControlIndex;
-  bool m_bCanSet;
-  bool m_bDelay;
+  int m_nFormControlIndex = -1;
+  bool m_bCanSet = false;
+  bool m_bDelay = false;
 };
 
 #endif  // FXJS_CJS_FIELD_H_
