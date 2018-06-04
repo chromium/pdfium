@@ -479,7 +479,6 @@ void SplitString(const ByteString& content,
     result->push_back(
         {CBC_QRCoderMode::sALPHANUMERIC, content.Mid(flag, index - flag)});
   }
-  flag = index;
   if (index < content.GetLength())
     SplitString(content.Right(content.GetLength() - index), result);
 }
