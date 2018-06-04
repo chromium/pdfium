@@ -6,9 +6,9 @@
 
 #include "fxjs/cjs_annot.h"
 
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_object.h"
+#include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 
 namespace {

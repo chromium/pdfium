@@ -15,12 +15,12 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventhandler.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_publicmethods.h"
 #include "fxjs/cjs_runtime.h"
+#include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 
 #if _FX_OS_ == _FX_OS_ANDROID_

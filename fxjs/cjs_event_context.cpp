@@ -7,9 +7,9 @@
 #include "fxjs/cjs_event_context.h"
 
 #include "core/fxcrt/autorestorer.h"
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_eventhandler.h"
 #include "fxjs/cjs_runtime.h"
+#include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 
 CJS_EventContext::CJS_EventContext(CJS_Runtime* pRuntime)

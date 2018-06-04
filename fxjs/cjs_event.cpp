@@ -6,11 +6,11 @@
 
 #include "fxjs/cjs_event.h"
 
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventhandler.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_object.h"
+#include "fxjs/js_define.h"
 
 const JSPropertySpec CJS_Event::PropertySpecs[] = {
     {"change", get_change_static, set_change_static},

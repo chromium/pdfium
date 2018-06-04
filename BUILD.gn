@@ -1205,9 +1205,6 @@ jumbo_static_library("fxjs") {
 
   if (pdf_enable_v8) {
     sources += [
-      "fxjs/CJX_Define.h",
-      "fxjs/JS_Define.cpp",
-      "fxjs/JS_Define.h",
       "fxjs/cfx_v8.cpp",
       "fxjs/cfx_v8.h",
       "fxjs/cfxjs_engine.cpp",
@@ -1280,8 +1277,11 @@ jumbo_static_library("fxjs") {
       "fxjs/cjs_util.h",
       "fxjs/cjs_zoomtype.cpp",
       "fxjs/cjs_zoomtype.h",
+      "fxjs/cjx_define.h",
       "fxjs/global_timer.cpp",
       "fxjs/global_timer.h",
+      "fxjs/js_define.cpp",
+      "fxjs/js_define.h",
       "fxjs/js_resources.cpp",
       "fxjs/js_resources.h",
     ]

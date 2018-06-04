@@ -7,7 +7,7 @@
 #ifndef FXJS_CJS_EVENT_H_
 #define FXJS_CJS_EVENT_H_
 
-#include "fxjs/JS_Define.h"
+#include "fxjs/js_define.h"
 
 class CJS_Event : public CJS_Object {
  public:

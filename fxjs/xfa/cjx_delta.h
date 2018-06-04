@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_DELTA_H_
 #define FXJS_XFA_CJX_DELTA_H_
 
-#include "fxjs/CJX_Define.h"
+#include "fxjs/cjx_define.h"
 #include "fxjs/xfa/cjx_object.h"
 
 class CXFA_Delta;

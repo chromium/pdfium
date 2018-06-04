@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/JS_Define.h"
+#include "fxjs/js_define.h"
 
 #include <time.h>
 

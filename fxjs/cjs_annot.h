@@ -8,7 +8,7 @@
 #define FXJS_CJS_ANNOT_H_
 
 #include "fpdfsdk/cpdfsdk_baannot.h"
-#include "fxjs/JS_Define.h"
+#include "fxjs/js_define.h"
 
 class CJS_Annot : public CJS_Object {
  public:

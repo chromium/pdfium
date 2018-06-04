@@ -8,11 +8,11 @@
 
 #include <vector>
 
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventhandler.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_runtime.h"
+#include "fxjs/js_define.h"
 
 const JSPropertySpec CJS_Color::PropertySpecs[] = {
     {"black", get_black_static, set_black_static},

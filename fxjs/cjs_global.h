@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_keyvalue.h"
+#include "fxjs/js_define.h"
 
 class CJS_GlobalData;
 

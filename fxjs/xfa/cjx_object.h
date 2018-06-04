@@ -15,7 +15,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
-#include "fxjs/CJX_Define.h"
+#include "fxjs/cjx_define.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 

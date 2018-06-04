@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "fxjs/JS_Define.h"
+#include "fxjs/js_define.h"
 
 // Return values for ParseDataType() below.
 #define UTIL_INT 0

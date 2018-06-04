@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "fxjs/CJX_Define.h"
+#include "fxjs/cjx_define.h"
 #include "fxjs/xfa/cjx_object.h"
 
 enum XFA_LAYOUTMODEL_HWXY {

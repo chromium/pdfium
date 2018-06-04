@@ -11,7 +11,7 @@
 #include <set>
 #include <vector>
 
-#include "fxjs/JS_Define.h"
+#include "fxjs/js_define.h"
 
 class CJS_Runtime;
 class GlobalTimer;

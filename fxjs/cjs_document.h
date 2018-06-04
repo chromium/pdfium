@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "fxjs/JS_Define.h"
+#include "fxjs/js_define.h"
 
 class CJS_Document;
 class CPDF_TextObject;

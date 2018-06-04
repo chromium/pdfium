@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_annot.h"
 #include "fxjs/cjs_app.h"
 #include "fxjs/cjs_border.h"
@@ -39,6 +38,7 @@
 #include "fxjs/cjs_timerobj.h"
 #include "fxjs/cjs_util.h"
 #include "fxjs/cjs_zoomtype.h"
+#include "fxjs/js_define.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"
 

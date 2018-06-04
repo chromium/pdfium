@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_TEMPLATE_H_
 #define FXJS_XFA_CJX_TEMPLATE_H_
 
-#include "fxjs/CJX_Define.h"
+#include "fxjs/cjx_define.h"
 #include "fxjs/xfa/cjx_model.h"
 
 class CXFA_Template;

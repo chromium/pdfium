@@ -7,12 +7,12 @@
 #include "fxjs/cjs_eventhandler.h"
 
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "fxjs/JS_Define.h"
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_runtime.h"
+#include "fxjs/js_define.h"
 
 CJS_EventHandler::CJS_EventHandler(CJS_EventContext* pContext)
     : m_pJSEventContext(pContext) {}
