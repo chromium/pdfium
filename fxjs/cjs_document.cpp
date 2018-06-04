@@ -1256,7 +1256,8 @@ CJS_Return CJS_Document::getPageNthWord(
   if (!pPageDict)
     return CJS_Return(false);
 
-  RetainPtr<CPDF_Page> page = pDocument->GetOrCreatePDFPage(pPageDict);
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, pPageDict, true);
+  page->ParseContent();
 
   int nWords = 0;
   WideString swRet;
@@ -1304,7 +1305,8 @@ CJS_Return CJS_Document::getPageNumWords(
   if (!pPageDict)
     return CJS_Return(false);
 
-  RetainPtr<CPDF_Page> page = pDocument->GetOrCreatePDFPage(pPageDict);
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, pPageDict, true);
+  page->ParseContent();
 
   int nWords = 0;
   for (auto& pPageObj : *page->GetPageObjectList()) {

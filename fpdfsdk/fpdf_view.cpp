@@ -360,7 +360,8 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
   if (!pDict)
     return nullptr;
 
-  RetainPtr<CPDF_Page> pPage = pDoc->GetOrCreatePDFPage(pDict);
+  auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict, true);
+  pPage->ParseContent();
   return FPDFPageFromUnderlying(pPage.Leak());
 #endif  // PDF_ENABLE_XFA
 }
@@ -958,7 +959,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   if (!pDict)
     return false;
 
-  RetainPtr<CPDF_Page> page = pDoc->GetOrCreatePDFPage(pDict);
+  auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, pDict, true);
   *width = page->GetPageWidth();
   *height = page->GetPageHeight();
   return true;
