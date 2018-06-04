@@ -272,9 +272,9 @@ FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
     return -1;
   CPDF_InterForm interform(pPage->GetDocument());
   int z_order = -1;
-  (void)interform.GetControlAtPoint(
+  static_cast<void>(interform.GetControlAtPoint(
       pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
-      &z_order);
+      &z_order));
   return z_order;
 }
 

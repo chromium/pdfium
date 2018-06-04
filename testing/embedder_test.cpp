@@ -220,7 +220,7 @@ bool EmbedderTest::OpenDocumentHelper(const char* password,
     FPDF_LoadXFA(*document);
 #endif  // PDF_ENABLE_XFA
 
-  (void)FPDF_GetDocPermissions(*document);
+  static_cast<void>(FPDF_GetDocPermissions(*document));
   return true;
 }
 
@@ -262,16 +262,16 @@ void EmbedderTest::DoOpenActions() {
 
 int EmbedderTest::GetFirstPageNum() {
   int first_page = FPDFAvail_GetFirstPageNum(document_);
-  (void)FPDFAvail_IsPageAvail(avail_, first_page,
-                              fake_file_access_->GetDownloadHints());
+  static_cast<void>(FPDFAvail_IsPageAvail(
+      avail_, first_page, fake_file_access_->GetDownloadHints()));
   return first_page;
 }
 
 int EmbedderTest::GetPageCount() {
   int page_count = FPDF_GetPageCount(document_);
   for (int i = 0; i < page_count; ++i)
-    (void)FPDFAvail_IsPageAvail(avail_, i,
-                                fake_file_access_->GetDownloadHints());
+    static_cast<void>(FPDFAvail_IsPageAvail(
+        avail_, i, fake_file_access_->GetDownloadHints()));
   return page_count;
 }
 

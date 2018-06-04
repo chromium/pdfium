@@ -256,7 +256,7 @@ CFX_CTTGSUBTable::ParseCoverage(FT_Bytes raw) {
 void CFX_CTTGSUBTable::ParseCoverageFormat1(FT_Bytes raw,
                                             TCoverageFormat1* rec) {
   FT_Bytes sp = raw;
-  (void)GetUInt16(sp);
+  static_cast<void>(GetUInt16(sp));
   rec->GlyphArray = std::vector<uint16_t>(GetUInt16(sp));
   for (auto& glyph : rec->GlyphArray)
     glyph = GetUInt16(sp);
@@ -265,7 +265,7 @@ void CFX_CTTGSUBTable::ParseCoverageFormat1(FT_Bytes raw,
 void CFX_CTTGSUBTable::ParseCoverageFormat2(FT_Bytes raw,
                                             TCoverageFormat2* rec) {
   FT_Bytes sp = raw;
-  (void)GetUInt16(sp);
+  static_cast<void>(GetUInt16(sp));
   rec->RangeRecords = std::vector<TRangeRecord>(GetUInt16(sp));
   for (auto& rangeRec : rec->RangeRecords) {
     rangeRec.Start = GetUInt16(sp);
@@ -300,7 +300,7 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat1(FT_Bytes raw, TSubTable1* rec) {
 
 void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw, TSubTable2* rec) {
   FT_Bytes sp = raw;
-  (void)GetUInt16(sp);
+  static_cast<void>(GetUInt16(sp));
   uint16_t offset = GetUInt16(sp);
   rec->Coverage = ParseCoverage(&raw[offset]);
   rec->Substitutes = std::vector<uint16_t>(GetUInt16(sp));

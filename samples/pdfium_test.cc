@@ -682,7 +682,7 @@ void RenderPdf(const std::string& name,
     return;
   }
 
-  (void)FPDF_GetDocPermissions(doc.get());
+  static_cast<void>(FPDF_GetDocPermissions(doc.get()));
 
   if (options.show_metadata)
     DumpMetaData(doc.get());
