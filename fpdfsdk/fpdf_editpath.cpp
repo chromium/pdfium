@@ -236,6 +236,55 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
+                                                       double* a,
+                                                       double* b,
+                                                       double* c,
+                                                       double* d,
+                                                       double* e,
+                                                       double* f) {
+  if (!path || !a || !b || !c || !d || !e || !f)
+    return false;
+
+  CPDF_PathObject* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
+    return false;
+
+  *a = pPathObj->m_Matrix.a;
+  *b = pPathObj->m_Matrix.b;
+  *c = pPathObj->m_Matrix.c;
+  *d = pPathObj->m_Matrix.d;
+  *e = pPathObj->m_Matrix.e;
+  *f = pPathObj->m_Matrix.f;
+
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetMatrix(FPDF_PAGEOBJECT path,
+                                                       double a,
+                                                       double b,
+                                                       double c,
+                                                       double d,
+                                                       double e,
+                                                       double f) {
+  if (!path)
+    return false;
+
+  CPDF_PathObject* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj)
+    return false;
+
+  pPathObj->m_Matrix.a = a;
+  pPathObj->m_Matrix.b = b;
+  pPathObj->m_Matrix.c = c;
+  pPathObj->m_Matrix.d = d;
+  pPathObj->m_Matrix.e = e;
+  pPathObj->m_Matrix.f = f;
+  pPathObj->SetDirty(true);
+
+  return true;
+}
+
 FPDF_EXPORT void FPDF_CALLCONV FPDFPath_SetLineJoin(FPDF_PAGEOBJECT path,
                                                     int line_join) {
   auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);

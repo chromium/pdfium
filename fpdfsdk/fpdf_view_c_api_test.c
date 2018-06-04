@@ -183,6 +183,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_CountSegments);
     CHK(FPDFPath_GetDrawMode);
     CHK(FPDFPath_GetFillColor);
+    CHK(FPDFPath_GetMatrix);
     CHK(FPDFPath_GetPathSegment);
     CHK(FPDFPath_GetStrokeColor);
     CHK(FPDFPath_LineTo);
@@ -191,6 +192,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_SetFillColor);
     CHK(FPDFPath_SetLineCap);
     CHK(FPDFPath_SetLineJoin);
+    CHK(FPDFPath_SetMatrix);
     CHK(FPDFPath_SetStrokeColor);
     CHK(FPDFPath_SetStrokeWidth);
     CHK(FPDFText_LoadFont);

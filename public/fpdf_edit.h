@@ -941,6 +941,56 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
                                                          int* fillmode,
                                                          FPDF_BOOL* stroke);
 
+// Experimental API.
+// Get the transform matrix of a path.
+//
+//   path - handle to a path.
+//   a    - matrix value.
+//   b    - matrix value.
+//   c    - matrix value.
+//   d    - matrix value.
+//   e    - matrix value.
+//   f    - matrix value.
+//
+// The matrix is composed as:
+//   |a c e|
+//   |b d f|
+// and used to scale, rotate, shear and translate the path.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
+                                                       double* a,
+                                                       double* b,
+                                                       double* c,
+                                                       double* d,
+                                                       double* e,
+                                                       double* f);
+
+// Experimental API.
+// Set the transform matrix of a path.
+//
+//   path - handle to a path.
+//   a    - matrix value.
+//   b    - matrix value.
+//   c    - matrix value.
+//   d    - matrix value.
+//   e    - matrix value.
+//   f    - matrix value.
+//
+// The matrix is composed as:
+//   |a c e|
+//   |b d f|
+// and can be used to scale, rotate, shear and translate the path.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetMatrix(FPDF_PAGEOBJECT path,
+                                                       double a,
+                                                       double b,
+                                                       double c,
+                                                       double d,
+                                                       double e,
+                                                       double f);
+
 // Create a new text object using one of the standard PDF fonts.
 //
 // document   - handle to the document.

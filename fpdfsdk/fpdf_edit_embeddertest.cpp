@@ -248,6 +248,36 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   EXPECT_EQ(FPDF_FILLMODE_ALTERNATE, fillmode);
   EXPECT_FALSE(stroke);
 
+  double matrix_a = 1;
+  double matrix_b = 2;
+  double matrix_c = 3;
+  double matrix_d = 4;
+  double matrix_e = 5;
+  double matrix_f = 6;
+  EXPECT_FALSE(FPDFPath_SetMatrix(nullptr, matrix_a, matrix_b, matrix_c,
+                                  matrix_d, matrix_e, matrix_f));
+  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, matrix_a, matrix_b, matrix_c,
+                                 matrix_d, matrix_e, matrix_f));
+  EXPECT_FALSE(FPDFPath_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
+                                  &matrix_d, &matrix_e, &matrix_f));
+  EXPECT_TRUE(FPDFPath_GetMatrix(red_rect, &matrix_a, &matrix_b, &matrix_c,
+                                 &matrix_d, &matrix_e, &matrix_f));
+  EXPECT_EQ(1, static_cast<int>(matrix_a));
+  EXPECT_EQ(2, static_cast<int>(matrix_b));
+  EXPECT_EQ(3, static_cast<int>(matrix_c));
+  EXPECT_EQ(4, static_cast<int>(matrix_d));
+  EXPECT_EQ(5, static_cast<int>(matrix_e));
+  EXPECT_EQ(6, static_cast<int>(matrix_f));
+  // Set back the default
+  matrix_a = 1;
+  matrix_b = 0;
+  matrix_c = 0;
+  matrix_d = 1;
+  matrix_e = 0;
+  matrix_f = 0;
+  EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, matrix_a, matrix_b, matrix_c,
+                                 matrix_d, matrix_e, matrix_f));
+
   FPDFPage_InsertObject(page, red_rect);
   {
     ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
