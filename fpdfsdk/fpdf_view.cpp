@@ -308,7 +308,16 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  return pDoc ? pDoc->GetUserPermissions() : 0;
+  // https://bugs.chromium.org/p/pdfium/issues/detail?id=499
+  if (!pDoc) {
+#ifndef PDF_ENABLE_XFA
+    return 0;
+#else   // PDF_ENABLE_XFA
+    return 0xFFFFFFFF;
+#endif  // PDF_ENABLE_XFA
+  }
+
+  return pDoc->GetUserPermissions();
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

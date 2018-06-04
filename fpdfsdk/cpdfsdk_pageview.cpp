@@ -38,18 +38,19 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
     CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
     pPDFInterForm->FixPageFields(pPDFPage);
+#ifndef PDF_ENABLE_XFA
     pPDFPage->SetView(this);
+#endif  // PDF_ENABLE_XFA
   }
 }
 
 CPDFSDK_PageView::~CPDFSDK_PageView() {
-  CPDF_Page* pPDFPage = ToPDFPage(m_page);
-  if (pPDFPage) {
-    // The call to |ReleaseAnnot| can cause the page pointed to by |m_page| to
-    // be freed, which will cause issues if we try to cleanup the pageview ptr
-    // in |m_page|. So, reset the pageview pointer before doing anything else.
-    pPDFPage->SetView(nullptr);
-  }
+#ifndef PDF_ENABLE_XFA
+  // The call to |ReleaseAnnot| can cause the page pointed to by |m_page| to
+  // be freed, which will cause issues if we try to cleanup the pageview pointer
+  // in |m_page|. So, reset the pageview pointer before doing anything else.
+  m_page->AsPDFPage()->SetView(nullptr);
+#endif  // PDF_ENABLE_XFA
 
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
       m_pFormFillEnv->GetAnnotHandlerMgr();
