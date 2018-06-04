@@ -136,9 +136,8 @@ TEST(CPDF_CrossRefAvailTest, IncorrectData) {
 
 TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
   char int_buffer[100];
-  int cur_offset = 0;
   std::string table = "pdf blah blah blah\n";
-  cur_offset = static_cast<int>(table.size());
+  size_t cur_offset = table.size();
   table +=
       "xref \n"
       "0 6 \n"
@@ -148,8 +147,8 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
       "[<afbb0f593c2d2aea5b519cb61da1c17b><4f9bb2e7978401808f8f1f2a75c322c8>]"
       "/Info 15 0 R/Size 16>>\n";
   table += "Dummy Data jgwhughouiwbahng";
-  int prev_offset = cur_offset;
-  cur_offset = static_cast<int>(table.size());
+  size_t prev_offset = cur_offset;
+  cur_offset = table.size();
   table += std::string(
                "xref \n"
                "0 6 \n"
@@ -160,10 +159,10 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
                "4f9bb2e7978401808f8f1f2a75c322c8>]"
                "/Info 15 0 R/Size 16"
                "/Prev ") +
-           FXSYS_itoa(prev_offset, int_buffer, 10) + ">>\n";
+           FXSYS_itoa(static_cast<int>(prev_offset), int_buffer, 10) + ">>\n";
   table += "More Dummy Data jgwhughouiwbahng";
   prev_offset = cur_offset;
-  cur_offset = static_cast<int>(table.size());
+  cur_offset = table.size();
   table += std::string(
                "xref \n"
                "0 6 \n"
@@ -174,8 +173,8 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
                "4f9bb2e7978401808f8f1f2a75c322c8>]"
                "/Info 15 0 R/Size 16"
                "/Prev ") +
-           FXSYS_itoa(prev_offset, int_buffer, 10) + ">>\n";
-  const FX_FILESIZE last_crossref_offset = cur_offset;
+           FXSYS_itoa(static_cast<int>(prev_offset), int_buffer, 10) + ">>\n";
+  const FX_FILESIZE last_crossref_offset = static_cast<FX_FILESIZE>(cur_offset);
 
   auto parser = MakeParserForBuffer(
       reinterpret_cast<const unsigned char*>(table.data()), table.size());
@@ -186,9 +185,8 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
 
 TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
   char int_buffer[100];
-  int cur_offset = 0;
   std::string table = "pdf blah blah blah\n";
-  cur_offset = static_cast<int>(table.size());
+  size_t cur_offset = table.size();
   table +=
       "16 0 obj\n"
       "<</Type /XRef>>"
@@ -198,12 +196,12 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
       "endobj\n";
   table += "Dummy Data jgwhughouiwbahng";
 
-  int prev_offset = cur_offset;
-  cur_offset = static_cast<int>(table.size());
+  size_t prev_offset = cur_offset;
+  cur_offset = table.size();
   table += std::string(
                "55 0 obj\n"
                "<</Type /XRef /Prev ") +
-           FXSYS_itoa(prev_offset, int_buffer, 10) +
+           FXSYS_itoa(static_cast<int>(prev_offset), int_buffer, 10) +
            ">>"
            " stream \n"
            "STREAM DATA STREAM DATA STREAM DATA\n"
@@ -211,17 +209,17 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
            "endobj\n";
   table += "More Dummy Data jgwhughouiwbahng";
   prev_offset = cur_offset;
-  cur_offset = static_cast<int>(table.size());
+  cur_offset = table.size();
   table += std::string(
                "88 0 obj\n"
                "<</Type /XRef /NNNN /Prev ") +
-           FXSYS_itoa(prev_offset, int_buffer, 10) +
+           FXSYS_itoa(static_cast<int>(prev_offset), int_buffer, 10) +
            ">>"
            " stream \n"
            "STREAM DATA STREAM DATA STREAM DATA favav\n"
            "endstream\n"
            "endobj\n";
-  const FX_FILESIZE last_crossref_offset = cur_offset;
+  const FX_FILESIZE last_crossref_offset = static_cast<FX_FILESIZE>(cur_offset);
 
   auto parser = MakeParserForBuffer(
       reinterpret_cast<const unsigned char*>(table.data()), table.size());
