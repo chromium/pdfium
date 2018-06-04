@@ -16,7 +16,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "third_party/base/ptr_util.h"
 
@@ -37,9 +36,11 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
 
   CPDF_Stream* pStream = pContent->AsStream();
   if (pStream) {
-    m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-    m_pSingleStream->LoadAllDataFiltered();
-    m_CurrentStage = Stage::kPrepareContent;
+    RetainPtr<CPDF_StreamAcc> pSingleStream =
+        pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+    pSingleStream->LoadAllDataFiltered();
+    m_StreamArray.push_back(pSingleStream);
+    m_CurrentStage = Stage::kParse;
     return;
   }
 
@@ -104,11 +105,10 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
     pState->SetFillAlpha(1.0f);
     pState->SetSoftMask(nullptr);
   }
-  m_pSingleStream =
+  RetainPtr<CPDF_StreamAcc> pSingleStream =
       pdfium::MakeRetain<CPDF_StreamAcc>(pForm->m_pFormStream.Get());
-  m_pSingleStream->LoadAllDataFiltered();
-  m_pData.Reset(m_pSingleStream->GetData());
-  m_Size = m_pSingleStream->GetSize();
+  pSingleStream->LoadAllDataFiltered();
+  m_StreamArray.push_back(pSingleStream);
 }
 
 CPDF_ContentParser::~CPDF_ContentParser() {}
@@ -122,9 +122,6 @@ bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
     if (pPause && pPause->NeedToPauseNow())
       return true;
   }
-
-  if (m_CurrentStage == Stage::kPrepareContent)
-    m_CurrentStage = PrepareContent();
 
   while (m_CurrentStage == Stage::kParse) {
     m_CurrentStage = Parse();
@@ -149,40 +146,12 @@ CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
   m_StreamArray[m_CurrentOffset]->LoadAllDataFiltered();
   m_CurrentOffset++;
 
-  return m_CurrentOffset == m_nStreams ? Stage::kPrepareContent
-                                       : Stage::kGetContent;
-}
-
-CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
-  m_CurrentOffset = 0;
-
-  if (m_StreamArray.empty()) {
-    m_pData.Reset(m_pSingleStream->GetData());
-    m_Size = m_pSingleStream->GetSize();
+  if (m_CurrentOffset >= m_nStreams) {
+    m_CurrentOffset = 0;
     return Stage::kParse;
   }
 
-  FX_SAFE_UINT32 safeSize = 0;
-  for (const auto& stream : m_StreamArray) {
-    safeSize += stream->GetSize();
-    safeSize += 1;
-  }
-  if (!safeSize.IsValid())
-    return Stage::kComplete;
-
-  m_Size = safeSize.ValueOrDie();
-  m_pData.Reset(
-      std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Alloc(uint8_t, m_Size)));
-
-  uint32_t pos = 0;
-  for (const auto& stream : m_StreamArray) {
-    memcpy(m_pData.Get() + pos, stream->GetData(), stream->GetSize());
-    pos += stream->GetSize();
-    m_pData.Get()[pos++] = ' ';
-  }
-  m_StreamArray.clear();
-
-  return Stage::kParse;
+  return Stage::kGetContent;
 }
 
 CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
@@ -195,12 +164,19 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
         nullptr, m_parsedSet.get());
     m_pParser->GetCurStates()->m_ColorState.SetDefault();
   }
-  if (m_CurrentOffset >= m_Size)
-    return Stage::kCheckClip;
 
-  m_CurrentOffset +=
-      m_pParser->Parse(m_pData.Get() + m_CurrentOffset,
-                       m_Size - m_CurrentOffset, PARSE_STEP_LIMIT);
+  m_CurrentOffset += m_pParser->Parse(
+      m_StreamArray[m_CurrentStream]->GetData() + m_CurrentOffset,
+      m_StreamArray[m_CurrentStream]->GetSize() - m_CurrentOffset,
+      PARSE_STEP_LIMIT);
+
+  if (m_CurrentOffset >= m_StreamArray[m_CurrentStream]->GetSize()) {
+    m_CurrentOffset = 0;
+    ++m_CurrentStream;
+    if (m_CurrentStream >= m_nStreams)
+      return Stage::kCheckClip;
+  }
+
   return Stage::kParse;
 }
 
