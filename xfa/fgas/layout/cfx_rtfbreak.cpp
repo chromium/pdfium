@@ -767,7 +767,6 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
       } else if (bRTLPiece) {
         wForm = FX_GetMirrorChar(wch, dwProps);
       }
-      dwProps = FX_GetUnicodeProperties(wForm);
 
       if (!bEmptyChar) {
         if (bCharCode) {
