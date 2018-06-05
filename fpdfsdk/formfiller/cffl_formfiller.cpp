@@ -489,9 +489,8 @@ CFX_FloatRect CFFL_FormFiller::GetFocusBox(CPDFSDK_PageView* pPageView) {
     return CFX_FloatRect();
 
   CFX_FloatRect rcFocus = FFLtoWnd(pPageView, PWLtoFFL(pWnd->GetFocusRect()));
-  return pPageView->GetPDFPage()->GetPageBBox().Contains(rcFocus)
-             ? rcFocus
-             : CFX_FloatRect();
+  return pPageView->GetPDFPage()->GetBBox().Contains(rcFocus) ? rcFocus
+                                                              : CFX_FloatRect();
 }
 
 CFX_FloatRect CFFL_FormFiller::FFLtoPWL(const CFX_FloatRect& rect) {

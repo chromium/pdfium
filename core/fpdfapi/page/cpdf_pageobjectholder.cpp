@@ -29,18 +29,23 @@ bool CPDF_PageObjectHolder::IsPage() const {
   return false;
 }
 
-void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
-  if (!m_pParser) {
-    m_ParseState = CONTENT_PARSED;
-    return;
-  }
+void CPDF_PageObjectHolder::StartParse(
+    std::unique_ptr<CPDF_ContentParser> pParser) {
+  ASSERT(m_ParseState == ParseState::kNotParsed);
+  m_pParser = std::move(pParser);
+  m_ParseState = ParseState::kParsing;
+}
 
+void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
+  if (m_ParseState == ParseState::kParsed)
+    return;
+
+  ASSERT(m_ParseState == ParseState::kParsing);
   if (m_pParser->Continue(pPause))
     return;
 
-  m_ParseState = CONTENT_PARSED;
+  m_ParseState = ParseState::kParsed;
   m_pDocument->IncrementParsedPageCount();
-
   if (m_pParser->GetCurStates())
     m_LastCTM = m_pParser->GetCurStates()->m_CTM;
 

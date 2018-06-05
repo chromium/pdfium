@@ -114,20 +114,22 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
       if (is_mask && iter != iterEnd)
         return;
     }
-    if (m_pCurrentLayer->m_pObjectHolder->IsParsed()) {
+    if (m_pCurrentLayer->m_pObjectHolder->GetParseState() ==
+        CPDF_PageObjectHolder::ParseState::kParsed) {
       m_pRenderStatus.reset();
       m_pDevice->RestoreState(false);
       m_pCurrentLayer = nullptr;
       m_LayerIndex++;
-      if (is_mask || (pPause && pPause->NeedToPauseNow())) {
+      if (is_mask || (pPause && pPause->NeedToPauseNow()))
         return;
-      }
     } else if (is_mask) {
       return;
     } else {
       m_pCurrentLayer->m_pObjectHolder->ContinueParse(pPause);
-      if (!m_pCurrentLayer->m_pObjectHolder->IsParsed())
+      if (m_pCurrentLayer->m_pObjectHolder->GetParseState() !=
+          CPDF_PageObjectHolder::ParseState::kParsed) {
         return;
+      }
     }
   }
 }

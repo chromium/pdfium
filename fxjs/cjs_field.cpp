@@ -1647,7 +1647,7 @@ void CJS_Field::SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
           CFX_FloatRect crRect = rect;
 
           CPDF_Page* pPDFPage = pWidget->GetPDFPage();
-          crRect.Intersect(pPDFPage->GetPageBBox());
+          crRect.Intersect(pPDFPage->GetBBox());
 
           if (!crRect.IsEmpty()) {
             CFX_FloatRect rcOld = pWidget->GetRect();
@@ -1672,10 +1672,8 @@ void CJS_Field::SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
             pFormField->GetControl(nControlIndex)) {
       if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
         CFX_FloatRect crRect = rect;
-
         CPDF_Page* pPDFPage = pWidget->GetPDFPage();
-        crRect.Intersect(pPDFPage->GetPageBBox());
-
+        crRect.Intersect(pPDFPage->GetBBox());
         if (!crRect.IsEmpty()) {
           CFX_FloatRect rcOld = pWidget->GetRect();
           if (crRect.left != rcOld.left || crRect.right != rcOld.right ||

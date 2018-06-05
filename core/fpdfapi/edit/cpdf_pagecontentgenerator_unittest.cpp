@@ -299,7 +299,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
   auto pTestForm =
       pdfium::MakeUnique<CPDF_Form>(pDoc.get(), nullptr, pStream.get());
   pTestForm->ParseContent(nullptr, nullptr, nullptr, nullptr);
-  ASSERT_TRUE(pTestForm->IsParsed());
+  ASSERT_EQ(CPDF_PageObjectHolder::ParseState::kParsed,
+            pTestForm->GetParseState());
 
   // The generated stream for the empty form should be an empty string.
   CPDF_PageContentGenerator generator(pTestForm.get());
@@ -325,7 +326,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   auto pTestForm =
       pdfium::MakeUnique<CPDF_Form>(pDoc.get(), nullptr, pStream.get());
   pTestForm->ParseContent(nullptr, nullptr, nullptr, nullptr);
-  ASSERT_TRUE(pTestForm->IsParsed());
+  ASSERT_EQ(CPDF_PageObjectHolder::ParseState::kParsed,
+            pTestForm->GetParseState());
 
   CPDF_PageContentGenerator generator(pTestForm.get());
   std::ostringstream process_buf;
