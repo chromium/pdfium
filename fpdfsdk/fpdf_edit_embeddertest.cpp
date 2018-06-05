@@ -258,6 +258,14 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
                                   matrix_d, matrix_e, matrix_f));
   EXPECT_TRUE(FPDFPath_SetMatrix(red_rect, matrix_a, matrix_b, matrix_c,
                                  matrix_d, matrix_e, matrix_f));
+  // Set to 0 before FPDFPath_GetMatrix() to ensure they are actually set by
+  // the function.
+  matrix_a = 0;
+  matrix_b = 0;
+  matrix_c = 0;
+  matrix_d = 0;
+  matrix_e = 0;
+  matrix_f = 0;
   EXPECT_FALSE(FPDFPath_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
                                   &matrix_d, &matrix_e, &matrix_f));
   EXPECT_TRUE(FPDFPath_GetMatrix(red_rect, &matrix_a, &matrix_b, &matrix_c,
