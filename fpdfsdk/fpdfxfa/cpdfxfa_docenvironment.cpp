@@ -644,7 +644,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
   if (!it)
     return true;
 
-  static_cast<void>(it->MoveToNext());
+  (void)it->MoveToNext();
   CXFA_Node* pNode = it->MoveToNext();
 
   while (pNode) {

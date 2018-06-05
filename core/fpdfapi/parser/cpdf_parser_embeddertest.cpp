@@ -28,7 +28,7 @@ TEST_F(CPDFParserEmbeddertest, Bug_544880) {
   // Shouldn't crash. We don't check the return value here because we get the
   // the count from the "/Count 1" in the testcase (at the time of writing)
   // rather than the actual count (0).
-  static_cast<void>(GetPageCount());
+  (void)GetPageCount();
 }
 
 TEST_F(CPDFParserEmbeddertest, Bug_325a) {

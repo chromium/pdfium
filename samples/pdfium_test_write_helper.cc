@@ -211,7 +211,7 @@ void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
   uint32_t bom = 0x0000FEFF;
   if (fwrite(&bom, sizeof(bom), 1, fp) != 1) {
     fprintf(stderr, "Failed to write to %s\n", filename);
-    static_cast<void>(fclose(fp));
+    (void)fclose(fp);
     return;
   }
 
@@ -223,7 +223,7 @@ void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
       break;
     }
   }
-  static_cast<void>(fclose(fp));
+  (void)fclose(fp);
 }
 
 void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
@@ -343,7 +343,7 @@ void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
     }
   }
 
-  static_cast<void>(fclose(fp));
+  (void)fclose(fp);
 }
 
 std::string WritePng(const char* pdf_name,
@@ -383,7 +383,7 @@ std::string WritePng(const char* pdf_name,
   if (bytes_written != png_encoding.size())
     fprintf(stderr, "Failed to write to %s\n", filename);
 
-  static_cast<void>(fclose(fp));
+  (void)fclose(fp);
   return std::string(filename);
 }
 
@@ -649,6 +649,6 @@ void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
     else
       fprintf(stderr, "Successfully wrote embedded image %s.\n", filename);
 
-    static_cast<void>(fclose(fp));
+    (void)fclose(fp);
   }
 }
