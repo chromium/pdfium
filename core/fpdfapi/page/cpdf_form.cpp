@@ -50,3 +50,7 @@ void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
 
   ContinueParse(nullptr);
 }
+
+const CPDF_Stream* CPDF_Form::GetStream() const {
+  return m_pFormStream.Get();
+}

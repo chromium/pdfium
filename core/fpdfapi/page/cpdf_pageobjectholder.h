@@ -84,8 +84,6 @@ class CPDF_PageObjectHolder {
   void Transform(const CFX_Matrix& matrix);
   CFX_FloatRect CalcBoundingBox() const;
 
-  // TODO(thestig): Move |m_pFormStream| into CPDF_Form.
-  UnownedPtr<CPDF_Stream> m_pFormStream;
   UnownedPtr<CPDF_Dictionary> m_pPageResources;
   UnownedPtr<CPDF_Dictionary> m_pResources;
   std::map<GraphicsData, ByteString> m_GraphicsMap;

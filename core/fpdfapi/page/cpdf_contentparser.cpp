@@ -106,7 +106,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
     pState->SetSoftMask(nullptr);
   }
   RetainPtr<CPDF_StreamAcc> pSingleStream =
-      pdfium::MakeRetain<CPDF_StreamAcc>(pForm->m_pFormStream.Get());
+      pdfium::MakeRetain<CPDF_StreamAcc>(pForm->GetStream());
   pSingleStream->LoadAllDataFiltered();
   m_StreamArray.push_back(pSingleStream);
 }

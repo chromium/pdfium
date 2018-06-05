@@ -32,8 +32,12 @@ class CPDF_Form : public CPDF_PageObjectHolder {
                     CPDF_Type3Char* pType3Char,
                     std::set<const uint8_t*>* parsedSet);
 
+  const CPDF_Stream* GetStream() const;
+
  private:
   std::unique_ptr<std::set<const uint8_t*>> m_ParsedSet;
+
+  UnownedPtr<CPDF_Stream> m_pFormStream;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_FORM_H_
