@@ -49,7 +49,7 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
 };
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
-  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>(-1);
   pPathObj->m_Path.AppendRect(10, 5, 13, 30);
   pPathObj->m_FillType = FXFILL_ALTERNATE;
   pPathObj->m_bStroke = true;
@@ -60,7 +60,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ("q 1 0 0 1 0 0 cm 10 5 3 25 re B* Q\n", ByteString(buf));
 
-  pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+  pPathObj = pdfium::MakeUnique<CPDF_PathObject>(-1);
   pPathObj->m_Path.AppendPoint(CFX_PointF(0, 0), FXPT_TYPE::MoveTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(5.2f, 0), FXPT_TYPE::LineTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(5.2f, 3.78f), FXPT_TYPE::LineTo,
@@ -75,7 +75,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
-  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>(-1);
   pPathObj->m_Path.AppendPoint(CFX_PointF(3.102f, 4.67f), FXPT_TYPE::MoveTo,
                                false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(5.45f, 0.29f), FXPT_TYPE::LineTo,
@@ -110,7 +110,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
-  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>(-1);
   pPathObj->m_Path.AppendPoint(CFX_PointF(1, 2), FXPT_TYPE::MoveTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(3, 4), FXPT_TYPE::LineTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(5, 6), FXPT_TYPE::LineTo, true);
@@ -170,7 +170,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(pDoc.get(), pPageDict, false);
   CPDF_PageContentGenerator generator(pTestPage.Get());
-  auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
+  auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>(-1);
   CPDF_Font* pFont = CPDF_Font::GetStockFont(pDoc.get(), "Times-Roman");
   pTextObj->m_TextState.SetFont(pFont);
   pTextObj->m_TextState.SetFontSize(10.0f);
@@ -237,7 +237,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   std::ostringstream buf;
   {
     // Set the text object font and text
-    auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
+    auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>(-1);
     CPDF_Dictionary* pDict = pDoc->NewIndirect<CPDF_Dictionary>();
     pDict->SetNewFor<CPDF_Name>("Type", "Font");
     pDict->SetNewFor<CPDF_Name>("Subtype", "TrueType");

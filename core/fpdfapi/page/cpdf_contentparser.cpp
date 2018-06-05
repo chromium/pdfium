@@ -168,7 +168,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   m_CurrentOffset += m_pParser->Parse(
       m_StreamArray[m_CurrentStream]->GetData() + m_CurrentOffset,
       m_StreamArray[m_CurrentStream]->GetSize() - m_CurrentOffset,
-      PARSE_STEP_LIMIT);
+      PARSE_STEP_LIMIT, m_CurrentStream);
 
   if (m_CurrentOffset >= m_StreamArray[m_CurrentStream]->GetSize()) {
     m_CurrentOffset = 0;

@@ -46,7 +46,7 @@ CPDF_PathObject* CPDFPathObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewPath(float x,
                                                                     float y) {
-  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>(-1);
   pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
   pPathObj->DefaultStates();
 
@@ -58,7 +58,7 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV FPDFPageObj_CreateNewRect(float x,
                                                                     float y,
                                                                     float w,
                                                                     float h) {
-  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+  auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>(-1);
   pPathObj->m_Path.AppendRect(x, y, x + w, y + h);
   pPathObj->DefaultStates();
 
