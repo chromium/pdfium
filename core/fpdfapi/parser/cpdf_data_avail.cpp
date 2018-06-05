@@ -80,9 +80,8 @@ CPDF_DataAvail::CPDF_DataAvail(
     FileAvail* pFileAvail,
     const RetainPtr<IFX_SeekableReadStream>& pFileRead,
     bool bSupportHintTable)
-    : m_pFileAvail(pFileAvail),
-      m_pFileRead(
-          pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, m_pFileAvail)),
+    : m_pFileRead(
+          pdfium::MakeRetain<CPDF_ReadValidator>(pFileRead, pFileAvail)),
       m_dwFileLen(m_pFileRead->GetSize()),
       m_bSupportHintTable(bSupportHintTable) {}
 
@@ -201,7 +200,6 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
 
   m_dwRootObjNum = m_parser.GetRootObjNum();
   m_dwInfoObjNum = m_parser.GetInfoObjNum();
-  m_pCurrentParser = &m_parser;
   m_docStatus = PDF_DATAAVAIL_ROOT;
   return true;
 }
@@ -287,7 +285,6 @@ bool CPDF_DataAvail::PreparePageItem() {
   }
 
   m_PagesObjNum = pRef->GetRefObjNum();
-  m_pCurrentParser = m_pDocument->GetParser();
   m_docStatus = PDF_DATAAVAIL_PAGETREE;
   return true;
 }
@@ -334,7 +331,7 @@ bool CPDF_DataAvail::CheckPage() {
   size_t iPages = m_PagesArray.size();
   for (size_t i = 0; i < iPages; ++i) {
     std::unique_ptr<CPDF_Object> pPages = std::move(m_PagesArray[i]);
-    if (pPages && !GetPageKids(m_pCurrentParser, pPages.get())) {
+    if (pPages && !GetPageKids(pPages.get())) {
       m_PagesArray.clear();
       m_docStatus = PDF_DATAAVAIL_ERROR;
       return false;
@@ -347,12 +344,7 @@ bool CPDF_DataAvail::CheckPage() {
   return true;
 }
 
-bool CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
-  if (!pParser) {
-    m_docStatus = PDF_DATAAVAIL_ERROR;
-    return false;
-  }
-
+bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
   CPDF_Dictionary* pDict = pPages->GetDict();
   CPDF_Object* pKids = pDict ? pDict->GetObjectFor("Kids") : nullptr;
   if (!pKids)
@@ -393,7 +385,7 @@ bool CPDF_DataAvail::CheckPages() {
     return false;
   }
 
-  if (!GetPageKids(m_pCurrentParser, pPages.get())) {
+  if (!GetPageKids(pPages.get())) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
