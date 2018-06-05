@@ -545,8 +545,9 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
   }
   if (m_bBlack) {
     ASSERT(m_Pitch == m_ScanlineBuf.size());
-    uint8_t* data = m_ScanlineBuf.data();
-    for (size_t i = 0; i < m_ScanlineBuf.size(); ++i)
+    ASSERT(m_Pitch % 4 == 0);
+    uint32_t* data = reinterpret_cast<uint32_t*>(m_ScanlineBuf.data());
+    for (size_t i = 0; i < m_ScanlineBuf.size() / 4; ++i)
       data[i] = ~data[i];
   }
   return m_ScanlineBuf.data();
