@@ -14,6 +14,7 @@
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_PageObjectHolder::CPDF_PageObjectHolder(CPDF_Document* pDoc,
                                              CPDF_Dictionary* pFormDict)
@@ -38,6 +39,8 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
     return;
 
   m_ParseState = CONTENT_PARSED;
+  m_pDocument->IncrementParsedPageCount();
+
   if (m_pParser->GetCurStates())
     m_LastCTM = m_pParser->GetCurStates()->m_CTM;
 

@@ -106,6 +106,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   void CreateNewDoc();
   CPDF_Dictionary* CreateNewPage(int iPage);
 
+  void IncrementParsedPageCount() { ++m_ParsedPageCount; }
+  uint32_t GetParsedPageCountForTesting() { return m_ParsedPageCount; }
+
   CPDF_Font* AddStandardFont(const char* font, CPDF_FontEncoding* pEncoding);
   CPDF_Font* AddFont(CFX_Font* pFont, int charset, bool bVert);
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -165,6 +168,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   bool m_bLinearized;
   int m_iFirstPageNo;
   uint32_t m_dwFirstPageObjNum;
+  uint32_t m_ParsedPageCount = 0;
   std::unique_ptr<CPDF_DocPageData> m_pDocPage;
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;

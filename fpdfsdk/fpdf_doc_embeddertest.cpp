@@ -7,7 +7,9 @@
 #include <string>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_string.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_edit.h"
@@ -20,6 +22,7 @@ class FPDFDocEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFDocEmbeddertest, MultipleSamePage) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document());
 
   std::set<FPDF_PAGE> unique_pages;
   std::vector<ScopedFPDFPage> owned_pages(4);
@@ -29,8 +32,10 @@ TEST_F(FPDFDocEmbeddertest, MultipleSamePage) {
   }
 #ifdef PDF_ENABLE_XFA
   EXPECT_EQ(1u, unique_pages.size());
+  EXPECT_EQ(1u, pDoc->GetParsedPageCountForTesting());
 #else   // PDF_ENABLE_XFA
   EXPECT_EQ(4u, unique_pages.size());
+  EXPECT_EQ(4u, pDoc->GetParsedPageCountForTesting());
 #endif  // PDF_ENABLE_XFA
 }
 
