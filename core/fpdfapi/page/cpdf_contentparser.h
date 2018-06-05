@@ -42,22 +42,26 @@ class CPDF_ContentParser {
  private:
   enum class Stage : uint8_t {
     kGetContent = 1,
+    kPrepareContent,
     kParse,
     kCheckClip,
     kComplete,
   };
 
   Stage GetContent();
+  Stage PrepareContent();
   Stage Parse();
   Stage CheckClip();
 
   Stage m_CurrentStage;
   UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
   UnownedPtr<CPDF_Type3Char> m_pType3Char;  // Only used when parsing forms.
+  RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
+  MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   uint32_t m_nStreams = 0;
+  uint32_t m_Size = 0;
   uint32_t m_CurrentOffset = 0;
-  uint32_t m_CurrentStream = 0;
 
   // Only used when parsing pages.
   std::unique_ptr<std::set<const uint8_t*>> m_parsedSet;
