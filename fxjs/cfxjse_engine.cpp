@@ -11,10 +11,10 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
-#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_resolveprocessor.h"
 #include "fxjs/cfxjse_value.h"
+#include "fxjs/cjs_runtime.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -94,12 +94,12 @@ CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue,
 }
 
 CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
-                             CFXJS_Engine* fxjs_engine)
-    : CFX_V8(fxjs_engine->GetIsolate()),
-      m_pSubordinateEngine(fxjs_engine),
+                             CJS_Runtime* fxjs_runtime)
+    : CFX_V8(fxjs_runtime->GetIsolate()),
+      m_pSubordinateRuntime(fxjs_runtime),
       m_pDocument(pDocument),
-      m_JsContext(CFXJSE_Context::Create(fxjs_engine->GetIsolate(),
-                                         fxjs_engine,
+      m_JsContext(CFXJSE_Context::Create(fxjs_runtime->GetIsolate(),
+                                         fxjs_runtime,
                                          &GlobalClassDescriptor,
                                          pDocument->GetRoot())),
       m_pJsClass(nullptr),
@@ -146,7 +146,12 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
   AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
   CFXJSE_Value* pValue = pThisObject ? GetJSValueFromMap(pThisObject) : nullptr;
-  return m_JsContext->ExecuteScript(btScript.c_str(), hRetValue, pValue);
+
+  IJS_EventContext* ctx = m_pSubordinateRuntime->NewEventContext();
+  bool ret = m_JsContext->ExecuteScript(btScript.c_str(), hRetValue, pValue);
+  m_pSubordinateRuntime->ReleaseEventContext(ctx);
+
+  return ret;
 }
 
 bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
@@ -463,7 +468,7 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
     return nullptr;
 
   auto pNewContext = CFXJSE_Context::Create(
-      GetIsolate(), m_pSubordinateEngine.Get(), &VariablesClassDescriptor,
+      GetIsolate(), m_pSubordinateRuntime.Get(), &VariablesClassDescriptor,
       new CXFA_ThisProxy(pSubform, pScriptNode));
   RemoveBuiltInObjs(pNewContext.get());
   pNewContext->EnableCompatibleMode();

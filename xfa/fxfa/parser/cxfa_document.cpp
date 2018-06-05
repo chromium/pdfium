@@ -1435,9 +1435,9 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   return m_pLocalMgr.get();
 }
 
-CFXJSE_Engine* CXFA_Document::InitScriptContext(CFXJS_Engine* fxjs_engine) {
+CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
   ASSERT(!m_pScriptContext);
-  m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this, fxjs_engine);
+  m_pScriptContext = pdfium::MakeUnique<CFXJSE_Engine>(this, fxjs_runtime);
   return m_pScriptContext.get();
 }
 

@@ -41,7 +41,7 @@ enum XFA_DocFlag {
 };
 
 class CFXJSE_Engine;
-class CFXJS_Engine;
+class CJS_Runtime;
 class CScript_DataWindow;
 class CScript_EventPseudoModel;
 class CScript_HostPseudoModel;
@@ -58,7 +58,7 @@ class CXFA_Document : public CXFA_NodeOwner {
   explicit CXFA_Document(CXFA_FFNotify* notify);
   ~CXFA_Document() override;
 
-  CFXJSE_Engine* InitScriptContext(CFXJS_Engine* fxjs_engine);
+  CFXJSE_Engine* InitScriptContext(CJS_Runtime* fxjs_runtime);
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
   CXFA_FFNotify* GetNotify() const { return notify_.Get(); }

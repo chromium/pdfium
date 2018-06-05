@@ -23,7 +23,7 @@
 #define XFA_RESOLVENODE_TagName 0x0002
 
 class CFXJSE_ResolveProcessor;
-class CFXJS_Engine;
+class CJS_Runtime;
 class CXFA_List;
 
 class CFXJSE_Engine : public CFX_V8 {
@@ -52,7 +52,7 @@ class CFXJSE_Engine : public CFX_V8 {
                                       const ByteStringView& szPropName,
                                       bool bQueryIn);
 
-  CFXJSE_Engine(CXFA_Document* pDocument, CFXJS_Engine* fxjs_engine);
+  CFXJSE_Engine(CXFA_Document* pDocument, CJS_Runtime* fxjs_runtime);
   ~CFXJSE_Engine() override;
 
   void SetEventParam(CXFA_EventParam* param) { m_eventParam = param; }
@@ -107,7 +107,7 @@ class CFXJSE_Engine : public CFX_V8 {
                           bool bGetter);
   bool RunVariablesScript(CXFA_Node* pScriptNode);
 
-  UnownedPtr<CFXJS_Engine> const m_pSubordinateEngine;
+  UnownedPtr<CJS_Runtime> const m_pSubordinateRuntime;
   UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CFXJSE_Context> m_JsContext;
   CFXJSE_Class* m_pJsClass;
