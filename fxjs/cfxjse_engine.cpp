@@ -145,13 +145,10 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
   }
   AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
+
   CFXJSE_Value* pValue = pThisObject ? GetJSValueFromMap(pThisObject) : nullptr;
-
-  IJS_EventContext* ctx = m_pSubordinateRuntime->NewEventContext();
-  bool ret = m_JsContext->ExecuteScript(btScript.c_str(), hRetValue, pValue);
-  m_pSubordinateRuntime->ReleaseEventContext(ctx);
-
-  return ret;
+  IJS_Runtime::ScopedEventContext ctx(m_pSubordinateRuntime.Get());
+  return m_JsContext->ExecuteScript(btScript.c_str(), hRetValue, pValue);
 }
 
 bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,

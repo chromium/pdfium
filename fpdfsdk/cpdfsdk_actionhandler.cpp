@@ -539,12 +539,8 @@ void CPDFSDK_ActionHandler::RunScriptForAction(
 void CPDFSDK_ActionHandler::RunScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                       const WideString& script,
                                       const RunScriptCallback& cb) {
-  IJS_Runtime* pRuntime = pFormFillEnv->GetIJSRuntime();
-  IJS_EventContext* pContext = pRuntime->NewEventContext();
-
-  cb(pContext);
-
+  IJS_Runtime::ScopedEventContext pContext(pFormFillEnv->GetIJSRuntime());
+  cb(pContext.Get());
   pContext->RunScript(script);
-  pRuntime->ReleaseEventContext(pContext);
   // TODO(dsinclair): Return error if RunScript returns a IJS_Runtime::JS_Error.
 }

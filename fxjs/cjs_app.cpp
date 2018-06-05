@@ -414,12 +414,12 @@ void CJS_App::CancelProc(GlobalTimer* pTimer) {
 }
 
 void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
-  if (!pRuntime->IsBlocking()) {
-    IJS_EventContext* pContext = pRuntime->NewEventContext();
-    pContext->OnExternal_Exec();
-    pContext->RunScript(wsScript);
-    pRuntime->ReleaseEventContext(pContext);
-  }
+  if (pRuntime->IsBlocking())
+    return;
+
+  IJS_Runtime::ScopedEventContext pContext(pRuntime);
+  pContext->OnExternal_Exec();
+  pContext->RunScript(wsScript);
 }
 
 CJS_Return CJS_App::goBack(CJS_Runtime* pRuntime,

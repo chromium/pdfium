@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_actionfields.h"
 #include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
@@ -255,12 +256,11 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
   if (m_bBusy)
     return;
 
+  AutoRestorer<bool> restorer(&m_bBusy);
   m_bBusy = true;
 
-  if (!IsCalculateEnabled()) {
-    m_bBusy = false;
+  if (!IsCalculateEnabled())
     return;
-  }
 
   IJS_Runtime* pRuntime = m_pFormFillEnv->GetIJSRuntime();
   int nSize = m_pInterForm->CountFieldsInCalculationOrder();
@@ -285,18 +285,16 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
     if (csJS.IsEmpty())
       continue;
 
-    IJS_EventContext* pContext = pRuntime->NewEventContext();
     WideString sOldValue = pField->GetValue();
     WideString sValue = sOldValue;
     bool bRC = true;
+    IJS_Runtime::ScopedEventContext pContext(pRuntime);
     pContext->OnField_Calculate(pFormField, pField, sValue, bRC);
 
     Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(csJS);
-    pRuntime->ReleaseEventContext(pContext);
     if (!err && bRC && sValue.Compare(sOldValue) != 0)
       pField->SetValue(sValue, true);
   }
-  m_bBusy = false;
 }
 
 WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
@@ -325,11 +323,10 @@ WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
       if (!script.IsEmpty()) {
         WideString Value = sValue;
 
-        IJS_EventContext* pContext = pRuntime->NewEventContext();
+        IJS_Runtime::ScopedEventContext pContext(pRuntime);
         pContext->OnField_Format(pFormField, Value, true);
 
         Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(script);
-        pRuntime->ReleaseEventContext(pContext);
         if (!err) {
           sValue = Value;
           bFormatted = true;

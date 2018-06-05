@@ -34,10 +34,26 @@ class IJS_Runtime {
     JS_Error(int line, int column, const WideString& exception);
   };
 
+  class ScopedEventContext {
+   public:
+    explicit ScopedEventContext(IJS_Runtime* pRuntime)
+        : m_pRuntime(pRuntime), m_pContext(pRuntime->NewEventContext()) {}
+
+    ~ScopedEventContext() { m_pRuntime->ReleaseEventContext(m_pContext); }
+
+    IJS_EventContext* Get() const { return m_pContext; }
+    IJS_EventContext* operator->() const { return m_pContext; }
+
+   private:
+    IJS_Runtime* m_pRuntime;
+    IJS_EventContext* m_pContext;
+  };
+
   static void Initialize(unsigned int slot, void* isolate);
   static void Destroy();
   static std::unique_ptr<IJS_Runtime> Create(
       CPDFSDK_FormFillEnvironment* pFormFillEnv);
+
   virtual ~IJS_Runtime();
 
   virtual CJS_Runtime* AsCJSRuntime() = 0;

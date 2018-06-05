@@ -994,10 +994,8 @@ bool CPDFXFA_DocEnvironment::SetPropertyInNonXFAGlobalObject(
   if (!pIJSRuntime)
     return false;
 
-  IJS_EventContext* pContext = pIJSRuntime->NewEventContext();
-  bool bRet = pIJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
-  pIJSRuntime->ReleaseEventContext(pContext);
-  return bRet;
+  IJS_Runtime::ScopedEventContext pContext(pIJSRuntime);
+  return pIJSRuntime->SetValueByNameInGlobalObject(szPropName, pValue);
 }
 
 bool CPDFXFA_DocEnvironment::GetPropertyFromNonXFAGlobalObject(
@@ -1015,8 +1013,6 @@ bool CPDFXFA_DocEnvironment::GetPropertyFromNonXFAGlobalObject(
   if (!pIJSRuntime)
     return false;
 
-  IJS_EventContext* pContext = pIJSRuntime->NewEventContext();
-  bool bRet = pIJSRuntime->GetValueByNameFromGlobalObject(szPropName, pValue);
-  pIJSRuntime->ReleaseEventContext(pContext);
-  return bRet;
+  IJS_Runtime::ScopedEventContext pContext(pIJSRuntime);
+  return pIJSRuntime->GetValueByNameFromGlobalObject(szPropName, pValue);
 }

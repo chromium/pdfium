@@ -80,9 +80,8 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
   if (m_isolateManaged || FXJS_GlobalIsolateRefCount() == 0)
     DefineJSObjects();
 
-  IJS_EventContext* pContext = NewEventContext();
+  ScopedEventContext pContext(this);
   InitializeEngine();
-  ReleaseEventContext(pContext);
   SetFormFillEnvToDocument();
 }
 
@@ -153,11 +152,8 @@ IJS_EventContext* CJS_Runtime::NewEventContext() {
 }
 
 void CJS_Runtime::ReleaseEventContext(IJS_EventContext* pContext) {
-  auto it = std::find(m_EventContextArray.begin(), m_EventContextArray.end(),
-                      pdfium::FakeUniquePtr<CJS_EventContext>(
-                          static_cast<CJS_EventContext*>(pContext)));
-  if (it != m_EventContextArray.end())
-    m_EventContextArray.erase(it);
+  ASSERT(pContext == m_EventContextArray.back().get());
+  m_EventContextArray.pop_back();
 }
 
 CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
