@@ -23,7 +23,8 @@
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
-  if (!pPage || !pPage->GetDocument() || !pPage->GetFormDict()) {
+  ASSERT(pPage);
+  if (!pPage->GetDocument() || !pPage->GetFormDict()) {
     m_CurrentStage = Stage::kComplete;
     return;
   }
@@ -66,6 +67,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
     : m_CurrentStage(Stage::kParse),
       m_pObjectHolder(pForm),
       m_pType3Char(pType3Char) {
+  ASSERT(pForm);
   CFX_Matrix form_matrix = pForm->GetFormDict()->GetMatrixFor("Matrix");
   if (pGraphicStates)
     form_matrix.Concat(pGraphicStates->m_CTM);
