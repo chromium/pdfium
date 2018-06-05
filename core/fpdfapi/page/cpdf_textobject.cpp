@@ -18,8 +18,7 @@ CPDF_TextObjectItem::CPDF_TextObjectItem() : m_CharCode(0) {}
 
 CPDF_TextObjectItem::~CPDF_TextObjectItem() = default;
 
-CPDF_TextObject::CPDF_TextObject(int32_t content_stream)
-    : CPDF_PageObject(content_stream) {}
+CPDF_TextObject::CPDF_TextObject() {}
 
 CPDF_TextObject::~CPDF_TextObject() {
   // Move m_CharCodes to a local variable so it will be captured in crash dumps,
@@ -101,7 +100,7 @@ void CPDF_TextObject::GetCharInfo(size_t index,
 }
 
 std::unique_ptr<CPDF_TextObject> CPDF_TextObject::Clone() const {
-  auto obj = pdfium::MakeUnique<CPDF_TextObject>(-1);
+  auto obj = pdfium::MakeUnique<CPDF_TextObject>();
   obj->CopyData(this);
   obj->m_CharCodes = m_CharCodes;
   obj->m_CharPos = m_CharPos;

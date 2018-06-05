@@ -28,7 +28,7 @@ class CPDF_PageObject : public CPDF_GraphicStates {
     FORM,
   };
 
-  explicit CPDF_PageObject(int32_t content_stream);
+  CPDF_PageObject();
   ~CPDF_PageObject() override;
 
   virtual Type GetType() const = 0;
@@ -58,7 +58,6 @@ class CPDF_PageObject : public CPDF_GraphicStates {
     return CFX_FloatRect(m_Left, m_Bottom, m_Right, m_Top);
   }
   FX_RECT GetBBox(const CFX_Matrix* pMatrix) const;
-  int32_t GetContentStream() const { return m_ContentStream; }
 
   float m_Left;
   float m_Right;
@@ -74,7 +73,6 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   void operator=(const CPDF_PageObject& src) = delete;
 
   bool m_bDirty;
-  int32_t m_ContentStream;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_

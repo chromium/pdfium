@@ -43,10 +43,7 @@ class CPDF_StreamContentParser {
                            std::set<const uint8_t*>* parsedSet);
   ~CPDF_StreamContentParser();
 
-  uint32_t Parse(const uint8_t* pData,
-                 uint32_t dwSize,
-                 uint32_t max_cost,
-                 uint32_t content_stream);
+  uint32_t Parse(const uint8_t* pData, uint32_t dwSize, uint32_t max_cost);
   CPDF_PageObjectHolder* GetPageObjectHolder() const {
     return m_pObjectHolder.Get();
   }
@@ -233,7 +230,6 @@ class CPDF_StreamContentParser {
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
   float m_Type3Data[6];
   ContentParam m_ParamBuf[kParamBufSize];
-  uint32_t m_CurrentContentStream;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_

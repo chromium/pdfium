@@ -6,8 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 
-CPDF_PathObject::CPDF_PathObject(int32_t content_stream)
-    : CPDF_PageObject(content_stream), m_FillType(0), m_bStroke(false) {}
+CPDF_PathObject::CPDF_PathObject() : m_FillType(0), m_bStroke(false) {}
 
 CPDF_PathObject::~CPDF_PathObject() {}
 

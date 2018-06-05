@@ -1990,7 +1990,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 bool bFill,
                                                 bool bStroke) {
   if (!bStroke) {
-    CPDF_PathObject path(-1);
+    CPDF_PathObject path;
     std::vector<std::unique_ptr<CPDF_TextObject>> pCopy;
     pCopy.push_back(std::unique_ptr<CPDF_TextObject>(textobj->Clone()));
     path.m_bStroke = false;
@@ -2019,7 +2019,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     if (!pPath)
       continue;
 
-    CPDF_PathObject path(-1);
+    CPDF_PathObject path;
     path.m_GraphState = textobj->m_GraphState;
     path.m_ColorState = textobj->m_ColorState;
 

@@ -15,9 +15,7 @@ class CPDF_ShadingPattern;
 
 class CPDF_ShadingObject : public CPDF_PageObject {
  public:
-  CPDF_ShadingObject(int32_t content_stream,
-                     CPDF_ShadingPattern* pattern,
-                     const CFX_Matrix& matrix);
+  CPDF_ShadingObject(CPDF_ShadingPattern* pattern, const CFX_Matrix& matrix);
   ~CPDF_ShadingObject() override;
 
   // CPDF_PageObject:
