@@ -100,7 +100,6 @@ class CPDF_DataAvail final {
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
-  RetainPtr<IFX_SeekableReadStream> GetFileRead() const;
   int GetPageCount() const;
   CPDF_Dictionary* GetPageDictionary(int index) const;
   RetainPtr<CPDF_ReadValidator> GetValidator() const;

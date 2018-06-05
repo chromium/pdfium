@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -201,14 +202,14 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
 }
 
 bool CPDF_Parser::InitSyntaxParser(
-    const RetainPtr<IFX_SeekableReadStream>& file_access) {
-  const int32_t header_offset = GetHeaderOffset(file_access);
+    const RetainPtr<CPDF_ReadValidator>& validator) {
+  const int32_t header_offset = GetHeaderOffset(validator);
   if (header_offset == kInvalidHeaderOffset)
     return false;
-  if (file_access->GetSize() < header_offset + kPDFHeaderSize)
+  if (validator->GetSize() < header_offset + kPDFHeaderSize)
     return false;
 
-  m_pSyntax->InitParser(file_access, header_offset);
+  m_pSyntax->InitParserWithValidator(validator, header_offset);
   return ParseFileVersion();
 }
 
@@ -232,7 +233,8 @@ bool CPDF_Parser::ParseFileVersion() {
 CPDF_Parser::Error CPDF_Parser::StartParse(
     const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
     CPDF_Document* pDocument) {
-  if (!InitSyntaxParser(pFileAccess))
+  if (!InitSyntaxParser(
+          pdfium::MakeRetain<CPDF_ReadValidator>(pFileAccess, nullptr)))
     return FORMAT_ERROR;
   return StartParseInternal(pDocument);
 }
@@ -1327,13 +1329,13 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_Parser::ParseLinearizedHeader() {
 }
 
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
-    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    const RetainPtr<CPDF_ReadValidator>& validator,
     CPDF_Document* pDocument) {
   ASSERT(!m_bHasParsed);
   m_bXRefStream = false;
   m_LastXRefOffset = 0;
 
-  if (!InitSyntaxParser(pFileAccess))
+  if (!InitSyntaxParser(validator))
     return FORMAT_ERROR;
 
   m_pLinearized = ParseLinearizedHeader();

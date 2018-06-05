@@ -26,6 +26,7 @@ class CPDF_Document;
 class CPDF_IndirectObjectHolder;
 class CPDF_LinearizedHeader;
 class CPDF_Object;
+class CPDF_ReadValidator;
 class CPDF_SecurityHandler;
 class CPDF_StreamAcc;
 class CPDF_SyntaxParser;
@@ -52,7 +53,7 @@ class CPDF_Parser {
 
   Error StartParse(const RetainPtr<IFX_SeekableReadStream>& pFile,
                    CPDF_Document* pDocument);
-  Error StartLinearizedParse(const RetainPtr<IFX_SeekableReadStream>& pFile,
+  Error StartLinearizedParse(const RetainPtr<CPDF_ReadValidator>& validator,
                              CPDF_Document* pDocument);
 
   void SetPassword(const char* password) { m_Password = password; }
@@ -195,7 +196,7 @@ class CPDF_Parser {
       CPDF_SyntaxParser::ParseType parse_type,
       FX_FILESIZE* pResultPos);
 
-  bool InitSyntaxParser(const RetainPtr<IFX_SeekableReadStream>& file_access);
+  bool InitSyntaxParser(const RetainPtr<CPDF_ReadValidator>& validator);
   bool ParseFileVersion();
 
   ObjectType GetObjectType(uint32_t objnum) const;
