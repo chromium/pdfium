@@ -15,9 +15,8 @@
     (rt)->SetConstArray((name), array);                                      \
     (rt)->DefineGlobalConst(                                                 \
         (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {        \
-          CJS_Runtime* pCurrentRuntime =                                     \
-              CJS_Runtime::RuntimeFromIsolateCurrentContext(                 \
-                  info.GetIsolate());                                        \
+          CJS_Object* pObj = CFXJS_Engine::GetObjectPrivate(info.Holder());  \
+          CJS_Runtime* pCurrentRuntime = pObj->GetRuntime();                 \
           if (pCurrentRuntime)                                               \
             info.GetReturnValue().Set(pCurrentRuntime->GetConstArray(name)); \
         });                                                                  \
