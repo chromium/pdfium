@@ -236,8 +236,10 @@ double JS_DateParse(const WideString& str) {
       v8::Local<v8::Function> funC = v8::Local<v8::Function>::Cast(v);
       const int argc = 1;
       v8::Local<v8::Value> timeStr =
-          CJS_Runtime::RuntimeFromIsolateCurrentContext(pIsolate)->NewString(
-              str.AsStringView());
+          v8::String::NewFromUtf8(pIsolate,
+                                  FX_UTF8Encode(str.AsStringView()).c_str(),
+                                  v8::NewStringType::kNormal)
+              .ToLocalChecked();
       v8::Local<v8::Value> argv[argc] = {timeStr};
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {

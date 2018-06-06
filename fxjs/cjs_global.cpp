@@ -311,9 +311,9 @@ CJS_Return CJS_Global::setPersistent(
 }
 
 void CJS_Global::UpdateGlobalPersistentVariables() {
-  CJS_Runtime* pRuntime =
-      static_cast<CJS_Runtime*>(CFXJS_Engine::EngineFromIsolateCurrentContext(
-          ToV8Object()->GetIsolate()));
+  CJS_Runtime* pRuntime = GetRuntime();
+  if (!pRuntime)
+    return;
 
   for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
     CJS_GlobalData_Element* pData = m_pGlobalData->GetAt(i);
@@ -450,8 +450,9 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
 
 void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
                                    CJS_KeyValue* pData) {
-  CJS_Runtime* pRuntime =
-      CJS_Runtime::RuntimeFromIsolateCurrentContext(ToV8Object()->GetIsolate());
+  CJS_Runtime* pRuntime = GetRuntime();
+  if (pRuntime)
+    return;
 
   for (int i = 0, sz = pData->objData.Count(); i < sz; i++) {
     CJS_KeyValue* pObjData = pData->objData.GetAt(i);

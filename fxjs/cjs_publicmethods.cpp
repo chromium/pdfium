@@ -120,8 +120,11 @@ template <CJS_Return (*F)(CJS_Runtime*,
                           const std::vector<v8::Local<v8::Value>>&)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
-  CJS_Runtime* pRuntime =
-      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
+  CJS_Object* pObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
+  if (!pObj)
+    return;
+
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
   if (!pRuntime)
     return;
 

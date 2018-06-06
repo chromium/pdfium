@@ -46,13 +46,6 @@
 #include "fxjs/cfxjse_value.h"
 #endif  // PDF_ENABLE_XFA
 
-// static
-CJS_Runtime* CJS_Runtime::RuntimeFromIsolateCurrentContext(
-    v8::Isolate* pIsolate) {
-  return static_cast<CJS_Runtime*>(
-      CFXJS_Engine::EngineFromIsolateCurrentContext(pIsolate));
-}
-
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv),
       m_bBlocking(false),
