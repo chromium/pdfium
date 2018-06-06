@@ -198,7 +198,6 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
     return false;
   }
 
-  m_dwRootObjNum = m_parser.GetRootObjNum();
   m_docStatus = PDF_DATAAVAIL_ROOT;
   return true;
 }
@@ -243,35 +242,25 @@ bool CPDF_DataAvail::CheckInfo() {
 }
 
 bool CPDF_DataAvail::CheckRoot() {
-  bool bExist = false;
-  m_pRoot = GetObject(m_dwRootObjNum, &bExist);
-  if (!bExist) {
-    m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
+  const uint32_t dwRootObjNum = m_parser.GetRootObjNum();
+  if (dwRootObjNum == CPDF_Object::kInvalidObjNum) {
+    m_docStatus = PDF_DATAAVAIL_ERROR;
     return true;
   }
 
-  if (!m_pRoot) {
-    if (m_docStatus == PDF_DATAAVAIL_ERROR) {
-      m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-      return true;
-    }
+  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  m_pRoot = ToDictionary(m_parser.ParseIndirectObject(nullptr, dwRootObjNum));
+  if (GetValidator()->has_read_problems())
     return false;
-  }
 
-  CPDF_Dictionary* pDict = m_pRoot->GetDict();
-  if (!pDict) {
-    m_docStatus = PDF_DATAAVAIL_ERROR;
-    return false;
-  }
-
-  CPDF_Reference* pRef = ToReference(pDict->GetObjectFor("Pages"));
+  const CPDF_Reference* pRef =
+      ToReference(m_pRoot ? m_pRoot->GetObjectFor("Pages") : nullptr);
   if (!pRef) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
 
   m_PagesObjNum = pRef->GetRefObjNum();
-
   m_docStatus = PDF_DATAAVAIL_INFO;
   return true;
 }
