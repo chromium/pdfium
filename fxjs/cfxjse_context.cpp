@@ -293,7 +293,16 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
 
 #ifndef NDEBUG
   v8::String::Utf8Value error(GetIsolate(), trycatch.Exception());
-  fprintf(stderr, "JS Error: %ls\n", WideString::FromUTF8(*error).c_str());
+  fprintf(stderr, "JS Error: %s\n", *error);
+
+  v8::Local<v8::Message> message = trycatch.Message();
+  if (!message.IsEmpty()) {
+    v8::Local<v8::Context> context(GetIsolate()->GetCurrentContext());
+    int linenum = message->GetLineNumber(context).FromJust();
+    v8::String::Utf8Value sourceline(
+        GetIsolate(), message->GetSourceLine(context).ToLocalChecked());
+    fprintf(stderr, "Line %d: %s\n", linenum, *sourceline);
+  }
 #endif  // NDEBUG
 
   if (lpRetValue) {
