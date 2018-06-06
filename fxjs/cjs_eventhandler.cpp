@@ -580,10 +580,11 @@ CJS_Field* CJS_EventHandler::Source() {
   if (pFieldObj.IsEmpty())
     return nullptr;
 
-  CJS_Document* pJSDocument =
-      static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
-  CJS_Field* pJSField =
-      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
+  auto* pJSDocument =
+      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
+
+  auto* pJSField =
+      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
 
   pJSDocument->SetFormFillEnv(m_pTargetFormFillEnv
                                   ? m_pTargetFormFillEnv.Get()
@@ -605,10 +606,11 @@ CJS_Field* CJS_EventHandler::Target_Field() {
   if (pFieldObj.IsEmpty())
     return nullptr;
 
-  CJS_Document* pJSDocument =
-      static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
-  CJS_Field* pJSField =
-      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
+  auto* pJSDocument =
+      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pDocObj));
+
+  auto* pJSField =
+      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
 
   pJSDocument->SetFormFillEnv(m_pTargetFormFillEnv
                                   ? m_pTargetFormFillEnv.Get()

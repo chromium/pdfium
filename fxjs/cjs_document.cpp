@@ -254,12 +254,12 @@ CJS_Return CJS_Document::getField(
   if (pFieldObj.IsEmpty())
     return CJS_Return(false);
 
-  CJS_Field* pJSField =
-      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
-  pJSField->AttachField(this, wideName);
+  auto* pJSField =
+      static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pFieldObj));
   if (!pJSField)
     return CJS_Return(false);
 
+  pJSField->AttachField(this, wideName);
   return CJS_Return(pJSField->ToV8Object());
 }
 
@@ -362,7 +362,7 @@ CJS_Return CJS_Document::print(
       if (CFXJS_Engine::GetObjDefnID(pObj) ==
           CJS_PrintParamsObj::GetObjDefnID()) {
         v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8]);
-        CJS_Object* pJSObj = pRuntime->GetObjectPrivate(pObj);
+        CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(pObj);
         if (pJSObj) {
           CJS_PrintParamsObj* printObj =
               static_cast<CJS_PrintParamsObj*>(pJSObj);
@@ -1013,8 +1013,7 @@ CJS_Return CJS_Document::getAnnot(
   CPDFSDK_AnnotIteration annotIteration(pPageView, false);
   CPDFSDK_BAAnnot* pSDKBAAnnot = nullptr;
   for (const auto& pSDKAnnotCur : annotIteration) {
-    CPDFSDK_BAAnnot* pBAAnnot =
-        static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get());
+    auto* pBAAnnot = static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get());
     if (pBAAnnot && pBAAnnot->GetAnnotName() == swAnnotName) {
       pSDKBAAnnot = pBAAnnot;
       break;
@@ -1028,8 +1027,8 @@ CJS_Return CJS_Document::getAnnot(
   if (pObj.IsEmpty())
     return CJS_Return(false);
 
-  CJS_Annot* pJS_Annot =
-      static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
+  auto* pJS_Annot =
+      static_cast<CJS_Annot*>(CFXJS_Engine::GetObjectPrivate(pObj));
   if (!pJS_Annot)
     return CJS_Return(false);
 
@@ -1063,8 +1062,8 @@ CJS_Return CJS_Document::getAnnots(
       if (pObj.IsEmpty())
         return CJS_Return(false);
 
-      CJS_Annot* pJS_Annot =
-          static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
+      auto* pJS_Annot =
+          static_cast<CJS_Annot*>(CFXJS_Engine::GetObjectPrivate(pObj));
       pJS_Annot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
       pRuntime->PutArrayElement(
           annots, i,
@@ -1119,7 +1118,7 @@ CJS_Return CJS_Document::addIcon(
     return CJS_Return(JSGetStringFromID(JSMessage::kTypeError));
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(params[1]);
-  CJS_Object* obj = pRuntime->GetObjectPrivate(pObj);
+  CJS_Object* obj = CFXJS_Engine::GetObjectPrivate(pObj);
   if (!obj)
     return CJS_Return(JSGetStringFromID(JSMessage::kTypeError));
 
@@ -1140,8 +1139,8 @@ CJS_Return CJS_Document::get_icons(CJS_Runtime* pRuntime) {
     if (pObj.IsEmpty())
       return CJS_Return(false);
 
-    CJS_Icon* pJS_Icon =
-        static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
+    auto* pJS_Icon =
+        static_cast<CJS_Icon*>(CFXJS_Engine::GetObjectPrivate(pObj));
     pJS_Icon->SetIconName(name);
     pRuntime->PutArrayElement(Icons, i++,
                               pJS_Icon
@@ -1172,12 +1171,12 @@ CJS_Return CJS_Document::getIcon(
   if (pObj.IsEmpty())
     return CJS_Return(false);
 
-  CJS_Icon* pJS_Icon = static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-  if (!pJS_Icon)
+  auto* pJSIcon = static_cast<CJS_Icon*>(CFXJS_Engine::GetObjectPrivate(pObj));
+  if (!pJSIcon)
     return CJS_Return(false);
 
-  pJS_Icon->SetIconName(*it);
-  return CJS_Return(pJS_Icon->ToV8Object());
+  pJSIcon->SetIconName(*it);
+  return CJS_Return(pJSIcon->ToV8Object());
 }
 
 CJS_Return CJS_Document::removeIcon(

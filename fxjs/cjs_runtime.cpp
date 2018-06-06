@@ -168,14 +168,12 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   v8::Context::Scope context_scope(context);
 
   v8::Local<v8::Object> pThis = GetThisObj();
-  if (pThis.IsEmpty())
+  if (pThis.IsEmpty() ||
+      CFXJS_Engine::GetObjDefnID(pThis) != CJS_Document::GetObjDefnID()) {
     return;
-
-  if (CFXJS_Engine::GetObjDefnID(pThis) != CJS_Document::GetObjDefnID())
-    return;
-
-  CJS_Document* pJSDocument =
-      static_cast<CJS_Document*>(GetObjectPrivate(pThis));
+  }
+  auto* pJSDocument =
+      static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pThis));
   if (!pJSDocument)
     return;
 

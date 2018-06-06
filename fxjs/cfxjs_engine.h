@@ -85,7 +85,7 @@ class CFXJS_Engine : public CFX_V8 {
   static CFXJS_Engine* EngineFromContext(v8::Local<v8::Context> pContext);
 
   static int GetObjDefnID(v8::Local<v8::Object> pObj);
-
+  static CJS_Object* GetObjectPrivate(v8::Local<v8::Object> pObj);
   static void SetObjectPrivate(v8::Local<v8::Object> pObj,
                                std::unique_ptr<CJS_Object> p);
   static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
@@ -128,9 +128,6 @@ class CFXJS_Engine : public CFX_V8 {
   v8::Local<v8::Object> GetThisObj();
   v8::Local<v8::Object> NewFXJSBoundObject(int nObjDefnID,
                                            bool bStatic = false);
-  // Retrieve native object binding.
-  CJS_Object* GetObjectPrivate(v8::Local<v8::Object> pObj);
-
   void Error(const WideString& message);
 
   v8::Local<v8::Context> GetV8Context() {

@@ -99,9 +99,10 @@ CJS_App::~CJS_App() = default;
 CJS_Return CJS_App::get_active_docs(CJS_Runtime* pRuntime) {
   CJS_Document* pJSDocument = nullptr;
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::GetObjDefnID())
-    pJSDocument = static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
-
+  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::GetObjDefnID()) {
+    pJSDocument =
+        static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pObj));
+  }
   v8::Local<v8::Array> aDocs = pRuntime->NewArray();
   pRuntime->PutArrayElement(
       aDocs, 0,
@@ -326,8 +327,9 @@ CJS_Return CJS_App::setInterval(
   if (pRetObj.IsEmpty())
     return CJS_Return(false);
 
-  CJS_TimerObj* pJS_TimerObj =
-      static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
+  auto* pJS_TimerObj =
+      static_cast<CJS_TimerObj*>(CFXJS_Engine::GetObjectPrivate(pRetObj));
+
   pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Return(pRetObj);
 }
@@ -354,8 +356,9 @@ CJS_Return CJS_App::setTimeOut(
   if (pRetObj.IsEmpty())
     return CJS_Return(false);
 
-  CJS_TimerObj* pJS_TimerObj =
-      static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
+  auto* pJS_TimerObj =
+      static_cast<CJS_TimerObj*>(CFXJS_Engine::GetObjectPrivate(pRetObj));
+
   pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Return(pRetObj);
 }
@@ -389,12 +392,11 @@ void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
   if (CFXJS_Engine::GetObjDefnID(pObj) != CJS_TimerObj::GetObjDefnID())
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(pObj);
+  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(pObj);
   if (!pJSObj)
     return;
 
-  CJS_TimerObj* pJS_TimerObj = static_cast<CJS_TimerObj*>(pJSObj);
-  GlobalTimer::Cancel(pJS_TimerObj->GetTimerID());
+  GlobalTimer::Cancel(static_cast<CJS_TimerObj*>(pJSObj)->GetTimerID());
 }
 
 CJS_Return CJS_App::execMenuItem(

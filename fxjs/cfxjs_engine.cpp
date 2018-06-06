@@ -591,15 +591,16 @@ void CFXJS_Engine::Error(const WideString& message) {
   GetIsolate()->ThrowException(NewString(message.AsStringView()));
 }
 
+// static
 CJS_Object* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
   CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
   if (!pData && !pObj.IsEmpty()) {
     // It could be a global proxy object.
     v8::Local<v8::Value> v = pObj->GetPrototype();
-    v8::Local<v8::Context> context = GetIsolate()->GetCurrentContext();
     if (v->IsObject()) {
       pData = CFXJS_PerObjectData::GetFromObject(
-          v->ToObject(context).ToLocalChecked());
+          v->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext())
+              .ToLocalChecked());
     }
   }
   return pData ? pData->m_pPrivate.get() : nullptr;

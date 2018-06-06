@@ -32,18 +32,17 @@ template <class Alt>
 void JSSpecialPropQuery(const char*,
                         v8::Local<v8::String> property,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  CJS_Runtime* pRuntime =
-      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
-  if (!pRuntime)
-    return;
-
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
+  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
-  CJS_Return result =
-      pObj->QueryProperty(PropFromV8Prop(info.GetIsolate(), property).c_str());
+  CJS_Runtime* pRuntime = pJSObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  CJS_Return result = static_cast<Alt*>(pJSObj)->QueryProperty(
+      PropFromV8Prop(info.GetIsolate(), property).c_str());
+
   info.GetReturnValue().Set(!result.HasError() ? 4 : 0);
 }
 
@@ -51,24 +50,22 @@ template <class Alt>
 void JSSpecialPropGet(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  CJS_Runtime* pRuntime =
-      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
-  if (!pRuntime)
-    return;
-
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
+  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
-  CJS_Return result = pObj->GetProperty(
+  CJS_Runtime* pRuntime = pJSObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  CJS_Return result = static_cast<Alt*>(pJSObj)->GetProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
+
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString(class_name, "GetProperty", result.Error()));
     return;
   }
-
   if (result.HasReturn())
     info.GetReturnValue().Set(result.Return());
 }
@@ -78,18 +75,17 @@ void JSSpecialPropPut(const char* class_name,
                       v8::Local<v8::String> property,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  CJS_Runtime* pRuntime =
-      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
-  if (!pRuntime)
-    return;
-
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
+  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
-  CJS_Return result = pObj->SetProperty(
+  CJS_Runtime* pRuntime = pJSObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  CJS_Return result = static_cast<Alt*>(pJSObj)->SetProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str(), value);
+
   if (result.HasError()) {
     pRuntime->Error(
         JSFormatErrorString(class_name, "PutProperty", result.Error()));
@@ -100,17 +96,15 @@ template <class Alt>
 void JSSpecialPropDel(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  CJS_Runtime* pRuntime =
-      CJS_Runtime::RuntimeFromIsolateCurrentContext(info.GetIsolate());
-  if (!pRuntime)
-    return;
-
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
+  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
   if (!pJSObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
-  CJS_Return result = pObj->DelProperty(
+  CJS_Runtime* pRuntime = pJSObj->GetRuntime();
+  if (!pRuntime)
+    return;
+
+  CJS_Return result = static_cast<Alt*>(pJSObj)->DelProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
   if (result.HasError()) {
     // TODO(dsinclair): Should this set the pRuntime->Error result?
