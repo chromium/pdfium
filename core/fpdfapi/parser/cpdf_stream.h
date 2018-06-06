@@ -37,7 +37,9 @@ class CPDF_Stream : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive) const override;
 
   uint32_t GetRawSize() const { return m_dwSize; }
-  uint8_t* GetRawData() const { return m_pDataBuf.get(); }
+  // Will be null in case when stream is not memory based.
+  // Use CPDF_StreamAcc to data access in all cases.
+  uint8_t* GetInMemoryRawData() const { return m_pDataBuf.get(); }
 
   // Does not takes ownership of |pData|, copies into internally-owned buffer.
   void SetData(const uint8_t* pData, uint32_t size);

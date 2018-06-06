@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -74,14 +75,18 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     EXPECT_TRUE(font_desc->KeyExist(present));
     EXPECT_FALSE(font_desc->KeyExist(absent));
 
+    auto streamAcc =
+        pdfium::MakeRetain<CPDF_StreamAcc>(font_desc->GetStreamFor(present));
+    streamAcc->LoadAllDataRaw();
+
     // Check that the font stream is the one that was provided
-    const CPDF_Stream* font_stream = font_desc->GetStreamFor(present);
-    ASSERT_EQ(size, font_stream->GetRawSize());
+    ASSERT_EQ(size, streamAcc->GetSize());
     if (font_type == FPDF_FONT_TRUETYPE) {
       ASSERT_EQ(static_cast<int>(size),
-                font_stream->GetDict()->GetIntegerFor("Length1"));
+                streamAcc->GetDict()->GetIntegerFor("Length1"));
     }
-    uint8_t* stream_data = font_stream->GetRawData();
+
+    const uint8_t* stream_data = streamAcc->GetData();
     for (size_t j = 0; j < size; j++)
       EXPECT_EQ(data[j], stream_data[j]) << " at byte " << j;
   }

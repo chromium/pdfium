@@ -11,6 +11,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_interform.h"
@@ -319,40 +320,14 @@ unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
                                                    void* buffer,
                                                    unsigned long buflen) {
   ASSERT(stream);
-  uint8_t* data = stream->GetRawData();
-  uint32_t len = stream->GetRawSize();
-  const CPDF_Dictionary* dict = stream->GetDict();
-  const CPDF_Object* decoder =
-      dict ? dict->GetDirectObjectFor("Filter") : nullptr;
-  if (decoder && (decoder->IsArray() || decoder->IsName())) {
-    // Decode the stream if one or more stream filters are specified.
-    uint8_t* decoded_data = nullptr;
-    uint32_t decoded_len = 0;
-    ByteString dummy_last_decoder;
-    const CPDF_Dictionary* dummy_last_param;
-    if (PDF_DataDecode(data, len, dict,
-                       dict->GetIntegerFor(pdfium::stream::kDL), false,
-                       &decoded_data, &decoded_len, &dummy_last_decoder,
-                       &dummy_last_param)) {
-      if (buffer && buflen >= decoded_len)
-        memcpy(buffer, decoded_data, decoded_len);
+  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
+  stream_acc->LoadAllDataFiltered();
+  const auto stream_data_size = stream_acc->GetSize();
+  if (!buffer || buflen < stream_data_size)
+    return stream_data_size;
 
-      // Free the buffer for the decoded data if it was allocated by
-      // PDF_DataDecode(). Note that for images with a single image-specific
-      // filter, |decoded_data| is directly assigned to be |data|, so
-      // |decoded_data| does not need to be freed.
-      if (decoded_data != data)
-        FX_Free(decoded_data);
-
-      return decoded_len;
-    }
-  }
-  // Copy the raw data and return its length if there is no valid filter
-  // specified or if decoding failed.
-  if (buffer && buflen >= len)
-    memcpy(buffer, data, len);
-
-  return len;
+  memcpy(buffer, stream_acc->GetData(), stream_data_size);
+  return stream_data_size;
 }
 
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,

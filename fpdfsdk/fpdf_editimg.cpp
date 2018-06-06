@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "fpdfsdk/cpdfsdk_customaccess.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -221,10 +222,14 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
   if (!pImgStream)
     return 0;
 
-  uint32_t len = pImgStream->GetRawSize();
-  if (buffer && buflen >= len)
-    memcpy(buffer, pImgStream->GetRawData(), len);
+  auto streamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pImgStream);
+  streamAcc->LoadAllDataRaw();
 
+  const uint32_t len = streamAcc->GetSize();
+  if (!buffer || buflen < len)
+    return len;
+
+  memcpy(buffer, streamAcc->GetData(), len);
   return len;
 }
 

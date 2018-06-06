@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -153,16 +154,18 @@ class PDFObjectsTest : public testing::Test {
         // Compare dictionaries.
         if (!Equal(stream1->GetDict(), stream2->GetDict()))
           return false;
+
+        auto streamAcc1 = pdfium::MakeRetain<CPDF_StreamAcc>(stream1);
+        streamAcc1->LoadAllDataRaw();
+        auto streamAcc2 = pdfium::MakeRetain<CPDF_StreamAcc>(stream2);
+        streamAcc2->LoadAllDataRaw();
+
         // Compare sizes.
-        if (stream1->GetRawSize() != stream2->GetRawSize())
+        if (streamAcc1->GetSize() != streamAcc2->GetSize())
           return false;
-        // Compare contents.
-        // Since this function is used for testing Clone(), only memory based
-        // streams need to be handled.
-        if (!stream1->IsMemoryBased() || !stream2->IsMemoryBased())
-          return false;
-        return memcmp(stream1->GetRawData(), stream2->GetRawData(),
-                      stream1->GetRawSize()) == 0;
+
+        return memcmp(streamAcc1->GetData(), streamAcc2->GetData(),
+                      streamAcc2->GetSize()) == 0;
       }
       case CPDF_Object::REFERENCE:
         return obj1->AsReference()->GetRefObjNum() ==
