@@ -5,6 +5,7 @@
 #ifndef TESTING_EMBEDDER_TEST_H_
 #define TESTING_EMBEDDER_TEST_H_
 
+#include <fstream>
 #include <map>
 #include <memory>
 #include <string>
@@ -204,6 +205,9 @@ class EmbedderTest : public ::testing::Test,
 
   void SetWholeFileAvailable();
 
+  void OpenPDFFileForWrite(const char* filename);
+  void ClosePDFFileForWrite();
+
   std::unique_ptr<Delegate> default_delegate_;
   Delegate* delegate_;
 
@@ -256,6 +260,7 @@ class EmbedderTest : public ::testing::Test,
   int GetPageNumberForSavedPage(FPDF_PAGE page) const;
 
   std::string data_string_;
+  std::ofstream filestream_;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_H_
