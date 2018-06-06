@@ -199,7 +199,6 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
   }
 
   m_dwRootObjNum = m_parser.GetRootObjNum();
-  m_dwInfoObjNum = m_parser.GetInfoObjNum();
   m_docStatus = PDF_DATAAVAIL_ROOT;
   return true;
 }
@@ -228,15 +227,17 @@ std::unique_ptr<CPDF_Object> CPDF_DataAvail::GetObject(uint32_t objnum,
 }
 
 bool CPDF_DataAvail::CheckInfo() {
-  bool bExist = false;
-  std::unique_ptr<CPDF_Object> pInfo = GetObject(m_dwInfoObjNum, &bExist);
-  if (bExist && !pInfo) {
-    if (m_docStatus == PDF_DATAAVAIL_ERROR) {
-      m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-      return true;
-    }
-    return false;
+  const uint32_t dwInfoObjNum = m_parser.GetInfoObjNum();
+  if (dwInfoObjNum == CPDF_Object::kInvalidObjNum) {
+    m_docStatus = PDF_DATAAVAIL_PAGETREE;
+    return true;
   }
+
+  const CPDF_ReadValidator::Session read_session(GetValidator().Get());
+  m_parser.ParseIndirectObject(nullptr, dwInfoObjNum);
+  if (GetValidator()->has_read_problems())
+    return false;
+
   m_docStatus = PDF_DATAAVAIL_PAGETREE;
   return true;
 }
@@ -271,7 +272,7 @@ bool CPDF_DataAvail::CheckRoot() {
 
   m_PagesObjNum = pRef->GetRefObjNum();
 
-  m_docStatus = m_dwInfoObjNum ? PDF_DATAAVAIL_INFO : PDF_DATAAVAIL_PAGETREE;
+  m_docStatus = PDF_DATAAVAIL_INFO;
   return true;
 }
 

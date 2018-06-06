@@ -69,7 +69,7 @@ class CPDF_Parser::TrailerData {
 
     // Info is optional.
     uint32_t info_obj_num = GetInfoObjNum();
-    if (info_obj_num > 0)
+    if (info_obj_num != CPDF_Object::kInvalidObjNum)
       result->SetNewFor<CPDF_Reference>("Info", nullptr, GetInfoObjNum());
 
     // Root is required.
@@ -90,8 +90,8 @@ class CPDF_Parser::TrailerData {
 
   void Clear() {
     main_trailer_.reset();
-    last_info_obj_num_ = 0;
-    last_root_obj_num_ = 0;
+    last_info_obj_num_ = CPDF_Object::kInvalidObjNum;
+    last_root_obj_num_ = CPDF_Object::kInvalidObjNum;
   }
 
   uint32_t GetInfoObjNum() const {
@@ -120,8 +120,8 @@ class CPDF_Parser::TrailerData {
   }
 
   std::unique_ptr<CPDF_Dictionary> main_trailer_;
-  uint32_t last_info_obj_num_ = 0;
-  uint32_t last_root_obj_num_ = 0;
+  uint32_t last_info_obj_num_ = CPDF_Object::kInvalidObjNum;
+  uint32_t last_root_obj_num_ = CPDF_Object::kInvalidObjNum;
 };
 
 CPDF_Parser::CPDF_Parser()
@@ -286,9 +286,9 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal(CPDF_Document* pDocument) {
     if (!m_pDocument->GetRoot())
       return FORMAT_ERROR;
   }
-  if (GetRootObjNum() == 0) {
+  if (GetRootObjNum() == CPDF_Object::kInvalidObjNum) {
     ReleaseEncryptHandler();
-    if (!RebuildCrossRef() || GetRootObjNum() == 0)
+    if (!RebuildCrossRef() || GetRootObjNum() == CPDF_Object::kInvalidObjNum)
       return FORMAT_ERROR;
 
     eRet = SetEncryptHandler();
@@ -1389,9 +1389,9 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
       return FORMAT_ERROR;
   }
 
-  if (GetRootObjNum() == 0) {
+  if (GetRootObjNum() == CPDF_Object::kInvalidObjNum) {
     ReleaseEncryptHandler();
-    if (!RebuildCrossRef() || GetRootObjNum() == 0)
+    if (!RebuildCrossRef() || GetRootObjNum() == CPDF_Object::kInvalidObjNum)
       return FORMAT_ERROR;
 
     eRet = SetEncryptHandler();

@@ -167,7 +167,6 @@ class CPDF_DataAvail final {
   CPDF_Parser m_parser;
   std::unique_ptr<CPDF_Object> m_pRoot;
   uint32_t m_dwRootObjNum = 0;
-  uint32_t m_dwInfoObjNum = 0;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   bool m_bDocAvail = false;
   std::unique_ptr<CPDF_CrossRefAvail> m_pCrossRefAvail;
