@@ -30,6 +30,10 @@ config("pdfium_common_config") {
     defines += [ "PDF_ENABLE_V8" ]
   }
 
+  if (pdf_enable_click_logging) {
+    defines += [ "PDF_ENABLE_CLICK_LOGGING" ]
+  }
+
   if (pdf_enable_xfa) {
     defines += [ "PDF_ENABLE_XFA" ]
     if (pdf_enable_xfa_bmp) {
