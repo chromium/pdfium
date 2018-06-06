@@ -326,7 +326,6 @@ bug_492.in * nov8 *
 
 # TODO(rharrison): Create expectations for existing files.
 dynamic_list_box_allow_multiple_selection.pdf * * *
-dynamic_password_field_background_fill.pdf * * *
 resolve_nodes.pdf * * *
 standard_symbols.pdf * * *
 # TODO(rharrison): Remove after pdfium:1095 is fixed
