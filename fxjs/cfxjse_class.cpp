@@ -95,7 +95,8 @@ void DynPropGetterAdapter_MethodCallback(
 
   CJS_Return result = lpClass->dynMethodCall(info, szFxPropName);
   if (result.HasError()) {
-    WideString err = JSFormatErrorString(*szPropName, "", result.Error());
+    WideString err =
+        JSFormatErrorString(lpClass->name, *szPropName, result.Error());
     v8::MaybeLocal<v8::String> str = v8::String::NewFromUtf8(
         info.GetIsolate(), ByteString::FromUnicode(err).c_str(),
         v8::NewStringType::kNormal);
