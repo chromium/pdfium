@@ -325,7 +325,6 @@ bug_492.in * nov8 *
 # xfa_specific
 
 # TODO(rharrison): Create expectations for existing files.
-barcode_test.pdf * * *
 dynamic_list_box_allow_multiple_selection.pdf * * *
 dynamic_password_field_background_fill.pdf * * *
 resolve_nodes.pdf * * *
