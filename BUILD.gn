@@ -2945,6 +2945,7 @@ test("pdfium_unittests") {
       "xfa/fwl/cfx_barcode_unittest.cpp",
       "xfa/fxfa/cxfa_ffbarcode_unittest.cpp",
       "xfa/fxfa/cxfa_textparser_unittest.cpp",
+      "xfa/fxfa/fm2js/cxfa_fmexpression_unittest.cpp",
       "xfa/fxfa/fm2js/cxfa_fmlexer_unittest.cpp",
       "xfa/fxfa/fm2js/cxfa_fmparser_unittest.cpp",
       "xfa/fxfa/fm2js/cxfa_fmsimpleexpression_unittest.cpp",

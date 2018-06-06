@@ -131,6 +131,7 @@ bool CXFA_FMVarExpression::ToJavaScript(CFX_WideTextBuf* js, ReturnType type) {
     if (!m_pInit->ToJavaScript(js, ReturnType::kInfered))
       return false;
 
+    *js << L";\n";
     *js << tempName << L" = pfm_rt.var_filter(" << tempName << L");\n";
   } else {
     *js << L"\"\";\n";

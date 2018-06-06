@@ -371,3 +371,34 @@ TEST(CXFA_FMParserTest, ParseCallBig) {
   EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_EQ(ret, buf.AsStringView());
 }
+
+TEST(CXFA_FMParserTest, ParseVar) {
+  const wchar_t input[] = L"var s = \"\"\n";
+  const wchar_t ret[] =
+      L"(function() {\n"
+      L"let pfm_method_runner = function(obj, cb) {\n"
+      L"  if (pfm_rt.is_ary(obj)) {\n"
+      L"    let pfm_method_return = null;\n"
+      L"    for (var idx = obj.length -1; idx > 1; idx--) {\n"
+      L"      pfm_method_return = cb(obj[idx]);\n"
+      L"    }\n"
+      L"    return pfm_method_return;\n"
+      L"  }\n"
+      L"  return cb(obj);\n"
+      L"};\n"
+      L"var pfm_ret = null;\n"
+      L"var s = \"\";\n"
+      L"s = pfm_rt.var_filter(s);\n"
+      L"pfm_ret = s;\n"
+      L"return pfm_rt.get_val(pfm_ret);\n"
+      L"}).call(this);";
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  EXPECT_FALSE(parser->HasError());
+
+  CXFA_FMToJavaScriptDepth::Reset();
+  CFX_WideTextBuf buf;
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
+  EXPECT_STREQ(ret, buf.MakeString().c_str());
+}
