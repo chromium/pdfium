@@ -331,8 +331,6 @@ bug_492.in * nov8 *
 # TODO(rharrison): Create expectations for existing files.
 dynamic_list_box_allow_multiple_selection.pdf * * *
 standard_symbols.pdf * * *
-# TODO(rharrison): Remove after pdfium:1095 is fixed
+# TODO(rharrison): Remove these after pdfium:1095 is fixed
 xfa_example.in win * *
-xfa_node_caption.pdf * * *
-# TODO(rharrison): Remove after pdfium:1095 is fixed
 xfa_textfield.in win * *
