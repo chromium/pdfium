@@ -82,8 +82,10 @@ void CPDF_PageContentGenerator::GenerateContent() {
 
   // Add buffer to a stream in page's 'Contents'
   CPDF_Dictionary* pPageDict = m_pObjHolder->GetFormDict();
-  CPDF_Object* pContent =
-      pPageDict ? pPageDict->GetObjectFor("Contents") : nullptr;
+  if (!pPageDict)
+    return;
+
+  CPDF_Object* pContent = pPageDict->GetObjectFor("Contents");
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
   pStream->SetData(&buf);
   if (pContent) {
