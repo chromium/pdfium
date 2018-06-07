@@ -43,6 +43,7 @@ bool IsLinearizedHeaderValid(const CPDF_LinearizedHeader* header,
   return header->GetFileSize() == file_size &&
          static_cast<int>(header->GetFirstPageNo()) >= 0 &&
          header->GetFirstPageNo() < kMaxInt &&
+         header->GetFirstPageNo() < header->GetPageCount() &&
          header->GetMainXRefTableFirstEntryOffset() < file_size &&
          header->GetPageCount() > 0 &&
          header->GetFirstPageEndOffset() < file_size &&
