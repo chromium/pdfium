@@ -153,7 +153,6 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
 // static
 std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     v8::Isolate* pIsolate,
-    CFXJS_Engine* pOptionalEngineToSet,
     const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
     CFXJSE_HostObject* pGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
@@ -196,9 +195,6 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
 
   v8::Local<v8::Object> hGlobalObject = GetGlobalObjectFromContext(hNewContext);
   FXJSE_UpdateObjectBinding(hGlobalObject, pGlobalObject);
-  if (pOptionalEngineToSet)
-    pOptionalEngineToSet->SetIntoContext(hNewContext);
-
   pContext->m_hContext.Reset(pIsolate, hNewContext);
   return pContext;
 }

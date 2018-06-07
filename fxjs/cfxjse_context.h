@@ -22,7 +22,6 @@ class CFXJSE_Context {
  public:
   static std::unique_ptr<CFXJSE_Context> Create(
       v8::Isolate* pIsolate,
-      CFXJS_Engine* pOptionalEngineToSet,
       const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
       CFXJSE_HostObject* pGlobalObject);
 

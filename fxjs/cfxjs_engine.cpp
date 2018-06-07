@@ -15,11 +15,6 @@
 
 class CFXJS_PerObjectData;
 
-// Keep this consistent with the values defined in gin/public/context_holder.h
-// (without actually requiring a dependency on gin itself for the standalone
-// embedders of PDFIum). The value we want to use is:
-//   kPerContextDataStartIndex + kEmbedderPDFium, which is 3.
-static const unsigned int kPerContextDataIndex = 3u;
 static unsigned int g_embedderDataSlot = 1u;
 static v8::Isolate* g_isolate = nullptr;
 static size_t g_isolate_ref_count = 0;
@@ -297,18 +292,6 @@ CFXJS_Engine::CFXJS_Engine(v8::Isolate* pIsolate) : CFX_V8(pIsolate) {}
 CFXJS_Engine::~CFXJS_Engine() = default;
 
 // static
-CFXJS_Engine* CFXJS_Engine::EngineFromIsolateCurrentContext(
-    v8::Isolate* pIsolate) {
-  return EngineFromContext(pIsolate->GetCurrentContext());
-}
-
-// static
-CFXJS_Engine* CFXJS_Engine::EngineFromContext(v8::Local<v8::Context> pContext) {
-  return static_cast<CFXJS_Engine*>(
-      pContext->GetAlignedPointerFromEmbedderData(kPerContextDataIndex));
-}
-
-// static
 int CFXJS_Engine::GetObjDefnID(v8::Local<v8::Object> pObj) {
   CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
   return pData ? pData->m_ObjDefID : -1;
@@ -330,10 +313,6 @@ void CFXJS_Engine::FreeObjectPrivate(v8::Local<v8::Object> pObj) {
   pObj->SetAlignedPointerInInternalField(0, nullptr);
   pObj->SetAlignedPointerInInternalField(1, nullptr);
   delete pData;
-}
-
-void CFXJS_Engine::SetIntoContext(v8::Local<v8::Context> pContext) {
-  pContext->SetAlignedPointerInEmbedderData(kPerContextDataIndex, this);
 }
 
 int CFXJS_Engine::DefineObj(const char* sObjName,
@@ -451,7 +430,6 @@ void CFXJS_Engine::InitializeEngine() {
   }
 
   v8::Context::Scope context_scope(v8Context);
-  SetIntoContext(v8Context);
 
   int maxID = CFXJS_ObjDefinition::MaxID(GetIsolate());
   m_StaticObjects.resize(maxID + 1);

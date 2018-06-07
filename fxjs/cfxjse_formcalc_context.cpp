@@ -2839,7 +2839,7 @@ void CFXJSE_FormCalcContext::Eval(CFXJSE_Value* pThis,
   }
 
   std::unique_ptr<CFXJSE_Context> pNewContext(
-      CFXJSE_Context::Create(pIsolate, nullptr, nullptr, nullptr));
+      CFXJSE_Context::Create(pIsolate, nullptr, nullptr));
 
   auto returnValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   pNewContext->ExecuteScript(

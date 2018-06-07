@@ -81,16 +81,11 @@ class CFXJS_Engine : public CFX_V8 {
       std::function<void(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj)>;
   using Destructor = std::function<void(v8::Local<v8::Object> obj)>;
 
-  static CFXJS_Engine* EngineFromIsolateCurrentContext(v8::Isolate* pIsolate);
-  static CFXJS_Engine* EngineFromContext(v8::Local<v8::Context> pContext);
-
   static int GetObjDefnID(v8::Local<v8::Object> pObj);
   static CJS_Object* GetObjectPrivate(v8::Local<v8::Object> pObj);
   static void SetObjectPrivate(v8::Local<v8::Object> pObj,
                                std::unique_ptr<CJS_Object> p);
   static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
-
-  void SetIntoContext(v8::Local<v8::Context> pContext);
 
   // Always returns a valid, newly-created objDefnID.
   int DefineObj(const char* sObjName,
