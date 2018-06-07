@@ -427,6 +427,55 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   VerifySavedDocument(612, 792, kLastMD5);
 }
 
+// Fails due to pdfium:1051.
+TEST_F(FPDFEditEmbeddertest, DISABLED_SetText) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the "Hello, world!" text object and change it.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(page_object);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text1 =
+      GetFPDFWideString(L"Changed for SetText test");
+  EXPECT_TRUE(FPDFText_SetText(page_object, text1.get()));
+
+  // Verify the "Hello, world!" text is gone and "Changed for SetText test" is
+  // now displayed.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+  const char kChangedMD5[] = "94c1e7a5af7dd9d77dc2223b1091acb7";
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  const char kChangedMD5[] = "9d31703c1d1a3e1e9a778b1e297c9cd2";
+#else
+  const char kChangedMD5[] = "a0c4ea6620772991f66bf7130379b08a";
+#endif
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kChangedMD5);
+  }
+
+  // Now save the result.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  UnloadPage(page);
+
+  // Re-open the file and check the changes were kept in the saved .pdf.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(saved_page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kChangedMD5);
+  }
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFEditEmbeddertest, RemovePageObject) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
