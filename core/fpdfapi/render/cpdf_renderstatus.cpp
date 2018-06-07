@@ -1242,7 +1242,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   const CPDF_Dictionary* pFormResource = nullptr;
   const CPDF_FormObject* pFormObj = pObj->AsForm();
   if (pFormObj) {
-    const CPDF_Dictionary* pFormDict = pFormObj->form()->GetFormDict();
+    const CPDF_Dictionary* pFormDict = pFormObj->form()->GetDict();
     if (pFormDict)
       pFormResource = pFormDict->GetDictFor("Resources");
   }
@@ -1259,15 +1259,14 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  const CPDF_Dictionary* pOC =
-      pFormObj->form()->GetFormDict()->GetDictFor("OC");
+  const CPDF_Dictionary* pOC = pFormObj->form()->GetDict()->GetDictFor("OC");
   if (pOC && m_Options.GetOCContext() &&
       !m_Options.GetOCContext()->CheckOCGVisible(pOC)) {
     return true;
   }
   CFX_Matrix matrix = pFormObj->form_matrix();
   matrix.Concat(*pObj2Device);
-  const CPDF_Dictionary* pFormDict = pFormObj->form()->GetFormDict();
+  const CPDF_Dictionary* pFormDict = pFormObj->form()->GetDict();
   const CPDF_Dictionary* pResources =
       pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
   CPDF_RenderStatus status;
@@ -1491,7 +1490,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     group_alpha = pFormObj->m_GeneralState.GetFillAlpha();
     transparency = pFormObj->form()->GetTransparency();
     bGroupTransparent = transparency.IsIsolated();
-    const CPDF_Dictionary* pFormDict = pFormObj->form()->GetFormDict();
+    const CPDF_Dictionary* pFormDict = pFormObj->form()->GetDict();
     if (pFormDict)
       pFormResource = pFormDict->GetDictFor("Resources");
   }
@@ -1881,9 +1880,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       options.SetFlags(option_flags);
 
       const CPDF_Dictionary* pFormResource = nullptr;
-      if (pType3Char->form() && pType3Char->form()->GetFormDict()) {
-        pFormResource =
-            pType3Char->form()->GetFormDict()->GetDictFor("Resources");
+      if (pType3Char->form() && pType3Char->form()->GetDict()) {
+        pFormResource = pType3Char->form()->GetDict()->GetDictFor("Resources");
       }
       if (fill_alpha == 255) {
         CPDF_RenderStatus status;
@@ -2249,7 +2247,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     if (!pPattern->colored())
       pStates = CloneObjStates(pPageObj, bStroke);
 
-    const CPDF_Dictionary* pFormDict = pPattern->form()->GetFormDict();
+    const CPDF_Dictionary* pFormDict = pPattern->form()->GetDict();
     const CPDF_Dictionary* pFormResource =
         pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
     for (int col = min_col; col <= max_col; col++) {
@@ -2581,8 +2579,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   }
 
   const CPDF_Dictionary* pFormResource = nullptr;
-  if (form.GetFormDict())
-    pFormResource = form.GetFormDict()->GetDictFor("Resources");
+  if (form.GetDict())
+    pFormResource = form.GetDict()->GetDictFor("Resources");
   CPDF_RenderOptions options;
   options.SetColorMode(bLuminosity ? CPDF_RenderOptions::kNormal
                                    : CPDF_RenderOptions::kAlpha);

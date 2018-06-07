@@ -34,7 +34,7 @@ CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
       m_pPageView(pPageView),
       m_nAnnotSubtype(nAnnotSubtype) {
   CPDF_Page* pPDFPage = m_pPageView->GetPDFPage();
-  ByteString sTabs = pPDFPage->GetFormDict()->GetStringFor("Tabs");
+  ByteString sTabs = pPDFPage->GetDict()->GetStringFor("Tabs");
   if (sTabs == "R")
     m_eTabOrder = ROW;
   else if (sTabs == "C")

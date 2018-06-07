@@ -17,9 +17,9 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 
 CPDF_PageObjectHolder::CPDF_PageObjectHolder(CPDF_Document* pDoc,
-                                             CPDF_Dictionary* pFormDict)
-    : m_pFormDict(pFormDict), m_pDocument(pDoc) {
-  // TODO(thestig): Check if |m_pFormDict| is never a nullptr and simplify
+                                             CPDF_Dictionary* pDict)
+    : m_pDict(pDict), m_pDocument(pDoc) {
+  // TODO(thestig): Check if |m_pDict| is never a nullptr and simplify
   // callers that checks for that.
 }
 
@@ -79,10 +79,10 @@ CFX_FloatRect CPDF_PageObjectHolder::CalcBoundingBox() const {
 }
 
 void CPDF_PageObjectHolder::LoadTransInfo() {
-  if (!m_pFormDict)
+  if (!m_pDict)
     return;
 
-  CPDF_Dictionary* pGroup = m_pFormDict->GetDictFor("Group");
+  CPDF_Dictionary* pGroup = m_pDict->GetDictFor("Group");
   if (!pGroup)
     return;
 

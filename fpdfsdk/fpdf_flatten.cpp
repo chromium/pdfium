@@ -240,7 +240,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     return FLATTEN_FAIL;
 
   CPDF_Document* pDocument = pPage->GetDocument();
-  CPDF_Dictionary* pPageDict = pPage->GetFormDict();
+  CPDF_Dictionary* pPageDict = pPage->GetDict();
   if (!pDocument || !pPageDict)
     return FLATTEN_FAIL;
 

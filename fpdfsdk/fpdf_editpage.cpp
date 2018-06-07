@@ -58,7 +58,7 @@ bool IsPageObject(CPDF_Page* pPage) {
   if (!pPage)
     return false;
 
-  const CPDF_Dictionary* pFormDict = pPage->GetFormDict();
+  const CPDF_Dictionary* pFormDict = pPage->GetDict();
   if (!pFormDict || !pFormDict->KeyExist("Type"))
     return false;
 
@@ -492,7 +492,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page,
     return;
 
   rotate %= 4;
-  pPage->GetFormDict()->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
+  pPage->GetDict()->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
 }
 
 FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,

@@ -53,9 +53,9 @@ CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
   if (!pForm)
     return nullptr;
 
-  CFX_Matrix form_matrix = pForm->GetFormDict()->GetMatrixFor("Matrix");
+  CFX_Matrix form_matrix = pForm->GetDict()->GetMatrixFor("Matrix");
   CFX_FloatRect form_bbox =
-      form_matrix.TransformRect(pForm->GetFormDict()->GetRectFor("BBox"));
+      form_matrix.TransformRect(pForm->GetDict()->GetRectFor("BBox"));
   matrix->MatchRect(pAnnot->GetRect(), form_bbox);
   matrix->Concat(*pUser2Device);
   return pForm;

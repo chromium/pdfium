@@ -34,7 +34,7 @@ bool CPDFXFA_Page::LoadPDFPage() {
   if (!pDict)
     return false;
 
-  if (!m_pPDFPage || m_pPDFPage->GetFormDict() != pDict) {
+  if (!m_pPDFPage || m_pPDFPage->GetDict() != pDict) {
     m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(pPDFDoc, pDict, true);
     m_pPDFPage->ParseContent();
   }

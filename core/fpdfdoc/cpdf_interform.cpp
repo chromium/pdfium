@@ -732,7 +732,7 @@ CPDF_FormControl* CPDF_InterForm::GetControlAtPoint(CPDF_Page* pPage,
                                                     const CFX_PointF& point,
 
                                                     int* z_order) const {
-  CPDF_Array* pAnnotList = pPage->GetFormDict()->GetArrayFor("Annots");
+  CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
     return nullptr;
 
@@ -881,7 +881,7 @@ bool CPDF_InterForm::HasXFAForm() const {
 }
 
 void CPDF_InterForm::FixPageFields(CPDF_Page* pPage) {
-  CPDF_Dictionary* pPageDict = pPage->GetFormDict();
+  CPDF_Dictionary* pPageDict = pPage->GetDict();
   if (!pPageDict)
     return;
 

@@ -15,7 +15,7 @@ CPDF_LinkList::~CPDF_LinkList() {}
 
 const std::vector<CPDF_Dictionary*>* CPDF_LinkList::GetPageLinks(
     CPDF_Page* pPage) {
-  uint32_t objnum = pPage->GetFormDict()->GetObjNum();
+  uint32_t objnum = pPage->GetDict()->GetObjNum();
   if (objnum == 0)
     return nullptr;
 
@@ -55,7 +55,7 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
 
 void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage,
                                   std::vector<CPDF_Dictionary*>* pList) {
-  CPDF_Array* pAnnotList = pPage->GetFormDict()->GetArrayFor("Annots");
+  CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
     return;
 

@@ -37,7 +37,7 @@ FPDF_StructTree_GetForPage(FPDF_PAGE page) {
 
   // Caller takes onwership.
   return FPDFStructTreeFromCPDFStructTree(
-      CPDF_StructTree::LoadPage(pPage->GetDocument(), pPage->GetFormDict())
+      CPDF_StructTree::LoadPage(pPage->GetDocument(), pPage->GetDict())
           .release());
 }
 

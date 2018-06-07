@@ -25,12 +25,12 @@
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pObjectHolder(pPage) {
   ASSERT(pPage);
-  if (!pPage->GetDocument() || !pPage->GetFormDict()) {
+  if (!pPage->GetDocument() || !pPage->GetDict()) {
     m_CurrentStage = Stage::kComplete;
     return;
   }
 
-  CPDF_Object* pContent = pPage->GetFormDict()->GetDirectObjectFor("Contents");
+  CPDF_Object* pContent = pPage->GetDict()->GetDirectObjectFor("Contents");
   if (!pContent) {
     m_CurrentStage = Stage::kComplete;
     return;
@@ -67,11 +67,11 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
       m_pObjectHolder(pForm),
       m_pType3Char(pType3Char) {
   ASSERT(pForm);
-  CFX_Matrix form_matrix = pForm->GetFormDict()->GetMatrixFor("Matrix");
+  CFX_Matrix form_matrix = pForm->GetDict()->GetMatrixFor("Matrix");
   if (pGraphicStates)
     form_matrix.Concat(pGraphicStates->m_CTM);
 
-  CPDF_Array* pBBox = pForm->GetFormDict()->GetArrayFor("BBox");
+  CPDF_Array* pBBox = pForm->GetDict()->GetArrayFor("BBox");
   CFX_FloatRect form_bbox;
   CPDF_Path ClipPath;
   if (pBBox) {
@@ -88,7 +88,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
       form_bbox = pParentMatrix->TransformRect(form_bbox);
   }
 
-  CPDF_Dictionary* pResources = pForm->GetFormDict()->GetDictFor("Resources");
+  CPDF_Dictionary* pResources = pForm->GetDict()->GetDictFor("Resources");
   m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
       pForm->GetDocument(), pForm->m_pPageResources.Get(),
       pForm->m_pResources.Get(), pParentMatrix, pForm, pResources, form_bbox,
@@ -141,8 +141,7 @@ bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
 }
 
 CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
-  CPDF_Array* pContent =
-      m_pObjectHolder->GetFormDict()->GetArrayFor("Contents");
+  CPDF_Array* pContent = m_pObjectHolder->GetDict()->GetArrayFor("Contents");
   CPDF_Stream* pStreamObj = ToStream(
       pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);
   m_StreamArray[m_CurrentOffset] =
