@@ -316,17 +316,20 @@ bug_679642.in * * noxfa
 bug_679643.in * * noxfa
 bug_735912.in * * noxfa
 
+# xfa_specific
+
+TODO(dsinclair): Remove after pdfium:1106 is fixed
+resolve_nodes_1.pdf * * *
+
 #
 # Pixel tests
 #
 bug_492.in * nov8 *
 
-#
 # xfa_specific
 
 # TODO(rharrison): Create expectations for existing files.
 dynamic_list_box_allow_multiple_selection.pdf * * *
-resolve_nodes.pdf * * *
 standard_symbols.pdf * * *
 # TODO(rharrison): Remove after pdfium:1095 is fixed
 xfa_example.in win * *
