@@ -39,8 +39,6 @@ class CFXJSE_Context {
                      CFXJSE_Value* lpNewThisObject = nullptr);
 
  protected:
-  friend class CFXJSE_ScopeUtil_IsolateHandleContext;
-
   CFXJSE_Context(const CFXJSE_Context&) = delete;
   CFXJSE_Context& operator=(const CFXJSE_Context&) = delete;
 

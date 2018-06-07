@@ -90,17 +90,10 @@ v8::Local<v8::Object> GetGlobalObjectFromContext(
   return hContext->Global()->GetPrototype().As<v8::Object>();
 }
 
-}  // namespace
-
-// Note, not in the anonymous namespace due to the friend call
-// in cfxjse_context.h
-// TODO(dsinclair): Remove the friending, use public methods.
 class CFXJSE_ScopeUtil_IsolateHandleContext {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext)
-      : m_parent(pContext->m_pIsolate),
-        m_cscope(v8::Local<v8::Context>::New(pContext->m_pIsolate,
-                                             pContext->m_hContext)) {}
+      : m_parent(pContext->GetIsolate()), m_cscope(pContext->GetContext()) {}
 
  private:
   CFXJSE_ScopeUtil_IsolateHandleContext(
@@ -112,6 +105,8 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
   CFXJSE_ScopeUtil_IsolateHandle m_parent;
   v8::Context::Scope m_cscope;
 };
+
+}  // namespace
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
                                CFXJSE_HostObject* lpNewBinding) {
