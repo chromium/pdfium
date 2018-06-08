@@ -124,13 +124,11 @@ void CJS_Document::DefineJSObjects(CFXJS_Engine* pEngine) {
 }
 
 CJS_Document::CJS_Document(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
-    : CJS_Object(pObject, pRuntime) {}
-
-CJS_Document::~CJS_Document() = default;
-
-void CJS_Document::InitInstance() {
+    : CJS_Object(pObject, pRuntime) {
   SetFormFillEnv(GetRuntime()->GetFormFillEnv());
 }
+
+CJS_Document::~CJS_Document() = default;
 
 // The total number of fields in document.
 CJS_Return CJS_Document::get_num_fields(CJS_Runtime* pRuntime) {

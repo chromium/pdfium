@@ -38,9 +38,6 @@ class CJS_Global : public CJS_Object {
   CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Global() override;
 
-  // CJS_Object:
-  void InitInstance() override;
-
   CJS_Return DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 

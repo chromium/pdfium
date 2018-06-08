@@ -26,9 +26,6 @@ class CJS_Document : public CJS_Object {
   CJS_Document(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Document() override;
 
-  // CJS_Object:
-  void InitInstance() override;
-
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();

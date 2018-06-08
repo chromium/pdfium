@@ -53,8 +53,6 @@ class CJS_Object {
   CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   virtual ~CJS_Object();
 
-  virtual void InitInstance();
-
   v8::Local<v8::Object> ToV8Object() { return m_pV8Object.Get(GetIsolate()); }
   v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
   CJS_Runtime* GetRuntime() const { return m_pRuntime.Get(); }

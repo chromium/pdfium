@@ -200,15 +200,13 @@ void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
 }
 
 CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
-    : CJS_Object(pObject, pRuntime) {}
+    : CJS_Object(pObject, pRuntime) {
+  Initial(GetRuntime()->GetFormFillEnv());
+}
 
 CJS_Global::~CJS_Global() {
   DestroyGlobalPersisitentVariables();
   m_pGlobalData->Release();
-}
-
-void CJS_Global::InitInstance() {
-  Initial(GetRuntime()->GetFormFillEnv());
 }
 
 void CJS_Global::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
