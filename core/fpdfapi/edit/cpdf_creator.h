@@ -55,9 +55,7 @@ class CPDF_Creator {
   bool WriteDirectObj(uint32_t objnum, const CPDF_Object* pObj, bool bEncrypt);
   bool WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
 
-  bool WriteStream(const CPDF_Object* pStream,
-                   uint32_t objnum,
-                   CPDF_CryptoHandler* pCrypto);
+  bool WriteStream(const CPDF_Object* pStream, uint32_t objnum);
 
   CPDF_CryptoHandler* GetCryptoHandler();
 

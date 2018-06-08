@@ -151,9 +151,10 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
 
 CPDF_Creator::~CPDF_Creator() {}
 
-bool CPDF_Creator::WriteStream(const CPDF_Object* pStream,
-                               uint32_t objnum,
-                               CPDF_CryptoHandler* pCrypto) {
+bool CPDF_Creator::WriteStream(const CPDF_Object* pStream, uint32_t objnum) {
+  CPDF_CryptoHandler* pCrypto =
+      pStream != m_pMetadata ? GetCryptoHandler() : nullptr;
+
   CPDF_FlateEncoder encoder(pStream->AsStream(), pStream != m_pMetadata);
   CPDF_Encryptor encryptor(pCrypto, objnum, encoder.GetSpan());
   if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
@@ -183,9 +184,7 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
     return false;
 
   if (pObj->IsStream()) {
-    CPDF_CryptoHandler* pHandler =
-        pObj != m_pMetadata ? GetCryptoHandler() : nullptr;
-    if (!WriteStream(pObj, objnum, pHandler))
+    if (!WriteStream(pObj, objnum))
       return false;
   } else if (!WriteDirectObj(objnum, pObj, true)) {
     return false;
