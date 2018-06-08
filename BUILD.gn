@@ -302,6 +302,7 @@ visibility = [
 
 source_set("constants") {
   sources = [
+    "constants/page_object.h",
     "constants/stream_dict_common.h",
     "constants/transparency.h",
   ]

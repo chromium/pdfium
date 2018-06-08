@@ -9,6 +9,7 @@
 #include <set>
 #include <utility>
 
+#include "constants/page_object.h"
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -30,15 +31,15 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
   if (!pPageDict)
     return;
 
-  CPDF_Object* pPageAttr = GetPageAttr("Resources");
+  CPDF_Object* pPageAttr = GetPageAttr(pdfium::page_object::kResources);
   m_pResources = pPageAttr ? pPageAttr->GetDict() : nullptr;
   m_pPageResources = m_pResources;
 
-  CFX_FloatRect mediabox = GetBox("MediaBox");
+  CFX_FloatRect mediabox = GetBox(pdfium::page_object::kMediaBox);
   if (mediabox.IsEmpty())
     mediabox = CFX_FloatRect(0, 0, 612, 792);
 
-  m_BBox = GetBox("CropBox");
+  m_BBox = GetBox(pdfium::page_object::kCropBox);
   if (m_BBox.IsEmpty())
     m_BBox = mediabox;
   else
@@ -102,7 +103,7 @@ CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
     if (CPDF_Object* pObj = pPageDict->GetDirectObjectFor(name))
       return pObj;
 
-    pPageDict = pPageDict->GetDictFor("Parent");
+    pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent);
     if (!pPageDict || pdfium::ContainsKey(visited, pPageDict))
       break;
   }
@@ -194,7 +195,7 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
 }
 
 int CPDF_Page::GetPageRotation() const {
-  CPDF_Object* pRotate = GetPageAttr("Rotate");
+  CPDF_Object* pRotate = GetPageAttr(pdfium::page_object::kRotate);
   int rotate = pRotate ? (pRotate->GetInteger() / 90) % 4 : 0;
   return (rotate < 0) ? (rotate + 4) : rotate;
 }

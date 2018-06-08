@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/page_object.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
@@ -186,9 +187,10 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
   if (!pPageDict)
     return nullptr;
 
-  pPageDict->SetRectFor("MediaBox", CFX_FloatRect(0, 0, width, height));
-  pPageDict->SetNewFor<CPDF_Number>("Rotate", 0);
-  pPageDict->SetNewFor<CPDF_Dictionary>("Resources");
+  pPageDict->SetRectFor(pdfium::page_object::kMediaBox,
+                        CFX_FloatRect(0, 0, width, height));
+  pPageDict->SetNewFor<CPDF_Number>(pdfium::page_object::kRotate, 0);
+  pPageDict->SetNewFor<CPDF_Dictionary>(pdfium::page_object::kResources);
 
 #ifdef PDF_ENABLE_XFA
   auto* pContext = static_cast<CPDFXFA_Context*>(pDoc->GetExtension());
@@ -492,7 +494,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page,
     return;
 
   rotate %= 4;
-  pPage->GetDict()->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
+  pPage->GetDict()->SetNewFor<CPDF_Number>(pdfium::page_object::kRotate,
+                                           rotate * 90);
 }
 
 FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
