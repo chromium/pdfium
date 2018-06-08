@@ -63,20 +63,20 @@ class CPDF_Creator {
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   UnownedPtr<CPDF_Parser> const m_pParser;
-  bool m_bSecurityChanged;
   UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
   fxcrt::MaybeOwned<CPDF_SecurityHandler> m_pSecurityHandler;
   UnownedPtr<const CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
-  FX_FILESIZE m_SavedOffset;
-  int32_t m_iStage;
-  uint32_t m_CurObjNum;
-  FX_FILESIZE m_XrefStart;
+  FX_FILESIZE m_SavedOffset = 0;
+  int32_t m_iStage = -1;
+  uint32_t m_CurObjNum = 0;
+  FX_FILESIZE m_XrefStart = 0;
   std::map<uint32_t, FX_FILESIZE> m_ObjectOffsets;
   std::vector<uint32_t> m_NewObjNumArray;  // Sorted, ascending.
   std::unique_ptr<CPDF_Array> m_pIDArray;
-  int32_t m_FileVersion;
+  int32_t m_FileVersion = 0;
+  bool m_bSecurityChanged = false;
   bool m_IsIncremental = false;
   bool m_IsOriginal = false;
 };

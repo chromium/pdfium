@@ -144,17 +144,10 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
                            const RetainPtr<IFX_WriteStream>& archive)
     : m_pDocument(pDoc),
       m_pParser(pDoc->GetParser()),
-      m_bSecurityChanged(false),
       m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),
       m_pSecurityHandler(m_pParser ? m_pParser->GetSecurityHandler() : nullptr),
       m_dwLastObjNum(m_pDocument->GetLastObjNum()),
-      m_Archive(pdfium::MakeUnique<CFX_FileBufferArchive>(archive)),
-      m_SavedOffset(0),
-      m_iStage(-1),
-      m_CurObjNum(0),
-      m_XrefStart(0),
-      m_pIDArray(nullptr),
-      m_FileVersion(0) {}
+      m_Archive(pdfium::MakeUnique<CFX_FileBufferArchive>(archive)) {}
 
 CPDF_Creator::~CPDF_Creator() {}
 
