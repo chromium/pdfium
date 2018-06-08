@@ -363,7 +363,7 @@ int32_t CPDFXFA_DocEnvironment::GetCurrentPage(CXFA_FFDoc* hDoc) {
 void CPDFXFA_DocEnvironment::SetCurrentPage(CXFA_FFDoc* hDoc,
                                             int32_t iCurPage) {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv() ||
-      m_pContext->GetFormType() != FormType::kXFAFull || iCurPage < 0 ||
+      !m_pContext->ContainsXFAForm() || iCurPage < 0 ||
       iCurPage >= m_pContext->GetFormFillEnv()->GetPageCount()) {
     return;
   }
