@@ -3019,6 +3019,7 @@ test("pdfium_embeddertests") {
     "fpdfsdk/fpdf_save_embeddertest.cpp",
     "fpdfsdk/fpdf_structtree_embeddertest.cpp",
     "fpdfsdk/fpdf_text_embeddertest.cpp",
+    "fpdfsdk/fpdf_transformpage_embeddertest.cpp",
     "fpdfsdk/fpdf_view_c_api_test.c",
     "fpdfsdk/fpdf_view_c_api_test.h",
     "fpdfsdk/fpdf_view_embeddertest.cpp",
