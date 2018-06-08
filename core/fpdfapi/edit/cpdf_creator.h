@@ -35,30 +35,10 @@ class CPDF_Creator {
 
   void RemoveSecurity();
   bool Create(uint32_t flags);
-  int32_t Continue();
   bool SetFileVersion(int32_t fileVersion);
 
-  IFX_ArchiveStream* GetArchive() { return m_Archive.get(); }
-
-  uint32_t GetNextObjectNumber() { return ++m_dwLastObjNum; }
-  uint32_t GetLastObjectNumber() const { return m_dwLastObjNum; }
-  CPDF_CryptoHandler* GetCryptoHandler();
-  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
-  CPDF_Array* GetIDArray() const { return m_pIDArray.get(); }
-  CPDF_Dictionary* GetEncryptDict() const { return m_pEncryptDict.Get(); }
-  uint32_t GetEncryptObjectNumber() const { return m_dwEncryptObjNum; }
-
-  uint32_t GetObjectOffset(uint32_t objnum) { return m_ObjectOffsets[objnum]; }
-  bool HasObjectNumber(uint32_t objnum) {
-    return m_ObjectOffsets.find(objnum) != m_ObjectOffsets.end();
-  }
-  void SetObjectOffset(uint32_t objnum, FX_FILESIZE offset) {
-    m_ObjectOffsets[objnum] = offset;
-  }
-  bool IsIncremental() const { return !!(m_dwFlags & FPDFCREATE_INCREMENTAL); }
-  bool IsOriginal() const { return !(m_dwFlags & FPDFCREATE_NO_ORIGINAL); }
-
  private:
+  int32_t Continue();
   void Clear();
 
   void InitNewObjNumOffsets();
@@ -79,13 +59,14 @@ class CPDF_Creator {
                    uint32_t objnum,
                    CPDF_CryptoHandler* pCrypto);
 
-  bool IsXRefNeedEnd();
+  CPDF_CryptoHandler* GetCryptoHandler();
+  bool IsIncremental() const { return !!(m_dwFlags & FPDFCREATE_INCREMENTAL); }
+  bool IsOriginal() const { return !(m_dwFlags & FPDFCREATE_NO_ORIGINAL); }
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   UnownedPtr<CPDF_Parser> const m_pParser;
   bool m_bSecurityChanged;
   UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
-  uint32_t m_dwEncryptObjNum;
   fxcrt::MaybeOwned<CPDF_SecurityHandler> m_pSecurityHandler;
   UnownedPtr<const CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;

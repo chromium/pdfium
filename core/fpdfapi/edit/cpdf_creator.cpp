@@ -146,7 +146,6 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
       m_pParser(pDoc->GetParser()),
       m_bSecurityChanged(false),
       m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),
-      m_dwEncryptObjNum(0),
       m_pSecurityHandler(m_pParser ? m_pParser->GetSecurityHandler() : nullptr),
       m_dwLastObjNum(m_pDocument->GetLastObjNum()),
       m_Archive(pdfium::MakeUnique<CFX_FileBufferArchive>(archive)),
@@ -462,7 +461,6 @@ int32_t CPDF_Creator::WriteDoc_Stage2() {
         return -1;
 
       m_ObjectOffsets[m_dwLastObjNum] = saveOffset;
-      m_dwEncryptObjNum = m_dwLastObjNum;
       if (IsIncremental())
         m_NewObjNumArray.push_back(m_dwLastObjNum);
     }
