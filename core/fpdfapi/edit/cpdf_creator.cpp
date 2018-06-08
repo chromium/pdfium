@@ -346,27 +346,6 @@ bool CPDF_Creator::WriteNewObjs() {
   return true;
 }
 
-void CPDF_Creator::InitOldObjNumOffsets() {
-  if (!m_pParser)
-    return;
-
-  uint32_t dwStart = 0;
-  uint32_t dwEnd = m_pParser->GetLastObjNum();
-  while (dwStart <= dwEnd) {
-    while (dwStart <= dwEnd && m_pParser->IsObjectFreeOrNull(dwStart))
-      dwStart++;
-
-    if (dwStart > dwEnd)
-      break;
-
-    uint32_t j = dwStart;
-    while (j <= dwEnd && !m_pParser->IsObjectFreeOrNull(j))
-      j++;
-
-    dwStart = j;
-  }
-}
-
 void CPDF_Creator::InitNewObjNumOffsets() {
   for (const auto& pair : *m_pDocument) {
     const uint32_t objnum = pair.first;
@@ -411,8 +390,6 @@ int32_t CPDF_Creator::WriteDoc_Stage1() {
           !m_Archive->WriteString("\r\n%\xA1\xB3\xC5\xD7\r\n")) {
         return -1;
       }
-
-      InitOldObjNumOffsets();
       m_iStage = 20;
     } else {
       m_SavedOffset = m_pParser->GetFileAccess()->GetSize();
@@ -438,8 +415,6 @@ int32_t CPDF_Creator::WriteDoc_Stage1() {
       }
     }
     if (IsOriginal() && m_pParser->GetLastXRefOffset() == 0) {
-      InitOldObjNumOffsets();
-
       for (uint32_t num = 0; num <= m_pParser->GetLastObjNum(); ++num) {
         if (m_pParser->IsObjectFreeOrNull(num))
           continue;

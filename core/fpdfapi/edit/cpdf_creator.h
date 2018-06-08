@@ -61,7 +61,6 @@ class CPDF_Creator {
  private:
   void Clear();
 
-  void InitOldObjNumOffsets();
   void InitNewObjNumOffsets();
   void InitID();
 
