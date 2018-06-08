@@ -47,7 +47,7 @@ CJS_Return CJX_SignaturePseudoModel::enumerate(
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_SignaturePseudoModel::clear(

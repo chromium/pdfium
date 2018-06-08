@@ -27,7 +27,7 @@ CJX_Container::~CJX_Container() {}
 CJS_Return CJX_Container::getDelta(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Container::getDeltas(

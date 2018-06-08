@@ -42,7 +42,7 @@ CJS_Return CJX_List::append(CFX_V8* runtime,
     return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
   GetXFAList()->Append(pNode);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_List::insert(CFX_V8* runtime,
@@ -58,7 +58,7 @@ CJS_Return CJX_List::insert(CFX_V8* runtime,
   auto* pBeforeNode =
       ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[1]));
   GetXFAList()->Insert(pNewNode, pBeforeNode);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_List::remove(CFX_V8* runtime,
@@ -72,7 +72,7 @@ CJS_Return CJX_List::remove(CFX_V8* runtime,
     return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
 
   GetXFAList()->Remove(pNode);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_List::item(CFX_V8* runtime,

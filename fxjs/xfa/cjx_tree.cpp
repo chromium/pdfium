@@ -38,7 +38,7 @@ CJS_Return CJX_Tree::resolveNode(
   WideString expression = runtime->ToWideString(params[0]);
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
-    return CJS_Return(true);
+    return CJS_Return();
 
   CXFA_Object* refNode = GetXFAObject();
   if (refNode->GetElementType() == XFA_Element::Xfa)
@@ -90,7 +90,7 @@ CJS_Return CJX_Tree::resolveNodes(
 
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
-    return CJS_Return(true);
+    return CJS_Return();
 
   auto pValue = pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
   ResolveNodeList(pValue.get(), runtime->ToWideString(params[0]),

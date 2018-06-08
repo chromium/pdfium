@@ -34,11 +34,11 @@ CJS_Return CJS_Report::writeText(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJS_Report::save(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
-  return CJS_Return(true);
+  return CJS_Return();
 }

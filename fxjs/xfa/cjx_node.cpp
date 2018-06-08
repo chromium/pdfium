@@ -117,7 +117,7 @@ CJS_Return CJX_Node::applyXSL(CFX_V8* runtime,
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Node::assignNode(
@@ -127,7 +127,7 @@ CJS_Return CJX_Node::assignNode(
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Node::clone(CFX_V8* runtime,
@@ -206,7 +206,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
 
   ByteString expression = runtime->ToByteString(params[0]);
   if (expression.IsEmpty())
-    return CJS_Return(true);
+    return CJS_Return();
 
   bool bIgnoreRoot = true;
   if (params.size() >= 2)
@@ -218,11 +218,11 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
 
   auto pParser = pdfium::MakeUnique<CXFA_DocumentParser>(GetDocument());
   if (!pParser)
-    return CJS_Return(true);
+    return CJS_Return();
 
   CFX_XMLNode* pXMLNode = pParser->ParseXMLData(expression);
   if (!pXMLNode)
-    return CJS_Return(true);
+    return CJS_Return();
 
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != FX_XMLNODE_Element ||
@@ -278,7 +278,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot);
   pFakeRoot = pParser->GetRootNode();
   if (!pFakeRoot)
-    return CJS_Return(true);
+    return CJS_Return();
 
   if (bOverwrite) {
     CXFA_Node* pChild = GetXFANode()->GetFirstChild();
@@ -326,14 +326,14 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   }
   pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren);
 
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Node::saveFilteredXML(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // TODO(weili): Check whether we need to implement this, pdfium:501.
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Node::saveXML(CFX_V8* runtime,
@@ -383,7 +383,7 @@ CJS_Return CJX_Node::setAttribute(
   WideString attributeValue = runtime->ToWideString(params[0]);
   WideString attribute = runtime->ToWideString(params[1]);
   SetAttribute(attribute.AsStringView(), attributeValue.AsStringView(), true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Node::setElement(
@@ -393,7 +393,7 @@ CJS_Return CJX_Node::setElement(
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 void CJX_Node::id(CFXJSE_Value* pValue,

@@ -78,7 +78,7 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
   CXFA_Node* pNode =
       ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
-    return CJS_Return(true);
+    return CJS_Return();
 
   WideString unit(L"pt");
   if (params.size() >= 2) {
@@ -90,11 +90,11 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return(true);
+    return CJS_Return();
 
   CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem)
-    return CJS_Return(true);
+    return CJS_Return();
 
   while (iIndex > 0 && pLayoutItem) {
     pLayoutItem = pLayoutItem->GetNext();
@@ -154,7 +154,7 @@ CJS_Return CJX_LayoutPseudoModel::NumberedPageCount(CFX_V8* runtime,
                                                     bool bNumbered) {
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return(true);
+    return CJS_Return();
 
   int32_t iPageCount = 0;
   int32_t iPageNum = pDocLayout->CountPages();
@@ -189,11 +189,11 @@ CJS_Return CJX_LayoutPseudoModel::pageSpan(
   CXFA_Node* pNode =
       ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
-    return CJS_Return(true);
+    return CJS_Return();
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return(true);
+    return CJS_Return();
 
   CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem)
@@ -365,11 +365,11 @@ CJS_Return CJX_LayoutPseudoModel::pageContent(
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return CJS_Return(true);
+    return CJS_Return();
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return(true);
+    return CJS_Return();
 
   auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(GetDocument());
   pArrayNodeList->SetArrayNodeList(
@@ -411,7 +411,7 @@ CJS_Return CJX_LayoutPseudoModel::relayout(
     pLayoutProcessor->AddChangedContainer(pContentRootNode);
 
   pLayoutProcessor->SetForceReLayout(true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_LayoutPseudoModel::absPageSpan(
@@ -445,7 +445,7 @@ CJS_Return CJX_LayoutPseudoModel::sheet(
 CJS_Return CJX_LayoutPseudoModel::relayoutPageArea(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_LayoutPseudoModel::sheetCount(
@@ -474,7 +474,7 @@ CJS_Return CJX_LayoutPseudoModel::PageInternals(
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return(true);
+    return CJS_Return();
 
   CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem)

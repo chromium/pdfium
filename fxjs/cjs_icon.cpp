@@ -34,5 +34,5 @@ CJS_Return CJS_Icon::get_name(CJS_Runtime* pRuntime) {
 }
 
 CJS_Return CJS_Icon::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
-  return CJS_Return(false);
+  return CJS_Return(JSMessage::kNotSupportedError);
 }

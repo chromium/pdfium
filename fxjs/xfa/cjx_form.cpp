@@ -59,7 +59,7 @@ CJS_Return CJX_Form::remerge(CFX_V8* runtime,
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   GetDocument()->DoDataRemerge(true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Form::execInitialize(
@@ -72,7 +72,7 @@ CJS_Return CJX_Form::execInitialize(
   if (pNotify)
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
                                   true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Form::recalculate(
@@ -82,19 +82,19 @@ CJS_Return CJX_Form::recalculate(
       GetDocument()->GetScriptContext()->GetEventParam();
   if (pEventParam->m_eType == XFA_EVENT_Calculate ||
       pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-    return CJS_Return(true);
+    return CJS_Return();
   }
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify || runtime->ToInt32(params[0]) != 0)
-    return CJS_Return(true);
+    return CJS_Return();
 
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false, true);
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate, false, true);
   pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Ready, true, true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Form::execCalculate(
@@ -107,7 +107,7 @@ CJS_Return CJX_Form::execCalculate(
   if (pNotify)
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
                                   true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Form::execValidate(

@@ -44,7 +44,7 @@ CJS_Return CJX_Field::clearItems(
   CXFA_Node* node = GetXFANode();
   if (node->IsWidgetReady())
     node->DeleteItem(-1, true, false);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Field::execEvent(
@@ -57,7 +57,7 @@ CJS_Return CJX_Field::execEvent(
   int32_t iRet =
       execSingleEventByName(eventString.AsStringView(), XFA_Element::Field);
   if (eventString != L"validate")
-    return CJS_Return(true);
+    return CJS_Return();
 
   return CJS_Return(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
@@ -73,7 +73,7 @@ CJS_Return CJX_Field::execInitialize(
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
                                   false);
   }
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Field::deleteItem(
@@ -84,7 +84,7 @@ CJS_Return CJX_Field::deleteItem(
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return(true);
+    return CJS_Return();
 
   bool bValue = node->DeleteItem(runtime->ToInt32(params[0]), true, true);
   return CJS_Return(runtime->NewBoolean(bValue));
@@ -119,7 +119,7 @@ CJS_Return CJX_Field::boundItem(
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return(true);
+    return CJS_Return();
 
   WideString value = runtime->ToWideString(params[0]);
   WideString boundValue = node->GetItemValue(value.AsStringView());
@@ -134,7 +134,7 @@ CJS_Return CJX_Field::getItemState(
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return(true);
+    return CJS_Return();
 
   int32_t state = node->GetItemState(runtime->ToInt32(params[0]));
   return CJS_Return(runtime->NewBoolean(state != 0));
@@ -151,7 +151,7 @@ CJS_Return CJX_Field::execCalculate(
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
                                   false);
   }
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Field::getDisplayItem(
@@ -183,17 +183,17 @@ CJS_Return CJX_Field::setItemState(
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return(true);
+    return CJS_Return();
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (runtime->ToInt32(params[1]) != 0) {
     node->SetItemState(iIndex, true, true, true, true);
-    return CJS_Return(true);
+    return CJS_Return();
   }
   if (node->GetItemState(iIndex))
     node->SetItemState(iIndex, false, true, true, true);
 
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Field::addItem(CFX_V8* runtime,
@@ -203,7 +203,7 @@ CJS_Return CJX_Field::addItem(CFX_V8* runtime,
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return(true);
+    return CJS_Return();
 
   WideString label;
   if (params.size() >= 1)
@@ -214,7 +214,7 @@ CJS_Return CJX_Field::addItem(CFX_V8* runtime,
     value = runtime->ToWideString(params[1]);
 
   node->InsertItem(label, value, true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Field::execValidate(

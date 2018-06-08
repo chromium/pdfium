@@ -83,7 +83,7 @@ CJS_Return CJS_Util::printf(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 1)
-    return CJS_Return(false);
+    return CJS_Return(JSMessage::kParamError);
 
   std::wstring unsafe_fmt_string(pRuntime->ToWideString(params[0]).c_str());
   std::vector<std::wstring> unsafe_conversion_specifiers;
@@ -145,10 +145,10 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 2)
-    return CJS_Return(false);
+    return CJS_Return(JSMessage::kParamError);
 
   if (params[1].IsEmpty() || !params[1]->IsDate())
-    return CJS_Return(JSGetStringFromID(JSMessage::kSecondParamNotDateError));
+    return CJS_Return(JSMessage::kSecondParamNotDateError);
 
   v8::Local<v8::Date> v8_date = params[1].As<v8::Date>();
   if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date))) {
@@ -180,7 +180,7 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
                                       month, day, hour, min, sec);
         break;
       default:
-        return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
+        return CJS_Return(JSMessage::kValueError);
     }
 
     return CJS_Return(pRuntime->NewString(swResult.c_str()));
@@ -189,7 +189,7 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
   if (params[0]->IsString()) {
     // We don't support XFAPicture at the moment.
     if (iSize > 2 && pRuntime->ToBoolean(params[2]))
-      return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+      return CJS_Return(JSMessage::kNotSupportedError);
 
     // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
     // pre-existing %-directives before inserting our own.
@@ -210,7 +210,7 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
     }
 
     if (year < 0)
-      return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
+      return CJS_Return(JSMessage::kValueError);
 
     const TbConvertAdditional cTableAd[] = {
         {L"m", month}, {L"d", day},
@@ -248,13 +248,13 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
     return CJS_Return(pRuntime->NewString(cFormat.c_str()));
   }
 
-  return CJS_Return(JSGetStringFromID(JSMessage::kTypeError));
+  return CJS_Return(JSMessage::kTypeError);
 }
 
 CJS_Return CJS_Util::printx(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return(JSMessage::kParamError);
 
   return CJS_Return(
       pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
@@ -363,7 +363,7 @@ WideString CJS_Util::printx(const WideString& wsFormat,
 CJS_Return CJS_Util::scand(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
-    return CJS_Return(false);
+    return CJS_Return(JSMessage::kParamError);
 
   WideString sFormat = pRuntime->ToWideString(params[0]);
   WideString sDate = pRuntime->ToWideString(params[1]);
@@ -380,11 +380,11 @@ CJS_Return CJS_Util::byteToChar(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return(JSMessage::kParamError);
 
   int arg = pRuntime->ToInt32(params[0]);
   if (arg < 0 || arg > 255)
-    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
+    return CJS_Return(JSMessage::kValueError);
 
   WideString wStr(static_cast<wchar_t>(arg));
   return CJS_Return(pRuntime->NewString(wStr.c_str()));

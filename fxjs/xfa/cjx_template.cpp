@@ -42,7 +42,7 @@ CJS_Return CJX_Template::remerge(
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
   GetDocument()->DoDataRemerge(true);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJX_Template::execInitialize(

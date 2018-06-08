@@ -253,19 +253,17 @@ CJS_Return CJS_Color::SetPropertyHelper(CJS_Runtime* pRuntime,
                                         v8::Local<v8::Value> vp,
                                         CFX_Color* var) {
   if (vp.IsEmpty() || !vp->IsArray())
-    return CJS_Return(false);
+    return CJS_Return(JSMessage::kParamError);
 
   *var = ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(vp));
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJS_Color::convert(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   int iSize = params.size();
-  if (iSize < 2)
-    return CJS_Return(false);
-  if (params[0].IsEmpty() || !params[0]->IsArray())
-    return CJS_Return(false);
+  if (iSize < 2 || params[0].IsEmpty() || !params[0]->IsArray())
+    return CJS_Return(JSMessage::kParamError);
 
   WideString sDestSpace = pRuntime->ToWideString(params[1]);
   int nColorType = CFX_Color::kTransparent;
@@ -290,11 +288,9 @@ CJS_Return CJS_Color::convert(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_Color::equal(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
-  if (params.size() < 2)
-    return CJS_Return(false);
-  if (params[0].IsEmpty() || !params[0]->IsArray() || params[1].IsEmpty() ||
-      !params[1]->IsArray()) {
-    return CJS_Return(false);
+  if (params.size() < 2 || params[0].IsEmpty() || !params[0]->IsArray() ||
+      params[1].IsEmpty() || !params[1]->IsArray()) {
+    return CJS_Return(JSMessage::kParamError);
   }
 
   CFX_Color color1 =

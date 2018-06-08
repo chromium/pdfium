@@ -8,12 +8,14 @@
 #define FXJS_CJS_RETURN_H_
 
 #include "fxjs/cfxjs_engine.h"
+#include "fxjs/js_resources.h"
 
 class CJS_Return {
  public:
-  explicit CJS_Return(bool);
-  explicit CJS_Return(const WideString&);
-  explicit CJS_Return(v8::Local<v8::Value>);
+  CJS_Return();                               // Successful but empty return.
+  explicit CJS_Return(v8::Local<v8::Value>);  // Successful return with value.
+  explicit CJS_Return(const WideString&);     // Error with custom message.
+  explicit CJS_Return(JSMessage id);          // Error with stock message.
   CJS_Return(const CJS_Return&);
   ~CJS_Return();
 
@@ -24,8 +26,6 @@ class CJS_Return {
   v8::Local<v8::Value> Return() const { return return_; }
 
  private:
-  CJS_Return() = delete;
-
   bool is_error_ = false;
   WideString error_;
   v8::Local<v8::Value> return_;

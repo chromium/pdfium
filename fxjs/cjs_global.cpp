@@ -218,28 +218,30 @@ void CJS_Global::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
 }
 
 CJS_Return CJS_Global::QueryProperty(const wchar_t* propname) {
-  return CJS_Return(WideString(propname) != L"setPersistent");
+  if (WideString(propname) != L"setPersistent")
+    return CJS_Return(JSMessage::kUnknownProperty);
+  return CJS_Return();
 }
 
 CJS_Return CJS_Global::DelProperty(CJS_Runtime* pRuntime,
                                    const wchar_t* propname) {
   auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
   if (it == m_MapGlobal.end())
-    return CJS_Return(false);
+    return CJS_Return(JSMessage::kUnknownProperty);
 
   it->second->bDeleted = true;
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 CJS_Return CJS_Global::GetProperty(CJS_Runtime* pRuntime,
                                    const wchar_t* propname) {
   auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
   if (it == m_MapGlobal.end())
-    return CJS_Return(true);
+    return CJS_Return();
 
   JSGlobalData* pData = it->second.get();
   if (pData->bDeleted)
-    return CJS_Return(true);
+    return CJS_Return();
 
   switch (pData->nType) {
     case JS_GlobalDataType::NUMBER:
@@ -257,7 +259,7 @@ CJS_Return CJS_Global::GetProperty(CJS_Runtime* pRuntime,
     default:
       break;
   }
-  return CJS_Return(false);
+  return CJS_Return(JSMessage::kObjectTypeError);
 }
 
 CJS_Return CJS_Global::SetProperty(CJS_Runtime* pRuntime,
@@ -290,24 +292,24 @@ CJS_Return CJS_Global::SetProperty(CJS_Runtime* pRuntime,
   }
   if (vp->IsUndefined()) {
     DelProperty(pRuntime, propname);
-    return CJS_Return(true);
+    return CJS_Return();
   }
-  return CJS_Return(false);
+  return CJS_Return(JSMessage::kObjectTypeError);
 }
 
 CJS_Return CJS_Global::setPersistent(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return(JSMessage::kParamError);
 
   auto it = m_MapGlobal.find(
       ByteString::FromUnicode(pRuntime->ToWideString(params[0])));
   if (it == m_MapGlobal.end() || it->second->bDeleted)
-    return CJS_Return(JSGetStringFromID(JSMessage::kGlobalNotFoundError));
+    return CJS_Return(JSMessage::kGlobalNotFoundError);
 
   it->second->bPersistent = pRuntime->ToBoolean(params[1]);
-  return CJS_Return(true);
+  return CJS_Return();
 }
 
 void CJS_Global::UpdateGlobalPersistentVariables() {
@@ -498,7 +500,7 @@ CJS_Return CJS_Global::SetGlobalVariables(const ByteString& propname,
                                           v8::Local<v8::Object> pData,
                                           bool bDefaultPersistent) {
   if (propname.IsEmpty())
-    return CJS_Return(false);
+    return CJS_Return(JSMessage::kUnknownProperty);
 
   auto it = m_MapGlobal.find(propname);
   if (it != m_MapGlobal.end()) {
@@ -526,9 +528,9 @@ CJS_Return CJS_Global::SetGlobalVariables(const ByteString& propname,
       case JS_GlobalDataType::NULLOBJ:
         break;
       default:
-        return CJS_Return(false);
+        return CJS_Return(JSMessage::kObjectTypeError);
     }
-    return CJS_Return(true);
+    return CJS_Return();
   }
 
   auto pNewData = pdfium::MakeUnique<JSGlobalData>();
@@ -558,8 +560,8 @@ CJS_Return CJS_Global::SetGlobalVariables(const ByteString& propname,
       pNewData->bPersistent = bDefaultPersistent;
       break;
     default:
-      return CJS_Return(false);
+      return CJS_Return(JSMessage::kObjectTypeError);
   }
   m_MapGlobal[propname] = std::move(pNewData);
-  return CJS_Return(true);
+  return CJS_Return();
 }
