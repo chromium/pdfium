@@ -60,8 +60,6 @@ class CPDF_Creator {
                    CPDF_CryptoHandler* pCrypto);
 
   CPDF_CryptoHandler* GetCryptoHandler();
-  bool IsIncremental() const { return !!(m_dwFlags & FPDFCREATE_INCREMENTAL); }
-  bool IsOriginal() const { return !(m_dwFlags & FPDFCREATE_NO_ORIGINAL); }
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   UnownedPtr<CPDF_Parser> const m_pParser;
@@ -73,13 +71,14 @@ class CPDF_Creator {
   std::unique_ptr<IFX_ArchiveStream> m_Archive;
   FX_FILESIZE m_SavedOffset;
   int32_t m_iStage;
-  uint32_t m_dwFlags;
   uint32_t m_CurObjNum;
   FX_FILESIZE m_XrefStart;
   std::map<uint32_t, FX_FILESIZE> m_ObjectOffsets;
   std::vector<uint32_t> m_NewObjNumArray;  // Sorted, ascending.
   std::unique_ptr<CPDF_Array> m_pIDArray;
   int32_t m_FileVersion;
+  bool m_IsIncremental = false;
+  bool m_IsOriginal = false;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
