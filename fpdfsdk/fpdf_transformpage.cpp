@@ -36,6 +36,9 @@ bool GetBoundingBox(CPDF_Page* page,
                     float* bottom,
                     float* right,
                     float* top) {
+  if (!left || !bottom || !right || !top)
+    return false;
+
   CPDF_Array* pArray = page->GetDict()->GetArrayFor(key);
   if (!pArray)
     return false;

@@ -66,6 +66,16 @@ TEST_F(FPDFTransformEmbedderTest, GetBoundingBoxes) {
     EXPECT_EQ(60, cropbox_right);
     EXPECT_EQ(60, cropbox_top);
 
+    EXPECT_FALSE(FPDFPage_GetCropBox(page, nullptr, &cropbox_bottom,
+                                     &cropbox_right, &cropbox_top));
+    EXPECT_FALSE(FPDFPage_GetCropBox(page, &cropbox_left, nullptr,
+                                     &cropbox_right, &cropbox_top));
+    EXPECT_FALSE(FPDFPage_GetCropBox(page, &cropbox_left, &cropbox_bottom,
+                                     nullptr, &cropbox_top));
+    EXPECT_FALSE(FPDFPage_GetCropBox(page, &cropbox_left, &cropbox_bottom,
+                                     &cropbox_right, nullptr));
+    EXPECT_FALSE(FPDFPage_GetCropBox(page, nullptr, nullptr, nullptr, nullptr));
+
     UnloadPage(page);
   }
 }
