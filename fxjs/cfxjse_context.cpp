@@ -42,7 +42,9 @@ const char szCompatibleModeScript[] =
     "  }\n"
     "}(this, {String: ['substr', 'toUpperCase']}));";
 
-wchar_t g_FXJSETagString[] = L"FXJSE_HostObject";
+// Only address matters, values are for humans debuging here.
+char g_FXJSEHostObjectTag[] = "FXJSE Host Object";
+char g_FXJSEProxyObjectTag[] = "FXJSE Proxy Object";
 
 v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
                                         v8::TryCatch& trycatch) {
@@ -85,11 +87,6 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
   return hReturnValue;
 }
 
-v8::Local<v8::Object> GetGlobalObjectFromContext(
-    v8::Local<v8::Context> hContext) {
-  return hContext->Global()->GetPrototype().As<v8::Object>();
-}
-
 class CFXJSE_ScopeUtil_IsolateHandleContext {
  public:
   explicit CFXJSE_ScopeUtil_IsolateHandleContext(CFXJSE_Context* pContext)
@@ -106,13 +103,20 @@ class CFXJSE_ScopeUtil_IsolateHandleContext {
   v8::Context::Scope m_cscope;
 };
 
+void FXJSE_UpdateProxyBinding(v8::Local<v8::Object>& hObject) {
+  ASSERT(!hObject.IsEmpty());
+  ASSERT(hObject->InternalFieldCount() == 2);
+  hObject->SetAlignedPointerInInternalField(0, g_FXJSEProxyObjectTag);
+  hObject->SetAlignedPointerInInternalField(1, nullptr);
+}
+
 }  // namespace
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
                                CFXJSE_HostObject* lpNewBinding) {
   ASSERT(!hObject.IsEmpty());
   ASSERT(hObject->InternalFieldCount() == 2);
-  hObject->SetAlignedPointerInInternalField(0, g_FXJSETagString);
+  hObject->SetAlignedPointerInInternalField(0, g_FXJSEHostObjectTag);
   hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
 }
 
@@ -123,7 +127,8 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
     return nullptr;
 
   v8::Local<v8::Object> hObject = hJSObject;
-  if (hObject->InternalFieldCount() != 2) {
+  if (hObject->InternalFieldCount() != 2 ||
+      hObject->GetAlignedPointerFromInternalField(0) == g_FXJSEProxyObjectTag) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
     if (hProtoObject.IsEmpty() || !hProtoObject->IsObject())
       return nullptr;
@@ -132,8 +137,9 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
     if (hObject->InternalFieldCount() != 2)
       return nullptr;
   }
-  if (hObject->GetAlignedPointerFromInternalField(0) != g_FXJSETagString)
+  if (hObject->GetAlignedPointerFromInternalField(0) != g_FXJSEHostObjectTag)
     return nullptr;
+
   if (lpClass) {
     v8::Local<v8::FunctionTemplate> hClass =
         v8::Local<v8::FunctionTemplate>::New(
@@ -175,21 +181,14 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
       v8::Context::New(pIsolate, nullptr, hObjectTemplate);
 
   v8::Local<v8::Object> pThisProxy = hNewContext->Global();
-  ASSERT(pThisProxy->InternalFieldCount() == 2);
-  pThisProxy->SetAlignedPointerInInternalField(0, nullptr);
-  pThisProxy->SetAlignedPointerInInternalField(1, nullptr);
+  FXJSE_UpdateProxyBinding(pThisProxy);
 
   v8::Local<v8::Object> pThis = pThisProxy->GetPrototype().As<v8::Object>();
-  ASSERT(pThis->InternalFieldCount() == 2);
-  pThis->SetAlignedPointerInInternalField(0, nullptr);
-  pThis->SetAlignedPointerInInternalField(1, nullptr);
+  FXJSE_UpdateObjectBinding(pThis, pGlobalObject);
 
   v8::Local<v8::Context> hRootContext = v8::Local<v8::Context>::New(
       pIsolate, CFXJSE_RuntimeData::Get(pIsolate)->m_hRootContext);
   hNewContext->SetSecurityToken(hRootContext->GetSecurityToken());
-
-  v8::Local<v8::Object> hGlobalObject = GetGlobalObjectFromContext(hNewContext);
-  FXJSE_UpdateObjectBinding(hGlobalObject, pGlobalObject);
   pContext->m_hContext.Reset(pIsolate, hNewContext);
   return pContext;
 }
@@ -203,7 +202,8 @@ std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext =
       v8::Local<v8::Context>::New(m_pIsolate, m_hContext);
-  v8::Local<v8::Object> hGlobalObject = GetGlobalObjectFromContext(hContext);
+  v8::Local<v8::Object> hGlobalObject =
+      hContext->Global()->GetPrototype().As<v8::Object>();
   pValue->ForceSetValue(hGlobalObject);
   return pValue;
 }
