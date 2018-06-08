@@ -446,9 +446,9 @@ WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
       IsAddLineFeed = false;
       if (charinfo.m_Unicode)
         strText += charinfo.m_Unicode;
-    } else if (charinfo.m_Unicode == 32) {
-      if (IsContainPreChar && charinfo.m_Unicode) {
-        strText += charinfo.m_Unicode;
+    } else if (charinfo.m_Unicode == L' ') {
+      if (IsContainPreChar) {
+        strText += L' ';
         IsContainPreChar = false;
         IsAddLineFeed = false;
       }

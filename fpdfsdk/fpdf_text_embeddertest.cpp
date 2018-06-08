@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_memory.h"
 #include "public/fpdf_text.h"
+#include "public/fpdf_transformpage.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -159,7 +162,8 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_EQ(0.0, bottom);
   EXPECT_EQ(0.0, top);
 
-  EXPECT_EQ(9, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, 0, 0));
+  EXPECT_EQ(
+      9, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, nullptr, 0));
 
   // Extract starting at character 4 as above.
   memset(buffer, 0xbd, sizeof(buffer));
@@ -750,4 +754,59 @@ TEST_F(FPDFTextEmbeddertest, CountRects) {
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbeddertest, CroppedText) {
+  static constexpr int kPageCount = 4;
+  static constexpr FS_RECTF kBoxes[kPageCount] = {
+      {50.0f, 150.0f, 150.0f, 50.0f},
+      {50.0f, 150.0f, 150.0f, 50.0f},
+      {60.0f, 150.0f, 150.0f, 60.0f},
+      {60.0f, 150.0f, 150.0f, 60.0f},
+  };
+  static constexpr const char* kExpectedText[kPageCount] = {
+      " world!\r\ndbye, world!", " world!\r\ndbye, world!", "bye, world!",
+      "bye, world!",
+  };
+
+  ASSERT_TRUE(OpenDocument("cropped_text.pdf"));
+  ASSERT_EQ(kPageCount, FPDF_GetPageCount(document()));
+
+  for (int i = 0; i < kPageCount; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    ASSERT_TRUE(page);
+
+    FS_RECTF box;
+    EXPECT_TRUE(FPDF_GetPageBoundingBox(page, &box));
+    EXPECT_EQ(kBoxes[i].left, box.left);
+    EXPECT_EQ(kBoxes[i].top, box.top);
+    EXPECT_EQ(kBoxes[i].right, box.right);
+    EXPECT_EQ(kBoxes[i].bottom, box.bottom);
+
+    {
+      ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+      ASSERT_TRUE(textpage);
+
+      unsigned short buffer[128];
+      memset(buffer, 0xbd, sizeof(buffer));
+      int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
+      ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
+      EXPECT_TRUE(check_unsigned_shorts(kHelloGoodbyeText, buffer,
+                                        kHelloGoodbyeTextSize));
+
+      int expected_char_count = strlen(kExpectedText[i]);
+      ASSERT_EQ(expected_char_count,
+                FPDFText_GetBoundedText(textpage.get(), box.left, box.top,
+                                        box.right, box.bottom, nullptr, 0));
+
+      memset(buffer, 0xbd, sizeof(buffer));
+      ASSERT_EQ(expected_char_count + 1,
+                FPDFText_GetBoundedText(textpage.get(), box.left, box.top,
+                                        box.right, box.bottom, buffer, 128));
+      EXPECT_TRUE(
+          check_unsigned_shorts(kExpectedText[i], buffer, expected_char_count));
+    }
+
+    UnloadPage(page);
+  }
 }
