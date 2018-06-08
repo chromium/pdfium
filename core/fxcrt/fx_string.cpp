@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
+#include "third_party/base/compiler_specific.h"
 
 namespace {
 
@@ -133,8 +134,14 @@ bool FX_atonum(const ByteStringView& strc, void* pData) {
   // Switch back to the int space so we can flip to a negative if we need.
   uint32_t uValue = integer.ValueOrDefault(0);
   int32_t value = static_cast<int>(uValue);
-  if (bNegative)
-    value = -value;
+  if (bNegative) {
+    // |value| is usually positive, except in the corner case of "-2147483648",
+    // where |uValue| is 2147483648. When it gets casted to an int, |value|
+    // becomes -2147483648. For this case, avoid undefined behavior, because an
+    // integer cannot represent 2147483648.
+    static constexpr int kMinInt = std::numeric_limits<int>::min();
+    value = LIKELY(value != kMinInt) ? -value : kMinInt;
+  }
 
   int* pInt = static_cast<int*>(pData);
   *pInt = value;
