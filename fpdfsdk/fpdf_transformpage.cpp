@@ -28,7 +28,8 @@ namespace {
 void SetBoundingBox(CPDF_Page* page,
                     const ByteString& key,
                     const CFX_FloatRect& rect) {
-  page->GetDict()->SetRectFor(key, rect);
+  if (page)
+    page->GetDict()->SetRectFor(key, rect);
 }
 
 bool GetBoundingBox(CPDF_Page* page,
@@ -37,7 +38,7 @@ bool GetBoundingBox(CPDF_Page* page,
                     float* bottom,
                     float* right,
                     float* top) {
-  if (!left || !bottom || !right || !top)
+  if (!page || !left || !bottom || !right || !top)
     return false;
 
   CPDF_Array* pArray = page->GetDict()->GetArrayFor(key);
@@ -64,11 +65,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetMediaBox(FPDF_PAGE page,
                                                     float bottom,
                                                     float right,
                                                     float top) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
-    return;
-
-  SetBoundingBox(pPage, pdfium::page_object::kMediaBox,
+  SetBoundingBox(CPDFPageFromFPDFPage(page), pdfium::page_object::kMediaBox,
                  CFX_FloatRect(left, bottom, right, top));
 }
 
@@ -77,11 +74,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
                                                    float bottom,
                                                    float right,
                                                    float top) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
-    return;
-
-  SetBoundingBox(pPage, pdfium::page_object::kCropBox,
+  SetBoundingBox(CPDFPageFromFPDFPage(page), pdfium::page_object::kCropBox,
                  CFX_FloatRect(left, bottom, right, top));
 }
 
@@ -90,9 +83,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetMediaBox(FPDF_PAGE page,
                                                          float* bottom,
                                                          float* right,
                                                          float* top) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  return pPage && GetBoundingBox(pPage, pdfium::page_object::kMediaBox, left,
-                                 bottom, right, top);
+  return GetBoundingBox(CPDFPageFromFPDFPage(page),
+                        pdfium::page_object::kMediaBox, left, bottom, right,
+                        top);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
@@ -100,9 +93,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
                                                         float* bottom,
                                                         float* right,
                                                         float* top) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  return pPage && GetBoundingBox(pPage, pdfium::page_object::kCropBox, left,
-                                 bottom, right, top);
+  return GetBoundingBox(CPDFPageFromFPDFPage(page),
+                        pdfium::page_object::kCropBox, left, bottom, right,
+                        top);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
