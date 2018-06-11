@@ -26,7 +26,7 @@ const CJX_MethodSpec CJX_Form::MethodSpecs[] = {
     {"remerge", remerge_static}};
 
 CJX_Form::CJX_Form(CXFA_Form* form) : CJX_Model(form) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Form::~CJX_Form() {}

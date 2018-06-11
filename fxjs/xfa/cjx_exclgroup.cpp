@@ -25,7 +25,7 @@ const CJX_MethodSpec CJX_ExclGroup::MethodSpecs[] = {
     {"selectedMember", selectedMember_static}};
 
 CJX_ExclGroup::CJX_ExclGroup(CXFA_ExclGroup* group) : CJX_Node(group) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_ExclGroup::~CJX_ExclGroup() {}

@@ -22,7 +22,7 @@ const CJX_MethodSpec CJX_Template::MethodSpecs[] = {
     {"remerge", remerge_static}};
 
 CJX_Template::CJX_Template(CXFA_Template* tmpl) : CJX_Model(tmpl) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Template::~CJX_Template() {}

@@ -48,7 +48,7 @@ const CJX_MethodSpec CJX_LayoutPseudoModel::MethodSpecs[] = {
 
 CJX_LayoutPseudoModel::CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_LayoutPseudoModel::~CJX_LayoutPseudoModel() {}

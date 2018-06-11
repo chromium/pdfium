@@ -19,7 +19,7 @@ const CJX_MethodSpec CJX_DataWindow::MethodSpecs[] = {
 
 CJX_DataWindow::CJX_DataWindow(CScript_DataWindow* window)
     : CJX_Object(window) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_DataWindow::~CJX_DataWindow() {}

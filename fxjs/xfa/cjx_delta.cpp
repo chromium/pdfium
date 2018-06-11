@@ -15,7 +15,7 @@
 const CJX_MethodSpec CJX_Delta::MethodSpecs[] = {{"restore", restore_static}};
 
 CJX_Delta::CJX_Delta(CXFA_Delta* delta) : CJX_Object(delta) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Delta::~CJX_Delta() {}

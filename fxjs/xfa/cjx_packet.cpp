@@ -23,7 +23,7 @@ const CJX_MethodSpec CJX_Packet::MethodSpecs[] = {
     {"setAttribute", setAttribute_static}};
 
 CJX_Packet::CJX_Packet(CXFA_Packet* packet) : CJX_Node(packet) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Packet::~CJX_Packet() {}

@@ -20,7 +20,7 @@ const CJX_MethodSpec CJX_LogPseudoModel::MethodSpecs[] = {
 
 CJX_LogPseudoModel::CJX_LogPseudoModel(CScript_LogPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_LogPseudoModel::~CJX_LogPseudoModel() {}

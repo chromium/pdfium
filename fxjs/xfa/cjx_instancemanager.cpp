@@ -27,7 +27,7 @@ const CJX_MethodSpec CJX_InstanceManager::MethodSpecs[] = {
 
 CJX_InstanceManager::CJX_InstanceManager(CXFA_InstanceManager* mgr)
     : CJX_Node(mgr) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_InstanceManager::~CJX_InstanceManager() {}

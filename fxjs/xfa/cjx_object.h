@@ -17,6 +17,7 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "fxjs/cjx_define.h"
 #include "third_party/base/optional.h"
+#include "third_party/base/span.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFXJSE_Value;
@@ -218,8 +219,7 @@ class CJX_Object {
   void ThrowTooManyOccurancesException(const WideString& obj) const;
 
  protected:
-  void DefineMethods(const CJX_MethodSpec method_specs[], size_t count);
-
+  void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
   void SetMapModuleString(void* pKey, const WideStringView& wsValue);
   void ThrowException(const wchar_t* str, ...) const;

@@ -16,7 +16,7 @@ const CJX_MethodSpec CJX_Manifest::MethodSpecs[] = {
     {"evaluate", evaluate_static}};
 
 CJX_Manifest::CJX_Manifest(CXFA_Manifest* manifest) : CJX_Node(manifest) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Manifest::~CJX_Manifest() {}

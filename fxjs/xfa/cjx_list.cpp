@@ -22,7 +22,7 @@ const CJX_MethodSpec CJX_List::MethodSpecs[] = {{"append", append_static},
                                                 {"remove", remove_static}};
 
 CJX_List::CJX_List(CXFA_List* list) : CJX_Object(list) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_List::~CJX_List() {}

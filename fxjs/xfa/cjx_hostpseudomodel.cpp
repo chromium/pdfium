@@ -68,7 +68,7 @@ const CJX_MethodSpec CJX_HostPseudoModel::MethodSpecs[] = {
 
 CJX_HostPseudoModel::CJX_HostPseudoModel(CScript_HostPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_HostPseudoModel::~CJX_HostPseudoModel() {}

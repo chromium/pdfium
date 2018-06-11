@@ -17,7 +17,7 @@ const CJX_MethodSpec CJX_WsdlConnection::MethodSpecs[] = {
 
 CJX_WsdlConnection::CJX_WsdlConnection(CXFA_WsdlConnection* connection)
     : CJX_Node(connection) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_WsdlConnection::~CJX_WsdlConnection() {}

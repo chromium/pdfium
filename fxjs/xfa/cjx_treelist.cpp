@@ -19,7 +19,7 @@ const CJX_MethodSpec CJX_TreeList::MethodSpecs[] = {
     {"namedItem", namedItem_static}};
 
 CJX_TreeList::CJX_TreeList(CXFA_TreeList* list) : CJX_List(list) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_TreeList::~CJX_TreeList() {}

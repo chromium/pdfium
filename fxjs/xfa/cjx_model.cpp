@@ -20,7 +20,7 @@ const CJX_MethodSpec CJX_Model::MethodSpecs[] = {
     {"isCompatibleNS", isCompatibleNS_static}};
 
 CJX_Model::CJX_Model(CXFA_Node* node) : CJX_Node(node) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Model::~CJX_Model() {}

@@ -23,7 +23,7 @@ const CJX_MethodSpec CJX_Subform::MethodSpecs[] = {
     {"execValidate", execValidate_static}};
 
 CJX_Subform::CJX_Subform(CXFA_Node* node) : CJX_Container(node) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Subform::~CJX_Subform() {}

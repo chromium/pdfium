@@ -129,10 +129,9 @@ CJX_Object::~CJX_Object() {
   ClearMapModuleBuffer();
 }
 
-void CJX_Object::DefineMethods(const CJX_MethodSpec method_specs[],
-                               size_t count) {
-  for (size_t i = 0; i < count; ++i)
-    method_specs_[method_specs[i].pName] = method_specs[i].pMethodCall;
+void CJX_Object::DefineMethods(pdfium::span<const CJX_MethodSpec> methods) {
+  for (const auto& item : methods)
+    method_specs_[item.pName] = item.pMethodCall;
 }
 
 CXFA_Document* CJX_Object::GetDocument() const {

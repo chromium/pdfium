@@ -51,7 +51,7 @@ const CJX_MethodSpec CJX_EventPseudoModel::MethodSpecs[] = {
 
 CJX_EventPseudoModel::CJX_EventPseudoModel(CScript_EventPseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_EventPseudoModel::~CJX_EventPseudoModel() {}

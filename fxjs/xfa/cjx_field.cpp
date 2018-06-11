@@ -33,7 +33,7 @@ const CJX_MethodSpec CJX_Field::MethodSpecs[] = {
     {"setItemState", setItemState_static}};
 
 CJX_Field::CJX_Field(CXFA_Field* field) : CJX_Container(field) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Field::~CJX_Field() {}

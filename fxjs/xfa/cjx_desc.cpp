@@ -15,7 +15,7 @@
 const CJX_MethodSpec CJX_Desc::MethodSpecs[] = {{"metadata", metadata_static}};
 
 CJX_Desc::CJX_Desc(CXFA_Desc* desc) : CJX_Node(desc) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Desc::~CJX_Desc() {}

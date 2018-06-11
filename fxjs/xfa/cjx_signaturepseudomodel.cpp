@@ -21,7 +21,7 @@ const CJX_MethodSpec CJX_SignaturePseudoModel::MethodSpecs[] = {
 CJX_SignaturePseudoModel::CJX_SignaturePseudoModel(
     CScript_SignaturePseudoModel* model)
     : CJX_Object(model) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_SignaturePseudoModel::~CJX_SignaturePseudoModel() {}

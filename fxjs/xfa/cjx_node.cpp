@@ -98,7 +98,7 @@ const CJX_MethodSpec CJX_Node::MethodSpecs[] = {
     {"setElement", setElement_static}};
 
 CJX_Node::CJX_Node(CXFA_Node* node) : CJX_Tree(node) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Node::~CJX_Node() = default;

@@ -19,7 +19,7 @@ const CJX_MethodSpec CJX_Container::MethodSpecs[] = {
     {"getDeltas", getDeltas_static}};
 
 CJX_Container::CJX_Container(CXFA_Node* node) : CJX_Node(node) {
-  DefineMethods(MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(MethodSpecs);
 }
 
 CJX_Container::~CJX_Container() {}
