@@ -22,6 +22,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/ijs_runtime.h"
+#include "third_party/base/stl_util.h"
 #include "v8/include/v8-util.h"
 #include "v8/include/v8.h"
 
@@ -51,11 +52,17 @@ class FXJS_PerIsolateData {
   static void SetUp(v8::Isolate* pIsolate);
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
 
+  int MaxObjDefinitionID() const {
+    return pdfium::CollectionSize<int>(m_ObjectDefnArray);
+  }
+  CFXJS_ObjDefinition* ObjDefinitionForID(int id) const;
+  int AssignIDForObjDefinition(std::unique_ptr<CFXJS_ObjDefinition> pDefn);
+
   std::vector<std::unique_ptr<CFXJS_ObjDefinition>> m_ObjectDefnArray;
+  std::unique_ptr<V8TemplateMap> m_pDynamicObjsMap;
 #ifdef PDF_ENABLE_XFA
   std::unique_ptr<CFXJSE_RuntimeData> m_pFXJSERuntimeData;
 #endif  // PDF_ENABLE_XFA
-  std::unique_ptr<V8TemplateMap> m_pDynamicObjsMap;
 
  protected:
   explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);
