@@ -33,7 +33,7 @@ TEST(CFX_LZWDecompressor, ExtractData) {
 
     EXPECT_EQ(10u, *(decompressor->DecompressedNextForTest()));
     for (size_t i = 0; i < *(decompressor->DecompressedNextForTest()); ++i)
-      EXPECT_EQ(i, decompressed->operator[](i));
+      EXPECT_EQ(i, (*decompressed)[i]);
   }
 
   // Check that less than decompressed size only gets the expected number
@@ -53,7 +53,7 @@ TEST(CFX_LZWDecompressor, ExtractData) {
 
     EXPECT_EQ(5u, *(decompressor->DecompressedNextForTest()));
     for (i = 0; i < *(decompressor->DecompressedNextForTest()); ++i)
-      EXPECT_EQ(i, decompressed->operator[](i));
+      EXPECT_EQ(i, (*decompressed)[i]);
   }
 
   // Check that greater than decompressed size depletes the decompressor
