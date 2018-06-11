@@ -17,6 +17,7 @@
 class CPDF_Array;
 class CPDF_Boolean;
 class CPDF_Dictionary;
+class CPDF_IndirectObjectHolder;
 class CPDF_Name;
 class CPDF_Null;
 class CPDF_Number;
@@ -105,6 +106,11 @@ class CPDF_Object {
   virtual std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const;
+
+  // Return a reference to itself.
+  // The object must be direct (!IsInlined).
+  virtual std::unique_ptr<CPDF_Object> MakeReference(
+      CPDF_IndirectObjectHolder* holder) const;
 
  protected:
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}

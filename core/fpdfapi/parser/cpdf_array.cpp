@@ -191,7 +191,7 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
     return;
 
   CPDF_Object* pNew = pHolder->AddIndirectObject(std::move(m_Objects[i]));
-  m_Objects[i] = pdfium::MakeUnique<CPDF_Reference>(pHolder, pNew->GetObjNum());
+  m_Objects[i] = pNew->MakeReference(pHolder);
 }
 
 CPDF_Object* CPDF_Array::SetAt(size_t i, std::unique_ptr<CPDF_Object> pObj) {

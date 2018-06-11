@@ -393,6 +393,18 @@ TEST_F(PDFObjectsTest, IsTypeAndAsType) {
   }
 }
 
+TEST_F(PDFObjectsTest, MakeReferenceGeneric) {
+  auto original_obj = pdfium::MakeUnique<CPDF_Null>();
+  original_obj->SetObjNum(42);
+  ASSERT_FALSE(original_obj->IsInline());
+
+  auto ref_obj = original_obj->MakeReference(m_ObjHolder.get());
+
+  ASSERT_TRUE(ref_obj->IsReference());
+  EXPECT_EQ(original_obj->GetObjNum(),
+            ToReference(ref_obj.get())->GetRefObjNum());
+}
+
 TEST(PDFArrayTest, GetMatrix) {
   float elems[][6] = {{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
                       {1, 2, 3, 4, 5, 6},
@@ -970,4 +982,19 @@ TEST(PDFDictionaryTest, ExtractObjectOnRemove) {
 
   extracted_object = dict->RemoveFor("non_exists_object");
   EXPECT_FALSE(extracted_object);
+}
+
+TEST(PDFRefernceTest, MakeReferenceToReference) {
+  auto obj_holder = pdfium::MakeUnique<CPDF_IndirectObjectHolder>();
+  auto original_ref = pdfium::MakeUnique<CPDF_Reference>(obj_holder.get(), 42);
+  original_ref->SetObjNum(1952);
+  ASSERT_FALSE(original_ref->IsInline());
+
+  auto ref_obj = original_ref->MakeReference(obj_holder.get());
+
+  ASSERT_TRUE(ref_obj->IsReference());
+  // We do not allow reference to reference.
+  // New reference should have same RefObjNum.
+  EXPECT_EQ(original_ref->GetRefObjNum(),
+            ToReference(ref_obj.get())->GetRefObjNum());
 }

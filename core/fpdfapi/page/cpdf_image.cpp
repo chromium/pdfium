@@ -238,9 +238,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
           pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
           std::move(pColorTable), iPalette * 3, std::move(pNewDict));
-      pCS->AddNew<CPDF_Reference>(m_pDocument.Get(), pCTS->GetObjNum());
-      pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument.Get(),
-                                       pCS->GetObjNum());
+      pCS->Add(pCTS->MakeReference(m_pDocument.Get()));
+      pDict->SetFor("ColorSpace", pCS->MakeReference(m_pDocument.Get()));
     } else {
       pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     }
@@ -281,8 +280,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     pMaskDict->SetNewFor<CPDF_Number>("Length", mask_size);
     CPDF_Stream* pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
         std::move(mask_buf), mask_size, std::move(pMaskDict));
-    pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument.Get(),
-                                     pNewStream->GetObjNum());
+    pDict->SetFor("SMask", pNewStream->MakeReference(m_pDocument.Get()));
   }
 
   uint8_t* src_buf = pBitmap->GetBuffer();

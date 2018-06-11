@@ -224,7 +224,7 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
     return;
 
   CPDF_Object* pObj = pHolder->AddIndirectObject(std::move(it->second));
-  it->second = pdfium::MakeUnique<CPDF_Reference>(pHolder, pObj->GetObjNum());
+  it->second = pObj->MakeReference(pHolder);
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Dictionary::RemoveFor(const ByteString& key) {

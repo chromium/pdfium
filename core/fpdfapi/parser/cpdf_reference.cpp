@@ -103,3 +103,11 @@ bool CPDF_Reference::WriteTo(IFX_ArchiveStream* archive) const {
   return archive->WriteString(" ") && archive->WriteDWord(GetRefObjNum()) &&
          archive->WriteString(" 0 R ");
 }
+
+std::unique_ptr<CPDF_Object> CPDF_Reference::MakeReference(
+    CPDF_IndirectObjectHolder* holder) const {
+  ASSERT(holder == m_pObjList.Get());
+  // Do not allow reference to reference, just create other reference for same
+  // object.
+  return pdfium::MakeUnique<CPDF_Reference>(holder, GetRefObjNum());
+}

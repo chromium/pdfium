@@ -247,8 +247,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     CPDF_Dictionary* pDesc = pDoc->NewIndirect<CPDF_Dictionary>();
     pDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
     pDesc->SetNewFor<CPDF_Name>("FontName", pFont->GetBaseFont());
-    pDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),
-                                     pDesc->GetObjNum());
+    pDict->SetFor("FontDescriptor", pDesc->MakeReference(pDoc.get()));
 
     CPDF_Font* loadedFont = pDoc->LoadFont(pDict);
     pTextObj->m_TextState.SetFont(loadedFont);

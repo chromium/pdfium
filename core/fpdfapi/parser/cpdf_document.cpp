@@ -513,7 +513,7 @@ void CPDF_Document::CreateNewDoc() {
   pPages->SetNewFor<CPDF_Name>("Type", "Pages");
   pPages->SetNewFor<CPDF_Number>("Count", 0);
   pPages->SetNewFor<CPDF_Array>("Kids");
-  m_pRootDict->SetNewFor<CPDF_Reference>("Pages", this, pPages->GetObjNum());
+  m_pRootDict->SetFor("Pages", pPages->MakeReference(this));
   m_pInfoDict = NewIndirect<CPDF_Dictionary>();
 }
 
@@ -545,9 +545,8 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
         continue;
       }
       if (bInsert) {
-        pKidList->InsertNewAt<CPDF_Reference>(i, this, pPageDict->GetObjNum());
-        pPageDict->SetNewFor<CPDF_Reference>("Parent", this,
-                                             pPages->GetObjNum());
+        pKidList->InsertAt(i, pPageDict->MakeReference(this));
+        pPageDict->SetFor("Parent", pPages->MakeReference(this));
       } else {
         pKidList->RemoveAt(i);
       }
@@ -589,9 +588,9 @@ bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
     CPDF_Array* pPagesList = pPages->GetArrayFor("Kids");
     if (!pPagesList)
       pPagesList = pPages->SetNewFor<CPDF_Array>("Kids");
-    pPagesList->AddNew<CPDF_Reference>(this, pPageDict->GetObjNum());
+    pPagesList->Add(pPageDict->MakeReference(this));
     pPages->SetNewFor<CPDF_Number>("Count", nPages + 1);
-    pPageDict->SetNewFor<CPDF_Reference>("Parent", this, pPages->GetObjNum());
+    pPageDict->SetFor("Parent", pPages->MakeReference(this));
     ResetTraversal();
   } else {
     std::set<CPDF_Dictionary*> stack = {pPages};
@@ -647,8 +646,7 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
     ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
     pArray->AddNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
-  pBaseDict->SetNewFor<CPDF_Reference>("Encoding", this,
-                                       pEncodingDict->GetObjNum());
+  pBaseDict->SetFor("Encoding", pEncodingDict->MakeReference(this));
   return i;
 }
 
@@ -715,7 +713,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   pCIDSysInfo->SetNewFor<CPDF_Number>("Supplement", supplement);
 
   CPDF_Array* pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
-  pArray->AddNew<CPDF_Reference>(this, pFontDict->GetObjNum());
+  pArray->Add(pFontDict->MakeReference(this));
   return pFontDict;
 }
 
@@ -796,8 +794,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   CPDF_Dictionary* pFontDesc = ToDictionary(AddIndirectObject(
       CalculateFontDesc(this, basefont, flags, italicangle, pFont->GetAscent(),
                         pFont->GetDescent(), std::move(pBBox), nStemV)));
-  pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", this,
-                                       pFontDesc->GetObjNum());
+  pFontDict->SetFor("FontDescriptor", pFontDesc->MakeReference(this));
   return LoadFont(pBaseDict);
 }
 
@@ -889,9 +886,9 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
       CalculateFontDesc(this, basefont, flags, italicangle, ascend, descend,
                         std::move(pBBox), pLogFont->lfWeight / 5);
   pFontDesc->SetNewFor<CPDF_Number>("CapHeight", capheight);
-  pFontDict->SetNewFor<CPDF_Reference>(
-      "FontDescriptor", this,
-      AddIndirectObject(std::move(pFontDesc))->GetObjNum());
+  pFontDict->SetFor(
+      "FontDescriptor",
+      AddIndirectObject(std::move(pFontDesc))->MakeReference(this));
   hFont = SelectObject(hDC, hFont);
   DeleteObject(hFont);
   DeleteDC(hDC);

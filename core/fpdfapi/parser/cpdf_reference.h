@@ -34,6 +34,8 @@ class CPDF_Reference : public CPDF_Object {
   CPDF_Reference* AsReference() override;
   const CPDF_Reference* AsReference() const override;
   bool WriteTo(IFX_ArchiveStream* archive) const override;
+  std::unique_ptr<CPDF_Object> MakeReference(
+      CPDF_IndirectObjectHolder* holder) const override;
 
   CPDF_IndirectObjectHolder* GetObjList() const { return m_pObjList.Get(); }
   uint32_t GetRefObjNum() const { return m_RefObjNum; }
