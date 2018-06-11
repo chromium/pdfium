@@ -143,6 +143,34 @@ class CFXJS_ObjDefinition {
     m_Signature.Reset(isolate, sig);
   }
 
+  void DefineConst(const char* sConstName, v8::Local<v8::Value> pDefault) {
+    GetInstanceTemplate()->Set(m_pIsolate, sConstName, pDefault);
+  }
+
+  void DefineProperty(v8::Local<v8::String> sPropName,
+                      v8::AccessorGetterCallback pPropGet,
+                      v8::AccessorSetterCallback pPropPut) {
+    GetInstanceTemplate()->SetAccessor(sPropName, pPropGet, pPropPut);
+  }
+
+  void DefineMethod(v8::Local<v8::String> sMethodName,
+                    v8::FunctionCallback pMethodCall) {
+    v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
+        m_pIsolate, pMethodCall, v8::Local<v8::Value>(), GetSignature());
+    fun->RemovePrototype();
+    GetInstanceTemplate()->Set(sMethodName, fun, v8::ReadOnly);
+  }
+
+  void DefineAllProperties(v8::GenericNamedPropertyQueryCallback pPropQurey,
+                           v8::GenericNamedPropertyGetterCallback pPropGet,
+                           v8::GenericNamedPropertySetterCallback pPropPut,
+                           v8::GenericNamedPropertyDeleterCallback pPropDel) {
+    GetInstanceTemplate()->SetHandler(v8::NamedPropertyHandlerConfiguration(
+        pPropGet, pPropPut, pPropQurey, pPropDel, nullptr,
+        v8::Local<v8::Value>(),
+        v8::PropertyHandlerFlags::kOnlyInterceptStrings));
+  }
+
   v8::Local<v8::ObjectTemplate> GetInstanceTemplate() {
     v8::EscapableHandleScope scope(m_pIsolate);
     v8::Local<v8::FunctionTemplate> function =
@@ -332,12 +360,7 @@ void CFXJS_Engine::DefineObjMethod(int nObjDefnID,
   v8::HandleScope handle_scope(GetIsolate());
   FXJS_PerIsolateData* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());
   CFXJS_ObjDefinition* pObjDef = pIsolateData->ObjDefinitionForID(nObjDefnID);
-  v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
-      GetIsolate(), pMethodCall, v8::Local<v8::Value>(),
-      pObjDef->GetSignature());
-  fun->RemovePrototype();
-  pObjDef->GetInstanceTemplate()->Set(NewString(sMethodName), fun,
-                                      v8::ReadOnly);
+  pObjDef->DefineMethod(NewString(sMethodName), pMethodCall);
 }
 
 void CFXJS_Engine::DefineObjProperty(int nObjDefnID,
@@ -348,8 +371,7 @@ void CFXJS_Engine::DefineObjProperty(int nObjDefnID,
   v8::HandleScope handle_scope(GetIsolate());
   FXJS_PerIsolateData* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());
   CFXJS_ObjDefinition* pObjDef = pIsolateData->ObjDefinitionForID(nObjDefnID);
-  pObjDef->GetInstanceTemplate()->SetAccessor(NewString(sPropName), pPropGet,
-                                              pPropPut);
+  pObjDef->DefineProperty(NewString(sPropName), pPropGet, pPropPut);
 }
 
 void CFXJS_Engine::DefineObjAllProperties(
@@ -362,11 +384,7 @@ void CFXJS_Engine::DefineObjAllProperties(
   v8::HandleScope handle_scope(GetIsolate());
   FXJS_PerIsolateData* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());
   CFXJS_ObjDefinition* pObjDef = pIsolateData->ObjDefinitionForID(nObjDefnID);
-  pObjDef->GetInstanceTemplate()->SetHandler(
-      v8::NamedPropertyHandlerConfiguration(
-          pPropGet, pPropPut, pPropQurey, pPropDel, nullptr,
-          v8::Local<v8::Value>(),
-          v8::PropertyHandlerFlags::kOnlyInterceptStrings));
+  pObjDef->DefineAllProperties(pPropQurey, pPropGet, pPropPut, pPropDel);
 }
 
 void CFXJS_Engine::DefineObjConst(int nObjDefnID,
@@ -376,7 +394,7 @@ void CFXJS_Engine::DefineObjConst(int nObjDefnID,
   v8::HandleScope handle_scope(GetIsolate());
   FXJS_PerIsolateData* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());
   CFXJS_ObjDefinition* pObjDef = pIsolateData->ObjDefinitionForID(nObjDefnID);
-  pObjDef->GetInstanceTemplate()->Set(GetIsolate(), sConstName, pDefault);
+  pObjDef->DefineConst(sConstName, pDefault);
 }
 
 void CFXJS_Engine::DefineGlobalMethod(const char* sMethodName,
