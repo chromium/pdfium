@@ -71,7 +71,7 @@ const char CJS_Util::kName[] = "util";
 void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_Util::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Util>, JSDestructor);
-  DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
 
 CJS_Util::CJS_Util(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)

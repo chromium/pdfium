@@ -21,7 +21,7 @@ int CJS_Icon::GetObjDefnID() {
 void CJS_Icon::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_Icon::kName, FXJSOBJTYPE_DYNAMIC,
                                  JSConstructor<CJS_Icon>, JSDestructor);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+  DefineProps(pEngine, ObjDefnID, PropertySpecs);
 }
 
 CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)

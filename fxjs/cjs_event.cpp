@@ -41,7 +41,7 @@ const char CJS_Event::kName[] = "event";
 void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_Event::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Event>, JSDestructor);
-  DefineProps(pEngine, ObjDefnID, PropertySpecs, FX_ArraySize(PropertySpecs));
+  DefineProps(pEngine, ObjDefnID, PropertySpecs);
 }
 
 CJS_Event::CJS_Event(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)

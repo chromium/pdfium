@@ -18,7 +18,7 @@ int CJS_Highlight::ObjDefnID = -1;
 void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("highlight", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }
 
 CJS_Highlight::CJS_Highlight(v8::Local<v8::Object> pObject,

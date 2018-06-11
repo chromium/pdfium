@@ -16,7 +16,7 @@ int CJS_ScaleHow::ObjDefnID = -1;
 void CJS_ScaleHow::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID =
       pEngine->DefineObj("scaleHow", FXJSOBJTYPE_STATIC, nullptr, nullptr);
-  DefineConsts(pEngine, ObjDefnID, ConstSpecs, FX_ArraySize(ConstSpecs));
+  DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }
 
 CJS_ScaleHow::CJS_ScaleHow(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)

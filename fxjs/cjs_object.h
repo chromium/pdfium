@@ -14,6 +14,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_runtime.h"
+#include "third_party/base/span.h"
 
 struct JSConstSpec {
   enum Type { Number = 0, String = 1 };
@@ -39,16 +40,13 @@ class CJS_Object {
  public:
   static void DefineConsts(CFXJS_Engine* pEngine,
                            int objId,
-                           const JSConstSpec consts[],
-                           size_t count);
+                           pdfium::span<const JSConstSpec> consts);
   static void DefineProps(CFXJS_Engine* pEngine,
                           int objId,
-                          const JSPropertySpec props[],
-                          size_t count);
+                          pdfium::span<const JSPropertySpec> consts);
   static void DefineMethods(CFXJS_Engine* pEngine,
                             int objId,
-                            const JSMethodSpec methods[],
-                            size_t count);
+                            pdfium::span<const JSMethodSpec> consts);
 
   CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   virtual ~CJS_Object();

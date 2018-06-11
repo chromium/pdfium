@@ -22,7 +22,7 @@ const char CJS_Report::kName[] = "Report";
 void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   ObjDefnID = pEngine->DefineObj(CJS_Report::kName, eObjType,
                                  JSConstructor<CJS_Report>, JSDestructor);
-  DefineMethods(pEngine, ObjDefnID, MethodSpecs, FX_ArraySize(MethodSpecs));
+  DefineMethods(pEngine, ObjDefnID, MethodSpecs);
 }
 
 CJS_Report::CJS_Report(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
