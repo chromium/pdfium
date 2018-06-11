@@ -95,7 +95,7 @@ void InsertWidthArray1(CFX_Font* pFont,
 int CountPages(CPDF_Dictionary* pPages,
                std::set<CPDF_Dictionary*>* visited_pages) {
   int count = pPages->GetIntegerFor("Count");
-  if (count > 0 && count < FPDF_PAGE_MAX_NUM)
+  if (count > 0 && count < CPDF_Document::kPageMaxNum)
     return count;
   CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
   if (!pKidList)

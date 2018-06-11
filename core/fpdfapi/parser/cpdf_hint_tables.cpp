@@ -132,7 +132,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   hStream->SkipBits(16);
 
   const uint32_t nPages = m_pLinearized->GetPageCount();
-  if (nPages < 1 || nPages >= FPDF_PAGE_MAX_NUM)
+  if (nPages < 1 || nPages >= CPDF_Document::kPageMaxNum)
     return false;
 
   const uint32_t dwPages = pdfium::base::checked_cast<uint32_t>(nPages);

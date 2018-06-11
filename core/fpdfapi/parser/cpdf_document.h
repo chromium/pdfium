@@ -38,8 +38,6 @@ class JBig2_DocumentContext;
 #define FPDFPERM_FILL_FORM 0x0100
 #define FPDFPERM_EXTRACT_ACCESS 0x0200
 
-#define FPDF_PAGE_MAX_NUM 0xFFFFF
-
 class CPDF_Document : public CPDF_IndirectObjectHolder {
  public:
   // Type from which the XFA extension can subclass itself.
@@ -51,6 +49,8 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
     virtual void DeletePage(int page_index) = 0;
     virtual uint32_t GetUserPermissions() const = 0;
   };
+
+  static const int kPageMaxNum = 0xFFFFF;
 
   explicit CPDF_Document(std::unique_ptr<CPDF_Parser> pParser);
   ~CPDF_Document() override;
