@@ -156,7 +156,7 @@ FPDF_DOCUMENT LoadDocumentImpl(
   pDocument->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(pDocument.get()));
 #endif  // PDF_ENABLE_XFA
 
-  CheckUnSupportError(pDocument.get(), error);
+  ReportUnsupportedFeatures(pDocument.get());
   return FPDFDocumentFromCPDFDocument(pDocument.release());
 }
 

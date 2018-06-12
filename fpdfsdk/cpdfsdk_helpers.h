@@ -246,7 +246,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             bool bNeedToRestore,
                             IPDFSDK_PauseAdapter* pause);
 
-void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code);
+void ReportUnsupportedFeatures(CPDF_Document* pDoc);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
 
 #ifndef _WIN32

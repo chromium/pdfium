@@ -162,7 +162,7 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   document->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(document.get()));
 #endif  // PDF_ENABLE_XFA
 
-  CheckUnSupportError(document.get(), FPDF_ERR_SUCCESS);
+  ReportUnsupportedFeatures(document.get());
   return FPDFDocumentFromCPDFDocument(document.release());
 }
 

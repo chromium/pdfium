@@ -199,15 +199,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
   }
 }
 
-void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
-  // Security
-  if (err_code == FPDF_ERR_SECURITY) {
-    RaiseUnSupportError(FPDF_UNSP_DOC_SECURITY);
-    return;
-  }
-  if (!pDoc)
-    return;
-
+void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
   const CPDF_Dictionary* pRootDict = pDoc->GetRoot();
   if (pRootDict) {
     // Portfolios and Packages
@@ -236,6 +228,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
         }
       }
     }
+
     // SharedForm
     const CPDF_Stream* pStream = pRootDict->GetStreamFor("Metadata");
     if (pStream) {
