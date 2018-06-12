@@ -164,11 +164,13 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
 
   FX_SAFE_UINT32 safeSize = 0;
   for (const auto& stream : m_StreamArray) {
+    m_StreamSegmentOffsets.push_back(safeSize.ValueOrDie());
+
     safeSize += stream->GetSize();
     safeSize += 1;
+    if (!safeSize.IsValid())
+      return Stage::kComplete;
   }
-  if (!safeSize.IsValid())
-    return Stage::kComplete;
 
   m_Size = safeSize.ValueOrDie();
   m_pData.Reset(
@@ -198,9 +200,12 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (m_CurrentOffset >= m_Size)
     return Stage::kCheckClip;
 
-  m_CurrentOffset +=
-      m_pParser->Parse(m_pData.Get() + m_CurrentOffset,
-                       m_Size - m_CurrentOffset, PARSE_STEP_LIMIT);
+  if (m_StreamSegmentOffsets.empty())
+    m_StreamSegmentOffsets.push_back(0);
+
+  m_CurrentOffset += m_pParser->Parse(m_pData.Get() + m_CurrentOffset,
+                                      m_Size - m_CurrentOffset,
+                                      PARSE_STEP_LIMIT, m_StreamSegmentOffsets);
   return Stage::kParse;
 }
 

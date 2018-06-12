@@ -16,6 +16,7 @@ class CPDF_Image;
 
 class CPDF_ImageObject : public CPDF_PageObject {
  public:
+  explicit CPDF_ImageObject(int32_t content_stream);
   CPDF_ImageObject();
   ~CPDF_ImageObject() override;
 

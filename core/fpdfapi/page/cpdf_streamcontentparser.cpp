@@ -785,7 +785,8 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
 
-  auto pFormObj = pdfium::MakeUnique<CPDF_FormObject>(std::move(form), matrix);
+  auto pFormObj = pdfium::MakeUnique<CPDF_FormObject>(GetCurrentStreamIndex(),
+                                                      std::move(form), matrix);
   if (!m_pObjectHolder->BackgroundAlphaNeeded() &&
       pFormObj->form()->BackgroundAlphaNeeded()) {
     m_pObjectHolder->SetBackgroundAlphaNeeded(true);
@@ -800,14 +801,16 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
   if (!pStream)
     return nullptr;
 
-  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  auto pImageObj =
+      pdfium::MakeUnique<CPDF_ImageObject>(GetCurrentStreamIndex());
   pImageObj->SetImage(
       pdfium::MakeRetain<CPDF_Image>(m_pDocument.Get(), std::move(pStream)));
   return AddImageObject(std::move(pImageObj));
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(uint32_t streamObjNum) {
-  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  auto pImageObj =
+      pdfium::MakeUnique<CPDF_ImageObject>(GetCurrentStreamIndex());
   pImageObj->SetImage(m_pDocument->LoadImageFromPageData(streamObjNum));
   return AddImageObject(std::move(pImageObj));
 }
@@ -817,7 +820,8 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
   if (!pImage)
     return nullptr;
 
-  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  auto pImageObj =
+      pdfium::MakeUnique<CPDF_ImageObject>(GetCurrentStreamIndex());
   pImageObj->SetImage(
       m_pDocument->GetPageData()->GetImage(pImage->GetStream()->GetObjNum()));
 
@@ -1084,7 +1088,8 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
 
   CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
-  auto pObj = pdfium::MakeUnique<CPDF_ShadingObject>(pShading, matrix);
+  auto pObj = pdfium::MakeUnique<CPDF_ShadingObject>(GetCurrentStreamIndex(),
+                                                     pShading, matrix);
   SetGraphicStates(pObj.get(), false, false, false);
   CFX_FloatRect bbox =
       pObj->m_ClipPath.HasRef() ? pObj->m_ClipPath.GetClipBox() : m_BBox;
@@ -1219,7 +1224,7 @@ void CPDF_StreamContentParser::AddTextObject(ByteString* pStrs,
       pFont->IsType3Font() ? TextRenderingMode::MODE_FILL
                            : m_pCurStates->m_TextState.GetTextMode();
   {
-    auto pText = pdfium::MakeUnique<CPDF_TextObject>();
+    auto pText = pdfium::MakeUnique<CPDF_TextObject>(GetCurrentStreamIndex());
     m_pLastTextObject = pText.get();
     SetGraphicStates(m_pLastTextObject.Get(), true, true, true);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
@@ -1256,6 +1261,12 @@ void CPDF_StreamContentParser::AddTextObject(ByteString* pStrs,
           1000;
     }
   }
+}
+
+int32_t CPDF_StreamContentParser::GetCurrentStreamIndex() {
+  auto it = std::upper_bound(m_StreamStartOffsets.begin(),
+                             m_StreamStartOffsets.end(), m_pSyntax->GetPos());
+  return (it - m_StreamStartOffsets.begin()) - 1;
 }
 
 void CPDF_StreamContentParser::Handle_ShowText() {
@@ -1456,7 +1467,8 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
   CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
   if (bStroke || FillType) {
-    auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
+    auto pPathObj =
+        pdfium::MakeUnique<CPDF_PathObject>(GetCurrentStreamIndex());
     pPathObj->m_bStroke = bStroke;
     pPathObj->m_FillType = FillType;
     pPathObj->m_Path = Path;
@@ -1474,22 +1486,27 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
   }
 }
 
-uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
-                                         uint32_t dwSize,
-                                         uint32_t max_cost) {
+uint32_t CPDF_StreamContentParser::Parse(
+    const uint8_t* pData,
+    uint32_t dwSize,
+    uint32_t max_cost,
+    const std::vector<uint32_t>& stream_start_offsets) {
   if (m_ParsedSet->size() > kMaxFormLevel ||
       pdfium::ContainsKey(*m_ParsedSet, pData))
     return dwSize;
 
+  m_StreamStartOffsets = stream_start_offsets;
+
   pdfium::ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet.Get(),
                                                           pData);
 
-  uint32_t InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
+  uint32_t init_obj_count = m_pObjectHolder->GetPageObjectList()->size();
   CPDF_StreamParser syntax(pdfium::make_span(pData, dwSize),
                            m_pDocument->GetByteStringPool());
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   while (1) {
-    uint32_t cost = m_pObjectHolder->GetPageObjectList()->size() - InitObjCount;
+    uint32_t cost =
+        m_pObjectHolder->GetPageObjectList()->size() - init_obj_count;
     if (max_cost && cost >= max_cost) {
       break;
     }

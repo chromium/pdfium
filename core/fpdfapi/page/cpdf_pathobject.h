@@ -14,6 +14,7 @@
 
 class CPDF_PathObject : public CPDF_PageObject {
  public:
+  explicit CPDF_PathObject(int32_t content_stream);
   CPDF_PathObject();
   ~CPDF_PathObject() override;
 

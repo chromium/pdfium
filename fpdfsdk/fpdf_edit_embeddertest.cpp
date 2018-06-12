@@ -9,6 +9,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
@@ -653,6 +654,34 @@ TEST_F(FPDFEditEmbeddertest, DISABLED_RemoveExistingPageObject) {
   EXPECT_EQ(1, FPDFPage_CountObjects(saved_page));
   CloseSavedPage(saved_page);
   CloseSavedDocument();
+}
+
+// TODO(pdfium:1051): Extend this test to remove some elements and verify
+// saving works.
+TEST_F(FPDFEditEmbeddertest, GetContentStream) {
+  // Load document with some text split across streams.
+  EXPECT_TRUE(OpenDocument("split_streams.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Content stream 0: page objects 0-14.
+  // Content stream 1: page objects 15-17.
+  // Content stream 2: page object 18.
+  ASSERT_EQ(19, FPDFPage_CountObjects(page));
+  for (int i = 0; i < 19; i++) {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, i);
+    ASSERT_TRUE(page_object);
+    CPDF_PageObject* cpdf_page_object =
+        CPDFPageObjectFromFPDFPageObject(page_object);
+    if (i < 15)
+      EXPECT_EQ(0, cpdf_page_object->GetContentStream()) << i;
+    else if (i < 18)
+      EXPECT_EQ(1, cpdf_page_object->GetContentStream()) << i;
+    else
+      EXPECT_EQ(2, cpdf_page_object->GetContentStream()) << i;
+  }
+
+  UnloadPage(page);
 }
 
 TEST_F(FPDFEditEmbeddertest, InsertPageObjectAndSave) {

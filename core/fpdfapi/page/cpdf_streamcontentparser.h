@@ -43,7 +43,10 @@ class CPDF_StreamContentParser {
                            std::set<const uint8_t*>* parsedSet);
   ~CPDF_StreamContentParser();
 
-  uint32_t Parse(const uint8_t* pData, uint32_t dwSize, uint32_t max_cost);
+  uint32_t Parse(const uint8_t* pData,
+                 uint32_t dwSize,
+                 uint32_t max_cost,
+                 const std::vector<uint32_t>& stream_start_offsets);
   CPDF_PageObjectHolder* GetPageObjectHolder() const {
     return m_pObjectHolder.Get();
   }
@@ -127,6 +130,7 @@ class CPDF_StreamContentParser {
 
   std::vector<float> GetColors() const;
   std::vector<float> GetNamedColors() const;
+  int32_t GetCurrentStreamIndex();
 
   void Handle_CloseFillStrokePath();
   void Handle_FillStrokePath();
@@ -230,6 +234,7 @@ class CPDF_StreamContentParser {
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
   float m_Type3Data[6];
   ContentParam m_ParamBuf[kParamBufSize];
+  std::vector<uint32_t> m_StreamStartOffsets;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_

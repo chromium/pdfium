@@ -58,6 +58,7 @@ class CPDF_ContentParser {
   UnownedPtr<CPDF_Type3Char> m_pType3Char;  // Only used when parsing forms.
   RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
+  std::vector<uint32_t> m_StreamSegmentOffsets;
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   uint32_t m_nStreams = 0;
   uint32_t m_Size = 0;

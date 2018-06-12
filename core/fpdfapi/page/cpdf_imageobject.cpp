@@ -12,7 +12,10 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 
-CPDF_ImageObject::CPDF_ImageObject() {}
+CPDF_ImageObject::CPDF_ImageObject(int32_t content_stream)
+    : CPDF_PageObject(content_stream) {}
+
+CPDF_ImageObject::CPDF_ImageObject() : CPDF_ImageObject(kNoContentStream) {}
 
 CPDF_ImageObject::~CPDF_ImageObject() {
   MaybePurgeCache();

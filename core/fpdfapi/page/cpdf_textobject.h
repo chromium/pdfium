@@ -25,6 +25,7 @@ class CPDF_TextObjectItem {
 
 class CPDF_TextObject : public CPDF_PageObject {
  public:
+  explicit CPDF_TextObject(int32_t content_stream);
   CPDF_TextObject();
   ~CPDF_TextObject() override;
 
