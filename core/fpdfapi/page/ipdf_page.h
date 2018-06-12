@@ -20,6 +20,11 @@ class CPDFXFA_Page;
 // Interface implemented by both page types (CPDF_Page and CPDFXFA_Page).
 class IPDF_Page : public Retainable {
  public:
+  // There are actually 3 cases: a PDF page, an XFA page backed by a PDF page,
+  // and an XFA page not backed by a PDF page. AsPDFPage() will return the
+  // PDF page in either of the first two cases. AsXFAPage() is a straight
+  // downcast and is null if not either of the last two cases. Hence, both
+  // of these may return non-null on a given page.
   virtual CPDF_Page* AsPDFPage() = 0;
   virtual CPDFXFA_Page* AsXFAPage() = 0;
 

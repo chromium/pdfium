@@ -245,12 +245,9 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
     }
   }
 
-#ifndef PDF_ENABLE_XFA
   // XFA Forms
-  CPDF_InterForm interform(pDoc);
-  if (interform.HasXFAForm())
+  if (!pDoc->GetExtension() && CPDF_InterForm(pDoc).HasXFAForm())
     RaiseUnSupportError(FPDF_UNSP_DOC_XFAFORM);
-#endif  // PDF_ENABLE_XFA
 }
 
 #ifndef _WIN32

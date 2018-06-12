@@ -67,7 +67,7 @@ static_assert(WindowsPrintMode::kModePostScript2PassThrough ==
 static_assert(WindowsPrintMode::kModePostScript3PassThrough ==
                   FPDF_PRINTMODE_POSTSCRIPT3_PASSTHROUGH,
               "WindowsPrintMode::kModePostScript3PassThrough value mismatch");
-#endif
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
 
@@ -151,12 +151,12 @@ FPDF_DOCUMENT LoadDocumentImpl(
     ProcessParseError(error);
     return nullptr;
   }
-  CheckUnSupportError(pDocument.get(), error);
 
 #ifdef PDF_ENABLE_XFA
   pDocument->SetExtension(pdfium::MakeUnique<CPDFXFA_Context>(pDocument.get()));
 #endif  // PDF_ENABLE_XFA
 
+  CheckUnSupportError(pDocument.get(), error);
   return FPDFDocumentFromCPDFDocument(pDocument.release());
 }
 
@@ -716,7 +716,7 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
   pPage->SetRenderContext(nullptr);
   return recorder;
 }
-#endif
+#endif  // _SKIA_SUPPORT_
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   if (!page)
@@ -726,7 +726,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   RetainPtr<IPDF_Page> pPage;
   pPage.Unleak(IPDFPageFromFPDFPage(page));
 
-#ifndef PDF_ENABLE_XFA
+  if (pPage->AsXFAPage())
+    return;
+
   CPDFSDK_PageView* pPageView =
       static_cast<CPDFSDK_PageView*>(pPage->AsPDFPage()->GetView());
   if (!pPageView || pPageView->IsBeingDestroyed())
@@ -741,7 +743,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   // first because it will attempt to reset the View on the |pPage| during
   // destruction.
   pPageView->GetFormFillEnv()->RemovePageView(pPage.Get());
-#endif  // PDF_ENABLE_XFA
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_CloseDocument(FPDF_DOCUMENT document) {
