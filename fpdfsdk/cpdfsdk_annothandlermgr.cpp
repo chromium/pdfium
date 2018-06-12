@@ -311,7 +311,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
   CPDFXFA_Page* pPage = pPageView->GetPDFXFAPage();
   if (!pPage)
     return nullptr;
-  if (pPage->GetPDFPage()) {  // for pdf annots.
+  if (pPage->AsPDFPage()) {  // for pdf annots.
     CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
                              pSDKAnnot->GetAnnotSubtype());
     CPDFSDK_Annot* pNext =
