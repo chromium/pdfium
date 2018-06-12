@@ -1548,7 +1548,7 @@ FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 
 #ifdef PDF_ENABLE_XFA
 #define FPDF_FORMFIELD_COUNT 16
-#else
+#else  // PDF_ENABLE_XFA
 #define FPDF_FORMFIELD_COUNT 8
 #endif  // PDF_ENABLE_XFA
 

@@ -465,7 +465,7 @@ WideString CPDFSDK_Widget::GetValue(bool bDisplay) const {
                                      : XFA_VALUEPICTURE_Edit);
     }
   }
-#else
+#else   // PDF_ENABLE_XFA
 WideString CPDFSDK_Widget::GetValue() const {
 #endif  // PDF_ENABLE_XFA
   CPDF_FormField* pFormField = GetFormField();

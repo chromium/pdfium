@@ -72,7 +72,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   int GetSelectedIndex(int nIndex) const;
 #ifdef PDF_ENABLE_XFA
   WideString GetValue(bool bDisplay = true) const;
-#else
+#else   // PDF_ENABLE_XFA
   WideString GetValue() const;
 #endif  // PDF_ENABLE_XFA
   WideString GetDefaultValue() const;
