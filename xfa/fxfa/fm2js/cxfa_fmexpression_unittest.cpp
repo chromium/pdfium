@@ -14,26 +14,44 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fm2js/cxfa_fmtojavascriptdepth.h"
 
+TEST(CXFA_FMExpressionTest, VarExpressionInitNull) {
+  CXFA_FMToJavaScriptDepth::Reset();
+  CFX_WideTextBuf accumulator;
+
+  CXFA_FMVarExpression(L"s", nullptr)
+      .ToJavaScript(&accumulator, ReturnType::kInfered);
+  EXPECT_STREQ(
+      LR"***(var s = "";
+)***",
+      accumulator.MakeString().c_str());
+}
+
 TEST(CXFA_FMExpressionTest, VarExpressionInitBlank) {
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
 
-  auto init = pdfium::MakeUnique<CXFA_FMStringExpression>(L"\"\"");
+  auto init = pdfium::MakeUnique<CXFA_FMStringExpression>(LR"("")");
   CXFA_FMVarExpression(L"s", std::move(init))
       .ToJavaScript(&accumulator, ReturnType::kInfered);
-  EXPECT_STREQ(L"var s = \"\";\ns = pfm_rt.var_filter(s);\n",
-               accumulator.MakeString().c_str());
+  EXPECT_STREQ(
+      LR"***(var s = "";
+s = pfm_rt.var_filter(s);
+)***",
+      accumulator.MakeString().c_str());
 }
 
 TEST(CXFA_FMExpressionTest, VarExpressionInitString) {
   CXFA_FMToJavaScriptDepth::Reset();
   CFX_WideTextBuf accumulator;
 
-  auto init = pdfium::MakeUnique<CXFA_FMStringExpression>(L"\"foo\"");
+  auto init = pdfium::MakeUnique<CXFA_FMStringExpression>(LR"("foo")");
   CXFA_FMVarExpression(L"s", std::move(init))
       .ToJavaScript(&accumulator, ReturnType::kInfered);
-  EXPECT_STREQ(L"var s = \"foo\";\ns = pfm_rt.var_filter(s);\n",
-               accumulator.MakeString().c_str());
+  EXPECT_STREQ(
+      LR"***(var s = "foo";
+s = pfm_rt.var_filter(s);
+)***",
+      accumulator.MakeString().c_str());
 }
 
 TEST(CXFA_FMExpressionTest, VarExpressionInitNumeric) {
@@ -43,6 +61,9 @@ TEST(CXFA_FMExpressionTest, VarExpressionInitNumeric) {
   auto init = pdfium::MakeUnique<CXFA_FMNumberExpression>(L"112");
   CXFA_FMVarExpression(L"s", std::move(init))
       .ToJavaScript(&accumulator, ReturnType::kInfered);
-  EXPECT_STREQ(L"var s = 112;\ns = pfm_rt.var_filter(s);\n",
-               accumulator.MakeString().c_str());
+  EXPECT_STREQ(
+      LR"***(var s = 112;
+s = pfm_rt.var_filter(s);
+)***",
+      accumulator.MakeString().c_str());
 }
