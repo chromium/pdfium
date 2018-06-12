@@ -199,13 +199,11 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
     pXFAPage->LoadPDFPage(pPageDict);
     return FPDFPageFromIPDFPage(pXFAPage.Leak());  // Caller takes ownership.
   }
-  // Eventually, fallthru into non-XFA case once page type is consistent.
-  return nullptr;
-#else  // PDF_ENABLE_XFA
+#endif  // PDF_ENABLE_XFA
+
   auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pPageDict, true);
   pPage->ParseContent();
   return FPDFPageFromIPDFPage(pPage.Leak());  // Caller takes ownership.
-#endif  // PDF_ENABLE_XFA
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetRotation(FPDF_PAGE page) {
