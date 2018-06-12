@@ -9,6 +9,7 @@
 #include <tuple>
 #include <utility>
 
+#include "core/fpdfapi/edit/cpdf_pagecontentmanager.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
@@ -64,60 +65,67 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
 void CPDF_PageContentGenerator::GenerateContent() {
   ASSERT(m_pObjHolder->IsPage());
 
-  CPDF_Document* pDoc = m_pDocument.Get();
-  std::ostringstream buf;
+  std::map<int32_t, std::unique_ptr<std::ostringstream>> stream =
+      GenerateModifiedStreams();
 
+  UpdateContentStreams(&stream);
+}
+
+std::map<int32_t, std::unique_ptr<std::ostringstream>>
+CPDF_PageContentGenerator::GenerateModifiedStreams() {
+  auto buf = pdfium::MakeUnique<std::ostringstream>();
+
+  std::map<int32_t, std::unique_ptr<std::ostringstream>> streams;
+  if (GenerateStreamWithNewObjects(buf.get()))
+    streams[CPDF_PageObject::kNoContentStream] = std::move(buf);
+
+  // TODO(pdfium:1051): Generate other streams and add to |streams|.
+
+  return streams;
+}
+
+bool CPDF_PageContentGenerator::GenerateStreamWithNewObjects(
+    std::ostringstream* buf) {
   // Set the default graphic state values
-  buf << "q\n";
+  *buf << "q\n";
   if (!m_pObjHolder->GetLastCTM().IsIdentity())
-    buf << m_pObjHolder->GetLastCTM().GetInverse() << " cm\n";
-  ProcessDefaultGraphics(&buf);
+    *buf << m_pObjHolder->GetLastCTM().GetInverse() << " cm\n";
+  ProcessDefaultGraphics(buf);
 
   // Process the page objects
-  if (!ProcessPageObjects(&buf))
-    return;
+  if (!ProcessPageObjects(buf))
+    return false;
 
   // Return graphics to original state
-  buf << "Q\n";
+  *buf << "Q\n";
 
-  // Add buffer to a stream in page's 'Contents'
-  CPDF_Dictionary* pPageDict = m_pObjHolder->GetDict();
-  if (!pPageDict)
+  return true;
+}
+
+void CPDF_PageContentGenerator::UpdateContentStreams(
+    std::map<int32_t, std::unique_ptr<std::ostringstream>>* new_stream_data) {
+  // If no streams were regenerated or removed, nothing to do here.
+  if (new_stream_data->empty())
     return;
 
-  CPDF_Object* pContent = pPageDict->GetObjectFor("Contents");
-  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
-  pStream->SetData(&buf);
-  if (pContent) {
-    CPDF_Array* pArray = ToArray(pContent);
-    if (pArray) {
-      pArray->Add(pStream->MakeReference(pDoc));
-      return;
+  CPDF_PageContentManager page_content_manager(m_pObjHolder.Get());
+
+  for (auto& pair : *new_stream_data) {
+    int32_t stream_index = pair.first;
+    std::ostringstream* buf = pair.second.get();
+
+    if (stream_index == CPDF_PageObject::kNoContentStream) {
+      int new_stream_index = page_content_manager.AddStream(buf);
+      UpdateStreamlessPageObjects(new_stream_index);
+      continue;
     }
-    CPDF_Reference* pReference = ToReference(pContent);
-    if (!pReference) {
-      pPageDict->SetFor("Contents", pStream->MakeReference(pDoc));
-      return;
-    }
-    CPDF_Object* pDirectObj = pReference->GetDirect();
-    if (!pDirectObj) {
-      pPageDict->SetFor("Contents", pStream->MakeReference(pDoc));
-      return;
-    }
-    CPDF_Array* pObjArray = pDirectObj->AsArray();
-    if (pObjArray) {
-      pObjArray->Add(pStream->MakeReference(pDoc));
-      return;
-    }
-    if (pDirectObj->IsStream()) {
-      CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
-      pContentArray->Add(pDirectObj->MakeReference(pDoc));
-      pContentArray->Add(pStream->MakeReference(pDoc));
-      pPageDict->SetFor("Contents", pContentArray->MakeReference(pDoc));
-      return;
-    }
+
+    CPDF_Stream* old_stream =
+        page_content_manager.GetStreamByIndex(stream_index);
+    ASSERT(old_stream);
+
+    old_stream->SetData(buf);
   }
-  pPageDict->SetFor("Contents", pStream->MakeReference(pDoc));
 }
 
 ByteString CPDF_PageContentGenerator::RealizeResource(
@@ -163,6 +171,12 @@ bool CPDF_PageContentGenerator::ProcessPageObjects(std::ostringstream* buf) {
     pPageObj->SetDirty(false);
   }
   return bDirty;
+}
+
+void CPDF_PageContentGenerator::UpdateStreamlessPageObjects(
+    int new_content_stream_index) {
+  // TODO(pdfium:1051): Mark page objects that did not have a content stream
+  // with the new content stream index.
 }
 
 void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
