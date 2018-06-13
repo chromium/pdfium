@@ -119,6 +119,11 @@ bool CPDF_PageObjectHolder::RemovePageObject(CPDF_PageObject* pPageObj) {
 
   it->release();
   m_PageObjectList.erase(it);
+
+  int32_t content_stream = pPageObj->GetContentStream();
+  if (content_stream >= 0)
+    m_DirtyStreams.insert(content_stream);
+
   return true;
 }
 
