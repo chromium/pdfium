@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
 #include <memory>
+#include <vector>
 
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
 #include "core/fxcodec/codec/codec_int.h"
-#include "core/fxcrt/cfx_fixedbufgrow.h"
 
 namespace {
 
@@ -123,20 +124,21 @@ void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
 
   uint32_t nSrcComponents = m_nComponents;
   uint8_t output[4];
+  // TODO(npm): Currently the CmsDoTransform method is part of LCMS and it will
+  // apply some member of m_hTransform to the input. We need to go over all the
+  // places which set transform to verify that only nSrcComponents are used.
   if (pTransform->m_bLab) {
-    CFX_FixedBufGrow<double, 16> inputs(nSrcComponents);
-    double* input = inputs;
+    std::vector<double> inputs(std::max(nSrcComponents, 16u));
     for (uint32_t i = 0; i < nSrcComponents; ++i)
-      input[i] = pSrcValues[i];
-    cmsDoTransform(pTransform->m_hTransform, input, output, 1);
+      inputs[i] = pSrcValues[i];
+    cmsDoTransform(pTransform->m_hTransform, inputs.data(), output, 1);
   } else {
-    CFX_FixedBufGrow<uint8_t, 16> inputs(nSrcComponents);
-    uint8_t* input = inputs;
+    std::vector<uint8_t> inputs(std::max(nSrcComponents, 16u));
     for (uint32_t i = 0; i < nSrcComponents; ++i) {
-      input[i] =
+      inputs[i] =
           pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
     }
-    cmsDoTransform(pTransform->m_hTransform, input, output, 1);
+    cmsDoTransform(pTransform->m_hTransform, inputs.data(), output, 1);
   }
   pDestValues[0] = output[2] / 255.0f;
   pDestValues[1] = output[1] / 255.0f;
