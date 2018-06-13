@@ -50,8 +50,10 @@ class CFX_Font {
 #ifdef PDF_ENABLE_XFA
   bool LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile, int nFaceIndex);
 
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   void SetFace(FXFT_Face face);
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst);
+#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 #endif  // PDF_ENABLE_XFA
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,

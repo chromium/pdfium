@@ -306,6 +306,24 @@ CFX_Font::CFX_Font()
 }
 
 #ifdef PDF_ENABLE_XFA
+bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
+                        int nFaceIndex) {
+  m_bEmbedded = false;
+
+  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
+  pFontMgr->InitFTLibrary();
+
+  FXFT_Library library = pFontMgr->GetFTLibrary();
+  std::unique_ptr<FXFT_StreamRec> stream;
+  if (!LoadFileImp(library, &m_Face, pFile, nFaceIndex, &stream))
+    return false;
+
+  m_pOwnedStream = std::move(stream);
+  FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
+  return true;
+}
+
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 void CFX_Font::SetFace(FXFT_Face face) {
   ClearFaceCache();
   m_Face = face;
@@ -314,6 +332,7 @@ void CFX_Font::SetFace(FXFT_Face face) {
 void CFX_Font::SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
   m_pSubstFont = std::move(subst);
 }
+#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 #endif  // PDF_ENABLE_XFA
 
 CFX_Font::~CFX_Font() {
@@ -352,25 +371,6 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
     m_dwSize = FXFT_Get_Face_Stream_Size(m_Face);
   }
 }
-
-#ifdef PDF_ENABLE_XFA
-bool CFX_Font::LoadFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
-                        int nFaceIndex) {
-  m_bEmbedded = false;
-
-  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
-  pFontMgr->InitFTLibrary();
-
-  FXFT_Library library = pFontMgr->GetFTLibrary();
-  std::unique_ptr<FXFT_StreamRec> stream;
-  if (!LoadFileImp(library, &m_Face, pFile, nFaceIndex, &stream))
-    return false;
-
-  m_pOwnedStream = std::move(stream);
-  FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
-  return true;
-}
-#endif  // PDF_ENABLE_XFA
 
 uint32_t CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
   if (!m_Face)
