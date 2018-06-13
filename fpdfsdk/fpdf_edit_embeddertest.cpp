@@ -931,6 +931,7 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   FPDF_ClosePage(page);
 }
 
+// Tests adding text from standard font using FPDFPageObj_NewTextObj.
 TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
@@ -999,6 +1000,73 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   // TODO(npm): Why are there issues with text rotated by 90 degrees?
   // TODO(npm): FPDF_SaveAsCopy not giving the desired result after this.
   FPDF_ClosePage(page);
+}
+
+// Tests adding text from standard font using FPDFText_LoadStandardFont.
+TEST_F(FPDFEditEmbeddertest, AddStandardFontText2) {
+  // Start with a blank page
+  ScopedFPDFPage page(FPDFPage_New(CreateNewDocument(), 0, 612, 792));
+
+  // Load a standard font.
+  FPDF_FONT font = FPDFText_LoadStandardFont(document(), "Helvetica");
+  ASSERT_TRUE(font);
+
+  // Add some text to the page.
+  FPDF_PAGEOBJECT text_object =
+      FPDFPageObj_CreateTextObj(document(), font, 12.0f);
+  EXPECT_TRUE(text_object);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+      GetFPDFWideString(L"I'm at the bottom of the page");
+  EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
+  FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 20, 20);
+  FPDFPage_InsertObject(page.get(), text_object);
+  ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page.get(), nullptr, 0);
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+  const char md5[] = "a4dddc1a3930fa694bbff9789dab4161";
+#else
+  const char md5[] = "eacaa24573b8ce997b3882595f096f00";
+#endif
+  CompareBitmap(page_bitmap.get(), 612, 792, md5);
+}
+
+TEST_F(FPDFEditEmbeddertest, LoadStandardFonts) {
+  CreateNewDocument();
+  const char* standard_font_names[] = {"Arial",
+                                       "Arial-Bold",
+                                       "Arial-BoldItalic",
+                                       "Arial-Italic",
+                                       "Courier",
+                                       "Courier-BoldOblique",
+                                       "Courier-Oblique",
+                                       "Courier-Bold",
+                                       "CourierNew",
+                                       "CourierNew-Bold",
+                                       "CourierNew-BoldItalic",
+                                       "CourierNew-Italic",
+                                       "Helvetica",
+                                       "Helvetica-Bold",
+                                       "Helvetica-BoldOblique",
+                                       "Helvetica-Oblique",
+                                       "Symbol",
+                                       "TimesNewRoman",
+                                       "TimesNewRoman-Bold",
+                                       "TimesNewRoman-BoldItalic",
+                                       "TimesNewRoman-Italic",
+                                       "ZapfDingbats"};
+  for (auto* const font_name : standard_font_names) {
+    FPDF_FONT font = FPDFText_LoadStandardFont(document(), font_name);
+    EXPECT_TRUE(font) << font_name << " should be considered a standard font.";
+  }
+  const char* not_standard_font_names[] = {
+      "Abcdefg",      "ArialB",    "Arial-Style",
+      "Font Name",    "FontArial", "NotAStandardFontName",
+      "TestFontName", "Quack",     "Symbol-Italic",
+      "Zapf"};
+  for (auto* const font_name : not_standard_font_names) {
+    FPDF_FONT font = FPDFText_LoadStandardFont(document(), font_name);
+    EXPECT_FALSE(font) << font_name
+                       << " should not be considered a standard font.";
+  }
 }
 
 TEST_F(FPDFEditEmbeddertest, GraphicsData) {

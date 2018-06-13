@@ -462,6 +462,16 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
           : LoadSimpleFont(pDoc, std::move(pFont), data, size, font_type));
 }
 
+FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
+FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
+
+  return FPDFFontFromCPDFFont(
+      CPDF_Font::GetStockFont(pDoc, ByteStringView(font)));
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_SetFillColor(FPDF_PAGEOBJECT text_object,
                       unsigned int R,

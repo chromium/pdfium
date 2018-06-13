@@ -1022,7 +1022,7 @@ FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text);
 // type.
 // cid        - a boolean specifying if the font is a CID font or not.
 //
-// The loaded font can be closed using FPDF_Font_Close.
+// The loaded font can be closed using FPDFFont_Close.
 //
 // Returns NULL on failure
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
@@ -1030,6 +1030,21 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
                                                       uint32_t size,
                                                       int font_type,
                                                       FPDF_BOOL cid);
+
+// Experimental API.
+// Loads one of the standard 14 fonts per PDF spec 1.7 page 416. The preferred
+// way of using font style is using a dash to separate the name from the style,
+// for example 'Helvetica-BoldItalic'.
+//
+// document   - handle to the document.
+// font       - string containing the font name, without spaces.
+//
+// The loaded font should NOT be closed using FPDFFont_Close. It will be
+// unloaded during the document's destruction.
+//
+// Returns NULL on failure.
+FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
+FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font);
 
 // DEPRECATED as of May 2018. This API will be removed in the future. Please
 // use FPDFPageObj_SetFillColor instead.
