@@ -70,11 +70,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   float GetFontSize() const;
 
   int GetSelectedIndex(int nIndex) const;
-#ifdef PDF_ENABLE_XFA
-  WideString GetValue(bool bDisplay = true) const;
-#else   // PDF_ENABLE_XFA
   WideString GetValue() const;
-#endif  // PDF_ENABLE_XFA
   WideString GetDefaultValue() const;
   WideString GetOptionLabel(int nIndex) const;
   int CountOptions() const;

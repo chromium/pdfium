@@ -456,17 +456,13 @@ int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
   return pFormField->GetSelectedIndex(nIndex);
 }
 
+WideString CPDFSDK_Widget::GetValue() const {
 #ifdef PDF_ENABLE_XFA
-WideString CPDFSDK_Widget::GetValue(bool bDisplay) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     CXFA_Node* node = hWidget->GetNode();
-    if (node->IsWidgetReady()) {
-      return node->GetValue(bDisplay ? XFA_VALUEPICTURE_Display
-                                     : XFA_VALUEPICTURE_Edit);
-    }
+    if (node->IsWidgetReady())
+      return node->GetValue(XFA_VALUEPICTURE_Display);
   }
-#else   // PDF_ENABLE_XFA
-WideString CPDFSDK_Widget::GetValue() const {
 #endif  // PDF_ENABLE_XFA
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->GetValue();

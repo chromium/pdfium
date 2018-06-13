@@ -1781,7 +1781,7 @@ void CPWL_AppStream::SetAsTextField(const WideString* sValue) {
 #ifdef PDF_ENABLE_XFA
   WideString sValueTmp;
   if (!sValue && widget_->GetMixXFAWidget()) {
-    sValueTmp = widget_->GetValue(true);
+    sValueTmp = widget_->GetValue();
     sValue = &sValueTmp;
   }
 #endif  // PDF_ENABLE_XFA
