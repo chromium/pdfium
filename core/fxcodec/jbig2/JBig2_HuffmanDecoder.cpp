@@ -14,7 +14,7 @@ CJBig2_HuffmanDecoder::CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream)
 
 CJBig2_HuffmanDecoder::~CJBig2_HuffmanDecoder() {}
 
-int CJBig2_HuffmanDecoder::DecodeAValue(CJBig2_HuffmanTable* pTable,
+int CJBig2_HuffmanDecoder::DecodeAValue(const CJBig2_HuffmanTable* pTable,
                                         int* nResult) {
   FX_SAFE_INT32 nSafeVal = 0;
   int nBits = 0;

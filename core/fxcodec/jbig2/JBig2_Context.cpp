@@ -1240,7 +1240,7 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
   return SBSYMCODES;
 }
 
-CJBig2_HuffmanTable* CJBig2_Context::GetHuffmanTable(size_t idx) {
+const CJBig2_HuffmanTable* CJBig2_Context::GetHuffmanTable(size_t idx) {
   ASSERT(idx > 0);
   ASSERT(idx < CJBig2_HuffmanTable::kNumHuffmanTables);
   if (!m_HuffmanTables[idx].get())

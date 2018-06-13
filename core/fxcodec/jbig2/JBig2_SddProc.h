@@ -36,10 +36,10 @@ class CJBig2_SDDProc {
   CJBig2_Image** SDINSYMS;
   uint32_t SDNUMNEWSYMS;
   uint32_t SDNUMEXSYMS;
-  CJBig2_HuffmanTable* SDHUFFDH;
-  CJBig2_HuffmanTable* SDHUFFDW;
-  CJBig2_HuffmanTable* SDHUFFBMSIZE;
-  CJBig2_HuffmanTable* SDHUFFAGGINST;
+  const CJBig2_HuffmanTable* SDHUFFDH;
+  const CJBig2_HuffmanTable* SDHUFFDW;
+  const CJBig2_HuffmanTable* SDHUFFBMSIZE;
+  const CJBig2_HuffmanTable* SDHUFFAGGINST;
   uint8_t SDTEMPLATE;
   int8_t SDAT[8];
   bool SDRTEMPLATE;

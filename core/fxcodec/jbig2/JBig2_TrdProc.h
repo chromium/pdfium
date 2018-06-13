@@ -72,14 +72,14 @@ class CJBig2_TRDProc {
 
   JBig2Corner REFCORNER;
   int8_t SBDSOFFSET;
-  CJBig2_HuffmanTable* SBHUFFFS;
-  CJBig2_HuffmanTable* SBHUFFDS;
-  CJBig2_HuffmanTable* SBHUFFDT;
-  CJBig2_HuffmanTable* SBHUFFRDW;
-  CJBig2_HuffmanTable* SBHUFFRDH;
-  CJBig2_HuffmanTable* SBHUFFRDX;
-  CJBig2_HuffmanTable* SBHUFFRDY;
-  CJBig2_HuffmanTable* SBHUFFRSIZE;
+  const CJBig2_HuffmanTable* SBHUFFFS;
+  const CJBig2_HuffmanTable* SBHUFFDS;
+  const CJBig2_HuffmanTable* SBHUFFDT;
+  const CJBig2_HuffmanTable* SBHUFFRDW;
+  const CJBig2_HuffmanTable* SBHUFFRDH;
+  const CJBig2_HuffmanTable* SBHUFFRDX;
+  const CJBig2_HuffmanTable* SBHUFFRDY;
+  const CJBig2_HuffmanTable* SBHUFFRSIZE;
   bool SBRTEMPLATE;
   int8_t SBRAT[4];
 

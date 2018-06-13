@@ -79,7 +79,7 @@ class CJBig2_Context {
 
   std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(uint32_t SBNUMSYMS);
 
-  CJBig2_HuffmanTable* GetHuffmanTable(size_t idx);
+  const CJBig2_HuffmanTable* GetHuffmanTable(size_t idx);
 
   std::unique_ptr<CJBig2_Context> m_pGlobalContext;
   std::unique_ptr<CJBig2_BitStream> m_pStream;
