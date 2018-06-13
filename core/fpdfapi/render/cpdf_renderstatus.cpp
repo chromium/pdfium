@@ -49,7 +49,6 @@
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/cfx_fixedbufgrow.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -152,24 +151,24 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float y_span = end_y - start_y;
   float axis_len_square = (x_span * x_span) + (y_span * y_span);
 
-  CFX_FixedBufGrow<float, 16> result_array(total_results);
-  float* pResults = result_array;
-  memset(pResults, 0, total_results * sizeof(float));
+  ASSERT(total_results >= CountOutputsFromFunctions(funcs));
+  ASSERT(total_results >= pCS->CountComponents());
+  std::vector<float> result_array(total_results);
   uint32_t rgb_array[kShadingSteps];
-  for (int i = 0; i < kShadingSteps; i++) {
+  for (int i = 0; i < kShadingSteps; ++i) {
     float input = (t_max - t_min) * i / kShadingSteps + t_min;
     int offset = 0;
     for (const auto& func : funcs) {
       if (func) {
         int nresults = 0;
-        if (func->Call(&input, 1, pResults + offset, &nresults))
+        if (func->Call(&input, 1, &result_array[offset], &nresults))
           offset += nresults;
       }
     }
     float R = 0.0f;
     float G = 0.0f;
     float B = 0.0f;
-    pCS->GetRGB(pResults, &R, &G, &B);
+    pCS->GetRGB(result_array.data(), &R, &G, &B);
     rgb_array[i] =
         FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
                                 FXSYS_round(G * 255), FXSYS_round(B * 255)));
@@ -238,24 +237,24 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     bEndExtend = !!pArray->GetIntegerAt(1);
   }
 
-  CFX_FixedBufGrow<float, 16> result_array(total_results);
-  float* pResults = result_array;
-  memset(pResults, 0, total_results * sizeof(float));
+  ASSERT(total_results >= CountOutputsFromFunctions(funcs));
+  ASSERT(total_results >= pCS->CountComponents());
+  std::vector<float> result_array(total_results);
   uint32_t rgb_array[kShadingSteps];
-  for (int i = 0; i < kShadingSteps; i++) {
+  for (int i = 0; i < kShadingSteps; ++i) {
     float input = (t_max - t_min) * i / kShadingSteps + t_min;
     int offset = 0;
     for (const auto& func : funcs) {
       if (func) {
         int nresults;
-        if (func->Call(&input, 1, pResults + offset, &nresults))
+        if (func->Call(&input, 1, &result_array[offset], &nresults))
           offset += nresults;
       }
     }
     float R = 0.0f;
     float G = 0.0f;
     float B = 0.0f;
-    pCS->GetRGB(pResults, &R, &G, &B);
+    pCS->GetRGB(result_array.data(), &R, &G, &B);
     rgb_array[i] =
         FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
                                 FXSYS_round(G * 255), FXSYS_round(B * 255)));
@@ -367,10 +366,10 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
 
-  CFX_FixedBufGrow<float, 16> result_array(total_results);
-  float* pResults = result_array;
-  memset(pResults, 0, total_results * sizeof(float));
-  for (int row = 0; row < height; row++) {
+  ASSERT(total_results >= CountOutputsFromFunctions(funcs));
+  ASSERT(total_results >= pCS->CountComponents());
+  std::vector<float> result_array(total_results);
+  for (int row = 0; row < height; ++row) {
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
@@ -383,7 +382,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       for (const auto& func : funcs) {
         if (func) {
           int nresults;
-          if (func->Call(input, 2, pResults + offset, &nresults))
+          if (func->Call(input, 2, &result_array[offset], &nresults))
             offset += nresults;
         }
       }
@@ -391,7 +390,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float R = 0.0f;
       float G = 0.0f;
       float B = 0.0f;
-      pCS->GetRGB(pResults, &R, &G, &B);
+      pCS->GetRGB(result_array.data(), &R, &G, &B);
       dib_buf[column] = FXARGB_TODIB(ArgbEncode(
           alpha, (int32_t)(R * 255), (int32_t)(G * 255), (int32_t)(B * 255)));
     }
@@ -2054,13 +2053,13 @@ void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
     const CPDF_Array* pBackColor = pDict->GetArrayFor("Background");
     if (pBackColor &&
         pBackColor->GetCount() >= pColorSpace->CountComponents()) {
-      CFX_FixedBufGrow<float, 16> comps(pColorSpace->CountComponents());
+      std::vector<float> comps(pColorSpace->CountComponents());
       for (uint32_t i = 0; i < pColorSpace->CountComponents(); i++)
         comps[i] = pBackColor->GetNumberAt(i);
       float R = 0.0f;
       float G = 0.0f;
       float B = 0.0f;
-      pColorSpace->GetRGB(comps, &R, &G, &B);
+      pColorSpace->GetRGB(comps.data(), &R, &G, &B);
       background = ArgbEncode(255, (int32_t)(R * 255), (int32_t)(G * 255),
                               (int32_t)(B * 255));
     }
@@ -2600,11 +2599,11 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   int src_pitch = bitmap.GetPitch();
   std::vector<uint8_t> transfers(256);
   if (pFunc) {
-    CFX_FixedBufGrow<float, 16> results(pFunc->CountOutputs());
+    std::vector<float> results(pFunc->CountOutputs());
     for (int i = 0; i < 256; i++) {
       float input = (float)i / 255.0f;
       int nresult;
-      pFunc->Call(&input, 1, results, &nresult);
+      pFunc->Call(&input, 1, results.data(), &nresult);
       transfers[i] = FXSYS_round(results[0] * 255);
     }
   } else {
