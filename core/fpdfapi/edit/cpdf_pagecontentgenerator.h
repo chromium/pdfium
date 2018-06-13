@@ -40,8 +40,9 @@ class CPDF_PageContentGenerator {
   void ProcessGraphics(std::ostringstream* buf, CPDF_PageObject* pPageObj);
   void ProcessDefaultGraphics(std::ostringstream* buf);
   void ProcessText(std::ostringstream* buf, CPDF_TextObject* pTextObj);
+  ByteString GetOrCreateDefaultGraphics() const;
   ByteString RealizeResource(const CPDF_Object* pResource,
-                             const ByteString& bsType);
+                             const ByteString& bsType) const;
 
   // Returns a map from content stream index to new stream data. Unmodified
   // streams are not touched.

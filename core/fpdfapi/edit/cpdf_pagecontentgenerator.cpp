@@ -130,7 +130,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
 
 ByteString CPDF_PageContentGenerator::RealizeResource(
     const CPDF_Object* pResource,
-    const ByteString& bsType) {
+    const ByteString& bsType) const {
   ASSERT(pResource);
   if (!m_pObjHolder->m_pResources) {
     m_pObjHolder->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
@@ -343,24 +343,30 @@ void CPDF_PageContentGenerator::ProcessDefaultGraphics(
   *buf << "0 0 0 RG 0 0 0 rg 1 w "
        << static_cast<int>(CFX_GraphStateData::LineCapButt) << " J "
        << static_cast<int>(CFX_GraphStateData::LineJoinMiter) << " j\n";
+  ByteString name = GetOrCreateDefaultGraphics();
+  *buf << "/" << PDF_NameEncode(name).c_str() << " gs ";
+}
+
+ByteString CPDF_PageContentGenerator::GetOrCreateDefaultGraphics() const {
   GraphicsData defaultGraphics;
   defaultGraphics.fillAlpha = 1.0f;
   defaultGraphics.strokeAlpha = 1.0f;
   defaultGraphics.blendType = FXDIB_BLEND_NORMAL;
   auto it = m_pObjHolder->m_GraphicsMap.find(defaultGraphics);
-  ByteString name;
-  if (it != m_pObjHolder->m_GraphicsMap.end()) {
-    name = it->second;
-  } else {
-    auto gsDict = pdfium::MakeUnique<CPDF_Dictionary>();
-    gsDict->SetNewFor<CPDF_Number>("ca", defaultGraphics.fillAlpha);
-    gsDict->SetNewFor<CPDF_Number>("CA", defaultGraphics.strokeAlpha);
-    gsDict->SetNewFor<CPDF_Name>("BM", "Normal");
-    CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(gsDict));
-    name = RealizeResource(pDict, "ExtGState");
-    m_pObjHolder->m_GraphicsMap[defaultGraphics] = name;
-  }
-  *buf << "/" << PDF_NameEncode(name).c_str() << " gs ";
+
+  // If default graphics already exists, return it.
+  if (it != m_pObjHolder->m_GraphicsMap.end())
+    return it->second;
+
+  // Otherwise, create them.
+  auto gsDict = pdfium::MakeUnique<CPDF_Dictionary>();
+  gsDict->SetNewFor<CPDF_Number>("ca", defaultGraphics.fillAlpha);
+  gsDict->SetNewFor<CPDF_Number>("CA", defaultGraphics.strokeAlpha);
+  gsDict->SetNewFor<CPDF_Name>("BM", "Normal");
+  CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(gsDict));
+  ByteString name = RealizeResource(pDict, "ExtGState");
+  m_pObjHolder->m_GraphicsMap[defaultGraphics] = name;
+  return name;
 }
 
 // This method adds text to the buffer, BT begins the text object, ET ends it.
