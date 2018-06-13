@@ -309,34 +309,29 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_PageView* pPageView = pSDKAnnot->GetPageView();
   CPDFXFA_Page* pPage = pPageView->GetPDFXFAPage();
-  if (!pPage)
-    return nullptr;
-  if (pPage->AsPDFPage()) {  // for pdf annots.
-    CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
-                             pSDKAnnot->GetAnnotSubtype());
-    CPDFSDK_Annot* pNext =
-        bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
-    return pNext;
-  }
-  // for xfa annots
-  std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
-      pPage->GetXFAPageView()->CreateWidgetIterator(
-          XFA_TRAVERSEWAY_Tranvalse, XFA_WidgetStatus_Visible |
-                                         XFA_WidgetStatus_Viewable |
-                                         XFA_WidgetStatus_Focused));
-  if (!pWidgetIterator)
-    return nullptr;
-  if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
-    pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
-  CXFA_FFWidget* hNextFocus =
-      bNext ? pWidgetIterator->MoveToNext() : pWidgetIterator->MoveToPrevious();
-  if (!hNextFocus && pSDKAnnot)
-    hNextFocus = pWidgetIterator->MoveToFirst();
+  if (pPage && !pPage->AsPDFPage()) {
+    // For xfa annots in XFA pages not backed by PDF pages.
+    std::unique_ptr<IXFA_WidgetIterator> pWidgetIterator(
+        pPage->GetXFAPageView()->CreateWidgetIterator(
+            XFA_TRAVERSEWAY_Tranvalse, XFA_WidgetStatus_Visible |
+                                           XFA_WidgetStatus_Viewable |
+                                           XFA_WidgetStatus_Focused));
+    if (!pWidgetIterator)
+      return nullptr;
+    if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
+      pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
+    CXFA_FFWidget* hNextFocus = bNext ? pWidgetIterator->MoveToNext()
+                                      : pWidgetIterator->MoveToPrevious();
+    if (!hNextFocus && pSDKAnnot)
+      hNextFocus = pWidgetIterator->MoveToFirst();
 
-  return pPageView->GetAnnotByXFAWidget(hNextFocus);
-#else   // PDF_ENABLE_XFA
-  CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
-                           CPDF_Annot::Subtype::WIDGET);
-  return bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
+    return pPageView->GetAnnotByXFAWidget(hNextFocus);
+  }
 #endif  // PDF_ENABLE_XFA
+
+  // For PDF annots.
+  ASSERT(pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET);
+  CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
+                           pSDKAnnot->GetAnnotSubtype());
+  return bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
 }
