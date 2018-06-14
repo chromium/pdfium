@@ -156,28 +156,21 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     dwPageLenArray.push_back(safePageLen.ValueOrDie());
   }
 
-  const FX_FILESIZE nOffsetE = m_pLinearized->GetFirstPageEndOffset();
   const uint32_t nFirstPageNum = m_pLinearized->GetFirstPageNo();
-  for (uint32_t i = 0; i < nPages; ++i) {
-    if (i == nFirstPageNum) {
-      m_szPageOffsetArray.push_back(m_szFirstPageObjOffset);
-    } else if (i == nFirstPageNum + 1) {
-      if (i == 1) {
-        m_szPageOffsetArray.push_back(nOffsetE);
-      } else {
-        m_szPageOffsetArray.push_back(m_szPageOffsetArray[i - 2] +
-                                      dwPageLenArray[i - 2]);
-      }
-    } else {
-      if (i == 0) {
-        m_szPageOffsetArray.push_back(nOffsetE);
-      } else {
-        m_szPageOffsetArray.push_back(m_szPageOffsetArray[i - 1] +
-                                      dwPageLenArray[i - 1]);
-      }
-    }
-  }
+  if (nFirstPageNum >= nPages)
+    return false;
 
+  m_szPageOffsetArray.resize(nPages, 0);
+  ASSERT(m_szFirstPageObjOffset);
+  m_szPageOffsetArray[nFirstPageNum] = m_szFirstPageObjOffset;
+  FX_FILESIZE prev_page_offset = m_pLinearized->GetFirstPageEndOffset();
+  for (uint32_t i = 0; i < nPages; ++i) {
+    if (i == nFirstPageNum)
+      continue;
+
+    m_szPageOffsetArray[i] = prev_page_offset;
+    prev_page_offset += dwPageLenArray[i];
+  }
   m_szPageOffsetArray.push_back(m_szPageOffsetArray[nPages - 1] +
                                 dwPageLenArray[nPages - 1]);
   hStream->ByteAlign();
