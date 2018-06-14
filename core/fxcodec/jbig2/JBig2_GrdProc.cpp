@@ -17,6 +17,20 @@
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "third_party/base/ptr_util.h"
 
+namespace {
+
+// TODO(npm): Name this constants better or merge some together.
+constexpr int kOptConstant1[] = {0x9b25, 0x0795, 0x00e5};
+constexpr int kOptConstant2[] = {6, 4, 1};
+constexpr int kOptConstant3[] = {0xf800, 0x1e00, 0x0380};
+constexpr int kOptConstant4[] = {0, 1, 3};
+constexpr int kOptConstant5[] = {0x07f0, 0x01f8, 0x007c};
+constexpr int kOptConstant6[] = {0x7bf7, 0x0efb, 0x01bd};
+constexpr int kOptConstant7[] = {0x0800, 0x0200, 0x0080};
+constexpr int kOptConstant8[] = {0x0010, 0x0008, 0x0004};
+
+}  // namespace
+
 CJBig2_GRDProc::CJBig2_GRDProc() {}
 
 CJBig2_GRDProc::~CJBig2_GRDProc() {}
@@ -41,33 +55,30 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArith(
   if (!CJBig2_Image::IsValidImageSize(GBW, GBH))
     return pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
 
-  using DecodeFunction = std::function<std::unique_ptr<CJBig2_Image>(
-      CJBig2_GRDProc&, CJBig2_ArithDecoder*, JBig2ArithCtx*)>;
-  DecodeFunction func;
   switch (GBTEMPLATE) {
     case 0:
-      func = UseTemplate0Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate0Opt3
-                                : &CJBig2_GRDProc::DecodeArithTemplate0Unopt;
-      break;
+      return UseTemplate0Opt3()
+                 ? DecodeArithOpt3(pArithDecoder, gbContext, 0)
+                 : DecodeArithTemplate0Unopt(pArithDecoder, gbContext);
     case 1:
-      func = UseTemplate1Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate1Opt3
-                                : &CJBig2_GRDProc::DecodeArithTemplate1Unopt;
-      break;
+      return UseTemplate1Opt3()
+                 ? DecodeArithOpt3(pArithDecoder, gbContext, 1)
+                 : DecodeArithTemplate1Unopt(pArithDecoder, gbContext);
     case 2:
-      func = UseTemplate23Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate2Opt3
-                                 : &CJBig2_GRDProc::DecodeArithTemplate2Unopt;
-      break;
+      return UseTemplate23Opt3()
+                 ? DecodeArithOpt3(pArithDecoder, gbContext, 2)
+                 : DecodeArithTemplate2Unopt(pArithDecoder, gbContext);
     default:
-      func = UseTemplate23Opt3() ? &CJBig2_GRDProc::DecodeArithTemplate3Opt3
-                                 : &CJBig2_GRDProc::DecodeArithTemplate3Unopt;
-      break;
+      return UseTemplate23Opt3()
+                 ? DecodeArithTemplate3Opt3(pArithDecoder, gbContext)
+                 : DecodeArithTemplate3Unopt(pArithDecoder, gbContext);
   }
-  return func(*this, pArithDecoder, gbContext);
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Opt3(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext) {
+    JBig2ArithCtx* gbContext,
+    int OPT) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->data())
     return nullptr;
@@ -78,13 +89,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Opt3(
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
-  uint32_t height = GBH & 0x7fffffff;
-  for (uint32_t h = 0; h < height; h++) {
+  // TODO(npm): Why is the height only trimmed when OPT is 0?
+  uint32_t height = OPT == 0 ? GBH & 0x7fffffff : GBH;
+  for (uint32_t h = 0; h < height; ++h) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[kOptConstant1[OPT]]);
     }
     if (LTP) {
       GBREG->CopyLine(h, h - 1);
@@ -92,68 +104,74 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Opt3(
       if (h > 1) {
         uint8_t* pLine1 = pLine - nStride2;
         uint8_t* pLine2 = pLine - nStride;
-        uint32_t line1 = (*pLine1++) << 6;
+        uint32_t line1 = (*pLine1++) << kOptConstant2[OPT];
         uint32_t line2 = *pLine2++;
-        uint32_t CONTEXT = ((line1 & 0xf800) | (line2 & 0x07f0));
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | ((*pLine1++) << 6);
+        uint32_t CONTEXT = (line1 & kOptConstant3[OPT]) |
+                           ((line2 >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
+        for (int32_t cc = 0; cc < nLineBytes; ++cc) {
+          line1 = (line1 << 8) | ((*pLine1++) << kOptConstant2[OPT]);
           line2 = (line2 << 8) | (*pLine2++);
           uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
-                       ((line1 >> k) & 0x0800) | ((line2 >> k) & 0x0010));
-          }
-          pLine[cc] = cVal;
-        }
-        line1 <<= 8;
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT =
-              (((CONTEXT & 0x7bf7) << 1) | bVal |
-               ((line1 >> (7 - k)) & 0x0800) | ((line2 >> (7 - k)) & 0x0010));
-        }
-        pLine[nLineBytes] = cVal1;
-      } else {
-        uint8_t* pLine2 = pLine - nStride;
-        uint32_t line2 = (h & 1) ? (*pLine2++) : 0;
-        uint32_t CONTEXT = (line2 & 0x07f0);
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          if (h & 1) {
-            line2 = (line2 << 8) | (*pLine2++);
-          }
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
+          for (int32_t k = 7; k >= 0; --k) {
             if (pArithDecoder->IsComplete())
               return nullptr;
 
             int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
             cVal |= bVal << k;
             CONTEXT =
-                (((CONTEXT & 0x7bf7) << 1) | bVal | ((line2 >> k) & 0x0010));
+                (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+                 ((line1 >> k) & kOptConstant7[OPT]) |
+                 ((line2 >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
           }
           pLine[cc] = cVal;
         }
+        line1 <<= 8;
         line2 <<= 8;
         uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
+        for (int32_t k = 0; k < nBitsLeft; ++k) {
           if (pArithDecoder->IsComplete())
             return nullptr;
 
           int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
           cVal1 |= bVal << (7 - k);
-          CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
-                     (((line2 >> (7 - k))) & 0x0010));
+          CONTEXT =
+              (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+               ((line1 >> (7 - k)) & kOptConstant7[OPT]) |
+               ((line2 >> (7 + kOptConstant4[OPT] - k)) & kOptConstant8[OPT]));
+        }
+        pLine[nLineBytes] = cVal1;
+      } else {
+        uint8_t* pLine2 = pLine - nStride;
+        uint32_t line2 = (h & 1) ? (*pLine2++) : 0;
+        uint32_t CONTEXT = ((line2 >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
+        for (int32_t cc = 0; cc < nLineBytes; ++cc) {
+          if (h & 1) {
+            line2 = (line2 << 8) | (*pLine2++);
+          }
+          uint8_t cVal = 0;
+          for (int32_t k = 7; k >= 0; --k) {
+            if (pArithDecoder->IsComplete())
+              return nullptr;
+
+            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
+            cVal |= bVal << k;
+            CONTEXT =
+                (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+                 ((line2 >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
+          }
+          pLine[cc] = cVal;
+        }
+        line2 <<= 8;
+        uint8_t cVal1 = 0;
+        for (int32_t k = 0; k < nBitsLeft; ++k) {
+          if (pArithDecoder->IsComplete())
+            return nullptr;
+
+          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
+          cVal1 |= bVal << (7 - k);
+          CONTEXT = (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+                     (((line2 >> (7 + kOptConstant4[OPT] - k))) &
+                      kOptConstant8[OPT]));
         }
         pLine[nLineBytes] = cVal1;
       }
@@ -217,103 +235,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Unopt(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate1Opt3(
-    CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->data())
-    return nullptr;
-
-  int LTP = 0;
-  uint8_t* pLine = GBREG->data();
-  int32_t nStride = GBREG->stride();
-  int32_t nStride2 = nStride << 1;
-  int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
-  int32_t nBitsLeft = GBW - (nLineBytes << 3);
-  for (uint32_t h = 0; h < GBH; h++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
-    }
-    if (LTP) {
-      GBREG->CopyLine(h, h - 1);
-    } else {
-      if (h > 1) {
-        uint8_t* pLine1 = pLine - nStride2;
-        uint8_t* pLine2 = pLine - nStride;
-        uint32_t line1 = (*pLine1++) << 4;
-        uint32_t line2 = *pLine2++;
-        uint32_t CONTEXT = (line1 & 0x1e00) | ((line2 >> 1) & 0x01f8);
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | ((*pLine1++) << 4);
-          line2 = (line2 << 8) | (*pLine2++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                      ((line1 >> k) & 0x0200) | ((line2 >> (k + 1)) & 0x0008);
-          }
-          pLine[cc] = cVal;
-        }
-        line1 <<= 8;
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                    ((line1 >> (7 - k)) & 0x0200) |
-                    ((line2 >> (8 - k)) & 0x0008);
-        }
-        pLine[nLineBytes] = cVal1;
-      } else {
-        uint8_t* pLine2 = pLine - nStride;
-        uint32_t line2 = (h & 1) ? (*pLine2++) : 0;
-        uint32_t CONTEXT = (line2 >> 1) & 0x01f8;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          if (h & 1) {
-            line2 = (line2 << 8) | (*pLine2++);
-          }
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                      ((line2 >> (k + 1)) & 0x0008);
-          }
-          pLine[cc] = cVal;
-        }
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT =
-              ((CONTEXT & 0x0efb) << 1) | bVal | ((line2 >> (8 - k)) & 0x0008);
-        }
-        pLine[nLineBytes] = cVal1;
-      }
-    }
-    pLine += nStride;
-  }
-  return GBREG;
-}
-
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate1Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
@@ -362,103 +283,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate1Unopt(
         line3 = ((line3 << 1) | bVal) & 0x07;
       }
     }
-  }
-  return GBREG;
-}
-
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate2Opt3(
-    CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->data())
-    return nullptr;
-
-  int LTP = 0;
-  uint8_t* pLine = GBREG->data();
-  int32_t nStride = GBREG->stride();
-  int32_t nStride2 = nStride << 1;
-  int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
-  int32_t nBitsLeft = GBW - (nLineBytes << 3);
-  for (uint32_t h = 0; h < GBH; h++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
-    }
-    if (LTP) {
-      GBREG->CopyLine(h, h - 1);
-    } else {
-      if (h > 1) {
-        uint8_t* pLine1 = pLine - nStride2;
-        uint8_t* pLine2 = pLine - nStride;
-        uint32_t line1 = (*pLine1++) << 1;
-        uint32_t line2 = *pLine2++;
-        uint32_t CONTEXT = (line1 & 0x0380) | ((line2 >> 3) & 0x007c);
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | ((*pLine1++) << 1);
-          line2 = (line2 << 8) | (*pLine2++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                      ((line1 >> k) & 0x0080) | ((line2 >> (k + 3)) & 0x0004);
-          }
-          pLine[cc] = cVal;
-        }
-        line1 <<= 8;
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                    ((line1 >> (7 - k)) & 0x0080) |
-                    ((line2 >> (10 - k)) & 0x0004);
-        }
-        pLine[nLineBytes] = cVal1;
-      } else {
-        uint8_t* pLine2 = pLine - nStride;
-        uint32_t line2 = (h & 1) ? (*pLine2++) : 0;
-        uint32_t CONTEXT = (line2 >> 3) & 0x007c;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          if (h & 1) {
-            line2 = (line2 << 8) | (*pLine2++);
-          }
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                      ((line2 >> (k + 3)) & 0x0004);
-          }
-          pLine[cc] = cVal;
-        }
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          int bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                    (((line2 >> (10 - k))) & 0x0004);
-        }
-        pLine[nLineBytes] = cVal1;
-      }
-    }
-    pLine += nStride;
   }
   return GBREG;
 }
