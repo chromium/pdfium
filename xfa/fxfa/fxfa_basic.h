@@ -9,9 +9,9 @@
 
 #include "fxjs/fxjse.h"
 
-class CJX_Object;
 class CXFA_Measurement;
 enum class XFA_ObjectType;
+struct XFA_SCRIPTATTRIBUTEINFO;
 
 enum XFA_HashCode : uint32_t {
   XFA_HASHCODE_None = 0,
@@ -964,20 +964,9 @@ enum class XFA_Unit : uint8_t {
   Unknown = 255,
 };
 
-typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
-                                                   bool bSetting,
-                                                   XFA_Attribute eAttribute);
 enum class XFA_ScriptType : uint8_t {
   Basic,
   Object,
-};
-
-struct XFA_SCRIPTATTRIBUTEINFO {
-  uint32_t uHash;
-  const wchar_t* pName;
-  XFA_ATTRIBUTE_CALLBACK callback;
-  XFA_Attribute attribute;
-  XFA_ScriptType eValueType;
 };
 
 #endif  // XFA_FXFA_FXFA_BASIC_H_

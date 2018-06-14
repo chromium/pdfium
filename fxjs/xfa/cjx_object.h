@@ -22,6 +22,7 @@
 
 class CFXJSE_Value;
 class CFX_V8;
+class CJX_Object;
 class CXFA_CalcData;
 class CXFA_Document;
 class CXFA_LayoutItem;
@@ -283,6 +284,18 @@ class CJX_Object {
   std::unique_ptr<CXFA_CalcData> calc_data_;
   std::map<ByteString, CJX_MethodCall> method_specs_;
   size_t calc_recursion_count_ = 0;
+};
+
+typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
+                                                   bool bSetting,
+                                                   XFA_Attribute eAttribute);
+
+struct XFA_SCRIPTATTRIBUTEINFO {
+  uint32_t uHash;
+  const wchar_t* pName;
+  XFA_ATTRIBUTE_CALLBACK callback;
+  XFA_Attribute attribute;
+  XFA_ScriptType eValueType;
 };
 
 #endif  // FXJS_XFA_CJX_OBJECT_H_
