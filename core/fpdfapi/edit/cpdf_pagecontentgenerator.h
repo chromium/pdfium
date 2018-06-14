@@ -35,6 +35,7 @@ class CPDF_PageContentGenerator {
  private:
   friend class CPDF_PageContentGeneratorTest;
 
+  void ProcessPageObject(std::ostringstream* buf, CPDF_PageObject* pPageObj);
   void ProcessPath(std::ostringstream* buf, CPDF_PathObject* pPathObj);
   void ProcessImage(std::ostringstream* buf, CPDF_ImageObject* pImageObj);
   void ProcessGraphics(std::ostringstream* buf, CPDF_PageObject* pPageObj);
@@ -48,9 +49,6 @@ class CPDF_PageContentGenerator {
   // streams are not touched.
   std::map<int32_t, std::unique_ptr<std::ostringstream>>
   GenerateModifiedStreams();
-
-  // Generate new stream data with all dirty page objects.
-  bool GenerateStreamWithNewObjects(std::ostringstream* buf);
 
   // Add buffer as a stream in page's 'Contents'
   void UpdateContentStreams(

@@ -428,8 +428,7 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   VerifySavedDocument(612, 792, kLastMD5);
 }
 
-// Fails due to pdfium:1051.
-TEST_F(FPDFEditEmbeddertest, DISABLED_SetText) {
+TEST_F(FPDFEditEmbeddertest, SetText) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -626,8 +625,7 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
   UnloadPage(page);
 }
 
-// Fails due to pdfium:1051.
-TEST_F(FPDFEditEmbeddertest, DISABLED_RemoveExistingPageObject) {
+TEST_F(FPDFEditEmbeddertest, RemoveExistingPageObject) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -652,6 +650,100 @@ TEST_F(FPDFEditEmbeddertest, DISABLED_RemoveExistingPageObject) {
   OpenSavedDocument();
   FPDF_PAGE saved_page = LoadSavedPage(0);
   EXPECT_EQ(1, FPDFPage_CountObjects(saved_page));
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
+TEST_F(FPDFEditEmbeddertest, RemoveExistingPageObjectSplitStreamsNotLonely) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("hello_world_split_streams.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the "Hello, world!" text object and remove it. There is another object
+  // in the same stream that says "Goodbye, world!"
+  ASSERT_EQ(3, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(page_object);
+  EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object));
+
+  // Verify the "Hello, world!" text is gone.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+  const char kHelloRemovedMD5[] = "e07a62d412728fc4d6e3ff42f2dd0e11";
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  const char kHelloRemovedMD5[] = "de37b0bb7ff903c1068bae361844be50";
+#else
+  const char kHelloRemovedMD5[] = "95b92950647a2190e1230911e7a1a0e9";
+#endif
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloRemovedMD5);
+  }
+
+  // Save the file
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+  FPDFPageObj_Destroy(page_object);
+
+  // Re-open the file and check the page object count is still 2.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(saved_page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kHelloRemovedMD5);
+  }
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
+TEST_F(FPDFEditEmbeddertest, RemoveExistingPageObjectSplitStreamsLonely) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("hello_world_split_streams.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Get the "Greetings, world!" text object and remove it. This is the only
+  // object in the stream.
+  ASSERT_EQ(3, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 2);
+  ASSERT_TRUE(page_object);
+  EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object));
+
+  // Verify the "Greetings, world!" text is gone.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
+  const char kGreetingsRemovedMD5[] = "b90475ca64d1348c3bf5e2b77ad9187a";
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  const char kGreetingsRemovedMD5[] = "e5a6fa28298db07484cd922f3e210c88";
+#else
+  const char kGreetingsRemovedMD5[] = "2baa4c0e1758deba1b9c908e1fbd04ed";
+#endif
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kGreetingsRemovedMD5);
+  }
+
+  // Save the file
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+  FPDFPageObj_Destroy(page_object);
+
+  // Re-open the file and check the page object count is still 2.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  EXPECT_EQ(2, FPDFPage_CountObjects(saved_page));
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(saved_page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kGreetingsRemovedMD5);
+  }
+
   CloseSavedPage(saved_page);
   CloseSavedDocument();
 }
@@ -699,6 +791,39 @@ TEST_F(FPDFEditEmbeddertest, InsertPageObjectAndSave) {
 
   // Verify the red rectangle was added.
   ASSERT_EQ(3, FPDFPage_CountObjects(page));
+
+  // Save the file
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Re-open the file and check the page object count is still 3.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  EXPECT_EQ(3, FPDFPage_CountObjects(saved_page));
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
+TEST_F(FPDFEditEmbeddertest, InsertPageObjectEditAndSave) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Add a red rectangle.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 100, 100, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(page, red_rect);
+
+  // Verify the red rectangle was added.
+  ASSERT_EQ(3, FPDFPage_CountObjects(page));
+
+  // Generate content but change it again
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
 
   // Save the file
   EXPECT_TRUE(FPDFPage_GenerateContent(page));

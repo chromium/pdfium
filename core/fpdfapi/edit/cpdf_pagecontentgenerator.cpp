@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 
+#include <map>
+#include <memory>
+#include <set>
 #include <tuple>
 #include <utility>
 
@@ -73,33 +76,67 @@ void CPDF_PageContentGenerator::GenerateContent() {
 
 std::map<int32_t, std::unique_ptr<std::ostringstream>>
 CPDF_PageContentGenerator::GenerateModifiedStreams() {
-  auto buf = pdfium::MakeUnique<std::ostringstream>();
+  // Make sure default graphics are created.
+  (void)GetOrCreateDefaultGraphics();
 
+  // Figure out which streams are dirty.
+  std::set<int32_t> all_dirty_streams;
+  for (auto& pPageObj : m_pageObjects) {
+    if (pPageObj->IsDirty())
+      all_dirty_streams.insert(pPageObj->GetContentStream());
+  }
+  const std::set<int32_t>* marked_dirty_streams =
+      m_pObjHolder->GetDirtyStreams();
+  all_dirty_streams.insert(marked_dirty_streams->begin(),
+                           marked_dirty_streams->end());
+
+  // Start regenerating dirty streams.
   std::map<int32_t, std::unique_ptr<std::ostringstream>> streams;
-  if (GenerateStreamWithNewObjects(buf.get()))
-    streams[CPDF_PageObject::kNoContentStream] = std::move(buf);
+  std::map<int32_t, bool> stream_is_empty;
 
-  // TODO(pdfium:1051): Generate other streams and add to |streams|.
+  for (int32_t dirty_stream : all_dirty_streams) {
+    std::unique_ptr<std::ostringstream> buf =
+        pdfium::MakeUnique<std::ostringstream>();
+
+    // Set the default graphic state values
+    *buf << "q\n";
+    if (!m_pObjHolder->GetLastCTM().IsIdentity())
+      *buf << m_pObjHolder->GetLastCTM().GetInverse() << " cm\n";
+
+    ProcessDefaultGraphics(buf.get());
+
+    streams[dirty_stream] = std::move(buf);
+    stream_is_empty[dirty_stream] = true;
+  }
+
+  // Process the page objects, write into each dirty stream.
+  for (auto& pPageObj : m_pageObjects) {
+    int stream_index = pPageObj->GetContentStream();
+    auto it = streams.find(stream_index);
+    if (it == streams.end())
+      continue;
+
+    std::ostringstream* buf = it->second.get();
+    stream_is_empty[stream_index] = false;
+    ProcessPageObject(buf, pPageObj.Get());
+  }
+
+  // Finish dirty streams.
+  for (int32_t dirty_stream : all_dirty_streams) {
+    std::ostringstream* buf = streams[dirty_stream].get();
+    if (stream_is_empty[dirty_stream]) {
+      // Clear to show that this stream needs to be deleted.
+      buf->str("");
+    } else {
+      // Return graphics to original state
+      *buf << "Q\n";
+    }
+  }
+
+  // Clear dirty streams in m_pObjHolder
+  m_pObjHolder->ClearDirtyStreams();
 
   return streams;
-}
-
-bool CPDF_PageContentGenerator::GenerateStreamWithNewObjects(
-    std::ostringstream* buf) {
-  // Set the default graphic state values
-  *buf << "q\n";
-  if (!m_pObjHolder->GetLastCTM().IsIdentity())
-    *buf << m_pObjHolder->GetLastCTM().GetInverse() << " cm\n";
-  ProcessDefaultGraphics(buf);
-
-  // Process the page objects
-  if (!ProcessPageObjects(buf))
-    return false;
-
-  // Return graphics to original state
-  *buf << "Q\n";
-
-  return true;
 }
 
 void CPDF_PageContentGenerator::UpdateContentStreams(
@@ -123,6 +160,9 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
     CPDF_Stream* old_stream =
         page_content_manager.GetStreamByIndex(stream_index);
     ASSERT(old_stream);
+
+    // TODO(pdfium:1051): Remove streams that are now empty. If buf is empty,
+    // remove this instead of setting the data.
 
     old_stream->SetData(buf);
   }
@@ -162,21 +202,28 @@ bool CPDF_PageContentGenerator::ProcessPageObjects(std::ostringstream* buf) {
       continue;
 
     bDirty = true;
-    if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
-      ProcessImage(buf, pImageObject);
-    else if (CPDF_PathObject* pPathObj = pPageObj->AsPath())
-      ProcessPath(buf, pPathObj);
-    else if (CPDF_TextObject* pTextObj = pPageObj->AsText())
-      ProcessText(buf, pTextObj);
-    pPageObj->SetDirty(false);
+    ProcessPageObject(buf, pPageObj.Get());
   }
   return bDirty;
 }
 
 void CPDF_PageContentGenerator::UpdateStreamlessPageObjects(
     int new_content_stream_index) {
-  // TODO(pdfium:1051): Mark page objects that did not have a content stream
-  // with the new content stream index.
+  for (auto& pPageObj : m_pageObjects) {
+    if (pPageObj->GetContentStream() == CPDF_PageObject::kNoContentStream)
+      pPageObj->SetContentStream(new_content_stream_index);
+  }
+}
+
+void CPDF_PageContentGenerator::ProcessPageObject(std::ostringstream* buf,
+                                                  CPDF_PageObject* pPageObj) {
+  if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
+    ProcessImage(buf, pImageObject);
+  else if (CPDF_PathObject* pPathObj = pPageObj->AsPath())
+    ProcessPath(buf, pPathObj);
+  else if (CPDF_TextObject* pTextObj = pPageObj->AsText())
+    ProcessText(buf, pTextObj);
+  pPageObj->SetDirty(false);
 }
 
 void CPDF_PageContentGenerator::ProcessImage(std::ostringstream* buf,
