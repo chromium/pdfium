@@ -304,8 +304,10 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
 CXFA_FMToken CXFA_FMLexer::AdvanceForNumber() {
   // This will set end to the character after the end of the number.
   int32_t used_length = 0;
-  if (m_cursor)
-    FXSYS_wcstof(const_cast<wchar_t*>(m_cursor), -1, &used_length);
+  if (m_cursor) {
+    FXSYS_wcstof(const_cast<wchar_t*>(m_cursor), m_end - m_cursor,
+                 &used_length);
+  }
 
   const wchar_t* end = m_cursor + used_length;
   if (used_length == 0 || !end || FXSYS_iswalpha(*end)) {
