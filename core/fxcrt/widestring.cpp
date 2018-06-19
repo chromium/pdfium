@@ -441,9 +441,16 @@ const WideString& WideString::operator=(const WideStringView& stringSrc) {
   return *this;
 }
 
-const WideString& WideString::operator=(const WideString& stringSrc) {
-  if (m_pData != stringSrc.m_pData)
-    m_pData = stringSrc.m_pData;
+const WideString& WideString::operator=(const WideString& that) {
+  if (m_pData != that.m_pData)
+    m_pData = that.m_pData;
+
+  return *this;
+}
+
+const WideString& WideString::operator=(WideString&& that) {
+  if (m_pData != that.m_pData)
+    m_pData = std::move(that.m_pData);
 
   return *this;
 }
@@ -660,6 +667,10 @@ void WideString::Concat(const wchar_t* pSrcData, size_t nSrcLen) {
   pNewData->CopyContents(*m_pData);
   pNewData->CopyContentsAt(m_pData->m_nDataLength, pSrcData, nSrcLen);
   m_pData.Swap(pNewData);
+}
+
+intptr_t WideString::ReferenceCountForTesting() const {
+  return m_pData ? m_pData->m_nRefs : 0;
 }
 
 ByteString WideString::UTF8Encode() const {

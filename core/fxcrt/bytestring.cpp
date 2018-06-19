@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <utility>
 
 #include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -244,9 +245,16 @@ const ByteString& ByteString::operator=(const ByteStringView& stringSrc) {
   return *this;
 }
 
-const ByteString& ByteString::operator=(const ByteString& stringSrc) {
-  if (m_pData != stringSrc.m_pData)
-    m_pData = stringSrc.m_pData;
+const ByteString& ByteString::operator=(const ByteString& that) {
+  if (m_pData != that.m_pData)
+    m_pData = that.m_pData;
+
+  return *this;
+}
+
+const ByteString& ByteString::operator=(ByteString&& that) {
+  if (m_pData != that.m_pData)
+    m_pData = std::move(that.m_pData);
 
   return *this;
 }
@@ -491,6 +499,10 @@ void ByteString::Concat(const char* pSrcData, size_t nSrcLen) {
   pNewData->CopyContents(*m_pData);
   pNewData->CopyContentsAt(m_pData->m_nDataLength, pSrcData, nSrcLen);
   m_pData.Swap(pNewData);
+}
+
+intptr_t ByteString::ReferenceCountForTesting() const {
+  return m_pData ? m_pData->m_nRefs : 0;
 }
 
 ByteString ByteString::Mid(size_t first, size_t count) const {

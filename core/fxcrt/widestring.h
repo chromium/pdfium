@@ -23,6 +23,7 @@ namespace fxcrt {
 
 class ByteString;
 class StringPool_WideString_Test;
+class WideString_Assign_Test;
 class WideString_ConcatInPlace_Test;
 
 // A mutable string with shared buffers using copy-on-write semantics that
@@ -111,8 +112,9 @@ class WideString {
   bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
   const WideString& operator=(const wchar_t* str);
-  const WideString& operator=(const WideString& stringSrc);
   const WideString& operator=(const WideStringView& stringSrc);
+  const WideString& operator=(const WideString& that);
+  const WideString& operator=(WideString&& that);
 
   const WideString& operator+=(const wchar_t* str);
   const WideString& operator+=(wchar_t ch);
@@ -208,10 +210,12 @@ class WideString {
   void AllocCopy(WideString& dest, size_t nCopyLen, size_t nCopyIndex) const;
   void AssignCopy(const wchar_t* pSrcData, size_t nSrcLen);
   void Concat(const wchar_t* lpszSrcData, size_t nSrcLen);
+  intptr_t ReferenceCountForTesting() const;
 
   RetainPtr<StringData> m_pData;
 
   friend WideString_ConcatInPlace_Test;
+  friend WideString_Assign_Test;
   friend StringPool_WideString_Test;
 };
 

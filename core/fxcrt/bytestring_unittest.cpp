@@ -59,6 +59,37 @@ TEST(ByteString, ElementAccess) {
 #endif
 }
 
+TEST(ByteString, Assign) {
+  {
+    // Copy-assign.
+    ByteString string1;
+    EXPECT_EQ(0, string1.ReferenceCountForTesting());
+    {
+      ByteString string2("abc");
+      EXPECT_EQ(1, string2.ReferenceCountForTesting());
+
+      string1 = string2;
+      EXPECT_EQ(2, string1.ReferenceCountForTesting());
+      EXPECT_EQ(2, string2.ReferenceCountForTesting());
+    }
+    EXPECT_EQ(1, string1.ReferenceCountForTesting());
+  }
+  {
+    // Move-assign.
+    ByteString string1;
+    EXPECT_EQ(0, string1.ReferenceCountForTesting());
+    {
+      ByteString string2("abc");
+      EXPECT_EQ(1, string2.ReferenceCountForTesting());
+
+      string1 = std::move(string2);
+      EXPECT_EQ(1, string1.ReferenceCountForTesting());
+      EXPECT_EQ(0, string2.ReferenceCountForTesting());
+    }
+    EXPECT_EQ(1, string1.ReferenceCountForTesting());
+  }
+}
+
 TEST(ByteString, OperatorLT) {
   ByteString empty;
   ByteString a("a");

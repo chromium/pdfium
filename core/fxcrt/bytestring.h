@@ -21,6 +21,7 @@
 
 namespace fxcrt {
 
+class ByteString_Assign_Test;
 class ByteString_Concat_Test;
 class StringPool_ByteString_Test;
 class WideString;
@@ -133,7 +134,8 @@ class ByteString {
 
   const ByteString& operator=(const char* str);
   const ByteString& operator=(const ByteStringView& bstrc);
-  const ByteString& operator=(const ByteString& stringSrc);
+  const ByteString& operator=(const ByteString& that);
+  const ByteString& operator=(ByteString&& that);
 
   const ByteString& operator+=(char ch);
   const ByteString& operator+=(const char* str);
@@ -209,9 +211,11 @@ class ByteString {
   void AllocCopy(ByteString& dest, size_t nCopyLen, size_t nCopyIndex) const;
   void AssignCopy(const char* pSrcData, size_t nSrcLen);
   void Concat(const char* lpszSrcData, size_t nSrcLen);
+  intptr_t ReferenceCountForTesting() const;
 
   RetainPtr<StringData> m_pData;
 
+  friend ByteString_Assign_Test;
   friend ByteString_Concat_Test;
   friend class StringPool_ByteString_Test;
 };
