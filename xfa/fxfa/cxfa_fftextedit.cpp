@@ -313,7 +313,7 @@ void CXFA_FFTextEdit::OnTextWillChange(CFWL_Widget* pWidget,
   // Copy the data back out of the EventParam and into the TextChanged event so
   // it can propagate back to the calling widget.
   event->cancelled = eParam.m_bCancelAction;
-  event->change_text = eParam.m_wsChange;
+  event->change_text = std::move(eParam.m_wsChange);
   event->selection_start = static_cast<size_t>(eParam.m_iSelStart);
   event->selection_end = static_cast<size_t>(eParam.m_iSelEnd);
 }

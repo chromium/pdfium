@@ -31,10 +31,10 @@ int CPDF_ContentMark::GetMarkedContentID() const {
   return pData ? pData->GetMarkedContentID() : -1;
 }
 
-void CPDF_ContentMark::AddMark(const ByteString& name,
+void CPDF_ContentMark::AddMark(ByteString name,
                                const CPDF_Dictionary* pDict,
                                bool bDirect) {
-  m_Ref.GetPrivateCopy()->AddMark(name, pDict, bDirect);
+  m_Ref.GetPrivateCopy()->AddMark(std::move(name), pDict, bDirect);
 }
 
 void CPDF_ContentMark::DeleteLastMark() {
@@ -68,11 +68,11 @@ int CPDF_ContentMark::MarkData::GetMarkedContentID() const {
   return -1;
 }
 
-void CPDF_ContentMark::MarkData::AddMark(const ByteString& name,
+void CPDF_ContentMark::MarkData::AddMark(ByteString name,
                                          const CPDF_Dictionary* pDict,
                                          bool bDirect) {
   CPDF_ContentMarkItem item;
-  item.SetName(name);
+  item.SetName(std::move(name));
   if (pDict) {
     if (bDirect)
       item.SetDirectDict(ToDictionary(pDict->Clone()));

@@ -40,15 +40,12 @@ bool CBC_Code39::Encode(const WideStringView& contents) {
   int32_t outHeight = 0;
   auto* pWriter = GetOnedCode39Writer();
   WideString filtercontents = pWriter->FilterContents(contents);
-  WideString renderContents = pWriter->RenderTextContents(contents);
-  m_renderContents = renderContents;
+  m_renderContents = pWriter->RenderTextContents(contents);
   ByteString byteString = filtercontents.UTF8Encode();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
       pWriter->Encode(byteString, format, outWidth, outHeight));
-  if (!data)
-    return false;
-  return pWriter->RenderResult(renderContents.AsStringView(), data.get(),
-                               outWidth);
+  return data && pWriter->RenderResult(m_renderContents.AsStringView(),
+                                       data.get(), outWidth);
 }
 
 bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,

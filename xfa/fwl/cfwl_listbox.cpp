@@ -458,7 +458,7 @@ void CFWL_ListBox::DrawItem(CXFA_Graphics* pGraphics,
   textParam.m_pGraphics = pGraphics;
   textParam.m_matrix.Concat(*pMatrix);
   textParam.m_rtPart = rtText;
-  textParam.m_wsText = wsText;
+  textParam.m_wsText = std::move(wsText);
   textParam.m_dwTTOStyles = m_dwTTOStyles;
   textParam.m_iTTOAlign = m_iTTOAligns;
   textParam.m_bMaximize = true;

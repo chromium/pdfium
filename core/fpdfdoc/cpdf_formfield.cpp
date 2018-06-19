@@ -92,7 +92,7 @@ WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
     WideString short_name = pLevel->GetUnicodeTextFor("T");
     if (!short_name.IsEmpty()) {
       if (full_name.IsEmpty())
-        full_name = short_name;
+        full_name = std::move(short_name);
       else
         full_name = short_name + L"." + full_name;
     }

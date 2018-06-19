@@ -138,7 +138,7 @@ bool GetAttributeLocalName(const WideStringView& wsAttributeName,
   WideString wsAttrName(wsAttributeName);
   auto pos = wsAttrName.Find(L':', 0);
   if (!pos.has_value()) {
-    wsLocalAttrName = wsAttrName;
+    wsLocalAttrName = std::move(wsAttrName);
     return false;
   }
   wsLocalAttrName = wsAttrName.Right(wsAttrName.GetLength() - pos.value() - 1);
@@ -254,7 +254,7 @@ void ConvertXMLToPlainText(CFX_XMLElement* pRootXMLNode, WideString& wsOutput) {
         if (IsStringAllWhitespace(wsText))
           continue;
 
-        wsOutput = wsText;
+        wsOutput = std::move(wsText);
         break;
       }
       default:

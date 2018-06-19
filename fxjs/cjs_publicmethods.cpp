@@ -14,6 +14,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_interform.h"
@@ -1192,13 +1193,12 @@ double CJS_PublicMethods::MakeInterDate(const WideString& strValue) {
   WideString sTemp;
   for (const auto& c : strValue) {
     if (c == L' ' || c == L':') {
-      wsArray.push_back(sTemp);
-      sTemp.clear();
+      wsArray.push_back(std::move(sTemp));
       continue;
     }
     sTemp += c;
   }
-  wsArray.push_back(sTemp);
+  wsArray.push_back(std::move(sTemp));
   if (wsArray.size() != 8)
     return 0;
 
@@ -1471,7 +1471,7 @@ CJS_Return CJS_PublicMethods::AFSpecial_KeystrokeEx(
     }
     iIndexMask++;
   }
-  wideChange = wChange;
+  wideChange = std::move(wChange);
   return CJS_Return();
 }
 

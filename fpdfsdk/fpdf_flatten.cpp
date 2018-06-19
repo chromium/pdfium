@@ -299,7 +299,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     while (i < INT_MAX) {
       ByteString sKey = ByteString::Format("FFT%d", i);
       if (!pPageXObject->KeyExist(sKey)) {
-        key = sKey;
+        key = std::move(sKey);
         break;
       }
       ++i;

@@ -3807,16 +3807,14 @@ void CFXJSE_FormCalcContext::Format(CFXJSE_Value* pThis,
         wsPattern = L"num{" + wsPattern + L"}";
       } break;
       default: {
-        WideString wsTestPattern;
-        wsTestPattern = L"num{" + wsPattern + L"}";
+        WideString wsTestPattern = L"num{" + wsPattern + L"}";
         CXFA_LocaleValue tempLocaleValue(XFA_VT_FLOAT, wsValue, wsTestPattern,
                                          pLocale, pMgr);
         if (tempLocaleValue.IsValid()) {
-          wsPattern = wsTestPattern;
+          wsPattern = std::move(wsTestPattern);
           patternType = XFA_VT_FLOAT;
         } else {
-          wsTestPattern = L"text{" + wsPattern + L"}";
-          wsPattern = wsTestPattern;
+          wsPattern = L"text{" + wsPattern + L"}";
           patternType = XFA_VT_TEXT;
         }
       } break;

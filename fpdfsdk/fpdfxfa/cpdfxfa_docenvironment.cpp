@@ -7,6 +7,7 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -848,27 +849,28 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
     return false;
 
   auto pos = srcURL.Find(L'?');
-  WideString tmp;
-  if (!pos.has_value()) {
-    pos = srcURL.Find(L'@');
-    if (!pos.has_value())
-      return false;
 
-    tmp = srcURL.Right(csURL.GetLength() - 7);
-  } else {
-    tmp = srcURL.Left(pos.value());
-    tmp = tmp.Right(tmp.GetLength() - 7);
+  {
+    WideString tmp;
+    if (!pos.has_value()) {
+      pos = srcURL.Find(L'@');
+      if (!pos.has_value())
+        return false;
+
+      tmp = srcURL.Right(csURL.GetLength() - 7);
+    } else {
+      tmp = srcURL.Left(pos.value());
+      tmp = tmp.Right(tmp.GetLength() - 7);
+    }
+    tmp.Trim();
+    csToAddress = std::move(tmp);
   }
-  tmp.Trim();
-
-  csToAddress = tmp;
 
   srcURL = srcURL.Right(srcURL.GetLength() - (pos.value() + 1));
   while (!srcURL.IsEmpty()) {
     srcURL.Trim();
     pos = srcURL.Find(L'&');
-
-    tmp = (!pos.has_value()) ? srcURL : srcURL.Left(pos.value());
+    WideString tmp = (!pos.has_value()) ? srcURL : srcURL.Left(pos.value());
     tmp.Trim();
     if (tmp.GetLength() >= 3 && tmp.Left(3).CompareNoCase(L"cc=") == 0) {
       tmp = tmp.Right(tmp.GetLength() - 3);

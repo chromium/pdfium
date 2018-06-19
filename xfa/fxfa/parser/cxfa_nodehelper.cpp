@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_nodehelper.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
@@ -237,14 +239,13 @@ WideString CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
   WideString wsName;
   if (bIsAllPath) {
     wsName = GetNameExpression(refNode, false, eLogicType);
-    WideString wsParent;
     CXFA_Node* parent =
         ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
     while (parent) {
-      wsParent = GetNameExpression(parent, false, eLogicType);
+      WideString wsParent = GetNameExpression(parent, false, eLogicType);
       wsParent += L".";
       wsParent += wsName;
-      wsName = wsParent;
+      wsName = std::move(wsParent);
       parent = ResolveNodes_GetParent(parent, XFA_LOGIC_NoTransparent);
     }
     return wsName;

@@ -56,18 +56,14 @@ bool CBC_UPCA::Encode(const WideStringView& contents) {
   BCFORMAT format = BCFORMAT_UPC_A;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  WideString encodeContents = Preprocess(contents);
-  ByteString byteString = encodeContents.UTF8Encode();
-  m_renderContents = encodeContents;
-
+  m_renderContents = Preprocess(contents);
+  ByteString byteString = m_renderContents.UTF8Encode();
   CBC_OnedUPCAWriter* pWriter = GetOnedUPCAWriter();
   pWriter->Init();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
       pWriter->Encode(byteString, format, outWidth, outHeight));
-  if (!data)
-    return false;
-  return pWriter->RenderResult(encodeContents.AsStringView(), data.get(),
-                               outWidth);
+  return data && pWriter->RenderResult(m_renderContents.AsStringView(),
+                                       data.get(), outWidth);
 }
 
 bool CBC_UPCA::RenderDevice(CFX_RenderDevice* device,

@@ -10,6 +10,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -322,13 +323,11 @@ WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
       WideString script = action.GetJavaScript();
       if (!script.IsEmpty()) {
         WideString Value = sValue;
-
         IJS_Runtime::ScopedEventContext pContext(pRuntime);
         pContext->OnField_Format(pFormField, Value, true);
-
         Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(script);
         if (!err) {
-          sValue = Value;
+          sValue = std::move(Value);
           bFormatted = true;
         }
       }

@@ -1175,9 +1175,9 @@ void CJX_Object::Script_Attribute_String(CFXJSE_Value* pValue,
   WideString wsSOM;
   if (!wsValue.IsEmpty()) {
     if (wsValue[0] == '#')
-      wsID = WideString(wsValue.c_str() + 1, wsValue.GetLength() - 1);
+      wsID = wsValue.Mid(1, wsValue.GetLength() - 1);
     else
-      wsSOM = wsValue;
+      wsSOM = std::move(wsValue);
   }
 
   CXFA_Node* pProtoNode = nullptr;

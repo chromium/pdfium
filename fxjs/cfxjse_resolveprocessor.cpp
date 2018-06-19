@@ -179,7 +179,7 @@ bool CFXJSE_ResolveProcessor::ResolveNumberSign(CFXJSE_ResolveNodeData& rnd) {
   rndFind.m_dwStyles = rnd.m_dwStyles;
   rndFind.m_dwStyles |= XFA_RESOLVENODE_TagName;
   rndFind.m_dwStyles &= ~XFA_RESOLVENODE_Attributes;
-  rndFind.m_wsName = wsName;
+  rndFind.m_wsName = std::move(wsName);
   rndFind.m_uHashName = static_cast<XFA_HashCode>(
       FX_HashCode_GetW(rndFind.m_wsName.AsStringView(), false));
   rndFind.m_wsCondition = wsCondition;
@@ -255,10 +255,9 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
     } else {
       rndFind.m_CurObject = pVariablesNode;
       SetStylesForChild(dwStyles, rndFind);
-      WideString wsSaveCondition = rndFind.m_wsCondition;
-      rndFind.m_wsCondition.clear();
+      WideString wsSaveCondition = std::move(rndFind.m_wsCondition);
       ResolveNormal(rndFind);
-      rndFind.m_wsCondition = wsSaveCondition;
+      rndFind.m_wsCondition = std::move(wsSaveCondition);
       rnd.m_Objects.insert(rnd.m_Objects.end(), rndFind.m_Objects.begin(),
                            rndFind.m_Objects.end());
       rndFind.m_Objects.clear();
@@ -290,11 +289,9 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
         }
         rndFind.m_CurObject = child;
 
-        WideString wsSaveCondition = rndFind.m_wsCondition;
-        rndFind.m_wsCondition.clear();
+        WideString wsSaveCondition = std::move(rndFind.m_wsCondition);
         ResolveNormal(rndFind);
-
-        rndFind.m_wsCondition = wsSaveCondition;
+        rndFind.m_wsCondition = std::move(wsSaveCondition);
         rnd.m_Objects.insert(rnd.m_Objects.end(), rndFind.m_Objects.begin(),
                              rndFind.m_Objects.end());
         rndFind.m_Objects.clear();
@@ -425,15 +422,12 @@ bool CFXJSE_ResolveProcessor::ResolveNormal(CFXJSE_ResolveNodeData& rnd) {
       }
       if (bInnerSearch) {
         rndFind.m_CurObject = child;
-        WideString wsOriginCondition = rndFind.m_wsCondition;
-        rndFind.m_wsCondition.clear();
-
+        WideString wsOriginCondition = std::move(rndFind.m_wsCondition);
         uint32_t dwOriginStyle = rndFind.m_dwStyles;
         rndFind.m_dwStyles = dwOriginStyle | XFA_RESOLVENODE_ALL;
         ResolveNormal(rndFind);
-
         rndFind.m_dwStyles = dwOriginStyle;
-        rndFind.m_wsCondition = wsOriginCondition;
+        rndFind.m_wsCondition = std::move(wsOriginCondition);
         rnd.m_Objects.insert(rnd.m_Objects.end(), rndFind.m_Objects.begin(),
                              rndFind.m_Objects.end());
         rndFind.m_Objects.clear();

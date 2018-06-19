@@ -29,16 +29,14 @@ class CJS_GlobalData {
   static CJS_GlobalData* GetRetainedInstance(CPDFSDK_FormFillEnvironment* pApp);
   void Release();
 
-  void SetGlobalVariableNumber(const ByteString& propname, double dData);
-  void SetGlobalVariableBoolean(const ByteString& propname, bool bData);
-  void SetGlobalVariableString(const ByteString& propname,
-                               const ByteString& sData);
-  void SetGlobalVariableObject(const ByteString& propname,
+  void SetGlobalVariableNumber(ByteString propname, double dData);
+  void SetGlobalVariableBoolean(ByteString propname, bool bData);
+  void SetGlobalVariableString(ByteString propname, const ByteString& sData);
+  void SetGlobalVariableObject(ByteString propname,
                                const CJS_GlobalVariableArray& array);
-  void SetGlobalVariableNull(const ByteString& propname);
-  bool SetGlobalVariablePersistent(const ByteString& propname,
-                                   bool bPersistent);
-  bool DeleteGlobalVariable(const ByteString& propname);
+  void SetGlobalVariableNull(ByteString propname);
+  bool SetGlobalVariablePersistent(ByteString propname, bool bPersistent);
+  bool DeleteGlobalVariable(ByteString propname);
 
   int32_t GetSize() const;
   CJS_GlobalData_Element* GetAt(int index) const;

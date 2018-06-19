@@ -21,19 +21,23 @@
  */
 
 #include "fxbarcode/datamatrix/BC_DefaultPlacement.h"
+
+#include <utility>
+
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 
 CBC_DefaultPlacement::CBC_DefaultPlacement(WideString codewords,
                                            int32_t numcols,
-                                           int32_t numrows) {
-  m_codewords = codewords;
-  m_numcols = numcols;
-  m_numrows = numrows;
+                                           int32_t numrows)
+    : m_codewords(std::move(codewords)),
+      m_numrows(numrows),
+      m_numcols(numcols) {
   m_bits.resize(numcols * numrows);
   for (int32_t i = 0; i < numcols * numrows; i++) {
     m_bits[i] = (uint8_t)2;
   }
 }
+
 CBC_DefaultPlacement::~CBC_DefaultPlacement() {}
 
 int32_t CBC_DefaultPlacement::getNumrows() {

@@ -404,7 +404,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
         decoder = "DCTDecode";
       else if (decoder == "CCF")
         decoder = "CCITTFaxDecode";
-      *ImageEncoding = decoder;
+      *ImageEncoding = std::move(decoder);
       *pImageParms = pParam;
       *dest_buf = last_buf;
       *dest_size = last_size;

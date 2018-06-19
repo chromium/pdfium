@@ -90,9 +90,8 @@ CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(
   return iter != m_arrayGlobalData.end() ? iter->get() : nullptr;
 }
 
-void CJS_GlobalData::SetGlobalVariableNumber(const ByteString& propname,
+void CJS_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
                                              double dData) {
-  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -102,15 +101,14 @@ void CJS_GlobalData::SetGlobalVariableNumber(const ByteString& propname,
     return;
   }
   auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
-  pNewData->data.sKey = sPropName;
+  pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::NUMBER;
   pNewData->data.dData = dData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableBoolean(const ByteString& propname,
+void CJS_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
                                               bool bData) {
-  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -120,15 +118,14 @@ void CJS_GlobalData::SetGlobalVariableBoolean(const ByteString& propname,
     return;
   }
   auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
-  pNewData->data.sKey = sPropName;
+  pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::BOOLEAN;
   pNewData->data.bData = bData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableString(const ByteString& propname,
+void CJS_GlobalData::SetGlobalVariableString(ByteString sPropName,
                                              const ByteString& sData) {
-  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -138,16 +135,15 @@ void CJS_GlobalData::SetGlobalVariableString(const ByteString& propname,
     return;
   }
   auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
-  pNewData->data.sKey = sPropName;
+  pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::STRING;
   pNewData->data.sData = sData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
 void CJS_GlobalData::SetGlobalVariableObject(
-    const ByteString& propname,
+    ByteString sPropName,
     const CJS_GlobalVariableArray& array) {
-  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return;
 
@@ -157,14 +153,13 @@ void CJS_GlobalData::SetGlobalVariableObject(
     return;
   }
   auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
-  pNewData->data.sKey = sPropName;
+  pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::OBJECT;
   pNewData->data.objData.Copy(array);
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableNull(const ByteString& propname) {
-  ByteString sPropName(propname);
+void CJS_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
   if (!TrimPropName(&sPropName))
     return;
 
@@ -173,14 +168,13 @@ void CJS_GlobalData::SetGlobalVariableNull(const ByteString& propname) {
     return;
   }
   auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
-  pNewData->data.sKey = sPropName;
+  pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-bool CJS_GlobalData::SetGlobalVariablePersistent(const ByteString& propname,
+bool CJS_GlobalData::SetGlobalVariablePersistent(ByteString sPropName,
                                                  bool bPersistent) {
-  ByteString sPropName(propname);
   if (!TrimPropName(&sPropName))
     return false;
 
@@ -192,8 +186,7 @@ bool CJS_GlobalData::SetGlobalVariablePersistent(const ByteString& propname,
   return true;
 }
 
-bool CJS_GlobalData::DeleteGlobalVariable(const ByteString& propname) {
-  ByteString sPropName(propname);
+bool CJS_GlobalData::DeleteGlobalVariable(ByteString sPropName) {
   if (!TrimPropName(&sPropName))
     return false;
 

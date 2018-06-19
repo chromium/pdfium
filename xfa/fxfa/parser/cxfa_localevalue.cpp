@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
@@ -618,7 +619,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const WideString& wsValue,
         WideString fNum;
         bRet = pFormat->ParseNum(wsValue, wsFormat, &fNum);
         if (bRet)
-          m_wsValue = fNum;
+          m_wsValue = std::move(fNum);
         break;
       }
       case FX_LOCALECATEGORY_Text:

@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
+#include <utility>
+
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
@@ -205,7 +207,7 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
               m_Map[code] = GetUnicode();
               m_MultiCharBuf.AppendChar(retcode.GetLength());
               m_MultiCharBuf << retcode;
-              destcode = retcode;
+              destcode = std::move(retcode);
             }
           }
         }

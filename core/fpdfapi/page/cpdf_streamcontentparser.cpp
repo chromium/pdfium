@@ -184,7 +184,7 @@ void ReplaceAbbr(CPDF_Object* pObj) {
         if (!fullname.IsEmpty()) {
           AbbrReplacementOp op;
           op.is_replace_key = true;
-          op.key = key;
+          op.key = std::move(key);
           op.replacement = fullname;
           replacements.push_back(op);
           key = fullname;
@@ -606,9 +606,8 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
       return;
     bDirect = false;
   }
-  if (const CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    m_CurContentMark.AddMark(tag, pDict, bDirect);
-  }
+  if (const CPDF_Dictionary* pDict = pProperty->AsDictionary())
+    m_CurContentMark.AddMark(std::move(tag), pDict, bDirect);
 }
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
@@ -755,20 +754,23 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   if (pXObject->GetDict())
     type = pXObject->GetDict()->GetStringFor("Subtype");
 
+  if (type == "Form") {
+    AddForm(pXObject);
+    return;
+  }
+
   if (type == "Image") {
     CPDF_ImageObject* pObj = pXObject->IsInline()
                                  ? AddImage(std::unique_ptr<CPDF_Stream>(
                                        ToStream(pXObject->Clone())))
                                  : AddImage(pXObject->GetObjNum());
 
-    m_LastImageName = name;
+    m_LastImageName = std::move(name);
     if (pObj) {
       m_pLastImage = pObj->GetImage();
       if (m_pLastImage->IsMask())
         m_pObjectHolder->AddImageMaskBoundingBox(pObj->GetRect());
     }
-  } else if (type == "Form") {
-    AddForm(pXObject);
   }
 }
 
@@ -1307,7 +1309,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
       ByteString str = pObj->GetString();
       if (str.IsEmpty())
         continue;
-      strs[iSegment] = str;
+      strs[iSegment] = std::move(str);
       kernings[iSegment++] = 0;
     } else {
       float num = pObj->GetNumber();
