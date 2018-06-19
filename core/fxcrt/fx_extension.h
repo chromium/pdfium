@@ -8,6 +8,7 @@
 #define CORE_FXCRT_FX_EXTENSION_H_
 
 #include <cctype>
+#include <cmath>
 #include <cwctype>
 #include <memory>
 
@@ -91,5 +92,21 @@ void FXSYS_IntToTwoHexChars(uint8_t c, char* buf);
 void FXSYS_IntToFourHexChars(uint16_t c, char* buf);
 
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf);
+
+// Strict order over floating types where NaNs may be present.
+template <typename T>
+bool FXSYS_SafeEQ(const T& lhs, const T& rhs) {
+  return (std::isnan(lhs) && std::isnan(rhs)) ||
+         (!std::isnan(lhs) && !std::isnan(rhs) && lhs == rhs);
+}
+
+template <typename T>
+bool FXSYS_SafeLT(const T& lhs, const T& rhs) {
+  if (std::isnan(lhs) && std::isnan(rhs))
+    return false;
+  if (std::isnan(lhs) || std::isnan(rhs))
+    return std::isnan(lhs) < std::isnan(rhs);
+  return lhs < rhs;
+}
 
 #endif  // CORE_FXCRT_FX_EXTENSION_H_

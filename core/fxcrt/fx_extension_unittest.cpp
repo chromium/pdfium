@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 
 #include "core/fxcrt/fx_extension.h"
+
+#include <limits>
+
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcrt, FXSYS_HexCharToInt) {
@@ -133,4 +136,31 @@ TEST(fxcrt, FXSYS_wcstof) {
   EXPECT_FLOAT_EQ(99999999999999999.0f,
                   FXSYS_wcstof(L"99999999999999999", 17, &used_len));
   EXPECT_EQ(17, used_len);
+}
+
+TEST(fxcrt, FXSYS_SafeOps) {
+  const float fMin = std::numeric_limits<float>::min();
+  const float fMax = std::numeric_limits<float>::max();
+  const float fInf = std::numeric_limits<float>::infinity();
+  const float fNan = std::numeric_limits<float>::quiet_NaN();
+  const float ascending[] = {fMin, 1.0f, 2.0f, fMax, fInf, fNan};
+
+  for (size_t i = 0; i < FX_ArraySize(ascending); ++i) {
+    for (size_t j = 0; j < FX_ArraySize(ascending); ++j) {
+      if (i == j) {
+        EXPECT_TRUE(FXSYS_SafeEQ(ascending[i], ascending[j]))
+            << " at " << i << " " << j;
+      } else {
+        EXPECT_FALSE(FXSYS_SafeEQ(ascending[i], ascending[j]))
+            << " at " << i << " " << j;
+      }
+      if (i < j) {
+        EXPECT_TRUE(FXSYS_SafeLT(ascending[i], ascending[j]))
+            << " at " << i << " " << j;
+      } else {
+        EXPECT_FALSE(FXSYS_SafeLT(ascending[i], ascending[j]))
+            << " at " << i << " " << j;
+      }
+    }
+  }
 }
