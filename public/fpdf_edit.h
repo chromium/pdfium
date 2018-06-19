@@ -1065,6 +1065,31 @@ FPDFText_SetFillColor(FPDF_PAGEOBJECT text_object,
                       unsigned int B,
                       unsigned int A);
 
+// Experimental API.
+// Get the transform matrix of a text object.
+//
+//   text - handle to a text.
+//   a    - matrix value.
+//   b    - matrix value.
+//   c    - matrix value.
+//   d    - matrix value.
+//   e    - matrix value.
+//   f    - matrix value.
+//
+// The matrix is composed as:
+//   |a c e|
+//   |b d f|
+// and used to scale, rotate, shear and translate the text.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
+                                                       double* a,
+                                                       double* b,
+                                                       double* c,
+                                                       double* d,
+                                                       double* e,
+                                                       double* f);
+
 // Close a loaded PDF font.
 //
 // font   - Handle to the loaded font.

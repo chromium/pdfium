@@ -1122,6 +1122,23 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
     CompareBitmap(page_bitmap.get(), 612, 792, md5_3);
   }
 
+  double matrix_a = 0;
+  double matrix_b = 0;
+  double matrix_c = 0;
+  double matrix_d = 0;
+  double matrix_e = 0;
+  double matrix_f = 0;
+  EXPECT_FALSE(FPDFText_GetMatrix(nullptr, &matrix_a, &matrix_b, &matrix_c,
+                                  &matrix_d, &matrix_e, &matrix_f));
+  EXPECT_TRUE(FPDFText_GetMatrix(text_object3, &matrix_a, &matrix_b, &matrix_c,
+                                 &matrix_d, &matrix_e, &matrix_f));
+  EXPECT_EQ(1., matrix_a);
+  EXPECT_EQ(1.5, matrix_b);
+  EXPECT_EQ(2., matrix_c);
+  EXPECT_EQ(0.5, matrix_d);
+  EXPECT_EQ(200., matrix_e);
+  EXPECT_EQ(200., matrix_f);
+
   // TODO(npm): Why are there issues with text rotated by 90 degrees?
   // TODO(npm): FPDF_SaveAsCopy not giving the desired result after this.
   FPDF_ClosePage(page);
