@@ -43,7 +43,7 @@ constexpr int32_t kInvalidHeaderOffset = -1;
 // |kInvalidHeaderOffset|.
 int32_t GetHeaderOffset(const RetainPtr<IFX_SeekableReadStream>& pFile);
 
-int32_t GetDirectInteger(CPDF_Dictionary* pDict, const ByteString& key);
+int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key);
 
 ByteString PDF_NameDecode(const ByteStringView& orig);
 ByteString PDF_NameEncode(const ByteString& orig);

@@ -84,8 +84,8 @@ int32_t GetHeaderOffset(const RetainPtr<IFX_SeekableReadStream>& pFile) {
   return kInvalidHeaderOffset;
 }
 
-int32_t GetDirectInteger(CPDF_Dictionary* pDict, const ByteString& key) {
-  CPDF_Number* pObj = ToNumber(pDict->GetObjectFor(key));
+int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key) {
+  const CPDF_Number* pObj = ToNumber(pDict->GetObjectFor(key));
   return pObj ? pObj->GetInteger() : 0;
 }
 
