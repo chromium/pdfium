@@ -2052,8 +2052,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       // if the gradient is horizontal or vertical, modify the draw rectangle
       if (pts[0].fX == pts[1].fX) {  // vertical
         if (pts[0].fY > pts[1].fY) {
-          SkTSwap(pts[0].fY, pts[1].fY);
-          SkTSwap(clipStart, clipEnd);
+          std::swap(pts[0].fY, pts[1].fY);
+          std::swap(clipStart, clipEnd);
         }
         if (clipStart)
           skRect.fTop = SkTMax(skRect.fTop, pts[0].fY);
@@ -2061,8 +2061,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
           skRect.fBottom = SkTMin(skRect.fBottom, pts[1].fY);
       } else if (pts[0].fY == pts[1].fY) {  // horizontal
         if (pts[0].fX > pts[1].fX) {
-          SkTSwap(pts[0].fX, pts[1].fX);
-          SkTSwap(clipStart, clipEnd);
+          std::swap(pts[0].fX, pts[1].fX);
+          std::swap(clipStart, clipEnd);
         }
         if (clipStart)
           skRect.fLeft = SkTMax(skRect.fLeft, pts[0].fX);
