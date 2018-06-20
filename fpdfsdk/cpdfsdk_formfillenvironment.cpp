@@ -405,16 +405,6 @@ bool CPDFSDK_FormFillEnvironment::PopupMenu(CPDFXFA_Page* page,
                                 menuFlag, pt.x, pt.y);
 }
 
-void CPDFSDK_FormFillEnvironment::Alert(FPDF_WIDESTRING Msg,
-                                        FPDF_WIDESTRING Title,
-                                        int Type,
-                                        int Icon) {
-  if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->app_alert) {
-    m_pInfo->m_pJsPlatform->app_alert(m_pInfo->m_pJsPlatform, Msg, Title, Type,
-                                      Icon);
-  }
-}
-
 void CPDFSDK_FormFillEnvironment::EmailTo(FPDF_FILEHANDLER* fileHandler,
                                           FPDF_WIDESTRING pTo,
                                           FPDF_WIDESTRING pSubject,

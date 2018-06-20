@@ -655,10 +655,8 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       if (!pFormFillEnv)
         return false;
 
-      WideString ws = WideString::FromLocal(IDS_XFA_Validate_Input);
-      ByteString bs = ws.UTF16LE_Encode();
-      pFormFillEnv->Alert(AsFPDFWideString(&bs),
-                          reinterpret_cast<FPDF_WIDESTRING>(L""), 0, 1);
+      pFormFillEnv->JS_appAlert(WideString::FromLocal(IDS_XFA_Validate_Input),
+                                L"", 0, 1);
       return false;
     }
     pNode = it->MoveToNext();
@@ -910,10 +908,8 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
 
   WideString csURL = submit->GetSubmitTarget();
   if (csURL.IsEmpty()) {
-    WideString ws = WideString::FromLocal("Submit cancelled.");
-    ByteString bs = ws.UTF16LE_Encode();
-    pFormFillEnv->Alert(AsFPDFWideString(&bs),
-                        reinterpret_cast<FPDF_WIDESTRING>(L""), 0, 4);
+    pFormFillEnv->JS_appAlert(WideString::FromLocal("Submit cancelled."), L"",
+                              0, 4);
     return false;
   }
 

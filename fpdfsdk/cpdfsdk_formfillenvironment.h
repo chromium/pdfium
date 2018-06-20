@@ -137,7 +137,6 @@ class CPDFSDK_FormFillEnvironment
                  int menuFlag,
                  CFX_PointF pt);
 
-  void Alert(FPDF_WIDESTRING Msg, FPDF_WIDESTRING Title, int Type, int Icon);
   void EmailTo(FPDF_FILEHANDLER* fileHandler,
                FPDF_WIDESTRING pTo,
                FPDF_WIDESTRING pSubject,
