@@ -81,8 +81,8 @@ CJS_Return CJS_Annot::set_hidden(CJS_Runtime* pRuntime,
 CJS_Return CJS_Annot::get_name(CJS_Runtime* pRuntime) {
   if (!m_pAnnot)
     return CJS_Return(JSMessage::kBadObjectError);
-  return CJS_Return(
-      pRuntime->NewString(ToBAAnnot(m_pAnnot.Get())->GetAnnotName().c_str()));
+  return CJS_Return(pRuntime->NewString(
+      ToBAAnnot(m_pAnnot.Get())->GetAnnotName().AsStringView()));
 }
 
 CJS_Return CJS_Annot::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
@@ -101,8 +101,8 @@ CJS_Return CJS_Annot::get_type(CJS_Runtime* pRuntime) {
   return CJS_Return(pRuntime->NewString(
       WideString::FromLocal(CPDF_Annot::AnnotSubtypeToString(
                                 ToBAAnnot(m_pAnnot.Get())->GetAnnotSubtype())
-                                .c_str())
-          .c_str()));
+                                .AsStringView())
+          .AsStringView()));
 }
 
 CJS_Return CJS_Annot::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {

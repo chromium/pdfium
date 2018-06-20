@@ -176,9 +176,9 @@ CJS_Return CJS_App::get_platform(CJS_Runtime* pRuntime) {
   if (!pFormFillEnv)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  WideString platfrom = pFormFillEnv->GetPlatform();
-  if (!platfrom.IsEmpty())
-    return CJS_Return(pRuntime->NewString(platfrom.c_str()));
+  WideString platform = pFormFillEnv->GetPlatform();
+  if (!platform.IsEmpty())
+    return CJS_Return(pRuntime->NewString(platform.AsStringView()));
 #endif
   return CJS_Return(pRuntime->NewString(JS_STR_PLATFORM));
 }
@@ -196,7 +196,7 @@ CJS_Return CJS_App::get_language(CJS_Runtime* pRuntime) {
 
   WideString language = pFormFillEnv->GetLanguage();
   if (!language.IsEmpty())
-    return CJS_Return(pRuntime->NewString(language.c_str()));
+    return CJS_Return(pRuntime->NewString(language.AsStringView()));
 #endif
   return CJS_Return(pRuntime->NewString(JS_STR_LANGUAGE));
 }
@@ -572,7 +572,7 @@ CJS_Return CJS_App::response(CJS_Runtime* pRuntime,
   return CJS_Return(pRuntime->NewString(
       WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
                               nLengthBytes / sizeof(uint16_t))
-          .c_str()));
+          .AsStringView()));
 }
 
 CJS_Return CJS_App::get_media(CJS_Runtime* pRuntime) {

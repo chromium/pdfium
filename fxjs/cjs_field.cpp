@@ -890,7 +890,8 @@ CJS_Return CJS_Field::get_default_value(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kObjectTypeError);
   }
 
-  return CJS_Return(pRuntime->NewString(pFormField->GetDefaultValue().c_str()));
+  return CJS_Return(
+      pRuntime->NewString(pFormField->GetDefaultValue().AsStringView()));
 }
 
 CJS_Return CJS_Field::set_default_value(CJS_Runtime* pRuntime,
@@ -1092,7 +1093,7 @@ CJS_Return CJS_Field::get_export_values(CJS_Runtime* pRuntime) {
       CPDF_FormControl* pFormControl = pFormField->GetControl(i);
       pRuntime->PutArrayElement(
           ExportValuesArray, i,
-          pRuntime->NewString(pFormControl->GetExportValue().c_str()));
+          pRuntime->NewString(pFormControl->GetExportValue().AsStringView()));
     }
   } else {
     if (m_nFormControlIndex >= pFormField->CountControls())
@@ -1105,7 +1106,7 @@ CJS_Return CJS_Field::get_export_values(CJS_Runtime* pRuntime) {
 
     pRuntime->PutArrayElement(
         ExportValuesArray, 0,
-        pRuntime->NewString(pFormControl->GetExportValue().c_str()));
+        pRuntime->NewString(pFormControl->GetExportValue().AsStringView()));
   }
   return CJS_Return(ExportValuesArray);
 }
@@ -1420,7 +1421,7 @@ CJS_Return CJS_Field::get_name(CJS_Runtime* pRuntime) {
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
 
-  return CJS_Return(pRuntime->NewString(m_FieldName.c_str()));
+  return CJS_Return(pRuntime->NewString(m_FieldName.AsStringView()));
 }
 
 CJS_Return CJS_Field::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
@@ -1903,8 +1904,8 @@ CJS_Return CJS_Field::get_style(CJS_Runtime* pRuntime) {
       csBCaption = "check";
       break;
   }
-  return CJS_Return(
-      pRuntime->NewString(WideString::FromLocal(csBCaption.c_str()).c_str()));
+  return CJS_Return(pRuntime->NewString(
+      WideString::FromLocal(csBCaption.AsStringView()).AsStringView()));
 }
 
 CJS_Return CJS_Field::set_style(CJS_Runtime* pRuntime,
@@ -1993,7 +1994,8 @@ CJS_Return CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   return CJS_Return(pRuntime->NewString(
-      WideString::FromLocal(pFont->GetBaseFont().c_str()).c_str()));
+      WideString::FromLocal(pFont->GetBaseFont().AsStringView())
+          .AsStringView()));
 }
 
 CJS_Return CJS_Field::set_text_font(CJS_Runtime* pRuntime,
@@ -2074,7 +2076,7 @@ CJS_Return CJS_Field::get_user_name(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   return CJS_Return(
-      pRuntime->NewString(FieldArray[0]->GetAlternateName().c_str()));
+      pRuntime->NewString(FieldArray[0]->GetAlternateName().AsStringView()));
 }
 
 CJS_Return CJS_Field::set_user_name(CJS_Runtime* pRuntime,
@@ -2098,7 +2100,7 @@ CJS_Return CJS_Field::get_value(CJS_Runtime* pRuntime) {
       return CJS_Return(JSMessage::kObjectTypeError);
     case FormFieldType::kComboBox:
     case FormFieldType::kTextField:
-      ret = pRuntime->NewString(pFormField->GetValue().c_str());
+      ret = pRuntime->NewString(pFormField->GetValue().AsStringView());
       break;
     case FormFieldType::kListBox: {
       if (pFormField->CountSelectedItems() > 1) {
@@ -2107,17 +2109,17 @@ CJS_Return CJS_Field::get_value(CJS_Runtime* pRuntime) {
         int iIndex;
         for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
           iIndex = pFormField->GetSelectedIndex(i);
-          ElementValue =
-              pRuntime->NewString(pFormField->GetOptionValue(iIndex).c_str());
+          ElementValue = pRuntime->NewString(
+              pFormField->GetOptionValue(iIndex).AsStringView());
           if (wcslen(pRuntime->ToWideString(ElementValue).c_str()) == 0) {
-            ElementValue =
-                pRuntime->NewString(pFormField->GetOptionLabel(iIndex).c_str());
+            ElementValue = pRuntime->NewString(
+                pFormField->GetOptionLabel(iIndex).AsStringView());
           }
           pRuntime->PutArrayElement(ValueArray, i, ElementValue);
         }
         ret = ValueArray;
       } else {
-        ret = pRuntime->NewString(pFormField->GetValue().c_str());
+        ret = pRuntime->NewString(pFormField->GetValue().AsStringView());
       }
       break;
     }
@@ -2127,7 +2129,7 @@ CJS_Return CJS_Field::get_value(CJS_Runtime* pRuntime) {
       for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
         if (pFormField->GetControl(i)->IsChecked()) {
           ret = pRuntime->NewString(
-              pFormField->GetControl(i)->GetExportValue().c_str());
+              pFormField->GetControl(i)->GetExportValue().AsStringView());
           bFind = true;
           break;
         }
@@ -2138,7 +2140,7 @@ CJS_Return CJS_Field::get_value(CJS_Runtime* pRuntime) {
       break;
     }
     default:
-      ret = pRuntime->NewString(pFormField->GetValue().c_str());
+      ret = pRuntime->NewString(pFormField->GetValue().AsStringView());
       break;
   }
   return CJS_Return(pRuntime->MaybeCoerceToNumber(ret));
@@ -2245,7 +2247,7 @@ CJS_Return CJS_Field::get_value_as_string(CJS_Runtime* pRuntime) {
     for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
       if (pFormField->GetControl(i)->IsChecked()) {
         return CJS_Return(pRuntime->NewString(
-            pFormField->GetControl(i)->GetExportValue().c_str()));
+            pFormField->GetControl(i)->GetExportValue().AsStringView()));
       }
     }
     return CJS_Return(pRuntime->NewString(L"Off"));
@@ -2255,7 +2257,7 @@ CJS_Return CJS_Field::get_value_as_string(CJS_Runtime* pRuntime) {
       (pFormField->CountSelectedItems() > 1)) {
     return CJS_Return(pRuntime->NewString(L""));
   }
-  return CJS_Return(pRuntime->NewString(pFormField->GetValue().c_str()));
+  return CJS_Return(pRuntime->NewString(pFormField->GetValue().AsStringView()));
 }
 
 CJS_Return CJS_Field::set_value_as_string(CJS_Runtime* pRuntime,
@@ -2305,13 +2307,15 @@ CJS_Return CJS_Field::buttonGetCaption(
 
   if (nface == 0) {
     return CJS_Return(
-        pRuntime->NewString(pFormControl->GetNormalCaption().c_str()));
-  } else if (nface == 1) {
+        pRuntime->NewString(pFormControl->GetNormalCaption().AsStringView()));
+  }
+  if (nface == 1) {
     return CJS_Return(
-        pRuntime->NewString(pFormControl->GetDownCaption().c_str()));
-  } else if (nface == 2) {
+        pRuntime->NewString(pFormControl->GetDownCaption().AsStringView()));
+  }
+  if (nface == 2) {
     return CJS_Return(
-        pRuntime->NewString(pFormControl->GetRolloverCaption().c_str()));
+        pRuntime->NewString(pFormControl->GetRolloverCaption().AsStringView()));
   }
   return CJS_Return(JSMessage::kValueError);
 }
@@ -2496,13 +2500,13 @@ CJS_Return CJS_Field::getItemAt(
     if (bExport) {
       WideString strval = pFormField->GetOptionValue(nIdx);
       if (strval.IsEmpty()) {
-        return CJS_Return(
-            pRuntime->NewString(pFormField->GetOptionLabel(nIdx).c_str()));
+        return CJS_Return(pRuntime->NewString(
+            pFormField->GetOptionLabel(nIdx).AsStringView()));
       }
-      return CJS_Return(pRuntime->NewString(strval.c_str()));
+      return CJS_Return(pRuntime->NewString(strval.AsStringView()));
     }
     return CJS_Return(
-        pRuntime->NewString(pFormField->GetOptionLabel(nIdx).c_str()));
+        pRuntime->NewString(pFormField->GetOptionLabel(nIdx).AsStringView()));
   }
   return CJS_Return(JSMessage::kObjectTypeError);
 }

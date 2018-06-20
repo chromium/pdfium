@@ -51,10 +51,9 @@ CJS_Event::~CJS_Event() = default;
 
 CJS_Return CJS_Event::get_change(CJS_Runtime* pRuntime) {
   ASSERT(pRuntime->GetCurrentEventContext());
-
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  return CJS_Return(pRuntime->NewString(pEvent->Change().c_str()));
+  return CJS_Return(pRuntime->NewString(pEvent->Change().AsStringView()));
 }
 
 CJS_Return CJS_Event::set_change(CJS_Runtime* pRuntime,
@@ -73,11 +72,10 @@ CJS_Return CJS_Event::set_change(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_Event::get_change_ex(CJS_Runtime* pRuntime) {
   ASSERT(pRuntime->GetCurrentEventContext());
-
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  return CJS_Return(pRuntime->NewString(pEvent->ChangeEx().c_str()));
+  return CJS_Return(pRuntime->NewString(pEvent->ChangeEx().AsStringView()));
 }
 
 CJS_Return CJS_Event::set_change_ex(CJS_Runtime* pRuntime,
@@ -256,7 +254,6 @@ CJS_Return CJS_Event::set_source(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_Event::get_target(CJS_Runtime* pRuntime) {
   ASSERT(pRuntime->GetCurrentEventContext());
-
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Return(pEvent->Target_Field()->ToV8Object());
@@ -269,10 +266,9 @@ CJS_Return CJS_Event::set_target(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_Event::get_target_name(CJS_Runtime* pRuntime) {
   ASSERT(pRuntime->GetCurrentEventContext());
-
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  return CJS_Return(pRuntime->NewString(pEvent->TargetName().c_str()));
+  return CJS_Return(pRuntime->NewString(pEvent->TargetName().AsStringView()));
 }
 
 CJS_Return CJS_Event::set_target_name(CJS_Runtime* pRuntime,
@@ -304,7 +300,7 @@ CJS_Return CJS_Event::get_value(CJS_Runtime* pRuntime) {
   if (!pEvent->m_pValue)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  return CJS_Return(pRuntime->NewString(pEvent->Value().c_str()));
+  return CJS_Return(pRuntime->NewString(pEvent->Value().AsStringView()));
 }
 
 CJS_Return CJS_Event::set_value(CJS_Runtime* pRuntime,

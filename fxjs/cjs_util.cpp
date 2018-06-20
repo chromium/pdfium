@@ -387,7 +387,7 @@ CJS_Return CJS_Util::byteToChar(
     return CJS_Return(JSMessage::kValueError);
 
   WideString wStr(static_cast<wchar_t>(arg));
-  return CJS_Return(pRuntime->NewString(wStr.c_str()));
+  return CJS_Return(pRuntime->NewString(wStr.AsStringView()));
 }
 
 // Ensure that sFormat contains at most one well-understood printf formatting

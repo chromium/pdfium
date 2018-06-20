@@ -336,13 +336,13 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
     if (!pTemp) {
       pRuntime->PutArrayElement(
           StrArray, nIndex,
-          pRuntime->NewString(StrTrim(ByteString(p)).c_str()));
+          pRuntime->NewString(StrTrim(ByteString(p)).AsStringView()));
       break;
     }
 
     pRuntime->PutArrayElement(
         StrArray, nIndex,
-        pRuntime->NewString(StrTrim(ByteString(p, pTemp - p)).c_str()));
+        pRuntime->NewString(StrTrim(ByteString(p, pTemp - p)).AsStringView()));
 
     nIndex++;
     p = ++pTemp;
@@ -1525,11 +1525,11 @@ CJS_Return CJS_PublicMethods::AFMergeChange(
     swValue = pEventHandler->Value();
 
   if (pEventHandler->WillCommit())
-    return CJS_Return(pRuntime->NewString(swValue.c_str()));
+    return CJS_Return(pRuntime->NewString(swValue.AsStringView()));
 
   WideString merged =
       CalcMergedString(pEventHandler, swValue, pEventHandler->Change());
-  return CJS_Return(pRuntime->NewString(merged.c_str()));
+  return CJS_Return(pRuntime->NewString(merged.AsStringView()));
 }
 
 CJS_Return CJS_PublicMethods::AFParseDateEx(
@@ -1571,7 +1571,7 @@ CJS_Return CJS_PublicMethods::AFMakeNumber(
   NormalizeDecimalMarkW(&ws);
 
   v8::Local<v8::Value> val =
-      pRuntime->MaybeCoerceToNumber(pRuntime->NewString(ws.c_str()));
+      pRuntime->MaybeCoerceToNumber(pRuntime->NewString(ws.AsStringView()));
   if (!val->IsNumber())
     return CJS_Return(pRuntime->NewNumber(0));
   return CJS_Return(val);
@@ -1734,14 +1734,15 @@ CJS_Return CJS_PublicMethods::AFExtractNums(
       sPart += wc;
     } else if (sPart.GetLength() > 0) {
       pRuntime->PutArrayElement(nums, nIndex,
-                                pRuntime->NewString(sPart.c_str()));
+                                pRuntime->NewString(sPart.AsStringView()));
       sPart.clear();
       nIndex++;
     }
   }
-  if (sPart.GetLength() > 0)
-    pRuntime->PutArrayElement(nums, nIndex, pRuntime->NewString(sPart.c_str()));
-
+  if (sPart.GetLength() > 0) {
+    pRuntime->PutArrayElement(nums, nIndex,
+                              pRuntime->NewString(sPart.AsStringView()));
+  }
   if (pRuntime->GetArrayLength(nums) > 0)
     return CJS_Return(nums);
   return CJS_Return(pRuntime->NewUndefined());

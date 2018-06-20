@@ -492,7 +492,7 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
       continue;
 
     WideString wsFaceName =
-        WideString::FromLocal(pFontMapper->GetFaceName(i).c_str());
+        WideString::FromLocal(pFontMapper->GetFaceName(i).AsStringView());
     RegisterFaces(pFontStream, &wsFaceName);
   }
 

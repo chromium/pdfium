@@ -238,7 +238,7 @@ size_t CFDE_TextEditEngine::CountCharsExceedingSize(const WideString& text,
   text_out->SetStyles(style);
 
   size_t length = text.GetLength();
-  WideStringView temp(text.c_str(), length);
+  WideStringView temp = text.AsStringView();
 
   float vertical_height = line_spacing_ * visible_line_count_;
   size_t chars_exceeding_size = 0;

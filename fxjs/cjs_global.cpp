@@ -248,7 +248,7 @@ CJS_Return CJS_Global::GetProperty(CJS_Runtime* pRuntime,
       return CJS_Return(pRuntime->NewBoolean(pData->bData));
     case JS_GlobalDataType::STRING:
       return CJS_Return(pRuntime->NewString(
-          WideString::FromLocal(pData->sData.c_str()).c_str()));
+          WideString::FromLocal(pData->sData.AsStringView()).AsStringView()));
     case JS_GlobalDataType::OBJECT:
       return CJS_Return(
           v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData));

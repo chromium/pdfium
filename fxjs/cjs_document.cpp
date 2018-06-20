@@ -279,7 +279,7 @@ CJS_Return CJS_Document::getNthFieldName(
   CPDF_FormField* pField = pPDFForm->GetField(nIndex, WideString());
   if (!pField)
     return CJS_Return(JSMessage::kBadObjectError);
-  return CJS_Return(pRuntime->NewString(pField->GetFullName().c_str()));
+  return CJS_Return(pRuntime->NewString(pField->GetFullName().AsStringView()));
 }
 
 CJS_Return CJS_Document::importAnFDF(
@@ -719,8 +719,8 @@ CJS_Return CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
   CPDF_Dictionary* pDictionary = m_pFormFillEnv->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return CJS_Return(JSMessage::kBadObjectError);
-  return CJS_Return(
-      pRuntime->NewString(pDictionary->GetUnicodeTextFor(propName).c_str()));
+  return CJS_Return(pRuntime->NewString(
+      pDictionary->GetUnicodeTextFor(propName).AsStringView()));
 }
 
 CJS_Return CJS_Document::setPropertyInternal(CJS_Runtime* pRuntime,
@@ -889,7 +889,7 @@ CJS_Return CJS_Document::get_URL(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSMessage::kBadObjectError);
   return CJS_Return(
-      pRuntime->NewString(m_pFormFillEnv->JS_docGetFilePath().c_str()));
+      pRuntime->NewString(m_pFormFillEnv->JS_docGetFilePath().AsStringView()));
 }
 
 CJS_Return CJS_Document::set_URL(CJS_Runtime* pRuntime,
@@ -898,7 +898,7 @@ CJS_Return CJS_Document::set_URL(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Document::get_base_URL(CJS_Runtime* pRuntime) {
-  return CJS_Return(pRuntime->NewString(m_cwBaseURL.c_str()));
+  return CJS_Return(pRuntime->NewString(m_cwBaseURL.AsStringView()));
 }
 
 CJS_Return CJS_Document::set_base_URL(CJS_Runtime* pRuntime,
@@ -950,7 +950,8 @@ CJS_Return CJS_Document::get_path(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Return(JSMessage::kBadObjectError);
   return CJS_Return(pRuntime->NewString(
-      CJS_App::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath()).c_str()));
+      CJS_App::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath())
+          .AsStringView()));
 }
 
 CJS_Return CJS_Document::set_path(CJS_Runtime* pRuntime,
@@ -1269,7 +1270,7 @@ CJS_Return CJS_Document::getPageNthWord(
 
   if (bStrip)
     swRet.Trim();
-  return CJS_Return(pRuntime->NewString(swRet.c_str()));
+  return CJS_Return(pRuntime->NewString(swRet.AsStringView()));
 }
 
 CJS_Return CJS_Document::getPageNthWordQuads(
