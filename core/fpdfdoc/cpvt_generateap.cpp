@@ -929,10 +929,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
   if (!font)
     return;
 
-  ByteString sFontName = PDF_NameDecode(font->AsStringView());
-  if (sFontName.IsEmpty())
-    return;
-
+  ByteString font_name = *font;
   CFX_Color crText = CFX_Color::ParseColor(DA);
   CPDF_Dictionary* pDRDict = pFormDict->GetDictFor("DR");
   if (!pDRDict)
@@ -942,16 +939,14 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
   if (!pDRFontDict)
     return;
 
-  CPDF_Dictionary* pFontDict =
-      pDRFontDict->GetDictFor(sFontName.Right(sFontName.GetLength() - 1));
+  CPDF_Dictionary* pFontDict = pDRFontDict->GetDictFor(font_name);
   if (!pFontDict) {
     pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
     pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
     pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
     pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
     pFontDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
-    pDRFontDict->SetFor(sFontName.Right(sFontName.GetLength() - 1),
-                        pFontDict->MakeReference(pDoc));
+    pDRFontDict->SetFor(font_name, pFontDict->MakeReference(pDoc));
   }
   CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
   if (!pDefFont)
@@ -1071,8 +1066,8 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
       CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
       if (!pStreamResFontList)
         pStreamResFontList = pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
-      if (!pStreamResFontList->KeyExist(sFontName)) {
-        pStreamResFontList->SetFor(sFontName, pFontDict->MakeReference(pDoc));
+      if (!pStreamResFontList->KeyExist(font_name)) {
+        pStreamResFontList->SetFor(font_name, pFontDict->MakeReference(pDoc));
       }
     } else {
       pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
@@ -1097,7 +1092,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
               : 0;
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
-          pDefFont, sFontName.Right(sFontName.GetLength() - 1));
+          pDefFont, font_name);
       CPDF_VariableText::Provider prd(&map);
       CPDF_VariableText vt;
       vt.SetProvider(&prd);
@@ -1158,7 +1153,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
               : WideString();
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
-          pDefFont, sFontName.Right(sFontName.GetLength() - 1));
+          pDefFont, font_name);
       CPDF_VariableText::Provider prd(&map);
       CPDF_VariableText vt;
       vt.SetProvider(&prd);
@@ -1226,7 +1221,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
     case CPVT_GenerateAP::kListBox: {
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictFor("Resources") : nullptr,
-          pDefFont, sFontName.Right(sFontName.GetLength() - 1));
+          pDefFont, font_name);
       CPDF_VariableText::Provider prd(&map);
       CPDF_Array* pOpts = ToArray(FPDF_GetFieldAttr(pAnnotDict, "Opt"));
       CPDF_Array* pSels = ToArray(FPDF_GetFieldAttr(pAnnotDict, "I"));
@@ -1318,8 +1313,8 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
           pStreamResFontList =
               pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
         }
-        if (!pStreamResFontList->KeyExist(sFontName)) {
-          pStreamResFontList->SetFor(sFontName, pFontDict->MakeReference(pDoc));
+        if (!pStreamResFontList->KeyExist(font_name)) {
+          pStreamResFontList->SetFor(font_name, pFontDict->MakeReference(pDoc));
         }
       } else {
         pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());

@@ -218,12 +218,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   CPDF_DefaultAppearance appearance(sDA);
   float font_size;
   Optional<ByteString> font = appearance.GetFont(&font_size);
-  if (font) {
-    ByteString sDecodedFontName = PDF_NameDecode(font->AsStringView());
-    *sAlias = sDecodedFontName.Right(sDecodedFontName.GetLength() - 1);
-  } else {
-    *sAlias = ByteString();
-  }
+  *sAlias = font.value_or(ByteString());
 
   CPDF_Dictionary* pFontDict = nullptr;
   if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP")) {
