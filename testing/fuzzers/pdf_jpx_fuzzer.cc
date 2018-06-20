@@ -14,6 +14,10 @@
 
 CCodec_JpxModule g_module;
 
+namespace {
+const uint32_t kMaxJPXFuzzSize = 100 * 1024 * 1024;  // 100 MB
+}  // namespace
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<CJPX_Decoder> decoder =
       g_module.CreateDecoder(data, size, nullptr);
@@ -45,6 +49,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!bitmap->Create(width, height, format))
+    return 0;
+
+  if (bitmap->GetHeight() <= 0 ||
+      kMaxJPXFuzzSize / bitmap->GetPitch() <
+          static_cast<uint32_t>(bitmap->GetHeight()))
     return 0;
 
   std::vector<uint8_t> output_offsets(components);

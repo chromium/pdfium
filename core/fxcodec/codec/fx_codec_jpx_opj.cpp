@@ -567,13 +567,12 @@ void CJPX_Decoder::GetInfo(uint32_t* width,
 }
 
 bool CJPX_Decoder::Decode(uint8_t* dest_buf,
-                          int pitch,
+                          uint32_t pitch,
                           const std::vector<uint8_t>& offsets) {
   if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
     return false;
 
-  if (pitch<static_cast<int>(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>>
-      5 << 2) {
+  if (pitch<(m_Image->comps[0].w * 8 * m_Image->numcomps + 31)>> 5 << 2) {
     return false;
   }
 
@@ -591,14 +590,14 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
       }
     }
   }
-  int width = m_Image->comps[0].w;
-  int height = m_Image->comps[0].h;
+  uint32_t width = m_Image->comps[0].w;
+  uint32_t height = m_Image->comps[0].h;
   for (uint32_t channel = 0; channel < m_Image->numcomps; ++channel) {
     uint8_t* pChannel = channel_bufs[channel];
     if (adjust_comps[channel] < 0) {
-      for (int row = 0; row < height; ++row) {
+      for (uint32_t row = 0; row < height; ++row) {
         uint8_t* pScanline = pChannel + row * pitch;
-        for (int col = 0; col < width; ++col) {
+        for (uint32_t col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
           if (!m_Image->comps[channel].data)
             continue;
@@ -615,9 +614,9 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
         }
       }
     } else {
-      for (int row = 0; row < height; ++row) {
+      for (uint32_t row = 0; row < height; ++row) {
         uint8_t* pScanline = pChannel + row * pitch;
-        for (int col = 0; col < width; ++col) {
+        for (uint32_t col = 0; col < width; ++col) {
           uint8_t* pPixel = pScanline + col * m_Image->numcomps;
           if (!m_Image->comps[channel].data)
             continue;
@@ -662,7 +661,7 @@ void CCodec_JpxModule::GetImageInfo(CJPX_Decoder* pDecoder,
 
 bool CCodec_JpxModule::Decode(CJPX_Decoder* pDecoder,
                               uint8_t* dest_data,
-                              int pitch,
+                              uint32_t pitch,
                               const std::vector<uint8_t>& offsets) {
   return pDecoder->Decode(dest_data, pitch, offsets);
 }

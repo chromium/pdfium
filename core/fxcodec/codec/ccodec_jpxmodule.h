@@ -29,7 +29,7 @@ class CCodec_JpxModule {
                     uint32_t* components);
   bool Decode(CJPX_Decoder* pDecoder,
               uint8_t* dest_data,
-              int pitch,
+              uint32_t pitch,
               const std::vector<uint8_t>& offsets);
 };
 

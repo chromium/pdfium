@@ -24,7 +24,7 @@ class CJPX_Decoder {
   bool Init(const unsigned char* src_data, uint32_t src_size);
   void GetInfo(uint32_t* width, uint32_t* height, uint32_t* components);
   bool Decode(uint8_t* dest_buf,
-              int pitch,
+              uint32_t pitch,
               const std::vector<uint8_t>& offsets);
 
  private:
