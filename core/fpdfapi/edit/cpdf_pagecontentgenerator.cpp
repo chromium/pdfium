@@ -391,7 +391,7 @@ void CPDF_PageContentGenerator::ProcessDefaultGraphics(
        << static_cast<int>(CFX_GraphStateData::LineCapButt) << " J "
        << static_cast<int>(CFX_GraphStateData::LineJoinMiter) << " j\n";
   ByteString name = GetOrCreateDefaultGraphics();
-  *buf << "/" << PDF_NameEncode(name).c_str() << " gs ";
+  *buf << "/" << PDF_NameEncode(name) << " gs ";
 }
 
 ByteString CPDF_PageContentGenerator::GetOrCreateDefaultGraphics() const {
