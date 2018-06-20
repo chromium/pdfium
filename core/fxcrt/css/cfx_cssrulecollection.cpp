@@ -29,7 +29,7 @@ void CFX_CSSRuleCollection::Clear() {
 
 const std::vector<std::unique_ptr<CFX_CSSRuleCollection::Data>>*
 CFX_CSSRuleCollection::GetTagRuleData(const WideString& tagname) const {
-  auto it = m_TagRules.find(FX_HashCode_GetW(tagname.c_str(), true));
+  auto it = m_TagRules.find(FX_HashCode_GetW(tagname.AsStringView(), true));
   return it != m_TagRules.end() ? &it->second : nullptr;
 }
 

@@ -160,7 +160,7 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
   void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB);
   uint32_t GetFlags(FXFT_Face pFace);
   bool VerifyUnicode(CFX_FontDescriptor* pDesc, wchar_t wcUnicode);
-  int32_t IsPartName(const WideString& Name1, const WideString& Name2);
+  bool IsPartName(const WideString& name1, const WideString& name2);
   void MatchFonts(std::vector<CFX_FontDescriptorInfo>* MatchedFonts,
                   uint16_t wCodePage,
                   uint32_t dwFontStyles,

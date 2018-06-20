@@ -183,7 +183,7 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
         return CJS_Return(JSMessage::kValueError);
     }
 
-    return CJS_Return(pRuntime->NewString(swResult.c_str()));
+    return CJS_Return(pRuntime->NewString(swResult.AsStringView()));
   }
 
   if (params[0]->IsString()) {
@@ -259,7 +259,7 @@ CJS_Return CJS_Util::printx(CJS_Runtime* pRuntime,
   return CJS_Return(
       pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
                                  pRuntime->ToWideString(params[1]))
-                              .c_str()));
+                              .AsStringView()));
 }
 
 enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };

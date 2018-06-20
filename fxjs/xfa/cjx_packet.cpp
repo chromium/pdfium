@@ -38,7 +38,7 @@ CJS_Return CJX_Packet::getAttribute(
   CFX_XMLNode* pXMLNode = GetXFANode()->GetXMLMappingNode();
   if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
     attributeValue = static_cast<CFX_XMLElement*>(pXMLNode)->GetAttribute(
-        runtime->ToWideString(params[0]).c_str());
+        runtime->ToWideString(params[0]));
   }
   return CJS_Return(
       runtime->NewString(attributeValue.UTF8Encode().AsStringView()));
@@ -68,8 +68,8 @@ CJS_Return CJX_Packet::removeAttribute(
   if (pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element) {
     WideString name = runtime->ToWideString(params[0]);
     CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-    if (pXMLElement->HasAttribute(name.c_str()))
-      pXMLElement->RemoveAttribute(name.c_str());
+    if (pXMLElement->HasAttribute(name))
+      pXMLElement->RemoveAttribute(name);
   }
   return CJS_Return(runtime->NewNull());
 }

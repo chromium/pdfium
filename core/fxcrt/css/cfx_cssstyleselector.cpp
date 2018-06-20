@@ -75,7 +75,7 @@ bool CFX_CSSStyleSelector::MatchSelector(const WideString& tagname,
       pSel->GetType() == CFX_CSSSelectorType::Descendant) {
     return false;
   }
-  return pSel->GetNameHash() == FX_HashCode_GetW(tagname.c_str(), true);
+  return pSel->GetNameHash() == FX_HashCode_GetW(tagname.AsStringView(), true);
 }
 
 void CFX_CSSStyleSelector::ComputeStyle(

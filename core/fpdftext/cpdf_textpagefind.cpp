@@ -161,7 +161,7 @@ bool CPDF_TextPageFind::FindNext() {
       }
       continue;
     }
-    nResultPos = m_strText.Find(csWord.c_str(), nStartPos);
+    nResultPos = m_strText.Find(csWord.AsStringView(), nStartPos);
     if (!nResultPos.has_value()) {
       m_IsFind = false;
       return m_IsFind;
