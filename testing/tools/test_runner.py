@@ -160,6 +160,7 @@ class TestRunner:
         # becomes "example_005.pdf.0".
         test_name = os.path.splitext(os.path.split(img_path)[1])[0]
 
+        matched = "suppressed"
         if not self.test_suppressor.IsResultSuppressed(input_filename):
           matched = self.gold_baseline.MatchLocalResult(test_name, md5_hash)
           if matched == gold.GoldBaseline.MISMATCH:
@@ -168,7 +169,7 @@ class TestRunner:
             print 'No Skia Gold baseline found for test case: %s' % test_name
 
         if self.gold_results:
-          self.gold_results.AddTestResult(test_name, md5_hash, img_path)
+          self.gold_results.AddTestResult(test_name, md5_hash, img_path, matched)
 
     if self.test_suppressor.IsResultSuppressed(input_filename):
       self.result_suppressed_cases.append(input_filename)

@@ -65,39 +65,31 @@ class GoldBaseline(object):
     Download the baseline json and return a list of the two baselines that
     should be used to match hashes (master and cl#).
     """
-    GOLD_BASELINE_URL = ('https://storage.googleapis.com/skia-infra-gm/'
-                         'hash_files/gold-pdfium-baseline.json')
+    GOLD_BASELINE_URL = 'https://pdfium-gold.skia.org/json/baseline'
+
+    # If we have an issue number add it to the baseline URL
+    cl_number_str = self._properties.get('issue', None)
+    url = GOLD_BASELINE_URL + ('/' + cl_number_str if cl_number_str else '')
+
     try:
-      response = urllib2.urlopen(GOLD_BASELINE_URL, timeout=2)
+      response = urllib2.urlopen(url, timeout=2)
+      c_type = response.headers.get('Content-type', '')
+      if c_type != 'application/json':
+        raise ValueError('Invalid content type. Got %s instead of %s' % (
+          c_type, 'application/json'))
       json_data = response.read()
     except (urllib2.HTTPError, urllib2.URLError) as e:
       print ('Error: Unable to read skia gold json from %s: %s'
-             % (GOLD_BASELINE_URL, e))
+             % (url, e))
       return None
 
     try:
       data = json.loads(json_data)
-    except ValueError:
-      print 'Error: Malformed json read from %s: %s' % (GOLD_BASELINE_URL, e)
+    except ValueError as e:
+      print 'Error: Malformed json read from %s: %s' % (url, e)
       return None
 
-    try:
-      master_baseline = data['master']
-    except (KeyError, TypeError):
-      print ('Error: "master" key not in json read from %s: %s'
-             % (GOLD_BASELINE_URL, e))
-      return None
-
-    cl_number_str = self._properties.get('issue')
-    if cl_number_str is None:
-      return [master_baseline]
-
-    try:
-      cl_baseline = data['changeLists'][cl_number_str]
-    except KeyError:
-      return [master_baseline]
-
-    return [cl_baseline, master_baseline]
+    return data.get('master', {})
 
   # Return values for MatchLocalResult().
   MATCH = 'match'
@@ -124,11 +116,10 @@ class GoldBaseline(object):
       return GoldBaseline.BASELINE_DOWNLOAD_FAILED
 
     found_test_case = False
-    for baseline in self._baselines:
-      if test_name in baseline:
-        found_test_case = True
-        if md5_hash in baseline[test_name]:
-          return GoldBaseline.MATCH
+    if test_name in self._baselines:
+      found_test_case = True
+      if md5_hash in self._baselines[test_name]:
+        return GoldBaseline.MATCH
 
     return (GoldBaseline.MISMATCH if found_test_case
             else GoldBaseline.NO_BASELINE)
@@ -195,6 +186,7 @@ class GoldResults(object):
     self._properties = _ParseKeyValuePairs(propertiesStr)
     self._properties["key"] = _ParseKeyValuePairs(keyStr)
     self._results =  []
+    self._passfail = []
     self._outputDir = outputDir
 
     # make sure the output directory exists and is empty.
@@ -208,7 +200,7 @@ class GoldResults(object):
         hashes=[x.strip() for x in ig_file.readlines() if x.strip()]
         self._ignore_hashes = set(hashes)
 
-  def AddTestResult(self, testName, md5Hash, outputImagePath):
+  def AddTestResult(self, testName, md5Hash, outputImagePath, matchResult):
     # If the hash is in the list of hashes to ignore then we don'try
     # make a copy, but add it to the result.
     imgExt = os.path.splitext(outputImagePath)[1].lstrip(".")
@@ -232,6 +224,8 @@ class GoldResults(object):
       }
     })
 
+    self._passfail.append((testName, matchResult))
+
   def WriteResults(self):
     self._properties.update({
       "results": self._results
@@ -240,6 +234,11 @@ class GoldResults(object):
     outputFileName = os.path.join(self._outputDir, "dm.json")
     with open(outputFileName, 'wb') as outfile:
       json.dump(self._properties, outfile, indent=1)
+      outfile.write("\n")
+
+    outputFileName = os.path.join(self._outputDir, "passfail.json")
+    with open(outputFileName, 'wb') as outfile:
+      json.dump(self._passfail, outfile, indent=1)
       outfile.write("\n")
 
 # Produce example output for manual testing.
@@ -261,8 +260,9 @@ if __name__ == "__main__":
   with open(hash_file, 'wb') as f:
     f.write("\n".join(["hash-1","hash-4"]) + "\n")
 
-  gr = GoldResults("pdfium", testDir, propStr, keyStr, hash_file)
-  gr.AddTestResult("test-1", "hash-1", os.path.join(testDir, "image1.png"))
-  gr.AddTestResult("test-2", "hash-2", os.path.join(testDir, "image2.png"))
-  gr.AddTestResult("test-3", "hash-3", os.path.join(testDir, "image3.png"))
+  outputDir = "./output_directory"
+  gr = GoldResults("pdfium", outputDir, propStr, keyStr, hash_file)
+  gr.AddTestResult("test-1", "hash-1", os.path.join(testDir, "image1.png"), GoldBaseline.MATCH)
+  gr.AddTestResult("test-2", "hash-2", os.path.join(testDir, "image2.png"), GoldBaseline.MATCH)
+  gr.AddTestResult("test-3", "hash-3", os.path.join(testDir, "image3.png"), GoldBaseline.MISMATCH)
   gr.WriteResults()
