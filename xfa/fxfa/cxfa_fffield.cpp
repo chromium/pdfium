@@ -665,8 +665,9 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
       IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
       if (pAppProvider) {
         pAppProvider->MsgBox(L"You are not allowed to modify this field.",
-                             L"Calculate Override", XFA_MBICON_Warning,
-                             XFA_MB_OK);
+                             L"Calculate Override",
+                             static_cast<uint32_t>(AlertIcon::kWarning),
+                             static_cast<uint32_t>(AlertButton::kOK));
       }
       return 0;
     }
@@ -692,7 +693,9 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
 
       wsMessage += L"Are you sure you want to modify this field?";
       if (pAppProvider->MsgBox(wsMessage, L"Calculate Override",
-                               XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
+                               static_cast<uint32_t>(AlertIcon::kWarning),
+                               static_cast<uint32_t>(AlertButton::kYesNo)) ==
+          static_cast<uint32_t>(AlertReturn::kYes)) {
         pNode->SetFlag(XFA_NodeFlag_UserInteractive);
         return 1;
       }

@@ -156,8 +156,9 @@ void CXFA_FFDocView::ShowNullTestMsg() {
                            L"validation errors not reported.",
                            iRemain);
     }
-    pAppProvider->MsgBox(wsMsg, pAppProvider->GetAppTitle(), XFA_MBICON_Status,
-                         XFA_MB_OK);
+    pAppProvider->MsgBox(wsMsg, pAppProvider->GetAppTitle(),
+                         static_cast<uint32_t>(AlertIcon::kStatus),
+                         static_cast<uint32_t>(AlertButton::kOK));
   }
   m_arrNullTestMsg.clear();
 }

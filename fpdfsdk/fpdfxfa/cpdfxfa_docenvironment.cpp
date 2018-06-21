@@ -656,7 +656,8 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
         return false;
 
       pFormFillEnv->JS_appAlert(WideString::FromLocal(IDS_XFA_Validate_Input),
-                                L"", 0, 1);
+                                L"", JSPLATFORM_ALERT_BUTTON_OK,
+                                JSPLATFORM_ALERT_ICON_WARNING);
       return false;
     }
     pNode = it->MoveToNext();
@@ -909,7 +910,8 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
   WideString csURL = submit->GetSubmitTarget();
   if (csURL.IsEmpty()) {
     pFormFillEnv->JS_appAlert(WideString::FromLocal("Submit cancelled."), L"",
-                              0, 4);
+                              JSPLATFORM_ALERT_BUTTON_OK,
+                              JSPLATFORM_ALERT_ICON_ASTERISK);
     return false;
   }
 

@@ -254,11 +254,11 @@ CJS_Return CJS_App::alert(CJS_Runtime* pRuntime,
     swMsg = pRuntime->ToWideString(newParams[0]);
   }
 
-  int iIcon = 0;
+  int iIcon = JSPLATFORM_ALERT_ICON_DEFAULT;
   if (IsTypeKnown(newParams[1]))
     iIcon = pRuntime->ToInt32(newParams[1]);
 
-  int iType = 0;
+  int iType = JSPLATFORM_ALERT_BUTTON_DEFAULT;
   if (IsTypeKnown(newParams[2]))
     iType = pRuntime->ToInt32(newParams[2]);
 
@@ -282,7 +282,11 @@ CJS_Return CJS_App::beep(CJS_Runtime* pRuntime,
   if (params.size() != 1)
     return CJS_Return(JSMessage::kParamError);
 
-  pRuntime->GetFormFillEnv()->JS_appBeep(pRuntime->ToInt32(params[0]));
+  int type = JSPLATFORM_BEEP_DEFAULT;
+  if (IsTypeKnown(params[0]))
+    type = pRuntime->ToInt32(params[0]);
+
+  pRuntime->GetFormFillEnv()->JS_appBeep(type);
   return CJS_Return();
 }
 

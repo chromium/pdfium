@@ -22,6 +22,30 @@ typedef void* FPDF_FORMHANDLE;
                                    // of XFA spec
 #define FORMTYPE_COUNT 4           // The number of form types
 
+#define JSPLATFORM_ALERT_BUTTON_OK 0           // OK button
+#define JSPLATFORM_ALERT_BUTTON_OKCANCEL 1     // OK & Cancel buttons
+#define JSPLATFORM_ALERT_BUTTON_YESNO 2        // Yes & No buttons
+#define JSPLATFORM_ALERT_BUTTON_YESNOCANCEL 3  // Yes, No & Cancel buttons
+#define JSPLATFORM_ALERT_BUTTON_DEFAULT JSPLATFORM_ALERT_BUTTON_OK
+
+#define JSPLATFORM_ALERT_ICON_ERROR 0     // Error
+#define JSPLATFORM_ALERT_ICON_WARNING 1   // Warning
+#define JSPLATFORM_ALERT_ICON_QUESTION 2  // Question
+#define JSPLATFORM_ALERT_ICON_STATUS 3    // Status
+#define JSPLATFORM_ALERT_ICON_ASTERISK 4  // Asterisk
+#define JSPLATFORM_ALERT_ICON_DEFAULT JSPLATFORM_ALERT_ICON_ERROR
+
+#define JSPLATFORM_ALERT_RETURN_OK 1      // OK
+#define JSPLATFORM_ALERT_RETURN_CANCEL 2  // Cancel
+#define JSPLATFORM_ALERT_RETURN_NO 3      // No
+#define JSPLATFORM_ALERT_RETURN_YES 4     // Yes
+
+#define JSPLATFORM_BEEP_ERROR 0     // Error
+#define JSPLATFORM_BEEP_WARNING 1   // Warning
+#define JSPLATFORM_BEEP_QUESTION 2  // Question
+#define JSPLATFORM_BEEP_STATUS 3    // Status
+#define JSPLATFORM_BEEP_DEFAULT 4   // Default
+
 // Exported Functions
 #ifdef __cplusplus
 extern "C" {
@@ -36,34 +60,25 @@ typedef struct _IPDF_JsPlatform {
   /* Version 1. */
 
   /**
-  * Method: app_alert
-  *           pop up a dialog to show warning or hint.
-  * Interface Version:
-  *           1
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *           pThis       -   Pointer to the interface structure itself
-  *           Msg         -   A string containing the message to be displayed.
-  *           Title       -   The title of the dialog.
-  *           Type        -   The stype of button group.
-  *                           0-OK(default);
-  *                           1-OK,Cancel;
-  *                           2-Yes,NO;
-  *                           3-Yes, NO, Cancel.
-  *           nIcon       -   The Icon type.
-  *                           0-Error(default);
-  *                           1-Warning;
-  *                           2-Question;
-  *                           3-Status.
-  *                           4-Asterisk
-  * Return Value:
-  *           The return value could be the folowing type:
-  *                           1-OK;
-  *                           2-Cancel;
-  *                           3-NO;
-  *                           4-Yes;
-  */
+   * Method: app_alert
+   *           pop up a dialog to show warning or hint.
+   * Interface Version:
+   *           1
+   * Implementation Required:
+   *           yes
+   * Parameters:
+   *           pThis       -   Pointer to the interface structure itself.
+   *           Msg         -   A string containing the message to be displayed.
+   *           Title       -   The title of the dialog.
+   *           Type        -   The type of button group, see
+   *                           JSPLATFORM_ALERT_BUTTON_* above.
+   *           nIcon       -   The icon type, see see
+   *                           JSPLATFORM_ALERT_ICON_* above .
+   *
+   * Return Value:
+   *           Option selected by user in dialogue, see see
+   *           JSPLATFORM_ALERT_RETURN_* above.
+   */
   int (*app_alert)(struct _IPDF_JsPlatform* pThis,
                    FPDF_WIDESTRING Msg,
                    FPDF_WIDESTRING Title,
@@ -71,23 +86,20 @@ typedef struct _IPDF_JsPlatform {
                    int Icon);
 
   /**
-  * Method: app_beep
-  *           Causes the system to play a sound.
-  * Interface Version:
-  *           1
-  * Implementation Required:
-  *           yes
-  * Parameters:
-  *           pThis       -   Pointer to the interface structure itself
-  *           nType       -   The sound type.
-  *                           0 - Error
-  *                           1 - Warning
-  *                           2 - Question
-  *                           3 - Status
-  *                           4 - Default (default value)
-  * Return Value:
-  *           None
-  */
+   * Method: app_beep
+   *           Causes the system to play a sound.
+   * Interface Version:
+   *           1
+   * Implementation Required:
+   *           yes
+   * Parameters:
+   *           pThis       -   Pointer to the interface structure itself
+   *           nType       -   The sound type, see see JSPLATFORM_BEEP_TYPE_*
+   *                           above.
+   *
+   * Return Value:
+   *           None
+   */
   void (*app_beep)(struct _IPDF_JsPlatform* pThis, int nType);
 
   /**
@@ -1553,14 +1565,15 @@ FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle);
 #endif  // PDF_ENABLE_XFA
 
 #ifdef PDF_ENABLE_XFA
-#define IS_XFA_FORMFIELD(type)                                              \
-  ((type == FPDF_FORMFIELD_XFA) || (type == FPDF_FORMFIELD_XFA_CHECKBOX) || \
-   (type == FPDF_FORMFIELD_XFA_COMBOBOX) ||                                 \
-   (type == FPDF_FORMFIELD_XFA_IMAGEFIELD) ||                               \
-   (type == FPDF_FORMFIELD_XFA_LISTBOX) ||                                  \
-   (type == FPDF_FORMFIELD_XFA_PUSHBUTTON) ||                               \
-   (type == FPDF_FORMFIELD_XFA_SIGNATURE) ||                                \
-   (type == FPDF_FORMFIELD_XFA_TEXTFIELD))
+#define IS_XFA_FORMFIELD(type)                  \
+  (((type) == FPDF_FORMFIELD_XFA) ||            \
+   ((type) == FPDF_FORMFIELD_XFA_CHECKBOX) ||   \
+   ((type) == FPDF_FORMFIELD_XFA_COMBOBOX) ||   \
+   ((type) == FPDF_FORMFIELD_XFA_IMAGEFIELD) || \
+   ((type) == FPDF_FORMFIELD_XFA_LISTBOX) ||    \
+   ((type) == FPDF_FORMFIELD_XFA_PUSHBUTTON) || \
+   ((type) == FPDF_FORMFIELD_XFA_SIGNATURE) ||  \
+   ((type) == FPDF_FORMFIELD_XFA_TEXTFIELD))
 #endif  // PDF_ENABLE_XFA
 
 /**

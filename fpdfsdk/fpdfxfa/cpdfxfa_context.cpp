@@ -36,6 +36,19 @@ extern void SetLastError(int err);
 extern int GetLastError();
 #endif
 
+#define IS_VALID_ALERT_BUTTON(type)              \
+  ((type) == JSPLATFORM_ALERT_BUTTON_OK ||       \
+   (type) == JSPLATFORM_ALERT_BUTTON_OKCANCEL || \
+   (type) == JSPLATFORM_ALERT_BUTTON_YESNO ||    \
+   (type) == JSPLATFORM_ALERT_BUTTON_YESNOCANCEL)
+
+#define IS_VALID_ALERT_ICON(type)              \
+  ((type) == JSPLATFORM_ALERT_ICON_ERROR ||    \
+   (type) == JSPLATFORM_ALERT_ICON_WARNING ||  \
+   (type) == JSPLATFORM_ALERT_ICON_QUESTION || \
+   (type) == JSPLATFORM_ALERT_ICON_STATUS ||   \
+   (type) == JSPLATFORM_ALERT_ICON_ASTERISK)
+
 CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
       m_pXFAApp(pdfium::MakeUnique<CXFA_FFApp>(this)),
@@ -247,50 +260,13 @@ int32_t CPDFXFA_Context::MsgBox(const WideString& wsMessage,
   if (!m_pFormFillEnv || m_nLoadStatus != FXFA_LOADSTATUS_LOADED)
     return -1;
 
-  uint32_t iconType = 0;
-  int iButtonType = 0;
-  switch (dwIconType) {
-    case XFA_MBICON_Error:
-      iconType |= 0;
-      break;
-    case XFA_MBICON_Warning:
-      iconType |= 1;
-      break;
-    case XFA_MBICON_Question:
-      iconType |= 2;
-      break;
-    case XFA_MBICON_Status:
-      iconType |= 3;
-      break;
-  }
-  switch (dwButtonType) {
-    case XFA_MB_OK:
-      iButtonType |= 0;
-      break;
-    case XFA_MB_OKCancel:
-      iButtonType |= 1;
-      break;
-    case XFA_MB_YesNo:
-      iButtonType |= 2;
-      break;
-    case XFA_MB_YesNoCancel:
-      iButtonType |= 3;
-      break;
-  }
-  int32_t iRet =
-      m_pFormFillEnv->JS_appAlert(wsMessage, wsTitle, iButtonType, iconType);
-
-  switch (iRet) {
-    case 1:
-      return XFA_IDOK;
-    case 2:
-      return XFA_IDCancel;
-    case 3:
-      return XFA_IDNo;
-    case 4:
-      return XFA_IDYes;
-  }
-  return XFA_IDYes;
+  int iconType = IS_VALID_ALERT_ICON(dwIconType)
+                     ? dwIconType
+                     : JSPLATFORM_ALERT_ICON_DEFAULT;
+  int iButtonType = IS_VALID_ALERT_BUTTON(dwButtonType)
+                        ? dwButtonType
+                        : JSPLATFORM_ALERT_BUTTON_DEFAULT;
+  return m_pFormFillEnv->JS_appAlert(wsMessage, wsTitle, iButtonType, iconType);
 }
 
 WideString CPDFXFA_Context::Response(const WideString& wsQuestion,

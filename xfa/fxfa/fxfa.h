@@ -23,18 +23,32 @@ class CXFA_Submit;
 class IFWL_AdapterTimerMgr;
 class IFX_SeekableReadStream;
 
-#define XFA_MBICON_Error 0
-#define XFA_MBICON_Warning 1
-#define XFA_MBICON_Question 2
-#define XFA_MBICON_Status 3
-#define XFA_MB_OK 0
-#define XFA_MB_OKCancel 1
-#define XFA_MB_YesNo 2
-#define XFA_MB_YesNoCancel 3
-#define XFA_IDOK 1
-#define XFA_IDCancel 2
-#define XFA_IDNo 3
-#define XFA_IDYes 4
+// Note, values must match fpdf_formfill.h JSPLATFORM_ALERT_BUTTON_* flags.
+enum class AlertButton {
+  kDefault = 0,
+  kOK = 0,
+  kOKCancel = 1,
+  kYesNo = 2,
+  kYesNoCancel = 3,
+};
+
+// Note, values must match fpdf_formfill.h JSPLATFORM_ALERT_ICON_* flags.
+enum class AlertIcon {
+  kDefault = 0,
+  kError = 0,
+  kWarning = 1,
+  kQuestion = 2,
+  kStatus = 3,
+  kAsterisk = 4,
+};
+
+// Note, values must match fpdf_formfill.h JSPLATFORM_ALERT_RETURN_* flags.
+enum class AlertReturn {
+  kOK = 1,
+  kCancel = 2,
+  kNo = 3,
+  kYes = 4,
+};
 
 // Note, values must match fpdf_formfill.h FORMTYPE_* flags.
 enum class FormType {
@@ -50,6 +64,7 @@ enum class FormType {
 #define XFA_PRINTOPT_AsImage 0x00000008
 #define XFA_PRINTOPT_ReverseOrder 0x00000010
 #define XFA_PRINTOPT_PrintAnnot 0x00000020
+
 #define XFA_PAGEVIEWEVENT_PostAdded 1
 #define XFA_PAGEVIEWEVENT_PostRemoved 3
 #define XFA_PAGEVIEWEVENT_StopLayout 4

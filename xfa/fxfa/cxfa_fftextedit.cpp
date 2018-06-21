@@ -205,8 +205,9 @@ void CXFA_FFTextEdit::ValidateNumberField(const WideString& wsText) {
   WideString wsSomField = GetNode()->GetSOMExpression();
   pAppProvider->MsgBox(WideString::Format(L"%ls can not contain %ls",
                                           wsText.c_str(), wsSomField.c_str()),
-                       pAppProvider->GetAppTitle(), XFA_MBICON_Error,
-                       XFA_MB_OK);
+                       pAppProvider->GetAppTitle(),
+                       static_cast<uint32_t>(AlertIcon::kError),
+                       static_cast<uint32_t>(AlertButton::kOK));
 }
 
 bool CXFA_FFTextEdit::IsDataChanged() {

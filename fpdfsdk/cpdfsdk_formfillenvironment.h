@@ -165,8 +165,8 @@ class CPDFSDK_FormFillEnvironment
 
   int JS_appAlert(const WideString& Msg,
                   const WideString& Title,
-                  uint32_t Type,
-                  uint32_t Icon);
+                  int Type,
+                  int Icon);
   int JS_appResponse(const WideString& Question,
                      const WideString& Title,
                      const WideString& Default,

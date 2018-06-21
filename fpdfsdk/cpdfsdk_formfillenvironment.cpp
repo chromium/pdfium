@@ -64,12 +64,13 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
 
 int CPDFSDK_FormFillEnvironment::JS_appAlert(const WideString& Msg,
                                              const WideString& Title,
-                                             uint32_t Type,
-                                             uint32_t Icon) {
+                                             int Type,
+                                             int Icon) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->app_alert) {
     return -1;
   }
+
   ByteString bsMsg = Msg.UTF16LE_Encode();
   ByteString bsTitle = Title.UTF16LE_Encode();
   return m_pInfo->m_pJsPlatform->app_alert(
