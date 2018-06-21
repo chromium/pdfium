@@ -5,6 +5,7 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTMANAGER_H_
 #define CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTMANAGER_H_
 
+#include <set>
 #include <sstream>
 
 #include "core/fxcrt/unowned_ptr.h"
@@ -28,11 +29,21 @@ class CPDF_PageContentManager {
   // if Contents is not an array, but only a single stream.
   size_t AddStream(std::ostringstream* buf);
 
+  // Schedule the removal of the Content stream at a given index. It will be
+  // removed when ExecuteScheduledRemovals() is called.
+  void ScheduleRemoveStreamByIndex(size_t stream_index);
+
+  // Remove all Content streams for which ScheduleRemoveStreamByIndex() was
+  // called. Update the content stream of all page objects with the shifted
+  // indexes.
+  void ExecuteScheduledRemovals();
+
  private:
   UnownedPtr<CPDF_PageObjectHolder> const obj_holder_;
   UnownedPtr<CPDF_Document> const doc_;
   UnownedPtr<CPDF_Array> contents_array_;
   UnownedPtr<CPDF_Stream> contents_stream_;
+  std::set<size_t> streams_to_remove_;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTMANAGER_H_

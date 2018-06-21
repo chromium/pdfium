@@ -161,11 +161,14 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
         page_content_manager.GetStreamByIndex(stream_index);
     ASSERT(old_stream);
 
-    // TODO(pdfium:1051): Remove streams that are now empty. If buf is empty,
-    // remove this instead of setting the data.
-
-    old_stream->SetData(buf);
+    // If buf is now empty, remove the stream instead of setting the data.
+    if (buf->tellp() <= 0)
+      page_content_manager.ScheduleRemoveStreamByIndex(stream_index);
+    else
+      old_stream->SetData(buf);
   }
+
+  page_content_manager.ExecuteScheduledRemovals();
 }
 
 ByteString CPDF_PageContentGenerator::RealizeResource(
