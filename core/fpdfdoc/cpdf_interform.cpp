@@ -379,9 +379,7 @@ class CFieldTree {
     }
 
     CPDF_FormField* GetField() const { return m_pField.get(); }
-
-    const WideString& GetShortName() const { return m_ShortName; }
-
+    WideString GetShortName() const { return m_ShortName; }
     int GetLevel() const { return m_level; }
 
    private:

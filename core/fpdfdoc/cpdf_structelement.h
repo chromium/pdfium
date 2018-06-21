@@ -39,8 +39,8 @@ class CPDF_StructElement : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  const ByteString& GetType() const { return m_Type; }
-  const ByteString& GetTitle() const { return m_Title; }
+  ByteString GetType() const { return m_Type; }
+  ByteString GetTitle() const { return m_Title; }
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
   size_t CountKids() const;

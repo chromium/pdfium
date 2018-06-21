@@ -57,7 +57,7 @@ class DictionaryIterator : public CPDF_ObjectWalker::SubobjectIterator {
     dict_iterator_ = object()->GetDict()->begin();
   }
 
-  const ByteString& dict_key() const { return dict_key_; }
+  ByteString dict_key() const { return dict_key_; }
 
  private:
   CPDF_Dictionary::const_iterator dict_iterator_;

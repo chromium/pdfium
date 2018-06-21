@@ -138,7 +138,7 @@ const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
 
   size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(kKeys);
   for (size_t i = 0; i < end; ++i) {
-    const ByteString& key = kKeys[i];
+    ByteString key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       const CPDF_Stream* pStream = pFiles->GetStreamFor(key);
       if (pStream)
@@ -160,7 +160,7 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() {
 
   size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(kKeys);
   for (size_t i = 0; i < end; ++i) {
-    const ByteString& key = kKeys[i];
+    ByteString key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       CPDF_Stream* pStream = pFiles->GetStreamFor(key);
       if (pStream)

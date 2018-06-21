@@ -144,7 +144,7 @@ class CJS_EventHandler {
   bool IsValid() const;
 
   WideString& Change();
-  const WideString& ChangeEx();
+  WideString ChangeEx() const;
   int CommitKey() const;
   bool FieldFull() const;
   bool KeyDown() const;
@@ -161,7 +161,7 @@ class CJS_EventHandler {
   CJS_Field* Target_Field();
   WideString& Value();
   bool WillCommit() const;
-  const WideString& TargetName() const;
+  WideString TargetName() const;
 
   JS_EVENT_T EventType() const { return m_eEventType; }
 

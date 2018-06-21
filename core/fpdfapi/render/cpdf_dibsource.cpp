@@ -288,8 +288,7 @@ CPDF_DIBSource::LoadState CPDF_DIBSource::ContinueLoadDIBSource(
   if (m_Status == LoadState::kFail)
     return LoadState::kFail;
 
-  const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
-  if (decoder == "JPXDecode")
+  if (m_pStreamAcc->GetImageDecoder() == "JPXDecode")
     return LoadState::kFail;
 
   FXCODEC_STATUS iDecodeStatus;
@@ -448,7 +447,7 @@ bool CPDF_DIBSource::GetDecodeAndMaskArray(bool* bDefaultDecode,
 }
 
 CPDF_DIBSource::LoadState CPDF_DIBSource::CreateDecoder() {
-  const ByteString& decoder = m_pStreamAcc->GetImageDecoder();
+  ByteString decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder.IsEmpty())
     return LoadState::kSuccess;
 

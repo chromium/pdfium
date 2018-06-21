@@ -396,7 +396,7 @@ WideString& CJS_EventHandler::Change() {
   return m_WideStrChangeDu;
 }
 
-const WideString& CJS_EventHandler::ChangeEx() {
+WideString CJS_EventHandler::ChangeEx() const {
   return m_WideStrChangeEx;
 }
 
@@ -628,6 +628,6 @@ bool CJS_EventHandler::WillCommit() const {
   return m_bWillCommit;
 }
 
-const WideString& CJS_EventHandler::TargetName() const {
+WideString CJS_EventHandler::TargetName() const {
   return m_strTargetName;
 }

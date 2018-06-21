@@ -41,7 +41,7 @@ class CPDF_ObjectWalker {
 
   size_t current_depth() const { return current_depth_; }
   const CPDF_Object* GetParent() const { return parent_object_; }
-  const ByteString& dictionary_key() const { return dict_key_; }
+  ByteString dictionary_key() const { return dict_key_; }
 
  private:
   static std::unique_ptr<SubobjectIterator> MakeIterator(
@@ -49,10 +49,8 @@ class CPDF_ObjectWalker {
 
   const CPDF_Object* next_object_;
   const CPDF_Object* parent_object_;
-
   ByteString dict_key_;
   size_t current_depth_;
-
   std::stack<std::unique_ptr<SubobjectIterator>> stack_;
 };
 

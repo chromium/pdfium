@@ -63,7 +63,7 @@ class CPDF_Font {
   virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
   virtual bool HasFontWidths() const;
 
-  const ByteString& GetBaseFont() const { return m_BaseFont; }
+  ByteString GetBaseFont() const { return m_BaseFont; }
   CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
   bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   const CPDF_Dictionary* GetFontDict() const { return m_pFontDict; }
