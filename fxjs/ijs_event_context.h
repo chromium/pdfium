@@ -57,39 +57,38 @@ class IJS_EventContext {
   virtual void OnField_Focus(bool bModifier,
                              bool bShift,
                              CPDF_FormField* pTarget,
-                             const WideString& Value) = 0;
+                             WideString* Value) = 0;
   virtual void OnField_Blur(bool bModifier,
                             bool bShift,
                             CPDF_FormField* pTarget,
-                            const WideString& Value) = 0;
-
+                            WideString* Value) = 0;
   virtual void OnField_Calculate(CPDF_FormField* pSource,
                                  CPDF_FormField* pTarget,
-                                 WideString& Value,
-                                 bool& bRc) = 0;
+                                 WideString* Value,
+                                 bool* bRc) = 0;
   virtual void OnField_Format(CPDF_FormField* pTarget,
-                              WideString& Value,
+                              WideString* Value,
                               bool bWillCommit) = 0;
-  virtual void OnField_Keystroke(WideString& strChange,
+  virtual void OnField_Keystroke(WideString* strChange,
                                  const WideString& strChangeEx,
                                  bool KeyDown,
                                  bool bModifier,
-                                 int& nSelEnd,
-                                 int& nSelStart,
+                                 int* nSelEnd,
+                                 int* nSelStart,
                                  bool bShift,
                                  CPDF_FormField* pTarget,
-                                 WideString& Value,
+                                 WideString* Value,
                                  bool bWillCommit,
                                  bool bFieldFull,
-                                 bool& bRc) = 0;
-  virtual void OnField_Validate(WideString& strChange,
+                                 bool* bRc) = 0;
+  virtual void OnField_Validate(WideString* strChange,
                                 const WideString& strChangeEx,
                                 bool bKeyDown,
                                 bool bModifier,
                                 bool bShift,
                                 CPDF_FormField* pTarget,
-                                WideString& Value,
-                                bool& bRc) = 0;
+                                WideString* Value,
+                                bool* bRc) = 0;
 
   virtual void OnScreen_Focus(bool bModifier,
                               bool bShift,

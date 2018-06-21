@@ -422,22 +422,24 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
             break;
           case CPDF_AAction::GetFocus:
             context->OnField_Focus(data->bModifier, data->bShift, pFormField,
-                                   data->sValue);
+                                   &data->sValue);
             break;
           case CPDF_AAction::LoseFocus:
             context->OnField_Blur(data->bModifier, data->bShift, pFormField,
-                                  data->sValue);
+                                  &data->sValue);
             break;
           case CPDF_AAction::KeyStroke:
             context->OnField_Keystroke(
-                data->sChange, data->sChangeEx, data->bKeyDown, data->bModifier,
-                data->nSelEnd, data->nSelStart, data->bShift, pFormField,
-                data->sValue, data->bWillCommit, data->bFieldFull, data->bRC);
+                &data->sChange, data->sChangeEx, data->bKeyDown,
+                data->bModifier, &data->nSelEnd, &data->nSelStart, data->bShift,
+                pFormField, &data->sValue, data->bWillCommit, data->bFieldFull,
+                &data->bRC);
             break;
           case CPDF_AAction::Validate:
-            context->OnField_Validate(
-                data->sChange, data->sChangeEx, data->bKeyDown, data->bModifier,
-                data->bShift, pFormField, data->sValue, data->bRC);
+            context->OnField_Validate(&data->sChange, data->sChangeEx,
+                                      data->bKeyDown, data->bModifier,
+                                      data->bShift, pFormField, &data->sValue,
+                                      &data->bRC);
             break;
           default:
             NOTREACHED();

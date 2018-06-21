@@ -290,7 +290,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
     WideString sValue = sOldValue;
     bool bRC = true;
     IJS_Runtime::ScopedEventContext pContext(pRuntime);
-    pContext->OnField_Calculate(pFormField, pField, sValue, bRC);
+    pContext->OnField_Calculate(pFormField, pField, &sValue, &bRC);
 
     Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(csJS);
     if (!err && bRC && sValue.Compare(sOldValue) != 0)
@@ -324,7 +324,7 @@ WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
       if (!script.IsEmpty()) {
         WideString Value = sValue;
         IJS_Runtime::ScopedEventContext pContext(pRuntime);
-        pContext->OnField_Format(pFormField, Value, true);
+        pContext->OnField_Format(pFormField, &Value, true);
         Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(script);
         if (!err) {
           sValue = std::move(Value);

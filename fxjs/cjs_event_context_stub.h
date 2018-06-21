@@ -44,38 +44,38 @@ class CJS_EventContextStub final : public IJS_EventContext {
   void OnField_Focus(bool bModifier,
                      bool bShift,
                      CPDF_FormField* pTarget,
-                     const WideString& Value) override {}
+                     WideString* Value) override {}
   void OnField_Blur(bool bModifier,
                     bool bShift,
                     CPDF_FormField* pTarget,
-                    const WideString& Value) override {}
+                    WideString* Value) override {}
   void OnField_Calculate(CPDF_FormField* pSource,
                          CPDF_FormField* pTarget,
-                         WideString& Value,
-                         bool& bRc) override {}
+                         WideString* pValue,
+                         bool* pRc) override {}
   void OnField_Format(CPDF_FormField* pTarget,
-                      WideString& Value,
+                      WideString* Value,
                       bool bWillCommit) override {}
-  void OnField_Keystroke(WideString& strChange,
+  void OnField_Keystroke(WideString* strChange,
                          const WideString& strChangeEx,
                          bool KeyDown,
                          bool bModifier,
-                         int& nSelEnd,
-                         int& nSelStart,
+                         int* nSelEnd,
+                         int* nSelStart,
                          bool bShift,
                          CPDF_FormField* pTarget,
-                         WideString& Value,
+                         WideString* Value,
                          bool bWillCommit,
                          bool bFieldFull,
-                         bool& bRc) override {}
-  void OnField_Validate(WideString& strChange,
+                         bool* bRc) override {}
+  void OnField_Validate(WideString* strChange,
                         const WideString& strChangeEx,
                         bool bKeyDown,
                         bool bModifier,
                         bool bShift,
                         CPDF_FormField* pTarget,
-                        WideString& Value,
-                        bool& bRc) override {}
+                        WideString* Value,
+                        bool* bRc) override {}
   void OnScreen_Focus(bool bModifier,
                       bool bShift,
                       CPDFSDK_Annot* pScreen) override {}
