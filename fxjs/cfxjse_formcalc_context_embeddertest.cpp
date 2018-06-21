@@ -1176,6 +1176,16 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Lower) {
   }
 }
 
+// This is testing for an OOB read, so will likely only fail under ASAN.
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, bug_854623) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  const uint8_t test_string[] = {
+      0x4c, 0x6f, 0x77, 0x65, 0x72, 0x28, 0x22, 0xc3,
+      0x85, 0xc3, 0x85, 0xc3, 0x85, 0x22, 0x29};  // Lower("ÅÅÅ")
+  Execute(ByteString(test_string, sizeof(test_string)).AsStringView());
+}
+
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ltrim) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
