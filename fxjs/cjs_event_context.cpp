@@ -50,7 +50,7 @@ Optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
 
   Optional<IJS_Runtime::JS_Error> err;
   if (script.GetLength() > 0)
-    err = m_pRuntime->ExecuteScript(script.c_str());
+    err = m_pRuntime->ExecuteScript(script);
 
   m_pRuntime->RemoveEventFromSet(event);
   m_pEventHandler->Destroy();

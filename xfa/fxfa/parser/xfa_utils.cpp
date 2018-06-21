@@ -474,8 +474,8 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
       continue;
 
     auto* pElement = static_cast<CFX_XMLElement*>(pParent);
-    if (pElement->HasAttribute(wsNSAttribute.c_str())) {
-      *wsNamespaceURI = pElement->GetAttribute(wsNSAttribute.c_str());
+    if (pElement->HasAttribute(wsNSAttribute)) {
+      *wsNamespaceURI = pElement->GetAttribute(wsNSAttribute);
       return true;
     }
   }

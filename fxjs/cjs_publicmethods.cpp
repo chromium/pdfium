@@ -79,7 +79,7 @@ T StrTrim(const T& str) {
   return result;
 }
 
-void AlertIfPossible(CJS_EventContext* pContext, const wchar_t* swMsg) {
+void AlertIfPossible(CJS_EventContext* pContext, const WideString& swMsg) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pContext->GetFormFillEnv();
   if (pFormFillEnv)
     pFormFillEnv->JS_appAlert(swMsg, WideString(), 0, 3);
@@ -648,7 +648,7 @@ double CJS_PublicMethods::MakeRegularDate(const WideString& value,
               sMonth.MakeLower();
 
               for (int m = 0; m < 12; m++) {
-                WideString sFullMonths = kFullMonths[m];
+                WideString sFullMonths = WideString(kFullMonths[m]);
                 sFullMonths.MakeLower();
 
                 if (sFullMonths.Contains(sMonth.c_str())) {
@@ -997,10 +997,10 @@ CJS_Return CJS_PublicMethods::AFNumber_Keystroke(
       return CJS_Return();
 
     NormalizeDecimalMarkW(&swTemp);
-    if (!IsNumber(swTemp.c_str())) {
+    if (!IsNumber(swTemp)) {
       pEvent->Rc() = false;
       WideString sError = JSGetStringFromID(JSMessage::kInvalidInputError);
-      AlertIfPossible(pContext, sError.c_str());
+      AlertIfPossible(pContext, sError);
       return CJS_Return(sError);
     }
     // It happens after the last keystroke and before validating,
@@ -1180,7 +1180,7 @@ CJS_Return CJS_PublicMethods::AFDate_FormatEx(
   if (std::isnan(dDate)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
-    AlertIfPossible(pContext, swMsg.c_str());
+    AlertIfPossible(pContext, swMsg);
     return CJS_Return(JSMessage::kParseDateError);
   }
 
@@ -1250,7 +1250,7 @@ CJS_Return CJS_PublicMethods::AFDate_KeystrokeEx(
       WideString swMsg = WideString::Format(
           JSGetStringFromID(JSMessage::kParseDateError).c_str(),
           sFormat.c_str());
-      AlertIfPossible(pContext, swMsg.c_str());
+      AlertIfPossible(pContext, swMsg);
       pEvent->Rc() = false;
       return CJS_Return();
     }
@@ -1426,7 +1426,7 @@ CJS_Return CJS_PublicMethods::AFSpecial_KeystrokeEx(
     if (iIndexMask != wstrMask.GetLength() ||
         (iIndexMask != valEvent.GetLength() && wstrMask.GetLength() != 0)) {
       AlertIfPossible(pContext,
-                      JSGetStringFromID(JSMessage::kInvalidInputError).c_str());
+                      JSGetStringFromID(JSMessage::kInvalidInputError));
       pEvent->Rc() = false;
     }
     return CJS_Return();
@@ -1441,15 +1441,13 @@ CJS_Return CJS_PublicMethods::AFSpecial_KeystrokeEx(
   size_t combined_len = valEvent.GetLength() + wChange.GetLength() +
                         pEvent->SelStart() - pEvent->SelEnd();
   if (combined_len > wstrMask.GetLength()) {
-    AlertIfPossible(pContext,
-                    JSGetStringFromID(JSMessage::kParamTooLongError).c_str());
+    AlertIfPossible(pContext, JSGetStringFromID(JSMessage::kParamTooLongError));
     pEvent->Rc() = false;
     return CJS_Return();
   }
 
   if (iIndexMask >= wstrMask.GetLength() && !wChange.IsEmpty()) {
-    AlertIfPossible(pContext,
-                    JSGetStringFromID(JSMessage::kParamTooLongError).c_str());
+    AlertIfPossible(pContext, JSGetStringFromID(JSMessage::kParamTooLongError));
     pEvent->Rc() = false;
     return CJS_Return();
   }
@@ -1457,7 +1455,7 @@ CJS_Return CJS_PublicMethods::AFSpecial_KeystrokeEx(
   for (size_t i = 0; i < wChange.GetLength(); ++i) {
     if (iIndexMask >= wstrMask.GetLength()) {
       AlertIfPossible(pContext,
-                      JSGetStringFromID(JSMessage::kParamTooLongError).c_str());
+                      JSGetStringFromID(JSMessage::kParamTooLongError));
       pEvent->Rc() = false;
       return CJS_Return();
     }
@@ -1544,7 +1542,7 @@ CJS_Return CJS_PublicMethods::AFParseDateEx(
   if (std::isnan(dDate)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
-    AlertIfPossible(pRuntime->GetCurrentEventContext(), swMsg.c_str());
+    AlertIfPossible(pRuntime->GetCurrentEventContext(), swMsg);
     return CJS_Return(JSMessage::kParseDateError);
   }
   return CJS_Return(pRuntime->NewNumber(dDate));
@@ -1710,7 +1708,7 @@ CJS_Return CJS_PublicMethods::AFRange_Validate(
   }
 
   if (!swMsg.IsEmpty()) {
-    AlertIfPossible(pContext, swMsg.c_str());
+    AlertIfPossible(pContext, swMsg);
     pEvent->Rc() = false;
   }
   return CJS_Return();

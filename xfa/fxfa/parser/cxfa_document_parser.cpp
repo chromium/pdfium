@@ -1000,10 +1000,9 @@ void CXFA_DocumentParser::ParseDataGroup(CXFA_Node* pXFANode,
           pXFAMetaData->SetFlag(XFA_NodeFlag_Initialized);
         }
 
-        if (!bNeedValue) {
-          WideString wsNilName(L"xsi:nil");
-          pXMLElement->RemoveAttribute(wsNilName.c_str());
-        }
+        if (!bNeedValue)
+          pXMLElement->RemoveAttribute(L"xsi:nil");
+
         pXFANode->InsertChild(pXFAChild, nullptr);
         if (eNodeType == XFA_Element::DataGroup)
           ParseDataGroup(pXFAChild, pXMLElement, ePacketID);

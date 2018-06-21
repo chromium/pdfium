@@ -1245,7 +1245,7 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
         static_cast<CFX_XMLElement*>(pNode->xml_node_.Get());
     WideString wsAttributeName =
         pNode->JSObject()->GetCData(XFA_Attribute::QualifiedName);
-    pXMLElement->RemoveAttribute(wsAttributeName.c_str());
+    pXMLElement->RemoveAttribute(wsAttributeName);
   }
 
   WideString wsName = pNode->JSObject()
