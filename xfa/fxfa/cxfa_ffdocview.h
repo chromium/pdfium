@@ -47,7 +47,7 @@ class CXFA_FFDocView {
   explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
   ~CXFA_FFDocView();
 
-  CXFA_FFDoc* GetDoc() { return m_pDoc.Get(); }
+  CXFA_FFDoc* GetDoc() const { return m_pDoc.Get(); }
   int32_t StartLayout();
   int32_t DoLayout();
   void StopLayout();

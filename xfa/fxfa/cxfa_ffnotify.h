@@ -58,7 +58,7 @@ class CXFA_FFNotify {
                                bool bIsFormReady,
                                bool bRecursive);
   void AddCalcValidate(CXFA_Node* pNode);
-  CXFA_FFDoc* GetHDOC() { return m_pDoc.Get(); }
+  CXFA_FFDoc* GetHDOC() const { return m_pDoc.Get(); }
   IXFA_AppProvider* GetAppProvider();
   CXFA_FFWidgetHandler* GetWidgetHandler();
   void OpenDropDownList(CXFA_FFWidget* hWidget);

@@ -60,10 +60,8 @@ class CJX_Object {
 
   JS_PROP(className);
 
-  CXFA_Object* GetXFAObject() { return object_.Get(); }
-  const CXFA_Object* GetXFAObject() const { return object_.Get(); }
-
   CXFA_Document* GetDocument() const;
+  CXFA_Object* GetXFAObject() const { return object_.Get(); }
 
   void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }
   size_t GetCalcRecursionCount() const { return calc_recursion_count_; }

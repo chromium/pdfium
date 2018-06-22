@@ -143,7 +143,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   CPDFSDK_PageView* GetCurPageView(bool renew);
   void SetChangeMark();
 
-  CPDFSDK_Annot* GetSDKAnnot() { return m_pWidget.Get(); }
+  CPDFSDK_Annot* GetSDKAnnot() const { return m_pWidget.Get(); }
 
  protected:
   using CFFL_PageView2PDFWindow = std::map<CPDFSDK_PageView*, CPWL_Wnd*>;

@@ -56,7 +56,7 @@ class CFXJSE_Engine : public CFX_V8 {
   ~CFXJSE_Engine() override;
 
   void SetEventParam(CXFA_EventParam* param) { m_eventParam = param; }
-  CXFA_EventParam* GetEventParam() { return m_eventParam.Get(); }
+  CXFA_EventParam* GetEventParam() const { return m_eventParam.Get(); }
   bool RunScript(CXFA_Script::Type eScriptType,
                  const WideStringView& wsScript,
                  CFXJSE_Value* pRetValue,

@@ -148,7 +148,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   uint32_t GetStatus();
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
 
-  CXFA_Node* GetNode() { return m_pNode.Get(); }
+  CXFA_Node* GetNode() const { return m_pNode.Get(); }
 
   CXFA_FFDocView* GetDocView();
   void SetDocView(CXFA_FFDocView* pDocView);

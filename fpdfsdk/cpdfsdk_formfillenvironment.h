@@ -66,7 +66,7 @@ class CPDFSDK_FormFillEnvironment
   void RemovePageView(IPDF_Page* pPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
-  CPDFSDK_Annot* GetFocusAnnot() { return m_pFocusAnnot.Get(); }
+  CPDFSDK_Annot* GetFocusAnnot() const { return m_pFocusAnnot.Get(); }
   bool SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot);
   bool KillFocusAnnot(uint32_t nFlag);
   void ClearAllFocusedAnnots();
