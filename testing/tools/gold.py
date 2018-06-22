@@ -74,13 +74,13 @@ class GoldBaseline(object):
     try:
       response = urllib2.urlopen(url, timeout=2)
       c_type = response.headers.get('Content-type', '')
-      if c_type != 'application/json':
+      EXPECTED_CONTENT_TYPE = 'application/json'
+      if c_type != EXPECTED_CONTENT_TYPE:
         raise ValueError('Invalid content type. Got %s instead of %s' % (
-          c_type, 'application/json'))
+            c_type, EXPECTED_CONTENT_TYPE))
       json_data = response.read()
     except (urllib2.HTTPError, urllib2.URLError) as e:
-      print ('Error: Unable to read skia gold json from %s: %s'
-             % (url, e))
+      print ('Error: Unable to read skia gold json from %s: %s' % (url, e))
       return None
 
     try:
