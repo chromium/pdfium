@@ -85,10 +85,10 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     if (pPageObj->IsDirty())
       all_dirty_streams.insert(pPageObj->GetContentStream());
   }
-  const std::set<int32_t>* marked_dirty_streams =
+  const std::set<int32_t>& marked_dirty_streams =
       m_pObjHolder->GetDirtyStreams();
-  all_dirty_streams.insert(marked_dirty_streams->begin(),
-                           marked_dirty_streams->end());
+  all_dirty_streams.insert(marked_dirty_streams.begin(),
+                           marked_dirty_streams.end());
 
   // Start regenerating dirty streams.
   std::map<int32_t, std::unique_ptr<std::ostringstream>> streams;
