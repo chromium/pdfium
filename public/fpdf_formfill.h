@@ -76,7 +76,7 @@ typedef struct _IPDF_JsPlatform {
    *                           JSPLATFORM_ALERT_ICON_* above .
    *
    * Return Value:
-   *           Option selected by user in dialogue, see see
+   *           Option selected by user in dialogue, see
    *           JSPLATFORM_ALERT_RETURN_* above.
    */
   int (*app_alert)(struct _IPDF_JsPlatform* pThis,

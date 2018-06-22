@@ -36,18 +36,24 @@ extern void SetLastError(int err);
 extern int GetLastError();
 #endif
 
-#define IS_VALID_ALERT_BUTTON(type)              \
-  ((type) == JSPLATFORM_ALERT_BUTTON_OK ||       \
-   (type) == JSPLATFORM_ALERT_BUTTON_OKCANCEL || \
-   (type) == JSPLATFORM_ALERT_BUTTON_YESNO ||    \
-   (type) == JSPLATFORM_ALERT_BUTTON_YESNOCANCEL)
+namespace {
 
-#define IS_VALID_ALERT_ICON(type)              \
-  ((type) == JSPLATFORM_ALERT_ICON_ERROR ||    \
-   (type) == JSPLATFORM_ALERT_ICON_WARNING ||  \
-   (type) == JSPLATFORM_ALERT_ICON_QUESTION || \
-   (type) == JSPLATFORM_ALERT_ICON_STATUS ||   \
-   (type) == JSPLATFORM_ALERT_ICON_ASTERISK)
+bool IsValidAlertButton(int type) {
+  return type == JSPLATFORM_ALERT_BUTTON_OK ||
+         type == JSPLATFORM_ALERT_BUTTON_OKCANCEL ||
+         type == JSPLATFORM_ALERT_BUTTON_YESNO ||
+         type == JSPLATFORM_ALERT_BUTTON_YESNOCANCEL;
+}
+
+bool IsValidAlertIcon(int type) {
+  return type == JSPLATFORM_ALERT_ICON_ERROR ||
+         type == JSPLATFORM_ALERT_ICON_WARNING ||
+         type == JSPLATFORM_ALERT_ICON_QUESTION ||
+         type == JSPLATFORM_ALERT_ICON_STATUS ||
+         type == JSPLATFORM_ALERT_ICON_ASTERISK;
+}
+
+}  // namespace
 
 CPDFXFA_Context::CPDFXFA_Context(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc),
@@ -260,10 +266,9 @@ int32_t CPDFXFA_Context::MsgBox(const WideString& wsMessage,
   if (!m_pFormFillEnv || m_nLoadStatus != FXFA_LOADSTATUS_LOADED)
     return -1;
 
-  int iconType = IS_VALID_ALERT_ICON(dwIconType)
-                     ? dwIconType
-                     : JSPLATFORM_ALERT_ICON_DEFAULT;
-  int iButtonType = IS_VALID_ALERT_BUTTON(dwButtonType)
+  int iconType =
+      IsValidAlertIcon(dwIconType) ? dwIconType : JSPLATFORM_ALERT_ICON_DEFAULT;
+  int iButtonType = IsValidAlertButton(dwButtonType)
                         ? dwButtonType
                         : JSPLATFORM_ALERT_BUTTON_DEFAULT;
   return m_pFormFillEnv->JS_appAlert(wsMessage, wsTitle, iButtonType, iconType);
