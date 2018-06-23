@@ -30,6 +30,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "third_party/base/stl_util.h"
 #include "third_party/skia_shared/SkFloatToDecimal.h"
 
 namespace {
@@ -77,7 +78,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
 std::map<int32_t, std::unique_ptr<std::ostringstream>>
 CPDF_PageContentGenerator::GenerateModifiedStreams() {
   // Make sure default graphics are created.
-  (void)GetOrCreateDefaultGraphics();
+  GetOrCreateDefaultGraphics();
 
   // Figure out which streams are dirty.
   std::set<int32_t> all_dirty_streams;
@@ -92,7 +93,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
   // Start regenerating dirty streams.
   std::map<int32_t, std::unique_ptr<std::ostringstream>> streams;
-  std::map<int32_t, bool> stream_is_empty;
+  std::set<int32_t> empty_streams;
 
   for (int32_t dirty_stream : all_dirty_streams) {
     std::unique_ptr<std::ostringstream> buf =
@@ -106,7 +107,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     ProcessDefaultGraphics(buf.get());
 
     streams[dirty_stream] = std::move(buf);
-    stream_is_empty[dirty_stream] = true;
+    empty_streams.insert(dirty_stream);
   }
 
   // Process the page objects, write into each dirty stream.
@@ -117,14 +118,14 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
       continue;
 
     std::ostringstream* buf = it->second.get();
-    stream_is_empty[stream_index] = false;
+    empty_streams.erase(stream_index);
     ProcessPageObject(buf, pPageObj.Get());
   }
 
   // Finish dirty streams.
   for (int32_t dirty_stream : all_dirty_streams) {
     std::ostringstream* buf = streams[dirty_stream].get();
-    if (stream_is_empty[dirty_stream]) {
+    if (pdfium::ContainsKey(empty_streams, dirty_stream)) {
       // Clear to show that this stream needs to be deleted.
       buf->str("");
     } else {
