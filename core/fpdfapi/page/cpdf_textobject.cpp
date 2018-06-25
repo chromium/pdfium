@@ -148,34 +148,34 @@ CFX_Matrix CPDF_TextObject::GetTextMatrix() const {
 }
 
 void CPDF_TextObject::SetSegments(const ByteString* pStrs,
-                                  const float* pKerning,
-                                  int nsegs) {
+                                  const std::vector<float>& kernings,
+                                  size_t nSegs) {
   m_CharCodes.clear();
   m_CharPos.clear();
   CPDF_Font* pFont = m_TextState.GetFont();
   int nChars = 0;
-  for (int i = 0; i < nsegs; ++i)
+  for (size_t i = 0; i < nSegs; ++i)
     nChars += pFont->CountChar(pStrs[i].AsStringView());
-  nChars += nsegs - 1;
+  nChars += nSegs - 1;
   m_CharCodes.resize(nChars);
   m_CharPos.resize(nChars - 1);
   size_t index = 0;
-  for (int i = 0; i < nsegs; ++i) {
+  for (size_t i = 0; i < nSegs; ++i) {
     ByteStringView segment = pStrs[i].AsStringView();
     size_t offset = 0;
     while (offset < segment.GetLength()) {
       ASSERT(index < m_CharCodes.size());
       m_CharCodes[index++] = pFont->GetNextChar(segment, offset);
     }
-    if (i != nsegs - 1) {
-      m_CharPos[index - 1] = pKerning[i];
+    if (i != nSegs - 1) {
+      m_CharPos[index - 1] = kernings[i];
       m_CharCodes[index++] = CPDF_Font::kInvalidCharCode;
     }
   }
 }
 
 void CPDF_TextObject::SetText(const ByteString& str) {
-  SetSegments(&str, nullptr, 1);
+  SetSegments(&str, std::vector<float>(), 1);
   RecalcPositionData();
   SetDirty(true);
 }

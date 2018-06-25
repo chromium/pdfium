@@ -1200,28 +1200,23 @@ CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const ByteString& name,
                                   m_pCurStates->m_ParentMatrix);
 }
 
-void CPDF_StreamContentParser::AddTextObject(ByteString* pStrs,
+void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
                                              float fInitKerning,
-                                             float* pKerning,
-                                             int nsegs) {
+                                             const std::vector<float>& kernings,
+                                             size_t nSegs) {
   CPDF_Font* pFont = m_pCurStates->m_TextState.GetFont();
-  if (!pFont) {
+  if (!pFont)
     return;
-  }
+
   if (fInitKerning != 0) {
-    if (!pFont->IsVertWriting()) {
-      m_pCurStates->m_TextPos.x -=
-          (fInitKerning * m_pCurStates->m_TextState.GetFontSize() *
-           m_pCurStates->m_TextHorzScale) /
-          1000;
-    } else {
-      m_pCurStates->m_TextPos.y -=
-          (fInitKerning * m_pCurStates->m_TextState.GetFontSize()) / 1000;
-    }
+    if (pFont->IsVertWriting())
+      m_pCurStates->m_TextPos.y -= GetVerticalTextSize(fInitKerning);
+    else
+      m_pCurStates->m_TextPos.x -= GetHorizontalTextSize(fInitKerning);
   }
-  if (nsegs == 0) {
+  if (nSegs == 0)
     return;
-  }
+
   const TextRenderingMode text_mode =
       pFont->IsType3Font() ? TextRenderingMode::MODE_FILL
                            : m_pCurStates->m_TextState.GetTextMode();
@@ -1236,7 +1231,7 @@ void CPDF_StreamContentParser::AddTextObject(ByteString* pStrs,
       pCTM[2] = m_pCurStates->m_CTM.b;
       pCTM[3] = m_pCurStates->m_CTM.d;
     }
-    pText->SetSegments(pStrs, pKerning, nsegs);
+    pText->SetSegments(pStrs, kernings, nSegs);
     pText->SetPosition(
         m_mtContentToUser.Transform(m_pCurStates->m_CTM.Transform(
             m_pCurStates->m_TextMatrix.Transform(CFX_PointF(
@@ -1251,18 +1246,20 @@ void CPDF_StreamContentParser::AddTextObject(ByteString* pStrs,
     }
     m_pObjectHolder->AppendPageObject(std::move(pText));
   }
-  if (pKerning && pKerning[nsegs - 1] != 0) {
-    if (!pFont->IsVertWriting()) {
-      m_pCurStates->m_TextPos.x -=
-          (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize() *
-           m_pCurStates->m_TextHorzScale) /
-          1000;
-    } else {
-      m_pCurStates->m_TextPos.y -=
-          (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize()) /
-          1000;
-    }
+  if (!kernings.empty() && kernings[nSegs - 1] != 0) {
+    if (pFont->IsVertWriting())
+      m_pCurStates->m_TextPos.y -= GetVerticalTextSize(kernings[nSegs - 1]);
+    else
+      m_pCurStates->m_TextPos.x -= GetHorizontalTextSize(kernings[nSegs - 1]);
   }
+}
+
+float CPDF_StreamContentParser::GetHorizontalTextSize(float fKerning) const {
+  return GetVerticalTextSize(fKerning) * m_pCurStates->m_TextHorzScale;
+}
+
+float CPDF_StreamContentParser::GetVerticalTextSize(float fKerning) const {
+  return fKerning * m_pCurStates->m_TextState.GetFontSize() / 1000;
 }
 
 int32_t CPDF_StreamContentParser::GetCurrentStreamIndex() {
@@ -1273,10 +1270,8 @@ int32_t CPDF_StreamContentParser::GetCurrentStreamIndex() {
 
 void CPDF_StreamContentParser::Handle_ShowText() {
   ByteString str = GetString(0);
-  if (str.IsEmpty()) {
-    return;
-  }
-  AddTextObject(&str, 0, nullptr, 1);
+  if (!str.IsEmpty())
+    AddTextObject(&str, 0, std::vector<float>(), 1);
 }
 
 void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
@@ -1292,10 +1287,9 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   }
   if (nsegs == 0) {
     for (size_t i = 0; i < n; i++) {
-      m_pCurStates->m_TextPos.x -=
-          (pArray->GetNumberAt(i) * m_pCurStates->m_TextState.GetFontSize() *
-           m_pCurStates->m_TextHorzScale) /
-          1000;
+      float fKerning = pArray->GetNumberAt(i);
+      if (fKerning != 0)
+        m_pCurStates->m_TextPos.x -= GetHorizontalTextSize(fKerning);
     }
     return;
   }
@@ -1319,7 +1313,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
         kernings[iSegment - 1] += num;
     }
   }
-  AddTextObject(strs.data(), fInitKerning, kernings.data(), iSegment);
+  AddTextObject(strs.data(), fInitKerning, kernings, iSegment);
 }
 
 void CPDF_StreamContentParser::Handle_SetTextLeading() {

@@ -102,10 +102,12 @@ class CPDF_StreamContentParser {
     return static_cast<int>(GetNumber(index));
   }
   void OnOperator(const ByteStringView& op);
-  void AddTextObject(ByteString* pText,
+  void AddTextObject(const ByteString* pStrs,
                      float fInitKerning,
-                     float* pKerning,
-                     int count);
+                     const std::vector<float>& kernings,
+                     size_t nSegs);
+  float GetHorizontalTextSize(float fKerning) const;
+  float GetVerticalTextSize(float fKerning) const;
 
   void OnChangeTextMatrix();
   void ParsePathObject();
