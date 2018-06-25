@@ -293,27 +293,14 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
           continue;
         }
         float root = sqrt(b2_4ac);
-        float s1, s2;
-        if (a > 0) {
-          s1 = (-b - root) / (2 * a);
-          s2 = (-b + root) / (2 * a);
-        } else {
-          s2 = (-b - root) / (2 * a);
-          s1 = (-b + root) / (2 * a);
-        }
-        if (bDecreasing) {
-          if (s1 >= 0 || bStartExtend) {
-            s = s1;
-          } else {
-            s = s2;
-          }
-        } else {
-          if (s2 <= 1.0f || bEndExtend) {
-            s = s2;
-          } else {
-            s = s1;
-          }
-        }
+        float s1 = (-b - root) / (2 * a);
+        float s2 = (-b + root) / (2 * a);
+        if (a <= 0)
+          std::swap(s1, s2);
+        if (bDecreasing)
+          s = (s1 >= 0 || bStartExtend) ? s1 : s2;
+        else
+          s = (s2 <= 1.0f || bEndExtend) ? s2 : s1;
         if ((start_r + s * (end_r - start_r)) < 0) {
           continue;
         }
@@ -324,8 +311,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
           continue;
         }
         index = 0;
-      }
-      if (index >= kShadingSteps) {
+      } else if (index >= kShadingSteps) {
         if (!bEndExtend) {
           continue;
         }
