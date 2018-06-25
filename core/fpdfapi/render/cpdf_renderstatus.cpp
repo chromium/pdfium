@@ -1429,6 +1429,18 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
   }
 }
 
+bool CPDF_RenderStatus::ClipPattern(const CPDF_PageObject* pPageObj,
+                                    const CFX_Matrix* pObj2Device,
+                                    bool bStroke) {
+  if (pPageObj->IsPath())
+    return SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke);
+  if (pPageObj->IsImage()) {
+    m_pDevice->SetClip_Rect(pPageObj->GetBBox(pObj2Device));
+    return true;
+  }
+  return false;
+}
+
 bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
                                        const CFX_Matrix* pObj2Device,
                                        bool bStroke) {
@@ -2127,14 +2139,9 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-  if (pPageObj->IsPath()) {
-    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke))
-      return;
-  } else if (pPageObj->IsImage()) {
-    m_pDevice->SetClip_Rect(pPageObj->GetBBox(pObj2Device));
-  } else {
+  if (!ClipPattern(pPageObj, pObj2Device, bStroke))
     return;
-  }
+
   FX_RECT rect = GetObjectClippedRect(pPageObj, pObj2Device);
   if (rect.IsEmpty())
     return;
@@ -2171,14 +2178,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-  if (pPageObj->IsPath()) {
-    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke))
-      return;
-  } else if (pPageObj->IsImage()) {
-    m_pDevice->SetClip_Rect(pPageObj->GetBBox(pObj2Device));
-  } else {
+  if (!ClipPattern(pPageObj, pObj2Device, bStroke))
     return;
-  }
 
   FX_RECT clip_box = m_pDevice->GetClipBox();
   if (clip_box.IsEmpty())
