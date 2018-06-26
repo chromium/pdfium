@@ -191,9 +191,6 @@ CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
       m_pRootDict(nullptr),
       m_iNextPageToTraverse(0),
       m_bReachedMaxPageLevel(false),
-      m_bLinearized(false),
-      m_iFirstPageNo(0),
-      m_dwFirstPageObjNum(0),
       m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
       m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)) {
   if (pParser)
@@ -226,17 +223,18 @@ void CPDF_Document::LoadDoc() {
   LoadPages();
 }
 
-void CPDF_Document::LoadLinearizedDoc(
-    const CPDF_LinearizedHeader* pLinearizationParams) {
-  m_bLinearized = true;
-  LoadDocInternal();
-  m_PageList.resize(pLinearizationParams->GetPageCount());
-  m_iFirstPageNo = pLinearizationParams->GetFirstPageNo();
-  m_dwFirstPageObjNum = pLinearizationParams->GetFirstPageObjNum();
-}
-
 void CPDF_Document::LoadPages() {
-  m_PageList.resize(RetrievePageCount());
+  const CPDF_LinearizedHeader* linearized_header =
+      m_pParser->GetLinearizedHeader();
+  if (!linearized_header) {
+    m_PageList.resize(RetrievePageCount());
+    return;
+  }
+
+  m_PageList.resize(linearized_header->GetPageCount());
+  DCHECK(linearized_header->GetFirstPageNo() < m_PageList.size());
+  m_PageList[linearized_header->GetFirstPageNo()] =
+      linearized_header->GetFirstPageObjNum();
 }
 
 CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
@@ -329,15 +327,12 @@ CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
   if (!pdfium::IndexInBounds(m_PageList, iPage))
     return nullptr;
 
-  if (m_bLinearized && iPage == m_iFirstPageNo) {
-    if (CPDF_Dictionary* pDict =
-            ToDictionary(GetOrParseIndirectObject(m_dwFirstPageObjNum))) {
-      return pDict;
-    }
+  const uint32_t objnum = m_PageList[iPage];
+  if (objnum) {
+    CPDF_Dictionary* result = ToDictionary(GetOrParseIndirectObject(objnum));
+    if (result)
+      return result;
   }
-  uint32_t objnum = m_PageList[iPage];
-  if (objnum)
-    return ToDictionary(GetOrParseIndirectObject(objnum));
 
   CPDF_Dictionary* pPages = GetPagesDict();
   if (!pPages)

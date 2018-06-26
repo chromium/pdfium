@@ -215,13 +215,15 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   // ObjNum can be added in CPDF_DataAvail::IsPageAvail, and PagesDict
   // can be not exists in this case.
   // (case, when hint table is used to page check in CPDF_DataAvail).
-  CPDF_Document document(pdfium::MakeUnique<CPDF_Parser>());
   auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Boolean>("Linearized", true);
   const int page_count = 100;
   dict->SetNewFor<CPDF_Number>("N", page_count);
-  TestLinearized linearized(dict.get());
-  document.LoadLinearizedDoc(&linearized);
+  auto linearized = pdfium::MakeUnique<TestLinearized>(dict.get());
+  auto parser = pdfium::MakeUnique<CPDF_Parser>();
+  parser->SetLinearizedHeader(std::move(linearized));
+  CPDF_Document document(std::move(parser));
+  document.LoadDoc();
   ASSERT_EQ(page_count, document.GetPageCount());
   CPDF_Object* page_stub = document.NewIndirect<CPDF_Dictionary>();
   const uint32_t obj_num = page_stub->GetObjNum();

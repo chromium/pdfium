@@ -97,7 +97,6 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   RetainPtr<CPDF_IccProfile> LoadIccProfile(const CPDF_Stream* pStream);
 
   void LoadDoc();
-  void LoadLinearizedDoc(const CPDF_LinearizedHeader* pLinearizationParams);
   void LoadPages();
 
   void CreateNewDoc();
@@ -159,9 +158,6 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   // Index of the next page that will be traversed from the page tree.
   int m_iNextPageToTraverse;
   bool m_bReachedMaxPageLevel;
-  bool m_bLinearized;
-  int m_iFirstPageNo;
-  uint32_t m_dwFirstPageObjNum;
   uint32_t m_ParsedPageCount = 0;
   std::unique_ptr<CPDF_DocPageData> m_pDocPage;
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
