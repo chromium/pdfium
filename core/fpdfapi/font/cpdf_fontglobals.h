@@ -14,6 +14,7 @@
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/font/cfx_stockfontarray.h"
 #include "core/fpdfapi/font/cpdf_cmapmanager.h"
+#include "third_party/base/span.h"
 
 class CPDF_FontGlobals {
  public:
@@ -40,9 +41,9 @@ class CPDF_FontGlobals {
     m_EmbeddedToUnicodes[idx].m_pMap = map;
     m_EmbeddedToUnicodes[idx].m_Count = count;
   }
-  std::pair<uint32_t, const uint16_t*> GetEmbeddedToUnicode(size_t idx) {
-    return {m_EmbeddedToUnicodes[idx].m_Count,
-            m_EmbeddedToUnicodes[idx].m_pMap};
+  pdfium::span<const uint16_t> GetEmbeddedToUnicode(size_t idx) {
+    return pdfium::make_span(m_EmbeddedToUnicodes[idx].m_pMap,
+                             m_EmbeddedToUnicodes[idx].m_Count);
   }
 
   CPDF_CMapManager* GetCMapManager() { return &m_CMapManager; }

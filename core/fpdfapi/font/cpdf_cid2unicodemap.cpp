@@ -10,23 +10,21 @@
 #include "core/fpdfapi/font/cpdf_cmapmanager.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 
-CPDF_CID2UnicodeMap::CPDF_CID2UnicodeMap() {
-  m_EmbeddedCount = 0;
+CPDF_CID2UnicodeMap::CPDF_CID2UnicodeMap() = default;
+
+CPDF_CID2UnicodeMap::~CPDF_CID2UnicodeMap() = default;
+
+bool CPDF_CID2UnicodeMap::IsLoaded() const {
+  return !m_pEmbeddedMap.empty();
 }
 
-CPDF_CID2UnicodeMap::~CPDF_CID2UnicodeMap() {}
-
-bool CPDF_CID2UnicodeMap::IsLoaded() {
-  return m_EmbeddedCount != 0;
-}
-
-wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) {
-  if (m_Charset == CIDSET_UNICODE) {
+wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) const {
+  if (m_Charset == CIDSET_UNICODE)
     return CID;
-  }
-  if (CID < m_EmbeddedCount) {
+
+  if (CID < m_pEmbeddedMap.size())
     return m_pEmbeddedMap[CID];
-  }
+
   return 0;
 }
 
@@ -37,6 +35,6 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
 
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  std::tie(m_EmbeddedCount, m_pEmbeddedMap) =
-      pFontGlobals->GetEmbeddedToUnicode(charset);
+
+  m_pEmbeddedMap = pFontGlobals->GetEmbeddedToUnicode(charset);
 }
