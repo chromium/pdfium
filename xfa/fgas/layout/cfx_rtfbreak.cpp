@@ -153,10 +153,17 @@ void CFX_RTFBreak::AppendChar_Tab(CFX_Char* pCurChar) {
 
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
   int32_t iCharWidth = iLineWidth;
-  if (GetPositionedTab(&iCharWidth))
-    iCharWidth -= iLineWidth;
-  else
-    iCharWidth = m_iTabWidth * (iLineWidth / m_iTabWidth + 1) - iLineWidth;
+  FX_SAFE_INT32 iSafeCharWidth;
+  if (GetPositionedTab(&iCharWidth)) {
+    iSafeCharWidth = iCharWidth;
+  } else {
+    // Tab width is >= 160000, so this part does not need to be checked.
+    iSafeCharWidth = iLineWidth / m_iTabWidth + 1;
+    iSafeCharWidth *= m_iTabWidth;
+  }
+  iSafeCharWidth -= iLineWidth;
+
+  iCharWidth = iSafeCharWidth.ValueOrDefault(0);
 
   pCurChar->m_iCharWidth = iCharWidth;
   iLineWidth += iCharWidth;
