@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_object_stream.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
@@ -44,14 +45,6 @@ uint32_t GetVarInt(const uint8_t* p, int32_t n) {
   for (int32_t i = 0; i < n; ++i)
     result = result * 256 + p[i];
   return result;
-}
-
-int32_t GetStreamNCount(const RetainPtr<CPDF_StreamAcc>& pObjStream) {
-  return pObjStream->GetDict()->GetIntegerFor("N");
-}
-
-int32_t GetStreamFirst(const RetainPtr<CPDF_StreamAcc>& pObjStream) {
-  return pObjStream->GetDict()->GetIntegerFor("First");
 }
 
 }  // namespace
@@ -1198,8 +1191,7 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
     return nullptr;
 
   pdfium::ScopedSetInsertion<uint32_t> local_insert(&m_ParsingObjNums, objnum);
-  if (GetObjectType(objnum) == ObjectType::kNotCompressed ||
-      GetObjectType(objnum) == ObjectType::kNull) {
+  if (GetObjectType(objnum) == ObjectType::kNotCompressed) {
     FX_FILESIZE pos = m_ObjectInfo[objnum].pos;
     if (pos <= 0)
       return nullptr;
@@ -1208,52 +1200,43 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
   if (GetObjectType(objnum) != ObjectType::kCompressed)
     return nullptr;
 
-  RetainPtr<CPDF_StreamAcc> pObjStream =
-      GetObjectStream(m_ObjectInfo[objnum].pos);
+  const CPDF_ObjectStream* pObjStream =
+      GetObjectStream(pObjList, m_ObjectInfo[objnum].pos);
   if (!pObjStream)
     return nullptr;
 
-  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
-      const_cast<uint8_t*>(pObjStream->GetData()),
-      static_cast<size_t>(pObjStream->GetSize()), false);
-  CPDF_SyntaxParser syntax;
-  syntax.InitParser(file, 0);
-  const int32_t offset = GetStreamFirst(pObjStream);
-
-  // Read object numbers from |pObjStream| into a cache.
-  if (!pdfium::ContainsKey(m_ObjCache, pObjStream)) {
-    for (int32_t i = GetStreamNCount(pObjStream); i > 0; --i) {
-      uint32_t thisnum = syntax.GetDirectNum();
-      uint32_t thisoff = syntax.GetDirectNum();
-      m_ObjCache[pObjStream][thisnum] = thisoff;
-    }
-  }
-
-  const auto it = m_ObjCache[pObjStream].find(objnum);
-  if (it == m_ObjCache[pObjStream].end())
-    return nullptr;
-
-  syntax.SetPos(offset + it->second);
-  return syntax.GetObjectBody(pObjList);
+  return pObjStream->ParseObject(pObjList, objnum);
 }
 
-RetainPtr<CPDF_StreamAcc> CPDF_Parser::GetObjectStream(uint32_t objnum) {
-  auto it = m_ObjectStreamMap.find(objnum);
+const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(
+    CPDF_IndirectObjectHolder* pObjList,
+    uint32_t object_number) {
+  // Prevent circular parsing the same object.
+  if (pdfium::ContainsKey(m_ParsingObjNums, object_number))
+    return nullptr;
+
+  pdfium::ScopedSetInsertion<uint32_t> local_insert(&m_ParsingObjNums,
+                                                    object_number);
+
+  auto it = m_ObjectStreamMap.find(object_number);
   if (it != m_ObjectStreamMap.end())
-    return it->second;
+    return it->second.get();
 
-  if (!m_pDocument)
+  const FX_FILESIZE object_pos = GetObjectPositionOrZero(object_number);
+  if (object_pos <= 0)
     return nullptr;
 
-  const CPDF_Stream* pStream =
-      ToStream(m_pDocument->GetOrParseIndirectObject(objnum));
-  if (!pStream)
+  std::unique_ptr<CPDF_Object> object =
+      ParseIndirectObjectAt(pObjList, object_pos, object_number);
+  if (!object)
     return nullptr;
 
-  auto pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-  pStreamAcc->LoadAllDataFiltered();
-  m_ObjectStreamMap[objnum] = pStreamAcc;
-  return pStreamAcc;
+  std::unique_ptr<CPDF_ObjectStream> objs_stream =
+      CPDF_ObjectStream::Create(ToStream(object.get()));
+  const CPDF_ObjectStream* result = objs_stream.get();
+  m_ObjectStreamMap[object_number] = std::move(objs_stream);
+
+  return result;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(
@@ -1437,7 +1420,6 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   const AutoRestorer<uint32_t> save_metadata_objnum(&m_MetadataObjnum);
   m_MetadataObjnum = 0;
   m_ObjectStreamMap.clear();
-  m_ObjCache.clear();
 
   if (!LoadLinearizedAllCrossRefV4(main_xref_offset.ValueOrDie()) &&
       !LoadLinearizedAllCrossRefV5(main_xref_offset.ValueOrDie())) {

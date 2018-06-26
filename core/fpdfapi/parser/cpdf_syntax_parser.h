@@ -60,6 +60,7 @@ class CPDF_SyntaxParser {
   const RetainPtr<CPDF_ReadValidator>& GetValidator() const {
     return m_pFileAccess;
   }
+  uint32_t GetDirectNum();
 
  private:
   friend class CPDF_Parser;
@@ -69,7 +70,6 @@ class CPDF_SyntaxParser {
   static const int kParserMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
-  uint32_t GetDirectNum();
   bool ReadBlockAt(FX_FILESIZE read_pos);
   bool GetNextChar(uint8_t& ch);
   bool GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch);
