@@ -328,8 +328,6 @@ bug_492.in * nov8 *
 
 # xfa_specific
 
-# TODO(pdfium:1105): Remove after associated bug is fixed
-dynamic_list_box_allow_multiple_selection.pdf * * *
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * *
 # TODO(pdfium:1095): Remove after associated bug is fixed
