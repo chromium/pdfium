@@ -511,6 +511,17 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
   return true;
 }
 
+FPDF_EXPORT double FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text) {
+  if (!text)
+    return 0;
+
+  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
+  if (!pTextObj)
+    return 0;
+
+  return pTextObj->GetFontSize();
+}
+
 FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
   CPDF_Font* pFont = CPDFFontFromFPDFFont(font);
   if (!pFont)

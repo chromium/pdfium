@@ -1479,6 +1479,9 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   EXPECT_EQ(200., matrix_e);
   EXPECT_EQ(200., matrix_f);
 
+  EXPECT_EQ(0, FPDFTextObj_GetFontSize(nullptr));
+  EXPECT_EQ(20, FPDFTextObj_GetFontSize(text_object3));
+
   // TODO(npm): Why are there issues with text rotated by 90 degrees?
   // TODO(npm): FPDF_SaveAsCopy not giving the desired result after this.
   FPDF_ClosePage(page);
