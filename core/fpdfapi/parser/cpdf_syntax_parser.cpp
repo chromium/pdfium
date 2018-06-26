@@ -11,7 +11,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
@@ -53,7 +52,7 @@ bool CPDF_SyntaxParser::GetCharAt(FX_FILESIZE pos, uint8_t& ch) {
 bool CPDF_SyntaxParser::ReadBlockAt(FX_FILESIZE read_pos) {
   if (read_pos >= m_FileLen)
     return false;
-  size_t read_size = CPDF_ModuleMgr::kFileBufSize;
+  size_t read_size = m_ReadBufferSize;
   FX_SAFE_FILESIZE safe_end = read_pos;
   safe_end += read_size;
   if (!safe_end.IsValid() || safe_end.ValueOrDie() > m_FileLen)
