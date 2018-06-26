@@ -158,6 +158,7 @@ void CFX_RTFBreak::AppendChar_Tab(CFX_Char* pCurChar) {
     iSafeCharWidth = iCharWidth;
   } else {
     // Tab width is >= 160000, so this part does not need to be checked.
+    ASSERT(m_iTabWidth >= 160000);
     iSafeCharWidth = iLineWidth / m_iTabWidth + 1;
     iSafeCharWidth *= m_iTabWidth;
   }
