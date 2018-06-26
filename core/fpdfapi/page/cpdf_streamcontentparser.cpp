@@ -61,7 +61,7 @@ const char kPathOperatorRectangle[] = "re";
 
 class CPDF_StreamParserAutoClearer {
  public:
-  CPDF_StreamParserAutoClearer(CPDF_StreamParser** scoped_variable,
+  CPDF_StreamParserAutoClearer(UnownedPtr<CPDF_StreamParser>* scoped_variable,
                                CPDF_StreamParser* new_parser)
       : scoped_variable_(scoped_variable) {
     *scoped_variable_ = new_parser;
@@ -69,7 +69,7 @@ class CPDF_StreamParserAutoClearer {
   ~CPDF_StreamParserAutoClearer() { *scoped_variable_ = nullptr; }
 
  private:
-  CPDF_StreamParser** scoped_variable_;
+  UnownedPtr<CPDF_StreamParser>* scoped_variable_;
 };
 
 CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
