@@ -37,8 +37,7 @@ static const FXCMAP_CMap g_FXCMAP_Korea1_cmaps[] = {
 void CPDF_ModuleMgr::LoadEmbeddedKorea1CMaps() {
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  pFontGlobals->SetEmbeddedCharset(CIDSET_KOREA1, g_FXCMAP_Korea1_cmaps,
-                                   FX_ArraySize(g_FXCMAP_Korea1_cmaps));
+  pFontGlobals->SetEmbeddedCharset(CIDSET_KOREA1, g_FXCMAP_Korea1_cmaps);
   pFontGlobals->SetEmbeddedToUnicode(CIDSET_KOREA1,
-                                     g_FXCMAP_Korea1CID2Unicode_2, 18352);
+                                     g_FXCMAP_Korea1CID2Unicode_2);
 }

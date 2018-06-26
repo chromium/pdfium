@@ -41,8 +41,6 @@ static const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
 void CPDF_ModuleMgr::LoadEmbeddedGB1CMaps() {
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  pFontGlobals->SetEmbeddedCharset(CIDSET_GB1, g_FXCMAP_GB1_cmaps,
-                                   FX_ArraySize(g_FXCMAP_GB1_cmaps));
-  pFontGlobals->SetEmbeddedToUnicode(CIDSET_GB1, g_FXCMAP_GB1CID2Unicode_5,
-                                     30284);
+  pFontGlobals->SetEmbeddedCharset(CIDSET_GB1, g_FXCMAP_GB1_cmaps);
+  pFontGlobals->SetEmbeddedToUnicode(CIDSET_GB1, g_FXCMAP_GB1CID2Unicode_5);
 }

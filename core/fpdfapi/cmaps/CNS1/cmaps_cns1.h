@@ -26,6 +26,6 @@ extern const FXCMAP_DWordCIDMap g_FXCMAP_CNS_EUC_V_0_DWord[];
 extern const uint16_t g_FXCMAP_UniCNS_UCS2_H_3[];
 extern const uint16_t g_FXCMAP_UniCNS_UCS2_V_3[];
 extern const uint16_t g_FXCMAP_UniCNS_UTF16_H_0[];
-extern const uint16_t g_FXCMAP_CNS1CID2Unicode_5[];
+extern const uint16_t g_FXCMAP_CNS1CID2Unicode_5[19088];
 
 #endif  // CORE_FPDFAPI_CMAPS_CNS1_CMAPS_CNS1_H_

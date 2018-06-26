@@ -19,6 +19,6 @@ extern const uint16_t g_FXCMAP_KSCpc_EUC_H_0[];
 extern const uint16_t g_FXCMAP_UniKS_UCS2_H_1[];
 extern const uint16_t g_FXCMAP_UniKS_UCS2_V_1[];
 extern const uint16_t g_FXCMAP_UniKS_UTF16_H_0[];
-extern const uint16_t g_FXCMAP_Korea1CID2Unicode_2[];
+extern const uint16_t g_FXCMAP_Korea1CID2Unicode_2[18352];
 
 #endif  // CORE_FPDFAPI_CMAPS_KOREA1_CMAPS_KOREA1_H_

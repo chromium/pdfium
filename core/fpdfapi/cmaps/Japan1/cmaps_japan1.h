@@ -30,6 +30,6 @@ extern const uint16_t g_FXCMAP_UniJIS_UCS2_HW_V_4[];
 extern const uint16_t g_FXCMAP_UniJIS_UTF16_H_0[];
 extern const uint16_t g_FXCMAP_UniJIS_UTF16_H_0_DWord[];
 extern const uint16_t g_FXCMAP_UniJIS_UTF16_V_0[];
-extern const uint16_t g_FXCMAP_Japan1CID2Unicode_4[];
+extern const uint16_t g_FXCMAP_Japan1CID2Unicode_4[15444];
 
 #endif  // CORE_FPDFAPI_CMAPS_JAPAN1_CMAPS_JAPAN1_H_
