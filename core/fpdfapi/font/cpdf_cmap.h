@@ -73,7 +73,7 @@ class CPDF_CMap : public Retainable {
   }
 
   int GetCoding() const { return m_Coding; }
-  const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap; }
+  const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap.Get(); }
   CIDSet GetCharset() const { return m_Charset; }
   void SetCharset(CIDSet set) { m_Charset = set; }
 
@@ -98,7 +98,7 @@ class CPDF_CMap : public Retainable {
   std::vector<CodeRange> m_MixedFourByteLeadingRanges;
   std::vector<uint16_t> m_DirectCharcodeToCIDTable;
   std::vector<CIDRange> m_AdditionalCharcodeToCIDMappings;
-  const FXCMAP_CMap* m_pEmbedMap;
+  UnownedPtr<const FXCMAP_CMap> m_pEmbedMap;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CMAP_H_
