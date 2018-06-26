@@ -168,8 +168,8 @@ void CFX_CSSComputedStyle::AddCustomStyle(const CFX_CSSCustomProperty& prop) {
 }
 
 CFX_CSSComputedStyle::InheritedData::InheritedData()
-    : m_LetterSpacing(CFX_CSSLengthUnit::Normal),
-      m_WordSpacing(CFX_CSSLengthUnit::Normal),
+    : m_LetterSpacing(CFX_CSSLengthUnit::Normal, 0),
+      m_WordSpacing(CFX_CSSLengthUnit::Normal, 0),
       m_TextIndent(CFX_CSSLengthUnit::Point, 0),
       m_pFontFamily(nullptr),
       m_fFontSize(12.0f),
