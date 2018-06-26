@@ -42,13 +42,13 @@ class PDFDocTest : public testing::Test {
     CPDF_ModuleMgr::Get()->Init();
     auto pTestDoc = pdfium::MakeUnique<CPDF_TestDocument>();
     m_pIndirectObjs = pTestDoc->GetHolder();
-    m_pRootObj = pdfium::MakeUnique<CPDF_Dictionary>();
-    pTestDoc->SetRoot(m_pRootObj.get());
+    m_pRootObj = m_pIndirectObjs->NewIndirect<CPDF_Dictionary>();
+    pTestDoc->SetRoot(m_pRootObj.Get());
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));
   }
 
   void TearDown() override {
-    m_pRootObj.reset();
+    m_pRootObj = nullptr;
     m_pIndirectObjs = nullptr;
     m_pDoc.reset();
     CPDF_ModuleMgr::Destroy();
@@ -67,7 +67,7 @@ class PDFDocTest : public testing::Test {
  protected:
   ScopedFPDFDocument m_pDoc;
   UnownedPtr<CPDF_IndirectObjectHolder> m_pIndirectObjs;
-  std::unique_ptr<CPDF_Dictionary> m_pRootObj;
+  UnownedPtr<CPDF_Dictionary> m_pRootObj;
 };
 
 TEST_F(PDFDocTest, FindBookmark) {
