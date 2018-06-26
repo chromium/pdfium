@@ -10,11 +10,11 @@
 #include <string>
 #include <vector>
 
+#include "fxjs/cjs_document.h"
 #include "fxjs/js_define.h"
 
 class CPDF_FormControl;
 class CPDFSDK_Widget;
-class CJS_Document;
 struct CJS_DelayData;
 
 enum FIELD_PROP {
@@ -418,7 +418,7 @@ class CJS_Field : public CJS_Object {
 
   void DoDelay();
 
-  CJS_Document* m_pJSDoc = nullptr;
+  CJS_Document::ObservedPtr m_pJSDoc;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   WideString m_FieldName;
   int m_nFormControlIndex = -1;

@@ -205,7 +205,7 @@ void CJS_Field::ParseFieldName(const std::wstring& strFieldNameParsed,
 
 bool CJS_Field::AttachField(CJS_Document* pDocument,
                             const WideString& csFieldName) {
-  m_pJSDoc = pDocument;
+  m_pJSDoc.Reset(pDocument);
   m_pFormFillEnv.Reset(pDocument->GetFormFillEnv());
   m_bCanSet = m_pFormFillEnv->GetPermissions(FPDFPERM_FILL_FORM) ||
               m_pFormFillEnv->GetPermissions(FPDFPERM_ANNOT_FORM) ||
@@ -2467,7 +2467,7 @@ CJS_Return CJS_Field::getArray(
 
     auto* pJSField =
         static_cast<CJS_Field*>(CFXJS_Engine::GetObjectPrivate(pObj));
-    pJSField->AttachField(m_pJSDoc, *pStr);
+    pJSField->AttachField(m_pJSDoc.Get(), *pStr);
     pRuntime->PutArrayElement(FormFieldArray, j++,
                               pJSField
                                   ? v8::Local<v8::Value>(pJSField->ToV8Object())
