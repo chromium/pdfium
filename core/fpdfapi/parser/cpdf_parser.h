@@ -57,7 +57,7 @@ class CPDF_Parser {
                              CPDF_Document* pDocument);
 
   void SetPassword(const char* password) { m_Password = password; }
-  ByteString GetPassword() { return m_Password; }
+  ByteString GetPassword() const { return m_Password; }
 
   CPDF_Dictionary* GetTrailer() const;
 
@@ -68,8 +68,8 @@ class CPDF_Parser {
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
 
   uint32_t GetPermissions() const;
-  uint32_t GetRootObjNum();
-  uint32_t GetInfoObjNum();
+  uint32_t GetRootObjNum() const;
+  uint32_t GetInfoObjNum() const;
   const CPDF_Array* GetIDArray() const;
 
   CPDF_Dictionary* GetEncryptDict() const { return m_pEncryptDict.Get(); }

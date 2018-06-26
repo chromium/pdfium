@@ -16,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
-    CPDF_PageObjectHolder* obj_holder)
+    const CPDF_PageObjectHolder* obj_holder)
     : obj_holder_(obj_holder), doc_(obj_holder_->GetDocument()) {
   CPDF_Dictionary* page_dict = obj_holder_->GetDict();
   CPDF_Object* contents_obj = page_dict->GetObjectFor("Contents");

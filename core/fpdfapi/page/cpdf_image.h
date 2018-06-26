@@ -29,9 +29,9 @@ class CPDF_Image : public Retainable {
 
   void ConvertStreamToIndirectObject();
 
-  CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   CPDF_Dictionary* GetDict() const;
-  CPDF_Dictionary* GetOC() const { return m_pOC.Get(); }
+  CPDF_Stream* GetStream() const { return m_pStream.Get(); }
+  const CPDF_Dictionary* GetOC() const { return m_pOC.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
   int32_t GetPixelHeight() const { return m_Height; }
@@ -82,7 +82,7 @@ class CPDF_Image : public Retainable {
   bool m_bInterpolate = false;
   UnownedPtr<CPDF_Document> const m_pDocument;
   MaybeOwned<CPDF_Stream> m_pStream;
-  UnownedPtr<CPDF_Dictionary> m_pOC;
+  UnownedPtr<const CPDF_Dictionary> m_pOC;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_

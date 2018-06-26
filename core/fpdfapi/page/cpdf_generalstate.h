@@ -40,7 +40,7 @@ class CPDF_GeneralState {
   CPDF_Object* GetSoftMask() const;
   void SetSoftMask(CPDF_Object* pObject);
 
-  CPDF_Object* GetTR() const;
+  const CPDF_Object* GetTR() const;
   void SetTR(CPDF_Object* pObject);
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc() const;
@@ -89,7 +89,7 @@ class CPDF_GeneralState {
     CFX_Matrix m_SMaskMatrix;
     float m_StrokeAlpha;
     float m_FillAlpha;
-    UnownedPtr<CPDF_Object> m_pTR;
+    UnownedPtr<const CPDF_Object> m_pTR;
     RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
     CFX_Matrix m_Matrix;
     int m_RenderIntent;
@@ -99,9 +99,9 @@ class CPDF_GeneralState {
     bool m_StrokeOP;
     bool m_FillOP;
     int m_OPMode;
-    UnownedPtr<CPDF_Object> m_pBG;
-    UnownedPtr<CPDF_Object> m_pUCR;
-    UnownedPtr<CPDF_Object> m_pHT;
+    UnownedPtr<const CPDF_Object> m_pBG;
+    UnownedPtr<const CPDF_Object> m_pUCR;
+    UnownedPtr<const CPDF_Object> m_pHT;
     float m_Flatness;
     float m_Smoothness;
   };

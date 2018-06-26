@@ -73,7 +73,7 @@ class CPDF_CIDFont : public CPDF_Font {
   wchar_t GetUnicodeFromCharCode(uint32_t charcode) const;
 
   RetainPtr<CPDF_CMap> m_pCMap;
-  UnownedPtr<CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
+  UnownedPtr<const CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
   CIDSet m_Charset;
   bool m_bType1;
   bool m_bCIDIsGID;

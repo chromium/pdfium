@@ -1135,11 +1135,11 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Parser::GetCombinedTrailer() const {
   return m_TrailerData->GetCombinedTrailer();
 }
 
-uint32_t CPDF_Parser::GetInfoObjNum() {
+uint32_t CPDF_Parser::GetInfoObjNum() const {
   return m_TrailerData->GetInfoObjNum();
 }
 
-uint32_t CPDF_Parser::GetRootObjNum() {
+uint32_t CPDF_Parser::GetRootObjNum() const {
   return m_TrailerData->GetRootObjNum();
 }
 

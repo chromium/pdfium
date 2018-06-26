@@ -76,7 +76,7 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
                              const CFX_Matrix& matrix) {
   ShadingType type = pShading->GetShadingType();
   const CPDF_Stream* pStream = ToStream(pShading->GetShadingObject());
-  CPDF_ColorSpace* pCS = pShading->GetCS();
+  const CPDF_ColorSpace* pCS = pShading->GetCS();
   if (!pStream || !pCS)
     return CFX_FloatRect();
 

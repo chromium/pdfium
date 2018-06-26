@@ -33,7 +33,7 @@ class CPDF_ShadingObject : public CPDF_PageObject {
   const CFX_Matrix& matrix() const { return m_Matrix; }
 
  private:
-  UnownedPtr<CPDF_ShadingPattern> m_pShading;
+  UnownedPtr<const CPDF_ShadingPattern> m_pShading;
   CFX_Matrix m_Matrix;
 };
 

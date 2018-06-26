@@ -35,7 +35,7 @@ class CPDF_ToUnicodeMap {
   uint32_t GetUnicode();
 
   std::map<uint32_t, uint32_t> m_Map;
-  UnownedPtr<CPDF_CID2UnicodeMap> m_pBaseMap;
+  UnownedPtr<const CPDF_CID2UnicodeMap> m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
 };
 
