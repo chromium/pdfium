@@ -18,7 +18,7 @@
 
 class CPDF_TestDocument : public CPDF_Document {
  public:
-  CPDF_TestDocument() : CPDF_Document(nullptr) {}
+  CPDF_TestDocument() : CPDF_Document() {}
 
   void SetRoot(CPDF_Dictionary* root) {
     m_pRootDict = root;

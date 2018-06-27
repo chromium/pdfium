@@ -128,7 +128,7 @@ unsigned int GetUnsignedAlpha(float alpha) {
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
-  auto pDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
+  auto pDoc = pdfium::MakeUnique<CPDF_Document>();
   pDoc->CreateNewDoc();
 
   time_t currentTime;

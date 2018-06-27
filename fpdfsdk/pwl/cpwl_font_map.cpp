@@ -50,7 +50,7 @@ CPWL_FontMap::~CPWL_FontMap() {
 CPDF_Document* CPWL_FontMap::GetDocument() {
   if (!m_pPDFDoc) {
     if (CPDF_ModuleMgr::Get()) {
-      m_pPDFDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
+      m_pPDFDoc = pdfium::MakeUnique<CPDF_Document>();
       m_pPDFDoc->CreateNewDoc();
     }
   }

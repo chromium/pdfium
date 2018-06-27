@@ -19,6 +19,7 @@
 
 class CPDF_CrossRefAvail;
 class CPDF_Dictionary;
+class CPDF_Document;
 class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
 class CPDF_LinearizedHeader;

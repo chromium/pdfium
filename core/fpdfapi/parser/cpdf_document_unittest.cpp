@@ -49,7 +49,7 @@ std::unique_ptr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
 
 class CPDF_TestDocumentForPages : public CPDF_Document {
  public:
-  CPDF_TestDocumentForPages() : CPDF_Document(nullptr) {
+  CPDF_TestDocumentForPages() : CPDF_Document() {
     // Set up test
     auto zeroToTwo = pdfium::MakeUnique<CPDF_Array>();
     zeroToTwo->AddNew<CPDF_Reference>(
@@ -101,7 +101,7 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
 
 class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
  public:
-  CPDF_TestDocumentWithPageWithoutPageNum() : CPDF_Document(nullptr) {
+  CPDF_TestDocumentWithPageWithoutPageNum() : CPDF_Document() {
     // Set up test
     auto allPages = pdfium::MakeUnique<CPDF_Array>();
     allPages->AddNew<CPDF_Reference>(
@@ -132,7 +132,7 @@ class TestLinearized : public CPDF_LinearizedHeader {
 
 class CPDF_TestDocPagesWithoutKids : public CPDF_Document {
  public:
-  CPDF_TestDocPagesWithoutKids() : CPDF_Document(nullptr) {
+  CPDF_TestDocPagesWithoutKids() : CPDF_Document() {
     CPDF_Dictionary* pagesDict = NewIndirect<CPDF_Dictionary>();
     pagesDict->SetNewFor<CPDF_Name>("Type", "Pages");
     pagesDict->SetNewFor<CPDF_Number>("Count", 3);
@@ -141,6 +141,11 @@ class CPDF_TestDocPagesWithoutKids : public CPDF_Document {
     m_pRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                            pagesDict->GetObjNum());
   }
+};
+
+class CPDF_TestDocumentAllowSetParser : public CPDF_Document {
+ public:
+  using CPDF_Document::SetParser;
 };
 
 }  // namespace
@@ -222,8 +227,9 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   auto linearized = pdfium::MakeUnique<TestLinearized>(dict.get());
   auto parser = pdfium::MakeUnique<CPDF_Parser>();
   parser->SetLinearizedHeader(std::move(linearized));
-  CPDF_Document document(std::move(parser));
-  document.LoadDoc();
+  CPDF_TestDocumentAllowSetParser document;
+  document.SetParser(std::move(parser));
+  document.LoadPages();
   ASSERT_EQ(page_count, document.GetPageCount());
   CPDF_Object* page_stub = document.NewIndirect<CPDF_Dictionary>();
   const uint32_t obj_num = page_stub->GetObjNum();

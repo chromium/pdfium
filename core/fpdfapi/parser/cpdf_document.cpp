@@ -22,6 +22,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
@@ -185,17 +186,13 @@ std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
 
 }  // namespace
 
-CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
-    : CPDF_IndirectObjectHolder(),
-      m_pParser(std::move(pParser)),
+CPDF_Document::CPDF_Document()
+    : ParsedObjectsHolder(),
       m_pRootDict(nullptr),
       m_iNextPageToTraverse(0),
       m_bReachedMaxPageLevel(false),
       m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
-      m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)) {
-  if (pParser)
-    SetLastObjNum(m_pParser->GetLastObjNum());
-}
+      m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)) {}
 
 CPDF_Document::~CPDF_Document() {
   CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
@@ -203,7 +200,7 @@ CPDF_Document::~CPDF_Document() {
 
 std::unique_ptr<CPDF_Object> CPDF_Document::ParseIndirectObject(
     uint32_t objnum) {
-  return m_pParser ? m_pParser->ParseIndirectObject(this, objnum) : nullptr;
+  return m_pParser ? m_pParser->ParseIndirectObject(objnum) : nullptr;
 }
 
 void CPDF_Document::LoadDocInternal() {
@@ -218,9 +215,28 @@ void CPDF_Document::LoadDocInternal() {
     return;
 }
 
-void CPDF_Document::LoadDoc() {
+bool CPDF_Document::TryInit() {
   LoadDocInternal();
   LoadPages();
+  return GetRoot() && (GetPageCount() > 0);
+}
+
+CPDF_Parser::Error CPDF_Document::LoadDoc(
+    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    const char* password) {
+  if (!m_pParser)
+    SetParser(pdfium::MakeUnique<CPDF_Parser>(this));
+
+  return m_pParser->StartParse(pFileAccess, password);
+}
+
+CPDF_Parser::Error CPDF_Document::LoadLinearizedDoc(
+    const RetainPtr<CPDF_ReadValidator>& validator,
+    const char* password) {
+  if (!m_pParser)
+    SetParser(pdfium::MakeUnique<CPDF_Parser>(this));
+
+  return m_pParser->StartLinearizedParse(validator, password);
 }
 
 void CPDF_Document::LoadPages() {
@@ -307,6 +323,11 @@ void CPDF_Document::ResetTraversal() {
   m_iNextPageToTraverse = 0;
   m_bReachedMaxPageLevel = false;
   m_pTreeTraversal.clear();
+}
+
+void CPDF_Document::SetParser(std::unique_ptr<CPDF_Parser> pParser) {
+  DCHECK(!m_pParser);
+  m_pParser = std::move(pParser);
 }
 
 const CPDF_Dictionary* CPDF_Document::GetPagesDict() const {

@@ -214,7 +214,7 @@ std::unique_ptr<CPDF_Object> CPDF_DataAvail::GetObject(uint32_t objnum,
   std::unique_ptr<CPDF_Object> pRet;
   if (pParser) {
     const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-    pRet = pParser->ParseIndirectObject(nullptr, objnum);
+    pRet = pParser->ParseIndirectObject(objnum);
     if (GetValidator()->has_read_problems())
       return nullptr;
   }
@@ -233,7 +233,7 @@ bool CPDF_DataAvail::CheckInfo() {
   }
 
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  m_parser.ParseIndirectObject(nullptr, dwInfoObjNum);
+  m_parser.ParseIndirectObject(dwInfoObjNum);
   if (GetValidator()->has_read_problems())
     return false;
 
@@ -249,7 +249,7 @@ bool CPDF_DataAvail::CheckRoot() {
   }
 
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  m_pRoot = ToDictionary(m_parser.ParseIndirectObject(nullptr, dwRootObjNum));
+  m_pRoot = ToDictionary(m_parser.ParseIndirectObject(dwRootObjNum));
   if (GetValidator()->has_read_problems())
     return false;
 
@@ -1011,11 +1011,11 @@ CPDF_DataAvail::ParseDocument(const char* password) {
   }
   auto parser = pdfium::MakeUnique<CPDF_Parser>();
   parser->SetPassword(password);
-  auto document = pdfium::MakeUnique<CPDF_Document>(std::move(parser));
+  auto document = pdfium::MakeUnique<CPDF_Document>();
 
   CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  CPDF_Parser::Error error = document->GetParser()->StartLinearizedParse(
-      GetValidator(), document.get());
+  CPDF_Parser::Error error =
+      document->LoadLinearizedDoc(GetValidator(), password);
 
   // Additional check, that all ok.
   if (GetValidator()->has_read_problems()) {

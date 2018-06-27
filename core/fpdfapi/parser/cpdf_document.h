@@ -15,9 +15,10 @@
 
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfdoc/cpdf_linklist.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_Font;
 class CFX_Matrix;
@@ -30,7 +31,9 @@ class CPDF_IccProfile;
 class CPDF_LinearizedHeader;
 class CPDF_Parser;
 class CPDF_Pattern;
+class CPDF_ReadValidator;
 class CPDF_StreamAcc;
+class IFX_SeekableReadStream;
 class JBig2_DocumentContext;
 
 #define FPDFPERM_MODIFY 0x0008
@@ -38,7 +41,7 @@ class JBig2_DocumentContext;
 #define FPDFPERM_FILL_FORM 0x0100
 #define FPDFPERM_EXTRACT_ACCESS 0x0200
 
-class CPDF_Document : public CPDF_IndirectObjectHolder {
+class CPDF_Document : public CPDF_Parser::ParsedObjectsHolder {
  public:
   // Type from which the XFA extension can subclass itself.
   class Extension {
@@ -52,7 +55,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
 
   static const int kPageMaxNum = 0xFFFFF;
 
-  explicit CPDF_Document(std::unique_ptr<CPDF_Parser> pParser);
+  CPDF_Document();
   ~CPDF_Document() override;
 
   Extension* GetExtension() const { return m_pExtension.get(); }
@@ -96,7 +99,16 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   RetainPtr<CPDF_StreamAcc> LoadFontFile(const CPDF_Stream* pStream);
   RetainPtr<CPDF_IccProfile> LoadIccProfile(const CPDF_Stream* pStream);
 
-  void LoadDoc();
+  //  CPDF_Parser::ParsedObjectsHolder overrides:
+  bool TryInit() override;
+
+  CPDF_Parser::Error LoadDoc(
+      const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+      const char* password);
+  CPDF_Parser::Error LoadLinearizedDoc(
+      const RetainPtr<CPDF_ReadValidator>& validator,
+      const char* password);
+
   void LoadPages();
 
   void CreateNewDoc();
@@ -144,6 +156,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                            std::set<CPDF_Dictionary*>* pVisited);
   bool InsertNewPage(int iPage, CPDF_Dictionary* pPageDict);
   void ResetTraversal();
+  void SetParser(std::unique_ptr<CPDF_Parser> pParser);
 
   std::unique_ptr<CPDF_Parser> m_pParser;
   UnownedPtr<CPDF_Dictionary> m_pRootDict;
