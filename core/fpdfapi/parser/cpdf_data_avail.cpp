@@ -1009,8 +1009,6 @@ CPDF_DataAvail::ParseDocument(const char* password) {
     // We already returned parsed document.
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
   }
-  auto parser = pdfium::MakeUnique<CPDF_Parser>();
-  parser->SetPassword(password);
   auto document = pdfium::MakeUnique<CPDF_Document>();
 
   CPDF_ReadValidator::Session read_session(GetValidator().Get());

@@ -29,7 +29,6 @@ class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_IccProfile;
 class CPDF_LinearizedHeader;
-class CPDF_Parser;
 class CPDF_Pattern;
 class CPDF_ReadValidator;
 class CPDF_StreamAcc;
