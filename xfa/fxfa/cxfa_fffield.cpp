@@ -41,9 +41,7 @@ CXFA_FFField* ToField(CXFA_LayoutItem* widget) {
 
 CXFA_FFField::CXFA_FFField(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
-CXFA_FFField::~CXFA_FFField() {
-  CXFA_FFField::UnloadWidget();
-}
+CXFA_FFField::~CXFA_FFField() = default;
 
 CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   if (!bDrawFocus)
@@ -131,10 +129,6 @@ bool CXFA_FFField::LoadWidget() {
   m_pNode->LoadCaption(GetDoc());
   PerformLayout();
   return true;
-}
-
-void CXFA_FFField::UnloadWidget() {
-  m_pNormalWidget.reset();
 }
 
 void CXFA_FFField::SetEditScrollOffset() {

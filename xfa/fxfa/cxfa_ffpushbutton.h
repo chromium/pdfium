@@ -30,7 +30,6 @@ class CXFA_FFPushButton : public CXFA_FFField {
                     const CFX_Matrix& matrix,
                     uint32_t dwStatus) override;
   bool LoadWidget() override;
-  void UnloadWidget() override;
   bool PerformLayout() override;
   void UpdateWidgetProperty() override;
   void OnProcessMessage(CFWL_Message* pMessage) override;

@@ -93,7 +93,6 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
                             uint32_t dwStatus);
   virtual bool IsLoaded();
   virtual bool LoadWidget();
-  virtual void UnloadWidget();
   virtual bool PerformLayout();
   virtual bool UpdateFWLData();
   virtual void UpdateWidgetProperty();

@@ -318,8 +318,6 @@ bool CXFA_FFWidget::LoadWidget() {
   return true;
 }
 
-void CXFA_FFWidget::UnloadWidget() {}
-
 bool CXFA_FFWidget::PerformLayout() {
   RecacheWidgetRect();
   return true;

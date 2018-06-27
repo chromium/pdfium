@@ -31,7 +31,6 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                     uint32_t dwStatus) override;
   bool IsLoaded() override;
   bool LoadWidget() override;
-  void UnloadWidget() override;
   bool PerformLayout() override;
   bool OnMouseEnter() override;
   bool OnMouseExit() override;

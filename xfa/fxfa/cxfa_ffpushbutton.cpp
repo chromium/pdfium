@@ -28,9 +28,7 @@
 CXFA_FFPushButton::CXFA_FFPushButton(CXFA_Node* pNode, CXFA_Button* button)
     : CXFA_FFField(pNode), button_(button) {}
 
-CXFA_FFPushButton::~CXFA_FFPushButton() {
-  CXFA_FFPushButton::UnloadWidget();
-}
+CXFA_FFPushButton::~CXFA_FFPushButton() = default;
 
 void CXFA_FFPushButton::RenderWidget(CXFA_Graphics* pGS,
                                      const CFX_Matrix& matrix,
@@ -86,15 +84,6 @@ void CXFA_FFPushButton::UpdateWidgetProperty() {
       break;
   }
   m_pNormalWidget->ModifyStylesEx(dwStyleEx, 0xFFFFFFFF);
-}
-
-void CXFA_FFPushButton::UnloadWidget() {
-  m_pRolloverTextLayout.reset();
-  m_pDownTextLayout.reset();
-  m_pRollProvider.reset();
-  m_pDownProvider.reset();
-  m_pOldDelegate = nullptr;
-  CXFA_FFField::UnloadWidget();
 }
 
 bool CXFA_FFPushButton::PerformLayout() {

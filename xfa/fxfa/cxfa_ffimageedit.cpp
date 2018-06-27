@@ -28,7 +28,7 @@ CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_Node* pNode)
     : CXFA_FFField(pNode), m_pOldDelegate(nullptr) {}
 
 CXFA_FFImageEdit::~CXFA_FFImageEdit() {
-  CXFA_FFImageEdit::UnloadWidget();
+  m_pNode->SetImageEditImage(nullptr);
 }
 
 bool CXFA_FFImageEdit::LoadWidget() {
@@ -49,11 +49,6 @@ bool CXFA_FFImageEdit::LoadWidget() {
     UpdateFWLData();
 
   return true;
-}
-
-void CXFA_FFImageEdit::UnloadWidget() {
-  m_pNode->SetImageEditImage(nullptr);
-  CXFA_FFField::UnloadWidget();
 }
 
 void CXFA_FFImageEdit::RenderWidget(CXFA_Graphics* pGS,
