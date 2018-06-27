@@ -7,21 +7,12 @@
 
 #include <stddef.h>
 #include <iosfwd>
+#include <iterator>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 #include "build/build_config.h"
-
-// This hacks around libstdc++ 4.6 missing stuff in type_traits, while we need
-// to support it.
-#define CR_GLIBCXX_4_7_0 20120322
-#define CR_GLIBCXX_4_5_4 20120702
-#define CR_GLIBCXX_4_6_4 20121127
-#if defined(__GLIBCXX__) &&                                               \
-    (__GLIBCXX__ < CR_GLIBCXX_4_7_0 || __GLIBCXX__ == CR_GLIBCXX_4_5_4 || \
-     __GLIBCXX__ == CR_GLIBCXX_4_6_4)
-#define CR_USE_FALLBACKS_FOR_OLD_GLIBCXX
-#endif
 
 // Some versions of libstdc++ have partial support for type_traits, but misses
 // a smaller subset while removing some of the older non-standard stuff. Assume
@@ -47,52 +38,30 @@
 
 namespace base {
 
-template <class T>
-struct is_non_const_reference : std::false_type {};
-template <class T>
-struct is_non_const_reference<T&> : std::true_type {};
-template <class T>
-struct is_non_const_reference<const T&> : std::false_type {};
-
-// is_assignable
+template <class T> struct is_non_const_reference : std::false_type {};
+template <class T> struct is_non_const_reference<T&> : std::true_type {};
+template <class T> struct is_non_const_reference<const T&> : std::false_type {};
 
 namespace internal {
 
-template <typename First, typename Second>
-struct SelectSecond {
-  using type = Second;
+// Implementation detail of base::void_t below.
+template <typename...>
+struct make_void {
+  using type = void;
 };
 
-struct Any {
-  Any(...);
-};
+}  // namespace internal
 
-// True case: If |Lvalue| can be assigned to from |Rvalue|, then the return
-// value is a true_type.
-template <class Lvalue, class Rvalue>
-typename internal::SelectSecond<
-    decltype((std::declval<Lvalue>() = std::declval<Rvalue>())),
-    std::true_type>::type
-IsAssignableTest(Lvalue&&, Rvalue&&);
+// base::void_t is an implementation of std::void_t from C++17.
+//
+// We use |base::internal::make_void| as a helper struct to avoid a C++14
+// defect:
+//   http://en.cppreference.com/w/cpp/types/void_t
+//   http://open-std.org/JTC1/SC22/WG21/docs/cwg_defects.html#1558
+template <typename... Ts>
+using void_t = typename ::base::internal::make_void<Ts...>::type;
 
-// False case: Otherwise the return value is a false_type.
-template <class Rvalue>
-std::false_type IsAssignableTest(internal::Any, Rvalue&&);
-
-// Default case: Neither Lvalue nor Rvalue is void. Uses IsAssignableTest to
-// determine the type of IsAssignableImpl.
-template <class Lvalue,
-          class Rvalue,
-          bool = std::is_void<Lvalue>::value || std::is_void<Rvalue>::value>
-struct IsAssignableImpl
-    : public std::common_type<decltype(
-          internal::IsAssignableTest(std::declval<Lvalue>(),
-                                     std::declval<Rvalue>()))>::type {};
-
-// Void case: Either Lvalue or Rvalue is void. Then the type of IsAssignableTest
-// is false_type.
-template <class Lvalue, class Rvalue>
-struct IsAssignableImpl<Lvalue, Rvalue, true> : public std::false_type {};
+namespace internal {
 
 // Uses expression SFINAE to detect whether using operator<< would work.
 template <typename T, typename = void>
@@ -103,58 +72,23 @@ struct SupportsOstreamOperator<T,
                                              << std::declval<T>()))>
     : std::true_type {};
 
+// Used to detech whether the given type is an iterator.  This is normally used
+// with std::enable_if to provide disambiguation for functions that take
+// templatzed iterators as input.
+template <typename T, typename = void>
+struct is_iterator : std::false_type {};
+
+template <typename T>
+struct is_iterator<T,
+                   void_t<typename std::iterator_traits<T>::iterator_category>>
+    : std::true_type {};
+
 }  // namespace internal
-
-// TODO(crbug.com/554293): Remove this when all platforms have this in the std
-// namespace.
-template <class Lvalue, class Rvalue>
-struct is_assignable : public internal::IsAssignableImpl<Lvalue, Rvalue> {};
-
-// is_copy_assignable is true if a T const& is assignable to a T&.
-// TODO(crbug.com/554293): Remove this when all platforms have this in the std
-// namespace.
-template <class T>
-struct is_copy_assignable
-    : public is_assignable<typename std::add_lvalue_reference<T>::type,
-                           typename std::add_lvalue_reference<
-                               typename std::add_const<T>::type>::type> {};
-
-// is_move_assignable is true if a T&& is assignable to a T&.
-// TODO(crbug.com/554293): Remove this when all platforms have this in the std
-// namespace.
-template <class T>
-struct is_move_assignable
-    : public is_assignable<typename std::add_lvalue_reference<T>::type,
-                           const typename std::add_rvalue_reference<T>::type> {
-};
-
-// underlying_type produces the integer type backing an enum type.
-// TODO(crbug.com/554293): Remove this when all platforms have this in the std
-// namespace.
-#if defined(CR_USE_FALLBACKS_FOR_OLD_GLIBCXX)
-template <typename T>
-struct underlying_type {
-  using type = __underlying_type(T);
-};
-#else
-template <typename T>
-using underlying_type = std::underlying_type<T>;
-#endif
-
-// TODO(crbug.com/554293): Remove this when all platforms have this in the std
-// namespace.
-#if defined(CR_USE_FALLBACKS_FOR_OLD_GLIBCXX)
-template <class T>
-using is_trivially_destructible = std::has_trivial_destructor<T>;
-#else
-template <class T>
-using is_trivially_destructible = std::is_trivially_destructible<T>;
-#endif
 
 // is_trivially_copyable is especially hard to get right.
 // - Older versions of libstdc++ will fail to have it like they do for other
-//   type traits. In this case we should provide it based on compiler
-//   intrinsics. This is covered by the CR_USE_FALLBACKS_FOR_OLD_GLIBCXX define.
+//   type traits. This has become a subset of the second point, but used to be
+//   handled independently.
 // - An experimental release of gcc includes most of type_traits but misses
 //   is_trivially_copyable, so we still have to avoid using libstdc++ in this
 //   case, which is covered by CR_USE_FALLBACKS_FOR_OLD_EXPERIMENTAL_GLIBCXX.
@@ -175,8 +109,7 @@ using is_trivially_destructible = std::is_trivially_destructible<T>;
 
 // TODO(crbug.com/554293): Remove this when all platforms have this in the std
 // namespace and it works with gcc as needed.
-#if defined(CR_USE_FALLBACKS_FOR_OLD_GLIBCXX) ||              \
-    defined(CR_USE_FALLBACKS_FOR_OLD_EXPERIMENTAL_GLIBCXX) || \
+#if defined(CR_USE_FALLBACKS_FOR_OLD_EXPERIMENTAL_GLIBCXX) || \
     defined(CR_USE_FALLBACKS_FOR_GCC_WITH_LIBCXX)
 template <typename T>
 struct is_trivially_copyable {
@@ -186,7 +119,8 @@ struct is_trivially_copyable {
 #if _GNUC_VER >= 501
   static constexpr bool value = __is_trivially_copyable(T);
 #else
-  static constexpr bool value = __has_trivial_copy(T);
+  static constexpr bool value =
+      __has_trivial_copy(T) && __has_trivial_destructor(T);
 #endif
 };
 #else
@@ -194,9 +128,25 @@ template <class T>
 using is_trivially_copyable = std::is_trivially_copyable<T>;
 #endif
 
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ <= 7
+// Workaround for g++7 and earlier family.
+// Due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80654, without this
+// Optional<std::vector<T>> where T is non-copyable causes a compile error.
+// As we know it is not trivially copy constructible, explicitly declare so.
+template <typename T>
+struct is_trivially_copy_constructible
+    : std::is_trivially_copy_constructible<T> {};
+
+template <typename... T>
+struct is_trivially_copy_constructible<std::vector<T...>> : std::false_type {};
+#else
+// Otherwise use std::is_trivially_copy_constructible as is.
+template <typename T>
+using is_trivially_copy_constructible = std::is_trivially_copy_constructible<T>;
+#endif
+
 }  // namespace base
 
-#undef CR_USE_FALLBACKS_FOR_OLD_GLIBCXX
 #undef CR_USE_FALLBACKS_FOR_GCC_WITH_LIBCXX
 #undef CR_USE_FALLBACKS_FOR_OLD_EXPERIMENTAL_GLIBCXX
 
