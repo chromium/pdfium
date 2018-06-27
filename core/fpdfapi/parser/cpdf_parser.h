@@ -103,11 +103,6 @@ class CPDF_Parser {
       FX_FILESIZE pos,
       uint32_t objnum);
 
-  std::unique_ptr<CPDF_Object> ParseIndirectObjectAtByStrict(
-      FX_FILESIZE pos,
-      uint32_t objnum,
-      FX_FILESIZE* pResultPos);
-
   uint32_t GetFirstPageNo() const;
   const CPDF_LinearizedHeader* GetLinearizedHeader() const {
     return m_pLinearized.get();
@@ -179,12 +174,6 @@ class CPDF_Parser {
       std::vector<CrossRefObjData>* out_objects);
   bool ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects);
   void MergeCrossRefObjectsData(const std::vector<CrossRefObjData>& objects);
-
-  std::unique_ptr<CPDF_Object> ParseIndirectObjectAtInternal(
-      FX_FILESIZE pos,
-      uint32_t objnum,
-      CPDF_SyntaxParser::ParseType parse_type,
-      FX_FILESIZE* pResultPos);
 
   bool InitSyntaxParser(const RetainPtr<CPDF_ReadValidator>& validator);
   bool ParseFileVersion();

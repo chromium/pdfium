@@ -1196,22 +1196,11 @@ const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {
 std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(
     FX_FILESIZE pos,
     uint32_t objnum) {
-  return ParseIndirectObjectAtInternal(
-      pos, objnum, CPDF_SyntaxParser::ParseType::kLoose, nullptr);
-}
-
-std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAtInternal(
-    FX_FILESIZE pos,
-    uint32_t objnum,
-    CPDF_SyntaxParser::ParseType parse_type,
-    FX_FILESIZE* pResultPos) {
   const FX_FILESIZE saved_pos = m_pSyntax->GetPos();
   m_pSyntax->SetPos(pos);
-  auto result =
-      m_pSyntax->GetIndirectObject(m_pObjectsHolder.Get(), parse_type);
+  auto result = m_pSyntax->GetIndirectObject(
+      m_pObjectsHolder.Get(), CPDF_SyntaxParser::ParseType::kLoose);
 
-  if (pResultPos)
-    *pResultPos = m_pSyntax->GetPos();
   m_pSyntax->SetPos(saved_pos);
 
   if (result && objnum && result->GetObjNum() != objnum)
@@ -1225,14 +1214,6 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAtInternal(
         std::move(result));
 
   return result;
-}
-
-std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAtByStrict(
-    FX_FILESIZE pos,
-    uint32_t objnum,
-    FX_FILESIZE* pResultPos) {
-  return ParseIndirectObjectAtInternal(
-      pos, objnum, CPDF_SyntaxParser::ParseType::kStrict, pResultPos);
 }
 
 uint32_t CPDF_Parser::GetFirstPageNo() const {
