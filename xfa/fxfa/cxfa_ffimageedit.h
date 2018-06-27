@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFIMAGEEDIT_H_
 #define XFA_FXFA_CXFA_FFIMAGEEDIT_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 class CXFA_FFImageEdit : public CXFA_FFField {
@@ -35,7 +36,7 @@ class CXFA_FFImageEdit : public CXFA_FFField {
   bool UpdateFWLData() override;
   bool CommitData() override;
 
-  IFWL_WidgetDelegate* m_pOldDelegate;
+  UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
 };
 
 #endif  // XFA_FXFA_CXFA_FFIMAGEEDIT_H_

@@ -93,6 +93,7 @@ void CXFA_FFPushButton::UnloadWidget() {
   m_pDownTextLayout.reset();
   m_pRollProvider.reset();
   m_pDownProvider.reset();
+  m_pOldDelegate = nullptr;
   CXFA_FFField::UnloadWidget();
 }
 

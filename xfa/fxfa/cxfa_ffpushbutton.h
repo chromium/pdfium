@@ -51,7 +51,7 @@ class CXFA_FFPushButton : public CXFA_FFField {
   std::unique_ptr<CXFA_TextLayout> m_pDownTextLayout;
   std::unique_ptr<CXFA_TextProvider> m_pRollProvider;
   std::unique_ptr<CXFA_TextProvider> m_pDownProvider;
-  IFWL_WidgetDelegate* m_pOldDelegate = nullptr;
+  UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
   UnownedPtr<CXFA_Button> button_;
 };
 

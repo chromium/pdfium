@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_FFCOMBOBOX_H_
 #define XFA_FXFA_CXFA_FFCOMBOBOX_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_ffdropdown.h"
 
 class CXFA_EventParam;
@@ -59,7 +60,7 @@ class CXFA_FFComboBox : public CXFA_FFDropDown {
   void SetItemState(int32_t nIndex, bool bSelected);
 
  private:
-  // CXFA_FFField
+  // CXFA_FFField:
   bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;
   bool UpdateFWLData() override;
@@ -67,11 +68,10 @@ class CXFA_FFComboBox : public CXFA_FFDropDown {
 
   uint32_t GetAlignment();
   void FWLEventSelChange(CXFA_EventParam* pParam);
-
   WideString GetCurrentText() const;
 
   WideString m_wsNewValue;
-  IFWL_WidgetDelegate* m_pOldDelegate;
+  UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
 };
 
 #endif  // XFA_FXFA_CXFA_FFCOMBOBOX_H_

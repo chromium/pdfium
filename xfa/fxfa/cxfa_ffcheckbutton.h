@@ -44,7 +44,7 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   void AddUIMargin(XFA_AttributeEnum iCapPlacement);
   XFA_CHECKSTATE FWLState2XFAState();
 
-  IFWL_WidgetDelegate* m_pOldDelegate = nullptr;
+  UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
   CFX_RectF m_rtCheckBox;
   UnownedPtr<CXFA_CheckButton> button_;
 };

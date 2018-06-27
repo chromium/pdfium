@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
 class CFWL_Event;
@@ -63,7 +64,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
  protected:
   uint32_t GetAlignment();
 
-  IFWL_WidgetDelegate* m_pOldDelegate;
+  UnownedPtr<IFWL_WidgetDelegate> m_pOldDelegate;
 
  private:
   bool CommitData() override;
