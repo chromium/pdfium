@@ -12,10 +12,14 @@ class AutoRestorer {
  public:
   explicit AutoRestorer(T* location)
       : m_Location(location), m_OldValue(*location) {}
-  ~AutoRestorer() { *m_Location = m_OldValue; }
+  ~AutoRestorer() {
+    if (m_Location)
+      *m_Location = m_OldValue;
+  }
+  void AbandonRestoration() { m_Location = nullptr; }
 
  private:
-  T* const m_Location;
+  T* m_Location;
   const T m_OldValue;
 };
 

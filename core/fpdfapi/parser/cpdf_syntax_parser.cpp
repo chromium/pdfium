@@ -359,7 +359,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBody(
 std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     CPDF_IndirectObjectHolder* pObjList,
     ParseType parse_type) {
-  AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
+  AutoRestorer<int> depth_restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
     return nullptr;
 
@@ -370,19 +370,21 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     return nullptr;
 
   if (bIsNumber) {
-    FX_FILESIZE SavedPos = m_Pos;
+    AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
     ByteString nextword = GetNextWord(&bIsNumber);
-    if (bIsNumber) {
-      ByteString nextword2 = GetNextWord(nullptr);
-      if (nextword2 == "R") {
-        uint32_t refnum = FXSYS_atoui(word.c_str());
-        if (refnum == CPDF_Object::kInvalidObjNum)
-          return nullptr;
-        return pdfium::MakeUnique<CPDF_Reference>(pObjList, refnum);
-      }
-    }
-    m_Pos = SavedPos;
-    return pdfium::MakeUnique<CPDF_Number>(word.AsStringView());
+    if (!bIsNumber)
+      return pdfium::MakeUnique<CPDF_Number>(word.AsStringView());
+
+    ByteString nextword2 = GetNextWord(nullptr);
+    if (nextword2 != "R")
+      return pdfium::MakeUnique<CPDF_Number>(word.AsStringView());
+
+    pos_restorer.AbandonRestoration();
+    uint32_t refnum = FXSYS_atoui(word.c_str());
+    if (refnum == CPDF_Object::kInvalidObjNum)
+      return nullptr;
+
+    return pdfium::MakeUnique<CPDF_Reference>(pObjList, refnum);
   }
 
   if (word == "true" || word == "false")
@@ -453,12 +455,10 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
       }
     }
 
-    FX_FILESIZE SavedPos = m_Pos;
-    ByteString nextword = GetNextWord(nullptr);
-    if (nextword != "stream") {
-      m_Pos = SavedPos;
+    AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
+    if (GetNextWord(nullptr) != "stream")
       return std::move(pDict);
-    }
+    pos_restorer.AbandonRestoration();
     return ReadStream(std::move(pDict));
   }
   if (word == ">>")
