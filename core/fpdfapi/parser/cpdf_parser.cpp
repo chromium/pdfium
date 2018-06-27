@@ -670,6 +670,7 @@ bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
 }
 
 bool CPDF_Parser::RebuildCrossRef() {
+  CPDF_CrossRefTable cross_ref_table;
   m_ObjectInfo.clear();
   m_TrailerData->Clear();
 
@@ -826,23 +827,14 @@ bool CPDF_Parser::RebuildCrossRef() {
                       CPDF_Object* pRoot = pDict->GetObjectFor("Root");
                       if (pRoot && pRoot->GetDict() &&
                           pRoot->GetDict()->GetObjectFor("Pages")) {
-                        m_TrailerData->SetMainTrailer(
-                            ToDictionary(pDict->Clone()));
+                        cross_ref_table.Update(
+                            pdfium::MakeUnique<CPDF_CrossRefTable>(
+                                ToDictionary(pDict->Clone())));
                       }
                     }
                   }
                 }
-                ObjectInfo& info = m_ObjectInfo[objnum];
-                if (pObject || !info.pos) {
-                  info.pos = obj_pos;
-                  info.type = ObjectType::kNotCompressed;
-                  // The newer version of object should be located after old
-                  // version.
-                  // Do not worry about gennum in this case, because we read
-                  // file
-                  // in front order.
-                  info.gennum = gennum;
-                }
+                cross_ref_table.AddNormal(objnum, gennum, obj_pos);
               }
               state = ParserState::kDefault;
               break;
@@ -859,42 +851,21 @@ bool CPDF_Parser::RebuildCrossRef() {
               if (!pObj)
                 m_pSyntax->SetPos(current_char_pos);
 
-              {
-                if (pObj && (pObj->IsDictionary() || pObj->IsStream())) {
-                  if (CPDF_Dictionary* pTrailer =
-                          pObj->IsStream() ? pObj->AsStream()->GetDict()
-                                           : pObj->AsDictionary()) {
-                    if (GetTrailer()) {
-                      CPDF_Object* pRoot = pTrailer->GetObjectFor("Root");
-                      CPDF_Reference* pRef = ToReference(pRoot);
-                      if (!pRoot ||
-                          (pRef && IsValidObjectNumber(pRef->GetRefObjNum()) &&
-                           m_ObjectInfo[pRef->GetRefObjNum()].pos != 0)) {
-                        // This is newer version of trailer. Merge it with old.
-                        for (auto it = pTrailer->begin();
-                             it != pTrailer->end();) {
-                          DCHECK(it->second->IsInline());
-                          const ByteString key = it->first;
-                          ++it;
-                          GetTrailer()->SetFor(key, pTrailer->RemoveFor(key));
-                        }
-                      }
-                    } else {
-                      m_TrailerData->SetMainTrailer(
-                          ToDictionary(pObj->IsStream() ? pTrailer->Clone()
-                                                        : std::move(pObj)));
+              if (pObj) {
+                cross_ref_table.Update(pdfium::MakeUnique<CPDF_CrossRefTable>(
+                    ToDictionary(pObj->IsStream()
+                                     ? pObj->AsStream()->GetDict()->Clone()
+                                     : std::move(pObj))));
 
-                      FX_FILESIZE dwSavePos = m_pSyntax->GetPos();
-                      ByteString strWord = m_pSyntax->GetKeyword();
-                      if (!strWord.Compare("startxref")) {
-                        bool bNumber;
-                        ByteString bsOffset = m_pSyntax->GetNextWord(&bNumber);
-                        if (bNumber)
-                          m_LastXRefOffset = FXSYS_atoi(bsOffset.c_str());
-                      }
-                      m_pSyntax->SetPos(dwSavePos);
-                    }
-                  }
+                FX_FILESIZE dwSavePos = m_pSyntax->GetPos();
+                ByteString strWord = m_pSyntax->GetKeyword();
+                if (!strWord.Compare("startxref")) {
+                  bool bNumber;
+                  ByteString bsOffset = m_pSyntax->GetNextWord(&bNumber);
+                  if (bNumber)
+                    last_xref = FXSYS_atoi(bsOffset.c_str());
+                } else {
+                  m_pSyntax->SetPos(dwSavePos);
                 }
               }
             }
@@ -972,8 +943,14 @@ bool CPDF_Parser::RebuildCrossRef() {
   else if (last_trailer == -1 || last_xref < last_obj)
     last_trailer = m_pSyntax->m_FileLen;
 
+  if (cross_ref_table.trailer()) {
+    m_TrailerData->SetMainTrailer(
+        ToDictionary(cross_ref_table.trailer()->Clone()));
+    m_ObjectInfo = cross_ref_table.objects_info();
+  }
   // Resore default buffer size.
   m_pSyntax->SetReadBufferSize(CPDF_ModuleMgr::kFileBufSize);
+
   return GetTrailer() && !m_ObjectInfo.empty();
 }
 

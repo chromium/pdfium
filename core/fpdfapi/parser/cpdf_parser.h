@@ -13,6 +13,7 @@
 #include <set>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_cross_ref_table.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -113,25 +114,8 @@ class CPDF_Parser {
   void SetLinearizedHeader(std::unique_ptr<CPDF_LinearizedHeader> pLinearized);
 
  protected:
-  enum class ObjectType : uint8_t {
-    kFree = 0x00,
-    kNotCompressed = 0x01,
-    kCompressed = 0x02,
-    kNull = 0xFF,
-  };
-
-  struct ObjectInfo {
-    ObjectInfo() : pos(0), type(ObjectType::kFree), gennum(0) {}
-    // if type is ObjectType::kCompressed the archive_obj_num should be used.
-    // if type is ObjectType::kNotCompressed the pos should be used.
-    // In other cases its are unused.
-    union {
-      FX_FILESIZE pos;
-      FX_FILESIZE archive_obj_num;
-    };
-    ObjectType type;
-    uint16_t gennum;
-  };
+  using ObjectType = CPDF_CrossRefTable::ObjectType;
+  using ObjectInfo = CPDF_CrossRefTable::ObjectInfo;
 
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
   std::map<uint32_t, ObjectInfo> m_ObjectInfo;

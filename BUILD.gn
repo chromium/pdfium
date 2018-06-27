@@ -605,6 +605,8 @@ jumbo_static_library("fpdfapi") {
     "core/fpdfapi/parser/cpdf_boolean.h",
     "core/fpdfapi/parser/cpdf_cross_ref_avail.cpp",
     "core/fpdfapi/parser/cpdf_cross_ref_avail.h",
+    "core/fpdfapi/parser/cpdf_cross_ref_table.cpp",
+    "core/fpdfapi/parser/cpdf_cross_ref_table.h",
     "core/fpdfapi/parser/cpdf_crypto_handler.cpp",
     "core/fpdfapi/parser/cpdf_crypto_handler.h",
     "core/fpdfapi/parser/cpdf_data_avail.cpp",
