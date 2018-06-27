@@ -465,24 +465,23 @@ CJPX_Decoder::CJPX_Decoder(CPDF_ColorSpace* cs)
 
 CJPX_Decoder::~CJPX_Decoder() {
   if (m_Codec)
-    opj_destroy_codec(m_Codec);
+    opj_destroy_codec(m_Codec.Release());
   if (m_Stream)
-    opj_stream_destroy(m_Stream);
+    opj_stream_destroy(m_Stream.Release());
   if (m_Image)
-    opj_image_destroy(m_Image);
+    opj_image_destroy(m_Image.Release());
 }
 
-bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
+bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
   static const unsigned char szJP2Header[] = {
       0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
-  if (!src_data || src_size < sizeof(szJP2Header))
+  if (src_data.empty() || src_data.size() < sizeof(szJP2Header))
     return false;
 
   m_Image = nullptr;
   m_SrcData = src_data;
-  m_SrcSize = src_size;
-  m_DecodeData = pdfium::MakeUnique<DecodeData>(
-      const_cast<unsigned char*>(src_data), src_size);
+  m_DecodeData =
+      pdfium::MakeUnique<DecodeData>(src_data.data(), src_data.size());
   m_Stream = fx_opj_stream_create_memory_stream(
       m_DecodeData.get(), static_cast<unsigned int>(OPJ_J2K_STREAM_CHUNK_SIZE),
       1);
@@ -492,7 +491,7 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   opj_set_default_decoder_parameters(&m_Parameters);
   m_Parameters.decod_format = 0;
   m_Parameters.cod_format = 3;
-  if (memcmp(m_SrcData, szJP2Header, sizeof(szJP2Header)) == 0) {
+  if (memcmp(m_SrcData.data(), szJP2Header, sizeof(szJP2Header)) == 0) {
     m_Codec = opj_create_decompress(OPJ_CODEC_JP2);
     m_Parameters.decod_format = 1;
   } else {
@@ -503,39 +502,38 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
 
   if (m_ColorSpace && m_ColorSpace->GetFamily() == PDFCS_INDEXED)
     m_Parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
-  opj_set_info_handler(m_Codec, fx_ignore_callback, nullptr);
-  opj_set_warning_handler(m_Codec, fx_ignore_callback, nullptr);
-  opj_set_error_handler(m_Codec, fx_ignore_callback, nullptr);
-  if (!opj_setup_decoder(m_Codec, &m_Parameters))
+  opj_set_info_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
+  opj_set_warning_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
+  opj_set_error_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
+  if (!opj_setup_decoder(m_Codec.Get(), &m_Parameters))
     return false;
 
-  if (!opj_read_header(m_Stream, m_Codec, &m_Image)) {
-    m_Image = nullptr;
+  m_Image = nullptr;
+  opj_image_t* pTempImage = nullptr;
+  if (!opj_read_header(m_Stream.Get(), m_Codec.Get(), &pTempImage))
     return false;
-  }
+
+  m_Image = pTempImage;
   m_Image->pdfium_use_colorspace = !!m_ColorSpace;
 
   if (!m_Parameters.nb_tile_to_decode) {
-    if (!opj_set_decode_area(m_Codec, m_Image, m_Parameters.DA_x0,
+    if (!opj_set_decode_area(m_Codec.Get(), m_Image.Get(), m_Parameters.DA_x0,
                              m_Parameters.DA_y0, m_Parameters.DA_x1,
                              m_Parameters.DA_y1)) {
-      opj_image_destroy(m_Image);
-      m_Image = nullptr;
+      opj_image_destroy(m_Image.Release());
       return false;
     }
-    if (!(opj_decode(m_Codec, m_Stream, m_Image) &&
-          opj_end_decompress(m_Codec, m_Stream))) {
-      opj_image_destroy(m_Image);
-      m_Image = nullptr;
+    if (!(opj_decode(m_Codec.Get(), m_Stream.Get(), m_Image.Get()) &&
+          opj_end_decompress(m_Codec.Get(), m_Stream.Get()))) {
+      opj_image_destroy(m_Image.Release());
       return false;
     }
-  } else if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image,
+  } else if (!opj_get_decoded_tile(m_Codec.Get(), m_Stream.Get(), m_Image.Get(),
                                    m_Parameters.tile_index)) {
     return false;
   }
 
-  opj_stream_destroy(m_Stream);
-  m_Stream = nullptr;
+  opj_stream_destroy(m_Stream.Release());
   if (m_Image->color_space != OPJ_CLRSPC_SYCC && m_Image->numcomps == 3 &&
       m_Image->comps[0].dx == m_Image->comps[0].dy &&
       m_Image->comps[1].dx != 1) {
@@ -544,7 +542,7 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     m_Image->color_space = OPJ_CLRSPC_GRAY;
   }
   if (m_Image->color_space == OPJ_CLRSPC_SYCC)
-    color_sycc_to_rgb(m_Image);
+    color_sycc_to_rgb(m_Image.Get());
 
   if (m_Image->icc_profile_buf) {
     // TODO(palmer): Using |opj_free| here resolves the crash described in
@@ -649,7 +647,9 @@ std::unique_ptr<CJPX_Decoder> CCodec_JpxModule::CreateDecoder(
     uint32_t src_size,
     CPDF_ColorSpace* cs) {
   auto decoder = pdfium::MakeUnique<CJPX_Decoder>(cs);
-  return decoder->Init(src_buf, src_size) ? std::move(decoder) : nullptr;
+  return decoder->Init(pdfium::make_span(src_buf, src_size))
+             ? std::move(decoder)
+             : nullptr;
 }
 
 void CCodec_JpxModule::GetImageInfo(CJPX_Decoder* pDecoder,
