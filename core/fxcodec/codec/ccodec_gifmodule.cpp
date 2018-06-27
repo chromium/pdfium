@@ -57,12 +57,12 @@ CFX_GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
                                                 CFX_DIBAttribute* pAttribute) {
   auto* context = static_cast<CFX_GifContext*>(pContext);
   CFX_GifDecodeStatus ret = context->LoadFrame(frame_num);
-  if (ret != CFX_GifDecodeStatus::Success || !pAttribute)
+  if (ret != CFX_GifDecodeStatus::Success)
     return ret;
 
-  pAttribute->m_nGifLeft = context->images_[frame_num]->image_info.left;
-  pAttribute->m_nGifTop = context->images_[frame_num]->image_info.top;
-  pAttribute->m_fAspectRatio = context->pixel_aspect_;
+  if (pAttribute)
+    pAttribute->m_fAspectRatio = context->pixel_aspect_;
+
   return CFX_GifDecodeStatus::Success;
 }
 

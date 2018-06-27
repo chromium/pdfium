@@ -59,12 +59,6 @@ class CFX_DIBAttribute {
 #ifdef PDF_ENABLE_XFA_BMP
   int32_t m_nBmpCompressType = 0;
 #endif  // PDF_ENABLE_XFA_BMP
-#ifdef PDF_ENABLE_XFA_GIF
-  int32_t m_nGifLeft = 0;
-  int32_t m_nGifTop = 0;
-  uint32_t* m_pGifLocalPalette = nullptr;
-  uint32_t m_nGifLocalPalNum = 0;
-#endif  // PDF_ENABLE_XFA_GIF
 
   int32_t m_nXDPI = -1;
   int32_t m_nYDPI = -1;
