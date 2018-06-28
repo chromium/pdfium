@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fpdfapi/parser/cpdf_object_walker.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -355,55 +356,25 @@ bool CPDF_PageOrganizer::PDFDocInit() {
 
 bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
                                          ObjectNumberMap* pObjNumberMap) {
-  switch (pObj->GetType()) {
-    case CPDF_Object::REFERENCE: {
-      CPDF_Reference* pReference = pObj->AsReference();
-      uint32_t newobjnum = GetNewObjId(pObjNumberMap, pReference);
-      if (newobjnum == 0)
-        return false;
-      pReference->SetRef(dest(), newobjnum);
-      break;
+  for (CPDF_NonConstObjectWalker walker(pObj);
+       CPDF_Object* child = walker.GetNext();) {
+    if (walker.dictionary_key() == "Parent" ||
+        walker.dictionary_key() == "Prev" ||
+        walker.dictionary_key() == "First") {
+      walker.SkipWalkIntoCurrentObject();
+      continue;
     }
-    case CPDF_Object::DICTIONARY: {
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
-      auto it = pDict->begin();
-      while (it != pDict->end()) {
-        const ByteString& key = it->first;
-        CPDF_Object* pNextObj = it->second.get();
-        ++it;
-        if (key == "Parent" || key == "Prev" || key == "First")
-          continue;
-        if (!pNextObj)
-          return false;
-        if (!UpdateReference(pNextObj, pObjNumberMap))
-          pDict->RemoveFor(key);
-      }
-      break;
-    }
-    case CPDF_Object::ARRAY: {
-      CPDF_Array* pArray = pObj->AsArray();
-      for (size_t i = 0; i < pArray->GetCount(); ++i) {
-        CPDF_Object* pNextObj = pArray->GetObjectAt(i);
-        if (!pNextObj)
-          return false;
-        if (!UpdateReference(pNextObj, pObjNumberMap))
-          return false;
-      }
-      break;
-    }
-    case CPDF_Object::STREAM: {
-      CPDF_Stream* pStream = pObj->AsStream();
-      CPDF_Dictionary* pDict = pStream->GetDict();
-      if (!pDict)
-        return false;
-      if (!UpdateReference(pDict, pObjNumberMap))
-        return false;
-      break;
-    }
-    default:
-      break;
-  }
+    if (!child->IsReference())
+      continue;
 
+    CPDF_Reference* ref = ToReference(child);
+
+    const uint32_t newobjnum = GetNewObjId(pObjNumberMap, ref);
+    if (newobjnum == 0)
+      return false;
+
+    ref->SetRef(dest(), newobjnum);
+  }
   return true;
 }
 
