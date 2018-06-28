@@ -493,7 +493,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
                                                        double* d,
                                                        double* e,
                                                        double* f) {
-  if (!text || !a || !b || !c || !d || !e || !f)
+  if (!a || !b || !c || !d || !e || !f)
     return false;
 
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
@@ -512,14 +512,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
 }
 
 FPDF_EXPORT double FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text) {
-  if (!text)
-    return 0;
-
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
-  if (!pTextObj)
-    return 0;
-
-  return pTextObj->GetFontSize();
+  return pTextObj ? pTextObj->GetFontSize() : 0;
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
