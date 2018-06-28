@@ -97,6 +97,8 @@ class CPDF_DataAvail final {
                  bool bSupportHintTable);
   ~CPDF_DataAvail();
 
+  void BeforeDocumentDestroyed();
+
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
   DocFormStatus IsFormAvail(DownloadHints* pHints);
@@ -172,7 +174,7 @@ class CPDF_DataAvail final {
   std::unique_ptr<CPDF_CrossRefAvail> m_pCrossRefAvail;
   PDF_DATAAVAIL_STATUS m_docStatus = PDF_DATAAVAIL_HEADER;
   const FX_FILESIZE m_dwFileLen;
-  CPDF_Document* m_pDocument = nullptr;
+  UnownedPtr<CPDF_Document> m_pDocument;
   std::vector<uint32_t> m_PageObjList;
   uint32_t m_PagesObjNum = 0;
   bool m_bLinearedDataOK = false;

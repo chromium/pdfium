@@ -70,6 +70,17 @@ class HintsScope {
   UnownedPtr<CPDF_ReadValidator> validator_;
 };
 
+class CPDF_DocumentForAvail : public CPDF_Document {
+ public:
+  explicit CPDF_DocumentForAvail(CPDF_DataAvail* avail) : m_pAvail(avail) {
+    DCHECK(avail);
+  }
+  ~CPDF_DocumentForAvail() override { m_pAvail->BeforeDocumentDestroyed(); }
+
+ private:
+  UnownedPtr<CPDF_DataAvail> m_pAvail;
+};
+
 }  // namespace
 
 CPDF_DataAvail::FileAvail::~FileAvail() {}
@@ -87,6 +98,14 @@ CPDF_DataAvail::CPDF_DataAvail(
 
 CPDF_DataAvail::~CPDF_DataAvail() {
   m_pHintTables.reset();
+}
+
+void CPDF_DataAvail::BeforeDocumentDestroyed() {
+  m_pDocument = nullptr;
+  m_pFormAvail.reset();
+  m_PagesArray.clear();
+  m_PagesObjAvail.clear();
+  m_PagesResourcesAvail.clear();
 }
 
 CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
@@ -816,7 +835,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
 
       auto page_num_obj = std::make_pair(
           dwPage, pdfium::MakeUnique<CPDF_PageObjectAvail>(
-                      GetValidator().Get(), m_pDocument, pPageDict));
+                      GetValidator().Get(), m_pDocument.Get(), pPageDict));
 
       CPDF_PageObjectAvail* page_obj_avail =
           m_PagesObjAvail.insert(std::move(page_num_obj)).first->second.get();
@@ -868,7 +887,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   {
     auto page_num_obj = std::make_pair(
         dwPage, pdfium::MakeUnique<CPDF_PageObjectAvail>(
-                    GetValidator().Get(), m_pDocument, pPageDict));
+                    GetValidator().Get(), m_pDocument.Get(), pPageDict));
     CPDF_PageObjectAvail* page_obj_avail =
         m_PagesObjAvail.insert(std::move(page_num_obj)).first->second.get();
     const DocAvailStatus status = page_obj_avail->CheckAvail();
@@ -900,8 +919,9 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
   CPDF_PageObjectAvail* resource_avail =
       m_PagesResourcesAvail
           .insert(std::make_pair(
-              resources, pdfium::MakeUnique<CPDF_PageObjectAvail>(
-                             GetValidator().Get(), m_pDocument, resources)))
+              resources,
+              pdfium::MakeUnique<CPDF_PageObjectAvail>(
+                  GetValidator().Get(), m_pDocument.Get(), resources)))
           .first->second.get();
   return resource_avail->CheckAvail();
 }
@@ -944,7 +964,8 @@ CPDF_Dictionary* CPDF_DataAvail::GetPageDictionary(int index) const {
   // Page object already can be parsed in document.
   if (!m_pDocument->GetIndirectObject(dwObjNum)) {
     m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
-        dwObjNum, ParseIndirectObjectAt(szPageStartPos, dwObjNum, m_pDocument));
+        dwObjNum,
+        ParseIndirectObjectAt(szPageStartPos, dwObjNum, m_pDocument.Get()));
   }
   if (!ValidatePage(index))
     return nullptr;
@@ -979,7 +1000,7 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
       return FormNotExist;
 
     m_pFormAvail = pdfium::MakeUnique<CPDF_PageObjectAvail>(
-        GetValidator().Get(), m_pDocument, pAcroForm);
+        GetValidator().Get(), m_pDocument.Get(), pAcroForm);
   }
   switch (m_pFormAvail->CheckAvail()) {
     case DocAvailStatus::DataError:
@@ -999,7 +1020,8 @@ bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) const {
   auto* pPageDict = m_pDocument->GetPageDictionary(safePage.ValueOrDie());
   if (!pPageDict)
     return false;
-  CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument, pPageDict);
+  CPDF_PageObjectAvail obj_avail(GetValidator().Get(), m_pDocument.Get(),
+                                 pPageDict);
   return obj_avail.CheckAvail() == DocAvailStatus::DataAvailable;
 }
 
@@ -1009,7 +1031,7 @@ CPDF_DataAvail::ParseDocument(const char* password) {
     // We already returned parsed document.
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
   }
-  auto document = pdfium::MakeUnique<CPDF_Document>();
+  auto document = pdfium::MakeUnique<CPDF_DocumentForAvail>(this);
 
   CPDF_ReadValidator::Session read_session(GetValidator().Get());
   CPDF_Parser::Error error =
