@@ -60,7 +60,7 @@ std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
 CPDF_ObjectStream::CPDF_ObjectStream(const CPDF_Stream* obj_stream)
     : obj_num_(obj_stream->GetObjNum()),
       first_object_offset_(obj_stream->GetDict()->GetIntegerFor("First")) {
-  DCHECK(IsObjectsStreamObject(obj_stream));
+  ASSERT(IsObjectsStreamObject(obj_stream));
   if (const auto* extends_ref =
           ToReference(obj_stream->GetDict()->GetObjectFor("Extends"))) {
     extends_obj_num_ = extends_ref->GetRefObjNum();

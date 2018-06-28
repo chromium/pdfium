@@ -248,7 +248,7 @@ void CPDF_Document::LoadPages() {
   }
 
   m_PageList.resize(linearized_header->GetPageCount());
-  DCHECK(linearized_header->GetFirstPageNo() < m_PageList.size());
+  ASSERT(linearized_header->GetFirstPageNo() < m_PageList.size());
   m_PageList[linearized_header->GetFirstPageNo()] =
       linearized_header->GetFirstPageObjNum();
 }
@@ -326,7 +326,7 @@ void CPDF_Document::ResetTraversal() {
 }
 
 void CPDF_Document::SetParser(std::unique_ptr<CPDF_Parser> pParser) {
-  DCHECK(!m_pParser);
+  ASSERT(!m_pParser);
   m_pParser = std::move(pParser);
 }
 

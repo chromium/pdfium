@@ -143,7 +143,7 @@ void CJS_Global::setPersistent_static(
 void CJS_Global::queryprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  DCHECK(property->IsString());
+  ASSERT(property->IsString());
   JSSpecialPropQuery<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
@@ -154,7 +154,7 @@ void CJS_Global::queryprop_static(
 void CJS_Global::getprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  DCHECK(property->IsString());
+  ASSERT(property->IsString());
   JSSpecialPropGet<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
@@ -166,7 +166,7 @@ void CJS_Global::putprop_static(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
-  DCHECK(property->IsString());
+  ASSERT(property->IsString());
   JSSpecialPropPut<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
@@ -177,7 +177,7 @@ void CJS_Global::putprop_static(
 void CJS_Global::delprop_static(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  DCHECK(property->IsString());
+  ASSERT(property->IsString());
   JSSpecialPropDel<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
