@@ -320,8 +320,8 @@ void CJX_InstanceManager::count(CFXJSE_Value* pValue,
                                 bool bSetting,
                                 XFA_Attribute eAttribute) {
   if (bSetting) {
-    pValue->SetInteger(GetXFANode()->GetCount());
+    SetInstances(pValue->ToInteger());
     return;
   }
-  SetInstances(pValue->ToInteger());
+  pValue->SetInteger(GetXFANode()->GetCount());
 }
