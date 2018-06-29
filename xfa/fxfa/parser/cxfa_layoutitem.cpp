@@ -16,9 +16,9 @@
 
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
-  CXFA_FFNotify* pNotify = pLayoutItem->m_pFormNode->GetDocument()->GetNotify();
-  CXFA_LayoutProcessor* pDocLayout =
-      pLayoutItem->m_pFormNode->GetDocument()->GetLayoutProcessor();
+  CXFA_Document* pDocument = pLayoutItem->GetFormNode()->GetDocument();
+  CXFA_FFNotify* pNotify = pDocument->GetNotify();
+  CXFA_LayoutProcessor* pDocLayout = pDocument->GetLayoutProcessor();
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
     pNode->m_pParent = nullptr;
@@ -27,7 +27,7 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
     pNode = pNext;
   }
   pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
-  if (pLayoutItem->m_pFormNode->GetElementType() == XFA_Element::PageArea) {
+  if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea) {
     pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
                          XFA_PAGEVIEWEVENT_PostRemoved);
   }
@@ -35,13 +35,9 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
 }
 
 CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, bool bIsContentLayoutItem)
-    : m_pFormNode(pNode),
-      m_pParent(nullptr),
-      m_pNextSibling(nullptr),
-      m_pFirstChild(nullptr),
-      m_bIsContentLayoutItem(bIsContentLayoutItem) {}
+    : m_bIsContentLayoutItem(bIsContentLayoutItem), m_pFormNode(pNode) {}
 
-CXFA_LayoutItem::~CXFA_LayoutItem() {}
+CXFA_LayoutItem::~CXFA_LayoutItem() = default;
 
 CXFA_ContainerLayoutItem* CXFA_LayoutItem::AsContainerLayoutItem() {
   return IsContainerLayoutItem() ? static_cast<CXFA_ContainerLayoutItem*>(this)

@@ -40,7 +40,7 @@ class CXFA_TextProvider {
                     WideString& wsValue);
 
  private:
-  CXFA_Node* m_pNode;
+  CXFA_Node* m_pNode;  // Raw, this class owned by tree node.
   XFA_TEXTPROVIDERTYPE m_eType;
 };
 

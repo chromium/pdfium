@@ -15,6 +15,7 @@ class CXFA_Node;
 class CXFA_AttachNodeList : public CXFA_TreeList {
  public:
   CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
+  ~CXFA_AttachNodeList() override;
 
   // From CXFA_TreeList.
   size_t GetLength() override;
@@ -24,7 +25,7 @@ class CXFA_AttachNodeList : public CXFA_TreeList {
   CXFA_Node* Item(size_t iIndex) override;
 
  private:
-  CXFA_Node* m_pAttachNode;
+  UnownedPtr<CXFA_Node> const m_pAttachNode;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ATTACHNODELIST_H_

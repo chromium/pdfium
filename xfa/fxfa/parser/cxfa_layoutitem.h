@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
 #define XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 class CXFA_ContainerLayoutItem;
@@ -23,8 +24,10 @@ class CXFA_LayoutItem {
   CXFA_ContentLayoutItem* AsContentLayoutItem();
 
   CXFA_ContainerLayoutItem* GetPage() const;
-  CXFA_Node* GetFormNode() const { return m_pFormNode; }
   CFX_RectF GetRect(bool bRelative) const;
+
+  CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
+  void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
 
   int32_t GetIndex() const;
   int32_t GetCount() const;
@@ -40,15 +43,15 @@ class CXFA_LayoutItem {
   void RemoveChild(CXFA_LayoutItem* pChildItem);
   void InsertChild(CXFA_LayoutItem* pBeforeItem, CXFA_LayoutItem* pChildItem);
 
-  CXFA_Node* m_pFormNode;
-  CXFA_LayoutItem* m_pParent;
-  CXFA_LayoutItem* m_pNextSibling;
-  CXFA_LayoutItem* m_pFirstChild;
+  CXFA_LayoutItem* m_pParent = nullptr;       // Raw, intra-tree pointer.
+  CXFA_LayoutItem* m_pNextSibling = nullptr;  // Raw, intra-tree pointer.
+  CXFA_LayoutItem* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
 
  protected:
   CXFA_LayoutItem(CXFA_Node* pNode, bool bIsContentLayoutItem);
 
   bool m_bIsContentLayoutItem;
+  UnownedPtr<CXFA_Node> m_pFormNode;
 };
 
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);

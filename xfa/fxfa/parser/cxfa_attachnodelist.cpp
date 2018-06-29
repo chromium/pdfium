@@ -11,9 +11,9 @@
 
 CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
                                          CXFA_Node* pAttachNode)
-    : CXFA_TreeList(pDocument) {
-  m_pAttachNode = pAttachNode;
-}
+    : CXFA_TreeList(pDocument), m_pAttachNode(pAttachNode) {}
+
+CXFA_AttachNodeList::~CXFA_AttachNodeList() = default;
 
 size_t CXFA_AttachNodeList::GetLength() {
   return m_pAttachNode->CountChildren(
