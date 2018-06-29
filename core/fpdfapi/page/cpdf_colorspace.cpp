@@ -207,8 +207,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
                           int image_width,
                           int image_height,
                           bool bTransMask) const override;
-
-  bool IsSRGB() const { return m_pProfile->IsSRGB(); }
+  bool IsNormal() const override;
 
  private:
   // If no valid ICC profile or using sRGB, try looking for an alternate.
@@ -595,6 +594,12 @@ void CPDF_ColorSpace::EnableStdConversion(bool bEnabled) {
     m_dwStdConversion--;
 }
 
+bool CPDF_ColorSpace::IsNormal() const {
+  return GetFamily() == PDFCS_DEVICEGRAY || GetFamily() == PDFCS_DEVICERGB ||
+         GetFamily() == PDFCS_DEVICECMYK || GetFamily() == PDFCS_CALGRAY ||
+         GetFamily() == PDFCS_CALRGB;
+}
+
 CPDF_PatternCS* CPDF_ColorSpace::AsPatternCS() {
   NOTREACHED();
   return nullptr;
@@ -909,7 +914,7 @@ bool CPDF_ICCBasedCS::GetRGB(const float* pBuf,
                              float* G,
                              float* B) const {
   ASSERT(m_pProfile);
-  if (IsSRGB()) {
+  if (m_pProfile->IsSRGB()) {
     *R = pBuf[0];
     *G = pBuf[1];
     *B = pBuf[2];
@@ -947,7 +952,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
                                          int image_width,
                                          int image_height,
                                          bool bTransMask) const {
-  if (IsSRGB()) {
+  if (m_pProfile->IsSRGB()) {
     ReverseRGB(pDestBuf, pSrcBuf, pixels);
     return;
   }
@@ -1008,6 +1013,16 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
     *pDestBuf++ = pCachePtr[index + 1];
     *pDestBuf++ = pCachePtr[index + 2];
   }
+}
+
+bool CPDF_ICCBasedCS::IsNormal() const {
+  if (m_pProfile->IsSRGB())
+    return true;
+  if (m_pProfile->transform())
+    return m_pProfile->transform()->m_bNormal;
+  if (m_pAlterCS)
+    return m_pAlterCS->IsNormal();
+  return false;
 }
 
 bool CPDF_ICCBasedCS::FindAlternateProfile(

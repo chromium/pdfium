@@ -85,6 +85,8 @@ class CPDF_ColorSpace {
                                   bool bTransMask) const;
   virtual void EnableStdConversion(bool bEnabled);
 
+  virtual bool IsNormal() const;
+
   // Only call these 3 methods below if GetFamily() returns |PDFCS_PATTERN|.
 
   // Returns |this| as a CPDF_PatternCS* if |this| is a pattern.
