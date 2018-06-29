@@ -140,8 +140,11 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
 
   virtual FormFieldType GetFormFieldType();
 
-  CXFA_FFPageView* GetPageView() const { return m_pPageView; }
+  CXFA_FFPageView* GetPageView() const { return m_pPageView.Get(); }
   void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
+  CXFA_FFDocView* GetDocView() const { return m_pDocView.Get(); }
+  void SetDocView(CXFA_FFDocView* pDocView) { m_pDocView = pDocView; }
+
   const CFX_RectF& GetWidgetRect() const;
   const CFX_RectF& RecacheWidgetRect() const;
   uint32_t GetStatus();
@@ -149,8 +152,6 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
 
   CXFA_Node* GetNode() const { return m_pNode.Get(); }
 
-  CXFA_FFDocView* GetDocView();
-  void SetDocView(CXFA_FFDocView* pDocView);
   CXFA_FFDoc* GetDoc();
   CXFA_FFApp* GetApp();
   IXFA_AppProvider* GetAppProvider();
@@ -182,8 +183,8 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   bool IsButtonDown();
   void SetButtonDown(bool bSet);
 
-  CXFA_FFDocView* m_pDocView = nullptr;
-  CXFA_FFPageView* m_pPageView = nullptr;
+  UnownedPtr<CXFA_FFDocView> m_pDocView;
+  UnownedPtr<CXFA_FFPageView> m_pPageView;
   UnownedPtr<CXFA_Node> const m_pNode;
   mutable CFX_RectF m_rtWidget;
 };
