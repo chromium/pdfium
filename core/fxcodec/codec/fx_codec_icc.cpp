@@ -51,9 +51,7 @@ CCodec_IccModule::~CCodec_IccModule() {}
 
 std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     const unsigned char* pSrcProfileData,
-    uint32_t dwSrcProfileSize,
-    uint32_t* nSrcComponents) {
-  *nSrcComponents = 0;
+    uint32_t dwSrcProfileSize) {
   ScopedCmsProfile srcProfile(
       cmsOpenProfileFromMem(pSrcProfileData, dwSrcProfileSize));
   if (!srcProfile)
@@ -65,9 +63,9 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
 
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile.get());
 
-  *nSrcComponents = cmsChannelsOf(srcCS);
+  uint32_t nSrcComponents = cmsChannelsOf(srcCS);
   // According to PDF spec, number of components must be 1, 3, or 4.
-  if (*nSrcComponents != 1 && *nSrcComponents != 3 && *nSrcComponents != 4)
+  if (nSrcComponents != 1 && nSrcComponents != 3 && nSrcComponents != 4)
     return nullptr;
 
   int srcFormat;
@@ -75,11 +73,11 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
   bool bNormal = false;
   if (srcCS == cmsSigLabData) {
     srcFormat =
-        COLORSPACE_SH(PT_Lab) | CHANNELS_SH(*nSrcComponents) | BYTES_SH(0);
+        COLORSPACE_SH(PT_Lab) | CHANNELS_SH(nSrcComponents) | BYTES_SH(0);
     bLab = true;
   } else {
     srcFormat =
-        COLORSPACE_SH(PT_ANY) | CHANNELS_SH(*nSrcComponents) | BYTES_SH(1);
+        COLORSPACE_SH(PT_ANY) | CHANNELS_SH(nSrcComponents) | BYTES_SH(1);
     // TODO(thestig): Check to see if lcms2 supports more colorspaces that can
     // be considered normal.
     bNormal = srcCS == cmsSigGrayData || srcCS == cmsSigRgbData ||
@@ -107,7 +105,7 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
   if (!hTransform)
     return nullptr;
 
-  return pdfium::MakeUnique<CLcmsCmm>(hTransform, *nSrcComponents, bLab,
+  return pdfium::MakeUnique<CLcmsCmm>(hTransform, nSrcComponents, bLab,
                                       bNormal);
 }
 

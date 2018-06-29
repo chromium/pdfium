@@ -46,8 +46,7 @@ class CCodec_IccModule {
   ~CCodec_IccModule();
 
   std::unique_ptr<CLcmsCmm> CreateTransform_sRGB(const uint8_t* pProfileData,
-                                                 uint32_t dwProfileSize,
-                                                 uint32_t* nComponents);
+                                                 uint32_t dwProfileSize);
   void Translate(CLcmsCmm* pTransform,
                  const float* pSrcValues,
                  float* pDestValues);
