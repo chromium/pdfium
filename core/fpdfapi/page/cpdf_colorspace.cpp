@@ -1019,7 +1019,7 @@ bool CPDF_ICCBasedCS::IsNormal() const {
   if (m_pProfile->IsSRGB())
     return true;
   if (m_pProfile->transform())
-    return m_pProfile->transform()->m_bNormal;
+    return m_pProfile->transform()->IsNormal();
   if (m_pAlterCS)
     return m_pAlterCS->IsNormal();
   return false;

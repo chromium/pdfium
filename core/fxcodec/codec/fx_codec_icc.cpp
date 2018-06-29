@@ -25,20 +25,20 @@ bool Check3Components(cmsColorSpaceSignature cs) {
 
 }  // namespace
 
-CLcmsCmm::CLcmsCmm(int srcComponents,
-                   cmsHTRANSFORM hTransform,
-                   bool isLab,
+CLcmsCmm::CLcmsCmm(cmsHTRANSFORM hTransform,
+                   int srcComponents,
+                   bool bIsLab,
                    bool bNormal)
     : m_hTransform(hTransform),
       m_nSrcComponents(srcComponents),
-      m_bLab(isLab),
+      m_bLab(bIsLab),
       m_bNormal(bNormal) {}
 
 CLcmsCmm::~CLcmsCmm() {
   cmsDeleteTransform(m_hTransform);
 }
 
-CCodec_IccModule::CCodec_IccModule() : m_nComponents(0) {}
+CCodec_IccModule::CCodec_IccModule() {}
 
 CCodec_IccModule::~CCodec_IccModule() {}
 
@@ -111,7 +111,7 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     return nullptr;
   }
   auto pCmm =
-      pdfium::MakeUnique<CLcmsCmm>(*nSrcComponents, hTransform, bLab, bNormal);
+      pdfium::MakeUnique<CLcmsCmm>(hTransform, *nSrcComponents, bLab, bNormal);
   cmsCloseProfile(srcProfile);
   cmsCloseProfile(dstProfile);
   return pCmm;
@@ -128,18 +128,18 @@ void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
   // TODO(npm): Currently the CmsDoTransform method is part of LCMS and it will
   // apply some member of m_hTransform to the input. We need to go over all the
   // places which set transform to verify that only nSrcComponents are used.
-  if (pTransform->m_bLab) {
+  if (pTransform->IsLab()) {
     std::vector<double> inputs(std::max(nSrcComponents, 16u));
     for (uint32_t i = 0; i < nSrcComponents; ++i)
       inputs[i] = pSrcValues[i];
-    cmsDoTransform(pTransform->m_hTransform, inputs.data(), output, 1);
+    cmsDoTransform(pTransform->transform(), inputs.data(), output, 1);
   } else {
     std::vector<uint8_t> inputs(std::max(nSrcComponents, 16u));
     for (uint32_t i = 0; i < nSrcComponents; ++i) {
       inputs[i] =
           pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
     }
-    cmsDoTransform(pTransform->m_hTransform, inputs.data(), output, 1);
+    cmsDoTransform(pTransform->transform(), inputs.data(), output, 1);
   }
   pDestValues[0] = output[2] / 255.0f;
   pDestValues[1] = output[1] / 255.0f;
@@ -151,5 +151,5 @@ void CCodec_IccModule::TranslateScanline(CLcmsCmm* pTransform,
                                          const unsigned char* pSrc,
                                          int32_t pixels) {
   if (pTransform)
-    cmsDoTransform(pTransform->m_hTransform, pSrc, pDest, pixels);
+    cmsDoTransform(pTransform->transform(), pSrc, pDest, pixels);
 }
