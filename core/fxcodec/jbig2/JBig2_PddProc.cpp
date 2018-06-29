@@ -17,10 +17,10 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     PauseIndicatorIface* pPause) {
-  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
-  pGRD->MMR = HDMMR;
-  pGRD->GBW = (GRAYMAX + 1) * HDPW;
-  pGRD->GBH = HDPH;
+  std::unique_ptr<CJBig2_GRDProc> pGRD = CreateGRDProc();
+  if (!pGRD)
+    return nullptr;
+
   pGRD->GBTEMPLATE = HDTEMPLATE;
   pGRD->TPGDON = 0;
   pGRD->USESKIP = 0;
@@ -57,11 +57,11 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
 
 std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
     CJBig2_BitStream* pStream) {
+  std::unique_ptr<CJBig2_GRDProc> pGRD = CreateGRDProc();
+  if (!pGRD)
+    return nullptr;
+
   std::unique_ptr<CJBig2_Image> BHDC;
-  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
-  pGRD->MMR = HDMMR;
-  pGRD->GBW = (GRAYMAX + 1) * HDPW;
-  pGRD->GBH = HDPH;
   pGRD->StartDecodeMMR(&BHDC, pStream);
   if (!BHDC)
     return nullptr;
@@ -70,4 +70,17 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
   for (uint32_t GRAY = 0; GRAY <= GRAYMAX; ++GRAY)
     pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
   return pDict;
+}
+
+std::unique_ptr<CJBig2_GRDProc> CJBig2_PDDProc::CreateGRDProc() {
+  uint32_t width = (GRAYMAX + 1) * HDPW;
+  uint32_t height = HDPH;
+  if (width > JBIG2_MAX_IMAGE_SIZE || height > JBIG2_MAX_IMAGE_SIZE)
+    return nullptr;
+
+  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
+  pGRD->MMR = HDMMR;
+  pGRD->GBW = width;
+  pGRD->GBH = height;
+  return pGRD;
 }
