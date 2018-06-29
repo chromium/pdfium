@@ -37,6 +37,9 @@ bool IsValidPageOffsetHintTableBitCount(uint32_t bits) {
 
 }  // namespace
 
+CPDF_HintTables::PageInfo::PageInfo() = default;
+CPDF_HintTables::PageInfo::~PageInfo() = default;
+
 CPDF_HintTables::CPDF_HintTables(CPDF_ReadValidator* pValidator,
                                  CPDF_LinearizedHeader* pLinearized)
     : m_pValidator(pValidator),
@@ -59,6 +62,14 @@ uint32_t CPDF_HintTables::GetItemLength(
 }
 
 bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
+  const uint32_t nPages = m_pLinearized->GetPageCount();
+  if (nPages < 1 || nPages >= CPDF_Document::kPageMaxNum)
+    return false;
+
+  const uint32_t nFirstPageNum = m_pLinearized->GetFirstPageNo();
+  if (nFirstPageNum >= nPages)
+    return false;
+
   if (!hStream || hStream->IsEOF())
     return false;
 
@@ -122,83 +133,78 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // Item 13: Skip Item 13 which has 16 bits.
   hStream->SkipBits(16);
 
-  const uint32_t nPages = m_pLinearized->GetPageCount();
-  if (nPages < 1 || nPages >= CPDF_Document::kPageMaxNum)
-    return false;
-
-  const uint32_t dwPages = pdfium::base::checked_cast<uint32_t>(nPages);
   FX_SAFE_UINT32 required_bits = dwDeltaObjectsBits;
-  required_bits *= dwPages;
+  required_bits *= nPages;
   if (!CanReadFromBitStream(hStream, required_bits))
     return false;
 
+  m_PageInfos = std::vector<PageInfo>(nPages);
+  m_PageInfos[nFirstPageNum].set_start_obj_num(
+      m_pLinearized->GetFirstPageObjNum());
+  // The object number of remaining pages starts from 1.
+  uint32_t dwStartObjNum = 1;
   for (uint32_t i = 0; i < nPages; ++i) {
     FX_SAFE_UINT32 safeDeltaObj = hStream->GetBits(dwDeltaObjectsBits);
     safeDeltaObj += dwObjLeastNum;
     if (!safeDeltaObj.IsValid())
       return false;
-    m_dwDeltaNObjsArray.push_back(safeDeltaObj.ValueOrDie());
+    m_PageInfos[i].set_objects_count(safeDeltaObj.ValueOrDie());
+    if (i == nFirstPageNum)
+      continue;
+    m_PageInfos[i].set_start_obj_num(dwStartObjNum);
+    dwStartObjNum += m_PageInfos[i].objects_count();
   }
   hStream->ByteAlign();
 
   required_bits = dwDeltaPageLenBits;
-  required_bits *= dwPages;
+  required_bits *= nPages;
   if (!CanReadFromBitStream(hStream, required_bits))
     return false;
 
-  std::vector<uint32_t> dwPageLenArray;
   for (uint32_t i = 0; i < nPages; ++i) {
     FX_SAFE_UINT32 safePageLen = hStream->GetBits(dwDeltaPageLenBits);
     safePageLen += dwPageLeastLen;
     if (!safePageLen.IsValid())
       return false;
-
-    dwPageLenArray.push_back(safePageLen.ValueOrDie());
+    m_PageInfos[i].set_page_length(safePageLen.ValueOrDie());
   }
 
-  const uint32_t nFirstPageNum = m_pLinearized->GetFirstPageNo();
-  if (nFirstPageNum >= nPages)
-    return false;
-
-  m_szPageOffsetArray.resize(nPages, 0);
   ASSERT(m_szFirstPageObjOffset);
-  m_szPageOffsetArray[nFirstPageNum] = m_szFirstPageObjOffset;
-  FX_FILESIZE prev_page_offset = m_pLinearized->GetFirstPageEndOffset();
+  m_PageInfos[nFirstPageNum].set_page_offset(m_szFirstPageObjOffset);
+  FX_FILESIZE prev_page_end = m_pLinearized->GetFirstPageEndOffset();
   for (uint32_t i = 0; i < nPages; ++i) {
     if (i == nFirstPageNum)
       continue;
-
-    m_szPageOffsetArray[i] = prev_page_offset;
-    prev_page_offset += dwPageLenArray[i];
+    m_PageInfos[i].set_page_offset(prev_page_end);
+    prev_page_end += m_PageInfos[i].page_length();
   }
-  m_szPageOffsetArray.push_back(m_szPageOffsetArray[nPages - 1] +
-                                dwPageLenArray[nPages - 1]);
   hStream->ByteAlign();
 
   // Number of shared objects.
   required_bits = dwSharedObjBits;
-  required_bits *= dwPages;
+  required_bits *= nPages;
   if (!CanReadFromBitStream(hStream, required_bits))
     return false;
 
+  std::vector<uint32_t> dwNSharedObjsArray(nPages);
   for (uint32_t i = 0; i < nPages; i++)
-    m_dwNSharedObjsArray.push_back(hStream->GetBits(dwSharedObjBits));
+    dwNSharedObjsArray[i] = hStream->GetBits(dwSharedObjBits);
   hStream->ByteAlign();
 
   // Array of identifiers, size = nshared_objects.
   for (uint32_t i = 0; i < nPages; i++) {
     required_bits = dwSharedIdBits;
-    required_bits *= m_dwNSharedObjsArray[i];
+    required_bits *= dwNSharedObjsArray[i];
     if (!CanReadFromBitStream(hStream, required_bits))
       return false;
 
-    for (uint32_t j = 0; j < m_dwNSharedObjsArray[i]; j++)
-      m_dwIdentifierArray.push_back(hStream->GetBits(dwSharedIdBits));
+    for (uint32_t j = 0; j < dwNSharedObjsArray[i]; j++)
+      m_PageInfos[i].AddIdentifier(hStream->GetBits(dwSharedIdBits));
   }
   hStream->ByteAlign();
 
   for (uint32_t i = 0; i < nPages; i++) {
-    FX_SAFE_UINT32 safeSize = m_dwNSharedObjsArray[i];
+    FX_SAFE_UINT32 safeSize = dwNSharedObjsArray[i];
     safeSize *= dwSharedNumeratorBits;
     if (!CanReadFromBitStream(hStream, safeSize))
       return false;
@@ -207,7 +213,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   }
   hStream->ByteAlign();
 
-  FX_SAFE_UINT32 safeTotalPageLen = dwPages;
+  FX_SAFE_UINT32 safeTotalPageLen = nPages;
   safeTotalPageLen *= dwDeltaPageLenBits;
   if (!CanReadFromBitStream(hStream, safeTotalPageLen))
     return false;
@@ -343,24 +349,9 @@ bool CPDF_HintTables::GetPagePos(uint32_t index,
   if (index >= m_pLinearized->GetPageCount())
     return false;
 
-  *szPageStartPos = m_szPageOffsetArray[index];
-  *szPageLength = GetItemLength(index, m_szPageOffsetArray);
-
-  const uint32_t nFirstPageObjNum = m_pLinearized->GetFirstPageObjNum();
-
-  const uint32_t dwFirstPageNum = m_pLinearized->GetFirstPageNo();
-  if (index == dwFirstPageNum) {
-    *dwObjNum = nFirstPageObjNum;
-    return true;
-  }
-
-  // The object number of remaining pages starts from 1.
-  *dwObjNum = 1;
-  for (uint32_t i = 0; i < index; ++i) {
-    if (i == dwFirstPageNum)
-      continue;
-    *dwObjNum += m_dwDeltaNObjsArray[i];
-  }
+  *szPageStartPos = m_PageInfos[index].page_offset();
+  *szPageLength = m_PageInfos[index].page_length();
+  *dwObjNum = m_PageInfos[index].start_obj_num();
   return true;
 }
 
@@ -368,27 +359,23 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
   if (index == m_pLinearized->GetFirstPageNo())
     return CPDF_DataAvail::DataAvailable;
 
-  uint32_t dwLength = GetItemLength(index, m_szPageOffsetArray);
-  // If two pages have the same offset, it should be treated as an error.
+  if (index >= m_pLinearized->GetPageCount())
+    return CPDF_DataAvail::DataError;
+
+  uint32_t dwLength = m_PageInfos[index].page_length();
   if (!dwLength)
     return CPDF_DataAvail::DataError;
 
   if (!m_pValidator->CheckDataRangeAndRequestIfUnavailable(
-          m_szPageOffsetArray[index], dwLength)) {
+          m_PageInfos[index].page_offset(), dwLength)) {
     return CPDF_DataAvail::DataNotAvailable;
   }
 
   // Download data of shared objects in the page.
-  uint32_t offset = 0;
-  for (uint32_t i = 0; i < index; ++i)
-    offset += m_dwNSharedObjsArray[i];
-
   const uint32_t nFirstPageObjNum = m_pLinearized->GetFirstPageObjNum();
 
-  uint32_t dwIndex = 0;
   uint32_t dwObjNum = 0;
-  for (uint32_t j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
-    dwIndex = m_dwIdentifierArray[offset + j];
+  for (const uint32_t dwIndex : m_PageInfos[index].Identifiers()) {
     if (dwIndex >= m_dwSharedObjNumArray.size())
       continue;
 

@@ -67,3 +67,32 @@ TEST_F(CPDF_HintTablesTest, Load) {
   ASSERT_FALSE(
       hint_tables->GetPagePos(2, &page_start, &page_length, &page_obj_num));
 }
+
+TEST_F(CPDF_HintTablesTest, PageInfos) {
+  auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
+  ASSERT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable,
+            data_avail->IsDocAvail(nullptr));
+
+  const CPDF_HintTables* hint_tables = data_avail->GetHintTables();
+  ASSERT_TRUE(hint_tables);
+  ASSERT_EQ(2u, hint_tables->PageInfos().size());
+
+  EXPECT_EQ(5u, hint_tables->PageInfos()[0].objects_count());
+  EXPECT_EQ(777, hint_tables->PageInfos()[0].page_offset());
+  EXPECT_EQ(4328u, hint_tables->PageInfos()[0].page_length());
+  EXPECT_EQ(39u, hint_tables->PageInfos()[0].start_obj_num());
+  ASSERT_EQ(2u, hint_tables->PageInfos()[0].Identifiers().size());
+
+  EXPECT_EQ(0u, hint_tables->PageInfos()[0].Identifiers()[0]);
+  EXPECT_EQ(0u, hint_tables->PageInfos()[0].Identifiers()[1]);
+
+  EXPECT_EQ(3u, hint_tables->PageInfos()[1].objects_count());
+  EXPECT_EQ(5105, hint_tables->PageInfos()[1].page_offset());
+  EXPECT_EQ(767u, hint_tables->PageInfos()[1].page_length());
+  EXPECT_EQ(1u, hint_tables->PageInfos()[1].start_obj_num());
+  ASSERT_EQ(3u, hint_tables->PageInfos()[1].Identifiers().size());
+
+  EXPECT_EQ(2u, hint_tables->PageInfos()[1].Identifiers()[0]);
+  EXPECT_EQ(5u, hint_tables->PageInfos()[1].Identifiers()[1]);
+  EXPECT_EQ(3u, hint_tables->PageInfos()[1].Identifiers()[2]);
+}

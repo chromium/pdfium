@@ -20,6 +20,46 @@ class CPDF_ReadValidator;
 
 class CPDF_HintTables {
  public:
+  class PageInfo {
+   public:
+    PageInfo();
+    ~PageInfo();
+
+    void set_objects_count(uint32_t objects_count) {
+      m_nObjectsCount = objects_count;
+    }
+    uint32_t objects_count() const { return m_nObjectsCount; }
+
+    void set_page_offset(FX_FILESIZE offset) { m_szOffset = offset; }
+    FX_FILESIZE page_offset() const { return m_szOffset; }
+
+    void set_page_length(uint32_t length) { m_dwLength = length; }
+    uint32_t page_length() const { return m_dwLength; }
+
+    void set_start_obj_num(uint32_t start_obj_num) {
+      m_dwStartObjNum = start_obj_num;
+    }
+    uint32_t start_obj_num() const { return m_dwStartObjNum; }
+
+    void AddIdentifier(uint32_t Identifier) {
+      m_dwIdentifierArray.push_back(Identifier);
+    }
+
+    const std::vector<uint32_t>& Identifiers() const {
+      return m_dwIdentifierArray;
+    }
+
+   private:
+    uint32_t m_nObjectsCount = 0;
+    FX_FILESIZE m_szOffset = 0;
+    uint32_t m_dwLength = 0;
+    uint32_t m_dwStartObjNum = 0;
+    std::vector<uint32_t> m_dwIdentifierArray;
+
+    PageInfo(const PageInfo& other) = delete;
+    PageInfo& operator=(const PageInfo&) = delete;
+  };
+
   CPDF_HintTables(CPDF_ReadValidator* pValidator,
                   CPDF_LinearizedHeader* pLinearized);
   virtual ~CPDF_HintTables();
@@ -32,6 +72,8 @@ class CPDF_HintTables {
   CPDF_DataAvail::DocAvailStatus CheckPage(uint32_t index);
 
   bool LoadHintStream(CPDF_Stream* pHintStream);
+
+  const std::vector<PageInfo>& PageInfos() const { return m_PageInfos; }
 
  protected:
   bool ReadPageHintTable(CFX_BitStream* hStream);
@@ -51,11 +93,9 @@ class CPDF_HintTables {
 
   uint32_t m_nFirstPageSharedObjs;
   FX_FILESIZE m_szFirstPageObjOffset;
-  std::vector<uint32_t> m_dwDeltaNObjsArray;
-  std::vector<uint32_t> m_dwNSharedObjsArray;
+
+  std::vector<PageInfo> m_PageInfos;
   std::vector<uint32_t> m_dwSharedObjNumArray;
-  std::vector<uint32_t> m_dwIdentifierArray;
-  std::vector<FX_FILESIZE> m_szPageOffsetArray;
   std::vector<FX_FILESIZE> m_szSharedObjOffsetArray;
 };
 
