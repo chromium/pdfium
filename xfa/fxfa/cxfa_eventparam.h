@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_EVENTPARAM_H_
 #define XFA_FXFA_CXFA_EVENTPARAM_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Node;
@@ -52,8 +53,9 @@ class CXFA_EventParam {
   CXFA_EventParam(const CXFA_EventParam& other);
 
   void Reset();
+  WideString GetNewText() const;
 
-  CXFA_Node* m_pTarget;
+  UnownedPtr<CXFA_Node> m_pTarget;
   XFA_EVENTTYPE m_eType;
   WideString m_wsResult;
   bool m_bCancelAction;
@@ -72,8 +74,6 @@ class CXFA_EventParam {
   WideString m_wsSoapFaultCode;
   WideString m_wsSoapFaultString;
   bool m_bIsFormReady;
-
-  WideString GetNewText() const;
 };
 
 #endif  // XFA_FXFA_CXFA_EVENTPARAM_H_

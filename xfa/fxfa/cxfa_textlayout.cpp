@@ -99,7 +99,7 @@ std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
 
   auto pBreak = pdfium::MakeUnique<CFX_RTFBreak>(dwStyle);
   pBreak->SetLineBreakTolerance(1);
-  pBreak->SetFont(m_textParser.GetFont(m_pDoc, m_pTextProvider, nullptr));
+  pBreak->SetFont(m_textParser.GetFont(m_pDoc.Get(), m_pTextProvider, nullptr));
   pBreak->SetFontSize(m_textParser.GetFontSize(m_pTextProvider, nullptr));
   return pBreak;
 }
@@ -161,7 +161,8 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
 
   float fFontSize = m_textParser.GetFontSize(m_pTextProvider, nullptr);
   m_pBreak->SetFontSize(fFontSize);
-  m_pBreak->SetFont(m_textParser.GetFont(m_pDoc, m_pTextProvider, nullptr));
+  m_pBreak->SetFont(
+      m_textParser.GetFont(m_pDoc.Get(), m_pTextProvider, nullptr));
   m_pBreak->SetLineBreakTolerance(fFontSize * 0.2f);
 }
 
@@ -241,7 +242,8 @@ void CXFA_TextLayout::InitBreak(CFX_CSSComputedStyle* pStyle,
   float fFontSize = m_textParser.GetFontSize(m_pTextProvider, pStyle);
   m_pBreak->SetFontSize(fFontSize);
   m_pBreak->SetLineBreakTolerance(fFontSize * 0.2f);
-  m_pBreak->SetFont(m_textParser.GetFont(m_pDoc, m_pTextProvider, pStyle));
+  m_pBreak->SetFont(
+      m_textParser.GetFont(m_pDoc.Get(), m_pTextProvider, pStyle));
   m_pBreak->SetHorizontalScale(
       m_textParser.GetHorScale(m_pTextProvider, pStyle, pXMLNode));
   m_pBreak->SetVerticalScale(m_textParser.GetVerScale(m_pTextProvider, pStyle));
@@ -488,7 +490,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
         }
       }
     } else {
-      pNode = m_pLoader->m_pNode;
+      pNode = m_pLoader->m_pNode.Get();
       if (!pNode)
         return true;
       LoadText(pNode, szText.width, &fLinePos, true);
@@ -1029,7 +1031,8 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
       m_textParser.GetLinethrough(m_pTextProvider, pStyle.Get(),
                                   pTP->iLineThrough);
       pTP->dwColor = m_textParser.GetColor(m_pTextProvider, pStyle.Get());
-      pTP->pFont = m_textParser.GetFont(m_pDoc, m_pTextProvider, pStyle.Get());
+      pTP->pFont =
+          m_textParser.GetFont(m_pDoc.Get(), m_pTextProvider, pStyle.Get());
       pTP->fFontSize = m_textParser.GetFontSize(m_pTextProvider, pStyle.Get());
       pTP->rtPiece.left = pPiece->m_iStartPos / 20000.0f;
       pTP->rtPiece.width = pPiece->m_iWidth / 20000.0f;

@@ -188,7 +188,7 @@ CJS_Return CJX_EventPseudoModel::emit(
   if (!pWidgetHandler)
     return CJS_Return();
 
-  pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
+  pWidgetHandler->ProcessEvent(pEventParam->m_pTarget.Get(), pEventParam);
   return CJS_Return();
 }
 

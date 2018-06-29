@@ -111,9 +111,9 @@ class CXFA_TextLayout {
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
 
-  CXFA_FFDoc* m_pDoc;
-  CXFA_TextProvider* m_pTextProvider;
-  CXFA_Node* m_pTextDataNode;
+  UnownedPtr<CXFA_FFDoc> m_pDoc;
+  CXFA_TextProvider* m_pTextProvider;  // Raw, TextProvider owned by tree node.
+  CXFA_Node* m_pTextDataNode;          // Raw, this class owned by tree node.
   bool m_bRichText;
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<CXFA_LoaderContext> m_pLoader;
