@@ -13,20 +13,14 @@
 
 namespace {
 
-bool Check3Components(cmsColorSpaceSignature cs, bool bDst) {
+bool Check3Components(cmsColorSpaceSignature cs) {
   switch (cs) {
     case cmsSigGrayData:
-      return false;
     case cmsSigCmykData:
-      if (bDst)
-        return false;
-      break;
-    case cmsSigLabData:
-    case cmsSigRgbData:
+      return false;
     default:
-      break;
+      return true;
   }
-  return true;
 }
 
 }  // namespace
@@ -90,26 +84,23 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
               srcCS == cmsSigCmykData;
   }
   cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile);
-  if (!Check3Components(dstCS, true)) {
+  if (!Check3Components(dstCS)) {
     cmsCloseProfile(srcProfile);
     cmsCloseProfile(dstProfile);
     return nullptr;
   }
 
   cmsHTRANSFORM hTransform = nullptr;
-  int intent = 0;
+  const int intent = 0;
   switch (dstCS) {
-    case cmsSigGrayData:
-      hTransform = cmsCreateTransform(srcProfile, srcFormat, dstProfile,
-                                      TYPE_GRAY_8, intent, 0);
-      break;
     case cmsSigRgbData:
       hTransform = cmsCreateTransform(srcProfile, srcFormat, dstProfile,
                                       TYPE_BGR_8, intent, 0);
       break;
+    case cmsSigGrayData:
     case cmsSigCmykData:
-      hTransform = cmsCreateTransform(srcProfile, srcFormat, dstProfile,
-                                      TYPE_CMYK_8, intent, 0);
+      // Check3Components() already filtered these types.
+      NOTREACHED();
       break;
     default:
       break;
