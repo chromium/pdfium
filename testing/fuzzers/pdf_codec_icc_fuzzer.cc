@@ -5,11 +5,12 @@
 #include <cstdint>
 
 #include "core/fxcodec/codec/ccodec_iccmodule.h"
+#include "third_party/base/span.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CCodec_IccModule icc_module;
   std::unique_ptr<CLcmsCmm> transform =
-      icc_module.CreateTransform_sRGB(data, size);
+      icc_module.CreateTransform_sRGB(pdfium::make_span(data, size));
 
   if (transform) {
     float src[4];

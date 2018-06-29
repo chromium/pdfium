@@ -50,10 +50,8 @@ CCodec_IccModule::CCodec_IccModule() {}
 CCodec_IccModule::~CCodec_IccModule() {}
 
 std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
-    const unsigned char* pSrcProfileData,
-    uint32_t dwSrcProfileSize) {
-  ScopedCmsProfile srcProfile(
-      cmsOpenProfileFromMem(pSrcProfileData, dwSrcProfileSize));
+    pdfium::span<const uint8_t> span) {
+  ScopedCmsProfile srcProfile(cmsOpenProfileFromMem(span.data(), span.size()));
   if (!srcProfile)
     return nullptr;
 

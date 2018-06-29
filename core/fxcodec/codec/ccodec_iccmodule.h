@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 
 #if defined(USE_SYSTEM_LCMS2)
 #include <lcms2.h>
@@ -45,8 +46,8 @@ class CCodec_IccModule {
   CCodec_IccModule();
   ~CCodec_IccModule();
 
-  std::unique_ptr<CLcmsCmm> CreateTransform_sRGB(const uint8_t* pProfileData,
-                                                 uint32_t dwProfileSize);
+  std::unique_ptr<CLcmsCmm> CreateTransform_sRGB(
+      pdfium::span<const uint8_t> span);
   void Translate(CLcmsCmm* pTransform,
                  const float* pSrcValues,
                  float* pDestValues);
