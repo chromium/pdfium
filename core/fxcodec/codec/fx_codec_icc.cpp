@@ -13,6 +13,13 @@
 
 namespace {
 
+// For use with std::unique_ptr<cmsHPROFILE>.
+struct CmsProfileDeleter {
+  inline void operator()(cmsHPROFILE p) { cmsCloseProfile(p); }
+};
+
+using ScopedCmsProfile = std::unique_ptr<void, CmsProfileDeleter>;
+
 bool Check3Components(cmsColorSpaceSignature cs) {
   switch (cs) {
     case cmsSigGrayData:
@@ -47,26 +54,21 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     uint32_t dwSrcProfileSize,
     uint32_t* nSrcComponents) {
   *nSrcComponents = 0;
-  cmsHPROFILE srcProfile =
-      cmsOpenProfileFromMem(pSrcProfileData, dwSrcProfileSize);
+  ScopedCmsProfile srcProfile(
+      cmsOpenProfileFromMem(pSrcProfileData, dwSrcProfileSize));
   if (!srcProfile)
     return nullptr;
 
-  cmsHPROFILE dstProfile;
-  dstProfile = cmsCreate_sRGBProfile();
-  if (!dstProfile) {
-    cmsCloseProfile(srcProfile);
+  ScopedCmsProfile dstProfile(cmsCreate_sRGBProfile());
+  if (!dstProfile)
     return nullptr;
-  }
-  cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile);
+
+  cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile.get());
 
   *nSrcComponents = cmsChannelsOf(srcCS);
   // According to PDF spec, number of components must be 1, 3, or 4.
-  if (*nSrcComponents != 1 && *nSrcComponents != 3 && *nSrcComponents != 4) {
-    cmsCloseProfile(srcProfile);
-    cmsCloseProfile(dstProfile);
+  if (*nSrcComponents != 1 && *nSrcComponents != 3 && *nSrcComponents != 4)
     return nullptr;
-  }
 
   int srcFormat;
   bool bLab = false;
@@ -83,19 +85,16 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     bNormal = srcCS == cmsSigGrayData || srcCS == cmsSigRgbData ||
               srcCS == cmsSigCmykData;
   }
-  cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile);
-  if (!Check3Components(dstCS)) {
-    cmsCloseProfile(srcProfile);
-    cmsCloseProfile(dstProfile);
+  cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile.get());
+  if (!Check3Components(dstCS))
     return nullptr;
-  }
 
   cmsHTRANSFORM hTransform = nullptr;
   const int intent = 0;
   switch (dstCS) {
     case cmsSigRgbData:
-      hTransform = cmsCreateTransform(srcProfile, srcFormat, dstProfile,
-                                      TYPE_BGR_8, intent, 0);
+      hTransform = cmsCreateTransform(srcProfile.get(), srcFormat,
+                                      dstProfile.get(), TYPE_BGR_8, intent, 0);
       break;
     case cmsSigGrayData:
     case cmsSigCmykData:
@@ -105,16 +104,11 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     default:
       break;
   }
-  if (!hTransform) {
-    cmsCloseProfile(srcProfile);
-    cmsCloseProfile(dstProfile);
+  if (!hTransform)
     return nullptr;
-  }
-  auto pCmm =
-      pdfium::MakeUnique<CLcmsCmm>(hTransform, *nSrcComponents, bLab, bNormal);
-  cmsCloseProfile(srcProfile);
-  cmsCloseProfile(dstProfile);
-  return pCmm;
+
+  return pdfium::MakeUnique<CLcmsCmm>(hTransform, *nSrcComponents, bLab,
+                                      bNormal);
 }
 
 void CCodec_IccModule::Translate(CLcmsCmm* pTransform,
