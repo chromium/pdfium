@@ -17,10 +17,6 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     PauseIndicatorIface* pPause) {
-  uint32_t GRAY;
-  std::unique_ptr<CJBig2_Image> BHDC;
-  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
-
   auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
@@ -28,7 +24,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
   pGRD->GBTEMPLATE = HDTEMPLATE;
   pGRD->TPGDON = 0;
   pGRD->USESKIP = 0;
-  pGRD->GBAT[0] = -(int32_t)HDPW;
+  pGRD->GBAT[0] = -1 * static_cast<int32_t>(HDPW);
   pGRD->GBAT[1] = 0;
   if (pGRD->GBTEMPLATE == 0) {
     pGRD->GBAT[2] = -3;
@@ -38,6 +34,8 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     pGRD->GBAT[6] = -2;
     pGRD->GBAT[7] = -2;
   }
+
+  std::unique_ptr<CJBig2_Image> BHDC;
   CJBig2_GRDProc::ProgressiveArithDecodeState state;
   state.pImage = &BHDC;
   state.pArithDecoder = pArithDecoder;
@@ -51,20 +49,15 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
   if (!BHDC)
     return nullptr;
 
-  GRAY = 0;
-  while (GRAY <= GRAYMAX) {
+  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
+  for (uint32_t GRAY = 0; GRAY <= GRAYMAX; ++GRAY)
     pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
-    GRAY = GRAY + 1;
-  }
   return pDict;
 }
 
 std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
     CJBig2_BitStream* pStream) {
-  uint32_t GRAY;
   std::unique_ptr<CJBig2_Image> BHDC;
-  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
-
   auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
@@ -73,10 +66,8 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeMMR(
   if (!BHDC)
     return nullptr;
 
-  GRAY = 0;
-  while (GRAY <= GRAYMAX) {
+  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>(GRAYMAX + 1);
+  for (uint32_t GRAY = 0; GRAY <= GRAYMAX; ++GRAY)
     pDict->HDPATS[GRAY] = BHDC->SubImage(HDPW * GRAY, 0, HDPW, HDPH);
-    GRAY = GRAY + 1;
-  }
   return pDict;
 }
