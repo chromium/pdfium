@@ -14,7 +14,30 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "third_party/base/optional.h"
 #include "third_party/base/ptr_util.h"
+
+namespace {
+
+Optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
+  FX_SAFE_UINT32 result = dimension;
+  result += delta;
+  if (!result.IsValid())
+    return {};
+  return {result.ValueOrDie()};
+}
+
+Optional<int32_t> CheckTRDReferenceDimension(uint32_t dimension,
+                                             uint32_t divisor,
+                                             int32_t offset) {
+  FX_SAFE_INT32 result = offset;
+  result += dimension / divisor;
+  if (!result.IsValid())
+    return {};
+  return {result.ValueOrDie()};
+}
+
+}  // namespace
 
 CJBig2_TRDProc::CJBig2_TRDProc() {}
 
@@ -133,20 +156,25 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         if (!IBOI)
           return nullptr;
 
-        uint32_t WOI = IBOI->width();
-        uint32_t HOI = IBOI->height();
-        if (static_cast<int>(WOI + RDWI) < 0 ||
-            static_cast<int>(HOI + RDHI) < 0) {
+        Optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
+        Optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
+        if (!WOI || !HOI)
           return nullptr;
-        }
+
+        Optional<int32_t> GRREFERENCEDX =
+            CheckTRDReferenceDimension(RDWI, 4, RDXI);
+        Optional<int32_t> GRREFERENCEDY =
+            CheckTRDReferenceDimension(RDHI, 4, RDYI);
+        if (!GRREFERENCEDX || !GRREFERENCEDY)
+          return nullptr;
 
         auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
-        pGRRD->GRW = WOI + RDWI;
-        pGRRD->GRH = HOI + RDHI;
+        pGRRD->GRW = WOI.value();
+        pGRRD->GRH = HOI.value();
         pGRRD->GRTEMPLATE = SBRTEMPLATE;
         pGRRD->GRREFERENCE = IBOI;
-        pGRRD->GRREFERENCEDX = (RDWI >> 2) + RDXI;
-        pGRRD->GRREFERENCEDY = (RDHI >> 2) + RDYI;
+        pGRRD->GRREFERENCEDX = GRREFERENCEDX.value();
+        pGRRD->GRREFERENCEDY = GRREFERENCEDY.value();
         pGRRD->TPGRON = 0;
         pGRRD->GRAT[0] = SBRAT[0];
         pGRRD->GRAT[1] = SBRAT[1];
@@ -308,20 +336,25 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         if (!IBOI)
           return nullptr;
 
-        uint32_t WOI = IBOI->width();
-        uint32_t HOI = IBOI->height();
-        if (static_cast<int>(WOI + RDWI) < 0 ||
-            static_cast<int>(HOI + RDHI) < 0) {
+        Optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
+        Optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
+        if (!WOI || !HOI)
           return nullptr;
-        }
+
+        Optional<int32_t> GRREFERENCEDX =
+            CheckTRDReferenceDimension(RDWI, 2, RDXI);
+        Optional<int32_t> GRREFERENCEDY =
+            CheckTRDReferenceDimension(RDHI, 2, RDYI);
+        if (!GRREFERENCEDX || !GRREFERENCEDY)
+          return nullptr;
 
         auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
-        pGRRD->GRW = WOI + RDWI;
-        pGRRD->GRH = HOI + RDHI;
+        pGRRD->GRW = WOI.value();
+        pGRRD->GRH = HOI.value();
         pGRRD->GRTEMPLATE = SBRTEMPLATE;
         pGRRD->GRREFERENCE = IBOI;
-        pGRRD->GRREFERENCEDX = (RDWI >> 1) + RDXI;
-        pGRRD->GRREFERENCEDY = (RDHI >> 1) + RDYI;
+        pGRRD->GRREFERENCEDX = GRREFERENCEDX.value();
+        pGRRD->GRREFERENCEDY = GRREFERENCEDY.value();
         pGRRD->TPGRON = 0;
         pGRRD->GRAT[0] = SBRAT[0];
         pGRRD->GRAT[1] = SBRAT[1];
