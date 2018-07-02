@@ -13,8 +13,8 @@
 namespace {
 
 bool DetectSRGB(pdfium::span<const uint8_t> span) {
-  return span.size() == 3144 &&
-         memcmp(span.data() + 0x190, "sRGB IEC61966-2.1", 17) == 0;
+  static const char kSRGB[] = "sRGB IEC61966-2.1";
+  return span.size() == 3144 && memcmp(&span[400], kSRGB, strlen(kSRGB)) == 0;
 }
 
 }  // namespace
