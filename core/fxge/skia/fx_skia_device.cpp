@@ -363,13 +363,13 @@ bool AddColors(const CPDF_ExpIntFunc* pFunc, SkTDArray<SkColor>* skColors) {
   if (pFunc->m_nOrigOutputs != 3)
     return false;
   skColors->push(
-      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_pBeginValues[0]),
-                     SkUnitScalarClampToByte(pFunc->m_pBeginValues[1]),
-                     SkUnitScalarClampToByte(pFunc->m_pBeginValues[2])));
+      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_BeginValues[0]),
+                     SkUnitScalarClampToByte(pFunc->m_BeginValues[1]),
+                     SkUnitScalarClampToByte(pFunc->m_BeginValues[2])));
   skColors->push(
-      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_pEndValues[0]),
-                     SkUnitScalarClampToByte(pFunc->m_pEndValues[1]),
-                     SkUnitScalarClampToByte(pFunc->m_pEndValues[2])));
+      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_EndValues[0]),
+                     SkUnitScalarClampToByte(pFunc->m_EndValues[1]),
+                     SkUnitScalarClampToByte(pFunc->m_EndValues[2])));
   return true;
 }
 

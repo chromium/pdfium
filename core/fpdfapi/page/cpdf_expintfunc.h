@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
 
 #include <set>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_function.h"
 
@@ -23,8 +24,8 @@ class CPDF_ExpIntFunc : public CPDF_Function {
 
   uint32_t m_nOrigOutputs = 0;
   float m_Exponent = 0.0f;
-  float* m_pBeginValues = nullptr;
-  float* m_pEndValues = nullptr;
+  std::vector<float> m_BeginValues;
+  std::vector<float> m_EndValues;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
