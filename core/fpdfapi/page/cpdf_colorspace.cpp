@@ -245,7 +245,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
   uint32_t m_nBaseComponents = 0;
   int m_MaxIndex = 0;
   ByteString m_Table;
-  float* m_pCompMinMax = nullptr;
+  std::vector<float> m_pCompMinMax;
 };
 
 class CPDF_SeparationCS : public CPDF_ColorSpace {
@@ -1089,7 +1089,6 @@ CPDF_IndexedCS::CPDF_IndexedCS(CPDF_Document* pDoc)
     : CPDF_ColorSpace(pDoc, PDFCS_INDEXED) {}
 
 CPDF_IndexedCS::~CPDF_IndexedCS() {
-  FX_Free(m_pCompMinMax);
   const CPDF_ColorSpace* pCS =
       m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
   if (pCS && m_pDocument) {
@@ -1122,7 +1121,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
 
   m_pCountedBaseCS = pDocPageData->FindColorSpacePtr(m_pBaseCS->GetArray());
   m_nBaseComponents = m_pBaseCS->CountComponents();
-  m_pCompMinMax = FX_Alloc2D(float, m_nBaseComponents, 2);
+  m_pCompMinMax = pdfium::Vector2D<float>(m_nBaseComponents, 2);
   float defvalue;
   for (uint32_t i = 0; i < m_nBaseComponents; i++) {
     m_pBaseCS->GetDefaultValue(i, &defvalue, &m_pCompMinMax[i * 2],
