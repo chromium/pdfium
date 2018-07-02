@@ -9,8 +9,10 @@
 #include <iterator>
 #include <memory>
 #include <set>
+#include <vector>
 
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/numerics/safe_math.h"
 
 namespace pdfium {
 
@@ -72,6 +74,14 @@ class ScopedSetInsertion {
 template <class T>
 constexpr const T& clamp(const T& v, const T& lo, const T& hi) {
   return std::min(std::max(v, lo), hi);
+}
+
+// Safely allocate a 1-dim vector big enough for |w| by |h| or die.
+template <typename T>
+std::vector<T> Vector2D(size_t w, size_t h) {
+  pdfium::base::CheckedNumeric<size_t> safe_size = w;
+  safe_size *= h;
+  return std::vector<T>(safe_size.ValueOrDie());
 }
 
 }  // namespace pdfium

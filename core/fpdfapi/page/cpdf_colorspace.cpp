@@ -222,7 +222,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
 
   MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
   RetainPtr<CPDF_IccProfile> m_pProfile;
-  mutable std::unique_ptr<uint8_t, FxFreeDeleter> m_pCache;
+  mutable std::vector<uint8_t> m_pCache;
   std::vector<float> m_pRanges;
 };
 
@@ -984,24 +984,22 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
     return;
   }
 
-  if (!m_pCache) {
-    m_pCache.reset(FX_Alloc2D(uint8_t, nMaxColors, 3));
-    std::unique_ptr<uint8_t, FxFreeDeleter> temp_src(
-        FX_Alloc2D(uint8_t, nMaxColors, nComponents));
-    uint8_t* pSrc = temp_src.get();
+  if (m_pCache.empty()) {
+    m_pCache = pdfium::Vector2D<uint8_t>(nMaxColors, 3);
+    auto temp_src = pdfium::Vector2D<uint8_t>(nMaxColors, nComponents);
+    size_t src_index = 0;
     for (int i = 0; i < nMaxColors; i++) {
       uint32_t color = i;
       uint32_t order = nMaxColors / 52;
       for (uint32_t c = 0; c < nComponents; c++) {
-        *pSrc++ = static_cast<uint8_t>(color / order * 5);
+        temp_src[src_index++] = static_cast<uint8_t>(color / order * 5);
         color %= order;
         order /= 52;
       }
     }
     CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
-        m_pProfile->transform(), m_pCache.get(), temp_src.get(), nMaxColors);
+        m_pProfile->transform(), m_pCache.data(), temp_src.data(), nMaxColors);
   }
-  uint8_t* pCachePtr = m_pCache.get();
   for (int i = 0; i < pixels; i++) {
     int index = 0;
     for (uint32_t c = 0; c < nComponents; c++) {
@@ -1009,9 +1007,9 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
       pSrcBuf++;
     }
     index *= 3;
-    *pDestBuf++ = pCachePtr[index];
-    *pDestBuf++ = pCachePtr[index + 1];
-    *pDestBuf++ = pCachePtr[index + 2];
+    *pDestBuf++ = m_pCache[index];
+    *pDestBuf++ = m_pCache[index + 1];
+    *pDestBuf++ = m_pCache[index + 2];
   }
 }
 
