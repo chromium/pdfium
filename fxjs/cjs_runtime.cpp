@@ -79,7 +79,7 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
 }
 
 CJS_Runtime::~CJS_Runtime() {
-  NotifyObservedPtrs();
+  NotifyObservers();
   ReleaseEngine();
   if (m_isolateManaged) {
     GetIsolate()->Dispose();

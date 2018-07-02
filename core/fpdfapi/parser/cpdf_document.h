@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfdoc/cpdf_linklist.h"
+#include "core/fxcrt/observable.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_Font;
@@ -40,7 +41,8 @@ class JBig2_DocumentContext;
 #define FPDFPERM_FILL_FORM 0x0100
 #define FPDFPERM_EXTRACT_ACCESS 0x0200
 
-class CPDF_Document : public CPDF_Parser::ParsedObjectsHolder {
+class CPDF_Document : public Observable<CPDF_Document>,
+                      public CPDF_Parser::ParsedObjectsHolder {
  public:
   // Type from which the XFA extension can subclass itself.
   class Extension {

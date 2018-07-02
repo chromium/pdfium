@@ -15,26 +15,34 @@ namespace fxcrt {
 template <class T>
 class Observable {
  public:
-  class ObservedPtr {
+  // General-purpose interface for more complicated cleanup.
+  class Observer {
+   public:
+    virtual ~Observer() = default;
+    virtual void OnObservableDestroyed() = 0;
+  };
+
+  // Simple case of a self-nulling pointer.
+  class ObservedPtr final : public Observer {
    public:
     ObservedPtr() : m_pObservable(nullptr) {}
     explicit ObservedPtr(T* pObservable) : m_pObservable(pObservable) {
       if (m_pObservable)
-        m_pObservable->AddObservedPtr(this);
+        m_pObservable->AddObserver(this);
     }
     ObservedPtr(const ObservedPtr& that) : ObservedPtr(that.Get()) {}
     ~ObservedPtr() {
       if (m_pObservable)
-        m_pObservable->RemoveObservedPtr(this);
+        m_pObservable->RemoveObserver(this);
     }
     void Reset(T* pObservable = nullptr) {
       if (m_pObservable)
-        m_pObservable->RemoveObservedPtr(this);
+        m_pObservable->RemoveObserver(this);
       m_pObservable = pObservable;
       if (m_pObservable)
-        m_pObservable->AddObservedPtr(this);
+        m_pObservable->AddObserver(this);
     }
-    void OnDestroy() {
+    void OnObservableDestroyed() override {
       ASSERT(m_pObservable);
       m_pObservable = nullptr;
     }
@@ -57,27 +65,27 @@ class Observable {
 
   Observable() = default;
   Observable(const Observable& that) = delete;
-  ~Observable() { NotifyObservedPtrs(); }
-  void AddObservedPtr(ObservedPtr* pObservedPtr) {
-    ASSERT(!pdfium::ContainsKey(m_ObservedPtrs, pObservedPtr));
-    m_ObservedPtrs.insert(pObservedPtr);
+  ~Observable() { NotifyObservers(); }
+  void AddObserver(Observer* pObserver) {
+    ASSERT(!pdfium::ContainsKey(m_Observers, pObserver));
+    m_Observers.insert(pObserver);
   }
-  void RemoveObservedPtr(ObservedPtr* pObservedPtr) {
-    ASSERT(pdfium::ContainsKey(m_ObservedPtrs, pObservedPtr));
-    m_ObservedPtrs.erase(pObservedPtr);
+  void RemoveObserver(Observer* pObserver) {
+    ASSERT(pdfium::ContainsKey(m_Observers, pObserver));
+    m_Observers.erase(pObserver);
   }
-  void NotifyObservedPtrs() {
-    for (auto* pObservedPtr : m_ObservedPtrs)
-      pObservedPtr->OnDestroy();
-    m_ObservedPtrs.clear();
+  void NotifyObservers() {
+    for (auto* pObserver : m_Observers)
+      pObserver->OnObservableDestroyed();
+    m_Observers.clear();
   }
   Observable& operator=(const Observable& that) = delete;
 
  protected:
-  size_t ActiveObservedPtrsForTesting() const { return m_ObservedPtrs.size(); }
+  size_t ActiveObserversForTesting() const { return m_Observers.size(); }
 
  private:
-  std::set<ObservedPtr*> m_ObservedPtrs;
+  std::set<Observer*> m_Observers;
 };
 
 }  // namespace fxcrt

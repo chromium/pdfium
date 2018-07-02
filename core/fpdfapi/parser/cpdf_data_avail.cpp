@@ -70,17 +70,6 @@ class HintsScope {
   UnownedPtr<CPDF_ReadValidator> validator_;
 };
 
-class CPDF_DocumentForAvail : public CPDF_Document {
- public:
-  explicit CPDF_DocumentForAvail(CPDF_DataAvail* avail) : m_pAvail(avail) {
-    DCHECK(avail);
-  }
-  ~CPDF_DocumentForAvail() override { m_pAvail->BeforeDocumentDestroyed(); }
-
- private:
-  UnownedPtr<CPDF_DataAvail> m_pAvail;
-};
-
 }  // namespace
 
 CPDF_DataAvail::FileAvail::~FileAvail() {}
@@ -98,9 +87,11 @@ CPDF_DataAvail::CPDF_DataAvail(
 
 CPDF_DataAvail::~CPDF_DataAvail() {
   m_pHintTables.reset();
+  if (m_pDocument)
+    m_pDocument->RemoveObserver(this);
 }
 
-void CPDF_DataAvail::BeforeDocumentDestroyed() {
+void CPDF_DataAvail::OnObservableDestroyed() {
   m_pDocument = nullptr;
   m_pFormAvail.reset();
   m_PagesArray.clear();
@@ -1031,7 +1022,8 @@ CPDF_DataAvail::ParseDocument(const char* password) {
     // We already returned parsed document.
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
   }
-  auto document = pdfium::MakeUnique<CPDF_DocumentForAvail>(this);
+  auto document = pdfium::MakeUnique<CPDF_Document>();
+  document->AddObserver(this);
 
   CPDF_ReadValidator::Session read_session(GetValidator().Get());
   CPDF_Parser::Error error =

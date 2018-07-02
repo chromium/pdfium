@@ -13,13 +13,13 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_CrossRefAvail;
 class CPDF_Dictionary;
-class CPDF_Document;
 class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
 class CPDF_LinearizedHeader;
@@ -50,7 +50,7 @@ enum PDF_PAGENODE_TYPE {
   PDF_PAGENODE_ARRAY,
 };
 
-class CPDF_DataAvail final {
+class CPDF_DataAvail final : public CPDF_Document::Observer {
  public:
   // Must match PDF_DATA_* definitions in public/fpdf_dataavail.h, but cannot
   // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
@@ -95,9 +95,10 @@ class CPDF_DataAvail final {
   CPDF_DataAvail(FileAvail* pFileAvail,
                  const RetainPtr<IFX_SeekableReadStream>& pFileRead,
                  bool bSupportHintTable);
-  ~CPDF_DataAvail();
+  ~CPDF_DataAvail() override;
 
-  void BeforeDocumentDestroyed();
+  // CPDF_Document::Observer:
+  void OnObservableDestroyed() override;
 
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);

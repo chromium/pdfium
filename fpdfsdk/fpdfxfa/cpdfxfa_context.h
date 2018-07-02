@@ -14,13 +14,13 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CJS_Runtime;
-class CPDFSDK_FormFillEnvironment;
 class CXFA_FFDocHandler;
 class IJS_EventContext;
 class IJS_Runtime;
