@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFWL_Widget;
 
@@ -21,16 +22,21 @@ class CFWL_Message {
   explicit CFWL_Message(Type type);
   CFWL_Message(Type type, CFWL_Widget* pSrcTarget);
   CFWL_Message(Type type, CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
+  CFWL_Message(const CFWL_Message& that);
   virtual ~CFWL_Message();
 
   virtual std::unique_ptr<CFWL_Message> Clone();
-  Type GetType() const { return m_type; }
 
-  CFWL_Widget* m_pSrcTarget;
-  CFWL_Widget* m_pDstTarget;
+  Type GetType() const { return m_type; }
+  CFWL_Widget* GetSrcTarget() const { return m_pSrcTarget.Get(); }
+  CFWL_Widget* GetDstTarget() const { return m_pDstTarget.Get(); }
+  void SetSrcTarget(CFWL_Widget* pWidget) { m_pSrcTarget = pWidget; }
+  void SetDstTarget(CFWL_Widget* pWidget) { m_pDstTarget = pWidget; }
 
  private:
-  Type m_type;
+  const Type m_type;
+  UnownedPtr<CFWL_Widget> m_pSrcTarget;
+  UnownedPtr<CFWL_Widget> m_pDstTarget;
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGE_H_

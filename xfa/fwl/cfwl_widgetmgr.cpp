@@ -358,10 +358,11 @@ void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
 void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
-  if (!pMessage->m_pDstTarget)
+
+  CFWL_Widget* pDstWidget = pMessage->GetDstTarget();
+  if (!pDstWidget)
     return;
 
-  CFWL_Widget* pDstWidget = pMessage->m_pDstTarget;
   const CFWL_App* pApp = pDstWidget->GetOwnerApp();
   if (!pApp)
     return;

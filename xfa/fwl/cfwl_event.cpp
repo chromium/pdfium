@@ -6,15 +6,14 @@
 
 #include "xfa/fwl/cfwl_event.h"
 
-CFWL_Event::CFWL_Event(CFWL_Event::Type type)
-    : CFWL_Event(type, nullptr, nullptr) {}
+CFWL_Event::CFWL_Event(CFWL_Event::Type type) : m_type(type) {}
 
 CFWL_Event::CFWL_Event(Type type, CFWL_Widget* pSrcTarget)
-    : CFWL_Event(type, pSrcTarget, nullptr) {}
+    : m_type(type), m_pSrcTarget(pSrcTarget) {}
 
 CFWL_Event::CFWL_Event(Type type,
                        CFWL_Widget* pSrcTarget,
                        CFWL_Widget* pDstTarget)
-    : m_pSrcTarget(pSrcTarget), m_pDstTarget(pDstTarget), m_type(type) {}
+    : m_type(type), m_pSrcTarget(pSrcTarget), m_pDstTarget(pDstTarget) {}
 
-CFWL_Event::~CFWL_Event() {}
+CFWL_Event::~CFWL_Event() = default;

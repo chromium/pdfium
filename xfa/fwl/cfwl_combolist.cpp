@@ -208,7 +208,7 @@ bool CFWL_ComboList::OnDropListKey(CFWL_MessageKey* pKey) {
     bPropagate = true;
   }
   if (bPropagate) {
-    pKey->m_pDstTarget = m_pOuter;
+    pKey->SetDstTarget(m_pOuter);
     pOuter->GetDelegate()->OnProcessMessage(pKey);
     return true;
   }

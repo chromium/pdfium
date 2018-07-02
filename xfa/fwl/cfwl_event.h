@@ -39,12 +39,13 @@ class CFWL_Event {
   virtual ~CFWL_Event();
 
   Type GetType() const { return m_type; }
-
-  CFWL_Widget* m_pSrcTarget;
-  CFWL_Widget* m_pDstTarget;
+  CFWL_Widget* GetSrcTarget() const { return m_pSrcTarget.Get(); }
+  CFWL_Widget* GetDstTarget() const { return m_pDstTarget.Get(); }
 
  private:
-  Type m_type;
+  const Type m_type;
+  UnownedPtr<CFWL_Widget> const m_pSrcTarget;
+  UnownedPtr<CFWL_Widget> const m_pDstTarget;
 };
 
 #endif  // XFA_FWL_CFWL_EVENT_H_

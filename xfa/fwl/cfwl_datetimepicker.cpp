@@ -395,7 +395,7 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
                           m_pProperties->m_rtWidget.height - 1);
     }
     rtInvalidate = m_rtBtn;
-    pMsg->m_pDstTarget = m_pEdit.get();
+    pMsg->SetDstTarget(m_pEdit.get());
     m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
   } else {
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
@@ -404,7 +404,7 @@ void CFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
     if (IsMonthCalendarVisible())
       ShowMonthCalendar(false);
     if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
-      pMsg->m_pSrcTarget = m_pEdit.get();
+      pMsg->SetSrcTarget(m_pEdit.get());
       m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
     }
   }

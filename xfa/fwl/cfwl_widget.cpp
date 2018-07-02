@@ -448,14 +448,13 @@ bool CFWL_Widget::IsParent(CFWL_Widget* pParent) {
 }
 
 void CFWL_Widget::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage->m_pDstTarget)
+  CFWL_Widget* pWidget = pMessage->GetDstTarget();
+  if (!pWidget)
     return;
 
-  CFWL_Widget* pWidget = pMessage->m_pDstTarget;
   switch (pMessage->GetType()) {
     case CFWL_Message::Type::Mouse: {
       CFWL_MessageMouse* pMsgMouse = static_cast<CFWL_MessageMouse*>(pMessage);
-
       CFWL_EventMouse evt(pWidget, pWidget);
       evt.m_dwCmd = pMsgMouse->m_dwCmd;
       pWidget->DispatchEvent(&evt);
