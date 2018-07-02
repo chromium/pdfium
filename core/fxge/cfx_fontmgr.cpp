@@ -20,7 +20,7 @@
 namespace {
 
 struct BuiltinFont {
-  const uint8_t* m_pFontData;
+  const uint8_t* m_pFontData;  // Raw, POD struct.
   uint32_t m_dwSize;
 };
 

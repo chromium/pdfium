@@ -20,8 +20,8 @@ namespace {
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
 struct GlyphNameMap {
-  const char* m_pStrAdobe;
-  const char* m_pStrUnicode;
+  const char* m_pStrAdobe;    // Raw, POD struct.
+  const char* m_pStrUnicode;  // Raw, POD struct.
 };
 
 const GlyphNameMap g_GlyphNameSubsts[] = {{"ff", "uniFB00"},

@@ -23,7 +23,7 @@ struct ByteRange {
 };
 
 struct PredefinedCMap {
-  const char* m_pName;
+  const char* m_pName;  // Raw, POD struct.
   CIDSet m_Charset;
   CIDCoding m_Coding;
   CPDF_CMap::CodingScheme m_CodingScheme;

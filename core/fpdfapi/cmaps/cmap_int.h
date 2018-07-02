@@ -20,9 +20,9 @@ struct FXCMAP_DWordCIDMap {
 struct FXCMAP_CMap {
   enum MapType : uint8_t { Single, Range };
 
-  const char* m_Name;
-  const uint16_t* m_pWordMap;
-  const FXCMAP_DWordCIDMap* m_pDWordMap;
+  const char* m_Name;                     // Raw, POD struct.
+  const uint16_t* m_pWordMap;             // Raw, POD struct.
+  const FXCMAP_DWordCIDMap* m_pDWordMap;  // Raw, POD struct.
   uint16_t m_WordCount;
   uint16_t m_DWordCount;
   MapType m_WordMapType;

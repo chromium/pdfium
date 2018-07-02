@@ -41,10 +41,12 @@ const char* const g_Base14FontNames[kNumStandardFonts] = {
     "ZapfDingbats",
 };
 
-const struct AltFontName {
-  const char* m_pName;
+struct AltFontName {
+  const char* m_pName;  // Raw, POD struct.
   int m_Index;
-} g_AltFontNames[] = {
+};
+
+const AltFontName g_AltFontNames[] = {
     {"Arial", 4},
     {"Arial,Bold", 5},
     {"Arial,BoldItalic", 6},
@@ -136,10 +138,12 @@ const struct AltFontName {
     {"ZapfDingbats", 13},
 };
 
-const struct AltFontFamily {
-  const char* m_pFontName;
-  const char* m_pFontFamily;
-} g_AltFontFamilies[] = {
+struct AltFontFamily {
+  const char* m_pFontName;    // Raw, POD struct.
+  const char* m_pFontFamily;  // Raw, POD struct.
+};
+
+const AltFontFamily g_AltFontFamilies[] = {
     {"AGaramondPro", "Adobe Garamond Pro"},
     {"BankGothicBT-Medium", "BankGothic Md BT"},
     {"ForteMT", "Forte"},
