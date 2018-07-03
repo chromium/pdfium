@@ -59,7 +59,6 @@ std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
   ASSERT(height);
 
   auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(width, height);
-  matrix->Init();
   int32_t matrixY = 0;
   for (int32_t y = 0; y < symbolHeight; y++) {
     int32_t matrixX;
@@ -144,6 +143,6 @@ uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
   outWidth = bytematrix->GetWidth();
   outHeight = bytematrix->GetHeight();
   uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
-  memcpy(result, bytematrix->GetArray(), outWidth * outHeight);
+  memcpy(result, bytematrix->GetArray().data(), outWidth * outHeight);
   return result;
 }

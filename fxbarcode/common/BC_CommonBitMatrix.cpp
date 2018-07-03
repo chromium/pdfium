@@ -22,9 +22,13 @@
 
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 
+#include <algorithm>
+#include <iterator>
+
 #include "fxbarcode/common/BC_CommonBitArray.h"
 #include "fxbarcode/utils.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() {}
 
@@ -33,8 +37,7 @@ void CBC_CommonBitMatrix::Init(int32_t dimension) {
   m_height = dimension;
   int32_t rowSize = (m_height + 31) >> 5;
   m_rowSize = rowSize;
-  m_bits = FX_Alloc2D(int32_t, m_rowSize, m_height);
-  memset(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
+  m_bits = pdfium::Vector2D<int32_t>(m_rowSize, m_height);
 }
 
 void CBC_CommonBitMatrix::Init(int32_t width, int32_t height) {
@@ -42,13 +45,10 @@ void CBC_CommonBitMatrix::Init(int32_t width, int32_t height) {
   m_height = height;
   int32_t rowSize = (width + 31) >> 5;
   m_rowSize = rowSize;
-  m_bits = FX_Alloc2D(int32_t, m_rowSize, m_height);
-  memset(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
+  m_bits = pdfium::Vector2D<int32_t>(m_rowSize, m_height);
 }
 
-CBC_CommonBitMatrix::~CBC_CommonBitMatrix() {
-  FX_Free(m_bits);
-}
+CBC_CommonBitMatrix::~CBC_CommonBitMatrix() = default;
 
 bool CBC_CommonBitMatrix::Get(int32_t x, int32_t y) const {
   int32_t offset = y * m_rowSize + (x >> 5);
@@ -70,7 +70,7 @@ void CBC_CommonBitMatrix::Flip(int32_t x, int32_t y) {
 }
 
 void CBC_CommonBitMatrix::Clear() {
-  memset(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
+  std::fill(std::begin(m_bits), std::end(m_bits), 0);
 }
 
 bool CBC_CommonBitMatrix::SetRegion(int32_t left,
