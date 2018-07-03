@@ -7,6 +7,7 @@
 #ifndef XFA_FWL_CFWL_THEMEBACKGROUND_H_
 #define XFA_FWL_CFWL_THEMEBACKGROUND_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_themepart.h"
 
 class CXFA_Graphics;
@@ -17,13 +18,12 @@ class CFWL_ThemeBackground : public CFWL_ThemePart {
   CFWL_ThemeBackground();
   ~CFWL_ThemeBackground();
 
-  CXFA_Graphics* m_pGraphics;
-  CXFA_GEPath* m_pPath;
+  UnownedPtr<CXFA_Graphics> m_pGraphics;
+  UnownedPtr<CXFA_GEPath> m_pPath;
 };
 
-inline CFWL_ThemeBackground::CFWL_ThemeBackground()
-    : m_pGraphics(nullptr), m_pPath(nullptr) {}
+inline CFWL_ThemeBackground::CFWL_ThemeBackground() = default;
 
-inline CFWL_ThemeBackground::~CFWL_ThemeBackground() {}
+inline CFWL_ThemeBackground::~CFWL_ThemeBackground() = default;
 
 #endif  // XFA_FWL_CFWL_THEMEBACKGROUND_H_

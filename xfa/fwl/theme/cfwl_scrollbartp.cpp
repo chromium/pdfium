@@ -38,7 +38,7 @@ void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   else if (pParams->m_dwStates & CFWL_PartState_Disabled)
     eState = FWLTHEME_STATE_Disable;
 
-  CXFA_Graphics* pGraphics = pParams->m_pGraphics;
+  CXFA_Graphics* pGraphics = pParams->m_pGraphics.Get();
   CFX_RectF* pRect = &pParams->m_rtPart;
   bool bVert = !!pWidget->GetStylesEx();
   switch (pParams->m_iPart) {
