@@ -624,7 +624,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
         dwStyles |= XFA_RESOLVENODE_Bind;
         findObjects.clear();
         findObjects.push_back(
-            m_ResolveProcessor->GetNodeHelper()->m_pAllStartParent);
+            m_ResolveProcessor->GetNodeHelper()->m_pAllStartParent.Get());
         continue;
       }
       break;
@@ -724,7 +724,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
                   XFA_RESOLVENODE_BindNew)) {
     CXFA_NodeHelper* helper = m_ResolveProcessor->GetNodeHelper();
     if (helper->m_pCreateParent)
-      resolveNodeRS->objects.push_back(helper->m_pCreateParent);
+      resolveNodeRS->objects.push_back(helper->m_pCreateParent.Get());
     else
       helper->CreateNode_ForCondition(rndFind.m_wsCondition);
 

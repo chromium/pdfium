@@ -17,15 +17,9 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_NodeHelper::CXFA_NodeHelper()
-    : m_eLastCreateType(XFA_Element::DataValue),
-      m_pCreateParent(nullptr),
-      m_iCreateCount(0),
-      m_iCreateFlag(XFA_ResolveNode_RSType_CreateNodeOne),
-      m_iCurAllStart(-1),
-      m_pAllStartParent(nullptr) {}
+CXFA_NodeHelper::CXFA_NodeHelper() = default;
 
-CXFA_NodeHelper::~CXFA_NodeHelper() {}
+CXFA_NodeHelper::~CXFA_NodeHelper() = default;
 
 CXFA_Node* CXFA_NodeHelper::ResolveNodes_GetOneChild(CXFA_Node* parent,
                                                      const wchar_t* pwsName,
