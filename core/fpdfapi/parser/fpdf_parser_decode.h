@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CCodec_ScanlineDecoder;
 class CPDF_Dictionary;
@@ -80,6 +81,6 @@ bool PDF_DataDecode(const uint8_t* src_buf,
                     uint8_t** dest_buf,
                     uint32_t* dest_size,
                     ByteString* ImageEncoding,
-                    const CPDF_Dictionary** pImageParms);
+                    UnownedPtr<const CPDF_Dictionary>* pImageParms);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_
