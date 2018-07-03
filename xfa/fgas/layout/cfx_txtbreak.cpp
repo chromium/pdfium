@@ -293,7 +293,7 @@ bool CFX_TxtBreak::EndBreak_SplitLine(CFX_BreakLine* pNextLine,
       case FX_CHARTYPE_Space:
         break;
       default:
-        SplitTextLine(m_pCurLine, pNextLine, bAllChars);
+        SplitTextLine(m_pCurLine.Get(), pNextLine, bAllChars);
         bDone = true;
         break;
     }

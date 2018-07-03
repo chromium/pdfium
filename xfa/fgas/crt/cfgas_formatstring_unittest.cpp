@@ -44,6 +44,7 @@ class CFGAS_FormatStringTest : public testing::Test {
   // Note, this re-creates the fmt on each call. If you need to multiple
   // times store it locally.
   CFGAS_FormatString* fmt(const WideString& locale) {
+    fmt_.reset();  // Can't outlive |mgr_|.
     mgr_ = pdfium::MakeUnique<CXFA_LocaleMgr>(nullptr, locale);
     fmt_ = pdfium::MakeUnique<CFGAS_FormatString>(mgr_.get());
     return fmt_.get();

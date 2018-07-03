@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/locale_iface.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime);
@@ -67,7 +68,7 @@ class CFGAS_FormatString {
                                     WideString* wsDatePattern,
                                     WideString* wsTimePattern);
 
-  CXFA_LocaleMgr* m_pLocaleMgr;
+  UnownedPtr<CXFA_LocaleMgr> m_pLocaleMgr;
 };
 
 #endif  // XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_

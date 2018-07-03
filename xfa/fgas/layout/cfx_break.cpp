@@ -19,29 +19,11 @@ const int kMinimumTabWidth = 160000;
 }  // namespace
 
 CFX_Break::CFX_Break(uint32_t dwLayoutStyles)
-    : m_eCharType(FX_CHARTYPE_Unknown),
-      m_bSingleLine(false),
-      m_bCombText(false),
-      m_dwIdentity(0),
-      m_dwLayoutStyles(dwLayoutStyles),
-      m_iLineStart(0),
-      m_iLineWidth(2000000),
-      m_wParagraphBreakChar(L'\n'),
-      m_iFontSize(240),
-      m_iTabWidth(720000),
-      m_iHorizontalScale(100),
-      m_iVerticalScale(100),
-      m_iTolerance(0),
-      m_iCharSpace(0),
-      m_iDefChar(0),
-      m_wDefChar(0xFEFF),
-      m_pFont(nullptr),
-      m_pCurLine(nullptr),
-      m_iReadyLineIndex(-1) {
+    : m_dwLayoutStyles(dwLayoutStyles) {
   m_pCurLine = &m_Line[0];
 }
 
-CFX_Break::~CFX_Break() {}
+CFX_Break::~CFX_Break() = default;
 
 void CFX_Break::Reset() {
   m_eCharType = FX_CHARTYPE_Unknown;

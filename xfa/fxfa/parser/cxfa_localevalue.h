@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class LocaleIface;
@@ -28,7 +29,6 @@ class CXFA_LocaleMgr;
 class CXFA_LocaleValue {
  public:
   CXFA_LocaleValue();
-  CXFA_LocaleValue(const CXFA_LocaleValue& value);
   CXFA_LocaleValue(uint32_t dwType, CXFA_LocaleMgr* pLocaleMgr);
   CXFA_LocaleValue(uint32_t dwType,
                    const WideString& wsValue,
@@ -38,8 +38,10 @@ class CXFA_LocaleValue {
                    const WideString& wsFormat,
                    LocaleIface* pLocale,
                    CXFA_LocaleMgr* pLocaleMgr);
+  CXFA_LocaleValue(const CXFA_LocaleValue& that);
   ~CXFA_LocaleValue();
-  CXFA_LocaleValue& operator=(const CXFA_LocaleValue& value);
+
+  CXFA_LocaleValue& operator=(const CXFA_LocaleValue& that);
 
   bool ValidateValue(const WideString& wsValue,
                      const WideString& wsPattern,
@@ -56,14 +58,13 @@ class CXFA_LocaleValue {
                            const WideString& wsFormat,
                            LocaleIface* pLocale);
 
+  bool IsValid() const { return m_bValid; }
   WideString GetValue() const { return m_wsValue; }
   uint32_t GetType() const { return m_dwType; }
   double GetDoubleNum() const;
   bool SetDate(const CFX_DateTime& d);
   CFX_DateTime GetDate() const;
   CFX_DateTime GetTime() const;
-
-  bool IsValid() const { return m_bValid; }
 
  private:
   bool FormatSinglePattern(WideString& wsResult,
@@ -81,10 +82,10 @@ class CXFA_LocaleValue {
                          const WideString& wsPattern,
                          LocaleIface* pLocale);
 
-  CXFA_LocaleMgr* m_pLocaleMgr;
+  UnownedPtr<CXFA_LocaleMgr> m_pLocaleMgr;
   WideString m_wsValue;
-  uint32_t m_dwType;
-  bool m_bValid;
+  uint32_t m_dwType = XFA_VT_NULL;
+  bool m_bValid = true;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LOCALEVALUE_H_
