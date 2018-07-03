@@ -88,8 +88,8 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
       m_DecodeInfo[i].decode_min = pDecode->GetFloatAt(2 * i);
       m_DecodeInfo[i].decode_max = pDecode->GetFloatAt(2 * i + 1);
     } else {
-      m_DecodeInfo[i].decode_min = m_pRanges[i * 2];
-      m_DecodeInfo[i].decode_max = m_pRanges[i * 2 + 1];
+      m_DecodeInfo[i].decode_min = m_Ranges[i * 2];
+      m_DecodeInfo[i].decode_max = m_Ranges[i * 2 + 1];
     }
   }
   return true;
@@ -108,7 +108,7 @@ bool CPDF_SampledFunc::v_Call(const float* inputs, float* results) const {
     else
       blocksize[i] = blocksize[i - 1] * m_EncodeInfo[i - 1].sizes;
     encoded_input[i] =
-        Interpolate(inputs[i], m_pDomains[i * 2], m_pDomains[i * 2 + 1],
+        Interpolate(inputs[i], m_Domains[i * 2], m_Domains[i * 2 + 1],
                     m_EncodeInfo[i].encode_min, m_EncodeInfo[i].encode_max);
     index[i] = pdfium::clamp(static_cast<uint32_t>(encoded_input[i]), 0U,
                              m_EncodeInfo[i].sizes - 1);

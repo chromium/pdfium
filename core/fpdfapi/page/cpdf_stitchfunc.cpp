@@ -96,10 +96,10 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
   }
 
   m_bounds.reserve(nSubs + 1);
-  m_bounds.push_back(m_pDomains[0]);
+  m_bounds.push_back(m_Domains[0]);
   for (uint32_t i = 0; i < nSubs - 1; i++)
     m_bounds.push_back(pBoundsArray->GetFloatAt(i));
-  m_bounds.push_back(m_pDomains[1]);
+  m_bounds.push_back(m_Domains[1]);
 
   m_encode.reserve(nSubs * 2);
   for (uint32_t i = 0; i < nSubs * 2; i++)
