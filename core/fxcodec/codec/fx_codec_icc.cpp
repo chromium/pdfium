@@ -30,10 +30,14 @@ bool Check3Components(cmsColorSpaceSignature cs, bool bDst) {
 
 }  // namespace
 
-CLcmsCmm::CLcmsCmm(int srcComponents, cmsHTRANSFORM hTransform, bool isLab)
+CLcmsCmm::CLcmsCmm(int srcComponents,
+                   cmsHTRANSFORM hTransform,
+                   bool isLab,
+                   bool bNormal)
     : m_hTransform(hTransform),
       m_nSrcComponents(srcComponents),
-      m_bLab(isLab) {}
+      m_bLab(isLab),
+      m_bNormal(bNormal) {}
 
 CLcmsCmm::~CLcmsCmm() {
   cmsDeleteTransform(m_hTransform);
@@ -59,8 +63,6 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     cmsCloseProfile(srcProfile);
     return nullptr;
   }
-  int srcFormat;
-  bool bLab = false;
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile);
 
   *nSrcComponents = cmsChannelsOf(srcCS);
@@ -71,6 +73,9 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     return nullptr;
   }
 
+  int srcFormat;
+  bool bLab = false;
+  bool bNormal = false;
   if (srcCS == cmsSigLabData) {
     srcFormat =
         COLORSPACE_SH(PT_Lab) | CHANNELS_SH(*nSrcComponents) | BYTES_SH(0);
@@ -78,6 +83,10 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
   } else {
     srcFormat =
         COLORSPACE_SH(PT_ANY) | CHANNELS_SH(*nSrcComponents) | BYTES_SH(1);
+    // TODO(thestig): Check to see if lcms2 supports more colorspaces that can
+    // be considered normal.
+    bNormal = srcCS == cmsSigGrayData || srcCS == cmsSigRgbData ||
+              srcCS == cmsSigCmykData;
   }
   cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile);
   if (!Check3Components(dstCS, true)) {
@@ -109,7 +118,8 @@ std::unique_ptr<CLcmsCmm> CCodec_IccModule::CreateTransform_sRGB(
     cmsCloseProfile(dstProfile);
     return nullptr;
   }
-  auto pCmm = pdfium::MakeUnique<CLcmsCmm>(*nSrcComponents, hTransform, bLab);
+  auto pCmm =
+      pdfium::MakeUnique<CLcmsCmm>(*nSrcComponents, hTransform, bLab, bNormal);
   cmsCloseProfile(srcProfile);
   cmsCloseProfile(dstProfile);
   return pCmm;

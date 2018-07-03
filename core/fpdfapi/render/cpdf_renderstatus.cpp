@@ -2654,8 +2654,10 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
     return kDefaultColor;
 
   int family = pCS->GetFamily();
-  if (family == PDFCS_LAB || family == PDFCS_ICCBASED || pCS->IsSpecial())
+  if (family == PDFCS_LAB || pCS->IsSpecial() ||
+      (family == PDFCS_ICCBASED && !pCS->IsNormal())) {
     return kDefaultColor;
+  }
 
   // Store Color Space Family to use in CPDF_RenderStatus::Initialize().
   *pCSFamily = family;

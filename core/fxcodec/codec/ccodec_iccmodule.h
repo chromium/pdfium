@@ -22,12 +22,16 @@
 
 class CLcmsCmm {
  public:
-  CLcmsCmm(int srcComponents, cmsHTRANSFORM transform, bool isLab);
+  CLcmsCmm(int srcComponents,
+           cmsHTRANSFORM transform,
+           bool isLab,
+           bool bNormal);
   ~CLcmsCmm();
 
   cmsHTRANSFORM m_hTransform;
   int m_nSrcComponents;
   bool m_bLab;
+  const bool m_bNormal;
 };
 
 class CCodec_IccModule {
