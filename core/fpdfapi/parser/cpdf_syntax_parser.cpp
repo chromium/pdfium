@@ -518,6 +518,56 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
   return 0;
 }
 
+FX_FILESIZE CPDF_SyntaxParser::FindWordPos(const ByteStringView& word) {
+  AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
+  FX_FILESIZE end_offset = FindTag(word, 0);
+  while (end_offset >= 0) {
+    // Stop searching when word is found.
+    if (IsWholeWord(GetPos() - word.GetLength(), m_FileLen, word, true))
+      return GetPos() - word.GetLength();
+
+    end_offset = FindTag(word, 0);
+  }
+  return -1;
+}
+
+FX_FILESIZE CPDF_SyntaxParser::FindStreamEndPos() {
+  const ByteStringView kEndStreamStr("endstream");
+  const ByteStringView kEndObjStr("endobj");
+
+  FX_FILESIZE endStreamWordOffset = FindWordPos(kEndStreamStr);
+  FX_FILESIZE endObjWordOffset = FindWordPos(kEndObjStr);
+
+  // Can't find "endstream" or "endobj".
+  if (endStreamWordOffset < 0 && endObjWordOffset < 0) {
+    return -1;
+  }
+
+  if (endStreamWordOffset < 0 && endObjWordOffset >= 0) {
+    // Correct the position of end stream.
+    endStreamWordOffset = endObjWordOffset;
+  } else if (endStreamWordOffset >= 0 && endObjWordOffset < 0) {
+    // Correct the position of end obj.
+    endObjWordOffset = endStreamWordOffset;
+  } else if (endStreamWordOffset > endObjWordOffset) {
+    endStreamWordOffset = endObjWordOffset;
+  }
+
+  int numMarkers = ReadEOLMarkers(endStreamWordOffset - 2);
+  if (numMarkers == 2) {
+    endStreamWordOffset -= 2;
+  } else {
+    numMarkers = ReadEOLMarkers(endStreamWordOffset - 1);
+    if (numMarkers == 1) {
+      endStreamWordOffset -= 1;
+    }
+  }
+  if (endStreamWordOffset < GetPos()) {
+    return -1;
+  }
+  return endStreamWordOffset;
+}
+
 std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     std::unique_ptr<CPDF_Dictionary> pDict) {
   const CPDF_Number* pLenObj = ToNumber(pDict->GetDirectObjectFor("Length"));
@@ -525,113 +575,68 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
 
   // Locate the start of stream.
   ToNextLine();
-  FX_FILESIZE streamStartPos = GetPos();
+  const FX_FILESIZE streamStartPos = GetPos();
+
+  std::unique_ptr<uint8_t, FxFreeDeleter> pData;
+  if (len > 0) {
+    FX_SAFE_FILESIZE pos = GetPos();
+    pos += len;
+    if (!pos.IsValid() || pos.ValueOrDie() >= m_FileLen)
+      len = -1;
+  }
+
+  if (len > 0) {
+    pData.reset(FX_Alloc(uint8_t, len));
+    // We should try read data first to allow the Validator to request data
+    // smoothly, without jumps.
+    if (!ReadBlock(pData.get(), len))
+      return nullptr;
+  }
 
   const ByteStringView kEndStreamStr("endstream");
   const ByteStringView kEndObjStr("endobj");
 
-  bool bSearchForKeyword = true;
+  // Note, we allow zero length streams as we need to pass them through when we
+  // are importing pages into a new document.
   if (len >= 0) {
-    pdfium::base::CheckedNumeric<FX_FILESIZE> pos = GetPos();
-    pos += len;
-    if (pos.IsValid() && pos.ValueOrDie() < m_FileLen)
-      m_Pos = pos.ValueOrDie();
-
+    const CPDF_ReadValidator::Session read_session(GetValidator().Get());
     m_Pos += ReadEOLMarkers(GetPos());
     memset(m_WordBuffer, 0, kEndStreamStr.GetLength() + 1);
     GetNextWordInternal(nullptr);
+    if (GetValidator()->has_read_problems())
+      return nullptr;
+
     // Earlier version of PDF specification doesn't require EOL marker before
     // 'endstream' keyword. If keyword 'endstream' follows the bytes in
     // specified length, it signals the end of stream.
     if (memcmp(m_WordBuffer, kEndStreamStr.raw_str(),
-               kEndStreamStr.GetLength()) == 0) {
-      bSearchForKeyword = false;
+               kEndStreamStr.GetLength()) != 0) {
+      pData.reset();
+      len = -1;
+      SetPos(streamStartPos);
     }
   }
 
-  if (bSearchForKeyword) {
-    // If len is not available, len needs to be calculated
+  if (len < 0) {
+    // If len is not available or incorrect, len needs to be calculated
     // by searching the keywords "endstream" or "endobj".
-    m_Pos = streamStartPos;
-    FX_FILESIZE endStreamOffset = 0;
-    while (endStreamOffset >= 0) {
-      endStreamOffset = FindTag(kEndStreamStr, 0);
-
-      // Can't find "endstream".
-      if (endStreamOffset < 0)
-        break;
-
-      // Stop searching when "endstream" is found.
-      if (IsWholeWord(GetPos() - kEndStreamStr.GetLength(), m_FileLen,
-                      kEndStreamStr, true)) {
-        endStreamOffset = GetPos() - streamStartPos - kEndStreamStr.GetLength();
-        break;
-      }
-    }
-
-    m_Pos = streamStartPos;
-    FX_FILESIZE endObjOffset = 0;
-    while (endObjOffset >= 0) {
-      endObjOffset = FindTag(kEndObjStr, 0);
-
-      // Can't find "endobj".
-      if (endObjOffset < 0)
-        break;
-
-      // Stop searching when "endobj" is found.
-      if (IsWholeWord(GetPos() - kEndObjStr.GetLength(), m_FileLen, kEndObjStr,
-                      true)) {
-        endObjOffset = GetPos() - streamStartPos - kEndObjStr.GetLength();
-        break;
-      }
-    }
-
-    // Can't find "endstream" or "endobj".
-    if (endStreamOffset < 0 && endObjOffset < 0)
+    const FX_FILESIZE streamEndPos = FindStreamEndPos();
+    if (streamEndPos < 0)
       return nullptr;
 
-    if (endStreamOffset < 0 && endObjOffset >= 0) {
-      // Correct the position of end stream.
-      endStreamOffset = endObjOffset;
-    } else if (endStreamOffset >= 0 && endObjOffset < 0) {
-      // Correct the position of end obj.
-      endObjOffset = endStreamOffset;
-    } else if (endStreamOffset > endObjOffset) {
-      endStreamOffset = endObjOffset;
+    len = streamEndPos - streamStartPos;
+    ASSERT(len >= 0);
+    if (len > 0) {
+      SetPos(streamStartPos);
+      pData.reset(FX_Alloc(uint8_t, len));
+      if (!ReadBlock(pData.get(), len))
+        return nullptr;
     }
-    len = endStreamOffset;
-
-    int numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 2);
-    if (numMarkers == 2) {
-      len -= 2;
-    } else {
-      numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 1);
-      if (numMarkers == 1) {
-        len -= 1;
-      }
-    }
-    if (len < 0)
-      return nullptr;
-
-    pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(len));
   }
-  m_Pos = streamStartPos;
 
-  // Read up to the end of the buffer. Note, we allow zero length streams as
-  // we need to pass them through when we are importing pages into a new
-  // document.
-  len = std::min(len, m_FileLen - GetPos() - m_HeaderOffset);
-  if (len < 0)
-    return nullptr;
-
-  std::unique_ptr<uint8_t, FxFreeDeleter> pData;
-  if (len > 0) {
-    pData.reset(FX_Alloc(uint8_t, len));
-    ReadBlock(pData.get(), len);
-  }
   auto pStream =
       pdfium::MakeUnique<CPDF_Stream>(std::move(pData), len, std::move(pDict));
-  streamStartPos = GetPos();
+  const FX_FILESIZE end_stream_offset = GetPos();
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
   GetNextWordInternal(nullptr);
 
@@ -639,7 +644,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (m_WordSize == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
       numMarkers != 0 &&
       memcmp(m_WordBuffer, kEndObjStr.raw_str(), kEndObjStr.GetLength()) == 0) {
-    m_Pos = streamStartPos;
+    SetPos(end_stream_offset);
   }
   return pStream;
 }
