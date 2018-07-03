@@ -19,4 +19,4 @@ CFWL_App::CFWL_App(CXFA_FFApp* pAdapter)
   ASSERT(m_pAdapterNative);
 }
 
-CFWL_App::~CFWL_App() {}
+CFWL_App::~CFWL_App() = default;

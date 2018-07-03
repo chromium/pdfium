@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxgraphics/cxfa_graphics.h"
@@ -36,7 +37,7 @@ class CFWL_NoteDriver {
   void PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* PopNoteLoop();
 
-  CFWL_Widget* GetFocus() const { return m_pFocus; }
+  CFWL_Widget* GetFocus() const { return m_pFocus.Get(); }
   bool SetFocus(CFWL_Widget* pFocus);
   void SetGrab(CFWL_Widget* pGrab, bool bSet) {
     m_pGrab = bSet ? pGrab : nullptr;
@@ -66,14 +67,14 @@ class CFWL_NoteDriver {
   bool IsValidMessage(CFWL_Message* pMessage);
   CFWL_Widget* GetMessageForm(CFWL_Widget* pDstTarget);
 
-  std::vector<CFWL_Widget*> m_Forms;
+  std::vector<UnownedPtr<CFWL_Widget>> m_Forms;
   std::deque<std::unique_ptr<CFWL_Message>> m_NoteQueue;
-  std::vector<CFWL_NoteLoop*> m_NoteLoopQueue;
-  std::map<uint32_t, std::unique_ptr<CFWL_EventTarget>> m_eventTargets;
-  CFWL_Widget* m_pHover;
-  CFWL_Widget* m_pFocus;
-  CFWL_Widget* m_pGrab;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
+  std::vector<UnownedPtr<CFWL_NoteLoop>> m_NoteLoopQueue;
+  std::map<uint32_t, std::unique_ptr<CFWL_EventTarget>> m_eventTargets;
+  UnownedPtr<CFWL_Widget> m_pHover;
+  UnownedPtr<CFWL_Widget> m_pFocus;
+  UnownedPtr<CFWL_Widget> m_pGrab;
 };
 
 #endif  // XFA_FWL_CFWL_NOTEDRIVER_H_
