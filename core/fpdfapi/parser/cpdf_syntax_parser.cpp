@@ -525,19 +525,19 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
 
   // Locate the start of stream.
   ToNextLine();
-  FX_FILESIZE streamStartPos = m_Pos;
+  FX_FILESIZE streamStartPos = GetPos();
 
   const ByteStringView kEndStreamStr("endstream");
   const ByteStringView kEndObjStr("endobj");
 
   bool bSearchForKeyword = true;
   if (len >= 0) {
-    pdfium::base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
+    pdfium::base::CheckedNumeric<FX_FILESIZE> pos = GetPos();
     pos += len;
     if (pos.IsValid() && pos.ValueOrDie() < m_FileLen)
       m_Pos = pos.ValueOrDie();
 
-    m_Pos += ReadEOLMarkers(m_Pos);
+    m_Pos += ReadEOLMarkers(GetPos());
     memset(m_WordBuffer, 0, kEndStreamStr.GetLength() + 1);
     GetNextWordInternal(nullptr);
     // Earlier version of PDF specification doesn't require EOL marker before
@@ -562,9 +562,9 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
         break;
 
       // Stop searching when "endstream" is found.
-      if (IsWholeWord(m_Pos - kEndStreamStr.GetLength(), m_FileLen,
+      if (IsWholeWord(GetPos() - kEndStreamStr.GetLength(), m_FileLen,
                       kEndStreamStr, true)) {
-        endStreamOffset = m_Pos - streamStartPos - kEndStreamStr.GetLength();
+        endStreamOffset = GetPos() - streamStartPos - kEndStreamStr.GetLength();
         break;
       }
     }
@@ -579,9 +579,9 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
         break;
 
       // Stop searching when "endobj" is found.
-      if (IsWholeWord(m_Pos - kEndObjStr.GetLength(), m_FileLen, kEndObjStr,
+      if (IsWholeWord(GetPos() - kEndObjStr.GetLength(), m_FileLen, kEndObjStr,
                       true)) {
-        endObjOffset = m_Pos - streamStartPos - kEndObjStr.GetLength();
+        endObjOffset = GetPos() - streamStartPos - kEndObjStr.GetLength();
         break;
       }
     }
@@ -620,7 +620,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   // Read up to the end of the buffer. Note, we allow zero length streams as
   // we need to pass them through when we are importing pages into a new
   // document.
-  len = std::min(len, m_FileLen - m_Pos - m_HeaderOffset);
+  len = std::min(len, m_FileLen - GetPos() - m_HeaderOffset);
   if (len < 0)
     return nullptr;
 
@@ -631,11 +631,11 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   }
   auto pStream =
       pdfium::MakeUnique<CPDF_Stream>(std::move(pData), len, std::move(pDict));
-  streamStartPos = m_Pos;
+  streamStartPos = GetPos();
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
   GetNextWordInternal(nullptr);
 
-  int numMarkers = ReadEOLMarkers(m_Pos);
+  int numMarkers = ReadEOLMarkers(GetPos());
   if (m_WordSize == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
       numMarkers != 0 &&
       memcmp(m_WordBuffer, kEndObjStr.raw_str(), kEndObjStr.GetLength()) == 0) {
