@@ -197,6 +197,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPath_SetStrokeWidth);
     CHK(FPDFTextObj_GetFontSize);
     CHK(FPDFText_GetMatrix);
+    CHK(FPDFText_GetTextRenderMode);
     CHK(FPDFText_LoadFont);
     CHK(FPDFText_LoadStandardFont);
     CHK(FPDFText_SetFillColor);

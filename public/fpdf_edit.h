@@ -70,6 +70,15 @@
 #define FPDF_PRINTMODE_POSTSCRIPT2_PASSTHROUGH 4
 #define FPDF_PRINTMODE_POSTSCRIPT3_PASSTHROUGH 5
 
+#define FPDF_TEXTRENDERMODE_FILL 0
+#define FPDF_TEXTRENDERMODE_STROKE 1
+#define FPDF_TEXTRENDERMODE_FILL_STROKE 2
+#define FPDF_TEXTRENDERMODE_INVISIBLE 3
+#define FPDF_TEXTRENDERMODE_FILL_CLIP 4
+#define FPDF_TEXTRENDERMODE_STROKE_CLIP 5
+#define FPDF_TEXTRENDERMODE_FILL_STROKE_CLIP 6
+#define FPDF_TEXTRENDERMODE_CLIP 7
+
 typedef struct FPDF_IMAGEOBJ_METADATA {
   // The image width in pixels.
   unsigned int width;
@@ -1115,6 +1124,14 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
                           FPDF_FONT font,
                           float font_size);
+
+// Experimental API.
+// Get the text rendering mode of a text object.
+//
+// text     - the handle to the text object.
+//
+// Returns one of the FPDF_TEXTRENDERMODE_* flags on success, -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text);
 
 #ifdef __cplusplus
 }  // extern "C"

@@ -14,6 +14,7 @@
 #include "core/fpdfapi/font/cpdf_type1font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
+#include "core/fpdfapi/page/cpdf_textstate.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -27,6 +28,31 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_edit.h"
 
+// These checks are here because core/ and public/ cannot depend on each other.
+static_assert(static_cast<int>(TextRenderingMode::MODE_FILL) ==
+                  FPDF_TEXTRENDERMODE_FILL,
+              "TextRenderingMode::MODE_FILL value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_STROKE) ==
+                  FPDF_TEXTRENDERMODE_STROKE,
+              "TextRenderingMode::MODE_STROKE value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_FILL_STROKE) ==
+                  FPDF_TEXTRENDERMODE_FILL_STROKE,
+              "TextRenderingMode::MODE_FILL_STROKE value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_INVISIBLE) ==
+                  FPDF_TEXTRENDERMODE_INVISIBLE,
+              "TextRenderingMode::MODE_INVISIBLE value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_FILL_CLIP) ==
+                  FPDF_TEXTRENDERMODE_FILL_CLIP,
+              "TextRenderingMode::MODE_FILL_CLIP value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_STROKE_CLIP) ==
+                  FPDF_TEXTRENDERMODE_STROKE_CLIP,
+              "TextRenderingMode::MODE_STROKE_CLIP value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_FILL_STROKE_CLIP) ==
+                  FPDF_TEXTRENDERMODE_FILL_STROKE_CLIP,
+              "TextRenderingMode::MODE_FILL_STROKE_CLIP value mismatch");
+static_assert(static_cast<int>(TextRenderingMode::MODE_CLIP) ==
+                  FPDF_TEXTRENDERMODE_CLIP,
+              "TextRenderingMode::MODE_CLIP value mismatch");
 namespace {
 
 CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
@@ -544,4 +570,15 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
   pTextObj->m_TextState.SetFontSize(font_size);
   pTextObj->DefaultStates();
   return FPDFPageObjectFromCPDFPageObject(pTextObj.release());
+}
+
+FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text) {
+  if (!text)
+    return -1;
+
+  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
+  if (!pTextObj)
+    return -1;
+
+  return static_cast<int>(pTextObj->m_TextState.GetTextMode());
 }

@@ -1,0 +1,75 @@
+%PDF-1.2
+%‚„œ”
+1 0 obj 
+<<
+/Resources 2 0 R
+/Contents 3 0 R
+/Parent 4 0 R
+/Type /Page
+/MediaBox [0 0 612 446]
+>>
+endobj 
+3 0 obj 
+<<
+/Length 102
+>>
+stream
+  BT
+  /F1 24 Tf
+  0 Tr
+  1 0 0 1 260 250 Tm
+  (fill)Tj
+  1 Tr
+  1 0 0 1 260 200 Tm
+  (stroke)Tj
+  ET
+
+endstream 
+endobj 
+2 0 obj 
+<<
+/Font 
+<<
+/F1 5 0 R
+>>
+>>
+endobj 
+5 0 obj 
+<<
+/Subtype /Type1
+/Name /F1
+/Type /Font
+/BaseFont /Helvetica
+>>
+endobj 
+4 0 obj 
+<<
+/Kids [1 0 R]
+/Type /Pages
+/MediaBox [0 0 612 446]
+/Count 1
+>>
+endobj 
+6 0 obj 
+<<
+/Type /Catalog
+/Pages 4 0 R
+>>
+endobj xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000277 00000 n 
+0000000121 00000 n 
+0000000405 00000 n 
+0000000323 00000 n 
+0000000488 00000 n 
+trailer
+
+<<
+/Root 6 0 R
+/Size 7
+>>
+startxref
+538
+%%EOF

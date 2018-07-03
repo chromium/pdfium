@@ -1487,6 +1487,23 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDF_ClosePage(page);
 }
 
+TEST_F(FPDFEditEmbeddertest, TestGetTextRenderMode) {
+  EXPECT_TRUE(OpenDocument("text_render_mode.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(2, FPDFPage_CountObjects(page));
+
+  ASSERT_EQ(-1, FPDFText_GetTextRenderMode(nullptr));
+
+  FPDF_PAGEOBJECT fill = FPDFPage_GetObject(page, 0);
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_FILL, FPDFText_GetTextRenderMode(fill));
+
+  FPDF_PAGEOBJECT stroke = FPDFPage_GetObject(page, 1);
+  ASSERT_EQ(FPDF_TEXTRENDERMODE_STROKE, FPDFText_GetTextRenderMode(stroke));
+
+  UnloadPage(page);
+}
+
 // Tests adding text from standard font using FPDFText_LoadStandardFont.
 TEST_F(FPDFEditEmbeddertest, AddStandardFontText2) {
   // Start with a blank page
