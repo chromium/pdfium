@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "third_party/base/stl_util.h"
 

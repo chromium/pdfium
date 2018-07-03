@@ -15,7 +15,6 @@
 
 #include "core/fpdfapi/parser/cpdf_cross_ref_table.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
-#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"

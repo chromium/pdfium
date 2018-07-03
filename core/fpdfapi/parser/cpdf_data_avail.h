@@ -15,7 +15,6 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
-#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_CrossRefAvail;
@@ -24,8 +23,8 @@ class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
 class CPDF_LinearizedHeader;
 class CPDF_PageObjectAvail;
-class CPDF_Parser;
 class CPDF_ReadValidator;
+class CPDF_SyntaxParser;
 
 enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_HEADER = 0,
