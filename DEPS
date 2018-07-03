@@ -26,7 +26,7 @@ vars = {
   'gtest_revision': '4bd8c4638ada823a8da2569735cc0a9402fb8052',
   'icu_revision': 'e4194dc7bbb3305d84cbb1b294274ca70d230721',
   'instrumented_lib_revision': '323cf32193caecbf074d1a0cb5b02b905f163e0f',
-  'jinja2_revision': 'd34383206fa42d52faa10bb9931d6d538f3a57e0',
+  'jinja2_revision': '45571de473282bd1d8b63a8dfcb1fd268d0635d2',
   'jpeg_turbo_revision': '7260e4d8b8e1e40b17f03fafdf1cd83296900f76',
   'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
   'pdfium_tests_revision': '9b7ff5b879ce578f4f186ad546f45fc9fb592943',
