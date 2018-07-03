@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CFX_RenderDevice;
@@ -34,7 +35,7 @@ class CXFA_ImageRenderer {
                          int left,
                          int top);
 
-  CFX_RenderDevice* m_pDevice;
+  UnownedPtr<CFX_RenderDevice> m_pDevice;
   int m_Status = 0;
   CFX_Matrix m_ImageMatrix;
   RetainPtr<CFX_DIBSource> m_pDIBSource;

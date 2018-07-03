@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -123,7 +124,7 @@ class CXFA_FFWidgetHandler {
   CXFA_Document* GetObjFactory() const;
   CXFA_Document* GetXFADoc() const;
 
-  CXFA_FFDocView* m_pDocView;
+  UnownedPtr<CXFA_FFDocView> m_pDocView;
 };
 
 #endif  //  XFA_FXFA_CXFA_FFWIDGETHANDLER_H_

@@ -459,11 +459,11 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
       if (!pContainerNode)
         return true;
 
-      CFX_XMLNode* pXMLNode = m_pLoader->m_pXMLNode;
+      CFX_XMLNode* pXMLNode = m_pLoader->m_pXMLNode.Get();
       if (!pXMLNode)
         return true;
 
-      CFX_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
+      CFX_XMLNode* pSaveXMLNode = pXMLNode;
       for (; pXMLNode; pXMLNode = pXMLNode->GetNextSibling()) {
         if (!LoadRichText(pXMLNode, szText.width, &fLinePos,
                           m_pLoader->m_pParentStyle, true, nullptr)) {
