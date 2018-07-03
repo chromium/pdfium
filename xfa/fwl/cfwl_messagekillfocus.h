@@ -9,18 +9,25 @@
 
 #include <memory>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_message.h"
 
 class CFWL_MessageKillFocus : public CFWL_Message {
  public:
   explicit CFWL_MessageKillFocus(CFWL_Widget* pSrcTarget);
   CFWL_MessageKillFocus(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
+  CFWL_MessageKillFocus(const CFWL_MessageKillFocus& that);
   ~CFWL_MessageKillFocus() override;
 
-  // CFWL_Message
+  // CFWL_Message:
   std::unique_ptr<CFWL_Message> Clone() override;
 
-  CFWL_Widget* m_pSetFocus;
+  bool IsFocusedOnWidget(const CFWL_Widget* pWidget) const {
+    return pWidget == m_pSetFocus.Get();
+  }
+
+ private:
+  UnownedPtr<CFWL_Widget> m_pSetFocus;
 };
 
 #endif  // XFA_FWL_CFWL_MESSAGEKILLFOCUS_H_

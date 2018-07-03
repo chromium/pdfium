@@ -122,8 +122,8 @@ void CFWL_ComboList::OnDropListFocusChanged(CFWL_Message* pMsg, bool bSet) {
 
   CFWL_MessageKillFocus* pKill = static_cast<CFWL_MessageKillFocus*>(pMsg);
   CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(m_pOuter);
-  if (pKill->m_pSetFocus == m_pOuter ||
-      pKill->m_pSetFocus == pOuter->GetComboEdit()) {
+  if (pKill->IsFocusedOnWidget(m_pOuter) ||
+      pKill->IsFocusedOnWidget(pOuter->GetComboEdit())) {
     pOuter->ShowDropList(false);
   }
 }
