@@ -551,13 +551,13 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
 
 FX_FILESIZE CPDF_SyntaxParser::FindWordPos(const ByteStringView& word) {
   AutoRestorer<FX_FILESIZE> pos_restorer(&m_Pos);
-  FX_FILESIZE end_offset = FindTag(word, 0);
+  FX_FILESIZE end_offset = FindTag(word);
   while (end_offset >= 0) {
     // Stop searching when word is found.
     if (IsWholeWord(GetPos() - word.GetLength(), m_FileLen, word, true))
       return GetPos() - word.GetLength();
 
-    end_offset = FindTag(word, 0);
+    end_offset = FindTag(word);
   }
   return -1;
 }
@@ -791,13 +791,12 @@ bool CPDF_SyntaxParser::BackwardsSearchToWord(const ByteStringView& tag,
   }
 }
 
-FX_FILESIZE CPDF_SyntaxParser::FindTag(const ByteStringView& tag,
-                                       FX_FILESIZE limit) {
-  int32_t taglen = tag.GetLength();
-  int32_t match = 0;
-  limit += m_Pos;
-  FX_FILESIZE startpos = m_Pos;
+FX_FILESIZE CPDF_SyntaxParser::FindTag(const ByteStringView& tag) {
+  const FX_FILESIZE startpos = GetPos();
+  const int32_t taglen = tag.GetLength();
+  ASSERT(taglen > 0);
 
+  int32_t match = 0;
   while (1) {
     uint8_t ch;
     if (!GetNextChar(ch))
@@ -806,13 +805,10 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(const ByteStringView& tag,
     if (ch == tag[match]) {
       match++;
       if (match == taglen)
-        return m_Pos - startpos - taglen;
+        return GetPos() - startpos - taglen;
     } else {
       match = ch == tag[0] ? 1 : 0;
     }
-
-    if (limit && m_Pos == limit)
-      return -1;
   }
   return -1;
 }
