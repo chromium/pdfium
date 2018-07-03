@@ -5,6 +5,7 @@
 #include "core/fxcrt/bytestring.h"
 
 #include <algorithm>
+#include <iterator>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -1632,6 +1633,15 @@ TEST(ByteString, MultiCharIterator) {
   }
   EXPECT_TRUE(any_present);
   EXPECT_EQ('a' + 'b' + 'c', sum);
+}
+
+TEST(ByteString, StdBegin) {
+  ByteString one_str("abc");
+  std::vector<uint8_t> vec(std::begin(one_str), std::end(one_str));
+  ASSERT_EQ(3u, vec.size());
+  EXPECT_EQ('a', vec[0]);
+  EXPECT_EQ('b', vec[1]);
+  EXPECT_EQ('c', vec[2]);
 }
 
 TEST(ByteString, AnyAllNoneOf) {
