@@ -34,14 +34,14 @@ class CPDF_FlateEncoder {
   }
 
  private:
+  RetainPtr<CPDF_StreamAcc> m_pAcc;
+
   uint32_t m_dwSize;
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
 
   // Only one of these two pointers is valid at any time.
   UnownedPtr<const CPDF_Dictionary> m_pDict;
   std::unique_ptr<CPDF_Dictionary> m_pClonedDict;
-
-  RetainPtr<CPDF_StreamAcc> m_pAcc;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_FLATEENCODER_H_
