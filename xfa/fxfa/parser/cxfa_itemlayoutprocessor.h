@@ -17,7 +17,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
-#define XFA_LAYOUT_INVALIDNODE ((CXFA_Node*)(intptr_t)-1)
+#define XFA_LAYOUT_INVALIDNODE nullptr
 #define XFA_LAYOUT_FLOAT_PERCISION (0.0005f)
 
 class CXFA_ContainerLayoutItem;
