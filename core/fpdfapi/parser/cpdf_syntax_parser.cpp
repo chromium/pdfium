@@ -530,92 +530,92 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   const ByteStringView kEndStreamStr("endstream");
   const ByteStringView kEndObjStr("endobj");
 
-    bool bSearchForKeyword = true;
-    if (len >= 0) {
-      pdfium::base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
-      pos += len;
-      if (pos.IsValid() && pos.ValueOrDie() < m_FileLen)
-        m_Pos = pos.ValueOrDie();
+  bool bSearchForKeyword = true;
+  if (len >= 0) {
+    pdfium::base::CheckedNumeric<FX_FILESIZE> pos = m_Pos;
+    pos += len;
+    if (pos.IsValid() && pos.ValueOrDie() < m_FileLen)
+      m_Pos = pos.ValueOrDie();
 
-      m_Pos += ReadEOLMarkers(m_Pos);
-      memset(m_WordBuffer, 0, kEndStreamStr.GetLength() + 1);
-      GetNextWordInternal(nullptr);
-      // Earlier version of PDF specification doesn't require EOL marker before
-      // 'endstream' keyword. If keyword 'endstream' follows the bytes in
-      // specified length, it signals the end of stream.
-      if (memcmp(m_WordBuffer, kEndStreamStr.raw_str(),
-                 kEndStreamStr.GetLength()) == 0) {
-        bSearchForKeyword = false;
-      }
+    m_Pos += ReadEOLMarkers(m_Pos);
+    memset(m_WordBuffer, 0, kEndStreamStr.GetLength() + 1);
+    GetNextWordInternal(nullptr);
+    // Earlier version of PDF specification doesn't require EOL marker before
+    // 'endstream' keyword. If keyword 'endstream' follows the bytes in
+    // specified length, it signals the end of stream.
+    if (memcmp(m_WordBuffer, kEndStreamStr.raw_str(),
+               kEndStreamStr.GetLength()) == 0) {
+      bSearchForKeyword = false;
     }
+  }
 
-    if (bSearchForKeyword) {
-      // If len is not available, len needs to be calculated
-      // by searching the keywords "endstream" or "endobj".
-      m_Pos = streamStartPos;
-      FX_FILESIZE endStreamOffset = 0;
-      while (endStreamOffset >= 0) {
-        endStreamOffset = FindTag(kEndStreamStr, 0);
-
-        // Can't find "endstream".
-        if (endStreamOffset < 0)
-          break;
-
-        // Stop searching when "endstream" is found.
-        if (IsWholeWord(m_Pos - kEndStreamStr.GetLength(), m_FileLen,
-                        kEndStreamStr, true)) {
-          endStreamOffset = m_Pos - streamStartPos - kEndStreamStr.GetLength();
-          break;
-        }
-      }
-
-      m_Pos = streamStartPos;
-      FX_FILESIZE endObjOffset = 0;
-      while (endObjOffset >= 0) {
-        endObjOffset = FindTag(kEndObjStr, 0);
-
-        // Can't find "endobj".
-        if (endObjOffset < 0)
-          break;
-
-        // Stop searching when "endobj" is found.
-        if (IsWholeWord(m_Pos - kEndObjStr.GetLength(), m_FileLen, kEndObjStr,
-                        true)) {
-          endObjOffset = m_Pos - streamStartPos - kEndObjStr.GetLength();
-          break;
-        }
-      }
-
-      // Can't find "endstream" or "endobj".
-      if (endStreamOffset < 0 && endObjOffset < 0)
-        return nullptr;
-
-      if (endStreamOffset < 0 && endObjOffset >= 0) {
-        // Correct the position of end stream.
-        endStreamOffset = endObjOffset;
-      } else if (endStreamOffset >= 0 && endObjOffset < 0) {
-        // Correct the position of end obj.
-        endObjOffset = endStreamOffset;
-      } else if (endStreamOffset > endObjOffset) {
-        endStreamOffset = endObjOffset;
-      }
-      len = endStreamOffset;
-
-      int numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 2);
-      if (numMarkers == 2) {
-        len -= 2;
-      } else {
-        numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 1);
-        if (numMarkers == 1) {
-          len -= 1;
-        }
-      }
-      if (len < 0)
-        return nullptr;
-
-      pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(len));
-    }
+  if (bSearchForKeyword) {
+    // If len is not available, len needs to be calculated
+    // by searching the keywords "endstream" or "endobj".
     m_Pos = streamStartPos;
+    FX_FILESIZE endStreamOffset = 0;
+    while (endStreamOffset >= 0) {
+      endStreamOffset = FindTag(kEndStreamStr, 0);
+
+      // Can't find "endstream".
+      if (endStreamOffset < 0)
+        break;
+
+      // Stop searching when "endstream" is found.
+      if (IsWholeWord(m_Pos - kEndStreamStr.GetLength(), m_FileLen,
+                      kEndStreamStr, true)) {
+        endStreamOffset = m_Pos - streamStartPos - kEndStreamStr.GetLength();
+        break;
+      }
+    }
+
+    m_Pos = streamStartPos;
+    FX_FILESIZE endObjOffset = 0;
+    while (endObjOffset >= 0) {
+      endObjOffset = FindTag(kEndObjStr, 0);
+
+      // Can't find "endobj".
+      if (endObjOffset < 0)
+        break;
+
+      // Stop searching when "endobj" is found.
+      if (IsWholeWord(m_Pos - kEndObjStr.GetLength(), m_FileLen, kEndObjStr,
+                      true)) {
+        endObjOffset = m_Pos - streamStartPos - kEndObjStr.GetLength();
+        break;
+      }
+    }
+
+    // Can't find "endstream" or "endobj".
+    if (endStreamOffset < 0 && endObjOffset < 0)
+      return nullptr;
+
+    if (endStreamOffset < 0 && endObjOffset >= 0) {
+      // Correct the position of end stream.
+      endStreamOffset = endObjOffset;
+    } else if (endStreamOffset >= 0 && endObjOffset < 0) {
+      // Correct the position of end obj.
+      endObjOffset = endStreamOffset;
+    } else if (endStreamOffset > endObjOffset) {
+      endStreamOffset = endObjOffset;
+    }
+    len = endStreamOffset;
+
+    int numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 2);
+    if (numMarkers == 2) {
+      len -= 2;
+    } else {
+      numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 1);
+      if (numMarkers == 1) {
+        len -= 1;
+      }
+    }
+    if (len < 0)
+      return nullptr;
+
+    pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(len));
+  }
+  m_Pos = streamStartPos;
 
   // Read up to the end of the buffer. Note, we allow zero length streams as
   // we need to pass them through when we are importing pages into a new
