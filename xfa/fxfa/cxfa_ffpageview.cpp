@@ -247,10 +247,10 @@ void CXFA_FFTabOrderPageWidgetIterator::Reset() {
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToFirst() {
   for (int32_t i = 0;
        i < pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray); i++) {
-    if (PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, true,
+    if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
                          m_bIgnorerelevant)) {
       m_iCurWidget = i;
-      return m_TabOrderWidgetArray[m_iCurWidget];
+      return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
   }
   return nullptr;
@@ -259,10 +259,10 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToFirst() {
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToLast() {
   for (int32_t i = pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray) - 1;
        i >= 0; i--) {
-    if (PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, true,
+    if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
                          m_bIgnorerelevant)) {
       m_iCurWidget = i;
-      return m_TabOrderWidgetArray[m_iCurWidget];
+      return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
   }
   return nullptr;
@@ -271,10 +271,10 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToLast() {
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToNext() {
   for (int32_t i = m_iCurWidget + 1;
        i < pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray); i++) {
-    if (PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, true,
+    if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
                          m_bIgnorerelevant)) {
       m_iCurWidget = i;
-      return m_TabOrderWidgetArray[m_iCurWidget];
+      return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
   }
   m_iCurWidget = -1;
@@ -283,10 +283,10 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToNext() {
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToPrevious() {
   for (int32_t i = m_iCurWidget - 1; i >= 0; i--) {
-    if (PageWidgetFilter(m_TabOrderWidgetArray[i], m_dwFilter, true,
+    if (PageWidgetFilter(m_TabOrderWidgetArray[i].Get(), m_dwFilter, true,
                          m_bIgnorerelevant)) {
       m_iCurWidget = i;
-      return m_TabOrderWidgetArray[m_iCurWidget];
+      return m_TabOrderWidgetArray[m_iCurWidget].Get();
     }
   }
   m_iCurWidget = -1;
@@ -294,7 +294,8 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::MoveToPrevious() {
 }
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetCurrentWidget() {
-  return m_iCurWidget >= 0 ? m_TabOrderWidgetArray[m_iCurWidget] : nullptr;
+  return m_iCurWidget >= 0 ? m_TabOrderWidgetArray[m_iCurWidget].Get()
+                           : nullptr;
 }
 
 bool CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(
@@ -343,7 +344,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
   while (pdfium::CollectionSize<int32_t>(m_TabOrderWidgetArray) <
          nWidgetCount) {
     if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget)) {
-      m_TabOrderWidgetArray.push_back(hWidget);
+      m_TabOrderWidgetArray.emplace_back(hWidget);
       CXFA_Node* pNode = hWidget->GetNode();
       if (pNode->GetFFWidgetType() == XFA_FFWidgetType::kExclGroup) {
         auto it = std::find(SpaceOrderWidgetArray.begin(),
@@ -357,7 +358,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
           if (radio->GetNode()->GetExclGroupIfExists() != pNode)
             break;
           if (!pdfium::ContainsValue(m_TabOrderWidgetArray, hWidget))
-            m_TabOrderWidgetArray.push_back(radio);
+            m_TabOrderWidgetArray.emplace_back(radio);
 
           iWidgetIndex++;
         }
@@ -432,7 +433,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
 
 void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     std::vector<CXFA_FFWidget*>* WidgetArray) {
-  CXFA_LayoutItemIterator sIterator(m_pPageView);
+  CXFA_LayoutItemIterator sIterator(m_pPageView.Get());
   auto pParam = pdfium::MakeUnique<CXFA_TabParam>(nullptr);
   bool bCurrentItem = false;
   bool bContentArea = false;

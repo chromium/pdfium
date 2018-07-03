@@ -54,8 +54,8 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
  protected:
   CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
 
-  CXFA_FFPageView* m_pPageView;
-  CXFA_FFWidget* m_hCurWidget;
+  UnownedPtr<CXFA_FFPageView> m_pPageView;
+  UnownedPtr<CXFA_FFWidget> m_hCurWidget;
   uint32_t m_dwFilter;
   bool m_bIgnorerelevant;
   CXFA_LayoutItemIterator m_sIterator;
@@ -104,8 +104,8 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
                       bool& bContentArea,
                       bool bMarsterPage = false);
 
-  std::vector<CXFA_FFWidget*> m_TabOrderWidgetArray;
-  CXFA_FFPageView* m_pPageView;
+  std::vector<UnownedPtr<CXFA_FFWidget>> m_TabOrderWidgetArray;
+  UnownedPtr<CXFA_FFPageView> m_pPageView;
   uint32_t m_dwFilter;
   int32_t m_iCurWidget;
   bool m_bIgnorerelevant;
