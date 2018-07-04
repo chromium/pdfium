@@ -62,15 +62,6 @@ config("pdfium_common_config") {
     defines += [ "PDFIUM_PRINT_TEXT_WITH_GDI" ]
   }
 
-  if (use_coverage && is_clang) {
-    cflags += [
-      "--coverage",
-      "-g",
-      "-O0",
-    ]
-    ldflags += [ "--coverage" ]
-  }
-
   if (is_win) {
     # Assume UTF-8 by default to avoid code page dependencies.
     cflags += [ "/utf-8" ]
