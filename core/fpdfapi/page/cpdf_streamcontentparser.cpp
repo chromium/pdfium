@@ -868,10 +868,8 @@ void CPDF_StreamContentParser::Handle_MarkPlace_Dictionary() {}
 void CPDF_StreamContentParser::Handle_EndImage() {}
 
 void CPDF_StreamContentParser::Handle_EndMarkedContent() {
-  if (m_pCurContentMark->HasRef()) {
-    m_pCurContentMark = m_pCurContentMark->Clone();
-    m_pCurContentMark->DeleteLastMark();
-  }
+  m_pCurContentMark = m_pCurContentMark->Clone();
+  m_pCurContentMark->DeleteLastMark();
 }
 
 void CPDF_StreamContentParser::Handle_EndText() {

@@ -1100,10 +1100,9 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
     return;
   }
   m_pCurObj = pObj;
-  if (m_Options.GetOCContext() && pObj->m_ContentMark.HasRef()) {
-    if (!m_Options.GetOCContext()->CheckObjectVisible(pObj)) {
-      return;
-    }
+  if (m_Options.GetOCContext() &&
+      !m_Options.GetOCContext()->CheckObjectVisible(pObj)) {
+    return;
   }
   ProcessClipPath(pObj->m_ClipPath, pObj2Device);
   if (ProcessTransparency(pObj, pObj2Device)) {
@@ -1129,7 +1128,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
   }
 
   m_pCurObj = pObj;
-  if (m_Options.GetOCContext() && pObj->m_ContentMark.HasRef() &&
+  if (m_Options.GetOCContext() &&
       !m_Options.GetOCContext()->CheckObjectVisible(pObj)) {
     return false;
   }

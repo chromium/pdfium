@@ -23,6 +23,9 @@ std::unique_ptr<CPDF_ContentMark> CPDF_ContentMark::Clone() {
 }
 
 size_t CPDF_ContentMark::CountItems() const {
+  if (!m_Ref)
+    return 0;
+
   return m_Ref->CountItems();
 }
 

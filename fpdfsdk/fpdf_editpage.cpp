@@ -277,7 +277,7 @@ FPDFPageObj_CountMarks(FPDF_PAGEOBJECT page_object) {
 
   const auto& mark =
       CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
-  return mark.HasRef() ? mark.CountItems() : 0;
+  return mark.CountItems();
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECTMARK FPDF_CALLCONV
@@ -286,9 +286,6 @@ FPDFPageObj_GetMark(FPDF_PAGEOBJECT page_object, unsigned long index) {
     return nullptr;
 
   auto* mark = &CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
-  if (!mark->HasRef())
-    return nullptr;
-
   if (index >= mark->CountItems())
     return nullptr;
 

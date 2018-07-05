@@ -29,8 +29,6 @@ class CPDF_ContentMark {
   void AddMark(ByteString name, const CPDF_Dictionary* pDict, bool bDirect);
   void DeleteLastMark();
 
-  bool HasRef() const { return !!m_Ref; }
-
  private:
   class MarkData : public Retainable {
    public:
