@@ -573,6 +573,12 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
                   FPDFPageObjMark_GetParamValueType(mark, 0));
         int square_root = FPDFPageObjMark_GetParamIntValue(mark, 0);
         EXPECT_EQ(i + 1, square_root * square_root);
+
+        EXPECT_EQ(FPDF_OBJECT_NUMBER,
+                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Factor"));
+        EXPECT_TRUE(FPDFPageObjMark_GetParamIntValueByKey(mark, "Factor",
+                                                          &square_root));
+        EXPECT_EQ(i + 1, square_root * square_root);
       } else if (name == L"GreaterThanTen") {
         greater_than_ten_count++;
         EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
@@ -590,6 +596,15 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
             GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
         EXPECT_EQ(L"Last", value);
         EXPECT_EQ(18, i);
+
+        EXPECT_EQ(FPDF_OBJECT_STRING,
+                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Position"));
+        unsigned long length;
+        EXPECT_TRUE(FPDFPageObjMark_GetParamStringValueByKey(
+            mark, "Position", buffer, 256, &length));
+        ASSERT_GT(length, 0u);
+        value = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+        EXPECT_EQ(L"Last", value);
       } else {
         FAIL();
       }

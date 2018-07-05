@@ -99,15 +99,19 @@ void CalcBoundingBox(CPDF_PageObject* pPageObj) {
   }
 }
 
-const std::pair<const ByteString, std::unique_ptr<CPDF_Object>>*
-GetMarkParamPairAtIndex(FPDF_PAGEOBJECTMARK mark, unsigned long index) {
+const CPDF_Dictionary* GetMarkParamDict(FPDF_PAGEOBJECTMARK mark) {
   if (!mark)
     return nullptr;
 
   const CPDF_ContentMarkItem* pMarkItem =
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
 
-  const CPDF_Dictionary* pParams = pMarkItem->GetParam();
+  return pMarkItem->GetParam();
+}
+
+const std::pair<const ByteString, std::unique_ptr<CPDF_Object>>*
+GetMarkParamPairAtIndex(FPDF_PAGEOBJECTMARK mark, unsigned long index) {
+  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
   if (!pParams)
     return nullptr;
 
@@ -345,6 +349,20 @@ FPDFPageObjMark_GetParamValueType(FPDF_PAGEOBJECTMARK mark,
   return param_pair->second->GetType();
 }
 
+FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
+FPDFPageObjMark_GetParamValueTypeByKey(FPDF_PAGEOBJECTMARK mark,
+                                       FPDF_BYTESTRING key) {
+  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  if (!pParams)
+    return FPDF_OBJECT_UNKNOWN;
+
+  const CPDF_Object* pObject = pParams->GetObjectFor(key);
+  if (!pObject)
+    return FPDF_OBJECT_UNKNOWN;
+
+  return pObject->GetType();
+}
+
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
                                  unsigned long index) {
@@ -353,6 +371,22 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
     return 0;
 
   return param_pair->second->GetInteger();
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_GetParamIntValueByKey(FPDF_PAGEOBJECTMARK mark,
+                                      FPDF_BYTESTRING key,
+                                      int* out_value) {
+  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  if (!pParams)
+    return false;
+
+  const CPDF_Object* pObj = pParams->GetObjectFor(key);
+  if (!pObj || !pObj->IsNumber())
+    return false;
+
+  *out_value = pObj->GetInteger();
+  return true;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -367,6 +401,25 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
   return Utf16EncodeMaybeCopyAndReturnLength(
       WideString::FromUTF8(param_pair->second->GetString().AsStringView()),
       buffer, buflen);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_GetParamStringValueByKey(FPDF_PAGEOBJECTMARK mark,
+                                         FPDF_BYTESTRING key,
+                                         void* buffer,
+                                         unsigned long buflen,
+                                         unsigned long* out_buflen) {
+  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  if (!pParams)
+    return false;
+
+  const CPDF_Object* pObj = pParams->GetObjectFor(key);
+  if (!pObj || !pObj->IsString())
+    return false;
+
+  *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
+      WideString::FromUTF8(pObj->GetString().AsStringView()), buffer, buflen);
+  return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
