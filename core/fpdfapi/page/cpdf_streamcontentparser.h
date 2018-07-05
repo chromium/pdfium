@@ -219,7 +219,7 @@ class CPDF_StreamContentParser {
   uint32_t m_ParamCount;
   UnownedPtr<CPDF_StreamParser> m_pSyntax;
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
-  CPDF_ContentMark m_CurContentMark;
+  std::unique_ptr<CPDF_ContentMark> m_pCurContentMark;
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
   UnownedPtr<CPDF_TextObject> m_pLastTextObject;
   float m_DefFontSize;

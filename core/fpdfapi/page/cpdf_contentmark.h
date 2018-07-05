@@ -7,20 +7,21 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_
 #define CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/shared_copy_on_write.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Dictionary;
 
 class CPDF_ContentMark {
  public:
   CPDF_ContentMark();
-  CPDF_ContentMark(const CPDF_ContentMark& that);
   ~CPDF_ContentMark();
 
+  std::unique_ptr<CPDF_ContentMark> Clone();
   int GetMarkedContentID() const;
   size_t CountItems() const;
   const CPDF_ContentMarkItem& GetItem(size_t i) const;
@@ -50,7 +51,7 @@ class CPDF_ContentMark {
     std::vector<CPDF_ContentMarkItem> m_Marks;
   };
 
-  SharedCopyOnWrite<MarkData> m_Ref;
+  RetainPtr<MarkData> m_Ref;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_

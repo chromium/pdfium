@@ -258,6 +258,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_ParamStartPos(0),
       m_ParamCount(0),
       m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()),
+      m_pCurContentMark(pdfium::MakeUnique<CPDF_ContentMark>()),
       m_DefFontSize(0),
       m_PathStartX(0.0f),
       m_PathStartY(0.0f),
@@ -434,7 +435,7 @@ void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
                                                 bool bGraph) {
   pObj->m_GeneralState = m_pCurStates->m_GeneralState;
   pObj->m_ClipPath = m_pCurStates->m_ClipPath;
-  pObj->m_ContentMark = m_CurContentMark;
+  pObj->m_ContentMark = *m_pCurContentMark;
   if (bColor) {
     pObj->m_ColorState = m_pCurStates->m_ColorState;
   }
@@ -606,8 +607,10 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
       return;
     bDirect = false;
   }
-  if (const CPDF_Dictionary* pDict = pProperty->AsDictionary())
-    m_CurContentMark.AddMark(std::move(tag), pDict, bDirect);
+  if (const CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
+    m_pCurContentMark = m_pCurContentMark->Clone();
+    m_pCurContentMark->AddMark(std::move(tag), pDict, bDirect);
+  }
 }
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
@@ -671,7 +674,8 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
-  m_CurContentMark.AddMark(GetString(0), nullptr, false);
+  m_pCurContentMark = m_pCurContentMark->Clone();
+  m_pCurContentMark->AddMark(GetString(0), nullptr, false);
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
@@ -864,8 +868,10 @@ void CPDF_StreamContentParser::Handle_MarkPlace_Dictionary() {}
 void CPDF_StreamContentParser::Handle_EndImage() {}
 
 void CPDF_StreamContentParser::Handle_EndMarkedContent() {
-  if (m_CurContentMark.HasRef())
-    m_CurContentMark.DeleteLastMark();
+  if (m_pCurContentMark->HasRef()) {
+    m_pCurContentMark = m_pCurContentMark->Clone();
+    m_pCurContentMark->DeleteLastMark();
+  }
 }
 
 void CPDF_StreamContentParser::Handle_EndText() {
