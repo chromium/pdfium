@@ -2070,55 +2070,56 @@ void CXFA_Node::ProcessScriptTestValidate(CXFA_FFDocView* docView,
 int32_t CXFA_Node::ProcessFormatTestValidate(CXFA_FFDocView* docView,
                                              CXFA_Validate* validate,
                                              bool bVersionFlag) {
+  WideString wsPicture = validate->GetPicture();
+  if (wsPicture.IsEmpty())
+    return XFA_EVENTERROR_NotExist;
+
   WideString wsRawValue = GetRawValue();
-  if (!wsRawValue.IsEmpty()) {
-    WideString wsPicture = validate->GetPicture();
-    if (wsPicture.IsEmpty())
-      return XFA_EVENTERROR_NotExist;
+  if (wsRawValue.IsEmpty())
+    return XFA_EVENTERROR_Error;
 
-    LocaleIface* pLocale = GetLocale();
-    if (!pLocale)
-      return XFA_EVENTERROR_NotExist;
+  LocaleIface* pLocale = GetLocale();
+  if (!pLocale)
+    return XFA_EVENTERROR_NotExist;
 
-    CXFA_LocaleValue lcValue = XFA_GetLocaleValue(this);
-    if (!lcValue.ValidateValue(lcValue.GetValue(), wsPicture, pLocale,
-                               nullptr)) {
-      IXFA_AppProvider* pAppProvider =
-          docView->GetDoc()->GetApp()->GetAppProvider();
-      if (!pAppProvider)
-        return XFA_EVENTERROR_NotExist;
+  CXFA_LocaleValue lcValue = XFA_GetLocaleValue(this);
+  if (lcValue.ValidateValue(lcValue.GetValue(), wsPicture, pLocale, nullptr))
+    return XFA_EVENTERROR_Success;
 
-      WideString wsFormatMsg = validate->GetFormatMessageText();
-      WideString wsTitle = pAppProvider->GetAppTitle();
-      if (validate->GetFormatTest() == XFA_AttributeEnum::Error) {
-        if (wsFormatMsg.IsEmpty())
-          wsFormatMsg = GetValidateMessage(true, bVersionFlag);
-        pAppProvider->MsgBox(wsFormatMsg, wsTitle,
-                             static_cast<uint32_t>(AlertIcon::kError),
-                             static_cast<uint32_t>(AlertButton::kOK));
-        return XFA_EVENTERROR_Success;
-      }
-      if (IsUserInteractive())
-        return XFA_EVENTERROR_NotExist;
-      if (wsFormatMsg.IsEmpty())
-        wsFormatMsg = GetValidateMessage(false, bVersionFlag);
+  IXFA_AppProvider* pAppProvider =
+      docView->GetDoc()->GetApp()->GetAppProvider();
+  if (!pAppProvider)
+    return XFA_EVENTERROR_NotExist;
 
-      if (bVersionFlag) {
-        pAppProvider->MsgBox(wsFormatMsg, wsTitle,
-                             static_cast<uint32_t>(AlertIcon::kWarning),
-                             static_cast<uint32_t>(AlertButton::kOK));
-        return XFA_EVENTERROR_Success;
-      }
-      if (pAppProvider->MsgBox(wsFormatMsg, wsTitle,
-                               static_cast<uint32_t>(AlertIcon::kWarning),
-                               static_cast<uint32_t>(AlertButton::kYesNo)) ==
-          static_cast<uint32_t>(AlertReturn::kYes)) {
-        SetFlag(XFA_NodeFlag_UserInteractive);
-      }
-      return XFA_EVENTERROR_Success;
-    }
+  WideString wsFormatMsg = validate->GetFormatMessageText();
+  WideString wsTitle = pAppProvider->GetAppTitle();
+  if (validate->GetFormatTest() == XFA_AttributeEnum::Error) {
+    if (wsFormatMsg.IsEmpty())
+      wsFormatMsg = GetValidateMessage(true, bVersionFlag);
+    pAppProvider->MsgBox(wsFormatMsg, wsTitle,
+                         static_cast<uint32_t>(AlertIcon::kError),
+                         static_cast<uint32_t>(AlertButton::kOK));
+    return XFA_EVENTERROR_Error;
   }
-  return XFA_EVENTERROR_NotExist;
+
+  if (wsFormatMsg.IsEmpty())
+    wsFormatMsg = GetValidateMessage(false, bVersionFlag);
+
+  if (bVersionFlag) {
+    pAppProvider->MsgBox(wsFormatMsg, wsTitle,
+                         static_cast<uint32_t>(AlertIcon::kWarning),
+                         static_cast<uint32_t>(AlertButton::kOK));
+    return XFA_EVENTERROR_Error;
+  }
+
+  if (pAppProvider->MsgBox(wsFormatMsg, wsTitle,
+                           static_cast<uint32_t>(AlertIcon::kWarning),
+                           static_cast<uint32_t>(AlertButton::kYesNo)) ==
+      static_cast<uint32_t>(AlertReturn::kYes)) {
+    SetFlag(XFA_NodeFlag_UserInteractive);
+  }
+
+  return XFA_EVENTERROR_Error;
 }
 
 int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
