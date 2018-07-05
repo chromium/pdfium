@@ -49,7 +49,7 @@ class CPDF_ContentMark {
     std::vector<CPDF_ContentMarkItem> m_Marks;
   };
 
-  RetainPtr<MarkData> m_Ref;
+  RetainPtr<MarkData> m_pMarkData;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_
