@@ -13,6 +13,7 @@
 #include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fpdfapi/render/cpdf_type3glyphs.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/ptr_util.h"
@@ -138,11 +139,13 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
       if (bFlipped)
         std::swap(top_y, bottom_y);
       std::tie(top_line, bottom_line) = pSize->AdjustBlue(top_y, bottom_y);
-      pResBitmap = pBitmap->StretchTo(
-          static_cast<int>(image_matrix.a),
-          static_cast<int>(bFlipped ? top_line - bottom_line
-                                    : bottom_line - top_line),
-          0, nullptr);
+      FX_SAFE_INT32 safe_height = bFlipped ? top_line : bottom_line;
+      safe_height -= bFlipped ? bottom_line : top_line;
+      if (!safe_height.IsValid())
+        return nullptr;
+
+      pResBitmap = pBitmap->StretchTo(static_cast<int>(image_matrix.a),
+                                      safe_height.ValueOrDie(), 0, nullptr);
       top = top_line;
       if (image_matrix.a < 0)
         left = FXSYS_round(image_matrix.e + image_matrix.a);
