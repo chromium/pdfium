@@ -27,11 +27,11 @@ Optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
   return {result.ValueOrDie()};
 }
 
-Optional<int32_t> CheckTRDReferenceDimension(uint32_t dimension,
-                                             uint32_t divisor,
+Optional<int32_t> CheckTRDReferenceDimension(int32_t dimension,
+                                             uint32_t shift,
                                              int32_t offset) {
   FX_SAFE_INT32 result = offset;
-  result += dimension / divisor;
+  result += dimension >> shift;
   if (!result.IsValid())
     return {};
   return {result.ValueOrDie()};
@@ -162,9 +162,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
           return nullptr;
 
         Optional<int32_t> GRREFERENCEDX =
-            CheckTRDReferenceDimension(RDWI, 4, RDXI);
+            CheckTRDReferenceDimension(RDWI, 2, RDXI);
         Optional<int32_t> GRREFERENCEDY =
-            CheckTRDReferenceDimension(RDHI, 4, RDYI);
+            CheckTRDReferenceDimension(RDHI, 2, RDYI);
         if (!GRREFERENCEDX || !GRREFERENCEDY)
           return nullptr;
 
@@ -342,9 +342,9 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
           return nullptr;
 
         Optional<int32_t> GRREFERENCEDX =
-            CheckTRDReferenceDimension(RDWI, 2, RDXI);
+            CheckTRDReferenceDimension(RDWI, 1, RDXI);
         Optional<int32_t> GRREFERENCEDY =
-            CheckTRDReferenceDimension(RDHI, 2, RDYI);
+            CheckTRDReferenceDimension(RDHI, 1, RDYI);
         if (!GRREFERENCEDX || !GRREFERENCEDY)
           return nullptr;
 
