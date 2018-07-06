@@ -258,7 +258,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_ParamStartPos(0),
       m_ParamCount(0),
       m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()),
-      m_pCurContentMark(pdfium::MakeUnique<CPDF_ContentMark>()),
       m_DefFontSize(0),
       m_PathStartX(0.0f),
       m_PathStartY(0.0f),
@@ -284,6 +283,9 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
   for (size_t i = 0; i < FX_ArraySize(m_Type3Data); ++i) {
     m_Type3Data[i] = 0.0;
   }
+
+  // Add the sentinel.
+  m_ContentMarksStack.push(pdfium::MakeUnique<CPDF_ContentMark>());
 }
 
 CPDF_StreamContentParser::~CPDF_StreamContentParser() {
@@ -435,7 +437,7 @@ void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
                                                 bool bGraph) {
   pObj->m_GeneralState = m_pCurStates->m_GeneralState;
   pObj->m_ClipPath = m_pCurStates->m_ClipPath;
-  pObj->m_ContentMark = *m_pCurContentMark;
+  pObj->m_ContentMark = *m_ContentMarksStack.top();
   if (bColor) {
     pObj->m_ColorState = m_pCurStates->m_ColorState;
   }
@@ -608,8 +610,10 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     bDirect = false;
   }
   if (const CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    m_pCurContentMark = m_pCurContentMark->Clone();
-    m_pCurContentMark->AddMark(std::move(tag), pDict, bDirect);
+    std::unique_ptr<CPDF_ContentMark> new_marks =
+        m_ContentMarksStack.top()->Clone();
+    new_marks->AddMark(std::move(tag), pDict, bDirect);
+    m_ContentMarksStack.push(std::move(new_marks));
   }
 }
 
@@ -674,8 +678,10 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
-  m_pCurContentMark = m_pCurContentMark->Clone();
-  m_pCurContentMark->AddMark(GetString(0), nullptr, false);
+  std::unique_ptr<CPDF_ContentMark> new_marks =
+      m_ContentMarksStack.top()->Clone();
+  new_marks->AddMark(GetString(0), nullptr, false);
+  m_ContentMarksStack.push(std::move(new_marks));
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
@@ -868,8 +874,10 @@ void CPDF_StreamContentParser::Handle_MarkPlace_Dictionary() {}
 void CPDF_StreamContentParser::Handle_EndImage() {}
 
 void CPDF_StreamContentParser::Handle_EndMarkedContent() {
-  m_pCurContentMark = m_pCurContentMark->Clone();
-  m_pCurContentMark->DeleteLastMark();
+  // First element is a sentinel, so do not pop it, ever. This may come up if
+  // the EMCs are mismatched with the BMC/BDCs.
+  if (m_ContentMarksStack.size() > 1)
+    m_ContentMarksStack.pop();
 }
 
 void CPDF_StreamContentParser::Handle_EndText() {
