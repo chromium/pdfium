@@ -12,19 +12,17 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
 
-class CPDF_ContentMarkItem {
+class CPDF_ContentMarkItem : public Retainable {
  public:
   enum ParamType { None, PropertiesDict, DirectDict };
 
   CPDF_ContentMarkItem();
-  CPDF_ContentMarkItem(const CPDF_ContentMarkItem& that);
-  ~CPDF_ContentMarkItem();
-
-  CPDF_ContentMarkItem& operator=(CPDF_ContentMarkItem&& other) = default;
+  ~CPDF_ContentMarkItem() override;
 
   ByteString GetName() const { return m_MarkName; }
   ParamType GetParamType() const { return m_ParamType; }

@@ -46,7 +46,7 @@ class CPDF_ContentMark {
     void DeleteLastMark();
 
    private:
-    std::vector<CPDF_ContentMarkItem> m_Marks;
+    std::vector<RetainPtr<CPDF_ContentMarkItem>> m_Marks;
   };
 
   RetainPtr<MarkData> m_pMarkData;
