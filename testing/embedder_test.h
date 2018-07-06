@@ -260,7 +260,6 @@ class EmbedderTest : public ::testing::Test,
   int GetPageNumberForSavedPage(FPDF_PAGE page) const;
 
   std::string data_string_;
-  std::string saved_document_file_data_;
   std::ofstream filestream_;
 };
 

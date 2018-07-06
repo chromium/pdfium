@@ -351,9 +351,7 @@ FPDF_DOCUMENT EmbedderTest::OpenSavedDocument(const char* password) {
   memset(&saved_file_access_, 0, sizeof(saved_file_access_));
   saved_file_access_.m_FileLen = data_string_.size();
   saved_file_access_.m_GetBlock = GetBlockFromString;
-  // Copy data to prevent clearing it before saved document close.
-  saved_document_file_data_ = data_string_;
-  saved_file_access_.m_Param = &saved_document_file_data_;
+  saved_file_access_.m_Param = &data_string_;
 
   saved_fake_file_access_ =
       pdfium::MakeUnique<FakeFileAccess>(&saved_file_access_);
