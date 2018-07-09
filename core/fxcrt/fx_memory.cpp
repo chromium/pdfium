@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <stdlib.h>  // For abort().
+
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
-
-#include <stdlib.h>  // For abort().
+#include "third_party/base/debug/alias.h"
 
 pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
 pdfium::base::PartitionAllocatorGeneric gGeneralPartitionAllocator;
@@ -45,6 +46,11 @@ void FXMEM_DefaultFree(void* pointer) {
 }
 
 NEVER_INLINE void FX_OutOfMemoryTerminate() {
+  // Convince the linker this should not be folded with similar functions using
+  // Identical Code Folding.
+  static int make_this_function_aliased = 0xbd;
+  base::debug::Alias(&make_this_function_aliased);
+
   // Termimate cleanly if we can, else crash at a specific address (0xbd).
   abort();
 #ifndef _WIN32
