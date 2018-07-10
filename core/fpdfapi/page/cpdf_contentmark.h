@@ -24,9 +24,12 @@ class CPDF_ContentMark {
   std::unique_ptr<CPDF_ContentMark> Clone();
   int GetMarkedContentID() const;
   size_t CountItems() const;
-  const CPDF_ContentMarkItem& GetItem(size_t i) const;
 
-  void AddMark(ByteString name, const CPDF_Dictionary* pDict, bool bDirect);
+  // The returned pointer is never null.
+  CPDF_ContentMarkItem* GetItem(size_t i);
+  const CPDF_ContentMarkItem* GetItem(size_t i) const;
+
+  void AddMark(ByteString name, CPDF_Dictionary* pDict, bool bDirect);
   void DeleteLastMark();
 
  private:
@@ -37,12 +40,11 @@ class CPDF_ContentMark {
     ~MarkData() override;
 
     size_t CountItems() const;
-    const CPDF_ContentMarkItem& GetItem(size_t index) const;
+    CPDF_ContentMarkItem* GetItem(size_t index);
+    const CPDF_ContentMarkItem* GetItem(size_t index) const;
 
     int GetMarkedContentID() const;
-    void AddMark(ByteString name,
-                 const CPDF_Dictionary* pDict,
-                 bool bDictNeedClone);
+    void AddMark(ByteString name, CPDF_Dictionary* pDict, bool bDictNeedClone);
     void DeleteLastMark();
 
    private:

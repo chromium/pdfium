@@ -317,6 +317,19 @@ FPDF_EXPORT FPDF_PAGEOBJECTMARK FPDF_CALLCONV
 FPDFPageObj_GetMark(FPDF_PAGEOBJECT page_object, unsigned long index);
 
 // Experimental API.
+// Add a new content mark to a |page_object|.
+//
+//   page_object - handle to a page object.
+//   name        - the name (tag) of the mark.
+//
+// Returns the handle to the content mark, or NULL on failure. The handle is
+// still owned by the library, and it should not be freed directly. It becomes
+// invalid if the page object is destroyed, either directly or indirectly by
+// unloading the page.
+FPDF_EXPORT FPDF_PAGEOBJECTMARK FPDF_CALLCONV
+FPDFPageObj_AddMark(FPDF_PAGEOBJECT page_object, FPDF_BYTESTRING name);
+
+// Experimental API.
 // Get name of a content mark. |buffer| is only modified if |buflen| is longer
 // than the length of the name.
 //
@@ -440,6 +453,40 @@ FPDFPageObjMark_GetParamStringValueByKey(FPDF_PAGEOBJECTMARK mark,
                                          void* buffer,
                                          unsigned long buflen,
                                          unsigned long* out_buflen);
+
+// Experimental API.
+// Set the value of an int property in a content mark by key. If a parameter
+// with key |key| exists, its value is set to |value|. Otherwise, it is added as
+// a new parameter.
+//
+//   document - handle to the document.
+//   mark     - handle to a content mark.
+//   key      - string key of the property.
+//   value    - int value to set.
+//
+// Returns TRUE if the operation succeeded, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_SetIntParam(FPDF_DOCUMENT document,
+                            FPDF_PAGEOBJECTMARK mark,
+                            FPDF_BYTESTRING key,
+                            int value);
+
+// Experimental API.
+// Set the value of a string property in a content mark by key. If a parameter
+// with key |key| exists, its value is set to |value|. Otherwise, it is added as
+// a new parameter.
+//
+//   document - handle to the document.
+//   mark     - handle to a content mark.
+//   key      - string key of the property.
+//   value    - string value to set.
+//
+// Returns TRUE if the operation succeeded, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_SetStringParam(FPDF_DOCUMENT document,
+                               FPDF_PAGEOBJECTMARK mark,
+                               FPDF_BYTESTRING key,
+                               FPDF_BYTESTRING value);
 
 // Load an image from a JPEG image file and then set it into |image_object|.
 //

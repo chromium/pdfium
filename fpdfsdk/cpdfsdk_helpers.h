@@ -139,12 +139,12 @@ inline CPDF_PageObject* CPDFPageObjectFromFPDFPageObject(
 }
 
 inline FPDF_PAGEOBJECTMARK FPDFPageObjectMarkFromCPDFContentMarkItem(
-    const CPDF_ContentMarkItem* mark) {
+    CPDF_ContentMarkItem* mark) {
   return reinterpret_cast<FPDF_PAGEOBJECTMARK>(mark);
 }
-inline const CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
+inline CPDF_ContentMarkItem* CPDFContentMarkItemFromFPDFPageObjectMark(
     FPDF_PAGEOBJECTMARK mark) {
-  return reinterpret_cast<const CPDF_ContentMarkItem*>(mark);
+  return reinterpret_cast<CPDF_ContentMarkItem*>(mark);
 }
 
 inline FPDF_PAGERANGE FPDFPageRangeFromCPDFArray(const CPDF_Array* range) {
