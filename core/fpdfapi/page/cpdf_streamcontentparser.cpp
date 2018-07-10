@@ -236,6 +236,14 @@ void ReplaceAbbr(CPDF_Object* pObj) {
   }
 }
 
+CPDF_Dictionary* ChooseResourcesDict(CPDF_Dictionary* pResources,
+                                     CPDF_Dictionary* pParentResources,
+                                     CPDF_Dictionary* pPageResources) {
+  if (pResources)
+    return pResources;
+  return pParentResources ? pParentResources : pPageResources;
+}
+
 }  // namespace
 
 CPDF_StreamContentParser::CPDF_StreamContentParser(
@@ -251,7 +259,8 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     : m_pDocument(pDocument),
       m_pPageResources(pPageResources),
       m_pParentResources(pParentResources),
-      m_pResources(pResources),
+      m_pResources(
+          ChooseResourcesDict(pResources, pParentResources, pPageResources)),
       m_pObjectHolder(pObjHolder),
       m_ParsedSet(parsedSet),
       m_BBox(rcBBox),
@@ -268,10 +277,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_bResourceMissing(false) {
   if (pmtContentToUser)
     m_mtContentToUser = *pmtContentToUser;
-  if (!m_pResources)
-    m_pResources = m_pParentResources;
-  if (!m_pResources)
-    m_pResources = m_pPageResources;
   if (pStates) {
     m_pCurStates->Copy(*pStates);
   } else {
