@@ -6,6 +6,7 @@
 
 #include "build/build_config.h"
 
+namespace pdfium {
 namespace base {
 namespace debug {
 
@@ -26,3 +27,4 @@ void Alias(const void* var) {
 
 }  // namespace debug
 }  // namespace base
+}  // namespace pdfium

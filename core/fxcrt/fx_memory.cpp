@@ -49,7 +49,7 @@ NEVER_INLINE void FX_OutOfMemoryTerminate() {
   // Convince the linker this should not be folded with similar functions using
   // Identical Code Folding.
   static int make_this_function_aliased = 0xbd;
-  base::debug::Alias(&make_this_function_aliased);
+  pdfium::base::debug::Alias(&make_this_function_aliased);
 
   // Termimate cleanly if we can, else crash at a specific address (0xbd).
   abort();

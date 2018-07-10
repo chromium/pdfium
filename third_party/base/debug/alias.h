@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_DEBUG_ALIAS_H_
-#define BASE_DEBUG_ALIAS_H_
+#ifndef PDFIUM_THIRD_PARTY_BASE_DEBUG_ALIAS_H_
+#define PDFIUM_THIRD_PARTY_BASE_DEBUG_ALIAS_H_
 
+namespace pdfium {
 namespace base {
 namespace debug {
 
@@ -28,5 +29,6 @@ void Alias(const void* var);
 
 }  // namespace debug
 }  // namespace base
+}  // namespace pdfium
 
-#endif  // BASE_DEBUG_ALIAS_H_
+#endif  // PDFIUM_THIRD_PARTY_BASE_DEBUG_ALIAS_H_
