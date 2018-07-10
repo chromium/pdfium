@@ -41,7 +41,9 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
     uint32_t GlyphID = charpos.m_GlyphIndex;
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
     charpos.m_ExtGID = pFont->GlyphFromCharCodeExt(CharCode);
-    GlyphID = charpos.m_ExtGID;
+    GlyphID = charpos.m_ExtGID != static_cast<uint32_t>(-1)
+                  ? charpos.m_ExtGID
+                  : charpos.m_GlyphIndex;
 #endif
     CFX_Font* pCurrentFont;
     if (GlyphID != static_cast<uint32_t>(-1)) {
