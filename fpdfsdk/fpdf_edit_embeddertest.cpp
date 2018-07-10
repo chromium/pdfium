@@ -519,6 +519,117 @@ TEST_F(FPDFEditEmbeddertest, RemovePageObject) {
   FPDFPageObj_Destroy(page_object);
 }
 
+void CheckMarkCounts(FPDF_PAGE page,
+                     int start_from,
+                     int expected_object_count,
+                     size_t expected_prime_count,
+                     size_t expected_square_count,
+                     size_t expected_greater_than_ten_count,
+                     size_t expected_bounds_count) {
+  int object_count = FPDFPage_CountObjects(page);
+  ASSERT_EQ(expected_object_count, object_count);
+
+  size_t prime_count = 0;
+  size_t square_count = 0;
+  size_t greater_than_ten_count = 0;
+  size_t bounds_count = 0;
+  for (int i = 0; i < object_count; ++i) {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, i);
+
+    int mark_count = FPDFPageObj_CountMarks(page_object);
+    for (int j = 0; j < mark_count; ++j) {
+      FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
+
+      char buffer[256];
+      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, 256), 0u);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+      if (name == L"Prime") {
+        prime_count++;
+      } else if (name == L"Square") {
+        square_count++;
+        int expected_square = start_from + i;
+        EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
+
+        unsigned long get_param_key_return =
+            FPDFPageObjMark_GetParamKey(mark, 0, buffer, 256);
+        ASSERT_GT(get_param_key_return, 0u);
+        EXPECT_EQ((6u + 1u) * 2u, get_param_key_return);
+        std::wstring key =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+        EXPECT_EQ(L"Factor", key);
+
+        EXPECT_EQ(FPDF_OBJECT_NUMBER,
+                  FPDFPageObjMark_GetParamValueType(mark, 0));
+        int square_root = FPDFPageObjMark_GetParamIntValue(mark, 0);
+        EXPECT_EQ(expected_square, square_root * square_root);
+
+        EXPECT_EQ(FPDF_OBJECT_NUMBER,
+                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Factor"));
+        EXPECT_TRUE(FPDFPageObjMark_GetParamIntValueByKey(mark, "Factor",
+                                                          &square_root));
+        EXPECT_EQ(expected_square, square_root * square_root);
+      } else if (name == L"GreaterThanTen") {
+        greater_than_ten_count++;
+      } else if (name == L"Bounds") {
+        bounds_count++;
+        EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
+
+        unsigned long get_param_key_return =
+            FPDFPageObjMark_GetParamKey(mark, 0, buffer, 256);
+        ASSERT_GT(get_param_key_return, 0u);
+        EXPECT_EQ((8u + 1u) * 2u, get_param_key_return);
+        std::wstring key =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+        EXPECT_EQ(L"Position", key);
+
+        EXPECT_EQ(FPDF_OBJECT_STRING,
+                  FPDFPageObjMark_GetParamValueType(mark, 0));
+        unsigned long get_param_value_return =
+            FPDFPageObjMark_GetParamStringValue(mark, 0, buffer, 256);
+        ASSERT_GT(get_param_value_return, 0u);
+        EXPECT_EQ((4u + 1u) * 2u, get_param_value_return);
+        std::wstring value =
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+        EXPECT_EQ(L"Last", value);
+
+        // Should be the last object.
+        EXPECT_EQ(object_count - 1, i);
+
+        EXPECT_EQ(FPDF_OBJECT_STRING,
+                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Position"));
+        unsigned long length;
+        EXPECT_TRUE(FPDFPageObjMark_GetParamStringValueByKey(
+            mark, "Position", buffer, 256, &length));
+        ASSERT_GT(length, 0u);
+        EXPECT_EQ((4u + 1u) * 2u, length);
+        value = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+        EXPECT_EQ(L"Last", value);
+      } else {
+        FAIL();
+      }
+    }
+  }
+
+  // Expect certain number of tagged objects. The test file contains strings
+  // from 1 to 19.
+  EXPECT_EQ(expected_prime_count, prime_count);
+  EXPECT_EQ(expected_square_count, square_count);
+  EXPECT_EQ(expected_greater_than_ten_count, greater_than_ten_count);
+  EXPECT_EQ(expected_bounds_count, bounds_count);
+}
+
+TEST_F(FPDFEditEmbeddertest, ReadMarkedObjectsIndirectDict) {
+  // Load document with some text marked with an indirect property.
+  EXPECT_TRUE(OpenDocument("text_in_page_marked_indirect.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  CheckMarkCounts(page, 1, 19, 8, 4, 9, 1);
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));
@@ -538,16 +649,12 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
     CompareBitmap(page_bitmap.get(), 200, 200, kOriginalMD5);
   }
 
-  // Iterate over all objects, counting the number of times each content mark
-  // name appears.
-  int object_count = FPDFPage_CountObjects(page);
-  ASSERT_EQ(19, object_count);
+  constexpr int expected_object_count = 19;
+  CheckMarkCounts(page, 1, expected_object_count, 8, 4, 9, 1);
 
-  unsigned long prime_count = 0;
-  unsigned long square_count = 0;
-  unsigned long greater_than_ten_count = 0;
+  // Get all objects marked with "Prime"
   std::vector<FPDF_PAGEOBJECT> primes;
-  for (int i = 0; i < object_count; ++i) {
+  for (int i = 0; i < expected_object_count; ++i) {
     FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, i);
 
     int mark_count = FPDFPageObj_CountMarks(page_object);
@@ -559,63 +666,10 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
       std::wstring name =
           GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Prime") {
-        prime_count++;
-        EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
         primes.push_back(page_object);
-      } else if (name == L"Square") {
-        square_count++;
-        EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
-        ASSERT_GT(FPDFPageObjMark_GetParamKey(mark, 0, buffer, 256), 0u);
-        std::wstring key =
-            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
-        EXPECT_EQ(L"Factor", key);
-        EXPECT_EQ(FPDF_OBJECT_NUMBER,
-                  FPDFPageObjMark_GetParamValueType(mark, 0));
-        int square_root = FPDFPageObjMark_GetParamIntValue(mark, 0);
-        EXPECT_EQ(i + 1, square_root * square_root);
-
-        EXPECT_EQ(FPDF_OBJECT_NUMBER,
-                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Factor"));
-        EXPECT_TRUE(FPDFPageObjMark_GetParamIntValueByKey(mark, "Factor",
-                                                          &square_root));
-        EXPECT_EQ(i + 1, square_root * square_root);
-      } else if (name == L"GreaterThanTen") {
-        greater_than_ten_count++;
-        EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
-      } else if (name == L"Bounds") {
-        EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
-        ASSERT_GT(FPDFPageObjMark_GetParamKey(mark, 0, buffer, 256), 0u);
-        std::wstring key =
-            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
-        EXPECT_EQ(L"Position", key);
-        EXPECT_EQ(FPDF_OBJECT_STRING,
-                  FPDFPageObjMark_GetParamValueType(mark, 0));
-        ASSERT_GT(FPDFPageObjMark_GetParamStringValue(mark, 0, buffer, 256),
-                  0u);
-        std::wstring value =
-            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
-        EXPECT_EQ(L"Last", value);
-        EXPECT_EQ(18, i);
-
-        EXPECT_EQ(FPDF_OBJECT_STRING,
-                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Position"));
-        unsigned long length;
-        EXPECT_TRUE(FPDFPageObjMark_GetParamStringValueByKey(
-            mark, "Position", buffer, 256, &length));
-        ASSERT_GT(length, 0u);
-        value = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
-        EXPECT_EQ(L"Last", value);
-      } else {
-        FAIL();
       }
     }
   }
-
-  // Expect certain number of tagged objects. The test file contains strings
-  // from 1 to 19.
-  EXPECT_EQ(8u, prime_count);
-  EXPECT_EQ(4u, square_count);
-  EXPECT_EQ(9u, greater_than_ten_count);
 
   // Remove all objects marked with "Prime".
   for (FPDF_PAGEOBJECT page_object : primes) {
