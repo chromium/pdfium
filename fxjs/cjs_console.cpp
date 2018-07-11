@@ -22,6 +22,11 @@ int CJS_Console::ObjDefnID = -1;
 const char CJS_Console::kName[] = "console";
 
 // static
+int CJS_Console::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_Console::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_Console::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Console>, JSDestructor);

@@ -19,6 +19,7 @@
 
 class CJS_Util : public CJS_Object {
  public:
+  static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   CJS_Util(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);

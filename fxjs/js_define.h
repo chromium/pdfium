@@ -57,20 +57,31 @@ static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
 // CJS_Object has virtual dtor, template not required.
 void JSDestructor(v8::Local<v8::Object> obj);
 
+template <class C>
+C* JSGetObject(v8::Local<v8::Object> obj) {
+  if (CFXJS_Engine::GetObjDefnID(obj) != C::GetObjDefnID())
+    return nullptr;
+
+  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(obj);
+  if (!pJSObj)
+    return nullptr;
+
+  return static_cast<C*>(pJSObj);
+}
+
 template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
-  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  C* pObj = JSGetObject<C>(info.Holder());
+  if (!pObj)
     return;
 
-  CJS_Runtime* pRuntime = pJSObj->GetRuntime();
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
   if (!pRuntime)
     return;
 
-  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
@@ -88,15 +99,14 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::String> property,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
-  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  C* pObj = JSGetObject<C>(info.Holder());
+  if (!pObj)
     return;
 
-  CJS_Runtime* pRuntime = pJSObj->GetRuntime();
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
   if (!pRuntime)
     return;
 
-  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime, value);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
@@ -110,11 +120,11 @@ template <class C,
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
-  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  C* pObj = JSGetObject<C>(info.Holder());
+  if (!pObj)
     return;
 
-  CJS_Runtime* pRuntime = pJSObj->GetRuntime();
+  CJS_Runtime* pRuntime = pObj->GetRuntime();
   if (!pRuntime)
     return;
 
@@ -122,7 +132,6 @@ void JSMethod(const char* method_name_string,
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
     parameters.push_back(info[i]);
 
-  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime, parameters);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,

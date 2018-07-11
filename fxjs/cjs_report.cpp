@@ -19,6 +19,11 @@ int CJS_Report::ObjDefnID = -1;
 const char CJS_Report::kName[] = "Report";
 
 // static
+int CJS_Report::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_Report::DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType) {
   ObjDefnID = pEngine->DefineObj(CJS_Report::kName, eObjType,
                                  JSConstructor<CJS_Report>, JSDestructor);

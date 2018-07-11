@@ -38,6 +38,11 @@ int CJS_Event::ObjDefnID = -1;
 const char CJS_Event::kName[] = "event";
 
 // static
+int CJS_Event::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_Event::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_Event::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Event>, JSDestructor);
