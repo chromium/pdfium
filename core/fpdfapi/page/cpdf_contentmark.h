@@ -31,7 +31,9 @@ class CPDF_ContentMark {
 
   void AddMark(ByteString name);
   void AddMarkWithDirectDict(ByteString name, CPDF_Dictionary* pDict);
-  void AddMarkWithPropertiesDict(ByteString name, CPDF_Dictionary* pDict);
+  void AddMarkWithPropertiesDict(ByteString name,
+                                 CPDF_Dictionary* pDict,
+                                 const ByteString& property_name);
   void DeleteLastMark();
 
  private:
@@ -48,7 +50,9 @@ class CPDF_ContentMark {
     int GetMarkedContentID() const;
     void AddMark(ByteString name);
     void AddMarkWithDirectDict(ByteString name, CPDF_Dictionary* pDict);
-    void AddMarkWithPropertiesDict(ByteString name, CPDF_Dictionary* pDict);
+    void AddMarkWithPropertiesDict(ByteString name,
+                                   CPDF_Dictionary* pDict,
+                                   const ByteString& property_name);
     void DeleteLastMark();
 
    private:

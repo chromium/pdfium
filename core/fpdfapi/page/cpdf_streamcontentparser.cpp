@@ -608,18 +608,22 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     return;
 
   bool bIndirect = pProperty->IsName();
+  ByteString property_name;
   if (bIndirect) {
-    pProperty = FindResourceObj("Properties", pProperty->GetString());
+    property_name = pProperty->GetString();
+    pProperty = FindResourceObj("Properties", property_name);
     if (!pProperty)
       return;
   }
   if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
     std::unique_ptr<CPDF_ContentMark> new_marks =
         m_ContentMarksStack.top()->Clone();
-    if (bIndirect)
-      new_marks->AddMarkWithPropertiesDict(std::move(tag), pDict);
-    else
+    if (bIndirect) {
+      new_marks->AddMarkWithPropertiesDict(std::move(tag), pDict,
+                                           property_name);
+    } else {
       new_marks->AddMarkWithDirectDict(std::move(tag), pDict);
+    }
     m_ContentMarksStack.push(std::move(new_marks));
   }
 }
