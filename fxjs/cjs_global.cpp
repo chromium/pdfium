@@ -387,7 +387,7 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
         CJS_GlobalVariableArray array;
         v8::Local<v8::Object> obj =
             v8::Local<v8::Object>::New(GetIsolate(), pData->pData);
-        ObjectToArray(pRuntime, obj, array);
+        ObjectToArray(pRuntime, obj, &array);
         m_pGlobalData->SetGlobalVariableObject(name, array);
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
       } break;
@@ -401,7 +401,7 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
 
 void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
                                v8::Local<v8::Object> pObj,
-                               CJS_GlobalVariableArray& array) {
+                               CJS_GlobalVariableArray* pArray) {
   std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
     ByteString sKey = ws.UTF8Encode();
@@ -411,7 +411,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       pObjElement->nType = JS_GlobalDataType::NUMBER;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToDouble(v);
-      array.Add(pObjElement);
+      pArray->Add(pObjElement);
       continue;
     }
     if (v->IsBoolean()) {
@@ -419,7 +419,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       pObjElement->nType = JS_GlobalDataType::BOOLEAN;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToBoolean(v);
-      array.Add(pObjElement);
+      pArray->Add(pObjElement);
       continue;
     }
     if (v->IsString()) {
@@ -428,22 +428,22 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       pObjElement->nType = JS_GlobalDataType::STRING;
       pObjElement->sKey = sKey;
       pObjElement->sData = sValue;
-      array.Add(pObjElement);
+      pArray->Add(pObjElement);
       continue;
     }
     if (v->IsObject()) {
       CJS_KeyValue* pObjElement = new CJS_KeyValue;
       pObjElement->nType = JS_GlobalDataType::OBJECT;
       pObjElement->sKey = sKey;
-      ObjectToArray(pRuntime, pRuntime->ToObject(v), pObjElement->objData);
-      array.Add(pObjElement);
+      ObjectToArray(pRuntime, pRuntime->ToObject(v), &pObjElement->objData);
+      pArray->Add(pObjElement);
       continue;
     }
     if (v->IsNull()) {
       CJS_KeyValue* pObjElement = new CJS_KeyValue;
       pObjElement->nType = JS_GlobalDataType::NULLOBJ;
       pObjElement->sKey = sKey;
-      array.Add(pObjElement);
+      pArray->Add(pObjElement);
     }
   }
 }

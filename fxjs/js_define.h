@@ -54,7 +54,7 @@ static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
       obj, pdfium::MakeUnique<T>(obj, static_cast<CJS_Runtime*>(pEngine)));
 }
 
-// CJS_Object has vitual dtor, template not required.
+// CJS_Object has virtual dtor, template not required.
 void JSDestructor(v8::Local<v8::Object> obj);
 
 template <class C, CJS_Return (C::*M)(CJS_Runtime*)>

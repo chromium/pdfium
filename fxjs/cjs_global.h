@@ -78,7 +78,7 @@ class CJS_Global : public CJS_Object {
                                 bool bDefaultPersistent);
   void ObjectToArray(CJS_Runtime* pRuntime,
                      v8::Local<v8::Object> pObj,
-                     CJS_GlobalVariableArray& array);
+                     CJS_GlobalVariableArray* pArray);
   void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
 
   std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
