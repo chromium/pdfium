@@ -977,16 +977,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (!objnum)
     return false;
 
-  CPDF_Object* pUnownedObject = pObject.get();
-  const CPDF_Dictionary* pRootDict = GetRoot();
-  if (pRootDict && pRootDict->GetObjNum() == objnum)
-    return false;
-  if (!m_pObjectsHolder->ReplaceIndirectObjectIfHigherGeneration(
-          objnum, std::move(pObject))) {
-    return false;
-  }
-
-  CPDF_Stream* pStream = pUnownedObject->AsStream();
+  CPDF_Stream* pStream = pObject->AsStream();
   if (!pStream)
     return false;
 
