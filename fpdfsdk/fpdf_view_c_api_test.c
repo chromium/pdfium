@@ -139,12 +139,9 @@ int CheckPDFiumCApi() {
     CHK(FPDFImageObj_SetMatrix);
     CHK(FPDFPageObjMark_CountParams);
     CHK(FPDFPageObjMark_GetName);
-    CHK(FPDFPageObjMark_GetParamIntValue);
     CHK(FPDFPageObjMark_GetParamIntValueByKey);
     CHK(FPDFPageObjMark_GetParamKey);
-    CHK(FPDFPageObjMark_GetParamStringValue);
     CHK(FPDFPageObjMark_GetParamStringValueByKey);
-    CHK(FPDFPageObjMark_GetParamValueType);
     CHK(FPDFPageObjMark_GetParamValueTypeByKey);
     CHK(FPDFPageObjMark_SetIntParam);
     CHK(FPDFPageObjMark_SetStringParam);
