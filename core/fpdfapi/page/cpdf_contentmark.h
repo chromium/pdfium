@@ -29,7 +29,9 @@ class CPDF_ContentMark {
   CPDF_ContentMarkItem* GetItem(size_t i);
   const CPDF_ContentMarkItem* GetItem(size_t i) const;
 
-  void AddMark(ByteString name, CPDF_Dictionary* pDict, bool bDirect);
+  void AddMark(ByteString name);
+  void AddMarkWithDirectDict(ByteString name, CPDF_Dictionary* pDict);
+  void AddMarkWithPropertiesDict(ByteString name, CPDF_Dictionary* pDict);
   void DeleteLastMark();
 
  private:
@@ -44,12 +46,16 @@ class CPDF_ContentMark {
     const CPDF_ContentMarkItem* GetItem(size_t index) const;
 
     int GetMarkedContentID() const;
-    void AddMark(ByteString name, CPDF_Dictionary* pDict, bool bDictNeedClone);
+    void AddMark(ByteString name);
+    void AddMarkWithDirectDict(ByteString name, CPDF_Dictionary* pDict);
+    void AddMarkWithPropertiesDict(ByteString name, CPDF_Dictionary* pDict);
     void DeleteLastMark();
 
    private:
     std::vector<RetainPtr<CPDF_ContentMarkItem>> m_Marks;
   };
+
+  void EnsureMarkDataExists();
 
   RetainPtr<MarkData> m_pMarkData;
 };

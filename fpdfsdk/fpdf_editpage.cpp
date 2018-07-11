@@ -326,7 +326,7 @@ FPDFPageObj_AddMark(FPDF_PAGEOBJECT page_object, FPDF_BYTESTRING name) {
     return nullptr;
 
   auto* mark = &CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
-  mark->AddMark(name, nullptr, true);
+  mark->AddMark(name);
   unsigned long index = mark->CountItems() - 1;
 
   return FPDFPageObjectMarkFromCPDFContentMarkItem(mark->GetItem(index));
