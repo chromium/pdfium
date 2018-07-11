@@ -102,12 +102,8 @@ CJS_App::CJS_App(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 CJS_App::~CJS_App() = default;
 
 CJS_Return CJS_App::get_active_docs(CJS_Runtime* pRuntime) {
-  CJS_Document* pJSDocument = nullptr;
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::GetObjDefnID()) {
-    pJSDocument =
-        static_cast<CJS_Document*>(CFXJS_Engine::GetObjectPrivate(pObj));
-  }
+  CJS_Document* pJSDocument = JSGetObject<CJS_Document>(pObj);
   v8::Local<v8::Array> aDocs = pRuntime->NewArray();
   pRuntime->PutArrayElement(
       aDocs, 0,
@@ -398,14 +394,11 @@ void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
     return;
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(param);
-  if (CFXJS_Engine::GetObjDefnID(pObj) != CJS_TimerObj::GetObjDefnID())
+  CJS_TimerObj* pTimer = JSGetObject<CJS_TimerObj>(pObj);
+  if (!pTimer)
     return;
 
-  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(pObj);
-  if (!pJSObj)
-    return;
-
-  GlobalTimer::Cancel(static_cast<CJS_TimerObj*>(pJSObj)->GetTimerID());
+  GlobalTimer::Cancel(pTimer->GetTimerID());
 }
 
 CJS_Return CJS_App::execMenuItem(

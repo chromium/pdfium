@@ -354,22 +354,16 @@ CJS_Return CJS_Document::print(
   if (nLength == 9) {
     if (params[8]->IsObject()) {
       v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8]);
-      if (CFXJS_Engine::GetObjDefnID(pObj) ==
-          CJS_PrintParamsObj::GetObjDefnID()) {
-        v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8]);
-        CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(pObj);
-        if (pJSObj) {
-          CJS_PrintParamsObj* printObj =
-              static_cast<CJS_PrintParamsObj*>(pJSObj);
-          bUI = printObj->GetUI();
-          nStart = printObj->GetStart();
-          nEnd = printObj->GetEnd();
-          bSilent = printObj->GetSilent();
-          bShrinkToFit = printObj->GetShrinkToFit();
-          bPrintAsImage = printObj->GetPrintAsImage();
-          bReverse = printObj->GetReverse();
-          bAnnotations = printObj->GetAnnotations();
-        }
+      CJS_PrintParamsObj* pPrintObj = JSGetObject<CJS_PrintParamsObj>(pObj);
+      if (pPrintObj) {
+        bUI = pPrintObj->GetUI();
+        nStart = pPrintObj->GetStart();
+        nEnd = pPrintObj->GetEnd();
+        bSilent = pPrintObj->GetSilent();
+        bShrinkToFit = pPrintObj->GetShrinkToFit();
+        bPrintAsImage = pPrintObj->GetPrintAsImage();
+        bReverse = pPrintObj->GetReverse();
+        bAnnotations = pPrintObj->GetAnnotations();
       }
     }
   } else {
@@ -1109,13 +1103,8 @@ CJS_Return CJS_Document::addIcon(
   if (!params[1]->IsObject())
     return CJS_Return(JSMessage::kTypeError);
 
-  v8::Local<v8::Object> pJSIcon = pRuntime->ToObject(params[1]);
-  if (CFXJS_Engine::GetObjDefnID(pJSIcon) != CJS_Icon::GetObjDefnID())
-    return CJS_Return(JSMessage::kTypeError);
-
   v8::Local<v8::Object> pObj = pRuntime->ToObject(params[1]);
-  CJS_Object* obj = CFXJS_Engine::GetObjectPrivate(pObj);
-  if (!obj)
+  if (!JSGetObject<CJS_Icon>(pObj))
     return CJS_Return(JSMessage::kTypeError);
 
   WideString swIconName = pRuntime->ToWideString(params[0]);
