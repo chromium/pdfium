@@ -1226,6 +1226,15 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
 // Returns one of the FPDF_TEXTRENDERMODE_* flags on success, -1 on error.
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text);
 
+// Experimental API.
+// Get number of page objects inside |form_object|.
+//
+//   form_object - handle to a form object.
+//
+// Returns the number of objects in |form_object| on success, -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFFormObj_CountObjects(FPDF_PAGEOBJECT form_object);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

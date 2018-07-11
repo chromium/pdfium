@@ -1,0 +1,91 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+/FormType 1
+/Subtype /Form
+/Resources
+<<
+/Font
+<<
+/F1 2 0 R
+>>
+>>
+/Type /XObject
+/BBox [0 0 612 446]
+/Length 0
+>>
+stream
+  BT
+  /F1 24 Tf
+  1 0 0 1 260 254 Tm
+  (Hello)Tj
+  ET
+  BT
+  /F1 24 Tf
+  1 0 0 1 260 204 Tm
+  (World)Tj
+  ET
+
+endstream
+endobj
+3 0 obj <<
+/ProcSet [/PDF]
+/XObject
+<<
+/Im1 1 0 R
+>>
+>>
+endobj
+4 0 obj <<
+/Resources 3 0 R
+/Parent 5 0 R
+/Contents 6 0 R
+/Type /Page
+/MediaBox [0 0 62 69]
+>>
+endobj
+6 0 obj <<
+/Length 0
+>>
+stream
+q
+1 0 0 1 -260 -203 cm
+/Im1 Do
+Q
+endstream
+endobj
+5 0 obj <<
+/Kids [4 0 R]
+/Type /Pages
+/Count 1
+>>
+endobj
+2 0 obj <<
+/Subtype /Type1
+/Name /F1
+/Type /Font
+/BaseFont /Helvetica
+>>
+endobj
+7 0 obj <<
+/Type /Catalog
+/Pages 5 0 R
+>>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000578 00000 n 
+0000000275 00000 n 
+0000000338 00000 n 
+0000000521 00000 n 
+0000000440 00000 n 
+0000000658 00000 n 
+trailer <<
+/Root 7 0 R
+/Size 8
+>>
+startxref
+707
+%%EOF

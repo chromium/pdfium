@@ -751,3 +751,24 @@ FPDFPageObj_SetLineCap(FPDF_PAGEOBJECT page_object, int line_cap) {
   pPageObj->SetDirty(true);
   return true;
 }
+
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFFormObj_CountObjects(FPDF_PAGEOBJECT page_object) {
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj)
+    return -1;
+
+  CPDF_FormObject* pFormObject = pPageObj->AsForm();
+  if (!pFormObject)
+    return -1;
+
+  const CPDF_Form* pForm = pFormObject->form();
+  if (!pForm)
+    return -1;
+
+  const CPDF_PageObjectList* pObjectList = pForm->GetPageObjectList();
+  if (!pObjectList)
+    return -1;
+
+  return pObjectList->size();
+}
