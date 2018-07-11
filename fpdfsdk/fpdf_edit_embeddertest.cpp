@@ -560,10 +560,10 @@ void CheckMarkCounts(FPDF_PAGE page,
         EXPECT_EQ(L"Factor", key);
 
         EXPECT_EQ(FPDF_OBJECT_NUMBER,
-                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Factor"));
+                  FPDFPageObjMark_GetParamValueType(mark, "Factor"));
         int square_root;
-        EXPECT_TRUE(FPDFPageObjMark_GetParamIntValueByKey(mark, "Factor",
-                                                          &square_root));
+        EXPECT_TRUE(
+            FPDFPageObjMark_GetParamIntValue(mark, "Factor", &square_root));
         EXPECT_EQ(expected_square, square_root * square_root);
       } else if (name == L"GreaterThanTen") {
         greater_than_ten_count++;
@@ -583,10 +583,10 @@ void CheckMarkCounts(FPDF_PAGE page,
         EXPECT_EQ(object_count - 1, i);
 
         EXPECT_EQ(FPDF_OBJECT_STRING,
-                  FPDFPageObjMark_GetParamValueTypeByKey(mark, "Position"));
+                  FPDFPageObjMark_GetParamValueType(mark, "Position"));
         unsigned long length;
-        EXPECT_TRUE(FPDFPageObjMark_GetParamStringValueByKey(
-            mark, "Position", buffer, 256, &length));
+        EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(mark, "Position",
+                                                        buffer, 256, &length));
         ASSERT_GT(length, 0u);
         EXPECT_EQ((4u + 1u) * 2u, length);
         std::wstring value =
@@ -2183,17 +2183,16 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
 
   // Check the two parameters can be retrieved.
   EXPECT_EQ(FPDF_OBJECT_NUMBER,
-            FPDFPageObjMark_GetParamValueTypeByKey(mark, "IntKey"));
+            FPDFPageObjMark_GetParamValueType(mark, "IntKey"));
   int int_value;
-  EXPECT_TRUE(
-      FPDFPageObjMark_GetParamIntValueByKey(mark, "IntKey", &int_value));
+  EXPECT_TRUE(FPDFPageObjMark_GetParamIntValue(mark, "IntKey", &int_value));
   EXPECT_EQ(42, int_value);
 
   EXPECT_EQ(FPDF_OBJECT_STRING,
-            FPDFPageObjMark_GetParamValueTypeByKey(mark, "StringKey"));
+            FPDFPageObjMark_GetParamValueType(mark, "StringKey"));
   unsigned long out_buffer_len;
-  EXPECT_TRUE(FPDFPageObjMark_GetParamStringValueByKey(
-      mark, "StringKey", buffer, 256, &out_buffer_len));
+  EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(mark, "StringKey", buffer,
+                                                  256, &out_buffer_len));
   EXPECT_GT(out_buffer_len, 0u);
   name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"StringValue", name);
