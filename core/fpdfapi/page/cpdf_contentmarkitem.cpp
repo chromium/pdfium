@@ -10,7 +10,8 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 
-CPDF_ContentMarkItem::CPDF_ContentMarkItem() {}
+CPDF_ContentMarkItem::CPDF_ContentMarkItem(ByteString name)
+    : m_MarkName(std::move(name)) {}
 
 CPDF_ContentMarkItem::~CPDF_ContentMarkItem() {}
 

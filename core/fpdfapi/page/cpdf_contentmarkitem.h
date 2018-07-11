@@ -21,7 +21,7 @@ class CPDF_ContentMarkItem : public Retainable {
  public:
   enum ParamType { None, PropertiesDict, DirectDict };
 
-  CPDF_ContentMarkItem();
+  explicit CPDF_ContentMarkItem(ByteString name);
   ~CPDF_ContentMarkItem() override;
 
   ByteString GetName() const { return m_MarkName; }
@@ -30,7 +30,6 @@ class CPDF_ContentMarkItem : public Retainable {
   CPDF_Dictionary* GetParam();
   bool HasMCID() const;
 
-  void SetName(const ByteString& name) { m_MarkName = name; }
   void SetDirectDict(std::unique_ptr<CPDF_Dictionary> pDict);
   void SetPropertiesDict(CPDF_Dictionary* pDict);
 
