@@ -38,8 +38,11 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
     pSrcData = m_pStream->GetInMemoryRawData();
   } else {
     pSrcData = m_pSrcData = FX_Alloc(uint8_t, dwSrcSize);
-    if (!m_pStream->ReadRawData(0, pSrcData, dwSrcSize))
+    if (!m_pStream->ReadRawData(0, pSrcData, dwSrcSize)) {
+      FX_Free(pSrcData);
+      pSrcData = m_pSrcData = nullptr;
       return;
+    }
   }
   if (bProcessRawData) {
     m_pData = pSrcData;
@@ -77,7 +80,8 @@ uint8_t* CPDF_StreamAcc::GetData() const {
 uint32_t CPDF_StreamAcc::GetSize() const {
   if (m_bNewBuf)
     return m_dwSize;
-  return m_pStream ? m_pStream->GetRawSize() : 0;
+  return (m_pStream && m_pStream->IsMemoryBased()) ? m_pStream->GetRawSize()
+                                                   : 0;
 }
 
 std::unique_ptr<uint8_t, FxFreeDeleter> CPDF_StreamAcc::DetachData() {
