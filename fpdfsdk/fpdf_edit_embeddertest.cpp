@@ -694,6 +694,68 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbeddertest, MaintainMarkedObjects) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Iterate over all objects, counting the number of times each content mark
+  // name appears.
+  CheckMarkCounts(page, 1, 19, 8, 4, 9, 1);
+
+  // Remove first page object.
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+  EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object));
+  FPDFPageObj_Destroy(page_object);
+
+  CheckMarkCounts(page, 2, 18, 8, 3, 9, 1);
+
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  UnloadPage(page);
+
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  CheckMarkCounts(saved_page, 2, 18, 8, 3, 9, 1);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
+TEST_F(FPDFEditEmbeddertest, MaintainIndirectMarkedObjects) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("text_in_page_marked_indirect.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Iterate over all objects, counting the number of times each content mark
+  // name appears.
+  CheckMarkCounts(page, 1, 19, 8, 4, 9, 1);
+
+  // Remove first page object.
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+  EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object));
+  FPDFPageObj_Destroy(page_object);
+
+  CheckMarkCounts(page, 2, 18, 8, 3, 9, 1);
+
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  UnloadPage(page);
+
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  CheckMarkCounts(saved_page, 2, 18, 8, 3, 9, 1);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFEditEmbeddertest, RemoveExistingPageObject) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
@@ -2160,10 +2222,29 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
     CompareBitmap(page_bitmap.get(), 612, 792, md5);
   }
 
+  // Now save the result.
+  EXPECT_EQ(1, FPDFPage_CountObjects(page));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
   FPDF_ClosePage(page);
 
-  // TODO(pdfium:1118): Save, then re-open the file and check the changes were
-  // kept in the saved .pdf.
+  // Re-open the file and check the changes were kept in the saved .pdf.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  EXPECT_EQ(1, FPDFPage_CountObjects(saved_page));
+
+  text_object = FPDFPage_GetObject(saved_page, 0);
+  EXPECT_TRUE(text_object);
+  EXPECT_EQ(1, FPDFPageObj_CountMarks(text_object));
+  mark = FPDFPageObj_GetMark(text_object, 0);
+  EXPECT_TRUE(mark);
+  EXPECT_GT(FPDFPageObjMark_GetName(mark, buffer, 256), 0u);
+  name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+  EXPECT_EQ(L"TestMarkName", name);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFEditEmbeddertest, ExtractImageBitmap) {

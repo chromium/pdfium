@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -77,6 +78,20 @@ void CPDF_ContentMark::DeleteLastMark() {
   m_pMarkData->DeleteLastMark();
   if (CountItems() == 0)
     m_pMarkData.Reset();
+}
+
+size_t CPDF_ContentMark::FindFirstDifference(
+    const CPDF_ContentMark* other) const {
+  if (m_pMarkData == other->m_pMarkData)
+    return CountItems();
+
+  size_t min_len = std::min(CountItems(), other->CountItems());
+
+  for (size_t i = 0; i < min_len; ++i) {
+    if (GetItem(i) != other->GetItem(i))
+      return i;
+  }
+  return min_len;
 }
 
 CPDF_ContentMark::MarkData::MarkData() {}

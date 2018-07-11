@@ -35,6 +35,7 @@ class CPDF_ContentMark {
                                  CPDF_Dictionary* pDict,
                                  const ByteString& property_name);
   void DeleteLastMark();
+  size_t FindFirstDifference(const CPDF_ContentMark* other) const;
 
  private:
   class MarkData : public Retainable {

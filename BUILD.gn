@@ -474,6 +474,8 @@ jumbo_static_library("fpdfapi") {
     "core/fpdfapi/edit/cpdf_pagecontentgenerator.h",
     "core/fpdfapi/edit/cpdf_pagecontentmanager.cpp",
     "core/fpdfapi/edit/cpdf_pagecontentmanager.h",
+    "core/fpdfapi/edit/cpdf_stringarchivestream.cpp",
+    "core/fpdfapi/edit/cpdf_stringarchivestream.h",
     "core/fpdfapi/font/cfx_cttgsubtable.cpp",
     "core/fpdfapi/font/cfx_cttgsubtable.h",
     "core/fpdfapi/font/cfx_stockfontarray.cpp",
