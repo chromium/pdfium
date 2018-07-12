@@ -67,6 +67,16 @@ bool IsCheckBoxOrRadioButton(const CPDF_FormField* pFormField) {
          pFormField->GetFieldType() == FormFieldType::kRadioButton;
 }
 
+bool IsComboBoxOrListBox(const CPDF_FormField* pFormField) {
+  return pFormField->GetFieldType() == FormFieldType::kComboBox ||
+         pFormField->GetFieldType() == FormFieldType::kListBox;
+}
+
+bool IsComboBoxOrTextField(const CPDF_FormField* pFormField) {
+  return pFormField->GetFieldType() == FormFieldType::kComboBox ||
+         pFormField->GetFieldType() == FormFieldType::kTextField;
+}
+
 }  // namespace
 
 const JSPropertySpec CJS_Field::PropertySpecs[] = {
@@ -268,9 +278,7 @@ void CJS_Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
     pInterForm->GetWidgets(pFormField, &widgets);
 
-    FormFieldType fieldType = pFormField->GetFieldType();
-    if (fieldType == FormFieldType::kComboBox ||
-        fieldType == FormFieldType::kTextField) {
+    if (IsComboBoxOrTextField(pFormField)) {
       for (auto& pObserved : widgets) {
         if (pObserved) {
           bool bFormatted = false;
@@ -705,10 +713,8 @@ CJS_Return CJS_Field::get_calc_order_index(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
-      pFormField->GetFieldType() != FormFieldType::kTextField) {
+  if (!IsComboBoxOrTextField(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   CPDFSDK_InterForm* pRDInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pInterForm = pRDInterForm->GetInterForm();
@@ -776,10 +782,8 @@ CJS_Return CJS_Field::get_commit_on_sel_change(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
-      pFormField->GetFieldType() != FormFieldType::kListBox) {
+  if (!IsComboBoxOrListBox(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   return CJS_Return(pRuntime->NewBoolean(
       !!(pFormField->GetFieldFlags() & FIELDFLAG_COMMITONSELCHANGE)));
@@ -799,10 +803,8 @@ CJS_Return CJS_Field::get_current_value_indices(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
-      pFormField->GetFieldType() != FormFieldType::kListBox) {
+  if (!IsComboBoxOrListBox(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   int count = pFormField->CountSelectedItems();
   if (count <= 0)
@@ -855,21 +857,20 @@ void CJS_Field::SetCurrentValueIndices(
       GetFormFields(pFormFillEnv, swFieldName);
 
   for (CPDF_FormField* pFormField : FieldArray) {
-    FormFieldType fieldType = pFormField->GetFieldType();
-    if (fieldType == FormFieldType::kComboBox ||
-        fieldType == FormFieldType::kListBox) {
-      uint32_t dwFieldFlags = pFormField->GetFieldFlags();
-      pFormField->ClearSelection(true);
-      for (size_t i = 0; i < array.size(); ++i) {
-        if (i != 0 && !(dwFieldFlags & (1 << 21)))
-          break;
-        if (array[i] < static_cast<uint32_t>(pFormField->CountOptions()) &&
-            !pFormField->IsItemSelected(array[i])) {
-          pFormField->SetItemSelection(array[i], true);
-        }
+    if (!IsComboBoxOrListBox(pFormField))
+      continue;
+
+    uint32_t dwFieldFlags = pFormField->GetFieldFlags();
+    pFormField->ClearSelection(true);
+    for (size_t i = 0; i < array.size(); ++i) {
+      if (i != 0 && !(dwFieldFlags & (1 << 21)))
+        break;
+      if (array[i] < static_cast<uint32_t>(pFormField->CountOptions()) &&
+          !pFormField->IsItemSelected(array[i])) {
+        pFormField->SetItemSelection(array[i], true);
       }
-      UpdateFormField(pFormFillEnv, pFormField, true, true, true);
     }
+    UpdateFormField(pFormFillEnv, pFormField, true, true, true);
   }
 }
 
@@ -938,10 +939,8 @@ CJS_Return CJS_Field::get_do_not_spell_check(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kTextField &&
-      pFormField->GetFieldType() != FormFieldType::kComboBox) {
+  if (!IsComboBoxOrTextField(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   return CJS_Return(pRuntime->NewBoolean(
       !!(pFormField->GetFieldFlags() & FIELDFLAG_DONOTSPELLCHECK)));
@@ -1435,10 +1434,8 @@ CJS_Return CJS_Field::get_num_items(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kComboBox &&
-      pFormField->GetFieldType() != FormFieldType::kListBox) {
+  if (!IsComboBoxOrListBox(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   return CJS_Return(pRuntime->NewNumber(pFormField->CountOptions()));
 }
@@ -2488,22 +2485,22 @@ CJS_Return CJS_Field::getItemAt(
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if ((pFormField->GetFieldType() == FormFieldType::kListBox) ||
-      (pFormField->GetFieldType() == FormFieldType::kComboBox)) {
-    if (nIdx == -1 || nIdx > pFormField->CountOptions())
-      nIdx = pFormField->CountOptions() - 1;
-    if (bExport) {
-      WideString strval = pFormField->GetOptionValue(nIdx);
-      if (strval.IsEmpty()) {
-        return CJS_Return(pRuntime->NewString(
-            pFormField->GetOptionLabel(nIdx).AsStringView()));
-      }
-      return CJS_Return(pRuntime->NewString(strval.AsStringView()));
-    }
+  if (!IsComboBoxOrListBox(pFormField))
+    return CJS_Return(JSMessage::kObjectTypeError);
+
+  if (nIdx == -1 || nIdx > pFormField->CountOptions())
+    nIdx = pFormField->CountOptions() - 1;
+  if (!bExport) {
     return CJS_Return(
         pRuntime->NewString(pFormField->GetOptionLabel(nIdx).AsStringView()));
   }
-  return CJS_Return(JSMessage::kObjectTypeError);
+
+  WideString strval = pFormField->GetOptionValue(nIdx);
+  if (strval.IsEmpty()) {
+    return CJS_Return(
+        pRuntime->NewString(pFormField->GetOptionLabel(nIdx).AsStringView()));
+  }
+  return CJS_Return(pRuntime->NewString(strval.AsStringView()));
 }
 
 CJS_Return CJS_Field::getLock(CJS_Runtime* pRuntime,
