@@ -1496,10 +1496,10 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
     bool bRgbByteOrder,
-    const RetainPtr<CFX_DIBitmap>& pOriDevice,
+    const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
     bool bGroupKnockout)
     : m_pBitmap(pBitmap),
-      m_pOriDevice(pOriDevice),
+      m_pBackdropBitmap(pBackdropBitmap),
       m_pRecorder(nullptr),
       m_pCache(new SkiaState(this)),
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -1521,7 +1521,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 #ifdef _SKIA_SUPPORT_
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(int size_x, int size_y)
     : m_pBitmap(nullptr),
-      m_pOriDevice(nullptr),
+      m_pBackdropBitmap(nullptr),
       m_pRecorder(new SkPictureRecorder),
       m_pCache(new SkiaState(this)),
       m_bGroupKnockout(false) {
@@ -1531,7 +1531,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(int size_x, int size_y)
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
     : m_pBitmap(nullptr),
-      m_pOriDevice(nullptr),
+      m_pBackdropBitmap(nullptr),
       m_pRecorder(recorder),
       m_pCache(new SkiaState(this)),
       m_bGroupKnockout(false) {
@@ -2222,8 +2222,8 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
   RetainPtr<CFX_DIBitmap> pBack;
-  if (m_pOriDevice) {
-    pBack = m_pOriDevice->Clone(&rect);
+  if (m_pBackdropBitmap) {
+    pBack = m_pBackdropBitmap->Clone(&rect);
     if (!pBack)
       return true;
 
@@ -2250,7 +2250,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
 }
 
 RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
-  return m_pOriDevice;
+  return m_pBackdropBitmap;
 }
 
 bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
@@ -2345,7 +2345,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     int blend_type) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
-  DebugValidate(m_pBitmap, m_pOriDevice);
+  DebugValidate(m_pBitmap, m_pBackdropBitmap);
   std::unique_ptr<uint8_t, FxFreeDeleter> dst8Storage;
   std::unique_ptr<uint32_t, FxFreeDeleter> dst32Storage;
   SkBitmap skBitmap;
@@ -2379,7 +2379,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
   }
   m_pCanvas->restore();
-  DebugValidate(m_pBitmap, m_pOriDevice);
+  DebugValidate(m_pBitmap, m_pBackdropBitmap);
 #endif  // _SKIA_SUPPORT_
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -2474,7 +2474,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     int bitmap_alpha,
     const CFX_Matrix* pMatrix,
     int blend_type) {
-  DebugValidate(m_pBitmap, m_pOriDevice);
+  DebugValidate(m_pBitmap, m_pBackdropBitmap);
   std::unique_ptr<uint8_t, FxFreeDeleter> src8Storage, mask8Storage;
   std::unique_ptr<uint32_t, FxFreeDeleter> src32Storage, mask32Storage;
   SkBitmap skBitmap, skMask;
@@ -2505,7 +2505,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   SkRect r = {0, 0, SkIntToScalar(srcWidth), SkIntToScalar(srcHeight)};
   m_pCanvas->drawRect(r, paint);
   m_pCanvas->restore();
-  DebugValidate(m_pBitmap, m_pOriDevice);
+  DebugValidate(m_pBitmap, m_pBackdropBitmap);
   return true;
 }
 
@@ -2537,8 +2537,8 @@ void CFX_SkiaDeviceDriver::Dump() const {
 
 #ifdef _SKIA_SUPPORT_
 void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
-  if (m_pOriDevice)
-    m_pOriDevice->DebugVerifyBitmapIsPreMultiplied(nullptr);
+  if (m_pBackdropBitmap)
+    m_pBackdropBitmap->DebugVerifyBitmapIsPreMultiplied(nullptr);
 }
 #endif  // _SKIA_SUPPORT_
 
@@ -2559,15 +2559,16 @@ SkPictureRecorder* CFX_DefaultRenderDevice::CreateRecorder(int size_x,
 }
 #endif  // _SKIA_SUPPORT_
 
-bool CFX_DefaultRenderDevice::Attach(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                                     bool bRgbByteOrder,
-                                     const RetainPtr<CFX_DIBitmap>& pOriDevice,
-                                     bool bGroupKnockout) {
+bool CFX_DefaultRenderDevice::Attach(
+    const RetainPtr<CFX_DIBitmap>& pBitmap,
+    bool bRgbByteOrder,
+    const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+    bool bGroupKnockout) {
   if (!pBitmap)
     return false;
   SetBitmap(pBitmap);
   SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(
-      pBitmap, bRgbByteOrder, pOriDevice, bGroupKnockout));
+      pBitmap, bRgbByteOrder, pBackdropBitmap, bGroupKnockout));
   return true;
 }
 
@@ -2584,14 +2585,14 @@ bool CFX_DefaultRenderDevice::Create(
     int width,
     int height,
     FXDIB_Format format,
-    const RetainPtr<CFX_DIBitmap>& pOriDevice) {
+    const RetainPtr<CFX_DIBitmap>& pBackdropBitmap) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, format)) {
     return false;
   }
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(pBitmap, false,
-                                                           pOriDevice, false));
+  SetDeviceDriver(pdfium::MakeUnique<CFX_SkiaDeviceDriver>(
+      pBitmap, false, pBackdropBitmap, false));
   return true;
 }
 

@@ -26,7 +26,7 @@ class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
  public:
   CFX_SkiaDeviceDriver(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        bool bRgbByteOrder,
-                       const RetainPtr<CFX_DIBitmap>& pOriDevice,
+                       const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
                        bool bGroupKnockout);
 #ifdef _SKIA_SUPPORT_
   explicit CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
@@ -160,7 +160,7 @@ class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
 
  private:
   RetainPtr<CFX_DIBitmap> m_pBitmap;
-  RetainPtr<CFX_DIBitmap> m_pOriDevice;
+  RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
   std::unique_ptr<SkiaState> m_pCache;

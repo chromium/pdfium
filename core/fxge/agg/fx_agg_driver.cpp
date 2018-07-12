@@ -326,7 +326,7 @@ class CFX_Renderer {
   void prepare(unsigned) {}
 
   void CompositeSpan(uint8_t* dest_scan,
-                     uint8_t* ori_scan,
+                     uint8_t* backdrop_scan,
                      int Bpp,
                      bool bDestAlpha,
                      int span_left,
@@ -387,7 +387,7 @@ class CFX_Renderer {
                          uint8_t* dest_extra_alpha_scan);
 
   bool Init(const RetainPtr<CFX_DIBitmap>& pDevice,
-            const RetainPtr<CFX_DIBitmap>& pOriDevice,
+            const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
             const CFX_ClipRgn* pClipRgn,
             uint32_t color,
             bool bFullCover,
@@ -443,14 +443,14 @@ class CFX_Renderer {
   bool m_bFullCover;
   bool m_bRgbByteOrder;
   FX_RECT m_ClipBox;
-  RetainPtr<CFX_DIBitmap> m_pOriDevice;
+  RetainPtr<CFX_DIBitmap> m_pBackdropDevice;
   RetainPtr<CFX_DIBitmap> m_pClipMask;
   RetainPtr<CFX_DIBitmap> m_pDevice;
   UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
 };
 
 void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
-                                 uint8_t* ori_scan,
+                                 uint8_t* backdrop_scan,
                                  int Bpp,
                                  bool bDestAlpha,
                                  int span_left,
@@ -464,30 +464,33 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
   int col_end = GetColEnd(span_left, span_len, clip_right);
   if (Bpp) {
     dest_scan += col_start * Bpp;
-    ori_scan += col_start * Bpp;
+    backdrop_scan += col_start * Bpp;
   } else {
     dest_scan += col_start / 8;
-    ori_scan += col_start / 8;
+    backdrop_scan += col_start / 8;
   }
   if (m_bRgbByteOrder) {
     if (Bpp == 4 && bDestAlpha) {
       for (int col = col_start; col < col_end; col++) {
         int src_alpha = GetSrcAlpha(clip_scan, col);
         uint8_t dest_alpha =
-            ori_scan[3] + src_alpha - ori_scan[3] * src_alpha / 255;
+            backdrop_scan[3] + src_alpha - backdrop_scan[3] * src_alpha / 255;
         dest_scan[3] = dest_alpha;
         int alpha_ratio = src_alpha * 255 / dest_alpha;
         if (m_bFullCover) {
-          *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Red, alpha_ratio);
-          *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, alpha_ratio);
-          *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, alpha_ratio);
+          *dest_scan++ =
+              FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Red, alpha_ratio);
+          *dest_scan++ =
+              FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Green, alpha_ratio);
+          *dest_scan++ =
+              FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Blue, alpha_ratio);
           dest_scan++;
-          ori_scan++;
+          backdrop_scan++;
         } else {
-          int r = FXDIB_ALPHA_MERGE(*ori_scan++, m_Red, alpha_ratio);
-          int g = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, alpha_ratio);
-          int b = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, alpha_ratio);
-          ori_scan++;
+          int r = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Red, alpha_ratio);
+          int g = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Green, alpha_ratio);
+          int b = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Blue, alpha_ratio);
+          backdrop_scan++;
           *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, r, cover_scan[col]);
           dest_scan++;
           *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, g, cover_scan[col]);
@@ -501,10 +504,10 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
     if (Bpp == 3 || Bpp == 4) {
       for (int col = col_start; col < col_end; col++) {
         int src_alpha = GetSrcAlpha(clip_scan, col);
-        int r = FXDIB_ALPHA_MERGE(*ori_scan++, m_Red, src_alpha);
-        int g = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, src_alpha);
-        int b = FXDIB_ALPHA_MERGE(*ori_scan, m_Blue, src_alpha);
-        ori_scan += Bpp - 2;
+        int r = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Red, src_alpha);
+        int g = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Green, src_alpha);
+        int b = FXDIB_ALPHA_MERGE(*backdrop_scan, m_Blue, src_alpha);
+        backdrop_scan += Bpp - 2;
         *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, r, cover_scan[col]);
         dest_scan++;
         *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, g, cover_scan[col]);
@@ -554,17 +557,17 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
     for (int col = col_start; col < col_end; col++) {
       int src_alpha = GetSrcAlpha(clip_scan, col);
       if (m_bFullCover) {
-        *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, src_alpha);
-        *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, src_alpha);
-        *dest_scan = FXDIB_ALPHA_MERGE(*ori_scan, m_Red, src_alpha);
+        *dest_scan++ = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Blue, src_alpha);
+        *dest_scan++ = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Green, src_alpha);
+        *dest_scan = FXDIB_ALPHA_MERGE(*backdrop_scan, m_Red, src_alpha);
         dest_scan += Bpp - 2;
-        ori_scan += Bpp - 2;
+        backdrop_scan += Bpp - 2;
         continue;
       }
-      int b = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, src_alpha);
-      int g = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, src_alpha);
-      int r = FXDIB_ALPHA_MERGE(*ori_scan, m_Red, src_alpha);
-      ori_scan += Bpp - 2;
+      int b = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Blue, src_alpha);
+      int g = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Green, src_alpha);
+      int r = FXDIB_ALPHA_MERGE(*backdrop_scan, m_Red, src_alpha);
+      backdrop_scan += Bpp - 2;
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, b, cover_scan[col]);
       dest_scan++;
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, g, cover_scan[col]);
@@ -579,10 +582,10 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
     for (int col = col_start; col < col_end; col++) {
       int src_alpha = GetSrcAlpha(clip_scan, col);
       if (m_bFullCover) {
-        *dest_scan = FXDIB_ALPHA_MERGE(*ori_scan++, m_Gray, src_alpha);
+        *dest_scan = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Gray, src_alpha);
         continue;
       }
-      int gray = FXDIB_ALPHA_MERGE(*ori_scan++, m_Gray, src_alpha);
+      int gray = FXDIB_ALPHA_MERGE(*backdrop_scan++, m_Gray, src_alpha);
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, cover_scan[col]);
       dest_scan++;
     }
@@ -886,7 +889,7 @@ void CFX_Renderer::CompositeSpanCMYK(uint8_t* dest_scan,
 }
 
 bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
-                        const RetainPtr<CFX_DIBitmap>& pOriDevice,
+                        const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
                         const CFX_ClipRgn* pClipRgn,
                         uint32_t color,
                         bool bFullCover,
@@ -895,7 +898,7 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
   m_pClipRgn = pClipRgn;
   composite_span = nullptr;
   m_bRgbByteOrder = bRgbByteOrder;
-  m_pOriDevice = pOriDevice;
+  m_pBackdropDevice = pBackdropDevice;
   if (m_pClipRgn) {
     m_ClipBox = m_pClipRgn->GetBox();
   } else {
@@ -938,7 +941,7 @@ bool CFX_Renderer::Init(const RetainPtr<CFX_DIBitmap>& pDevice,
 
 template <class Scanline>
 void CFX_Renderer::render(const Scanline& sl) {
-  if (!m_pOriDevice && !composite_span)
+  if (!m_pBackdropDevice && !composite_span)
     return;
 
   int y = sl.y();
@@ -952,9 +955,11 @@ void CFX_Renderer::render(const Scanline& sl) {
     dest_scan_extra_alpha =
         pAlphaMask->GetBuffer() + pAlphaMask->GetPitch() * y;
   }
-  uint8_t* ori_scan = nullptr;
-  if (m_pOriDevice)
-    ori_scan = m_pOriDevice->GetBuffer() + m_pOriDevice->GetPitch() * y;
+  uint8_t* backdrop_scan = nullptr;
+  if (m_pBackdropDevice) {
+    backdrop_scan =
+        m_pBackdropDevice->GetBuffer() + m_pBackdropDevice->GetPitch() * y;
+  }
   int Bpp = m_pDevice->GetBPP() / 8;
   bool bDestAlpha = m_pDevice->HasAlpha() || m_pDevice->IsAlphaMask();
   unsigned num_spans = sl.num_spans();
@@ -966,15 +971,15 @@ void CFX_Renderer::render(const Scanline& sl) {
     int x = span->x;
     uint8_t* dest_pos = nullptr;
     uint8_t* dest_extra_alpha_pos = nullptr;
-    uint8_t* ori_pos = nullptr;
+    uint8_t* backdrop_pos = nullptr;
     if (Bpp) {
-      ori_pos = ori_scan ? ori_scan + x * Bpp : nullptr;
+      backdrop_pos = backdrop_scan ? backdrop_scan + x * Bpp : nullptr;
       dest_pos = dest_scan + x * Bpp;
       dest_extra_alpha_pos =
           dest_scan_extra_alpha ? dest_scan_extra_alpha + x : nullptr;
     } else {
       dest_pos = dest_scan + x / 8;
-      ori_pos = ori_scan ? ori_scan + x / 8 : nullptr;
+      backdrop_pos = backdrop_scan ? backdrop_scan + x / 8 : nullptr;
     }
     uint8_t* clip_pos = nullptr;
     if (m_pClipMask) {
@@ -982,8 +987,8 @@ void CFX_Renderer::render(const Scanline& sl) {
                  (y - m_ClipBox.top) * m_pClipMask->GetPitch() + x -
                  m_ClipBox.left;
     }
-    if (ori_pos) {
-      CompositeSpan(dest_pos, ori_pos, Bpp, bDestAlpha, x, span->len,
+    if (backdrop_pos) {
+      CompositeSpan(dest_pos, backdrop_pos, Bpp, bDestAlpha, x, span->len,
                     span->covers, m_ClipBox.left, m_ClipBox.right, clip_pos);
     } else {
       (this->*composite_span)(dest_pos, Bpp, x, span->len, span->covers,
@@ -1115,7 +1120,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
 CFX_AggDeviceDriver::CFX_AggDeviceDriver(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
     bool bRgbByteOrder,
-    const RetainPtr<CFX_DIBitmap>& pOriDevice,
+    const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
     bool bGroupKnockout)
     : m_pBitmap(pBitmap),
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
@@ -1123,7 +1128,7 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
 #endif
       m_FillFlags(0),
       m_bRgbByteOrder(bRgbByteOrder),
-      m_pOriDevice(pOriDevice),
+      m_pBackdropBitmap(pBackdropBitmap),
       m_bGroupKnockout(bGroupKnockout) {
   InitPlatform();
 }
@@ -1292,7 +1297,7 @@ bool CFX_AggDeviceDriver::RenderRasterizer(
     uint32_t color,
     bool bFullCover,
     bool bGroupKnockout) {
-  RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pOriDevice : nullptr;
+  RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pBackdropBitmap : nullptr;
   CFX_Renderer render;
   if (!render.Init(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
                    m_bRgbByteOrder)) {
@@ -1462,8 +1467,8 @@ bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
   RetainPtr<CFX_DIBitmap> pBack;
-  if (m_pOriDevice) {
-    pBack = m_pOriDevice->Clone(&rect);
+  if (m_pBackdropBitmap) {
+    pBack = m_pBackdropBitmap->Clone(&rect);
     if (!pBack)
       return true;
 
@@ -1487,7 +1492,7 @@ bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
 }
 
 RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {
-  return m_pOriDevice;
+  return m_pBackdropBitmap;
 }
 
 bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
@@ -1570,16 +1575,17 @@ CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() {}
 
 CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() {}
 
-bool CFX_DefaultRenderDevice::Attach(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                                     bool bRgbByteOrder,
-                                     const RetainPtr<CFX_DIBitmap>& pOriDevice,
-                                     bool bGroupKnockout) {
+bool CFX_DefaultRenderDevice::Attach(
+    const RetainPtr<CFX_DIBitmap>& pBitmap,
+    bool bRgbByteOrder,
+    const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
+    bool bGroupKnockout) {
   if (!pBitmap)
     return false;
 
   SetBitmap(pBitmap);
   SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(
-      pBitmap, bRgbByteOrder, pOriDevice, bGroupKnockout));
+      pBitmap, bRgbByteOrder, pBackdropBitmap, bGroupKnockout));
   return true;
 }
 
@@ -1587,14 +1593,14 @@ bool CFX_DefaultRenderDevice::Create(
     int width,
     int height,
     FXDIB_Format format,
-    const RetainPtr<CFX_DIBitmap>& pOriDevice) {
+    const RetainPtr<CFX_DIBitmap>& pBackdropBitmap) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, format))
     return false;
 
   SetBitmap(pBitmap);
-  SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(pBitmap, false,
-                                                          pOriDevice, false));
+  SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(
+      pBitmap, false, pBackdropBitmap, false));
   return true;
 }
 

@@ -19,12 +19,12 @@ class CFX_DefaultRenderDevice : public CFX_RenderDevice {
 
   bool Attach(const RetainPtr<CFX_DIBitmap>& pBitmap,
               bool bRgbByteOrder,
-              const RetainPtr<CFX_DIBitmap>& pOriDevice,
+              const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
               bool bGroupKnockout);
   bool Create(int width,
               int height,
               FXDIB_Format format,
-              const RetainPtr<CFX_DIBitmap>& pOriDevice);
+              const RetainPtr<CFX_DIBitmap>& pBackdropBitmap);
 
 #ifdef _SKIA_SUPPORT_
   bool AttachRecorder(SkPictureRecorder* recorder);

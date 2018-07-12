@@ -1551,15 +1551,15 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   int width = rect.Width();
   int height = rect.Height();
   CFX_DefaultRenderDevice bitmap_device;
-  RetainPtr<CFX_DIBitmap> oriDevice;
+  RetainPtr<CFX_DIBitmap> backdrop;
   if (!transparency.IsIsolated() &&
       (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
-    oriDevice = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!m_pDevice->CreateCompatibleBitmap(oriDevice, width, height))
+    backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
+    if (!m_pDevice->CreateCompatibleBitmap(backdrop, width, height))
       return true;
-    m_pDevice->GetDIBits(oriDevice, rect.left, rect.top);
+    m_pDevice->GetDIBits(backdrop, rect.left, rect.top);
   }
-  if (!bitmap_device.Create(width, height, FXDIB_Argb, oriDevice))
+  if (!bitmap_device.Create(width, height, FXDIB_Argb, backdrop))
     return true;
 
   RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();

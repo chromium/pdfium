@@ -34,7 +34,7 @@ class CFX_AggDeviceDriver : public RenderDeviceDriverIface {
  public:
   CFX_AggDeviceDriver(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       bool bRgbByteOrder,
-                      const RetainPtr<CFX_DIBitmap>& pOriDevice,
+                      const RetainPtr<CFX_DIBitmap>& pBackdropBitmap,
                       bool bGroupKnockout);
   ~CFX_AggDeviceDriver() override;
 
@@ -117,7 +117,7 @@ class CFX_AggDeviceDriver : public RenderDeviceDriverIface {
 #endif
   int m_FillFlags;
   const bool m_bRgbByteOrder;
-  RetainPtr<CFX_DIBitmap> m_pOriDevice;
+  RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;
   const bool m_bGroupKnockout;
 };
 
