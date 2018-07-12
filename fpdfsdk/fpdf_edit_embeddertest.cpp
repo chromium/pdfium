@@ -579,19 +579,25 @@ void CheckMarkCounts(FPDF_PAGE page,
             GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
         EXPECT_EQ(L"Position", key);
 
-        // Should be the last object.
-        EXPECT_EQ(object_count - 1, i);
-
         EXPECT_EQ(FPDF_OBJECT_STRING,
                   FPDFPageObjMark_GetParamValueType(mark, "Position"));
         unsigned long length;
         EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(mark, "Position",
                                                         buffer, 256, &length));
         ASSERT_GT(length, 0u);
-        EXPECT_EQ((4u + 1u) * 2u, length);
         std::wstring value =
             GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
-        EXPECT_EQ(L"Last", value);
+
+        // "Position" can be "First" or "Last".
+        if (i == 0) {
+          EXPECT_EQ((5u + 1u) * 2u, length);
+          EXPECT_EQ(L"First", value);
+        } else if (i == object_count - 1) {
+          EXPECT_EQ((4u + 1u) * 2u, length);
+          EXPECT_EQ(L"Last", value);
+        } else {
+          FAIL();
+        }
       } else {
         FAIL();
       }
@@ -2136,6 +2142,39 @@ TEST_F(FPDFEditEmbeddertest, SaveAndRender) {
   }
 
   VerifySavedDocument(612, 792, md5);
+}
+
+TEST_F(FPDFEditEmbeddertest, AddMark) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjectCount = 19;
+  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 1);
+
+  // Add to the first page object a "Bounds" mark with "Position": "First".
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
+  FPDF_PAGEOBJECTMARK mark = FPDFPageObj_AddMark(page_object, "Bounds");
+  EXPECT_TRUE(mark);
+  EXPECT_TRUE(
+      FPDFPageObjMark_SetStringParam(document(), mark, "Position", "First"));
+
+  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 2);
+
+  // Save the file
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Re-open the file and check the new mark is present.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  CheckMarkCounts(saved_page, 1, kExpectedObjectCount, 8, 4, 9, 2);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
