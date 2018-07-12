@@ -62,6 +62,11 @@ bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
   return false;
 }
 
+bool IsCheckBoxOrRadioButton(const CPDF_FormField* pFormField) {
+  return pFormField->GetFieldType() == FormFieldType::kCheckBox ||
+         pFormField->GetFieldType() == FormFieldType::kRadioButton;
+}
+
 }  // namespace
 
 const JSPropertySpec CJS_Field::PropertySpecs[] = {
@@ -1082,10 +1087,8 @@ CJS_Return CJS_Field::get_export_values(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kCheckBox &&
-      pFormField->GetFieldType() != FormFieldType::kRadioButton) {
+  if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   v8::Local<v8::Array> ExportValuesArray = pRuntime->NewArray();
   if (m_nFormControlIndex < 0) {
@@ -1118,10 +1121,8 @@ CJS_Return CJS_Field::set_export_values(CJS_Runtime* pRuntime,
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kCheckBox &&
-      pFormField->GetFieldType() != FormFieldType::kRadioButton) {
+  if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   if (!m_bCanSet)
     return CJS_Return(JSMessage::kReadOnlyError);
@@ -1872,10 +1873,8 @@ CJS_Return CJS_Field::get_style(CJS_Runtime* pRuntime) {
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kRadioButton &&
-      pFormField->GetFieldType() != FormFieldType::kCheckBox) {
+  if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
@@ -2389,10 +2388,8 @@ CJS_Return CJS_Field::checkThisBox(
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDF_FormField* pFormField = FieldArray[0];
-  if (pFormField->GetFieldType() != FormFieldType::kCheckBox &&
-      pFormField->GetFieldType() != FormFieldType::kRadioButton) {
+  if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
-  }
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return CJS_Return(JSMessage::kValueError);
 
@@ -2429,9 +2426,7 @@ CJS_Return CJS_Field::defaultIsChecked(
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return CJS_Return(JSMessage::kValueError);
 
-  return CJS_Return(pRuntime->NewBoolean(
-      pFormField->GetFieldType() == FormFieldType::kCheckBox ||
-      pFormField->GetFieldType() == FormFieldType::kRadioButton));
+  return CJS_Return(pRuntime->NewBoolean(IsCheckBoxOrRadioButton(pFormField)));
 }
 
 CJS_Return CJS_Field::deleteItemAt(
@@ -2537,10 +2532,9 @@ CJS_Return CJS_Field::isBoxChecked(
   if (nIndex < 0 || nIndex >= pFormField->CountControls())
     return CJS_Return(JSMessage::kValueError);
 
-  return CJS_Return(pRuntime->NewBoolean(
-      ((pFormField->GetFieldType() == FormFieldType::kCheckBox ||
-        pFormField->GetFieldType() == FormFieldType::kRadioButton) &&
-       pFormField->GetControl(nIndex)->IsChecked() != 0)));
+  return CJS_Return(
+      pRuntime->NewBoolean((IsCheckBoxOrRadioButton(pFormField) &&
+                            pFormField->GetControl(nIndex)->IsChecked() != 0)));
 }
 
 CJS_Return CJS_Field::isDefaultChecked(
@@ -2559,8 +2553,7 @@ CJS_Return CJS_Field::isDefaultChecked(
     return CJS_Return(JSMessage::kValueError);
 
   return CJS_Return(pRuntime->NewBoolean(
-      ((pFormField->GetFieldType() == FormFieldType::kCheckBox ||
-        pFormField->GetFieldType() == FormFieldType::kRadioButton) &&
+      (IsCheckBoxOrRadioButton(pFormField) &&
        pFormField->GetControl(nIndex)->IsDefaultChecked() != 0)));
 }
 
