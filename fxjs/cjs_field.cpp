@@ -262,13 +262,12 @@ std::vector<CPDF_FormField*> CJS_Field::GetFormFields(
   return fields;
 }
 
-std::vector<CPDF_FormField*> CJS_Field::GetFormFields(
-    const WideString& csFieldName) const {
-  return CJS_Field::GetFormFields(m_pFormFillEnv.Get(), csFieldName);
+std::vector<CPDF_FormField*> CJS_Field::GetFormFields() const {
+  return CJS_Field::GetFormFields(m_pFormFillEnv.Get(), m_FieldName);
 }
 
 CPDF_FormField* CJS_Field::GetFirstFormField() const {
-  std::vector<CPDF_FormField*> fields = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> fields = GetFormFields();
   return fields.empty() ? nullptr : fields[0];
 }
 
@@ -374,7 +373,7 @@ CPDFSDK_Widget* CJS_Field::GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 }
 
 bool CJS_Field::ValueIsOccur(CPDF_FormField* pFormField,
-                             WideString csOptLabel) {
+                             WideString csOptLabel) const {
   for (int i = 0, sz = pFormField->CountOptions(); i < sz; i++) {
     if (csOptLabel.Compare(pFormField->GetOptionLabel(i)) == 0)
       return true;
@@ -1183,7 +1182,7 @@ CJS_Return CJS_Field::get_fill_color(CJS_Runtime* pRuntime) {
 
 CJS_Return CJS_Field::set_fill_color(CJS_Runtime* pRuntime,
                                      v8::Local<v8::Value> vp) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> FieldArray = GetFormFields();
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
   if (!m_bCanSet)
@@ -1386,7 +1385,7 @@ CJS_Return CJS_Field::set_multiple_selection(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_name(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> FieldArray = GetFormFields();
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1486,7 +1485,7 @@ CJS_Return CJS_Field::get_print(CJS_Runtime* pRuntime) {
 CJS_Return CJS_Field::set_print(CJS_Runtime* pRuntime,
                                 v8::Local<v8::Value> vp) {
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> FieldArray = GetFormFields();
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1556,7 +1555,7 @@ CJS_Return CJS_Field::get_radios_in_unison(CJS_Runtime* pRuntime) {
 
 CJS_Return CJS_Field::set_radios_in_unison(CJS_Runtime* pRuntime,
                                            v8::Local<v8::Value> vp) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> FieldArray = GetFormFields();
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
   if (!m_bCanSet)
@@ -1575,7 +1574,7 @@ CJS_Return CJS_Field::get_readonly(CJS_Runtime* pRuntime) {
 
 CJS_Return CJS_Field::set_readonly(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> FieldArray = GetFormFields();
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
   if (!m_bCanSet)
@@ -1710,7 +1709,7 @@ CJS_Return CJS_Field::get_required(CJS_Runtime* pRuntime) {
 
 CJS_Return CJS_Field::set_required(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> FieldArray = GetFormFields();
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
   if (!m_bCanSet)
@@ -2376,7 +2375,7 @@ CJS_Return CJS_Field::deleteItemAt(
 CJS_Return CJS_Field::getArray(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
+  std::vector<CPDF_FormField*> FieldArray = GetFormFields();
   if (FieldArray.empty())
     return CJS_Return(JSMessage::kBadObjectError);
 

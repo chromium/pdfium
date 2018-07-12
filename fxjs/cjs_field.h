@@ -403,11 +403,10 @@ class CJS_Field : public CJS_Object {
   void ParseFieldName(const std::wstring& strFieldNameParsed,
                       std::wstring& strFieldName,
                       int& iControlNo);
-  std::vector<CPDF_FormField*> GetFormFields(
-      const WideString& csFieldName) const;
+  std::vector<CPDF_FormField*> GetFormFields() const;
   CPDF_FormField* GetFirstFormField() const;
   CPDF_FormControl* GetSmartFieldControl(CPDF_FormField* pFormField);
-  bool ValueIsOccur(CPDF_FormField* pFormField, WideString csOptLabel);
+  bool ValueIsOccur(CPDF_FormField* pFormField, WideString csOptLabel) const;
 
   void AddDelay_Int(FIELD_PROP prop, int32_t n);
   void AddDelay_Bool(FIELD_PROP prop, bool b);
