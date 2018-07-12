@@ -128,56 +128,6 @@ class CJS_Field : public CJS_Object {
   static const JSPropertySpec PropertySpecs[];
   static const JSMethodSpec MethodSpecs[];
 
-  static void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                             const WideString& swFieldName,
-                             int nControlIndex,
-                             const ByteString& string);
-  static void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                     const WideString& swFieldName,
-                                     int nControlIndex,
-                                     const std::vector<uint32_t>& array);
-  static void SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                         const WideString& swFieldName,
-                         int nControlIndex,
-                         int number);
-  static void SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                        const WideString& swFieldName,
-                        int nControlIndex,
-                        bool b);
-  static void SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const WideString& swFieldName,
-                           int nControlIndex,
-                           int number);
-  static void SetMultiline(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                           const WideString& swFieldName,
-                           int nControlIndex,
-                           bool b);
-  static void SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                      const WideString& swFieldName,
-                      int nControlIndex,
-                      const CFX_FloatRect& rect);
-  static void SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                       const WideString& swFieldName,
-                       int nControlIndex,
-                       const std::vector<WideString>& strArray);
-
-  static void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                              CPDF_FormField* pFormField,
-                              bool bChangeMark,
-                              bool bResetAP,
-                              bool bRefresh);
-  static void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                CPDF_FormControl* pFormControl,
-                                bool bChangeMark,
-                                bool bResetAP,
-                                bool bRefresh);
-
-  static CPDFSDK_Widget* GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                                   CPDF_FormControl* pFormControl);
-  static std::vector<CPDF_FormField*> GetFormFields(
-      CPDFSDK_FormFillEnvironment* pFormFillEnv,
-      const WideString& csFieldName);
-
   CJS_Return get_alignment(CJS_Runtime* pRuntime);
   CJS_Return set_alignment(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
