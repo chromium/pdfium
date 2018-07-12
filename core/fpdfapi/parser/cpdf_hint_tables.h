@@ -88,9 +88,6 @@ class CPDF_HintTables {
   bool ReadSharedObjHintTable(CFX_BitStream* hStream, uint32_t offset);
 
  private:
-  uint32_t GetItemLength(uint32_t index,
-                         const std::vector<FX_FILESIZE>& szArray) const;
-
   FX_FILESIZE HintsOffsetToFileOffset(uint32_t hints_offset) const;
 
   // Owned by |m_pDataAvail|.
