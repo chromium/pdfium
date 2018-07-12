@@ -277,60 +277,38 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
     return false;
   }
 
-  const uint32_t nFirstPageObjNum = m_pLinearized->GetFirstPageObjNum();
-
-  uint32_t dwPrevObjLen = 0;
-  uint32_t dwCurObjLen = 0;
   FX_SAFE_UINT32 required_bits = dwSharedObjTotal;
   required_bits *= dwDeltaGroupLen;
   if (!CanReadFromBitStream(hStream, required_bits))
     return false;
 
+  if (dwSharedObjTotal > 0) {
+    uint32_t dwLastSharedObj = dwSharedObjTotal - 1;
+    if (dwLastSharedObj > m_nFirstPageSharedObjs) {
+      FX_SAFE_UINT32 safeObjNum = dwFirstSharedObjNum;
+      safeObjNum += dwLastSharedObj - m_nFirstPageSharedObjs;
+      if (!safeObjNum.IsValid())
+        return false;
+    }
+  }
+
+  m_SharedObjGroupInfos.resize(dwSharedObjTotal);
+  FX_SAFE_FILESIZE prev_shared_group_end_offset = m_szFirstPageObjOffset;
   for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
-    dwPrevObjLen = dwCurObjLen;
+    if (i == m_nFirstPageSharedObjs)
+      prev_shared_group_end_offset = szFirstSharedObjLoc;
+
     FX_SAFE_UINT32 safeObjLen = hStream->GetBits(dwDeltaGroupLen);
     safeObjLen += dwGroupLeastLen;
     if (!safeObjLen.IsValid())
       return false;
 
-    dwCurObjLen = safeObjLen.ValueOrDie();
-    if (i < m_nFirstPageSharedObjs) {
-      m_dwSharedObjNumArray.push_back(nFirstPageObjNum + i);
-      if (i == 0)
-        m_szSharedObjOffsetArray.push_back(m_szFirstPageObjOffset);
-    } else {
-      FX_SAFE_UINT32 safeObjNum = dwFirstSharedObjNum;
-      safeObjNum += i - m_nFirstPageSharedObjs;
-      if (!safeObjNum.IsValid())
-        return false;
-
-      m_dwSharedObjNumArray.push_back(safeObjNum.ValueOrDie());
-      if (i == m_nFirstPageSharedObjs) {
-        FX_SAFE_FILESIZE safeLoc = szFirstSharedObjLoc;
-        if (!safeLoc.IsValid())
-          return false;
-
-        m_szSharedObjOffsetArray.push_back(safeLoc.ValueOrDie());
-      }
-    }
-
-    if (i != 0 && i != m_nFirstPageSharedObjs) {
-      FX_SAFE_FILESIZE safeLoc = dwPrevObjLen;
-      safeLoc += m_szSharedObjOffsetArray[i - 1];
-      if (!safeLoc.IsValid())
-        return false;
-
-      m_szSharedObjOffsetArray.push_back(safeLoc.ValueOrDie());
-    }
-  }
-
-  if (dwSharedObjTotal > 0) {
-    FX_SAFE_FILESIZE safeLoc = dwCurObjLen;
-    safeLoc += m_szSharedObjOffsetArray[dwSharedObjTotal - 1];
-    if (!safeLoc.IsValid())
+    m_SharedObjGroupInfos[i].m_dwLength = safeObjLen.ValueOrDie();
+    m_SharedObjGroupInfos[i].m_szOffset =
+        prev_shared_group_end_offset.ValueOrDie();
+    prev_shared_group_end_offset += m_SharedObjGroupInfos[i].m_dwLength;
+    if (!prev_shared_group_end_offset.IsValid())
       return false;
-
-    m_szSharedObjOffsetArray.push_back(safeLoc.ValueOrDie());
   }
 
   hStream->ByteAlign();
@@ -362,7 +340,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
   if (index >= m_pLinearized->GetPageCount())
     return CPDF_DataAvail::DataError;
 
-  uint32_t dwLength = m_PageInfos[index].page_length();
+  const uint32_t dwLength = m_PageInfos[index].page_length();
   if (!dwLength)
     return CPDF_DataAvail::DataError;
 
@@ -372,27 +350,17 @@ CPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(uint32_t index) {
   }
 
   // Download data of shared objects in the page.
-  const uint32_t nFirstPageObjNum = m_pLinearized->GetFirstPageObjNum();
-
-  uint32_t dwObjNum = 0;
   for (const uint32_t dwIndex : m_PageInfos[index].Identifiers()) {
-    if (dwIndex >= m_dwSharedObjNumArray.size())
+    if (dwIndex >= m_SharedObjGroupInfos.size())
       continue;
+    const SharedObjGroupInfo& shared_group_info =
+        m_SharedObjGroupInfos[dwIndex];
 
-    dwObjNum = m_dwSharedObjNumArray[dwIndex];
-    if (dwObjNum >= static_cast<uint32_t>(nFirstPageObjNum) &&
-        dwObjNum <
-            static_cast<uint32_t>(nFirstPageObjNum) + m_nFirstPageSharedObjs) {
-      continue;
-    }
-
-    dwLength = GetItemLength(dwIndex, m_szSharedObjOffsetArray);
-    // If two objects have the same offset, it should be treated as an error.
-    if (!dwLength)
+    if (!shared_group_info.m_szOffset || !shared_group_info.m_dwLength)
       return CPDF_DataAvail::DataError;
 
     if (!m_pValidator->CheckDataRangeAndRequestIfUnavailable(
-            m_szSharedObjOffsetArray[dwIndex], dwLength)) {
+            shared_group_info.m_szOffset, shared_group_info.m_dwLength)) {
       return CPDF_DataAvail::DataNotAvailable;
     }
   }

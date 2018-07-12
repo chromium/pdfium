@@ -10,6 +10,8 @@
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
+#include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/fx_stream.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -68,7 +70,7 @@ TEST_F(CPDF_HintTablesTest, Load) {
       hint_tables->GetPagePos(2, &page_start, &page_length, &page_obj_num));
 }
 
-TEST_F(CPDF_HintTablesTest, PageInfos) {
+TEST_F(CPDF_HintTablesTest, PageAndGroupInfos) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
   ASSERT_EQ(CPDF_DataAvail::DocAvailStatus::DataAvailable,
             data_avail->IsDocAvail(nullptr));
@@ -95,4 +97,25 @@ TEST_F(CPDF_HintTablesTest, PageInfos) {
   EXPECT_EQ(2u, hint_tables->PageInfos()[1].Identifiers()[0]);
   EXPECT_EQ(5u, hint_tables->PageInfos()[1].Identifiers()[1]);
   EXPECT_EQ(3u, hint_tables->PageInfos()[1].Identifiers()[2]);
+
+  // SharedGroupInfo
+  ASSERT_EQ(6u, hint_tables->SharedGroupInfos().size());
+
+  EXPECT_EQ(777, hint_tables->SharedGroupInfos()[0].m_szOffset);
+  EXPECT_EQ(254u, hint_tables->SharedGroupInfos()[0].m_dwLength);
+
+  EXPECT_EQ(1031, hint_tables->SharedGroupInfos()[1].m_szOffset);
+  EXPECT_EQ(389u, hint_tables->SharedGroupInfos()[1].m_dwLength);
+
+  EXPECT_EQ(1420, hint_tables->SharedGroupInfos()[2].m_szOffset);
+  EXPECT_EQ(726u, hint_tables->SharedGroupInfos()[2].m_dwLength);
+
+  EXPECT_EQ(2146, hint_tables->SharedGroupInfos()[3].m_szOffset);
+  EXPECT_EQ(290u, hint_tables->SharedGroupInfos()[3].m_dwLength);
+
+  EXPECT_EQ(2436, hint_tables->SharedGroupInfos()[4].m_szOffset);
+  EXPECT_EQ(2669u, hint_tables->SharedGroupInfos()[4].m_dwLength);
+
+  EXPECT_EQ(10939, hint_tables->SharedGroupInfos()[5].m_szOffset);
+  EXPECT_EQ(544u, hint_tables->SharedGroupInfos()[5].m_dwLength);
 }

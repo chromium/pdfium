@@ -20,6 +20,11 @@ class CPDF_ReadValidator;
 
 class CPDF_HintTables {
  public:
+  struct SharedObjGroupInfo {
+    FX_FILESIZE m_szOffset = 0;
+    uint32_t m_dwLength = 0;
+  };
+
   class PageInfo {
    public:
     PageInfo();
@@ -74,6 +79,9 @@ class CPDF_HintTables {
   bool LoadHintStream(CPDF_Stream* pHintStream);
 
   const std::vector<PageInfo>& PageInfos() const { return m_PageInfos; }
+  const std::vector<SharedObjGroupInfo>& SharedGroupInfos() const {
+    return m_SharedObjGroupInfos;
+  }
 
  protected:
   bool ReadPageHintTable(CFX_BitStream* hStream);
@@ -95,8 +103,7 @@ class CPDF_HintTables {
   FX_FILESIZE m_szFirstPageObjOffset;
 
   std::vector<PageInfo> m_PageInfos;
-  std::vector<uint32_t> m_dwSharedObjNumArray;
-  std::vector<FX_FILESIZE> m_szSharedObjOffsetArray;
+  std::vector<SharedObjGroupInfo> m_SharedObjGroupInfos;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_HINT_TABLES_H_
