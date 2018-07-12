@@ -267,6 +267,11 @@ std::vector<CPDF_FormField*> CJS_Field::GetFormFields(
   return CJS_Field::GetFormFields(m_pFormFillEnv.Get(), csFieldName);
 }
 
+CPDF_FormField* CJS_Field::GetFirstFormField() const {
+  std::vector<CPDF_FormField*> fields = GetFormFields(m_FieldName);
+  return fields.empty() ? nullptr : fields[0];
+}
+
 void CJS_Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                 CPDF_FormField* pFormField,
                                 bool bChangeMark,
@@ -390,11 +395,10 @@ CPDF_FormControl* CJS_Field::GetSmartFieldControl(CPDF_FormField* pFormField) {
 CJS_Return CJS_Field::get_alignment(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -424,12 +428,10 @@ CJS_Return CJS_Field::set_alignment(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_border_style(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
-  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
   CPDFSDK_Widget* pWidget =
@@ -523,11 +525,10 @@ void CJS_Field::SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 CJS_Return CJS_Field::get_button_align_x(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -554,11 +555,10 @@ CJS_Return CJS_Field::set_button_align_x(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_button_align_y(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -586,11 +586,10 @@ CJS_Return CJS_Field::set_button_align_y(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_button_fit_bounds(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -613,11 +612,10 @@ CJS_Return CJS_Field::set_button_fit_bounds(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_button_position(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -639,11 +637,10 @@ CJS_Return CJS_Field::set_button_position(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_button_scale_how(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -666,11 +663,10 @@ CJS_Return CJS_Field::set_button_scale_how(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_button_scale_when(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -708,11 +704,10 @@ CJS_Return CJS_Field::set_button_scale_when(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_calc_order_index(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsComboBoxOrTextField(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -733,11 +728,10 @@ CJS_Return CJS_Field::set_calc_order_index(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_char_limit(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
   return CJS_Return(
@@ -755,11 +749,10 @@ CJS_Return CJS_Field::set_char_limit(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_comb(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -777,11 +770,10 @@ CJS_Return CJS_Field::set_comb(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 CJS_Return CJS_Field::get_commit_on_sel_change(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsComboBoxOrListBox(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -798,11 +790,10 @@ CJS_Return CJS_Field::set_commit_on_sel_change(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_current_value_indices(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsComboBoxOrListBox(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -886,11 +877,10 @@ CJS_Return CJS_Field::set_default_style(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_default_value(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() == FormFieldType::kPushButton ||
       pFormField->GetFieldType() == FormFieldType::kSignature) {
     return CJS_Return(JSMessage::kObjectTypeError);
@@ -911,11 +901,10 @@ CJS_Return CJS_Field::set_default_value(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_do_not_scroll(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -934,11 +923,10 @@ CJS_Return CJS_Field::set_do_not_scroll(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_do_not_spell_check(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsComboBoxOrTextField(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -977,12 +965,9 @@ CJS_Return CJS_Field::set_delay(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_display(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
-
-  CPDF_FormField* pFormField = FieldArray[0];
-  ASSERT(pFormField);
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDFSDK_Widget* pWidget =
@@ -1061,11 +1046,10 @@ CJS_Return CJS_Field::set_doc(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 }
 
 CJS_Return CJS_Field::get_editable(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kComboBox)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1081,11 +1065,10 @@ CJS_Return CJS_Field::set_editable(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_export_values(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1115,11 +1098,10 @@ CJS_Return CJS_Field::get_export_values(CJS_Runtime* pRuntime) {
 
 CJS_Return CJS_Field::set_export_values(CJS_Runtime* pRuntime,
                                         v8::Local<v8::Value> vp) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1133,11 +1115,10 @@ CJS_Return CJS_Field::set_export_values(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_file_select(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1147,11 +1128,10 @@ CJS_Return CJS_Field::get_file_select(CJS_Runtime* pRuntime) {
 
 CJS_Return CJS_Field::set_file_select(CJS_Runtime* pRuntime,
                                       v8::Local<v8::Value> vp) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1162,12 +1142,10 @@ CJS_Return CJS_Field::set_file_select(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_fill_color(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
-  ASSERT(pFormField);
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
     return CJS_Return(JSMessage::kBadObjectError);
@@ -1216,12 +1194,9 @@ CJS_Return CJS_Field::set_fill_color(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_hidden(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
-
-  CPDF_FormField* pFormField = FieldArray[0];
-  ASSERT(pFormField);
 
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDFSDK_Widget* pWidget =
@@ -1259,11 +1234,10 @@ void CJS_Field::SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 CJS_Return CJS_Field::get_highlight(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1296,12 +1270,9 @@ CJS_Return CJS_Field::set_highlight(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_line_width(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
-
-  CPDF_FormField* pFormField = FieldArray[0];
-  ASSERT(pFormField);
 
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
@@ -1374,11 +1345,10 @@ void CJS_Field::SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 CJS_Return CJS_Field::get_multiline(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1396,11 +1366,10 @@ CJS_Return CJS_Field::set_multiline(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_Field::get_multiple_selection(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kListBox)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1429,11 +1398,10 @@ CJS_Return CJS_Field::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 }
 
 CJS_Return CJS_Field::get_num_items(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsComboBoxOrListBox(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1446,11 +1414,7 @@ CJS_Return CJS_Field::set_num_items(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_page(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
-    return CJS_Return(JSMessage::kBadObjectError);
-
-  CPDF_FormField* pFormField = FieldArray[0];
+  CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1485,11 +1449,10 @@ CJS_Return CJS_Field::set_page(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 CJS_Return CJS_Field::get_password(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1507,11 +1470,10 @@ CJS_Return CJS_Field::set_password(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_Field::get_print(CJS_Runtime* pRuntime) {
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   CPDFSDK_Widget* pWidget =
       pInterForm->GetWidget(GetSmartFieldControl(pFormField));
   if (!pWidget)
@@ -1581,11 +1543,10 @@ CJS_Return CJS_Field::set_print(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_radios_in_unison(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kRadioButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1604,12 +1565,12 @@ CJS_Return CJS_Field::set_radios_in_unison(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_readonly(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
   return CJS_Return(pRuntime->NewBoolean(
-      !!(FieldArray[0]->GetFieldFlags() & FIELDFLAG_READONLY)));
+      !!(pFormField->GetFieldFlags() & FIELDFLAG_READONLY)));
 }
 
 CJS_Return CJS_Field::set_readonly(CJS_Runtime* pRuntime,
@@ -1623,11 +1584,10 @@ CJS_Return CJS_Field::set_readonly(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_rect(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDFSDK_Widget* pWidget =
       pInterForm->GetWidget(GetSmartFieldControl(pFormField));
@@ -1737,11 +1697,10 @@ void CJS_Field::SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 }
 
 CJS_Return CJS_Field::get_required(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() == FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1762,11 +1721,10 @@ CJS_Return CJS_Field::set_required(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_rich_text(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kTextField)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1794,11 +1752,10 @@ CJS_Return CJS_Field::set_rich_value(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_rotation(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
     return CJS_Return(JSMessage::kBadObjectError);
@@ -1815,11 +1772,10 @@ CJS_Return CJS_Field::set_rotation(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_stroke_color(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
     return CJS_Return(JSMessage::kBadObjectError);
@@ -1865,11 +1821,10 @@ CJS_Return CJS_Field::set_stroke_color(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_style(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -1922,11 +1877,10 @@ CJS_Return CJS_Field::set_submit_name(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_text_color(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
     return CJS_Return(JSMessage::kBadObjectError);
@@ -1967,12 +1921,10 @@ CJS_Return CJS_Field::set_text_color(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
-  ASSERT(pFormField);
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
     return CJS_Return(JSMessage::kBadObjectError);
@@ -2008,12 +1960,10 @@ CJS_Return CJS_Field::set_text_font(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::get_text_size(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
-  ASSERT(pFormField);
   CPDF_FormControl* pFormControl = GetSmartFieldControl(pFormField);
   if (!pFormControl)
     return CJS_Return(JSMessage::kBadObjectError);
@@ -2033,11 +1983,10 @@ CJS_Return CJS_Field::set_text_size(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_type(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   switch (pFormField->GetFieldType()) {
     case FormFieldType::kUnknown:
       return CJS_Return(pRuntime->NewString(L"unknown"));
@@ -2067,12 +2016,12 @@ CJS_Return CJS_Field::set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
 CJS_Return CJS_Field::get_user_name(CJS_Runtime* pRuntime) {
   ASSERT(m_pFormFillEnv);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
   return CJS_Return(
-      pRuntime->NewString(FieldArray[0]->GetAlternateName().AsStringView()));
+      pRuntime->NewString(pFormField->GetAlternateName().AsStringView()));
 }
 
 CJS_Return CJS_Field::set_user_name(CJS_Runtime* pRuntime,
@@ -2084,13 +2033,11 @@ CJS_Return CJS_Field::set_user_name(CJS_Runtime* pRuntime,
 }
 
 CJS_Return CJS_Field::get_value(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
   v8::Local<v8::Value> ret;
-
-  CPDF_FormField* pFormField = FieldArray[0];
   switch (pFormField->GetFieldType()) {
     case FormFieldType::kPushButton:
       return CJS_Return(JSMessage::kObjectTypeError);
@@ -2223,11 +2170,10 @@ void CJS_Field::SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 }
 
 CJS_Return CJS_Field::get_value_as_string(CJS_Runtime* pRuntime) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() == FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -2264,11 +2210,10 @@ CJS_Return CJS_Field::set_value_as_string(CJS_Runtime* pRuntime,
 CJS_Return CJS_Field::browseForFileToSubmit(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if ((pFormField->GetFieldFlags() & FIELDFLAG_FILESELECT) &&
       (pFormField->GetFieldType() == FormFieldType::kTextField)) {
     WideString wsFileName = m_pFormFillEnv->JS_fieldBrowse();
@@ -2289,11 +2234,10 @@ CJS_Return CJS_Field::buttonGetCaption(
   if (iSize >= 1)
     nface = pRuntime->ToInt32(params[0]);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -2325,11 +2269,10 @@ CJS_Return CJS_Field::buttonGetIcon(
       return CJS_Return(JSMessage::kValueError);
   }
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (pFormField->GetFieldType() != FormFieldType::kPushButton)
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -2380,11 +2323,10 @@ CJS_Return CJS_Field::checkThisBox(
   if (iSize >= 2)
     bCheckit = pRuntime->ToBoolean(params[1]);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
@@ -2414,12 +2356,11 @@ CJS_Return CJS_Field::defaultIsChecked(
   if (iSize < 1)
     return CJS_Return(JSMessage::kParamError);
 
-  int nWidget = pRuntime->ToInt32(params[0]);
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
+  int nWidget = pRuntime->ToInt32(params[0]);
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return CJS_Return(JSMessage::kValueError);
 
@@ -2441,8 +2382,7 @@ CJS_Return CJS_Field::getArray(
 
   std::vector<std::unique_ptr<WideString>> swSort;
   for (CPDF_FormField* pFormField : FieldArray) {
-    swSort.push_back(
-        std::unique_ptr<WideString>(new WideString(pFormField->GetFullName())));
+    swSort.push_back(pdfium::MakeUnique<WideString>(pFormField->GetFullName()));
   }
 
   std::sort(swSort.begin(), swSort.end(),
@@ -2480,11 +2420,10 @@ CJS_Return CJS_Field::getItemAt(
   if (iSize >= 2)
     bExport = pRuntime->ToBoolean(params[1]);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (!IsComboBoxOrListBox(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
 
@@ -2521,11 +2460,10 @@ CJS_Return CJS_Field::isBoxChecked(
   if (params.size() >= 1)
     nIndex = pRuntime->ToInt32(params[0]);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (nIndex < 0 || nIndex >= pFormField->CountControls())
     return CJS_Return(JSMessage::kValueError);
 
@@ -2541,11 +2479,10 @@ CJS_Return CJS_Field::isDefaultChecked(
   if (params.size() >= 1)
     nIndex = pRuntime->ToInt32(params[0]);
 
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   if (nIndex < 0 || nIndex >= pFormField->CountControls())
     return CJS_Return(JSMessage::kValueError);
 
@@ -2563,11 +2500,10 @@ CJS_Return CJS_Field::setAction(
 CJS_Return CJS_Field::setFocus(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
-  if (FieldArray.empty())
+  CPDF_FormField* pFormField = GetFirstFormField();
+  if (!pFormField)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  CPDF_FormField* pFormField = FieldArray[0];
   int32_t nCount = pFormField->CountControls();
   if (nCount < 1)
     return CJS_Return(JSMessage::kBadObjectError);

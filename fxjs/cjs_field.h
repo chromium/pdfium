@@ -405,6 +405,7 @@ class CJS_Field : public CJS_Object {
                       int& iControlNo);
   std::vector<CPDF_FormField*> GetFormFields(
       const WideString& csFieldName) const;
+  CPDF_FormField* GetFirstFormField() const;
   CPDF_FormControl* GetSmartFieldControl(CPDF_FormField* pFormField);
   bool ValueIsOccur(CPDF_FormField* pFormField, WideString csOptLabel);
 
