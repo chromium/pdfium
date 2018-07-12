@@ -407,13 +407,33 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
 //   out_buflen - pointer to variable that will receive the length of the value.
 //                Not filled if false is returned.
 //
-// Returns TRUE if the key maps to a string value, FALSE otherwise.
+// Returns TRUE if the key maps to a string/blob value, FALSE otherwise.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
                                     FPDF_BYTESTRING key,
                                     void* buffer,
                                     unsigned long buflen,
                                     unsigned long* out_buflen);
+
+// Experimental API.
+// Get the value of a blob property in a content mark by key.
+// |buffer| is only modified if |buflen| is longer than or equal to the length
+// of the value.
+//
+//   mark       - handle to a content mark.
+//   key        - string key of the property.
+//   buffer     - buffer for holding the returned value.
+//   buflen     - length of the buffer.
+//   out_buflen - pointer to variable that will receive the length of the value.
+//                Not filled if false is returned.
+//
+// Returns TRUE if the key maps to a string/blob value, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
+                                  FPDF_BYTESTRING key,
+                                  void* buffer,
+                                  unsigned long buflen,
+                                  unsigned long* out_buflen);
 
 // Experimental API.
 // Set the value of an int property in a content mark by key. If a parameter
@@ -448,6 +468,25 @@ FPDFPageObjMark_SetStringParam(FPDF_DOCUMENT document,
                                FPDF_PAGEOBJECTMARK mark,
                                FPDF_BYTESTRING key,
                                FPDF_BYTESTRING value);
+
+// Experimental API.
+// Set the value of a blob property in a content mark by key. If a parameter
+// with key |key| exists, its value is set to |value|. Otherwise, it is added as
+// a new parameter.
+//
+//   document  - handle to the document.
+//   mark      - handle to a content mark.
+//   key       - string key of the property.
+//   value     - pointer to blob value to set.
+//   value_len - size in bytes of |value|.
+//
+// Returns TRUE if the operation succeeded, FALSE otherwise.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
+                             FPDF_PAGEOBJECTMARK mark,
+                             FPDF_BYTESTRING key,
+                             void* value,
+                             unsigned long value_len);
 
 // Load an image from a JPEG image file and then set it into |image_object|.
 //

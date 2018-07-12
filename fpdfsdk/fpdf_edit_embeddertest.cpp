@@ -2175,11 +2175,17 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   // Add parameters:
   // - int "IntKey" : 42
   // - string "StringKey": "StringValue"
+  // - blob "BlobKey": "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0"
+  constexpr const size_t kBlobLen = 28;
+  char kBlobValue[kBlobLen];
+  memcpy(kBlobValue, "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0", kBlobLen);
   EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
   EXPECT_TRUE(FPDFPageObjMark_SetIntParam(document(), mark, "IntKey", 42));
   EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), mark, "StringKey",
                                              "StringValue"));
-  EXPECT_EQ(2, FPDFPageObjMark_CountParams(mark));
+  EXPECT_TRUE(FPDFPageObjMark_SetBlobParam(document(), mark, "BlobKey",
+                                           kBlobValue, kBlobLen));
+  EXPECT_EQ(3, FPDFPageObjMark_CountParams(mark));
 
   // Check the two parameters can be retrieved.
   EXPECT_EQ(FPDF_OBJECT_NUMBER,
@@ -2196,6 +2202,14 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   EXPECT_GT(out_buffer_len, 0u);
   name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"StringValue", name);
+
+  EXPECT_EQ(FPDF_OBJECT_STRING,
+            FPDFPageObjMark_GetParamValueType(mark, "BlobKey"));
+  out_buffer_len = 0;
+  EXPECT_TRUE(FPDFPageObjMark_GetParamBlobValue(mark, "BlobKey", buffer, 256,
+                                                &out_buffer_len));
+  EXPECT_EQ(kBlobLen, out_buffer_len);
+  EXPECT_EQ(0, memcmp(kBlobValue, buffer, kBlobLen));
 
 // Render and check the bitmap is the expected one.
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_

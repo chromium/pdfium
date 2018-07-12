@@ -402,6 +402,9 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
                                     void* buffer,
                                     unsigned long buflen,
                                     unsigned long* out_buflen) {
+  if (!out_buflen)
+    return false;
+
   const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
   if (!pParams)
     return false;
@@ -412,6 +415,33 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
 
   *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
       WideString::FromUTF8(pObj->GetString().AsStringView()), buffer, buflen);
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
+                                  FPDF_BYTESTRING key,
+                                  void* buffer,
+                                  unsigned long buflen,
+                                  unsigned long* out_buflen) {
+  if (!out_buflen)
+    return false;
+
+  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  if (!pParams)
+    return false;
+
+  const CPDF_Object* pObj = pParams->GetObjectFor(key);
+  if (!pObj || !pObj->IsString())
+    return false;
+
+  ByteString result = pObj->GetString();
+  unsigned long len = result.GetLength();
+
+  if (buffer && len <= buflen)
+    memcpy(buffer, result.c_str(), len);
+
+  *out_buflen = len;
   return true;
 }
 
@@ -472,6 +502,24 @@ FPDFPageObjMark_SetStringParam(FPDF_DOCUMENT document,
     return false;
 
   pParams->SetNewFor<CPDF_String>(key, value, false);
+  return true;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
+                             FPDF_PAGEOBJECTMARK mark,
+                             FPDF_BYTESTRING key,
+                             void* value,
+                             unsigned long value_len) {
+  CPDF_Dictionary* pParams = GetOrCreateMarkParamsDict(document, mark);
+  if (!pParams)
+    return false;
+
+  if (!value && value_len > 0)
+    return false;
+
+  pParams->SetNewFor<CPDF_String>(
+      key, ByteString(static_cast<const char*>(value), value_len), true);
   return true;
 }
 
