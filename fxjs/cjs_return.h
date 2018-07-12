@@ -9,6 +9,7 @@
 
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/optional.h"
 
 class CJS_Return {
  public:
@@ -19,15 +20,14 @@ class CJS_Return {
   CJS_Return(const CJS_Return&);
   ~CJS_Return();
 
-  bool HasError() const { return is_error_; }
-  WideString Error() const { return error_; }
+  bool HasError() const { return error_.has_value(); }
+  WideString Error() const { return error_.value(); }
 
   bool HasReturn() const { return !return_.IsEmpty(); }
   v8::Local<v8::Value> Return() const { return return_; }
 
  private:
-  bool is_error_ = false;
-  WideString error_;
+  Optional<WideString> error_;
   v8::Local<v8::Value> return_;
 };
 
