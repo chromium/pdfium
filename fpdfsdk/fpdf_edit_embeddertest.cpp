@@ -741,6 +741,82 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarks) {
   CloseSavedDocument();
 }
 
+TEST_F(FPDFEditEmbeddertest, RemoveMarkParam) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjectCount = 19;
+  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 1);
+
+  // Remove all "Square" content marks parameters.
+  for (int i = 0; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, i);
+
+    int mark_count = FPDFPageObj_CountMarks(page_object);
+    for (int j = 0; j < mark_count; ++j) {
+      FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
+
+      char buffer[256];
+      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+      if (name == L"Square") {
+        // Show the mark has a "Factor" parameter.
+        int out_value;
+        EXPECT_TRUE(
+            FPDFPageObjMark_GetParamIntValue(mark, "Factor", &out_value));
+
+        // Remove parameter.
+        EXPECT_TRUE(FPDFPageObjMark_RemoveParam(page_object, mark, "Factor"));
+
+        // Verify the "Factor" parameter is gone.
+        EXPECT_FALSE(
+            FPDFPageObjMark_GetParamIntValue(mark, "Factor", &out_value));
+      }
+    }
+  }
+
+  // Save the file.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Re-open the file and check the "Factor" parameters are still gone.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  size_t square_count = 0;
+  for (int i = 0; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(saved_page, i);
+
+    int mark_count = FPDFPageObj_CountMarks(page_object);
+    for (int j = 0; j < mark_count; ++j) {
+      FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
+
+      char buffer[256];
+      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+      if (name == L"Square") {
+        // Verify the "Factor" parameter is still gone.
+        int out_value;
+        EXPECT_FALSE(
+            FPDFPageObjMark_GetParamIntValue(mark, "Factor", &out_value));
+
+        ++square_count;
+      }
+    }
+  }
+
+  // Verify the parameters are gone, but the marks are not.
+  EXPECT_EQ(4u, square_count);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFEditEmbeddertest, MaintainMarkedObjects) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));
