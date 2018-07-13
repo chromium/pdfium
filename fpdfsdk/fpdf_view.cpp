@@ -920,6 +920,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                                       int page_index,
                                                       double* width,
                                                       double* height) {
+  if (!width || !height)
+    return false;
+
   auto* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return false;

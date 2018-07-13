@@ -593,10 +593,13 @@ TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
 
 TEST_F(FPDFViewEmbeddertest, FPDF_GetPageSizeByIndex) {
   EXPECT_TRUE(OpenDocument("rectangles.pdf"));
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document());
 
   double width = 0;
   double height = 0;
+
+  EXPECT_FALSE(FPDF_GetPageSizeByIndex(nullptr, 0, &width, &height));
+  EXPECT_FALSE(FPDF_GetPageSizeByIndex(document(), 0, nullptr, &height));
+  EXPECT_FALSE(FPDF_GetPageSizeByIndex(document(), 0, &width, nullptr));
 
   // Page -1 doesn't exist.
   EXPECT_FALSE(FPDF_GetPageSizeByIndex(document(), -1, &width, &height));
@@ -609,6 +612,7 @@ TEST_F(FPDFViewEmbeddertest, FPDF_GetPageSizeByIndex) {
   EXPECT_EQ(200.0, width);
   EXPECT_EQ(300.0, height);
 
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document());
 #ifdef PDF_ENABLE_XFA
   // TODO(tsepez): XFA must obtain this size without parsing.
   EXPECT_EQ(1u, pDoc->GetParsedPageCountForTesting());
