@@ -692,6 +692,55 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbeddertest, RemoveMarks) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjectCount = 19;
+  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 1);
+
+  // Remove all "Prime" content marks.
+  for (int i = 0; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, i);
+
+    int mark_count = FPDFPageObj_CountMarks(page_object);
+    for (int j = mark_count - 1; j >= 0; --j) {
+      FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
+
+      char buffer[256];
+      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
+      std::wstring name =
+          GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
+      if (name == L"Prime") {
+        // Remove mark.
+        EXPECT_TRUE(FPDFPageObj_RemoveMark(page_object, mark));
+
+        // Verify there is now one fewer mark in the page object.
+        EXPECT_EQ(mark_count - 1, FPDFPageObj_CountMarks(page_object));
+      }
+    }
+  }
+
+  // Verify there are 0 "Prime" content marks now.
+  CheckMarkCounts(page, 1, kExpectedObjectCount, 0, 4, 9, 1);
+
+  // Save the file.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Re-open the file and check the prime marks are not there anymore.
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  CheckMarkCounts(saved_page, 1, kExpectedObjectCount, 0, 4, 9, 1);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFEditEmbeddertest, MaintainMarkedObjects) {
   // Load document with some text.
   EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));

@@ -73,6 +73,10 @@ void CPDF_ContentMark::AddMarkWithPropertiesDict(
   m_pMarkData->AddMarkWithPropertiesDict(std::move(name), pDict, property_name);
 }
 
+bool CPDF_ContentMark::RemoveMark(CPDF_ContentMarkItem* pMarkItem) {
+  return m_pMarkData && m_pMarkData->RemoveMark(pMarkItem);
+}
+
 void CPDF_ContentMark::EnsureMarkDataExists() {
   if (!m_pMarkData)
     m_pMarkData = pdfium::MakeRetain<MarkData>();
@@ -158,6 +162,16 @@ void CPDF_ContentMark::MarkData::AddMarkWithPropertiesDict(
   auto pItem = pdfium::MakeRetain<CPDF_ContentMarkItem>(std::move(name));
   pItem->SetPropertiesDict(pDict, property_name);
   m_Marks.push_back(pItem);
+}
+
+bool CPDF_ContentMark::MarkData::RemoveMark(CPDF_ContentMarkItem* pMarkItem) {
+  for (auto it = m_Marks.begin(); it != m_Marks.end(); ++it) {
+    if (it->Get() == pMarkItem) {
+      m_Marks.erase(it);
+      return true;
+    }
+  }
+  return false;
 }
 
 void CPDF_ContentMark::MarkData::DeleteLastMark() {
