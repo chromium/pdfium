@@ -30,6 +30,13 @@ size_t CPDF_ContentMark::CountItems() const {
   return m_pMarkData->CountItems();
 }
 
+bool CPDF_ContentMark::ContainsItem(const CPDF_ContentMarkItem* pItem) const {
+  if (!m_pMarkData)
+    return false;
+
+  return m_pMarkData->ContainsItem(pItem);
+}
+
 CPDF_ContentMarkItem* CPDF_ContentMark::GetItem(size_t i) {
   ASSERT(i < CountItems());
   return m_pMarkData->GetItem(i);
@@ -103,6 +110,15 @@ CPDF_ContentMark::MarkData::~MarkData() {}
 
 size_t CPDF_ContentMark::MarkData::CountItems() const {
   return m_Marks.size();
+}
+
+bool CPDF_ContentMark::MarkData::ContainsItem(
+    const CPDF_ContentMarkItem* pItem) const {
+  for (const auto pMark : m_Marks) {
+    if (pMark.Get() == pItem)
+      return true;
+  }
+  return false;
 }
 
 CPDF_ContentMarkItem* CPDF_ContentMark::MarkData::GetItem(size_t index) {

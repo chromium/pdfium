@@ -541,7 +541,7 @@ void CheckMarkCounts(FPDF_PAGE page,
       FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
 
       char buffer[256];
-      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, 256), 0u);
+      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
       std::wstring name =
           GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Prime") {
@@ -552,7 +552,7 @@ void CheckMarkCounts(FPDF_PAGE page,
         EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
 
         unsigned long get_param_key_return =
-            FPDFPageObjMark_GetParamKey(mark, 0, buffer, 256);
+            FPDFPageObjMark_GetParamKey(mark, 0, buffer, sizeof(buffer));
         ASSERT_GT(get_param_key_return, 0u);
         EXPECT_EQ((6u + 1u) * 2u, get_param_key_return);
         std::wstring key =
@@ -572,7 +572,7 @@ void CheckMarkCounts(FPDF_PAGE page,
         EXPECT_EQ(1, FPDFPageObjMark_CountParams(mark));
 
         unsigned long get_param_key_return =
-            FPDFPageObjMark_GetParamKey(mark, 0, buffer, 256);
+            FPDFPageObjMark_GetParamKey(mark, 0, buffer, sizeof(buffer));
         ASSERT_GT(get_param_key_return, 0u);
         EXPECT_EQ((8u + 1u) * 2u, get_param_key_return);
         std::wstring key =
@@ -582,19 +582,24 @@ void CheckMarkCounts(FPDF_PAGE page,
         EXPECT_EQ(FPDF_OBJECT_STRING,
                   FPDFPageObjMark_GetParamValueType(mark, "Position"));
         unsigned long length;
-        EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(mark, "Position",
-                                                        buffer, 256, &length));
+        EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(
+            mark, "Position", buffer, sizeof(buffer), &length));
         ASSERT_GT(length, 0u);
         std::wstring value =
             GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
 
-        // "Position" can be "First" or "Last".
+        // "Position" can be "First", "Last", or "End".
         if (i == 0) {
           EXPECT_EQ((5u + 1u) * 2u, length);
           EXPECT_EQ(L"First", value);
         } else if (i == object_count - 1) {
-          EXPECT_EQ((4u + 1u) * 2u, length);
-          EXPECT_EQ(L"Last", value);
+          if (length == (4u + 1u) * 2u) {
+            EXPECT_EQ(L"Last", value);
+          } else if (length == (3u + 1u) * 2u) {
+            EXPECT_EQ(L"End", value);
+          } else {
+            FAIL();
+          }
         } else {
           FAIL();
         }
@@ -655,7 +660,7 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
       FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, j);
 
       char buffer[256];
-      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, 256), 0u);
+      ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
       std::wstring name =
           GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
       if (name == L"Prime") {
@@ -2157,8 +2162,8 @@ TEST_F(FPDFEditEmbeddertest, AddMark) {
   FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
   FPDF_PAGEOBJECTMARK mark = FPDFPageObj_AddMark(page_object, "Bounds");
   EXPECT_TRUE(mark);
-  EXPECT_TRUE(
-      FPDFPageObjMark_SetStringParam(document(), mark, "Position", "First"));
+  EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), page_object, mark,
+                                             "Position", "First"));
 
   CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 2);
 
@@ -2172,6 +2177,68 @@ TEST_F(FPDFEditEmbeddertest, AddMark) {
   FPDF_PAGE saved_page = LoadSavedPage(0);
 
   CheckMarkCounts(saved_page, 1, kExpectedObjectCount, 8, 4, 9, 2);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
+TEST_F(FPDFEditEmbeddertest, SetMarkParam) {
+  // Load document with some text.
+  EXPECT_TRUE(OpenDocument("text_in_page_marked.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjectCount = 19;
+  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 1);
+
+  // Check the "Bounds" mark's "Position" param is "Last".
+  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 18);
+  FPDF_PAGEOBJECTMARK mark = FPDFPageObj_GetMark(page_object, 1);
+  ASSERT_TRUE(mark);
+  char buffer[256];
+  ASSERT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
+  ASSERT_EQ(L"Bounds",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
+  unsigned long out_buffer_len;
+  ASSERT_TRUE(FPDFPageObjMark_GetParamStringValue(
+      mark, "Position", buffer, sizeof(buffer), &out_buffer_len));
+  ASSERT_EQ(L"Last",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
+
+  // Set is to "End".
+  EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), page_object, mark,
+                                             "Position", "End"));
+
+  // Verify the object passed must correspond to the mark passed.
+  FPDF_PAGEOBJECT another_page_object = FPDFPage_GetObject(page, 17);
+  EXPECT_FALSE(FPDFPageObjMark_SetStringParam(document(), another_page_object,
+                                              mark, "Position", "End"));
+
+  // Verify nothing else changed.
+  CheckMarkCounts(page, 1, kExpectedObjectCount, 8, 4, 9, 1);
+
+  // Verify "Position" now maps to "End".
+  EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(
+      mark, "Position", buffer, sizeof(buffer), &out_buffer_len));
+  EXPECT_EQ(L"End",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
+
+  // Save the file
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Re-open the file and cerify "Position" still maps to "End".
+  OpenSavedDocument();
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+
+  CheckMarkCounts(saved_page, 1, kExpectedObjectCount, 8, 4, 9, 1);
+  page_object = FPDFPage_GetObject(saved_page, 18);
+  mark = FPDFPageObj_GetMark(page_object, 1);
+  EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(
+      mark, "Position", buffer, sizeof(buffer), &out_buffer_len));
+  EXPECT_EQ(L"End",
+            GetPlatformWString(reinterpret_cast<unsigned short*>(buffer)));
 
   CloseSavedPage(saved_page);
   CloseSavedDocument();
@@ -2206,7 +2273,7 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   EXPECT_EQ(1, FPDFPageObj_CountMarks(text_object));
   EXPECT_EQ(mark, FPDFPageObj_GetMark(text_object, 0));
   char buffer[256];
-  EXPECT_GT(FPDFPageObjMark_GetName(mark, buffer, 256), 0u);
+  EXPECT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
   std::wstring name =
       GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"TestMarkName", name);
@@ -2219,11 +2286,12 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   char kBlobValue[kBlobLen];
   memcpy(kBlobValue, "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0", kBlobLen);
   EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
-  EXPECT_TRUE(FPDFPageObjMark_SetIntParam(document(), mark, "IntKey", 42));
-  EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), mark, "StringKey",
-                                             "StringValue"));
-  EXPECT_TRUE(FPDFPageObjMark_SetBlobParam(document(), mark, "BlobKey",
-                                           kBlobValue, kBlobLen));
+  EXPECT_TRUE(
+      FPDFPageObjMark_SetIntParam(document(), text_object, mark, "IntKey", 42));
+  EXPECT_TRUE(FPDFPageObjMark_SetStringParam(document(), text_object, mark,
+                                             "StringKey", "StringValue"));
+  EXPECT_TRUE(FPDFPageObjMark_SetBlobParam(document(), text_object, mark,
+                                           "BlobKey", kBlobValue, kBlobLen));
   EXPECT_EQ(3, FPDFPageObjMark_CountParams(mark));
 
   // Check the two parameters can be retrieved.
@@ -2236,8 +2304,8 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   EXPECT_EQ(FPDF_OBJECT_STRING,
             FPDFPageObjMark_GetParamValueType(mark, "StringKey"));
   unsigned long out_buffer_len;
-  EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(mark, "StringKey", buffer,
-                                                  256, &out_buffer_len));
+  EXPECT_TRUE(FPDFPageObjMark_GetParamStringValue(
+      mark, "StringKey", buffer, sizeof(buffer), &out_buffer_len));
   EXPECT_GT(out_buffer_len, 0u);
   name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"StringValue", name);
@@ -2245,8 +2313,8 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   EXPECT_EQ(FPDF_OBJECT_STRING,
             FPDFPageObjMark_GetParamValueType(mark, "BlobKey"));
   out_buffer_len = 0;
-  EXPECT_TRUE(FPDFPageObjMark_GetParamBlobValue(mark, "BlobKey", buffer, 256,
-                                                &out_buffer_len));
+  EXPECT_TRUE(FPDFPageObjMark_GetParamBlobValue(
+      mark, "BlobKey", buffer, sizeof(buffer), &out_buffer_len));
   EXPECT_EQ(kBlobLen, out_buffer_len);
   EXPECT_EQ(0, memcmp(kBlobValue, buffer, kBlobLen));
 
@@ -2278,7 +2346,7 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   EXPECT_EQ(1, FPDFPageObj_CountMarks(text_object));
   mark = FPDFPageObj_GetMark(text_object, 0);
   EXPECT_TRUE(mark);
-  EXPECT_GT(FPDFPageObjMark_GetName(mark, buffer, 256), 0u);
+  EXPECT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
   name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
   EXPECT_EQ(L"TestMarkName", name);
 
