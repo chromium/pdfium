@@ -546,7 +546,7 @@ class CPDF_NPageToOneExporter : public CPDF_PageOrganizer {
   // numbers, insert them into the destination document, starting at page 0.
   // |pageNums| is 1-based.
   // |destPageSize| is the destination document page dimensions, measured in
-  // pixels.
+  // PDF "user space" units.
   // |numPagesOnXAxis| and |numPagesOnXAxis| together defines how many source
   // pages fit on one destination page.
   bool ExportNPagesToOne(const std::vector<uint32_t>& pageNums,

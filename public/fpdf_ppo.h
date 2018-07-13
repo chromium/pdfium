@@ -34,8 +34,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
 // |output_doc| page.
 //
 //   src_doc             - The document to be imported.
-//   output_width        - The output page width measured in pixels.
-//   output_height       - The output page height measured in pixels.
+//   output_width        - The output page width in PDF "user space" units.
+//   output_height       - The output page height in PDF "user space" units.
 //   num_pages_on_x_axis - The number of pages on X Axis.
 //   num_pages_on_y_axis - The number of pages on Y Axis.
 //
