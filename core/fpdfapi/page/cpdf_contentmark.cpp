@@ -18,23 +18,16 @@ CPDF_ContentMark::~CPDF_ContentMark() {}
 std::unique_ptr<CPDF_ContentMark> CPDF_ContentMark::Clone() {
   auto result = pdfium::MakeUnique<CPDF_ContentMark>();
   if (m_pMarkData)
-    result->m_pMarkData.Reset(new MarkData(*m_pMarkData));
-
+    result->m_pMarkData = pdfium::MakeRetain<MarkData>(*m_pMarkData);
   return result;
 }
 
 size_t CPDF_ContentMark::CountItems() const {
-  if (!m_pMarkData)
-    return 0;
-
-  return m_pMarkData->CountItems();
+  return m_pMarkData ? m_pMarkData->CountItems() : 0;
 }
 
 bool CPDF_ContentMark::ContainsItem(const CPDF_ContentMarkItem* pItem) const {
-  if (!m_pMarkData)
-    return false;
-
-  return m_pMarkData->ContainsItem(pItem);
+  return m_pMarkData && m_pMarkData->ContainsItem(pItem);
 }
 
 CPDF_ContentMarkItem* CPDF_ContentMark::GetItem(size_t i) {
@@ -48,10 +41,7 @@ const CPDF_ContentMarkItem* CPDF_ContentMark::GetItem(size_t i) const {
 }
 
 int CPDF_ContentMark::GetMarkedContentID() const {
-  if (!m_pMarkData)
-    return -1;
-
-  return m_pMarkData->GetMarkedContentID();
+  return m_pMarkData ? m_pMarkData->GetMarkedContentID() : -1;
 }
 
 void CPDF_ContentMark::AddMark(ByteString name) {

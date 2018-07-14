@@ -100,13 +100,9 @@ void CalcBoundingBox(CPDF_PageObject* pPageObj) {
 }
 
 CPDF_Dictionary* GetMarkParamDict(FPDF_PAGEOBJECTMARK mark) {
-  if (!mark)
-    return nullptr;
-
   CPDF_ContentMarkItem* pMarkItem =
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
-
-  return pMarkItem->GetParam();
+  return pMarkItem ? pMarkItem->GetParam() : nullptr;
 }
 
 CPDF_Dictionary* GetOrCreateMarkParamsDict(FPDF_DOCUMENT document,
@@ -365,10 +361,7 @@ FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark) {
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
 
   const CPDF_Dictionary* pParams = pMarkItem->GetParam();
-  if (!pParams)
-    return 0;
-
-  return pParams->GetCount();
+  return pParams ? pParams->GetCount() : 0;
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -399,10 +392,7 @@ FPDFPageObjMark_GetParamValueType(FPDF_PAGEOBJECTMARK mark,
     return FPDF_OBJECT_UNKNOWN;
 
   const CPDF_Object* pObject = pParams->GetObjectFor(key);
-  if (!pObject)
-    return FPDF_OBJECT_UNKNOWN;
-
-  return pObject->GetType();
+  return pObject ? pObject->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
