@@ -39,30 +39,29 @@ namespace {
 
 const int FX_MAX_PAGE_LEVEL = 1024;
 
-void InsertWidthArrayImpl(int* widths, int size, CPDF_Array* pWidthArray) {
-  int i;
-  for (i = 1; i < size; i++) {
-    if (widths[i] != *widths)
+void InsertWidthArrayImpl(std::vector<int> widths, CPDF_Array* pWidthArray) {
+  size_t i;
+  for (i = 1; i < widths.size(); i++) {
+    if (widths[i] != widths[0])
       break;
   }
-  if (i == size) {
+  if (i == widths.size()) {
     int first = pWidthArray->GetIntegerAt(pWidthArray->GetCount() - 1);
-    pWidthArray->AddNew<CPDF_Number>(first + size - 1);
-    pWidthArray->AddNew<CPDF_Number>(*widths);
-  } else {
-    CPDF_Array* pWidthArray1 = pWidthArray->AddNew<CPDF_Array>();
-    for (i = 0; i < size; i++)
-      pWidthArray1->AddNew<CPDF_Number>(widths[i]);
+    pWidthArray->AddNew<CPDF_Number>(first + static_cast<int>(widths.size()) -
+                                     1);
+    pWidthArray->AddNew<CPDF_Number>(widths[0]);
+    return;
   }
-  FX_Free(widths);
+  CPDF_Array* pWidthArray1 = pWidthArray->AddNew<CPDF_Array>();
+  for (int w : widths)
+    pWidthArray1->AddNew<CPDF_Number>(w);
 }
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 void InsertWidthArray(HDC hDC, int start, int end, CPDF_Array* pWidthArray) {
-  int size = end - start + 1;
-  int* widths = FX_Alloc(int, size);
-  GetCharWidth(hDC, start, end, widths);
-  InsertWidthArrayImpl(widths, size, pWidthArray);
+  std::vector<int> widths(end - start + 1);
+  GetCharWidth(hDC, start, end, widths.data());
+  InsertWidthArrayImpl(std::move(widths), pWidthArray);
 }
 
 ByteString FPDF_GetPSNameFromTT(HDC hDC) {
@@ -83,14 +82,12 @@ void InsertWidthArray1(CFX_Font* pFont,
                        wchar_t start,
                        wchar_t end,
                        CPDF_Array* pWidthArray) {
-  int size = end - start + 1;
-  int* widths = FX_Alloc(int, size);
-  int i;
-  for (i = 0; i < size; i++) {
+  std::vector<int> widths(end - start + 1);
+  for (size_t i = 0; i < widths.size(); ++i) {
     int glyph_index = pEncoding->GlyphFromCharCode(start + i);
     widths[i] = pFont->GetGlyphWidth(glyph_index);
   }
-  InsertWidthArrayImpl(widths, size, pWidthArray);
+  InsertWidthArrayImpl(std::move(widths), pWidthArray);
 }
 
 int CountPages(CPDF_Dictionary* pPages,
