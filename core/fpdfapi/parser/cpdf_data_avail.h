@@ -182,7 +182,6 @@ class CPDF_DataAvail final : public CPDF_Document::Observer {
   bool m_bMainXRefLoadedOK = false;
   bool m_bPagesTreeLoad = false;
   bool m_bPagesLoad = false;
-  CPDF_Parser* m_pCurrentParser = nullptr;
   std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
   std::vector<std::unique_ptr<CPDF_Object>> m_PagesArray;
   uint32_t m_dwEncryptObjNum = 0;
