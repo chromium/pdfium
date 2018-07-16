@@ -1143,18 +1143,17 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
       if (iColSpan <= pdfium::CollectionSize<int32_t>(
                           *pContext->m_prgSpecifiedColumnWidths) -
                           iColIndex) {
-        pContext->m_fCurColumnWidth = 0;
-        pContext->m_bCurColumnWidthAvaiable = true;
+        pContext->m_fCurColumnWidth = 0.0f;
         if (iColSpan == -1) {
           iColSpan = pdfium::CollectionSize<int32_t>(
               *pContext->m_prgSpecifiedColumnWidths);
         }
         for (int32_t i = 0; iColIndex + i < iColSpan; ++i) {
-          pContext->m_fCurColumnWidth +=
+          pContext->m_fCurColumnWidth.value() +=
               (*pContext->m_prgSpecifiedColumnWidths)[iColIndex + i];
         }
-        if (pContext->m_fCurColumnWidth == 0)
-          pContext->m_bCurColumnWidthAvaiable = false;
+        if (pContext->m_fCurColumnWidth.value() == 0)
+          pContext->m_fCurColumnWidth.reset();
 
         iColIndex += iColSpan >= 0 ? iColSpan : 0;
       }
@@ -1273,8 +1272,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
 
   for (; m_pCurChildNode; GotoNextContainerNode(
            m_pCurChildNode, &m_nCurChildNodeStage, GetFormNode(), false)) {
-    layoutContext.m_bCurColumnWidthAvaiable = false;
-    layoutContext.m_fCurColumnWidth = 0;
+    layoutContext.m_fCurColumnWidth.reset();
     if (m_nCurChildNodeStage != XFA_ItemLayoutProcessorStages::Container)
       continue;
 
@@ -1605,9 +1603,9 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
 
   CFX_SizeF containerSize = CalculateContainerSpecifiedSize(
       GetFormNode(), &bContainerWidthAutoSize, &bContainerHeightAutoSize);
-  if (pContext && pContext->m_bCurColumnWidthAvaiable) {
+  if (pContext && pContext->m_fCurColumnWidth.has_value()) {
+    containerSize.width = pContext->m_fCurColumnWidth.value();
     bContainerWidthAutoSize = false;
-    containerSize.width = pContext->m_fCurColumnWidth;
   }
   if (!bContainerHeightAutoSize)
     containerSize.height -= m_fUsedSize;
@@ -2556,7 +2554,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::InsertFlowedItem(
       pProcessor->GetFormNode()->GetIntact() == XFA_AttributeEnum::None) {
     pFormNode = m_pPageMgr->QueryOverflow(pProcessor->GetFormNode());
     if (!pFormNode && pLayoutContext && pLayoutContext->m_pOverflowProcessor) {
-      pFormNode = pLayoutContext->m_pOverflowNode;
+      pFormNode = pLayoutContext->m_pOverflowNode.Get();
       bUseInherited = true;
     }
     if (m_pPageMgr->ProcessOverflow(pFormNode, pOverflowLeaderNode,

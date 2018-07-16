@@ -9,24 +9,21 @@
 
 #include <vector>
 
-class CXFA_ItemLayoutProcess;
+#include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/optional.h"
+
+class CXFA_ItemLayoutProcessor;
 class CXFA_Node;
 
 class CXFA_LayoutContext {
  public:
-  CXFA_LayoutContext()
-      : m_prgSpecifiedColumnWidths(nullptr),
-        m_fCurColumnWidth(0),
-        m_bCurColumnWidthAvaiable(false),
-        m_pOverflowProcessor(nullptr),
-        m_pOverflowNode(nullptr) {}
-  ~CXFA_LayoutContext() {}
+  CXFA_LayoutContext();
+  ~CXFA_LayoutContext();
 
-  std::vector<float>* m_prgSpecifiedColumnWidths;
-  float m_fCurColumnWidth;
-  bool m_bCurColumnWidthAvaiable;
-  CXFA_ItemLayoutProcessor* m_pOverflowProcessor;
-  CXFA_Node* m_pOverflowNode;
+  Optional<float> m_fCurColumnWidth;
+  UnownedPtr<std::vector<float>> m_prgSpecifiedColumnWidths;
+  UnownedPtr<CXFA_ItemLayoutProcessor> m_pOverflowProcessor;
+  UnownedPtr<CXFA_Node> m_pOverflowNode;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LAYOUTCONTEXT_H_

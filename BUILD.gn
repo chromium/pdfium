@@ -2450,6 +2450,7 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_labelprinter.h",
       "xfa/fxfa/parser/cxfa_layout.cpp",
       "xfa/fxfa/parser/cxfa_layout.h",
+      "xfa/fxfa/parser/cxfa_layoutcontext.cpp",
       "xfa/fxfa/parser/cxfa_layoutcontext.h",
       "xfa/fxfa/parser/cxfa_layoutitem.cpp",
       "xfa/fxfa/parser/cxfa_layoutitem.h",
