@@ -11,15 +11,13 @@
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cfxjse_isolatetracker.h"
 
-CFXJSE_RuntimeData::CFXJSE_RuntimeData(v8::Isolate* pIsolate)
-    : m_pIsolate(pIsolate) {}
+CFXJSE_RuntimeData::CFXJSE_RuntimeData() = default;
 
-CFXJSE_RuntimeData::~CFXJSE_RuntimeData() {}
+CFXJSE_RuntimeData::~CFXJSE_RuntimeData() = default;
 
 std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
     v8::Isolate* pIsolate) {
-  std::unique_ptr<CFXJSE_RuntimeData> pRuntimeData(
-      new CFXJSE_RuntimeData(pIsolate));
+  std::unique_ptr<CFXJSE_RuntimeData> pRuntimeData(new CFXJSE_RuntimeData());
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
 
   v8::Local<v8::FunctionTemplate> hFuncTemplate =

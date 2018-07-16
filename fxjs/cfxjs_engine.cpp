@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjse_runtimedata.h"
 #include "fxjs/cjs_object.h"
 
@@ -143,8 +144,10 @@ class CFXJS_ObjDefinition {
     m_Signature.Reset(isolate, sig);
   }
 
+  v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
+
   void DefineConst(const char* sConstName, v8::Local<v8::Value> pDefault) {
-    GetInstanceTemplate()->Set(m_pIsolate, sConstName, pDefault);
+    GetInstanceTemplate()->Set(GetIsolate(), sConstName, pDefault);
   }
 
   void DefineProperty(v8::Local<v8::String> sPropName,
@@ -156,7 +159,7 @@ class CFXJS_ObjDefinition {
   void DefineMethod(v8::Local<v8::String> sMethodName,
                     v8::FunctionCallback pMethodCall) {
     v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
-        m_pIsolate, pMethodCall, v8::Local<v8::Value>(), GetSignature());
+        GetIsolate(), pMethodCall, v8::Local<v8::Value>(), GetSignature());
     fun->RemovePrototype();
     GetInstanceTemplate()->Set(sMethodName, fun, v8::ReadOnly);
   }
@@ -172,23 +175,22 @@ class CFXJS_ObjDefinition {
   }
 
   v8::Local<v8::ObjectTemplate> GetInstanceTemplate() {
-    v8::EscapableHandleScope scope(m_pIsolate);
+    v8::EscapableHandleScope scope(GetIsolate());
     v8::Local<v8::FunctionTemplate> function =
-        m_FunctionTemplate.Get(m_pIsolate);
+        m_FunctionTemplate.Get(GetIsolate());
     return scope.Escape(function->InstanceTemplate());
   }
 
   v8::Local<v8::Signature> GetSignature() {
-    v8::EscapableHandleScope scope(m_pIsolate);
-    return scope.Escape(m_Signature.Get(m_pIsolate));
+    v8::EscapableHandleScope scope(GetIsolate());
+    return scope.Escape(m_Signature.Get(GetIsolate()));
   }
 
   const char* const m_ObjName;
   const FXJSOBJTYPE m_ObjType;
   const CFXJS_Engine::Constructor m_pConstructor;
   const CFXJS_Engine::Destructor m_pDestructor;
-
-  v8::Isolate* m_pIsolate;
+  UnownedPtr<v8::Isolate> m_pIsolate;
   v8::Global<v8::FunctionTemplate> m_FunctionTemplate;
   v8::Global<v8::Signature> m_Signature;
 };

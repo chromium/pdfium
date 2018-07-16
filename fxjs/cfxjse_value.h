@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjse_isolatetracker.h"
 #include "fxjs/cfxjse_runtimedata.h"
 #include "v8/include/v8.h"
@@ -69,15 +70,15 @@ class CFXJSE_Value {
                             CFXJSE_Value* lpPropValue);
   bool SetFunctionBind(CFXJSE_Value* lpOldFunction, CFXJSE_Value* lpNewThis);
 
-  v8::Isolate* GetIsolate() const { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
   const v8::Global<v8::Value>& DirectGetValue() const { return m_hValue; }
   void ForceSetValue(v8::Local<v8::Value> hValue) {
-    m_hValue.Reset(m_pIsolate, hValue);
+    m_hValue.Reset(GetIsolate(), hValue);
   }
   void Assign(const CFXJSE_Value* lpValue) {
     ASSERT(lpValue);
     if (lpValue) {
-      m_hValue.Reset(m_pIsolate, lpValue->m_hValue);
+      m_hValue.Reset(GetIsolate(), lpValue->m_hValue);
     } else {
       m_hValue.Reset();
     }
@@ -91,7 +92,7 @@ class CFXJSE_Value {
   CFXJSE_Value(const CFXJSE_Value&);
   CFXJSE_Value& operator=(const CFXJSE_Value&);
 
-  v8::Isolate* m_pIsolate;
+  UnownedPtr<v8::Isolate> m_pIsolate;
   v8::Global<v8::Value> m_hValue;
 };
 

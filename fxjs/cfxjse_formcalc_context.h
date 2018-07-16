@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_context.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
@@ -423,7 +424,7 @@ class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
   void GlobalPropertyGetter(CFXJSE_Value* pValue);
 
  private:
-  v8::Isolate* GetScriptRuntime() const { return m_pIsolate; }
+  v8::Isolate* GetScriptRuntime() const { return m_pIsolate.Get(); }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
   void ThrowNoDefaultPropertyException(const ByteStringView& name) const;
@@ -436,7 +437,7 @@ class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
   void ThrowParamCountMismatchException(const WideString& method) const;
   void ThrowException(const wchar_t* str, ...) const;
 
-  v8::Isolate* m_pIsolate;
+  UnownedPtr<v8::Isolate> m_pIsolate;
   CFXJSE_Class* m_pFMClass;
   std::unique_ptr<CFXJSE_Value> m_pValue;
   UnownedPtr<CXFA_Document> const m_pDocument;

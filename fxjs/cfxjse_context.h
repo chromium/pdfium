@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/fxjse.h"
 #include "v8/include/v8.h"
 
@@ -28,7 +29,7 @@ class CFXJSE_Context {
   explicit CFXJSE_Context(v8::Isolate* pIsolate);
   ~CFXJSE_Context();
 
-  v8::Isolate* GetIsolate() const { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
   v8::Local<v8::Context> GetContext();
   std::unique_ptr<CFXJSE_Value> GetGlobalObject();
   void AddClass(std::unique_ptr<CFXJSE_Class> pClass);
@@ -38,12 +39,12 @@ class CFXJSE_Context {
                      CFXJSE_Value* lpRetValue,
                      CFXJSE_Value* lpNewThisObject = nullptr);
 
- protected:
+ private:
   CFXJSE_Context(const CFXJSE_Context&) = delete;
   CFXJSE_Context& operator=(const CFXJSE_Context&) = delete;
 
   v8::Global<v8::Context> m_hContext;
-  v8::Isolate* m_pIsolate;
+  UnownedPtr<v8::Isolate> m_pIsolate;
   std::vector<std::unique_ptr<CFXJSE_Class>> m_rgClasses;
 };
 
