@@ -208,6 +208,9 @@ class CPDFSDK_FormFillEnvironment
   CPDFSDK_ActionHandler* GetActionHandler();      // Creates if not present.
   CPDFSDK_InterForm* GetInterForm();              // Creates if not present.
 
+  void SetSaveCalled(FORM_SAVECALLED callback) { m_SaveCalled = callback; }
+  void SaveCalled();
+
  private:
   IPDF_Page* GetPage(int nIndex);
 
@@ -223,6 +226,7 @@ class CPDFSDK_FormFillEnvironment
   std::unique_ptr<CFX_SystemHandler> m_pSysHandler;
   bool m_bChangeMask;
   bool m_bBeingDestroyed;
+  FORM_SAVECALLED m_SaveCalled;
 };
 
 #endif  // FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_

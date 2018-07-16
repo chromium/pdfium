@@ -1113,6 +1113,26 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
 FPDF_EXPORT void FPDF_CALLCONV
 FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle);
 
+typedef void (*FORM_SAVECALLED)(FPDF_FORMFILLINFO*);
+/**
+ * Experimental API
+ * Function: FORM_SetSaveCallback
+ *          This method is used to set a callback handler for when Save is
+ *          attempted by a PDF. Should be invoked after user successfully
+ *          loaded a PDF page, and method FPDFDOC_InitFormFillEnvironment had
+ *          been invoked.
+ * Parameters:
+ *          callback    -   Function pointer to the callback to be called when a
+ *                          Save is attempted. If NULL then no function will be
+ *                          invoked..
+ *          hHandle     -   Handle to the form fill module. Returned by
+ *                          FPDFDOC_InitFormFillEnvironment.
+ * Return Value:
+ *          NONE.
+ **/
+FPDF_EXPORT void FPDF_CALLCONV FORM_SetSaveCallback(FORM_SAVECALLED callback,
+                                                    FPDF_FORMHANDLE hHandle);
+
 /**
  * Function: FORM_OnAfterLoadPage
  *          This method is required for implementing all the form related

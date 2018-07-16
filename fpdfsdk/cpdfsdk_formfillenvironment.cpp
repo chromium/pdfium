@@ -39,7 +39,8 @@ CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
       m_pCPDFDoc(pDoc),
       m_pSysHandler(pdfium::MakeUnique<CFX_SystemHandler>(this)),
       m_bChangeMask(false),
-      m_bBeingDestroyed(false) {}
+      m_bBeingDestroyed(false),
+      m_SaveCalled(nullptr) {}
 
 CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
   m_bBeingDestroyed = true;
@@ -627,6 +628,13 @@ CPDFSDK_InterForm* CPDFSDK_FormFillEnvironment::GetInterForm() {
   if (!m_pInterForm)
     m_pInterForm = pdfium::MakeUnique<CPDFSDK_InterForm>(this);
   return m_pInterForm.get();
+}
+
+void CPDFSDK_FormFillEnvironment::SaveCalled() {
+  if (!m_pInfo || !m_SaveCalled)
+    return;
+
+  m_SaveCalled(m_pInfo);
 }
 
 void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_PageView* pSender,
