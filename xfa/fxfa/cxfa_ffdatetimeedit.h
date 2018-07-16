@@ -16,6 +16,7 @@ enum XFA_DATETIMETYPE {
   XFA_DATETIMETYPE_DateAndTime
 };
 
+class CFWL_DateTimePicker;
 class CFWL_Event;
 class CFWL_Widget;
 
@@ -35,11 +36,30 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
                        int32_t iMonth,
                        int32_t iDay);
 
+  // CXFA_FFWidget
+  bool CanUndo() override;
+  bool CanRedo() override;
+  bool Undo() override;
+  bool Redo() override;
+  bool CanCopy() override;
+  bool CanCut() override;
+  bool CanPaste() override;
+  bool CanSelectAll() override;
+  Optional<WideString> Copy() override;
+  Optional<WideString> Cut() override;
+  bool Paste(const WideString& wsPaste) override;
+  void SelectAll() override;
+  void Delete() override;
+  void DeSelect() override;
+  WideString GetText() override;
+
  private:
   bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;
   bool UpdateFWLData() override;
   bool IsDataChanged() override;
+
+  CFWL_DateTimePicker* GetPickerWidget();
 
   uint32_t GetAlignment();
 };
