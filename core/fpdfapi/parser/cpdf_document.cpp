@@ -37,7 +37,7 @@
 
 namespace {
 
-const int FX_MAX_PAGE_LEVEL = 1024;
+const int kMaxPageLevel = 1024;
 
 void InsertWidthArrayImpl(std::vector<int> widths, CPDF_Array* pWidthArray) {
   size_t i;
@@ -184,11 +184,7 @@ std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
 }  // namespace
 
 CPDF_Document::CPDF_Document()
-    : ParsedObjectsHolder(),
-      m_pRootDict(nullptr),
-      m_iNextPageToTraverse(0),
-      m_bReachedMaxPageLevel(false),
-      m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
+    : m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
       m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)) {}
 
 CPDF_Document::~CPDF_Document() {
@@ -265,7 +261,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
     m_PageList[iPage] = pPages->GetObjNum();
     return pPages;
   }
-  if (level >= FX_MAX_PAGE_LEVEL) {
+  if (level >= kMaxPageLevel) {
     m_pTreeTraversal.pop_back();
     m_bReachedMaxPageLevel = true;
     return nullptr;
@@ -390,7 +386,7 @@ int CPDF_Document::FindPageIndex(const CPDF_Dictionary* pNode,
   if (!pKidList)
     return -1;
 
-  if (level >= FX_MAX_PAGE_LEVEL)
+  if (level >= kMaxPageLevel)
     return -1;
 
   size_t count = pNode->GetIntegerFor("Count");

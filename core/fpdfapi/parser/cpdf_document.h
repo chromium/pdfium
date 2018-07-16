@@ -170,8 +170,8 @@ class CPDF_Document : public Observable<CPDF_Document>,
   std::vector<std::pair<CPDF_Dictionary*, size_t>> m_pTreeTraversal;
 
   // Index of the next page that will be traversed from the page tree.
-  int m_iNextPageToTraverse;
-  bool m_bReachedMaxPageLevel;
+  int m_iNextPageToTraverse = 0;
+  bool m_bReachedMaxPageLevel = false;
   uint32_t m_ParsedPageCount = 0;
   std::unique_ptr<CPDF_DocPageData> m_pDocPage;
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
