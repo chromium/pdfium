@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 
 class CXFA_Node;
@@ -31,7 +32,10 @@ class CXFA_LocaleMgr {
 
   std::vector<std::unique_ptr<LocaleIface>> m_LocaleArray;
   std::vector<std::unique_ptr<LocaleIface>> m_XMLLocaleArray;
-  LocaleIface* m_pDefLocale;  // owned by m_LocaleArray or m_XMLLocaleArray.
+
+  // Owned by m_LocaleArray or m_XMLLocaleArray.
+  UnownedPtr<LocaleIface> m_pDefLocale;
+
   WideString m_wsConfigLocale;
   uint16_t m_dwDeflcid;
   bool m_hasSetLocaleName = false;
