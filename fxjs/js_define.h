@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_return.h"
@@ -58,7 +59,7 @@ static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
 void JSDestructor(v8::Local<v8::Object> obj);
 
 template <class C>
-C* JSGetObject(v8::Local<v8::Object> obj) {
+UnownedPtr<C> JSGetObject(v8::Local<v8::Object> obj) {
   if (CFXJS_Engine::GetObjDefnID(obj) != C::GetObjDefnID())
     return nullptr;
 
@@ -66,7 +67,7 @@ C* JSGetObject(v8::Local<v8::Object> obj) {
   if (!pJSObj)
     return nullptr;
 
-  return static_cast<C*>(pJSObj);
+  return UnownedPtr<C>(static_cast<C*>(pJSObj));
 }
 
 template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
@@ -74,7 +75,7 @@ void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
-  C* pObj = JSGetObject<C>(info.Holder());
+  auto pObj = JSGetObject<C>(info.Holder());
   if (!pObj)
     return;
 
@@ -82,7 +83,7 @@ void JSPropGetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Return result = (pObj->*M)(pRuntime);
+  CJS_Return result = (pObj.Get()->*M)(pRuntime);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -99,7 +100,7 @@ void JSPropSetter(const char* prop_name_string,
                   v8::Local<v8::String> property,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
-  C* pObj = JSGetObject<C>(info.Holder());
+  auto pObj = JSGetObject<C>(info.Holder());
   if (!pObj)
     return;
 
@@ -107,7 +108,7 @@ void JSPropSetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Return result = (pObj->*M)(pRuntime, value);
+  CJS_Return result = (pObj.Get()->*M)(pRuntime, value);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -120,7 +121,7 @@ template <class C,
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
-  C* pObj = JSGetObject<C>(info.Holder());
+  auto pObj = JSGetObject<C>(info.Holder());
   if (!pObj)
     return;
 
@@ -132,7 +133,7 @@ void JSMethod(const char* method_name_string,
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
     parameters.push_back(info[i]);
 
-  CJS_Return result = (pObj->*M)(pRuntime, parameters);
+  CJS_Return result = (pObj.Get()->*M)(pRuntime, parameters);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,
                                         result.Error()));

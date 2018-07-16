@@ -32,7 +32,7 @@ template <class Alt>
 void JSSpecialPropQuery(const char*,
                         v8::Local<v8::String> property,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
-  Alt* pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<Alt>(info.Holder());
   if (!pObj)
     return;
 
@@ -50,7 +50,7 @@ template <class Alt>
 void JSSpecialPropGet(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  Alt* pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<Alt>(info.Holder());
   if (!pObj)
     return;
 
@@ -75,7 +75,7 @@ void JSSpecialPropPut(const char* class_name,
                       v8::Local<v8::String> property,
                       v8::Local<v8::Value> value,
                       const v8::PropertyCallbackInfo<v8::Value>& info) {
-  Alt* pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<Alt>(info.Holder());
   if (!pObj)
     return;
 
@@ -96,7 +96,7 @@ template <class Alt>
 void JSSpecialPropDel(const char* class_name,
                       v8::Local<v8::String> property,
                       const v8::PropertyCallbackInfo<v8::Boolean>& info) {
-  Alt* pObj = JSGetObject<Alt>(info.Holder());
+  auto pObj = JSGetObject<Alt>(info.Holder());
   if (!pObj)
     return;
 

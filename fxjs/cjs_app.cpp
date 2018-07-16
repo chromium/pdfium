@@ -103,7 +103,7 @@ CJS_App::~CJS_App() = default;
 
 CJS_Return CJS_App::get_active_docs(CJS_Runtime* pRuntime) {
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-  CJS_Document* pJSDocument = JSGetObject<CJS_Document>(pObj);
+  auto pJSDocument = JSGetObject<CJS_Document>(pObj);
   v8::Local<v8::Array> aDocs = pRuntime->NewArray();
   pRuntime->PutArrayElement(
       aDocs, 0,
@@ -394,7 +394,7 @@ void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
     return;
 
   v8::Local<v8::Object> pObj = pRuntime->ToObject(param);
-  CJS_TimerObj* pTimer = JSGetObject<CJS_TimerObj>(pObj);
+  auto pTimer = JSGetObject<CJS_TimerObj>(pObj);
   if (!pTimer)
     return;
 

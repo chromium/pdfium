@@ -162,7 +162,7 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   if (pThis.IsEmpty())
     return;
 
-  CJS_Document* pJSDocument = JSGetObject<CJS_Document>(pThis);
+  auto pJSDocument = JSGetObject<CJS_Document>(pThis);
   if (!pJSDocument)
     return;
 

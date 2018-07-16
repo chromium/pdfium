@@ -354,7 +354,7 @@ CJS_Return CJS_Document::print(
   if (nLength == 9) {
     if (params[8]->IsObject()) {
       v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8]);
-      CJS_PrintParamsObj* pPrintObj = JSGetObject<CJS_PrintParamsObj>(pObj);
+      auto pPrintObj = JSGetObject<CJS_PrintParamsObj>(pObj);
       if (pPrintObj) {
         bUI = pPrintObj->GetUI();
         nStart = pPrintObj->GetStart();
