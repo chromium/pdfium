@@ -613,14 +613,13 @@ bool CXFA_FFField::ProcessCommittedData() {
     return false;
   if (!IsDataChanged())
     return false;
-  if (CalculateOverride() != 1)
-    return false;
-  if (!CommitData())
-    return false;
 
   m_pDocView->SetChangeMark();
   m_pDocView->AddValidateNode(m_pNode.Get());
-  return true;
+
+  if (CalculateOverride() != 1)
+    return false;
+  return CommitData();
 }
 
 int32_t CXFA_FFField::CalculateOverride() {
