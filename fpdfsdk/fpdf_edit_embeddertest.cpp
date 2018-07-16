@@ -1769,6 +1769,26 @@ TEST_F(FPDFEditEmbeddertest, TestFormGetObjects) {
   ASSERT_EQ(-1, FPDFFormObj_CountObjects(nullptr));
   ASSERT_EQ(2, FPDFFormObj_CountObjects(form));
 
+  // FPDFFormObj_GetObject() positive testing.
+  FPDF_PAGEOBJECT text1 = FPDFFormObj_GetObject(form, 0);
+  ASSERT_TRUE(text1);
+  float left = 0;
+  float bottom = 0;
+  float right = 0;
+  float top = 0;
+  ASSERT_TRUE(FPDFPageObj_GetBounds(text1, &left, &bottom, &right, &top));
+  ASSERT_EQ(271, static_cast<int>(top));
+
+  FPDF_PAGEOBJECT text2 = FPDFFormObj_GetObject(form, 1);
+  ASSERT_TRUE(text2);
+  ASSERT_TRUE(FPDFPageObj_GetBounds(text2, &left, &bottom, &right, &top));
+  ASSERT_EQ(221, static_cast<int>(top));
+
+  // FPDFFormObj_GetObject() negative testing.
+  ASSERT_EQ(nullptr, FPDFFormObj_GetObject(nullptr, 0));
+  ASSERT_EQ(nullptr, FPDFFormObj_GetObject(form, -1));
+  ASSERT_EQ(nullptr, FPDFFormObj_GetObject(form, 2));
+
   UnloadPage(page);
 }
 

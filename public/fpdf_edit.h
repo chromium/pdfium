@@ -1265,6 +1265,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text);
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFFormObj_CountObjects(FPDF_PAGEOBJECT form_object);
 
+// Experimental API.
+// Get page object in |form_object| at |index|.
+//
+//   form_object - handle to a form object.
+//   index       - the 0-based index of a page object.
+//
+// Returns the handle to the page object, or NULL on error.
+FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
+FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

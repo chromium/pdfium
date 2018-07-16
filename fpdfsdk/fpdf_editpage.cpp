@@ -140,6 +140,23 @@ unsigned int GetUnsignedAlpha(float alpha) {
   return static_cast<unsigned int>(alpha * 255.f + 0.5f);
 }
 
+const CPDF_PageObjectList* CPDFPageObjListFromFPDFFormObject(
+    FPDF_PAGEOBJECT page_object) {
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj)
+    return nullptr;
+
+  CPDF_FormObject* pFormObject = pPageObj->AsForm();
+  if (!pFormObject)
+    return nullptr;
+
+  const CPDF_Form* pForm = pFormObject->form();
+  if (!pForm)
+    return nullptr;
+
+  return pForm->GetPageObjectList();
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
@@ -812,21 +829,21 @@ FPDFPageObj_SetLineCap(FPDF_PAGEOBJECT page_object, int line_cap) {
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFFormObj_CountObjects(FPDF_PAGEOBJECT page_object) {
-  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj)
-    return -1;
-
-  CPDF_FormObject* pFormObject = pPageObj->AsForm();
-  if (!pFormObject)
-    return -1;
-
-  const CPDF_Form* pForm = pFormObject->form();
-  if (!pForm)
-    return -1;
-
-  const CPDF_PageObjectList* pObjectList = pForm->GetPageObjectList();
+  const CPDF_PageObjectList* pObjectList =
+      CPDFPageObjListFromFPDFFormObject(page_object);
   if (!pObjectList)
     return -1;
 
   return pObjectList->size();
+}
+
+FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
+FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index) {
+  const CPDF_PageObjectList* pObjectList =
+      CPDFPageObjListFromFPDFFormObject(form_object);
+  if (!pObjectList)
+    return nullptr;
+
+  return FPDFPageObjectFromCPDFPageObject(
+      pObjectList->GetPageObjectByIndex(index));
 }
