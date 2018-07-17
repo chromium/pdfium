@@ -1122,16 +1122,16 @@ typedef void (*FORM_SAVECALLED)(FPDF_FORMFILLINFO*);
  *          loaded a PDF page, and method FPDFDOC_InitFormFillEnvironment had
  *          been invoked.
  * Parameters:
- *          callback    -   Function pointer to the callback to be called when a
- *                          Save is attempted. If NULL then no function will be
- *                          invoked..
  *          hHandle     -   Handle to the form fill module. Returned by
  *                          FPDFDOC_InitFormFillEnvironment.
+ *          callback    -   Function pointer to the callback to be called when a
+ *                          Save is attempted. If NULL then no function will be
+ *                          invoked.
  * Return Value:
  *          NONE.
  **/
-FPDF_EXPORT void FPDF_CALLCONV FORM_SetSaveCallback(FORM_SAVECALLED callback,
-                                                    FPDF_FORMHANDLE hHandle);
+FPDF_EXPORT void FPDF_CALLCONV FORM_SetSaveCallback(FPDF_FORMHANDLE hHandle,
+                                                    FORM_SAVECALLED callback);
 
 /**
  * Function: FORM_OnAfterLoadPage
