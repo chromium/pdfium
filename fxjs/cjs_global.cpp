@@ -37,11 +37,10 @@ void JSSpecialPropQuery(const char*,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  Alt* pObj = JSGetObject<Alt>(pRuntime, info.Holder());
+  if (!pObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result =
       pObj->QueryProperty(PropFromV8Prop(info.GetIsolate(), property).c_str());
   info.GetReturnValue().Set(!result.HasError() ? 4 : 0);
@@ -56,11 +55,10 @@ void JSSpecialPropGet(const char* class_name,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  Alt* pObj = JSGetObject<Alt>(pRuntime, info.Holder());
+  if (!pObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result = pObj->GetProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
   if (result.HasError()) {
@@ -83,11 +81,10 @@ void JSSpecialPropPut(const char* class_name,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  Alt* pObj = JSGetObject<Alt>(pRuntime, info.Holder());
+  if (!pObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result = pObj->SetProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str(), value);
   if (result.HasError()) {
@@ -105,11 +102,10 @@ void JSSpecialPropDel(const char* class_name,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  Alt* pObj = JSGetObject<Alt>(pRuntime, info.Holder());
+  if (!pObj)
     return;
 
-  Alt* pObj = static_cast<Alt*>(pJSObj);
   CJS_Return result = pObj->DelProperty(
       pRuntime, PropFromV8Prop(info.GetIsolate(), property).c_str());
   if (result.HasError()) {
