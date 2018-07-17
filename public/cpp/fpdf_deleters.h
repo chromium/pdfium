@@ -45,6 +45,12 @@ struct FPDFPageDeleter {
   inline void operator()(FPDF_PAGE page) { FPDF_ClosePage(page); }
 };
 
+struct FPDFPageLinkDeleter {
+  inline void operator()(FPDF_PAGELINK pagelink) {
+    FPDFLink_CloseWebLinks(pagelink);
+  }
+};
+
 struct FPDFStructTreeDeleter {
   inline void operator()(FPDF_STRUCTTREE tree) { FPDF_StructTree_Close(tree); }
 };

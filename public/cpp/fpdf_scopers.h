@@ -44,6 +44,10 @@ using ScopedFPDFTextPage =
 using ScopedFPDFPage =
     std::unique_ptr<std::remove_pointer<FPDF_PAGE>::type, FPDFPageDeleter>;
 
+using ScopedFPDFPageLink =
+    std::unique_ptr<std::remove_pointer<FPDF_PAGELINK>::type,
+                    FPDFPageLinkDeleter>;
+
 using ScopedFPDFStructTree =
     std::unique_ptr<std::remove_pointer<FPDF_STRUCTTREE>::type,
                     FPDFStructTreeDeleter>;

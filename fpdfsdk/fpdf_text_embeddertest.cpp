@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_memory.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_text.h"
 #include "public/fpdf_transformpage.h"
 #include "public/fpdfview.h"
@@ -321,16 +322,21 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
   ASSERT_TRUE(textpage);
 
+  {
+    ScopedFPDFPageLink pagelink(FPDFLink_LoadWebLinks(textpage));
+    EXPECT_TRUE(pagelink);
+
+    // Page contains two HTTP-style URLs.
+    EXPECT_EQ(2, FPDFLink_CountWebLinks(pagelink.get()));
+
+    // Only a terminating NUL required for bogus links.
+    EXPECT_EQ(1, FPDFLink_GetURL(pagelink.get(), 2, nullptr, 0));
+    EXPECT_EQ(1, FPDFLink_GetURL(pagelink.get(), 1400, nullptr, 0));
+    EXPECT_EQ(1, FPDFLink_GetURL(pagelink.get(), -1, nullptr, 0));
+  }
+
   FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
   EXPECT_TRUE(pagelink);
-
-  // Page contains two HTTP-style URLs.
-  EXPECT_EQ(2, FPDFLink_CountWebLinks(pagelink));
-
-  // Only a terminating NUL required for bogus links.
-  EXPECT_EQ(1, FPDFLink_GetURL(pagelink, 2, nullptr, 0));
-  EXPECT_EQ(1, FPDFLink_GetURL(pagelink, 1400, nullptr, 0));
-  EXPECT_EQ(1, FPDFLink_GetURL(pagelink, -1, nullptr, 0));
 
   // Query the number of characters required for each link (incl NUL).
   EXPECT_EQ(25, FPDFLink_GetURL(pagelink, 0, nullptr, 0));
