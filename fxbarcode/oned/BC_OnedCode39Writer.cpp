@@ -73,6 +73,7 @@ bool CBC_OnedCode39Writer::CheckContentValidity(
 WideString CBC_OnedCode39Writer::FilterContents(
     const WideStringView& contents) {
   WideString filtercontents;
+  filtercontents.Reserve(contents.GetLength());
   for (size_t i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
     if (ch == L'*' && (i == 0 || i == contents.GetLength() - 1)) {

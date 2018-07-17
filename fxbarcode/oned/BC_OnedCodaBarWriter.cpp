@@ -109,6 +109,7 @@ bool CBC_OnedCodaBarWriter::CheckContentValidity(
 WideString CBC_OnedCodaBarWriter::FilterContents(
     const WideStringView& contents) {
   WideString filtercontents;
+  filtercontents.Reserve(contents.GetLength());
   wchar_t ch;
   for (size_t index = 0; index < contents.GetLength(); index++) {
     ch = contents[index];

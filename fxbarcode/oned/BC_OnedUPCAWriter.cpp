@@ -52,6 +52,7 @@ bool CBC_OnedUPCAWriter::CheckContentValidity(const WideStringView& contents) {
 
 WideString CBC_OnedUPCAWriter::FilterContents(const WideStringView& contents) {
   WideString filtercontents;
+  filtercontents.Reserve(contents.GetLength());
   wchar_t ch;
   for (size_t i = 0; i < contents.GetLength(); i++) {
     ch = contents[i];
