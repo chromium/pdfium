@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -768,6 +769,12 @@ CXFA_Node* CXFA_DocumentParser::NormalLoader(CXFA_Node* pXFANode,
                                              CFX_XMLNode* pXMLDoc,
                                              XFA_PacketType ePacketID,
                                              bool bUseAttribute) {
+  constexpr const unsigned long kMaxExecuteRecursion = 1000;
+  if (m_ExecuteRecursionDepth > kMaxExecuteRecursion)
+    return nullptr;
+  AutoRestorer<unsigned long> restorer(&m_ExecuteRecursionDepth);
+  ++m_ExecuteRecursionDepth;
+
   bool bOneOfPropertyFound = false;
   for (CFX_XMLNode* pXMLChild = pXMLDoc->GetFirstChild(); pXMLChild;
        pXMLChild = pXMLChild->GetNextSibling()) {
