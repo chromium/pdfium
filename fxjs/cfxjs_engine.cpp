@@ -586,17 +586,33 @@ void CFXJS_Engine::Error(const WideString& message) {
 
 // static
 CJS_Object* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
-  CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
-  if (!pData && !pObj.IsEmpty()) {
-    // It could be a global proxy object.
-    v8::Local<v8::Value> v = pObj->GetPrototype();
-    if (v->IsObject()) {
-      pData = CFXJS_PerObjectData::GetFromObject(
-          v->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext())
-              .ToLocalChecked());
-    }
-  }
-  return pData ? pData->m_pPrivate.get() : nullptr;
+  auto* pData = CFXJS_PerObjectData::GetFromObject(pObj);
+  if (pData)
+    return pData->m_pPrivate.get();
+
+  if (pObj.IsEmpty())
+    return nullptr;
+
+  // It could be a global proxy object, in which case the prototype holds
+  // the actual bound object.
+  v8::Local<v8::Value> val = pObj->GetPrototype();
+  if (!val->IsObject())
+    return nullptr;
+
+  auto* pProtoData = CFXJS_PerObjectData::GetFromObject(val.As<v8::Object>());
+  if (!pProtoData)
+    return nullptr;
+
+  auto* pIsolateData = FXJS_PerIsolateData::Get(v8::Isolate::GetCurrent());
+  if (!pIsolateData)
+    return nullptr;
+
+  CFXJS_ObjDefinition* pObjDef =
+      pIsolateData->ObjDefinitionForID(pProtoData->m_ObjDefID);
+  if (!pObjDef || pObjDef->m_ObjType != FXJSOBJTYPE_GLOBAL)
+    return nullptr;
+
+  return pProtoData->m_pPrivate.get();
 }
 
 v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const WideString& name) {
