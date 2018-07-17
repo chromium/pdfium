@@ -13,6 +13,7 @@
 
 class CJS_Report : public CJS_Object {
  public:
+  static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
   explicit CJS_Report(v8::Local<v8::Object> pObject);

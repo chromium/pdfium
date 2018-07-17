@@ -35,6 +35,11 @@ int CJS_Color::ObjDefnID = -1;
 const char CJS_Color::kName[] = "color";
 
 // static
+int CJS_Color::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_Color::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_Color::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Color>, JSDestructor);

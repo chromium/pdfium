@@ -84,6 +84,11 @@ int CJS_App::ObjDefnID = -1;
 const char CJS_App::kName[] = "app";
 
 // static
+int CJS_App::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_App::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_App::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_App>, JSDestructor);

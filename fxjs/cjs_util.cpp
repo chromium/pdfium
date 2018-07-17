@@ -68,6 +68,11 @@ int CJS_Util::ObjDefnID = -1;
 const char CJS_Util::kName[] = "util";
 
 // static
+int CJS_Util::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_Util::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj(CJS_Util::kName, FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Util>, JSDestructor);

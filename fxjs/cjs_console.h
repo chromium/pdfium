@@ -13,6 +13,7 @@
 
 class CJS_Console : public CJS_Object {
  public:
+  static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
   explicit CJS_Console(v8::Local<v8::Object> pObject);

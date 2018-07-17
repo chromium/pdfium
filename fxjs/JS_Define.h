@@ -58,6 +58,18 @@ static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
 // CJS_Object has vitual dtor, template not required.
 void JSDestructor(v8::Local<v8::Object> obj);
 
+template <class C>
+C* JSGetObject(CJS_Runtime* pRuntime, v8::Local<v8::Object> obj) {
+  if (CFXJS_Engine::GetObjDefnID(obj) != C::GetObjDefnID())
+    return nullptr;
+
+  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(obj);
+  if (!pJSObj)
+    return nullptr;
+
+  return static_cast<C*>(pJSObj);
+}
+
 template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
@@ -68,11 +80,10 @@ void JSPropGetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  C* pObj = JSGetObject<C>(pRuntime, info.Holder());
+  if (!pObj)
     return;
 
-  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
@@ -95,11 +106,10 @@ void JSPropSetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  C* pObj = JSGetObject<C>(pRuntime, info.Holder());
+  if (!pObj)
     return;
 
-  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime, value);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
@@ -118,15 +128,14 @@ void JSMethod(const char* method_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Object* pJSObj = pRuntime->GetObjectPrivate(info.Holder());
-  if (!pJSObj)
+  C* pObj = JSGetObject<C>(pRuntime, info.Holder());
+  if (!pObj)
     return;
 
   std::vector<v8::Local<v8::Value>> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
     parameters.push_back(info[i]);
 
-  C* pObj = static_cast<C*>(pJSObj);
   CJS_Return result = (pObj->*M)(pRuntime, parameters);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,

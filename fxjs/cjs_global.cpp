@@ -198,6 +198,11 @@ void CJS_Global::DefineAllProperties(CFXJS_Engine* pEngine) {
 }
 
 // static
+int CJS_Global::GetObjDefnID() {
+  return ObjDefnID;
+}
+
+// static
 void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("global", FXJSOBJTYPE_STATIC,
                                  JSConstructor<CJS_Global>, JSDestructor);
