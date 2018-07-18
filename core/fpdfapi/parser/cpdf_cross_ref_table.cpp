@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_parser.h"
 
 // static
 std::unique_ptr<CPDF_CrossRefTable> CPDF_CrossRefTable::MergeUp(
@@ -31,6 +32,12 @@ CPDF_CrossRefTable::~CPDF_CrossRefTable() = default;
 
 void CPDF_CrossRefTable::AddCompressed(uint32_t obj_num,
                                        uint32_t archive_obj_num) {
+  if (obj_num >= CPDF_Parser::kMaxObjectNumber ||
+      archive_obj_num >= CPDF_Parser::kMaxObjectNumber) {
+    NOTREACHED();
+    return;
+  }
+
   auto& info = objects_info_[obj_num];
   if (info.gennum > 0)
     return;
@@ -48,6 +55,11 @@ void CPDF_CrossRefTable::AddCompressed(uint32_t obj_num,
 void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
                                    uint16_t gen_num,
                                    FX_FILESIZE pos) {
+  if (obj_num >= CPDF_Parser::kMaxObjectNumber) {
+    NOTREACHED();
+    return;
+  }
+
   auto& info = objects_info_[obj_num];
   if (info.gennum > gen_num)
     return;
@@ -63,6 +75,11 @@ void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
 }
 
 void CPDF_CrossRefTable::SetFree(uint32_t obj_num) {
+  if (obj_num >= CPDF_Parser::kMaxObjectNumber) {
+    NOTREACHED();
+    return;
+  }
+
   auto& info = objects_info_[obj_num];
   info.type = ObjectType::kFree;
   info.gennum = 0xFFFF;

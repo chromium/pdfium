@@ -777,7 +777,8 @@ bool CPDF_Parser::RebuildCrossRef() {
                     }
                   }
                 }
-                cross_ref_table->AddNormal(objnum, gennum, obj_pos);
+                if (objnum < kMaxObjectNumber)
+                  cross_ref_table->AddNormal(objnum, gennum, obj_pos);
               }
               state = ParserState::kDefault;
               break;
