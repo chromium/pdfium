@@ -711,21 +711,18 @@ bool CPDF_Creator::Create(uint32_t flags) {
 }
 
 void CPDF_Creator::InitID() {
-  const CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
+  ASSERT(!m_pIDArray);
 
-  bool idArrayPreExisting = !!m_pIDArray;
-  if (!idArrayPreExisting) {
-    m_pIDArray = pdfium::MakeUnique<CPDF_Array>();
-    const CPDF_Object* pID1 =
-        pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
-    if (pID1) {
-      m_pIDArray->Add(pID1->Clone());
-    } else {
-      std::vector<uint8_t> buffer =
-          GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
-      ByteString bsBuffer(buffer.data(), buffer.size());
-      m_pIDArray->AddNew<CPDF_String>(bsBuffer, true);
-    }
+  m_pIDArray = pdfium::MakeUnique<CPDF_Array>();
+  const CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
+  const CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
+  if (pID1) {
+    m_pIDArray->Add(pID1->Clone());
+  } else {
+    std::vector<uint8_t> buffer =
+        GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
+    ByteString bsBuffer(buffer.data(), buffer.size());
+    m_pIDArray->AddNew<CPDF_String>(bsBuffer, true);
   }
 
   if (pOldIDArray) {
@@ -742,7 +739,8 @@ void CPDF_Creator::InitID() {
   }
 
   m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
-  if (m_pEncryptDict && !pOldIDArray && m_pParser && !idArrayPreExisting) {
+  if (m_pEncryptDict) {
+    ASSERT(m_pParser);
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       ByteString user_pass = m_pParser->GetPassword();
       m_pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
