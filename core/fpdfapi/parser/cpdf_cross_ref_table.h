@@ -36,6 +36,11 @@ class CPDF_CrossRefTable {
     uint16_t gennum;
   };
 
+  // Merge cross reference tables.  Apply top on current.
+  static std::unique_ptr<CPDF_CrossRefTable> MergeUp(
+      std::unique_ptr<CPDF_CrossRefTable> current,
+      std::unique_ptr<CPDF_CrossRefTable> top);
+
   CPDF_CrossRefTable();
   explicit CPDF_CrossRefTable(std::unique_ptr<CPDF_Dictionary> trailer);
   ~CPDF_CrossRefTable();

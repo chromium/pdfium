@@ -14,6 +14,16 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
+namespace {
+
+CPDF_CrossRefTable::ObjectInfo GetObjInfo(const CPDF_Parser& parser,
+                                          uint32_t obj_num) {
+  const auto* info = parser.GetCrossRefTable()->GetObjectInfo(obj_num);
+  return info ? *info : CPDF_CrossRefTable::ObjectInfo();
+}
+
+}  // namespace
+
 // A wrapper class to help test member functions of CPDF_Parser.
 class CPDF_TestParser : public CPDF_Parser {
  public:
@@ -61,9 +71,9 @@ TEST(cpdf_parser, RebuildCrossRefCorrectly) {
   const FX_FILESIZE offsets[] = {0, 15, 61, 154, 296, 374, 450};
   const uint16_t versions[] = {0, 0, 2, 4, 6, 8, 0};
   for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
-    EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
+    EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
   for (size_t i = 0; i < FX_ArraySize(versions); ++i)
-    EXPECT_EQ(versions[i], parser.m_ObjectInfo[i].gennum);
+    EXPECT_EQ(versions[i], GetObjInfo(parser, i).gennum);
 }
 
 TEST(cpdf_parser, RebuildCrossRefFailed) {
@@ -102,8 +112,8 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
     }
   }
   {
@@ -141,8 +151,8 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
     }
   }
   {
@@ -180,8 +190,8 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
     }
   }
   {
@@ -211,8 +221,8 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kNotCompressed,
         CPDF_TestParser::ObjectType::kNotCompressed};
     for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
-      EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+      EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
+      EXPECT_EQ(types[i], GetObjInfo(parser, i).type);
     }
   }
 }

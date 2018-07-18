@@ -8,6 +8,20 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 
+// static
+std::unique_ptr<CPDF_CrossRefTable> CPDF_CrossRefTable::MergeUp(
+    std::unique_ptr<CPDF_CrossRefTable> current,
+    std::unique_ptr<CPDF_CrossRefTable> top) {
+  if (!current)
+    return top;
+
+  if (!top)
+    return current;
+
+  current->Update(std::move(top));
+  return current;
+}
+
 CPDF_CrossRefTable::CPDF_CrossRefTable() = default;
 
 CPDF_CrossRefTable::CPDF_CrossRefTable(std::unique_ptr<CPDF_Dictionary> trailer)
