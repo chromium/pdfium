@@ -2143,8 +2143,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         float g;
         float b;
         std::tie(r, g, b) = stream.ReadColor();
-        colors[i] = SkColorSetARGBInline(0xFF, (U8CPU)(r * 255),
-                                         (U8CPU)(g * 255), (U8CPU)(b * 255));
+        colors[i] = SkColorSetARGB(0xFF, (U8CPU)(r * 255), (U8CPU)(g * 255),
+                                   (U8CPU)(b * 255));
       }
       m_pCanvas->drawPatch(cubics, colors, nullptr, paint);
     }
