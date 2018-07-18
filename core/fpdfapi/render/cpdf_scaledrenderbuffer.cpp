@@ -12,7 +12,11 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/ptr_util.h"
 
-#define _FPDFAPI_IMAGESIZE_LIMIT_ (30 * 1024 * 1024)
+namespace {
+
+constexpr size_t kImageSizeLimitBytes = 30 * 1024 * 1024;
+
+}  // namespace
 
 CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer() {}
 
@@ -54,14 +58,18 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
   while (1) {
     FX_RECT bitmap_rect =
         m_Matrix.TransformRect(CFX_FloatRect(pRect)).GetOuterRect();
-    int32_t iWidth = bitmap_rect.Width();
-    int32_t iHeight = bitmap_rect.Height();
-    int32_t iPitch = (iWidth * bpp + 31) / 32 * 4;
-    if (iWidth * iHeight < 1)
+    int32_t width = bitmap_rect.Width();
+    int32_t height = bitmap_rect.Height();
+    // Set to 0 to make CalculatePitchAndSize() calculate it.
+    uint32_t pitch = 0;
+    uint32_t size;
+    if (!CFX_DIBitmap::CalculatePitchAndSize(width, height, dibFormat, &pitch,
+                                             &size)) {
       return false;
+    }
 
-    if (iPitch * iHeight <= _FPDFAPI_IMAGESIZE_LIMIT_ &&
-        m_pBitmapDevice->Create(iWidth, iHeight, dibFormat, nullptr)) {
+    if (size <= kImageSizeLimitBytes &&
+        m_pBitmapDevice->Create(width, height, dibFormat, nullptr)) {
       break;
     }
     m_Matrix.Scale(0.5f, 0.5f);
