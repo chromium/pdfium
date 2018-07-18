@@ -37,8 +37,6 @@ const int kFormTextPassword = 0x200;
 const int kFormTextNoScroll = 0x400;
 const int kFormTextComb = 0x800;
 
-constexpr int kGetFieldMaxRecursion = 32;
-
 bool IsUnison(CPDF_FormField* pField) {
   if (pField->GetType() == CPDF_FormField::CheckBox)
     return true;
@@ -58,6 +56,7 @@ Optional<FormFieldType> IntToFormFieldType(int value) {
 const CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
                                      const char* name,
                                      int nLevel) {
+  static constexpr int kGetFieldMaxRecursion = 32;
   if (!pFieldDict || nLevel > kGetFieldMaxRecursion)
     return nullptr;
 
@@ -72,15 +71,8 @@ const CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
 CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
                                const char* name,
                                int nLevel) {
-  if (!pFieldDict || nLevel > kGetFieldMaxRecursion)
-    return nullptr;
-
-  CPDF_Object* pAttr = pFieldDict->GetDirectObjectFor(name);
-  if (pAttr)
-    return pAttr;
-
-  CPDF_Dictionary* pParent = pFieldDict->GetDictFor("Parent");
-  return pParent ? FPDF_GetFieldAttr(pParent, name, nLevel + 1) : nullptr;
+  return const_cast<CPDF_Object*>(FPDF_GetFieldAttr(
+      static_cast<const CPDF_Dictionary*>(pFieldDict), name, nLevel));
 }
 
 WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {

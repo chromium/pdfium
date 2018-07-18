@@ -329,8 +329,8 @@ const CPDF_Dictionary* CPDF_Document::GetPagesDict() const {
 }
 
 CPDF_Dictionary* CPDF_Document::GetPagesDict() {
-  CPDF_Dictionary* pRoot = GetRoot();
-  return pRoot ? pRoot->GetDictFor("Pages") : nullptr;
+  return const_cast<CPDF_Dictionary*>(
+      static_cast<const CPDF_Document*>(this)->GetPagesDict());
 }
 
 bool CPDF_Document::IsPageLoaded(int iPage) const {

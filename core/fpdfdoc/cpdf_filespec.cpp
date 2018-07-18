@@ -19,10 +19,6 @@
 
 namespace {
 
-// List of keys to check for the file specification string.
-// Follows the same precedence order as GetFileName().
-constexpr const char* kKeys[] = {"UF", "F", "DOS", "Mac", "Unix"};
-
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
     _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 WideString ChangeSlashToPlatform(const wchar_t* str) {
@@ -136,6 +132,9 @@ const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
   if (!pFiles)
     return nullptr;
 
+  // List of keys to check for the file specification string.
+  // Follows the same precedence order as GetFileName().
+  constexpr const char* kKeys[] = {"UF", "F", "DOS", "Mac", "Unix"};
   size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(kKeys);
   for (size_t i = 0; i < end; ++i) {
     ByteString key = kKeys[i];
@@ -149,25 +148,8 @@ const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
 }
 
 CPDF_Stream* CPDF_FileSpec::GetFileStream() {
-  CPDF_Dictionary* pDict = m_pWritableObj->AsDictionary();
-  if (!pDict)
-    return nullptr;
-
-  // Get the embedded files dictionary.
-  CPDF_Dictionary* pFiles = pDict->GetDictFor("EF");
-  if (!pFiles)
-    return nullptr;
-
-  size_t end = pDict->GetStringFor("FS") == "URL" ? 2 : FX_ArraySize(kKeys);
-  for (size_t i = 0; i < end; ++i) {
-    ByteString key = kKeys[i];
-    if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
-      CPDF_Stream* pStream = pFiles->GetStreamFor(key);
-      if (pStream)
-        return pStream;
-    }
-  }
-  return nullptr;
+  return const_cast<CPDF_Stream*>(
+      static_cast<const CPDF_FileSpec*>(this)->GetFileStream());
 }
 
 const CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
@@ -180,12 +162,8 @@ const CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
 }
 
 CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() {
-  CPDF_Stream* pStream = GetFileStream();
-  if (!pStream)
-    return nullptr;
-
-  CPDF_Dictionary* pDict = pStream->GetDict();
-  return pDict ? pDict->GetDictFor("Params") : nullptr;
+  return const_cast<CPDF_Dictionary*>(
+      static_cast<const CPDF_FileSpec*>(this)->GetParamsDict());
 }
 
 WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {

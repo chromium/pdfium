@@ -87,8 +87,8 @@ const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
 }
 
 CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) {
-  auto it = m_Map.find(key);
-  return it != m_Map.end() ? it->second.get() : nullptr;
+  return const_cast<CPDF_Object*>(
+      static_cast<const CPDF_Dictionary*>(this)->GetObjectFor(key));
 }
 
 const CPDF_Object* CPDF_Dictionary::GetDirectObjectFor(
@@ -98,8 +98,8 @@ const CPDF_Object* CPDF_Dictionary::GetDirectObjectFor(
 }
 
 CPDF_Object* CPDF_Dictionary::GetDirectObjectFor(const ByteString& key) {
-  CPDF_Object* p = GetObjectFor(key);
-  return p ? p->GetDirect() : nullptr;
+  return const_cast<CPDF_Object*>(
+      static_cast<const CPDF_Dictionary*>(this)->GetDirectObjectFor(key));
 }
 
 ByteString CPDF_Dictionary::GetStringFor(const ByteString& key) const {
@@ -154,14 +154,8 @@ const CPDF_Dictionary* CPDF_Dictionary::GetDictFor(
 }
 
 CPDF_Dictionary* CPDF_Dictionary::GetDictFor(const ByteString& key) {
-  CPDF_Object* p = GetDirectObjectFor(key);
-  if (!p)
-    return nullptr;
-  if (CPDF_Dictionary* pDict = p->AsDictionary())
-    return pDict;
-  if (CPDF_Stream* pStream = p->AsStream())
-    return pStream->GetDict();
-  return nullptr;
+  return const_cast<CPDF_Dictionary*>(
+      static_cast<const CPDF_Dictionary*>(this)->GetDictFor(key));
 }
 
 const CPDF_Array* CPDF_Dictionary::GetArrayFor(const ByteString& key) const {
