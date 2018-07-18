@@ -500,9 +500,8 @@ ByteString PDF_EncodeText(const wchar_t* pString, int len) {
   size_t dest_index = 0;
   size_t encLen = len * 2 + 2;
   {
-    pdfium::span<char> cspan = result.GetBuffer(encLen);
-    auto dest_buf = pdfium::make_span(reinterpret_cast<uint8_t*>(cspan.data()),
-                                      cspan.size());
+    pdfium::span<uint8_t> dest_buf =
+        pdfium::as_writable_bytes(result.GetBuffer(encLen));
     dest_buf[dest_index++] = 0xfe;
     dest_buf[dest_index++] = 0xff;
     for (int j = 0; j < len; ++j) {
