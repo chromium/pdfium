@@ -28,15 +28,8 @@ const CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
 }
 
 CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() {
-  switch (m_ParamType) {
-    case PropertiesDict:
-      return m_pPropertiesDict.Get();
-    case DirectDict:
-      return m_pDirectDict.get();
-    case None:
-    default:
-      return nullptr;
-  }
+  return const_cast<CPDF_Dictionary*>(
+      static_cast<const CPDF_ContentMarkItem*>(this)->GetParam());
 }
 
 bool CPDF_ContentMarkItem::HasMCID() const {

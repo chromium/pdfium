@@ -27,8 +27,8 @@ class CPDF_ContentMark {
   bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
 
   // The returned pointer is never null.
-  CPDF_ContentMarkItem* GetItem(size_t i);
-  const CPDF_ContentMarkItem* GetItem(size_t i) const;
+  CPDF_ContentMarkItem* GetItem(size_t index);
+  const CPDF_ContentMarkItem* GetItem(size_t index) const;
 
   void AddMark(ByteString name);
   void AddMarkWithDirectDict(ByteString name, CPDF_Dictionary* pDict);

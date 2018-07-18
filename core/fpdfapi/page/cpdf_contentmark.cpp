@@ -30,14 +30,14 @@ bool CPDF_ContentMark::ContainsItem(const CPDF_ContentMarkItem* pItem) const {
   return m_pMarkData && m_pMarkData->ContainsItem(pItem);
 }
 
-CPDF_ContentMarkItem* CPDF_ContentMark::GetItem(size_t i) {
-  ASSERT(i < CountItems());
-  return m_pMarkData->GetItem(i);
+CPDF_ContentMarkItem* CPDF_ContentMark::GetItem(size_t index) {
+  return const_cast<CPDF_ContentMarkItem*>(
+      static_cast<const CPDF_ContentMark*>(this)->GetItem(index));
 }
 
-const CPDF_ContentMarkItem* CPDF_ContentMark::GetItem(size_t i) const {
-  ASSERT(i < CountItems());
-  return m_pMarkData->GetItem(i);
+const CPDF_ContentMarkItem* CPDF_ContentMark::GetItem(size_t index) const {
+  ASSERT(index < CountItems());
+  return m_pMarkData->GetItem(index);
 }
 
 int CPDF_ContentMark::GetMarkedContentID() const {
