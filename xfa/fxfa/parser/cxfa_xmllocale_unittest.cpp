@@ -4,10 +4,14 @@
 
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
 
+#include <memory>
+
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-static const char* xml_data =
+namespace {
+
+const char kXMLData[] =
     "<locale name=\"en_US\" desc=\"English(America)\">"
     "<calendarSymbols name=\"gregorian\"><monthNames><month>January</month>"
     "<month>February</month>"
@@ -85,11 +89,15 @@ static const char* xml_data =
     "</currencySymbols>"
     "</locale>";
 
+std::unique_ptr<CXFA_XMLLocale> CreateLocaleHelper() {
+  return CXFA_XMLLocale::Create(pdfium::as_writable_bytes(
+      pdfium::make_span(const_cast<char*>(kXMLData), strlen(kXMLData))));
+}
+
+}  // namespace
+
 TEST(CXFA_XMLLocaleTest, Create) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   EXPECT_TRUE(locale != nullptr);
 }
 
@@ -99,20 +107,14 @@ TEST(CXFA_XMLLocaleTest, CreateBadXML) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetName) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"en_US", locale->GetName());
 }
 
 TEST(CXFA_XMLLocaleTest, GetNumericSymbols) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L".", locale->GetDecimalSymbol());
@@ -123,20 +125,14 @@ TEST(CXFA_XMLLocaleTest, GetNumericSymbols) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetDateTimeSymbols) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"GyMdkHmsSEDFwWahKzZ", locale->GetDateTimeSymbols());
 }
 
 TEST(CXFA_XMLLocaleTest, GetMonthName) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"", locale->GetMonthName(24, false));
@@ -146,10 +142,7 @@ TEST(CXFA_XMLLocaleTest, GetMonthName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetDayName) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"", locale->GetDayName(24, false));
@@ -159,10 +152,7 @@ TEST(CXFA_XMLLocaleTest, GetDayName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetMeridiemName) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"AM", locale->GetMeridiemName(true));
@@ -170,10 +160,7 @@ TEST(CXFA_XMLLocaleTest, GetMeridiemName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetEraName) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"AD", locale->GetEraName(true));
@@ -181,10 +168,7 @@ TEST(CXFA_XMLLocaleTest, GetEraName) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetDatePattern) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"M/D/YY",
@@ -200,10 +184,7 @@ TEST(CXFA_XMLLocaleTest, GetDatePattern) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetTimePattern) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"h:MM A",
@@ -219,10 +200,7 @@ TEST(CXFA_XMLLocaleTest, GetTimePattern) {
 }
 
 TEST(CXFA_XMLLocaleTest, GetNumPattern) {
-  auto span =
-      pdfium::make_span(reinterpret_cast<uint8_t*>(const_cast<char*>(xml_data)),
-                        strlen(xml_data));
-  auto locale = CXFA_XMLLocale::Create(span);
+  auto locale = CreateLocaleHelper();
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"z,zzz,zzz,zzz,zzz,zzz%",
