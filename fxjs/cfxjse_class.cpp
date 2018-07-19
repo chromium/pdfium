@@ -76,33 +76,37 @@ void Context_GlobalObjToString(
 void DynPropGetterAdapter_MethodCallback(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Local<v8::Object> hCallBackInfo = info.Data().As<v8::Object>();
-  ASSERT(hCallBackInfo->InternalFieldCount() == 2);
+  if (hCallBackInfo->InternalFieldCount() != 2)
+    return;
 
-  const FXJSE_CLASS_DESCRIPTOR* lpClass =
-      static_cast<const FXJSE_CLASS_DESCRIPTOR*>(
-          hCallBackInfo->GetAlignedPointerFromInternalField(0));
-  ASSERT(lpClass == &GlobalClassDescriptor ||
-         lpClass == &NormalClassDescriptor ||
-         lpClass == &VariablesClassDescriptor ||
-         lpClass == &kFormCalcFM2JSDescriptor);
+  auto* pClassDescriptor = static_cast<const FXJSE_CLASS_DESCRIPTOR*>(
+      hCallBackInfo->GetAlignedPointerFromInternalField(0));
+  if (pClassDescriptor != &GlobalClassDescriptor &&
+      pClassDescriptor != &NormalClassDescriptor &&
+      pClassDescriptor != &VariablesClassDescriptor &&
+      pClassDescriptor != &kFormCalcFM2JSDescriptor) {
+    return;
+  }
 
   v8::Local<v8::String> hPropName =
       hCallBackInfo->GetInternalField(1).As<v8::String>();
-  ASSERT(!hPropName.IsEmpty());
+  if (hPropName.IsEmpty())
+    return;
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), hPropName);
-  WideString szFxPropName = WideString::FromUTF8(*szPropName);
+  CJS_Return result =
+      pClassDescriptor->dynMethodCall(info, WideString::FromUTF8(*szPropName));
 
-  CJS_Return result = lpClass->dynMethodCall(info, szFxPropName);
   if (result.HasError()) {
-    WideString err =
-        JSFormatErrorString(lpClass->name, *szPropName, result.Error());
+    WideString err = JSFormatErrorString(pClassDescriptor->name, *szPropName,
+                                         result.Error());
     v8::MaybeLocal<v8::String> str = v8::String::NewFromUtf8(
         info.GetIsolate(), ByteString::FromUnicode(err).c_str(),
         v8::NewStringType::kNormal);
     info.GetIsolate()->ThrowException(str.ToLocalChecked());
     return;
   }
+
   if (result.HasReturn())
     info.GetReturnValue().Set(result.Return());
 }
