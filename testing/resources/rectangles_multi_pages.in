@@ -18,6 +18,7 @@ endobj
 >>
 endobj
 {{object 4 0}} <<
+  {{streamlen}}
 >>
 stream
 q
@@ -35,6 +36,7 @@ endobj
 >>
 endobj
 {{object 6 0}} <<
+  {{streamlen}}
 >>
 stream
 q
@@ -51,6 +53,7 @@ endobj
 >>
 endobj
 {{object 8 0}} <<
+  {{streamlen}}
 >>
 stream
 q
@@ -65,7 +68,9 @@ endobj
   /Parent 2 0 R
   /Contents 10 0 R
 >>
+endobj
 {{object 10 0}} <<
+  {{streamlen}}
 >>
 stream
 q
@@ -75,7 +80,6 @@ q
 Q
 endstream
 endobj
-endobj
 {{object 11 0}} <<
   /Type /Page
   /Parent 2 0 R
@@ -83,6 +87,7 @@ endobj
 >>
 endobj
 {{object 12 0}} <<
+  {{streamlen}}
 >>
 stream
 q
