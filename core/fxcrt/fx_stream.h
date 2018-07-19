@@ -12,20 +12,16 @@
 #include "core/fxcrt/retain_ptr.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-#include <direct.h>
 
-class CFindFileDataA;
+struct CFindFileDataA;
 typedef CFindFileDataA FX_FileHandle;
 
 #else  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 #include <dirent.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
-
 typedef DIR FX_FileHandle;
+
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 FX_FileHandle* FX_OpenFolder(const char* path);
@@ -107,20 +103,5 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
 
   bool Flush() override = 0;
 };
-
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-class CFindFileData {
- public:
-  virtual ~CFindFileData() {}
-  HANDLE m_Handle;
-  bool m_bEnd;
-};
-
-class CFindFileDataA : public CFindFileData {
- public:
-  ~CFindFileDataA() override {}
-  WIN32_FIND_DATAA m_FindData;
-};
-#endif
 
 #endif  // CORE_FXCRT_FX_STREAM_H_

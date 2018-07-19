@@ -15,6 +15,16 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#include <direct.h>
+
+struct CFindFileDataA {
+  HANDLE m_Handle;
+  bool m_bEnd;
+  WIN32_FIND_DATAA m_FindData;
+};
+#endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+
 namespace {
 
 class CFX_CRTFileStream final : public IFX_SeekableStream {
