@@ -49,9 +49,9 @@ class CFXJSE_Context {
 };
 
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
-                               CFXJSE_HostObject* lpNewBinding = nullptr);
+                               CFXJSE_HostObject* lpNewBinding);
 
 CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
-                                               CFXJSE_Class* lpClass = nullptr);
+                                               CFXJSE_Class* lpClass);
 
 #endif  // FXJS_CFXJSE_CONTEXT_H_
