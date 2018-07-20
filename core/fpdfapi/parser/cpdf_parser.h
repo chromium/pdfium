@@ -123,23 +123,6 @@ class CPDF_Parser {
  private:
   friend class CPDF_DataAvail;
 
-  enum class ParserState {
-    kDefault,
-    kComment,
-    kWhitespace,
-    kString,
-    kHexString,
-    kEscapedString,
-    kXref,
-    kObjNum,
-    kPostObjNum,
-    kGenNum,
-    kPostGenNum,
-    kTrailer,
-    kBeginObj,
-    kEndObj
-  };
-
   struct CrossRefObjData {
     uint32_t obj_num = 0;
     ObjectInfo info;
