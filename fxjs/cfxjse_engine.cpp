@@ -83,9 +83,8 @@ CXFA_Object* CFXJSE_Engine::ToObject(
 }
 
 // static.
-CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue,
-                                     CFXJSE_Class* pClass) {
-  CFXJSE_HostObject* pHostObj = pValue->ToHostObject(pClass);
+CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue) {
+  CFXJSE_HostObject* pHostObj = pValue->ToHostObject(nullptr);
   return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
 }
 
@@ -175,7 +174,7 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
 void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
                                          const ByteStringView& szPropName,
                                          CFXJSE_Value* pValue) {
-  CXFA_Object* lpOrginalNode = ToObject(pObject, nullptr);
+  CXFA_Object* lpOrginalNode = ToObject(pObject);
   CXFA_Document* pDoc = lpOrginalNode->GetDocument();
   CFXJSE_Engine* lpScriptContext = pDoc->GetScriptContext();
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
@@ -209,7 +208,7 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
 void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
                                          const ByteStringView& szPropName,
                                          CFXJSE_Value* pValue) {
-  CXFA_Object* pOriginalObject = ToObject(pObject, nullptr);
+  CXFA_Object* pOriginalObject = ToObject(pObject);
   CXFA_Document* pDoc = pOriginalObject->GetDocument();
   CFXJSE_Engine* lpScriptContext = pDoc->GetScriptContext();
   WideString wsPropName = WideString::FromUTF8(szPropName);
@@ -268,7 +267,7 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
 int32_t CFXJSE_Engine::GlobalPropTypeGetter(CFXJSE_Value* pOriginalValue,
                                             const ByteStringView& szPropName,
                                             bool bQueryIn) {
-  CXFA_Object* pObject = ToObject(pOriginalValue, nullptr);
+  CXFA_Object* pObject = ToObject(pOriginalValue);
   if (!pObject)
     return FXJSE_ClassPropType_None;
 
@@ -284,7 +283,7 @@ int32_t CFXJSE_Engine::GlobalPropTypeGetter(CFXJSE_Value* pOriginalValue,
 void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                          const ByteStringView& szPropName,
                                          CFXJSE_Value* pReturnValue) {
-  CXFA_Object* pOriginalObject = ToObject(pOriginalValue, nullptr);
+  CXFA_Object* pOriginalObject = ToObject(pOriginalValue);
   if (!pOriginalObject) {
     pReturnValue->SetUndefined();
     return;
@@ -358,7 +357,7 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
 void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
                                          const ByteStringView& szPropName,
                                          CFXJSE_Value* pReturnValue) {
-  CXFA_Object* pOriginalObject = ToObject(pOriginalValue, nullptr);
+  CXFA_Object* pOriginalObject = ToObject(pOriginalValue);
   if (!pOriginalObject)
     return;
 
@@ -411,7 +410,7 @@ void CFXJSE_Engine::NormalPropertySetter(CFXJSE_Value* pOriginalValue,
 int32_t CFXJSE_Engine::NormalPropTypeGetter(CFXJSE_Value* pOriginalValue,
                                             const ByteStringView& szPropName,
                                             bool bQueryIn) {
-  CXFA_Object* pObject = ToObject(pOriginalValue, nullptr);
+  CXFA_Object* pObject = ToObject(pOriginalValue);
   if (!pObject)
     return FXJSE_ClassPropType_None;
 
@@ -663,7 +662,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
         CJX_Object* jsObject = rndFind.m_Objects.front()->JSObject();
         (jsObject->*(rndFind.m_pScriptAttribute->callback))(
             pValue.get(), false, rndFind.m_pScriptAttribute->attribute);
-        rndFind.m_Objects.front() = ToObject(pValue.get(), nullptr);
+        rndFind.m_Objects.front() = ToObject(pValue.get());
       }
       if (!m_upObjectArray.empty())
         m_upObjectArray.pop_back();

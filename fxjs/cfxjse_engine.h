@@ -29,7 +29,7 @@ class CXFA_List;
 class CFXJSE_Engine : public CFX_V8 {
  public:
   static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
-  static CXFA_Object* ToObject(CFXJSE_Value* pValue, CFXJSE_Class* pClass);
+  static CXFA_Object* ToObject(CFXJSE_Value* pValue);
   static void GlobalPropertyGetter(CFXJSE_Value* pObject,
                                    const ByteStringView& szPropName,
                                    CFXJSE_Value* pValue);

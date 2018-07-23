@@ -5837,7 +5837,7 @@ void CFXJSE_FormCalcContext::unfoldArgs(
 void CFXJSE_FormCalcContext::GetObjectDefaultValue(
     CFXJSE_Value* pValue,
     CFXJSE_Value* pDefaultValue) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue, nullptr));
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue));
   if (!pNode) {
     pDefaultValue->SetNull();
     return;
@@ -5849,7 +5849,7 @@ void CFXJSE_FormCalcContext::GetObjectDefaultValue(
 // static
 bool CFXJSE_FormCalcContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
                                                    CFXJSE_Value* hNewValue) {
-  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue, nullptr));
+  CXFA_Node* pNode = ToNode(CFXJSE_Engine::ToObject(pValue));
   if (!pNode)
     return false;
 
@@ -5934,7 +5934,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
       pNode = pScriptContext->GetThisObject();
       dFlags = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
     } else {
-      pNode = CFXJSE_Engine::ToObject(pRefValue, nullptr);
+      pNode = CFXJSE_Engine::ToObject(pRefValue);
       if (!pNode)
         return false;
 
@@ -5959,7 +5959,7 @@ bool CFXJSE_FormCalcContext::ResolveObjects(CFXJSE_Value* pThis,
       }
     }
   } else {
-    pNode = CFXJSE_Engine::ToObject(pRefValue, nullptr);
+    pNode = CFXJSE_Engine::ToObject(pRefValue);
     dFlags = XFA_RESOLVENODE_AnyChild;
   }
   return pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringView(),

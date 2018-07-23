@@ -242,7 +242,7 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
         (jsObject->*(resolveNodeRS.pScriptAttribute->callback))(
             pValue.get(), false, resolveNodeRS.pScriptAttribute->attribute);
 
-        CXFA_Object* obj = CFXJSE_Engine::ToObject(pValue.get(), nullptr);
+        CXFA_Object* obj = CFXJSE_Engine::ToObject(pValue.get());
         if (obj->IsNode())
           pNodeList->Append(obj->AsNode());
       }
