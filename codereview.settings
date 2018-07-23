@@ -1,5 +1,5 @@
-# This file is used by gcl to get repository specific information.
-CODE_REVIEW_SERVER: codereview.chromium.org
+GERRIT_HOST: True
+GERRIT_SQUASH_UPLOADS: True
 CC_LIST: pdfium-reviews@googlegroups.com
 VIEW_VC: https://pdfium.googlesource.com/pdfium/+/
 PROJECT: pdfium
