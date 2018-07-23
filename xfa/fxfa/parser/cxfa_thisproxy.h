@@ -13,6 +13,8 @@
 
 class CXFA_ThisProxy : public CXFA_Object {
  public:
+  static CXFA_ThisProxy* FromCXFAObject(CXFA_Object* that);
+
   CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode);
   ~CXFA_ThisProxy() override;
 
