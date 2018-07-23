@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "fxjs/cfxjse_engine.h"
+#include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/compiler_specific.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"

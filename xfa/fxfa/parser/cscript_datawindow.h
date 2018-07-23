@@ -7,17 +7,14 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
 #define XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_
 
-#include "fxjs/xfa/cjx_datawindow.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
+
+class CXFA_Document;
 
 class CScript_DataWindow : public CXFA_Object {
  public:
   explicit CScript_DataWindow(CXFA_Document* pDocument);
   ~CScript_DataWindow() override;
-
-  CJX_DataWindow* JSDataWindow() {
-    return static_cast<CJX_DataWindow*>(JSObject());
-  }
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_

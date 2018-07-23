@@ -7,17 +7,14 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
 
-#include "fxjs/xfa/cjx_logpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
+
+class CXFA_Document;
 
 class CScript_LogPseudoModel : public CXFA_Object {
  public:
   explicit CScript_LogPseudoModel(CXFA_Document* pDocument);
   ~CScript_LogPseudoModel() override;
-
-  CJX_LogPseudoModel* JSLogPseudoModel() {
-    return static_cast<CJX_LogPseudoModel*>(JSObject());
-  }
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
 
+#include "fxjs/xfa/cjx_signaturepseudomodel.h"
 #include "third_party/base/ptr_util.h"
 
 CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
@@ -16,4 +17,4 @@ CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
                   WideStringView(L"signaturePseudoModel"),
                   pdfium::MakeUnique<CJX_SignaturePseudoModel>(this)) {}
 
-CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
+CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() = default;
