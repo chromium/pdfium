@@ -650,8 +650,6 @@ bool CPDF_Parser::RebuildCrossRef() {
       const FX_FILESIZE obj_pos = numbers[0].second;
       const uint32_t obj_num = numbers[0].first;
       const uint32_t gen_num = numbers[1].first;
-      if (obj_num < kMaxObjectNumber)
-        cross_ref_table->AddNormal(obj_num, gen_num, obj_pos);
 
       m_pSyntax->SetPos(obj_pos);
       const std::unique_ptr<CPDF_Stream> pStream =
@@ -663,6 +661,17 @@ bool CPDF_Parser::RebuildCrossRef() {
             std::move(cross_ref_table),
             pdfium::MakeUnique<CPDF_CrossRefTable>(
                 ToDictionary(pStream->GetDict()->Clone())));
+      }
+
+      if (obj_num < kMaxObjectNumber) {
+        cross_ref_table->AddNormal(obj_num, gen_num, obj_pos);
+        if (const auto object_stream =
+                CPDF_ObjectStream::Create(pStream.get())) {
+          for (const auto& it : object_stream->objects_offsets()) {
+            if (it.first < kMaxObjectNumber)
+              cross_ref_table->AddCompressed(it.first, obj_num);
+          }
+        }
       }
     }
     numbers.clear();

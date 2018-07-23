@@ -33,6 +33,9 @@ class CPDF_ObjectStream {
   bool HasObject(uint32_t obj_number) const;
   std::unique_ptr<CPDF_Object> ParseObject(CPDF_IndirectObjectHolder* pObjList,
                                            uint32_t obj_number) const;
+  const std::map<uint32_t, uint32_t>& objects_offsets() const {
+    return objects_offsets_;
+  }
 
  protected:
   explicit CPDF_ObjectStream(const CPDF_Stream* stream);
