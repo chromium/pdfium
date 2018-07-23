@@ -449,7 +449,7 @@ bool PatternStringType(const ByteStringView& szPattern, uint32_t& patternType) {
 }
 
 CFXJSE_FormCalcContext* ToFormCalcContext(CFXJSE_Value* pValue) {
-  CFXJSE_HostObject* pHostObj = pValue->ToHostObject(nullptr);
+  CFXJSE_HostObject* pHostObj = pValue->ToHostObject();
   return pHostObj ? pHostObj->AsFormCalcContext() : nullptr;
 }
 
@@ -4944,8 +4944,7 @@ bool CFXJSE_FormCalcContext::fm_ref_equal(CFXJSE_Value* pThis,
   if (firstJSObject->IsNull() || secondJSObject->IsNull())
     return false;
 
-  return (firstJSObject->ToHostObject(nullptr) ==
-          secondJSObject->ToHostObject(nullptr));
+  return firstJSObject->ToHostObject() == secondJSObject->ToHostObject();
 }
 
 // static

@@ -43,7 +43,7 @@ class CFXJSE_Value {
   WideString ToWideString() const {
     return WideString::FromUTF8(ToString().AsStringView());
   }
-  CFXJSE_HostObject* ToHostObject(CFXJSE_Class* lpClass) const;
+  CFXJSE_HostObject* ToHostObject() const;
 
   void SetUndefined();
   void SetNull();
