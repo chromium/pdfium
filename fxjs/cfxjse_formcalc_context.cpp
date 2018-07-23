@@ -450,9 +450,7 @@ bool PatternStringType(const ByteStringView& szPattern, uint32_t& patternType) {
 
 CFXJSE_FormCalcContext* ToFormCalcContext(CFXJSE_Value* pValue) {
   CFXJSE_HostObject* pHostObj = pValue->ToHostObject(nullptr);
-  if (!pHostObj || pHostObj->type() != CFXJSE_HostObject::kFM2JS)
-    return nullptr;
-  return static_cast<CFXJSE_FormCalcContext*>(pHostObj);
+  return pHostObj ? pHostObj->AsFormCalcContext() : nullptr;
 }
 
 bool IsWhitespace(char c) {
@@ -6177,15 +6175,13 @@ bool CFXJSE_FormCalcContext::Translate(const WideStringView& wsFormcalc,
     return false;
 
   wsJavascript->AppendChar(0);
-
   return !CXFA_IsTooBig(wsJavascript);
 }
 
 CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
-    : CFXJSE_HostObject(kFM2JS),
-      m_pIsolate(pScriptIsolate),
+    : m_pIsolate(pScriptIsolate),
       m_pFMClass(CFXJSE_Class::Create(pScriptContext,
                                       &kFormCalcFM2JSDescriptor,
                                       false)),
@@ -6194,7 +6190,11 @@ CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
   m_pValue.get()->SetObject(this, m_pFMClass);
 }
 
-CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() {}
+CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() = default;
+
+CFXJSE_FormCalcContext* CFXJSE_FormCalcContext::AsFormCalcContext() {
+  return this;
+}
 
 void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
   pValue->Assign(m_pValue.get());

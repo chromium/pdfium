@@ -77,20 +77,16 @@ CXFA_Object* CFXJSE_Engine::ToObject(
   if (!info.Holder()->IsObject())
     return nullptr;
 
-  CFXJSE_HostObject* hostObj =
+  CFXJSE_HostObject* pHostObj =
       FXJSE_RetrieveObjectBinding(info.Holder().As<v8::Object>(), nullptr);
-  if (!hostObj || hostObj->type() != CFXJSE_HostObject::kXFA)
-    return nullptr;
-  return static_cast<CXFA_Object*>(hostObj);
+  return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
 }
 
 // static.
 CXFA_Object* CFXJSE_Engine::ToObject(CFXJSE_Value* pValue,
                                      CFXJSE_Class* pClass) {
   CFXJSE_HostObject* pHostObj = pValue->ToHostObject(pClass);
-  if (!pHostObj || pHostObj->type() != CFXJSE_HostObject::kXFA)
-    return nullptr;
-  return static_cast<CXFA_Object*>(pHostObj);
+  return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
 }
 
 CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
@@ -791,16 +787,12 @@ void CFXJSE_Engine::AddNodesOfRunScript(CXFA_Node* pNode) {
 }
 
 CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {
-  ASSERT(!obj.IsEmpty());
-
-  if (!obj->IsObject())
+  if (obj.IsEmpty() || !obj->IsObject())
     return nullptr;
 
-  CFXJSE_HostObject* hostObj =
+  CFXJSE_HostObject* pHostObj =
       FXJSE_RetrieveObjectBinding(obj.As<v8::Object>(), nullptr);
-  if (!hostObj || hostObj->type() != CFXJSE_HostObject::kXFA)
-    return nullptr;
-  return static_cast<CXFA_Object*>(hostObj);
+  return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
 }
 
 v8::Local<v8::Value> CFXJSE_Engine::NewXFAObject(

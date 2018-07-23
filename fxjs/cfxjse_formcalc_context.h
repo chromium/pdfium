@@ -25,6 +25,9 @@ class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
                          CXFA_Document* pDoc);
   ~CFXJSE_FormCalcContext() override;
 
+  // CFXJSE_HostObject:
+  CFXJSE_FormCalcContext* AsFormCalcContext() override;
+
   static void Abs(CFXJSE_Value* pThis,
                   const ByteStringView& szFuncName,
                   CFXJSE_Arguments& args);

@@ -12,23 +12,22 @@
 #include "v8/include/v8.h"
 
 class CFXJSE_Arguments;
+class CFXJSE_FormCalcContext;
 class CFXJSE_Value;
 class CJS_Return;
+class CXFA_Object;
 
 // C++ object which is retrieved from v8 object's slot.
 class CFXJSE_HostObject {
  public:
-  virtual ~CFXJSE_HostObject() {}
+  virtual ~CFXJSE_HostObject();
 
-  // Small layering violation here, but we need to distinguish between the
-  // two kinds of subclasses.
-  enum Type { kXFA, kFM2JS };
-  Type type() const { return type_; }
+  // Two subclasses.
+  virtual CFXJSE_FormCalcContext* AsFormCalcContext();
+  virtual CXFA_Object* AsCXFAObject();
 
  protected:
-  explicit CFXJSE_HostObject(Type type) { type_ = type; }
-
-  Type type_;
+  CFXJSE_HostObject();
 };
 
 typedef CJS_Return (*FXJSE_MethodCallback)(

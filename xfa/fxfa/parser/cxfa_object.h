@@ -36,6 +36,9 @@ class CXFA_Object : public CFXJSE_HostObject {
  public:
   ~CXFA_Object() override;
 
+  // CFXJSE_HostObject:
+  CXFA_Object* AsCXFAObject() override;
+
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
   XFA_ObjectType GetObjectType() const { return m_objectType; }
 

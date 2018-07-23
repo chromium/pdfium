@@ -1323,6 +1323,7 @@ jumbo_static_library("fxjs") {
         "fxjs/cfxjse_runtimedata.h",
         "fxjs/cfxjse_value.cpp",
         "fxjs/cfxjse_value.h",
+        "fxjs/fxjse.cpp",
         "fxjs/fxjse.h",
         "fxjs/xfa/cjx_arc.cpp",
         "fxjs/xfa/cjx_arc.h",

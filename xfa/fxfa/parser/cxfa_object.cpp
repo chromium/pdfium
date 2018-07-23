@@ -22,15 +22,18 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_Element elementType,
                          const WideStringView& elementName,
                          std::unique_ptr<CJX_Object> jsObject)
-    : CFXJSE_HostObject(kXFA),
-      m_pDocument(pDocument),
+    : m_pDocument(pDocument),
       m_objectType(objectType),
       m_elementType(elementType),
       m_elementNameHash(FX_HashCode_GetW(elementName, false)),
       m_elementName(elementName),
       m_pJSObject(std::move(jsObject)) {}
 
-CXFA_Object::~CXFA_Object() {}
+CXFA_Object::~CXFA_Object() = default;
+
+CXFA_Object* CXFA_Object::AsCXFAObject() {
+  return this;
+}
 
 WideString CXFA_Object::GetSOMExpression() {
   CFXJSE_Engine* pScriptContext = m_pDocument->GetScriptContext();
