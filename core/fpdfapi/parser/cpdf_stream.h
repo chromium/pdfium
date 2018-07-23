@@ -34,7 +34,8 @@ class CPDF_Stream : public CPDF_Object {
   bool IsStream() const override;
   CPDF_Stream* AsStream() override;
   const CPDF_Stream* AsStream() const override;
-  bool WriteTo(IFX_ArchiveStream* archive) const override;
+  bool WriteTo(IFX_ArchiveStream* archive,
+               const CPDF_Encryptor* encryptor) const override;
 
   uint32_t GetRawSize() const { return m_dwSize; }
   // Will be null in case when stream is not memory based.

@@ -33,7 +33,8 @@ class CPDF_Reference : public CPDF_Object {
   bool IsReference() const override;
   CPDF_Reference* AsReference() override;
   const CPDF_Reference* AsReference() const override;
-  bool WriteTo(IFX_ArchiveStream* archive) const override;
+  bool WriteTo(IFX_ArchiveStream* archive,
+               const CPDF_Encryptor* encryptor) const override;
   std::unique_ptr<CPDF_Object> MakeReference(
       CPDF_IndirectObjectHolder* holder) const override;
 

@@ -17,6 +17,7 @@
 class CPDF_Array;
 class CPDF_Boolean;
 class CPDF_Dictionary;
+class CPDF_Encryptor;
 class CPDF_IndirectObjectHolder;
 class CPDF_Name;
 class CPDF_Null;
@@ -95,7 +96,8 @@ class CPDF_Object {
   virtual CPDF_String* AsString();
   virtual const CPDF_String* AsString() const;
 
-  virtual bool WriteTo(IFX_ArchiveStream* archive) const = 0;
+  virtual bool WriteTo(IFX_ArchiveStream* archive,
+                       const CPDF_Encryptor* encryptor) const = 0;
 
   // Create a deep copy of the object with the option to either
   // copy a reference object or directly copy the object it refers to

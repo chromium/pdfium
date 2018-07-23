@@ -9,25 +9,25 @@
 
 #include <stdint.h>
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
 class CPDF_CryptoHandler;
 
 class CPDF_Encryptor {
  public:
-  CPDF_Encryptor(CPDF_CryptoHandler* pHandler,
-                 int objnum,
-                 pdfium::span<const uint8_t> src_data);
+  CPDF_Encryptor(CPDF_CryptoHandler* pHandler, int objnum);
   ~CPDF_Encryptor();
 
-  pdfium::span<const uint8_t> GetSpan() const { return m_Span; }
+  std::vector<uint8_t> Encrypt(pdfium::span<const uint8_t> src_data) const;
 
  private:
-  std::vector<uint8_t> m_NewBuf;
-  pdfium::span<const uint8_t> m_Span;
+  UnownedPtr<CPDF_CryptoHandler> const m_pHandler;
+  const int m_ObjNum;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_ENCRYPTOR_H_

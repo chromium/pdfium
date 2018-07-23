@@ -230,12 +230,13 @@ CPDF_Object* CPDF_Array::Add(std::unique_ptr<CPDF_Object> pObj) {
   return pRet;
 }
 
-bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive) const {
+bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive,
+                         const CPDF_Encryptor* encryptor) const {
   if (!archive->WriteString("["))
     return false;
 
   for (size_t i = 0; i < GetCount(); ++i) {
-    if (!GetObjectAt(i)->WriteTo(archive))
+    if (!GetObjectAt(i)->WriteTo(archive, encryptor))
       return false;
   }
   return archive->WriteString("]");

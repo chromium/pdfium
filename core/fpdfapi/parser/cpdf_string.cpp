@@ -7,7 +7,9 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 
 #include <utility>
+#include <vector>
 
+#include "core/fpdfapi/edit/cpdf_encryptor.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"
@@ -65,7 +67,15 @@ WideString CPDF_String::GetUnicodeText() const {
   return PDF_DecodeText(m_String);
 }
 
-bool CPDF_String::WriteTo(IFX_ArchiveStream* archive) const {
-  return archive->WriteString(
-      PDF_EncodeString(GetString(), IsHex()).AsStringView());
+bool CPDF_String::WriteTo(IFX_ArchiveStream* archive,
+                          const CPDF_Encryptor* encryptor) const {
+  std::vector<uint8_t> encrypted_data;
+  pdfium::span<const uint8_t> data = m_String.AsRawSpan();
+  if (encryptor) {
+    encrypted_data = encryptor->Encrypt(data);
+    data = encrypted_data;
+  }
+  const ByteString content =
+      PDF_EncodeString(ByteString(data.data(), data.size()), IsHex());
+  return archive->WriteString(content.AsStringView());
 }

@@ -57,7 +57,8 @@ ByteString CPDF_Number::GetString() const {
                     : ByteString::FormatFloat(m_Float);
 }
 
-bool CPDF_Number::WriteTo(IFX_ArchiveStream* archive) const {
+bool CPDF_Number::WriteTo(IFX_ArchiveStream* archive,
+                          const CPDF_Encryptor* encryptor) const {
   return archive->WriteString(" ") &&
          archive->WriteString(GetString().AsStringView());
 }

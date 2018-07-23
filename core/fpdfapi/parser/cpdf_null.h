@@ -18,7 +18,8 @@ class CPDF_Null : public CPDF_Object {
   // CPDF_Object.
   Type GetType() const override;
   std::unique_ptr<CPDF_Object> Clone() const override;
-  bool WriteTo(IFX_ArchiveStream* archive) const override;
+  bool WriteTo(IFX_ArchiveStream* archive,
+               const CPDF_Encryptor* encryptor) const override;
   bool IsNull() const override;
 };
 

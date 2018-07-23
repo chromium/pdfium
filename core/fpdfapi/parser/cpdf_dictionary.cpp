@@ -269,9 +269,12 @@ ByteString CPDF_Dictionary::MaybeIntern(const ByteString& str) {
   return m_pPool ? m_pPool->Intern(str) : str;
 }
 
-bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive) const {
+bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive,
+                              const CPDF_Encryptor* encryptor) const {
   if (!archive->WriteString("<<"))
     return false;
+
+  const bool is_signature = CPDF_CryptoHandler::IsSignatureDictionary(this);
 
   for (const auto& it : *this) {
     const ByteString& key = it.first;
@@ -280,9 +283,11 @@ bool CPDF_Dictionary::WriteTo(IFX_ArchiveStream* archive) const {
         !archive->WriteString(PDF_NameEncode(key).AsStringView())) {
       return false;
     }
-
-    if (!pValue->WriteTo(archive))
+    if (!pValue->WriteTo(archive, !is_signature || key != "Contents"
+                                      ? encryptor
+                                      : nullptr)) {
       return false;
+    }
   }
   return archive->WriteString(">>");
 }
