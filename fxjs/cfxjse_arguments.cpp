@@ -45,15 +45,6 @@ ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   return ByteString(*szStringVal);
 }
 
-CFXJSE_HostObject* CFXJSE_Arguments::GetObject(int32_t index,
-                                               CFXJSE_Class* pClass) const {
-  v8::Local<v8::Value> hValue = (*m_pInfo)[index];
-  ASSERT(!hValue.IsEmpty());
-  if (!hValue->IsObject())
-    return nullptr;
-  return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>(), pClass);
-}
-
 CFXJSE_Value* CFXJSE_Arguments::GetReturnValue() const {
   return m_pRetValue.Get();
 }
