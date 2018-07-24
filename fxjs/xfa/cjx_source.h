@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_SOURCE_H_
 #define FXJS_XFA_CJX_SOURCE_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Source;
@@ -17,27 +17,27 @@ class CJX_Source : public CJX_Node {
   explicit CJX_Source(CXFA_Source* src);
   ~CJX_Source() override;
 
-  JS_METHOD(addNew, CJX_Source);
-  JS_METHOD(cancel, CJX_Source);
-  JS_METHOD(cancelBatch, CJX_Source);
-  JS_METHOD(close, CJX_Source);
-  JS_METHOD(deleteItem /*delete*/, CJX_Source);
-  JS_METHOD(first, CJX_Source);
-  JS_METHOD(hasDataChanged, CJX_Source);
-  JS_METHOD(isBOF, CJX_Source);
-  JS_METHOD(isEOF, CJX_Source);
-  JS_METHOD(last, CJX_Source);
-  JS_METHOD(next, CJX_Source);
-  JS_METHOD(open, CJX_Source);
-  JS_METHOD(previous, CJX_Source);
-  JS_METHOD(requery, CJX_Source);
-  JS_METHOD(resync, CJX_Source);
-  JS_METHOD(update, CJX_Source);
-  JS_METHOD(updateBatch, CJX_Source);
+  JSE_METHOD(addNew, CJX_Source);
+  JSE_METHOD(cancel, CJX_Source);
+  JSE_METHOD(cancelBatch, CJX_Source);
+  JSE_METHOD(close, CJX_Source);
+  JSE_METHOD(deleteItem /*delete*/, CJX_Source);
+  JSE_METHOD(first, CJX_Source);
+  JSE_METHOD(hasDataChanged, CJX_Source);
+  JSE_METHOD(isBOF, CJX_Source);
+  JSE_METHOD(isEOF, CJX_Source);
+  JSE_METHOD(last, CJX_Source);
+  JSE_METHOD(next, CJX_Source);
+  JSE_METHOD(open, CJX_Source);
+  JSE_METHOD(previous, CJX_Source);
+  JSE_METHOD(requery, CJX_Source);
+  JSE_METHOD(resync, CJX_Source);
+  JSE_METHOD(update, CJX_Source);
+  JSE_METHOD(updateBatch, CJX_Source);
 
-  JS_PROP(db);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(db);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

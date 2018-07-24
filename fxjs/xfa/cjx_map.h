@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_MAP_H_
 #define FXJS_XFA_CJX_MAP_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Map;
@@ -16,10 +17,10 @@ class CJX_Map : public CJX_Node {
   explicit CJX_Map(CXFA_Map* node);
   ~CJX_Map() override;
 
-  JS_PROP(bind);
-  JS_PROP(from);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(bind);
+  JSE_PROP(from);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_MAP_H_

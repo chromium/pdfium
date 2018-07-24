@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_FILTER_H_
 #define FXJS_XFA_CJX_FILTER_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Filter;
@@ -16,9 +17,9 @@ class CJX_Filter : public CJX_Node {
   explicit CJX_Filter(CXFA_Filter* node);
   ~CJX_Filter() override;
 
-  JS_PROP(addRevocationInfo);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(addRevocationInfo);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_FILTER_H_

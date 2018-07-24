@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_WSDLCONNECTION_H_
 #define FXJS_XFA_CJX_WSDLCONNECTION_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_WsdlConnection;
@@ -17,10 +17,10 @@ class CJX_WsdlConnection : public CJX_Node {
   explicit CJX_WsdlConnection(CXFA_WsdlConnection* connection);
   ~CJX_WsdlConnection() override;
 
-  JS_METHOD(execute, CJX_WsdlConnection);
+  JSE_METHOD(execute, CJX_WsdlConnection);
 
-  JS_PROP(dataDescription);
-  JS_PROP(execute);
+  JSE_PROP(dataDescription);
+  JSE_PROP(execute);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

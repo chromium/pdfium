@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_LIST_H_
 #define FXJS_XFA_CJX_LIST_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
 
 class CXFA_List;
@@ -17,12 +17,12 @@ class CJX_List : public CJX_Object {
   explicit CJX_List(CXFA_List* list);
   ~CJX_List() override;
 
-  JS_METHOD(append, CJX_List);
-  JS_METHOD(insert, CJX_List);
-  JS_METHOD(item, CJX_List);
-  JS_METHOD(remove, CJX_List);
+  JSE_METHOD(append, CJX_List);
+  JSE_METHOD(insert, CJX_List);
+  JSE_METHOD(item, CJX_List);
+  JSE_METHOD(remove, CJX_List);
 
-  JS_PROP(length);
+  JSE_PROP(length);
 
  private:
   CXFA_List* GetXFAList();

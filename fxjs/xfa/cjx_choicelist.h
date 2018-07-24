@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_CHOICELIST_H_
 #define FXJS_XFA_CJX_CHOICELIST_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_ChoiceList;
@@ -16,11 +17,11 @@ class CJX_ChoiceList : public CJX_Node {
   explicit CJX_ChoiceList(CXFA_ChoiceList* node);
   ~CJX_ChoiceList() override;
 
-  JS_PROP(commitOn);
-  JS_PROP(open);
-  JS_PROP(textEntry);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(commitOn);
+  JSE_PROP(open);
+  JSE_PROP(textEntry);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_CHOICELIST_H_

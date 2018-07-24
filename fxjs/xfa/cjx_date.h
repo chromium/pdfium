@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_DATE_H_
 #define FXJS_XFA_CJX_DATE_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_content.h"
 
 class CXFA_Date;
@@ -16,10 +17,10 @@ class CJX_Date : public CJX_Content {
   explicit CJX_Date(CXFA_Date* node);
   ~CJX_Date() override;
 
-  JS_PROP(defaultValue); /* {default} */
-  JS_PROP(use);
-  JS_PROP(usehref);
-  JS_PROP(value);
+  JSE_PROP(defaultValue); /* {default} */
+  JSE_PROP(use);
+  JSE_PROP(usehref);
+  JSE_PROP(value);
 };
 
 #endif  // FXJS_XFA_CJX_DATE_H_

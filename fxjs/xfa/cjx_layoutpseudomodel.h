@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
 
 enum XFA_LAYOUTMODEL_HWXY {
@@ -29,27 +29,27 @@ class CJX_LayoutPseudoModel : public CJX_Object {
   explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
   ~CJX_LayoutPseudoModel() override;
 
-  JS_METHOD(absPage, CJX_LayoutPseudoModel);
-  JS_METHOD(absPageCount, CJX_LayoutPseudoModel);
-  JS_METHOD(absPageCountInBatch, CJX_LayoutPseudoModel);
-  JS_METHOD(absPageInBatch, CJX_LayoutPseudoModel);
-  JS_METHOD(absPageSpan, CJX_LayoutPseudoModel);
-  JS_METHOD(h, CJX_LayoutPseudoModel);
-  JS_METHOD(page, CJX_LayoutPseudoModel);
-  JS_METHOD(pageContent, CJX_LayoutPseudoModel);
-  JS_METHOD(pageCount, CJX_LayoutPseudoModel);
-  JS_METHOD(pageSpan, CJX_LayoutPseudoModel);
-  JS_METHOD(relayout, CJX_LayoutPseudoModel);
-  JS_METHOD(relayoutPageArea, CJX_LayoutPseudoModel);
-  JS_METHOD(sheet, CJX_LayoutPseudoModel);
-  JS_METHOD(sheetCount, CJX_LayoutPseudoModel);
-  JS_METHOD(sheetCountInBatch, CJX_LayoutPseudoModel);
-  JS_METHOD(sheetInBatch, CJX_LayoutPseudoModel);
-  JS_METHOD(w, CJX_LayoutPseudoModel);
-  JS_METHOD(x, CJX_LayoutPseudoModel);
-  JS_METHOD(y, CJX_LayoutPseudoModel);
+  JSE_METHOD(absPage, CJX_LayoutPseudoModel);
+  JSE_METHOD(absPageCount, CJX_LayoutPseudoModel);
+  JSE_METHOD(absPageCountInBatch, CJX_LayoutPseudoModel);
+  JSE_METHOD(absPageInBatch, CJX_LayoutPseudoModel);
+  JSE_METHOD(absPageSpan, CJX_LayoutPseudoModel);
+  JSE_METHOD(h, CJX_LayoutPseudoModel);
+  JSE_METHOD(page, CJX_LayoutPseudoModel);
+  JSE_METHOD(pageContent, CJX_LayoutPseudoModel);
+  JSE_METHOD(pageCount, CJX_LayoutPseudoModel);
+  JSE_METHOD(pageSpan, CJX_LayoutPseudoModel);
+  JSE_METHOD(relayout, CJX_LayoutPseudoModel);
+  JSE_METHOD(relayoutPageArea, CJX_LayoutPseudoModel);
+  JSE_METHOD(sheet, CJX_LayoutPseudoModel);
+  JSE_METHOD(sheetCount, CJX_LayoutPseudoModel);
+  JSE_METHOD(sheetCountInBatch, CJX_LayoutPseudoModel);
+  JSE_METHOD(sheetInBatch, CJX_LayoutPseudoModel);
+  JSE_METHOD(w, CJX_LayoutPseudoModel);
+  JSE_METHOD(x, CJX_LayoutPseudoModel);
+  JSE_METHOD(y, CJX_LayoutPseudoModel);
 
-  JS_PROP(ready);
+  JSE_PROP(ready);
 
  private:
   CJS_Return NumberedPageCount(CFX_V8* runtime, bool bNumbered);

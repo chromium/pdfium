@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_NODE_H_
 #define FXJS_XFA_CJX_NODE_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/cjx_tree.h"
 #include "xfa/fxfa/fxfa_basic.h"
@@ -19,24 +19,24 @@ class CJX_Node : public CJX_Tree {
   explicit CJX_Node(CXFA_Node* node);
   ~CJX_Node() override;
 
-  JS_METHOD(applyXSL, CJX_Node);
-  JS_METHOD(assignNode, CJX_Node);
-  JS_METHOD(clone, CJX_Node);
-  JS_METHOD(getAttribute, CJX_Node);
-  JS_METHOD(getElement, CJX_Node);
-  JS_METHOD(isPropertySpecified, CJX_Node);
-  JS_METHOD(loadXML, CJX_Node);
-  JS_METHOD(saveFilteredXML, CJX_Node);
-  JS_METHOD(saveXML, CJX_Node);
-  JS_METHOD(setAttribute, CJX_Node);
-  JS_METHOD(setElement, CJX_Node);
+  JSE_METHOD(applyXSL, CJX_Node);
+  JSE_METHOD(assignNode, CJX_Node);
+  JSE_METHOD(clone, CJX_Node);
+  JSE_METHOD(getAttribute, CJX_Node);
+  JSE_METHOD(getElement, CJX_Node);
+  JSE_METHOD(isPropertySpecified, CJX_Node);
+  JSE_METHOD(loadXML, CJX_Node);
+  JSE_METHOD(saveFilteredXML, CJX_Node);
+  JSE_METHOD(saveXML, CJX_Node);
+  JSE_METHOD(setAttribute, CJX_Node);
+  JSE_METHOD(setElement, CJX_Node);
 
-  JS_PROP(id);
-  JS_PROP(isContainer);
-  JS_PROP(isNull);
-  JS_PROP(model);
-  JS_PROP(ns);
-  JS_PROP(oneOfChild);
+  JSE_PROP(id);
+  JSE_PROP(isContainer);
+  JSE_PROP(isNull);
+  JSE_PROP(model);
+  JSE_PROP(ns);
+  JSE_PROP(oneOfChild);
 
   CXFA_Node* GetXFANode();
   const CXFA_Node* GetXFANode() const;

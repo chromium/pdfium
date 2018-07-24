@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_CONNECT_H_
 #define FXJS_XFA_CJX_CONNECT_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Connect;
@@ -16,13 +17,13 @@ class CJX_Connect : public CJX_Node {
   explicit CJX_Connect(CXFA_Connect* node);
   ~CJX_Connect() override;
 
-  JS_PROP(connection);
-  JS_PROP(delayedOpen);
-  JS_PROP(ref);
-  JS_PROP(timeout);
-  JS_PROP(usage);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(connection);
+  JSE_PROP(delayedOpen);
+  JSE_PROP(ref);
+  JSE_PROP(timeout);
+  JSE_PROP(usage);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_CONNECT_H_

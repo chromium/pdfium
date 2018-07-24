@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_KEYUSAGE_H_
 #define FXJS_XFA_CJX_KEYUSAGE_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_KeyUsage;
@@ -16,18 +17,18 @@ class CJX_KeyUsage : public CJX_Node {
   explicit CJX_KeyUsage(CXFA_KeyUsage* node);
   ~CJX_KeyUsage() override;
 
-  JS_PROP(crlSign);
-  JS_PROP(dataEncipherment);
-  JS_PROP(decipherOnly);
-  JS_PROP(digitalSignature);
-  JS_PROP(encipherOnly);
-  JS_PROP(keyAgreement);
-  JS_PROP(keyCertSign);
-  JS_PROP(keyEncipherment);
-  JS_PROP(nonRepudiation);
-  JS_PROP(type);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(crlSign);
+  JSE_PROP(dataEncipherment);
+  JSE_PROP(decipherOnly);
+  JSE_PROP(digitalSignature);
+  JSE_PROP(encipherOnly);
+  JSE_PROP(keyAgreement);
+  JSE_PROP(keyCertSign);
+  JSE_PROP(keyEncipherment);
+  JSE_PROP(nonRepudiation);
+  JSE_PROP(type);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_KEYUSAGE_H_

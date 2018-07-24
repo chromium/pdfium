@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_TREELIST_H_
 #define FXJS_XFA_CJX_TREELIST_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_list.h"
 
 class CXFA_TreeList;
@@ -17,7 +17,7 @@ class CJX_TreeList : public CJX_List {
   explicit CJX_TreeList(CXFA_TreeList* list);
   ~CJX_TreeList() override;
 
-  JS_METHOD(namedItem, CJX_TreeList);
+  JSE_METHOD(namedItem, CJX_TreeList);
 
  private:
   CXFA_TreeList* GetXFATreeList();

@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_DESC_H_
 #define FXJS_XFA_CJX_DESC_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Desc;
@@ -17,10 +17,10 @@ class CJX_Desc : public CJX_Node {
   explicit CJX_Desc(CXFA_Desc* desc);
   ~CJX_Desc() override;
 
-  JS_METHOD(metadata, CJX_Desc);
+  JSE_METHOD(metadata, CJX_Desc);
 
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

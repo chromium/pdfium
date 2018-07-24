@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_SIGNATUREPROPERTIES_H_
 #define FXJS_XFA_CJX_SIGNATUREPROPERTIES_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_SignatureProperties;
@@ -17,8 +18,8 @@ class CJX_SignatureProperties : public CJX_Node {
   explicit CJX_SignatureProperties(CXFA_SignatureProperties* node);
   ~CJX_SignatureProperties() override;
 
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_SIGNATUREPROPERTIES_H_

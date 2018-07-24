@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_SOURCESET_H_
 #define FXJS_XFA_CJX_SOURCESET_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_model.h"
 
 class CXFA_SourceSet;
@@ -16,8 +17,8 @@ class CJX_SourceSet : public CJX_Model {
   explicit CJX_SourceSet(CXFA_SourceSet* node);
   ~CJX_SourceSet() override;
 
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_SOURCESET_H_

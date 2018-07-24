@@ -15,7 +15,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 #include "xfa/fxfa/fxfa_basic.h"
@@ -58,7 +58,7 @@ class CJX_Object {
   explicit CJX_Object(CXFA_Object* obj);
   virtual ~CJX_Object();
 
-  JS_PROP(className);
+  JSE_PROP(className);
 
   CXFA_Document* GetDocument() const;
   CXFA_Object* GetXFAObject() const { return object_.Get(); }

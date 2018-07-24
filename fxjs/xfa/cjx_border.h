@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_BORDER_H_
 #define FXJS_XFA_CJX_BORDER_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Border;
@@ -16,12 +17,12 @@ class CJX_Border : public CJX_Node {
   explicit CJX_Border(CXFA_Border* node);
   ~CJX_Border() override;
 
-  JS_PROP(breakValue); /* break */
-  JS_PROP(hand);
-  JS_PROP(presence);
-  JS_PROP(relevant);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(breakValue); /* break */
+  JSE_PROP(hand);
+  JSE_PROP(presence);
+  JSE_PROP(relevant);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BORDER_H_

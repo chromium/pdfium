@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_MESSAGE_H_
 #define FXJS_XFA_CJX_MESSAGE_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Message;
@@ -16,8 +17,8 @@ class CJX_Message : public CJX_Node {
   explicit CJX_Message(CXFA_Message* node);
   ~CJX_Message() override;
 
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_MESSAGE_H_

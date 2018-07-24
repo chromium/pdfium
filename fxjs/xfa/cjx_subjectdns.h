@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_SUBJECTDNS_H_
 #define FXJS_XFA_CJX_SUBJECTDNS_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_SubjectDNs;
@@ -16,7 +17,7 @@ class CJX_SubjectDNs : public CJX_Node {
   explicit CJX_SubjectDNs(CXFA_SubjectDNs* node);
   ~CJX_SubjectDNs() override;
 
-  JS_PROP(type);
+  JSE_PROP(type);
 };
 
 #endif  // FXJS_XFA_CJX_SUBJECTDNS_H_

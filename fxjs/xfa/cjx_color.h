@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_COLOR_H_
 #define FXJS_XFA_CJX_COLOR_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Color;
@@ -16,10 +17,10 @@ class CJX_Color : public CJX_Node {
   explicit CJX_Color(CXFA_Color* node);
   ~CJX_Color() override;
 
-  JS_PROP(cSpace);
-  JS_PROP(use);
-  JS_PROP(usehref);
-  JS_PROP(value);
+  JSE_PROP(cSpace);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
+  JSE_PROP(value);
 };
 
 #endif  // FXJS_XFA_CJX_COLOR_H_

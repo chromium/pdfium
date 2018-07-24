@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_LOGPSEUDOMODEL_H_
 #define FXJS_XFA_CJX_LOGPSEUDOMODEL_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
 
 class CScript_LogPseudoModel;
@@ -19,11 +19,11 @@ class CJX_LogPseudoModel : public CJX_Object {
   explicit CJX_LogPseudoModel(CScript_LogPseudoModel* model);
   ~CJX_LogPseudoModel() override;
 
-  JS_METHOD(message, CJX_LogPseudoModel);
-  JS_METHOD(traceEnabled, CJX_LogPseudoModel);
-  JS_METHOD(traceActivate, CJX_LogPseudoModel);
-  JS_METHOD(traceDeactivate, CJX_LogPseudoModel);
-  JS_METHOD(trace, CJX_LogPseudoModel);
+  JSE_METHOD(message, CJX_LogPseudoModel);
+  JSE_METHOD(traceEnabled, CJX_LogPseudoModel);
+  JSE_METHOD(traceActivate, CJX_LogPseudoModel);
+  JSE_METHOD(traceDeactivate, CJX_LogPseudoModel);
+  JSE_METHOD(trace, CJX_LogPseudoModel);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

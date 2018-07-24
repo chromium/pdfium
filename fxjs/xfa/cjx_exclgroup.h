@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_EXCLGROUP_H_
 #define FXJS_XFA_CJX_EXCLGROUP_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_ExclGroup;
@@ -17,40 +17,40 @@ class CJX_ExclGroup : public CJX_Node {
   explicit CJX_ExclGroup(CXFA_ExclGroup* group);
   ~CJX_ExclGroup() override;
 
-  JS_METHOD(execCalculate, CJX_ExclGroup);
-  JS_METHOD(execEvent, CJX_ExclGroup);
-  JS_METHOD(execInitialize, CJX_ExclGroup);
-  JS_METHOD(execValidate, CJX_ExclGroup);
-  JS_METHOD(selectedMember, CJX_ExclGroup);
+  JSE_METHOD(execCalculate, CJX_ExclGroup);
+  JSE_METHOD(execEvent, CJX_ExclGroup);
+  JSE_METHOD(execInitialize, CJX_ExclGroup);
+  JSE_METHOD(execValidate, CJX_ExclGroup);
+  JSE_METHOD(selectedMember, CJX_ExclGroup);
 
-  JS_PROP(defaultValue); /* {default} */
-  JS_PROP(access);
-  JS_PROP(accessKey);
-  JS_PROP(anchorType);
-  JS_PROP(borderColor);
-  JS_PROP(borderWidth);
-  JS_PROP(colSpan);
-  JS_PROP(fillColor);
-  JS_PROP(h);
-  JS_PROP(hAlign);
-  JS_PROP(layout);
-  JS_PROP(mandatory);
-  JS_PROP(mandatoryMessage);
-  JS_PROP(maxH);
-  JS_PROP(maxW);
-  JS_PROP(minH);
-  JS_PROP(minW);
-  JS_PROP(presence);
-  JS_PROP(rawValue);
-  JS_PROP(relevant);
-  JS_PROP(transient);
-  JS_PROP(use);
-  JS_PROP(usehref);
-  JS_PROP(validationMessage);
-  JS_PROP(vAlign);
-  JS_PROP(w);
-  JS_PROP(x);
-  JS_PROP(y);
+  JSE_PROP(defaultValue); /* {default} */
+  JSE_PROP(access);
+  JSE_PROP(accessKey);
+  JSE_PROP(anchorType);
+  JSE_PROP(borderColor);
+  JSE_PROP(borderWidth);
+  JSE_PROP(colSpan);
+  JSE_PROP(fillColor);
+  JSE_PROP(h);
+  JSE_PROP(hAlign);
+  JSE_PROP(layout);
+  JSE_PROP(mandatory);
+  JSE_PROP(mandatoryMessage);
+  JSE_PROP(maxH);
+  JSE_PROP(maxW);
+  JSE_PROP(minH);
+  JSE_PROP(minW);
+  JSE_PROP(presence);
+  JSE_PROP(rawValue);
+  JSE_PROP(relevant);
+  JSE_PROP(transient);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
+  JSE_PROP(validationMessage);
+  JSE_PROP(vAlign);
+  JSE_PROP(w);
+  JSE_PROP(x);
+  JSE_PROP(y);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

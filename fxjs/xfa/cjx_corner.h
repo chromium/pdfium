@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_CORNER_H_
 #define FXJS_XFA_CJX_CORNER_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Corner;
@@ -16,14 +17,14 @@ class CJX_Corner : public CJX_Node {
   explicit CJX_Corner(CXFA_Corner* node);
   ~CJX_Corner() override;
 
-  JS_PROP(inverted);
-  JS_PROP(join);
-  JS_PROP(presence);
-  JS_PROP(radius);
-  JS_PROP(stroke);
-  JS_PROP(thickness);
-  JS_PROP(usehref);
-  JS_PROP(use);
+  JSE_PROP(inverted);
+  JSE_PROP(join);
+  JSE_PROP(presence);
+  JSE_PROP(radius);
+  JSE_PROP(stroke);
+  JSE_PROP(thickness);
+  JSE_PROP(usehref);
+  JSE_PROP(use);
 };
 
 #endif  // FXJS_XFA_CJX_CORNER_H_

@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_CONTAINER_H_
 #define FXJS_XFA_CJX_CONTAINER_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Node;
@@ -17,8 +17,8 @@ class CJX_Container : public CJX_Node {
   explicit CJX_Container(CXFA_Node* node);
   ~CJX_Container() override;
 
-  JS_METHOD(getDelta, CJX_Container);
-  JS_METHOD(getDeltas, CJX_Container);
+  JSE_METHOD(getDelta, CJX_Container);
+  JSE_METHOD(getDeltas, CJX_Container);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

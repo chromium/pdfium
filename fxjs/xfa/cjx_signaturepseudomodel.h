@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_SIGNATUREPSEUDOMODEL_H_
 #define FXJS_XFA_CJX_SIGNATUREPSEUDOMODEL_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
 
 class CScript_SignaturePseudoModel;
@@ -17,10 +17,10 @@ class CJX_SignaturePseudoModel : public CJX_Object {
   explicit CJX_SignaturePseudoModel(CScript_SignaturePseudoModel* model);
   ~CJX_SignaturePseudoModel() override;
 
-  JS_METHOD(verifySignature /*verify*/, CJX_SignaturePseudoModel);
-  JS_METHOD(sign, CJX_SignaturePseudoModel);
-  JS_METHOD(enumerate, CJX_SignaturePseudoModel);
-  JS_METHOD(clear, CJX_SignaturePseudoModel);
+  JSE_METHOD(verifySignature /*verify*/, CJX_SignaturePseudoModel);
+  JSE_METHOD(sign, CJX_SignaturePseudoModel);
+  JSE_METHOD(enumerate, CJX_SignaturePseudoModel);
+  JSE_METHOD(clear, CJX_SignaturePseudoModel);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

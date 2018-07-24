@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_XMLCONNECTION_H_
 #define FXJS_XFA_CJX_XMLCONNECTION_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_XmlConnection;
@@ -16,7 +17,7 @@ class CJX_XmlConnection : public CJX_Node {
   explicit CJX_XmlConnection(CXFA_XmlConnection* node);
   ~CJX_XmlConnection() override;
 
-  JS_PROP(dataDescription);
+  JSE_PROP(dataDescription);
 };
 
 #endif  // FXJS_XFA_CJX_XMLCONNECTION_H_

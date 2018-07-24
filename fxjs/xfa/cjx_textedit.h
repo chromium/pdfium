@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_TEXTEDIT_H_
 #define FXJS_XFA_CJX_TEXTEDIT_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_TextEdit;
@@ -16,12 +17,12 @@ class CJX_TextEdit : public CJX_Node {
   explicit CJX_TextEdit(CXFA_TextEdit* node);
   ~CJX_TextEdit() override;
 
-  JS_PROP(allowRichText);
-  JS_PROP(hScrollPolicy);
-  JS_PROP(multiLine);
-  JS_PROP(use);
-  JS_PROP(usehref);
-  JS_PROP(vScrollPolicy);
+  JSE_PROP(allowRichText);
+  JSE_PROP(hScrollPolicy);
+  JSE_PROP(multiLine);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
+  JSE_PROP(vScrollPolicy);
 };
 
 #endif  // FXJS_XFA_CJX_TEXTEDIT_H_

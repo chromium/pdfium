@@ -1285,13 +1285,13 @@ jumbo_static_library("fxjs") {
       "fxjs/cjs_util.h",
       "fxjs/cjs_zoomtype.cpp",
       "fxjs/cjs_zoomtype.h",
-      "fxjs/cjx_define.h",
       "fxjs/global_timer.cpp",
       "fxjs/global_timer.h",
       "fxjs/js_define.cpp",
       "fxjs/js_define.h",
       "fxjs/js_resources.cpp",
       "fxjs/js_resources.h",
+      "fxjs/jse_define.h",
     ]
     deps += [
       ":fxcrt",

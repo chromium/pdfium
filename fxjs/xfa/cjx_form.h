@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_FORM_H_
 #define FXJS_XFA_CJX_FORM_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_model.h"
 
 class CXFA_Form;
@@ -17,12 +17,12 @@ class CJX_Form : public CJX_Model {
   explicit CJX_Form(CXFA_Form* form);
   ~CJX_Form() override;
 
-  JS_METHOD(execCalculate, CJX_Form);
-  JS_METHOD(execInitialize, CJX_Form);
-  JS_METHOD(execValidate, CJX_Form);
-  JS_METHOD(formNodes, CJX_Form);
-  JS_METHOD(recalculate, CJX_Form);
-  JS_METHOD(remerge, CJX_Form);
+  JSE_METHOD(execCalculate, CJX_Form);
+  JSE_METHOD(execInitialize, CJX_Form);
+  JSE_METHOD(execValidate, CJX_Form);
+  JSE_METHOD(formNodes, CJX_Form);
+  JSE_METHOD(recalculate, CJX_Form);
+  JSE_METHOD(remerge, CJX_Form);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

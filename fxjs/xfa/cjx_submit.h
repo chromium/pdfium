@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_SUBMIT_H_
 #define FXJS_XFA_CJX_SUBMIT_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Submit;
@@ -16,13 +17,13 @@ class CJX_Submit : public CJX_Node {
   explicit CJX_Submit(CXFA_Submit* node);
   ~CJX_Submit() override;
 
-  JS_PROP(embedPDF);
-  JS_PROP(format);
-  JS_PROP(target);
-  JS_PROP(textEncoding);
-  JS_PROP(use);
-  JS_PROP(usehref);
-  JS_PROP(xdpContent);
+  JSE_PROP(embedPDF);
+  JSE_PROP(format);
+  JSE_PROP(target);
+  JSE_PROP(textEncoding);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
+  JSE_PROP(xdpContent);
 };
 
 #endif  // FXJS_XFA_CJX_SUBMIT_H_

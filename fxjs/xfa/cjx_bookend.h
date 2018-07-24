@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_BOOKEND_H_
 #define FXJS_XFA_CJX_BOOKEND_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Bookend;
@@ -16,10 +17,10 @@ class CJX_Bookend : public CJX_Node {
   explicit CJX_Bookend(CXFA_Bookend* node);
   ~CJX_Bookend() override;
 
-  JS_PROP(leader);
-  JS_PROP(trailer);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(leader);
+  JSE_PROP(trailer);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BOOKEND_H_

@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_HOSTPSEUDOMODEL_H_
 #define FXJS_XFA_CJX_HOSTPSEUDOMODEL_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
@@ -19,36 +19,36 @@ class CJX_HostPseudoModel : public CJX_Object {
   explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
   ~CJX_HostPseudoModel() override;
 
-  JS_METHOD(beep, CJX_HostPseudoModel);
-  JS_METHOD(documentCountInBatch, CJX_HostPseudoModel);
-  JS_METHOD(documentInBatch, CJX_HostPseudoModel);
-  JS_METHOD(exportData, CJX_HostPseudoModel);
-  JS_METHOD(getFocus, CJX_HostPseudoModel);
-  JS_METHOD(gotoURL, CJX_HostPseudoModel);
-  JS_METHOD(importData, CJX_HostPseudoModel);
-  JS_METHOD(messageBox, CJX_HostPseudoModel);
-  JS_METHOD(openList, CJX_HostPseudoModel);
-  JS_METHOD(pageDown, CJX_HostPseudoModel);
-  JS_METHOD(pageUp, CJX_HostPseudoModel);
-  JS_METHOD(print, CJX_HostPseudoModel);
-  JS_METHOD(resetData, CJX_HostPseudoModel);
-  JS_METHOD(response, CJX_HostPseudoModel);
-  JS_METHOD(setFocus, CJX_HostPseudoModel);
+  JSE_METHOD(beep, CJX_HostPseudoModel);
+  JSE_METHOD(documentCountInBatch, CJX_HostPseudoModel);
+  JSE_METHOD(documentInBatch, CJX_HostPseudoModel);
+  JSE_METHOD(exportData, CJX_HostPseudoModel);
+  JSE_METHOD(getFocus, CJX_HostPseudoModel);
+  JSE_METHOD(gotoURL, CJX_HostPseudoModel);
+  JSE_METHOD(importData, CJX_HostPseudoModel);
+  JSE_METHOD(messageBox, CJX_HostPseudoModel);
+  JSE_METHOD(openList, CJX_HostPseudoModel);
+  JSE_METHOD(pageDown, CJX_HostPseudoModel);
+  JSE_METHOD(pageUp, CJX_HostPseudoModel);
+  JSE_METHOD(print, CJX_HostPseudoModel);
+  JSE_METHOD(resetData, CJX_HostPseudoModel);
+  JSE_METHOD(response, CJX_HostPseudoModel);
+  JSE_METHOD(setFocus, CJX_HostPseudoModel);
 
-  JS_PROP(appType);
-  JS_PROP(calculationsEnabled);
-  JS_PROP(currentPage);
-  JS_PROP(language);
-  JS_PROP(numPages);
-  JS_PROP(platform);
-  JS_PROP(title);
-  JS_PROP(validationsEnabled);
-  JS_PROP(variation);
-  JS_PROP(version);
+  JSE_PROP(appType);
+  JSE_PROP(calculationsEnabled);
+  JSE_PROP(currentPage);
+  JSE_PROP(language);
+  JSE_PROP(numPages);
+  JSE_PROP(platform);
+  JSE_PROP(title);
+  JSE_PROP(validationsEnabled);
+  JSE_PROP(variation);
+  JSE_PROP(version);
 
   // TODO(dsinclair): Remove when xfa_basic_data_element_script is removed.
   // Doesn't exist in spec
-  JS_PROP(name);
+  JSE_PROP(name);
 
  private:
   static const CJX_MethodSpec MethodSpecs[];

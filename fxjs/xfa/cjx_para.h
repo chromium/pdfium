@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_PARA_H_
 #define FXJS_XFA_CJX_PARA_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Para;
@@ -16,20 +17,20 @@ class CJX_Para : public CJX_Node {
   explicit CJX_Para(CXFA_Para* node);
   ~CJX_Para() override;
 
-  JS_PROP(hAlign);
-  JS_PROP(lineHeight);
-  JS_PROP(marginLeft);
-  JS_PROP(marginRight);
-  JS_PROP(preserve);
-  JS_PROP(radixOffset);
-  JS_PROP(spaceAbove);
-  JS_PROP(spaceBelow);
-  JS_PROP(tabDefault);
-  JS_PROP(tabStops);
-  JS_PROP(textIndent);
-  JS_PROP(use);
-  JS_PROP(usehref);
-  JS_PROP(vAlign);
+  JSE_PROP(hAlign);
+  JSE_PROP(lineHeight);
+  JSE_PROP(marginLeft);
+  JSE_PROP(marginRight);
+  JSE_PROP(preserve);
+  JSE_PROP(radixOffset);
+  JSE_PROP(spaceAbove);
+  JSE_PROP(spaceBelow);
+  JSE_PROP(tabDefault);
+  JSE_PROP(tabStops);
+  JSE_PROP(textIndent);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
+  JSE_PROP(vAlign);
 };
 
 #endif  // FXJS_XFA_CJX_PARA_H_

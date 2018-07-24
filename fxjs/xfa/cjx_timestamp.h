@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_TIMESTAMP_H_
 #define FXJS_XFA_CJX_TIMESTAMP_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_TimeStamp;
@@ -16,10 +17,10 @@ class CJX_TimeStamp : public CJX_Node {
   explicit CJX_TimeStamp(CXFA_TimeStamp* node);
   ~CJX_TimeStamp() override;
 
-  JS_PROP(server);
-  JS_PROP(type);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(server);
+  JSE_PROP(type);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_TIMESTAMP_H_

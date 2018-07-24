@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_BREAKAFTER_H_
 #define FXJS_XFA_CJX_BREAKAFTER_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_BreakAfter;
@@ -16,13 +17,13 @@ class CJX_BreakAfter : public CJX_Node {
   explicit CJX_BreakAfter(CXFA_BreakAfter* node);
   ~CJX_BreakAfter() override;
 
-  JS_PROP(leader);
-  JS_PROP(startNew);
-  JS_PROP(target);
-  JS_PROP(targetType);
-  JS_PROP(trailer);
-  JS_PROP(use);
-  JS_PROP(usehref);
+  JSE_PROP(leader);
+  JSE_PROP(startNew);
+  JSE_PROP(target);
+  JSE_PROP(targetType);
+  JSE_PROP(trailer);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
 };
 
 #endif  // FXJS_XFA_CJX_BREAKAFTER_H_

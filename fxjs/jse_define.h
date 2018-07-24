@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJX_DEFINE_H_
-#define FXJS_CJX_DEFINE_H_
+#ifndef FXJS_JSE_DEFINE_H_
+#define FXJS_JSE_DEFINE_H_
 
 #include <vector>
 
@@ -21,7 +21,7 @@ CJS_Return JSMethod(C* node,
   return (node->*M)(runtime, params);
 }
 
-#define JS_METHOD(method_name, class_name)                 \
+#define JSE_METHOD(method_name, class_name)                \
   static CJS_Return method_name##_static(                  \
       CJX_Object* node, CFX_V8* runtime,                   \
       const std::vector<v8::Local<v8::Value>>& params) {   \
@@ -31,7 +31,7 @@ CJS_Return JSMethod(C* node,
   CJS_Return method_name(CFX_V8* runtime,                  \
                          const std::vector<v8::Local<v8::Value>>& params)
 
-#define JS_PROP(prop_name) \
+#define JSE_PROP(prop_name) \
   void prop_name(CFXJSE_Value* pValue, bool bSetting, XFA_Attribute eAttribute)
 
-#endif  // FXJS_CJX_DEFINE_H_
+#endif  // FXJS_JSE_DEFINE_H_

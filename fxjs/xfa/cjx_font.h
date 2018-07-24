@@ -7,6 +7,7 @@
 #ifndef FXJS_XFA_CJX_FONT_H_
 #define FXJS_XFA_CJX_FONT_H_
 
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Font;
@@ -16,23 +17,23 @@ class CJX_Font : public CJX_Node {
   explicit CJX_Font(CXFA_Font* node);
   ~CJX_Font() override;
 
-  JS_PROP(baselineShift);
-  JS_PROP(fontHorizontalScale);
-  JS_PROP(fontVerticalScale);
-  JS_PROP(kerningMode);
-  JS_PROP(letterSpacing);
-  JS_PROP(lineThrough);
-  JS_PROP(lineThroughPeriod);
-  JS_PROP(overline);
-  JS_PROP(overlinePeriod);
-  JS_PROP(posture);
-  JS_PROP(size);
-  JS_PROP(typeface);
-  JS_PROP(underline);
-  JS_PROP(underlinePeriod);
-  JS_PROP(use);
-  JS_PROP(usehref);
-  JS_PROP(weight);
+  JSE_PROP(baselineShift);
+  JSE_PROP(fontHorizontalScale);
+  JSE_PROP(fontVerticalScale);
+  JSE_PROP(kerningMode);
+  JSE_PROP(letterSpacing);
+  JSE_PROP(lineThrough);
+  JSE_PROP(lineThroughPeriod);
+  JSE_PROP(overline);
+  JSE_PROP(overlinePeriod);
+  JSE_PROP(posture);
+  JSE_PROP(size);
+  JSE_PROP(typeface);
+  JSE_PROP(underline);
+  JSE_PROP(underlinePeriod);
+  JSE_PROP(use);
+  JSE_PROP(usehref);
+  JSE_PROP(weight);
 };
 
 #endif  // FXJS_XFA_CJX_FONT_H_

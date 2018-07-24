@@ -7,7 +7,7 @@
 #ifndef FXJS_XFA_CJX_TEXTNODE_H_
 #define FXJS_XFA_CJX_TEXTNODE_H_
 
-#include "fxjs/cjx_define.h"
+#include "fxjs/jse_define.h"
 #include "fxjs/xfa/cjx_node.h"
 
 class CXFA_Node;
@@ -17,8 +17,8 @@ class CJX_TextNode : public CJX_Node {
   explicit CJX_TextNode(CXFA_Node* node);
   ~CJX_TextNode() override;
 
-  JS_PROP(defaultValue); /* {default} */
-  JS_PROP(value);
+  JSE_PROP(defaultValue); /* {default} */
+  JSE_PROP(value);
 };
 
 #endif  // FXJS_XFA_CJX_TEXTNODE_H_
