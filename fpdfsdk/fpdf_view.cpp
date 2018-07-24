@@ -313,7 +313,7 @@ FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
   if (!pDoc || !pDoc->GetParser())
     return -1;
 
-  CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
+  const CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
   return pDict ? pDict->GetIntegerFor("R") : -1;
 }
 

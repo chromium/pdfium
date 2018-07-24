@@ -75,7 +75,8 @@ class CPDF_Creator {
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   UnownedPtr<const CPDF_Parser> const m_pParser;
-  UnownedPtr<CPDF_Dictionary> m_pEncryptDict;
+  UnownedPtr<const CPDF_Dictionary> m_pEncryptDict;
+  std::unique_ptr<CPDF_Dictionary> m_pNewEncryptDict;
   fxcrt::MaybeOwned<CPDF_SecurityHandler> m_pSecurityHandler;
   UnownedPtr<const CPDF_Object> m_pMetadata;
   uint32_t m_dwLastObjNum;

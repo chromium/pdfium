@@ -119,7 +119,13 @@ bool CPDF_SecurityHandler::CheckSecurity(const ByteString& password) {
 }
 
 uint32_t CPDF_SecurityHandler::GetPermissions() const {
-  return m_bOwnerUnlocked ? 0xFFFFFFFF : m_Permissions;
+  uint32_t dwPermission = m_bOwnerUnlocked ? 0xFFFFFFFF : m_Permissions;
+  if (m_pEncryptDict && m_pEncryptDict->GetStringFor("Filter") == "Standard") {
+    // See PDF Reference 1.7, page 123, table 3.20.
+    dwPermission &= 0xFFFFFFFC;
+    dwPermission |= 0xFFFFF0C0;
+  }
+  return dwPermission;
 }
 
 static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,

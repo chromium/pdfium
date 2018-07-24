@@ -619,10 +619,11 @@ void CPDF_Creator::InitID() {
   if (m_pEncryptDict) {
     ASSERT(m_pParser);
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
-      ByteString user_pass = m_pParser->GetPassword();
+      m_pNewEncryptDict = ToDictionary(m_pEncryptDict->Clone());
+      m_pEncryptDict = m_pNewEncryptDict.get();
       m_pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
-      m_pSecurityHandler->OnCreate(m_pEncryptDict.Get(), m_pIDArray.get(),
-                                   user_pass);
+      m_pSecurityHandler->OnCreate(m_pNewEncryptDict.get(), m_pIDArray.get(),
+                                   m_pParser->GetPassword());
       m_bSecurityChanged = true;
     }
   }
@@ -666,6 +667,7 @@ void CPDF_Creator::RemoveSecurity() {
   m_pSecurityHandler.Reset();
   m_bSecurityChanged = true;
   m_pEncryptDict = nullptr;
+  m_pNewEncryptDict.reset();
 }
 
 CPDF_CryptoHandler* CPDF_Creator::GetCryptoHandler() {

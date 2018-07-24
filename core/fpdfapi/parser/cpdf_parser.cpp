@@ -119,10 +119,6 @@ bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
   return GetObjectType(objnum) == ObjectType::kFree;
 }
 
-void CPDF_Parser::SetEncryptDictionary(const CPDF_Dictionary* pDict) {
-  m_pEncryptDict = pDict ? ToDictionary(pDict->Clone()) : nullptr;
-}
-
 RetainPtr<IFX_SeekableReadStream> CPDF_Parser::GetFileAccess() const {
   return m_pSyntax->GetFileAccess();
 }
@@ -260,37 +256,24 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
   if (!GetTrailer())
     return FORMAT_ERROR;
 
-  const CPDF_Object* pEncryptObj = GetTrailer()->GetObjectFor("Encrypt");
-  if (pEncryptObj) {
-    if (const CPDF_Dictionary* pEncryptDict = pEncryptObj->AsDictionary()) {
-      SetEncryptDictionary(pEncryptDict);
-    } else if (const CPDF_Reference* pRef = pEncryptObj->AsReference()) {
-      pEncryptObj =
-          m_pObjectsHolder->GetOrParseIndirectObject(pRef->GetRefObjNum());
-      if (pEncryptObj)
-        SetEncryptDictionary(pEncryptObj->GetDict());
-    }
-  }
+  const CPDF_Dictionary* pEncryptDict = GetEncryptDict();
+  if (!pEncryptDict)
+    return SUCCESS;
 
-  if (m_pEncryptDict) {
-    ByteString filter = m_pEncryptDict->GetStringFor("Filter");
-    if (filter != "Standard")
-      return HANDLER_ERROR;
+  if (pEncryptDict->GetStringFor("Filter") != "Standard")
+    return HANDLER_ERROR;
 
-    std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler =
-        pdfium::MakeUnique<CPDF_SecurityHandler>();
-    if (!pSecurityHandler->OnInit(m_pEncryptDict.get(), GetIDArray(),
-                                  m_Password))
-      return PASSWORD_ERROR;
+  std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler =
+      pdfium::MakeUnique<CPDF_SecurityHandler>();
+  if (!pSecurityHandler->OnInit(pEncryptDict, GetIDArray(), m_Password))
+    return PASSWORD_ERROR;
 
-    m_pSecurityHandler = std::move(pSecurityHandler);
-  }
+  m_pSecurityHandler = std::move(pSecurityHandler);
   return SUCCESS;
 }
 
 void CPDF_Parser::ReleaseEncryptHandler() {
   m_pSecurityHandler.reset();
-  SetEncryptDictionary(nullptr);
 }
 
 // Ideally, all the cross reference entries should be verified.
@@ -828,6 +811,24 @@ CPDF_Dictionary* CPDF_Parser::GetRoot() const {
   return obj ? obj->GetDict() : nullptr;
 }
 
+const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {
+  if (!GetTrailer())
+    return nullptr;
+
+  const CPDF_Object* pEncryptObj = GetTrailer()->GetObjectFor("Encrypt");
+  if (!pEncryptObj)
+    return nullptr;
+
+  if (pEncryptObj->IsDictionary())
+    return ToDictionary(pEncryptObj);
+
+  if (pEncryptObj->IsReference()) {
+    return ToDictionary(m_pObjectsHolder->GetOrParseIndirectObject(
+        pEncryptObj->AsReference()->GetRefObjNum()));
+  }
+  return nullptr;
+}
+
 const CPDF_Dictionary* CPDF_Parser::GetTrailer() const {
   return m_CrossRefTable->trailer();
 }
@@ -954,16 +955,7 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Parser::LoadTrailerV4() {
 }
 
 uint32_t CPDF_Parser::GetPermissions() const {
-  if (!m_pSecurityHandler)
-    return 0xFFFFFFFF;
-
-  uint32_t dwPermission = m_pSecurityHandler->GetPermissions();
-  if (m_pEncryptDict && m_pEncryptDict->GetStringFor("Filter") == "Standard") {
-    // See PDF Reference 1.7, page 123, table 3.20.
-    dwPermission &= 0xFFFFFFFC;
-    dwPermission |= 0xFFFFF0C0;
-  }
-  return dwPermission;
+  return m_pSecurityHandler ? m_pSecurityHandler->GetPermissions() : 0xFFFFFFFF;
 }
 
 std::unique_ptr<CPDF_LinearizedHeader> CPDF_Parser::ParseLinearizedHeader() {

@@ -78,7 +78,7 @@ class CPDF_Parser {
   const CPDF_Array* GetIDArray() const;
   CPDF_Dictionary* GetRoot() const;
 
-  CPDF_Dictionary* GetEncryptDict() const { return m_pEncryptDict.get(); }
+  const CPDF_Dictionary* GetEncryptDict() const;
 
   std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum);
 
@@ -141,7 +141,6 @@ class CPDF_Parser {
   Error LoadLinearizedMainXRefTable();
   const CPDF_ObjectStream* GetObjectStream(uint32_t object_number);
   std::unique_ptr<CPDF_LinearizedHeader> ParseLinearizedHeader();
-  void SetEncryptDictionary(const CPDF_Dictionary* pDict);
   void ShrinkObjectMap(uint32_t size);
   // A simple check whether the cross reference table matches with
   // the objects.
@@ -172,7 +171,6 @@ class CPDF_Parser {
   // m_CrossRefTable must be destroyed after m_pSecurityHandler due to the
   // ownership of the ID array data.
   std::unique_ptr<CPDF_CrossRefTable> m_CrossRefTable;
-  std::unique_ptr<CPDF_Dictionary> m_pEncryptDict;
   FX_FILESIZE m_LastXRefOffset;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   ByteString m_Password;
