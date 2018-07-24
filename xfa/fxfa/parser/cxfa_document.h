@@ -79,6 +79,7 @@ class CXFA_Document : public CXFA_NodeOwner {
   bool IsInteractive();
   XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }
   XFA_VERSION RecognizeXFAVersionNumber(const WideString& wsTemplateNS);
+  FormType GetFormType() const;
 
   CXFA_Node* CreateNode(XFA_PacketType packet, XFA_Element eElement);
 

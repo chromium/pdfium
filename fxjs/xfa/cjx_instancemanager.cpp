@@ -12,6 +12,7 @@
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_instancemanager.h"
@@ -135,6 +136,10 @@ int32_t CJX_InstanceManager::MoveInstance(int32_t iTo, int32_t iFrom) {
 CJS_Return CJX_InstanceManager::moveInstance(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
+  if (doc->GetFormType() != FormType::kXFAFull)
+    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+
   if (params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -162,6 +167,10 @@ CJS_Return CJX_InstanceManager::moveInstance(
 CJS_Return CJX_InstanceManager::removeInstance(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
+  if (doc->GetFormType() != FormType::kXFAFull)
+    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -202,6 +211,10 @@ CJS_Return CJX_InstanceManager::removeInstance(
 CJS_Return CJX_InstanceManager::setInstances(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
+  if (doc->GetFormType() != FormType::kXFAFull)
+    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+
   if (params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -212,6 +225,10 @@ CJS_Return CJX_InstanceManager::setInstances(
 CJS_Return CJX_InstanceManager::addInstance(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
+  if (doc->GetFormType() != FormType::kXFAFull)
+    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+
   if (!params.empty() && params.size() != 1)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 
@@ -253,6 +270,10 @@ CJS_Return CJX_InstanceManager::addInstance(
 CJS_Return CJX_InstanceManager::insertInstance(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
+  if (doc->GetFormType() != FormType::kXFAFull)
+    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+
   if (params.size() != 1 && params.size() != 2)
     return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
 

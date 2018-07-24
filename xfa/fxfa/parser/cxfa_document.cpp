@@ -1478,6 +1478,10 @@ XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
   return eVersion;
 }
 
+FormType CXFA_Document::GetFormType() const {
+  return GetNotify()->GetHDOC()->GetFormType();
+}
+
 CXFA_Node* CXFA_Document::GetNodeByID(CXFA_Node* pRoot,
                                       const WideStringView& wsID) const {
   if (!pRoot || wsID.IsEmpty())
