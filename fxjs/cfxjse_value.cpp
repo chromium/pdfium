@@ -76,7 +76,7 @@ CFXJSE_HostObject* CFXJSE_Value::ToHostObject() const {
   if (!pValue->IsObject())
     return nullptr;
 
-  return FXJSE_RetrieveObjectBinding(pValue.As<v8::Object>(), nullptr);
+  return FXJSE_RetrieveObjectBinding(pValue.As<v8::Object>());
 }
 
 void CFXJSE_Value::SetObject(CFXJSE_HostObject* lpObject,

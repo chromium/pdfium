@@ -120,8 +120,8 @@ void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
   hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
 }
 
-CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
-                                               CFXJSE_Class* lpClass) {
+CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
+    v8::Local<v8::Object> hJSObject) {
   ASSERT(!hJSObject.IsEmpty());
   if (!hJSObject->IsObject())
     return nullptr;
@@ -140,13 +140,6 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(v8::Local<v8::Object> hJSObject,
   if (hObject->GetAlignedPointerFromInternalField(0) != g_FXJSEHostObjectTag)
     return nullptr;
 
-  if (lpClass) {
-    v8::Local<v8::FunctionTemplate> hClass =
-        v8::Local<v8::FunctionTemplate>::New(
-            lpClass->GetContext()->GetIsolate(), lpClass->GetTemplate());
-    if (!hClass->HasInstance(hObject))
-      return nullptr;
-  }
   return static_cast<CFXJSE_HostObject*>(
       hObject->GetAlignedPointerFromInternalField(1));
 }

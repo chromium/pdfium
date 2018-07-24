@@ -81,7 +81,7 @@ CXFA_Object* CFXJSE_Engine::ToObject(
     return nullptr;
 
   CFXJSE_HostObject* pHostObj =
-      FXJSE_RetrieveObjectBinding(info.Holder().As<v8::Object>(), nullptr);
+      FXJSE_RetrieveObjectBinding(info.Holder().As<v8::Object>());
   return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
 }
 
@@ -793,7 +793,7 @@ CXFA_Object* CFXJSE_Engine::ToXFAObject(v8::Local<v8::Value> obj) {
     return nullptr;
 
   CFXJSE_HostObject* pHostObj =
-      FXJSE_RetrieveObjectBinding(obj.As<v8::Object>(), nullptr);
+      FXJSE_RetrieveObjectBinding(obj.As<v8::Object>());
   return pHostObj ? pHostObj->AsCXFAObject() : nullptr;
 }
 
