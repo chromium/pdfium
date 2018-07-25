@@ -47,17 +47,16 @@ class CPDF_TestParser : public CPDF_Parser {
   }
 
   // Setup reading from a buffer and initial states.
-  bool InitTestFromBufferWithOffset(const unsigned char* buffer,
-                                    size_t len,
+  bool InitTestFromBufferWithOffset(pdfium::span<const uint8_t> buffer,
                                     FX_FILESIZE header_offset) {
     m_pSyntax = CPDF_SyntaxParser::CreateForTesting(
-        pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer, len),
+        pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer),
         header_offset);
     return true;
   }
 
-  bool InitTestFromBuffer(const unsigned char* buffer, size_t len) {
-    return InitTestFromBufferWithOffset(buffer, len, 0 /*header_offset*/);
+  bool InitTestFromBuffer(pdfium::span<const uint8_t> buffer) {
+    return InitTestFromBufferWithOffset(buffer, 0 /*header_offset*/);
   }
 
  private:
@@ -109,8 +108,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000000409 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(
-        parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
+    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 17, 81, 0, 331, 409};
@@ -140,8 +138,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(
-        parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
+    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 0,     0,     25325, 0, 0,    0,
@@ -179,8 +176,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(
-        parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
+    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 0, 0,     25325, 0, 0,    0,
@@ -217,8 +213,7 @@ TEST(cpdf_parser, LoadCrossRefV4) {
         "0000000179 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
-    ASSERT_TRUE(
-        parser.InitTestFromBuffer(xref_table, FX_ArraySize(xref_table)));
+    ASSERT_TRUE(parser.InitTestFromBuffer(xref_table));
 
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     const FX_FILESIZE offsets[] = {0, 23, 0, 0, 0, 45, 179};
@@ -264,8 +259,7 @@ TEST(cpdf_parser, ParseStartXRefWithHeaderOffset) {
   ASSERT_TRUE(pFileAccess->ReadBlock(&data.front() + kTestHeaderOffset, 0,
                                      pFileAccess->GetSize()));
   CPDF_TestParser parser;
-  parser.InitTestFromBufferWithOffset(&data.front(), data.size(),
-                                      kTestHeaderOffset);
+  parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
 
   EXPECT_EQ(100940, parser.ParseStartXRef());
   std::unique_ptr<CPDF_Object> cross_ref_v5_obj =
@@ -286,8 +280,7 @@ TEST(cpdf_parser, ParseLinearizedWithHeaderOffset) {
   ASSERT_TRUE(pFileAccess->ReadBlock(&data.front() + kTestHeaderOffset, 0,
                                      pFileAccess->GetSize()));
   CPDF_TestParser parser;
-  parser.InitTestFromBufferWithOffset(&data.front(), data.size(),
-                                      kTestHeaderOffset);
+  parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
 
   EXPECT_TRUE(parser.ParseLinearizedHeader());
 }

@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_stream.h"
+#include "third_party/base/span.h"
 
 // Output stream operator so GTEST macros work with CFX_DateTime objects.
 std::ostream& operator<<(std::ostream& os, const CFX_DateTime& dt);
@@ -37,29 +38,17 @@ class CFX_BufferSeekableReadStream : public IFX_SeekableReadStream {
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream:
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-    if (offset < 0 || static_cast<size_t>(offset) >= data_size_)
-      return false;
-
-    if (static_cast<size_t>(offset) + size > data_size_)
-      size = data_size_ - static_cast<size_t>(offset);
-    if (size == 0)
-      return false;
-
-    memcpy(buffer, data_ + offset, size);
-    return true;
-  }
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
   FX_FILESIZE GetSize() override {
-    return static_cast<FX_FILESIZE>(data_size_);
+    return static_cast<FX_FILESIZE>(data_.size());
   }
 
  private:
-  CFX_BufferSeekableReadStream(const unsigned char* src, size_t src_size);
+  explicit CFX_BufferSeekableReadStream(pdfium::span<const uint8_t> data);
   ~CFX_BufferSeekableReadStream() override;
 
-  const unsigned char* data_;
-  size_t data_size_;
+  pdfium::span<const uint8_t> data_;
 };
 
 #endif  // TESTING_FX_STRING_TESTHELPERS_H_

@@ -49,8 +49,7 @@ class TestLinearizedHeader : public CPDF_LinearizedHeader {
   static std::unique_ptr<CPDF_LinearizedHeader> MakeHeader(
       const std::string& inline_data) {
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
-        reinterpret_cast<const unsigned char*>(inline_data.data()),
-        inline_data.size()));
+        pdfium::as_bytes(pdfium::make_span(inline_data))));
     std::unique_ptr<CPDF_Dictionary> dict =
         ToDictionary(parser.GetObjectBody(nullptr));
     ASSERT(dict);

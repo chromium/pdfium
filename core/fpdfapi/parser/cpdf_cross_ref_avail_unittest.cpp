@@ -15,10 +15,9 @@
 namespace {
 
 std::unique_ptr<CPDF_SyntaxParser> MakeParserForBuffer(
-    const unsigned char* buffer,
-    size_t buffer_size) {
+    pdfium::span<const uint8_t> buffer) {
   return pdfium::MakeUnique<CPDF_SyntaxParser>(
-      pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer, buffer_size));
+      pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer));
 }
 
 }  // namespace
@@ -39,7 +38,7 @@ TEST(CPDF_CrossRefAvailTest, CheckCrossRefV4) {
       "/Info 15 0 R/Size 16>>";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser = MakeParserForBuffer(xref_table, FX_ArraySize(xref_table));
+  auto parser = MakeParserForBuffer(xref_table);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
 
@@ -56,7 +55,7 @@ TEST(CPDF_CrossRefAvailTest, CheckCrossRefStream) {
       "endobj\n";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser = MakeParserForBuffer(xref_stream, FX_ArraySize(xref_stream));
+  auto parser = MakeParserForBuffer(xref_stream);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
 
@@ -74,7 +73,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectStartOffset) {
 
   const FX_FILESIZE last_crossref_offset = 70000;
 
-  auto parser = MakeParserForBuffer(xref_stream, FX_ArraySize(xref_stream));
+  auto parser = MakeParserForBuffer(xref_stream);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
 
@@ -91,7 +90,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectPrevOffset) {
       "endobj\n";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser = MakeParserForBuffer(xref_stream, FX_ArraySize(xref_stream));
+  auto parser = MakeParserForBuffer(xref_stream);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
@@ -113,7 +112,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectPrevStreamOffset) {
       "/Info 15 0 R/Size 16 /XRefStm 70000>>";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser = MakeParserForBuffer(xref_table, FX_ArraySize(xref_table));
+  auto parser = MakeParserForBuffer(xref_table);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
@@ -125,8 +124,7 @@ TEST(CPDF_CrossRefAvailTest, IncorrectData) {
       "wfoihoiwfghouiafghwoigahfi";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser =
-      MakeParserForBuffer(incorrect_data, FX_ArraySize(incorrect_data));
+  auto parser = MakeParserForBuffer(incorrect_data);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
@@ -174,8 +172,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV4) {
            FXSYS_itoa(static_cast<int>(prev_offset), int_buffer, 10) + ">>\n";
   const FX_FILESIZE last_crossref_offset = static_cast<FX_FILESIZE>(cur_offset);
 
-  auto parser = MakeParserForBuffer(
-      reinterpret_cast<const unsigned char*>(table.data()), table.size());
+  auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
@@ -219,8 +216,7 @@ TEST(CPDF_CrossRefAvailTest, ThreeCrossRefV5) {
            "endobj\n";
   const FX_FILESIZE last_crossref_offset = static_cast<FX_FILESIZE>(cur_offset);
 
-  auto parser = MakeParserForBuffer(
-      reinterpret_cast<const unsigned char*>(table.data()), table.size());
+  auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
@@ -269,8 +265,7 @@ TEST(CPDF_CrossRefAvailTest, Mixed) {
            FXSYS_itoa(first_v5_table_offset, int_buffer, 10) + ">>\n";
   const FX_FILESIZE last_crossref_offset = last_v4_table_offset;
 
-  auto parser = MakeParserForBuffer(
-      reinterpret_cast<const unsigned char*>(table.data()), table.size());
+  auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataAvailable, cross_ref_avail->CheckAvail());
@@ -284,8 +279,7 @@ TEST(CPDF_CrossRefAvailTest, CrossRefV5IsNotStream) {
       "endobj\n";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser = MakeParserForBuffer(invalid_xref_stream,
-                                    FX_ArraySize(invalid_xref_stream));
+  auto parser = MakeParserForBuffer(invalid_xref_stream);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
@@ -308,7 +302,7 @@ TEST(CPDF_CrossRefAvailTest, CrossRefV4WithEncryptRef) {
       "/Info 15 0 R/Size 16>>";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser = MakeParserForBuffer(xref_table, FX_ArraySize(xref_table));
+  auto parser = MakeParserForBuffer(xref_table);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
@@ -324,7 +318,7 @@ TEST(CPDF_CrossRefAvailTest, CrossRefStreamWithEncryptRef) {
       "endobj\n";
   const FX_FILESIZE last_crossref_offset = 0;
 
-  auto parser = MakeParserForBuffer(xref_stream, FX_ArraySize(xref_stream));
+  auto parser = MakeParserForBuffer(xref_stream);
   auto cross_ref_avail = pdfium::MakeUnique<CPDF_CrossRefAvail>(
       parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::DataError, cross_ref_avail->CheckAvail());
