@@ -151,7 +151,7 @@ correctly appear.
 ## Waterfall
 
 The current health of the source tree can be found at
-http://build.chromium.org/p/client.pdfium/console
+https://ci.chromium.org/p/pdfium/g/main/console
 
 ## Community
 
