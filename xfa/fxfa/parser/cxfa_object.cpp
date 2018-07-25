@@ -15,6 +15,7 @@
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_thisproxy.h"
 #include "xfa/fxfa/parser/cxfa_treelist.h"
 
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
@@ -43,6 +44,10 @@ WideString CXFA_Object::GetSOMExpression() {
   return pScriptContext->GetSomExpression(ToNode(this));
 }
 
+CXFA_List* CXFA_Object::AsList() {
+  return IsList() ? static_cast<CXFA_List*>(this) : nullptr;
+}
+
 CXFA_Node* CXFA_Object::AsNode() {
   return IsNode() ? static_cast<CXFA_Node*>(this) : nullptr;
 }
@@ -51,18 +56,22 @@ CXFA_TreeList* CXFA_Object::AsTreeList() {
   return IsTreeList() ? static_cast<CXFA_TreeList*>(this) : nullptr;
 }
 
-const CXFA_Node* CXFA_Object::AsNode() const {
-  return IsNode() ? static_cast<const CXFA_Node*>(this) : nullptr;
+CXFA_ThisProxy* CXFA_Object::AsThisProxy() {
+  return IsThisProxy() ? static_cast<CXFA_ThisProxy*>(this) : nullptr;
 }
 
-const CXFA_TreeList* CXFA_Object::AsTreeList() const {
-  return IsTreeList() ? static_cast<const CXFA_TreeList*>(this) : nullptr;
+CXFA_List* ToList(CXFA_Object* pObj) {
+  return pObj ? pObj->AsList() : nullptr;
 }
 
 CXFA_Node* ToNode(CXFA_Object* pObj) {
   return pObj ? pObj->AsNode() : nullptr;
 }
 
-const CXFA_Node* ToNode(const CXFA_Object* pObj) {
-  return pObj ? pObj->AsNode() : nullptr;
+CXFA_TreeList* ToTreeList(CXFA_Object* pObj) {
+  return pObj ? pObj->AsTreeList() : nullptr;
+}
+
+CXFA_ThisProxy* ToThisProxy(CXFA_Object* pObj) {
+  return pObj ? pObj->AsThisProxy() : nullptr;
 }

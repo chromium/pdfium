@@ -10,15 +10,9 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-// static
-CXFA_ThisProxy* CXFA_ThisProxy::FromCXFAObject(CXFA_Object* that) {
-  return that && that->IsVariablesThis() ? static_cast<CXFA_ThisProxy*>(that)
-                                         : nullptr;
-}
-
 CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode)
     : CXFA_Object(pThisNode->GetDocument(),
-                  XFA_ObjectType::VariablesThis,
+                  XFA_ObjectType::ThisProxy,
                   XFA_Element::Unknown,
                   WideStringView(),
                   pdfium::MakeUnique<CJX_Object>(this)),

@@ -28,7 +28,7 @@ CJX_List::CJX_List(CXFA_List* list) : CJX_Object(list) {
 CJX_List::~CJX_List() {}
 
 CXFA_List* CJX_List::GetXFAList() {
-  return static_cast<CXFA_List*>(GetXFAObject());
+  return ToList(GetXFAObject());
 }
 
 CJS_Return CJX_List::append(CFX_V8* runtime,

@@ -103,12 +103,8 @@ CJX_Node::CJX_Node(CXFA_Node* node) : CJX_Tree(node) {
 
 CJX_Node::~CJX_Node() = default;
 
-CXFA_Node* CJX_Node::GetXFANode() {
-  return static_cast<CXFA_Node*>(GetXFAObject());
-}
-
-const CXFA_Node* CJX_Node::GetXFANode() const {
-  return static_cast<const CXFA_Node*>(GetXFAObject());
+CXFA_Node* CJX_Node::GetXFANode() const {
+  return ToNode(GetXFAObject());
 }
 
 CJS_Return CJX_Node::applyXSL(CFX_V8* runtime,

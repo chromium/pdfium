@@ -25,7 +25,7 @@ CJX_TreeList::CJX_TreeList(CXFA_TreeList* list) : CJX_List(list) {
 CJX_TreeList::~CJX_TreeList() {}
 
 CXFA_TreeList* CJX_TreeList::GetXFATreeList() {
-  return static_cast<CXFA_TreeList*>(GetXFAObject());
+  return ToTreeList(GetXFAObject());
 }
 
 CJS_Return CJX_TreeList::namedItem(

@@ -67,9 +67,7 @@ const char kFormCalcRuntime[] = "pfm_rt";
 
 CXFA_ThisProxy* ToThisProxy(CFXJSE_Value* pValue) {
   CFXJSE_HostObject* pHostObject = pValue->ToHostObject();
-  if (!pHostObject)
-    return nullptr;
-  return CXFA_ThisProxy::FromCXFAObject(pHostObject->AsCXFAObject());
+  return pHostObject ? ToThisProxy(pHostObject->AsCXFAObject()) : nullptr;
 }
 
 }  // namespace
@@ -181,7 +179,7 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
   CXFA_Document* pDoc = lpOrginalNode->GetDocument();
   CFXJSE_Engine* lpScriptContext = pDoc->GetScriptContext();
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
-  if (lpOrginalNode->IsVariablesThis())
+  if (lpOrginalNode->IsThisProxy())
     pRefNode = ToNode(lpScriptContext->GetVariablesThis(lpOrginalNode));
 
   WideString wsPropName = WideString::FromUTF8(szPropName);
@@ -193,7 +191,7 @@ void CFXJSE_Engine::GlobalPropertySetter(CFXJSE_Value* pObject,
           true)) {
     return;
   }
-  if (lpOrginalNode->IsVariablesThis()) {
+  if (lpOrginalNode->IsThisProxy()) {
     if (pValue && pValue->IsUndefined()) {
       pObject->SetObjectOwnProperty(szPropName, pValue);
       return;
@@ -234,7 +232,7 @@ void CFXJSE_Engine::GlobalPropertyGetter(CFXJSE_Value* pObject,
   }
 
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
-  if (pOriginalObject->IsVariablesThis())
+  if (pOriginalObject->IsThisProxy())
     pRefNode = ToNode(lpScriptContext->GetVariablesThis(pOriginalObject));
 
   if (lpScriptContext->QueryNodeByFlag(
@@ -473,7 +471,7 @@ CFXJSE_Context* CFXJSE_Engine::CreateVariablesContext(CXFA_Node* pScriptNode,
 
 CXFA_Object* CFXJSE_Engine::GetVariablesThis(CXFA_Object* pObject,
                                              bool bScriptNode) {
-  CXFA_ThisProxy* pProxy = CXFA_ThisProxy::FromCXFAObject(pObject);
+  CXFA_ThisProxy* pProxy = ToThisProxy(pObject);
   if (!pProxy)
     return pObject;
 
