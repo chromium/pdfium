@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
-#include "core/fxcrt/cfx_memorystream.h"
+
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/string_write_stream.h"
 #include "testing/test_support.h"
@@ -82,13 +83,12 @@ TEST(CFX_XMLInstructionTest, SaveAcrobat) {
 }
 
 TEST(CFX_XMLInstructionTest, ParseAndReSave) {
-  const char* input =
+  static const char input[] =
       "<?acrobat http://www.xfa.org/schema/xfa-template/3.3/ Display:1 ?>\n"
       "<node></node>";
 
-  auto in_stream = pdfium::MakeRetain<CFX_MemoryStream>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-      false);
+  auto in_stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+      pdfium::as_bytes(pdfium::make_span(input)));
 
   CFX_XMLParser parser(in_stream);
   std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
@@ -116,14 +116,13 @@ TEST(CFX_XMLInstructionTest, ParseAndReSave) {
 }
 
 TEST(CFX_XMLInstructionTest, ParseAndReSaveInnerInstruction) {
-  const char* input =
+  static const char input[] =
       "<node>\n"
       "<?acrobat http://www.xfa.org/schema/xfa-template/3.3/ Display:1 ?>\n"
       "</node>";
 
-  auto in_stream = pdfium::MakeRetain<CFX_MemoryStream>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-      false);
+  auto in_stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+      pdfium::as_bytes(pdfium::make_span(input)));
 
   CFX_XMLParser parser(in_stream);
   std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();

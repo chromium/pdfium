@@ -318,8 +318,9 @@ CXFA_DocumentParser::CXFA_DocumentParser(CXFA_Document* pFactory)
 
 CXFA_DocumentParser::~CXFA_DocumentParser() = default;
 
-bool CXFA_DocumentParser::Parse(const RetainPtr<IFX_SeekableStream>& pStream,
-                                XFA_PacketType ePacketID) {
+bool CXFA_DocumentParser::Parse(
+    const RetainPtr<IFX_SeekableReadStream>& pStream,
+    XFA_PacketType ePacketID) {
   xml_doc_ = LoadXML(pStream);
   if (!xml_doc_)
     return false;
@@ -342,7 +343,7 @@ CFX_XMLNode* CXFA_DocumentParser::ParseXMLData(const ByteString& wsXML) {
 }
 
 std::unique_ptr<CFX_XMLDocument> CXFA_DocumentParser::LoadXML(
-    const RetainPtr<IFX_SeekableStream>& pStream) {
+    const RetainPtr<IFX_SeekableReadStream>& pStream) {
   ASSERT(pStream);
 
   CFX_XMLParser parser(pStream);

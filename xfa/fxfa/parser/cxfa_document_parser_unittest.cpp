@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
-#include "core/fxcrt/cfx_memorystream.h"
+
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -31,16 +32,15 @@ class CXFA_DocumentParserTest : public testing::Test {
 };
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOff) {
-  const char* input =
+  static const char input[] =
       "<config>\n"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
       "v2.7-scripting:0 ?>\n"
       "</config>";
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
 
-  auto stream = pdfium::MakeRetain<CFX_MemoryStream>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-      false);
+  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+      pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
@@ -49,7 +49,7 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOff) {
 }
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOn) {
-  const char* input =
+  static const char input[] =
       "<config>\n"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
       "v2.7-scripting:1 ?>\n"
@@ -57,9 +57,8 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOn) {
 
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
 
-  auto stream = pdfium::MakeRetain<CFX_MemoryStream>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-      false);
+  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+      pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
@@ -68,16 +67,15 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOn) {
 }
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScope) {
-  const char* input =
+  static const char input[] =
       "<config>"
       "<?acrobat JavaScript strictScoping ?>\n"
       "</config>";
 
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
 
-  auto stream = pdfium::MakeRetain<CFX_MemoryStream>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-      false);
+  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+      pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
@@ -86,16 +84,15 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScope) {
 }
 
 TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScopeBad) {
-  const char* input =
+  static const char input[] =
       "<config>"
       "<?acrobat JavaScript otherScoping ?>\n"
       "</config>";
 
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
 
-  auto stream = pdfium::MakeRetain<CFX_MemoryStream>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-      false);
+  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+      pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();
@@ -104,7 +101,7 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScopeBad) {
 }
 
 TEST_F(CXFA_DocumentParserTest, MultipleXMLInstructions) {
-  const char* input =
+  static const char input[] =
       "<config>"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
       "v2.7-scripting:1 ?>\n"
@@ -114,9 +111,8 @@ TEST_F(CXFA_DocumentParserTest, MultipleXMLInstructions) {
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
 
-  auto stream = pdfium::MakeRetain<CFX_MemoryStream>(
-      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-      false);
+  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+      pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
   CXFA_Node* root = GetParser()->GetRootNode();

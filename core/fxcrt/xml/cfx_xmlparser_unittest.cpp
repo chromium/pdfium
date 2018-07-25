@@ -6,36 +6,33 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
 class CFX_XMLParserTest : public testing::Test {
  public:
-  std::unique_ptr<CFX_XMLDocument> Parse(const char* input) {
-    auto stream = pdfium::MakeRetain<CFX_MemoryStream>(
-        reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input),
-        false);
-
-    CFX_XMLParser parser(stream);
+  std::unique_ptr<CFX_XMLDocument> Parse(pdfium::span<const char> input) {
+    CFX_XMLParser parser(pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+        pdfium::as_bytes(input)));
     return parser.Parse();
   }
 };
 
 TEST_F(CFX_XMLParserTest, AttributesMustBeQuoted) {
-  const char* input =
+  static const char input[] =
       "<script display=1>\n"
       "</script>";
   ASSERT_TRUE(Parse(input) == nullptr);
 }
 
 TEST_F(CFX_XMLParserTest, Attributes) {
-  const char* input =
+  static const char input[] =
       "<script contentType=\"application/x-javascript\" display=\"1\">\n"
       "</script>";
 
@@ -50,7 +47,7 @@ TEST_F(CFX_XMLParserTest, Attributes) {
 }
 
 TEST_F(CFX_XMLParserTest, CData) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <![CDATA[\n"
       "    if (a[1] < 3)\n"
@@ -58,7 +55,7 @@ TEST_F(CFX_XMLParserTest, CData) {
       "  ]]>\n"
       "</script>";
 
-  const wchar_t* cdata =
+  static const wchar_t cdata[] =
       L"\n  \n"
       L"    if (a[1] < 3)\n"
       L"      app.alert(\"Tclams\");\n"
@@ -73,7 +70,7 @@ TEST_F(CFX_XMLParserTest, CData) {
 }
 
 TEST_F(CFX_XMLParserTest, CDataWithInnerScript) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <![CDATA[\n"
       "    if (a[1] < 3)\n"
@@ -82,7 +79,7 @@ TEST_F(CFX_XMLParserTest, CDataWithInnerScript) {
       "  ]]>\n"
       "</script>";
 
-  const wchar_t* cdata =
+  static const wchar_t cdata[] =
       L"\n  \n"
       L"    if (a[1] < 3)\n"
       L"      app.alert(\"Tclams\");\n"
@@ -98,7 +95,7 @@ TEST_F(CFX_XMLParserTest, CDataWithInnerScript) {
 }
 
 TEST_F(CFX_XMLParserTest, ArrowBangArrow) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <!>\n"
       "</script>";
@@ -112,7 +109,7 @@ TEST_F(CFX_XMLParserTest, ArrowBangArrow) {
 }
 
 TEST_F(CFX_XMLParserTest, ArrowBangBracketArrow) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <![>\n"
       "</script>";
@@ -126,7 +123,7 @@ TEST_F(CFX_XMLParserTest, ArrowBangBracketArrow) {
 }
 
 TEST_F(CFX_XMLParserTest, IncompleteCData) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <![CDATA>\n"
       "</script>";
@@ -140,7 +137,7 @@ TEST_F(CFX_XMLParserTest, IncompleteCData) {
 }
 
 TEST_F(CFX_XMLParserTest, UnClosedCData) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <![CDATA[\n"
       "</script>";
@@ -154,7 +151,7 @@ TEST_F(CFX_XMLParserTest, UnClosedCData) {
 }
 
 TEST_F(CFX_XMLParserTest, EmptyCData) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <![CDATA[]]>\n"
       "</script>";
@@ -168,7 +165,7 @@ TEST_F(CFX_XMLParserTest, EmptyCData) {
 }
 
 TEST_F(CFX_XMLParserTest, Comment) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <!-- A Comment -->\n"
       "</script>";
@@ -182,7 +179,7 @@ TEST_F(CFX_XMLParserTest, Comment) {
 }
 
 TEST_F(CFX_XMLParserTest, IncorrectCommentStart) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <!- A Comment -->\n"
       "</script>";
@@ -196,7 +193,7 @@ TEST_F(CFX_XMLParserTest, IncorrectCommentStart) {
 }
 
 TEST_F(CFX_XMLParserTest, CommentEmpty) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <!---->\n"
       "</script>";
@@ -210,7 +207,7 @@ TEST_F(CFX_XMLParserTest, CommentEmpty) {
 }
 
 TEST_F(CFX_XMLParserTest, CommentThreeDash) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <!--->\n"
       "</script>";
@@ -224,7 +221,7 @@ TEST_F(CFX_XMLParserTest, CommentThreeDash) {
 }
 
 TEST_F(CFX_XMLParserTest, CommentTwoDash) {
-  const char* input =
+  static const char input[] =
       "<script>\n"
       "  <!-->\n"
       "</script>";
@@ -237,7 +234,7 @@ TEST_F(CFX_XMLParserTest, CommentTwoDash) {
 }
 
 TEST_F(CFX_XMLParserTest, Entities) {
-  const char* input =
+  static const char input[] =
       "<script>"
       "&#66;"                     // B
       "&#x54;"                    // T
@@ -262,7 +259,7 @@ TEST_F(CFX_XMLParserTest, Entities) {
 }
 
 TEST_F(CFX_XMLParserTest, EntityOverflowHex) {
-  const char* input =
+  static const char input[] =
       "<script>"
       "&#xaDBDFFFFF;"
       "&#xafffffffffffffffffffffffffffffffff;"
@@ -277,7 +274,7 @@ TEST_F(CFX_XMLParserTest, EntityOverflowHex) {
 }
 
 TEST_F(CFX_XMLParserTest, EntityOverflowDecimal) {
-  const char* input =
+  static const char input[] =
       "<script>"
       "&#2914910205;"
       "&#29149102052342342134521341234512351234213452315;"
@@ -317,7 +314,7 @@ TEST_F(CFX_XMLParserTest, DoubleElementClose) {
 }
 
 TEST_F(CFX_XMLParserTest, ParseInstruction) {
-  const char* input =
+  static const char input[] =
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/3.3/ ?>"
       "<form></form>";
 
@@ -334,7 +331,7 @@ TEST_F(CFX_XMLParserTest, ParseInstruction) {
 }
 
 TEST_F(CFX_XMLParserTest, BadEntity) {
-  const char* input =
+  static const char input[] =
       "<script>"
       "Test &<p>; thing"
       "</script>";
