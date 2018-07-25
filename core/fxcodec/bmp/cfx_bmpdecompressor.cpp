@@ -66,13 +66,11 @@ void CFX_BmpDecompressor::Error() {
 
 void CFX_BmpDecompressor::ReadScanline(uint32_t row_num_,
                                        const std::vector<uint8_t>& row_buf) {
-  auto* p = static_cast<CFX_BmpContext*>(context_ptr_);
-  p->m_pDelegate->BmpReadScanline(row_num_, row_buf);
+  context_ptr_->m_pDelegate->BmpReadScanline(row_num_, row_buf);
 }
 
 bool CFX_BmpDecompressor::GetDataPosition(uint32_t rcd_pos) {
-  auto* p = reinterpret_cast<CFX_BmpContext*>(context_ptr_);
-  return p->m_pDelegate->BmpInputImagePositionBuf(rcd_pos);
+  return context_ptr_->m_pDelegate->BmpInputImagePositionBuf(rcd_pos);
 }
 
 int32_t CFX_BmpDecompressor::ReadHeader() {

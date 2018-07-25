@@ -16,6 +16,8 @@
 
 #include "core/fxcrt/cfx_memorystream.h"
 
+class CFX_BmpContext;
+
 class CFX_BmpDecompressor {
  public:
   CFX_BmpDecompressor();
@@ -28,12 +30,9 @@ class CFX_BmpDecompressor {
   FX_FILESIZE GetAvailInput(uint8_t** avail_buf);
 
   jmp_buf jmpbuf_;
-
-  void* context_ptr_;
-
+  CFX_BmpContext* context_ptr_;
   std::vector<uint8_t> out_row_buffer_;
   std::vector<uint32_t> palette_;
-
   uint32_t header_offset_;
   uint32_t width_;
   uint32_t height_;
@@ -56,7 +55,6 @@ class CFX_BmpDecompressor {
   uint32_t mask_red_;
   uint32_t mask_green_;
   uint32_t mask_blue_;
-
   int32_t decode_status_;
 
  private:
