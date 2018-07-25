@@ -83,6 +83,8 @@ class CPDF_HintTables {
     return m_SharedObjGroupInfos;
   }
 
+  FX_FILESIZE GetFirstPageObjOffset() const { return m_szFirstPageObjOffset; }
+
  protected:
   bool ReadPageHintTable(CFX_BitStream* hStream);
   bool ReadSharedObjHintTable(CFX_BitStream* hStream, uint32_t offset);
