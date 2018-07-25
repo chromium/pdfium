@@ -28,9 +28,48 @@
 
 namespace {
 
+bool PopupAppearsForAnnotType(CPDF_Annot::Subtype subtype) {
+  switch (subtype) {
+    case CPDF_Annot::Subtype::TEXT:
+    case CPDF_Annot::Subtype::LINE:
+    case CPDF_Annot::Subtype::SQUARE:
+    case CPDF_Annot::Subtype::CIRCLE:
+    case CPDF_Annot::Subtype::POLYGON:
+    case CPDF_Annot::Subtype::POLYLINE:
+    case CPDF_Annot::Subtype::HIGHLIGHT:
+    case CPDF_Annot::Subtype::UNDERLINE:
+    case CPDF_Annot::Subtype::SQUIGGLY:
+    case CPDF_Annot::Subtype::STRIKEOUT:
+    case CPDF_Annot::Subtype::STAMP:
+    case CPDF_Annot::Subtype::CARET:
+    case CPDF_Annot::Subtype::INK:
+    case CPDF_Annot::Subtype::FILEATTACHMENT:
+      return true;
+    case CPDF_Annot::Subtype::UNKNOWN:
+    case CPDF_Annot::Subtype::LINK:
+    case CPDF_Annot::Subtype::FREETEXT:
+    case CPDF_Annot::Subtype::POPUP:
+    case CPDF_Annot::Subtype::SOUND:
+    case CPDF_Annot::Subtype::MOVIE:
+    case CPDF_Annot::Subtype::WIDGET:
+    case CPDF_Annot::Subtype::SCREEN:
+    case CPDF_Annot::Subtype::PRINTERMARK:
+    case CPDF_Annot::Subtype::TRAPNET:
+    case CPDF_Annot::Subtype::WATERMARK:
+    case CPDF_Annot::Subtype::THREED:
+    case CPDF_Annot::Subtype::RICHMEDIA:
+    case CPDF_Annot::Subtype::XFAWIDGET:
+    default:
+      return false;
+  }
+}
+
 std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
                                              CPDF_Document* pDocument,
                                              CPDF_Page* pPage) {
+  if (!PopupAppearsForAnnotType(pAnnot->GetSubtype()))
+    return nullptr;
+
   CPDF_Dictionary* pParentDict = pAnnot->GetAnnotDict();
   if (!pParentDict)
     return nullptr;
