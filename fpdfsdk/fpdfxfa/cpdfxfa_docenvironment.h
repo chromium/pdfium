@@ -62,7 +62,9 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
              uint32_t dwOptions) override;
   FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) override;
 
+#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
   bool Submit(CXFA_FFDoc* hDoc, CXFA_Submit* submit) override;
+#endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
   bool GetPropertyFromNonXFAGlobalObject(CXFA_FFDoc* hDoc,
                                          const ByteStringView& szPropName,
@@ -76,10 +78,13 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
       const WideString& wsLink) override;
 
  private:
+#ifdef PDF_XFA_ELEMENT_SUBMIT_ENABLED
   bool OnBeforeNotifySubmit();
   void OnAfterNotifySubmit();
   bool NotifySubmit(bool bPrevOrPost);
   bool SubmitInternal(CXFA_FFDoc* hDoc, CXFA_Submit* submit);
+#endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
+
   bool MailToInfo(WideString& csURL,
                   WideString& csToAddress,
                   WideString& csCCAddress,
