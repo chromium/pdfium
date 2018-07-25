@@ -70,7 +70,29 @@ class ReadableSubStream : public IFX_SeekableReadStream {
 // static
 int CPDF_SyntaxParser::s_CurrentRecursionDepth = 0;
 
-CPDF_SyntaxParser::CPDF_SyntaxParser() = default;
+// static
+std::unique_ptr<CPDF_SyntaxParser> CPDF_SyntaxParser::CreateForTesting(
+    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    FX_FILESIZE HeaderOffset) {
+  return pdfium::MakeUnique<CPDF_SyntaxParser>(
+      pdfium::MakeRetain<CPDF_ReadValidator>(pFileAccess, nullptr),
+      HeaderOffset);
+}
+
+CPDF_SyntaxParser::CPDF_SyntaxParser(
+    const RetainPtr<IFX_SeekableReadStream>& pFileAccess)
+    : CPDF_SyntaxParser(
+          pdfium::MakeRetain<CPDF_ReadValidator>(pFileAccess, nullptr),
+          0) {}
+
+CPDF_SyntaxParser::CPDF_SyntaxParser(
+    const RetainPtr<CPDF_ReadValidator>& validator,
+    FX_FILESIZE HeaderOffset)
+    : m_pFileAccess(validator),
+      m_HeaderOffset(HeaderOffset),
+      m_FileLen(m_pFileAccess->GetSize()) {
+  ASSERT(m_HeaderOffset <= m_FileLen);
+}
 
 CPDF_SyntaxParser::~CPDF_SyntaxParser() = default;
 
@@ -700,28 +722,6 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     SetPos(end_stream_offset);
   }
   return pStream;
-}
-
-void CPDF_SyntaxParser::InitParser(
-    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
-    uint32_t HeaderOffset) {
-  ASSERT(pFileAccess);
-  return InitParserWithValidator(
-      pdfium::MakeRetain<CPDF_ReadValidator>(pFileAccess, nullptr),
-      HeaderOffset);
-}
-
-void CPDF_SyntaxParser::InitParserWithValidator(
-    const RetainPtr<CPDF_ReadValidator>& validator,
-    uint32_t HeaderOffset) {
-  ASSERT(validator);
-  m_pFileBuf.clear();
-  m_HeaderOffset = HeaderOffset;
-  m_FileLen = validator->GetSize();
-  ASSERT(m_HeaderOffset <= m_FileLen);
-  m_Pos = 0;
-  m_pFileAccess = validator;
-  m_BufOffset = 0;
 }
 
 uint32_t CPDF_SyntaxParser::GetDirectNum() {

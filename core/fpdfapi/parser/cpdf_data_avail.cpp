@@ -506,7 +506,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
   if (header_offset == kInvalidHeaderOffset)
     return DocAvailStatus::DataError;
 
-  m_parser.m_pSyntax->InitParserWithValidator(GetValidator(), header_offset);
+  m_parser.m_pSyntax =
+      pdfium::MakeUnique<CPDF_SyntaxParser>(GetValidator(), header_offset);
   m_pLinearized = m_parser.ParseLinearizedHeader();
   if (GetValidator()->has_read_problems())
     return DocAvailStatus::DataNotAvailable;

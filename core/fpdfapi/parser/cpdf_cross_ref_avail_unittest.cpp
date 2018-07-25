@@ -17,10 +17,8 @@ namespace {
 std::unique_ptr<CPDF_SyntaxParser> MakeParserForBuffer(
     const unsigned char* buffer,
     size_t buffer_size) {
-  auto parser = pdfium::MakeUnique<CPDF_SyntaxParser>();
-  parser->InitParser(
-      pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer, buffer_size), 0);
-  return parser;
+  return pdfium::MakeUnique<CPDF_SyntaxParser>(
+      pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer, buffer_size));
 }
 
 }  // namespace

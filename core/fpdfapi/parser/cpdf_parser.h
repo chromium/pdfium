@@ -116,10 +116,10 @@ class CPDF_Parser {
   using ObjectType = CPDF_CrossRefTable::ObjectType;
   using ObjectInfo = CPDF_CrossRefTable::ObjectInfo;
 
-  std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
-
   bool LoadCrossRefV4(FX_FILESIZE pos, bool bSkip);
   bool RebuildCrossRef();
+
+  std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
 
  private:
   friend class cpdf_parser_ParseStartXRefWithHeaderOffset_Test;
@@ -169,9 +169,9 @@ class CPDF_Parser {
   std::unique_ptr<ParsedObjectsHolder> m_pOwnedObjectsHolder;
   UnownedPtr<ParsedObjectsHolder> m_pObjectsHolder;
 
-  bool m_bHasParsed;
-  bool m_bXRefStream;
-  int m_FileVersion;
+  bool m_bHasParsed = false;
+  bool m_bXRefStream = false;
+  int m_FileVersion = 0;
   // m_CrossRefTable must be destroyed after m_pSecurityHandler due to the
   // ownership of the ID array data.
   std::unique_ptr<CPDF_CrossRefTable> m_CrossRefTable;

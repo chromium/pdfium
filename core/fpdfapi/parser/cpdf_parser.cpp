@@ -57,11 +57,7 @@ class ObjectsHolderStub : public CPDF_Parser::ParsedObjectsHolder {
 }  // namespace
 
 CPDF_Parser::CPDF_Parser(ParsedObjectsHolder* holder)
-    : m_pSyntax(pdfium::MakeUnique<CPDF_SyntaxParser>()),
-      m_pObjectsHolder(holder),
-      m_bHasParsed(false),
-      m_bXRefStream(false),
-      m_FileVersion(0),
+    : m_pObjectsHolder(holder),
       m_CrossRefTable(pdfium::MakeUnique<CPDF_CrossRefTable>()) {
   if (!holder) {
     m_pOwnedObjectsHolder = pdfium::MakeUnique<ObjectsHolderStub>();
@@ -131,7 +127,7 @@ bool CPDF_Parser::InitSyntaxParser(
   if (validator->GetSize() < header_offset + kPDFHeaderSize)
     return false;
 
-  m_pSyntax->InitParserWithValidator(validator, header_offset);
+  m_pSyntax = pdfium::MakeUnique<CPDF_SyntaxParser>(validator, header_offset);
   return ParseFileVersion();
 }
 

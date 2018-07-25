@@ -42,15 +42,15 @@ class CPDF_TestParser : public CPDF_Parser {
       return false;
 
     // For the test file, the header is set at the beginning.
-    m_pSyntax->InitParser(pFileAccess, 0);
+    m_pSyntax = pdfium::MakeUnique<CPDF_SyntaxParser>(pFileAccess);
     return true;
   }
 
   // Setup reading from a buffer and initial states.
   bool InitTestFromBufferWithOffset(const unsigned char* buffer,
                                     size_t len,
-                                    int header_offset) {
-    m_pSyntax->InitParser(
+                                    FX_FILESIZE header_offset) {
+    m_pSyntax = CPDF_SyntaxParser::CreateForTesting(
         pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer, len),
         header_offset);
     return true;

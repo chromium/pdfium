@@ -39,8 +39,7 @@ std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(uint8_t* pData,
 void CFDF_Document::ParseStream(
     const RetainPtr<IFX_SeekableReadStream>& pFile) {
   m_pFile = pFile;
-  CPDF_SyntaxParser parser;
-  parser.InitParser(m_pFile, 0);
+  CPDF_SyntaxParser parser(m_pFile);
   while (1) {
     bool bNumber;
     ByteString word = parser.GetNextWord(&bNumber);
