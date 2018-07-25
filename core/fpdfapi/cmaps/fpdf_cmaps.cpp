@@ -15,6 +15,17 @@
 
 namespace {
 
+struct SingleCmap {
+  uint16_t code;
+  uint16_t cid;
+};
+
+struct RangeCmap {
+  uint16_t low;
+  uint16_t high;
+  uint16_t cid;
+};
+
 const FXCMAP_CMap* FindNextCMap(const FXCMAP_CMap* pMap) {
   return pMap->m_UseOffset ? pMap + pMap->m_UseOffset : nullptr;
 }
@@ -67,10 +78,6 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
     if (!pMap->m_pWordMap)
       return 0;
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {
-      struct SingleCmap {
-        uint16_t code;
-        uint16_t cid;
-      };
       const auto* begin = reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
       const auto* end = begin + pMap->m_WordCount;
       const auto* found = std::lower_bound(
@@ -81,11 +88,6 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
         return found->cid;
     } else {
       ASSERT(pMap->m_WordMapType == FXCMAP_CMap::Range);
-      struct RangeCmap {
-        uint16_t low;
-        uint16_t high;
-        uint16_t cid;
-      };
       const auto* begin = reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
       const auto* end = begin + pMap->m_WordCount;
       const auto* found = std::lower_bound(
@@ -109,23 +111,21 @@ uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
   ASSERT(pMap);
   while (pMap) {
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {
-      const uint16_t* pCur = pMap->m_pWordMap;
-      const uint16_t* pEnd = pMap->m_pWordMap + pMap->m_WordCount * 2;
+      const auto* pCur = reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
+      const auto* pEnd = pCur + pMap->m_WordCount;
       while (pCur < pEnd) {
-        if (pCur[1] == cid)
-          return pCur[0];
-
-        pCur += 2;
+        if (pCur->cid == cid)
+          return pCur->code;
+        ++pCur;
       }
     } else {
       ASSERT(pMap->m_WordMapType == FXCMAP_CMap::Range);
-      const uint16_t* pCur = pMap->m_pWordMap;
-      const uint16_t* pEnd = pMap->m_pWordMap + pMap->m_WordCount * 3;
+      const auto* pCur = reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
+      const auto* pEnd = pCur + pMap->m_WordCount;
       while (pCur < pEnd) {
-        if (cid >= pCur[2] && cid <= pCur[2] + pCur[1] - pCur[0])
-          return pCur[0] + cid - pCur[2];
-
-        pCur += 3;
+        if (cid >= pCur->cid && cid <= pCur->cid + pCur->high - pCur->low)
+          return pCur->low + cid - pCur->cid;
+        ++pCur;
       }
     }
     pMap = FindNextCMap(pMap);
