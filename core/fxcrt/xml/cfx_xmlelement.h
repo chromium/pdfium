@@ -54,4 +54,10 @@ class CFX_XMLElement : public CFX_XMLNode {
   std::map<WideString, WideString> attrs_;
 };
 
+inline CFX_XMLElement* ToXMLElement(CFX_XMLNode* pNode) {
+  return pNode && pNode->GetType() == FX_XMLNODE_Element
+             ? static_cast<CFX_XMLElement*>(pNode)
+             : nullptr;
+}
+
 #endif  // CORE_FXCRT_XML_CFX_XMLELEMENT_H_

@@ -539,10 +539,9 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                            false);
             }
           } else {
-            CFX_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
-            ASSERT(pXMLNode->GetType() == FX_XMLNODE_Element);
-            static_cast<CFX_XMLElement*>(pXMLNode)->SetAttribute(
-                L"xfa:dataNode", L"dataGroup");
+            CFX_XMLElement* pElement =
+                ToXMLElement(pDataNode->GetXMLMappingNode());
+            pElement->SetAttribute(L"xfa:dataNode", L"dataGroup");
           }
         } else if (!wsValue.IsEmpty()) {
           pDataNode->JSObject()->SetAttributeValue(

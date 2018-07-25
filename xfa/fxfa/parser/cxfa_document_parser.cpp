@@ -669,11 +669,9 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_Data(
     if (pParentXMLNode)
       pParentXMLNode->RemoveChildNode(pXMLDocumentNode);
 
-    ASSERT(pXMLDocumentNode->GetType() == FX_XMLNODE_Element);
-    if (pXMLDocumentNode->GetType() == FX_XMLNODE_Element) {
-      static_cast<CFX_XMLElement*>(pXMLDocumentNode)
-          ->RemoveAttribute(L"xmlns:xfa");
-    }
+    CFX_XMLElement* pElement = ToXMLElement(pXMLDocumentNode);
+    pElement->RemoveAttribute(L"xmlns:xfa");
+
     // The node was either removed from the parent above, or already has no
     // parent so we can take ownership.
     pDataElement->AppendChild(pXMLDocumentNode);

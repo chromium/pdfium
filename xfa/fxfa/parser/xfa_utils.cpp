@@ -497,20 +497,13 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
   if (pDataNode->GetElementType() != XFA_Element::DataGroup)
     return;
 
+  CFX_XMLElement* pElement = ToXMLElement(pDataNode->GetXMLMappingNode());
   if (iChildNum > 0) {
-    CFX_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
-    ASSERT(pXMLNode->GetType() == FX_XMLNODE_Element);
-    CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-    if (pXMLElement->HasAttribute(L"xfa:dataNode"))
-      pXMLElement->RemoveAttribute(L"xfa:dataNode");
-
+    if (pElement->HasAttribute(L"xfa:dataNode"))
+      pElement->RemoveAttribute(L"xfa:dataNode");
     return;
   }
-
-  CFX_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
-  ASSERT(pXMLNode->GetType() == FX_XMLNODE_Element);
-  static_cast<CFX_XMLElement*>(pXMLNode)->SetAttribute(L"xfa:dataNode",
-                                                       L"dataGroup");
+  pElement->SetAttribute(L"xfa:dataNode", L"dataGroup");
 }
 
 void XFA_DataExporter_RegenerateFormFile(

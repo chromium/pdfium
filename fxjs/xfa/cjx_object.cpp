@@ -480,13 +480,11 @@ void CJX_Object::SetCData(XFA_Attribute eAttr,
     return;
   }
 
-  auto* elem = static_cast<CFX_XMLElement*>(xfaObj->GetXMLMappingNode());
-  ASSERT(elem->GetType() == FX_XMLNODE_Element);
-
   WideString wsAttrName = CXFA_Node::AttributeToName(eAttr);
   if (eAttr == XFA_Attribute::ContentType)
     wsAttrName = L"xfa:" + wsAttrName;
 
+  CFX_XMLElement* elem = ToXMLElement(xfaObj->GetXMLMappingNode());
   elem->SetAttribute(wsAttrName, wsValue);
   return;
 }
@@ -544,14 +542,10 @@ CFX_XMLElement* CJX_Object::SetValue(XFA_Attribute eAttr,
   OnChanging(eAttr, bNotify);
   SetMapModuleValue(pKey, pValue);
   OnChanged(eAttr, bNotify, false);
-  if (!ToNode(GetXFAObject())->IsNeedSavingXMLNode())
-    return nullptr;
 
-  auto* elem =
-      static_cast<CFX_XMLElement*>(ToNode(GetXFAObject())->GetXMLMappingNode());
-  ASSERT(elem->GetType() == FX_XMLNODE_Element);
-
-  return elem;
+  CXFA_Node* pNode = ToNode(GetXFAObject());
+  return pNode->IsNeedSavingXMLNode() ? ToXMLElement(pNode->GetXMLMappingNode())
+                                      : nullptr;
 }
 
 void CJX_Object::SetContent(const WideString& wsContent,

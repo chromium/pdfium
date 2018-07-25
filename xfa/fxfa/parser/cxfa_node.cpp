@@ -2712,11 +2712,10 @@ void CXFA_Node::SetImageEdit(const WideString& wsContentType,
   CXFA_Node* pHrefNode = pBind->GetFirstChild();
   if (pHrefNode) {
     pHrefNode->JSObject()->SetCData(XFA_Attribute::Value, wsHref, false, false);
-  } else {
-    CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
-    ASSERT(pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element);
-    static_cast<CFX_XMLElement*>(pXMLNode)->SetAttribute(L"href", wsHref);
+    return;
   }
+  CFX_XMLElement* pElement = ToXMLElement(pBind->GetXMLMappingNode());
+  pElement->SetAttribute(L"href", wsHref);
 }
 
 CXFA_FFWidget* CXFA_Node::GetNextWidget(CXFA_FFWidget* pWidget) {
