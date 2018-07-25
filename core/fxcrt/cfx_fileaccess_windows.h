@@ -8,8 +8,12 @@
 #define CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_
 
 #include "core/fxcrt/fileaccess_iface.h"
+#include "core/fxcrt/fx_system.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#error "Included on the wrong platform"
+#endif
+
 class CFX_FileAccess_Windows : public FileAccessIface {
  public:
   CFX_FileAccess_Windows();
@@ -34,6 +38,5 @@ class CFX_FileAccess_Windows : public FileAccessIface {
  protected:
   void* m_hFile;
 };
-#endif
 
 #endif  // CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_

@@ -11,8 +11,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/ptr_util.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-
 namespace {
 
 void GetFileMode(uint32_t dwMode,
@@ -35,18 +33,6 @@ void GetFileMode(uint32_t dwMode,
 std::unique_ptr<FileAccessIface> FileAccessIface::Create() {
   return pdfium::MakeUnique<CFX_FileAccess_Windows>();
 }
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-WINBASEAPI BOOL WINAPI GetFileSizeEx(HANDLE hFile, PLARGE_INTEGER lpFileSize);
-WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE hFile,
-                                        LARGE_INTEGER liDistanceToMove,
-                                        PLARGE_INTEGER lpNewFilePointer,
-                                        DWORD dwMoveMethod);
-#ifdef __cplusplus
-}
-#endif
 
 CFX_FileAccess_Windows::CFX_FileAccess_Windows() : m_hFile(nullptr) {}
 
@@ -193,4 +179,3 @@ bool CFX_FileAccess_Windows::Truncate(FX_FILESIZE szFile) {
 
   return !!::SetEndOfFile(m_hFile);
 }
-#endif

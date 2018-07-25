@@ -8,10 +8,14 @@
 #define CORE_FXCRT_CFX_FILEACCESS_POSIX_H_
 
 #include "core/fxcrt/fileaccess_iface.h"
+#include "core/fxcrt/fx_system.h"
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_ || \
-    _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
-    _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
+#if _FX_PLATFORM_ != _FX_PLATFORM_LINUX_ && \
+    _FX_PLATFORM_ != _FX_PLATFORM_APPLE_ && \
+    _FX_PLATFORM_ != _FX_PLATFORM_ANDROID_
+#error "Included on the wrong platform"
+#endif
+
 class CFX_FileAccess_Posix : public FileAccessIface {
  public:
   CFX_FileAccess_Posix();
@@ -36,6 +40,5 @@ class CFX_FileAccess_Posix : public FileAccessIface {
  protected:
   int32_t m_nFD;
 };
-#endif
 
 #endif  // CORE_FXCRT_CFX_FILEACCESS_POSIX_H_

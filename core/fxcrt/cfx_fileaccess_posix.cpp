@@ -22,10 +22,6 @@
 #define O_LARGEFILE 0
 #endif  // O_LARGEFILE
 
-#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_ || \
-    _FX_PLATFORM_ == _FX_PLATFORM_APPLE_ || \
-    _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
-
 namespace {
 
 void GetFileMode(uint32_t dwModes, int32_t& nFlags, int32_t& nMasks) {
@@ -153,5 +149,3 @@ bool CFX_FileAccess_Posix::Truncate(FX_FILESIZE szFile) {
 
   return !ftruncate(m_nFD, szFile);
 }
-
-#endif

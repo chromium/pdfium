@@ -854,8 +854,6 @@ jumbo_static_library("fxcrt") {
     "core/fxcrt/cfx_bitstream.h",
     "core/fxcrt/cfx_datetime.cpp",
     "core/fxcrt/cfx_datetime.h",
-    "core/fxcrt/cfx_fileaccess_windows.cpp",
-    "core/fxcrt/cfx_fileaccess_windows.h",
     "core/fxcrt/cfx_fixedbufgrow.h",
     "core/fxcrt/cfx_memorystream.cpp",
     "core/fxcrt/cfx_memorystream.h",
@@ -932,6 +930,12 @@ jumbo_static_library("fxcrt") {
     sources += [
       "core/fxcrt/cfx_fileaccess_posix.cpp",
       "core/fxcrt/cfx_fileaccess_posix.h",
+    ]
+  }
+  if (is_win) {
+    sources += [
+      "core/fxcrt/cfx_fileaccess_windows.cpp",
+      "core/fxcrt/cfx_fileaccess_windows.h",
     ]
   }
   if (pdf_enable_xfa) {
