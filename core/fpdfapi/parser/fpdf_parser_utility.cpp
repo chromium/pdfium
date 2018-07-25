@@ -71,17 +71,18 @@ const char PDF_CharType[256] = {
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'W'};
 
-int32_t GetHeaderOffset(const RetainPtr<IFX_SeekableReadStream>& pFile) {
-  const size_t kBufSize = 4;
+Optional<FX_FILESIZE> GetHeaderOffset(
+    const RetainPtr<IFX_SeekableReadStream>& pFile) {
+  static constexpr size_t kBufSize = 4;
   uint8_t buf[kBufSize];
-  for (int32_t offset = 0; offset <= 1024; ++offset) {
+  for (FX_FILESIZE offset = 0; offset <= 1024; ++offset) {
     if (!pFile->ReadBlock(buf, offset, kBufSize))
-      return kInvalidHeaderOffset;
+      return {};
 
     if (memcmp(buf, "%PDF", 4) == 0)
       return offset;
   }
-  return kInvalidHeaderOffset;
+  return {};
 }
 
 int32_t GetDirectInteger(const CPDF_Dictionary* pDict, const ByteString& key) {
@@ -114,7 +115,7 @@ ByteString PDF_NameDecode(const ByteStringView& bstr) {
 }
 
 ByteString PDF_NameEncode(const ByteString& orig) {
-  uint8_t* src_buf = (uint8_t*)orig.c_str();
+  const uint8_t* src_buf = reinterpret_cast<const uint8_t*>(orig.c_str());
   int src_len = orig.GetLength();
   int dest_len = 0;
   int i;

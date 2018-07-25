@@ -499,15 +499,15 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
     return DocAvailStatus::DataAvailable;
 
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());
-  const int32_t header_offset = GetHeaderOffset(GetValidator());
+  const Optional<FX_FILESIZE> header_offset = GetHeaderOffset(GetValidator());
   if (GetValidator()->has_read_problems())
     return DocAvailStatus::DataNotAvailable;
 
-  if (header_offset == kInvalidHeaderOffset)
+  if (!header_offset)
     return DocAvailStatus::DataError;
 
   m_parser.m_pSyntax =
-      pdfium::MakeUnique<CPDF_SyntaxParser>(GetValidator(), header_offset);
+      pdfium::MakeUnique<CPDF_SyntaxParser>(GetValidator(), *header_offset);
   m_pLinearized = m_parser.ParseLinearizedHeader();
   if (GetValidator()->has_read_problems())
     return DocAvailStatus::DataNotAvailable;

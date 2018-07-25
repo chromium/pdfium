@@ -121,13 +121,13 @@ void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
 
 bool CPDF_Parser::InitSyntaxParser(
     const RetainPtr<CPDF_ReadValidator>& validator) {
-  const int32_t header_offset = GetHeaderOffset(validator);
-  if (header_offset == kInvalidHeaderOffset)
+  const Optional<FX_FILESIZE> header_offset = GetHeaderOffset(validator);
+  if (!header_offset)
     return false;
-  if (validator->GetSize() < header_offset + kPDFHeaderSize)
+  if (validator->GetSize() < *header_offset + kPDFHeaderSize)
     return false;
 
-  m_pSyntax = pdfium::MakeUnique<CPDF_SyntaxParser>(validator, header_offset);
+  m_pSyntax = pdfium::MakeUnique<CPDF_SyntaxParser>(validator, *header_offset);
   return ParseFileVersion();
 }
 
