@@ -31,11 +31,10 @@ CPDFSDK_WidgetHandler::CPDFSDK_WidgetHandler(
 CPDFSDK_WidgetHandler::~CPDFSDK_WidgetHandler() {}
 
 bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET);
-  if (pAnnot->IsSignatureWidget())
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
+  if (pWidget->IsSignatureWidget())
     return false;
 
-  CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
   if (!pWidget->IsVisible())
     return false;
 

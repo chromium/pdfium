@@ -709,16 +709,21 @@ uint8_t* CCodec_FlatePredictorScanlineDecoder::v_GetNextLine() {
 }
 
 void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
-  if (m_Predictor == PredictorType::kPng) {
-    FlateOutput(m_pFlate.get(), m_pPredictRaw, m_PredictPitch + 1);
-    PNG_PredictLine(m_pScanline.get(), m_pPredictRaw, m_pLastLine,
-                    m_BitsPerComponent, m_Colors, m_Columns);
-    memcpy(m_pLastLine, m_pScanline.get(), m_PredictPitch);
-  } else {
-    ASSERT(m_Predictor == PredictorType::kFlate);
-    FlateOutput(m_pFlate.get(), m_pScanline.get(), m_Pitch);
-    TIFF_PredictLine(m_pScanline.get(), m_PredictPitch, m_bpc, m_nComps,
-                     m_OutputWidth);
+  switch (m_Predictor) {
+    case PredictorType::kPng:
+      FlateOutput(m_pFlate.get(), m_pPredictRaw, m_PredictPitch + 1);
+      PNG_PredictLine(m_pScanline.get(), m_pPredictRaw, m_pLastLine,
+                      m_BitsPerComponent, m_Colors, m_Columns);
+      memcpy(m_pLastLine, m_pScanline.get(), m_PredictPitch);
+      break;
+    case PredictorType::kFlate:
+      FlateOutput(m_pFlate.get(), m_pScanline.get(), m_Pitch);
+      TIFF_PredictLine(m_pScanline.get(), m_PredictPitch, m_bpc, m_nComps,
+                       m_OutputWidth);
+      break;
+    default:
+      NOTREACHED();
+      break;
   }
 }
 
@@ -732,16 +737,21 @@ void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
     bytes_to_go -= read_leftover;
   }
   while (bytes_to_go) {
-    if (m_Predictor == PredictorType::kPng) {
-      FlateOutput(m_pFlate.get(), m_pPredictRaw, m_PredictPitch + 1);
-      PNG_PredictLine(m_pPredictBuffer, m_pPredictRaw, m_pLastLine,
-                      m_BitsPerComponent, m_Colors, m_Columns);
-      memcpy(m_pLastLine, m_pPredictBuffer, m_PredictPitch);
-    } else {
-      ASSERT(m_Predictor == PredictorType::kFlate);
-      FlateOutput(m_pFlate.get(), m_pPredictBuffer, m_PredictPitch);
-      TIFF_PredictLine(m_pPredictBuffer, m_PredictPitch, m_BitsPerComponent,
-                       m_Colors, m_Columns);
+    switch (m_Predictor) {
+      case PredictorType::kPng:
+        FlateOutput(m_pFlate.get(), m_pPredictRaw, m_PredictPitch + 1);
+        PNG_PredictLine(m_pPredictBuffer, m_pPredictRaw, m_pLastLine,
+                        m_BitsPerComponent, m_Colors, m_Columns);
+        memcpy(m_pLastLine, m_pPredictBuffer, m_PredictPitch);
+        break;
+      case PredictorType::kFlate:
+        FlateOutput(m_pFlate.get(), m_pPredictBuffer, m_PredictPitch);
+        TIFF_PredictLine(m_pPredictBuffer, m_PredictPitch, m_BitsPerComponent,
+                         m_Colors, m_Columns);
+        break;
+      default:
+        NOTREACHED();
+        break;
     }
     size_t read_bytes =
         m_PredictPitch > bytes_to_go ? bytes_to_go : m_PredictPitch;
@@ -807,17 +817,22 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
     FlateUncompress(pdfium::make_span(src_buf, src_size), estimated_size,
                     *dest_buf, *dest_size, offset);
   }
-  if (predictor_type == PredictorType::kNone)
-    return offset;
 
-  bool ret;
-  if (predictor_type == PredictorType::kPng) {
-    ret =
-        PNG_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent, Columns);
-  } else {
-    ASSERT(predictor_type == PredictorType::kFlate);
-    ret = TIFF_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent,
-                         Columns);
+  bool ret = false;
+  switch (predictor_type) {
+    case PredictorType::kNone:
+      return offset;
+    case PredictorType::kPng:
+      ret = PNG_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent,
+                          Columns);
+      break;
+    case PredictorType::kFlate:
+      ret = TIFF_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent,
+                           Columns);
+      break;
+    default:
+      NOTREACHED();
+      break;
   }
   return ret ? offset : FX_INVALID_OFFSET;
 }

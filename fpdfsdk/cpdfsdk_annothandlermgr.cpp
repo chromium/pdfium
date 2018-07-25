@@ -16,6 +16,7 @@
 #include "fpdfsdk/cpdfsdk_datetime.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/cpdfsdk_widgethandler.h"
 #include "third_party/base/ptr_util.h"
 
@@ -330,8 +331,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
 #endif  // PDF_ENABLE_XFA
 
   // For PDF annots.
-  ASSERT(pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET);
-  CPDFSDK_AnnotIterator ai(pSDKAnnot->GetPageView(),
-                           pSDKAnnot->GetAnnotSubtype());
-  return bNext ? ai.GetNextAnnot(pSDKAnnot) : ai.GetPrevAnnot(pSDKAnnot);
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pSDKAnnot);
+  CPDFSDK_AnnotIterator ai(pWidget->GetPageView(), pWidget->GetAnnotSubtype());
+  return bNext ? ai.GetNextAnnot(pWidget) : ai.GetPrevAnnot(pWidget);
 }

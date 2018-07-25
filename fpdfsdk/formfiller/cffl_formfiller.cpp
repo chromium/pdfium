@@ -16,14 +16,6 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 
-namespace {
-
-CPDFSDK_Widget* CPDFSDKAnnotToWidget(CPDFSDK_Annot* annot) {
-  return static_cast<CPDFSDK_Widget*>(annot);
-}
-
-}  // namespace
-
 CFFL_FormFiller::CFFL_FormFiller(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDFSDK_Widget* pWidget)
     : m_pFormFillEnv(pFormFillEnv), m_pWidget(pWidget), m_bValid(false) {
@@ -71,8 +63,6 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              CFX_RenderDevice* pDevice,
                              const CFX_Matrix& mtUser2Device) {
-  ASSERT(pAnnot->GetPDFAnnot()->GetSubtype() == CPDF_Annot::Subtype::WIDGET);
-
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, false)) {
     CFX_Matrix mt = GetCurMatrix();
     mt.Concat(mtUser2Device);
@@ -80,7 +70,7 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
     return;
   }
 
-  CPDFSDK_Widget* pWidget = CPDFSDKAnnotToWidget(pAnnot);
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   if (!CFFL_InteractiveFormFiller::IsVisible(pWidget))
     return;
 
@@ -91,8 +81,8 @@ void CFFL_FormFiller::OnDrawDeactive(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot,
                                      CFX_RenderDevice* pDevice,
                                      const CFX_Matrix& mtUser2Device) {
-  CPDFSDKAnnotToWidget(pAnnot)->DrawAppearance(pDevice, mtUser2Device,
-                                               CPDF_Annot::Normal, nullptr);
+  ToCPDFSDKWidget(pAnnot)->DrawAppearance(pDevice, mtUser2Device,
+                                          CPDF_Annot::Normal, nullptr);
 }
 
 void CFFL_FormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView,

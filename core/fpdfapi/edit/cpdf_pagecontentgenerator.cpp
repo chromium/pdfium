@@ -264,13 +264,20 @@ const CPDF_ContentMark* CPDF_PageContentGenerator::ProcessContentMarks(
     }
 
     // If there are parameters, write properties, direct or indirect.
-    if (item->GetParamType() == CPDF_ContentMarkItem::DirectDict) {
-      CPDF_StringArchiveStream archive_stream(buf);
-      item->GetParam()->WriteTo(&archive_stream, nullptr);
-      *buf << " ";
-    } else {
-      ASSERT(item->GetParamType() == CPDF_ContentMarkItem::PropertiesDict);
-      *buf << "/" << item->GetPropertyName() << " ";
+    switch (item->GetParamType()) {
+      case CPDF_ContentMarkItem::DirectDict: {
+        CPDF_StringArchiveStream archive_stream(buf);
+        item->GetParam()->WriteTo(&archive_stream, nullptr);
+        *buf << " ";
+        break;
+      }
+      case CPDF_ContentMarkItem::PropertiesDict: {
+        *buf << "/" << item->GetPropertyName() << " ";
+        break;
+      }
+      default:
+        NOTREACHED();
+        break;
     }
 
     // Write BDC (begin dictionary content) operator.

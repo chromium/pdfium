@@ -144,4 +144,10 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 #endif  // PDF_ENABLE_XFA
 };
 
+inline CPDFSDK_Widget* ToCPDFSDKWidget(CPDFSDK_Annot* pAnnot) {
+  return pAnnot && pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET
+             ? static_cast<CPDFSDK_Widget*>(pAnnot)
+             : nullptr;
+}
+
 #endif  // FPDFSDK_CPDFSDK_WIDGET_H_
