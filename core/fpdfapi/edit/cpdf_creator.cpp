@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_extension.h"
@@ -254,20 +255,19 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
       }
       m_iStage = Stage::kInitWriteObjs20;
     } else {
-      m_SavedOffset = m_pParser->GetFileAccess()->GetSize();
+      m_SavedOffset = m_pParser->GetSyntax()->GetDocumentSize();
       m_iStage = Stage::kWriteIncremental15;
     }
   }
   if (m_iStage == Stage::kWriteIncremental15) {
     if (m_IsOriginal && m_SavedOffset > 0) {
-      RetainPtr<IFX_SeekableReadStream> pSrcFile = m_pParser->GetFileAccess();
-      std::vector<uint8_t> buffer(4096);
+      static constexpr FX_FILESIZE kBufferSize = 4096;
+      std::vector<uint8_t> buffer(kBufferSize);
       FX_FILESIZE src_size = m_SavedOffset;
+      m_pParser->GetSyntax()->SetPos(0);
       while (src_size) {
-        uint32_t block_size = src_size > 4096 ? 4096 : src_size;
-        if (!pSrcFile->ReadBlock(buffer.data(),
-                                 m_Archive->CurrentOffset() - src_size,
-                                 block_size)) {
+        const FX_FILESIZE block_size = std::min(kBufferSize, src_size);
+        if (!m_pParser->GetSyntax()->ReadBlock(buffer.data(), block_size)) {
           return Stage::kInvalid;
         }
         if (!m_Archive->WriteBlock(buffer.data(), block_size))

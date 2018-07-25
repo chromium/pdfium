@@ -90,7 +90,6 @@ class CPDF_Parser {
   CPDF_SecurityHandler* GetSecurityHandler() const {
     return m_pSecurityHandler.get();
   }
-  RetainPtr<IFX_SeekableReadStream> GetFileAccess() const;
   bool IsObjectFree(uint32_t objnum) const;
 
   int GetFileVersion() const { return m_FileVersion; }
@@ -109,6 +108,8 @@ class CPDF_Parser {
     return m_CrossRefTable.get();
   }
 
+  CPDF_SyntaxParser* GetSyntax() const { return m_pSyntax.get(); }
+
   void SetLinearizedHeader(std::unique_ptr<CPDF_LinearizedHeader> pLinearized);
 
  protected:
@@ -121,6 +122,9 @@ class CPDF_Parser {
   bool RebuildCrossRef();
 
  private:
+  friend class cpdf_parser_ParseStartXRefWithHeaderOffset_Test;
+  friend class cpdf_parser_ParseStartXRef_Test;
+  friend class cpdf_parser_ParseLinearizedWithHeaderOffset_Test;
   friend class CPDF_DataAvail;
 
   struct CrossRefObjData {

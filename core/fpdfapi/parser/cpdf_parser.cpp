@@ -119,10 +119,6 @@ bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
   return GetObjectType(objnum) == ObjectType::kFree;
 }
 
-RetainPtr<IFX_SeekableReadStream> CPDF_Parser::GetFileAccess() const {
-  return m_pSyntax->GetFileAccess();
-}
-
 void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
   m_CrossRefTable->ShrinkObjectMap(objnum);
 }
@@ -230,8 +226,7 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
 
 FX_FILESIZE CPDF_Parser::ParseStartXRef() {
   static constexpr char kStartXRefKeyword[] = "startxref";
-  m_pSyntax->SetPos(m_pSyntax->m_FileLen - m_pSyntax->m_HeaderOffset -
-                    strlen(kStartXRefKeyword));
+  m_pSyntax->SetPos(m_pSyntax->GetDocumentSize() - strlen(kStartXRefKeyword));
   if (!m_pSyntax->BackwardsSearchToWord(kStartXRefKeyword, 4096))
     return 0;
 
@@ -245,7 +240,7 @@ FX_FILESIZE CPDF_Parser::ParseStartXRef() {
     return 0;
 
   const FX_SAFE_FILESIZE result = FXSYS_atoi64(xrefpos_str.c_str());
-  if (!result.IsValid() || result.ValueOrDie() >= GetFileAccess()->GetSize())
+  if (!result.IsValid() || result.ValueOrDie() >= m_pSyntax->GetDocumentSize())
     return 0;
 
   return result.ValueOrDie();
@@ -453,7 +448,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
     return false;
 
   const size_t max_entries_in_file =
-      m_pSyntax->GetFileAccess()->GetSize() / kEntryConstSize;
+      m_pSyntax->GetDocumentSize() / kEntryConstSize;
   if (new_size.ValueOrDie() > max_entries_in_file)
     return false;
 

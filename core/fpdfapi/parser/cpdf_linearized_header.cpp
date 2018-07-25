@@ -38,17 +38,17 @@ bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
 }
 
 bool IsLinearizedHeaderValid(const CPDF_LinearizedHeader* header,
-                             FX_FILESIZE file_size) {
+                             FX_FILESIZE document_size) {
   ASSERT(header);
-  return header->GetFileSize() == file_size &&
+  return header->GetFileSize() == document_size &&
          static_cast<int>(header->GetFirstPageNo()) >= 0 &&
          header->GetFirstPageNo() < kMaxInt &&
          header->GetFirstPageNo() < header->GetPageCount() &&
-         header->GetMainXRefTableFirstEntryOffset() < file_size &&
+         header->GetMainXRefTableFirstEntryOffset() < document_size &&
          header->GetPageCount() > 0 &&
-         header->GetFirstPageEndOffset() < file_size &&
-         header->GetLastXRefOffset() < file_size &&
-         header->GetHintStart() < file_size;
+         header->GetFirstPageEndOffset() < document_size &&
+         header->GetLastXRefOffset() < document_size &&
+         header->GetHintStart() < document_size;
 }
 
 }  // namespace
@@ -78,10 +78,9 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
   auto result = pdfium::WrapUnique(
       new CPDF_LinearizedHeader(pDict.get(), parser->GetPos()));
 
-  if (!IsLinearizedHeaderValid(result.get(),
-                               parser->GetFileAccess()->GetSize())) {
+  if (!IsLinearizedHeaderValid(result.get(), parser->GetDocumentSize()))
     return nullptr;
-  }
+
   return result;
 }
 
