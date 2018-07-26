@@ -49,8 +49,6 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
       }
     }
   }
-  if (pFont)
-    m_CacheFonts.push_back(pFont);
   return pFont;
 }
 
@@ -64,7 +62,5 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetDefaultFont(
     pFont = pFontMgr->LoadFont(static_cast<const wchar_t*>(nullptr),
                                dwFontStyles, 0xFFFF);
   }
-  if (pFont)
-    m_CacheFonts.push_back(pFont);
   return pFont;
 }

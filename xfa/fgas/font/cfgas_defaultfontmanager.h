@@ -24,9 +24,6 @@ class CFGAS_DefaultFontManager {
   RetainPtr<CFGAS_GEFont> GetDefaultFont(CFGAS_FontMgr* pFontMgr,
                                          const WideStringView& wsFontFamily,
                                          uint32_t dwFontStyles);
-
- private:
-  std::vector<RetainPtr<CFGAS_GEFont>> m_CacheFonts;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_
