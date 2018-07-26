@@ -470,11 +470,8 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,
   }
   for (CFX_XMLNode* pParent = pNode; pParent != pFakeRoot;
        pParent = pParent->GetParent()) {
-    if (pParent->GetType() != FX_XMLNODE_Element)
-      continue;
-
-    auto* pElement = static_cast<CFX_XMLElement*>(pParent);
-    if (pElement->HasAttribute(wsNSAttribute)) {
+    CFX_XMLElement* pElement = ToXMLElement(pParent);
+    if (pElement && pElement->HasAttribute(wsNSAttribute)) {
       *wsNamespaceURI = pElement->GetAttribute(wsNSAttribute);
       return true;
     }

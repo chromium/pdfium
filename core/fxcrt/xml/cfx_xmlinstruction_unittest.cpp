@@ -132,7 +132,7 @@ TEST(CFX_XMLInstructionTest, ParseAndReSaveInnerInstruction) {
   ASSERT_TRUE(root->GetFirstChild() != nullptr);
   ASSERT_TRUE(root->GetFirstChild()->GetType() == FX_XMLNODE_Element);
 
-  CFX_XMLElement* node = static_cast<CFX_XMLElement*>(root->GetFirstChild());
+  CFX_XMLElement* node = ToXMLElement(root->GetFirstChild());
   EXPECT_EQ(L"node", node->GetName());
 
   CFX_XMLInstruction* instruction = nullptr;

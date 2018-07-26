@@ -1259,11 +1259,9 @@ void CXFA_Node::RemoveChild(CXFA_Node* pNode, bool bNotify) {
     return;
   }
 
-  ASSERT(pNode->xml_node_.Get() == xml_node_.Get() &&
-         xml_node_->GetType() == FX_XMLNODE_Element);
-  if (pNode->xml_node_->GetType() == FX_XMLNODE_Element) {
-    CFX_XMLElement* pXMLElement =
-        static_cast<CFX_XMLElement*>(pNode->xml_node_.Get());
+  ASSERT(pNode->xml_node_.Get() == xml_node_.Get());
+  CFX_XMLElement* pXMLElement = ToXMLElement(pNode->xml_node_.Get());
+  if (pXMLElement) {
     WideString wsAttributeName =
         pNode->JSObject()->GetCData(XFA_Attribute::QualifiedName);
     pXMLElement->RemoveAttribute(wsAttributeName);
@@ -4700,10 +4698,10 @@ bool CXFA_Node::PresenceRequiresSpace() const {
 }
 
 void CXFA_Node::SetToXML(const WideString& value) {
-  auto* elem = static_cast<CFX_XMLElement*>(GetXMLMappingNode());
-  FX_XMLNODETYPE eXMLType = elem->GetType();
-  switch (eXMLType) {
+  auto* pNode = GetXMLMappingNode();
+  switch (pNode->GetType()) {
     case FX_XMLNODE_Element: {
+      auto* elem = static_cast<CFX_XMLElement*>(pNode);
       if (IsAttributeInXML()) {
         elem->SetAttribute(JSObject()->GetCData(XFA_Attribute::QualifiedName),
                            value);

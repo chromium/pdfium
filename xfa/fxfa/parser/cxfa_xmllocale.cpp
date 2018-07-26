@@ -41,17 +41,15 @@ std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
   CFX_XMLElement* locale = nullptr;
   for (auto* child = doc->GetRoot()->GetFirstChild(); child;
        child = child->GetNextSibling()) {
-    if (child->GetType() != FX_XMLNODE_Element)
-      continue;
-
-    CFX_XMLElement* elem = static_cast<CFX_XMLElement*>(child);
-    if (elem->GetName() == L"locale") {
+    CFX_XMLElement* elem = ToXMLElement(child);
+    if (elem && elem->GetName() == L"locale") {
       locale = elem;
       break;
     }
   }
   if (!locale)
     return nullptr;
+
   return pdfium::MakeUnique<CXFA_XMLLocale>(std::move(doc), locale);
 }
 
@@ -129,11 +127,8 @@ WideString CXFA_XMLLocale::GetCalendarSymbol(const WideStringView& symbol,
   CFX_XMLElement* name_child = nullptr;
   for (auto* name = child->GetFirstChild(); name;
        name = name->GetNextSibling()) {
-    if (name->GetType() != FX_XMLNODE_Element)
-      continue;
-
-    auto* elem = static_cast<CFX_XMLElement*>(name);
-    if (elem->GetName() != pstrSymbolNames)
+    CFX_XMLElement* elem = ToXMLElement(name);
+    if (!elem || elem->GetName() != pstrSymbolNames)
       continue;
 
     WideString abbr = elem->GetAttribute(L"abbr");
@@ -213,16 +208,11 @@ WideString CXFA_XMLLocale::GetPattern(CFX_XMLElement* patterns,
                                       const WideStringView& wsName) const {
   for (auto* child = patterns->GetFirstChild(); child;
        child = child->GetNextSibling()) {
-    if (child->GetType() != FX_XMLNODE_Element)
-      continue;
-
-    CFX_XMLElement* pattern = static_cast<CFX_XMLElement*>(child);
-    if (pattern->GetName() != bsTag)
-      continue;
-    if (pattern->GetAttribute(L"name") != wsName)
-      continue;
-
-    return pattern->GetTextData();
+    CFX_XMLElement* pattern = ToXMLElement(child);
+    if (pattern && pattern->GetName() == bsTag &&
+        pattern->GetAttribute(L"name") == wsName) {
+      return pattern->GetTextData();
+    }
   }
   return L"";
 }

@@ -806,30 +806,31 @@ Optional<WideString> CJX_Object::TryNamespace() {
   if (ToNode(GetXFAObject())->IsModelNode() ||
       ToNode(GetXFAObject())->GetElementType() == XFA_Element::Packet) {
     CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
-    if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
+    CFX_XMLElement* element = ToXMLElement(pXMLNode);
+    if (!element)
       return {};
 
-    return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
+    return {element->GetNamespaceURI()};
   }
 
   if (ToNode(GetXFAObject())->GetPacketType() != XFA_PacketType::Datasets)
     return ToNode(GetXFAObject())->GetModelNode()->JSObject()->TryNamespace();
 
   CFX_XMLNode* pXMLNode = ToNode(GetXFAObject())->GetXMLMappingNode();
-  if (!pXMLNode || pXMLNode->GetType() != FX_XMLNODE_Element)
+  CFX_XMLElement* element = ToXMLElement(pXMLNode);
+  if (!element)
     return {};
 
   if (ToNode(GetXFAObject())->GetElementType() == XFA_Element::DataValue &&
       GetEnum(XFA_Attribute::Contains) == XFA_AttributeEnum::MetaData) {
     WideString wsNamespace;
-    bool ret = XFA_FDEExtension_ResolveNamespaceQualifier(
-        static_cast<CFX_XMLElement*>(pXMLNode),
-        GetCData(XFA_Attribute::QualifiedName), &wsNamespace);
-    if (!ret)
+    if (!XFA_FDEExtension_ResolveNamespaceQualifier(
+            element, GetCData(XFA_Attribute::QualifiedName), &wsNamespace)) {
       return {};
+    }
     return {wsNamespace};
   }
-  return {static_cast<CFX_XMLElement*>(pXMLNode)->GetNamespaceURI()};
+  return {element->GetNamespaceURI()};
 }
 
 std::pair<CXFA_Node*, int32_t> CJX_Object::GetPropertyInternal(

@@ -262,11 +262,10 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             current_buffer_idx++;
             current_parser_state = FDE_XmlSyntaxState::AttriName;
 
-            if (current_node_ &&
-                current_node_->GetType() == FX_XMLNODE_Element) {
-              static_cast<CFX_XMLElement*>(current_node_)
-                  ->SetAttribute(current_attribute_name, GetTextData());
-            }
+            CFX_XMLElement* elem = ToXMLElement(current_node_);
+            if (elem)
+              elem->SetAttribute(current_attribute_name, GetTextData());
+
             current_attribute_name.clear();
           } else {
             ProcessTextChar(ch);
@@ -311,13 +310,13 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
               node_type_stack.pop();
               current_parser_state = FDE_XmlSyntaxState::Text;
 
-              if (current_node_->GetType() != FX_XMLNODE_Element)
+              CFX_XMLElement* element = ToXMLElement(current_node_);
+              if (!element)
                 return false;
 
               WideString element_name = GetTextData();
               if (element_name.GetLength() > 0 &&
-                  element_name !=
-                      static_cast<CFX_XMLElement*>(current_node_)->GetName()) {
+                  element_name != element->GetName()) {
                 return false;
               }
 

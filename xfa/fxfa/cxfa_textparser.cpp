@@ -276,18 +276,18 @@ bool CXFA_TextParser::TagValidate(const WideString& wsName) const {
 std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
     CFX_XMLNode* pXMLNode) {
   auto tagProvider = pdfium::MakeUnique<TagProvider>();
-
-  WideString wsName;
-  if (pXMLNode->GetType() == FX_XMLNODE_Element) {
-    CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
-    wsName = pXMLElement->GetLocalTagName();
+  CFX_XMLElement* pXMLElement = ToXMLElement(pXMLNode);
+  if (pXMLElement) {
+    WideString wsName = pXMLElement->GetLocalTagName();
     tagProvider->SetTagName(wsName);
     tagProvider->m_bTagAvailable = TagValidate(wsName);
-
     WideString wsValue = pXMLElement->GetAttribute(L"style");
     if (!wsValue.IsEmpty())
       tagProvider->SetAttribute(L"style", wsValue);
-  } else if (pXMLNode->GetType() == FX_XMLNODE_Text) {
+
+    return tagProvider;
+  }
+  if (pXMLNode->GetType() == FX_XMLNODE_Text) {
     tagProvider->m_bTagAvailable = true;
     tagProvider->m_bContent = true;
   }
@@ -502,38 +502,38 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
   if (!pXMLNode)
     return false;
 
-  bool bRet = false;
-  if (pXMLNode->GetType() == FX_XMLNODE_Element) {
-    CFX_XMLElement* pElement = static_cast<CFX_XMLElement*>(pXMLNode);
-    WideString wsAttr = pElement->GetAttribute(L"xfa:embed");
-    if (wsAttr.IsEmpty())
-      return false;
-    if (wsAttr[0] == L'#')
-      wsAttr.Delete(0);
+  CFX_XMLElement* pElement = ToXMLElement(pXMLNode);
+  if (!pElement)
+    return false;
 
-    WideString ws = pElement->GetAttribute(L"xfa:embedType");
-    if (ws.IsEmpty())
-      ws = L"som";
-    else
-      ws.MakeLower();
+  WideString wsAttr = pElement->GetAttribute(L"xfa:embed");
+  if (wsAttr.IsEmpty())
+    return false;
 
-    bool bURI = (ws == L"uri");
-    if (!bURI && ws != L"som")
-      return false;
+  if (wsAttr[0] == L'#')
+    wsAttr.Delete(0);
 
-    ws = pElement->GetAttribute(L"xfa:embedMode");
-    if (ws.IsEmpty())
-      ws = L"formatted";
-    else
-      ws.MakeLower();
+  WideString ws = pElement->GetAttribute(L"xfa:embedType");
+  if (ws.IsEmpty())
+    ws = L"som";
+  else
+    ws.MakeLower();
 
-    bool bRaw = (ws == L"raw");
-    if (!bRaw && ws != L"formatted")
-      return false;
+  bool bURI = (ws == L"uri");
+  if (!bURI && ws != L"som")
+    return false;
 
-    bRet = pTextProvider->GetEmbbedObj(bURI, bRaw, wsAttr, wsValue);
-  }
-  return bRet;
+  ws = pElement->GetAttribute(L"xfa:embedMode");
+  if (ws.IsEmpty())
+    ws = L"formatted";
+  else
+    ws.MakeLower();
+
+  bool bRaw = (ws == L"raw");
+  if (!bRaw && ws != L"formatted")
+    return false;
+
+  return pTextProvider->GetEmbbedObj(bURI, bRaw, wsAttr, wsValue);
 }
 
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(

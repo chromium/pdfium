@@ -510,9 +510,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           wsHref = image->GetHref();
         }
         CFX_XMLElement* pXMLDataElement =
-            static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
+            ToXMLElement(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
-
         pDataNode->JSObject()->SetAttributeValue(
             wsValue, pFormNode->GetFormatDataValue(wsValue), false, false);
         pDataNode->JSObject()->SetCData(XFA_Attribute::ContentType,
@@ -656,9 +655,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       CXFA_Image* image = defValue ? defValue->GetImageIfExists() : nullptr;
       if (image) {
         CFX_XMLElement* pXMLDataElement =
-            static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
-        ASSERT(pXMLDataElement);
-
+            ToXMLElement(pDataNode->GetXMLMappingNode());
         WideString wsContentType =
             pXMLDataElement->GetAttribute(L"xfa:contentType");
         if (!wsContentType.IsEmpty()) {

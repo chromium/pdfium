@@ -77,19 +77,17 @@ CFX_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
   if (!pXMLRoot)
     return nullptr;
 
-  CFX_XMLNode* pXMLContainer = nullptr;
   for (CFX_XMLNode* pXMLChild = pXMLRoot->GetFirstChild(); pXMLChild;
        pXMLChild = pXMLChild->GetNextSibling()) {
-    if (pXMLChild->GetType() == FX_XMLNODE_Element) {
-      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
-      WideString wsTag = pXMLElement->GetLocalTagName();
-      if (wsTag == L"body" || wsTag == L"html") {
-        pXMLContainer = pXMLChild;
-        break;
-      }
-    }
+    CFX_XMLElement* pXMLElement = ToXMLElement(pXMLChild);
+    if (!pXMLElement)
+      continue;
+    WideString wsTag = pXMLElement->GetLocalTagName();
+    if (wsTag == L"body" || wsTag == L"html")
+      return pXMLChild;
   }
-  return pXMLContainer;
+
+  return nullptr;
 }
 
 std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {

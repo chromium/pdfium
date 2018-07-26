@@ -49,11 +49,9 @@ void CheckForSharedFormInternal(CFX_XMLElement* element,
 
   for (auto* child = element->GetFirstChild(); child;
        child = child->GetNextSibling()) {
-    if (child->GetType() != FX_XMLNODE_Element)
-      continue;
-
-    CheckForSharedFormInternal(static_cast<CFX_XMLElement*>(child),
-                               unsupported);
+    CFX_XMLElement* pElement = ToXMLElement(child);
+    if (pElement)
+      CheckForSharedFormInternal(pElement, unsupported);
   }
 }
 
