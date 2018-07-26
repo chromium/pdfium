@@ -111,10 +111,8 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget,
   auto pIterator = pdfium::MakeUnique<CPDFSDK_AnnotIterator>(
       pWidget->GetPageView(), CPDF_Annot::Subtype::WIDGET);
 
-  if (bNext)
-    return static_cast<CPDFSDK_Widget*>(pIterator->GetNextAnnot(pWidget));
-
-  return static_cast<CPDFSDK_Widget*>(pIterator->GetPrevAnnot(pWidget));
+  return ToCPDFSDKWidget(bNext ? pIterator->GetNextAnnot(pWidget)
+                               : pIterator->GetPrevAnnot(pWidget));
 }
 
 CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
@@ -144,10 +142,7 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
       pPage = m_pFormFillEnv->GetPageView(nPageIndex);
   }
 
-  if (!pPage)
-    return nullptr;
-
-  return static_cast<CPDFSDK_Widget*>(pPage->GetAnnotByDict(pControlDict));
+  return pPage ? ToCPDFSDKWidget(pPage->GetAnnotByDict(pControlDict)) : nullptr;
 }
 
 void CPDFSDK_InterForm::GetWidgets(

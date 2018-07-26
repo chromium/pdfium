@@ -36,4 +36,9 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
   UnownedPtr<CXFA_FFWidget> m_hXFAWidget;
 };
 
+inline CPDFSDK_XFAWidget* ToXFAWidget(CPDFSDK_Annot* pAnnot) {
+  return pAnnot && pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::XFAWIDGET
+      ? static_cast<CPDFSDK_XFAWidget*>(pAnnot) : nullptr;
+}
+
 #endif  // FPDFSDK_CPDFSDK_XFAWIDGET_H_

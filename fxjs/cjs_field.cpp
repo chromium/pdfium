@@ -54,20 +54,18 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       for (auto& pObserved : widgets) {
         if (pObserved) {
           bool bFormatted = false;
-          WideString sValue = static_cast<CPDFSDK_Widget*>(pObserved.Get())
-                                  ->OnFormat(bFormatted);
+          WideString sValue =
+              ToCPDFSDKWidget(pObserved.Get())->OnFormat(bFormatted);
           if (pObserved) {  // Not redundant, may be clobbered by OnFormat.
-            static_cast<CPDFSDK_Widget*>(pObserved.Get())
-                ->ResetAppearance(bFormatted ? &sValue : nullptr, false);
+            ToCPDFSDKWidget(pObserved.Get())->ResetAppearance(
+                bFormatted ? &sValue : nullptr, false);
           }
         }
       }
     } else {
       for (auto& pObserved : widgets) {
-        if (pObserved) {
-          static_cast<CPDFSDK_Widget*>(pObserved.Get())
-              ->ResetAppearance(nullptr, false);
-        }
+        if (pObserved)
+          ToCPDFSDKWidget(pObserved.Get())->ResetAppearance(nullptr, false);
       }
     }
   }
@@ -84,7 +82,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     // |GetFormFillEnv| out of the loop.
     for (auto& pObserved : widgets) {
       if (pObserved) {
-        CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pObserved.Get());
+        CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pObserved.Get());
         pWidget->GetInterForm()->GetFormFillEnv()->UpdateAllViews(nullptr,
                                                                   pWidget);
       }
@@ -1540,7 +1538,7 @@ CJS_Return CJS_Field::get_page(CJS_Runtime* pRuntime) {
     if (!pObserved)
       return CJS_Return(JSMessage::kBadObjectError);
 
-    auto* pWidget = static_cast<CPDFSDK_Widget*>(pObserved.Get());
+    auto* pWidget = ToCPDFSDKWidget(pObserved.Get());
     CPDFSDK_PageView* pPageView = pWidget->GetPageView();
     if (!pPageView)
       return CJS_Return(JSMessage::kBadObjectError);

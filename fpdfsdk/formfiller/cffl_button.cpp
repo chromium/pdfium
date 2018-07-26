@@ -64,7 +64,7 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
                          CFX_RenderDevice* pDevice,
                          const CFX_Matrix& mtUser2Device) {
   ASSERT(pPageView);
-  CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
   if (pCtrl->GetHighlightingMode() != CPDF_FormControl::Push) {
     pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Normal,

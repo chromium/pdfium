@@ -77,11 +77,10 @@ CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CXFA_FFWidget* hWidget,
 
 void CPDFSDK_WidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot);
-
   if (m_pFormFiller)
     m_pFormFiller->OnDelete(pAnnot);
 
-  std::unique_ptr<CPDFSDK_Widget> pWidget(static_cast<CPDFSDK_Widget*>(pAnnot));
+  std::unique_ptr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot));
   CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
   CPDF_FormControl* pControl = pWidget->GetFormControl();
   pInterForm->RemoveMap(pControl);
@@ -222,7 +221,7 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
   if (pAnnot->IsSignatureWidget())
     return;
 
-  CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
+  CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   if (!pWidget->IsAppearanceValid())
     pWidget->ResetAppearance(nullptr, false);
 

@@ -277,33 +277,32 @@ void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
 }
 
 bool CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
-  ObservedPtr thisObserved(this);
-  if (!IsValid())
+    if (!IsValid())
     return true;
 
+  ObservedPtr thisObserved(this);
   CFX_FloatRect rcRefresh = pRect ? *pRect : GetWindowRect();
-
   if (!HasFlag(PWS_NOREFRESHCLIP)) {
     CFX_FloatRect rcClip = GetClipRect();
-    if (!rcClip.IsEmpty()) {
+    if (!rcClip.IsEmpty())
       rcRefresh.Intersect(rcClip);
-    }
   }
 
   CFX_FloatRect rcWin = PWLtoWnd(rcRefresh);
   rcWin.Inflate(1, 1);
   rcWin.Normalize();
 
-  if (CFX_SystemHandler* pSH = GetSystemHandler()) {
-    if (CPDFSDK_Widget* widget = static_cast<CPDFSDK_Widget*>(
-            m_CreationParams.pAttachedWidget.Get())) {
-      pSH->InvalidateRect(widget, rcWin);
-      if (!thisObserved)
-        return false;
-    }
-  }
+  CFX_SystemHandler* pSH = GetSystemHandler();
+  if (!pSH)
+    return true;
 
-  return true;
+  CPDFSDK_Widget* widget =
+      ToCPDFSDKWidget(m_CreationParams.pAttachedWidget.Get());
+  if (!widget)
+    return true;
+
+  pSH->InvalidateRect(widget, rcWin);
+  return !!thisObserved;
 }
 
 #define PWL_IMPLEMENT_KEY_METHOD(key_method_name)                  \

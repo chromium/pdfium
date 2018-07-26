@@ -417,7 +417,7 @@ CJS_Return CJS_Document::removeField(
     return CJS_Return();
 
   for (const auto& pAnnot : widgets) {
-    CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot.Get());
+    CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot.Get());
     if (!pWidget)
       continue;
 

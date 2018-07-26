@@ -61,7 +61,7 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
 
       CPWL_CheckBox* pWnd = GetCheckBox(pPageView, true);
       if (pWnd) {
-        CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
+        CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
         pWnd->SetCheck(!pWidget->IsChecked());
       }
 
@@ -83,7 +83,7 @@ bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
 
   CPWL_CheckBox* pWnd = GetCheckBox(pPageView, true);
   if (pWnd) {
-    CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot);
+    CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
     pWnd->SetCheck(!pWidget->IsChecked());
   }
 
