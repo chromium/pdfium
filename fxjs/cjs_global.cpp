@@ -146,7 +146,8 @@ void CJS_Global::queryprop_static(
   ASSERT(property->IsString());
   JSSpecialPropQuery<CJS_Global>(
       "global",
-      v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
+      v8::Local<v8::String>::New(info.GetIsolate(),
+                                 property->ToString(info.GetIsolate())),
       info);
 }
 
@@ -157,7 +158,8 @@ void CJS_Global::getprop_static(
   ASSERT(property->IsString());
   JSSpecialPropGet<CJS_Global>(
       "global",
-      v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
+      v8::Local<v8::String>::New(info.GetIsolate(),
+                                 property->ToString(info.GetIsolate())),
       info);
 }
 
@@ -169,7 +171,8 @@ void CJS_Global::putprop_static(
   ASSERT(property->IsString());
   JSSpecialPropPut<CJS_Global>(
       "global",
-      v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
+      v8::Local<v8::String>::New(info.GetIsolate(),
+                                 property->ToString(info.GetIsolate())),
       value, info);
 }
 
@@ -180,7 +183,8 @@ void CJS_Global::delprop_static(
   ASSERT(property->IsString());
   JSSpecialPropDel<CJS_Global>(
       "global",
-      v8::Local<v8::String>::New(info.GetIsolate(), property->ToString()),
+      v8::Local<v8::String>::New(info.GetIsolate(),
+                                 property->ToString(info.GetIsolate())),
       info);
 }
 
