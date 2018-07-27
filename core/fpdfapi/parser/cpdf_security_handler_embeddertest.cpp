@@ -49,7 +49,7 @@ TEST_F(CPDFSecurityHandlerEmbeddertest, PasswordAfterGenerateSave) {
 #elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   const char md5[] = "6951b6c9891dfe0332a5b1983e484400";
 #else
-  const char md5[] = "a5dde3c6c37b8716b9b369a03752a728";
+  const char md5[] = "041c2fb541c8907cc22ce101b686c79e";
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
   {
     ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678",

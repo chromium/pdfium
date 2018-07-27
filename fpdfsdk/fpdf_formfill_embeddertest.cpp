@@ -577,6 +577,10 @@ TEST_F(FPDFFormFillEmbeddertest, FormText) {
   const char md5_1[] = "5f11dbe575fe197a37c3fb422559f8ff";
   const char md5_2[] = "35b1a4b679eafc749a0b6fda750c0e8d";
   const char md5_3[] = "65c64a7c355388f719a752aa1e23f6fe";
+#elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  const char md5_1[] = "d3204faa62b607f0bd3893c9c22cabcb";
+  const char md5_2[] = "29d1c3fd226ca6a69597f75937690320";
+  const char md5_3[] = "5e678a55912cb568fd677bf34abb8727";
 #else
   const char md5_1[] = "b890950d4b9bc163b1a96797f3004b53";
   const char md5_2[] = "11487d5597599a26e8912b9c1d9422cb";
