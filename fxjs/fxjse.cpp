@@ -6,6 +6,15 @@
 
 #include "fxjs/fxjse.h"
 
+namespace pdfium {
+namespace fxjse {
+
+const char kFuncTag[] = "function descriptor tag";
+const char kClassTag[] = "class descriptor tag";
+
+}  // namespace fxjse
+}  // namespace pdfium
+
 CFXJSE_HostObject::CFXJSE_HostObject() = default;
 
 CFXJSE_HostObject::~CFXJSE_HostObject() = default;

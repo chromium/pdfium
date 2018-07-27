@@ -31,10 +31,13 @@
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+using pdfium::fxjse::kClassTag;
+
 const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor = {
-    "Root",   // name
-    nullptr,  // methods
-    0,        // method count
+    kClassTag,  // tag
+    "Root",     // name
+    nullptr,    // methods
+    0,          // method count
     CFXJSE_Engine::GlobalPropTypeGetter,
     CFXJSE_Engine::GlobalPropertyGetter,
     CFXJSE_Engine::GlobalPropertySetter,
@@ -42,6 +45,7 @@ const FXJSE_CLASS_DESCRIPTOR GlobalClassDescriptor = {
 };
 
 const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor = {
+    kClassTag,    // tag
     "XFAObject",  // name
     nullptr,      // methods
     0,            // method count
@@ -52,6 +56,7 @@ const FXJSE_CLASS_DESCRIPTOR NormalClassDescriptor = {
 };
 
 const FXJSE_CLASS_DESCRIPTOR VariablesClassDescriptor = {
+    kClassTag,          // tag
     "XFAScriptObject",  // name
     nullptr,            // methods
     0,                  // method count
