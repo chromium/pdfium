@@ -77,15 +77,10 @@ class CJBig2_GRDProc {
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext,
       int OPT);
-  std::unique_ptr<CJBig2_Image> DecodeArithTemplate0Unopt(
+  std::unique_ptr<CJBig2_Image> DecodeArithTemplateUnopt(
       CJBig2_ArithDecoder* pArithDecoder,
-      JBig2ArithCtx* gbContext);
-  std::unique_ptr<CJBig2_Image> DecodeArithTemplate1Unopt(
-      CJBig2_ArithDecoder* pArithDecoder,
-      JBig2ArithCtx* gbContext);
-  std::unique_ptr<CJBig2_Image> DecodeArithTemplate2Unopt(
-      CJBig2_ArithDecoder* pArithDecoder,
-      JBig2ArithCtx* gbContext);
+      JBig2ArithCtx* gbContext,
+      int UNOPT);
   std::unique_ptr<CJBig2_Image> DecodeArithTemplate3Opt3(
       CJBig2_ArithDecoder* pArithDecoder,
       JBig2ArithCtx* gbContext);

@@ -20,14 +20,18 @@
 namespace {
 
 // TODO(npm): Name this constants better or merge some together.
-constexpr int kOptConstant1[] = {0x9b25, 0x0795, 0x00e5};
-constexpr int kOptConstant2[] = {6, 4, 1};
-constexpr int kOptConstant3[] = {0xf800, 0x1e00, 0x0380};
-constexpr int kOptConstant4[] = {0, 1, 3};
-constexpr int kOptConstant5[] = {0x07f0, 0x01f8, 0x007c};
-constexpr int kOptConstant6[] = {0x7bf7, 0x0efb, 0x01bd};
-constexpr int kOptConstant7[] = {0x0800, 0x0200, 0x0080};
-constexpr int kOptConstant8[] = {0x0010, 0x0008, 0x0004};
+constexpr uint16_t kOptConstant1[] = {0x9b25, 0x0795, 0x00e5};
+constexpr uint16_t kOptConstant2[] = {0x0006, 0x0004, 0x0001};
+constexpr uint16_t kOptConstant3[] = {0xf800, 0x1e00, 0x0380};
+constexpr uint16_t kOptConstant4[] = {0x0000, 0x0001, 0x0003};
+constexpr uint16_t kOptConstant5[] = {0x07f0, 0x01f8, 0x007c};
+constexpr uint16_t kOptConstant6[] = {0x7bf7, 0x0efb, 0x01bd};
+constexpr uint16_t kOptConstant7[] = {0x0800, 0x0200, 0x0080};
+constexpr uint16_t kOptConstant8[] = {0x0010, 0x0008, 0x0004};
+constexpr uint16_t kOptConstant9[] = {0x000c, 0x0009, 0x0007};
+constexpr uint16_t kOptConstant10[] = {0x0007, 0x000f, 0x0007};
+constexpr uint16_t kOptConstant11[] = {0x001f, 0x001f, 0x000f};
+constexpr uint16_t kOptConstant12[] = {0x000f, 0x0007, 0x0003};
 
 }  // namespace
 
@@ -59,15 +63,15 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArith(
     case 0:
       return UseTemplate0Opt3()
                  ? DecodeArithOpt3(pArithDecoder, gbContext, 0)
-                 : DecodeArithTemplate0Unopt(pArithDecoder, gbContext);
+                 : DecodeArithTemplateUnopt(pArithDecoder, gbContext, 0);
     case 1:
       return UseTemplate1Opt3()
                  ? DecodeArithOpt3(pArithDecoder, gbContext, 1)
-                 : DecodeArithTemplate1Unopt(pArithDecoder, gbContext);
+                 : DecodeArithTemplateUnopt(pArithDecoder, gbContext, 1);
     case 2:
       return UseTemplate23Opt3()
                  ? DecodeArithOpt3(pArithDecoder, gbContext, 2)
-                 : DecodeArithTemplate2Unopt(pArithDecoder, gbContext);
+                 : DecodeArithTemplateUnopt(pArithDecoder, gbContext, 2);
     default:
       return UseTemplate23Opt3()
                  ? DecodeArithTemplate3Opt3(pArithDecoder, gbContext)
@@ -181,157 +185,63 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
   return GBREG;
 }
 
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate0Unopt(
+std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext) {
+    JBig2ArithCtx* gbContext,
+    int UNOPT) {
   auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->data())
     return nullptr;
 
   GBREG->Fill(0);
   int LTP = 0;
+  uint8_t MOD2 = UNOPT % 2;
+  uint8_t DIV2 = UNOPT / 2;
+  uint8_t SHIFT = 4 - UNOPT;
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x9b25]);
+      LTP = LTP ^ pArithDecoder->Decode(&gbContext[kOptConstant1[UNOPT]]);
     }
     if (LTP) {
       GBREG->CopyLine(h, h - 1);
-    } else {
-      uint32_t line1 = GBREG->GetPixel(1, h - 2);
-      line1 |= GBREG->GetPixel(0, h - 2) << 1;
-      uint32_t line2 = GBREG->GetPixel(2, h - 1);
-      line2 |= GBREG->GetPixel(1, h - 1) << 1;
+      continue;
+    }
+    uint32_t line1 = GBREG->GetPixel(1 + MOD2, h - 2);
+    line1 |= GBREG->GetPixel(MOD2, h - 2) << 1;
+    if (UNOPT == 1)
+      line1 |= GBREG->GetPixel(0, h - 2) << 2;
+    uint32_t line2 = GBREG->GetPixel(2 - DIV2, h - 1);
+    line2 |= GBREG->GetPixel(1 - DIV2, h - 1) << 1;
+    if (UNOPT < 2)
       line2 |= GBREG->GetPixel(0, h - 1) << 2;
-      uint32_t line3 = 0;
-      for (uint32_t w = 0; w < GBW; w++) {
-        int bVal;
-        if (USESKIP && SKIP->GetPixel(w, h)) {
-          bVal = 0;
-        } else {
-          uint32_t CONTEXT = line3;
-          CONTEXT |= GBREG->GetPixel(w + GBAT[0], h + GBAT[1]) << 4;
-          CONTEXT |= line2 << 5;
+    uint32_t line3 = 0;
+    for (uint32_t w = 0; w < GBW; w++) {
+      int bVal = 0;
+      if (!USESKIP || !SKIP->GetPixel(w, h)) {
+        if (pArithDecoder->IsComplete())
+          return nullptr;
+
+        uint32_t CONTEXT = line3;
+        CONTEXT |= GBREG->GetPixel(w + GBAT[0], h + GBAT[1]) << SHIFT;
+        CONTEXT |= line2 << (SHIFT + 1);
+        CONTEXT |= line1 << kOptConstant9[UNOPT];
+        if (UNOPT == 0) {
           CONTEXT |= GBREG->GetPixel(w + GBAT[2], h + GBAT[3]) << 10;
           CONTEXT |= GBREG->GetPixel(w + GBAT[4], h + GBAT[5]) << 11;
-          CONTEXT |= line1 << 12;
           CONTEXT |= GBREG->GetPixel(w + GBAT[6], h + GBAT[7]) << 15;
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
         }
-        if (bVal) {
+        bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
+        if (bVal)
           GBREG->SetPixel(w, h, bVal);
-        }
-        line1 = ((line1 << 1) | GBREG->GetPixel(w + 2, h - 2)) & 0x07;
-        line2 = ((line2 << 1) | GBREG->GetPixel(w + 3, h - 1)) & 0x1f;
-        line3 = ((line3 << 1) | bVal) & 0x0f;
       }
-    }
-  }
-  return GBREG;
-}
-
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate1Unopt(
-    CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->data())
-    return nullptr;
-
-  GBREG->Fill(0);
-  int LTP = 0;
-  for (uint32_t h = 0; h < GBH; h++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x0795]);
-    }
-    if (LTP) {
-      GBREG->CopyLine(h, h - 1);
-    } else {
-      uint32_t line1 = GBREG->GetPixel(2, h - 2);
-      line1 |= GBREG->GetPixel(1, h - 2) << 1;
-      line1 |= GBREG->GetPixel(0, h - 2) << 2;
-      uint32_t line2 = GBREG->GetPixel(2, h - 1);
-      line2 |= GBREG->GetPixel(1, h - 1) << 1;
-      line2 |= GBREG->GetPixel(0, h - 1) << 2;
-      uint32_t line3 = 0;
-      for (uint32_t w = 0; w < GBW; w++) {
-        int bVal;
-        if (USESKIP && SKIP->GetPixel(w, h)) {
-          bVal = 0;
-        } else {
-          uint32_t CONTEXT = line3;
-          CONTEXT |= GBREG->GetPixel(w + GBAT[0], h + GBAT[1]) << 3;
-          CONTEXT |= line2 << 4;
-          CONTEXT |= line1 << 9;
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-        }
-        if (bVal) {
-          GBREG->SetPixel(w, h, bVal);
-        }
-        line1 = ((line1 << 1) | GBREG->GetPixel(w + 3, h - 2)) & 0x0f;
-        line2 = ((line2 << 1) | GBREG->GetPixel(w + 3, h - 1)) & 0x1f;
-        line3 = ((line3 << 1) | bVal) & 0x07;
-      }
-    }
-  }
-  return GBREG;
-}
-
-std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate2Unopt(
-    CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext) {
-  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
-  if (!GBREG->data())
-    return nullptr;
-
-  GBREG->Fill(0);
-  int LTP = 0;
-  for (uint32_t h = 0; h < GBH; h++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(&gbContext[0x00e5]);
-    }
-    if (LTP) {
-      GBREG->CopyLine(h, h - 1);
-    } else {
-      uint32_t line1 = GBREG->GetPixel(1, h - 2);
-      line1 |= GBREG->GetPixel(0, h - 2) << 1;
-      uint32_t line2 = GBREG->GetPixel(1, h - 1);
-      line2 |= GBREG->GetPixel(0, h - 1) << 1;
-      uint32_t line3 = 0;
-      for (uint32_t w = 0; w < GBW; w++) {
-        int bVal;
-        if (USESKIP && SKIP->GetPixel(w, h)) {
-          bVal = 0;
-        } else {
-          uint32_t CONTEXT = line3;
-          CONTEXT |= GBREG->GetPixel(w + GBAT[0], h + GBAT[1]) << 2;
-          CONTEXT |= line2 << 3;
-          CONTEXT |= line1 << 7;
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          bVal = pArithDecoder->Decode(&gbContext[CONTEXT]);
-        }
-        if (bVal) {
-          GBREG->SetPixel(w, h, bVal);
-        }
-        line1 = ((line1 << 1) | GBREG->GetPixel(w + 2, h - 2)) & 0x07;
-        line2 = ((line2 << 1) | GBREG->GetPixel(w + 2, h - 1)) & 0x0f;
-        line3 = ((line3 << 1) | bVal) & 0x03;
-      }
+      line1 = ((line1 << 1) | GBREG->GetPixel(w + 2 + MOD2, h - 2)) &
+              kOptConstant10[UNOPT];
+      line2 = ((line2 << 1) | GBREG->GetPixel(w + 3 - DIV2, h - 1)) &
+              kOptConstant11[UNOPT];
+      line3 = ((line3 << 1) | bVal) & kOptConstant12[UNOPT];
     }
   }
   return GBREG;
