@@ -233,6 +233,8 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   // Item 1: The object number of the first object in the shared objects
   // section.
   uint32_t dwFirstSharedObjNum = hStream->GetBits(32);
+  if (!dwFirstSharedObjNum)
+    return false;
 
   // Item 2: The location of the first object in the shared objects section.
   const FX_FILESIZE szFirstSharedObjLoc =
@@ -248,8 +250,8 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   uint32_t dwSharedObjTotal = hStream->GetBits(32);
 
   // Item 5: The number of bits needed to represent the greatest number of
-  // objects in a shared object group. Skipped.
-  hStream->SkipBits(16);
+  // objects in a shared object group.
+  uint32_t dwSharedObjNumBits = hStream->GetBits(16);
 
   // Item 6: The least length of a shared object group in bytes.
   uint32_t dwGroupLeastLen = hStream->GetBits(32);
@@ -285,6 +287,9 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   }
 
   m_SharedObjGroupInfos.resize(dwSharedObjTotal);
+  // Table F.6 –  Shared object hint table, shared object group entries:
+  // Item 1: A number that, when added to the least shared object
+  // group length.
   FX_SAFE_FILESIZE prev_shared_group_end_offset = m_szFirstPageObjOffset;
   for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
     if (i == m_nFirstPageSharedObjs)
@@ -304,10 +309,48 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   }
 
   hStream->ByteAlign();
-  if (hStream->BitsRemaining() < dwSharedObjTotal)
-    return false;
+  {
+    // Item 2: A flag indicating whether the shared object signature (item 3) is
+    // present.
+    uint32_t signature_count = 0;
+    for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
+      signature_count += hStream->GetBits(1);
+    }
+    hStream->ByteAlign();
+    // Item 3: (Only if item 2 is 1) The shared object signature, a 16-byte MD5
+    // hash that uniquely identifies the resource that the group of objects
+    // represents.
+    if (signature_count) {
+      required_bits = signature_count;
+      required_bits *= 128;
+      if (!CanReadFromBitStream(hStream, required_bits))
+        return false;
 
-  hStream->SkipBits(dwSharedObjTotal);
+      hStream->SkipBits(required_bits.ValueOrDie());
+      hStream->ByteAlign();
+    }
+  }
+  // Item 4: A number equal to 1 less than the number of objects in the group.
+  FX_SAFE_UINT32 cur_obj_num = m_pLinearized->GetFirstPageObjNum();
+  for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
+    if (i == m_nFirstPageSharedObjs)
+      cur_obj_num = dwFirstSharedObjNum;
+
+    FX_SAFE_UINT32 obj_count =
+        dwSharedObjNumBits ? hStream->GetBits(dwSharedObjNumBits) : 0;
+    obj_count += 1;
+    if (!obj_count.IsValid())
+      return false;
+
+    uint32_t obj_num = cur_obj_num.ValueOrDie();
+    cur_obj_num += obj_count.ValueOrDie();
+    if (!cur_obj_num.IsValid())
+      return false;
+
+    m_SharedObjGroupInfos[i].m_dwStartObjNum = obj_num;
+    m_SharedObjGroupInfos[i].m_dwObjectsCount = obj_count.ValueOrDie();
+  }
+
   hStream->ByteAlign();
   return true;
 }

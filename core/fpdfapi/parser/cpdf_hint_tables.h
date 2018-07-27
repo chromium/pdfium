@@ -23,6 +23,8 @@ class CPDF_HintTables {
   struct SharedObjGroupInfo {
     FX_FILESIZE m_szOffset = 0;
     uint32_t m_dwLength = 0;
+    uint32_t m_dwObjectsCount = 0;
+    uint32_t m_dwStartObjNum = 0;
   };
 
   class PageInfo {
@@ -31,9 +33,9 @@ class CPDF_HintTables {
     ~PageInfo();
 
     void set_objects_count(uint32_t objects_count) {
-      m_nObjectsCount = objects_count;
+      m_dwObjectsCount = objects_count;
     }
-    uint32_t objects_count() const { return m_nObjectsCount; }
+    uint32_t objects_count() const { return m_dwObjectsCount; }
 
     void set_page_offset(FX_FILESIZE offset) { m_szOffset = offset; }
     FX_FILESIZE page_offset() const { return m_szOffset; }
@@ -55,7 +57,7 @@ class CPDF_HintTables {
     }
 
    private:
-    uint32_t m_nObjectsCount = 0;
+    uint32_t m_dwObjectsCount = 0;
     FX_FILESIZE m_szOffset = 0;
     uint32_t m_dwLength = 0;
     uint32_t m_dwStartObjNum = 0;
