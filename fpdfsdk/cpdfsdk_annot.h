@@ -20,6 +20,7 @@ class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Page;
 class CPDF_RenderOptions;
+class CPDFSDK_BAAnnot;
 class CPDFSDK_PageView;
 
 #ifdef PDF_ENABLE_XFA
@@ -30,6 +31,8 @@ class CPDFSDK_Annot : public Observable<CPDFSDK_Annot> {
  public:
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
   virtual ~CPDFSDK_Annot();
+
+  virtual CPDFSDK_BAAnnot* AsBAAnnot();
 
 #ifdef PDF_ENABLE_XFA
   virtual bool IsXFAField();
@@ -56,5 +59,9 @@ class CPDFSDK_Annot : public Observable<CPDFSDK_Annot> {
  protected:
   UnownedPtr<CPDFSDK_PageView> const m_pPageView;
 };
+
+inline CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* pAnnot) {
+  return pAnnot ? pAnnot->AsBAAnnot() : nullptr;
+}
 
 #endif  // FPDFSDK_CPDFSDK_ANNOT_H_

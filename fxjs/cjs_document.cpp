@@ -1003,7 +1003,7 @@ CJS_Return CJS_Document::getAnnot(
   CPDFSDK_AnnotIteration annotIteration(pPageView, false);
   CPDFSDK_BAAnnot* pSDKBAAnnot = nullptr;
   for (const auto& pSDKAnnotCur : annotIteration) {
-    auto* pBAAnnot = static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get());
+    auto* pBAAnnot = pSDKAnnotCur->AsBAAnnot();
     if (pBAAnnot && pBAAnnot->GetAnnotName() == swAnnotName) {
       pSDKBAAnnot = pBAAnnot;
       break;
@@ -1054,7 +1054,7 @@ CJS_Return CJS_Document::getAnnots(
 
       auto* pJS_Annot =
           static_cast<CJS_Annot*>(CFXJS_Engine::GetObjectPrivate(pObj));
-      pJS_Annot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
+      pJS_Annot->SetSDKAnnot(pSDKAnnotCur->AsBAAnnot());
       pRuntime->PutArrayElement(
           annots, i,
           pJS_Annot ? v8::Local<v8::Value>(pJS_Annot->ToV8Object())

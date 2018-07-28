@@ -72,15 +72,15 @@ void CPDFSDK_BAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
     return;
 #endif  // PDF_ENABLE_XFA
   if (bDrawAnnots && pAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP) {
-    static_cast<CPDFSDK_BAAnnot*>(pAnnot)->DrawAppearance(
-        pDevice, *pUser2Device, CPDF_Annot::Normal, nullptr);
+    pAnnot->AsBAAnnot()->DrawAppearance(pDevice, *pUser2Device,
+                                        CPDF_Annot::Normal, nullptr);
   }
 }
 
 void CPDFSDK_BAAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                           CPDFSDK_Annot::ObservedPtr* pAnnot,
                                           uint32_t nFlag) {
-  CPDFSDK_BAAnnot* pBAAnnot = static_cast<CPDFSDK_BAAnnot*>(pAnnot->Get());
+  CPDFSDK_BAAnnot* pBAAnnot = (*pAnnot)->AsBAAnnot();
   pBAAnnot->SetOpenState(true);
   UpdateAnnotRects(pPageView, pBAAnnot);
 }
@@ -88,7 +88,7 @@ void CPDFSDK_BAAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
 void CPDFSDK_BAAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
                                          CPDFSDK_Annot::ObservedPtr* pAnnot,
                                          uint32_t nFlag) {
-  CPDFSDK_BAAnnot* pBAAnnot = static_cast<CPDFSDK_BAAnnot*>(pAnnot->Get());
+  CPDFSDK_BAAnnot* pBAAnnot = (*pAnnot)->AsBAAnnot();
   pBAAnnot->SetOpenState(false);
   UpdateAnnotRects(pPageView, pBAAnnot);
 }

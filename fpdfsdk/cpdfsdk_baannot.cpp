@@ -26,6 +26,10 @@ CPDFSDK_BAAnnot::CPDFSDK_BAAnnot(CPDF_Annot* pAnnot,
 
 CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot() {}
 
+CPDFSDK_BAAnnot* CPDFSDK_BAAnnot::AsBAAnnot() {
+  return this;
+}
+
 CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() const {
   return m_pAnnot.Get();
 }

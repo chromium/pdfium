@@ -27,6 +27,10 @@ CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
 
 CPDFSDK_Annot::~CPDFSDK_Annot() {}
 
+CPDFSDK_BAAnnot* CPDFSDK_Annot::AsBAAnnot() {
+  return nullptr;
+}
+
 #ifdef PDF_ENABLE_XFA
 
 bool CPDFSDK_Annot::IsXFAField() {
