@@ -2759,7 +2759,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_traverse.cpp",
       "xfa/fxfa/parser/cxfa_traverse.h",
       "xfa/fxfa/parser/cxfa_traversestrategy_contentareacontainerlayoutitem.h",
-      "xfa/fxfa/parser/cxfa_traversestrategy_contentlayoutitem.h",
       "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h",
       "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h",
       "xfa/fxfa/parser/cxfa_traversestrategy_xfanode.h",

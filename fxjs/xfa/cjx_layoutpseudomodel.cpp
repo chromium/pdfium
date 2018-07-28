@@ -24,7 +24,7 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
-#include "xfa/fxfa/parser/cxfa_traversestrategy_contentlayoutitem.h"
+#include "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h"
 
 const CJX_MethodSpec CJX_LayoutPseudoModel::MethodSpecs[] = {
     {"absPage", absPage_static},
@@ -244,14 +244,13 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
       if (pItem->GetFormNode()->GetElementType() == XFA_Element::ContentArea) {
         retArray.push_back(pItem->GetFormNode());
         if (!bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
-                                    CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem->m_pFirstChild));
-          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
-               pItemChild; pItemChild = iterator.MoveToNext()) {
-            if (!pItemChild->IsContentLayoutItem()) {
+          CXFA_LayoutItemIterator iterator(pItem->m_pFirstChild);
+          for (CXFA_LayoutItem* pChild = iterator.GetCurrent(); pChild;
+               pChild = iterator.MoveToNext()) {
+            CXFA_ContentLayoutItem* pItemChild = pChild->AsContentLayoutItem();
+            if (!pItemChild)
               continue;
-            }
+
             XFA_Element eType = pItemChild->GetFormNode()->GetElementType();
             if (eType != XFA_Element::Field && eType != XFA_Element::Draw &&
                 eType != XFA_Element::Subform && eType != XFA_Element::Area) {
@@ -266,14 +265,13 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
         }
       } else {
         if (bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
-                                    CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem));
-          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
-               pItemChild; pItemChild = iterator.MoveToNext()) {
-            if (!pItemChild->IsContentLayoutItem()) {
+          CXFA_LayoutItemIterator iterator(pItem);
+          for (CXFA_LayoutItem* pChild = iterator.GetCurrent(); pChild;
+               pChild = iterator.MoveToNext()) {
+            CXFA_ContentLayoutItem* pItemChild = pChild->AsContentLayoutItem();
+            if (!pItemChild)
               continue;
-            }
+
             XFA_Element eType = pItemChild->GetFormNode()->GetElementType();
             if (eType != XFA_Element::Field && eType != XFA_Element::Draw &&
                 eType != XFA_Element::Subform && eType != XFA_Element::Area) {
@@ -281,6 +279,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
             }
             if (pdfium::ContainsValue(formItems, pItemChild->GetFormNode()))
               continue;
+
             formItems.insert(pItemChild->GetFormNode());
             retArray.push_back(pItemChild->GetFormNode());
           }
@@ -305,12 +304,11 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
          pItem = pItem->m_pNextSibling) {
       if (pItem->GetFormNode()->GetElementType() == XFA_Element::ContentArea) {
         if (!bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
-                                    CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem->m_pFirstChild));
-          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
-               pItemChild; pItemChild = iterator.MoveToNext()) {
-            if (!pItemChild->IsContentLayoutItem())
+          CXFA_LayoutItemIterator iterator(pItem->m_pFirstChild);
+          for (CXFA_LayoutItem* pChild = iterator.GetCurrent(); pChild;
+               pChild = iterator.MoveToNext()) {
+            CXFA_ContentLayoutItem* pItemChild = pChild->AsContentLayoutItem();
+            if (!pItemChild)
               continue;
             if (pItemChild->GetFormNode()->GetElementType() != eType)
               continue;
@@ -323,12 +321,11 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
         }
       } else {
         if (bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
-                                    CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator(static_cast<CXFA_ContentLayoutItem*>(pItem));
-          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
-               pItemChild; pItemChild = iterator.MoveToNext()) {
-            if (!pItemChild->IsContentLayoutItem())
+          CXFA_LayoutItemIterator iterator(pItem);
+          for (CXFA_LayoutItem* pChild = iterator.GetCurrent(); pChild;
+               pChild = iterator.MoveToNext()) {
+            CXFA_ContentLayoutItem* pItemChild = pChild->AsContentLayoutItem();
+            if (!pItemChild)
               continue;
             if (pItemChild->GetFormNode()->GetElementType() != eType)
               continue;

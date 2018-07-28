@@ -12,7 +12,6 @@
 
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
-#include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h"
 
 class CXFA_FFWidget;
@@ -33,10 +32,6 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
  protected:
   UnownedPtr<CXFA_FFDocView> const m_pDocView;
 };
-
-using CXFA_LayoutItemIterator =
-    CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
-                              CXFA_TraverseStrategy_LayoutItem>;
 
 class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
  public:

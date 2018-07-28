@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_
 
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
+#include "xfa/fxfa/parser/cxfa_nodeiteratortemplate.h"
 
 class CXFA_TraverseStrategy_LayoutItem {
  public:
@@ -21,5 +22,9 @@ class CXFA_TraverseStrategy_LayoutItem {
     return pLayoutItem->m_pParent;
   }
 };
+
+using CXFA_LayoutItemIterator =
+    CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
+                              CXFA_TraverseStrategy_LayoutItem>;
 
 #endif  // XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_LAYOUTITEM_H_
