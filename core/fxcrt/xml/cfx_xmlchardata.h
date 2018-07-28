@@ -25,4 +25,10 @@ class CFX_XMLCharData : public CFX_XMLText {
   void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
 };
 
+inline CFX_XMLCharData* ToXMLCharData(CFX_XMLNode* pNode) {
+  return pNode && pNode->GetType() == FX_XMLNODE_CharData
+             ? static_cast<CFX_XMLCharData*>(pNode)
+             : nullptr;
+}
+
 #endif  // CORE_FXCRT_XML_CFX_XMLCHARDATA_H_

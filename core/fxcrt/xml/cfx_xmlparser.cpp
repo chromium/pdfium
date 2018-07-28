@@ -518,12 +518,10 @@ void CFX_XMLParser::ProcessTargetData() {
   WideString target_data = GetTextData();
   if (target_data.IsEmpty())
     return;
-  if (!current_node_)
-    return;
-  if (current_node_->GetType() != FX_XMLNODE_Instruction)
-    return;
 
-  static_cast<CFX_XMLInstruction*>(current_node_)->AppendData(target_data);
+  CFX_XMLInstruction* instruction = ToXMLInstruction(current_node_);
+  if (instruction)
+    instruction->AppendData(target_data);
 }
 
 WideString CFX_XMLParser::GetTextData() {

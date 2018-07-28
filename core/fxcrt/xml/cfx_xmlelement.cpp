@@ -76,13 +76,11 @@ WideString CFX_XMLElement::GetNamespaceURI() const {
 
 WideString CFX_XMLElement::GetTextData() const {
   CFX_WideTextBuf buffer;
-
   for (CFX_XMLNode* pChild = GetFirstChild(); pChild;
        pChild = pChild->GetNextSibling()) {
-    if (pChild->GetType() == FX_XMLNODE_Text ||
-        pChild->GetType() == FX_XMLNODE_CharData) {
-      buffer << static_cast<CFX_XMLText*>(pChild)->GetText();
-    }
+    CFX_XMLText* pText = ToXMLText(pChild);
+    if (pText)
+      buffer << pText->GetText();
   }
   return buffer.MakeString();
 }

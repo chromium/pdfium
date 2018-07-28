@@ -53,8 +53,7 @@ TEST(CFX_XMLInstructionTest, Clone) {
   EXPECT_TRUE(clone != nullptr);
 
   ASSERT_EQ(FX_XMLNODE_Instruction, clone->GetType());
-  CFX_XMLInstruction* inst = static_cast<CFX_XMLInstruction*>(clone);
-
+  CFX_XMLInstruction* inst = ToXMLInstruction(clone);
   EXPECT_TRUE(inst->IsAcrobat());
 
   auto& data = inst->GetTargetData();
@@ -98,8 +97,7 @@ TEST(CFX_XMLInstructionTest, ParseAndReSave) {
   ASSERT_TRUE(root->GetFirstChild() != nullptr);
   ASSERT_EQ(FX_XMLNODE_Instruction, root->GetFirstChild()->GetType());
 
-  CFX_XMLInstruction* node =
-      static_cast<CFX_XMLInstruction*>(root->GetFirstChild());
+  CFX_XMLInstruction* node = ToXMLInstruction(root->GetFirstChild());
   ASSERT_TRUE(node != nullptr);
   EXPECT_TRUE(node->IsAcrobat());
 
@@ -136,12 +134,9 @@ TEST(CFX_XMLInstructionTest, ParseAndReSaveInnerInstruction) {
   EXPECT_EQ(L"node", node->GetName());
 
   CFX_XMLInstruction* instruction = nullptr;
-  for (auto* elem = node->GetFirstChild(); elem;
+  for (auto* elem = node->GetFirstChild(); elem && !instruction;
        elem = elem->GetNextSibling()) {
-    if (elem->GetType() == FX_XMLNODE_Instruction) {
-      instruction = static_cast<CFX_XMLInstruction*>(elem);
-      break;
-    }
+    instruction = ToXMLInstruction(elem);
   }
   ASSERT_TRUE(instruction != nullptr);
   EXPECT_TRUE(instruction->IsAcrobat());

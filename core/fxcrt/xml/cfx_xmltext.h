@@ -31,4 +31,13 @@ class CFX_XMLText : public CFX_XMLNode {
   WideString m_wsText;
 };
 
+inline bool IsXMLText(CFX_XMLNode* pNode) {
+  FX_XMLNODETYPE type = pNode->GetType();
+  return type == FX_XMLNODE_Text || type == FX_XMLNODE_CharData;
+}
+
+inline CFX_XMLText* ToXMLText(CFX_XMLNode* pNode) {
+  return pNode && IsXMLText(pNode) ? static_cast<CFX_XMLText*>(pNode) : nullptr;
+}
+
 #endif  // CORE_FXCRT_XML_CFX_XMLTEXT_H_

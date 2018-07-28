@@ -104,7 +104,7 @@ TEST(CFX_XMLElementTest, Clone) {
   EXPECT_TRUE(inst->GetFirstChild()->GetNextSibling() == nullptr);
 
   ASSERT_EQ(FX_XMLNODE_Text, inst->GetFirstChild()->GetType());
-  auto* text = static_cast<CFX_XMLText*>(inst->GetFirstChild());
+  auto* text = ToXMLText(inst->GetFirstChild());
   EXPECT_EQ(L"Text Child", text->GetText());
 }
 

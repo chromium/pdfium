@@ -26,7 +26,7 @@ TEST(CFX_XMLCharDataTest, Clone) {
   EXPECT_TRUE(clone != nullptr);
   EXPECT_NE(&data, clone);
   ASSERT_EQ(FX_XMLNODE_CharData, clone->GetType());
-  EXPECT_EQ(L"My Data", static_cast<CFX_XMLCharData*>(clone)->GetText());
+  EXPECT_EQ(L"My Data", ToXMLCharData(clone)->GetText());
 }
 
 TEST(CFX_XMLCharDataTest, Save) {

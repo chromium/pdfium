@@ -4730,7 +4730,7 @@ void CXFA_Node::SetToXML(const WideString& value) {
       break;
     }
     case FX_XMLNODE_Text:
-      static_cast<CFX_XMLText*>(GetXMLMappingNode())->SetText(value);
+      ToXMLText(GetXMLMappingNode())->SetText(value);
       break;
     default:
       NOTREACHED();

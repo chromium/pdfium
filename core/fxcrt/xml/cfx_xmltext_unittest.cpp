@@ -25,7 +25,7 @@ TEST(CFX_XMLTextTest, Clone) {
   CFX_XMLNode* clone = data.Clone(&doc);
   EXPECT_TRUE(clone != nullptr);
   ASSERT_EQ(FX_XMLNODE_Text, clone->GetType());
-  EXPECT_EQ(L"My Data", static_cast<CFX_XMLText*>(clone)->GetText());
+  EXPECT_EQ(L"My Data", ToXMLText(clone)->GetText());
 }
 
 TEST(CFX_XMLTextTest, Save) {

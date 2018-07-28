@@ -325,8 +325,7 @@ TEST_F(CFX_XMLParserTest, ParseInstruction) {
   ASSERT_TRUE(root->GetFirstChild() != nullptr);
   ASSERT_EQ(FX_XMLNODE_Instruction, root->GetFirstChild()->GetType());
 
-  CFX_XMLInstruction* instruction =
-      static_cast<CFX_XMLInstruction*>(root->GetFirstChild());
+  CFX_XMLInstruction* instruction = ToXMLInstruction(root->GetFirstChild());
   EXPECT_TRUE(instruction->IsOriginalXFAVersion());
 }
 
