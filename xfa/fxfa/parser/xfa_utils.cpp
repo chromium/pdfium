@@ -450,7 +450,7 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_Node* pNode) {
       break;
   }
   return CXFA_LocaleValue(iVTType, pNode->GetRawValue(),
-                          pNode->GetDocument()->GetLocalMgr());
+                          pNode->GetDocument()->GetLocaleMgr());
 }
 
 bool XFA_FDEExtension_ResolveNamespaceQualifier(CFX_XMLElement* pNode,

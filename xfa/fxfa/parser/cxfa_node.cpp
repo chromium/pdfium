@@ -961,8 +961,8 @@ LocaleIface* CXFA_Node::GetLocale() {
   if (!localeName)
     return nullptr;
   if (localeName.value() == L"ambient")
-    return GetDocument()->GetLocalMgr()->GetDefLocale();
-  return GetDocument()->GetLocalMgr()->GetLocaleByName(localeName.value());
+    return GetDocument()->GetLocaleMgr()->GetDefLocale();
+  return GetDocument()->GetLocaleMgr()->GetLocaleByName(localeName.value());
 }
 
 Optional<WideString> CXFA_Node::GetLocaleName() {
@@ -983,7 +983,7 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
 
   CXFA_Node* pConfig = ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
   Optional<WideString> localeName = {
-      GetDocument()->GetLocalMgr()->GetConfigLocaleName(pConfig)};
+      GetDocument()->GetLocaleMgr()->GetConfigLocaleName(pConfig)};
   if (localeName && !localeName->IsEmpty())
     return localeName;
 
@@ -994,7 +994,7 @@ Optional<WideString> CXFA_Node::GetLocaleName() {
       return localeName;
   }
 
-  LocaleIface* pLocale = GetDocument()->GetLocalMgr()->GetDefLocale();
+  LocaleIface* pLocale = GetDocument()->GetLocaleMgr()->GetDefLocale();
   if (!pLocale)
     return {};
 
@@ -4310,14 +4310,14 @@ bool CXFA_Node::SetValue(XFA_VALUEPICTURE eValueType,
 
   XFA_Element eType = pNode->GetElementType();
   if (!wsPicture.IsEmpty()) {
-    CXFA_LocaleMgr* pLocalMgr = GetDocument()->GetLocalMgr();
+    CXFA_LocaleMgr* pLocaleMgr = GetDocument()->GetLocaleMgr();
     LocaleIface* pLocale = GetLocale();
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
     bValidate =
         widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture);
     if (bValidate) {
       widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsNewText,
-                                     wsPicture, pLocale, pLocalMgr);
+                                     wsPicture, pLocale, pLocaleMgr);
       wsNewText = widgetValue.GetValue();
       if (eType == XFA_Element::NumericEdit)
         wsNewText = NumericLimit(wsNewText);
@@ -4453,12 +4453,12 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
 
   if (LocaleIface* pLocale = GetLocale()) {
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
-    CXFA_LocaleMgr* pLocalMgr = GetDocument()->GetLocalMgr();
+    CXFA_LocaleMgr* pLocaleMgr = GetDocument()->GetLocaleMgr();
     switch (widgetValue.GetType()) {
       case XFA_VT_DATE: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocalMgr);
+          CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocaleMgr);
           if (date.FormatPatterns(wsValue, wsPicture, pLocale, eValueType))
             return wsValue;
         }
@@ -4467,7 +4467,7 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
       case XFA_VT_TIME: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocalMgr);
+          CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocaleMgr);
           if (time.FormatPatterns(wsValue, wsPicture, pLocale, eValueType))
             return wsValue;
         }
@@ -4489,12 +4489,12 @@ WideString CXFA_Node::GetNormalizeDataValue(const WideString& wsValue) {
   if (wsPicture.IsEmpty())
     return wsValue;
 
-  CXFA_LocaleMgr* pLocalMgr = GetDocument()->GetLocalMgr();
+  CXFA_LocaleMgr* pLocaleMgr = GetDocument()->GetLocaleMgr();
   LocaleIface* pLocale = GetLocale();
   CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
   if (widgetValue.ValidateValue(wsValue, wsPicture, pLocale, &wsPicture)) {
     widgetValue = CXFA_LocaleValue(widgetValue.GetType(), wsValue, wsPicture,
-                                   pLocale, pLocalMgr);
+                                   pLocale, pLocaleMgr);
     return widgetValue.GetValue();
   }
   return wsValue;
@@ -4548,13 +4548,13 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
         iVTType = XFA_VT_NULL;
         break;
     }
-    CXFA_LocaleMgr* pLocalMgr = GetDocument()->GetLocalMgr();
-    CXFA_LocaleValue widgetValue(iVTType, wsValue, pLocalMgr);
+    CXFA_LocaleMgr* pLocaleMgr = GetDocument()->GetLocaleMgr();
+    CXFA_LocaleValue widgetValue(iVTType, wsValue, pLocaleMgr);
     switch (widgetValue.GetType()) {
       case XFA_VT_DATE: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocalMgr);
+          CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocaleMgr);
           if (date.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
                                   XFA_VALUEPICTURE_DataBind)) {
             return wsFormattedValue;
@@ -4565,7 +4565,7 @@ WideString CXFA_Node::GetFormatDataValue(const WideString& wsValue) {
       case XFA_VT_TIME: {
         WideString wsDate, wsTime;
         if (SplitDateTime(wsValue, wsDate, wsTime)) {
-          CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocalMgr);
+          CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocaleMgr);
           if (time.FormatPatterns(wsFormattedValue, wsPicture, pLocale,
                                   XFA_VALUEPICTURE_DataBind)) {
             return wsFormattedValue;

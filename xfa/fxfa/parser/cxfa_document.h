@@ -62,7 +62,7 @@ class CXFA_Document : public CXFA_NodeOwner {
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
   CXFA_FFNotify* GetNotify() const { return notify_.Get(); }
-  CXFA_LocaleMgr* GetLocalMgr();
+  CXFA_LocaleMgr* GetLocaleMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const WideStringView& wsID) const;
   CXFA_Node* GetNotBindNode(const std::vector<CXFA_Object*>& arrayNodes) const;
@@ -107,7 +107,7 @@ class CXFA_Document : public CXFA_NodeOwner {
   std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
   std::unique_ptr<CXFA_LayoutProcessor> m_pLayoutProcessor;
-  std::unique_ptr<CXFA_LocaleMgr> m_pLocalMgr;
+  std::unique_ptr<CXFA_LocaleMgr> m_pLocaleMgr;
   std::unique_ptr<CScript_DataWindow> m_pScriptDataWindow;
   std::unique_ptr<CScript_EventPseudoModel> m_pScriptEvent;
   std::unique_ptr<CScript_HostPseudoModel> m_pScriptHost;

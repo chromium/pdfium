@@ -1238,7 +1238,7 @@ void CFXJSE_FormCalcContext::IsoTime2Num(CFXJSE_Value* pThis,
   }
 
   CXFA_Document* pDoc = pContext->GetDocument();
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   ByteString szArgString = ValueToUTF8String(argOne.get());
   auto pos = szArgString.Find('T', 0);
   if (!pos.has_value() || pos.value() == szArgString.GetLength() - 1) {
@@ -1639,7 +1639,7 @@ void CFXJSE_FormCalcContext::Time2Num(CFXJSE_Value* pThis,
   }
 
   CXFA_Document* pDoc = ToFormCalcContext(pThis)->GetDocument();
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = nullptr;
   if (localString.IsEmpty()) {
     CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
@@ -1999,7 +1999,7 @@ ByteString CFXJSE_FormCalcContext::Local2IsoDate(
   if (!pDoc)
     return ByteString();
 
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, szLocale);
   if (!pLocale)
     return ByteString();
@@ -2023,7 +2023,7 @@ ByteString CFXJSE_FormCalcContext::IsoDate2Local(
   if (!pDoc)
     return ByteString();
 
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, szLocale);
   if (!pLocale)
     return ByteString();
@@ -2045,7 +2045,7 @@ ByteString CFXJSE_FormCalcContext::IsoTime2Local(
   if (!pDoc)
     return ByteString();
 
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, szLocale);
   if (!pLocale)
     return ByteString();
@@ -2127,7 +2127,7 @@ ByteString CFXJSE_FormCalcContext::GetLocalDateFormat(
   if (!pDoc)
     return ByteString();
 
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, szLocale);
   if (!pLocale)
     return ByteString();
@@ -2150,7 +2150,7 @@ ByteString CFXJSE_FormCalcContext::GetLocalTimeFormat(
   if (!pDoc)
     return ByteString();
 
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   LocaleIface* pLocale = LocaleFromString(pDoc, pMgr, szLocale);
   if (!pLocale)
     return ByteString();
@@ -3766,7 +3766,7 @@ void CFXJSE_FormCalcContext::Format(CFXJSE_Value* pThis,
   ByteString szValue = ValueToUTF8String(argTwo.get());
 
   CXFA_Document* pDoc = pContext->GetDocument();
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
   ASSERT(pThisNode);
 
@@ -3941,7 +3941,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
   ByteString szPattern = ValueToUTF8String(argOne.get());
   ByteString szValue = ValueToUTF8String(argTwo.get());
   CXFA_Document* pDoc = pContext->GetDocument();
-  CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
+  CXFA_LocaleMgr* pMgr = pDoc->GetLocaleMgr();
   CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
   ASSERT(pThisNode);
 

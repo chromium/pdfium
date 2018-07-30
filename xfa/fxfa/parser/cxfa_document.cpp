@@ -1294,7 +1294,7 @@ CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
 void CXFA_Document::ClearLayoutData() {
   m_pLayoutProcessor.reset();
   m_pScriptContext.reset();
-  m_pLocalMgr.reset();
+  m_pLocaleMgr.reset();
   m_pScriptDataWindow.reset();
   m_pScriptEvent.reset();
   m_pScriptHost.reset();
@@ -1421,13 +1421,13 @@ bool CXFA_Document::IsInteractive() {
   return false;
 }
 
-CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
-  if (!m_pLocalMgr) {
-    m_pLocalMgr = pdfium::MakeUnique<CXFA_LocaleMgr>(
+CXFA_LocaleMgr* CXFA_Document::GetLocaleMgr() {
+  if (!m_pLocaleMgr) {
+    m_pLocaleMgr = pdfium::MakeUnique<CXFA_LocaleMgr>(
         ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)),
         GetNotify()->GetAppProvider()->GetLanguage());
   }
-  return m_pLocalMgr.get();
+  return m_pLocaleMgr.get();
 }
 
 CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {
