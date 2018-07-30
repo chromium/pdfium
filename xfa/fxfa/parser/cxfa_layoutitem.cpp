@@ -28,7 +28,7 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   }
   pNotify->OnLayoutItemRemoving(pDocLayout, pLayoutItem);
   if (pLayoutItem->GetFormNode()->GetElementType() == XFA_Element::PageArea) {
-    pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
+    pNotify->OnPageEvent(ToContainerLayoutItem(pLayoutItem),
                          XFA_PAGEVIEWEVENT_PostRemoved);
   }
   delete pLayoutItem;
