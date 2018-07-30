@@ -252,6 +252,8 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   // Item 5: The number of bits needed to represent the greatest number of
   // objects in a shared object group.
   uint32_t dwSharedObjNumBits = hStream->GetBits(16);
+  if (dwSharedObjNumBits > 32)
+    return false;
 
   // Item 6: The least length of a shared object group in bytes.
   uint32_t dwGroupLeastLen = hStream->GetBits(32);
