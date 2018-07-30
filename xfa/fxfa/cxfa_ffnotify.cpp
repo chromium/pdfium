@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/cxfa_ffnotify.h"
 
-#include <memory>
 #include <utility>
 
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -91,101 +90,106 @@ void CXFA_FFNotify::OnWidgetListItemRemoved(CXFA_Node* pSender,
   }
 }
 
-CXFA_ContainerLayoutItem* CXFA_FFNotify::OnCreateContainerLayoutItem(
-    CXFA_Node* pNode) {
+std::unique_ptr<CXFA_ContainerLayoutItem>
+CXFA_FFNotify::OnCreateContainerLayoutItem(CXFA_Node* pNode) {
   XFA_Element type = pNode->GetElementType();
-  ASSERT(type == XFA_Element::ContentArea || type == XFA_Element::PageArea);
-
   if (type == XFA_Element::PageArea) {
     CXFA_LayoutProcessor* pLayout = m_pDoc->GetXFADoc()->GetLayoutProcessor();
-    return new CXFA_FFPageView(m_pDoc->GetDocView(pLayout), pNode);
+    return pdfium::MakeUnique<CXFA_FFPageView>(m_pDoc->GetDocView(pLayout),
+                                               pNode);
   }
-  return new CXFA_ContainerLayoutItem(pNode);
+  if (type == XFA_Element::ContentArea)
+    return pdfium::MakeUnique<CXFA_ContainerLayoutItem>(pNode);
+
+  NOTREACHED();
+  return nullptr;
 }
 
-CXFA_ContentLayoutItem* CXFA_FFNotify::OnCreateContentLayoutItem(
-    CXFA_Node* pNode) {
+std::unique_ptr<CXFA_ContentLayoutItem>
+CXFA_FFNotify::OnCreateContentLayoutItem(CXFA_Node* pNode) {
   ASSERT(pNode->GetElementType() != XFA_Element::ContentArea);
   ASSERT(pNode->GetElementType() != XFA_Element::PageArea);
 
   // We only need to create the widget for certain types of objects.
   if (!pNode->HasCreatedUIWidget())
-    return new CXFA_ContentLayoutItem(pNode);
+    return pdfium::MakeUnique<CXFA_ContentLayoutItem>(pNode);
 
-  CXFA_FFWidget* pWidget = nullptr;
+  std::unique_ptr<CXFA_FFWidget> pWidget;
   switch (pNode->GetFFWidgetType()) {
     case XFA_FFWidgetType::kBarcode: {
       CXFA_Node* child = pNode->GetUIChildNode();
-      if (child->GetElementType() == XFA_Element::Barcode)
-        pWidget = new CXFA_FFBarcode(pNode, static_cast<CXFA_Barcode*>(child));
+      if (child->GetElementType() == XFA_Element::Barcode) {
+        pWidget = pdfium::MakeUnique<CXFA_FFBarcode>(
+            pNode, static_cast<CXFA_Barcode*>(child));
+      }
       break;
     }
     case XFA_FFWidgetType::kButton: {
       CXFA_Node* child = pNode->GetUIChildNode();
       if (child->GetElementType() == XFA_Element::Button) {
-        pWidget =
-            new CXFA_FFPushButton(pNode, static_cast<CXFA_Button*>(child));
+        pWidget = pdfium::MakeUnique<CXFA_FFPushButton>(
+            pNode, static_cast<CXFA_Button*>(child));
       }
       break;
     }
     case XFA_FFWidgetType::kCheckButton: {
       CXFA_Node* child = pNode->GetUIChildNode();
       if (child->GetElementType() == XFA_Element::CheckButton) {
-        pWidget = new CXFA_FFCheckButton(pNode,
-                                         static_cast<CXFA_CheckButton*>(child));
+        pWidget = pdfium::MakeUnique<CXFA_FFCheckButton>(
+            pNode, static_cast<CXFA_CheckButton*>(child));
       }
       break;
     }
     case XFA_FFWidgetType::kChoiceList: {
       if (pNode->IsListBox())
-        pWidget = new CXFA_FFListBox(pNode);
+        pWidget = pdfium::MakeUnique<CXFA_FFListBox>(pNode);
       else
-        pWidget = new CXFA_FFComboBox(pNode);
+        pWidget = pdfium::MakeUnique<CXFA_FFComboBox>(pNode);
       break;
     }
     case XFA_FFWidgetType::kDateTimeEdit:
-      pWidget = new CXFA_FFDateTimeEdit(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFDateTimeEdit>(pNode);
       break;
     case XFA_FFWidgetType::kImageEdit:
-      pWidget = new CXFA_FFImageEdit(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFImageEdit>(pNode);
       break;
     case XFA_FFWidgetType::kNumericEdit:
-      pWidget = new CXFA_FFNumericEdit(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFNumericEdit>(pNode);
       break;
     case XFA_FFWidgetType::kPasswordEdit: {
       CXFA_Node* child = pNode->GetUIChildNode();
       if (child->GetElementType() == XFA_Element::PasswordEdit) {
-        pWidget = new CXFA_FFPasswordEdit(
+        pWidget = pdfium::MakeUnique<CXFA_FFPasswordEdit>(
             pNode, static_cast<CXFA_PasswordEdit*>(child));
       }
       break;
     }
     case XFA_FFWidgetType::kSignature:
-      pWidget = new CXFA_FFSignature(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFSignature>(pNode);
       break;
     case XFA_FFWidgetType::kTextEdit:
-      pWidget = new CXFA_FFTextEdit(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFTextEdit>(pNode);
       break;
     case XFA_FFWidgetType::kArc:
-      pWidget = new CXFA_FFArc(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFArc>(pNode);
       break;
     case XFA_FFWidgetType::kLine:
-      pWidget = new CXFA_FFLine(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFLine>(pNode);
       break;
     case XFA_FFWidgetType::kRectangle:
-      pWidget = new CXFA_FFRectangle(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFRectangle>(pNode);
       break;
     case XFA_FFWidgetType::kText:
-      pWidget = new CXFA_FFText(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFText>(pNode);
       break;
     case XFA_FFWidgetType::kImage:
-      pWidget = new CXFA_FFImage(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFImage>(pNode);
       break;
     case XFA_FFWidgetType::kSubform:
-      pWidget = new CXFA_FFWidget(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFWidget>(pNode);
       break;
     case XFA_FFWidgetType::kExclGroup:
-      pWidget = new CXFA_FFExclGroup(pNode);
+      pWidget = pdfium::MakeUnique<CXFA_FFExclGroup>(pNode);
       break;
     case XFA_FFWidgetType::kNone:
       return nullptr;

@@ -582,7 +582,8 @@ void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
     pNewPageAreaLayoutItem = pContainerItem;
   } else {
     CXFA_FFNotify* pNotify = pNewPageArea->GetDocument()->GetNotify();
-    auto* pContainerItem = pNotify->OnCreateContainerLayoutItem(pNewPageArea);
+    auto* pContainerItem =
+        pNotify->OnCreateContainerLayoutItem(pNewPageArea).release();
     m_PageArray.push_back(pContainerItem);
     m_nAvailPages++;
     pNotify->OnPageEvent(pContainerItem, XFA_PAGEVIEWEVENT_PostRemoved);
