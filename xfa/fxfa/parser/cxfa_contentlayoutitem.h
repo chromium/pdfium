@@ -23,11 +23,11 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
   int32_t GetIndex() const;
   int32_t GetCount() const;
 
-  CXFA_ContentLayoutItem* m_pPrev;
-  CXFA_ContentLayoutItem* m_pNext;
+  CXFA_ContentLayoutItem* m_pPrev = nullptr;
+  CXFA_ContentLayoutItem* m_pNext = nullptr;
   CFX_PointF m_sPos;
   CFX_SizeF m_sSize;
-  mutable uint32_t m_dwStatus;
+  mutable uint32_t m_dwStatus = 0;
 };
 
 inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* pItem) {

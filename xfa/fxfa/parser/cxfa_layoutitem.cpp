@@ -34,8 +34,8 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   delete pLayoutItem;
 }
 
-CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, bool bIsContentLayoutItem)
-    : m_bIsContentLayoutItem(bIsContentLayoutItem), m_pFormNode(pNode) {}
+CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, ItemType type)
+    : m_ItemType(type), m_pFormNode(pNode) {}
 
 CXFA_LayoutItem::~CXFA_LayoutItem() = default;
 

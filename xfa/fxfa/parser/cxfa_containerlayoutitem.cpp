@@ -14,7 +14,7 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
-    : CXFA_LayoutItem(pNode, false) {}
+    : CXFA_LayoutItem(pNode, kContainerItem) {}
 
 CXFA_ContainerLayoutItem::~CXFA_ContainerLayoutItem() = default;
 

@@ -18,8 +18,8 @@ class CXFA_LayoutItem {
  public:
   virtual ~CXFA_LayoutItem();
 
-  bool IsContainerLayoutItem() const { return !m_bIsContentLayoutItem; }
-  bool IsContentLayoutItem() const { return m_bIsContentLayoutItem; }
+  bool IsContainerLayoutItem() const { return m_ItemType == kContainerItem; }
+  bool IsContentLayoutItem() const { return m_ItemType == kContentItem; }
   CXFA_ContainerLayoutItem* AsContainerLayoutItem();
   CXFA_ContentLayoutItem* AsContentLayoutItem();
 
@@ -27,7 +27,6 @@ class CXFA_LayoutItem {
   CXFA_LayoutItem* GetParent() const { return m_pParent; }
   CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
   void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
-
 
   void AddChild(CXFA_LayoutItem* pChildItem);
   void AddHeadChild(CXFA_LayoutItem* pChildItem);
@@ -39,9 +38,10 @@ class CXFA_LayoutItem {
   CXFA_LayoutItem* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
 
  protected:
-  CXFA_LayoutItem(CXFA_Node* pNode, bool bIsContentLayoutItem);
+  enum ItemType { kContainerItem, kContentItem };
+  CXFA_LayoutItem(CXFA_Node* pNode, ItemType type);
 
-  bool m_bIsContentLayoutItem;
+  const ItemType m_ItemType;
   UnownedPtr<CXFA_Node> m_pFormNode;
 };
 
