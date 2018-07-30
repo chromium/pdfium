@@ -14,6 +14,15 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
   explicit CXFA_ContentLayoutItem(CXFA_Node* pNode);
   ~CXFA_ContentLayoutItem() override;
 
+  CXFA_ContentLayoutItem* GetFirst();
+  CXFA_ContentLayoutItem* GetLast();
+  CXFA_ContentLayoutItem* GetPrev() const { return m_pPrev; }
+  CXFA_ContentLayoutItem* GetNext() const { return m_pNext; }
+
+  CFX_RectF GetRect(bool bRelative) const;
+  int32_t GetIndex() const;
+  int32_t GetCount() const;
+
   CXFA_ContentLayoutItem* m_pPrev;
   CXFA_ContentLayoutItem* m_pNext;
   CFX_PointF m_sPos;

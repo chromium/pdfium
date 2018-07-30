@@ -92,7 +92,8 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
   if (!pDocLayout)
     return CJS_Return();
 
-  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_ContentLayoutItem* pLayoutItem =
+      ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
     return CJS_Return();
 
@@ -195,7 +196,8 @@ CJS_Return CJX_LayoutPseudoModel::pageSpan(
   if (!pDocLayout)
     return CJS_Return();
 
-  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_ContentLayoutItem* pLayoutItem =
+      ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
     return CJS_Return(runtime->NewNumber(-1));
 
@@ -473,7 +475,8 @@ CJS_Return CJX_LayoutPseudoModel::PageInternals(
   if (!pDocLayout)
     return CJS_Return();
 
-  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_ContentLayoutItem* pLayoutItem =
+      ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
     return CJS_Return(runtime->NewNumber(-1));
 

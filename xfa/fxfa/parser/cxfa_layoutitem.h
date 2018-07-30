@@ -24,19 +24,10 @@ class CXFA_LayoutItem {
   CXFA_ContentLayoutItem* AsContentLayoutItem();
 
   CXFA_ContainerLayoutItem* GetPage() const;
-  CFX_RectF GetRect(bool bRelative) const;
-
+  CXFA_LayoutItem* GetParent() const { return m_pParent; }
   CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
   void SetFormNode(CXFA_Node* pNode) { m_pFormNode = pNode; }
 
-  int32_t GetIndex() const;
-  int32_t GetCount() const;
-
-  CXFA_LayoutItem* GetParent() const { return m_pParent; }
-  CXFA_LayoutItem* GetFirst();
-  const CXFA_LayoutItem* GetLast() const;
-  CXFA_LayoutItem* GetPrev() const;
-  CXFA_LayoutItem* GetNext() const;
 
   void AddChild(CXFA_LayoutItem* pChildItem);
   void AddHeadChild(CXFA_LayoutItem* pChildItem);

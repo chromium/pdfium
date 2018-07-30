@@ -167,7 +167,7 @@ void CXFA_FFField::CapPlacement() {
   CFX_RectF rtWidget = GetRectWithoutRotate();
   CXFA_Margin* margin = m_pNode->GetMarginIfExists();
   if (margin) {
-    CXFA_LayoutItem* pItem = this;
+    CXFA_ContentLayoutItem* pItem = this;
     float fLeftInset = margin->GetLeftInset();
     float fRightInset = margin->GetRightInset();
     float fTopInset = margin->GetTopInset();
@@ -195,7 +195,7 @@ void CXFA_FFField::CapPlacement() {
       m_rtCaption.Reset();
     } else {
       fCapReserve = caption->GetReserve();
-      CXFA_LayoutItem* pItem = this;
+      CXFA_ContentLayoutItem* pItem = this;
       if (!pItem->GetPrev() && !pItem->GetNext()) {
         m_rtCaption = rtWidget;
       } else {
