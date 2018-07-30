@@ -86,16 +86,16 @@ CXFA_Node* FormValueNode_CreateChild(CXFA_Node* pValueNode, XFA_Element iType) {
   return pChildNode;
 }
 
-bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
+void FormValueNode_SetChildContent(CXFA_Node* pValueNode,
                                    const WideString& wsContent,
-                                   XFA_Element iType = XFA_Element::Unknown) {
+                                   XFA_Element iType) {
   if (!pValueNode)
-    return false;
+    return;
 
   ASSERT(pValueNode->GetPacketType() == XFA_PacketType::Form);
   CXFA_Node* pChildNode = FormValueNode_CreateChild(pValueNode, iType);
   if (!pChildNode)
-    return false;
+    return;
 
   switch (pChildNode->GetObjectType()) {
     case XFA_ObjectType::ContentNode: {
@@ -128,10 +128,8 @@ bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
       break;
     }
     default:
-      NOTREACHED();
       break;
   }
-  return true;
 }
 
 void MergeNodeRecurse(CXFA_Node* pDestNodeParent, CXFA_Node* pProtoNode) {
