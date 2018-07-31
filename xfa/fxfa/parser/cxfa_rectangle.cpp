@@ -111,8 +111,8 @@ void CXFA_Rectangle::GetFillPath(const std::vector<CXFA_Stroke*>& strokes,
     float nx = 1.0f;
     float ny = 1.0f;
     CFX_PointF cp1, cp2;
-    auto* corner1 = static_cast<CXFA_Corner*>(strokes[i]);
-    auto* corner2 = static_cast<CXFA_Corner*>(strokes[(i + 2) % 8]);
+    CXFA_Stroke* corner1 = strokes[i];
+    CXFA_Stroke* corner2 = strokes[(i + 2) % 8];
     float fRadius1 = corner1->GetRadius();
     float fRadius2 = corner2->GetRadius();
     bool bInverted = corner1->IsInverted();
@@ -449,8 +449,8 @@ void CXFA_Rectangle::GetPath(const std::vector<CXFA_Stroke*>& strokes,
   ASSERT(nIndex >= 0 && nIndex < 8);
 
   int32_t n = (nIndex & 1) ? nIndex - 1 : nIndex;
-  auto* corner1 = static_cast<CXFA_Corner*>(strokes[n]);
-  auto* corner2 = static_cast<CXFA_Corner*>(strokes[(n + 2) % 8]);
+  CXFA_Stroke* corner1 = strokes[n];
+  CXFA_Stroke* corner2 = strokes[(n + 2) % 8];
   float fRadius1 = bCorner ? corner1->GetRadius() : 0.0f;
   float fRadius2 = bCorner ? corner2->GetRadius() : 0.0f;
   bool bInverted = corner1->IsInverted();
