@@ -53,7 +53,7 @@ CXFA_ContainerLayoutItem* CXFA_LayoutItem::GetPage() const {
   for (CXFA_LayoutItem* pCurNode = const_cast<CXFA_LayoutItem*>(this); pCurNode;
        pCurNode = pCurNode->m_pParent) {
     if (pCurNode->m_pFormNode->GetElementType() == XFA_Element::PageArea)
-      return static_cast<CXFA_ContainerLayoutItem*>(pCurNode);
+      return pCurNode->AsContainerLayoutItem();
   }
   return nullptr;
 }
