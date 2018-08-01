@@ -99,6 +99,9 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
                                      const WideString& wsPattern,
                                      LocaleIface* pLocale,
                                      WideString* pMatchFormat) {
+  if (!m_pLocaleMgr)
+    return false;
+
   WideString wsOutput;
   LocaleIface* locale = m_pLocaleMgr->GetDefLocale();
   if (pLocale)
@@ -109,10 +112,9 @@ bool CXFA_LocaleValue::ValidateValue(const WideString& wsValue,
   pFormat->SplitFormatString(wsPattern, &wsPatterns);
 
   bool bRet = false;
-  int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
-  int32_t i = 0;
-  for (; i < iCount && !bRet; i++) {
-    WideString wsFormat = wsPatterns[i];
+  size_t i = 0;
+  for (; !bRet && i < wsPatterns.size(); i++) {
+    const WideString& wsFormat = wsPatterns[i];
     switch (ValueCategory(pFormat->GetCategory(wsFormat), m_dwType)) {
       case FX_LOCALECATEGORY_Null:
         bRet = pFormat->ParseNull(wsValue, wsFormat);
