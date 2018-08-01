@@ -622,6 +622,925 @@ double ByteStringToDouble(const ByteStringView& szStringVal) {
   return dValue;
 }
 
+bool IsIsoDateFormat(const char* pData,
+                     int32_t iLength,
+                     int32_t& iStyle,
+                     int32_t& iYear,
+                     int32_t& iMonth,
+                     int32_t& iDay) {
+  iYear = 0;
+  iMonth = 1;
+  iDay = 1;
+
+  if (iLength < 4)
+    return false;
+
+  char strYear[5];
+  strYear[4] = '\0';
+  for (int32_t i = 0; i < 4; ++i) {
+    if (!std::isdigit(pData[i]))
+      return false;
+
+    strYear[i] = pData[i];
+  }
+  iYear = FXSYS_atoi(strYear);
+  iStyle = 0;
+  if (iLength == 4)
+    return true;
+
+  iStyle = pData[4] == '-' ? 1 : 0;
+
+  char strTemp[3];
+  strTemp[2] = '\0';
+  int32_t iPosOff = iStyle == 0 ? 4 : 5;
+  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
+    return false;
+
+  strTemp[0] = pData[iPosOff];
+  strTemp[1] = pData[iPosOff + 1];
+  iMonth = FXSYS_atoi(strTemp);
+  if (iMonth > 12 || iMonth < 1)
+    return false;
+
+  if (iStyle == 0) {
+    iPosOff += 2;
+    if (iLength == 6)
+      return true;
+  } else {
+    iPosOff += 3;
+    if (iLength == 7)
+      return true;
+  }
+  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
+    return false;
+
+  strTemp[0] = pData[iPosOff];
+  strTemp[1] = pData[iPosOff + 1];
+  iDay = FXSYS_atoi(strTemp);
+  if (iPosOff + 2 < iLength)
+    return false;
+
+  if ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) {
+    if (iMonth == 2 && iDay > 29)
+      return false;
+  } else {
+    if (iMonth == 2 && iDay > 28)
+      return false;
+  }
+  if (iMonth != 2) {
+    if (iMonth < 8) {
+      if (iDay > (iMonth % 2 == 0 ? 30 : 31))
+        return false;
+    } else if (iDay > (iMonth % 2 == 0 ? 31 : 30)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool IsIsoTimeFormat(const char* pData,
+                     int32_t iLength,
+                     int32_t& iHour,
+                     int32_t& iMinute,
+                     int32_t& iSecond,
+                     int32_t& iMilliSecond,
+                     int32_t& iZoneHour,
+                     int32_t& iZoneMinute) {
+  iHour = 0;
+  iMinute = 0;
+  iSecond = 0;
+  iMilliSecond = 0;
+  iZoneHour = 0;
+  iZoneMinute = 0;
+  if (!pData)
+    return false;
+
+  char strTemp[3];
+  strTemp[2] = '\0';
+  int32_t iZone = 0;
+  int32_t i = 0;
+  while (i < iLength) {
+    if (!std::isdigit(pData[i]) && pData[i] != ':') {
+      iZone = i;
+      break;
+    }
+    ++i;
+  }
+  if (i == iLength)
+    iZone = iLength;
+
+  int32_t iPos = 0;
+  int32_t iIndex = 0;
+  while (iIndex < iZone) {
+    if (!std::isdigit(pData[iIndex]))
+      return false;
+
+    strTemp[0] = pData[iIndex];
+    if (!std::isdigit(pData[iIndex + 1]))
+      return false;
+
+    strTemp[1] = pData[iIndex + 1];
+    if (FXSYS_atoi(strTemp) > 60)
+      return false;
+
+    if (pData[2] == ':') {
+      if (iPos == 0) {
+        iHour = FXSYS_atoi(strTemp);
+        ++iPos;
+      } else if (iPos == 1) {
+        iMinute = FXSYS_atoi(strTemp);
+        ++iPos;
+      } else {
+        iSecond = FXSYS_atoi(strTemp);
+      }
+      iIndex += 3;
+    } else {
+      if (iPos == 0) {
+        iHour = FXSYS_atoi(strTemp);
+        ++iPos;
+      } else if (iPos == 1) {
+        iMinute = FXSYS_atoi(strTemp);
+        ++iPos;
+      } else if (iPos == 2) {
+        iSecond = FXSYS_atoi(strTemp);
+        ++iPos;
+      }
+      iIndex += 2;
+    }
+  }
+
+  if (iIndex < iLength && pData[iIndex] == '.') {
+    constexpr int kSubSecondLength = 3;
+    if (iIndex + kSubSecondLength >= iLength)
+      return false;
+
+    ++iIndex;
+    char strSec[kSubSecondLength + 1];
+    for (int i = 0; i < kSubSecondLength; ++i) {
+      char c = pData[iIndex + i];
+      if (!std::isdigit(c))
+        return false;
+      strSec[i] = c;
+    }
+    strSec[kSubSecondLength] = '\0';
+
+    iMilliSecond = FXSYS_atoi(strSec);
+    if (iMilliSecond > 100) {
+      iMilliSecond = 0;
+      return false;
+    }
+    iIndex += kSubSecondLength;
+  }
+
+  if (iIndex < iLength && FXSYS_towlower(pData[iIndex]) == 'z')
+    return true;
+
+  int32_t iSign = 1;
+  if (iIndex < iLength) {
+    if (pData[iIndex] == '+') {
+      ++iIndex;
+    } else if (pData[iIndex] == '-') {
+      iSign = -1;
+      ++iIndex;
+    }
+  }
+  iPos = 0;
+  while (iIndex < iLength) {
+    if (!std::isdigit(pData[iIndex]))
+      return false;
+
+    strTemp[0] = pData[iIndex];
+    if (!std::isdigit(pData[iIndex + 1]))
+      return false;
+
+    strTemp[1] = pData[iIndex + 1];
+    if (FXSYS_atoi(strTemp) > 60)
+      return false;
+
+    if (pData[2] == ':') {
+      if (iPos == 0) {
+        iZoneHour = FXSYS_atoi(strTemp);
+      } else if (iPos == 1) {
+        iZoneMinute = FXSYS_atoi(strTemp);
+      }
+      iIndex += 3;
+    } else {
+      if (!iPos) {
+        iZoneHour = FXSYS_atoi(strTemp);
+        ++iPos;
+      } else if (iPos == 1) {
+        iZoneMinute = FXSYS_atoi(strTemp);
+        ++iPos;
+      }
+      iIndex += 2;
+    }
+  }
+  if (iIndex < iLength)
+    return false;
+
+  iZoneHour *= iSign;
+  return true;
+}
+
+bool IsIsoDateTimeFormat(const char* pData,
+                         int32_t iLength,
+                         int32_t& iYear,
+                         int32_t& iMonth,
+                         int32_t& iDay,
+                         int32_t& iHour,
+                         int32_t& iMinute,
+                         int32_t& iSecond,
+                         int32_t& iMillionSecond,
+                         int32_t& iZoneHour,
+                         int32_t& iZoneMinute) {
+  iYear = 0;
+  iMonth = 0;
+  iDay = 0;
+  iHour = 0;
+  iMinute = 0;
+  iSecond = 0;
+  if (!pData)
+    return false;
+
+  int32_t iIndex = 0;
+  while (pData[iIndex] != 'T' && pData[iIndex] != 't') {
+    if (iIndex >= iLength)
+      return false;
+    ++iIndex;
+  }
+  if (iIndex != 8 && iIndex != 10)
+    return false;
+
+  int32_t iStyle = -1;
+  if (!IsIsoDateFormat(pData, iIndex, iStyle, iYear, iMonth, iDay))
+    return false;
+  if (pData[iIndex] != 'T' && pData[iIndex] != 't')
+    return true;
+
+  ++iIndex;
+  if (((iLength - iIndex > 13) && (iLength - iIndex < 6)) &&
+      (iLength - iIndex != 15)) {
+    return true;
+  }
+  return IsIsoTimeFormat(pData + iIndex, iLength - iIndex, iHour, iMinute,
+                         iSecond, iMillionSecond, iZoneHour, iZoneMinute);
+}
+
+int32_t DateString2Num(const ByteStringView& szDateString) {
+  int32_t iLength = szDateString.GetLength();
+  int32_t iYear = 0;
+  int32_t iMonth = 0;
+  int32_t iDay = 0;
+  if (iLength <= 10) {
+    int32_t iStyle = -1;
+    if (!IsIsoDateFormat(szDateString.unterminated_c_str(), iLength, iStyle,
+                         iYear, iMonth, iDay)) {
+      return 0;
+    }
+  } else {
+    int32_t iHour = 0;
+    int32_t iMinute = 0;
+    int32_t iSecond = 0;
+    int32_t iMilliSecond = 0;
+    int32_t iZoneHour = 0;
+    int32_t iZoneMinute = 0;
+    if (!IsIsoDateTimeFormat(szDateString.unterminated_c_str(), iLength, iYear,
+                             iMonth, iDay, iHour, iMinute, iSecond,
+                             iMilliSecond, iZoneHour, iZoneMinute)) {
+      return 0;
+    }
+  }
+
+  float dDays = 0;
+  int32_t i = 1;
+  if (iYear < 1900)
+    return 0;
+
+  while (iYear - i >= 1900) {
+    dDays +=
+        ((!((iYear - i) % 4) && ((iYear - i) % 100)) || !((iYear - i) % 400))
+            ? 366
+            : 365;
+    ++i;
+  }
+  i = 1;
+  while (i < iMonth) {
+    if (i == 2)
+      dDays += ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) ? 29 : 28;
+    else if (i <= 7)
+      dDays += (i % 2 == 0) ? 30 : 31;
+    else
+      dDays += (i % 2 == 0) ? 31 : 30;
+
+    ++i;
+  }
+  i = 0;
+  while (iDay - i > 0) {
+    dDays += 1;
+    ++i;
+  }
+  return (int32_t)dDays;
+}
+
+void GetLocalTimeZone(int32_t& iHour, int32_t& iMin, int32_t& iSec) {
+  time_t now;
+  time(&now);
+
+  struct tm* pGmt = gmtime(&now);
+  struct tm* pLocal = localtime(&now);
+  iHour = pLocal->tm_hour - pGmt->tm_hour;
+  iMin = pLocal->tm_min - pGmt->tm_min;
+  iSec = pLocal->tm_sec - pGmt->tm_sec;
+}
+
+bool HTMLSTR2Code(const WideStringView& pData, uint32_t* iCode) {
+  auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter,
+                    const WideStringView& val) {
+    // TODO(tsepez): check usage of c_str() below.
+    return wcscmp(val.unterminated_c_str(), iter.m_htmlReserve) > 0;
+  };
+  const XFA_FMHtmlReserveCode* result =
+      std::lower_bound(std::begin(kReservesForDecode),
+                       std::end(kReservesForDecode), pData, cmpFunc);
+  if (result != std::end(kReservesForEncode) &&
+      !wcscmp(pData.unterminated_c_str(), result->m_htmlReserve)) {
+    *iCode = result->m_uCode;
+    return true;
+  }
+  return false;
+}
+
+bool HTMLCode2STR(uint32_t iCode, WideString* wsHTMLReserve) {
+  auto cmpFunc = [](const XFA_FMHtmlReserveCode iter, const uint32_t& val) {
+    return iter.m_uCode < val;
+  };
+  const XFA_FMHtmlReserveCode* result =
+      std::lower_bound(std::begin(kReservesForEncode),
+                       std::end(kReservesForEncode), iCode, cmpFunc);
+  if (result != std::end(kReservesForEncode) && result->m_uCode == iCode) {
+    *wsHTMLReserve = result->m_htmlReserve;
+    return true;
+  }
+  return false;
+}
+
+WideString DecodeURL(const WideString& wsURLString) {
+  const wchar_t* pData = wsURLString.c_str();
+  size_t i = 0;
+  CFX_WideTextBuf wsResultBuf;
+  while (i < wsURLString.GetLength()) {
+    wchar_t ch = pData[i];
+    if ('%' != ch) {
+      wsResultBuf.AppendChar(ch);
+      ++i;
+      continue;
+    }
+
+    wchar_t chTemp = 0;
+    int32_t iCount = 0;
+    while (iCount < 2) {
+      ++i;
+      ch = pData[i];
+      if (ch <= '9' && ch >= '0') {
+        // TODO(dsinclair): Premultiply and add rather then scale.
+        chTemp += (ch - '0') * (!iCount ? 16 : 1);
+      } else if (ch <= 'F' && ch >= 'A') {
+        chTemp += (ch - 'A' + 10) * (!iCount ? 16 : 1);
+      } else if (ch <= 'f' && ch >= 'a') {
+        chTemp += (ch - 'a' + 10) * (!iCount ? 16 : 1);
+      } else {
+        return WideString();
+      }
+      ++iCount;
+    }
+    wsResultBuf.AppendChar(chTemp);
+    ++i;
+  }
+  wsResultBuf.AppendChar(0);
+  return wsResultBuf.MakeString();
+}
+
+WideString DecodeHTML(const WideString& wsHTMLString) {
+  wchar_t strString[9];
+  size_t iStrIndex = 0;
+  size_t iLen = wsHTMLString.GetLength();
+  size_t i = 0;
+  int32_t iCode = 0;
+  const wchar_t* pData = wsHTMLString.c_str();
+  CFX_WideTextBuf wsResultBuf;
+  while (i < iLen) {
+    wchar_t ch = pData[i];
+    if (ch != '&') {
+      wsResultBuf.AppendChar(ch);
+      ++i;
+      continue;
+    }
+
+    ++i;
+    ch = pData[i];
+    if (ch == '#') {
+      ++i;
+      ch = pData[i];
+      if (ch != 'x' && ch != 'X') {
+        return WideString();
+      }
+
+      ++i;
+      ch = pData[i];
+      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
+          (ch <= 'F' && ch >= 'A')) {
+        while (ch != ';' && i < iLen) {
+          if (ch >= '0' && ch <= '9') {
+            iCode += ch - '0';
+          } else if (ch <= 'f' && ch >= 'a') {
+            iCode += ch - 'a' + 10;
+          } else if (ch <= 'F' && ch >= 'A') {
+            iCode += ch - 'A' + 10;
+          } else {
+            return WideString();
+          }
+          ++i;
+          // TODO(dsinclair): Postmultiply seems wrong, start at zero
+          //   and pre-multiply then can remove the post divide.
+          iCode *= 16;
+          ch = pData[i];
+        }
+        iCode /= 16;
+      }
+    } else {
+      while (ch != ';' && i < iLen) {
+        strString[iStrIndex++] = ch;
+        ++i;
+        ch = pData[i];
+      }
+      strString[iStrIndex] = 0;
+    }
+    uint32_t iData = 0;
+    if (HTMLSTR2Code(strString, &iData)) {
+      wsResultBuf.AppendChar((wchar_t)iData);
+    } else {
+      wsResultBuf.AppendChar(iCode);
+    }
+    iStrIndex = 0;
+    strString[iStrIndex] = 0;
+    ++i;
+  }
+  wsResultBuf.AppendChar(0);
+
+  return wsResultBuf.MakeString();
+}
+
+WideString DecodeXML(const WideString& wsXMLString) {
+  wchar_t strString[9];
+  int32_t iStrIndex = 0;
+  int32_t iLen = wsXMLString.GetLength();
+  int32_t i = 0;
+  int32_t iCode = 0;
+  wchar_t ch = 0;
+  const wchar_t* pData = wsXMLString.c_str();
+  CFX_WideTextBuf wsResultBuf;
+  while (i < iLen) {
+    ch = pData[i];
+    if (ch != '&') {
+      wsResultBuf.AppendChar(ch);
+      ++i;
+      continue;
+    }
+
+    // TODO(dsinclair): This is very similar to DecodeHTML, can they be
+    //   combined?
+    ++i;
+    ch = pData[i];
+    if (ch == '#') {
+      ++i;
+      ch = pData[i];
+      if (ch != 'x' && ch != 'X') {
+        return WideString();
+      }
+
+      ++i;
+      ch = pData[i];
+      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
+          (ch <= 'F' && ch >= 'A')) {
+        while (ch != ';') {
+          if (ch >= '0' && ch <= '9') {
+            iCode += ch - '0';
+          } else if (ch <= 'f' && ch >= 'a') {
+            iCode += ch - 'a' + 10;
+          } else if (ch <= 'F' && ch >= 'A') {
+            iCode += ch - 'A' + 10;
+          } else {
+            return WideString();
+          }
+          ++i;
+          iCode *= 16;
+          ch = pData[i];
+        }
+        iCode /= 16;
+      }
+    } else {
+      while (ch != ';' && i < iLen) {
+        strString[iStrIndex++] = ch;
+        ++i;
+        ch = pData[i];
+      }
+      strString[iStrIndex] = 0;
+    }
+
+    const wchar_t* const strName[] = {L"quot", L"amp", L"apos", L"lt", L"gt"};
+    int32_t iIndex = 0;
+    while (iIndex < 5) {
+      if (memcmp(strString, strName[iIndex], wcslen(strName[iIndex])) == 0) {
+        break;
+      }
+      ++iIndex;
+    }
+    switch (iIndex) {
+      case 0:
+        wsResultBuf.AppendChar('"');
+        break;
+      case 1:
+        wsResultBuf.AppendChar('&');
+        break;
+      case 2:
+        wsResultBuf.AppendChar('\'');
+        break;
+      case 3:
+        wsResultBuf.AppendChar('<');
+        break;
+      case 4:
+        wsResultBuf.AppendChar('>');
+        break;
+      default:
+        wsResultBuf.AppendChar(iCode);
+        break;
+    }
+    iStrIndex = 0;
+    strString[iStrIndex] = 0;
+    ++i;
+    iCode = 0;
+  }
+  wsResultBuf.AppendChar(0);
+  return wsResultBuf.MakeString();
+}
+
+WideString EncodeURL(const ByteString& szURLString) {
+  WideString wsURLString = WideString::FromUTF8(szURLString.AsStringView());
+  CFX_WideTextBuf wsResultBuf;
+  wchar_t strEncode[4];
+  strEncode[0] = '%';
+  strEncode[3] = 0;
+  wchar_t strUnsafe[] = {' ', '<',  '>', '"', '#', '%', '{', '}',
+                         '|', '\\', '^', '~', '[', ']', '`'};
+  wchar_t strReserved[] = {';', '/', '?', ':', '@', '=', '&'};
+  wchar_t strSpecial[] = {'$', '-', '+', '!', '*', '\'', '(', ')', ','};
+  const wchar_t* strCode = L"0123456789abcdef";
+  for (auto ch : wsURLString) {
+    int32_t i = 0;
+    int32_t iCount = FX_ArraySize(strUnsafe);
+    while (i < iCount) {
+      if (ch == strUnsafe[i]) {
+        int32_t iIndex = ch / 16;
+        strEncode[1] = strCode[iIndex];
+        strEncode[2] = strCode[ch - iIndex * 16];
+        wsResultBuf << strEncode;
+        break;
+      }
+      ++i;
+    }
+    if (i < iCount)
+      continue;
+
+    i = 0;
+    iCount = FX_ArraySize(strReserved);
+    while (i < iCount) {
+      if (ch == strReserved[i]) {
+        int32_t iIndex = ch / 16;
+        strEncode[1] = strCode[iIndex];
+        strEncode[2] = strCode[ch - iIndex * 16];
+        wsResultBuf << strEncode;
+        break;
+      }
+      ++i;
+    }
+    if (i < iCount)
+      continue;
+
+    i = 0;
+    iCount = FX_ArraySize(strSpecial);
+    while (i < iCount) {
+      if (ch == strSpecial[i]) {
+        wsResultBuf.AppendChar(ch);
+        break;
+      }
+      ++i;
+    }
+    if (i < iCount)
+      continue;
+
+    if ((ch >= 0x80 && ch <= 0xff) || ch <= 0x1f || ch == 0x7f) {
+      int32_t iIndex = ch / 16;
+      strEncode[1] = strCode[iIndex];
+      strEncode[2] = strCode[ch - iIndex * 16];
+      wsResultBuf << strEncode;
+    } else if (ch >= 0x20 && ch <= 0x7e) {
+      wsResultBuf.AppendChar(ch);
+    } else {
+      const wchar_t iRadix = 16;
+      WideString strTmp;
+      while (ch >= iRadix) {
+        wchar_t tmp = strCode[ch % iRadix];
+        ch /= iRadix;
+        strTmp += tmp;
+      }
+      strTmp += strCode[ch];
+      int32_t iLen = strTmp.GetLength();
+      if (iLen < 2)
+        break;
+
+      int32_t iIndex = 0;
+      if (iLen % 2 != 0) {
+        strEncode[1] = '0';
+        strEncode[2] = strTmp[iLen - 1];
+        iIndex = iLen - 2;
+      } else {
+        strEncode[1] = strTmp[iLen - 1];
+        strEncode[2] = strTmp[iLen - 2];
+        iIndex = iLen - 3;
+      }
+      wsResultBuf << strEncode;
+      while (iIndex > 0) {
+        strEncode[1] = strTmp[iIndex];
+        strEncode[2] = strTmp[iIndex - 1];
+        iIndex -= 2;
+        wsResultBuf << strEncode;
+      }
+    }
+  }
+  wsResultBuf.AppendChar(0);
+  return wsResultBuf.MakeString();
+}
+
+WideString EncodeHTML(const ByteString& szHTMLString) {
+  WideString wsHTMLString = WideString::FromUTF8(szHTMLString.AsStringView());
+  const wchar_t* strCode = L"0123456789abcdef";
+  wchar_t strEncode[9];
+  strEncode[0] = '&';
+  strEncode[1] = '#';
+  strEncode[2] = 'x';
+  strEncode[5] = ';';
+  strEncode[6] = 0;
+  strEncode[7] = ';';
+  strEncode[8] = 0;
+  CFX_WideTextBuf wsResultBuf;
+  int32_t iLen = wsHTMLString.GetLength();
+  int32_t i = 0;
+  const wchar_t* pData = wsHTMLString.c_str();
+  while (i < iLen) {
+    uint32_t ch = pData[i];
+    WideString htmlReserve;
+    if (HTMLCode2STR(ch, &htmlReserve)) {
+      wsResultBuf.AppendChar(L'&');
+      wsResultBuf << htmlReserve;
+      wsResultBuf.AppendChar(L';');
+    } else if (ch >= 32 && ch <= 126) {
+      wsResultBuf.AppendChar((wchar_t)ch);
+    } else if (ch < 256) {
+      int32_t iIndex = ch / 16;
+      strEncode[3] = strCode[iIndex];
+      strEncode[4] = strCode[ch - iIndex * 16];
+      strEncode[5] = ';';
+      strEncode[6] = 0;
+      wsResultBuf << strEncode;
+    } else {
+      int32_t iBigByte = ch / 256;
+      int32_t iLittleByte = ch % 256;
+      strEncode[3] = strCode[iBigByte / 16];
+      strEncode[4] = strCode[iBigByte % 16];
+      strEncode[5] = strCode[iLittleByte / 16];
+      strEncode[6] = strCode[iLittleByte % 16];
+      wsResultBuf << strEncode;
+    }
+    ++i;
+  }
+  wsResultBuf.AppendChar(0);
+  return wsResultBuf.MakeString();
+}
+
+WideString EncodeXML(const ByteString& szXMLString) {
+  WideString wsXMLString = WideString::FromUTF8(szXMLString.AsStringView());
+  CFX_WideTextBuf wsResultBuf;
+  wchar_t strEncode[9];
+  strEncode[0] = '&';
+  strEncode[1] = '#';
+  strEncode[2] = 'x';
+  strEncode[5] = ';';
+  strEncode[6] = 0;
+  strEncode[7] = ';';
+  strEncode[8] = 0;
+  const wchar_t* strCode = L"0123456789abcdef";
+  for (const auto& ch : wsXMLString) {
+    switch (ch) {
+      case '"':
+        wsResultBuf.AppendChar('&');
+        wsResultBuf << WideStringView(L"quot");
+        wsResultBuf.AppendChar(';');
+        break;
+      case '&':
+        wsResultBuf.AppendChar('&');
+        wsResultBuf << WideStringView(L"amp");
+        wsResultBuf.AppendChar(';');
+        break;
+      case '\'':
+        wsResultBuf.AppendChar('&');
+        wsResultBuf << WideStringView(L"apos");
+        wsResultBuf.AppendChar(';');
+        break;
+      case '<':
+        wsResultBuf.AppendChar('&');
+        wsResultBuf << WideStringView(L"lt");
+        wsResultBuf.AppendChar(';');
+        break;
+      case '>':
+        wsResultBuf.AppendChar('&');
+        wsResultBuf << WideStringView(L"gt");
+        wsResultBuf.AppendChar(';');
+        break;
+      default: {
+        if (ch >= 32 && ch <= 126) {
+          wsResultBuf.AppendChar(ch);
+        } else if (ch < 256) {
+          int32_t iIndex = ch / 16;
+          strEncode[3] = strCode[iIndex];
+          strEncode[4] = strCode[ch - iIndex * 16];
+          strEncode[5] = ';';
+          strEncode[6] = 0;
+          wsResultBuf << strEncode;
+        } else {
+          int32_t iBigByte = ch / 256;
+          int32_t iLittleByte = ch % 256;
+          strEncode[3] = strCode[iBigByte / 16];
+          strEncode[4] = strCode[iBigByte % 16];
+          strEncode[5] = strCode[iLittleByte / 16];
+          strEncode[6] = strCode[iLittleByte % 16];
+          wsResultBuf << strEncode;
+        }
+        break;
+      }
+    }
+  }
+  wsResultBuf.AppendChar(0);
+  return wsResultBuf.MakeString();
+}
+
+ByteString TrillionUS(const ByteStringView& szData) {
+  std::ostringstream strBuf;
+  ByteStringView pUnits[] = {"zero", "one", "two",   "three", "four",
+                             "five", "six", "seven", "eight", "nine"};
+  ByteStringView pCapUnits[] = {"Zero", "One", "Two",   "Three", "Four",
+                                "Five", "Six", "Seven", "Eight", "Nine"};
+  ByteStringView pTens[] = {"Ten",      "Eleven",  "Twelve",  "Thirteen",
+                            "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+                            "Eighteen", "Nineteen"};
+  ByteStringView pLastTens[] = {"Twenty", "Thirty",  "Forty",  "Fifty",
+                                "Sixty",  "Seventy", "Eighty", "Ninety"};
+  ByteStringView pComm[] = {" Hundred ", " Thousand ", " Million ", " Billion ",
+                            "Trillion"};
+  const char* pData = szData.unterminated_c_str();
+  int32_t iLength = szData.GetLength();
+  int32_t iComm = 0;
+  if (iLength > 12)
+    iComm = 4;
+  else if (iLength > 9)
+    iComm = 3;
+  else if (iLength > 6)
+    iComm = 2;
+  else if (iLength > 3)
+    iComm = 1;
+
+  int32_t iFirstCount = iLength % 3;
+  if (iFirstCount == 0)
+    iFirstCount = 3;
+
+  int32_t iIndex = 0;
+  if (iFirstCount == 3) {
+    if (pData[iIndex] != '0') {
+      strBuf << pCapUnits[pData[iIndex] - '0'];
+      strBuf << pComm[0];
+    }
+    if (pData[iIndex + 1] == '0') {
+      strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+    } else {
+      if (pData[iIndex + 1] > '1') {
+        strBuf << pLastTens[pData[iIndex + 1] - '2'];
+        strBuf << "-";
+        strBuf << pUnits[pData[iIndex + 2] - '0'];
+      } else if (pData[iIndex + 1] == '1') {
+        strBuf << pTens[pData[iIndex + 2] - '0'];
+      } else if (pData[iIndex + 1] == '0') {
+        strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+      }
+    }
+    iIndex += 3;
+  } else if (iFirstCount == 2) {
+    if (pData[iIndex] == '0') {
+      strBuf << pCapUnits[pData[iIndex + 1] - '0'];
+    } else {
+      if (pData[iIndex] > '1') {
+        strBuf << pLastTens[pData[iIndex] - '2'];
+        strBuf << "-";
+        strBuf << pUnits[pData[iIndex + 1] - '0'];
+      } else if (pData[iIndex] == '1') {
+        strBuf << pTens[pData[iIndex + 1] - '0'];
+      } else if (pData[iIndex] == '0') {
+        strBuf << pCapUnits[pData[iIndex + 1] - '0'];
+      }
+    }
+    iIndex += 2;
+  } else if (iFirstCount == 1) {
+    strBuf << pCapUnits[pData[iIndex] - '0'];
+    iIndex += 1;
+  }
+  if (iLength > 3 && iFirstCount > 0) {
+    strBuf << pComm[iComm];
+    --iComm;
+  }
+  while (iIndex < iLength) {
+    if (pData[iIndex] != '0') {
+      strBuf << pCapUnits[pData[iIndex] - '0'];
+      strBuf << pComm[0];
+    }
+    if (pData[iIndex + 1] == '0') {
+      strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+    } else {
+      if (pData[iIndex + 1] > '1') {
+        strBuf << pLastTens[pData[iIndex + 1] - '2'];
+        strBuf << "-";
+        strBuf << pUnits[pData[iIndex + 2] - '0'];
+      } else if (pData[iIndex + 1] == '1') {
+        strBuf << pTens[pData[iIndex + 2] - '0'];
+      } else if (pData[iIndex + 1] == '0') {
+        strBuf << pCapUnits[pData[iIndex + 2] - '0'];
+      }
+    }
+    if (iIndex < iLength - 3) {
+      strBuf << pComm[iComm];
+      --iComm;
+    }
+    iIndex += 3;
+  }
+  return ByteString(strBuf);
+}
+
+ByteString WordUS(const ByteString& szData, int32_t iStyle) {
+  const char* pData = szData.c_str();
+  int32_t iLength = szData.GetLength();
+  if (iStyle < 0 || iStyle > 2) {
+    return ByteString();
+  }
+
+  std::ostringstream strBuf;
+
+  int32_t iIndex = 0;
+  while (iIndex < iLength) {
+    if (pData[iIndex] == '.')
+      break;
+    ++iIndex;
+  }
+  int32_t iInteger = iIndex;
+  iIndex = 0;
+  while (iIndex < iInteger) {
+    int32_t iCount = (iInteger - iIndex) % 12;
+    if (!iCount && iInteger - iIndex > 0)
+      iCount = 12;
+
+    strBuf << TrillionUS(ByteStringView(pData + iIndex, iCount));
+    iIndex += iCount;
+    if (iIndex < iInteger)
+      strBuf << " Trillion ";
+  }
+
+  if (iStyle > 0)
+    strBuf << " Dollars";
+
+  if (iStyle > 1 && iInteger < iLength) {
+    strBuf << " And ";
+    iIndex = iInteger + 1;
+    while (iIndex < iLength) {
+      int32_t iCount = (iLength - iIndex) % 12;
+      if (!iCount && iLength - iIndex > 0)
+        iCount = 12;
+
+      strBuf << TrillionUS(ByteStringView(pData + iIndex, iCount));
+      iIndex += iCount;
+      if (iIndex < iLength)
+        strBuf << " Trillion ";
+    }
+    strBuf << " Cents";
+  }
+  return ByteString(strBuf);
+}
+
 }  // namespace
 
 const FXJSE_CLASS_DESCRIPTOR kFormCalcFM2JSDescriptor = {
@@ -1738,273 +2657,6 @@ void CFXJSE_FormCalcContext::TimeFmt(CFXJSE_Value* pThis,
 }
 
 // static
-bool CFXJSE_FormCalcContext::IsIsoDateFormat(const char* pData,
-                                             int32_t iLength,
-                                             int32_t& iStyle,
-                                             int32_t& iYear,
-                                             int32_t& iMonth,
-                                             int32_t& iDay) {
-  iYear = 0;
-  iMonth = 1;
-  iDay = 1;
-
-  if (iLength < 4)
-    return false;
-
-  char strYear[5];
-  strYear[4] = '\0';
-  for (int32_t i = 0; i < 4; ++i) {
-    if (!std::isdigit(pData[i]))
-      return false;
-
-    strYear[i] = pData[i];
-  }
-  iYear = FXSYS_atoi(strYear);
-  iStyle = 0;
-  if (iLength == 4)
-    return true;
-
-  iStyle = pData[4] == '-' ? 1 : 0;
-
-  char strTemp[3];
-  strTemp[2] = '\0';
-  int32_t iPosOff = iStyle == 0 ? 4 : 5;
-  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
-    return false;
-
-  strTemp[0] = pData[iPosOff];
-  strTemp[1] = pData[iPosOff + 1];
-  iMonth = FXSYS_atoi(strTemp);
-  if (iMonth > 12 || iMonth < 1)
-    return false;
-
-  if (iStyle == 0) {
-    iPosOff += 2;
-    if (iLength == 6)
-      return true;
-  } else {
-    iPosOff += 3;
-    if (iLength == 7)
-      return true;
-  }
-  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
-    return false;
-
-  strTemp[0] = pData[iPosOff];
-  strTemp[1] = pData[iPosOff + 1];
-  iDay = FXSYS_atoi(strTemp);
-  if (iPosOff + 2 < iLength)
-    return false;
-
-  if ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) {
-    if (iMonth == 2 && iDay > 29)
-      return false;
-  } else {
-    if (iMonth == 2 && iDay > 28)
-      return false;
-  }
-  if (iMonth != 2) {
-    if (iMonth < 8) {
-      if (iDay > (iMonth % 2 == 0 ? 30 : 31))
-        return false;
-    } else if (iDay > (iMonth % 2 == 0 ? 31 : 30)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// static
-bool CFXJSE_FormCalcContext::IsIsoTimeFormat(const char* pData,
-                                             int32_t iLength,
-                                             int32_t& iHour,
-                                             int32_t& iMinute,
-                                             int32_t& iSecond,
-                                             int32_t& iMilliSecond,
-                                             int32_t& iZoneHour,
-                                             int32_t& iZoneMinute) {
-  iHour = 0;
-  iMinute = 0;
-  iSecond = 0;
-  iMilliSecond = 0;
-  iZoneHour = 0;
-  iZoneMinute = 0;
-  if (!pData)
-    return false;
-
-  char strTemp[3];
-  strTemp[2] = '\0';
-  int32_t iZone = 0;
-  int32_t i = 0;
-  while (i < iLength) {
-    if (!std::isdigit(pData[i]) && pData[i] != ':') {
-      iZone = i;
-      break;
-    }
-    ++i;
-  }
-  if (i == iLength)
-    iZone = iLength;
-
-  int32_t iPos = 0;
-  int32_t iIndex = 0;
-  while (iIndex < iZone) {
-    if (!std::isdigit(pData[iIndex]))
-      return false;
-
-    strTemp[0] = pData[iIndex];
-    if (!std::isdigit(pData[iIndex + 1]))
-      return false;
-
-    strTemp[1] = pData[iIndex + 1];
-    if (FXSYS_atoi(strTemp) > 60)
-      return false;
-
-    if (pData[2] == ':') {
-      if (iPos == 0) {
-        iHour = FXSYS_atoi(strTemp);
-        ++iPos;
-      } else if (iPos == 1) {
-        iMinute = FXSYS_atoi(strTemp);
-        ++iPos;
-      } else {
-        iSecond = FXSYS_atoi(strTemp);
-      }
-      iIndex += 3;
-    } else {
-      if (iPos == 0) {
-        iHour = FXSYS_atoi(strTemp);
-        ++iPos;
-      } else if (iPos == 1) {
-        iMinute = FXSYS_atoi(strTemp);
-        ++iPos;
-      } else if (iPos == 2) {
-        iSecond = FXSYS_atoi(strTemp);
-        ++iPos;
-      }
-      iIndex += 2;
-    }
-  }
-
-  if (iIndex < iLength && pData[iIndex] == '.') {
-    constexpr int kSubSecondLength = 3;
-    if (iIndex + kSubSecondLength >= iLength)
-      return false;
-
-    ++iIndex;
-    char strSec[kSubSecondLength + 1];
-    for (int i = 0; i < kSubSecondLength; ++i) {
-      char c = pData[iIndex + i];
-      if (!std::isdigit(c))
-        return false;
-      strSec[i] = c;
-    }
-    strSec[kSubSecondLength] = '\0';
-
-    iMilliSecond = FXSYS_atoi(strSec);
-    if (iMilliSecond > 100) {
-      iMilliSecond = 0;
-      return false;
-    }
-    iIndex += kSubSecondLength;
-  }
-
-  if (iIndex < iLength && FXSYS_towlower(pData[iIndex]) == 'z')
-    return true;
-
-  int32_t iSign = 1;
-  if (iIndex < iLength) {
-    if (pData[iIndex] == '+') {
-      ++iIndex;
-    } else if (pData[iIndex] == '-') {
-      iSign = -1;
-      ++iIndex;
-    }
-  }
-  iPos = 0;
-  while (iIndex < iLength) {
-    if (!std::isdigit(pData[iIndex]))
-      return false;
-
-    strTemp[0] = pData[iIndex];
-    if (!std::isdigit(pData[iIndex + 1]))
-      return false;
-
-    strTemp[1] = pData[iIndex + 1];
-    if (FXSYS_atoi(strTemp) > 60)
-      return false;
-
-    if (pData[2] == ':') {
-      if (iPos == 0) {
-        iZoneHour = FXSYS_atoi(strTemp);
-      } else if (iPos == 1) {
-        iZoneMinute = FXSYS_atoi(strTemp);
-      }
-      iIndex += 3;
-    } else {
-      if (!iPos) {
-        iZoneHour = FXSYS_atoi(strTemp);
-        ++iPos;
-      } else if (iPos == 1) {
-        iZoneMinute = FXSYS_atoi(strTemp);
-        ++iPos;
-      }
-      iIndex += 2;
-    }
-  }
-  if (iIndex < iLength)
-    return false;
-
-  iZoneHour *= iSign;
-  return true;
-}
-
-// static
-bool CFXJSE_FormCalcContext::IsIsoDateTimeFormat(const char* pData,
-                                                 int32_t iLength,
-                                                 int32_t& iYear,
-                                                 int32_t& iMonth,
-                                                 int32_t& iDay,
-                                                 int32_t& iHour,
-                                                 int32_t& iMinute,
-                                                 int32_t& iSecond,
-                                                 int32_t& iMillionSecond,
-                                                 int32_t& iZoneHour,
-                                                 int32_t& iZoneMinute) {
-  iYear = 0;
-  iMonth = 0;
-  iDay = 0;
-  iHour = 0;
-  iMinute = 0;
-  iSecond = 0;
-  if (!pData)
-    return false;
-
-  int32_t iIndex = 0;
-  while (pData[iIndex] != 'T' && pData[iIndex] != 't') {
-    if (iIndex >= iLength)
-      return false;
-    ++iIndex;
-  }
-  if (iIndex != 8 && iIndex != 10)
-    return false;
-
-  int32_t iStyle = -1;
-  if (!IsIsoDateFormat(pData, iIndex, iStyle, iYear, iMonth, iDay))
-    return false;
-  if (pData[iIndex] != 'T' && pData[iIndex] != 't')
-    return true;
-
-  ++iIndex;
-  if (((iLength - iIndex > 13) && (iLength - iIndex < 6)) &&
-      (iLength - iIndex != 15)) {
-    return true;
-  }
-  return IsIsoTimeFormat(pData + iIndex, iLength - iIndex, iHour, iMinute,
-                         iSecond, iMillionSecond, iZoneHour, iZoneMinute);
-}
-
-// static
 ByteString CFXJSE_FormCalcContext::Local2IsoDate(
     CFXJSE_Value* pThis,
     const ByteStringView& szDate,
@@ -2072,64 +2724,6 @@ ByteString CFXJSE_FormCalcContext::IsoTime2Local(
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
   return wsRet.UTF8Encode();
-}
-
-// static
-int32_t CFXJSE_FormCalcContext::DateString2Num(
-    const ByteStringView& szDateString) {
-  int32_t iLength = szDateString.GetLength();
-  int32_t iYear = 0;
-  int32_t iMonth = 0;
-  int32_t iDay = 0;
-  if (iLength <= 10) {
-    int32_t iStyle = -1;
-    if (!IsIsoDateFormat(szDateString.unterminated_c_str(), iLength, iStyle,
-                         iYear, iMonth, iDay)) {
-      return 0;
-    }
-  } else {
-    int32_t iHour = 0;
-    int32_t iMinute = 0;
-    int32_t iSecond = 0;
-    int32_t iMilliSecond = 0;
-    int32_t iZoneHour = 0;
-    int32_t iZoneMinute = 0;
-    if (!IsIsoDateTimeFormat(szDateString.unterminated_c_str(), iLength, iYear,
-                             iMonth, iDay, iHour, iMinute, iSecond,
-                             iMilliSecond, iZoneHour, iZoneMinute)) {
-      return 0;
-    }
-  }
-
-  float dDays = 0;
-  int32_t i = 1;
-  if (iYear < 1900)
-    return 0;
-
-  while (iYear - i >= 1900) {
-    dDays +=
-        ((!((iYear - i) % 4) && ((iYear - i) % 100)) || !((iYear - i) % 400))
-            ? 366
-            : 365;
-    ++i;
-  }
-  i = 1;
-  while (i < iMonth) {
-    if (i == 2)
-      dDays += ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) ? 29 : 28;
-    else if (i <= 7)
-      dDays += (i % 2 == 0) ? 30 : 31;
-    else
-      dDays += (i % 2 == 0) ? 31 : 30;
-
-    ++i;
-  }
-  i = 0;
-  while (iDay - i > 0) {
-    dDays += 1;
-    ++i;
-  }
-  return (int32_t)dDays;
 }
 
 // static
@@ -2203,20 +2797,6 @@ ByteString CFXJSE_FormCalcContext::Num2AllTime(CFXJSE_Value* pThis,
       pThis,
       ByteString::Format("%02d:%02d:%02d", iHour, iMin, iSec).AsStringView(),
       szFormat, szLocale);
-}
-
-// static
-void CFXJSE_FormCalcContext::GetLocalTimeZone(int32_t& iHour,
-                                              int32_t& iMin,
-                                              int32_t& iSec) {
-  time_t now;
-  time(&now);
-
-  struct tm* pGmt = gmtime(&now);
-  struct tm* pLocal = localtime(&now);
-  iHour = pLocal->tm_hour - pGmt->tm_hour;
-  iMin = pLocal->tm_min - pGmt->tm_min;
-  iSec = pLocal->tm_sec - pGmt->tm_sec;
 }
 
 // static
@@ -3253,209 +3833,6 @@ void CFXJSE_FormCalcContext::Decode(CFXJSE_Value* pThis,
 }
 
 // static
-WideString CFXJSE_FormCalcContext::DecodeURL(const WideString& wsURLString) {
-  const wchar_t* pData = wsURLString.c_str();
-  size_t i = 0;
-  CFX_WideTextBuf wsResultBuf;
-  while (i < wsURLString.GetLength()) {
-    wchar_t ch = pData[i];
-    if ('%' != ch) {
-      wsResultBuf.AppendChar(ch);
-      ++i;
-      continue;
-    }
-
-    wchar_t chTemp = 0;
-    int32_t iCount = 0;
-    while (iCount < 2) {
-      ++i;
-      ch = pData[i];
-      if (ch <= '9' && ch >= '0') {
-        // TODO(dsinclair): Premultiply and add rather then scale.
-        chTemp += (ch - '0') * (!iCount ? 16 : 1);
-      } else if (ch <= 'F' && ch >= 'A') {
-        chTemp += (ch - 'A' + 10) * (!iCount ? 16 : 1);
-      } else if (ch <= 'f' && ch >= 'a') {
-        chTemp += (ch - 'a' + 10) * (!iCount ? 16 : 1);
-      } else {
-        return WideString();
-      }
-      ++iCount;
-    }
-    wsResultBuf.AppendChar(chTemp);
-    ++i;
-  }
-  wsResultBuf.AppendChar(0);
-  return wsResultBuf.MakeString();
-}
-
-// static
-WideString CFXJSE_FormCalcContext::DecodeHTML(const WideString& wsHTMLString) {
-  wchar_t strString[9];
-  size_t iStrIndex = 0;
-  size_t iLen = wsHTMLString.GetLength();
-  size_t i = 0;
-  int32_t iCode = 0;
-  const wchar_t* pData = wsHTMLString.c_str();
-  CFX_WideTextBuf wsResultBuf;
-  while (i < iLen) {
-    wchar_t ch = pData[i];
-    if (ch != '&') {
-      wsResultBuf.AppendChar(ch);
-      ++i;
-      continue;
-    }
-
-    ++i;
-    ch = pData[i];
-    if (ch == '#') {
-      ++i;
-      ch = pData[i];
-      if (ch != 'x' && ch != 'X') {
-        return WideString();
-      }
-
-      ++i;
-      ch = pData[i];
-      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
-          (ch <= 'F' && ch >= 'A')) {
-        while (ch != ';' && i < iLen) {
-          if (ch >= '0' && ch <= '9') {
-            iCode += ch - '0';
-          } else if (ch <= 'f' && ch >= 'a') {
-            iCode += ch - 'a' + 10;
-          } else if (ch <= 'F' && ch >= 'A') {
-            iCode += ch - 'A' + 10;
-          } else {
-            return WideString();
-          }
-          ++i;
-          // TODO(dsinclair): Postmultiply seems wrong, start at zero
-          //   and pre-multiply then can remove the post divide.
-          iCode *= 16;
-          ch = pData[i];
-        }
-        iCode /= 16;
-      }
-    } else {
-      while (ch != ';' && i < iLen) {
-        strString[iStrIndex++] = ch;
-        ++i;
-        ch = pData[i];
-      }
-      strString[iStrIndex] = 0;
-    }
-    uint32_t iData = 0;
-    if (HTMLSTR2Code(strString, &iData)) {
-      wsResultBuf.AppendChar((wchar_t)iData);
-    } else {
-      wsResultBuf.AppendChar(iCode);
-    }
-    iStrIndex = 0;
-    strString[iStrIndex] = 0;
-    ++i;
-  }
-  wsResultBuf.AppendChar(0);
-
-  return wsResultBuf.MakeString();
-}
-
-// static
-WideString CFXJSE_FormCalcContext::DecodeXML(const WideString& wsXMLString) {
-  wchar_t strString[9];
-  int32_t iStrIndex = 0;
-  int32_t iLen = wsXMLString.GetLength();
-  int32_t i = 0;
-  int32_t iCode = 0;
-  wchar_t ch = 0;
-  const wchar_t* pData = wsXMLString.c_str();
-  CFX_WideTextBuf wsResultBuf;
-  while (i < iLen) {
-    ch = pData[i];
-    if (ch != '&') {
-      wsResultBuf.AppendChar(ch);
-      ++i;
-      continue;
-    }
-
-    // TODO(dsinclair): This is very similar to DecodeHTML, can they be
-    //   combined?
-    ++i;
-    ch = pData[i];
-    if (ch == '#') {
-      ++i;
-      ch = pData[i];
-      if (ch != 'x' && ch != 'X') {
-        return WideString();
-      }
-
-      ++i;
-      ch = pData[i];
-      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
-          (ch <= 'F' && ch >= 'A')) {
-        while (ch != ';') {
-          if (ch >= '0' && ch <= '9') {
-            iCode += ch - '0';
-          } else if (ch <= 'f' && ch >= 'a') {
-            iCode += ch - 'a' + 10;
-          } else if (ch <= 'F' && ch >= 'A') {
-            iCode += ch - 'A' + 10;
-          } else {
-            return WideString();
-          }
-          ++i;
-          iCode *= 16;
-          ch = pData[i];
-        }
-        iCode /= 16;
-      }
-    } else {
-      while (ch != ';' && i < iLen) {
-        strString[iStrIndex++] = ch;
-        ++i;
-        ch = pData[i];
-      }
-      strString[iStrIndex] = 0;
-    }
-
-    const wchar_t* const strName[] = {L"quot", L"amp", L"apos", L"lt", L"gt"};
-    int32_t iIndex = 0;
-    while (iIndex < 5) {
-      if (memcmp(strString, strName[iIndex], wcslen(strName[iIndex])) == 0) {
-        break;
-      }
-      ++iIndex;
-    }
-    switch (iIndex) {
-      case 0:
-        wsResultBuf.AppendChar('"');
-        break;
-      case 1:
-        wsResultBuf.AppendChar('&');
-        break;
-      case 2:
-        wsResultBuf.AppendChar('\'');
-        break;
-      case 3:
-        wsResultBuf.AppendChar('<');
-        break;
-      case 4:
-        wsResultBuf.AppendChar('>');
-        break;
-      default:
-        wsResultBuf.AppendChar(iCode);
-        break;
-    }
-    iStrIndex = 0;
-    strString[iStrIndex] = 0;
-    ++i;
-    iCode = 0;
-  }
-  wsResultBuf.AppendChar(0);
-  return wsResultBuf.MakeString();
-}
-
-// static
 void CFXJSE_FormCalcContext::Encode(CFXJSE_Value* pThis,
                                     const ByteStringView& szFuncName,
                                     CFXJSE_Arguments& args) {
@@ -3497,253 +3874,6 @@ void CFXJSE_FormCalcContext::Encode(CFXJSE_Value* pThis,
 
   args.GetReturnValue()->SetString(
       FX_UTF8Encode(encoded.AsStringView()).AsStringView());
-}
-
-// static
-WideString CFXJSE_FormCalcContext::EncodeURL(const ByteString& szURLString) {
-  WideString wsURLString = WideString::FromUTF8(szURLString.AsStringView());
-  CFX_WideTextBuf wsResultBuf;
-  wchar_t strEncode[4];
-  strEncode[0] = '%';
-  strEncode[3] = 0;
-  wchar_t strUnsafe[] = {' ', '<',  '>', '"', '#', '%', '{', '}',
-                         '|', '\\', '^', '~', '[', ']', '`'};
-  wchar_t strReserved[] = {';', '/', '?', ':', '@', '=', '&'};
-  wchar_t strSpecial[] = {'$', '-', '+', '!', '*', '\'', '(', ')', ','};
-  const wchar_t* strCode = L"0123456789abcdef";
-  for (auto ch : wsURLString) {
-    int32_t i = 0;
-    int32_t iCount = FX_ArraySize(strUnsafe);
-    while (i < iCount) {
-      if (ch == strUnsafe[i]) {
-        int32_t iIndex = ch / 16;
-        strEncode[1] = strCode[iIndex];
-        strEncode[2] = strCode[ch - iIndex * 16];
-        wsResultBuf << strEncode;
-        break;
-      }
-      ++i;
-    }
-    if (i < iCount)
-      continue;
-
-    i = 0;
-    iCount = FX_ArraySize(strReserved);
-    while (i < iCount) {
-      if (ch == strReserved[i]) {
-        int32_t iIndex = ch / 16;
-        strEncode[1] = strCode[iIndex];
-        strEncode[2] = strCode[ch - iIndex * 16];
-        wsResultBuf << strEncode;
-        break;
-      }
-      ++i;
-    }
-    if (i < iCount)
-      continue;
-
-    i = 0;
-    iCount = FX_ArraySize(strSpecial);
-    while (i < iCount) {
-      if (ch == strSpecial[i]) {
-        wsResultBuf.AppendChar(ch);
-        break;
-      }
-      ++i;
-    }
-    if (i < iCount)
-      continue;
-
-    if ((ch >= 0x80 && ch <= 0xff) || ch <= 0x1f || ch == 0x7f) {
-      int32_t iIndex = ch / 16;
-      strEncode[1] = strCode[iIndex];
-      strEncode[2] = strCode[ch - iIndex * 16];
-      wsResultBuf << strEncode;
-    } else if (ch >= 0x20 && ch <= 0x7e) {
-      wsResultBuf.AppendChar(ch);
-    } else {
-      const wchar_t iRadix = 16;
-      WideString strTmp;
-      while (ch >= iRadix) {
-        wchar_t tmp = strCode[ch % iRadix];
-        ch /= iRadix;
-        strTmp += tmp;
-      }
-      strTmp += strCode[ch];
-      int32_t iLen = strTmp.GetLength();
-      if (iLen < 2)
-        break;
-
-      int32_t iIndex = 0;
-      if (iLen % 2 != 0) {
-        strEncode[1] = '0';
-        strEncode[2] = strTmp[iLen - 1];
-        iIndex = iLen - 2;
-      } else {
-        strEncode[1] = strTmp[iLen - 1];
-        strEncode[2] = strTmp[iLen - 2];
-        iIndex = iLen - 3;
-      }
-      wsResultBuf << strEncode;
-      while (iIndex > 0) {
-        strEncode[1] = strTmp[iIndex];
-        strEncode[2] = strTmp[iIndex - 1];
-        iIndex -= 2;
-        wsResultBuf << strEncode;
-      }
-    }
-  }
-  wsResultBuf.AppendChar(0);
-  return wsResultBuf.MakeString();
-}
-
-// static
-WideString CFXJSE_FormCalcContext::EncodeHTML(const ByteString& szHTMLString) {
-  WideString wsHTMLString = WideString::FromUTF8(szHTMLString.AsStringView());
-  const wchar_t* strCode = L"0123456789abcdef";
-  wchar_t strEncode[9];
-  strEncode[0] = '&';
-  strEncode[1] = '#';
-  strEncode[2] = 'x';
-  strEncode[5] = ';';
-  strEncode[6] = 0;
-  strEncode[7] = ';';
-  strEncode[8] = 0;
-  CFX_WideTextBuf wsResultBuf;
-  int32_t iLen = wsHTMLString.GetLength();
-  int32_t i = 0;
-  const wchar_t* pData = wsHTMLString.c_str();
-  while (i < iLen) {
-    uint32_t ch = pData[i];
-    WideString htmlReserve;
-    if (HTMLCode2STR(ch, &htmlReserve)) {
-      wsResultBuf.AppendChar(L'&');
-      wsResultBuf << htmlReserve;
-      wsResultBuf.AppendChar(L';');
-    } else if (ch >= 32 && ch <= 126) {
-      wsResultBuf.AppendChar((wchar_t)ch);
-    } else if (ch < 256) {
-      int32_t iIndex = ch / 16;
-      strEncode[3] = strCode[iIndex];
-      strEncode[4] = strCode[ch - iIndex * 16];
-      strEncode[5] = ';';
-      strEncode[6] = 0;
-      wsResultBuf << strEncode;
-    } else {
-      int32_t iBigByte = ch / 256;
-      int32_t iLittleByte = ch % 256;
-      strEncode[3] = strCode[iBigByte / 16];
-      strEncode[4] = strCode[iBigByte % 16];
-      strEncode[5] = strCode[iLittleByte / 16];
-      strEncode[6] = strCode[iLittleByte % 16];
-      wsResultBuf << strEncode;
-    }
-    ++i;
-  }
-  wsResultBuf.AppendChar(0);
-  return wsResultBuf.MakeString();
-}
-
-// static
-WideString CFXJSE_FormCalcContext::EncodeXML(const ByteString& szXMLString) {
-  WideString wsXMLString = WideString::FromUTF8(szXMLString.AsStringView());
-  CFX_WideTextBuf wsResultBuf;
-  wchar_t strEncode[9];
-  strEncode[0] = '&';
-  strEncode[1] = '#';
-  strEncode[2] = 'x';
-  strEncode[5] = ';';
-  strEncode[6] = 0;
-  strEncode[7] = ';';
-  strEncode[8] = 0;
-  const wchar_t* strCode = L"0123456789abcdef";
-  for (const auto& ch : wsXMLString) {
-    switch (ch) {
-      case '"':
-        wsResultBuf.AppendChar('&');
-        wsResultBuf << WideStringView(L"quot");
-        wsResultBuf.AppendChar(';');
-        break;
-      case '&':
-        wsResultBuf.AppendChar('&');
-        wsResultBuf << WideStringView(L"amp");
-        wsResultBuf.AppendChar(';');
-        break;
-      case '\'':
-        wsResultBuf.AppendChar('&');
-        wsResultBuf << WideStringView(L"apos");
-        wsResultBuf.AppendChar(';');
-        break;
-      case '<':
-        wsResultBuf.AppendChar('&');
-        wsResultBuf << WideStringView(L"lt");
-        wsResultBuf.AppendChar(';');
-        break;
-      case '>':
-        wsResultBuf.AppendChar('&');
-        wsResultBuf << WideStringView(L"gt");
-        wsResultBuf.AppendChar(';');
-        break;
-      default: {
-        if (ch >= 32 && ch <= 126) {
-          wsResultBuf.AppendChar(ch);
-        } else if (ch < 256) {
-          int32_t iIndex = ch / 16;
-          strEncode[3] = strCode[iIndex];
-          strEncode[4] = strCode[ch - iIndex * 16];
-          strEncode[5] = ';';
-          strEncode[6] = 0;
-          wsResultBuf << strEncode;
-        } else {
-          int32_t iBigByte = ch / 256;
-          int32_t iLittleByte = ch % 256;
-          strEncode[3] = strCode[iBigByte / 16];
-          strEncode[4] = strCode[iBigByte % 16];
-          strEncode[5] = strCode[iLittleByte / 16];
-          strEncode[6] = strCode[iLittleByte % 16];
-          wsResultBuf << strEncode;
-        }
-        break;
-      }
-    }
-  }
-  wsResultBuf.AppendChar(0);
-  return wsResultBuf.MakeString();
-}
-
-// static
-bool CFXJSE_FormCalcContext::HTMLSTR2Code(const WideStringView& pData,
-                                          uint32_t* iCode) {
-  auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter,
-                    const WideStringView& val) {
-    // TODO(tsepez): check usage of c_str() below.
-    return wcscmp(val.unterminated_c_str(), iter.m_htmlReserve) > 0;
-  };
-  const XFA_FMHtmlReserveCode* result =
-      std::lower_bound(std::begin(kReservesForDecode),
-                       std::end(kReservesForDecode), pData, cmpFunc);
-  if (result != std::end(kReservesForEncode) &&
-      !wcscmp(pData.unterminated_c_str(), result->m_htmlReserve)) {
-    *iCode = result->m_uCode;
-    return true;
-  }
-  return false;
-}
-
-// static
-bool CFXJSE_FormCalcContext::HTMLCode2STR(uint32_t iCode,
-                                          WideString* wsHTMLReserve) {
-  auto cmpFunc = [](const XFA_FMHtmlReserveCode iter, const uint32_t& val) {
-    return iter.m_uCode < val;
-  };
-  const XFA_FMHtmlReserveCode* result =
-      std::lower_bound(std::begin(kReservesForEncode),
-                       std::end(kReservesForEncode), iCode, cmpFunc);
-  if (result != std::end(kReservesForEncode) && result->m_uCode == iCode) {
-    *wsHTMLReserve = result->m_htmlReserve;
-    return true;
-  }
-  return false;
 }
 
 // static
@@ -4490,157 +4620,6 @@ void CFXJSE_FormCalcContext::WordNum(CFXJSE_Value* pThis,
 
   args.GetReturnValue()->SetString(
       WordUS(ByteString::Format("%.2f", fNumber), iIdentifier).AsStringView());
-}
-
-// static
-ByteString CFXJSE_FormCalcContext::TrillionUS(const ByteStringView& szData) {
-  std::ostringstream strBuf;
-  ByteStringView pUnits[] = {"zero", "one", "two",   "three", "four",
-                             "five", "six", "seven", "eight", "nine"};
-  ByteStringView pCapUnits[] = {"Zero", "One", "Two",   "Three", "Four",
-                                "Five", "Six", "Seven", "Eight", "Nine"};
-  ByteStringView pTens[] = {"Ten",      "Eleven",  "Twelve",  "Thirteen",
-                            "Fourteen", "Fifteen", "Sixteen", "Seventeen",
-                            "Eighteen", "Nineteen"};
-  ByteStringView pLastTens[] = {"Twenty", "Thirty",  "Forty",  "Fifty",
-                                "Sixty",  "Seventy", "Eighty", "Ninety"};
-  ByteStringView pComm[] = {" Hundred ", " Thousand ", " Million ", " Billion ",
-                            "Trillion"};
-  const char* pData = szData.unterminated_c_str();
-  int32_t iLength = szData.GetLength();
-  int32_t iComm = 0;
-  if (iLength > 12)
-    iComm = 4;
-  else if (iLength > 9)
-    iComm = 3;
-  else if (iLength > 6)
-    iComm = 2;
-  else if (iLength > 3)
-    iComm = 1;
-
-  int32_t iFirstCount = iLength % 3;
-  if (iFirstCount == 0)
-    iFirstCount = 3;
-
-  int32_t iIndex = 0;
-  if (iFirstCount == 3) {
-    if (pData[iIndex] != '0') {
-      strBuf << pCapUnits[pData[iIndex] - '0'];
-      strBuf << pComm[0];
-    }
-    if (pData[iIndex + 1] == '0') {
-      strBuf << pCapUnits[pData[iIndex + 2] - '0'];
-    } else {
-      if (pData[iIndex + 1] > '1') {
-        strBuf << pLastTens[pData[iIndex + 1] - '2'];
-        strBuf << "-";
-        strBuf << pUnits[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '1') {
-        strBuf << pTens[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '0') {
-        strBuf << pCapUnits[pData[iIndex + 2] - '0'];
-      }
-    }
-    iIndex += 3;
-  } else if (iFirstCount == 2) {
-    if (pData[iIndex] == '0') {
-      strBuf << pCapUnits[pData[iIndex + 1] - '0'];
-    } else {
-      if (pData[iIndex] > '1') {
-        strBuf << pLastTens[pData[iIndex] - '2'];
-        strBuf << "-";
-        strBuf << pUnits[pData[iIndex + 1] - '0'];
-      } else if (pData[iIndex] == '1') {
-        strBuf << pTens[pData[iIndex + 1] - '0'];
-      } else if (pData[iIndex] == '0') {
-        strBuf << pCapUnits[pData[iIndex + 1] - '0'];
-      }
-    }
-    iIndex += 2;
-  } else if (iFirstCount == 1) {
-    strBuf << pCapUnits[pData[iIndex] - '0'];
-    iIndex += 1;
-  }
-  if (iLength > 3 && iFirstCount > 0) {
-    strBuf << pComm[iComm];
-    --iComm;
-  }
-  while (iIndex < iLength) {
-    if (pData[iIndex] != '0') {
-      strBuf << pCapUnits[pData[iIndex] - '0'];
-      strBuf << pComm[0];
-    }
-    if (pData[iIndex + 1] == '0') {
-      strBuf << pCapUnits[pData[iIndex + 2] - '0'];
-    } else {
-      if (pData[iIndex + 1] > '1') {
-        strBuf << pLastTens[pData[iIndex + 1] - '2'];
-        strBuf << "-";
-        strBuf << pUnits[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '1') {
-        strBuf << pTens[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '0') {
-        strBuf << pCapUnits[pData[iIndex + 2] - '0'];
-      }
-    }
-    if (iIndex < iLength - 3) {
-      strBuf << pComm[iComm];
-      --iComm;
-    }
-    iIndex += 3;
-  }
-  return ByteString(strBuf);
-}
-
-// static
-ByteString CFXJSE_FormCalcContext::WordUS(const ByteString& szData,
-                                          int32_t iStyle) {
-  const char* pData = szData.c_str();
-  int32_t iLength = szData.GetLength();
-  if (iStyle < 0 || iStyle > 2) {
-    return ByteString();
-  }
-
-  std::ostringstream strBuf;
-
-  int32_t iIndex = 0;
-  while (iIndex < iLength) {
-    if (pData[iIndex] == '.')
-      break;
-    ++iIndex;
-  }
-  int32_t iInteger = iIndex;
-  iIndex = 0;
-  while (iIndex < iInteger) {
-    int32_t iCount = (iInteger - iIndex) % 12;
-    if (!iCount && iInteger - iIndex > 0)
-      iCount = 12;
-
-    strBuf << TrillionUS(ByteStringView(pData + iIndex, iCount));
-    iIndex += iCount;
-    if (iIndex < iInteger)
-      strBuf << " Trillion ";
-  }
-
-  if (iStyle > 0)
-    strBuf << " Dollars";
-
-  if (iStyle > 1 && iInteger < iLength) {
-    strBuf << " And ";
-    iIndex = iInteger + 1;
-    while (iIndex < iLength) {
-      int32_t iCount = (iLength - iIndex) % 12;
-      if (!iCount && iLength - iIndex > 0)
-        iCount = 12;
-
-      strBuf << TrillionUS(ByteStringView(pData + iIndex, iCount));
-      iIndex += iCount;
-      if (iIndex < iLength)
-        strBuf << " Trillion ";
-    }
-    strBuf << " Cents";
-  }
-  return ByteString(strBuf);
 }
 
 // static
