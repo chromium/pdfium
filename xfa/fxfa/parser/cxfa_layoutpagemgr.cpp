@@ -34,40 +34,47 @@
 
 namespace {
 
-class PageSetContainerLayoutItem {
+class TraverseStrategy_PageSet {
  public:
   static CXFA_ContainerLayoutItem* GetFirstChild(
       CXFA_ContainerLayoutItem* pLayoutItem) {
     if (pLayoutItem->GetFormNode()->GetElementType() != XFA_Element::PageSet)
       return nullptr;
 
-    CXFA_ContainerLayoutItem* pChildItem =
-        static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem->m_pFirstChild);
-    while (pChildItem && pChildItem->GetFormNode()->GetElementType() !=
-                             XFA_Element::PageSet) {
-      pChildItem =
-          static_cast<CXFA_ContainerLayoutItem*>(pChildItem->m_pNextSibling);
+    for (CXFA_LayoutItem* pChildItem = pLayoutItem->m_pFirstChild; pChildItem;
+         pChildItem = pChildItem->m_pNextSibling) {
+      CXFA_ContainerLayoutItem* pContainer =
+          pChildItem->AsContainerLayoutItem();
+      if (pContainer &&
+          pContainer->GetFormNode()->GetElementType() == XFA_Element::PageSet) {
+        return pContainer;
+      }
     }
-    return pChildItem;
+    return nullptr;
   }
 
   static CXFA_ContainerLayoutItem* GetNextSibling(
       CXFA_ContainerLayoutItem* pLayoutItem) {
-    CXFA_ContainerLayoutItem* pChildItem =
-        static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem->m_pNextSibling);
-    while (pChildItem && pChildItem->GetFormNode()->GetElementType() !=
-                             XFA_Element::PageSet) {
-      pChildItem =
-          static_cast<CXFA_ContainerLayoutItem*>(pChildItem->m_pNextSibling);
+    for (CXFA_LayoutItem* pChildItem = pLayoutItem->m_pNextSibling; pChildItem;
+         pChildItem = pChildItem->m_pNextSibling) {
+      CXFA_ContainerLayoutItem* pContainer =
+          pChildItem->AsContainerLayoutItem();
+      if (pContainer &&
+          pContainer->GetFormNode()->GetElementType() == XFA_Element::PageSet) {
+        return pContainer;
+      }
     }
-    return pChildItem;
+    return nullptr;
   }
 
   static CXFA_ContainerLayoutItem* GetParent(
       CXFA_ContainerLayoutItem* pLayoutItem) {
-    return static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem->m_pParent);
+    return ToContainerLayoutItem(pLayoutItem->m_pParent);
   }
 };
+
+using PageSetIterator = CXFA_NodeIteratorTemplate<CXFA_ContainerLayoutItem,
+                                                  TraverseStrategy_PageSet>;
 
 uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
   uint32_t dwRelevant = XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
@@ -613,9 +620,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
   for (; pRootPageSetLayoutItem;
        pRootPageSetLayoutItem = static_cast<CXFA_ContainerLayoutItem*>(
            pRootPageSetLayoutItem->m_pNextSibling)) {
-    CXFA_NodeIteratorTemplate<CXFA_ContainerLayoutItem,
-                              PageSetContainerLayoutItem>
-        sIterator(pRootPageSetLayoutItem);
+    PageSetIterator sIterator(pRootPageSetLayoutItem);
     for (CXFA_ContainerLayoutItem* pPageSetLayoutItem = sIterator.GetCurrent();
          pPageSetLayoutItem; pPageSetLayoutItem = sIterator.MoveToNext()) {
       XFA_AttributeEnum ePageRelation =
