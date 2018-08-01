@@ -38,6 +38,7 @@ class CPDF_StructElement;
 class CPDF_StructTree;
 class CPDF_TextPage;
 class CPDF_TextPageFind;
+class CPDFSDK_FormFillEnvironment;
 class IPDFSDK_PauseAdapter;
 class FX_PATHPOINT;
 
@@ -195,6 +196,15 @@ inline FPDF_SCHHANDLE FPDFSchHandleFromCPDFTextPageFind(
 inline CPDF_TextPageFind* CPDFTextPageFindFromFPDFSchHandle(
     FPDF_SCHHANDLE handle) {
   return reinterpret_cast<CPDF_TextPageFind*>(handle);
+}
+
+inline FPDF_FORMHANDLE FPDFFormHandleFromCPDFSDKFormFillEnvironment(
+    CPDFSDK_FormFillEnvironment* handle) {
+  return reinterpret_cast<FPDF_FORMHANDLE>(handle);
+}
+inline CPDFSDK_FormFillEnvironment*
+CPDFSDKFormFillEnvironmentFromFPDFFormHandle(FPDF_FORMHANDLE handle) {
+  return reinterpret_cast<CPDFSDK_FormFillEnvironment*>(handle);
 }
 
 ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string);

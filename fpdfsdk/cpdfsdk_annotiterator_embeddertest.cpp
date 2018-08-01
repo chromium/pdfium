@@ -40,7 +40,7 @@ TEST_F(CPDFSDK_AnnotIteratorTest, CPDFSDK_AnnotIterator) {
   CFX_FloatRect RightTop(401, 401, 421, 421);
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      static_cast<CPDFSDK_FormFillEnvironment*>(form_handle());
+      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
 
   {
     // Page 0 specifies "row order".

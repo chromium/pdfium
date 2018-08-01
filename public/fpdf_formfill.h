@@ -10,8 +10,6 @@
 // NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
-typedef void* FPDF_FORMHANDLE;
-
 // These values are return values for a public API, so should not be changed
 // other than the count when adding new values.
 #define FORMTYPE_NONE 0            // Document contains no forms

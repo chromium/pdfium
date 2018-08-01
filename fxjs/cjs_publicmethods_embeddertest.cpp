@@ -180,7 +180,8 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   auto* page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  CJS_Runtime runtime(static_cast<CPDFSDK_FormFillEnvironment*>(form_handle()));
+  CJS_Runtime runtime(
+      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle()));
   runtime.NewEventContext();
 
   WideString result;
@@ -214,7 +215,8 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
   auto* page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  CJS_Runtime runtime(static_cast<CPDFSDK_FormFillEnvironment*>(form_handle()));
+  CJS_Runtime runtime(
+      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle()));
   runtime.NewEventContext();
 
   auto* handler = runtime.GetCurrentEventContext()->GetEventHandler();

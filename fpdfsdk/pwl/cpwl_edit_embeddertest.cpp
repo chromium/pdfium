@@ -28,7 +28,8 @@ class CPWLEditEmbeddertest : public EmbedderTest {
     m_page = LoadPage(0);
     ASSERT_TRUE(m_page);
 
-    m_pFormFillEnv = static_cast<CPDFSDK_FormFillEnvironment*>(form_handle());
+    m_pFormFillEnv =
+        CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageView(0),
                                CPDF_Annot::Subtype::WIDGET);
     // Normal text field.
