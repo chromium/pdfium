@@ -27,4 +27,6 @@ Local Modifications:
 0026-use_opj_uint_ceildiv.patch: Remove (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)a, (OPJ_INT32) b).
 0033-undefined-shift-opj_t1_dec_clnpass.patch: fix undefined shifts originated from opj_t1_decode_cblk.
 0034-opj_malloc.patch: PDFium changes in opj_malloc.
-0035-opj_j2k_update_image_dimensions.patch: fix integer overflow.
+0035-opj_image_data_free.patch: Use the right free function in opj_jp2_apply_pclr.
+0036-opj_j2k_update_image_dimensions.patch: fix integer overflow.
+0037-opj_j2k_merge_ppt_leak.patch: fix memory leak.
