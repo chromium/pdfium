@@ -13,14 +13,19 @@ set -e
 while (( "$#" )); do
   INFILE="$1"
   echo $INFILE | grep -qs ' ' && echo space in filename detected && exit 1
-  out/Debug/pdfium_test --png $INFILE
+  EVTFILE="${INFILE%.*}.evt"
+  if [ -f "$EVTFILE" ]; then
+    out/Debug/pdfium_test --send-events --png $INFILE
+  else
+    out/Debug/pdfium_test --png $INFILE
+  fi
   RESULTS="$INFILE.*.png"
   for RESULT in $RESULTS ; do
-      EXPECTED=`echo -n $RESULT | sed 's/[.]pdf[.]/_expected.pdf./'`
-      mv $RESULT $EXPECTED
-      if [ -n "$PNGOPTIMIZER" ]; then
-        "$PNGOPTIMIZER" $EXPECTED
-      fi
+    EXPECTED=`echo -n $RESULT | sed 's/[.]pdf[.]/_expected.pdf./'`
+    mv $RESULT $EXPECTED
+    if [ -n "$PNGOPTIMIZER" ]; then
+      "$PNGOPTIMIZER" $EXPECTED
+    fi
   done
   shift
 done
