@@ -1257,6 +1257,24 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text);
 
 // Experimental API.
+// Get the font name of a text object.
+//
+// text             - the handle to the text object.
+// buffer           - the address of a buffer that receives the font name.
+// length           - the size, in bytes, of |buffer|.
+//
+// Returns the number of bytes in the font name (including the trailing NUL
+// character) on success, 0 on error.
+//
+// Regardless of the platform, the |buffer| is always in UTF-8 encoding.
+// If |length| is less than the returned length, or |buffer| is NULL, |buffer|
+// will not be modified.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
+                        void* buffer,
+                        unsigned long length);
+
+// Experimental API.
 // Get number of page objects inside |form_object|.
 //
 //   form_object - handle to a form object.

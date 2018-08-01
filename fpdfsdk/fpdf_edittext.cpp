@@ -542,6 +542,28 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFTextObj_GetFontSize(FPDF_PAGEOBJECT text) {
   return pTextObj ? pTextObj->GetFontSize() : 0;
 }
 
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
+                        void* buffer,
+                        unsigned long length) {
+  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
+  if (!pTextObj)
+    return 0;
+
+  CPDF_Font* pPdfFont = pTextObj->GetFont();
+  if (!pPdfFont)
+    return 0;
+
+  CFX_Font* pFont = pPdfFont->GetFont();
+  ASSERT(pFont);
+
+  ByteString name = pFont->GetFamilyName();
+  unsigned long dwStringLen = name.GetLength() + 1;
+  if (buffer && length >= dwStringLen)
+    memcpy(buffer, name.c_str(), dwStringLen);
+  return dwStringLen;
+}
+
 FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {
   CPDF_Font* pFont = CPDFFontFromFPDFFont(font);
   if (!pFont)
