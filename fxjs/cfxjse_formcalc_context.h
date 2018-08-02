@@ -343,11 +343,9 @@ class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
   static bool simpleValueCompare(CFXJSE_Value* pThis,
                                  CFXJSE_Value* firstValue,
                                  CFXJSE_Value* secondValue);
-  static void unfoldArgs(
+  static std::vector<std::unique_ptr<CFXJSE_Value>> unfoldArgs(
       CFXJSE_Value* pThis,
-      CFXJSE_Arguments& args,
-      std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
-      int32_t iStart = 0);
+      CFXJSE_Arguments& args);
   static void GetObjectDefaultValue(CFXJSE_Value* pObjectValue,
                                     CFXJSE_Value* pDefaultValue);
   static bool SetObjectDefaultValue(CFXJSE_Value* pObjectValue,
