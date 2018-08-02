@@ -41,11 +41,9 @@ bool IsLinearizedHeaderValid(const CPDF_LinearizedHeader* header,
                              FX_FILESIZE document_size) {
   ASSERT(header);
   return header->GetFileSize() == document_size &&
-         static_cast<int>(header->GetFirstPageNo()) >= 0 &&
          header->GetFirstPageNo() < kMaxInt &&
          header->GetFirstPageNo() < header->GetPageCount() &&
          header->GetMainXRefTableFirstEntryOffset() < document_size &&
-         header->GetPageCount() > 0 &&
          header->GetFirstPageEndOffset() < document_size &&
          header->GetLastXRefOffset() < document_size &&
          header->GetHintStart() < document_size;
@@ -65,7 +63,7 @@ std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::Parse(
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "L", 1) ||
       !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "P", 0, false) ||
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "T", 1) ||
-      !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "N", 0) ||
+      !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "N", 1) ||
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "E", 1) ||
       !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "O", 1)) {
     return nullptr;
