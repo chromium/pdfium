@@ -72,9 +72,8 @@ CPDF_Parser::~CPDF_Parser() {
 }
 
 uint32_t CPDF_Parser::GetLastObjNum() const {
-  return m_CrossRefTable->objects_info().empty()
-             ? 0
-             : m_CrossRefTable->objects_info().rbegin()->first;
+  const uint32_t size = m_CrossRefTable->GetSize();
+  return size ? size - 1 : 0;
 }
 
 bool CPDF_Parser::IsValidObjectNumber(uint32_t objnum) const {
@@ -115,8 +114,8 @@ bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
   return GetObjectType(objnum) == ObjectType::kFree;
 }
 
-void CPDF_Parser::ShrinkObjectMap(uint32_t objnum) {
-  m_CrossRefTable->ShrinkObjectMap(objnum);
+void CPDF_Parser::ShrinkObjectMap(uint32_t max_size) {
+  m_CrossRefTable->ShrinkObjectMap(max_size);
 }
 
 bool CPDF_Parser::InitSyntaxParser(
@@ -746,8 +745,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     const uint8_t* segstart = pData + segindex * totalWidth;
     FX_SAFE_UINT32 dwMaxObjNum = startnum;
     dwMaxObjNum += count;
-    uint32_t dwV5Size =
-        m_CrossRefTable->objects_info().empty() ? 0 : GetLastObjNum() + 1;
+    uint32_t dwV5Size = m_CrossRefTable->GetSize();
     if (!dwMaxObjNum.IsValid() || dwMaxObjNum.ValueOrDie() > dwV5Size)
       continue;
 
