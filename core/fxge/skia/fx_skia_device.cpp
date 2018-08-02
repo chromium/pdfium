@@ -843,7 +843,7 @@ class SkiaState {
     if (Accumulator::kPath == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kText == m_type &&
          (FontChanged(pFont, pMatrix, font_size, scaleX, color) ||
-          hasRSX == !m_rsxform.count()))) {
+          hasRSX == m_rsxform.isEmpty()))) {
       Flush();
     }
     if (Accumulator::kText != m_type) {
@@ -931,15 +931,15 @@ class SkiaState {
     SkTDArray<SkUnichar> text;
     text.setCount(m_glyphs.count());
     skPaint.glyphsToUnichars(m_glyphs.begin(), m_glyphs.count(), text.begin());
-    for (size_t i = 0; i < m_glyphs.count(); ++i)
+    for (int i = 0; i < m_glyphs.count(); ++i)
       printf("%lc", m_glyphs[i]);
     printf("\n");
 #endif
     if (m_rsxform.count()) {
-      skCanvas->drawTextRSXform(m_glyphs.begin(), m_glyphs.count() * 2,
+      skCanvas->drawTextRSXform(m_glyphs.begin(), m_glyphs.bytes(),
                                 m_rsxform.begin(), nullptr, skPaint);
     } else {
-      skCanvas->drawPosText(m_glyphs.begin(), m_glyphs.count() * 2,
+      skCanvas->drawPosText(m_glyphs.begin(), m_glyphs.bytes(),
                             m_positions.begin(), skPaint);
     }
     skCanvas->restore();
@@ -1610,7 +1610,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   SkTDArray<SkUnichar> text;
   text.setCount(glyphs.count());
   paint.glyphsToUnichars(glyphs.begin(), glyphs.count(), text.begin());
-  for (size_t i = 0; i < glyphs.count(); ++i)
+  for (int i = 0; i < glyphs.count(); ++i)
     printf("%lc", text[i]);
   printf("\n");
 #endif
