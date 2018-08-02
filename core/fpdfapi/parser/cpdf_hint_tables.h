@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_HINT_TABLES_H_
 #define CORE_FPDFAPI_PARSER_CPDF_HINT_TABLES_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
@@ -15,8 +16,9 @@
 
 class CFX_BitStream;
 class CPDF_LinearizedHeader;
-class CPDF_Stream;
 class CPDF_ReadValidator;
+class CPDF_Stream;
+class CPDF_SyntaxParser;
 
 class CPDF_HintTables {
  public:
@@ -66,6 +68,10 @@ class CPDF_HintTables {
     PageInfo(const PageInfo& other) = delete;
     PageInfo& operator=(const PageInfo&) = delete;
   };
+
+  static std::unique_ptr<CPDF_HintTables> Parse(
+      CPDF_SyntaxParser* parser,
+      CPDF_LinearizedHeader* pLinearized);
 
   CPDF_HintTables(CPDF_ReadValidator* pValidator,
                   CPDF_LinearizedHeader* pLinearized);

@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -39,6 +40,39 @@ bool IsValidPageOffsetHintTableBitCount(uint32_t bits) {
 
 CPDF_HintTables::PageInfo::PageInfo() = default;
 CPDF_HintTables::PageInfo::~PageInfo() = default;
+
+//  static
+std::unique_ptr<CPDF_HintTables> CPDF_HintTables::Parse(
+    CPDF_SyntaxParser* parser,
+    CPDF_LinearizedHeader* pLinearized) {
+  ASSERT(parser);
+  if (!pLinearized || pLinearized->GetPageCount() <= 1 ||
+      !pLinearized->HasHintTable()) {
+    return nullptr;
+  }
+
+  const FX_FILESIZE szHintStart = pLinearized->GetHintStart();
+  const uint32_t szHintLength = pLinearized->GetHintLength();
+
+  if (!parser->GetValidator()->CheckDataRangeAndRequestIfUnavailable(
+          szHintStart, szHintLength)) {
+    return nullptr;
+  }
+
+  parser->SetPos(szHintStart);
+  std::unique_ptr<CPDF_Stream> hints_stream = ToStream(
+      parser->GetIndirectObject(nullptr, CPDF_SyntaxParser::ParseType::kLoose));
+
+  if (!hints_stream)
+    return nullptr;
+
+  auto pHintTables = pdfium::MakeUnique<CPDF_HintTables>(
+      parser->GetValidator().Get(), pLinearized);
+  if (!pHintTables->LoadHintStream(hints_stream.get()))
+    return nullptr;
+
+  return pHintTables;
+}
 
 CPDF_HintTables::CPDF_HintTables(CPDF_ReadValidator* pValidator,
                                  CPDF_LinearizedHeader* pLinearized)
