@@ -17,6 +17,18 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 
+#define JBIG2_GETDWORD(buf)                  \
+  ((static_cast<uint32_t>((buf)[0]) << 24) | \
+   (static_cast<uint32_t>((buf)[1]) << 16) | \
+   (static_cast<uint32_t>((buf)[2]) << 8) |  \
+   (static_cast<uint32_t>((buf)[3]) << 0))
+
+#define JBIG2_PUTDWORD(buf, val)                 \
+  ((buf)[0] = static_cast<uint8_t>((val) >> 24), \
+   (buf)[1] = static_cast<uint8_t>((val) >> 16), \
+   (buf)[2] = static_cast<uint8_t>((val) >> 8),  \
+   (buf)[3] = static_cast<uint8_t>((val) >> 0))
+
 namespace {
 
 const int kMaxImagePixels = INT_MAX - 31;
@@ -154,9 +166,6 @@ bool CJBig2_Image::ComposeFromWithRect(int32_t x,
   return m_pData ? pSrc->ComposeToWithRect(this, x, y, rtSrc, op) : false;
 }
 
-#define JBIG2_GETDWORD(buf) \
-  ((uint32_t)(((buf)[0] << 24) | ((buf)[1] << 16) | ((buf)[2] << 8) | (buf)[3]))
-
 std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
                                                      int32_t y,
                                                      int32_t w,
@@ -211,10 +220,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
         } else {
           wTmp = JBIG2_GETDWORD(pSrc) << n;
         }
-        pDst[0] = (uint8_t)(wTmp >> 24);
-        pDst[1] = (uint8_t)(wTmp >> 16);
-        pDst[2] = (uint8_t)(wTmp >> 8);
-        pDst[3] = (uint8_t)wTmp;
+        JBIG2_PUTDWORD(pDst, wTmp);
       }
       pLineSrc += m_nStride;
       pLineDst += pImage->m_nStride;
@@ -311,10 +317,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
               break;
           }
-          lineDst[0] = (uint8_t)(tmp >> 24);
-          lineDst[1] = (uint8_t)(tmp >> 16);
-          lineDst[2] = (uint8_t)(tmp >> 8);
-          lineDst[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(lineDst, tmp);
           lineSrc += m_nStride;
           lineDst += pDst->m_nStride;
         }
@@ -341,10 +344,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
               break;
           }
-          lineDst[0] = (uint8_t)(tmp >> 24);
-          lineDst[1] = (uint8_t)(tmp >> 16);
-          lineDst[2] = (uint8_t)(tmp >> 8);
-          lineDst[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(lineDst, tmp);
           lineSrc += m_nStride;
           lineDst += pDst->m_nStride;
         }
@@ -374,10 +374,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
             tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
             break;
         }
-        lineDst[0] = (uint8_t)(tmp >> 24);
-        lineDst[1] = (uint8_t)(tmp >> 16);
-        lineDst[2] = (uint8_t)(tmp >> 8);
-        lineDst[3] = (uint8_t)tmp;
+        JBIG2_PUTDWORD(lineDst, tmp);
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
       }
@@ -415,10 +412,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -444,10 +438,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = tmp1;
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -475,10 +466,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
         }
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
@@ -509,10 +497,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -537,10 +522,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = tmp1;
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -565,10 +547,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
         }
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
@@ -601,10 +580,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           dp += 4;
         }
         for (int32_t xx = 0; xx < middleDwords; xx++) {
@@ -629,10 +605,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = tmp1;
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -660,10 +633,7 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
         }
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
@@ -737,10 +707,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
               break;
           }
-          lineDst[0] = (uint8_t)(tmp >> 24);
-          lineDst[1] = (uint8_t)(tmp >> 16);
-          lineDst[2] = (uint8_t)(tmp >> 8);
-          lineDst[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(lineDst, tmp);
           lineSrc += m_nStride;
           lineDst += pDst->m_nStride;
         }
@@ -769,10 +736,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
               break;
           }
-          lineDst[0] = (uint8_t)(tmp >> 24);
-          lineDst[1] = (uint8_t)(tmp >> 16);
-          lineDst[2] = (uint8_t)(tmp >> 8);
-          lineDst[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(lineDst, tmp);
           lineSrc += m_nStride;
           lineDst += pDst->m_nStride;
         }
@@ -804,10 +768,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
             tmp = (tmp2 & ~maskM) | (tmp1 & maskM);
             break;
         }
-        lineDst[0] = (uint8_t)(tmp >> 24);
-        lineDst[1] = (uint8_t)(tmp >> 16);
-        lineDst[2] = (uint8_t)(tmp >> 8);
-        lineDst[3] = (uint8_t)tmp;
+        JBIG2_PUTDWORD(lineDst, tmp);
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
       }
@@ -844,10 +805,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -873,10 +831,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = tmp1;
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -904,10 +859,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
         }
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
@@ -940,10 +892,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -968,10 +917,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = tmp1;
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -996,10 +942,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
         }
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
@@ -1034,10 +977,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskL) | (tmp1 & maskL);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           dp += 4;
         }
         for (int32_t xx = 0; xx < middleDwords; xx++) {
@@ -1062,10 +1002,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = tmp1;
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
           sp += 4;
           dp += 4;
         }
@@ -1093,10 +1030,7 @@ bool CJBig2_Image::ComposeToOpt2WithRect(CJBig2_Image* pDst,
               tmp = (tmp2 & ~maskR) | (tmp1 & maskR);
               break;
           }
-          dp[0] = (uint8_t)(tmp >> 24);
-          dp[1] = (uint8_t)(tmp >> 16);
-          dp[2] = (uint8_t)(tmp >> 8);
-          dp[3] = (uint8_t)tmp;
+          JBIG2_PUTDWORD(dp, tmp);
         }
         lineSrc += m_nStride;
         lineDst += pDst->m_nStride;
