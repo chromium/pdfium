@@ -624,10 +624,15 @@ double ByteStringToDouble(const ByteStringView& szStringVal) {
 
 bool IsIsoDateFormat(const char* pData,
                      int32_t iLength,
-                     int32_t& iStyle,
-                     int32_t& iYear,
-                     int32_t& iMonth,
-                     int32_t& iDay) {
+                     int32_t* pStyle,
+                     int32_t* pYear,
+                     int32_t* pMonth,
+                     int32_t* pDay) {
+  int32_t& iStyle = *pStyle;
+  int32_t& iYear = *pYear;
+  int32_t& iMonth = *pMonth;
+  int32_t& iDay = *pDay;
+
   iYear = 0;
   iMonth = 1;
   iDay = 1;
@@ -680,32 +685,31 @@ bool IsIsoDateFormat(const char* pData,
   if (iPosOff + 2 < iLength)
     return false;
 
-  if ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) {
-    if (iMonth == 2 && iDay > 29)
-      return false;
-  } else {
-    if (iMonth == 2 && iDay > 28)
-      return false;
+  if (iMonth == 2) {
+    bool bIsLeap = (!(iYear % 4) && (iYear % 100)) || !(iYear % 400);
+    return iDay <= (bIsLeap ? 29 : 28);
   }
-  if (iMonth != 2) {
-    if (iMonth < 8) {
-      if (iDay > (iMonth % 2 == 0 ? 30 : 31))
-        return false;
-    } else if (iDay > (iMonth % 2 == 0 ? 31 : 30)) {
-      return false;
-    }
-  }
-  return true;
+
+  if (iMonth < 8)
+    return iDay <= (iMonth % 2 == 0 ? 30 : 31);
+  return iDay <= (iMonth % 2 == 0 ? 31 : 30);
 }
 
 bool IsIsoTimeFormat(const char* pData,
                      int32_t iLength,
-                     int32_t& iHour,
-                     int32_t& iMinute,
-                     int32_t& iSecond,
-                     int32_t& iMilliSecond,
-                     int32_t& iZoneHour,
-                     int32_t& iZoneMinute) {
+                     int32_t* pHour,
+                     int32_t* pMinute,
+                     int32_t* pSecond,
+                     int32_t* pMilliSecond,
+                     int32_t* pZoneHour,
+                     int32_t* pZoneMinute) {
+  int32_t& iHour = *pHour;
+  int32_t& iMinute = *pMinute;
+  int32_t& iSecond = *pSecond;
+  int32_t& iMilliSecond = *pMilliSecond;
+  int32_t& iZoneHour = *pZoneHour;
+  int32_t& iZoneMinute = *pZoneMinute;
+
   iHour = 0;
   iMinute = 0;
   iSecond = 0;
@@ -844,15 +848,25 @@ bool IsIsoTimeFormat(const char* pData,
 
 bool IsIsoDateTimeFormat(const char* pData,
                          int32_t iLength,
-                         int32_t& iYear,
-                         int32_t& iMonth,
-                         int32_t& iDay,
-                         int32_t& iHour,
-                         int32_t& iMinute,
-                         int32_t& iSecond,
-                         int32_t& iMillionSecond,
-                         int32_t& iZoneHour,
-                         int32_t& iZoneMinute) {
+                         int32_t* pYear,
+                         int32_t* pMonth,
+                         int32_t* pDay,
+                         int32_t* pHour,
+                         int32_t* pMinute,
+                         int32_t* pSecond,
+                         int32_t* pMilliSecond,
+                         int32_t* pZoneHour,
+                         int32_t* pZoneMinute) {
+  int32_t& iYear = *pYear;
+  int32_t& iMonth = *pMonth;
+  int32_t& iDay = *pDay;
+  int32_t& iHour = *pHour;
+  int32_t& iMinute = *pMinute;
+  int32_t& iSecond = *pSecond;
+  int32_t& iMilliSecond = *pMilliSecond;
+  int32_t& iZoneHour = *pZoneHour;
+  int32_t& iZoneMinute = *pZoneMinute;
+
   iYear = 0;
   iMonth = 0;
   iDay = 0;
@@ -872,18 +886,14 @@ bool IsIsoDateTimeFormat(const char* pData,
     return false;
 
   int32_t iStyle = -1;
-  if (!IsIsoDateFormat(pData, iIndex, iStyle, iYear, iMonth, iDay))
+  if (!IsIsoDateFormat(pData, iIndex, &iStyle, &iYear, &iMonth, &iDay))
     return false;
   if (pData[iIndex] != 'T' && pData[iIndex] != 't')
     return true;
 
   ++iIndex;
-  if (((iLength - iIndex > 13) && (iLength - iIndex < 6)) &&
-      (iLength - iIndex != 15)) {
-    return true;
-  }
-  return IsIsoTimeFormat(pData + iIndex, iLength - iIndex, iHour, iMinute,
-                         iSecond, iMillionSecond, iZoneHour, iZoneMinute);
+  return IsIsoTimeFormat(pData + iIndex, iLength - iIndex, &iHour, &iMinute,
+                         &iSecond, &iMilliSecond, &iZoneHour, &iZoneMinute);
 }
 
 int32_t DateString2Num(const ByteStringView& szDateString) {
@@ -893,8 +903,8 @@ int32_t DateString2Num(const ByteStringView& szDateString) {
   int32_t iDay = 0;
   if (iLength <= 10) {
     int32_t iStyle = -1;
-    if (!IsIsoDateFormat(szDateString.unterminated_c_str(), iLength, iStyle,
-                         iYear, iMonth, iDay)) {
+    if (!IsIsoDateFormat(szDateString.unterminated_c_str(), iLength, &iStyle,
+                         &iYear, &iMonth, &iDay)) {
       return 0;
     }
   } else {
@@ -904,9 +914,9 @@ int32_t DateString2Num(const ByteStringView& szDateString) {
     int32_t iMilliSecond = 0;
     int32_t iZoneHour = 0;
     int32_t iZoneMinute = 0;
-    if (!IsIsoDateTimeFormat(szDateString.unterminated_c_str(), iLength, iYear,
-                             iMonth, iDay, iHour, iMinute, iSecond,
-                             iMilliSecond, iZoneHour, iZoneMinute)) {
+    if (!IsIsoDateTimeFormat(szDateString.unterminated_c_str(), iLength, &iYear,
+                             &iMonth, &iDay, &iHour, &iMinute, &iSecond,
+                             &iMilliSecond, &iZoneHour, &iZoneMinute)) {
       return 0;
     }
   }
@@ -942,15 +952,15 @@ int32_t DateString2Num(const ByteStringView& szDateString) {
   return (int32_t)dDays;
 }
 
-void GetLocalTimeZone(int32_t& iHour, int32_t& iMin, int32_t& iSec) {
+void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
   time_t now;
   time(&now);
 
   struct tm* pGmt = gmtime(&now);
   struct tm* pLocal = localtime(&now);
-  iHour = pLocal->tm_hour - pGmt->tm_hour;
-  iMin = pLocal->tm_min - pGmt->tm_min;
-  iSec = pLocal->tm_sec - pGmt->tm_sec;
+  *pHour = pLocal->tm_hour - pGmt->tm_hour;
+  *pMin = pLocal->tm_min - pGmt->tm_min;
+  *pSec = pLocal->tm_sec - pGmt->tm_sec;
 }
 
 bool HTMLSTR2Code(const WideStringView& pData, uint32_t* iCode) {
@@ -2784,10 +2794,10 @@ ByteString CFXJSE_FormCalcContext::Num2AllTime(CFXJSE_Value* pThis,
   iSec = (static_cast<int>(iTime) - iHour * 3600000 - iMin * 60000) / 1000;
 
   if (!bGM) {
-    int32_t iZoneHour = 0;
-    int32_t iZoneMin = 0;
-    int32_t iZoneSec = 0;
-    GetLocalTimeZone(iZoneHour, iZoneMin, iZoneSec);
+    int32_t iZoneHour;
+    int32_t iZoneMin;
+    int32_t iZoneSec;
+    GetLocalTimeZone(&iZoneHour, &iZoneMin, &iZoneSec);
     iHour += iZoneHour;
     iMin += iZoneMin;
     iSec += iZoneSec;
