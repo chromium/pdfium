@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 #define JBIG2_GETDWORD(buf)                  \
   ((static_cast<uint32_t>((buf)[0]) << 24) | \
@@ -29,6 +30,8 @@
    (buf)[2] = static_cast<uint8_t>((val) >> 8),  \
    (buf)[3] = static_cast<uint8_t>((val) >> 0))
 
+#define BIT_INDEX_TO_ALIGNED_BYTE(x) (((x) >> 5) << 2)
+
 namespace {
 
 const int kMaxImagePixels = INT_MAX - 31;
@@ -36,8 +39,7 @@ const int kMaxImageBytes = kMaxImagePixels / 8;
 
 }  // namespace
 
-CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
-    : m_pData(nullptr), m_nWidth(0), m_nHeight(0), m_nStride(0) {
+CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   if (w <= 0 || h <= 0 || w > kMaxImagePixels)
     return;
 
@@ -52,9 +54,15 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h)
       FX_Alloc2D(uint8_t, m_nStride, m_nHeight)));
 }
 
-CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t* pBuf)
-    : m_pData(nullptr), m_nWidth(0), m_nHeight(0), m_nStride(0) {
-  if (w < 0 || h < 0 || stride < 0 || stride > kMaxImageBytes)
+CJBig2_Image::CJBig2_Image(int32_t w,
+                           int32_t h,
+                           int32_t stride,
+                           uint8_t* pBuf) {
+  if (w < 0 || h < 0)
+    return;
+
+  // Stride must be word-aligned.
+  if (stride < 0 || stride > kMaxImageBytes || stride % 4 != 0)
     return;
 
   int32_t stride_pixels = 8 * stride;
@@ -68,8 +76,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t* pBuf)
 }
 
 CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
-    : m_pData(nullptr),
-      m_nWidth(other.m_nWidth),
+    : m_nWidth(other.m_nWidth),
       m_nHeight(other.m_nHeight),
       m_nStride(other.m_nStride) {
   if (other.m_pData) {
@@ -115,6 +122,10 @@ void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
     data()[m] |= n;
   else
     data()[m] &= ~n;
+}
+
+uint8_t* CJBig2_Image::GetLine(int32_t y) const {
+  return (y >= 0 && y < m_nHeight) ? GetLineUnsafe(y) : nullptr;
 }
 
 void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
@@ -170,60 +181,40 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
                                                      int32_t y,
                                                      int32_t w,
                                                      int32_t h) {
-  int32_t m;
-  int32_t n;
-  int32_t j;
-  uint8_t* pLineSrc;
-  uint8_t* pLineDst;
-  uint32_t wTmp;
-  uint8_t* pSrc;
-  uint8_t* pSrcEnd;
-  uint8_t* pDst;
-  uint8_t* pDstEnd;
-  if (w == 0 || h == 0)
-    return nullptr;
-
   auto pImage = pdfium::MakeUnique<CJBig2_Image>(w, h);
-  if (!m_pData) {
-    pImage->Fill(0);
+  if (!pImage->data() || !m_pData)
+    return pImage;
+
+  if (x < 0 || x >= m_nWidth || y < 0 || y >= m_nHeight)
+    return pImage;
+
+  int32_t m = BIT_INDEX_TO_ALIGNED_BYTE(x);
+  int32_t n = x & 31;
+  int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
+  int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
+
+  // Fast case when DWORD-aligned.
+  if (n == 0) {
+    for (int32_t j = 0; j < lines_to_copy; j++) {
+      const uint8_t* pLineSrc = GetLineUnsafe(y + j);
+      uint8_t* pLineDst = pImage->GetLineUnsafe(j);
+      memcpy(pLineDst, pLineSrc + m, bytes_to_copy);
+    }
     return pImage;
   }
-  if (!pImage->m_pData)
-    return pImage;
 
-  pLineSrc = data() + m_nStride * y;
-  pLineDst = pImage->data();
-  m = (x >> 5) << 2;
-  n = x & 31;
-  if (n == 0) {
-    for (j = 0; j < h; j++) {
-      pSrc = pLineSrc + m;
-      pSrcEnd = pLineSrc + m_nStride;
-      pDst = pLineDst;
-      pDstEnd = pLineDst + pImage->m_nStride;
-      for (; pDst < pDstEnd; pSrc += 4, pDst += 4) {
-        *((uint32_t*)pDst) = *((uint32_t*)pSrc);
-      }
-      pLineSrc += m_nStride;
-      pLineDst += pImage->m_nStride;
-    }
-  } else {
-    for (j = 0; j < h; j++) {
-      pSrc = pLineSrc + m;
-      pSrcEnd = pLineSrc + m_nStride;
-      pDst = pLineDst;
-      pDstEnd = pLineDst + pImage->m_nStride;
-      for (; pDst < pDstEnd; pSrc += 4, pDst += 4) {
-        if (pSrc + 4 < pSrcEnd) {
-          wTmp = (JBIG2_GETDWORD(pSrc) << n) |
-                 (JBIG2_GETDWORD(pSrc + 4) >> (32 - n));
-        } else {
-          wTmp = JBIG2_GETDWORD(pSrc) << n;
-        }
-        JBIG2_PUTDWORD(pDst, wTmp);
-      }
-      pLineSrc += m_nStride;
-      pLineDst += pImage->m_nStride;
+  // Normal slow case.
+  for (int32_t j = 0; j < lines_to_copy; j++) {
+    const uint8_t* pLineSrc = GetLineUnsafe(y + j);
+    uint8_t* pLineDst = pImage->GetLineUnsafe(j);
+    const uint8_t* pSrc = pLineSrc + m;
+    const uint8_t* pSrcEnd = pLineSrc + m_nStride;
+    uint8_t* pDstEnd = pLineDst + bytes_to_copy;
+    for (uint8_t *pDst = pLineDst; pDst < pDstEnd; pSrc += 4, pDst += 4) {
+      uint32_t wTmp = JBIG2_GETDWORD(pSrc) << n;
+      if (pSrc + 4 < pSrcEnd)
+        wTmp |= (JBIG2_GETDWORD(pSrc + 4) >> (32 - n));
+      JBIG2_PUTDWORD(pDst, wTmp);
     }
   }
   return pImage;
@@ -382,7 +373,6 @@ bool CJBig2_Image::ComposeToOpt2(CJBig2_Image* pDst,
   } else {
     uint8_t* sp = nullptr;
     uint8_t* dp = nullptr;
-
     if (s1 > d1) {
       uint32_t shift1 = s1 - d1;
       uint32_t shift2 = 32 - shift1;
