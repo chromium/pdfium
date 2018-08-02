@@ -857,12 +857,15 @@ class SkiaState {
       m_drawIndex = m_commandIndex;
       m_type = Accumulator::kText;
     }
+    if (!hasRSX && !m_rsxform.isEmpty())
+      FlushText();
+
     int count = m_positions.count();
     m_positions.setCount(nChars + count);
     m_glyphs.setCount(nChars + count);
-    if (hasRSX) {
+    if (hasRSX)
       m_rsxform.setCount(nChars + count);
-    }
+
     SkScalar flip = m_fontSize < 0 ? -1 : 1;
     SkScalar vFlip = flip;
     if (pFont->IsVertical())
