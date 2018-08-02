@@ -297,3 +297,40 @@ TEST(fxcodec, JBig2SubImage) {
   EXPECT_EQ(32, sub->width());
   EXPECT_EQ(40, sub->height());
 }
+
+TEST(fxcodec, JBig2CopyLine) {
+  // Horizontal line in image.
+  uint8_t pattern[3][8] = {
+      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+      {0x00, 0x01, 0xff, 0x80, 0x00, 0x00, 0x00, 0x00},
+      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  };
+
+  uint8_t expected_pattern[3][8] = {
+      {0x00, 0x01, 0xff, 0x80, 0x00, 0x00, 0x00, 0x00},
+      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  };
+
+  auto img = pdfium::MakeUnique<CJBig2_Image>(
+      37, 3, 8, reinterpret_cast<uint8_t*>(pattern));
+
+  auto expected = pdfium::MakeUnique<CJBig2_Image>(
+      37, 3, 8, reinterpret_cast<uint8_t*>(expected_pattern));
+
+  // Shuffle.
+  img->CopyLine(2, 1);
+  img->CopyLine(1, 0);
+  img->CopyLine(0, 2);
+
+  // Clear top line via invalid |from| offset.
+  img->CopyLine(2, 3);
+
+  // Copies with invalid |to|s don't mess with things.
+  img->CopyLine(-1, 0);
+  img->CopyLine(4, 0);
+  img->CopyLine(-1, -1);
+  img->CopyLine(4, 4);
+
+  CheckImageEq(expected.get(), img.get(), __LINE__);
+}

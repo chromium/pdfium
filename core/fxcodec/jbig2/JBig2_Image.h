@@ -40,8 +40,11 @@ class CJBig2_Image {
   int GetPixel(int32_t x, int32_t y) const;
   void SetPixel(int32_t x, int32_t y, int bVal);
 
-  uint8_t* GetLine(int32_t y) const;
   uint8_t* GetLineUnsafe(int32_t y) const { return data() + y * m_nStride; }
+  uint8_t* GetLine(int32_t y) const {
+    return (y >= 0 && y < m_nHeight) ? GetLineUnsafe(y) : nullptr;
+  }
+
   void CopyLine(int32_t hTo, int32_t hFrom);
   void Fill(bool v);
 
