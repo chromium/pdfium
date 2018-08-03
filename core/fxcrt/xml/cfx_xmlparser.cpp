@@ -92,7 +92,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
 
   FX_SAFE_SIZE_T alloc_size_safe = m_iXMLPlaneSize;
   alloc_size_safe += 1;  // For NUL.
-  if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0)
+  if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0 ||
+      m_iXMLPlaneSize <= 0)
     return false;
 
   std::vector<wchar_t> buffer;
@@ -133,6 +134,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
               current_parser_state = FDE_XmlSyntaxState::Node;
             }
           } else {
+            if (node_type_stack.size() <= 0 && ch && !FXSYS_iswspace(ch))
+              return false;
             ProcessTextChar(ch);
             current_buffer_idx++;
           }
