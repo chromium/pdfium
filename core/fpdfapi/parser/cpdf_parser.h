@@ -164,7 +164,7 @@ class CPDF_Parser {
 
   ObjectType GetObjectType(uint32_t objnum) const;
   ObjectType GetObjectTypeFromCrossRefStreamType(
-      int cross_ref_stream_type) const;
+      uint32_t cross_ref_stream_type) const;
 
   std::unique_ptr<ParsedObjectsHolder> m_pOwnedObjectsHolder;
   UnownedPtr<ParsedObjectsHolder> m_pObjectsHolder;

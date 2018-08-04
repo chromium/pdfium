@@ -753,15 +753,15 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       ObjectType type = ObjectType::kNotCompressed;
       const uint8_t* entrystart = segstart + j * totalWidth;
       if (WidthArray[0]) {
-        const int cross_ref_stream_obj_type =
+        const uint32_t cross_ref_stream_obj_type =
             GetVarInt(entrystart, WidthArray[0]);
         type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
       }
 
       if (GetObjectType(startnum + j) == ObjectType::kNull) {
-        FX_FILESIZE offset =
-            GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
-        m_CrossRefTable->AddNormal(startnum + j, 0, offset);
+        uint32_t offset = GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
+        if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
+          m_CrossRefTable->AddNormal(startnum + j, 0, offset);
         continue;
       }
 
@@ -771,14 +771,16 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       if (type == ObjectType::kFree) {
         m_CrossRefTable->SetFree(startnum + j);
       } else {
-        const FX_FILESIZE entry_value =
+        const uint32_t entry_value =
             GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
         if (type == ObjectType::kNotCompressed) {
-          const auto object_offset = entry_value;
-          m_CrossRefTable->AddNormal(startnum + j, 0, object_offset);
+          const uint32_t offset = entry_value;
+          if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
+            m_CrossRefTable->AddNormal(startnum + j, 0, offset);
         } else {
-          const auto archive_obj_num = entry_value;
-          if (archive_obj_num < 0 || !IsValidObjectNumber(archive_obj_num))
+          ASSERT(type == ObjectType::kCompressed);
+          const uint32_t archive_obj_num = entry_value;
+          if (!IsValidObjectNumber(archive_obj_num))
             return false;
 
           m_CrossRefTable->AddCompressed(startnum + j, archive_obj_num);
@@ -1070,7 +1072,7 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
 }
 
 CPDF_Parser::ObjectType CPDF_Parser::GetObjectTypeFromCrossRefStreamType(
-    int cross_ref_stream_type) const {
+    uint32_t cross_ref_stream_type) const {
   switch (cross_ref_stream_type) {
     case 0:
       return CPDF_Parser::ObjectType::kFree;
