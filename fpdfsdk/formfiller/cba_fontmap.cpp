@@ -23,14 +23,8 @@
 CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
                          CFX_SystemHandler* pSystemHandler)
     : CPWL_FontMap(pSystemHandler),
-      m_pDocument(nullptr),
-      m_pAnnotDict(nullptr),
-      m_pDefaultFont(nullptr),
-      m_sAPType("N") {
-  CPDF_Page* pPage = pAnnot->GetPDFPage();
-
-  m_pDocument = pPage->GetDocument();
-  m_pAnnotDict = pAnnot->GetPDFAnnot()->GetAnnotDict();
+      m_pDocument(pAnnot->GetPDFPage()->GetDocument()),
+      m_pAnnotDict(pAnnot->GetPDFAnnot()->GetAnnotDict()) {
   Initialize();
 }
 
