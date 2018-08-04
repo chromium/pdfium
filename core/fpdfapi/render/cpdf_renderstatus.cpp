@@ -1991,6 +1991,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.m_FillType = FXFILL_WINDING;
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
+    path.m_GeneralState = textobj->m_GeneralState;
     path.m_Path.AppendRect(textobj->m_Left, textobj->m_Bottom, textobj->m_Right,
                            textobj->m_Top);
     path.m_Left = textobj->m_Left;
