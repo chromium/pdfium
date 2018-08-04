@@ -207,11 +207,8 @@ bool IsMetricForCID(const uint32_t* pEntry, uint16_t CID) {
 
 }  // namespace
 
-CPDF_CIDFont::CPDF_CIDFont()
-    : m_pCID2UnicodeMap(nullptr),
-      m_bCIDIsGID(false),
-      m_bAnsiWidthsFixed(false),
-      m_bAdobeCourierStd(false) {
+CPDF_CIDFont::CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
+    : CPDF_Font(pDocument, pFontDict) {
   for (size_t i = 0; i < FX_ArraySize(m_CharBBox); ++i)
     m_CharBBox[i] = FX_RECT(-1, -1, -1, -1);
 }

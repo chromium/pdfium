@@ -11,7 +11,9 @@
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/numerics/safe_math.h"
 
-CPDF_SimpleFont::CPDF_SimpleFont() : m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
+CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* pDocument,
+                                 CPDF_Dictionary* pFontDict)
+    : CPDF_Font(pDocument, pFontDict) {
   memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
   memset(m_GlyphIndex, 0xff, sizeof(m_GlyphIndex));
   memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
@@ -19,7 +21,7 @@ CPDF_SimpleFont::CPDF_SimpleFont() : m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
     m_CharBBox[i] = FX_RECT(-1, -1, -1, -1);
 }
 
-CPDF_SimpleFont::~CPDF_SimpleFont() {}
+CPDF_SimpleFont::~CPDF_SimpleFont() = default;
 
 int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (pVertGlyph)

@@ -60,7 +60,11 @@ bool FT_UseType1Charmap(FXFT_Face face) {
 
 }  // namespace
 
-CPDF_Type1Font::CPDF_Type1Font() : m_Base14Font(-1) {}
+CPDF_Type1Font::CPDF_Type1Font(CPDF_Document* pDocument,
+                               CPDF_Dictionary* pFontDict)
+    : CPDF_SimpleFont(pDocument, pFontDict) {}
+
+CPDF_Type1Font::~CPDF_Type1Font() = default;
 
 bool CPDF_Type1Font::IsType1Font() const {
   return true;

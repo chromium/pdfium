@@ -34,7 +34,7 @@ class CPDF_StreamAcc;
 
 class CPDF_CIDFont : public CPDF_Font {
  public:
-  CPDF_CIDFont();
+  CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
   ~CPDF_CIDFont() override;
 
   static float CIDTransformToFloat(uint8_t ch);
@@ -76,15 +76,15 @@ class CPDF_CIDFont : public CPDF_Font {
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
   CIDSet m_Charset;
   bool m_bType1;
-  bool m_bCIDIsGID;
+  bool m_bCIDIsGID = false;
   uint16_t m_DefaultWidth;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
-  bool m_bAnsiWidthsFixed;
+  bool m_bAnsiWidthsFixed = false;
   std::vector<uint32_t> m_WidthList;
   short m_DefaultVY;
   short m_DefaultW1;
   std::vector<uint32_t> m_VertMetrics;
-  bool m_bAdobeCourierStd;
+  bool m_bAdobeCourierStd = false;
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
   FX_RECT m_CharBBox[256];
 };

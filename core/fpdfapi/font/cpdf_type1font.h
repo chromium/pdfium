@@ -12,7 +12,8 @@
 
 class CPDF_Type1Font : public CPDF_SimpleFont {
  public:
-  CPDF_Type1Font();
+  CPDF_Type1Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  ~CPDF_Type1Font() override;
 
   // CPDF_Font:
   bool IsType1Font() const override;
@@ -34,7 +35,7 @@ class CPDF_Type1Font : public CPDF_SimpleFont {
   void CalcExtGID(int charcode);
 #endif
 
-  int m_Base14Font;
+  int m_Base14Font = -1;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE1FONT_H_

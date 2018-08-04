@@ -23,7 +23,9 @@ constexpr int kMaxType3FormLevel = 4;
 
 }  // namespace
 
-CPDF_Type3Font::CPDF_Type3Font() {
+CPDF_Type3Font::CPDF_Type3Font(CPDF_Document* pDocument,
+                               CPDF_Dictionary* pFontDict)
+    : CPDF_SimpleFont(pDocument, pFontDict) {
   memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
 

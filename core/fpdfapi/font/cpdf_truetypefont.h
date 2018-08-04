@@ -12,7 +12,8 @@
 
 class CPDF_TrueTypeFont : public CPDF_SimpleFont {
  public:
-  CPDF_TrueTypeFont();
+  CPDF_TrueTypeFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
+  ~CPDF_TrueTypeFont() override;
 
   // CPDF_Font:
   bool IsTrueTypeFont() const override;

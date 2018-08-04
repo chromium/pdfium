@@ -88,7 +88,7 @@ class CPDF_Font {
   CFX_Font* GetFontFallback(int position);
 
  protected:
-  CPDF_Font();
+  CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
 
   static int TT2PDF(int m, FXFT_Face face);
   static bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
@@ -108,20 +108,20 @@ class CPDF_Font {
                                const std::vector<ByteString>& charnames,
                                int charcode);
 
-  UnownedPtr<CPDF_Document> m_pDocument;
+  UnownedPtr<CPDF_Document> const m_pDocument;
   CFX_Font m_Font;
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
-  ByteString m_BaseFont;
   RetainPtr<CPDF_StreamAcc> m_pFontFile;
   UnownedPtr<CPDF_Dictionary> m_pFontDict;
+  ByteString m_BaseFont;
   mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
-  mutable bool m_bToUnicodeLoaded;
-  int m_Flags;
+  mutable bool m_bToUnicodeLoaded = false;
+  int m_Flags = 0;
+  int m_StemV = 0;
+  int m_Ascent = 0;
+  int m_Descent = 0;
+  int m_ItalicAngle = 0;
   FX_RECT m_FontBBox;
-  int m_StemV;
-  int m_Ascent;
-  int m_Descent;
-  int m_ItalicAngle;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_FONT_H_

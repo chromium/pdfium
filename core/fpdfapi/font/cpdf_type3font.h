@@ -19,7 +19,7 @@ class CPDF_Type3Char;
 
 class CPDF_Type3Font : public CPDF_SimpleFont {
  public:
-  CPDF_Type3Font();
+  CPDF_Type3Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
   ~CPDF_Type3Font() override;
 
   // CPDF_Font:

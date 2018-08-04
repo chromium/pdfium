@@ -15,7 +15,11 @@ const uint8_t kPrefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
 
 }  // namespace
 
-CPDF_TrueTypeFont::CPDF_TrueTypeFont() {}
+CPDF_TrueTypeFont::CPDF_TrueTypeFont(CPDF_Document* pDocument,
+                                     CPDF_Dictionary* pFontDict)
+    : CPDF_SimpleFont(pDocument, pFontDict) {}
+
+CPDF_TrueTypeFont::~CPDF_TrueTypeFont() = default;
 
 bool CPDF_TrueTypeFont::IsTrueTypeFont() const {
   return true;
