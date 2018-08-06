@@ -219,6 +219,15 @@ TEST(fxcodec, JBig2SubImage) {
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
   };
 
+  // 1-px wide rectangle in image, offset 16 in x, 1 in y, padded.
+  uint8_t pattern161[5][8] = {
+      {0xff, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+      {0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+      {0xff, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  };
+
   // Image size a nice clean power of two.
   auto img32 = pdfium::MakeUnique<CJBig2_Image>(
       32, 5, 8, reinterpret_cast<uint8_t*>(pattern));
@@ -233,6 +242,9 @@ TEST(fxcodec, JBig2SubImage) {
 
   auto expected22 = pdfium::MakeUnique<CJBig2_Image>(
       30, 5, 8, reinterpret_cast<uint8_t*>(pattern22));
+
+  auto expected161 = pdfium::MakeUnique<CJBig2_Image>(
+      25, 5, 8, reinterpret_cast<uint8_t*>(pattern161));
 
   auto expected_zeros = pdfium::MakeUnique<CJBig2_Image>(32, 5);
 
@@ -258,6 +270,10 @@ TEST(fxcodec, JBig2SubImage) {
 
   sub = img37->SubImage(2, 2, 30, 5);
   CheckImageEq(expected22.get(), sub.get(), __LINE__);
+
+  // Fast path.
+  sub = img37->SubImage(16, 1, 25, 5);
+  CheckImageEq(expected161.get(), sub.get(), __LINE__);
 
   // Aligned Sub-image including cruft in stride beyond width.
   sub = img37->SubImage(32, 0, 32, 5);

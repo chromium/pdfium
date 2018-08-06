@@ -196,22 +196,36 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
   if (x < 0 || x >= m_nWidth || y < 0 || y >= m_nHeight)
     return pImage;
 
+  // Fast case when byte-aligned, normal slow case otherwise.
+  if ((x & 7) == 0)
+    SubImageFast(x, y, w, h, pImage.get());
+  else
+    SubImageSlow(x, y, w, h, pImage.get());
+
+  return pImage;
+}
+
+void CJBig2_Image::SubImageFast(int32_t x,
+                                int32_t y,
+                                int32_t w,
+                                int32_t h,
+                                CJBig2_Image* pImage) {
+  int32_t m = BIT_INDEX_TO_BYTE(x);
+  int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
+  int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
+  for (int32_t j = 0; j < lines_to_copy; j++)
+    memcpy(pImage->GetLineUnsafe(j), GetLineUnsafe(y + j) + m, bytes_to_copy);
+}
+
+void CJBig2_Image::SubImageSlow(int32_t x,
+                                int32_t y,
+                                int32_t w,
+                                int32_t h,
+                                CJBig2_Image* pImage) {
   int32_t m = BIT_INDEX_TO_ALIGNED_BYTE(x);
   int32_t n = x & 31;
   int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
   int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
-
-  // Fast case when DWORD-aligned.
-  if (n == 0) {
-    for (int32_t j = 0; j < lines_to_copy; j++) {
-      const uint8_t* pLineSrc = GetLineUnsafe(y + j);
-      uint8_t* pLineDst = pImage->GetLineUnsafe(j);
-      memcpy(pLineDst, pLineSrc + m, bytes_to_copy);
-    }
-    return pImage;
-  }
-
-  // Normal slow case.
   for (int32_t j = 0; j < lines_to_copy; j++) {
     const uint8_t* pLineSrc = GetLineUnsafe(y + j);
     uint8_t* pLineDst = pImage->GetLineUnsafe(j);
@@ -225,7 +239,6 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
       JBIG2_PUTDWORD(pDst, wTmp);
     }
   }
-  return pImage;
 }
 
 void CJBig2_Image::Expand(int32_t h, bool v) {
