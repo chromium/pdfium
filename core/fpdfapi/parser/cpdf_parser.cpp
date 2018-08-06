@@ -752,6 +752,8 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
         const uint32_t cross_ref_stream_obj_type =
             GetVarInt(entrystart, WidthArray[0]);
         type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
+        if (type == ObjectType::kNull)
+          continue;
       }
 
       const uint32_t objnum = startnum + i;
