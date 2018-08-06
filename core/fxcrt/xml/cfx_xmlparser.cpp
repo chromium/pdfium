@@ -134,7 +134,9 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
               current_parser_state = FDE_XmlSyntaxState::Node;
             }
           } else {
-            if (node_type_stack.size() <= 0 && ch && !FXSYS_iswspace(ch))
+            // Fail if there is text outside of the root element, ignore
+            // whitespace/null.
+            if (node_type_stack.empty() && ch && !FXSYS_iswspace(ch))
               return false;
             ProcessTextChar(ch);
             current_buffer_idx++;
