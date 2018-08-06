@@ -757,14 +757,18 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
       }
 
       const uint32_t objnum = startnum + i;
-      if (GetObjectType(objnum) == ObjectType::kNull) {
+      if (objnum >= CPDF_Parser::kMaxObjectNumber)
+        continue;
+
+      const ObjectType existing_type = GetObjectType(objnum);
+      if (existing_type == ObjectType::kNull) {
         uint32_t offset = GetVarInt(entrystart + WidthArray[0], WidthArray[1]);
         if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
           m_CrossRefTable->AddNormal(objnum, 0, offset);
         continue;
       }
 
-      if (GetObjectType(objnum) != ObjectType::kFree)
+      if (existing_type != ObjectType::kFree)
         continue;
 
       if (type == ObjectType::kFree) {
