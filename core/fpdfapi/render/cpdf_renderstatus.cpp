@@ -1727,7 +1727,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
         break;
       case TextRenderingMode::MODE_STROKE:
       case TextRenderingMode::MODE_STROKE_CLIP:
-        if (pFont->GetFace())
+        if (pFont->HasFace())
           bStroke = true;
         else
           bFill = true;
@@ -1735,7 +1735,7 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
       case TextRenderingMode::MODE_FILL_STROKE:
       case TextRenderingMode::MODE_FILL_STROKE_CLIP:
         bFill = true;
-        if (pFont->GetFace())
+        if (pFont->HasFace())
           bStroke = true;
         break;
       case TextRenderingMode::MODE_INVISIBLE:
