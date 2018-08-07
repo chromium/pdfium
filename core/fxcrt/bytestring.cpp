@@ -55,44 +55,6 @@ const char* FX_strstr(const char* haystack,
   return nullptr;
 }
 
-#ifndef NDEBUG
-bool IsValidCodePage(uint16_t codepage) {
-  switch (codepage) {
-    case FX_CODEPAGE_DefANSI:
-    case FX_CODEPAGE_ShiftJIS:
-    case FX_CODEPAGE_ChineseSimplified:
-    case FX_CODEPAGE_Hangul:
-    case FX_CODEPAGE_ChineseTraditional:
-      return true;
-    default:
-      return false;
-  }
-}
-#endif
-
-ByteString GetByteString(uint16_t codepage, const WideStringView& wstr) {
-#ifndef NDEBUG
-  ASSERT(IsValidCodePage(codepage));
-#endif
-
-  int src_len = wstr.GetLength();
-  int dest_len =
-      FXSYS_WideCharToMultiByte(codepage, 0, wstr.unterminated_c_str(), src_len,
-                                nullptr, 0, nullptr, nullptr);
-  if (!dest_len)
-    return ByteString();
-
-  ByteString bstr;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<char> dest_buf = bstr.GetBuffer(dest_len);
-    FXSYS_WideCharToMultiByte(codepage, 0, wstr.unterminated_c_str(), src_len,
-                              dest_buf.data(), dest_len, nullptr, nullptr);
-  }
-  bstr.ReleaseBuffer(dest_len);
-  return bstr;
-}
-
 }  // namespace
 
 namespace fxcrt {
@@ -715,8 +677,23 @@ WideString ByteString::UTF8Decode() const {
 }
 
 // static
-ByteString ByteString::FromUnicode(const WideString& str) {
-  return GetByteString(0, str.AsStringView());
+ByteString ByteString::FromUnicode(const WideString& wstr) {
+  int src_len = wstr.GetLength();
+  int dest_len =
+      FXSYS_WideCharToMultiByte(FX_CODEPAGE_DefANSI, 0, wstr.c_str(), src_len,
+                                nullptr, 0, nullptr, nullptr);
+  if (!dest_len)
+    return ByteString();
+
+  ByteString bstr;
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<char> dest_buf = bstr.GetBuffer(dest_len);
+    FXSYS_WideCharToMultiByte(FX_CODEPAGE_DefANSI, 0, wstr.c_str(), src_len,
+                              dest_buf.data(), dest_len, nullptr, nullptr);
+  }
+  bstr.ReleaseBuffer(dest_len);
+  return bstr;
 }
 
 int ByteString::Compare(const ByteStringView& str) const {
