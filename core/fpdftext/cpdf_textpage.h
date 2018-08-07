@@ -8,6 +8,7 @@
 #define CORE_FPDFTEXT_CPDF_TEXTPAGE_H_
 
 #include <deque>
+#include <functional>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectlist.h"
@@ -97,6 +98,7 @@ class CPDF_TextPage {
   std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
   int GetIndexAtPos(const CFX_PointF& point, const CFX_SizeF& tolerance) const;
   WideString GetTextByRect(const CFX_FloatRect& rect) const;
+  WideString GetTextByObject(const CPDF_TextObject* pTextObj) const;
 
   // Returns string with the text from |m_TextBuf| that are covered by the input
   // range. |start| and |count| are in terms of the |m_CharIndex|, so the range
@@ -151,6 +153,8 @@ class CPDF_TextPage {
   TextOrientation FindTextlineFlowOrientation() const;
   void AppendGeneratedCharacter(wchar_t unicode, const CFX_Matrix& formMatrix);
   void SwapTempTextBuf(int32_t iCharListStartAppend, int32_t iBufStartAppend);
+  WideString GetTextByPredicate(
+      const std::function<bool(const PAGECHAR_INFO&)>& predicate) const;
 
   UnownedPtr<const CPDF_Page> const m_pPage;
   std::vector<uint16_t> m_CharIndex;

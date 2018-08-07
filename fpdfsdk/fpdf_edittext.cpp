@@ -22,6 +22,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdftext/cpdf_textpage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"
@@ -562,6 +563,23 @@ FPDFTextObj_GetFontName(FPDF_PAGEOBJECT text,
   if (buffer && length >= dwStringLen)
     memcpy(buffer, name.c_str(), dwStringLen);
   return dwStringLen;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
+                    FPDF_TEXTPAGE text_page,
+                    void* buffer,
+                    unsigned long length) {
+  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text_object);
+  if (!pTextObj)
+    return 0;
+
+  CPDF_TextPage* pTextPage = CPDFTextPageFromFPDFTextPage(text_page);
+  if (!pTextPage)
+    return 0;
+
+  WideString text = pTextPage->GetTextByObject(pTextObj);
+  return Utf16EncodeMaybeCopyAndReturnLength(text, buffer, length);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFFont_Close(FPDF_FONT font) {

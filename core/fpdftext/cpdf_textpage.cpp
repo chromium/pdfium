@@ -426,7 +426,8 @@ int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
   return pos < nCount ? pos : NearPos;
 }
 
-WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
+WideString CPDF_TextPage::GetTextByPredicate(
+    const std::function<bool(const PAGECHAR_INFO&)>& predicate) const {
   if (!m_bIsParsed)
     return WideString();
 
@@ -435,7 +436,7 @@ WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
   bool IsAddLineFeed = false;
   WideString strText;
   for (const auto& charinfo : m_CharList) {
-    if (IsRectIntersect(rect, charinfo.m_CharBox)) {
+    if (predicate(charinfo)) {
       if (fabs(posy - charinfo.m_Origin.y) > 0 && !IsContainPreChar &&
           IsAddLineFeed) {
         posy = charinfo.m_Origin.y;
@@ -458,6 +459,19 @@ WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
     }
   }
   return strText;
+}
+
+WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
+  return GetTextByPredicate([&rect](const PAGECHAR_INFO& charinfo) {
+    return IsRectIntersect(rect, charinfo.m_CharBox);
+  });
+}
+
+WideString CPDF_TextPage::GetTextByObject(
+    const CPDF_TextObject* pTextObj) const {
+  return GetTextByPredicate([pTextObj](const PAGECHAR_INFO& charinfo) {
+    return charinfo.m_pTextObj == pTextObj;
+  });
 }
 
 void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
