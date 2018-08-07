@@ -178,9 +178,8 @@ CJS_Return CJX_Object::RunMethod(
 }
 
 void CJX_Object::ThrowTooManyOccurancesException(const WideString& obj) const {
-  ThrowException(
-      L"The element [%ls] has violated its allowable number of occurrences.",
-      obj.c_str());
+  ThrowException(L"The element [" + obj +
+                 L"] has violated its allowable number of occurrences.");
 }
 
 void CJX_Object::ThrowInvalidPropertyException() const {
@@ -193,22 +192,17 @@ void CJX_Object::ThrowIndexOutOfBoundsException() const {
 
 void CJX_Object::ThrowParamCountMismatchException(
     const WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '%ls'.",
-                 method.c_str());
+  ThrowException(L"Incorrect number of parameters calling method '" + method +
+                 L"'.");
 }
 
 void CJX_Object::ThrowArgumentMismatchException() const {
   ThrowException(L"Argument mismatch in property or function argument.");
 }
 
-void CJX_Object::ThrowException(const wchar_t* str, ...) const {
-  va_list arg_ptr;
-  va_start(arg_ptr, str);
-  WideString wsMessage = WideString::FormatV(str, arg_ptr);
-  va_end(arg_ptr);
-
-  ASSERT(!wsMessage.IsEmpty());
-  FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringView());
+void CJX_Object::ThrowException(const WideString& str) const {
+  ASSERT(!str.IsEmpty());
+  FXJSE_ThrowMessage(str.UTF8Encode().AsStringView());
 }
 
 bool CJX_Object::HasAttribute(XFA_Attribute eAttr) {

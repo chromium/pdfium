@@ -222,7 +222,7 @@ class CJX_Object {
   void DefineMethods(pdfium::span<const CJX_MethodSpec> methods);
   void MoveBufferMapData(CXFA_Object* pSrcModule, CXFA_Object* pDstModule);
   void SetMapModuleString(void* pKey, const WideStringView& wsValue);
-  void ThrowException(const wchar_t* str, ...) const;
+  void ThrowException(const WideString& str) const;
 
  private:
   void Script_Boolean_DefaultValue(CFXJSE_Value* pValue,

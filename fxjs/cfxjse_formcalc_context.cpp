@@ -6199,8 +6199,8 @@ void CFXJSE_FormCalcContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
 
 void CFXJSE_FormCalcContext::ThrowNoDefaultPropertyException(
     const ByteStringView& name) const {
-  ThrowException(L"%ls doesn't have a default property.",
-                 WideString::FromUTF8(name).c_str());
+  ThrowException(WideString::FromUTF8(name) +
+                 L" doesn't have a default property.");
 }
 
 void CFXJSE_FormCalcContext::ThrowCompilerErrorException() const {
@@ -6218,28 +6218,21 @@ void CFXJSE_FormCalcContext::ThrowServerDeniedException() const {
 void CFXJSE_FormCalcContext::ThrowPropertyNotInObjectException(
     const WideString& name,
     const WideString& exp) const {
-  ThrowException(
-      L"An attempt was made to reference property '%ls' of a non-object "
-      L"in SOM expression %ls.",
-      name.c_str(), exp.c_str());
+  ThrowException(L"An attempt was made to reference property '" + name +
+                 L"' of a non-object in SOM expression " + exp + L".");
 }
 
 void CFXJSE_FormCalcContext::ThrowParamCountMismatchException(
     const WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '%ls'.",
-                 method.c_str());
+  ThrowException(L"Incorrect number of parameters calling method '" + method +
+                 L"'.");
 }
 
 void CFXJSE_FormCalcContext::ThrowArgumentMismatchException() const {
   ThrowException(L"Argument mismatch in property or function argument.");
 }
 
-void CFXJSE_FormCalcContext::ThrowException(const wchar_t* str, ...) const {
-  va_list arg_ptr;
-  va_start(arg_ptr, str);
-  WideString wsMessage = WideString::FormatV(str, arg_ptr);
-  va_end(arg_ptr);
-
-  ASSERT(!wsMessage.IsEmpty());
-  FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringView());
+void CFXJSE_FormCalcContext::ThrowException(const WideString& str) const {
+  ASSERT(!str.IsEmpty());
+  FXJSE_ThrowMessage(str.UTF8Encode().AsStringView());
 }

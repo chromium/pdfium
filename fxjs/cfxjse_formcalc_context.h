@@ -399,7 +399,7 @@ class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
                                          const WideString& exp) const;
   void ThrowArgumentMismatchException() const;
   void ThrowParamCountMismatchException(const WideString& method) const;
-  void ThrowException(const wchar_t* str, ...) const;
+  void ThrowException(const WideString& str) const;
 
   UnownedPtr<v8::Isolate> m_pIsolate;
   CFXJSE_Class* m_pFMClass;
