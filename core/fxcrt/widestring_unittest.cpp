@@ -395,6 +395,13 @@ TEST(WideString, OperatorNE) {
   EXPECT_TRUE(c_string3 != wide_string);
 }
 
+TEST(WideString, OperatorPlus) {
+  EXPECT_EQ(L"I like dogs", L"I like " + WideString(L"dogs"));
+  EXPECT_EQ(L"Dogs like me", WideString(L"Dogs") + L" like me");
+  EXPECT_EQ(L"Oh no, error number 42",
+            L"Oh no, error number " + WideString::Format(L"%d", 42));
+}
+
 TEST(WideString, ConcatInPlace) {
   WideString fred;
   fred.Concat(L"FRED", 4);

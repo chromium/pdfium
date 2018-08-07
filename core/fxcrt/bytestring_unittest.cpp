@@ -390,6 +390,13 @@ TEST(ByteString, OperatorNE) {
   EXPECT_TRUE(c_string3 != byte_string);
 }
 
+TEST(ByteString, OperatorPlus) {
+  EXPECT_EQ("I like dogs", "I like " + ByteString("dogs"));
+  EXPECT_EQ("Dogs like me", ByteString("Dogs") + " like me");
+  EXPECT_EQ("Oh no, error number 42",
+            "Oh no, error number " + ByteString::Format("%d", 42));
+}
+
 TEST(ByteString, Concat) {
   ByteString fred;
   fred.Concat("FRED", 4);
