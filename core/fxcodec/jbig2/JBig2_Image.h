@@ -79,16 +79,11 @@ class CJBig2_Image {
                     int32_t w,
                     int32_t h,
                     CJBig2_Image* pImage);
-
-  bool ComposeToOpt2(CJBig2_Image* pDst,
-                     int32_t x,
-                     int32_t y,
-                     JBig2ComposeOp op);
-  bool ComposeToOpt2WithRect(CJBig2_Image* pDst,
-                             int32_t x,
-                             int32_t y,
-                             JBig2ComposeOp op,
-                             const FX_RECT& rtSrc);
+  bool ComposeToInternal(CJBig2_Image* pDst,
+                         int32_t x,
+                         int32_t y,
+                         JBig2ComposeOp op,
+                         const FX_RECT& rtSrc);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   int32_t m_nWidth = 0;   // 1-bit pixels
