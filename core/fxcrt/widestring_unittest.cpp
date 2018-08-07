@@ -1381,6 +1381,22 @@ TEST(WideString, FormatOutOfRangeChar) {
   EXPECT_NE(L"", WideString::Format(L"unsupported char '%c'", 0x00FF00FF));
 }
 
+TEST(WideString, FormatString) {
+  // %ls and wide characters are the reliable combination across platforms.
+  EXPECT_EQ(L"", WideString::Format(L"%ls", L""));
+  EXPECT_EQ(L"", WideString::Format(L"%ls", WideString().c_str()));
+  EXPECT_EQ(L"clams", WideString::Format(L"%ls", L"clams"));
+  EXPECT_EQ(L"cla", WideString::Format(L"%.3ls", L"clams"));
+  EXPECT_EQ(L"\u043e\u043f", WideString(L"\u043e\u043f"));
+
+#if _FX_OS_ != _FX_OS_MACOSX_
+  // See https://bugs.chromium.org/p/pdfium/issues/detail?id=1132
+  EXPECT_EQ(L"\u043e\u043f", WideString::Format(L"\u043e\u043f"));
+  EXPECT_EQ(L"\u043e\u043f", WideString::Format(L"%ls", L"\u043e\u043f"));
+  EXPECT_EQ(L"\u043e", WideString::Format(L"%.1ls", L"\u043e\u043f"));
+#endif
+}
+
 TEST(WideString, Empty) {
   WideString empty_str;
   EXPECT_TRUE(empty_str.IsEmpty());

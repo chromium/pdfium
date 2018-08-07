@@ -193,7 +193,7 @@ void CJX_Object::ThrowIndexOutOfBoundsException() const {
 
 void CJX_Object::ThrowParamCountMismatchException(
     const WideString& method) const {
-  ThrowException(L"Incorrect number of parameters calling method '%.16s'.",
+  ThrowException(L"Incorrect number of parameters calling method '%ls'.",
                  method.c_str());
 }
 
