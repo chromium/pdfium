@@ -2187,8 +2187,7 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
     case XFA_AttributeEnum::Error: {
       if (wsNullMsg.IsEmpty()) {
         wsCaptionName = GetValidateCaptionName(bVersionFlag);
-        wsNullMsg =
-            WideString::Format(L"%ls cannot be blank.", wsCaptionName.c_str());
+        wsNullMsg = wsCaptionName + L" cannot be blank.";
       }
       pAppProvider->MsgBox(wsNullMsg, wsTitle,
                            static_cast<uint32_t>(AlertIcon::kStatus),
@@ -2201,10 +2200,9 @@ int32_t CXFA_Node::ProcessNullTestValidate(CXFA_FFDocView* docView,
 
       if (wsNullMsg.IsEmpty()) {
         wsCaptionName = GetValidateCaptionName(bVersionFlag);
-        wsNullMsg = WideString::Format(
-            L"%ls cannot be blank. To ignore validations for %ls, click "
-            L"Ignore.",
-            wsCaptionName.c_str(), wsCaptionName.c_str());
+        wsNullMsg = wsCaptionName +
+                    L" cannot be blank. To ignore validations for " +
+                    wsCaptionName + L", click Ignore.";
       }
       if (pAppProvider->MsgBox(wsNullMsg, wsTitle,
                                static_cast<uint32_t>(AlertIcon::kWarning),
@@ -2288,15 +2286,14 @@ WideString CXFA_Node::GetValidateCaptionName(bool bVersionFlag) {
 WideString CXFA_Node::GetValidateMessage(bool bError, bool bVersionFlag) {
   WideString wsCaptionName = GetValidateCaptionName(bVersionFlag);
   if (bVersionFlag)
-    return WideString::Format(L"%ls validation failed", wsCaptionName.c_str());
-  if (bError) {
-    return WideString::Format(L"The value you entered for %ls is invalid.",
-                              wsCaptionName.c_str());
+    return wsCaptionName + L" validation failed";
+  WideString result =
+      L"The value you entered for " + wsCaptionName + L" is invalid.";
+  if (!bError) {
+    result +=
+        L" To ignore validations for " + wsCaptionName + L", click Ignore.";
   }
-  return WideString::Format(
-      L"The value you entered for %ls is invalid. To ignore "
-      L"validations for %ls, click Ignore.",
-      wsCaptionName.c_str(), wsCaptionName.c_str());
+  return result;
 }
 
 int32_t CXFA_Node::ExecuteScript(CXFA_FFDocView* docView,
