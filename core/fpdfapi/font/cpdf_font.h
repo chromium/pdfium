@@ -96,11 +96,6 @@ class CPDF_Font {
   virtual bool Load() = 0;
 
   void LoadUnicodeMap() const;  // logically const only.
-  void LoadPDFEncoding(CPDF_Object* pEncoding,
-                       int& iBaseEncoding,
-                       std::vector<ByteString>* pCharNames,
-                       bool bEmbedded,
-                       bool bTrueType);
   void LoadFontDescriptor(const CPDF_Dictionary* pDict);
   void CheckFontMetrics();
 

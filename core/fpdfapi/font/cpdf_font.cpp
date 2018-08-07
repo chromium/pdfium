@@ -39,17 +39,6 @@ const uint8_t kChineseFontNames[][kChineseFontNameSize] = {
     {0xB7, 0xC2, 0xCB, 0xCE},
     {0xD0, 0xC2, 0xCB, 0xCE}};
 
-void GetPredefinedEncoding(const ByteString& value, int* basemap) {
-  if (value == "WinAnsiEncoding")
-    *basemap = PDFFONT_ENCODING_WINANSI;
-  else if (value == "MacRomanEncoding")
-    *basemap = PDFFONT_ENCODING_MACROMAN;
-  else if (value == "MacExpertEncoding")
-    *basemap = PDFFONT_ENCODING_MACEXPERT;
-  else if (value == "PDFDocEncoding")
-    *basemap = PDFFONT_ENCODING_PDFDOC;
-}
-
 }  // namespace
 
 CPDF_Font::CPDF_Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict)
@@ -348,73 +337,6 @@ uint32_t CPDF_Font::GetNextChar(const ByteStringView& pString,
   uint8_t ch = offset < pString.GetLength() ? pString[offset++]
                                             : pString[pString.GetLength() - 1];
   return static_cast<uint32_t>(ch);
-}
-
-void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
-                                int& iBaseEncoding,
-                                std::vector<ByteString>* pCharNames,
-                                bool bEmbedded,
-                                bool bTrueType) {
-  if (!pEncoding) {
-    if (m_BaseFont == "Symbol") {
-      iBaseEncoding = bTrueType ? PDFFONT_ENCODING_MS_SYMBOL
-                                : PDFFONT_ENCODING_ADOBE_SYMBOL;
-    } else if (!bEmbedded && iBaseEncoding == PDFFONT_ENCODING_BUILTIN) {
-      iBaseEncoding = PDFFONT_ENCODING_WINANSI;
-    }
-    return;
-  }
-  if (pEncoding->IsName()) {
-    if (iBaseEncoding == PDFFONT_ENCODING_ADOBE_SYMBOL ||
-        iBaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
-      return;
-    }
-    if (FontStyleIsSymbolic(m_Flags) && m_BaseFont == "Symbol") {
-      if (!bTrueType)
-        iBaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
-      return;
-    }
-    ByteString bsEncoding = pEncoding->GetString();
-    if (bsEncoding.Compare("MacExpertEncoding") == 0) {
-      bsEncoding = "WinAnsiEncoding";
-    }
-    GetPredefinedEncoding(bsEncoding, &iBaseEncoding);
-    return;
-  }
-
-  CPDF_Dictionary* pDict = pEncoding->AsDictionary();
-  if (!pDict)
-    return;
-
-  if (iBaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
-      iBaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS) {
-    ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
-    if (bTrueType && bsEncoding.Compare("MacExpertEncoding") == 0)
-      bsEncoding = "WinAnsiEncoding";
-    GetPredefinedEncoding(bsEncoding, &iBaseEncoding);
-  }
-  if ((!bEmbedded || bTrueType) && iBaseEncoding == PDFFONT_ENCODING_BUILTIN)
-    iBaseEncoding = PDFFONT_ENCODING_STANDARD;
-
-  CPDF_Array* pDiffs = pDict->GetArrayFor("Differences");
-  if (!pDiffs)
-    return;
-
-  pCharNames->resize(256);
-  uint32_t cur_code = 0;
-  for (uint32_t i = 0; i < pDiffs->GetCount(); i++) {
-    CPDF_Object* pElement = pDiffs->GetDirectObjectAt(i);
-    if (!pElement)
-      continue;
-
-    if (CPDF_Name* pName = pElement->AsName()) {
-      if (cur_code < 256)
-        (*pCharNames)[cur_code] = pName->GetString();
-      cur_code++;
-    } else {
-      cur_code = pElement->GetInteger();
-    }
-  }
 }
 
 bool CPDF_Font::IsStandardFont() const {
