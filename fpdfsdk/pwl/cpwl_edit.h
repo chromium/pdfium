@@ -84,7 +84,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
   bool IsTextFull() const;
 
-  static float GetCharArrayAutoFontSize(CPDF_Font* pFont,
+  static float GetCharArrayAutoFontSize(const CPDF_Font* pFont,
                                         const CFX_FloatRect& rcPlate,
                                         int32_t nCharArray);
 
@@ -114,7 +114,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
   bool IsVScrollBarVisible() const;
   void SetParamByFlag();
 
-  float GetCharArrayAutoFontSize(int32_t nCharArray);
   CFX_PointF GetWordRightBottomPoint(const CPVT_WordPlace& wpWord);
 
   CPVT_WordRange CombineWordRange(const CPVT_WordRange& wr1,

@@ -72,7 +72,7 @@ class CPDF_Font {
   FXFT_Face GetFace() const { return m_Font.GetFace(); }
   void AppendChar(ByteString* str, uint32_t charcode) const;
 
-  void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
+  const FX_RECT& GetFontBBox() const { return m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
   int GetTypeDescent() const { return m_Descent; }
   uint32_t GetStringWidth(const ByteStringView& pString);

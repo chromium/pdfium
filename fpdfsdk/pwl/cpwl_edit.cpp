@@ -369,14 +369,13 @@ bool CPWL_Edit::IsTextFull() const {
   return m_pEdit->IsTextFull();
 }
 
-float CPWL_Edit::GetCharArrayAutoFontSize(CPDF_Font* pFont,
+float CPWL_Edit::GetCharArrayAutoFontSize(const CPDF_Font* pFont,
                                           const CFX_FloatRect& rcPlate,
                                           int32_t nCharArray) {
   if (!pFont || pFont->IsStandardFont())
     return 0.0f;
 
-  FX_RECT rcBBox;
-  pFont->GetFontBBox(rcBBox);
+  const FX_RECT& rcBBox = pFont->GetFontBBox();
 
   CFX_FloatRect rcCell = rcPlate;
   float xdiv = rcCell.Width() / nCharArray * 1000.0f / rcBBox.Width();
