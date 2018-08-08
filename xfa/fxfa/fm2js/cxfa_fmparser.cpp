@@ -17,6 +17,7 @@ namespace {
 
 constexpr unsigned int kMaxParseDepth = 1250;
 constexpr unsigned int kMaxPostExpressions = 256;
+constexpr unsigned int kMaxExpressionListSize = 10000;
 
 }  // namespace
 
@@ -91,6 +92,12 @@ CXFA_FMParser::ParseExpressionList() {
       m_error = true;
       return std::vector<std::unique_ptr<CXFA_FMExpression>>();
     }
+
+    if (expressions.size() >= kMaxExpressionListSize) {
+      m_error = true;
+      return std::vector<std::unique_ptr<CXFA_FMExpression>>();
+    }
+
     expressions.push_back(std::move(expr));
   }
   return expressions;
