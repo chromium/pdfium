@@ -203,6 +203,7 @@ int FXSYS_WideCharToMultiByte(uint32_t codepage,
   }
   return len;
 }
+
 int FXSYS_MultiByteToWideChar(uint32_t codepage,
                               uint32_t dwFlags,
                               const char* bstr,
@@ -211,9 +212,8 @@ int FXSYS_MultiByteToWideChar(uint32_t codepage,
                               int buflen) {
   int wlen = 0;
   for (int i = 0; i < blen; i++) {
-    if (buf && wlen < buflen) {
-      buf[wlen] = bstr[i];
-    }
+    if (buf && wlen < buflen)
+      buf[wlen] = reinterpret_cast<const uint8_t*>(bstr)[i];
     wlen++;
   }
   return wlen;
