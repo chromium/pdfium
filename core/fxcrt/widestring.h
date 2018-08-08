@@ -195,6 +195,7 @@ class WideString {
   size_t Replace(const WideStringView& pOld, const WideStringView& pNew);
   size_t Remove(wchar_t ch);
 
+  ByteString ToDefANSI() const;
   ByteString UTF8Encode() const;
 
   // This method will add \0\0 to the end of the string to represent the

@@ -999,6 +999,32 @@ TEST(WideString, UTF16LE_Encode) {
   }
 }
 
+TEST(WideString, ToDefANSI) {
+  EXPECT_EQ("", WideString().ToDefANSI());
+#if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+  const char* kResult =
+      "x"
+      "?"
+      "\xff"
+      "A"
+      "?"
+      "y";
+#else
+  const char* kResult =
+      "x"
+      "\x80"
+      "\xff"
+      "y";
+#endif
+  EXPECT_EQ(kResult, WideString(L"x"
+                                L"\u0080"
+                                L"\u00ff"
+                                L"\u0100"
+                                L"\u208c"
+                                L"y")
+                         .ToDefANSI());
+}
+
 TEST(WideStringView, FromVector) {
   std::vector<WideStringView::UnsignedType> null_vec;
   WideStringView null_string(null_vec);

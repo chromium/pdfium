@@ -66,8 +66,6 @@ class ByteString {
 
   void clear() { m_pData.Reset(); }
 
-  static ByteString FromUnicode(const WideString& str) WARN_UNUSED_RESULT;
-
   // Explicit conversion to C-style string.
   // Note: Any subsequent modification of |this| will invalidate the result.
   const char* c_str() const { return m_pData ? m_pData->m_String : ""; }

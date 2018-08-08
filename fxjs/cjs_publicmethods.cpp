@@ -327,7 +327,7 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
     return pRuntime->ToArray(val);
 
   WideString wsStr = pRuntime->ToWideString(val);
-  ByteString t = ByteString::FromUnicode(wsStr);
+  ByteString t = wsStr.ToDefANSI();
   const char* p = t.c_str();
 
   int nIndex = 0;
@@ -882,7 +882,7 @@ CJS_Return CJS_PublicMethods::AFNumber_Format(
     return CJS_Return(L"No event handler");
 
   WideString& Value = pEvent->Value();
-  ByteString strValue = StrTrim(ByteString::FromUnicode(Value));
+  ByteString strValue = StrTrim(Value.ToDefANSI());
   if (strValue.IsEmpty())
     return CJS_Return();
 
@@ -1078,7 +1078,7 @@ CJS_Return CJS_PublicMethods::AFPercent_Format(
     return CJS_Return(JSMessage::kBadObjectError);
 
   WideString& Value = pEvent->Value();
-  ByteString strValue = StrTrim(ByteString::FromUnicode(Value));
+  ByteString strValue = StrTrim(Value.ToDefANSI());
   if (strValue.IsEmpty())
     return CJS_Return();
 
@@ -1683,7 +1683,7 @@ CJS_Return CJS_PublicMethods::AFRange_Validate(
   if (pEvent->Value().IsEmpty())
     return CJS_Return();
 
-  double dEentValue = atof(ByteString::FromUnicode(pEvent->Value()).c_str());
+  double dEentValue = atof(pEvent->Value().ToDefANSI().c_str());
   bool bGreaterThan = pRuntime->ToBoolean(params[0]);
   double dGreaterThan = pRuntime->ToDouble(params[1]);
   bool bLessThan = pRuntime->ToBoolean(params[2]);

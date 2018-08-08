@@ -232,7 +232,7 @@ CJS_Return CJS_Global::QueryProperty(const wchar_t* propname) {
 
 CJS_Return CJS_Global::DelProperty(CJS_Runtime* pRuntime,
                                    const wchar_t* propname) {
-  auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
+  auto it = m_MapGlobal.find(WideString(propname).ToDefANSI());
   if (it == m_MapGlobal.end())
     return CJS_Return(JSMessage::kUnknownProperty);
 
@@ -242,7 +242,7 @@ CJS_Return CJS_Global::DelProperty(CJS_Runtime* pRuntime,
 
 CJS_Return CJS_Global::GetProperty(CJS_Runtime* pRuntime,
                                    const wchar_t* propname) {
-  auto it = m_MapGlobal.find(ByteString::FromUnicode(propname));
+  auto it = m_MapGlobal.find(WideString(propname).ToDefANSI());
   if (it == m_MapGlobal.end())
     return CJS_Return();
 
@@ -272,7 +272,7 @@ CJS_Return CJS_Global::GetProperty(CJS_Runtime* pRuntime,
 CJS_Return CJS_Global::SetProperty(CJS_Runtime* pRuntime,
                                    const wchar_t* propname,
                                    v8::Local<v8::Value> vp) {
-  ByteString sPropName = ByteString::FromUnicode(propname);
+  ByteString sPropName = WideString(propname).ToDefANSI();
   if (vp->IsNumber()) {
     return SetGlobalVariables(sPropName, JS_GlobalDataType::NUMBER,
                               pRuntime->ToDouble(vp), false, "",
@@ -284,10 +284,9 @@ CJS_Return CJS_Global::SetProperty(CJS_Runtime* pRuntime,
                               v8::Local<v8::Object>(), false);
   }
   if (vp->IsString()) {
-    return SetGlobalVariables(
-        sPropName, JS_GlobalDataType::STRING, 0, false,
-        ByteString::FromUnicode(pRuntime->ToWideString(vp)),
-        v8::Local<v8::Object>(), false);
+    return SetGlobalVariables(sPropName, JS_GlobalDataType::STRING, 0, false,
+                              pRuntime->ToWideString(vp).ToDefANSI(),
+                              v8::Local<v8::Object>(), false);
   }
   if (vp->IsObject()) {
     return SetGlobalVariables(sPropName, JS_GlobalDataType::OBJECT, 0, false,
@@ -310,8 +309,7 @@ CJS_Return CJS_Global::setPersistent(
   if (params.size() != 2)
     return CJS_Return(JSMessage::kParamError);
 
-  auto it = m_MapGlobal.find(
-      ByteString::FromUnicode(pRuntime->ToWideString(params[0])));
+  auto it = m_MapGlobal.find(pRuntime->ToWideString(params[0]).ToDefANSI());
   if (it == m_MapGlobal.end() || it->second->bDeleted)
     return CJS_Return(JSMessage::kGlobalNotFoundError);
 
@@ -432,7 +430,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       continue;
     }
     if (v->IsString()) {
-      ByteString sValue = ByteString::FromUnicode(pRuntime->ToWideString(v));
+      ByteString sValue = pRuntime->ToWideString(v).ToDefANSI();
       CJS_KeyValue* pObjElement = new CJS_KeyValue;
       pObjElement->nType = JS_GlobalDataType::STRING;
       pObjElement->sKey = sKey;

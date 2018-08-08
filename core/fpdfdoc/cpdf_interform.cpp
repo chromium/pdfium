@@ -1030,8 +1030,8 @@ std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
   if (!pdf_path.IsEmpty()) {
     if (bSimpleFileSpec) {
       WideString wsFilePath = CPDF_FileSpec::EncodeFileName(pdf_path);
-      pMainDict->SetNewFor<CPDF_String>(
-          pdfium::stream::kF, ByteString::FromUnicode(wsFilePath), false);
+      pMainDict->SetNewFor<CPDF_String>(pdfium::stream::kF,
+                                        wsFilePath.ToDefANSI(), false);
       pMainDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsFilePath),
                                         false);
     } else {

@@ -731,7 +731,7 @@ CJS_Return CJS_Field::set_border_style(CJS_Runtime* pRuntime,
   if (!m_bCanSet)
     return CJS_Return(JSMessage::kReadOnlyError);
 
-  ByteString byte_str = ByteString::FromUnicode(pRuntime->ToWideString(vp));
+  ByteString byte_str = pRuntime->ToWideString(vp).ToDefANSI();
   if (m_bDelay) {
     AddDelay_String(FP_BORDERSTYLE, byte_str);
   } else {
@@ -2002,7 +2002,7 @@ CJS_Return CJS_Field::set_text_font(CJS_Runtime* pRuntime,
 
   if (!m_bCanSet)
     return CJS_Return(JSMessage::kReadOnlyError);
-  if (ByteString::FromUnicode(pRuntime->ToWideString(vp)).IsEmpty())
+  if (pRuntime->ToWideString(vp).ToDefANSI().IsEmpty())
     return CJS_Return(JSMessage::kValueError);
   return CJS_Return();
 }

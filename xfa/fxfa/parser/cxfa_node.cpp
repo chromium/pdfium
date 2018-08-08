@@ -214,7 +214,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
             pdfium::MakeRetain<CFX_MemoryStream>(pImageBuffer, iRead, false);
       }
     } else {
-      bsContent = ByteString::FromUnicode(wsImage);
+      bsContent = wsImage.ToDefANSI();
       pImageFileRead = pdfium::MakeRetain<CFX_MemoryStream>(
           const_cast<uint8_t*>(bsContent.raw_str()), bsContent.GetLength(),
           false);

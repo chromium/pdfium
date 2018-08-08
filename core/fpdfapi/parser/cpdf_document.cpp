@@ -814,7 +814,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
                                          bool bTranslateName) {
   LOGFONTA lfa;
   memcpy(&lfa, pLogFont, (char*)lfa.lfFaceName - (char*)&lfa);
-  ByteString face = ByteString::FromUnicode(pLogFont->lfFaceName);
+  ByteString face = WideString(pLogFont->lfFaceName).ToDefANSI();
   if (face.GetLength() >= LF_FACESIZE)
     return nullptr;
 

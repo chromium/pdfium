@@ -76,7 +76,7 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
     return false;
   ByteString csFontFamily;
   if (pszFontFamily)
-    csFontFamily = ByteString::FromUnicode(pszFontFamily);
+    csFontFamily = WideString(pszFontFamily).ToDefANSI();
 
   int32_t iWeight =
       FontStyleIsBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;

@@ -673,6 +673,25 @@ intptr_t WideString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }
 
+// static
+ByteString WideString::ToDefANSI() const {
+  int src_len = GetLength();
+  int dest_len = FXSYS_WideCharToMultiByte(
+      FX_CODEPAGE_DefANSI, 0, c_str(), src_len, nullptr, 0, nullptr, nullptr);
+  if (!dest_len)
+    return ByteString();
+
+  ByteString bstr;
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<char> dest_buf = bstr.GetBuffer(dest_len);
+    FXSYS_WideCharToMultiByte(FX_CODEPAGE_DefANSI, 0, c_str(), src_len,
+                              dest_buf.data(), dest_len, nullptr, nullptr);
+  }
+  bstr.ReleaseBuffer(dest_len);
+  return bstr;
+}
+
 ByteString WideString::UTF8Encode() const {
   return FX_UTF8Encode(AsStringView());
 }

@@ -650,7 +650,7 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(int nChars,
     wsText += charpos.m_Unicode;
   }
   size_t len = totalLength;
-  ByteString text = ByteString::FromUnicode(wsText);
+  ByteString text = wsText.ToDefANSI();
   while (len > 0) {
     char buffer[1026];
     size_t send_len = std::min(len, static_cast<size_t>(1024));

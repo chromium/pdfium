@@ -112,8 +112,7 @@ void DynPropGetterAdapter_MethodCallback(
     WideString err = JSFormatErrorString(pClassDescriptor->name, *szPropName,
                                          result.Error());
     v8::MaybeLocal<v8::String> str = v8::String::NewFromUtf8(
-        info.GetIsolate(), ByteString::FromUnicode(err).c_str(),
-        v8::NewStringType::kNormal);
+        info.GetIsolate(), err.ToDefANSI().c_str(), v8::NewStringType::kNormal);
     info.GetIsolate()->ThrowException(str.ToLocalChecked());
     return;
   }

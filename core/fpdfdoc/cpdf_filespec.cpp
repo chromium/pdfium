@@ -203,10 +203,9 @@ void CPDF_FileSpec::SetFileName(const WideString& wsFileName) {
 
   WideString wsStr = EncodeFileName(wsFileName);
   if (m_pObj->IsString()) {
-    m_pWritableObj->SetString(ByteString::FromUnicode(wsStr));
+    m_pWritableObj->SetString(wsStr.ToDefANSI());
   } else if (CPDF_Dictionary* pDict = m_pWritableObj->AsDictionary()) {
-    pDict->SetNewFor<CPDF_String>(pdfium::stream::kF,
-                                  ByteString::FromUnicode(wsStr), false);
+    pDict->SetNewFor<CPDF_String>(pdfium::stream::kF, wsStr.ToDefANSI(), false);
     pDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsStr), false);
   }
 }

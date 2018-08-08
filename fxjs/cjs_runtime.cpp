@@ -234,7 +234,7 @@ v8::Local<v8::Value> CJS_Runtime::MaybeCoerceToNumber(
     v8::Local<v8::Value> value) {
   bool bAllowNaN = false;
   if (value->IsString()) {
-    ByteString bstr = ByteString::FromUnicode(ToWideString(value));
+    ByteString bstr = ToWideString(value).ToDefANSI();
     if (bstr.GetLength() == 0)
       return value;
     if (bstr == "NaN")

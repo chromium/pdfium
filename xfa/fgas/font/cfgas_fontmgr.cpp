@@ -416,8 +416,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
   }
   ByteString bsName;
   bool bFolder;
-  ByteString bsFolderSeparator =
-      ByteString::FromUnicode(WideString(kFolderSeparator));
+  ByteString bsFolderSeparator = WideString(kFolderSeparator).ToDefANSI();
   while (true) {
     if (!FX_GetNextFile(pCurHandle, &bsName, &bFolder)) {
       FX_CloseFolder(pCurHandle);

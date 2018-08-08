@@ -506,10 +506,10 @@ bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
       continue;
     WideString name;
     name = pField->GetUnicodeTextFor("T");
-    ByteString name_b = ByteString::FromUnicode(name);
+    ByteString name_b = name.ToDefANSI();
     ByteString csBValue = pField->GetStringFor("V");
     WideString csWValue = PDF_DecodeText(csBValue);
-    ByteString csValue_b = ByteString::FromUnicode(csWValue);
+    ByteString csValue_b = csWValue.ToDefANSI();
     fdfEncodedData << name_b << "=" << csValue_b;
     if (i != pFields->GetCount() - 1)
       fdfEncodedData << "&";
