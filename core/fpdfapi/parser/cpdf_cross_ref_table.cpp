@@ -4,20 +4,10 @@
 
 #include "core/fpdfapi/parser/cpdf_cross_ref_table.h"
 
-#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
-
-namespace {
-
-constexpr char kXRefStm[] = "XRefStm";
-constexpr char kPrev[] = "Prev";
-constexpr char kSize[] = "Size";
-
-}  // namespace
 
 // static
 std::unique_ptr<CPDF_CrossRefTable> CPDF_CrossRefTable::MergeUp(
@@ -112,24 +102,16 @@ void CPDF_CrossRefTable::Update(
   UpdateTrailer(std::move(new_cross_ref->trailer_));
 }
 
-void CPDF_CrossRefTable::ShrinkObjectMap(uint32_t max_size) {
-  if (max_size == 0) {
+void CPDF_CrossRefTable::ShrinkObjectMap(uint32_t objnum) {
+  if (objnum == 0) {
     objects_info_.clear();
     return;
   }
 
-  objects_info_.erase(objects_info_.lower_bound(max_size), objects_info_.end());
-}
+  objects_info_.erase(objects_info_.lower_bound(objnum), objects_info_.end());
 
-uint32_t CPDF_CrossRefTable::GetSize() const {
-  const uint32_t size_from_objects_num =
-      objects_info_.empty() ? 0 : (objects_info_.rbegin()->first + 1);
-  const int size_from_trailer = trailer() ? trailer()->GetIntegerFor(kSize) : 0;
-  if (size_from_trailer <= 0)
-    return size_from_objects_num;
-
-  return std::max(static_cast<uint32_t>(size_from_trailer),
-                  size_from_objects_num);
+  if (!pdfium::ContainsKey(objects_info_, objnum - 1))
+    objects_info_[objnum - 1].pos = 0;
 }
 
 void CPDF_CrossRefTable::UpdateInfo(
@@ -167,11 +149,8 @@ void CPDF_CrossRefTable::UpdateTrailer(
     return;
   }
 
-  new_trailer->RemoveFor(kXRefStm);
-  new_trailer->RemoveFor(kPrev);
-  new_trailer->SetNewFor<CPDF_Number>(
-      kSize, std::max(trailer_->GetIntegerFor(kSize),
-                      new_trailer->GetIntegerFor(kSize)));
+  new_trailer->SetFor("XRefStm", trailer_->RemoveFor("XRefStm"));
+  new_trailer->SetFor("Prev", trailer_->RemoveFor("Prev"));
 
   for (auto it = new_trailer->begin(); it != new_trailer->end();) {
     const ByteString key = it->first;

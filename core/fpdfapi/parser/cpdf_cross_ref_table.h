@@ -60,12 +60,7 @@ class CPDF_CrossRefTable {
 
   void Update(std::unique_ptr<CPDF_CrossRefTable> new_cross_ref);
 
-  void ShrinkObjectMap(uint32_t max_size);
-
-  // The total number of entries in the file’s cross-reference table, as
-  // defined by the combination of the original section and all update
-  // section.
-  uint32_t GetSize() const;
+  void ShrinkObjectMap(uint32_t objnum);
 
  private:
   void UpdateInfo(std::map<uint32_t, ObjectInfo>&& new_objects_info);
