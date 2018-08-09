@@ -54,7 +54,7 @@ class CPDF_Font {
   virtual bool IsVertWriting() const;
   virtual bool IsUnicodeCompatible() const;
   virtual uint32_t GetNextChar(const ByteStringView& pString,
-                               size_t& offset) const;
+                               size_t* pOffset) const;
   virtual size_t CountChar(const ByteStringView& pString) const;
   virtual int AppendChar(char* buf, uint32_t charcode) const;
   virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;

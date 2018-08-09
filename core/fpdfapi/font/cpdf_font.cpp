@@ -275,7 +275,7 @@ uint32_t CPDF_Font::GetStringWidth(const ByteStringView& pString) {
   size_t offset = 0;
   uint32_t width = 0;
   while (offset < pString.GetLength())
-    width += GetCharWidthF(GetNextChar(pString, offset));
+    width += GetCharWidthF(GetNextChar(pString, &offset));
   return width;
 }
 
@@ -330,13 +330,13 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
 }
 
 uint32_t CPDF_Font::GetNextChar(const ByteStringView& pString,
-                                size_t& offset) const {
+                                size_t* pOffset) const {
   if (pString.IsEmpty())
     return 0;
 
-  uint8_t ch = offset < pString.GetLength() ? pString[offset++]
-                                            : pString[pString.GetLength() - 1];
-  return static_cast<uint32_t>(ch);
+  size_t& offset = *pOffset;
+  return offset < pString.GetLength() ? pString[offset++]
+                                      : pString[pString.GetLength() - 1];
 }
 
 bool CPDF_Font::IsStandardFont() const {

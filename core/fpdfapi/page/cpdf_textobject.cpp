@@ -165,7 +165,7 @@ void CPDF_TextObject::SetSegments(const ByteString* pStrs,
     size_t offset = 0;
     while (offset < segment.GetLength()) {
       ASSERT(index < m_CharCodes.size());
-      m_CharCodes[index++] = pFont->GetNextChar(segment, offset);
+      m_CharCodes[index++] = pFont->GetNextChar(segment, &offset);
     }
     if (i != nSegs - 1) {
       m_CharPos[index - 1] = kernings[i];

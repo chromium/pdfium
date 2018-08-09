@@ -94,7 +94,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   positions.resize(nChars - 1);
   float cur_pos = 0;
   for (int i = 0; i < nChars; i++) {
-    codes[i] = pFont->GetNextChar(str.AsStringView(), offset);
+    codes[i] = pFont->GetNextChar(str.AsStringView(), &offset);
     if (i)
       positions[i - 1] = cur_pos;
     cur_pos += pFont->GetCharWidthF(codes[i]) * font_size / 1000;

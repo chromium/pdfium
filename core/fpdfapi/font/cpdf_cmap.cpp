@@ -338,7 +338,8 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
 }
 
 uint32_t CPDF_CMap::GetNextChar(const ByteStringView& pString,
-                                size_t& offset) const {
+                                size_t* pOffset) const {
+  size_t& offset = *pOffset;
   auto pBytes = pString.span();
   switch (m_CodingScheme) {
     case OneByte: {
@@ -422,7 +423,7 @@ size_t CPDF_CMap::CountChar(const ByteStringView& pString) const {
       size_t count = 0;
       size_t offset = 0;
       while (offset < pString.GetLength()) {
-        GetNextChar(pString, offset);
+        GetNextChar(pString, &offset);
         count++;
       }
       return count;
