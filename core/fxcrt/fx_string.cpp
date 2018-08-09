@@ -7,60 +7,11 @@
 #include <limits>
 #include <vector>
 
+#include "core/fxcrt/cfx_utf8decoder.h"
+#include "core/fxcrt/cfx_utf8encoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/compiler_specific.h"
-
-namespace {
-
-class CFX_UTF8Encoder {
- public:
-  CFX_UTF8Encoder() {}
-  ~CFX_UTF8Encoder() {}
-
-  void Input(wchar_t unicodeAsWchar) {
-    uint32_t unicode = static_cast<uint32_t>(unicodeAsWchar);
-    if (unicode < 0x80) {
-      m_Buffer.push_back(unicode);
-    } else {
-      if (unicode >= 0x80000000)
-        return;
-
-      int nbytes = 0;
-      if (unicode < 0x800)
-        nbytes = 2;
-      else if (unicode < 0x10000)
-        nbytes = 3;
-      else if (unicode < 0x200000)
-        nbytes = 4;
-      else if (unicode < 0x4000000)
-        nbytes = 5;
-      else
-        nbytes = 6;
-
-      static const uint8_t prefix[] = {0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
-      int order = 1 << ((nbytes - 1) * 6);
-      int code = unicodeAsWchar;
-      m_Buffer.push_back(prefix[nbytes - 2] | (code / order));
-      for (int i = 0; i < nbytes - 1; i++) {
-        code = code % order;
-        order >>= 6;
-        m_Buffer.push_back(0x80 | (code / order));
-      }
-    }
-  }
-
-  // The data returned by GetResult() is invalidated when this is modified by
-  // appending any data.
-  ByteStringView GetResult() const {
-    return ByteStringView(m_Buffer.data(), m_Buffer.size());
-  }
-
- private:
-  std::vector<uint8_t> m_Buffer;
-};
-
-}  // namespace
 
 ByteString FX_UTF8Encode(const WideStringView& wsStr) {
   size_t len = wsStr.GetLength();
@@ -70,6 +21,17 @@ ByteString FX_UTF8Encode(const WideStringView& wsStr) {
     encoder.Input(*pStr++);
 
   return ByteString(encoder.GetResult());
+}
+
+WideString FX_UTF8Decode(const ByteStringView& bsStr) {
+  if (bsStr.IsEmpty())
+    return WideString();
+
+  CFX_UTF8Decoder decoder;
+  for (size_t i = 0; i < bsStr.GetLength(); i++)
+    decoder.Input(bsStr[i]);
+
+  return WideString(decoder.GetResult());
 }
 
 namespace {

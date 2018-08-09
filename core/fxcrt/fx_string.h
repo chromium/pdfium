@@ -15,6 +15,8 @@
    ((uint32_t)c4))
 
 ByteString FX_UTF8Encode(const WideStringView& wsStr);
+WideString FX_UTF8Decode(const ByteStringView& bsStr);
+
 float FX_atof(const ByteStringView& str);
 float FX_atof(const WideStringView& wsStr);
 bool FX_atonum(const ByteStringView& str, void* pData);

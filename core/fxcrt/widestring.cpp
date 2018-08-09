@@ -12,7 +12,6 @@
 #include <cctype>
 #include <cwctype>
 
-#include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -885,14 +884,7 @@ WideString WideString::FromLocal(const ByteStringView& bstr) {
 
 // static
 WideString WideString::FromUTF8(const ByteStringView& str) {
-  if (str.IsEmpty())
-    return WideString();
-
-  CFX_UTF8Decoder decoder;
-  for (size_t i = 0; i < str.GetLength(); i++)
-    decoder.Input(str[i]);
-
-  return WideString(decoder.GetResult());
+  return FX_UTF8Decode(str);
 }
 
 // static

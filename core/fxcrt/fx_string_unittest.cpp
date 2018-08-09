@@ -51,3 +51,52 @@ TEST(fxstring, FX_atonum) {
   EXPECT_FALSE(FX_atonum("3.24", &f));
   EXPECT_FLOAT_EQ(3.24f, f);
 }
+
+TEST(fxstring, FX_UTF8Encode) {
+  EXPECT_EQ("", FX_UTF8Encode(WideStringView()));
+  EXPECT_EQ(
+      "x"
+      "\xc2\x80"
+      "\xc3\xbf"
+      "\xef\xbc\xac"
+      "y",
+      FX_UTF8Encode(L"x"
+                    L"\u0080"
+                    L"\u00ff"
+                    L"\uff2c"
+                    L"y"));
+}
+
+TEST(fxstring, FX_UTF8Decode) {
+  EXPECT_EQ(L"", FX_UTF8Decode(ByteStringView()));
+  EXPECT_EQ(
+      L"x"
+      L"\u0080"
+      L"\u00ff"
+      L"\uff2c"
+      L"y",
+      FX_UTF8Decode("x"
+                    "\xc2\x80"
+                    "\xc3\xbf"
+                    "\xef\xbc\xac"
+                    "y"));
+  EXPECT_EQ(L"a(A) b() c() d() e().",
+            FX_UTF8Decode("a(\xc2\x41) "      // Invalid continuation.
+                          "b(\xc2\xc2) "      // Invalid continuation.
+                          "c(\xc2\xff\x80) "  // Invalid continuation.
+                          "d(\x80\x80) "      // Invalid leading.
+                          "e(\xff\x80\x80)"   // Invalid leading.
+                          "."));
+}
+
+TEST(fxstring, FX_UTF8EncodeDecodeConsistency) {
+  WideString wstr;
+  wstr.Reserve(0x10000);
+  for (int w = 0; w < 0x10000; ++w)
+    wstr += static_cast<wchar_t>(w);
+
+  ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
+  WideString wstr2 = FX_UTF8Decode(bstr.AsStringView());
+  EXPECT_EQ(0x10000u, wstr2.GetLength());
+  EXPECT_EQ(wstr, wstr2);
+}

@@ -669,11 +669,7 @@ size_t ByteString::Replace(const ByteStringView& pOld,
 }
 
 WideString ByteString::UTF8Decode() const {
-  CFX_UTF8Decoder decoder;
-  for (size_t i = 0; i < GetLength(); i++) {
-    decoder.Input(static_cast<uint8_t>(m_pData->m_String[i]));
-  }
-  return WideString(decoder.GetResult());
+  return WideString::FromUTF8(AsStringView());
 }
 
 int ByteString::Compare(const ByteStringView& str) const {

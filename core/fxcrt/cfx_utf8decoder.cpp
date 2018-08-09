@@ -43,5 +43,7 @@ void CFX_UTF8Decoder::Input(uint8_t byte) {
   } else if (byte < 0xfe) {
     m_PendingBytes = 5;
     m_PendingChar = (byte & 0x01) << 30;
+  } else {
+    m_PendingBytes = 0;
   }
 }

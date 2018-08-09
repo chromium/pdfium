@@ -858,6 +858,8 @@ jumbo_static_library("fxcrt") {
     "core/fxcrt/cfx_seekablestreamproxy.h",
     "core/fxcrt/cfx_utf8decoder.cpp",
     "core/fxcrt/cfx_utf8decoder.h",
+    "core/fxcrt/cfx_utf8encoder.cpp",
+    "core/fxcrt/cfx_utf8encoder.h",
     "core/fxcrt/cfx_widetextbuf.cpp",
     "core/fxcrt/cfx_widetextbuf.h",
     "core/fxcrt/fileaccess_iface.h",
