@@ -21,7 +21,6 @@ extern const uint16_t PDFDocEncoding[256];
 ByteString PDF_EncodeString(const ByteString& src, bool bHex);
 WideString PDF_DecodeText(const uint8_t* pData, uint32_t size);
 WideString PDF_DecodeText(const ByteString& bstr);
-ByteString PDF_EncodeText(const wchar_t* pString, int len);
 ByteString PDF_EncodeText(const WideString& str);
 
 bool FlateEncode(const uint8_t* src_buf,

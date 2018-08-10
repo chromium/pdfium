@@ -467,21 +467,18 @@ WideString PDF_DecodeText(const ByteString& bstr) {
                         bstr.GetLength());
 }
 
-ByteString PDF_EncodeText(const wchar_t* pString, int len) {
-  if (len == -1)
-    len = wcslen(pString);
-
-  int i;
+ByteString PDF_EncodeText(const WideString& str) {
+  size_t i = 0;
+  size_t len = str.GetLength();
   ByteString result;
   {
     pdfium::span<char> dest_buf = result.GetBuffer(len);
     for (i = 0; i < len; ++i) {
       int code;
       for (code = 0; code < 256; ++code) {
-        if (PDFDocEncoding[code] == pString[i])
+        if (PDFDocEncoding[code] == str[i])
           break;
       }
-
       if (code == 256)
         break;
 
@@ -504,17 +501,13 @@ ByteString PDF_EncodeText(const wchar_t* pString, int len) {
         pdfium::as_writable_bytes(result.GetBuffer(encLen));
     dest_buf[dest_index++] = 0xfe;
     dest_buf[dest_index++] = 0xff;
-    for (int j = 0; j < len; ++j) {
-      dest_buf[dest_index++] = pString[j] >> 8;
-      dest_buf[dest_index++] = static_cast<uint8_t>(pString[j]);
+    for (size_t j = 0; j < len; ++j) {
+      dest_buf[dest_index++] = str[j] >> 8;
+      dest_buf[dest_index++] = static_cast<uint8_t>(str[j]);
     }
   }
   result.ReleaseBuffer(encLen);
   return result;
-}
-
-ByteString PDF_EncodeText(const WideString& str) {
-  return PDF_EncodeText(str.c_str(), str.GetLength());
 }
 
 ByteString PDF_EncodeString(const ByteString& src, bool bHex) {
