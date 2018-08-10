@@ -7,6 +7,8 @@
 #ifndef PUBLIC_FPDF_EXT_H_
 #define PUBLIC_FPDF_EXT_H_
 
+#include <time.h>
+
 // NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
@@ -66,6 +68,14 @@ typedef struct _UNSUPPORT_INFO {
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info);
+
+// Sets generator function for calls to time.
+//
+// This API is intended to be used only for testing, thus may cause PDFium to
+// behave poorly in production environments.
+//
+//   func - Function pointer to alternate implementation of time.
+FPDF_EXPORT void FPDF_CALLCONV FSDK_SetTimeFunction(time_t (*func)());
 
 // Unknown page mode.
 #define PAGEMODE_UNKNOWN -1

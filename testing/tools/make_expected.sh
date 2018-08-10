@@ -6,6 +6,11 @@
 #
 # Script to generate expected result files.
 
+# Arbitrary timestamp, expressed in seconds since the epoch, used to make sure
+# that tests that depend on the current time are stable. Happens to be the
+# timestamp of the first commit to repo, 2014/5/9 17:48:50.
+TEST_SEED_TIME=1399672130
+
 # Do this before "set -e" so "which" failing is not fatal.
 PNGOPTIMIZER="$(which optipng)"
 
@@ -15,9 +20,9 @@ while (( "$#" )); do
   echo $INFILE | grep -qs ' ' && echo space in filename detected && exit 1
   EVTFILE="${INFILE%.*}.evt"
   if [ -f "$EVTFILE" ]; then
-    out/Debug/pdfium_test --send-events --png $INFILE
+    out/Debug/pdfium_test --send-events --time=$TEST_SEED_TIME --png $INFILE
   else
-    out/Debug/pdfium_test --png $INFILE
+    out/Debug/pdfium_test --time=$TEST_SEED_TIME --png $INFILE
   fi
   RESULTS="$INFILE.*.png"
   for RESULT in $RESULTS ; do

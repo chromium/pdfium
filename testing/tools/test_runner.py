@@ -17,6 +17,11 @@ import gold
 import pngdiffer
 import suppressor
 
+# Arbitrary timestamp, expressed in seconds since the epoch, used to make sure
+# that tests that depend on the current time are stable. Happens to be the
+# timestamp of the first commit to repo, 2014/5/9 17:48:50.
+TEST_SEED_TIME = "1399672130"
+
 class KeyboardInterruptError(Exception): pass
 
 # Nomenclature:
@@ -132,14 +137,16 @@ class TestRunner:
     txt_path = os.path.join(self.working_dir, input_root + '.txt')
 
     with open(txt_path, 'w') as outfile:
-      cmd_to_run = [self.pdfium_test_path, '--send-events', pdf_path]
+      cmd_to_run = [self.pdfium_test_path, '--send-events',
+                    '--time=' + TEST_SEED_TIME, pdf_path]
       subprocess.check_call(cmd_to_run, stdout=outfile)
 
     cmd = [sys.executable, self.text_diff_path, expected_txt_path, txt_path]
     return common.RunCommand(cmd)
 
   def TestPixel(self, input_root, pdf_path, use_ahem):
-    cmd_to_run = [self.pdfium_test_path, '--send-events', '--png', '--md5']
+    cmd_to_run = [self.pdfium_test_path, '--send-events', '--png', '--md5',
+                  '--time=' + TEST_SEED_TIME]
 
     if self.oneshot_renderer:
       cmd_to_run.append('--render-oneshot')

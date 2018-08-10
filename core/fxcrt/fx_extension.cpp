@@ -11,6 +11,9 @@
 #include <limits>
 
 #include "third_party/base/compiler_specific.h"
+#include "third_party/base/ptr_util.h"
+
+time_t (*time_func)() = []() -> time_t { return time(nullptr); };
 
 float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pwsStr);
@@ -166,4 +169,15 @@ size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf) {
   // Low ten bits plus 0xDC00
   FXSYS_IntToFourHexChars(0xDC00 + unicode % 0x400, buf + 4);
   return 8;
+}
+
+void FXSYS_SetTimeFunction(time_t (*func)()) {
+  time_func = func ? func : []() -> time_t { return time(nullptr); };
+}
+
+time_t FXSYS_time(time_t* tloc) {
+  time_t ret_val = time_func();
+  if (tloc)
+    *tloc = ret_val;
+  return ret_val;
 }

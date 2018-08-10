@@ -22,6 +22,8 @@ def _IsValidFunctionName(function, filename):
     return True
   if function == 'FSDK_SetUnSpObjProcessHandler' and filename == 'fpdf_ext.h':
     return True
+  if function == 'FSDK_SetTimeFunction' and filename == 'fpdf_ext.h':
+    return True
   if function.startswith('FORM_') and filename == 'fpdf_formfill.h':
     return True
   return False

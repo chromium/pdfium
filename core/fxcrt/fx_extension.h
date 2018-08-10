@@ -109,4 +109,7 @@ bool FXSYS_SafeLT(const T& lhs, const T& rhs) {
   return lhs < rhs;
 }
 
+void FXSYS_SetTimeFunction(time_t (*func)());
+time_t FXSYS_time(time_t* tloc);
+
 #endif  // CORE_FXCRT_FX_EXTENSION_H_

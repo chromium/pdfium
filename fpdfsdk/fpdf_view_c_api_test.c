@@ -217,6 +217,7 @@ int CheckPDFiumCApi() {
 
     // fpdf_ext.h
     CHK(FPDFDoc_GetPageMode);
+    CHK(FSDK_SetTimeFunction);
     CHK(FSDK_SetUnSpObjProcessHandler);
 
     // fpdf_flatten.h

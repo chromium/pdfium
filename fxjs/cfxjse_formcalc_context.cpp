@@ -6,8 +6,6 @@
 
 #include "fxjs/cfxjse_formcalc_context.h"
 
-#include <time.h>
-
 #include <algorithm>
 #include <string>
 #include <utility>
@@ -2061,7 +2059,7 @@ void CFXJSE_FormCalcContext::Date(CFXJSE_Value* pThis,
   }
 
   time_t currentTime;
-  time(&currentTime);
+  FXSYS_time(&currentTime);
   struct tm* pTmStruct = gmtime(&currentTime);
 
   args.GetReturnValue()->SetInteger(DateString2Num(
