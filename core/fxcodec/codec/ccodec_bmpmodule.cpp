@@ -70,8 +70,8 @@ FX_FILESIZE CCodec_BmpModule::GetAvailInput(Context* pContext,
 }
 
 void CCodec_BmpModule::Input(Context* pContext,
-                             const uint8_t* src_buf,
+                             uint8_t* src_buf,
                              uint32_t src_size) {
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
-  ctx->m_Bmp.SetInputBuffer(const_cast<uint8_t*>(src_buf), src_size);
+  ctx->m_Bmp.SetInputBuffer(src_buf, src_size);
 }

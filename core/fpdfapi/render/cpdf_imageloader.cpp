@@ -21,14 +21,14 @@ CPDF_ImageLoader::CPDF_ImageLoader()
 
 CPDF_ImageLoader::~CPDF_ImageLoader() {}
 
-bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
+bool CPDF_ImageLoader::Start(CPDF_ImageObject* pImage,
                              CPDF_PageRenderCache* pCache,
                              bool bStdCS,
                              uint32_t GroupFamily,
                              bool bLoadMask,
                              CPDF_RenderStatus* pRenderStatus) {
   m_pCache = pCache;
-  m_pImageObject = const_cast<CPDF_ImageObject*>(pImage);
+  m_pImageObject = pImage;
   bool ret;
   if (pCache) {
     ret = pCache->StartGetCachedBitmap(m_pImageObject->GetImage(), bStdCS,

@@ -23,7 +23,7 @@ class CPDF_ImageLoader {
   CPDF_ImageLoader();
   ~CPDF_ImageLoader();
 
-  bool Start(const CPDF_ImageObject* pImage,
+  bool Start(CPDF_ImageObject* pImage,
              CPDF_PageRenderCache* pCache,
              bool bStdCS,
              uint32_t GroupFamily,
