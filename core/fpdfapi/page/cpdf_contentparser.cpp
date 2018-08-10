@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 
+#include "constants/page_object.h"
 #include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/page/cpdf_allstates.h"
 #include "core/fpdfapi/page/cpdf_form.h"
@@ -30,7 +31,8 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     return;
   }
 
-  CPDF_Object* pContent = pPage->GetDict()->GetDirectObjectFor("Contents");
+  CPDF_Object* pContent =
+      pPage->GetDict()->GetDirectObjectFor(pdfium::page_object::kContents);
   if (!pContent) {
     m_CurrentStage = Stage::kComplete;
     return;
@@ -141,7 +143,10 @@ bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
 }
 
 CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
-  CPDF_Array* pContent = m_pObjectHolder->GetDict()->GetArrayFor("Contents");
+  ASSERT(m_CurrentStage == Stage::kGetContent);
+  ASSERT(m_pObjectHolder->IsPage());
+  CPDF_Array* pContent =
+      m_pObjectHolder->GetDict()->GetArrayFor(pdfium::page_object::kContents);
   CPDF_Stream* pStreamObj = ToStream(
       pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);
   m_StreamArray[m_CurrentOffset] =
