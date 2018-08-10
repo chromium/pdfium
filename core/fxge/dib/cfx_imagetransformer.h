@@ -61,7 +61,7 @@ class CFX_ImageTransformer {
   };
 
   struct CalcData {
-    const CFX_DIBitmap* bitmap;
+    CFX_DIBitmap* bitmap;
     const CFX_Matrix& matrix;
     const uint8_t* buf;
     uint32_t pitch;
