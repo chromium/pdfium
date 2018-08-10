@@ -24,7 +24,7 @@ class CFX_LZWDecompressor {
                                                      uint8_t code_exp);
   ~CFX_LZWDecompressor();
 
-  CFX_GifDecodeStatus Decode(uint8_t* src_buf,
+  CFX_GifDecodeStatus Decode(const uint8_t* src_buf,
                              uint32_t src_size,
                              uint8_t* dest_buf,
                              uint32_t* dest_size);
@@ -35,7 +35,6 @@ class CFX_LZWDecompressor {
   }
 
   std::vector<uint8_t>* DecompressedForTest() { return &decompressed_; }
-
   size_t* DecompressedNextForTest() { return &decompressed_next_; }
 
  private:
@@ -55,7 +54,7 @@ class CFX_LZWDecompressor {
   std::vector<uint8_t> decompressed_;
   size_t decompressed_next_;
   uint16_t code_old_;
-  uint8_t* next_in_;
+  const uint8_t* next_in_;
   uint32_t avail_in_;
   uint8_t bits_left_;
   uint32_t code_store_;

@@ -28,9 +28,9 @@ void LZWFuzz(const uint8_t* src_buf,
     // the initial data.
     uint32_t dest_size = static_cast<uint32_t>(dest_buf.size());
     if (CFX_GifDecodeStatus::InsufficientDestSize !=
-        decompressor->Decode(const_cast<uint8_t*>(src_buf), src_size,
-                             dest_buf.data(), &dest_size))
+        decompressor->Decode(src_buf, src_size, dest_buf.data(), &dest_size)) {
       return;
+    }
   }
 }
 
