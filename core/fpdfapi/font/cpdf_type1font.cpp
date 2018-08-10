@@ -197,8 +197,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
             GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
         if (name) {
           m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
-          m_GlyphIndex[charcode] =
-              FXFT_Get_Name_Index(m_Font.GetFace(), const_cast<char*>(name));
+          m_GlyphIndex[charcode] = FXFT_Get_Name_Index(m_Font.GetFace(), name);
           SetExtGID(name, charcode);
         } else {
           m_GlyphIndex[charcode] =
@@ -233,12 +232,10 @@ void CPDF_Type1Font::LoadGlyphMap() {
 
       m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
       const char* pStrUnicode = GlyphNameRemap(name);
-      if (pStrUnicode &&
-          FXFT_Get_Name_Index(m_Font.GetFace(), const_cast<char*>(name)) == 0) {
+      if (pStrUnicode && FXFT_Get_Name_Index(m_Font.GetFace(), name) == 0) {
         name = pStrUnicode;
       }
-      m_GlyphIndex[charcode] =
-          FXFT_Get_Name_Index(m_Font.GetFace(), const_cast<char*>(name));
+      m_GlyphIndex[charcode] = FXFT_Get_Name_Index(m_Font.GetFace(), name);
       SetExtGID(name, charcode);
       if (m_GlyphIndex[charcode] != 0)
         continue;
@@ -264,8 +261,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
       if (name) {
         m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
-        m_GlyphIndex[charcode] =
-            FXFT_Get_Name_Index(m_Font.GetFace(), const_cast<char*>(name));
+        m_GlyphIndex[charcode] = FXFT_Get_Name_Index(m_Font.GetFace(), name);
       } else {
         m_GlyphIndex[charcode] =
             FXFT_Get_Char_Index(m_Font.GetFace(), charcode);
@@ -301,8 +297,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       continue;
 
     m_Encoding.m_Unicodes[charcode] = PDF_UnicodeFromAdobeName(name);
-    m_GlyphIndex[charcode] =
-        FXFT_Get_Name_Index(m_Font.GetFace(), const_cast<char*>(name));
+    m_GlyphIndex[charcode] = FXFT_Get_Name_Index(m_Font.GetFace(), name);
     if (m_GlyphIndex[charcode] != 0)
       continue;
 
