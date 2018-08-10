@@ -954,7 +954,7 @@ int32_t DateString2Num(const ByteStringView& szDateString) {
 
 void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
   time_t now;
-  time(&now);
+  FXSYS_time(&now);
 
   struct tm* pGmt = gmtime(&now);
   struct tm* pLocal = localtime(&now);
@@ -2539,7 +2539,7 @@ void CFXJSE_FormCalcContext::Time(CFXJSE_Value* pThis,
   }
 
   time_t now;
-  time(&now);
+  FXSYS_time(&now);
 
   struct tm* pGmt = gmtime(&now);
   args.GetReturnValue()->SetInteger(

@@ -93,7 +93,7 @@ void CPDFSDK_DateTime::ResetDateTime() {
   tzset();
 
   time_t curTime;
-  time(&curTime);
+  FXSYS_time(&curTime);
 
   struct tm* newtime = localtime(&curTime);
   m_year = newtime->tm_year + 1900;

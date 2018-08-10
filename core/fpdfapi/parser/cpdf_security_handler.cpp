@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/fx_extension.h"
 
 namespace {
 
@@ -531,7 +532,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
     owner_password_copy = user_password;
 
   if (m_Revision >= 5) {
-    int t = (int)time(nullptr);
+    int t = static_cast<int>(FXSYS_time(nullptr));
     CRYPT_sha2_context sha;
     CRYPT_SHA256Start(&sha);
     CRYPT_SHA256Update(&sha, (uint8_t*)&t, sizeof t);

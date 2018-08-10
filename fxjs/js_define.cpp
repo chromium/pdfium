@@ -13,6 +13,7 @@
 #include <limits>
 #include <vector>
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_object.h"
 
@@ -22,7 +23,7 @@ double GetLocalTZA() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
   time_t t = 0;
-  time(&t);
+  FXSYS_time(&t);
   localtime(&t);
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   // In gcc 'timezone' is a global variable declared in time.h. In VC++, that
@@ -174,7 +175,7 @@ void JSDestructor(v8::Local<v8::Object> obj) {
 double JS_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
-  time_t t = time(nullptr);
+  time_t t = FXSYS_time(nullptr);
   struct tm* pTm = localtime(&t);
 
   int year = pTm->tm_year + 1900;
