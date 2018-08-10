@@ -45,8 +45,8 @@ class CXFA_LayoutPageMgr {
   bool ProcessOverflow(CXFA_Node* pFormNode,
                        CXFA_Node*& pLeaderNode,
                        CXFA_Node*& pTrailerNode,
-                       bool bDataMerge = false,
-                       bool bCreatePage = true);
+                       bool bDataMerge,
+                       bool bCreatePage);
   CXFA_Node* QueryOverflow(CXFA_Node* pFormNode);
   bool ProcessBookendLeaderOrTrailer(CXFA_Node* pBookendNode,
                                      bool bLeader,
@@ -78,7 +78,7 @@ class CXFA_LayoutPageMgr {
   CXFA_Node* BreakOverflow(CXFA_Node* pOverflowNode,
                            CXFA_Node*& pLeaderTemplate,
                            CXFA_Node*& pTrailerTemplate,
-                           bool bCreatePage = true);
+                           bool bCreatePage);
   bool ResolveBookendLeaderOrTrailer(CXFA_Node* pBookendNode,
                                      bool bLeader,
                                      CXFA_Node*& pBookendAppendTemplate);
@@ -94,16 +94,16 @@ class CXFA_LayoutPageMgr {
   void CreateNextMinRecord(CXFA_Node* pRecordNode);
   bool FindPageAreaFromPageSet(CXFA_Node* pPageSet,
                                CXFA_Node* pStartChild,
-                               CXFA_Node* pTargetPageArea = nullptr,
-                               CXFA_Node* pTargetContentArea = nullptr,
-                               bool bNewPage = false,
-                               bool bQuery = false);
+                               CXFA_Node* pTargetPageArea,
+                               CXFA_Node* pTargetContentArea,
+                               bool bNewPage,
+                               bool bQuery);
   bool FindPageAreaFromPageSet_Ordered(CXFA_Node* pPageSet,
                                        CXFA_Node* pStartChild,
-                                       CXFA_Node* pTargetPageArea = nullptr,
-                                       CXFA_Node* pTargetContentArea = nullptr,
-                                       bool bNewPage = false,
-                                       bool bQuery = false);
+                                       CXFA_Node* pTargetPageArea,
+                                       CXFA_Node* pTargetContentArea,
+                                       bool bNewPage,
+                                       bool bQuery);
   bool FindPageAreaFromPageSet_SimplexDuplex(
       CXFA_Node* pPageSet,
       CXFA_Node* pStartChild,

@@ -275,7 +275,6 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual void OnCreated();
   virtual void OnDestroy();
 
-  void SetNotifyFlag(bool bNotifying = true) { m_bNotifying = bNotifying; }
   bool IsNotifying() const { return m_bNotifying; }
   bool IsValid() const { return m_bCreated; }
   const CreateParams& GetCreationParams() const { return m_CreationParams; }

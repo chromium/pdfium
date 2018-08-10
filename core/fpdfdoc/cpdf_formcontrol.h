@@ -54,7 +54,7 @@ class CPDF_FormControl {
                    CFX_Matrix* pMatrix,
                    CPDF_Page* pPage,
                    CPDF_Annot::AppearanceMode mode,
-                   const CPDF_RenderOptions* pOptions = nullptr);
+                   const CPDF_RenderOptions* pOptions);
 
   ByteString GetCheckedAPState();
   WideString GetExportValue() const;

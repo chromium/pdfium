@@ -158,9 +158,9 @@ class IXFA_AppProvider {
    * user, refer to XFA_ID.
    */
   virtual int32_t MsgBox(const WideString& wsMessage,
-                         const WideString& wsTitle = L"",
-                         uint32_t dwIconType = 0,
-                         uint32_t dwButtonType = 0) = 0;
+                         const WideString& wsTitle,
+                         uint32_t dwIconType,
+                         uint32_t dwButtonType) = 0;
 
   /**
    * Get a response from the user.
@@ -171,9 +171,9 @@ class IXFA_AppProvider {
    * @return A string containing the user's response.
    */
   virtual WideString Response(const WideString& wsQuestion,
-                              const WideString& wsTitle = L"",
-                              const WideString& wsDefaultAnswer = L"",
-                              bool bMask = true) = 0;
+                              const WideString& wsTitle,
+                              const WideString& wsDefaultAnswer,
+                              bool bMask) = 0;
 
   /**
    * Download something from somewhere.

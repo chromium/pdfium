@@ -165,12 +165,12 @@ class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
                   uint16_t wCodePage,
                   uint32_t dwFontStyles,
                   const WideString& FontName,
-                  wchar_t wcUnicode = 0xFFFE);
+                  wchar_t wcUnicode);
   int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
                       uint16_t wCodePage,
                       uint32_t dwFontStyles,
                       const WideString& FontName,
-                      wchar_t wcUnicode = 0xFFFE);
+                      wchar_t wcUnicode);
   RetainPtr<CFGAS_GEFont> LoadFont(const WideString& wsFaceName,
                                    int32_t iFaceIndex,
                                    int32_t* pFaceCount);

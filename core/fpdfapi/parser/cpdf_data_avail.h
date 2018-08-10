@@ -141,7 +141,7 @@ class CPDF_DataAvail final : public CPDF_Document::Observer {
   std::unique_ptr<CPDF_Object> ParseIndirectObjectAt(
       FX_FILESIZE pos,
       uint32_t objnum,
-      CPDF_IndirectObjectHolder* pObjList = nullptr) const;
+      CPDF_IndirectObjectHolder* pObjList) const;
   std::unique_ptr<CPDF_Object> GetObject(uint32_t objnum,
                                          bool* pExistInFile);
   bool GetPageKids(CPDF_Object* pPages);

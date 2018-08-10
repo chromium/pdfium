@@ -25,7 +25,7 @@ class CXFA_FFWidgetHandler {
 
   CXFA_FFWidget* CreateWidget(CXFA_FFWidget* hParent,
                               XFA_WIDGETTYPE eType,
-                              CXFA_FFWidget* hBefore = nullptr);
+                              CXFA_FFWidget* hBefore);
 
   bool OnMouseEnter(CXFA_FFWidget* hWidget);
   bool OnMouseExit(CXFA_FFWidget* hWidget);

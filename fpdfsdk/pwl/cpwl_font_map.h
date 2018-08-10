@@ -61,7 +61,7 @@ class CPWL_FontMap : public IPVT_FontMap {
                        bool bFind);
   int32_t AddFontData(CPDF_Font* pFont,
                       const ByteString& sFontAlias,
-                      int32_t nCharset = FX_CHARSET_Default);
+                      int32_t nCharset);
 
   ByteString EncodeFontAlias(const ByteString& sFontName, int32_t nCharset);
   ByteString EncodeFontAlias(const ByteString& sFontName);
@@ -70,9 +70,7 @@ class CPWL_FontMap : public IPVT_FontMap {
   std::vector<std::unique_ptr<CPWL_FontMap_Native>> m_NativeFont;
 
  private:
-  int32_t FindFont(const ByteString& sFontName,
-                   int32_t nCharset = FX_CHARSET_Default);
-
+  int32_t FindFont(const ByteString& sFontName, int32_t nCharset);
   ByteString GetNativeFont(int32_t nCharset);
   CPDF_Font* AddFontToDocument(CPDF_Document* pDoc,
                                ByteString& sFontName,

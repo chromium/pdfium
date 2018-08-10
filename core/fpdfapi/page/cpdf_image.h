@@ -52,9 +52,9 @@ class CPDF_Image : public Retainable {
   // Returns whether to Continue() or not.
   bool StartLoadDIBSource(const CPDF_Dictionary* pFormResource,
                           CPDF_Dictionary* pPageResource,
-                          bool bStdCS = false,
-                          uint32_t GroupFamily = 0,
-                          bool bLoadMask = false);
+                          bool bStdCS,
+                          uint32_t GroupFamily,
+                          bool bLoadMask);
 
   // Returns whether to Continue() or not.
   bool Continue(PauseIndicatorIface* pPause);

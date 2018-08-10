@@ -117,7 +117,7 @@ struct PWL_SCROLL_PRIVATEDATA {
 
 class CPWL_ScrollBar : public CPWL_Wnd {
  public:
-  explicit CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType = SBT_HSCROLL);
+  explicit CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType);
   ~CPWL_ScrollBar() override;
 
   // CPWL_Wnd:

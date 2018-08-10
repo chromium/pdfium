@@ -25,7 +25,7 @@ class CXFA_NodeHelper {
 
   CXFA_Node* ResolveNodes_GetOneChild(CXFA_Node* parent,
                                       const wchar_t* pwsName,
-                                      bool bIsClassName = false);
+                                      bool bIsClassName);
   CXFA_Node* ResolveNodes_GetParent(
       CXFA_Node* pNode,
       XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
@@ -39,15 +39,15 @@ class CXFA_NodeHelper {
   int32_t NodeAcc_TraverseAnySiblings(CXFA_Node* parent,
                                       uint32_t dNameHash,
                                       std::vector<CXFA_Node*>* pSiblings,
-                                      bool bIsClassName = false);
+                                      bool bIsClassName);
   int32_t CountSiblings(CXFA_Node* pNode,
                         XFA_LOGIC_TYPE eLogicType,
                         std::vector<CXFA_Node*>* pSiblings,
-                        bool bIsClassName = false);
+                        bool bIsClassName);
   int32_t GetIndex(CXFA_Node* pNode,
-                   XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent,
-                   bool bIsProperty = false,
-                   bool bIsClassIndex = false);
+                   XFA_LOGIC_TYPE eLogicType,
+                   bool bIsProperty,
+                   bool bIsClassIndex);
   WideString GetNameExpression(
       CXFA_Node* refNode,
       bool bIsAllPath,

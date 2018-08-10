@@ -31,7 +31,7 @@ class CPDF_DocPageData {
   explicit CPDF_DocPageData(CPDF_Document* pPDFDoc);
   ~CPDF_DocPageData();
 
-  void Clear(bool bRelease = false);
+  void Clear(bool bRelease);
   bool IsForceClear() const { return m_bForceClear; }
 
   CPDF_Font* GetFont(CPDF_Dictionary* pFontDict);

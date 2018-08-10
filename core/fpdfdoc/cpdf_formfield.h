@@ -114,7 +114,7 @@ class CPDF_FormField {
   CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
   void SetFieldDict(CPDF_Dictionary* pDict) { m_pDict = pDict; }
 
-  bool ResetField(bool bNotify = false);
+  bool ResetField(bool bNotify);
 
   int CountControls() const {
     return pdfium::CollectionSize<int>(m_ControlList);
@@ -165,7 +165,7 @@ class CPDF_FormField {
   int GetSelectedOptionIndex(int index) const;
   bool IsOptionSelected(int iOptIndex) const;
   bool SelectOption(int iOptIndex, bool bSelected, bool bNotify = false);
-  bool ClearSelectedOptions(bool bNotify = false);
+  bool ClearSelectedOptions(bool bNotify);
 
   float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont.Get(); }
