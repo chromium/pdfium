@@ -21,14 +21,13 @@ bool CPDF_PSFunc::v_Init(const CPDF_Object* pObj,
 }
 
 bool CPDF_PSFunc::v_Call(const float* inputs, float* results) const {
-  CPDF_PSEngine& PS = const_cast<CPDF_PSEngine&>(m_PS);
-  PS.Reset();
+  m_PS.Reset();
   for (uint32_t i = 0; i < m_nInputs; i++)
-    PS.Push(inputs[i]);
-  PS.Execute();
-  if (PS.GetStackSize() < m_nOutputs)
+    m_PS.Push(inputs[i]);
+  m_PS.Execute();
+  if (m_PS.GetStackSize() < m_nOutputs)
     return false;
   for (uint32_t i = 0; i < m_nOutputs; i++)
-    results[m_nOutputs - i - 1] = PS.Pop();
+    results[m_nOutputs - i - 1] = m_PS.Pop();
   return true;
 }

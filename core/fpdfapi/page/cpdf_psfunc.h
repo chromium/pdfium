@@ -25,7 +25,7 @@ class CPDF_PSFunc : public CPDF_Function {
   bool v_Call(const float* inputs, float* results) const override;
 
  private:
-  CPDF_PSEngine m_PS;
+  mutable CPDF_PSEngine m_PS;  // Pre-initialized scratch space for v_Call().
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PSFUNC_H_
