@@ -552,7 +552,7 @@ bool RenderPage(const std::string& name,
 
       int rv = FPDF_RenderPageBitmap_Start(bitmap.get(), page, 0, 0, width,
                                            height, 0, FPDF_ANNOT, &pause);
-      while (rv == FPDF_RENDER_TOBECOUNTINUED)
+      while (rv == FPDF_RENDER_TOBECONTINUED)
         rv = FPDF_RenderPage_Continue(page, &pause);
     }
 
