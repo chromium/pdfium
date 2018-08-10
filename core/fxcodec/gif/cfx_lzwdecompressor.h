@@ -14,10 +14,10 @@
 
 class CFX_LZWDecompressor {
  public:
-  typedef struct {
+  struct CodeEntry {
     uint16_t prefix;
     uint8_t suffix;
-  } CodeEntry;
+  };
 
   // Returns nullptr on error
   static std::unique_ptr<CFX_LZWDecompressor> Create(uint8_t color_exp,

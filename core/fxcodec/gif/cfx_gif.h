@@ -116,7 +116,10 @@ enum class CFX_GifDecodeStatus {
   InsufficientDestSize,  // Only used internally by CGifLZWDecoder::Decode()
 };
 
-typedef struct {
+struct CFX_GifImage {
+  CFX_GifImage();
+  ~CFX_GifImage();
+
   std::unique_ptr<CFX_GifGraphicControlExtension> image_GCE;
   std::vector<CFX_GifPalette> local_palettes;
   std::vector<uint8_t> row_buffer;
@@ -125,6 +128,6 @@ typedef struct {
   uint8_t code_exp;
   uint32_t data_pos;
   int32_t row_num;
-} CFX_GifImage;
+};
 
 #endif  // CORE_FXCODEC_GIF_CFX_GIF_H_

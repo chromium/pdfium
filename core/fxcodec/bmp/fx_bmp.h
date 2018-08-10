@@ -30,21 +30,23 @@
 // Limit width to (MAXINT32 - 31) / 32
 #define BMP_MAX_WIDTH 67108863
 #pragma pack(1)
-typedef struct tagBmpFileHeader {
+struct BmpFileHeader {
   uint16_t bfType;
   uint32_t bfSize;
   uint16_t bfReserved1;
   uint16_t bfReserved2;
   uint32_t bfOffBits;
-} BmpFileHeader;
-typedef struct tagBmpCoreHeader {
+};
+
+struct BmpCoreHeader {
   uint32_t bcSize;
   uint16_t bcWidth;
   uint16_t bcHeight;
   uint16_t bcPlanes;
   uint16_t bcBitCount;
-} BmpCoreHeader;
-typedef struct tagBmpInfoHeader {
+};
+
+struct BmpInfoHeader {
   uint32_t biSize;
   int32_t biWidth;
   int32_t biHeight;
@@ -56,7 +58,7 @@ typedef struct tagBmpInfoHeader {
   int32_t biYPelsPerMeter;
   uint32_t biClrUsed;
   uint32_t biClrImportant;
-} BmpInfoHeader;
+};
 #pragma pack()
 
 #endif  // CORE_FXCODEC_BMP_FX_BMP_H_

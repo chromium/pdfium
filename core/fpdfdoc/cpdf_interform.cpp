@@ -300,10 +300,10 @@ class CFieldNameExtractor {
 };
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-typedef struct {
+struct PDF_FONTDATA {
   bool bFind;
   LOGFONTA lf;
-} PDF_FONTDATA;
+};
 
 static int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
                                       NEWTEXTMETRICEX* lpntme,

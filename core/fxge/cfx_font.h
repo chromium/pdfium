@@ -103,11 +103,11 @@ class CFX_Font {
   static const uint8_t s_WeightPow_11[kWeightPowArraySize];
   static const uint8_t s_WeightPow_SHIFTJIS[kWeightPowArraySize];
 
-  // This struct shoub same as FPDF_CharsetFontMap
-  typedef struct {
+  // This struct should be the same as FPDF_CharsetFontMap.
+  struct CharsetFontMap {
     int charset;           // Character Set Enum value, see FX_CHARSET_XXX.
     const char* fontname;  // Name of default font to use with that charset.
-  } CharsetFontMap;
+  };
 
   /**
    *    Pointer to the default character set to TT Font name map. The

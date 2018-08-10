@@ -29,3 +29,7 @@ static_assert(sizeof(GifApplicationExtension) == 12,
               "GifApplicationExtension should have a size of 12");
 static_assert(sizeof(CFX_GifPalette) == 3,
               "CFX_GifPalette should have a size of 3");
+
+CFX_GifImage::CFX_GifImage() = default;
+
+CFX_GifImage::~CFX_GifImage() = default;
