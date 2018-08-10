@@ -480,7 +480,7 @@ void CFX_ImageTransformer::DoBilinearLoop(
     std::function<void(const BilinearData&, uint8_t*)> func) {
   CFX_BilinearMatrix matrix_fix(cdata.matrix);
   for (int row = 0; row < m_result.Height(); row++) {
-    uint8_t* dest = const_cast<uint8_t*>(cdata.bitmap->GetScanline(row));
+    const uint8_t* dest = cdata.bitmap->GetScanline(row);
     for (int col = 0; col < m_result.Width(); col++) {
       BilinearData d;
       d.res_x = 0;
@@ -496,7 +496,7 @@ void CFX_ImageTransformer::DoBilinearLoop(
         AdjustCoords(&d.src_col_r, &d.src_row_r);
         d.row_offset_l = d.src_row_l * cdata.pitch;
         d.row_offset_r = d.src_row_r * cdata.pitch;
-        func(d, dest);
+        func(d, const_cast<uint8_t*>(dest));
       }
       dest += increment;
     }
@@ -509,7 +509,7 @@ void CFX_ImageTransformer::DoBicubicLoop(
     std::function<void(const BicubicData&, uint8_t*)> func) {
   CFX_BilinearMatrix matrix_fix(cdata.matrix);
   for (int row = 0; row < m_result.Height(); row++) {
-    uint8_t* dest = const_cast<uint8_t*>(cdata.bitmap->GetScanline(row));
+    const uint8_t* dest = cdata.bitmap->GetScanline(row);
     for (int col = 0; col < m_result.Width(); col++) {
       BicubicData d;
       d.res_x = 0;
@@ -523,7 +523,7 @@ void CFX_ImageTransformer::DoBicubicLoop(
         bicubic_get_pos_weight(d.pos_pixel, d.u_w, d.v_w, d.src_col_l,
                                d.src_row_l, d.res_x, d.res_y, stretch_width(),
                                stretch_height());
-        func(d, dest);
+        func(d, const_cast<uint8_t*>(dest));
       }
       dest += increment;
     }
@@ -536,7 +536,7 @@ void CFX_ImageTransformer::DoDownSampleLoop(
     std::function<void(const DownSampleData&, uint8_t*)> func) {
   CPDF_FixedMatrix matrix_fix(cdata.matrix);
   for (int row = 0; row < m_result.Height(); row++) {
-    uint8_t* dest = const_cast<uint8_t*>(cdata.bitmap->GetScanline(row));
+    const uint8_t* dest = cdata.bitmap->GetScanline(row);
     for (int col = 0; col < m_result.Width(); col++) {
       DownSampleData d;
       d.src_col = 0;
@@ -544,7 +544,7 @@ void CFX_ImageTransformer::DoDownSampleLoop(
       matrix_fix.Transform(col, row, &d.src_col, &d.src_row);
       if (LIKELY(InStretchBounds(d.src_col, d.src_row))) {
         AdjustCoords(&d.src_col, &d.src_row);
-        func(d, dest);
+        func(d, const_cast<uint8_t*>(dest));
       }
       dest += increment;
     }

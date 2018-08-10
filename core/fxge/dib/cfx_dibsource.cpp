@@ -349,11 +349,10 @@ void ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
   }
   int32_t lut_1 = lut - 1;
   for (int row = 0; row < height; ++row) {
-    uint8_t* src_scan =
-        const_cast<uint8_t*>(pSrcBitmap->GetScanline(src_top + row)) + src_left;
+    const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row) + src_left;
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     for (int col = 0; col < width; ++col) {
-      uint8_t* src_port = src_scan + col * bpp;
+      const uint8_t* src_port = src_scan + col * bpp;
       int r = src_port[2] & 0xf0;
       int g = src_port[1] & 0xf0;
       int b = src_port[0] & 0xf0;
@@ -748,8 +747,10 @@ RetainPtr<CFX_DIBitmap> CFX_DIBSource::Clone(const FX_RECT* pClip) const {
     int right_shift = 32 - left_shift;
     int dword_count = pNewBitmap->m_Pitch / 4;
     for (int row = rect.top; row < rect.bottom; ++row) {
-      uint32_t* src_scan = (uint32_t*)GetScanline(row) + rect.left / 32;
-      uint32_t* dest_scan = (uint32_t*)pNewBitmap->GetScanline(row - rect.top);
+      const uint32_t* src_scan =
+          reinterpret_cast<const uint32_t*>(GetScanline(row)) + rect.left / 32;
+      uint32_t* dest_scan = reinterpret_cast<uint32_t*>(
+          pNewBitmap->GetWritableScanline(row - rect.top));
       for (int i = 0; i < dword_count; ++i) {
         dest_scan[i] =
             (src_scan[i] << left_shift) | (src_scan[i + 1] >> right_shift);
@@ -762,7 +763,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBSource::Clone(const FX_RECT* pClip) const {
 
     for (int row = rect.top; row < rect.bottom; ++row) {
       const uint8_t* src_scan = GetScanline(row) + rect.left * m_bpp / 8;
-      uint8_t* dest_scan = (uint8_t*)pNewBitmap->GetScanline(row - rect.top);
+      uint8_t* dest_scan = pNewBitmap->GetWritableScanline(row - rect.top);
       memcpy(dest_scan, src_scan, copy_len);
     }
   }
@@ -932,8 +933,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBSource::CloneAlphaMask() const {
 
   for (int row = rect.top; row < rect.bottom; ++row) {
     const uint8_t* src_scan = GetScanline(row) + rect.left * 4 + 3;
-    uint8_t* dest_scan =
-        const_cast<uint8_t*>(pMask->GetScanline(row - rect.top));
+    uint8_t* dest_scan = pMask->GetWritableScanline(row - rect.top);
     for (int col = rect.left; col < rect.right; ++col) {
       *dest_scan++ = *src_scan;
       src_scan += 4;
@@ -963,7 +963,7 @@ bool CFX_DIBSource::SetAlphaMask(const RetainPtr<CFX_DIBSource>& pAlphaMask,
       return false;
   }
   for (int row = 0; row < m_Height; ++row) {
-    memcpy(const_cast<uint8_t*>(m_pAlphaMask->GetScanline(row)),
+    memcpy(m_pAlphaMask->GetWritableScanline(row),
            pAlphaMask->GetScanline(row + rect.top) + rect.left,
            m_pAlphaMask->m_Pitch);
   }
@@ -1126,7 +1126,8 @@ RetainPtr<CFX_DIBitmap> CFX_DIBSource::SwapXY(bool bXFlip, bool bYFlip) const {
       if (bYFlip)
         dest_scan += (result_height - 1) * dest_pitch;
       if (nBytes == 4) {
-        uint32_t* src_scan = (uint32_t*)GetScanline(row) + col_start;
+        const uint32_t* src_scan =
+            reinterpret_cast<const uint32_t*>(GetScanline(row)) + col_start;
         for (int col = col_start; col < col_end; ++col) {
           *(uint32_t*)dest_scan = *src_scan++;
           dest_scan += dest_step;

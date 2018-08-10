@@ -640,7 +640,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBSource::LoadJpxBitmap() {
       m_bpc < 8) {
     int scale = 8 - m_bpc;
     for (uint32_t row = 0; row < height; ++row) {
-      uint8_t* scanline = const_cast<uint8_t*>(pCachedBitmap->GetScanline(row));
+      uint8_t* scanline = pCachedBitmap->GetWritableScanline(row);
       for (uint32_t col = 0; col < width; ++col) {
         *scanline = (*scanline) >> scale;
         ++scanline;

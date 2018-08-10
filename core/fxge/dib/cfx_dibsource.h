@@ -44,6 +44,9 @@ class CFX_DIBSource : public Retainable {
                                   int clip_left,
                                   int clip_width) const = 0;
 
+  uint8_t* GetWritableScanline(int line) {
+    return const_cast<uint8_t*>(GetScanline(line));
+  }
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
 

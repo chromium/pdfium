@@ -463,7 +463,7 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
                                   (uint32*)pDIBitmap->GetBuffer(), rotation,
                                   1)) {
       for (uint32_t row = 0; row < img_height; row++) {
-        uint8_t* row_buf = (uint8_t*)pDIBitmap->GetScanline(row);
+        uint8_t* row_buf = pDIBitmap->GetWritableScanline(row);
         TiffBGRA2RGBA(row_buf, img_width, 4);
       }
       return true;

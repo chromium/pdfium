@@ -25,10 +25,10 @@ void CFX_BitmapStorer::Replace(RetainPtr<CFX_DIBitmap>&& pBitmap) {
 void CFX_BitmapStorer::ComposeScanline(int line,
                                        const uint8_t* scanline,
                                        const uint8_t* scan_extra_alpha) {
-  uint8_t* dest_buf = const_cast<uint8_t*>(m_pBitmap->GetScanline(line));
+  uint8_t* dest_buf = m_pBitmap->GetWritableScanline(line);
   uint8_t* dest_alpha_buf =
       m_pBitmap->m_pAlphaMask
-          ? const_cast<uint8_t*>(m_pBitmap->m_pAlphaMask->GetScanline(line))
+          ? m_pBitmap->m_pAlphaMask->GetWritableScanline(line)
           : nullptr;
   if (dest_buf)
     memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
