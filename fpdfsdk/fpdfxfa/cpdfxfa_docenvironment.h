@@ -13,7 +13,6 @@
 #include "xfa/fxfa/fxfa.h"
 
 class CPDFXFA_Context;
-class IJS_EventContext;
 
 class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
  public:
