@@ -12,9 +12,46 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CFX_CTTGSUBTable::CFX_CTTGSUBTable() : m_bFeautureMapLoad(false) {}
+namespace {
 
-CFX_CTTGSUBTable::~CFX_CTTGSUBTable() {}
+constexpr uint32_t MakeTag(char c1, char c2, char c3, char c4) {
+  return static_cast<uint8_t>(c1) << 24 | static_cast<uint8_t>(c2) << 16 |
+         static_cast<uint8_t>(c3) << 8 | static_cast<uint8_t>(c4);
+}
+
+bool IsVerticalFeatureTag(uint32_t tag) {
+  static constexpr uint32_t kTags[] = {
+      MakeTag('v', 'r', 't', '2'), MakeTag('v', 'e', 'r', 't'),
+  };
+  return tag == kTags[0] || tag == kTags[1];
+}
+
+}  // namespace
+
+CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub) {
+  if (!LoadGSUBTable(gsub))
+    return;
+
+  for (const TScriptRecord& script : ScriptList) {
+    for (const auto& record : script.LangSysRecords) {
+      for (uint16_t index : record.FeatureIndices) {
+        if (IsVerticalFeatureTag(FeatureList[index].FeatureTag))
+          m_featureSet.insert(index);
+      }
+    }
+  }
+  if (!m_featureSet.empty())
+    return;
+
+  int i = 0;
+  for (const TFeatureRecord& feature : FeatureList) {
+    if (IsVerticalFeatureTag(feature.FeatureTag))
+      m_featureSet.insert(i);
+    ++i;
+  }
+}
+
+CFX_CTTGSUBTable::~CFX_CTTGSUBTable() = default;
 
 bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub) {
   if ((gsub[0] << 24u | gsub[1] << 16u | gsub[2] << 8u | gsub[3]) != 0x00010000)
@@ -24,61 +61,33 @@ bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub) {
                &gsub[gsub[8] << 8 | gsub[9]]);
 }
 
-bool CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum,
-                                        uint32_t* vglyphnum) {
-  uint32_t tag[] = {
-      (uint8_t)'v' << 24 | (uint8_t)'r' << 16 | (uint8_t)'t' << 8 |
-          (uint8_t)'2',
-      (uint8_t)'v' << 24 | (uint8_t)'e' << 16 | (uint8_t)'r' << 8 |
-          (uint8_t)'t',
-  };
-  if (!m_bFeautureMapLoad) {
-    for (const TScriptRecord& script : ScriptList) {
-      for (const auto& record : script.LangSysRecords) {
-        for (const auto& index : record.FeatureIndices) {
-          if (FeatureList[index].FeatureTag == tag[0] ||
-              FeatureList[index].FeatureTag == tag[1]) {
-            m_featureSet.insert(index);
-          }
-        }
-      }
-    }
-    if (m_featureSet.empty()) {
-      int i = 0;
-      for (const TFeatureRecord& feature : FeatureList) {
-        if (feature.FeatureTag == tag[0] || feature.FeatureTag == tag[1])
-          m_featureSet.insert(i);
-        ++i;
-      }
-    }
-    m_bFeautureMapLoad = true;
+uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
+  uint32_t vglyphnum = 0;
+  for (uint32_t item : m_featureSet) {
+    if (GetVerticalGlyphSub(FeatureList[item], glyphnum, &vglyphnum))
+      break;
   }
-  for (const auto& item : m_featureSet) {
-    if (GetVerticalGlyphSub(glyphnum, vglyphnum, &FeatureList[item])) {
-      return true;
-    }
-  }
-  return false;
+  return vglyphnum;
 }
 
-bool CFX_CTTGSUBTable::GetVerticalGlyphSub(uint32_t glyphnum,
-                                           uint32_t* vglyphnum,
-                                           TFeatureRecord* Feature) {
-  for (int index : Feature->LookupListIndices) {
+bool CFX_CTTGSUBTable::GetVerticalGlyphSub(const TFeatureRecord& feature,
+                                           uint32_t glyphnum,
+                                           uint32_t* vglyphnum) const {
+  for (int index : feature.LookupListIndices) {
     if (!pdfium::IndexInBounds(LookupList, index))
       continue;
     if (LookupList[index].LookupType == 1 &&
-        GetVerticalGlyphSub2(glyphnum, vglyphnum, &LookupList[index])) {
+        GetVerticalGlyphSub2(LookupList[index], glyphnum, vglyphnum)) {
       return true;
     }
   }
   return false;
 }
 
-bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(uint32_t glyphnum,
-                                            uint32_t* vglyphnum,
-                                            TLookup* Lookup) {
-  for (const auto& subTable : Lookup->SubTables) {
+bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(const TLookup& lookup,
+                                            uint32_t glyphnum,
+                                            uint32_t* vglyphnum) const {
+  for (const auto& subTable : lookup.SubTables) {
     switch (subTable->SubstFormat) {
       case 1: {
         auto* tbl1 = static_cast<TSubTable1*>(subTable.get());

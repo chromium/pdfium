@@ -577,14 +577,12 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   if (error || !m_Font.GetSubData())
     return index;
 
-  m_pTTGSUBTable = pdfium::MakeUnique<CFX_CTTGSUBTable>();
-  m_pTTGSUBTable->LoadGSUBTable((FT_Bytes)m_Font.GetSubData());
+  m_pTTGSUBTable = pdfium::MakeUnique<CFX_CTTGSUBTable>(m_Font.GetSubData());
   return GetVerticalGlyph(index, pVertGlyph);
 }
 
 int CPDF_CIDFont::GetVerticalGlyph(int index, bool* pVertGlyph) {
-  uint32_t vindex = 0;
-  m_pTTGSUBTable->GetVerticalGlyph(index, &vindex);
+  uint32_t vindex = m_pTTGSUBTable->GetVerticalGlyph(index);
   if (!vindex)
     return index;
 
