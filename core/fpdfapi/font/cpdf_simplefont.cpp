@@ -98,66 +98,64 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   }
 }
 
-void CPDF_SimpleFont::LoadPDFEncoding(CPDF_Object* pEncoding,
-                                      int& iBaseEncoding,
-                                      std::vector<ByteString>* pCharNames,
-                                      bool bEmbedded,
-                                      bool bTrueType) {
+void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
+  const CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding) {
     if (m_BaseFont == "Symbol") {
-      iBaseEncoding = bTrueType ? PDFFONT_ENCODING_MS_SYMBOL
-                                : PDFFONT_ENCODING_ADOBE_SYMBOL;
-    } else if (!bEmbedded && iBaseEncoding == PDFFONT_ENCODING_BUILTIN) {
-      iBaseEncoding = PDFFONT_ENCODING_WINANSI;
+      m_BaseEncoding = bTrueType ? PDFFONT_ENCODING_MS_SYMBOL
+                                 : PDFFONT_ENCODING_ADOBE_SYMBOL;
+    } else if (!bEmbedded && m_BaseEncoding == PDFFONT_ENCODING_BUILTIN) {
+      m_BaseEncoding = PDFFONT_ENCODING_WINANSI;
     }
     return;
   }
   if (pEncoding->IsName()) {
-    if (iBaseEncoding == PDFFONT_ENCODING_ADOBE_SYMBOL ||
-        iBaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
+    if (m_BaseEncoding == PDFFONT_ENCODING_ADOBE_SYMBOL ||
+        m_BaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
       return;
     }
     if (FontStyleIsSymbolic(m_Flags) && m_BaseFont == "Symbol") {
       if (!bTrueType)
-        iBaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
+        m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
       return;
     }
     ByteString bsEncoding = pEncoding->GetString();
     if (bsEncoding.Compare("MacExpertEncoding") == 0) {
       bsEncoding = "WinAnsiEncoding";
     }
-    GetPredefinedEncoding(bsEncoding, &iBaseEncoding);
+    GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
     return;
   }
 
-  CPDF_Dictionary* pDict = pEncoding->AsDictionary();
+  const CPDF_Dictionary* pDict = pEncoding->AsDictionary();
   if (!pDict)
     return;
 
-  if (iBaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
-      iBaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS) {
+  if (m_BaseEncoding != PDFFONT_ENCODING_ADOBE_SYMBOL &&
+      m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS) {
     ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
     if (bTrueType && bsEncoding.Compare("MacExpertEncoding") == 0)
       bsEncoding = "WinAnsiEncoding";
-    GetPredefinedEncoding(bsEncoding, &iBaseEncoding);
+    GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);
   }
-  if ((!bEmbedded || bTrueType) && iBaseEncoding == PDFFONT_ENCODING_BUILTIN)
-    iBaseEncoding = PDFFONT_ENCODING_STANDARD;
+  if ((!bEmbedded || bTrueType) && m_BaseEncoding == PDFFONT_ENCODING_BUILTIN)
+    m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
 
-  CPDF_Array* pDiffs = pDict->GetArrayFor("Differences");
+  const CPDF_Array* pDiffs = pDict->GetArrayFor("Differences");
   if (!pDiffs)
     return;
 
-  pCharNames->resize(256);
+  m_CharNames.resize(256);
   uint32_t cur_code = 0;
   for (uint32_t i = 0; i < pDiffs->GetCount(); i++) {
-    CPDF_Object* pElement = pDiffs->GetDirectObjectAt(i);
+    const CPDF_Object* pElement = pDiffs->GetDirectObjectAt(i);
     if (!pElement)
       continue;
 
-    if (CPDF_Name* pName = pElement->AsName()) {
+    const CPDF_Name* pName = pElement->AsName();
+    if (pName) {
       if (cur_code < 256)
-        (*pCharNames)[cur_code] = pName->GetString();
+        m_CharNames[cur_code] = pName->GetString();
       cur_code++;
     } else {
       cur_code = pElement->GetInteger();
@@ -221,9 +219,7 @@ bool CPDF_SimpleFont::LoadCommon() {
   }
   if (!FontStyleIsSymbolic(m_Flags))
     m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
-  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
-  LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, !!m_pFontFile,
-                  m_Font.IsTTFont());
+  LoadPDFEncoding(!!m_pFontFile, m_Font.IsTTFont());
   LoadGlyphMap();
   m_CharNames.clear();
   if (!m_Font.GetFace())

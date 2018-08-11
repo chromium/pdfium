@@ -37,11 +37,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   bool LoadCommon();
   void LoadSubstFont();
   void LoadCharMetrics(int charcode);
-  void LoadPDFEncoding(CPDF_Object* pEncoding,
-                       int& iBaseEncoding,
-                       std::vector<ByteString>* pCharNames,
-                       bool bEmbedded,
-                       bool bTrueType);
+  void LoadPDFEncoding(bool bEmbedded, bool bTrueType);
 
   CPDF_FontEncoding m_Encoding;
   int m_BaseEncoding = PDFFONT_ENCODING_BUILTIN;

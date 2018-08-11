@@ -78,9 +78,8 @@ bool CPDF_Type3Font::Load() {
     }
   }
   m_pCharProcs = m_pFontDict->GetDictFor("CharProcs");
-  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
-  if (pEncoding)
-    LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, false, false);
+  if (m_pFontDict->GetDirectObjectFor("Encoding"))
+    LoadPDFEncoding(false, false);
   return true;
 }
 
