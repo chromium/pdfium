@@ -417,9 +417,6 @@ bool CPDF_CIDFont::Load() {
     if (pDefaultArray) {
       m_DefaultVY = pDefaultArray->GetIntegerAt(0);
       m_DefaultW1 = pDefaultArray->GetIntegerAt(1);
-    } else {
-      m_DefaultVY = 880;
-      m_DefaultW1 = -1000;
     }
   }
   return true;
@@ -829,7 +826,6 @@ void CPDF_CIDFont::LoadGB2312() {
     LoadFontDescriptor(pFontDesc);
 
   m_Charset = CIDSET_GB1;
-  m_bType1 = false;
 
   CPDF_CMapManager* manager = GetFontGlobals()->GetCMapManager();
   m_pCMap = manager->GetPredefinedCMap("GBK-EUC-H", false);
@@ -838,7 +834,6 @@ void CPDF_CIDFont::LoadGB2312() {
     LoadSubstFont();
 
   CheckFontMetrics();
-  m_DefaultWidth = 1000;
   m_bAnsiWidthsFixed = true;
 }
 

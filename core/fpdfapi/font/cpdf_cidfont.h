@@ -74,18 +74,18 @@ class CPDF_CIDFont : public CPDF_Font {
 
   RetainPtr<CPDF_CMap> m_pCMap;
   UnownedPtr<const CPDF_CID2UnicodeMap> m_pCID2UnicodeMap;
-  CIDSet m_Charset;
-  bool m_bType1;
-  bool m_bCIDIsGID = false;
-  uint16_t m_DefaultWidth;
   RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
-  bool m_bAnsiWidthsFixed = false;
-  std::vector<uint32_t> m_WidthList;
-  short m_DefaultVY;
-  short m_DefaultW1;
-  std::vector<uint32_t> m_VertMetrics;
-  bool m_bAdobeCourierStd = false;
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
+  bool m_bType1 = false;
+  bool m_bCIDIsGID = false;
+  bool m_bAnsiWidthsFixed = false;
+  bool m_bAdobeCourierStd = false;
+  CIDSet m_Charset = CIDSET_UNKNOWN;
+  uint16_t m_DefaultWidth = 1000;
+  short m_DefaultVY = 880;
+  short m_DefaultW1 = -1000;
+  std::vector<uint32_t> m_WidthList;
+  std::vector<uint32_t> m_VertMetrics;
   FX_RECT m_CharBBox[256];
 };
 
