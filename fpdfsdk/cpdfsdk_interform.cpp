@@ -78,9 +78,9 @@ bool IsFormFieldTypeXFA(FormFieldType fieldType) {
 }
 #endif  // PDF_ENABLE_XFA
 
-bool FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
+bool FDFToURLEncodedData(std::vector<uint8_t>* pBuffer) {
   std::unique_ptr<CFDF_Document> pFDF =
-      CFDF_Document::ParseMemory(pBuf, nBufSize);
+      CFDF_Document::ParseMemory(pBuffer->data(), pBuffer->size());
   if (!pFDF)
     return true;
 
@@ -108,12 +108,12 @@ bool FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
       fdfEncodedData << "&";
   }
 
-  nBufSize = fdfEncodedData.tellp();
+  size_t nBufSize = fdfEncodedData.tellp();
   if (nBufSize <= 0)
     return false;
 
-  pBuf = FX_Alloc(uint8_t, nBufSize);
-  memcpy(pBuf, fdfEncodedData.str().c_str(), nBufSize);
+  pBuffer->resize(nBufSize);
+  memcpy(pBuffer->data(), fdfEncodedData.str().c_str(), nBufSize);
   return true;
 }
 
@@ -505,22 +505,12 @@ bool CPDFSDK_InterForm::SubmitFields(const WideString& csDestination,
   if (nBufSize == 0)
     return false;
 
-  uint8_t* pLocalBuffer = FX_Alloc(uint8_t, nBufSize);
-  memcpy(pLocalBuffer, textBuf.c_str(), nBufSize);
-  uint8_t* pBuffer = pLocalBuffer;
-
-  if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize)) {
-    FX_Free(pLocalBuffer);
+  std::vector<uint8_t> buffer(nBufSize);
+  memcpy(buffer.data(), textBuf.c_str(), nBufSize);
+  if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
     return false;
-  }
 
-  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination);
-
-  if (pBuffer != pLocalBuffer)
-    FX_Free(pBuffer);
-
-  FX_Free(pLocalBuffer);
-
+  m_pFormFillEnv->JS_docSubmitForm(buffer.data(), buffer.size(), csDestination);
   return true;
 }
 
@@ -547,27 +537,15 @@ bool CPDFSDK_InterForm::SubmitForm(const WideString& sDestination,
     return false;
 
   ByteString fdfBuffer = pFDFDoc->WriteToString();
-
   if (fdfBuffer.IsEmpty())
     return false;
 
-  uint8_t* pLocalBuffer = FX_Alloc(uint8_t, fdfBuffer.GetLength());
-  memcpy(pLocalBuffer, fdfBuffer.c_str(), fdfBuffer.GetLength());
-
-  uint8_t* pBuffer = pLocalBuffer;
-  size_t nBufSize = fdfBuffer.GetLength();
-  if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize)) {
-    FX_Free(pLocalBuffer);
+  std::vector<uint8_t> buffer(fdfBuffer.GetLength());
+  memcpy(buffer.data(), fdfBuffer.c_str(), fdfBuffer.GetLength());
+  if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
     return false;
-  }
 
-  m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination);
-
-  if (pBuffer != pLocalBuffer)
-    FX_Free(pBuffer);
-
-  FX_Free(pLocalBuffer);
-
+  m_pFormFillEnv->JS_docSubmitForm(buffer.data(), buffer.size(), sDestination);
   return true;
 }
 
