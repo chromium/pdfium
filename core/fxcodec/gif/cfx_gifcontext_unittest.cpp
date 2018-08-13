@@ -18,7 +18,7 @@ class CFX_GifContextForTest : public CFX_GifContext {
   using CFX_GifContext::ReadGifSignature;
   using CFX_GifContext::ReadLogicalScreenDescriptor;
 
-  CFX_MemoryStream* InputBuffer() const { return input_buffer_.Get(); }
+  CFX_CodecMemory* InputBuffer() const { return input_buffer_.Get(); }
 };
 
 TEST(CFX_GifContext, SetInputBuffer) {
@@ -26,29 +26,29 @@ TEST(CFX_GifContext, SetInputBuffer) {
 
   context.SetInputBuffer(nullptr, 0);
   EXPECT_EQ(nullptr, context.InputBuffer()->GetBuffer());
-  EXPECT_EQ(0, context.InputBuffer()->GetSize());
-  EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+  EXPECT_EQ(0u, context.InputBuffer()->GetSize());
+  EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 
   context.SetInputBuffer(nullptr, 100);
   EXPECT_EQ(nullptr, context.InputBuffer()->GetBuffer());
-  EXPECT_EQ(100, context.InputBuffer()->GetSize());
-  EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+  EXPECT_EQ(100u, context.InputBuffer()->GetSize());
+  EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 
   uint8_t buffer[] = {0x00, 0x01, 0x02};
   context.SetInputBuffer(buffer, 0);
   EXPECT_EQ(buffer, context.InputBuffer()->GetBuffer());
-  EXPECT_EQ(0, context.InputBuffer()->GetSize());
-  EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+  EXPECT_EQ(0u, context.InputBuffer()->GetSize());
+  EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 
   context.SetInputBuffer(buffer, 3);
   EXPECT_EQ(buffer, context.InputBuffer()->GetBuffer());
-  EXPECT_EQ(3, context.InputBuffer()->GetSize());
-  EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+  EXPECT_EQ(3u, context.InputBuffer()->GetSize());
+  EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 
   context.SetInputBuffer(buffer, 100);
   EXPECT_EQ(buffer, context.InputBuffer()->GetBuffer());
-  EXPECT_EQ(100, context.InputBuffer()->GetSize());
-  EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+  EXPECT_EQ(100u, context.InputBuffer()->GetSize());
+  EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 }
 
 TEST(CFX_GifContext, ReadData) {
@@ -70,7 +70,7 @@ TEST(CFX_GifContext, ReadData) {
 
   context.SetInputBuffer(src_buffer, 1);
   EXPECT_FALSE(context.ReadData(dest_buffer.data(), sizeof(src_buffer)));
-  EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+  EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
   EXPECT_FALSE(context.ReadData(nullptr, sizeof(src_buffer)));
   EXPECT_FALSE(context.ReadData(nullptr, 1));
   EXPECT_TRUE(context.ReadData(dest_buffer.data(), 1));
@@ -96,48 +96,48 @@ TEST(CFX_GifContext, ReadGifSignature) {
     uint8_t data[1];
     context.SetInputBuffer(data, 0);
     EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadGifSignature());
-    EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
   }
   // Make sure testing the entire signature
   {
     uint8_t data[] = {'G', 'I', 'F'};
     context.SetInputBuffer(data, sizeof(data));
     EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadGifSignature());
-    EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
   }
   {
     uint8_t data[] = {'N', 'O', 'T', 'G', 'I', 'F'};
     context.SetInputBuffer(data, sizeof(data));
     EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadGifSignature());
-    EXPECT_EQ(6, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
   }
   // Make sure not matching GIF8*a
   {
     uint8_t data[] = {'G', 'I', 'F', '8', '0', 'a'};
     context.SetInputBuffer(data, sizeof(data));
     EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadGifSignature());
-    EXPECT_EQ(6, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
   }
   // Make sure not matching GIF**a
   {
     uint8_t data[] = {'G', 'I', 'F', '9', '2', 'a'};
     context.SetInputBuffer(data, sizeof(data));
     EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadGifSignature());
-    EXPECT_EQ(6, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
   }
   // One valid signature
   {
     uint8_t data[] = {'G', 'I', 'F', '8', '7', 'a'};
     context.SetInputBuffer(data, sizeof(data));
     EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadGifSignature());
-    EXPECT_EQ(6, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
   }
   // The other valid signature
   {
     uint8_t data[] = {'G', 'I', 'F', '8', '9', 'a'};
     context.SetInputBuffer(data, sizeof(data));
     EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadGifSignature());
-    EXPECT_EQ(6, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(6u, context.InputBuffer()->GetPosition());
   }
 }
 
@@ -190,7 +190,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(CFX_GifDecodeStatus::Unfinished,
               context.ReadLogicalScreenDescriptor());
 
-    EXPECT_EQ(0, context.InputBuffer()->GetPosition());
+    EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
   }
   // LSD with global palette
   {
@@ -204,8 +204,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(CFX_GifDecodeStatus::Success,
               context.ReadLogicalScreenDescriptor());
 
-    EXPECT_EQ(sizeof(data),
-              static_cast<size_t>(context.InputBuffer()->GetPosition()));
+    EXPECT_EQ(sizeof(data), context.InputBuffer()->GetPosition());
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(1u, context.bc_index_);
@@ -214,8 +213,8 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
     EXPECT_EQ(1u, context.global_pal_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
-    EXPECT_TRUE(0 == memcmp(data.palette, context.global_palette_.data(),
-                            sizeof(data.palette)));
+    EXPECT_EQ(0, memcmp(data.palette, context.global_palette_.data(),
+                        sizeof(data.palette)));
   }
 }
 
@@ -232,8 +231,7 @@ TEST(CFX_GifContext, ReadHeader) {
 
     EXPECT_EQ(CFX_GifDecodeStatus::Error, context.ReadHeader());
 
-    EXPECT_EQ(sizeof(data.signature),
-              static_cast<size_t>(context.InputBuffer()->GetPosition()));
+    EXPECT_EQ(sizeof(data.signature), context.InputBuffer()->GetPosition());
   }
   // Short after signature
   {
@@ -243,8 +241,7 @@ TEST(CFX_GifContext, ReadHeader) {
 
     EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadHeader());
 
-    EXPECT_EQ(sizeof(signature),
-              static_cast<size_t>(context.InputBuffer()->GetPosition()));
+    EXPECT_EQ(sizeof(signature), context.InputBuffer()->GetPosition());
   }
   // Success without global palette
   {
@@ -257,8 +254,7 @@ TEST(CFX_GifContext, ReadHeader) {
 
     EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadHeader());
 
-    EXPECT_EQ(sizeof(data),
-              static_cast<size_t>(context.InputBuffer()->GetPosition()));
+    EXPECT_EQ(sizeof(data), context.InputBuffer()->GetPosition());
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(0u, context.bc_index_);  // bc_index_ is 0 if no global palette
@@ -275,8 +271,7 @@ TEST(CFX_GifContext, ReadHeader) {
 
     EXPECT_EQ(CFX_GifDecodeStatus::Unfinished, context.ReadHeader());
 
-    EXPECT_EQ(sizeof(data.signature),
-              static_cast<size_t>(context.InputBuffer()->GetPosition()));
+    EXPECT_EQ(sizeof(data.signature), context.InputBuffer()->GetPosition());
   }
   // Success with global palette
   {
@@ -291,8 +286,7 @@ TEST(CFX_GifContext, ReadHeader) {
 
     EXPECT_EQ(CFX_GifDecodeStatus::Success, context.ReadHeader());
 
-    EXPECT_EQ(sizeof(data),
-              static_cast<size_t>(context.InputBuffer()->GetPosition()));
+    EXPECT_EQ(sizeof(data), context.InputBuffer()->GetPosition());
     EXPECT_EQ(0x000A, context.width_);
     EXPECT_EQ(0x0F00, context.height_);
     EXPECT_EQ(1u, context.bc_index_);
@@ -300,7 +294,7 @@ TEST(CFX_GifContext, ReadHeader) {
     EXPECT_EQ(1u, context.global_pal_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
-    EXPECT_TRUE(0 == memcmp(data.palette, context.global_palette_.data(),
-                            sizeof(data.palette)));
+    EXPECT_EQ(0, memcmp(data.palette, context.global_palette_.data(),
+                        sizeof(data.palette)));
   }
 }

@@ -146,14 +146,6 @@ bool CFX_MemoryStream::WriteBlock(const void* buffer,
   return true;
 }
 
-bool CFX_MemoryStream::Seek(size_t pos) {
-  if (pos > m_nCurSize)
-    return false;
-
-  m_nCurPos = pos;
-  return true;
-}
-
 bool CFX_MemoryStream::ExpandBlocks(size_t size) {
   m_nCurSize = std::max(m_nCurSize, size);
   if (size <= m_nTotalSize)

@@ -824,6 +824,12 @@ jumbo_static_library("fxcodec") {
       ]
       deps += [ "third_party:fx_tiff" ]
     }
+    if (pdf_enable_xfa_bmp || pdf_enable_xfa_gif) {
+      sources += [
+        "core/fxcodec/codec/cfx_codec_memory.cpp",
+        "core/fxcodec/codec/cfx_codec_memory.h",
+      ]
+    }
   }
 }
 

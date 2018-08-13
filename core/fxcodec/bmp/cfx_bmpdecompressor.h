@@ -14,7 +14,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcodec/codec/cfx_codec_memory.h"
 
 class CFX_BmpContext;
 
@@ -69,7 +69,7 @@ class CFX_BmpDecompressor {
   bool ValidateFlag() const;
   void SetHeight(int32_t signed_height);
 
-  RetainPtr<CFX_MemoryStream> input_buffer_;
+  RetainPtr<CFX_CodecMemory> input_buffer_;
 };
 
 #endif  // CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_

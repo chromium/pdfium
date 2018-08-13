@@ -26,9 +26,6 @@ class CFX_MemoryStream : public IFX_SeekableStream {
   bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
   bool Flush() override;
 
-  // Sets the cursor position to |pos| if possible
-  bool Seek(size_t pos);
-
   uint8_t* GetBuffer() {
     return !m_Blocks.empty() ? m_Blocks.front() : nullptr;
   }
