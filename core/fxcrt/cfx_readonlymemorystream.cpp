@@ -4,21 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/cpdfsdk_memoryaccess.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 
-CPDFSDK_MemoryAccess::CPDFSDK_MemoryAccess(const uint8_t* pBuf,
-                                           FX_FILESIZE size)
+#include "core/fxcrt/fx_safe_types.h"
+
+CFX_ReadOnlyMemoryStream::CFX_ReadOnlyMemoryStream(const uint8_t* pBuf,
+                                                   FX_FILESIZE size)
     : m_pBuf(pBuf), m_size(size) {}
 
-CPDFSDK_MemoryAccess::~CPDFSDK_MemoryAccess() = default;
+CFX_ReadOnlyMemoryStream::~CFX_ReadOnlyMemoryStream() = default;
 
-FX_FILESIZE CPDFSDK_MemoryAccess::GetSize() {
+FX_FILESIZE CFX_ReadOnlyMemoryStream::GetSize() {
   return m_size;
 }
 
-bool CPDFSDK_MemoryAccess::ReadBlock(void* buffer,
-                                     FX_FILESIZE offset,
-                                     size_t size) {
+bool CFX_ReadOnlyMemoryStream::ReadBlock(void* buffer,
+                                         FX_FILESIZE offset,
+                                         size_t size) {
   if (offset < 0)
     return false;
 
