@@ -112,9 +112,11 @@ size_t CPDF_Font::CountChar(const ByteStringView& pString) const {
   return pString.GetLength();
 }
 
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
 int CPDF_Font::GlyphFromCharCodeExt(uint32_t charcode) {
   return GlyphFromCharCode(charcode, nullptr);
 }
+#endif
 
 bool CPDF_Font::IsVertWriting() const {
   const CPDF_CIDFont* pCIDFont = AsCIDFont();

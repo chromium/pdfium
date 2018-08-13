@@ -32,7 +32,6 @@ CPDF_SimpleFont::CPDF_SimpleFont(CPDF_Document* pDocument,
     : CPDF_Font(pDocument, pFontDict) {
   memset(m_CharWidth, 0xff, sizeof(m_CharWidth));
   memset(m_GlyphIndex, 0xff, sizeof(m_GlyphIndex));
-  memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
   for (size_t i = 0; i < FX_ArraySize(m_CharBBox); ++i)
     m_CharBBox[i] = FX_RECT(-1, -1, -1, -1);
 }

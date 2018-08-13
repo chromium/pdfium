@@ -58,7 +58,9 @@ class CPDF_Font {
   virtual size_t CountChar(const ByteStringView& pString) const;
   virtual int AppendChar(char* buf, uint32_t charcode) const;
   virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;
+#if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
   virtual int GlyphFromCharCodeExt(uint32_t charcode);
+#endif
   virtual WideString UnicodeFromCharCode(uint32_t charcode) const;
   virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
   virtual bool HasFontWidths() const;
