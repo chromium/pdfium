@@ -78,6 +78,45 @@ bool IsFormFieldTypeXFA(FormFieldType fieldType) {
 }
 #endif  // PDF_ENABLE_XFA
 
+bool FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
+  std::unique_ptr<CFDF_Document> pFDF =
+      CFDF_Document::ParseMemory(pBuf, nBufSize);
+  if (!pFDF)
+    return true;
+
+  CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictFor("FDF");
+  if (!pMainDict)
+    return false;
+
+  CPDF_Array* pFields = pMainDict->GetArrayFor("Fields");
+  if (!pFields)
+    return false;
+
+  std::ostringstream fdfEncodedData;
+  for (uint32_t i = 0; i < pFields->GetCount(); i++) {
+    CPDF_Dictionary* pField = pFields->GetDictAt(i);
+    if (!pField)
+      continue;
+    WideString name;
+    name = pField->GetUnicodeTextFor("T");
+    ByteString name_b = name.ToDefANSI();
+    ByteString csBValue = pField->GetStringFor("V");
+    WideString csWValue = PDF_DecodeText(csBValue);
+    ByteString csValue_b = csWValue.ToDefANSI();
+    fdfEncodedData << name_b << "=" << csValue_b;
+    if (i != pFields->GetCount() - 1)
+      fdfEncodedData << "&";
+  }
+
+  nBufSize = fdfEncodedData.tellp();
+  if (nBufSize <= 0)
+    return false;
+
+  pBuf = FX_Alloc(uint8_t, nBufSize);
+  memcpy(pBuf, fdfEncodedData.str().c_str(), nBufSize);
+  return true;
+}
+
 }  // namespace
 
 CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv)
@@ -482,45 +521,6 @@ bool CPDFSDK_InterForm::SubmitFields(const WideString& csDestination,
 
   FX_Free(pLocalBuffer);
 
-  return true;
-}
-
-bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize) {
-  std::unique_ptr<CFDF_Document> pFDF =
-      CFDF_Document::ParseMemory(pBuf, nBufSize);
-  if (!pFDF)
-    return true;
-
-  CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictFor("FDF");
-  if (!pMainDict)
-    return false;
-
-  CPDF_Array* pFields = pMainDict->GetArrayFor("Fields");
-  if (!pFields)
-    return false;
-
-  std::ostringstream fdfEncodedData;
-  for (uint32_t i = 0; i < pFields->GetCount(); i++) {
-    CPDF_Dictionary* pField = pFields->GetDictAt(i);
-    if (!pField)
-      continue;
-    WideString name;
-    name = pField->GetUnicodeTextFor("T");
-    ByteString name_b = name.ToDefANSI();
-    ByteString csBValue = pField->GetStringFor("V");
-    WideString csWValue = PDF_DecodeText(csBValue);
-    ByteString csValue_b = csWValue.ToDefANSI();
-    fdfEncodedData << name_b << "=" << csValue_b;
-    if (i != pFields->GetCount() - 1)
-      fdfEncodedData << "&";
-  }
-
-  nBufSize = fdfEncodedData.tellp();
-  if (nBufSize <= 0)
-    return false;
-
-  pBuf = FX_Alloc(uint8_t, nBufSize);
-  memcpy(pBuf, fdfEncodedData.str().c_str(), nBufSize);
   return true;
 }
 

@@ -111,7 +111,6 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   void AfterCheckedStatusChange(CPDF_FormField* pField) override;
   void AfterFormReset(CPDF_InterForm* pForm) override;
 
-  bool FDFToURLEncodedData(uint8_t*& pBuf, size_t& nBufSize);
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
                               CPDF_Dictionary* pAnnotDict) const;
 
