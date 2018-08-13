@@ -12,30 +12,28 @@
 
 namespace {
 
-const int32_t kBlockSize = 64 * 1024;
+constexpr size_t kBlockSize = 64 * 1024;
 
 }  // namespace
 
 CFX_MemoryStream::CFX_MemoryStream(bool bConsecutive)
     : m_nTotalSize(0),
       m_nCurSize(0),
-      m_nCurPos(0),
-      m_nGrowSize(kBlockSize),
-      m_dwFlags(Type::kTakeOver | (bConsecutive ? Type::kConsecutive : 0)) {}
+      m_bConsecutive(bConsecutive),
+      m_bTakeOver(true) {}
 
 CFX_MemoryStream::CFX_MemoryStream(uint8_t* pBuffer,
                                    size_t nSize,
                                    bool bTakeOver)
     : m_nTotalSize(nSize),
       m_nCurSize(nSize),
-      m_nCurPos(0),
-      m_nGrowSize(kBlockSize),
-      m_dwFlags(Type::kConsecutive | (bTakeOver ? Type::kTakeOver : 0)) {
+      m_bConsecutive(true),
+      m_bTakeOver(bTakeOver) {
   m_Blocks.push_back(pBuffer);
 }
 
 CFX_MemoryStream::~CFX_MemoryStream() {
-  if (m_dwFlags & Type::kTakeOver) {
+  if (m_bTakeOver) {
     for (uint8_t* pBlock : m_Blocks)
       FX_Free(pBlock);
   }
@@ -71,15 +69,15 @@ bool CFX_MemoryStream::ReadBlock(void* buffer,
   }
 
   m_nCurPos = newPos.ValueOrDie();
-  if (m_dwFlags & Type::kConsecutive) {
+  if (m_bConsecutive) {
     memcpy(buffer, m_Blocks[0] + static_cast<size_t>(offset), size);
     return true;
   }
 
-  size_t nStartBlock = static_cast<size_t>(offset) / m_nGrowSize;
-  offset -= static_cast<FX_FILESIZE>(nStartBlock * m_nGrowSize);
+  size_t nStartBlock = static_cast<size_t>(offset) / kBlockSize;
+  offset -= static_cast<FX_FILESIZE>(nStartBlock * kBlockSize);
   while (size) {
-    size_t nRead = std::min(size, m_nGrowSize - static_cast<size_t>(offset));
+    size_t nRead = std::min(size, kBlockSize - static_cast<size_t>(offset));
     memcpy(buffer, m_Blocks[nStartBlock] + offset, nRead);
     buffer = static_cast<uint8_t*>(buffer) + nRead;
     size -= nRead;
@@ -106,7 +104,7 @@ bool CFX_MemoryStream::WriteBlock(const void* buffer,
   if (!buffer || !size)
     return false;
 
-  if (m_dwFlags & Type::kConsecutive) {
+  if (m_bConsecutive) {
     FX_SAFE_SIZE_T newPos = size;
     newPos += offset;
     if (!newPos.IsValid())
@@ -114,7 +112,7 @@ bool CFX_MemoryStream::WriteBlock(const void* buffer,
 
     m_nCurPos = newPos.ValueOrDie();
     if (m_nCurPos > m_nTotalSize) {
-      m_nTotalSize = (m_nCurPos + m_nGrowSize - 1) / m_nGrowSize * m_nGrowSize;
+      m_nTotalSize = (m_nCurPos + kBlockSize - 1) / kBlockSize * kBlockSize;
       if (m_Blocks.empty())
         m_Blocks.push_back(FX_Alloc(uint8_t, m_nTotalSize));
       else
@@ -135,10 +133,10 @@ bool CFX_MemoryStream::WriteBlock(const void* buffer,
     return false;
 
   m_nCurPos = newPos.ValueOrDie();
-  size_t nStartBlock = static_cast<size_t>(offset) / m_nGrowSize;
-  offset -= static_cast<FX_FILESIZE>(nStartBlock * m_nGrowSize);
+  size_t nStartBlock = static_cast<size_t>(offset) / kBlockSize;
+  offset -= static_cast<FX_FILESIZE>(nStartBlock * kBlockSize);
   while (size) {
-    size_t nWrite = std::min(size, m_nGrowSize - static_cast<size_t>(offset));
+    size_t nWrite = std::min(size, kBlockSize - static_cast<size_t>(offset));
     memcpy(m_Blocks[nStartBlock] + offset, buffer, nWrite);
     buffer = static_cast<const uint8_t*>(buffer) + nWrite;
     size -= nWrite;
@@ -161,12 +159,12 @@ bool CFX_MemoryStream::ExpandBlocks(size_t size) {
   if (size <= m_nTotalSize)
     return true;
 
-  size = (size - m_nTotalSize + m_nGrowSize - 1) / m_nGrowSize;
+  size = (size - m_nTotalSize + kBlockSize - 1) / kBlockSize;
   size_t iCount = m_Blocks.size();
   m_Blocks.resize(iCount + size);
   while (size--) {
-    m_Blocks[iCount++] = FX_Alloc(uint8_t, m_nGrowSize);
-    m_nTotalSize += m_nGrowSize;
+    m_Blocks[iCount++] = FX_Alloc(uint8_t, kBlockSize);
+    m_nTotalSize += kBlockSize;
   }
   return true;
 }

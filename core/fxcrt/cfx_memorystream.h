@@ -14,8 +14,6 @@
 
 class CFX_MemoryStream : public IFX_SeekableStream {
  public:
-  enum Type { kConsecutive = 1 << 0, kTakeOver = 1 << 1 };
-
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
@@ -31,9 +29,7 @@ class CFX_MemoryStream : public IFX_SeekableStream {
   // Sets the cursor position to |pos| if possible
   bool Seek(size_t pos);
 
-  bool IsConsecutive() const { return !!(m_dwFlags & Type::kConsecutive); }
-
-  uint8_t* GetBuffer() const {
+  uint8_t* GetBuffer() {
     return !m_Blocks.empty() ? m_Blocks.front() : nullptr;
   }
 
@@ -47,9 +43,9 @@ class CFX_MemoryStream : public IFX_SeekableStream {
   std::vector<uint8_t*> m_Blocks;
   size_t m_nTotalSize;
   size_t m_nCurSize;
-  size_t m_nCurPos;
-  size_t m_nGrowSize;
-  uint32_t m_dwFlags;
+  size_t m_nCurPos = 0;
+  const bool m_bConsecutive;
+  const bool m_bTakeOver;  // Owns the data in |m_Blocks|.
 };
 
 #endif  // CORE_FXCRT_CFX_MEMORYSTREAM_H_
