@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/autorestorer.h"
-#include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -332,8 +332,8 @@ bool CXFA_DocumentParser::Parse(
 }
 
 CFX_XMLNode* CXFA_DocumentParser::ParseXMLData(const ByteString& wsXML) {
-  auto pStream = pdfium::MakeRetain<CFX_MemoryStream>(
-      const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength(), false);
+  auto pStream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+      wsXML.raw_str(), wsXML.GetLength());
   xml_doc_ = LoadXML(pStream);
   if (!xml_doc_)
     return nullptr;

@@ -15,7 +15,7 @@
 
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/cfx_decimal.h"
-#include "core/fxcrt/cfx_memorystream.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/locale_iface.h"
@@ -200,24 +200,22 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
 
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImage->GetContentType());
   ByteString bsContent;
-  uint8_t* pImageBuffer = nullptr;
+  std::vector<uint8_t> buffer;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
     XFA_AttributeEnum iEncoding = pImage->GetTransferEncoding();
     if (iEncoding == XFA_AttributeEnum::Base64) {
       ByteString bsData = wsImage.UTF8Encode();
-      int32_t iLength = bsData.GetLength();
-      pImageBuffer = FX_Alloc(uint8_t, iLength);
-      int32_t iRead = XFA_Base64Decode(bsData.c_str(), pImageBuffer);
+      buffer.resize(bsData.GetLength());
+      int32_t iRead = XFA_Base64Decode(bsData.c_str(), buffer.data());
       if (iRead > 0) {
         pImageFileRead =
-            pdfium::MakeRetain<CFX_MemoryStream>(pImageBuffer, iRead, false);
+            pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(buffer.data(), iRead);
       }
     } else {
       bsContent = wsImage.ToDefANSI();
-      pImageFileRead = pdfium::MakeRetain<CFX_MemoryStream>(
-          const_cast<uint8_t*>(bsContent.raw_str()), bsContent.GetLength(),
-          false);
+      pImageFileRead = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+          bsContent.raw_str(), bsContent.GetLength());
     }
   } else {
     WideString wsURL = wsHref;
@@ -231,16 +229,15 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
     }
     pImageFileRead = pDoc->GetDocEnvironment()->OpenLinkedFile(pDoc, wsURL);
   }
-  if (!pImageFileRead) {
-    FX_Free(pImageBuffer);
+  if (!pImageFileRead)
     return nullptr;
-  }
+
   bNameImage = false;
   RetainPtr<CFX_DIBitmap> pBitmap =
       XFA_LoadImageFromBuffer(pImageFileRead, type, iImageXDpi, iImageYDpi);
-  FX_Free(pImageBuffer);
   return pBitmap;
 }
+
 bool SplitDateTime(const WideString& wsDateTime,
                    WideString& wsDate,
                    WideString& wsTime) {
