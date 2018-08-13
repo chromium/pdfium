@@ -79,8 +79,7 @@ bool IsFormFieldTypeXFA(FormFieldType fieldType) {
 #endif  // PDF_ENABLE_XFA
 
 bool FDFToURLEncodedData(std::vector<uint8_t>* pBuffer) {
-  std::unique_ptr<CFDF_Document> pFDF =
-      CFDF_Document::ParseMemory(pBuffer->data(), pBuffer->size());
+  std::unique_ptr<CFDF_Document> pFDF = CFDF_Document::ParseMemory(*pBuffer);
   if (!pFDF)
     return true;
 
