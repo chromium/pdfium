@@ -19,11 +19,11 @@ while (( "$#" )); do
   INFILE="$1"
   echo $INFILE | grep -qs ' ' && echo space in filename detected && exit 1
   EVTFILE="${INFILE%.*}.evt"
+  SEND_EVENTS=
   if [ -f "$EVTFILE" ]; then
-    out/Debug/pdfium_test --send-events --time=$TEST_SEED_TIME --png $INFILE
-  else
-    out/Debug/pdfium_test --time=$TEST_SEED_TIME --png $INFILE
+    SEND_EVENTS="--send-events"
   fi
+  out/Debug/pdfium_test "$SEND_EVENTS" --time=$TEST_SEED_TIME --png $INFILE
   RESULTS="$INFILE.*.png"
   for RESULT in $RESULTS ; do
     EXPECTED=`echo -n $RESULT | sed 's/[.]pdf[.]/_expected.pdf./'`
