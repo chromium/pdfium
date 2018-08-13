@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_ReadOnlyMemoryStream final : public IFX_SeekableReadStream {
  public:
@@ -20,11 +21,10 @@ class CFX_ReadOnlyMemoryStream final : public IFX_SeekableReadStream {
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  private:
-  CFX_ReadOnlyMemoryStream(const uint8_t* pBuf, FX_FILESIZE size);
+  explicit CFX_ReadOnlyMemoryStream(pdfium::span<const uint8_t> span);
   ~CFX_ReadOnlyMemoryStream() override;
 
-  const uint8_t* const m_pBuf;
-  const FX_FILESIZE m_size;
+  const pdfium::span<const uint8_t> m_span;
 };
 
 #endif  // CORE_FXCRT_CFX_READONLYMEMORYSTREAM_H_

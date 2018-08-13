@@ -29,6 +29,7 @@
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
@@ -199,7 +200,6 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
     return nullptr;
 
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(pImage->GetContentType());
-  ByteString bsContent;
   std::vector<uint8_t> buffer;
   RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
@@ -209,13 +209,12 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
       buffer.resize(bsData.GetLength());
       int32_t iRead = XFA_Base64Decode(bsData.c_str(), buffer.data());
       if (iRead > 0) {
-        pImageFileRead =
-            pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(buffer.data(), iRead);
+        pImageFileRead = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+            pdfium::make_span(buffer.data(), iRead));
       }
     } else {
-      bsContent = wsImage.ToDefANSI();
       pImageFileRead = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-          bsContent.raw_str(), bsContent.GetLength());
+          wsImage.ToDefANSI().AsRawSpan());
     }
   } else {
     WideString wsURL = wsHref;

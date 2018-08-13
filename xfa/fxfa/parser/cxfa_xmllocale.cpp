@@ -31,8 +31,7 @@ constexpr wchar_t kCurrencySymbol[] = L"currencySymbol";
 // static
 std::unique_ptr<CXFA_XMLLocale> CXFA_XMLLocale::Create(
     pdfium::span<uint8_t> data) {
-  auto stream =
-      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data.data(), data.size());
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data);
   CFX_XMLParser parser(stream);
   auto doc = parser.Parse();
   if (!doc)

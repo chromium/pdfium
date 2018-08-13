@@ -41,6 +41,7 @@
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
@@ -269,9 +270,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {
-  return LoadDocumentImpl(pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-                              static_cast<const uint8_t*>(data_buf), size),
-                          password);
+  return LoadDocumentImpl(
+      pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+          pdfium::make_span(static_cast<const uint8_t*>(data_buf), size)),
+      password);
 }
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV

@@ -8,14 +8,14 @@
 
 #include "core/fxcrt/fx_safe_types.h"
 
-CFX_ReadOnlyMemoryStream::CFX_ReadOnlyMemoryStream(const uint8_t* pBuf,
-                                                   FX_FILESIZE size)
-    : m_pBuf(pBuf), m_size(size) {}
+CFX_ReadOnlyMemoryStream::CFX_ReadOnlyMemoryStream(
+    pdfium::span<const uint8_t> span)
+    : m_span(span) {}
 
 CFX_ReadOnlyMemoryStream::~CFX_ReadOnlyMemoryStream() = default;
 
 FX_FILESIZE CFX_ReadOnlyMemoryStream::GetSize() {
-  return m_size;
+  return pdfium::base::checked_cast<FX_FILESIZE>(m_span.size());
 }
 
 bool CFX_ReadOnlyMemoryStream::ReadBlock(void* buffer,
@@ -24,11 +24,11 @@ bool CFX_ReadOnlyMemoryStream::ReadBlock(void* buffer,
   if (offset < 0)
     return false;
 
-  FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
-  newPos += offset;
-  if (!newPos.IsValid() || newPos.ValueOrDie() > m_size)
+  FX_SAFE_SIZE_T pos = size;
+  pos += offset;
+  if (!pos.IsValid() || pos.ValueOrDie() > m_span.size())
     return false;
 
-  memcpy(buffer, m_pBuf + offset, size);
+  memcpy(buffer, &m_span[offset], size);
   return true;
 }

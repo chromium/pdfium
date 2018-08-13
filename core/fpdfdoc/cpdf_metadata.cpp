@@ -67,8 +67,7 @@ std::vector<UnsupportedFeature> CPDF_Metadata::CheckForSharedForm() const {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(stream_.Get());
   pAcc->LoadAllDataFiltered();
 
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(pAcc->GetData(),
-                                                             pAcc->GetSize());
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(pAcc->GetSpan());
   CFX_XMLParser parser(stream);
   std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
   if (!doc)

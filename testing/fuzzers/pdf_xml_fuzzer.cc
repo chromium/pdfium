@@ -13,13 +13,15 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/span.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   FX_SAFE_SIZE_T safe_size = size;
   if (!safe_size.IsValid())
     return 0;
 
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(data, size);
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
+      pdfium::make_span(data, size));
   CFX_XMLParser parser(stream);
   std::unique_ptr<CFX_XMLDocument> doc = parser.Parse();
   if (!doc || !doc->GetRoot())
