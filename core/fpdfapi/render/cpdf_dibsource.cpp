@@ -705,8 +705,9 @@ bool CPDF_DIBSource::IsJBigImage() const {
 
 CPDF_DIBSource::LoadState CPDF_DIBSource::StartLoadMaskDIB() {
   m_pMask = pdfium::MakeRetain<CPDF_DIBSource>();
-  LoadState ret = m_pMask->StartLoadDIBSource(
-      m_pDocument.Get(), m_pMaskStream.Get(), false, nullptr, nullptr, true);
+  LoadState ret =
+      m_pMask->StartLoadDIBSource(m_pDocument.Get(), m_pMaskStream.Get(), false,
+                                  nullptr, nullptr, true, 0, false);
   if (ret == LoadState::kContinue) {
     if (m_Status == LoadState::kFail)
       m_Status = LoadState::kContinue;

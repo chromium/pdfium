@@ -316,7 +316,7 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   auto pSource = pdfium::MakeRetain<CPDF_DIBSource>();
   CPDF_DIBSource::LoadState ret = pSource->StartLoadDIBSource(
       pPage->GetDocument(), pImg->GetStream(), false, nullptr,
-      pPage->m_pPageResources.Get());
+      pPage->m_pPageResources.Get(), false, 0, false);
   if (ret == CPDF_DIBSource::LoadState::kFail)
     return true;
 

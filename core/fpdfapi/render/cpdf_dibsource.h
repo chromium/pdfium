@@ -68,9 +68,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
                                bool bHasMask,
                                const CPDF_Dictionary* pFormResources,
                                CPDF_Dictionary* pPageResources,
-                               bool bStdCS = false,
-                               uint32_t GroupFamily = 0,
-                               bool bLoadMask = false);
+                               bool bStdCS,
+                               uint32_t GroupFamily,
+                               bool bLoadMask);
   LoadState ContinueLoadDIBSource(PauseIndicatorIface* pPause);
   RetainPtr<CPDF_DIBSource> DetachMask();
 
