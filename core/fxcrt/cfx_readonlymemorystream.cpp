@@ -21,7 +21,7 @@ FX_FILESIZE CFX_ReadOnlyMemoryStream::GetSize() {
 bool CFX_ReadOnlyMemoryStream::ReadBlock(void* buffer,
                                          FX_FILESIZE offset,
                                          size_t size) {
-  if (offset < 0)
+  if (!buffer || offset < 0 || size == 0)
     return false;
 
   FX_SAFE_SIZE_T pos = size;

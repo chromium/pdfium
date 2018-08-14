@@ -11,10 +11,10 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
@@ -50,8 +50,7 @@ class CPDF_TestParser : public CPDF_Parser {
   bool InitTestFromBufferWithOffset(pdfium::span<const uint8_t> buffer,
                                     FX_FILESIZE header_offset) {
     m_pSyntax = CPDF_SyntaxParser::CreateForTesting(
-        pdfium::MakeRetain<CFX_BufferSeekableReadStream>(buffer),
-        header_offset);
+        pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(buffer), header_offset);
     return true;
   }
 

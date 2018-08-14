@@ -32,23 +32,4 @@ class CFX_InvalidSeekableReadStream : public IFX_SeekableReadStream {
   const FX_FILESIZE data_size_;
 };
 
-class CFX_BufferSeekableReadStream : public IFX_SeekableReadStream {
- public:
-  template <typename T, typename... Args>
-  friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  // IFX_SeekableReadStream:
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-
-  FX_FILESIZE GetSize() override {
-    return static_cast<FX_FILESIZE>(data_.size());
-  }
-
- private:
-  explicit CFX_BufferSeekableReadStream(pdfium::span<const uint8_t> data);
-  ~CFX_BufferSeekableReadStream() override;
-
-  pdfium::span<const uint8_t> data_;
-};
-
 #endif  // TESTING_FX_STRING_TESTHELPERS_H_

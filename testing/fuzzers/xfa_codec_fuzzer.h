@@ -9,8 +9,8 @@
 
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "testing/fx_string_testhelpers.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
@@ -53,7 +53,7 @@ class XFACodecFuzzer {
 
     std::unique_ptr<CCodec_ProgressiveDecoder> decoder =
         mgr->CreateProgressiveDecoder();
-    auto source = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+    auto source = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
         pdfium::make_span(data, size));
     FXCODEC_STATUS status = decoder->LoadImageInfo(source, type, nullptr, true);
     if (status != FXCODEC_STATUS_FRAME_READY)

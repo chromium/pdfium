@@ -4,7 +4,7 @@
 
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 
-#include "testing/fx_string_testhelpers.h"
+#include "core/fxcrt/cfx_readonlymemorystream.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -39,7 +39,7 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOff) {
       "</config>";
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
 
-  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
@@ -57,7 +57,7 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsScriptOn) {
 
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
 
-  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
@@ -74,7 +74,7 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScope) {
 
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
 
-  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
@@ -91,7 +91,7 @@ TEST_F(CXFA_DocumentParserTest, XMLInstructionsStrictScopeBad) {
 
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
 
-  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
@@ -111,7 +111,7 @@ TEST_F(CXFA_DocumentParserTest, MultipleXMLInstructions) {
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_Scripting));
   EXPECT_FALSE(GetDoc()->HasFlag(XFA_DOCFLAG_StrictScoping));
 
-  auto stream = pdfium::MakeRetain<CFX_BufferSeekableReadStream>(
+  auto stream = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
       pdfium::as_bytes(pdfium::make_span(input)));
   ASSERT_TRUE(GetParser()->Parse(stream, XFA_PacketType::Config));
 
