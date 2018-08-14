@@ -1313,6 +1313,32 @@ FPDFFormObj_CountObjects(FPDF_PAGEOBJECT form_object);
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index);
 
+// Experimental API.
+// Get the transform matrix of a form object.
+//
+//   form_object - handle to a form.
+//   a           - pointer to out variable to receive matrix value.
+//   b           - pointer to out variable to receive matrix value.
+//   c           - pointer to out variable to receive matrix value.
+//   d           - pointer to out variable to receive matrix value.
+//   e           - pointer to out variable to receive matrix value.
+//   f           - pointer to out variable to receive matrix value.
+//
+// The matrix is composed as:
+//   |a c e|
+//   |b d f|
+// and used to scale, rotate, shear and translate the form object.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFFormObj_GetMatrix(FPDF_PAGEOBJECT form_object,
+                      double* a,
+                      double* b,
+                      double* c,
+                      double* d,
+                      double* e,
+                      double* f);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

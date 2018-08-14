@@ -127,6 +127,7 @@ int CheckPDFiumCApi() {
     // fpdf_edit.h
     CHK(FPDFFont_Close);
     CHK(FPDFFormObj_CountObjects);
+    CHK(FPDFFormObj_GetMatrix);
     CHK(FPDFFormObj_GetObject);
     CHK(FPDFImageObj_GetBitmap);
     CHK(FPDFImageObj_GetImageDataDecoded);

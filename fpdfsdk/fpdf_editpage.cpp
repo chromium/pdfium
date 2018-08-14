@@ -842,3 +842,30 @@ FPDFFormObj_GetObject(FPDF_PAGEOBJECT form_object, unsigned long index) {
   return FPDFPageObjectFromCPDFPageObject(
       pObjectList->GetPageObjectByIndex(index));
 }
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFFormObj_GetMatrix(FPDF_PAGEOBJECT form_object,
+                      double* a,
+                      double* b,
+                      double* c,
+                      double* d,
+                      double* e,
+                      double* f) {
+  if (!form_object || !a || !b || !c || !d || !e || !f)
+    return false;
+
+  auto* pPageObj = CPDFPageObjectFromFPDFPageObject(form_object);
+  CPDF_FormObject* pFormObj = pPageObj->AsForm();
+  if (!pFormObj)
+    return false;
+
+  const CFX_Matrix& matrix = pFormObj->form_matrix();
+  *a = matrix.a;
+  *b = matrix.b;
+  *c = matrix.c;
+  *d = matrix.d;
+  *e = matrix.e;
+  *f = matrix.f;
+
+  return true;
+}
