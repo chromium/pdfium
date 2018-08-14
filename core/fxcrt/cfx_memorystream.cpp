@@ -17,26 +17,16 @@ constexpr size_t kBlockSize = 64 * 1024;
 }  // namespace
 
 CFX_MemoryStream::CFX_MemoryStream(bool bConsecutive)
-    : m_nTotalSize(0),
-      m_nCurSize(0),
-      m_bConsecutive(bConsecutive),
-      m_bTakeOver(true) {}
+    : m_nTotalSize(0), m_nCurSize(0), m_bConsecutive(bConsecutive) {}
 
-CFX_MemoryStream::CFX_MemoryStream(uint8_t* pBuffer,
-                                   size_t nSize,
-                                   bool bTakeOver)
-    : m_nTotalSize(nSize),
-      m_nCurSize(nSize),
-      m_bConsecutive(true),
-      m_bTakeOver(bTakeOver) {
+CFX_MemoryStream::CFX_MemoryStream(uint8_t* pBuffer, size_t nSize)
+    : m_nTotalSize(nSize), m_nCurSize(nSize), m_bConsecutive(true) {
   m_Blocks.push_back(pBuffer);
 }
 
 CFX_MemoryStream::~CFX_MemoryStream() {
-  if (m_bTakeOver) {
-    for (uint8_t* pBlock : m_Blocks)
-      FX_Free(pBlock);
-  }
+  for (uint8_t* pBlock : m_Blocks)
+    FX_Free(pBlock);
 }
 
 FX_FILESIZE CFX_MemoryStream::GetSize() {

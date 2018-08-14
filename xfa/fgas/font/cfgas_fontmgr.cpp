@@ -179,7 +179,8 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
   // Use a named object to store the returned value of EnumGdiFonts() instead
   // of using a temporary object. This can prevent use-after-free issues since
   // pDesc may point to one of std::deque object's elements.
-  std::deque<FX_FONTDESCRIPTOR> namedFonts = EnumGdiFonts(pszFontFamily, wUnicode);
+  std::deque<FX_FONTDESCRIPTOR> namedFonts =
+      EnumGdiFonts(pszFontFamily, wUnicode);
   params.pwsFamily = nullptr;
   pDesc = MatchDefaultFont(&params, namedFonts);
   if (!pDesc)
@@ -628,7 +629,7 @@ RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
   uint8_t* pBuffer = FX_Alloc(uint8_t, dwFileSize + 1);
   dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, pBuffer, dwFileSize);
 
-  return pdfium::MakeRetain<CFX_MemoryStream>(pBuffer, dwFileSize, true);
+  return pdfium::MakeRetain<CFX_MemoryStream>(pBuffer, dwFileSize);
 }
 
 RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(

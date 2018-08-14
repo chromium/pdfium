@@ -32,7 +32,9 @@ class CFX_MemoryStream : public IFX_SeekableStream {
 
  private:
   explicit CFX_MemoryStream(bool bConsecutive);
-  CFX_MemoryStream(uint8_t* pBuffer, size_t nSize, bool bTakeOver);
+
+  // Takes ownership of |pBuffer|.
+  CFX_MemoryStream(uint8_t* pBuffer, size_t nSize);
   ~CFX_MemoryStream() override;
 
   bool ExpandBlocks(size_t size);
@@ -42,7 +44,6 @@ class CFX_MemoryStream : public IFX_SeekableStream {
   size_t m_nCurSize;
   size_t m_nCurPos = 0;
   const bool m_bConsecutive;
-  const bool m_bTakeOver;  // Owns the data in |m_Blocks|.
 };
 
 #endif  // CORE_FXCRT_CFX_MEMORYSTREAM_H_
