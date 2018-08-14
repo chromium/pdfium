@@ -663,7 +663,6 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
 CPDF_Dictionary* CPDF_Document::ProcessbCJK(
     CPDF_Dictionary* pBaseDict,
     int charset,
-    bool bVert,
     ByteString basefont,
     std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert) {
   CPDF_Dictionary* pFontDict = NewIndirect<CPDF_Dictionary>();
@@ -673,14 +672,14 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   CPDF_Array* pWidthArray = pFontDict->SetNewFor<CPDF_Array>("W");
   switch (charset) {
     case FX_CHARSET_ChineseTraditional:
-      cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
+      cmap = "ETenms-B5-H";
       ordering = "CNS1";
       supplement = 4;
       pWidthArray->AddNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
     case FX_CHARSET_ChineseSimplified:
-      cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
+      cmap = "GBK-EUC-H";
       ordering = "GB1";
       supplement = 2;
       pWidthArray->AddNew<CPDF_Number>(7716);
@@ -689,14 +688,14 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
       Insert(0x21, 0x7e, pWidthArray);
       break;
     case FX_CHARSET_Hangul:
-      cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
+      cmap = "KSCms-UHC-H";
       ordering = "Korea1";
       supplement = 2;
       pWidthArray->AddNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
     case FX_CHARSET_ShiftJIS:
-      cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
+      cmap = "90ms-RKSJ-H";
       ordering = "Japan1";
       supplement = 5;
       pWidthArray->AddNew<CPDF_Number>(231);
@@ -727,7 +726,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   return pFontDict;
 }
 
-CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
+CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset) {
   if (!pFont)
     return nullptr;
 
@@ -772,7 +771,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
                    std::move(pWidths));
   } else {
     pFontDict = ProcessbCJK(
-        pBaseDict, charset, bVert, basefont,
+        pBaseDict, charset, basefont,
         [pFont, &pEncoding](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
           InsertWidthArray1(pFont, pEncoding.get(), start, end, widthArr);
         });
@@ -868,7 +867,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont) {
                    pLogFont->lfItalic != 0, basefont, std::move(pWidths));
   } else {
     pFontDict =
-        ProcessbCJK(pBaseDict, pLogFont->lfCharSet, false, basefont,
+        ProcessbCJK(pBaseDict, pLogFont->lfCharSet, basefont,
                     [&hDC](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
                       InsertWidthArray(hDC, start, end, widthArr);
                     });

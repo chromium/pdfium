@@ -106,7 +106,7 @@ CPDF_Font* CFX_SystemHandler::AddNativeTrueTypeFontToPDF(
   auto pFXFont = pdfium::MakeUnique<CFX_Font>();
   pFXFont->LoadSubst(sFontFaceName, true, 0, 0, 0,
                      FX_GetCodePageFromCharset(nCharset), false);
-  return pDoc->AddFont(pFXFont.get(), nCharset, false);
+  return pDoc->AddFont(pFXFont.get(), nCharset);
 }
 
 int32_t CFX_SystemHandler::SetTimer(int32_t uElapse,

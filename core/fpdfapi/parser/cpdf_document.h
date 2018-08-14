@@ -118,7 +118,7 @@ class CPDF_Document : public Observable<CPDF_Document>,
   uint32_t GetParsedPageCountForTesting() { return m_ParsedPageCount; }
 
   CPDF_Font* AddStandardFont(const char* font, CPDF_FontEncoding* pEncoding);
-  CPDF_Font* AddFont(CFX_Font* pFont, int charset, bool bVert);
+  CPDF_Font* AddFont(CFX_Font* pFont, int charset);
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont);
@@ -142,7 +142,6 @@ class CPDF_Document : public Observable<CPDF_Document>,
   CPDF_Dictionary* ProcessbCJK(
       CPDF_Dictionary* pBaseDict,
       int charset,
-      bool bVert,
       ByteString basefont,
       std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
   bool InsertDeletePDFPage(CPDF_Dictionary* pPages,
