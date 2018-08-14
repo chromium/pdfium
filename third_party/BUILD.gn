@@ -163,6 +163,7 @@ if (pdf_bundle_freetype) {
       "//third_party/freetype/src/src/base/ftbase.c",
       "//third_party/freetype/src/src/base/ftbase.h",
       "//third_party/freetype/src/src/base/ftbitmap.c",
+      "//third_party/freetype/src/src/base/ftdebug.c",
       "//third_party/freetype/src/src/base/ftglyph.c",
       "//third_party/freetype/src/src/base/ftinit.c",
       "//third_party/freetype/src/src/base/ftmm.c",
