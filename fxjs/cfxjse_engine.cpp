@@ -514,7 +514,8 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
       CreateVariablesContext(pScriptNode, pThisObject);
   AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
-  return pVariablesContext->ExecuteScript(btScript.c_str(), hRetValue.get());
+  return pVariablesContext->ExecuteScript(btScript.c_str(), hRetValue.get(),
+                                          nullptr);
 }
 
 bool CFXJSE_Engine::QueryVariableValue(CXFA_Node* pScriptNode,

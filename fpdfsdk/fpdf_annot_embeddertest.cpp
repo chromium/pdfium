@@ -320,7 +320,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndSaveUnderlineAnnotation) {
   // Open the saved document.
   const char md5[] = "dba153419f67b7c0c0e3d22d3e8910d5";
 
-  OpenSavedDocument();
+  OpenSavedDocument(nullptr);
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 612, 792, md5);
 
@@ -762,7 +762,7 @@ TEST_F(FPDFAnnotEmbeddertest, AddAndModifyPath) {
   UnloadPage(page);
 
   // Open the saved document.
-  OpenSavedDocument();
+  OpenSavedDocument(nullptr);
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 595, 842, md5_new_annot);
 
@@ -1076,7 +1076,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetStringValue) {
 #endif
 
   // Open the saved annotation.
-  OpenSavedDocument();
+  OpenSavedDocument(nullptr);
   page = LoadSavedPage(0);
   VerifySavedRendering(page, 595, 842, md5);
   {
@@ -1198,7 +1198,7 @@ TEST_F(FPDFAnnotEmbeddertest, GetSetAP) {
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
 
-  OpenSavedDocument();
+  OpenSavedDocument(nullptr);
   page = LoadSavedPage(0);
   {
     ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));

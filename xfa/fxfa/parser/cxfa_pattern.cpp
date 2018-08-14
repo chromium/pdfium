@@ -79,7 +79,7 @@ void CXFA_Pattern::Draw(CXFA_Graphics* pGS,
       break;
   }
 
-  CXFA_GEPattern pattern(iHatch, crEnd, crStart);
+  CXFA_GEPattern pattern(iHatch, crEnd, crStart, nullptr);
 
   pGS->SaveGraphState();
   pGS->SetFillColor(CXFA_GEColor(&pattern, 0x0));

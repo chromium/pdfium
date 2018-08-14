@@ -192,7 +192,7 @@ class EmbedderTest : public ::testing::Test,
                                 unsigned long size);
 
   // See comments in the respective non-Saved versions of these methods.
-  FPDF_DOCUMENT OpenSavedDocument(const char* password = nullptr);
+  FPDF_DOCUMENT OpenSavedDocument(const char* password);
   void CloseSavedDocument();
   FPDF_PAGE LoadSavedPage(int page_number);
   void CloseSavedPage(FPDF_PAGE page);

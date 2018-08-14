@@ -112,7 +112,7 @@ class CXFA_FFWidgetHandler {
                             CXFA_Node* pBefore) const;
   CXFA_Node* CreateCopyNode(XFA_Element eElement,
                             CXFA_Node* pParent,
-                            CXFA_Node* pBefore = nullptr) const;
+                            CXFA_Node* pBefore) const;
   CXFA_Node* CreateTemplateNode(XFA_Element eElement,
                                 CXFA_Node* pParent,
                                 CXFA_Node* pBefore) const;

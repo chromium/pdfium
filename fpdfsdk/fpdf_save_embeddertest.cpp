@@ -82,7 +82,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   EXPECT_EQ(8219u, GetString().length());
 
   // Make sure new document renders the same as the old one.
-  EXPECT_TRUE(OpenSavedDocument());
+  EXPECT_TRUE(OpenSavedDocument(nullptr));
   for (int i = 0; i < kPageCount; ++i) {
     FPDF_PAGE page = LoadSavedPage(i);
     ASSERT_TRUE(page);

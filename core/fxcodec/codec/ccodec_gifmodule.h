@@ -42,7 +42,7 @@ class CCodec_GifModule {
   ~CCodec_GifModule();
 
   std::unique_ptr<Context> Start(Delegate* pDelegate);
-  uint32_t GetAvailInput(Context* context, uint8_t** avail_buf_ptr = nullptr);
+  uint32_t GetAvailInput(Context* context, uint8_t** avail_buf_ptr);
   void Input(Context* context, const uint8_t* src_buf, uint32_t src_size);
   CFX_GifDecodeStatus ReadHeader(Context* context,
                                  int* width,

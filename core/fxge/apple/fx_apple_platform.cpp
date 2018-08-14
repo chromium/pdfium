@@ -76,9 +76,9 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.d = -new_matrix.d;
   }
   quartz2d.setGraphicsTextMatrix(pContext, &new_matrix);
-  return quartz2d.drawGraphicsString(
-      pContext, pFont->GetPlatformFont(), font_size, glyph_indices.data(),
-      glyph_positions.data(), nChars, argb, nullptr);
+  return quartz2d.drawGraphicsString(pContext, pFont->GetPlatformFont(),
+                                     font_size, glyph_indices.data(),
+                                     glyph_positions.data(), nChars, argb);
 }
 
 }  // namespace

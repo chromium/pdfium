@@ -420,7 +420,7 @@ void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
 }
 
 void EmbedderTest::VerifySavedDocument(int width, int height, const char* md5) {
-  OpenSavedDocument();
+  OpenSavedDocument(nullptr);
   FPDF_PAGE page = LoadSavedPage(0);
   VerifySavedRendering(page, width, height, md5);
   CloseSavedPage(page);

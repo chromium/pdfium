@@ -31,8 +31,7 @@ class CQuartz2D {
                           uint16_t* glyphIndices,
                           CGPoint* glyphPositions,
                           int32_t chars,
-                          FX_ARGB argb,
-                          CFX_Matrix* matrix = nullptr);
+                          FX_ARGB argb);
   void saveGraphicsState(void* graphics);
   void restoreGraphicsState(void* graphics);
 };

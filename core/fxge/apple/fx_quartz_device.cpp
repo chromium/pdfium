@@ -79,20 +79,14 @@ bool CQuartz2D::drawGraphicsString(void* graphics,
                                    uint16_t* glyphIndices,
                                    CGPoint* glyphPositions,
                                    int32_t charsCount,
-                                   FX_ARGB argb,
-                                   CFX_Matrix* matrix) {
+                                   FX_ARGB argb) {
   if (!graphics)
     return false;
+
   CGContextRef context = (CGContextRef)graphics;
   CGContextSetFont(context, (CGFontRef)font);
   CGContextSetFontSize(context, fontSize);
-  if (matrix) {
-    CGAffineTransform m = CGContextGetTextMatrix(context);
-    m = CGAffineTransformConcat(
-        m, CGAffineTransformMake(matrix->a, matrix->b, matrix->c, matrix->d,
-                                 matrix->e, matrix->f));
-    CGContextSetTextMatrix(context, m);
-  }
+
   int32_t a;
   int32_t r;
   int32_t g;

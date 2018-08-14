@@ -3429,7 +3429,8 @@ void CFXJSE_FormCalcContext::Eval(CFXJSE_Value* pThis,
 
   auto returnValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   pNewContext->ExecuteScript(
-      FX_UTF8Encode(wsJavaScriptBuf.AsStringView()).c_str(), returnValue.get());
+      FX_UTF8Encode(wsJavaScriptBuf.AsStringView()).c_str(), returnValue.get(),
+      nullptr);
 
   args.GetReturnValue()->Assign(returnValue.get());
 }

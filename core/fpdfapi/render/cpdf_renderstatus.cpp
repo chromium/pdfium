@@ -2633,7 +2633,7 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   if (pGroup)
     pCSObj = pGroup->GetDirectObjectFor(pdfium::transparency::kCS);
   const CPDF_ColorSpace* pCS =
-      m_pContext->GetDocument()->LoadColorSpace(pCSObj);
+      m_pContext->GetDocument()->LoadColorSpace(pCSObj, nullptr);
   if (!pCS)
     return kDefaultColor;
 

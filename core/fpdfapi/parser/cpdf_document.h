@@ -90,7 +90,7 @@ class CPDF_Document : public Observable<CPDF_Document>,
   // |pFontDict| must not be null.
   CPDF_Font* LoadFont(CPDF_Dictionary* pFontDict);
   CPDF_ColorSpace* LoadColorSpace(const CPDF_Object* pCSObj,
-                                  const CPDF_Dictionary* pResources = nullptr);
+                                  const CPDF_Dictionary* pResources);
 
   CPDF_Pattern* LoadPattern(CPDF_Object* pObj,
                             bool bShading,

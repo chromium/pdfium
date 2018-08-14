@@ -457,7 +457,7 @@ void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
 #ifdef PDF_ENABLE_XFA_GIF
 void CCodec_ProgressiveDecoder::GifRecordCurrentPosition(uint32_t& cur_pos) {
   uint32_t remain_size =
-      m_pCodecMgr->GetGifModule()->GetAvailInput(m_pGifContext.get());
+      m_pCodecMgr->GetGifModule()->GetAvailInput(m_pGifContext.get(), nullptr);
   cur_pos = m_offSet - remain_size;
 }
 

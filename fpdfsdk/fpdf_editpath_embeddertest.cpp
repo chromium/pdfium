@@ -31,7 +31,7 @@ TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
   FPDF_ClosePage(page);
   page = nullptr;
 
-  OpenSavedDocument();
+  OpenSavedDocument(nullptr);
   page = LoadSavedPage(0);
   ASSERT(page);
 

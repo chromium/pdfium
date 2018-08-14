@@ -37,7 +37,7 @@ class CFXJSE_Context {
   void EnableCompatibleMode();
   bool ExecuteScript(const char* szScript,
                      CFXJSE_Value* lpRetValue,
-                     CFXJSE_Value* lpNewThisObject = nullptr);
+                     CFXJSE_Value* lpNewThisObject);
 
  private:
   CFXJSE_Context(const CFXJSE_Context&) = delete;

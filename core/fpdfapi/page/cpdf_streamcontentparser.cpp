@@ -1201,14 +1201,14 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
       }
       return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
     }
-    return m_pDocument->LoadColorSpace(pDefObj);
+    return m_pDocument->LoadColorSpace(pDefObj, nullptr);
   }
   const CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
   if (!pCSObj) {
     m_bResourceMissing = true;
     return nullptr;
   }
-  return m_pDocument->LoadColorSpace(pCSObj);
+  return m_pDocument->LoadColorSpace(pCSObj, nullptr);
 }
 
 CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const ByteString& name,

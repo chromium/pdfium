@@ -19,7 +19,7 @@ class CXFA_GEPattern {
   CXFA_GEPattern(FX_HatchStyle hatchStyle,
                  const FX_ARGB foreArgb,
                  const FX_ARGB backArgb,
-                 CFX_Matrix* matrix = nullptr);
+                 CFX_Matrix* matrix);
 
   virtual ~CXFA_GEPattern();
 

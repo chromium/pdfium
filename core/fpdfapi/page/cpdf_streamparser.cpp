@@ -141,7 +141,7 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   if (pCSObj) {
     uint32_t bpc = pDict->GetIntegerFor("BitsPerComponent");
     uint32_t nComponents = 1;
-    CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj);
+    CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj, nullptr);
     if (pCS) {
       nComponents = pCS->CountComponents();
       pDoc->GetPageData()->ReleaseColorSpace(pCSObj);

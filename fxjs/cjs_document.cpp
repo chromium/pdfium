@@ -1199,7 +1199,7 @@ CJS_Return CJS_Document::calculateNow(
     return CJS_Return(JSMessage::kPermissionError);
   }
 
-  m_pFormFillEnv->GetInterForm()->OnCalculate();
+  m_pFormFillEnv->GetInterForm()->OnCalculate(nullptr);
   return CJS_Return();
 }
 
