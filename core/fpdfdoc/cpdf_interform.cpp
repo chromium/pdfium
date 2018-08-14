@@ -688,7 +688,7 @@ CPDF_Font* CPDF_InterForm::AddNativeFont(uint8_t charSet,
   if (!csFontName.IsEmpty()) {
     if (csFontName == CFX_Font::kDefaultAnsiFontName)
       return AddStandardFont(pDocument, csFontName);
-    return pDocument->AddWindowsFont(&lf, false, true);
+    return pDocument->AddWindowsFont(&lf);
   }
 #endif
   return nullptr;

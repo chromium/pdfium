@@ -809,23 +809,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
 }
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
-                                         bool bVert,
-                                         bool bTranslateName) {
-  LOGFONTA lfa;
-  memcpy(&lfa, pLogFont, (char*)lfa.lfFaceName - (char*)&lfa);
-  ByteString face = WideString(pLogFont->lfFaceName).ToDefANSI();
-  if (face.GetLength() >= LF_FACESIZE)
-    return nullptr;
-
-  strncpy(lfa.lfFaceName, face.c_str(),
-          (face.GetLength() + 1) * sizeof(ByteString::CharType));
-  return AddWindowsFont(&lfa, bVert, bTranslateName);
-}
-
-CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
-                                         bool bVert,
-                                         bool bTranslateName) {
+CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont) {
   pLogFont->lfHeight = -1000;
   pLogFont->lfWidth = 0;
   HGDIOBJ hFont = CreateFontIndirectA(pLogFont);
@@ -850,7 +834,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
 
   const bool bCJK = FX_CharSetIsCJK(pLogFont->lfCharSet);
   ByteString basefont;
-  if (bTranslateName && bCJK)
+  if (bCJK)
     basefont = FPDF_GetPSNameFromTT(hDC);
 
   if (basefont.IsEmpty())
@@ -884,7 +868,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
                    pLogFont->lfItalic != 0, basefont, std::move(pWidths));
   } else {
     pFontDict =
-        ProcessbCJK(pBaseDict, pLogFont->lfCharSet, bVert, basefont,
+        ProcessbCJK(pBaseDict, pLogFont->lfCharSet, false, basefont,
                     [&hDC](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
                       InsertWidthArray(hDC, start, end, widthArr);
                     });

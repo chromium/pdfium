@@ -111,7 +111,6 @@ class CPDF_Document : public Observable<CPDF_Document>,
       const char* password);
 
   void LoadPages();
-
   void CreateNewDoc();
   CPDF_Dictionary* CreateNewPage(int iPage);
 
@@ -120,13 +119,9 @@ class CPDF_Document : public Observable<CPDF_Document>,
 
   CPDF_Font* AddStandardFont(const char* font, CPDF_FontEncoding* pEncoding);
   CPDF_Font* AddFont(CFX_Font* pFont, int charset, bool bVert);
+
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont,
-                            bool bVert,
-                            bool bTranslateName = false);
-  CPDF_Font* AddWindowsFont(LOGFONTW* pLogFont,
-                            bool bVert,
-                            bool bTranslateName = false);
+  CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont);
 #endif
 
  protected:
