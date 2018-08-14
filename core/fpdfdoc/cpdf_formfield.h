@@ -80,11 +80,8 @@ class CPDF_InterForm;
 class CPDF_String;
 
 const CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
-                                     const char* name,
-                                     int nLevel = 0);
-CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
-                               const char* name,
-                               int nLevel = 0);
+                                     const char* name);
+CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict, const char* name);
 
 WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict);
 

@@ -43,6 +43,21 @@ bool IsUnison(CPDF_FormField* pField) {
   return (pField->GetFieldFlags() & 0x2000000) != 0;
 }
 
+const CPDF_Object* FPDF_GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
+                                              const char* name,
+                                              int nLevel) {
+  static constexpr int kGetFieldMaxRecursion = 32;
+  if (!pFieldDict || nLevel > kGetFieldMaxRecursion)
+    return nullptr;
+
+  const CPDF_Object* pAttr = pFieldDict->GetDirectObjectFor(name);
+  if (pAttr)
+    return pAttr;
+
+  return FPDF_GetFieldAttrRecursive(pFieldDict->GetDictFor("Parent"), name,
+                                    nLevel + 1);
+}
+
 }  // namespace
 
 Optional<FormFieldType> IntToFormFieldType(int value) {
@@ -54,25 +69,13 @@ Optional<FormFieldType> IntToFormFieldType(int value) {
 }
 
 const CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
-                                     const char* name,
-                                     int nLevel) {
-  static constexpr int kGetFieldMaxRecursion = 32;
-  if (!pFieldDict || nLevel > kGetFieldMaxRecursion)
-    return nullptr;
-
-  const CPDF_Object* pAttr = pFieldDict->GetDirectObjectFor(name);
-  if (pAttr)
-    return pAttr;
-
-  const CPDF_Dictionary* pParent = pFieldDict->GetDictFor("Parent");
-  return pParent ? FPDF_GetFieldAttr(pParent, name, nLevel + 1) : nullptr;
+                                     const char* name) {
+  return FPDF_GetFieldAttrRecursive(pFieldDict, name, 0);
 }
 
-CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
-                               const char* name,
-                               int nLevel) {
-  return const_cast<CPDF_Object*>(FPDF_GetFieldAttr(
-      static_cast<const CPDF_Dictionary*>(pFieldDict), name, nLevel));
+CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict, const char* name) {
+  return const_cast<CPDF_Object*>(FPDF_GetFieldAttrRecursive(
+      static_cast<const CPDF_Dictionary*>(pFieldDict), name, 0));
 }
 
 WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
