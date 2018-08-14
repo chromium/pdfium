@@ -66,14 +66,16 @@ TEST_F(FXJSEngineUnitTest, GC) {
   engine()->InitializeEngine();
 
   v8::Context::Scope context_scope(engine()->GetV8Context());
-  v8::Local<v8::Object> perm = engine()->NewFXJSBoundObject(0, false);
+  v8::Local<v8::Object> perm =
+      engine()->NewFXJSBoundObject(0, FXJSOBJTYPE_DYNAMIC);
   EXPECT_FALSE(perm.IsEmpty());
   EXPECT_TRUE(perm_created);
   EXPECT_FALSE(perm_destroyed);
 
   {
     v8::HandleScope inner_handle_scope(isolate());
-    v8::Local<v8::Object> temp = engine()->NewFXJSBoundObject(1, false);
+    v8::Local<v8::Object> temp =
+        engine()->NewFXJSBoundObject(1, FXJSOBJTYPE_DYNAMIC);
     EXPECT_FALSE(temp.IsEmpty());
     EXPECT_TRUE(temp_created);
     EXPECT_FALSE(temp_destroyed);

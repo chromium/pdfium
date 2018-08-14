@@ -128,8 +128,7 @@ class CFXJS_Engine : public CFX_V8 {
   Optional<IJS_Runtime::JS_Error> Execute(const WideString& script);
 
   v8::Local<v8::Object> GetThisObj();
-  v8::Local<v8::Object> NewFXJSBoundObject(int nObjDefnID,
-                                           bool bStatic = false);
+  v8::Local<v8::Object> NewFXJSBoundObject(int nObjDefnID, FXJSOBJTYPE type);
   void Error(const WideString& message);
 
   v8::Local<v8::Context> GetV8Context() {

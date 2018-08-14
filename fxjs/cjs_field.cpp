@@ -2274,8 +2274,8 @@ CJS_Return CJS_Field::buttonGetIcon(
   if (!pFormControl)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  v8::Local<v8::Object> pObj =
-      pRuntime->NewFXJSBoundObject(CJS_Icon::GetObjDefnID());
+  v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+      CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
   if (pObj.IsEmpty())
     return CJS_Return(JSMessage::kBadObjectError);
 
@@ -2386,8 +2386,8 @@ CJS_Return CJS_Field::getArray(
   v8::Local<v8::Array> FormFieldArray = pRuntime->NewArray();
   int j = 0;
   for (const auto& pStr : swSort) {
-    v8::Local<v8::Object> pObj =
-        pRuntime->NewFXJSBoundObject(CJS_Field::GetObjDefnID());
+    v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+        CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
     if (pObj.IsEmpty())
       return CJS_Return(JSMessage::kBadObjectError);
 

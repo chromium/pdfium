@@ -247,8 +247,8 @@ CJS_Return CJS_Document::getField(
   if (pPDFForm->CountFields(wideName) <= 0)
     return CJS_Return(pRuntime->NewUndefined());
 
-  v8::Local<v8::Object> pFieldObj =
-      pRuntime->NewFXJSBoundObject(CJS_Field::GetObjDefnID());
+  v8::Local<v8::Object> pFieldObj = pRuntime->NewFXJSBoundObject(
+      CJS_Field::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
   if (pFieldObj.IsEmpty())
     return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1012,8 +1012,8 @@ CJS_Return CJS_Document::getAnnot(
   if (!pSDKBAAnnot)
     return CJS_Return(JSMessage::kBadObjectError);
 
-  v8::Local<v8::Object> pObj =
-      pRuntime->NewFXJSBoundObject(CJS_Annot::GetObjDefnID());
+  v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+      CJS_Annot::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
   if (pObj.IsEmpty())
     return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1047,8 +1047,8 @@ CJS_Return CJS_Document::getAnnots(
       if (!pSDKAnnotCur)
         return CJS_Return(JSMessage::kBadObjectError);
 
-      v8::Local<v8::Object> pObj =
-          pRuntime->NewFXJSBoundObject(CJS_Annot::GetObjDefnID());
+      v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+          CJS_Annot::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
       if (pObj.IsEmpty())
         return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1119,8 +1119,8 @@ CJS_Return CJS_Document::get_icons(CJS_Runtime* pRuntime) {
   v8::Local<v8::Array> Icons = pRuntime->NewArray();
   int i = 0;
   for (const auto& name : m_IconNames) {
-    v8::Local<v8::Object> pObj =
-        pRuntime->NewFXJSBoundObject(CJS_Icon::GetObjDefnID());
+    v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+        CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
     if (pObj.IsEmpty())
       return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1151,8 +1151,8 @@ CJS_Return CJS_Document::getIcon(
   if (it == m_IconNames.end())
     return CJS_Return(JSMessage::kBadObjectError);
 
-  v8::Local<v8::Object> pObj =
-      pRuntime->NewFXJSBoundObject(CJS_Icon::GetObjDefnID());
+  v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
+      CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
   if (pObj.IsEmpty())
     return CJS_Return(JSMessage::kBadObjectError);
 
@@ -1301,8 +1301,8 @@ CJS_Return CJS_Document::getPageNumWords(
 CJS_Return CJS_Document::getPrintParams(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  v8::Local<v8::Object> pRetObj =
-      pRuntime->NewFXJSBoundObject(CJS_PrintParamsObj::GetObjDefnID());
+  v8::Local<v8::Object> pRetObj = pRuntime->NewFXJSBoundObject(
+      CJS_PrintParamsObj::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
   if (pRetObj.IsEmpty())
     return CJS_Return(JSMessage::kBadObjectError);
   return CJS_Return(JSMessage::kNotSupportedError);
