@@ -84,25 +84,25 @@ CPDF_Type1Font* CPDF_Type1Font::AsType1Font() {
 
 bool CPDF_Type1Font::Load() {
   m_Base14Font = PDF_GetStandardFontName(&m_BaseFont);
-  if (m_Base14Font >= 0) {
-    const CPDF_Dictionary* pFontDesc =
-        m_pFontDict->GetDictFor("FontDescriptor");
-    if (pFontDesc && pFontDesc->KeyExist("Flags"))
-      m_Flags = pFontDesc->GetIntegerFor("Flags");
-    else
-      m_Flags = m_Base14Font >= 12 ? FXFONT_SYMBOLIC : FXFONT_NONSYMBOLIC;
+  if (!IsBase14Font())
+    return LoadCommon();
 
-    if (m_Base14Font < 4) {
-      for (int i = 0; i < 256; i++)
-        m_CharWidth[i] = 600;
-    }
-    if (m_Base14Font == 12)
-      m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
-    else if (m_Base14Font == 13)
-      m_BaseEncoding = PDFFONT_ENCODING_ZAPFDINGBATS;
-    else if (FontStyleIsNonSymbolic(m_Flags))
-      m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
+  const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
+  if (pFontDesc && pFontDesc->KeyExist("Flags"))
+    m_Flags = pFontDesc->GetIntegerFor("Flags");
+  else
+    m_Flags = m_Base14Font >= 12 ? FXFONT_SYMBOLIC : FXFONT_NONSYMBOLIC;
+
+  if (m_Base14Font < 4) {
+    for (int i = 0; i < 256; i++)
+      m_CharWidth[i] = 600;
   }
+  if (m_Base14Font == 12)
+    m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
+  else if (m_Base14Font == 13)
+    m_BaseEncoding = PDFFONT_ENCODING_ZAPFDINGBATS;
+  else if (FontStyleIsNonSymbolic(m_Flags))
+    m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
   return LoadCommon();
 }
 

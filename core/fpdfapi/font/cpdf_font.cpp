@@ -346,9 +346,7 @@ bool CPDF_Font::IsStandardFont() const {
     return false;
   if (m_pFontFile)
     return false;
-  if (AsType1Font()->GetBase14Font() < 0)
-    return false;
-  return true;
+  return AsType1Font()->IsBase14Font();
 }
 
 const char* CPDF_Font::GetAdobeCharName(
