@@ -437,9 +437,9 @@ TEST(CFX_Matrix, ComposeTransformations) {
 
   // Now compose all transforms prepending.
   m.SetIdentity();
-  m.Concat(rotate_90, true);
-  m.Concat(translate_23_11, true);
-  m.Concat(scale_5_13, true);
+  m.ConcatPrepend(rotate_90);
+  m.ConcatPrepend(translate_23_11);
+  m.ConcatPrepend(scale_5_13);
   EXPECT_NEAR_FIVE_PLACES(0.0f, m.a);
   EXPECT_NEAR_FIVE_PLACES(5.0f, m.b);
   EXPECT_NEAR_FIVE_PLACES(-13.0f, m.c);
@@ -457,68 +457,4 @@ TEST(CFX_Matrix, ComposeTransformations) {
   p_10_20_transformed = m.Transform(CFX_PointF(10, 20));
   EXPECT_FLOAT_EQ(-271.0f, p_10_20_transformed.x);
   EXPECT_FLOAT_EQ(73.0f, p_10_20_transformed.y);
-}
-
-TEST(CFX_Matrix, RotateAt) {
-  CFX_Matrix m;
-  m.RotateAt(FX_PI, 10, 20);
-
-  // 180 degree rotation
-  CFX_PointF p(27, 19);
-  CFX_PointF new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(-7, new_p.x);
-  EXPECT_FLOAT_EQ(21, new_p.y);
-
-  p = CFX_PointF(10, 20);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(10, new_p.x);
-  EXPECT_FLOAT_EQ(20, new_p.y);
-
-  p = CFX_PointF(0, 0);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(20, new_p.x);
-  EXPECT_FLOAT_EQ(40, new_p.y);
-
-  // 90 degree rotation
-  m.SetIdentity();
-  m.RotateAt(FX_PI / 2, 10, 20);
-
-  p = CFX_PointF(6, 17);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(13, new_p.x);
-  EXPECT_FLOAT_EQ(16, new_p.y);
-
-  p = CFX_PointF(10, 20);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(10, new_p.x);
-  EXPECT_FLOAT_EQ(20, new_p.y);
-
-  p = CFX_PointF(0, 0);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(30, new_p.x);
-  EXPECT_FLOAT_EQ(10, new_p.y);
-
-  // 60 degree rotation
-  m.SetIdentity();
-  m.RotateAt(FX_PI / 3, 10, 20);
-
-  p = CFX_PointF(20, 20);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(15, new_p.x);
-  EXPECT_FLOAT_EQ(28.660254f, new_p.y);
-
-  p = CFX_PointF(10, 20);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(10, new_p.x);
-  EXPECT_FLOAT_EQ(20, new_p.y);
-
-  p = CFX_PointF(0, 0);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(22.320509f, new_p.x);
-  EXPECT_FLOAT_EQ(1.3397465f, new_p.y);
-
-  p = CFX_PointF(10, -80);
-  new_p = m.Transform(p);
-  EXPECT_FLOAT_EQ(96.602540f, new_p.x);
-  EXPECT_FLOAT_EQ(-30, new_p.y);
 }

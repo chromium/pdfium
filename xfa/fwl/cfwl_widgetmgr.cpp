@@ -424,7 +424,7 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
     if (pMatrix)
       widgetMatrix.Concat(*pMatrix);
 
-    widgetMatrix.Translate(rtWidget.left, rtWidget.top, true);
+    widgetMatrix.TranslatePrepend(rtWidget.left, rtWidget.top);
 
     if (IFWL_WidgetDelegate* pDelegate = child->GetDelegate())
       pDelegate->OnDrawWidget(pGraphics, widgetMatrix);

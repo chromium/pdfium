@@ -592,8 +592,10 @@ class CFX_Matrix {
 
   CFX_Matrix GetInverse() const;
 
-  void Concat(const CFX_Matrix& m, bool bPrepended = false);
-  void ConcatInverse(const CFX_Matrix& m, bool bPrepended = false);
+  void Concat(const CFX_Matrix& right);
+  void ConcatPrepend(const CFX_Matrix& left);
+  void ConcatInverse(const CFX_Matrix& m);
+  void ConcatInversePrepend(const CFX_Matrix& m);
 
   bool IsIdentity() const {
     return a == 1 && b == 0 && c == 0 && d == 1 && e == 0 && f == 0;
@@ -603,18 +605,18 @@ class CFX_Matrix {
   bool IsScaled() const;
   bool WillScale() const { return a != 1.0f || b != 0 || c != 0 || d != 1.0f; }
 
-  void Translate(float x, float y, bool bPrepended = false);
-  void Translate(int32_t x, int32_t y, bool bPrepended = false) {
-    Translate(static_cast<float>(x), static_cast<float>(y), bPrepended);
+  void Translate(float x, float y);
+  void TranslatePrepend(float x, float y);
+  void Translate(int32_t x, int32_t y) {
+    Translate(static_cast<float>(x), static_cast<float>(y));
+  }
+  void TranslatePrepend(int32_t x, int32_t y) {
+    TranslatePrepend(static_cast<float>(x), static_cast<float>(y));
   }
 
-  void Scale(float sx, float sy, bool bPrepended = false);
-  void Rotate(float fRadian, bool bPrepended = false);
-
-  // Rotates counterclockwise around the (x, y) point.
-  void RotateAt(float fRadian, float x, float y, bool bPrepended = false);
-
-  void Shear(float fAlphaRadian, float fBetaRadian, bool bPrepended = false);
+  void Scale(float sx, float sy);
+  void Rotate(float fRadian);
+  void Shear(float fAlphaRadian, float fBetaRadian);
 
   void MatchRect(const CFX_FloatRect& dest, const CFX_FloatRect& src);
 
@@ -641,9 +643,6 @@ class CFX_Matrix {
   float d;
   float e;
   float f;
-
- private:
-  void ConcatInternal(const CFX_Matrix& other, bool prepend);
 };
 
 #endif  // CORE_FXCRT_FX_COORDINATES_H_
