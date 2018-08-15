@@ -54,11 +54,13 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
       m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);
       m_LastObjectRendered =
           m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->end();
-      m_pRenderStatus = pdfium::MakeUnique<CPDF_RenderStatus>();
-      m_pRenderStatus->Initialize(
-          m_pContext.Get(), m_pDevice.Get(), nullptr, nullptr, nullptr, nullptr,
-          m_pOptions, m_pCurrentLayer->m_pObjectHolder->GetTransparency(),
-          false, nullptr);
+      m_pRenderStatus = pdfium::MakeUnique<CPDF_RenderStatus>(m_pContext.Get(),
+                                                              m_pDevice.Get());
+      if (m_pOptions)
+        m_pRenderStatus->SetOptions(*m_pOptions);
+      m_pRenderStatus->SetTransparency(
+          m_pCurrentLayer->m_pObjectHolder->GetTransparency());
+      m_pRenderStatus->Initialize(nullptr, nullptr);
       m_pDevice->SaveState();
       m_ClipRect = m_pCurrentLayer->m_Matrix.GetInverse().TransformRect(
           CFX_FloatRect(m_pDevice->GetClipBox()));
@@ -94,10 +96,10 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
                 pCurObj, &m_pCurrentLayer->m_Matrix, pPause)) {
           return;
         }
-        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions()->HasFlag(
+        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions().HasFlag(
                                       RENDER_LIMITEDIMAGECACHE)) {
           m_pContext->GetPageCache()->CacheOptimization(
-              m_pRenderStatus->GetRenderOptions()->GetCacheSizeLimit());
+              m_pRenderStatus->GetRenderOptions().GetCacheSizeLimit());
         }
         if (pCurObj->IsForm() || pCurObj->IsShading())
           nObjsToGo = 0;

@@ -998,42 +998,15 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
 
 }  // namespace
 
-CPDF_RenderStatus::CPDF_RenderStatus() {}
+CPDF_RenderStatus::CPDF_RenderStatus(CPDF_RenderContext* pContext,
+                                     CFX_RenderDevice* pDevice)
+    : m_pContext(pContext), m_pDevice(pDevice) {}
 
 CPDF_RenderStatus::~CPDF_RenderStatus() {}
 
-bool CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
-                                   CFX_RenderDevice* pDevice,
-                                   const CFX_Matrix* pDeviceMatrix,
-                                   const CPDF_PageObject* pStopObj,
-                                   const CPDF_RenderStatus* pParentState,
-                                   const CPDF_GraphicStates* pInitialStates,
-                                   const CPDF_RenderOptions* pOptions,
-                                   const CPDF_Transparency& transparency,
-                                   bool bDropObjects,
-                                   const CPDF_Dictionary* pFormResource,
-                                   bool bStdCS,
-                                   CPDF_Type3Char* pType3Char,
-                                   FX_ARGB fill_color,
-                                   uint32_t GroupFamily,
-                                   bool bLoadMask) {
-  m_pContext = pContext;
-  m_pDevice = pDevice;
+void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentState,
+                                   const CPDF_GraphicStates* pInitialStates) {
   m_bPrint = m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
-  if (pDeviceMatrix) {
-    m_DeviceMatrix = *pDeviceMatrix;
-  }
-  m_pStopObj = pStopObj;
-  if (pOptions) {
-    m_Options = *pOptions;
-  }
-  m_bDropObjects = bDropObjects;
-  m_bStdCS = bStdCS;
-  m_T3FillColor = fill_color;
-  m_pType3Char = pType3Char;
-  m_GroupFamily = GroupFamily;
-  m_bLoadMask = bLoadMask;
-  m_pFormResource = pFormResource;
   m_pPageResource = m_pContext->GetPageResources();
   if (pInitialStates && !m_pType3Char) {
     m_InitialStates.CopyStates(*pInitialStates);
@@ -1054,9 +1027,6 @@ bool CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
   } else {
     m_InitialStates.DefaultStates();
   }
-  m_pImageRenderer.reset();
-  m_Transparency = transparency;
-  return true;
 }
 
 void CPDF_RenderStatus::RenderObjectList(
@@ -1230,10 +1200,13 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
     if (pFormDict)
       pFormResource = pFormDict->GetDictFor("Resources");
   }
-  CPDF_RenderStatus status;
-  status.Initialize(m_pContext.Get(), buffer.GetDevice(), buffer.GetMatrix(),
-                    nullptr, nullptr, nullptr, &m_Options, m_Transparency,
-                    m_bDropObjects, pFormResource);
+  CPDF_RenderStatus status(m_pContext.Get(), buffer.GetDevice());
+  status.SetOptions(m_Options);
+  status.SetDeviceMatrix(*buffer.GetMatrix());
+  status.SetTransparency(m_Transparency);
+  status.SetDropObjects(m_bDropObjects);
+  status.SetFormResource(pFormResource);
+  status.Initialize(nullptr, nullptr);
   status.RenderSingleObject(pObj, &matrix);
   buffer.OutputToDevice();
 }
@@ -1253,10 +1226,13 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   const CPDF_Dictionary* pFormDict = pFormObj->form()->GetDict();
   const CPDF_Dictionary* pResources =
       pFormDict ? pFormDict->GetDictFor("Resources") : nullptr;
-  CPDF_RenderStatus status;
-  status.Initialize(m_pContext.Get(), m_pDevice, nullptr, m_pStopObj, this,
-                    pFormObj, &m_Options, m_Transparency, m_bDropObjects,
-                    pResources, false);
+  CPDF_RenderStatus status(m_pContext.Get(), m_pDevice);
+  status.SetOptions(m_Options);
+  status.SetStopObject(m_pStopObj);
+  status.SetTransparency(m_Transparency);
+  status.SetDropObjects(m_bDropObjects);
+  status.SetFormResource(pResources);
+  status.Initialize(this, pFormObj);
   status.m_curBlend = m_curBlend;
   {
     CFX_RenderDevice::StateRestorer restorer(m_pDevice);
@@ -1590,10 +1566,13 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
           (FX_ARGB)-1, 0, nullptr, 0);
     }
   }
-  CPDF_RenderStatus bitmap_render;
-  bitmap_render.Initialize(
-      m_pContext.Get(), &bitmap_device, nullptr, m_pStopObj, nullptr, nullptr,
-      &m_Options, CPDF_Transparency(), m_bDropObjects, pFormResource, true);
+  CPDF_RenderStatus bitmap_render(m_pContext.Get(), &bitmap_device);
+  bitmap_render.SetOptions(m_Options);
+  bitmap_render.SetStopObject(m_pStopObj);
+  bitmap_render.SetStdCS(true);
+  bitmap_render.SetDropObjects(m_bDropObjects);
+  bitmap_render.SetFormResource(pFormResource);
+  bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
 #if defined _SKIA_SUPPORT_PATHS_
   bitmap_device.Flush(true);
@@ -1880,11 +1859,14 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         pFormResource = pType3Char->form()->GetDict()->GetDictFor("Resources");
       }
       if (fill_alpha == 255) {
-        CPDF_RenderStatus status;
-        status.Initialize(m_pContext.Get(), m_pDevice, nullptr, nullptr, this,
-                          pStates.get(), &options,
-                          pType3Char->form()->GetTransparency(), m_bDropObjects,
-                          pFormResource, false, pType3Char, fill_argb);
+        CPDF_RenderStatus status(m_pContext.Get(), m_pDevice);
+        status.SetOptions(options);
+        status.SetTransparency(pType3Char->form()->GetTransparency());
+        status.SetType3Char(pType3Char);
+        status.SetFillColor(fill_argb);
+        status.SetDropObjects(m_bDropObjects);
+        status.SetFormResource(pFormResource);
+        status.Initialize(this, pStates.get());
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
 
@@ -1900,11 +1882,14 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
           return true;
         }
         bitmap_device.GetBitmap()->Clear(0);
-        CPDF_RenderStatus status;
-        status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr,
-                          this, pStates.get(), &options,
-                          pType3Char->form()->GetTransparency(), m_bDropObjects,
-                          pFormResource, false, pType3Char, fill_argb);
+        CPDF_RenderStatus status(m_pContext.Get(), &bitmap_device);
+        status.SetOptions(options);
+        status.SetTransparency(pType3Char->form()->GetTransparency());
+        status.SetType3Char(pType3Char);
+        status.SetFillColor(fill_argb);
+        status.SetDropObjects(m_bDropObjects);
+        status.SetFormResource(pFormResource);
+        status.Initialize(this, pStates.get());
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
         matrix.Translate(-rect.left, -rect.top);
@@ -2244,11 +2229,12 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         matrix.Translate(original.x - mtPattern2Device.e,
                          original.y - mtPattern2Device.f);
         CFX_RenderDevice::StateRestorer restorer2(m_pDevice);
-        CPDF_RenderStatus status;
-        status.Initialize(m_pContext.Get(), m_pDevice, nullptr, nullptr, this,
-                          pStates.get(), &m_Options,
-                          pPattern->form()->GetTransparency(), m_bDropObjects,
-                          pFormResource);
+        CPDF_RenderStatus status(m_pContext.Get(), m_pDevice);
+        status.SetOptions(m_Options);
+        status.SetTransparency(pPattern->form()->GetTransparency());
+        status.SetFormResource(pFormResource);
+        status.SetDropObjects(m_bDropObjects);
+        status.Initialize(this, pStates.get());
         status.RenderObjectList(pPattern->form(), &matrix);
       }
     }
@@ -2570,10 +2556,14 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   CPDF_RenderOptions options;
   options.SetColorMode(bLuminosity ? CPDF_RenderOptions::kNormal
                                    : CPDF_RenderOptions::kAlpha);
-  CPDF_RenderStatus status;
-  status.Initialize(m_pContext.Get(), &bitmap_device, nullptr, nullptr, nullptr,
-                    nullptr, &options, CPDF_Transparency(), m_bDropObjects,
-                    pFormResource, true, nullptr, 0, nCSFamily, bLuminosity);
+  CPDF_RenderStatus status(m_pContext.Get(), &bitmap_device);
+  status.SetOptions(options);
+  status.SetGroupFamily(nCSFamily);
+  status.SetLoadMask(bLuminosity);
+  status.SetStdCS(true);
+  status.SetFormResource(pFormResource);
+  status.SetDropObjects(m_bDropObjects);
+  status.Initialize(nullptr, nullptr);
   status.RenderObjectList(&form, &matrix);
 
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
