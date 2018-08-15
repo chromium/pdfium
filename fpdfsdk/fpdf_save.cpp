@@ -120,7 +120,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   // L"datasets"
   {
     RetainPtr<IFX_SeekableStream> pDsfileWrite =
-        pdfium::MakeRetain<CFX_MemoryStream>(false);
+        pdfium::MakeRetain<CFX_MemoryStream>();
     CXFA_FFDoc* ffdoc = pXFADocView->GetDoc();
     if (ffdoc->SavePackage(
             ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Datasets)),
@@ -146,7 +146,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   // L"form"
   {
     RetainPtr<IFX_SeekableStream> pfileWrite =
-        pdfium::MakeRetain<CFX_MemoryStream>(false);
+        pdfium::MakeRetain<CFX_MemoryStream>();
 
     CXFA_FFDoc* ffdoc = pXFADocView->GetDoc();
     if (ffdoc->SavePackage(
