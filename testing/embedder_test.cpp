@@ -6,13 +6,11 @@
 
 #include <limits.h>
 
-#include <fstream>
 #include <list>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "core/fdrm/crypto/fx_crypt.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -21,8 +19,8 @@
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "testing/gmock/include/gmock/gmock.h"
-#include "testing/image_diff/image_diff_png.h"
 #include "testing/test_support.h"
+#include "testing/utils/bitmap_saver.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
@@ -494,32 +492,7 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
 // static
 void EmbedderTest::WriteBitmapToPng(FPDF_BITMAP bitmap,
                                     const std::string& filename) {
-  const int stride = FPDFBitmap_GetStride(bitmap);
-  const int width = FPDFBitmap_GetWidth(bitmap);
-  const int height = FPDFBitmap_GetHeight(bitmap);
-  const auto* buffer =
-      static_cast<const unsigned char*>(FPDFBitmap_GetBuffer(bitmap));
-
-  std::vector<unsigned char> png_encoding;
-  bool encoded;
-  if (FPDFBitmap_GetFormat(bitmap) == FPDFBitmap_Gray) {
-    encoded = image_diff_png::EncodeGrayPNG(buffer, width, height, stride,
-                                            &png_encoding);
-  } else {
-    encoded = image_diff_png::EncodeBGRAPNG(buffer, width, height, stride,
-                                            /*discard_transparency=*/false,
-                                            &png_encoding);
-  }
-
-  ASSERT_TRUE(encoded);
-  ASSERT_LT(filename.size(), 256u);
-
-  std::ofstream png_file;
-  png_file.open(filename, std::ios_base::out | std::ios_base::binary);
-  png_file.write(reinterpret_cast<char*>(&png_encoding.front()),
-                 png_encoding.size());
-  ASSERT_TRUE(png_file.good());
-  png_file.close();
+  BitmapSaver::WriteBitmapToPng(bitmap, filename);
 }
 #endif
 

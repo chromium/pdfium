@@ -248,6 +248,8 @@ jumbo_static_library("test_support") {
     "testing/string_write_stream.h",
     "testing/test_support.cpp",
     "testing/test_support.h",
+    "testing/utils/bitmap_saver.cpp",
+    "testing/utils/bitmap_saver.h",
     "testing/utils/path_service.cpp",
     "testing/utils/path_service.h",
   ]
@@ -255,6 +257,7 @@ jumbo_static_library("test_support") {
     "testing/resources/",
   ]
   deps = [
+    ":image_diff",
     ":pdfium",
     "//testing/gmock",
     "//testing/gtest",
