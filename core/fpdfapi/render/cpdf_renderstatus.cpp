@@ -2325,10 +2325,12 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       } else {
         if (pPattern->colored()) {
           pScreen->CompositeBitmap(start_x, start_y, width, height,
-                                   pPatternBitmap, 0, 0);
+                                   pPatternBitmap, 0, 0, FXDIB_BLEND_NORMAL,
+                                   nullptr, false);
         } else {
           pScreen->CompositeMask(start_x, start_y, width, height,
-                                 pPatternBitmap, fill_argb, 0, 0);
+                                 pPatternBitmap, fill_argb, 0, 0,
+                                 FXDIB_BLEND_NORMAL, nullptr, false, 0);
         }
       }
     }
@@ -2447,15 +2449,18 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 
       RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
       pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                              pForeBitmap, rect.left, rect.top);
+                              pForeBitmap, rect.left, rect.top,
+                              FXDIB_BLEND_NORMAL, nullptr, false);
       left = std::min(left, 0);
       top = std::min(top, 0);
       if (pDIBitmap->IsAlphaMask()) {
         pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                              pDIBitmap, mask_argb, left, top, blend_mode);
+                              pDIBitmap, mask_argb, left, top, blend_mode,
+                              nullptr, false, 0);
       } else {
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                                pDIBitmap, left, top, blend_mode);
+                                pDIBitmap, left, top, blend_mode, nullptr,
+                                false);
       }
     } else {
       pClone = pDIBitmap;
@@ -2483,11 +2488,12 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   if (pDIBitmap->IsAlphaMask()) {
     pBackdrop->CompositeMask(left - back_left, top - back_top,
                              pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
-                             pDIBitmap, mask_argb, 0, 0, blend_mode);
+                             pDIBitmap, mask_argb, 0, 0, blend_mode, nullptr,
+                             false, 0);
   } else {
     pBackdrop->CompositeBitmap(left - back_left, top - back_top,
                                pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
-                               pDIBitmap, 0, 0, blend_mode);
+                               pDIBitmap, 0, 0, blend_mode, nullptr, false);
   }
 
   auto pBackdrop1 = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -2495,7 +2501,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
                      FXDIB_Rgb32);
   pBackdrop1->Clear((uint32_t)-1);
   pBackdrop1->CompositeBitmap(0, 0, pBackdrop->GetWidth(),
-                              pBackdrop->GetHeight(), pBackdrop, 0, 0);
+                              pBackdrop->GetHeight(), pBackdrop, 0, 0,
+                              FXDIB_BLEND_NORMAL, nullptr, false);
   pBackdrop = std::move(pBackdrop1);
   m_pDevice->SetDIBits(pBackdrop, back_left, back_top);
 }

@@ -1469,7 +1469,7 @@ bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       return true;
 
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
-                           m_pBitmap, 0, 0);
+                           m_pBitmap, 0, 0, FXDIB_BLEND_NORMAL, nullptr, false);
   } else {
     pBack = m_pBitmap->Clone(&rect);
     if (!pBack)

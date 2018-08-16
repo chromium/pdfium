@@ -434,7 +434,7 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
     return -1;
 
   int start_index = 0;
-  int found_index = FindPageIndex(pPages, &skip_count, objnum, &start_index);
+  int found_index = FindPageIndex(pPages, &skip_count, objnum, &start_index, 0);
 
   // Corrupt page tree may yield out-of-range results.
   if (!pdfium::IndexInBounds(m_PageList, found_index))

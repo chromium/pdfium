@@ -16,7 +16,7 @@ CFX_DIBExtractor::CFX_DIBExtractor(const RetainPtr<CFX_DIBSource>& pSrc) {
   RetainPtr<CFX_DIBSource> pOldSrc(pSrc);
   m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!m_pBitmap->Create(pOldSrc->GetWidth(), pOldSrc->GetHeight(),
-                         pOldSrc->GetFormat(), pOldSrc->GetBuffer())) {
+                         pOldSrc->GetFormat(), pOldSrc->GetBuffer(), 0)) {
     m_pBitmap.Reset();
     return;
   }

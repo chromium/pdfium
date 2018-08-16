@@ -133,7 +133,7 @@ class CPDF_Document : public Observable<CPDF_Document>,
                     uint32_t* skip_count,
                     uint32_t objnum,
                     int* index,
-                    int level = 0) const;
+                    int level) const;
   std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
   void LoadDocInternal();
   size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);

@@ -18,11 +18,13 @@ class CFX_DIBitmap : public CFX_DIBSource {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  bool Create(int width, int height, FXDIB_Format format);
+
   bool Create(int width,
               int height,
               FXDIB_Format format,
-              uint8_t* pBuffer = nullptr,
-              uint32_t pitch = 0);
+              uint8_t* pBuffer,
+              uint32_t pitch);
 
   bool Copy(const RetainPtr<CFX_DIBSource>& pSrc);
 
@@ -67,9 +69,9 @@ class CFX_DIBitmap : public CFX_DIBSource {
                        const RetainPtr<CFX_DIBSource>& pSrcBitmap,
                        int src_left,
                        int src_top,
-                       int blend_type = FXDIB_BLEND_NORMAL,
-                       const CFX_ClipRgn* pClipRgn = nullptr,
-                       bool bRgbByteOrder = false);
+                       int blend_type,
+                       const CFX_ClipRgn* pClipRgn,
+                       bool bRgbByteOrder);
 
   bool CompositeMask(int dest_left,
                      int dest_top,
@@ -79,10 +81,10 @@ class CFX_DIBitmap : public CFX_DIBSource {
                      uint32_t color,
                      int src_left,
                      int src_top,
-                     int blend_type = FXDIB_BLEND_NORMAL,
-                     const CFX_ClipRgn* pClipRgn = nullptr,
-                     bool bRgbByteOrder = false,
-                     int alpha_flag = 0);
+                     int blend_type,
+                     const CFX_ClipRgn* pClipRgn,
+                     bool bRgbByteOrder,
+                     int alpha_flag);
 
   bool CompositeRect(int dest_left,
                      int dest_top,

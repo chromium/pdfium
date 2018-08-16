@@ -30,6 +30,10 @@ CFX_DIBitmap::CFX_DIBitmap() {
 #endif
 }
 
+bool CFX_DIBitmap::Create(int width, int height, FXDIB_Format format) {
+  return Create(width, height, format, nullptr, 0);
+}
+
 bool CFX_DIBitmap::Create(int width,
                           int height,
                           FXDIB_Format format,

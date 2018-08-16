@@ -187,7 +187,7 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
 }
 
 CFX_WindowsDIB::CFX_WindowsDIB(HDC hDC, int width, int height) {
-  Create(width, height, FXDIB_Rgb, (uint8_t*)1);
+  Create(width, height, FXDIB_Rgb, (uint8_t*)1, 0);
   BITMAPINFOHEADER bmih;
   memset(&bmih, 0, sizeof bmih);
   bmih.biSize = sizeof bmih;
