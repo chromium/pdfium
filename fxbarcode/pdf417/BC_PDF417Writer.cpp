@@ -55,7 +55,7 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
   int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
   int32_t row = m_Height / (m_ModuleWidth * 20);
   if (row >= 3 && row <= 90 && col >= 1 && col <= 30)
-    encoder.setDimensions(col, col, row, row);
+    encoder.setDimensions(col, 1, row, 3);
   else if (col >= 1 && col <= 30)
     encoder.setDimensions(col, col, 90, 3);
   else if (row >= 3 && row <= 90)
