@@ -63,15 +63,13 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
   if (!encoder.generateBarcodeLogic(contents, m_iCorrectLevel))
     return nullptr;
 
-  int32_t lineThickness = 2;
-  int32_t aspectRatio = 4;
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
-  std::vector<uint8_t> originalScale = barcodeMatrix->getScaledMatrix(
-      lineThickness, aspectRatio * lineThickness);
+  std::vector<uint8_t> originalScale = barcodeMatrix->getMatrix();
   int32_t width = outWidth;
   int32_t height = outHeight;
   outWidth = barcodeMatrix->getWidth();
   outHeight = barcodeMatrix->getHeight();
+
   bool rotated = false;
   if ((height > width) ^ (outWidth < outHeight)) {
     rotateArray(originalScale, outHeight, outWidth);
@@ -84,8 +82,7 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
   int32_t scaleY = height / outHeight;
   int32_t scale = std::min(scaleX, scaleY);
   if (scale > 1) {
-    originalScale = barcodeMatrix->getScaledMatrix(
-        scale * lineThickness, scale * aspectRatio * lineThickness);
+    originalScale = barcodeMatrix->getScaledMatrix(scale);
     if (rotated) {
       rotateArray(originalScale, outHeight, outWidth);
       int32_t temp = outHeight;
