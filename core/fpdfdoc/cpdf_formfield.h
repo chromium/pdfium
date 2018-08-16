@@ -12,11 +12,12 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_aaction.h"
-#include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/stl_util.h"
+
+enum class NotificationOption { kDoNotNotify = 0, kNotify };
 
 enum class FormFieldType : uint8_t {
   kUnknown = 0,
@@ -111,7 +112,7 @@ class CPDF_FormField {
   CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
   void SetFieldDict(CPDF_Dictionary* pDict) { m_pDict = pDict; }
 
-  bool ResetField(bool bNotify);
+  bool ResetField(NotificationOption notify);
 
   int CountControls() const {
     return pdfium::CollectionSize<int>(m_ControlList);
@@ -133,15 +134,15 @@ class CPDF_FormField {
 
   WideString GetValue() const;
   WideString GetDefaultValue() const;
-  bool SetValue(const WideString& value, bool bNotify = false);
+  bool SetValue(const WideString& value, NotificationOption notify);
 
   int GetMaxLen() const;
   int CountSelectedItems() const;
   int GetSelectedIndex(int index) const;
 
-  bool ClearSelection(bool bNotify = false);
+  bool ClearSelection(NotificationOption notify);
   bool IsItemSelected(int index) const;
-  bool SetItemSelection(int index, bool bSelected, bool bNotify = false);
+  bool SetItemSelection(int index, bool bSelected, NotificationOption notify);
 
   bool IsItemDefaultSelected(int index) const;
 
@@ -154,15 +155,17 @@ class CPDF_FormField {
   int FindOption(WideString csOptLabel) const;
   int FindOptionValue(const WideString& csOptValue) const;
 
-  bool CheckControl(int iControlIndex, bool bChecked, bool bNotify = false);
+  bool CheckControl(int iControlIndex,
+                    bool bChecked,
+                    NotificationOption notify);
 
   int GetTopVisibleIndex() const;
   int CountSelectedOptions() const;
 
   int GetSelectedOptionIndex(int index) const;
   bool IsOptionSelected(int iOptIndex) const;
-  bool SelectOption(int iOptIndex, bool bSelected, bool bNotify = false);
-  bool ClearSelectedOptions(bool bNotify);
+  bool SelectOption(int iOptIndex, bool bSelected, NotificationOption notify);
+  bool ClearSelectedOptions(NotificationOption notify);
 
   float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont.Get(); }
@@ -182,21 +185,20 @@ class CPDF_FormField {
 
  private:
   WideString GetValue(bool bDefault) const;
-  bool SetValue(const WideString& value, bool bDefault, bool bNotify);
-
+  bool SetValue(const WideString& value,
+                bool bDefault,
+                NotificationOption notify);
   void SyncFieldFlags();
   int FindListSel(CPDF_String* str);
   WideString GetOptionText(int index, int sub_index) const;
-
   void LoadDA();
-  bool SetCheckValue(const WideString& value, bool bDefault, bool bNotify);
-
+  bool SetCheckValue(const WideString& value,
+                     bool bDefault,
+                     NotificationOption notify);
   bool NotifyBeforeSelectionChange(const WideString& value);
   void NotifyAfterSelectionChange();
-
   bool NotifyBeforeValueChange(const WideString& value);
   void NotifyAfterValueChange();
-
   bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 

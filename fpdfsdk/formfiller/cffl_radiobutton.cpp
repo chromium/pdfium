@@ -91,26 +91,25 @@ void CFFL_RadioButton::SaveData(CPDFSDK_PageView* pPageView) {
     return;
 
   bool bNewChecked = pWnd->IsChecked();
-
   if (bNewChecked) {
     CPDF_FormField* pField = m_pWidget->GetFormField();
     for (int32_t i = 0, sz = pField->CountControls(); i < sz; i++) {
       if (CPDF_FormControl* pCtrl = pField->GetControl(i)) {
-        if (pCtrl->IsChecked()) {
+        if (pCtrl->IsChecked())
           break;
-        }
       }
     }
   }
   CPDFSDK_Widget::ObservedPtr observed_widget(m_pWidget.Get());
   CFFL_RadioButton::ObservedPtr observed_this(this);
-
-  m_pWidget->SetCheck(bNewChecked, false);
+  m_pWidget->SetCheck(bNewChecked, NotificationOption::kDoNotNotify);
   if (!observed_widget)
     return;
+
   m_pWidget->UpdateField();
   if (!observed_widget || !observed_this)
     return;
+
   SetChangeMark();
 }
 

@@ -108,27 +108,32 @@ void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
     return;
 
   int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
-  m_pWidget->ClearSelection(false);
+  m_pWidget->ClearSelection(NotificationOption::kDoNotNotify);
   if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
-      if (pListBox->IsItemSelected(i))
-        m_pWidget->SetOptionSelection(i, true, false);
+      if (pListBox->IsItemSelected(i)) {
+        m_pWidget->SetOptionSelection(i, true,
+                                      NotificationOption::kDoNotNotify);
+      }
     }
   } else {
-    m_pWidget->SetOptionSelection(pListBox->GetCurSel(), true, false);
+    m_pWidget->SetOptionSelection(pListBox->GetCurSel(), true,
+                                  NotificationOption::kDoNotNotify);
   }
   CPDFSDK_Widget::ObservedPtr observed_widget(m_pWidget.Get());
   CFFL_ListBox::ObservedPtr observed_this(this);
-
   m_pWidget->SetTopVisibleIndex(nNewTopIndex);
   if (!observed_widget)
     return;
+
   m_pWidget->ResetFieldAppearance(true);
   if (!observed_widget)
     return;
+
   m_pWidget->UpdateField();
   if (!observed_widget || !observed_this)
     return;
+
   SetChangeMark();
 }
 

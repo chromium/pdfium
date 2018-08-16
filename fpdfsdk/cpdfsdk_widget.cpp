@@ -526,44 +526,45 @@ int CPDFSDK_Widget::GetMaxLen() const {
   return pFormField->GetMaxLen();
 }
 
-void CPDFSDK_Widget::SetCheck(bool bChecked, bool bNotify) {
+void CPDFSDK_Widget::SetCheck(bool bChecked, NotificationOption notify) {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_FormField* pFormField = pFormCtrl->GetField();
   pFormField->CheckControl(pFormField->GetControlIndex(pFormCtrl), bChecked,
-                           bNotify);
+                           notify);
 #ifdef PDF_ENABLE_XFA
   if (!IsWidgetAppearanceValid(CPDF_Annot::Normal))
     ResetAppearance(true);
-  if (!bNotify)
+  if (notify == NotificationOption::kDoNotNotify)
     Synchronize(true);
 #endif  // PDF_ENABLE_XFA
 }
 
-void CPDFSDK_Widget::SetValue(const WideString& sValue, bool bNotify) {
+void CPDFSDK_Widget::SetValue(const WideString& sValue,
+                              NotificationOption notify) {
   CPDF_FormField* pFormField = GetFormField();
-  pFormField->SetValue(sValue, bNotify);
+  pFormField->SetValue(sValue, notify);
 #ifdef PDF_ENABLE_XFA
-  if (!bNotify)
+  if (notify == NotificationOption::kDoNotNotify)
     Synchronize(true);
 #endif  // PDF_ENABLE_XFA
 }
 
 void CPDFSDK_Widget::SetOptionSelection(int index,
                                         bool bSelected,
-                                        bool bNotify) {
+                                        NotificationOption notify) {
   CPDF_FormField* pFormField = GetFormField();
-  pFormField->SetItemSelection(index, bSelected, bNotify);
+  pFormField->SetItemSelection(index, bSelected, notify);
 #ifdef PDF_ENABLE_XFA
-  if (!bNotify)
+  if (notify == NotificationOption::kDoNotNotify)
     Synchronize(true);
 #endif  // PDF_ENABLE_XFA
 }
 
-void CPDFSDK_Widget::ClearSelection(bool bNotify) {
+void CPDFSDK_Widget::ClearSelection(NotificationOption notify) {
   CPDF_FormField* pFormField = GetFormField();
-  pFormField->ClearSelection(bNotify);
+  pFormField->ClearSelection(notify);
 #ifdef PDF_ENABLE_XFA
-  if (!bNotify)
+  if (notify == NotificationOption::kDoNotNotify)
     Synchronize(true);
 #endif  // PDF_ENABLE_XFA
 }

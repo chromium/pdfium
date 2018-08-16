@@ -96,27 +96,27 @@ void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
 
   WideString swText = pWnd->GetText();
   int32_t nCurSel = pWnd->GetSelect();
-
   bool bSetValue = false;
-
   if (m_pWidget->GetFieldFlags() & FIELDFLAG_EDIT)
     bSetValue = (nCurSel < 0) || (swText != m_pWidget->GetOptionLabel(nCurSel));
 
   if (bSetValue) {
-    m_pWidget->SetValue(swText, false);
+    m_pWidget->SetValue(swText, NotificationOption::kDoNotNotify);
   } else {
     m_pWidget->GetSelectedIndex(0);
-    m_pWidget->SetOptionSelection(nCurSel, true, false);
+    m_pWidget->SetOptionSelection(nCurSel, true,
+                                  NotificationOption::kDoNotNotify);
   }
   CPDFSDK_Widget::ObservedPtr observed_widget(m_pWidget.Get());
   CFFL_ComboBox::ObservedPtr observed_this(this);
-
   m_pWidget->ResetFieldAppearance(true);
   if (!observed_widget)
     return;
+
   m_pWidget->UpdateField();
   if (!observed_widget || !observed_this)
     return;
+
   SetChangeMark();
   m_pWidget->GetPDFPage();
 }

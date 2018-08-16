@@ -13,6 +13,7 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
+#include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -23,7 +24,6 @@ class CPDF_Document;
 class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormControl;
-class CPDF_FormField;
 class CPDF_Object;
 class CPDF_Page;
 class IPDF_FormNotify;
@@ -80,10 +80,12 @@ class CPDF_InterForm {
       bool bIncludeOrExclude,
       bool bSimpleFileSpec) const;
 
+  void ResetForm(NotificationOption notify);
+
+  // TODO(tsepez): Use a span.
   void ResetForm(const std::vector<CPDF_FormField*>& fields,
                  bool bIncludeOrExclude,
-                 bool bNotify);
-  void ResetForm(bool bNotify);
+                 NotificationOption notify);
 
   void SetFormNotify(IPDF_FormNotify* pNotify);
   bool HasXFAForm() const;

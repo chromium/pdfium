@@ -465,7 +465,7 @@ CJS_Return CJS_Document::resetForm(
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
   CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
   if (params.empty()) {
-    pPDFForm->ResetForm(true);
+    pPDFForm->ResetForm(NotificationOption::kNotify);
     m_pFormFillEnv->SetChangeMark();
     return CJS_Return();
   }
@@ -487,7 +487,7 @@ CJS_Return CJS_Document::resetForm(
   }
 
   if (!aFields.empty()) {
-    pPDFForm->ResetForm(aFields, true, true);
+    pPDFForm->ResetForm(aFields, true, NotificationOption::kNotify);
     m_pFormFillEnv->SetChangeMark();
   }
 

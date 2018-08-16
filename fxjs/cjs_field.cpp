@@ -254,13 +254,14 @@ void SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       continue;
 
     uint32_t dwFieldFlags = pFormField->GetFieldFlags();
-    pFormField->ClearSelection(true);
+    pFormField->ClearSelection(NotificationOption::kNotify);
     for (size_t i = 0; i < array.size(); ++i) {
       if (i != 0 && !(dwFieldFlags & (1 << 21)))
         break;
       if (array[i] < static_cast<uint32_t>(pFormField->CountOptions()) &&
           !pFormField->IsItemSelected(array[i])) {
-        pFormField->SetItemSelection(array[i], true);
+        pFormField->SetItemSelection(array[i], true,
+                                     NotificationOption::kDoNotNotify);
       }
     }
     UpdateFormField(pFormFillEnv, pFormField, true, true, true);
@@ -427,14 +428,14 @@ void SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       case FormFieldType::kTextField:
       case FormFieldType::kComboBox:
         if (pFormField->GetValue() != strArray[0]) {
-          pFormField->SetValue(strArray[0], true);
+          pFormField->SetValue(strArray[0], NotificationOption::kNotify);
           UpdateFormField(pFormFillEnv, pFormField, true, false, true);
         }
         break;
       case FormFieldType::kCheckBox:
       case FormFieldType::kRadioButton:
         if (pFormField->GetValue() != strArray[0]) {
-          pFormField->SetValue(strArray[0], true);
+          pFormField->SetValue(strArray[0], NotificationOption::kNotify);
           UpdateFormField(pFormFillEnv, pFormField, true, false, true);
         }
         break;
@@ -447,11 +448,12 @@ void SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
           }
         }
         if (bModified) {
-          pFormField->ClearSelection(true);
+          pFormField->ClearSelection(NotificationOption::kNotify);
           for (const auto& str : strArray) {
             int index = pFormField->FindOption(str);
             if (!pFormField->IsItemSelected(index))
-              pFormField->SetItemSelection(index, true, true);
+              pFormField->SetItemSelection(index, true,
+                                           NotificationOption::kNotify);
           }
           UpdateFormField(pFormFillEnv, pFormField, true, false, true);
         }
@@ -2212,7 +2214,7 @@ CJS_Return CJS_Field::browseForFileToSubmit(
       (pFormField->GetFieldType() == FormFieldType::kTextField)) {
     WideString wsFileName = m_pFormFillEnv->JS_fieldBrowse();
     if (!wsFileName.IsEmpty()) {
-      pFormField->SetValue(wsFileName);
+      pFormField->SetValue(wsFileName, NotificationOption::kDoNotNotify);
       UpdateFormField(m_pFormFillEnv.Get(), pFormField, true, true, true);
     }
     return CJS_Return();
@@ -2323,13 +2325,13 @@ CJS_Return CJS_Field::checkThisBox(
 
   if (!IsCheckBoxOrRadioButton(pFormField))
     return CJS_Return(JSMessage::kObjectTypeError);
+
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return CJS_Return(JSMessage::kValueError);
 
   // TODO(weili): Check whether anything special needed for radio button.
   // (When pFormField->GetFieldType() == FormFieldType::kRadioButton.)
-  pFormField->CheckControl(nWidget, bCheckit, true);
-
+  pFormField->CheckControl(nWidget, bCheckit, NotificationOption::kNotify);
   UpdateFormField(m_pFormFillEnv.Get(), pFormField, true, true, true);
   return CJS_Return();
 }

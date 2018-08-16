@@ -815,7 +815,7 @@ int CPDF_InterForm::GetFormAlignment() const {
 
 void CPDF_InterForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
                                bool bIncludeOrExclude,
-                               bool bNotify) {
+                               NotificationOption notify) {
   size_t nCount = m_pFieldTree->m_Root.CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
@@ -823,22 +823,22 @@ void CPDF_InterForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
       continue;
 
     if (bIncludeOrExclude == pdfium::ContainsValue(fields, pField))
-      pField->ResetField(bNotify);
+      pField->ResetField(notify);
   }
-  if (bNotify && m_pFormNotify)
+  if (notify == NotificationOption::kNotify && m_pFormNotify)
     m_pFormNotify->AfterFormReset(this);
 }
 
-void CPDF_InterForm::ResetForm(bool bNotify) {
+void CPDF_InterForm::ResetForm(NotificationOption notify) {
   size_t nCount = m_pFieldTree->m_Root.CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
     if (!pField)
       continue;
 
-    pField->ResetField(bNotify);
+    pField->ResetField(notify);
   }
-  if (bNotify && m_pFormNotify)
+  if (notify == NotificationOption::kNotify && m_pFormNotify)
     m_pFormNotify->AfterFormReset(this);
 }
 

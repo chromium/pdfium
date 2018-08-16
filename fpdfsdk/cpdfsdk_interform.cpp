@@ -327,7 +327,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
 
     Optional<IJS_Runtime::JS_Error> err = pContext->RunScript(csJS);
     if (!err && bRC && sValue.Compare(sOldValue) != 0)
-      pField->SetValue(sValue, true);
+      pField->SetValue(sValue, NotificationOption::kNotify);
   }
 }
 
@@ -557,19 +557,17 @@ ByteString CPDFSDK_InterForm::ExportFormToFDFTextBuf() {
 
 void CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
   ASSERT(action.GetDict());
-
   const CPDF_Dictionary* pActionDict = action.GetDict();
   if (!pActionDict->KeyExist("Fields")) {
-    m_pInterForm->ResetForm(true);
+    m_pInterForm->ResetForm(NotificationOption::kNotify);
     return;
   }
-
   CPDF_ActionFields af(&action);
   uint32_t dwFlags = action.GetFlags();
-
   std::vector<const CPDF_Object*> fieldObjects = af.GetAllFields();
   std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
-  m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), true);
+  m_pInterForm->ResetForm(fields, !(dwFlags & 0x01),
+                          NotificationOption::kNotify);
 }
 
 std::vector<CPDF_FormField*> CPDFSDK_InterForm::GetFieldFromObjects(
