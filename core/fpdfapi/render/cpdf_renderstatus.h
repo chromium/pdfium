@@ -89,7 +89,14 @@ class CPDF_RenderStatus {
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(
       const CPDF_Object* pObject) const;
-  FX_ARGB GetFillArgb(CPDF_PageObject* pObj, bool bType3 = false) const;
+
+  FX_ARGB GetFillArgb(CPDF_PageObject* pObj) const {
+    return GetFillArgbInternal(pObj, false);
+  }
+  FX_ARGB GetFillArgbForType3(CPDF_PageObject* pObj) const {
+    return GetFillArgbInternal(pObj, true);
+  }
+
   void DrawTilingPattern(CPDF_TilingPattern* pPattern,
                          CPDF_PageObject* pPageObj,
                          const CFX_Matrix* pObj2Device,
@@ -107,6 +114,7 @@ class CPDF_RenderStatus {
                          const CPDF_Transparency& transparency);
 
  private:
+  FX_ARGB GetFillArgbInternal(CPDF_PageObject* pObj, bool bType3) const;
   bool ProcessTransparency(CPDF_PageObject* PageObj,
                            const CFX_Matrix* pObj2Device);
   void ProcessObjectNoClip(CPDF_PageObject* PageObj,
