@@ -26,9 +26,8 @@ class CXFA_NodeHelper {
   CXFA_Node* ResolveNodes_GetOneChild(CXFA_Node* parent,
                                       const wchar_t* pwsName,
                                       bool bIsClassName);
-  CXFA_Node* ResolveNodes_GetParent(
-      CXFA_Node* pNode,
-      XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
+  CXFA_Node* ResolveNodes_GetParent(CXFA_Node* pNode,
+                                    XFA_LOGIC_TYPE eLogicType);
 
   int32_t NodeAcc_TraverseSiblings(CXFA_Node* parent,
                                    uint32_t dNameHash,
@@ -48,10 +47,7 @@ class CXFA_NodeHelper {
                    XFA_LOGIC_TYPE eLogicType,
                    bool bIsProperty,
                    bool bIsClassIndex);
-  WideString GetNameExpression(
-      CXFA_Node* refNode,
-      bool bIsAllPath,
-      XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
+  WideString GetNameExpression(CXFA_Node* refNode, bool bIsAllPath);
   bool NodeIsTransparent(CXFA_Node* refNode);
   bool ResolveNodes_CreateNode(WideString wsName,
                                WideString wsCondition,

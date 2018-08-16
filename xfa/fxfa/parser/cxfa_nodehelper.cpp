@@ -183,7 +183,7 @@ CXFA_Node* CXFA_NodeHelper::ResolveNodes_GetParent(CXFA_Node* pNode,
   CXFA_Node* parent;
   CXFA_Node* node = pNode;
   while (true) {
-    parent = ResolveNodes_GetParent(node);
+    parent = ResolveNodes_GetParent(node, XFA_LOGIC_NoTransparent);
     if (!parent) {
       break;
     }
@@ -228,15 +228,14 @@ int32_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
 }
 
 WideString CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
-                                              bool bIsAllPath,
-                                              XFA_LOGIC_TYPE eLogicType) {
+                                              bool bIsAllPath) {
   WideString wsName;
   if (bIsAllPath) {
-    wsName = GetNameExpression(refNode, false, eLogicType);
+    wsName = GetNameExpression(refNode, false);
     CXFA_Node* parent =
         ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
     while (parent) {
-      WideString wsParent = GetNameExpression(parent, false, eLogicType);
+      WideString wsParent = GetNameExpression(parent, false);
       wsParent += L".";
       wsParent += wsName;
       wsName = std::move(wsParent);
@@ -250,13 +249,15 @@ WideString CXFA_NodeHelper::GetNameExpression(CXFA_Node* refNode,
   if (refNode->IsUnnamed() ||
       (bIsProperty && refNode->GetElementType() != XFA_Element::PageSet)) {
     ws = refNode->GetClassName();
-    return WideString::Format(L"#%ls[%d]", ws.c_str(),
-                              GetIndex(refNode, eLogicType, bIsProperty, true));
+    return WideString::Format(
+        L"#%ls[%d]", ws.c_str(),
+        GetIndex(refNode, XFA_LOGIC_Transparent, bIsProperty, true));
   }
   ws = refNode->JSObject()->GetCData(XFA_Attribute::Name);
   ws.Replace(L".", L"\\.");
-  return WideString::Format(L"%ls[%d]", ws.c_str(),
-                            GetIndex(refNode, eLogicType, bIsProperty, false));
+  return WideString::Format(
+      L"%ls[%d]", ws.c_str(),
+      GetIndex(refNode, XFA_LOGIC_Transparent, bIsProperty, false));
 }
 
 bool CXFA_NodeHelper::NodeIsTransparent(CXFA_Node* refNode) {
