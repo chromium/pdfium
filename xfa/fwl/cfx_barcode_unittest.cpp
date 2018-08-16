@@ -44,8 +44,6 @@ class BarcodeTest : public testing::Test {
     if (!barcode_)
       return false;
 
-    barcode_->SetModuleHeight(300);
-    barcode_->SetModuleWidth(420);
     barcode_->SetHeight(298);
     barcode_->SetWidth(418);
     return true;
