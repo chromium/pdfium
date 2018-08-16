@@ -562,14 +562,14 @@ std::vector<int32_t> CBC_PDF417::determineDimensions(
   }
   if (dimensions.empty()) {
     int32_t rows = calculateNumberOfRows(sourceCodeWords,
-                                         errorCorrectionCodeWords, m_minCols);
+                                         errorCorrectionCodeWords, m_maxCols);
     if (rows < m_minRows) {
       dimensions.resize(2);
-      dimensions[0] = m_minCols;
+      dimensions[0] = m_maxCols;
       dimensions[1] = m_minRows;
     } else if (rows >= 3 && rows <= 90) {
       dimensions.resize(2);
-      dimensions[0] = m_minCols;
+      dimensions[0] = m_maxCols;
       dimensions[1] = rows;
     }
   }
