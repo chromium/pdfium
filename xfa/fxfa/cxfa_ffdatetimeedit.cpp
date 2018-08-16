@@ -28,10 +28,10 @@ CFWL_DateTimePicker* CXFA_FFDateTimeEdit::GetPickerWidget() {
   return static_cast<CFWL_DateTimePicker*>(m_pNormalWidget.get());
 }
 
-CFX_RectF CXFA_FFDateTimeEdit::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
-  if (bDrawFocus)
+CFX_RectF CXFA_FFDateTimeEdit::GetBBox(uint32_t dwStatus, FocusOption focus) {
+  if (focus == kDrawFocus)
     return CFX_RectF();
-  return CXFA_FFWidget::GetBBox(dwStatus);
+  return CXFA_FFWidget::GetBBox(dwStatus, kDoNotDrawFocus);
 }
 
 bool CXFA_FFDateTimeEdit::PtInActiveRect(const CFX_PointF& point) {

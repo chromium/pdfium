@@ -285,8 +285,8 @@ void CXFA_FFWidget::ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved) {
   m_dwStatus = (m_dwStatus & ~dwRemoved) | dwAdded;
 }
 
-CFX_RectF CXFA_FFWidget::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
-  if (bDrawFocus || !m_pPageView)
+CFX_RectF CXFA_FFWidget::GetBBox(uint32_t dwStatus, FocusOption focus) {
+  if (focus == kDrawFocus || !m_pPageView)
     return CFX_RectF();
   return m_pPageView->GetPageViewRect();
 }
@@ -347,7 +347,7 @@ void CXFA_FFWidget::DrawBorderWithFlag(CXFA_Graphics* pGS,
 }
 
 void CXFA_FFWidget::InvalidateRect() {
-  CFX_RectF rtWidget = GetBBox(XFA_WidgetStatus_Focused);
+  CFX_RectF rtWidget = GetBBox(XFA_WidgetStatus_Focused, kDoNotDrawFocus);
   rtWidget.Inflate(2, 2);
   m_pDocView->InvalidateRect(m_pPageView.Get(), rtWidget);
 }

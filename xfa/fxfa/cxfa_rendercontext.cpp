@@ -26,7 +26,8 @@ CXFA_RenderContext::~CXFA_RenderContext() {}
 
 void CXFA_RenderContext::DoRender(CXFA_Graphics* gs) {
   while (m_pWidget) {
-    CFX_RectF rtWidgetBox = m_pWidget->GetBBox(XFA_WidgetStatus_Visible);
+    CFX_RectF rtWidgetBox = m_pWidget->GetBBox(XFA_WidgetStatus_Visible,
+                                               CXFA_FFWidget::kDoNotDrawFocus);
     rtWidgetBox.width += 1;
     rtWidgetBox.height += 1;
     if (rtWidgetBox.IntersectWith(m_rtClipRect))

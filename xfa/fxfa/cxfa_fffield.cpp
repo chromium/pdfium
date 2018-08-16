@@ -43,9 +43,9 @@ CXFA_FFField::CXFA_FFField(CXFA_Node* pNode) : CXFA_FFWidget(pNode) {}
 
 CXFA_FFField::~CXFA_FFField() = default;
 
-CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
-  if (!bDrawFocus)
-    return CXFA_FFWidget::GetBBox(dwStatus);
+CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, FocusOption focus) {
+  if (focus == kDoNotDrawFocus)
+    return CXFA_FFWidget::GetBBox(dwStatus, kDoNotDrawFocus);
 
   switch (m_pNode->GetFFWidgetType()) {
     case XFA_FFWidgetType::kButton:

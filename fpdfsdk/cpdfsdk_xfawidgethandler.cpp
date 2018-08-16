@@ -79,17 +79,17 @@ void CPDFSDK_XFAWidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
 
 CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                     CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot);
-
   CXFA_Node* node = pAnnot->GetXFAWidget()->GetNode();
   ASSERT(node->IsWidgetReady());
 
   CFX_RectF rcBBox;
-  if (node->GetFFWidgetType() == XFA_FFWidgetType::kSignature)
-    rcBBox = pAnnot->GetXFAWidget()->GetBBox(XFA_WidgetStatus_Visible, true);
-  else
-    rcBBox = pAnnot->GetXFAWidget()->GetBBox(XFA_WidgetStatus_None);
-
+  if (node->GetFFWidgetType() == XFA_FFWidgetType::kSignature) {
+    rcBBox = pAnnot->GetXFAWidget()->GetBBox(XFA_WidgetStatus_Visible,
+                                             CXFA_FFWidget::kDrawFocus);
+  } else {
+    rcBBox = pAnnot->GetXFAWidget()->GetBBox(XFA_WidgetStatus_None,
+                                             CXFA_FFWidget::kDoNotDrawFocus);
+  }
   CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                          rcBBox.top + rcBBox.height);
   rcWidget.left -= 1.0f;

@@ -25,7 +25,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   ~CXFA_FFField() override;
 
   // CXFA_FFWidget
-  CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false) override;
+  CFX_RectF GetBBox(uint32_t dwStatus, FocusOption focus) override;
   void RenderWidget(CXFA_Graphics* pGS,
                     const CFX_Matrix& matrix,
                     uint32_t dwStatus) override;

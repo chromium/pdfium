@@ -84,10 +84,12 @@ enum class XFA_FFWidgetType {
 
 class CXFA_FFWidget : public CXFA_ContentLayoutItem {
  public:
+  enum FocusOption { kDoNotDrawFocus = 0, kDrawFocus };
+
   explicit CXFA_FFWidget(CXFA_Node* pNode);
   ~CXFA_FFWidget() override;
 
-  virtual CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false);
+  virtual CFX_RectF GetBBox(uint32_t dwStatus, FocusOption focus);
   virtual void RenderWidget(CXFA_Graphics* pGS,
                             const CFX_Matrix& matrix,
                             uint32_t dwStatus);
