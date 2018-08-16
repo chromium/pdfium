@@ -80,8 +80,8 @@ CFX_FloatRect CPWL_Edit::GetClientRect() const {
   return rcClient;
 }
 
-void CPWL_Edit::SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat, bool bPaint) {
-  m_pEdit->SetAlignmentV((int32_t)nFormat, bPaint);
+void CPWL_Edit::SetAlignFormatVerticalCenter() {
+  m_pEdit->SetAlignmentV(static_cast<int32_t>(PEAV_CENTER), true);
 }
 
 bool CPWL_Edit::CanSelectAll() const {

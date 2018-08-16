@@ -79,7 +79,7 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
   if (nMaxLen > 0) {
     if (pWnd->HasFlag(PES_CHARARRAY)) {
       pWnd->SetCharArray(nMaxLen);
-      pWnd->SetAlignFormatV(PEAV_CENTER);
+      pWnd->SetAlignFormatVerticalCenter();
     } else {
       pWnd->SetLimitChar(nMaxLen);
     }

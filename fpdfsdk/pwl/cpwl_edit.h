@@ -65,12 +65,9 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void OnSetFocus() override;
   void OnKillFocus() override;
 
-  void SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat = PEAV_TOP,
-                       bool bPaint = true);  // 0:top 1:bottom 2:center
-
+  void SetAlignFormatVerticalCenter();
   void SetCharArray(int32_t nCharArray);
   void SetLimitChar(int32_t nLimitChar);
-
   void SetCharSpace(float fCharSpace);
 
   bool CanSelectAll() const;
