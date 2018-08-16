@@ -71,7 +71,7 @@ int32_t CXFA_FFDocView::StartLayout() {
   m_pDoc->GetXFADoc()->DoDataMerge();
   m_pXFADocLayout = GetXFALayout();
 
-  int32_t iStatus = m_pXFADocLayout->StartLayout();
+  int32_t iStatus = m_pXFADocLayout->StartLayout(false);
   if (iStatus < 0)
     return iStatus;
 
@@ -446,7 +446,7 @@ bool CXFA_FFDocView::RunLayout() {
   LockUpdate();
   m_bInLayoutStatus = true;
   if (!m_pXFADocLayout->IncrementLayout() &&
-      m_pXFADocLayout->StartLayout() < 100) {
+      m_pXFADocLayout->StartLayout(false) < 100) {
     m_pXFADocLayout->DoLayout();
     UnlockUpdate();
     m_bInLayoutStatus = false;

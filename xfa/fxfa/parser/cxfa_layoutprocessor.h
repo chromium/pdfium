@@ -26,7 +26,7 @@ class CXFA_LayoutProcessor {
   ~CXFA_LayoutProcessor();
 
   CXFA_Document* GetDocument() const;
-  int32_t StartLayout(bool bForceRestart = false);
+  int32_t StartLayout(bool bForceRestart);
   int32_t DoLayout();
   bool IncrementLayout();
   int32_t CountPages() const;

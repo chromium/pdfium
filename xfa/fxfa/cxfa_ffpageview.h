@@ -95,9 +95,9 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
   void OrderContainer(CXFA_LayoutItemIterator* sIterator,
                       CXFA_LayoutItem* pContainerItem,
                       CXFA_TabParam* pContainer,
-                      bool& bCurrentItem,
-                      bool& bContentArea,
-                      bool bMarsterPage = false);
+                      bool* bCurrentItem,
+                      bool* bContentArea,
+                      bool bMasterPage);
 
   std::vector<UnownedPtr<CXFA_FFWidget>> m_TabOrderWidgetArray;
   UnownedPtr<CXFA_FFPageView> m_pPageView;
