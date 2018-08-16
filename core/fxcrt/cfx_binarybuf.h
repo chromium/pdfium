@@ -24,7 +24,8 @@ class CFX_BinaryBuf {
   bool IsEmpty() const { return GetLength() == 0; }
 
   void Clear();
-  void EstimateSize(size_t size, size_t alloc_step = 0);
+  void SetAllocStep(size_t step) { m_AllocStep = step; }
+  void EstimateSize(size_t size);
   void AppendBlock(const void* pBuf, size_t size);
   void AppendString(const ByteString& str) {
     AppendBlock(str.c_str(), str.GetLength());
@@ -43,9 +44,9 @@ class CFX_BinaryBuf {
  protected:
   void ExpandBuf(size_t size);
 
-  size_t m_AllocStep;
-  size_t m_AllocSize;
-  size_t m_DataSize;
+  size_t m_AllocStep = 0;
+  size_t m_AllocSize = 0;
+  size_t m_DataSize = 0;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
 };
 

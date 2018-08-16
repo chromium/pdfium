@@ -759,7 +759,7 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
   m_RefLine.resize(m_Pitch);
   memset(m_RefLine.data(), 0xff, m_Pitch);
   m_pLineBuf = FX_Alloc2D(uint8_t, m_Pitch, 8);
-  m_DestBuf.EstimateSize(0, 10240);
+  m_DestBuf.SetAllocStep(10240);
 }
 
 CCodec_FaxEncoder::~CCodec_FaxEncoder() {

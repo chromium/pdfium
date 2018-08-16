@@ -217,7 +217,7 @@ PAGECHAR_INFO::~PAGECHAR_INFO() {}
 
 CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags)
     : m_pPage(pPage), m_parserflag(flags) {
-  m_TextBuf.EstimateSize(0, 10240);
+  m_TextBuf.SetAllocStep(10240);
   const FX_RECT rect(0, 0, static_cast<int>(pPage->GetPageWidth()),
                      static_cast<int>(pPage->GetPageHeight()));
   m_DisplayMatrix = pPage->GetDisplayMatrix(rect, 0);
