@@ -9,8 +9,6 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/android/cfpf_skiabufferfont.h"
-#include "core/fxge/android/cfpf_skiafilefont.h"
 #include "core/fxge/android/cfpf_skiafontdescriptor.h"
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
@@ -191,17 +189,6 @@ bool CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr* pFontMgr,
     case FPF_SKIAFONTTYPE_Path: {
       CFPF_SkiaPathFont* pFont = (CFPF_SkiaPathFont*)pFontDes;
       m_Face = pFontMgr->GetFontFace(pFont->m_pPath, pFont->m_iFaceIndex);
-      break;
-    }
-    case FPF_SKIAFONTTYPE_File: {
-      CFPF_SkiaFileFont* pFont = (CFPF_SkiaFileFont*)pFontDes;
-      m_Face = pFontMgr->GetFontFace(pFont->m_pFile, pFont->m_iFaceIndex);
-      break;
-    }
-    case FPF_SKIAFONTTYPE_Buffer: {
-      CFPF_SkiaBufferFont* pFont = (CFPF_SkiaBufferFont*)pFontDes;
-      m_Face = pFontMgr->GetFontFace((const uint8_t*)pFont->m_pBuffer,
-                                     pFont->m_szBuffer, pFont->m_iFaceIndex);
       break;
     }
     default:

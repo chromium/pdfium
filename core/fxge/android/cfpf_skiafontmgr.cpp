@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/android/cfpf_skiafont.h"
 #include "core/fxge/android/cfpf_skiafontdescriptor.h"
@@ -23,28 +24,6 @@
 #include "core/fxge/fx_freetype.h"
 
 namespace {
-
-unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
-                                  unsigned long offset,
-                                  unsigned char* buffer,
-                                  unsigned long count) {
-  if (count == 0)
-    return 0;
-
-  IFX_SeekableReadStream* pFileRead =
-      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-  if (!pFileRead)
-    return 0;
-
-  if (!pFileRead->ReadBlock(buffer, static_cast<FX_FILESIZE>(offset),
-                            static_cast<size_t>(count))) {
-    return 0;
-  }
-
-  return count;
-}
-
-void FPF_SkiaStream_Close(FXFT_Stream stream) {}
 
 struct FPF_SKIAFONTMAP {
   uint32_t dwFamily;
@@ -356,31 +335,6 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
   return nullptr;
 }
 
-FXFT_Face CFPF_SkiaFontMgr::GetFontFace(
-    const RetainPtr<IFX_SeekableReadStream>& pFileRead,
-    int32_t iFaceIndex) {
-  if (!pFileRead)
-    return nullptr;
-  if (pFileRead->GetSize() == 0)
-    return nullptr;
-  if (iFaceIndex < 0)
-    return nullptr;
-  FXFT_StreamRec streamRec;
-  memset(&streamRec, 0, sizeof(FXFT_StreamRec));
-  streamRec.size = pFileRead->GetSize();
-  streamRec.descriptor.pointer = static_cast<void*>(pFileRead.Get());
-  streamRec.read = FPF_SkiaStream_Read;
-  streamRec.close = FPF_SkiaStream_Close;
-  FXFT_Open_Args args;
-  args.flags = FT_OPEN_STREAM;
-  args.stream = &streamRec;
-  FXFT_Face face;
-  if (FXFT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face))
-    return nullptr;
-  FXFT_Set_Pixel_Sizes(face, 0, 64);
-  return face;
-}
-
 FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const ByteStringView& bsFile,
                                         int32_t iFaceIndex) {
   if (bsFile.IsEmpty())
@@ -390,24 +344,6 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const ByteStringView& bsFile,
   FXFT_Open_Args args;
   args.flags = FT_OPEN_PATHNAME;
   args.pathname = const_cast<FT_String*>(bsFile.unterminated_c_str());
-  FXFT_Face face;
-  if (FXFT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face))
-    return nullptr;
-  FXFT_Set_Pixel_Sizes(face, 0, 64);
-  return face;
-}
-
-FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const uint8_t* pBuffer,
-                                        size_t szBuffer,
-                                        int32_t iFaceIndex) {
-  if (!pBuffer || szBuffer < 1)
-    return nullptr;
-  if (iFaceIndex < 0)
-    return nullptr;
-  FXFT_Open_Args args;
-  args.flags = FT_OPEN_MEMORY;
-  args.memory_base = pBuffer;
-  args.memory_size = szBuffer;
   FXFT_Face face;
   if (FXFT_Open_Face(m_FTLibrary, &args, iFaceIndex, &face))
     return nullptr;

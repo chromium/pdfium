@@ -10,7 +10,6 @@
 #include <map>
 #include <vector>
 
-#include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_font.h"
 
@@ -31,12 +30,7 @@ class CFPF_SkiaFontMgr {
                             uint32_t dwMatch);
 
   bool InitFTLibrary();
-  FXFT_Face GetFontFace(const RetainPtr<IFX_SeekableReadStream>& pFileRead,
-                        int32_t iFaceIndex);
   FXFT_Face GetFontFace(const ByteStringView& bsFile, int32_t iFaceIndex);
-  FXFT_Face GetFontFace(const uint8_t* pBuffer,
-                        size_t szBuffer,
-                        int32_t iFaceIndex);
 
  private:
   void ScanPath(const ByteString& path);

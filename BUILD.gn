@@ -1000,12 +1000,8 @@ jumbo_static_library("fxcrt") {
 
 jumbo_static_library("fxge") {
   sources = [
-    "core/fxge/android/cfpf_skiabufferfont.cpp",
-    "core/fxge/android/cfpf_skiabufferfont.h",
     "core/fxge/android/cfpf_skiadevicemodule.cpp",
     "core/fxge/android/cfpf_skiadevicemodule.h",
-    "core/fxge/android/cfpf_skiafilefont.cpp",
-    "core/fxge/android/cfpf_skiafilefont.h",
     "core/fxge/android/cfpf_skiafont.cpp",
     "core/fxge/android/cfpf_skiafont.h",
     "core/fxge/android/cfpf_skiafontdescriptor.cpp",
