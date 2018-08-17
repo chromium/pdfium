@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_text.h"
 #include "public/fpdf_transformpage.h"
@@ -507,6 +508,88 @@ TEST_F(FPDFTextEmbeddertest, GetFontSize) {
   ASSERT_EQ(FX_ArraySize(kExpectedFontsSizes), static_cast<size_t>(count));
   for (int i = 0; i < count; ++i)
     EXPECT_EQ(kExpectedFontsSizes[i], FPDFText_GetFontSize(textpage, i)) << i;
+
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbeddertest, GetFontInfo) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  ASSERT_TRUE(textpage);
+  std::vector<char> font_name;
+  size_t num_chars1 = strlen("Hello, world!");
+  const char kExpectedFontName1[] = "Times-Roman";
+
+  for (size_t i = 0; i < num_chars1; i++) {
+    int flags = -1;
+    unsigned long length =
+        FPDFText_GetFontInfo(textpage, i, nullptr, 0, &flags);
+    static constexpr unsigned long expected_length = sizeof(kExpectedFontName1);
+    ASSERT_EQ(expected_length, length);
+    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+    font_name.resize(length);
+    std::fill(font_name.begin(), font_name.end(), 'a');
+    flags = -1;
+    EXPECT_EQ(expected_length,
+              FPDFText_GetFontInfo(textpage, i, font_name.data(),
+                                   font_name.size(), &flags));
+    EXPECT_STREQ(kExpectedFontName1, font_name.data());
+    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+  }
+  // If the size of the buffer is not large enough, the buffer should remain
+  // unchanged.
+  font_name.pop_back();
+  std::fill(font_name.begin(), font_name.end(), 'a');
+  EXPECT_EQ(sizeof(kExpectedFontName1),
+            FPDFText_GetFontInfo(textpage, 0, font_name.data(),
+                                 font_name.size(), nullptr));
+  for (char a : font_name)
+    EXPECT_EQ('a', a);
+
+  // The text is "Hello, world!\r\nGoodbye, world!", so the next two characters
+  // do not have any font information.
+  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, num_chars1, font_name.data(),
+                                     font_name.size(), nullptr));
+  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, num_chars1 + 1, font_name.data(),
+                                     font_name.size(), nullptr));
+
+  size_t num_chars2 = strlen("Goodbye, world!");
+  const char kExpectedFontName2[] = "Helvetica";
+  for (size_t i = num_chars1 + 2; i < num_chars1 + num_chars2 + 2; i++) {
+    int flags = -1;
+    unsigned long length =
+        FPDFText_GetFontInfo(textpage, i, nullptr, 0, &flags);
+    static constexpr unsigned long expected_length = sizeof(kExpectedFontName2);
+    ASSERT_EQ(expected_length, length);
+    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+    font_name.resize(length);
+    std::fill(font_name.begin(), font_name.end(), 'a');
+    flags = -1;
+    EXPECT_EQ(expected_length,
+              FPDFText_GetFontInfo(textpage, i, font_name.data(),
+                                   font_name.size(), &flags));
+    EXPECT_STREQ(kExpectedFontName2, font_name.data());
+    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+  }
+
+  // Now try some out of bounds indices and null pointers to make sure we do not
+  // crash.
+  // No textpage.
+  EXPECT_EQ(0u, FPDFText_GetFontInfo(nullptr, 0, font_name.data(),
+                                     font_name.size(), nullptr));
+  // No buffer.
+  EXPECT_EQ(sizeof(kExpectedFontName1),
+            FPDFText_GetFontInfo(textpage, 0, nullptr, 0, nullptr));
+  // Negative index.
+  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, -1, font_name.data(),
+                                     font_name.size(), nullptr));
+  // Out of bounds index.
+  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, 1000, font_name.data(),
+                                     font_name.size(), nullptr));
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);

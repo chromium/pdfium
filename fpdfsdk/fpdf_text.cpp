@@ -10,7 +10,9 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
 #include "core/fpdftext/cpdf_linkextract.h"
 #include "core/fpdftext/cpdf_textpage.h"
@@ -86,6 +88,37 @@ FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
   FPDF_CHAR_INFO charinfo;
   textpage->GetCharInfo(index, &charinfo);
   return charinfo.m_FontSize;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
+                     int index,
+                     void* buffer,
+                     unsigned long buflen,
+                     int* flags) {
+  if (!text_page)
+    return 0;
+  CPDF_TextPage* pTextObj = CPDFTextPageFromFPDFTextPage(text_page);
+
+  if (index < 0 || index >= pTextObj->CountChars())
+    return 0;
+
+  FPDF_CHAR_INFO charinfo;
+  pTextObj->GetCharInfo(index, &charinfo);
+  if (!charinfo.m_pTextObj)
+    return 0;
+
+  CPDF_Font* font = charinfo.m_pTextObj->GetFont();
+  if (!font)
+    return 0;
+
+  if (flags)
+    *flags = font->GetFontFlags();
+  ByteString basefont = font->GetBaseFont();
+  unsigned long length = basefont.GetLength() + 1;
+  if (buffer && buflen >= length)
+    memcpy(buffer, basefont.c_str(), length);
+  return length;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,

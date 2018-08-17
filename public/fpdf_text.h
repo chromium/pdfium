@@ -87,6 +87,31 @@ FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index);
 FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
                                                       int index);
 
+// Experimental API.
+// Function: FPDFText_GetFontInfo
+//          Get the font name and flags of a particular character.
+// Parameters:
+//          text_page - Handle to a text page information structure.
+//          Returned by FPDFText_LoadPage function.
+//          index     - Zero-based index of the character.
+//          buffer    - A buffer receiving the font name.
+//          buflen    - The length of |buffer| in bytes.
+//          flags     - Optional pointer to an int receiving the font flags.
+//          These flags should be interpreted per PDF spec 1.7 Section 5.7.1
+//          Font Descriptor Flags.
+// Return value:
+//          On success, return the length of the font name, including the
+//          trailing NUL character, in bytes. If this length is less than or
+//          equal to |length|, |buffer| is set to the font name, |flags| is
+//          set to the font flags. |buffer| is in UTF-8 encoding. Return 0 on
+//          failure.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
+                     int index,
+                     void* buffer,
+                     unsigned long buflen,
+                     int* flags);
+
 // Function: FPDFText_GetCharBox
 //          Get bounding box of a particular character.
 // Parameters:
