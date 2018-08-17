@@ -228,10 +228,9 @@ uint32_t FPF_SkiaGetFaceCharset(TT_OS2* pOS2) {
 CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() = default;
 
 CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
-  for (const auto& pair : m_FamilyFonts) {
-    if (pair.second)
-      pair.second->Release();
-  }
+  for (const auto& pair : m_FamilyFonts)
+    pair.second->Release();
+
   m_FamilyFonts.clear();
   m_FontFaces.clear();
   if (m_FTLibrary)
@@ -257,7 +256,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
                                             uint32_t dwMatch) {
   uint32_t dwHash = FPF_SKIAGetFamilyHash(bsFamilyname, dwStyle, uCharset);
   auto it = m_FamilyFonts.find(dwHash);
-  if (it != m_FamilyFonts.end() && it->second)
+  if (it != m_FamilyFonts.end())
     return it->second->Retain();
 
   uint32_t dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
@@ -323,10 +322,12 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
     }
   }
   if (pBestFont) {
-    CFPF_SkiaFont* pFont = new CFPF_SkiaFont;
-    if (pFont->InitFont(this, pBestFont, bsFamilyname, dwStyle, uCharset)) {
+    CFPF_SkiaFont* pFont =
+        new CFPF_SkiaFont(this, pBestFont, dwStyle, uCharset);
+    pFont->Retain();
+    if (pFont->IsValid()) {
       m_FamilyFonts[dwHash] = pFont;
-      return pFont->Retain();
+      return pFont;
     }
     pFont->Release();
   }

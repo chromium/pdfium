@@ -15,7 +15,15 @@
 
 #define FPF_EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
-CFPF_SkiaFont::CFPF_SkiaFont() = default;
+CFPF_SkiaFont::CFPF_SkiaFont(CFPF_SkiaFontMgr* pFontMgr,
+                             const CFPF_SkiaPathFont* pFont,
+                             uint32_t dwStyle,
+                             uint8_t uCharset)
+    : m_pFontMgr(pFontMgr),
+      m_pFont(pFont),
+      m_Face(m_pFontMgr->GetFontFace(m_pFont->path(), m_pFont->face_index())),
+      m_dwStyle(dwStyle),
+      m_uCharset(uCharset) {}
 
 CFPF_SkiaFont::~CFPF_SkiaFont() {
   if (m_Face)
@@ -166,24 +174,4 @@ uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
   if (FXFT_Load_Sfnt_Table(m_Face, dwTable, 0, pBuffer, &ulSize))
     return 0;
   return pdfium::base::checked_cast<uint32_t>(ulSize);
-}
-
-bool CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr* pFontMgr,
-                             const CFPF_SkiaPathFont* pFont,
-                             const ByteStringView& bsFamily,
-                             uint32_t dwStyle,
-                             uint8_t uCharset) {
-  if (!pFontMgr || !pFont)
-    return false;
-
-  m_Face = pFontMgr->GetFontFace(pFont->path(), pFont->face_index());
-  if (!m_Face)
-    return false;
-
-  m_dwStyle = dwStyle;
-  m_uCharset = uCharset;
-  m_pFontMgr = pFontMgr;
-  m_pFont = pFont;
-  m_dwRefCount = 1;
-  return true;
 }

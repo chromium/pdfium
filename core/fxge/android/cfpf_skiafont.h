@@ -16,11 +16,15 @@ class CFPF_SkiaPathFont;
 
 class CFPF_SkiaFont {
  public:
-  CFPF_SkiaFont();
-  ~CFPF_SkiaFont();
+  CFPF_SkiaFont(CFPF_SkiaFontMgr* pFontMgr,
+                const CFPF_SkiaPathFont* pFont,
+                uint32_t dwStyle,
+                uint8_t uCharset);
 
   void Release();
   CFPF_SkiaFont* Retain();
+
+  bool IsValid() const { return !!m_Face; }
 
   ByteString GetFamilyName();
   ByteString GetPsName();
@@ -36,18 +40,14 @@ class CFPF_SkiaFont {
   int32_t GetItalicAngle() const;
   uint32_t GetFontData(uint32_t dwTable, uint8_t* pBuffer, uint32_t dwSize);
 
-  bool InitFont(CFPF_SkiaFontMgr* pFontMgr,
-                const CFPF_SkiaPathFont* pFont,
-                const ByteStringView& bsFamily,
-                uint32_t dwStyle,
-                uint8_t uCharset);
-
  private:
-  UnownedPtr<CFPF_SkiaFontMgr> m_pFontMgr;
-  UnownedPtr<const CFPF_SkiaPathFont> m_pFont;
-  FXFT_Face m_Face = nullptr;
-  uint32_t m_dwStyle = 0;
-  uint8_t m_uCharset = 0;
+  ~CFPF_SkiaFont();
+
+  UnownedPtr<CFPF_SkiaFontMgr> const m_pFontMgr;
+  UnownedPtr<const CFPF_SkiaPathFont> const m_pFont;
+  const FXFT_Face m_Face;
+  const uint32_t m_dwStyle;
+  const uint8_t m_uCharset;
   uint32_t m_dwRefCount = 0;
 };
 
