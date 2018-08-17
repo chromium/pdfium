@@ -151,11 +151,9 @@ int32_t CFPF_SkiaFont::GetItalicAngle() const {
   if (!m_Face)
     return 0;
 
-  TT_Postscript* ttInfo =
-      (TT_Postscript*)FT_Get_Sfnt_Table(m_Face, ft_sfnt_post);
-  if (ttInfo)
-    return ttInfo->italicAngle;
-  return 0;
+  auto* info =
+      static_cast<TT_Postscript*>(FT_Get_Sfnt_Table(m_Face, ft_sfnt_post));
+  return info ? info->italicAngle : 0;
 }
 
 uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
@@ -178,7 +176,7 @@ bool CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr* pFontMgr,
   if (!pFontMgr || !pFont)
     return false;
 
-  m_Face = pFontMgr->GetFontFace(pFont->m_pPath, pFont->m_iFaceIndex);
+  m_Face = pFontMgr->GetFontFace(pFont->path(), pFont->face_index());
   if (!m_Face)
     return false;
 
