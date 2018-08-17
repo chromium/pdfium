@@ -53,7 +53,7 @@ class CXFA_LayoutPageMgr {
                                      CXFA_Node*& pBookendAppendNode);
 
  private:
-  bool AppendNewPage(bool bFirstTemPage = false);
+  bool AppendNewPage(bool bFirstTemPage);
   void ReorderPendingLayoutRecordToTail(CXFA_ContainerRecord* pNewRecord,
                                         CXFA_ContainerRecord* pPrevRecord);
   void RemoveLayoutRecord(CXFA_ContainerRecord* pNewRecord,
@@ -65,8 +65,8 @@ class CXFA_LayoutPageMgr {
     auto iter = m_ProposedContainerRecords.end();
     return !m_ProposedContainerRecords.empty() ? std::prev(iter) : iter;
   }
-  CXFA_ContainerRecord* CreateContainerRecord(CXFA_Node* pPageNode = nullptr,
-                                              bool bCreateNew = false);
+  CXFA_ContainerRecord* CreateContainerRecord(CXFA_Node* pPageNode,
+                                              bool bCreateNew);
   void AddPageAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
                              CXFA_Node* pNewPageArea);
   void AddContentAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
@@ -89,8 +89,8 @@ class CXFA_LayoutPageMgr {
 
   int32_t CreateMinPageRecord(CXFA_Node* pPageArea,
                               bool bTargetPageArea,
-                              bool bCreateLast = false);
-  void CreateMinPageSetRecord(CXFA_Node* pPageSet, bool bCreateAll = false);
+                              bool bCreateLast);
+  void CreateMinPageSetRecord(CXFA_Node* pPageSet, bool bCreateAll);
   void CreateNextMinRecord(CXFA_Node* pRecordNode);
   bool FindPageAreaFromPageSet(CXFA_Node* pPageSet,
                                CXFA_Node* pStartChild,
@@ -114,9 +114,9 @@ class CXFA_LayoutPageMgr {
       XFA_AttributeEnum ePreferredPosition = XFA_AttributeEnum::First);
   bool MatchPageAreaOddOrEven(CXFA_Node* pPageArea);
   CXFA_Node* GetNextAvailPageArea(CXFA_Node* pTargetPageArea,
-                                  CXFA_Node* pTargetContentArea = nullptr,
-                                  bool bNewPage = false,
-                                  bool bQuery = false);
+                                  CXFA_Node* pTargetContentArea,
+                                  bool bNewPage,
+                                  bool bQuery);
   bool GetNextContentArea(CXFA_Node* pTargetContentArea);
   void InitPageSetMap();
   void ProcessLastPageSet();
