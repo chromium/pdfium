@@ -22,13 +22,12 @@
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_freetype.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-static unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
-                                         unsigned long offset,
-                                         unsigned char* buffer,
-                                         unsigned long count) {
+namespace {
+
+unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
+                                  unsigned long offset,
+                                  unsigned char* buffer,
+                                  unsigned long count) {
   if (count == 0)
     return 0;
 
@@ -37,19 +36,15 @@ static unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
   if (!pFileRead)
     return 0;
 
-  if (!pFileRead->ReadBlock(buffer, (FX_FILESIZE)offset,
-                            static_cast<size_t>(count)))
+  if (!pFileRead->ReadBlock(buffer, static_cast<FX_FILESIZE>(offset),
+                            static_cast<size_t>(count))) {
     return 0;
+  }
 
   return count;
 }
 
-static void FPF_SkiaStream_Close(FXFT_Stream stream) {}
-#ifdef __cplusplus
-};
-#endif
-
-namespace {
+void FPF_SkiaStream_Close(FXFT_Stream stream) {}
 
 struct FPF_SKIAFONTMAP {
   uint32_t dwFamily;
@@ -251,7 +246,7 @@ uint32_t FPF_SkiaGetFaceCharset(TT_OS2* pOS2) {
 
 }  // namespace
 
-CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() : m_bLoaded(false), m_FTLibrary(nullptr) {}
+CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() = default;
 
 CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
   for (const auto& pair : m_FamilyFonts) {
@@ -448,7 +443,7 @@ void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
 }
 
 void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
-  FXFT_Face face = GetFontFace(file.AsStringView());
+  FXFT_Face face = GetFontFace(file.AsStringView(), 0);
   if (!face)
     return;
   CFPF_SkiaPathFont* pFontDesc = new CFPF_SkiaPathFont;
@@ -469,7 +464,7 @@ void CFPF_SkiaFontMgr::ReportFace(FXFT_Face face,
     pFontDesc->m_dwStyle |= FXFONT_ITALIC;
   if (FT_IS_FIXED_WIDTH(face))
     pFontDesc->m_dwStyle |= FXFONT_FIXED_PITCH;
-  TT_OS2* pOS2 = (TT_OS2*)FT_Get_Sfnt_Table(face, ft_sfnt_os2);
+  TT_OS2* pOS2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(face, ft_sfnt_os2));
   if (pOS2) {
     if (pOS2->ulCodePageRange1 & (1 << 31))
       pFontDesc->m_dwStyle |= FXFONT_SYMBOLIC;

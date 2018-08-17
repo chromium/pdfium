@@ -28,23 +28,23 @@ class CFPF_SkiaFontMgr {
   CFPF_SkiaFont* CreateFont(const ByteStringView& bsFamilyname,
                             uint8_t uCharset,
                             uint32_t dwStyle,
-                            uint32_t dwMatch = 0);
+                            uint32_t dwMatch);
 
   bool InitFTLibrary();
   FXFT_Face GetFontFace(const RetainPtr<IFX_SeekableReadStream>& pFileRead,
-                        int32_t iFaceIndex = 0);
-  FXFT_Face GetFontFace(const ByteStringView& bsFile, int32_t iFaceIndex = 0);
+                        int32_t iFaceIndex);
+  FXFT_Face GetFontFace(const ByteStringView& bsFile, int32_t iFaceIndex);
   FXFT_Face GetFontFace(const uint8_t* pBuffer,
                         size_t szBuffer,
-                        int32_t iFaceIndex = 0);
+                        int32_t iFaceIndex);
 
  private:
   void ScanPath(const ByteString& path);
   void ScanFile(const ByteString& file);
   void ReportFace(FXFT_Face face, CFPF_SkiaFontDescriptor* pFontDesc);
 
-  bool m_bLoaded;
-  FXFT_Library m_FTLibrary;
+  bool m_bLoaded = false;
+  FXFT_Library m_FTLibrary = nullptr;
   std::vector<CFPF_SkiaFontDescriptor*> m_FontFaces;
   std::map<uint32_t, CFPF_SkiaFont*> m_FamilyFonts;
 };
