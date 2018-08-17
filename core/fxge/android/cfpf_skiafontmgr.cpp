@@ -6,11 +6,6 @@
 
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 
-#define FPF_SKIAMATCHWEIGHT_NAME1 62
-#define FPF_SKIAMATCHWEIGHT_NAME2 60
-#define FPF_SKIAMATCHWEIGHT_1 16
-#define FPF_SKIAMATCHWEIGHT_2 8
-
 #include <algorithm>
 
 #include "core/fxcrt/fx_codepage.h"
@@ -24,6 +19,11 @@
 #include "third_party/base/ptr_util.h"
 
 namespace {
+
+constexpr int FPF_SKIAMATCHWEIGHT_NAME1 = 62;
+constexpr int FPF_SKIAMATCHWEIGHT_NAME2 = 60;
+constexpr int FPF_SKIAMATCHWEIGHT_1 = 16;
+constexpr int FPF_SKIAMATCHWEIGHT_2 = 8;
 
 struct FPF_SKIAFONTMAP {
   uint32_t dwFamily;
@@ -252,8 +252,7 @@ void CFPF_SkiaFontMgr::LoadSystemFonts() {
 
 CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
                                             uint8_t uCharset,
-                                            uint32_t dwStyle,
-                                            uint32_t dwMatch) {
+                                            uint32_t dwStyle) {
   uint32_t dwHash = FPF_SKIAGetFamilyHash(bsFamilyname, dwStyle, uCharset);
   auto it = m_FamilyFonts.find(dwHash);
   if (it != m_FamilyFonts.end())
@@ -268,8 +267,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
   if (uCharset != FX_CHARSET_MSWin_Arabic &&
       FPF_SkiaMaybeArabic(bsFamilyname)) {
     uCharset = FX_CHARSET_MSWin_Arabic;
-  } else if (uCharset == FX_CHARSET_ANSI &&
-             (dwMatch & FPF_MATCHFONT_REPLACEANSI)) {
+  } else if (uCharset == FX_CHARSET_ANSI) {
     uCharset = FX_CHARSET_Default;
   }
   int32_t nExpectVal = FPF_SKIAMATCHWEIGHT_NAME1 + FPF_SKIAMATCHWEIGHT_1 * 3 +

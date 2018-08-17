@@ -14,8 +14,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_font.h"
 
-#define FPF_MATCHFONT_REPLACEANSI 1
-
 class CFPF_SkiaFont;
 class CFPF_SkiaPathFont;
 
@@ -27,8 +25,7 @@ class CFPF_SkiaFontMgr {
   void LoadSystemFonts();
   CFPF_SkiaFont* CreateFont(const ByteStringView& bsFamilyname,
                             uint8_t uCharset,
-                            uint32_t dwStyle,
-                            uint32_t dwMatch);
+                            uint32_t dwStyle);
 
   bool InitFTLibrary();
   FXFT_Face GetFontFace(const ByteStringView& bsFile, int32_t iFaceIndex);
