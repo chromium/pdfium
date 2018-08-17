@@ -42,11 +42,11 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   }
   for (int32_t x = 0; x < m_output->GetWidth(); x++) {
     for (int32_t y = 0; y < m_output->GetHeight(); y++) {
-      CFX_PathData rect;
-      rect.AppendRect((float)leftPos + x, (float)topPos + y,
-                      (float)(leftPos + x + 1), (float)(topPos + y + 1));
       if (m_output->Get(x, y)) {
         CFX_GraphStateData data;
+        CFX_PathData rect;
+        rect.AppendRect((float)leftPos + x, (float)topPos + y,
+                        (float)(leftPos + x + 1), (float)(topPos + y + 1));
         device->DrawPath(&rect, &matri, &data, m_barColor, 0, FXFILL_WINDING);
       }
     }
