@@ -464,7 +464,8 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
       CFX_XMLNode* pSaveXMLNode = pXMLNode;
       for (; pXMLNode; pXMLNode = pXMLNode->GetNextSibling()) {
         if (!LoadRichText(pXMLNode, szText.width, &fLinePos,
-                          m_pLoader->m_pParentStyle, true, nullptr)) {
+                          m_pLoader->m_pParentStyle, true, nullptr, true, false,
+                          0)) {
           break;
         }
       }
@@ -473,7 +474,8 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
         if (pXMLNode == pContainerNode)
           break;
         if (!LoadRichText(pXMLNode, szText.width, &fLinePos,
-                          m_pLoader->m_pParentStyle, true, nullptr, false)) {
+                          m_pLoader->m_pParentStyle, true, nullptr, false,
+                          false, 0)) {
           break;
         }
         pSaveXMLNode = pXMLNode;
@@ -482,7 +484,8 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
           continue;
         for (; pXMLNode; pXMLNode = pXMLNode->GetNextSibling()) {
           if (!LoadRichText(pXMLNode, szText.width, &fLinePos,
-                            m_pLoader->m_pParentStyle, true, nullptr)) {
+                            m_pLoader->m_pParentStyle, true, nullptr, true,
+                            false, 0)) {
             break;
           }
         }
@@ -636,7 +639,7 @@ bool CXFA_TextLayout::Loader(float textWidth,
 
       auto pRootStyle = m_textParser.CreateRootStyle(m_pTextProvider);
       LoadRichText(pXMLContainer, textWidth, pLinePos, pRootStyle, bSavePieces,
-                   nullptr);
+                   nullptr, true, false, 0);
     }
   } else {
     LoadText(m_pTextDataNode, textWidth, pLinePos, bSavePieces);
@@ -881,7 +884,7 @@ bool CXFA_TextLayout::AppendChar(const WideString& wsText,
 
     dwStatus = m_pBreak->AppendChar(wch);
     if (dwStatus != CFX_BreakType::None && dwStatus != CFX_BreakType::Piece) {
-      AppendTextLine(dwStatus, pLinePos, bSavePieces);
+      AppendTextLine(dwStatus, pLinePos, bSavePieces, false);
       if (IsEnd(bSavePieces)) {
         if (m_pLoader)
           m_pLoader->m_iChar = i;
@@ -1259,15 +1262,15 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
 }
 
 int32_t CXFA_TextLayout::GetDisplayPos(const CXFA_TextPiece* pPiece,
-                                       FXTEXT_CHARPOS* pCharPos,
-                                       bool bCharCode) {
+                                       FXTEXT_CHARPOS* pCharPos) {
   if (!pPiece)
     return 0;
 
   FX_RTFTEXTOBJ tr;
   if (!ToRun(pPiece, &tr))
     return 0;
-  return m_pBreak->GetDisplayPos(&tr, pCharPos, bCharCode);
+
+  return m_pBreak->GetDisplayPos(&tr, pCharPos, false);
 }
 
 bool CXFA_TextLayout::ToRun(const CXFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr) {
