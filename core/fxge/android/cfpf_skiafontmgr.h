@@ -8,6 +8,7 @@
 #define CORE_FXGE_ANDROID_CFPF_SKIAFONTMGR_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -35,11 +36,12 @@ class CFPF_SkiaFontMgr {
  private:
   void ScanPath(const ByteString& path);
   void ScanFile(const ByteString& file);
-  void ReportFace(FXFT_Face face, CFPF_SkiaPathFont* pFont);
+  std::unique_ptr<CFPF_SkiaPathFont> ReportFace(FXFT_Face face,
+                                                const ByteString& file);
 
   bool m_bLoaded = false;
   FXFT_Library m_FTLibrary = nullptr;
-  std::vector<CFPF_SkiaPathFont*> m_FontFaces;
+  std::vector<std::unique_ptr<CFPF_SkiaPathFont>> m_FontFaces;
   std::map<uint32_t, CFPF_SkiaFont*> m_FamilyFonts;
 };
 

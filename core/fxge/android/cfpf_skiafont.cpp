@@ -171,7 +171,7 @@ uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
 }
 
 bool CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr* pFontMgr,
-                             CFPF_SkiaPathFont* pFont,
+                             const CFPF_SkiaPathFont* pFont,
                              const ByteStringView& bsFamily,
                              uint32_t dwStyle,
                              uint8_t uCharset) {

@@ -37,14 +37,14 @@ class CFPF_SkiaFont {
   uint32_t GetFontData(uint32_t dwTable, uint8_t* pBuffer, uint32_t dwSize);
 
   bool InitFont(CFPF_SkiaFontMgr* pFontMgr,
-                CFPF_SkiaPathFont* pFont,
+                const CFPF_SkiaPathFont* pFont,
                 const ByteStringView& bsFamily,
                 uint32_t dwStyle,
                 uint8_t uCharset);
 
  private:
   UnownedPtr<CFPF_SkiaFontMgr> m_pFontMgr;
-  UnownedPtr<CFPF_SkiaPathFont> m_pFont;
+  UnownedPtr<const CFPF_SkiaPathFont> m_pFont;
   FXFT_Face m_Face = nullptr;
   uint32_t m_dwStyle = 0;
   uint8_t m_uCharset = 0;

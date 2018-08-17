@@ -21,6 +21,7 @@
 #include "core/fxge/android/cfpf_skiafont.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -232,8 +233,6 @@ CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
       pair.second->Release();
   }
   m_FamilyFonts.clear();
-  for (auto it = m_FontFaces.begin(); it != m_FontFaces.end(); ++it)
-    delete *it;
   m_FontFaces.clear();
   if (m_FTLibrary)
     FXFT_Done_FreeType(m_FTLibrary);
@@ -276,11 +275,11 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
   }
   int32_t nExpectVal = FPF_SKIAMATCHWEIGHT_NAME1 + FPF_SKIAMATCHWEIGHT_1 * 3 +
                        FPF_SKIAMATCHWEIGHT_2 * 2;
-  CFPF_SkiaPathFont* pBestFont = nullptr;
+  const CFPF_SkiaPathFont* pBestFont = nullptr;
   int32_t nMax = -1;
   int32_t nGlyphNum = 0;
   for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.rend(); ++it) {
-    CFPF_SkiaPathFont* pFont = *it;
+    const CFPF_SkiaPathFont* pFont = it->get();
     if (!(pFont->m_dwCharsets & FPF_SkiaGetCharset(uCharset)))
       continue;
     int32_t nFind = 0;
@@ -307,19 +306,19 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
     if (uCharset == FX_CHARSET_Default || bMaybeSymbol) {
       if (nFind > nMax && bMatchedName) {
         nMax = nFind;
-        pBestFont = *it;
+        pBestFont = it->get();
       }
     } else if (FPF_SkiaIsCJK(uCharset)) {
       if (bMatchedName || pFont->m_iGlyphNum > nGlyphNum) {
-        pBestFont = *it;
+        pBestFont = it->get();
         nGlyphNum = pFont->m_iGlyphNum;
       }
     } else if (nFind > nMax) {
       nMax = nFind;
-      pBestFont = *it;
+      pBestFont = it->get();
     }
     if (nExpectVal <= nFind) {
-      pBestFont = *it;
+      pBestFont = it->get();
       break;
     }
   }
@@ -381,16 +380,16 @@ void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
   FXFT_Face face = GetFontFace(file.AsStringView(), 0);
   if (!face)
     return;
-  CFPF_SkiaPathFont* pFont = new CFPF_SkiaPathFont;
-  pFont->SetPath(file.c_str());
-  ReportFace(face, pFont);
-  m_FontFaces.push_back(pFont);
+
+  m_FontFaces.push_back(ReportFace(face, file));
   FXFT_Done_Face(face);
 }
 
-void CFPF_SkiaFontMgr::ReportFace(FXFT_Face face, CFPF_SkiaPathFont* pFont) {
-  if (!face || !pFont)
-    return;
+std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
+    FXFT_Face face,
+    const ByteString& file) {
+  auto pFont = pdfium::MakeUnique<CFPF_SkiaPathFont>();
+  pFont->SetPath(file.c_str());
   pFont->SetFamily(FXFT_Get_Face_Family_Name(face));
   if (FXFT_Is_Face_Bold(face))
     pFont->m_dwStyle |= FXFONT_BOLD;
@@ -413,4 +412,5 @@ void CFPF_SkiaFontMgr::ReportFace(FXFT_Face face, CFPF_SkiaPathFont* pFont) {
   pFont->m_dwCharsets = FPF_SkiaGetFaceCharset(pOS2);
   pFont->m_iFaceIndex = face->face_index;
   pFont->m_iGlyphNum = face->num_glyphs;
+  return pFont;
 }
