@@ -88,7 +88,7 @@ CJS_Return CJS_Util::printf(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 1)
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   std::wstring unsafe_fmt_string(pRuntime->ToWideString(params[0]).c_str());
   std::vector<std::wstring> unsafe_conversion_specifiers;
@@ -143,23 +143,21 @@ CJS_Return CJS_Util::printf(CJS_Runtime* pRuntime,
   }
 
   c_strResult.erase(c_strResult.begin());
-  return CJS_Return(pRuntime->NewString(c_strResult.c_str()));
+  return CJS_Return::Success(pRuntime->NewString(c_strResult.c_str()));
 }
 
 CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   const size_t iSize = params.size();
   if (iSize < 2)
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   if (params[1].IsEmpty() || !params[1]->IsDate())
-    return CJS_Return(JSMessage::kSecondParamNotDateError);
+    return CJS_Return::Failure(JSMessage::kSecondParamNotDateError);
 
   v8::Local<v8::Date> v8_date = params[1].As<v8::Date>();
-  if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date))) {
-    return CJS_Return(
-        JSGetStringFromID(JSMessage::kSecondParamInvalidDateError));
-  }
+  if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date)))
+    return CJS_Return::Failure(JSMessage::kSecondParamInvalidDateError);
 
   double date = JS_LocalTime(pRuntime->ToDouble(v8_date));
   int year = JS_GetYearFromTime(date);
@@ -185,37 +183,38 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
                                       month, day, hour, min, sec);
         break;
       default:
-        return CJS_Return(JSMessage::kValueError);
+        return CJS_Return::Failure(JSMessage::kValueError);
     }
 
-    return CJS_Return(pRuntime->NewString(swResult.AsStringView()));
+    return CJS_Return::Success(pRuntime->NewString(swResult.AsStringView()));
   }
 
-  if (params[0]->IsString()) {
-    // We don't support XFAPicture at the moment.
-    if (iSize > 2 && pRuntime->ToBoolean(params[2]))
-      return CJS_Return(JSMessage::kNotSupportedError);
+  if (!params[0]->IsString())
+    return CJS_Return::Failure(JSMessage::kTypeError);
 
-    // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
-    // pre-existing %-directives before inserting our own.
-    std::basic_string<wchar_t> cFormat =
-        pRuntime->ToWideString(params[0]).c_str();
-    cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
-                  cFormat.end());
+  // We don't support XFAPicture at the moment.
+  if (iSize > 2 && pRuntime->ToBoolean(params[2]))
+    return CJS_Return::Failure(JSMessage::kNotSupportedError);
 
-    for (size_t i = 0; i < FX_ArraySize(TbConvertTable); ++i) {
-      int iStart = 0;
-      int iEnd;
-      while ((iEnd = cFormat.find(TbConvertTable[i].lpszJSMark, iStart)) !=
-             -1) {
-        cFormat.replace(iEnd, wcslen(TbConvertTable[i].lpszJSMark),
-                        TbConvertTable[i].lpszCppMark);
-        iStart = iEnd;
-      }
+  // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
+  // pre-existing %-directives before inserting our own.
+  std::basic_string<wchar_t> cFormat =
+      pRuntime->ToWideString(params[0]).c_str();
+  cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
+                cFormat.end());
+
+  for (size_t i = 0; i < FX_ArraySize(TbConvertTable); ++i) {
+    int iStart = 0;
+    int iEnd;
+    while ((iEnd = cFormat.find(TbConvertTable[i].lpszJSMark, iStart)) != -1) {
+      cFormat.replace(iEnd, wcslen(TbConvertTable[i].lpszJSMark),
+                      TbConvertTable[i].lpszCppMark);
+      iStart = iEnd;
+    }
     }
 
     if (year < 0)
-      return CJS_Return(JSMessage::kValueError);
+      return CJS_Return::Failure(JSMessage::kValueError);
 
     const TbConvertAdditional cTableAd[] = {
         {L"m", month}, {L"d", day},
@@ -250,18 +249,15 @@ CJS_Return CJS_Util::printd(CJS_Runtime* pRuntime,
     wchar_t buf[64] = {};
     FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
     cFormat = buf;
-    return CJS_Return(pRuntime->NewString(cFormat.c_str()));
-  }
-
-  return CJS_Return(JSMessage::kTypeError);
+    return CJS_Return::Success(pRuntime->NewString(cFormat.c_str()));
 }
 
 CJS_Return CJS_Util::printx(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
 
-  return CJS_Return(
+  return CJS_Return::Success(
       pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
                                  pRuntime->ToWideString(params[1]))
                               .AsStringView()));
@@ -368,31 +364,31 @@ WideString CJS_Util::printx(const WideString& wsFormat,
 CJS_Return CJS_Util::scand(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2)
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   WideString sFormat = pRuntime->ToWideString(params[0]);
   WideString sDate = pRuntime->ToWideString(params[1]);
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0)
     dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
-
   if (std::isnan(dDate))
-    return CJS_Return(pRuntime->NewUndefined());
-  return CJS_Return(pRuntime->NewDate(dDate));
+    return CJS_Return::Success(pRuntime->NewUndefined());
+
+  return CJS_Return::Success(pRuntime->NewDate(dDate));
 }
 
 CJS_Return CJS_Util::byteToChar(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 1)
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   int arg = pRuntime->ToInt32(params[0]);
   if (arg < 0 || arg > 255)
-    return CJS_Return(JSMessage::kValueError);
+    return CJS_Return::Failure(JSMessage::kValueError);
 
   WideString wStr(static_cast<wchar_t>(arg));
-  return CJS_Return(pRuntime->NewString(wStr.AsStringView()));
+  return CJS_Return::Success(pRuntime->NewString(wStr.AsStringView()));
 }
 
 // Ensure that sFormat contains at most one well-understood printf formatting

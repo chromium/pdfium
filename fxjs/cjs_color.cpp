@@ -250,25 +250,26 @@ CJS_Return CJS_Color::set_light_gray(CJS_Runtime* pRuntime,
 CJS_Return CJS_Color::GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* var) {
   v8::Local<v8::Value> array = ConvertPWLColorToArray(pRuntime, *var);
   if (array.IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(array);
+    return CJS_Return::Success(pRuntime->NewArray());
+
+  return CJS_Return::Success(array);
 }
 
 CJS_Return CJS_Color::SetPropertyHelper(CJS_Runtime* pRuntime,
                                         v8::Local<v8::Value> vp,
                                         CFX_Color* var) {
   if (vp.IsEmpty() || !vp->IsArray())
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   *var = ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(vp));
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJS_Color::convert(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   int iSize = params.size();
   if (iSize < 2 || params[0].IsEmpty() || !params[0]->IsArray())
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   WideString sDestSpace = pRuntime->ToWideString(params[1]);
   int nColorType = CFX_Color::kTransparent;
@@ -283,19 +284,19 @@ CJS_Return CJS_Color::convert(CJS_Runtime* pRuntime,
 
   CFX_Color color =
       ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[0]));
-
   v8::Local<v8::Value> array =
       ConvertPWLColorToArray(pRuntime, color.ConvertColorType(nColorType));
   if (array.IsEmpty())
-    return CJS_Return(pRuntime->NewArray());
-  return CJS_Return(array);
+    return CJS_Return::Success(pRuntime->NewArray());
+
+  return CJS_Return::Success(array);
 }
 
 CJS_Return CJS_Color::equal(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 2 || params[0].IsEmpty() || !params[0]->IsArray() ||
       params[1].IsEmpty() || !params[1]->IsArray()) {
-    return CJS_Return(JSMessage::kParamError);
+    return CJS_Return::Failure(JSMessage::kParamError);
   }
 
   CFX_Color color1 =
@@ -304,5 +305,5 @@ CJS_Return CJS_Color::equal(CJS_Runtime* pRuntime,
       ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[1]));
 
   color1 = color1.ConvertColorType(color2.nColorType);
-  return CJS_Return(pRuntime->NewBoolean(color1 == color2));
+  return CJS_Return::Success(pRuntime->NewBoolean(color1 == color2));
 }

@@ -25,9 +25,10 @@ CJS_Return CJX_Manifest::evaluate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
-  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
+  return CJS_Return::Success(
+      runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
 
 void CJX_Manifest::defaultValue(CFXJSE_Value* pValue,

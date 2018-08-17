@@ -40,21 +40,21 @@ CJS_Console::~CJS_Console() = default;
 
 CJS_Return CJS_Console::clear(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJS_Console::hide(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJS_Console::println(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJS_Console::show(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }

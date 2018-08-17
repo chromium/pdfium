@@ -44,166 +44,169 @@ CJS_Return CJX_Field::clearItems(
   CXFA_Node* node = GetXFANode();
   if (node->IsWidgetReady())
     node->DeleteItem(-1, true, false);
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Field::execEvent(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   WideString eventString = runtime->ToWideString(params[0]);
   int32_t iRet =
       execSingleEventByName(eventString.AsStringView(), XFA_Element::Field);
   if (eventString != L"validate")
-    return CJS_Return();
+    return CJS_Return::Success();
 
-  return CJS_Return(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  return CJS_Return::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
 
 CJS_Return CJX_Field::execInitialize(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
                                   false);
   }
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Field::deleteItem(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return();
+    return CJS_Return::Success();
 
   bool bValue = node->DeleteItem(runtime->ToInt32(params[0]), true, true);
-  return CJS_Return(runtime->NewBoolean(bValue));
+  return CJS_Return::Success(runtime->NewBoolean(bValue));
 }
 
 CJS_Return CJX_Field::getSaveItem(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (iIndex < 0)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
   Optional<WideString> value = node->GetChoiceListItem(iIndex, true);
   if (!value)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
-  return CJS_Return(runtime->NewString(value->UTF8Encode().AsStringView()));
+  return CJS_Return::Success(
+      runtime->NewString(value->UTF8Encode().AsStringView()));
 }
 
 CJS_Return CJX_Field::boundItem(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return();
+    return CJS_Return::Success();
 
   WideString value = runtime->ToWideString(params[0]);
   WideString boundValue = node->GetItemValue(value.AsStringView());
-  return CJS_Return(runtime->NewString(boundValue.UTF8Encode().AsStringView()));
+  return CJS_Return::Success(
+      runtime->NewString(boundValue.UTF8Encode().AsStringView()));
 }
 
 CJS_Return CJX_Field::getItemState(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return();
+    return CJS_Return::Success();
 
   int32_t state = node->GetItemState(runtime->ToInt32(params[0]));
-  return CJS_Return(runtime->NewBoolean(state != 0));
+  return CJS_Return::Success(runtime->NewBoolean(state != 0));
 }
 
 CJS_Return CJX_Field::execCalculate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify) {
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
                                   false);
   }
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Field::getDisplayItem(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (iIndex < 0)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
   Optional<WideString> value = node->GetChoiceListItem(iIndex, false);
   if (!value)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
-  return CJS_Return(runtime->NewString(value->UTF8Encode().AsStringView()));
+  return CJS_Return::Success(
+      runtime->NewString(value->UTF8Encode().AsStringView()));
 }
 
 CJS_Return CJX_Field::setItemState(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return();
+    return CJS_Return::Success();
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   if (runtime->ToInt32(params[1]) != 0) {
     node->SetItemState(iIndex, true, true, true, true);
-    return CJS_Return();
+    return CJS_Return::Success();
   }
   if (node->GetItemState(iIndex))
     node->SetItemState(iIndex, false, true, true, true);
 
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Field::addItem(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1 && params.size() != 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return();
+    return CJS_Return::Success();
 
   WideString label;
   if (params.size() >= 1)
@@ -214,22 +217,22 @@ CJS_Return CJX_Field::addItem(CFX_V8* runtime,
     value = runtime->ToWideString(params[1]);
 
   node->InsertItem(label, value, true);
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Field::execValidate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return CJS_Return(runtime->NewBoolean(false));
+    return CJS_Return::Success(runtime->NewBoolean(false));
 
   int32_t iRet = pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate,
                                                false, false);
-  return CJS_Return(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  return CJS_Return::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
 
 void CJX_Field::defaultValue(CFXJSE_Value* pValue,

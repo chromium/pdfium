@@ -31,48 +31,56 @@ CJS_Return CJX_Template::formNodes(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewBoolean(true));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(runtime->NewBoolean(true));
 }
 
 CJS_Return CJX_Template::remerge(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   GetDocument()->DoDataRemerge(true);
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Template::execInitialize(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(
+      runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
 
 CJS_Return CJX_Template::recalculate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewBoolean(true));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(runtime->NewBoolean(true));
 }
 
 CJS_Return CJX_Template::execCalculate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(
+      runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
 
 CJS_Return CJX_Template::execValidate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(
+      runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }

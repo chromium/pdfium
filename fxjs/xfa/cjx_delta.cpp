@@ -23,8 +23,9 @@ CJX_Delta::~CJX_Delta() {}
 CJS_Return CJX_Delta::restore(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return();
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success();
 }
 
 void CJX_Delta::currentValue(CFXJSE_Value* pValue,

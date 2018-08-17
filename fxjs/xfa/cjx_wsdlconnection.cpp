@@ -26,8 +26,9 @@ CJS_Return CJX_WsdlConnection::execute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty() && params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewBoolean(false));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(runtime->NewBoolean(false));
 }
 
 void CJX_WsdlConnection::dataDescription(CFXJSE_Value* pValue,

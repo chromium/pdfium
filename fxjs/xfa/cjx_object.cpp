@@ -171,7 +171,7 @@ CJS_Return CJX_Object::RunMethod(
     const std::vector<v8::Local<v8::Value>>& params) {
   auto it = method_specs_.find(func.UTF8Encode());
   if (it == method_specs_.end())
-    return CJS_Return(JSMessage::kUnknownMethod);
+    return CJS_Return::Failure(JSMessage::kUnknownMethod);
 
   return it->second(this, GetXFAObject()->GetDocument()->GetScriptContext(),
                     params);

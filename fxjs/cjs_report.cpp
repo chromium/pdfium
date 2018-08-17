@@ -38,12 +38,12 @@ CJS_Report::~CJS_Report() = default;
 CJS_Return CJS_Report::writeText(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  // Unsafe, not supported.
-  return CJS_Return();
+  // Unsafe, not supported, but do not return error.
+  return CJS_Return::Success();
 }
 
 CJS_Return CJS_Report::save(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
-  // Unsafe, not supported.
-  return CJS_Return();
+  // Unsafe, not supported, but do not return error.
+  return CJS_Return::Success();
 }

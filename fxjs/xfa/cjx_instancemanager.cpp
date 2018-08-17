@@ -138,10 +138,10 @@ CJS_Return CJX_InstanceManager::moveInstance(
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
-    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+    return CJS_Return::Failure(JSMessage::kNotSupportedError);
 
   if (params.size() != 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   int32_t iFrom = runtime->ToInt32(params[0]);
   int32_t iTo = runtime->ToInt32(params[1]);
@@ -149,7 +149,7 @@ CJS_Return CJX_InstanceManager::moveInstance(
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_Node* pToInstance = GetXFANode()->GetItemIfExists(iTo);
   if (pToInstance && pToInstance->GetElementType() == XFA_Element::Subform)
@@ -161,7 +161,7 @@ CJS_Return CJX_InstanceManager::moveInstance(
     pNotify->RunSubformIndexChange(pFromInstance);
   }
 
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_InstanceManager::removeInstance(
@@ -169,24 +169,24 @@ CJS_Return CJX_InstanceManager::removeInstance(
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
-    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+    return CJS_Return::Failure(JSMessage::kNotSupportedError);
 
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   int32_t iCount = GetXFANode()->GetCount();
   if (iIndex < 0 || iIndex >= iCount)
-    return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
+    return CJS_Return::Failure(JSMessage::kInvalidInputError);
 
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
   int32_t iMin = occur ? occur->GetMin() : CXFA_Occur::kDefaultMin;
   if (iCount - 1 < iMin)
-    return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
+    return CJS_Return::Failure(JSMessage::kTooManyOccurances);
 
   CXFA_Node* pRemoveInstance = GetXFANode()->GetItemIfExists(iIndex);
   if (!pRemoveInstance)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   GetXFANode()->RemoveItem(pRemoveInstance, true);
 
@@ -205,7 +205,7 @@ CJS_Return CJX_InstanceManager::removeInstance(
     pLayoutPro->AddChangedContainer(
         ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form)));
   }
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_InstanceManager::setInstances(
@@ -213,13 +213,13 @@ CJS_Return CJX_InstanceManager::setInstances(
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
-    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+    return CJS_Return::Failure(JSMessage::kNotSupportedError);
 
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   SetInstances(runtime->ToInt32(params[0]));
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_InstanceManager::addInstance(
@@ -227,10 +227,10 @@ CJS_Return CJX_InstanceManager::addInstance(
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
-    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+    return CJS_Return::Failure(JSMessage::kNotSupportedError);
 
   if (!params.empty() && params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   bool fFlags = true;
   if (params.size() == 1)
@@ -240,11 +240,11 @@ CJS_Return CJX_InstanceManager::addInstance(
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
   int32_t iMax = occur ? occur->GetMax() : CXFA_Occur::kDefaultMax;
   if (iMax >= 0 && iCount >= iMax)
-    return CJS_Return(JSGetStringFromID(JSMessage::kTooManyOccurances));
+    return CJS_Return::Failure(JSMessage::kTooManyOccurances);
 
   CXFA_Node* pNewInstance = GetXFANode()->CreateInstanceIfPossible(fFlags);
   if (!pNewInstance)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
   GetXFANode()->InsertItem(pNewInstance, iCount, iCount, false);
 
@@ -262,9 +262,10 @@ CJS_Return CJX_InstanceManager::addInstance(
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewInstance);
   if (!value)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
-  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
+  return CJS_Return::Success(
+      value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
 CJS_Return CJX_InstanceManager::insertInstance(
@@ -272,10 +273,10 @@ CJS_Return CJX_InstanceManager::insertInstance(
     const std::vector<v8::Local<v8::Value>>& params) {
   CXFA_Document* doc = static_cast<CFXJSE_Engine*>(runtime)->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
-    return CJS_Return(JSGetStringFromID(JSMessage::kNotSupportedError));
+    return CJS_Return::Failure(JSMessage::kNotSupportedError);
 
   if (params.size() != 1 && params.size() != 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   int32_t iIndex = runtime->ToInt32(params[0]);
   bool bBind = false;
@@ -284,16 +285,16 @@ CJS_Return CJX_InstanceManager::insertInstance(
 
   int32_t iCount = GetXFANode()->GetCount();
   if (iIndex < 0 || iIndex > iCount)
-    return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
+    return CJS_Return::Failure(JSMessage::kInvalidInputError);
 
   CXFA_Occur* occur = GetXFANode()->GetOccurIfExists();
   int32_t iMax = occur ? occur->GetMax() : CXFA_Occur::kDefaultMax;
   if (iMax >= 0 && iCount >= iMax)
-    return CJS_Return(JSGetStringFromID(JSMessage::kInvalidInputError));
+    return CJS_Return::Failure(JSMessage::kInvalidInputError);
 
   CXFA_Node* pNewInstance = GetXFANode()->CreateInstanceIfPossible(bBind);
   if (!pNewInstance)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
   GetXFANode()->InsertItem(pNewInstance, iIndex, iCount, true);
 
@@ -310,9 +311,10 @@ CJS_Return CJX_InstanceManager::insertInstance(
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewInstance);
   if (!value)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
-  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
+  return CJS_Return::Success(
+      value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
 void CJX_InstanceManager::max(CFXJSE_Value* pValue,

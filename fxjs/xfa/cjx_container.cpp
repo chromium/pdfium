@@ -27,14 +27,14 @@ CJX_Container::~CJX_Container() {}
 CJS_Return CJX_Container::getDelta(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Container::getDeltas(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(GetDocument());
-  return CJS_Return(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
-      pFormNodes,
+  auto* pEngine = static_cast<CFXJSE_Engine*>(runtime);
+  return CJS_Return::Success(pEngine->NewXFAObject(
+      new CXFA_ArrayNodeList(GetDocument()),
       GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
 }

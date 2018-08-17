@@ -35,29 +35,29 @@ CJS_Return CJX_LogPseudoModel::message(
   //   fprintf(stderr, "  %ls\n", WideString::FromUTF8(*str).c_str());
   // }
 
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_LogPseudoModel::traceEnabled(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_LogPseudoModel::traceActivate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_LogPseudoModel::traceDeactivate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_LogPseudoModel::trace(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }

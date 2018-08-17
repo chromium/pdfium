@@ -27,25 +27,25 @@ CJX_DataWindow::~CJX_DataWindow() {}
 CJS_Return CJX_DataWindow::moveCurrentRecord(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_DataWindow::record(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_DataWindow::gotoRecord(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_DataWindow::isRecordGroup(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 void CJX_DataWindow::recordsBefore(CFXJSE_Value* pValue,

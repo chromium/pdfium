@@ -23,8 +23,9 @@ CJX_Desc::~CJX_Desc() {}
 CJS_Return CJX_Desc::metadata(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 0 && params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewString(""));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(runtime->NewString(""));
 }
 
 void CJX_Desc::use(CFXJSE_Value* pValue,

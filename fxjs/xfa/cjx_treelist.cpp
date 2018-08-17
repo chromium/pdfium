@@ -32,17 +32,18 @@ CJS_Return CJX_TreeList::namedItem(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* pNode = GetXFATreeList()->NamedItem(
       runtime->ToWideString(params[0]).AsStringView());
   if (!pNode)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode);
   if (!value)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
-  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
+  return CJS_Return::Success(
+      value->DirectGetValue().Get(runtime->GetIsolate()));
 }

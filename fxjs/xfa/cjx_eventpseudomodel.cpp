@@ -174,22 +174,22 @@ CJS_Return CJX_EventPseudoModel::emit(
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
   if (!pEventParam)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_FFWidgetHandler* pWidgetHandler = pNotify->GetWidgetHandler();
   if (!pWidgetHandler)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   pWidgetHandler->ProcessEvent(pEventParam->m_pTarget.Get(), pEventParam);
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_EventPseudoModel::reset(
@@ -197,14 +197,13 @@ CJS_Return CJX_EventPseudoModel::reset(
     const std::vector<v8::Local<v8::Value>>& params) {
   CFXJSE_Engine* pScriptContext = GetDocument()->GetScriptContext();
   if (!pScriptContext)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_EventParam* pEventParam = pScriptContext->GetEventParam();
-  if (!pEventParam)
-    return CJS_Return();
+  if (pEventParam)
+    pEventParam->Reset();
 
-  pEventParam->Reset();
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 void CJX_EventPseudoModel::Property(CFXJSE_Value* pValue,

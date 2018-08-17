@@ -110,43 +110,45 @@ CXFA_Node* CJX_Node::GetXFANode() const {
 CJS_Return CJX_Node::applyXSL(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Node::assignNode(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Node::clone(CFX_V8* runtime,
                            const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* pCloneNode = GetXFANode()->Clone(runtime->ToBoolean(params[0]));
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pCloneNode);
   if (!value)
-    return CJS_Return(runtime->NewNull());
-  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
+    return CJS_Return::Success(runtime->NewNull());
+
+  return CJS_Return::Success(
+      value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
 CJS_Return CJX_Node::getAttribute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   WideString expression = runtime->ToWideString(params[0]);
-  return CJS_Return(runtime->NewString(
+  return CJS_Return::Success(runtime->NewString(
       GetAttribute(expression.AsStringView()).UTF8Encode().AsStringView()));
 }
 
@@ -154,33 +156,34 @@ CJS_Return CJX_Node::getElement(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   WideString expression = runtime->ToWideString(params[0]);
   int32_t iValue = params.size() >= 2 ? runtime->ToInt32(params[1]) : 0;
-
   CXFA_Node* pNode = GetOrCreateProperty<CXFA_Node>(
       iValue, CXFA_Node::NameToElement(expression));
   if (!pNode)
-    return CJS_Return(runtime->NewNull());
+    return CJS_Return::Success(runtime->NewNull());
 
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNode);
   if (!value)
-    return CJS_Return(runtime->NewNull());
-  return CJS_Return(value->DirectGetValue().Get(runtime->GetIsolate()));
+    return CJS_Return::Success(runtime->NewNull());
+
+  return CJS_Return::Success(
+      value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
 CJS_Return CJX_Node::isPropertySpecified(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   WideString expression = runtime->ToWideString(params[0]);
   XFA_Attribute attr = CXFA_Node::NameToAttribute(expression.AsStringView());
   if (attr != XFA_Attribute::Unknown && HasAttribute(attr))
-    return CJS_Return(runtime->NewBoolean(true));
+    return CJS_Return::Success(runtime->NewBoolean(true));
 
   bool bParent = params.size() < 2 || runtime->ToBoolean(params[1]);
   int32_t iIndex = params.size() == 3 ? runtime->ToInt32(params[2]) : 0;
@@ -192,17 +195,17 @@ CJS_Return CJX_Node::isPropertySpecified(
     bHas = jsnode->HasAttribute(attr) ||
            !!jsnode->GetOrCreateProperty<CXFA_Node>(iIndex, eType);
   }
-  return CJS_Return(runtime->NewBoolean(bHas));
+  return CJS_Return::Success(runtime->NewBoolean(bHas));
 }
 
 CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   ByteString expression = runtime->ToByteString(params[0]);
   if (expression.IsEmpty())
-    return CJS_Return();
+    return CJS_Return::Success();
 
   bool bIgnoreRoot = true;
   if (params.size() >= 2)
@@ -213,12 +216,9 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
     bOverwrite = runtime->ToBoolean(params[2]);
 
   auto pParser = pdfium::MakeUnique<CXFA_DocumentParser>(GetDocument());
-  if (!pParser)
-    return CJS_Return();
-
   CFX_XMLNode* pXMLNode = pParser->ParseXMLData(expression);
   if (!pXMLNode)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != FX_XMLNODE_Element ||
@@ -274,7 +274,7 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot);
   pFakeRoot = pParser->GetRootNode();
   if (!pFakeRoot)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   if (bOverwrite) {
     CXFA_Node* pChild = GetXFANode()->GetFirstChild();
@@ -322,36 +322,38 @@ CJS_Return CJX_Node::loadXML(CFX_V8* runtime,
   }
   pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren);
 
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Node::saveFilteredXML(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // TODO(weili): Check whether we need to implement this, pdfium:501.
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Node::saveXML(CFX_V8* runtime,
                              const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() > 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
   if (params.size() == 1 && runtime->ToWideString(params[0]) != L"pretty")
-    return CJS_Return(JSGetStringFromID(JSMessage::kValueError));
+    return CJS_Return::Failure(JSMessage::kValueError);
 
   // TODO(weili): Check whether we need to save pretty print XML, pdfium:501.
 
   ByteString bsXMLHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   if (GetXFANode()->GetPacketType() != XFA_PacketType::Form &&
       GetXFANode()->GetPacketType() != XFA_PacketType::Datasets) {
-    return CJS_Return(runtime->NewString(""));
+    return CJS_Return::Success(runtime->NewString(""));
   }
 
   CFX_XMLNode* pElement = nullptr;
   if (GetXFANode()->GetPacketType() == XFA_PacketType::Datasets) {
     pElement = GetXFANode()->GetXMLMappingNode();
     if (!pElement || pElement->GetType() != FX_XMLNODE_Element) {
-      return CJS_Return(runtime->NewString(bsXMLHeader.AsStringView()));
+      return CJS_Return::Success(
+          runtime->NewString(bsXMLHeader.AsStringView()));
     }
 
     XFA_DataExporter_DealWithDataGroupNode(GetXFANode());
@@ -366,7 +368,7 @@ CJS_Return CJX_Node::saveXML(CFX_V8* runtime,
     pElement->Save(pMemoryStream);
   }
 
-  return CJS_Return(runtime->NewString(
+  return CJS_Return::Success(runtime->NewString(
       ByteStringView(pMemoryStream->GetBuffer(), pMemoryStream->GetSize())));
 }
 
@@ -374,22 +376,22 @@ CJS_Return CJX_Node::setAttribute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   WideString attributeValue = runtime->ToWideString(params[0]);
   WideString attribute = runtime->ToWideString(params[1]);
   SetAttribute(attribute.AsStringView(), attributeValue.AsStringView(), true);
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_Node::setElement(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1 && params.size() != 2)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   // TODO(weili): check whether we need to implement this, pdfium:501.
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 void CJX_Node::id(CFXJSE_Value* pValue,

@@ -442,7 +442,7 @@ CJS_Return CFXJSE_Engine::NormalMethodCall(
     const WideString& functionName) {
   CXFA_Object* pObject = ToObject(info);
   if (!pObject)
-    return CJS_Return(L"no Holder() present.");
+    return CJS_Return::Failure(L"no Holder() present.");
 
   CFXJSE_Engine* lpScriptContext = pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject, false);

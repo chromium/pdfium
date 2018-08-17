@@ -74,12 +74,12 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
     const std::vector<v8::Local<v8::Value>>& params,
     XFA_LAYOUTMODEL_HWXY layoutModel) {
   if (params.empty() || params.size() > 3)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* pNode =
       ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   WideString unit(L"pt");
   if (params.size() >= 2) {
@@ -90,12 +90,12 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
   int32_t iIndex = params.size() >= 3 ? runtime->ToInt32(params[2]) : 0;
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   while (iIndex > 0 && pLayoutItem) {
     pLayoutItem = pLayoutItem->GetNext();
@@ -103,7 +103,7 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
   }
 
   if (!pLayoutItem)
-    return CJS_Return(runtime->NewNumber(0.0));
+    return CJS_Return::Success(runtime->NewNumber(0.0));
 
   CXFA_Measurement measure;
   CFX_RectF rtRect = pLayoutItem->GetRect(true);
@@ -124,7 +124,8 @@ CJS_Return CJX_LayoutPseudoModel::HWXY(
 
   float fValue =
       measure.ToUnit(CXFA_Measurement::GetUnitFromString(unit.AsStringView()));
-  return CJS_Return(runtime->NewNumber(FXSYS_round(fValue * 1000) / 1000.0f));
+  return CJS_Return::Success(
+      runtime->NewNumber(FXSYS_round(fValue * 1000) / 1000.0f));
 }
 
 CJS_Return CJX_LayoutPseudoModel::h(
@@ -155,7 +156,7 @@ CJS_Return CJX_LayoutPseudoModel::NumberedPageCount(CFX_V8* runtime,
                                                     bool bNumbered) {
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   int32_t iPageCount = 0;
   int32_t iPageNum = pDocLayout->CountPages();
@@ -172,7 +173,7 @@ CJS_Return CJX_LayoutPseudoModel::NumberedPageCount(CFX_V8* runtime,
   } else {
     iPageCount = iPageNum;
   }
-  return CJS_Return(runtime->NewNumber(iPageCount));
+  return CJS_Return::Success(runtime->NewNumber(iPageCount));
 }
 
 CJS_Return CJX_LayoutPseudoModel::pageCount(
@@ -185,26 +186,26 @@ CJS_Return CJX_LayoutPseudoModel::pageSpan(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* pNode =
       ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
-    return CJS_Return(runtime->NewNumber(-1));
+    return CJS_Return::Success(runtime->NewNumber(-1));
 
   int32_t iLast = pLayoutItem->GetLast()->GetPage()->GetPageIndex();
   int32_t iFirst = pLayoutItem->GetFirst()->GetPage()->GetPageIndex();
   int32_t iPageSpan = iLast - iFirst + 1;
-  return CJS_Return(runtime->NewNumber(iPageSpan));
+  return CJS_Return::Success(runtime->NewNumber(iPageSpan));
 }
 
 CJS_Return CJX_LayoutPseudoModel::page(
@@ -348,7 +349,7 @@ CJS_Return CJX_LayoutPseudoModel::pageContent(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   int32_t iIndex = 0;
   if (params.size() >= 1)
@@ -364,18 +365,18 @@ CJS_Return CJX_LayoutPseudoModel::pageContent(
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   auto pArrayNodeList = pdfium::MakeUnique<CXFA_ArrayNodeList>(GetDocument());
   pArrayNodeList->SetArrayNodeList(
       GetObjArray(pDocLayout, iIndex, wsType, bOnPageArea));
 
   // TODO(dsinclair): Who owns the array once we release it? Won't this leak?
-  return CJS_Return(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
+  return CJS_Return::Success(static_cast<CFXJSE_Engine*>(runtime)->NewXFAObject(
       pArrayNodeList.release(),
       GetDocument()->GetScriptContext()->GetJseNormalClass()->GetTemplate()));
 }
@@ -389,13 +390,13 @@ CJS_Return CJX_LayoutPseudoModel::absPageCount(
 CJS_Return CJX_LayoutPseudoModel::absPageCountInBatch(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return(runtime->NewNumber(0));
+  return CJS_Return::Success(runtime->NewNumber(0));
 }
 
 CJS_Return CJX_LayoutPseudoModel::sheetCountInBatch(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return(runtime->NewNumber(0));
+  return CJS_Return::Success(runtime->NewNumber(0));
 }
 
 CJS_Return CJX_LayoutPseudoModel::relayout(
@@ -410,7 +411,7 @@ CJS_Return CJX_LayoutPseudoModel::relayout(
     pLayoutProcessor->AddChangedContainer(pContentRootNode);
 
   pLayoutProcessor->SetForceReLayout(true);
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_LayoutPseudoModel::absPageSpan(
@@ -423,16 +424,18 @@ CJS_Return CJX_LayoutPseudoModel::absPageInBatch(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewNumber(0));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(runtime->NewNumber(0));
 }
 
 CJS_Return CJX_LayoutPseudoModel::sheetInBatch(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
-  return CJS_Return(runtime->NewNumber(0));
+    return CJS_Return::Failure(JSMessage::kParamError);
+
+  return CJS_Return::Success(runtime->NewNumber(0));
 }
 
 CJS_Return CJX_LayoutPseudoModel::sheet(
@@ -444,7 +447,7 @@ CJS_Return CJX_LayoutPseudoModel::sheet(
 CJS_Return CJX_LayoutPseudoModel::relayoutPageArea(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return();
+  return CJS_Return::Success();
 }
 
 CJS_Return CJX_LayoutPseudoModel::sheetCount(
@@ -464,22 +467,22 @@ CJS_Return CJX_LayoutPseudoModel::PageInternals(
     const std::vector<v8::Local<v8::Value>>& params,
     bool bAbsPage) {
   if (params.size() != 1)
-    return CJS_Return(JSGetStringFromID(JSMessage::kParamError));
+    return CJS_Return::Failure(JSMessage::kParamError);
 
   CXFA_Node* pNode =
       ToNode(static_cast<CFXJSE_Engine*>(runtime)->ToXFAObject(params[0]));
   if (!pNode)
-    return CJS_Return(runtime->NewNumber(0));
+    return CJS_Return::Success(runtime->NewNumber(0));
 
   CXFA_LayoutProcessor* pDocLayout = GetDocument()->GetLayoutProcessor();
   if (!pDocLayout)
-    return CJS_Return();
+    return CJS_Return::Success();
 
   CXFA_ContentLayoutItem* pLayoutItem =
       ToContentLayoutItem(pDocLayout->GetLayoutItem(pNode));
   if (!pLayoutItem)
-    return CJS_Return(runtime->NewNumber(-1));
+    return CJS_Return::Success(runtime->NewNumber(-1));
 
   int32_t iPage = pLayoutItem->GetFirst()->GetPage()->GetPageIndex();
-  return CJS_Return(runtime->NewNumber(bAbsPage ? iPage : iPage + 1));
+  return CJS_Return::Success(runtime->NewNumber(bAbsPage ? iPage : iPage + 1));
 }
