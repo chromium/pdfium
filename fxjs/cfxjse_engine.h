@@ -42,7 +42,7 @@ class CFXJSE_Engine : public CFX_V8 {
   static void NormalPropertySetter(CFXJSE_Value* pObject,
                                    const ByteStringView& szPropName,
                                    CFXJSE_Value* pValue);
-  static CJS_Return NormalMethodCall(
+  static CJS_Result NormalMethodCall(
       const v8::FunctionCallbackInfo<v8::Value>& info,
       const WideString& functionName);
   static int32_t NormalPropTypeGetter(CFXJSE_Value* pObject,

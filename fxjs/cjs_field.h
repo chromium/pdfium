@@ -119,8 +119,8 @@ class CJS_Field : public CJS_Object {
   JS_STATIC_METHOD(signatureSign, CJS_Field);
   JS_STATIC_METHOD(signatureValidate, CJS_Field);
 
-  CJS_Return get_text_color(CJS_Runtime* pRuntime);
-  CJS_Return set_text_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_text_color(CJS_Runtime* pRuntime);
+  CJS_Result set_text_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
  private:
   static int ObjDefnID;
@@ -128,225 +128,225 @@ class CJS_Field : public CJS_Object {
   static const JSPropertySpec PropertySpecs[];
   static const JSMethodSpec MethodSpecs[];
 
-  CJS_Return get_alignment(CJS_Runtime* pRuntime);
-  CJS_Return set_alignment(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_alignment(CJS_Runtime* pRuntime);
+  CJS_Result set_alignment(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_border_style(CJS_Runtime* pRuntime);
-  CJS_Return set_border_style(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_border_style(CJS_Runtime* pRuntime);
+  CJS_Result set_border_style(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_button_align_x(CJS_Runtime* pRuntime);
-  CJS_Return set_button_align_x(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_button_align_x(CJS_Runtime* pRuntime);
+  CJS_Result set_button_align_x(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_button_align_y(CJS_Runtime* pRuntime);
-  CJS_Return set_button_align_y(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_button_align_y(CJS_Runtime* pRuntime);
+  CJS_Result set_button_align_y(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_button_fit_bounds(CJS_Runtime* pRuntime);
-  CJS_Return set_button_fit_bounds(CJS_Runtime* pRuntime,
+  CJS_Result get_button_fit_bounds(CJS_Runtime* pRuntime);
+  CJS_Result set_button_fit_bounds(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp);
 
-  CJS_Return get_button_position(CJS_Runtime* pRuntime);
-  CJS_Return set_button_position(CJS_Runtime* pRuntime,
+  CJS_Result get_button_position(CJS_Runtime* pRuntime);
+  CJS_Result set_button_position(CJS_Runtime* pRuntime,
                                  v8::Local<v8::Value> vp);
 
-  CJS_Return get_button_scale_how(CJS_Runtime* pRuntime);
-  CJS_Return set_button_scale_how(CJS_Runtime* pRuntime,
+  CJS_Result get_button_scale_how(CJS_Runtime* pRuntime);
+  CJS_Result set_button_scale_how(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp);
 
-  CJS_Return get_button_scale_when(CJS_Runtime* pRuntime);
-  CJS_Return set_button_scale_when(CJS_Runtime* pRuntime,
+  CJS_Result get_button_scale_when(CJS_Runtime* pRuntime);
+  CJS_Result set_button_scale_when(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp);
 
-  CJS_Return get_calc_order_index(CJS_Runtime* pRuntime);
-  CJS_Return set_calc_order_index(CJS_Runtime* pRuntime,
+  CJS_Result get_calc_order_index(CJS_Runtime* pRuntime);
+  CJS_Result set_calc_order_index(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp);
 
-  CJS_Return get_char_limit(CJS_Runtime* pRuntime);
-  CJS_Return set_char_limit(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_char_limit(CJS_Runtime* pRuntime);
+  CJS_Result set_char_limit(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_comb(CJS_Runtime* pRuntime);
-  CJS_Return set_comb(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_comb(CJS_Runtime* pRuntime);
+  CJS_Result set_comb(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_commit_on_sel_change(CJS_Runtime* pRuntime);
-  CJS_Return set_commit_on_sel_change(CJS_Runtime* pRuntime,
+  CJS_Result get_commit_on_sel_change(CJS_Runtime* pRuntime);
+  CJS_Result set_commit_on_sel_change(CJS_Runtime* pRuntime,
                                       v8::Local<v8::Value> vp);
 
-  CJS_Return get_current_value_indices(CJS_Runtime* pRuntime);
-  CJS_Return set_current_value_indices(CJS_Runtime* pRuntime,
+  CJS_Result get_current_value_indices(CJS_Runtime* pRuntime);
+  CJS_Result set_current_value_indices(CJS_Runtime* pRuntime,
                                        v8::Local<v8::Value> vp);
 
-  CJS_Return get_default_style(CJS_Runtime* pRuntime);
-  CJS_Return set_default_style(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_default_style(CJS_Runtime* pRuntime);
+  CJS_Result set_default_style(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_default_value(CJS_Runtime* pRuntime);
-  CJS_Return set_default_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_default_value(CJS_Runtime* pRuntime);
+  CJS_Result set_default_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_do_not_scroll(CJS_Runtime* pRuntime);
-  CJS_Return set_do_not_scroll(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_do_not_scroll(CJS_Runtime* pRuntime);
+  CJS_Result set_do_not_scroll(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_do_not_spell_check(CJS_Runtime* pRuntime);
-  CJS_Return set_do_not_spell_check(CJS_Runtime* pRuntime,
+  CJS_Result get_do_not_spell_check(CJS_Runtime* pRuntime);
+  CJS_Result set_do_not_spell_check(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp);
 
-  CJS_Return get_delay(CJS_Runtime* pRuntime);
-  CJS_Return set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_delay(CJS_Runtime* pRuntime);
+  CJS_Result set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_display(CJS_Runtime* pRuntime);
-  CJS_Return set_display(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_display(CJS_Runtime* pRuntime);
+  CJS_Result set_display(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_doc(CJS_Runtime* pRuntime);
-  CJS_Return set_doc(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_doc(CJS_Runtime* pRuntime);
+  CJS_Result set_doc(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_editable(CJS_Runtime* pRuntime);
-  CJS_Return set_editable(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_editable(CJS_Runtime* pRuntime);
+  CJS_Result set_editable(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_export_values(CJS_Runtime* pRuntime);
-  CJS_Return set_export_values(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_export_values(CJS_Runtime* pRuntime);
+  CJS_Result set_export_values(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_file_select(CJS_Runtime* pRuntime);
-  CJS_Return set_file_select(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_file_select(CJS_Runtime* pRuntime);
+  CJS_Result set_file_select(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_fill_color(CJS_Runtime* pRuntime);
-  CJS_Return set_fill_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_fill_color(CJS_Runtime* pRuntime);
+  CJS_Result set_fill_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_hidden(CJS_Runtime* pRuntime);
-  CJS_Return set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_hidden(CJS_Runtime* pRuntime);
+  CJS_Result set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_highlight(CJS_Runtime* pRuntime);
-  CJS_Return set_highlight(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_highlight(CJS_Runtime* pRuntime);
+  CJS_Result set_highlight(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_line_width(CJS_Runtime* pRuntime);
-  CJS_Return set_line_width(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_line_width(CJS_Runtime* pRuntime);
+  CJS_Result set_line_width(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_multiline(CJS_Runtime* pRuntime);
-  CJS_Return set_multiline(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_multiline(CJS_Runtime* pRuntime);
+  CJS_Result set_multiline(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_multiple_selection(CJS_Runtime* pRuntime);
-  CJS_Return set_multiple_selection(CJS_Runtime* pRuntime,
+  CJS_Result get_multiple_selection(CJS_Runtime* pRuntime);
+  CJS_Result set_multiple_selection(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp);
 
-  CJS_Return get_name(CJS_Runtime* pRuntime);
-  CJS_Return set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_name(CJS_Runtime* pRuntime);
+  CJS_Result set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_num_items(CJS_Runtime* pRuntime);
-  CJS_Return set_num_items(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_num_items(CJS_Runtime* pRuntime);
+  CJS_Result set_num_items(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_page(CJS_Runtime* pRuntime);
-  CJS_Return set_page(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_page(CJS_Runtime* pRuntime);
+  CJS_Result set_page(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_password(CJS_Runtime* pRuntime);
-  CJS_Return set_password(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_password(CJS_Runtime* pRuntime);
+  CJS_Result set_password(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_print(CJS_Runtime* pRuntime);
-  CJS_Return set_print(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_print(CJS_Runtime* pRuntime);
+  CJS_Result set_print(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_radios_in_unison(CJS_Runtime* pRuntime);
-  CJS_Return set_radios_in_unison(CJS_Runtime* pRuntime,
+  CJS_Result get_radios_in_unison(CJS_Runtime* pRuntime);
+  CJS_Result set_radios_in_unison(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp);
 
-  CJS_Return get_readonly(CJS_Runtime* pRuntime);
-  CJS_Return set_readonly(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_readonly(CJS_Runtime* pRuntime);
+  CJS_Result set_readonly(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_rect(CJS_Runtime* pRuntime);
-  CJS_Return set_rect(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_rect(CJS_Runtime* pRuntime);
+  CJS_Result set_rect(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_required(CJS_Runtime* pRuntime);
-  CJS_Return set_required(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_required(CJS_Runtime* pRuntime);
+  CJS_Result set_required(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_rich_text(CJS_Runtime* pRuntime);
-  CJS_Return set_rich_text(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_rich_text(CJS_Runtime* pRuntime);
+  CJS_Result set_rich_text(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_rich_value(CJS_Runtime* pRuntime);
-  CJS_Return set_rich_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_rich_value(CJS_Runtime* pRuntime);
+  CJS_Result set_rich_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_rotation(CJS_Runtime* pRuntime);
-  CJS_Return set_rotation(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_rotation(CJS_Runtime* pRuntime);
+  CJS_Result set_rotation(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_stroke_color(CJS_Runtime* pRuntime);
-  CJS_Return set_stroke_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_stroke_color(CJS_Runtime* pRuntime);
+  CJS_Result set_stroke_color(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_style(CJS_Runtime* pRuntime);
-  CJS_Return set_style(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_style(CJS_Runtime* pRuntime);
+  CJS_Result set_style(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_submit_name(CJS_Runtime* pRuntime);
-  CJS_Return set_submit_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_submit_name(CJS_Runtime* pRuntime);
+  CJS_Result set_submit_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_text_font(CJS_Runtime* pRuntime);
-  CJS_Return set_text_font(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_text_font(CJS_Runtime* pRuntime);
+  CJS_Result set_text_font(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_text_size(CJS_Runtime* pRuntime);
-  CJS_Return set_text_size(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_text_size(CJS_Runtime* pRuntime);
+  CJS_Result set_text_size(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_type(CJS_Runtime* pRuntime);
-  CJS_Return set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_type(CJS_Runtime* pRuntime);
+  CJS_Result set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_user_name(CJS_Runtime* pRuntime);
-  CJS_Return set_user_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_user_name(CJS_Runtime* pRuntime);
+  CJS_Result set_user_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_value(CJS_Runtime* pRuntime);
-  CJS_Return set_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_value(CJS_Runtime* pRuntime);
+  CJS_Result set_value(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_value_as_string(CJS_Runtime* pRuntime);
-  CJS_Return set_value_as_string(CJS_Runtime* pRuntime,
+  CJS_Result get_value_as_string(CJS_Runtime* pRuntime);
+  CJS_Result set_value_as_string(CJS_Runtime* pRuntime,
                                  v8::Local<v8::Value> vp);
 
-  CJS_Return get_source(CJS_Runtime* pRuntime);
-  CJS_Return set_source(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_source(CJS_Runtime* pRuntime);
+  CJS_Result set_source(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return browseForFileToSubmit(
+  CJS_Result browseForFileToSubmit(
       CJS_Runtime* pRuntime,
       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return buttonGetCaption(CJS_Runtime* pRuntime,
+  CJS_Result buttonGetCaption(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return buttonGetIcon(CJS_Runtime* pRuntime,
+  CJS_Result buttonGetIcon(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return buttonImportIcon(CJS_Runtime* pRuntime,
+  CJS_Result buttonImportIcon(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return buttonSetCaption(CJS_Runtime* pRuntime,
+  CJS_Result buttonSetCaption(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return buttonSetIcon(CJS_Runtime* pRuntime,
+  CJS_Result buttonSetIcon(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return checkThisBox(CJS_Runtime* pRuntime,
+  CJS_Result checkThisBox(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return clearItems(CJS_Runtime* pRuntime,
+  CJS_Result clearItems(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return defaultIsChecked(CJS_Runtime* pRuntime,
+  CJS_Result defaultIsChecked(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return deleteItemAt(CJS_Runtime* pRuntime,
+  CJS_Result deleteItemAt(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getArray(CJS_Runtime* pRuntime,
+  CJS_Result getArray(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getItemAt(CJS_Runtime* pRuntime,
+  CJS_Result getItemAt(CJS_Runtime* pRuntime,
                        const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getLock(CJS_Runtime* pRuntime,
+  CJS_Result getLock(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return insertItemAt(CJS_Runtime* pRuntime,
+  CJS_Result insertItemAt(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return isBoxChecked(CJS_Runtime* pRuntime,
+  CJS_Result isBoxChecked(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return isDefaultChecked(CJS_Runtime* pRuntime,
+  CJS_Result isDefaultChecked(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return setAction(CJS_Runtime* pRuntime,
+  CJS_Result setAction(CJS_Runtime* pRuntime,
                        const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return setFocus(CJS_Runtime* pRuntime,
+  CJS_Result setFocus(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return setItems(CJS_Runtime* pRuntime,
+  CJS_Result setItems(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return setLock(CJS_Runtime* pRuntime,
+  CJS_Result setLock(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return signatureGetModifications(
+  CJS_Result signatureGetModifications(
       CJS_Runtime* pRuntime,
       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return signatureGetSeedValue(
+  CJS_Result signatureGetSeedValue(
       CJS_Runtime* pRuntime,
       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return signatureInfo(CJS_Runtime* pRuntime,
+  CJS_Result signatureInfo(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return signatureSetSeedValue(
+  CJS_Result signatureSetSeedValue(
       CJS_Runtime* pRuntime,
       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return signatureSign(CJS_Runtime* pRuntime,
+  CJS_Result signatureSign(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return signatureValidate(CJS_Runtime* pRuntime,
+  CJS_Result signatureValidate(CJS_Runtime* pRuntime,
                                const std::vector<v8::Local<v8::Value>>& params);
 
   void SetDelay(bool bDelay);

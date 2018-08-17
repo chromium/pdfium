@@ -30,67 +30,67 @@ CJX_ExclGroup::CJX_ExclGroup(CXFA_ExclGroup* group) : CJX_Node(group) {
 
 CJX_ExclGroup::~CJX_ExclGroup() {}
 
-CJS_Return CJX_ExclGroup::execEvent(
+CJS_Result CJX_ExclGroup::execEvent(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   execSingleEventByName(runtime->ToWideString(params[0]).AsStringView(),
                         XFA_Element::ExclGroup);
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_ExclGroup::execInitialize(
+CJS_Result CJX_ExclGroup::execInitialize(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify)
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
                                   true);
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_ExclGroup::execCalculate(
+CJS_Result CJX_ExclGroup::execCalculate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify)
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
                                   true);
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_ExclGroup::execValidate(
+CJS_Result CJX_ExclGroup::execValidate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* notify = GetDocument()->GetNotify();
   if (!notify)
-    return CJS_Return::Success(runtime->NewBoolean(false));
+    return CJS_Result::Success(runtime->NewBoolean(false));
 
   int32_t iRet = notify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate,
                                               false, true);
-  return CJS_Return::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
 
-CJS_Return CJX_ExclGroup::selectedMember(
+CJS_Result CJX_ExclGroup::selectedMember(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_Node* node = GetXFANode();
   if (!node->IsWidgetReady())
-    return CJS_Return::Success(runtime->NewNull());
+    return CJS_Result::Success(runtime->NewNull());
 
   CXFA_Node* pReturnNode = nullptr;
   if (params.empty()) {
@@ -100,14 +100,14 @@ CJS_Return CJX_ExclGroup::selectedMember(
         runtime->ToWideString(params[0]).AsStringView(), true);
   }
   if (!pReturnNode)
-    return CJS_Return::Success(runtime->NewNull());
+    return CJS_Result::Success(runtime->NewNull());
 
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pReturnNode);
   if (!value)
-    return CJS_Return::Success(runtime->NewNull());
+    return CJS_Result::Success(runtime->NewNull());
 
-  return CJS_Return::Success(
+  return CJS_Result::Success(
       value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 

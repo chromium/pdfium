@@ -26,38 +26,38 @@ CJX_SignaturePseudoModel::CJX_SignaturePseudoModel(
 
 CJX_SignaturePseudoModel::~CJX_SignaturePseudoModel() {}
 
-CJS_Return CJX_SignaturePseudoModel::verifySignature(
+CJS_Result CJX_SignaturePseudoModel::verifySignature(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 4)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
-  return CJS_Return::Success(runtime->NewNumber(0));
+  return CJS_Result::Success(runtime->NewNumber(0));
 }
 
-CJS_Return CJX_SignaturePseudoModel::sign(
+CJS_Result CJX_SignaturePseudoModel::sign(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() < 3 || params.size() > 7)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
-  return CJS_Return::Success(runtime->NewBoolean(false));
+  return CJS_Result::Success(runtime->NewBoolean(false));
 }
 
-CJS_Return CJX_SignaturePseudoModel::enumerate(
+CJS_Result CJX_SignaturePseudoModel::enumerate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_SignaturePseudoModel::clear(
+CJS_Result CJX_SignaturePseudoModel::clear(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 2)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
-  return CJS_Return::Success(runtime->NewBoolean(false));
+  return CJS_Result::Success(runtime->NewBoolean(false));
 }

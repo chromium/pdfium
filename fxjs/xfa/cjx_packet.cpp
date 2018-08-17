@@ -28,40 +28,40 @@ CJX_Packet::CJX_Packet(CXFA_Packet* packet) : CJX_Node(packet) {
 
 CJX_Packet::~CJX_Packet() {}
 
-CJS_Return CJX_Packet::getAttribute(
+CJS_Result CJX_Packet::getAttribute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString attributeValue;
   CFX_XMLElement* element = ToXMLElement(GetXFANode()->GetXMLMappingNode());
   if (element)
     attributeValue = element->GetAttribute(runtime->ToWideString(params[0]));
 
-  return CJS_Return::Success(
+  return CJS_Result::Success(
       runtime->NewString(attributeValue.UTF8Encode().AsStringView()));
 }
 
-CJS_Return CJX_Packet::setAttribute(
+CJS_Result CJX_Packet::setAttribute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 2)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CFX_XMLElement* element = ToXMLElement(GetXFANode()->GetXMLMappingNode());
   if (element) {
     element->SetAttribute(runtime->ToWideString(params[1]),
                           runtime->ToWideString(params[0]));
   }
-  return CJS_Return::Success(runtime->NewNull());
+  return CJS_Result::Success(runtime->NewNull());
 }
 
-CJS_Return CJX_Packet::removeAttribute(
+CJS_Result CJX_Packet::removeAttribute(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CFX_XMLElement* pElement = ToXMLElement(GetXFANode()->GetXMLMappingNode());
   if (pElement) {
@@ -69,7 +69,7 @@ CJS_Return CJX_Packet::removeAttribute(
     if (pElement->HasAttribute(name))
       pElement->RemoveAttribute(name);
   }
-  return CJS_Return::Success(runtime->NewNull());
+  return CJS_Result::Success(runtime->NewNull());
 }
 
 void CJX_Packet::content(CFXJSE_Value* pValue,

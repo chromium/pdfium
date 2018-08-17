@@ -25,17 +25,17 @@ CJX_Model::CJX_Model(CXFA_Node* node) : CJX_Node(node) {
 
 CJX_Model::~CJX_Model() {}
 
-CJS_Return CJX_Model::clearErrorList(
+CJS_Result CJX_Model::clearErrorList(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_Model::createNode(
+CJS_Result CJX_Model::createNode(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty() || params.size() > 3)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString name;
   if (params.size() > 1)
@@ -49,11 +49,11 @@ CJS_Return CJX_Model::createNode(
   XFA_Element eType = CXFA_Node::NameToElement(tagName);
   CXFA_Node* pNewNode = GetXFANode()->CreateSamePacketNode(eType);
   if (!pNewNode)
-    return CJS_Return::Success(runtime->NewNull());
+    return CJS_Result::Success(runtime->NewNull());
 
   if (!name.IsEmpty()) {
     if (!pNewNode->HasAttribute(XFA_Attribute::Name))
-      return CJS_Return::Failure(JSMessage::kParamError);
+      return CJS_Result::Failure(JSMessage::kParamError);
 
     pNewNode->JSObject()->SetAttribute(XFA_Attribute::Name, name.AsStringView(),
                                        true);
@@ -64,23 +64,23 @@ CJS_Return CJX_Model::createNode(
   CFXJSE_Value* value =
       GetDocument()->GetScriptContext()->GetJSValueFromMap(pNewNode);
   if (!value)
-    return CJS_Return::Success(runtime->NewNull());
+    return CJS_Result::Success(runtime->NewNull());
 
-  return CJS_Return::Success(
+  return CJS_Result::Success(
       value->DirectGetValue().Get(runtime->GetIsolate()));
 }
 
-CJS_Return CJX_Model::isCompatibleNS(
+CJS_Result CJX_Model::isCompatibleNS(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString nameSpace;
   if (params.size() >= 1)
     nameSpace = runtime->ToWideString(params[0]);
 
-  return CJS_Return::Success(
+  return CJS_Result::Success(
       runtime->NewBoolean(TryNamespace().value_or(WideString()) == nameSpace));
 }
 

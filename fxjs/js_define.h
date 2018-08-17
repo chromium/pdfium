@@ -13,7 +13,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_object.h"
-#include "fxjs/cjs_return.h"
+#include "fxjs/cjs_result.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/ptr_util.h"
 
@@ -70,7 +70,7 @@ UnownedPtr<C> JSGetObject(v8::Local<v8::Object> obj) {
   return UnownedPtr<C>(static_cast<C*>(pJSObj));
 }
 
-template <class C, CJS_Return (C::*M)(CJS_Runtime*)>
+template <class C, CJS_Result (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -83,7 +83,7 @@ void JSPropGetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Return result = (pObj.Get()->*M)(pRuntime);
+  CJS_Result result = (pObj.Get()->*M)(pRuntime);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -94,7 +94,7 @@ void JSPropGetter(const char* prop_name_string,
     info.GetReturnValue().Set(result.Return());
 }
 
-template <class C, CJS_Return (C::*M)(CJS_Runtime*, v8::Local<v8::Value>)>
+template <class C, CJS_Result (C::*M)(CJS_Runtime*, v8::Local<v8::Value>)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
                   v8::Local<v8::String> property,
@@ -108,7 +108,7 @@ void JSPropSetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Return result = (pObj.Get()->*M)(pRuntime, value);
+  CJS_Result result = (pObj.Get()->*M)(pRuntime, value);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -116,7 +116,7 @@ void JSPropSetter(const char* prop_name_string,
 }
 
 template <class C,
-          CJS_Return (C::*M)(CJS_Runtime*,
+          CJS_Result (C::*M)(CJS_Runtime*,
                              const std::vector<v8::Local<v8::Value>>&)>
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
@@ -133,7 +133,7 @@ void JSMethod(const char* method_name_string,
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
     parameters.push_back(info[i]);
 
-  CJS_Return result = (pObj.Get()->*M)(pRuntime, parameters);
+  CJS_Result result = (pObj.Get()->*M)(pRuntime, parameters);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,
                                         result.Error()));

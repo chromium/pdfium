@@ -29,10 +29,10 @@ CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 
 CJS_Icon::~CJS_Icon() = default;
 
-CJS_Return CJS_Icon::get_name(CJS_Runtime* pRuntime) {
-  return CJS_Return::Success(pRuntime->NewString(m_swIconName.AsStringView()));
+CJS_Result CJS_Icon::get_name(CJS_Runtime* pRuntime) {
+  return CJS_Result::Success(pRuntime->NewString(m_swIconName.AsStringView()));
 }
 
-CJS_Return CJS_Icon::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
-  return CJS_Return::Failure(JSMessage::kNotSupportedError);
+CJS_Result CJS_Icon::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
+  return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }

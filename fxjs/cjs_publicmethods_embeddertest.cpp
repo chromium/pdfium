@@ -196,7 +196,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   params.push_back(runtime.NewString("SUM"));
   params.push_back(ary);
 
-  CJS_Return ret = CJS_PublicMethods::AFSimple_Calculate(&runtime, params);
+  CJS_Result ret = CJS_PublicMethods::AFSimple_Calculate(&runtime, params);
   UnloadPage(page);
 
   runtime.GetCurrentEventContext()->GetEventHandler()->m_pValue = nullptr;
@@ -237,7 +237,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
   params.push_back(runtime.NewString(L"-10"));
   params.push_back(runtime.NewString(L""));
 
-  CJS_Return ret = CJS_PublicMethods::AFNumber_Keystroke(&runtime, params);
+  CJS_Result ret = CJS_PublicMethods::AFNumber_Keystroke(&runtime, params);
   EXPECT_TRUE(valid);
   EXPECT_TRUE(!ret.HasError());
   EXPECT_TRUE(!ret.HasReturn());

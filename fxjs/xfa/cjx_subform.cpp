@@ -28,56 +28,56 @@ CJX_Subform::CJX_Subform(CXFA_Node* node) : CJX_Container(node) {
 
 CJX_Subform::~CJX_Subform() {}
 
-CJS_Return CJX_Subform::execEvent(
+CJS_Result CJX_Subform::execEvent(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 1)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   execSingleEventByName(runtime->ToWideString(params[0]).AsStringView(),
                         XFA_Element::Subform);
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_Subform::execInitialize(
+CJS_Result CJX_Subform::execInitialize(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify)
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Initialize, false,
                                   true);
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_Subform::execCalculate(
+CJS_Result CJX_Subform::execCalculate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (pNotify)
     pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Calculate, false,
                                   true);
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJX_Subform::execValidate(
+CJS_Result CJX_Subform::execValidate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
-    return CJS_Return::Success(runtime->NewBoolean(false));
+    return CJS_Result::Success(runtime->NewBoolean(false));
 
   int32_t iRet = pNotify->ExecEventByDeepFirst(GetXFANode(), XFA_EVENT_Validate,
                                                false, true);
-  return CJS_Return::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
+  return CJS_Result::Success(runtime->NewBoolean(iRet != XFA_EVENTERROR_Error));
 }
 
 void CJX_Subform::locale(CFXJSE_Value* pValue,

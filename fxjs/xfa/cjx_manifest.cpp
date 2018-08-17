@@ -21,13 +21,13 @@ CJX_Manifest::CJX_Manifest(CXFA_Manifest* manifest) : CJX_Node(manifest) {
 
 CJX_Manifest::~CJX_Manifest() {}
 
-CJS_Return CJX_Manifest::evaluate(
+CJS_Result CJX_Manifest::evaluate(
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
   if (!params.empty())
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
-  return CJS_Return::Success(
+  return CJS_Result::Success(
       runtime->NewBoolean(GetXFANode()->IsWidgetReady()));
 }
 

@@ -46,49 +46,49 @@ class CJS_Color : public CJS_Object {
   static const JSPropertySpec PropertySpecs[];
   static const JSMethodSpec MethodSpecs[];
 
-  CJS_Return get_black(CJS_Runtime* pRuntime);
-  CJS_Return set_black(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_black(CJS_Runtime* pRuntime);
+  CJS_Result set_black(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_blue(CJS_Runtime* pRuntime);
-  CJS_Return set_blue(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_blue(CJS_Runtime* pRuntime);
+  CJS_Result set_blue(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_cyan(CJS_Runtime* pRuntime);
-  CJS_Return set_cyan(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_cyan(CJS_Runtime* pRuntime);
+  CJS_Result set_cyan(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_dark_gray(CJS_Runtime* pRuntime);
-  CJS_Return set_dark_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_dark_gray(CJS_Runtime* pRuntime);
+  CJS_Result set_dark_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_gray(CJS_Runtime* pRuntime);
-  CJS_Return set_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_gray(CJS_Runtime* pRuntime);
+  CJS_Result set_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_green(CJS_Runtime* pRuntime);
-  CJS_Return set_green(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_green(CJS_Runtime* pRuntime);
+  CJS_Result set_green(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_light_gray(CJS_Runtime* pRuntime);
-  CJS_Return set_light_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_light_gray(CJS_Runtime* pRuntime);
+  CJS_Result set_light_gray(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_magenta(CJS_Runtime* pRuntime);
-  CJS_Return set_magenta(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_magenta(CJS_Runtime* pRuntime);
+  CJS_Result set_magenta(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_red(CJS_Runtime* pRuntime);
-  CJS_Return set_red(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_red(CJS_Runtime* pRuntime);
+  CJS_Result set_red(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_transparent(CJS_Runtime* pRuntime);
-  CJS_Return set_transparent(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_transparent(CJS_Runtime* pRuntime);
+  CJS_Result set_transparent(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_white(CJS_Runtime* pRuntime);
-  CJS_Return set_white(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_white(CJS_Runtime* pRuntime);
+  CJS_Result set_white(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_yellow(CJS_Runtime* pRuntime);
-  CJS_Return set_yellow(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_yellow(CJS_Runtime* pRuntime);
+  CJS_Result set_yellow(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return convert(CJS_Runtime* pRuntime,
+  CJS_Result convert(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return equal(CJS_Runtime* pRuntime,
+  CJS_Result equal(CJS_Runtime* pRuntime,
                    const std::vector<v8::Local<v8::Value>>& params);
 
-  CJS_Return GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* val);
-  CJS_Return SetPropertyHelper(CJS_Runtime* pRuntime,
+  CJS_Result GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* val);
+  CJS_Result SetPropertyHelper(CJS_Runtime* pRuntime,
                                v8::Local<v8::Value> vp,
                                CFX_Color* val);
 

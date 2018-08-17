@@ -70,85 +70,85 @@ class CJS_App : public CJS_Object {
   static const JSPropertySpec PropertySpecs[];
   static const JSMethodSpec MethodSpecs[];
 
-  CJS_Return get_active_docs(CJS_Runtime* pRuntime);
-  CJS_Return set_active_docs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_active_docs(CJS_Runtime* pRuntime);
+  CJS_Result set_active_docs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_calculate(CJS_Runtime* pRuntime);
-  CJS_Return set_calculate(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_calculate(CJS_Runtime* pRuntime);
+  CJS_Result set_calculate(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_forms_version(CJS_Runtime* pRuntime);
-  CJS_Return set_forms_version(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_forms_version(CJS_Runtime* pRuntime);
+  CJS_Result set_forms_version(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_fs(CJS_Runtime* pRuntime);
-  CJS_Return set_fs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_fs(CJS_Runtime* pRuntime);
+  CJS_Result set_fs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_fullscreen(CJS_Runtime* pRuntime);
-  CJS_Return set_fullscreen(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_fullscreen(CJS_Runtime* pRuntime);
+  CJS_Result set_fullscreen(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_language(CJS_Runtime* pRuntime);
-  CJS_Return set_language(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_language(CJS_Runtime* pRuntime);
+  CJS_Result set_language(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_media(CJS_Runtime* pRuntime);
-  CJS_Return set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_media(CJS_Runtime* pRuntime);
+  CJS_Result set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_platform(CJS_Runtime* pRuntime);
-  CJS_Return set_platform(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_platform(CJS_Runtime* pRuntime);
+  CJS_Result set_platform(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_runtime_highlight(CJS_Runtime* pRuntime);
-  CJS_Return set_runtime_highlight(CJS_Runtime* pRuntime,
+  CJS_Result get_runtime_highlight(CJS_Runtime* pRuntime);
+  CJS_Result set_runtime_highlight(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp);
 
-  CJS_Return get_viewer_type(CJS_Runtime* pRuntime);
-  CJS_Return set_viewer_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_viewer_type(CJS_Runtime* pRuntime);
+  CJS_Result set_viewer_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_viewer_variation(CJS_Runtime* pRuntime);
-  CJS_Return set_viewer_variation(CJS_Runtime* pRuntime,
+  CJS_Result get_viewer_variation(CJS_Runtime* pRuntime);
+  CJS_Result set_viewer_variation(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp);
 
-  CJS_Return get_viewer_version(CJS_Runtime* pRuntime);
-  CJS_Return set_viewer_version(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_viewer_version(CJS_Runtime* pRuntime);
+  CJS_Result set_viewer_version(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return alert(CJS_Runtime* pRuntime,
+  CJS_Result alert(CJS_Runtime* pRuntime,
                    const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return beep(CJS_Runtime* pRuntime,
+  CJS_Result beep(CJS_Runtime* pRuntime,
                   const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return browseForDoc(CJS_Runtime* pRuntime,
+  CJS_Result browseForDoc(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return clearInterval(CJS_Runtime* pRuntime,
+  CJS_Result clearInterval(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return clearTimeOut(CJS_Runtime* pRuntime,
+  CJS_Result clearTimeOut(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return execDialog(CJS_Runtime* pRuntime,
+  CJS_Result execDialog(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return execMenuItem(CJS_Runtime* pRuntime,
+  CJS_Result execMenuItem(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return findComponent(CJS_Runtime* pRuntime,
+  CJS_Result findComponent(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return goBack(CJS_Runtime* pRuntime,
+  CJS_Result goBack(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return goForward(CJS_Runtime* pRuntime,
+  CJS_Result goForward(CJS_Runtime* pRuntime,
                        const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return launchURL(CJS_Runtime* pRuntime,
+  CJS_Result launchURL(CJS_Runtime* pRuntime,
                        const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return mailMsg(CJS_Runtime* pRuntime,
+  CJS_Result mailMsg(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return newFDF(CJS_Runtime* pRuntime,
+  CJS_Result newFDF(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return newDoc(CJS_Runtime* pRuntime,
+  CJS_Result newDoc(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return openDoc(CJS_Runtime* pRuntime,
+  CJS_Result openDoc(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return openFDF(CJS_Runtime* pRuntime,
+  CJS_Result openFDF(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return popUpMenuEx(CJS_Runtime* pRuntime,
+  CJS_Result popUpMenuEx(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return popUpMenu(CJS_Runtime* pRuntime,
+  CJS_Result popUpMenu(CJS_Runtime* pRuntime,
                        const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return response(CJS_Runtime* pRuntime,
+  CJS_Result response(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return setInterval(CJS_Runtime* pRuntime,
+  CJS_Result setInterval(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return setTimeOut(CJS_Runtime* pRuntime,
+  CJS_Result setTimeOut(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
 
   void RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript);

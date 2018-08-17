@@ -38,23 +38,23 @@ CJS_Console::CJS_Console(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 
 CJS_Console::~CJS_Console() = default;
 
-CJS_Return CJS_Console::clear(CJS_Runtime* pRuntime,
+CJS_Result CJS_Console::clear(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJS_Console::hide(CJS_Runtime* pRuntime,
+CJS_Result CJS_Console::hide(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJS_Console::println(
+CJS_Result CJS_Console::println(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJS_Console::show(CJS_Runtime* pRuntime,
+CJS_Result CJS_Console::show(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params) {
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }

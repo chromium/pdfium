@@ -31,7 +31,7 @@ class CXFA_Node;
 class CXFA_Object;
 struct XFA_MAPMODULEDATA;
 
-typedef CJS_Return (*CJX_MethodCall)(
+typedef CJS_Result (*CJX_MethodCall)(
     CJX_Object* obj,
     CFX_V8* runtime,
     const std::vector<v8::Local<v8::Value>>& params);
@@ -71,7 +71,7 @@ class CJX_Object {
   CXFA_LayoutItem* GetLayoutItem() const { return layout_item_; }
 
   bool HasMethod(const WideString& func) const;
-  CJS_Return RunMethod(const WideString& func,
+  CJS_Result RunMethod(const WideString& func,
                        const std::vector<v8::Local<v8::Value>>& params);
 
   bool HasAttribute(XFA_Attribute eAttr);

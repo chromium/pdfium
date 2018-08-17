@@ -29,13 +29,13 @@ class CJS_Console : public CJS_Object {
   static const char kName[];
   static const JSMethodSpec MethodSpecs[];
 
-  CJS_Return clear(CJS_Runtime* pRuntime,
+  CJS_Result clear(CJS_Runtime* pRuntime,
                    const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return hide(CJS_Runtime* pRuntime,
+  CJS_Result hide(CJS_Runtime* pRuntime,
                   const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return println(CJS_Runtime* pRuntime,
+  CJS_Result println(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return show(CJS_Runtime* pRuntime,
+  CJS_Result show(CJS_Runtime* pRuntime,
                   const std::vector<v8::Local<v8::Value>>& params);
 };
 

@@ -43,15 +43,15 @@ class CJS_Util : public CJS_Object {
 
   static int ParseDataType(std::wstring* sFormat);
 
-  CJS_Return printd(CJS_Runtime* pRuntime,
+  CJS_Result printd(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return printf(CJS_Runtime* pRuntime,
+  CJS_Result printf(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return printx(CJS_Runtime* pRuntime,
+  CJS_Result printx(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return scand(CJS_Runtime* pRuntime,
+  CJS_Result scand(CJS_Runtime* pRuntime,
                    const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return byteToChar(CJS_Runtime* pRuntime,
+  CJS_Result byteToChar(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
 };
 

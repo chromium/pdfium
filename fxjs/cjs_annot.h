@@ -29,14 +29,14 @@ class CJS_Annot : public CJS_Object {
   static const char kName[];
   static const JSPropertySpec PropertySpecs[];
 
-  CJS_Return get_hidden(CJS_Runtime* pRuntime);
-  CJS_Return set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_hidden(CJS_Runtime* pRuntime);
+  CJS_Result set_hidden(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_name(CJS_Runtime* pRuntime);
-  CJS_Return set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_name(CJS_Runtime* pRuntime);
+  CJS_Result set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_type(CJS_Runtime* pRuntime);
-  CJS_Return set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_type(CJS_Runtime* pRuntime);
+  CJS_Result set_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
   CPDFSDK_Annot::ObservedPtr m_pAnnot;
 };

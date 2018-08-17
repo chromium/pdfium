@@ -39,14 +39,14 @@ class CJS_Global : public CJS_Object {
   CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Global() override;
 
-  CJS_Return DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
+  CJS_Result DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
-  CJS_Return setPersistent(CJS_Runtime* pRuntime,
+  CJS_Result setPersistent(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return QueryProperty(const wchar_t* propname);
-  CJS_Return GetProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
-  CJS_Return SetProperty(CJS_Runtime* pRuntime,
+  CJS_Result QueryProperty(const wchar_t* propname);
+  CJS_Result GetProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
+  CJS_Result SetProperty(CJS_Runtime* pRuntime,
                          const wchar_t* propname,
                          v8::Local<v8::Value> vp);
 
@@ -70,7 +70,7 @@ class CJS_Global : public CJS_Object {
   void UpdateGlobalPersistentVariables();
   void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
   void DestroyGlobalPersisitentVariables();
-  CJS_Return SetGlobalVariables(const ByteString& propname,
+  CJS_Result SetGlobalVariables(const ByteString& propname,
                                 JS_GlobalDataType nType,
                                 double dData,
                                 bool bData,

@@ -437,12 +437,12 @@ int32_t CFXJSE_Engine::NormalPropTypeGetter(CFXJSE_Value* pOriginalValue,
   return FXJSE_ClassPropType_Property;
 }
 
-CJS_Return CFXJSE_Engine::NormalMethodCall(
+CJS_Result CFXJSE_Engine::NormalMethodCall(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     const WideString& functionName) {
   CXFA_Object* pObject = ToObject(info);
   if (!pObject)
-    return CJS_Return::Failure(L"no Holder() present.");
+    return CJS_Result::Failure(L"no Holder() present.");
 
   CFXJSE_Engine* lpScriptContext = pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject, false);

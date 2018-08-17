@@ -27,8 +27,8 @@ class CJS_Icon : public CJS_Object {
   static const char kName[];
   static const JSPropertySpec PropertySpecs[];
 
-  CJS_Return get_name(CJS_Runtime* pRuntime);
-  CJS_Return set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_name(CJS_Runtime* pRuntime);
+  CJS_Result set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
   WideString m_swIconName;
 };

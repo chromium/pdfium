@@ -23,7 +23,7 @@ extern const char kClassTag[];
 class CFXJSE_Arguments;
 class CFXJSE_FormCalcContext;
 class CFXJSE_Value;
-class CJS_Return;
+class CJS_Result;
 class CXFA_Object;
 
 // C++ object which is retrieved from v8 object's slot.
@@ -39,7 +39,7 @@ class CFXJSE_HostObject {
   CFXJSE_HostObject();
 };
 
-typedef CJS_Return (*FXJSE_MethodCallback)(
+typedef CJS_Result (*FXJSE_MethodCallback)(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     const WideString& functionName);
 typedef void (*FXJSE_FuncCallback)(CFXJSE_Value* pThis,

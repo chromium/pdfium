@@ -114,197 +114,197 @@ class CJS_Document : public CJS_Object, public Observable<CJS_Document> {
   static const JSPropertySpec PropertySpecs[];
   static const JSMethodSpec MethodSpecs[];
 
-  CJS_Return get_ADBE(CJS_Runtime* pRuntime);
-  CJS_Return set_ADBE(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_ADBE(CJS_Runtime* pRuntime);
+  CJS_Result set_ADBE(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_author(CJS_Runtime* pRuntime);
-  CJS_Return set_author(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_author(CJS_Runtime* pRuntime);
+  CJS_Result set_author(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_base_URL(CJS_Runtime* pRuntime);
-  CJS_Return set_base_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_base_URL(CJS_Runtime* pRuntime);
+  CJS_Result set_base_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_bookmark_root(CJS_Runtime* pRuntime);
-  CJS_Return set_bookmark_root(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_bookmark_root(CJS_Runtime* pRuntime);
+  CJS_Result set_bookmark_root(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_calculate(CJS_Runtime* pRuntime);
-  CJS_Return set_calculate(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_calculate(CJS_Runtime* pRuntime);
+  CJS_Result set_calculate(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_collab(CJS_Runtime* pRuntime);
-  CJS_Return set_collab(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_collab(CJS_Runtime* pRuntime);
+  CJS_Result set_collab(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_creation_date(CJS_Runtime* pRuntime);
-  CJS_Return set_creation_date(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_creation_date(CJS_Runtime* pRuntime);
+  CJS_Result set_creation_date(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_creator(CJS_Runtime* pRuntime);
-  CJS_Return set_creator(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_creator(CJS_Runtime* pRuntime);
+  CJS_Result set_creator(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_delay(CJS_Runtime* pRuntime);
-  CJS_Return set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_delay(CJS_Runtime* pRuntime);
+  CJS_Result set_delay(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_dirty(CJS_Runtime* pRuntime);
-  CJS_Return set_dirty(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_dirty(CJS_Runtime* pRuntime);
+  CJS_Result set_dirty(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_document_file_name(CJS_Runtime* pRuntime);
-  CJS_Return set_document_file_name(CJS_Runtime* pRuntime,
+  CJS_Result get_document_file_name(CJS_Runtime* pRuntime);
+  CJS_Result set_document_file_name(CJS_Runtime* pRuntime,
                                     v8::Local<v8::Value> vp);
 
-  CJS_Return get_external(CJS_Runtime* pRuntime);
-  CJS_Return set_external(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_external(CJS_Runtime* pRuntime);
+  CJS_Result set_external(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_filesize(CJS_Runtime* pRuntime);
-  CJS_Return set_filesize(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_filesize(CJS_Runtime* pRuntime);
+  CJS_Result set_filesize(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_icons(CJS_Runtime* pRuntime);
-  CJS_Return set_icons(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_icons(CJS_Runtime* pRuntime);
+  CJS_Result set_icons(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_info(CJS_Runtime* pRuntime);
-  CJS_Return set_info(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_info(CJS_Runtime* pRuntime);
+  CJS_Result set_info(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_keywords(CJS_Runtime* pRuntime);
-  CJS_Return set_keywords(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_keywords(CJS_Runtime* pRuntime);
+  CJS_Result set_keywords(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_layout(CJS_Runtime* pRuntime);
-  CJS_Return set_layout(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_layout(CJS_Runtime* pRuntime);
+  CJS_Result set_layout(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_media(CJS_Runtime* pRuntime);
-  CJS_Return set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_media(CJS_Runtime* pRuntime);
+  CJS_Result set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_mod_date(CJS_Runtime* pRuntime);
-  CJS_Return set_mod_date(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_mod_date(CJS_Runtime* pRuntime);
+  CJS_Result set_mod_date(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_mouse_x(CJS_Runtime* pRuntime);
-  CJS_Return set_mouse_x(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_mouse_x(CJS_Runtime* pRuntime);
+  CJS_Result set_mouse_x(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_mouse_y(CJS_Runtime* pRuntime);
-  CJS_Return set_mouse_y(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_mouse_y(CJS_Runtime* pRuntime);
+  CJS_Result set_mouse_y(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_num_fields(CJS_Runtime* pRuntime);
-  CJS_Return set_num_fields(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_num_fields(CJS_Runtime* pRuntime);
+  CJS_Result set_num_fields(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_num_pages(CJS_Runtime* pRuntime);
-  CJS_Return set_num_pages(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_num_pages(CJS_Runtime* pRuntime);
+  CJS_Result set_num_pages(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_page_num(CJS_Runtime* pRuntime);
-  CJS_Return set_page_num(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_page_num(CJS_Runtime* pRuntime);
+  CJS_Result set_page_num(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_page_window_rect(CJS_Runtime* pRuntime);
-  CJS_Return set_page_window_rect(CJS_Runtime* pRuntime,
+  CJS_Result get_page_window_rect(CJS_Runtime* pRuntime);
+  CJS_Result set_page_window_rect(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp);
 
-  CJS_Return get_path(CJS_Runtime* pRuntime);
-  CJS_Return set_path(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_path(CJS_Runtime* pRuntime);
+  CJS_Result set_path(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_producer(CJS_Runtime* pRuntime);
-  CJS_Return set_producer(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_producer(CJS_Runtime* pRuntime);
+  CJS_Result set_producer(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_subject(CJS_Runtime* pRuntime);
-  CJS_Return set_subject(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_subject(CJS_Runtime* pRuntime);
+  CJS_Result set_subject(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_title(CJS_Runtime* pRuntime);
-  CJS_Return set_title(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_title(CJS_Runtime* pRuntime);
+  CJS_Result set_title(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_zoom(CJS_Runtime* pRuntime);
-  CJS_Return set_zoom(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_zoom(CJS_Runtime* pRuntime);
+  CJS_Result set_zoom(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_zoom_type(CJS_Runtime* pRuntime);
-  CJS_Return set_zoom_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_zoom_type(CJS_Runtime* pRuntime);
+  CJS_Result set_zoom_type(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return get_URL(CJS_Runtime* pRuntime);
-  CJS_Return set_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
+  CJS_Result get_URL(CJS_Runtime* pRuntime);
+  CJS_Result set_URL(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  CJS_Return addAnnot(CJS_Runtime* pRuntime,
+  CJS_Result addAnnot(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return addField(CJS_Runtime* pRuntime,
+  CJS_Result addField(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return addLink(CJS_Runtime* pRuntime,
+  CJS_Result addLink(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return addIcon(CJS_Runtime* pRuntime,
+  CJS_Result addIcon(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return calculateNow(CJS_Runtime* pRuntime,
+  CJS_Result calculateNow(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return closeDoc(CJS_Runtime* pRuntime,
+  CJS_Result closeDoc(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return createDataObject(CJS_Runtime* pRuntime,
+  CJS_Result createDataObject(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return deletePages(CJS_Runtime* pRuntime,
+  CJS_Result deletePages(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return exportAsText(CJS_Runtime* pRuntime,
+  CJS_Result exportAsText(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return exportAsFDF(CJS_Runtime* pRuntime,
+  CJS_Result exportAsFDF(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return exportAsXFDF(CJS_Runtime* pRuntime,
+  CJS_Result exportAsXFDF(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return extractPages(CJS_Runtime* pRuntime,
+  CJS_Result extractPages(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getAnnot(CJS_Runtime* pRuntime,
+  CJS_Result getAnnot(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getAnnots(CJS_Runtime* pRuntime,
+  CJS_Result getAnnots(CJS_Runtime* pRuntime,
                        const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getAnnot3D(CJS_Runtime* pRuntime,
+  CJS_Result getAnnot3D(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getAnnots3D(CJS_Runtime* pRuntime,
+  CJS_Result getAnnots3D(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getField(CJS_Runtime* pRuntime,
+  CJS_Result getField(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getIcon(CJS_Runtime* pRuntime,
+  CJS_Result getIcon(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getLinks(CJS_Runtime* pRuntime,
+  CJS_Result getLinks(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getNthFieldName(CJS_Runtime* pRuntime,
+  CJS_Result getNthFieldName(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getOCGs(CJS_Runtime* pRuntime,
+  CJS_Result getOCGs(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getPageBox(CJS_Runtime* pRuntime,
+  CJS_Result getPageBox(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getPageNthWord(CJS_Runtime* pRuntime,
+  CJS_Result getPageNthWord(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getPageNthWordQuads(
+  CJS_Result getPageNthWordQuads(
       CJS_Runtime* pRuntime,
       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getPageNumWords(CJS_Runtime* pRuntime,
+  CJS_Result getPageNumWords(CJS_Runtime* pRuntime,
                              const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getPrintParams(CJS_Runtime* pRuntime,
+  CJS_Result getPrintParams(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return getURL(CJS_Runtime* pRuntime,
+  CJS_Result getURL(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return gotoNamedDest(CJS_Runtime* pRuntime,
+  CJS_Result gotoNamedDest(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return importAnFDF(CJS_Runtime* pRuntime,
+  CJS_Result importAnFDF(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return importAnXFDF(CJS_Runtime* pRuntime,
+  CJS_Result importAnXFDF(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return importTextData(CJS_Runtime* pRuntime,
+  CJS_Result importTextData(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return insertPages(CJS_Runtime* pRuntime,
+  CJS_Result insertPages(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return mailForm(CJS_Runtime* pRuntime,
+  CJS_Result mailForm(CJS_Runtime* pRuntime,
                       const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return print(CJS_Runtime* pRuntime,
+  CJS_Result print(CJS_Runtime* pRuntime,
                    const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return removeField(CJS_Runtime* pRuntime,
+  CJS_Result removeField(CJS_Runtime* pRuntime,
                          const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return replacePages(CJS_Runtime* pRuntime,
+  CJS_Result replacePages(CJS_Runtime* pRuntime,
                           const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return resetForm(CJS_Runtime* pRuntime,
+  CJS_Result resetForm(CJS_Runtime* pRuntime,
                        const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return saveAs(CJS_Runtime* pRuntime,
+  CJS_Result saveAs(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return submitForm(CJS_Runtime* pRuntime,
+  CJS_Result submitForm(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return syncAnnotScan(CJS_Runtime* pRuntime,
+  CJS_Result syncAnnotScan(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return mailDoc(CJS_Runtime* pRuntime,
+  CJS_Result mailDoc(CJS_Runtime* pRuntime,
                      const std::vector<v8::Local<v8::Value>>& params);
-  CJS_Return removeIcon(CJS_Runtime* pRuntime,
+  CJS_Result removeIcon(CJS_Runtime* pRuntime,
                         const std::vector<v8::Local<v8::Value>>& params);
 
   bool IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect);
   int CountWords(CPDF_TextObject* pTextObj);
   WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
 
-  CJS_Return getPropertyInternal(CJS_Runtime* pRuntime,
+  CJS_Result getPropertyInternal(CJS_Runtime* pRuntime,
                                  const ByteString& propName);
-  CJS_Return setPropertyInternal(CJS_Runtime* pRuntime,
+  CJS_Result setPropertyInternal(CJS_Runtime* pRuntime,
                                  v8::Local<v8::Value> vp,
                                  const ByteString& propName);
 

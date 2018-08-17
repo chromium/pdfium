@@ -10,25 +10,25 @@
 #include <vector>
 
 #include "fxjs/cfx_v8.h"
-#include "fxjs/cjs_return.h"
+#include "fxjs/cjs_result.h"
 
 template <class C,
-          CJS_Return (C::*M)(CFX_V8* runtime,
+          CJS_Result (C::*M)(CFX_V8* runtime,
                              const std::vector<v8::Local<v8::Value>>& params)>
-CJS_Return JSMethod(C* node,
+CJS_Result JSMethod(C* node,
                     CFX_V8* runtime,
                     const std::vector<v8::Local<v8::Value>>& params) {
   return (node->*M)(runtime, params);
 }
 
 #define JSE_METHOD(method_name, class_name)                \
-  static CJS_Return method_name##_static(                  \
+  static CJS_Result method_name##_static(                  \
       CJX_Object* node, CFX_V8* runtime,                   \
       const std::vector<v8::Local<v8::Value>>& params) {   \
     return JSMethod<class_name, &class_name::method_name>( \
         static_cast<class_name*>(node), runtime, params);  \
   }                                                        \
-  CJS_Return method_name(CFX_V8* runtime,                  \
+  CJS_Result method_name(CFX_V8* runtime,                  \
                          const std::vector<v8::Local<v8::Value>>& params)
 
 #define JSE_PROP(prop_name) \

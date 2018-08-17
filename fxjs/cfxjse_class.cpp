@@ -12,7 +12,7 @@
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_value.h"
-#include "fxjs/cjs_return.h"
+#include "fxjs/cjs_result.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/ptr_util.h"
 
@@ -105,7 +105,7 @@ void DynPropGetterAdapter_MethodCallback(
     return;
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), hPropName);
-  CJS_Return result =
+  CJS_Result result =
       pClassDescriptor->dynMethodCall(info, WideString::FromUTF8(*szPropName));
 
   if (result.HasError()) {

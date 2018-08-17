@@ -20,12 +20,12 @@ CJX_Desc::CJX_Desc(CXFA_Desc* desc) : CJX_Node(desc) {
 
 CJX_Desc::~CJX_Desc() {}
 
-CJS_Return CJX_Desc::metadata(CFX_V8* runtime,
+CJS_Result CJX_Desc::metadata(CFX_V8* runtime,
                               const std::vector<v8::Local<v8::Value>>& params) {
   if (params.size() != 0 && params.size() != 1)
-    return CJS_Return::Failure(JSMessage::kParamError);
+    return CJS_Result::Failure(JSMessage::kParamError);
 
-  return CJS_Return::Success(runtime->NewString(""));
+  return CJS_Result::Success(runtime->NewString(""));
 }
 
 void CJX_Desc::use(CFXJSE_Value* pValue,

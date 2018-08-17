@@ -13,7 +13,7 @@
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
-#include "fxjs/cjs_return.h"
+#include "fxjs/cjs_result.h"
 #include "fxjs/xfa/cjx_boolean.h"
 #include "fxjs/xfa/cjx_draw.h"
 #include "fxjs/xfa/cjx_field.h"
@@ -166,12 +166,12 @@ bool CJX_Object::HasMethod(const WideString& func) const {
   return pdfium::ContainsKey(method_specs_, func.UTF8Encode());
 }
 
-CJS_Return CJX_Object::RunMethod(
+CJS_Result CJX_Object::RunMethod(
     const WideString& func,
     const std::vector<v8::Local<v8::Value>>& params) {
   auto it = method_specs_.find(func.UTF8Encode());
   if (it == method_specs_.end())
-    return CJS_Return::Failure(JSMessage::kUnknownMethod);
+    return CJS_Result::Failure(JSMessage::kUnknownMethod);
 
   return it->second(this, GetXFAObject()->GetDocument()->GetScriptContext(),
                     params);

@@ -35,15 +35,15 @@ CJS_Report::CJS_Report(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 
 CJS_Report::~CJS_Report() = default;
 
-CJS_Return CJS_Report::writeText(
+CJS_Result CJS_Report::writeText(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported, but do not return error.
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
 
-CJS_Return CJS_Report::save(CJS_Runtime* pRuntime,
+CJS_Result CJS_Report::save(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported, but do not return error.
-  return CJS_Return::Success();
+  return CJS_Result::Success();
 }
