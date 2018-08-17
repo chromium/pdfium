@@ -50,10 +50,10 @@ int32_t CXFA_NodeHelper::CountSiblings(CXFA_Node* pNode,
   }
   if (bIsClassName) {
     return NodeAcc_TraverseSiblings(parent, pNode->GetClassHashCode(),
-                                    pSiblings, eLogicType, bIsClassName);
+                                    pSiblings, eLogicType, bIsClassName, true);
   }
   return NodeAcc_TraverseSiblings(parent, pNode->GetNameHash(), pSiblings,
-                                  eLogicType, bIsClassName);
+                                  eLogicType, bIsClassName, true);
 }
 
 int32_t CXFA_NodeHelper::NodeAcc_TraverseAnySiblings(
@@ -217,7 +217,7 @@ int32_t CXFA_NodeHelper::GetIndex(CXFA_Node* pNode,
   }
   std::vector<CXFA_Node*> siblings;
   int32_t iSize = NodeAcc_TraverseSiblings(parent, dwHashName, &siblings,
-                                           eLogicType, bIsClassIndex);
+                                           eLogicType, bIsClassIndex, true);
   for (int32_t i = 0; i < iSize; ++i) {
     CXFA_Node* child = siblings[i];
     if (child == pNode) {

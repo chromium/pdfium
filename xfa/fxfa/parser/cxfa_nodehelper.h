@@ -33,8 +33,8 @@ class CXFA_NodeHelper {
                                    uint32_t dNameHash,
                                    std::vector<CXFA_Node*>* pSiblings,
                                    XFA_LOGIC_TYPE eLogicType,
-                                   bool bIsClassName = false,
-                                   bool bIsFindProperty = true);
+                                   bool bIsClassName,
+                                   bool bIsFindProperty);
   int32_t NodeAcc_TraverseAnySiblings(CXFA_Node* parent,
                                       uint32_t dNameHash,
                                       std::vector<CXFA_Node*>* pSiblings,
