@@ -188,8 +188,8 @@ class CPDF_RenderStatus {
   CFX_RenderDevice* const m_pDevice;
   CFX_Matrix m_DeviceMatrix;
   CPDF_ClipPath m_LastClipPath;
-  const CPDF_PageObject* m_pCurObj = nullptr;
-  const CPDF_PageObject* m_pStopObj = nullptr;
+  UnownedPtr<const CPDF_PageObject> m_pCurObj;
+  UnownedPtr<const CPDF_PageObject> m_pStopObj;
   CPDF_GraphicStates m_InitialStates;
   std::unique_ptr<CPDF_ImageRenderer> m_pImageRenderer;
   CPDF_Transparency m_Transparency;
