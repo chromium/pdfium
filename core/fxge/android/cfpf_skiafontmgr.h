@@ -16,7 +16,7 @@
 #define FPF_MATCHFONT_REPLACEANSI 1
 
 class CFPF_SkiaFont;
-class CFPF_SkiaFontDescriptor;
+class CFPF_SkiaPathFont;
 
 class CFPF_SkiaFontMgr {
  public:
@@ -35,11 +35,11 @@ class CFPF_SkiaFontMgr {
  private:
   void ScanPath(const ByteString& path);
   void ScanFile(const ByteString& file);
-  void ReportFace(FXFT_Face face, CFPF_SkiaFontDescriptor* pFontDesc);
+  void ReportFace(FXFT_Face face, CFPF_SkiaPathFont* pFont);
 
   bool m_bLoaded = false;
   FXFT_Library m_FTLibrary = nullptr;
-  std::vector<CFPF_SkiaFontDescriptor*> m_FontFaces;
+  std::vector<CFPF_SkiaPathFont*> m_FontFaces;
   std::map<uint32_t, CFPF_SkiaFont*> m_FamilyFonts;
 };
 

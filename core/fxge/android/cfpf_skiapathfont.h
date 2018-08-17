@@ -8,21 +8,21 @@
 #define CORE_FXGE_ANDROID_CFPF_SKIAPATHFONT_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/android/cfpf_skiafontdescriptor.h"
 
-#define FPF_SKIAFONTTYPE_Path 1
-
-class CFPF_SkiaPathFont : public CFPF_SkiaFontDescriptor {
+class CFPF_SkiaPathFont {
  public:
   CFPF_SkiaPathFont();
-  ~CFPF_SkiaPathFont() override;
-
-  // CFPF_SkiaFontDescriptor
-  int32_t GetType() const override;
+  ~CFPF_SkiaPathFont();
 
   void SetPath(const char* pPath);
+  void SetFamily(const char* pFamily);
 
-  char* m_pPath;
+  char* m_pPath = nullptr;
+  char* m_pFamily = nullptr;
+  uint32_t m_dwStyle = 0;
+  int32_t m_iFaceIndex = 0;
+  uint32_t m_dwCharsets = 0;
+  int32_t m_iGlyphNum = 0;
 };
 
 #endif  // CORE_FXGE_ANDROID_CFPF_SKIAPATHFONT_H_

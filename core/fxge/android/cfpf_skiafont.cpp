@@ -9,20 +9,13 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/android/cfpf_skiafontdescriptor.h"
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/fx_freetype.h"
 
 #define FPF_EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
-CFPF_SkiaFont::CFPF_SkiaFont()
-    : m_pFontMgr(nullptr),
-      m_pFontDes(nullptr),
-      m_Face(nullptr),
-      m_dwStyle(0),
-      m_uCharset(0),
-      m_dwRefCount(0) {}
+CFPF_SkiaFont::CFPF_SkiaFont() = default;
 
 CFPF_SkiaFont::~CFPF_SkiaFont() {
   if (m_Face)
@@ -178,29 +171,21 @@ uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
 }
 
 bool CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr* pFontMgr,
-                             CFPF_SkiaFontDescriptor* pFontDes,
+                             CFPF_SkiaPathFont* pFont,
                              const ByteStringView& bsFamily,
                              uint32_t dwStyle,
                              uint8_t uCharset) {
-  if (!pFontMgr || !pFontDes)
+  if (!pFontMgr || !pFont)
     return false;
 
-  switch (pFontDes->GetType()) {
-    case FPF_SKIAFONTTYPE_Path: {
-      CFPF_SkiaPathFont* pFont = (CFPF_SkiaPathFont*)pFontDes;
-      m_Face = pFontMgr->GetFontFace(pFont->m_pPath, pFont->m_iFaceIndex);
-      break;
-    }
-    default:
-      return false;
-  }
+  m_Face = pFontMgr->GetFontFace(pFont->m_pPath, pFont->m_iFaceIndex);
   if (!m_Face)
     return false;
 
   m_dwStyle = dwStyle;
   m_uCharset = uCharset;
   m_pFontMgr = pFontMgr;
-  m_pFontDes = pFontDes;
+  m_pFont = pFont;
   m_dwRefCount = 1;
   return true;
 }
