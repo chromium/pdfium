@@ -63,6 +63,9 @@ class CFX_Break {
   }
 
  protected:
+  static const int kMinimumTabWidth;
+  static const float kConversionFactor;
+
   explicit CFX_Break(uint32_t dwLayoutStyles);
 
   void SetBreakStatus();

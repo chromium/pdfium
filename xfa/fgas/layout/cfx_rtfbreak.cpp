@@ -27,15 +27,15 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
 CFX_RTFBreak::~CFX_RTFBreak() {}
 
 void CFX_RTFBreak::SetLineStartPos(float fLinePos) {
-  int32_t iLinePos = FXSYS_round(fLinePos * 20000.0f);
+  int32_t iLinePos = FXSYS_round(fLinePos * kConversionFactor);
   iLinePos = std::min(iLinePos, m_iLineWidth);
   iLinePos = std::max(iLinePos, m_iLineStart);
   m_pCurLine->m_iStart = iLinePos;
 }
 
 void CFX_RTFBreak::AddPositionedTab(float fTabPos) {
-  int32_t iTabPos =
-      std::min(FXSYS_round(fTabPos * 20000.0f) + m_iLineStart, m_iLineWidth);
+  int32_t iTabPos = std::min(
+      FXSYS_round(fTabPos * kConversionFactor) + m_iLineStart, m_iLineWidth);
   auto it = std::lower_bound(m_PositionedTabs.begin(), m_PositionedTabs.end(),
                              iTabPos);
   if (it != m_PositionedTabs.end() && *it == iTabPos)
@@ -158,7 +158,7 @@ void CFX_RTFBreak::AppendChar_Tab(CFX_Char* pCurChar) {
     iSafeCharWidth = iCharWidth;
   } else {
     // Tab width is >= 160000, so this part does not need to be checked.
-    ASSERT(m_iTabWidth >= 160000);
+    ASSERT(m_iTabWidth >= kMinimumTabWidth);
     iSafeCharWidth = iLineWidth / m_iTabWidth + 1;
     iSafeCharWidth *= m_iTabWidth;
   }

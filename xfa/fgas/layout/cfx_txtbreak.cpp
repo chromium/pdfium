@@ -33,7 +33,7 @@ CFX_TxtBreak::CFX_TxtBreak()
 CFX_TxtBreak::~CFX_TxtBreak() {}
 
 void CFX_TxtBreak::SetLineWidth(float fLineWidth) {
-  m_iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
+  m_iLineWidth = FXSYS_round(fLineWidth * kConversionFactor);
   ASSERT(m_iLineWidth >= 20000);
 }
 
@@ -44,7 +44,7 @@ void CFX_TxtBreak::SetAlignment(int32_t iAlignment) {
 }
 
 void CFX_TxtBreak::SetCombWidth(float fCombWidth) {
-  m_iCombWidth = FXSYS_round(fCombWidth * 20000.0f);
+  m_iCombWidth = FXSYS_round(fCombWidth * kConversionFactor);
 }
 
 void CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
@@ -953,7 +953,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
       wch = *pStr++;
       iCharSize = *pWidths++;
     }
-    fCharSize = static_cast<float>(iCharSize) / 20000.0f;
+    fCharSize = static_cast<float>(iCharSize) / kConversionFactor;
     bool bRet = (!bSingleLine && IsCtrlCode(wch));
     if (!(wch == L'\v' || wch == L'\f' || wch == 0x2028 || wch == 0x2029 ||
           wch == L'\n')) {
