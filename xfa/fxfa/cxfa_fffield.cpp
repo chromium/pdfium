@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/cxfa_fffield.h"
 
+#include <algorithm>
+
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventmouse.h"
 #include "xfa/fwl/cfwl_messagekey.h"
@@ -195,6 +197,12 @@ void CXFA_FFField::CapPlacement() {
       m_rtCaption.Reset();
     } else {
       fCapReserve = caption->GetReserve();
+      if (iCapPlacement == XFA_AttributeEnum::Top ||
+          iCapPlacement == XFA_AttributeEnum::Bottom) {
+        fCapReserve = std::min(fCapReserve, rtWidget.height);
+      } else {
+        fCapReserve = std::min(fCapReserve, rtWidget.width);
+      }
       CXFA_ContentLayoutItem* pItem = this;
       if (!pItem->GetPrev() && !pItem->GetNext()) {
         m_rtCaption = rtWidget;
