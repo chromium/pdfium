@@ -368,6 +368,42 @@ float GetEdgeThickness(const std::vector<CXFA_Stroke*>& strokes,
   return fThickness;
 }
 
+WideString FormatNumStr(const WideString& wsValue, LocaleIface* pLocale) {
+  if (wsValue.IsEmpty())
+    return L"";
+
+  WideString wsSrcNum = wsValue;
+  WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
+  bool bNeg = false;
+  if (wsSrcNum[0] == '-') {
+    bNeg = true;
+    wsSrcNum.Delete(0, 1);
+  }
+
+  auto dot_index = wsSrcNum.Find('.');
+  dot_index = !dot_index.has_value() ? wsSrcNum.GetLength() : dot_index;
+
+  if (dot_index.value() < 1)
+    return L"";
+
+  size_t nPos = dot_index.value() % 3;
+  WideString wsOutput;
+  for (size_t i = 0; i < dot_index.value(); i++) {
+    if (i % 3 == nPos && i != 0)
+      wsOutput += wsGroupSymbol;
+
+    wsOutput += wsSrcNum[i];
+  }
+  if (dot_index.value() < wsSrcNum.GetLength()) {
+    wsOutput += pLocale->GetDecimalSymbol();
+    wsOutput += wsSrcNum.Right(wsSrcNum.GetLength() - dot_index.value() - 1);
+  }
+  if (bNeg)
+    return pLocale->GetMinusSymbol() + wsOutput;
+
+  return wsOutput;
+}
+
 }  // namespace
 
 class CXFA_WidgetLayoutData {
@@ -3050,7 +3086,7 @@ float CXFA_Node::CalculateWidgetAutoWidth(float fWidthCalc) {
   return fWidthCalc;
 }
 
-float CXFA_Node::GetWidthWithoutMargin(float fWidthCalc) {
+float CXFA_Node::GetWidthWithoutMargin(float fWidthCalc) const {
   CXFA_Margin* margin = GetMarginIfExists();
   if (margin)
     fWidthCalc -= margin->GetLeftInset() + margin->GetRightInset();
@@ -3073,7 +3109,7 @@ float CXFA_Node::CalculateWidgetAutoHeight(float fHeightCalc) {
   return fHeightCalc;
 }
 
-float CXFA_Node::GetHeightWithoutMargin(float fHeightCalc) {
+float CXFA_Node::GetHeightWithoutMargin(float fHeightCalc) const {
   CXFA_Margin* margin = GetMarginIfExists();
   if (margin)
     fHeightCalc -= margin->GetTopInset() + margin->GetBottomInset();
@@ -4079,22 +4115,17 @@ void CXFA_Node::InsertItem(const WideString& wsLabel,
                                                     wsValue.c_str(), nIndex);
 }
 
-void CXFA_Node::GetItemLabel(const WideStringView& wsValue,
-                             WideString& wsLabel) {
-  int32_t iCount = 0;
+WideString CXFA_Node::GetItemLabel(const WideStringView& wsValue) const {
   std::vector<CXFA_Node*> listitems;
   CXFA_Node* pItems = GetFirstChild();
   for (; pItems; pItems = pItems->GetNextSibling()) {
     if (pItems->GetElementType() != XFA_Element::Items)
       continue;
-    iCount++;
     listitems.push_back(pItems);
   }
 
-  if (iCount <= 1) {
-    wsLabel = wsValue;
-    return;
-  }
+  if (listitems.size() <= 1)
+    return WideString(wsValue);
 
   CXFA_Node* pLabelItems = listitems[0];
   bool bSave = pLabelItems->JSObject()->GetBoolean(XFA_Attribute::Save);
@@ -4105,8 +4136,8 @@ void CXFA_Node::GetItemLabel(const WideStringView& wsValue,
   } else {
     pSaveItems = listitems[1];
   }
-  iCount = 0;
 
+  int32_t iCount = 0;
   int32_t iSearch = -1;
   for (CXFA_Node* pChildItem = pSaveItems->GetFirstChild(); pChildItem;
        pChildItem = pChildItem->GetNextSibling()) {
@@ -4117,12 +4148,11 @@ void CXFA_Node::GetItemLabel(const WideStringView& wsValue,
     iCount++;
   }
   if (iSearch < 0)
-    return;
+    return WideString();
 
   CXFA_Node* pText =
       pLabelItems->GetChild<CXFA_Node>(iSearch, XFA_Element::Unknown, false);
-  if (pText)
-    wsLabel = pText->JSObject()->GetContent(false);
+  return pText ? pText->JSObject()->GetContent(false) : WideString();
 }
 
 WideString CXFA_Node::GetItemValue(const WideStringView& wsLabel) {
@@ -4413,7 +4443,7 @@ WideString CXFA_Node::GetValue(XFA_VALUEPICTURE eValueType) {
   WideString wsValue = JSObject()->GetContent(false);
 
   if (eValueType == XFA_VALUEPICTURE_Display)
-    GetItemLabel(wsValue.AsStringView(), wsValue);
+    wsValue = GetItemLabel(wsValue.AsStringView());
 
   WideString wsPicture = GetPictureContent(eValueType);
   CXFA_Node* pNode = GetUIChildNode();
@@ -4588,43 +4618,6 @@ WideString CXFA_Node::NormalizeNumStr(const WideString& wsValue) {
   }
   if (wsOutput.IsEmpty() || wsOutput[0] == '.')
     wsOutput.InsertAtFront('0');
-
-  return wsOutput;
-}
-
-WideString CXFA_Node::FormatNumStr(const WideString& wsValue,
-                                   LocaleIface* pLocale) {
-  if (wsValue.IsEmpty())
-    return L"";
-
-  WideString wsSrcNum = wsValue;
-  WideString wsGroupSymbol = pLocale->GetGroupingSymbol();
-  bool bNeg = false;
-  if (wsSrcNum[0] == '-') {
-    bNeg = true;
-    wsSrcNum.Delete(0, 1);
-  }
-
-  auto dot_index = wsSrcNum.Find('.');
-  dot_index = !dot_index.has_value() ? wsSrcNum.GetLength() : dot_index;
-
-  if (dot_index.value() < 1)
-    return L"";
-
-  size_t nPos = dot_index.value() % 3;
-  WideString wsOutput;
-  for (size_t i = 0; i < dot_index.value(); i++) {
-    if (i % 3 == nPos && i != 0)
-      wsOutput += wsGroupSymbol;
-
-    wsOutput += wsSrcNum[i];
-  }
-  if (dot_index.value() < wsSrcNum.GetLength()) {
-    wsOutput += pLocale->GetDecimalSymbol();
-    wsOutput += wsSrcNum.Right(wsSrcNum.GetLength() - dot_index.value() - 1);
-  }
-  if (bNeg)
-    return pLocale->GetMinusSymbol() + wsOutput;
 
   return wsOutput;
 }
