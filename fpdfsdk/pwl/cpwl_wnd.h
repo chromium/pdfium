@@ -126,8 +126,8 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     ~CreateParams();
 
     CFX_FloatRect rcRectWnd;                          // required
-    CFX_SystemHandler* pSystemHandler;                // required
-    IPVT_FontMap* pFontMap;                           // required
+    UnownedPtr<CFX_SystemHandler> pSystemHandler;     // required
+    UnownedPtr<IPVT_FontMap> pFontMap;                // required
     ProviderIface::ObservedPtr pProvider;             // required
     UnownedPtr<FocusHandlerIface> pFocusHandler;      // optional
     uint32_t dwFlags;                                 // optional
@@ -141,7 +141,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     float fFontSize;                                  // optional
     CPWL_Dash sDash;                                  // optional
     UnownedPtr<PrivateData> pAttachedData;            // optional
-    CPWL_Wnd* pParentWnd;                             // ignore
+    UnownedPtr<CPWL_Wnd> pParentWnd;                  // ignore
     CPWL_MsgControl* pMsgControl;                     // ignore
     int32_t eCursorType;                              // ignore
     CFX_Matrix mtChild;                               // ignore
@@ -230,8 +230,12 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   void SetClipRect(const CFX_FloatRect& rect);
   const CFX_FloatRect& GetClipRect() const;
 
-  CPWL_Wnd* GetParentWindow() const;
-  PrivateData* GetAttachedData() const;
+  CPWL_Wnd* GetParentWindow() const {
+    return m_CreationParams.pParentWnd.Get();
+  }
+  PrivateData* GetAttachedData() const {
+    return m_CreationParams.pAttachedData.Get();
+  }
 
   bool WndHitTest(const CFX_PointF& point) const;
   bool ClientHitTest(const CFX_PointF& point) const;
@@ -244,9 +248,13 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   bool IsReadOnly() const;
   CPWL_ScrollBar* GetVScrollBar() const;
 
-  IPVT_FontMap* GetFontMap() const;
-  ProviderIface* GetProvider() const;
-  FocusHandlerIface* GetFocusHandler() const;
+  IPVT_FontMap* GetFontMap() const { return m_CreationParams.pFontMap.Get(); }
+  ProviderIface* GetProvider() const {
+    return m_CreationParams.pProvider.Get();
+  }
+  FocusHandlerIface* GetFocusHandler() const {
+    return m_CreationParams.pFocusHandler.Get();
+  }
 
   int32_t GetTransparency();
   void SetTransparency(int32_t nTransparency);
@@ -260,7 +268,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual void OnKillFocus();
 
  protected:
-  // CPWL_TimerHandler
+  // CPWL_TimerHandler:
   CFX_SystemHandler* GetSystemHandler() const override;
 
   virtual void CreateChildWnd(const CreateParams& cp);
@@ -285,7 +293,6 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
-  const CPWL_Wnd* GetRootWnd() const;
 
   static bool IsCTRLpressed(uint32_t nFlag) {
     return CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(nFlag);

@@ -23,13 +23,8 @@ constexpr float kDefaultFontSize = 9.0f;
 
 CPWL_Wnd::CreateParams::CreateParams()
     : rcRectWnd(0, 0, 0, 0),
-      pSystemHandler(nullptr),
-      pFontMap(nullptr),
-      pProvider(nullptr),
-      pFocusHandler(nullptr),
       dwFlags(0),
       sBackgroundColor(),
-      pAttachedWidget(nullptr),
       nBorderStyle(BorderStyle::SOLID),
       dwBorderWidth(1),
       sBorderColor(),
@@ -37,8 +32,6 @@ CPWL_Wnd::CreateParams::CreateParams()
       nTransparency(255),
       fFontSize(kDefaultFontSize),
       sDash(3, 0, 0),
-      pAttachedData(nullptr),
-      pParentWnd(nullptr),
       pMsgControl(nullptr),
       eCursorType(FXCT_ARROW) {}
 
@@ -422,10 +415,6 @@ void CPWL_Wnd::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {}
 
 void CPWL_Wnd::NotifyMouseMove(CPWL_Wnd* child, const CFX_PointF& pos) {}
 
-CPWL_Wnd* CPWL_Wnd::GetParentWindow() const {
-  return m_CreationParams.pParentWnd;
-}
-
 CFX_FloatRect CPWL_Wnd::GetWindowRect() const {
   return m_rcWindow;
 }
@@ -497,10 +486,6 @@ const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
   return m_CreationParams.sDash;
 }
 
-CPWL_Wnd::PrivateData* CPWL_Wnd::GetAttachedData() const {
-  return m_CreationParams.pAttachedData.Get();
-}
-
 CPWL_ScrollBar* CPWL_Wnd::GetVScrollBar() const {
   return HasFlag(PWS_VSCROLL) ? m_pVScrollBar.Get() : nullptr;
 }
@@ -567,11 +552,6 @@ bool CPWL_Wnd::WndHitTest(const CFX_PointF& point) const {
 
 bool CPWL_Wnd::ClientHitTest(const CFX_PointF& point) const {
   return IsValid() && IsVisible() && GetClientRect().Contains(point);
-}
-
-const CPWL_Wnd* CPWL_Wnd::GetRootWnd() const {
-  auto* pParent = m_CreationParams.pParentWnd;
-  return pParent ? pParent->GetRootWnd() : this;
 }
 
 bool CPWL_Wnd::SetVisible(bool bVisible) {
@@ -699,19 +679,7 @@ void CPWL_Wnd::SetFontSize(float fFontSize) {
 }
 
 CFX_SystemHandler* CPWL_Wnd::GetSystemHandler() const {
-  return m_CreationParams.pSystemHandler;
-}
-
-CPWL_Wnd::FocusHandlerIface* CPWL_Wnd::GetFocusHandler() const {
-  return m_CreationParams.pFocusHandler.Get();
-}
-
-CPWL_Wnd::ProviderIface* CPWL_Wnd::GetProvider() const {
-  return m_CreationParams.pProvider.Get();
-}
-
-IPVT_FontMap* CPWL_Wnd::GetFontMap() const {
-  return m_CreationParams.pFontMap;
+  return m_CreationParams.pSystemHandler.Get();
 }
 
 CFX_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
