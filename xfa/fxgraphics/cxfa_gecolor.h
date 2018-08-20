@@ -7,6 +7,7 @@
 #ifndef XFA_FXGRAPHICS_CXFA_GECOLOR_H_
 #define XFA_FXGRAPHICS_CXFA_GECOLOR_H_
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
 class CXFA_GEPattern;
@@ -20,6 +21,7 @@ class CXFA_GEColor {
   explicit CXFA_GEColor(const FX_ARGB argb);
   explicit CXFA_GEColor(CXFA_GEShading* shading);
   CXFA_GEColor(CXFA_GEPattern* pattern, const FX_ARGB argb);
+  CXFA_GEColor(const CXFA_GEColor& that);
   ~CXFA_GEColor();
 
   Type GetType() const { return m_type; }
@@ -29,22 +31,20 @@ class CXFA_GEColor {
   }
   CXFA_GEPattern* GetPattern() const {
     ASSERT(m_type == Pattern);
-    return m_pointer.pattern;
+    return m_pPattern.Get();
   }
   CXFA_GEShading* GetShading() const {
     ASSERT(m_type == Shading);
-    return m_pointer.shading;
+    return m_pShading.Get();
   }
 
   CXFA_GEColor& operator=(const CXFA_GEColor& that);
 
  private:
-  Type m_type;
-  FX_ARGB m_argb;
-  union {
-    CXFA_GEPattern* pattern;
-    CXFA_GEShading* shading;
-  } m_pointer;
+  Type m_type = Invalid;
+  FX_ARGB m_argb = 0;
+  UnownedPtr<CXFA_GEPattern> m_pPattern;
+  UnownedPtr<CXFA_GEShading> m_pShading;
 };
 
 #endif  // XFA_FXGRAPHICS_CXFA_GECOLOR_H_
