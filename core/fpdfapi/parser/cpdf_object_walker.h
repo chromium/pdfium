@@ -9,6 +9,7 @@
 #include <stack>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 // Walk on all non-null sub-objects in an object in depth, include itself,
 // like in flat list.
@@ -17,10 +18,10 @@ class CPDF_ObjectWalker {
   class SubobjectIterator {
    public:
     virtual ~SubobjectIterator();
+    virtual bool IsFinished() const = 0;
     bool IsStarted() const { return is_started_; }
-    bool virtual IsFinished() const = 0;
     const CPDF_Object* Increment();
-    const CPDF_Object* object() const { return object_; }
+    const CPDF_Object* object() const { return object_.Get(); }
 
    protected:
     explicit SubobjectIterator(const CPDF_Object* object);
@@ -29,7 +30,7 @@ class CPDF_ObjectWalker {
     virtual void Start() = 0;
 
    private:
-    const CPDF_Object* object_;
+    UnownedPtr<const CPDF_Object> object_;
     bool is_started_ = false;
   };
 
@@ -40,17 +41,17 @@ class CPDF_ObjectWalker {
   void SkipWalkIntoCurrentObject();
 
   size_t current_depth() const { return current_depth_; }
-  const CPDF_Object* GetParent() const { return parent_object_; }
+  const CPDF_Object* GetParent() const { return parent_object_.Get(); }
   ByteString dictionary_key() const { return dict_key_; }
 
  private:
   static std::unique_ptr<SubobjectIterator> MakeIterator(
       const CPDF_Object* object);
 
-  const CPDF_Object* next_object_;
-  const CPDF_Object* parent_object_;
+  UnownedPtr<const CPDF_Object> next_object_;
+  UnownedPtr<const CPDF_Object> parent_object_;
   ByteString dict_key_;
-  size_t current_depth_;
+  size_t current_depth_ = 0;
   std::stack<std::unique_ptr<SubobjectIterator>> stack_;
 };
 
