@@ -763,8 +763,8 @@ bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   auto pExtGStateDict =
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
-  auto pResourceDict = GenerateResourceDict(pDoc, std::move(pResourceFontDict),
-                                            std::move(pExtGStateDict));
+  auto pResourceDict = GenerateResourceDict(pDoc, std::move(pExtGStateDict),
+                                            std::move(pResourceFontDict));
 
   sAppStream << GetPopupContentsString(pDoc, *pAnnotDict, pDefFont, sFontName);
   GenerateAndSetAPDict(pDoc, pAnnotDict, &sAppStream, std::move(pResourceDict),
