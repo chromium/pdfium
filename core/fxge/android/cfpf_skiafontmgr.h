@@ -39,7 +39,7 @@ class CFPF_SkiaFontMgr {
   bool m_bLoaded = false;
   FXFT_Library m_FTLibrary = nullptr;
   std::vector<std::unique_ptr<CFPF_SkiaPathFont>> m_FontFaces;
-  std::map<uint32_t, CFPF_SkiaFont*> m_FamilyFonts;
+  std::map<uint32_t, std::unique_ptr<CFPF_SkiaFont>> m_FamilyFonts;
 };
 
 #endif  // CORE_FXGE_ANDROID_CFPF_SKIAFONTMGR_H_

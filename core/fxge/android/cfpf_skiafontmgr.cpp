@@ -7,6 +7,7 @@
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -228,9 +229,6 @@ uint32_t FPF_SkiaGetFaceCharset(TT_OS2* pOS2) {
 CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() = default;
 
 CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
-  for (const auto& pair : m_FamilyFonts)
-    pair.second->Release();
-
   m_FamilyFonts.clear();
   m_FontFaces.clear();
   if (m_FTLibrary)
@@ -256,7 +254,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
   uint32_t dwHash = FPF_SKIAGetFamilyHash(bsFamilyname, dwStyle, uCharset);
   auto it = m_FamilyFonts.find(dwHash);
   if (it != m_FamilyFonts.end())
-    return it->second->Retain();
+    return it->second.get();
 
   uint32_t dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
   uint32_t dwSubst = FPF_SkiaGetSubstFont(dwFaceName, g_SkiaFontmap,
@@ -319,17 +317,17 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
       break;
     }
   }
-  if (pBestFont) {
-    CFPF_SkiaFont* pFont =
-        new CFPF_SkiaFont(this, pBestFont, dwStyle, uCharset);
-    pFont->Retain();
-    if (pFont->IsValid()) {
-      m_FamilyFonts[dwHash] = pFont;
-      return pFont;
-    }
-    pFont->Release();
-  }
-  return nullptr;
+  if (!pBestFont)
+    return nullptr;
+
+  auto pFont =
+      pdfium::MakeUnique<CFPF_SkiaFont>(this, pBestFont, dwStyle, uCharset);
+  if (!pFont->IsValid())
+    return nullptr;
+
+  CFPF_SkiaFont* pRet = pFont.get();
+  m_FamilyFonts[dwHash] = std::move(pFont);
+  return pRet;
 }
 
 FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const ByteStringView& bsFile,

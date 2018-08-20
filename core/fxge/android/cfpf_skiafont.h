@@ -20,9 +20,7 @@ class CFPF_SkiaFont {
                 const CFPF_SkiaPathFont* pFont,
                 uint32_t dwStyle,
                 uint8_t uCharset);
-
-  void Release();
-  CFPF_SkiaFont* Retain();
+  ~CFPF_SkiaFont();
 
   bool IsValid() const { return !!m_Face; }
 
@@ -41,14 +39,11 @@ class CFPF_SkiaFont {
   uint32_t GetFontData(uint32_t dwTable, uint8_t* pBuffer, uint32_t dwSize);
 
  private:
-  ~CFPF_SkiaFont();
-
   UnownedPtr<CFPF_SkiaFontMgr> const m_pFontMgr;
   UnownedPtr<const CFPF_SkiaPathFont> const m_pFont;
   const FXFT_Face m_Face;
   const uint32_t m_dwStyle;
   const uint8_t m_uCharset;
-  uint32_t m_dwRefCount = 0;
 };
 
 #endif  // CORE_FXGE_ANDROID_CFPF_SKIAFONT_H_

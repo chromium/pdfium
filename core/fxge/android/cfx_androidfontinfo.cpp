@@ -77,9 +77,4 @@ bool CFX_AndroidFontInfo::GetFontCharset(void* hFont, int* charset) {
   return false;
 }
 
-void CFX_AndroidFontInfo::DeleteFont(void* hFont) {
-  if (!hFont)
-    return;
-
-  static_cast<CFPF_SkiaFont*>(hFont)->Release();
-}
+void CFX_AndroidFontInfo::DeleteFont(void* hFont) {}

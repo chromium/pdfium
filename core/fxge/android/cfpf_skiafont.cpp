@@ -30,16 +30,6 @@ CFPF_SkiaFont::~CFPF_SkiaFont() {
     FXFT_Done_Face(m_Face);
 }
 
-void CFPF_SkiaFont::Release() {
-  if (--m_dwRefCount == 0)
-    delete this;
-}
-
-CFPF_SkiaFont* CFPF_SkiaFont::Retain() {
-  m_dwRefCount++;
-  return this;
-}
-
 ByteString CFPF_SkiaFont::GetFamilyName() {
   if (!m_Face)
     return ByteString();
