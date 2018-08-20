@@ -39,10 +39,6 @@ class CPDF_InterForm {
 
   static void SetUpdateAP(bool bUpdateAP);
   static bool IsUpdateAPEnabled();
-  static ByteString GenerateNewResourceName(const CPDF_Dictionary* pResDict,
-                                            const char* csType,
-                                            int iMinLen,
-                                            const char* csPrefix);
   static CPDF_Font* AddStandardFont(CPDF_Document* pDocument,
                                     ByteString csFontName);
   static ByteString GetNativeFont(uint8_t iCharSet, void* pLogFont);

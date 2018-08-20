@@ -32,6 +32,42 @@ namespace {
 
 const int nMaxRecursion = 32;
 
+ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
+                                       const ByteString& csPrefix) {
+  static const char kDummyFontName[] = "ZiTi";
+  ByteString csStr = csPrefix;
+  if (csStr.IsEmpty())
+    csStr = kDummyFontName;
+
+  const size_t szCount = csStr.GetLength();
+  size_t m = 0;
+  ByteString csTmp;
+  while (m < strlen(kDummyFontName) && m < szCount)
+    csTmp += csStr[m++];
+  while (m < strlen(kDummyFontName)) {
+    csTmp += '0' + m % 10;
+    m++;
+  }
+
+  const CPDF_Dictionary* pDict = pResDict->GetDictFor("Font");
+  ASSERT(pDict);
+
+  int num = 0;
+  ByteString bsNum;
+  while (true) {
+    ByteString csKey = csTmp + bsNum;
+    if (!pDict->KeyExist(csKey))
+      return csKey;
+    if (m < szCount)
+      csTmp += csStr[m++];
+    else
+      bsNum = ByteString::Format("%d", num++);
+
+    m++;
+  }
+  return csTmp;
+}
+
 void AddFont(CPDF_Dictionary*& pFormDict,
              CPDF_Document* pDocument,
              const CPDF_Font* pFont,
@@ -245,8 +281,7 @@ void AddFont(CPDF_Dictionary*& pFormDict,
     *csNameTag = pFont->GetBaseFont();
 
   csNameTag->Remove(' ');
-  *csNameTag = CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4,
-                                                       csNameTag->c_str());
+  *csNameTag = GenerateNewFontResourceName(pDR, *csNameTag);
   pFonts->SetFor(*csNameTag, pFont->GetFontDict()->MakeReference(pDocument));
 }
 
@@ -571,60 +606,6 @@ bool CPDF_InterForm::IsUpdateAPEnabled() {
 
 void CPDF_InterForm::SetUpdateAP(bool bUpdateAP) {
   s_bUpdateAP = bUpdateAP;
-}
-
-ByteString CPDF_InterForm::GenerateNewResourceName(
-    const CPDF_Dictionary* pResDict,
-    const char* csType,
-    int iMinLen,
-    const char* csPrefix) {
-  ByteString csStr = csPrefix;
-  ByteString csBType = csType;
-  if (csStr.IsEmpty()) {
-    if (csBType == "ExtGState")
-      csStr = "GS";
-    else if (csBType == "ColorSpace")
-      csStr = "CS";
-    else if (csBType == "Font")
-      csStr = "ZiTi";
-    else
-      csStr = "Res";
-  }
-  ByteString csTmp = csStr;
-  int iCount = csStr.GetLength();
-  int m = 0;
-  if (iMinLen > 0) {
-    csTmp.clear();
-    while (m < iMinLen && m < iCount)
-      csTmp += csStr[m++];
-    while (m < iMinLen) {
-      csTmp += '0' + m % 10;
-      m++;
-    }
-  } else {
-    m = iCount;
-  }
-  if (!pResDict)
-    return csTmp;
-
-  const CPDF_Dictionary* pDict = pResDict->GetDictFor(csType);
-  if (!pDict)
-    return csTmp;
-
-  int num = 0;
-  ByteString bsNum;
-  while (true) {
-    ByteString csKey = csTmp + bsNum;
-    if (!pDict->KeyExist(csKey))
-      return csKey;
-    if (m < iCount)
-      csTmp += csStr[m++];
-    else
-      bsNum = ByteString::Format("%d", num++);
-
-    m++;
-  }
-  return csTmp;
 }
 
 CPDF_Font* CPDF_InterForm::AddStandardFont(CPDF_Document* pDocument,
