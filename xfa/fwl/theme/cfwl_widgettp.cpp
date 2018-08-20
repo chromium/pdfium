@@ -143,12 +143,12 @@ void CFWL_WidgetTP::DrawFocus(CXFA_Graphics* pGraphics,
   if (!pGraphics || !pRect)
     return;
 
-  float DashPattern[2] = {1, 1};
   CXFA_GEPath path;
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   pGraphics->SaveGraphState();
   pGraphics->SetStrokeColor(CXFA_GEColor(0xFF000000));
-  pGraphics->SetLineDash(0.0f, DashPattern, 2);
+  static constexpr float kDashPattern[2] = {1, 1};
+  pGraphics->SetLineDash(0.0f, kDashPattern, FX_ArraySize(kDashPattern));
   pGraphics->StrokePath(&path, pMatrix);
   pGraphics->RestoreGraphState();
 }

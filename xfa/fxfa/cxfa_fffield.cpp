@@ -108,8 +108,8 @@ void CXFA_FFField::DrawFocus(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
 
   pGS->SetStrokeColor(CXFA_GEColor(0xFF000000));
 
-  float DashPattern[2] = {1, 1};
-  pGS->SetLineDash(0.0f, DashPattern, 2);
+  static constexpr float kDashPattern[2] = {1, 1};
+  pGS->SetLineDash(0.0f, kDashPattern, FX_ArraySize(kDashPattern));
   pGS->SetLineWidth(0);
 
   CXFA_GEPath path;
@@ -348,12 +348,10 @@ void CXFA_FFField::SetFWLRect() {
     return;
 
   CFX_RectF rtUi = m_rtUI;
-  if (rtUi.width < 1.0)
-    rtUi.width = 1.0;
+  rtUi.width = std::max(rtUi.width, 1.0f);
   if (!GetDoc()->GetXFADoc()->IsInteractive()) {
     float fFontSize = m_pNode->GetFontSize();
-    if (rtUi.height < fFontSize)
-      rtUi.height = fFontSize;
+    rtUi.height = std::max(rtUi.height, fFontSize);
   }
   m_pNormalWidget->SetWidgetRect(rtUi);
 }
@@ -587,10 +585,8 @@ void CXFA_FFField::LayoutCaption() {
   if (!pCapTextLayout)
     return;
 
-  float fHeight =
-      pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));
-  if (m_rtCaption.height < fHeight)
-    m_rtCaption.height = fHeight;
+  float fHeight = pCapTextLayout->Layout(m_rtCaption.Size());
+  m_rtCaption.height = std::max(m_rtCaption.height, fHeight);
 }
 
 void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
@@ -603,7 +599,7 @@ void CXFA_FFField::RenderCaption(CXFA_Graphics* pGS, CFX_Matrix* pMatrix) {
     return;
 
   if (!pCapTextLayout->IsLoaded())
-    pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));
+    pCapTextLayout->Layout(m_rtCaption.Size());
 
   CFX_RectF rtClip = m_rtCaption;
   rtClip.Intersect(GetRectWithoutRotate());
@@ -675,9 +671,7 @@ int32_t CXFA_FFField::CalculateNode(CXFA_Node* pNode) {
     case XFA_AttributeEnum::Warning: {
       if (version <= XFA_VERSION_204) {
         CXFA_Script* script = calc->GetScriptIfExists();
-        if (!script)
-          return 1;
-        if (script->GetExpression().IsEmpty())
+        if (!script || script->GetExpression().IsEmpty())
           return 1;
       }
 

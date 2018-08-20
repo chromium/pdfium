@@ -26,7 +26,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
         dashArray[1] = 2;
         dashArray[3] = 2;
       }
-      pGraphics->SetLineDash(0, dashArray, 4);
+      pGraphics->SetLineDash(0, dashArray, FX_ArraySize(dashArray));
       break;
     }
     case XFA_AttributeEnum::DashDotDot: {
@@ -36,7 +36,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
         dashArray[3] = 2;
         dashArray[5] = 2;
       }
-      pGraphics->SetLineDash(0, dashArray, 6);
+      pGraphics->SetLineDash(0, dashArray, FX_ArraySize(dashArray));
       break;
     }
     case XFA_AttributeEnum::Dashed: {
@@ -44,7 +44,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
       if (iCapType != XFA_AttributeEnum::Butt)
         dashArray[1] = 2;
 
-      pGraphics->SetLineDash(0, dashArray, 2);
+      pGraphics->SetLineDash(0, dashArray, FX_ArraySize(dashArray));
       break;
     }
     case XFA_AttributeEnum::Dotted: {
@@ -52,7 +52,7 @@ void XFA_StrokeTypeSetLineDash(CXFA_Graphics* pGraphics,
       if (iCapType != XFA_AttributeEnum::Butt)
         dashArray[1] = 2;
 
-      pGraphics->SetLineDash(0, dashArray, 2);
+      pGraphics->SetLineDash(0, dashArray, FX_ArraySize(dashArray));
       break;
     }
     default:

@@ -45,7 +45,7 @@ class CXFA_Graphics {
   CFX_RenderDevice* GetRenderDevice();
 
   void SetLineCap(CFX_GraphStateData::LineCap lineCap);
-  void SetLineDash(float dashPhase, float* dashArray, int32_t dashCount);
+  void SetLineDash(float dashPhase, const float* dashArray, size_t dashCount);
   void SetSolidLineDash();
   void SetLineWidth(float lineWidth);
   void EnableActOnDash();
