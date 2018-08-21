@@ -59,8 +59,8 @@ bool CBC_CommonBitMatrix::Get(int32_t x, int32_t y) const {
 
 void CBC_CommonBitMatrix::Set(int32_t x, int32_t y) {
   int32_t offset = y * m_rowSize + (x >> 5);
-  if (offset >= m_rowSize * m_height || offset < 0)
-    return;
+  ASSERT(offset >= 0);
+  ASSERT(offset < m_rowSize * m_height);
   m_bits[offset] |= 1 << (x & 0x1f);
 }
 

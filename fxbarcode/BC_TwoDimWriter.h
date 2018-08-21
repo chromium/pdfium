@@ -31,7 +31,17 @@ class CBC_TwoDimWriter : public CBC_Writer {
  protected:
   int32_t m_iCorrectLevel;
   bool m_bFixedSize;
+
+ private:
   std::unique_ptr<CBC_CommonBitMatrix> m_output;
+  int32_t m_multiX;
+  int32_t m_multiY;
+  int32_t m_leftPadding;
+  int32_t m_topPadding;
+  int32_t m_inputWidth;
+  int32_t m_inputHeight;
+  int32_t m_outputWidth;
+  int32_t m_outputHeight;
 };
 
 #endif  // FXBARCODE_BC_TWODIMWRITER_H_
