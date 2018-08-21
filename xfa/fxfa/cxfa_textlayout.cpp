@@ -773,7 +773,10 @@ bool CXFA_TextLayout::LoadRichText(
             while (iTabCount-- > 0)
               wsText += L'\t';
           } else {
-            m_textParser.GetEmbbedObj(m_pTextProvider, pXMLNode, wsText);
+            Optional<WideString> obj =
+                m_textParser.GetEmbeddedObj(m_pTextProvider, pXMLNode);
+            if (obj)
+              wsText = *obj;
           }
         }
 

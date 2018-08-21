@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFGAS_GEFont;
@@ -79,9 +80,8 @@ class CXFA_TextParser {
                       bool bFirst,
                       float fVerScale) const;
 
-  bool GetEmbbedObj(CXFA_TextProvider* pTextProvider,
-                    CFX_XMLNode* pXMLNode,
-                    WideString& wsValue);
+  Optional<WideString> GetEmbeddedObj(CXFA_TextProvider* pTextProvider,
+                                      CFX_XMLNode* pXMLNode);
   CXFA_TextParseContext* GetParseContextFromMap(CFX_XMLNode* pXMLNode);
 
  protected:

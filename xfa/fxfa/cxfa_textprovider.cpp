@@ -130,21 +130,18 @@ CXFA_Font* CXFA_TextProvider::GetFontIfExists() {
   return font ? font : m_pNode->GetFontIfExists();
 }
 
-bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
+bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() const {
   if (m_pNode->GetFFWidgetType() != XFA_FFWidgetType::kCheckButton)
     return false;
   return !m_pNode->TryWidth();
 }
 
-bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
-                                     bool bRaw,
-                                     const WideString& wsAttr,
-                                     WideString& wsValue) {
-  if (m_eType != XFA_TEXTPROVIDERTYPE_Text)
-    return false;
-
-  if (!bURI)
-    return false;
+Optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
+    bool bURI,
+    bool bRaw,
+    const WideString& wsAttr) {
+  if (m_eType != XFA_TEXTPROVIDERTYPE_Text || !bURI)
+    return {};
 
   CXFA_Node* pParent = m_pNode->GetParent();
   CXFA_Document* pDocument = m_pNode->GetDocument();
@@ -158,8 +155,7 @@ bool CXFA_TextProvider::GetEmbbedObj(bool bURI,
         wsAttr.AsStringView());
   }
   if (!pIDNode || !pIDNode->IsWidgetReady())
-    return false;
+    return {};
 
-  wsValue = pIDNode->GetValue(XFA_VALUEPICTURE_Display);
-  return true;
+  return pIDNode->GetValue(XFA_VALUEPICTURE_Display);
 }

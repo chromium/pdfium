@@ -495,20 +495,19 @@ float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
   return fLineHeight;
 }
 
-bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
-                                   CFX_XMLNode* pXMLNode,
-                                   WideString& wsValue) {
-  wsValue.clear();
+Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
+    CXFA_TextProvider* pTextProvider,
+    CFX_XMLNode* pXMLNode) {
   if (!pXMLNode)
-    return false;
+    return {};
 
   CFX_XMLElement* pElement = ToXMLElement(pXMLNode);
   if (!pElement)
-    return false;
+    return {};
 
   WideString wsAttr = pElement->GetAttribute(L"xfa:embed");
   if (wsAttr.IsEmpty())
-    return false;
+    return {};
 
   if (wsAttr[0] == L'#')
     wsAttr.Delete(0);
@@ -521,7 +520,7 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
 
   bool bURI = (ws == L"uri");
   if (!bURI && ws != L"som")
-    return false;
+    return {};
 
   ws = pElement->GetAttribute(L"xfa:embedMode");
   if (ws.IsEmpty())
@@ -531,9 +530,9 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
 
   bool bRaw = (ws == L"raw");
   if (!bRaw && ws != L"formatted")
-    return false;
+    return {};
 
-  return pTextProvider->GetEmbbedObj(bURI, bRaw, wsAttr, wsValue);
+  return pTextProvider->GetEmbeddedObj(bURI, bRaw, wsAttr);
 }
 
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
