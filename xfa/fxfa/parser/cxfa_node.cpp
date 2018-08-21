@@ -795,7 +795,7 @@ std::vector<CXFA_Node*> CXFA_Node::GetNodeList(uint32_t dwTypeFilter,
   std::vector<CXFA_Node*> nodes;
   for (CXFA_Node* pChild = first_child_; pChild;
        pChild = pChild->next_sibling_) {
-    if (!HasProperty(pChild->GetElementType())) {
+    if (HasProperty(pChild->GetElementType())) {
       if (bFilterProperties) {
         nodes.push_back(pChild);
       } else if (bFilterOneOfProperties &&
