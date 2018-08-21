@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 
@@ -78,6 +79,21 @@ TEST(MaybeOwned, NotOwned) {
   }
   EXPECT_EQ(0, delete_count);
   EXPECT_EQ(1, owned_delete_count);
+}
+
+TEST(MaybeOwned, UnownedPtr) {
+  int delete_count = 0;
+  PseudoDeletable thing1(100, &delete_count);
+  PseudoDeletable thing2(200, &delete_count);
+  UnownedPtr<PseudoDeletable> unowned1(&thing1);
+  UnownedPtr<PseudoDeletable> unowned2(&thing2);
+  {
+    MaybeOwned<PseudoDeletable> ptr1(unowned1);
+    MaybeOwned<PseudoDeletable> ptr2(unowned2);
+    ptr2 = unowned1;
+    ptr1 = unowned2;
+  }
+  EXPECT_EQ(0, delete_count);
 }
 
 TEST(MaybeOwned, Owned) {

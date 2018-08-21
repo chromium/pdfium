@@ -24,6 +24,7 @@ class MaybeOwned {
  public:
   MaybeOwned() : m_pObj(nullptr) {}
   explicit MaybeOwned(T* ptr) : m_pObj(ptr) {}
+  explicit MaybeOwned(const UnownedPtr<T>& ptr) : m_pObj(ptr.Get()) {}
   explicit MaybeOwned(std::unique_ptr<T, D> ptr)
       : m_pOwnedObj(std::move(ptr)), m_pObj(m_pOwnedObj.get()) {}
 
@@ -72,6 +73,10 @@ class MaybeOwned {
   }
   MaybeOwned& operator=(T* ptr) {
     Reset(ptr);
+    return *this;
+  }
+  MaybeOwned& operator=(const UnownedPtr<T>& ptr) {
+    Reset(ptr.Get());
     return *this;
   }
   MaybeOwned& operator=(std::unique_ptr<T, D> ptr) {
