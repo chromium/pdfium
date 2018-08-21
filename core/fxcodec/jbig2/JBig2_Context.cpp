@@ -1013,29 +1013,32 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
       m_pArithDecoder =
           pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     }
-    CJBig2_GRDProc::ProgressiveArithDecodeState state;
-    state.pImage = &pSegment->m_Image;
-    state.pArithDecoder = m_pArithDecoder.get();
-    state.gbContext = m_gbContext.data();
-    state.pPause = pPause;
-    m_ProcessingStatus = bStart ? m_pGRD->StartDecodeArith(&state)
-                                : m_pGRD->ContinueDecode(&state);
-    if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
-      if (pSegment->m_cFlags.s.type != 36) {
-        if (!m_bBufSpecified) {
-          const auto& pPageInfo = m_PageInfoList.back();
-          if ((pPageInfo->m_bIsStriped == 1) &&
-              (m_ri.y + m_ri.height > m_pPage->height())) {
-            m_pPage->Expand(m_ri.y + m_ri.height,
-                            (pPageInfo->m_cFlags & 4) ? 1 : 0);
+    {
+      // |state.gbContext| can't exist when m_gbContext.clear() called below.
+      CJBig2_GRDProc::ProgressiveArithDecodeState state;
+      state.pImage = &pSegment->m_Image;
+      state.pArithDecoder = m_pArithDecoder.get();
+      state.gbContext = m_gbContext.data();
+      state.pPause = pPause;
+      m_ProcessingStatus = bStart ? m_pGRD->StartDecodeArith(&state)
+                                  : m_pGRD->ContinueDecode(&state);
+      if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
+        if (pSegment->m_cFlags.s.type != 36) {
+          if (!m_bBufSpecified) {
+            const auto& pPageInfo = m_PageInfoList.back();
+            if ((pPageInfo->m_bIsStriped == 1) &&
+                (m_ri.y + m_ri.height > m_pPage->height())) {
+              m_pPage->Expand(m_ri.y + m_ri.height,
+                              (pPageInfo->m_cFlags & 4) ? 1 : 0);
+            }
           }
+          const FX_RECT& rect = m_pGRD->GetReplaceRect();
+          m_pPage->ComposeFromWithRect(m_ri.x + rect.left, m_ri.y + rect.top,
+                                       pSegment->m_Image.get(), rect,
+                                       (JBig2ComposeOp)(m_ri.flags & 0x03));
         }
-        const FX_RECT& rect = m_pGRD->GetReplaceRect();
-        m_pPage->ComposeFromWithRect(m_ri.x + rect.left, m_ri.y + rect.top,
-                                     pSegment->m_Image.get(), rect,
-                                     (JBig2ComposeOp)(m_ri.flags & 0x03));
+        return JBig2_Result::kSuccess;
       }
-      return JBig2_Result::kSuccess;
     }
     m_pArithDecoder.reset();
     m_gbContext.clear();
