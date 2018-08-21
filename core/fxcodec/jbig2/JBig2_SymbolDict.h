@@ -32,11 +32,11 @@ class CJBig2_SymbolDict {
   const std::vector<JBig2ArithCtx>& GbContext() const { return m_gbContext; }
   const std::vector<JBig2ArithCtx>& GrContext() const { return m_grContext; }
 
-  void SetGbContext(const std::vector<JBig2ArithCtx>& gbContext) {
-    m_gbContext = gbContext;
+  void SetGbContext(std::vector<JBig2ArithCtx> gbContext) {
+    m_gbContext = std::move(gbContext);
   }
-  void SetGrContext(const std::vector<JBig2ArithCtx>& grContext) {
-    m_grContext = grContext;
+  void SetGrContext(std::vector<JBig2ArithCtx> grContext) {
+    m_grContext = std::move(grContext);
   }
 
  private:

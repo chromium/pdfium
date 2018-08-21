@@ -603,9 +603,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   }
   if (wFlags & 0x0200) {
     if (bUseGbContext)
-      pSegment->m_SymbolDict->SetGbContext(gbContext);
+      pSegment->m_SymbolDict->SetGbContext(std::move(gbContext));
     if (bUseGrContext)
-      pSegment->m_SymbolDict->SetGrContext(grContext);
+      pSegment->m_SymbolDict->SetGrContext(std::move(grContext));
   }
   return JBig2_Result::kSuccess;
 }
