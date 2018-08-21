@@ -32,19 +32,10 @@
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() {}
 
-void CBC_CommonBitMatrix::Init(int32_t dimension) {
-  m_width = dimension;
-  m_height = dimension;
-  int32_t rowSize = (m_height + 31) >> 5;
-  m_rowSize = rowSize;
-  m_bits = pdfium::Vector2D<int32_t>(m_rowSize, m_height);
-}
-
 void CBC_CommonBitMatrix::Init(int32_t width, int32_t height) {
   m_width = width;
   m_height = height;
-  int32_t rowSize = (width + 31) >> 5;
-  m_rowSize = rowSize;
+  m_rowSize = (width + 31) >> 5;
   m_bits = pdfium::Vector2D<int32_t>(m_rowSize, m_height);
 }
 
@@ -62,46 +53,4 @@ void CBC_CommonBitMatrix::Set(int32_t x, int32_t y) {
   ASSERT(offset >= 0);
   ASSERT(offset < m_rowSize * m_height);
   m_bits[offset] |= 1 << (x & 0x1f);
-}
-
-void CBC_CommonBitMatrix::Flip(int32_t x, int32_t y) {
-  int32_t offset = y * m_rowSize + (x >> 5);
-  m_bits[offset] ^= 1 << (x & 0x1f);
-}
-
-void CBC_CommonBitMatrix::Clear() {
-  std::fill(std::begin(m_bits), std::end(m_bits), 0);
-}
-
-bool CBC_CommonBitMatrix::SetRegion(int32_t left,
-                                    int32_t top,
-                                    int32_t width,
-                                    int32_t height) {
-  if (top < 0 || left < 0 || height < 1 || width < 1)
-    return false;
-
-  int32_t right = left + width;
-  int32_t bottom = top + height;
-  if (m_height < bottom || m_width < right)
-    return false;
-
-  for (int32_t y = top; y < bottom; y++) {
-    int32_t offset = y * m_rowSize;
-    for (int32_t x = left; x < right; x++)
-      m_bits[offset + (x >> 5)] |= 1 << (x & 0x1f);
-  }
-  return true;
-}
-
-void CBC_CommonBitMatrix::SetRow(int32_t y, CBC_CommonBitArray* row) {
-  int32_t l = y * m_rowSize;
-  for (int32_t i = 0; i < m_rowSize; i++) {
-    m_bits[l] = row->GetBitArray()[i];
-    l++;
-  }
-}
-
-void CBC_CommonBitMatrix::SetCol(int32_t y, CBC_CommonBitArray* col) {
-  for (size_t i = 0; i < col->GetBits().size(); ++i)
-    m_bits[i * m_rowSize + y] = col->GetBitArray()[i];
 }
