@@ -12,6 +12,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_ArithIaidDecoder;
@@ -22,16 +23,19 @@ struct JBig2ArithCtx;
 struct JBig2HuffmanCode;
 
 struct JBig2IntDecoderState {
-  CJBig2_ArithIntDecoder* IADT;
-  CJBig2_ArithIntDecoder* IAFS;
-  CJBig2_ArithIntDecoder* IADS;
-  CJBig2_ArithIntDecoder* IAIT;
-  CJBig2_ArithIntDecoder* IARI;
-  CJBig2_ArithIntDecoder* IARDW;
-  CJBig2_ArithIntDecoder* IARDH;
-  CJBig2_ArithIntDecoder* IARDX;
-  CJBig2_ArithIntDecoder* IARDY;
-  CJBig2_ArithIaidDecoder* IAID;
+  JBig2IntDecoderState();
+  ~JBig2IntDecoderState();
+
+  UnownedPtr<CJBig2_ArithIntDecoder> IADT;
+  UnownedPtr<CJBig2_ArithIntDecoder> IAFS;
+  UnownedPtr<CJBig2_ArithIntDecoder> IADS;
+  UnownedPtr<CJBig2_ArithIntDecoder> IAIT;
+  UnownedPtr<CJBig2_ArithIntDecoder> IARI;
+  UnownedPtr<CJBig2_ArithIntDecoder> IARDW;
+  UnownedPtr<CJBig2_ArithIntDecoder> IARDH;
+  UnownedPtr<CJBig2_ArithIntDecoder> IARDX;
+  UnownedPtr<CJBig2_ArithIntDecoder> IARDY;
+  UnownedPtr<CJBig2_ArithIaidDecoder> IAID;
 };
 
 enum JBig2Corner {

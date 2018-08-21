@@ -39,9 +39,13 @@ Optional<int32_t> CheckTRDReferenceDimension(int32_t dimension,
 
 }  // namespace
 
-CJBig2_TRDProc::CJBig2_TRDProc() {}
+JBig2IntDecoderState::JBig2IntDecoderState() = default;
 
-CJBig2_TRDProc::~CJBig2_TRDProc() {}
+JBig2IntDecoderState::~JBig2IntDecoderState() = default;
+
+CJBig2_TRDProc::CJBig2_TRDProc() = default;
+
+CJBig2_TRDProc::~CJBig2_TRDProc() = default;
 
 std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
     CJBig2_BitStream* pStream,
