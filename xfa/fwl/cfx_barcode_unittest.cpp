@@ -131,7 +131,7 @@ TEST_F(BarcodeTest, Pdf417) {
   EXPECT_TRUE(Create(BC_PDF417));
   EXPECT_TRUE(barcode()->Encode(L"clams"));
   RenderDevice();
-  EXPECT_EQ("35e94f2da8649fb1402534cc65085999", BitmapChecksum());
+  EXPECT_EQ("191e35d11613901b7d5d51033689aa89", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, DataMatrix) {

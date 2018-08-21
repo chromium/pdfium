@@ -25,12 +25,12 @@
 #include "third_party/base/ptr_util.h"
 
 CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {
-  m_matrix.resize(height + 2);
+  m_matrix.resize(height);
   for (size_t i = 0; i < m_matrix.size(); ++i)
     m_matrix[i] = pdfium::MakeUnique<CBC_BarcodeRow>((width + 4) * 17 + 1);
 
   m_width = width * 17;
-  m_height = height + 2;
+  m_height = height;
   m_currentRow = 0;
   m_outHeight = 0;
   m_outWidth = 0;
@@ -44,7 +44,7 @@ void CBC_BarcodeMatrix::set(int32_t x, int32_t y, uint8_t value) {
 void CBC_BarcodeMatrix::setMatrix(int32_t x, int32_t y, bool black) {
   set(x, y, (uint8_t)(black ? 1 : 0));
 }
-void CBC_BarcodeMatrix::startRow() {
+void CBC_BarcodeMatrix::nextRow() {
   ++m_currentRow;
 }
 std::vector<uint8_t>& CBC_BarcodeMatrix::getMatrix() {

@@ -23,7 +23,7 @@ class CBC_BarcodeMatrix {
   int32_t getHeight() const { return m_outHeight; }
   void set(int32_t x, int32_t y, uint8_t value);
   void setMatrix(int32_t x, int32_t y, bool black);
-  void startRow();
+  void nextRow();
   std::vector<uint8_t>& getMatrix();
   std::vector<uint8_t>& getScaledMatrix(int32_t scale);
   std::vector<uint8_t>& getScaledMatrix(int32_t xScale, int32_t yScale);
