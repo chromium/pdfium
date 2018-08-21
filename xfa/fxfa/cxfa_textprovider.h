@@ -9,10 +9,10 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/cxfa_textlayout.h"
-#include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Font;
 class CXFA_Node;
+class CXFA_Para;
 
 enum XFA_TEXTPROVIDERTYPE {
   XFA_TEXTPROVIDERTYPE_Text,

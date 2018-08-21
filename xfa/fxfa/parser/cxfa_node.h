@@ -13,10 +13,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxge/fx_dib.h"
-#include "fxbarcode/BC_Library.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_object.h"

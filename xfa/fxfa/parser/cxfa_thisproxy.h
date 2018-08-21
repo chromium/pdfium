@@ -8,8 +8,9 @@
 #define XFA_FXFA_PARSER_CXFA_THISPROXY_H_
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
+
+class CXFA_Node;
 
 class CXFA_ThisProxy : public CXFA_Object {
  public:

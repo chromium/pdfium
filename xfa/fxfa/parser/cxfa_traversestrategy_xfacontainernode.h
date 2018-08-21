@@ -23,8 +23,8 @@ class CXFA_TraverseStrategy_XFAContainerNode {
   }
 };
 
-typedef CXFA_NodeIteratorTemplate<CXFA_Node,
-                                  CXFA_TraverseStrategy_XFAContainerNode>
-    CXFA_ContainerIterator;
+using CXFA_ContainerIterator =
+    CXFA_NodeIteratorTemplate<CXFA_Node,
+                              CXFA_TraverseStrategy_XFAContainerNode>;
 
 #endif  // XFA_FXFA_PARSER_CXFA_TRAVERSESTRATEGY_XFACONTAINERNODE_H_
