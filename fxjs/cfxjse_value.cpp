@@ -370,7 +370,8 @@ bool CFXJSE_Value::ToBoolean() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return static_cast<bool>(hValue->BooleanValue());
+  return hValue->BooleanValue(GetIsolate()->GetCurrentContext())
+      .FromMaybe(false);
 }
 
 float CFXJSE_Value::ToFloat() const {
@@ -378,7 +379,8 @@ float CFXJSE_Value::ToFloat() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return static_cast<float>(hValue->NumberValue());
+  return static_cast<float>(
+      hValue->NumberValue(GetIsolate()->GetCurrentContext()).FromMaybe(0.0));
 }
 
 double CFXJSE_Value::ToDouble() const {
@@ -386,7 +388,7 @@ double CFXJSE_Value::ToDouble() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return static_cast<double>(hValue->NumberValue());
+  return hValue->NumberValue(GetIsolate()->GetCurrentContext()).FromMaybe(0.0);
 }
 
 int32_t CFXJSE_Value::ToInteger() const {
@@ -394,7 +396,8 @@ int32_t CFXJSE_Value::ToInteger() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return static_cast<int32_t>(hValue->NumberValue());
+  return static_cast<int32_t>(
+      hValue->NumberValue(GetIsolate()->GetCurrentContext()).FromMaybe(0.0));
 }
 
 ByteString CFXJSE_Value::ToString() const {
@@ -402,7 +405,7 @@ ByteString CFXJSE_Value::ToString() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  v8::Local<v8::String> hString = hValue->ToString();
+  v8::Local<v8::String> hString = hValue->ToString(GetIsolate());
   v8::String::Utf8Value hStringVal(GetIsolate(), hString);
   return ByteString(*hStringVal);
 }
