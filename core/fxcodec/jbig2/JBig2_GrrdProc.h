@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_Image;
@@ -17,16 +18,19 @@ struct JBig2ArithCtx;
 
 class CJBig2_GRRDProc {
  public:
+  CJBig2_GRRDProc();
+  ~CJBig2_GRRDProc();
+
   std::unique_ptr<CJBig2_Image> Decode(CJBig2_ArithDecoder* pArithDecoder,
                                        JBig2ArithCtx* grContext);
 
+  bool GRTEMPLATE;
+  bool TPGRON;
   uint32_t GRW;
   uint32_t GRH;
-  bool GRTEMPLATE;
-  CJBig2_Image* GRREFERENCE;
   int32_t GRREFERENCEDX;
   int32_t GRREFERENCEDY;
-  bool TPGRON;
+  UnownedPtr<CJBig2_Image> GRREFERENCE;
   int8_t GRAT[4];
 
  private:

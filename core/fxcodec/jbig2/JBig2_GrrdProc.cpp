@@ -13,6 +13,10 @@
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "third_party/base/ptr_util.h"
 
+CJBig2_GRRDProc::CJBig2_GRRDProc() = default;
+
+CJBig2_GRRDProc::~CJBig2_GRRDProc() = default;
+
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::Decode(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
