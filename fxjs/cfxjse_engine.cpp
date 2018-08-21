@@ -163,11 +163,12 @@ bool CFXJSE_Engine::QueryNodeByFlag(CXFA_Node* refNode,
   if (!ResolveObjects(refNode, propname, &resolveRs, dwFlag, nullptr))
     return false;
   if (resolveRs.dwFlags == XFA_ResolveNode_RSType_Nodes) {
-    pValue->Assign(GetJSValueFromMap(resolveRs.objects.front()));
+    pValue->Assign(GetJSValueFromMap(resolveRs.objects.front().Get()));
     return true;
   }
   if (resolveRs.dwFlags == XFA_ResolveNode_RSType_Attribute) {
-    const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo = resolveRs.pScriptAttribute;
+    const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
+        resolveRs.pScriptAttribute.Get();
     if (lpAttributeInfo) {
       CJX_Object* jsObject = resolveRs.objects.front()->JSObject();
       (jsObject->*(lpAttributeInfo->callback))(pValue, bSetting,
@@ -600,8 +601,8 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   int32_t nStart = 0;
   int32_t nLevel = 0;
 
-  std::vector<CXFA_Object*> findObjects;
-  findObjects.push_back(refObject ? refObject : m_pDocument->GetRoot());
+  std::vector<UnownedPtr<CXFA_Object>> findObjects;
+  findObjects.emplace_back(refObject ? refObject : m_pDocument->GetRoot());
   int32_t nNodes = 0;
   while (true) {
     nNodes = pdfium::CollectionSize<int32_t>(findObjects);
@@ -617,18 +618,18 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
           pDataNode = m_pDocument->GetNotBindNode(findObjects);
           if (pDataNode) {
             findObjects.clear();
-            findObjects.push_back(pDataNode);
+            findObjects.emplace_back(pDataNode);
             break;
           }
         } else {
           pDataNode = findObjects.front()->AsNode();
           findObjects.clear();
-          findObjects.push_back(pDataNode);
+          findObjects.emplace_back(pDataNode);
           break;
         }
         dwStyles |= XFA_RESOLVENODE_Bind;
         findObjects.clear();
-        findObjects.push_back(
+        findObjects.emplace_back(
             m_ResolveProcessor->GetNodeHelper()->m_pAllStartParent.Get());
         continue;
       }
@@ -658,7 +659,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
         m_ResolveProcessor->SetIndexDataBind(rndBind.m_wsCondition, i, nNodes);
         bDataBind = true;
       }
-      rndFind.m_CurObject = findObjects[i++];
+      rndFind.m_CurObject = findObjects[i++].Get();
       rndFind.m_nLevel = nLevel;
       rndFind.m_dwFlag = XFA_ResolveNode_RSType_Nodes;
       if (!m_ResolveProcessor->Resolve(rndFind))
@@ -705,8 +706,8 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
       break;
     }
 
-    findObjects =
-        std::vector<CXFA_Object*>(retObjects.begin(), retObjects.end());
+    findObjects = std::vector<UnownedPtr<CXFA_Object>>(retObjects.begin(),
+                                                       retObjects.end());
     rndFind.m_Objects.clear();
     if (nLevel == 0)
       dwStyles &= ~(XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
@@ -729,7 +730,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
                   XFA_RESOLVENODE_BindNew)) {
     CXFA_NodeHelper* helper = m_ResolveProcessor->GetNodeHelper();
     if (helper->m_pCreateParent)
-      resolveNodeRS->objects.push_back(helper->m_pCreateParent.Get());
+      resolveNodeRS->objects.emplace_back(helper->m_pCreateParent.Get());
     else
       helper->CreateNode_ForCondition(rndFind.m_wsCondition);
 

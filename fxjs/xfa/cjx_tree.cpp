@@ -55,7 +55,7 @@ CJS_Result CJX_Tree::resolveNode(
   }
 
   if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
-    CXFA_Object* pObject = resolveNodeRS.objects.front();
+    CXFA_Object* pObject = resolveNodeRS.objects.front().Get();
     CFXJSE_Value* value =
         GetDocument()->GetScriptContext()->GetJSValueFromMap(pObject);
     if (!value)
@@ -66,7 +66,7 @@ CJS_Result CJX_Tree::resolveNode(
   }
 
   const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
-      resolveNodeRS.pScriptAttribute;
+      resolveNodeRS.pScriptAttribute.Get();
   if (!lpAttributeInfo ||
       lpAttributeInfo->eValueType != XFA_ScriptType::Object) {
     return CJS_Result::Success(runtime->NewNull());
@@ -231,14 +231,14 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
                                  &resolveNodeRS, dwFlag, nullptr);
   CXFA_ArrayNodeList* pNodeList = new CXFA_ArrayNodeList(GetDocument());
   if (resolveNodeRS.dwFlags == XFA_ResolveNode_RSType_Nodes) {
-    for (CXFA_Object* pObject : resolveNodeRS.objects) {
+    for (auto& pObject : resolveNodeRS.objects) {
       if (pObject->IsNode())
         pNodeList->Append(pObject->AsNode());
     }
   } else {
     if (resolveNodeRS.pScriptAttribute &&
         resolveNodeRS.pScriptAttribute->eValueType == XFA_ScriptType::Object) {
-      for (CXFA_Object* pObject : resolveNodeRS.objects) {
+      for (auto& pObject : resolveNodeRS.objects) {
         auto pValue =
             pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
         CJX_Object* jsObject = pObject->JSObject();

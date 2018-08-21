@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_nodeowner.h"
@@ -65,7 +66,8 @@ class CXFA_Document : public CXFA_NodeOwner {
   CXFA_LocaleMgr* GetLocaleMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const WideStringView& wsID) const;
-  CXFA_Node* GetNotBindNode(const std::vector<CXFA_Object*>& arrayNodes) const;
+  CXFA_Node* GetNotBindNode(
+      const std::vector<UnownedPtr<CXFA_Object>>& arrayNodes) const;
   CXFA_LayoutProcessor* GetLayoutProcessor();
   CFXJSE_Engine* GetScriptContext() const;
 
