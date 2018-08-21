@@ -18,6 +18,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPVT_Word;
 class CSection;
@@ -28,7 +29,6 @@ struct CPVT_WordInfo;
 
 class CPDF_VariableText {
  public:
-
   class Iterator {
    public:
     explicit Iterator(CPDF_VariableText* pVT);
@@ -63,7 +63,7 @@ class CPDF_VariableText {
     virtual int32_t GetDefaultFontIndex();
 
    private:
-    IPVT_FontMap* const m_pFontMap;
+    UnownedPtr<IPVT_FontMap> const m_pFontMap;
   };
 
   CPDF_VariableText();
@@ -196,20 +196,20 @@ class CPDF_VariableText {
   bool IsBigger(float fFontSize) const;
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);
 
+  bool m_bInitialized = false;
+  bool m_bMultiLine = false;
+  bool m_bLimitWidth = false;
+  bool m_bAutoFontSize = false;
+  uint16_t m_wSubWord = 0;
+  int32_t m_nLimitChar = 0;
+  int32_t m_nCharArray = 0;
+  int32_t m_nAlignment = 0;
+  int32_t m_nHorzScale = 100;
+  float m_fLineLeading = 0.0f;
+  float m_fCharSpace = 0.0f;
+  float m_fFontSize = 0.0f;
   std::vector<std::unique_ptr<CSection>> m_SectionArray;
-  int32_t m_nLimitChar;
-  int32_t m_nCharArray;
-  bool m_bMultiLine;
-  bool m_bLimitWidth;
-  bool m_bAutoFontSize;
-  int32_t m_nAlignment;
-  float m_fLineLeading;
-  float m_fCharSpace;
-  int32_t m_nHorzScale;
-  uint16_t m_wSubWord;
-  float m_fFontSize;
-  bool m_bInitialized;
-  CPDF_VariableText::Provider* m_pVTProvider;
+  UnownedPtr<CPDF_VariableText::Provider> m_pVTProvider;
   std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
   CFX_FloatRect m_rcPlate;
   CPVT_FloatRect m_rcContent;

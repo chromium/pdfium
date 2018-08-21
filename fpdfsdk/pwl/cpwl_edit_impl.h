@@ -374,10 +374,10 @@ class CPWL_EditImpl {
 
   void AddEditUndoItem(std::unique_ptr<IFX_Edit_UndoItem> pEditUndoItem);
 
-  std::unique_ptr<CPDF_VariableText> m_pVT;
+  std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
+  std::unique_ptr<CPDF_VariableText> m_pVT;  // Must outlive |m_pVTProvider|.
   UnownedPtr<CPWL_EditCtrl> m_pNotify;
   UnownedPtr<CPWL_Edit> m_pOperationNotify;
-  std::unique_ptr<CPWL_EditImpl_Provider> m_pVTProvider;
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
   CPWL_EditImpl_Select m_SelState;

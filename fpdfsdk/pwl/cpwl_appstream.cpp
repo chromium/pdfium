@@ -1597,12 +1597,13 @@ void CPWL_AppStream::SetAsComboBox(const WideString* sValue) {
   rcButton.left = rcButton.right - 13;
   rcButton.Normalize();
 
-  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
-  pEdit->EnableRefresh(false);
-
+  // Font map must outlive |pEdit|.
   CBA_FontMap font_map(
       widget_.Get(),
       widget_->GetInterForm()->GetFormFillEnv()->GetSysHandler());
+
+  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
+  pEdit->EnableRefresh(false);
   pEdit->SetFontMap(&font_map);
 
   CFX_FloatRect rcEdit = rcClient;
@@ -1663,12 +1664,13 @@ void CPWL_AppStream::SetAsListBox() {
   CFX_FloatRect rcClient = widget_->GetClientRect();
   std::ostringstream sBody;
 
-  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
-  pEdit->EnableRefresh(false);
-
+  // Font map must outlive |pEdit|.
   CBA_FontMap font_map(
       widget_.Get(),
       widget_->GetInterForm()->GetFormFillEnv()->GetSysHandler());
+
+  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
+  pEdit->EnableRefresh(false);
   pEdit->SetFontMap(&font_map);
   pEdit->SetPlateRect(CFX_FloatRect(rcClient.left, 0.0f, rcClient.right, 0.0f));
 
@@ -1747,12 +1749,13 @@ void CPWL_AppStream::SetAsTextField(const WideString* sValue) {
   std::ostringstream sBody;
   std::ostringstream sLines;
 
-  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
-  pEdit->EnableRefresh(false);
-
+  // Font map must outlive |pEdit|.
   CBA_FontMap font_map(
       widget_.Get(),
       widget_->GetInterForm()->GetFormFillEnv()->GetSysHandler());
+
+  auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
+  pEdit->EnableRefresh(false);
   pEdit->SetFontMap(&font_map);
 
   CFX_FloatRect rcClient = widget_->GetClientRect();

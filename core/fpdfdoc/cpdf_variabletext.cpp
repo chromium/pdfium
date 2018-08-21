@@ -178,22 +178,9 @@ bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   return true;
 }
 
-CPDF_VariableText::CPDF_VariableText()
-    : m_nLimitChar(0),
-      m_nCharArray(0),
-      m_bMultiLine(false),
-      m_bLimitWidth(false),
-      m_bAutoFontSize(false),
-      m_nAlignment(0),
-      m_fLineLeading(0.0f),
-      m_fCharSpace(0.0f),
-      m_nHorzScale(100),
-      m_wSubWord(0),
-      m_fFontSize(0.0f),
-      m_bInitialized(false),
-      m_pVTProvider(nullptr) {}
+CPDF_VariableText::CPDF_VariableText() = default;
 
-CPDF_VariableText::~CPDF_VariableText() {}
+CPDF_VariableText::~CPDF_VariableText() = default;
 
 void CPDF_VariableText::Initialize() {
   if (m_bInitialized)
