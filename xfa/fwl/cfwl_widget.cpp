@@ -171,7 +171,7 @@ CFX_PointF CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
   return point + CFX_PointF(szOffset.width, szOffset.height);
 }
 
-CFX_Matrix CFWL_Widget::GetMatrix() {
+CFX_Matrix CFWL_Widget::GetMatrix() const {
   if (!m_pProperties)
     return CFX_Matrix();
 
@@ -199,10 +199,6 @@ CFX_Matrix CFWL_Widget::GetMatrix() {
   matrix.ConcatPrepend(m);
   parents.clear();
   return matrix;
-}
-
-IFWL_ThemeProvider* CFWL_Widget::GetThemeProvider() const {
-  return m_pProperties->m_pThemeProvider;
 }
 
 void CFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
@@ -259,7 +255,7 @@ CFX_RectF CFWL_Widget::GetRelativeRect() {
 
 IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() {
   if (m_pProperties->m_pThemeProvider)
-    return m_pProperties->m_pThemeProvider;
+    return m_pProperties->m_pThemeProvider.Get();
 
   CFWL_Widget* pUp = this;
   do {

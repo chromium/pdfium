@@ -98,8 +98,7 @@ FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
 
 void CFWL_ComboBox::DrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix& matrix) {
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
   pGraphics->SaveGraphState();
   pGraphics->ConcatMatrix(&matrix);
   if (!m_rtBtn.IsEmpty(0.1f)) {
@@ -327,11 +326,10 @@ void CFWL_ComboBox::Layout() {
 }
 
 void CFWL_ComboBox::ResetTheme() {
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  if (!pTheme) {
-    pTheme = GetAvailableTheme();
-    m_pProperties->m_pThemeProvider = pTheme;
-  }
+  if (!m_pProperties->m_pThemeProvider)
+    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
   if (m_pListBox && !m_pListBox->GetThemeProvider())
     m_pListBox->SetThemeProvider(pTheme);
   if (m_pEdit && !m_pEdit->GetThemeProvider())

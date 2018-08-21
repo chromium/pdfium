@@ -9,11 +9,11 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/cfwl_widget.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 
-class IFWL_ThemeProvider;
 class CFWL_Widget;
+class IFWL_ThemeProvider;
 
 class CFWL_WidgetProperties {
  public:
@@ -21,12 +21,12 @@ class CFWL_WidgetProperties {
   ~CFWL_WidgetProperties();
 
   CFX_RectF m_rtWidget;
-  uint32_t m_dwStyles;
-  uint32_t m_dwStyleExes;
-  uint32_t m_dwStates;
-  IFWL_ThemeProvider* m_pThemeProvider;
-  CFWL_Widget* m_pParent;
-  CFWL_Widget* m_pOwner;
+  uint32_t m_dwStyles = FWL_WGTSTYLE_Child;
+  uint32_t m_dwStyleExes = 0;
+  uint32_t m_dwStates = 0;
+  UnownedPtr<IFWL_ThemeProvider> m_pThemeProvider;
+  CFWL_Widget* m_pParent = nullptr;  // Raw, this class owned by node in tree.
+  CFWL_Widget* m_pOwner = nullptr;   // Raw, this class owned by node in tree.
 };
 
 #endif  // XFA_FWL_CFWL_WIDGETPROPERTIES_H_

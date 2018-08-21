@@ -95,7 +95,7 @@ CFX_RectF CFWL_Edit::GetAutosizedWidgetRect() {
 
   if (m_EdtEngine.GetLength() > 0) {
     CFX_SizeF size = CalcTextSize(
-        m_EdtEngine.GetText(), m_pProperties->m_pThemeProvider,
+        m_EdtEngine.GetText(), m_pProperties->m_pThemeProvider.Get(),
         !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine));
     rect = CFX_RectF(0, 0, size);
   }
@@ -147,14 +147,15 @@ FWL_WidgetHit CFWL_Edit::HitTest(const CFX_PointF& point) {
 void CFWL_Edit::DrawWidget(CXFA_Graphics* pGraphics, const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
-    return;
+
   if (m_rtClient.IsEmpty())
     return;
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  DrawContent(pGraphics, pTheme, &matrix);
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  if (!pTheme)
+    return;
 
+  DrawContent(pGraphics, pTheme, &matrix);
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 }

@@ -54,7 +54,7 @@ void CFWL_Caret::DrawWidget(CXFA_Graphics* pGraphics,
   if (!m_pProperties->m_pThemeProvider)
     return;
 
-  DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider, &matrix);
+  DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider.Get(), &matrix);
 }
 
 void CFWL_Caret::ShowCaret() {

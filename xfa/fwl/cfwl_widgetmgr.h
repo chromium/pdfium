@@ -31,7 +31,7 @@ class CFWL_WidgetMgr {
                     CXFA_Graphics* pGraphics,
                     const CFX_Matrix& matrix);
 
-  CFWL_Widget* GetParentWidget(CFWL_Widget* pWidget) const;
+  CFWL_Widget* GetParentWidget(const CFWL_Widget* pWidget) const;
   CFWL_Widget* GetOwnerWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetNextSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetFirstChildWidget(CFWL_Widget* pWidget) const;
@@ -80,7 +80,7 @@ class CFWL_WidgetMgr {
   CFWL_Widget* GetFirstSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetPriorSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetLastChildWidget(CFWL_Widget* pWidget) const;
-  Item* GetWidgetMgrItem(CFWL_Widget* pWidget) const;
+  Item* GetWidgetMgrItem(const CFWL_Widget* pWidget) const;
 
   void AppendWidget(CFWL_Widget* pWidget);
 
@@ -96,7 +96,7 @@ class CFWL_WidgetMgr {
 
   bool IsAbleNative(CFWL_Widget* pWidget) const;
 
-  std::map<CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
+  std::map<const CFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
   UnownedPtr<CXFA_FWLAdapterWidgetMgr> const m_pAdapter;
 };
 

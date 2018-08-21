@@ -22,7 +22,7 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
 
 CFWL_WidgetMgr::~CFWL_WidgetMgr() {}
 
-CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(CFWL_Widget* pWidget) const {
+CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
   Item* pItem = GetWidgetMgrItem(pWidget);
   return pItem && pItem->pParent ? pItem->pParent->pWidget : nullptr;
 }
@@ -328,7 +328,7 @@ void CFWL_WidgetMgr::ResetRedrawCounts(CFWL_Widget* pWidget) {
 }
 
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrItem(
-    CFWL_Widget* pWidget) const {
+    const CFWL_Widget* pWidget) const {
   auto it = m_mapWidgetItem.find(pWidget);
   return it != m_mapWidgetItem.end() ? static_cast<Item*>(it->second.get())
                                      : nullptr;

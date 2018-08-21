@@ -65,14 +65,13 @@ void CFWL_CheckBox::DrawWidget(CXFA_Graphics* pGraphics,
                                const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
+
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  if (!pTheme)
     return;
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  if (HasBorder()) {
-    DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
-               matrix);
-  }
+  if (HasBorder())
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 
   int32_t dwStates = GetPartStates();
 
@@ -136,8 +135,8 @@ void CFWL_CheckBox::Layout() {
   CFX_RectF rtFocus(m_rtCaption.left, m_rtCaption.top, m_rtCaption.width,
                     m_rtCaption.height);
 
-  CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider, m_dwTTOStyles,
-               m_iTTOAlign, &rtFocus);
+  CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider.Get(),
+               m_dwTTOStyles, m_iTTOAlign, &rtFocus);
 
   m_rtFocus = CFX_RectF(m_rtCaption.TopLeft(),
                         std::max(m_rtCaption.width, rtFocus.width),

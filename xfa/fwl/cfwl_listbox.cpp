@@ -94,10 +94,11 @@ void CFWL_ListBox::DrawWidget(CXFA_Graphics* pGraphics,
                               const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
+
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  if (!pTheme)
     return;
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   pGraphics->SaveGraphState();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
@@ -599,8 +600,8 @@ float CFWL_ListBox::GetMaxTextWidth() {
     if (!pItem)
       continue;
 
-    CFX_SizeF sz =
-        CalcTextSize(pItem->GetText(), m_pProperties->m_pThemeProvider, false);
+    CFX_SizeF sz = CalcTextSize(pItem->GetText(),
+                                m_pProperties->m_pThemeProvider.Get(), false);
     fRet = std::max(fRet, sz.width);
   }
   return fRet;

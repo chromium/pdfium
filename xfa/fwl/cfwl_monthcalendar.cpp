@@ -122,10 +122,11 @@ void CFWL_MonthCalendar::DrawWidget(CXFA_Graphics* pGraphics,
                                     const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
+
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
 
@@ -215,8 +216,8 @@ void CFWL_MonthCalendar::DrawCaption(CXFA_Graphics* pGraphics,
   textParam.m_dwStates = CFWL_PartState_Normal;
   textParam.m_pGraphics = pGraphics;
   textParam.m_wsText = GetHeadText(m_iCurYear, m_iCurMonth);
-  m_szHead =
-      CalcTextSize(textParam.m_wsText, m_pProperties->m_pThemeProvider, false);
+  m_szHead = CalcTextSize(textParam.m_wsText,
+                          m_pProperties->m_pThemeProvider.Get(), false);
   CalcHeadSize();
   textParam.m_rtPart = m_rtHeadText;
   textParam.m_dwTTOStyles.single_line_ = true;
@@ -307,8 +308,8 @@ void CFWL_MonthCalendar::DrawToday(CXFA_Graphics* pGraphics,
   params.m_iTTOAlign = FDE_TextAlignment::kCenterLeft;
   params.m_wsText = GetTodayText(m_iYear, m_iMonth, m_iDay);
 
-  m_szToday =
-      CalcTextSize(params.m_wsText, m_pProperties->m_pThemeProvider, false);
+  m_szToday = CalcTextSize(params.m_wsText,
+                           m_pProperties->m_pThemeProvider.Get(), false);
   CalcTodaySize();
   params.m_rtPart = m_rtToday;
   params.m_dwTTOStyles.single_line_ = true;
@@ -383,18 +384,18 @@ void CFWL_MonthCalendar::DrawDatesInCircle(CXFA_Graphics* pGraphics,
 }
 
 CFX_SizeF CFWL_MonthCalendar::CalcSize() {
-  if (!m_pProperties->m_pThemeProvider)
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  if (!pTheme)
     return CFX_SizeF();
 
   CFWL_ThemePart params;
   params.m_pWidget = this;
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
+
   float fMaxWeekW = 0.0f;
   float fMaxWeekH = 0.0f;
-
   for (uint32_t i = 0; i < 7; ++i) {
-    CFX_SizeF sz = CalcTextSize(GetCapacityForDay(pTheme, params, i),
-                                m_pProperties->m_pThemeProvider, false);
+    CFX_SizeF sz =
+        CalcTextSize(GetCapacityForDay(pTheme, params, i), pTheme, false);
     fMaxWeekW = (fMaxWeekW >= sz.width) ? fMaxWeekW : sz.width;
     fMaxWeekH = (fMaxWeekH >= sz.height) ? fMaxWeekH : sz.height;
   }
@@ -402,8 +403,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   float fDayMaxW = 0.0f;
   float fDayMaxH = 0.0f;
   for (int day = 10; day <= 31; day++) {
-    CFX_SizeF sz = CalcTextSize(WideString::Format(L"%d", day),
-                                m_pProperties->m_pThemeProvider, false);
+    CFX_SizeF sz = CalcTextSize(WideString::Format(L"%d", day), pTheme, false);
     fDayMaxW = (fDayMaxW >= sz.width) ? fDayMaxW : sz.width;
     fDayMaxH = (fDayMaxH >= sz.height) ? fDayMaxH : sz.height;
   }
@@ -415,18 +415,18 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   fs.width = m_szCell.width * MONTHCAL_COLUMNS +
              MONTHCAL_HMARGIN * MONTHCAL_COLUMNS * 2 +
              MONTHCAL_HEADER_BTN_HMARGIN * 2;
+
   float fMonthMaxW = 0.0f;
   float fMonthMaxH = 0.0f;
-
   for (uint32_t i = 0; i < 12; ++i) {
-    CFX_SizeF sz = CalcTextSize(GetCapacityForMonth(pTheme, params, i),
-                                m_pProperties->m_pThemeProvider, false);
+    CFX_SizeF sz =
+        CalcTextSize(GetCapacityForMonth(pTheme, params, i), pTheme, false);
     fMonthMaxW = (fMonthMaxW >= sz.width) ? fMonthMaxW : sz.width;
     fMonthMaxH = (fMonthMaxH >= sz.height) ? fMonthMaxH : sz.height;
   }
 
-  CFX_SizeF szYear = CalcTextSize(GetHeadText(m_iYear, m_iMonth),
-                                  m_pProperties->m_pThemeProvider, false);
+  CFX_SizeF szYear =
+      CalcTextSize(GetHeadText(m_iYear, m_iMonth), pTheme, false);
   fMonthMaxH = std::max(fMonthMaxH, szYear.height);
   m_szHead = CFX_SizeF(fMonthMaxW + szYear.width, fMonthMaxH);
   fMonthMaxW =
@@ -434,7 +434,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   fs.width = std::max(fs.width, fMonthMaxW);
 
   m_wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
-  m_szToday = CalcTextSize(m_wsToday, m_pProperties->m_pThemeProvider, false);
+  m_szToday = CalcTextSize(m_wsToday, pTheme, false);
   m_szToday.height = (m_szToday.height >= m_szCell.height) ? m_szToday.height
                                                            : m_szCell.height;
   fs.height = m_szCell.width + m_szCell.height * (MONTHCAL_ROWS - 2) +

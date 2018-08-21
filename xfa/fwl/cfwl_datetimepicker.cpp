@@ -65,17 +65,16 @@ FWL_Type CFWL_DateTimePicker::GetClassID() const {
 void CFWL_DateTimePicker::Update() {
   if (m_iLock)
     return;
+
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
-
-  m_pEdit->SetThemeProvider(m_pProperties->m_pThemeProvider);
+  m_pEdit->SetThemeProvider(m_pProperties->m_pThemeProvider.Get());
   m_rtClient = GetClientRect();
   m_pEdit->SetWidgetRect(m_rtClient);
   ResetEditAlignment();
   m_pEdit->Update();
-
   if (!m_pMonthCal->GetThemeProvider())
-    m_pMonthCal->SetThemeProvider(m_pProperties->m_pThemeProvider);
+    m_pMonthCal->SetThemeProvider(m_pProperties->m_pThemeProvider.Get());
 
   IFWL_ThemeProvider* theme = GetAvailableTheme();
   if (!theme)
@@ -109,10 +108,11 @@ void CFWL_DateTimePicker::DrawWidget(CXFA_Graphics* pGraphics,
                                      const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
+
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  if (!pTheme)
     return;
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
   if (!m_rtBtn.IsEmpty())

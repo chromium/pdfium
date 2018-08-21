@@ -52,14 +52,14 @@ void CFWL_PushButton::DrawWidget(CXFA_Graphics* pGraphics,
                                  const CFX_Matrix& matrix) {
   if (!pGraphics)
     return;
-  if (!m_pProperties->m_pThemeProvider)
+
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider.Get();
+  if (!pTheme)
     return;
 
-  if (HasBorder()) {
-    DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
-               matrix);
-  }
-  DrawBkground(pGraphics, m_pProperties->m_pThemeProvider, &matrix);
+  if (HasBorder())
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, matrix);
+  DrawBkground(pGraphics, pTheme, &matrix);
 }
 
 void CFWL_PushButton::DrawBkground(CXFA_Graphics* pGraphics,
