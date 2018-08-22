@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -36,17 +37,15 @@ class IJS_Runtime {
 
   class ScopedEventContext {
    public:
-    explicit ScopedEventContext(IJS_Runtime* pRuntime)
-        : m_pRuntime(pRuntime), m_pContext(pRuntime->NewEventContext()) {}
+    explicit ScopedEventContext(IJS_Runtime* pRuntime);
+    ~ScopedEventContext();
 
-    ~ScopedEventContext() { m_pRuntime->ReleaseEventContext(m_pContext); }
-
-    IJS_EventContext* Get() const { return m_pContext; }
-    IJS_EventContext* operator->() const { return m_pContext; }
+    IJS_EventContext* Get() const { return m_pContext.Get(); }
+    IJS_EventContext* operator->() const { return m_pContext.Get(); }
 
    private:
-    IJS_Runtime* m_pRuntime;
-    IJS_EventContext* m_pContext;
+    UnownedPtr<IJS_Runtime> m_pRuntime;
+    UnownedPtr<IJS_EventContext> m_pContext;
   };
 
   static void Initialize(unsigned int slot, void* isolate);
