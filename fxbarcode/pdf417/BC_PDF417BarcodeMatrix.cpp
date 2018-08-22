@@ -43,25 +43,16 @@ void CBC_BarcodeMatrix::nextRow() {
 }
 
 std::vector<uint8_t>& CBC_BarcodeMatrix::getMatrix() {
-  return getScaledMatrix(1, 1);
-}
-
-std::vector<uint8_t>& CBC_BarcodeMatrix::getScaledMatrix(int32_t scale) {
-  return getScaledMatrix(scale, scale);
-}
-
-std::vector<uint8_t>& CBC_BarcodeMatrix::getScaledMatrix(int32_t xScale,
-                                                         int32_t yScale) {
-  size_t yMax = m_height * yScale;
-  std::vector<uint8_t> bytearray = m_matrix[0]->getScaledRow(xScale);
+  std::vector<uint8_t> bytearray = m_matrix[0]->getRow();
   size_t xMax = bytearray.size();
+  size_t yMax = m_height;
   m_matrixOut.resize(xMax * yMax);
   m_outWidth = xMax;
   m_outHeight = yMax;
   int32_t k = 0;
   for (size_t i = 0; i < yMax; i++) {
     if (i != 0)
-      bytearray = m_matrix[i / yScale]->getScaledRow(xScale);
+      bytearray = m_matrix[i]->getRow();
     k = i * xMax;
     for (size_t l = 0; l < xMax; l++)
       m_matrixOut[k + l] = bytearray[l];

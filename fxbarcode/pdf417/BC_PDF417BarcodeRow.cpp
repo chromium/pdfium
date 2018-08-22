@@ -37,10 +37,3 @@ void CBC_BarcodeRow::addBar(bool black, int32_t width) {
 std::vector<uint8_t>& CBC_BarcodeRow::getRow() {
   return m_row;
 }
-
-std::vector<uint8_t>& CBC_BarcodeRow::getScaledRow(int32_t scale) {
-  m_output.resize(m_row.size() * scale);
-  for (size_t i = 0; i < m_output.size(); i++)
-    m_output[i] = m_row[i / scale];
-  return m_output;
-}

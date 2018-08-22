@@ -18,11 +18,9 @@ class CBC_BarcodeRow {
 
   void addBar(bool black, int32_t width);
   std::vector<uint8_t>& getRow();
-  std::vector<uint8_t>& getScaledRow(int32_t scale);
 
  private:
   std::vector<uint8_t> m_row;
-  std::vector<uint8_t> m_output;
   int32_t m_currentLocation;
 };
 
