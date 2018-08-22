@@ -38,21 +38,18 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {
 
 CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {}
 
-void CBC_BarcodeMatrix::set(int32_t x, int32_t y, uint8_t value) {
-  m_matrix[y]->set(x, value);
-}
-void CBC_BarcodeMatrix::setMatrix(int32_t x, int32_t y, bool black) {
-  set(x, y, (uint8_t)(black ? 1 : 0));
-}
 void CBC_BarcodeMatrix::nextRow() {
   ++m_currentRow;
 }
+
 std::vector<uint8_t>& CBC_BarcodeMatrix::getMatrix() {
   return getScaledMatrix(1, 1);
 }
+
 std::vector<uint8_t>& CBC_BarcodeMatrix::getScaledMatrix(int32_t scale) {
   return getScaledMatrix(scale, scale);
 }
+
 std::vector<uint8_t>& CBC_BarcodeMatrix::getScaledMatrix(int32_t xScale,
                                                          int32_t yScale) {
   size_t yMax = m_height * yScale;
