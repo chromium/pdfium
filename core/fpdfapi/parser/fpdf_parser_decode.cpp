@@ -29,8 +29,12 @@ namespace {
 
 const uint32_t kMaxStreamSize = 20 * 1024 * 1024;
 
-uint16_t GetUnicodeFromBytes(const uint8_t* bytes, bool bBE) {
-  return bBE ? (bytes[0] << 8 | bytes[1]) : (bytes[1] << 8 | bytes[0]);
+uint16_t GetUnicodeFromBigEndianBytes(const uint8_t* bytes) {
+  return bytes[0] << 8 | bytes[1];
+}
+
+uint16_t GetUnicodeFromLittleEndianBytes(const uint8_t* bytes) {
+  return bytes[1] << 8 | bytes[0];
 }
 
 bool CheckFlateDecodeParams(int Colors, int BitsPerComponent, int Columns) {
@@ -436,21 +440,30 @@ WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
       return result;
 
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(max_chars);
-    bool bBE = src_data[0] == 0xfe || (src_data[0] == 0xff && !src_data[2]);
-    const uint8_t* uni_str = src_data + 2;
+    uint16_t (*GetUnicodeFromBytes)(const uint8_t*) =
+        src_data[0] == 0xfe ? GetUnicodeFromBigEndianBytes
+                            : GetUnicodeFromLittleEndianBytes;
+    const uint8_t* unicode_str = src_data + 2;
     for (uint32_t i = 0; i < max_chars * 2; i += 2) {
-      uint16_t unicode = GetUnicodeFromBytes(uni_str + i, bBE);
-      if (unicode != 0x1b) {
-        dest_buf[dest_pos++] = unicode;
-        continue;
-      }
-      i += 2;
-      while (i < max_chars * 2) {
-        uint16_t unicode2 = GetUnicodeFromBytes(uni_str + i, bBE);
+      uint16_t unicode = GetUnicodeFromBytes(unicode_str + i);
+
+      // 0x001B is a begin/end marker for language metadata region that
+      // should not be in the decoded text.
+      if (unicode == 0x001B) {
         i += 2;
-        if (unicode2 == 0x1b)
+        for (; i < max_chars * 2; i += 2) {
+          unicode = GetUnicodeFromBytes(unicode_str + i);
+          if (unicode == 0x001B) {
+            i += 2;
+            unicode = GetUnicodeFromBytes(unicode_str + i);
+            break;
+          }
+        }
+        if (i >= max_chars * 2)
           break;
       }
+
+      dest_buf[dest_pos++] = unicode;
     }
   } else {
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(src_len);

@@ -358,6 +358,17 @@ TEST_F(FPDFDocEmbeddertest, GetMetaText) {
             WideString::FromUTF16LE(buf, FXSYS_len(kExpectedModDate)));
 }
 
+TEST_F(FPDFDocEmbeddertest, Bug_182) {
+  ASSERT_TRUE(OpenDocument("bug_182.pdf"));
+
+  unsigned short buf[128];
+  constexpr wchar_t kExpectedTitle[] = L"Super Visual Formade 印刷";
+
+  ASSERT_EQ(48u, FPDF_GetMetaText(document(), "Title", buf, sizeof(buf)));
+  EXPECT_EQ(WideString(kExpectedTitle),
+            WideString::FromUTF16LE(buf, FXSYS_len(kExpectedTitle)));
+}
+
 TEST_F(FPDFDocEmbeddertest, GetMetaTextSameObjectNumber) {
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
 
