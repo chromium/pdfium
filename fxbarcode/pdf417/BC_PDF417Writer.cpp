@@ -23,6 +23,7 @@
 #include "fxbarcode/pdf417/BC_PDF417Writer.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/common/BC_CommonBitArray.h"
@@ -49,8 +50,8 @@ void CBC_PDF417Writer::SetTruncated(bool truncated) {
 }
 
 uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
-                                  int32_t& outWidth,
-                                  int32_t& outHeight) {
+                                  int32_t* outWidth,
+                                  int32_t* outHeight) {
   CBC_PDF417 encoder;
   int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
   int32_t row = m_Height / (m_ModuleWidth * 20);
@@ -64,34 +65,18 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
     return nullptr;
 
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
-  std::vector<uint8_t> originalScale = barcodeMatrix->getMatrix();
-  int32_t width = outWidth;
-  int32_t height = outHeight;
-  outWidth = barcodeMatrix->getWidth();
-  outHeight = barcodeMatrix->getHeight();
+  std::vector<uint8_t> matrixData = barcodeMatrix->getMatrix();
+  int32_t matrixWidth = barcodeMatrix->getWidth();
+  int32_t matrixHeight = barcodeMatrix->getHeight();
 
-  bool rotated = false;
-  if ((height > width) ^ (outWidth < outHeight)) {
-    rotateArray(originalScale, outHeight, outWidth);
-    rotated = true;
-    int32_t temp = outHeight;
-    outHeight = outWidth;
-    outWidth = temp;
+  if (matrixWidth < matrixHeight) {
+    rotateArray(matrixData, matrixHeight, matrixWidth);
+    std::swap(matrixWidth, matrixHeight);
   }
-  int32_t scaleX = width / outWidth;
-  int32_t scaleY = height / outHeight;
-  int32_t scale = std::min(scaleX, scaleY);
-  if (scale > 1) {
-    originalScale = barcodeMatrix->getScaledMatrix(scale);
-    if (rotated) {
-      rotateArray(originalScale, outHeight, outWidth);
-      int32_t temp = outHeight;
-      outHeight = outWidth;
-      outWidth = temp;
-    }
-  }
-  uint8_t* result = FX_Alloc2D(uint8_t, outHeight, outWidth);
-  memcpy(result, originalScale.data(), outHeight * outWidth);
+  uint8_t* result = FX_Alloc2D(uint8_t, matrixHeight, matrixWidth);
+  memcpy(result, matrixData.data(), matrixHeight * matrixWidth);
+  *outWidth = matrixWidth;
+  *outHeight = matrixHeight;
   return result;
 }
 
