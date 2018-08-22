@@ -60,4 +60,10 @@ inline CFX_XMLElement* ToXMLElement(CFX_XMLNode* pNode) {
              : nullptr;
 }
 
+inline const CFX_XMLElement* ToXMLElement(const CFX_XMLNode* pNode) {
+  return pNode && pNode->GetType() == FX_XMLNODE_Element
+             ? static_cast<const CFX_XMLElement*>(pNode)
+             : nullptr;
+}
+
 #endif  // CORE_FXCRT_XML_CFX_XMLELEMENT_H_

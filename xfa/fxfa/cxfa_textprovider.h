@@ -35,9 +35,7 @@ class CXFA_TextProvider {
   CXFA_Para* GetParaIfExists();
   CXFA_Font* GetFontIfExists();
   bool IsCheckButtonAndAutoWidth() const;
-  Optional<WideString> GetEmbeddedObj(bool bURI,
-                                      bool bRaw,
-                                      const WideString& wsAttr);
+  Optional<WideString> GetEmbeddedObj(const WideString& wsAttr) const;
 
  private:
   CXFA_Node* m_pNode;  // Raw, this class owned by tree node.

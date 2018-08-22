@@ -496,12 +496,12 @@ float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
 }
 
 Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
-    CXFA_TextProvider* pTextProvider,
-    CFX_XMLNode* pXMLNode) {
+    const CXFA_TextProvider* pTextProvider,
+    const CFX_XMLNode* pXMLNode) {
   if (!pXMLNode)
     return {};
 
-  CFX_XMLElement* pElement = ToXMLElement(pXMLNode);
+  const CFX_XMLElement* pElement = ToXMLElement(pXMLNode);
   if (!pElement)
     return {};
 
@@ -517,9 +517,7 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
     ws = L"som";
   else
     ws.MakeLower();
-
-  bool bURI = (ws == L"uri");
-  if (!bURI && ws != L"som")
+  if (ws != L"uri")
     return {};
 
   ws = pElement->GetAttribute(L"xfa:embedMode");
@@ -527,12 +525,10 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
     ws = L"formatted";
   else
     ws.MakeLower();
-
-  bool bRaw = (ws == L"raw");
-  if (!bRaw && ws != L"formatted")
+  if (ws != L"raw" && ws != L"formatted")
     return {};
 
-  return pTextProvider->GetEmbeddedObj(bURI, bRaw, wsAttr);
+  return pTextProvider->GetEmbeddedObj(wsAttr);
 }
 
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(

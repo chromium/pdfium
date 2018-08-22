@@ -137,10 +137,8 @@ bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() const {
 }
 
 Optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
-    bool bURI,
-    bool bRaw,
-    const WideString& wsAttr) {
-  if (m_eType != XFA_TEXTPROVIDERTYPE_Text || !bURI)
+    const WideString& wsAttr) const {
+  if (m_eType != XFA_TEXTPROVIDERTYPE_Text)
     return {};
 
   CXFA_Node* pParent = m_pNode->GetParent();

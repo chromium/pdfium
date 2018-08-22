@@ -80,8 +80,8 @@ class CXFA_TextParser {
                       bool bFirst,
                       float fVerScale) const;
 
-  Optional<WideString> GetEmbeddedObj(CXFA_TextProvider* pTextProvider,
-                                      CFX_XMLNode* pXMLNode);
+  Optional<WideString> GetEmbeddedObj(const CXFA_TextProvider* pTextProvider,
+                                      const CFX_XMLNode* pXMLNode);
   CXFA_TextParseContext* GetParseContextFromMap(CFX_XMLNode* pXMLNode);
 
  protected:
