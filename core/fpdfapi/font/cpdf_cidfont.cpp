@@ -119,8 +119,11 @@ const struct CIDTransform {
 };
 
 // Boundary values to avoid integer overflow when multiplied by 1000.
-const long kMinCBox = -2147483;
-const long kMaxCBox = 2147483;
+constexpr long kMinCBox = -2147483;
+constexpr long kMaxCBox = 2147483;
+
+// Boundary value to avoid integer overflow when adding 1/64th of the value.
+constexpr int kMaxRectTop = 2114445437;
 
 CPDF_FontGlobals* GetFontGlobals() {
   return CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
@@ -472,7 +475,10 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
                        TT2PDF(FXFT_Get_Glyph_HoriBearingY(face) -
                                   FXFT_Get_Glyph_Height(face),
                               face));
-        rect.top += rect.top / 64;
+        if (rect.top <= kMaxRectTop)
+          rect.top += rect.top / 64;
+        else
+          rect.top = std::numeric_limits<int>::max();
       }
     }
   }
