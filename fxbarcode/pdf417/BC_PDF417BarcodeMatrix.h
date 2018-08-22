@@ -17,16 +17,14 @@ class CBC_BarcodeMatrix {
   CBC_BarcodeMatrix(size_t height, size_t width);
   virtual ~CBC_BarcodeMatrix();
 
-  CBC_BarcodeRow* getCurrentRow() const { return m_matrix[m_currentRow].get(); }
+  CBC_BarcodeRow* getRow(size_t row) const { return m_matrix[row].get(); }
   size_t getWidth() const { return m_width; }
   size_t getHeight() const { return m_height; }
-  void nextRow();
   std::vector<uint8_t>& getMatrix();
 
  private:
   std::vector<std::unique_ptr<CBC_BarcodeRow>> m_matrix;
   std::vector<uint8_t> m_matrixOut;
-  size_t m_currentRow = 0;
   size_t m_width;
   size_t m_height;
 };

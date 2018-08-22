@@ -33,10 +33,6 @@ CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t height, size_t width)
 
 CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {}
 
-void CBC_BarcodeMatrix::nextRow() {
-  ++m_currentRow;
-}
-
 std::vector<uint8_t>& CBC_BarcodeMatrix::getMatrix() {
   m_matrixOut.resize(m_width * m_height);
   for (size_t i = 0; i < m_height; ++i) {

@@ -505,8 +505,9 @@ void CBC_PDF417::encodeLowLevel(WideString fullCodewords,
                                 CBC_BarcodeMatrix* logic) {
   int32_t idx = 0;
   for (int32_t y = 0; y < r; y++) {
+    CBC_BarcodeRow* logicRow = logic->getRow(y);
     int32_t cluster = y % 3;
-    encodeChar(START_PATTERN, 17, logic->getCurrentRow());
+    encodeChar(START_PATTERN, 17, logicRow);
     int32_t left;
     int32_t right;
     if (cluster == 0) {
@@ -520,20 +521,19 @@ void CBC_PDF417::encodeLowLevel(WideString fullCodewords,
       right = (30 * (y / 3)) + (errorCorrectionLevel * 3) + ((r - 1) % 3);
     }
     int32_t pattern = CODEWORD_TABLE[cluster][left];
-    encodeChar(pattern, 17, logic->getCurrentRow());
+    encodeChar(pattern, 17, logicRow);
     for (int32_t x = 0; x < c; x++) {
       pattern = CODEWORD_TABLE[cluster][fullCodewords[idx]];
-      encodeChar(pattern, 17, logic->getCurrentRow());
+      encodeChar(pattern, 17, logicRow);
       idx++;
     }
     if (m_compact) {
-      encodeChar(STOP_PATTERN, 1, logic->getCurrentRow());
+      encodeChar(STOP_PATTERN, 1, logicRow);
     } else {
       pattern = CODEWORD_TABLE[cluster][right];
-      encodeChar(pattern, 17, logic->getCurrentRow());
-      encodeChar(STOP_PATTERN, 18, logic->getCurrentRow());
+      encodeChar(pattern, 17, logicRow);
+      encodeChar(STOP_PATTERN, 18, logicRow);
     }
-    logic->nextRow();
   }
 }
 
