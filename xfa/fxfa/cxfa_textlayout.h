@@ -65,14 +65,14 @@ class CXFA_TextLayout {
   void InitBreak(CFX_CSSComputedStyle* pStyle,
                  CFX_CSSDisplay eDisplay,
                  float fLineWidth,
-                 CFX_XMLNode* pXMLNode,
+                 const CFX_XMLNode* pXMLNode,
                  CFX_CSSComputedStyle* pParentStyle);
-  bool Loader(float textWidth, float* pLinePos, bool bSavePieces);
+  void Loader(float textWidth, float* pLinePos, bool bSavePieces);
   void LoadText(CXFA_Node* pNode,
                 float textWidth,
                 float* pLinePos,
                 bool bSavePieces);
-  bool LoadRichText(CFX_XMLNode* pXMLNode,
+  bool LoadRichText(const CFX_XMLNode* pXMLNode,
                     float textWidth,
                     float* pLinePos,
                     const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,

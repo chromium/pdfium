@@ -192,7 +192,7 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
 }
 
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
-    CFX_XMLNode* pXMLNode,
+    const CFX_XMLNode* pXMLNode,
     CFX_CSSComputedStyle* pParentStyle) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
   if (it == m_mapXMLNodeToParseContext.end())
@@ -215,7 +215,7 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
   return pStyle;
 }
 
-void CXFA_TextParser::DoParse(CFX_XMLNode* pXMLContainer,
+void CXFA_TextParser::DoParse(const CFX_XMLNode* pXMLContainer,
                               CXFA_TextProvider* pTextProvider) {
   if (!pXMLContainer || !pTextProvider || m_bParsed)
     return;
@@ -226,7 +226,7 @@ void CXFA_TextParser::DoParse(CFX_XMLNode* pXMLContainer,
   ParseRichText(pXMLContainer, pRootStyle.Get());
 }
 
-void CXFA_TextParser::ParseRichText(CFX_XMLNode* pXMLNode,
+void CXFA_TextParser::ParseRichText(const CFX_XMLNode* pXMLNode,
                                     CFX_CSSComputedStyle* pParentStyle) {
   if (!pXMLNode)
     return;
@@ -285,10 +285,11 @@ bool CXFA_TextParser::TagValidate(const WideString& wsName) const {
                             FX_HashCode_GetW(wsName.AsStringView(), true));
 }
 
+// static
 std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
-    CFX_XMLNode* pXMLNode) {
+    const CFX_XMLNode* pXMLNode) {
   auto tagProvider = pdfium::MakeUnique<TagProvider>();
-  CFX_XMLElement* pXMLElement = ToXMLElement(pXMLNode);
+  const CFX_XMLElement* pXMLElement = ToXMLElement(pXMLNode);
   if (pXMLElement) {
     WideString wsName = pXMLElement->GetLocalTagName();
     tagProvider->SetTagName(wsName);
@@ -377,7 +378,7 @@ float CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
 
 int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
                                      CFX_CSSComputedStyle* pStyle,
-                                     CFX_XMLNode* pXMLNode) const {
+                                     const CFX_XMLNode* pXMLNode) const {
   if (pStyle) {
     WideString wsValue;
     if (pStyle->GetCustomStyle(L"xfa-font-horizontal-scale", wsValue))
@@ -538,7 +539,7 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
 }
 
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
-    CFX_XMLNode* pXMLNode) {
+    const CFX_XMLNode* pXMLNode) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
   return it != m_mapXMLNodeToParseContext.end() ? it->second.get() : nullptr;
 }

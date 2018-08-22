@@ -30,7 +30,7 @@ class CXFA_LoaderContext {
   int32_t m_iLines;
   int32_t m_iTotalLines;
   uint32_t m_dwFlags;
-  UnownedPtr<CFX_XMLNode> m_pXMLNode;
+  UnownedPtr<const CFX_XMLNode> m_pXMLNode;
   UnownedPtr<CXFA_Node> m_pNode;
   RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
   std::vector<float> m_lineHeights;
