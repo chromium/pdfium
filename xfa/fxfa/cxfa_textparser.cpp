@@ -41,6 +41,18 @@ enum class TabStopStatus {
   Location,
 };
 
+WideString GetLowerCaseElementAttributeOrDefault(
+    const CFX_XMLElement* pElement,
+    const WideString& wsName,
+    const WideString& wsDefaultValue) {
+  WideString ws = pElement->GetAttribute(wsName);
+  if (ws.IsEmpty())
+    ws = wsDefaultValue;
+  else
+    ws.MakeLower();
+  return ws;
+}
+
 }  // namespace
 
 CXFA_TextParser::CXFA_TextParser()
@@ -512,19 +524,13 @@ Optional<WideString> CXFA_TextParser::GetEmbeddedObj(
   if (wsAttr[0] == L'#')
     wsAttr.Delete(0);
 
-  WideString ws = pElement->GetAttribute(L"xfa:embedType");
-  if (ws.IsEmpty())
-    ws = L"som";
-  else
-    ws.MakeLower();
+  WideString ws =
+      GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedType", L"som");
   if (ws != L"uri")
     return {};
 
-  ws = pElement->GetAttribute(L"xfa:embedMode");
-  if (ws.IsEmpty())
-    ws = L"formatted";
-  else
-    ws.MakeLower();
+  ws = GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedMode",
+                                             L"formatted");
   if (ws != L"raw" && ws != L"formatted")
     return {};
 
