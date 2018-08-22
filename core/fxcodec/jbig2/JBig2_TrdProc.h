@@ -59,32 +59,28 @@ class CJBig2_TRDProc {
 
   bool SBHUFF;
   bool SBREFINE;
+  bool SBRTEMPLATE;
+  bool TRANSPOSED;
+  bool SBDEFPIXEL;
+  int8_t SBDSOFFSET;
+  uint8_t SBSYMCODELEN;
   uint32_t SBW;
   uint32_t SBH;
   uint32_t SBNUMINSTANCES;
   uint32_t SBSTRIPS;
   uint32_t SBNUMSYMS;
-
   std::vector<JBig2HuffmanCode> SBSYMCODES;
-  uint8_t SBSYMCODELEN;
-
   CJBig2_Image** SBSYMS;
-  bool SBDEFPIXEL;
-
   JBig2ComposeOp SBCOMBOP;
-  bool TRANSPOSED;
-
   JBig2Corner REFCORNER;
-  int8_t SBDSOFFSET;
-  const CJBig2_HuffmanTable* SBHUFFFS;
-  const CJBig2_HuffmanTable* SBHUFFDS;
-  const CJBig2_HuffmanTable* SBHUFFDT;
-  const CJBig2_HuffmanTable* SBHUFFRDW;
-  const CJBig2_HuffmanTable* SBHUFFRDH;
-  const CJBig2_HuffmanTable* SBHUFFRDX;
-  const CJBig2_HuffmanTable* SBHUFFRDY;
-  const CJBig2_HuffmanTable* SBHUFFRSIZE;
-  bool SBRTEMPLATE;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFFS;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFDS;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFDT;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRDW;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRDH;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRDX;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRDY;
+  UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRSIZE;
   int8_t SBRAT[4];
 
  private:
