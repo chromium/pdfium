@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_save.h"
 
 class CPDFSDK_FileWriteAdapter : public IFX_WriteStream {
@@ -21,10 +22,10 @@ class CPDFSDK_FileWriteAdapter : public IFX_WriteStream {
   bool WriteString(const ByteStringView& str) override;
 
  private:
-  explicit CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* fileWriteStruct);
+  explicit CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write);
   ~CPDFSDK_FileWriteAdapter() override;
 
-  FPDF_FILEWRITE* fileWriteStruct_;
+  UnownedPtr<FPDF_FILEWRITE> file_write_;
 };
 
 #endif  // FPDFSDK_CPDFSDK_FILEWRITEADAPTER_H_

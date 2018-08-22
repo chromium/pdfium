@@ -6,16 +6,15 @@
 
 #include "fpdfsdk/cpdfsdk_filewriteadapter.h"
 
-CPDFSDK_FileWriteAdapter::CPDFSDK_FileWriteAdapter(
-    FPDF_FILEWRITE* fileWriteStruct)
-    : fileWriteStruct_(fileWriteStruct) {
-  ASSERT(fileWriteStruct_);
+CPDFSDK_FileWriteAdapter::CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write)
+    : file_write_(file_write) {
+  ASSERT(file_write_);
 }
 
 CPDFSDK_FileWriteAdapter::~CPDFSDK_FileWriteAdapter() {}
 
 bool CPDFSDK_FileWriteAdapter::WriteBlock(const void* data, size_t size) {
-  return fileWriteStruct_->WriteBlock(fileWriteStruct_, data, size) != 0;
+  return file_write_->WriteBlock(file_write_.Get(), data, size) != 0;
 }
 
 bool CPDFSDK_FileWriteAdapter::WriteString(const ByteStringView& str) {
