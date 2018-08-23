@@ -158,8 +158,8 @@ void CFWL_Form::DrawBackground(CXFA_Graphics* pGraphics,
 CFX_RectF CFWL_Form::GetEdgeRect() {
   CFX_RectF rtEdge = m_rtRelative;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
-    float fCX = GetBorderSize(true);
-    float fCY = GetBorderSize(false);
+    float fCX = GetCXBorderSize();
+    float fCY = GetCYBorderSize();
     rtEdge.Deflate(fCX, fCY, fCX, fCY);
   }
   return rtEdge;

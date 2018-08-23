@@ -75,10 +75,11 @@ CFX_RectF CFWL_Widget::GetWidgetRect() {
 }
 
 void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
-  if (HasBorder()) {
-    float fBorder = GetBorderSize(true);
-    rect.Inflate(fBorder, fBorder);
-  }
+  if (!HasBorder())
+    return;
+
+  float fBorder = GetCXBorderSize();
+  rect.Inflate(fBorder, fBorder);
 }
 
 void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
@@ -230,34 +231,34 @@ bool CFWL_Widget::IsChild() const {
   return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child);
 }
 
-CFX_RectF CFWL_Widget::GetEdgeRect() {
+CFX_RectF CFWL_Widget::GetEdgeRect() const {
   CFX_RectF rtEdge(0, 0, m_pProperties->m_rtWidget.width,
                    m_pProperties->m_rtWidget.height);
-  if (HasBorder()) {
-    float fCX = GetBorderSize(true);
-    float fCY = GetBorderSize(false);
-    rtEdge.Deflate(fCX, fCY);
-  }
+  if (HasBorder())
+    rtEdge.Deflate(GetCXBorderSize(), GetCYBorderSize());
   return rtEdge;
 }
 
-float CFWL_Widget::GetBorderSize(bool bCX) {
+float CFWL_Widget::GetCXBorderSize() const {
   IFWL_ThemeProvider* theme = GetAvailableTheme();
-  if (!theme)
-    return 0.0f;
-  return bCX ? theme->GetCXBorderSize() : theme->GetCYBorderSize();
+  return theme ? theme->GetCXBorderSize() : 0.0f;
 }
 
-CFX_RectF CFWL_Widget::GetRelativeRect() {
+float CFWL_Widget::GetCYBorderSize() const {
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  return theme ? theme->GetCYBorderSize() : 0.0f;
+}
+
+CFX_RectF CFWL_Widget::GetRelativeRect() const {
   return CFX_RectF(0, 0, m_pProperties->m_rtWidget.width,
                    m_pProperties->m_rtWidget.height);
 }
 
-IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() {
+IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() const {
   if (m_pProperties->m_pThemeProvider)
     return m_pProperties->m_pThemeProvider.Get();
 
-  CFWL_Widget* pUp = this;
+  const CFWL_Widget* pUp = this;
   do {
     pUp = (pUp->GetStyles() & FWL_WGTSTYLE_Popup)
               ? m_pWidgetMgr->GetOwnerWidget(pUp)

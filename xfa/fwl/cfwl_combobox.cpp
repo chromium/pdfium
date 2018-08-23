@@ -242,7 +242,7 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
     pComboList->ChangeSelected(m_iCurSel);
 
     float fItemHeight = pComboList->CalcItemHeight();
-    float fBorder = GetBorderSize(true);
+    float fBorder = GetCXBorderSize();
     float fPopupMin = 0.0f;
     if (iItems > 3)
       fPopupMin = fItemHeight * 3 + fBorder * 2;

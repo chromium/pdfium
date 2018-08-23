@@ -32,7 +32,7 @@ class CFWL_WidgetMgr {
                     const CFX_Matrix& matrix);
 
   CFWL_Widget* GetParentWidget(const CFWL_Widget* pWidget) const;
-  CFWL_Widget* GetOwnerWidget(CFWL_Widget* pWidget) const;
+  CFWL_Widget* GetOwnerWidget(const CFWL_Widget* pWidget) const;
   CFWL_Widget* GetNextSiblingWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetFirstChildWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetSystemFormWidget(CFWL_Widget* pWidget) const;
