@@ -196,22 +196,15 @@ std::unique_ptr<CPDF_Object> CPDF_Document::ParseIndirectObject(
   return m_pParser ? m_pParser->ParseIndirectObject(objnum) : nullptr;
 }
 
-void CPDF_Document::LoadDocInternal() {
+bool CPDF_Document::TryInit() {
   SetLastObjNum(m_pParser->GetLastObjNum());
 
   CPDF_Object* pRootObj = GetOrParseIndirectObject(m_pParser->GetRootObjNum());
-  if (!pRootObj)
-    return;
+  if (pRootObj)
+    m_pRootDict = pRootObj->GetDict();
 
-  m_pRootDict = pRootObj->GetDict();
-  if (!m_pRootDict)
-    return;
-}
-
-bool CPDF_Document::TryInit() {
-  LoadDocInternal();
   LoadPages();
-  return GetRoot() && (GetPageCount() > 0);
+  return GetRoot() && GetPageCount() > 0;
 }
 
 CPDF_Parser::Error CPDF_Document::LoadDoc(
