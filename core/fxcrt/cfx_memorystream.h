@@ -31,9 +31,8 @@ class CFX_MemoryStream : public IFX_SeekableStream {
 
  private:
   CFX_MemoryStream();
-
-  // Takes ownership of |pBuffer|.
-  CFX_MemoryStream(uint8_t* pBuffer, size_t nSize);
+  CFX_MemoryStream(std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer,
+                   size_t nSize);
   ~CFX_MemoryStream() override;
 
   std::unique_ptr<uint8_t, FxFreeDeleter> m_data;
