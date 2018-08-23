@@ -27,7 +27,9 @@
 
 namespace {
 
-const float kDefaultFontSize = 1.0f;
+constexpr float kDefaultFontSize = 1.0f;
+constexpr float kSizeEpsilon = 0.01f;
+
 const uint16_t* const g_UnicodeData_Normalization_Maps[] = {
     g_UnicodeData_Normalization_Map2, g_UnicodeData_Normalization_Map3,
     g_UnicodeData_Normalization_Map4};
@@ -334,8 +336,8 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
     PAGECHAR_INFO info_curchar = m_CharList[curPos++];
     if (info_curchar.m_Flag == FPDFTEXT_CHAR_GENERATED)
       continue;
-    if (info_curchar.m_CharBox.Width() < 0.01 ||
-        info_curchar.m_CharBox.Height() < 0.01) {
+    if (info_curchar.m_CharBox.Width() < kSizeEpsilon ||
+        info_curchar.m_CharBox.Height() < kSizeEpsilon) {
       continue;
     }
     if (!pCurObj)
@@ -346,40 +348,16 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
       bFlagNewRect = true;
     }
     if (bFlagNewRect) {
-      CFX_Matrix matrix = info_curchar.m_pTextObj->GetTextMatrix();
-      matrix.Concat(info_curchar.m_Matrix);
-
-      CFX_PointF origin = matrix.GetInverse().Transform(info_curchar.m_Origin);
-      rect.left = info_curchar.m_CharBox.left;
-      rect.right = info_curchar.m_CharBox.right;
-      if (pCurObj->GetFont()->GetTypeDescent()) {
-        const float fFontSize = pCurObj->GetFontSize() / 1000;
-        rect.bottom =
-            origin.y + pCurObj->GetFont()->GetTypeDescent() * fFontSize;
-        rect.bottom = matrix.Transform(CFX_PointF(origin.x, rect.bottom)).y;
-      } else {
-        rect.bottom = info_curchar.m_CharBox.bottom;
-      }
-      if (pCurObj->GetFont()->GetTypeAscent()) {
-        const float fFontSize = pCurObj->GetFontSize() / 1000;
-        rect.top = origin.y + pCurObj->GetFont()->GetTypeAscent() * fFontSize;
-        float xPosTemp =
-            GetCharWidth(info_curchar.m_CharCode, pCurObj->GetFont());
-        xPosTemp = xPosTemp * fFontSize + origin.x;
-        rect.top = matrix.Transform(CFX_PointF(xPosTemp, rect.top)).y;
-      } else {
-        rect.top = info_curchar.m_CharBox.top;
-      }
       bFlagNewRect = false;
       rect = info_curchar.m_CharBox;
       rect.Normalize();
-    } else {
-      info_curchar.m_CharBox.Normalize();
-      rect.left = std::min(rect.left, info_curchar.m_CharBox.left);
-      rect.right = std::max(rect.right, info_curchar.m_CharBox.right);
-      rect.top = std::max(rect.top, info_curchar.m_CharBox.top);
-      rect.bottom = std::min(rect.bottom, info_curchar.m_CharBox.bottom);
+      continue;
     }
+    info_curchar.m_CharBox.Normalize();
+    rect.left = std::min(rect.left, info_curchar.m_CharBox.left);
+    rect.right = std::max(rect.right, info_curchar.m_CharBox.right);
+    rect.top = std::max(rect.top, info_curchar.m_CharBox.top);
+    rect.bottom = std::min(rect.bottom, info_curchar.m_CharBox.bottom);
   }
   rects.push_back(rect);
   return rects;
@@ -785,7 +763,7 @@ void CPDF_TextPage::ProcessTextObject(
     const CFX_Matrix& formMatrix,
     const CPDF_PageObjectList* pObjList,
     CPDF_PageObjectList::const_iterator ObjPos) {
-  if (fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
+  if (fabs(pTextObj->m_Right - pTextObj->m_Left) < kSizeEpsilon)
     return;
 
   size_t count = m_LineObj.size();
@@ -977,7 +955,7 @@ void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
 
 void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj.Get();
-  if (fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
+  if (fabs(pTextObj->m_Right - pTextObj->m_Left) < kSizeEpsilon)
     return;
   CFX_Matrix formMatrix = Obj.m_formMatrix;
   CPDF_Font* pFont = pTextObj->GetFont();
@@ -1141,11 +1119,13 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     charinfo.m_CharBox.left = rect.left * fFontSize + item.m_Origin.x;
     charinfo.m_CharBox.right = rect.right * fFontSize + item.m_Origin.x;
     charinfo.m_CharBox.bottom = rect.bottom * fFontSize + item.m_Origin.y;
-    if (fabsf(charinfo.m_CharBox.top - charinfo.m_CharBox.bottom) < 0.01f) {
+    if (fabsf(charinfo.m_CharBox.top - charinfo.m_CharBox.bottom) <
+        kSizeEpsilon) {
       charinfo.m_CharBox.top =
           charinfo.m_CharBox.bottom + pTextObj->GetFontSize();
     }
-    if (fabsf(charinfo.m_CharBox.right - charinfo.m_CharBox.left) < 0.01f) {
+    if (fabsf(charinfo.m_CharBox.right - charinfo.m_CharBox.left) <
+        kSizeEpsilon) {
       charinfo.m_CharBox.right =
           charinfo.m_CharBox.left + pTextObj->GetCharWidth(charinfo.m_CharCode);
     }
