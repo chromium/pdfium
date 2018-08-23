@@ -51,10 +51,12 @@ TEST_F(CFXJSEngineEmbedderTest, MultipleEngines) {
   engine2.InitializeEngine();
 
   v8::Context::Scope context_scope(GetV8Context());
-  Optional<IJS_Runtime::JS_Error> err = engine()->Execute(WideString(kScript0));
-  EXPECT_FALSE(err);
-  CheckAssignmentInEngineContext(engine(), kExpected0);
-
+  {
+    Optional<IJS_Runtime::JS_Error> err =
+        engine()->Execute(WideString(kScript0));
+    EXPECT_FALSE(err);
+    CheckAssignmentInEngineContext(engine(), kExpected0);
+  }
   {
     // engine1 executing in engine1's context doesn't affect main.
     v8::Context::Scope context_scope1(engine1.GetV8Context());

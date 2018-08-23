@@ -147,7 +147,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     pContentArray->InsertAt(0, pStream->MakeReference(pDoc));
     pContentArray->Add(pEndStream->MakeReference(pDoc));
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
-    CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
+    pContentArray = pDoc->NewIndirect<CPDF_Array>();
     pContentArray->Add(pStream->MakeReference(pDoc));
     pContentArray->Add(pContentObj->MakeReference(pDoc));
     pContentArray->Add(pEndStream->MakeReference(pDoc));

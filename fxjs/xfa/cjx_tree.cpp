@@ -239,13 +239,13 @@ void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,
     if (resolveNodeRS.pScriptAttribute &&
         resolveNodeRS.pScriptAttribute->eValueType == XFA_ScriptType::Object) {
       for (auto& pObject : resolveNodeRS.objects) {
-        auto pValue =
+        auto innerValue =
             pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetIsolate());
         CJX_Object* jsObject = pObject->JSObject();
         (jsObject->*(resolveNodeRS.pScriptAttribute->callback))(
-            pValue.get(), false, resolveNodeRS.pScriptAttribute->attribute);
+            innerValue.get(), false, resolveNodeRS.pScriptAttribute->attribute);
 
-        CXFA_Object* obj = CFXJSE_Engine::ToObject(pValue.get());
+        CXFA_Object* obj = CFXJSE_Engine::ToObject(innerValue.get());
         if (obj->IsNode())
           pNodeList->Append(obj->AsNode());
       }

@@ -235,9 +235,9 @@ void CXFA_FFDocView::ResetNode(CXFA_Node* pNode) {
   if (pFormNode->GetElementType() != XFA_Element::Field &&
       pFormNode->GetElementType() != XFA_Element::ExclGroup) {
     CXFA_ReadyNodeIterator it(pFormNode);
-    while (CXFA_Node* pNode = it.MoveToNext()) {
-      bChanged |= ResetSingleNodeData(pNode);
-      if (pNode->GetElementType() == XFA_Element::ExclGroup)
+    while (CXFA_Node* next_node = it.MoveToNext()) {
+      bChanged |= ResetSingleNodeData(next_node);
+      if (next_node->GetElementType() == XFA_Element::ExclGroup)
         it.SkipTree();
     }
   }

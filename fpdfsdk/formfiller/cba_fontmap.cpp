@@ -154,8 +154,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
     pAPDict = m_pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
 
   // to avoid checkbox and radiobutton
-  CPDF_Object* pObject = pAPDict->GetObjectFor(m_sAPType);
-  if (ToDictionary(pObject))
+  if (ToDictionary(pAPDict->GetObjectFor(m_sAPType)))
     return;
 
   CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);

@@ -494,11 +494,11 @@ void CPDF_TextPage::CheckMarkedContentObject(int32_t* pStart,
   if (FPDFTEXT_CHAR_PIECE == charinfo2.m_Flag) {
     PAGECHAR_INFO charinfo3 = charinfo2;
     int endIndex = start + nCount - 1;
-    const int nCount = CountChars();
+    const int innerCount = CountChars();
     while (FPDFTEXT_CHAR_PIECE == charinfo3.m_Flag &&
            charinfo3.m_Index == charinfo2.m_Index) {
       endIndex++;
-      if (endIndex >= nCount)
+      if (endIndex >= innerCount)
         break;
       charinfo3 = m_CharList[endIndex];
     }
@@ -1316,8 +1316,8 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
           if (re.Contains(pObj->GetPos())) {
             bNewline = false;
           } else {
-            CFX_FloatRect rect(0, pObj->m_Bottom, 1000, pObj->m_Top);
-            if (rect.Contains(m_pPreTextObj->GetPos()))
+            if (CFX_FloatRect(0, pObj->m_Bottom, 1000, pObj->m_Top)
+                    .Contains(m_pPreTextObj->GetPos()))
               bNewline = false;
           }
         }

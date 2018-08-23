@@ -334,7 +334,6 @@ void CFXJSE_Engine::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
                                                szPropName, pReturnValue, true);
 
     if (!bRet) {
-      WideString wsPropName = WideString::FromUTF8(szPropName);
       const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
           XFA_GetScriptAttributeByName(pObject->GetElementType(),
                                        wsPropName.AsStringView());

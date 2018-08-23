@@ -447,8 +447,7 @@ CXFA_Node* CXFA_DocumentParser::ParseAsXDPPacket_XDP(
   m_pRootNode = pXFARootNode;
   pXFARootNode->JSObject()->SetCData(XFA_Attribute::Name, L"xfa", false, false);
 
-  CFX_XMLElement* pElement = ToXMLElement(pXMLDocumentNode);
-  for (auto it : pElement->GetAttributes()) {
+  for (auto it : ToXMLElement(pXMLDocumentNode)->GetAttributes()) {
     if (it.first == L"uuid")
       pXFARootNode->JSObject()->SetCData(XFA_Attribute::Uuid, it.second, false,
                                          false);

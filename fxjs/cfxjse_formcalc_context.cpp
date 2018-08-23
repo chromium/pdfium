@@ -780,11 +780,11 @@ bool IsIsoTimeFormat(const char* pData,
 
     ++iIndex;
     char strSec[kSubSecondLength + 1];
-    for (int i = 0; i < kSubSecondLength; ++i) {
-      char c = pData[iIndex + i];
+    for (int j = 0; j < kSubSecondLength; ++j) {
+      char c = pData[iIndex + j];
       if (!std::isdigit(c))
         return false;
-      strSec[i] = c;
+      strSec[j] = c;
     }
     strSec[kSubSecondLength] = '\0';
 

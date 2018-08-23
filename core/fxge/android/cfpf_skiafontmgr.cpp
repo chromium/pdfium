@@ -252,9 +252,9 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
                                             uint8_t uCharset,
                                             uint32_t dwStyle) {
   uint32_t dwHash = FPF_SKIAGetFamilyHash(bsFamilyname, dwStyle, uCharset);
-  auto it = m_FamilyFonts.find(dwHash);
-  if (it != m_FamilyFonts.end())
-    return it->second.get();
+  auto family_iter = m_FamilyFonts.find(dwHash);
+  if (family_iter != m_FamilyFonts.end())
+    return family_iter->second.get();
 
   uint32_t dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
   uint32_t dwSubst = FPF_SkiaGetSubstFont(dwFaceName, g_SkiaFontmap,
@@ -273,8 +273,9 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
   const CFPF_SkiaPathFont* pBestFont = nullptr;
   int32_t nMax = -1;
   int32_t nGlyphNum = 0;
-  for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.rend(); ++it) {
-    const CFPF_SkiaPathFont* pFont = it->get();
+  for (auto face_iter = m_FontFaces.rbegin(); face_iter != m_FontFaces.rend();
+       ++face_iter) {
+    const CFPF_SkiaPathFont* pFont = face_iter->get();
     if (!(pFont->charsets() & FPF_SkiaGetCharset(uCharset)))
       continue;
     int32_t nFind = 0;
@@ -301,19 +302,19 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const ByteStringView& bsFamilyname,
     if (uCharset == FX_CHARSET_Default || bMaybeSymbol) {
       if (nFind > nMax && bMatchedName) {
         nMax = nFind;
-        pBestFont = it->get();
+        pBestFont = face_iter->get();
       }
     } else if (FPF_SkiaIsCJK(uCharset)) {
       if (bMatchedName || pFont->glyph_num() > nGlyphNum) {
-        pBestFont = it->get();
+        pBestFont = face_iter->get();
         nGlyphNum = pFont->glyph_num();
       }
     } else if (nFind > nMax) {
       nMax = nFind;
-      pBestFont = it->get();
+      pBestFont = face_iter->get();
     }
     if (nExpectVal <= nFind) {
-      pBestFont = it->get();
+      pBestFont = face_iter->get();
       break;
     }
   }
