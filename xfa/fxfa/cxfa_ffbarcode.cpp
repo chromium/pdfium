@@ -206,9 +206,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   if (textLoc)
     pBarCodeWidget->SetTextLocation(*textLoc);
 
-  Optional<bool> truncate = barcode_->GetTruncate();
-  if (truncate)
-    pBarCodeWidget->SetTruncated(*truncate);
+  // Truncated is currently not a supported flag.
 
   Optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
   if (ratio)

@@ -150,11 +150,6 @@ void CFWL_Barcode::SetErrorCorrectionLevel(int32_t ecLevel) {
   m_nECLevel = ecLevel;
 }
 
-void CFWL_Barcode::SetTruncated(bool truncated) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_TRUNCATED;
-  m_bTruncated = truncated;
-}
-
 void CFWL_Barcode::GenerateBarcodeImageCache() {
   if ((m_dwStatus & XFA_BCS_NeedUpdate) == 0)
     return;
@@ -202,8 +197,6 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
     m_pBarcodeEngine->SetEndChar(m_cEndChar);
   if (m_dwAttributeMask & FWL_BCDATTRIBUTE_ECLEVEL)
     m_pBarcodeEngine->SetErrorCorrectionLevel(m_nECLevel);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED)
-    m_pBarcodeEngine->SetTruncated(m_bTruncated);
 
   m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringView())
                    ? XFA_BCS_EncodeSuccess

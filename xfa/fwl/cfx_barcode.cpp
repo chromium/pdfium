@@ -282,20 +282,6 @@ bool CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(level) : false;
 }
 
-bool CFX_Barcode::SetTruncated(bool truncated) {
-  typedef void (CBC_CodeBase::*memptrtype)(bool);
-  memptrtype memptr = nullptr;
-  switch (GetType()) {
-    case BC_PDF417:
-      memptr = (memptrtype)&CBC_PDF417I::SetTruncated;
-      break;
-    default:
-      break;
-  }
-  return m_pBCEngine && memptr ? ((m_pBCEngine.get()->*memptr)(truncated), true)
-                               : false;
-}
-
 bool CFX_Barcode::Encode(const WideStringView& contents) {
   return m_pBCEngine && m_pBCEngine->Encode(contents);
 }

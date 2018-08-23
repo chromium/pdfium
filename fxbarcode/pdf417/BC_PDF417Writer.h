@@ -25,13 +25,10 @@ class CBC_PDF417Writer : public CBC_TwoDimWriter {
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;
 
-  void SetTruncated(bool truncated);
-
  private:
   void rotateArray(std::vector<uint8_t>& bitarray,
                    int32_t width,
                    int32_t height);
-  bool m_bTruncated;
 };
 
 #endif  // FXBARCODE_PDF417_BC_PDF417WRITER_H_

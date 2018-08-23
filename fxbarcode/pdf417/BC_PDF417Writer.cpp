@@ -35,18 +35,15 @@
 CBC_PDF417Writer::CBC_PDF417Writer() {
   m_bFixedSize = false;
 }
-CBC_PDF417Writer::~CBC_PDF417Writer() {
-  m_bTruncated = true;
-}
+
+CBC_PDF417Writer::~CBC_PDF417Writer() {}
+
 bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 8) {
     return false;
   }
   m_iCorrectLevel = level;
   return true;
-}
-void CBC_PDF417Writer::SetTruncated(bool truncated) {
-  m_bTruncated = truncated;
 }
 
 uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,

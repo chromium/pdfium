@@ -52,7 +52,6 @@ class CFX_Barcode {
   bool SetStartChar(char start);
   bool SetEndChar(char end);
   bool SetErrorCorrectionLevel(int32_t level);
-  bool SetTruncated(bool truncated);
 
  private:
   CFX_Barcode();

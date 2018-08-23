@@ -34,7 +34,6 @@ enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_STARTCHAR = 1 << 8,
   FWL_BCDATTRIBUTE_ENDCHAR = 1 << 9,
   FWL_BCDATTRIBUTE_ECLEVEL = 1 << 10,
-  FWL_BCDATTRIBUTE_TRUNCATED = 1 << 11,
 };
 
 class CFWL_Barcode : public CFWL_Edit {
@@ -68,7 +67,6 @@ class CFWL_Barcode : public CFWL_Edit {
   void SetStartChar(char startChar);
   void SetEndChar(char endChar);
   void SetErrorCorrectionLevel(int32_t ecLevel);
-  void SetTruncated(bool truncated);
 
  private:
   void GenerateBarcodeImageCache();
@@ -88,7 +86,6 @@ class CFWL_Barcode : public CFWL_Edit {
   char m_cStartChar;
   char m_cEndChar;
   int32_t m_nECLevel;
-  bool m_bTruncated;
   uint32_t m_dwAttributeMask;
 };
 
