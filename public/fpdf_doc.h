@@ -177,19 +177,6 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                       void* buffer,
                       unsigned long buflen);
 
-// Deprecated. Use FPDFDest_GetDestPageIndex() instead.
-//
-// Get the page index of |dest|.
-//
-//   document - handle to the document.
-//   dest     - handle to the destination.
-//
-// Returns the page index containing |dest|. Page indices start from 0.
-// On an error, returns 0 or -1. Note that 0 can mean the first page, hence
-// do not use this API.
-FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFDest_GetPageIndex(FPDF_DOCUMENT document, FPDF_DEST dest);
-
 // Get the page index of |dest|.
 //
 //   document - handle to the document.

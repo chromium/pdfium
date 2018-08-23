@@ -38,24 +38,6 @@ CPDF_Dest::CPDF_Dest(const CPDF_Array* pObj) : m_pObj(pObj) {}
 
 CPDF_Dest::~CPDF_Dest() {}
 
-int CPDF_Dest::GetPageIndexDeprecated(CPDF_Document* pDoc) const {
-  const CPDF_Array* pArray = ToArray(m_pObj.Get());
-  if (!pArray)
-    return 0;
-
-  const CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
-  if (!pPage)
-    return 0;
-
-  if (pPage->IsNumber())
-    return pPage->GetInteger();
-
-  if (!pPage->IsDictionary())
-    return 0;
-
-  return pDoc->GetPageIndex(pPage->GetObjNum());
-}
-
 int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
   const CPDF_Array* pArray = ToArray(m_pObj.Get());
   if (!pArray)
