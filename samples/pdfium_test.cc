@@ -157,6 +157,7 @@ void OutputMD5Hash(const char* file_name, const char* buffer, int len) {
   printf("MD5:%s:%s\n", file_name, hash.c_str());
 }
 
+#ifdef PDF_ENABLE_V8
 // These example JS platform callback handlers are entirely optional,
 // and exist here to show the flow of information from a document back
 // to the embedder.
@@ -217,6 +218,7 @@ void ExampleDocMail(IPDF_JSPLATFORM*,
          GetPlatformWString(BCC).c_str(), GetPlatformWString(Subject).c_str(),
          GetPlatformWString(Msg).c_str());
 }
+#endif  // PDF_ENABLE_V8
 
 void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
   std::string feature = "Unknown";
@@ -702,6 +704,7 @@ void RenderPdf(const std::string& name,
   if (options.save_attachments)
     WriteAttachments(doc.get(), name);
 
+#ifdef PDF_ENABLE_V8
   IPDF_JSPLATFORM platform_callbacks = {};
   platform_callbacks.version = 3;
   platform_callbacks.app_alert = ExampleAppAlert;
@@ -709,6 +712,7 @@ void RenderPdf(const std::string& name,
   platform_callbacks.app_beep = ExampleAppBeep;
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
   platform_callbacks.Doc_mail = ExampleDocMail;
+#endif  // PDF_ENABLE_V8
 
   FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
 #ifdef PDF_ENABLE_XFA

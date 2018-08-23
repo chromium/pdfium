@@ -59,6 +59,7 @@ TEST(fxcrt, DISABLED_FX_TryAllocOOM) {
   FX_Free(ptr);
 }
 
+#if !defined(__GNUC__)
 TEST(fxcrt, FX_TryAllocOverflow) {
   // |ptr| needs to be defined and used to avoid Clang optimizes away the
   // calloc() statement overzealously for optimized builds.
@@ -70,6 +71,7 @@ TEST(fxcrt, FX_TryAllocOverflow) {
   EXPECT_FALSE(FX_TryRealloc(int, ptr, kOverflowIntAlloc));
   FX_Free(ptr);
 }
+#endif
 
 TEST(fxcrt, DISABLED_FXMEM_DefaultOOM) {
   EXPECT_FALSE(FXMEM_DefaultAlloc(kMaxByteAlloc));

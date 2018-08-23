@@ -49,12 +49,9 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
       m_Matrix.Scale(1.0f, (float)(max_dpi) / (float)dpiv);
   }
   m_pBitmapDevice = pdfium::MakeUnique<CFX_DefaultRenderDevice>();
-  FXDIB_Format dibFormat = FXDIB_Rgb;
-  int32_t bpp = 24;
-  if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT) {
-    dibFormat = FXDIB_Argb;
-    bpp = 32;
-  }
+  bool bIsAlpha =
+      !!(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT);
+  FXDIB_Format dibFormat = bIsAlpha ? FXDIB_Argb : FXDIB_Rgb;
   while (1) {
     FX_RECT bitmap_rect =
         m_Matrix.TransformRect(CFX_FloatRect(pRect)).GetOuterRect();
