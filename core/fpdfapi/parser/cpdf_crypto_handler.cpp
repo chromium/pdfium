@@ -329,7 +329,7 @@ std::unique_ptr<CPDF_Object> CPDF_CryptoHandler::DecryptObjectTree(
         stream_access->LoadAllDataRaw();
 
         if (IsCipherAES() && stream_access->GetSize() < 16) {
-          stream->SetData(nullptr, 0);
+          stream->SetData({});
           continue;
         }
 
@@ -348,7 +348,7 @@ std::unique_ptr<CPDF_Object> CPDF_CryptoHandler::DecryptObjectTree(
           stream->SetData(decrypted_buf.DetachBuffer(), decrypted_size);
         } else {
           // Decryption failed, set the stream to empty
-          stream->SetData(nullptr, 0);
+          stream->SetData({});
         }
       }
     }

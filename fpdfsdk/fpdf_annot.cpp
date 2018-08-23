@@ -153,7 +153,7 @@ void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
   CPDF_PageContentGenerator generator(pForm);
   std::ostringstream buf;
   generator.ProcessPageObjects(&buf);
-  pStream->SetDataAndRemoveFilter(&buf);
+  pStream->SetDataFromStringstreamAndRemoveFilter(&buf);
 }
 
 void SetQuadPointsAtIndex(CPDF_Array* array,
@@ -784,7 +784,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
 
     ByteString newValue = CFXByteStringFromFPDFWideString(value);
     auto pNewApStream = pdfium::MakeUnique<CPDF_Stream>();
-    pNewApStream->SetData(newValue.raw_str(), newValue.GetLength());
+    pNewApStream->SetData(newValue.AsRawSpan());
     pApDict->SetFor(modeKey, std::move(pNewApStream));
   } else {
     if (pApDict) {

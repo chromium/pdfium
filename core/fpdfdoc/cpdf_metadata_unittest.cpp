@@ -17,7 +17,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormEmailAtTopLevel) {
       "</node>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -34,7 +34,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormAcrobatAtTopLevel) {
       "</node>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -51,7 +51,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormFilesystemAtTopLevel) {
       "</node>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -68,7 +68,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormWithoutWorkflow) {
       "</node>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -86,7 +86,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormAsChild) {
       "</parent></grandparent>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -100,7 +100,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormAsNoAdhoc) {
       "<node></node>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -116,7 +116,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormWrongNamespace) {
       "</node>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -146,7 +146,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormMultipleErrors) {
       "</grandparent>";
 
   CPDF_Stream stream;
-  stream.SetData(reinterpret_cast<const uint8_t*>(data), strlen(data));
+  stream.SetData(ByteStringView(data).span());
   CPDF_Metadata metadata(&stream);
 
   auto results = metadata.CheckForSharedForm();

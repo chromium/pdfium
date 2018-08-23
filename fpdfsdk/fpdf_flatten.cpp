@@ -176,7 +176,7 @@ CPDF_Object* NewIndirectContentsStream(const ByteString& key,
       pdfium::MakeUnique<CPDF_Dictionary>(pDocument->GetByteStringPool()));
   ByteString sStream =
       ByteString::Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-  pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
+  pNewContents->SetData(sStream.AsRawSpan());
   return pNewContents;
 }
 
@@ -205,8 +205,7 @@ void SetPageContents(const ByteString& key,
     ByteString sStream = "q\n";
     ByteString sBody = ByteString(pAcc->GetData(), pAcc->GetSize());
     sStream = sStream + sBody + "\nQ";
-    pContentsStream->SetDataAndRemoveFilter(sStream.raw_str(),
-                                            sStream.GetLength());
+    pContentsStream->SetDataAndRemoveFilter(sStream.AsRawSpan());
     pContentsArray->Add(pContentsStream->MakeReference(pDocument));
     pPage->SetFor(pdfium::page_object::kContents,
                   pContentsArray->MakeReference(pDocument));
@@ -394,7 +393,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);
     sStream += ByteString::Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d,
                                   m.e, m.f, sFormName.c_str());
-    pNewXObject->SetDataAndRemoveFilter(sStream.raw_str(), sStream.GetLength());
+    pNewXObject->SetDataAndRemoveFilter(sStream.AsRawSpan());
   }
   pPageDict->RemoveFor("Annots");
   return FLATTEN_SUCCESS;

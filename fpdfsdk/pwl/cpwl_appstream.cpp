@@ -1948,11 +1948,11 @@ void CPWL_AppStream::Write(const ByteString& sAPType,
     pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
     pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
-    pStream->InitStream(nullptr, 0, std::move(pNewDict));
+    pStream->InitStream({}, std::move(pNewDict));
   }
   pStreamDict->SetMatrixFor("Matrix", widget_->GetMatrix());
   pStreamDict->SetRectFor("BBox", widget_->GetRotatedRect());
-  pStream->SetDataAndRemoveFilter(sContents.raw_str(), sContents.GetLength());
+  pStream->SetDataAndRemoveFilter(sContents.AsRawSpan());
 }
 
 void CPWL_AppStream::Remove(const ByteString& sAPType) {

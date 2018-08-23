@@ -60,7 +60,7 @@ CPDF_Stream* CPDF_PageContentManager::GetStreamByIndex(size_t stream_index) {
 
 size_t CPDF_PageContentManager::AddStream(std::ostringstream* buf) {
   CPDF_Stream* new_stream = doc_->NewIndirect<CPDF_Stream>();
-  new_stream->SetData(buf);
+  new_stream->SetDataFromStringstream(buf);
 
   // If there is one Content stream (not in an array), now there will be two, so
   // create an array with the old and the new one. The new one's index is 1.

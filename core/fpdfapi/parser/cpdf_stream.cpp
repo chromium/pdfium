@@ -69,11 +69,10 @@ const CPDF_Stream* CPDF_Stream::AsStream() const {
   return this;
 }
 
-void CPDF_Stream::InitStream(const uint8_t* pData,
-                             uint32_t size,
+void CPDF_Stream::InitStream(pdfium::span<const uint8_t> pData,
                              std::unique_ptr<CPDF_Dictionary> pDict) {
   m_pDict = std::move(pDict);
-  SetData(pData, size);
+  SetData(pData);
 }
 
 void CPDF_Stream::InitStreamFromFile(
@@ -111,29 +110,31 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
                                          std::move(pNewDict));
 }
 
-void CPDF_Stream::SetDataAndRemoveFilter(const uint8_t* pData, uint32_t size) {
-  SetData(pData, size);
+void CPDF_Stream::SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData) {
+  SetData(pData);
   m_pDict->RemoveFor("Filter");
   m_pDict->RemoveFor(pdfium::stream::kDecodeParms);
 }
 
-void CPDF_Stream::SetDataAndRemoveFilter(std::ostringstream* stream) {
+void CPDF_Stream::SetDataFromStringstreamAndRemoveFilter(
+    std::ostringstream* stream) {
   if (stream->tellp() <= 0) {
-    SetDataAndRemoveFilter(nullptr, 0);
+    SetDataAndRemoveFilter({});
     return;
   }
 
   SetDataAndRemoveFilter(
-      reinterpret_cast<const uint8_t*>(stream->str().c_str()), stream->tellp());
+      {reinterpret_cast<const uint8_t*>(stream->str().c_str()),
+       static_cast<size_t>(stream->tellp())});
 }
 
-void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
+void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
   std::unique_ptr<uint8_t, FxFreeDeleter> data_copy;
-  if (pData) {
-    data_copy.reset(FX_Alloc(uint8_t, size));
-    memcpy(data_copy.get(), pData, size);
+  if (!pData.empty()) {
+    data_copy.reset(FX_Alloc(uint8_t, pData.size()));
+    memcpy(data_copy.get(), pData.data(), pData.size());
   }
-  SetData(std::move(data_copy), size);
+  SetData(std::move(data_copy), pData.size());
 }
 
 void CPDF_Stream::SetData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
@@ -147,14 +148,13 @@ void CPDF_Stream::SetData(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
   m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
 }
 
-void CPDF_Stream::SetData(std::ostringstream* stream) {
+void CPDF_Stream::SetDataFromStringstream(std::ostringstream* stream) {
   if (stream->tellp() <= 0) {
-    SetData(nullptr, 0);
+    SetData({});
     return;
   }
-
-  SetData(reinterpret_cast<const uint8_t*>(stream->str().c_str()),
-          stream->tellp());
+  SetData({reinterpret_cast<const uint8_t*>(stream->str().c_str()),
+           static_cast<size_t>(stream->tellp())});
 }
 
 bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,

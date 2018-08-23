@@ -176,7 +176,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
     if (buf->tellp() <= 0)
       page_content_manager.ScheduleRemoveStreamByIndex(stream_index);
     else
-      old_stream->SetData(buf);
+      old_stream->SetDataFromStringstream(buf);
   }
 
   page_content_manager.ExecuteScheduledRemovals();

@@ -708,8 +708,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     pStream->InitStreamFromFile(data, std::move(pDict));
   } else {
     DCHECK(!len);
-    // Empty stream
-    pStream->InitStream(nullptr, 0, std::move(pDict));
+    pStream->InitStream({}, std::move(pDict));  // Empty stream
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);

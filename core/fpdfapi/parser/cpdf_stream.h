@@ -18,7 +18,6 @@
 class CPDF_Stream : public CPDF_Object {
  public:
   CPDF_Stream();
-
   CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
               uint32_t size,
               std::unique_ptr<CPDF_Dictionary> pDict);
@@ -42,17 +41,16 @@ class CPDF_Stream : public CPDF_Object {
   // Use CPDF_StreamAcc to data access in all cases.
   uint8_t* GetInMemoryRawData() const { return m_pDataBuf.get(); }
 
-  // Does not takes ownership of |pData|, copies into internally-owned buffer.
-  void SetData(const uint8_t* pData, uint32_t size);
+  // Copies span into internally-owned buffer.
+  void SetData(pdfium::span<const uint8_t> pData);
   void SetData(std::unique_ptr<uint8_t, FxFreeDeleter> pData, uint32_t size);
-  void SetData(std::ostringstream* stream);
+  void SetDataFromStringstream(std::ostringstream* stream);
   // Set data and remove "Filter" and "DecodeParms" fields from stream
   // dictionary.
-  void SetDataAndRemoveFilter(const uint8_t* pData, uint32_t size);
-  void SetDataAndRemoveFilter(std::ostringstream* stream);
+  void SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData);
+  void SetDataFromStringstreamAndRemoveFilter(std::ostringstream* stream);
 
-  void InitStream(const uint8_t* pData,
-                  uint32_t size,
+  void InitStream(pdfium::span<const uint8_t> pData,
                   std::unique_ptr<CPDF_Dictionary> pDict);
   void InitStreamFromFile(const RetainPtr<IFX_SeekableReadStream>& pFile,
                           std::unique_ptr<CPDF_Dictionary> pDict);

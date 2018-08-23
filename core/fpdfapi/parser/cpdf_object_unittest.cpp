@@ -803,8 +803,7 @@ TEST(PDFArrayTest, ConvertIndirect) {
 TEST(PDFStreamTest, SetData) {
   std::vector<uint8_t> data(100);
   auto stream = pdfium::MakeUnique<CPDF_Stream>();
-  stream->InitStream(data.data(), data.size(),
-                     pdfium::MakeUnique<CPDF_Dictionary>());
+  stream->InitStream(data, pdfium::MakeUnique<CPDF_Dictionary>());
   EXPECT_EQ(static_cast<int>(data.size()),
             stream->GetDict()->GetIntegerFor(pdfium::stream::kLength));
 
@@ -814,7 +813,7 @@ TEST(PDFStreamTest, SetData) {
                                             L"SomeParams");
 
   std::vector<uint8_t> new_data(data.size() * 2);
-  stream->SetData(new_data.data(), new_data.size());
+  stream->SetData(new_data);
 
   // The "Length" field should be updated for new data size.
   EXPECT_EQ(static_cast<int>(new_data.size()),
@@ -830,8 +829,7 @@ TEST(PDFStreamTest, SetData) {
 TEST(PDFStreamTest, SetDataAndRemoveFilter) {
   std::vector<uint8_t> data(100);
   auto stream = pdfium::MakeUnique<CPDF_Stream>();
-  stream->InitStream(data.data(), data.size(),
-                     pdfium::MakeUnique<CPDF_Dictionary>());
+  stream->InitStream(data, pdfium::MakeUnique<CPDF_Dictionary>());
   EXPECT_EQ(static_cast<int>(data.size()),
             stream->GetDict()->GetIntegerFor(pdfium::stream::kLength));
 
@@ -841,7 +839,7 @@ TEST(PDFStreamTest, SetDataAndRemoveFilter) {
                                             L"SomeParams");
 
   std::vector<uint8_t> new_data(data.size() * 2);
-  stream->SetDataAndRemoveFilter(new_data.data(), new_data.size());
+  stream->SetDataAndRemoveFilter(new_data);
   // The "Length" field should be updated for new data size.
   EXPECT_EQ(static_cast<int>(new_data.size()),
             stream->GetDict()->GetIntegerFor(pdfium::stream::kLength));

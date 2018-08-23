@@ -715,17 +715,14 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
       bsSrcContentStream += bsStream;
       bsSrcContentStream += "\n";
     }
-    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.raw_str(),
-                                        bsSrcContentStream.GetLength());
+    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.AsRawSpan());
   } else {
     const CPDF_Stream* pStream = pSrcContentObj->AsStream();
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
     pAcc->LoadAllDataFiltered();
     ByteString bsStream(pAcc->GetData(), pAcc->GetSize());
-    pNewXObject->SetDataAndRemoveFilter(bsStream.raw_str(),
-                                        bsStream.GetLength());
+    pNewXObject->SetDataAndRemoveFilter(bsStream.AsRawSpan());
   }
-
   return pNewXObject->GetObjNum();
 }
 
@@ -752,7 +749,7 @@ void CPDF_NPageToOneExporter::FinishPage(
   auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(dest()->GetByteStringPool());
   CPDF_Stream* pStream =
       dest()->NewIndirect<CPDF_Stream>(nullptr, 0, std::move(pDict));
-  pStream->SetData(bsContent.raw_str(), bsContent.GetLength());
+  pStream->SetData(bsContent.AsRawSpan());
   pDestPageDict->SetFor(pdfium::page_object::kContents,
                         pStream->MakeReference(dest()));
 }
