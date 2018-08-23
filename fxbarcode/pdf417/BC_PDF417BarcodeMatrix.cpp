@@ -24,7 +24,7 @@
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 #include "third_party/base/ptr_util.h"
 
-CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t height, size_t width)
+CBC_BarcodeMatrix::CBC_BarcodeMatrix(size_t width, size_t height)
     : m_width((width + 4) * 17 + 1), m_height(height) {
   m_matrix.resize(m_height);
   for (size_t i = 0; i < m_height; ++i)

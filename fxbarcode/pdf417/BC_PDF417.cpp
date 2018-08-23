@@ -438,7 +438,7 @@ bool CBC_PDF417::generateBarcodeLogic(WideString msg,
     return false;
   }
   WideString fullCodewords = dataCodewords + ec;
-  m_barcodeMatrix = pdfium::MakeUnique<CBC_BarcodeMatrix>(rows, cols);
+  m_barcodeMatrix = pdfium::MakeUnique<CBC_BarcodeMatrix>(cols, rows);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
                  m_barcodeMatrix.get());
   return true;

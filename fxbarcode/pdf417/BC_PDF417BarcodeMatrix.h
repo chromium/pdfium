@@ -14,7 +14,7 @@ class CBC_BarcodeRow;
 
 class CBC_BarcodeMatrix {
  public:
-  CBC_BarcodeMatrix(size_t height, size_t width);
+  CBC_BarcodeMatrix(size_t width, size_t height);
   virtual ~CBC_BarcodeMatrix();
 
   CBC_BarcodeRow* getRow(size_t row) const { return m_matrix[row].get(); }
