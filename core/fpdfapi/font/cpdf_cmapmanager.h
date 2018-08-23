@@ -19,14 +19,12 @@ class CPDF_CMapManager {
   CPDF_CMapManager();
   ~CPDF_CMapManager();
 
-  RetainPtr<CPDF_CMap> GetPredefinedCMap(const ByteString& name,
-                                         bool bPromptCJK);
-  CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
+  RetainPtr<CPDF_CMap> GetPredefinedCMap(const ByteString& name);
+  CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset);
 
  private:
-  RetainPtr<CPDF_CMap> LoadPredefinedCMap(ByteString name, bool bPromptCJK);
-  std::unique_ptr<CPDF_CID2UnicodeMap> LoadCID2UnicodeMap(CIDSet charset,
-                                                          bool bPromptCJK);
+  RetainPtr<CPDF_CMap> LoadPredefinedCMap(ByteString name);
+  std::unique_ptr<CPDF_CID2UnicodeMap> LoadCID2UnicodeMap(CIDSet charset);
 
   std::map<ByteString, RetainPtr<CPDF_CMap>> m_CMaps;
   std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[6];

@@ -362,8 +362,7 @@ bool CPDF_CIDFont::Load() {
   CPDF_CMapManager* manager = GetFontGlobals()->GetCMapManager();
   if (pEncoding->IsName()) {
     ByteString cmap = pEncoding->GetString();
-    bool bPromptCJK = m_pFontFile && m_bType1;
-    m_pCMap = manager->GetPredefinedCMap(cmap, bPromptCJK);
+    m_pCMap = manager->GetPredefinedCMap(cmap);
     if (!m_pCMap)
       return false;
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
@@ -384,9 +383,7 @@ bool CPDF_CIDFont::Load() {
     }
   }
   if (m_Charset != CIDSET_UNKNOWN) {
-    bool bPromptCJK = !m_pFontFile && (m_pCMap->GetCoding() == CIDCODING_CID ||
-                                       pCIDFontDict->KeyExist("W"));
-    m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset, bPromptCJK);
+    m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset);
   }
   if (m_Font.GetFace()) {
     if (m_bType1)
@@ -832,8 +829,8 @@ void CPDF_CIDFont::LoadGB2312() {
   m_Charset = CIDSET_GB1;
 
   CPDF_CMapManager* manager = GetFontGlobals()->GetCMapManager();
-  m_pCMap = manager->GetPredefinedCMap("GBK-EUC-H", false);
-  m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset, false);
+  m_pCMap = manager->GetPredefinedCMap("GBK-EUC-H");
+  m_pCID2UnicodeMap = manager->GetCID2UnicodeMap(m_Charset);
   if (!IsEmbedded())
     LoadSubstFont();
 

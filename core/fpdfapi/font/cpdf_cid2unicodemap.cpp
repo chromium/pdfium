@@ -28,13 +28,10 @@ wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) const {
   return 0;
 }
 
-void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
-                               CIDSet charset,
-                               bool bPromptCJK) {
+void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr, CIDSet charset) {
   m_Charset = charset;
 
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-
   m_pEmbeddedMap = pFontGlobals->GetEmbeddedToUnicode(charset);
 }

@@ -248,8 +248,7 @@ CPDF_CMap::CPDF_CMap()
 CPDF_CMap::~CPDF_CMap() {}
 
 void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
-                               const ByteString& bsName,
-                               bool bPromptCJK) {
+                               const ByteString& bsName) {
   m_PredefinedCMap = bsName;
   if (m_PredefinedCMap == "Identity-H" || m_PredefinedCMap == "Identity-V") {
     m_Coding = CIDCODING_CID;

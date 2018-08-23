@@ -51,9 +51,7 @@ class CPDF_CMap : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  void LoadPredefined(CPDF_CMapManager* pMgr,
-                      const ByteString& name,
-                      bool bPromptCJK);
+  void LoadPredefined(CPDF_CMapManager* pMgr, const ByteString& name);
   void LoadEmbedded(pdfium::span<const uint8_t> data);
 
   bool IsLoaded() const { return m_bLoaded; }

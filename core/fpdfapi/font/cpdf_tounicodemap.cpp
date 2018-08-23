@@ -227,7 +227,7 @@ void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
                      ->GetPageModule()
                      ->GetFontGlobals()
                      ->GetCMapManager()
-                     ->GetCID2UnicodeMap(cid_set, false);
+                     ->GetCID2UnicodeMap(cid_set);
   } else {
     m_pBaseMap = nullptr;
   }
