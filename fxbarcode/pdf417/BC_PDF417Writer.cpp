@@ -62,7 +62,7 @@ uint8_t* CBC_PDF417Writer::Encode(const WideString& contents,
     return nullptr;
 
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
-  std::vector<uint8_t> matrixData = barcodeMatrix->getMatrix();
+  std::vector<uint8_t> matrixData = barcodeMatrix->toBitArray();
   int32_t matrixWidth = barcodeMatrix->getWidth();
   int32_t matrixHeight = barcodeMatrix->getHeight();
 

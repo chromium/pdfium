@@ -20,11 +20,10 @@ class CBC_BarcodeMatrix {
   CBC_BarcodeRow* getRow(size_t row) const { return m_matrix[row].get(); }
   size_t getWidth() const { return m_width; }
   size_t getHeight() const { return m_height; }
-  std::vector<uint8_t>& getMatrix();
+  std::vector<uint8_t> toBitArray();
 
  private:
   std::vector<std::unique_ptr<CBC_BarcodeRow>> m_matrix;
-  std::vector<uint8_t> m_matrixOut;
   size_t m_width;
   size_t m_height;
 };
