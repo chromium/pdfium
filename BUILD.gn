@@ -1041,7 +1041,6 @@ jumbo_static_library("fxge") {
     "core/fxge/cfx_substfont.h",
     "core/fxge/cfx_unicodeencoding.cpp",
     "core/fxge/cfx_unicodeencoding.h",
-    "core/fxge/cfx_windowsrenderdevice.h",
     "core/fxge/cttfontdesc.cpp",
     "core/fxge/cttfontdesc.h",
     "core/fxge/dib/cfx_bitmapcomposer.cpp",
@@ -1137,6 +1136,7 @@ jumbo_static_library("fxge") {
 
   if (is_win) {
     sources += [
+      "core/fxge/cfx_windowsrenderdevice.h",
       "core/fxge/win32/cfx_psrenderer.cpp",
       "core/fxge/win32/cfx_psrenderer.h",
       "core/fxge/win32/cpsoutput.cpp",
