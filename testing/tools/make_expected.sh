@@ -23,7 +23,7 @@ while (( "$#" )); do
   if [ -f "$EVTFILE" ]; then
     SEND_EVENTS="--send-events"
   fi
-  out/Debug/pdfium_test "$SEND_EVENTS" --time=$TEST_SEED_TIME --png $INFILE
+  out/Debug/pdfium_test $SEND_EVENTS --time=$TEST_SEED_TIME --png $INFILE
   RESULTS="$INFILE.*.png"
   for RESULT in $RESULTS ; do
     EXPECTED=`echo -n $RESULT | sed 's/[.]pdf[.]/_expected.pdf./'`
