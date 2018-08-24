@@ -48,26 +48,27 @@ float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
 
 float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
                          const CFX_Matrix& matrix) {
-  float baseSpace = 0.0;
   const size_t nItems = pTextObj->CountItems();
-  if (pTextObj->m_TextState.GetCharSpace() && nItems >= 3) {
-    bool bAllChar = true;
-    float spacing =
-        matrix.TransformDistance(pTextObj->m_TextState.GetCharSpace());
-    baseSpace = spacing;
-    for (size_t i = 0; i < nItems; ++i) {
-      CPDF_TextObjectItem item;
-      pTextObj->GetItemInfo(i, &item);
-      if (item.m_CharCode == static_cast<uint32_t>(-1)) {
-        float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
-        float kerning = -fontsize_h * item.m_Origin.x / 1000;
-        baseSpace = std::min(baseSpace, kerning + spacing);
-        bAllChar = false;
-      }
+  if (!pTextObj->m_TextState.GetCharSpace() || nItems < 3)
+    return 0.0f;
+
+  bool bAllChar = true;
+  float spacing =
+      matrix.TransformDistance(pTextObj->m_TextState.GetCharSpace());
+  float baseSpace = spacing;
+  for (size_t i = 0; i < nItems; ++i) {
+    CPDF_TextObjectItem item;
+    pTextObj->GetItemInfo(i, &item);
+    if (item.m_CharCode == static_cast<uint32_t>(-1)) {
+      float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
+      float kerning = -fontsize_h * item.m_Origin.x / 1000;
+      baseSpace = std::min(baseSpace, kerning + spacing);
+      bAllChar = false;
     }
-    if (baseSpace < 0.0 || (nItems == 3 && !bAllChar))
-      baseSpace = 0.0;
   }
+  if (baseSpace < 0.0 || (nItems == 3 && !bAllChar))
+    return 0.0f;
+
   return baseSpace;
 }
 
@@ -90,7 +91,7 @@ size_t Unicode_GetNormalization(wchar_t wch, wchar_t* pDst) {
   wFind >>= 12;
   const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind - 2] + wch;
   if (wFind == 4)
-    wFind = (wchar_t)(*pMap++);
+    wFind = static_cast<wchar_t>(*pMap++);
 
   if (pDst) {
     wchar_t n = wFind;
