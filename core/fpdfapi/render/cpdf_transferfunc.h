@@ -12,7 +12,7 @@
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Document;
-class CFX_DIBSource;
+class CFX_DIBBase;
 
 class CPDF_TransferFunc : public Retainable {
  public:
@@ -20,7 +20,7 @@ class CPDF_TransferFunc : public Retainable {
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   FX_COLORREF TranslateColor(FX_COLORREF colorref) const;
-  RetainPtr<CFX_DIBSource> TranslateImage(const RetainPtr<CFX_DIBSource>& pSrc);
+  RetainPtr<CFX_DIBBase> TranslateImage(const RetainPtr<CFX_DIBBase>& pSrc);
 
   const CPDF_Document* GetDocument() const { return m_pPDFDoc.Get(); }
 

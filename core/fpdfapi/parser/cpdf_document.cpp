@@ -26,7 +26,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/render/cpdf_dibsource.h"
+#include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"

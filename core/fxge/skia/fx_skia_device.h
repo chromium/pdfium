@@ -83,15 +83,15 @@ class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
 
   RetainPtr<CFX_DIBitmap> GetBackDrop() override;
 
-  bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int dest_left,
                  int dest_top,
                  int blend_type) override;
 #ifdef _SKIA_SUPPORT_
-  bool SetBitsWithMask(const RetainPtr<CFX_DIBSource>& pBitmap,
-                       const RetainPtr<CFX_DIBSource>& pMask,
+  bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
+                       const RetainPtr<CFX_DIBBase>& pMask,
                        int dest_left,
                        int dest_top,
                        int bitmap_alpha,
@@ -102,7 +102,7 @@ class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
   void SetClipMask(const FX_RECT& clipBox, const SkPath& skClipPath);
 #endif
 
-  bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -112,7 +112,7 @@ class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
                      uint32_t flags,
                      int blend_type) override;
 
-  bool StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
@@ -123,8 +123,8 @@ class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
   bool ContinueDIBits(CFX_ImageRenderer* handle,
                       PauseIndicatorIface* pPause) override;
 
-  bool DrawBitsWithMask(const RetainPtr<CFX_DIBSource>& pBitmap,
-                        const RetainPtr<CFX_DIBSource>& pMask,
+  bool DrawBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
+                        const RetainPtr<CFX_DIBBase>& pMask,
                         int bitmap_alpha,
                         const CFX_Matrix* pMatrix,
                         int blend_type);

@@ -722,11 +722,10 @@ RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() {
   return m_pDeviceDriver->GetBackDrop();
 }
 
-bool CFX_RenderDevice::SetDIBitsWithBlend(
-    const RetainPtr<CFX_DIBSource>& pBitmap,
-    int left,
-    int top,
-    int blend_mode) {
+bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
+                                          int left,
+                                          int top,
+                                          int blend_mode) {
   ASSERT(!pBitmap->IsAlphaMask());
   FX_RECT dest_rect(left, top, left + pBitmap->GetWidth(),
                     top + pBitmap->GetHeight());
@@ -767,7 +766,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
 }
 
 bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
-    const RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBBase>& pBitmap,
     int left,
     int top,
     int dest_width,
@@ -782,7 +781,7 @@ bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
                                    dest_height, &clip_box, flags, blend_mode);
 }
 
-bool CFX_RenderDevice::SetBitMask(const RetainPtr<CFX_DIBSource>& pBitmap,
+bool CFX_RenderDevice::SetBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                   int left,
                                   int top,
                                   uint32_t argb) {
@@ -791,7 +790,7 @@ bool CFX_RenderDevice::SetBitMask(const RetainPtr<CFX_DIBSource>& pBitmap,
                                     FXDIB_BLEND_NORMAL);
 }
 
-bool CFX_RenderDevice::StretchBitMask(const RetainPtr<CFX_DIBSource>& pBitmap,
+bool CFX_RenderDevice::StretchBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                       int left,
                                       int top,
                                       int dest_width,
@@ -802,7 +801,7 @@ bool CFX_RenderDevice::StretchBitMask(const RetainPtr<CFX_DIBSource>& pBitmap,
 }
 
 bool CFX_RenderDevice::StretchBitMaskWithFlags(
-    const RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBBase>& pBitmap,
     int left,
     int top,
     int dest_width,
@@ -818,7 +817,7 @@ bool CFX_RenderDevice::StretchBitMaskWithFlags(
 }
 
 bool CFX_RenderDevice::StartDIBitsWithBlend(
-    const RetainPtr<CFX_DIBSource>& pBitmap,
+    const RetainPtr<CFX_DIBBase>& pBitmap,
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix* pMatrix,
@@ -839,8 +838,8 @@ void CFX_RenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
   SkASSERT(0);
 }
 
-bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBSource>& pBitmap,
-                                       const RetainPtr<CFX_DIBSource>& pMask,
+bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
+                                       const RetainPtr<CFX_DIBBase>& pMask,
                                        int left,
                                        int top,
                                        int bitmap_alpha,

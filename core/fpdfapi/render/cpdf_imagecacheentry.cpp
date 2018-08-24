@@ -13,7 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfapi/render/cpdf_dibsource.h"
+#include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
@@ -37,22 +37,22 @@ void CPDF_ImageCacheEntry::Reset(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 }
 
 static uint32_t FPDF_ImageCache_EstimateImageSize(
-    const RetainPtr<CFX_DIBSource>& pDIB) {
+    const RetainPtr<CFX_DIBBase>& pDIB) {
   return pDIB && pDIB->GetBuffer()
              ? (uint32_t)pDIB->GetHeight() * pDIB->GetPitch() +
                    (uint32_t)pDIB->GetPaletteSize() * 4
              : 0;
 }
 
-RetainPtr<CFX_DIBSource> CPDF_ImageCacheEntry::DetachBitmap() {
+RetainPtr<CFX_DIBBase> CPDF_ImageCacheEntry::DetachBitmap() {
   return std::move(m_pCurBitmap);
 }
 
-RetainPtr<CFX_DIBSource> CPDF_ImageCacheEntry::DetachMask() {
+RetainPtr<CFX_DIBBase> CPDF_ImageCacheEntry::DetachMask() {
   return std::move(m_pCurMask);
 }
 
-CPDF_DIBSource::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
+CPDF_DIBBase::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
     const CPDF_Dictionary* pFormResources,
     CPDF_Dictionary* pPageResources,
     bool bStdCS,
@@ -64,32 +64,32 @@ CPDF_DIBSource::LoadState CPDF_ImageCacheEntry::StartGetCachedBitmap(
   if (m_pCachedBitmap) {
     m_pCurBitmap = m_pCachedBitmap;
     m_pCurMask = m_pCachedMask;
-    return CPDF_DIBSource::LoadState::kSuccess;
+    return CPDF_DIBBase::LoadState::kSuccess;
   }
 
-  m_pCurBitmap = pdfium::MakeRetain<CPDF_DIBSource>();
-  CPDF_DIBSource::LoadState ret =
-      m_pCurBitmap.As<CPDF_DIBSource>()->StartLoadDIBSource(
+  m_pCurBitmap = pdfium::MakeRetain<CPDF_DIBBase>();
+  CPDF_DIBBase::LoadState ret =
+      m_pCurBitmap.As<CPDF_DIBBase>()->StartLoadDIBBase(
           m_pDocument.Get(), m_pImage->GetStream(), true, pFormResources,
           pPageResources, bStdCS, GroupFamily, bLoadMask);
-  if (ret == CPDF_DIBSource::LoadState::kContinue)
-    return CPDF_DIBSource::LoadState::kContinue;
+  if (ret == CPDF_DIBBase::LoadState::kContinue)
+    return CPDF_DIBBase::LoadState::kContinue;
 
-  if (ret == CPDF_DIBSource::LoadState::kSuccess)
+  if (ret == CPDF_DIBBase::LoadState::kSuccess)
     ContinueGetCachedBitmap(pRenderStatus);
   else
     m_pCurBitmap.Reset();
-  return CPDF_DIBSource::LoadState::kFail;
+  return CPDF_DIBBase::LoadState::kFail;
 }
 
 bool CPDF_ImageCacheEntry::Continue(PauseIndicatorIface* pPause,
                                     CPDF_RenderStatus* pRenderStatus) {
-  CPDF_DIBSource::LoadState ret =
-      m_pCurBitmap.As<CPDF_DIBSource>()->ContinueLoadDIBSource(pPause);
-  if (ret == CPDF_DIBSource::LoadState::kContinue)
+  CPDF_DIBBase::LoadState ret =
+      m_pCurBitmap.As<CPDF_DIBBase>()->ContinueLoadDIBBase(pPause);
+  if (ret == CPDF_DIBBase::LoadState::kContinue)
     return true;
 
-  if (ret == CPDF_DIBSource::LoadState::kSuccess)
+  if (ret == CPDF_DIBBase::LoadState::kSuccess)
     ContinueGetCachedBitmap(pRenderStatus);
   else
     m_pCurBitmap.Reset();
@@ -98,8 +98,8 @@ bool CPDF_ImageCacheEntry::Continue(PauseIndicatorIface* pPause,
 
 void CPDF_ImageCacheEntry::ContinueGetCachedBitmap(
     CPDF_RenderStatus* pRenderStatus) {
-  m_MatteColor = m_pCurBitmap.As<CPDF_DIBSource>()->GetMatteColor();
-  m_pCurMask = m_pCurBitmap.As<CPDF_DIBSource>()->DetachMask();
+  m_MatteColor = m_pCurBitmap.As<CPDF_DIBBase>()->GetMatteColor();
+  m_pCurMask = m_pCurBitmap.As<CPDF_DIBBase>()->DetachMask();
   CPDF_RenderContext* pContext = pRenderStatus->GetContext();
   CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();

@@ -9,8 +9,8 @@
 #include <climits>
 #include <tuple>
 
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
@@ -23,7 +23,7 @@ bool SourceSizeWithinLimit(int width, int height) {
   return !height || width < kMaxProgressiveStretchPixels / height;
 }
 
-FXDIB_Format GetStretchedFormat(const CFX_DIBSource& src) {
+FXDIB_Format GetStretchedFormat(const CFX_DIBBase& src) {
   FXDIB_Format format = src.GetFormat();
   if (format == FXDIB_1bppMask)
     return FXDIB_8bppMask;
@@ -43,7 +43,7 @@ std::tuple<int, int, int, int> CmykDecode(const uint32_t cmyk) {
 }  // namespace
 
 CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
-                                       const RetainPtr<CFX_DIBSource>& pSource,
+                                       const RetainPtr<CFX_DIBBase>& pSource,
                                        int dest_width,
                                        int dest_height,
                                        const FX_RECT& bitmap_rect,

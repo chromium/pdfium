@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 
-class CFX_FilteredDIB : public CFX_DIBSource {
+class CFX_FilteredDIB : public CFX_DIBBase {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -26,13 +26,13 @@ class CFX_FilteredDIB : public CFX_DIBSource {
                                     int pixels,
                                     int Bpp) const = 0;
 
-  void LoadSrc(const RetainPtr<CFX_DIBSource>& pSrc);
+  void LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc);
 
  protected:
   CFX_FilteredDIB();
   ~CFX_FilteredDIB() override;
 
-  // CFX_DIBSource
+  // CFX_DIBBase
   const uint8_t* GetScanline(int line) const override;
   void DownSampleScanline(int line,
                           uint8_t* dest_scan,
@@ -42,7 +42,7 @@ class CFX_FilteredDIB : public CFX_DIBSource {
                           int clip_left,
                           int clip_width) const override;
 
-  RetainPtr<CFX_DIBSource> m_pSrc;
+  RetainPtr<CFX_DIBBase> m_pSrc;
   mutable std::vector<uint8_t> m_Scanline;
 };
 

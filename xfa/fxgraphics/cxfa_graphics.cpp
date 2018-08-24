@@ -412,7 +412,7 @@ void CXFA_Graphics::FillPathWithShading(const CXFA_GEPath* path,
   }
 }
 
-void CXFA_Graphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBSource>& source,
+void CXFA_Graphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
                                         const CFX_Matrix& matrix) {
   if (matrix.IsIdentity()) {
     m_renderDevice->SetDIBits(source, 0, 0);

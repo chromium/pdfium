@@ -43,7 +43,7 @@ class CCodec_IccModule;
 class CCodec_Jbig2Module;
 class CCodec_JpegModule;
 class CCodec_JpxModule;
-class CFX_DIBSource;
+class CFX_DIBBase;
 class CJPX_Decoder;
 class CPDF_ColorSpace;
 class CPDF_StreamAcc;

@@ -49,15 +49,15 @@ bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
 
   m_ImageMatrix = pPageObj->AsImage()->matrix();
   {
-    // |pSource| actually gets assigned a CPDF_DIBSource, which has pointers
+    // |pSource| actually gets assigned a CPDF_DIBBase, which has pointers
     // into objects owned by |m_pForm|. Make sure it is out of scope before
     // clearing the form.
-    RetainPtr<CFX_DIBSource> pSource =
-        pPageObj->AsImage()->GetImage()->LoadDIBSource();
+    RetainPtr<CFX_DIBBase> pSource =
+        pPageObj->AsImage()->GetImage()->LoadDIBBase();
 
-    // Clone() is non-virtual, and can't be overloaded by CPDF_DIBSource to
+    // Clone() is non-virtual, and can't be overloaded by CPDF_DIBBase to
     // return a clone of the subclass as one would typically expect from a
-    // such a method. Instead, it only clones the CFX_DIBSource, none of whose
+    // such a method. Instead, it only clones the CFX_DIBBase, none of whose
     // members point to objects owned by the form. As a result, |m_pBitmap|
     // may outlive |m_pForm|.
     if (pSource)

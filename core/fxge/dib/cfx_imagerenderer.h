@@ -13,8 +13,8 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/stl_util.h"
 
@@ -25,7 +25,7 @@ class CFX_ImageRenderer {
  public:
   CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                     const CFX_ClipRgn* pClipRgn,
-                    const RetainPtr<CFX_DIBSource>& pSource,
+                    const RetainPtr<CFX_DIBBase>& pSource,
                     int bitmap_alpha,
                     uint32_t mask_color,
                     const CFX_Matrix* pMatrix,

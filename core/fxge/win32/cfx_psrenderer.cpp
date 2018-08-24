@@ -337,7 +337,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   WriteToStream(&buf);
 }
 
-bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                uint32_t color,
                                int left,
                                int top) {
@@ -348,7 +348,7 @@ bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBSource>& pSource,
   return DrawDIBits(pSource, color, &matrix, 0);
 }
 
-bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                    uint32_t color,
                                    int dest_left,
                                    int dest_top,
@@ -361,7 +361,7 @@ bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBSource>& pSource,
   return DrawDIBits(pSource, color, &matrix, flags);
 }
 
-bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                 uint32_t color,
                                 const CFX_Matrix* pMatrix,
                                 uint32_t flags) {
@@ -423,7 +423,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBSource>& pSource,
     output_buf.release();
   } else {
     CFX_DIBExtractor source_extractor(pSource);
-    RetainPtr<CFX_DIBSource> pConverted = source_extractor.GetBitmap();
+    RetainPtr<CFX_DIBBase> pConverted = source_extractor.GetBitmap();
     if (!pConverted)
       return false;
     switch (pSource->GetFormat()) {

@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 
 class CFX_ScanlineCompositor {
  public:

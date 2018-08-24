@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_DIBSOURCE_H_
-#define CORE_FPDFAPI_RENDER_CPDF_DIBSOURCE_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_
+#define CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_
 
 #include <map>
 #include <memory>
@@ -21,7 +21,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 
 class CCodec_Jbig2Context;
 class CCodec_ScanlineDecoder;
@@ -39,7 +39,7 @@ struct DIB_COMP_DATA {
 
 #define FPDF_HUGE_IMAGE_SIZE 60000000
 
-class CPDF_DIBSource : public CFX_DIBSource {
+class CPDF_DIBBase : public CFX_DIBBase {
  public:
   enum class LoadState : uint8_t { kFail, kSuccess, kContinue };
 
@@ -48,7 +48,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
 
   bool Load(CPDF_Document* pDoc, const CPDF_Stream* pStream);
 
-  // CFX_DIBSource
+  // CFX_DIBBase
   bool SkipToScanline(int line, PauseIndicatorIface* pPause) const override;
   uint8_t* GetBuffer() const override;
   const uint8_t* GetScanline(int line) const override;
@@ -63,22 +63,22 @@ class CPDF_DIBSource : public CFX_DIBSource {
   const CPDF_ColorSpace* GetColorSpace() const { return m_pColorSpace.Get(); }
   uint32_t GetMatteColor() const { return m_MatteColor; }
 
-  LoadState StartLoadDIBSource(CPDF_Document* pDoc,
-                               const CPDF_Stream* pStream,
-                               bool bHasMask,
-                               const CPDF_Dictionary* pFormResources,
-                               CPDF_Dictionary* pPageResources,
-                               bool bStdCS,
-                               uint32_t GroupFamily,
-                               bool bLoadMask);
-  LoadState ContinueLoadDIBSource(PauseIndicatorIface* pPause);
-  RetainPtr<CPDF_DIBSource> DetachMask();
+  LoadState StartLoadDIBBase(CPDF_Document* pDoc,
+                             const CPDF_Stream* pStream,
+                             bool bHasMask,
+                             const CPDF_Dictionary* pFormResources,
+                             CPDF_Dictionary* pPageResources,
+                             bool bStdCS,
+                             uint32_t GroupFamily,
+                             bool bLoadMask);
+  LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
+  RetainPtr<CPDF_DIBBase> DetachMask();
 
   bool IsJBigImage() const;
 
  private:
-  CPDF_DIBSource();
-  ~CPDF_DIBSource() override;
+  CPDF_DIBBase();
+  ~CPDF_DIBBase() override;
 
   LoadState StartLoadMask();
   LoadState StartLoadMaskDIB();
@@ -149,7 +149,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pLineBuf;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskedLine;
   RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
-  RetainPtr<CPDF_DIBSource> m_pMask;
+  RetainPtr<CPDF_DIBBase> m_pMask;
   RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
 
@@ -160,4 +160,4 @@ class CPDF_DIBSource : public CFX_DIBSource {
   LoadState m_Status = LoadState::kFail;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_DIBSOURCE_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_

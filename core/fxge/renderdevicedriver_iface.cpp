@@ -81,8 +81,8 @@ bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern* pPattern,
 }
 
 bool RenderDeviceDriverIface::SetBitsWithMask(
-    const RetainPtr<CFX_DIBSource>& pBitmap,
-    const RetainPtr<CFX_DIBSource>& pMask,
+    const RetainPtr<CFX_DIBBase>& pBitmap,
+    const RetainPtr<CFX_DIBBase>& pMask,
     int left,
     int top,
     int bitmap_alpha,

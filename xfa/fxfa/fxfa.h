@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/fxfa_basic.h"
 

@@ -12,7 +12,7 @@ CFX_FilteredDIB::CFX_FilteredDIB() {}
 
 CFX_FilteredDIB::~CFX_FilteredDIB() {}
 
-void CFX_FilteredDIB::LoadSrc(const RetainPtr<CFX_DIBSource>& pSrc) {
+void CFX_FilteredDIB::LoadSrc(const RetainPtr<CFX_DIBBase>& pSrc) {
   m_pSrc = pSrc;
   m_Width = pSrc->GetWidth();
   m_Height = pSrc->GetHeight();

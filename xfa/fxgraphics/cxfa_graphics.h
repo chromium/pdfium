@@ -87,7 +87,7 @@ class CXFA_Graphics {
                            FX_FillMode fillMode,
                            const CFX_Matrix& matrix);
 
-  void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBSource>& source,
+  void SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
                            const CFX_Matrix& matrix);
 
   CFX_RenderDevice* const m_renderDevice;  // Not owned.

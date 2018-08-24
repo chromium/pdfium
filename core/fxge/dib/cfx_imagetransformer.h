@@ -13,14 +13,14 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/dib/cfx_dibsource.h"
 
 class CFX_ImageStretcher;
 
 class CFX_ImageTransformer {
  public:
-  CFX_ImageTransformer(const RetainPtr<CFX_DIBSource>& pSrc,
+  CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
                        const CFX_Matrix* pMatrix,
                        int flags,
                        const FX_RECT* pClip);
@@ -98,7 +98,7 @@ class CFX_ImageTransformer {
       int increment,
       std::function<void(const DownSampleData&, uint8_t*)> func);
 
-  const RetainPtr<CFX_DIBSource> m_pSrc;
+  const RetainPtr<CFX_DIBBase> m_pSrc;
   UnownedPtr<const CFX_Matrix> const m_pMatrix;
   const FX_RECT* const m_pClip;
   FX_RECT m_StretchClip;

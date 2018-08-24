@@ -60,7 +60,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                 int dest_top,
                                 int width,
                                 int height,
-                                const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
   if (!pBitmap)
@@ -566,7 +566,7 @@ void SetBitmapPaint(bool isAlphaMask,
   paint->setAlpha(bitmap_alpha);
 }
 
-bool Upsample(const RetainPtr<CFX_DIBSource>& pSource,
+bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
               std::unique_ptr<uint8_t, FxFreeDeleter>& dst8Storage,
               std::unique_ptr<uint32_t, FxFreeDeleter>& dst32Storage,
               SkBitmap* skBitmap,
@@ -2256,7 +2256,7 @@ RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
   return m_pBackdropBitmap;
 }
 
-bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                      uint32_t argb,
                                      const FX_RECT* pSrcRect,
                                      int left,
@@ -2286,16 +2286,15 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
 #endif  // _SKIA_SUPPORT_PATHS_
 }
 
-bool CFX_SkiaDeviceDriver::StretchDIBits(
-    const RetainPtr<CFX_DIBSource>& pSource,
-    uint32_t argb,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    const FX_RECT* pClipRect,
-    uint32_t flags,
-    int blend_type) {
+bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
+                                         uint32_t argb,
+                                         int dest_left,
+                                         int dest_top,
+                                         int dest_width,
+                                         int dest_height,
+                                         const FX_RECT* pClipRect,
+                                         uint32_t flags,
+                                         int blend_type) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
   if (!m_pBitmap->GetBuffer())
@@ -2339,7 +2338,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBits(
-    const RetainPtr<CFX_DIBSource>& pSource,
+    const RetainPtr<CFX_DIBBase>& pSource,
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix* pMatrix,
@@ -2472,8 +2471,8 @@ void CFX_DIBitmap::UnPreMultiply() {
 
 #ifdef _SKIA_SUPPORT_
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
-    const RetainPtr<CFX_DIBSource>& pSource,
-    const RetainPtr<CFX_DIBSource>& pMask,
+    const RetainPtr<CFX_DIBBase>& pSource,
+    const RetainPtr<CFX_DIBBase>& pMask,
     int bitmap_alpha,
     const CFX_Matrix* pMatrix,
     int blend_type) {
@@ -2513,8 +2512,8 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
 }
 
 bool CFX_SkiaDeviceDriver::SetBitsWithMask(
-    const RetainPtr<CFX_DIBSource>& pBitmap,
-    const RetainPtr<CFX_DIBSource>& pMask,
+    const RetainPtr<CFX_DIBBase>& pBitmap,
+    const RetainPtr<CFX_DIBBase>& pMask,
     int dest_left,
     int dest_top,
     int bitmap_alpha,
@@ -2614,8 +2613,8 @@ void CFX_DefaultRenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
 }
 
 bool CFX_DefaultRenderDevice::SetBitsWithMask(
-    const RetainPtr<CFX_DIBSource>& pBitmap,
-    const RetainPtr<CFX_DIBSource>& pMask,
+    const RetainPtr<CFX_DIBBase>& pBitmap,
+    const RetainPtr<CFX_DIBBase>& pMask,
     int left,
     int top,
     int bitmap_alpha,
@@ -2629,7 +2628,7 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
 }
 #endif  // _SKIA_SUPPORT_
 
-void CFX_DIBSource::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
+void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
 #ifdef SK_DEBUG
   SkASSERT(32 == GetBPP());
   const uint32_t* buffer = (const uint32_t*)(opt ? opt : GetBuffer());

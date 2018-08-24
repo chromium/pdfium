@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fpdfapi/render/cpdf_dibsource.h"
+#include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -32,7 +32,7 @@ class CPDF_ImageCacheEntry {
   uint32_t GetTimeCount() const { return m_dwTimeCount; }
   CPDF_Image* GetImage() const { return m_pImage.Get(); }
 
-  CPDF_DIBSource::LoadState StartGetCachedBitmap(
+  CPDF_DIBBase::LoadState StartGetCachedBitmap(
       const CPDF_Dictionary* pFormResources,
       CPDF_Dictionary* pPageResources,
       bool bStdCS,
@@ -43,8 +43,8 @@ class CPDF_ImageCacheEntry {
   // Returns whether to Continue() or not.
   bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
 
-  RetainPtr<CFX_DIBSource> DetachBitmap();
-  RetainPtr<CFX_DIBSource> DetachMask();
+  RetainPtr<CFX_DIBBase> DetachBitmap();
+  RetainPtr<CFX_DIBBase> DetachMask();
 
   int m_dwTimeCount;
   uint32_t m_MatteColor;
@@ -55,10 +55,10 @@ class CPDF_ImageCacheEntry {
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CPDF_Image> const m_pImage;
-  RetainPtr<CFX_DIBSource> m_pCurBitmap;
-  RetainPtr<CFX_DIBSource> m_pCurMask;
-  RetainPtr<CFX_DIBSource> m_pCachedBitmap;
-  RetainPtr<CFX_DIBSource> m_pCachedMask;
+  RetainPtr<CFX_DIBBase> m_pCurBitmap;
+  RetainPtr<CFX_DIBBase> m_pCurMask;
+  RetainPtr<CFX_DIBBase> m_pCachedBitmap;
+  RetainPtr<CFX_DIBBase> m_pCachedMask;
   uint32_t m_dwCacheSize;
 };
 

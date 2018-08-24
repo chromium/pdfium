@@ -14,7 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fpdfapi/render/cpdf_dibsource.h"
+#include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "fpdfsdk/cpdfsdk_customaccess.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/ptr_util.h"
@@ -170,7 +170,7 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   if (!pImg)
     return nullptr;
 
-  RetainPtr<CFX_DIBSource> pSource = pImg->LoadDIBSource();
+  RetainPtr<CFX_DIBBase> pSource = pImg->LoadDIBBase();
   if (!pSource)
     return nullptr;
 
@@ -313,11 +313,11 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   if (!pPage || !pPage->GetDocument() || !pImg->GetStream())
     return true;
 
-  auto pSource = pdfium::MakeRetain<CPDF_DIBSource>();
-  CPDF_DIBSource::LoadState ret = pSource->StartLoadDIBSource(
+  auto pSource = pdfium::MakeRetain<CPDF_DIBBase>();
+  CPDF_DIBBase::LoadState ret = pSource->StartLoadDIBBase(
       pPage->GetDocument(), pImg->GetStream(), false, nullptr,
       pPage->m_pPageResources.Get(), false, 0, false);
-  if (ret == CPDF_DIBSource::LoadState::kFail)
+  if (ret == CPDF_DIBBase::LoadState::kFail)
     return true;
 
   metadata->bits_per_pixel = pSource->GetBPP();

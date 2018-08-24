@@ -15,7 +15,7 @@
 #include "core/fxge/dib/cfx_imagerenderer.h"
 
 class CFX_DIBitmap;
-class CFX_DIBSource;
+class CFX_DIBBase;
 class CFX_DefaultRenderDevice;
 class CFX_ImageTransformer;
 class CPDF_ImageObject;
@@ -35,7 +35,7 @@ class CPDF_ImageRenderer {
              int blendType);
 
   bool Start(CPDF_RenderStatus* pStatus,
-             const RetainPtr<CFX_DIBSource>& pDIBSource,
+             const RetainPtr<CFX_DIBBase>& pDIBBase,
              FX_ARGB bitmap_argb,
              int bitmap_alpha,
              const CFX_Matrix* pImage2Device,
@@ -48,9 +48,9 @@ class CPDF_ImageRenderer {
 
  private:
   bool StartBitmapAlpha();
-  bool StartDIBSource();
-  bool StartRenderDIBSource();
-  bool StartLoadDIBSource();
+  bool StartDIBBase();
+  bool StartRenderDIBBase();
+  bool StartLoadDIBBase();
   bool DrawMaskedImage();
   bool DrawPatternImage(const CFX_Matrix* pObj2Device);
   bool NotDrawing() const;
@@ -58,7 +58,7 @@ class CPDF_ImageRenderer {
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
   void CalculateDrawImage(CFX_DefaultRenderDevice* bitmap_device1,
                           CFX_DefaultRenderDevice* bitmap_device2,
-                          const RetainPtr<CFX_DIBSource>& pDIBSource,
+                          const RetainPtr<CFX_DIBBase>& pDIBBase,
                           CFX_Matrix* pNewMatrix,
                           const FX_RECT& rect) const;
   void HandleFilters();
@@ -69,7 +69,7 @@ class CPDF_ImageRenderer {
   UnownedPtr<const CFX_Matrix> m_pObj2Device;
   CFX_Matrix m_ImageMatrix;
   CPDF_ImageLoader m_Loader;
-  RetainPtr<CFX_DIBSource> m_pDIBSource;
+  RetainPtr<CFX_DIBBase> m_pDIBBase;
   int m_BitmapAlpha;
   bool m_bPatternColor;
   UnownedPtr<CPDF_Pattern> m_pPattern;

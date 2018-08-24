@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_DIB_CFX_DIBSOURCE_H_
-#define CORE_FXGE_DIB_CFX_DIBSOURCE_H_
+#ifndef CORE_FXGE_DIB_CFX_DIBBASE_H_
+#define CORE_FXGE_DIB_CFX_DIBBASE_H_
 
 #include <memory>
 
@@ -29,9 +29,10 @@ class CFX_ClipRgn;
 class CFX_DIBitmap;
 class PauseIndicatorIface;
 
-class CFX_DIBSource : public Retainable {
+// Base class for all Device-Indepenent Bitmaps.
+class CFX_DIBBase : public Retainable {
  public:
-  ~CFX_DIBSource() override;
+  ~CFX_DIBBase() override;
 
   virtual uint8_t* GetBuffer() const;
   virtual const uint8_t* GetScanline(int line) const = 0;
@@ -90,7 +91,7 @@ class CFX_DIBSource : public Retainable {
   RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 
   // Copies into internally-owned mask.
-  bool SetAlphaMask(const RetainPtr<CFX_DIBSource>& pAlphaMask,
+  bool SetAlphaMask(const RetainPtr<CFX_DIBBase>& pAlphaMask,
                     const FX_RECT* pClip);
 
   void GetOverlapRect(int& dest_left,
@@ -110,14 +111,14 @@ class CFX_DIBSource : public Retainable {
   RetainPtr<CFX_DIBitmap> m_pAlphaMask;
 
  protected:
-  CFX_DIBSource();
+  CFX_DIBBase();
 
   static bool ConvertBuffer(FXDIB_Format dest_format,
                             uint8_t* dest_buf,
                             int dest_pitch,
                             int width,
                             int height,
-                            const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                            const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                             int src_left,
                             int src_top,
                             std::unique_ptr<uint32_t, FxFreeDeleter>* pal);
@@ -136,4 +137,4 @@ class CFX_DIBSource : public Retainable {
   std::unique_ptr<uint32_t, FxFreeDeleter> m_pPalette;
 };
 
-#endif  // CORE_FXGE_DIB_CFX_DIBSOURCE_H_
+#endif  // CORE_FXGE_DIB_CFX_DIBBASE_H_

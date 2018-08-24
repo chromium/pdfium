@@ -99,7 +99,7 @@ void bicubic_get_pos_weight(int pos_pixel[],
   v_w[3] = SDP_Table[512 - res_y];
 }
 
-FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBSource>& pDrc) {
+FXDIB_Format GetTransformedFormat(const RetainPtr<CFX_DIBBase>& pDrc) {
   if (pDrc->IsAlphaMask())
     return FXDIB_8bppMask;
 
@@ -200,7 +200,7 @@ class CFX_BilinearMatrix : public CPDF_FixedMatrix {
 
 }  // namespace
 
-CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBSource>& pSrc,
+CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
                                            const CFX_Matrix* pMatrix,
                                            int flags,
                                            const FX_RECT* pClip)

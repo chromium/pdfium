@@ -10,8 +10,8 @@
 #include <utility>
 
 #include "core/fxcrt/pauseindicator_iface.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 #include "core/fxge/fx_dib.h"
 
@@ -227,7 +227,7 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
                                int dest_width,
                                int dest_height,
                                const FX_RECT& clip_rect,
-                               const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                               const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                int flags)
     : m_DestFormat(dest_format),
       m_DestBpp(GetBppFromFormat(dest_format)),

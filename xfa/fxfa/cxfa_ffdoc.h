@@ -29,12 +29,12 @@ class CXFA_FFDocView;
 struct FX_IMAGEDIB_AND_DPI {
   FX_IMAGEDIB_AND_DPI();
   FX_IMAGEDIB_AND_DPI(const FX_IMAGEDIB_AND_DPI& that);
-  FX_IMAGEDIB_AND_DPI(const RetainPtr<CFX_DIBSource>& pDib,
+  FX_IMAGEDIB_AND_DPI(const RetainPtr<CFX_DIBBase>& pDib,
                       int32_t xDpi,
                       int32_t yDpi);
   ~FX_IMAGEDIB_AND_DPI();
 
-  RetainPtr<CFX_DIBSource> pDibSource;
+  RetainPtr<CFX_DIBBase> pDibSource;
   int32_t iImageXDpi;
   int32_t iImageYDpi;
 };
@@ -44,7 +44,7 @@ inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(
     const FX_IMAGEDIB_AND_DPI& that) = default;
 
 inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(
-    const RetainPtr<CFX_DIBSource>& pDib,
+    const RetainPtr<CFX_DIBBase>& pDib,
     int32_t xDpi,
     int32_t yDpi)
     : pDibSource(pDib), iImageXDpi(xDpi), iImageYDpi(yDpi) {}

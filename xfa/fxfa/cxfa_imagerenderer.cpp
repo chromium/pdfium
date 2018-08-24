@@ -7,23 +7,20 @@
 #include "xfa/fxfa/cxfa_imagerenderer.h"
 
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/ptr_util.h"
 
-CXFA_ImageRenderer::CXFA_ImageRenderer(
-    CFX_RenderDevice* pDevice,
-    const RetainPtr<CFX_DIBSource>& pDIBSource,
-    const CFX_Matrix* pImage2Device)
-    : m_pDevice(pDevice),
-      m_ImageMatrix(*pImage2Device),
-      m_pDIBSource(pDIBSource) {}
+CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
+                                       const RetainPtr<CFX_DIBBase>& pDIBBase,
+                                       const CFX_Matrix* pImage2Device)
+    : m_pDevice(pDevice), m_ImageMatrix(*pImage2Device), m_pDIBBase(pDIBBase) {}
 
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start() {
-  if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, 255, 0, &m_ImageMatrix,
+  if (m_pDevice->StartDIBitsWithBlend(m_pDIBBase, 255, 0, &m_ImageMatrix,
                                       FXDIB_INTERPOL, &m_DeviceHandle,
                                       FXDIB_BLEND_NORMAL)) {
     if (m_DeviceHandle) {
@@ -38,11 +35,11 @@ bool CXFA_ImageRenderer::Start() {
   int dest_height = image_rect.Height();
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
-    RetainPtr<CFX_DIBSource> pDib = m_pDIBSource;
-    if (m_pDIBSource->HasAlpha() &&
+    RetainPtr<CFX_DIBBase> pDib = m_pDIBBase;
+    if (m_pDIBBase->HasAlpha() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
         !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
-      m_pCloneConvert = m_pDIBSource->CloneConvert(FXDIB_Rgb);
+      m_pCloneConvert = m_pDIBBase->CloneConvert(FXDIB_Rgb);
       if (!m_pCloneConvert)
         return false;
 
@@ -62,15 +59,15 @@ bool CXFA_ImageRenderer::Start() {
   int dest_left, dest_top;
   dest_left = dest_width > 0 ? image_rect.left : image_rect.right;
   dest_top = dest_height > 0 ? image_rect.top : image_rect.bottom;
-  if (m_pDIBSource->IsOpaqueImage()) {
+  if (m_pDIBBase->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
-            m_pDIBSource, dest_left, dest_top, dest_width, dest_height,
+            m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
             FXDIB_INTERPOL, FXDIB_BLEND_NORMAL)) {
       return false;
     }
   }
-  if (m_pDIBSource->IsAlphaMask()) {
-    if (m_pDevice->StretchBitMaskWithFlags(m_pDIBSource, dest_left, dest_top,
+  if (m_pDIBBase->IsAlphaMask()) {
+    if (m_pDevice->StretchBitMaskWithFlags(m_pDIBBase, dest_left, dest_top,
                                            dest_width, dest_height, 0,
                                            FXDIB_INTERPOL)) {
       return false;
@@ -83,7 +80,7 @@ bool CXFA_ImageRenderer::Start() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  RetainPtr<CFX_DIBitmap> pStretched = m_pDIBSource->StretchTo(
+  RetainPtr<CFX_DIBitmap> pStretched = m_pDIBBase->StretchTo(
       dest_width, dest_height, FXDIB_INTERPOL, &dest_clip);
   if (pStretched)
     CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top);

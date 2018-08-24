@@ -16,7 +16,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
 
-class CFX_DIBSource;
+class CFX_DIBBase;
 class CFX_FaceCache;
 class CFX_Font;
 class CFX_FontCache;
@@ -52,18 +52,18 @@ class CFX_PSRenderer {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode);
-  bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  int dest_left,
                  int dest_top);
-  bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
                      int dest_width,
                      int dest_height,
                      uint32_t flags);
-  bool DrawDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool DrawDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                   uint32_t color,
                   const CFX_Matrix* pMatrix,
                   uint32_t flags);

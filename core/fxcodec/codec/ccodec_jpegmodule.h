@@ -14,7 +14,7 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CCodec_ScanlineDecoder;
-class CFX_DIBSource;
+class CFX_DIBBase;
 
 #ifdef PDF_ENABLE_XFA
 class CFX_DIBAttribute;
@@ -58,7 +58,7 @@ class CCodec_JpegModule {
   uint32_t GetAvailInput(Context* pContext, uint8_t** avail_buf_ptr);
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-  static bool JpegEncode(const RetainPtr<CFX_DIBSource>& pSource,
+  static bool JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
                          uint8_t** dest_buf,
                          size_t* dest_size);
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_

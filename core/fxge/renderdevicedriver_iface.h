@@ -14,7 +14,7 @@
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_DIBitmap;
-class CFX_DIBSource;
+class CFX_DIBBase;
 class CFX_Font;
 class CFX_GraphStateData;
 class CFX_ImageRenderer;
@@ -63,13 +63,13 @@ class RenderDeviceDriverIface {
                          int left,
                          int top);
   virtual RetainPtr<CFX_DIBitmap> GetBackDrop();
-  virtual bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  virtual bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                          uint32_t color,
                          const FX_RECT* pSrcRect,
                          int dest_left,
                          int dest_top,
                          int blend_type) = 0;
-  virtual bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  virtual bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                              uint32_t color,
                              int dest_left,
                              int dest_top,
@@ -78,7 +78,7 @@ class RenderDeviceDriverIface {
                              const FX_RECT* pClipRect,
                              uint32_t flags,
                              int blend_type) = 0;
-  virtual bool StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  virtual bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                            int bitmap_alpha,
                            uint32_t color,
                            const CFX_Matrix* pMatrix,
@@ -100,8 +100,8 @@ class RenderDeviceDriverIface {
                            const FX_RECT& clip_rect,
                            int alpha,
                            bool bAlphaMode);
-  virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBSource>& pBitmap,
-                               const RetainPtr<CFX_DIBSource>& pMask,
+  virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
+                               const RetainPtr<CFX_DIBBase>& pMask,
                                int left,
                                int top,
                                int bitmap_alpha,

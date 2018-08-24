@@ -85,7 +85,7 @@ bool CFX_DIBitmap::Create(int width,
   return false;
 }
 
-bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBSource>& pSrc) {
+bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBBase>& pSrc) {
   if (m_pBuffer)
     return false;
 
@@ -188,7 +188,7 @@ bool CFX_DIBitmap::TransferBitmap(int dest_left,
                                   int dest_top,
                                   int width,
                                   int height,
-                                  const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                  const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                   int src_left,
                                   int src_top) {
   if (!m_pBuffer)
@@ -223,7 +223,7 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
     int dest_top,
     int width,
     int height,
-    const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+    const RetainPtr<CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
   if (m_pPalette)
@@ -247,7 +247,7 @@ void CFX_DIBitmap::TransferWithMultipleBPP(
     int dest_top,
     int width,
     int height,
-    const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+    const RetainPtr<CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
   int Bpp = GetBPP() / 8;
@@ -265,7 +265,7 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
     int dest_top,
     int width,
     int height,
-    const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+    const RetainPtr<CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
   for (int row = 0; row < height; ++row) {
@@ -283,12 +283,12 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
 }
 
 bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
-                               const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                               const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                FXDIB_Channel srcChannel) {
   if (!m_pBuffer)
     return false;
 
-  RetainPtr<CFX_DIBSource> pSrcClone = pSrcBitmap;
+  RetainPtr<CFX_DIBBase> pSrcClone = pSrcBitmap;
   int srcOffset;
   if (srcChannel == FXDIB_Alpha) {
     if (!pSrcBitmap->HasAlpha() && !pSrcBitmap->IsAlphaMask())
@@ -348,7 +348,7 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
     destOffset = kChannelOffset[destChannel];
   }
   if (srcChannel == FXDIB_Alpha && pSrcClone->m_pAlphaMask) {
-    RetainPtr<CFX_DIBSource> pAlphaMask = pSrcClone->m_pAlphaMask;
+    RetainPtr<CFX_DIBBase> pAlphaMask = pSrcClone->m_pAlphaMask;
     if (pSrcClone->GetWidth() != m_Width ||
         pSrcClone->GetHeight() != m_Height) {
       if (pAlphaMask) {
@@ -446,7 +446,7 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
   return true;
 }
 
-bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBSource>& pSrcBitmap) {
+bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
   if (!m_pBuffer)
     return false;
 
@@ -881,7 +881,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                                    int dest_top,
                                    int width,
                                    int height,
-                                   const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                   const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                    int src_left,
                                    int src_top,
                                    int blend_type,
@@ -952,7 +952,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  int dest_top,
                                  int width,
                                  int height,
-                                 const RetainPtr<CFX_DIBSource>& pMask,
+                                 const RetainPtr<CFX_DIBBase>& pMask,
                                  uint32_t color,
                                  int src_left,
                                  int src_top,
@@ -1266,7 +1266,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     }
   }
   bool ret = false;
-  RetainPtr<CFX_DIBSource> holder(this);
+  RetainPtr<CFX_DIBBase> holder(this);
   std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
   ret = ConvertBuffer(dest_format, dest_buf.get(), dest_pitch, m_Width,
                       m_Height, holder, 0, 0, &pal_8bpp);

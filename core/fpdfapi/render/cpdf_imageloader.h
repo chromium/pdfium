@@ -31,8 +31,8 @@ class CPDF_ImageLoader {
              CPDF_RenderStatus* pRenderStatus);
   bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
 
-  RetainPtr<CFX_DIBSource> m_pBitmap;
-  RetainPtr<CFX_DIBSource> m_pMask;
+  RetainPtr<CFX_DIBBase> m_pBitmap;
+  RetainPtr<CFX_DIBBase> m_pMask;
   uint32_t m_MatteColor;
   bool m_bCached;
 

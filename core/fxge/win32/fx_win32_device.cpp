@@ -1187,7 +1187,7 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   return ret;
 }
 
-bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pSource,
+bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                   uint32_t color,
                                   const FX_RECT* pSrcRect,
                                   int left,
@@ -1235,7 +1235,7 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBSource>& pSource,
 }
 
 bool CGdiDisplayDriver::UseFoxitStretchEngine(
-    const RetainPtr<CFX_DIBSource>& pSource,
+    const RetainPtr<CFX_DIBBase>& pSource,
     uint32_t color,
     int dest_left,
     int dest_top,
@@ -1261,7 +1261,7 @@ bool CGdiDisplayDriver::UseFoxitStretchEngine(
                    pClipRect->top, FXDIB_BLEND_NORMAL);
 }
 
-bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBSource>& pSource,
+bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                       uint32_t color,
                                       int dest_left,
                                       int dest_top,
@@ -1328,7 +1328,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBSource>& pSource,
                            dest_height, flags);
 }
 
-bool CGdiDisplayDriver::StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+bool CGdiDisplayDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                     int bitmap_alpha,
                                     uint32_t color,
                                     const CFX_Matrix* pMatrix,

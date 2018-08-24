@@ -16,13 +16,13 @@
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 #include "core/fxge/fx_dib.h"
 
-class CFX_DIBSource;
+class CFX_DIBBase;
 class PauseIndicatorIface;
 
 class CFX_ImageStretcher {
  public:
   CFX_ImageStretcher(ScanlineComposerIface* pDest,
-                     const RetainPtr<CFX_DIBSource>& pSource,
+                     const RetainPtr<CFX_DIBBase>& pSource,
                      int dest_width,
                      int dest_height,
                      const FX_RECT& bitmap_rect,
@@ -32,7 +32,7 @@ class CFX_ImageStretcher {
   bool Start();
   bool Continue(PauseIndicatorIface* pPause);
 
-  RetainPtr<CFX_DIBSource> source() { return m_pSource; }
+  RetainPtr<CFX_DIBBase> source() { return m_pSource; }
 
  private:
   bool StartQuickStretch();
@@ -41,7 +41,7 @@ class CFX_ImageStretcher {
   bool ContinueStretch(PauseIndicatorIface* pPause);
 
   UnownedPtr<ScanlineComposerIface> const m_pDest;
-  RetainPtr<CFX_DIBSource> m_pSource;
+  RetainPtr<CFX_DIBBase> m_pSource;
   std::unique_ptr<CStretchEngine> m_pStretchEngine;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanline;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskScanline;

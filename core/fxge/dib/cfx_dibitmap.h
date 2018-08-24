@@ -10,10 +10,10 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "third_party/base/stl_util.h"
 
-class CFX_DIBitmap : public CFX_DIBSource {
+class CFX_DIBitmap : public CFX_DIBBase {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -26,9 +26,9 @@ class CFX_DIBitmap : public CFX_DIBSource {
               uint8_t* pBuffer,
               uint32_t pitch);
 
-  bool Copy(const RetainPtr<CFX_DIBSource>& pSrc);
+  bool Copy(const RetainPtr<CFX_DIBBase>& pSrc);
 
-  // CFX_DIBSource
+  // CFX_DIBBase
   uint8_t* GetBuffer() const override;
   const uint8_t* GetScanline(int line) const override;
   void DownSampleScanline(int line,
@@ -47,18 +47,18 @@ class CFX_DIBitmap : public CFX_DIBSource {
   void SetPixel(int x, int y, uint32_t color);
 
   bool LoadChannel(FXDIB_Channel destChannel,
-                   const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                   const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                    FXDIB_Channel srcChannel);
   bool LoadChannel(FXDIB_Channel destChannel, int value);
 
   bool MultiplyAlpha(int alpha);
-  bool MultiplyAlpha(const RetainPtr<CFX_DIBSource>& pAlphaMask);
+  bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pAlphaMask);
 
   bool TransferBitmap(int dest_left,
                       int dest_top,
                       int width,
                       int height,
-                      const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                      const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                       int src_left,
                       int src_top);
 
@@ -66,7 +66,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
                        int dest_top,
                        int width,
                        int height,
-                       const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                       const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                        int src_left,
                        int src_top,
                        int blend_type,
@@ -77,7 +77,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
                      int dest_top,
                      int width,
                      int height,
-                     const RetainPtr<CFX_DIBSource>& pMask,
+                     const RetainPtr<CFX_DIBBase>& pMask,
                      uint32_t color,
                      int src_left,
                      int src_top,
@@ -130,21 +130,21 @@ class CFX_DIBitmap : public CFX_DIBSource {
                                   int dest_top,
                                   int width,
                                   int height,
-                                  const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                  const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                   int src_left,
                                   int src_top);
   void TransferWithMultipleBPP(int dest_left,
                                int dest_top,
                                int width,
                                int height,
-                               const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                               const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                int src_left,
                                int src_top);
   void TransferEqualFormatsOneBPP(int dest_left,
                                   int dest_top,
                                   int width,
                                   int height,
-                                  const RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                  const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                   int src_left,
                                   int src_top);
 };

@@ -197,13 +197,13 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
   bool GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int left,
                  int top) override;
-  bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
                  int blend_type) override;
-  bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -212,14 +212,14 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                      const FX_RECT* pClipRect,
                      uint32_t flags,
                      int blend_type) override;
-  bool StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    int blend_type) override;
-  bool UseFoxitStretchEngine(const RetainPtr<CFX_DIBSource>& pSource,
+  bool UseFoxitStretchEngine(const RetainPtr<CFX_DIBBase>& pSource,
                              uint32_t color,
                              int dest_left,
                              int dest_top,
@@ -236,13 +236,13 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
 
  protected:
   int GetDeviceCaps(int caps_id) const override;
-  bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
                  int blend_type) override;
-  bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -251,7 +251,7 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                      const FX_RECT* pClipRect,
                      uint32_t flags,
                      int blend_type) override;
-  bool StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
@@ -295,13 +295,13 @@ class CPSPrinterDriver : public RenderDeviceDriverIface {
                 int fill_mode,
                 int blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
-  bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
                  int blend_type) override;
-  bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -310,7 +310,7 @@ class CPSPrinterDriver : public RenderDeviceDriverIface {
                      const FX_RECT* pClipRect,
                      uint32_t flags,
                      int blend_type) override;
-  bool StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
@@ -358,13 +358,13 @@ class CTextOnlyPrinterDriver : public RenderDeviceDriverIface {
                 int fill_mode,
                 int blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
-  bool SetDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
                  int blend_type) override;
-  bool StretchDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -373,7 +373,7 @@ class CTextOnlyPrinterDriver : public RenderDeviceDriverIface {
                      const FX_RECT* pClipRect,
                      uint32_t flags,
                      int blend_type) override;
-  bool StartDIBits(const RetainPtr<CFX_DIBSource>& pBitmap,
+  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,

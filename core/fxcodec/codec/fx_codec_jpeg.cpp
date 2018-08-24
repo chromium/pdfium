@@ -13,7 +13,7 @@
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
@@ -493,7 +493,7 @@ uint32_t CCodec_JpegModule::GetAvailInput(Context* pContext,
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 #define JPEG_BLOCK_SIZE 1048576
-bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBSource>& pSource,
+bool CCodec_JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
                                    uint8_t** dest_buf,
                                    size_t* dest_size) {
   struct jpeg_error_mgr jerr;

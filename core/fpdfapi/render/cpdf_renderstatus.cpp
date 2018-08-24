@@ -37,7 +37,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_charposlist.h"
 #include "core/fpdfapi/render/cpdf_devicebuffer.h"
-#include "core/fpdfapi/render/cpdf_dibsource.h"
+#include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_imagerenderer.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
@@ -1582,7 +1582,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (pSMaskDict) {
     CFX_Matrix smask_matrix = *pPageObj->m_GeneralState.GetSMaskMatrix();
     smask_matrix.Concat(*pObj2Device);
-    RetainPtr<CFX_DIBSource> pSMaskSource =
+    RetainPtr<CFX_DIBBase> pSMaskSource =
         LoadSMask(pSMaskDict, &rect, &smask_matrix);
     if (pSMaskSource)
       bitmap->MultiplyAlpha(pSMaskSource);
