@@ -9,7 +9,7 @@
 #include "testing/test_support.h"
 
 TEST(CPDF_MetadataTest, CheckSharedFormEmailAtTopLevel) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<node xmlns:adhocwf=\"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/\">\n"
       "<adhocwf:workflowType>0</adhocwf:workflowType>\n"
@@ -26,7 +26,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormEmailAtTopLevel) {
 }
 
 TEST(CPDF_MetadataTest, CheckSharedFormAcrobatAtTopLevel) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<node xmlns:adhocwf=\"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/\">\n"
       "<adhocwf:workflowType>1</adhocwf:workflowType>\n"
@@ -43,7 +43,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormAcrobatAtTopLevel) {
 }
 
 TEST(CPDF_MetadataTest, CheckSharedFormFilesystemAtTopLevel) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<node xmlns:adhocwf=\"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/\">\n"
       "<adhocwf:workflowType>2</adhocwf:workflowType>\n"
@@ -60,7 +60,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormFilesystemAtTopLevel) {
 }
 
 TEST(CPDF_MetadataTest, CheckSharedFormWithoutWorkflow) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<node xmlns:adhocwf=\"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/\">\n"
       "<adhocwf:state>2</adhocwf:state>\n"
@@ -76,7 +76,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormWithoutWorkflow) {
 }
 
 TEST(CPDF_MetadataTest, CheckSharedFormAsChild) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<grandparent><parent>\n"
       "<node xmlns:adhocwf=\"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/\">\n"
@@ -95,7 +95,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormAsChild) {
 }
 
 TEST(CPDF_MetadataTest, CheckSharedFormAsNoAdhoc) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<node></node>";
 
@@ -108,7 +108,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormAsNoAdhoc) {
 }
 
 TEST(CPDF_MetadataTest, CheckSharedFormWrongNamespace) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<node xmlns:adhocwf=\"http://ns.adobe.com/AcrobatAdhocWorkflow/2.0/\">\n"
       "<adhocwf:workflowType>1</adhocwf:workflowType>\n"
@@ -124,7 +124,7 @@ TEST(CPDF_MetadataTest, CheckSharedFormWrongNamespace) {
 }
 
 TEST(CPDF_MetadataTest, CheckSharedFormMultipleErrors) {
-  const char* data =
+  static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
       "<grandparent>"
       "<parent>\n"
