@@ -659,8 +659,8 @@ void CFX_BmpDecompressor::SaveDecodingStatus(int32_t status) {
   decode_status_ = status;
 }
 
-void CFX_BmpDecompressor::SetInputBuffer(uint8_t* src_buf, uint32_t src_size) {
-  input_buffer_ = pdfium::MakeRetain<CFX_CodecMemory>(src_buf, src_size);
+void CFX_BmpDecompressor::SetInputBuffer(pdfium::span<uint8_t> src_buf) {
+  input_buffer_ = pdfium::MakeRetain<CFX_CodecMemory>(src_buf);
 }
 
 FX_FILESIZE CFX_BmpDecompressor::GetAvailInput(uint8_t** avail_buf) {

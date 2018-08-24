@@ -342,8 +342,8 @@ CFX_GifDecodeStatus CFX_GifContext::LoadFrame(int32_t frame_num) {
   return CFX_GifDecodeStatus::Error;
 }
 
-void CFX_GifContext::SetInputBuffer(uint8_t* src_buf, uint32_t src_size) {
-  input_buffer_ = pdfium::MakeRetain<CFX_CodecMemory>(src_buf, src_size);
+void CFX_GifContext::SetInputBuffer(pdfium::span<uint8_t> src_buf) {
+  input_buffer_ = pdfium::MakeRetain<CFX_CodecMemory>(src_buf);
 }
 
 uint32_t CFX_GifContext::GetAvailInput(uint8_t** avail_buf) const {

@@ -765,7 +765,7 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
   }
 
   m_offSet += size;
-  pBmpModule->Input(m_pBmpContext.get(), m_pSrcBuf, size);
+  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf, size});
   std::vector<uint32_t> palette;
   int32_t readResult = pBmpModule->ReadHeader(
       m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
@@ -873,7 +873,7 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
     return false;
   }
   m_offSet += dwSize;
-  pBmpModule->Input(m_pBmpContext.get(), m_pSrcBuf, dwSize + dwAvail);
+  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf, dwSize + dwAvail});
   return true;
 }
 
@@ -969,8 +969,8 @@ bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
   }
 
   m_offSet += dwAmountToFetchFromFile;
-  pGifModule->Input(m_pGifContext.get(), m_pSrcBuf,
-                    dwAmountToFetchFromFile + dwUnusedBuffer);
+  pGifModule->Input(m_pGifContext.get(),
+                    {m_pSrcBuf, dwAmountToFetchFromFile + dwUnusedBuffer});
   m_InvalidateGifBuffer = false;
   return true;
 }
@@ -989,7 +989,7 @@ bool CCodec_ProgressiveDecoder::GifDetectImageType(CFX_DIBAttribute* pAttribute,
     return false;
   }
   m_offSet += size;
-  pGifModule->Input(m_pGifContext.get(), m_pSrcBuf, size);
+  pGifModule->Input(m_pGifContext.get(), {m_pSrcBuf, size});
   m_SrcComponents = 1;
   CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
       m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,

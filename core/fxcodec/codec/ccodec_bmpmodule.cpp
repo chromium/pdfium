@@ -69,9 +69,6 @@ FX_FILESIZE CCodec_BmpModule::GetAvailInput(Context* pContext,
   return ctx->m_Bmp.GetAvailInput(avail_buf_ptr);
 }
 
-void CCodec_BmpModule::Input(Context* pContext,
-                             uint8_t* src_buf,
-                             uint32_t src_size) {
-  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
-  ctx->m_Bmp.SetInputBuffer(src_buf, src_size);
+void CCodec_BmpModule::Input(Context* pContext, pdfium::span<uint8_t> src_buf) {
+  static_cast<CFX_BmpContext*>(pContext)->m_Bmp.SetInputBuffer(src_buf);
 }

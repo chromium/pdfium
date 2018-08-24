@@ -6,27 +6,27 @@
 #define CORE_FXCODEC_CODEC_CFX_CODEC_MEMORY_H_
 
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_CodecMemory : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  uint8_t* GetBuffer() { return buffer_; }
-  size_t GetSize() const { return size_; }
+  uint8_t* GetBuffer() { return buffer_.data(); }
+  size_t GetSize() const { return buffer_.size(); }
   size_t GetPosition() const { return pos_; }
-  bool IsEOF() const { return pos_ >= size_; }
+  bool IsEOF() const { return pos_ >= buffer_.size(); }
   size_t ReadBlock(void* buffer, size_t size);
 
   // Sets the cursor position to |pos| if possible.
   bool Seek(size_t pos);
 
  private:
-  CFX_CodecMemory(uint8_t* buffer, size_t size);
+  explicit CFX_CodecMemory(pdfium::span<uint8_t> buffer);
   ~CFX_CodecMemory() override;
 
-  uint8_t* const buffer_;
-  const size_t size_;
+  pdfium::span<uint8_t> const buffer_;
   size_t pos_ = 0;
 };
 

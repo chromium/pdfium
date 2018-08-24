@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_DIBAttribute;
 
@@ -34,7 +35,7 @@ class CCodec_BmpModule {
 
   std::unique_ptr<Context> Start(Delegate* pDelegate);
   FX_FILESIZE GetAvailInput(Context* pContext, uint8_t** avail_buf_ptr);
-  void Input(Context* pContext, uint8_t* src_buf, uint32_t src_size);
+  void Input(Context* pContext, pdfium::span<uint8_t> src_buf);
   int32_t ReadHeader(Context* pContext,
                      int32_t* width,
                      int32_t* height,

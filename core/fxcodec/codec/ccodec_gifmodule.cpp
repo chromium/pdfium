@@ -72,9 +72,6 @@ uint32_t CCodec_GifModule::GetAvailInput(Context* pContext,
   return context->GetAvailInput(avail_buf_ptr);
 }
 
-void CCodec_GifModule::Input(Context* pContext,
-                             const uint8_t* src_buf,
-                             uint32_t src_size) {
-  auto* context = static_cast<CFX_GifContext*>(pContext);
-  context->SetInputBuffer((uint8_t*)src_buf, src_size);
+void CCodec_GifModule::Input(Context* pContext, pdfium::span<uint8_t> src_buf) {
+  static_cast<CFX_GifContext*>(pContext)->SetInputBuffer(src_buf);
 }
