@@ -1458,7 +1458,7 @@ CJS_Result CJS_Document::gotoNamedDest(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_Dest dest(destArray);
-  const CPDF_Array* arrayObject = ToArray(dest.GetObject());
+  const CPDF_Array* arrayObject = dest.GetArray();
   std::vector<float> scrollPositionArray;
   if (arrayObject) {
     for (size_t i = 2; i < arrayObject->GetCount(); i++)
