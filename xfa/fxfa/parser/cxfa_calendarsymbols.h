@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_CalendarSymbols : public CXFA_Node {
+class CXFA_CalendarSymbols final : public CXFA_Node {
  public:
   CXFA_CalendarSymbols(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CalendarSymbols() override;

@@ -21,7 +21,7 @@ class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 
-class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
+class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
  public:
   explicit CFFL_InteractiveFormFiller(
       CPDFSDK_FormFillEnvironment* pFormFillEnv);
@@ -158,7 +158,7 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
   bool m_bNotifying;
 };
 
-class CFFL_PrivateData : public CPWL_Wnd::PrivateData {
+class CFFL_PrivateData final : public CPWL_Wnd::PrivateData {
  public:
   CPDFSDK_Widget* pWidget;
   CPDFSDK_PageView* pPageView;

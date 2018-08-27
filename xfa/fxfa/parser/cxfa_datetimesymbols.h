@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_DateTimeSymbols : public CXFA_Node {
+class CXFA_DateTimeSymbols final : public CXFA_Node {
  public:
   CXFA_DateTimeSymbols(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DateTimeSymbols() override;

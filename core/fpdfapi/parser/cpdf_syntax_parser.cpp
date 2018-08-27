@@ -34,7 +34,7 @@ namespace {
 
 enum class ReadStatus { Normal, Backslash, Octal, FinishOctal, CarriageReturn };
 
-class ReadableSubStream : public IFX_SeekableReadStream {
+class ReadableSubStream final : public IFX_SeekableReadStream {
  public:
   ReadableSubStream(const RetainPtr<IFX_SeekableReadStream>& pFileRead,
                     FX_FILESIZE part_offset,

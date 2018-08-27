@@ -12,7 +12,7 @@
 
 class CXFA_Message;
 
-class CJX_Message : public CJX_Node {
+class CJX_Message final : public CJX_Node {
  public:
   explicit CJX_Message(CXFA_Message* node);
   ~CJX_Message() override;

@@ -188,7 +188,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   int m_RenderCaps;
 };
 
-class CGdiDisplayDriver : public CGdiDeviceDriver {
+class CGdiDisplayDriver final : public CGdiDeviceDriver {
  public:
   explicit CGdiDisplayDriver(HDC hDC);
   ~CGdiDisplayDriver() override;
@@ -229,7 +229,7 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                              int render_flags);
 };
 
-class CGdiPrinterDriver : public CGdiDeviceDriver {
+class CGdiPrinterDriver final : public CGdiDeviceDriver {
  public:
   explicit CGdiPrinterDriver(HDC hDC);
   ~CGdiPrinterDriver() override;
@@ -269,7 +269,7 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
   const int m_VertSize;
 };
 
-class CPSPrinterDriver : public RenderDeviceDriverIface {
+class CPSPrinterDriver final : public RenderDeviceDriverIface {
  public:
   CPSPrinterDriver(HDC hDC, WindowsPrintMode mode, bool bCmykOutput);
   ~CPSPrinterDriver() override;
@@ -334,7 +334,7 @@ class CPSPrinterDriver : public RenderDeviceDriverIface {
   CFX_PSRenderer m_PSRenderer;
 };
 
-class CTextOnlyPrinterDriver : public RenderDeviceDriverIface {
+class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
  public:
   explicit CTextOnlyPrinterDriver(HDC hDC);
   ~CTextOnlyPrinterDriver() override;

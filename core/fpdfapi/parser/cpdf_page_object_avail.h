@@ -9,7 +9,7 @@
 
 // Helper for check availability of page's object tree.
 // Exclude references to pages.
-class CPDF_PageObjectAvail : public CPDF_ObjectAvail {
+class CPDF_PageObjectAvail final : public CPDF_ObjectAvail {
  public:
   using CPDF_ObjectAvail::CPDF_ObjectAvail;
   ~CPDF_PageObjectAvail() override;

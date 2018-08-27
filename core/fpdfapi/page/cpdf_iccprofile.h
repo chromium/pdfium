@@ -16,7 +16,7 @@
 class CLcmsCmm;
 class CPDF_Stream;
 
-class CPDF_IccProfile : public Retainable {
+class CPDF_IccProfile final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

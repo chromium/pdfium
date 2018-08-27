@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Whitespace : public CXFA_Node {
+class CXFA_Whitespace final : public CXFA_Node {
  public:
   CXFA_Whitespace(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Whitespace() override;

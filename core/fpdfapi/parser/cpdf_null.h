@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 
-class CPDF_Null : public CPDF_Object {
+class CPDF_Null final : public CPDF_Object {
  public:
   CPDF_Null();
 

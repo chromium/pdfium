@@ -14,7 +14,7 @@
 
 class CBC_OnedEAN8Writer;
 
-class CBC_EAN8 : public CBC_OneCode {
+class CBC_EAN8 final : public CBC_OneCode {
  public:
   CBC_EAN8();
   ~CBC_EAN8() override;

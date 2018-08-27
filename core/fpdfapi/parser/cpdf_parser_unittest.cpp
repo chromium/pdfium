@@ -29,7 +29,7 @@ CPDF_CrossRefTable::ObjectInfo GetObjInfo(const CPDF_Parser& parser,
 }  // namespace
 
 // A wrapper class to help test member functions of CPDF_Parser.
-class CPDF_TestParser : public CPDF_Parser {
+class CPDF_TestParser final : public CPDF_Parser {
  public:
   CPDF_TestParser() {}
   ~CPDF_TestParser() {}

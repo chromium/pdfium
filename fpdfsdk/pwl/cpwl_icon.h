@@ -13,7 +13,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-class CPWL_Icon : public CPWL_Wnd {
+class CPWL_Icon final : public CPWL_Wnd {
  public:
   CPWL_Icon();
   ~CPWL_Icon() override;

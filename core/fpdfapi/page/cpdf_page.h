@@ -23,7 +23,7 @@ class CPDF_Object;
 class CPDF_PageRenderCache;
 class CPDF_PageRenderContext;
 
-class CPDF_Page : public IPDF_Page, public CPDF_PageObjectHolder {
+class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
  public:
   class View {};  // Caller implements as desired, empty here due to layering.
 

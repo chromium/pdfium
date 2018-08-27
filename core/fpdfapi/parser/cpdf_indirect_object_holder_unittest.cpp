@@ -14,7 +14,7 @@
 
 namespace {
 
-class MockIndirectObjectHolder : public CPDF_IndirectObjectHolder {
+class MockIndirectObjectHolder final : public CPDF_IndirectObjectHolder {
  public:
   MockIndirectObjectHolder() {}
   ~MockIndirectObjectHolder() override {}

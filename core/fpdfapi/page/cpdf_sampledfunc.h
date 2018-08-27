@@ -14,7 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CPDF_SampledFunc : public CPDF_Function {
+class CPDF_SampledFunc final : public CPDF_Function {
  public:
   struct SampleEncodeInfo {
     float encode_max;

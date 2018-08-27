@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CFX_GraphStateData : public Retainable {
+class CFX_GraphStateData final : public Retainable {
  public:
   enum LineCap { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 };
 

@@ -12,7 +12,7 @@
 
 class CXFA_Bookend;
 
-class CJX_Bookend : public CJX_Node {
+class CJX_Bookend final : public CJX_Node {
  public:
   explicit CJX_Bookend(CXFA_Bookend* node);
   ~CJX_Bookend() override;

@@ -12,7 +12,7 @@
 
 class CXFA_Solid;
 
-class CJX_Solid : public CJX_Node {
+class CJX_Solid final : public CJX_Node {
  public:
   explicit CJX_Solid(CXFA_Solid* node);
   ~CJX_Solid() override;

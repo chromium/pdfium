@@ -40,7 +40,7 @@ std::unique_ptr<CPDF_DataAvail> MakeDataAvailFromFile(
       nullptr, MakeValidatorFromFile(file_name), true);
 }
 
-class TestLinearizedHeader : public CPDF_LinearizedHeader {
+class TestLinearizedHeader final : public CPDF_LinearizedHeader {
  public:
   TestLinearizedHeader(const CPDF_Dictionary* pDict,
                        FX_FILESIZE szLastXRefOffset)

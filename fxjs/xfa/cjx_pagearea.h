@@ -12,7 +12,7 @@
 
 class CXFA_PageArea;
 
-class CJX_PageArea : public CJX_Container {
+class CJX_PageArea final : public CJX_Container {
  public:
   explicit CJX_PageArea(CXFA_PageArea* node);
   ~CJX_PageArea() override;

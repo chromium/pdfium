@@ -14,7 +14,7 @@
 
 class CFPF_SkiaFontMgr;
 
-class CFX_AndroidFontInfo : public SystemFontInfoIface {
+class CFX_AndroidFontInfo final : public SystemFontInfoIface {
  public:
   CFX_AndroidFontInfo();
   ~CFX_AndroidFontInfo() override;

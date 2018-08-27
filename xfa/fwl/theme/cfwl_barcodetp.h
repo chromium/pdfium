@@ -10,7 +10,7 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_BarcodeTP : public CFWL_WidgetTP {
+class CFWL_BarcodeTP final : public CFWL_WidgetTP {
  public:
   CFWL_BarcodeTP();
   ~CFWL_BarcodeTP() override;

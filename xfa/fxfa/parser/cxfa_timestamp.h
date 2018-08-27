@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_TimeStamp : public CXFA_Node {
+class CXFA_TimeStamp final : public CXFA_Node {
  public:
   CXFA_TimeStamp(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_TimeStamp() override;

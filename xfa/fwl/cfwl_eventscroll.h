@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/cfwl_event.h"
 
-class CFWL_EventScroll : public CFWL_Event {
+class CFWL_EventScroll final : public CFWL_Event {
  public:
   enum class Code {
     None = 1,

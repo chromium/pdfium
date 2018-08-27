@@ -12,7 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/cfwl_message.h"
 
-class CFWL_MessageKillFocus : public CFWL_Message {
+class CFWL_MessageKillFocus final : public CFWL_Message {
  public:
   explicit CFWL_MessageKillFocus(CFWL_Widget* pSrcTarget);
   CFWL_MessageKillFocus(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);

@@ -16,7 +16,7 @@
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 #include "third_party/base/stl_util.h"
 
-class CFX_BitmapStorer : public ScanlineComposerIface {
+class CFX_BitmapStorer final : public ScanlineComposerIface {
  public:
   CFX_BitmapStorer();
   ~CFX_BitmapStorer() override;

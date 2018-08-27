@@ -77,7 +77,7 @@ class CPDF_GeneralState {
   CFX_Matrix* GetMutableMatrix();
 
  private:
-  class StateData : public Retainable {
+  class StateData final : public Retainable {
    public:
     StateData();
     StateData(const StateData& that);

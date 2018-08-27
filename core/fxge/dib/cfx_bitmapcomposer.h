@@ -18,7 +18,7 @@
 class CFX_ClipRgn;
 class CFX_DIBitmap;
 
-class CFX_BitmapComposer : public ScanlineComposerIface {
+class CFX_BitmapComposer final : public ScanlineComposerIface {
  public:
   CFX_BitmapComposer();
   ~CFX_BitmapComposer() override;

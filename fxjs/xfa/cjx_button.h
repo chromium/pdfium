@@ -12,7 +12,7 @@
 
 class CXFA_Button;
 
-class CJX_Button : public CJX_Node {
+class CJX_Button final : public CJX_Node {
  public:
   explicit CJX_Button(CXFA_Button* node);
   ~CJX_Button() override;

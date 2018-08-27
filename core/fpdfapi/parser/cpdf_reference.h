@@ -15,7 +15,7 @@
 
 class CPDF_IndirectObjectHolder;
 
-class CPDF_Reference : public CPDF_Object {
+class CPDF_Reference final : public CPDF_Object {
  public:
   CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
   ~CPDF_Reference() override;

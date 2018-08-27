@@ -14,7 +14,7 @@
 class CXFA_Color;
 class CXFA_Graphics;
 
-class CXFA_Linear : public CXFA_Node {
+class CXFA_Linear final : public CXFA_Node {
  public:
   static constexpr XFA_AttributeEnum kDefaultType = XFA_AttributeEnum::ToRight;
 

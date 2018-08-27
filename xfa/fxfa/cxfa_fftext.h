@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFText : public CXFA_FFWidget {
+class CXFA_FFText final : public CXFA_FFWidget {
  public:
   explicit CXFA_FFText(CXFA_Node* pNode);
   ~CXFA_FFText() override;

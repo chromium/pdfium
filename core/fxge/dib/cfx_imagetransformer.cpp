@@ -180,7 +180,7 @@ class CPDF_FixedMatrix {
   const int f;
 };
 
-class CFX_BilinearMatrix : public CPDF_FixedMatrix {
+class CFX_BilinearMatrix final : public CPDF_FixedMatrix {
  public:
   explicit CFX_BilinearMatrix(const CFX_Matrix& src) : CPDF_FixedMatrix(src) {}
 

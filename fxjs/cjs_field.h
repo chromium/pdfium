@@ -27,7 +27,7 @@ enum FIELD_PROP {
   FP_VALUE
 };
 
-class CJS_Field : public CJS_Object {
+class CJS_Field final : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);

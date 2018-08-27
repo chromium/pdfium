@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CXFA_LinkUserData : public Retainable {
+class CXFA_LinkUserData final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

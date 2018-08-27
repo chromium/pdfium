@@ -25,7 +25,7 @@ enum class FWL_MouseCommand {
   Hover
 };
 
-class CFWL_MessageMouse : public CFWL_Message {
+class CFWL_MessageMouse final : public CFWL_Message {
  public:
   CFWL_MessageMouse(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   CFWL_MessageMouse(const CFWL_MessageMouse& other);

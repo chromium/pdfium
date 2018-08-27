@@ -11,7 +11,7 @@
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Barcode : public CXFA_Node {
+class CXFA_Barcode final : public CXFA_Node {
  public:
   CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Barcode() override;

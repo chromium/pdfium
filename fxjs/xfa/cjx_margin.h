@@ -12,7 +12,7 @@
 
 class CXFA_Margin;
 
-class CJX_Margin : public CJX_Node {
+class CJX_Margin final : public CJX_Node {
  public:
   explicit CJX_Margin(CXFA_Margin* node);
   ~CJX_Margin() override;

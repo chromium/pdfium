@@ -14,7 +14,7 @@
 
 class CBC_QRCodeWriter;
 
-class CBC_QRCode : public CBC_CodeBase {
+class CBC_QRCode final : public CBC_CodeBase {
  public:
   CBC_QRCode();
   ~CBC_QRCode() override;

@@ -27,7 +27,7 @@ enum CIDCoding : uint8_t {
   CIDCODING_UTF16,
 };
 
-class CPDF_CMap : public Retainable {
+class CPDF_CMap final : public Retainable {
  public:
   enum CodingScheme : uint8_t {
     OneByte,

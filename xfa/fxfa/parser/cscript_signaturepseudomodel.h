@@ -11,7 +11,7 @@
 
 class CXFA_Document;
 
-class CScript_SignaturePseudoModel : public CXFA_Object {
+class CScript_SignaturePseudoModel final : public CXFA_Object {
  public:
   explicit CScript_SignaturePseudoModel(CXFA_Document* pDocument);
   ~CScript_SignaturePseudoModel() override;

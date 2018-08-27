@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_rectangle.h"
 
-class CXFA_Border : public CXFA_Rectangle {
+class CXFA_Border final : public CXFA_Rectangle {
  public:
   CXFA_Border(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Border() override;

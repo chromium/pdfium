@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_ListBoxTP : public CFWL_WidgetTP {
+class CFWL_ListBoxTP final : public CFWL_WidgetTP {
  public:
   CFWL_ListBoxTP();
   ~CFWL_ListBoxTP() override;

@@ -12,7 +12,7 @@
 
 class CXFA_Para;
 
-class CJX_Para : public CJX_Node {
+class CJX_Para final : public CJX_Node {
  public:
   explicit CJX_Para(CXFA_Para* node);
   ~CJX_Para() override;

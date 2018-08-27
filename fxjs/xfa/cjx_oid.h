@@ -12,7 +12,7 @@
 
 class CXFA_Oid;
 
-class CJX_Oid : public CJX_TextNode {
+class CJX_Oid final : public CJX_TextNode {
  public:
   explicit CJX_Oid(CXFA_Oid* node);
   ~CJX_Oid() override;

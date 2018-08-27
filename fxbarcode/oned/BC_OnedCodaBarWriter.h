@@ -12,7 +12,7 @@
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
-class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
+class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
  public:
   CBC_OnedCodaBarWriter();
   ~CBC_OnedCodaBarWriter() override;

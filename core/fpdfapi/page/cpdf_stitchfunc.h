@@ -13,7 +13,7 @@
 
 #include "core/fpdfapi/page/cpdf_function.h"
 
-class CPDF_StitchFunc : public CPDF_Function {
+class CPDF_StitchFunc final : public CPDF_Function {
  public:
   CPDF_StitchFunc();
   ~CPDF_StitchFunc() override;

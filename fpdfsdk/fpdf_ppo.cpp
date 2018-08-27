@@ -445,7 +445,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(ObjectNumberMap* pObjNumberMap,
 
 // Copies pages from a source document into a destination document.
 // This class is intended to be used once via ExportPage() and then destroyed.
-class CPDF_PageExporter : public CPDF_PageOrganizer {
+class CPDF_PageExporter final : public CPDF_PageOrganizer {
  public:
   CPDF_PageExporter(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
   ~CPDF_PageExporter();
@@ -536,7 +536,7 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
 // Copies pages from a source document into a destination document. Creates 1
 // page in the destination document for every N source pages. This class is
 // intended to be used once via ExportNPagesToOne() and then destroyed.
-class CPDF_NPageToOneExporter : public CPDF_PageOrganizer {
+class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
  public:
   CPDF_NPageToOneExporter(CPDF_Document* pDestPDFDoc,
                           CPDF_Document* pSrcPDFDoc);

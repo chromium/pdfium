@@ -12,7 +12,7 @@
 
 class CXFA_Field;
 
-class CJX_Field : public CJX_Container {
+class CJX_Field final : public CJX_Container {
  public:
   explicit CJX_Field(CXFA_Field* field);
   ~CJX_Field() override;

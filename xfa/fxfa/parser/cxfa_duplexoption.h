@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_DuplexOption : public CXFA_Node {
+class CXFA_DuplexOption final : public CXFA_Node {
  public:
   CXFA_DuplexOption(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DuplexOption() override;

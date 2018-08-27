@@ -23,7 +23,7 @@ class CXFA_FMExpression {
   CXFA_FMExpression();
 };
 
-class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
+class CXFA_FMFunctionDefinition final : public CXFA_FMExpression {
  public:
   CXFA_FMFunctionDefinition(
       const WideStringView& wsName,
@@ -51,7 +51,7 @@ class CXFA_FMAST {
   std::vector<std::unique_ptr<CXFA_FMExpression>> expressions_;
 };
 
-class CXFA_FMVarExpression : public CXFA_FMExpression {
+class CXFA_FMVarExpression final : public CXFA_FMExpression {
  public:
   CXFA_FMVarExpression(const WideStringView& wsName,
                        std::unique_ptr<CXFA_FMSimpleExpression> pInit);
@@ -64,7 +64,7 @@ class CXFA_FMVarExpression : public CXFA_FMExpression {
   std::unique_ptr<CXFA_FMSimpleExpression> m_pInit;
 };
 
-class CXFA_FMExpExpression : public CXFA_FMExpression {
+class CXFA_FMExpExpression final : public CXFA_FMExpression {
  public:
   explicit CXFA_FMExpExpression(
       std::unique_ptr<CXFA_FMSimpleExpression> pExpression);
@@ -76,7 +76,7 @@ class CXFA_FMExpExpression : public CXFA_FMExpression {
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExpression;
 };
 
-class CXFA_FMBlockExpression : public CXFA_FMExpression {
+class CXFA_FMBlockExpression final : public CXFA_FMExpression {
  public:
   CXFA_FMBlockExpression(
       std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressionList);
@@ -88,7 +88,7 @@ class CXFA_FMBlockExpression : public CXFA_FMExpression {
   std::vector<std::unique_ptr<CXFA_FMExpression>> m_ExpressionList;
 };
 
-class CXFA_FMDoExpression : public CXFA_FMExpression {
+class CXFA_FMDoExpression final : public CXFA_FMExpression {
  public:
   explicit CXFA_FMDoExpression(std::unique_ptr<CXFA_FMExpression> pList);
   ~CXFA_FMDoExpression() override;
@@ -99,7 +99,7 @@ class CXFA_FMDoExpression : public CXFA_FMExpression {
   std::unique_ptr<CXFA_FMExpression> m_pList;
 };
 
-class CXFA_FMIfExpression : public CXFA_FMExpression {
+class CXFA_FMIfExpression final : public CXFA_FMExpression {
  public:
   CXFA_FMIfExpression(
       std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
@@ -117,7 +117,7 @@ class CXFA_FMIfExpression : public CXFA_FMExpression {
   std::unique_ptr<CXFA_FMExpression> m_pElseExpression;
 };
 
-class CXFA_FMWhileExpression : public CXFA_FMExpression {
+class CXFA_FMWhileExpression final : public CXFA_FMExpression {
  public:
   CXFA_FMWhileExpression(std::unique_ptr<CXFA_FMSimpleExpression> pCodition,
                          std::unique_ptr<CXFA_FMExpression> pExpression);
@@ -130,7 +130,7 @@ class CXFA_FMWhileExpression : public CXFA_FMExpression {
   std::unique_ptr<CXFA_FMExpression> m_pExpression;
 };
 
-class CXFA_FMBreakExpression : public CXFA_FMExpression {
+class CXFA_FMBreakExpression final : public CXFA_FMExpression {
  public:
   CXFA_FMBreakExpression();
   ~CXFA_FMBreakExpression() override;
@@ -138,7 +138,7 @@ class CXFA_FMBreakExpression : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 };
 
-class CXFA_FMContinueExpression : public CXFA_FMExpression {
+class CXFA_FMContinueExpression final : public CXFA_FMExpression {
  public:
   CXFA_FMContinueExpression();
   ~CXFA_FMContinueExpression() override;
@@ -146,7 +146,7 @@ class CXFA_FMContinueExpression : public CXFA_FMExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 };
 
-class CXFA_FMForExpression : public CXFA_FMExpression {
+class CXFA_FMForExpression final : public CXFA_FMExpression {
  public:
   CXFA_FMForExpression(const WideStringView& wsVariant,
                        std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
@@ -167,7 +167,7 @@ class CXFA_FMForExpression : public CXFA_FMExpression {
   std::unique_ptr<CXFA_FMExpression> m_pList;
 };
 
-class CXFA_FMForeachExpression : public CXFA_FMExpression {
+class CXFA_FMForeachExpression final : public CXFA_FMExpression {
  public:
   // Takes ownership of |pAccessors|.
   CXFA_FMForeachExpression(

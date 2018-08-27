@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_CaretTP : public CFWL_WidgetTP {
+class CFWL_CaretTP final : public CFWL_WidgetTP {
  public:
   CFWL_CaretTP();
   ~CFWL_CaretTP() override;

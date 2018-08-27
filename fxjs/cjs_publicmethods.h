@@ -12,7 +12,7 @@
 
 #include "fxjs/js_define.h"
 
-class CJS_PublicMethods : public CJS_Object {
+class CJS_PublicMethods final : public CJS_Object {
  public:
   CJS_PublicMethods(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_PublicMethods() override;

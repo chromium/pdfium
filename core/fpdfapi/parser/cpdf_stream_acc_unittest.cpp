@@ -12,7 +12,7 @@
 
 namespace {
 
-class InvalidStream : public IFX_SeekableReadStream {
+class InvalidStream final : public IFX_SeekableReadStream {
  public:
   InvalidStream() = default;
   ~InvalidStream() override = default;

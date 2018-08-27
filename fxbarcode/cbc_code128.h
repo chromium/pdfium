@@ -14,7 +14,7 @@
 
 class CBC_OnedCode128Writer;
 
-class CBC_Code128 : public CBC_OneCode {
+class CBC_Code128 final : public CBC_OneCode {
  public:
   explicit CBC_Code128(BC_TYPE type);
   ~CBC_Code128() override;

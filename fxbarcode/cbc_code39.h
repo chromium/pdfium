@@ -15,7 +15,7 @@
 
 class CBC_OnedCode39Writer;
 
-class CBC_Code39 : public CBC_OneCode {
+class CBC_Code39 final : public CBC_OneCode {
  public:
   CBC_Code39();
   ~CBC_Code39() override;

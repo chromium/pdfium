@@ -10,7 +10,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
-class CXFA_FFImageEdit : public CXFA_FFField {
+class CXFA_FFImageEdit final : public CXFA_FFField {
  public:
   explicit CXFA_FFImageEdit(CXFA_Node* pNode);
   ~CXFA_FFImageEdit() override;

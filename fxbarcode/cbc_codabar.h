@@ -14,7 +14,7 @@
 
 class CBC_OnedCodaBarWriter;
 
-class CBC_Codabar : public CBC_OneCode {
+class CBC_Codabar final : public CBC_OneCode {
  public:
   CBC_Codabar();
   ~CBC_Codabar() override;

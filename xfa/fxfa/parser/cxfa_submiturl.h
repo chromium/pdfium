@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_SubmitUrl : public CXFA_Node {
+class CXFA_SubmitUrl final : public CXFA_Node {
  public:
   CXFA_SubmitUrl(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SubmitUrl() override;

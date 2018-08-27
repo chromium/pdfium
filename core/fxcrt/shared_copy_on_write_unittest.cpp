@@ -29,7 +29,7 @@ class Observer {
   std::map<std::string, int> destruction_counts_;
 };
 
-class Object : public Retainable {
+class Object final : public Retainable {
  public:
   Object(Observer* observer, const std::string& name)
       : name_(name), observer_(observer) {

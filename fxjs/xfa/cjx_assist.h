@@ -12,7 +12,7 @@
 
 class CXFA_Assist;
 
-class CJX_Assist : public CJX_Node {
+class CJX_Assist final : public CJX_Node {
  public:
   explicit CJX_Assist(CXFA_Assist* node);
   ~CJX_Assist() override;

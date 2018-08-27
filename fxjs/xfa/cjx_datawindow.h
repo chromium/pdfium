@@ -14,7 +14,7 @@
 class CFXJSE_Value;
 class CScript_DataWindow;
 
-class CJX_DataWindow : public CJX_Object {
+class CJX_DataWindow final : public CJX_Object {
  public:
   explicit CJX_DataWindow(CScript_DataWindow* window);
   ~CJX_DataWindow() override;

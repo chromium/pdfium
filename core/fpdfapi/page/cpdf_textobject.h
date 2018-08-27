@@ -23,7 +23,7 @@ class CPDF_TextObjectItem {
   CFX_PointF m_Origin;
 };
 
-class CPDF_TextObject : public CPDF_PageObject {
+class CPDF_TextObject final : public CPDF_PageObject {
  public:
   explicit CPDF_TextObject(int32_t content_stream);
   CPDF_TextObject();

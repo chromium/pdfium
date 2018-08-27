@@ -12,7 +12,7 @@
 
 class CXFA_Text;
 
-class CJX_Text : public CJX_Content {
+class CJX_Text final : public CJX_Content {
  public:
   explicit CJX_Text(CXFA_Text* node);
   ~CJX_Text() override;

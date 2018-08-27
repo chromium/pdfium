@@ -21,7 +21,7 @@ class CFWL_Widget;
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 
-class CFWL_ScrollBar : public CFWL_Widget {
+class CFWL_ScrollBar final : public CFWL_Widget {
  public:
   CFWL_ScrollBar(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
@@ -55,7 +55,7 @@ class CFWL_ScrollBar : public CFWL_Widget {
   void SetTrackPos(float fTrackPos);
 
  private:
-  class Timer : public CFWL_Timer {
+  class Timer final : public CFWL_Timer {
    public:
     explicit Timer(CFWL_ScrollBar* pToolTip);
     ~Timer() override {}

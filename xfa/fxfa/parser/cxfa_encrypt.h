@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Encrypt : public CXFA_Node {
+class CXFA_Encrypt final : public CXFA_Node {
  public:
   CXFA_Encrypt(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Encrypt() override;

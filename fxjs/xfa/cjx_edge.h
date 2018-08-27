@@ -12,7 +12,7 @@
 
 class CXFA_Edge;
 
-class CJX_Edge : public CJX_Node {
+class CJX_Edge final : public CJX_Node {
  public:
   explicit CJX_Edge(CXFA_Edge* node);
   ~CJX_Edge() override;

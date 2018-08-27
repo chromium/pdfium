@@ -11,7 +11,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Occur : public CXFA_Node {
+class CXFA_Occur final : public CXFA_Node {
  public:
   static constexpr int32_t kDefaultMax = 1;
   static constexpr int32_t kDefaultMin = 1;

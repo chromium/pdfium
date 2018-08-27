@@ -12,7 +12,7 @@
 
 class CXFA_Event;
 
-class CJX_Event : public CJX_Node {
+class CJX_Event final : public CJX_Node {
  public:
   explicit CJX_Event(CXFA_Event* node);
   ~CJX_Event() override;

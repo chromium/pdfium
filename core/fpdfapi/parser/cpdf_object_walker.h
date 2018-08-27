@@ -55,7 +55,7 @@ class CPDF_ObjectWalker {
   std::stack<std::unique_ptr<SubobjectIterator>> stack_;
 };
 
-class CPDF_NonConstObjectWalker : public CPDF_ObjectWalker {
+class CPDF_NonConstObjectWalker final : public CPDF_ObjectWalker {
  public:
   explicit CPDF_NonConstObjectWalker(CPDF_Object* root)
       : CPDF_ObjectWalker(root) {}

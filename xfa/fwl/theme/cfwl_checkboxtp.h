@@ -12,7 +12,7 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_CheckBoxTP : public CFWL_WidgetTP {
+class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
  public:
   CFWL_CheckBoxTP();
   ~CFWL_CheckBoxTP() override;

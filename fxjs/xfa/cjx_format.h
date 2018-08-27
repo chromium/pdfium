@@ -12,7 +12,7 @@
 
 class CXFA_Format;
 
-class CJX_Format : public CJX_Node {
+class CJX_Format final : public CJX_Node {
  public:
   explicit CJX_Format(CXFA_Format* node);
   ~CJX_Format() override;

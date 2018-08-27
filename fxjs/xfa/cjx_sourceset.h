@@ -12,7 +12,7 @@
 
 class CXFA_SourceSet;
 
-class CJX_SourceSet : public CJX_Model {
+class CJX_SourceSet final : public CJX_Model {
  public:
   explicit CJX_SourceSet(CXFA_SourceSet* node);
   ~CJX_SourceSet() override;

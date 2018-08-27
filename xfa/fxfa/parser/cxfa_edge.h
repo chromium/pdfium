@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_stroke.h"
 
-class CXFA_Edge : public CXFA_Stroke {
+class CXFA_Edge final : public CXFA_Stroke {
  public:
   static constexpr FX_ARGB kDefaultColor = 0xFF000000;
 

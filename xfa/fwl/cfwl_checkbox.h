@@ -33,7 +33,7 @@ class CFWL_MessageMouse;
 class CFWL_WidgetProperties;
 class CFWL_Widget;
 
-class CFWL_CheckBox : public CFWL_Widget {
+class CFWL_CheckBox final : public CFWL_Widget {
  public:
   explicit CFWL_CheckBox(const CFWL_App* pApp);
   ~CFWL_CheckBox() override;

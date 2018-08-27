@@ -11,7 +11,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_PushButtonTP : public CFWL_WidgetTP {
+class CFWL_PushButtonTP final : public CFWL_WidgetTP {
  public:
   CFWL_PushButtonTP();
   ~CFWL_PushButtonTP() override;

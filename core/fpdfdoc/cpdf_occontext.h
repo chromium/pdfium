@@ -17,7 +17,7 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_PageObject;
 
-class CPDF_OCContext : public Retainable {
+class CPDF_OCContext final : public Retainable {
  public:
   enum UsageType { View = 0, Design, Print, Export };
 

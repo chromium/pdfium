@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CFX_SeekableStreamProxy : public IFX_SeekableReadStream {
+class CFX_SeekableStreamProxy final : public IFX_SeekableReadStream {
  public:
   enum class From {
     Begin = 0,

@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_AppearanceFilter : public CXFA_Node {
+class CXFA_AppearanceFilter final : public CXFA_Node {
  public:
   CXFA_AppearanceFilter(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_AppearanceFilter() override;

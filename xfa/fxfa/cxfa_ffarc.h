@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFArc : public CXFA_FFWidget {
+class CXFA_FFArc final : public CXFA_FFWidget {
  public:
   explicit CXFA_FFArc(CXFA_Node* pnode);
   ~CXFA_FFArc() override;

@@ -23,7 +23,7 @@ class CPDFSDK_PageView;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
-class CPDFSDK_WidgetHandler : public IPDFSDK_AnnotHandler {
+class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
  public:
   explicit CPDFSDK_WidgetHandler(CPDFSDK_FormFillEnvironment* pApp);
   ~CPDFSDK_WidgetHandler() override;

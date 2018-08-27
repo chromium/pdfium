@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_BreakBefore : public CXFA_Node {
+class CXFA_BreakBefore final : public CXFA_Node {
  public:
   CXFA_BreakBefore(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_BreakBefore() override;

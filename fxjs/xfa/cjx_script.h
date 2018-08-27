@@ -12,7 +12,7 @@
 
 class CXFA_Script;
 
-class CJX_Script : public CJX_Node {
+class CJX_Script final : public CJX_Node {
  public:
   explicit CJX_Script(CXFA_Script* node);
   ~CJX_Script() override;

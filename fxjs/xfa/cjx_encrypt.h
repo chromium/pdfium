@@ -12,7 +12,7 @@
 
 class CXFA_Encrypt;
 
-class CJX_Encrypt : public CJX_Node {
+class CJX_Encrypt final : public CJX_Node {
  public:
   explicit CJX_Encrypt(CXFA_Encrypt* node);
   ~CJX_Encrypt() override;

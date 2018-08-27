@@ -32,7 +32,7 @@ class CPDF_CID2UnicodeMap;
 class CPDF_CMap;
 class CPDF_StreamAcc;
 
-class CPDF_CIDFont : public CPDF_Font {
+class CPDF_CIDFont final : public CPDF_Font {
  public:
   CPDF_CIDFont(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
   ~CPDF_CIDFont() override;

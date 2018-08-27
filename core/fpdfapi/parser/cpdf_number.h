@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_Number : public CPDF_Object {
+class CPDF_Number final : public CPDF_Object {
  public:
   CPDF_Number();
   explicit CPDF_Number(int value);

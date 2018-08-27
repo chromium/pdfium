@@ -12,7 +12,7 @@
 class CXFA_Script;
 class CXFA_Submit;
 
-class CXFA_Event : public CXFA_Node {
+class CXFA_Event final : public CXFA_Node {
  public:
   CXFA_Event(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Event() override;

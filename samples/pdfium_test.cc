@@ -135,7 +135,7 @@ Optional<std::string> ExpandDirectoryPath(const std::string& path) {
 #endif  // WORDEXP_AVAILABLE
 }
 
-struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
+struct FPDF_FORMFILLINFO_PDFiumTest final : public FPDF_FORMFILLINFO {
   // Hold a map of the currently loaded pages in order to avoid them
   // to get loaded twice.
   std::map<int, ScopedFPDFPage> loaded_pages;

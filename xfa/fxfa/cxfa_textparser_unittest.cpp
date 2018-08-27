@@ -6,7 +6,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CXFA_TestTextParser : public CXFA_TextParser {
+class CXFA_TestTextParser final : public CXFA_TextParser {
  public:
   CXFA_TestTextParser() : CXFA_TextParser() {}
 

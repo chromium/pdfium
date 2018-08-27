@@ -43,7 +43,7 @@ struct FX_RTFTEXTOBJ {
   int32_t iVerticalScale;
 };
 
-class CFX_RTFBreak : public CFX_Break {
+class CFX_RTFBreak final : public CFX_Break {
  public:
   explicit CFX_RTFBreak(uint32_t dwLayoutStyles);
   ~CFX_RTFBreak() override;

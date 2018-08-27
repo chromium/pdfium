@@ -18,7 +18,7 @@
 class CFX_WideTextBuf;
 class CXFA_Document;
 
-class CFXJSE_FormCalcContext : public CFXJSE_HostObject {
+class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
  public:
   CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
                          CFXJSE_Context* pScriptContext,

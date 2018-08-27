@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_box.h"
 
-class CXFA_Arc : public CXFA_Box {
+class CXFA_Arc final : public CXFA_Box {
  public:
   CXFA_Arc(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Arc() override;

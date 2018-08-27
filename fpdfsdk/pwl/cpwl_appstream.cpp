@@ -92,7 +92,7 @@ class AutoClosedCommand {
   ByteString close_;
 };
 
-class AutoClosedQCommand : public AutoClosedCommand {
+class AutoClosedQCommand final : public AutoClosedCommand {
  public:
   explicit AutoClosedQCommand(std::ostringstream* stream)
       : AutoClosedCommand(stream, kStateSaveOperator, kStateRestoreOperator) {}

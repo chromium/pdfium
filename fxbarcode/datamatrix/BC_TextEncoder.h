@@ -9,7 +9,7 @@
 
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
 
-class CBC_TextEncoder : public CBC_C40Encoder {
+class CBC_TextEncoder final : public CBC_C40Encoder {
  public:
   CBC_TextEncoder();
   ~CBC_TextEncoder() override;

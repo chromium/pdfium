@@ -1517,7 +1517,7 @@ CFX_DIBAttribute::~CFX_DIBAttribute() {
 }
 #endif  // PDF_ENABLE_XFA
 
-class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder {
+class CCodec_RLScanlineDecoder final : public CCodec_ScanlineDecoder {
  public:
   CCodec_RLScanlineDecoder();
   ~CCodec_RLScanlineDecoder() override;

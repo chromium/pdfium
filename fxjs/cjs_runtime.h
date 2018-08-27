@@ -21,9 +21,9 @@
 
 class CJS_EventContext;
 
-class CJS_Runtime : public IJS_Runtime,
-                    public CFXJS_Engine,
-                    public Observable<CJS_Runtime> {
+class CJS_Runtime final : public IJS_Runtime,
+                          public CFXJS_Engine,
+                          public Observable<CJS_Runtime> {
  public:
   using FieldEvent = std::pair<WideString, JS_EVENT_T>;
 

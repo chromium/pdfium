@@ -35,7 +35,7 @@ const struct {
     {"Times-Italic", "Times New Roman Italic"},
 };
 
-class CFX_MacFontInfo : public CFX_FolderFontInfo {
+class CFX_MacFontInfo final : public CFX_FolderFontInfo {
  public:
   CFX_MacFontInfo() {}
   ~CFX_MacFontInfo() override {}

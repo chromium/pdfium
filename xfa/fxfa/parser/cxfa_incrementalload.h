@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_IncrementalLoad : public CXFA_Node {
+class CXFA_IncrementalLoad final : public CXFA_Node {
  public:
   CXFA_IncrementalLoad(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_IncrementalLoad() override;

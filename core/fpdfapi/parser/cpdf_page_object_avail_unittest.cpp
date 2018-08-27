@@ -21,8 +21,7 @@
 
 namespace {
 
-
-class TestReadValidator : public CPDF_ReadValidator {
+class TestReadValidator final : public CPDF_ReadValidator {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -37,7 +36,7 @@ class TestReadValidator : public CPDF_ReadValidator {
   ~TestReadValidator() override {}
 };
 
-class TestHolder : public CPDF_IndirectObjectHolder {
+class TestHolder final : public CPDF_IndirectObjectHolder {
  public:
   enum class ObjectState {
     Unavailable,

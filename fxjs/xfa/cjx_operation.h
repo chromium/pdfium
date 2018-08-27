@@ -12,7 +12,7 @@
 
 class CXFA_Operation;
 
-class CJX_Operation : public CJX_TextNode {
+class CJX_Operation final : public CJX_TextNode {
  public:
   explicit CJX_Operation(CXFA_Operation* node);
   ~CJX_Operation() override;

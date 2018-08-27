@@ -23,7 +23,7 @@ enum class CFX_CSSNumberType {
   Picas,
 };
 
-class CFX_CSSNumberValue : public CFX_CSSValue {
+class CFX_CSSNumberValue final : public CFX_CSSValue {
  public:
   CFX_CSSNumberValue(CFX_CSSNumberType type, float value);
   ~CFX_CSSNumberValue() override;

@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_CurrencySymbols : public CXFA_Node {
+class CXFA_CurrencySymbols final : public CXFA_Node {
  public:
   CXFA_CurrencySymbols(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CurrencySymbols() override;

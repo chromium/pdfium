@@ -12,7 +12,7 @@
 
 class SkPictureRecorder;
 
-class CFX_DefaultRenderDevice : public CFX_RenderDevice {
+class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
  public:
   CFX_DefaultRenderDevice();
   ~CFX_DefaultRenderDevice() override;

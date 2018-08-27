@@ -23,7 +23,7 @@
 
 #define PNG_ERROR_SIZE 256
 
-class CPngContext : public CCodec_PngModule::Context {
+class CPngContext final : public CCodec_PngModule::Context {
  public:
   CPngContext(CCodec_PngModule* pModule, CCodec_PngModule::Delegate* pDelegate);
   ~CPngContext() override;

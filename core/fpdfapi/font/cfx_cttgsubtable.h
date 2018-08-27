@@ -64,14 +64,14 @@ class CFX_CTTGSUBTable {
     uint16_t CoverageFormat;
   };
 
-  struct TCoverageFormat1 : public TCoverageFormatBase {
+  struct TCoverageFormat1 final : public TCoverageFormatBase {
     TCoverageFormat1();
     ~TCoverageFormat1() override;
 
     std::vector<uint16_t> GlyphArray;
   };
 
-  struct TCoverageFormat2 : public TCoverageFormatBase {
+  struct TCoverageFormat2 final : public TCoverageFormatBase {
     TCoverageFormat2();
     ~TCoverageFormat2() override;
 
@@ -94,14 +94,14 @@ class CFX_CTTGSUBTable {
     uint16_t SubstFormat;
   };
 
-  struct TSubTable1 : public TSubTableBase {
+  struct TSubTable1 final : public TSubTableBase {
     TSubTable1();
     ~TSubTable1() override;
 
     int16_t DeltaGlyphID;
   };
 
-  struct TSubTable2 : public TSubTableBase {
+  struct TSubTable2 final : public TSubTableBase {
     TSubTable2();
     ~TSubTable2() override;
 

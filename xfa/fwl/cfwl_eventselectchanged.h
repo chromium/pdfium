@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/cfwl_event.h"
 
-class CFWL_EventSelectChanged : public CFWL_Event {
+class CFWL_EventSelectChanged final : public CFWL_Event {
  public:
   explicit CFWL_EventSelectChanged(CFWL_Widget* pSrcTarget);
   ~CFWL_EventSelectChanged() override;

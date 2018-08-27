@@ -12,7 +12,7 @@
 
 class CXFA_Decimal;
 
-class CJX_Decimal : public CJX_Content {
+class CJX_Decimal final : public CJX_Content {
  public:
   explicit CJX_Decimal(CXFA_Decimal* node);
   ~CJX_Decimal() override;

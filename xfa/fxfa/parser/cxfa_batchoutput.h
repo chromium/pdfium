@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_BatchOutput : public CXFA_Node {
+class CXFA_BatchOutput final : public CXFA_Node {
  public:
   CXFA_BatchOutput(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_BatchOutput() override;

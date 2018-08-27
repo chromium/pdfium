@@ -7,7 +7,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 
-class CPDF_StringArchiveStream : public IFX_ArchiveStream {
+class CPDF_StringArchiveStream final : public IFX_ArchiveStream {
  public:
   explicit CPDF_StringArchiveStream(std::ostringstream* stream);
   ~CPDF_StringArchiveStream() override;

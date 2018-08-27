@@ -12,7 +12,7 @@
 
 class CXFA_Rectangle;
 
-class CJX_Rectangle : public CJX_Node {
+class CJX_Rectangle final : public CJX_Node {
  public:
   explicit CJX_Rectangle(CXFA_Rectangle* node);
   ~CJX_Rectangle() override;

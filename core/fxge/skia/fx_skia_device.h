@@ -22,7 +22,7 @@ class SkPictureRecorder;
 class SkiaState;
 struct SkIRect;
 
-class CFX_SkiaDeviceDriver : public RenderDeviceDriverIface {
+class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
  public:
   CFX_SkiaDeviceDriver(const RetainPtr<CFX_DIBitmap>& pBitmap,
                        bool bRgbByteOrder,

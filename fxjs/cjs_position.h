@@ -9,7 +9,7 @@
 
 #include "fxjs/js_define.h"
 
-class CJS_Position : public CJS_Object {
+class CJS_Position final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 

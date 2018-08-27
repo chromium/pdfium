@@ -10,7 +10,7 @@
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fxjs/js_define.h"
 
-class CJS_Annot : public CJS_Object {
+class CJS_Annot final : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);

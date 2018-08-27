@@ -10,7 +10,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 
-class StringWriteStream : public IFX_SeekableWriteStream {
+class StringWriteStream final : public IFX_SeekableWriteStream {
  public:
   StringWriteStream();
   ~StringWriteStream() override;

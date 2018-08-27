@@ -12,7 +12,7 @@
 
 class CXFA_SetProperty;
 
-class CJX_SetProperty : public CJX_Node {
+class CJX_SetProperty final : public CJX_Node {
  public:
   explicit CJX_SetProperty(CXFA_SetProperty* node);
   ~CJX_SetProperty() override;

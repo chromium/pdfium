@@ -12,7 +12,7 @@
 
 class CXFA_Delete;
 
-class CJX_Delete : public CJX_TextNode {
+class CJX_Delete final : public CJX_TextNode {
  public:
   explicit CJX_Delete(CXFA_Delete* node);
   ~CJX_Delete() override;

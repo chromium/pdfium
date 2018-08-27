@@ -14,7 +14,7 @@
 
 class CBC_DataMatrixWriter;
 
-class CBC_DataMatrix : public CBC_CodeBase {
+class CBC_DataMatrix final : public CBC_CodeBase {
  public:
   CBC_DataMatrix();
   ~CBC_DataMatrix() override;

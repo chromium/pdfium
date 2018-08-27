@@ -12,7 +12,7 @@
 
 class CXFA_Node;
 
-class CXFA_ThisProxy : public CXFA_Object {
+class CXFA_ThisProxy final : public CXFA_Object {
  public:
   CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode);
   ~CXFA_ThisProxy() override;

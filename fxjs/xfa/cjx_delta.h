@@ -12,7 +12,7 @@
 
 class CXFA_Delta;
 
-class CJX_Delta : public CJX_Object {
+class CJX_Delta final : public CJX_Object {
  public:
   explicit CJX_Delta(CXFA_Delta* delta);
   ~CJX_Delta() override;

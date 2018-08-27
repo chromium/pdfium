@@ -13,7 +13,7 @@
 class CFWL_Event;
 class CFWL_Widget;
 
-class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
+class CXFA_FFNumericEdit final : public CXFA_FFTextEdit {
  public:
   explicit CXFA_FFNumericEdit(CXFA_Node* pNode);
   ~CXFA_FFNumericEdit() override;

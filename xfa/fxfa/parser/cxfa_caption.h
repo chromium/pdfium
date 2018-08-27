@@ -13,7 +13,7 @@ class CXFA_Font;
 class CXFA_Margin;
 class CXFA_Value;
 
-class CXFA_Caption : public CXFA_Node {
+class CXFA_Caption final : public CXFA_Node {
  public:
   static constexpr XFA_AttributeEnum kDefaultPlacementType =
       XFA_AttributeEnum::Left;

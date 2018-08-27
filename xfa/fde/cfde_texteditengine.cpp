@@ -19,7 +19,7 @@ constexpr size_t kMaxEditOperations = 128;
 constexpr size_t kGapSize = 128;
 constexpr size_t kPageWidthMax = 0xffff;
 
-class InsertOperation : public CFDE_TextEditEngine::Operation {
+class InsertOperation final : public CFDE_TextEditEngine::Operation {
  public:
   InsertOperation(CFDE_TextEditEngine* engine,
                   size_t start_idx,
@@ -44,7 +44,7 @@ class InsertOperation : public CFDE_TextEditEngine::Operation {
   WideString added_text_;
 };
 
-class DeleteOperation : public CFDE_TextEditEngine::Operation {
+class DeleteOperation final : public CFDE_TextEditEngine::Operation {
  public:
   DeleteOperation(CFDE_TextEditEngine* engine,
                   size_t start_idx,
@@ -69,7 +69,7 @@ class DeleteOperation : public CFDE_TextEditEngine::Operation {
   WideString removed_text_;
 };
 
-class ReplaceOperation : public CFDE_TextEditEngine::Operation {
+class ReplaceOperation final : public CFDE_TextEditEngine::Operation {
  public:
   ReplaceOperation(CFDE_TextEditEngine* engine,
                    size_t start_idx,

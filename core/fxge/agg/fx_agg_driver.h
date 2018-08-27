@@ -30,7 +30,7 @@ class CAgg_PathData {
   agg::path_storage m_PathData;
 };
 
-class CFX_AggDeviceDriver : public RenderDeviceDriverIface {
+class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
  public:
   CFX_AggDeviceDriver(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       bool bRgbByteOrder,

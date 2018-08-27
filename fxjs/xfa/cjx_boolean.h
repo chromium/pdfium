@@ -12,7 +12,7 @@
 
 class CXFA_Boolean;
 
-class CJX_Boolean : public CJX_Content {
+class CJX_Boolean final : public CJX_Content {
  public:
   explicit CJX_Boolean(CXFA_Boolean* node);
   ~CJX_Boolean() override;

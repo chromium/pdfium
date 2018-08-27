@@ -12,7 +12,7 @@
 
 class CXFA_Submit;
 
-class CJX_Submit : public CJX_Node {
+class CJX_Submit final : public CJX_Node {
  public:
   explicit CJX_Submit(CXFA_Submit* node);
   ~CJX_Submit() override;

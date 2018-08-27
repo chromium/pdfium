@@ -19,7 +19,7 @@ class CPDF_AllStates;
 class CFX_Matrix;
 class CPDF_Type3Char;
 
-class CPDF_Form : public CPDF_PageObjectHolder {
+class CPDF_Form final : public CPDF_PageObjectHolder {
  public:
   CPDF_Form(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageResources,

@@ -447,7 +447,7 @@ void FaxGet1DLine(const uint8_t* src_buf,
 
 }  // namespace
 
-class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
+class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
  public:
   CCodec_FaxDecoder(const uint8_t* src_buf,
                     uint32_t src_size,

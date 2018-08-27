@@ -12,7 +12,7 @@
 
 class CPDF_PageObject;
 
-class CPDF_PageObjectList
+class CPDF_PageObjectList final
     : public std::deque<std::unique_ptr<CPDF_PageObject>> {
  public:
   CPDF_PageObject* GetPageObjectByIndex(int index) const;

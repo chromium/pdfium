@@ -11,7 +11,7 @@
 
 class CXFA_Document;
 
-class CScript_DataWindow : public CXFA_Object {
+class CScript_DataWindow final : public CXFA_Object {
  public:
   explicit CScript_DataWindow(CXFA_Document* pDocument);
   ~CScript_DataWindow() override;

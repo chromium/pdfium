@@ -12,7 +12,7 @@
 
 class CXFA_Barcode;
 
-class CJX_Barcode : public CJX_Node {
+class CJX_Barcode final : public CJX_Node {
  public:
   explicit CJX_Barcode(CXFA_Barcode* arc);
   ~CJX_Barcode() override;

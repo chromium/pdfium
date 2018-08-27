@@ -12,7 +12,7 @@
 
 class CXFA_WsdlAddress;
 
-class CJX_WsdlAddress : public CJX_TextNode {
+class CJX_WsdlAddress final : public CJX_TextNode {
  public:
   explicit CJX_WsdlAddress(CXFA_WsdlAddress* node);
   ~CJX_WsdlAddress() override;

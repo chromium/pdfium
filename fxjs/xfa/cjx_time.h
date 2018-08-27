@@ -12,7 +12,7 @@
 
 class CXFA_Time;
 
-class CJX_Time : public CJX_Content {
+class CJX_Time final : public CJX_Content {
  public:
   explicit CJX_Time(CXFA_Time* node);
   ~CJX_Time() override;

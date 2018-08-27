@@ -11,7 +11,7 @@
 
 class CXFA_Edge;
 
-class CXFA_Line : public CXFA_Node {
+class CXFA_Line final : public CXFA_Node {
  public:
   CXFA_Line(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Line() override;

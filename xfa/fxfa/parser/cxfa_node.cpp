@@ -418,7 +418,7 @@ class CXFA_WidgetLayoutData {
   float m_fWidgetHeight = -1.0f;
 };
 
-class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
+class CXFA_TextLayoutData final : public CXFA_WidgetLayoutData {
  public:
   CXFA_TextLayoutData() = default;
   ~CXFA_TextLayoutData() override = default;
@@ -443,7 +443,7 @@ class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
   std::unique_ptr<CXFA_TextProvider> m_pTextProvider;
 };
 
-class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
+class CXFA_ImageLayoutData final : public CXFA_WidgetLayoutData {
  public:
   CXFA_ImageLayoutData() = default;
   ~CXFA_ImageLayoutData() override = default;
@@ -503,7 +503,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   std::vector<float> m_FieldSplitArray;
 };
 
-class CXFA_TextEditData : public CXFA_FieldLayoutData {
+class CXFA_TextEditData final : public CXFA_FieldLayoutData {
  public:
   CXFA_TextEditData() = default;
   ~CXFA_TextEditData() override = default;
@@ -511,7 +511,7 @@ class CXFA_TextEditData : public CXFA_FieldLayoutData {
   CXFA_TextEditData* AsTextEditData() override { return this; }
 };
 
-class CXFA_ImageEditData : public CXFA_FieldLayoutData {
+class CXFA_ImageEditData final : public CXFA_FieldLayoutData {
  public:
   CXFA_ImageEditData() = default;
   ~CXFA_ImageEditData() override = default;

@@ -12,7 +12,7 @@
 
 class CXFA_Draw;
 
-class CJX_Draw : public CJX_Container {
+class CJX_Draw final : public CJX_Container {
  public:
   explicit CJX_Draw(CXFA_Draw* node);
   ~CJX_Draw() override;

@@ -12,7 +12,7 @@
 
 class CXFA_Integer;
 
-class CJX_Integer : public CJX_Content {
+class CJX_Integer final : public CJX_Content {
  public:
   explicit CJX_Integer(CXFA_Integer* node);
   ~CJX_Integer() override;

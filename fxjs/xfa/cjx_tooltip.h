@@ -12,7 +12,7 @@
 
 class CXFA_ToolTip;
 
-class CJX_ToolTip : public CJX_TextNode {
+class CJX_ToolTip final : public CJX_TextNode {
  public:
   explicit CJX_ToolTip(CXFA_ToolTip* node);
   ~CJX_ToolTip() override;

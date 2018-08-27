@@ -14,7 +14,7 @@ class CScript_LogPseudoModel;
 
 // TODO(dsinclair): This doesn't exist in the spec. Remove after
 // xfa_basic_data_element_script is removed.
-class CJX_LogPseudoModel : public CJX_Object {
+class CJX_LogPseudoModel final : public CJX_Object {
  public:
   explicit CJX_LogPseudoModel(CScript_LogPseudoModel* model);
   ~CJX_LogPseudoModel() override;

@@ -17,7 +17,7 @@ class CPDF_Document;
 class CPDF_Dictionary;
 class CPDF_Font;
 
-class CPVT_FontMap : public IPVT_FontMap {
+class CPVT_FontMap final : public IPVT_FontMap {
  public:
   CPVT_FontMap(CPDF_Document* pDoc,
                CPDF_Dictionary* pResDict,

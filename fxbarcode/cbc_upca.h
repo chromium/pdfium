@@ -14,7 +14,7 @@
 
 class CBC_OnedUPCAWriter;
 
-class CBC_UPCA : public CBC_OneCode {
+class CBC_UPCA final : public CBC_OneCode {
  public:
   CBC_UPCA();
   ~CBC_UPCA() override;

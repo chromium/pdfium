@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFImage : public CXFA_FFWidget {
+class CXFA_FFImage final : public CXFA_FFWidget {
  public:
   explicit CXFA_FFImage(CXFA_Node* pNode);
   ~CXFA_FFImage() override;

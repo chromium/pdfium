@@ -12,7 +12,7 @@
 
 class CXFA_Picture;
 
-class CJX_Picture : public CJX_Node {
+class CJX_Picture final : public CJX_Node {
  public:
   explicit CJX_Picture(CXFA_Picture* node);
   ~CJX_Picture() override;

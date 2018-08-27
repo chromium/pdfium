@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/cfwl_event.h"
 
-class CFWL_EventValidate : public CFWL_Event {
+class CFWL_EventValidate final : public CFWL_Event {
  public:
   explicit CFWL_EventValidate(CFWL_Widget* pSrcTarget);
   ~CFWL_EventValidate() override;

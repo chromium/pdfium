@@ -26,7 +26,7 @@ class CFXJSE_ResolveProcessor;
 class CJS_Runtime;
 class CXFA_List;
 
-class CFXJSE_Engine : public CFX_V8 {
+class CFXJSE_Engine final : public CFX_V8 {
  public:
   static CXFA_Object* ToObject(const v8::FunctionCallbackInfo<v8::Value>& info);
   static CXFA_Object* ToObject(CFXJSE_Value* pValue);

@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_PlaintextMetadata : public CXFA_Node {
+class CXFA_PlaintextMetadata final : public CXFA_Node {
  public:
   CXFA_PlaintextMetadata(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PlaintextMetadata() override;

@@ -18,7 +18,7 @@ class CJS_EventHandler;
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 
-class CJS_EventContext : public IJS_EventContext {
+class CJS_EventContext final : public IJS_EventContext {
  public:
   explicit CJS_EventContext(CJS_Runtime* pRuntime);
   ~CJS_EventContext() override;

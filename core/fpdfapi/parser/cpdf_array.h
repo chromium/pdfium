@@ -18,7 +18,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "third_party/base/ptr_util.h"
 
-class CPDF_Array : public CPDF_Object {
+class CPDF_Array final : public CPDF_Object {
  public:
   using const_iterator =
       std::vector<std::unique_ptr<CPDF_Object>>::const_iterator;

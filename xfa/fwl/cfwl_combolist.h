@@ -13,7 +13,7 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-class CFWL_ComboList : public CFWL_ListBox {
+class CFWL_ComboList final : public CFWL_ListBox {
  public:
   CFWL_ComboList(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,

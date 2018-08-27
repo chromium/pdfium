@@ -14,7 +14,7 @@
 // Output stream operator so GTEST macros work with CFX_DateTime objects.
 std::ostream& operator<<(std::ostream& os, const CFX_DateTime& dt);
 
-class CFX_InvalidSeekableReadStream : public IFX_SeekableReadStream {
+class CFX_InvalidSeekableReadStream final : public IFX_SeekableReadStream {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

@@ -20,7 +20,7 @@
 
 namespace {
 
-class MockDownloadHints : public FX_DOWNLOADHINTS {
+class MockDownloadHints final : public FX_DOWNLOADHINTS {
  public:
   static void SAddSegment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
   }
@@ -33,7 +33,7 @@ class MockDownloadHints : public FX_DOWNLOADHINTS {
   ~MockDownloadHints() {}
 };
 
-class TestAsyncLoader : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
+class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
  public:
   explicit TestAsyncLoader(const std::string& file_name) {
     std::string file_path;

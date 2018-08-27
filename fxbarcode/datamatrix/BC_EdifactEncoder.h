@@ -9,7 +9,7 @@
 
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 
-class CBC_EdifactEncoder : public CBC_Encoder {
+class CBC_EdifactEncoder final : public CBC_Encoder {
  public:
   CBC_EdifactEncoder();
   ~CBC_EdifactEncoder() override;

@@ -11,7 +11,7 @@
 
 class CFDE_TextEditEngineTest : public testing::Test {
  public:
-  class Delegate : public CFDE_TextEditEngine::Delegate {
+  class Delegate final : public CFDE_TextEditEngine::Delegate {
    public:
     void Reset() {
       text_is_full = false;

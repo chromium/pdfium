@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/cfwl_themepart.h"
 
-class CFWL_ThemeText : public CFWL_ThemePart {
+class CFWL_ThemeText final : public CFWL_ThemePart {
  public:
   CFWL_ThemeText() : m_pGraphics(nullptr) {}
 

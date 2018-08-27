@@ -35,7 +35,7 @@ class CXFA_FFWidget;
 class CXFA_FFWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 
-class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
+class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
  public:
 #ifdef PDF_ENABLE_XFA
   CXFA_FFWidget* GetMixXFAWidget() const;

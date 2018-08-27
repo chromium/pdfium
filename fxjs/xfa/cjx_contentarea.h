@@ -12,7 +12,7 @@
 
 class CXFA_ContentArea;
 
-class CJX_ContentArea : public CJX_Container {
+class CJX_ContentArea final : public CJX_Container {
  public:
   explicit CJX_ContentArea(CXFA_ContentArea* node);
   ~CJX_ContentArea() override;

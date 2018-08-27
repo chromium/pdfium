@@ -12,7 +12,7 @@
 
 class CXFA_Form;
 
-class CJX_Form : public CJX_Model {
+class CJX_Form final : public CJX_Model {
  public:
   explicit CJX_Form(CXFA_Form* form);
   ~CJX_Form() override;

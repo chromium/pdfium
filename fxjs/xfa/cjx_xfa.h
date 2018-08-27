@@ -12,7 +12,7 @@
 
 class CXFA_Xfa;
 
-class CJX_Xfa : public CJX_Model {
+class CJX_Xfa final : public CJX_Model {
  public:
   explicit CJX_Xfa(CXFA_Xfa* node);
   ~CJX_Xfa() override;

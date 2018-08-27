@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
 
-class CFX_CSSValueList : public CFX_CSSValue {
+class CFX_CSSValueList final : public CFX_CSSValue {
  public:
   explicit CFX_CSSValueList(std::vector<RetainPtr<CFX_CSSValue>>& list);
   ~CFX_CSSValueList() override;

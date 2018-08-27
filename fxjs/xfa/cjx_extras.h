@@ -12,7 +12,7 @@
 
 class CXFA_Extras;
 
-class CJX_Extras : public CJX_Node {
+class CJX_Extras final : public CJX_Node {
  public:
   explicit CJX_Extras(CXFA_Extras* node);
   ~CJX_Extras() override;

@@ -9,7 +9,7 @@
 
 #include "fxjs/js_define.h"
 
-class CJS_GlobalArrays : public CJS_Object {
+class CJS_GlobalArrays final : public CJS_Object {
  public:
   static void DefineJSObjects(CJS_Runtime* pRuntmie);
 };

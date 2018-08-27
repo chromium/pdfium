@@ -20,7 +20,7 @@ class CPDFSDK_PageView;
 class CXFA_FFWidget;
 class CXFA_FFWidgetHandler;
 
-class CPDFSDK_XFAWidgetHandler : public IPDFSDK_AnnotHandler {
+class CPDFSDK_XFAWidgetHandler final : public IPDFSDK_AnnotHandler {
  public:
   explicit CPDFSDK_XFAWidgetHandler(CPDFSDK_FormFillEnvironment* pApp);
   ~CPDFSDK_XFAWidgetHandler() override;

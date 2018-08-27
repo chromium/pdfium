@@ -12,7 +12,7 @@
 
 class CXFA_Items;
 
-class CJX_Items : public CJX_Node {
+class CJX_Items final : public CJX_Node {
  public:
   explicit CJX_Items(CXFA_Items* node);
   ~CJX_Items() override;

@@ -16,7 +16,7 @@
 
 class CJS_GlobalData;
 
-class CJS_Global : public CJS_Object {
+class CJS_Global final : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);

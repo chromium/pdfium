@@ -14,7 +14,7 @@
 
 class CPDFXFA_Context;
 
-class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
+class CPDFXFA_DocEnvironment final : public IXFA_DocEnvironment {
  public:
   explicit CPDFXFA_DocEnvironment(CPDFXFA_Context*);
   ~CPDFXFA_DocEnvironment() override;

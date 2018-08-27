@@ -59,7 +59,7 @@ class CPDF_TextState {
   float* GetMutableCTM();
 
  private:
-  class TextData : public Retainable {
+  class TextData final : public Retainable {
    public:
     TextData();
     TextData(const TextData& src);

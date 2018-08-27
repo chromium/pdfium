@@ -15,7 +15,7 @@
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/fx_dib.h"
 
-class CFX_UnicodeEncodingEx : public CFX_UnicodeEncoding {
+class CFX_UnicodeEncodingEx final : public CFX_UnicodeEncoding {
  public:
   CFX_UnicodeEncodingEx(CFX_Font* pFont, uint32_t EncodingID);
   ~CFX_UnicodeEncodingEx() override;

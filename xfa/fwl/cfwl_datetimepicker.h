@@ -30,7 +30,7 @@
 
 class CFWL_DateTimeEdit;
 
-class CFWL_DateTimePicker : public CFWL_Widget {
+class CFWL_DateTimePicker final : public CFWL_Widget {
  public:
   explicit CFWL_DateTimePicker(const CFWL_App* pApp);
   ~CFWL_DateTimePicker() override;

@@ -20,7 +20,7 @@ class CXFA_Button;
 class CXFA_TextLayout;
 class CXFA_TextProvider;
 
-class CXFA_FFPushButton : public CXFA_FFField {
+class CXFA_FFPushButton final : public CXFA_FFField {
  public:
   CXFA_FFPushButton(CXFA_Node* pNode, CXFA_Button* button);
   ~CXFA_FFPushButton() override;

@@ -10,7 +10,7 @@
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
-class CBC_OnedCode39Writer : public CBC_OneDimWriter {
+class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
  public:
   CBC_OnedCode39Writer();
   ~CBC_OnedCode39Writer() override;

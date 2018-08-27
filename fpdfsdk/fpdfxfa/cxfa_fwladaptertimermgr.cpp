@@ -14,7 +14,7 @@
 
 namespace {
 
-class CFWL_FWLAdapterTimerInfo : public CFWL_TimerInfo {
+class CFWL_FWLAdapterTimerInfo final : public CFWL_TimerInfo {
  public:
   CFWL_FWLAdapterTimerInfo(IFWL_AdapterTimerMgr* mgr,
                            int32_t event,

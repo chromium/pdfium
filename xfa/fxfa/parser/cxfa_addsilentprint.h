@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_AddSilentPrint : public CXFA_Node {
+class CXFA_AddSilentPrint final : public CXFA_Node {
  public:
   CXFA_AddSilentPrint(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_AddSilentPrint() override;

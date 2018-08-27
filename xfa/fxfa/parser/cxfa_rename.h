@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Rename : public CXFA_Node {
+class CXFA_Rename final : public CXFA_Node {
  public:
   CXFA_Rename(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Rename() override;

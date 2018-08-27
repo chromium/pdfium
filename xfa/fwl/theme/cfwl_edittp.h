@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_EditTP : public CFWL_WidgetTP {
+class CFWL_EditTP final : public CFWL_WidgetTP {
  public:
   CFWL_EditTP();
   ~CFWL_EditTP() override;

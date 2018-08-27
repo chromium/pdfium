@@ -14,7 +14,7 @@
 
 class CPDF_Object;
 
-class CPDF_PSFunc : public CPDF_Function {
+class CPDF_PSFunc final : public CPDF_Function {
  public:
   CPDF_PSFunc();
   ~CPDF_PSFunc() override;

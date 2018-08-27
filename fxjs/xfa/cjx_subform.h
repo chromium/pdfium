@@ -12,7 +12,7 @@
 
 class CXFA_Delta;
 
-class CJX_Subform : public CJX_Container {
+class CJX_Subform final : public CJX_Container {
  public:
   explicit CJX_Subform(CXFA_Node* container);
   ~CJX_Subform() override;

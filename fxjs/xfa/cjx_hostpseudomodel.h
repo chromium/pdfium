@@ -14,7 +14,7 @@
 class CFXJSE_Value;
 class CScript_HostPseudoModel;
 
-class CJX_HostPseudoModel : public CJX_Object {
+class CJX_HostPseudoModel final : public CJX_Object {
  public:
   explicit CJX_HostPseudoModel(CScript_HostPseudoModel* model);
   ~CJX_HostPseudoModel() override;

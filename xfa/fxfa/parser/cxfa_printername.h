@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_PrinterName : public CXFA_Node {
+class CXFA_PrinterName final : public CXFA_Node {
  public:
   CXFA_PrinterName(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PrinterName() override;

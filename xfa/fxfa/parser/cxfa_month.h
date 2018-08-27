@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Month : public CXFA_Node {
+class CXFA_Month final : public CXFA_Node {
  public:
   CXFA_Month(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Month() override;

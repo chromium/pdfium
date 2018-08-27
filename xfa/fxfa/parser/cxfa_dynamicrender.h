@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_DynamicRender : public CXFA_Node {
+class CXFA_DynamicRender final : public CXFA_Node {
  public:
   CXFA_DynamicRender(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_DynamicRender() override;

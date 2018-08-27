@@ -12,7 +12,7 @@
 
 class CXFA_Certificate;
 
-class CJX_Certificate : public CJX_TextNode {
+class CJX_Certificate final : public CJX_TextNode {
  public:
   explicit CJX_Certificate(CXFA_Certificate* node);
   ~CJX_Certificate() override;

@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_EquateRange : public CXFA_Node {
+class CXFA_EquateRange final : public CXFA_Node {
  public:
   CXFA_EquateRange(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EquateRange() override;

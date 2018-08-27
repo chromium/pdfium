@@ -12,7 +12,7 @@
 
 class CXFA_KeyUsage;
 
-class CJX_KeyUsage : public CJX_Node {
+class CJX_KeyUsage final : public CJX_Node {
  public:
   explicit CJX_KeyUsage(CXFA_KeyUsage* node);
   ~CJX_KeyUsage() override;

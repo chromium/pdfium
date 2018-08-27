@@ -10,7 +10,7 @@
 #include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_Type1Font : public CPDF_SimpleFont {
+class CPDF_Type1Font final : public CPDF_SimpleFont {
  public:
   CPDF_Type1Font(CPDF_Document* pDocument, CPDF_Dictionary* pFontDict);
   ~CPDF_Type1Font() override;

@@ -15,7 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_stream.h"
 
-class CPDF_Stream : public CPDF_Object {
+class CPDF_Stream final : public CPDF_Object {
  public:
   CPDF_Stream();
   CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,

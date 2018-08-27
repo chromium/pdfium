@@ -12,7 +12,7 @@
 
 class CXFA_Speak;
 
-class CJX_Speak : public CJX_TextNode {
+class CJX_Speak final : public CJX_TextNode {
  public:
   explicit CJX_Speak(CXFA_Speak* node);
   ~CJX_Speak() override;

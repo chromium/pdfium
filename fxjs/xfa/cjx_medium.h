@@ -12,7 +12,7 @@
 
 class CXFA_Medium;
 
-class CJX_Medium : public CJX_Node {
+class CJX_Medium final : public CJX_Node {
  public:
   explicit CJX_Medium(CXFA_Medium* node);
   ~CJX_Medium() override;

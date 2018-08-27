@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPSOutput : public IFX_WriteStream {
+class CPSOutput final : public IFX_WriteStream {
  public:
   enum class OutputMode { kExtEscape, kGdiComment };
 

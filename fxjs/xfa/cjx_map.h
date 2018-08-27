@@ -12,7 +12,7 @@
 
 class CXFA_Map;
 
-class CJX_Map : public CJX_Node {
+class CJX_Map final : public CJX_Node {
  public:
   explicit CJX_Map(CXFA_Map* node);
   ~CJX_Map() override;

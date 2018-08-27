@@ -14,7 +14,7 @@
 class CFX_DIBitmap;
 class CFX_RenderDevice;
 
-class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
+class CBC_OnedEAN13Writer final : public CBC_OneDimWriter {
  public:
   CBC_OnedEAN13Writer();
   ~CBC_OnedEAN13Writer() override;

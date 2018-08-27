@@ -54,7 +54,7 @@ struct FX_TXTRUN {
   bool bSkipSpace;
 };
 
-class CFX_TxtBreak : public CFX_Break {
+class CFX_TxtBreak final : public CFX_Break {
  public:
   CFX_TxtBreak();
   ~CFX_TxtBreak() override;

@@ -12,7 +12,7 @@
 
 class CXFA_Handler;
 
-class CJX_Handler : public CJX_TextNode {
+class CJX_Handler final : public CJX_TextNode {
  public:
   explicit CJX_Handler(CXFA_Handler* node);
   ~CJX_Handler() override;

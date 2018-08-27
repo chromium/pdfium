@@ -10,7 +10,7 @@
 
 namespace {
 
-class TestNode : public CXFA_Node {
+class TestNode final : public CXFA_Node {
  public:
   explicit TestNode(CXFA_Document* doc)
       : CXFA_Node(doc,

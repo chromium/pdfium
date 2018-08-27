@@ -16,7 +16,7 @@
 class CFX_XMLDocument;
 class CFX_XMLElement;
 
-class CXFA_XMLLocale : public LocaleIface {
+class CXFA_XMLLocale final : public LocaleIface {
  public:
   static std::unique_ptr<CXFA_XMLLocale> Create(pdfium::span<uint8_t> data);
 

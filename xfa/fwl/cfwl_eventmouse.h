@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/cfwl_event.h"
 
-class CFWL_EventMouse : public CFWL_Event {
+class CFWL_EventMouse final : public CFWL_Event {
  public:
   explicit CFWL_EventMouse(CFWL_Widget* pSrcTarget);
   CFWL_EventMouse(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);

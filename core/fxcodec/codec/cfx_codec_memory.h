@@ -8,7 +8,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
 
-class CFX_CodecMemory : public Retainable {
+class CFX_CodecMemory final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

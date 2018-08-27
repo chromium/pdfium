@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_PickTrayByPDFSize : public CXFA_Node {
+class CXFA_PickTrayByPDFSize final : public CXFA_Node {
  public:
   CXFA_PickTrayByPDFSize(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PickTrayByPDFSize() override;

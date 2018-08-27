@@ -12,7 +12,7 @@
 
 class CXFA_XmlConnection;
 
-class CJX_XmlConnection : public CJX_Node {
+class CJX_XmlConnection final : public CJX_Node {
  public:
   explicit CJX_XmlConnection(CXFA_XmlConnection* node);
   ~CJX_XmlConnection() override;

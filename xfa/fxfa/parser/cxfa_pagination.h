@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Pagination : public CXFA_Node {
+class CXFA_Pagination final : public CXFA_Node {
  public:
   CXFA_Pagination(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Pagination() override;

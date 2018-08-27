@@ -12,7 +12,7 @@
 
 class CXFA_Filter;
 
-class CJX_Filter : public CJX_Node {
+class CJX_Filter final : public CJX_Node {
  public:
   explicit CJX_Filter(CXFA_Filter* node);
   ~CJX_Filter() override;

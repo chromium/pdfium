@@ -12,7 +12,7 @@
 
 class CXFA_DataValue;
 
-class CJX_DataValue : public CJX_Node {
+class CJX_DataValue final : public CJX_Node {
  public:
   explicit CJX_DataValue(CXFA_DataValue* node);
   ~CJX_DataValue() override;

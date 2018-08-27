@@ -12,7 +12,7 @@
 
 class CXFA_DigestMethod;
 
-class CJX_DigestMethod : public CJX_Node {
+class CJX_DigestMethod final : public CJX_Node {
  public:
   explicit CJX_DigestMethod(CXFA_DigestMethod* node);
   ~CJX_DigestMethod() override;

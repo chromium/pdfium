@@ -12,7 +12,7 @@
 
 class CXFA_ChoiceList;
 
-class CJX_ChoiceList : public CJX_Node {
+class CJX_ChoiceList final : public CJX_Node {
  public:
   explicit CJX_ChoiceList(CXFA_ChoiceList* node);
   ~CJX_ChoiceList() override;

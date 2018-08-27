@@ -12,7 +12,7 @@
 
 class CXFA_Variables;
 
-class CJX_Variables : public CJX_Container {
+class CJX_Variables final : public CJX_Container {
  public:
   explicit CJX_Variables(CXFA_Variables* node);
   ~CJX_Variables() override;

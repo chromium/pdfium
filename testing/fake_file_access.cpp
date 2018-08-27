@@ -14,7 +14,7 @@
 
 namespace {
 
-class FileAccessWrapper : public FPDF_FILEACCESS {
+class FileAccessWrapper final : public FPDF_FILEACCESS {
  public:
   explicit FileAccessWrapper(FakeFileAccess* simulator)
       : simulator_(simulator) {
@@ -35,7 +35,7 @@ class FileAccessWrapper : public FPDF_FILEACCESS {
   fxcrt::UnownedPtr<FakeFileAccess> simulator_;
 };
 
-class FileAvailImpl : public FX_FILEAVAIL {
+class FileAvailImpl final : public FX_FILEAVAIL {
  public:
   explicit FileAvailImpl(FakeFileAccess* simulator) : simulator_(simulator) {
     version = 1;
@@ -53,7 +53,7 @@ class FileAvailImpl : public FX_FILEAVAIL {
   fxcrt::UnownedPtr<FakeFileAccess> simulator_;
 };
 
-class DownloadHintsImpl : public FX_DOWNLOADHINTS {
+class DownloadHintsImpl final : public FX_DOWNLOADHINTS {
  public:
   explicit DownloadHintsImpl(FakeFileAccess* simulator)
       : simulator_(simulator) {

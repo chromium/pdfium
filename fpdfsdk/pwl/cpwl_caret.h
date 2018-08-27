@@ -9,7 +9,7 @@
 
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-class CPWL_Caret : public CPWL_Wnd {
+class CPWL_Caret final : public CPWL_Wnd {
  public:
   CPWL_Caret();
   ~CPWL_Caret() override;

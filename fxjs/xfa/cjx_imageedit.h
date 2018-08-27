@@ -12,7 +12,7 @@
 
 class CXFA_ImageEdit;
 
-class CJX_ImageEdit : public CJX_Node {
+class CJX_ImageEdit final : public CJX_Node {
  public:
   explicit CJX_ImageEdit(CXFA_ImageEdit* node);
   ~CJX_ImageEdit() override;

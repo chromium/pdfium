@@ -13,7 +13,7 @@
 class CXFA_SignatureProperties;
 
 /* Deprecated */
-class CJX_SignatureProperties : public CJX_Node {
+class CJX_SignatureProperties final : public CJX_Node {
  public:
   explicit CJX_SignatureProperties(CXFA_SignatureProperties* node);
   ~CJX_SignatureProperties() override;

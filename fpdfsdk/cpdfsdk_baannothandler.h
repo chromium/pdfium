@@ -22,7 +22,7 @@ class CPDFSDK_PageView;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
-class CPDFSDK_BAAnnotHandler : public IPDFSDK_AnnotHandler {
+class CPDFSDK_BAAnnotHandler final : public IPDFSDK_AnnotHandler {
  public:
   CPDFSDK_BAAnnotHandler();
   ~CPDFSDK_BAAnnotHandler() override;

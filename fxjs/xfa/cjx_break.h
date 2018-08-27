@@ -12,7 +12,7 @@
 
 class CXFA_Break;
 
-class CJX_Break : public CJX_Node {
+class CJX_Break final : public CJX_Node {
  public:
   explicit CJX_Break(CXFA_Break* node);
   ~CJX_Break() override;

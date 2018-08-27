@@ -14,7 +14,7 @@
 
 class CBC_PDF417Writer;
 
-class CBC_PDF417I : public CBC_CodeBase {
+class CBC_PDF417I final : public CBC_CodeBase {
  public:
   CBC_PDF417I();
   ~CBC_PDF417I() override;

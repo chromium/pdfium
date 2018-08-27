@@ -12,7 +12,7 @@
 
 class CXFA_SoapAddress;
 
-class CJX_SoapAddress : public CJX_TextNode {
+class CJX_SoapAddress final : public CJX_TextNode {
  public:
   explicit CJX_SoapAddress(CXFA_SoapAddress* node);
   ~CJX_SoapAddress() override;

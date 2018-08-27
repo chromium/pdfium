@@ -12,7 +12,7 @@
 
 class CXFA_SoapAction;
 
-class CJX_SoapAction : public CJX_TextNode {
+class CJX_SoapAction final : public CJX_TextNode {
  public:
   explicit CJX_SoapAction(CXFA_SoapAction* node);
   ~CJX_SoapAction() override;

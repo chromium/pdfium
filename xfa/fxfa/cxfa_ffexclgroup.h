@@ -10,7 +10,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFExclGroup : public CXFA_FFWidget {
+class CXFA_FFExclGroup final : public CXFA_FFWidget {
  public:
   explicit CXFA_FFExclGroup(CXFA_Node* pNode);
   ~CXFA_FFExclGroup() override;

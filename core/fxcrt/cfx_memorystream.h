@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CFX_MemoryStream : public IFX_SeekableStream {
+class CFX_MemoryStream final : public IFX_SeekableStream {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

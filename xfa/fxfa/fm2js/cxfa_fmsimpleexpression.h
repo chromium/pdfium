@@ -36,7 +36,7 @@ class CXFA_FMSimpleExpression {
   const XFA_FM_TOKEN m_op;
 };
 
-class CXFA_FMNullExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMNullExpression final : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMNullExpression();
   ~CXFA_FMNullExpression() override {}
@@ -44,7 +44,7 @@ class CXFA_FMNullExpression : public CXFA_FMSimpleExpression {
   bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) override;
 };
 
-class CXFA_FMNumberExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMNumberExpression final : public CXFA_FMSimpleExpression {
  public:
   explicit CXFA_FMNumberExpression(WideStringView wsNumber);
   ~CXFA_FMNumberExpression() override;
@@ -55,7 +55,7 @@ class CXFA_FMNumberExpression : public CXFA_FMSimpleExpression {
   WideStringView m_wsNumber;
 };
 
-class CXFA_FMStringExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMStringExpression final : public CXFA_FMSimpleExpression {
  public:
   explicit CXFA_FMStringExpression(WideStringView wsString);
   ~CXFA_FMStringExpression() override;
@@ -66,7 +66,7 @@ class CXFA_FMStringExpression : public CXFA_FMSimpleExpression {
   WideStringView m_wsString;
 };
 
-class CXFA_FMIdentifierExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMIdentifierExpression final : public CXFA_FMSimpleExpression {
  public:
   explicit CXFA_FMIdentifierExpression(WideStringView wsIdentifier);
   ~CXFA_FMIdentifierExpression() override;
@@ -77,7 +77,7 @@ class CXFA_FMIdentifierExpression : public CXFA_FMSimpleExpression {
   WideStringView m_wsIdentifier;
 };
 
-class CXFA_FMAssignExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMAssignExpression final : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMAssignExpression(XFA_FM_TOKEN op,
                           std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -109,7 +109,7 @@ class CXFA_FMBinExpression : public CXFA_FMSimpleExpression {
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp2;
 };
 
-class CXFA_FMLogicalOrExpression : public CXFA_FMBinExpression {
+class CXFA_FMLogicalOrExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMLogicalOrExpression(XFA_FM_TOKEN op,
                              std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -117,7 +117,7 @@ class CXFA_FMLogicalOrExpression : public CXFA_FMBinExpression {
   ~CXFA_FMLogicalOrExpression() override {}
 };
 
-class CXFA_FMLogicalAndExpression : public CXFA_FMBinExpression {
+class CXFA_FMLogicalAndExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMLogicalAndExpression(XFA_FM_TOKEN op,
                               std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -125,7 +125,7 @@ class CXFA_FMLogicalAndExpression : public CXFA_FMBinExpression {
   ~CXFA_FMLogicalAndExpression() override {}
 };
 
-class CXFA_FMEqualExpression : public CXFA_FMBinExpression {
+class CXFA_FMEqualExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMEqualExpression(XFA_FM_TOKEN op,
                          std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -133,7 +133,7 @@ class CXFA_FMEqualExpression : public CXFA_FMBinExpression {
   ~CXFA_FMEqualExpression() override {}
 };
 
-class CXFA_FMNotEqualExpression : public CXFA_FMBinExpression {
+class CXFA_FMNotEqualExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMNotEqualExpression(XFA_FM_TOKEN op,
                             std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -141,7 +141,7 @@ class CXFA_FMNotEqualExpression : public CXFA_FMBinExpression {
   ~CXFA_FMNotEqualExpression() override {}
 };
 
-class CXFA_FMGtExpression : public CXFA_FMBinExpression {
+class CXFA_FMGtExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMGtExpression(XFA_FM_TOKEN op,
                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -149,7 +149,7 @@ class CXFA_FMGtExpression : public CXFA_FMBinExpression {
   ~CXFA_FMGtExpression() override {}
 };
 
-class CXFA_FMGeExpression : public CXFA_FMBinExpression {
+class CXFA_FMGeExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMGeExpression(XFA_FM_TOKEN op,
                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -157,7 +157,7 @@ class CXFA_FMGeExpression : public CXFA_FMBinExpression {
   ~CXFA_FMGeExpression() override {}
 };
 
-class CXFA_FMLtExpression : public CXFA_FMBinExpression {
+class CXFA_FMLtExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMLtExpression(XFA_FM_TOKEN op,
                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -165,7 +165,7 @@ class CXFA_FMLtExpression : public CXFA_FMBinExpression {
   ~CXFA_FMLtExpression() override {}
 };
 
-class CXFA_FMLeExpression : public CXFA_FMBinExpression {
+class CXFA_FMLeExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMLeExpression(XFA_FM_TOKEN op,
                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -173,7 +173,7 @@ class CXFA_FMLeExpression : public CXFA_FMBinExpression {
   ~CXFA_FMLeExpression() override {}
 };
 
-class CXFA_FMPlusExpression : public CXFA_FMBinExpression {
+class CXFA_FMPlusExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMPlusExpression(XFA_FM_TOKEN op,
                         std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -181,7 +181,7 @@ class CXFA_FMPlusExpression : public CXFA_FMBinExpression {
   ~CXFA_FMPlusExpression() override {}
 };
 
-class CXFA_FMMinusExpression : public CXFA_FMBinExpression {
+class CXFA_FMMinusExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMMinusExpression(XFA_FM_TOKEN op,
                          std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -189,7 +189,7 @@ class CXFA_FMMinusExpression : public CXFA_FMBinExpression {
   ~CXFA_FMMinusExpression() override {}
 };
 
-class CXFA_FMMulExpression : public CXFA_FMBinExpression {
+class CXFA_FMMulExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMMulExpression(XFA_FM_TOKEN op,
                        std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -197,7 +197,7 @@ class CXFA_FMMulExpression : public CXFA_FMBinExpression {
   ~CXFA_FMMulExpression() override {}
 };
 
-class CXFA_FMDivExpression : public CXFA_FMBinExpression {
+class CXFA_FMDivExpression final : public CXFA_FMBinExpression {
  public:
   CXFA_FMDivExpression(XFA_FM_TOKEN op,
                        std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
@@ -221,25 +221,25 @@ class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp;
 };
 
-class CXFA_FMPosExpression : public CXFA_FMUnaryExpression {
+class CXFA_FMPosExpression final : public CXFA_FMUnaryExpression {
  public:
   explicit CXFA_FMPosExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExp);
   ~CXFA_FMPosExpression() override {}
 };
 
-class CXFA_FMNegExpression : public CXFA_FMUnaryExpression {
+class CXFA_FMNegExpression final : public CXFA_FMUnaryExpression {
  public:
   explicit CXFA_FMNegExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExp);
   ~CXFA_FMNegExpression() override {}
 };
 
-class CXFA_FMNotExpression : public CXFA_FMUnaryExpression {
+class CXFA_FMNotExpression final : public CXFA_FMUnaryExpression {
  public:
   explicit CXFA_FMNotExpression(std::unique_ptr<CXFA_FMSimpleExpression> pExp);
   ~CXFA_FMNotExpression() override {}
 };
 
-class CXFA_FMCallExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMCallExpression final : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMCallExpression(
       std::unique_ptr<CXFA_FMSimpleExpression> pExp,
@@ -257,7 +257,7 @@ class CXFA_FMCallExpression : public CXFA_FMSimpleExpression {
   std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> m_Arguments;
 };
 
-class CXFA_FMDotAccessorExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMDotAccessorExpression final : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMDotAccessorExpression(
       std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
@@ -274,7 +274,7 @@ class CXFA_FMDotAccessorExpression : public CXFA_FMSimpleExpression {
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp2;
 };
 
-class CXFA_FMIndexExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMIndexExpression final : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMIndexExpression(XFA_FM_AccessorIndex accessorIndex,
                          std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp,
@@ -289,7 +289,7 @@ class CXFA_FMIndexExpression : public CXFA_FMSimpleExpression {
   bool m_bIsStarIndex;
 };
 
-class CXFA_FMDotDotAccessorExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMDotDotAccessorExpression final : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMDotDotAccessorExpression(
       std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
@@ -306,7 +306,7 @@ class CXFA_FMDotDotAccessorExpression : public CXFA_FMSimpleExpression {
   std::unique_ptr<CXFA_FMSimpleExpression> m_pExp2;
 };
 
-class CXFA_FMMethodCallExpression : public CXFA_FMSimpleExpression {
+class CXFA_FMMethodCallExpression final : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMMethodCallExpression(
       std::unique_ptr<CXFA_FMSimpleExpression> pAccessorExp1,

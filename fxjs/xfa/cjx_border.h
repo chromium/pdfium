@@ -12,7 +12,7 @@
 
 class CXFA_Border;
 
-class CJX_Border : public CJX_Node {
+class CJX_Border final : public CJX_Node {
  public:
   explicit CJX_Border(CXFA_Border* node);
   ~CJX_Border() override;

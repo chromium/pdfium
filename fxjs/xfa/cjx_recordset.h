@@ -12,7 +12,7 @@
 
 class CXFA_RecordSet;
 
-class CJX_RecordSet : public CJX_Node {
+class CJX_RecordSet final : public CJX_Node {
  public:
   explicit CJX_RecordSet(CXFA_RecordSet* node);
   ~CJX_RecordSet() override;

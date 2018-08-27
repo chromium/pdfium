@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_PrintScaling : public CXFA_Node {
+class CXFA_PrintScaling final : public CXFA_Node {
  public:
   CXFA_PrintScaling(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_PrintScaling() override;

@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Delete : public CXFA_Node {
+class CXFA_Delete final : public CXFA_Node {
  public:
   CXFA_Delete(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Delete() override;

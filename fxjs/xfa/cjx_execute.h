@@ -12,7 +12,7 @@
 
 class CXFA_Execute;
 
-class CJX_Execute : public CJX_Node {
+class CJX_Execute final : public CJX_Node {
  public:
   explicit CJX_Execute(CXFA_Execute* node);
   ~CJX_Execute() override;

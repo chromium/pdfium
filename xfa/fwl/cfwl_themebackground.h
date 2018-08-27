@@ -13,7 +13,7 @@
 class CXFA_Graphics;
 class CXFA_GEPath;
 
-class CFWL_ThemeBackground : public CFWL_ThemePart {
+class CFWL_ThemeBackground final : public CFWL_ThemePart {
  public:
   CFWL_ThemeBackground();
   ~CFWL_ThemeBackground();

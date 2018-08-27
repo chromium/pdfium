@@ -17,7 +17,7 @@
 
 class CPDF_Dictionary;
 
-class CPDF_ContentMarkItem : public Retainable {
+class CPDF_ContentMarkItem final : public Retainable {
  public:
   enum ParamType { None, PropertiesDict, DirectDict };
 

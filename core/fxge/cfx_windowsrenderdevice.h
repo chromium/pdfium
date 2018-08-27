@@ -36,7 +36,7 @@ extern PDFiumEnsureTypefaceCharactersAccessible
 #endif
 extern WindowsPrintMode g_pdfium_print_mode;
 
-class CFX_WindowsRenderDevice : public CFX_RenderDevice {
+class CFX_WindowsRenderDevice final : public CFX_RenderDevice {
  public:
   static RenderDeviceDriverIface* CreateDriver(HDC hDC);
 

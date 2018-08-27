@@ -12,7 +12,7 @@
 
 class CXFA_Float;
 
-class CJX_Float : public CJX_Content {
+class CJX_Float final : public CJX_Content {
  public:
   explicit CJX_Float(CXFA_Float* node);
   ~CJX_Float() override;

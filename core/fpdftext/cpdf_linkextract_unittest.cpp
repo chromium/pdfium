@@ -7,7 +7,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 // Class to help test functions in CPDF_LinkExtract class.
-class CPDF_TestLinkExtract : public CPDF_LinkExtract {
+class CPDF_TestLinkExtract final : public CPDF_LinkExtract {
  public:
   CPDF_TestLinkExtract() : CPDF_LinkExtract(nullptr) {}
 

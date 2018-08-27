@@ -12,7 +12,7 @@
 
 class CXFA_Keep;
 
-class CJX_Keep : public CJX_Node {
+class CJX_Keep final : public CJX_Node {
  public:
   explicit CJX_Keep(CXFA_Keep* node);
   ~CJX_Keep() override;

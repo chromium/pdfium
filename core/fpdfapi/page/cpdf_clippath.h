@@ -44,7 +44,7 @@ class CPDF_ClipPath {
   void Transform(const CFX_Matrix& matrix);
 
  private:
-  class PathData : public Retainable {
+  class PathData final : public Retainable {
    public:
     using PathAndTypeData = std::pair<CPDF_Path, uint8_t>;
 

@@ -12,7 +12,7 @@
 
 class CXFA_Linear;
 
-class CJX_Linear : public CJX_Node {
+class CJX_Linear final : public CJX_Node {
  public:
   explicit CJX_Linear(CXFA_Linear* node);
   ~CJX_Linear() override;

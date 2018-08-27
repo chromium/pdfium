@@ -12,7 +12,7 @@
 
 class CXFA_Corner;
 
-class CJX_Corner : public CJX_Node {
+class CJX_Corner final : public CJX_Node {
  public:
   explicit CJX_Corner(CXFA_Corner* node);
   ~CJX_Corner() override;

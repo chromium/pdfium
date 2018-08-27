@@ -33,8 +33,8 @@ enum LoadStatus {
   FXFA_LOADSTATUS_CLOSED
 };
 
-class CPDFXFA_Context : public CPDF_Document::Extension,
-                        public IXFA_AppProvider {
+class CPDFXFA_Context final : public CPDF_Document::Extension,
+                              public IXFA_AppProvider {
  public:
   explicit CPDFXFA_Context(CPDF_Document* pPDFDoc);
   ~CPDFXFA_Context() override;

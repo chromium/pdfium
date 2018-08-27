@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_CompressObjectStream : public CXFA_Node {
+class CXFA_CompressObjectStream final : public CXFA_Node {
  public:
   CXFA_CompressObjectStream(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_CompressObjectStream() override;

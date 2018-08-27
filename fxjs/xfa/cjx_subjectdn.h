@@ -12,7 +12,7 @@
 
 class CXFA_SubjectDN;
 
-class CJX_SubjectDN : public CJX_Node {
+class CJX_SubjectDN final : public CJX_Node {
  public:
   explicit CJX_SubjectDN(CXFA_SubjectDN* node);
   ~CJX_SubjectDN() override;

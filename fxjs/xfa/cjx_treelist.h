@@ -12,7 +12,7 @@
 
 class CXFA_TreeList;
 
-class CJX_TreeList : public CJX_List {
+class CJX_TreeList final : public CJX_List {
  public:
   explicit CJX_TreeList(CXFA_TreeList* list);
   ~CJX_TreeList() override;

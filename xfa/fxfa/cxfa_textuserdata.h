@@ -12,7 +12,7 @@
 class CFX_CSSComputedStyle;
 class CXFA_LinkUserData;
 
-class CXFA_TextUserData : public Retainable {
+class CXFA_TextUserData final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

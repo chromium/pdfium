@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_Boolean : public CPDF_Object {
+class CPDF_Boolean final : public CPDF_Object {
  public:
   CPDF_Boolean();
   explicit CPDF_Boolean(bool value);

@@ -10,7 +10,7 @@
 #include "fxbarcode/BC_TwoDimWriter.h"
 
 class CBC_TwoDimWriter;
-class CBC_QRCodeWriter : public CBC_TwoDimWriter {
+class CBC_QRCodeWriter final : public CBC_TwoDimWriter {
  public:
   CBC_QRCodeWriter();
   ~CBC_QRCodeWriter() override;

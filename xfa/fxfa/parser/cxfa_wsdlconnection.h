@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_WsdlConnection : public CXFA_Node {
+class CXFA_WsdlConnection final : public CXFA_Node {
  public:
   CXFA_WsdlConnection(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_WsdlConnection() override;

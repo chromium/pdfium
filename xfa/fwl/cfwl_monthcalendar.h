@@ -20,7 +20,7 @@
 
 class CFWL_MessageMouse;
 
-class CFWL_MonthCalendar : public CFWL_Widget {
+class CFWL_MonthCalendar final : public CFWL_Widget {
  public:
   CFWL_MonthCalendar(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,

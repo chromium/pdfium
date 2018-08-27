@@ -12,7 +12,7 @@
 
 class CXFA_Occur;
 
-class CJX_Occur : public CJX_Node {
+class CJX_Occur final : public CJX_Node {
  public:
   explicit CJX_Occur(CXFA_Occur* node);
   ~CJX_Occur() override;

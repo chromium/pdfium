@@ -11,7 +11,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
+class CFWL_MonthCalendarTP final : public CFWL_WidgetTP {
  public:
   CFWL_MonthCalendarTP();
   ~CFWL_MonthCalendarTP() override;

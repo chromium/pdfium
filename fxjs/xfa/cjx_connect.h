@@ -12,7 +12,7 @@
 
 class CXFA_Connect;
 
-class CJX_Connect : public CJX_Node {
+class CJX_Connect final : public CJX_Node {
  public:
   explicit CJX_Connect(CXFA_Connect* node);
   ~CJX_Connect() override;

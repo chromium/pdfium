@@ -28,7 +28,7 @@ namespace {
 
 const size_t kArchiveBufferSize = 32768;
 
-class CFX_FileBufferArchive : public IFX_ArchiveStream {
+class CFX_FileBufferArchive final : public IFX_ArchiveStream {
  public:
   explicit CFX_FileBufferArchive(const RetainPtr<IFX_WriteStream>& archive);
   ~CFX_FileBufferArchive() override;

@@ -12,7 +12,7 @@
 
 class CXFA_Uri;
 
-class CJX_Uri : public CJX_TextNode {
+class CJX_Uri final : public CJX_TextNode {
  public:
   explicit CJX_Uri(CXFA_Uri* node);
   ~CJX_Uri() override;

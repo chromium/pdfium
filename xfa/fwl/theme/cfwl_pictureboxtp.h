@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_PictureBoxTP : public CFWL_WidgetTP {
+class CFWL_PictureBoxTP final : public CFWL_WidgetTP {
  public:
   CFWL_PictureBoxTP();
   ~CFWL_PictureBoxTP() override;

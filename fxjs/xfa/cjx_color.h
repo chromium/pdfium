@@ -12,7 +12,7 @@
 
 class CXFA_Color;
 
-class CJX_Color : public CJX_Node {
+class CJX_Color final : public CJX_Node {
  public:
   explicit CJX_Color(CXFA_Color* node);
   ~CJX_Color() override;

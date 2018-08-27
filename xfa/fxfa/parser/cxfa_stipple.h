@@ -14,7 +14,7 @@
 class CXFA_Color;
 class CXFA_Graphics;
 
-class CXFA_Stipple : public CXFA_Node {
+class CXFA_Stipple final : public CXFA_Node {
  public:
   static int32_t GetDefaultRate() { return 50; }
 

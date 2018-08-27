@@ -14,7 +14,7 @@
 
 class CPDF_Form;
 
-class CPDF_FormObject : public CPDF_PageObject {
+class CPDF_FormObject final : public CPDF_PageObject {
  public:
   CPDF_FormObject(int32_t content_stream,
                   std::unique_ptr<CPDF_Form> pForm,

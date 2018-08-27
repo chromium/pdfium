@@ -12,7 +12,7 @@
 
 class CXFA_ExData;
 
-class CJX_ExData : public CJX_Content {
+class CJX_ExData final : public CJX_Content {
  public:
   explicit CJX_ExData(CXFA_ExData* node);
   ~CJX_ExData() override;

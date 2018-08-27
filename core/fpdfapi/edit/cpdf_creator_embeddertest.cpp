@@ -20,7 +20,7 @@
 
 namespace {
 
-class FileAccess : public FPDF_FILEACCESS {
+class FileAccess final : public FPDF_FILEACCESS {
  public:
   explicit FileAccess(const std::string& file_name) {
     std::string file_path;

@@ -132,7 +132,7 @@ using CFX_Size = CFX_STemplate<int32_t>;
 using CFX_SizeF = CFX_STemplate<float>;
 
 template <class BaseType>
-class CFX_VTemplate : public CFX_PTemplate<BaseType> {
+class CFX_VTemplate final : public CFX_PTemplate<BaseType> {
  public:
   using CFX_PTemplate<BaseType>::x;
   using CFX_PTemplate<BaseType>::y;

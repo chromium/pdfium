@@ -14,7 +14,7 @@
 class CXFA_Color;
 class CXFA_Graphics;
 
-class CXFA_Pattern : public CXFA_Node {
+class CXFA_Pattern final : public CXFA_Node {
  public:
   static constexpr XFA_AttributeEnum kDefaultType = XFA_AttributeEnum::Unknown;
 

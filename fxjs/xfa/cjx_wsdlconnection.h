@@ -12,7 +12,7 @@
 
 class CXFA_WsdlConnection;
 
-class CJX_WsdlConnection : public CJX_Node {
+class CJX_WsdlConnection final : public CJX_Node {
  public:
   explicit CJX_WsdlConnection(CXFA_WsdlConnection* connection);
   ~CJX_WsdlConnection() override;

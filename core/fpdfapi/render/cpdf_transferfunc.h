@@ -14,7 +14,7 @@
 class CPDF_Document;
 class CFX_DIBBase;
 
-class CPDF_TransferFunc : public Retainable {
+class CPDF_TransferFunc final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

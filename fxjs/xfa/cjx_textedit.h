@@ -12,7 +12,7 @@
 
 class CXFA_TextEdit;
 
-class CJX_TextEdit : public CJX_Node {
+class CJX_TextEdit final : public CJX_Node {
  public:
   explicit CJX_TextEdit(CXFA_TextEdit* node);
   ~CJX_TextEdit() override;

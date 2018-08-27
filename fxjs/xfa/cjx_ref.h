@@ -12,7 +12,7 @@
 
 class CXFA_Ref;
 
-class CJX_Ref : public CJX_TextNode {
+class CJX_Ref final : public CJX_TextNode {
  public:
   explicit CJX_Ref(CXFA_Ref* node);
   ~CJX_Ref() override;

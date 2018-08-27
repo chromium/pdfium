@@ -12,7 +12,7 @@
 
 class CXFA_Radial;
 
-class CJX_Radial : public CJX_Node {
+class CJX_Radial final : public CJX_Node {
  public:
   explicit CJX_Radial(CXFA_Radial* node);
   ~CJX_Radial() override;

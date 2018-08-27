@@ -12,7 +12,7 @@
 
 class CXFA_Pattern;
 
-class CJX_Pattern : public CJX_Node {
+class CJX_Pattern final : public CJX_Node {
  public:
   explicit CJX_Pattern(CXFA_Pattern* node);
   ~CJX_Pattern() override;

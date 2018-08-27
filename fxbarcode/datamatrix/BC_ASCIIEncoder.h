@@ -11,7 +11,7 @@
 
 class CBC_EncoderContext;
 
-class CBC_ASCIIEncoder : public CBC_Encoder {
+class CBC_ASCIIEncoder final : public CBC_Encoder {
  public:
   CBC_ASCIIEncoder();
   ~CBC_ASCIIEncoder() override;

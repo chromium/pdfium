@@ -14,7 +14,7 @@
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-class CPWL_CBListBox : public CPWL_ListBox {
+class CPWL_CBListBox final : public CPWL_ListBox {
  public:
   CPWL_CBListBox() {}
   ~CPWL_CBListBox() override {}
@@ -28,7 +28,7 @@ class CPWL_CBListBox : public CPWL_ListBox {
   bool OnCharNotify(uint16_t nChar, uint32_t nFlag);
 };
 
-class CPWL_CBButton : public CPWL_Wnd {
+class CPWL_CBButton final : public CPWL_Wnd {
  public:
   CPWL_CBButton() {}
   ~CPWL_CBButton() override {}
@@ -40,7 +40,7 @@ class CPWL_CBButton : public CPWL_Wnd {
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
 };
 
-class CPWL_ComboBox : public CPWL_Wnd {
+class CPWL_ComboBox final : public CPWL_Wnd {
  public:
   CPWL_ComboBox();
   ~CPWL_ComboBox() override;

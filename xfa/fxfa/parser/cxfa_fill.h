@@ -18,7 +18,7 @@ class CXFA_Pattern;
 class CXFA_Radial;
 class CXFA_Stipple;
 
-class CXFA_Fill : public CXFA_Node {
+class CXFA_Fill final : public CXFA_Node {
  public:
   CXFA_Fill(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Fill() override;

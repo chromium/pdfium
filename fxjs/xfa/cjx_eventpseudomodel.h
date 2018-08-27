@@ -33,7 +33,7 @@ enum class XFA_Event {
   CancelAction
 };
 
-class CJX_EventPseudoModel : public CJX_Object {
+class CJX_EventPseudoModel final : public CJX_Object {
  public:
   explicit CJX_EventPseudoModel(CScript_EventPseudoModel* model);
   ~CJX_EventPseudoModel() override;

@@ -12,7 +12,7 @@
 
 class CXFA_SubformSet;
 
-class CJX_SubformSet : public CJX_Container {
+class CJX_SubformSet final : public CJX_Container {
  public:
   explicit CJX_SubformSet(CXFA_SubformSet* node);
   ~CJX_SubformSet() override;

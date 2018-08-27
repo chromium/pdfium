@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_aDBE_JSConsole : public CXFA_Node {
+class CXFA_aDBE_JSConsole final : public CXFA_Node {
  public:
   CXFA_aDBE_JSConsole(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_aDBE_JSConsole() override;

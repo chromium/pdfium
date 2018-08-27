@@ -12,7 +12,7 @@
 
 class CXFA_Overflow;
 
-class CJX_Overflow : public CJX_Node {
+class CJX_Overflow final : public CJX_Node {
  public:
   explicit CJX_Overflow(CXFA_Overflow* node);
   ~CJX_Overflow() override;

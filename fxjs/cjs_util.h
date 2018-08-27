@@ -17,7 +17,7 @@
 #define UTIL_DOUBLE 1
 #define UTIL_STRING 2
 
-class CJS_Util : public CJS_Object {
+class CJS_Util final : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);

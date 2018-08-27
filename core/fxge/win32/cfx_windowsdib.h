@@ -24,7 +24,7 @@ struct WINDIB_Open_Args_ {
   const wchar_t* path_name;
 };
 
-class CFX_WindowsDIB : public CFX_DIBitmap {
+class CFX_WindowsDIB final : public CFX_DIBitmap {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

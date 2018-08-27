@@ -16,7 +16,7 @@
 
 class CFX_XMLDocument;
 
-class CFX_XMLElement : public CFX_XMLNode {
+class CFX_XMLElement final : public CFX_XMLNode {
  public:
   explicit CFX_XMLElement(const WideString& wsTag);
   ~CFX_XMLElement() override;

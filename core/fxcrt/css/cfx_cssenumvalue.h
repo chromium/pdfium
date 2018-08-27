@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
 
-class CFX_CSSEnumValue : public CFX_CSSValue {
+class CFX_CSSEnumValue final : public CFX_CSSValue {
  public:
   explicit CFX_CSSEnumValue(CFX_CSSPropertyValue value);
   ~CFX_CSSEnumValue() override;

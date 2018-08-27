@@ -36,7 +36,7 @@ class CFWL_Widget;
 #define FWL_STYLEEXT_CMB_ListItemAlignMask (3L << 10)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
-class CFWL_ComboBox : public CFWL_Widget {
+class CFWL_ComboBox final : public CFWL_Widget {
  public:
   explicit CFWL_ComboBox(const CFWL_App* pApp);
   ~CFWL_ComboBox() override;

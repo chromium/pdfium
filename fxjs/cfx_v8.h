@@ -66,7 +66,7 @@ class CFX_V8 {
   UnownedPtr<v8::Isolate> m_pIsolate;
 };
 
-class CFX_V8ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+class CFX_V8ArrayBufferAllocator final : public v8::ArrayBuffer::Allocator {
   static const size_t kMaxAllowedBytes = 0x10000000;
   void* Allocate(size_t length) override;
   void* AllocateUninitialized(size_t length) override;

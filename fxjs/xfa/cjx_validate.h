@@ -12,7 +12,7 @@
 
 class CXFA_Validate;
 
-class CJX_Validate : public CJX_Node {
+class CJX_Validate final : public CJX_Node {
  public:
   explicit CJX_Validate(CXFA_Validate* node);
   ~CJX_Validate() override;

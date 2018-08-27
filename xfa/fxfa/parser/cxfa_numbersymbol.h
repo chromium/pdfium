@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_NumberSymbol : public CXFA_Node {
+class CXFA_NumberSymbol final : public CXFA_Node {
  public:
   CXFA_NumberSymbol(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_NumberSymbol() override;

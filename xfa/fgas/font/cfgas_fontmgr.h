@@ -121,7 +121,7 @@ class CFX_FontSourceEnum_File {
 
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
-class CFGAS_FontMgr : public Observable<CFGAS_FontMgr> {
+class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
  public:
   CFGAS_FontMgr();
   ~CFGAS_FontMgr();

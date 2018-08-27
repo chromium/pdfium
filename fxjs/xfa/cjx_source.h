@@ -12,7 +12,7 @@
 
 class CXFA_Source;
 
-class CJX_Source : public CJX_Node {
+class CJX_Source final : public CJX_Node {
  public:
   explicit CJX_Source(CXFA_Source* src);
   ~CJX_Source() override;

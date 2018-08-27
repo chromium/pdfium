@@ -12,7 +12,7 @@
 
 class CXFA_DefaultUi;
 
-class CJX_DefaultUi : public CJX_Node {
+class CJX_DefaultUi final : public CJX_Node {
  public:
   explicit CJX_DefaultUi(CXFA_DefaultUi* node);
   ~CJX_DefaultUi() override;

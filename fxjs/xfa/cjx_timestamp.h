@@ -12,7 +12,7 @@
 
 class CXFA_TimeStamp;
 
-class CJX_TimeStamp : public CJX_Node {
+class CJX_TimeStamp final : public CJX_Node {
  public:
   explicit CJX_TimeStamp(CXFA_TimeStamp* node);
   ~CJX_TimeStamp() override;

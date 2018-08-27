@@ -12,7 +12,7 @@
 
 class CXFA_Encoding;
 
-class CJX_Encoding : public CJX_Node {
+class CJX_Encoding final : public CJX_Node {
  public:
   explicit CJX_Encoding(CXFA_Encoding* node);
   ~CJX_Encoding() override;

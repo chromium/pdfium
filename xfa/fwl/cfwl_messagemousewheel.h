@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fwl/cfwl_message.h"
 
-class CFWL_MessageMouseWheel : public CFWL_Message {
+class CFWL_MessageMouseWheel final : public CFWL_Message {
  public:
   CFWL_MessageMouseWheel(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   CFWL_MessageMouseWheel(const CFWL_MessageMouseWheel&);

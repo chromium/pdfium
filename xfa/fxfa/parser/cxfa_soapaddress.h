@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_SoapAddress : public CXFA_Node {
+class CXFA_SoapAddress final : public CXFA_Node {
  public:
   CXFA_SoapAddress(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SoapAddress() override;

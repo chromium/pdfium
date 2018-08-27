@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
-class CBC_OnedCode128Writer : public CBC_OneDimWriter {
+class CBC_OnedCode128Writer final : public CBC_OneDimWriter {
  public:
   explicit CBC_OnedCode128Writer(BC_TYPE type);
   ~CBC_OnedCode128Writer() override;

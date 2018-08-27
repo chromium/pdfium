@@ -18,7 +18,7 @@ class CFX_DIBitmap;
 class CFX_Matrix;
 class CFX_RenderDevice;
 
-class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
+class CBC_OnedUPCAWriter final : public CBC_OneDimWriter {
  public:
   CBC_OnedUPCAWriter();
   ~CBC_OnedUPCAWriter() override;

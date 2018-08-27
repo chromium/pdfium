@@ -29,7 +29,7 @@ class CPDFSDK_XFAWidget;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
-class CPDFSDK_InterForm : public IPDF_FormNotify {
+class CPDFSDK_InterForm final : public IPDF_FormNotify {
  public:
   explicit CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CPDFSDK_InterForm() override;

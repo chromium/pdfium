@@ -13,7 +13,7 @@
 
 class CPDF_Document;
 
-class CPDF_PatternCS : public CPDF_ColorSpace {
+class CPDF_PatternCS final : public CPDF_ColorSpace {
  public:
   explicit CPDF_PatternCS(CPDF_Document* pDoc);
   ~CPDF_PatternCS() override;

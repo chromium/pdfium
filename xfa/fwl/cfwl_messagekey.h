@@ -13,7 +13,7 @@
 
 enum class FWL_KeyCommand { KeyDown, KeyUp, Char };
 
-class CFWL_MessageKey : public CFWL_Message {
+class CFWL_MessageKey final : public CFWL_Message {
  public:
   CFWL_MessageKey(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   ~CFWL_MessageKey() override;

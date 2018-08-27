@@ -9,7 +9,7 @@
 
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 
-class CBC_Base256Encoder : public CBC_Encoder {
+class CBC_Base256Encoder final : public CBC_Encoder {
  public:
   CBC_Base256Encoder();
   ~CBC_Base256Encoder() override;

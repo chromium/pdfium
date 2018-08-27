@@ -15,7 +15,7 @@
 
 class CPDF_TransferFunc;
 
-class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
+class CPDF_DIBTransferFunc final : public CFX_FilteredDIB {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

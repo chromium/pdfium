@@ -12,7 +12,7 @@
 
 class CXFA_Traverse;
 
-class CJX_Traverse : public CJX_Node {
+class CJX_Traverse final : public CJX_Node {
  public:
   explicit CJX_Traverse(CXFA_Traverse* node);
   ~CJX_Traverse() override;

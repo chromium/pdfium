@@ -12,7 +12,7 @@
 
 class CXFA_InstanceManager;
 
-class CJX_InstanceManager : public CJX_Node {
+class CJX_InstanceManager final : public CJX_Node {
  public:
   explicit CJX_InstanceManager(CXFA_InstanceManager* mgr);
   ~CJX_InstanceManager() override;

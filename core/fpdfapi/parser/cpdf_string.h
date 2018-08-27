@@ -15,7 +15,7 @@
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
 
-class CPDF_String : public CPDF_Object {
+class CPDF_String final : public CPDF_Object {
  public:
   CPDF_String();
   CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str, bool bHex);

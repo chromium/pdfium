@@ -12,7 +12,7 @@
 
 class CXFA_Font;
 
-class CJX_Font : public CJX_Node {
+class CJX_Font final : public CJX_Node {
  public:
   explicit CJX_Font(CXFA_Font* node);
   ~CJX_Font() override;

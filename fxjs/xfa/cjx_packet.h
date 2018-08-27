@@ -12,7 +12,7 @@
 
 class CXFA_Packet;
 
-class CJX_Packet : public CJX_Node {
+class CJX_Packet final : public CJX_Node {
  public:
   explicit CJX_Packet(CXFA_Packet* packet);
   ~CJX_Packet() override;

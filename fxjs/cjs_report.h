@@ -11,7 +11,7 @@
 
 #include "fxjs/js_define.h"
 
-class CJS_Report : public CJS_Object {
+class CJS_Report final : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);

@@ -32,7 +32,7 @@ struct TiffDeleter {
 
 }  // namespace
 
-class CTiffContext : public CCodec_TiffModule::Context {
+class CTiffContext final : public CCodec_TiffModule::Context {
  public:
   CTiffContext() = default;
   ~CTiffContext() override = default;

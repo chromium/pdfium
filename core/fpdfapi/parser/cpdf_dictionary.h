@@ -21,7 +21,7 @@
 
 class CPDF_IndirectObjectHolder;
 
-class CPDF_Dictionary : public CPDF_Object {
+class CPDF_Dictionary final : public CPDF_Object {
  public:
   using const_iterator =
       std::map<ByteString, std::unique_ptr<CPDF_Object>>::const_iterator;

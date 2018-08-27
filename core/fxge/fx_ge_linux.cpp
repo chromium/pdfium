@@ -66,7 +66,7 @@ size_t GetJapanesePreference(const char* facearr,
   return 2;
 }
 
-class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
+class CFX_LinuxFontInfo final : public CFX_FolderFontInfo {
  public:
   CFX_LinuxFontInfo() {}
   ~CFX_LinuxFontInfo() override {}

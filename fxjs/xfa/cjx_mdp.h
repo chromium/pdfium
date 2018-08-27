@@ -12,7 +12,7 @@
 
 class CXFA_Mdp;
 
-class CJX_Mdp : public CJX_Node {
+class CJX_Mdp final : public CJX_Node {
  public:
   explicit CJX_Mdp(CXFA_Mdp* node);
   ~CJX_Mdp() override;

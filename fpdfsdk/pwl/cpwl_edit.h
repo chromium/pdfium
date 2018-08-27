@@ -41,7 +41,7 @@ class IPWL_Filler_Notify {
 #endif  // PDF_ENABLE_XFA
 };
 
-class CPWL_Edit : public CPWL_EditCtrl {
+class CPWL_Edit final : public CPWL_EditCtrl {
  public:
   CPWL_Edit();
   ~CPWL_Edit() override;

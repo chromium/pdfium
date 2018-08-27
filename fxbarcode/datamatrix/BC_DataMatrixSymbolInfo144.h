@@ -9,7 +9,7 @@
 
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
-class CBC_DataMatrixSymbolInfo144 : public CBC_SymbolInfo {
+class CBC_DataMatrixSymbolInfo144 final : public CBC_SymbolInfo {
  public:
   CBC_DataMatrixSymbolInfo144();
   ~CBC_DataMatrixSymbolInfo144() override;

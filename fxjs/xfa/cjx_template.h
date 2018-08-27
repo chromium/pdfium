@@ -12,7 +12,7 @@
 
 class CXFA_Template;
 
-class CJX_Template : public CJX_Model {
+class CJX_Template final : public CJX_Model {
  public:
   explicit CJX_Template(CXFA_Template* tmpl);
   ~CJX_Template() override;

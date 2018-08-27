@@ -22,7 +22,7 @@ class CPDF_Page;
 class PauseIndicatorIface;
 class IFX_SeekableReadStream;
 
-class CPDF_Image : public Retainable {
+class CPDF_Image final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

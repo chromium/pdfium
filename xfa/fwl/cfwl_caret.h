@@ -16,7 +16,7 @@
 class CFWL_WidgetProperties;
 class CFWL_Widget;
 
-class CFWL_Caret : public CFWL_Widget {
+class CFWL_Caret final : public CFWL_Widget {
  public:
   CFWL_Caret(const CFWL_App* app,
              std::unique_ptr<CFWL_WidgetProperties> properties,
@@ -35,7 +35,7 @@ class CFWL_Caret : public CFWL_Widget {
   void HideCaret();
 
  private:
-  class Timer : public CFWL_Timer {
+  class Timer final : public CFWL_Timer {
    public:
     explicit Timer(CFWL_Caret* pCaret);
     ~Timer() override {}

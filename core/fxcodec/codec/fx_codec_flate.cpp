@@ -623,7 +623,7 @@ uint32_t CCodec_FlateScanlineDecoder::GetSrcOffset() {
   return FlateGetPossiblyTruncatedTotalIn(m_pFlate.get());
 }
 
-class CCodec_FlatePredictorScanlineDecoder
+class CCodec_FlatePredictorScanlineDecoder final
     : public CCodec_FlateScanlineDecoder {
  public:
   CCodec_FlatePredictorScanlineDecoder(const uint8_t* src_buf,

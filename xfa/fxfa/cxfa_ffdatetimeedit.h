@@ -20,7 +20,7 @@ class CFWL_DateTimePicker;
 class CFWL_Event;
 class CFWL_Widget;
 
-class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
+class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
  public:
   explicit CXFA_FFDateTimeEdit(CXFA_Node* pNode);
   ~CXFA_FFDateTimeEdit() override;

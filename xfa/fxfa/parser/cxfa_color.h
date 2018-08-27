@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Color : public CXFA_Node {
+class CXFA_Color final : public CXFA_Node {
  public:
   static constexpr FX_ARGB kBlackColor = 0xFF000000;
 

@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_PathObject : public CPDF_PageObject {
+class CPDF_PathObject final : public CPDF_PageObject {
  public:
   explicit CPDF_PathObject(int32_t content_stream);
   CPDF_PathObject();

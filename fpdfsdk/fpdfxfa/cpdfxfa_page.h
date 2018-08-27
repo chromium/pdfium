@@ -22,7 +22,7 @@ class CPDF_Dictionary;
 class CPDFXFA_Context;
 class CXFA_FFPageView;
 
-class CPDFXFA_Page : public IPDF_Page {
+class CPDFXFA_Page final : public IPDF_Page {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

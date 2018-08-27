@@ -12,7 +12,7 @@
 
 class CXFA_ConnectString;
 
-class CJX_ConnectString : public CJX_TextNode {
+class CJX_ConnectString final : public CJX_TextNode {
  public:
   explicit CJX_ConnectString(CXFA_ConnectString* node);
   ~CJX_ConnectString() override;

@@ -17,7 +17,7 @@ class CXFA_Image;
 class CXFA_Line;
 class CXFA_Rectangle;
 
-class CXFA_Value : public CXFA_Node {
+class CXFA_Value final : public CXFA_Node {
  public:
   CXFA_Value(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Value() override;

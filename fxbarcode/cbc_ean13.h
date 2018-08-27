@@ -15,7 +15,7 @@
 
 class CBC_OnedEAN13Writer;
 
-class CBC_EAN13 : public CBC_OneCode {
+class CBC_EAN13 final : public CBC_OneCode {
  public:
   CBC_EAN13();
   ~CBC_EAN13() override;

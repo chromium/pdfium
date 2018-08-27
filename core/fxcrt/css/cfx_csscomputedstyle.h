@@ -15,7 +15,7 @@
 
 class CFX_CSSValueList;
 
-class CFX_CSSComputedStyle : public Retainable {
+class CFX_CSSComputedStyle final : public Retainable {
  public:
   class InheritedData {
    public:

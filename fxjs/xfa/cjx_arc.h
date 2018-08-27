@@ -12,7 +12,7 @@
 
 class CXFA_Arc;
 
-class CJX_Arc : public CJX_Node {
+class CJX_Arc final : public CJX_Node {
  public:
   explicit CJX_Arc(CXFA_Arc* node);
   ~CJX_Arc() override;

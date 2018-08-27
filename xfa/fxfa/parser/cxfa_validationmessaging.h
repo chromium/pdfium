@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_ValidationMessaging : public CXFA_Node {
+class CXFA_ValidationMessaging final : public CXFA_Node {
  public:
   CXFA_ValidationMessaging(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_ValidationMessaging() override;

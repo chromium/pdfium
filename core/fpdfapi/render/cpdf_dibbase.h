@@ -39,7 +39,7 @@ struct DIB_COMP_DATA {
 
 #define FPDF_HUGE_IMAGE_SIZE 60000000
 
-class CPDF_DIBBase : public CFX_DIBBase {
+class CPDF_DIBBase final : public CFX_DIBBase {
  public:
   enum class LoadState : uint8_t { kFail, kSuccess, kContinue };
 

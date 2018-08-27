@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Threshold : public CXFA_Node {
+class CXFA_Threshold final : public CXFA_Node {
  public:
   CXFA_Threshold(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Threshold() override;

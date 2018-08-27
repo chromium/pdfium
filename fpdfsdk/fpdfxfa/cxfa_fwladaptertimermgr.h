@@ -15,7 +15,7 @@
 #include "xfa/fwl/cfwl_timerinfo.h"
 #include "xfa/fwl/ifwl_adaptertimermgr.h"
 
-class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
+class CXFA_FWLAdapterTimerMgr final : public IFWL_AdapterTimerMgr {
  public:
   explicit CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CXFA_FWLAdapterTimerMgr() override;

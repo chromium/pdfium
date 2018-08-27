@@ -7,7 +7,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CFX_GifContextForTest : public CFX_GifContext {
+class CFX_GifContextForTest final : public CFX_GifContext {
  public:
   CFX_GifContextForTest(CCodec_GifModule* gif_module,
                         CCodec_GifModule::Delegate* delegate)

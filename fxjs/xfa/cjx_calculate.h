@@ -12,7 +12,7 @@
 
 class CXFA_Calculate;
 
-class CJX_Calculate : public CJX_Node {
+class CJX_Calculate final : public CJX_Node {
  public:
   explicit CJX_Calculate(CXFA_Calculate* node);
   ~CJX_Calculate() override;

@@ -14,7 +14,7 @@
 class CXFA_Color;
 class CXFA_Graphics;
 
-class CXFA_Radial : public CXFA_Node {
+class CXFA_Radial final : public CXFA_Node {
  public:
   CXFA_Radial(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Radial() override;

@@ -16,7 +16,7 @@
 class CJS_Runtime;
 class GlobalTimer;
 
-class CJS_App : public CJS_Object {
+class CJS_App final : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);

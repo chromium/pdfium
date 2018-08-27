@@ -54,7 +54,7 @@ class CXFA_LayoutProcessor;
 class CXFA_Node;
 class CXFA_Object;
 
-class CXFA_Document : public CXFA_NodeOwner {
+class CXFA_Document final : public CXFA_NodeOwner {
  public:
   explicit CXFA_Document(CXFA_FFNotify* notify);
   ~CXFA_Document() override;

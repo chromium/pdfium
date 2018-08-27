@@ -24,7 +24,7 @@ static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 static wchar_t kPerObjectDataTag[] = L"CFXJS_PerObjectData";
 
 // Global weak map to save dynamic objects.
-class V8TemplateMapTraits
+class V8TemplateMapTraits final
     : public v8::StdMapTraits<CFXJS_PerObjectData*, v8::Object> {
  public:
   using WeakCallbackDataType = CFXJS_PerObjectData;

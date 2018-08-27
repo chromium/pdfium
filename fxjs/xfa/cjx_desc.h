@@ -12,7 +12,7 @@
 
 class CXFA_Desc;
 
-class CJX_Desc : public CJX_Node {
+class CJX_Desc final : public CJX_Node {
  public:
   explicit CJX_Desc(CXFA_Desc* desc);
   ~CJX_Desc() override;

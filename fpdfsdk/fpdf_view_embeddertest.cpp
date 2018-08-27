@@ -18,7 +18,7 @@
 
 namespace {
 
-class MockDownloadHints : public FX_DOWNLOADHINTS {
+class MockDownloadHints final : public FX_DOWNLOADHINTS {
  public:
   static void SAddSegment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
   }
@@ -629,7 +629,7 @@ TEST_F(FPDFViewEmbeddertest, FPDF_GetPageSizeByIndex) {
   UnloadPage(page);
 }
 
-class UnSupRecordDelegate : public EmbedderTest::Delegate {
+class UnSupRecordDelegate final : public EmbedderTest::Delegate {
  public:
   UnSupRecordDelegate() : type_(-1) {}
   ~UnSupRecordDelegate() override {}

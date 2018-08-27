@@ -19,7 +19,7 @@ class CFWL_MessageMouse;
 class CFX_DIBitmap;
 class CFWL_Widget;
 
-class CFWL_PushButton : public CFWL_Widget {
+class CFWL_PushButton final : public CFWL_Widget {
  public:
   explicit CFWL_PushButton(const CFWL_App*);
   ~CFWL_PushButton() override;

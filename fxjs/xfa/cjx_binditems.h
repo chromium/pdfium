@@ -12,7 +12,7 @@
 
 class CXFA_BindItems;
 
-class CJX_BindItems : public CJX_Node {
+class CJX_BindItems final : public CJX_Node {
  public:
   explicit CJX_BindItems(CXFA_BindItems* node);
   ~CJX_BindItems() override;

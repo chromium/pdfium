@@ -50,7 +50,7 @@ class CPDF_ColorState {
   bool HasRef() const { return !!m_Ref; }
 
  private:
-  class ColorData : public Retainable {
+  class ColorData final : public Retainable {
    public:
     ColorData();
     ColorData(const ColorData& src);

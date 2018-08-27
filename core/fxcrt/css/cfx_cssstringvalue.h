@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
 
-class CFX_CSSStringValue : public CFX_CSSValue {
+class CFX_CSSStringValue final : public CFX_CSSValue {
  public:
   explicit CFX_CSSStringValue(const WideString& value);
   ~CFX_CSSStringValue() override;

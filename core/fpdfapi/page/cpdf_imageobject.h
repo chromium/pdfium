@@ -14,7 +14,7 @@
 
 class CPDF_Image;
 
-class CPDF_ImageObject : public CPDF_PageObject {
+class CPDF_ImageObject final : public CPDF_PageObject {
  public:
   explicit CPDF_ImageObject(int32_t content_stream);
   CPDF_ImageObject();

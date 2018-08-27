@@ -14,7 +14,7 @@
 #error "Included on the wrong platform"
 #endif
 
-class CFX_FileAccess_Windows : public FileAccessIface {
+class CFX_FileAccess_Windows final : public FileAccessIface {
  public:
   CFX_FileAccess_Windows();
   ~CFX_FileAccess_Windows() override;

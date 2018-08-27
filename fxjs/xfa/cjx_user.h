@@ -12,7 +12,7 @@
 
 class CXFA_User;
 
-class CJX_User : public CJX_TextNode {
+class CJX_User final : public CJX_TextNode {
  public:
   explicit CJX_User(CXFA_User* node);
   ~CJX_User() override;

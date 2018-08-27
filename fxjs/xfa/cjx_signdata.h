@@ -12,7 +12,7 @@
 
 class CXFA_SignData;
 
-class CJX_SignData : public CJX_Node {
+class CJX_SignData final : public CJX_Node {
  public:
   explicit CJX_SignData(CXFA_SignData* node);
   ~CJX_SignData() override;

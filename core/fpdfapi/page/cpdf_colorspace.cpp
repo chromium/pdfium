@@ -105,7 +105,7 @@ bool GetWhitePoint(const CPDF_Dictionary* pDict, float* pPoints) {
   return pPoints[0] > 0.0f && pPoints[1] == 1.0f && pPoints[2] > 0.0f;
 }
 
-class CPDF_CalGray : public CPDF_ColorSpace {
+class CPDF_CalGray final : public CPDF_ColorSpace {
  public:
   explicit CPDF_CalGray(CPDF_Document* pDoc);
   ~CPDF_CalGray() override {}
@@ -130,7 +130,7 @@ class CPDF_CalGray : public CPDF_ColorSpace {
   float m_BlackPoint[kBlackWhitePointCount];
 };
 
-class CPDF_CalRGB : public CPDF_ColorSpace {
+class CPDF_CalRGB final : public CPDF_ColorSpace {
  public:
   explicit CPDF_CalRGB(CPDF_Document* pDoc);
   ~CPDF_CalRGB() override {}
@@ -160,7 +160,7 @@ class CPDF_CalRGB : public CPDF_ColorSpace {
   bool m_bMatrix = false;
 };
 
-class CPDF_LabCS : public CPDF_ColorSpace {
+class CPDF_LabCS final : public CPDF_ColorSpace {
  public:
   explicit CPDF_LabCS(CPDF_Document* pDoc);
   ~CPDF_LabCS() override {}
@@ -190,7 +190,7 @@ class CPDF_LabCS : public CPDF_ColorSpace {
   float m_Ranges[kRangesCount];
 };
 
-class CPDF_ICCBasedCS : public CPDF_ColorSpace {
+class CPDF_ICCBasedCS final : public CPDF_ColorSpace {
  public:
   explicit CPDF_ICCBasedCS(CPDF_Document* pDoc);
   ~CPDF_ICCBasedCS() override;
@@ -226,7 +226,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
   std::vector<float> m_pRanges;
 };
 
-class CPDF_IndexedCS : public CPDF_ColorSpace {
+class CPDF_IndexedCS final : public CPDF_ColorSpace {
  public:
   explicit CPDF_IndexedCS(CPDF_Document* pDoc);
   ~CPDF_IndexedCS() override;
@@ -248,7 +248,7 @@ class CPDF_IndexedCS : public CPDF_ColorSpace {
   std::vector<float> m_pCompMinMax;
 };
 
-class CPDF_SeparationCS : public CPDF_ColorSpace {
+class CPDF_SeparationCS final : public CPDF_ColorSpace {
  public:
   explicit CPDF_SeparationCS(CPDF_Document* pDoc);
   ~CPDF_SeparationCS() override;
@@ -270,7 +270,7 @@ class CPDF_SeparationCS : public CPDF_ColorSpace {
   enum { None, All, Colorant } m_Type;
 };
 
-class CPDF_DeviceNCS : public CPDF_ColorSpace {
+class CPDF_DeviceNCS final : public CPDF_ColorSpace {
  public:
   explicit CPDF_DeviceNCS(CPDF_Document* pDoc);
   ~CPDF_DeviceNCS() override;

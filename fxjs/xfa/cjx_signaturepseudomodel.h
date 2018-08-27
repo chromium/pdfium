@@ -12,7 +12,7 @@
 
 class CScript_SignaturePseudoModel;
 
-class CJX_SignaturePseudoModel : public CJX_Object {
+class CJX_SignaturePseudoModel final : public CJX_Object {
  public:
   explicit CJX_SignaturePseudoModel(CScript_SignaturePseudoModel* model);
   ~CJX_SignaturePseudoModel() override;

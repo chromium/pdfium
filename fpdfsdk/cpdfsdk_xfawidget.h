@@ -16,7 +16,7 @@ class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class CXFA_FFWidget;
 
-class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
+class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
  public:
   CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
                     CPDFSDK_PageView* pPageView,

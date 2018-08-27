@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_DateTimePickerTP : public CFWL_WidgetTP {
+class CFWL_DateTimePickerTP final : public CFWL_WidgetTP {
  public:
   CFWL_DateTimePickerTP();
   ~CFWL_DateTimePickerTP() override;

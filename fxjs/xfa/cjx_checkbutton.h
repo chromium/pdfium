@@ -12,7 +12,7 @@
 
 class CXFA_CheckButton;
 
-class CJX_CheckButton : public CJX_Node {
+class CJX_CheckButton final : public CJX_Node {
  public:
   explicit CJX_CheckButton(CXFA_CheckButton* node);
   ~CJX_CheckButton() override;

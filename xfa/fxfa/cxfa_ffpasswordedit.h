@@ -12,7 +12,7 @@
 
 class CXFA_PasswordEdit;
 
-class CXFA_FFPasswordEdit : public CXFA_FFTextEdit {
+class CXFA_FFPasswordEdit final : public CXFA_FFTextEdit {
  public:
   CXFA_FFPasswordEdit(CXFA_Node* pNode, CXFA_PasswordEdit* password_node);
   ~CXFA_FFPasswordEdit() override;

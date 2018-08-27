@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 
-class CBC_PDF417Writer : public CBC_TwoDimWriter {
+class CBC_PDF417Writer final : public CBC_TwoDimWriter {
  public:
   CBC_PDF417Writer();
   ~CBC_PDF417Writer() override;

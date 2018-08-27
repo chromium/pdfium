@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Decimal : public CXFA_Node {
+class CXFA_Decimal final : public CXFA_Node {
  public:
   CXFA_Decimal(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Decimal() override;

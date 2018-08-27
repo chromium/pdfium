@@ -40,7 +40,7 @@ class CPDF_ContentMark {
   size_t FindFirstDifference(const CPDF_ContentMark* other) const;
 
  private:
-  class MarkData : public Retainable {
+  class MarkData final : public Retainable {
    public:
     MarkData();
     MarkData(const MarkData& src);

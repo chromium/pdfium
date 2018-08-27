@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Text : public CXFA_Node {
+class CXFA_Text final : public CXFA_Node {
  public:
   CXFA_Text(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Text() override;

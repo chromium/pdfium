@@ -13,7 +13,7 @@
 class CPDF_Dictionary;
 class CPDFSDK_Annot;
 
-class CBA_FontMap : public CPWL_FontMap {
+class CBA_FontMap final : public CPWL_FontMap {
  public:
   CBA_FontMap(CPDFSDK_Annot* pAnnot, CFX_SystemHandler* pSystemHandler);
   ~CBA_FontMap() override;

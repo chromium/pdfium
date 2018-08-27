@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_AddViewerPreferences : public CXFA_Node {
+class CXFA_AddViewerPreferences final : public CXFA_Node {
  public:
   CXFA_AddViewerPreferences(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_AddViewerPreferences() override;

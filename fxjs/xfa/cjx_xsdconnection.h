@@ -12,7 +12,7 @@
 
 class CXFA_XsdConnection;
 
-class CJX_XsdConnection : public CJX_Node {
+class CJX_XsdConnection final : public CJX_Node {
  public:
   explicit CJX_XsdConnection(CXFA_XsdConnection* node);
   ~CJX_XsdConnection() override;

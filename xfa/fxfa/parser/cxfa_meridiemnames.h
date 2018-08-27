@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_MeridiemNames : public CXFA_Node {
+class CXFA_MeridiemNames final : public CXFA_Node {
  public:
   CXFA_MeridiemNames(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_MeridiemNames() override;

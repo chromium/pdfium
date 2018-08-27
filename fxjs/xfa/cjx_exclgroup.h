@@ -12,7 +12,7 @@
 
 class CXFA_ExclGroup;
 
-class CJX_ExclGroup : public CJX_Node {
+class CJX_ExclGroup final : public CJX_Node {
  public:
   explicit CJX_ExclGroup(CXFA_ExclGroup* group);
   ~CJX_ExclGroup() override;

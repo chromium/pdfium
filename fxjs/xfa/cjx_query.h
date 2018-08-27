@@ -12,7 +12,7 @@
 
 class CXFA_Query;
 
-class CJX_Query : public CJX_Node {
+class CJX_Query final : public CJX_Node {
  public:
   explicit CJX_Query(CXFA_Query* node);
   ~CJX_Query() override;

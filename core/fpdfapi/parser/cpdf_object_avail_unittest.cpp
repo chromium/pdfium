@@ -20,7 +20,7 @@
 
 namespace {
 
-class TestReadValidator : public CPDF_ReadValidator {
+class TestReadValidator final : public CPDF_ReadValidator {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -35,7 +35,7 @@ class TestReadValidator : public CPDF_ReadValidator {
   ~TestReadValidator() override {}
 };
 
-class TestHolder : public CPDF_IndirectObjectHolder {
+class TestHolder final : public CPDF_IndirectObjectHolder {
  public:
   enum class ObjectState {
     Unavailable,
@@ -93,7 +93,7 @@ class TestHolder : public CPDF_IndirectObjectHolder {
   RetainPtr<TestReadValidator> validator_;
 };
 
-class CPDF_ObjectAvailFailOnExclude : public CPDF_ObjectAvail {
+class CPDF_ObjectAvailFailOnExclude final : public CPDF_ObjectAvail {
  public:
   using CPDF_ObjectAvail::CPDF_ObjectAvail;
   ~CPDF_ObjectAvailFailOnExclude() override {}
@@ -103,7 +103,7 @@ class CPDF_ObjectAvailFailOnExclude : public CPDF_ObjectAvail {
   }
 };
 
-class CPDF_ObjectAvailExcludeArray : public CPDF_ObjectAvail {
+class CPDF_ObjectAvailExcludeArray final : public CPDF_ObjectAvail {
  public:
   using CPDF_ObjectAvail::CPDF_ObjectAvail;
   ~CPDF_ObjectAvailExcludeArray() override {}
@@ -112,7 +112,7 @@ class CPDF_ObjectAvailExcludeArray : public CPDF_ObjectAvail {
   }
 };
 
-class CPDF_ObjectAvailExcludeTypeKey : public CPDF_ObjectAvail {
+class CPDF_ObjectAvailExcludeTypeKey final : public CPDF_ObjectAvail {
  public:
   using CPDF_ObjectAvail::CPDF_ObjectAvail;
   ~CPDF_ObjectAvailExcludeTypeKey() override {}

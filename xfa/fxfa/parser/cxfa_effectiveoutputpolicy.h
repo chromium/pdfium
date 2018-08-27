@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_EffectiveOutputPolicy : public CXFA_Node {
+class CXFA_EffectiveOutputPolicy final : public CXFA_Node {
  public:
   CXFA_EffectiveOutputPolicy(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_EffectiveOutputPolicy() override;

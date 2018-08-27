@@ -11,7 +11,7 @@
 
 class CXFA_Deltas;
 
-class CJX_Deltas : public CJX_List {
+class CJX_Deltas final : public CJX_List {
  public:
   explicit CJX_Deltas(CXFA_Deltas* node);
   ~CJX_Deltas() override;

@@ -12,7 +12,7 @@
 
 class CXFA_Reason;
 
-class CJX_Reason : public CJX_TextNode {
+class CJX_Reason final : public CJX_TextNode {
  public:
   explicit CJX_Reason(CXFA_Reason* node);
   ~CJX_Reason() override;

@@ -17,7 +17,7 @@ class CPDF_Document;
 class CPDF_Form;
 class CPDF_Object;
 
-class CPDF_TilingPattern : public CPDF_Pattern {
+class CPDF_TilingPattern final : public CPDF_Pattern {
  public:
   CPDF_TilingPattern(CPDF_Document* pDoc,
                      CPDF_Object* pPatternObj,

@@ -9,7 +9,7 @@
 
 #include "fxjs/js_define.h"
 
-class CJS_Border : public CJS_Object {
+class CJS_Border final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 

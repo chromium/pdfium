@@ -12,7 +12,7 @@
 
 namespace {
 
-class StreamIterator : public CPDF_ObjectWalker::SubobjectIterator {
+class StreamIterator final : public CPDF_ObjectWalker::SubobjectIterator {
  public:
   explicit StreamIterator(const CPDF_Stream* stream)
       : SubobjectIterator(stream) {}
@@ -33,7 +33,7 @@ class StreamIterator : public CPDF_ObjectWalker::SubobjectIterator {
   bool is_finished_ = false;
 };
 
-class DictionaryIterator : public CPDF_ObjectWalker::SubobjectIterator {
+class DictionaryIterator final : public CPDF_ObjectWalker::SubobjectIterator {
  public:
   explicit DictionaryIterator(const CPDF_Dictionary* dictionary)
       : SubobjectIterator(dictionary) {}
@@ -64,7 +64,7 @@ class DictionaryIterator : public CPDF_ObjectWalker::SubobjectIterator {
   ByteString dict_key_;
 };
 
-class ArrayIterator : public CPDF_ObjectWalker::SubobjectIterator {
+class ArrayIterator final : public CPDF_ObjectWalker::SubobjectIterator {
  public:
   explicit ArrayIterator(const CPDF_Array* array) : SubobjectIterator(array) {}
 

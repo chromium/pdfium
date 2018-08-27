@@ -47,7 +47,7 @@ uint32_t GetVarInt(const uint8_t* p, int32_t n) {
   return result;
 }
 
-class ObjectsHolderStub : public CPDF_Parser::ParsedObjectsHolder {
+class ObjectsHolderStub final : public CPDF_Parser::ParsedObjectsHolder {
  public:
   ObjectsHolderStub() = default;
   ~ObjectsHolderStub() override = default;

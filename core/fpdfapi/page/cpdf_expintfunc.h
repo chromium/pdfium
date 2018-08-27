@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/page/cpdf_function.h"
 
-class CPDF_ExpIntFunc : public CPDF_Function {
+class CPDF_ExpIntFunc final : public CPDF_Function {
  public:
   CPDF_ExpIntFunc();
   ~CPDF_ExpIntFunc() override;

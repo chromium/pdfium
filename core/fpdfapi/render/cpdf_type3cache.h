@@ -18,7 +18,7 @@
 
 class CPDF_Type3Glyphs;
 
-class CPDF_Type3Cache : public Retainable {
+class CPDF_Type3Cache final : public Retainable {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

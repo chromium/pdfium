@@ -9,7 +9,7 @@
 
 #include "fxjs/js_define.h"
 
-class CJS_PrintParamsObj : public CJS_Object {
+class CJS_PrintParamsObj final : public CJS_Object {
  public:
   static int GetObjDefnID();
   static void DefineJSObjects(CFXJS_Engine* pEngine);

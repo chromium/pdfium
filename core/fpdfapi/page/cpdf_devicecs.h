@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
-class CPDF_DeviceCS : public CPDF_ColorSpace {
+class CPDF_DeviceCS final : public CPDF_ColorSpace {
  public:
   explicit CPDF_DeviceCS(int family);
   ~CPDF_DeviceCS() override;

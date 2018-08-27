@@ -10,7 +10,7 @@
 #include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Script : public CXFA_Node {
+class CXFA_Script final : public CXFA_Node {
  public:
   enum class Type {
     Formcalc = 0,

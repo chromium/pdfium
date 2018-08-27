@@ -22,7 +22,7 @@ int32_t GetData(const int32_t** data32, const uint8_t** data, size_t* size) {
   return *ret;
 }
 
-class HintTableForFuzzing : public CPDF_HintTables {
+class HintTableForFuzzing final : public CPDF_HintTables {
  public:
   HintTableForFuzzing(CPDF_LinearizedHeader* pLinearized,
                       int shared_hint_table_offset)
@@ -47,7 +47,7 @@ class HintTableForFuzzing : public CPDF_HintTables {
   int shared_hint_table_offset_;
 };
 
-class FakeLinearized : public CPDF_LinearizedHeader {
+class FakeLinearized final : public CPDF_LinearizedHeader {
  public:
   explicit FakeLinearized(CPDF_Dictionary* linearized_dict)
       : CPDF_LinearizedHeader(linearized_dict, 0) {}

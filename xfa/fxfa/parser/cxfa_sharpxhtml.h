@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_SharpxHTML : public CXFA_Node {
+class CXFA_SharpxHTML final : public CXFA_Node {
  public:
   CXFA_SharpxHTML(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_SharpxHTML() override;

@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Handler : public CXFA_Node {
+class CXFA_Handler final : public CXFA_Node {
  public:
   CXFA_Handler(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Handler() override;

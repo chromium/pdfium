@@ -12,7 +12,7 @@
 
 class CXFA_Password;
 
-class CJX_Password : public CJX_TextNode {
+class CJX_Password final : public CJX_TextNode {
  public:
   explicit CJX_Password(CXFA_Password* node);
   ~CJX_Password() override;

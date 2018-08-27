@@ -9,7 +9,7 @@
 
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-class CFWL_ComboBoxTP : public CFWL_WidgetTP {
+class CFWL_ComboBoxTP final : public CFWL_WidgetTP {
  public:
   CFWL_ComboBoxTP();
   ~CFWL_ComboBoxTP() override;

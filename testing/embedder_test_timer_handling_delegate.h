@@ -13,7 +13,7 @@
 #include "testing/embedder_test.h"
 #include "testing/test_support.h"
 
-class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
+class EmbedderTestTimerHandlingDelegate final : public EmbedderTest::Delegate {
  public:
   struct AlertRecord {
     std::wstring message;

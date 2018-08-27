@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/cxfa_ffwidget.h"
 
-class CXFA_FFRectangle : public CXFA_FFWidget {
+class CXFA_FFRectangle final : public CXFA_FFWidget {
  public:
   explicit CXFA_FFRectangle(CXFA_Node* pNode);
   ~CXFA_FFRectangle() override;

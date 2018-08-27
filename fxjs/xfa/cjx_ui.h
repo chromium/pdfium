@@ -12,7 +12,7 @@
 
 class CXFA_Ui;
 
-class CJX_Ui : public CJX_Node {
+class CJX_Ui final : public CJX_Node {
  public:
   explicit CJX_Ui(CXFA_Ui* node);
   ~CJX_Ui() override;

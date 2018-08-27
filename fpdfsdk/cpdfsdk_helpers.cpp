@@ -39,7 +39,7 @@ bool RaiseUnSupportError(int nError) {
 }
 
 #ifdef PDF_ENABLE_XFA
-class FPDF_FileHandlerContext : public IFX_SeekableStream {
+class FPDF_FileHandlerContext final : public IFX_SeekableStream {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);

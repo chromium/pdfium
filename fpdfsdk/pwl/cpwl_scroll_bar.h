@@ -42,7 +42,7 @@ enum PWL_SCROLLBAR_TYPE { SBT_HSCROLL, SBT_VSCROLL };
 
 enum PWL_SBBUTTON_TYPE { PSBT_MIN, PSBT_MAX, PSBT_POS };
 
-class CPWL_SBButton : public CPWL_Wnd {
+class CPWL_SBButton final : public CPWL_Wnd {
  public:
   CPWL_SBButton(PWL_SCROLLBAR_TYPE eScrollBarType,
                 PWL_SBBUTTON_TYPE eButtonType);
@@ -115,7 +115,7 @@ struct PWL_SCROLL_PRIVATEDATA {
   float fSmallStep;
 };
 
-class CPWL_ScrollBar : public CPWL_Wnd {
+class CPWL_ScrollBar final : public CPWL_Wnd {
  public:
   explicit CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType);
   ~CPWL_ScrollBar() override;

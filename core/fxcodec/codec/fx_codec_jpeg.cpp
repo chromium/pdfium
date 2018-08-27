@@ -29,7 +29,7 @@ extern "C" {
 #endif
 }  // extern "C"
 
-class CJpegContext : public CCodec_JpegModule::Context {
+class CJpegContext final : public CCodec_JpegModule::Context {
  public:
   CJpegContext();
   ~CJpegContext() override;
@@ -162,7 +162,7 @@ static bool JpegLoadInfo(const uint8_t* src_buf,
   return true;
 }
 
-class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
+class CCodec_JpegDecoder final : public CCodec_ScanlineDecoder {
  public:
   CCodec_JpegDecoder();
   ~CCodec_JpegDecoder() override;

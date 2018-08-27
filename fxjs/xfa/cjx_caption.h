@@ -12,7 +12,7 @@
 
 class CXFA_Caption;
 
-class CJX_Caption : public CJX_Node {
+class CJX_Caption final : public CJX_Node {
  public:
   explicit CJX_Caption(CXFA_Caption* node);
   ~CJX_Caption() override;

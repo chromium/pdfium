@@ -13,7 +13,7 @@ class CBC_CommonByteMatrix;
 class CBC_DefaultPlacement;
 class CBC_SymbolInfo;
 
-class CBC_DataMatrixWriter : public CBC_TwoDimWriter {
+class CBC_DataMatrixWriter final : public CBC_TwoDimWriter {
  public:
   CBC_DataMatrixWriter();
   ~CBC_DataMatrixWriter() override;

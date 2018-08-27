@@ -12,7 +12,7 @@
 
 class CXFA_Select;
 
-class CJX_Select : public CJX_TextNode {
+class CJX_Select final : public CJX_TextNode {
  public:
   explicit CJX_Select(CXFA_Select* node);
   ~CJX_Select() override;

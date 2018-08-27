@@ -47,7 +47,7 @@ static_assert(CPDF_DataAvail::FormNotExist == PDF_FORM_NOTEXIST,
 
 namespace {
 
-class FPDF_FileAvailContext : public CPDF_DataAvail::FileAvail {
+class FPDF_FileAvailContext final : public CPDF_DataAvail::FileAvail {
  public:
   FPDF_FileAvailContext() : m_pfileAvail(nullptr) {}
   ~FPDF_FileAvailContext() override {}
@@ -63,7 +63,7 @@ class FPDF_FileAvailContext : public CPDF_DataAvail::FileAvail {
   FX_FILEAVAIL* m_pfileAvail;
 };
 
-class FPDF_FileAccessContext : public IFX_SeekableReadStream {
+class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
@@ -85,7 +85,7 @@ class FPDF_FileAccessContext : public IFX_SeekableReadStream {
   FPDF_FILEACCESS* m_pFileAccess;
 };
 
-class FPDF_DownloadHintsContext : public CPDF_DataAvail::DownloadHints {
+class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {
  public:
   explicit FPDF_DownloadHintsContext(FX_DOWNLOADHINTS* pDownloadHints) {
     m_pDownloadHints = pDownloadHints;

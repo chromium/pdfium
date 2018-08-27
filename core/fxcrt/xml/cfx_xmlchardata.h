@@ -14,7 +14,7 @@
 
 class CFX_XMLDocument;
 
-class CFX_XMLCharData : public CFX_XMLText {
+class CFX_XMLCharData final : public CFX_XMLText {
  public:
   explicit CFX_XMLCharData(const WideString& wsCData);
   ~CFX_XMLCharData() override;

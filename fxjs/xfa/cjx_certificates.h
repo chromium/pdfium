@@ -12,7 +12,7 @@
 
 class CXFA_Certificates;
 
-class CJX_Certificates : public CJX_Node {
+class CJX_Certificates final : public CJX_Node {
  public:
   explicit CJX_Certificates(CXFA_Certificates* node);
   ~CJX_Certificates() override;

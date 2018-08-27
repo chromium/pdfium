@@ -12,7 +12,7 @@
 
 class CXFA_Issuers;
 
-class CJX_Issuers : public CJX_Node {
+class CJX_Issuers final : public CJX_Node {
  public:
   explicit CJX_Issuers(CXFA_Issuers* node);
   ~CJX_Issuers() override;

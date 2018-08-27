@@ -24,7 +24,7 @@ class CScript_LayoutPseudoModel;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 
-class CJX_LayoutPseudoModel : public CJX_Object {
+class CJX_LayoutPseudoModel final : public CJX_Object {
  public:
   explicit CJX_LayoutPseudoModel(CScript_LayoutPseudoModel* model);
   ~CJX_LayoutPseudoModel() override;

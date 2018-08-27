@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 
-class CPVT_FloatRect : public CFX_FloatRect {
+class CPVT_FloatRect final : public CFX_FloatRect {
  public:
   CPVT_FloatRect() { left = top = right = bottom = 0.0f; }
 

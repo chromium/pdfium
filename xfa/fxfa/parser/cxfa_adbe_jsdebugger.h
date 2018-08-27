@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_aDBE_JSDebugger : public CXFA_Node {
+class CXFA_aDBE_JSDebugger final : public CXFA_Node {
  public:
   CXFA_aDBE_JSDebugger(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_aDBE_JSDebugger() override;

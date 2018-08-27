@@ -102,7 +102,7 @@ class IFX_Edit_UndoItem {
   virtual void Redo() = 0;
 };
 
-class CFXEU_InsertWord : public IFX_Edit_UndoItem {
+class CFXEU_InsertWord final : public IFX_Edit_UndoItem {
  public:
   CFXEU_InsertWord(CPWL_EditImpl* pEdit,
                    const CPVT_WordPlace& wpOldPlace,
@@ -124,7 +124,7 @@ class CFXEU_InsertWord : public IFX_Edit_UndoItem {
   int32_t m_nCharset;
 };
 
-class CFXEU_InsertReturn : public IFX_Edit_UndoItem {
+class CFXEU_InsertReturn final : public IFX_Edit_UndoItem {
  public:
   CFXEU_InsertReturn(CPWL_EditImpl* pEdit,
                      const CPVT_WordPlace& wpOldPlace,
@@ -142,7 +142,7 @@ class CFXEU_InsertReturn : public IFX_Edit_UndoItem {
   CPVT_WordPlace m_wpNew;
 };
 
-class CFXEU_Backspace : public IFX_Edit_UndoItem {
+class CFXEU_Backspace final : public IFX_Edit_UndoItem {
  public:
   CFXEU_Backspace(CPWL_EditImpl* pEdit,
                   const CPVT_WordPlace& wpOldPlace,
@@ -164,7 +164,7 @@ class CFXEU_Backspace : public IFX_Edit_UndoItem {
   int32_t m_nCharset;
 };
 
-class CFXEU_Delete : public IFX_Edit_UndoItem {
+class CFXEU_Delete final : public IFX_Edit_UndoItem {
  public:
   CFXEU_Delete(CPWL_EditImpl* pEdit,
                const CPVT_WordPlace& wpOldPlace,
@@ -188,7 +188,7 @@ class CFXEU_Delete : public IFX_Edit_UndoItem {
   bool m_bSecEnd;
 };
 
-class CFXEU_Clear : public IFX_Edit_UndoItem {
+class CFXEU_Clear final : public IFX_Edit_UndoItem {
  public:
   CFXEU_Clear(CPWL_EditImpl* pEdit,
               const CPVT_WordRange& wrSel,
@@ -206,7 +206,7 @@ class CFXEU_Clear : public IFX_Edit_UndoItem {
   WideString m_swText;
 };
 
-class CFXEU_InsertText : public IFX_Edit_UndoItem {
+class CFXEU_InsertText final : public IFX_Edit_UndoItem {
  public:
   CFXEU_InsertText(CPWL_EditImpl* pEdit,
                    const CPVT_WordPlace& wpOldPlace,
@@ -415,7 +415,7 @@ class CPWL_EditImpl_Iterator {
   CPDF_VariableText::Iterator* m_pVTIterator;
 };
 
-class CPWL_EditImpl_Provider : public CPDF_VariableText::Provider {
+class CPWL_EditImpl_Provider final : public CPDF_VariableText::Provider {
  public:
   explicit CPWL_EditImpl_Provider(IPVT_FontMap* pFontMap);
   ~CPWL_EditImpl_Provider() override;

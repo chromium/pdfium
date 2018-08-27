@@ -12,7 +12,7 @@
 
 class CXFA_Insert;
 
-class CJX_Insert : public CJX_TextNode {
+class CJX_Insert final : public CJX_TextNode {
  public:
   explicit CJX_Insert(CXFA_Insert* node);
   ~CJX_Insert() override;

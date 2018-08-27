@@ -29,7 +29,7 @@ class FX_PATHPOINT {
   bool m_CloseFigure;
 };
 
-class CFX_PathData : public Retainable {
+class CFX_PathData final : public Retainable {
  public:
   CFX_PathData();
   CFX_PathData(const CFX_PathData& src);

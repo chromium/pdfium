@@ -8,7 +8,7 @@
 #include "testing/embedder_test.h"
 #include "testing/gmock/include/gmock/gmock.h"
 
-class EmbedderTestMockDelegate : public EmbedderTest::Delegate {
+class EmbedderTestMockDelegate final : public EmbedderTest::Delegate {
  public:
   MOCK_METHOD1(UnsupportedHandler, void(int type));
   MOCK_METHOD4(

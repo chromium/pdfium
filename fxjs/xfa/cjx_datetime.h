@@ -12,7 +12,7 @@
 
 class CXFA_DateTime;
 
-class CJX_DateTime : public CJX_Node {
+class CJX_DateTime final : public CJX_Node {
  public:
   explicit CJX_DateTime(CXFA_DateTime* node);
   ~CJX_DateTime() override;

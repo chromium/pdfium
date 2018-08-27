@@ -12,7 +12,7 @@
 
 class CXFA_Stipple;
 
-class CJX_Stipple : public CJX_Node {
+class CJX_Stipple final : public CJX_Node {
  public:
   explicit CJX_Stipple(CXFA_Stipple* node);
   ~CJX_Stipple() override;

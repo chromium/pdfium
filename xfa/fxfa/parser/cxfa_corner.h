@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_stroke.h"
 
-class CXFA_Corner : public CXFA_Stroke {
+class CXFA_Corner final : public CXFA_Stroke {
  public:
   CXFA_Corner(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Corner() override;

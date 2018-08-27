@@ -47,7 +47,7 @@ std::unique_ptr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
   return page;
 }
 
-class CPDF_TestDocumentForPages : public CPDF_Document {
+class CPDF_TestDocumentForPages final : public CPDF_Document {
  public:
   CPDF_TestDocumentForPages() : CPDF_Document() {
     // Set up test
@@ -99,7 +99,7 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
   }
 };
 
-class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
+class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_Document {
  public:
   CPDF_TestDocumentWithPageWithoutPageNum() : CPDF_Document() {
     // Set up test
@@ -124,13 +124,13 @@ class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
   const CPDF_Object* inlined_page_;
 };
 
-class TestLinearized : public CPDF_LinearizedHeader {
+class TestLinearized final : public CPDF_LinearizedHeader {
  public:
   explicit TestLinearized(CPDF_Dictionary* dict)
       : CPDF_LinearizedHeader(dict, 0) {}
 };
 
-class CPDF_TestDocPagesWithoutKids : public CPDF_Document {
+class CPDF_TestDocPagesWithoutKids final : public CPDF_Document {
  public:
   CPDF_TestDocPagesWithoutKids() : CPDF_Document() {
     CPDF_Dictionary* pagesDict = NewIndirect<CPDF_Dictionary>();
@@ -143,7 +143,7 @@ class CPDF_TestDocPagesWithoutKids : public CPDF_Document {
   }
 };
 
-class CPDF_TestDocumentAllowSetParser : public CPDF_Document {
+class CPDF_TestDocumentAllowSetParser final : public CPDF_Document {
  public:
   using CPDF_Document::SetParser;
 };

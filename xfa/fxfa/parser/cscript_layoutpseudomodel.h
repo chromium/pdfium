@@ -11,7 +11,7 @@
 
 class CXFA_Document;
 
-class CScript_LayoutPseudoModel : public CXFA_Object {
+class CScript_LayoutPseudoModel final : public CXFA_Object {
  public:
   explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
   ~CScript_LayoutPseudoModel() override;

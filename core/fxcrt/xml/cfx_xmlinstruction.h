@@ -15,7 +15,7 @@
 
 class CFX_XMLDocument;
 
-class CFX_XMLInstruction : public CFX_XMLNode {
+class CFX_XMLInstruction final : public CFX_XMLNode {
  public:
   explicit CFX_XMLInstruction(const WideString& wsTarget);
   ~CFX_XMLInstruction() override;

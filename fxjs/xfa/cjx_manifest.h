@@ -12,7 +12,7 @@
 
 class CXFA_Manifest;
 
-class CJX_Manifest : public CJX_Node {
+class CJX_Manifest final : public CJX_Node {
  public:
   explicit CJX_Manifest(CXFA_Manifest* manifest);
   ~CJX_Manifest() override;

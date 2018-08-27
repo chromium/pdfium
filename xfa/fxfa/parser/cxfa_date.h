@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-class CXFA_Date : public CXFA_Node {
+class CXFA_Date final : public CXFA_Node {
  public:
   CXFA_Date(CXFA_Document* doc, XFA_PacketType packet);
   ~CXFA_Date() override;

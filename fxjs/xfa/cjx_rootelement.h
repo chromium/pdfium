@@ -12,7 +12,7 @@
 
 class CXFA_RootElement;
 
-class CJX_RootElement : public CJX_TextNode {
+class CJX_RootElement final : public CJX_TextNode {
  public:
   explicit CJX_RootElement(CXFA_RootElement* node);
   ~CJX_RootElement() override;

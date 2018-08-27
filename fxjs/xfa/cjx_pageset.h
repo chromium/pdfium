@@ -12,7 +12,7 @@
 
 class CXFA_PageSet;
 
-class CJX_PageSet : public CJX_Container {
+class CJX_PageSet final : public CJX_Container {
  public:
   explicit CJX_PageSet(CXFA_PageSet* node);
   ~CJX_PageSet() override;

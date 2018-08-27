@@ -36,7 +36,7 @@ enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_ECLEVEL = 1 << 10,
 };
 
-class CFWL_Barcode : public CFWL_Edit {
+class CFWL_Barcode final : public CFWL_Edit {
  public:
   explicit CFWL_Barcode(const CFWL_App* pApp);
   ~CFWL_Barcode() override;

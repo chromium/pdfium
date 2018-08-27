@@ -12,7 +12,7 @@
 
 class CXFA_Fill;
 
-class CJX_Fill : public CJX_Node {
+class CJX_Fill final : public CJX_Node {
  public:
   explicit CJX_Fill(CXFA_Fill* node);
   ~CJX_Fill() override;

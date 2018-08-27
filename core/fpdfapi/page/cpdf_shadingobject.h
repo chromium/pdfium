@@ -13,7 +13,7 @@
 
 class CPDF_ShadingPattern;
 
-class CPDF_ShadingObject : public CPDF_PageObject {
+class CPDF_ShadingObject final : public CPDF_PageObject {
  public:
   CPDF_ShadingObject(int32_t content_stream,
                      CPDF_ShadingPattern* pattern,

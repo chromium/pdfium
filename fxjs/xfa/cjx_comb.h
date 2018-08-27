@@ -12,7 +12,7 @@
 
 class CXFA_Comb;
 
-class CJX_Comb : public CJX_Node {
+class CJX_Comb final : public CJX_Node {
  public:
   explicit CJX_Comb(CXFA_Comb* node);
   ~CJX_Comb() override;

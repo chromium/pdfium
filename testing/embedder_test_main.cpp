@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
 #include <string>
 
 #include "core/fxcrt/fx_memory.h"
@@ -28,7 +29,7 @@ v8::StartupData* g_v8_snapshot = nullptr;
 // The loading time of the CFGAS_FontMgr is linear in the number of times it is
 // loaded. So, if a test suite has a lot of tests that need a font manager they
 // can end up executing very, very slowly.
-class Environment : public testing::Environment {
+class Environment final : public testing::Environment {
  public:
   void SetUp() override {
 #ifdef PDF_ENABLE_V8
