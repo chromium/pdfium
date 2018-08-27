@@ -324,4 +324,11 @@ hooks = [
                 "-s", "pdfium/third_party/instrumented_libraries/binaries/msan-no-origins-trusty.tgz.sha1",
               ],
   },
+  {
+    # Update LASTCHANGE.
+    'name': 'lastchange',
+    'pattern': '.',
+    'action': ['python', 'pdfium/build/util/lastchange.py',
+               '-o', 'pdfium/build/util/LASTCHANGE'],
+  },
 ]
