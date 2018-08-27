@@ -73,7 +73,7 @@ class CCodec_ProgressiveDecoder :
                                CFX_DIBAttribute* pAttribute,
                                bool bSkipImageTypeCheck);
 
-  FXCODEC_IMAGE_TYPE GetType() const { return m_imagType; }
+  FXCODEC_IMAGE_TYPE GetType() const { return m_imageType; }
   int32_t GetWidth() const { return m_SrcWidth; }
   int32_t GetHeight() const { return m_SrcHeight; }
   int32_t GetNumComponents() const { return m_SrcComponents; }
@@ -241,6 +241,8 @@ class CCodec_ProgressiveDecoder :
                       double scale_y,
                       int dest_row);
 
+  FXCODEC_STATUS m_status = FXCODEC_STATUS_DECODE_FINISH;
+  FXCODEC_IMAGE_TYPE m_imageType = FXCODEC_IMAGE_UNKNOWN;
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
@@ -257,44 +259,42 @@ class CCodec_ProgressiveDecoder :
 #ifdef PDF_ENABLE_XFA_TIFF
   std::unique_ptr<CCodec_TiffModule::Context> m_pTiffContext;
 #endif  // PDF_ENABLE_XFA_TIFF
-  FXCODEC_IMAGE_TYPE m_imagType;
-  uint32_t m_offSet;
-  uint8_t* m_pSrcBuf;
-  uint32_t m_SrcSize;
-  uint8_t* m_pDecodeBuf;
-  int m_ScanlineSize;
+  uint32_t m_offSet = 0;
+  uint8_t* m_pSrcBuf = nullptr;
+  uint32_t m_SrcSize = 0;
+  uint8_t* m_pDecodeBuf = nullptr;
+  int m_ScanlineSize = 0;
   CFXCODEC_WeightTable m_WeightHorz;
   CFXCODEC_VertTable m_WeightVert;
   CFXCODEC_HorzTable m_WeightHorzOO;
-  int m_SrcWidth;
-  int m_SrcHeight;
-  int m_SrcComponents;
-  int m_SrcBPC;
+  int m_SrcWidth = 0;
+  int m_SrcHeight = 0;
+  int m_SrcComponents = 0;
+  int m_SrcBPC = 0;
   FX_RECT m_clipBox;
-  int m_startX;
-  int m_startY;
-  int m_sizeX;
-  int m_sizeY;
-  int m_TransMethod;
-  FX_ARGB* m_pSrcPalette;
-  int m_SrcPaletteNumber;
-  int m_SrcRow;
-  FXCodec_Format m_SrcFormat;
-  int m_SrcPassNumber;
-  size_t m_FrameNumber;
-  size_t m_FrameCur;
+  int m_startX = 0;
+  int m_startY = 0;
+  int m_sizeX = 0;
+  int m_sizeY = 0;
+  int m_TransMethod = -1;
+  FX_ARGB* m_pSrcPalette = nullptr;
+  int m_SrcPaletteNumber = 0;
+  int m_SrcRow = 0;
+  FXCodec_Format m_SrcFormat = FXCodec_Invalid;
+  int m_SrcPassNumber = 0;
+  size_t m_FrameNumber = 0;
+  size_t m_FrameCur = 0;
 #ifdef PDF_ENABLE_XFA_GIF
-  int m_GifBgIndex;
-  CFX_GifPalette* m_pGifPalette;
-  int32_t m_GifPltNumber;
-  int m_GifTransIndex;
+  int m_GifBgIndex = 0;
+  CFX_GifPalette* m_pGifPalette = nullptr;
+  int32_t m_GifPltNumber = 0;
+  int m_GifTransIndex = -1;
   FX_RECT m_GifFrameRect;
-  bool m_InvalidateGifBuffer;
+  bool m_InvalidateGifBuffer = true;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_BMP
-  bool m_BmpIsTopBottom;
+  bool m_BmpIsTopBottom = false;
 #endif  // PDF_ENABLE_XFA_BMP
-  FXCODEC_STATUS m_status;
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_PROGRESSIVEDECODER_H_

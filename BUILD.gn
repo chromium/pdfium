@@ -789,8 +789,8 @@ jumbo_static_library("fxcodec") {
 
   if (pdf_enable_xfa) {
     sources += [
+      "core/fxcodec/codec/ccodec_progressivedecoder.cpp",
       "core/fxcodec/codec/ccodec_progressivedecoder.h",
-      "core/fxcodec/codec/fx_codec_progress.cpp",
     ]
     if (pdf_enable_xfa_bmp) {
       sources += [

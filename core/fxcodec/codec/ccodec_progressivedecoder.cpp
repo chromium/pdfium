@@ -250,43 +250,8 @@ void CCodec_ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len,
 }
 
 CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
-    CCodec_ModuleMgr* pCodecMgr) {
-  m_pFile = nullptr;
-  m_pCodecMgr = nullptr;
-  m_pSrcBuf = nullptr;
-  m_pDecodeBuf = nullptr;
-  m_pDeviceBitmap = nullptr;
-  m_pSrcPalette = nullptr;
-  m_pCodecMgr = pCodecMgr;
-  m_offSet = 0;
-  m_SrcSize = 0;
-  m_ScanlineSize = 0;
-  m_SrcWidth = 0;
-  m_SrcHeight = 0;
-  m_SrcComponents = 0;
-  m_SrcBPC = 0;
-  m_SrcPassNumber = 0;
-  m_clipBox = FX_RECT(0, 0, 0, 0);
-  m_imagType = FXCODEC_IMAGE_UNKNOWN;
-  m_status = FXCODEC_STATUS_DECODE_FINISH;
-  m_TransMethod = -1;
-  m_SrcRow = 0;
-  m_SrcFormat = FXCodec_Invalid;
-  m_FrameNumber = 0;
-  m_FrameCur = 0;
-  m_SrcPaletteNumber = 0;
-#ifdef PDF_ENABLE_XFA_GIF
-  m_GifPltNumber = 0;
-  m_GifBgIndex = 0;
-  m_pGifPalette = nullptr;
-  m_GifTransIndex = -1;
-  m_GifFrameRect = FX_RECT(0, 0, 0, 0);
-  m_InvalidateGifBuffer = true;
-#endif  // PDF_ENABLE_XFA_GIF
-#ifdef PDF_ENABLE_XFA_BMP
-  m_BmpIsTopBottom = false;
-#endif  // PDF_ENABLE_XFA_BMP
-}
+    CCodec_ModuleMgr* pCodecMgr)
+    : m_pCodecMgr(pCodecMgr) {}
 
 CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
   FX_Free(m_pSrcBuf);
@@ -424,7 +389,6 @@ bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   }
   return true;
 }
-
 
 void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
                                                             int line) {
@@ -1789,7 +1753,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
   m_SrcPassNumber = 0;
   if (imageType != FXCODEC_IMAGE_UNKNOWN &&
       DetectImageType(imageType, pAttribute)) {
-    m_imagType = imageType;
+    m_imageType = imageType;
     m_status = FXCODEC_STATUS_FRAME_READY;
     return m_status;
   }
@@ -1801,7 +1765,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
 
   for (int type = FXCODEC_IMAGE_UNKNOWN + 1; type < FXCODEC_IMAGE_MAX; type++) {
     if (DetectImageType(static_cast<FXCODEC_IMAGE_TYPE>(type), pAttribute)) {
-      m_imagType = static_cast<FXCODEC_IMAGE_TYPE>(type);
+      m_imageType = static_cast<FXCODEC_IMAGE_TYPE>(type);
       m_status = FXCODEC_STATUS_FRAME_READY;
       return m_status;
     }
@@ -2312,7 +2276,7 @@ std::pair<FXCODEC_STATUS, size_t> CCodec_ProgressiveDecoder::GetFrames() {
     return {FXCODEC_STATUS_ERROR, 0};
   }
 
-  switch (m_imagType) {
+  switch (m_imageType) {
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
 #endif  // PDF_ENABLE_XFA_BMP
@@ -2413,7 +2377,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
   if (m_clipBox.IsEmpty()) {
     return FXCODEC_STATUS_ERR_PARAMS;
   }
-  switch (m_imagType) {
+  switch (m_imageType) {
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
       return BmpStartDecode(pDIBitmap);
@@ -2442,7 +2406,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode() {
   if (m_status != FXCODEC_STATUS_DECODE_TOBECONTINUE)
     return FXCODEC_STATUS_ERROR;
 
-  switch (m_imagType) {
+  switch (m_imageType) {
     case FXCODEC_IMAGE_JPG:
       return JpegContinueDecode();
 #ifdef PDF_ENABLE_XFA_BMP
