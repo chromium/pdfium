@@ -10,14 +10,14 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/span.h"
 
 class CCodec_ScanlineDecoder;
 
 class CCodec_BasicModule {
  public:
   std::unique_ptr<CCodec_ScanlineDecoder> CreateRunLengthDecoder(
-      const uint8_t* src_buf,
-      uint32_t src_size,
+      pdfium::span<const uint8_t> src_buf,
       int width,
       int height,
       int nComps,

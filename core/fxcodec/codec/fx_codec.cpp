@@ -1522,8 +1522,7 @@ class CCodec_RLScanlineDecoder final : public CCodec_ScanlineDecoder {
   CCodec_RLScanlineDecoder();
   ~CCodec_RLScanlineDecoder() override;
 
-  bool Create(const uint8_t* src_buf,
-              uint32_t src_size,
+  bool Create(pdfium::span<const uint8_t> src_buf,
               int width,
               int height,
               int nComps,
@@ -1539,40 +1538,33 @@ class CCodec_RLScanlineDecoder final : public CCodec_ScanlineDecoder {
   void GetNextOperator();
   void UpdateOperator(uint8_t used_bytes);
 
-  uint8_t* m_pScanline;
-  const uint8_t* m_pSrcBuf;
-  uint32_t m_SrcSize;
-  uint32_t m_dwLineBytes;
-  uint32_t m_SrcOffset;
-  bool m_bEOD;
-  uint8_t m_Operator;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanline;
+  pdfium::span<const uint8_t> m_SrcBuf;
+  size_t m_dwLineBytes = 0;
+  size_t m_SrcOffset = 0;
+  bool m_bEOD = false;
+  uint8_t m_Operator = 0;
 };
-CCodec_RLScanlineDecoder::CCodec_RLScanlineDecoder()
-    : m_pScanline(nullptr),
-      m_pSrcBuf(nullptr),
-      m_SrcSize(0),
-      m_dwLineBytes(0),
-      m_SrcOffset(0),
-      m_bEOD(false),
-      m_Operator(0) {}
-CCodec_RLScanlineDecoder::~CCodec_RLScanlineDecoder() {
-  FX_Free(m_pScanline);
-}
+
+CCodec_RLScanlineDecoder::CCodec_RLScanlineDecoder() = default;
+
+CCodec_RLScanlineDecoder::~CCodec_RLScanlineDecoder() = default;
+
 bool CCodec_RLScanlineDecoder::CheckDestSize() {
-  uint32_t i = 0;
+  size_t i = 0;
   uint32_t old_size = 0;
   uint32_t dest_size = 0;
-  while (i < m_SrcSize) {
-    if (m_pSrcBuf[i] < 128) {
+  while (i < m_SrcBuf.size()) {
+    if (m_SrcBuf[i] < 128) {
       old_size = dest_size;
-      dest_size += m_pSrcBuf[i] + 1;
+      dest_size += m_SrcBuf[i] + 1;
       if (dest_size < old_size) {
         return false;
       }
-      i += m_pSrcBuf[i] + 2;
-    } else if (m_pSrcBuf[i] > 128) {
+      i += m_SrcBuf[i] + 2;
+    } else if (m_SrcBuf[i] > 128) {
       old_size = dest_size;
-      dest_size += 257 - m_pSrcBuf[i];
+      dest_size += 257 - m_SrcBuf[i];
       if (dest_size < old_size) {
         return false;
       }
@@ -1587,14 +1579,13 @@ bool CCodec_RLScanlineDecoder::CheckDestSize() {
   }
   return true;
 }
-bool CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
-                                      uint32_t src_size,
+
+bool CCodec_RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
                                       int width,
                                       int height,
                                       int nComps,
                                       int bpc) {
-  m_pSrcBuf = src_buf;
-  m_SrcSize = src_size;
+  m_SrcBuf = src_buf;
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
   m_nComps = nComps;
@@ -1612,52 +1603,52 @@ bool CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
   m_Pitch = pitch.ValueOrDie();
   // Overflow should already have been checked before this is called.
   m_dwLineBytes = (static_cast<uint32_t>(width) * nComps * bpc + 7) / 8;
-  m_pScanline = FX_Alloc(uint8_t, m_Pitch);
+  m_pScanline.reset(FX_Alloc(uint8_t, m_Pitch));
   return CheckDestSize();
 }
+
 bool CCodec_RLScanlineDecoder::v_Rewind() {
-  memset(m_pScanline, 0, m_Pitch);
+  memset(m_pScanline.get(), 0, m_Pitch);
   m_SrcOffset = 0;
   m_bEOD = false;
   m_Operator = 0;
   return true;
 }
+
 uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
   if (m_SrcOffset == 0) {
     GetNextOperator();
-  } else {
-    if (m_bEOD) {
-      return nullptr;
-    }
+  } else if (m_bEOD) {
+    return nullptr;
   }
-  memset(m_pScanline, 0, m_Pitch);
+  memset(m_pScanline.get(), 0, m_Pitch);
   uint32_t col_pos = 0;
   bool eol = false;
-  while (m_SrcOffset < m_SrcSize && !eol) {
+  while (m_SrcOffset < m_SrcBuf.size() && !eol) {
     if (m_Operator < 128) {
       uint32_t copy_len = m_Operator + 1;
       if (col_pos + copy_len >= m_dwLineBytes) {
         copy_len = m_dwLineBytes - col_pos;
         eol = true;
       }
-      if (copy_len >= m_SrcSize - m_SrcOffset) {
-        copy_len = m_SrcSize - m_SrcOffset;
+      if (copy_len >= m_SrcBuf.size() - m_SrcOffset) {
+        copy_len = m_SrcBuf.size() - m_SrcOffset;
         m_bEOD = true;
       }
-      memcpy(m_pScanline + col_pos, m_pSrcBuf + m_SrcOffset, copy_len);
+      memcpy(m_pScanline.get() + col_pos, &m_SrcBuf[m_SrcOffset], copy_len);
       col_pos += copy_len;
       UpdateOperator((uint8_t)copy_len);
     } else if (m_Operator > 128) {
       int fill = 0;
-      if (m_SrcOffset - 1 < m_SrcSize - 1) {
-        fill = m_pSrcBuf[m_SrcOffset];
+      if (m_SrcOffset - 1 < m_SrcBuf.size() - 1) {
+        fill = m_SrcBuf[m_SrcOffset];
       }
       uint32_t duplicate_len = 257 - m_Operator;
       if (col_pos + duplicate_len >= m_dwLineBytes) {
         duplicate_len = m_dwLineBytes - col_pos;
         eol = true;
       }
-      memset(m_pScanline + col_pos, fill, duplicate_len);
+      memset(m_pScanline.get() + col_pos, fill, duplicate_len);
       col_pos += duplicate_len;
       UpdateOperator((uint8_t)duplicate_len);
     } else {
@@ -1665,14 +1656,15 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
       break;
     }
   }
-  return m_pScanline;
+  return m_pScanline.get();
 }
+
 void CCodec_RLScanlineDecoder::GetNextOperator() {
-  if (m_SrcOffset >= m_SrcSize) {
+  if (m_SrcOffset >= m_SrcBuf.size()) {
     m_Operator = 128;
     return;
   }
-  m_Operator = m_pSrcBuf[m_SrcOffset];
+  m_Operator = m_SrcBuf[m_SrcOffset];
   m_SrcOffset++;
 }
 void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
@@ -1688,7 +1680,7 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
     }
     m_Operator -= used_bytes;
     m_SrcOffset += used_bytes;
-    if (m_SrcOffset >= m_SrcSize) {
+    if (m_SrcOffset >= m_SrcBuf.size()) {
       m_Operator = 128;
     }
     return;
@@ -1705,14 +1697,13 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder>
-CCodec_BasicModule::CreateRunLengthDecoder(const uint8_t* src_buf,
-                                           uint32_t src_size,
+CCodec_BasicModule::CreateRunLengthDecoder(pdfium::span<const uint8_t> src_buf,
                                            int width,
                                            int height,
                                            int nComps,
                                            int bpc) {
   auto pDecoder = pdfium::MakeUnique<CCodec_RLScanlineDecoder>();
-  if (!pDecoder->Create(src_buf, src_size, width, height, nComps, bpc))
+  if (!pDecoder->Create(src_buf, width, height, nComps, bpc))
     return nullptr;
 
   return std::move(pDecoder);

@@ -482,7 +482,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
   } else if (decoder == "RunLengthDecode") {
     CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
     m_pDecoder = pEncoders->GetBasicModule()->CreateRunLengthDecoder(
-        src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc);
+        {src_data, src_size}, m_Width, m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
     if (!CreateDCTDecoder(src_data, src_size, pParams))
       return LoadState::kFail;
