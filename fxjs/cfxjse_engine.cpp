@@ -102,12 +102,7 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
       m_JsContext(CFXJSE_Context::Create(fxjs_runtime->GetIsolate(),
                                          &GlobalClassDescriptor,
                                          pDocument->GetRoot())),
-      m_pJsClass(nullptr),
-      m_eScriptType(CXFA_Script::Type::Unknown),
-      m_pScriptNodeArray(nullptr),
-      m_ResolveProcessor(pdfium::MakeUnique<CFXJSE_ResolveProcessor>()),
-      m_pThisObject(nullptr),
-      m_eRunAtType(XFA_AttributeEnum::Client) {
+      m_ResolveProcessor(pdfium::MakeUnique<CFXJSE_ResolveProcessor>()) {
   RemoveBuiltInObjs(m_JsContext.get());
   m_JsContext->EnableCompatibleMode();
 
