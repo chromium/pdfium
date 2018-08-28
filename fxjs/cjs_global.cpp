@@ -113,6 +113,13 @@ void JSSpecialPropDel(const char* class_name,
   }
 }
 
+template <class T>
+v8::Local<v8::String> GetV8StringFromProperty(v8::Local<v8::Name> property,
+                                              const T& info) {
+  return property->ToString(info.GetIsolate()->GetCurrentContext())
+      .ToLocalChecked();
+}
+
 }  // namespace
 
 CJS_Global::JSGlobalData::JSGlobalData()
@@ -147,7 +154,7 @@ void CJS_Global::queryprop_static(
   JSSpecialPropQuery<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
-                                 property->ToString(info.GetIsolate())),
+                                 GetV8StringFromProperty(property, info)),
       info);
 }
 
@@ -159,7 +166,7 @@ void CJS_Global::getprop_static(
   JSSpecialPropGet<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
-                                 property->ToString(info.GetIsolate())),
+                                 GetV8StringFromProperty(property, info)),
       info);
 }
 
@@ -172,7 +179,7 @@ void CJS_Global::putprop_static(
   JSSpecialPropPut<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
-                                 property->ToString(info.GetIsolate())),
+                                 GetV8StringFromProperty(property, info)),
       value, info);
 }
 
@@ -184,7 +191,7 @@ void CJS_Global::delprop_static(
   JSSpecialPropDel<CJS_Global>(
       "global",
       v8::Local<v8::String>::New(info.GetIsolate(),
-                                 property->ToString(info.GetIsolate())),
+                                 GetV8StringFromProperty(property, info)),
       info);
 }
 
@@ -210,18 +217,15 @@ void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
 
 CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
     : CJS_Object(pObject, pRuntime) {
-  Initial(GetRuntime()->GetFormFillEnv());
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = GetRuntime()->GetFormFillEnv();
+  m_pFormFillEnv.Reset(pFormFillEnv);
+  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pFormFillEnv);
+  UpdateGlobalPersistentVariables();
 }
 
 CJS_Global::~CJS_Global() {
   DestroyGlobalPersisitentVariables();
   m_pGlobalData->Release();
-}
-
-void CJS_Global::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  m_pFormFillEnv.Reset(pFormFillEnv);
-  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pFormFillEnv);
-  UpdateGlobalPersistentVariables();
 }
 
 CJS_Result CJS_Global::QueryProperty(const wchar_t* propname) {

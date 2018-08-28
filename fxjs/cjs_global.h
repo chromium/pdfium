@@ -40,7 +40,6 @@ class CJS_Global final : public CJS_Object {
   ~CJS_Global() override;
 
   CJS_Result DelProperty(CJS_Runtime* pRuntime, const wchar_t* propname);
-  void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
   CJS_Result setPersistent(CJS_Runtime* pRuntime,
                            const std::vector<v8::Local<v8::Value>>& params);
