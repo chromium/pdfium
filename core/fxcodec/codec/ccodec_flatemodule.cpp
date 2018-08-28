@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/codec/ccodec_flatemodule.h"
 
 #include <algorithm>
 #include <limits>
@@ -12,8 +12,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/codec/ccodec_flatemodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
+#include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"

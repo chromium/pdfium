@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcodec/codec/ccodec_jpxmodule.h"
+
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -11,7 +13,6 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
-#include "core/fxcodec/codec/ccodec_jpxmodule.h"
 #include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"

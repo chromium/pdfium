@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcodec/codec/ccodec_faxmodule.h"
+
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/cfx_binarybuf.h"
