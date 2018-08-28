@@ -246,6 +246,10 @@ class CCodec_ProgressiveDecoder :
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
+  // |m_pSrcBuf| must outlive |m_pGifContext|.
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pSrcBuf;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pDecodeBuf;
+  std::unique_ptr<FX_ARGB, FxFreeDeleter> m_pSrcPalette;
   std::unique_ptr<CCodec_JpegModule::Context> m_pJpegContext;
 #ifdef PDF_ENABLE_XFA_BMP
   std::unique_ptr<CCodec_BmpModule::Context> m_pBmpContext;
@@ -260,9 +264,7 @@ class CCodec_ProgressiveDecoder :
   std::unique_ptr<CCodec_TiffModule::Context> m_pTiffContext;
 #endif  // PDF_ENABLE_XFA_TIFF
   uint32_t m_offSet = 0;
-  uint8_t* m_pSrcBuf = nullptr;
   uint32_t m_SrcSize = 0;
-  uint8_t* m_pDecodeBuf = nullptr;
   int m_ScanlineSize = 0;
   CFXCODEC_WeightTable m_WeightHorz;
   CFXCODEC_VertTable m_WeightVert;
@@ -277,7 +279,6 @@ class CCodec_ProgressiveDecoder :
   int m_sizeX = 0;
   int m_sizeY = 0;
   int m_TransMethod = -1;
-  FX_ARGB* m_pSrcPalette = nullptr;
   int m_SrcPaletteNumber = 0;
   int m_SrcRow = 0;
   FXCodec_Format m_SrcFormat = FXCodec_Invalid;

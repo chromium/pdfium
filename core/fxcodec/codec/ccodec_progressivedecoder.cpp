@@ -253,11 +253,7 @@ CCodec_ProgressiveDecoder::CCodec_ProgressiveDecoder(
     CCodec_ModuleMgr* pCodecMgr)
     : m_pCodecMgr(pCodecMgr) {}
 
-CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {
-  FX_Free(m_pSrcBuf);
-  FX_Free(m_pDecodeBuf);
-  FX_Free(m_pSrcPalette);
-}
+CCodec_ProgressiveDecoder::~CCodec_ProgressiveDecoder() {}
 
 #ifdef PDF_ENABLE_XFA_PNG
 bool CCodec_ProgressiveDecoder::PngReadHeader(int width,
@@ -327,8 +323,8 @@ bool CCodec_ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
     double scale_y = static_cast<double>(m_sizeY) / m_clipBox.Height();
     int32_t row = (int32_t)((line - m_clipBox.top) * scale_y) + m_startY;
     const uint8_t* src_scan = pDIBitmap->GetScanline(row);
-    uint8_t* dest_scan = m_pDecodeBuf;
-    *pSrcBuf = m_pDecodeBuf;
+    uint8_t* dest_scan = m_pDecodeBuf.get();
+    *pSrcBuf = m_pDecodeBuf.get();
     int32_t src_Bpp = pDIBitmap->GetBPP() >> 3;
     int32_t dest_Bpp = (m_SrcFormat & 0xff) >> 3;
     int32_t src_left = m_startX;
@@ -406,7 +402,8 @@ void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
     if (dest_row >= dest_top + dest_height) {
       return;
     }
-    PngOneOneMapResampleHorz(pDIBitmap, dest_row, m_pDecodeBuf, m_SrcFormat);
+    PngOneOneMapResampleHorz(pDIBitmap, dest_row, m_pDecodeBuf.get(),
+                             m_SrcFormat);
     if (m_SrcPassNumber == 1 && scale_y > 1.0) {
       ResampleVert(pDIBitmap, scale_y, dest_row);
       return;
@@ -452,15 +449,15 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
     pPalette = m_pGifPalette;
   }
   if (!m_pSrcPalette)
-    m_pSrcPalette = FX_Alloc(FX_ARGB, pal_num);
+    m_pSrcPalette.reset(FX_Alloc(FX_ARGB, pal_num));
   else if (pal_num > m_SrcPaletteNumber)
-    m_pSrcPalette = FX_Realloc(FX_ARGB, m_pSrcPalette, pal_num);
+    m_pSrcPalette.reset(FX_Realloc(FX_ARGB, m_pSrcPalette.release(), pal_num));
   if (!m_pSrcPalette)
     return false;
 
   m_SrcPaletteNumber = pal_num;
   for (int i = 0; i < pal_num; i++) {
-    m_pSrcPalette[i] =
+    m_pSrcPalette.get()[i] =
         ArgbEncode(0xff, pPalette[i].r, pPalette[i].g, pPalette[i].b);
   }
   m_GifTransIndex = trans_index;
@@ -471,7 +468,7 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
   if (trans_index >= pal_num)
     trans_index = -1;
   if (trans_index != -1) {
-    m_pSrcPalette[trans_index] &= 0x00ffffff;
+    m_pSrcPalette.get()[trans_index] &= 0x00ffffff;
     if (pDevice->HasAlpha())
       pal_index = trans_index;
   }
@@ -483,7 +480,7 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBuf(
   int sizeX = m_sizeX;
   int sizeY = m_sizeY;
   int Bpp = pDevice->GetBPP() / 8;
-  FX_ARGB argb = m_pSrcPalette[pal_index];
+  FX_ARGB argb = m_pSrcPalette.get()[pal_index];
   for (int row = 0; row < sizeY; row++) {
     uint8_t* pScanline =
         pDevice->GetWritableScanline(row + startY) + startX * Bpp;
@@ -533,11 +530,11 @@ void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
   if (m_GifTransIndex != -1 && m_pDeviceBitmap->HasAlpha()) {
     pal_index = m_GifTransIndex;
   }
-  memset(m_pDecodeBuf, pal_index, m_SrcWidth);
+  memset(m_pDecodeBuf.get(), pal_index, m_SrcWidth);
   bool bLastPass = (row_num % 2) == 1;
   int32_t line = row_num + m_GifFrameRect.top;
   int32_t left = m_GifFrameRect.left;
-  memcpy(m_pDecodeBuf + left, row_buf, img_width);
+  memcpy(m_pDecodeBuf.get() + left, row_buf, img_width);
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
   int dest_top = m_startY;
@@ -552,7 +549,7 @@ void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
   if (dest_row >= dest_top + dest_height)
     return;
 
-  ReSampleScanline(pDIBitmap, dest_row, m_pDecodeBuf, m_SrcFormat);
+  ReSampleScanline(pDIBitmap, dest_row, m_pDecodeBuf.get(), m_SrcFormat);
   if (scale_y > 1.0 && m_SrcPassNumber == 1) {
     ResampleVert(pDIBitmap, scale_y, dest_row);
     return;
@@ -590,7 +587,8 @@ void CCodec_ProgressiveDecoder::BmpReadScanline(
     const std::vector<uint8_t>& row_buf) {
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   ASSERT(pDIBitmap);
-  std::copy(row_buf.begin(), row_buf.begin() + m_ScanlineSize, m_pDecodeBuf);
+  std::copy(row_buf.begin(), row_buf.begin() + m_ScanlineSize,
+            m_pDecodeBuf.get());
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
   int dest_top = m_startY;
@@ -607,7 +605,7 @@ void CCodec_ProgressiveDecoder::BmpReadScanline(
   if (dest_row >= dest_top + dest_height)
     return;
 
-  ReSampleScanline(pDIBitmap, dest_row, m_pDecodeBuf, m_SrcFormat);
+  ReSampleScanline(pDIBitmap, dest_row, m_pDecodeBuf.get(), m_SrcFormat);
   if (scale_y <= 1.0)
     return;
 
@@ -723,13 +721,13 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
     return false;
   }
 
-  if (!m_pFile->ReadBlock(m_pSrcBuf, 0, size)) {
+  if (!m_pFile->ReadBlock(m_pSrcBuf.get(), 0, size)) {
     m_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
 
   m_offSet += size;
-  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf, size});
+  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf.get(), size});
   std::vector<uint32_t> palette;
   int32_t readResult = pBmpModule->ReadHeader(
       m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
@@ -789,12 +787,12 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
 
   m_SrcBPC = 8;
   m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
-  FX_Free(m_pSrcPalette);
   if (m_SrcPaletteNumber) {
-    m_pSrcPalette = FX_Alloc(FX_ARGB, m_SrcPaletteNumber);
-    memcpy(m_pSrcPalette, palette.data(), m_SrcPaletteNumber * sizeof(FX_ARGB));
+    m_pSrcPalette.reset(FX_Alloc(FX_ARGB, m_SrcPaletteNumber));
+    memcpy(m_pSrcPalette.get(), palette.data(),
+           m_SrcPaletteNumber * sizeof(FX_ARGB));
   } else {
-    m_pSrcPalette = nullptr;
+    m_pSrcPalette.reset();
   }
   return true;
 }
@@ -818,7 +816,7 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
     }
     m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
                 FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
-    m_pSrcBuf = FX_TryRealloc(uint8_t, m_pSrcBuf, m_SrcSize);
+    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
     if (!m_pSrcBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
@@ -826,18 +824,18 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
   } else {
     uint32_t dwConsume = m_SrcSize - dwAvail;
     if (dwAvail) {
-      memmove(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
+      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsume, dwAvail);
     }
     if (dwSize > dwConsume) {
       dwSize = dwConsume;
     }
   }
-  if (!m_pFile->ReadBlock(m_pSrcBuf + dwAvail, m_offSet, dwSize)) {
+  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwAvail, m_offSet, dwSize)) {
     err_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
   m_offSet += dwSize;
-  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf, dwSize + dwAvail});
+  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf.get(), dwSize + dwAvail});
   return true;
 }
 
@@ -852,9 +850,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpStartDecode(
   }
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   m_ScanlineSize = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
-  FX_Free(m_pDecodeBuf);
-  m_pDecodeBuf = FX_Alloc(uint8_t, m_ScanlineSize);
-  memset(m_pDecodeBuf, 0, m_ScanlineSize);
+  m_pDecodeBuf.reset(FX_Alloc(uint8_t, m_ScanlineSize));
+  memset(m_pDecodeBuf.get(), 0, m_ScanlineSize);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
                     m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
@@ -913,7 +910,7 @@ bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
         (dwAmountToFetchFromFile + dwUnusedBuffer + FXCODEC_BLOCK_SIZE - 1) /
             FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE,
         static_cast<uint32_t>(m_pFile->GetSize()));
-    m_pSrcBuf = FX_TryRealloc(uint8_t, m_pSrcBuf, m_SrcSize);
+    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
     if (!m_pSrcBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
@@ -921,20 +918,21 @@ bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
   } else {
     uint32_t dwConsumed = m_SrcSize - dwUnusedBuffer;
     if (dwUnusedBuffer)
-      memmove(m_pSrcBuf, m_pSrcBuf + dwConsumed, dwUnusedBuffer);
+      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsumed, dwUnusedBuffer);
     if (dwFileRemaining > dwConsumed)
       dwAmountToFetchFromFile = dwConsumed;
   }
 
-  if (!m_pFile->ReadBlock(m_pSrcBuf + dwUnusedBuffer, m_offSet,
+  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwUnusedBuffer, m_offSet,
                           dwAmountToFetchFromFile)) {
     err_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
 
   m_offSet += dwAmountToFetchFromFile;
-  pGifModule->Input(m_pGifContext.get(),
-                    {m_pSrcBuf, dwAmountToFetchFromFile + dwUnusedBuffer});
+  pGifModule->Input(
+      m_pGifContext.get(),
+      {m_pSrcBuf.get(), dwAmountToFetchFromFile + dwUnusedBuffer});
   m_InvalidateGifBuffer = false;
   return true;
 }
@@ -947,13 +945,13 @@ bool CCodec_ProgressiveDecoder::GifDetectImageType(CFX_DIBAttribute* pAttribute,
     return false;
   }
   m_pGifContext = pGifModule->Start(this);
-  bool bResult = m_pFile->ReadBlock(m_pSrcBuf, 0, size);
+  bool bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), 0, size);
   if (!bResult) {
     m_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
   m_offSet += size;
-  pGifModule->Input(m_pGifContext.get(), {m_pSrcBuf, size});
+  pGifModule->Input(m_pGifContext.get(), {m_pSrcBuf.get(), size});
   m_SrcComponents = 1;
   CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
       m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
@@ -991,9 +989,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GifStartDecode(
   m_SrcFormat = FXCodec_8bppRgb;
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = (m_SrcWidth + 3) / 4 * 4;
-  FX_Free(m_pDecodeBuf);
-  m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
-  memset(m_pDecodeBuf, 0, scanline_size);
+  m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
+  memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
                     m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
@@ -1139,7 +1136,7 @@ bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
     }
     m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
                 FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
-    m_pSrcBuf = FX_TryRealloc(uint8_t, m_pSrcBuf, m_SrcSize);
+    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
     if (!m_pSrcBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
@@ -1147,18 +1144,18 @@ bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
   } else {
     uint32_t dwConsume = m_SrcSize - dwAvail;
     if (dwAvail) {
-      memmove(m_pSrcBuf, m_pSrcBuf + dwConsume, dwAvail);
+      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsume, dwAvail);
     }
     if (dwSize > dwConsume) {
       dwSize = dwConsume;
     }
   }
-  if (!m_pFile->ReadBlock(m_pSrcBuf + dwAvail, m_offSet, dwSize)) {
+  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwAvail, m_offSet, dwSize)) {
     err_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
   m_offSet += dwSize;
-  pJpegModule->Input(m_pJpegContext.get(), m_pSrcBuf, dwSize + dwAvail);
+  pJpegModule->Input(m_pJpegContext.get(), m_pSrcBuf.get(), dwSize + dwAvail);
   return true;
 }
 
@@ -1171,12 +1168,12 @@ bool CCodec_ProgressiveDecoder::JpegDetectImageType(
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  if (!m_pFile->ReadBlock(m_pSrcBuf, 0, size)) {
+  if (!m_pFile->ReadBlock(m_pSrcBuf.get(), 0, size)) {
     m_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
   m_offSet += size;
-  pJpegModule->Input(m_pJpegContext.get(), m_pSrcBuf, size);
+  pJpegModule->Input(m_pJpegContext.get(), m_pSrcBuf.get(), size);
   // Setting jump marker before calling ReadHeader, since a longjmp to
   // the marker indicates a fatal error.
   if (setjmp(*m_pJpegContext->GetJumpMark()) == -1) {
@@ -1236,9 +1233,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegStartDecode(
   }
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
   scanline_size = (scanline_size * m_SrcComponents + 3) / 4 * 4;
-  FX_Free(m_pDecodeBuf);
-  m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
-  memset(m_pDecodeBuf, 0, scanline_size);
+  m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
+  memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
                     m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
@@ -1270,7 +1266,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegContinueDecode() {
 
   while (true) {
     bool readRes =
-        pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf);
+        pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf.get());
     while (!readRes) {
       FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
       if (!JpegReadMoreData(pJpegModule, error_status)) {
@@ -1279,11 +1275,12 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegContinueDecode() {
         m_status = error_status;
         return m_status;
       }
-      readRes = pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf);
+      readRes =
+          pJpegModule->ReadScanline(m_pJpegContext.get(), m_pDecodeBuf.get());
     }
     if (m_SrcFormat == FXCodec_Rgb) {
       int src_Bpp = (m_SrcFormat & 0xff) >> 3;
-      RGB2BGR(m_pDecodeBuf + m_clipBox.left * src_Bpp, m_clipBox.Width());
+      RGB2BGR(m_pDecodeBuf.get() + m_clipBox.left * src_Bpp, m_clipBox.Width());
     }
     if (m_SrcRow >= m_clipBox.bottom) {
       m_pDeviceBitmap = nullptr;
@@ -1291,7 +1288,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegContinueDecode() {
       m_status = FXCODEC_STATUS_DECODE_FINISH;
       return m_status;
     }
-    Resample(m_pDeviceBitmap, m_SrcRow, m_pDecodeBuf, m_SrcFormat);
+    Resample(m_pDeviceBitmap, m_SrcRow, m_pDecodeBuf.get(), m_SrcFormat);
     m_SrcRow++;
   }
 }
@@ -1386,14 +1383,15 @@ bool CCodec_ProgressiveDecoder::PngDetectImageType(CFX_DIBAttribute* pAttribute,
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  bool bResult = m_pFile->ReadBlock(m_pSrcBuf, 0, size);
+  bool bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), 0, size);
   if (!bResult) {
     m_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
 
   m_offSet += size;
-  bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, size, pAttribute);
+  bResult =
+      pPngModule->Input(m_pPngContext.get(), m_pSrcBuf.get(), size, pAttribute);
   while (bResult) {
     uint32_t remain_size = static_cast<uint32_t>(m_pFile->GetSize()) - m_offSet;
     uint32_t input_size =
@@ -1404,19 +1402,18 @@ bool CCodec_ProgressiveDecoder::PngDetectImageType(CFX_DIBAttribute* pAttribute,
       return false;
     }
     if (m_pSrcBuf && input_size > m_SrcSize) {
-      FX_Free(m_pSrcBuf);
-      m_pSrcBuf = FX_Alloc(uint8_t, input_size);
-      memset(m_pSrcBuf, 0, input_size);
+      m_pSrcBuf.reset(FX_Alloc(uint8_t, input_size));
+      memset(m_pSrcBuf.get(), 0, input_size);
       m_SrcSize = input_size;
     }
-    bResult = m_pFile->ReadBlock(m_pSrcBuf, m_offSet, input_size);
+    bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), m_offSet, input_size);
     if (!bResult) {
       m_status = FXCODEC_STATUS_ERR_READ;
       return false;
     }
     m_offSet += input_size;
-    bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, input_size,
-                                pAttribute);
+    bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf.get(),
+                                input_size, pAttribute);
   }
   ASSERT(!bResult);
   m_pPngContext.reset();
@@ -1468,9 +1465,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngStartDecode(
   }
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
-  FX_Free(m_pDecodeBuf);
-  m_pDecodeBuf = FX_Alloc(uint8_t, scanline_size);
-  memset(m_pDecodeBuf, 0, scanline_size);
+  m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
+  memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorzOO.Calc(m_sizeX, m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1495,12 +1491,11 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
       return m_status;
     }
     if (m_pSrcBuf && input_size > m_SrcSize) {
-      FX_Free(m_pSrcBuf);
-      m_pSrcBuf = FX_Alloc(uint8_t, input_size);
-      memset(m_pSrcBuf, 0, input_size);
+      m_pSrcBuf.reset(FX_Alloc(uint8_t, input_size));
+      memset(m_pSrcBuf.get(), 0, input_size);
       m_SrcSize = input_size;
     }
-    bool bResult = m_pFile->ReadBlock(m_pSrcBuf, m_offSet, input_size);
+    bool bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), m_offSet, input_size);
     if (!bResult) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
@@ -1508,8 +1503,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
       return m_status;
     }
     m_offSet += input_size;
-    bResult =
-        pPngModule->Input(m_pPngContext.get(), m_pSrcBuf, input_size, nullptr);
+    bResult = pPngModule->Input(m_pPngContext.get(), m_pSrcBuf.get(),
+                                input_size, nullptr);
     if (!bResult) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
@@ -1695,9 +1690,8 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   if (size > FXCODEC_BLOCK_SIZE) {
     size = FXCODEC_BLOCK_SIZE;
   }
-  FX_Free(m_pSrcBuf);
-  m_pSrcBuf = FX_Alloc(uint8_t, size);
-  memset(m_pSrcBuf, 0, size);
+  m_pSrcBuf.reset(FX_Alloc(uint8_t, size));
+  memset(m_pSrcBuf.get(), 0, size);
   m_SrcSize = size;
   switch (imageType) {
     case FXCODEC_IMAGE_JPG:
@@ -1956,7 +1950,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          unsigned long argb = m_pSrcPalette[src_scan[j]];
+          unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
           dest_r += pixel_weight * (uint8_t)(argb >> 16);
           dest_g += pixel_weight * (uint8_t)(argb >> 8);
           dest_b += pixel_weight * (uint8_t)argb;
@@ -2023,7 +2017,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          unsigned long argb = m_pSrcPalette[src_scan[j]];
+          unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
           dest_r += pixel_weight * (uint8_t)(argb >> 16);
           dest_g += pixel_weight * (uint8_t)(argb >> 8);
           dest_b += pixel_weight * (uint8_t)argb;
@@ -2043,7 +2037,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
                j++) {
             int pixel_weight =
                 pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            unsigned long argb = m_pSrcPalette[src_scan[j]];
+            unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
             dest_r += pixel_weight * (uint8_t)(argb >> 16);
             dest_g += pixel_weight * (uint8_t)(argb >> 8);
             dest_b += pixel_weight * (uint8_t)argb;
@@ -2063,7 +2057,7 @@ void CCodec_ProgressiveDecoder::ReSampleScanline(
              j++) {
           int pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-          unsigned long argb = m_pSrcPalette[src_scan[j]];
+          unsigned long argb = m_pSrcPalette.get()[src_scan[j]];
           dest_a += pixel_weight * (uint8_t)(argb >> 24);
           dest_r += pixel_weight * (uint8_t)(argb >> 16);
           dest_g += pixel_weight * (uint8_t)(argb >> 8);
@@ -2260,13 +2254,12 @@ void CCodec_ProgressiveDecoder::Resample(
     double scale_y = static_cast<double>(dest_height) / src_height;
     int src_row = src_line - src_top;
     int dest_row = (int)(src_row * scale_y) + dest_top;
-    if (dest_row >= dest_top + dest_height) {
+    if (dest_row >= dest_top + dest_height)
       return;
-    }
-    ReSampleScanline(pDeviceBitmap, dest_row, m_pDecodeBuf, src_format);
-    if (scale_y > 1.0) {
+
+    ReSampleScanline(pDeviceBitmap, dest_row, m_pDecodeBuf.get(), src_format);
+    if (scale_y > 1.0)
       ResampleVert(pDeviceBitmap, scale_y, dest_row);
-    }
   }
 }
 
