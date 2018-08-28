@@ -88,11 +88,11 @@ class CFXJSE_Value {
   friend class CFXJSE_Class;
   friend class CFXJSE_Context;
 
-  CFXJSE_Value();
-  CFXJSE_Value(const CFXJSE_Value&);
-  CFXJSE_Value& operator=(const CFXJSE_Value&);
+  CFXJSE_Value() = delete;
+  CFXJSE_Value(const CFXJSE_Value&) = delete;
+  CFXJSE_Value& operator=(const CFXJSE_Value&) = delete;
 
-  UnownedPtr<v8::Isolate> m_pIsolate;
+  UnownedPtr<v8::Isolate> const m_pIsolate;
   v8::Global<v8::Value> m_hValue;
 };
 

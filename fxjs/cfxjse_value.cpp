@@ -84,7 +84,10 @@ void CFXJSE_Value::SetObject(CFXJSE_HostObject* lpObject,
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::FunctionTemplate> hClass =
       v8::Local<v8::FunctionTemplate>::New(GetIsolate(), pClass->m_hTemplate);
-  v8::Local<v8::Object> hObject = hClass->InstanceTemplate()->NewInstance();
+  v8::Local<v8::Object> hObject =
+      hClass->InstanceTemplate()
+          ->NewInstance(GetIsolate()->GetCurrentContext())
+          .ToLocalChecked();
   FXJSE_UpdateObjectBinding(hObject, lpObject);
   m_hValue.Reset(GetIsolate(), hObject);
 }
@@ -125,11 +128,11 @@ bool CFXJSE_Value::SetObjectProperty(const ByteStringView& szPropName,
 
   v8::Local<v8::Value> hPropValue =
       v8::Local<v8::Value>::New(GetIsolate(), lpPropValue->DirectGetValue());
-  return (bool)hObject.As<v8::Object>()->Set(
+  return static_cast<bool>(hObject.As<v8::Object>()->Set(
       v8::String::NewFromUtf8(GetIsolate(), szPropName.unterminated_c_str(),
                               v8::String::kNormalString,
                               szPropName.GetLength()),
-      hPropValue);
+      hPropValue));
 }
 
 bool CFXJSE_Value::GetObjectProperty(const ByteStringView& szPropName,
@@ -159,7 +162,7 @@ bool CFXJSE_Value::SetObjectProperty(uint32_t uPropIdx,
 
   v8::Local<v8::Value> hPropValue =
       v8::Local<v8::Value>::New(GetIsolate(), lpPropValue->DirectGetValue());
-  return (bool)hObject.As<v8::Object>()->Set(uPropIdx, hPropValue);
+  return static_cast<bool>(hObject.As<v8::Object>()->Set(uPropIdx, hPropValue));
 }
 
 bool CFXJSE_Value::GetObjectPropertyByIdx(uint32_t uPropIdx,
@@ -219,7 +222,7 @@ bool CFXJSE_Value::SetObjectOwnProperty(const ByteStringView& szPropName,
       v8::Local<v8::Value>::New(GetIsolate(), lpPropValue->m_hValue);
   return hObject.As<v8::Object>()
       ->DefineOwnProperty(
-          m_pIsolate->GetCurrentContext(),
+          GetIsolate()->GetCurrentContext(),
           v8::String::NewFromUtf8(GetIsolate(), szPropName.unterminated_c_str(),
                                   v8::String::kNormalString,
                                   szPropName.GetLength()),
@@ -249,7 +252,7 @@ bool CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
       v8::String::NewFromUtf8(GetIsolate(),
                               "(function (oldfunction, newthis) { return "
                               "oldfunction.bind(newthis); })");
-  v8::Local<v8::Context> hContext = m_pIsolate->GetCurrentContext();
+  v8::Local<v8::Context> hContext = GetIsolate()->GetCurrentContext();
   v8::Local<v8::Function> hBinderFunc =
       v8::Script::Compile(hContext, hBinderFuncSource)
           .ToLocalChecked()

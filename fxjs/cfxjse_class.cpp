@@ -142,7 +142,9 @@ void DynPropGetterAdapter(const FXJSE_CLASS_DESCRIPTOR* lpClass,
           v8::ObjectTemplate::New(pIsolate);
       hCallBackInfoTemplate->SetInternalFieldCount(2);
       v8::Local<v8::Object> hCallBackInfo =
-          hCallBackInfoTemplate->NewInstance();
+          hCallBackInfoTemplate
+              ->NewInstance(pValue->GetIsolate()->GetCurrentContext())
+              .ToLocalChecked();
       hCallBackInfo->SetAlignedPointerInInternalField(
           0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClass));
       hCallBackInfo->SetInternalField(
@@ -251,6 +253,21 @@ void NamedPropertyEnumeratorCallback(
   info.GetReturnValue().Set(v8::Array::New(info.GetIsolate()));
 }
 
+void SetUpNamedPropHandler(v8::Isolate* pIsolate,
+                           v8::Local<v8::ObjectTemplate>* pObjectTemplate,
+                           const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition) {
+  v8::NamedPropertyHandlerConfiguration configuration(
+      lpClassDefinition->dynPropGetter ? NamedPropertyGetterCallback : nullptr,
+      lpClassDefinition->dynPropSetter ? NamedPropertySetterCallback : nullptr,
+      lpClassDefinition->dynPropTypeGetter ? NamedPropertyQueryCallback
+                                           : nullptr,
+      nullptr, NamedPropertyEnumeratorCallback,
+      v8::External::New(pIsolate,
+                        const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)),
+      v8::PropertyHandlerFlags::kNonMasking);
+  (*pObjectTemplate)->SetHandler(configuration);
+}
+
 }  // namespace
 
 // static
@@ -280,7 +297,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(2);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
-  SetUpNamedPropHandler(pIsolate, hObjectTemplate, lpClassDefinition);
+  SetUpNamedPropHandler(pIsolate, &hObjectTemplate, lpClassDefinition);
 
   if (lpClassDefinition->methNum) {
     for (int32_t i = 0; i < lpClassDefinition->methNum; i++) {
@@ -310,23 +327,6 @@ CFXJSE_Class* CFXJSE_Class::Create(
   return pResult;
 }
 
-// static
-void CFXJSE_Class::SetUpNamedPropHandler(
-    v8::Isolate* pIsolate,
-    v8::Local<v8::ObjectTemplate>& hObjectTemplate,
-    const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition) {
-  v8::NamedPropertyHandlerConfiguration configuration(
-      lpClassDefinition->dynPropGetter ? NamedPropertyGetterCallback : 0,
-      lpClassDefinition->dynPropSetter ? NamedPropertySetterCallback : 0,
-      lpClassDefinition->dynPropTypeGetter ? NamedPropertyQueryCallback : 0, 0,
-      NamedPropertyEnumeratorCallback,
-      v8::External::New(pIsolate,
-                        const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)),
-      v8::PropertyHandlerFlags::kNonMasking);
-  hObjectTemplate->SetHandler(configuration);
-}
-
-CFXJSE_Class::CFXJSE_Class(CFXJSE_Context* lpContext)
-    : m_lpClassDefinition(nullptr), m_pContext(lpContext) {}
+CFXJSE_Class::CFXJSE_Class(CFXJSE_Context* lpContext) : m_pContext(lpContext) {}
 
 CFXJSE_Class::~CFXJSE_Class() {}

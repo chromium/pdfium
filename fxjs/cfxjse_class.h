@@ -20,11 +20,6 @@ class CFXJSE_Class {
                               const FXJSE_CLASS_DESCRIPTOR* lpClassDefintion,
                               bool bIsJSGlobal);
 
-  static void SetUpNamedPropHandler(
-      v8::Isolate* pIsolate,
-      v8::Local<v8::ObjectTemplate>& hObjectTemplate,
-      const FXJSE_CLASS_DESCRIPTOR* lpClassDefinition);
-
   explicit CFXJSE_Class(CFXJSE_Context* lpContext);
   ~CFXJSE_Class();
 
@@ -32,12 +27,13 @@ class CFXJSE_Class {
   v8::Global<v8::FunctionTemplate>& GetTemplate() { return m_hTemplate; }
 
  protected:
-  ByteString m_szClassName;
-  UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> m_lpClassDefinition;
-  UnownedPtr<CFXJSE_Context> m_pContext;
-  v8::Global<v8::FunctionTemplate> m_hTemplate;
   friend class CFXJSE_Context;
   friend class CFXJSE_Value;
+
+  ByteString m_szClassName;
+  UnownedPtr<const FXJSE_CLASS_DESCRIPTOR> m_lpClassDefinition;
+  UnownedPtr<CFXJSE_Context> const m_pContext;
+  v8::Global<v8::FunctionTemplate> m_hTemplate;
 };
 
 #endif  // FXJS_CFXJSE_CLASS_H_
