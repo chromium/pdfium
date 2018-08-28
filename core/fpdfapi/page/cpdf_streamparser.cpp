@@ -71,7 +71,7 @@ uint32_t DecodeInlineStream(const uint8_t* src_buf,
                             uint32_t* dest_size) {
   if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
-        FPDFAPI_CreateFaxDecoder(src_buf, limit, width, height, pParam);
+        FPDFAPI_CreateFaxDecoder({src_buf, limit}, width, height, pParam);
     return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
   }
   if (decoder == "ASCII85Decode" || decoder == "A85")

@@ -30,7 +30,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   CCodec_FaxModule fax_module;
   std::unique_ptr<CCodec_ScanlineDecoder> decoder(
-      fax_module.CreateDecoder(data, size, width, height, K, EndOfLine,
+      fax_module.CreateDecoder({data, size}, width, height, K, EndOfLine,
                                ByteAlign, BlackIs1, Columns, Rows));
 
   if (decoder) {

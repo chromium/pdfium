@@ -11,21 +11,23 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/span.h"
 
 class CCodec_ScanlineDecoder;
 
 class CCodec_FaxModule {
  public:
-  std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(const uint8_t* src_buf,
-                                                        uint32_t src_size,
-                                                        int width,
-                                                        int height,
-                                                        int K,
-                                                        bool EndOfLine,
-                                                        bool EncodedByteAlign,
-                                                        bool BlackIs1,
-                                                        int Columns,
-                                                        int Rows);
+  std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
+      pdfium::span<const uint8_t> src_buf,
+      int width,
+      int height,
+      int K,
+      bool EndOfLine,
+      bool EncodedByteAlign,
+      bool BlackIs1,
+      int Columns,
+      int Rows);
+
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   static void FaxEncode(const uint8_t* src_buf,
                         int width,

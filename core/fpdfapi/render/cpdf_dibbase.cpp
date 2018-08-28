@@ -470,21 +470,19 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
     return LoadState::kContinue;
   }
 
-  const uint8_t* src_data = m_pStreamAcc->GetData();
-  uint32_t src_size = m_pStreamAcc->GetSize();
+  pdfium::span<const uint8_t> src_span = m_pStreamAcc->GetSpan();
   const CPDF_Dictionary* pParams = m_pStreamAcc->GetImageParam();
   if (decoder == "CCITTFaxDecode") {
-    m_pDecoder = FPDFAPI_CreateFaxDecoder(src_data, src_size, m_Width, m_Height,
-                                          pParams);
+    m_pDecoder = FPDFAPI_CreateFaxDecoder(src_span, m_Width, m_Height, pParams);
   } else if (decoder == "FlateDecode") {
-    m_pDecoder = FPDFAPI_CreateFlateDecoder(
-        src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams);
+    m_pDecoder = FPDFAPI_CreateFlateDecoder(src_span, m_Width, m_Height,
+                                            m_nComponents, m_bpc, pParams);
   } else if (decoder == "RunLengthDecode") {
     CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
     m_pDecoder = pEncoders->GetBasicModule()->CreateRunLengthDecoder(
-        {src_data, src_size}, m_Width, m_Height, m_nComponents, m_bpc);
+        src_span, m_Width, m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
-    if (!CreateDCTDecoder({src_data, src_size}, pParams))
+    if (!CreateDCTDecoder(src_span, pParams))
       return LoadState::kFail;
   }
   if (!m_pDecoder)
@@ -576,8 +574,8 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
 RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
   CCodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
   auto context = pdfium::MakeUnique<JpxBitMapContext>(pJpxModule);
-  context->set_decoder(pJpxModule->CreateDecoder(
-      m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(), m_pColorSpace.Get()));
+  context->set_decoder(
+      pJpxModule->CreateDecoder(m_pStreamAcc->GetSpan(), m_pColorSpace.Get()));
   if (!context->decoder())
     return nullptr;
 

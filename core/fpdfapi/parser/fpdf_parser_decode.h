@@ -39,15 +39,13 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
                          uint32_t* dest_size);
 
 std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFaxDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     const CPDF_Dictionary* pParams);
 
 std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     int nComps,

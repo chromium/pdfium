@@ -450,8 +450,7 @@ void FaxGet1DLine(const uint8_t* src_buf,
 
 class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
  public:
-  CCodec_FaxDecoder(const uint8_t* src_buf,
-                    uint32_t src_size,
+  CCodec_FaxDecoder(pdfium::span<const uint8_t> src_span,
                     int width,
                     int height,
                     uint32_t pitch,
@@ -468,18 +467,16 @@ class CCodec_FaxDecoder final : public CCodec_ScanlineDecoder {
 
  private:
   const int m_Encoding;
-  int m_bitpos;
-  bool m_bByteAlign;
+  int m_bitpos = 0;
+  bool m_bByteAlign = false;
   const bool m_bEndOfLine;
   const bool m_bBlack;
-  const uint32_t m_SrcSize;
-  const uint8_t* const m_pSrcBuf;
+  pdfium::span<const uint8_t> const m_SrcSpan;
   std::vector<uint8_t> m_ScanlineBuf;
   std::vector<uint8_t> m_RefBuf;
 };
 
-CCodec_FaxDecoder::CCodec_FaxDecoder(const uint8_t* src_buf,
-                                     uint32_t src_size,
+CCodec_FaxDecoder::CCodec_FaxDecoder(pdfium::span<const uint8_t> src_span,
                                      int width,
                                      int height,
                                      uint32_t pitch,
@@ -489,12 +486,10 @@ CCodec_FaxDecoder::CCodec_FaxDecoder(const uint8_t* src_buf,
                                      bool BlackIs1)
     : CCodec_ScanlineDecoder(width, height, width, height, 1, 1, pitch),
       m_Encoding(K),
-      m_bitpos(0),
       m_bByteAlign(EncodedByteAlign),
       m_bEndOfLine(EndOfLine),
       m_bBlack(BlackIs1),
-      m_SrcSize(src_size),
-      m_pSrcBuf(src_buf),
+      m_SrcSpan(src_span),
       m_ScanlineBuf(pitch),
       m_RefBuf(pitch) {}
 
@@ -507,35 +502,37 @@ bool CCodec_FaxDecoder::v_Rewind() {
 }
 
 uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
-  int bitsize = m_SrcSize * 8;
-  FaxSkipEOL(m_pSrcBuf, bitsize, &m_bitpos);
+  int bitsize = m_SrcSpan.size() * 8;
+  FaxSkipEOL(m_SrcSpan.data(), bitsize, &m_bitpos);
   if (m_bitpos >= bitsize)
     return nullptr;
 
   memset(m_ScanlineBuf.data(), 0xff, m_ScanlineBuf.size());
   if (m_Encoding < 0) {
-    FaxG4GetRow(m_pSrcBuf, bitsize, &m_bitpos, m_ScanlineBuf.data(), m_RefBuf,
-                m_OrigWidth);
+    FaxG4GetRow(m_SrcSpan.data(), bitsize, &m_bitpos, m_ScanlineBuf.data(),
+                m_RefBuf, m_OrigWidth);
     m_RefBuf = m_ScanlineBuf;
   } else if (m_Encoding == 0) {
-    FaxGet1DLine(m_pSrcBuf, bitsize, &m_bitpos, &m_ScanlineBuf, m_OrigWidth);
+    FaxGet1DLine(m_SrcSpan.data(), bitsize, &m_bitpos, &m_ScanlineBuf,
+                 m_OrigWidth);
   } else {
-    if (NextBit(m_pSrcBuf, &m_bitpos)) {
-      FaxGet1DLine(m_pSrcBuf, bitsize, &m_bitpos, &m_ScanlineBuf, m_OrigWidth);
+    if (NextBit(m_SrcSpan.data(), &m_bitpos)) {
+      FaxGet1DLine(m_SrcSpan.data(), bitsize, &m_bitpos, &m_ScanlineBuf,
+                   m_OrigWidth);
     } else {
-      FaxG4GetRow(m_pSrcBuf, bitsize, &m_bitpos, m_ScanlineBuf.data(), m_RefBuf,
-                  m_OrigWidth);
+      FaxG4GetRow(m_SrcSpan.data(), bitsize, &m_bitpos, m_ScanlineBuf.data(),
+                  m_RefBuf, m_OrigWidth);
     }
     m_RefBuf = m_ScanlineBuf;
   }
   if (m_bEndOfLine)
-    FaxSkipEOL(m_pSrcBuf, bitsize, &m_bitpos);
+    FaxSkipEOL(m_SrcSpan.data(), bitsize, &m_bitpos);
 
   if (m_bByteAlign && m_bitpos < bitsize) {
     int bitpos0 = m_bitpos;
     int bitpos1 = (m_bitpos + 7) / 8 * 8;
     while (m_bByteAlign && bitpos0 < bitpos1) {
-      int bit = m_pSrcBuf[bitpos0 / 8] & (1 << (7 - bitpos0 % 8));
+      int bit = m_SrcSpan[bitpos0 / 8] & (1 << (7 - bitpos0 % 8));
       if (bit != 0)
         m_bByteAlign = false;
       else
@@ -555,7 +552,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
 }
 
 uint32_t CCodec_FaxDecoder::GetSrcOffset() {
-  return std::min(static_cast<uint32_t>((m_bitpos + 7) / 8), m_SrcSize);
+  return std::min(static_cast<size_t>((m_bitpos + 7) / 8), m_SrcSpan.size());
 }
 
 void FaxG4Decode(const uint8_t* src_buf,
@@ -580,8 +577,7 @@ void FaxG4Decode(const uint8_t* src_buf,
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     int K,
@@ -603,7 +599,7 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
 
   uint32_t pitch = (static_cast<uint32_t>(actual_width) + 31) / 32 * 4;
   return pdfium::MakeUnique<CCodec_FaxDecoder>(
-      src_buf, src_size, actual_width, actual_height, pitch, K, EndOfLine,
+      src_span, actual_width, actual_height, pitch, K, EndOfLine,
       EncodedByteAlign, BlackIs1);
 }
 

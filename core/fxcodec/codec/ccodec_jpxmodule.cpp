@@ -644,13 +644,13 @@ CCodec_JpxModule::CCodec_JpxModule() {}
 CCodec_JpxModule::~CCodec_JpxModule() {}
 
 std::unique_ptr<CJPX_Decoder> CCodec_JpxModule::CreateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     CPDF_ColorSpace* cs) {
   auto decoder = pdfium::MakeUnique<CJPX_Decoder>(cs);
-  return decoder->Init(pdfium::make_span(src_buf, src_size))
-             ? std::move(decoder)
-             : nullptr;
+  if (!decoder->Init(src_span))
+    return nullptr;
+
+  return decoder;
 }
 
 void CCodec_JpxModule::GetImageInfo(CJPX_Decoder* pDecoder,

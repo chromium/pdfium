@@ -568,8 +568,7 @@ static PredictorType GetPredictor(int predictor) {
 
 class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
  public:
-  CCodec_FlateScanlineDecoder(const uint8_t* src_buf,
-                              uint32_t src_size,
+  CCodec_FlateScanlineDecoder(pdfium::span<const uint8_t> src_buf,
                               int width,
                               int height,
                               int nComps,
@@ -587,12 +586,12 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
   std::unique_ptr<uint8_t, FxFreeDeleter> const m_pScanline;
 };
 
-CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder(const uint8_t* src_buf,
-                                                         uint32_t src_size,
-                                                         int width,
-                                                         int height,
-                                                         int nComps,
-                                                         int bpc)
+CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder(
+    pdfium::span<const uint8_t> src_span,
+    int width,
+    int height,
+    int nComps,
+    int bpc)
     : CCodec_ScanlineDecoder(width,
                              height,
                              width,
@@ -600,7 +599,7 @@ CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder(const uint8_t* src_buf,
                              nComps,
                              bpc,
                              CalculatePitch8(bpc, nComps, width).ValueOrDie()),
-      m_SrcBuf(src_buf, src_size),
+      m_SrcBuf(src_span),
       m_pScanline(FX_Alloc(uint8_t, m_Pitch)) {}
 
 CCodec_FlateScanlineDecoder::~CCodec_FlateScanlineDecoder() = default;
@@ -626,8 +625,7 @@ uint32_t CCodec_FlateScanlineDecoder::GetSrcOffset() {
 class CCodec_FlatePredictorScanlineDecoder final
     : public CCodec_FlateScanlineDecoder {
  public:
-  CCodec_FlatePredictorScanlineDecoder(const uint8_t* src_buf,
-                                       uint32_t src_size,
+  CCodec_FlatePredictorScanlineDecoder(pdfium::span<const uint8_t> src_buf,
                                        int width,
                                        int height,
                                        int comps,
@@ -658,8 +656,7 @@ class CCodec_FlatePredictorScanlineDecoder final
 };
 
 CCodec_FlatePredictorScanlineDecoder::CCodec_FlatePredictorScanlineDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     int comps,
@@ -668,7 +665,7 @@ CCodec_FlatePredictorScanlineDecoder::CCodec_FlatePredictorScanlineDecoder(
     int Colors,
     int BitsPerComponent,
     int Columns)
-    : CCodec_FlateScanlineDecoder(src_buf, src_size, width, height, comps, bpc),
+    : CCodec_FlateScanlineDecoder(src_span, width, height, comps, bpc),
       m_Predictor(predictor) {
   ASSERT(m_Predictor != PredictorType::kNone);
   if (BitsPerComponent * Colors * Columns == 0) {
@@ -765,8 +762,7 @@ void CCodec_FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
 }  // namespace
 
 std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     int nComps,
@@ -777,11 +773,11 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
     int Columns) {
   PredictorType predictor_type = GetPredictor(predictor);
   if (predictor_type == PredictorType::kNone) {
-    return pdfium::MakeUnique<CCodec_FlateScanlineDecoder>(
-        src_buf, src_size, width, height, nComps, bpc);
+    return pdfium::MakeUnique<CCodec_FlateScanlineDecoder>(src_span, width,
+                                                           height, nComps, bpc);
   }
   return pdfium::MakeUnique<CCodec_FlatePredictorScanlineDecoder>(
-      src_buf, src_size, width, height, nComps, bpc, predictor_type, Colors,
+      src_span, width, height, nComps, bpc, predictor_type, Colors,
       BitsPerComponent, Columns);
 }
 

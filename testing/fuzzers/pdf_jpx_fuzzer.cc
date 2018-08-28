@@ -20,7 +20,7 @@ const uint32_t kMaxJPXFuzzSize = 100 * 1024 * 1024;  // 100 MB
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<CJPX_Decoder> decoder =
-      g_module.CreateDecoder(data, size, nullptr);
+      g_module.CreateDecoder({data, size}, nullptr);
   if (!decoder)
     return 0;
 

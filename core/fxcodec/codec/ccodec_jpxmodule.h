@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/span.h"
 
 class CJPX_Decoder;
 class CPDF_ColorSpace;
@@ -20,9 +21,10 @@ class CCodec_JpxModule {
   CCodec_JpxModule();
   ~CCodec_JpxModule();
 
-  std::unique_ptr<CJPX_Decoder> CreateDecoder(const uint8_t* src_buf,
-                                              uint32_t src_size,
-                                              CPDF_ColorSpace* cs);
+  std::unique_ptr<CJPX_Decoder> CreateDecoder(
+      pdfium::span<const uint8_t> src_span,
+      CPDF_ColorSpace* cs);
+
   void GetImageInfo(CJPX_Decoder* pDecoder,
                     uint32_t* width,
                     uint32_t* height,

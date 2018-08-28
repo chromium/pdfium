@@ -258,8 +258,7 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFaxDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     const CPDF_Dictionary* pParams) {
@@ -280,13 +279,12 @@ std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFaxDecoder(
       Rows = 0;
   }
   return CPDF_ModuleMgr::Get()->GetFaxModule()->CreateDecoder(
-      src_buf, src_size, width, height, K, EndOfLine, ByteAlign, BlackIs1,
-      Columns, Rows);
+      src_span, width, height, K, EndOfLine, ByteAlign, BlackIs1, Columns,
+      Rows);
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     int nComps,
@@ -305,8 +303,8 @@ std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
       return nullptr;
   }
   return CPDF_ModuleMgr::Get()->GetFlateModule()->CreateDecoder(
-      src_buf, src_size, width, height, nComps, bpc, predictor, Colors,
-      BitsPerComponent, Columns);
+      src_span, width, height, nComps, bpc, predictor, Colors, BitsPerComponent,
+      Columns);
 }
 
 uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
