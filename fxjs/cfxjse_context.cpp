@@ -42,6 +42,13 @@ const char szCompatibleModeScript[] =
     "  }\n"
     "}(this, {String: ['substr', 'toUpperCase']}));";
 
+const char szConsoleScript[] =
+    "console.show = function() {};\n"
+    "\n"
+    "console.println = function(...args) {\n"
+    "  this.log(...args);\n"
+    "};";
+
 // Only address matters, values are for humans debuging here.
 char g_FXJSEHostObjectTag[] = "FXJSE Host Object";
 char g_FXJSEProxyObjectTag[] = "FXJSE Proxy Object";
@@ -221,6 +228,7 @@ CFXJSE_Class* CFXJSE_Context::GetClassByName(
 
 void CFXJSE_Context::EnableCompatibleMode() {
   ExecuteScript(szCompatibleModeScript, nullptr, nullptr);
+  ExecuteScript(szConsoleScript, nullptr, nullptr);
 }
 
 bool CFXJSE_Context::ExecuteScript(const char* szScript,
