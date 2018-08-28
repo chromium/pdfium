@@ -944,3 +944,26 @@ TEST_F(FPDFTextEmbeddertest, CroppedText) {
     UnloadPage(page);
   }
 }
+
+TEST_F(FPDFTextEmbeddertest, Bug_1139) {
+  ASSERT_TRUE(OpenDocument("bug_1139.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  ASSERT_TRUE(text_page);
+
+  // -1 for CountChars not including the \0, but +1 for the extra control
+  // character.
+  EXPECT_EQ(kHelloGoodbyeTextSize, FPDFText_CountChars(text_page));
+
+  // There is an extra control character at the beginning of the string, but it
+  // should not appear in the output nor prevent extracting the text.
+  unsigned short buffer[128];
+  int num_chars = FPDFText_GetText(text_page, 0, 128, buffer);
+  ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
+  EXPECT_TRUE(
+      check_unsigned_shorts(kHelloGoodbyeText, buffer, kHelloGoodbyeTextSize));
+  FPDFText_ClosePage(text_page);
+  UnloadPage(page);
+}
