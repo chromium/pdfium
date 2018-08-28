@@ -71,15 +71,15 @@ CPDF_Dictionary* CPDF_Image::GetDict() const {
   return m_pStream ? m_pStream->GetDict() : nullptr;
 }
 
-std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
-                                                      uint32_t size) {
+std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(
+    pdfium::span<uint8_t> src_span) {
   int32_t width;
   int32_t height;
   int32_t num_comps;
   int32_t bits;
   bool color_trans;
   if (!CPDF_ModuleMgr::Get()->GetJpegModule()->LoadInfo(
-          pData, size, &width, &height, &num_comps, &bits, &color_trans)) {
+          src_span, &width, &height, &num_comps, &bits, &color_trans)) {
     return nullptr;
   }
 
@@ -128,12 +128,11 @@ void CPDF_Image::SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile) {
   if (!pFile->ReadBlock(data.data(), 0, dwEstimateSize))
     return;
 
-  std::unique_ptr<CPDF_Dictionary> pDict =
-      InitJPEG(data.data(), dwEstimateSize);
+  std::unique_ptr<CPDF_Dictionary> pDict = InitJPEG(data);
   if (!pDict && size > dwEstimateSize) {
     data.resize(size);
     pFile->ReadBlock(data.data(), 0, size);
-    pDict = InitJPEG(data.data(), size);
+    pDict = InitJPEG(data);
   }
   if (!pDict)
     return;
@@ -151,7 +150,7 @@ void CPDF_Image::SetJpegImageInline(
   if (!pFile->ReadBlock(data.data(), 0, size))
     return;
 
-  std::unique_ptr<CPDF_Dictionary> pDict = InitJPEG(data.data(), size);
+  std::unique_ptr<CPDF_Dictionary> pDict = InitJPEG(data);
   if (!pDict)
     return;
 

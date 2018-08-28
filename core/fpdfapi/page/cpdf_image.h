@@ -14,6 +14,7 @@
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_DIBBase;
 class CFX_DIBitmap;
@@ -73,7 +74,7 @@ class CPDF_Image final : public Retainable {
   ~CPDF_Image() override;
 
   void FinishInitialization(CPDF_Dictionary* pStreamDict);
-  std::unique_ptr<CPDF_Dictionary> InitJPEG(uint8_t* pData, uint32_t size);
+  std::unique_ptr<CPDF_Dictionary> InitJPEG(pdfium::span<uint8_t> src_span);
 
   int32_t m_Height = 0;
   int32_t m_Width = 0;

@@ -22,6 +22,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_dibbase.h"
+#include "third_party/base/span.h"
 
 class CCodec_Jbig2Context;
 class CCodec_ScanlineDecoder;
@@ -90,8 +91,7 @@ class CPDF_DIBBase final : public CFX_DIBBase {
   RetainPtr<CFX_DIBitmap> LoadJpxBitmap();
   void LoadPalette();
   LoadState CreateDecoder();
-  bool CreateDCTDecoder(const uint8_t* src_data,
-                        uint32_t src_size,
+  bool CreateDCTDecoder(pdfium::span<const uint8_t> src_data,
                         const CPDF_Dictionary* pParams);
   void TranslateScanline24bpp(uint8_t* dest_scan,
                               const uint8_t* src_scan) const;

@@ -484,7 +484,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
     m_pDecoder = pEncoders->GetBasicModule()->CreateRunLengthDecoder(
         {src_data, src_size}, m_Width, m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
-    if (!CreateDCTDecoder(src_data, src_size, pParams))
+    if (!CreateDCTDecoder({src_data, src_size}, pParams))
       return LoadState::kFail;
   }
   if (!m_pDecoder)
@@ -503,12 +503,11 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
   return LoadState::kSuccess;
 }
 
-bool CPDF_DIBBase::CreateDCTDecoder(const uint8_t* src_data,
-                                    uint32_t src_size,
+bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
                                     const CPDF_Dictionary* pParams) {
   CCodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
   m_pDecoder = pJpegModule->CreateDecoder(
-      src_data, src_size, m_Width, m_Height, m_nComponents,
+      src_span, m_Width, m_Height, m_nComponents,
       !pParams || pParams->GetIntegerFor("ColorTransform", 1));
   if (m_pDecoder)
     return true;
@@ -516,15 +515,15 @@ bool CPDF_DIBBase::CreateDCTDecoder(const uint8_t* src_data,
   bool bTransform = false;
   int comps;
   int bpc;
-  if (!pJpegModule->LoadInfo(src_data, src_size, &m_Width, &m_Height, &comps,
-                             &bpc, &bTransform)) {
+  if (!pJpegModule->LoadInfo(src_span, &m_Width, &m_Height, &comps, &bpc,
+                             &bTransform)) {
     return false;
   }
 
   if (m_nComponents == static_cast<uint32_t>(comps)) {
     m_bpc = bpc;
-    m_pDecoder = pJpegModule->CreateDecoder(
-        src_data, src_size, m_Width, m_Height, m_nComponents, bTransform);
+    m_pDecoder = pJpegModule->CreateDecoder(src_span, m_Width, m_Height,
+                                            m_nComponents, bTransform);
     return true;
   }
 
@@ -569,7 +568,7 @@ bool CPDF_DIBBase::CreateDCTDecoder(const uint8_t* src_data,
     return false;
 
   m_bpc = bpc;
-  m_pDecoder = pJpegModule->CreateDecoder(src_data, src_size, m_Width, m_Height,
+  m_pDecoder = pJpegModule->CreateDecoder(src_span, m_Width, m_Height,
                                           m_nComponents, bTransform);
   return true;
 }

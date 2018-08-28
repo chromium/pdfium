@@ -89,7 +89,7 @@ uint32_t DecodeInlineStream(const uint8_t* src_buf,
   if (decoder == "DCTDecode" || decoder == "DCT") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
-            src_buf, limit, width, height, 0,
+            {src_buf, limit}, width, height, 0,
             !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
   }

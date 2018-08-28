@@ -4,14 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcodec/codec/ccodec_jpegmodule.h"
+
 #include <setjmp.h>
 
 #include <memory>
 #include <utility>
 
-#include "core/fxcodec/codec/ccodec_jpegmodule.h"
 #include "core/fxcodec/codec/ccodec_scanlinedecoder.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/fx_dib.h"
@@ -45,22 +47,19 @@ class CJpegContext final : public CCodec_JpegModule::Context {
   void (*m_FreeFunc)(void*);
 };
 
-extern "C" {
+static pdfium::span<const uint8_t> JpegScanSOI(
+    pdfium::span<const uint8_t> src_span) {
+  if (src_span.empty())
+    return {};
 
-static void JpegScanSOI(const uint8_t** src_buf, uint32_t* src_size) {
-  if (*src_size == 0)
-    return;
-
-  uint32_t offset = 0;
-  while (offset < *src_size - 1) {
-    if ((*src_buf)[offset] == 0xff && (*src_buf)[offset + 1] == 0xd8) {
-      *src_buf += offset;
-      *src_size -= offset;
-      return;
-    }
-    offset++;
+  for (size_t offset = 0; offset < src_span.size() - 1; ++offset) {
+    if (src_span[offset] == 0xff && src_span[offset + 1] == 0xd8)
+      return src_span.subspan(offset);
   }
+  return src_span;
 }
+
+extern "C" {
 
 static void _src_do_nothing(struct jpeg_decompress_struct* cinfo) {}
 
@@ -111,14 +110,13 @@ static void JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
 }
 #endif  // PDF_ENABLE_XFA
 
-static bool JpegLoadInfo(const uint8_t* src_buf,
-                         uint32_t src_size,
+static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
                          int* width,
                          int* height,
                          int* num_components,
                          int* bits_per_components,
                          bool* color_transform) {
-  JpegScanSOI(&src_buf, &src_size);
+  src_span = JpegScanSOI(src_span);
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;
   jerr.error_exit = _error_fatal;
@@ -140,8 +138,8 @@ static bool JpegLoadInfo(const uint8_t* src_buf,
   src.skip_input_data = _src_skip_data;
   src.fill_input_buffer = _src_fill_buffer;
   src.resync_to_restart = _src_resync;
-  src.bytes_in_buffer = src_size;
-  src.next_input_byte = src_buf;
+  src.bytes_in_buffer = src_span.size();
+  src.next_input_byte = src_span.data();
   cinfo.src = &src;
   if (setjmp(mark) == -1) {
     jpeg_destroy_decompress(&cinfo);
@@ -167,8 +165,7 @@ class CCodec_JpegDecoder final : public CCodec_ScanlineDecoder {
   CCodec_JpegDecoder();
   ~CCodec_JpegDecoder() override;
 
-  bool Create(const uint8_t* src_buf,
-              uint32_t src_size,
+  bool Create(pdfium::span<const uint8_t> src_buf,
               int width,
               int height,
               int nComps,
@@ -185,30 +182,23 @@ class CCodec_JpegDecoder final : public CCodec_ScanlineDecoder {
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;
   struct jpeg_source_mgr src;
-  const uint8_t* m_SrcBuf;
-  uint32_t m_SrcSize;
-  uint8_t* m_pScanlineBuf;
+  pdfium::span<const uint8_t> m_SrcSpan;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanlineBuf;
+  bool m_bInited = false;
+  bool m_bStarted = false;
+  bool m_bJpegTransform = false;
 
-  bool m_bInited;
-  bool m_bStarted;
-  bool m_bJpegTransform;
-
- protected:
-  uint32_t m_nDefaultScaleDenom;
+ private:
+  uint32_t m_nDefaultScaleDenom = 1;
 };
 
 CCodec_JpegDecoder::CCodec_JpegDecoder() {
-  m_pScanlineBuf = nullptr;
-  m_bStarted = false;
-  m_bInited = false;
   memset(&cinfo, 0, sizeof(cinfo));
   memset(&jerr, 0, sizeof(jerr));
   memset(&src, 0, sizeof(src));
-  m_nDefaultScaleDenom = 1;
 }
 
 CCodec_JpegDecoder::~CCodec_JpegDecoder() {
-  FX_Free(m_pScanlineBuf);
   if (m_bInited)
     jpeg_destroy_decompress(&cinfo);
 }
@@ -222,8 +212,8 @@ bool CCodec_JpegDecoder::InitDecode() {
   jpeg_create_decompress(&cinfo);
   m_bInited = true;
   cinfo.src = &src;
-  src.bytes_in_buffer = m_SrcSize;
-  src.next_input_byte = m_SrcBuf;
+  src.bytes_in_buffer = m_SrcSpan.size();
+  src.next_input_byte = m_SrcSpan.data();
   if (setjmp(m_JmpBuf) == -1) {
     jpeg_destroy_decompress(&cinfo);
     m_bInited = false;
@@ -249,15 +239,12 @@ bool CCodec_JpegDecoder::InitDecode() {
   return true;
 }
 
-bool CCodec_JpegDecoder::Create(const uint8_t* src_buf,
-                                uint32_t src_size,
+bool CCodec_JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
                                 int width,
                                 int height,
                                 int nComps,
                                 bool ColorTransform) {
-  JpegScanSOI(&src_buf, &src_size);
-  m_SrcBuf = src_buf;
-  m_SrcSize = src_size;
+  m_SrcSpan = JpegScanSOI(src_span);
   jerr.error_exit = _error_fatal;
   jerr.emit_message = _error_do_nothing1;
   jerr.output_message = _error_do_nothing;
@@ -269,9 +256,9 @@ bool CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   src.fill_input_buffer = _src_fill_buffer;
   src.resync_to_restart = _src_resync;
   m_bJpegTransform = ColorTransform;
-  if (src_size > 1 && memcmp(src_buf + src_size - 2, "\xFF\xD9", 2) != 0) {
-    ((uint8_t*)src_buf)[src_size - 2] = 0xFF;
-    ((uint8_t*)src_buf)[src_size - 1] = 0xD9;
+  if (m_SrcSpan.size() >= 2) {
+    const_cast<uint8_t*>(m_SrcSpan.data())[m_SrcSpan.size() - 2] = 0xFF;
+    const_cast<uint8_t*>(m_SrcSpan.data())[m_SrcSpan.size() - 1] = 0xD9;
   }
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
@@ -287,7 +274,7 @@ bool CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   m_Pitch =
       (static_cast<uint32_t>(cinfo.image_width) * cinfo.num_components + 3) /
       4 * 4;
-  m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
+  m_pScanlineBuf.reset(FX_Alloc(uint8_t, m_Pitch));
   m_nComps = cinfo.num_components;
   m_bpc = 8;
   m_bStarted = false;
@@ -323,40 +310,38 @@ uint8_t* CCodec_JpegDecoder::v_GetNextLine() {
   if (setjmp(m_JmpBuf) == -1)
     return nullptr;
 
-  int nlines = jpeg_read_scanlines(&cinfo, &m_pScanlineBuf, 1);
-  return nlines > 0 ? m_pScanlineBuf : nullptr;
+  uint8_t* row_array[] = {m_pScanlineBuf.get()};
+  int nlines = jpeg_read_scanlines(&cinfo, row_array, 1);
+  return nlines > 0 ? m_pScanlineBuf.get() : nullptr;
 }
 
 uint32_t CCodec_JpegDecoder::GetSrcOffset() {
-  return (uint32_t)(m_SrcSize - src.bytes_in_buffer);
+  return static_cast<uint32_t>(m_SrcSpan.size() - src.bytes_in_buffer);
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> CCodec_JpegModule::CreateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
+    pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     int nComps,
     bool ColorTransform) {
-  if (!src_buf || src_size == 0)
+  if (src_span.empty())
     return nullptr;
 
   auto pDecoder = pdfium::MakeUnique<CCodec_JpegDecoder>();
-  if (!pDecoder->Create(src_buf, src_size, width, height, nComps,
-                        ColorTransform)) {
+  if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform))
     return nullptr;
-  }
+
   return std::move(pDecoder);
 }
 
-bool CCodec_JpegModule::LoadInfo(const uint8_t* src_buf,
-                                 uint32_t src_size,
+bool CCodec_JpegModule::LoadInfo(pdfium::span<const uint8_t> src_span,
                                  int* width,
                                  int* height,
                                  int* num_components,
                                  int* bits_per_components,
                                  bool* color_transform) {
-  return JpegLoadInfo(src_buf, src_size, width, height, num_components,
+  return JpegLoadInfo(src_span, width, height, num_components,
                       bits_per_components, color_transform);
 }
 
