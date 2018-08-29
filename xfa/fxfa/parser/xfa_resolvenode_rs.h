@@ -14,6 +14,7 @@
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 #define XFA_RESOLVENODE_Children 0x0001
+#define XFA_RESOLVENODE_TagName 0x0002
 #define XFA_RESOLVENODE_Attributes 0x0004
 #define XFA_RESOLVENODE_Properties 0x0008
 #define XFA_RESOLVENODE_Siblings 0x0020

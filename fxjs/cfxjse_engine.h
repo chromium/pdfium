@@ -20,8 +20,6 @@
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
-#define XFA_RESOLVENODE_TagName 0x0002
-
 class CFXJSE_ResolveProcessor;
 class CJS_Runtime;
 class CXFA_List;

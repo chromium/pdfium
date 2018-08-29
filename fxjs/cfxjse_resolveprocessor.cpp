@@ -26,7 +26,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CFXJSE_ResolveProcessor::CFXJSE_ResolveProcessor()
-    : m_iCurStart(0), m_pNodeHelper(pdfium::MakeUnique<CXFA_NodeHelper>()) {}
+    : m_pNodeHelper(pdfium::MakeUnique<CXFA_NodeHelper>()) {}
 
 CFXJSE_ResolveProcessor::~CFXJSE_ResolveProcessor() {}
 
