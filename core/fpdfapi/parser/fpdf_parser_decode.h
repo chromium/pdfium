@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CCodec_ScanlineDecoder;
 class CPDF_Dictionary;
@@ -22,21 +23,6 @@ ByteString PDF_EncodeString(const ByteString& src, bool bHex);
 WideString PDF_DecodeText(const uint8_t* pData, uint32_t size);
 WideString PDF_DecodeText(const ByteString& bstr);
 ByteString PDF_EncodeText(const WideString& str);
-
-bool FlateEncode(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 uint8_t** dest_buf,
-                 uint32_t* dest_size);
-
-uint32_t FlateDecode(const uint8_t* src_buf,
-                     uint32_t src_size,
-                     uint8_t** dest_buf,
-                     uint32_t* dest_size);
-
-uint32_t RunLengthDecode(const uint8_t* src_buf,
-                         uint32_t src_size,
-                         uint8_t** dest_buf,
-                         uint32_t* dest_size);
 
 std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
     pdfium::span<const uint8_t> src_span,
@@ -52,26 +38,34 @@ std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(
     int bpc,
     const CPDF_Dictionary* pParams);
 
-uint32_t A85Decode(const uint8_t* src_buf,
-                   uint32_t src_size,
+bool FlateEncode(pdfium::span<const uint8_t> src_span,
+                 uint8_t** dest_buf,
+                 uint32_t* dest_size);
+
+uint32_t FlateDecode(pdfium::span<const uint8_t> src_span,
+                     uint8_t** dest_buf,
+                     uint32_t* dest_size);
+
+uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
+                         uint8_t** dest_buf,
+                         uint32_t* dest_size);
+
+uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
                    uint8_t** dest_buf,
                    uint32_t* dest_size);
 
-uint32_t HexDecode(const uint8_t* src_buf,
-                   uint32_t src_size,
+uint32_t HexDecode(pdfium::span<const uint8_t> src_span,
                    uint8_t** dest_buf,
                    uint32_t* dest_size);
 
 uint32_t FlateOrLZWDecode(bool bLZW,
-                          const uint8_t* src_buf,
-                          uint32_t src_size,
+                          pdfium::span<const uint8_t> src_span,
                           const CPDF_Dictionary* pParams,
                           uint32_t estimated_size,
                           uint8_t** dest_buf,
                           uint32_t* dest_size);
 
-bool PDF_DataDecode(const uint8_t* src_buf,
-                    uint32_t src_size,
+bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
                     const CPDF_Dictionary* pDict,
                     uint32_t estimated_size,
                     bool bImageAcc,

@@ -28,8 +28,7 @@ class CCodec_FlateModule {
       int Columns);
 
   uint32_t FlateOrLZWDecode(bool bLZW,
-                            const uint8_t* src_buf,
-                            uint32_t src_size,
+                            pdfium::span<const uint8_t> src_buf,
                             bool bEarlyChange,
                             int predictor,
                             int Colors,

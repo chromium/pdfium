@@ -29,7 +29,7 @@ constexpr char kChecksumKey[] = "CheckSum";
 ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
   uint8_t* result = nullptr;
   uint32_t size = 0;
-  HexDecode(bsHex.raw_str(), bsHex.GetLength(), &result, &size);
+  HexDecode(bsHex.AsRawSpan(), &result, &size);
   ByteString bsDecoded(result, size);
   FX_Free(result);
   return bsDecoded;

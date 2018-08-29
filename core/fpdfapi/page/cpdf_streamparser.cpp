@@ -61,8 +61,7 @@ uint32_t DecodeAllScanlines(std::unique_ptr<CCodec_ScanlineDecoder> pDecoder,
   return pDecoder->GetSrcOffset();
 }
 
-uint32_t DecodeInlineStream(const uint8_t* src_buf,
-                            uint32_t limit,
+uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             int width,
                             int height,
                             const ByteString& decoder,
@@ -71,30 +70,29 @@ uint32_t DecodeInlineStream(const uint8_t* src_buf,
                             uint32_t* dest_size) {
   if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
-        CreateFaxDecoder({src_buf, limit}, width, height, pParam);
+        CreateFaxDecoder(src_span, width, height, pParam);
     return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
   }
   if (decoder == "ASCII85Decode" || decoder == "A85")
-    return A85Decode(src_buf, limit, dest_buf, dest_size);
+    return A85Decode(src_span, dest_buf, dest_size);
   if (decoder == "ASCIIHexDecode" || decoder == "AHx")
-    return HexDecode(src_buf, limit, dest_buf, dest_size);
+    return HexDecode(src_span, dest_buf, dest_size);
   if (decoder == "FlateDecode" || decoder == "Fl") {
-    return FlateOrLZWDecode(false, src_buf, limit, pParam, *dest_size, dest_buf,
+    return FlateOrLZWDecode(false, src_span, pParam, *dest_size, dest_buf,
                             dest_size);
   }
   if (decoder == "LZWDecode" || decoder == "LZW") {
-    return FlateOrLZWDecode(true, src_buf, limit, pParam, 0, dest_buf,
-                            dest_size);
+    return FlateOrLZWDecode(true, src_span, pParam, 0, dest_buf, dest_size);
   }
   if (decoder == "DCTDecode" || decoder == "DCT") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
-            {src_buf, limit}, width, height, 0,
+            src_span, width, height, 0,
             !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
   }
   if (decoder == "RunLengthDecode" || decoder == "RL")
-    return RunLengthDecode(src_buf, limit, dest_buf, dest_size);
+    return RunLengthDecode(src_span, dest_buf, dest_size);
   *dest_size = 0;
   *dest_buf = 0;
   return 0xFFFFFFFF;
@@ -185,9 +183,8 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   } else {
     uint8_t* pIgnore = nullptr;
     uint32_t dwDestSize = OrigSize;
-    dwStreamSize =
-        DecodeInlineStream(&m_pBuf[m_Pos], m_pBuf.size() - m_Pos, width, height,
-                           Decoder, pParam, &pIgnore, &dwDestSize);
+    dwStreamSize = DecodeInlineStream(m_pBuf.subspan(m_Pos), width, height,
+                                      Decoder, pParam, &pIgnore, &dwDestSize);
     FX_Free(pIgnore);
     if (static_cast<int>(dwStreamSize) < 0)
       return nullptr;

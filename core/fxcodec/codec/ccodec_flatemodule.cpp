@@ -781,17 +781,17 @@ std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
       BitsPerComponent, Columns);
 }
 
-uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
-                                              const uint8_t* src_buf,
-                                              uint32_t src_size,
-                                              bool bEarlyChange,
-                                              int predictor,
-                                              int Colors,
-                                              int BitsPerComponent,
-                                              int Columns,
-                                              uint32_t estimated_size,
-                                              uint8_t** dest_buf,
-                                              uint32_t* dest_size) {
+uint32_t CCodec_FlateModule::FlateOrLZWDecode(
+    bool bLZW,
+    pdfium::span<const uint8_t> src_span,
+    bool bEarlyChange,
+    int predictor,
+    int Colors,
+    int BitsPerComponent,
+    int Columns,
+    uint32_t estimated_size,
+    uint8_t** dest_buf,
+    uint32_t* dest_size) {
   *dest_buf = nullptr;
   uint32_t offset = 0;
   PredictorType predictor_type = GetPredictor(predictor);
@@ -799,19 +799,19 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
   if (bLZW) {
     auto decoder = pdfium::MakeUnique<CLZWDecoder>();
     *dest_size = 0xFFFFFFFF;
-    offset = src_size;
-    int err =
-        decoder->Decode(nullptr, *dest_size, src_buf, offset, bEarlyChange);
+    offset = src_span.size();
+    int err = decoder->Decode(nullptr, *dest_size, src_span.data(), offset,
+                              bEarlyChange);
     if (err || *dest_size == 0 || *dest_size + 1 < *dest_size)
       return FX_INVALID_OFFSET;
 
     decoder = pdfium::MakeUnique<CLZWDecoder>();
     *dest_buf = FX_Alloc(uint8_t, *dest_size + 1);
     (*dest_buf)[*dest_size] = '\0';
-    decoder->Decode(*dest_buf, *dest_size, src_buf, offset, bEarlyChange);
+    decoder->Decode(*dest_buf, *dest_size, src_span.data(), offset,
+                    bEarlyChange);
   } else {
-    FlateUncompress(pdfium::make_span(src_buf, src_size), estimated_size,
-                    *dest_buf, *dest_size, offset);
+    FlateUncompress(src_span, estimated_size, *dest_buf, *dest_size, offset);
   }
 
   bool ret = false;
