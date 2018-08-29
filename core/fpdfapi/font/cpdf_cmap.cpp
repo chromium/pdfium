@@ -282,7 +282,7 @@ void CPDF_CMap::LoadPredefined(CPDF_CMapManager* pMgr,
         m_MixedTwoByteLeadingBytes[b] = true;
     }
   }
-  m_pEmbedMap = FPDFAPI_FindEmbeddedCMap(bsName, m_Charset, m_Coding);
+  m_pEmbedMap = FindEmbeddedCMap(bsName, m_Charset, m_Coding);
   if (!m_pEmbedMap)
     return;
 
@@ -316,7 +316,7 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
     return static_cast<uint16_t>(charcode);
 
   if (m_pEmbedMap)
-    return FPDFAPI_CIDFromCharCode(m_pEmbedMap.Get(), charcode);
+    return ::CIDFromCharCode(m_pEmbedMap.Get(), charcode);
 
   if (m_DirectCharcodeToCIDTable.empty())
     return static_cast<uint16_t>(charcode);

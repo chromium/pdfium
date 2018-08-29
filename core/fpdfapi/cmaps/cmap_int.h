@@ -29,10 +29,10 @@ struct FXCMAP_CMap {
   int8_t m_UseOffset;
 };
 
-const FXCMAP_CMap* FPDFAPI_FindEmbeddedCMap(const ByteString& name,
-                                            int charset,
-                                            int coding);
-uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode);
-uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid);
+const FXCMAP_CMap* FindEmbeddedCMap(const ByteString& name,
+                                    int charset,
+                                    int coding);
+uint16_t CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode);
+uint32_t CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid);
 
 #endif  // CORE_FPDFAPI_CMAPS_CMAP_INT_H_

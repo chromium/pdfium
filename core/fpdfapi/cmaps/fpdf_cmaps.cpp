@@ -32,9 +32,9 @@ const FXCMAP_CMap* FindNextCMap(const FXCMAP_CMap* pMap) {
 
 }  // namespace
 
-const FXCMAP_CMap* FPDFAPI_FindEmbeddedCMap(const ByteString& bsName,
-                                            int charset,
-                                            int coding) {
+const FXCMAP_CMap* FindEmbeddedCMap(const ByteString& bsName,
+                                    int charset,
+                                    int coding) {
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
 
@@ -48,7 +48,7 @@ const FXCMAP_CMap* FPDFAPI_FindEmbeddedCMap(const ByteString& bsName,
   return nullptr;
 }
 
-uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
+uint16_t CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
   ASSERT(pMap);
   const uint16_t loword = static_cast<uint16_t>(charcode);
   if (charcode >> 16) {
@@ -111,7 +111,7 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
   return 0;
 }
 
-uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
+uint32_t CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
   // TODO(dsinclair): This should be checking both pMap->m_WordMap and
   // pMap->m_DWordMap. There was a second while() but it was never reached as
   // the first always returns. Investigate and determine how this should

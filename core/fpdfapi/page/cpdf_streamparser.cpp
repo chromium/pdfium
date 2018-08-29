@@ -71,7 +71,7 @@ uint32_t DecodeInlineStream(const uint8_t* src_buf,
                             uint32_t* dest_size) {
   if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
-        FPDFAPI_CreateFaxDecoder({src_buf, limit}, width, height, pParam);
+        CreateFaxDecoder({src_buf, limit}, width, height, pParam);
     return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
   }
   if (decoder == "ASCII85Decode" || decoder == "A85")
@@ -79,12 +79,12 @@ uint32_t DecodeInlineStream(const uint8_t* src_buf,
   if (decoder == "ASCIIHexDecode" || decoder == "AHx")
     return HexDecode(src_buf, limit, dest_buf, dest_size);
   if (decoder == "FlateDecode" || decoder == "Fl") {
-    return FPDFAPI_FlateOrLZWDecode(false, src_buf, limit, pParam, *dest_size,
-                                    dest_buf, dest_size);
+    return FlateOrLZWDecode(false, src_buf, limit, pParam, *dest_size, dest_buf,
+                            dest_size);
   }
   if (decoder == "LZWDecode" || decoder == "LZW") {
-    return FPDFAPI_FlateOrLZWDecode(true, src_buf, limit, pParam, 0, dest_buf,
-                                    dest_size);
+    return FlateOrLZWDecode(true, src_buf, limit, pParam, 0, dest_buf,
+                            dest_size);
   }
   if (decoder == "DCTDecode" || decoder == "DCT") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =

@@ -150,7 +150,7 @@ wchar_t EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
   if (!IsValidEmbeddedCharcodeFromUnicodeCharset(charset))
     return 0;
 
-  uint16_t cid = FPDFAPI_CIDFromCharCode(pEmbedMap, charcode);
+  uint16_t cid = CIDFromCharCode(pEmbedMap, charcode);
   if (!cid)
     return 0;
 
@@ -169,7 +169,7 @@ uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
       GetFontGlobals()->GetEmbeddedToUnicode(charset);
   for (uint32_t i = 0; i < map.size(); ++i) {
     if (map[i] == unicode) {
-      uint32_t charCode = FPDFAPI_CharCodeFromCID(pEmbedMap, i);
+      uint32_t charCode = CharCodeFromCID(pEmbedMap, i);
       if (charCode)
         return charCode;
     }

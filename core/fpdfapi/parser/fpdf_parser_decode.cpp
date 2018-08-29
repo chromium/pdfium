@@ -257,7 +257,7 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
   return std::min(i + 1, src_size);
 }
 
-std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFaxDecoder(
+std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
@@ -283,7 +283,7 @@ std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFaxDecoder(
       Rows);
 }
 
-std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
+std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
@@ -307,13 +307,13 @@ std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
       Columns);
 }
 
-uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
-                                  const uint8_t* src_buf,
-                                  uint32_t src_size,
-                                  const CPDF_Dictionary* pParams,
-                                  uint32_t estimated_size,
-                                  uint8_t** dest_buf,
-                                  uint32_t* dest_size) {
+uint32_t FlateOrLZWDecode(bool bLZW,
+                          const uint8_t* src_buf,
+                          uint32_t src_size,
+                          const CPDF_Dictionary* pParams,
+                          uint32_t estimated_size,
+                          uint8_t** dest_buf,
+                          uint32_t* dest_size) {
   int predictor = 0;
   int Colors = 0;
   int BitsPerComponent = 0;
@@ -382,11 +382,11 @@ bool PDF_DataDecode(const uint8_t* src_buf,
         *pImageParams = pParam;
         return true;
       }
-      offset = FPDFAPI_FlateOrLZWDecode(false, last_buf, last_size, pParam,
-                                        estimated_size, &new_buf, &new_size);
+      offset = FlateOrLZWDecode(false, last_buf, last_size, pParam,
+                                estimated_size, &new_buf, &new_size);
     } else if (decoder == "LZWDecode" || decoder == "LZW") {
-      offset = FPDFAPI_FlateOrLZWDecode(true, last_buf, last_size, pParam,
-                                        estimated_size, &new_buf, &new_size);
+      offset = FlateOrLZWDecode(true, last_buf, last_size, pParam,
+                                estimated_size, &new_buf, &new_size);
     } else if (decoder == "ASCII85Decode" || decoder == "A85") {
       offset = A85Decode(last_buf, last_size, &new_buf, &new_size);
     } else if (decoder == "ASCIIHexDecode" || decoder == "AHx") {

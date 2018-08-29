@@ -38,13 +38,13 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
                          uint8_t** dest_buf,
                          uint32_t* dest_size);
 
-std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFaxDecoder(
+std::unique_ptr<CCodec_ScanlineDecoder> CreateFaxDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
     const CPDF_Dictionary* pParams);
 
-std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
+std::unique_ptr<CCodec_ScanlineDecoder> CreateFlateDecoder(
     pdfium::span<const uint8_t> src_span,
     int width,
     int height,
@@ -62,13 +62,13 @@ uint32_t HexDecode(const uint8_t* src_buf,
                    uint8_t** dest_buf,
                    uint32_t* dest_size);
 
-uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
-                                  const uint8_t* src_buf,
-                                  uint32_t src_size,
-                                  const CPDF_Dictionary* pParams,
-                                  uint32_t estimated_size,
-                                  uint8_t** dest_buf,
-                                  uint32_t* dest_size);
+uint32_t FlateOrLZWDecode(bool bLZW,
+                          const uint8_t* src_buf,
+                          uint32_t src_size,
+                          const CPDF_Dictionary* pParams,
+                          uint32_t estimated_size,
+                          uint8_t** dest_buf,
+                          uint32_t* dest_size);
 
 bool PDF_DataDecode(const uint8_t* src_buf,
                     uint32_t src_size,
