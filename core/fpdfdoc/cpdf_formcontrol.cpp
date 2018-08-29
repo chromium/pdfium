@@ -166,7 +166,7 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
   if (m_pWidgetDict->GetIntegerFor("F") & ANNOTFLAG_HIDDEN)
     return;
 
-  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(m_pWidgetDict.Get(), mode);
+  CPDF_Stream* pStream = GetAnnotAP(m_pWidgetDict.Get(), mode);
   if (!pStream)
     return;
 

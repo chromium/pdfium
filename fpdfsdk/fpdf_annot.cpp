@@ -143,7 +143,7 @@ static_assert(static_cast<int>(CPDF_Object::Type::REFERENCE) ==
               "CPDF_Object::REFERENCE value mismatch");
 
 bool HasAPStream(CPDF_Dictionary* pAnnotDict) {
-  return !!FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+  return !!GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
 }
 
 void UpdateContentStream(CPDF_Form* pForm, CPDF_Stream* pStream) {
@@ -192,7 +192,7 @@ void UpdateBBox(CPDF_Dictionary* annot_dict) {
   // Update BBox entry in appearance stream based on the bounding rectangle
   // of the annotation's quadpoints.
   CPDF_Stream* pStream =
-      FPDFDOC_GetAnnotAP(annot_dict, CPDF_Annot::AppearanceMode::Normal);
+      GetAnnotAP(annot_dict, CPDF_Annot::AppearanceMode::Normal);
   if (pStream) {
     CFX_FloatRect boundingRect =
         CPDF_Annot::BoundingRectFromQuadPoints(annot_dict);
@@ -339,8 +339,8 @@ FPDFAnnot_UpdateObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
 
   // Check that the annotation already has an appearance stream, since an
   // existing object is to be updated.
-  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(pAnnot->GetAnnotDict(),
-                                            CPDF_Annot::AppearanceMode::Normal);
+  CPDF_Stream* pStream =
+      GetAnnotAP(pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
   if (!pStream)
     return false;
 
@@ -377,12 +377,11 @@ FPDFAnnot_AppendObject(FPDF_ANNOTATION annot, FPDF_PAGEOBJECT obj) {
     return false;
 
   // If the annotation does not have an AP stream yet, generate and set it.
-  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(pAnnot->GetAnnotDict(),
-                                            CPDF_Annot::AppearanceMode::Normal);
+  CPDF_Stream* pStream =
+      GetAnnotAP(pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
   if (!pStream) {
     CPVT_GenerateAP::GenerateEmptyAP(pPage->GetDocument(), pAnnotDict);
-    pStream =
-        FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+    pStream = GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
     if (!pStream)
       return false;
   }
@@ -420,8 +419,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
     return 0;
 
   if (!pAnnot->HasForm()) {
-    CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(
-        pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
+    CPDF_Stream* pStream =
+        GetAnnotAP(pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
     if (!pStream)
       return 0;
 
@@ -437,8 +436,8 @@ FPDFAnnot_GetObject(FPDF_ANNOTATION annot, int index) {
     return nullptr;
 
   if (!pAnnot->HasForm()) {
-    CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(
-        pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
+    CPDF_Stream* pStream =
+        GetAnnotAP(pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
     if (!pStream)
       return nullptr;
 
@@ -461,8 +460,8 @@ FPDFAnnot_RemoveObject(FPDF_ANNOTATION annot, int index) {
 
   // Check that the annotation already has an appearance stream, since an
   // existing object is to be deleted.
-  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(pAnnot->GetAnnotDict(),
-                                            CPDF_Annot::AppearanceMode::Normal);
+  CPDF_Stream* pStream =
+      GetAnnotAP(pAnnot->GetAnnotDict(), CPDF_Annot::AppearanceMode::Normal);
   if (!pStream)
     return false;
 
@@ -676,7 +675,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,
     return true;
 
   CPDF_Stream* pStream =
-      FPDFDOC_GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
+      GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);
   if (pStream && newRect.Contains(pStream->GetDict()->GetRectFor("BBox")))
     pStream->GetDict()->SetRectFor("BBox", newRect);
   return true;
@@ -817,7 +816,7 @@ FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
   CPDF_Annot::AppearanceMode mode =
       static_cast<CPDF_Annot::AppearanceMode>(appearanceMode);
 
-  CPDF_Stream* pStream = FPDFDOC_GetAnnotAPNoFallback(pAnnotDict, mode);
+  CPDF_Stream* pStream = GetAnnotAPNoFallback(pAnnotDict, mode);
   return Utf16EncodeMaybeCopyAndReturnLength(
       pStream ? pStream->GetUnicodeText() : L"", buffer, buflen);
 }
