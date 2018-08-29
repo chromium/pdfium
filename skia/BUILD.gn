@@ -167,15 +167,12 @@ config("skia_library_config") {
 
     cflags = [
       "/wd4244",  # conversion from 'type1( __int64)' to 'type2 (unsigned int)'
-      "/wd4267",  # conversion from 'size_t' (64 bit) to 'type'(32 bit).
       "/wd4341",  # signed value is out of range for enum constant.
       "/wd4345",  # Object is default-initialized if initialization is omitted.
       "/wd4390",  # ';'empty statement found in looping;is it what was intended?
       "/wd4554",  # 'operator' : check operator precedence for possible error
       "/wd4748",  # compiler will disable optimizations if a function has inline
                   # assembly code contains flow control(jmp or jcc) statements.
-
-      "/wd4800",  # forcing value to bool 'true/false'(assigning int to bool).
     ]
   }
 }

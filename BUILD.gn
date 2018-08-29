@@ -85,11 +85,11 @@ config("pdfium_core_config") {
   }
   if (is_win) {
     cflags += [
-      "/wd4267",
       "/wd4324",
       "/wd4577",
     ]
   }
+  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 }
 
 config("xfa_warnings") {
