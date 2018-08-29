@@ -47,9 +47,7 @@
 #endif  // PDF_ENABLE_XFA
 
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv),
-      m_bBlocking(false),
-      m_isolateManaged(false) {
+    : m_pFormFillEnv(pFormFillEnv) {
   v8::Isolate* pIsolate = nullptr;
 
   IPDF_JSPLATFORM* pPlatform = m_pFormFillEnv->GetFormFillInfo()->m_pJsPlatform;
@@ -199,9 +197,12 @@ bool CJS_Runtime::GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
   v8::HandleScope handle_scope(GetIsolate());
   v8::Local<v8::Context> context = GetV8Context();
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::Value> propvalue = context->Global()->Get(
+  v8::Local<v8::String> str =
       v8::String::NewFromUtf8(GetIsolate(), utf8Name.unterminated_c_str(),
-                              v8::String::kNormalString, utf8Name.GetLength()));
+                              v8::NewStringType::kNormal, utf8Name.GetLength())
+          .ToLocalChecked();
+  v8::Local<v8::Value> propvalue =
+      context->Global()->Get(context, str).ToLocalChecked();
   if (propvalue.IsEmpty()) {
     pValue->SetUndefined();
     return false;
@@ -222,11 +223,11 @@ bool CJS_Runtime::SetValueByNameInGlobalObject(const ByteStringView& utf8Name,
   v8::Context::Scope context_scope(context);
   v8::Local<v8::Value> propvalue =
       v8::Local<v8::Value>::New(pIsolate, pValue->DirectGetValue());
-  context->Global()->Set(
+  v8::Local<v8::String> str =
       v8::String::NewFromUtf8(pIsolate, utf8Name.unterminated_c_str(),
-                              v8::String::kNormalString, utf8Name.GetLength()),
-      propvalue);
-  return true;
+                              v8::NewStringType::kNormal, utf8Name.GetLength())
+          .ToLocalChecked();
+  return context->Global()->Set(context, str, propvalue).FromJust();
 }
 #endif
 

@@ -49,7 +49,9 @@ float CFXJSE_Arguments::GetFloat(int32_t index) const {
 
 ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   v8::Isolate* isolate = m_pInfo->GetIsolate();
-  v8::Local<v8::String> hString = (*m_pInfo)[index]->ToString(isolate);
+  v8::Local<v8::Value> info = (*m_pInfo)[index];
+  v8::Local<v8::String> hString =
+      info->ToString(isolate->GetCurrentContext()).ToLocalChecked();
   v8::String::Utf8Value szStringVal(isolate, hString);
   return ByteString(*szStringVal);
 }

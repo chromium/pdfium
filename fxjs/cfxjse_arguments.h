@@ -28,8 +28,8 @@ class CFXJSE_Arguments {
   CFXJSE_Value* GetReturnValue() const;
 
  private:
-  UnownedPtr<const v8::FunctionCallbackInfo<v8::Value>> m_pInfo;
-  UnownedPtr<CFXJSE_Value> m_pRetValue;
+  UnownedPtr<const v8::FunctionCallbackInfo<v8::Value>> const m_pInfo;
+  UnownedPtr<CFXJSE_Value> const m_pRetValue;
 };
 
 #endif  // FXJS_CFXJSE_ARGUMENTS_H_
