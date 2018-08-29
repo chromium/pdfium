@@ -585,11 +585,12 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   }
 
   bool bNextCreate = false;
+  CXFA_NodeHelper* pNodeHelper = m_ResolveProcessor->GetNodeHelper();
   if (dwStyles & XFA_RESOLVENODE_CreateNode)
-    m_ResolveProcessor->GetNodeHelper()->SetCreateNodeType(bindNode);
+    pNodeHelper->SetCreateNodeType(bindNode);
 
-  m_ResolveProcessor->GetNodeHelper()->m_pCreateParent = nullptr;
-  m_ResolveProcessor->GetNodeHelper()->m_iCurAllStart = -1;
+  pNodeHelper->m_pCreateParent = nullptr;
+  pNodeHelper->m_iCurAllStart = -1;
 
   CFXJSE_ResolveNodeData rndFind(this);
   int32_t nStart = 0;
@@ -607,7 +608,7 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
     if (nStart < 1) {
       if ((dwStyles & XFA_RESOLVENODE_CreateNode) && !bNextCreate) {
         CXFA_Node* pDataNode = nullptr;
-        nStart = m_ResolveProcessor->GetNodeHelper()->m_iCurAllStart;
+        nStart = pNodeHelper->m_iCurAllStart;
         if (nStart != -1) {
           pDataNode = m_pDocument->GetNotBindNode(findObjects);
           if (pDataNode) {
@@ -623,19 +624,17 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
         }
         dwStyles |= XFA_RESOLVENODE_Bind;
         findObjects.clear();
-        findObjects.emplace_back(
-            m_ResolveProcessor->GetNodeHelper()->m_pAllStartParent.Get());
+        findObjects.emplace_back(pNodeHelper->m_pAllStartParent.Get());
         continue;
       }
       break;
     }
     if (bNextCreate) {
-      bool bCreate =
-          m_ResolveProcessor->GetNodeHelper()->ResolveNodes_CreateNode(
-              rndFind.m_wsName, rndFind.m_wsCondition,
-              nStart ==
-                  pdfium::base::checked_cast<int32_t>(wsExpression.GetLength()),
-              this);
+      bool bCreate = pNodeHelper->ResolveNodes_CreateNode(
+          rndFind.m_wsName, rndFind.m_wsCondition,
+          nStart ==
+              pdfium::base::checked_cast<int32_t>(wsExpression.GetLength()),
+          this);
       if (bCreate)
         continue;
 
@@ -683,17 +682,15 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
     if (nNodes < 1) {
       if (dwStyles & XFA_RESOLVENODE_CreateNode) {
         bNextCreate = true;
-        if (!m_ResolveProcessor->GetNodeHelper()->m_pCreateParent) {
-          m_ResolveProcessor->GetNodeHelper()->m_pCreateParent =
-              ToNode(rndFind.m_CurObject);
-          m_ResolveProcessor->GetNodeHelper()->m_iCreateCount = 1;
+        if (!pNodeHelper->m_pCreateParent) {
+          pNodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject);
+          pNodeHelper->m_iCreateCount = 1;
         }
-        bool bCreate =
-            m_ResolveProcessor->GetNodeHelper()->ResolveNodes_CreateNode(
-                rndFind.m_wsName, rndFind.m_wsCondition,
-                nStart == pdfium::base::checked_cast<int32_t>(
-                              wsExpression.GetLength()),
-                this);
+        bool bCreate = pNodeHelper->ResolveNodes_CreateNode(
+            rndFind.m_wsName, rndFind.m_wsCondition,
+            nStart ==
+                pdfium::base::checked_cast<int32_t>(wsExpression.GetLength()),
+            this);
         if (bCreate)
           continue;
       }
@@ -722,15 +719,14 @@ bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
   }
   if (dwStyles & (XFA_RESOLVENODE_CreateNode | XFA_RESOLVENODE_Bind |
                   XFA_RESOLVENODE_BindNew)) {
-    CXFA_NodeHelper* helper = m_ResolveProcessor->GetNodeHelper();
-    if (helper->m_pCreateParent)
-      resolveNodeRS->objects.emplace_back(helper->m_pCreateParent.Get());
+    if (pNodeHelper->m_pCreateParent)
+      resolveNodeRS->objects.emplace_back(pNodeHelper->m_pCreateParent.Get());
     else
-      helper->CreateNode_ForCondition(rndFind.m_wsCondition);
+      pNodeHelper->CreateNode_ForCondition(rndFind.m_wsCondition);
 
-    resolveNodeRS->dwFlags = helper->m_iCreateFlag;
+    resolveNodeRS->dwFlags = pNodeHelper->m_iCreateFlag;
     if (resolveNodeRS->dwFlags == XFA_ResolveNode_RSType_CreateNodeOne) {
-      if (helper->m_iCurAllStart != -1)
+      if (pNodeHelper->m_iCurAllStart != -1)
         resolveNodeRS->dwFlags = XFA_ResolveNode_RSType_CreateNodeMidAll;
     }
 

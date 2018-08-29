@@ -46,7 +46,7 @@ class CFXJSE_ResolveProcessor {
                         int32_t iCount);
   void SetCurStart(int32_t start) { m_iCurStart = start; }
 
-  CXFA_NodeHelper* GetNodeHelper() const { return m_pNodeHelper.get(); }
+  CXFA_NodeHelper* GetNodeHelper() { return m_pNodeHelper.get(); }
 
  private:
   bool ResolveForAttributeRs(CXFA_Object* curNode,

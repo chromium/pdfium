@@ -118,7 +118,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   // CacheList holds the List items so we can clean them up when we're done.
   std::vector<std::unique_ptr<CXFA_List>> m_CacheList;
   std::vector<CXFA_Node*>* m_pScriptNodeArray = nullptr;
-  std::unique_ptr<CFXJSE_ResolveProcessor> m_ResolveProcessor;
+  const std::unique_ptr<CFXJSE_ResolveProcessor> m_ResolveProcessor;
   std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;
   CXFA_Object* m_pThisObject = nullptr;
   XFA_AttributeEnum m_eRunAtType = XFA_AttributeEnum::Client;
