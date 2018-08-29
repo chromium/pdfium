@@ -20,6 +20,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/span.h"
 
 #ifndef _SKIA_SUPPORT_
 
@@ -52,8 +53,8 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     if (pFont->GetPsName() == "DFHeiStd-W5")
       return false;
 
-    pFont->SetPlatformFont(
-        quartz2d.CreateFont(pFont->GetFontData(), pFont->GetSize()));
+    pdfium::span<const uint8_t> span = pFont->GetFontSpan();
+    pFont->SetPlatformFont(quartz2d.CreateFont(span.data(), span.size()));
     if (!pFont->GetPlatformFont())
       return false;
   }

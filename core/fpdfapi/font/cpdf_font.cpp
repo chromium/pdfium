@@ -208,9 +208,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   if (!m_pFontFile)
     return;
 
-  const uint8_t* pFontData = m_pFontFile->GetData();
-  uint32_t dwFontSize = m_pFontFile->GetSize();
-  if (!m_Font.LoadEmbedded(pFontData, dwFontSize)) {
+  if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan())) {
     m_pDocument->GetPageData()->MaybePurgeFontFileStreamAcc(
         m_pFontFile->GetStream()->AsStream());
     m_pFontFile = nullptr;

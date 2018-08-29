@@ -129,8 +129,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
     if (m_Font.GetPsName() == "DFHeiStd-W5")
       bCoreText = false;
 
-    m_Font.SetPlatformFont(
-        quartz2d.CreateFont(m_Font.GetFontData(), m_Font.GetSize()));
+    pdfium::span<const uint8_t> span = m_Font.GetFontSpan();
+    m_Font.SetPlatformFont(quartz2d.CreateFont(span.data(), span.size()));
     if (!m_Font.GetPlatformFont())
       bCoreText = false;
   }

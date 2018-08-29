@@ -15,7 +15,8 @@
 #include FT_OUTLINE_H
 #include FT_TRUETYPE_TABLES_H
 
-using FXFT_Face = struct FT_FaceRec_*;
+using FXFT_FaceRec = struct FT_FaceRec_;
+using FXFT_Face = FXFT_FaceRec*;
 using FXFT_Library = void*;
 
 using FXFT_MM_Var = FT_MM_Var*;

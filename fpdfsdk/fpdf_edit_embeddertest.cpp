@@ -39,8 +39,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
                            int font_type,
                            bool bold,
                            bool italic,
-                           uint32_t size,
-                           const uint8_t* data) {
+                           pdfium::span<const uint8_t> span) {
     const CPDF_Dictionary* font_desc = font_dict->GetDictFor("FontDescriptor");
     ASSERT_TRUE(font_desc);
     EXPECT_EQ("FontDescriptor", font_desc->GetStringFor("Type"));
@@ -82,15 +81,15 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     streamAcc->LoadAllDataRaw();
 
     // Check that the font stream is the one that was provided
-    ASSERT_EQ(size, streamAcc->GetSize());
+    ASSERT_EQ(span.size(), streamAcc->GetSize());
     if (font_type == FPDF_FONT_TRUETYPE) {
-      ASSERT_EQ(static_cast<int>(size),
+      ASSERT_EQ(static_cast<int>(span.size()),
                 streamAcc->GetDict()->GetIntegerFor("Length1"));
     }
 
     const uint8_t* stream_data = streamAcc->GetData();
-    for (size_t j = 0; j < size; j++)
-      EXPECT_EQ(data[j], stream_data[j]) << " at byte " << j;
+    for (size_t j = 0; j < span.size(); j++)
+      EXPECT_EQ(span[j], stream_data[j]) << " at byte " << j;
   }
 
   void CheckCompositeFontWidths(const CPDF_Array* widths_array,
@@ -2052,10 +2051,9 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
   // TODO(npm): use other fonts after disallowing loading any font as any type
   const CPDF_Font* stock_font =
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Bold");
-  const uint8_t* data = stock_font->GetFont()->GetFontData();
-  const uint32_t size = stock_font->GetFont()->GetSize();
-  ScopedFPDFFont font(
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, false));
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TYPE1, false));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsType1Font());
@@ -2075,16 +2073,15 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
   EXPECT_EQ(250, widths_array->GetNumberAt(0));
   EXPECT_EQ(569, widths_array->GetNumberAt(11));
   EXPECT_EQ(500, widths_array->GetNumberAt(223));
-  CheckFontDescriptor(font_dict, FPDF_FONT_TYPE1, true, false, size, data);
+  CheckFontDescriptor(font_dict, FPDF_FONT_TYPE1, true, false, span);
 }
 
 TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   CreateNewDocument();
   const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Courier");
-  const uint8_t* data = stock_font->GetFont()->GetFontData();
-  const uint32_t size = stock_font->GetFont()->GetSize();
-  ScopedFPDFFont font(
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, false));
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TRUETYPE, false));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsTrueTypeFont());
@@ -2104,17 +2101,16 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
   EXPECT_EQ(600, widths_array->GetNumberAt(33));
   EXPECT_EQ(600, widths_array->GetNumberAt(74));
   EXPECT_EQ(600, widths_array->GetNumberAt(223));
-  CheckFontDescriptor(font_dict, FPDF_FONT_TRUETYPE, false, false, size, data);
+  CheckFontDescriptor(font_dict, FPDF_FONT_TRUETYPE, false, false, span);
 }
 
 TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   CreateNewDocument();
   const CPDF_Font* stock_font =
       CPDF_Font::GetStockFont(cpdf_doc(), "Times-Roman");
-  const uint8_t* data = stock_font->GetFont()->GetFontData();
-  const uint32_t size = stock_font->GetFont()->GetSize();
-  ScopedFPDFFont font(
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TYPE1, 1));
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TYPE1, 1));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
@@ -2141,7 +2137,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   EXPECT_EQ("Adobe", cidinfo_dict->GetStringFor("Registry"));
   EXPECT_EQ("Identity", cidinfo_dict->GetStringFor("Ordering"));
   EXPECT_EQ(0, cidinfo_dict->GetNumberFor("Supplement"));
-  CheckFontDescriptor(cidfont_dict, FPDF_FONT_TYPE1, false, false, size, data);
+  CheckFontDescriptor(cidfont_dict, FPDF_FONT_TYPE1, false, false, span);
 
   // Check widths
   const CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
@@ -2154,11 +2150,9 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   CreateNewDocument();
   const CPDF_Font* stock_font =
       CPDF_Font::GetStockFont(cpdf_doc(), "Helvetica-Oblique");
-  const uint8_t* data = stock_font->GetFont()->GetFontData();
-  const uint32_t size = stock_font->GetFont()->GetSize();
-
-  ScopedFPDFFont font(
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TRUETYPE, 1));
   ASSERT_TRUE(font.get());
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
@@ -2185,8 +2179,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   EXPECT_EQ("Adobe", cidinfo_dict->GetStringFor("Registry"));
   EXPECT_EQ("Identity", cidinfo_dict->GetStringFor("Ordering"));
   EXPECT_EQ(0, cidinfo_dict->GetNumberFor("Supplement"));
-  CheckFontDescriptor(cidfont_dict, FPDF_FONT_TRUETYPE, false, true, size,
-                      data);
+  CheckFontDescriptor(cidfont_dict, FPDF_FONT_TRUETYPE, false, true, span);
 
   // Check widths
   const CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
@@ -2209,10 +2202,9 @@ TEST_F(FPDFEditEmbeddertest, AddTrueTypeFontText) {
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
   {
     const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Arial");
-    const uint8_t* data = stock_font->GetFont()->GetFontData();
-    const uint32_t size = stock_font->GetFont()->GetSize();
-    ScopedFPDFFont font(
-        FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 0));
+    pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+    ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                          FPDF_FONT_TRUETYPE, 0));
     ASSERT_TRUE(font.get());
 
     // Add some text to the page
@@ -2289,12 +2281,11 @@ TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
     // First, get the data from the font
     CIDfont.LoadSubst("IPAGothic", 1, 0, 400, 0, 932, 0);
     EXPECT_EQ("IPAGothic", CIDfont.GetFaceName());
-    const uint8_t* data = CIDfont.GetFontData();
-    const uint32_t size = CIDfont.GetSize();
+    pdfium::span<const uint8_t> span = CIDfont.GetFontSpan();
 
     // Load the data into a FPDF_Font.
-    ScopedFPDFFont font(
-        FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 1));
+    ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                          FPDF_FONT_TRUETYPE, 1));
     ASSERT_TRUE(font.get());
 
     // Add some text to the page
@@ -2469,10 +2460,9 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
 
   const CPDF_Font* stock_font = CPDF_Font::GetStockFont(cpdf_doc(), "Arial");
-  const uint8_t* data = stock_font->GetFont()->GetFontData();
-  const uint32_t size = stock_font->GetFont()->GetSize();
-  ScopedFPDFFont font(
-      FPDFText_LoadFont(document(), data, size, FPDF_FONT_TRUETYPE, 0));
+  pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
+                                        FPDF_FONT_TRUETYPE, 0));
   ASSERT_TRUE(font.get());
 
   // Add some text to the page.
