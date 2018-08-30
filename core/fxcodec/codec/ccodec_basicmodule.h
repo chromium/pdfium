@@ -22,12 +22,12 @@ class CCodec_BasicModule {
       int height,
       int nComps,
       int bpc);
-  bool RunLengthEncode(const uint8_t* src_buf,
-                       uint32_t src_size,
+
+  bool RunLengthEncode(pdfium::span<const uint8_t> src_buf,
                        uint8_t** dest_buf,
                        uint32_t* dest_size);
-  bool A85Encode(const uint8_t* src_buf,
-                 uint32_t src_size,
+
+  bool A85Encode(pdfium::span<const uint8_t> src_buf,
                  uint8_t** dest_buf,
                  uint32_t* dest_size);
 };

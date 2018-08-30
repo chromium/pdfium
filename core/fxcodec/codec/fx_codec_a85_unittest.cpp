@@ -13,17 +13,15 @@
 TEST(fxcodec, A85TestBadInputs) {
   const uint8_t src_buf[] = {1, 2, 3, 4};
   uint8_t* dest_buf = nullptr;
-  uint32_t src_size = 4;
   uint32_t dest_size = 0;
 
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
   // Error codes, not segvs, should callers pass us a nullptr pointer.
-  EXPECT_FALSE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, nullptr));
-  EXPECT_FALSE(pEncoders->A85Encode(src_buf, src_size, nullptr, &dest_size));
-  EXPECT_FALSE(pEncoders->A85Encode(src_buf, 0, &dest_buf, &dest_size));
-  EXPECT_FALSE(pEncoders->A85Encode(nullptr, src_size, &dest_buf, &dest_size));
+  EXPECT_FALSE(pEncoders->A85Encode(src_buf, &dest_buf, nullptr));
+  EXPECT_FALSE(pEncoders->A85Encode(src_buf, nullptr, &dest_size));
+  EXPECT_FALSE(pEncoders->A85Encode({}, &dest_buf, &dest_size));
 }
 
 // No leftover bytes, just translate 2 sets of symbols.
@@ -31,14 +29,13 @@ TEST(fxcodec, A85TestBasic) {
   // Make sure really big values don't break.
   const uint8_t src_buf[] = {1, 2, 3, 4, 255, 255, 255, 255};
   uint8_t* dest_buf = nullptr;
-  uint32_t src_size = 8;
   uint32_t dest_size = 0;
 
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
   // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf, &dest_buf, &dest_size));
 
   // Should have 5 chars for each set of 4 and 2 terminators.
   ASSERT_EQ(12u, dest_size);
@@ -56,15 +53,13 @@ TEST(fxcodec, A85TestLeftoverBytes) {
   // 1 Leftover Byte:
   const uint8_t src_buf_1leftover[] = {1, 2, 3, 4, 255};
   uint8_t* dest_buf = nullptr;
-  uint32_t src_size = 5;
   uint32_t dest_size = 0;
 
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
   // Should succeed
-  EXPECT_TRUE(
-      pEncoders->A85Encode(src_buf_1leftover, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf_1leftover, &dest_buf, &dest_size));
   ASSERT_EQ(9u, dest_size);  // 5 chars for first symbol + 2 + 2 terminators.
   uint8_t expected_out_1leftover[] = {33, 60, 78, 63, 43, 114, 114, 126, 62};
 
@@ -74,13 +69,11 @@ TEST(fxcodec, A85TestLeftoverBytes) {
   FX_Free(dest_buf);
 
   // 2 Leftover bytes:
-  src_size++;
+  const uint8_t src_buf_2leftover[] = {1, 2, 3, 4, 255, 254};
   dest_buf = nullptr;
   dest_size = 0;
-  const uint8_t src_buf_2leftover[] = {1, 2, 3, 4, 255, 254};
   // Should succeed
-  EXPECT_TRUE(
-      pEncoders->A85Encode(src_buf_2leftover, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf_2leftover, &dest_buf, &dest_size));
   ASSERT_EQ(10u, dest_size);  // 5 chars for first symbol + 3 + 2 terminators.
   const uint8_t expected_out_2leftover[] = {33,  60, 78, 63,  43,
                                             115, 56, 68, 126, 62};
@@ -91,13 +84,11 @@ TEST(fxcodec, A85TestLeftoverBytes) {
   FX_Free(dest_buf);
 
   // 3 Leftover bytes:
-  src_size++;
+  const uint8_t src_buf_3leftover[] = {1, 2, 3, 4, 255, 254, 253};
   dest_buf = nullptr;
   dest_size = 0;
-  const uint8_t src_buf_3leftover[] = {1, 2, 3, 4, 255, 254, 253};
   // Should succeed
-  EXPECT_TRUE(
-      pEncoders->A85Encode(src_buf_3leftover, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf_3leftover, &dest_buf, &dest_size));
   ASSERT_EQ(11u, dest_size);  // 5 chars for first symbol + 4 + 2 terminators.
   const uint8_t expected_out_3leftover[] = {33, 60, 78,  63,  43, 115,
                                             56, 77, 114, 126, 62};
@@ -113,14 +104,13 @@ TEST(fxcodec, A85TestZeros) {
   // Make sure really big values don't break.
   const uint8_t src_buf[] = {1, 2, 3, 4, 0, 0, 0, 0};
   uint8_t* dest_buf = nullptr;
-  uint32_t src_size = 8;
   uint32_t dest_size = 0;
 
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
   // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf, &dest_buf, &dest_size));
 
   // Should have 5 chars for first set of 4 + 1 for z + 2 terminators.
   ASSERT_EQ(8u, dest_size);
@@ -132,12 +122,12 @@ TEST(fxcodec, A85TestZeros) {
   FX_Free(dest_buf);
 
   // Should also work if it is at the start:
+  const uint8_t src_buf_2[] = {0, 0, 0, 0, 1, 2, 3, 4};
   dest_buf = nullptr;
   dest_size = 0;
-  const uint8_t src_buf_2[] = {0, 0, 0, 0, 1, 2, 3, 4};
 
   // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf_2, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf_2, &dest_buf, &dest_size));
 
   // Should have 5 chars for set of 4 + 1 for z + 2 terminators.
   ASSERT_EQ(8u, dest_size);
@@ -149,12 +139,12 @@ TEST(fxcodec, A85TestZeros) {
   FX_Free(dest_buf);
 
   // Try with 2 leftover zero bytes. Make sure we don't get a "z".
-  src_size = 6;  // Cut off the last 2 zeros.
+  const uint8_t src_buf_3[] = {1, 2, 3, 4, 0, 0};
   dest_buf = nullptr;
   dest_size = 0;
 
   // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf_3, &dest_buf, &dest_size));
 
   // Should have 5 chars for set of 4 + 3 for last 2 + 2 terminators.
   ASSERT_EQ(10u, dest_size);
@@ -186,14 +176,13 @@ TEST(fxcodec, A85TestLineBreaks) {
     src_buf[k + 3] = 4;
   }
   uint8_t* dest_buf = nullptr;
-  uint32_t src_size = 131;
   uint32_t dest_size = 0;
 
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
   // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, &dest_size));
+  EXPECT_TRUE(pEncoders->A85Encode(src_buf, &dest_buf, &dest_size));
 
   // Should have 75 chars in the first row plus 2 char return,
   // 76 chars in the second row plus 2 char return,
