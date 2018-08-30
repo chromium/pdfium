@@ -57,39 +57,62 @@ v8::Local<v8::Object> CreateReturnValue(v8::Isolate* pIsolate,
                                         v8::TryCatch& trycatch) {
   v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
   if (trycatch.HasCaught()) {
+    v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
     v8::Local<v8::Value> hException = trycatch.Exception();
     v8::Local<v8::Message> hMessage = trycatch.Message();
     if (hException->IsObject()) {
-      v8::Local<v8::Value> hValue;
-      hValue = hException.As<v8::Object>()->Get(
-          v8::String::NewFromUtf8(pIsolate, "name"));
-      if (hValue->IsString() || hValue->IsStringObject())
-        hReturnValue->Set(0, hValue);
-      else
-        hReturnValue->Set(0, v8::String::NewFromUtf8(pIsolate, "Error"));
+      v8::Local<v8::String> hNameStr =
+          v8::String::NewFromUtf8(pIsolate, "name", v8::NewStringType::kNormal)
+              .ToLocalChecked();
+      v8::Local<v8::Value> hValue =
+          hException.As<v8::Object>()->Get(context, hNameStr).ToLocalChecked();
+      if (hValue->IsString() || hValue->IsStringObject()) {
+        hReturnValue->Set(context, 0, hValue).FromJust();
+      } else {
+        v8::Local<v8::String> hErrorStr =
+            v8::String::NewFromUtf8(pIsolate, "Error",
+                                    v8::NewStringType::kNormal)
+                .ToLocalChecked();
+        hReturnValue->Set(context, 0, hErrorStr).FromJust();
+      }
 
-      hValue = hException.As<v8::Object>()->Get(
-          v8::String::NewFromUtf8(pIsolate, "message"));
+      v8::Local<v8::String> hMessageStr =
+          v8::String::NewFromUtf8(pIsolate, "message",
+                                  v8::NewStringType::kNormal)
+              .ToLocalChecked();
+      hValue = hException.As<v8::Object>()
+                   ->Get(context, hMessageStr)
+                   .ToLocalChecked();
       if (hValue->IsString() || hValue->IsStringObject())
-        hReturnValue->Set(1, hValue);
+        hReturnValue->Set(context, 1, hValue).FromJust();
       else
-        hReturnValue->Set(1, hMessage->Get());
+        hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
     } else {
-      hReturnValue->Set(0, v8::String::NewFromUtf8(pIsolate, "Error"));
-      hReturnValue->Set(1, hMessage->Get());
+      v8::Local<v8::String> hErrorStr =
+          v8::String::NewFromUtf8(pIsolate, "Error", v8::NewStringType::kNormal)
+              .ToLocalChecked();
+      hReturnValue->Set(context, 0, hErrorStr).FromJust();
+      hReturnValue->Set(context, 1, hMessage->Get()).FromJust();
     }
-    hReturnValue->Set(2, hException);
-    hReturnValue->Set(
-        3, v8::Integer::New(
-               pIsolate, hMessage->GetLineNumber(pIsolate->GetCurrentContext())
-                             .FromMaybe(0)));
-    hReturnValue->Set(4, hMessage->GetSourceLine(pIsolate->GetCurrentContext())
-                             .FromMaybe(v8::Local<v8::String>()));
-    v8::Maybe<int32_t> maybe_int =
-        hMessage->GetStartColumn(pIsolate->GetCurrentContext());
-    hReturnValue->Set(5, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)));
-    maybe_int = hMessage->GetEndColumn(pIsolate->GetCurrentContext());
-    hReturnValue->Set(6, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)));
+    hReturnValue->Set(context, 2, hException).FromJust();
+    hReturnValue
+        ->Set(context, 3,
+              v8::Integer::New(pIsolate,
+                               hMessage->GetLineNumber(context).FromMaybe(0)))
+        .FromJust();
+    hReturnValue
+        ->Set(
+            context, 4,
+            hMessage->GetSourceLine(context).FromMaybe(v8::Local<v8::String>()))
+        .FromJust();
+    v8::Maybe<int32_t> maybe_int = hMessage->GetStartColumn(context);
+    hReturnValue
+        ->Set(context, 5, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)))
+        .FromJust();
+    maybe_int = hMessage->GetEndColumn(context);
+    hReturnValue
+        ->Set(context, 6, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)))
+        .FromJust();
   }
   return hReturnValue;
 }
@@ -238,7 +261,9 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   v8::Local<v8::Context> hContext = GetIsolate()->GetCurrentContext();
   v8::TryCatch trycatch(GetIsolate());
   v8::Local<v8::String> hScriptString =
-      v8::String::NewFromUtf8(GetIsolate(), szScript);
+      v8::String::NewFromUtf8(GetIsolate(), szScript,
+                              v8::NewStringType::kNormal)
+          .ToLocalChecked();
   if (!lpNewThisObject) {
     v8::Local<v8::Script> hScript;
     if (v8::Script::Compile(hContext, hScriptString).ToLocal(&hScript)) {
@@ -261,12 +286,13 @@ bool CFXJSE_Context::ExecuteScript(const char* szScript,
   v8::Local<v8::Value> hNewThis =
       v8::Local<v8::Value>::New(GetIsolate(), lpNewThisObject->m_hValue);
   ASSERT(!hNewThis.IsEmpty());
-  v8::Local<v8::Script> hWrapper =
-      v8::Script::Compile(
-          hContext,
-          v8::String::NewFromUtf8(
-              GetIsolate(), "(function () { return eval(arguments[0]); })"))
+  v8::Local<v8::String> hEval =
+      v8::String::NewFromUtf8(GetIsolate(),
+                              "(function () { return eval(arguments[0]); })",
+                              v8::NewStringType::kNormal)
           .ToLocalChecked();
+  v8::Local<v8::Script> hWrapper =
+      v8::Script::Compile(hContext, hEval).ToLocalChecked();
   v8::Local<v8::Value> hWrapperValue;
   if (hWrapper->Run(hContext).ToLocal(&hWrapperValue)) {
     ASSERT(!trycatch.HasCaught());
