@@ -15,8 +15,8 @@ vars = {
 
   'android_ndk_revision': '5cd86312e794bdf542a3685c6f10cbb96072990b',
   'binutils_revision': '4110e09197116a9c5dedd4c827bbe95c224f87ac',
-  'build_revision': '7ac293430bfc16826dc27680c6c3c60911f10759',
-  'buildtools_revision': '4ae75c1f8188282a68ecdcc28231585181af4a19',
+  'build_revision': '4755315adacf22d0aa29ac7f27e131dacdb578f5',
+  'buildtools_revision': '2dff9c9c74e9d732e6fe57c84ef7fd044cc45d96',
   'catapult_revision': 'c61a0380486a3c952109d0024cf77dac8a05bbb5',
   'clang_revision': '13b165992adfe43a7442fceb958626755ef4d066',
   'code_coverage_revision': '64186cbaf924329bfa0d139c0a45946cc529af1f',
@@ -33,7 +33,7 @@ vars = {
   'skia_revision': '588f879677d4f36e16a42dd96876534f104c2e2f',
   'tools_memory_revision': 'f7b00daf4df7f6c469f5fbc68d7f40f6bd15d6e6',
   'trace_event_revision': '211b3ed9d0481b4caddbee1322321b86a483ca1f',
-  'v8_revision': 'ff6b34b468c1eae8589b278923f87e2f573bc248',
+  'v8_revision': '19afaa1436ef38c86f7ea9a73a6ae9e43ec71ad1',
   'yasm_source_revision': '720b70524a4424b15fc57e82263568c8ba0496ad',
   'zlib_revision': 'dcf1d0f8c952f76cfceefb4ba61e004f93ad7287',
 }
