@@ -8,24 +8,9 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/pseudo_retainable.h"
 
 namespace fxcrt {
-namespace {
-
-class PseudoRetainable {
- public:
-  PseudoRetainable() : retain_count_(0), release_count_(0) {}
-  void Retain() { ++retain_count_; }
-  void Release() { ++release_count_; }
-  int retain_count() const { return retain_count_; }
-  int release_count() const { return release_count_; }
-
- private:
-  int retain_count_;
-  int release_count_;
-};
-
-}  // namespace
 
 TEST(RetainPtr, Null) {
   RetainPtr<PseudoRetainable> ptr;

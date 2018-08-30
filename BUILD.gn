@@ -3047,6 +3047,7 @@ test("pdfium_embeddertests") {
     "testing/embedder_test_timer_handling_delegate.h",
     "testing/fake_file_access.cpp",
     "testing/fake_file_access.h",
+    "testing/pseudo_retainable.h",
     "testing/range_set.cpp",
     "testing/range_set.h",
   ]
