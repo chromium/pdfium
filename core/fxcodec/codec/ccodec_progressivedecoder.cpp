@@ -579,7 +579,8 @@ void CCodec_ProgressiveDecoder::GifReadScanline(int32_t row_num,
 bool CCodec_ProgressiveDecoder::BmpInputImagePositionBuf(uint32_t rcd_pos) {
   m_offSet = rcd_pos;
   FXCODEC_STATUS error_status = FXCODEC_STATUS_ERROR;
-  return BmpReadMoreData(m_pCodecMgr->GetBmpModule(), error_status);
+  return BmpReadMoreData(m_pCodecMgr->GetBmpModule(), m_pBmpContext.get(),
+                         error_status);
 }
 
 void CCodec_ProgressiveDecoder::BmpReadScanline(
@@ -715,8 +716,9 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
     return false;
   }
 
-  m_pBmpContext = pBmpModule->Start(this);
-  if (!m_pBmpContext) {
+  std::unique_ptr<CCodec_BmpModule::Context> pBmpContext =
+      pBmpModule->Start(this);
+  if (!pBmpContext) {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
@@ -727,24 +729,23 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
   }
 
   m_offSet += size;
-  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf.get(), size});
+  pBmpModule->Input(pBmpContext.get(), {m_pSrcBuf.get(), size});
   std::vector<uint32_t> palette;
   int32_t readResult = pBmpModule->ReadHeader(
-      m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
+      pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
       &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
   while (readResult == 2) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS_ERR_FORMAT;
-    if (!BmpReadMoreData(pBmpModule, error_status)) {
+    if (!BmpReadMoreData(pBmpModule, pBmpContext.get(), error_status)) {
       m_status = error_status;
       return false;
     }
     readResult = pBmpModule->ReadHeader(
-        m_pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
+        pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
         &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
   }
 
   if (readResult != 1) {
-    m_pBmpContext.reset();
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
@@ -764,7 +765,6 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
       format = FXDIB_Rgb32;
       break;
     default:
-      m_pBmpContext.reset();
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return false;
   }
@@ -773,20 +773,19 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
   uint32_t neededData = 0;
   if (!CFX_DIBitmap::CalculatePitchAndSize(m_SrcWidth, m_SrcHeight, format,
                                            &pitch, &neededData)) {
-    m_pBmpContext.reset();
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
 
   uint32_t availableData = m_SrcSize > m_offSet ? m_SrcSize - m_offSet : 0;
   if (neededData > availableData) {
-    m_pBmpContext.reset();
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
   }
 
   m_SrcBPC = 8;
   m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
+  m_pBmpContext = std::move(pBmpContext);
   if (m_SrcPaletteNumber) {
     m_pSrcPalette.reset(FX_Alloc(FX_ARGB, m_SrcPaletteNumber));
     memcpy(m_pSrcPalette.get(), palette.data(),
@@ -797,15 +796,16 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageType(CFX_DIBAttribute* pAttribute,
   return true;
 }
 
-bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
-                                                FXCODEC_STATUS& err_status) {
+bool CCodec_ProgressiveDecoder::BmpReadMoreData(
+    CCodec_BmpModule* pBmpModule,
+    CCodec_BmpModule::Context* pBmpContext,
+    FXCODEC_STATUS& err_status) {
   uint32_t dwSize = (uint32_t)m_pFile->GetSize();
   if (dwSize <= m_offSet)
     return false;
 
   dwSize = dwSize - m_offSet;
-  FX_SAFE_UINT32 avail_input =
-      pBmpModule->GetAvailInput(m_pBmpContext.get(), nullptr);
+  FX_SAFE_UINT32 avail_input = pBmpModule->GetAvailInput(pBmpContext, nullptr);
   if (!avail_input.IsValid())
     return false;
 
@@ -835,7 +835,7 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
     return false;
   }
   m_offSet += dwSize;
-  pBmpModule->Input(m_pBmpContext.get(), {m_pSrcBuf.get(), dwSize + dwAvail});
+  pBmpModule->Input(pBmpContext, {m_pSrcBuf.get(), dwSize + dwAvail});
   return true;
 }
 
@@ -869,7 +869,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
     int32_t readRes = pBmpModule->LoadImage(m_pBmpContext.get());
     while (readRes == 2) {
       FXCODEC_STATUS error_status = FXCODEC_STATUS_DECODE_FINISH;
-      if (!BmpReadMoreData(pBmpModule, error_status)) {
+      if (!BmpReadMoreData(pBmpModule, m_pBmpContext.get(), error_status)) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
         m_status = error_status;

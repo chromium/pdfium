@@ -182,6 +182,7 @@ class CCodec_ProgressiveDecoder :
  private:
 #ifdef PDF_ENABLE_XFA_BMP
   bool BmpReadMoreData(CCodec_BmpModule* pBmpModule,
+                       CCodec_BmpModule::Context* pBmpContext,
                        FXCODEC_STATUS& err_status);
   bool BmpDetectImageType(CFX_DIBAttribute* pAttribute, uint32_t size);
   FXCODEC_STATUS BmpStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
