@@ -12,6 +12,8 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/optional.h"
+#include "third_party/base/span.h"
 
 class CFX_FontMapper;
 class CFX_SubstFont;
@@ -45,7 +47,7 @@ class CFX_FontMgr {
                              uint32_t size,
                              int font_offset);
   FXFT_Face GetFileFace(const char* filename, int face_index);
-  FXFT_Face GetFixedFace(const uint8_t* pData, uint32_t size, int face_index);
+  FXFT_Face GetFixedFace(pdfium::span<const uint8_t> span, int face_index);
   void ReleaseFace(FXFT_Face face);
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);
   FXFT_Face FindSubstFont(const ByteString& face_name,
@@ -55,7 +57,7 @@ class CFX_FontMgr {
                           int italic_angle,
                           int CharsetCP,
                           CFX_SubstFont* pSubstFont);
-  bool GetBuiltinFont(size_t index, const uint8_t** pFontData, uint32_t* size);
+  Optional<pdfium::span<const uint8_t>> GetBuiltinFont(size_t index);
   CFX_FontMapper* GetBuiltinMapper() const { return m_pBuiltinMapper.get(); }
   FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
   bool FTLibrarySupportsHinting() const { return m_FTLibrarySupportsHinting; }

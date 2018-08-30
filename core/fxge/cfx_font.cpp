@@ -381,8 +381,8 @@ uint32_t CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
 bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span) {
   m_pFontDataAllocation =
       std::vector<uint8_t>(src_span.begin(), src_span.end());
-  m_Face = CFX_GEModule::Get()->GetFontMgr()->GetFixedFace(
-      m_pFontDataAllocation.data(), m_pFontDataAllocation.size(), 0);
+  m_Face =
+      CFX_GEModule::Get()->GetFontMgr()->GetFixedFace(m_pFontDataAllocation, 0);
   m_bEmbedded = true;
   m_FontData = m_pFontDataAllocation;
   return !!m_Face;
