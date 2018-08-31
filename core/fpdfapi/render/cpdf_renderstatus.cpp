@@ -260,33 +260,31 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
         FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
                                 FXSYS_round(G * 255), FXSYS_round(B * 255)));
   }
-  const float a = ((start_x - end_x) * (start_x - end_x)) +
-                  ((start_y - end_y) * (start_y - end_y)) -
-                  ((start_r - end_r) * (start_r - end_r));
+
+  const float dx = end_x - start_x;
+  const float dy = end_y - start_y;
+  const float dr = end_r - start_r;
+  const float a = dx * dx + dy * dy - dr * dr;
   const bool a_is_float_zero = IsFloatZero(a);
 
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
-  bool bDecreasing = false;
-  if (start_r > end_r) {
-    int length = (int)sqrt((((start_x - end_x) * (start_x - end_x)) +
-                            ((start_y - end_y) * (start_y - end_y))));
-    if (length < start_r - end_r) {
-      bDecreasing = true;
-    }
-  }
+
+  bool bDecreasing =
+      (dr < 0 && static_cast<int>(sqrt(dx * dx + dy * dy)) < -dr);
+
   CFX_Matrix matrix = pObject2Bitmap->GetInverse();
   for (int row = 0; row < height; row++) {
-    uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
+    uint32_t* dib_buf =
+        reinterpret_cast<uint32_t*>(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
-      float b = -2 * (((pos.x - start_x) * (end_x - start_x)) +
-                      ((pos.y - start_y) * (end_y - start_y)) +
-                      (start_r * (end_r - start_r)));
-      float c = ((pos.x - start_x) * (pos.x - start_x)) +
-                ((pos.y - start_y) * (pos.y - start_y)) - (start_r * start_r);
+      float pos_dx = pos.x - start_x;
+      float pos_dy = pos.y - start_y;
+      float b = -2 * (pos_dx * dx + pos_dy * dy + start_r * dr);
+      float c = pos_dx * pos_dx + pos_dy * pos_dy - start_r * start_r;
       float s;
       if (IsFloatZero(b)) {
         s = sqrt(-c / a);
@@ -294,9 +292,9 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
         s = -c / b;
       } else {
         float b2_4ac = (b * b) - 4 * (a * c);
-        if (b2_4ac < 0) {
+        if (b2_4ac < 0)
           continue;
-        }
+
         float root = sqrt(b2_4ac);
         float s1 = (-b - root) / (2 * a);
         float s2 = (-b + root) / (2 * a);
@@ -306,20 +304,19 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
           s = (s1 >= 0 || bStartExtend) ? s1 : s2;
         else
           s = (s2 <= 1.0f || bEndExtend) ? s2 : s1;
-        if ((start_r + s * (end_r - start_r)) < 0) {
+
+        if (start_r + s * dr < 0)
           continue;
-        }
       }
-      int index = (int32_t)(s * (kShadingSteps - 1));
+
+      int index = static_cast<int32_t>(s * (kShadingSteps - 1));
       if (index < 0) {
-        if (!bStartExtend) {
+        if (!bStartExtend)
           continue;
-        }
         index = 0;
       } else if (index >= kShadingSteps) {
-        if (!bEndExtend) {
+        if (!bEndExtend)
           continue;
-        }
         index = kShadingSteps - 1;
       }
       dib_buf[column] = rgb_array[index];
