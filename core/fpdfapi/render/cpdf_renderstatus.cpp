@@ -260,11 +260,10 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
         FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
                                 FXSYS_round(G * 255), FXSYS_round(B * 255)));
   }
-  float a = ((start_x - end_x) * (start_x - end_x)) +
-            ((start_y - end_y) * (start_y - end_y)) -
-            ((start_r - end_r) * (start_r - end_r));
-  if (IsFloatZero(a))
-    a = 0.0f;
+  const float a = ((start_x - end_x) * (start_x - end_x)) +
+                  ((start_y - end_y) * (start_y - end_y)) -
+                  ((start_r - end_r) * (start_r - end_r));
+  const bool a_is_float_zero = IsFloatZero(a);
 
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
@@ -289,7 +288,9 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
       float c = ((pos.x - start_x) * (pos.x - start_x)) +
                 ((pos.y - start_y) * (pos.y - start_y)) - (start_r * start_r);
       float s;
-      if (a == 0.0f) {
+      if (IsFloatZero(b)) {
+        s = sqrt(-c / a);
+      } else if (a_is_float_zero) {
         s = -c / b;
       } else {
         float b2_4ac = (b * b) - 4 * (a * c);
