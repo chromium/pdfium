@@ -346,19 +346,11 @@ void CFX_GifContext::SetInputBuffer(pdfium::span<uint8_t> src_buf) {
   input_buffer_ = pdfium::MakeRetain<CFX_CodecMemory>(src_buf);
 }
 
-uint32_t CFX_GifContext::GetAvailInput(uint8_t** avail_buf) const {
+uint32_t CFX_GifContext::GetAvailInput() const {
   if (!input_buffer_)
     return 0;
 
-  FX_FILESIZE available_size =
-      input_buffer_->GetSize() - input_buffer_->GetPosition();
-  if (avail_buf) {
-    *avail_buf = nullptr;
-    if (available_size > 0)
-      *avail_buf = input_buffer_->GetBuffer() + available_size;
-  }
-
-  return available_size;
+  return input_buffer_->GetSize() - input_buffer_->GetPosition();
 }
 
 bool CFX_GifContext::ReadData(uint8_t* dest, uint32_t size) {

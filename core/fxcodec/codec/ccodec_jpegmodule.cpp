@@ -464,15 +464,8 @@ bool CCodec_JpegModule::ReadScanline(Context* pContext,
   return nlines == 1;
 }
 
-uint32_t CCodec_JpegModule::GetAvailInput(Context* pContext,
-                                          uint8_t** avail_buf_ptr) {
+uint32_t CCodec_JpegModule::GetAvailInput(Context* pContext) const {
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  if (avail_buf_ptr) {
-    *avail_buf_ptr = nullptr;
-    if (ctx->m_SrcMgr.bytes_in_buffer > 0) {
-      *avail_buf_ptr = (uint8_t*)ctx->m_SrcMgr.next_input_byte;
-    }
-  }
   return (uint32_t)ctx->m_SrcMgr.bytes_in_buffer;
 }
 

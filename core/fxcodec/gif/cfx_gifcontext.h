@@ -42,7 +42,7 @@ class CFX_GifContext : public CCodec_GifModule::Context {
   CFX_GifDecodeStatus GetFrame();
   CFX_GifDecodeStatus LoadFrame(int32_t frame_num);
   void SetInputBuffer(pdfium::span<uint8_t> src_buf);
-  uint32_t GetAvailInput(uint8_t** avail_buf) const;
+  uint32_t GetAvailInput() const;
   size_t GetFrameNum() const { return images_.size(); }
 
   UnownedPtr<CCodec_GifModule> gif_module_;

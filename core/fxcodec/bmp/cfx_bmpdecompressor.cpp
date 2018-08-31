@@ -663,19 +663,11 @@ void CFX_BmpDecompressor::SetInputBuffer(pdfium::span<uint8_t> src_buf) {
   input_buffer_ = pdfium::MakeRetain<CFX_CodecMemory>(src_buf);
 }
 
-FX_FILESIZE CFX_BmpDecompressor::GetAvailInput(uint8_t** avail_buf) {
+FX_FILESIZE CFX_BmpDecompressor::GetAvailInput() const {
   if (!input_buffer_)
     return 0;
 
-  FX_FILESIZE available =
-      input_buffer_->GetSize() - input_buffer_->GetPosition();
-  if (avail_buf) {
-    *avail_buf = nullptr;
-    if (available > 0)
-      *avail_buf = input_buffer_->GetBuffer() + available;
-  }
-
-  return available;
+  return input_buffer_->GetSize() - input_buffer_->GetPosition();
 }
 
 void CFX_BmpDecompressor::SetHeight(int32_t signed_height) {

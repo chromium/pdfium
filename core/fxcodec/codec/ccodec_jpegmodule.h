@@ -56,7 +56,7 @@ class CCodec_JpegModule {
 
   bool StartScanline(Context* pContext, int down_scale);
   bool ReadScanline(Context* pContext, uint8_t* dest_buf);
-  uint32_t GetAvailInput(Context* pContext, uint8_t** avail_buf_ptr);
+  uint32_t GetAvailInput(Context* pContext) const;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   static bool JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,

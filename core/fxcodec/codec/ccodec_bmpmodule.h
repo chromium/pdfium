@@ -34,7 +34,7 @@ class CCodec_BmpModule {
   ~CCodec_BmpModule();
 
   std::unique_ptr<Context> Start(Delegate* pDelegate);
-  FX_FILESIZE GetAvailInput(Context* pContext, uint8_t** avail_buf_ptr);
+  FX_FILESIZE GetAvailInput(Context* pContext) const;
   void Input(Context* pContext, pdfium::span<uint8_t> src_buf);
   int32_t ReadHeader(Context* pContext,
                      int32_t* width,

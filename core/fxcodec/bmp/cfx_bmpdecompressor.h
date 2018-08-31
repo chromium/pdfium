@@ -28,7 +28,7 @@ class CFX_BmpDecompressor {
   int32_t DecodeImage();
   int32_t ReadHeader();
   void SetInputBuffer(pdfium::span<uint8_t> src_buf);
-  FX_FILESIZE GetAvailInput(uint8_t** avail_buf);
+  FX_FILESIZE GetAvailInput() const;
 
   jmp_buf jmpbuf_;
   CFX_BmpContext* context_ptr_;

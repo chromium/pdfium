@@ -418,7 +418,7 @@ void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
 #ifdef PDF_ENABLE_XFA_GIF
 void CCodec_ProgressiveDecoder::GifRecordCurrentPosition(uint32_t& cur_pos) {
   uint32_t remain_size =
-      m_pCodecMgr->GetGifModule()->GetAvailInput(m_pGifContext.get(), nullptr);
+      m_pCodecMgr->GetGifModule()->GetAvailInput(m_pGifContext.get());
   cur_pos = m_offSet - remain_size;
 }
 
@@ -805,7 +805,7 @@ bool CCodec_ProgressiveDecoder::BmpReadMoreData(
     return false;
 
   dwSize = dwSize - m_offSet;
-  FX_SAFE_UINT32 avail_input = pBmpModule->GetAvailInput(pBmpContext, nullptr);
+  FX_SAFE_UINT32 avail_input = pBmpModule->GetAvailInput(pBmpContext);
   if (!avail_input.IsValid())
     return false;
 
@@ -898,10 +898,9 @@ bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
     return false;
 
   uint32_t dwFileRemaining = m_pFile->GetSize() - m_offSet;
-  uint32_t dwUnusedBuffer =
-      !m_InvalidateGifBuffer
-          ? pGifModule->GetAvailInput(m_pGifContext.get(), nullptr)
-          : 0;
+  uint32_t dwUnusedBuffer = !m_InvalidateGifBuffer
+                                ? pGifModule->GetAvailInput(m_pGifContext.get())
+                                : 0;
   uint32_t dwAmountToFetchFromFile = dwFileRemaining;
   if (dwUnusedBuffer == m_SrcSize) {
     if (dwFileRemaining > FXCODEC_BLOCK_SIZE)
@@ -1129,7 +1128,7 @@ bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
     return false;
   }
   dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pJpegModule->GetAvailInput(m_pJpegContext.get(), nullptr);
+  uint32_t dwAvail = pJpegModule->GetAvailInput(m_pJpegContext.get());
   if (dwAvail == m_SrcSize) {
     if (dwSize > FXCODEC_BLOCK_SIZE) {
       dwSize = FXCODEC_BLOCK_SIZE;
