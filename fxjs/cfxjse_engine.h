@@ -67,7 +67,7 @@ class CFXJSE_Engine final : public CFX_V8 {
                       CXFA_Node* bindNode);
   CFXJSE_Value* GetJSValueFromMap(CXFA_Object* pObject);
   void AddToCacheList(std::unique_ptr<CXFA_List> pList);
-  CXFA_Object* GetThisObject() const { return m_pThisObject; }
+  CXFA_Object* GetThisObject() const { return m_pThisObject.Get(); }
 
   int32_t GetIndexByName(CXFA_Node* refNode);
   int32_t GetIndexByClassName(CXFA_Node* refNode);
@@ -75,7 +75,7 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   void SetNodesOfRunScript(std::vector<CXFA_Node*>* pArray);
   void AddNodesOfRunScript(CXFA_Node* pNode);
-  CFXJSE_Class* GetJseNormalClass();
+  CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
 
   void SetRunAtType(XFA_AttributeEnum eRunAt) { m_eRunAtType = eRunAt; }
   bool IsRunAtClient() { return m_eRunAtType != XFA_AttributeEnum::Server; }
@@ -108,7 +108,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   UnownedPtr<CJS_Runtime> const m_pSubordinateRuntime;
   UnownedPtr<CXFA_Document> const m_pDocument;
   std::unique_ptr<CFXJSE_Context> m_JsContext;
-  CFXJSE_Class* m_pJsClass = nullptr;
+  UnownedPtr<CFXJSE_Class> m_pJsClass;
   CXFA_Script::Type m_eScriptType = CXFA_Script::Type::Unknown;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Context>>
@@ -117,10 +117,10 @@ class CFXJSE_Engine final : public CFX_V8 {
   std::vector<CXFA_Node*> m_upObjectArray;
   // CacheList holds the List items so we can clean them up when we're done.
   std::vector<std::unique_ptr<CXFA_List>> m_CacheList;
-  std::vector<CXFA_Node*>* m_pScriptNodeArray = nullptr;
+  UnownedPtr<std::vector<CXFA_Node*>> m_pScriptNodeArray;
   const std::unique_ptr<CFXJSE_ResolveProcessor> m_ResolveProcessor;
   std::unique_ptr<CFXJSE_FormCalcContext> m_FM2JSContext;
-  CXFA_Object* m_pThisObject = nullptr;
+  UnownedPtr<CXFA_Object> m_pThisObject;
   XFA_AttributeEnum m_eRunAtType = XFA_AttributeEnum::Client;
 };
 

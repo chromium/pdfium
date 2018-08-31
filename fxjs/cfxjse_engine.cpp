@@ -138,7 +138,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
   } else {
     btScript = FX_UTF8Encode(wsScript);
   }
-  AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
+  AutoRestorer<UnownedPtr<CXFA_Object>> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
 
   CFXJSE_Value* pValue = pThisObject ? GetJSValueFromMap(pThisObject) : nullptr;
@@ -510,7 +510,7 @@ bool CFXJSE_Engine::RunVariablesScript(CXFA_Node* pScriptNode) {
   CXFA_Node* pThisObject = pParent->GetParent();
   CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
-  AutoRestorer<CXFA_Object*> nodeRestorer(&m_pThisObject);
+  AutoRestorer<UnownedPtr<CXFA_Object>> nodeRestorer(&m_pThisObject);
   m_pThisObject = pThisObject;
   return pVariablesContext->ExecuteScript(btScript.c_str(), hRetValue.get(),
                                           nullptr);
@@ -561,10 +561,6 @@ void CFXJSE_Engine::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
     if (pObject->GetObjectProperty(OBJ_NAME[i], hProp.get()))
       pObject->DeleteObjectProperty(OBJ_NAME[i]);
   }
-}
-
-CFXJSE_Class* CFXJSE_Engine::GetJseNormalClass() {
-  return m_pJsClass;
 }
 
 bool CFXJSE_Engine::ResolveObjects(CXFA_Object* refObject,
@@ -753,7 +749,7 @@ CFXJSE_Value* CFXJSE_Engine::GetJSValueFromMap(CXFA_Object* pObject) {
     return iter->second.get();
 
   auto jsValue = pdfium::MakeUnique<CFXJSE_Value>(GetIsolate());
-  jsValue->SetObject(pObject, m_pJsClass);
+  jsValue->SetObject(pObject, m_pJsClass.Get());
 
   CFXJSE_Value* pValue = jsValue.get();
   m_mapObjectToValue.insert(std::make_pair(pObject, std::move(jsValue)));
