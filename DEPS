@@ -107,11 +107,6 @@ deps = {
     Var('chromium_git') + "/chromium/src/tools/code_coverage.git@" +
         Var('code_coverage_revision'),
 
-  # TODO(GYP): Remove this when no tools rely on GYP anymore.
-  "tools/gyp":
-    Var('chromium_git') + '/external/gyp.git@' +
-        'eb296f67da078ec01f5e3a9ea9cdc6d26d680161',
-
   "tools/memory":
     Var('chromium_git') + "/chromium/src/tools/memory@" +
         Var('tools_memory_revision'),

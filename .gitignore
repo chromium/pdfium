@@ -22,7 +22,6 @@
 /third_party/zlib
 /tools/clang
 /tools/code_coverage
-/tools/gyp
 /tools/memory
 /v8
 /xcodebuild
