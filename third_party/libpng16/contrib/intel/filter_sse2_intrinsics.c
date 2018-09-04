@@ -1,18 +1,19 @@
 
 /* filter_sse2_intrinsics.c - SSE2 optimized filter functions
  *
- * Copyright (c) 2016-2017 Glenn Randers-Pehrson
+ * Copyright (c) 2016 Google, Inc.
  * Written by Mike Klein and Matt Sarett
- * Derived from arm/filter_neon_intrinsics.c
+ * Derived from arm/filter_neon_intrinsics.c, which was
+ * Copyright (c) 2014,2016 Glenn Randers-Pehrson
  *
- * Last changed in libpng 1.6.31 [July 27, 2017]
+ * Last changed in libpng 1.6.22 [May 26, 2016]
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
  * and license in png.h
  */
 
-#include "../pngpriv.h"
+#include "../../pngpriv.h"
 
 #ifdef PNG_READ_SUPPORTED
 
@@ -40,7 +41,7 @@ static __m128i load3(const void* p) {
    /* We'll load 2 bytes, then 1 byte,
     * then mask them together, and finally load into SSE.
     */
-   const png_uint_16* p01 = (png_const_uint_16p)p;
+   const png_uint_16* p01 = p;
    const png_byte*    p2  = (const png_byte*)(p01+1);
 
    png_uint_32 v012 = (png_uint_32)(*p01)
@@ -53,15 +54,12 @@ static void store3(void* p, __m128i v) {
     * its bottom two bytes, then its third byte.
     */
    png_uint_32 v012;
-   png_uint_16* p01;
-   png_byte*    p2;
-
    store4(&v012, v);
 
-   p01 = (png_uint_16p)p;
-   p2  = (png_byte*)(p01+1);
-   *p01 = (png_uint_16)v012;
-   *p2  = (png_byte)(v012 >> 16);
+   png_uint_16* p01 = p;
+   png_byte*    p2  = (png_byte*)(p01+1);
+   *p01 = v012;
+   *p2  = v012 >> 16;
 }
 
 void png_read_filter_row_sub3_sse2(png_row_infop row_info, png_bytep row,
@@ -71,13 +69,10 @@ void png_read_filter_row_sub3_sse2(png_row_infop row_info, png_bytep row,
     * There is no pixel to the left of the first pixel.  It's encoded directly.
     * That works with our main loop if we just say that left pixel was zero.
     */
-   png_size_t rb;
-
+   png_debug(1, "in png_read_filter_row_sub3_sse2");
    __m128i a, d = _mm_setzero_si128();
 
-   png_debug(1, "in png_read_filter_row_sub3_sse2");
-
-   rb = row_info->rowbytes;
+   int rb = row_info->rowbytes;
    while (rb >= 4) {
       a = d; d = load4(row);
       d = _mm_add_epi8(d, a);
@@ -94,7 +89,6 @@ void png_read_filter_row_sub3_sse2(png_row_infop row_info, png_bytep row,
       row += 3;
       rb  -= 3;
    }
-   PNG_UNUSED(prev)
 }
 
 void png_read_filter_row_sub4_sse2(png_row_infop row_info, png_bytep row,
@@ -104,14 +98,11 @@ void png_read_filter_row_sub4_sse2(png_row_infop row_info, png_bytep row,
     * There is no pixel to the left of the first pixel.  It's encoded directly.
     * That works with our main loop if we just say that left pixel was zero.
     */
-   png_size_t rb;
-
+   png_debug(1, "in png_read_filter_row_sub4_sse2");
    __m128i a, d = _mm_setzero_si128();
 
-   png_debug(1, "in png_read_filter_row_sub4_sse2");
-
-   rb = row_info->rowbytes+4;
-   while (rb > 4) {
+   int rb = row_info->rowbytes;
+   while (rb > 0) {
       a = d; d = load4(row);
       d = _mm_add_epi8(d, a);
       store4(row, d);
@@ -119,7 +110,6 @@ void png_read_filter_row_sub4_sse2(png_row_infop row_info, png_bytep row,
       row += 4;
       rb  -= 4;
    }
-   PNG_UNUSED(prev)
 }
 
 void png_read_filter_row_avg3_sse2(png_row_infop row_info, png_bytep row,
@@ -130,23 +120,18 @@ void png_read_filter_row_avg3_sse2(png_row_infop row_info, png_bytep row,
     * predicted to be half of the pixel above it.  So again, this works
     * perfectly with our loop if we make sure a starts at zero.
     */
-
-   png_size_t rb;
-
+   png_debug(1, "in png_read_filter_row_avg3_sse2");
    const __m128i zero = _mm_setzero_si128();
-
    __m128i    b;
    __m128i a, d = zero;
 
-   png_debug(1, "in png_read_filter_row_avg3_sse2");
-   rb = row_info->rowbytes;
+   int rb = row_info->rowbytes;
    while (rb >= 4) {
-      __m128i avg;
              b = load4(prev);
       a = d; d = load4(row );
 
       /* PNG requires a truncating average, so we can't just use _mm_avg_epu8 */
-      avg = _mm_avg_epu8(a,b);
+      __m128i avg = _mm_avg_epu8(a,b);
       /* ...but we can fix it up by subtracting off 1 if it rounded up. */
       avg = _mm_sub_epi8(avg, _mm_and_si128(_mm_xor_si128(a,b),
                                             _mm_set1_epi8(1)));
@@ -158,12 +143,11 @@ void png_read_filter_row_avg3_sse2(png_row_infop row_info, png_bytep row,
       rb   -= 3;
    }
    if (rb > 0) {
-      __m128i avg;
              b = load3(prev);
       a = d; d = load3(row );
 
       /* PNG requires a truncating average, so we can't just use _mm_avg_epu8 */
-      avg = _mm_avg_epu8(a,b);
+      __m128i avg = _mm_avg_epu8(a,b);
       /* ...but we can fix it up by subtracting off 1 if it rounded up. */
       avg = _mm_sub_epi8(avg, _mm_and_si128(_mm_xor_si128(a,b),
                                             _mm_set1_epi8(1)));
@@ -185,21 +169,18 @@ void png_read_filter_row_avg4_sse2(png_row_infop row_info, png_bytep row,
     * predicted to be half of the pixel above it.  So again, this works
     * perfectly with our loop if we make sure a starts at zero.
     */
-   png_size_t rb;
+   png_debug(1, "in png_read_filter_row_avg4_sse2");
    const __m128i zero = _mm_setzero_si128();
    __m128i    b;
    __m128i a, d = zero;
 
-   png_debug(1, "in png_read_filter_row_avg4_sse2");
-
-   rb = row_info->rowbytes+4;
-   while (rb > 4) {
-      __m128i avg;
+   int rb = row_info->rowbytes;
+   while (rb > 0) {
              b = load4(prev);
       a = d; d = load4(row );
 
       /* PNG requires a truncating average, so we can't just use _mm_avg_epu8 */
-      avg = _mm_avg_epu8(a,b);
+      __m128i avg = _mm_avg_epu8(a,b);
       /* ...but we can fix it up by subtracting off 1 if it rounded up. */
       avg = _mm_sub_epi8(avg, _mm_and_si128(_mm_xor_si128(a,b),
                                             _mm_set1_epi8(1)));
@@ -227,7 +208,7 @@ static __m128i abs_i16(__m128i x) {
    x = _mm_xor_si128(x, is_negative);
 
    /* +1 to negative lanes, else +0. */
-   x = _mm_sub_epi16(x, is_negative);
+   x = _mm_add_epi16(x, _mm_srli_epi16(is_negative, 15));
    return x;
 #endif
 }
@@ -257,42 +238,38 @@ void png_read_filter_row_paeth3_sse2(png_row_infop row_info, png_bytep row,
     * Here we zero b and d, which become c and a respectively at the start of
     * the loop.
     */
-   png_size_t rb;
+   png_debug(1, "in png_read_filter_row_paeth3_sse2");
    const __m128i zero = _mm_setzero_si128();
    __m128i c, b = zero,
            a, d = zero;
 
-   png_debug(1, "in png_read_filter_row_paeth3_sse2");
-
-   rb = row_info->rowbytes;
+   int rb = row_info->rowbytes;
    while (rb >= 4) {
       /* It's easiest to do this math (particularly, deal with pc) with 16-bit
        * intermediates.
        */
-      __m128i pa,pb,pc,smallest,nearest;
       c = b; b = _mm_unpacklo_epi8(load4(prev), zero);
       a = d; d = _mm_unpacklo_epi8(load4(row ), zero);
 
       /* (p-a) == (a+b-c - a) == (b-c) */
-   
-      pa = _mm_sub_epi16(b,c);
+      __m128i pa = _mm_sub_epi16(b,c);
 
       /* (p-b) == (a+b-c - b) == (a-c) */
-      pb = _mm_sub_epi16(a,c);
+      __m128i pb = _mm_sub_epi16(a,c);
 
       /* (p-c) == (a+b-c - c) == (a+b-c-c) == (b-c)+(a-c) */
-      pc = _mm_add_epi16(pa,pb);
+      __m128i pc = _mm_add_epi16(pa,pb);
 
       pa = abs_i16(pa);  /* |p-a| */
       pb = abs_i16(pb);  /* |p-b| */
       pc = abs_i16(pc);  /* |p-c| */
 
-      smallest = _mm_min_epi16(pc, _mm_min_epi16(pa, pb));
+      __m128i smallest = _mm_min_epi16(pc, _mm_min_epi16(pa, pb));
 
       /* Paeth breaks ties favoring a over b over c. */
-      nearest  = if_then_else(_mm_cmpeq_epi16(smallest, pa), a,
-                 if_then_else(_mm_cmpeq_epi16(smallest, pb), b,
-                                                             c));
+      __m128i nearest  = if_then_else(_mm_cmpeq_epi16(smallest, pa), a,
+                         if_then_else(_mm_cmpeq_epi16(smallest, pb), b,
+                                                                     c));
 
       /* Note `_epi8`: we need addition to wrap modulo 255. */
       d = _mm_add_epi8(d, nearest);
@@ -306,29 +283,28 @@ void png_read_filter_row_paeth3_sse2(png_row_infop row_info, png_bytep row,
       /* It's easiest to do this math (particularly, deal with pc) with 16-bit
        * intermediates.
        */
-      __m128i pa,pb,pc,smallest,nearest;
       c = b; b = _mm_unpacklo_epi8(load3(prev), zero);
       a = d; d = _mm_unpacklo_epi8(load3(row ), zero);
 
       /* (p-a) == (a+b-c - a) == (b-c) */
-      pa = _mm_sub_epi16(b,c);
+      __m128i pa = _mm_sub_epi16(b,c);
 
       /* (p-b) == (a+b-c - b) == (a-c) */
-      pb = _mm_sub_epi16(a,c);
+      __m128i pb = _mm_sub_epi16(a,c);
 
       /* (p-c) == (a+b-c - c) == (a+b-c-c) == (b-c)+(a-c) */
-      pc = _mm_add_epi16(pa,pb);
+      __m128i pc = _mm_add_epi16(pa,pb);
 
       pa = abs_i16(pa);  /* |p-a| */
       pb = abs_i16(pb);  /* |p-b| */
       pc = abs_i16(pc);  /* |p-c| */
 
-      smallest = _mm_min_epi16(pc, _mm_min_epi16(pa, pb));
+      __m128i smallest = _mm_min_epi16(pc, _mm_min_epi16(pa, pb));
 
       /* Paeth breaks ties favoring a over b over c. */
-      nearest  = if_then_else(_mm_cmpeq_epi16(smallest, pa), a,
-                 if_then_else(_mm_cmpeq_epi16(smallest, pb), b,
-                                                             c));
+      __m128i nearest  = if_then_else(_mm_cmpeq_epi16(smallest, pa), a,
+                         if_then_else(_mm_cmpeq_epi16(smallest, pb), b,
+                                                                     c));
 
       /* Note `_epi8`: we need addition to wrap modulo 255. */
       d = _mm_add_epi8(d, nearest);
@@ -356,16 +332,13 @@ void png_read_filter_row_paeth4_sse2(png_row_infop row_info, png_bytep row,
     * Here we zero b and d, which become c and a respectively at the start of
     * the loop.
     */
-   png_size_t rb;
+   png_debug(1, "in png_read_filter_row_paeth4_sse2");
    const __m128i zero = _mm_setzero_si128();
-   __m128i pa,pb,pc,smallest,nearest;
    __m128i c, b = zero,
            a, d = zero;
 
-   png_debug(1, "in png_read_filter_row_paeth4_sse2");
-
-   rb = row_info->rowbytes+4;
-   while (rb > 4) {
+   int rb = row_info->rowbytes;
+   while (rb > 0) {
       /* It's easiest to do this math (particularly, deal with pc) with 16-bit
        * intermediates.
        */
@@ -373,22 +346,22 @@ void png_read_filter_row_paeth4_sse2(png_row_infop row_info, png_bytep row,
       a = d; d = _mm_unpacklo_epi8(load4(row ), zero);
 
       /* (p-a) == (a+b-c - a) == (b-c) */
-      pa = _mm_sub_epi16(b,c);
+      __m128i pa = _mm_sub_epi16(b,c);
 
       /* (p-b) == (a+b-c - b) == (a-c) */
-      pb = _mm_sub_epi16(a,c);
+      __m128i pb = _mm_sub_epi16(a,c);
 
       /* (p-c) == (a+b-c - c) == (a+b-c-c) == (b-c)+(a-c) */
-      pc = _mm_add_epi16(pa,pb);
+      __m128i pc = _mm_add_epi16(pa,pb);
 
       pa = abs_i16(pa);  /* |p-a| */
       pb = abs_i16(pb);  /* |p-b| */
       pc = abs_i16(pc);  /* |p-c| */
 
-      smallest = _mm_min_epi16(pc, _mm_min_epi16(pa, pb));
+      __m128i smallest = _mm_min_epi16(pc, _mm_min_epi16(pa, pb));
 
       /* Paeth breaks ties favoring a over b over c. */
-      nearest  = if_then_else(_mm_cmpeq_epi16(smallest, pa), a,
+      __m128i nearest  = if_then_else(_mm_cmpeq_epi16(smallest, pa), a,
                          if_then_else(_mm_cmpeq_epi16(smallest, pb), b,
                                                                      c));
 
