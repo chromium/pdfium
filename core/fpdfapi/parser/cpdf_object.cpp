@@ -13,7 +13,6 @@
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
-#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/stl_util.h"
