@@ -177,7 +177,8 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     if (OrigSize > m_pBuf.size() - m_Pos)
       OrigSize = m_pBuf.size() - m_Pos;
     pData.reset(FX_Alloc(uint8_t, OrigSize));
-    memcpy(pData.get(), &m_pBuf[m_Pos], OrigSize);
+    auto copy_span = m_pBuf.subspan(m_Pos, OrigSize);
+    memcpy(pData.get(), copy_span.data(), copy_span.size());
     dwStreamSize = OrigSize;
     m_Pos += OrigSize;
   } else {
@@ -209,7 +210,8 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     }
     m_Pos = dwSavePos;
     pData.reset(FX_Alloc(uint8_t, dwStreamSize));
-    memcpy(pData.get(), &m_pBuf[m_Pos], dwStreamSize);
+    auto copy_span = m_pBuf.subspan(m_Pos, dwStreamSize);
+    memcpy(pData.get(), copy_span.data(), copy_span.size());
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(dwStreamSize));

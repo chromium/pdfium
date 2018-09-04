@@ -29,6 +29,7 @@ bool CFX_ReadOnlyMemoryStream::ReadBlock(void* buffer,
   if (!pos.IsValid() || pos.ValueOrDie() > m_span.size())
     return false;
 
-  memcpy(buffer, &m_span[offset], size);
+  auto copy_span = m_span.subspan(offset, size);
+  memcpy(buffer, copy_span.data(), copy_span.size());
   return true;
 }

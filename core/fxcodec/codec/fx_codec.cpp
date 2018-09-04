@@ -1642,7 +1642,8 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
         copy_len = m_SrcBuf.size() - m_SrcOffset;
         m_bEOD = true;
       }
-      memcpy(m_pScanline.get() + col_pos, &m_SrcBuf[m_SrcOffset], copy_len);
+      auto copy_span = m_SrcBuf.subspan(m_SrcOffset, copy_len);
+      memcpy(m_pScanline.get() + col_pos, copy_span.data(), copy_span.size());
       col_pos += copy_len;
       UpdateOperator((uint8_t)copy_len);
     } else if (m_Operator > 128) {
