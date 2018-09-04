@@ -239,7 +239,8 @@ uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
         copy_len = buf_left;
         memset(*dest_buf + dest_count + copy_len, '\0', delta);
       }
-      memcpy(*dest_buf + dest_count, &src_span[i + 1], copy_len);
+      auto copy_span = src_span.subspan(i + 1, copy_len);
+      memcpy(*dest_buf + dest_count, copy_span.data(), copy_span.size());
       dest_count += src_span[i] + 1;
       i += src_span[i] + 2;
     } else {
