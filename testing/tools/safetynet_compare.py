@@ -156,11 +156,11 @@ class CompareRun(object):
     self._StashLocalChanges()
 
     self._CheckoutBranch(after_branch)
-    self._BuildCurrentBranch(self.after_build_dir)
+    self._BuildCurrentBranch(self.after_build_dir, True)
     after = self._MeasureCurrentBranch('after', self.after_build_dir)
 
     self._CheckoutBranch(before_branch)
-    self._BuildCurrentBranch(self.before_build_dir)
+    self._BuildCurrentBranch(self.before_build_dir, True)
     before = self._MeasureCurrentBranch('before', self.before_build_dir)
 
     self._CheckoutBranch(branch_to_restore)
@@ -213,13 +213,13 @@ class CompareRun(object):
     """
     branch_to_restore = self.git.GetCurrentBranchName()
 
-    self._BuildCurrentBranch(self.after_build_dir)
+    self._BuildCurrentBranch(self.after_build_dir, False)
     after = self._MeasureCurrentBranch('after', self.after_build_dir)
 
     self._StashLocalChanges()
 
     self._CheckoutBranch(other_branch)
-    self._BuildCurrentBranch(self.before_build_dir)
+    self._BuildCurrentBranch(self.before_build_dir, True)
     before = self._MeasureCurrentBranch('before', self.before_build_dir)
 
     self._CheckoutBranch(branch_to_restore)
@@ -245,7 +245,7 @@ class CompareRun(object):
       in the given branch. The current branch is considered to be "after" and
       the other branch is considered to be "before".
     """
-    self._BuildCurrentBranch(self.after_build_dir)
+    self._BuildCurrentBranch(self.after_build_dir, False)
     after = self._MeasureCurrentBranch('after', self.after_build_dir)
 
     before = self._ProfileSeparateRepo('before',
@@ -267,7 +267,7 @@ class CompareRun(object):
       considered to be "before" and with uncommitted changes is considered to be
       "after".
     """
-    self._BuildCurrentBranch(self.after_build_dir)
+    self._BuildCurrentBranch(self.after_build_dir, False)
     after = self._MeasureCurrentBranch('after', self.after_build_dir)
 
     pushed = self._StashLocalChanges()
@@ -276,7 +276,7 @@ class CompareRun(object):
 
     before_build_dir = self.before_build_dir
 
-    self._BuildCurrentBranch(before_build_dir)
+    self._BuildCurrentBranch(before_build_dir, True)
     before = self._MeasureCurrentBranch('before', before_build_dir)
 
     self._RestoreLocalChanges()
@@ -316,7 +316,7 @@ class CompareRun(object):
                                      relative_build_dir,
                                      branch)
 
-    self._BuildCurrentBranch(build_dir)
+    self._BuildCurrentBranch(build_dir, False)
     return self._MeasureCurrentBranch(run_label, build_dir)
 
   def _CreateTempRepo(self, dir_name, relative_build_dir, branch):
@@ -383,12 +383,19 @@ class CompareRun(object):
     PrintErr('Restoring local changes')
     self.git.StashPopAll()
 
-  def _BuildCurrentBranch(self, build_dir):
+  def _BuildCurrentBranch(self, build_dir, do_clean):
     """Synchronizes and builds the current version of pdfium.
 
     Args:
       build_dir: String with path to build directory
+      do_clean: Whether to remove untracked files before syncing.
     """
+
+    # Some untracked files might be leftover from a gclient sync in a previous
+    # revision that are not .gitignore'd anymore.
+    if do_clean:
+      self.git.Clean()
+
     PrintErr('Syncing...')
     RunCommandPropagateErr(['gclient', 'sync'], exit_status_on_error=1)
     PrintErr('Done.')
