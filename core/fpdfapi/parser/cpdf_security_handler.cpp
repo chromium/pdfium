@@ -157,6 +157,9 @@ static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
       } else {
         nKeyBits = pEncryptDict->GetIntegerFor("Length", 256);
       }
+      if (nKeyBits < 0)
+        return false;
+
       if (nKeyBits < 40) {
         nKeyBits *= 8;
       }
