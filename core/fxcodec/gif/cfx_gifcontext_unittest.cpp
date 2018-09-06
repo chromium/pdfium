@@ -14,7 +14,7 @@ class CFX_GifContextForTest final : public CFX_GifContext {
       : CFX_GifContext(gif_module, delegate) {}
   ~CFX_GifContextForTest() override {}
 
-  using CFX_GifContext::ReadData;
+  using CFX_GifContext::ReadAllOrNone;
   using CFX_GifContext::ReadGifSignature;
   using CFX_GifContext::ReadLogicalScreenDescriptor;
 
@@ -54,7 +54,7 @@ TEST(CFX_GifContext, SetInputBuffer) {
   }
 }
 
-TEST(CFX_GifContext, ReadData) {
+TEST(CFX_GifContext, ReadAllOrNone) {
   std::vector<uint8_t> dest_buffer;
   uint8_t src_buffer[] = {0x00, 0x01, 0x02, 0x03, 0x04,
                           0x05, 0x06, 0x07, 0x08, 0x09};
@@ -63,33 +63,33 @@ TEST(CFX_GifContext, ReadData) {
     CFX_GifContextForTest context(nullptr, nullptr);
 
     context.SetInputBuffer({nullptr, 0});
-    EXPECT_FALSE(context.ReadData(nullptr, 0));
-    EXPECT_FALSE(context.ReadData(nullptr, 10));
+    EXPECT_FALSE(context.ReadAllOrNone(nullptr, 0));
+    EXPECT_FALSE(context.ReadAllOrNone(nullptr, 10));
 
-    EXPECT_FALSE(context.ReadData(dest_buffer.data(), 0));
-    EXPECT_FALSE(context.ReadData(dest_buffer.data(), 10));
+    EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), 0));
+    EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), 10));
 
     context.SetInputBuffer({src_buffer, 0});
     dest_buffer.resize(sizeof(src_buffer));
-    EXPECT_FALSE(context.ReadData(dest_buffer.data(), sizeof(src_buffer)));
+    EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
 
     context.SetInputBuffer({src_buffer, 1});
-    EXPECT_FALSE(context.ReadData(dest_buffer.data(), sizeof(src_buffer)));
+    EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
     EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
-    EXPECT_FALSE(context.ReadData(nullptr, sizeof(src_buffer)));
-    EXPECT_FALSE(context.ReadData(nullptr, 1));
-    EXPECT_TRUE(context.ReadData(dest_buffer.data(), 1));
+    EXPECT_FALSE(context.ReadAllOrNone(nullptr, sizeof(src_buffer)));
+    EXPECT_FALSE(context.ReadAllOrNone(nullptr, 1));
+    EXPECT_TRUE(context.ReadAllOrNone(dest_buffer.data(), 1));
     EXPECT_EQ(src_buffer[0], dest_buffer[0]);
 
     context.SetInputBuffer(src_buffer);
-    EXPECT_FALSE(context.ReadData(nullptr, sizeof(src_buffer)));
-    EXPECT_TRUE(context.ReadData(dest_buffer.data(), sizeof(src_buffer)));
+    EXPECT_FALSE(context.ReadAllOrNone(nullptr, sizeof(src_buffer)));
+    EXPECT_TRUE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
     for (size_t i = 0; i < sizeof(src_buffer); i++)
       EXPECT_EQ(src_buffer[i], dest_buffer[i]);
 
     context.SetInputBuffer(src_buffer);
     for (size_t i = 0; i < sizeof(src_buffer); i++) {
-      EXPECT_TRUE(context.ReadData(dest_buffer.data(), 1));
+      EXPECT_TRUE(context.ReadAllOrNone(dest_buffer.data(), 1));
       EXPECT_EQ(src_buffer[i], dest_buffer[0]);
     }
   }

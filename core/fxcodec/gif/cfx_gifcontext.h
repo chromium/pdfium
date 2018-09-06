@@ -64,7 +64,7 @@ class CFX_GifContext : public CCodec_GifModule::Context {
   uint8_t img_pass_num_;
 
  protected:
-  bool ReadData(uint8_t* dest, uint32_t size);
+  bool ReadAllOrNone(uint8_t* dest, uint32_t size);
   CFX_GifDecodeStatus ReadGifSignature();
   CFX_GifDecodeStatus ReadLogicalScreenDescriptor();
 
