@@ -351,7 +351,8 @@ class CompareRun(object):
       cmd.append('--cache-dir=%s' % self.args.cache_dir)
     RunCommandPropagateErr(cmd, exit_status_on_error=1)
 
-    RunCommandPropagateErr(['gclient', 'sync'], exit_status_on_error=1)
+    RunCommandPropagateErr(['gclient', 'sync', '--force'],
+                           exit_status_on_error=1)
 
     PrintErr('Done.')
 
@@ -390,7 +391,8 @@ class CompareRun(object):
       build_dir: String with path to build directory
     """
     PrintErr('Syncing...')
-    RunCommandPropagateErr(['gclient', 'sync'], exit_status_on_error=1)
+    RunCommandPropagateErr(['gclient', 'sync', '--force'],
+                           exit_status_on_error=1)
     PrintErr('Done.')
 
     PrintErr('Building...')
