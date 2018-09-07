@@ -64,6 +64,3 @@ class GitHelper(object):
   def CloneLocal(self, source_repo, new_repo):
     RunCommandPropagateErr(['git', 'clone', source_repo, new_repo],
                            exit_status_on_error=1)
-
-  def Clean(self):
-    RunCommandPropagateErr(['git', 'clean', '-df'])
