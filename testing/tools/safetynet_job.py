@@ -67,10 +67,6 @@ class JobRun(object):
         os.path.pardir)
     os.chdir(pdfium_src_dir)
 
-    if not self.git.IsCurrentBranchClean() and not self.args.no_checkout:
-      PrintWithTime('Current branch is not clean, aborting')
-      return 1
-
     branch_to_restore = self.git.GetCurrentBranchName()
 
     if not self.args.no_checkout:
