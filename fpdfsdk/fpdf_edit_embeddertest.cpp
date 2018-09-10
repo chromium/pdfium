@@ -677,19 +677,35 @@ TEST_F(FPDFEditEmbeddertest, RemoveMarkedObjectsPrime) {
 
   EXPECT_EQ(11, FPDFPage_CountObjects(page));
 
-  {
 #if _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-    const char kNonPrimesMD5[] = "57e76dc7375d896704f0fd6d6d1b9e65";
+  const char kNonPrimesMD5[] = "57e76dc7375d896704f0fd6d6d1b9e65";
 #elif _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-    const char kNonPrimesMD5[] = "4d906b57fba36c70c600cf50d60f508c";
+  const char kNonPrimesMD5[] = "4d906b57fba36c70c600cf50d60f508c";
 #else
-    const char kNonPrimesMD5[] = "33d9c45bec41ead92a295e252f6b7922";
+  const char kNonPrimesMD5[] = "33d9c45bec41ead92a295e252f6b7922";
 #endif
+  {
     ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 200, 200, kNonPrimesMD5);
   }
 
+  // Save the file.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   UnloadPage(page);
+
+  // Re-open the file and check the prime marks are not there anymore.
+  OpenSavedDocument(nullptr);
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  EXPECT_EQ(11, FPDFPage_CountObjects(saved_page));
+
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(saved_page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 200, kNonPrimesMD5);
+  }
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
 }
 
 TEST_F(FPDFEditEmbeddertest, RemoveMarks) {
