@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include <limits>
+#include <memory>
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
@@ -63,40 +64,37 @@ TEST(fxcodec, RLETestNormalInputs) {
 
   // Case 1:
   EXPECT_TRUE(pEncoders->RunLengthEncode(src_buf_1, &dest_buf, &dest_size));
-  uint8_t* decoded_buf = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> decoded_buf;
   uint32_t decoded_size = 0;
   RunLengthDecode({dest_buf, dest_size}, &decoded_buf, &decoded_size);
   ASSERT_EQ(sizeof(src_buf_1), decoded_size);
   for (uint32_t i = 0; i < decoded_size; i++)
-    EXPECT_EQ(src_buf_1[i], decoded_buf[i]) << " at " << i;
+    EXPECT_EQ(src_buf_1[i], decoded_buf.get()[i]) << " at " << i;
   FX_Free(dest_buf);
-  FX_Free(decoded_buf);
 
   // Case 2:
   dest_buf = nullptr;
   dest_size = 0;
   EXPECT_TRUE(pEncoders->RunLengthEncode(src_buf_2, &dest_buf, &dest_size));
-  decoded_buf = nullptr;
+  decoded_buf.reset();
   decoded_size = 0;
   RunLengthDecode({dest_buf, dest_size}, &decoded_buf, &decoded_size);
   ASSERT_EQ(sizeof(src_buf_2), decoded_size);
   for (uint32_t i = 0; i < decoded_size; i++)
-    EXPECT_EQ(src_buf_2[i], decoded_buf[i]) << " at " << i;
+    EXPECT_EQ(src_buf_2[i], decoded_buf.get()[i]) << " at " << i;
   FX_Free(dest_buf);
-  FX_Free(decoded_buf);
 
   // Case 3:
   dest_buf = nullptr;
   dest_size = 0;
   EXPECT_TRUE(pEncoders->RunLengthEncode(src_buf_3, &dest_buf, &dest_size));
-  decoded_buf = nullptr;
+  decoded_buf.reset();
   decoded_size = 0;
   RunLengthDecode({dest_buf, dest_size}, &decoded_buf, &decoded_size);
   ASSERT_EQ(sizeof(src_buf_3), decoded_size);
   for (uint32_t i = 0; i < decoded_size; i++)
-    EXPECT_EQ(src_buf_3[i], decoded_buf[i]) << " at " << i;
+    EXPECT_EQ(src_buf_3[i], decoded_buf.get()[i]) << " at " << i;
   FX_Free(dest_buf);
-  FX_Free(decoded_buf);
 }
 
 // Check that runs longer than 128 are broken up properly, both matched and
@@ -128,51 +126,47 @@ TEST(fxcodec, RLETestFullLengthInputs) {
 
   // Case 1:
   EXPECT_TRUE(pEncoders->RunLengthEncode(src_buf_1, &dest_buf, &dest_size));
-  uint8_t* decoded_buf = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> decoded_buf;
   uint32_t decoded_size = 0;
   RunLengthDecode({dest_buf, dest_size}, &decoded_buf, &decoded_size);
   ASSERT_EQ(sizeof(src_buf_1), decoded_size);
   for (uint32_t i = 0; i < decoded_size; i++)
-    EXPECT_EQ(src_buf_1[i], decoded_buf[i]) << " at " << i;
+    EXPECT_EQ(src_buf_1[i], decoded_buf.get()[i]) << " at " << i;
   FX_Free(dest_buf);
-  FX_Free(decoded_buf);
 
   // Case 2:
   dest_buf = nullptr;
   dest_size = 0;
   EXPECT_TRUE(pEncoders->RunLengthEncode(src_buf_2, &dest_buf, &dest_size));
-  decoded_buf = nullptr;
+  decoded_buf.reset();
   decoded_size = 0;
   RunLengthDecode({dest_buf, dest_size}, &decoded_buf, &decoded_size);
   ASSERT_EQ(sizeof(src_buf_2), decoded_size);
   for (uint32_t i = 0; i < decoded_size; i++)
-    EXPECT_EQ(src_buf_2[i], decoded_buf[i]) << " at " << i;
+    EXPECT_EQ(src_buf_2[i], decoded_buf.get()[i]) << " at " << i;
   FX_Free(dest_buf);
-  FX_Free(decoded_buf);
 
   // Case 3:
   dest_buf = nullptr;
   dest_size = 0;
   EXPECT_TRUE(pEncoders->RunLengthEncode(src_buf_3, &dest_buf, &dest_size));
-  decoded_buf = nullptr;
+  decoded_buf.reset();
   decoded_size = 0;
   RunLengthDecode({dest_buf, dest_size}, &decoded_buf, &decoded_size);
   ASSERT_EQ(sizeof(src_buf_3), decoded_size);
   for (uint32_t i = 0; i < decoded_size; i++)
-    EXPECT_EQ(src_buf_3[i], decoded_buf[i]) << " at " << i;
+    EXPECT_EQ(src_buf_3[i], decoded_buf.get()[i]) << " at " << i;
   FX_Free(dest_buf);
-  FX_Free(decoded_buf);
 
   // Case 4:
   dest_buf = nullptr;
   dest_size = 0;
   EXPECT_TRUE(pEncoders->RunLengthEncode(src_buf_4, &dest_buf, &dest_size));
-  decoded_buf = nullptr;
+  decoded_buf.reset();
   decoded_size = 0;
   RunLengthDecode({dest_buf, dest_size}, &decoded_buf, &decoded_size);
   ASSERT_EQ(sizeof(src_buf_4), decoded_size);
   for (uint32_t i = 0; i < decoded_size; i++)
-    EXPECT_EQ(src_buf_4[i], decoded_buf[i]) << " at " << i;
+    EXPECT_EQ(src_buf_4[i], decoded_buf.get()[i]) << " at " << i;
   FX_Free(dest_buf);
-  FX_Free(decoded_buf);
 }

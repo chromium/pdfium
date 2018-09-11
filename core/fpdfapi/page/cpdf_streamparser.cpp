@@ -70,16 +70,6 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             uint32_t* dest_size) {
   *dest_buf = nullptr;
   *dest_size = 0;
-  if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
-    std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
-        CreateFaxDecoder(src_span, width, height, pParam);
-    return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
-  }
-  std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
-  if (decoder == "ASCII85Decode" || decoder == "A85")
-    return A85Decode(src_span, &ignored_result, dest_size);
-  if (decoder == "ASCIIHexDecode" || decoder == "AHx")
-    return HexDecode(src_span, &ignored_result, dest_size);
   if (decoder == "FlateDecode" || decoder == "Fl") {
     return FlateOrLZWDecode(false, src_span, pParam, *dest_size, dest_buf,
                             dest_size);
@@ -93,8 +83,19 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
             !pParam || pParam->GetIntegerFor("ColorTransform", 1));
     return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
   }
+  if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
+    std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
+        CreateFaxDecoder(src_span, width, height, pParam);
+    return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
+  }
+
+  std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
+  if (decoder == "ASCII85Decode" || decoder == "A85")
+    return A85Decode(src_span, &ignored_result, dest_size);
+  if (decoder == "ASCIIHexDecode" || decoder == "AHx")
+    return HexDecode(src_span, &ignored_result, dest_size);
   if (decoder == "RunLengthDecode" || decoder == "RL")
-    return RunLengthDecode(src_span, dest_buf, dest_size);
+    return RunLengthDecode(src_span, &ignored_result, dest_size);
 
   return FX_INVALID_OFFSET;
 }

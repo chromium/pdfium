@@ -210,7 +210,7 @@ uint32_t HexDecode(pdfium::span<const uint8_t> src_span,
 }
 
 uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
-                         uint8_t** dest_buf,
+                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                          uint32_t* dest_size) {
   size_t i = 0;
   *dest_size = 0;
@@ -234,7 +234,8 @@ uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
   if (*dest_size >= kMaxStreamSize)
     return FX_INVALID_OFFSET;
 
-  *dest_buf = FX_Alloc(uint8_t, *dest_size);
+  dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
+  pdfium::span<uint8_t> dest_span(dest_buf->get(), *dest_size);
   i = 0;
   int dest_count = 0;
   while (i < src_span.size()) {
@@ -247,17 +248,17 @@ uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
       if (buf_left < copy_len) {
         uint32_t delta = copy_len - buf_left;
         copy_len = buf_left;
-        memset(*dest_buf + dest_count + copy_len, '\0', delta);
+        memset(&dest_span[dest_count + copy_len], '\0', delta);
       }
       auto copy_span = src_span.subspan(i + 1, copy_len);
-      memcpy(*dest_buf + dest_count, copy_span.data(), copy_span.size());
+      memcpy(&dest_span[dest_count], copy_span.data(), copy_span.size());
       dest_count += src_span[i] + 1;
       i += src_span[i] + 2;
     } else {
       int fill = 0;
       if (i < src_span.size() - 1)
         fill = src_span[i + 1];
-      memset(*dest_buf + dest_count, fill, 257 - src_span[i]);
+      memset(&dest_span[dest_count], fill, 257 - src_span[i]);
       dest_count += 257 - src_span[i];
       i += 2;
     }
@@ -409,7 +410,9 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
         *pImageParams = pParam;
         return true;
       }
-      offset = RunLengthDecode(last_span, &new_buf, &new_size);
+      std::unique_ptr<uint8_t, FxFreeDeleter> result;
+      offset = RunLengthDecode(last_span, &result, &new_size);
+      new_buf = result.release();
     } else {
       // If we get here, assume it's an image decoder.
       if (decoder == "DCT")
