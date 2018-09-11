@@ -1262,6 +1262,7 @@ bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
   std::vector<int> FIRSTCODE(LENMAX + 1);
   for (uint32_t i = 0; i < NTEMP; ++i)
     ++LENCOUNT[SBSYMCODES[i].codelen];
+  LENCOUNT[0] = 0;
 
   for (int i = 1; i <= LENMAX; ++i) {
     pdfium::base::CheckedNumeric<int> shifted = FIRSTCODE[i - 1];
