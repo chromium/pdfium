@@ -29,7 +29,7 @@ class CBC_HighLevelEncoder {
                                     WideString ecLevel,
                                     bool allowRectangular,
                                     int32_t& e);
-  static int32_t lookAheadTest(WideString msg,
+  static int32_t lookAheadTest(const WideString& msg,
                                int32_t startpos,
                                int32_t currentMode);
   static bool isDigit(wchar_t ch);
