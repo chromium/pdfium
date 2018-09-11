@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
@@ -51,11 +52,11 @@ uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
                          uint32_t* dest_size);
 
 uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
-                   uint8_t** dest_buf,
+                   std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                    uint32_t* dest_size);
 
 uint32_t HexDecode(pdfium::span<const uint8_t> src_span,
-                   uint8_t** dest_buf,
+                   std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                    uint32_t* dest_size);
 
 uint32_t FlateOrLZWDecode(bool bLZW,

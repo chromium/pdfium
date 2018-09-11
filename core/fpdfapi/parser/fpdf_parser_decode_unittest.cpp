@@ -8,7 +8,7 @@
 #include "testing/test_support.h"
 
 TEST(fpdf_parser_decode, A85Decode) {
-  pdfium::DecodeTestData test_data[] = {
+  const pdfium::DecodeTestData test_data[] = {
       // Empty src string.
       STR_IN_OUT_CASE("", "", 0),
       // Empty content in src string.
@@ -27,23 +27,23 @@ TEST(fpdf_parser_decode, A85Decode) {
       STR_IN_OUT_CASE("FCfN8FCfN8vw", "testtest", 11),
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
-    pdfium::DecodeTestData* ptr = &test_data[i];
-    uint8_t* result = nullptr;
+    const pdfium::DecodeTestData* ptr = &test_data[i];
+    std::unique_ptr<uint8_t, FxFreeDeleter> result;
     uint32_t result_size = 0;
     EXPECT_EQ(ptr->processed_size,
               A85Decode({ptr->input, ptr->input_size}, &result, &result_size))
         << "for case " << i;
     ASSERT_EQ(ptr->expected_size, result_size);
+    const uint8_t* result_ptr = result.get();
     for (size_t j = 0; j < result_size; ++j) {
-      EXPECT_EQ(ptr->expected[j], result[j]) << "for case " << i << " char "
-                                             << j;
+      EXPECT_EQ(ptr->expected[j], result_ptr[j])
+          << "for case " << i << " char " << j;
     }
-    FX_Free(result);
   }
 }
 
 TEST(fpdf_parser_decode, HexDecode) {
-  pdfium::DecodeTestData test_data[] = {
+  const pdfium::DecodeTestData test_data[] = {
       // Empty src string.
       STR_IN_OUT_CASE("", "", 0),
       // Empty content in src string.
@@ -62,18 +62,18 @@ TEST(fpdf_parser_decode, HexDecode) {
       STR_IN_OUT_CASE("12AcED3c3456", "\x12\xac\xed\x3c\x34\x56", 12),
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
-    pdfium::DecodeTestData* ptr = &test_data[i];
-    uint8_t* result = nullptr;
+    const pdfium::DecodeTestData* ptr = &test_data[i];
+    std::unique_ptr<uint8_t, FxFreeDeleter> result;
     uint32_t result_size = 0;
     EXPECT_EQ(ptr->processed_size,
               HexDecode({ptr->input, ptr->input_size}, &result, &result_size))
         << "for case " << i;
     ASSERT_EQ(ptr->expected_size, result_size);
+    const uint8_t* result_ptr = result.get();
     for (size_t j = 0; j < result_size; ++j) {
-      EXPECT_EQ(ptr->expected[j], result[j]) << "for case " << i << " char "
-                                             << j;
+      EXPECT_EQ(ptr->expected[j], result_ptr[j])
+          << "for case " << i << " char " << j;
     }
-    FX_Free(result);
   }
 }
 
