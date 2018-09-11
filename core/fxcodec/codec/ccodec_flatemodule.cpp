@@ -334,39 +334,40 @@ void PNG_PredictLine(uint8_t* pDestData,
   }
 }
 
-bool PNG_Predictor(uint8_t*& data_buf,
-                   uint32_t& data_size,
-                   int Colors,
+bool PNG_Predictor(int Colors,
                    int BitsPerComponent,
-                   int Columns) {
+                   int Columns,
+                   std::unique_ptr<uint8_t, FxFreeDeleter>* data_buf,
+                   uint32_t* data_size) {
   // TODO(thestig): Look into using CalculatePitch8() here.
   const int BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
   const int row_size = (Colors * BitsPerComponent * Columns + 7) / 8;
   if (row_size <= 0)
     return false;
-  const int row_count = (data_size + row_size) / (row_size + 1);
+  const int row_count = (*data_size + row_size) / (row_size + 1);
   if (row_count <= 0)
     return false;
-  const int last_row_size = data_size % (row_size + 1);
-  uint8_t* dest_buf = FX_Alloc2D(uint8_t, row_size, row_count);
+  const int last_row_size = *data_size % (row_size + 1);
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
+      FX_Alloc2D(uint8_t, row_size, row_count));
   uint32_t byte_cnt = 0;
-  uint8_t* pSrcData = data_buf;
-  uint8_t* pDestData = dest_buf;
+  uint8_t* pSrcData = data_buf->get();
+  uint8_t* pDestData = dest_buf.get();
   for (int row = 0; row < row_count; row++) {
     uint8_t tag = pSrcData[0];
     byte_cnt++;
     if (tag == 0) {
       int move_size = row_size;
-      if ((row + 1) * (move_size + 1) > (int)data_size) {
+      if ((row + 1) * (move_size + 1) > static_cast<int>(*data_size)) {
         move_size = last_row_size - 1;
       }
-      memmove(pDestData, pSrcData + 1, move_size);
+      memcpy(pDestData, pSrcData + 1, move_size);
       pSrcData += move_size + 1;
       pDestData += move_size;
       byte_cnt += move_size;
       continue;
     }
-    for (int byte = 0; byte < row_size && byte_cnt < data_size;
+    for (int byte = 0; byte < row_size && byte_cnt < *data_size;
          ++byte, ++byte_cnt) {
       uint8_t raw_byte = pSrcData[byte + 1];
       switch (tag) {
@@ -422,10 +423,9 @@ bool PNG_Predictor(uint8_t*& data_buf,
     pSrcData += row_size + 1;
     pDestData += row_size;
   }
-  FX_Free(data_buf);
-  data_buf = dest_buf;
-  data_size = row_size * row_count -
-              (last_row_size > 0 ? (row_size + 1 - last_row_size) : 0);
+  *data_buf = std::move(dest_buf);
+  *data_size = row_size * row_count -
+               (last_row_size > 0 ? (row_size + 1 - last_row_size) : 0);
   return true;
 }
 
@@ -469,19 +469,19 @@ void TIFF_PredictLine(uint8_t* dest_buf,
   }
 }
 
-bool TIFF_Predictor(uint8_t*& data_buf,
-                    uint32_t& data_size,
-                    int Colors,
+bool TIFF_Predictor(int Colors,
                     int BitsPerComponent,
-                    int Columns) {
+                    int Columns,
+                    std::unique_ptr<uint8_t, FxFreeDeleter>* data_buf,
+                    uint32_t* data_size) {
   int row_size = (Colors * BitsPerComponent * Columns + 7) / 8;
   if (row_size == 0)
     return false;
-  const int row_count = (data_size + row_size - 1) / row_size;
-  const int last_row_size = data_size % row_size;
+  const int row_count = (*data_size + row_size - 1) / row_size;
+  const int last_row_size = *data_size % row_size;
   for (int row = 0; row < row_count; row++) {
-    uint8_t* scan_line = data_buf + row * row_size;
-    if ((row + 1) * row_size > (int)data_size) {
+    uint8_t* scan_line = data_buf->get() + row * row_size;
+    if ((row + 1) * row_size > static_cast<int>(*data_size)) {
       row_size = last_row_size;
     }
     TIFF_PredictLine(scan_line, row_size, BitsPerComponent, Colors, Columns);
@@ -491,11 +491,11 @@ bool TIFF_Predictor(uint8_t*& data_buf,
 
 void FlateUncompress(pdfium::span<const uint8_t> src_buf,
                      uint32_t orig_size,
-                     uint8_t*& dest_buf,
-                     uint32_t& dest_size,
-                     uint32_t& offset) {
-  dest_buf = nullptr;
-  dest_size = 0;
+                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                     uint32_t* dest_size,
+                     uint32_t* offset) {
+  dest_buf->reset();
+  *dest_size = 0;
 
   std::unique_ptr<z_stream, FlateDeleter> context(FlateInit());
   if (!context)
@@ -513,48 +513,50 @@ void FlateUncompress(pdfium::span<const uint8_t> src_buf,
       FX_Alloc(uint8_t, guess_size + 1));
   guess_buf.get()[guess_size] = '\0';
 
-  std::vector<uint8_t*> result_tmp_bufs;
-  uint8_t* cur_buf = guess_buf.release();
-  while (1) {
-    uint32_t ret = FlateOutput(context.get(), cur_buf, buf_size);
-    uint32_t avail_buf_size = FlateGetAvailOut(context.get());
-    if (ret != Z_OK || avail_buf_size != 0) {
-      last_buf_size = buf_size - avail_buf_size;
-      result_tmp_bufs.push_back(cur_buf);
-      break;
+  std::vector<std::unique_ptr<uint8_t, FxFreeDeleter>> result_tmp_bufs;
+  {
+    std::unique_ptr<uint8_t, FxFreeDeleter> cur_buf = std::move(guess_buf);
+    while (1) {
+      uint32_t ret = FlateOutput(context.get(), cur_buf.get(), buf_size);
+      uint32_t avail_buf_size = FlateGetAvailOut(context.get());
+      if (ret != Z_OK || avail_buf_size != 0) {
+        last_buf_size = buf_size - avail_buf_size;
+        result_tmp_bufs.push_back(std::move(cur_buf));
+        break;
+      }
+      result_tmp_bufs.push_back(std::move(cur_buf));
+      cur_buf.reset(FX_Alloc(uint8_t, buf_size + 1));
+      cur_buf.get()[buf_size] = '\0';
     }
-    result_tmp_bufs.push_back(cur_buf);
-    cur_buf = FX_Alloc(uint8_t, buf_size + 1);
-    cur_buf[buf_size] = '\0';
   }
 
   // The TotalOut size returned from the library may not be big enough to
   // handle the content the library returns. We can only handle items
   // up to 4GB in size.
-  dest_size = FlateGetPossiblyTruncatedTotalOut(context.get());
-  offset = FlateGetPossiblyTruncatedTotalIn(context.get());
+  *dest_size = FlateGetPossiblyTruncatedTotalOut(context.get());
+  *offset = FlateGetPossiblyTruncatedTotalIn(context.get());
   if (result_tmp_bufs.size() == 1) {
-    dest_buf = result_tmp_bufs[0];
+    *dest_buf = std::move(result_tmp_bufs[0]);
     return;
   }
 
-  uint8_t* result_buf = FX_Alloc(uint8_t, dest_size);
+  std::unique_ptr<uint8_t, FxFreeDeleter> result_buf(
+      FX_Alloc(uint8_t, *dest_size));
   uint32_t result_pos = 0;
-  uint32_t remaining = dest_size;
+  uint32_t remaining = *dest_size;
   for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
-    uint8_t* tmp_buf = result_tmp_bufs[i];
+    std::unique_ptr<uint8_t, FxFreeDeleter> tmp_buf =
+        std::move(result_tmp_bufs[i]);
     uint32_t tmp_buf_size = buf_size;
     if (i == result_tmp_bufs.size() - 1)
       tmp_buf_size = last_buf_size;
 
     uint32_t cp_size = std::min(tmp_buf_size, remaining);
-    memcpy(result_buf + result_pos, tmp_buf, cp_size);
+    memcpy(result_buf.get() + result_pos, tmp_buf.get(), cp_size);
     result_pos += cp_size;
     remaining -= cp_size;
-
-    FX_Free(result_tmp_bufs[i]);
   }
-  dest_buf = result_buf;
+  *dest_buf = std::move(result_buf);
 }
 
 enum class PredictorType : uint8_t { kNone, kFlate, kPng };
@@ -790,9 +792,9 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(
     int BitsPerComponent,
     int Columns,
     uint32_t estimated_size,
-    uint8_t** dest_buf,
+    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
     uint32_t* dest_size) {
-  *dest_buf = nullptr;
+  dest_buf->reset();
   uint32_t offset = 0;
   PredictorType predictor_type = GetPredictor(predictor);
 
@@ -806,12 +808,13 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(
       return FX_INVALID_OFFSET;
 
     decoder = pdfium::MakeUnique<CLZWDecoder>();
-    *dest_buf = FX_Alloc(uint8_t, *dest_size + 1);
-    (*dest_buf)[*dest_size] = '\0';
-    decoder->Decode(*dest_buf, *dest_size, src_span.data(), offset,
+    dest_buf->reset(FX_Alloc(uint8_t, *dest_size + 1));
+    uint8_t* dest_buf_ptr = dest_buf->get();
+    dest_buf_ptr[*dest_size] = '\0';
+    decoder->Decode(dest_buf_ptr, *dest_size, src_span.data(), offset,
                     bEarlyChange);
   } else {
-    FlateUncompress(src_span, estimated_size, *dest_buf, *dest_size, offset);
+    FlateUncompress(src_span, estimated_size, dest_buf, dest_size, &offset);
   }
 
   bool ret = false;
@@ -819,12 +822,12 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(
     case PredictorType::kNone:
       return offset;
     case PredictorType::kPng:
-      ret = PNG_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent,
-                          Columns);
+      ret =
+          PNG_Predictor(Colors, BitsPerComponent, Columns, dest_buf, dest_size);
       break;
     case PredictorType::kFlate:
-      ret = TIFF_Predictor(*dest_buf, *dest_size, Colors, BitsPerComponent,
-                           Columns);
+      ret = TIFF_Predictor(Colors, BitsPerComponent, Columns, dest_buf,
+                           dest_size);
       break;
     default:
       NOTREACHED();

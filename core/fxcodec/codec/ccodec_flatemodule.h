@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
@@ -35,7 +36,7 @@ class CCodec_FlateModule {
                             int BitsPerComponent,
                             int Columns,
                             uint32_t estimated_size,
-                            uint8_t** dest_buf,
+                            std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                             uint32_t* dest_size);
 
   bool Encode(const uint8_t* src_buf,

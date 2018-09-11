@@ -320,7 +320,7 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                           pdfium::span<const uint8_t> src_span,
                           const CPDF_Dictionary* pParams,
                           uint32_t estimated_size,
-                          uint8_t** dest_buf,
+                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                           uint32_t* dest_size) {
   int predictor = 0;
   int Colors = 0;
@@ -389,11 +389,15 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
         *pImageParams = pParam;
         return true;
       }
+      std::unique_ptr<uint8_t, FxFreeDeleter> result;
       offset = FlateOrLZWDecode(false, last_span, pParam, estimated_size,
-                                &new_buf, &new_size);
+                                &result, &new_size);
+      new_buf = result.release();
     } else if (decoder == "LZWDecode" || decoder == "LZW") {
+      std::unique_ptr<uint8_t, FxFreeDeleter> result;
       offset = FlateOrLZWDecode(true, last_span, pParam, estimated_size,
-                                &new_buf, &new_size);
+                                &result, &new_size);
+      new_buf = result.release();
     } else if (decoder == "ASCII85Decode" || decoder == "A85") {
       std::unique_ptr<uint8_t, FxFreeDeleter> result;
       offset = A85Decode(last_span, &result, &new_size);
@@ -578,7 +582,7 @@ bool FlateEncode(pdfium::span<const uint8_t> src_span,
 }
 
 uint32_t FlateDecode(pdfium::span<const uint8_t> src_span,
-                     uint8_t** dest_buf,
+                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                      uint32_t* dest_size) {
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
   return pEncoders->GetFlateModule()->FlateOrLZWDecode(

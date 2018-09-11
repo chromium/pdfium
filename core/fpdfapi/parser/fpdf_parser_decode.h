@@ -44,7 +44,7 @@ bool FlateEncode(pdfium::span<const uint8_t> src_span,
                  uint32_t* dest_size);
 
 uint32_t FlateDecode(pdfium::span<const uint8_t> src_span,
-                     uint8_t** dest_buf,
+                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                      uint32_t* dest_size);
 
 uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
@@ -63,7 +63,7 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                           pdfium::span<const uint8_t> src_span,
                           const CPDF_Dictionary* pParams,
                           uint32_t estimated_size,
-                          uint8_t** dest_buf,
+                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                           uint32_t* dest_size);
 
 bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,

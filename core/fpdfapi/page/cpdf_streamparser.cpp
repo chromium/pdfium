@@ -70,12 +70,15 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             uint32_t* dest_size) {
   *dest_buf = nullptr;
   *dest_size = 0;
+  std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
   if (decoder == "FlateDecode" || decoder == "Fl") {
-    return FlateOrLZWDecode(false, src_span, pParam, *dest_size, dest_buf,
+    return FlateOrLZWDecode(false, src_span, pParam, *dest_size,
+                            &ignored_result, dest_size);
+  }
+  if (decoder == "LZWDecode" || decoder == "LZW") {
+    return FlateOrLZWDecode(true, src_span, pParam, 0, &ignored_result,
                             dest_size);
   }
-  if (decoder == "LZWDecode" || decoder == "LZW")
-    return FlateOrLZWDecode(true, src_span, pParam, 0, dest_buf, dest_size);
   if (decoder == "DCTDecode" || decoder == "DCT") {
     std::unique_ptr<CCodec_ScanlineDecoder> pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
@@ -89,7 +92,6 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
     return DecodeAllScanlines(std::move(pDecoder), dest_buf, dest_size);
   }
 
-  std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
   if (decoder == "ASCII85Decode" || decoder == "A85")
     return A85Decode(src_span, &ignored_result, dest_size);
   if (decoder == "ASCIIHexDecode" || decoder == "AHx")

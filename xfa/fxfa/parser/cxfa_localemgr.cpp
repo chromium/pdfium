@@ -1071,17 +1071,15 @@ std::unique_ptr<LocaleIface> GetLocaleFromBuffer(
   if (src_span.empty())
     return nullptr;
 
-  uint8_t* pOut = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> output;
   uint32_t dwSize;
   CCodec_ModuleMgr* pCodecMgr = CPDF_ModuleMgr::Get()->GetCodecModule();
   pCodecMgr->GetFlateModule()->FlateOrLZWDecode(false, src_span, true, 0, 0, 0,
-                                                0, 0, &pOut, &dwSize);
-  if (!pOut)
+                                                0, 0, &output, &dwSize);
+  if (!output)
     return nullptr;
 
-  auto locale = CXFA_XMLLocale::Create(pdfium::make_span(pOut, dwSize));
-  FX_Free(pOut);
-  return locale;
+  return CXFA_XMLLocale::Create(pdfium::make_span(output.get(), dwSize));
 }
 
 uint16_t GetLanguage(WideString wsLanguage) {
