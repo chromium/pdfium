@@ -40,7 +40,7 @@ class CPDF_CMapParser {
   UnownedPtr<CPDF_CMap> const m_pCMap;
   int m_Status;
   int m_CodeSeq;
-  std::vector<CPDF_CMap::CodeRange> m_CodeRanges;
+  std::vector<CPDF_CMap::CodeRange> m_PendingRanges;
   std::vector<CPDF_CMap::CIDRange> m_AdditionalCharcodeToCIDMappings;
   ByteString m_LastWord;
   uint32_t m_CodePoints[4];
