@@ -503,15 +503,23 @@ void ClipAngledGradient(const SkPoint pts[2],
   }
   if (minPerpPtIndex < 0 && maxPerpPtIndex < 0)  // nothing's outside
     return;
+
   // determine if negative distances are before start or after end
   SkPoint beforeStart = {pts[0].fX * 2 - pts[1].fX, pts[0].fY * 2 - pts[1].fY};
   bool beforeNeg = LineSide(startPerp, beforeStart) < 0;
-  const SkPoint& startEdgePt =
-      clipStart ? pts[0] : beforeNeg ? rectPts[minPerpPtIndex]
-                                     : rectPts[maxPerpPtIndex];
-  const SkPoint& endEdgePt = clipEnd ? pts[1] : beforeNeg
-                                                    ? rectPts[maxPerpPtIndex]
-                                                    : rectPts[minPerpPtIndex];
+
+  int noClipStartIndex = maxPerpPtIndex;
+  int noClipEndIndex = minPerpPtIndex;
+  if (beforeNeg)
+    std::swap(noClipStartIndex, noClipEndIndex);
+  if ((!clipStart && noClipStartIndex < 0) ||
+      (!clipEnd && noClipEndIndex < 0)) {
+    return;
+  }
+
+  const SkPoint& startEdgePt = clipStart ? pts[0] : rectPts[noClipStartIndex];
+  const SkPoint& endEdgePt = clipEnd ? pts[1] : rectPts[noClipEndIndex];
+
   // find the corners that bound the gradient
   SkScalar minDist = SK_ScalarMax;
   SkScalar maxDist = SK_ScalarMin;
