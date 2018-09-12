@@ -208,8 +208,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (m_StreamSegmentOffsets.empty())
     m_StreamSegmentOffsets.push_back(0);
 
-  m_CurrentOffset += m_pParser->Parse(m_pData.Get() + m_CurrentOffset,
-                                      m_Size - m_CurrentOffset,
+  m_CurrentOffset += m_pParser->Parse(m_pData.Get(), m_Size, m_CurrentOffset,
                                       PARSE_STEP_LIMIT, m_StreamSegmentOffsets);
   return Stage::kParse;
 }

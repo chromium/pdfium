@@ -1450,6 +1450,80 @@ TEST_F(FPDFEditEmbeddertest, InsertPageObjectEditAndSave) {
   CloseSavedDocument();
 }
 
+TEST_F(FPDFEditEmbeddertest, InsertAndRemoveLargeFile) {
+  const int kOriginalObjectCount = 600;
+
+  // Load document with many objects.
+  EXPECT_TRUE(OpenDocument("many_rectangles.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  const char kOriginalMD5[] = "b0170c575b65ecb93ebafada0ff0f038";
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 300, kOriginalMD5);
+  }
+
+  // Add a black rectangle.
+  ASSERT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT black_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(black_rect, 0, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(black_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(page, black_rect);
+
+  // Verify the black rectangle was added.
+  ASSERT_EQ(kOriginalObjectCount + 1, FPDFPage_CountObjects(page));
+  const char kPlusRectangleMD5[] = "6b9396ab570754b32b04ca629e902f77";
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 300, kPlusRectangleMD5);
+  }
+
+  // Save the file.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  // Re-open the file and check the rectangle added is still there.
+  OpenSavedDocument(nullptr);
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  EXPECT_EQ(kOriginalObjectCount + 1, FPDFPage_CountObjects(saved_page));
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(saved_page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 300, kPlusRectangleMD5);
+  }
+
+  // Remove the added rectangle.
+  FPDF_PAGEOBJECT added_object =
+      FPDFPage_GetObject(saved_page, kOriginalObjectCount);
+  EXPECT_TRUE(FPDFPage_RemoveObject(saved_page, added_object));
+  FPDFPageObj_Destroy(added_object);
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(saved_page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 300, kOriginalMD5);
+  }
+  EXPECT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(saved_page));
+
+  // Save the file again.
+  EXPECT_TRUE(FPDFPage_GenerateContent(saved_page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(saved_document_, this, 0));
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+
+  // Re-open the file (again) and check the black rectangle was removed and the
+  // rest is intact.
+  OpenSavedDocument(nullptr);
+  saved_page = LoadSavedPage(0);
+  EXPECT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(saved_page));
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(saved_page, nullptr, 0);
+    CompareBitmap(page_bitmap.get(), 200, 300, kOriginalMD5);
+  }
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFEditEmbeddertest, AddAndRemovePaths) {
   // Start with a blank page.
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);

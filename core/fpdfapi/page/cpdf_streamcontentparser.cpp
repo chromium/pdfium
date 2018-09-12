@@ -1286,8 +1286,9 @@ float CPDF_StreamContentParser::GetVerticalTextSize(float fKerning) const {
 }
 
 int32_t CPDF_StreamContentParser::GetCurrentStreamIndex() {
-  auto it = std::upper_bound(m_StreamStartOffsets.begin(),
-                             m_StreamStartOffsets.end(), m_pSyntax->GetPos());
+  auto it =
+      std::upper_bound(m_StreamStartOffsets.begin(), m_StreamStartOffsets.end(),
+                       m_pSyntax->GetPos() + m_StartParseOffset);
   return (it - m_StreamStartOffsets.begin()) - 1;
 }
 
@@ -1508,19 +1509,29 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
 uint32_t CPDF_StreamContentParser::Parse(
     const uint8_t* pData,
     uint32_t dwSize,
+    uint32_t start_offset,
     uint32_t max_cost,
     const std::vector<uint32_t>& stream_start_offsets) {
+  ASSERT(start_offset < dwSize);
+
+  // Parsing will be done from |pDataStart|, for at most |size_left| bytes.
+  const uint8_t* pDataStart = pData + start_offset;
+  uint32_t size_left = dwSize - start_offset;
+
+  m_StartParseOffset = start_offset;
+
   if (m_ParsedSet->size() > kMaxFormLevel ||
-      pdfium::ContainsKey(*m_ParsedSet, pData))
-    return dwSize;
+      pdfium::ContainsKey(*m_ParsedSet, pDataStart)) {
+    return size_left;
+  }
 
   m_StreamStartOffsets = stream_start_offsets;
 
   pdfium::ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet.Get(),
-                                                          pData);
+                                                          pDataStart);
 
   uint32_t init_obj_count = m_pObjectHolder->GetPageObjectList()->size();
-  CPDF_StreamParser syntax(pdfium::make_span(pData, dwSize),
+  CPDF_StreamParser syntax(pdfium::make_span(pDataStart, size_left),
                            m_pDocument->GetByteStringPool());
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   while (1) {
