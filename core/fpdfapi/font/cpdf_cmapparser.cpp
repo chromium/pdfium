@@ -109,7 +109,7 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
     m_Status = 0;
   } else if (m_Status == 7) {
     if (word == "endcodespacerange") {
-      const auto& code_ranges = m_pCMap->GetMixedFourByteLeadingRanges();
+      auto code_ranges = m_pCMap->GetMixedFourByteLeadingRanges();
       size_t nSegs = code_ranges.size();
       if (nSegs == 1) {
         m_pCMap->SetCodingScheme((code_ranges[0].m_CharSize == 2)
@@ -117,7 +117,7 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
                                      : CPDF_CMap::OneByte);
       } else if (nSegs > 1) {
         m_pCMap->SetCodingScheme(CPDF_CMap::MixedFourBytes);
-        for (const auto& range : m_PendingRanges)
+        for (auto range : m_PendingRanges)
           m_pCMap->AppendMixedFourByteLeadingRanges(range);
         m_PendingRanges.clear();
       }
