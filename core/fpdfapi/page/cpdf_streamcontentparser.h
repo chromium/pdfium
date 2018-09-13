@@ -15,7 +15,6 @@
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcrt/fx_number.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/cfx_pathdata.h"
 
@@ -72,7 +71,13 @@ class CPDF_StreamContentParser {
 
     Type m_Type;
     std::unique_ptr<CPDF_Object> m_pObject;
-    FX_Number m_Number;
+    struct {
+      bool m_bInteger;
+      union {
+        int m_Integer;
+        float m_Float;
+      };
+    } m_Number;
     struct {
       int m_Len;
       char m_Buffer[32];

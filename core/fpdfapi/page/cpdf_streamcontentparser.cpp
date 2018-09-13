@@ -338,7 +338,7 @@ void CPDF_StreamContentParser::AddNameParam(const ByteStringView& bsName) {
 void CPDF_StreamContentParser::AddNumberParam(const ByteStringView& str) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
   param.m_Type = ContentParam::NUMBER;
-  param.m_Number = FX_Number(str);
+  param.m_Number.m_bInteger = FX_atonum(str, &param.m_Number.m_Integer);
 }
 
 void CPDF_StreamContentParser::AddObjectParam(
@@ -373,9 +373,9 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
   if (param.m_Type == ContentParam::NUMBER) {
     param.m_Type = ContentParam::OBJECT;
     param.m_pObject =
-        param.m_Number.IsInteger()
-            ? pdfium::MakeUnique<CPDF_Number>(param.m_Number.GetSigned())
-            : pdfium::MakeUnique<CPDF_Number>(param.m_Number.GetFloat());
+        param.m_Number.m_bInteger
+            ? pdfium::MakeUnique<CPDF_Number>(param.m_Number.m_Integer)
+            : pdfium::MakeUnique<CPDF_Number>(param.m_Number.m_Float);
     return param.m_pObject.get();
   }
   if (param.m_Type == ContentParam::NAME) {
@@ -411,20 +411,21 @@ ByteString CPDF_StreamContentParser::GetString(uint32_t index) const {
 }
 
 float CPDF_StreamContentParser::GetNumber(uint32_t index) const {
-  if (index >= m_ParamCount)
+  if (index >= m_ParamCount) {
     return 0;
-
+  }
   int real_index = m_ParamStartPos + m_ParamCount - index - 1;
-  if (real_index >= kParamBufSize)
+  if (real_index >= kParamBufSize) {
     real_index -= kParamBufSize;
-
+  }
   const ContentParam& param = m_ParamBuf[real_index];
-  if (param.m_Type == ContentParam::NUMBER)
-    return param.m_Number.GetFloat();
-
+  if (param.m_Type == ContentParam::NUMBER) {
+    return param.m_Number.m_bInteger
+               ? static_cast<float>(param.m_Number.m_Integer)
+               : param.m_Number.m_Float;
+  }
   if (param.m_Type == 0 && param.m_pObject)
     return param.m_pObject->GetNumber();
-
   return 0;
 }
 
@@ -1631,8 +1632,10 @@ void CPDF_StreamContentParser::ParsePathObject() {
         if (nParams == 6)
           break;
 
-        FX_Number number(m_pSyntax->GetWord());
-        params[nParams++] = number.GetFloat();
+        int value;
+        bool bInteger = FX_atonum(m_pSyntax->GetWord(), &value);
+        params[nParams++] = bInteger ? static_cast<float>(value)
+                                     : *reinterpret_cast<float*>(&value);
         break;
       }
       default:
