@@ -47,69 +47,6 @@ float FractionalScale(size_t scale_factor, int value) {
 
 }  // namespace
 
-bool FX_atonum(const ByteStringView& strc, void* pData) {
-  if (strc.Contains('.')) {
-    float* pFloat = static_cast<float*>(pData);
-    *pFloat = FX_atof(strc);
-    return false;
-  }
-
-  // Note, numbers in PDF are typically of the form 123, -123, etc. But,
-  // for things like the Permissions on the encryption hash the number is
-  // actually an unsigned value. We use a uint32_t so we can deal with the
-  // unsigned and then check for overflow if the user actually signed the value.
-  // The Permissions flag is listed in Table 3.20 PDF 1.7 spec.
-  pdfium::base::CheckedNumeric<uint32_t> integer = 0;
-  bool bNegative = false;
-  bool bSigned = false;
-  size_t cc = 0;
-  if (strc[0] == '+') {
-    cc++;
-    bSigned = true;
-  } else if (strc[0] == '-') {
-    bNegative = true;
-    bSigned = true;
-    cc++;
-  }
-
-  while (cc < strc.GetLength() && std::isdigit(strc[cc])) {
-    integer = integer * 10 + FXSYS_DecimalCharToInt(strc.CharAt(cc));
-    if (!integer.IsValid())
-      break;
-    cc++;
-  }
-
-  // We have a sign, and the value was greater then a regular integer
-  // we've overflowed, reset to the default value.
-  if (bSigned) {
-    if (bNegative) {
-      if (integer.ValueOrDefault(0) >
-          static_cast<uint32_t>(std::numeric_limits<int>::max()) + 1) {
-        integer = 0;
-      }
-    } else if (integer.ValueOrDefault(0) >
-               static_cast<uint32_t>(std::numeric_limits<int>::max())) {
-      integer = 0;
-    }
-  }
-
-  // Switch back to the int space so we can flip to a negative if we need.
-  uint32_t uValue = integer.ValueOrDefault(0);
-  int32_t value = static_cast<int>(uValue);
-  if (bNegative) {
-    // |value| is usually positive, except in the corner case of "-2147483648",
-    // where |uValue| is 2147483648. When it gets casted to an int, |value|
-    // becomes -2147483648. For this case, avoid undefined behavior, because an
-    // integer cannot represent 2147483648.
-    static constexpr int kMinInt = std::numeric_limits<int>::min();
-    value = LIKELY(value != kMinInt) ? -value : kMinInt;
-  }
-
-  int* pInt = static_cast<int*>(pData);
-  *pInt = value;
-  return true;
-}
-
 float FX_atof(const ByteStringView& strc) {
   if (strc.IsEmpty())
     return 0.0;

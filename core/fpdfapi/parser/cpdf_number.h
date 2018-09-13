@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fxcrt/fx_number.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -34,14 +35,10 @@ class CPDF_Number final : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 
-  bool IsInteger() const { return m_bInteger; }
+  bool IsInteger() const { return m_Number.IsInteger(); }
 
- protected:
-  bool m_bInteger;
-  union {
-    int m_Integer;
-    float m_Float;
-  };
+ private:
+  FX_Number m_Number;
 };
 
 inline CPDF_Number* ToNumber(CPDF_Object* obj) {
