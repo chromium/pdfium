@@ -9,18 +9,26 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_safe_types.h"
 
 namespace {
 
 void MatchFloatRange(float f1, float f2, int* i1, int* i2) {
-  int length = static_cast<int>(ceil(f2 - f1));
-  int i1_1 = static_cast<int>(floor(f1));
-  int i1_2 = static_cast<int>(ceil(f1));
-  float error1 = f1 - i1_1 + fabsf(f2 - i1_1 - length);
-  float error2 = i1_2 - f1 + fabsf(f2 - i1_2 - length);
-
-  *i1 = error1 > error2 ? i1_2 : i1_1;
-  *i2 = *i1 + length;
+  float length = ceilf(f2 - f1);
+  float f1_floor = floorf(f1);
+  float f1_ceil = ceilf(f1);
+  float error1 = f1 - f1_floor + fabsf(f2 - f1_floor - length);
+  float error2 = f1_ceil - f1 + fabsf(f2 - f1_ceil - length);
+  float start = error1 > error2 ? f1_ceil : f1_floor;
+  FX_SAFE_INT32 safe1 = start;
+  FX_SAFE_INT32 safe2 = start + length;
+  if (safe1.IsValid() && safe2.IsValid()) {
+    *i1 = safe1.ValueOrDie();
+    *i2 = safe2.ValueOrDie();
+  } else {
+    *i1 = 0;
+    *i2 = 0;
+  }
 }
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
