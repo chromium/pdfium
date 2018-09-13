@@ -68,7 +68,9 @@ TEST(fxcrt, FX_TryAllocOverflow) {
 
   ptr = FX_Alloc(int, 1);
   EXPECT_TRUE(ptr);
+  *ptr = 1492;  // Arbitrary sentinel.
   EXPECT_FALSE(FX_TryRealloc(int, ptr, kOverflowIntAlloc));
+  EXPECT_EQ(1492, *ptr);
   FX_Free(ptr);
 }
 #endif
