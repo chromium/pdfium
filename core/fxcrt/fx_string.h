@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_FX_STRING_H_
 #define CORE_FXCRT_FX_STRING_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/widestring.h"
 
@@ -19,7 +21,6 @@ WideString FX_UTF8Decode(const ByteStringView& bsStr);
 
 float FX_atof(const ByteStringView& str);
 float FX_atof(const WideStringView& wsStr);
-bool FX_atonum(const ByteStringView& str, void* pData);
 size_t FX_ftoa(float f, char* buf);
 
 #endif  // CORE_FXCRT_FX_STRING_H_

@@ -8,14 +8,13 @@
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"
 
-CPDF_Number::CPDF_Number() : m_bInteger(true), m_Integer(0) {}
+CPDF_Number::CPDF_Number() {}
 
-CPDF_Number::CPDF_Number(int value) : m_bInteger(true), m_Integer(value) {}
+CPDF_Number::CPDF_Number(int value) : m_Number(value) {}
 
-CPDF_Number::CPDF_Number(float value) : m_bInteger(false), m_Float(value) {}
+CPDF_Number::CPDF_Number(float value) : m_Number(value) {}
 
-CPDF_Number::CPDF_Number(const ByteStringView& str)
-    : m_bInteger(FX_atonum(str, &m_Integer)) {}
+CPDF_Number::CPDF_Number(const ByteStringView& str) : m_Number(str) {}
 
 CPDF_Number::~CPDF_Number() {}
 
@@ -24,16 +23,17 @@ CPDF_Object::Type CPDF_Number::GetType() const {
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Number::Clone() const {
-  return m_bInteger ? pdfium::MakeUnique<CPDF_Number>(m_Integer)
-                    : pdfium::MakeUnique<CPDF_Number>(m_Float);
+  return m_Number.IsInteger()
+             ? pdfium::MakeUnique<CPDF_Number>(m_Number.GetSigned())
+             : pdfium::MakeUnique<CPDF_Number>(m_Number.GetFloat());
 }
 
 float CPDF_Number::GetNumber() const {
-  return m_bInteger ? static_cast<float>(m_Integer) : m_Float;
+  return m_Number.GetFloat();
 }
 
 int CPDF_Number::GetInteger() const {
-  return m_bInteger ? m_Integer : static_cast<int>(m_Float);
+  return m_Number.GetSigned();
 }
 
 bool CPDF_Number::IsNumber() const {
@@ -49,12 +49,12 @@ const CPDF_Number* CPDF_Number::AsNumber() const {
 }
 
 void CPDF_Number::SetString(const ByteString& str) {
-  m_bInteger = FX_atonum(str.AsStringView(), &m_Integer);
+  m_Number = FX_Number(str.AsStringView());
 }
 
 ByteString CPDF_Number::GetString() const {
-  return m_bInteger ? ByteString::FormatInteger(m_Integer)
-                    : ByteString::FormatFloat(m_Float);
+  return m_Number.IsInteger() ? ByteString::FormatInteger(m_Number.GetSigned())
+                              : ByteString::FormatFloat(m_Number.GetFloat());
 }
 
 bool CPDF_Number::WriteTo(IFX_ArchiveStream* archive,
