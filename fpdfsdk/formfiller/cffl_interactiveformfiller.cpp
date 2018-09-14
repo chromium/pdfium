@@ -476,37 +476,43 @@ CFFL_FormFiller* CFFL_InteractiveFormFiller::GetFormFiller(
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   FormFieldType fieldType = pWidget->GetFieldType();
-  CFFL_FormFiller* pFormFiller;
+  std::unique_ptr<CFFL_FormFiller> pFormFiller;
   switch (fieldType) {
     case FormFieldType::kPushButton:
-      pFormFiller = new CFFL_PushButton(m_pFormFillEnv.Get(), pWidget);
+      pFormFiller =
+          pdfium::MakeUnique<CFFL_PushButton>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kCheckBox:
-      pFormFiller = new CFFL_CheckBox(m_pFormFillEnv.Get(), pWidget);
+      pFormFiller =
+          pdfium::MakeUnique<CFFL_CheckBox>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kRadioButton:
-      pFormFiller = new CFFL_RadioButton(m_pFormFillEnv.Get(), pWidget);
+      pFormFiller =
+          pdfium::MakeUnique<CFFL_RadioButton>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kTextField:
-      pFormFiller = new CFFL_TextField(m_pFormFillEnv.Get(), pWidget);
+      pFormFiller =
+          pdfium::MakeUnique<CFFL_TextField>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kListBox:
-      pFormFiller = new CFFL_ListBox(m_pFormFillEnv.Get(), pWidget);
+      pFormFiller =
+          pdfium::MakeUnique<CFFL_ListBox>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kComboBox:
-      pFormFiller = new CFFL_ComboBox(m_pFormFillEnv.Get(), pWidget);
+      pFormFiller =
+          pdfium::MakeUnique<CFFL_ComboBox>(m_pFormFillEnv.Get(), pWidget);
       break;
     case FormFieldType::kUnknown:
     default:
-      pFormFiller = nullptr;
       break;
   }
 
   if (!pFormFiller)
     return nullptr;
 
-  m_Maps[pAnnot].reset(pFormFiller);
-  return pFormFiller;
+  CFFL_FormFiller* result = pFormFiller.get();
+  m_Maps[pAnnot] = std::move(pFormFiller);
+  return result;
 }
 
 WideString CFFL_InteractiveFormFiller::GetText(CPDFSDK_Annot* pAnnot) {
