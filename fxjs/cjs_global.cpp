@@ -418,43 +418,43 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
     ByteString sKey = ws.UTF8Encode();
     v8::Local<v8::Value> v = pRuntime->GetObjectProperty(pObj, ws);
     if (v->IsNumber()) {
-      CJS_KeyValue* pObjElement = new CJS_KeyValue;
+      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::NUMBER;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToDouble(v);
-      pArray->Add(pObjElement);
+      pArray->Add(std::move(pObjElement));
       continue;
     }
     if (v->IsBoolean()) {
-      CJS_KeyValue* pObjElement = new CJS_KeyValue;
+      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::BOOLEAN;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToBoolean(v);
-      pArray->Add(pObjElement);
+      pArray->Add(std::move(pObjElement));
       continue;
     }
     if (v->IsString()) {
       ByteString sValue = pRuntime->ToWideString(v).ToDefANSI();
-      CJS_KeyValue* pObjElement = new CJS_KeyValue;
+      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::STRING;
       pObjElement->sKey = sKey;
       pObjElement->sData = sValue;
-      pArray->Add(pObjElement);
+      pArray->Add(std::move(pObjElement));
       continue;
     }
     if (v->IsObject()) {
-      CJS_KeyValue* pObjElement = new CJS_KeyValue;
+      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::OBJECT;
       pObjElement->sKey = sKey;
       ObjectToArray(pRuntime, pRuntime->ToObject(v), &pObjElement->objData);
-      pArray->Add(pObjElement);
+      pArray->Add(std::move(pObjElement));
       continue;
     }
     if (v->IsNull()) {
-      CJS_KeyValue* pObjElement = new CJS_KeyValue;
+      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::NULLOBJ;
       pObjElement->sKey = sKey;
-      pArray->Add(pObjElement);
+      pArray->Add(std::move(pObjElement));
     }
   }
 }

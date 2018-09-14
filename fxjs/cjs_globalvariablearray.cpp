@@ -6,7 +6,10 @@
 
 #include "fxjs/cjs_globalvariablearray.h"
 
+#include <utility>
+
 #include "fxjs/cjs_keyvalue.h"
+#include "third_party/base/ptr_util.h"
 
 CJS_GlobalVariableArray::CJS_GlobalVariableArray() {}
 
@@ -18,45 +21,45 @@ void CJS_GlobalVariableArray::Copy(const CJS_GlobalVariableArray& array) {
     CJS_KeyValue* pOldObjData = array.GetAt(i);
     switch (pOldObjData->nType) {
       case JS_GlobalDataType::NUMBER: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
+        auto pNewObjData = pdfium::MakeUnique<CJS_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->dData = pOldObjData->dData;
-        Add(pNewObjData);
+        Add(std::move(pNewObjData));
       } break;
       case JS_GlobalDataType::BOOLEAN: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
+        auto pNewObjData = pdfium::MakeUnique<CJS_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->bData = pOldObjData->bData;
-        Add(pNewObjData);
+        Add(std::move(pNewObjData));
       } break;
       case JS_GlobalDataType::STRING: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
+        auto pNewObjData = pdfium::MakeUnique<CJS_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->sData = pOldObjData->sData;
-        Add(pNewObjData);
+        Add(std::move(pNewObjData));
       } break;
       case JS_GlobalDataType::OBJECT: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
+        auto pNewObjData = pdfium::MakeUnique<CJS_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->objData.Copy(pOldObjData->objData);
-        Add(pNewObjData);
+        Add(std::move(pNewObjData));
       } break;
       case JS_GlobalDataType::NULLOBJ: {
-        CJS_KeyValue* pNewObjData = new CJS_KeyValue;
+        auto pNewObjData = pdfium::MakeUnique<CJS_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
-        Add(pNewObjData);
+        Add(std::move(pNewObjData));
       } break;
     }
   }
 }
 
-void CJS_GlobalVariableArray::Add(CJS_KeyValue* p) {
-  m_Array.push_back(std::unique_ptr<CJS_KeyValue>(p));
+void CJS_GlobalVariableArray::Add(std::unique_ptr<CJS_KeyValue> pKeyValue) {
+  m_Array.push_back(std::move(pKeyValue));
 }
 
 int CJS_GlobalVariableArray::Count() const {

@@ -17,7 +17,7 @@ class CJS_GlobalVariableArray {
   CJS_GlobalVariableArray();
   ~CJS_GlobalVariableArray();
 
-  void Add(CJS_KeyValue* p);
+  void Add(std::unique_ptr<CJS_KeyValue> pKeyValue);
   int Count() const;
   CJS_KeyValue* GetAt(int index) const;
   void Copy(const CJS_GlobalVariableArray& array);
