@@ -555,8 +555,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc);
   }
 
-  FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                         rotate, flags, true, nullptr);
+  RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
+                        rotate, flags, true, nullptr);
 
   if (bHasMask) {
     // Finish rendering the page to bitmap and copy the correct segments
@@ -586,8 +586,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     option_flags |= RENDER_BREAKFORMASKS;
     pContext->m_pOptions->SetFlags(option_flags);
 
-    FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                           rotate, flags, true, nullptr);
+    RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
+                          rotate, flags, true, nullptr);
 
     // Render masks
     for (size_t i = 0; i < mask_boxes.size(); i++) {
@@ -642,8 +642,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
-  FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                         rotate, flags, true, nullptr);
+  RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
+                        rotate, flags, true, nullptr);
 
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush(true);
@@ -706,8 +706,8 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
   CFX_DefaultRenderDevice* skDevice = new CFX_DefaultRenderDevice;
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice.reset(skDevice);
-  FPDF_RenderPage_Retail(pContext, page, 0, 0, size_x, size_y, 0, 0, true,
-                         nullptr);
+  RenderPageWithContext(pContext, page, 0, 0, size_x, size_y, 0, 0, true,
+                        nullptr);
   pPage->SetRenderContext(nullptr);
   return recorder;
 }
@@ -899,16 +899,16 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {
   destroyer.Unleak(CFXDIBitmapFromFPDFBitmap(bitmap));
 }
 
-void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
-                            FPDF_PAGE page,
-                            int start_x,
-                            int start_y,
-                            int size_x,
-                            int size_y,
-                            int rotate,
-                            int flags,
-                            bool bNeedToRestore,
-                            IPDFSDK_PauseAdapter* pause) {
+void RenderPageWithContext(CPDF_PageRenderContext* pContext,
+                           FPDF_PAGE page,
+                           int start_x,
+                           int start_y,
+                           int size_x,
+                           int size_y,
+                           int rotate,
+                           int flags,
+                           bool bNeedToRestore,
+                           IPDFSDK_PauseAdapter* pause) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return;

@@ -245,16 +245,16 @@ void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable);
 FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy);
 
 // TODO(dsinclair): Where should this live?
-void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
-                            FPDF_PAGE page,
-                            int start_x,
-                            int start_y,
-                            int size_x,
-                            int size_y,
-                            int rotate,
-                            int flags,
-                            bool bNeedToRestore,
-                            IPDFSDK_PauseAdapter* pause);
+void RenderPageWithContext(CPDF_PageRenderContext* pContext,
+                           FPDF_PAGE page,
+                           int start_x,
+                           int start_y,
+                           int size_x,
+                           int size_y,
+                           int rotate,
+                           int flags,
+                           bool bNeedToRestore,
+                           IPDFSDK_PauseAdapter* pause);
 
 void ReportUnsupportedFeatures(CPDF_Document* pDoc);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
