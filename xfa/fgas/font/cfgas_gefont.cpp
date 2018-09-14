@@ -54,14 +54,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
   return pFont;
 }
 
-CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr)
-    :
-      m_bUseLogFontStyle(false),
-      m_dwLogFontStyle(0),
-      m_pFont(nullptr),
-      m_bExternalFont(false),
-      m_pFontMgr(pFontMgr) {
-}
+CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr) : m_pFontMgr(pFontMgr) {}
 
 CFGAS_GEFont::~CFGAS_GEFont() {
   if (!m_bExternalFont)

@@ -70,13 +70,11 @@ class CFGAS_GEFont final : public Retainable {
       bool bRecursive);
   WideString GetFamilyName() const;
 
-  bool m_bUseLogFontStyle;
-  uint32_t m_dwLogFontStyle;
-  CFX_Font* m_pFont;
-  bool m_bExternalFont;
-  RetainPtr<CFGAS_GEFont> m_pSrcFont;  // Only set by ctor, so no cycles.
-  CFGAS_FontMgr::ObservedPtr m_pFontMgr;
-  RetainPtr<IFX_SeekableReadStream> m_pFileRead;
+  bool m_bUseLogFontStyle = false;
+  bool m_bExternalFont = false;
+  uint32_t m_dwLogFontStyle = 0;
+  CFX_Font* m_pFont = nullptr;
+  CFGAS_FontMgr::ObservedPtr const m_pFontMgr;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;
   std::map<wchar_t, FX_RECT> m_BBoxMap;
