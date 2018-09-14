@@ -500,12 +500,10 @@ bool CPDFSDK_InterForm::SubmitFields(const WideString& csDestination,
                                      bool bIncludeOrExclude,
                                      bool bUrlEncoded) {
   ByteString textBuf = ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude);
-  size_t nBufSize = textBuf.GetLength();
-  if (nBufSize == 0)
+  if (textBuf.IsEmpty())
     return false;
 
-  std::vector<uint8_t> buffer(nBufSize);
-  memcpy(buffer.data(), textBuf.c_str(), nBufSize);
+  std::vector<uint8_t> buffer(textBuf.begin(), textBuf.end());
   if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
     return false;
 
@@ -539,8 +537,7 @@ bool CPDFSDK_InterForm::SubmitForm(const WideString& sDestination,
   if (fdfBuffer.IsEmpty())
     return false;
 
-  std::vector<uint8_t> buffer(fdfBuffer.GetLength());
-  memcpy(buffer.data(), fdfBuffer.c_str(), fdfBuffer.GetLength());
+  std::vector<uint8_t> buffer(fdfBuffer.begin(), fdfBuffer.end());
   if (bUrlEncoded && !FDFToURLEncodedData(&buffer))
     return false;
 
