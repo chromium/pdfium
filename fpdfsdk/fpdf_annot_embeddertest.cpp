@@ -28,6 +28,43 @@ std::string BufferToString(const std::vector<char>& buf) {
   return GetPlatformString(reinterpret_cast<FPDF_WIDESTRING>(buf.data()));
 }
 
+TEST_F(FPDFAnnotEmbeddertest, BadParams) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  EXPECT_EQ(0, FPDFPage_GetAnnotCount(nullptr));
+
+  EXPECT_FALSE(FPDFPage_GetAnnot(nullptr, 0));
+  EXPECT_FALSE(FPDFPage_GetAnnot(nullptr, -1));
+  EXPECT_FALSE(FPDFPage_GetAnnot(nullptr, 1));
+  EXPECT_FALSE(FPDFPage_GetAnnot(page, -1));
+  EXPECT_FALSE(FPDFPage_GetAnnot(page, 1));
+
+  EXPECT_EQ(FPDF_ANNOT_UNKNOWN, FPDFAnnot_GetSubtype(nullptr));
+
+  EXPECT_EQ(0, FPDFAnnot_GetObjectCount(nullptr));
+
+  EXPECT_FALSE(FPDFAnnot_GetObject(nullptr, 0));
+  EXPECT_FALSE(FPDFAnnot_GetObject(nullptr, -1));
+  EXPECT_FALSE(FPDFAnnot_GetObject(nullptr, 1));
+
+  EXPECT_FALSE(FPDFAnnot_HasKey(nullptr, "foo"));
+
+  static constexpr wchar_t kContents[] = L"Bar";
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text =
+      GetFPDFWideString(kContents);
+  EXPECT_FALSE(FPDFAnnot_SetStringValue(nullptr, "foo", text.get()));
+
+  char buffer[128];
+  EXPECT_EQ(0u, FPDFAnnot_GetStringValue(nullptr, "foo", nullptr, 0));
+  EXPECT_EQ(0u, FPDFAnnot_GetStringValue(nullptr, "foo", buffer, 0));
+  EXPECT_EQ(0u,
+            FPDFAnnot_GetStringValue(nullptr, "foo", buffer, sizeof(buffer)));
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFAnnotEmbeddertest, RenderAnnotWithOnlyRolloverAP) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
@@ -1418,9 +1455,19 @@ TEST_F(FPDFAnnotEmbeddertest, GetFormAnnotNull) {
   ASSERT_TRUE(page);
 
   // Attempt to get an annotation where no annotation exists on page.
-  FPDF_ANNOTATION annot =
-      FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 0, 0);
-  EXPECT_FALSE(annot);
+  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 0, 0));
+
+  {
+    // Verify there is an annotation.
+    ScopedFPDFAnnotation annot(
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, 120, 120));
+    EXPECT_TRUE(annot);
+  }
+
+  // Try other bad inputs at a valid location.
+  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, nullptr, 120, 120));
+  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, page, 120, 120));
+  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(form_handle(), nullptr, 120, 120));
 
   UnloadPage(page);
 }
