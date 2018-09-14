@@ -55,11 +55,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
 
 CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr) : m_pFontMgr(pFontMgr) {}
 
-CFGAS_GEFont::~CFGAS_GEFont() {
-  m_pFontEncoding.reset();  // Has an UnownedPtr to |m_pFont|.
-  if (!m_bExternalFont)
-    delete m_pFont;
-}
+CFGAS_GEFont::~CFGAS_GEFont() = default;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
@@ -73,7 +69,7 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
 
   int32_t iWeight =
       FontStyleIsBold(dwFontStyles) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  m_pFont = new CFX_Font;
+  m_pFont = pdfium::MakeUnique<CFX_Font>();
   if (FontStyleIsItalic(dwFontStyles) && FontStyleIsBold(dwFontStyles))
     csFontFamily += ",BoldItalic";
   else if (FontStyleIsBold(dwFontStyles))
@@ -83,9 +79,7 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
 
   m_pFont->LoadSubst(csFontFamily, true, dwFontStyles, iWeight, 0, wCodePage,
                      false);
-  if (!m_pFont->GetFace())
-    return false;
-  return InitFont();
+  return m_pFont->GetFace() && InitFont();
 }
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
@@ -94,7 +88,6 @@ bool CFGAS_GEFont::LoadFontInternal(CFX_Font* pExternalFont) {
     return false;
 
   m_pFont = pExternalFont;
-  m_bExternalFont = true;
   return InitFont();
 }
 
@@ -102,8 +95,7 @@ bool CFGAS_GEFont::LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont) {
   if (m_pFont || !pInternalFont)
     return false;
 
-  m_pFont = pInternalFont.release();
-  m_bExternalFont = false;
+  m_pFont = std::move(pInternalFont);
   return InitFont();
 }
 
@@ -114,7 +106,7 @@ bool CFGAS_GEFont::InitFont() {
   if (m_pFontEncoding)
     return true;
 
-  m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont, FXFM_ENCODING_NONE);
+  m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont.Get(), FXFM_ENCODING_NONE);
   return !!m_pFontEncoding;
 }
 
