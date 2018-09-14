@@ -125,6 +125,15 @@ class CPDF_Document : public Observable<CPDF_Document>,
 #endif
 
  protected:
+  class StockFontClearer {
+   public:
+    explicit StockFontClearer(CPDF_Document* pDoc);
+    ~StockFontClearer();
+
+   private:
+    UnownedPtr<CPDF_Document> const m_pDoc;
+  };
+
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount();
   // When this method is called, m_pTreeTraversal[level] exists.
@@ -171,6 +180,11 @@ class CPDF_Document : public Observable<CPDF_Document>,
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
   std::vector<uint32_t> m_PageList;  // Page number to page's dict objnum.
+
+  // Must be second to last.
+  StockFontClearer m_StockFontClearer;
+
+  // Must be last. Destroy the extension before any non-extension teardown.
   std::unique_ptr<Extension> m_pExtension;
 };
 

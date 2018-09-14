@@ -185,13 +185,10 @@ std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
 
 CPDF_Document::CPDF_Document()
     : m_pDocPage(pdfium::MakeUnique<CPDF_DocPageData>(this)),
-      m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)) {}
+      m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)),
+      m_StockFontClearer(this) {}
 
-CPDF_Document::~CPDF_Document() {
-  // Destroy the extension before doing any non-extension teardown.
-  m_pExtension.reset();
-  CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
-}
+CPDF_Document::~CPDF_Document() = default;
 
 std::unique_ptr<CPDF_Object> CPDF_Document::ParseIndirectObject(
     uint32_t objnum) {
@@ -883,3 +880,10 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont) {
   return LoadFont(pBaseDict);
 }
 #endif  //  _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+
+CPDF_Document::StockFontClearer::StockFontClearer(CPDF_Document* pDoc)
+    : m_pDoc(pDoc) {}
+
+CPDF_Document::StockFontClearer::~StockFontClearer() {
+  CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(m_pDoc.Get());
+}
