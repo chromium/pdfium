@@ -83,17 +83,20 @@ class CBC_OneDimWriter : public CBC_Writer {
   wchar_t Upper(wchar_t ch);
   void RenderVerticalBars(int32_t outputX, int32_t width, int32_t height);
 
-  bool m_bPrintChecksum;
-  int32_t m_iDataLenth;
-  bool m_bCalcChecksum;
+  bool m_bPrintChecksum = true;
+  bool m_bCalcChecksum = false;
+  bool m_bLeftPadding = false;
+  bool m_bRightPadding = false;
+
   UnownedPtr<CFX_Font> m_pFont;
-  float m_fFontSize;
-  int32_t m_iFontStyle;
-  uint32_t m_fontColor;
-  BC_TEXT_LOC m_locTextLoc;
-  size_t m_iContentLen;
-  bool m_bLeftPadding;
-  bool m_bRightPadding;
+  float m_fFontSize = 10.0f;
+  int32_t m_iFontStyle = 0;
+  uint32_t m_fontColor = 0xff000000;
+  BC_TEXT_LOC m_locTextLoc = BC_TEXT_LOC_BELOWEMBED;
+
+  int32_t m_iDataLenth = 0;
+  size_t m_iContentLen = 0;
+
   std::vector<CFX_PathData> m_output;
   int32_t m_barWidth;
   int32_t m_multiple;

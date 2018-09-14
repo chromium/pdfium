@@ -35,21 +35,9 @@
 #include "fxbarcode/BC_Writer.h"
 #include "third_party/base/ptr_util.h"
 
-CBC_OneDimWriter::CBC_OneDimWriter() {
-  m_locTextLoc = BC_TEXT_LOC_BELOWEMBED;
-  m_bPrintChecksum = true;
-  m_iDataLenth = 0;
-  m_bCalcChecksum = false;
-  m_pFont = nullptr;
-  m_fFontSize = 10;
-  m_iFontStyle = 0;
-  m_fontColor = 0xff000000;
-  m_iContentLen = 0;
-  m_bLeftPadding = false;
-  m_bRightPadding = false;
-}
+CBC_OneDimWriter::CBC_OneDimWriter() = default;
 
-CBC_OneDimWriter::~CBC_OneDimWriter() {}
+CBC_OneDimWriter::~CBC_OneDimWriter() = default;
 
 void CBC_OneDimWriter::SetPrintChecksum(bool checksum) {
   m_bPrintChecksum = checksum;
