@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
@@ -57,6 +56,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
 CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr) : m_pFontMgr(pFontMgr) {}
 
 CFGAS_GEFont::~CFGAS_GEFont() {
+  m_pFontEncoding.reset();  // Has an UnownedPtr to |m_pFont|.
   if (!m_bExternalFont)
     delete m_pFont;
 }

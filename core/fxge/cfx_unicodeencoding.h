@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/unowned_ptr.h"
+
 #ifdef PDF_ENABLE_XFA
 #define FXFM_ENC_TAG(a, b, c, d)                                          \
   (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | \
@@ -39,7 +41,7 @@ class CFX_UnicodeEncoding {
   virtual uint32_t GlyphFromCharCode(uint32_t charcode);
 
  protected:
-  CFX_Font* m_pFont;  // Unowned, not nullptr.
+  UnownedPtr<CFX_Font> const m_pFont;
 };
 
 #endif  // CORE_FXGE_CFX_UNICODEENCODING_H_

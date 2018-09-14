@@ -188,6 +188,8 @@ CPDF_Document::CPDF_Document()
       m_pDocRender(pdfium::MakeUnique<CPDF_DocRenderData>(this)) {}
 
 CPDF_Document::~CPDF_Document() {
+  // Destroy the extension before doing any non-extension teardown.
+  m_pExtension.reset();
   CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
 }
 
