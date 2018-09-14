@@ -121,8 +121,8 @@ WideString CFGAS_GEFont::GetFamilyName() const {
 
 uint32_t CFGAS_GEFont::GetFontStyles() const {
   ASSERT(m_pFont);
-  if (m_bUseLogFontStyle)
-    return m_dwLogFontStyle;
+  if (m_dwLogFontStyle.has_value())
+    return m_dwLogFontStyle.value();
 
   uint32_t dwStyles = 0;
   auto* pSubstFont = m_pFont->GetSubstFont();

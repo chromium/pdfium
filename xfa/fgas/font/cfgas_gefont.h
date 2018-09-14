@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/optional.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
@@ -48,7 +49,6 @@ class CFGAS_GEFont final : public Retainable {
   CFX_Font* GetDevFont() const { return m_pFont.Get(); }
 
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
-    m_bUseLogFontStyle = true;
     m_dwLogFontStyle = dwLogFontStyle;
   }
 
@@ -70,8 +70,7 @@ class CFGAS_GEFont final : public Retainable {
       bool bRecursive);
   WideString GetFamilyName() const;
 
-  bool m_bUseLogFontStyle = false;
-  uint32_t m_dwLogFontStyle = 0;
+  Optional<uint32_t> m_dwLogFontStyle;
   MaybeOwned<CFX_Font> m_pFont;  // Must come before |m_pFontEncoding|.
   CFGAS_FontMgr::ObservedPtr const m_pFontMgr;
   std::unique_ptr<CFX_UnicodeEncodingEx> m_pFontEncoding;
