@@ -71,12 +71,9 @@ class CPDF_StreamContentParser {
     ~ContentParam();
 
     Type m_Type;
-    std::unique_ptr<CPDF_Object> m_pObject;
     FX_Number m_Number;
-    struct {
-      int m_Len;
-      char m_Buffer[32];
-    } m_Name;
+    ByteString m_Name;
+    std::unique_ptr<CPDF_Object> m_pObject;
   };
 
   static const int kParamBufSize = 16;
