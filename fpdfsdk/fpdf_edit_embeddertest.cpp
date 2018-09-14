@@ -2363,7 +2363,7 @@ TEST_F(FPDFEditEmbeddertest, TransformAnnot) {
 
 // TODO(npm): Add tests using Japanese fonts in other OS.
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
-TEST_F(FPDFEditEmbeddertest, DISABLED_AddCIDFontText) {
+TEST_F(FPDFEditEmbeddertest, AddCIDFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
   CFX_Font CIDfont;
