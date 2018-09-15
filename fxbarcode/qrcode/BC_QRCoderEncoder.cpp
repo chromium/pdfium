@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/common/BC_CommonByteArray.h"
@@ -246,49 +247,6 @@ std::unique_ptr<CBC_CommonByteArray> GenerateECBytes(
   return ecBytes;
 }
 
-int32_t GetSpanByVersion(CBC_QRCoderMode* modeFirst,
-                         CBC_QRCoderMode* modeSecond,
-                         int32_t versionNum,
-                         int32_t& e) {
-  if (versionNum == 0)
-    return 0;
-
-  if (modeFirst == CBC_QRCoderMode::sALPHANUMERIC &&
-      modeSecond == CBC_QRCoderMode::sBYTE) {
-    if (versionNum >= 1 && versionNum <= 9)
-      return 11;
-    if (versionNum >= 10 && versionNum <= 26)
-      return 15;
-    if (versionNum >= 27 && versionNum <= CBC_QRCoderVersion::kMaxVersion)
-      return 16;
-    e = BCExceptionNoSuchVersion;
-    return 0;
-  }
-  if (modeSecond == CBC_QRCoderMode::sALPHANUMERIC &&
-      modeFirst == CBC_QRCoderMode::sNUMERIC) {
-    if (versionNum >= 1 && versionNum <= 9)
-      return 13;
-    if (versionNum >= 10 && versionNum <= 26)
-      return 15;
-    if (versionNum >= 27 && versionNum <= CBC_QRCoderVersion::kMaxVersion)
-      return 17;
-    e = BCExceptionNoSuchVersion;
-    return 0;
-  }
-  if (modeSecond == CBC_QRCoderMode::sBYTE &&
-      modeFirst == CBC_QRCoderMode::sNUMERIC) {
-    if (versionNum >= 1 && versionNum <= 9)
-      return 6;
-    if (versionNum >= 10 && versionNum <= 26)
-      return 8;
-    if (versionNum >= 27 && versionNum <= CBC_QRCoderVersion::kMaxVersion)
-      return 9;
-    e = BCExceptionNoSuchVersion;
-    return 0;
-  }
-  return -1;
-}
-
 int32_t CalculateMaskPenalty(CBC_CommonByteMatrix* matrix) {
   return CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1(matrix) +
          CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(matrix) +
@@ -366,61 +324,6 @@ bool TerminateBits(int32_t numDataBytes, CBC_QRCoderBitVector* bits) {
   for (int32_t k = 0; k < numPaddingBytes; ++k)
     bits->AppendBits(k % 2 ? 0x11 : 0xec, 8);
   return bits->Size() == capacity;
-}
-
-void MergeString(std::vector<ModeStringPair>* result,
-                 int32_t versionNum,
-                 int32_t& e) {
-  size_t mergeNum = 0;
-  for (size_t i = 0; i + 1 < result->size(); i++) {
-    auto& element1 = (*result)[i];
-    auto& element2 = (*result)[i + 1];
-    if (element1.first == CBC_QRCoderMode::sALPHANUMERIC) {
-      int32_t tmp = GetSpanByVersion(CBC_QRCoderMode::sALPHANUMERIC,
-                                     CBC_QRCoderMode::sBYTE, versionNum, e);
-      if (e != BCExceptionNO)
-        return;
-      if (element2.first == CBC_QRCoderMode::sBYTE && tmp >= 0 &&
-          element1.second.GetLength() < static_cast<size_t>(tmp)) {
-        element2.second = element1.second + element2.second;
-        result->erase(result->begin() + i);
-        i--;
-        mergeNum++;
-      }
-    } else if (element1.first == CBC_QRCoderMode::sBYTE) {
-      if (element2.first == CBC_QRCoderMode::sBYTE) {
-        element1.second += element2.second;
-        result->erase(result->begin() + i + 1);
-        i--;
-        mergeNum++;
-      }
-    } else if (element1.first == CBC_QRCoderMode::sNUMERIC) {
-      int32_t tmp = GetSpanByVersion(CBC_QRCoderMode::sNUMERIC,
-                                     CBC_QRCoderMode::sBYTE, versionNum, e);
-      if (e != BCExceptionNO)
-        return;
-      if (element2.first == CBC_QRCoderMode::sBYTE && tmp >= 0 &&
-          element1.second.GetLength() < static_cast<size_t>(tmp)) {
-        element2.second = element1.second + element2.second;
-        result->erase(result->begin() + i);
-        i--;
-        mergeNum++;
-      }
-      tmp = GetSpanByVersion(CBC_QRCoderMode::sNUMERIC,
-                             CBC_QRCoderMode::sALPHANUMERIC, versionNum, e);
-      if (e != BCExceptionNO)
-        return;
-      if (element2.first == CBC_QRCoderMode::sALPHANUMERIC && tmp >= 0 &&
-          element1.second.GetLength() < static_cast<size_t>(tmp)) {
-        element2.second = element1.second + element2.second;
-        result->erase(result->begin() + i);
-        i--;
-        mergeNum++;
-      }
-    }
-  }
-  if (mergeNum != 0)
-    MergeString(result, versionNum, e);
 }
 
 void SplitString(const ByteString& content,
@@ -558,10 +461,6 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
 }
 
 }  // namespace
-
-CBC_QRCoderEncoder::CBC_QRCoderEncoder() {}
-
-CBC_QRCoderEncoder::~CBC_QRCoderEncoder() {}
 
 // static
 bool CBC_QRCoderEncoder::Encode(const WideString& content,
