@@ -15,7 +15,6 @@
 #define FXFM_ENC_TAG(a, b, c, d)                                          \
   (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | \
    (uint32_t)(d))
-#define FXFM_ENCODING_NONE FXFM_ENC_TAG(0, 0, 0, 0)
 #define FXFM_ENCODING_MS_SYMBOL FXFM_ENC_TAG('s', 'y', 'm', 'b')
 #define FXFM_ENCODING_UNICODE FXFM_ENC_TAG('u', 'n', 'i', 'c')
 #define FXFM_ENCODING_MS_SJIS FXFM_ENC_TAG('s', 'j', 'i', 's')

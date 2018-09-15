@@ -106,7 +106,7 @@ bool CFGAS_GEFont::InitFont() {
   if (m_pFontEncoding)
     return true;
 
-  m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont.Get(), FXFM_ENCODING_NONE);
+  m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont.Get());
   return !!m_pFontEncoding;
 }
 

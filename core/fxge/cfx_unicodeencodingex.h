@@ -29,8 +29,6 @@ class CFX_UnicodeEncodingEx final : public CFX_UnicodeEncoding {
   uint32_t m_nEncodingID;
 };
 
-std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
-    CFX_Font* pFont,
-    uint32_t nEncodingID);
+std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(CFX_Font* pFont);
 
 #endif  // CORE_FXGE_CFX_UNICODEENCODINGEX_H_

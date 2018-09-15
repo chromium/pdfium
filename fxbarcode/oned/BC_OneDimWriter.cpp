@@ -123,7 +123,7 @@ void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
                                     int32_t fontSize,
                                     float& charsLen) {
   std::unique_ptr<CFX_UnicodeEncodingEx> encoding =
-      FX_CreateFontEncodingEx(cFont, FXFM_ENCODING_NONE);
+      FX_CreateFontEncodingEx(cFont);
 
   size_t length = text.GetLength();
   uint32_t* pCharCode = FX_Alloc(uint32_t, text.GetLength());
