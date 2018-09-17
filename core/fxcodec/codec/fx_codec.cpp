@@ -1540,7 +1540,7 @@ class CCodec_RLScanlineDecoder final : public CCodec_ScanlineDecoder {
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override { return m_SrcOffset; }
 
- protected:
+ private:
   bool CheckDestSize();
   void GetNextOperator();
   void UpdateOperator(uint8_t used_bytes);

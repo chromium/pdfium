@@ -23,7 +23,7 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
   void DrawText(CFWL_ThemeText* pParams) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
- protected:
+ private:
   struct CKBThemeData {
     FX_ARGB clrSignBorderNormal;
     FX_ARGB clrSignBorderDisable;
@@ -66,12 +66,10 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
                     CFX_Matrix* pMatrix);
 
   void InitCheckPath(float fCheckLen);
+  void SetThemeData();
 
   std::unique_ptr<CKBThemeData> m_pThemeData;
   std::unique_ptr<CXFA_GEPath> m_pCheckPath;
-
- private:
-  void SetThemeData();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_CHECKBOXTP_H_

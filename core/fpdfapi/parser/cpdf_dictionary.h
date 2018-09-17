@@ -106,7 +106,7 @@ class CPDF_Dictionary final : public CPDF_Object {
 
   WeakPtr<ByteStringPool> GetByteStringPool() const { return m_pPool; }
 
- protected:
+ private:
   ByteString MaybeIntern(const ByteString& str);
   std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,

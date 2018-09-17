@@ -20,7 +20,7 @@ class CPDF_TrueTypeFont final : public CPDF_SimpleFont {
   const CPDF_TrueTypeFont* AsTrueTypeFont() const override;
   CPDF_TrueTypeFont* AsTrueTypeFont() override;
 
- protected:
+ private:
   // CPDF_Font:
   bool Load() override;
 

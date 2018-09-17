@@ -34,14 +34,13 @@ class CBC_OnedEAN8Writer final : public CBC_OneDimWriter {
   bool SetTextLocation(BC_TEXT_LOC location);
   int32_t CalcChecksum(const ByteString& contents);
 
- protected:
+ private:
   bool ShowChars(const WideStringView& contents,
                  CFX_RenderDevice* device,
                  const CFX_Matrix* matrix,
                  int32_t barWidth,
                  int32_t multiple) override;
 
- private:
   static constexpr int32_t kDefaultCodeWidth = 3 + (7 * 4) + 5 + (7 * 4) + 3;
   int32_t m_codeWidth = kDefaultCodeWidth;
 };

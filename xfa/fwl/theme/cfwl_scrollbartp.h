@@ -19,7 +19,7 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
   // CFWL_WidgetTP
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
- protected:
+ private:
   struct SBThemeData {
     FX_ARGB clrTrackBKStart;
     FX_ARGB clrTrackBKEnd;
@@ -51,11 +51,9 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
                bool bVert,
                FWLTHEME_STATE eState,
                CFX_Matrix* pMatrix);
+  void SetThemeData();
 
   std::unique_ptr<SBThemeData> m_pThemeData;
-
- private:
-  void SetThemeData();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_SCROLLBARTP_H_

@@ -31,7 +31,7 @@ class CPDF_Boolean final : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 
- protected:
+ private:
   bool m_bValue;
 };
 

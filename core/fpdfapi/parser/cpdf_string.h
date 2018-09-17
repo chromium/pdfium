@@ -36,7 +36,7 @@ class CPDF_String final : public CPDF_Object {
 
   bool IsHex() const { return m_bHex; }
 
- protected:
+ private:
   ByteString m_String;
   bool m_bHex;
 };

@@ -193,7 +193,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
   explicit CGdiDisplayDriver(HDC hDC);
   ~CGdiDisplayDriver() override;
 
- protected:
+ private:
   bool GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int left,
                  int top) override;
@@ -234,7 +234,7 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
   explicit CGdiPrinterDriver(HDC hDC);
   ~CGdiPrinterDriver() override;
 
- protected:
+ private:
   int GetDeviceCaps(int caps_id) const override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
@@ -274,7 +274,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
   CPSPrinterDriver(HDC hDC, WindowsPrintMode mode, bool bCmykOutput);
   ~CPSPrinterDriver() override;
 
- protected:
+ private:
   // RenderDeviceDriverIface
   int GetDeviceCaps(int caps_id) const override;
   bool StartRendering() override;
@@ -339,7 +339,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
   explicit CTextOnlyPrinterDriver(HDC hDC);
   ~CTextOnlyPrinterDriver() override;
 
- protected:
+ private:
   // RenderDeviceDriverIface
   int GetDeviceCaps(int caps_id) const override;
   void SaveState() override{};

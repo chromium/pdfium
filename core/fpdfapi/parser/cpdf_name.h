@@ -30,7 +30,7 @@ class CPDF_Name final : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 
- protected:
+ private:
   ByteString m_Name;
 };
 

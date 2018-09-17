@@ -112,7 +112,7 @@ class CPDF_Array final : public CPDF_Object {
   const_iterator begin() const { return m_Objects.begin(); }
   const_iterator end() const { return m_Objects.end(); }
 
- protected:
+ private:
   std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;

@@ -17,7 +17,7 @@ class CFWL_ComboBoxTP final : public CFWL_WidgetTP {
   // CFWL_WidgetTP
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
- protected:
+ private:
   void DrawDropDownButton(CFWL_ThemeBackground* pParams,
                           uint32_t dwStates,
                           CFX_Matrix* pMatrix);

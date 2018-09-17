@@ -42,7 +42,7 @@ class CPDF_Reference final : public CPDF_Object {
   uint32_t GetRefObjNum() const { return m_RefObjNum; }
   void SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
 
- protected:
+ private:
   std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;

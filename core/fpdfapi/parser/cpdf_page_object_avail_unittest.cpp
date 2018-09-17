@@ -28,7 +28,7 @@ class TestReadValidator final : public CPDF_ReadValidator {
 
   void SimulateReadError() { ReadBlock(nullptr, 0, 1); }
 
- protected:
+ private:
   TestReadValidator()
       : CPDF_ReadValidator(
             pdfium::MakeRetain<CFX_InvalidSeekableReadStream>(100),

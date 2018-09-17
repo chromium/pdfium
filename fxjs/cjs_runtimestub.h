@@ -36,7 +36,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   Optional<IJS_Runtime::JS_Error> ExecuteScript(
       const WideString& script) override;
 
- protected:
+ private:
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   std::unique_ptr<IJS_EventContext> m_pContext;
 };

@@ -29,7 +29,7 @@ class CXFA_FFPageView final : public CXFA_ContainerLayoutItem {
       uint32_t dwTraverseWay,
       uint32_t dwWidgetFilter);
 
- protected:
+ private:
   UnownedPtr<CXFA_FFDocView> const m_pDocView;
 };
 
@@ -46,7 +46,7 @@ class CXFA_FFPageWidgetIterator final : public IXFA_WidgetIterator {
   CXFA_FFWidget* GetCurrentWidget() override;
   bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
- protected:
+ private:
   CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
 
   UnownedPtr<CXFA_FFPageView> m_pPageView;
@@ -85,7 +85,7 @@ class CXFA_FFTabOrderPageWidgetIterator final : public IXFA_WidgetIterator {
   CXFA_FFWidget* GetCurrentWidget() override;
   bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
- protected:
+ private:
   CXFA_FFWidget* GetTraverseWidget(CXFA_FFWidget* pWidget);
   CXFA_FFWidget* FindWidgetByName(const WideString& wsWidgetName,
                                   CXFA_FFWidget* pRefWidget);

@@ -37,7 +37,7 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
   bool GetFontCharset(void* hFont, int* charset) override;
   void DeleteFont(void* hFont) override;
 
- protected:
+ private:
   UnownedPtr<CFPF_SkiaFontMgr> m_pFontMgr;
 };
 

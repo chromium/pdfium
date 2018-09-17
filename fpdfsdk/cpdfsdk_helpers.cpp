@@ -54,7 +54,7 @@ class FPDF_FileHandlerContext final : public IFX_SeekableStream {
 
   void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
 
- protected:
+ private:
   explicit FPDF_FileHandlerContext(FPDF_FILEHANDLER* pFS);
   ~FPDF_FileHandlerContext() override;
 

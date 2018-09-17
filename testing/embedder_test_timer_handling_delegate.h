@@ -77,7 +77,7 @@ class EmbedderTestTimerHandlingDelegate final : public EmbedderTest::Delegate {
 
   void SetFailNextTimer() { fail_next_timer_ = true; }
 
- protected:
+ private:
   std::multimap<int, Timer> expiry_to_timer_map_;  // Keyed by timeout.
   bool fail_next_timer_ = false;
   int next_timer_id_ = 0;

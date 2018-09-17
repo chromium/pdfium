@@ -31,14 +31,13 @@ class CBC_OnedEAN13Writer final : public CBC_OneDimWriter {
 
   int32_t CalcChecksum(const ByteString& contents);
 
- protected:
+ private:
   bool ShowChars(const WideStringView& contents,
                  CFX_RenderDevice* device,
                  const CFX_Matrix* matrix,
                  int32_t barWidth,
                  int32_t multiple) override;
 
- private:
   int32_t m_codeWidth;
 };
 

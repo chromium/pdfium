@@ -14,7 +14,7 @@ class CPDF_PageObjectAvail final : public CPDF_ObjectAvail {
   using CPDF_ObjectAvail::CPDF_ObjectAvail;
   ~CPDF_PageObjectAvail() override;
 
- protected:
+ private:
   bool ExcludeObject(const CPDF_Object* object) const override;
 };
 

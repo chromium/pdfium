@@ -642,7 +642,7 @@ class CCodec_FlatePredictorScanlineDecoder final
   bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
 
- protected:
+ private:
   void GetNextLineWithPredictedPitch();
   void GetNextLineWithoutPredictedPitch();
 

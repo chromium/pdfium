@@ -17,7 +17,7 @@ class CFWL_ListBoxTP final : public CFWL_WidgetTP {
   // CFWL_WidgetTP
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
- protected:
+ private:
   void DrawListBoxItem(CXFA_Graphics* pGraphics,
                        uint32_t dwStates,
                        const CFX_RectF* prtItem,

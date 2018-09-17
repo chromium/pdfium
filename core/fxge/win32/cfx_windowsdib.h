@@ -42,7 +42,7 @@ class CFX_WindowsDIB final : public CFX_DIBitmap {
   void LoadFromDevice(HDC hDC, int left, int top);
   void SetToDevice(HDC hDC, int left, int top);
 
- protected:
+ private:
   CFX_WindowsDIB(HDC hDC, int width, int height);
   ~CFX_WindowsDIB() override;
 

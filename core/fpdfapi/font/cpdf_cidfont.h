@@ -62,7 +62,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   void GetVertOrigin(uint16_t CID, short& vx, short& vy) const;
   int GetCharSize(uint32_t charcode) const;
 
- protected:
+ private:
   void LoadGB2312();
   int GetGlyphIndex(uint32_t unicodeb, bool* pVertGlyph);
   int GetVerticalGlyph(int index, bool* pVertGlyph);

@@ -57,10 +57,9 @@ class CPWL_SBButton final : public CPWL_Wnd {
   bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag) override;
 
- protected:
+ private:
   PWL_SCROLLBAR_TYPE m_eScrollBarType;
   PWL_SBBUTTON_TYPE m_eSBButtonType;
-
   bool m_bMouseDown;
 };
 
@@ -142,7 +141,7 @@ class CPWL_ScrollBar final : public CPWL_Wnd {
 
   void SetNotifyForever(bool bForever) { m_bNotifyForever = bForever; }
 
- protected:
+ private:
   void SetScrollRange(float fMin, float fMax, float fClientWidth);
   void SetScrollPos(float fPos);
 
@@ -152,7 +151,6 @@ class CPWL_ScrollBar final : public CPWL_Wnd {
   void NotifyScrollWindow();
   CFX_FloatRect GetScrollArea() const;
 
- private:
   void CreateButtons(const CreateParams& cp);
 
   void OnMinButtonLBDown(const CFX_PointF& point);

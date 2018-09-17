@@ -35,7 +35,7 @@ class CFX_FileAccess_Windows final : public FileAccessIface {
   bool Flush() override;
   bool Truncate(FX_FILESIZE szFile) override;
 
- protected:
+ private:
   void* m_hFile;
 };
 

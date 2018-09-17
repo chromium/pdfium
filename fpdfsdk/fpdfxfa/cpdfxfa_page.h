@@ -52,7 +52,7 @@ class CPDFXFA_Page final : public IPDF_Page {
     m_pXFAPageView = pPageView;
   }
 
- protected:
+ private:
   // Refcounted class.
   CPDFXFA_Page(CPDFXFA_Context* pContext, int page_index);
   ~CPDFXFA_Page() override;
@@ -60,7 +60,6 @@ class CPDFXFA_Page final : public IPDF_Page {
   bool LoadPDFPage();
   bool LoadXFAPageView();
 
- private:
   RetainPtr<CPDF_Page> m_pPDFPage;
   CXFA_FFPageView* m_pXFAPageView;
   UnownedPtr<CPDFXFA_Context> const m_pContext;

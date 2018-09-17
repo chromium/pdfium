@@ -26,7 +26,7 @@ class CXFA_FWLAdapterTimerMgr final : public IFWL_AdapterTimerMgr {
              CFWL_TimerInfo** pTimerInfo) override;
   void Stop(CFWL_TimerInfo* pTimerInfo) override;
 
- protected:
+ private:
   static void TimerProc(int32_t idEvent);
 
   static std::vector<CFWL_TimerInfo*>* s_TimerArray;

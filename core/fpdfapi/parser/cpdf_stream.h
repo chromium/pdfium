@@ -62,7 +62,7 @@ class CPDF_Stream final : public CPDF_Object {
   bool IsMemoryBased() const { return m_bMemoryBased; }
   bool HasFilter() const;
 
- protected:
+ private:
   std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;

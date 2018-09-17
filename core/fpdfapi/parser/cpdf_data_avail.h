@@ -112,7 +112,7 @@ class CPDF_DataAvail final : public CPDF_Document::Observer {
 
   const CPDF_HintTables* GetHintTables() const { return m_pHintTables.get(); }
 
- protected:
+ private:
   class PageNode {
    public:
     PageNode();
@@ -184,7 +184,6 @@ class CPDF_DataAvail final : public CPDF_Document::Observer {
   bool m_bPagesLoad = false;
   std::unique_ptr<CPDF_PageObjectAvail> m_pFormAvail;
   std::vector<std::unique_ptr<CPDF_Object>> m_PagesArray;
-  uint32_t m_dwEncryptObjNum = 0;
   bool m_bTotalLoadPageTree = false;
   bool m_bCurPageDictLoadOK = false;
   PageNode m_PageNode;
