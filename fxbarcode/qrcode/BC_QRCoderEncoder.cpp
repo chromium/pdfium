@@ -62,9 +62,7 @@ int32_t GetAlphaNumericCode(int32_t code) {
   return g_alphaNumericTable[code_index];
 }
 
-void AppendNumericBytes(const ByteString& content,
-                        CBC_QRCoderBitVector* bits,
-                        int32_t& e) {
+bool AppendNumericBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
   int32_t length = content.GetLength();
   int32_t i = 0;
   while (i < length) {
@@ -83,25 +81,23 @@ void AppendNumericBytes(const ByteString& content,
       i++;
     }
   }
+  return true;
 }
 
-void AppendAlphaNumericBytes(const ByteString& content,
-                             CBC_QRCoderBitVector* bits,
-                             int32_t& e) {
+bool AppendAlphaNumericBytes(const ByteString& content,
+                             CBC_QRCoderBitVector* bits) {
   int32_t length = content.GetLength();
   int32_t i = 0;
   while (i < length) {
     int32_t code1 = GetAlphaNumericCode(content[i]);
-    if (code1 == -1) {
-      e = BCExceptionInvalidateCharacter;
-      return;
-    }
+    if (code1 == -1)
+      return false;
+
     if (i + 1 < length) {
       int32_t code2 = GetAlphaNumericCode(content[i + 1]);
-      if (code2 == -1) {
-        e = BCExceptionInvalidateCharacter;
-        return;
-      }
+      if (code2 == -1)
+        return false;
+
       bits->AppendBits(code1 * 45 + code2, 11);
       i += 2;
     } else {
@@ -109,54 +105,52 @@ void AppendAlphaNumericBytes(const ByteString& content,
       i++;
     }
   }
+  return true;
 }
 
-void AppendGBKBytes(const ByteString& content,
-                    CBC_QRCoderBitVector* bits,
-                    int32_t& e) {
+bool AppendGBKBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
   int32_t length = content.GetLength();
   uint32_t value = 0;
   for (int32_t i = 0; i < length; i += 2) {
     value = (uint32_t)(content[i] << 8 | content[i + 1]);
-    if (value <= 0xAAFE && value >= 0xA1A1) {
+    if (value <= 0xAAFE && value >= 0xA1A1)
       value -= 0xA1A1;
-    } else if (value <= 0xFAFE && value >= 0xB0A1) {
+    else if (value <= 0xFAFE && value >= 0xB0A1)
       value -= 0xA6A1;
-    } else {
-      e = BCExceptionInvalidateCharacter;
-      return;
-    }
+    else
+      return false;
+
     value = (uint32_t)((value >> 8) * 0x60) + (uint32_t)(value & 0xff);
     bits->AppendBits(value, 13);
   }
+  return true;
 }
 
-void Append8BitBytes(const ByteString& content,
+bool Append8BitBytes(const ByteString& content,
                      CBC_QRCoderBitVector* bits,
-                     ByteString encoding,
-                     int32_t& e) {
+                     ByteString encoding) {
   for (size_t i = 0; i < content.GetLength(); i++)
     bits->AppendBits(content[i], 8);
+  return true;
 }
 
-void AppendKanjiBytes(const ByteString& content,
-                      CBC_QRCoderBitVector* bits,
-                      int32_t& e) {
+bool AppendKanjiBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
   std::vector<uint8_t> bytes;
   uint32_t value = 0;
+  // TODO(thestig): This is wrong, as |bytes| is empty.
   for (size_t i = 0; i < bytes.size(); i += 2) {
     value = (uint32_t)((content[i] << 8) | content[i + 1]);
-    if (value <= 0x9ffc && value >= 0x8140) {
+    if (value <= 0x9ffc && value >= 0x8140)
       value -= 0x8140;
-    } else if (value <= 0xebbf && value >= 0xe040) {
+    else if (value <= 0xebbf && value >= 0xe040)
       value -= 0xc140;
-    } else {
-      e = BCExceptionInvalidateCharacter;
-      return;
-    }
+    else
+      return false;
+
     value = (uint32_t)((value >> 8) * 0xc0) + (uint32_t)(value & 0xff);
     bits->AppendBits(value, 13);
   }
+  return true;
 }
 
 void AppendModeInfo(CBC_QRCoderMode* mode, CBC_QRCoderBitVector* bits) {
@@ -185,23 +179,21 @@ bool AppendLengthInfo(int32_t numLetters,
   return true;
 }
 
-void AppendBytes(const ByteString& content,
+bool AppendBytes(const ByteString& content,
                  CBC_QRCoderMode* mode,
                  CBC_QRCoderBitVector* bits,
-                 ByteString encoding,
-                 int32_t& e) {
+                 ByteString encoding) {
   if (mode == CBC_QRCoderMode::sNUMERIC)
-    AppendNumericBytes(content, bits, e);
-  else if (mode == CBC_QRCoderMode::sALPHANUMERIC)
-    AppendAlphaNumericBytes(content, bits, e);
-  else if (mode == CBC_QRCoderMode::sBYTE)
-    Append8BitBytes(content, bits, encoding, e);
-  else if (mode == CBC_QRCoderMode::sKANJI)
-    AppendKanjiBytes(content, bits, e);
-  else if (mode == CBC_QRCoderMode::sGBK)
-    AppendGBKBytes(content, bits, e);
-  else
-    e = BCExceptionUnsupportedMode;
+    return AppendNumericBytes(content, bits);
+  if (mode == CBC_QRCoderMode::sALPHANUMERIC)
+    return AppendAlphaNumericBytes(content, bits);
+  if (mode == CBC_QRCoderMode::sBYTE)
+    return Append8BitBytes(content, bits, encoding);
+  if (mode == CBC_QRCoderMode::sKANJI)
+    return AppendKanjiBytes(content, bits);
+  if (mode == CBC_QRCoderMode::sGBK)
+    return AppendGBKBytes(content, bits);
+  return false;
 }
 
 bool InitQRCode(int32_t numInputBytes,
@@ -471,9 +463,7 @@ bool CBC_QRCoderEncoder::Encode(const WideString& content,
   CBC_UtilCodingConvert::UnicodeToUTF8(content, utf8Data);
   CBC_QRCoderMode* mode = ChooseMode(utf8Data, encoding);
   CBC_QRCoderBitVector dataBits;
-  int32_t e = BCExceptionNO;
-  AppendBytes(utf8Data, mode, &dataBits, encoding, e);
-  if (e != BCExceptionNO)
+  if (!AppendBytes(utf8Data, mode, &dataBits, encoding))
     return false;
   int32_t numInputBytes = dataBits.sizeInBytes();
   if (!InitQRCode(numInputBytes, ecLevel, mode, qrCode))
@@ -496,6 +486,7 @@ bool CBC_QRCoderEncoder::Encode(const WideString& content,
     return false;
   }
 
+  int32_t e = BCExceptionNO;
   auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   int32_t maskPattern = ChooseMaskPattern(
