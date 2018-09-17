@@ -86,6 +86,8 @@ class RetainPtr {
 // Trivial implementation - internal ref count with virtual destructor.
 class Retainable {
  public:
+  Retainable() = default;
+
   bool HasOneRef() const { return m_nRefCount == 1; }
 
  protected:
@@ -97,6 +99,9 @@ class Retainable {
 
   template <typename U>
   friend class RetainPtr;
+
+  Retainable(const Retainable& that) = delete;
+  Retainable& operator=(const Retainable& that) = delete;
 
   void Retain() { ++m_nRefCount; }
   void Release() {
