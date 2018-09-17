@@ -20,6 +20,11 @@ CPDF_StreamAcc::~CPDF_StreamAcc() {
 void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
                                  uint32_t estimated_size,
                                  bool bImageAcc) {
+  if (bRawAccess) {
+    ASSERT(!estimated_size);
+    ASSERT(!bImageAcc);
+  }
+
   if (!m_pStream)
     return;
 
@@ -61,6 +66,15 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
 
 void CPDF_StreamAcc::LoadAllDataFiltered() {
   LoadAllData(false, 0, false);
+}
+
+void CPDF_StreamAcc::LoadAllDataFilteredWithEstimatedSize(
+    uint32_t estimated_size) {
+  LoadAllData(false, estimated_size, false);
+}
+
+void CPDF_StreamAcc::LoadAllDataImageAcc(uint32_t estimated_size) {
+  LoadAllData(false, estimated_size, true);
 }
 
 void CPDF_StreamAcc::LoadAllDataRaw() {

@@ -24,8 +24,9 @@ class CPDF_StreamAcc final : public Retainable {
   CPDF_StreamAcc(const CPDF_StreamAcc&) = delete;
   CPDF_StreamAcc& operator=(const CPDF_StreamAcc&) = delete;
 
-  void LoadAllData(bool bRawAccess, uint32_t estimated_size, bool bImageAcc);
   void LoadAllDataFiltered();
+  void LoadAllDataFilteredWithEstimatedSize(uint32_t estimated_size);
+  void LoadAllDataImageAcc(uint32_t estimated_size);
   void LoadAllDataRaw();
 
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
@@ -43,6 +44,8 @@ class CPDF_StreamAcc final : public Retainable {
  protected:
   explicit CPDF_StreamAcc(const CPDF_Stream* pStream);
   ~CPDF_StreamAcc() override;
+
+  void LoadAllData(bool bRawAccess, uint32_t estimated_size, bool bImageAcc);
 
  private:
   uint8_t* m_pData = nullptr;

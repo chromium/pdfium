@@ -143,7 +143,7 @@ bool CPDF_DIBBase::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
     return false;
 
   m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-  m_pStreamAcc->LoadAllData(false, src_size.ValueOrDie(), true);
+  m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return false;
 
@@ -256,7 +256,7 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::StartLoadDIBBase(
     return LoadState::kFail;
 
   m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
-  m_pStreamAcc->LoadAllData(false, src_size.ValueOrDie(), true);
+  m_pStreamAcc->LoadAllDataImageAcc(src_size.ValueOrDie());
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return LoadState::kFail;
 

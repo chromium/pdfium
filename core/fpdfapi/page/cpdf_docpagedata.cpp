@@ -470,7 +470,7 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
   org_size = std::max(org_size, 0);
 
   auto pFontAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pFontStream);
-  pFontAcc->LoadAllData(false, org_size, false);
+  pFontAcc->LoadAllDataFilteredWithEstimatedSize(org_size);
   m_FontFileMap[pFontStream] = pFontAcc;
   return pFontAcc;
 }
