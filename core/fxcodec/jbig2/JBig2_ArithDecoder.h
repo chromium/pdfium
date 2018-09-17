@@ -12,6 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_BitStream;
+struct JBig2ArithQe;
 
 class JBig2ArithCtx {
  public:
@@ -19,7 +20,7 @@ class JBig2ArithCtx {
     uint16_t Qe;
     uint8_t NMPS;
     uint8_t NLPS;
-    uint8_t nSwitch;
+    bool bSwitch;
   };
 
   JBig2ArithCtx();
@@ -27,11 +28,11 @@ class JBig2ArithCtx {
   int DecodeNLPS(const JBig2ArithQe& qe);
   int DecodeNMPS(const JBig2ArithQe& qe);
 
-  unsigned int MPS() const { return m_MPS; }
+  unsigned int MPS() const { return m_MPS ? 1 : 0; }
   unsigned int I() const { return m_I; }
 
  private:
-  unsigned int m_MPS = 0;
+  bool m_MPS = 0;
   unsigned int m_I = 0;
 };
 
