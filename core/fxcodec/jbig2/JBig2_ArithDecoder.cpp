@@ -11,14 +11,7 @@
 
 namespace {
 
-struct JBig2ArithQe {
-  uint16_t Qe;
-  uint8_t NMPS;
-  uint8_t NLPS;
-  uint8_t nSwitch;
-};
-
-const JBig2ArithQe kQeTable[] = {
+const JBig2ArithCtx::JBig2ArithQe kQeTable[] = {
     // Stupid hack to keep clang-format from reformatting this badly.
     {0x5601, 1, 1, 1},   {0x3401, 2, 6, 0},   {0x1801, 3, 9, 0},
     {0x0AC1, 4, 12, 0},  {0x0521, 5, 29, 0},  {0x0221, 38, 33, 0},
@@ -39,21 +32,23 @@ const JBig2ArithQe kQeTable[] = {
 
 const unsigned int kDefaultAValue = 0x8000;
 
-int DecodeNMPS(JBig2ArithCtx* pCX, const JBig2ArithQe& qe) {
-  pCX->I = qe.NMPS;
-  return pCX->MPS;
-}
+}  // namespace
 
-int DecodeNLPS(JBig2ArithCtx* pCX, const JBig2ArithQe& qe) {
+JBig2ArithCtx::JBig2ArithCtx() = default;
+
+int JBig2ArithCtx::DecodeNLPS(const JBig2ArithQe& qe) {
   // TODO(thestig): |D|, |MPS| and friends probably should be booleans.
-  int D = 1 - pCX->MPS;
+  int D = 1 - m_MPS;
   if (qe.nSwitch == 1)
-    pCX->MPS = 1 - pCX->MPS;
-  pCX->I = qe.NLPS;
+    m_MPS = 1 - m_MPS;
+  m_I = qe.NLPS;
   return D;
 }
 
-}  // namespace
+int JBig2ArithCtx::DecodeNMPS(const JBig2ArithQe& qe) {
+  m_I = qe.NMPS;
+  return m_MPS;
+}
 
 CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
     : m_Complete(false), m_FinishedStream(false), m_pStream(pStream) {
@@ -68,22 +63,22 @@ CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
 CJBig2_ArithDecoder::~CJBig2_ArithDecoder() {}
 
 int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
-  if (!pCX || pCX->I >= FX_ArraySize(kQeTable))
+  if (!pCX || pCX->I() >= FX_ArraySize(kQeTable))
     return 0;
 
-  const JBig2ArithQe& qe = kQeTable[pCX->I];
+  const JBig2ArithCtx::JBig2ArithQe& qe = kQeTable[pCX->I()];
   m_A -= qe.Qe;
   if ((m_C >> 16) < m_A) {
     if (m_A & kDefaultAValue)
-      return pCX->MPS;
+      return pCX->MPS();
 
-    const int D = m_A < qe.Qe ? DecodeNLPS(pCX, qe) : DecodeNMPS(pCX, qe);
+    const int D = m_A < qe.Qe ? pCX->DecodeNLPS(qe) : pCX->DecodeNMPS(qe);
     ReadValueA();
     return D;
   }
 
   m_C -= m_A << 16;
-  const int D = m_A < qe.Qe ? DecodeNMPS(pCX, qe) : DecodeNLPS(pCX, qe);
+  const int D = m_A < qe.Qe ? pCX->DecodeNMPS(qe) : pCX->DecodeNLPS(qe);
   m_A = qe.Qe;
   ReadValueA();
   return D;

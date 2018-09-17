@@ -19,7 +19,7 @@ class CJBig2_ArithIaidDecoder;
 class CJBig2_ArithIntDecoder;
 class CJBig2_BitStream;
 class CJBig2_HuffmanTable;
-struct JBig2ArithCtx;
+class JBig2ArithCtx;
 struct JBig2HuffmanCode;
 
 struct JBig2IntDecoderState {

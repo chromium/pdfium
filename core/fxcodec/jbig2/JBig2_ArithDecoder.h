@@ -13,11 +13,26 @@
 
 class CJBig2_BitStream;
 
-struct JBig2ArithCtx {
-  JBig2ArithCtx() : MPS(0), I(0) {}
+class JBig2ArithCtx {
+ public:
+  struct JBig2ArithQe {
+    uint16_t Qe;
+    uint8_t NMPS;
+    uint8_t NLPS;
+    uint8_t nSwitch;
+  };
 
-  unsigned int MPS;
-  unsigned int I;
+  JBig2ArithCtx();
+
+  int DecodeNLPS(const JBig2ArithQe& qe);
+  int DecodeNMPS(const JBig2ArithQe& qe);
+
+  unsigned int MPS() const { return m_MPS; }
+  unsigned int I() const { return m_I; }
+
+ private:
+  unsigned int m_MPS = 0;
+  unsigned int m_I = 0;
 };
 
 class CJBig2_ArithDecoder {

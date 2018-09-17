@@ -14,7 +14,7 @@
 
 class CJBig2_ArithDecoder;
 class CJBig2_Image;
-struct JBig2ArithCtx;
+class JBig2ArithCtx;
 
 class CJBig2_GRRDProc {
  public:

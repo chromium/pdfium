@@ -15,8 +15,8 @@
 
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;
+class JBig2ArithCtx;
 class PauseIndicatorIface;
-struct JBig2ArithCtx;
 
 class CJBig2_HTRDProc {
  public:
