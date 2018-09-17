@@ -30,6 +30,26 @@ CBC_CodeBase::CBC_CodeBase(std::unique_ptr<CBC_Writer> pWriter)
 
 CBC_CodeBase::~CBC_CodeBase() {}
 
+bool CBC_CodeBase::SetTextLocation(BC_TEXT_LOC location) {
+  return false;
+}
+
+bool CBC_CodeBase::SetWideNarrowRatio(int8_t ratio) {
+  return false;
+}
+
+bool CBC_CodeBase::SetStartChar(char start) {
+  return false;
+}
+
+bool CBC_CodeBase::SetEndChar(char end) {
+  return false;
+}
+
+bool CBC_CodeBase::SetErrorCorrectionLevel(int32_t level) {
+  return false;
+}
+
 bool CBC_CodeBase::SetCharEncoding(int32_t encoding) {
   return m_pBCWriter->SetCharEncoding(encoding);
 }

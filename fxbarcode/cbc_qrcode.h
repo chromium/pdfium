@@ -24,8 +24,7 @@ class CBC_QRCode final : public CBC_CodeBase {
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
-
-  bool SetErrorCorrectionLevel(int32_t level);
+  bool SetErrorCorrectionLevel(int32_t level) override;
 
  private:
   CBC_QRCodeWriter* GetQRCodeWriter();
