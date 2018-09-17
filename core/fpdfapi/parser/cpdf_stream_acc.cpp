@@ -14,7 +14,6 @@ CPDF_StreamAcc::CPDF_StreamAcc(const CPDF_Stream* pStream)
 CPDF_StreamAcc::~CPDF_StreamAcc() {
   if (m_bNewBuf)
     FX_Free(m_pData);
-  FX_Free(m_pSrcData);
 }
 
 void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
@@ -42,12 +41,12 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
   if (m_pStream->IsMemoryBased()) {
     pSrcData = m_pStream->GetInMemoryRawData();
   } else {
-    pSrcData = m_pSrcData = FX_Alloc(uint8_t, dwSrcSize);
-    if (!m_pStream->ReadRawData(0, pSrcData, dwSrcSize)) {
-      FX_Free(pSrcData);
-      pSrcData = m_pSrcData = nullptr;
+    std::unique_ptr<uint8_t, FxFreeDeleter> pTempSrcData(
+        FX_Alloc(uint8_t, dwSrcSize));
+    if (!m_pStream->ReadRawData(0, pTempSrcData.get(), dwSrcSize))
       return;
-    }
+
+    pSrcData = pTempSrcData.release();
   }
   if (bProcessRawData) {
     m_pData = pSrcData;
@@ -60,7 +59,6 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
   }
   if (pSrcData != m_pStream->GetInMemoryRawData() && pSrcData != m_pData)
     FX_Free(pSrcData);
-  m_pSrcData = nullptr;
   m_bNewBuf = m_pData != m_pStream->GetInMemoryRawData();
 }
 
