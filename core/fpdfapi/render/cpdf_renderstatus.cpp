@@ -112,6 +112,37 @@ uint32_t GetValidatedOutputsCount(
   return funcs_outputs ? std::max(funcs_outputs, pCS->CountComponents()) : 0;
 }
 
+void GetShadingSteps(float t_min,
+                     float t_max,
+                     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
+                     const CPDF_ColorSpace* pCS,
+                     int alpha,
+                     size_t results_count,
+                     uint32_t* rgb_array) {
+  ASSERT(results_count >= CountOutputsFromFunctions(funcs));
+  ASSERT(results_count >= pCS->CountComponents());
+  std::vector<float> result_array(results_count);
+  float diff = t_max - t_min;
+  for (int i = 0; i < kShadingSteps; ++i) {
+    float input = diff * i / kShadingSteps + t_min;
+    int offset = 0;
+    for (const auto& func : funcs) {
+      if (func) {
+        int nresults = 0;
+        if (func->Call(&input, 1, &result_array[offset], &nresults))
+          offset += nresults;
+      }
+    }
+    float R = 0.0f;
+    float G = 0.0f;
+    float B = 0.0f;
+    pCS->GetRGB(result_array.data(), &R, &G, &B);
+    rgb_array[i] =
+        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
+                                FXSYS_round(G * 255), FXSYS_round(B * 255)));
+  }
+}
+
 void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
                       CFX_Matrix* pObject2Bitmap,
                       const CPDF_Dictionary* pDict,
@@ -152,28 +183,9 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float y_span = end_y - start_y;
   float axis_len_square = (x_span * x_span) + (y_span * y_span);
 
-  ASSERT(total_results >= CountOutputsFromFunctions(funcs));
-  ASSERT(total_results >= pCS->CountComponents());
-  std::vector<float> result_array(total_results);
   uint32_t rgb_array[kShadingSteps];
-  for (int i = 0; i < kShadingSteps; ++i) {
-    float input = (t_max - t_min) * i / kShadingSteps + t_min;
-    int offset = 0;
-    for (const auto& func : funcs) {
-      if (func) {
-        int nresults = 0;
-        if (func->Call(&input, 1, &result_array[offset], &nresults))
-          offset += nresults;
-      }
-    }
-    float R = 0.0f;
-    float G = 0.0f;
-    float B = 0.0f;
-    pCS->GetRGB(result_array.data(), &R, &G, &B);
-    rgb_array[i] =
-        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
-                                FXSYS_round(G * 255), FXSYS_round(B * 255)));
-  }
+  GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results, rgb_array);
+
   int pitch = pBitmap->GetPitch();
   CFX_Matrix matrix = pObject2Bitmap->GetInverse();
   for (int row = 0; row < height; row++) {
@@ -238,28 +250,8 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
     bEndExtend = !!pArray->GetIntegerAt(1);
   }
 
-  ASSERT(total_results >= CountOutputsFromFunctions(funcs));
-  ASSERT(total_results >= pCS->CountComponents());
-  std::vector<float> result_array(total_results);
   uint32_t rgb_array[kShadingSteps];
-  for (int i = 0; i < kShadingSteps; ++i) {
-    float input = (t_max - t_min) * i / kShadingSteps + t_min;
-    int offset = 0;
-    for (const auto& func : funcs) {
-      if (func) {
-        int nresults;
-        if (func->Call(&input, 1, &result_array[offset], &nresults))
-          offset += nresults;
-      }
-    }
-    float R = 0.0f;
-    float G = 0.0f;
-    float B = 0.0f;
-    pCS->GetRGB(result_array.data(), &R, &G, &B);
-    rgb_array[i] =
-        FXARGB_TODIB(ArgbEncode(alpha, FXSYS_round(R * 255),
-                                FXSYS_round(G * 255), FXSYS_round(B * 255)));
-  }
+  GetShadingSteps(t_min, t_max, funcs, pCS, alpha, total_results, rgb_array);
 
   const float dx = end_x - start_x;
   const float dy = end_y - start_y;
