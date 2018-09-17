@@ -178,15 +178,6 @@ FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_obj);
 //   page - handle to a page.
 //
 // Returns the number of objects in |page|.
-//
-// DEPRECATED. Please use FPDFPage_CountObjects.
-FPDF_EXPORT int FPDF_CALLCONV FPDFPage_CountObject(FPDF_PAGE page);
-
-// Get number of page objects inside |page|.
-//
-//   page - handle to a page.
-//
-// Returns the number of objects in |page|.
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_CountObjects(FPDF_PAGE page);
 
 // Get object in |page| at |index|.
