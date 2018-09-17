@@ -41,11 +41,13 @@ int JBig2ArithCtx::DecodeNLPS(const JBig2ArithQe& qe) {
   if (qe.bSwitch)
     m_MPS = !m_MPS;
   m_I = qe.NLPS;
+  ASSERT(m_I < FX_ArraySize(kQeTable));
   return D;
 }
 
 int JBig2ArithCtx::DecodeNMPS(const JBig2ArithQe& qe) {
   m_I = qe.NMPS;
+  ASSERT(m_I < FX_ArraySize(kQeTable));
   return MPS();
 }
 
@@ -62,8 +64,8 @@ CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
 CJBig2_ArithDecoder::~CJBig2_ArithDecoder() {}
 
 int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
-  if (!pCX || pCX->I() >= FX_ArraySize(kQeTable))
-    return 0;
+  ASSERT(pCX);
+  ASSERT(pCX->I() < FX_ArraySize(kQeTable));
 
   const JBig2ArithCtx::JBig2ArithQe& qe = kQeTable[pCX->I()];
   m_A -= qe.Qe;
