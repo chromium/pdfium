@@ -149,13 +149,13 @@ void CJS_GlobalData::SetGlobalVariableObject(
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
     pData->data.nType = JS_GlobalDataType::OBJECT;
-    pData->data.objData.Copy(array);
+    pData->data.objData = array;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::OBJECT;
-  pNewData->data.objData.Copy(array);
+  pNewData->data.objData = array;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 

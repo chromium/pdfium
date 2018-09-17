@@ -17,10 +17,11 @@ class CJS_GlobalVariableArray {
   CJS_GlobalVariableArray();
   ~CJS_GlobalVariableArray();
 
+  CJS_GlobalVariableArray& operator=(const CJS_GlobalVariableArray& array);
+
   void Add(std::unique_ptr<CJS_KeyValue> pKeyValue);
   int Count() const;
   CJS_KeyValue* GetAt(int index) const;
-  void Copy(const CJS_GlobalVariableArray& array);
 
  private:
   std::vector<std::unique_ptr<CJS_KeyValue>> m_Array;
