@@ -61,10 +61,6 @@ BC_TYPE CBC_Code39::GetType() {
   return BC_CODE39;
 }
 
-bool CBC_Code39::SetTextLocation(BC_TEXT_LOC location) {
-  return GetOnedCode39Writer()->SetTextLocation(location);
-}
-
 bool CBC_Code39::SetWideNarrowRatio(int8_t ratio) {
   return GetOnedCode39Writer()->SetWideNarrowRatio(ratio);
 }

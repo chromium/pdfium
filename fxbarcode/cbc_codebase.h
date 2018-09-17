@@ -29,12 +29,12 @@ class CBC_CodeBase {
   virtual bool Encode(const WideStringView& contents) = 0;
   virtual bool RenderDevice(CFX_RenderDevice* device,
                             const CFX_Matrix* matrix) = 0;
-  virtual bool SetTextLocation(BC_TEXT_LOC location);
   virtual bool SetWideNarrowRatio(int8_t ratio);
   virtual bool SetStartChar(char start);
   virtual bool SetEndChar(char end);
   virtual bool SetErrorCorrectionLevel(int32_t level);
 
+  bool SetTextLocation(BC_TEXT_LOC location);
   bool SetCharEncoding(int32_t encoding);
   bool SetModuleHeight(int32_t moduleHeight);
   bool SetModuleWidth(int32_t moduleWidth);

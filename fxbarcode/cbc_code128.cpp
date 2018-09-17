@@ -31,10 +31,6 @@ CBC_Code128::CBC_Code128(BC_TYPE type)
 
 CBC_Code128::~CBC_Code128() {}
 
-bool CBC_Code128::SetTextLocation(BC_TEXT_LOC location) {
-  return GetOnedCode128Writer()->SetTextLocation(location);
-}
-
 bool CBC_Code128::Encode(const WideStringView& contents) {
   if (contents.IsEmpty())
     return false;

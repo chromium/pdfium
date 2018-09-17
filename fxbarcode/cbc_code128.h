@@ -24,7 +24,6 @@ class CBC_Code128 final : public CBC_OneCode {
   bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
-  bool SetTextLocation(BC_TEXT_LOC location) override;
 
  private:
   CBC_OnedCode128Writer* GetOnedCode128Writer();

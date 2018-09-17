@@ -39,10 +39,6 @@ bool CBC_Codabar::SetEndChar(char end) {
   return GetOnedCodaBarWriter()->SetEndChar(end);
 }
 
-bool CBC_Codabar::SetTextLocation(BC_TEXT_LOC location) {
-  return GetOnedCodaBarWriter()->SetTextLocation(location);
-}
-
 bool CBC_Codabar::SetWideNarrowRatio(int8_t ratio) {
   return GetOnedCodaBarWriter()->SetWideNarrowRatio(ratio);
 }

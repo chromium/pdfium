@@ -30,8 +30,8 @@ class CBC_OnedEAN8Writer final : public CBC_OneDimWriter {
   bool CheckContentValidity(const WideStringView& contents) override;
   WideString FilterContents(const WideStringView& contents) override;
   void SetDataLength(int32_t length) override;
+  bool SetTextLocation(BC_TEXT_LOC location) override;
 
-  bool SetTextLocation(BC_TEXT_LOC location);
   int32_t CalcChecksum(const ByteString& contents);
 
  private:

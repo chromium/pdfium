@@ -33,8 +33,7 @@ class CBC_OnedCode128Writer final : public CBC_OneDimWriter {
   uint8_t* EncodeImpl(const ByteString& contents, int32_t& outLength) override;
   bool CheckContentValidity(const WideStringView& contents) override;
   WideString FilterContents(const WideStringView& contents) override;
-
-  bool SetTextLocation(BC_TEXT_LOC location);
+  bool SetTextLocation(BC_TEXT_LOC location) override;
 
   BC_TYPE GetType() const { return m_codeFormat; }
 

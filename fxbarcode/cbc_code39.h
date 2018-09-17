@@ -25,7 +25,6 @@ class CBC_Code39 final : public CBC_OneCode {
   bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
-  bool SetTextLocation(BC_TEXT_LOC location) override;
   bool SetWideNarrowRatio(int8_t ratio) override;
 
  private:
