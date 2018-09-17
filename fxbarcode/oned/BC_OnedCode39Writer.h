@@ -38,7 +38,7 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
   void ToIntArray(int16_t a, int8_t* toReturn);
   char CalcCheckSum(const ByteString& contents);
 
-  int8_t m_iWideNarrRatio;
+  int8_t m_iWideNarrRatio = 3;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_

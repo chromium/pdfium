@@ -42,7 +42,8 @@ class CBC_OnedEAN8Writer final : public CBC_OneDimWriter {
                  int32_t multiple) override;
 
  private:
-  int32_t m_codeWidth;
+  static constexpr int32_t kDefaultCodeWidth = 3 + (7 * 4) + 5 + (7 * 4) + 3;
+  int32_t m_codeWidth = kDefaultCodeWidth;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDEAN8WRITER_H_

@@ -81,7 +81,7 @@ CBC_OnedCode128Writer::CBC_OnedCode128Writer(BC_TYPE type)
   assert(m_codeFormat == BC_CODE128_B || m_codeFormat == BC_CODE128_C);
 }
 
-CBC_OnedCode128Writer::~CBC_OnedCode128Writer() {}
+CBC_OnedCode128Writer::~CBC_OnedCode128Writer() = default;
 
 bool CBC_OnedCode128Writer::CheckContentValidity(
     const WideStringView& contents) {

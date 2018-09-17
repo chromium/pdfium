@@ -46,10 +46,9 @@ const int8_t kOnedEAN8LPattern[10][4] = {
 
 CBC_OnedEAN8Writer::CBC_OnedEAN8Writer() {
   m_iDataLenth = 8;
-  m_codeWidth = 3 + (7 * 4) + 5 + (7 * 4) + 3;
 }
 
-CBC_OnedEAN8Writer::~CBC_OnedEAN8Writer() {}
+CBC_OnedEAN8Writer::~CBC_OnedEAN8Writer() = default;
 
 void CBC_OnedEAN8Writer::SetDataLength(int32_t length) {
   m_iDataLenth = 8;
