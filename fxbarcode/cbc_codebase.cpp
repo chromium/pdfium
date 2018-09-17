@@ -35,19 +35,19 @@ bool CBC_CodeBase::SetTextLocation(BC_TEXT_LOC location) {
 }
 
 bool CBC_CodeBase::SetWideNarrowRatio(int8_t ratio) {
-  return false;
+  return m_pBCWriter->SetWideNarrowRatio(ratio);
 }
 
 bool CBC_CodeBase::SetStartChar(char start) {
-  return false;
+  return m_pBCWriter->SetStartChar(start);
 }
 
 bool CBC_CodeBase::SetEndChar(char end) {
-  return false;
+  return m_pBCWriter->SetEndChar(end);
 }
 
 bool CBC_CodeBase::SetErrorCorrectionLevel(int32_t level) {
-  return false;
+  return m_pBCWriter->SetErrorCorrectionLevel(level);
 }
 
 bool CBC_CodeBase::SetCharEncoding(int32_t encoding) {

@@ -61,10 +61,6 @@ BC_TYPE CBC_Code39::GetType() {
   return BC_CODE39;
 }
 
-bool CBC_Code39::SetWideNarrowRatio(int8_t ratio) {
-  return GetOnedCode39Writer()->SetWideNarrowRatio(ratio);
-}
-
 CBC_OnedCode39Writer* CBC_Code39::GetOnedCode39Writer() {
   return static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get());
 }

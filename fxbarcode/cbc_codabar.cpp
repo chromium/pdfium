@@ -31,18 +31,6 @@ CBC_Codabar::CBC_Codabar()
 
 CBC_Codabar::~CBC_Codabar() {}
 
-bool CBC_Codabar::SetStartChar(char start) {
-  return GetOnedCodaBarWriter()->SetStartChar(start);
-}
-
-bool CBC_Codabar::SetEndChar(char end) {
-  return GetOnedCodaBarWriter()->SetEndChar(end);
-}
-
-bool CBC_Codabar::SetWideNarrowRatio(int8_t ratio) {
-  return GetOnedCodaBarWriter()->SetWideNarrowRatio(ratio);
-}
-
 bool CBC_Codabar::Encode(const WideStringView& contents) {
   if (contents.IsEmpty())
     return false;

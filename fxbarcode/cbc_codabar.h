@@ -24,9 +24,6 @@ class CBC_Codabar final : public CBC_OneCode {
   bool Encode(const WideStringView& contents) override;
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix) override;
-  bool SetWideNarrowRatio(int8_t ratio) override;
-  bool SetStartChar(char start) override;
-  bool SetEndChar(char end) override;
 
  private:
   CBC_OnedCodaBarWriter* GetOnedCodaBarWriter();

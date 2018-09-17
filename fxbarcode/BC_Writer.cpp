@@ -53,6 +53,22 @@ bool CBC_Writer::SetTextLocation(BC_TEXT_LOC location) {
   return false;
 }
 
+bool CBC_Writer::SetWideNarrowRatio(int8_t ratio) {
+  return false;
+}
+
+bool CBC_Writer::SetStartChar(char start) {
+  return false;
+}
+
+bool CBC_Writer::SetEndChar(char end) {
+  return false;
+}
+
+bool CBC_Writer::SetErrorCorrectionLevel(int32_t level) {
+  return false;
+}
+
 RetainPtr<CFX_DIBitmap> CBC_Writer::CreateDIBitmap(int32_t width,
                                                    int32_t height) {
   auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();

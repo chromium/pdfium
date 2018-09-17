@@ -25,6 +25,10 @@ class CBC_Writer {
   virtual void SetBackgroundColor(FX_ARGB backgroundColor);
   virtual void SetBarcodeColor(FX_ARGB foregroundColor);
   virtual bool SetTextLocation(BC_TEXT_LOC location);
+  virtual bool SetWideNarrowRatio(int8_t ratio);
+  virtual bool SetStartChar(char start);
+  virtual bool SetEndChar(char end);
+  virtual bool SetErrorCorrectionLevel(int32_t level);
 
  protected:
   RetainPtr<CFX_DIBitmap> CreateDIBitmap(int32_t width, int32_t height);

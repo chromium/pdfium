@@ -31,10 +31,10 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
   WideString FilterContents(const WideStringView& contents) override;
   void SetDataLength(int32_t length) override;
   bool SetTextLocation(BC_TEXT_LOC location) override;
+  bool SetWideNarrowRatio(int8_t ratio) override;
+  bool SetStartChar(char start) override;
+  bool SetEndChar(char end) override;
 
-  virtual bool SetStartChar(char start);
-  virtual bool SetEndChar(char end);
-  virtual bool SetWideNarrowRatio(int8_t ratio);
   virtual bool FindChar(wchar_t ch, bool isContent);
 
   WideString encodedContents(const WideStringView& contents);

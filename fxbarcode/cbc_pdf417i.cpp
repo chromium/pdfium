@@ -31,11 +31,6 @@ CBC_PDF417I::CBC_PDF417I()
 
 CBC_PDF417I::~CBC_PDF417I() {}
 
-bool CBC_PDF417I::SetErrorCorrectionLevel(int32_t level) {
-  GetPDF417Writer()->SetErrorCorrectionLevel(level);
-  return true;
-}
-
 bool CBC_PDF417I::Encode(const WideStringView& contents) {
   int32_t outWidth;
   int32_t outHeight;

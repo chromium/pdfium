@@ -31,12 +31,6 @@ CBC_QRCode::CBC_QRCode()
 
 CBC_QRCode::~CBC_QRCode() {}
 
-bool CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
-  if (level < 0 || level > 3)
-    return false;
-  return GetQRCodeWriter()->SetErrorCorrectionLevel(level);
-}
-
 bool CBC_QRCode::Encode(const WideStringView& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;

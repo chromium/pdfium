@@ -25,7 +25,7 @@ class CBC_TwoDimWriter : public CBC_Writer {
                             int32_t codeHeight);
   virtual void RenderDeviceResult(CFX_RenderDevice* device,
                                   const CFX_Matrix* matrix);
-  virtual bool SetErrorCorrectionLevel(int32_t level) = 0;
+
   int32_t GetErrorCorrectionLevel() const;
 
  protected:
