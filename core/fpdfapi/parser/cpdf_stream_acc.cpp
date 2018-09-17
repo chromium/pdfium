@@ -27,15 +27,16 @@ void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
   if (!m_pStream)
     return;
 
-  bool bProcessRawData = bRawAccess || !m_pStream->HasFilter();
-  if (bProcessRawData && m_pStream->IsMemoryBased()) {
-    m_dwSize = m_pStream->GetRawSize();
-    m_pData = m_pStream->GetInMemoryRawData();
-    return;
-  }
   uint32_t dwSrcSize = m_pStream->GetRawSize();
   if (dwSrcSize == 0)
     return;
+
+  bool bProcessRawData = bRawAccess || !m_pStream->HasFilter();
+  if (bProcessRawData && m_pStream->IsMemoryBased()) {
+    m_pData = m_pStream->GetInMemoryRawData();
+    m_dwSize = dwSrcSize;
+    return;
+  }
 
   uint8_t* pSrcData;
   if (m_pStream->IsMemoryBased()) {
