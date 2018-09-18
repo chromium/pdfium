@@ -345,19 +345,21 @@ FPDFPageObj_RemoveMark(FPDF_PAGEOBJECT page_object, FPDF_PAGEOBJECTMARK mark) {
   return result;
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
                         void* buffer,
-                        unsigned long buflen) {
-  if (!mark)
-    return 0;
+                        unsigned long buflen,
+                        unsigned long* out_buflen) {
+  if (!mark || !out_buflen)
+    return false;
 
   const CPDF_ContentMarkItem* pMarkItem =
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
 
-  return Utf16EncodeMaybeCopyAndReturnLength(
+  *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
       WideString::FromUTF8(pMarkItem->GetName().AsStringView()), buffer,
       buflen);
+  return true;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
@@ -372,24 +374,29 @@ FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark) {
   return pParams ? pParams->GetCount() : 0;
 }
 
-FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamKey(FPDF_PAGEOBJECTMARK mark,
                             unsigned long index,
                             void* buffer,
-                            unsigned long buflen) {
+                            unsigned long buflen,
+                            unsigned long* out_buflen) {
+  if (!out_buflen)
+    return false;
+
   const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
   if (!pParams)
-    return 0;
+    return false;
 
   for (auto& it : *pParams) {
     if (index == 0) {
-      return Utf16EncodeMaybeCopyAndReturnLength(
+      *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
           WideString::FromUTF8(it.first.AsStringView()), buffer, buflen);
+      return true;
     }
     --index;
   }
 
-  return 0;
+  return false;
 }
 
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
@@ -407,6 +414,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
                                  FPDF_BYTESTRING key,
                                  int* out_value) {
+  if (!out_value)
+    return false;
+
   const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
   if (!pParams)
     return false;
