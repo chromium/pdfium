@@ -255,7 +255,7 @@ const CPDF_ContentMark* CPDF_PageContentGenerator::ProcessContentMarks(
     const CPDF_ContentMarkItem* item = pNext->GetItem(i);
 
     // Write mark tag.
-    *buf << "/" << item->GetName() << " ";
+    *buf << "/" << PDF_NameEncode(item->GetName()) << " ";
 
     // If there are no parameters, write a BMC (begin marked content) operator.
     if (item->GetParamType() == CPDF_ContentMarkItem::None) {

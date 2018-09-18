@@ -2568,7 +2568,7 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
 
   // Add a mark with the tag "TestMarkName" to that text.
   EXPECT_EQ(0, FPDFPageObj_CountMarks(text_object));
-  FPDF_PAGEOBJECTMARK mark = FPDFPageObj_AddMark(text_object, "TestMarkName");
+  FPDF_PAGEOBJECTMARK mark = FPDFPageObj_AddMark(text_object, "Test Mark Name");
   EXPECT_TRUE(mark);
   EXPECT_EQ(1, FPDFPageObj_CountMarks(text_object));
   EXPECT_EQ(mark, FPDFPageObj_GetMark(text_object, 0));
@@ -2576,7 +2576,7 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   EXPECT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
   std::wstring name =
       GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
-  EXPECT_EQ(L"TestMarkName", name);
+  EXPECT_EQ(L"Test Mark Name", name);
 
   // Add parameters:
   // - int "IntKey" : 42
@@ -2650,7 +2650,7 @@ TEST_F(FPDFEditEmbeddertest, AddMarkedText) {
   EXPECT_TRUE(mark);
   EXPECT_GT(FPDFPageObjMark_GetName(mark, buffer, sizeof(buffer)), 0u);
   name = GetPlatformWString(reinterpret_cast<unsigned short*>(buffer));
-  EXPECT_EQ(L"TestMarkName", name);
+  EXPECT_EQ(L"Test Mark Name", name);
 
   CloseSavedPage(saved_page);
   CloseSavedDocument();
