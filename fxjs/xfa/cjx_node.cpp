@@ -221,6 +221,10 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
   if (!pXMLNode)
     return CJS_Result::Success();
 
+  CFX_XMLDocument* top_xml_doc =
+      GetXFANode()->GetDocument()->GetNotify()->GetHDOC()->GetXMLDocument();
+  top_xml_doc->AppendNodesFrom(pParser->GetXMLDoc().get());
+
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != FX_XMLNODE_Element ||
        XFA_RecognizeRichText(static_cast<CFX_XMLElement*>(pXMLNode)))) {
@@ -239,19 +243,10 @@ CJS_Result CJX_Node::loadXML(CFX_V8* runtime,
     CFX_XMLNode* pThisXMLRoot = GetXFANode()->GetXMLMappingNode();
     CFX_XMLNode* clone;
     if (pThisXMLRoot) {
-      clone = pThisXMLRoot->Clone(GetXFANode()
-                                      ->GetDocument()
-                                      ->GetNotify()
-                                      ->GetHDOC()
-                                      ->GetXMLDocument());
+      clone = pThisXMLRoot->Clone(top_xml_doc);
     } else {
-      clone = GetXFANode()
-                  ->GetDocument()
-                  ->GetNotify()
-                  ->GetHDOC()
-                  ->GetXMLDocument()
-                  ->CreateNode<CFX_XMLElement>(
-                      WideString(GetXFANode()->GetClassName()));
+      clone = top_xml_doc->CreateNode<CFX_XMLElement>(
+          WideString(GetXFANode()->GetClassName()));
     }
     pFakeXMLRoot = clone;
   }

@@ -12,3 +12,10 @@ CFX_XMLDocument::CFX_XMLDocument() {
 }
 
 CFX_XMLDocument::~CFX_XMLDocument() = default;
+
+void CFX_XMLDocument::AppendNodesFrom(CFX_XMLDocument* other) {
+  nodes_.reserve(nodes_.size() + other->nodes_.size());
+  nodes_.insert(nodes_.end(), std::make_move_iterator(other->nodes_.begin()),
+                std::make_move_iterator(other->nodes_.end()));
+  other->nodes_.clear();
+}

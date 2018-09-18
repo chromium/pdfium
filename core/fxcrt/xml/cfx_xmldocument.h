@@ -29,6 +29,12 @@ class CFX_XMLDocument {
     return static_cast<T*>(nodes_.back().get());
   }
 
+  // Transfers ownership of entries in |nodes_| from |other| to |this|.
+  // This is used in CJX_Node::loadXML to transfer ownership of the newly
+  // created nodes to the top-level XML doc for the PDF, after parsing an XML
+  // blob.
+  void AppendNodesFrom(CFX_XMLDocument* other);
+
  private:
   std::vector<std::unique_ptr<CFX_XMLNode>> nodes_;
   UnownedPtr<CFX_XMLElement> root_;
