@@ -47,6 +47,12 @@ class CPDF_StreamAcc final : public Retainable {
 
   void LoadAllData(bool bRawAccess, uint32_t estimated_size, bool bImageAcc);
 
+  void ProcessRawData();
+  void ProcessFilteredData(uint32_t estimated_size, bool bImageAcc);
+
+  // Reads the raw data from |m_pStream|, or return nullptr on failure.
+  std::unique_ptr<uint8_t, FxFreeDeleter> ReadRawStream() const;
+
   uint8_t* m_pData = nullptr;
   uint32_t m_dwSize = 0;
   bool m_bNewBuf = false;
