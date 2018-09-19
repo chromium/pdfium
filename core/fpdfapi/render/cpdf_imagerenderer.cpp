@@ -70,28 +70,23 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
 }
 
 bool CPDF_ImageRenderer::StartRenderDIBBase() {
-  if (!m_Loader.m_pBitmap)
+  if (!m_Loader.GetBitmap())
     return false;
 
   CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
   m_BitmapAlpha = FXSYS_round(255 * state.GetFillAlpha());
-  m_pDIBBase = m_Loader.m_pBitmap;
+  m_pDIBBase = m_Loader.GetBitmap();
   if (m_pRenderStatus->GetRenderOptions().ColorModeIs(
           CPDF_RenderOptions::kAlpha) &&
-      !m_Loader.m_pMask) {
+      !m_Loader.GetMask()) {
     return StartBitmapAlpha();
   }
   if (state.GetTR()) {
     if (!state.GetTransferFunc())
       state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(state.GetTR()));
 
-    if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity()) {
-      m_pDIBBase = m_Loader.m_pBitmap =
-          state.GetTransferFunc()->TranslateImage(m_Loader.m_pBitmap);
-      if (m_Loader.m_bCached && m_Loader.m_pMask)
-        m_Loader.m_pMask = m_Loader.m_pMask->Clone(nullptr);
-      m_Loader.m_bCached = false;
-    }
+    if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity())
+      m_pDIBBase = m_Loader.TranslateImage(state.GetTransferFunc());
   }
   m_FillArgb = 0;
   m_bPatternColor = false;
@@ -127,7 +122,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   else if (m_pImageObject->GetImage()->IsInterpol())
     m_Flags |= FXDIB_INTERPOL;
 
-  if (m_Loader.m_pMask)
+  if (m_Loader.GetMask())
     return DrawMaskedImage();
 
   if (m_bPatternColor)
@@ -242,11 +237,11 @@ void CPDF_ImageRenderer::CalculateDrawImage(
                          m_Flags, true, FXDIB_BLEND_NORMAL)) {
     image_render.Continue(nullptr);
   }
-  if (m_Loader.m_MatteColor == 0xffffffff)
+  if (m_Loader.MatteColor() == 0xffffffff)
     return;
-  int matte_r = FXARGB_R(m_Loader.m_MatteColor);
-  int matte_g = FXARGB_G(m_Loader.m_MatteColor);
-  int matte_b = FXARGB_B(m_Loader.m_MatteColor);
+  int matte_r = FXARGB_R(m_Loader.MatteColor());
+  int matte_g = FXARGB_G(m_Loader.MatteColor());
+  int matte_b = FXARGB_B(m_Loader.MatteColor());
   for (int row = 0; row < rect.Height(); row++) {
     uint8_t* dest_scan = pBitmapDevice1->GetBitmap()->GetWritableScanline(row);
     const uint8_t* mask_scan = pBitmapDevice2->GetBitmap()->GetScanline(row);
@@ -359,7 +354,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
 #else
   bitmap_device2.GetBitmap()->Clear(0);
 #endif
-  CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_Loader.m_pMask,
+  CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_Loader.GetMask(),
                      &new_matrix, rect);
 #ifdef _SKIA_SUPPORT_
   m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(

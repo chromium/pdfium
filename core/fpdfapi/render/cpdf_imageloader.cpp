@@ -12,14 +12,12 @@
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fpdfapi/render/cpdf_transferfunc.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 
-CPDF_ImageLoader::CPDF_ImageLoader()
-    : m_MatteColor(0),
-      m_bCached(false),
-      m_pCache(nullptr),
-      m_pImageObject(nullptr) {}
+CPDF_ImageLoader::CPDF_ImageLoader() = default;
 
-CPDF_ImageLoader::~CPDF_ImageLoader() {}
+CPDF_ImageLoader::~CPDF_ImageLoader() = default;
 
 bool CPDF_ImageLoader::Start(CPDF_ImageObject* pImage,
                              CPDF_PageRenderCache* pCache,
@@ -50,6 +48,18 @@ bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause,
   if (!ret)
     HandleFailure();
   return ret;
+}
+
+RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
+    const RetainPtr<CPDF_TransferFunc>& pTransferFunc) {
+  ASSERT(pTransferFunc);
+  ASSERT(!pTransferFunc->GetIdentity());
+
+  m_pBitmap = pTransferFunc->TranslateImage(m_pBitmap);
+  if (m_bCached && m_pMask)
+    m_pMask = m_pMask->Clone(nullptr);
+  m_bCached = false;
+  return m_pBitmap;
 }
 
 void CPDF_ImageLoader::HandleFailure() {
