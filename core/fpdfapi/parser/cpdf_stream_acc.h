@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
 
@@ -53,9 +54,8 @@ class CPDF_StreamAcc final : public Retainable {
   // Reads the raw data from |m_pStream|, or return nullptr on failure.
   std::unique_ptr<uint8_t, FxFreeDeleter> ReadRawStream() const;
 
-  uint8_t* m_pData = nullptr;
+  MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   uint32_t m_dwSize = 0;
-  bool m_bNewBuf = false;
   ByteString m_ImageDecoder;
   UnownedPtr<const CPDF_Dictionary> m_pImageParam;
   UnownedPtr<const CPDF_Stream> const m_pStream;

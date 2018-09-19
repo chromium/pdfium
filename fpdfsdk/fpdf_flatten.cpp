@@ -386,9 +386,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     ByteString sFormName = ByteString::Format("F%d", i);
     pXObject->SetFor(sFormName, pObj->MakeReference(pDocument));
 
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pNewXObject);
-    pAcc->LoadAllDataFiltered();
-    ByteString sStream(pAcc->GetData(), pAcc->GetSize());
+    ByteString sStream;
+    {
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pNewXObject);
+      pAcc->LoadAllDataFiltered();
+      sStream = ByteString(pAcc->GetSpan());
+    }
     CFX_Matrix matrix = pAPDic->GetMatrixFor("Matrix");
     CFX_Matrix m = GetMatrix(rcAnnot, rcStream, matrix);
     sStream += ByteString::Format("q %f 0 0 %f %f %f cm /%s Do Q\n", m.a, m.d,
