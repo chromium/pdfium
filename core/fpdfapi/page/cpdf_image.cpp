@@ -32,6 +32,18 @@
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 
+namespace {
+
+bool IsValidJpegComponent(int32_t comps) {
+  return comps == 1 || comps == 3 || comps == 4;
+}
+
+bool IsValidJpegBitsPerComponent(int32_t bpc) {
+  return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
+}
+
+}  // namespace
+
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
@@ -82,6 +94,8 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(
           src_span, &width, &height, &num_comps, &bits, &color_trans)) {
     return nullptr;
   }
+  if (!IsValidJpegComponent(num_comps) || !IsValidJpegBitsPerComponent(bits))
+    return nullptr;
 
   auto pDict =
       pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
