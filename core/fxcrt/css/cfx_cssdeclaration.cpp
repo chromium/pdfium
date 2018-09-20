@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 
+#include <utility>
+
 #include "core/fxcrt/css/cfx_csscolorvalue.h"
 #include "core/fxcrt/css/cfx_csscustomproperty.h"
 #include "core/fxcrt/css/cfx_cssenumvalue.h"

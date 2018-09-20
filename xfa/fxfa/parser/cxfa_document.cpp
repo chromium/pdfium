@@ -1648,7 +1648,8 @@ void CXFA_Document::DoDataMerge() {
     pDatasetsRoot->SetXMLMappingNode(pDatasetsXMLNode);
   }
 
-  CXFA_Node *pDataRoot = nullptr, *pDDRoot = nullptr;
+  CXFA_Node* pDataRoot = nullptr;
+  CXFA_Node* pDDRoot = nullptr;
   WideString wsDatasetsURI =
       pDatasetsRoot->JSObject()->TryNamespace().value_or(WideString());
   for (CXFA_Node* pChildNode = pDatasetsRoot->GetFirstChild(); pChildNode;

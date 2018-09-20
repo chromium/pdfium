@@ -7,12 +7,11 @@
 #ifndef CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_
 #define CORE_FXCODEC_BMP_CFX_BMPDECOMPRESSOR_H_
 
-#include "core/fxcodec/bmp/fx_bmp.h"
-
 #include <setjmp.h>
 
 #include <vector>
 
+#include "core/fxcodec/bmp/fx_bmp.h"
 #include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "third_party/base/span.h"
 

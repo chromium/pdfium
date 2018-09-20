@@ -15,11 +15,10 @@
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 #include "third_party/base/ptr_util.h"
 
-#define MAX_OOM_LIMIT 12000000
-
 namespace {
 
-const int8_t kChannelOffset[] = {0, 2, 1, 0, 0, 1, 2, 3, 3};
+constexpr size_t kMaxOOMLimit = 12000000;
+constexpr int8_t kChannelOffset[] = {0, 2, 1, 0, 0, 1, 2, 3, 3};
 
 }  // namespace
 
@@ -47,16 +46,14 @@ bool CFX_DIBitmap::Create(int width,
   m_Pitch = 0;
 
   uint32_t calculatedSize;
-  if (!CFX_DIBitmap::CalculatePitchAndSize(height, width, format, &pitch,
-                                           &calculatedSize))
+  if (!CalculatePitchAndSize(height, width, format, &pitch, &calculatedSize))
     return false;
 
   if (pBuffer) {
     m_pBuffer.Reset(pBuffer);
   } else {
     size_t bufferSize = calculatedSize + 4;
-    size_t oomlimit = MAX_OOM_LIMIT;
-    if (bufferSize >= oomlimit) {
+    if (bufferSize >= kMaxOOMLimit) {
       m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
           FX_TryAlloc(uint8_t, bufferSize));
       if (!m_pBuffer)
@@ -852,6 +849,7 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
   return true;
 }
 
+// static
 bool CFX_DIBitmap::CalculatePitchAndSize(int height,
                                          int width,
                                          FXDIB_Format format,

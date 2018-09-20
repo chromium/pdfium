@@ -1718,7 +1718,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
   }
 
   int32_t iIndex = 0;
-  for (; pRootLayout; pRootLayout = ToContainerLayoutItem(pRootLayout->m_pNextSibling)) {
+  for (; pRootLayout;
+       pRootLayout = ToContainerLayoutItem(pRootLayout->m_pNextSibling)) {
     CXFA_Node* pPendingPageSet = nullptr;
     CXFA_NodeIteratorTemplate<
         CXFA_ContainerLayoutItem,
@@ -1972,9 +1973,9 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
 }
 
 void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem) {
-  CXFA_LayoutItem *pNext, *pNode = pLayoutItem->m_pFirstChild;
+  CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
   while (pNode) {
-    pNext = pNode->m_pNextSibling;
+    CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
     pNode->m_pParent = nullptr;
     XFA_ReleaseLayoutItem_NoPageArea(pNode);
     pNode = pNext;

@@ -56,7 +56,6 @@ uint32_t DecodeAllScanlines(std::unique_ptr<CCodec_ScanlineDecoder> pDecoder) {
   for (int row = 0; row < height; ++row) {
     if (!pDecoder->GetScanline(row))
       break;
-
   }
   return pDecoder->GetSrcOffset();
 }

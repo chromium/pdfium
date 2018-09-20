@@ -4,6 +4,7 @@
 
 #include "xfa/fgas/layout/cfx_txtbreak.h"
 
+#include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_bidi.h"
