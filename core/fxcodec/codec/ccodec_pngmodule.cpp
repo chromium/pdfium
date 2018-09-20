@@ -23,34 +23,35 @@
 
 #define PNG_ERROR_SIZE 256
 
+namespace {
+
 class CPngContext final : public CCodec_PngModule::Context {
  public:
-  CPngContext(CCodec_PngModule* pModule, CCodec_PngModule::Delegate* pDelegate);
+  explicit CPngContext(CCodec_PngModule::Delegate* pDelegate);
   ~CPngContext() override;
 
-  png_structp m_pPng;
-  png_infop m_pInfo;
-  UnownedPtr<CCodec_PngModule> m_pModule;
-  UnownedPtr<CCodec_PngModule::Delegate> m_pDelegate;
-  void* (*m_AllocFunc)(unsigned int);
-  void (*m_FreeFunc)(void*);
+  png_structp m_pPng = nullptr;
+  png_infop m_pInfo = nullptr;
+  UnownedPtr<CCodec_PngModule::Delegate> const m_pDelegate;
   char m_szLastError[PNG_ERROR_SIZE];
 };
 
 extern "C" {
 
-static void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
-  if (png_get_error_ptr(png_ptr))
-    strncpy((char*)png_get_error_ptr(png_ptr), error_msg, PNG_ERROR_SIZE - 1);
+void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
+  if (png_get_error_ptr(png_ptr)) {
+    strncpy(static_cast<char*>(png_get_error_ptr(png_ptr)), error_msg,
+            PNG_ERROR_SIZE - 1);
+  }
 
   longjmp(png_jmpbuf(png_ptr), 1);
 }
 
-static void _png_warning_data(png_structp png_ptr, png_const_charp error_msg) {}
+void _png_warning_data(png_structp png_ptr, png_const_charp error_msg) {}
 
-static void _png_load_bmp_attribute(png_structp png_ptr,
-                                    png_infop info_ptr,
-                                    CFX_DIBAttribute* pAttribute) {
+void _png_load_bmp_attribute(png_structp png_ptr,
+                             png_infop info_ptr,
+                             CFX_DIBAttribute* pAttribute) {
   if (pAttribute) {
 #if defined(PNG_pHYs_SUPPORTED)
     pAttribute->m_nXDPI = png_get_x_pixels_per_meter(png_ptr, info_ptr);
@@ -82,15 +83,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
   }
 }
 
-static void* _png_alloc_func(unsigned int size) {
-  return FX_Alloc(char, size);
-}
-
-static void _png_free_func(void* p) {
-  FX_Free(p);
-}
-
-static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
+void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   auto* pContext =
       reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
   if (!pContext)
@@ -158,12 +151,12 @@ static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
   png_read_update_info(png_ptr, info_ptr);
 }
 
-static void _png_get_end_func(png_structp png_ptr, png_infop info_ptr) {}
+void _png_get_end_func(png_structp png_ptr, png_infop info_ptr) {}
 
-static void _png_get_row_func(png_structp png_ptr,
-                              png_bytep new_row,
-                              png_uint_32 row_num,
-                              int pass) {
+void _png_get_row_func(png_structp png_ptr,
+                       png_bytep new_row,
+                       png_uint_32 row_num,
+                       int pass) {
   auto* pContext =
       reinterpret_cast<CPngContext*>(png_get_progressive_ptr(png_ptr));
   if (!pContext)
@@ -181,14 +174,8 @@ static void _png_get_row_func(png_structp png_ptr,
 
 }  // extern "C"
 
-CPngContext::CPngContext(CCodec_PngModule* pModule,
-                         CCodec_PngModule::Delegate* pDelegate)
-    : m_pPng(nullptr),
-      m_pInfo(nullptr),
-      m_pModule(pModule),
-      m_pDelegate(pDelegate),
-      m_AllocFunc(_png_alloc_func),
-      m_FreeFunc(_png_free_func) {
+CPngContext::CPngContext(CCodec_PngModule::Delegate* pDelegate)
+    : m_pDelegate(pDelegate) {
   memset(m_szLastError, 0, sizeof(m_szLastError));
 }
 
@@ -197,9 +184,11 @@ CPngContext::~CPngContext() {
                           m_pInfo ? &m_pInfo : nullptr, nullptr);
 }
 
+}  // namespace
+
 std::unique_ptr<CCodec_PngModule::Context> CCodec_PngModule::Start(
     Delegate* pDelegate) {
-  auto p = pdfium::MakeUnique<CPngContext>(this, pDelegate);
+  auto p = pdfium::MakeUnique<CPngContext>(pDelegate);
   p->m_pPng =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!p->m_pPng)
@@ -231,6 +220,7 @@ bool CCodec_PngModule::Input(Context* pContext,
     }
     return false;
   }
-  png_process_data(ctx->m_pPng, ctx->m_pInfo, (uint8_t*)src_buf, src_size);
+  png_process_data(ctx->m_pPng, ctx->m_pInfo, const_cast<uint8_t*>(src_buf),
+                   src_size);
   return true;
 }

@@ -64,14 +64,6 @@ int SystemFontInfoIface::GetFaceIndex(void* hFont) {
   return 0;
 }
 
-extern "C" {
-unsigned long _FTStreamRead(FXFT_Stream stream,
-                            unsigned long offset,
-                            unsigned char* buffer,
-                            unsigned long count);
-void _FTStreamClose(FXFT_Stream stream);
-};
-
 #if _FX_OS_ == _FX_OS_ANDROID_
 std::unique_ptr<SystemFontInfoIface> SystemFontInfoIface::CreateDefault(
     const char** pUnused) {
