@@ -7,9 +7,6 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSDATA_H_
 #define CORE_FXCRT_CSS_CFX_CSSDATA_H_
 
-#include <memory>
-#include <vector>
-
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_cssnumbervalue.h"
 #include "core/fxcrt/css/cfx_cssvalue.h"

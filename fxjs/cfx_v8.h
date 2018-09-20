@@ -7,7 +7,6 @@
 #ifndef FXJS_CFX_V8_H_
 #define FXJS_CFX_V8_H_
 
-#include <map>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"

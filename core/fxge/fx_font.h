@@ -7,8 +7,6 @@
 #ifndef CORE_FXGE_FX_FONT_H_
 #define CORE_FXGE_FX_FONT_H_
 
-#include <memory>
-#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"

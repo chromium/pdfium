@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
 #define CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
 
-#include <memory>
-
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"

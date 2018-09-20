@@ -7,9 +7,6 @@
 #ifndef XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
 #define XFA_FXFA_FM2JS_CXFA_FMLEXER_H_
 
-#include <memory>
-#include <utility>
-
 #include "core/fxcrt/fx_string.h"
 
 enum XFA_FM_TOKEN {

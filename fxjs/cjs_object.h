@@ -7,9 +7,6 @@
 #ifndef FXJS_CJS_OBJECT_H_
 #define FXJS_CJS_OBJECT_H_
 
-#include <memory>
-#include <utility>
-
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cfxjs_engine.h"

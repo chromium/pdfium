@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_FPDFXFA_CXFA_FWLADAPTERTIMERMGR_H_
 #define FPDFSDK_FPDFXFA_CXFA_FWLADAPTERTIMERMGR_H_
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"

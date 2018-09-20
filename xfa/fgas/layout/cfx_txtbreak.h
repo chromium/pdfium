@@ -8,7 +8,6 @@
 #define XFA_FGAS_LAYOUT_CFX_TXTBREAK_H_
 
 #include <deque>
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/cfx_char.h"

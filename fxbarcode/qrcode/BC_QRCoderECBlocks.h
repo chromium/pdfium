@@ -9,8 +9,6 @@
 
 #include <stdint.h>
 
-#include <vector>
-
 struct CBC_QRCoderECBlockData;
 
 class CBC_QRCoderECBlocks {

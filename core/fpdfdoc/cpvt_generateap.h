@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFDOC_CPVT_GENERATEAP_H_
 #define CORE_FPDFDOC_CPVT_GENERATEAP_H_
 
-#include <memory>
-
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_variabletext.h"

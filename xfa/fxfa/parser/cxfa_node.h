@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_CXFA_NODE_H_
 #define XFA_FXFA_PARSER_CXFA_NODE_H_
 
-#include <map>
 #include <memory>
 #include <utility>
 #include <vector>

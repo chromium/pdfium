@@ -11,7 +11,6 @@
 
 #include <setjmp.h>
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcodec/codec/cfx_codec_memory.h"

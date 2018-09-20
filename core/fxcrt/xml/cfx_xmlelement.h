@@ -8,8 +8,6 @@
 #define CORE_FXCRT_XML_CFX_XMLELEMENT_H_
 
 #include <map>
-#include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/xml/cfx_xmlnode.h"

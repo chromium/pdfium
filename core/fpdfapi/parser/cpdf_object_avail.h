@@ -5,7 +5,6 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_OBJECT_AVAIL_H_
 #define CORE_FPDFAPI_PARSER_CPDF_OBJECT_AVAIL_H_
 
-#include <memory>
 #include <set>
 #include <stack>
 

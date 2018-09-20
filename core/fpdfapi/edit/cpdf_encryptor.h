@@ -9,7 +9,6 @@
 
 #include <stdint.h>
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"

@@ -7,8 +7,6 @@
 #ifndef FPDFSDK_PWL_CPWL_COMBO_BOX_H_
 #define FPDFSDK_PWL_CPWL_COMBO_BOX_H_
 
-#include <memory>
-
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"

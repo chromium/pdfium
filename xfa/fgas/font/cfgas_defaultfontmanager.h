@@ -7,8 +7,6 @@
 #ifndef XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_
 #define XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_
 
-#include <vector>
-
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"

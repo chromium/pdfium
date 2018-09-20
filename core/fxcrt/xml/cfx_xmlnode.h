@@ -7,8 +7,6 @@
 #ifndef CORE_FXCRT_XML_CFX_XMLNODE_H_
 #define CORE_FXCRT_XML_CFX_XMLNODE_H_
 
-#include <memory>
-
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 

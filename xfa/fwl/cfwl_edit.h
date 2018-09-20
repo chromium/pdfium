@@ -9,7 +9,6 @@
 
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include "xfa/fde/cfde_texteditengine.h"
 #include "xfa/fwl/cfwl_event.h"

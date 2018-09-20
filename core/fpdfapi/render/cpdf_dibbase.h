@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_
 #define CORE_FPDFAPI_RENDER_CPDF_DIBBASE_H_
 
-#include <map>
 #include <memory>
 #include <vector>
 

@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_PWL_CPWL_WND_H_
 #define FPDFSDK_PWL_CPWL_WND_H_
 
-#include <memory>
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"

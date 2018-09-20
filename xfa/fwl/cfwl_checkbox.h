@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_CHECKBOX_H_
 #define XFA_FWL_CFWL_CHECKBOX_H_
 
-#include <memory>
-
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"

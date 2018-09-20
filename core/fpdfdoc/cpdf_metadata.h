@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFDOC_CPDF_METADATA_H_
 #define CORE_FPDFDOC_CPDF_METADATA_H_
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"

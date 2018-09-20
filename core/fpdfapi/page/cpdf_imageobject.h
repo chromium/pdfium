@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_IMAGEOBJECT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_IMAGEOBJECT_H_
 
-#include <memory>
-
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxcrt/fx_coordinates.h"
 

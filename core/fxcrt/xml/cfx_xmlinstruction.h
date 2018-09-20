@@ -7,7 +7,6 @@
 #ifndef CORE_FXCRT_XML_CFX_XMLINSTRUCTION_H_
 #define CORE_FXCRT_XML_CFX_XMLINSTRUCTION_H_
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"

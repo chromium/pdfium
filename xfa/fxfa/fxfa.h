@@ -8,7 +8,6 @@
 #define XFA_FXFA_FXFA_H_
 
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"

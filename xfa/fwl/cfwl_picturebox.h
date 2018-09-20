@@ -7,8 +7,6 @@
 #ifndef XFA_FWL_CFWL_PICTUREBOX_H_
 #define XFA_FWL_CFWL_PICTUREBOX_H_
 
-#include <memory>
-
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 

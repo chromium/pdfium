@@ -7,8 +7,6 @@
 #ifndef CORE_FXCRT_FX_ARABIC_H_
 #define CORE_FXCRT_FX_ARABIC_H_
 
-#include <vector>
-
 #include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/fx_system.h"
 

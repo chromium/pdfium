@@ -7,7 +7,6 @@
 #ifndef FXJS_CJS_RUNTIME_H_
 #define FXJS_CJS_RUNTIME_H_
 
-#include <map>
 #include <memory>
 #include <set>
 #include <utility>

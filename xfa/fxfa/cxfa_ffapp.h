@@ -8,7 +8,6 @@
 #define XFA_FXFA_CXFA_FFAPP_H_
 
 #include <memory>
-#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"

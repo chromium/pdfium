@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_CPDFSDK_ANNOTHANDLERMGR_H_
 #define FPDFSDK_CPDFSDK_ANNOTHANDLERMGR_H_
 
-#include <map>
 #include <memory>
 
 #include "core/fpdfdoc/cpdf_annot.h"

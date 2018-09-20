@@ -8,7 +8,6 @@
 #define FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 
 #include <memory>
-#include <vector>
 
 #include "fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 

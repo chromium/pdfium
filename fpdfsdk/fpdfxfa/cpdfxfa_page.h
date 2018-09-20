@@ -7,8 +7,6 @@
 #ifndef FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_
 #define FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_
 
-#include <memory>
-
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/ipdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"

@@ -6,6 +6,7 @@
 #define PDFIUM_THIRD_PARTY_BASE_OPTIONAL_H_
 
 #include <type_traits>
+#include <utility>
 
 #include "third_party/base/logging.h"
 

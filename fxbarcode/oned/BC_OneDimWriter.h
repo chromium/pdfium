@@ -7,7 +7,6 @@
 #ifndef FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 #define FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 
-#include <memory>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"

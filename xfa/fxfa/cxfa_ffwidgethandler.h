@@ -7,8 +7,6 @@
 #ifndef XFA_FXFA_CXFA_FFWIDGETHANDLER_H_
 #define XFA_FXFA_CXFA_FFWIDGETHANDLER_H_
 
-#include <vector>
-
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/fxfa.h"

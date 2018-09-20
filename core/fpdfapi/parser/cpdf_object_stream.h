@@ -7,7 +7,6 @@
 
 #include <map>
 #include <memory>
-#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/retain_ptr.h"

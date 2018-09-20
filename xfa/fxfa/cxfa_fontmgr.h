@@ -8,8 +8,6 @@
 #define XFA_FXFA_CXFA_FONTMGR_H_
 
 #include <map>
-#include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"

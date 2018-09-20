@@ -7,8 +7,6 @@
 #ifndef XFA_FXFA_PARSER_XFA_BASIC_DATA_H_
 #define XFA_FXFA_PARSER_XFA_BASIC_DATA_H_
 
-#include <map>
-
 #include "xfa/fxfa/fxfa_basic.h"
 
 extern const XFA_AttributeEnumInfo g_XFAEnumData[];

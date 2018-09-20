@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_CPDFSDK_ACTIONHANDLER_H_
 #define FPDFSDK_CPDFSDK_ACTIONHANDLER_H_
 
-#include <memory>
 #include <set>
+#include <utility>
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"

@@ -7,9 +7,7 @@
 #ifndef CORE_FXGE_CFX_UNICODEENCODINGEX_H_
 #define CORE_FXGE_CFX_UNICODEENCODINGEX_H_
 
-#include <map>
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_unicodeencoding.h"

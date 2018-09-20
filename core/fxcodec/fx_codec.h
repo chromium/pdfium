@@ -11,7 +11,6 @@
 #include <memory>
 #include <tuple>
 #include <utility>
-#include <vector>
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/fx_coordinates.h"

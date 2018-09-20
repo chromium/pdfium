@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_CXFA_FFDOCVIEW_H_
 #define XFA_FXFA_CXFA_FFDOCVIEW_H_
 
-#include <map>
 #include <memory>
 #include <vector>
 
