@@ -9,7 +9,6 @@
 
 #include <map>
 #include <memory>
-#include <utility>
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
 #include "core/fpdfapi/font/cfx_stockfontarray.h"

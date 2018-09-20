@@ -11,7 +11,6 @@
 
 #include <list>
 #include <map>
-#include <tuple>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"

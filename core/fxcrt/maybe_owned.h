@@ -5,7 +5,6 @@
 #ifndef CORE_FXCRT_MAYBE_OWNED_H_
 #define CORE_FXCRT_MAYBE_OWNED_H_
 
-#include <algorithm>
 #include <memory>
 #include <utility>
 

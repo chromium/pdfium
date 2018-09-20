@@ -403,6 +403,10 @@ ByteString CPDF_SyntaxParser::GetKeyword() {
   return GetNextWord(nullptr);
 }
 
+void CPDF_SyntaxParser::SetPos(FX_FILESIZE pos) {
+  m_Pos = std::min(pos, m_FileLen);
+}
+
 std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBody(
     CPDF_IndirectObjectHolder* pObjList) {
   const CPDF_ReadValidator::Session read_session(GetValidator().Get());

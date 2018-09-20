@@ -8,7 +8,6 @@
 #define CORE_FXCRT_XML_CFX_XMLPARSER_H_
 
 #include <memory>
-#include <stack>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"

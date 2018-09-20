@@ -7,7 +7,6 @@
 #ifndef FXJS_JS_DEFINE_H_
 #define FXJS_JS_DEFINE_H_
 
-#include <utility>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"

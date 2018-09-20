@@ -360,7 +360,7 @@ class CJS_Field final : public CJS_Object {
 
   void AddDelay_Int(FIELD_PROP prop, int32_t n);
   void AddDelay_Bool(FIELD_PROP prop, bool b);
-  void AddDelay_String(FIELD_PROP prop, const ByteString& string);
+  void AddDelay_String(FIELD_PROP prop, const ByteString& str);
   void AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect);
   void AddDelay_WordArray(FIELD_PROP prop, const std::vector<uint32_t>& array);
   void AddDelay_WideStringArray(FIELD_PROP prop,

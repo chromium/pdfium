@@ -7,7 +7,6 @@
 #ifndef CORE_FXCRT_FILEACCESS_IFACE_H_
 #define CORE_FXCRT_FILEACCESS_IFACE_H_
 
-#include <algorithm>
 #include <memory>
 
 #include "core/fxcrt/fx_safe_types.h"

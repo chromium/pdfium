@@ -7,7 +7,6 @@
 #ifndef FXJS_CJS_DELAYDATA_H_
 #define FXJS_CJS_DELAYDATA_H_
 
-#include <string>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
@@ -24,7 +23,7 @@ struct CJS_DelayData {
   WideString sFieldName;
   int32_t num;
   bool b;
-  ByteString string;
+  ByteString bytestring;
   WideString widestring;
   CFX_FloatRect rect;
   CFX_Color color;

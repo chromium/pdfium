@@ -7,8 +7,6 @@
 #ifndef FPDFSDK_CPDFSDK_WIDGET_H_
 #define FPDFSDK_CPDFSDK_WIDGET_H_
 
-#include <set>
-
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_annot.h"

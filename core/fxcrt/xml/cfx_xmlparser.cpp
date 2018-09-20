@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cwctype>
 #include <iterator>
+#include <stack>
 #include <utility>
 
 #include "core/fxcrt/cfx_seekablestreamproxy.h"

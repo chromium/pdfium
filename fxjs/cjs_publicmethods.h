@@ -7,7 +7,6 @@
 #ifndef FXJS_CJS_PUBLICMETHODS_H_
 #define FXJS_CJS_PUBLICMETHODS_H_
 
-#include <string>
 #include <vector>
 
 #include "fxjs/js_define.h"
@@ -137,11 +136,11 @@ class CJS_PublicMethods final : public CJS_Object {
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
   static const JSMethodSpec GlobalFunctionSpecs[];
-  static int ParseStringInteger(const WideString& string,
+  static int ParseStringInteger(const WideString& str,
                                 size_t nStart,
                                 size_t* pSkip,
                                 size_t nMaxStep);
-  static WideString ParseStringString(const WideString& string,
+  static WideString ParseStringString(const WideString& str,
                                       size_t nStart,
                                       size_t* pSkip);
   static double ParseNormalDate(const WideString& value, bool* bWrongFormat);

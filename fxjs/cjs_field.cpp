@@ -2608,10 +2608,10 @@ void CJS_Field::AddDelay_Bool(FIELD_PROP prop, bool b) {
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
-void CJS_Field::AddDelay_String(FIELD_PROP prop, const ByteString& string) {
+void CJS_Field::AddDelay_String(FIELD_PROP prop, const ByteString& str) {
   auto pNewData =
       pdfium::MakeUnique<CJS_DelayData>(prop, m_nFormControlIndex, m_FieldName);
-  pNewData->string = string;
+  pNewData->bytestring = str;
   m_pJSDoc->AddDelayData(std::move(pNewData));
 }
 
@@ -2644,7 +2644,7 @@ void CJS_Field::DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   switch (pData->eProp) {
     case FP_BORDERSTYLE:
       SetBorderStyle(pFormFillEnv, pData->sFieldName, pData->nControlIndex,
-                     pData->string);
+                     pData->bytestring);
       break;
     case FP_CURRENTVALUEINDICES:
       SetCurrentValueIndices(pFormFillEnv, pData->sFieldName,

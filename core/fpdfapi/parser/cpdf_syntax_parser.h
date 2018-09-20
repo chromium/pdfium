@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_SYNTAX_PARSER_H_
 
-#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -42,7 +41,7 @@ class CPDF_SyntaxParser {
   }
 
   FX_FILESIZE GetPos() const { return m_Pos; }
-  void SetPos(FX_FILESIZE pos) { m_Pos = std::min(pos, m_FileLen); }
+  void SetPos(FX_FILESIZE pos);
 
   std::unique_ptr<CPDF_Object> GetObjectBody(
       CPDF_IndirectObjectHolder* pObjList);

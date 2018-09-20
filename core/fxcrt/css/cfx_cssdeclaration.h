@@ -8,7 +8,6 @@
 #define CORE_FXCRT_CSS_CFX_CSSDECLARATION_H_
 
 #include <memory>
-#include <utility>
 #include <vector>
 
 #include "core/fxcrt/css/cfx_cssdata.h"
