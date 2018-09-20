@@ -31,12 +31,12 @@ class XFAJSEmbedderTest : public EmbedderTest {
                                JavaScriptOption javascript_option) override;
 
   v8::Isolate* GetIsolate() const { return isolate_; }
-  CXFA_Document* GetXFADocument();
+  CXFA_Document* GetXFADocument() const;
 
   bool Execute(const ByteStringView& input);
   bool ExecuteSilenceFailure(const ByteStringView& input);
 
-  CFXJSE_Engine* GetScriptContext() { return script_context_; }
+  CFXJSE_Engine* GetScriptContext() const { return script_context_; }
   CFXJSE_Value* GetValue() const { return value_.get(); }
 
  private:

@@ -81,8 +81,8 @@ class EmbedderTest : public ::testing::Test,
     delegate_ = delegate ? delegate : default_delegate_.get();
   }
 
-  FPDF_DOCUMENT document() { return document_; }
-  FPDF_FORMHANDLE form_handle() { return form_handle_; }
+  FPDF_DOCUMENT document() const { return document_; }
+  FPDF_FORMHANDLE form_handle() const { return form_handle_; }
 
   // Create an empty document, and its form fill environment. Returns true
   // on success or false on failure.

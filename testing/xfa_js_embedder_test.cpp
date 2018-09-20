@@ -43,7 +43,7 @@ void XFAJSEmbedderTest::TearDown() {
   isolate_ = nullptr;
 }
 
-CXFA_Document* XFAJSEmbedderTest::GetXFADocument() {
+CXFA_Document* XFAJSEmbedderTest::GetXFADocument() const {
   auto* pDoc = CPDFDocumentFromFPDFDocument(document());
   if (!pDoc)
     return nullptr;
