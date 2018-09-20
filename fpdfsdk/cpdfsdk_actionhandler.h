@@ -44,6 +44,7 @@ class CPDFSDK_ActionHandler {
                        CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        CPDFSDK_Annot* pScreen);
   bool DoAction_Link(const CPDF_Action& action,
+                     CPDF_AAction::AActionType type,
                      CPDFSDK_FormFillEnvironment* pFormFillEnv);
   bool DoAction_Field(const CPDF_Action& action,
                       CPDF_AAction::AActionType type,
@@ -85,14 +86,17 @@ class CPDFSDK_ActionHandler {
                            CPDFSDK_Annot* pScreen,
                            std::set<const CPDF_Dictionary*>* visited);
   bool ExecuteBookMark(const CPDF_Action& action,
+                       CPDF_AAction::AActionType type,
                        CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        CPDF_Bookmark* pBookmark,
                        std::set<const CPDF_Dictionary*>* visited);
   bool ExecuteLinkAction(const CPDF_Action& action,
+                         CPDF_AAction::AActionType type,
                          CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          std::set<const CPDF_Dictionary*>* visited);
 
   void DoAction_NoJs(const CPDF_Action& action,
+                     CPDF_AAction::AActionType type,
                      CPDFSDK_FormFillEnvironment* pFormFillEnv);
   void RunDocumentPageJavaScript(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                  CPDF_AAction::AActionType type,
