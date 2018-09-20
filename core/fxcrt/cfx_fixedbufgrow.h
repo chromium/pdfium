@@ -11,10 +11,10 @@
 
 #include "core/fxcrt/fx_memory.h"
 
-template <class DataType, int FixedSize>
+template <class DataType, size_t FixedSize>
 class CFX_FixedBufGrow {
  public:
-  explicit CFX_FixedBufGrow(int data_size) {
+  explicit CFX_FixedBufGrow(size_t data_size) {
     if (data_size > FixedSize) {
       m_pGrowData.reset(FX_Alloc(DataType, data_size));
       return;
