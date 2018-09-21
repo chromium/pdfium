@@ -4,8 +4,88 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+
+TEST(fpdf_parser_decode, ValidateDecoderPipeline) {
+  {
+    // Empty decoder list is always valid.
+    CPDF_Array decoders;
+    EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // 1 decoder is always valid.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("FlateEncode");
+    EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // 1 decoder is always valid, even with an unknown decoder.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("FooBar");
+    EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Valid 2 decoder pipeline.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("AHx");
+    decoders.AddNew<CPDF_Name>("LZWDecode");
+    EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Valid 2 decoder pipeline.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("ASCII85Decode");
+    decoders.AddNew<CPDF_Name>("ASCII85Decode");
+    EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Valid 5 decoder pipeline.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("ASCII85Decode");
+    decoders.AddNew<CPDF_Name>("A85");
+    decoders.AddNew<CPDF_Name>("RunLengthDecode");
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    decoders.AddNew<CPDF_Name>("RL");
+    EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Valid 5 decoder pipeline, with an image decoder at the end.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("RunLengthDecode");
+    decoders.AddNew<CPDF_Name>("ASCII85Decode");
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    decoders.AddNew<CPDF_Name>("LZW");
+    decoders.AddNew<CPDF_Name>("DCTDecode");
+    EXPECT_TRUE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Invalid 2 decoder pipeline, with 2 image decoders.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("DCTDecode");
+    decoders.AddNew<CPDF_Name>("CCITTFaxDecode");
+    EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Invalid 2 decoder pipeline, with 1 image decoder at the start.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("DCTDecode");
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
+  }
+  {
+    // Invalid 5 decoder pipeline.
+    CPDF_Array decoders;
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    decoders.AddNew<CPDF_Name>("DCTDecode");
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    decoders.AddNew<CPDF_Name>("FlateDecode");
+    EXPECT_FALSE(ValidateDecoderPipeline(&decoders));
+  }
+}
 
 TEST(fpdf_parser_decode, A85Decode) {
   pdfium::DecodeTestData test_data[] = {
