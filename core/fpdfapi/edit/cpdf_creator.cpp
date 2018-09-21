@@ -127,15 +127,12 @@ std::vector<uint8_t> GenerateFileID(uint32_t dwSeed1, uint32_t dwSeed2) {
   return buffer;
 }
 
-int32_t OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
-  if (!archive->WriteByte(static_cast<uint8_t>(offset >> 24)) ||
-      !archive->WriteByte(static_cast<uint8_t>(offset >> 16)) ||
-      !archive->WriteByte(static_cast<uint8_t>(offset >> 8)) ||
-      !archive->WriteByte(static_cast<uint8_t>(offset)) ||
-      !archive->WriteByte(0)) {
-    return -1;
-  }
-  return 0;
+bool OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
+  return archive->WriteByte(static_cast<uint8_t>(offset >> 24)) &&
+         archive->WriteByte(static_cast<uint8_t>(offset >> 16)) &&
+         archive->WriteByte(static_cast<uint8_t>(offset >> 8)) &&
+         archive->WriteByte(static_cast<uint8_t>(offset)) &&
+         archive->WriteByte(0);
 }
 
 }  // namespace
@@ -535,7 +532,8 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
         auto it = m_ObjectOffsets.find(i);
         if (it == m_ObjectOffsets.end())
           continue;
-        OutputIndex(m_Archive.get(), it->second);
+        if (!OutputIndex(m_Archive.get(), it->second))
+          return Stage::kInvalid;
       }
     } else {
       size_t count = m_NewObjNumArray.size();
@@ -551,8 +549,10 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
           !m_Archive->WriteString(">>stream\r\n")) {
         return Stage::kInvalid;
       }
-      for (i = 0; i < count; ++i)
-        OutputIndex(m_Archive.get(), m_ObjectOffsets[m_NewObjNumArray[i]]);
+      for (i = 0; i < count; ++i) {
+        if (!OutputIndex(m_Archive.get(), m_ObjectOffsets[m_NewObjNumArray[i]]))
+          return Stage::kInvalid;
+      }
     }
     if (!m_Archive->WriteString("\r\nendstream"))
       return Stage::kInvalid;
