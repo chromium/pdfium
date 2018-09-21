@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcodec/codec/ccodec_faxmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
@@ -451,18 +452,18 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArith(
 FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
     std::unique_ptr<CJBig2_Image>* pImage,
     CJBig2_BitStream* pStream) {
-  int bitpos, i;
   auto image = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!image->data()) {
     *pImage = nullptr;
     m_ProssiveStatus = FXCODEC_STATUS_ERROR;
     return m_ProssiveStatus;
   }
-  bitpos = static_cast<int>(pStream->getBitPos());
-  FaxG4Decode(pStream->getBuf(), pStream->getLength(), &bitpos, image->data(),
-              GBW, GBH, image->stride());
+  int bitpos = static_cast<int>(pStream->getBitPos());
+  bitpos = CCodec_FaxModule::FaxG4Decode(pStream->getBuf(),
+                                         pStream->getLength(), bitpos, GBW, GBH,
+                                         image->stride(), image->data());
   pStream->setBitPos(bitpos);
-  for (i = 0; (uint32_t)i < image->stride() * GBH; ++i)
+  for (uint32_t i = 0; i < image->stride() * GBH; ++i)
     image->data()[i] = ~image->data()[i];
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
   *pImage = std::move(image);

@@ -555,25 +555,26 @@ uint32_t CCodec_FaxDecoder::GetSrcOffset() {
   return std::min(static_cast<size_t>((m_bitpos + 7) / 8), m_SrcSpan.size());
 }
 
-void FaxG4Decode(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 int* pbitpos,
-                 uint8_t* dest_buf,
-                 int width,
-                 int height,
-                 int pitch) {
+// static
+int CCodec_FaxModule::FaxG4Decode(const uint8_t* src_buf,
+                                  uint32_t src_size,
+                                  int starting_bitpos,
+                                  int width,
+                                  int height,
+                                  int pitch,
+                                  uint8_t* dest_buf) {
   if (pitch == 0)
     pitch = (width + 7) / 8;
 
   std::vector<uint8_t> ref_buf(pitch, 0xff);
-  int bitpos = *pbitpos;
-  for (int iRow = 0; iRow < height; iRow++) {
+  int bitpos = starting_bitpos;
+  for (int iRow = 0; iRow < height; ++iRow) {
     uint8_t* line_buf = dest_buf + iRow * pitch;
     memset(line_buf, 0xff, pitch);
     FaxG4GetRow(src_buf, src_size << 3, &bitpos, line_buf, ref_buf, width);
     memcpy(ref_buf.data(), line_buf, pitch);
   }
-  *pbitpos = bitpos;
+  return bitpos;
 }
 
 std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
@@ -647,90 +648,6 @@ const uint8_t WhiteRunMarkup[80] = {
     0x17, 12, 0x1c, 12, 0x1d, 12, 0x1e, 12, 0x1f, 12,
 };
 
-void AddBitStream(uint8_t* dest_buf, int* dest_bitpos, int data, int bitlen) {
-  for (int i = bitlen - 1; i >= 0; i--) {
-    if (data & (1 << i))
-      dest_buf[*dest_bitpos / 8] |= 1 << (7 - *dest_bitpos % 8);
-    (*dest_bitpos)++;
-  }
-}
-
-void FaxEncodeRun(uint8_t* dest_buf, int* dest_bitpos, int run, bool bWhite) {
-  while (run >= 2560) {
-    AddBitStream(dest_buf, dest_bitpos, 0x1f, 12);
-    run -= 2560;
-  }
-  if (run >= 64) {
-    int markup = run - run % 64;
-    const uint8_t* p = bWhite ? WhiteRunMarkup : BlackRunMarkup;
-    p += (markup / 64 - 1) * 2;
-    AddBitStream(dest_buf, dest_bitpos, *p, p[1]);
-  }
-  run %= 64;
-  const uint8_t* p = bWhite ? WhiteRunTerminator : BlackRunTerminator;
-  p += run * 2;
-  AddBitStream(dest_buf, dest_bitpos, *p, p[1]);
-}
-
-void FaxEncode2DLine(uint8_t* dest_buf,
-                     int* dest_bitpos,
-                     const uint8_t* src_buf,
-                     const std::vector<uint8_t>& ref_buf,
-                     int cols) {
-  int a0 = -1;
-  bool a0color = true;
-  while (1) {
-    int a1 = FindBit(src_buf, cols, a0 + 1, !a0color);
-    int b1;
-    int b2;
-    FaxG4FindB1B2(ref_buf, cols, a0, a0color, &b1, &b2);
-    if (b2 < a1) {
-      *dest_bitpos += 3;
-      dest_buf[*dest_bitpos / 8] |= 1 << (7 - *dest_bitpos % 8);
-      (*dest_bitpos)++;
-      a0 = b2;
-    } else if (a1 - b1 <= 3 && b1 - a1 <= 3) {
-      int delta = a1 - b1;
-      switch (delta) {
-        case 0:
-          dest_buf[*dest_bitpos / 8] |= 1 << (7 - *dest_bitpos % 8);
-          break;
-        case 1:
-        case 2:
-        case 3:
-          *dest_bitpos += delta == 1 ? 1 : delta + 2;
-          dest_buf[*dest_bitpos / 8] |= 1 << (7 - *dest_bitpos % 8);
-          (*dest_bitpos)++;
-          dest_buf[*dest_bitpos / 8] |= 1 << (7 - *dest_bitpos % 8);
-          break;
-        case -1:
-        case -2:
-        case -3:
-          *dest_bitpos += delta == -1 ? 1 : -delta + 2;
-          dest_buf[*dest_bitpos / 8] |= 1 << (7 - *dest_bitpos % 8);
-          (*dest_bitpos)++;
-          break;
-      }
-      (*dest_bitpos)++;
-      a0 = a1;
-      a0color = !a0color;
-    } else {
-      int a2 = FindBit(src_buf, cols, a1 + 1, a0color);
-      (*dest_bitpos)++;
-      (*dest_bitpos)++;
-      dest_buf[*dest_bitpos / 8] |= 1 << (7 - *dest_bitpos % 8);
-      (*dest_bitpos)++;
-      if (a0 < 0)
-        a0 = 0;
-      FaxEncodeRun(dest_buf, dest_bitpos, a1 - a0, a0color);
-      FaxEncodeRun(dest_buf, dest_bitpos, a2 - a1, !a0color);
-      a0 = a2;
-    }
-    if (a0 >= cols)
-      return;
-  }
-}
-
 class CCodec_FaxEncoder {
  public:
   CCodec_FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch);
@@ -739,9 +656,14 @@ class CCodec_FaxEncoder {
               uint32_t* dest_size);
 
  private:
+  void FaxEncode2DLine(const uint8_t* src_buf);
+  void FaxEncodeRun(int run, bool bWhite);
+  void AddBitStream(int data, int bitlen);
+
   CFX_BinaryBuf m_DestBuf;
   std::vector<uint8_t> m_RefLine;
   uint8_t* m_pLineBuf;
+  int m_DestBitpos;
   const int m_Cols;
   const int m_Rows;
   const int m_Pitch;
@@ -763,22 +685,101 @@ CCodec_FaxEncoder::~CCodec_FaxEncoder() {
   FX_Free(m_pLineBuf);
 }
 
+void CCodec_FaxEncoder::AddBitStream(int data, int bitlen) {
+  for (int i = bitlen - 1; i >= 0; --i, ++m_DestBitpos) {
+    if (data & (1 << i))
+      m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+  }
+}
+
+void CCodec_FaxEncoder::FaxEncodeRun(int run, bool bWhite) {
+  while (run >= 2560) {
+    AddBitStream(0x1f, 12);
+    run -= 2560;
+  }
+  if (run >= 64) {
+    int markup = run - run % 64;
+    const uint8_t* p = bWhite ? WhiteRunMarkup : BlackRunMarkup;
+    p += (markup / 64 - 1) * 2;
+    AddBitStream(*p, p[1]);
+  }
+  run %= 64;
+  const uint8_t* p = bWhite ? WhiteRunTerminator : BlackRunTerminator;
+  p += run * 2;
+  AddBitStream(*p, p[1]);
+}
+
+void CCodec_FaxEncoder::FaxEncode2DLine(const uint8_t* src_buf) {
+  int a0 = -1;
+  bool a0color = true;
+  while (1) {
+    int a1 = FindBit(src_buf, m_Cols, a0 + 1, !a0color);
+    int b1;
+    int b2;
+    FaxG4FindB1B2(m_RefLine, m_Cols, a0, a0color, &b1, &b2);
+    if (b2 < a1) {
+      m_DestBitpos += 3;
+      m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+      ++m_DestBitpos;
+      a0 = b2;
+    } else if (a1 - b1 <= 3 && b1 - a1 <= 3) {
+      int delta = a1 - b1;
+      switch (delta) {
+        case 0:
+          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          break;
+        case 1:
+        case 2:
+        case 3:
+          m_DestBitpos += delta == 1 ? 1 : delta + 2;
+          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          ++m_DestBitpos;
+          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          break;
+        case -1:
+        case -2:
+        case -3:
+          m_DestBitpos += delta == -1 ? 1 : -delta + 2;
+          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          ++m_DestBitpos;
+          break;
+      }
+      ++m_DestBitpos;
+      a0 = a1;
+      a0color = !a0color;
+    } else {
+      int a2 = FindBit(src_buf, m_Cols, a1 + 1, a0color);
+      ++m_DestBitpos;
+      ++m_DestBitpos;
+      m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+      ++m_DestBitpos;
+      if (a0 < 0)
+        a0 = 0;
+      FaxEncodeRun(a1 - a0, a0color);
+      FaxEncodeRun(a2 - a1, !a0color);
+      a0 = a2;
+    }
+    if (a0 >= m_Cols)
+      return;
+  }
+}
+
 void CCodec_FaxEncoder::Encode(
     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
     uint32_t* dest_size) {
-  int dest_bitpos = 0;
+  m_DestBitpos = 0;
   uint8_t last_byte = 0;
-  for (int i = 0; i < m_Rows; i++) {
+  for (int i = 0; i < m_Rows; ++i) {
     const uint8_t* scan_line = m_pSrcBuf + i * m_Pitch;
     memset(m_pLineBuf, 0, m_Pitch * 8);
     m_pLineBuf[0] = last_byte;
-    FaxEncode2DLine(m_pLineBuf, &dest_bitpos, scan_line, m_RefLine, m_Cols);
-    m_DestBuf.AppendBlock(m_pLineBuf, dest_bitpos / 8);
-    last_byte = m_pLineBuf[dest_bitpos / 8];
-    dest_bitpos %= 8;
+    FaxEncode2DLine(scan_line);
+    m_DestBuf.AppendBlock(m_pLineBuf, m_DestBitpos / 8);
+    last_byte = m_pLineBuf[m_DestBitpos / 8];
+    m_DestBitpos %= 8;
     memcpy(m_RefLine.data(), scan_line, m_Pitch);
   }
-  if (dest_bitpos)
+  if (m_DestBitpos)
     m_DestBuf.AppendByte(last_byte);
   *dest_size = m_DestBuf.GetSize();
   *dest_buf = m_DestBuf.DetachBuffer();

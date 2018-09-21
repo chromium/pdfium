@@ -36,6 +36,15 @@ class CCodec_FaxModule {
                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                         uint32_t* dest_size);
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
+
+  // Return the ending bit position.
+  static int FaxG4Decode(const uint8_t* src_buf,
+                         uint32_t src_size,
+                         int starting_bitpos,
+                         int width,
+                         int height,
+                         int pitch,
+                         uint8_t* dest_buf);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
