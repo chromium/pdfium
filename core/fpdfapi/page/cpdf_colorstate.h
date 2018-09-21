@@ -58,8 +58,8 @@ class CPDF_ColorState {
 
     void SetDefault();
 
-    FX_COLORREF m_FillColorRef;
-    FX_COLORREF m_StrokeColorRef;
+    FX_COLORREF m_FillColorRef = 0;
+    FX_COLORREF m_StrokeColorRef = 0;
     CPDF_Color m_FillColor;
     CPDF_Color m_StrokeColor;
   };

@@ -17,18 +17,18 @@ class CPDF_Pattern;
 class CPDF_Color {
  public:
   CPDF_Color();
+  CPDF_Color(const CPDF_Color& that);
+
   ~CPDF_Color();
+
+  CPDF_Color& operator=(const CPDF_Color& that);
 
   bool IsNull() const { return !m_pBuffer; }
   bool IsPattern() const;
-
-  void Copy(const CPDF_Color& src);
-
   void SetColorSpace(CPDF_ColorSpace* pCS);
   void SetValueForNonPattern(const std::vector<float>& values);
   void SetValueForPattern(CPDF_Pattern* pPattern,
                           const std::vector<float>& values);
-
   uint32_t CountComponents() const;
   bool IsColorSpaceRGB() const;
   bool GetRGB(int* R, int* G, int* B) const;

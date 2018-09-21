@@ -1008,14 +1008,14 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentState,
       if (!m_InitialStates.m_ColorState.HasFillColor()) {
         m_InitialStates.m_ColorState.SetFillColorRef(
             pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
-        m_InitialStates.m_ColorState.GetMutableFillColor()->Copy(
-            *pParentState->m_InitialStates.m_ColorState.GetFillColor());
+        *m_InitialStates.m_ColorState.GetMutableFillColor() =
+            *pParentState->m_InitialStates.m_ColorState.GetFillColor();
       }
       if (!m_InitialStates.m_ColorState.HasStrokeColor()) {
         m_InitialStates.m_ColorState.SetStrokeColorRef(
             pParentState->m_InitialStates.m_ColorState.GetFillColorRef());
-        m_InitialStates.m_ColorState.GetMutableStrokeColor()->Copy(
-            *pParentState->m_InitialStates.m_ColorState.GetStrokeColor());
+        *m_InitialStates.m_ColorState.GetMutableStrokeColor() =
+            *pParentState->m_InitialStates.m_ColorState.GetStrokeColor();
       }
     }
   } else {

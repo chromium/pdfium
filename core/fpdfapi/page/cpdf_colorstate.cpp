@@ -137,17 +137,15 @@ void CPDF_ColorState::SetPattern(CPDF_Pattern* pPattern,
   *colorref = ret ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
 }
 
-CPDF_ColorState::ColorData::ColorData()
-    : m_FillColorRef(0), m_StrokeColorRef(0) {}
+CPDF_ColorState::ColorData::ColorData() = default;
 
 CPDF_ColorState::ColorData::ColorData(const ColorData& src)
     : m_FillColorRef(src.m_FillColorRef),
-      m_StrokeColorRef(src.m_StrokeColorRef) {
-  m_FillColor.Copy(src.m_FillColor);
-  m_StrokeColor.Copy(src.m_StrokeColor);
-}
+      m_StrokeColorRef(src.m_StrokeColorRef),
+      m_FillColor(src.m_FillColor),
+      m_StrokeColor(src.m_StrokeColor) {}
 
-CPDF_ColorState::ColorData::~ColorData() {}
+CPDF_ColorState::ColorData::~ColorData() = default;
 
 void CPDF_ColorState::ColorData::SetDefault() {
   m_FillColorRef = 0;

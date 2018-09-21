@@ -12,7 +12,11 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_system.h"
 
-CPDF_Color::CPDF_Color() {}
+CPDF_Color::CPDF_Color() = default;
+
+CPDF_Color::CPDF_Color(const CPDF_Color& that) {
+  *this = that;
+}
 
 CPDF_Color::~CPDF_Color() {
   ReleaseBuffer();
@@ -119,32 +123,37 @@ void CPDF_Color::SetValueForPattern(CPDF_Pattern* pPattern,
   }
 }
 
-void CPDF_Color::Copy(const CPDF_Color& src) {
+CPDF_Color& CPDF_Color::operator=(const CPDF_Color& that) {
+  if (this == &that)
+    return *this;
+
   ReleaseBuffer();
   ReleaseColorSpace();
-  m_pCS = src.m_pCS;
+  m_pCS = that.m_pCS;
   if (!m_pCS)
-    return;
+    return *this;
 
   CPDF_Document* pDoc = m_pCS->GetDocument();
   const CPDF_Array* pArray = m_pCS->GetArray();
   if (pDoc && pArray) {
     m_pCS = pDoc->GetPageData()->GetCopiedColorSpace(pArray);
     if (!m_pCS)
-      return;
+      return *this;
   }
   m_pBuffer = m_pCS->CreateBuf();
-  memcpy(m_pBuffer, src.m_pBuffer, m_pCS->GetBufSize());
+  memcpy(m_pBuffer, that.m_pBuffer, m_pCS->GetBufSize());
   if (!IsPatternInternal())
-    return;
+    return *this;
 
   PatternValue* pValue = reinterpret_cast<PatternValue*>(m_pBuffer);
   CPDF_Pattern* pPattern = pValue->m_pPattern;
   if (!pPattern)
-    return;
+    return *this;
 
   pValue->m_pPattern = pPattern->document()->GetPageData()->GetPattern(
       pPattern->pattern_obj(), false, pPattern->parent_matrix());
+
+  return *this;
 }
 
 uint32_t CPDF_Color::CountComponents() const {
