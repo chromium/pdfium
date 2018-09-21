@@ -200,11 +200,13 @@ void SetPageContents(const ByteString& key,
   pPage->ConvertToIndirectObjectFor(pdfium::page_object::kContents, pDocument);
   if (!pContentsArray) {
     pContentsArray = pDocument->NewIndirect<CPDF_Array>();
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
-    pAcc->LoadAllDataFiltered();
     ByteString sStream = "q\n";
-    ByteString sBody = ByteString(pAcc->GetData(), pAcc->GetSize());
-    sStream = sStream + sBody + "\nQ";
+    {
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
+      pAcc->LoadAllDataFiltered();
+      sStream += ByteString(pAcc->GetData(), pAcc->GetSize());
+      sStream += "\nQ";
+    }
     pContentsStream->SetDataAndRemoveFilter(sStream.AsRawSpan());
     pContentsArray->Add(pContentsStream->MakeReference(pDocument));
     pPage->SetFor(pdfium::page_object::kContents,
