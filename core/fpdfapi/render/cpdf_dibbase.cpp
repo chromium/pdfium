@@ -54,7 +54,12 @@ bool GetBitValue(const uint8_t* pSrc, uint32_t pos) {
   return pSrc[pos / 8] & (1 << (7 - pos % 8));
 }
 
-bool IsAllowedBPCValue(int bpc) {
+// Just to sanity check and filter out obvious bad values.
+bool IsMaybeValidBitsPerComponent(int bpc) {
+  return bpc >= 0 && bpc <= 16;
+}
+
+bool IsAllowedBitsPerComponent(int bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
 }
 
@@ -338,6 +343,9 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::ContinueLoadDIBBase(
 bool CPDF_DIBBase::LoadColorInfo(const CPDF_Dictionary* pFormResources,
                                  const CPDF_Dictionary* pPageResources) {
   m_bpc_orig = m_pDict->GetIntegerFor("BitsPerComponent");
+  if (!IsMaybeValidBitsPerComponent(m_bpc_orig))
+    return false;
+
   if (m_pDict->GetIntegerFor("ImageMask"))
     m_bImageMask = true;
 
@@ -515,6 +523,10 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   int bpc;
   if (!pJpegModule->LoadInfo(src_span, &m_Width, &m_Height, &comps, &bpc,
                              &bTransform)) {
+    return false;
+  }
+  if (!CPDF_Image::IsValidJpegComponent(comps) ||
+      !CPDF_Image::IsValidJpegBitsPerComponent(bpc)) {
     return false;
   }
 
@@ -719,10 +731,18 @@ void CPDF_DIBBase::LoadPalette() {
   if (!m_pColorSpace || m_Family == PDFCS_PATTERN)
     return;
 
-  if (m_bpc == 0 || m_bpc * m_nComponents > 8)
+  if (m_bpc == 0)
     return;
 
-  if (m_bpc * m_nComponents == 1) {
+  // Use FX_SAFE_UINT32 just to be on the safe side, in case |m_bpc| or
+  // |m_nComponents| somehow gets a bad value.
+  FX_SAFE_UINT32 safe_bits = m_bpc;
+  safe_bits *= m_nComponents;
+  uint32_t bits = safe_bits.ValueOrDefault(255);
+  if (bits > 8)
+    return;
+
+  if (bits == 1) {
     if (m_bDefaultDecode &&
         (m_Family == PDFCS_DEVICEGRAY || m_Family == PDFCS_DEVICERGB)) {
       return;
@@ -759,7 +779,7 @@ void CPDF_DIBBase::LoadPalette() {
     return;
   }
 
-  int palette_count = 1 << (m_bpc * m_nComponents);
+  int palette_count = 1 << bits;
   // Using at least 16 elements due to the call m_pColorSpace->GetRGB().
   std::vector<float> color_values(std::max(m_nComponents, 16u));
   for (int i = 0; i < palette_count; i++) {
@@ -817,7 +837,7 @@ void CPDF_DIBBase::ValidateDictParam() {
     }
   }
 
-  if (!IsAllowedBPCValue(m_bpc))
+  if (!IsAllowedBitsPerComponent(m_bpc))
     m_bpc = 0;
 }
 

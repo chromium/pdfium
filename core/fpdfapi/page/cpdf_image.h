@@ -28,6 +28,9 @@ class CPDF_Image final : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  static bool IsValidJpegComponent(int32_t comps);
+  static bool IsValidJpegBitsPerComponent(int32_t bpc);
+
   void ConvertStreamToIndirectObject();
 
   CPDF_Dictionary* GetDict() const;
