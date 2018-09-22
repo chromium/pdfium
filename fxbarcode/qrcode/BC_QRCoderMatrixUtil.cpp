@@ -93,19 +93,11 @@ int32_t FindMSBSet(int32_t value) {
   return numDigits;
 }
 
-void ClearMatrix(CBC_CommonByteMatrix* matrix, int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
-  matrix->clear((uint8_t)-1);
-}
-
 void EmbedDataBits(CBC_QRCoderBitVector* dataBits,
                    int32_t maskPattern,
                    CBC_CommonByteMatrix* matrix,
                    int32_t& e) {
-  if (!matrix || !dataBits) {
+  if (!dataBits) {
     e = BCExceptionNullPointer;
     return;
   }
@@ -209,10 +201,6 @@ void EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                    int32_t maskPattern,
                    CBC_CommonByteMatrix* matrix,
                    int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   CBC_QRCoderBitVector typeInfoBits;
   MakeTypeInfoBits(ecLevel, maskPattern, &typeInfoBits, e);
   if (e != BCExceptionNO)
@@ -240,10 +228,6 @@ void EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
 void MaybeEmbedVersionInfo(int32_t version,
                            CBC_CommonByteMatrix* matrix,
                            int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   if (version < 7) {
     return;
   }
@@ -265,10 +249,6 @@ void MaybeEmbedVersionInfo(int32_t version,
 }
 
 void EmbedTimingPatterns(CBC_CommonByteMatrix* matrix, int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   for (int32_t i = 8; i < matrix->GetWidth() - 8; i++) {
     int32_t bit = (i + 1) % 2;
     if (!IsValidValue(matrix->Get(i, 6))) {
@@ -289,10 +269,6 @@ void EmbedTimingPatterns(CBC_CommonByteMatrix* matrix, int32_t& e) {
 }
 
 void EmbedDarkDotAtLeftBottomCorner(CBC_CommonByteMatrix* matrix, int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   if (matrix->Get(8, matrix->GetHeight() - 8) == 0) {
     e = BCExceptionHeight_8BeZero;
     return;
@@ -304,10 +280,6 @@ void EmbedHorizontalSeparationPattern(int32_t xStart,
                                       int32_t yStart,
                                       CBC_CommonByteMatrix* matrix,
                                       int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   for (int32_t x = 0; x < 8; x++) {
     if (!IsEmpty(matrix->Get(xStart + x, yStart))) {
       e = BCExceptionInvalidateData;
@@ -321,10 +293,6 @@ void EmbedVerticalSeparationPattern(int32_t xStart,
                                     int32_t yStart,
                                     CBC_CommonByteMatrix* matrix,
                                     int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   for (int32_t y = 0; y < 7; y++) {
     if (!IsEmpty(matrix->Get(xStart, yStart + y))) {
       e = BCExceptionInvalidateData;
@@ -338,11 +306,6 @@ void EmbedPositionAdjustmentPattern(int32_t xStart,
                                     int32_t yStart,
                                     CBC_CommonByteMatrix* matrix,
                                     int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    if (e != BCExceptionNO)
-      return;
-  }
   for (int32_t y = 0; y < 5; y++) {
     for (int32_t x = 0; x < 5; x++) {
       if (!IsEmpty(matrix->Get(xStart + x, y + yStart))) {
@@ -358,10 +321,6 @@ void EmbedPositionDetectionPattern(int32_t xStart,
                                    int32_t yStart,
                                    CBC_CommonByteMatrix* matrix,
                                    int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   for (int32_t y = 0; y < 7; y++) {
     for (int32_t x = 0; x < 7; x++) {
       if (!IsEmpty(matrix->Get(xStart + x, yStart + y))) {
@@ -375,10 +334,6 @@ void EmbedPositionDetectionPattern(int32_t xStart,
 
 void EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix,
                                                  int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   int32_t pdpWidth = 7;
   EmbedPositionDetectionPattern(0, 0, matrix, e);
   if (e != BCExceptionNO)
@@ -417,10 +372,6 @@ void EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix,
 void MaybeEmbedPositionAdjustmentPatterns(int32_t version,
                                           CBC_CommonByteMatrix* matrix,
                                           int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   if (version < 2) {
     return;
   }
@@ -447,10 +398,6 @@ void MaybeEmbedPositionAdjustmentPatterns(int32_t version,
 void EmbedBasicPatterns(int32_t version,
                         CBC_CommonByteMatrix* matrix,
                         int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
   EmbedPositionDetectionPatternsAndSeparators(matrix, e);
   if (e != BCExceptionNO)
     return;
@@ -467,30 +414,29 @@ void EmbedBasicPatterns(int32_t version,
 
 }  // namespace
 
-void CBC_QRCoderMatrixUtil::BuildMatrix(
+bool CBC_QRCoderMatrixUtil::BuildMatrix(
     CBC_QRCoderBitVector* dataBits,
     const CBC_QRCoderErrorCorrectionLevel* ecLevel,
     int32_t version,
     int32_t maskPattern,
-    CBC_CommonByteMatrix* matrix,
-    int32_t& e) {
-  if (!matrix) {
-    e = BCExceptionNullPointer;
-    return;
-  }
-  ClearMatrix(matrix, e);
-  if (e != BCExceptionNO)
-    return;
+    CBC_CommonByteMatrix* matrix) {
+  if (!matrix)
+    return false;
+
+  matrix->clear(0xff);
+
+  int32_t e = BCExceptionNO;
   EmbedBasicPatterns(version, matrix, e);
   if (e != BCExceptionNO)
-    return;
+    return false;
   EmbedTypeInfo(ecLevel, maskPattern, matrix, e);
   if (e != BCExceptionNO)
-    return;
+    return false;
   MaybeEmbedVersionInfo(version, matrix, e);
   if (e != BCExceptionNO)
-    return;
+    return false;
   EmbedDataBits(dataBits, maskPattern, matrix, e);
   if (e != BCExceptionNO)
-    return;
+    return false;
+  return true;
 }

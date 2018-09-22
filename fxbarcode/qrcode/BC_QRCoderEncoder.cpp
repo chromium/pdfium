@@ -38,6 +38,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "third_party/base/optional.h"
 #include "third_party/base/ptr_util.h"
 
 using ModeStringPair = std::pair<CBC_QRCoderMode*, ByteString>;
@@ -249,19 +250,19 @@ int32_t CalculateMaskPenalty(CBC_CommonByteMatrix* matrix) {
          CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(matrix);
 }
 
-int32_t ChooseMaskPattern(CBC_QRCoderBitVector* bits,
-                          const CBC_QRCoderErrorCorrectionLevel* ecLevel,
-                          int32_t version,
-                          CBC_CommonByteMatrix* matrix,
-                          int32_t& e) {
+Optional<int32_t> ChooseMaskPattern(
+    CBC_QRCoderBitVector* bits,
+    const CBC_QRCoderErrorCorrectionLevel* ecLevel,
+    int32_t version,
+    CBC_CommonByteMatrix* matrix) {
   int32_t minPenalty = 65535;
   int32_t bestMaskPattern = -1;
   for (int32_t maskPattern = 0; maskPattern < CBC_QRCoder::kNumMaskPatterns;
        maskPattern++) {
-    CBC_QRCoderMatrixUtil::BuildMatrix(bits, ecLevel, version, maskPattern,
-                                       matrix, e);
-    if (e != BCExceptionNO)
-      return 0;
+    if (!CBC_QRCoderMatrixUtil::BuildMatrix(bits, ecLevel, version, maskPattern,
+                                            matrix)) {
+      return {};
+    }
     int32_t penalty = CalculateMaskPenalty(matrix);
     if (penalty < minPenalty) {
       minPenalty = penalty;
@@ -494,20 +495,19 @@ bool CBC_QRCoderEncoder::Encode(const WideString& content,
     return false;
   }
 
-  int32_t e = BCExceptionNO;
   auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(
       qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
-  int32_t maskPattern = ChooseMaskPattern(
-      &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get(), e);
-  if (e != BCExceptionNO)
+  Optional<int32_t> maskPattern = ChooseMaskPattern(
+      &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get());
+  if (!maskPattern)
     return false;
 
-  qrCode->SetMaskPattern(maskPattern);
-  CBC_QRCoderMatrixUtil::BuildMatrix(&finalBits, qrCode->GetECLevel(),
-                                     qrCode->GetVersion(),
-                                     qrCode->GetMaskPattern(), matrix.get(), e);
-  if (e != BCExceptionNO)
+  qrCode->SetMaskPattern(*maskPattern);
+  if (!CBC_QRCoderMatrixUtil::BuildMatrix(
+          &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(),
+          qrCode->GetMaskPattern(), matrix.get())) {
     return false;
+  }
 
   qrCode->SetMatrix(std::move(matrix));
   return qrCode->IsValid();
