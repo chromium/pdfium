@@ -30,14 +30,12 @@
 #include "third_party/base/ptr_util.h"
 
 CBC_ReedSolomonEncoder::CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field)
-    : m_field(field) {}
-
-CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {}
-
-void CBC_ReedSolomonEncoder::Init() {
+    : m_field(field) {
   m_cachedGenerators.push_back(
       pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>(m_field.Get(), 1));
 }
+
+CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {}
 
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
     size_t degree) {

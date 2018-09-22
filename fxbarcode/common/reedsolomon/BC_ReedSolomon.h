@@ -20,7 +20,6 @@ class CBC_ReedSolomonEncoder {
   explicit CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field);
   ~CBC_ReedSolomonEncoder();
 
-  void Init();
   bool Encode(std::vector<int32_t>* toEncode, size_t ecBytes);
 
  private:

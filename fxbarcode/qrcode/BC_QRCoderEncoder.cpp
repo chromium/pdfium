@@ -28,13 +28,11 @@
 #include <vector>
 
 #include "fxbarcode/BC_UtilCodingConvert.h"
-#include "fxbarcode/common/BC_CommonByteArray.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
-#include "fxbarcode/qrcode/BC_QRCoderBlockPair.h"
 #include "fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
@@ -45,6 +43,11 @@
 using ModeStringPair = std::pair<CBC_QRCoderMode*, ByteString>;
 
 namespace {
+
+struct QRCoderBlockPair {
+  std::vector<uint8_t> data;
+  std::vector<uint8_t> ecc;
+};
 
 // This is a mapping for an ASCII table, starting at an index of 32.
 const int8_t g_alphaNumericTable[] = {
@@ -222,20 +225,20 @@ bool InitQRCode(int32_t numInputBytes,
   return false;
 }
 
-std::unique_ptr<CBC_CommonByteArray> GenerateECBytes(
-    CBC_CommonByteArray* dataBytes,
-    int32_t numEcBytesInBlock) {
-  int32_t numDataBytes = dataBytes->Size();
-  std::vector<int32_t> toEncode(numDataBytes + numEcBytesInBlock);
-  for (int32_t i = 0; i < numDataBytes; ++i)
-    toEncode[i] = dataBytes->At(i);
-  CBC_ReedSolomonEncoder encode(CBC_ReedSolomonGF256::QRCodeField);
-  encode.Init();
-  if (!encode.Encode(&toEncode, numEcBytesInBlock))
-    return nullptr;
-  auto ecBytes = pdfium::MakeUnique<CBC_CommonByteArray>(numEcBytesInBlock);
-  for (int32_t i = 0; i < numEcBytesInBlock; ++i)
-    ecBytes->Set(i, toEncode[numDataBytes + i]);
+std::vector<uint8_t> GenerateECBytes(const std::vector<uint8_t>& dataBytes,
+                                     size_t numEcBytesInBlock) {
+  // If |numEcBytesInBlock| is 0, the encoder will fail anyway.
+  ASSERT(numEcBytesInBlock > 0);
+  std::vector<int32_t> toEncode(dataBytes.size() + numEcBytesInBlock);
+  std::copy(dataBytes.begin(), dataBytes.end(), toEncode.begin());
+
+  std::vector<uint8_t> ecBytes;
+  CBC_ReedSolomonEncoder encoder(CBC_ReedSolomonGF256::QRCodeField);
+  if (encoder.Encode(&toEncode, numEcBytesInBlock)) {
+    ecBytes = std::vector<uint8_t>(toEncode.begin() + dataBytes.size(),
+                                   toEncode.end());
+    ASSERT(ecBytes.size() == static_cast<size_t>(numEcBytesInBlock));
+  }
   return ecBytes;
 }
 
@@ -272,8 +275,8 @@ void GetNumDataBytesAndNumECBytesForBlockID(int32_t numTotalBytes,
                                             int32_t numDataBytes,
                                             int32_t numRSBlocks,
                                             int32_t blockID,
-                                            int32_t& numDataBytesInBlock,
-                                            int32_t& numECBytesInBlock) {
+                                            int32_t* numDataBytesInBlock,
+                                            int32_t* numECBytesInBlock) {
   if (blockID >= numRSBlocks)
     return;
 
@@ -286,11 +289,11 @@ void GetNumDataBytesAndNumECBytesForBlockID(int32_t numTotalBytes,
   int32_t numEcBytesInGroup1 = numTotalBytesInGroup1 - numDataBytesInGroup1;
   int32_t numEcBytesInGroup2 = numTotalBytesInGroup2 - numDataBytesInGroup2;
   if (blockID < numRsBlocksInGroup1) {
-    numDataBytesInBlock = numDataBytesInGroup1;
-    numECBytesInBlock = numEcBytesInGroup1;
+    *numDataBytesInBlock = numDataBytesInGroup1;
+    *numECBytesInBlock = numEcBytesInGroup1;
   } else {
-    numDataBytesInBlock = numDataBytesInGroup2;
-    numECBytesInBlock = numEcBytesInGroup2;
+    *numDataBytesInBlock = numDataBytesInGroup2;
+    *numECBytesInBlock = numEcBytesInGroup2;
   }
 }
 
@@ -411,42 +414,47 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     return false;
 
   int32_t dataBytesOffset = 0;
-  int32_t maxNumDataBytes = 0;
-  int32_t maxNumEcBytes = 0;
-  std::vector<CBC_QRCoderBlockPair> blocks(numRSBlocks);
+  size_t maxNumDataBytes = 0;
+  size_t maxNumEcBytes = 0;
+  std::vector<QRCoderBlockPair> blocks(numRSBlocks);
   for (int32_t i = 0; i < numRSBlocks; i++) {
     int32_t numDataBytesInBlock;
-    int32_t numEcBytesInBlosk;
+    int32_t numEcBytesInBlock;
     GetNumDataBytesAndNumECBytesForBlockID(numTotalBytes, numDataBytes,
-                                           numRSBlocks, i, numDataBytesInBlock,
-                                           numEcBytesInBlosk);
-    auto dataBytes = pdfium::MakeUnique<CBC_CommonByteArray>();
-    dataBytes->Set(bits->GetArray(), dataBytesOffset, numDataBytesInBlock);
-    std::unique_ptr<CBC_CommonByteArray> ecBytes =
-        GenerateECBytes(dataBytes.get(), numEcBytesInBlosk);
-    if (!ecBytes)
+                                           numRSBlocks, i, &numDataBytesInBlock,
+                                           &numEcBytesInBlock);
+    if (numDataBytesInBlock < 0 || numEcBytesInBlock <= 0)
       return false;
 
-    maxNumDataBytes = std::max(maxNumDataBytes, dataBytes->Size());
-    maxNumEcBytes = std::max(maxNumEcBytes, ecBytes->Size());
-    blocks[i].SetData(std::move(dataBytes), std::move(ecBytes));
+    std::vector<uint8_t> dataBytes(numDataBytesInBlock);
+    memcpy(dataBytes.data(), bits->GetArray() + dataBytesOffset,
+           numDataBytesInBlock);
+    std::vector<uint8_t> ecBytes =
+        GenerateECBytes(dataBytes, numEcBytesInBlock);
+    if (ecBytes.empty())
+      return false;
+
+    maxNumDataBytes = std::max(maxNumDataBytes, dataBytes.size());
+    maxNumEcBytes = std::max(maxNumEcBytes, ecBytes.size());
+    blocks[i].data = std::move(dataBytes);
+    blocks[i].ecc = std::move(ecBytes);
     dataBytesOffset += numDataBytesInBlock;
   }
   if (numDataBytes != dataBytesOffset)
     return false;
 
-  for (int32_t x = 0; x < maxNumDataBytes; x++) {
+  for (size_t x = 0; x < maxNumDataBytes; x++) {
     for (size_t j = 0; j < blocks.size(); j++) {
-      const CBC_CommonByteArray* dataBytes = blocks[j].GetDataBytes();
-      if (x < dataBytes->Size())
-        result->AppendBits(dataBytes->At(x), 8);
+      const std::vector<uint8_t>& dataBytes = blocks[j].data;
+      if (x < dataBytes.size())
+        result->AppendBits(dataBytes[x], 8);
     }
   }
-  for (int32_t y = 0; y < maxNumEcBytes; y++) {
+  for (size_t y = 0; y < maxNumEcBytes; y++) {
     for (size_t l = 0; l < blocks.size(); l++) {
-      const CBC_CommonByteArray* ecBytes = blocks[l].GetErrorCorrectionBytes();
-      if (y < ecBytes->Size())
-        result->AppendBits(ecBytes->At(y), 8);
+      const std::vector<uint8_t>& ecBytes = blocks[l].ecc;
+      if (y < ecBytes.size())
+        result->AppendBits(ecBytes[y], 8);
     }
   }
   return static_cast<size_t>(numTotalBytes) == result->sizeInBytes();
