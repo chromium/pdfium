@@ -295,77 +295,6 @@ inline uint16_t GetUInt16(const uint8_t* p) {
   return static_cast<uint16_t>(p[0] << 8 | p[1]);
 }
 
-struct FX_BIT2CHARSET {
-  uint16_t wBit;
-  uint16_t wCharset;
-};
-
-const FX_BIT2CHARSET g_FX_Bit2Charset[4][16] = {
-    {{1 << 0, FX_CHARSET_ANSI},
-     {1 << 1, FX_CHARSET_MSWin_EasternEuropean},
-     {1 << 2, FX_CHARSET_MSWin_Cyrillic},
-     {1 << 3, FX_CHARSET_MSWin_Greek},
-     {1 << 4, FX_CHARSET_MSWin_Turkish},
-     {1 << 5, FX_CHARSET_MSWin_Hebrew},
-     {1 << 6, FX_CHARSET_MSWin_Arabic},
-     {1 << 7, FX_CHARSET_MSWin_Baltic},
-     {1 << 8, FX_CHARSET_MSWin_Vietnamese},
-     {1 << 9, FX_CHARSET_Default},
-     {1 << 10, FX_CHARSET_Default},
-     {1 << 11, FX_CHARSET_Default},
-     {1 << 12, FX_CHARSET_Default},
-     {1 << 13, FX_CHARSET_Default},
-     {1 << 14, FX_CHARSET_Default},
-     {1 << 15, FX_CHARSET_Default}},
-    {{1 << 0, FX_CHARSET_Thai},
-     {1 << 1, FX_CHARSET_ShiftJIS},
-     {1 << 2, FX_CHARSET_ChineseSimplified},
-     {1 << 3, FX_CHARSET_Hangul},
-     {1 << 4, FX_CHARSET_ChineseTraditional},
-     {1 << 5, FX_CHARSET_Johab},
-     {1 << 6, FX_CHARSET_Default},
-     {1 << 7, FX_CHARSET_Default},
-     {1 << 8, FX_CHARSET_Default},
-     {1 << 9, FX_CHARSET_Default},
-     {1 << 10, FX_CHARSET_Default},
-     {1 << 11, FX_CHARSET_Default},
-     {1 << 12, FX_CHARSET_Default},
-     {1 << 13, FX_CHARSET_Default},
-     {1 << 14, FX_CHARSET_OEM},
-     {1 << 15, FX_CHARSET_Symbol}},
-    {{1 << 0, FX_CHARSET_Default},
-     {1 << 1, FX_CHARSET_Default},
-     {1 << 2, FX_CHARSET_Default},
-     {1 << 3, FX_CHARSET_Default},
-     {1 << 4, FX_CHARSET_Default},
-     {1 << 5, FX_CHARSET_Default},
-     {1 << 6, FX_CHARSET_Default},
-     {1 << 7, FX_CHARSET_Default},
-     {1 << 8, FX_CHARSET_Default},
-     {1 << 9, FX_CHARSET_Default},
-     {1 << 10, FX_CHARSET_Default},
-     {1 << 11, FX_CHARSET_Default},
-     {1 << 12, FX_CHARSET_Default},
-     {1 << 13, FX_CHARSET_Default},
-     {1 << 14, FX_CHARSET_Default},
-     {1 << 15, FX_CHARSET_Default}},
-    {{1 << 0, FX_CHARSET_Default},
-     {1 << 1, FX_CHARSET_Default},
-     {1 << 2, FX_CHARSET_Default},
-     {1 << 3, FX_CHARSET_Default},
-     {1 << 4, FX_CHARSET_Default},
-     {1 << 5, FX_CHARSET_Default},
-     {1 << 6, FX_CHARSET_Default},
-     {1 << 7, FX_CHARSET_Default},
-     {1 << 8, FX_CHARSET_Default},
-     {1 << 9, FX_CHARSET_Default},
-     {1 << 10, FX_CHARSET_Default},
-     {1 << 11, FX_CHARSET_Default},
-     {1 << 12, FX_CHARSET_Default},
-     {1 << 13, FX_CHARSET_Default},
-     {1 << 14, FX_CHARSET_Default},
-     {1 << 15, FX_CHARSET_US}}};
-
 constexpr wchar_t kFolderSeparator = L'/';
 
 extern "C" {
@@ -427,25 +356,6 @@ std::vector<WideString> GetNames(const uint8_t* name_table) {
   return results;
 }
 
-std::vector<uint16_t> GetCharsets(FXFT_Face pFace) {
-  std::vector<uint16_t> charsets;
-  TT_OS2* pOS2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(pFace, ft_sfnt_os2));
-  if (!pOS2) {
-    charsets.push_back(FX_CHARSET_Default);
-    return charsets;
-  }
-  uint16_t a[4] = {
-      pOS2->ulCodePageRange1 & 0xffff, (pOS2->ulCodePageRange1 >> 16) & 0xffff,
-      pOS2->ulCodePageRange2 & 0xffff, (pOS2->ulCodePageRange2 >> 16) & 0xffff};
-  for (int n = 0; n < 4; n++) {
-    for (int32_t i = 0; i < 16; i++) {
-      if ((a[n] & g_FX_Bit2Charset[n][i].wBit) != 0)
-        charsets.push_back(g_FX_Bit2Charset[n][i].wCharset);
-    }
-  }
-  return charsets;
-}
-
 void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB) {
   TT_OS2* pOS2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(pFace, ft_sfnt_os2));
   if (!pOS2) {
@@ -466,21 +376,26 @@ void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB) {
 }
 
 uint32_t GetFlags(FXFT_Face pFace) {
-  uint32_t flag = 0;
+  uint32_t flags = 0;
+  if (FXFT_Is_Face_Bold(pFace))
+    flags |= FXFONT_BOLD;
+  if (FXFT_Is_Face_Italic(pFace))
+    flags |= FXFONT_ITALIC;
   if (FT_IS_FIXED_WIDTH(pFace))
-    flag |= FXFONT_FIXED_PITCH;
+    flags |= FXFONT_FIXED_PITCH;
+
   TT_OS2* pOS2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(pFace, ft_sfnt_os2));
   if (!pOS2)
-    return flag;
+    return flags;
 
   if (pOS2->ulCodePageRange1 & (1 << 31))
-    flag |= FXFONT_SYMBOLIC;
+    flags |= FXFONT_SYMBOLIC;
   if (pOS2->panose[0] == 2) {
     uint8_t uSerif = pOS2->panose[1];
     if ((uSerif > 1 && uSerif < 10) || uSerif > 13)
-      flag |= FXFONT_SERIF;
+      flags |= FXFONT_SERIF;
   }
-  return flag;
+  return flags;
 }
 
 RetainPtr<IFX_SeekableReadStream> CreateFontStream(
@@ -571,10 +486,11 @@ bool VerifyUnicodeForFontDescriptor(CFX_FontDescriptor* pDesc,
     return false;
 
   FXFT_Face pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
-  FT_Error retCharmap = FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE);
-  FT_Error retIndex = FXFT_Get_Char_Index(pFace, wcUnicode);
   if (!pFace)
     return false;
+
+  FT_Error retCharmap = FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE);
+  FT_Error retIndex = FXFT_Get_Char_Index(pFace, wcUnicode);
 
   if (FXFT_Get_Face_External_Stream(pFace))
     FXFT_Clear_Face_External_Stream(pFace);
@@ -842,11 +758,8 @@ void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace, const WideString* pFaceName) {
     return;
 
   auto pFont = pdfium::MakeUnique<CFX_FontDescriptor>();
-  pFont->m_dwFontStyles |= FXFT_Is_Face_Bold(pFace) ? FXFONT_BOLD : 0;
-  pFont->m_dwFontStyles |= FXFT_Is_Face_Italic(pFace) ? FXFONT_ITALIC : 0;
   pFont->m_dwFontStyles |= GetFlags(pFace);
 
-  std::vector<uint16_t> charsets = GetCharsets(pFace);
   GetUSBCSB(pFace, pFont->m_dwUsb, pFont->m_dwCsb);
 
   FT_ULong dwTag;
