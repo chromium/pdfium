@@ -62,9 +62,6 @@ class EmbedderTest : public ::testing::Test,
     virtual FPDF_PAGE GetPage(FPDF_FORMFILLINFO* info,
                               FPDF_DOCUMENT document,
                               int page_index);
-
-    // Equivalent to FPDF_FORMFILLINFO::FFI_DoURIAction().
-    virtual void DoURIAction(FPDF_BYTESTRING uri) {}
   };
 
   EmbedderTest();
@@ -248,8 +245,6 @@ class EmbedderTest : public ::testing::Test,
   static FPDF_PAGE GetPageTrampoline(FPDF_FORMFILLINFO* info,
                                      FPDF_DOCUMENT document,
                                      int page_index);
-  static void DoURIActionTrampoline(FPDF_FORMFILLINFO* info,
-                                    FPDF_BYTESTRING uri);
   static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
                                 const void* data,
                                 unsigned long size);

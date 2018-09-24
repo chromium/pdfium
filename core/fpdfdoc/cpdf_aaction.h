@@ -35,7 +35,6 @@ class CPDF_AAction {
     DocumentSaved,
     PrintDocument,
     DocumentPrinted,
-    DocumentOpen,
     NumberOfActions  // Must be last.
   };
 
@@ -46,8 +45,6 @@ class CPDF_AAction {
   bool ActionExist(AActionType eType) const;
   CPDF_Action GetAction(AActionType eType) const;
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
-
-  static bool IsUserClick(AActionType eType);
 
  private:
   UnownedPtr<const CPDF_Dictionary> const m_pDict;
