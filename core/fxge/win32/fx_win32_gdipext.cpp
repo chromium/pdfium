@@ -770,15 +770,15 @@ GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
       break;
   }
   CallFunc(GdipSetPenLineJoin)(pPen, lineJoin);
-  if (pGraphState->m_DashCount) {
-    float* pDashArray = FX_Alloc(
-        float, pGraphState->m_DashCount + pGraphState->m_DashCount % 2);
+  if (!pGraphState->m_DashArray.empty()) {
+    float* pDashArray =
+        FX_Alloc(float, (pGraphState->m_DashArray.size() + 1) & ~1);
     int nCount = 0;
     float on_leftover = 0, off_leftover = 0;
-    for (int i = 0; i < pGraphState->m_DashCount; i += 2) {
+    for (size_t i = 0; i < pGraphState->m_DashArray.size(); i += 2) {
       float on_phase = pGraphState->m_DashArray[i];
       float off_phase;
-      if (i == pGraphState->m_DashCount - 1)
+      if (i == pGraphState->m_DashArray.size() - 1)
         off_phase = on_phase;
       else
         off_phase = pGraphState->m_DashArray[i + 1];

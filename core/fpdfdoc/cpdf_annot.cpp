@@ -504,8 +504,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
       if (dash_count % 2) {
         dash_count++;
       }
-      graph_state.m_DashArray = FX_Alloc(float, dash_count);
-      graph_state.m_DashCount = dash_count;
+      graph_state.m_DashArray.resize(dash_count);
       size_t i;
       for (i = 0; i < pDashArray->GetCount(); ++i) {
         graph_state.m_DashArray[i] = pDashArray->GetNumberAt(i);
@@ -514,9 +513,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
         graph_state.m_DashArray[i] = graph_state.m_DashArray[i - 1];
       }
     } else {
-      graph_state.m_DashArray = FX_Alloc(float, 2);
-      graph_state.m_DashCount = 2;
-      graph_state.m_DashArray[0] = graph_state.m_DashArray[1] = 3 * 1.0f;
+      graph_state.m_DashArray = {3.0f, 3.0f};
     }
   }
 

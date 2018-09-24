@@ -1231,11 +1231,8 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
             FXPT_TYPE::LineTo, false);
 
         CFX_GraphStateData gsd;
-        gsd.SetDashCount(2);
-        gsd.m_DashArray[0] = 3.0f;
-        gsd.m_DashArray[1] = 3.0f;
+        gsd.m_DashArray = {3.0f, 3.0f};
         gsd.m_DashPhase = 0;
-
         gsd.m_LineWidth = fWidth;
         DrawPath(&path, pUser2Device, &gsd, 0, color.ToFXColor(nTransparency),
                  FXFILL_WINDING);

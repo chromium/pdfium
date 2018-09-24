@@ -6,47 +6,23 @@
 
 #include "core/fxge/cfx_graphstatedata.h"
 
-#include "core/fxcrt/fx_memory.h"
-#include "core/fxcrt/fx_system.h"
-
-CFX_GraphStateData::CFX_GraphStateData()
-    : m_LineCap(LineCapButt),
-      m_DashCount(0),
-      m_DashArray(nullptr),
-      m_DashPhase(0),
-      m_LineJoin(LineJoinMiter),
-      m_MiterLimit(10 * 1.0f),
-      m_LineWidth(1.0f) {}
+CFX_GraphStateData::CFX_GraphStateData() = default;
 
 CFX_GraphStateData::CFX_GraphStateData(const CFX_GraphStateData& src) {
-  m_DashArray = nullptr;
-  Copy(src);
+  *this = src;
 }
 
-void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
-  m_LineCap = src.m_LineCap;
-  m_DashCount = src.m_DashCount;
-  FX_Free(m_DashArray);
-  m_DashArray = nullptr;
-  m_DashPhase = src.m_DashPhase;
-  m_LineJoin = src.m_LineJoin;
-  m_MiterLimit = src.m_MiterLimit;
-  m_LineWidth = src.m_LineWidth;
-  if (m_DashCount) {
-    m_DashArray = FX_Alloc(float, m_DashCount);
-    memcpy(m_DashArray, src.m_DashArray, m_DashCount * sizeof(float));
+CFX_GraphStateData::~CFX_GraphStateData() = default;
+
+CFX_GraphStateData& CFX_GraphStateData::operator=(
+    const CFX_GraphStateData& that) {
+  if (this != &that) {
+    m_LineCap = that.m_LineCap;
+    m_LineJoin = that.m_LineJoin;
+    m_DashPhase = that.m_DashPhase;
+    m_MiterLimit = that.m_MiterLimit;
+    m_LineWidth = that.m_LineWidth;
+    m_DashArray = that.m_DashArray;
   }
-}
-
-CFX_GraphStateData::~CFX_GraphStateData() {
-  FX_Free(m_DashArray);
-}
-
-void CFX_GraphStateData::SetDashCount(int count) {
-  FX_Free(m_DashArray);
-  m_DashArray = nullptr;
-  m_DashCount = count;
-  if (count == 0)
-    return;
-  m_DashArray = FX_Alloc(float, count);
+  return *this;
 }

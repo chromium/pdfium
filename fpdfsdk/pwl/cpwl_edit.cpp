@@ -201,12 +201,10 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
       }
       case BorderStyle::DASH: {
         CFX_GraphStateData gsd;
-        gsd.m_LineWidth = (float)GetBorderWidth();
-
-        gsd.SetDashCount(2);
-        gsd.m_DashArray[0] = (float)GetBorderDash().nDash;
-        gsd.m_DashArray[1] = (float)GetBorderDash().nGap;
-        gsd.m_DashPhase = (float)GetBorderDash().nPhase;
+        gsd.m_LineWidth = static_cast<float>(GetBorderWidth());
+        gsd.m_DashArray = {static_cast<float>(GetBorderDash().nDash),
+                           static_cast<float>(GetBorderDash().nGap)};
+        gsd.m_DashPhase = static_cast<float>(GetBorderDash().nPhase);
 
         CFX_PathData path;
         for (int32_t i = 0; i < nCharArray - 1; i++) {

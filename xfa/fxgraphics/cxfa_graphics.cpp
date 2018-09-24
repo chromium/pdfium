@@ -145,14 +145,14 @@ void CXFA_Graphics::SetLineDash(float dashPhase,
 
   float scale = m_info.isActOnDash ? m_info.graphState.m_LineWidth : 1.0;
   m_info.graphState.m_DashPhase = dashPhase;
-  m_info.graphState.SetDashCount(dashCount);
+  m_info.graphState.m_DashArray.resize(dashCount);
   for (size_t i = 0; i < dashCount; i++)
     m_info.graphState.m_DashArray[i] = dashArray[i] * scale;
 }
 
 void CXFA_Graphics::SetSolidLineDash() {
   if (m_type == FX_CONTEXT_Device && m_renderDevice)
-    m_info.graphState.SetDashCount(0);
+    m_info.graphState.m_DashArray.clear();
 }
 
 void CXFA_Graphics::SetLineWidth(float lineWidth) {
@@ -439,7 +439,7 @@ CXFA_Graphics::TInfo::TInfo(const TInfo& info)
       fillColor(info.fillColor) {}
 
 CXFA_Graphics::TInfo& CXFA_Graphics::TInfo::operator=(const TInfo& other) {
-  graphState.Copy(other.graphState);
+  graphState = other.graphState;
   CTM = other.CTM;
   isActOnDash = other.isActOnDash;
   strokeColor = other.strokeColor;

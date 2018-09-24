@@ -734,7 +734,7 @@ class SkiaState {
                                ? SkPath::kEvenOdd_FillType
                                : SkPath::kWinding_FillType);
       if (pDrawState)
-        m_drawState.Copy(*pDrawState);
+        m_drawState = *pDrawState;
       m_fillColor = fill_color;
       m_strokeColor = stroke_color;
       m_blendType = blend_type;
@@ -1139,20 +1139,13 @@ class SkiaState {
 
   bool DashChanged(const CFX_GraphStateData* pState,
                    const CFX_GraphStateData& refState) const {
-    bool dashArray = pState && pState->m_DashArray;
-    if (!dashArray && !refState.m_DashArray)
+    bool dashArray = pState && !pState->m_DashArray.empty();
+    if (!dashArray && refState.m_DashArray.empty())
       return false;
-    if (!dashArray || !refState.m_DashArray)
+    if (!dashArray || refState.m_DashArray.empty())
       return true;
-    if (pState->m_DashPhase != refState.m_DashPhase ||
-        pState->m_DashCount != refState.m_DashCount) {
-      return true;
-    }
-    for (int index = 0; index < pState->m_DashCount; ++index) {
-      if (pState->m_DashArray[index] != refState.m_DashArray[index])
-        return true;
-    }
-    return true;
+    return pState->m_DashPhase != refState.m_DashPhase ||
+           pState->m_DashArray != refState.m_DashArray;
   }
 
   void AdjustClip(int limit) {
@@ -1476,16 +1469,16 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
   float width =
       SkTMax(pGraphState->m_LineWidth,
              SkTMin(deviceUnits[0].length(), deviceUnits[1].length()));
-  if (pGraphState->m_DashArray) {
-    int count = (pGraphState->m_DashCount + 1) / 2;
+  if (!pGraphState->m_DashArray.empty()) {
+    size_t count = (pGraphState->m_DashArray.size() + 1) / 2;
     std::unique_ptr<SkScalar, FxFreeDeleter> intervals(
         FX_Alloc2D(SkScalar, count, sizeof(SkScalar)));
     // Set dash pattern
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
       float on = pGraphState->m_DashArray[i * 2];
       if (on <= 0.000001f)
         on = 1.f / 10;
-      float off = i * 2 + 1 == pGraphState->m_DashCount
+      float off = i * 2 + 1 == pGraphState->m_DashArray.size()
                       ? on
                       : pGraphState->m_DashArray[i * 2 + 1];
       if (off < 0)

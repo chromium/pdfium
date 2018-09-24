@@ -86,8 +86,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                      false);
 
     CFX_GraphStateData gsd;
-    gsd.SetDashCount(1);
-    gsd.m_DashArray[0] = 1.0f;
+    gsd.m_DashArray = {1.0f};
     gsd.m_DashPhase = 0;
     gsd.m_LineWidth = 1.0f;
     pDevice->DrawPath(&path, pUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),

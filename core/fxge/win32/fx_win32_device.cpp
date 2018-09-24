@@ -103,7 +103,7 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
   float width = std::max(scale * pGraphState->m_LineWidth, 1.0f);
 
   uint32_t PenStyle = PS_GEOMETRIC;
-  if (pGraphState->m_DashCount)
+  if (!pGraphState->m_DashArray.empty())
     PenStyle |= PS_USERSTYLE;
   else
     PenStyle |= PS_SOLID;
@@ -137,9 +137,9 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
   lb.lbStyle = BS_SOLID;
   lb.lbHatch = 0;
   std::vector<uint32_t> dashes;
-  if (pGraphState->m_DashCount) {
-    dashes.resize(pGraphState->m_DashCount);
-    for (int i = 0; i < pGraphState->m_DashCount; i++) {
+  if (!pGraphState->m_DashArray.empty()) {
+    dashes.resize(pGraphState->m_DashArray.size());
+    for (size_t i = 0; i < pGraphState->m_DashArray.size(); i++) {
       dashes[i] = FXSYS_round(
           pMatrix ? pMatrix->TransformDistance(pGraphState->m_DashArray[i])
                   : pGraphState->m_DashArray[i]);
@@ -147,7 +147,7 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
     }
   }
   return ExtCreatePen(PenStyle, (DWORD)ceil(width), &lb,
-                      pGraphState->m_DashCount,
+                      pGraphState->m_DashArray.size(),
                       reinterpret_cast<const DWORD*>(dashes.data()));
 }
 
@@ -994,7 +994,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   if (pPlatform->m_GdiplusExt.IsAvailable()) {
     if (bDrawAlpha ||
         ((m_DeviceClass != FXDC_PRINTER && !(fill_mode & FXFILL_FULLCOVER)) ||
-         (pGraphState && pGraphState->m_DashCount))) {
+         (pGraphState && !pGraphState->m_DashArray.empty()))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
             pGraphState->m_LineWidth == 1.0f &&
             (pPathData->GetPoints().size() == 5 ||
@@ -1023,7 +1023,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     hBrush = (HBRUSH)SelectObject(m_hDC, hBrush);
   }
   if (pPathData->GetPoints().size() == 2 && pGraphState &&
-      pGraphState->m_DashCount) {
+      !pGraphState->m_DashArray.empty()) {
     CFX_PointF pos1 = pPathData->GetPoint(0);
     CFX_PointF pos2 = pPathData->GetPoint(1);
     if (pMatrix) {
