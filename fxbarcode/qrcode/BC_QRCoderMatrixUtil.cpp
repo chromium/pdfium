@@ -30,40 +30,40 @@
 
 namespace {
 
-const uint8_t POSITION_DETECTION_PATTERN[7][7] = {
+constexpr uint8_t POSITION_DETECTION_PATTERN[7][7] = {
     {1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 0, 0, 0, 1}, {1, 0, 1, 1, 1, 0, 1},
     {1, 0, 1, 1, 1, 0, 1}, {1, 0, 1, 1, 1, 0, 1}, {1, 0, 0, 0, 0, 0, 1},
     {1, 1, 1, 1, 1, 1, 1}};
 
-const uint8_t POSITION_ADJUSTMENT_PATTERN[5][5] = {{1, 1, 1, 1, 1},
-                                                   {1, 0, 0, 0, 1},
-                                                   {1, 0, 1, 0, 1},
-                                                   {1, 0, 0, 0, 1},
-                                                   {1, 1, 1, 1, 1}};
+constexpr uint8_t POSITION_ADJUSTMENT_PATTERN[5][5] = {{1, 1, 1, 1, 1},
+                                                       {1, 0, 0, 0, 1},
+                                                       {1, 0, 1, 0, 1},
+                                                       {1, 0, 0, 0, 1},
+                                                       {1, 1, 1, 1, 1}};
 
-const int16_t POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[40][7] =
+constexpr int16_t POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[39][7] =
     // NOLINTNEXTLINE
     {
-        {-1, -1, -1, -1, -1, -1, -1},   {6, 18, -1, -1, -1, -1, -1},
-        {6, 22, -1, -1, -1, -1, -1},    {6, 26, -1, -1, -1, -1, -1},
-        {6, 30, -1, -1, -1, -1, -1},    {6, 34, -1, -1, -1, -1, -1},
-        {6, 22, 38, -1, -1, -1, -1},    {6, 24, 42, -1, -1, -1, -1},
-        {6, 26, 46, -1, -1, -1, -1},    {6, 28, 50, -1, -1, -1, -1},
-        {6, 30, 54, -1, -1, -1, -1},    {6, 32, 58, -1, -1, -1, -1},
-        {6, 34, 62, -1, -1, -1, -1},    {6, 26, 46, 66, -1, -1, -1},
-        {6, 26, 48, 70, -1, -1, -1},    {6, 26, 50, 74, -1, -1, -1},
-        {6, 30, 54, 78, -1, -1, -1},    {6, 30, 56, 82, -1, -1, -1},
-        {6, 30, 58, 86, -1, -1, -1},    {6, 34, 62, 90, -1, -1, -1},
-        {6, 28, 50, 72, 94, -1, -1},    {6, 26, 50, 74, 98, -1, -1},
-        {6, 30, 54, 78, 102, -1, -1},   {6, 28, 54, 80, 106, -1, -1},
-        {6, 32, 58, 84, 110, -1, -1},   {6, 30, 58, 86, 114, -1, -1},
-        {6, 34, 62, 90, 118, -1, -1},   {6, 26, 50, 74, 98, 122, -1},
-        {6, 30, 54, 78, 102, 126, -1},  {6, 26, 52, 78, 104, 130, -1},
-        {6, 30, 56, 82, 108, 134, -1},  {6, 34, 60, 86, 112, 138, -1},
-        {6, 30, 58, 86, 114, 142, -1},  {6, 34, 62, 90, 118, 146, -1},
-        {6, 30, 54, 78, 102, 126, 150}, {6, 24, 50, 76, 102, 128, 154},
-        {6, 28, 54, 80, 106, 132, 158}, {6, 32, 58, 84, 110, 136, 162},
-        {6, 26, 54, 82, 110, 138, 166}, {6, 30, 58, 86, 114, 142, 170},
+        {6, 18, -1, -1, -1, -1, -1},    {6, 22, -1, -1, -1, -1, -1},
+        {6, 26, -1, -1, -1, -1, -1},    {6, 30, -1, -1, -1, -1, -1},
+        {6, 34, -1, -1, -1, -1, -1},    {6, 22, 38, -1, -1, -1, -1},
+        {6, 24, 42, -1, -1, -1, -1},    {6, 26, 46, -1, -1, -1, -1},
+        {6, 28, 50, -1, -1, -1, -1},    {6, 30, 54, -1, -1, -1, -1},
+        {6, 32, 58, -1, -1, -1, -1},    {6, 34, 62, -1, -1, -1, -1},
+        {6, 26, 46, 66, -1, -1, -1},    {6, 26, 48, 70, -1, -1, -1},
+        {6, 26, 50, 74, -1, -1, -1},    {6, 30, 54, 78, -1, -1, -1},
+        {6, 30, 56, 82, -1, -1, -1},    {6, 30, 58, 86, -1, -1, -1},
+        {6, 34, 62, 90, -1, -1, -1},    {6, 28, 50, 72, 94, -1, -1},
+        {6, 26, 50, 74, 98, -1, -1},    {6, 30, 54, 78, 102, -1, -1},
+        {6, 28, 54, 80, 106, -1, -1},   {6, 32, 58, 84, 110, -1, -1},
+        {6, 30, 58, 86, 114, -1, -1},   {6, 34, 62, 90, 118, -1, -1},
+        {6, 26, 50, 74, 98, 122, -1},   {6, 30, 54, 78, 102, 126, -1},
+        {6, 26, 52, 78, 104, 130, -1},  {6, 30, 56, 82, 108, 134, -1},
+        {6, 34, 60, 86, 112, 138, -1},  {6, 30, 58, 86, 114, 142, -1},
+        {6, 34, 62, 90, 118, 146, -1},  {6, 30, 54, 78, 102, 126, 150},
+        {6, 24, 50, 76, 102, 128, 154}, {6, 28, 54, 80, 106, 132, 158},
+        {6, 32, 58, 84, 110, 136, 162}, {6, 26, 54, 82, 110, 138, 166},
+        {6, 30, 58, 86, 114, 142, 170},
 };
 
 const uint8_t TYPE_INFO_COORDINATES[15][2] = {
@@ -93,22 +93,18 @@ int32_t FindMSBSet(int32_t value) {
   return numDigits;
 }
 
-void EmbedDataBits(CBC_QRCoderBitVector* dataBits,
+bool EmbedDataBits(CBC_QRCoderBitVector* dataBits,
                    int32_t maskPattern,
-                   CBC_CommonByteMatrix* matrix,
-                   int32_t& e) {
-  if (!dataBits) {
-    e = BCExceptionNullPointer;
-    return;
-  }
+                   CBC_CommonByteMatrix* matrix) {
+  int32_t e = BCExceptionNO;
   size_t bitIndex = 0;
   int32_t direction = -1;
   int32_t x = matrix->GetWidth() - 1;
   int32_t y = matrix->GetHeight() - 1;
   while (x > 0) {
-    if (x == 6) {
+    if (x == 6)
       x -= 1;
-    }
+
     while (y >= 0 && y < matrix->GetHeight()) {
       if (y == 6) {
         y += direction;
@@ -123,7 +119,7 @@ void EmbedDataBits(CBC_QRCoderBitVector* dataBits,
         if (bitIndex < dataBits->Size()) {
           bit = dataBits->At(bitIndex, e);
           if (e != BCExceptionNO)
-            return;
+            return false;
           bitIndex++;
         } else {
           bit = 0;
@@ -131,7 +127,7 @@ void EmbedDataBits(CBC_QRCoderBitVector* dataBits,
         if (maskPattern != -1) {
           bool bol = CBC_QRCoderMaskUtil::GetDataMaskBit(maskPattern, xx, y, e);
           if (e != BCExceptionNO)
-            return;
+            return false;
           if (bol) {
             bit ^= 0x01;
           }
@@ -144,9 +140,7 @@ void EmbedDataBits(CBC_QRCoderBitVector* dataBits,
     y += direction;
     x -= 2;
   }
-  if (bitIndex != dataBits->Size()) {
-    return;
-  }
+  return bitIndex == dataBits->Size();
 }
 
 int32_t CalculateBCHCode(int32_t value, int32_t poly) {
@@ -158,58 +152,44 @@ int32_t CalculateBCHCode(int32_t value, int32_t poly) {
   return value;
 }
 
-void MakeTypeInfoBits(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
+bool MakeTypeInfoBits(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                       int32_t maskPattern,
-                      CBC_QRCoderBitVector* bits,
-                      int32_t& e) {
-  if (!bits) {
-    e = BCExceptionNullPointer;
-    return;
-  }
-  if (!CBC_QRCoder::IsValidMaskPattern(maskPattern)) {
-    e = BCExceptionBadMask;
-    return;
-  }
+                      CBC_QRCoderBitVector* bits) {
+  if (!CBC_QRCoder::IsValidMaskPattern(maskPattern))
+    return false;
+
   int32_t typeInfo = (ecLevel->GetBits() << 3) | maskPattern;
   bits->AppendBits(typeInfo, 5);
   int32_t bchCode = CalculateBCHCode(typeInfo, TYPE_INFO_POLY);
   bits->AppendBits(bchCode, 10);
   CBC_QRCoderBitVector maskBits;
   maskBits.AppendBits(TYPE_INFO_MASK_PATTERN, 15);
-  if (!bits->XOR(&maskBits)) {
-    e = BCExceptionGeneric;
-    return;
-  }
+  if (!bits->XOR(&maskBits))
+    return false;
+
   ASSERT(bits->Size() == 15);
+  return true;
 }
 
-void MakeVersionInfoBits(int32_t version,
-                         CBC_QRCoderBitVector* bits,
-                         int32_t& e) {
-  if (!bits) {
-    e = BCExceptionNullPointer;
-    return;
-  }
-
+void MakeVersionInfoBits(int32_t version, CBC_QRCoderBitVector* bits) {
   bits->AppendBits(version, 6);
   int32_t bchCode = CalculateBCHCode(version, VERSION_INFO_POLY);
   bits->AppendBits(bchCode, 12);
   ASSERT(bits->Size() == 18);
 }
 
-void EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
+bool EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                    int32_t maskPattern,
-                   CBC_CommonByteMatrix* matrix,
-                   int32_t& e) {
+                   CBC_CommonByteMatrix* matrix) {
   CBC_QRCoderBitVector typeInfoBits;
-  MakeTypeInfoBits(ecLevel, maskPattern, &typeInfoBits, e);
-  if (e != BCExceptionNO)
-    return;
+  if (!MakeTypeInfoBits(ecLevel, maskPattern, &typeInfoBits))
+    return false;
 
+  int32_t e = BCExceptionNO;
   for (size_t i = 0; i < typeInfoBits.Size(); i++) {
     int32_t bit = typeInfoBits.At(typeInfoBits.Size() - 1 - i, e);
     if (e != BCExceptionNO)
-      return;
+      return false;
     int32_t x1 = TYPE_INFO_COORDINATES[i][0];
     int32_t y1 = TYPE_INFO_COORDINATES[i][1];
     matrix->Set(x1, y1, bit);
@@ -223,193 +203,181 @@ void EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
       matrix->Set(x2, y2, bit);
     }
   }
+  return true;
 }
 
-void MaybeEmbedVersionInfo(int32_t version,
-                           CBC_CommonByteMatrix* matrix,
-                           int32_t& e) {
-  if (version < 7) {
-    return;
-  }
+bool MaybeEmbedVersionInfo(int32_t version, CBC_CommonByteMatrix* matrix) {
+  if (version < 7)
+    return true;
+
   CBC_QRCoderBitVector versionInfoBits;
-  MakeVersionInfoBits(version, &versionInfoBits, e);
-  if (e != BCExceptionNO)
-    return;
+  MakeVersionInfoBits(version, &versionInfoBits);
   int32_t bitIndex = 6 * 3 - 1;
+  int32_t e = BCExceptionNO;
   for (int32_t i = 0; i < 6; i++) {
     for (int32_t j = 0; j < 3; j++) {
       int32_t bit = versionInfoBits.At(bitIndex, e);
       if (e != BCExceptionNO)
-        return;
+        return false;
       bitIndex--;
       matrix->Set(i, matrix->GetHeight() - 11 + j, bit);
       matrix->Set(matrix->GetHeight() - 11 + j, i, bit);
     }
   }
+  return true;
 }
 
-void EmbedTimingPatterns(CBC_CommonByteMatrix* matrix, int32_t& e) {
+bool EmbedTimingPatterns(CBC_CommonByteMatrix* matrix) {
   for (int32_t i = 8; i < matrix->GetWidth() - 8; i++) {
     int32_t bit = (i + 1) % 2;
-    if (!IsValidValue(matrix->Get(i, 6))) {
-      e = BCExceptionInvalidateImageData;
-      return;
-    }
-    if (IsEmpty(matrix->Get(i, 6))) {
+    if (!IsValidValue(matrix->Get(i, 6)))
+      return false;
+
+    if (IsEmpty(matrix->Get(i, 6)))
       matrix->Set(i, 6, bit);
-    }
-    if (!IsValidValue(matrix->Get(6, i))) {
-      e = BCExceptionInvalidateImageData;
-      return;
-    }
-    if (IsEmpty(matrix->Get(6, i))) {
+
+    if (!IsValidValue(matrix->Get(6, i)))
+      return false;
+
+    if (IsEmpty(matrix->Get(6, i)))
       matrix->Set(6, i, bit);
-    }
   }
+  return true;
 }
 
-void EmbedDarkDotAtLeftBottomCorner(CBC_CommonByteMatrix* matrix, int32_t& e) {
-  if (matrix->Get(8, matrix->GetHeight() - 8) == 0) {
-    e = BCExceptionHeight_8BeZero;
-    return;
-  }
+bool EmbedDarkDotAtLeftBottomCorner(CBC_CommonByteMatrix* matrix) {
+  if (matrix->Get(8, matrix->GetHeight() - 8) == 0)
+    return false;
+
   matrix->Set(8, matrix->GetHeight() - 8, 1);
+  return true;
 }
 
-void EmbedHorizontalSeparationPattern(int32_t xStart,
+bool EmbedHorizontalSeparationPattern(int32_t xStart,
                                       int32_t yStart,
-                                      CBC_CommonByteMatrix* matrix,
-                                      int32_t& e) {
+                                      CBC_CommonByteMatrix* matrix) {
   for (int32_t x = 0; x < 8; x++) {
-    if (!IsEmpty(matrix->Get(xStart + x, yStart))) {
-      e = BCExceptionInvalidateData;
-      return;
-    }
+    if (!IsEmpty(matrix->Get(xStart + x, yStart)))
+      return false;
+
     matrix->Set(xStart + x, yStart, 0);
   }
+  return true;
 }
 
-void EmbedVerticalSeparationPattern(int32_t xStart,
+bool EmbedVerticalSeparationPattern(int32_t xStart,
                                     int32_t yStart,
-                                    CBC_CommonByteMatrix* matrix,
-                                    int32_t& e) {
+                                    CBC_CommonByteMatrix* matrix) {
   for (int32_t y = 0; y < 7; y++) {
-    if (!IsEmpty(matrix->Get(xStart, yStart + y))) {
-      e = BCExceptionInvalidateData;
-      return;
-    }
+    if (!IsEmpty(matrix->Get(xStart, yStart + y)))
+      return false;
+
     matrix->Set(xStart, yStart + y, 0);
   }
+  return true;
 }
 
-void EmbedPositionAdjustmentPattern(int32_t xStart,
+bool EmbedPositionAdjustmentPattern(int32_t xStart,
                                     int32_t yStart,
-                                    CBC_CommonByteMatrix* matrix,
-                                    int32_t& e) {
+                                    CBC_CommonByteMatrix* matrix) {
   for (int32_t y = 0; y < 5; y++) {
     for (int32_t x = 0; x < 5; x++) {
-      if (!IsEmpty(matrix->Get(xStart + x, y + yStart))) {
-        e = BCExceptionInvalidateData;
-        return;
-      }
+      if (!IsEmpty(matrix->Get(xStart + x, y + yStart)))
+        return false;
+
       matrix->Set(xStart + x, yStart + y, POSITION_ADJUSTMENT_PATTERN[y][x]);
     }
   }
+  return true;
 }
 
-void EmbedPositionDetectionPattern(int32_t xStart,
+bool EmbedPositionDetectionPattern(int32_t xStart,
                                    int32_t yStart,
-                                   CBC_CommonByteMatrix* matrix,
-                                   int32_t& e) {
+                                   CBC_CommonByteMatrix* matrix) {
   for (int32_t y = 0; y < 7; y++) {
     for (int32_t x = 0; x < 7; x++) {
-      if (!IsEmpty(matrix->Get(xStart + x, yStart + y))) {
-        e = BCExceptionInvalidateData;
-        return;
-      }
+      if (!IsEmpty(matrix->Get(xStart + x, yStart + y)))
+        return false;
+
       matrix->Set(xStart + x, yStart + y, POSITION_DETECTION_PATTERN[y][x]);
     }
   }
+  return true;
 }
 
-void EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix,
-                                                 int32_t& e) {
-  int32_t pdpWidth = 7;
-  EmbedPositionDetectionPattern(0, 0, matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedPositionDetectionPattern(matrix->GetWidth() - pdpWidth, 0, matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedPositionDetectionPattern(0, matrix->GetWidth() - pdpWidth, matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  int32_t hspWidth = 8;
-  EmbedHorizontalSeparationPattern(0, hspWidth - 1, matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedHorizontalSeparationPattern(matrix->GetWidth() - hspWidth, hspWidth - 1,
-                                   matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedHorizontalSeparationPattern(0, matrix->GetWidth() - hspWidth, matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  int32_t vspSize = 7;
-  EmbedVerticalSeparationPattern(vspSize, 0, matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedVerticalSeparationPattern(matrix->GetHeight() - vspSize - 1, 0, matrix,
-                                 e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedVerticalSeparationPattern(vspSize, matrix->GetHeight() - vspSize, matrix,
-                                 e);
-  if (e != BCExceptionNO)
-    return;
-}
+bool EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix) {
+  constexpr int32_t pdpWidth = 7;
+  if (!EmbedPositionDetectionPattern(0, 0, matrix))
+    return false;
+  if (!EmbedPositionDetectionPattern(matrix->GetWidth() - pdpWidth, 0, matrix))
+    return false;
+  if (!EmbedPositionDetectionPattern(0, matrix->GetWidth() - pdpWidth, matrix))
+    return false;
 
-void MaybeEmbedPositionAdjustmentPatterns(int32_t version,
-                                          CBC_CommonByteMatrix* matrix,
-                                          int32_t& e) {
-  if (version < 2) {
-    return;
+  constexpr int32_t hspWidth = 8;
+  if (!EmbedHorizontalSeparationPattern(0, hspWidth - 1, matrix))
+    return false;
+  if (!EmbedHorizontalSeparationPattern(matrix->GetWidth() - hspWidth,
+                                        hspWidth - 1, matrix)) {
+    return false;
   }
-  int32_t index = version - 1;
+  if (!EmbedHorizontalSeparationPattern(0, matrix->GetWidth() - hspWidth,
+                                        matrix)) {
+    return false;
+  }
+
+  constexpr int32_t vspSize = 7;
+  if (!EmbedVerticalSeparationPattern(vspSize, 0, matrix))
+    return false;
+  if (!EmbedVerticalSeparationPattern(matrix->GetHeight() - vspSize - 1, 0,
+                                      matrix)) {
+    return false;
+  }
+  if (!EmbedVerticalSeparationPattern(vspSize, matrix->GetHeight() - vspSize,
+                                      matrix)) {
+    return false;
+  }
+  return true;
+}
+
+bool MaybeEmbedPositionAdjustmentPatterns(int32_t version,
+                                          CBC_CommonByteMatrix* matrix) {
+  if (version < 2)
+    return true;
+
+  const size_t index = version - 2;
+  if (index >= FX_ArraySize(POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE))
+    return false;
+
   const auto* coordinates =
       &POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[index][0];
-  int32_t numCoordinate = 7;
+  constexpr int32_t numCoordinate = 7;
   for (int32_t i = 0; i < numCoordinate; i++) {
     for (int32_t j = 0; j < numCoordinate; j++) {
       int32_t y = coordinates[i];
       int32_t x = coordinates[j];
-      if (x == -1 || y == -1) {
+      if (x == -1 || y == -1)
         continue;
-      }
+
       if (IsEmpty(matrix->Get(x, y))) {
-        EmbedPositionAdjustmentPattern(x - 2, y - 2, matrix, e);
-        if (e != BCExceptionNO)
-          return;
+        if (!EmbedPositionAdjustmentPattern(x - 2, y - 2, matrix))
+          return false;
       }
     }
   }
+  return true;
 }
 
-void EmbedBasicPatterns(int32_t version,
-                        CBC_CommonByteMatrix* matrix,
-                        int32_t& e) {
-  EmbedPositionDetectionPatternsAndSeparators(matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedDarkDotAtLeftBottomCorner(matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  MaybeEmbedPositionAdjustmentPatterns(version, matrix, e);
-  if (e != BCExceptionNO)
-    return;
-  EmbedTimingPatterns(matrix, e);
-  if (e != BCExceptionNO)
-    return;
+bool EmbedBasicPatterns(int32_t version, CBC_CommonByteMatrix* matrix) {
+  if (!EmbedPositionDetectionPatternsAndSeparators(matrix))
+    return false;
+  if (!EmbedDarkDotAtLeftBottomCorner(matrix))
+    return false;
+  if (!MaybeEmbedPositionAdjustmentPatterns(version, matrix))
+    return false;
+  if (!EmbedTimingPatterns(matrix))
+    return false;
+  return true;
 }
 
 }  // namespace
@@ -420,23 +388,18 @@ bool CBC_QRCoderMatrixUtil::BuildMatrix(
     int32_t version,
     int32_t maskPattern,
     CBC_CommonByteMatrix* matrix) {
-  if (!matrix)
+  if (!dataBits || !matrix)
     return false;
 
   matrix->clear(0xff);
 
-  int32_t e = BCExceptionNO;
-  EmbedBasicPatterns(version, matrix, e);
-  if (e != BCExceptionNO)
+  if (!EmbedBasicPatterns(version, matrix))
     return false;
-  EmbedTypeInfo(ecLevel, maskPattern, matrix, e);
-  if (e != BCExceptionNO)
+  if (!EmbedTypeInfo(ecLevel, maskPattern, matrix))
     return false;
-  MaybeEmbedVersionInfo(version, matrix, e);
-  if (e != BCExceptionNO)
+  if (!MaybeEmbedVersionInfo(version, matrix))
     return false;
-  EmbedDataBits(dataBits, maskPattern, matrix, e);
-  if (e != BCExceptionNO)
+  if (!EmbedDataBits(dataBits, maskPattern, matrix))
     return false;
   return true;
 }

@@ -50,12 +50,7 @@ enum BCFORMAT {
 #define BCExceptionBadIndexException 52
 #define BCExceptionUnsupportedMode 64
 #define BCExceptionInvalidateMaskPattern 68
-#define BCExceptionNullPointer 69
-#define BCExceptionBadMask 70
-#define BCExceptionInvalidateImageData 73
-#define BCExceptionHeight_8BeZero 74
 #define BCExceptionCharacterNotThisMode 75
-#define BCExceptionInvalidateData 77
 #define BCExceptionCharactersOutsideISO88591Encoding 87
 #define BCExceptionIllegalDataCodewords 88
 #define BCExceptionIllegalStateUnexpectedCase 90
