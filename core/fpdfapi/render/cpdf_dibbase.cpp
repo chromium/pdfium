@@ -511,8 +511,6 @@ CPDF_DIBBase::LoadState CPDF_DIBBase::CreateDecoder() {
 
 bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
                                     const CPDF_Dictionary* pParams) {
-  ASSERT(m_pColorSpace);  // Assigned in LoadColorInfo().
-
   CCodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
   m_pDecoder = pJpegModule->CreateDecoder(
       src_span, m_Width, m_Height, m_nComponents,
@@ -541,35 +539,40 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
 
   m_nComponents = static_cast<uint32_t>(comps);
   m_CompData.clear();
-  switch (m_Family) {
-    case PDFCS_DEVICEGRAY:
-    case PDFCS_DEVICERGB:
-    case PDFCS_DEVICECMYK: {
-      uint32_t dwMinComps = ComponentsForFamily(m_Family);
-      if (m_pColorSpace->CountComponents() < dwMinComps ||
-          m_nComponents < dwMinComps) {
-        return false;
+  if (m_pColorSpace) {
+    switch (m_Family) {
+      case PDFCS_DEVICEGRAY:
+      case PDFCS_DEVICERGB:
+      case PDFCS_DEVICECMYK: {
+        uint32_t dwMinComps = ComponentsForFamily(m_Family);
+        if (m_pColorSpace->CountComponents() < dwMinComps ||
+            m_nComponents < dwMinComps) {
+          return false;
+        }
+        break;
       }
-      break;
-    }
-    case PDFCS_LAB: {
-      if (m_nComponents != 3 || m_pColorSpace->CountComponents() < 3)
-        return false;
-      break;
-    }
-    case PDFCS_ICCBASED: {
-      if (!IsAllowedICCComponents(m_nComponents) ||
-          !IsAllowedICCComponents(m_pColorSpace->CountComponents()) ||
-          m_pColorSpace->CountComponents() < m_nComponents) {
-        return false;
+      case PDFCS_LAB: {
+        if (m_nComponents != 3 || m_pColorSpace->CountComponents() < 3)
+          return false;
+        break;
       }
-      break;
+      case PDFCS_ICCBASED: {
+        if (!IsAllowedICCComponents(m_nComponents) ||
+            !IsAllowedICCComponents(m_pColorSpace->CountComponents()) ||
+            m_pColorSpace->CountComponents() < m_nComponents) {
+          return false;
+        }
+        break;
+      }
+      default: {
+        if (m_pColorSpace->CountComponents() != m_nComponents)
+          return false;
+        break;
+      }
     }
-    default: {
-      if (m_pColorSpace->CountComponents() != m_nComponents)
-        return false;
-      break;
-    }
+  } else {
+    if (m_Family == PDFCS_LAB && m_nComponents != 3)
+      return false;
   }
   if (!GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey))
     return false;
@@ -581,8 +584,6 @@ bool CPDF_DIBBase::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
-  ASSERT(m_pColorSpace);  // Assigned in LoadColorInfo().
-
   CCodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
   auto context = pdfium::MakeUnique<JpxBitMapContext>(pJpxModule);
   context->set_decoder(
@@ -597,13 +598,22 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
   if (static_cast<int>(width) < m_Width || static_cast<int>(height) < m_Height)
     return nullptr;
 
-  if (components != m_pColorSpace->CountComponents())
-    return nullptr;
-
   bool bSwapRGB = false;
-  if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
-    bSwapRGB = true;
-    m_pColorSpace = nullptr;
+  if (m_pColorSpace) {
+    if (components != m_pColorSpace->CountComponents())
+      return nullptr;
+
+    if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
+      bSwapRGB = true;
+      m_pColorSpace = nullptr;
+    }
+  } else {
+    if (components == 3) {
+      bSwapRGB = true;
+    } else if (components == 4) {
+      m_pColorSpace = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
+    }
+    m_nComponents = components;
   }
 
   FXDIB_Format format;
@@ -614,7 +624,6 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
   } else if (components == 4) {
     format = FXDIB_Rgb32;
   } else {
-    // TODO(thestig): Is this reachable? Probably need to validate |components|.
     width = (width * components + 2) / 3;
     format = FXDIB_Rgb;
   }

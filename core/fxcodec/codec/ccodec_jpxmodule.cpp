@@ -646,8 +646,6 @@ CCodec_JpxModule::~CCodec_JpxModule() {}
 std::unique_ptr<CJPX_Decoder> CCodec_JpxModule::CreateDecoder(
     pdfium::span<const uint8_t> src_span,
     CPDF_ColorSpace* cs) {
-  // TODO(thestig): |cs| should never be nullptr in production, but
-  // pdf_jpx_fuzzer.cc passes that in.
   auto decoder = pdfium::MakeUnique<CJPX_Decoder>(cs);
   if (!decoder->Init(src_span))
     return nullptr;
