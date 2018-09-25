@@ -17,7 +17,7 @@ CCodec_BmpModule::CCodec_BmpModule() {}
 
 CCodec_BmpModule::~CCodec_BmpModule() {}
 
-std::unique_ptr<CCodec_BmpModule::Context> CCodec_BmpModule::Start(
+std::unique_ptr<CodecModuleIface::Context> CCodec_BmpModule::Start(
     Delegate* pDelegate) {
   auto p = pdfium::MakeUnique<CFX_BmpContext>(this, pDelegate);
   p->m_Bmp.context_ptr_ = p.get();
@@ -67,6 +67,9 @@ FX_FILESIZE CCodec_BmpModule::GetAvailInput(Context* pContext) const {
   return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.GetAvailInput();
 }
 
-void CCodec_BmpModule::Input(Context* pContext, pdfium::span<uint8_t> src_buf) {
+bool CCodec_BmpModule::Input(Context* pContext,
+                             pdfium::span<uint8_t> src_buf,
+                             CFX_DIBAttribute*) {
   static_cast<CFX_BmpContext*>(pContext)->m_Bmp.SetInputBuffer(src_buf);
+  return true;
 }

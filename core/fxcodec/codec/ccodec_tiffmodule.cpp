@@ -32,7 +32,7 @@ struct TiffDeleter {
 
 }  // namespace
 
-class CTiffContext final : public CCodec_TiffModule::Context {
+class CTiffContext final : public CodecModuleIface::Context {
  public:
   CTiffContext() = default;
   ~CTiffContext() override = default;
@@ -487,13 +487,25 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   return false;
 }
 
-std::unique_ptr<CCodec_TiffModule::Context> CCodec_TiffModule::CreateDecoder(
+std::unique_ptr<CodecModuleIface::Context> CCodec_TiffModule::CreateDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   auto pDecoder = pdfium::MakeUnique<CTiffContext>();
   if (!pDecoder->InitDecoder(file_ptr))
     return nullptr;
 
   return pDecoder;
+}
+
+FX_FILESIZE CCodec_TiffModule::GetAvailInput(Context* pContext) const {
+  NOTREACHED();
+  return 0;
+}
+
+bool CCodec_TiffModule::Input(Context* pContext,
+                              pdfium::span<uint8_t> src_buf,
+                              CFX_DIBAttribute*) {
+  NOTREACHED();
+  return false;
 }
 
 bool CCodec_TiffModule::LoadFrameInfo(Context* pContext,

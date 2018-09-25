@@ -23,9 +23,7 @@
 
 #define PNG_ERROR_SIZE 256
 
-namespace {
-
-class CPngContext final : public CCodec_PngModule::Context {
+class CPngContext final : public CodecModuleIface::Context {
  public:
   explicit CPngContext(CCodec_PngModule::Delegate* pDelegate);
   ~CPngContext() override;
@@ -184,9 +182,7 @@ CPngContext::~CPngContext() {
                           m_pInfo ? &m_pInfo : nullptr, nullptr);
 }
 
-}  // namespace
-
-std::unique_ptr<CCodec_PngModule::Context> CCodec_PngModule::Start(
+std::unique_ptr<CodecModuleIface::Context> CCodec_PngModule::Start(
     Delegate* pDelegate) {
   auto p = pdfium::MakeUnique<CPngContext>(pDelegate);
   p->m_pPng =
@@ -208,9 +204,13 @@ std::unique_ptr<CCodec_PngModule::Context> CCodec_PngModule::Start(
   return p;
 }
 
+FX_FILESIZE CCodec_PngModule::GetAvailInput(Context* pContext) const {
+  NOTREACHED();
+  return 0;
+}
+
 bool CCodec_PngModule::Input(Context* pContext,
-                             const uint8_t* src_buf,
-                             uint32_t src_size,
+                             pdfium::span<uint8_t> src_buf,
                              CFX_DIBAttribute* pAttribute) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   if (setjmp(png_jmpbuf(ctx->m_pPng))) {
@@ -220,7 +220,6 @@ bool CCodec_PngModule::Input(Context* pContext,
     }
     return false;
   }
-  png_process_data(ctx->m_pPng, ctx->m_pInfo, const_cast<uint8_t*>(src_buf),
-                   src_size);
+  png_process_data(ctx->m_pPng, ctx->m_pInfo, src_buf.data(), src_buf.size());
   return true;
 }

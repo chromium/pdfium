@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcodec/codec/codec_module_iface.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
@@ -17,13 +18,8 @@
 
 class CFX_DIBAttribute;
 
-class CCodec_GifModule {
+class CCodec_GifModule final : public CodecModuleIface {
  public:
-  class Context {
-   public:
-    virtual ~Context() {}
-  };
-
   class Delegate {
    public:
     virtual void GifRecordCurrentPosition(uint32_t& cur_pos) = 0;
@@ -40,11 +36,15 @@ class CCodec_GifModule {
   };
 
   CCodec_GifModule();
-  ~CCodec_GifModule();
+  ~CCodec_GifModule() override;
+
+  // CodecModuleIface:
+  FX_FILESIZE GetAvailInput(Context* context) const override;
+  bool Input(Context* context,
+             pdfium::span<uint8_t> src_buf,
+             CFX_DIBAttribute* pAttribute) override;
 
   std::unique_ptr<Context> Start(Delegate* pDelegate);
-  uint32_t GetAvailInput(Context* context) const;
-  void Input(Context* context, pdfium::span<uint8_t> src_buf);
   CFX_GifDecodeStatus ReadHeader(Context* context,
                                  int* width,
                                  int* height,

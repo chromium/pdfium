@@ -18,7 +18,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
-class CFX_GifContext : public CCodec_GifModule::Context {
+class CFX_GifContext : public CodecModuleIface::Context {
  public:
   CFX_GifContext(CCodec_GifModule* gif_module,
                  CCodec_GifModule::Delegate* delegate);

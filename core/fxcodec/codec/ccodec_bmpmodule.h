@@ -10,19 +10,15 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcodec/codec/codec_module_iface.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
 class CFX_DIBAttribute;
 
-class CCodec_BmpModule {
+class CCodec_BmpModule final : public CodecModuleIface {
  public:
-  class Context {
-   public:
-    virtual ~Context() {}
-  };
-
   class Delegate {
    public:
     virtual bool BmpInputImagePositionBuf(uint32_t rcd_pos) = 0;
@@ -31,11 +27,15 @@ class CCodec_BmpModule {
   };
 
   CCodec_BmpModule();
-  ~CCodec_BmpModule();
+  ~CCodec_BmpModule() override;
+
+  // CodecModuleIface:
+  FX_FILESIZE GetAvailInput(Context* pContext) const override;
+  bool Input(Context* pContext,
+             pdfium::span<uint8_t> src_buf,
+             CFX_DIBAttribute* pAttribute) override;
 
   std::unique_ptr<Context> Start(Delegate* pDelegate);
-  FX_FILESIZE GetAvailInput(Context* pContext) const;
-  void Input(Context* pContext, pdfium::span<uint8_t> src_buf);
   int32_t ReadHeader(Context* pContext,
                      int32_t* width,
                      int32_t* height,

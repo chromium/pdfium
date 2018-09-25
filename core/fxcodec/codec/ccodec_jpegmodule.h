@@ -10,25 +10,17 @@
 #include <csetjmp>
 #include <memory>
 
+#include "core/fxcodec/codec/codec_module_iface.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
 
 class CCodec_ScanlineDecoder;
+class CFX_DIBAttribute;
 class CFX_DIBBase;
 
-#ifdef PDF_ENABLE_XFA
-class CFX_DIBAttribute;
-#endif  // PDF_ENABLE_XFA
-
-class CCodec_JpegModule {
+class CCodec_JpegModule final : public CodecModuleIface {
  public:
-  class Context {
-   public:
-    virtual ~Context() {}
-    virtual jmp_buf* GetJumpMark() = 0;
-  };
-
   std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(
       pdfium::span<const uint8_t> src_buf,
       int width,
@@ -36,6 +28,13 @@ class CCodec_JpegModule {
       int nComps,
       bool ColorTransform);
 
+  // CodecModuleIface:
+  FX_FILESIZE GetAvailInput(Context* pContext) const override;
+  bool Input(Context* pContext,
+             pdfium::span<uint8_t> src_buf,
+             CFX_DIBAttribute* pAttribute) override;
+
+  jmp_buf* GetJumpMark(Context* pContext);
   bool LoadInfo(pdfium::span<const uint8_t> src_span,
                 int* width,
                 int* height,
@@ -44,7 +43,6 @@ class CCodec_JpegModule {
                 bool* color_transform);
 
   std::unique_ptr<Context> Start();
-  void Input(Context* pContext, const uint8_t* src_buf, uint32_t src_size);
 
 #ifdef PDF_ENABLE_XFA
   int ReadHeader(Context* pContext,
@@ -56,7 +54,6 @@ class CCodec_JpegModule {
 
   bool StartScanline(Context* pContext, int down_scale);
   bool ReadScanline(Context* pContext, uint8_t* dest_buf);
-  uint32_t GetAvailInput(Context* pContext) const;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   static bool JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,

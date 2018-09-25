@@ -17,7 +17,7 @@ CCodec_GifModule::CCodec_GifModule() {}
 
 CCodec_GifModule::~CCodec_GifModule() {}
 
-std::unique_ptr<CCodec_GifModule::Context> CCodec_GifModule::Start(
+std::unique_ptr<CodecModuleIface::Context> CCodec_GifModule::Start(
     Delegate* pDelegate) {
   return pdfium::MakeUnique<CFX_GifContext>(this, pDelegate);
 }
@@ -66,10 +66,13 @@ CFX_GifDecodeStatus CCodec_GifModule::LoadFrame(Context* pContext,
   return CFX_GifDecodeStatus::Success;
 }
 
-uint32_t CCodec_GifModule::GetAvailInput(Context* pContext) const {
+FX_FILESIZE CCodec_GifModule::GetAvailInput(Context* pContext) const {
   return static_cast<CFX_GifContext*>(pContext)->GetAvailInput();
 }
 
-void CCodec_GifModule::Input(Context* pContext, pdfium::span<uint8_t> src_buf) {
+bool CCodec_GifModule::Input(Context* pContext,
+                             pdfium::span<uint8_t> src_buf,
+                             CFX_DIBAttribute*) {
   static_cast<CFX_GifContext*>(pContext)->SetInputBuffer(src_buf);
+  return true;
 }
