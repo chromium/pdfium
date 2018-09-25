@@ -160,10 +160,11 @@ bool CFX_ImageStretcher::StartQuickStretch() {
     return false;
 
   size *= m_DestBPP;
-  m_pScanline.reset(FX_Alloc(uint8_t, (size / 8 + 3) / 4 * 4));
-  if (m_pSource->m_pAlphaMask)
-    m_pMaskScanline.reset(FX_Alloc(uint8_t, (m_ClipRect.Width() + 3) / 4 * 4));
-
+  m_pScanline.reset(FX_Alloc(uint8_t, FxAlignToBoundary<4>(size / 8)));
+  if (m_pSource->m_pAlphaMask) {
+    m_pMaskScanline.reset(
+        FX_Alloc(uint8_t, FxAlignToBoundary<4>(m_ClipRect.Width())));
+  }
   if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
     ContinueQuickStretch(nullptr);
     return false;

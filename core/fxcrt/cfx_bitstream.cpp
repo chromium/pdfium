@@ -8,6 +8,7 @@
 
 #include <limits>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 
 CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
@@ -18,7 +19,7 @@ CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
 CFX_BitStream::~CFX_BitStream() {}
 
 void CFX_BitStream::ByteAlign() {
-  m_BitPos = (m_BitPos + 7) & ~7;
+  m_BitPos = FxAlignToBoundary<8>(m_BitPos);
 }
 
 uint32_t CFX_BitStream::GetBits(uint32_t nBits) {

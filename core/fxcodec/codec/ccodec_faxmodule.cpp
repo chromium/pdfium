@@ -530,7 +530,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
 
   if (m_bByteAlign && m_bitpos < bitsize) {
     int bitpos0 = m_bitpos;
-    int bitpos1 = (m_bitpos + 7) / 8 * 8;
+    int bitpos1 = FxAlignToBoundary<8>(m_bitpos);
     while (m_bByteAlign && bitpos0 < bitpos1) {
       int bit = m_SrcSpan[bitpos0 / 8] & (1 << (7 - bitpos0 % 8));
       if (bit != 0)

@@ -44,7 +44,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   if (w <= 0 || h <= 0 || w > kMaxImagePixels)
     return;
 
-  int32_t stride_pixels = (w + 31) & ~31;
+  int32_t stride_pixels = FxAlignToBoundary<32>(w);
   if (h > kMaxImagePixels / stride_pixels)
     return;
 

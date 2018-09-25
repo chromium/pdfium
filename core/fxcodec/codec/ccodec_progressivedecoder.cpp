@@ -839,7 +839,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpStartDecode(
     return m_status;
   }
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
-  m_ScanlineSize = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
+  m_ScanlineSize = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, m_ScanlineSize));
   memset(m_pDecodeBuf.get(), 0, m_ScanlineSize);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
@@ -971,7 +971,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GifStartDecode(
   }
   m_SrcFormat = FXCodec_8bppRgb;
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
-  int scanline_size = (m_SrcWidth + 3) / 4 * 4;
+  int scanline_size = FxAlignToBoundary<4>(m_SrcWidth);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
   memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
@@ -1211,7 +1211,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegStartDecode(
     startStatus = pJpegModule->StartScanline(m_pJpegContext.get(), down_scale);
   }
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
-  scanline_size = (scanline_size * m_SrcComponents + 3) / 4 * 4;
+  scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
   memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
@@ -1435,7 +1435,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngStartDecode(
     }
   }
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
-  int scanline_size = (m_SrcWidth * m_SrcComponents + 3) / 4 * 4;
+  int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
   memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorzOO.Calc(m_sizeX, m_clipBox.Width());

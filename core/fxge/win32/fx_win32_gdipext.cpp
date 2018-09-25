@@ -525,7 +525,7 @@ RetainPtr<CFX_DIBitmap> StretchMonoToGray(
 
   int result_width = pClipRect->Width();
   int result_height = pClipRect->Height();
-  int result_pitch = (result_width + 3) / 4 * 4;
+  int result_pitch = FxAlignToBoundary<4>(result_width);
   auto pStretched = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pStretched->Create(result_width, result_height, FXDIB_8bppRgb))
     return nullptr;
@@ -620,10 +620,10 @@ void OutputImageMask(GpGraphics* pGraphics,
           pBitmap->StretchTo(dest_width, dest_height, false, &image_clip);
     }
     GpBitmap* bitmap;
-    CallFunc(GdipCreateBitmapFromScan0)(image_clip.Width(), image_clip.Height(),
-                                        (image_clip.Width() + 3) / 4 * 4,
-                                        PixelFormat8bppIndexed,
-                                        pStretched->GetBuffer(), &bitmap);
+    CallFunc(GdipCreateBitmapFromScan0)(
+        image_clip.Width(), image_clip.Height(),
+        FxAlignToBoundary<4>(image_clip.Width()), PixelFormat8bppIndexed,
+        pStretched->GetBuffer(), &bitmap);
     int a;
     int r;
     int g;
@@ -772,7 +772,7 @@ GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   CallFunc(GdipSetPenLineJoin)(pPen, lineJoin);
   if (!pGraphState->m_DashArray.empty()) {
     float* pDashArray =
-        FX_Alloc(float, (pGraphState->m_DashArray.size() + 1) & ~1);
+        FX_Alloc(float, FxAlignToBoundary<2>(pGraphState->m_DashArray.size()));
     int nCount = 0;
     float on_leftover = 0, off_leftover = 0;
     for (size_t i = 0; i < pGraphState->m_DashArray.size(); i += 2) {

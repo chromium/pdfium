@@ -130,6 +130,13 @@ inline void FX_Free(void* ptr) {
 template <typename T, size_t N>
 char (&ArraySizeHelper(T (&array)[N]))[N];
 
+// Round up to the power-of-two boundary N.
+template <int N, typename T>
+inline T FxAlignToBoundary(T size) {
+  static_assert(N > 0 && (N & (N - 1)) == 0, "Not non-zero power of two");
+  return (size + N - 1) & ~(N - 1);
+}
+
 // Used with std::unique_ptr to FX_Free raw memory.
 struct FxFreeDeleter {
   inline void operator()(void* ptr) const { FX_Free(ptr); }
