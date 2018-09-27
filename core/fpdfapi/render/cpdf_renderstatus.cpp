@@ -144,7 +144,7 @@ void GetShadingSteps(float t_min,
 }
 
 void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                      CFX_Matrix* pObject2Bitmap,
+                      const CFX_Matrix* pObject2Bitmap,
                       const CPDF_Dictionary* pDict,
                       const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                       const CPDF_ColorSpace* pCS,
@@ -214,7 +214,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 }
 
 void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                       CFX_Matrix* pObject2Bitmap,
+                       const CFX_Matrix* pObject2Bitmap,
                        const CPDF_Dictionary* pDict,
                        const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                        const CPDF_ColorSpace* pCS,
@@ -317,7 +317,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 }
 
 void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                     CFX_Matrix* pObject2Bitmap,
+                     const CFX_Matrix* pObject2Bitmap,
                      const CPDF_Dictionary* pDict,
                      const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                      const CPDF_ColorSpace* pCS,
@@ -477,7 +477,7 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
 void DrawFreeGouraudShading(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
-    CFX_Matrix* pObject2Bitmap,
+    const CFX_Matrix* pObject2Bitmap,
     const CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     const CPDF_ColorSpace* pCS,
@@ -518,7 +518,7 @@ void DrawFreeGouraudShading(
 
 void DrawLatticeGouraudShading(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
-    CFX_Matrix* pObject2Bitmap,
+    const CFX_Matrix* pObject2Bitmap,
     const CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     const CPDF_ColorSpace* pCS,
@@ -836,7 +836,7 @@ struct CPDF_PatchDrawer {
 void DrawCoonPatchMeshes(
     ShadingType type,
     const RetainPtr<CFX_DIBitmap>& pBitmap,
-    CFX_Matrix* pObject2Bitmap,
+    const CFX_Matrix* pObject2Bitmap,
     const CPDF_Stream* pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
     const CPDF_ColorSpace* pCS,
