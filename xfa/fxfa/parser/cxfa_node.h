@@ -494,18 +494,18 @@ class CXFA_Node : public CXFA_Object {
   // pointers within the tree (or in objects owned by nodes in the tree)
   // can't be UnownedPtr<> because the cleanup process will remove the nodes
   // in an order that doesn't necessarily match up to the tree structure.
-  CXFA_Node* parent_;        // Raw, intra-tree node pointer.
-  CXFA_Node* next_sibling_;  // Raw, intra-tree node pointer.
-  CXFA_Node* prev_sibling_;  // Raw, intra-tree node pointer.
-  CXFA_Node* first_child_;   // Raw, intra-tree node pointer.
-  CXFA_Node* last_child_;    // Raw, intra-tree node pointer.
+  CXFA_Node* parent_ = nullptr;        // Raw, intra-tree node pointer.
+  CXFA_Node* next_sibling_ = nullptr;  // Raw, intra-tree node pointer.
+  CXFA_Node* prev_sibling_ = nullptr;  // Raw, intra-tree node pointer.
+  CXFA_Node* first_child_ = nullptr;   // Raw, intra-tree node pointer.
+  CXFA_Node* last_child_ = nullptr;    // Raw, intra-tree node pointer.
 
   UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;
   uint8_t m_ExecuteRecursionDepth = 0;
-  uint16_t m_uNodeFlags;
-  uint32_t m_dwNameHash;
-  CXFA_Node* m_pAuxNode;  // Raw, node tree cleanup order.
+  uint16_t m_uNodeFlags = XFA_NodeFlag_None;
+  uint32_t m_dwNameHash = 0;
+  CXFA_Node* m_pAuxNode = nullptr;  // Raw, node tree cleanup order.
   std::vector<UnownedPtr<CXFA_Node>> binding_nodes_;
   bool m_bIsNull = true;
   bool m_bPreNull = true;

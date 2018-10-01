@@ -575,15 +575,7 @@ CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
       m_Properties(properties),
       m_Attributes(attributes),
       m_ValidPackets(validPackets),
-      parent_(nullptr),
-      next_sibling_(nullptr),
-      prev_sibling_(nullptr),
-      first_child_(nullptr),
-      last_child_(nullptr),
-      m_ePacket(ePacket),
-      m_uNodeFlags(XFA_NodeFlag_None),
-      m_dwNameHash(0),
-      m_pAuxNode(nullptr) {
+      m_ePacket(ePacket) {
   ASSERT(m_pDocument);
 }
 
@@ -3403,10 +3395,10 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     if (iLineNum >= iLinesCount) {
       if (*pCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
         if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-          (*pFieldArray)[iBlockIndex * 3 + 1] = (float)iLinesCount;
+          (*pFieldArray)[iBlockIndex * 3 + 1] = iLinesCount;
           (*pFieldArray)[iBlockIndex * 3 + 2] = *pCalcHeight;
         } else {
-          pFieldArray->push_back((float)iLinesCount);
+          pFieldArray->push_back(iLinesCount);
           pFieldArray->push_back(*pCalcHeight);
         }
         return false;
@@ -3424,10 +3416,10 @@ bool CXFA_Node::FindSplitPos(CXFA_FFDocView* docView,
     if (iLineNum > 0) {
       float fSplitHeight = iLineNum * fLineHeight + fCapReserve + fStartOffset;
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        (*pFieldArray)[iBlockIndex * 3 + 1] = (float)iLineNum;
+        (*pFieldArray)[iBlockIndex * 3 + 1] = iLineNum;
         (*pFieldArray)[iBlockIndex * 3 + 2] = fSplitHeight;
       } else {
-        pFieldArray->push_back((float)iLineNum);
+        pFieldArray->push_back(iLineNum);
         pFieldArray->push_back(fSplitHeight);
       }
       if (fabs(fSplitHeight - *pCalcHeight) < XFA_FLOAT_PERCISION)
