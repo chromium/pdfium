@@ -210,22 +210,22 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
   if (!remainder)
     return nullptr;
 
-  int e = BCExceptionNO;
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
-  int32_t inverseDenominatorLeadingTeam =
-      m_field->Inverse(denominatorLeadingTerm, e);
-  if (e != BCExceptionNO)
+  Optional<int32_t> inverseDenominatorLeadingTeam =
+      m_field->Inverse(denominatorLeadingTerm);
+  if (!inverseDenominatorLeadingTeam.has_value())
     return nullptr;
+
   while (remainder->GetDegree() >= other->GetDegree() && !remainder->IsZero()) {
     int32_t degreeDifference = remainder->GetDegree() - other->GetDegree();
     int32_t scale =
         m_field->Multiply(remainder->GetCoefficients((remainder->GetDegree())),
-                          inverseDenominatorLeadingTeam);
+                          inverseDenominatorLeadingTeam.value());
     auto term = other->MultiplyByMonomial(degreeDifference, scale);
     if (!term)
       return nullptr;
-    auto iteratorQuotient = m_field->BuildMonomial(degreeDifference, scale, e);
-    if (e != BCExceptionNO)
+    auto iteratorQuotient = m_field->BuildMonomial(degreeDifference, scale);
+    if (!iteratorQuotient)
       return nullptr;
     quotient = quotient->AddOrSubtract(iteratorQuotient.get());
     if (!quotient)

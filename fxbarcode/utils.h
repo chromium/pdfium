@@ -44,8 +44,6 @@ enum BCFORMAT {
 
 #define BCExceptionNO 0
 #define BCExceptionIllegalArgument 16
-#define BCExceptionDegreeIsNegative 31
-#define BCExceptionAIsZero 37
 #define BCExceptionValueMustBeEither0or1 50
 #define BCExceptionBadIndexException 52
 #define BCExceptionUnsupportedMode 64
