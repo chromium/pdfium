@@ -10,6 +10,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <type_traits>
+
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/logging.h"
 
