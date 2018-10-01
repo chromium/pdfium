@@ -329,8 +329,11 @@ bug_492.in * nov8 *
 
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * *
+# TODO(pdfium:1168): Remove after associated bug is fixed
+xfa_bmp_image.in * * *
 # TODO(pdfium:1095): Remove after associated bug is fixed
 xfa_example.in win * *
-xfa_textfield.in win * *
 # TODO(pdfium:1167): Remove after associated bug is fixed
 xfa_gif_image.in * * *
+# TODO(pdfium:1095): Remove after associated bug is fixed
+xfa_textfield.in win * *
