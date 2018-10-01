@@ -277,5 +277,4 @@ const XFA_AttributeEnumInfo g_XFAEnumData[] = {
     {0xfefc4885, L"urlencoded", XFA_AttributeEnum::Urlencoded},
     {0xff795ad2, L"lowered", XFA_AttributeEnum::Lowered},
 };
-const int32_t g_iXFAEnumCount =
-    sizeof(g_XFAEnumData) / sizeof(XFA_AttributeEnumInfo);
+const size_t g_szXFAEnumCount = FX_ArraySize(g_XFAEnumData);

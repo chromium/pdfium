@@ -552,11 +552,12 @@ Optional<XFA_AttributeEnum> CXFA_Node::NameToAttributeEnum(
   if (name.IsEmpty())
     return {};
 
-  auto* it = std::lower_bound(g_XFAEnumData, g_XFAEnumData + g_iXFAEnumCount,
+  static const auto* kXFAEnumDataEnd = g_XFAEnumData + g_szXFAEnumCount;
+  auto* it = std::lower_bound(g_XFAEnumData, kXFAEnumDataEnd,
                               FX_HashCode_GetW(name, false),
                               [](const XFA_AttributeEnumInfo& arg,
                                  uint32_t hash) { return arg.uHash < hash; });
-  if (it != g_XFAEnumData + g_iXFAEnumCount && name == it->pName)
+  if (it != kXFAEnumDataEnd && name == it->pName)
     return {it->eName};
   return {};
 }

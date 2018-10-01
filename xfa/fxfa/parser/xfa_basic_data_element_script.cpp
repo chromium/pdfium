@@ -471,8 +471,8 @@ const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
     {/*  */ 1072, 0, 316},
     {/*  */ 1072, 2, 316},
     {/*  */ 1074, 2, 316}};
-const int32_t g_iScriptIndexCount =
-    sizeof(g_XFAScriptIndex) / sizeof(XFA_SCRIPTHIERARCHY);
+const size_t g_szScriptIndexCount = FX_ArraySize(g_XFAScriptIndex);
+
 const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     /* ps */
     {0xbe52dfbf, L"desc",
@@ -3807,4 +3807,4 @@ const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
      (XFA_ATTRIBUTE_CALLBACK)&CJX_Object::Script_Som_DefaultValue,
      XFA_Attribute::Unknown, XFA_ScriptType::Basic},
 };
-const int32_t g_iSomAttributeCount = FX_ArraySize(g_SomAttributeData);
+const size_t g_szSomAttributeCount = FX_ArraySize(g_SomAttributeData);
