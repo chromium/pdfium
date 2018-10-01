@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
-#define PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
+#ifndef THIRD_PARTY_BASE_LOGGING_H_
+#define THIRD_PARTY_BASE_LOGGING_H_
 
 #include <assert.h>
 #include <stdlib.h>
@@ -36,4 +36,4 @@
 
 #define NOTREACHED() assert(false)
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_LOGGING_H_
+#endif  // THIRD_PARTY_BASE_LOGGING_H_

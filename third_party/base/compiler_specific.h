@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_COMPILER_SPECIFIC_H_
-#define BASE_COMPILER_SPECIFIC_H_
+#ifndef THIRD_PARTY_BASE_COMPILER_SPECIFIC_H_
+#define THIRD_PARTY_BASE_COMPILER_SPECIFIC_H_
 
 #include "build/build_config.h"
 
@@ -228,4 +228,4 @@
 #define FALLTHROUGH
 #endif
 
-#endif  // BASE_COMPILER_SPECIFIC_H_
+#endif  // THIRD_PARTY_BASE_COMPILER_SPECIFIC_H_

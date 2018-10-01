@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_SPAN_H_
-#define PDFIUM_THIRD_PARTY_BASE_SPAN_H_
+#ifndef THIRD_PARTY_BASE_SPAN_H_
+#define THIRD_PARTY_BASE_SPAN_H_
 
 #include <stddef.h>
 
@@ -349,4 +349,4 @@ constexpr span<T> make_span(const Container& container) {
 
 }  // namespace pdfium
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_SPAN_H_
+#endif  // THIRD_PARTY_BASE_SPAN_H_

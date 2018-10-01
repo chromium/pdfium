@@ -7,8 +7,8 @@
 // that are closely related to things that are commonly used that belong in this
 // file.)
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_MACROS_H_
-#define PDFIUM_THIRD_PARTY_BASE_MACROS_H_
+#ifndef THIRD_PARTY_BASE_MACROS_H_
+#define THIRD_PARTY_BASE_MACROS_H_
 
 // The COMPILE_ASSERT macro can be used to verify that a compile time
 // expression is true. For example, you could use it to verify the
@@ -34,4 +34,4 @@
   TypeName(const TypeName&) = delete;      \
   void operator=(const TypeName&) = delete
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_MACROS_H_
+#endif  // THIRD_PARTY_BASE_MACROS_H_

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_PTR_UTIL_H_
-#define PDFIUM_THIRD_PARTY_BASE_PTR_UTIL_H_
+#ifndef THIRD_PARTY_BASE_PTR_UTIL_H_
+#define THIRD_PARTY_BASE_PTR_UTIL_H_
 
 #include <memory>
 #include <utility>
@@ -71,4 +71,4 @@ typename internal::MakeUniqueResult<T>::Invalid MakeUnique(Args&&... args) =
 
 }  // namespace pdfium
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_PTR_UTIL_H_
+#endif  // THIRD_PARTY_BASE_PTR_UTIL_H_

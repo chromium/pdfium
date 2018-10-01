@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
-#define PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
+#ifndef THIRD_PARTY_BASE_STL_UTIL_H_
+#define THIRD_PARTY_BASE_STL_UTIL_H_
 
 #include <algorithm>
 #include <iterator>
@@ -86,4 +86,4 @@ std::vector<T> Vector2D(size_t w, size_t h) {
 
 }  // namespace pdfium
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
+#endif  // THIRD_PARTY_BASE_STL_UTIL_H_

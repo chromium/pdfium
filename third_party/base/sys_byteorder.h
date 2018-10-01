@@ -8,8 +8,8 @@
 // Use the functions defined here rather than using the platform-specific
 // functions directly.
 
-#ifndef BASE_SYS_BYTEORDER_H_
-#define BASE_SYS_BYTEORDER_H_
+#ifndef THIRD_PARTY_BASE_SYS_BYTEORDER_H_
+#define THIRD_PARTY_BASE_SYS_BYTEORDER_H_
 
 #include <stdint.h>
 
@@ -138,4 +138,4 @@ inline uint64_t HostToNet64(uint64_t x) {
 }  // namespace base
 }  // namespace pdfium
 
-#endif  // BASE_SYS_BYTEORDER_H_
+#endif  // THIRD_PARTY_BASE_SYS_BYTEORDER_H_

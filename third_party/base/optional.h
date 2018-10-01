@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_OPTIONAL_H_
-#define PDFIUM_THIRD_PARTY_BASE_OPTIONAL_H_
+#ifndef THIRD_PARTY_BASE_OPTIONAL_H_
+#define THIRD_PARTY_BASE_OPTIONAL_H_
 
 #include <type_traits>
 #include <utility>
@@ -507,4 +507,4 @@ struct hash<pdfium::Optional<T>> {
 template <class T>
 using Optional = pdfium::Optional<T>;
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_OPTIONAL_H_
+#endif  // THIRD_PARTY_BASE_OPTIONAL_H_

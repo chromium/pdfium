@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_TEMPLATE_UTIL_H_
-#define BASE_TEMPLATE_UTIL_H_
+#ifndef THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
+#define THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
 
 #include <stddef.h>
 #include <iosfwd>
@@ -150,4 +150,4 @@ using is_trivially_copy_constructible = std::is_trivially_copy_constructible<T>;
 #undef CR_USE_FALLBACKS_FOR_GCC_WITH_LIBCXX
 #undef CR_USE_FALLBACKS_FOR_OLD_EXPERIMENTAL_GLIBCXX
 
-#endif  // BASE_TEMPLATE_UTIL_H_
+#endif  // THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
