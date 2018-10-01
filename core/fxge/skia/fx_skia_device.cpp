@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fxge/skia/fx_skia_device.h"
+
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -25,7 +27,6 @@
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
-#include "core/fxge/skia/fx_skia_device.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/skia/include/core/SkCanvas.h"

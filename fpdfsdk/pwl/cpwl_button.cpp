@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fpdfsdk/pwl/cpwl_button.h"
+
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 CPWL_Button::CPWL_Button() : m_bMouseDown(false) {}

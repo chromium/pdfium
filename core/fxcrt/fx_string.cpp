@@ -4,13 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcrt/fx_string.h"
+
 #include <limits>
 #include <vector>
 
 #include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/cfx_utf8encoder.h"
 #include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_string.h"
 #include "third_party/base/compiler_specific.h"
 
 ByteString FX_UTF8Encode(const WideStringView& wsStr) {
