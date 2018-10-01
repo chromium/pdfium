@@ -111,7 +111,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   void CloseXFADoc();
 
   FormType m_FormType = FormType::kNone;
-  UnownedPtr<CPDF_Document> m_pPDFDoc;
+  UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   Observable<CPDFSDK_FormFillEnvironment>::ObservedPtr m_pFormFillEnv;
   UnownedPtr<CXFA_FFDocView> m_pXFADocView;
