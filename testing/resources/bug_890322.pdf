@@ -1,0 +1,69 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm << /Fields [ 4 0 R ] >>
+>>
+endobj
+2 0 obj <<
+  /Type /Pages /Count 1 /Kids [ 3 0 R ]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [ 0 0 200 200 ]
+  /Contents 6 0 R
+  /Annots [ 4 0 R ]
+>>
+endobj
+4 0 obj <<
+  /Type /Annot
+  /Subtype /Widget
+  /F 4
+  /FT /Btn
+  /Rect [ 75 80 125 120 ]
+  /T (PushButton)
+  /Ff 65536
+  /H
+  /P
+  /AP << /N 5 0 R >>
+  /MK << /BG [ 1.0 0.0 0.0 ] >>
+>>
+endobj
+5 0 obj <<
+  /Subtype /Form
+  /BBox [ 0 40 50 00 ]
+  /Length 29
+>>
+stream
+q
+0 0 1 rg
+0 0 50 40 re B*
+Q
+endstream
+6 0 obj <<
+  /Length 4
+>>
+stream
+q
+Q
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000104 00000 n 
+0000000165 00000 n 
+0000000282 00000 n 
+0000000474 00000 n 
+0000000587 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 7
+>>
+startxref
+641
+%%EOF

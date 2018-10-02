@@ -364,6 +364,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       rcStream = pAPDic->GetRectFor("Rect");
     else if (pAPDic->KeyExist("BBox"))
       rcStream = pAPDic->GetRectFor("BBox");
+    rcStream.Normalize();
 
     if (rcStream.IsEmpty())
       continue;

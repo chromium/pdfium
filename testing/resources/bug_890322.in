@@ -1,0 +1,56 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm << /Fields [ 4 0 R ] >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages /Count 1 /Kids [ 3 0 R ]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [ 0 0 200 200 ]
+  /Contents 6 0 R
+  /Annots [ 4 0 R ]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /F 4
+  /FT /Btn
+  /Rect [ 75 80 125 120 ]
+  /T (PushButton)
+  /Ff 65536
+  /H
+  /P
+  /AP << /N 5 0 R >>
+  /MK << /BG [ 1.0 0.0 0.0 ] >>
+>>
+endobj
+{{object 5 0}} <<
+  /Subtype /Form
+  /BBox [ 0 40 50 00 ]
+  {{streamlen}}
+>>
+stream
+q
+0 0 1 rg
+0 0 50 40 re B*
+Q
+endstream
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
