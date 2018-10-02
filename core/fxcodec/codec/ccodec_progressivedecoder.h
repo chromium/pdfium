@@ -200,12 +200,6 @@ class CCodec_ProgressiveDecoder :
                                  int dest_row);
 #endif  // PDF_ENABLE_XFA_GIF
 
-  bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
-                        FXCODEC_STATUS& err_status);
-  bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
-  FXCODEC_STATUS JpegStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
-  FXCODEC_STATUS JpegContinueDecode();
-
 #ifdef PDF_ENABLE_XFA_PNG
   void PngOneOneMapResampleHorz(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                                 int32_t dest_line,
@@ -221,8 +215,18 @@ class CCodec_ProgressiveDecoder :
   FXCODEC_STATUS TiffContinueDecode();
 #endif  // PDF_ENABLE_XFA_TIFF
 
+  bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
+                        FXCODEC_STATUS& err_status);
+  bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
+  FXCODEC_STATUS JpegStartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  FXCODEC_STATUS JpegContinueDecode();
+
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
+  bool ReadMoreData(CodecModuleIface* pModule,
+                    CodecModuleIface::Context* pContext,
+                    bool invalidate_buffer,
+                    FXCODEC_STATUS& err_status);
 
   void GetDownScale(int& down_scale);
   void GetTransMethod(FXDIB_Format dest_format, FXCodec_Format src_format);

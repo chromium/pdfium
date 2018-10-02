@@ -788,45 +788,9 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 
 bool CCodec_ProgressiveDecoder::BmpReadMoreData(
     CCodec_BmpModule* pBmpModule,
-    CodecModuleIface::Context* pBmpContext,
+    CodecModuleIface::Context* pContext,
     FXCODEC_STATUS& err_status) {
-  uint32_t dwSize = (uint32_t)m_pFile->GetSize();
-  if (dwSize <= m_offSet)
-    return false;
-
-  dwSize = dwSize - m_offSet;
-  FX_SAFE_UINT32 avail_input = pBmpModule->GetAvailInput(pBmpContext);
-  if (!avail_input.IsValid())
-    return false;
-
-  uint32_t dwAvail = avail_input.ValueOrDie();
-  if (dwAvail == m_SrcSize) {
-    if (dwSize > FXCODEC_BLOCK_SIZE) {
-      dwSize = FXCODEC_BLOCK_SIZE;
-    }
-    m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
-                FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
-    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
-    if (!m_pSrcBuf) {
-      err_status = FXCODEC_STATUS_ERR_MEMORY;
-      return false;
-    }
-  } else {
-    uint32_t dwConsume = m_SrcSize - dwAvail;
-    if (dwAvail) {
-      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsume, dwAvail);
-    }
-    if (dwSize > dwConsume) {
-      dwSize = dwConsume;
-    }
-  }
-  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwAvail, m_offSet, dwSize)) {
-    err_status = FXCODEC_STATUS_ERR_READ;
-    return false;
-  }
-  m_offSet += dwSize;
-  pBmpModule->Input(pBmpContext, {m_pSrcBuf.get(), dwSize + dwAvail}, nullptr);
-  return true;
+  return ReadMoreData(pBmpModule, pContext, false, err_status);
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpStartDecode(
@@ -884,44 +848,10 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpContinueDecode() {
 #ifdef PDF_ENABLE_XFA_GIF
 bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
                                                 FXCODEC_STATUS& err_status) {
-  if (static_cast<uint32_t>(m_pFile->GetSize()) <= m_offSet)
-    return false;
-
-  uint32_t dwFileRemaining = m_pFile->GetSize() - m_offSet;
-  uint32_t dwUnusedBuffer = !m_InvalidateGifBuffer
-                                ? pGifModule->GetAvailInput(m_pGifContext.get())
-                                : 0;
-  uint32_t dwAmountToFetchFromFile = dwFileRemaining;
-  if (dwUnusedBuffer == m_SrcSize) {
-    if (dwFileRemaining > FXCODEC_BLOCK_SIZE)
-      dwAmountToFetchFromFile = FXCODEC_BLOCK_SIZE;
-    m_SrcSize = std::min(
-        (dwAmountToFetchFromFile + dwUnusedBuffer + FXCODEC_BLOCK_SIZE - 1) /
-            FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE,
-        static_cast<uint32_t>(m_pFile->GetSize()));
-    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
-    if (!m_pSrcBuf) {
-      err_status = FXCODEC_STATUS_ERR_MEMORY;
-      return false;
-    }
-  } else {
-    uint32_t dwConsumed = m_SrcSize - dwUnusedBuffer;
-    if (dwUnusedBuffer)
-      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsumed, dwUnusedBuffer);
-    if (dwFileRemaining > dwConsumed)
-      dwAmountToFetchFromFile = dwConsumed;
-  }
-
-  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwUnusedBuffer, m_offSet,
-                          dwAmountToFetchFromFile)) {
-    err_status = FXCODEC_STATUS_ERR_READ;
+  if (!ReadMoreData(pGifModule, m_pGifContext.get(), m_InvalidateGifBuffer,
+                    err_status)) {
     return false;
   }
-
-  m_offSet += dwAmountToFetchFromFile;
-  pGifModule->Input(m_pGifContext.get(),
-                    {m_pSrcBuf.get(), dwAmountToFetchFromFile + dwUnusedBuffer},
-                    nullptr);
   m_InvalidateGifBuffer = false;
   return true;
 }
@@ -1107,40 +1037,7 @@ void CCodec_ProgressiveDecoder::GifDoubleLineResampleVert(
 
 bool CCodec_ProgressiveDecoder::JpegReadMoreData(CCodec_JpegModule* pJpegModule,
                                                  FXCODEC_STATUS& err_status) {
-  uint32_t dwSize = (uint32_t)m_pFile->GetSize();
-  if (dwSize <= m_offSet) {
-    return false;
-  }
-  dwSize = dwSize - m_offSet;
-  uint32_t dwAvail = pJpegModule->GetAvailInput(m_pJpegContext.get());
-  if (dwAvail == m_SrcSize) {
-    if (dwSize > FXCODEC_BLOCK_SIZE) {
-      dwSize = FXCODEC_BLOCK_SIZE;
-    }
-    m_SrcSize = (dwSize + dwAvail + FXCODEC_BLOCK_SIZE - 1) /
-                FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE;
-    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
-    if (!m_pSrcBuf) {
-      err_status = FXCODEC_STATUS_ERR_MEMORY;
-      return false;
-    }
-  } else {
-    uint32_t dwConsume = m_SrcSize - dwAvail;
-    if (dwAvail) {
-      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsume, dwAvail);
-    }
-    if (dwSize > dwConsume) {
-      dwSize = dwConsume;
-    }
-  }
-  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwAvail, m_offSet, dwSize)) {
-    err_status = FXCODEC_STATUS_ERR_READ;
-    return false;
-  }
-  m_offSet += dwSize;
-  pJpegModule->Input(m_pJpegContext.get(), {m_pSrcBuf.get(), dwSize + dwAvail},
-                     nullptr);
-  return true;
+  return ReadMoreData(pJpegModule, m_pJpegContext.get(), false, err_status);
 }
 
 bool CCodec_ProgressiveDecoder::JpegDetectImageTypeInBuffer(
@@ -1691,6 +1588,53 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
 
   m_status = FXCODEC_STATUS_ERR_FORMAT;
   return false;
+}
+
+bool CCodec_ProgressiveDecoder::ReadMoreData(
+    CodecModuleIface* pModule,
+    CodecModuleIface::Context* pContext,
+    bool invalidate_buffer,
+    FXCODEC_STATUS& err_status) {
+  if (static_cast<uint32_t>(m_pFile->GetSize()) <= m_offSet)
+    return false;
+
+  uint32_t dwFileRemaining = m_pFile->GetSize() - m_offSet;
+  uint32_t dwAmountToFetchFromFile = dwFileRemaining;
+  uint32_t dwUnusedBuffer = 0;
+  if (!invalidate_buffer) {
+    FX_SAFE_UINT32 avail_input = pModule->GetAvailInput(pContext);
+    if (!avail_input.IsValid())
+      return false;
+    dwUnusedBuffer = avail_input.ValueOrDie();
+  }
+  if (dwUnusedBuffer == m_SrcSize) {
+    if (dwFileRemaining > FXCODEC_BLOCK_SIZE)
+      dwAmountToFetchFromFile = FXCODEC_BLOCK_SIZE;
+    m_SrcSize = std::min(
+        (dwAmountToFetchFromFile + dwUnusedBuffer + FXCODEC_BLOCK_SIZE - 1) /
+            FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE,
+        static_cast<uint32_t>(m_pFile->GetSize()));
+    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
+    if (!m_pSrcBuf) {
+      err_status = FXCODEC_STATUS_ERR_MEMORY;
+      return false;
+    }
+  } else {
+    uint32_t dwConsumed = m_SrcSize - dwUnusedBuffer;
+    if (dwUnusedBuffer)
+      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsumed, dwUnusedBuffer);
+    if (dwFileRemaining > dwConsumed)
+      dwAmountToFetchFromFile = dwConsumed;
+  }
+  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwUnusedBuffer, m_offSet,
+                          dwAmountToFetchFromFile)) {
+    err_status = FXCODEC_STATUS_ERR_READ;
+    return false;
+  }
+  m_offSet += dwAmountToFetchFromFile;
+  return pModule->Input(
+      pContext, {m_pSrcBuf.get(), dwAmountToFetchFromFile + dwUnusedBuffer},
+      nullptr);
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
