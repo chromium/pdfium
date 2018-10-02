@@ -71,17 +71,22 @@ class GoldBaseline(object):
     cl_number_str = self._properties.get('issue', None)
     url = GOLD_BASELINE_URL + ('/' + cl_number_str if cl_number_str else '')
 
-    try:
-      response = urllib2.urlopen(url, timeout=2)
-      c_type = response.headers.get('Content-type', '')
-      EXPECTED_CONTENT_TYPE = 'application/json'
-      if c_type != EXPECTED_CONTENT_TYPE:
-        raise ValueError('Invalid content type. Got %s instead of %s' % (
-            c_type, EXPECTED_CONTENT_TYPE))
-      json_data = response.read()
-    except (urllib2.HTTPError, urllib2.URLError) as e:
-      print ('Error: Unable to read skia gold json from %s: %s' % (url, e))
-      return None
+    json_data = ''
+    RETRIES = 5
+    attempts = 0
+    while not json_data and attempts < RETRIES:
+      try:
+        response = urllib2.urlopen(url, timeout=2)
+        c_type = response.headers.get('Content-type', '')
+        EXPECTED_CONTENT_TYPE = 'application/json'
+        if c_type != EXPECTED_CONTENT_TYPE:
+          raise ValueError('Invalid content type. Got %s instead of %s' % (
+              c_type, EXPECTED_CONTENT_TYPE))
+        json_data = response.read()
+        attempts += 1
+      except (urllib2.HTTPError, urllib2.URLError) as e:
+        print ('Error: Unable to read skia gold json from %s: %s' % (url, e))
+        return None
 
     try:
       data = json.loads(json_data)
