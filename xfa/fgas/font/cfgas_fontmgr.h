@@ -161,9 +161,8 @@ class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
                   uint32_t dwFontStyles,
                   const WideString& FontName,
                   wchar_t wcUnicode);
-  RetainPtr<CFGAS_GEFont> LoadFont(const WideString& wsFaceName,
-                                   int32_t iFaceIndex,
-                                   int32_t* pFaceCount);
+  RetainPtr<CFGAS_GEFont> LoadFontInternal(const WideString& wsFaceName,
+                                           int32_t iFaceIndex);
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
   std::map<uint32_t, std::vector<RetainPtr<CFGAS_GEFont>>> m_Hash2Fonts;

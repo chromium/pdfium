@@ -702,9 +702,9 @@ bool CFGAS_FontMgr::EnumFonts() {
   return EnumFontsFromFontMapper() || EnumFontsFromFiles();
 }
 
-RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const WideString& wsFaceName,
-                                                int32_t iFaceIndex,
-                                                int32_t* pFaceCount) {
+RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFontInternal(
+    const WideString& wsFaceName,
+    int32_t iFaceIndex) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
   CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
   if (!pFontMapper)
@@ -729,8 +729,6 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(const WideString& wsFaceName,
     return nullptr;
 
   m_IFXFont2FileRead[pFont] = pFontStream;
-  if (pFaceCount)
-    *pFaceCount = pFont->GetDevFont()->GetFace()->num_faces;
   return pFont;
 }
 
@@ -866,7 +864,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
 
   CFX_FontDescriptor* pDesc = (*sortedFontInfos)[0].pFont;
   RetainPtr<CFGAS_GEFont> pFont =
-      LoadFont(pDesc->m_wsFaceName, pDesc->m_nFaceIndex, nullptr);
+      LoadFontInternal(pDesc->m_wsFaceName, pDesc->m_nFaceIndex);
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
   if (!pFont)
@@ -938,7 +936,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
     if (!VerifyUnicodeForFontDescriptor(pDesc, wUnicode))
       continue;
     RetainPtr<CFGAS_GEFont> pFont =
-        LoadFont(pDesc->m_wsFaceName, pDesc->m_nFaceIndex, nullptr);
+        LoadFontInternal(pDesc->m_wsFaceName, pDesc->m_nFaceIndex);
     if (!pFont)
       continue;
     pFont->SetLogicalFontStyle(dwFontStyles);
