@@ -173,31 +173,31 @@ class GoldBaseline(object):
 # }
 #
 class GoldResults(object):
-  def __init__(self, source_type, outputDir, propertiesStr, keyStr,
+  def __init__(self, source_type, output_dir, properties_str, key_str,
                ignore_hashes_file):
     """
     source_type is the source_type (=corpus) field used for all results.
     output_dir is the directory where the resulting images are copied and
                the dm.json file is written. If the directory exists it will
                be removed and recreated.
-    propertiesStr is a string with space separated key/value pairs that
+    properties_str is a string with space separated key/value pairs that
                is used to set the top level fields in the output JSON file.
-    keyStr is a string with space separated key/value pairs that
+    key_str is a string with space separated key/value pairs that
                is used to set the 'key' field in the output JSON file.
     ignore_hashes_file is a file that contains a list of image hashes
                that should be ignored.
     """
     self._source_type = source_type
-    self._properties = _ParseKeyValuePairs(propertiesStr)
-    self._properties["key"] = _ParseKeyValuePairs(keyStr)
+    self._properties = _ParseKeyValuePairs(properties_str)
+    self._properties['key'] = _ParseKeyValuePairs(key_str)
     self._results =  []
     self._passfail = []
-    self._outputDir = outputDir
+    self._output_dir = output_dir
 
     # make sure the output directory exists and is empty.
-    if os.path.exists(outputDir):
-      shutil.rmtree(outputDir, ignore_errors=True)
-    os.makedirs(outputDir)
+    if os.path.exists(output_dir):
+      shutil.rmtree(output_dir, ignore_errors=True)
+    os.makedirs(output_dir)
 
     self._ignore_hashes = set()
     if ignore_hashes_file:
@@ -208,24 +208,24 @@ class GoldResults(object):
   def AddTestResult(self, testName, md5Hash, outputImagePath, matchResult):
     # If the hash is in the list of hashes to ignore then we don'try
     # make a copy, but add it to the result.
-    imgExt = os.path.splitext(outputImagePath)[1].lstrip(".")
+    imgExt = os.path.splitext(outputImagePath)[1].lstrip('.')
     if md5Hash not in self._ignore_hashes:
       # Copy the image to <output_dir>/<md5Hash>.<image_extension>
       if not imgExt:
-        raise ValueError("File %s does not have an extension" % outputImagePath)
-      newFilePath = os.path.join(self._outputDir, md5Hash + '.' + imgExt)
+        raise ValueError('File %s does not have an extension' % outputImagePath)
+      newFilePath = os.path.join(self._output_dir, md5Hash + '.' + imgExt)
       shutil.copy2(outputImagePath, newFilePath)
 
     # Add an entry to the list of test results
     self._results.append({
-      "key": {
-        "name": testName,
-        "source_type": self._source_type,
+      'key': {
+        'name': testName,
+        'source_type': self._source_type,
       },
-      "md5": md5Hash,
-      "options": {
-        "ext": imgExt,
-        "gamma_correct": "no"
+      'md5': md5Hash,
+      'options': {
+        'ext': imgExt,
+        'gamma_correct': 'no'
       }
     })
 
@@ -233,41 +233,45 @@ class GoldResults(object):
 
   def WriteResults(self):
     self._properties.update({
-      "results": self._results
+      'results': self._results
     })
 
-    outputFileName = os.path.join(self._outputDir, "dm.json")
-    with open(outputFileName, 'wb') as outfile:
+    output_file_name = os.path.join(self._output_dir, 'dm.json')
+    with open(output_file_name, 'wb') as outfile:
       json.dump(self._properties, outfile, indent=1)
-      outfile.write("\n")
+      outfile.write('\n')
 
-    outputFileName = os.path.join(self._outputDir, "passfail.json")
-    with open(outputFileName, 'wb') as outfile:
+    output_file_name = os.path.join(self._output_dir, 'passfail.json')
+    with open(output_file_name, 'wb') as outfile:
       json.dump(self._passfail, outfile, indent=1)
-      outfile.write("\n")
+      outfile.write('\n')
 
 # Produce example output for manual testing.
-if __name__ == "__main__":
+if __name__ == '__main__':
   # Create a test directory with three empty 'image' files.
-  testDir = "./testdirectory"
-  if not os.path.exists(testDir):
-    os.makedirs(testDir)
-  open(os.path.join(testDir, "image1.png"), 'wb').close()
-  open(os.path.join(testDir, "image2.png"), 'wb').close()
-  open(os.path.join(testDir, "image3.png"), 'wb').close()
+  test_dir = './testdirectory'
+  if not os.path.exists(test_dir):
+    os.makedirs(test_dir)
+  open(os.path.join(test_dir, 'image1.png'), 'wb').close()
+  open(os.path.join(test_dir, 'image2.png'), 'wb').close()
+  open(os.path.join(test_dir, 'image3.png'), 'wb').close()
 
   # Create an instance and add results.
-  propStr = """build_number 2 "builder name" Builder-Name gitHash a4a338179013b029d6dd55e737b5bd648a9fb68c"""
+  prop_str = 'build_number 2 "builder name" Builder-Name gitHash ' \
+      'a4a338179013b029d6dd55e737b5bd648a9fb68c'
 
-  keyStr = "arch arm64 compiler Clang configuration Debug"
+  key_str = 'arch arm64 compiler Clang configuration Debug'
 
-  hash_file = os.path.join(testDir, "ignore_hashes.txt")
+  hash_file = os.path.join(test_dir, 'ignore_hashes.txt')
   with open(hash_file, 'wb') as f:
-    f.write("\n".join(["hash-1","hash-4"]) + "\n")
+    f.write('\n'.join(['hash-1', 'hash-4']) + '\n')
 
-  outputDir = "./output_directory"
-  gr = GoldResults("pdfium", outputDir, propStr, keyStr, hash_file)
-  gr.AddTestResult("test-1", "hash-1", os.path.join(testDir, "image1.png"), GoldBaseline.MATCH)
-  gr.AddTestResult("test-2", "hash-2", os.path.join(testDir, "image2.png"), GoldBaseline.MATCH)
-  gr.AddTestResult("test-3", "hash-3", os.path.join(testDir, "image3.png"), GoldBaseline.MISMATCH)
+  output_dir = './output_directory'
+  gr = GoldResults('pdfium', output_dir, prop_str, key_str, hash_file)
+  gr.AddTestResult('test-1', 'hash-1', os.path.join(test_dir, 'image1.png'),
+                   GoldBaseline.MATCH)
+  gr.AddTestResult('test-2', 'hash-2', os.path.join(test_dir, 'image2.png'),
+                   GoldBaseline.MATCH)
+  gr.AddTestResult('test-3', 'hash-3', os.path.join(test_dir, 'image3.png'),
+                   GoldBaseline.MISMATCH)
   gr.WriteResults()
