@@ -51,7 +51,7 @@ class CPDF_Image final : public Retainable {
   void SetJpegImage(const RetainPtr<IFX_SeekableReadStream>& pFile);
   void SetJpegImageInline(const RetainPtr<IFX_SeekableReadStream>& pFile);
 
-  void ResetCache(CPDF_Page* pPage, const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+  void ResetCache(CPDF_Page* pPage);
 
   // Returns whether to Continue() or not.
   bool StartLoadDIBBase(const CPDF_Dictionary* pFormResource,

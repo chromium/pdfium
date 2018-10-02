@@ -67,7 +67,7 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
     for (int index = 0; index < nCount; index++) {
       CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
       if (pPage)
-        pImgObj->GetImage()->ResetCache(pPage, nullptr);
+        pImgObj->GetImage()->ResetCache(pPage);
     }
   }
 
@@ -151,7 +151,7 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   for (int index = 0; index < nCount; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
     if (pPage)
-      pImgObj->GetImage()->ResetCache(pPage, nullptr);
+      pImgObj->GetImage()->ResetCache(pPage);
   }
   RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
   pImgObj->GetImage()->SetImage(holder);

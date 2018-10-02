@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 
 namespace {
 
@@ -125,21 +126,15 @@ bool CPDF_PageRenderCache::Continue(PauseIndicatorIface* pPause,
   return false;
 }
 
-void CPDF_PageRenderCache::ResetBitmap(const RetainPtr<CPDF_Image>& pImage,
-                                       const RetainPtr<CFX_DIBitmap>& pBitmap) {
+void CPDF_PageRenderCache::ResetBitmap(const RetainPtr<CPDF_Image>& pImage) {
   CPDF_ImageCacheEntry* pEntry;
   CPDF_Stream* pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
-  if (it == m_ImageCache.end()) {
-    if (!pBitmap)
-      return;
+  if (it == m_ImageCache.end())
+    return;
 
-    pEntry = new CPDF_ImageCacheEntry(m_pPage->GetDocument(), pImage);
-    m_ImageCache[pStream] = pEntry;
-  } else {
-    pEntry = it->second;
-  }
+  pEntry = it->second;
   m_nCacheSize -= pEntry->EstimateSize();
-  pEntry->Reset(pBitmap);
+  pEntry->Reset(nullptr);
   m_nCacheSize += pEntry->EstimateSize();
 }

@@ -13,7 +13,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_DIBitmap;
 class CPDF_Image;
 class CPDF_ImageCacheEntry;
 class CPDF_Page;
@@ -28,8 +27,7 @@ class CPDF_PageRenderCache {
 
   void CacheOptimization(int32_t dwLimitCacheSize);
   uint32_t GetTimeCount() const { return m_nTimeCount; }
-  void ResetBitmap(const RetainPtr<CPDF_Image>& pImage,
-                   const RetainPtr<CFX_DIBitmap>& pBitmap);
+  void ResetBitmap(const RetainPtr<CPDF_Image>& pImage);
   CPDF_Page* GetPage() const { return m_pPage.Get(); }
   CPDF_ImageCacheEntry* GetCurImageCacheEntry() const {
     return m_pCurImageCacheEntry;
