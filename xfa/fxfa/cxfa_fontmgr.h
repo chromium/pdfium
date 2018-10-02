@@ -10,7 +10,6 @@
 #include <map>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fgas/font/cfgas_defaultfontmanager.h"
 
 class CFGAS_GEFont;
 class CXFA_FFDoc;
@@ -25,7 +24,6 @@ class CXFA_FontMgr {
                                   uint32_t dwFontStyles);
 
  private:
-  CFGAS_DefaultFontManager m_pDefFontMgr;
   std::map<ByteString, RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 

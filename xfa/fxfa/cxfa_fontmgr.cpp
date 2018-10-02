@@ -16,6 +16,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fgas/font/cfgas_defaultfontmanager.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -44,9 +45,10 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
     if (pFont)
       return pFont;
   }
-  if (!pFont)
-    pFont = m_pDefFontMgr.GetFont(hDoc->GetApp()->GetFDEFontMgr(), wsFontFamily,
-                                  dwFontStyles);
+  if (!pFont) {
+    pFont = CFGAS_DefaultFontManager::GetFont(hDoc->GetApp()->GetFDEFontMgr(),
+                                              wsFontFamily, dwFontStyles);
+  }
 
   if (!pFont && pMgr) {
     pFont = pMgr->GetFont(wsEnglishName.AsStringView(), dwFontStyles, false);
@@ -55,8 +57,8 @@ RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
   }
 
   if (!pFont) {
-    pFont = m_pDefFontMgr.GetDefaultFont(hDoc->GetApp()->GetFDEFontMgr(),
-                                         wsFontFamily, dwFontStyles);
+    pFont = CFGAS_DefaultFontManager::GetDefaultFont(
+        hDoc->GetApp()->GetFDEFontMgr(), wsFontFamily, dwFontStyles);
   }
 
   if (!pFont) {

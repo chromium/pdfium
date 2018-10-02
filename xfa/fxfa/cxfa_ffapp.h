@@ -17,7 +17,6 @@
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/fxfa.h"
 
-class CFGAS_DefaultFontManager;
 class CFGAS_FontMgr;
 class CFWL_WidgetMgr;
 class CPDF_Document;
@@ -32,8 +31,6 @@ class CXFA_FFApp {
 
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp();
-
-  void SetDefaultFontMgr(std::unique_ptr<CFGAS_DefaultFontManager> pFontMgr);
 
   CXFA_FWLAdapterWidgetMgr* GetFWLAdapterWidgetMgr();
   CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }

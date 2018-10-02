@@ -9,10 +9,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
-CFGAS_DefaultFontManager::CFGAS_DefaultFontManager() {}
-
-CFGAS_DefaultFontManager::~CFGAS_DefaultFontManager() {}
-
+// static
 RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
     CFGAS_FontMgr* pFontMgr,
     const WideStringView& wsFontFamily,
@@ -55,6 +52,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
   return pFont;
 }
 
+// static
 RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetDefaultFont(
     CFGAS_FontMgr* pFontMgr,
     const WideStringView& wsFontFamily,

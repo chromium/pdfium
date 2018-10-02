@@ -15,15 +15,17 @@ class CFGAS_FontMgr;
 
 class CFGAS_DefaultFontManager {
  public:
-  CFGAS_DefaultFontManager();
-  ~CFGAS_DefaultFontManager();
-
-  RetainPtr<CFGAS_GEFont> GetFont(CFGAS_FontMgr* pFontMgr,
-                                  const WideStringView& wsFontFamily,
-                                  uint32_t dwFontStyles);
-  RetainPtr<CFGAS_GEFont> GetDefaultFont(CFGAS_FontMgr* pFontMgr,
+  static RetainPtr<CFGAS_GEFont> GetFont(CFGAS_FontMgr* pFontMgr,
                                          const WideStringView& wsFontFamily,
                                          uint32_t dwFontStyles);
+  static RetainPtr<CFGAS_GEFont> GetDefaultFont(
+      CFGAS_FontMgr* pFontMgr,
+      const WideStringView& wsFontFamily,
+      uint32_t dwFontStyles);
+
+  CFGAS_DefaultFontManager() = delete;
+  CFGAS_DefaultFontManager(const CFGAS_DefaultFontManager&) = delete;
+  CFGAS_DefaultFontManager& operator=(const CFGAS_DefaultFontManager&) = delete;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_DEFAULTFONTMANAGER_H_
