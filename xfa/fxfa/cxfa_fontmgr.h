@@ -9,15 +9,11 @@
 
 #include <map>
 
-#include "core/fxcrt/fx_extension.h"
-#include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fgas/font/cfgas_defaultfontmanager.h"
-#include "xfa/fgas/font/cfgas_fontmgr.h"
-#include "xfa/fgas/font/cfgas_pdffontmgr.h"
-#include "xfa/fxfa/fxfa.h"
 
-class CPDF_Font;
+class CFGAS_GEFont;
+class CXFA_FFDoc;
 
 class CXFA_FontMgr {
  public:

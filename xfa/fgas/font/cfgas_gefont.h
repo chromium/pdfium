@@ -12,13 +12,14 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/optional.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
-#include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
+class CFX_Font;
 class CFX_UnicodeEncodingEx;
 
 class CFGAS_GEFont final : public Retainable {
