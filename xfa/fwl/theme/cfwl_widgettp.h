@@ -20,13 +20,7 @@ class CFDE_TextOut;
 class CFGAS_FontMgr;
 class CFGAS_GEFont;
 class CFWL_ThemeBackground;
-class CFWL_ThemePart;
 class CFWL_ThemeText;
-class CFWL_Widget;
-
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
-class CFX_FontSourceEnum_File;
-#endif
 
 class CFWL_WidgetTP {
  public:
