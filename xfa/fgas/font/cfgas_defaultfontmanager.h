@@ -9,7 +9,9 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "xfa/fgas/font/cfgas_gefont.h"
+
+class CFGAS_GEFont;
+class CFGAS_FontMgr;
 
 class CFGAS_DefaultFontManager {
  public:
