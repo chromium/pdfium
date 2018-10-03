@@ -28,6 +28,11 @@ FX_FileHandle* FX_OpenFolder(const char* path);
 bool FX_GetNextFile(FX_FileHandle* handle, ByteString* filename, bool* bFolder);
 void FX_CloseFolder(FX_FileHandle* handle);
 
+// Used with std::unique_ptr to automatically call FX_CloseFolder().
+struct FxFolderHandleCloser {
+  inline void operator()(FX_FileHandle* h) const { FX_CloseFolder(h); }
+};
+
 #define FX_FILEMODE_ReadOnly 1
 #define FX_FILEMODE_Truncate 2
 

@@ -131,20 +131,21 @@ bool CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
 }
 
 void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
-  FX_FileHandle* handle = FX_OpenFolder(path.c_str());
+  std::unique_ptr<FX_FileHandle, FxFolderHandleCloser> handle(
+      FX_OpenFolder(path.c_str()));
   if (!handle)
     return;
 
   ByteString filename;
   bool bFolder;
-  while (FX_GetNextFile(handle, &filename, &bFolder)) {
+  while (FX_GetNextFile(handle.get(), &filename, &bFolder)) {
     if (bFolder) {
       if (filename == "." || filename == "..")
         continue;
     } else {
       ByteString ext = filename.Right(4);
-      ext.MakeUpper();
-      if (ext != ".TTF" && ext != ".OTF" && ext != ".TTC")
+      ext.MakeLower();
+      if (ext != ".ttf" && ext != ".ttc" && ext != ".otf")
         continue;
     }
 
@@ -158,7 +159,6 @@ void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
     fullpath += filename;
     bFolder ? ScanPath(fullpath) : ScanFile(fullpath);
   }
-  FX_CloseFolder(handle);
 }
 
 void CFX_FolderFontInfo::ScanFile(const ByteString& path) {

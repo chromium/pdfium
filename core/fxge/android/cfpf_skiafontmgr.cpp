@@ -348,12 +348,14 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(const ByteStringView& bsFile,
 }
 
 void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
-  DIR* handle = FX_OpenFolder(path.c_str());
+  std::unique_ptr<FX_FileHandle, FxFolderHandleCloser> handle(
+      FX_OpenFolder(path.c_str()));
   if (!handle)
     return;
+
   ByteString filename;
   bool bFolder = false;
-  while (FX_GetNextFile(handle, &filename, &bFolder)) {
+  while (FX_GetNextFile(handle.get(), &filename, &bFolder)) {
     if (bFolder) {
       if (filename == "." || filename == "..")
         continue;
@@ -371,7 +373,6 @@ void CFPF_SkiaFontMgr::ScanPath(const ByteString& path) {
     else
       ScanFile(fullpath);
   }
-  FX_CloseFolder(handle);
 }
 
 void CFPF_SkiaFontMgr::ScanFile(const ByteString& file) {
