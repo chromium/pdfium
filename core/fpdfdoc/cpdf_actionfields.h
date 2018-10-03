@@ -21,7 +21,6 @@ class CPDF_ActionFields {
   explicit CPDF_ActionFields(const CPDF_Action* pAction);
   ~CPDF_ActionFields();
 
-  size_t GetFieldsCount() const;
   std::vector<const CPDF_Object*> GetAllFields() const;
   const CPDF_Object* GetField(size_t iIndex) const;
 

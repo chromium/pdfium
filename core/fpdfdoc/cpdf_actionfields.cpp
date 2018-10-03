@@ -13,32 +13,7 @@
 CPDF_ActionFields::CPDF_ActionFields(const CPDF_Action* pAction)
     : m_pAction(pAction) {}
 
-CPDF_ActionFields::~CPDF_ActionFields() {}
-
-size_t CPDF_ActionFields::GetFieldsCount() const {
-  if (!m_pAction)
-    return 0;
-
-  const CPDF_Dictionary* pDict = m_pAction->GetDict();
-  if (!pDict)
-    return 0;
-
-  ByteString csType = pDict->GetStringFor("S");
-  const CPDF_Object* pFields;
-  if (csType == "Hide")
-    pFields = pDict->GetDirectObjectFor("T");
-  else
-    pFields = pDict->GetArrayFor("Fields");
-
-  if (!pFields)
-    return 0;
-  if (pFields->IsDictionary())
-    return 1;
-  if (pFields->IsString())
-    return 1;
-  const CPDF_Array* pArray = pFields->AsArray();
-  return pArray ? pArray->GetCount() : 0;
-}
+CPDF_ActionFields::~CPDF_ActionFields() = default;
 
 std::vector<const CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   std::vector<const CPDF_Object*> fields;
