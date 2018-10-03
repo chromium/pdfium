@@ -174,6 +174,7 @@ static XFA_EVENTTYPE GetXFAEventType(CPDF_AAction::AActionType eAAT,
     case CPDF_AAction::PrintDocument:
     case CPDF_AAction::DocumentPrinted:
       break;
+    case CPDF_AAction::DocumentOpen:
     case CPDF_AAction::NumberOfActions:
       NOTREACHED();
       break;

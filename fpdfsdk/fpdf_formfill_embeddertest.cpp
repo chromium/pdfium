@@ -379,6 +379,25 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
   UnloadPage(page);
 }
 
+class DoURIActionBlockedDelegate final : public EmbedderTest::Delegate {
+ public:
+  void DoURIAction(FPDF_BYTESTRING uri) override {
+    FAIL() << "Navigated to " << uri;
+  }
+};
+
+TEST_F(FPDFFormFillEmbeddertest, BUG_851821) {
+  DoURIActionBlockedDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("redirect.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+  DoOpenActions();
+
+  UnloadPage(page);
+}
+
 #ifdef PDF_ENABLE_V8
 TEST_F(FPDFFormFillEmbeddertest, DisableJavaScript) {
   // Test that timers and intervals can't fire without JS.

