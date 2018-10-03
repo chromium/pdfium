@@ -11,17 +11,17 @@
 
 class CFX_UTF8Decoder {
  public:
-  CFX_UTF8Decoder() { m_PendingBytes = 0; }
+  CFX_UTF8Decoder();
+  ~CFX_UTF8Decoder();
 
-  void Clear();
   void Input(uint8_t byte);
   void AppendCodePoint(uint32_t ch);
   void ClearStatus() { m_PendingBytes = 0; }
   WideStringView GetResult() const { return m_Buffer.AsStringView(); }
 
  private:
-  int m_PendingBytes;
-  uint32_t m_PendingChar;
+  int m_PendingBytes = 0;
+  uint32_t m_PendingChar = 0;
   CFX_WideTextBuf m_Buffer;
 };
 
