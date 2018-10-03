@@ -431,13 +431,6 @@ const unsigned int D3[256] = {
 #define ADD_ROUND_KEY_4                                                       \
   (block[0] ^= *keysched++, block[1] ^= *keysched++, block[2] ^= *keysched++, \
    block[3] ^= *keysched++)
-#define ADD_ROUND_KEY_6                                                       \
-  (block[0] ^= *keysched++, block[1] ^= *keysched++, block[2] ^= *keysched++, \
-   block[3] ^= *keysched++, block[4] ^= *keysched++, block[5] ^= *keysched++)
-#define ADD_ROUND_KEY_8                                                       \
-  (block[0] ^= *keysched++, block[1] ^= *keysched++, block[2] ^= *keysched++, \
-   block[3] ^= *keysched++, block[4] ^= *keysched++, block[5] ^= *keysched++, \
-   block[6] ^= *keysched++, block[7] ^= *keysched++)
 #define MOVEWORD(i) (block[i] = newstate[i])
 #undef MAKEWORD
 #define MAKEWORD(i)                                         \
@@ -478,88 +471,9 @@ void aes_encrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4;
 }
-
-void aes_encrypt_nb_6(CRYPT_aes_context* ctx, unsigned int* block) {
-  int i;
-  const int C1 = 1, C2 = 2, C3 = 3, Nb = 6;
-  unsigned int* keysched = ctx->keysched;
-  unsigned int newstate[6];
-  for (i = 0; i < ctx->Nr - 1; i++) {
-    ADD_ROUND_KEY_6;
-    MAKEWORD(0);
-    MAKEWORD(1);
-    MAKEWORD(2);
-    MAKEWORD(3);
-    MAKEWORD(4);
-    MAKEWORD(5);
-    MOVEWORD(0);
-    MOVEWORD(1);
-    MOVEWORD(2);
-    MOVEWORD(3);
-    MOVEWORD(4);
-    MOVEWORD(5);
-  }
-  ADD_ROUND_KEY_6;
-  LASTWORD(0);
-  LASTWORD(1);
-  LASTWORD(2);
-  LASTWORD(3);
-  LASTWORD(4);
-  LASTWORD(5);
-  MOVEWORD(0);
-  MOVEWORD(1);
-  MOVEWORD(2);
-  MOVEWORD(3);
-  MOVEWORD(4);
-  MOVEWORD(5);
-  ADD_ROUND_KEY_6;
-}
-
-void aes_encrypt_nb_8(CRYPT_aes_context* ctx, unsigned int* block) {
-  int i;
-  const int C1 = 1, C2 = 3, C3 = 4, Nb = 8;
-  unsigned int* keysched = ctx->keysched;
-  unsigned int newstate[8];
-  for (i = 0; i < ctx->Nr - 1; i++) {
-    ADD_ROUND_KEY_8;
-    MAKEWORD(0);
-    MAKEWORD(1);
-    MAKEWORD(2);
-    MAKEWORD(3);
-    MAKEWORD(4);
-    MAKEWORD(5);
-    MAKEWORD(6);
-    MAKEWORD(7);
-    MOVEWORD(0);
-    MOVEWORD(1);
-    MOVEWORD(2);
-    MOVEWORD(3);
-    MOVEWORD(4);
-    MOVEWORD(5);
-    MOVEWORD(6);
-    MOVEWORD(7);
-  }
-  ADD_ROUND_KEY_8;
-  LASTWORD(0);
-  LASTWORD(1);
-  LASTWORD(2);
-  LASTWORD(3);
-  LASTWORD(4);
-  LASTWORD(5);
-  LASTWORD(6);
-  LASTWORD(7);
-  MOVEWORD(0);
-  MOVEWORD(1);
-  MOVEWORD(2);
-  MOVEWORD(3);
-  MOVEWORD(4);
-  MOVEWORD(5);
-  MOVEWORD(6);
-  MOVEWORD(7);
-  ADD_ROUND_KEY_8;
-}
 #undef MAKEWORD
 #undef LASTWORD
+
 #define MAKEWORD(i)                                         \
   (newstate[i] = (D0[(block[i] >> 24) & 0xFF] ^             \
                   D1[(block[(i + C1) % Nb] >> 16) & 0xFF] ^ \
@@ -598,107 +512,20 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4;
 }
-
-void aes_decrypt_nb_6(CRYPT_aes_context* ctx, unsigned int* block) {
-  int i;
-  const int C1 = 6 - 1, C2 = 6 - 2, C3 = 6 - 3, Nb = 6;
-  unsigned int* keysched = ctx->invkeysched;
-  unsigned int newstate[6];
-  for (i = 0; i < ctx->Nr - 1; i++) {
-    ADD_ROUND_KEY_6;
-    MAKEWORD(0);
-    MAKEWORD(1);
-    MAKEWORD(2);
-    MAKEWORD(3);
-    MAKEWORD(4);
-    MAKEWORD(5);
-    MOVEWORD(0);
-    MOVEWORD(1);
-    MOVEWORD(2);
-    MOVEWORD(3);
-    MOVEWORD(4);
-    MOVEWORD(5);
-  }
-  ADD_ROUND_KEY_6;
-  LASTWORD(0);
-  LASTWORD(1);
-  LASTWORD(2);
-  LASTWORD(3);
-  LASTWORD(4);
-  LASTWORD(5);
-  MOVEWORD(0);
-  MOVEWORD(1);
-  MOVEWORD(2);
-  MOVEWORD(3);
-  MOVEWORD(4);
-  MOVEWORD(5);
-  ADD_ROUND_KEY_6;
-}
-
-void aes_decrypt_nb_8(CRYPT_aes_context* ctx, unsigned int* block) {
-  int i;
-  const int C1 = 8 - 1, C2 = 8 - 3, C3 = 8 - 4, Nb = 8;
-  unsigned int* keysched = ctx->invkeysched;
-  unsigned int newstate[8];
-  for (i = 0; i < ctx->Nr - 1; i++) {
-    ADD_ROUND_KEY_8;
-    MAKEWORD(0);
-    MAKEWORD(1);
-    MAKEWORD(2);
-    MAKEWORD(3);
-    MAKEWORD(4);
-    MAKEWORD(5);
-    MAKEWORD(6);
-    MAKEWORD(7);
-    MOVEWORD(0);
-    MOVEWORD(1);
-    MOVEWORD(2);
-    MOVEWORD(3);
-    MOVEWORD(4);
-    MOVEWORD(5);
-    MOVEWORD(6);
-    MOVEWORD(7);
-  }
-  ADD_ROUND_KEY_8;
-  LASTWORD(0);
-  LASTWORD(1);
-  LASTWORD(2);
-  LASTWORD(3);
-  LASTWORD(4);
-  LASTWORD(5);
-  LASTWORD(6);
-  LASTWORD(7);
-  MOVEWORD(0);
-  MOVEWORD(1);
-  MOVEWORD(2);
-  MOVEWORD(3);
-  MOVEWORD(4);
-  MOVEWORD(5);
-  MOVEWORD(6);
-  MOVEWORD(7);
-  ADD_ROUND_KEY_8;
-}
 #undef MAKEWORD
 #undef LASTWORD
+
 void aes_setup(CRYPT_aes_context* ctx,
-               int blocklen,
                const unsigned char* key,
                int keylen) {
-  int i, j, Nk, rconst;
-  ASSERT(blocklen == 16 || blocklen == 24 || blocklen == 32);
   ASSERT(keylen == 16 || keylen == 24 || keylen == 32);
-  Nk = keylen / 4;
-  ctx->Nb = blocklen / 4;
+  int Nk = keylen / 4;
+  ctx->Nb = 4;
   ctx->Nr = 6 + (ctx->Nb > Nk ? ctx->Nb : Nk);
-  if (ctx->Nb == 8) {
-    ctx->encrypt = aes_encrypt_nb_8, ctx->decrypt = aes_decrypt_nb_8;
-  } else if (ctx->Nb == 6) {
-    ctx->encrypt = aes_encrypt_nb_6, ctx->decrypt = aes_decrypt_nb_6;
-  } else if (ctx->Nb == 4) {
-    ctx->encrypt = aes_encrypt_nb_4, ctx->decrypt = aes_decrypt_nb_4;
-  }
-  rconst = 1;
-  for (i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
+  ctx->encrypt = aes_encrypt_nb_4;
+  ctx->decrypt = aes_decrypt_nb_4;
+  int rconst = 1;
+  for (int i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
     if (i < Nk) {
       ctx->keysched[i] = GET_32BIT_MSB_FIRST(key + 4 * i);
     } else {
@@ -728,8 +555,8 @@ void aes_setup(CRYPT_aes_context* ctx,
       ctx->keysched[i] = ctx->keysched[i - Nk] ^ temp;
     }
   }
-  for (i = 0; i <= ctx->Nr; i++) {
-    for (j = 0; j < ctx->Nb; j++) {
+  for (int i = 0; i <= ctx->Nr; i++) {
+    for (int j = 0; j < ctx->Nb; j++) {
       unsigned int temp;
       temp = ctx->keysched[(ctx->Nr - i) * ctx->Nb + j];
       if (i != 0 && i != ctx->Nr) {
@@ -747,6 +574,7 @@ void aes_setup(CRYPT_aes_context* ctx,
     }
   }
 }
+
 void aes_decrypt(CRYPT_aes_context* ctx, unsigned int* block) {
   ctx->decrypt(ctx, block);
 }
@@ -804,11 +632,10 @@ void aes_encrypt_cbc(unsigned char* dest,
 }  // namespace
 
 void CRYPT_AESSetKey(CRYPT_aes_context* context,
-                     uint32_t blocklen,
                      const uint8_t* key,
                      uint32_t keylen,
                      bool bEncrypt) {
-  aes_setup(context, blocklen, key, keylen);
+  aes_setup(context, key, keylen);
 }
 
 void CRYPT_AESSetIV(CRYPT_aes_context* context, const uint8_t* iv) {

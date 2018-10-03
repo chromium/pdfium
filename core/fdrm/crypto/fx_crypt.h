@@ -60,7 +60,6 @@ void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context,
                         uint32_t size);
 
 void CRYPT_AESSetKey(CRYPT_aes_context* context,
-                     uint32_t blocklen,
                      const uint8_t* key,
                      uint32_t keylen,
                      bool bEncrypt);
