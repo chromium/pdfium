@@ -6,9 +6,11 @@
 
 #include "xfa/fgas/font/cfx_fontsourceenum_file.h"
 
+#include <iterator>
+
 namespace {
 
-constexpr wchar_t kFolderSeparator = L'/';
+constexpr char kFolderSeparator = '/';
 
 constexpr const char* g_FontFolders[] = {
 #if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
@@ -23,12 +25,10 @@ constexpr const char* g_FontFolders[] = {
 
 }  // namespace
 
-CFX_FontSourceEnum_File::CFX_FontSourceEnum_File() {
-  for (size_t i = 0; i < FX_ArraySize(g_FontFolders); ++i)
-    m_FolderPaths.push_back(g_FontFolders[i]);
-}
+CFX_FontSourceEnum_File::CFX_FontSourceEnum_File()
+    : m_FolderPaths(std::begin(g_FontFolders), std::end(g_FontFolders)) {}
 
-CFX_FontSourceEnum_File::~CFX_FontSourceEnum_File() {}
+CFX_FontSourceEnum_File::~CFX_FontSourceEnum_File() = default;
 
 ByteString CFX_FontSourceEnum_File::GetNextFile() {
   FX_FileHandle* pCurHandle =
@@ -44,7 +44,6 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
   }
   ByteString bsName;
   bool bFolder;
-  ByteString bsFolderSeparator = WideString(kFolderSeparator).ToDefANSI();
   while (true) {
     if (!FX_GetNextFile(pCurHandle, &bsName, &bFolder)) {
       FX_CloseFolder(pCurHandle);
@@ -63,7 +62,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
     if (bFolder) {
       HandleParentPath hpp;
       hpp.bsParentPath =
-          m_FolderQueue.back().bsParentPath + bsFolderSeparator + bsName;
+          m_FolderQueue.back().bsParentPath + kFolderSeparator + bsName;
       hpp.pFileHandle = FX_OpenFolder(hpp.bsParentPath.c_str());
       if (!hpp.pFileHandle)
         continue;
@@ -71,7 +70,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
       pCurHandle = hpp.pFileHandle;
       continue;
     }
-    bsName = m_FolderQueue.back().bsParentPath + bsFolderSeparator + bsName;
+    bsName = m_FolderQueue.back().bsParentPath + kFolderSeparator + bsName;
     break;
   }
   return bsName;
