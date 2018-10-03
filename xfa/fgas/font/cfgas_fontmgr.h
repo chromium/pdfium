@@ -11,7 +11,6 @@
 #include <map>
 #include <memory>
 #include <set>
-#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
@@ -98,10 +97,9 @@ class CFX_FontSourceEnum_File {
   CFX_FontSourceEnum_File();
   ~CFX_FontSourceEnum_File();
 
-  bool HasStartPosition();
-
-  // <next exists, stream for next>
-  std::pair<bool, RetainPtr<IFX_SeekableStream>> GetNext();
+  void GetNext();
+  bool HasNext() const;
+  RetainPtr<IFX_SeekableStream> GetStream() const;
 
  private:
   struct HandleParentPath {
