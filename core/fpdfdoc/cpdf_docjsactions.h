@@ -20,8 +20,6 @@ class CPDF_DocJSActions {
 
   int CountJSActions() const;
   CPDF_Action GetJSActionAndName(int index, WideString* csName) const;
-  CPDF_Action GetJSAction(const WideString& csName) const;
-  int FindJSAction(const WideString& csName) const;
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
  private:
