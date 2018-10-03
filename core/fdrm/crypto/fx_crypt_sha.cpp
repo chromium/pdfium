@@ -510,9 +510,6 @@ void CRYPT_SHA256Generate(const uint8_t* data,
 }
 
 void CRYPT_SHA384Start(CRYPT_sha2_context* ctx) {
-  if (!ctx)
-    return;
-
   memset(ctx, 0, sizeof(CRYPT_sha2_context));
   ctx->state[0] = 0xcbbb9d5dc1059ed8ULL;
   ctx->state[1] = 0x629a292a367cd507ULL;
@@ -583,9 +580,6 @@ void CRYPT_SHA384Generate(const uint8_t* data,
 }
 
 void CRYPT_SHA512Start(CRYPT_sha2_context* ctx) {
-  if (!ctx)
-    return;
-
   memset(ctx, 0, sizeof(CRYPT_sha2_context));
   ctx->state[0] = 0x6a09e667f3bcc908ULL;
   ctx->state[1] = 0xbb67ae8584caa73bULL;
