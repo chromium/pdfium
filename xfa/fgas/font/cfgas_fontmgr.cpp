@@ -23,6 +23,10 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
+#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
+#include "xfa/fgas/font/cfx_fontsourceenum_file.h"
+#endif
+
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
@@ -198,17 +202,6 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
 
 namespace {
 
-constexpr const char* g_FontFolders[] = {
-#if _FX_PLATFORM_ == _FX_PLATFORM_LINUX_
-    "/usr/share/fonts", "/usr/share/X11/fonts/Type1",
-    "/usr/share/X11/fonts/TTF", "/usr/local/share/fonts",
-#elif _FX_PLATFORM_ == _FX_PLATFORM_APPLE_
-    "~/Library/Fonts", "/Library/Fonts", "/System/Library/Fonts",
-#elif _FX_PLATFORM_ == _FX_PLATFORM_ANDROID_
-    "/system/fonts",
-#endif
-};
-
 const uint16_t g_CodePages[] = {FX_CODEPAGE_MSWin_WesternEuropean,
                                 FX_CODEPAGE_MSWin_EasternEuropean,
                                 FX_CODEPAGE_MSWin_Cyrillic,
@@ -294,8 +287,6 @@ inline uint8_t GetUInt8(const uint8_t* p) {
 inline uint16_t GetUInt16(const uint8_t* p) {
   return static_cast<uint16_t>(p[0] << 8 | p[1]);
 }
-
-constexpr wchar_t kFolderSeparator = L'/';
 
 extern "C" {
 
@@ -579,74 +570,6 @@ CFX_FontDescriptor::CFX_FontDescriptor()
     : m_nFaceIndex(0), m_dwFontStyles(0), m_dwUsb(), m_dwCsb() {}
 
 CFX_FontDescriptor::~CFX_FontDescriptor() {}
-
-CFX_FontSourceEnum_File::CFX_FontSourceEnum_File() {
-  for (size_t i = 0; i < FX_ArraySize(g_FontFolders); ++i)
-    m_FolderPaths.push_back(g_FontFolders[i]);
-}
-
-CFX_FontSourceEnum_File::~CFX_FontSourceEnum_File() {}
-
-ByteString CFX_FontSourceEnum_File::GetNextFile() {
-  FX_FileHandle* pCurHandle =
-      !m_FolderQueue.empty() ? m_FolderQueue.back().pFileHandle : nullptr;
-  if (!pCurHandle) {
-    if (m_FolderPaths.empty())
-      return "";
-    pCurHandle = FX_OpenFolder(m_FolderPaths.back().c_str());
-    HandleParentPath hpp;
-    hpp.pFileHandle = pCurHandle;
-    hpp.bsParentPath = m_FolderPaths.back();
-    m_FolderQueue.push_back(hpp);
-  }
-  ByteString bsName;
-  bool bFolder;
-  ByteString bsFolderSeparator = WideString(kFolderSeparator).ToDefANSI();
-  while (true) {
-    if (!FX_GetNextFile(pCurHandle, &bsName, &bFolder)) {
-      FX_CloseFolder(pCurHandle);
-      if (!m_FolderQueue.empty())
-        m_FolderQueue.pop_back();
-      if (m_FolderQueue.empty()) {
-        if (!m_FolderPaths.empty())
-          m_FolderPaths.pop_back();
-        return !m_FolderPaths.empty() ? GetNextFile() : "";
-      }
-      pCurHandle = m_FolderQueue.back().pFileHandle;
-      continue;
-    }
-    if (bsName == "." || bsName == "..")
-      continue;
-    if (bFolder) {
-      HandleParentPath hpp;
-      hpp.bsParentPath =
-          m_FolderQueue.back().bsParentPath + bsFolderSeparator + bsName;
-      hpp.pFileHandle = FX_OpenFolder(hpp.bsParentPath.c_str());
-      if (!hpp.pFileHandle)
-        continue;
-      m_FolderQueue.push_back(hpp);
-      pCurHandle = hpp.pFileHandle;
-      continue;
-    }
-    bsName = m_FolderQueue.back().bsParentPath + bsFolderSeparator + bsName;
-    break;
-  }
-  return bsName;
-}
-
-void CFX_FontSourceEnum_File::GetNext() {
-  m_wsNext = GetNextFile().UTF8Decode();
-}
-
-bool CFX_FontSourceEnum_File::HasNext() const {
-  return !m_wsNext.IsEmpty();
-}
-
-RetainPtr<IFX_SeekableStream> CFX_FontSourceEnum_File::GetStream() const {
-  ASSERT(HasNext());
-  return IFX_SeekableStream::CreateFromFilename(m_wsNext.c_str(),
-                                                FX_FILEMODE_ReadOnly);
-}
 
 CFGAS_FontMgr::CFGAS_FontMgr()
     : m_pFontSource(pdfium::MakeUnique<CFX_FontSourceEnum_File>()) {}

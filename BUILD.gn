@@ -1889,6 +1889,13 @@ if (pdf_enable_xfa) {
       ":pdfium_core_config",
       ":xfa_warnings",
     ]
+
+    if (!is_win) {
+      sources += [
+        "xfa/fgas/font/cfx_fontsourceenum_file.cpp",
+        "xfa/fgas/font/cfx_fontsourceenum_file.h",
+      ]
+    }
   }
 
   jumbo_static_library("xfa_fwl") {

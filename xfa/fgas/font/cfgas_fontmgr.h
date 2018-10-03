@@ -92,33 +92,6 @@ class CFX_FontDescriptorInfo {
   }
 };
 
-class CFX_FontSourceEnum_File {
- public:
-  CFX_FontSourceEnum_File();
-  ~CFX_FontSourceEnum_File();
-
-  void GetNext();
-  bool HasNext() const;
-  RetainPtr<IFX_SeekableStream> GetStream() const;
-
- private:
-  struct HandleParentPath {
-    HandleParentPath() = default;
-    HandleParentPath(const HandleParentPath& x) {
-      pFileHandle = x.pFileHandle;
-      bsParentPath = x.bsParentPath;
-    }
-    FX_FileHandle* pFileHandle;
-    ByteString bsParentPath;
-  };
-
-  ByteString GetNextFile();
-
-  WideString m_wsNext;
-  std::vector<HandleParentPath> m_FolderQueue;
-  std::vector<ByteString> m_FolderPaths;
-};
-
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
