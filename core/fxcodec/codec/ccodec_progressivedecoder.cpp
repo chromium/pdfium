@@ -1595,46 +1595,51 @@ bool CCodec_ProgressiveDecoder::ReadMoreData(
     CodecModuleIface::Context* pContext,
     bool invalidate_buffer,
     FXCODEC_STATUS& err_status) {
-  if (static_cast<uint32_t>(m_pFile->GetSize()) <= m_offSet)
+  // Check for EOF.
+  if (m_offSet >= static_cast<uint32_t>(m_pFile->GetSize()))
     return false;
 
-  uint32_t dwFileRemaining = m_pFile->GetSize() - m_offSet;
-  uint32_t dwAmountToFetchFromFile = dwFileRemaining;
-  uint32_t dwUnusedBuffer = 0;
+  // Try to get whatever remains.
+  uint32_t dwBytesToFetchFromFile = m_pFile->GetSize() - m_offSet;
+
+  // Figure out if the codec stopped processing midway through the buffer.
+  uint32_t dwUnconsumed = 0;
   if (!invalidate_buffer) {
     FX_SAFE_UINT32 avail_input = pModule->GetAvailInput(pContext);
     if (!avail_input.IsValid())
       return false;
-    dwUnusedBuffer = avail_input.ValueOrDie();
+    dwUnconsumed = avail_input.ValueOrDie();
   }
-  if (dwUnusedBuffer == m_SrcSize) {
-    if (dwFileRemaining > FXCODEC_BLOCK_SIZE)
-      dwAmountToFetchFromFile = FXCODEC_BLOCK_SIZE;
-    m_SrcSize = std::min(
-        (dwAmountToFetchFromFile + dwUnusedBuffer + FXCODEC_BLOCK_SIZE - 1) /
-            FXCODEC_BLOCK_SIZE * FXCODEC_BLOCK_SIZE,
-        static_cast<uint32_t>(m_pFile->GetSize()));
-    m_pSrcBuf.reset(FX_TryRealloc(uint8_t, m_pSrcBuf.release(), m_SrcSize));
-    if (!m_pSrcBuf) {
+
+  if (dwUnconsumed == m_SrcSize) {
+    // Codec couldn't make any progress against the bytes in the buffer.
+    // Increase the buffer size so that there might be enough contiguous
+    // bytes to allow whatever operation is having difficulty to succeed.
+    dwBytesToFetchFromFile =
+        std::min<uint32_t>(dwBytesToFetchFromFile, FXCODEC_BLOCK_SIZE);
+    uint32_t dwNewSize = m_SrcSize + dwBytesToFetchFromFile;
+    uint8_t* pNewBuf = FX_TryRealloc(uint8_t, m_pSrcBuf.release(), dwNewSize);
+    if (!pNewBuf) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
     }
+    m_SrcSize = dwNewSize;
+    m_pSrcBuf.reset(pNewBuf);
   } else {
-    uint32_t dwConsumed = m_SrcSize - dwUnusedBuffer;
-    if (dwUnusedBuffer)
-      memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsumed, dwUnusedBuffer);
-    if (dwFileRemaining > dwConsumed)
-      dwAmountToFetchFromFile = dwConsumed;
+    uint32_t dwConsumed = m_SrcSize - dwUnconsumed;
+    memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsumed, dwUnconsumed);
+    dwBytesToFetchFromFile = std::min(dwBytesToFetchFromFile, dwConsumed);
+    m_SrcSize = dwBytesToFetchFromFile + dwUnconsumed;
   }
-  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwUnusedBuffer, m_offSet,
-                          dwAmountToFetchFromFile)) {
+
+  // Append new data past the bytes not yet processed by the codec.
+  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwUnconsumed, m_offSet,
+                          dwBytesToFetchFromFile)) {
     err_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
-  m_offSet += dwAmountToFetchFromFile;
-  return pModule->Input(
-      pContext, {m_pSrcBuf.get(), dwAmountToFetchFromFile + dwUnusedBuffer},
-      nullptr);
+  m_offSet += dwBytesToFetchFromFile;
+  return pModule->Input(pContext, {m_pSrcBuf.get(), m_SrcSize}, nullptr);
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
