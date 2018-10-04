@@ -33,7 +33,7 @@ class CPDF_FormObject final : public CPDF_PageObject {
   const CFX_Matrix& form_matrix() const { return m_FormMatrix; }
 
  private:
-  const std::unique_ptr<CPDF_Form> m_pForm;
+  std::unique_ptr<CPDF_Form> const m_pForm;
   CFX_Matrix m_FormMatrix;
 };
 

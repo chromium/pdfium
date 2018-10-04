@@ -71,7 +71,7 @@ class CFXJSE_ResolveProcessor {
   void FilterCondition(CFXJSE_ResolveNodeData& rnd, WideString wsCondition);
 
   int32_t m_iCurStart = 0;
-  const std::unique_ptr<CXFA_NodeHelper> m_pNodeHelper;
+  std::unique_ptr<CXFA_NodeHelper> const m_pNodeHelper;
 };
 
 #endif  // FXJS_CFXJSE_RESOLVEPROCESSOR_H_

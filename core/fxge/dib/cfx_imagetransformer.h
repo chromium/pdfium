@@ -98,7 +98,7 @@ class CFX_ImageTransformer {
       int increment,
       std::function<void(const DownSampleData&, uint8_t*)> func);
 
-  const RetainPtr<CFX_DIBBase> m_pSrc;
+  RetainPtr<CFX_DIBBase> const m_pSrc;
   UnownedPtr<const CFX_Matrix> const m_pMatrix;
   const FX_RECT* const m_pClip;
   FX_RECT m_StretchClip;

@@ -102,7 +102,7 @@ class CPDF_PageObjectHolder {
  private:
   bool m_bBackgroundAlphaNeeded = false;
   ParseState m_ParseState = ParseState::kNotParsed;
-  const UnownedPtr<CPDF_Dictionary> m_pDict;
+  UnownedPtr<CPDF_Dictionary> const m_pDict;
   UnownedPtr<CPDF_Document> m_pDocument;
   std::vector<CFX_FloatRect> m_MaskBoundingBoxes;
   std::unique_ptr<CPDF_ContentParser> m_pParser;
