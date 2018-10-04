@@ -63,15 +63,6 @@ void CPDFSDK_AnnotHandlerMgr::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   pAnnotHandler->ReleaseAnnot(pAnnot);
 }
 
-void CPDFSDK_AnnotHandlerMgr::Annot_OnCreate(CPDFSDK_Annot* pAnnot) {
-  CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
-
-  CPDFSDK_DateTime curTime;
-  pPDFAnnot->GetAnnotDict()->SetNewFor<CPDF_String>(
-      "M", curTime.ToPDFDateTimeString(), false);
-  pPDFAnnot->GetAnnotDict()->SetNewFor<CPDF_Number>("F", 0);
-}
-
 void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot);
   GetAnnotHandler(pAnnot)->OnLoad(pAnnot);
@@ -153,16 +144,6 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnLButtonUp(pPageView, pAnnot, nFlags, point);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(
-    CPDFSDK_PageView* pPageView,
-    CPDFSDK_Annot::ObservedPtr* pAnnot,
-    uint32_t nFlags,
-    const CFX_PointF& point) {
-  ASSERT(*pAnnot);
-  return GetAnnotHandler(pAnnot->Get())
-      ->OnLButtonDblClk(pPageView, pAnnot, nFlags, point);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(
@@ -248,12 +229,6 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
   }
 
   return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
-}
-
-bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyUp(CPDFSDK_Annot* pAnnot,
-                                            int nKeyCode,
-                                            int nFlag) {
-  return false;
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(
