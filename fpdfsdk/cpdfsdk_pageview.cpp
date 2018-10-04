@@ -191,7 +191,7 @@ bool CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
 #endif  // PDF_ENABLE_XFA
 
 CPDF_Document* CPDFSDK_PageView::GetPDFDocument() {
-  return m_page ? m_page->GetDocument() : nullptr;
+  return m_page->GetDocument();
 }
 
 CPDF_Page* CPDFSDK_PageView::GetPDFPage() const {
@@ -504,9 +504,6 @@ void CPDFSDK_PageView::UpdateView(CPDFSDK_Annot* pAnnot) {
 }
 
 int CPDFSDK_PageView::GetPageIndex() const {
-  if (!m_page)
-    return -1;
-
 #ifdef PDF_ENABLE_XFA
   auto* pContext = static_cast<CPDFXFA_Context*>(
       m_page->AsXFAPage()->GetDocumentExtension());
