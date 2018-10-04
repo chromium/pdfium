@@ -53,48 +53,6 @@ ByteString CPDF_FormControl::GetOnStateName() const {
   return ByteString();
 }
 
-void CPDF_FormControl::SetOnStateName(const ByteString& csOn) {
-  ASSERT(GetType() == CPDF_FormField::CheckBox ||
-         GetType() == CPDF_FormField::RadioButton);
-  ByteString csValue = csOn;
-  if (csValue.IsEmpty())
-    csValue = "Yes";
-  else if (csValue == "Off")
-    csValue = "Yes";
-
-  ByteString csAS = m_pWidgetDict->GetStringFor("AS", "Off");
-  if (csAS != "Off")
-    m_pWidgetDict->SetNewFor<CPDF_Name>("AS", csValue);
-
-  CPDF_Dictionary* pAP = m_pWidgetDict->GetDictFor("AP");
-  if (!pAP)
-    return;
-
-  for (const auto& it : *pAP) {
-    CPDF_Object* pObj1 = it.second.get();
-    if (!pObj1)
-      continue;
-
-    CPDF_Object* pObjDirect1 = pObj1->GetDirect();
-    CPDF_Dictionary* pSubDict = pObjDirect1->AsDictionary();
-    if (!pSubDict)
-      continue;
-
-    auto subdict_it = pSubDict->begin();
-    while (subdict_it != pSubDict->end()) {
-      const ByteString& csKey2 = subdict_it->first;
-      CPDF_Object* pObj2 = subdict_it->second.get();
-      ++subdict_it;
-      if (!pObj2)
-        continue;
-      if (csKey2 != "Off") {
-        pSubDict->ReplaceKey(csKey2, csValue);
-        break;
-      }
-    }
-  }
-}
-
 ByteString CPDF_FormControl::GetCheckedAPState() {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);

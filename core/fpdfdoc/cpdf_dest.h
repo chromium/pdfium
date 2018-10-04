@@ -23,9 +23,7 @@ class CPDF_Dest {
 
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   ByteString GetRemoteName() const;
-
   int GetDestPageIndex(CPDF_Document* pDoc) const;
-  uint32_t GetPageObjNum() const;
 
   // Returns the zoom mode, as one of the PDFDEST_VIEW_* values in fpdf_doc.h.
   int GetZoomMode() const;

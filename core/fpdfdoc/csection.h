@@ -27,7 +27,6 @@ class CSection final {
   explicit CSection(CPDF_VariableText* pVT);
   ~CSection();
 
-  void ResetAll();
   void ResetLinePlace();
   CPVT_WordPlace AddWord(const CPVT_WordPlace& place,
                          const CPVT_WordInfo& wordinfo);

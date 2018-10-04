@@ -176,9 +176,6 @@ class CPDF_VariableText {
                          const CPVT_LineInfo& lineinfo);
   CPVT_WordPlace AddWord(const CPVT_WordPlace& place,
                          const CPVT_WordInfo& wordinfo);
-  bool GetWordInfo(const CPVT_WordPlace& place, CPVT_WordInfo& wordinfo);
-  bool SetWordInfo(const CPVT_WordPlace& place, const CPVT_WordInfo& wordinfo);
-  bool GetLineInfo(const CPVT_WordPlace& place, CPVT_LineInfo& lineinfo);
   float GetWordFontSize();
   int32_t GetWordFontIndex(const CPVT_WordInfo& WordInfo);
 

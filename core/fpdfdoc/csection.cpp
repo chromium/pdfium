@@ -18,11 +18,6 @@ CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {}
 
 CSection::~CSection() {}
 
-void CSection::ResetAll() {
-  m_WordArray.clear();
-  m_LineArray.clear();
-}
-
 void CSection::ResetLinePlace() {
   int32_t i = 0;
   for (auto& pLine : m_LineArray) {

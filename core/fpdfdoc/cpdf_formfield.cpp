@@ -837,21 +837,6 @@ bool CPDF_FormField::SelectOption(int iOptIndex,
   return true;
 }
 
-bool CPDF_FormField::ClearSelectedOptions(NotificationOption notify) {
-  if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify()) {
-    WideString csValue;
-    int iIndex = GetSelectedIndex(0);
-    if (iIndex >= 0)
-      csValue = GetOptionLabel(iIndex);
-    if (!NotifyListOrComboBoxBeforeChange(csValue))
-      return false;
-  }
-  m_pDict->RemoveFor("I");
-  if (notify == NotificationOption::kNotify)
-    NotifyListOrComboBoxAfterChange();
-  return true;
-}
-
 void CPDF_FormField::LoadDA() {
   CPDF_Dictionary* pFormDict = m_pForm->GetFormDict();
   if (!pFormDict)

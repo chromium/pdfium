@@ -165,7 +165,6 @@ class CPDF_FormField {
   int GetSelectedOptionIndex(int index) const;
   bool IsOptionSelected(int iOptIndex) const;
   bool SelectOption(int iOptIndex, bool bSelected, NotificationOption notify);
-  bool ClearSelectedOptions(NotificationOption notify);
 
   float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont.Get(); }

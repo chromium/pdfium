@@ -18,8 +18,6 @@ class CPDF_PageLabel {
   ~CPDF_PageLabel();
 
   Optional<WideString> GetLabel(int nPage) const;
-  int32_t GetPageByLabel(const ByteStringView& bsLabel) const;
-  int32_t GetPageByLabel(const WideStringView& wsLabel) const;
 
  private:
   UnownedPtr<CPDF_Document> const m_pDocument;

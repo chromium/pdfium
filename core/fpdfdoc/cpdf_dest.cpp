@@ -55,20 +55,6 @@ int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
   return pDoc->GetPageIndex(pPage->GetObjNum());
 }
 
-uint32_t CPDF_Dest::GetPageObjNum() const {
-  if (!m_pArray)
-    return 0;
-
-  const CPDF_Object* pPage = m_pArray->GetDirectObjectAt(0);
-  if (!pPage)
-    return 0;
-  if (pPage->IsNumber())
-    return pPage->GetInteger();
-  if (pPage->IsDictionary())
-    return pPage->GetObjNum();
-  return 0;
-}
-
 int CPDF_Dest::GetZoomMode() const {
   if (!m_pArray)
     return 0;

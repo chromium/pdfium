@@ -572,45 +572,6 @@ CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace& place,
   return m_SectionArray[newplace.nSecIndex]->AddWord(newplace, wordinfo);
 }
 
-bool CPDF_VariableText::GetWordInfo(const CPVT_WordPlace& place,
-                                    CPVT_WordInfo& wordinfo) {
-  if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
-    return false;
-
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
-  if (!pdfium::IndexInBounds(pSection->m_WordArray, place.nWordIndex))
-    return false;
-
-  wordinfo = *pSection->m_WordArray[place.nWordIndex];
-  return true;
-}
-
-bool CPDF_VariableText::SetWordInfo(const CPVT_WordPlace& place,
-                                    const CPVT_WordInfo& wordinfo) {
-  if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
-    return false;
-
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
-  if (!pdfium::IndexInBounds(pSection->m_WordArray, place.nWordIndex))
-    return false;
-
-  *pSection->m_WordArray[place.nWordIndex] = wordinfo;
-  return true;
-}
-
-bool CPDF_VariableText::GetLineInfo(const CPVT_WordPlace& place,
-                                    CPVT_LineInfo& lineinfo) {
-  if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex))
-    return false;
-
-  CSection* pSection = m_SectionArray[place.nSecIndex].get();
-  if (!pdfium::IndexInBounds(pSection->m_LineArray, place.nLineIndex))
-    return false;
-
-  lineinfo = pSection->m_LineArray[place.nLineIndex]->m_LineInfo;
-  return true;
-}
-
 void CPDF_VariableText::SetPlateRect(const CFX_FloatRect& rect) {
   m_rcPlate = rect;
 }
