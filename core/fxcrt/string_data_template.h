@@ -41,12 +41,6 @@ class StringDataTemplate {
     return new (pData) StringDataTemplate(nLen, usableLen);
   }
 
-  static StringDataTemplate* Create(const StringDataTemplate& other) {
-    StringDataTemplate* result = Create(other.m_nDataLength);
-    result->CopyContents(other);
-    return result;
-  }
-
   static StringDataTemplate* Create(const CharType* pStr, size_t nLen) {
     StringDataTemplate* result = Create(nLen);
     result->CopyContents(pStr, nLen);

@@ -1024,46 +1024,8 @@ void WideString::TrimRight(const WideStringView& targets) {
   }
 }
 
-float FX_wtof(const wchar_t* str, int len) {
-  if (len == 0) {
-    return 0.0;
-  }
-  int cc = 0;
-  bool bNegative = false;
-  if (str[0] == '+') {
-    cc++;
-  } else if (str[0] == '-') {
-    bNegative = true;
-    cc++;
-  }
-  int integer = 0;
-  while (cc < len) {
-    if (str[cc] == '.') {
-      break;
-    }
-    integer = integer * 10 + FXSYS_DecimalCharToInt(str[cc]);
-    cc++;
-  }
-  float fraction = 0;
-  if (str[cc] == '.') {
-    cc++;
-    float scale = 0.1f;
-    while (cc < len) {
-      fraction += scale * FXSYS_DecimalCharToInt(str[cc]);
-      scale *= 0.1f;
-      cc++;
-    }
-  }
-  fraction += static_cast<float>(integer);
-  return bNegative ? -fraction : fraction;
-}
-
 int WideString::GetInteger() const {
   return m_pData ? FXSYS_wtoi(m_pData->m_String) : 0;
-}
-
-float WideString::GetFloat() const {
-  return m_pData ? FX_wtof(m_pData->m_String, m_pData->m_nDataLength) : 0.0f;
 }
 
 std::wostream& operator<<(std::wostream& os, const WideString& str) {

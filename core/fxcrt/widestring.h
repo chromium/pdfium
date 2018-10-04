@@ -176,7 +176,6 @@ class WideString {
   void ReleaseBuffer(size_t len);
 
   int GetInteger() const;
-  float GetFloat() const;
 
   Optional<size_t> Find(const WideStringView& pSub, size_t start = 0) const;
   Optional<size_t> Find(wchar_t ch, size_t start = 0) const;
