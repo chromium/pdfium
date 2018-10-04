@@ -122,8 +122,6 @@ jumbo_static_library("pdfium") {
     "fpdfsdk/cpdfsdk_common.h",
     "fpdfsdk/cpdfsdk_customaccess.cpp",
     "fpdfsdk/cpdfsdk_customaccess.h",
-    "fpdfsdk/cpdfsdk_datetime.cpp",
-    "fpdfsdk/cpdfsdk_datetime.h",
     "fpdfsdk/cpdfsdk_fieldaction.cpp",
     "fpdfsdk/cpdfsdk_fieldaction.h",
     "fpdfsdk/cpdfsdk_filewriteadapter.cpp",

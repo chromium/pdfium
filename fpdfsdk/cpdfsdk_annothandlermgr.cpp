@@ -13,7 +13,6 @@
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/cpdfsdk_baannothandler.h"
-#include "fpdfsdk/cpdfsdk_datetime.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
