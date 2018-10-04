@@ -48,10 +48,10 @@ class CPWL_FontMap : public IPVT_FontMap {
 
  protected:
   virtual void Initialize();
-  virtual CPDF_Document* GetDocument();
+  virtual CPDF_Document* GetDocument() = 0;
   virtual CPDF_Font* FindFontSameCharset(ByteString* sFontAlias,
-                                         int32_t nCharset);
-  virtual void AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias);
+                                         int32_t nCharset) = 0;
+  virtual void AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias) = 0;
 
   bool KnowWord(int32_t nFontIndex, uint16_t word);
 
@@ -81,7 +81,6 @@ class CPWL_FontMap : public IPVT_FontMap {
                            ByteString& sFontName,
                            uint8_t nCharset);
 
-  std::unique_ptr<CPDF_Document> m_pPDFDoc;
   UnownedPtr<CFX_SystemHandler> const m_pSystemHandler;
 };
 

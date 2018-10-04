@@ -47,16 +47,6 @@ CPWL_FontMap::~CPWL_FontMap() {
   Empty();
 }
 
-CPDF_Document* CPWL_FontMap::GetDocument() {
-  if (!m_pPDFDoc) {
-    if (CPDF_ModuleMgr::Get()) {
-      m_pPDFDoc = pdfium::MakeUnique<CPDF_Document>();
-      m_pPDFDoc->CreateNewDoc();
-    }
-  }
-  return m_pPDFDoc.get();
-}
-
 CPDF_Font* CPWL_FontMap::GetPDFFont(int32_t nFontIndex) {
   if (pdfium::IndexInBounds(m_Data, nFontIndex) && m_Data[nFontIndex])
     return m_Data[nFontIndex]->pFont;
@@ -187,11 +177,6 @@ int32_t CPWL_FontMap::GetFontIndex(const ByteString& sFontName,
   return AddFontData(pFont, sAlias, nCharset);
 }
 
-CPDF_Font* CPWL_FontMap::FindFontSameCharset(ByteString* sFontAlias,
-                                             int32_t nCharset) {
-  return nullptr;
-}
-
 int32_t CPWL_FontMap::AddFontData(CPDF_Font* pFont,
                                   const ByteString& sFontAlias,
                                   int32_t nCharset) {
@@ -202,8 +187,6 @@ int32_t CPWL_FontMap::AddFontData(CPDF_Font* pFont,
   m_Data.push_back(std::move(pNewData));
   return pdfium::CollectionSize<int32_t>(m_Data) - 1;
 }
-
-void CPWL_FontMap::AddedFont(CPDF_Font* pFont, const ByteString& sFontAlias) {}
 
 ByteString CPWL_FontMap::GetNativeFont(int32_t nCharset) {
   if (nCharset == FX_CHARSET_Default)
