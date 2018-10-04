@@ -201,14 +201,6 @@ FXFT_Face CFX_FontMgr::GetFixedFace(pdfium::span<const uint8_t> span,
   return FXFT_Set_Pixel_Sizes(face, 64, 64) ? nullptr : face;
 }
 
-FXFT_Face CFX_FontMgr::GetFileFace(const char* filename, int face_index) {
-  InitFTLibrary();
-  FXFT_Face face = nullptr;
-  if (FXFT_New_Face(m_FTLibrary, filename, face_index, &face))
-    return nullptr;
-  return FXFT_Set_Pixel_Sizes(face, 64, 64) ? nullptr : face;
-}
-
 void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
   if (!face)
     return;

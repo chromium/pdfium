@@ -14,19 +14,9 @@
 CFX_ClipRgn::CFX_ClipRgn(int width, int height)
     : m_Type(RectI), m_Box(0, 0, width, height) {}
 
-CFX_ClipRgn::CFX_ClipRgn(const CFX_ClipRgn& src) {
-  m_Type = src.m_Type;
-  m_Box = src.m_Box;
-  m_Mask = src.m_Mask;
-}
+CFX_ClipRgn::CFX_ClipRgn(const CFX_ClipRgn& src) = default;
 
-CFX_ClipRgn::~CFX_ClipRgn() {}
-
-void CFX_ClipRgn::Reset(const FX_RECT& rect) {
-  m_Type = RectI;
-  m_Box = rect;
-  m_Mask = nullptr;
-}
+CFX_ClipRgn::~CFX_ClipRgn() = default;
 
 void CFX_ClipRgn::IntersectRect(const FX_RECT& rect) {
   if (m_Type == RectI) {

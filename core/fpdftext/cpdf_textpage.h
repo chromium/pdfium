@@ -144,7 +144,6 @@ class CPDF_TextPage {
   void CloseTempLine();
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
-  void CheckMarkedContentObject(int32_t* pStart, int32_t* pCount) const;
   void FindPreviousTextObject();
   void AddCharInfoByLRDirection(wchar_t wChar, const PAGECHAR_INFO& info);
   void AddCharInfoByRLDirection(wchar_t wChar, const PAGECHAR_INFO& info);

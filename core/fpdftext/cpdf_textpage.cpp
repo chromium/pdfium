@@ -470,40 +470,6 @@ void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
   info->m_Matrix = charinfo.m_Matrix;
 }
 
-void CPDF_TextPage::CheckMarkedContentObject(int32_t* pStart,
-                                             int32_t* pCount) const {
-  int start = *pStart;
-  const int nCount = *pCount;
-  const PAGECHAR_INFO charinfo = m_CharList[start];
-  const PAGECHAR_INFO charinfo2 = m_CharList[start + nCount - 1];
-  if (charinfo.m_Flag == FPDFTEXT_CHAR_PIECE) {
-    PAGECHAR_INFO charinfo1 = charinfo;
-    while (FPDFTEXT_CHAR_PIECE == charinfo1.m_Flag &&
-           charinfo1.m_Index == charinfo.m_Index) {
-      --start;
-      if (start < 0)
-        break;
-      charinfo1 = m_CharList[start];
-    }
-    ++start;
-    *pStart = start;
-  }
-  if (charinfo2.m_Flag == FPDFTEXT_CHAR_PIECE) {
-    PAGECHAR_INFO charinfo3 = charinfo2;
-    int endIndex = start + nCount - 1;
-    const int innerCount = CountChars();
-    while (FPDFTEXT_CHAR_PIECE == charinfo3.m_Flag &&
-           charinfo3.m_Index == charinfo2.m_Index) {
-      ++endIndex;
-      if (endIndex >= innerCount)
-        break;
-      charinfo3 = m_CharList[endIndex];
-    }
-    --endIndex;
-    *pCount = endIndex - start + 1;
-  }
-}
-
 WideString CPDF_TextPage::GetPageText(int start, int count) const {
   if (start < 0 || start >= CountChars() || count <= 0 || !m_bIsParsed ||
       m_CharList.empty() || m_TextBuf.GetLength() == 0) {

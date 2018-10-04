@@ -46,7 +46,6 @@ class CFX_FontMgr {
                              std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                              uint32_t size,
                              int font_offset);
-  FXFT_Face GetFileFace(const char* filename, int face_index);
   FXFT_Face GetFixedFace(pdfium::span<const uint8_t> span, int face_index);
   void ReleaseFace(FXFT_Face face);
   void SetSystemFontInfo(std::unique_ptr<SystemFontInfoIface> pFontInfo);

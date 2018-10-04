@@ -24,7 +24,6 @@ class CFX_ClipRgn {
   const FX_RECT& GetBox() const { return m_Box; }
   RetainPtr<CFX_DIBitmap> GetMask() const { return m_Mask; }
 
-  void Reset(const FX_RECT& rect);
   void IntersectRect(const FX_RECT& rect);
   void IntersectMaskF(int left, int top, const RetainPtr<CFX_DIBitmap>& Mask);
 
