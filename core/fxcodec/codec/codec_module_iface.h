@@ -16,10 +16,10 @@ class CodecModuleIface {
  public:
   class Context {
    public:
-    virtual ~Context() {}
+    virtual ~Context() = default;
   };
 
-  virtual ~CodecModuleIface() {}
+  virtual ~CodecModuleIface() = default;
 
   // Returns the number of unprocessed bytes remaining in the input buffer.
   virtual FX_FILESIZE GetAvailInput(Context* pContext) const = 0;

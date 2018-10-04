@@ -96,7 +96,7 @@ class CPWL_EditImpl_Undo {
 
 class IFX_Edit_UndoItem {
  public:
-  virtual ~IFX_Edit_UndoItem() {}
+  virtual ~IFX_Edit_UndoItem() = default;
 
   virtual void Undo() = 0;
   virtual void Redo() = 0;

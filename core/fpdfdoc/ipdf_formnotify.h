@@ -14,7 +14,7 @@ class CPDF_InterForm;
 
 class IPDF_FormNotify {
  public:
-  virtual ~IPDF_FormNotify() {}
+  virtual ~IPDF_FormNotify() = default;
 
   virtual bool BeforeValueChange(CPDF_FormField* pField,
                                  const WideString& csValue) = 0;

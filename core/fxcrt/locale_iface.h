@@ -46,7 +46,7 @@ enum FX_DATETIMETYPE {
 
 class LocaleIface {
  public:
-  virtual ~LocaleIface() {}
+  virtual ~LocaleIface() = default;
 
   virtual WideString GetName() const = 0;
   virtual WideString GetDecimalSymbol() const = 0;

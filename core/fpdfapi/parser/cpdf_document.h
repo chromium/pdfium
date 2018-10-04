@@ -47,7 +47,7 @@ class CPDF_Document : public Observable<CPDF_Document>,
   // Type from which the XFA extension can subclass itself.
   class Extension {
    public:
-    virtual ~Extension() {}
+    virtual ~Extension() = default;
     virtual CPDF_Document* GetPDFDoc() const = 0;
     virtual int GetPageCount() const = 0;
     virtual void DeletePage(int page_index) = 0;

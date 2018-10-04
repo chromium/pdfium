@@ -16,7 +16,7 @@ class CFX_WideTextBuf;
 
 class CXFA_FMExpression {
  public:
-  virtual ~CXFA_FMExpression() {}
+  virtual ~CXFA_FMExpression() = default;
   virtual bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) = 0;
 
  protected:

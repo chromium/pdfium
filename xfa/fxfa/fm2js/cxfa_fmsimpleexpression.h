@@ -25,7 +25,7 @@ class CFX_WideTextBuf;
 
 class CXFA_FMSimpleExpression {
  public:
-  virtual ~CXFA_FMSimpleExpression() {}
+  virtual ~CXFA_FMSimpleExpression() = default;
   virtual bool ToJavaScript(CFX_WideTextBuf* js, ReturnType type) = 0;
 
   XFA_FM_TOKEN GetOperatorToken() const;

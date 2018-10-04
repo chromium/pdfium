@@ -11,7 +11,7 @@
 
 class ScanlineComposerIface {
  public:
-  virtual ~ScanlineComposerIface() {}
+  virtual ~ScanlineComposerIface() = default;
 
   virtual void ComposeScanline(int line,
                                const uint8_t* scanline,

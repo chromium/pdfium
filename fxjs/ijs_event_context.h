@@ -22,7 +22,7 @@ class CPDFSDK_FormFillEnvironment;
 // may trigger new events on top of one another.
 class IJS_EventContext {
  public:
-  virtual ~IJS_EventContext() {}
+  virtual ~IJS_EventContext() = default;
 
   virtual Optional<IJS_Runtime::JS_Error> RunScript(
       const WideString& script) = 0;

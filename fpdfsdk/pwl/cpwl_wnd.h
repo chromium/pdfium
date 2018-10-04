@@ -106,7 +106,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
 
   class ProviderIface : public Observable<ProviderIface> {
    public:
-    virtual ~ProviderIface() {}
+    virtual ~ProviderIface() = default;
 
     // get a matrix which map user space to CWnd client space
     virtual CFX_Matrix GetWindowMatrix(PrivateData* pAttached) = 0;
@@ -114,7 +114,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
 
   class FocusHandlerIface {
    public:
-    virtual ~FocusHandlerIface() {}
+    virtual ~FocusHandlerIface() = default;
     virtual void OnSetFocus(CPWL_Edit* pEdit) = 0;
   };
 

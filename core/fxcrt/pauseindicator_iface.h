@@ -9,7 +9,7 @@
 
 class PauseIndicatorIface {
  public:
-  virtual ~PauseIndicatorIface() {}
+  virtual ~PauseIndicatorIface() = default;
   virtual bool NeedToPauseNow() = 0;
 };
 

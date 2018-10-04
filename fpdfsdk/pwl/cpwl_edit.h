@@ -15,7 +15,7 @@
 
 class IPWL_Filler_Notify {
  public:
-  virtual ~IPWL_Filler_Notify() {}
+  virtual ~IPWL_Filler_Notify() = default;
 
   // Must write to |bBottom| and |fPopupRet|.
   virtual void QueryWherePopup(CPWL_Wnd::PrivateData* pAttached,

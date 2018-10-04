@@ -15,7 +15,7 @@ class CPDF_Font;
 
 class IPVT_FontMap {
  public:
-  virtual ~IPVT_FontMap() {}
+  virtual ~IPVT_FontMap() = default;
 
   virtual CPDF_Font* GetPDFFont(int32_t nFontIndex) = 0;
   virtual ByteString GetPDFFontAlias(int32_t nFontIndex) = 0;

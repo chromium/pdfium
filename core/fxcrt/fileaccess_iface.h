@@ -16,7 +16,7 @@
 class FileAccessIface {
  public:
   static std::unique_ptr<FileAccessIface> Create();
-  virtual ~FileAccessIface() {}
+  virtual ~FileAccessIface() = default;
 
   virtual bool Open(const ByteStringView& fileName, uint32_t dwMode) = 0;
   virtual bool Open(const WideStringView& fileName, uint32_t dwMode) = 0;

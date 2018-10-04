@@ -60,7 +60,7 @@ class CFX_CTTGSUBTable {
   };
 
   struct TCoverageFormatBase {
-    virtual ~TCoverageFormatBase() {}
+    virtual ~TCoverageFormatBase() = default;
     uint16_t CoverageFormat;
   };
 

@@ -19,7 +19,7 @@ class CFWL_Widget;
 
 class IFWL_ThemeProvider {
  public:
-  virtual ~IFWL_ThemeProvider() {}
+  virtual ~IFWL_ThemeProvider() = default;
 
   virtual void DrawBackground(CFWL_ThemeBackground* pParams) = 0;
   virtual void DrawText(CFWL_ThemeText* pParams) = 0;
