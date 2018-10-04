@@ -19,10 +19,6 @@ CPWL_Caret::CPWL_Caret() : m_bFlash(false), m_fWidth(0.4f), m_nDelay(0) {}
 
 CPWL_Caret::~CPWL_Caret() {}
 
-ByteString CPWL_Caret::GetClassName() const {
-  return "CPWL_Caret";
-}
-
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device) {
   if (!IsVisible() || !m_bFlash)

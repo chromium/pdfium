@@ -15,7 +15,6 @@ class CPWL_Caret final : public CPWL_Wnd {
   ~CPWL_Caret() override;
 
   // CPWL_Wnd
-  ByteString GetClassName() const override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
   bool InvalidateRect(CFX_FloatRect* pRect) override;

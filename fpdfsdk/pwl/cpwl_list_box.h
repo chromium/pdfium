@@ -42,7 +42,6 @@ class CPWL_ListBox : public CPWL_Wnd {
   ~CPWL_ListBox() override;
 
   // CPWL_Wnd
-  ByteString GetClassName() const override;
   void OnCreated() override;
   void OnDestroy() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,

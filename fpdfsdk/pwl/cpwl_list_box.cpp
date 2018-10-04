@@ -72,10 +72,6 @@ CPWL_ListBox::CPWL_ListBox()
 
 CPWL_ListBox::~CPWL_ListBox() {}
 
-ByteString CPWL_ListBox::GetClassName() const {
-  return "CPWL_ListBox";
-}
-
 void CPWL_ListBox::OnCreated() {
   m_pList->SetFontMap(GetFontMap());
   m_pListNotify = pdfium::MakeUnique<CPWL_List_Notify>(this);

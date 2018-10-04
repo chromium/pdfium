@@ -49,7 +49,6 @@ class CPWL_SBButton final : public CPWL_Wnd {
   ~CPWL_SBButton() override;
 
   // CPWL_Wnd
-  ByteString GetClassName() const override;
   void OnCreate(CreateParams* pParamsToAdjust) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
@@ -120,7 +119,6 @@ class CPWL_ScrollBar final : public CPWL_Wnd {
   ~CPWL_ScrollBar() override;
 
   // CPWL_Wnd:
-  ByteString GetClassName() const override;
   void OnCreate(CreateParams* pParamsToAdjust) override;
   void OnDestroy() override;
   bool RePosChildWnd() override;

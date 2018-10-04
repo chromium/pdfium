@@ -13,10 +13,6 @@ CPWL_PushButton::CPWL_PushButton() {}
 
 CPWL_PushButton::~CPWL_PushButton() {}
 
-ByteString CPWL_PushButton::GetClassName() const {
-  return "CPWL_PushButton";
-}
-
 CFX_FloatRect CPWL_PushButton::GetFocusRect() const {
   return GetWindowRect().GetDeflated(static_cast<float>(GetBorderWidth()),
                                      static_cast<float>(GetBorderWidth()));
@@ -25,10 +21,6 @@ CFX_FloatRect CPWL_PushButton::GetFocusRect() const {
 CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(false) {}
 
 CPWL_CheckBox::~CPWL_CheckBox() {}
-
-ByteString CPWL_CheckBox::GetClassName() const {
-  return "CPWL_CheckBox";
-}
 
 void CPWL_CheckBox::SetCheck(bool bCheck) {
   m_bChecked = bCheck;
@@ -54,10 +46,6 @@ bool CPWL_CheckBox::OnChar(uint16_t nChar, uint32_t nFlag) {
 CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(false) {}
 
 CPWL_RadioButton::~CPWL_RadioButton() {}
-
-ByteString CPWL_RadioButton::GetClassName() const {
-  return "CPWL_RadioButton";
-}
 
 bool CPWL_RadioButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (IsReadOnly())

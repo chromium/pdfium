@@ -149,8 +149,6 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   CPWL_Wnd();
   ~CPWL_Wnd() override;
 
-  virtual ByteString GetClassName() const;
-
   // Returns |true| iff this instance is still allocated.
   virtual bool InvalidateRect(CFX_FloatRect* pRect);
 

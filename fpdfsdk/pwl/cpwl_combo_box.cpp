@@ -151,10 +151,6 @@ CPWL_ComboBox::CPWL_ComboBox() {}
 
 CPWL_ComboBox::~CPWL_ComboBox() {}
 
-ByteString CPWL_ComboBox::GetClassName() const {
-  return "CPWL_ComboBox";
-}
-
 void CPWL_ComboBox::OnCreate(CreateParams* pParamsToAdjust) {
   pParamsToAdjust->dwFlags &= ~PWS_HSCROLL;
   pParamsToAdjust->dwFlags &= ~PWS_VSCROLL;

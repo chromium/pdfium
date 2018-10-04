@@ -127,10 +127,6 @@ CPWL_SBButton::CPWL_SBButton(PWL_SCROLLBAR_TYPE eScrollBarType,
 
 CPWL_SBButton::~CPWL_SBButton() {}
 
-ByteString CPWL_SBButton::GetClassName() const {
-  return "CPWL_SBButton";
-}
-
 void CPWL_SBButton::OnCreate(CreateParams* pParamsToAdjust) {
   pParamsToAdjust->eCursorType = FXCT_ARROW;
 }
@@ -325,10 +321,6 @@ CPWL_ScrollBar::CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType)
       m_bNotifyForever(true) {}
 
 CPWL_ScrollBar::~CPWL_ScrollBar() {}
-
-ByteString CPWL_ScrollBar::GetClassName() const {
-  return "CPWL_ScrollBar";
-}
 
 void CPWL_ScrollBar::OnCreate(CreateParams* pParamsToAdjust) {
   pParamsToAdjust->eCursorType = FXCT_ARROW;

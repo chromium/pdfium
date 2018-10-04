@@ -33,10 +33,6 @@ CPWL_Edit::~CPWL_Edit() {
   ASSERT(!m_bFocus);
 }
 
-ByteString CPWL_Edit::GetClassName() const {
-  return PWL_CLASSNAME_EDIT;
-}
-
 void CPWL_Edit::SetText(const WideString& csText) {
   m_pEdit->SetText(csText);
 }

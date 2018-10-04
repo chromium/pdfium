@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "fpdfsdk/pwl/cpwl_edit.h"
+
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
-#include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -64,8 +65,6 @@ class CPWLEditEmbeddertest : public EmbedderTest {
     CPWL_Wnd* pWindow =
         m_pFormFiller->GetPDFWindow(m_pFormFillEnv->GetPageView(0), false);
     ASSERT_TRUE(pWindow);
-    ASSERT_EQ(PWL_CLASSNAME_EDIT, pWindow->GetClassName());
-
     m_pEdit = static_cast<CPWL_Edit*>(pWindow);
   }
 

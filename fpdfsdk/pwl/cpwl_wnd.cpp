@@ -123,10 +123,6 @@ CPWL_Wnd::~CPWL_Wnd() {
   ASSERT(!m_bCreated);
 }
 
-ByteString CPWL_Wnd::GetClassName() const {
-  return "CPWL_Wnd";
-}
-
 void CPWL_Wnd::Create(const CreateParams& cp) {
   if (IsValid())
     return;
