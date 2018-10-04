@@ -392,3 +392,126 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_TRUE(ast->ToJavaScript(&buf));
   EXPECT_STREQ(ret, buf.MakeString().c_str());
 }
+
+TEST(CXFA_FMParserTest, ParseFunctionCallNoArguments) {
+  const wchar_t input[] = L"P.x()";
+  const wchar_t ret[] =
+      LR"***((function() {
+let pfm_method_runner = function(obj, cb) {
+  if (pfm_rt.is_ary(obj)) {
+    let pfm_method_return = null;
+    for (var idx = obj.length -1; idx > 1; idx--) {
+      pfm_method_return = cb(obj[idx]);
+    }
+    return pfm_method_return;
+  }
+  return cb(obj);
+};
+var pfm_ret = null;
+pfm_ret = pfm_rt.get_val((function() {
+  return pfm_method_runner(P, function(obj) {
+    return obj.x();
+  });
+}).call(this));
+return pfm_rt.get_val(pfm_ret);
+}).call(this);)***";
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  EXPECT_FALSE(parser->HasError());
+  CXFA_FMToJavaScriptDepth::Reset();
+  CFX_WideTextBuf buf;
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
+  EXPECT_STREQ(ret, buf.MakeString().c_str());
+}
+
+TEST(CXFA_FMParserTest, ParseFunctionCallSingleArgument) {
+  const wchar_t input[] = L"P.x(foo)";
+  const wchar_t ret[] =
+      LR"***((function() {
+let pfm_method_runner = function(obj, cb) {
+  if (pfm_rt.is_ary(obj)) {
+    let pfm_method_return = null;
+    for (var idx = obj.length -1; idx > 1; idx--) {
+      pfm_method_return = cb(obj[idx]);
+    }
+    return pfm_method_return;
+  }
+  return cb(obj);
+};
+var pfm_ret = null;
+pfm_ret = pfm_rt.get_val((function() {
+  return pfm_method_runner(P, function(obj) {
+    return obj.x(pfm_rt.get_jsobj(foo));
+  });
+}).call(this));
+return pfm_rt.get_val(pfm_ret);
+}).call(this);)***";
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  EXPECT_FALSE(parser->HasError());
+  CXFA_FMToJavaScriptDepth::Reset();
+  CFX_WideTextBuf buf;
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
+  EXPECT_STREQ(ret, buf.MakeString().c_str());
+}
+
+TEST(CXFA_FMParserTest, ParseFunctionCallMultipleArguments) {
+  const wchar_t input[] = L"P.x(foo, bar, baz)";
+  const wchar_t ret[] =
+      LR"***((function() {
+let pfm_method_runner = function(obj, cb) {
+  if (pfm_rt.is_ary(obj)) {
+    let pfm_method_return = null;
+    for (var idx = obj.length -1; idx > 1; idx--) {
+      pfm_method_return = cb(obj[idx]);
+    }
+    return pfm_method_return;
+  }
+  return cb(obj);
+};
+var pfm_ret = null;
+pfm_ret = pfm_rt.get_val((function() {
+  return pfm_method_runner(P, function(obj) {
+    return obj.x(pfm_rt.get_jsobj(foo), pfm_rt.get_val(bar), pfm_rt.get_val(baz));
+  });
+}).call(this));
+return pfm_rt.get_val(pfm_ret);
+}).call(this);)***";
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  EXPECT_FALSE(parser->HasError());
+  CXFA_FMToJavaScriptDepth::Reset();
+  CFX_WideTextBuf buf;
+  EXPECT_TRUE(ast->ToJavaScript(&buf));
+  EXPECT_STREQ(ret, buf.MakeString().c_str());
+}
+
+TEST(CXFA_FMParserTest, ParseFunctionCallMissingCommas) {
+  const wchar_t input[] = L"P.x(!foo!bar!baz)";
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  ASSERT_TRUE(ast == nullptr);
+  EXPECT_TRUE(parser->HasError());
+}
+
+TEST(CXFA_FMParserTest, ParseFunctionCallTrailingComma) {
+  const wchar_t input[] = L"P.x(foo,bar,baz,)";
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  ASSERT_TRUE(ast == nullptr);
+  EXPECT_TRUE(parser->HasError());
+}
+
+TEST(CXFA_FMParserTest, ParseFunctionCallExtraComma) {
+  const wchar_t input[] = L"P.x(foo,bar,,baz)";
+
+  auto parser = pdfium::MakeUnique<CXFA_FMParser>(input);
+  std::unique_ptr<CXFA_FMAST> ast = parser->Parse();
+  ASSERT_TRUE(ast == nullptr);
+  EXPECT_TRUE(parser->HasError());
+}

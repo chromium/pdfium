@@ -702,31 +702,13 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
 
     switch (m_token.m_type) {
       case TOKlparen: {
-        if (!NextToken())
+        std::unique_ptr<std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>
+            expressions = ParseArgumentList();
+        if (!expressions)
           return nullptr;
 
-        std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> expressions;
-        if (m_token.m_type != TOKrparen) {
-          while (m_token.m_type != TOKrparen) {
-            std::unique_ptr<CXFA_FMSimpleExpression> simple_expr =
-                ParseSimpleExpression();
-            if (!simple_expr)
-              return nullptr;
-
-            expressions.push_back(std::move(simple_expr));
-            if (m_token.m_type == TOKcomma) {
-              if (!NextToken())
-                return nullptr;
-            } else if (m_token.m_type == TOKeof ||
-                       m_token.m_type == TOKreserver) {
-              break;
-            }
-          }
-          if (m_token.m_type != TOKrparen)
-            return nullptr;
-        }
         expr = pdfium::MakeUnique<CXFA_FMCallExpression>(
-            std::move(expr), std::move(expressions), false);
+            std::move(expr), std::move(*expressions), false);
         if (!NextToken())
           return nullptr;
         if (m_token.m_type != TOKlbracket)
@@ -750,34 +732,15 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
         if (!NextToken())
           return nullptr;
         if (m_token.m_type == TOKlparen) {
-          std::unique_ptr<CXFA_FMSimpleExpression> pExpCall;
-          if (!NextToken())
+          std::unique_ptr<std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>
+              expressions = ParseArgumentList();
+          if (!expressions)
             return nullptr;
 
-          std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> expressions;
-          if (m_token.m_type != TOKrparen) {
-            while (m_token.m_type != TOKrparen) {
-              std::unique_ptr<CXFA_FMSimpleExpression> exp =
-                  ParseSimpleExpression();
-              if (!exp)
-                return nullptr;
-
-              expressions.push_back(std::move(exp));
-              if (m_token.m_type == TOKcomma) {
-                if (!NextToken())
-                  return nullptr;
-              } else if (m_token.m_type == TOKeof ||
-                         m_token.m_type == TOKreserver) {
-                break;
-              }
-            }
-            if (m_token.m_type != TOKrparen)
-              return nullptr;
-          }
-          std::unique_ptr<CXFA_FMSimpleExpression> pIdentifier =
+          auto pIdentifier =
               pdfium::MakeUnique<CXFA_FMIdentifierExpression>(tempStr);
-          pExpCall = pdfium::MakeUnique<CXFA_FMCallExpression>(
-              std::move(pIdentifier), std::move(expressions), true);
+          auto pExpCall = pdfium::MakeUnique<CXFA_FMCallExpression>(
+              std::move(pIdentifier), std::move(*expressions), true);
           expr = pdfium::MakeUnique<CXFA_FMMethodCallExpression>(
               std::move(expr), std::move(pExpCall));
           if (!NextToken())
@@ -876,6 +839,36 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParser::ParsePostExpression(
       return nullptr;
   }
   return expr;
+}
+
+// Argument lists are zero or more comma seperated simple expressions found
+// between '(' and ')'
+std::unique_ptr<std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>
+CXFA_FMParser::ParseArgumentList() {
+  if (m_token.m_type != TOKlparen || !NextToken())
+    return nullptr;
+
+  auto expressions = pdfium::MakeUnique<
+      std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>>();
+  bool first_arg = true;
+  while (m_token.m_type != TOKrparen) {
+    if (first_arg) {
+      first_arg = false;
+    } else {
+      if (m_token.m_type != TOKcomma || !NextToken())
+        return nullptr;
+    }
+
+    std::unique_ptr<CXFA_FMSimpleExpression> exp = ParseSimpleExpression();
+    if (!exp)
+      return nullptr;
+
+    expressions->push_back(std::move(exp));
+    if (expressions->size() > kMaxPostExpressions)
+      return nullptr;
+  }
+
+  return expressions;
 }
 
 // Index := '[' ('*' | '+' SimpleExpression | '-' SimpleExpression) ']'
