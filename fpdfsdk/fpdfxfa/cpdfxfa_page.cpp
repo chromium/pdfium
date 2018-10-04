@@ -18,9 +18,12 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 
 CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Context* pContext, int page_index)
-    : m_pXFAPageView(nullptr), m_pContext(pContext), m_iPageIndex(page_index) {}
+    : m_pContext(pContext), m_iPageIndex(page_index) {
+  ASSERT(m_pContext);
+  ASSERT(m_iPageIndex >= 0);
+}
 
-CPDFXFA_Page::~CPDFXFA_Page() {}
+CPDFXFA_Page::~CPDFXFA_Page() = default;
 
 CPDF_Page* CPDFXFA_Page::AsPDFPage() {
   return m_pPDFPage.Get();
@@ -31,17 +34,11 @@ CPDFXFA_Page* CPDFXFA_Page::AsXFAPage() {
 }
 
 CPDF_Document* CPDFXFA_Page::GetDocument() const {
-  return GetDocumentExtension()->GetPDFDoc();
+  return m_pContext->GetPDFDoc();
 }
 
 bool CPDFXFA_Page::LoadPDFPage() {
-  if (!m_pContext)
-    return false;
-
-  CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
-  if (!pPDFDoc)
-    return false;
-
+  CPDF_Document* pPDFDoc = GetDocument();
   CPDF_Dictionary* pDict = pPDFDoc->GetPageDictionary(m_iPageIndex);
   if (!pDict)
     return false;
@@ -54,9 +51,6 @@ bool CPDFXFA_Page::LoadPDFPage() {
 }
 
 bool CPDFXFA_Page::LoadXFAPageView() {
-  if (!m_pContext)
-    return false;
-
   CXFA_FFDoc* pXFADoc = m_pContext->GetXFADoc();
   if (!pXFADoc)
     return false;
@@ -74,9 +68,6 @@ bool CPDFXFA_Page::LoadXFAPageView() {
 }
 
 bool CPDFXFA_Page::LoadPage() {
-  if (!m_pContext || m_iPageIndex < 0)
-    return false;
-
   switch (m_pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
@@ -85,17 +76,14 @@ bool CPDFXFA_Page::LoadPage() {
     case FormType::kXFAFull:
       return LoadXFAPageView();
   }
+  NOTREACHED();
   return false;
 }
 
-bool CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
-  if (!m_pContext || m_iPageIndex < 0 || !pageDict)
-    return false;
-
-  m_pPDFPage =
-      pdfium::MakeRetain<CPDF_Page>(m_pContext->GetPDFDoc(), pageDict, true);
+void CPDFXFA_Page::LoadPDFPageFromDict(CPDF_Dictionary* pPageDict) {
+  ASSERT(pPageDict);
+  m_pPDFPage = pdfium::MakeRetain<CPDF_Page>(GetDocument(), pPageDict, true);
   m_pPDFPage->ParseContent();
-  return true;
 }
 
 CPDF_Document::Extension* CPDFXFA_Page::GetDocumentExtension() const {
