@@ -75,7 +75,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        float origin_y,
                                        CPDF_Font* pFont,
                                        float font_size,
-                                       const CFX_Matrix* pMatrix,
+                                       const CFX_Matrix& matrix,
                                        const ByteString& str,
                                        FX_ARGB fill_argb,
                                        const CFX_GraphStateData* pGraphState,
@@ -99,14 +99,10 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
       positions[i - 1] = cur_pos;
     cur_pos += pFont->GetCharWidthF(codes[i]) * font_size / 1000;
   }
-  CFX_Matrix matrix;
-  if (pMatrix)
-    matrix = *pMatrix;
-
-  matrix.e = origin_x;
-  matrix.f = origin_y;
-
-  DrawNormalText(pDevice, codes, positions, pFont, font_size, &matrix,
+  CFX_Matrix new_matrix = matrix;
+  new_matrix.e = origin_x;
+  new_matrix.f = origin_y;
+  DrawNormalText(pDevice, codes, positions, pFont, font_size, &new_matrix,
                  fill_argb, pOptions);
 }
 

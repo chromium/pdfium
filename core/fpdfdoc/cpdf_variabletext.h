@@ -108,7 +108,6 @@ class CPDF_VariableText {
   int32_t GetCharArray() const { return m_nCharArray; }
   int32_t GetLimitChar() const { return m_nLimitChar; }
   bool IsMultiLine() const { return m_bMultiLine; }
-  int32_t GetHorzScale() const { return m_nHorzScale; }
   float GetCharSpace() const { return m_fCharSpace; }
   bool IsAutoReturn() const { return m_bLimitWidth; }
 
@@ -153,7 +152,6 @@ class CPDF_VariableText {
                      uint16_t Word,
                      uint16_t SubWord,
                      float fCharSpace,
-                     int32_t nHorzScale,
                      float fFontSize,
                      float fWordTail);
   float GetWordAscent(const CPVT_WordInfo& WordInfo);
@@ -201,7 +199,6 @@ class CPDF_VariableText {
   int32_t m_nLimitChar = 0;
   int32_t m_nCharArray = 0;
   int32_t m_nAlignment = 0;
-  int32_t m_nHorzScale = 100;
   float m_fLineLeading = 0.0f;
   float m_fCharSpace = 0.0f;
   float m_fFontSize = 0.0f;

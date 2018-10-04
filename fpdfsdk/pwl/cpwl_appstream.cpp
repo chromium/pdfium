@@ -68,7 +68,6 @@ const char kSetNonZeroWindingClipOperator[] = "W";
 const char kSetRGBOperator[] = "rg";
 const char kSetRGBStrokedOperator[] = "RG";
 const char kSetTextFontAndSizeOperator[] = "Tf";
-const char kSetTextScaleHorizontalOperator[] = "Tz";
 const char kShowTextOperator[] = "Tj";
 const char kStateRestoreOperator[] = "Q";
 const char kStateSaveOperator[] = "q";
@@ -667,16 +666,9 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
 
   std::ostringstream sAppStream;
   if (sEditStream.tellp() > 0) {
-    int32_t nHorzScale = pEdit->GetHorzScale();
-    if (nHorzScale != 100) {
-      sAppStream << nHorzScale << " " << kSetTextScaleHorizontalOperator
-                 << "\n";
-    }
-
     float fCharSpace = pEdit->GetCharSpace();
-    if (!IsFloatZero(fCharSpace)) {
+    if (!IsFloatZero(fCharSpace))
       sAppStream << fCharSpace << " " << kSetCharacterSpacingOperator << "\n";
-    }
 
     sAppStream << sEditStream.str();
   }

@@ -315,8 +315,7 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
               std::min(fLineDescent, m_pVT->GetWordDescent(*pWord, fFontSize));
           fWordWidth = m_pVT->GetWordWidth(
               pWord->nFontIndex, pWord->Word, m_pVT->GetSubWord(),
-              m_pVT->GetCharSpace(), m_pVT->GetHorzScale(), fFontSize,
-              pWord->fWordTail);
+              m_pVT->GetCharSpace(), fFontSize, pWord->fWordTail);
         }
         if (!bOpened) {
           if (IsOpenStylePunctuation(pWord->Word)) {
