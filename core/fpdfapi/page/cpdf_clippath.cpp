@@ -55,21 +55,21 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
   bool bLayerStarted = false;
   for (size_t i = 0; i < GetTextCount(); ++i) {
     CPDF_TextObject* pTextObj = GetText(i);
-    if (!pTextObj) {
-      if (!bStarted) {
+    if (pTextObj) {
+      if (bLayerStarted) {
+        layer_rect.Union(CFX_FloatRect(pTextObj->GetBBox()));
+      } else {
+        layer_rect = CFX_FloatRect(pTextObj->GetBBox());
+        bLayerStarted = true;
+      }
+    } else {
+      if (bStarted) {
+        rect.Intersect(layer_rect);
+      } else {
         rect = layer_rect;
         bStarted = true;
-      } else {
-        rect.Intersect(layer_rect);
       }
       bLayerStarted = false;
-    } else {
-      if (!bLayerStarted) {
-        layer_rect = CFX_FloatRect(pTextObj->GetBBox(nullptr));
-        bLayerStarted = true;
-      } else {
-        layer_rect.Union(CFX_FloatRect(pTextObj->GetBBox(nullptr)));
-      }
     }
   }
   return rect;

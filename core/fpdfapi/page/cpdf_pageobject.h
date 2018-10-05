@@ -60,7 +60,8 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   CFX_FloatRect GetRect() const {
     return CFX_FloatRect(m_Left, m_Bottom, m_Right, m_Top);
   }
-  FX_RECT GetBBox(const CFX_Matrix* pMatrix) const;
+  FX_RECT GetBBox() const;
+  FX_RECT GetTransformedBBox(const CFX_Matrix& matrix) const;
 
   // Get what content stream the object was parsed from in its page. This number
   // is the index of the content stream in the "Contents" array, or 0 if there

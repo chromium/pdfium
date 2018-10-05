@@ -1121,7 +1121,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
 FX_RECT CPDF_RenderStatus::GetObjectClippedRect(
     const CPDF_PageObject* pObj,
     const CFX_Matrix& mtObj2Device) const {
-  FX_RECT rect = pObj->GetBBox(&mtObj2Device);
+  FX_RECT rect = pObj->GetTransformedBBox(mtObj2Device);
   rect.Intersect(m_pDevice->GetClipBox());
   return rect;
 }
@@ -1405,7 +1405,7 @@ bool CPDF_RenderStatus::ClipPattern(const CPDF_PageObject* pPageObj,
   if (pPageObj->IsPath())
     return SelectClipPath(pPageObj->AsPath(), mtObj2Device, bStroke);
   if (pPageObj->IsImage()) {
-    m_pDevice->SetClip_Rect(pPageObj->GetBBox(&mtObj2Device));
+    m_pDevice->SetClip_Rect(pPageObj->GetTransformedBBox(mtObj2Device));
     return true;
   }
   return false;
@@ -1514,7 +1514,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     }
     return true;
   }
-  FX_RECT rect = pPageObj->GetBBox(&mtObj2Device);
+  FX_RECT rect = pPageObj->GetTransformedBBox(mtObj2Device);
   rect.Intersect(m_pDevice->GetClipBox());
   if (rect.IsEmpty())
     return true;
@@ -2138,7 +2138,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
 
 void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
                                        const CFX_Matrix& mtObj2Device) {
-  FX_RECT rect = pShadingObj->GetBBox(&mtObj2Device);
+  FX_RECT rect = pShadingObj->GetTransformedBBox(mtObj2Device);
   FX_RECT clip_box = m_pDevice->GetClipBox();
   rect.Intersect(clip_box);
   if (rect.IsEmpty())
