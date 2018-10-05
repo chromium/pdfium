@@ -283,11 +283,11 @@ bool CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
                           static_cast<float>(-rect.top));
   if (CPDF_TilingPattern* pTilingPattern = m_pPattern->AsTilingPattern()) {
     bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject.Get(),
-                                    &patternDevice, false);
+                                    patternDevice, false);
   } else if (CPDF_ShadingPattern* pShadingPattern =
                  m_pPattern->AsShadingPattern()) {
     bitmap_render.DrawShadingPattern(pShadingPattern, m_pImageObject.Get(),
-                                     &patternDevice, false);
+                                     patternDevice, false);
   }
 
   CFX_DefaultRenderDevice bitmap_device2;

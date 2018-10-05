@@ -75,10 +75,10 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       FinalMatrix.Concat(*pLastMatrix);
       status.SetDeviceMatrix(*pLastMatrix);
       status.Initialize(nullptr, nullptr);
-      status.RenderObjectList(layer.m_pObjectHolder.Get(), &FinalMatrix);
+      status.RenderObjectList(layer.m_pObjectHolder.Get(), FinalMatrix);
     } else {
       status.Initialize(nullptr, nullptr);
-      status.RenderObjectList(layer.m_pObjectHolder.Get(), &layer.m_Matrix);
+      status.RenderObjectList(layer.m_pObjectHolder.Get(), layer.m_Matrix);
     }
     if (status.GetRenderOptions().HasFlag(RENDER_LIMITEDIMAGECACHE)) {
       m_pPageCache->CacheOptimization(

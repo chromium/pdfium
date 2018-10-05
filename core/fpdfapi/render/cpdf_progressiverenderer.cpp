@@ -87,13 +87,13 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
           if (m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
             m_LastObjectRendered = iter;
             m_pRenderStatus->ProcessClipPath(pCurObj->m_ClipPath,
-                                             &m_pCurrentLayer->m_Matrix);
+                                             m_pCurrentLayer->m_Matrix);
             return;
           }
           is_mask = true;
         }
         if (m_pRenderStatus->ContinueSingleObject(
-                pCurObj, &m_pCurrentLayer->m_Matrix, pPause)) {
+                pCurObj, m_pCurrentLayer->m_Matrix, pPause)) {
           return;
         }
         if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions().HasFlag(
