@@ -10,6 +10,7 @@
 #include <set>
 #include <utility>
 
+#include "constants/form_flags.h"
 #include "core/fpdfapi/parser/cfdf_document.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -25,6 +26,7 @@
 
 namespace {
 
+// TODO(thestig): Move into constants/form_flags.h.
 const int kFormListMultiSelect = 0x100;
 
 const int kFormComboEdit = 0x100;
@@ -100,23 +102,28 @@ WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
 
 CPDF_FormField::CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict)
     : m_pForm(pForm), m_pDict(pDict) {
-  SyncFieldFlags();
+  InitFieldFlags();
 }
 
 CPDF_FormField::~CPDF_FormField() {}
 
-void CPDF_FormField::SyncFieldFlags() {
+void CPDF_FormField::InitFieldFlags() {
   const CPDF_Object* ft_attr = FPDF_GetFieldAttr(m_pDict.Get(), "FT");
   ByteString type_name = ft_attr ? ft_attr->GetString() : ByteString();
   const CPDF_Object* ff_attr = FPDF_GetFieldAttr(m_pDict.Get(), "Ff");
   uint32_t flags = ff_attr ? ff_attr->GetInteger() : 0;
-  m_Flags = 0;
-  if (flags & FORMFLAG_READONLY)
-    m_Flags |= FORMFLAG_READONLY;
-  if (flags & FORMFLAG_REQUIRED)
-    m_Flags |= FORMFLAG_REQUIRED;
-  if (flags & FORMFLAG_NOEXPORT)
-    m_Flags |= FORMFLAG_NOEXPORT;
+  if (flags & pdfium::form_flags::kReadOnly) {
+    m_Flags |= pdfium::form_flags::kReadOnly;
+    m_bReadOnly = true;
+  }
+  if (flags & pdfium::form_flags::kRequired) {
+    m_Flags |= pdfium::form_flags::kRequired;
+    m_bRequired = true;
+  }
+  if (flags & pdfium::form_flags::kNoExport) {
+    m_Flags |= pdfium::form_flags::kNoExport;
+    m_bNoExport = true;
+  }
 
   if (type_name == "Btn") {
     if (flags & 0x8000) {

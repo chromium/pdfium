@@ -70,10 +70,6 @@ constexpr FormFieldType kFormFieldTypes[kFormFieldTypeCount] = {
 #endif  // PDF_ENABLE_XFA
 };
 
-#define FORMFLAG_READONLY 0x01
-#define FORMFLAG_REQUIRED 0x02
-#define FORMFLAG_NOEXPORT 0x04
-
 class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormControl;
@@ -132,9 +128,9 @@ class CPDF_FormField {
   ByteString GetDefaultStyle() const;
 
   // TODO(thestig): Figure out what to do with unused methods here.
-  bool IsReadOnly() const { return !!(m_Flags & FORMFLAG_READONLY); }
-  bool IsRequired() const { return !!(m_Flags & FORMFLAG_REQUIRED); }
-  bool IsNoExport() const { return !!(m_Flags & FORMFLAG_NOEXPORT); }
+  bool IsReadOnly() const { return m_bReadOnly; }
+  bool IsRequired() const { return m_bRequired; }
+  bool IsNoExport() const { return m_bNoExport; }
 
   WideString GetValue() const;
   WideString GetDefaultValue() const;
@@ -191,7 +187,7 @@ class CPDF_FormField {
   bool SetValue(const WideString& value,
                 bool bDefault,
                 NotificationOption notify);
-  void SyncFieldFlags();
+  void InitFieldFlags();
   int FindListSel(CPDF_String* str);
   WideString GetOptionText(int index, int sub_index) const;
   void LoadDA();
@@ -206,7 +202,11 @@ class CPDF_FormField {
   void NotifyListOrComboBoxAfterChange();
 
   CPDF_FormField::Type m_Type = Unknown;
-  uint32_t m_Flags;
+  uint32_t m_Flags = 0;
+  bool m_bReadOnly = false;
+  bool m_bRequired = false;
+  bool m_bNoExport = false;
+
   UnownedPtr<CPDF_InterForm> const m_pForm;
   UnownedPtr<CPDF_Dictionary> const m_pDict;
   // Owned by InterForm parent.

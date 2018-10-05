@@ -295,6 +295,7 @@ visibility = [
 
 source_set("constants") {
   sources = [
+    "constants/form_flags.h",
     "constants/page_object.h",
     "constants/stream_dict_common.h",
     "constants/transparency.h",
