@@ -14,9 +14,11 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {}
+CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {
+  ASSERT(m_pVT);
+}
 
-CSection::~CSection() {}
+CSection::~CSection() = default;
 
 void CSection::ResetLinePlace() {
   int32_t i = 0;
@@ -119,7 +121,6 @@ void CSection::UpdateWordPlace(CPVT_WordPlace& place) const {
 }
 
 CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
-  ASSERT(m_pVT);
   CPVT_WordPlace place = GetBeginWordPlace();
   bool bUp = true;
   bool bDown = true;
@@ -176,9 +177,7 @@ CPVT_WordPlace CSection::SearchWordPlace(float fx,
                                          const CPVT_WordRange& range) const {
   CPVT_WordPlace wordplace = range.BeginPos;
   wordplace.nWordIndex = -1;
-  if (!m_pVT) {
-    return wordplace;
-  }
+
   int32_t nLeft = range.BeginPos.nWordIndex;
   int32_t nRight = range.EndPos.nWordIndex + 1;
   int32_t nMid = (nLeft + nRight) / 2;
