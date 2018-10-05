@@ -631,8 +631,6 @@ CPVT_WordRange CPWL_Edit::GetLatinWordsRange(
 CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
                                             bool bLatin,
                                             bool bArabic) const {
-  CPVT_WordRange range;
-
   CPWL_EditImpl_Iterator* pIterator = m_pEdit->GetIterator();
   CPVT_Word wordinfo;
   CPVT_WordPlace wpStart(place), wpEnd(place);
@@ -676,6 +674,5 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
     } while (pIterator->PrevWord());
   }
 
-  range.Set(wpStart, wpEnd);
-  return range;
+  return CPVT_WordRange(wpStart, wpEnd);
 }
