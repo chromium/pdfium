@@ -358,16 +358,6 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   delete pFormFillEnv;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FORM_SetSaveCallback(FPDF_FORMHANDLE hHandle,
-                                                    FORM_SAVECALLED callback) {
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
-  if (!pFormFillEnv)
-    return;
-
-  pFormFillEnv->SetSaveCalled(callback);
-}
-
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
                                                      FPDF_PAGE page,
                                                      int modifier,

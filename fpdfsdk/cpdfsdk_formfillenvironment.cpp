@@ -628,13 +628,6 @@ CPDFSDK_InterForm* CPDFSDK_FormFillEnvironment::GetInterForm() {
   return m_pInterForm.get();
 }
 
-void CPDFSDK_FormFillEnvironment::SaveCalled() {
-  if (!m_pInfo || !m_SaveCalled)
-    return;
-
-  m_SaveCalled(m_pInfo);
-}
-
 void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_PageView* pSender,
                                                  CPDFSDK_Annot* pAnnot) {
   for (const auto& it : m_PageMap) {

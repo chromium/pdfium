@@ -249,7 +249,6 @@ int CheckPDFiumCApi() {
 #endif
     CHK(FORM_Redo);
     CHK(FORM_ReplaceSelection);
-    CHK(FORM_SetSaveCallback);
     CHK(FORM_Undo);
     CHK(FPDFDOC_ExitFormFillEnvironment);
     CHK(FPDFDOC_InitFormFillEnvironment);

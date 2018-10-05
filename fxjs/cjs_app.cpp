@@ -405,12 +405,6 @@ void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
 CJS_Result CJS_App::execMenuItem(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  if (params.size() > 0 && IsTypeKnown(params[0])) {
-    WideString item = pRuntime->ToWideString(params[0]);
-    if (item == L"SaveAs" && pRuntime->GetFormFillEnv())
-      pRuntime->GetFormFillEnv()->SaveCalled();
-  }
-
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
