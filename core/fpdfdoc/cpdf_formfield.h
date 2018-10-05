@@ -110,7 +110,6 @@ class CPDF_FormField {
   uint32_t GetFlags() const { return m_Flags; }
 
   CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
-  void SetFieldDict(CPDF_Dictionary* pDict) { m_pDict = pDict; }
 
   bool ResetField(NotificationOption notify);
 
@@ -131,6 +130,11 @@ class CPDF_FormField {
 
   uint32_t GetFieldFlags() const;
   ByteString GetDefaultStyle() const;
+
+  // TODO(thestig): Figure out what to do with unused methods here.
+  bool IsReadOnly() const { return !!(m_Flags & FORMFLAG_READONLY); }
+  bool IsRequired() const { return !!(m_Flags & FORMFLAG_REQUIRED); }
+  bool IsNoExport() const { return !!(m_Flags & FORMFLAG_NOEXPORT); }
 
   WideString GetValue() const;
   WideString GetDefaultValue() const;
@@ -201,13 +205,13 @@ class CPDF_FormField {
   bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 
-  CPDF_FormField::Type m_Type;
+  CPDF_FormField::Type m_Type = Unknown;
   uint32_t m_Flags;
   UnownedPtr<CPDF_InterForm> const m_pForm;
-  UnownedPtr<CPDF_Dictionary> m_pDict;
+  UnownedPtr<CPDF_Dictionary> const m_pDict;
   // Owned by InterForm parent.
   std::vector<UnownedPtr<CPDF_FormControl>> m_ControlList;
-  float m_FontSize;
+  float m_FontSize = 0;
   UnownedPtr<CPDF_Font> m_pFont;
 };
 

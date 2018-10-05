@@ -969,9 +969,7 @@ bool CPDF_InterForm::CheckRequiredFields(
         iType == CPDF_FormField::CheckBox || iType == CPDF_FormField::ListBox) {
       continue;
     }
-    uint32_t dwFlags = pField->GetFieldFlags();
-    // TODO(thestig): Look up these magic numbers and add constants for them.
-    if (dwFlags & FORMFLAG_NOEXPORT)
+    if (pField->IsNoExport())
       continue;
 
     bool bFind = true;
@@ -979,10 +977,8 @@ bool CPDF_InterForm::CheckRequiredFields(
       bFind = pdfium::ContainsValue(*fields, pField);
     if (bIncludeOrExclude == bFind) {
       const CPDF_Dictionary* pFieldDict = pField->GetDict();
-      if ((dwFlags & FORMFLAG_REQUIRED) != 0 &&
-          pFieldDict->GetStringFor("V").IsEmpty()) {
+      if (pField->IsRequired() && pFieldDict->GetStringFor("V").IsEmpty())
         return false;
-      }
     }
   }
   return true;

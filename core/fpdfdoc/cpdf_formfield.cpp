@@ -99,11 +99,7 @@ WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
 }
 
 CPDF_FormField::CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict)
-    : m_Type(Unknown),
-      m_pForm(pForm),
-      m_pDict(pDict),
-      m_FontSize(0),
-      m_pFont(nullptr) {
+    : m_pForm(pForm), m_pDict(pDict) {
   SyncFieldFlags();
 }
 
