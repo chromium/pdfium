@@ -11,15 +11,14 @@
 #include "core/fpdfdoc/cpdf_action.h"
 
 CPDF_ActionFields::CPDF_ActionFields(const CPDF_Action* pAction)
-    : m_pAction(pAction) {}
+    : m_pAction(pAction) {
+  ASSERT(m_pAction);
+}
 
 CPDF_ActionFields::~CPDF_ActionFields() = default;
 
 std::vector<const CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   std::vector<const CPDF_Object*> fields;
-  if (!m_pAction)
-    return fields;
-
   const CPDF_Dictionary* pDict = m_pAction->GetDict();
   if (!pDict)
     return fields;
@@ -47,9 +46,6 @@ std::vector<const CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
 }
 
 const CPDF_Object* CPDF_ActionFields::GetField(size_t iIndex) const {
-  if (!m_pAction)
-    return nullptr;
-
   const CPDF_Dictionary* pDict = m_pAction->GetDict();
   if (!pDict)
     return nullptr;
