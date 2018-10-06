@@ -21,7 +21,7 @@ vars = {
   'clang_revision': '9bd40b25b05f9ca4bf2e79598699f5daef63880b',
   'code_coverage_revision': '4191ea0675c4c133cb506316b6b974f31e600576',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
-  'depot_tools_revision': '02d53403125b2669236fd0db69f71f7e332c5767',
+  'depot_tools_revision': '71e3be7a50c21faeee91ed99a8d5addfb7594e7c',
   'freetype_revision': 'abd997aa7cf2bc9219136782c7363d14d325199c',
   'gtest_revision': 'd5266326752f0a1dadbd310932d8f4fd8c3c5e7d',
   'icu_revision': 'c56c671998902fcc4fc9ace88c83daa99f980793',
