@@ -275,68 +275,23 @@ class CFX_FloatRect {
   float Width() const { return right - left; }
   float Height() const { return top - bottom; }
 
-  void Inflate(float x, float y) {
-    Normalize();
-    left -= x;
-    right += x;
-    bottom -= y;
-    top += y;
-  }
-
+  void Inflate(float x, float y);
   void Inflate(float other_left,
                float other_bottom,
                float other_right,
-               float other_top) {
-    Normalize();
-    left -= other_left;
-    bottom -= other_bottom;
-    right += other_right;
-    top += other_top;
-  }
+               float other_top);
+  void Inflate(const CFX_FloatRect& rt);
 
-  void Inflate(const CFX_FloatRect& rt) {
-    Inflate(rt.left, rt.bottom, rt.right, rt.top);
-  }
-
-  void Deflate(float x, float y) {
-    Normalize();
-    left += x;
-    right -= x;
-    bottom += y;
-    top -= y;
-  }
-
+  void Deflate(float x, float y);
   void Deflate(float other_left,
                float other_bottom,
                float other_right,
-               float other_top) {
-    Normalize();
-    left += other_left;
-    bottom += other_bottom;
-    right -= other_right;
-    top -= other_top;
-  }
+               float other_top);
+  void Deflate(const CFX_FloatRect& rt);
 
-  void Deflate(const CFX_FloatRect& rt) {
-    Deflate(rt.left, rt.bottom, rt.right, rt.top);
-  }
+  CFX_FloatRect GetDeflated(float x, float y) const;
 
-  CFX_FloatRect GetDeflated(float x, float y) const {
-    if (IsEmpty())
-      return CFX_FloatRect();
-
-    CFX_FloatRect that = *this;
-    that.Deflate(x, y);
-    that.Normalize();
-    return that;
-  }
-
-  void Translate(float e, float f) {
-    left += e;
-    right += e;
-    top += f;
-    bottom += f;
-  }
+  void Translate(float e, float f);
 
   void Scale(float fScale);
   void ScaleFromCenterPoint(float fScale);
