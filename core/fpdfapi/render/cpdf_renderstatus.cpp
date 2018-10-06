@@ -1040,10 +1040,10 @@ void CPDF_RenderStatus::RenderObjectList(
     if (!pCurObj)
       continue;
 
-    if (pCurObj->m_Left > clip_rect.right ||
-        pCurObj->m_Right < clip_rect.left ||
-        pCurObj->m_Bottom > clip_rect.top ||
-        pCurObj->m_Top < clip_rect.bottom) {
+    if (pCurObj->GetRect().left > clip_rect.right ||
+        pCurObj->GetRect().right < clip_rect.left ||
+        pCurObj->GetRect().bottom > clip_rect.top ||
+        pCurObj->GetRect().top < clip_rect.bottom) {
       continue;
     }
     RenderSingleObject(pCurObj.get(), mtObj2Device);
@@ -1972,12 +1972,9 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
     path.m_GeneralState = textobj->m_GeneralState;
-    path.m_Path.AppendRect(textobj->m_Left, textobj->m_Bottom, textobj->m_Right,
-                           textobj->m_Top);
-    path.m_Left = textobj->m_Left;
-    path.m_Bottom = textobj->m_Bottom;
-    path.m_Right = textobj->m_Right;
-    path.m_Top = textobj->m_Top;
+    path.m_Path.AppendRect(textobj->GetRect().left, textobj->GetRect().bottom,
+                           textobj->GetRect().right, textobj->GetRect().top);
+    path.SetRect(textobj->GetRect());
 
     AutoRestorer<UnownedPtr<const CPDF_PageObject>> restorer2(&m_pCurObj);
     RenderSingleObject(&path, mtObj2Device);

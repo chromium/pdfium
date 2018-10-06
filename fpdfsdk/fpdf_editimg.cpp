@@ -298,8 +298,8 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   metadata->width = nPixelWidth;
   metadata->height = nPixelHeight;
 
-  const float nWidth = pObj->m_Right - pObj->m_Left;
-  const float nHeight = pObj->m_Top - pObj->m_Bottom;
+  const float nWidth = pObj->GetRect().Width();
+  const float nHeight = pObj->GetRect().Height();
   constexpr int nPointsPerInch = 72;
   if (nWidth != 0 && nHeight != 0) {
     metadata->horizontal_dpi = nPixelWidth / nWidth * nPointsPerInch;

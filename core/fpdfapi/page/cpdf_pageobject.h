@@ -54,12 +54,11 @@ class CPDF_PageObject : public CPDF_GraphicStates {
 
   void SetDirty(bool value) { m_bDirty = value; }
   bool IsDirty() const { return m_bDirty; }
-  void TransformClipPath(CFX_Matrix& matrix);
-  void TransformGeneralState(CFX_Matrix& matrix);
+  void TransformClipPath(const CFX_Matrix& matrix);
+  void TransformGeneralState(const CFX_Matrix& matrix);
 
-  CFX_FloatRect GetRect() const {
-    return CFX_FloatRect(m_Left, m_Bottom, m_Right, m_Top);
-  }
+  void SetRect(const CFX_FloatRect& rect) { m_Rect = rect; }
+  const CFX_FloatRect& GetRect() const { return m_Rect; }
   FX_RECT GetBBox() const;
   FX_RECT GetTransformedBBox(const CFX_Matrix& matrix) const;
 
@@ -75,20 +74,18 @@ class CPDF_PageObject : public CPDF_GraphicStates {
     m_ContentStream = new_content_stream;
   }
 
-  float m_Left;
-  float m_Right;
-  float m_Top;
-  float m_Bottom;
   CPDF_ContentMark m_ContentMark;
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
 
+  CFX_FloatRect m_Rect;
+
  private:
   CPDF_PageObject(const CPDF_PageObject& src) = delete;
   void operator=(const CPDF_PageObject& src) = delete;
 
-  bool m_bDirty;
+  bool m_bDirty = false;
   int32_t m_ContentStream;
 };
 

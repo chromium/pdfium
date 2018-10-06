@@ -273,17 +273,17 @@ CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
     min_y = min_y * fontsize / 1000;
     max_y = max_y * fontsize / 1000;
   }
-  std::tie(m_Left, m_Right, m_Top, m_Bottom) =
-      GetTextMatrix().TransformRect(min_x, max_x, max_y, min_y);
+  SetRect(
+      GetTextMatrix().TransformRect(CFX_FloatRect(min_x, min_y, max_x, max_y)));
 
   if (!TextRenderingModeIsStrokeMode(m_TextState.GetTextMode()))
     return ret;
 
   float half_width = m_GraphState.GetLineWidth() / 2;
-  m_Left -= half_width;
-  m_Right += half_width;
-  m_Top += half_width;
-  m_Bottom -= half_width;
+  m_Rect.left -= half_width;
+  m_Rect.right += half_width;
+  m_Rect.top += half_width;
+  m_Rect.bottom -= half_width;
 
   return ret;
 }
@@ -293,10 +293,10 @@ void CPDF_TextObject::SetPosition(float x, float y) {
   float dy = y - m_Pos.y;
   m_Pos.x = x;
   m_Pos.y = y;
-  m_Left += dx;
-  m_Right += dx;
-  m_Top += dy;
-  m_Bottom += dy;
+  m_Rect.left += dx;
+  m_Rect.right += dx;
+  m_Rect.top += dy;
+  m_Rect.bottom += dy;
 }
 
 void CPDF_TextObject::RecalcPositionData() {

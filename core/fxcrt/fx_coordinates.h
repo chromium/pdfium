@@ -225,8 +225,8 @@ struct FX_RECT {
 // LTRB rectangles (y-axis runs upwards).
 class CFX_FloatRect {
  public:
-  CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
-  CFX_FloatRect(float l, float b, float r, float t)
+  constexpr CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}
+  constexpr CFX_FloatRect(float l, float b, float r, float t)
       : left(l), bottom(b), right(r), top(t) {}
 
   explicit CFX_FloatRect(const float* pArray)

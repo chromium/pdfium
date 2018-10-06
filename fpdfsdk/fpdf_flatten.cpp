@@ -52,11 +52,7 @@ void GetContentsRect(CPDF_Document* pDoc,
   pPDFPage->ParseContent();
 
   for (const auto& pPageObject : *pPDFPage->GetPageObjectList()) {
-    CFX_FloatRect rc;
-    rc.left = pPageObject->m_Left;
-    rc.right = pPageObject->m_Right;
-    rc.bottom = pPageObject->m_Bottom;
-    rc.top = pPageObject->m_Top;
+    const CFX_FloatRect& rc = pPageObject->GetRect();
     if (IsValidRect(rc, pDict->GetRectFor(pdfium::page_object::kMediaBox)))
       pRectArray->push_back(rc);
   }

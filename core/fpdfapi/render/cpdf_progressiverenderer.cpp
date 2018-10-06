@@ -78,10 +78,10 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
     bool is_mask = false;
     while (iter != iterEnd) {
       CPDF_PageObject* pCurObj = iter->get();
-      if (pCurObj && pCurObj->m_Left <= m_ClipRect.right &&
-          pCurObj->m_Right >= m_ClipRect.left &&
-          pCurObj->m_Bottom <= m_ClipRect.top &&
-          pCurObj->m_Top >= m_ClipRect.bottom) {
+      if (pCurObj && pCurObj->GetRect().left <= m_ClipRect.right &&
+          pCurObj->GetRect().right >= m_ClipRect.left &&
+          pCurObj->GetRect().bottom <= m_ClipRect.top &&
+          pCurObj->GetRect().top >= m_ClipRect.bottom) {
         if (m_pOptions->HasFlag(RENDER_BREAKFORMASKS) && pCurObj->IsImage() &&
             pCurObj->AsImage()->GetImage()->IsMask()) {
           if (m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {

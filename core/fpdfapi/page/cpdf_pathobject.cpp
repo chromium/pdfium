@@ -53,8 +53,5 @@ void CPDF_PathObject::CalcBoundingBox() {
     rect.bottom += -0.5f;
     rect.top += 0.5f;
   }
-  m_Left = rect.left;
-  m_Right = rect.right;
-  m_Top = rect.top;
-  m_Bottom = rect.bottom;
+  SetRect(rect);
 }

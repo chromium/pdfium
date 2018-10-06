@@ -1106,10 +1106,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
       pObj->m_ClipPath.HasRef() ? pObj->m_ClipPath.GetClipBox() : m_BBox;
   if (pShading->IsMeshShading())
     bbox.Intersect(GetShadingBBox(pShading, pObj->matrix()));
-  pObj->m_Left = bbox.left;
-  pObj->m_Right = bbox.right;
-  pObj->m_Top = bbox.top;
-  pObj->m_Bottom = bbox.bottom;
+  pObj->SetRect(bbox);
   m_pObjectHolder->AppendPageObject(std::move(pObj));
 }
 

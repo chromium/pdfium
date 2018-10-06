@@ -729,7 +729,7 @@ FPDFPageObj_GetBounds(FPDF_PAGEOBJECT pageObject,
     return false;
 
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(pageObject);
-  CFX_FloatRect bbox = pPageObj->GetRect();
+  const CFX_FloatRect& bbox = pPageObj->GetRect();
   *left = bbox.left;
   *bottom = bbox.bottom;
   *right = bbox.right;
