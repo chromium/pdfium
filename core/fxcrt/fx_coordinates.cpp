@@ -206,11 +206,7 @@ void CFX_FloatRect::UpdateRect(const CFX_PointF& point) {
 }
 
 void CFX_FloatRect::Inflate(float x, float y) {
-  Normalize();
-  left -= x;
-  right += x;
-  bottom -= y;
-  top += y;
+  Inflate(x, y, x, y);
 }
 
 void CFX_FloatRect::Inflate(float other_left,
@@ -229,22 +225,14 @@ void CFX_FloatRect::Inflate(const CFX_FloatRect& rt) {
 }
 
 void CFX_FloatRect::Deflate(float x, float y) {
-  Normalize();
-  left += x;
-  right -= x;
-  bottom += y;
-  top -= y;
+  Deflate(x, y, x, y);
 }
 
 void CFX_FloatRect::Deflate(float other_left,
                             float other_bottom,
                             float other_right,
                             float other_top) {
-  Normalize();
-  left += other_left;
-  bottom += other_bottom;
-  right -= other_right;
-  top -= other_top;
+  Inflate(-other_left, -other_bottom, -other_right, -other_top);
 }
 
 void CFX_FloatRect::Deflate(const CFX_FloatRect& rt) {
