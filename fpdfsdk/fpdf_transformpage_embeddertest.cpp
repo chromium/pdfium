@@ -99,3 +99,24 @@ TEST_F(FPDFTransformEmbedderTest, NoCropBox) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFTransformEmbedderTest, ClipPath) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_CLIPPATH clip = FPDF_CreateClipPath(10.0f, 10.0f, 90.0f, 90.0f);
+  EXPECT_TRUE(clip);
+
+  // NULL arg call is a no-op.
+  FPDFPage_InsertClipPath(nullptr, clip);
+
+  // Do actual work.
+  FPDFPage_InsertClipPath(page, clip);
+
+  // TODO(tsepez): test how inserting path affects page rendering.
+
+  FPDF_DestroyClipPath(clip);
+  UnloadPage(page);
+}
