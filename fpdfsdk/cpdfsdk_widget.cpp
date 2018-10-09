@@ -44,19 +44,9 @@
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_PageView* pPageView,
                                CPDFSDK_InterForm* pInterForm)
-    : CPDFSDK_BAAnnot(pAnnot, pPageView),
-      m_pInterForm(pInterForm),
-      m_nAppearanceAge(0),
-      m_nValueAge(0)
-#ifdef PDF_ENABLE_XFA
-      ,
-      m_hMixXFAWidget(nullptr),
-      m_pWidgetHandler(nullptr)
-#endif  // PDF_ENABLE_XFA
-{
-}
+    : CPDFSDK_BAAnnot(pAnnot, pPageView), m_pInterForm(pInterForm) {}
 
-CPDFSDK_Widget::~CPDFSDK_Widget() {}
+CPDFSDK_Widget::~CPDFSDK_Widget() = default;
 
 #ifdef PDF_ENABLE_XFA
 CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
@@ -312,7 +302,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
 #endif  // PDF_ENABLE_XFA
 
 bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
+  CPDF_Dictionary* pAP = GetAnnotDict()->GetDictFor("AP");
   if (!pAP)
     return false;
 
@@ -371,7 +361,7 @@ int CPDFSDK_Widget::GetLayoutOrder() const {
 int CPDFSDK_Widget::GetFieldFlags() const {
   CPDF_InterForm* pPDFInterForm = m_pInterForm->GetInterForm();
   CPDF_FormControl* pFormControl =
-      pPDFInterForm->GetControlByDict(m_pAnnot->GetAnnotDict());
+      pPDFInterForm->GetControlByDict(GetAnnotDict());
   CPDF_FormField* pFormField = pFormControl->GetField();
   return pFormField->GetFieldFlags();
 }

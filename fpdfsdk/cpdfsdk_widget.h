@@ -132,9 +132,9 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 #endif  // PDF_ENABLE_XFA
 
   UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
-  bool m_bAppModified;
-  uint32_t m_nAppearanceAge;
-  uint32_t m_nValueAge;
+  bool m_bAppModified = false;
+  uint32_t m_nAppearanceAge = 0;
+  uint32_t m_nValueAge = 0;
 
 #ifdef PDF_ENABLE_XFA
   mutable UnownedPtr<CXFA_FFWidget> m_hMixXFAWidget;
