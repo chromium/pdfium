@@ -14,6 +14,8 @@
 #include "core/fxcrt/observable.h"
 #include "fxjs/js_define.h"
 
+class CPDFSDK_InterForm;
+class CPDF_InterForm;
 class CPDF_TextObject;
 struct CJS_DelayData;
 
@@ -303,6 +305,9 @@ class CJS_Document final : public CJS_Object, public Observable<CJS_Document> {
   CJS_Result setPropertyInternal(CJS_Runtime* pRuntime,
                                  v8::Local<v8::Value> vp,
                                  const ByteString& propName);
+
+  CPDF_InterForm* GetCoreInterForm();
+  CPDFSDK_InterForm* GetSDKInterForm();
 
   WideString m_cwBaseURL;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;

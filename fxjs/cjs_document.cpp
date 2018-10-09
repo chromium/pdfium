@@ -208,8 +208,7 @@ CJS_Result CJS_Document::get_num_fields(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
+  CPDF_InterForm* pPDFForm = GetCoreInterForm();
   return CJS_Result::Success(pRuntime->NewNumber(
       static_cast<int>(pPDFForm->CountFields(WideString()))));
 }
@@ -319,8 +318,7 @@ CJS_Result CJS_Document::getField(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   WideString wideName = pRuntime->ToWideString(params[0]);
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
+  CPDF_InterForm* pPDFForm = GetCoreInterForm();
   if (pPDFForm->CountFields(wideName) <= 0)
     return CJS_Result::Success(pRuntime->NewUndefined());
 
@@ -351,8 +349,7 @@ CJS_Result CJS_Document::getNthFieldName(
   if (nIndex < 0)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
+  CPDF_InterForm* pPDFForm = GetCoreInterForm();
   CPDF_FormField* pField = pPDFForm->GetField(nIndex, WideString());
   if (!pField)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
@@ -392,7 +389,7 @@ CJS_Result CJS_Document::mailForm(
   if (!m_pFormFillEnv->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = GetSDKInterForm();
   ByteString sTextBuf = pInterForm->ExportFormToFDFTextBuf();
   if (sTextBuf.GetLength() == 0)
     return CJS_Result::Failure(L"Bad FDF format.");
@@ -488,7 +485,7 @@ CJS_Result CJS_Document::removeField(
     return CJS_Result::Failure(JSMessage::kPermissionError);
 
   WideString sFieldName = pRuntime->ToWideString(params[0]);
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = GetSDKInterForm();
   std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
   if (widgets.empty())
@@ -535,8 +532,7 @@ CJS_Result CJS_Document::resetForm(
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
+  CPDF_InterForm* pPDFForm = GetCoreInterForm();
   if (params.empty()) {
     pPDFForm->ResetForm(NotificationOption::kNotify);
     m_pFormFillEnv->SetChangeMark();
@@ -612,13 +608,11 @@ CJS_Result CJS_Document::submitForm(
     aFields = pRuntime->ToArray(pRuntime->GetObjectProperty(pObj, L"aFields"));
   }
 
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-
+  CPDF_InterForm* pPDFForm = GetCoreInterForm();
   if (pRuntime->GetArrayLength(aFields) == 0 && bEmpty) {
-    if (pPDFInterForm->CheckRequiredFields(nullptr, true)) {
+    if (pPDFForm->CheckRequiredFields(nullptr, true)) {
       pRuntime->BeginBlock();
-      pInterForm->SubmitForm(strURL, false);
+      GetSDKInterForm()->SubmitForm(strURL, false);
       pRuntime->EndBlock();
     }
     return CJS_Result::Success();
@@ -628,7 +622,6 @@ CJS_Result CJS_Document::submitForm(
   for (size_t i = 0; i < pRuntime->GetArrayLength(aFields); ++i) {
     WideString sName =
         pRuntime->ToWideString(pRuntime->GetArrayElement(aFields, i));
-    CPDF_InterForm* pPDFForm = pInterForm->GetInterForm();
     for (int j = 0, jsz = pPDFForm->CountFields(sName); j < jsz; ++j) {
       CPDF_FormField* pField = pPDFForm->GetField(j, sName);
       if (!bEmpty && pField->GetValue().IsEmpty())
@@ -638,9 +631,9 @@ CJS_Result CJS_Document::submitForm(
     }
   }
 
-  if (pPDFInterForm->CheckRequiredFields(&fieldObjects, true)) {
+  if (pPDFForm->CheckRequiredFields(&fieldObjects, true)) {
     pRuntime->BeginBlock();
-    pInterForm->SubmitFields(strURL, fieldObjects, true, !bFDF);
+    GetSDKInterForm()->SubmitFields(strURL, fieldObjects, true, !bFDF);
     pRuntime->EndBlock();
   }
   return CJS_Result::Success();
@@ -976,7 +969,7 @@ CJS_Result CJS_Document::get_calculate(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = GetSDKInterForm();
   return CJS_Result::Success(
       pRuntime->NewBoolean(!!pInterForm->IsCalculateEnabled()));
 }
@@ -986,7 +979,7 @@ CJS_Result CJS_Document::set_calculate(CJS_Runtime* pRuntime,
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
+  CPDFSDK_InterForm* pInterForm = GetSDKInterForm();
   pInterForm->EnableCalculate(pRuntime->ToBoolean(vp));
   return CJS_Result::Success();
 }
@@ -1268,7 +1261,7 @@ CJS_Result CJS_Document::calculateNow(
     return CJS_Result::Failure(JSMessage::kPermissionError);
   }
 
-  m_pFormFillEnv->GetInterForm()->OnCalculate(nullptr);
+  GetSDKInterForm()->OnCalculate(nullptr);
   return CJS_Result::Success();
 }
 
@@ -1483,4 +1476,12 @@ void CJS_Document::DoFieldDelay(const WideString& sFieldName,
 
   for (const auto& pData : delayed_data)
     CJS_Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
+}
+
+CPDF_InterForm* CJS_Document::GetCoreInterForm() {
+  return GetSDKInterForm()->GetInterForm();
+}
+
+CPDFSDK_InterForm* CJS_Document::GetSDKInterForm() {
+  return m_pFormFillEnv->GetInterForm();
 }
