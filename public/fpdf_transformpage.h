@@ -14,9 +14,6 @@
 extern "C" {
 #endif
 
-typedef void* FPDF_PAGEARCSAVER;
-typedef void* FPDF_PAGEARCLOADER;
-
 /**
  * Set "MediaBox" entry to the page dictionary.
  *
@@ -127,6 +124,9 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
 /**
  * Create a new clip path, with a rectangle inserted.
  *
+ * Caller takes ownership of the returned FPDF_CLIPPATH. It should be freed with
+ * FPDF_DestroyClipPath().
+ *
  * left   - The left of the clip box.
  * bottom - The bottom of the clip box.
  * right  - The right of the clip box.
@@ -140,7 +140,7 @@ FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV FPDF_CreateClipPath(float left,
 /**
  * Destroy the clip path.
  *
- * clipPath - A handle to the clip path.
+ * clipPath - A handle to the clip path. It will be invalid after this call.
  */
 FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath);
 
@@ -152,7 +152,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath);
  * In this way, the page content will be clipped by this clip path.
  *
  * page        - A page handle.
- * clipPath    - A handle to the clip path.
+ * clipPath    - A handle to the clip path. (Does not take ownership.)
  */
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
                                                        FPDF_CLIPPATH clipPath);
