@@ -19,7 +19,7 @@ class CPDFSDK_PageView;
 
 class CPDFSDK_AnnotIterator {
  public:
-  enum TabOrder { STRUCTURE = 0, ROW, COLUMN };
+  enum TabOrder : uint8_t { STRUCTURE = 0, ROW, COLUMN };
 
   CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
                         CPDF_Annot::Subtype nAnnotSubtype);
@@ -37,9 +37,9 @@ class CPDFSDK_AnnotIterator {
   void AddSelectedToAnnots(std::vector<CPDFSDK_Annot*>* sa,
                            std::vector<size_t>* aSelect);
 
-  TabOrder m_eTabOrder;
-  UnownedPtr<CPDFSDK_PageView> m_pPageView;
+  UnownedPtr<CPDFSDK_PageView> const m_pPageView;
   CPDF_Annot::Subtype m_nAnnotSubtype;
+  const TabOrder m_eTabOrder;
   std::vector<CPDFSDK_Annot*> m_Annots;
 };
 

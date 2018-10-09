@@ -26,20 +26,23 @@ bool CompareByTopDescending(const CPDFSDK_Annot* p1, const CPDFSDK_Annot* p2) {
   return GetAnnotRect(p1).top > GetAnnotRect(p2).top;
 }
 
+CPDFSDK_AnnotIterator::TabOrder GetTabOrder(CPDFSDK_PageView* pPageView) {
+  CPDF_Page* pPDFPage = pPageView->GetPDFPage();
+  ByteString sTabs = pPDFPage->GetDict()->GetStringFor("Tabs");
+  if (sTabs == "R")
+    return CPDFSDK_AnnotIterator::ROW;
+  if (sTabs == "C")
+    return CPDFSDK_AnnotIterator::COLUMN;
+  return CPDFSDK_AnnotIterator::STRUCTURE;
+}
+
 }  // namespace
 
 CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
                                              CPDF_Annot::Subtype nAnnotSubtype)
-    : m_eTabOrder(STRUCTURE),
-      m_pPageView(pPageView),
-      m_nAnnotSubtype(nAnnotSubtype) {
-  CPDF_Page* pPDFPage = m_pPageView->GetPDFPage();
-  ByteString sTabs = pPDFPage->GetDict()->GetStringFor("Tabs");
-  if (sTabs == "R")
-    m_eTabOrder = ROW;
-  else if (sTabs == "C")
-    m_eTabOrder = COLUMN;
-
+    : m_pPageView(pPageView),
+      m_nAnnotSubtype(nAnnotSubtype),
+      m_eTabOrder(GetTabOrder(pPageView)) {
   GenerateResults();
 }
 
