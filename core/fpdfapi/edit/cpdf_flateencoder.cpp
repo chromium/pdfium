@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "constants/stream_dict_common.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"

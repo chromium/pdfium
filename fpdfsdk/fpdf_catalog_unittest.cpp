@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"

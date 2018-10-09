@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/cfx_readonlymemorystream.h"

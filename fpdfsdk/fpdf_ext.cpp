@@ -7,6 +7,7 @@
 #include "public/fpdf_ext.h"
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_metadata.h"

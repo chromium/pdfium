@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -32,7 +33,11 @@ CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
       m_pWidgetDict(pWidgetDict),
       m_pForm(m_pField->GetForm()) {}
 
-CPDF_FormControl::~CPDF_FormControl() {}
+CPDF_FormControl::~CPDF_FormControl() = default;
+
+CFX_FloatRect CPDF_FormControl::GetRect() const {
+  return m_pWidgetDict->GetRectFor("Rect");
+}
 
 ByteString CPDF_FormControl::GetOnStateName() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||

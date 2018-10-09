@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
@@ -46,7 +47,7 @@ CPDFSDK_AnnotIterator::CPDFSDK_AnnotIterator(CPDFSDK_PageView* pPageView,
   GenerateResults();
 }
 
-CPDFSDK_AnnotIterator::~CPDFSDK_AnnotIterator() {}
+CPDFSDK_AnnotIterator::~CPDFSDK_AnnotIterator() = default;
 
 CPDFSDK_Annot* CPDFSDK_AnnotIterator::GetFirstAnnot() {
   return m_Annots.empty() ? nullptr : m_Annots.front();

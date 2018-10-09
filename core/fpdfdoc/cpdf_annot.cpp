@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"

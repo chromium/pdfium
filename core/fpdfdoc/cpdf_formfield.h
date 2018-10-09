@@ -17,6 +17,13 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/stl_util.h"
 
+class CPDF_Dictionary;
+class CPDF_Font;
+class CPDF_FormControl;
+class CPDF_InterForm;
+class CPDF_Object;
+class CPDF_String;
+
 enum class NotificationOption { kDoNotNotify = 0, kNotify };
 
 enum class FormFieldType : uint8_t {
@@ -69,12 +76,6 @@ constexpr FormFieldType kFormFieldTypes[kFormFieldTypeCount] = {
     FormFieldType::kXFA_TextField
 #endif  // PDF_ENABLE_XFA
 };
-
-class CPDF_Dictionary;
-class CPDF_Font;
-class CPDF_FormControl;
-class CPDF_InterForm;
-class CPDF_String;
 
 const CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
                                      const char* name);
@@ -178,9 +179,7 @@ class CPDF_FormField {
     m_ControlList.emplace_back(pFormControl);
   }
 
-  void SetOpt(std::unique_ptr<CPDF_Object> pOpt) {
-    m_pDict->SetFor("Opt", std::move(pOpt));
-  }
+  void SetOpt(std::unique_ptr<CPDF_Object> pOpt);
 
  private:
   WideString GetValue(bool bDefault) const;

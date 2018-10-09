@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxge/fx_dib.h"

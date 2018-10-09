@@ -8,8 +8,10 @@
 #include <memory>
 #include <stack>
 
-#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+
+class CPDF_Object;
 
 // Walk on all non-null sub-objects in an object in depth, include itself,
 // like in flat list.
@@ -42,7 +44,7 @@ class CPDF_ObjectWalker {
 
   size_t current_depth() const { return current_depth_; }
   const CPDF_Object* GetParent() const { return parent_object_.Get(); }
-  ByteString dictionary_key() const { return dict_key_; }
+  const ByteString& dictionary_key() const { return dict_key_; }
 
  private:
   static std::unique_ptr<SubobjectIterator> MakeIterator(

@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/retain_ptr.h"

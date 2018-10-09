@@ -8,10 +8,11 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 
-CPDF_LinkList::CPDF_LinkList() {}
+CPDF_LinkList::CPDF_LinkList() = default;
 
-CPDF_LinkList::~CPDF_LinkList() {}
+CPDF_LinkList::~CPDF_LinkList() = default;
 
 const std::vector<CPDF_Dictionary*>* CPDF_LinkList::GetPageLinks(
     CPDF_Page* pPage) {

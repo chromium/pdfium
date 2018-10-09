@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 

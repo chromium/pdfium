@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"

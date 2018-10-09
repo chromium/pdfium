@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_structtree.h"
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -37,10 +38,9 @@ std::unique_ptr<CPDF_StructTree> CPDF_StructTree::LoadPage(
 
 CPDF_StructTree::CPDF_StructTree(const CPDF_Document* pDoc)
     : m_pTreeRoot(pDoc->GetRoot()->GetDictFor("StructTreeRoot")),
-      m_pRoleMap(m_pTreeRoot ? m_pTreeRoot->GetDictFor("RoleMap") : nullptr),
-      m_pPage(nullptr) {}
+      m_pRoleMap(m_pTreeRoot ? m_pTreeRoot->GetDictFor("RoleMap") : nullptr) {}
 
-CPDF_StructTree::~CPDF_StructTree() {}
+CPDF_StructTree::~CPDF_StructTree() = default;
 
 void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   m_pPage = pPageDict;

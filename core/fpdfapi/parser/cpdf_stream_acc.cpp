@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
 CPDF_StreamAcc::CPDF_StreamAcc(const CPDF_Stream* pStream)

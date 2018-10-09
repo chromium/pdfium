@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"

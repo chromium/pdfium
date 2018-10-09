@@ -9,6 +9,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "third_party/base/span.h"
 
 namespace {

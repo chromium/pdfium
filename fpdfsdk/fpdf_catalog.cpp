@@ -4,6 +4,7 @@
 
 #include "public/fpdf_catalog.h"
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 

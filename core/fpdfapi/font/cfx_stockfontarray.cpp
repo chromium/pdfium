@@ -9,9 +9,10 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_memory.h"
 
-CFX_StockFontArray::CFX_StockFontArray() {}
+CFX_StockFontArray::CFX_StockFontArray() = default;
 
 CFX_StockFontArray::~CFX_StockFontArray() {
   for (size_t i = 0; i < FX_ArraySize(m_StockFonts); ++i) {

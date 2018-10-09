@@ -6,13 +6,14 @@
 
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 
 CPDF_ViewerPreferences::CPDF_ViewerPreferences(const CPDF_Document* pDoc)
     : m_pDoc(pDoc) {}
 
-CPDF_ViewerPreferences::~CPDF_ViewerPreferences() {}
+CPDF_ViewerPreferences::~CPDF_ViewerPreferences() = default;
 
 bool CPDF_ViewerPreferences::IsDirectionR2L() const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();

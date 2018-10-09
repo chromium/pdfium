@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_aaction.h"
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+
 namespace {
 
 constexpr const char* g_sAATypes[] = {
@@ -43,7 +45,7 @@ CPDF_AAction::CPDF_AAction(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
 
-CPDF_AAction::~CPDF_AAction() {}
+CPDF_AAction::~CPDF_AAction() = default;
 
 bool CPDF_AAction::ActionExist(AActionType eType) const {
   return m_pDict && m_pDict->KeyExist(g_sAATypes[eType]);

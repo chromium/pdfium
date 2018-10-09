@@ -13,6 +13,7 @@
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/parser/cscript_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"

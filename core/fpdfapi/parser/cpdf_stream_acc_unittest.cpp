@@ -4,8 +4,8 @@
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-
 #include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"

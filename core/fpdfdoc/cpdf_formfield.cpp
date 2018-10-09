@@ -13,6 +13,7 @@
 #include "constants/form_flags.h"
 #include "core/fpdfapi/parser/cfdf_document.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
@@ -301,6 +302,10 @@ uint32_t CPDF_FormField::GetFieldFlags() const {
 ByteString CPDF_FormField::GetDefaultStyle() const {
   const CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict.Get(), "DS");
   return pObj ? pObj->GetString() : "";
+}
+
+void CPDF_FormField::SetOpt(std::unique_ptr<CPDF_Object> pOpt) {
+  m_pDict->SetFor("Opt", std::move(pOpt));
 }
 
 WideString CPDF_FormField::GetValue(bool bDefault) const {

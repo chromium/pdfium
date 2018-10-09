@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_docjsactions.h"
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 
 CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {

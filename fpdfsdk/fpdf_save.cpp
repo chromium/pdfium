@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"

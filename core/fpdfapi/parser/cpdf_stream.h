@@ -11,7 +11,6 @@
 #include <set>
 #include <sstream>
 
-#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_stream.h"
 

@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_interform.h"

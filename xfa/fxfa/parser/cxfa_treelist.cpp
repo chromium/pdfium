@@ -12,6 +12,7 @@
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_treelist.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

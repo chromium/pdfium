@@ -8,6 +8,7 @@
 
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
@@ -101,6 +102,18 @@ ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
       csURI = pURI->GetStringFor("Base") + csURI;
   }
   return csURI;
+}
+
+bool CPDF_Action::GetHideStatus() const {
+  return m_pDict->GetBooleanFor("H", true);
+}
+
+ByteString CPDF_Action::GetNamedAction() const {
+  return m_pDict->GetStringFor("N");
+}
+
+uint32_t CPDF_Action::GetFlags() const {
+  return m_pDict->GetIntegerFor("Flags");
 }
 
 WideString CPDF_Action::GetJavaScript() const {

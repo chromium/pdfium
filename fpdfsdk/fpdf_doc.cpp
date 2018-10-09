@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_bookmark.h"

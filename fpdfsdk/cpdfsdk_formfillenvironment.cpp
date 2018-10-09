@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_docjsactions.h"
 #include "fpdfsdk/cpdfsdk_actionhandler.h"
 #include "fpdfsdk/cpdfsdk_annothandlermgr.h"
