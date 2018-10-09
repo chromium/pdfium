@@ -247,8 +247,16 @@ TEST_F(FPDFDocEmbeddertest, NoBookmarks) {
   unsigned short buf[128];
   EXPECT_EQ(0u, FPDFBookmark_GetTitle(nullptr, buf, sizeof(buf)));
 
-  // The non-existent top-level bookmark has no children.
+  // NULL argument cases.
+  EXPECT_EQ(nullptr, FPDFBookmark_GetFirstChild(nullptr, nullptr));
   EXPECT_EQ(nullptr, FPDFBookmark_GetFirstChild(document(), nullptr));
+  EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(nullptr, nullptr));
+  EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), nullptr));
+  EXPECT_EQ(nullptr, FPDFBookmark_Find(nullptr, nullptr));
+  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), nullptr));
+  EXPECT_EQ(nullptr, FPDFBookmark_GetDest(nullptr, nullptr));
+  EXPECT_EQ(nullptr, FPDFBookmark_GetDest(document(), nullptr));
+  EXPECT_EQ(nullptr, FPDFBookmark_GetAction(nullptr));
 }
 
 TEST_F(FPDFDocEmbeddertest, Bookmarks) {

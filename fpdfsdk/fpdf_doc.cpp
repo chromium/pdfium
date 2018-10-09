@@ -72,11 +72,11 @@ FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
 
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK pDict) {
-  if (!pDict)
-    return nullptr;
-
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
+    return nullptr;
+
+  if (!pDict)
     return nullptr;
 
   CPDF_BookmarkTree tree(pDoc);
@@ -96,11 +96,13 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK pDict, void* buffer, unsigned long buflen) {
 
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
-  if (!title || title[0] == 0)
-    return nullptr;
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
+
+  if (!title || title[0] == 0)
+    return nullptr;
+
   CPDF_BookmarkTree tree(pDoc);
   size_t len = WideString::WStringLength(title);
   WideString encodedTitle = WideString::FromUTF16LE(title, len);
@@ -111,11 +113,13 @@ FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
 
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFBookmark_GetDest(FPDF_DOCUMENT document,
                                                          FPDF_BOOKMARK pDict) {
-  if (!pDict)
-    return nullptr;
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
+
+  if (!pDict)
+    return nullptr;
+
   CPDF_Bookmark bookmark(CPDFDictionaryFromFPDFBookmark(pDict));
   CPDF_Dest dest = bookmark.GetDest(pDoc);
   if (dest.GetArray())
@@ -132,6 +136,7 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV
 FPDFBookmark_GetAction(FPDF_BOOKMARK pDict) {
   if (!pDict)
     return nullptr;
+
   CPDF_Bookmark bookmark(CPDFDictionaryFromFPDFBookmark(pDict));
   return FPDFActionFromCPDFDictionary(bookmark.GetAction().GetDict());
 }
