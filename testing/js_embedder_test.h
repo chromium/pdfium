@@ -7,7 +7,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjs_engine.h"
 #include "testing/embedder_test.h"
 

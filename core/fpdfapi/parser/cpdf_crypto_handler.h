@@ -14,7 +14,6 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
 
 class CPDF_Dictionary;

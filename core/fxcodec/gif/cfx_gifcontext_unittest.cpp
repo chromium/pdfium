@@ -4,7 +4,6 @@
 
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class CFX_GifContextForTest final : public CFX_GifContext {

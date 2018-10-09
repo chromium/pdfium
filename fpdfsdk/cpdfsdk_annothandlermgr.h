@@ -11,7 +11,6 @@
 
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 
 class CFX_Matrix;

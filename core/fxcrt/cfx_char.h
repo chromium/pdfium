@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_unicode.h"
+#include "core/fxcrt/retain_ptr.h"
 
 enum class CFX_BreakType { None = 0, Piece, Line, Paragraph, Page };
 

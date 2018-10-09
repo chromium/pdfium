@@ -11,7 +11,6 @@
 #include <memory>
 #include <tuple>
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
 

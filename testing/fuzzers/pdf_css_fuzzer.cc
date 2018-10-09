@@ -7,7 +7,6 @@
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/retain_ptr.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   WideString input =

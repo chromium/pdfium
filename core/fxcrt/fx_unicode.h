@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_FX_UNICODE_H_
 #define CORE_FXCRT_FX_UNICODE_H_
 
-#include "core/fxcrt/retain_ptr.h"
+#include <stdint.h>
 
 uint32_t FX_GetUnicodeProperties(wchar_t wch);
 wchar_t FX_GetMirrorChar(wchar_t wch);
