@@ -35,6 +35,7 @@ group("fuzzers") {
     ":pdf_psengine_fuzzer_src",
     ":pdf_streamparser_fuzzer_src",
     ":pdf_xml_fuzzer_src",
+    ":pdfium_fuzzer_src",
   ]
   if (pdf_enable_xfa) {
     deps += [
@@ -44,6 +45,7 @@ group("fuzzers") {
       ":pdf_css_fuzzer_src",
       ":pdf_fm2js_fuzzer_src",
       ":pdf_formcalc_fuzzer_src",
+      ":pdfium_xfa_fuzzer_src",
     ]
     if (pdf_enable_xfa_bmp) {
       deps += [ ":pdf_codec_bmp_fuzzer_src" ]
@@ -78,6 +80,9 @@ template("pdfium_fuzzer") {
       "//build/config/compiler:no_chromium_code",
       ":fuzzer_config",
     ]
+    if (pdf_enable_v8) {
+      configs += [ "//v8:external_startup_data" ]
+    }
   }
 }
 
@@ -175,6 +180,19 @@ if (pdf_enable_xfa) {
       "pdf_formcalc_fuzzer.cc",
     ]
   }
+
+  pdfium_fuzzer("pdfium_xfa_fuzzer_src") {
+    sources = [
+      "pdfium_fuzzer_helper.cc",
+      "pdfium_fuzzer_helper.h",
+      "pdfium_xfa_fuzzer.cc",
+    ]
+    deps = [
+      "../../:test_support",
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
+  }
 }
 
 pdfium_fuzzer("pdf_cmap_fuzzer_src") {
@@ -250,4 +268,23 @@ pdfium_fuzzer("pdf_xml_fuzzer_src") {
   sources = [
     "pdf_xml_fuzzer.cc",
   ]
+}
+
+pdfium_fuzzer("pdfium_fuzzer_src") {
+  sources = [
+    "pdfium_fuzzer.cc",
+    "pdfium_fuzzer_helper.cc",
+    "pdfium_fuzzer_helper.h",
+  ]
+
+  deps = [
+    "../../:test_support",
+  ]
+
+  if (pdf_enable_v8) {
+    deps += [
+      "//v8",
+      "//v8:v8_libplatform",
+    ]
+  }
 }
