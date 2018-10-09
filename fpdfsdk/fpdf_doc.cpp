@@ -207,11 +207,11 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
                                                         FPDF_DEST dest) {
-  if (!dest)
-    return -1;
-
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
+    return -1;
+
+  if (!dest)
     return -1;
 
   CPDF_Dest destination(CPDFArrayFromFPDFDest(dest));

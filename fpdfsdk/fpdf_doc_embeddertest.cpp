@@ -42,7 +42,8 @@ TEST_F(FPDFDocEmbeddertest, MultipleSamePage) {
 TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
-  // NULL FPDF_DEST case.
+  // NULL argument cases.
+  EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(nullptr, nullptr));
   EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), nullptr));
 
   // Page number directly in item from Dests NameTree.
@@ -128,18 +129,21 @@ TEST_F(FPDFDocEmbeddertest, DestGetView) {
 TEST_F(FPDFDocEmbeddertest, DestGetLocationInPage) {
   EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
-  // NULL FPDF_DEST case.
-  EXPECT_EQ(-1, FPDFDest_GetDestPageIndex(document(), nullptr));
-
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
   EXPECT_TRUE(dest);
 
-  FPDF_BOOL hasX;
-  FPDF_BOOL hasY;
-  FPDF_BOOL hasZoom;
-  FS_FLOAT x;
-  FS_FLOAT y;
-  FS_FLOAT zoom;
+  FPDF_BOOL hasX = 0;
+  FPDF_BOOL hasY = 0;
+  FPDF_BOOL hasZoom = 0;
+  FS_FLOAT x = -1.0f;
+  FS_FLOAT y = -1.0f;
+  FS_FLOAT zoom = -1.0f;
+
+  // NULL argument case
+  EXPECT_FALSE(FPDFDest_GetLocationInPage(nullptr, &hasX, &hasY, &hasZoom, &x,
+                                          &y, &zoom));
+
+  // Actual argument case.
   EXPECT_TRUE(
       FPDFDest_GetLocationInPage(dest, &hasX, &hasY, &hasZoom, &x, &y, &zoom));
   EXPECT_TRUE(hasX);
