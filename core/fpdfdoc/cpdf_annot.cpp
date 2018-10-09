@@ -119,7 +119,8 @@ CPDF_Annot::~CPDF_Annot() {
 void CPDF_Annot::Init() {
   m_nSubtype = StringToAnnotSubtype(m_pAnnotDict->GetStringFor("Subtype"));
   m_bIsTextMarkupAnnotation = IsTextMarkupAnnotation(m_nSubtype);
-  m_bHasGeneratedAP = m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP);
+  m_bHasGeneratedAP =
+      m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP, false);
   GenerateAPIfNeeded();
 }
 

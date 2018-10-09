@@ -577,10 +577,7 @@ uint8_t CPDF_InterForm::GetNativeCharSet() {
 }
 
 CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
-    : m_pDocument(pDocument),
-      m_pFormDict(nullptr),
-      m_pFieldTree(pdfium::MakeUnique<CFieldTree>()),
-      m_pFormNotify(nullptr) {
+    : m_pDocument(pDocument), m_pFieldTree(pdfium::MakeUnique<CFieldTree>()) {
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   if (!pRoot)
     return;
@@ -742,7 +739,7 @@ CPDF_FormControl* CPDF_InterForm::GetControlByDict(
 }
 
 bool CPDF_InterForm::NeedConstructAP() const {
-  return m_pFormDict && m_pFormDict->GetBooleanFor("NeedAppearances");
+  return m_pFormDict && m_pFormDict->GetBooleanFor("NeedAppearances", false);
 }
 
 int CPDF_InterForm::CountFieldsInCalculationOrder() {

@@ -52,7 +52,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   WideString GetUnicodeTextFor(const ByteString& key) const;
   int GetIntegerFor(const ByteString& key) const;
   int GetIntegerFor(const ByteString& key, int default_int) const;
-  bool GetBooleanFor(const ByteString& key, bool bDefault = false) const;
+  bool GetBooleanFor(const ByteString& key, bool bDefault) const;
   float GetNumberFor(const ByteString& key) const;
   const CPDF_Dictionary* GetDictFor(const ByteString& key) const;
   CPDF_Dictionary* GetDictFor(const ByteString& key);

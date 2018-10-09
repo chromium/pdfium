@@ -50,5 +50,5 @@ void CPDF_IconFit::GetIconPosition(float& fLeft, float& fBottom) {
 }
 
 bool CPDF_IconFit::GetFittingBounds() {
-  return m_pDict ? m_pDict->GetBooleanFor("FB") : false;
+  return m_pDict && m_pDict->GetBooleanFor("FB", false);
 }
