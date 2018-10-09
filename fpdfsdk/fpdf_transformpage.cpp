@@ -158,28 +158,30 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   // Need to transform the patterns as well.
   CPDF_Dictionary* pRes =
       pPageDict->GetDictFor(pdfium::page_object::kResources);
-  if (pRes) {
-    CPDF_Dictionary* pPattenDict = pRes->GetDictFor("Pattern");
-    if (pPattenDict) {
-      for (const auto& it : *pPattenDict) {
-        CPDF_Object* pObj = it.second.get();
-        if (pObj->IsReference())
-          pObj = pObj->GetDirect();
+  if (!pRes)
+    return true;
 
-        CPDF_Dictionary* pDict = nullptr;
-        if (pObj->IsDictionary())
-          pDict = pObj->AsDictionary();
-        else if (CPDF_Stream* pObjStream = pObj->AsStream())
-          pDict = pObjStream->GetDict();
-        else
-          continue;
+  CPDF_Dictionary* pPattenDict = pRes->GetDictFor("Pattern");
+  if (!pPattenDict)
+    return true;
 
-        CFX_Matrix m = pDict->GetMatrixFor("Matrix");
-        CFX_Matrix t = *(CFX_Matrix*)matrix;
-        m.Concat(t);
-        pDict->SetMatrixFor("Matrix", m);
-      }
-    }
+  for (const auto& it : *pPattenDict) {
+    CPDF_Object* pObj = it.second.get();
+    if (pObj->IsReference())
+      pObj = pObj->GetDirect();
+
+    CPDF_Dictionary* pDict = nullptr;
+    if (pObj->IsDictionary())
+      pDict = pObj->AsDictionary();
+    else if (CPDF_Stream* pObjStream = pObj->AsStream())
+      pDict = pObjStream->GetDict();
+    else
+      continue;
+
+    CFX_Matrix m = pDict->GetMatrixFor("Matrix");
+    m.Concat(CFX_Matrix(matrix->a, matrix->b, matrix->c, matrix->d, matrix->e,
+                        matrix->f));
+    pDict->SetMatrixFor("Matrix", m);
   }
 
   return true;
