@@ -8,16 +8,13 @@
 
 #include <algorithm>
 
-#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
-#include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfdoc/cpdf_interform.h"
-#include "core/fxge/cfx_renderdevice.h"
 
 namespace {
 
@@ -58,7 +55,7 @@ ByteString CPDF_FormControl::GetOnStateName() const {
   return ByteString();
 }
 
-ByteString CPDF_FormControl::GetCheckedAPState() {
+ByteString CPDF_FormControl::GetCheckedAPState() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   ByteString csOn = GetOnStateName();
@@ -121,34 +118,8 @@ void CPDF_FormControl::CheckControl(bool bChecked) {
   m_pWidgetDict->SetNewFor<CPDF_Name>("AS", csAS);
 }
 
-void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
-                                   CFX_Matrix* pMatrix,
-                                   CPDF_Page* pPage,
-                                   CPDF_Annot::AppearanceMode mode,
-                                   const CPDF_RenderOptions* pOptions) {
-  if (m_pWidgetDict->GetIntegerFor("F") & ANNOTFLAG_HIDDEN)
-    return;
-
-  CPDF_Stream* pStream = GetAnnotAP(m_pWidgetDict.Get(), mode);
-  if (!pStream)
-    return;
-
-  CFX_Matrix form_matrix = pStream->GetDict()->GetMatrixFor("Matrix");
-  CFX_FloatRect form_bbox =
-      form_matrix.TransformRect(pStream->GetDict()->GetRectFor("BBox"));
-  CFX_FloatRect arect = m_pWidgetDict->GetRectFor("Rect");
-  CFX_Matrix matrix;
-  matrix.MatchRect(arect, form_bbox);
-  matrix.Concat(*pMatrix);
-  CPDF_Form form(m_pField->GetForm()->GetDocument(),
-                 m_pField->GetForm()->GetFormDict()->GetDictFor("DR"), pStream);
-  form.ParseContent(nullptr, nullptr, nullptr, nullptr);
-  CPDF_RenderContext context(pPage);
-  context.AppendLayer(&form, &matrix);
-  context.Render(pDevice, pOptions, nullptr);
-}
-
-CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode() {
+CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
+    const {
   if (!m_pWidgetDict)
     return Invert;
 
@@ -169,7 +140,7 @@ bool CPDF_FormControl::HasMKEntry(const ByteString& csEntry) const {
   return GetMK().HasMKEntry(csEntry);
 }
 
-int CPDF_FormControl::GetRotation() {
+int CPDF_FormControl::GetRotation() const {
   return GetMK().GetRotation();
 }
 
@@ -187,7 +158,7 @@ void CPDF_FormControl::GetOriginalColor(int& iColorType,
   GetMK().GetOriginalColor(iColorType, fc, csEntry);
 }
 
-WideString CPDF_FormControl::GetCaption(const ByteString& csEntry) {
+WideString CPDF_FormControl::GetCaption(const ByteString& csEntry) const {
   return GetMK().GetCaption(csEntry);
 }
 
@@ -195,15 +166,15 @@ CPDF_Stream* CPDF_FormControl::GetIcon(const ByteString& csEntry) {
   return GetMK().GetIcon(csEntry);
 }
 
-CPDF_IconFit CPDF_FormControl::GetIconFit() {
+CPDF_IconFit CPDF_FormControl::GetIconFit() const {
   return GetMK().GetIconFit();
 }
 
-int CPDF_FormControl::GetTextPosition() {
+int CPDF_FormControl::GetTextPosition() const {
   return GetMK().GetTextPosition();
 }
 
-CPDF_Action CPDF_FormControl::GetAction() {
+CPDF_Action CPDF_FormControl::GetAction() const {
   if (!m_pWidgetDict)
     return CPDF_Action(nullptr);
 
@@ -214,7 +185,7 @@ CPDF_Action CPDF_FormControl::GetAction() {
   return CPDF_Action(pObj ? pObj->GetDict() : nullptr);
 }
 
-CPDF_AAction CPDF_FormControl::GetAdditionalAction() {
+CPDF_AAction CPDF_FormControl::GetAdditionalAction() const {
   if (!m_pWidgetDict)
     return CPDF_AAction(nullptr);
 
@@ -223,7 +194,7 @@ CPDF_AAction CPDF_FormControl::GetAdditionalAction() {
   return m_pField->GetAdditionalAction();
 }
 
-CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() {
+CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
   if (!m_pWidgetDict)
     return CPDF_DefaultAppearance();
 
@@ -276,7 +247,7 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
   return nullptr;
 }
 
-int CPDF_FormControl::GetControlAlignment() {
+int CPDF_FormControl::GetControlAlignment() const {
   if (!m_pWidgetDict)
     return 0;
   if (m_pWidgetDict->KeyExist("Q"))

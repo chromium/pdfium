@@ -50,21 +50,15 @@ class CPDF_FormControl {
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict.Get(); }
   CFX_FloatRect GetRect() const;
 
-  void DrawControl(CFX_RenderDevice* pDevice,
-                   CFX_Matrix* pMatrix,
-                   CPDF_Page* pPage,
-                   CPDF_Annot::AppearanceMode mode,
-                   const CPDF_RenderOptions* pOptions);
-
-  ByteString GetCheckedAPState();
+  ByteString GetCheckedAPState() const;
   WideString GetExportValue() const;
 
   bool IsChecked() const;
   bool IsDefaultChecked() const;
 
-  HighlightingMode GetHighlightingMode();
+  HighlightingMode GetHighlightingMode() const;
   bool HasMKEntry(const ByteString& csEntry) const;
-  int GetRotation();
+  int GetRotation() const;
 
   FX_ARGB GetBorderColor(int& iColorType) { return GetColor(iColorType, "BC"); }
 
@@ -88,22 +82,22 @@ class CPDF_FormControl {
     GetOriginalColor(iColorType, fc, "BG");
   }
 
-  WideString GetNormalCaption() { return GetCaption("CA"); }
-  WideString GetRolloverCaption() { return GetCaption("RC"); }
-  WideString GetDownCaption() { return GetCaption("AC"); }
+  WideString GetNormalCaption() const { return GetCaption("CA"); }
+  WideString GetRolloverCaption() const { return GetCaption("RC"); }
+  WideString GetDownCaption() const { return GetCaption("AC"); }
 
   CPDF_Stream* GetNormalIcon() { return GetIcon("I"); }
   CPDF_Stream* GetRolloverIcon() { return GetIcon("RI"); }
   CPDF_Stream* GetDownIcon() { return GetIcon("IX"); }
-  CPDF_IconFit GetIconFit();
+  CPDF_IconFit GetIconFit() const;
 
-  int GetTextPosition();
-  CPDF_Action GetAction();
-  CPDF_AAction GetAdditionalAction();
-  CPDF_DefaultAppearance GetDefaultAppearance();
+  int GetTextPosition() const;
+  CPDF_Action GetAction() const;
+  CPDF_AAction GetAdditionalAction() const;
+  CPDF_DefaultAppearance GetDefaultAppearance() const;
 
   CPDF_Font* GetDefaultControlFont();
-  int GetControlAlignment();
+  int GetControlAlignment() const;
 
   ByteString GetOnStateName() const;
   void CheckControl(bool bChecked);
@@ -115,7 +109,7 @@ class CPDF_FormControl {
                         float fc[4],
                         const ByteString& csEntry);
 
-  WideString GetCaption(const ByteString& csEntry);
+  WideString GetCaption(const ByteString& csEntry) const;
   CPDF_Stream* GetIcon(const ByteString& csEntry);
   CPDF_ApSettings GetMK() const;
 
