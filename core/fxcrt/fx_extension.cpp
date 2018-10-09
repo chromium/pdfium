@@ -11,7 +11,6 @@
 #include <limits>
 
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/ptr_util.h"
 
 time_t (*time_func)() = []() -> time_t { return time(nullptr); };
 

@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widget.h"

@@ -7,7 +7,6 @@
 #include "core/fpdfapi/page/cpdf_psfunc.h"
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "third_party/base/ptr_util.h"
 
 CPDF_PSFunc::CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
 

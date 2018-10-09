@@ -16,7 +16,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_freetype.h"
-#include "third_party/base/ptr_util.h"
 
 #include "core/fxge/apple/apple_int.h"
 #ifndef CGFLOAT_IS_DOUBLE

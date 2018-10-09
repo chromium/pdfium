@@ -5,7 +5,6 @@
 #include "xfa/fxfa/cxfa_ffbarcode.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/ptr_util.h"
 
 TEST(XFA_FFBarcode, GetBarcodeTypeByName) {
   EXPECT_EQ(nullptr, CXFA_FFBarcode::GetBarcodeTypeByName(L""));

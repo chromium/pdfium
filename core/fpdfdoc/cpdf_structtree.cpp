@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfdoc/cpdf_numbertree.h"
 #include "core/fpdfdoc/cpdf_structelement.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

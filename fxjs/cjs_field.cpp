@@ -21,6 +21,7 @@
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_icon.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

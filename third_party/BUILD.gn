@@ -564,7 +564,6 @@ jumbo_source_set("pdfium_base") {
     "base/numerics/safe_math.h",
     "base/numerics/safe_math_impl.h",
     "base/optional.h",
-    "base/ptr_util.h",
     "base/span.h",
     "base/stl_util.h",
     "base/sys_byteorder.h",

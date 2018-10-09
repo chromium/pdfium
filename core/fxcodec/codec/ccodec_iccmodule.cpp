@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/codec/codec_int.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

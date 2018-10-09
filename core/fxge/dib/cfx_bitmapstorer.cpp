@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "third_party/base/ptr_util.h"
 
 CFX_BitmapStorer::CFX_BitmapStorer() {}
 

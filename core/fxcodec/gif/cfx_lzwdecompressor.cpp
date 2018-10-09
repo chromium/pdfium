@@ -12,7 +12,6 @@
 #include <utility>
 
 #include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 std::unique_ptr<CFX_LZWDecompressor> CFX_LZWDecompressor::Create(

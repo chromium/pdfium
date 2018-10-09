@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "core/fxcrt/locale_iface.h"
-#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
 class CFX_XMLDocument;

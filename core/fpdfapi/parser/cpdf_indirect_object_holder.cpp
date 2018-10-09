@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "third_party/base/logging.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

@@ -19,6 +19,7 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

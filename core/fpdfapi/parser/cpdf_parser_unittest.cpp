@@ -17,6 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

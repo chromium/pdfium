@@ -13,6 +13,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjse_runtimedata.h"
 #include "fxjs/cjs_object.h"
+#include "third_party/base/ptr_util.h"
 
 class CFXJS_PerObjectData;
 

@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "core/fxcrt/fx_extension.h"
-#include "third_party/base/ptr_util.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),

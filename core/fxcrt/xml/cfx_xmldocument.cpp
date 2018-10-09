@@ -6,7 +6,6 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
-#include "third_party/base/ptr_util.h"
 
 CFX_XMLDocument::CFX_XMLDocument() {
   root_ = CreateNode<CFX_XMLElement>(L"root");

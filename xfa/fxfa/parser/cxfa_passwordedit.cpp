@@ -7,7 +7,6 @@
 #include "xfa/fxfa/parser/cxfa_passwordedit.h"
 
 #include "fxjs/xfa/cjx_passwordedit.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 

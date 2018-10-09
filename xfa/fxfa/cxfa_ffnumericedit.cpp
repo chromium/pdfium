@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventvalidate.h"
 #include "xfa/fwl/cfwl_notedriver.h"

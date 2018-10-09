@@ -16,6 +16,7 @@
 #include "public/cpp/fpdf_scopers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/ptr_util.h"
 
 class CPDF_TestDocument final : public CPDF_Document {
  public:

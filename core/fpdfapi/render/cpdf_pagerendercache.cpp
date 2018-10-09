@@ -14,6 +14,7 @@
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

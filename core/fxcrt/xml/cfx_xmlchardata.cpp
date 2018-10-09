@@ -7,7 +7,6 @@
 #include "core/fxcrt/xml/cfx_xmlchardata.h"
 
 #include "core/fxcrt/xml/cfx_xmldocument.h"
-#include "third_party/base/ptr_util.h"
 
 CFX_XMLCharData::CFX_XMLCharData(const WideString& wsCData)
     : CFX_XMLText(wsCData) {}

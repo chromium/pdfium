@@ -16,7 +16,6 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
-#include "third_party/base/ptr_util.h"
 
 // Has to come before gdiplus.h
 namespace Gdiplus {

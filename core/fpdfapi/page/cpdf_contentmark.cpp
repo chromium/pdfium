@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_ContentMark::CPDF_ContentMark() {}
 

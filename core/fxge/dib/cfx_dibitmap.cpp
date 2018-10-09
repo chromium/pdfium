@@ -13,7 +13,6 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 

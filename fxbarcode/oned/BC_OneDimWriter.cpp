@@ -33,7 +33,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "fxbarcode/BC_Writer.h"
-#include "third_party/base/ptr_util.h"
 
 CBC_OneDimWriter::CBC_OneDimWriter() = default;
 

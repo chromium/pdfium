@@ -19,7 +19,6 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/win32_int.h"
-#include "third_party/base/ptr_util.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 namespace {

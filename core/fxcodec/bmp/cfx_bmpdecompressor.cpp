@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 

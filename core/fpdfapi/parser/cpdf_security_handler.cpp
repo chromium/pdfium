@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_extension.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 

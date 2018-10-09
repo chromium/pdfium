@@ -7,7 +7,6 @@
 #include "xfa/fxfa/parser/cxfa_defaultui.h"
 
 #include "fxjs/xfa/cjx_defaultui.h"
-#include "third_party/base/ptr_util.h"
 
 namespace {
 

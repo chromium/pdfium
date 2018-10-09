@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CPWL_ListCtrl::Item::Item()
