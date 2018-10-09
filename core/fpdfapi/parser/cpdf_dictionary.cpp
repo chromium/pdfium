@@ -194,10 +194,6 @@ bool CPDF_Dictionary::KeyExist(const ByteString& key) const {
   return pdfium::ContainsKey(m_Map, key);
 }
 
-bool CPDF_Dictionary::IsSignatureDict() const {
-  return CPDF_CryptoHandler::IsSignatureDictionary(this);
-}
-
 CPDF_Object* CPDF_Dictionary::SetFor(const ByteString& key,
                                      std::unique_ptr<CPDF_Object> pObj) {
   if (!pObj) {

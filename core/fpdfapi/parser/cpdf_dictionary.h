@@ -65,7 +65,6 @@ class CPDF_Dictionary final : public CPDF_Object {
   float GetFloatFor(const ByteString& key) const { return GetNumberFor(key); }
 
   bool KeyExist(const ByteString& key) const;
-  bool IsSignatureDict() const;
 
   // Set* functions invalidate iterators for the element with the key |key|.
   // Takes ownership of |pObj|, returns an unowned pointer to it.
