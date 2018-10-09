@@ -35,7 +35,7 @@ class CPDFSDK_Annot : public Observable<CPDFSDK_Annot> {
   virtual CPDFSDK_BAAnnot* AsBAAnnot();
 
 #ifdef PDF_ENABLE_XFA
-  virtual bool IsXFAField();
+  virtual bool IsXFAField() const;
   virtual CXFA_FFWidget* GetXFAWidget() const;
 #endif  // PDF_ENABLE_XFA
 

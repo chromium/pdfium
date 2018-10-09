@@ -24,7 +24,7 @@ class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
   ~CPDFSDK_XFAWidget() override;
 
   // CPDFSDK_Annot:
-  bool IsXFAField() override;
+  bool IsXFAField() const override;
   CXFA_FFWidget* GetXFAWidget() const override;
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
@@ -32,8 +32,8 @@ class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
   CPDFSDK_InterForm* GetInterForm() const { return m_pInterForm.Get(); }
 
  private:
-  UnownedPtr<CPDFSDK_InterForm> m_pInterForm;
-  UnownedPtr<CXFA_FFWidget> m_hXFAWidget;
+  UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
+  UnownedPtr<CXFA_FFWidget> const m_hXFAWidget;
 };
 
 inline CPDFSDK_XFAWidget* ToXFAWidget(CPDFSDK_Annot* pAnnot) {

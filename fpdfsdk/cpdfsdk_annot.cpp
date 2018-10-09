@@ -33,7 +33,7 @@ CPDFSDK_BAAnnot* CPDFSDK_Annot::AsBAAnnot() {
 
 #ifdef PDF_ENABLE_XFA
 
-bool CPDFSDK_Annot::IsXFAField() {
+bool CPDFSDK_Annot::IsXFAField() const {
   return false;
 }
 
