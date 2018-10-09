@@ -63,10 +63,10 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
 }
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
-                                       CFX_Matrix* pUser2Device,
+                                       const CFX_Matrix& mtUser2Device,
                                        CPDF_RenderOptions* pOptions,
                                        const FX_RECT& pClip) {
-  m_curMatrix = *pUser2Device;
+  m_curMatrix = mtUser2Device;
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pPage = GetPDFXFAPage();
@@ -83,7 +83,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
     gs.SetClipRect(rectClip);
 
     CXFA_FFPageView* xfaView = pPage->GetXFAPageView();
-    CXFA_RenderContext renderContext(xfaView, rectClip, *pUser2Device);
+    CXFA_RenderContext renderContext(xfaView, rectClip, mtUser2Device);
     renderContext.DoRender(&gs);
 
     CXFA_FFDocView* docView = xfaView->GetDocView();
@@ -94,7 +94,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
       return;
     // Render the focus widget
     docView->GetWidgetHandler()->RenderWidget(annot->GetXFAWidget(), &gs,
-                                              *pUser2Device, false);
+                                              mtUser2Device, false);
     return;
   }
 #endif  // PDF_ENABLE_XFA
@@ -103,7 +103,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   CPDFSDK_AnnotIteration annotIteration(this, true);
   for (const auto& pSDKAnnot : annotIteration) {
     m_pFormFillEnv->GetAnnotHandlerMgr()->Annot_OnDraw(
-        this, pSDKAnnot.Get(), pDevice, pUser2Device,
+        this, pSDKAnnot.Get(), pDevice, mtUser2Device,
         pOptions->GetDrawAnnots());
   }
 }

@@ -49,20 +49,19 @@ CPDFSDK_Annot* CPDFSDK_XFAWidgetHandler::NewAnnot(CXFA_FFWidget* pAnnot,
 void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
                                       CFX_RenderDevice* pDevice,
-                                      CFX_Matrix* pUser2Device,
+                                      const CFX_Matrix& mtUser2Device,
                                       bool bDrawAnnots) {
   ASSERT(pPageView);
   ASSERT(pAnnot);
 
   CXFA_Graphics gs(pDevice);
 
-  CFX_Matrix mt = *pUser2Device;
   bool bIsHighlight = false;
   if (pPageView->GetFormFillEnv()->GetFocusAnnot() != pAnnot)
     bIsHighlight = true;
 
-  GetXFAWidgetHandler(pAnnot)->RenderWidget(pAnnot->GetXFAWidget(), &gs, mt,
-                                            bIsHighlight);
+  GetXFAWidgetHandler(pAnnot)->RenderWidget(pAnnot->GetXFAWidget(), &gs,
+                                            mtUser2Device, bIsHighlight);
 
   // to do highlight and shadow
 }

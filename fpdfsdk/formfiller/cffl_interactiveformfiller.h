@@ -34,7 +34,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
-              CFX_Matrix* pUser2Device);
+              const CFX_Matrix& mtUser2Device);
 
   void OnDelete(CPDFSDK_Annot* pAnnot);
 

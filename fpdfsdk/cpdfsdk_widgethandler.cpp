@@ -89,14 +89,14 @@ void CPDFSDK_WidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
 void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
                                    CFX_RenderDevice* pDevice,
-                                   CFX_Matrix* pUser2Device,
+                                   const CFX_Matrix& mtUser2Device,
                                    bool bDrawAnnots) {
   if (pAnnot->IsSignatureWidget()) {
-    pAnnot->AsBAAnnot()->DrawAppearance(pDevice, *pUser2Device,
+    pAnnot->AsBAAnnot()->DrawAppearance(pDevice, mtUser2Device,
                                         CPDF_Annot::Normal, nullptr);
   } else {
     if (m_pFormFiller)
-      m_pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device);
+      m_pFormFiller->OnDraw(pPageView, pAnnot, pDevice, mtUser2Device);
   }
 }
 

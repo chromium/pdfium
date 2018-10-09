@@ -211,7 +211,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
         pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View));
 
     if (pPageView)
-      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, rect);
+      pPageView->PageView_OnDraw(pDevice.get(), matrix, &options, rect);
   }
 
 #ifdef _SKIA_SUPPORT_PATHS_

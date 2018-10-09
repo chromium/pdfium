@@ -26,7 +26,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   ~CPDFSDK_PageView();
 
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
-                       CFX_Matrix* pUser2Device,
+                       const CFX_Matrix& mtUser2Device,
                        CPDF_RenderOptions* pOptions,
                        const FX_RECT& pClip);
 
@@ -88,8 +88,8 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   int GetPageIndex() const;
 
   void SetValid(bool bValid) { m_bValid = bValid; }
-  bool IsValid() { return m_bValid; }
-  bool IsLocked() { return m_bLocked; }
+  bool IsValid() const { return m_bValid; }
+  bool IsLocked() const { return m_bLocked; }
   void SetBeingDestroyed() { m_bBeingDestroyed = true; }
   bool IsBeingDestroyed() const { return m_bBeingDestroyed; }
   void TakePageOwnership() { m_pOwnsPage.Reset(ToPDFPage(m_page)); }

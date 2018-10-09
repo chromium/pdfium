@@ -56,7 +56,7 @@ FX_RECT CFFL_InteractiveFormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
 void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
                                         CFX_RenderDevice* pDevice,
-                                        CFX_Matrix* pUser2Device) {
+                                        const CFX_Matrix& mtUser2Device) {
   ASSERT(pPageView);
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   if (!IsVisible(pWidget))
@@ -64,7 +64,7 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(pAnnot, false);
   if (pFormFiller && pFormFiller->IsValid()) {
-    pFormFiller->OnDraw(pPageView, pAnnot, pDevice, *pUser2Device);
+    pFormFiller->OnDraw(pPageView, pAnnot, pDevice, mtUser2Device);
     pAnnot->GetPDFPage();
     if (m_pFormFillEnv->GetFocusAnnot() != pAnnot)
       return;
@@ -89,16 +89,16 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
     gsd.m_DashArray = {1.0f};
     gsd.m_DashPhase = 0;
     gsd.m_LineWidth = 1.0f;
-    pDevice->DrawPath(&path, pUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
+    pDevice->DrawPath(&path, &mtUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
                       FXFILL_ALTERNATE);
     return;
   }
 
   pFormFiller = GetFormFiller(pAnnot, false);
   if (pFormFiller) {
-    pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, *pUser2Device);
+    pFormFiller->OnDrawDeactive(pPageView, pAnnot, pDevice, mtUser2Device);
   } else {
-    pWidget->DrawAppearance(pDevice, *pUser2Device, CPDF_Annot::Normal,
+    pWidget->DrawAppearance(pDevice, mtUser2Device, CPDF_Annot::Normal,
                             nullptr);
   }
 
