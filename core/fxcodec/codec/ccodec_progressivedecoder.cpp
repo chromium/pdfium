@@ -805,7 +805,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::BmpStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   m_ScanlineSize = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, m_ScanlineSize));
-  memset(m_pDecodeBuf.get(), 0, m_ScanlineSize);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
                     m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
@@ -903,7 +902,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GifStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
                     m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
@@ -1110,7 +1108,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::JpegStartDecode(
   int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
   scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorz.Calc(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
                     m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
@@ -1272,7 +1269,6 @@ bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
     }
     if (m_pSrcBuf && input_size > m_SrcSize) {
       m_pSrcBuf.reset(FX_Alloc(uint8_t, input_size));
-      memset(m_pSrcBuf.get(), 0, input_size);
       m_SrcSize = input_size;
     }
     bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), m_offSet, input_size);
@@ -1334,7 +1330,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngStartDecode(
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_pDecodeBuf.reset(FX_Alloc(uint8_t, scanline_size));
-  memset(m_pDecodeBuf.get(), 0, scanline_size);
   m_WeightHorzOO.Calc(m_sizeX, m_clipBox.Width());
   m_WeightVert.Calc(m_sizeY, m_clipBox.Height());
   m_status = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -1360,7 +1355,6 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
     }
     if (m_pSrcBuf && input_size > m_SrcSize) {
       m_pSrcBuf.reset(FX_Alloc(uint8_t, input_size));
-      memset(m_pSrcBuf.get(), 0, input_size);
       m_SrcSize = input_size;
     }
     bool bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), m_offSet, input_size);

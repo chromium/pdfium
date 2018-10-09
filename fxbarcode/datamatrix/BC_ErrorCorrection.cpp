@@ -184,7 +184,6 @@ WideString CBC_ErrorCorrection::createECCBlock(WideString codewords,
     return WideString();
   }
   uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
-  memset(ecc, 0, numECWords * sizeof(uint16_t));
   for (int32_t l = start; l < start + len; l++) {
     uint16_t m = ecc[numECWords - 1] ^ codewords[l];
     for (int32_t k = numECWords - 1; k > 0; k--) {

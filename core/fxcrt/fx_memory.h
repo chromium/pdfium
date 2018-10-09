@@ -88,7 +88,7 @@ inline void* FX_ReallocOrDie(void* ptr,
   return result;
 }
 
-// These never return nullptr.
+// These never return nullptr, and must return cleared memory.
 #define FX_Alloc(type, size) \
   static_cast<type*>(FX_AllocOrDie(size, sizeof(type)))
 #define FX_Alloc2D(type, w, h) \
@@ -96,7 +96,7 @@ inline void* FX_ReallocOrDie(void* ptr,
 #define FX_Realloc(type, ptr, size) \
   static_cast<type*>(FX_ReallocOrDie(ptr, size, sizeof(type)))
 
-// May return nullptr.
+// May return nullptr, but returns cleared memory otherwise.
 #define FX_TryAlloc(type, size) \
   static_cast<type*>(FX_SafeAlloc(size, sizeof(type)))
 #define FX_TryRealloc(type, ptr, size) \
