@@ -27,28 +27,7 @@ CPDF_Action::CPDF_Action(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
 
-CPDF_Action::~CPDF_Action() {}
-
-CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
-  if (!m_pDict)
-    return CPDF_Dest();
-
-  ByteString type = m_pDict->GetStringFor("S");
-  if (type != "GoTo" && type != "GoToR")
-    return CPDF_Dest();
-
-  const CPDF_Object* pDest = m_pDict->GetDirectObjectFor("D");
-  if (!pDest)
-    return CPDF_Dest();
-  if (pDest->IsString() || pDest->IsName()) {
-    CPDF_NameTree name_tree(pDoc, "Dests");
-    return CPDF_Dest(name_tree.LookupNamedDest(pDoc, pDest->GetUnicodeText()));
-  }
-  if (const CPDF_Array* pArray = pDest->AsArray())
-    return CPDF_Dest(pArray);
-
-  return CPDF_Dest();
-}
+CPDF_Action::~CPDF_Action() = default;
 
 CPDF_Action::ActionType CPDF_Action::GetType() const {
   if (!m_pDict)
@@ -65,10 +44,28 @@ CPDF_Action::ActionType CPDF_Action::GetType() const {
   return Unknown;
 }
 
+CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
+  ActionType type = GetType();
+  if (type != GoTo && type != GoToR)
+    return CPDF_Dest();
+
+  const CPDF_Object* pDest = m_pDict->GetDirectObjectFor("D");
+  if (!pDest)
+    return CPDF_Dest();
+  if (pDest->IsString() || pDest->IsName()) {
+    CPDF_NameTree name_tree(pDoc, "Dests");
+    return CPDF_Dest(name_tree.LookupNamedDest(pDoc, pDest->GetUnicodeText()));
+  }
+  if (const CPDF_Array* pArray = pDest->AsArray())
+    return CPDF_Dest(pArray);
+
+  return CPDF_Dest();
+}
+
 WideString CPDF_Action::GetFilePath() const {
-  ByteString type = m_pDict->GetStringFor("S");
-  if (type != "GoToR" && type != "Launch" && type != "SubmitForm" &&
-      type != "ImportData") {
+  ActionType type = GetType();
+  if (type != GoToR && type != Launch && type != SubmitForm &&
+      type != ImportData) {
     return WideString();
   }
 
@@ -76,24 +73,23 @@ WideString CPDF_Action::GetFilePath() const {
   if (pFile)
     return CPDF_FileSpec(pFile).GetFileName();
 
-  if (type == "Launch") {
-    const CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
-    if (pWinDict) {
-      return WideString::FromLocal(
-          pWinDict->GetStringFor(pdfium::stream::kF).AsStringView());
-    }
-  }
-  return WideString();
+  if (type != Launch)
+    return WideString();
+
+  const CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
+  if (!pWinDict)
+    return WideString();
+
+  return WideString::FromLocal(
+      pWinDict->GetStringFor(pdfium::stream::kF).AsStringView());
 }
 
 ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
-  ByteString csURI;
-  if (!m_pDict)
-    return csURI;
-  if (m_pDict->GetStringFor("S") != "URI")
-    return csURI;
+  ActionType type = GetType();
+  if (type != URI)
+    return ByteString();
 
-  csURI = m_pDict->GetStringFor("URI");
+  ByteString csURI = m_pDict->GetStringFor("URI");
   const CPDF_Dictionary* pRoot = pDoc->GetRoot();
   const CPDF_Dictionary* pURI = pRoot->GetDictFor("URI");
   if (pURI) {
