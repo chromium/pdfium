@@ -51,9 +51,6 @@ CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
 }
 
 CPDF_LinkList* GetLinkList(CPDF_Page* page) {
-  if (!page)
-    return nullptr;
-
   CPDF_Document* pDoc = page->GetDocument();
   std::unique_ptr<CPDF_LinkList>* pHolder = pDoc->LinksContext();
   if (!pHolder->get())
