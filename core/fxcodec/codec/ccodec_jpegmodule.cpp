@@ -413,8 +413,9 @@ std::unique_ptr<CodecModuleIface::Context> CCodec_JpegModule::Start() {
 }
 
 bool CCodec_JpegModule::Input(Context* pContext,
-                              pdfium::span<uint8_t> src_buf,
+                              RetainPtr<CFX_CodecMemory> codec_memory,
                               CFX_DIBAttribute*) {
+  pdfium::span<uint8_t> src_buf = codec_memory->GetSpan();
   auto* ctx = static_cast<CJpegContext*>(pContext);
   if (ctx->m_SkipSize) {
     if (ctx->m_SkipSize > src_buf.size()) {

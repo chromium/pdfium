@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <utility>
 
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -659,8 +660,9 @@ void CFX_BmpDecompressor::SaveDecodingStatus(int32_t status) {
   decode_status_ = status;
 }
 
-void CFX_BmpDecompressor::SetInputBuffer(pdfium::span<uint8_t> src_buf) {
-  input_buffer_ = pdfium::MakeRetain<CFX_CodecMemory>(src_buf);
+void CFX_BmpDecompressor::SetInputBuffer(
+    RetainPtr<CFX_CodecMemory> codec_memory) {
+  input_buffer_ = std::move(codec_memory);
 }
 
 FX_FILESIZE CFX_BmpDecompressor::GetAvailInput() const {

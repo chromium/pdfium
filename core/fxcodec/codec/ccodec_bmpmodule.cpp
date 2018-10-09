@@ -6,6 +6,8 @@
 
 #include "core/fxcodec/codec/ccodec_bmpmodule.h"
 
+#include <utility>
+
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
@@ -68,8 +70,9 @@ FX_FILESIZE CCodec_BmpModule::GetAvailInput(Context* pContext) const {
 }
 
 bool CCodec_BmpModule::Input(Context* pContext,
-                             pdfium::span<uint8_t> src_buf,
+                             RetainPtr<CFX_CodecMemory> codec_memory,
                              CFX_DIBAttribute*) {
-  static_cast<CFX_BmpContext*>(pContext)->m_Bmp.SetInputBuffer(src_buf);
+  auto* ctx = static_cast<CFX_BmpContext*>(pContext);
+  ctx->m_Bmp.SetInputBuffer(std::move(codec_memory));
   return true;
 }

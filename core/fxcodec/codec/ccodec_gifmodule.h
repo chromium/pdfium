@@ -41,7 +41,7 @@ class CCodec_GifModule final : public CodecModuleIface {
   // CodecModuleIface:
   FX_FILESIZE GetAvailInput(Context* context) const override;
   bool Input(Context* context,
-             pdfium::span<uint8_t> src_buf,
+             RetainPtr<CFX_CodecMemory> codec_memory,
              CFX_DIBAttribute* pAttribute) override;
 
   std::unique_ptr<Context> Start(Delegate* pDelegate);

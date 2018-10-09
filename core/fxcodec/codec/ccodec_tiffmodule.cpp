@@ -502,7 +502,7 @@ FX_FILESIZE CCodec_TiffModule::GetAvailInput(Context* pContext) const {
 }
 
 bool CCodec_TiffModule::Input(Context* pContext,
-                              pdfium::span<uint8_t> src_buf,
+                              RetainPtr<CFX_CodecMemory> codec_memory,
                               CFX_DIBAttribute*) {
   NOTREACHED();
   return false;

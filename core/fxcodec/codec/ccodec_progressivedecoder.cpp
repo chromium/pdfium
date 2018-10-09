@@ -718,7 +718,10 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 
   std::unique_ptr<CodecModuleIface::Context> pBmpContext =
       pBmpModule->Start(this);
-  pBmpModule->Input(pBmpContext.get(), {m_pSrcBuf.get(), m_SrcSize}, nullptr);
+  pBmpModule->Input(pBmpContext.get(),
+                    pdfium::MakeRetain<CFX_CodecMemory>(
+                        pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
+                    nullptr);
 
   std::vector<uint32_t> palette;
   int32_t readResult = pBmpModule->ReadHeader(
@@ -863,7 +866,10 @@ bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer(
     return false;
   }
   m_pGifContext = pGifModule->Start(this);
-  pGifModule->Input(m_pGifContext.get(), {m_pSrcBuf.get(), m_SrcSize}, nullptr);
+  pGifModule->Input(m_pGifContext.get(),
+                    pdfium::MakeRetain<CFX_CodecMemory>(
+                        pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
+                    nullptr);
   m_SrcComponents = 1;
   CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
       m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
@@ -1046,7 +1052,9 @@ bool CCodec_ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  pJpegModule->Input(m_pJpegContext.get(), {m_pSrcBuf.get(), m_SrcSize},
+  pJpegModule->Input(m_pJpegContext.get(),
+                     pdfium::MakeRetain<CFX_CodecMemory>(
+                         pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
                      nullptr);
   // Setting jump marker before calling ReadHeader, since a longjmp to
   // the marker indicates a fatal error.
@@ -1256,8 +1264,11 @@ bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  bool bResult = pPngModule->Input(m_pPngContext.get(),
-                                   {m_pSrcBuf.get(), m_SrcSize}, pAttribute);
+  bool bResult =
+      pPngModule->Input(m_pPngContext.get(),
+                        pdfium::MakeRetain<CFX_CodecMemory>(
+                            pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
+                        pAttribute);
   while (bResult) {
     uint32_t remain_size = static_cast<uint32_t>(m_pFile->GetSize()) - m_offSet;
     uint32_t input_size =
@@ -1277,8 +1288,11 @@ bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
       return false;
     }
     m_offSet += input_size;
-    bResult = pPngModule->Input(m_pPngContext.get(),
-                                {m_pSrcBuf.get(), input_size}, pAttribute);
+    bResult =
+        pPngModule->Input(m_pPngContext.get(),
+                          pdfium::MakeRetain<CFX_CodecMemory>(
+                              pdfium::make_span(m_pSrcBuf.get(), input_size)),
+                          pAttribute);
   }
   m_pPngContext.reset();
   if (m_SrcPassNumber == 0) {
@@ -1365,8 +1379,11 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
       return m_status;
     }
     m_offSet += input_size;
-    bResult = pPngModule->Input(m_pPngContext.get(),
-                                {m_pSrcBuf.get(), input_size}, nullptr);
+    bResult =
+        pPngModule->Input(m_pPngContext.get(),
+                          pdfium::MakeRetain<CFX_CodecMemory>(
+                              pdfium::make_span(m_pSrcBuf.get(), input_size)),
+                          nullptr);
     if (!bResult) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
@@ -1633,7 +1650,10 @@ bool CCodec_ProgressiveDecoder::ReadMoreData(
     return false;
   }
   m_offSet += dwBytesToFetchFromFile;
-  return pModule->Input(pContext, {m_pSrcBuf.get(), m_SrcSize}, nullptr);
+  return pModule->Input(pContext,
+                        pdfium::MakeRetain<CFX_CodecMemory>(
+                            pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
+                        nullptr);
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(

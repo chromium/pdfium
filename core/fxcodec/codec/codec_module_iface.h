@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_
 #define CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_
 
+#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
@@ -28,7 +29,7 @@ class CodecModuleIface {
   // setting details about the image extracted from the buffer into |pAttribute|
   // (if provided and the codec is capable providing that information).
   virtual bool Input(Context* pContext,
-                     pdfium::span<uint8_t> src_buf,
+                     RetainPtr<CFX_CodecMemory> codec_memory,
                      CFX_DIBAttribute* pAttribute) = 0;
 };
 

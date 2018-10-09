@@ -13,6 +13,7 @@ class CFX_CodecMemory final : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  pdfium::span<uint8_t> GetSpan() { return buffer_; }
   uint8_t* GetBuffer() { return buffer_.data(); }
   size_t GetSize() const { return buffer_.size(); }
   size_t GetPosition() const { return pos_; }

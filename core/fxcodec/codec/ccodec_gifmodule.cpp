@@ -71,8 +71,9 @@ FX_FILESIZE CCodec_GifModule::GetAvailInput(Context* pContext) const {
 }
 
 bool CCodec_GifModule::Input(Context* pContext,
-                             pdfium::span<uint8_t> src_buf,
+                             RetainPtr<CFX_CodecMemory> codec_memory,
                              CFX_DIBAttribute*) {
-  static_cast<CFX_GifContext*>(pContext)->SetInputBuffer(src_buf);
+  auto* ctx = static_cast<CFX_GifContext*>(pContext);
+  ctx->SetInputBuffer(std::move(codec_memory));
   return true;
 }

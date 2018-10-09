@@ -41,7 +41,7 @@ class CFX_GifContext : public CodecModuleIface::Context {
   CFX_GifDecodeStatus ReadHeader();
   CFX_GifDecodeStatus GetFrame();
   CFX_GifDecodeStatus LoadFrame(int32_t frame_num);
-  void SetInputBuffer(pdfium::span<uint8_t> src_buf);
+  void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   uint32_t GetAvailInput() const;
   size_t GetFrameNum() const { return images_.size(); }
 

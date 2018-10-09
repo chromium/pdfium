@@ -25,7 +25,7 @@ class CCodec_TiffModule final : public CodecModuleIface {
   // CodecModuleIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;
   bool Input(Context* pContext,
-             pdfium::span<uint8_t> src_buf,
+             RetainPtr<CFX_CodecMemory> codec_memory,
              CFX_DIBAttribute* pAttribute) override;
 
   bool LoadFrameInfo(Context* ctx,
