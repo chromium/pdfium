@@ -165,10 +165,17 @@ TEST_F(FPDFDocEmbeddertest, BUG_821454) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
+  // Cover some NULL arg cases while we're at it.
+  EXPECT_FALSE(FPDFLink_GetLinkAtPoint(nullptr, 150, 360));
+  EXPECT_EQ(-1, FPDFLink_GetLinkZOrderAtPoint(nullptr, 150, 360));
+
   FPDF_LINK link1 = FPDFLink_GetLinkAtPoint(page, 150, 360);
   ASSERT_TRUE(link1);
   FPDF_LINK link2 = FPDFLink_GetLinkAtPoint(page, 150, 420);
   ASSERT_TRUE(link2);
+
+  EXPECT_EQ(0, FPDFLink_GetLinkZOrderAtPoint(page, 150, 360));
+  EXPECT_EQ(1, FPDFLink_GetLinkZOrderAtPoint(page, 150, 420));
 
   FPDF_DEST dest1 = FPDFLink_GetDest(document(), link1);
   ASSERT_TRUE(dest1);
