@@ -6,13 +6,13 @@
 
 #include <algorithm>
 
-CFX_CodecMemory::CFX_CodecMemory(pdfium::span<uint8_t> buffer)
-    : buffer_(buffer) {}
+CFX_CodecMemory::CFX_CodecMemory(size_t buffer_size)
+    : buffer_(FX_Alloc(uint8_t, buffer_size)), size_(buffer_size) {}
 
 CFX_CodecMemory::~CFX_CodecMemory() = default;
 
 bool CFX_CodecMemory::Seek(size_t pos) {
-  if (pos > buffer_.size())
+  if (pos > size_)
     return false;
 
   pos_ = pos;
@@ -23,8 +23,25 @@ size_t CFX_CodecMemory::ReadBlock(void* buffer, size_t size) {
   if (!buffer || !size || IsEOF())
     return 0;
 
-  size_t bytes_to_read = std::min(size, buffer_.size() - pos_);
-  memcpy(buffer, &buffer_[pos_], bytes_to_read);
+  size_t bytes_to_read = std::min(size, size_ - pos_);
+  memcpy(buffer, buffer_.get() + pos_, bytes_to_read);
   pos_ += bytes_to_read;
   return bytes_to_read;
+}
+
+bool CFX_CodecMemory::TryResize(size_t new_buffer_size) {
+  uint8_t* pOldBuf = buffer_.release();
+  uint8_t* pNewBuf = FX_TryRealloc(uint8_t, pOldBuf, new_buffer_size);
+  if (!pNewBuf) {
+    buffer_.reset(pOldBuf);
+    return false;
+  }
+  buffer_.reset(pNewBuf);
+  size_ = new_buffer_size;
+  return true;
+}
+
+void CFX_CodecMemory::Consume(size_t consumed) {
+  size_t unconsumed = size_ - consumed;
+  memmove(buffer_.get(), buffer_.get() + consumed, unconsumed);
 }

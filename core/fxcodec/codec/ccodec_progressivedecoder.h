@@ -251,8 +251,7 @@ class CCodec_ProgressiveDecoder :
   RetainPtr<IFX_SeekableReadStream> m_pFile;
   RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
   UnownedPtr<CCodec_ModuleMgr> m_pCodecMgr;
-  // |m_pSrcBuf| must outlive |m_pGifContext|.
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pSrcBuf;
+  RetainPtr<CFX_CodecMemory> m_pCodecMemory;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDecodeBuf;
   std::unique_ptr<FX_ARGB, FxFreeDeleter> m_pSrcPalette;
   std::unique_ptr<CodecModuleIface::Context> m_pJpegContext;

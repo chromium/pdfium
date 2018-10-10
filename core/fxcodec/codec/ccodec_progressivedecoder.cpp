@@ -718,10 +718,7 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 
   std::unique_ptr<CodecModuleIface::Context> pBmpContext =
       pBmpModule->Start(this);
-  pBmpModule->Input(pBmpContext.get(),
-                    pdfium::MakeRetain<CFX_CodecMemory>(
-                        pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
-                    nullptr);
+  pBmpModule->Input(pBmpContext.get(), m_pCodecMemory, nullptr);
 
   std::vector<uint32_t> palette;
   int32_t readResult = pBmpModule->ReadHeader(
@@ -866,10 +863,7 @@ bool CCodec_ProgressiveDecoder::GifDetectImageTypeInBuffer(
     return false;
   }
   m_pGifContext = pGifModule->Start(this);
-  pGifModule->Input(m_pGifContext.get(),
-                    pdfium::MakeRetain<CFX_CodecMemory>(
-                        pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
-                    nullptr);
+  pGifModule->Input(m_pGifContext.get(), m_pCodecMemory, nullptr);
   m_SrcComponents = 1;
   CFX_GifDecodeStatus readResult = pGifModule->ReadHeader(
       m_pGifContext.get(), &m_SrcWidth, &m_SrcHeight, &m_GifPltNumber,
@@ -1052,10 +1046,8 @@ bool CCodec_ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  pJpegModule->Input(m_pJpegContext.get(),
-                     pdfium::MakeRetain<CFX_CodecMemory>(
-                         pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
-                     nullptr);
+  pJpegModule->Input(m_pJpegContext.get(), m_pCodecMemory, nullptr);
+
   // Setting jump marker before calling ReadHeader, since a longjmp to
   // the marker indicates a fatal error.
   if (setjmp(*pJpegModule->GetJumpMark(m_pJpegContext.get())) == -1) {
@@ -1264,12 +1256,7 @@ bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return false;
   }
-  bool bResult =
-      pPngModule->Input(m_pPngContext.get(),
-                        pdfium::MakeRetain<CFX_CodecMemory>(
-                            pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
-                        pAttribute);
-  while (bResult) {
+  while (pPngModule->Input(m_pPngContext.get(), m_pCodecMemory, pAttribute)) {
     uint32_t remain_size = static_cast<uint32_t>(m_pFile->GetSize()) - m_offSet;
     uint32_t input_size =
         remain_size > FXCODEC_BLOCK_SIZE ? FXCODEC_BLOCK_SIZE : remain_size;
@@ -1278,21 +1265,16 @@ bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return false;
     }
-    if (m_pSrcBuf && input_size > m_SrcSize) {
-      m_pSrcBuf.reset(FX_Alloc(uint8_t, input_size));
+    if (m_pCodecMemory && input_size > m_SrcSize) {
+      m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
       m_SrcSize = input_size;
     }
-    bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), m_offSet, input_size);
-    if (!bResult) {
+    if (!m_pFile->ReadBlock(m_pCodecMemory->GetBuffer(), m_offSet,
+                            input_size)) {
       m_status = FXCODEC_STATUS_ERR_READ;
       return false;
     }
     m_offSet += input_size;
-    bResult =
-        pPngModule->Input(m_pPngContext.get(),
-                          pdfium::MakeRetain<CFX_CodecMemory>(
-                              pdfium::make_span(m_pSrcBuf.get(), input_size)),
-                          pAttribute);
   }
   m_pPngContext.reset();
   if (m_SrcPassNumber == 0) {
@@ -1367,11 +1349,12 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
       m_status = FXCODEC_STATUS_DECODE_FINISH;
       return m_status;
     }
-    if (m_pSrcBuf && input_size > m_SrcSize) {
-      m_pSrcBuf.reset(FX_Alloc(uint8_t, input_size));
+    if (m_pCodecMemory && input_size > m_SrcSize) {
+      m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
       m_SrcSize = input_size;
     }
-    bool bResult = m_pFile->ReadBlock(m_pSrcBuf.get(), m_offSet, input_size);
+    bool bResult =
+        m_pFile->ReadBlock(m_pCodecMemory->GetBuffer(), m_offSet, input_size);
     if (!bResult) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
@@ -1379,11 +1362,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
       return m_status;
     }
     m_offSet += input_size;
-    bResult =
-        pPngModule->Input(m_pPngContext.get(),
-                          pdfium::MakeRetain<CFX_CodecMemory>(
-                              pdfium::make_span(m_pSrcBuf.get(), input_size)),
-                          nullptr);
+    bResult = pPngModule->Input(m_pPngContext.get(), m_pCodecMemory, nullptr);
     if (!bResult) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
@@ -1570,10 +1549,9 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
 
   size_t size = std::min<size_t>(m_pFile->GetSize(), FXCODEC_BLOCK_SIZE);
   m_SrcSize = static_cast<uint32_t>(size);
-  m_pSrcBuf.reset(FX_Alloc(uint8_t, m_SrcSize));
-
+  m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(m_SrcSize);
   m_offSet = 0;
-  if (!m_pFile->ReadBlock(m_pSrcBuf.get(), m_offSet, m_SrcSize)) {
+  if (!m_pFile->ReadBlock(m_pCodecMemory->GetBuffer(), m_offSet, m_SrcSize)) {
     m_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
@@ -1629,31 +1607,26 @@ bool CCodec_ProgressiveDecoder::ReadMoreData(
     dwBytesToFetchFromFile =
         std::min<uint32_t>(dwBytesToFetchFromFile, FXCODEC_BLOCK_SIZE);
     uint32_t dwNewSize = m_SrcSize + dwBytesToFetchFromFile;
-    uint8_t* pNewBuf = FX_TryRealloc(uint8_t, m_pSrcBuf.release(), dwNewSize);
-    if (!pNewBuf) {
+    if (!m_pCodecMemory->TryResize(dwNewSize)) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
     }
     m_SrcSize = dwNewSize;
-    m_pSrcBuf.reset(pNewBuf);
   } else {
     uint32_t dwConsumed = m_SrcSize - dwUnconsumed;
-    memmove(m_pSrcBuf.get(), m_pSrcBuf.get() + dwConsumed, dwUnconsumed);
+    m_pCodecMemory->Consume(dwConsumed);
     dwBytesToFetchFromFile = std::min(dwBytesToFetchFromFile, dwConsumed);
     m_SrcSize = dwBytesToFetchFromFile + dwUnconsumed;
   }
 
   // Append new data past the bytes not yet processed by the codec.
-  if (!m_pFile->ReadBlock(m_pSrcBuf.get() + dwUnconsumed, m_offSet,
+  if (!m_pFile->ReadBlock(m_pCodecMemory->GetBuffer() + dwUnconsumed, m_offSet,
                           dwBytesToFetchFromFile)) {
     err_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
   m_offSet += dwBytesToFetchFromFile;
-  return pModule->Input(pContext,
-                        pdfium::MakeRetain<CFX_CodecMemory>(
-                            pdfium::make_span(m_pSrcBuf.get(), m_SrcSize)),
-                        nullptr);
+  return pModule->Input(pContext, m_pCodecMemory, nullptr);
 }
 
 FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
