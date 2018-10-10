@@ -58,8 +58,8 @@ class WeakPtr {
  private:
   class Handle {
    public:
-    explicit Handle(std::unique_ptr<T, D> ptr)
-        : m_nCount(0), m_pObj(std::move(ptr)) {}
+    explicit Handle(std::unique_ptr<T, D> ptr) : m_pObj(std::move(ptr)) {}
+
     void Reset(std::unique_ptr<T, D> ptr) { m_pObj = std::move(ptr); }
     void Clear() {     // Now you're all weak ptrs ...
       m_pObj.reset();  // unique_ptr nulls first before invoking delete.
@@ -78,7 +78,7 @@ class WeakPtr {
    private:
     ~Handle() = default;
 
-    intptr_t m_nCount;
+    intptr_t m_nCount = 0;
     std::unique_ptr<T, D> m_pObj;
   };
 

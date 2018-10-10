@@ -44,7 +44,7 @@ class IJS_Runtime {
     IJS_EventContext* operator->() const { return m_pContext.Get(); }
 
    private:
-    UnownedPtr<IJS_Runtime> m_pRuntime;
+    UnownedPtr<IJS_Runtime> const m_pRuntime;
     UnownedPtr<IJS_EventContext> m_pContext;
   };
 
