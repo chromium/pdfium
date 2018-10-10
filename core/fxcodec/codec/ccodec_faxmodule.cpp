@@ -7,6 +7,8 @@
 #include "core/fxcodec/codec/ccodec_faxmodule.h"
 
 #include <algorithm>
+#include <iterator>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -14,6 +16,7 @@
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/cfx_binarybuf.h"
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -662,7 +665,7 @@ class CCodec_FaxEncoder {
 
   CFX_BinaryBuf m_DestBuf;
   std::vector<uint8_t> m_RefLine;
-  uint8_t* m_pLineBuf;
+  std::vector<uint8_t> m_LineBuf;
   int m_DestBitpos;
   const int m_Cols;
   const int m_Rows;
@@ -675,20 +678,20 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
                                      int height,
                                      int pitch)
     : m_Cols(width), m_Rows(height), m_Pitch(pitch), m_pSrcBuf(src_buf) {
-  m_RefLine.resize(m_Pitch);
-  memset(m_RefLine.data(), 0xff, m_Pitch);
-  m_pLineBuf = FX_Alloc2D(uint8_t, m_Pitch, 8);
+  CHECK(pitch > 0);
+  CHECK(pitch < std::numeric_limits<int>::max() / 8);
+  m_RefLine.resize(pitch);
+  std::fill(std::begin(m_RefLine), std::end(m_RefLine), 0xff);
+  m_LineBuf.resize(8 * m_Pitch);
   m_DestBuf.SetAllocStep(10240);
 }
 
-CCodec_FaxEncoder::~CCodec_FaxEncoder() {
-  FX_Free(m_pLineBuf);
-}
+CCodec_FaxEncoder::~CCodec_FaxEncoder() = default;
 
 void CCodec_FaxEncoder::AddBitStream(int data, int bitlen) {
   for (int i = bitlen - 1; i >= 0; --i, ++m_DestBitpos) {
     if (data & (1 << i))
-      m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+      m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
   }
 }
 
@@ -719,28 +722,28 @@ void CCodec_FaxEncoder::FaxEncode2DLine(const uint8_t* src_buf) {
     FaxG4FindB1B2(m_RefLine, m_Cols, a0, a0color, &b1, &b2);
     if (b2 < a1) {
       m_DestBitpos += 3;
-      m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+      m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
       ++m_DestBitpos;
       a0 = b2;
     } else if (a1 - b1 <= 3 && b1 - a1 <= 3) {
       int delta = a1 - b1;
       switch (delta) {
         case 0:
-          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
           break;
         case 1:
         case 2:
         case 3:
           m_DestBitpos += delta == 1 ? 1 : delta + 2;
-          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
           ++m_DestBitpos;
-          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
           break;
         case -1:
         case -2:
         case -3:
           m_DestBitpos += delta == -1 ? 1 : -delta + 2;
-          m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+          m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
           ++m_DestBitpos;
           break;
       }
@@ -751,7 +754,7 @@ void CCodec_FaxEncoder::FaxEncode2DLine(const uint8_t* src_buf) {
       int a2 = FindBit(src_buf, m_Cols, a1 + 1, a0color);
       ++m_DestBitpos;
       ++m_DestBitpos;
-      m_pLineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
+      m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
       ++m_DestBitpos;
       if (a0 < 0)
         a0 = 0;
@@ -771,11 +774,11 @@ void CCodec_FaxEncoder::Encode(
   uint8_t last_byte = 0;
   for (int i = 0; i < m_Rows; ++i) {
     const uint8_t* scan_line = m_pSrcBuf + i * m_Pitch;
-    memset(m_pLineBuf, 0, m_Pitch * 8);
-    m_pLineBuf[0] = last_byte;
+    std::fill(std::begin(m_LineBuf), std::end(m_LineBuf), 0);
+    m_LineBuf[0] = last_byte;
     FaxEncode2DLine(scan_line);
-    m_DestBuf.AppendBlock(m_pLineBuf, m_DestBitpos / 8);
-    last_byte = m_pLineBuf[m_DestBitpos / 8];
+    m_DestBuf.AppendBlock(m_LineBuf.data(), m_DestBitpos / 8);
+    last_byte = m_LineBuf[m_DestBitpos / 8];
     m_DestBitpos %= 8;
     memcpy(m_RefLine.data(), scan_line, m_Pitch);
   }
