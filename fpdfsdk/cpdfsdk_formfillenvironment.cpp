@@ -646,7 +646,7 @@ bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     return true;
   if (m_pFocusAnnot && !KillFocusAnnot(0))
     return false;
-  if (!*pAnnot)
+  if (!pAnnot->HasObservable())
     return false;
 
   CPDFSDK_PageView* pPageView = (*pAnnot)->GetPageView();

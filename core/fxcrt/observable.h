@@ -46,6 +46,7 @@ class Observable {
       ASSERT(m_pObservable);
       m_pObservable = nullptr;
     }
+    bool HasObservable() const { return !!m_pObservable; }
     ObservedPtr& operator=(const ObservedPtr& that) {
       Reset(that.Get());
       return *this;
@@ -54,7 +55,7 @@ class Observable {
       return m_pObservable == that.m_pObservable;
     }
     bool operator!=(const ObservedPtr& that) const { return !(*this == that); }
-    explicit operator bool() const { return !!m_pObservable; }
+    explicit operator bool() const { return HasObservable(); }
     T* Get() const { return m_pObservable; }
     T& operator*() const { return *m_pObservable; }
     T* operator->() const { return m_pObservable; }

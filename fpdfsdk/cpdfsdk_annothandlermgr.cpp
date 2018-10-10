@@ -130,7 +130,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
       ->OnLButtonDown(pPageView, pAnnot, nFlags, point);
 }
@@ -140,7 +140,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
       ->OnLButtonUp(pPageView, pAnnot, nFlags, point);
 }
@@ -150,7 +150,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
       ->OnMouseMove(pPageView, pAnnot, nFlags, point);
 }
@@ -161,7 +161,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(
     uint32_t nFlags,
     short zDelta,
     const CFX_PointF& point) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
       ->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta, point);
 }
@@ -171,7 +171,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
       ->OnRButtonDown(pPageView, pAnnot, nFlags, point);
 }
@@ -181,7 +181,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
     const CFX_PointF& point) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())
       ->OnRButtonUp(pPageView, pAnnot, nFlags, point);
 }
@@ -190,7 +190,7 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseEnter(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlag) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   GetAnnotHandler(pAnnot->Get())->OnMouseEnter(pPageView, pAnnot, nFlag);
 }
 
@@ -198,7 +198,7 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlag) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   GetAnnotHandler(pAnnot->Get())->OnMouseExit(pPageView, pAnnot, nFlag);
 }
 
@@ -233,14 +233,14 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlag) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())->OnSetFocus(pAnnot, nFlag);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnKillFocus(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlag) {
-  ASSERT(*pAnnot);
+  ASSERT(pAnnot->HasObservable());
   return GetAnnotHandler(pAnnot->Get())->OnKillFocus(pAnnot, nFlag);
 }
 
