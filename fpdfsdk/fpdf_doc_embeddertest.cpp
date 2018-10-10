@@ -257,13 +257,93 @@ TEST_F(FPDFDocEmbeddertest, ActionLaunch) {
   unsigned long bufsize = FPDFAction_GetFilePath(action, nullptr, 0);
   EXPECT_EQ(kExpectedLength, bufsize);
 
-  char buf[kExpectedLength];
+  char buf[1024];
   EXPECT_EQ(bufsize, FPDFAction_GetFilePath(action, buf, bufsize));
   EXPECT_STREQ(kExpectedResult, buf);
 
-  // Other public methods are not appropriate for this action type.
+  // Other public methods are not appropriate for launch actions.
   EXPECT_EQ(nullptr, FPDFAction_GetDest(document(), action));
-  EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), action, buf, bufsize));
+  EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), action, buf, sizeof(buf)));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFDocEmbeddertest, ActionURI) {
+  EXPECT_TRUE(OpenDocument("uri_action.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // The target action is nearly the size of the whole page.
+  FPDF_LINK link = FPDFLink_GetLinkAtPoint(page, 100, 100);
+  ASSERT_TRUE(link);
+
+  FPDF_ACTION action = FPDFLink_GetAction(link);
+  ASSERT_TRUE(action);
+  EXPECT_EQ(static_cast<unsigned long>(PDFACTION_URI),
+            FPDFAction_GetType(action));
+
+  const char kExpectedResult[] = "https://example.com/page.html";
+  const unsigned long kExpectedLength = sizeof(kExpectedResult);
+  unsigned long bufsize = FPDFAction_GetURIPath(document(), action, nullptr, 0);
+  ASSERT_EQ(kExpectedLength, bufsize);
+
+  char buf[1024];
+  EXPECT_EQ(bufsize, FPDFAction_GetURIPath(document(), action, buf, bufsize));
+  EXPECT_STREQ(kExpectedResult, buf);
+
+  // Other public methods are not appropriate for URI actions
+  EXPECT_EQ(nullptr, FPDFAction_GetDest(document(), action));
+  EXPECT_EQ(0u, FPDFAction_GetFilePath(action, buf, sizeof(buf)));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFDocEmbeddertest, ActionGoto) {
+  EXPECT_TRUE(OpenDocument("goto_action.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // The target action is nearly the size of the whole page.
+  FPDF_LINK link = FPDFLink_GetLinkAtPoint(page, 100, 100);
+  ASSERT_TRUE(link);
+
+  FPDF_ACTION action = FPDFLink_GetAction(link);
+  ASSERT_TRUE(action);
+  EXPECT_EQ(static_cast<unsigned long>(PDFACTION_GOTO),
+            FPDFAction_GetType(action));
+
+  EXPECT_TRUE(FPDFAction_GetDest(document(), action));
+
+  // Other public methods are not appropriate for GoTo actions.
+  char buf[1024];
+  EXPECT_EQ(0u, FPDFAction_GetFilePath(action, buf, sizeof(buf)));
+  EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), action, buf, sizeof(buf)));
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFDocEmbeddertest, ActionNonesuch) {
+  EXPECT_TRUE(OpenDocument("nonesuch_action.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // The target action is nearly the size of the whole page.
+  FPDF_LINK link = FPDFLink_GetLinkAtPoint(page, 100, 100);
+  ASSERT_TRUE(link);
+
+  FPDF_ACTION action = FPDFLink_GetAction(link);
+  ASSERT_TRUE(action);
+  EXPECT_EQ(static_cast<unsigned long>(PDFACTION_UNSUPPORTED),
+            FPDFAction_GetType(action));
+
+  // No public methods are appropriate for unsupported actions.
+  char buf[1024];
+  EXPECT_FALSE(FPDFAction_GetDest(document(), action));
+  EXPECT_EQ(0u, FPDFAction_GetFilePath(action, buf, sizeof(buf)));
+  EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), action, buf, sizeof(buf)));
 
   UnloadPage(page);
 }
