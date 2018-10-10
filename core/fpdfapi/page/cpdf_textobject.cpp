@@ -293,10 +293,7 @@ void CPDF_TextObject::SetPosition(float x, float y) {
   float dy = y - m_Pos.y;
   m_Pos.x = x;
   m_Pos.y = y;
-  m_Rect.left += dx;
-  m_Rect.right += dx;
-  m_Rect.top += dy;
-  m_Rect.bottom += dy;
+  m_Rect.Translate(dx, dy);
 }
 
 void CPDF_TextObject::RecalcPositionData() {
