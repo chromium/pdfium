@@ -54,14 +54,14 @@ bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
 CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
                                                CPDFSDK_PageView* pPage) {
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CPDF_FormControl* pCtrl = CPDFSDK_Widget::GetFormControl(
-      pInterForm->GetInterForm(), pAnnot->GetAnnotDict());
+  CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
+  CPDF_FormControl* pCtrl =
+      pPDFInterForm->GetControlByDict(pAnnot->GetAnnotDict());
   if (!pCtrl)
     return nullptr;
 
   CPDFSDK_Widget* pWidget = new CPDFSDK_Widget(pAnnot, pPage, pInterForm);
   pInterForm->AddMap(pCtrl, pWidget);
-  CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
   if (pPDFInterForm->NeedConstructAP())
     pWidget->ResetAppearance(pdfium::nullopt, false);
   return pWidget;

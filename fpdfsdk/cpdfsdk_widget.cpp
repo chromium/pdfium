@@ -380,13 +380,6 @@ CPDF_FormControl* CPDFSDK_Widget::GetFormControl() const {
   return pPDFInterForm->GetControlByDict(GetAnnotDict());
 }
 
-CPDF_FormControl* CPDFSDK_Widget::GetFormControl(
-    CPDF_InterForm* pInterForm,
-    const CPDF_Dictionary* pAnnotDict) {
-  ASSERT(pAnnotDict);
-  return pInterForm->GetControlByDict(pAnnotDict);
-}
-
 int CPDFSDK_Widget::GetRotate() const {
   CPDF_FormControl* pCtrl = GetFormControl();
   return pCtrl->GetRotation() % 360;
