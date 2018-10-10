@@ -7,6 +7,7 @@ import json
 import os
 import shlex
 import shutil
+import ssl
 import urllib2
 
 
@@ -72,19 +73,22 @@ class GoldBaseline(object):
     url = GOLD_BASELINE_URL + ('/' + cl_number_str if cl_number_str else '')
 
     json_data = ''
-    RETRIES = 5
-    attempts = 0
-    while not json_data and attempts < RETRIES:
+    MAX_TIMEOUT = 33  # 5 tries. (2, 4, 8, 16, 32)
+    timeout = 2
+    while True:
       try:
-        response = urllib2.urlopen(url, timeout=2)
+        response = urllib2.urlopen(url, timeout=timeout)
         c_type = response.headers.get('Content-type', '')
         EXPECTED_CONTENT_TYPE = 'application/json'
         if c_type != EXPECTED_CONTENT_TYPE:
           raise ValueError('Invalid content type. Got %s instead of %s' % (
               c_type, EXPECTED_CONTENT_TYPE))
         json_data = response.read()
-        attempts += 1
-      except (urllib2.HTTPError, urllib2.URLError) as e:
+        break  # If this line is reached, then no exception occurred.
+      except (ssl.SSLError, urllib2.HTTPError, urllib2.URLError) as e:
+        timeout *= 2
+        if timeout < MAX_TIMEOUT:
+          continue
         print ('Error: Unable to read skia gold json from %s: %s' % (url, e))
         return None
 
