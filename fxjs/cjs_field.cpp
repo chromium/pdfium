@@ -142,13 +142,6 @@ std::vector<CPDF_FormField*> GetFormFieldsForName(
   return fields;
 }
 
-CPDFSDK_Widget* GetWidget(CPDFSDK_FormFillEnvironment* pFormFillEnv,
-                          CPDF_FormControl* pFormControl) {
-  CPDFSDK_InterForm* pInterForm =
-      static_cast<CPDFSDK_InterForm*>(pFormFillEnv->GetInterForm());
-  return pInterForm ? pInterForm->GetWidget(pFormControl) : nullptr;
-}
-
 bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
   if (!pWidget)
     return false;
@@ -209,12 +202,14 @@ void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
 
   std::vector<CPDF_FormField*> FieldArray =
       GetFormFieldsForName(pFormFillEnv, swFieldName);
+  auto* pInterForm = pFormFillEnv->GetInterForm();
   for (CPDF_FormField* pFormField : FieldArray) {
     if (nControlIndex < 0) {
       bool bSet = false;
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
-        if (CPDFSDK_Widget* pWidget =
-                GetWidget(pFormFillEnv, pFormField->GetControl(i))) {
+        CPDFSDK_Widget* pWidget =
+            pInterForm->GetWidget(pFormField->GetControl(i));
+        if (pWidget) {
           if (pWidget->GetBorderStyle() != nBorderStyle) {
             pWidget->SetBorderStyle(nBorderStyle);
             bSet = true;
@@ -228,7 +223,8 @@ void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
         return;
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
-        if (CPDFSDK_Widget* pWidget = GetWidget(pFormFillEnv, pFormControl)) {
+        CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl);
+        if (pWidget) {
           if (pWidget->GetBorderStyle() != nBorderStyle) {
             pWidget->SetBorderStyle(nBorderStyle);
             UpdateFormControl(pFormFillEnv, pFormControl, true, true, true);
@@ -704,8 +700,8 @@ CJS_Result CJS_Field::get_border_style(CJS_Runtime* pRuntime) {
   if (!pFormField)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CPDFSDK_Widget* pWidget =
-      GetWidget(m_pFormFillEnv.Get(), GetSmartFieldControl(pFormField));
+  CPDFSDK_Widget* pWidget = m_pFormFillEnv->GetInterForm()->GetWidget(
+      GetSmartFieldControl(pFormField));
   if (!pWidget)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 

@@ -669,10 +669,8 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   auto type = static_cast<CPDF_AAction::AActionType>(aaType);
   if (aa.ActionExist(type)) {
     CPDF_Action action = aa.GetAction(type);
-    CPDFSDK_ActionHandler* pActionHandler =
-        CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle)
-            ->GetActionHandler();
-    pActionHandler->DoAction_Document(action, type, pFormFillEnv);
+    pFormFillEnv->GetActionHandler()->DoAction_Document(action, type,
+                                                        pFormFillEnv);
   }
 }
 

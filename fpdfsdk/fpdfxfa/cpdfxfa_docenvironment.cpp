@@ -387,9 +387,7 @@ void CPDFXFA_DocEnvironment::SetCalculationsEnabled(CXFA_FFDoc* hDoc,
                                                     bool bEnabled) {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return;
-  if (m_pContext->GetFormFillEnv()->GetInterForm()) {
-    m_pContext->GetFormFillEnv()->GetInterForm()->XfaEnableCalculate(bEnabled);
-  }
+  m_pContext->GetFormFillEnv()->GetInterForm()->XfaEnableCalculate(bEnabled);
 }
 
 void CPDFXFA_DocEnvironment::GetTitle(CXFA_FFDoc* hDoc, WideString& wsTitle) {
@@ -530,9 +528,8 @@ void CPDFXFA_DocEnvironment::GotoURL(CXFA_FFDoc* hDoc,
 bool CPDFXFA_DocEnvironment::IsValidationsEnabled(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return false;
-
-  auto* interform = m_pContext->GetFormFillEnv()->GetInterForm();
-  return !interform || interform->IsXfaValidationsEnabled();
+  auto* pInterform = m_pContext->GetFormFillEnv()->GetInterForm();
+  return pInterform->IsXfaValidationsEnabled();
 }
 
 void CPDFXFA_DocEnvironment::SetValidationsEnabled(CXFA_FFDoc* hDoc,
@@ -540,9 +537,8 @@ void CPDFXFA_DocEnvironment::SetValidationsEnabled(CXFA_FFDoc* hDoc,
   if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return;
 
-  auto* interform = m_pContext->GetFormFillEnv()->GetInterForm();
-  if (interform)
-    interform->XfaSetValidationsEnabled(bEnabled);
+  m_pContext->GetFormFillEnv()->GetInterForm()->XfaSetValidationsEnabled(
+      bEnabled);
 }
 
 void CPDFXFA_DocEnvironment::SetFocusWidget(CXFA_FFDoc* hDoc,

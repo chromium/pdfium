@@ -103,10 +103,6 @@ class CPDFSDK_WidgetHandler final : public IPDFSDK_AnnotHandler {
                          CPDFSDK_Annot::ObservedPtr* pNewAnnot) override;
 #endif  // PDF_ENABLE_XFA
 
-  CFFL_InteractiveFormFiller* GetFormFiller() const {
-    return m_pFormFiller.Get();
-  }
-
  private:
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
   UnownedPtr<CFFL_InteractiveFormFiller> const m_pFormFiller;
