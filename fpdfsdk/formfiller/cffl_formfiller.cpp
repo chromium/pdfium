@@ -340,16 +340,18 @@ CPWL_Wnd::CreateParams CFFL_FormFiller::GetCreateParam() {
   if (dwFieldFlag & FIELDFLAG_READONLY)
     dwCreateFlags |= PWS_READONLY;
 
-  FX_COLORREF color;
-  if (m_pWidget->GetFillColor(color))
-    cp.sBackgroundColor = CFX_Color(color);
-  if (m_pWidget->GetBorderColor(color))
-    cp.sBorderColor = CFX_Color(color);
+  Optional<FX_COLORREF> color = m_pWidget->GetFillColor();
+  if (color.has_value())
+    cp.sBackgroundColor = CFX_Color(color.value());
+  color = m_pWidget->GetBorderColor();
+  if (color.has_value())
+    cp.sBorderColor = CFX_Color(color.value());
 
   cp.sTextColor = CFX_Color(CFX_Color::kGray, 0);
 
-  if (m_pWidget->GetTextColor(color))
-    cp.sTextColor = CFX_Color(color);
+  color = m_pWidget->GetTextColor();
+  if (color.has_value())
+    cp.sTextColor = CFX_Color(color.value());
 
   cp.fFontSize = m_pWidget->GetFontSize();
   cp.dwBorderWidth = m_pWidget->GetBorderWidth();

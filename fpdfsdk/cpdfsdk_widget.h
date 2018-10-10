@@ -17,6 +17,7 @@
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
+#include "third_party/base/optional.h"
 
 class CFX_RenderDevice;
 class CPDF_Annot;
@@ -39,7 +40,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   CXFA_FFWidget* GetMixXFAWidget() const;
   CXFA_FFWidgetHandler* GetXFAWidgetHandler() const;
 
-  bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT);
+  bool HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const;
   bool OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
                     CPDFSDK_FieldAction* data,
                     CPDFSDK_PageView* pPageView);
@@ -62,9 +63,9 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   int GetFieldFlags() const;
   int GetRotate() const;
 
-  bool GetFillColor(FX_COLORREF& color) const;
-  bool GetBorderColor(FX_COLORREF& color) const;
-  bool GetTextColor(FX_COLORREF& color) const;
+  Optional<FX_COLORREF> GetFillColor() const;
+  Optional<FX_COLORREF> GetBorderColor() const;
+  Optional<FX_COLORREF> GetTextColor() const;
   float GetFontSize() const;
 
   int GetSelectedIndex(int nIndex) const;
@@ -127,7 +128,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 
  private:
 #ifdef PDF_ENABLE_XFA
-  CXFA_FFWidget* GetGroupMixXFAWidget();
+  CXFA_FFWidget* GetGroupMixXFAWidget() const;
   WideString GetName() const;
 #endif  // PDF_ENABLE_XFA
 

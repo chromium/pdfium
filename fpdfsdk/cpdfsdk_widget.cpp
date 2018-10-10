@@ -72,7 +72,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
   return nullptr;
 }
 
-CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
+CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() const {
   CPDFXFA_Context* pContext = m_pPageView->GetFormFillEnv()->GetXFAContext();
   if (pContext->GetFormType() != FormType::kXFAForeground)
     return nullptr;
@@ -173,7 +173,7 @@ static XFA_EVENTTYPE GetXFAEventType(CPDF_AAction::AActionType eAAT,
   return eEventType;
 }
 
-bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
+bool CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) const {
   CXFA_FFWidget* hWidget = GetMixXFAWidget();
   if (!hWidget)
     return false;
@@ -398,31 +398,37 @@ WideString CPDFSDK_Widget::GetName() const {
 }
 #endif  // PDF_ENABLE_XFA
 
-bool CPDFSDK_Widget::GetFillColor(FX_COLORREF& color) const {
+Optional<FX_COLORREF> CPDFSDK_Widget::GetFillColor() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   int iColorType = 0;
-  color = ArgbToColorRef(pFormCtrl->GetBackgroundColor(iColorType));
-  return iColorType != CFX_Color::kTransparent;
+  FX_COLORREF color = ArgbToColorRef(pFormCtrl->GetBackgroundColor(iColorType));
+  if (iColorType == CFX_Color::kTransparent)
+    return {};
+  return color;
 }
 
-bool CPDFSDK_Widget::GetBorderColor(FX_COLORREF& color) const {
+Optional<FX_COLORREF> CPDFSDK_Widget::GetBorderColor() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   int iColorType = 0;
-  color = ArgbToColorRef(pFormCtrl->GetBorderColor(iColorType));
-  return iColorType != CFX_Color::kTransparent;
+  FX_COLORREF color = ArgbToColorRef(pFormCtrl->GetBorderColor(iColorType));
+  if (iColorType == CFX_Color::kTransparent)
+    return {};
+  return color;
 }
 
-bool CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const {
+Optional<FX_COLORREF> CPDFSDK_Widget::GetTextColor() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
   FX_ARGB argb;
   Optional<CFX_Color::Type> iColorType;
   std::tie(iColorType, argb) = da.GetColor();
-  if (!iColorType)
-    return false;
+  if (!iColorType.has_value())
+    return {};
 
-  color = ArgbToColorRef(argb);
-  return *iColorType != CFX_Color::kTransparent;
+  FX_COLORREF color = ArgbToColorRef(argb);
+  if (iColorType.value() == CFX_Color::kTransparent)
+    return {};
+  return color;
 }
 
 float CPDFSDK_Widget::GetFontSize() const {
