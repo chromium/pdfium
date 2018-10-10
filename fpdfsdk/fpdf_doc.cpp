@@ -164,11 +164,14 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION pDict) {
 
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                        FPDF_ACTION pDict) {
-  if (!pDict)
-    return nullptr;
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
+
+  unsigned long type = FPDFAction_GetType(pDict);
+  if (type != PDFACTION_GOTO && type != PDFACTION_REMOTEGOTO)
+    return nullptr;
+
   CPDF_Action action(CPDFDictionaryFromFPDFAction(pDict));
   return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
 }
@@ -192,11 +195,14 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                       FPDF_ACTION pDict,
                       void* buffer,
                       unsigned long buflen) {
-  if (!pDict)
-    return 0;
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return 0;
+
+  unsigned long type = FPDFAction_GetType(pDict);
+  if (type != PDFACTION_URI)
+    return 0;
+
   CPDF_Action action(CPDFDictionaryFromFPDFAction(pDict));
   ByteString path = action.GetURI(pDoc);
   unsigned long len = path.GetLength() + 1;

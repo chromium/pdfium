@@ -136,23 +136,25 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action);
 //   action   - handle to the action. |action| must be a |PDFACTION_GOTO| or
 //              |PDFACTION_REMOTEGOTO|.
 //
-// Returns a handle to the destination data.
+// Returns a handle to the destination data, or NULL on error, typically
+// because the arguments were bad or the action was of the wrong type.
 //
-// In the case of |PDFACTION_REMOTEGOTO|, you should first call
-// FPDFAction_GetFilePath() then load that document, the document handle from
-// that document should pass as |document| to FPDFAction_GetDest().
+// In the case of |PDFACTION_REMOTEGOTO|, you must first call
+// FPDFAction_GetFilePath(), then load the document at that path, then pass
+// the document handle from that document as |document| to FPDFAction_GetDest().
 FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
                                                        FPDF_ACTION action);
 
-// Get file path of a |PDFACTION_REMOTEGOTO| |action|.
+// Get the file path of |action|.
 //
 //   action - handle to the action. |action| must be a |PDFACTION_LAUNCH| or
-//            |PDFACTION_REMOTEGOTO|
+//            |PDFACTION_REMOTEGOTO|.
 //   buffer - a buffer for output the path string. May be NULL.
 //   buflen - the length of the buffer, in bytes. May be 0.
 //
 // Returns the number of bytes in the file path, including the trailing NUL
-// character.
+// character, or 0 on error, typically because the arguments were bad or the
+// action was of the wrong type.
 //
 // Regardless of the platform, the |buffer| is always in UTF-8 encoding.
 // If |buflen| is less than the returned length, or |buffer| is NULL, |buffer|
@@ -160,14 +162,16 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen);
 
-// Get the URI path of a |PDFACTION_URI| |action|.
+// Get the URI path of |action|.
 //
 //   document - handle to the document.
 //   action   - handle to the action. Must be a |PDFACTION_URI|.
 //   buffer   - a buffer for the path string. May be NULL.
 //   buflen   - the length of the buffer, in bytes. May be 0.
 //
-// Returns the number of bytes in the URI path, including trailing zeros.
+// Returns the number of bytes in the URI path, including the trailing NUL
+// character, or 0 on error, typically because the arguments were bad or the
+// action was of the wrong type.
 //
 // The |buffer| is always encoded in 7-bit ASCII. If |buflen| is less than the
 // returned length, or |buffer| is NULL, |buffer| will not be modified.

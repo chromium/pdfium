@@ -225,7 +225,19 @@ TEST_F(FPDFDocEmbeddertest, BUG_821454) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
+TEST_F(FPDFDocEmbeddertest, ActionBadArguments) {
+  EXPECT_TRUE(OpenDocument("launch_action.pdf"));
+  EXPECT_EQ(static_cast<unsigned long>(PDFACTION_UNSUPPORTED),
+            FPDFAction_GetType(nullptr));
+
+  EXPECT_EQ(nullptr, FPDFAction_GetDest(nullptr, nullptr));
+  EXPECT_EQ(nullptr, FPDFAction_GetDest(document(), nullptr));
+  EXPECT_EQ(0u, FPDFAction_GetFilePath(nullptr, nullptr, 0));
+  EXPECT_EQ(0u, FPDFAction_GetURIPath(nullptr, nullptr, nullptr, 0));
+  EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), nullptr, nullptr, 0));
+}
+
+TEST_F(FPDFDocEmbeddertest, ActionLaunch) {
   EXPECT_TRUE(OpenDocument("launch_action.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
@@ -237,15 +249,21 @@ TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
 
   FPDF_ACTION action = FPDFLink_GetAction(link);
   ASSERT_TRUE(action);
+  EXPECT_EQ(static_cast<unsigned long>(PDFACTION_LAUNCH),
+            FPDFAction_GetType(action));
 
   const char kExpectedResult[] = "test.pdf";
   const unsigned long kExpectedLength = sizeof(kExpectedResult);
   unsigned long bufsize = FPDFAction_GetFilePath(action, nullptr, 0);
-  ASSERT_EQ(kExpectedLength, bufsize);
+  EXPECT_EQ(kExpectedLength, bufsize);
 
   char buf[kExpectedLength];
   EXPECT_EQ(bufsize, FPDFAction_GetFilePath(action, buf, bufsize));
-  EXPECT_EQ(std::string(kExpectedResult), std::string(buf));
+  EXPECT_STREQ(kExpectedResult, buf);
+
+  // Other public methods are not appropriate for this action type.
+  EXPECT_EQ(nullptr, FPDFAction_GetDest(document(), action));
+  EXPECT_EQ(0u, FPDFAction_GetURIPath(document(), action, buf, bufsize));
 
   UnloadPage(page);
 }
