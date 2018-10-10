@@ -820,15 +820,15 @@ void CPDF_TextPage::ProcessTextObject(
 
 FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj.Get();
-  size_t nContentMark = pTextObj->m_ContentMark.CountItems();
-  if (nContentMark == 0)
+  size_t nContentMarks = pTextObj->m_ContentMarks.CountItems();
+  if (nContentMarks == 0)
     return FPDFText_MarkedContent::Pass;
 
   WideString actText;
   bool bExist = false;
   const CPDF_Dictionary* pDict = nullptr;
-  for (size_t i = 0; i < nContentMark; ++i) {
-    const CPDF_ContentMarkItem* item = pTextObj->m_ContentMark.GetItem(i);
+  for (size_t i = 0; i < nContentMarks; ++i) {
+    const CPDF_ContentMarkItem* item = pTextObj->m_ContentMarks.GetItem(i);
     pDict = item->GetParam();
     if (!pDict)
       continue;
@@ -842,9 +842,9 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
     return FPDFText_MarkedContent::Pass;
 
   if (m_pPreTextObj) {
-    const CPDF_ContentMark& mark = m_pPreTextObj->m_ContentMark;
-    if (mark.CountItems() == nContentMark &&
-        mark.GetItem(nContentMark - 1)->GetParam() == pDict) {
+    const CPDF_ContentMarks& marks = m_pPreTextObj->m_ContentMarks;
+    if (marks.CountItems() == nContentMarks &&
+        marks.GetItem(nContentMarks - 1)->GetParam() == pDict) {
       return FPDFText_MarkedContent::Done;
     }
   }
@@ -880,13 +880,13 @@ FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
 void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj.Get();
 
-  size_t nContentMark = pTextObj->m_ContentMark.CountItems();
-  if (nContentMark == 0)
+  size_t nContentMarks = pTextObj->m_ContentMarks.CountItems();
+  if (nContentMarks == 0)
     return;
 
   WideString actText;
-  for (size_t n = 0; n < nContentMark; ++n) {
-    const CPDF_ContentMarkItem* item = pTextObj->m_ContentMark.GetItem(n);
+  for (size_t n = 0; n < nContentMarks; ++n) {
+    const CPDF_ContentMarkItem* item = pTextObj->m_ContentMarks.GetItem(n);
     const CPDF_Dictionary* pDict = item->GetParam();
     if (pDict)
       actText = pDict->GetUnicodeTextFor("ActualText");

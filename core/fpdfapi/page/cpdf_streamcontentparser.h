@@ -13,7 +13,7 @@
 #include <stack>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_contentmark.h"
+#include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_number.h"
 #include "core/fxcrt/fx_string.h"
@@ -213,7 +213,7 @@ class CPDF_StreamContentParser {
   uint32_t m_ParamCount;
   UnownedPtr<CPDF_StreamParser> m_pSyntax;
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
-  std::stack<std::unique_ptr<CPDF_ContentMark>> m_ContentMarksStack;
+  std::stack<std::unique_ptr<CPDF_ContentMarks>> m_ContentMarksStack;
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
   UnownedPtr<CPDF_TextObject> m_pLastTextObject;
   float m_DefFontSize;

@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_
 
-#include "core/fpdfapi/page/cpdf_contentmark.h"
+#include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
@@ -74,7 +74,7 @@ class CPDF_PageObject : public CPDF_GraphicStates {
     m_ContentStream = new_content_stream;
   }
 
-  CPDF_ContentMark m_ContentMark;
+  CPDF_ContentMarks m_ContentMarks;
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);

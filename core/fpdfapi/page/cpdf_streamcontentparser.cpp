@@ -290,7 +290,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
   }
 
   // Add the sentinel.
-  m_ContentMarksStack.push(pdfium::MakeUnique<CPDF_ContentMark>());
+  m_ContentMarksStack.push(pdfium::MakeUnique<CPDF_ContentMarks>());
 }
 
 CPDF_StreamContentParser::~CPDF_StreamContentParser() {
@@ -428,7 +428,7 @@ void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
                                                 bool bGraph) {
   pObj->m_GeneralState = m_pCurStates->m_GeneralState;
   pObj->m_ClipPath = m_pCurStates->m_ClipPath;
-  pObj->m_ContentMark = *m_ContentMarksStack.top();
+  pObj->m_ContentMarks = *m_ContentMarksStack.top();
   if (bColor) {
     pObj->m_ColorState = m_pCurStates->m_ColorState;
   }
@@ -602,7 +602,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
       return;
   }
   if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    std::unique_ptr<CPDF_ContentMark> new_marks =
+    std::unique_ptr<CPDF_ContentMarks> new_marks =
         m_ContentMarksStack.top()->Clone();
     if (bIndirect) {
       new_marks->AddMarkWithPropertiesDict(std::move(tag), pDict,
@@ -675,7 +675,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
-  std::unique_ptr<CPDF_ContentMark> new_marks =
+  std::unique_ptr<CPDF_ContentMarks> new_marks =
       m_ContentMarksStack.top()->Clone();
   new_marks->AddMark(GetString(0));
   m_ContentMarksStack.push(std::move(new_marks));

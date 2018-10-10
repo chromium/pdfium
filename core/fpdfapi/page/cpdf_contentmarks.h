@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_
-#define CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKS_H_
+#define CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKS_H_
 
 #include <memory>
 #include <vector>
@@ -16,12 +16,12 @@
 
 class CPDF_Dictionary;
 
-class CPDF_ContentMark {
+class CPDF_ContentMarks {
  public:
-  CPDF_ContentMark();
-  ~CPDF_ContentMark();
+  CPDF_ContentMarks();
+  ~CPDF_ContentMarks();
 
-  std::unique_ptr<CPDF_ContentMark> Clone();
+  std::unique_ptr<CPDF_ContentMarks> Clone();
   int GetMarkedContentID() const;
   size_t CountItems() const;
   bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
@@ -37,7 +37,7 @@ class CPDF_ContentMark {
                                  const ByteString& property_name);
   bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
   void DeleteLastMark();
-  size_t FindFirstDifference(const CPDF_ContentMark* other) const;
+  size_t FindFirstDifference(const CPDF_ContentMarks* other) const;
 
  private:
   class MarkData final : public Retainable {
@@ -69,4 +69,4 @@ class CPDF_ContentMark {
   RetainPtr<MarkData> m_pMarkData;
 };
 
-#endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARK_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_CONTENTMARKS_H_

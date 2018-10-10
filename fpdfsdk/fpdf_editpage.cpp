@@ -130,7 +130,7 @@ bool PageObjectContainsMark(CPDF_PageObject* pPageObj,
                             FPDF_PAGEOBJECTMARK mark) {
   const CPDF_ContentMarkItem* pMarkItem =
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
-  return pMarkItem && pPageObj->m_ContentMark.ContainsItem(pMarkItem);
+  return pMarkItem && pPageObj->m_ContentMarks.ContainsItem(pMarkItem);
 }
 
 unsigned int GetUnsignedAlpha(float alpha) {
@@ -301,7 +301,7 @@ FPDFPageObj_CountMarks(FPDF_PAGEOBJECT page_object) {
     return -1;
 
   const auto& mark =
-      CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
+      CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMarks;
   return mark.CountItems();
 }
 
@@ -310,7 +310,7 @@ FPDFPageObj_GetMark(FPDF_PAGEOBJECT page_object, unsigned long index) {
   if (!page_object)
     return nullptr;
 
-  auto* mark = &CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMark;
+  auto* mark = &CPDFPageObjectFromFPDFPageObject(page_object)->m_ContentMarks;
   if (index >= mark->CountItems())
     return nullptr;
 
@@ -323,7 +323,7 @@ FPDFPageObj_AddMark(FPDF_PAGEOBJECT page_object, FPDF_BYTESTRING name) {
   if (!pPageObj)
     return nullptr;
 
-  auto* mark = &pPageObj->m_ContentMark;
+  auto* mark = &pPageObj->m_ContentMarks;
   mark->AddMark(name);
   unsigned long index = mark->CountItems() - 1;
 
@@ -340,7 +340,7 @@ FPDFPageObj_RemoveMark(FPDF_PAGEOBJECT page_object, FPDF_PAGEOBJECTMARK mark) {
   if (!pPageObj || !pMarkItem)
     return false;
 
-  bool result = pPageObj->m_ContentMark.RemoveMark(pMarkItem);
+  bool result = pPageObj->m_ContentMarks.RemoveMark(pMarkItem);
   if (result)
     pPageObj->SetDirty(true);
 
