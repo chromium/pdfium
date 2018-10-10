@@ -39,8 +39,6 @@ class CPDFSDK_InterForm final : public IPDF_FormNotify {
     return m_pFormFillEnv.Get();
   }
 
-  bool HighlightWidgets();
-
   CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, bool bNext) const;
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
   void GetWidgets(const WideString& sFieldName,
@@ -92,7 +90,7 @@ class CPDFSDK_InterForm final : public IPDF_FormNotify {
       const std::vector<CPDF_FormField*>& fields,
       bool bIncludeOrExclude);
 
-  bool IsNeedHighLight(FormFieldType fieldType);
+  bool IsNeedHighLight(FormFieldType fieldType) const;
   void RemoveAllHighLights();
   void SetHighlightAlpha(uint8_t alpha) { m_HighlightAlpha = alpha; }
   uint8_t GetHighlightAlpha() { return m_HighlightAlpha; }
@@ -114,20 +112,18 @@ class CPDFSDK_InterForm final : public IPDF_FormNotify {
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
                               CPDF_Dictionary* pAnnotDict) const;
 
-  using CPDFSDK_WidgetMap = std::map<CPDF_FormControl*, CPDFSDK_Widget*>;
-
-  UnownedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
-  std::unique_ptr<CPDF_InterForm> m_pInterForm;
-  CPDFSDK_WidgetMap m_Map;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
+  std::unique_ptr<CPDF_InterForm> const m_pInterForm;
+  std::map<CPDF_FormControl*, CPDFSDK_Widget*> m_Map;
 #ifdef PDF_ENABLE_XFA
   std::map<CXFA_FFWidget*, CPDFSDK_XFAWidget*> m_XFAMap;
-  bool m_bXfaCalculate;
-  bool m_bXfaValidationsEnabled;
+  bool m_bXfaCalculate = true;
+  bool m_bXfaValidationsEnabled = true;
 #endif  // PDF_ENABLE_XFA
-  bool m_bCalculate;
-  bool m_bBusy;
+  bool m_bCalculate = true;
+  bool m_bBusy = false;
 
-  uint8_t m_HighlightAlpha;
+  uint8_t m_HighlightAlpha = 0;
   FX_COLORREF m_HighlightColor[kFormFieldTypeCount];
   bool m_NeedsHighlight[kFormFieldTypeCount];
 };

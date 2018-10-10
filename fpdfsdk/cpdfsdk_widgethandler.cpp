@@ -62,7 +62,7 @@ CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
   CPDFSDK_Widget* pWidget = new CPDFSDK_Widget(pAnnot, pPage, pInterForm);
   pInterForm->AddMap(pCtrl, pWidget);
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  if (pPDFInterForm && pPDFInterForm->NeedConstructAP())
+  if (pPDFInterForm->NeedConstructAP())
     pWidget->ResetAppearance(nullptr, false);
 
   return pWidget;
