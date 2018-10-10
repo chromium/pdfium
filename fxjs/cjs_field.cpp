@@ -758,11 +758,8 @@ CJS_Result CJS_Field::get_button_align_x(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_IconFit IconFit = pFormControl->GetIconFit();
-
-  float fLeft;
-  float fBottom;
-  IconFit.GetIconPosition(fLeft, fBottom);
-  return CJS_Result::Success(pRuntime->NewNumber(static_cast<int32_t>(fLeft)));
+  CFX_PointF pos = IconFit.GetIconBottomLeftPosition();
+  return CJS_Result::Success(pRuntime->NewNumber(static_cast<int32_t>(pos.x)));
 }
 
 CJS_Result CJS_Field::set_button_align_x(CJS_Runtime* pRuntime,
@@ -788,13 +785,8 @@ CJS_Result CJS_Field::get_button_align_y(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_IconFit IconFit = pFormControl->GetIconFit();
-
-  float fLeft;
-  float fBottom;
-  IconFit.GetIconPosition(fLeft, fBottom);
-
-  return CJS_Result::Success(
-      pRuntime->NewNumber(static_cast<int32_t>(fBottom)));
+  CFX_PointF pos = IconFit.GetIconBottomLeftPosition();
+  return CJS_Result::Success(pRuntime->NewNumber(static_cast<int32_t>(pos.y)));
 }
 
 CJS_Result CJS_Field::set_button_align_y(CJS_Runtime* pRuntime,

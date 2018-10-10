@@ -10,13 +10,19 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_string.h"
 
+namespace {
+
+constexpr float kDefaultPosition = 0.5f;
+
+}  // namespace
+
 CPDF_IconFit::CPDF_IconFit(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
 CPDF_IconFit::CPDF_IconFit(const CPDF_IconFit& that) = default;
 
-CPDF_IconFit::~CPDF_IconFit() {}
+CPDF_IconFit::~CPDF_IconFit() = default;
 
-CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {
+CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() const {
   if (!m_pDict)
     return Always;
 
@@ -30,25 +36,28 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {
   return Always;
 }
 
-bool CPDF_IconFit::IsProportionalScale() {
-  return m_pDict ? m_pDict->GetStringFor("S", "P") != "A" : true;
+bool CPDF_IconFit::IsProportionalScale() const {
+  return !m_pDict || m_pDict->GetStringFor("S", "P") != "A";
 }
 
-void CPDF_IconFit::GetIconPosition(float& fLeft, float& fBottom) {
-  fLeft = fBottom = 0.5;
+CFX_PointF CPDF_IconFit::GetIconBottomLeftPosition() const {
+  float fLeft = kDefaultPosition;
+  float fBottom = kDefaultPosition;
   if (!m_pDict)
-    return;
+    return {fLeft, fBottom};
 
   const CPDF_Array* pA = m_pDict->GetArrayFor("A");
-  if (pA) {
-    uint32_t dwCount = pA->GetCount();
-    if (dwCount > 0)
-      fLeft = pA->GetNumberAt(0);
-    if (dwCount > 1)
-      fBottom = pA->GetNumberAt(1);
-  }
+  if (!pA)
+    return {fLeft, fBottom};
+
+  size_t dwCount = pA->GetCount();
+  if (dwCount > 0)
+    fLeft = pA->GetNumberAt(0);
+  if (dwCount > 1)
+    fBottom = pA->GetNumberAt(1);
+  return {fLeft, fBottom};
 }
 
-bool CPDF_IconFit::GetFittingBounds() {
+bool CPDF_IconFit::GetFittingBounds() const {
   return m_pDict && m_pDict->GetBooleanFor("FB", false);
 }
