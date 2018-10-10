@@ -256,6 +256,11 @@ class TestRunner:
                                                    '--show-config'])
     self.test_suppressor = suppressor.Suppressor(finder, self.feature_string)
     self.image_differ = pngdiffer.PNGDiffer(finder)
+    error_message = self.image_differ.CheckMissingTools(
+        self.options.regenerate_expected)
+    if error_message:
+      print "FAILURE: %s" % error_message
+      return 1
 
     self.gold_baseline = gold.GoldBaseline(self.options.gold_properties)
 

@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import distutils.spawn
 import itertools
 import os
 import shutil
@@ -14,6 +15,13 @@ class PNGDiffer():
   def __init__(self, finder):
     self.pdfium_diff_path = finder.ExecutablePath('pdfium_diff')
     self.os_name = finder.os_name
+
+  def CheckMissingTools(self, regenerate_expected):
+    if (regenerate_expected and
+        self.os_name == 'linux' and
+        not distutils.spawn.find_executable('optipng')):
+      return 'Please install "optipng" to regenerate expected images.'
+    return None
 
   def GetActualFiles(self, input_filename, source_dir, working_dir):
     actual_paths = []
@@ -93,6 +101,7 @@ class PNGDiffer():
         continue
 
       shutil.copyfile(actual_path, expected_path)
+      common.RunCommand(['optipng', expected_path])
 
 
 ACTUAL_TEMPLATE = '.pdf.%d.png'
