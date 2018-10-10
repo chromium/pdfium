@@ -718,13 +718,12 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
   ASSERT(pWidget);
   CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
 
-  bool bFormatted = false;
-  WideString sValue = pInterForm->OnFormat(pWidget->GetFormField(), bFormatted);
+  Optional<WideString> sValue = pInterForm->OnFormat(pWidget->GetFormField());
   if (!(*pAnnot))
     return;
 
-  if (bFormatted) {
-    pInterForm->ResetFieldAppearance(pWidget->GetFormField(), &sValue, true);
+  if (sValue.has_value()) {
+    pInterForm->ResetFieldAppearance(pWidget->GetFormField(), sValue, true);
     pInterForm->UpdateField(pWidget->GetFormField());
   }
 

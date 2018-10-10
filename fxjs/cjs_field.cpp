@@ -54,19 +54,17 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     if (IsComboBoxOrTextField(pFormField)) {
       for (auto& pObserved : widgets) {
         if (pObserved) {
-          bool bFormatted = false;
-          WideString sValue =
-              ToCPDFSDKWidget(pObserved.Get())->OnFormat(bFormatted);
+          Optional<WideString> sValue =
+              ToCPDFSDKWidget(pObserved.Get())->OnFormat();
           if (pObserved) {  // Not redundant, may be clobbered by OnFormat.
-            ToCPDFSDKWidget(pObserved.Get())->ResetAppearance(
-                bFormatted ? &sValue : nullptr, false);
+            ToCPDFSDKWidget(pObserved.Get())->ResetAppearance(sValue, false);
           }
         }
       }
     } else {
       for (auto& pObserved : widgets) {
         if (pObserved)
-          ToCPDFSDKWidget(pObserved.Get())->ResetAppearance(nullptr, false);
+          ToCPDFSDKWidget(pObserved.Get())->ResetAppearance({}, false);
       }
     }
   }
@@ -110,13 +108,12 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       FormFieldType fieldType = pWidget->GetFieldType();
       if (fieldType == FormFieldType::kComboBox ||
           fieldType == FormFieldType::kTextField) {
-        bool bFormatted = false;
-        WideString sValue = pWidget->OnFormat(bFormatted);
+        Optional<WideString> sValue = pWidget->OnFormat();
         if (!observed_widget)
           return;
-        pWidget->ResetAppearance(bFormatted ? &sValue : nullptr, false);
+        pWidget->ResetAppearance(sValue, false);
       } else {
-        pWidget->ResetAppearance(nullptr, false);
+        pWidget->ResetAppearance({}, false);
       }
       if (!observed_widget)
         return;

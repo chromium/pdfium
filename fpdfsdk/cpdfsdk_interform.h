@@ -16,6 +16,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
+#include "third_party/base/optional.h"
 
 class CPDF_Dictionary;
 class CPDF_FormControl;
@@ -66,10 +67,10 @@ class CPDFSDK_InterForm final : public IPDF_FormNotify {
   bool OnKeyStrokeCommit(CPDF_FormField* pFormField, const WideString& csValue);
   bool OnValidate(CPDF_FormField* pFormField, const WideString& csValue);
   void OnCalculate(CPDF_FormField* pFormField);
-  WideString OnFormat(CPDF_FormField* pFormField, bool& bFormatted);
+  Optional<WideString> OnFormat(CPDF_FormField* pFormField);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,
-                            const WideString* sValue,
+                            Optional<WideString> sValue,
                             bool bValueChanged);
   void UpdateField(CPDF_FormField* pFormField);
 

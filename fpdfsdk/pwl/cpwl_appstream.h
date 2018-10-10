@@ -9,6 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/optional.h"
 
 class CPDFSDK_Widget;
 class CPDF_Dictionary;
@@ -22,9 +23,9 @@ class CPWL_AppStream {
   void SetAsPushButton();
   void SetAsCheckBox();
   void SetAsRadioButton();
-  void SetAsComboBox(const WideString* sValue);
+  void SetAsComboBox(Optional<WideString> sValue);
   void SetAsListBox();
-  void SetAsTextField(const WideString* sValue);
+  void SetAsTextField(Optional<WideString> sValue);
 
  private:
   void AddImage(const ByteString& sAPType, CPDF_Stream* pImage);
@@ -36,8 +37,8 @@ class CPWL_AppStream {
   ByteString GetBackgroundAppStream() const;
   ByteString GetBorderAppStream() const;
 
-  UnownedPtr<CPDFSDK_Widget> widget_;
-  UnownedPtr<CPDF_Dictionary> dict_;
+  UnownedPtr<CPDFSDK_Widget> const widget_;
+  UnownedPtr<CPDF_Dictionary> const dict_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_APPSTREAM_H_

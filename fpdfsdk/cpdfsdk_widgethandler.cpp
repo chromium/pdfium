@@ -63,8 +63,7 @@ CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
   pInterForm->AddMap(pCtrl, pWidget);
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
   if (pPDFInterForm->NeedConstructAP())
-    pWidget->ResetAppearance(nullptr, false);
-
+    pWidget->ResetAppearance(pdfium::nullopt, false);
   return pWidget;
 }
 
@@ -223,19 +222,18 @@ void CPDFSDK_WidgetHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot);
   if (!pWidget->IsAppearanceValid())
-    pWidget->ResetAppearance(nullptr, false);
+    pWidget->ResetAppearance(pdfium::nullopt, false);
 
   FormFieldType fieldType = pWidget->GetFieldType();
   if (fieldType == FormFieldType::kTextField ||
       fieldType == FormFieldType::kComboBox) {
-    bool bFormatted = false;
     CPDFSDK_Annot::ObservedPtr pObserved(pWidget);
-    WideString sValue = pWidget->OnFormat(bFormatted);
+    Optional<WideString> sValue = pWidget->OnFormat();
     if (!pObserved)
       return;
 
-    if (bFormatted && fieldType == FormFieldType::kComboBox)
-      pWidget->ResetAppearance(&sValue, false);
+    if (sValue.has_value() && fieldType == FormFieldType::kComboBox)
+      pWidget->ResetAppearance(sValue, false);
   }
 
 #ifdef PDF_ENABLE_XFA

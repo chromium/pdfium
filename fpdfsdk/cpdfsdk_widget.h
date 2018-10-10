@@ -89,10 +89,10 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 #ifdef PDF_ENABLE_XFA
   void ResetAppearance(bool bValueChanged);
 #endif  // PDF_ENABLE_XFA
-  void ResetAppearance(const WideString* sValue, bool bValueChanged);
+  void ResetAppearance(Optional<WideString> sValue, bool bValueChanged);
   void ResetFieldAppearance(bool bValueChanged);
   void UpdateField();
-  WideString OnFormat(bool& bFormatted);
+  Optional<WideString> OnFormat();
 
   bool OnAAction(CPDF_AAction::AActionType type,
                  CPDFSDK_FieldAction* data,

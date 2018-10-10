@@ -585,19 +585,17 @@ void CPDFSDK_Widget::ResetAppearance(bool bValueChanged) {
   switch (GetFieldType()) {
     case FormFieldType::kTextField:
     case FormFieldType::kComboBox: {
-      bool bFormatted = false;
-      WideString sValue = OnFormat(bFormatted);
-      ResetAppearance(bFormatted ? &sValue : nullptr, true);
+      ResetAppearance(OnFormat(), true);
       break;
     }
     default:
-      ResetAppearance(nullptr, false);
+      ResetAppearance(pdfium::nullopt, false);
       break;
   }
 }
 #endif  // PDF_ENABLE_XFA
 
-void CPDFSDK_Widget::ResetAppearance(const WideString* sValue,
+void CPDFSDK_Widget::ResetAppearance(Optional<WideString> sValue,
                                      bool bValueChanged) {
   SetAppModified();
 
@@ -632,16 +630,17 @@ void CPDFSDK_Widget::ResetAppearance(const WideString* sValue,
   m_pAnnot->ClearCachedAP();
 }
 
-WideString CPDFSDK_Widget::OnFormat(bool& bFormatted) {
+Optional<WideString> CPDFSDK_Widget::OnFormat() {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  return m_pInterForm->OnFormat(pFormField, bFormatted);
+  return m_pInterForm->OnFormat(pFormField);
 }
 
 void CPDFSDK_Widget::ResetFieldAppearance(bool bValueChanged) {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  m_pInterForm->ResetFieldAppearance(pFormField, nullptr, bValueChanged);
+  m_pInterForm->ResetFieldAppearance(pFormField, pdfium::nullopt,
+                                     bValueChanged);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
@@ -700,7 +699,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
 
 CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
   CFX_FloatRect rcWindow = GetRotatedRect();
-  float fBorderWidth = (float)GetBorderWidth();
+  float fBorderWidth = GetBorderWidth();
   switch (GetBorderStyle()) {
     case BorderStyle::BEVELED:
     case BorderStyle::INSET:

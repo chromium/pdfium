@@ -1580,7 +1580,7 @@ void CPWL_AppStream::SetAsRadioButton() {
     widget_->SetAppState("Off");
 }
 
-void CPWL_AppStream::SetAsComboBox(const WideString* sValue) {
+void CPWL_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   CPDF_FormControl* pControl = widget_->GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   std::ostringstream sBody;
@@ -1614,8 +1614,8 @@ void CPWL_AppStream::SetAsComboBox(const WideString* sValue) {
 
   pEdit->Initialize();
 
-  if (sValue) {
-    pEdit->SetText(*sValue);
+  if (sValue.has_value()) {
+    pEdit->SetText(sValue.value());
   } else {
     int32_t nCurSel = pField->GetSelectedIndex(0);
     if (nCurSel < 0)
@@ -1736,7 +1736,7 @@ void CPWL_AppStream::SetAsListBox() {
         "");
 }
 
-void CPWL_AppStream::SetAsTextField(const WideString* sValue) {
+void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
   CPDF_FormControl* pControl = widget_->GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   std::ostringstream sBody;
@@ -1775,11 +1775,8 @@ void CPWL_AppStream::SetAsTextField(const WideString* sValue) {
   float fFontSize = widget_->GetFontSize();
 
 #ifdef PDF_ENABLE_XFA
-  WideString sValueTmp;
-  if (!sValue && widget_->GetMixXFAWidget()) {
-    sValueTmp = widget_->GetValue();
-    sValue = &sValueTmp;
-  }
+  if (!sValue.has_value() && widget_->GetMixXFAWidget())
+    sValue = widget_->GetValue();
 #endif  // PDF_ENABLE_XFA
 
   if (nMaxLen > 0) {
@@ -1791,8 +1788,8 @@ void CPWL_AppStream::SetAsTextField(const WideString* sValue) {
                                                         rcClient, nMaxLen);
       }
     } else {
-      if (sValue)
-        nMaxLen = sValue->GetLength();
+      if (sValue.has_value())
+        nMaxLen = sValue.value().GetLength();
       pEdit->SetLimitChar(nMaxLen);
     }
   }
@@ -1803,7 +1800,7 @@ void CPWL_AppStream::SetAsTextField(const WideString* sValue) {
     pEdit->SetFontSize(fFontSize);
 
   pEdit->Initialize();
-  pEdit->SetText(sValue ? *sValue : pField->GetValue());
+  pEdit->SetText(sValue.value_or(pField->GetValue()));
 
   CFX_FloatRect rcContent = pEdit->GetContentRect();
   ByteString sEdit =
