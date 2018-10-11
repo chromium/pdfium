@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_CPDF_INTERFORM_H_
-#define CORE_FPDFDOC_CPDF_INTERFORM_H_
+#ifndef CORE_FPDFDOC_CPDF_INTERACTIVEFORM_H_
+#define CORE_FPDFDOC_CPDF_INTERACTIVEFORM_H_
 
 #include <map>
 #include <memory>
@@ -108,4 +108,4 @@ class CPDF_InterForm {
   UnownedPtr<IPDF_FormNotify> m_pFormNotify;
 };
 
-#endif  // CORE_FPDFDOC_CPDF_INTERFORM_H_
+#endif  // CORE_FPDFDOC_CPDF_INTERACTIVEFORM_H_

@@ -17,10 +17,10 @@
 #include <utility>
 #include <vector>
 
-#include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fxjs/cjs_color.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventhandler.h"

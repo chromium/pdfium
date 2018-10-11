@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "fpdfsdk/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fxjs/cjs_document.h"
 #include "fxjs/cjs_timerobj.h"
 #include "fxjs/global_timer.h"

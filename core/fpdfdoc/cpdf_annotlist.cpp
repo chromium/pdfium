@@ -21,7 +21,7 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxge/cfx_renderdevice.h"

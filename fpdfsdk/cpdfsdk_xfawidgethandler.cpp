@@ -6,10 +6,10 @@
 
 #include "fpdfsdk/cpdfsdk_xfawidgethandler.h"
 
-#include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
-#include "fpdfsdk/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_xfawidget.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"

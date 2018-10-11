@@ -11,10 +11,10 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "fpdfsdk/cpdfsdk_interform.h"
+#include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/ijs_runtime.h"
 #include "third_party/base/logging.h"

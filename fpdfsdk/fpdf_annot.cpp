@@ -19,7 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdf_annotcontext.h"

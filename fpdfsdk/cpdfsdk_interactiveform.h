@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_CPDFSDK_INTERFORM_H_
-#define FPDFSDK_CPDFSDK_INTERFORM_H_
+#ifndef FPDFSDK_CPDFSDK_INTERACTIVEFORM_H_
+#define FPDFSDK_CPDFSDK_INTERACTIVEFORM_H_
 
 #include <map>
 #include <memory>
@@ -129,4 +129,4 @@ class CPDFSDK_InterForm final : public IPDF_FormNotify {
   bool m_NeedsHighlight[kFormFieldTypeCount];
 };
 
-#endif  // FPDFSDK_CPDFSDK_INTERFORM_H_
+#endif  // FPDFSDK_CPDFSDK_INTERACTIVEFORM_H_

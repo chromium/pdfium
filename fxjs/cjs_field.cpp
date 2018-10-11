@@ -12,8 +12,8 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
-#include "core/fpdfdoc/cpdf_interform.h"
-#include "fpdfsdk/cpdfsdk_interform.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
+#include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fxjs/cjs_color.h"
