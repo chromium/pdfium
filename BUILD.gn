@@ -240,7 +240,7 @@ jumbo_static_library("pdfium") {
   }
 }
 
-jumbo_static_library("test_support") {
+jumbo_source_set("test_support") {
   testonly = true
   sources = [
     "testing/fx_string_testhelpers.cpp",
@@ -274,7 +274,7 @@ jumbo_static_library("test_support") {
   configs += [ ":pdfium_core_config" ]
 }
 
-jumbo_static_library("image_diff") {
+jumbo_source_set("image_diff") {
   testonly = true
   sources = [
     "testing/image_diff/image_diff_png.cpp",
@@ -302,7 +302,7 @@ jumbo_source_set("constants") {
   ]
 }
 
-jumbo_static_library("fdrm") {
+jumbo_source_set("fdrm") {
   sources = [
     "core/fdrm/crypto/fx_crypt.cpp",
     "core/fdrm/crypto/fx_crypt.h",
@@ -315,7 +315,7 @@ jumbo_static_library("fdrm") {
   ]
 }
 
-jumbo_static_library("fpdfdoc") {
+jumbo_source_set("fpdfdoc") {
   sources = [
     "core/fpdfdoc/cline.cpp",
     "core/fpdfdoc/cline.h",
@@ -398,7 +398,7 @@ jumbo_static_library("fpdfdoc") {
   ]
 }
 
-jumbo_static_library("fpdfapi") {
+jumbo_source_set("fpdfapi") {
   sources = [
     "core/fpdfapi/cmaps/CNS1/Adobe-CNS1-UCS2_5.cpp",
     "core/fpdfapi/cmaps/CNS1/B5pc-H_0.cpp",
@@ -701,7 +701,7 @@ jumbo_static_library("fpdfapi") {
   ]
 }
 
-jumbo_static_library("fpdftext") {
+jumbo_source_set("fpdftext") {
   sources = [
     "core/fpdftext/cpdf_linkextract.cpp",
     "core/fpdftext/cpdf_linkextract.h",
@@ -718,7 +718,7 @@ jumbo_static_library("fpdftext") {
   ]
 }
 
-jumbo_static_library("fxcodec") {
+jumbo_source_set("fxcodec") {
   sources = [
     "core/fxcodec/JBig2_DocumentContext.h",
     "core/fxcodec/codec/ccodec_basicmodule.h",
@@ -844,7 +844,7 @@ config("fxge_warnings") {
   }
 }
 
-jumbo_static_library("fxcrt") {
+jumbo_source_set("fxcrt") {
   sources = [
     "core/fxcrt/autorestorer.h",
     "core/fxcrt/bytestring.cpp",
@@ -999,7 +999,7 @@ jumbo_static_library("fxcrt") {
   }
 }
 
-jumbo_static_library("fxge") {
+jumbo_source_set("fxge") {
   sources = [
     "core/fxge/android/cfpf_skiadevicemodule.cpp",
     "core/fxge/android/cfpf_skiadevicemodule.h",
@@ -1160,7 +1160,7 @@ jumbo_static_library("fxge") {
   }
 }
 
-jumbo_static_library("pwl") {
+jumbo_source_set("pwl") {
   sources = [
     "fpdfsdk/pwl/cpwl_appstream.cpp",
     "fpdfsdk/pwl/cpwl_appstream.h",
@@ -1201,7 +1201,7 @@ jumbo_static_library("pwl") {
   ]
 }
 
-jumbo_static_library("fxjs") {
+jumbo_source_set("fxjs") {
   sources = [
     "fxjs/cjs_event_context_stub.cpp",
     "fxjs/cjs_event_context_stub.h",
@@ -1635,7 +1635,7 @@ jumbo_static_library("fxjs") {
   }
 }
 
-jumbo_static_library("formfiller") {
+jumbo_source_set("formfiller") {
   sources = [
     "fpdfsdk/formfiller/cba_fontmap.cpp",
     "fpdfsdk/formfiller/cba_fontmap.h",
@@ -1667,7 +1667,7 @@ jumbo_static_library("formfiller") {
 }
 
 if (pdf_enable_xfa) {
-  jumbo_static_library("fpdfxfa") {
+  jumbo_source_set("fpdfxfa") {
     sources = [
       "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
       "fpdfsdk/fpdfxfa/cpdfxfa_context.h",
@@ -1686,7 +1686,7 @@ if (pdf_enable_xfa) {
     configs += [ ":pdfium_core_config" ]
   }
 
-  jumbo_static_library("fxbarcode") {
+  jumbo_source_set("fxbarcode") {
     sources = [
       "fxbarcode/BC_Library.cpp",
       "fxbarcode/BC_Library.h",
@@ -1831,7 +1831,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  jumbo_static_library("xfa_fde") {
+  jumbo_source_set("xfa_fde") {
     sources = [
       "xfa/fde/cfde_data.h",
       "xfa/fde/cfde_texteditengine.cpp",
@@ -1850,7 +1850,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  jumbo_static_library("xfa_fgas") {
+  jumbo_source_set("xfa_fgas") {
     sources = [
       "xfa/fgas/crt/cfgas_formatstring.cpp",
       "xfa/fgas/crt/cfgas_formatstring.h",
@@ -1893,7 +1893,7 @@ if (pdf_enable_xfa) {
     }
   }
 
-  jumbo_static_library("xfa_fwl") {
+  jumbo_source_set("xfa_fwl") {
     sources = [
       "xfa/fwl/cfwl_app.cpp",
       "xfa/fwl/cfwl_app.h",
@@ -2017,7 +2017,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  jumbo_static_library("xfa_fxfa") {
+  jumbo_source_set("xfa_fxfa") {
     sources = [
       "xfa/fxfa/cxfa_eventparam.cpp",
       "xfa/fxfa/cxfa_eventparam.h",
@@ -2120,7 +2120,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  jumbo_static_library("xfa_fxfa_fm2js") {
+  jumbo_source_set("xfa_fxfa_fm2js") {
     sources = [
       "xfa/fxfa/fm2js/cxfa_fmexpression.cpp",
       "xfa/fxfa/fm2js/cxfa_fmexpression.h",
@@ -2142,7 +2142,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  jumbo_static_library("xfa_fxfa_parser") {
+  jumbo_source_set("xfa_fxfa_parser") {
     sources = [
       "xfa/fxfa/parser/cscript_datawindow.cpp",
       "xfa/fxfa/parser/cscript_datawindow.h",
@@ -2846,7 +2846,7 @@ if (pdf_enable_xfa) {
     ]
   }
 
-  jumbo_static_library("xfa_fxgraphics") {
+  jumbo_source_set("xfa_fxgraphics") {
     sources = [
       "xfa/fxgraphics/cxfa_gecolor.cpp",
       "xfa/fxgraphics/cxfa_gecolor.h",
