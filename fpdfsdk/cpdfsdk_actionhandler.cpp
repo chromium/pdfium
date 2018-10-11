@@ -212,9 +212,9 @@ bool CPDFSDK_ActionHandler::IsValidField(
     CPDF_Dictionary* pFieldDict) {
   ASSERT(pFieldDict);
 
-  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-  CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  return !!pPDFInterForm->GetFieldByDict(pFieldDict);
+  CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
+  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+  return !!pPDFForm->GetFieldByDict(pFieldDict);
 }
 
 bool CPDFSDK_ActionHandler::ExecuteFieldAction(
@@ -509,8 +509,8 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
 bool CPDFSDK_ActionHandler::DoAction_Hide(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-  if (pInterForm->DoAction_Hide(action)) {
+  CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
+  if (pForm->DoAction_Hide(action)) {
     pFormFillEnv->SetChangeMark();
     return true;
   }
@@ -520,15 +520,15 @@ bool CPDFSDK_ActionHandler::DoAction_Hide(
 bool CPDFSDK_ActionHandler::DoAction_SubmitForm(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-  return pInterForm->DoAction_SubmitForm(action);
+  CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
+  return pForm->DoAction_SubmitForm(action);
 }
 
 void CPDFSDK_ActionHandler::DoAction_ResetForm(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-  pInterForm->DoAction_ResetForm(action);
+  CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
+  pForm->DoAction_ResetForm(action);
 }
 
 void CPDFSDK_ActionHandler::RunScriptForAction(

@@ -702,8 +702,9 @@ void CFFL_InteractiveFormFiller::OnCalculate(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
   if (pWidget) {
-    CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
-    pInterForm->OnCalculate(pWidget->GetFormField());
+    CPDFSDK_InteractiveForm* pForm =
+        pPageView->GetFormFillEnv()->GetInteractiveForm();
+    pForm->OnCalculate(pWidget->GetFormField());
   }
   m_bNotifying = false;
 }
@@ -716,15 +717,16 @@ void CFFL_InteractiveFormFiller::OnFormat(CPDFSDK_Annot::ObservedPtr* pAnnot,
 
   CPDFSDK_Widget* pWidget = ToCPDFSDKWidget(pAnnot->Get());
   ASSERT(pWidget);
-  CPDFSDK_InterForm* pInterForm = pPageView->GetFormFillEnv()->GetInterForm();
+  CPDFSDK_InteractiveForm* pForm =
+      pPageView->GetFormFillEnv()->GetInteractiveForm();
 
-  Optional<WideString> sValue = pInterForm->OnFormat(pWidget->GetFormField());
+  Optional<WideString> sValue = pForm->OnFormat(pWidget->GetFormField());
   if (!pAnnot->HasObservable())
     return;
 
   if (sValue.has_value()) {
-    pInterForm->ResetFieldAppearance(pWidget->GetFormField(), sValue, true);
-    pInterForm->UpdateField(pWidget->GetFormField());
+    pForm->ResetFieldAppearance(pWidget->GetFormField(), sValue, true);
+    pForm->UpdateField(pWidget->GetFormField());
   }
 
   m_bNotifying = false;

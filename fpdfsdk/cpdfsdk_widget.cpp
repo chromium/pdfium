@@ -43,8 +43,9 @@
 
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_PageView* pPageView,
-                               CPDFSDK_InterForm* pInterForm)
-    : CPDFSDK_BAAnnot(pAnnot, pPageView), m_pInterForm(pInterForm) {}
+                               CPDFSDK_InteractiveForm* pInteractiveForm)
+    : CPDFSDK_BAAnnot(pAnnot, pPageView),
+      m_pInteractiveForm(pInteractiveForm) {}
 
 CPDFSDK_Widget::~CPDFSDK_Widget() = default;
 
@@ -359,9 +360,10 @@ int CPDFSDK_Widget::GetLayoutOrder() const {
 }
 
 int CPDFSDK_Widget::GetFieldFlags() const {
-  CPDF_InterForm* pPDFInterForm = m_pInterForm->GetInterForm();
+  CPDF_InteractiveForm* pPDFInteractiveForm =
+      m_pInteractiveForm->GetInteractiveForm();
   CPDF_FormControl* pFormControl =
-      pPDFInterForm->GetControlByDict(GetAnnotDict());
+      pPDFInteractiveForm->GetControlByDict(GetAnnotDict());
   CPDF_FormField* pFormField = pFormControl->GetField();
   return pFormField->GetFieldFlags();
 }
@@ -376,8 +378,9 @@ CPDF_FormField* CPDFSDK_Widget::GetFormField() const {
 }
 
 CPDF_FormControl* CPDFSDK_Widget::GetFormControl() const {
-  CPDF_InterForm* pPDFInterForm = m_pInterForm->GetInterForm();
-  return pPDFInterForm->GetControlByDict(GetAnnotDict());
+  CPDF_InteractiveForm* pPDFInteractiveForm =
+      m_pInteractiveForm->GetInteractiveForm();
+  return pPDFInteractiveForm->GetControlByDict(GetAnnotDict());
 }
 
 int CPDFSDK_Widget::GetRotate() const {
@@ -626,14 +629,14 @@ void CPDFSDK_Widget::ResetAppearance(Optional<WideString> sValue,
 Optional<WideString> CPDFSDK_Widget::OnFormat() {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  return m_pInterForm->OnFormat(pFormField);
+  return m_pInteractiveForm->OnFormat(pFormField);
 }
 
 void CPDFSDK_Widget::ResetFieldAppearance(bool bValueChanged) {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  m_pInterForm->ResetFieldAppearance(pFormField, pdfium::nullopt,
-                                     bValueChanged);
+  m_pInteractiveForm->ResetFieldAppearance(pFormField, pdfium::nullopt,
+                                           bValueChanged);
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
@@ -661,13 +664,13 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
 void CPDFSDK_Widget::UpdateField() {
   CPDF_FormField* pFormField = GetFormField();
   ASSERT(pFormField);
-  m_pInterForm->UpdateField(pFormField);
+  m_pInteractiveForm->UpdateField(pFormField);
 }
 
 void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
                                 CPDFSDK_PageView* pPageView) {
   FormFieldType fieldType = GetFieldType();
-  if (!m_pInterForm->IsNeedHighLight(fieldType))
+  if (!m_pInteractiveForm->IsNeedHighLight(fieldType))
     return;
 
   CFX_Matrix page2device;
@@ -684,10 +687,11 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   rcDevice.top = tmp.y;
   rcDevice.Normalize();
 
-  pDevice->FillRect(rcDevice.ToFxRect(),
-                    AlphaAndColorRefToArgb(
-                        static_cast<int>(m_pInterForm->GetHighlightAlpha()),
-                        m_pInterForm->GetHighlightColor(fieldType)));
+  pDevice->FillRect(
+      rcDevice.ToFxRect(),
+      AlphaAndColorRefToArgb(
+          static_cast<int>(m_pInteractiveForm->GetHighlightAlpha()),
+          m_pInteractiveForm->GetHighlightColor(fieldType)));
 }
 
 CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {

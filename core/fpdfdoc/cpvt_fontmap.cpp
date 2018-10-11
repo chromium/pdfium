@@ -33,7 +33,8 @@ CPDF_Font* CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
     return nullptr;
 
   CPDF_Dictionary* pFormDict = pDoc->GetRoot()->GetDictFor("AcroForm");
-  CPDF_Font* pPDFFont = AddNativeInterFormFont(pFormDict, pDoc, sSysFontAlias);
+  CPDF_Font* pPDFFont =
+      AddNativeInteractiveFormFont(pFormDict, pDoc, sSysFontAlias);
   if (!pPDFFont)
     return nullptr;
 

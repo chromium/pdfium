@@ -56,16 +56,15 @@ bool CPDFSDK_WidgetHandler::CanAnswer(CPDFSDK_Annot* pAnnot) {
 
 CPDFSDK_Annot* CPDFSDK_WidgetHandler::NewAnnot(CPDF_Annot* pAnnot,
                                                CPDFSDK_PageView* pPage) {
-  CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  CPDF_FormControl* pCtrl =
-      pPDFInterForm->GetControlByDict(pAnnot->GetAnnotDict());
+  CPDFSDK_InteractiveForm* pForm = m_pFormFillEnv->GetInteractiveForm();
+  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+  CPDF_FormControl* pCtrl = pPDFForm->GetControlByDict(pAnnot->GetAnnotDict());
   if (!pCtrl)
     return nullptr;
 
-  CPDFSDK_Widget* pWidget = new CPDFSDK_Widget(pAnnot, pPage, pInterForm);
-  pInterForm->AddMap(pCtrl, pWidget);
-  if (pPDFInterForm->NeedConstructAP())
+  CPDFSDK_Widget* pWidget = new CPDFSDK_Widget(pAnnot, pPage, pForm);
+  pForm->AddMap(pCtrl, pWidget);
+  if (pPDFForm->NeedConstructAP())
     pWidget->ResetAppearance(pdfium::nullopt, false);
   return pWidget;
 }
@@ -82,9 +81,9 @@ void CPDFSDK_WidgetHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   m_pFormFiller->OnDelete(pAnnot);
 
   std::unique_ptr<CPDFSDK_Widget> pWidget(ToCPDFSDKWidget(pAnnot));
-  CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
+  CPDFSDK_InteractiveForm* pForm = pWidget->GetInteractiveForm();
   CPDF_FormControl* pControl = pWidget->GetFormControl();
-  pInterForm->RemoveMap(pControl);
+  pForm->RemoveMap(pControl);
 }
 
 void CPDFSDK_WidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,

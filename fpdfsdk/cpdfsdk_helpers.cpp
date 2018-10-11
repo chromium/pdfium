@@ -239,7 +239,7 @@ void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
   }
 
   // XFA Forms
-  if (!pDoc->GetExtension() && CPDF_InterForm(pDoc).HasXFAForm())
+  if (!pDoc->GetExtension() && CPDF_InteractiveForm(pDoc).HasXFAForm())
     RaiseUnSupportError(FPDF_UNSP_DOC_XFAFORM);
 }
 

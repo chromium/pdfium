@@ -128,7 +128,8 @@ CJS_Result CJS_App::get_calculate(CJS_Runtime* pRuntime) {
 CJS_Result CJS_App::set_calculate(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp) {
   m_bCalculate = pRuntime->ToBoolean(vp);
-  pRuntime->GetFormFillEnv()->GetInterForm()->EnableCalculate(m_bCalculate);
+  pRuntime->GetFormFillEnv()->GetInteractiveForm()->EnableCalculate(
+      m_bCalculate);
   return CJS_Result::Success();
 }
 

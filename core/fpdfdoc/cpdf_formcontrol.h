@@ -32,7 +32,7 @@ class CFX_RenderDevice;
 class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormField;
-class CPDF_InterForm;
+class CPDF_InteractiveForm;
 class CPDF_OCContext;
 class CPDF_RenderOptions;
 class CPDF_Stream;
@@ -45,7 +45,9 @@ class CPDF_FormControl {
   ~CPDF_FormControl();
 
   CPDF_FormField::Type GetType() const { return m_pField->GetType(); }
-  const CPDF_InterForm* GetInterForm() const { return m_pForm.Get(); }
+  const CPDF_InteractiveForm* GetInteractiveForm() const {
+    return m_pForm.Get();
+  }
   CPDF_FormField* GetField() const { return m_pField; }
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict.Get(); }
   CFX_FloatRect GetRect() const;
@@ -115,7 +117,7 @@ class CPDF_FormControl {
 
   CPDF_FormField* const m_pField;
   UnownedPtr<CPDF_Dictionary> const m_pWidgetDict;
-  UnownedPtr<const CPDF_InterForm> const m_pForm;
+  UnownedPtr<const CPDF_InteractiveForm> const m_pForm;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMCONTROL_H_

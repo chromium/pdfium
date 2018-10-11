@@ -20,7 +20,7 @@
 class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormControl;
-class CPDF_InterForm;
+class CPDF_InteractiveForm;
 class CPDF_Object;
 class CPDF_String;
 
@@ -98,7 +98,7 @@ class CPDF_FormField {
     Sign
   };
 
-  CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict);
+  CPDF_FormField(CPDF_InteractiveForm* pForm, CPDF_Dictionary* pDict);
   ~CPDF_FormField();
 
   WideString GetFullName() const;
@@ -171,7 +171,7 @@ class CPDF_FormField {
   CPDF_Font* GetFont() const { return m_pFont.Get(); }
 
   CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
-  CPDF_InterForm* GetForm() const { return m_pForm.Get(); }
+  CPDF_InteractiveForm* GetForm() const { return m_pForm.Get(); }
 
   WideString GetCheckValue(bool bDefault) const;
 
@@ -206,9 +206,9 @@ class CPDF_FormField {
   bool m_bRequired = false;
   bool m_bNoExport = false;
 
-  UnownedPtr<CPDF_InterForm> const m_pForm;
+  UnownedPtr<CPDF_InteractiveForm> const m_pForm;
   UnownedPtr<CPDF_Dictionary> const m_pDict;
-  // Owned by InterForm parent.
+  // Owned by InteractiveForm parent.
   std::vector<UnownedPtr<CPDF_FormControl>> m_ControlList;
   float m_FontSize = 0;
   UnownedPtr<CPDF_Font> m_pFont;

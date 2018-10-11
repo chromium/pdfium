@@ -102,7 +102,8 @@ WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict) {
   return full_name;
 }
 
-CPDF_FormField::CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict)
+CPDF_FormField::CPDF_FormField(CPDF_InteractiveForm* pForm,
+                               CPDF_Dictionary* pDict)
     : m_pForm(pForm), m_pDict(pDict) {
   InitFieldFlags();
 }

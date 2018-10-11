@@ -12,7 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 
-class CPDFSDK_InterForm;
+class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 class CXFA_FFWidget;
 
@@ -20,7 +20,7 @@ class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
  public:
   CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
                     CPDFSDK_PageView* pPageView,
-                    CPDFSDK_InterForm* pInterForm);
+                    CPDFSDK_InteractiveForm* pInteractiveForm);
   ~CPDFSDK_XFAWidget() override;
 
   // CPDFSDK_Annot:
@@ -29,10 +29,12 @@ class CPDFSDK_XFAWidget final : public CPDFSDK_Annot {
   CPDF_Annot::Subtype GetAnnotSubtype() const override;
   CFX_FloatRect GetRect() const override;
 
-  CPDFSDK_InterForm* GetInterForm() const { return m_pInterForm.Get(); }
+  CPDFSDK_InteractiveForm* GetInteractiveForm() const {
+    return m_pInteractiveForm.Get();
+  }
 
  private:
-  UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
+  UnownedPtr<CPDFSDK_InteractiveForm> const m_pInteractiveForm;
   UnownedPtr<CXFA_FFWidget> const m_hXFAWidget;
 };
 

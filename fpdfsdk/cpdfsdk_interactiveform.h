@@ -21,7 +21,7 @@
 class CPDF_Dictionary;
 class CPDF_FormControl;
 class CPDF_FormField;
-class CPDF_InterForm;
+class CPDF_InteractiveForm;
 class CPDF_Object;
 class CPDFSDK_FormFillEnvironment;
 
@@ -30,12 +30,14 @@ class CPDFSDK_XFAWidget;
 class CXFA_FFWidget;
 #endif  // PDF_ENABLE_XFA
 
-class CPDFSDK_InterForm final : public IPDF_FormNotify {
+class CPDFSDK_InteractiveForm final : public IPDF_FormNotify {
  public:
-  explicit CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv);
-  ~CPDFSDK_InterForm() override;
+  explicit CPDFSDK_InteractiveForm(CPDFSDK_FormFillEnvironment* pFormFillEnv);
+  ~CPDFSDK_InteractiveForm() override;
 
-  CPDF_InterForm* GetInterForm() const { return m_pInterForm.get(); }
+  CPDF_InteractiveForm* GetInteractiveForm() const {
+    return m_pInteractiveForm.get();
+  }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
   }
@@ -108,13 +110,13 @@ class CPDFSDK_InterForm final : public IPDF_FormNotify {
                              const WideString& csValue) override;
   void AfterSelectionChange(CPDF_FormField* pField) override;
   void AfterCheckedStatusChange(CPDF_FormField* pField) override;
-  void AfterFormReset(CPDF_InterForm* pForm) override;
+  void AfterFormReset(CPDF_InteractiveForm* pForm) override;
 
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
                               CPDF_Dictionary* pAnnotDict) const;
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  std::unique_ptr<CPDF_InterForm> const m_pInterForm;
+  std::unique_ptr<CPDF_InteractiveForm> const m_pInteractiveForm;
   std::map<CPDF_FormControl*, CPDFSDK_Widget*> m_Map;
 #ifdef PDF_ENABLE_XFA
   std::map<CXFA_FFWidget*, CPDFSDK_XFAWidget*> m_XFAMap;

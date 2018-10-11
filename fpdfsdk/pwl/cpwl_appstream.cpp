@@ -1236,7 +1236,7 @@ void CPWL_AppStream::SetAsPushButton() {
 
   CBA_FontMap font_map(
       widget_.Get(),
-      widget_->GetInterForm()->GetFormFillEnv()->GetSysHandler());
+      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler());
   font_map.SetAPType("N");
 
   ByteString csAP =
@@ -1593,7 +1593,7 @@ void CPWL_AppStream::SetAsComboBox(Optional<WideString> sValue) {
   // Font map must outlive |pEdit|.
   CBA_FontMap font_map(
       widget_.Get(),
-      widget_->GetInterForm()->GetFormFillEnv()->GetSysHandler());
+      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler());
 
   auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1660,7 +1660,7 @@ void CPWL_AppStream::SetAsListBox() {
   // Font map must outlive |pEdit|.
   CBA_FontMap font_map(
       widget_.Get(),
-      widget_->GetInterForm()->GetFormFillEnv()->GetSysHandler());
+      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler());
 
   auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);
@@ -1745,7 +1745,7 @@ void CPWL_AppStream::SetAsTextField(Optional<WideString> sValue) {
   // Font map must outlive |pEdit|.
   CBA_FontMap font_map(
       widget_.Get(),
-      widget_->GetInterForm()->GetFormFillEnv()->GetSysHandler());
+      widget_->GetInteractiveForm()->GetFormFillEnv()->GetSysHandler());
 
   auto pEdit = pdfium::MakeUnique<CPWL_EditImpl>();
   pEdit->EnableRefresh(false);

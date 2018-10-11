@@ -144,10 +144,10 @@ static_assert(kFormFieldTypeCount == FPDF_FORMFIELD_COUNT,
 
 namespace {
 
-CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
+CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
       CPDFSDKFormFillEnvironmentFromFPDFFormHandle(hHandle);
-  return pFormFillEnv ? pFormFillEnv->GetInterForm() : nullptr;
+  return pFormFillEnv ? pFormFillEnv->GetInteractiveForm() : nullptr;
 }
 
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
@@ -232,8 +232,8 @@ FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     return -1;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (pPage) {
-    CPDF_InterForm interform(pPage->GetDocument());
-    CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
+    CPDF_InteractiveForm interactive_form(pPage->GetDocument());
+    CPDF_FormControl* pFormCtrl = interactive_form.GetControlAtPoint(
         pPage,
         CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
         nullptr);
@@ -294,9 +294,9 @@ FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
     return -1;
-  CPDF_InterForm interform(pPage->GetDocument());
+  CPDF_InteractiveForm interactive_form(pPage->GetDocument());
   int z_order = -1;
-  (void)interform.GetControlAtPoint(
+  (void)interactive_form.GetControlAtPoint(
       pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
       &z_order);
   return z_order;
@@ -585,31 +585,30 @@ FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
                                 int fieldType,
                                 unsigned long color) {
-  CPDFSDK_InterForm* interForm = FormHandleToInterForm(hHandle);
-  if (!interForm)
+  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
+  if (!pForm)
     return;
 
   Optional<FormFieldType> cast_input = IntToFormFieldType(fieldType);
   if (!cast_input)
     return;
 
-  if (cast_input.value() == FormFieldType::kUnknown) {
-    interForm->SetAllHighlightColors(color);
-  } else {
-    interForm->SetHighlightColor(color, cast_input.value());
-  }
+  if (cast_input.value() == FormFieldType::kUnknown)
+    pForm->SetAllHighlightColors(color);
+  else
+    pForm->SetHighlightColor(color, cast_input.value());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetFormFieldHighlightAlpha(FPDF_FORMHANDLE hHandle, unsigned char alpha) {
-  if (CPDFSDK_InterForm* pInterForm = FormHandleToInterForm(hHandle))
-    pInterForm->SetHighlightAlpha(alpha);
+  if (CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle))
+    pForm->SetHighlightAlpha(alpha);
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_RemoveFormFieldHighlight(FPDF_FORMHANDLE hHandle) {
-  if (CPDFSDK_InterForm* pInterForm = FormHandleToInterForm(hHandle))
-    pInterForm->RemoveAllHighLights();
+  if (CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle))
+    pForm->RemoveAllHighLights();
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FORM_OnAfterLoadPage(FPDF_PAGE page,

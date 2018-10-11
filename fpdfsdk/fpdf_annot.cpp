@@ -873,8 +873,8 @@ FPDFAnnot_GetFormFieldFlags(FPDF_PAGE page, FPDF_ANNOTATION annot) {
   if (!pAnnotDict)
     return FPDF_FORMFLAG_NONE;
 
-  CPDF_InterForm interform(pPage->GetDocument());
-  CPDF_FormField* pFormField = interform.GetFieldByDict(pAnnotDict);
+  CPDF_InteractiveForm interactive_form(pPage->GetDocument());
+  CPDF_FormField* pFormField = interactive_form.GetFieldByDict(pAnnotDict);
   return pFormField ? pFormField->GetFieldFlags() : FPDF_FORMFLAG_NONE;
 }
 
@@ -887,9 +887,9 @@ FPDFAnnot_GetFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (!hHandle || !pPage)
     return nullptr;
 
-  CPDF_InterForm interform(pPage->GetDocument());
+  CPDF_InteractiveForm interactive_form(pPage->GetDocument());
   int annot_index = -1;
-  CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
+  CPDF_FormControl* pFormCtrl = interactive_form.GetControlAtPoint(
       pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
       &annot_index);
   if (!pFormCtrl || annot_index == -1)

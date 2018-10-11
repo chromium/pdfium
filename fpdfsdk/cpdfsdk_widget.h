@@ -26,7 +26,7 @@ class CPDF_FormControl;
 class CPDF_FormField;
 class CPDF_RenderOptions;
 class CPDF_Stream;
-class CPDFSDK_InterForm;
+class CPDFSDK_InteractiveForm;
 class CPDFSDK_PageView;
 
 #ifdef PDF_ENABLE_XFA
@@ -50,7 +50,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
 
   CPDFSDK_Widget(CPDF_Annot* pAnnot,
                  CPDFSDK_PageView* pPageView,
-                 CPDFSDK_InterForm* pInterForm);
+                 CPDFSDK_InteractiveForm* pInteractiveForm);
   ~CPDFSDK_Widget() override;
 
   bool IsSignatureWidget() const override;
@@ -98,7 +98,9 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
                  CPDFSDK_FieldAction* data,
                  CPDFSDK_PageView* pPageView);
 
-  CPDFSDK_InterForm* GetInterForm() const { return m_pInterForm.Get(); }
+  CPDFSDK_InteractiveForm* GetInteractiveForm() const {
+    return m_pInteractiveForm.Get();
+  }
   CPDF_FormField* GetFormField() const;
   CPDF_FormControl* GetFormControl() const;
 
@@ -130,7 +132,7 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   WideString GetName() const;
 #endif  // PDF_ENABLE_XFA
 
-  UnownedPtr<CPDFSDK_InterForm> const m_pInterForm;
+  UnownedPtr<CPDFSDK_InteractiveForm> const m_pInteractiveForm;
   bool m_bAppModified = false;
   uint32_t m_nAppearanceAge = 0;
   uint32_t m_nValueAge = 0;

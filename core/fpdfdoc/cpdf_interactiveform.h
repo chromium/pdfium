@@ -28,14 +28,14 @@ class CPDF_Object;
 class CPDF_Page;
 class IPDF_FormNotify;
 
-CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
-                                  CPDF_Document* pDocument,
-                                  ByteString* csNameTag);
+CPDF_Font* AddNativeInteractiveFormFont(CPDF_Dictionary*& pFormDict,
+                                        CPDF_Document* pDocument,
+                                        ByteString* csNameTag);
 
-class CPDF_InterForm {
+class CPDF_InteractiveForm {
  public:
-  explicit CPDF_InterForm(CPDF_Document* pDocument);
-  ~CPDF_InterForm();
+  explicit CPDF_InteractiveForm(CPDF_Document* pDocument);
+  ~CPDF_InteractiveForm();
 
   static void SetUpdateAP(bool bUpdateAP);
   static bool IsUpdateAPEnabled();

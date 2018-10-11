@@ -37,9 +37,9 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   ASSERT(m_page);
   CPDF_Page* pPDFPage = ToPDFPage(page);
   if (pPDFPage) {
-    CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
-    CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-    pPDFInterForm->FixPageFields(pPDFPage);
+    CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
+    CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
+    pPDFForm->FixPageFields(pPDFPage);
     if (!page->AsXFAPage())
       pPDFPage->SetView(this);
   }
@@ -476,11 +476,11 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 
   CPDF_Page* pPage = GetPDFPage();
   ASSERT(pPage);
-  bool bUpdateAP = CPDF_InterForm::IsUpdateAPEnabled();
+  bool bUpdateAP = CPDF_InteractiveForm::IsUpdateAPEnabled();
   // Disable the default AP construction.
-  CPDF_InterForm::SetUpdateAP(false);
+  CPDF_InteractiveForm::SetUpdateAP(false);
   m_pAnnotList = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
-  CPDF_InterForm::SetUpdateAP(bUpdateAP);
+  CPDF_InteractiveForm::SetUpdateAP(bUpdateAP);
 
   const size_t nCount = m_pAnnotList->Count();
   for (size_t i = 0; i < nCount; ++i) {

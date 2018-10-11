@@ -11,9 +11,9 @@
 
 CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
                                      CPDFSDK_PageView* pPageView,
-                                     CPDFSDK_InterForm* pInterForm)
+                                     CPDFSDK_InteractiveForm* pInteractiveForm)
     : CPDFSDK_Annot(pPageView),
-      m_pInterForm(pInterForm),
+      m_pInteractiveForm(pInteractiveForm),
       m_hXFAWidget(pAnnot) {}
 
 CPDFSDK_XFAWidget::~CPDFSDK_XFAWidget() = default;
