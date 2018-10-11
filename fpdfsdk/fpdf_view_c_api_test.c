@@ -332,9 +332,11 @@ int CheckPDFiumCApi() {
 
     // fpdf_transformpage.h
     CHK(FPDFPageObj_TransformClipPath);
+    CHK(FPDFPage_GetArtBox);
     CHK(FPDFPage_GetCropBox);
     CHK(FPDFPage_GetMediaBox);
     CHK(FPDFPage_InsertClipPath);
+    CHK(FPDFPage_SetArtBox);
     CHK(FPDFPage_SetCropBox);
     CHK(FPDFPage_SetMediaBox);
     CHK(FPDFPage_TransFormWithClip);

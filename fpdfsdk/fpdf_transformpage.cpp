@@ -80,6 +80,15 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
                  CFX_FloatRect(left, bottom, right, top));
 }
 
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetArtBox(FPDF_PAGE page,
+                                                  float left,
+                                                  float bottom,
+                                                  float right,
+                                                  float top) {
+  SetBoundingBox(CPDFPageFromFPDFPage(page), pdfium::page_object::kArtBox,
+                 CFX_FloatRect(left, bottom, right, top));
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetMediaBox(FPDF_PAGE page,
                                                          float* left,
                                                          float* bottom,
@@ -98,6 +107,15 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
   return GetBoundingBox(CPDFPageFromFPDFPage(page),
                         pdfium::page_object::kCropBox, left, bottom, right,
                         top);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetArtBox(FPDF_PAGE page,
+                                                       float* left,
+                                                       float* bottom,
+                                                       float* right,
+                                                       float* top) {
+  return GetBoundingBox(CPDFPageFromFPDFPage(page),
+                        pdfium::page_object::kArtBox, left, bottom, right, top);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

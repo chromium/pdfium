@@ -41,6 +41,7 @@ endobj
   /Parent 2 0 R
   /MediaBox [ 0 0 200 200 ]
   /CropBox [ 50 50 150 150 ]
+  /ArtBox [ 55 65 140 145 ]
   /Resources <<
     /Font <<
       /F1 3 0 R
@@ -55,6 +56,7 @@ endobj
   /Parent 2 0 R
   /MediaBox [ -50 -50 200 200 ]
   /CropBox [ 50 50 150 150 ]
+  /ArtBox [ 50 60 135 140 ]
   /Resources <<
     /Font <<
       /F1 3 0 R
@@ -69,6 +71,7 @@ endobj
   /Parent 2 0 R
   /MediaBox [ 0 0 200 200 ]
   /CropBox [ 60 60 150 150 ]
+  /ArtBox [ 65 75 140 148 ]
   /Resources <<
     /Font <<
       /F1 3 0 R
@@ -83,6 +86,7 @@ endobj
   /Parent 2 0 R
   /MediaBox [ 0 0 200 200 ]
   /CropBox [ 150 150 60 60 ]
+  /ArtBox [ 140 145 65 70 ]
   /Resources <<
     /Font <<
       /F1 3 0 R
