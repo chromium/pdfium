@@ -736,6 +736,8 @@ jumbo_static_library("fxcodec") {
     "core/fxcodec/codec/ccodec_jpxmodule.h",
     "core/fxcodec/codec/ccodec_scanlinedecoder.cpp",
     "core/fxcodec/codec/ccodec_scanlinedecoder.h",
+    "core/fxcodec/codec/cfx_codec_memory.cpp",
+    "core/fxcodec/codec/cfx_codec_memory.h",
     "core/fxcodec/codec/cjpx_decoder.h",
     "core/fxcodec/codec/codec_int.h",
     "core/fxcodec/codec/codec_module_iface.h",
@@ -829,12 +831,6 @@ jumbo_static_library("fxcodec") {
         "core/fxcodec/codec/ccodec_tiffmodule.h",
       ]
       deps += [ "third_party:fx_tiff" ]
-    }
-    if (pdf_enable_xfa_bmp || pdf_enable_xfa_gif) {
-      sources += [
-        "core/fxcodec/codec/cfx_codec_memory.cpp",
-        "core/fxcodec/codec/cfx_codec_memory.h",
-      ]
     }
   }
 }
