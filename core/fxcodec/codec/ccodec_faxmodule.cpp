@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include <limits>
 #include <memory>
 #include <vector>
 
@@ -678,11 +677,9 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
                                      int height,
                                      int pitch)
     : m_Cols(width), m_Rows(height), m_Pitch(pitch), m_pSrcBuf(src_buf) {
-  CHECK(pitch > 0);
-  CHECK(pitch < std::numeric_limits<int>::max() / 8);
   m_RefLine.resize(pitch);
   std::fill(std::begin(m_RefLine), std::end(m_RefLine), 0xff);
-  m_LineBuf.resize(8 * m_Pitch);
+  m_LineBuf = pdfium::Vector2D<uint8_t>(8, m_Pitch);
   m_DestBuf.SetAllocStep(10240);
 }
 
