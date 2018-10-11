@@ -2867,6 +2867,7 @@ if (pdf_enable_xfa) {
 }
 
 test("pdfium_unittests") {
+  testonly = true
   sources = [
     "core/fdrm/crypto/fx_crypt_unittest.cpp",
     "core/fpdfapi/edit/cpdf_pagecontentgenerator_unittest.cpp",
@@ -2938,6 +2939,7 @@ test("pdfium_unittests") {
     "fpdfsdk/fpdf_catalog_unittest.cpp",
     "fpdfsdk/fpdf_doc_unittest.cpp",
     "fpdfsdk/fpdf_editimg_unittest.cpp",
+    "testing/pseudo_retainable.h",
     "testing/unit_test_main.cpp",
   ]
   deps = [
@@ -3010,6 +3012,7 @@ test("pdfium_unittests") {
 }
 
 test("pdfium_embeddertests") {
+  testonly = true
   sources = [
     "core/fpdfapi/edit/cpdf_creator_embeddertest.cpp",
     "core/fpdfapi/page/cpdf_docpagedata_embeddertest.cpp",
@@ -3049,7 +3052,6 @@ test("pdfium_embeddertests") {
     "testing/embedder_test_timer_handling_delegate.h",
     "testing/fake_file_access.cpp",
     "testing/fake_file_access.h",
-    "testing/pseudo_retainable.h",
     "testing/range_set.cpp",
     "testing/range_set.h",
   ]
