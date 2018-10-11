@@ -58,10 +58,12 @@ executable("pdfium_test") {
   configs += [ ":pdfium_samples_config" ]
 
   if (pdf_enable_v8) {
-    deps += [ "//v8:v8_libplatform" ]
+    deps += [
+      "//v8:v8_headers",
+      "//v8:v8_libplatform",
+    ]
     include_dirs = [
       "//v8",
-      "//v8/include",
     ]
     configs += [ "//v8:external_startup_data" ]
   }

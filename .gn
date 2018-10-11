@@ -15,3 +15,16 @@ default_args = {
   # PDFium does not want to switch to C++14 yet.
   use_cxx11 = true
 }
+
+check_targets = [
+  "//samples/*",
+
+  # TODO(thestig): Work on these.
+  #"//core/*",  # Need to split off.
+  #"//fpdfsdk/*",  # Need to split off.
+  #"//fxbarcode/*",  # Need to split off.
+  #"//fxjs/*",  # Need to split off.
+  #"//testing/*",
+  #"//testing/fuzzers/*",
+  #"//xfa/*",  # Need to split off.
+]
