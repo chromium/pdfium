@@ -479,7 +479,7 @@ jumbo_source_set("fx_lpng") {
   }
 }
 
-if (pdf_enable_xfa) {
+if (pdf_enable_xfa_tiff) {
   source_set("fx_tiff") {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
