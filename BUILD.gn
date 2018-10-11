@@ -293,7 +293,7 @@ visibility = [
   "//:gn_visibility",
 ]
 
-source_set("constants") {
+jumbo_source_set("constants") {
   sources = [
     "constants/form_flags.h",
     "constants/page_object.h",
@@ -3089,7 +3089,7 @@ test("pdfium_embeddertests") {
 }
 
 if (pdf_is_standalone) {
-  source_set("samples") {
+  jumbo_source_set("samples") {
     testonly = true
     deps = [
       "//samples",
