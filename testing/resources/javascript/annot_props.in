@@ -1,0 +1,92 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OpenAction 20 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [10 0 R]
+>>
+endobj
+{{object 10 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Annots [22 0 R]
+  /Tabs /R
+>>
+endobj
+{{object 20 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS 21 0 R
+>>
+endobj
+{{object 21 0}} <<
+>>
+stream
+app.alert("Test that non-existent annot fetch gives error");
+try {
+  var nonesuch = this.getAnnot(0, "nonesuch");
+  app.alert("nonesuch: " + typeof nonesuch);
+} catch (e) {
+  app.alert("SUCCESS: " + e);
+}
+app.alert("Test initial cases");
+try {
+  var annot = this.getAnnot(0, "Annot-1");
+  app.alert("annot: " + typeof annot);
+  app.alert("hidden: " + annot.hidden);
+  app.alert("name: " + annot.name);
+  app.alert("type: " + annot.type);
+
+  annot.hidden = true;
+  app.alert("hidden now: " + annot.hidden);
+  annot.hidden = false;
+  app.alert("hidden now: " + annot.hidden);
+
+  annot.name = "nonesuch";
+  app.alert("name now: " + annot.name);
+} catch (e) {
+  app.alert("ERROR: " + e);
+}
+app.alert("Test assigment to read-only property gives error");
+try {
+  annot.type = 42;
+} catch (e) {
+  app.alert("SUCCESS: " + e);
+}
+app.alert("Test lookup after name change gives error");
+try {
+  annot = this.getAnnot(0, "Annot-1");
+  app.alert("annot after name change: " + typeof annot);
+} catch (e) {
+  app.alert("SUCCESS: " + e);
+}
+app.alert("Test lookup under changed name");
+try {
+  nonesuch = this.getAnnot(0, "nonesuch");
+  app.alert("nonesuch after name change: " + typeof nonesuch);
+} catch (e) {
+  app.alert("ERROR: " + e);
+}
+endstream
+endobj
+{{object 22 0}} <<
+  /Type /Annot
+  /Subtype /Highlight
+  /Rect [475 681 512 690]
+  /NM (Annot-1)
+  /F 2
+  /QuadPoints [475 688 512 688 475 679 512 679]
+  /C [0.0001108646 0.001760244 0.9982184]
+  /Contents ()
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

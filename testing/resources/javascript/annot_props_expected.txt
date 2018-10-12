@@ -1,0 +1,16 @@
+Alert: Test that non-existent annot fetch gives error
+Alert: SUCCESS: Document.getAnnot: Object no longer exists.
+Alert: Test initial cases
+Alert: annot: object
+Alert: hidden: true
+Alert: name: Annot-1
+Alert: type: Highlight
+Alert: hidden now: true
+Alert: hidden now: false
+Alert: name now: nonesuch
+Alert: Test assigment to read-only property gives error
+Alert: SUCCESS: Annot.type: Cannot assign to readonly property.
+Alert: Test lookup after name change gives error
+Alert: SUCCESS: Document.getAnnot: Object no longer exists.
+Alert: Test lookup under changed name
+Alert: nonesuch after name change: object
