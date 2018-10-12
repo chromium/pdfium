@@ -94,43 +94,6 @@ config("pdfium_core_config") {
 
 jumbo_static_library("pdfium") {
   sources = [
-    "fpdfsdk/cfx_systemhandler.cpp",
-    "fpdfsdk/cfx_systemhandler.h",
-    "fpdfsdk/cpdf_annotcontext.cpp",
-    "fpdfsdk/cpdf_annotcontext.h",
-    "fpdfsdk/cpdfsdk_actionhandler.cpp",
-    "fpdfsdk/cpdfsdk_actionhandler.h",
-    "fpdfsdk/cpdfsdk_annot.cpp",
-    "fpdfsdk/cpdfsdk_annot.h",
-    "fpdfsdk/cpdfsdk_annothandlermgr.cpp",
-    "fpdfsdk/cpdfsdk_annothandlermgr.h",
-    "fpdfsdk/cpdfsdk_annotiteration.cpp",
-    "fpdfsdk/cpdfsdk_annotiteration.h",
-    "fpdfsdk/cpdfsdk_annotiterator.cpp",
-    "fpdfsdk/cpdfsdk_annotiterator.h",
-    "fpdfsdk/cpdfsdk_baannot.cpp",
-    "fpdfsdk/cpdfsdk_baannot.h",
-    "fpdfsdk/cpdfsdk_baannothandler.cpp",
-    "fpdfsdk/cpdfsdk_baannothandler.h",
-    "fpdfsdk/cpdfsdk_common.h",
-    "fpdfsdk/cpdfsdk_customaccess.cpp",
-    "fpdfsdk/cpdfsdk_customaccess.h",
-    "fpdfsdk/cpdfsdk_fieldaction.cpp",
-    "fpdfsdk/cpdfsdk_fieldaction.h",
-    "fpdfsdk/cpdfsdk_filewriteadapter.cpp",
-    "fpdfsdk/cpdfsdk_filewriteadapter.h",
-    "fpdfsdk/cpdfsdk_formfillenvironment.cpp",
-    "fpdfsdk/cpdfsdk_formfillenvironment.h",
-    "fpdfsdk/cpdfsdk_helpers.cpp",
-    "fpdfsdk/cpdfsdk_helpers.h",
-    "fpdfsdk/cpdfsdk_interactiveform.cpp",
-    "fpdfsdk/cpdfsdk_interactiveform.h",
-    "fpdfsdk/cpdfsdk_pageview.cpp",
-    "fpdfsdk/cpdfsdk_pageview.h",
-    "fpdfsdk/cpdfsdk_widget.cpp",
-    "fpdfsdk/cpdfsdk_widget.h",
-    "fpdfsdk/cpdfsdk_widgethandler.cpp",
-    "fpdfsdk/cpdfsdk_widgethandler.h",
     "fpdfsdk/fpdf_annot.cpp",
     "fpdfsdk/fpdf_attachment.cpp",
     "fpdfsdk/fpdf_catalog.cpp",
@@ -152,9 +115,6 @@ jumbo_static_library("pdfium") {
     "fpdfsdk/fpdf_text.cpp",
     "fpdfsdk/fpdf_transformpage.cpp",
     "fpdfsdk/fpdf_view.cpp",
-    "fpdfsdk/ipdfsdk_annothandler.h",
-    "fpdfsdk/ipdfsdk_pauseadapter.cpp",
-    "fpdfsdk/ipdfsdk_pauseadapter.h",
     "public/cpp/fpdf_deleters.h",
     "public/cpp/fpdf_scopers.h",
     "public/fpdf_annot.h",
@@ -184,14 +144,15 @@ jumbo_static_library("pdfium") {
   deps = [
     ":constants",
     ":fdrm",
-    ":formfiller",
     ":fpdfapi",
     ":fpdfdoc",
     ":fpdftext",
     ":fxcodec",
     ":fxcrt",
     ":fxge",
-    ":pwl",
+    "fpdfsdk",
+    "fpdfsdk/formfiller",
+    "fpdfsdk/pwl",
     "fxjs",
     "third_party:pdfium_base",
     "third_party:skia_shared",
@@ -200,16 +161,6 @@ jumbo_static_library("pdfium") {
   public_deps = [
     ":fxcrt",
   ]
-  if (pdf_enable_xfa) {
-    sources += [
-      "fpdfsdk/cpdfsdk_xfawidget.cpp",
-      "fpdfsdk/cpdfsdk_xfawidget.h",
-      "fpdfsdk/cpdfsdk_xfawidgethandler.cpp",
-      "fpdfsdk/cpdfsdk_xfawidgethandler.h",
-    ]
-
-    deps += [ ":fpdfxfa" ]
-  }
 
   if (is_win) {
     libs += [
@@ -918,6 +869,7 @@ jumbo_source_set("fxcrt") {
   configs += [ ":pdfium_core_config" ]
   visibility += [
     "fxbarcode:*",
+    "fpdfsdk/*",
     "fxjs:*",
     "xfa/*",
     "third_party:*",
@@ -1154,99 +1106,6 @@ jumbo_source_set("fxge") {
       "core/fxge/apple/fx_mac_imp.cpp",
       "core/fxge/apple/fx_quartz_device.cpp",
     ]
-  }
-}
-
-jumbo_source_set("pwl") {
-  sources = [
-    "fpdfsdk/pwl/cpwl_appstream.cpp",
-    "fpdfsdk/pwl/cpwl_appstream.h",
-    "fpdfsdk/pwl/cpwl_button.cpp",
-    "fpdfsdk/pwl/cpwl_button.h",
-    "fpdfsdk/pwl/cpwl_caret.cpp",
-    "fpdfsdk/pwl/cpwl_caret.h",
-    "fpdfsdk/pwl/cpwl_combo_box.cpp",
-    "fpdfsdk/pwl/cpwl_combo_box.h",
-    "fpdfsdk/pwl/cpwl_edit.cpp",
-    "fpdfsdk/pwl/cpwl_edit.h",
-    "fpdfsdk/pwl/cpwl_edit_ctrl.cpp",
-    "fpdfsdk/pwl/cpwl_edit_ctrl.h",
-    "fpdfsdk/pwl/cpwl_edit_impl.cpp",
-    "fpdfsdk/pwl/cpwl_edit_impl.h",
-    "fpdfsdk/pwl/cpwl_font_map.cpp",
-    "fpdfsdk/pwl/cpwl_font_map.h",
-    "fpdfsdk/pwl/cpwl_icon.cpp",
-    "fpdfsdk/pwl/cpwl_icon.h",
-    "fpdfsdk/pwl/cpwl_list_box.cpp",
-    "fpdfsdk/pwl/cpwl_list_box.h",
-    "fpdfsdk/pwl/cpwl_list_impl.cpp",
-    "fpdfsdk/pwl/cpwl_list_impl.h",
-    "fpdfsdk/pwl/cpwl_scroll_bar.cpp",
-    "fpdfsdk/pwl/cpwl_scroll_bar.h",
-    "fpdfsdk/pwl/cpwl_special_button.cpp",
-    "fpdfsdk/pwl/cpwl_special_button.h",
-    "fpdfsdk/pwl/cpwl_timer.cpp",
-    "fpdfsdk/pwl/cpwl_timer.h",
-    "fpdfsdk/pwl/cpwl_timer_handler.cpp",
-    "fpdfsdk/pwl/cpwl_timer_handler.h",
-    "fpdfsdk/pwl/cpwl_wnd.cpp",
-    "fpdfsdk/pwl/cpwl_wnd.h",
-  ]
-  configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
-}
-
-jumbo_source_set("formfiller") {
-  sources = [
-    "fpdfsdk/formfiller/cba_fontmap.cpp",
-    "fpdfsdk/formfiller/cba_fontmap.h",
-    "fpdfsdk/formfiller/cffl_button.cpp",
-    "fpdfsdk/formfiller/cffl_button.h",
-    "fpdfsdk/formfiller/cffl_checkbox.cpp",
-    "fpdfsdk/formfiller/cffl_checkbox.h",
-    "fpdfsdk/formfiller/cffl_combobox.cpp",
-    "fpdfsdk/formfiller/cffl_combobox.h",
-    "fpdfsdk/formfiller/cffl_formfiller.cpp",
-    "fpdfsdk/formfiller/cffl_formfiller.h",
-    "fpdfsdk/formfiller/cffl_interactiveformfiller.cpp",
-    "fpdfsdk/formfiller/cffl_interactiveformfiller.h",
-    "fpdfsdk/formfiller/cffl_listbox.cpp",
-    "fpdfsdk/formfiller/cffl_listbox.h",
-    "fpdfsdk/formfiller/cffl_pushbutton.cpp",
-    "fpdfsdk/formfiller/cffl_pushbutton.h",
-    "fpdfsdk/formfiller/cffl_radiobutton.cpp",
-    "fpdfsdk/formfiller/cffl_radiobutton.h",
-    "fpdfsdk/formfiller/cffl_textfield.cpp",
-    "fpdfsdk/formfiller/cffl_textfield.h",
-    "fpdfsdk/formfiller/cffl_textobject.cpp",
-    "fpdfsdk/formfiller/cffl_textobject.h",
-  ]
-  configs += [ ":pdfium_core_config" ]
-  deps = [
-    ":fxcrt",
-  ]
-}
-
-if (pdf_enable_xfa) {
-  jumbo_source_set("fpdfxfa") {
-    sources = [
-      "fpdfsdk/fpdfxfa/cpdfxfa_context.cpp",
-      "fpdfsdk/fpdfxfa/cpdfxfa_context.h",
-      "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.cpp",
-      "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h",
-      "fpdfsdk/fpdfxfa/cpdfxfa_page.cpp",
-      "fpdfsdk/fpdfxfa/cpdfxfa_page.h",
-      "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.cpp",
-      "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h",
-    ]
-    deps = [
-      ":fxcrt",
-      "fxjs",
-      "xfa",
-    ]
-    configs += [ ":pdfium_core_config" ]
   }
 }
 
