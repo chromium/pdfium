@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
+#include "core/fxcrt/fx_memory.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 const XFA_AttributeEnumInfo g_XFAEnumData[] = {

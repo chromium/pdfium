@@ -9,7 +9,6 @@
 
 #include <map>
 
-#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observable.h"
 #include "core/fxcrt/retain_ptr.h"

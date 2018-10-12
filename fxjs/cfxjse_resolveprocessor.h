@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_string.h"
+#include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CXFA_NodeHelper;

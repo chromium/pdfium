@@ -10,8 +10,9 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/xfa/cjx_object.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
+
+class CXFA_Object;
+struct XFA_SCRIPTATTRIBUTEINFO;
 
 #define XFA_RESOLVENODE_Children 0x0001
 #define XFA_RESOLVENODE_TagName 0x0002

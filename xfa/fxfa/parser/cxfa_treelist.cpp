@@ -9,12 +9,8 @@
 #include <memory>
 
 #include "core/fxcrt/fx_extension.h"
-#include "fxjs/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_treelist.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_TreeList::CXFA_TreeList(CXFA_Document* pDocument)
@@ -24,7 +20,7 @@ CXFA_TreeList::CXFA_TreeList(CXFA_Document* pDocument)
                 WideStringView(L"treeList"),
                 pdfium::MakeUnique<CJX_TreeList>(this)) {}
 
-CXFA_TreeList::~CXFA_TreeList() {}
+CXFA_TreeList::~CXFA_TreeList() = default;
 
 CXFA_Node* CXFA_TreeList::NamedItem(const WideStringView& wsName) {
   uint32_t dwHashCode = FX_HashCode_GetW(wsName, false);

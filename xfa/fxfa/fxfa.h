@@ -15,6 +15,7 @@
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+class CFXJSE_Value;
 class CXFA_FFDoc;
 class CXFA_FFPageView;
 class CXFA_FFWidget;

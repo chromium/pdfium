@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_CXFA_EVENTPARAM_H_
 #define XFA_FXFA_CXFA_EVENTPARAM_H_
 
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fxfa/fxfa_basic.h"
 

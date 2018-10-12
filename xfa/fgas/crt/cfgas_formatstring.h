@@ -11,7 +11,8 @@
 
 #include "core/fxcrt/locale_iface.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "xfa/fxfa/parser/cxfa_localemgr.h"
+
+class CXFA_LocaleMgr;
 
 bool FX_DateFromCanonical(const WideString& wsDate, CFX_DateTime* datetime);
 bool FX_TimeFromCanonical(const WideStringView& wsTime,

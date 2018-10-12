@@ -23,6 +23,7 @@
 class CFGAS_GEFont;
 class CFX_FontMapper;
 class CFX_FontSourceEnum_File;
+class IFX_SeekableReadStream;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 struct FX_FONTMATCHPARAMS {
