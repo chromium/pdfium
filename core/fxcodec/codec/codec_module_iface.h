@@ -7,10 +7,10 @@
 #ifndef CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_
 #define CORE_FXCODEC_CODEC_CODEC_MODULE_IFACE_H_
 
-#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/span.h"
+#include "core/fxcrt/retain_ptr.h"
 
+class CFX_CodecMemory;
 class CFX_DIBAttribute;
 
 class CodecModuleIface {

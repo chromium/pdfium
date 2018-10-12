@@ -10,11 +10,9 @@
 #include <memory>
 
 #include "core/fxcodec/codec/codec_module_iface.h"
-#include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/dib/cfx_dibitmap.h"
 
 class CFX_DIBAttribute;
+class CFX_DIBitmap;
 class IFX_SeekableReadStream;
 
 class CCodec_TiffModule final : public CodecModuleIface {

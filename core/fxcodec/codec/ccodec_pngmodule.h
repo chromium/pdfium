@@ -10,9 +10,6 @@
 #include <memory>
 
 #include "core/fxcodec/codec/codec_module_iface.h"
-#include "core/fxcrt/fx_system.h"
-
-class CFX_DIBAttribute;
 
 class CCodec_PngModule final : public CodecModuleIface {
  public:

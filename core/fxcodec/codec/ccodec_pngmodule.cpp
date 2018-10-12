@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/unowned_ptr.h"

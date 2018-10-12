@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
+#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"

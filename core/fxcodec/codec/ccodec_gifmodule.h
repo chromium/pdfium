@@ -13,8 +13,6 @@
 #include "core/fxcodec/codec/codec_module_iface.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
-#include "third_party/base/span.h"
 
 class CFX_DIBAttribute;
 

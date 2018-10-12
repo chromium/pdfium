@@ -11,8 +11,6 @@
 #include <memory>
 
 #include "core/fxcodec/codec/codec_module_iface.h"
-#include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/span.h"
 
 class CCodec_ScanlineDecoder;

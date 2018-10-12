@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
+#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"

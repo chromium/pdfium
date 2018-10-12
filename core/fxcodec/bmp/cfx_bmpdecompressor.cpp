@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
+#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/logging.h"

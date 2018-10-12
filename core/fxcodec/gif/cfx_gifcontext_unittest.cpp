@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class CFX_GifContextForTest final : public CFX_GifContext {

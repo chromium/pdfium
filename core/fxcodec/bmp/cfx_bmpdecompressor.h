@@ -12,10 +12,10 @@
 #include <vector>
 
 #include "core/fxcodec/bmp/fx_bmp.h"
-#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "third_party/base/span.h"
 
 class CFX_BmpContext;
+class CFX_CodecMemory;
 
 class CFX_BmpDecompressor {
  public:

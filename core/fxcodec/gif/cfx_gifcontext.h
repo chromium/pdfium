@@ -11,12 +11,13 @@
 #include <vector>
 
 #include "core/fxcodec/codec/ccodec_gifmodule.h"
-#include "core/fxcodec/codec/cfx_codec_memory.h"
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/gif/cfx_lzwdecompressor.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
+
+class CFX_CodecMemory;
 
 class CFX_GifContext : public CodecModuleIface::Context {
  public:
