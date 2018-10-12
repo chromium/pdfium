@@ -166,6 +166,7 @@ const JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"importAnXFDF", importAnXFDF_static},
     {"importTextData", importTextData_static},
     {"insertPages", insertPages_static},
+    {"mailDoc", mailDoc_static},
     {"mailForm", mailForm_static},
     {"print", print_static},
     {"removeField", removeField_static},
@@ -174,8 +175,7 @@ const JSMethodSpec CJS_Document::MethodSpecs[] = {
     {"removeIcon", removeIcon_static},
     {"saveAs", saveAs_static},
     {"submitForm", submitForm_static},
-    {"syncAnnotScan", syncAnnotScan_static},
-    {"mailDoc", mailDoc_static}};
+    {"syncAnnotScan", syncAnnotScan_static}};
 
 int CJS_Document::ObjDefnID = -1;
 const char CJS_Document::kName[] = "Document";
@@ -372,6 +372,49 @@ CJS_Result CJS_Document::importTextData(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   // Unsafe, not supported.
+  return CJS_Result::Success();
+}
+
+CJS_Result CJS_Document::mailDoc(
+    CJS_Runtime* pRuntime,
+    const std::vector<v8::Local<v8::Value>>& params) {
+  // TODO(tsepez): Check maximum number of allowed params.
+  size_t nLength = params.size();
+  bool bUI = true;
+  WideString cTo;
+  WideString cCc;
+  WideString cBcc;
+  WideString cSubject;
+  WideString cMsg;
+
+  if (nLength > 0 && params[0]->IsObject()) {
+    v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0]);
+    bUI = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bUI"));
+    cTo = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cTo"));
+    cCc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cCc"));
+    cBcc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cBcc"));
+    cSubject =
+        pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cSubject"));
+    cMsg = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cMsg"));
+  } else {
+    if (nLength > 0)
+      bUI = pRuntime->ToBoolean(params[0]);
+    if (nLength > 1)
+      cTo = pRuntime->ToWideString(params[1]);
+    if (nLength > 2)
+      cCc = pRuntime->ToWideString(params[2]);
+    if (nLength > 3)
+      cBcc = pRuntime->ToWideString(params[3]);
+    if (nLength > 4)
+      cSubject = pRuntime->ToWideString(params[4]);
+    if (nLength > 5)
+      cMsg = pRuntime->ToWideString(params[5]);
+  }
+
+  pRuntime->BeginBlock();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
+  pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject, cCc, cBcc, cMsg);
+  pRuntime->EndBlock();
   return CJS_Result::Success();
 }
 
@@ -646,49 +689,6 @@ CJS_Result CJS_Document::get_bookmark_root(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Document::set_bookmark_root(CJS_Runtime* pRuntime,
                                            v8::Local<v8::Value> vp) {
-  return CJS_Result::Success();
-}
-
-CJS_Result CJS_Document::mailDoc(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
-  // TODO(tsepez): Check maximum number of allowed params.
-  size_t nLength = params.size();
-  bool bUI = true;
-  WideString cTo;
-  WideString cCc;
-  WideString cBcc;
-  WideString cSubject;
-  WideString cMsg;
-
-  if (nLength > 0 && params[0]->IsObject()) {
-    v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0]);
-    bUI = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bUI"));
-    cTo = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cTo"));
-    cCc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cCc"));
-    cBcc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cBcc"));
-    cSubject =
-        pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cSubject"));
-    cMsg = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cMsg"));
-  } else {
-    if (nLength > 0)
-      bUI = pRuntime->ToBoolean(params[0]);
-    if (nLength > 1)
-      cTo = pRuntime->ToWideString(params[1]);
-    if (nLength > 2)
-      cCc = pRuntime->ToWideString(params[2]);
-    if (nLength > 3)
-      cBcc = pRuntime->ToWideString(params[3]);
-    if (nLength > 4)
-      cSubject = pRuntime->ToWideString(params[4]);
-    if (nLength > 5)
-      cMsg = pRuntime->ToWideString(params[5]);
-  }
-
-  pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
-  pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject, cCc, cBcc, cMsg);
-  pRuntime->EndBlock();
   return CJS_Result::Success();
 }
 

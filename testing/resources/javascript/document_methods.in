@@ -187,7 +187,11 @@ function testGetNthFieldName() {
   // Argument can not be negative.
   expectError('this.getNthFieldName(-1)');
 
-  // TODO(tsepez): test success cases.
+  // Argument can not be huge.
+  expectError('this.getNthFieldName(400000)');
+
+  // TODO(tsepez): add field object so this case works.
+  expectError('this.getNthFieldName(0)');
 }
 
 function testGetPageNthWord() {
@@ -229,29 +233,37 @@ function testGetPageNumWords() {
 }
 
 function testGetPrintParams() {
-   // Method is present.
-   expect('typeof this.getPrintParams', 'function');
+  // Method is present.
+  expect('typeof this.getPrintParams', 'function');
 
-  // TODO(tsepez): test success cases.
+  // Method always returns in error.
+  expectError('this.getPrintParams()');
+  expectError('this.getPrintParams(42)');
 }
 
 function testGotoNamedDest() {
-   // Method is present.
-   expect('typeof this.gotoNamedDest', 'function');
+  // Method is present.
+  expect('typeof this.gotoNamedDest', 'function');
 
-   // Method needs exactly one argument.
-   expectError('this.gotoNamedDest()');
-   expectError('this.gotoNamedDest(1, 2)');
+  // Method needs exactly one argument.
+  expectError('this.gotoNamedDest()');
+  expectError('this.gotoNamedDest(1, 2)');
 
-   // TODO(tonikitoo): test success cases.
+  // TODO(tsepez): add actual named dest matching this.
+  expectError('this.gotoNamedDest("chicago")');
 }
 
 function testMailDoc() {
-   // Method is present.
-   expect('typeof this.mailDoc', 'function');
+  // Method is present.
+  expect('typeof this.mailDoc', 'function');
 
   // TODO(tsepez): test with no permissions.
-  // TODO(tsepez): test success cases.
+
+  // Success cases.
+  expect('this.mailDoc(true)', undefined);
+  expect('this.mailDoc(false, "user@example.com", "cc@example.com", ' +
+             '"bcc@example.com", "Lottery Winner", "You won the lottery!")',
+         undefined);
 }
 
 function testMailForm() {
@@ -259,7 +271,12 @@ function testMailForm() {
    expect('typeof this.mailForm', 'function');
 
   // TODO(tsepez): test with no permissions.
-  // TODO(tsepez): test success cases.
+
+  // Success cases.
+  expect('this.mailForm(true)', undefined);
+  expect('this.mailForm(false, "user@example.com", "cc@example.com", ' +
+             '"bcc@example.com", "Lottery Winner", "You won the lottery!")',
+         undefined);
 }
 
 function testPrint() {
@@ -285,7 +302,10 @@ function testResetForm() {
    expect('typeof this.resetForm', 'function');
 
   // TODO(tsepez): test with no permissions.
-  // TODO(tsepez): test success cases.
+
+  // TODO(tsepez): Add form to document to match these arguments.
+  expect('this.resetForm()', undefined);
+  expect('this.resetForm("myform")', undefined);
 }
 
 function testSubmitForm() {
@@ -295,7 +315,8 @@ function testSubmitForm() {
   // Method requires at least one argument.
   expectError('this.submitForm()');
 
-  // TODO(tsepez): test success cases.
+  // TODO(tsepez): Add form to document to match these arguments.
+  expect('this.submitForm("myform", true, true, ["name", "age"])', undefined);
 }
 
 try {
