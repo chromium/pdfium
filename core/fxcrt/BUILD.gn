@@ -21,8 +21,6 @@ jumbo_source_set("fxcrt") {
     "cfx_memorystream.h",
     "cfx_readonlymemorystream.cpp",
     "cfx_readonlymemorystream.h",
-    "cfx_seekablemultistream.cpp",
-    "cfx_seekablemultistream.h",
     "cfx_seekablestreamproxy.cpp",
     "cfx_seekablestreamproxy.h",
     "cfx_utf8decoder.cpp",
@@ -120,50 +118,23 @@ jumbo_source_set("fxcrt") {
       "cfx_char.h",
       "cfx_decimal.cpp",
       "cfx_decimal.h",
-      "css/cfx_css.h",
-      "css/cfx_csscolorvalue.cpp",
-      "css/cfx_csscolorvalue.h",
-      "css/cfx_csscomputedstyle.cpp",
-      "css/cfx_csscomputedstyle.h",
-      "css/cfx_csscustomproperty.cpp",
-      "css/cfx_csscustomproperty.h",
-      "css/cfx_cssdata.cpp",
-      "css/cfx_cssdata.h",
-      "css/cfx_cssdeclaration.cpp",
-      "css/cfx_cssdeclaration.h",
-      "css/cfx_cssenumvalue.cpp",
-      "css/cfx_cssenumvalue.h",
-      "css/cfx_cssexttextbuf.cpp",
-      "css/cfx_cssexttextbuf.h",
-      "css/cfx_cssnumbervalue.cpp",
-      "css/cfx_cssnumbervalue.h",
-      "css/cfx_csspropertyholder.cpp",
-      "css/cfx_csspropertyholder.h",
-      "css/cfx_cssrulecollection.cpp",
-      "css/cfx_cssrulecollection.h",
-      "css/cfx_cssselector.cpp",
-      "css/cfx_cssselector.h",
-      "css/cfx_cssstringvalue.cpp",
-      "css/cfx_cssstringvalue.h",
-      "css/cfx_cssstylerule.cpp",
-      "css/cfx_cssstylerule.h",
-      "css/cfx_cssstyleselector.cpp",
-      "css/cfx_cssstyleselector.h",
-      "css/cfx_cssstylesheet.cpp",
-      "css/cfx_cssstylesheet.h",
-      "css/cfx_csssyntaxparser.cpp",
-      "css/cfx_csssyntaxparser.h",
-      "css/cfx_csstextbuf.cpp",
-      "css/cfx_csstextbuf.h",
-      "css/cfx_cssvalue.cpp",
-      "css/cfx_cssvalue.h",
-      "css/cfx_cssvaluelist.cpp",
-      "css/cfx_cssvaluelist.h",
-      "css/cfx_cssvaluelistparser.cpp",
-      "css/cfx_cssvaluelistparser.h",
       "fx_arabic.cpp",
       "fx_arabic.h",
       "locale_iface.h",
     ]
+  }
+}
+
+if (pdf_enable_xfa) {
+  jumbo_source_set("seekablemultistream") {
+    sources = [
+      "cfx_seekablemultistream.cpp",
+      "cfx_seekablemultistream.h",
+    ]
+    deps = [
+      ":fxcrt",
+      "../fpdfapi",
+    ]
+    visibility = [ "../../*" ]
   }
 }

@@ -232,7 +232,6 @@ test("pdfium_unittests") {
     "core/fxcrt/autorestorer_unittest.cpp",
     "core/fxcrt/bytestring_unittest.cpp",
     "core/fxcrt/cfx_bitstream_unittest.cpp",
-    "core/fxcrt/cfx_seekablemultistream_unittest.cpp",
     "core/fxcrt/fx_bidi_unittest.cpp",
     "core/fxcrt/fx_coordinates_unittest.cpp",
     "core/fxcrt/fx_extension_unittest.cpp",
@@ -274,6 +273,7 @@ test("pdfium_unittests") {
   include_dirs = []
   if (pdf_enable_xfa) {
     sources += [
+      "core/fxcrt/cfx_seekablemultistream_unittest.cpp",
       "core/fxcrt/css/cfx_cssdeclaration_unittest.cpp",
       "core/fxcrt/css/cfx_cssstylesheet_unittest.cpp",
       "core/fxcrt/css/cfx_cssvaluelistparser_unittest.cpp",
