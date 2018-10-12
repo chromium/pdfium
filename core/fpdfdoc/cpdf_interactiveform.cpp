@@ -969,8 +969,9 @@ bool CPDF_InteractiveForm::CheckRequiredFields(
       continue;
 
     int32_t iType = pField->GetType();
-    if (iType == CPDF_FormField::PushButton ||
-        iType == CPDF_FormField::CheckBox || iType == CPDF_FormField::ListBox) {
+    if (iType == CPDF_FormField::kPushButton ||
+        iType == CPDF_FormField::kCheckBox ||
+        iType == CPDF_FormField::kListBox) {
       continue;
     }
     if (pField->IsNoExport())
@@ -1029,7 +1030,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
   size_t nCount = m_pFieldTree->m_Root.CountFields();
   for (size_t i = 0; i < nCount; ++i) {
     CPDF_FormField* pField = m_pFieldTree->m_Root.GetFieldAtIndex(i);
-    if (!pField || pField->GetType() == CPDF_FormField::PushButton)
+    if (!pField || pField->GetType() == CPDF_FormField::kPushButton)
       continue;
 
     uint32_t dwFlags = pField->GetFieldFlags();
@@ -1048,8 +1049,8 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     auto pFieldDict =
         pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
     pFieldDict->SetNewFor<CPDF_String>("T", fullname);
-    if (pField->GetType() == CPDF_FormField::CheckBox ||
-        pField->GetType() == CPDF_FormField::RadioButton) {
+    if (pField->GetType() == CPDF_FormField::kCheckBox ||
+        pField->GetType() == CPDF_FormField::kRadioButton) {
       WideString csExport = pField->GetCheckValue(false);
       ByteString csBExport = PDF_EncodeText(csExport);
       CPDF_Object* pOpt = FPDF_GetFieldAttr(pField->GetDict(), "Opt");

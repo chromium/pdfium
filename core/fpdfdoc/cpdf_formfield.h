@@ -86,16 +86,16 @@ WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict);
 class CPDF_FormField {
  public:
   enum Type {
-    Unknown,
-    PushButton,
-    RadioButton,
-    CheckBox,
-    Text,
-    RichText,
-    File,
-    ListBox,
-    ComboBox,
-    Sign
+    kUnknown,
+    kPushButton,
+    kRadioButton,
+    kCheckBox,
+    kText,
+    kRichText,
+    kFile,
+    kListBox,
+    kComboBox,
+    kSign
   };
 
   CPDF_FormField(CPDF_InteractiveForm* pForm, CPDF_Dictionary* pDict);
@@ -200,7 +200,7 @@ class CPDF_FormField {
   bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 
-  CPDF_FormField::Type m_Type = Unknown;
+  CPDF_FormField::Type m_Type = kUnknown;
   uint32_t m_Flags = 0;
   bool m_bReadOnly = false;
   bool m_bRequired = false;
