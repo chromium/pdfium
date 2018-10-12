@@ -73,8 +73,8 @@ template("pdfium_public_fuzzer") {
                 "pdfium_fuzzer_helper.h",
               ]
     deps = [
+      "../:test_support",
       "../../:pdfium",
-      "../../:test_support",
     ]
     if (defined(invoker.deps)) {
       deps += invoker.deps
@@ -136,7 +136,7 @@ if (pdf_enable_xfa) {
         "xfa_codec_fuzzer.h",
       ]
       deps = [
-        "../../:test_support",
+        "../:test_support",
       ]
     }
   }
@@ -148,7 +148,7 @@ if (pdf_enable_xfa) {
         "xfa_codec_fuzzer.h",
       ]
       deps = [
-        "../../:test_support",
+        "../:test_support",
       ]
     }
 
@@ -165,7 +165,7 @@ if (pdf_enable_xfa) {
       "xfa_codec_fuzzer.h",
     ]
     deps = [
-      "../../:test_support",
+      "../:test_support",
     ]
   }
 
@@ -176,7 +176,7 @@ if (pdf_enable_xfa) {
         "xfa_codec_fuzzer.h",
       ]
       deps = [
-        "../../:test_support",
+        "../:test_support",
       ]
     }
   }
@@ -188,7 +188,7 @@ if (pdf_enable_xfa) {
         "xfa_codec_fuzzer.h",
       ]
       deps = [
-        "../../:test_support",
+        "../:test_support",
       ]
     }
   }

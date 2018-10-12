@@ -142,7 +142,6 @@ jumbo_static_library("pdfium") {
   configs += [ ":pdfium_core_config" ]
 
   deps = [
-    ":constants",
     ":fdrm",
     ":fpdfapi",
     ":fpdfdoc",
@@ -150,6 +149,7 @@ jumbo_static_library("pdfium") {
     ":fxcodec",
     ":fxcrt",
     ":fxge",
+    "constants",
     "fpdfsdk",
     "fpdfsdk/formfiller",
     "fpdfsdk/pwl",
@@ -183,67 +183,12 @@ jumbo_static_library("pdfium") {
   }
 }
 
-jumbo_source_set("test_support") {
-  testonly = true
-  sources = [
-    "testing/fx_string_testhelpers.cpp",
-    "testing/fx_string_testhelpers.h",
-    "testing/string_write_stream.cpp",
-    "testing/string_write_stream.h",
-    "testing/test_support.cpp",
-    "testing/test_support.h",
-    "testing/utils/bitmap_saver.cpp",
-    "testing/utils/bitmap_saver.h",
-    "testing/utils/path_service.cpp",
-    "testing/utils/path_service.h",
-  ]
-  data = [
-    "testing/resources/",
-  ]
-  deps = [
-    ":image_diff",
-    ":pdfium",
-    "//testing/gmock",
-    "//testing/gtest",
-  ]
-  include_dirs = []
-  if (pdf_enable_v8) {
-    deps += [
-      "//v8",
-      "//v8:v8_libplatform",
-    ]
-    configs += [ "//v8:external_startup_data" ]
-  }
-  configs += [ ":pdfium_core_config" ]
-}
-
-jumbo_source_set("image_diff") {
-  testonly = true
-  sources = [
-    "testing/image_diff/image_diff_png.cpp",
-    "testing/image_diff/image_diff_png.h",
-  ]
-  configs += [ ":pdfium_core_config" ]
-  deps = [
-    "third_party:png",
-  ]
-}
-
 # Targets below this are only visible within this file (and to the
 # top-level gn_visibility target used to help gn_all build everything).
 visibility = [
   ":*",
   "//:gn_visibility",
 ]
-
-jumbo_source_set("constants") {
-  sources = [
-    "constants/form_flags.h",
-    "constants/page_object.h",
-    "constants/stream_dict_common.h",
-    "constants/transparency.h",
-  ]
-}
 
 jumbo_source_set("fdrm") {
   sources = [
@@ -1187,7 +1132,7 @@ test("pdfium_unittests") {
   ]
   deps = [
     ":pdfium",
-    ":test_support",
+    "testing/:test_support",
     "//testing/gmock",
     "//testing/gtest",
   ]
@@ -1299,9 +1244,9 @@ test("pdfium_embeddertests") {
     "testing/range_set.h",
   ]
   deps = [
-    ":image_diff",
     ":pdfium",
-    ":test_support",
+    "testing/:test_support",
+    "testing/image_diff",
     "//testing/gmock",
     "//testing/gtest",
   ]
@@ -1347,8 +1292,8 @@ if (pdf_is_standalone) {
       "testing/image_diff/image_diff.cpp",
     ]
     deps = [
-      ":image_diff",
       ":pdfium",
+      "testing/image_diff",
       "//build/win:default_exe_manifest",
     ]
     configs -= [ "//build/config/compiler:chromium_code" ]
