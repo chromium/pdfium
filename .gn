@@ -17,12 +17,12 @@ default_args = {
 }
 
 check_targets = [
+  "//fxbarcode/*",
   "//samples/*",
 
   # TODO(thestig): Work on these.
   #"//core/*",  # Need to split off.
   #"//fpdfsdk/*",  # Need to split off.
-  #"//fxbarcode/*",  # Need to split off.
   #"//fxjs/*",  # Need to split off.
   #"//testing/*",
   #"//testing/fuzzers/*",
