@@ -45,6 +45,36 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
                                                    float top);
 
 /**
+ * Set "BleedBox" entry to the page dictionary.
+ *
+ * page   - Handle to a page.
+ * left   - The left of the rectangle.
+ * bottom - The bottom of the rectangle.
+ * right  - The right of the rectangle.
+ * top    - The top of the rectangle.
+ */
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetBleedBox(FPDF_PAGE page,
+                                                    float left,
+                                                    float bottom,
+                                                    float right,
+                                                    float top);
+
+/**
+ * Set "TrimBox" entry to the page dictionary.
+ *
+ * page   - Handle to a page.
+ * left   - The left of the rectangle.
+ * bottom - The bottom of the rectangle.
+ * right  - The right of the rectangle.
+ * top    - The top of the rectangle.
+ */
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetTrimBox(FPDF_PAGE page,
+                                                   float left,
+                                                   float bottom,
+                                                   float right,
+                                                   float top);
+
+/**
  * Set "ArtBox" entry to the page dictionary.
  *
  * page   - Handle to a page.
@@ -90,6 +120,42 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetMediaBox(FPDF_PAGE page,
  * false and leave the out parameters unmodified.
  */
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
+                                                        float* left,
+                                                        float* bottom,
+                                                        float* right,
+                                                        float* top);
+
+/**
+ * Get "BleedBox" entry from the page dictionary.
+ *
+ * page   - Handle to a page.
+ * left   - Pointer to a float value receiving the left of the rectangle.
+ * bottom - Pointer to a float value receiving the bottom of the rectangle.
+ * right  - Pointer to a float value receiving the right of the rectangle.
+ * top    - Pointer to a float value receiving the top of the rectangle.
+ *
+ * On success, return true and write to the out parameters. Otherwise return
+ * false and leave the out parameters unmodified.
+ */
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetBleedBox(FPDF_PAGE page,
+                                                         float* left,
+                                                         float* bottom,
+                                                         float* right,
+                                                         float* top);
+
+/**
+ * Get "TrimBox" entry from the page dictionary.
+ *
+ * page   - Handle to a page.
+ * left   - Pointer to a float value receiving the left of the rectangle.
+ * bottom - Pointer to a float value receiving the bottom of the rectangle.
+ * right  - Pointer to a float value receiving the right of the rectangle.
+ * top    - Pointer to a float value receiving the top of the rectangle.
+ *
+ * On success, return true and write to the out parameters. Otherwise return
+ * false and leave the out parameters unmodified.
+ */
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetTrimBox(FPDF_PAGE page,
                                                         float* left,
                                                         float* bottom,
                                                         float* right,

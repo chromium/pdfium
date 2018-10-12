@@ -333,12 +333,16 @@ int CheckPDFiumCApi() {
     // fpdf_transformpage.h
     CHK(FPDFPageObj_TransformClipPath);
     CHK(FPDFPage_GetArtBox);
+    CHK(FPDFPage_GetBleedBox);
     CHK(FPDFPage_GetCropBox);
     CHK(FPDFPage_GetMediaBox);
+    CHK(FPDFPage_GetTrimBox);
     CHK(FPDFPage_InsertClipPath);
     CHK(FPDFPage_SetArtBox);
+    CHK(FPDFPage_SetBleedBox);
     CHK(FPDFPage_SetCropBox);
     CHK(FPDFPage_SetMediaBox);
+    CHK(FPDFPage_SetTrimBox);
     CHK(FPDFPage_TransFormWithClip);
     CHK(FPDF_CreateClipPath);
     CHK(FPDF_DestroyClipPath);

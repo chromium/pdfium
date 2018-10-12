@@ -80,6 +80,24 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetCropBox(FPDF_PAGE page,
                  CFX_FloatRect(left, bottom, right, top));
 }
 
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetBleedBox(FPDF_PAGE page,
+                                                    float left,
+                                                    float bottom,
+                                                    float right,
+                                                    float top) {
+  SetBoundingBox(CPDFPageFromFPDFPage(page), pdfium::page_object::kBleedBox,
+                 CFX_FloatRect(left, bottom, right, top));
+}
+
+FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetTrimBox(FPDF_PAGE page,
+                                                   float left,
+                                                   float bottom,
+                                                   float right,
+                                                   float top) {
+  SetBoundingBox(CPDFPageFromFPDFPage(page), pdfium::page_object::kTrimBox,
+                 CFX_FloatRect(left, bottom, right, top));
+}
+
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetArtBox(FPDF_PAGE page,
                                                   float left,
                                                   float bottom,
@@ -106,6 +124,26 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetCropBox(FPDF_PAGE page,
                                                         float* top) {
   return GetBoundingBox(CPDFPageFromFPDFPage(page),
                         pdfium::page_object::kCropBox, left, bottom, right,
+                        top);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetBleedBox(FPDF_PAGE page,
+                                                         float* left,
+                                                         float* bottom,
+                                                         float* right,
+                                                         float* top) {
+  return GetBoundingBox(CPDFPageFromFPDFPage(page),
+                        pdfium::page_object::kBleedBox, left, bottom, right,
+                        top);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GetTrimBox(FPDF_PAGE page,
+                                                        float* left,
+                                                        float* bottom,
+                                                        float* right,
+                                                        float* top) {
+  return GetBoundingBox(CPDFPageFromFPDFPage(page),
+                        pdfium::page_object::kTrimBox, left, bottom, right,
                         top);
 }
 
