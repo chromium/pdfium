@@ -133,7 +133,7 @@ if (pdf_enable_xfa) {
     ]
     deps = [
       ":fxcrt",
-      "../fpdfapi",
+      "../fpdfapi/parser",
     ]
     visibility = [ "../../*" ]
   }
