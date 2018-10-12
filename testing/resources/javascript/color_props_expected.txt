@@ -1,0 +1,85 @@
+Alert: Original values
+Alert: transparent: T
+Alert: black: G,0
+Alert: white: G,1
+Alert: red: RGB,1,0,0
+Alert: green: RGB,0,1,0
+Alert: blue: RGB,0,0,1
+Alert: cyan: CMYK,1,0,0,0
+Alert: magenta: CMYK,0,1,0,0
+Alert: yellow: CMYK,0,0,1,0
+Alert: dkGray: G,0.25
+Alert: gray: G,0.5
+Alert: ltGray: G,0.75
+Alert: Setting to T
+Alert: Updated values
+Alert: transparent: T
+Alert: black: T
+Alert: white: T
+Alert: red: T
+Alert: green: T
+Alert: blue: T
+Alert: cyan: T
+Alert: magenta: T
+Alert: yellow: T
+Alert: dkGray: T
+Alert: gray: T
+Alert: ltGray: T
+Alert: Setting to G,20
+Alert: Updated values
+Alert: transparent: G,20
+Alert: black: G,20
+Alert: white: G,20
+Alert: red: G,20
+Alert: green: G,20
+Alert: blue: G,20
+Alert: cyan: G,20
+Alert: magenta: G,20
+Alert: yellow: G,20
+Alert: dkGray: G,20
+Alert: gray: G,20
+Alert: ltGray: G,20
+Alert: Setting to RGB,10,20,30
+Alert: Updated values
+Alert: transparent: RGB,10,20,30
+Alert: black: RGB,10,20,30
+Alert: white: RGB,10,20,30
+Alert: red: RGB,10,20,30
+Alert: green: RGB,10,20,30
+Alert: blue: RGB,10,20,30
+Alert: cyan: RGB,10,20,30
+Alert: magenta: RGB,10,20,30
+Alert: yellow: RGB,10,20,30
+Alert: dkGray: RGB,10,20,30
+Alert: gray: RGB,10,20,30
+Alert: ltGray: RGB,10,20,30
+Alert: Setting to CMYK,10,20,30,40
+Alert: Updated values
+Alert: transparent: CMYK,10,20,30,40
+Alert: black: CMYK,10,20,30,40
+Alert: white: CMYK,10,20,30,40
+Alert: red: CMYK,10,20,30,40
+Alert: green: CMYK,10,20,30,40
+Alert: blue: CMYK,10,20,30,40
+Alert: cyan: CMYK,10,20,30,40
+Alert: magenta: CMYK,10,20,30,40
+Alert: yellow: CMYK,10,20,30,40
+Alert: dkGray: CMYK,10,20,30,40
+Alert: gray: CMYK,10,20,30,40
+Alert: ltGray: CMYK,10,20,30,40
+Alert: Setting to BOGUS,4
+Alert: Updated values
+Alert: transparent: T
+Alert: black: T
+Alert: white: T
+Alert: red: T
+Alert: green: T
+Alert: blue: T
+Alert: cyan: T
+Alert: magenta: T
+Alert: yellow: T
+Alert: dkGray: T
+Alert: gray: T
+Alert: ltGray: T
+Alert: Testing wrong parameter type
+Alert: SUCCESS: color.red: Incorrect parameter type.

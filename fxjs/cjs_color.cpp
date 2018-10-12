@@ -258,8 +258,11 @@ CJS_Result CJS_Color::GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* var) {
 CJS_Result CJS_Color::SetPropertyHelper(CJS_Runtime* pRuntime,
                                         v8::Local<v8::Value> vp,
                                         CFX_Color* var) {
-  if (vp.IsEmpty() || !vp->IsArray())
+  if (vp.IsEmpty())
     return CJS_Result::Failure(JSMessage::kParamError);
+
+  if (!vp->IsArray())
+    return CJS_Result::Failure(JSMessage::kTypeError);
 
   *var = ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(vp));
   return CJS_Result::Success();

@@ -1,0 +1,76 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OpenAction 10 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [
+    3 0 R
+  ]
+>>
+endobj
+% Page number 0.
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents [21 0 R]
+  /MediaBox [0 0 612 792]
+>>
+% OpenAction action
+{{object 10 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS 11 0 R
+>>
+endobj
+% JS program to exexute
+{{object 11 0}} <<
+  {{streamlen}}
+>>
+stream
+var colorNames = [
+  "transparent", "black", "white", "red", "green", "blue", "cyan",
+  "magenta", "yellow", "dkGray", "gray", "ltGray"
+];
+var newValues = [
+  ["T"], ["G", 20], ["RGB", 10, 20, 30], ["CMYK", 10, 20, 30, 40], ["BOGUS", 4]
+];
+try {
+  var x, y, c, v;
+  app.alert("Original values");
+  for (x = 0; x < colorNames.length; ++x) {
+    c = colorNames[x];
+    app.alert(c + ": " + color[c]);
+  }
+  for (y = 0; y < newValues.length; ++y) {
+    v = newValues[y];
+    app.alert("Setting to " + v);
+    for (x = 0; x < colorNames.length; ++x) {
+      c = colorNames[x];
+      color[c] = v;
+    }
+    app.alert("Updated values");
+    for (x = 0; x < colorNames.length; ++x) {
+      c = colorNames[x];
+      app.alert(c + ": " + color[c]);
+    }
+  }
+} catch (e) {
+  app.alert("FAILURE" + e);
+}
+try {
+  app.alert("Testing wrong parameter type");
+  color.red = 42;
+} catch (e) {
+  app.alert("SUCCESS: " + e);
+}
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
