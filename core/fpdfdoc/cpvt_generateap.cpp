@@ -319,7 +319,7 @@ float GetBorderWidth(const CPDF_Dictionary& pAnnotDict) {
   }
 
   if (const CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
-    if (pBorderArray->GetCount() > 2)
+    if (pBorderArray->size() > 2)
       return pBorderArray->GetNumberAt(2);
   }
 
@@ -333,7 +333,7 @@ const CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
   }
 
   if (const CPDF_Array* pBorderArray = pAnnotDict.GetArrayFor("Border")) {
-    if (pBorderArray->GetCount() == 4)
+    if (pBorderArray->size() == 4)
       return pBorderArray->GetArrayAt(3);
   }
 
@@ -346,7 +346,7 @@ ByteString GetDashPatternString(const CPDF_Dictionary& pAnnotDict) {
     return ByteString();
 
   // Support maximum of ten elements in the dash array.
-  size_t pDashArrayCount = std::min<size_t>(pDashArray->GetCount(), 10);
+  size_t pDashArrayCount = std::min<size_t>(pDashArray->size(), 10);
   std::ostringstream sDashStream;
 
   sDashStream << "[";
@@ -657,15 +657,15 @@ bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   rect.Inflate(fBorderWidth / 2, fBorderWidth / 2);
   pAnnotDict->SetRectFor("Rect", rect);
 
-  for (size_t i = 0; i < pInkList->GetCount(); i++) {
+  for (size_t i = 0; i < pInkList->size(); i++) {
     CPDF_Array* pInkCoordList = pInkList->GetArrayAt(i);
-    if (!pInkCoordList || pInkCoordList->GetCount() < 2)
+    if (!pInkCoordList || pInkCoordList->size() < 2)
       continue;
 
     sAppStream << pInkCoordList->GetNumberAt(0) << " "
                << pInkCoordList->GetNumberAt(1) << " m ";
 
-    for (size_t j = 0; j < pInkCoordList->GetCount() - 1; j += 2) {
+    for (size_t j = 0; j < pInkCoordList->size() - 1; j += 2) {
       sAppStream << pInkCoordList->GetNumberAt(j) << " "
                  << pInkCoordList->GetNumberAt(j + 1) << " l ";
     }
@@ -803,7 +803,7 @@ bool GenerateSquareAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
   }
 
-  bool bIsFillRect = pInteriorColor && (pInteriorColor->GetCount() > 0);
+  bool bIsFillRect = pInteriorColor && (pInteriorColor->size() > 0);
 
   sAppStream << rect.left << " " << rect.bottom << " " << rect.Width() << " "
              << rect.Height() << " re "
@@ -1230,7 +1230,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
       std::ostringstream sBody;
       if (pOpts) {
         float fy = rcBody.top;
-        for (size_t i = nTop, sz = pOpts->GetCount(); i < sz; i++) {
+        for (size_t i = nTop, sz = pOpts->size(); i < sz; i++) {
           if (IsFloatSmaller(fy, rcBody.bottom))
             break;
 
@@ -1243,7 +1243,7 @@ void CPVT_GenerateAP::GenerateFormAP(Type type,
 
             bool bSelected = false;
             if (pSels) {
-              for (size_t s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
+              for (size_t s = 0, ssz = pSels->size(); s < ssz; s++) {
                 int value = pSels->GetIntegerAt(s);
                 if (value >= 0 && i == static_cast<size_t>(value)) {
                   bSelected = true;

@@ -93,7 +93,7 @@ CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
       m_szLastXRefOffset(szLastXRefOffset) {
   const CPDF_Array* pHintStreamRange = pDict->GetArrayFor("H");
   const size_t nHintStreamSize =
-      pHintStreamRange ? pHintStreamRange->GetCount() : 0;
+      pHintStreamRange ? pHintStreamRange->size() : 0;
   if (nHintStreamSize == 2 || nHintStreamSize == 4) {
     m_szHintStart = std::max(pHintStreamRange->GetIntegerAt(0), 0);
     const FX_SAFE_UINT32 safe_hint_length = pHintStreamRange->GetIntegerAt(1);

@@ -125,9 +125,9 @@ class PDFObjectsTest : public testing::Test {
       case CPDF_Object::ARRAY: {
         const CPDF_Array* array1 = obj1->AsArray();
         const CPDF_Array* array2 = obj2->AsArray();
-        if (array1->GetCount() != array2->GetCount())
+        if (array1->size() != array2->size())
           return false;
-        for (size_t i = 0; i < array1->GetCount(); ++i) {
+        for (size_t i = 0; i < array1->size(); ++i) {
           if (!Equal(array1->GetObjectAt(i), array2->GetObjectAt(i)))
             return false;
         }
@@ -136,7 +136,7 @@ class PDFObjectsTest : public testing::Test {
       case CPDF_Object::DICTIONARY: {
         const CPDF_Dictionary* dict1 = obj1->AsDictionary();
         const CPDF_Dictionary* dict2 = obj2->AsDictionary();
-        if (dict1->GetCount() != dict2->GetCount())
+        if (dict1->size() != dict2->size())
           return false;
         for (CPDF_Dictionary::const_iterator it = dict1->begin();
              it != dict1->end(); ++it) {
@@ -667,7 +667,7 @@ TEST(PDFArrayTest, GetTypeAt) {
                                 0, 0, 0, 0,     0,    0, 0};
     const float expected_float[] = {0, 0, 0, -1234, 2345, 0.05f, 0,
                                     0, 0, 0, 0,     0,    0,     0};
-    for (size_t i = 0; i < arr->GetCount(); ++i) {
+    for (size_t i = 0; i < arr->size(); ++i) {
       EXPECT_STREQ(expected_str[i], arr->GetStringAt(i).c_str());
       EXPECT_EQ(expected_int[i], arr->GetIntegerAt(i));
       EXPECT_EQ(expected_float[i], arr->GetNumberAt(i));
@@ -756,8 +756,8 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   for (size_t i = 0; i < FX_ArraySize(obj_nums); ++i)
     EXPECT_EQ(indirect_objs[i], holder->GetOrParseIndirectObject(obj_nums[i]));
   // Check arrays.
-  EXPECT_EQ(arr->GetCount(), arr1->GetCount());
-  for (size_t i = 0; i < arr->GetCount(); ++i) {
+  EXPECT_EQ(arr->size(), arr1->size());
+  for (size_t i = 0; i < arr->size(); ++i) {
     EXPECT_EQ(CPDF_Object::REFERENCE, arr->GetObjectAt(i)->GetType());
     EXPECT_EQ(indirect_objs[i], arr->GetObjectAt(i)->GetDirect());
     EXPECT_EQ(indirect_objs[i], arr->GetDirectObjectAt(i));
@@ -771,7 +771,7 @@ TEST(PDFArrayTest, CloneDirectObject) {
   CPDF_IndirectObjectHolder objects_holder;
   auto array = pdfium::MakeUnique<CPDF_Array>();
   array->AddNew<CPDF_Reference>(&objects_holder, 1234);
-  ASSERT_EQ(1U, array->GetCount());
+  ASSERT_EQ(1U, array->size());
   CPDF_Object* obj = array->GetObjectAt(0);
   ASSERT_TRUE(obj);
   EXPECT_TRUE(obj->IsReference());
@@ -782,7 +782,7 @@ TEST(PDFArrayTest, CloneDirectObject) {
 
   std::unique_ptr<CPDF_Array> cloned_array =
       ToArray(std::move(cloned_array_object));
-  ASSERT_EQ(0U, cloned_array->GetCount());
+  ASSERT_EQ(0U, cloned_array->size());
   CPDF_Object* cloned_obj = cloned_array->GetObjectAt(0);
   EXPECT_FALSE(cloned_obj);
 }
@@ -878,7 +878,7 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
   CPDF_IndirectObjectHolder objects_holder;
   auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Reference>("foo", &objects_holder, 1234);
-  ASSERT_EQ(1U, dict->GetCount());
+  ASSERT_EQ(1U, dict->size());
   CPDF_Object* obj = dict->GetObjectFor("foo");
   ASSERT_TRUE(obj);
   EXPECT_TRUE(obj->IsReference());
@@ -889,7 +889,7 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
 
   std::unique_ptr<CPDF_Dictionary> cloned_dict =
       ToDictionary(std::move(cloned_dict_object));
-  ASSERT_EQ(0U, cloned_dict->GetCount());
+  ASSERT_EQ(0U, cloned_dict->size());
   CPDF_Object* cloned_obj = cloned_dict->GetObjectFor("foo");
   EXPECT_FALSE(cloned_obj);
 }
@@ -906,7 +906,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     std::unique_ptr<CPDF_Array> cloned_array = ToArray(arr_obj->Clone());
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_array);
-    EXPECT_EQ(1u, cloned_array->GetCount());
+    EXPECT_EQ(1u, cloned_array->size());
     CPDF_Object* cloned_dict = cloned_array->GetObjectAt(0);
     ASSERT_TRUE(cloned_dict);
     ASSERT_TRUE(cloned_dict->IsDictionary());
@@ -953,7 +953,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     CPDF_Object* cloned_arr = cloned_dict->GetObjectFor("arr");
     ASSERT_TRUE(cloned_arr);
     ASSERT_TRUE(cloned_arr->IsArray());
-    EXPECT_EQ(0U, cloned_arr->AsArray()->GetCount());
+    EXPECT_EQ(0U, cloned_arr->AsArray()->size());
     // Recursively referenced object is not cloned.
     EXPECT_EQ(nullptr, cloned_arr->AsArray()->GetObjectAt(0));
   }

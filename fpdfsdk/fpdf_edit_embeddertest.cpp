@@ -58,7 +58,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
 
     const CPDF_Array* fontBBox = font_desc->GetArrayFor("FontBBox");
     ASSERT_TRUE(fontBBox);
-    EXPECT_EQ(4u, fontBBox->GetCount());
+    EXPECT_EQ(4u, fontBBox->size());
     // Check that the coordinates are in the preferred order according to spec
     // 1.7 Section 3.8.4
     EXPECT_TRUE(fontBBox->GetIntegerAt(0) < fontBBox->GetIntegerAt(2));
@@ -97,18 +97,18 @@ class FPDFEditEmbeddertest : public EmbedderTest {
     // Check that W array is in a format that conforms to PDF spec 1.7 section
     // "Glyph Metrics in CIDFonts" (these checks are not
     // implementation-specific).
-    EXPECT_GT(widths_array->GetCount(), 1u);
+    EXPECT_GT(widths_array->size(), 1u);
     int num_cids_checked = 0;
     int cur_cid = 0;
-    for (size_t idx = 0; idx < widths_array->GetCount(); idx++) {
+    for (size_t idx = 0; idx < widths_array->size(); idx++) {
       int cid = widths_array->GetNumberAt(idx);
       EXPECT_GE(cid, cur_cid);
-      ASSERT_FALSE(++idx == widths_array->GetCount());
+      ASSERT_FALSE(++idx == widths_array->size());
       const CPDF_Object* next = widths_array->GetObjectAt(idx);
       if (next->IsArray()) {
         // We are in the c [w1 w2 ...] case
         const CPDF_Array* arr = next->AsArray();
-        int cnt = static_cast<int>(arr->GetCount());
+        int cnt = static_cast<int>(arr->size());
         size_t inner_idx = 0;
         for (cur_cid = cid; cur_cid < cid + cnt; cur_cid++) {
           uint32_t width = arr->GetNumberAt(inner_idx++);
@@ -121,7 +121,7 @@ class FPDFEditEmbeddertest : public EmbedderTest {
       // Otherwise, are in the c_first c_last w case.
       ASSERT_TRUE(next->IsNumber());
       int last_cid = next->AsNumber()->GetInteger();
-      ASSERT_FALSE(++idx == widths_array->GetCount());
+      ASSERT_FALSE(++idx == widths_array->size());
       uint32_t width = widths_array->GetNumberAt(idx);
       for (cur_cid = cid; cur_cid <= last_cid; cur_cid++) {
         EXPECT_EQ(width, typed_font->GetCharWidthF(cur_cid))
@@ -2053,7 +2053,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   CPDF_Page* cpage = CPDFPageFromFPDFPage(page.get());
   CPDF_Dictionary* graphics_dict = cpage->m_pResources->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
-  EXPECT_EQ(2u, graphics_dict->GetCount());
+  EXPECT_EQ(2u, graphics_dict->size());
 
   // Add a text object causing no change to the graphics dictionary
   FPDF_PAGEOBJECT text1 = FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
@@ -2062,7 +2062,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   EXPECT_TRUE(FPDFText_SetFillColor(text1, 100, 100, 100, 255));
   FPDFPage_InsertObject(page.get(), text1);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(2u, graphics_dict->GetCount());
+  EXPECT_EQ(2u, graphics_dict->size());
 
   // Add a text object increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT text2 =
@@ -2071,7 +2071,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   FPDFPageObj_SetBlendMode(text2, "Darken");
   EXPECT_TRUE(FPDFText_SetFillColor(text2, 0, 0, 255, 150));
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(3u, graphics_dict->GetCount());
+  EXPECT_EQ(3u, graphics_dict->size());
 
   // Add a path that should reuse graphics
   FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
@@ -2079,7 +2079,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   EXPECT_TRUE(FPDFPath_SetFillColor(path, 200, 200, 100, 150));
   FPDFPage_InsertObject(page.get(), path);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(3u, graphics_dict->GetCount());
+  EXPECT_EQ(3u, graphics_dict->size());
 
   // Add a rect increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT rect2 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
@@ -2088,7 +2088,7 @@ TEST_F(FPDFEditEmbeddertest, GraphicsData) {
   EXPECT_TRUE(FPDFPath_SetStrokeColor(rect2, 0, 0, 0, 200));
   FPDFPage_InsertObject(page.get(), rect2);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(4u, graphics_dict->GetCount());
+  EXPECT_EQ(4u, graphics_dict->size());
 }
 
 TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
@@ -2106,7 +2106,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   CPDF_Page* cpage = CPDFPageFromFPDFPage(page);
   CPDF_Dictionary* graphics_dict = cpage->m_pResources->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
-  EXPECT_EQ(2u, graphics_dict->GetCount());
+  EXPECT_EQ(2u, graphics_dict->size());
 
   // Check the bitmap
   {
@@ -2118,7 +2118,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   // Never mind, my new favorite color is blue, increase alpha
   EXPECT_TRUE(FPDFPath_SetFillColor(rect, 0, 0, 255, 180));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->GetCount());
+  EXPECT_EQ(3u, graphics_dict->size());
 
   // Check that bitmap displays changed content
   {
@@ -2129,7 +2129,7 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
 
   // And now generate, without changes
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->GetCount());
+  EXPECT_EQ(3u, graphics_dict->size());
   {
     ScopedFPDFBitmap page_bitmap = RenderPageWithFlags(page, nullptr, 0);
     CompareBitmap(page_bitmap.get(), 612, 792,
@@ -2147,12 +2147,12 @@ TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   CPDF_Dictionary* font_dict = cpage->m_pResources->GetDictFor("Font");
   ASSERT_TRUE(font_dict);
-  EXPECT_EQ(1u, font_dict->GetCount());
+  EXPECT_EQ(1u, font_dict->size());
 
   // Generate yet again, check dicts are reasonably sized
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->GetCount());
-  EXPECT_EQ(1u, font_dict->GetCount());
+  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_EQ(1u, font_dict->size());
   FPDF_ClosePage(page);
 }
 
@@ -2179,7 +2179,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleType1Font) {
 
   const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
-  ASSERT_EQ(224u, widths_array->GetCount());
+  ASSERT_EQ(224u, widths_array->size());
   EXPECT_EQ(250, widths_array->GetNumberAt(0));
   EXPECT_EQ(569, widths_array->GetNumberAt(11));
   EXPECT_EQ(500, widths_array->GetNumberAt(223));
@@ -2207,7 +2207,7 @@ TEST_F(FPDFEditEmbeddertest, LoadSimpleTrueTypeFont) {
 
   const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
-  ASSERT_EQ(224u, widths_array->GetCount());
+  ASSERT_EQ(224u, widths_array->size());
   EXPECT_EQ(600, widths_array->GetNumberAt(33));
   EXPECT_EQ(600, widths_array->GetNumberAt(74));
   EXPECT_EQ(600, widths_array->GetNumberAt(223));
@@ -2234,7 +2234,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   const CPDF_Array* descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
   ASSERT_TRUE(descendant_array);
-  EXPECT_EQ(1u, descendant_array->GetCount());
+  EXPECT_EQ(1u, descendant_array->size());
 
   // Check the CIDFontDict
   const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);
@@ -2252,7 +2252,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType0Font) {
   // Check widths
   const CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
-  EXPECT_GT(widths_array->GetCount(), 1u);
+  EXPECT_GT(widths_array->size(), 1u);
   CheckCompositeFontWidths(widths_array, typed_font);
 }
 
@@ -2276,7 +2276,7 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   const CPDF_Array* descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
   ASSERT_TRUE(descendant_array);
-  EXPECT_EQ(1u, descendant_array->GetCount());
+  EXPECT_EQ(1u, descendant_array->size());
 
   // Check the CIDFontDict
   const CPDF_Dictionary* cidfont_dict = descendant_array->GetDictAt(0);

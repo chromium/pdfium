@@ -688,7 +688,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   std::vector<std::pair<int32_t, int32_t>> arrIndex;
   CPDF_Array* pArray = pDict->GetArrayFor("Index");
   if (pArray) {
-    for (size_t i = 0; i < pArray->GetCount() / 2; i++) {
+    for (size_t i = 0; i < pArray->size() / 2; i++) {
       CPDF_Object* pStartNumObj = pArray->GetObjectAt(i * 2);
       CPDF_Object* pCountObj = pArray->GetObjectAt(i * 2 + 1);
 
@@ -710,7 +710,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
 
   std::vector<uint32_t> WidthArray;
   FX_SAFE_UINT32 dwAccWidth = 0;
-  for (size_t i = 0; i < pArray->GetCount(); ++i) {
+  for (size_t i = 0; i < pArray->size(); ++i) {
     WidthArray.push_back(pArray->GetIntegerAt(i));
     dwAccWidth += WidthArray[i];
   }

@@ -278,7 +278,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpaceInternal(
   if (!pArray || pArray->IsEmpty())
     return nullptr;
 
-  if (pArray->GetCount() == 1) {
+  if (pArray->size() == 1) {
     return GetColorSpaceInternal(pArray->GetDirectObjectAt(0), pResources,
                                  pVisited, pVisitedInternal);
   }

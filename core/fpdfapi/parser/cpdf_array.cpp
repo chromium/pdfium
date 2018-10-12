@@ -236,7 +236,7 @@ bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive,
   if (!archive->WriteString("["))
     return false;
 
-  for (size_t i = 0; i < GetCount(); ++i) {
+  for (size_t i = 0; i < size(); ++i) {
     if (!GetObjectAt(i)->WriteTo(archive, encryptor))
       return false;
   }

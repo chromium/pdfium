@@ -218,7 +218,7 @@ void ReportUnsupportedFeatures(CPDF_Document* pDoc) {
         const CPDF_Array* pArray =
             pJSDict ? pJSDict->GetArrayFor("Names") : nullptr;
         if (pArray) {
-          for (size_t i = 0; i < pArray->GetCount(); i++) {
+          for (size_t i = 0; i < pArray->size(); i++) {
             ByteString cbStr = pArray->GetStringAt(i);
             if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
               RaiseUnSupportError(FPDF_UNSP_DOC_SHAREDREVIEW);
@@ -353,7 +353,7 @@ CPDF_Array* AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict) {
 }
 
 bool IsValidQuadPointsIndex(const CPDF_Array* array, size_t index) {
-  return array && index < array->GetCount() / 8;
+  return array && index < array->size() / 8;
 }
 
 bool GetQuadPointsAtIndex(const CPDF_Array* array,
@@ -383,7 +383,7 @@ bool GetQuadPointsFromDictionary(CPDF_Dictionary* dict,
   ASSERT(quad_points);
 
   const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(dict);
-  if (!pArray || quad_index >= pArray->GetCount() / 8)
+  if (!pArray || quad_index >= pArray->size() / 8)
     return false;
 
   quad_index *= 8;

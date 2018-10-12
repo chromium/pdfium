@@ -75,7 +75,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
   bool bIdentity = true;
   if (const CPDF_Array* pArray = pObj->AsArray()) {
     bUniTransfer = false;
-    if (pArray->GetCount() < 3)
+    if (pArray->size() < 3)
       return nullptr;
 
     for (uint32_t i = 0; i < 3; ++i) {

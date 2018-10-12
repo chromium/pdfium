@@ -2028,8 +2028,7 @@ void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
   FX_ARGB background = 0;
   if (!pPattern->IsShadingObject() && pDict->KeyExist("Background")) {
     const CPDF_Array* pBackColor = pDict->GetArrayFor("Background");
-    if (pBackColor &&
-        pBackColor->GetCount() >= pColorSpace->CountComponents()) {
+    if (pBackColor && pBackColor->size() >= pColorSpace->CountComponents()) {
       std::vector<float> comps(pColorSpace->CountComponents());
       for (uint32_t i = 0; i < pColorSpace->CountComponents(); i++)
         comps[i] = pBackColor->GetNumberAt(i);
@@ -2638,7 +2637,7 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
 
   uint32_t comps = std::max(8u, pCS->CountComponents());
   std::vector<float> floats(comps);
-  size_t count = std::min<size_t>(8, pBC->GetCount());
+  size_t count = std::min<size_t>(8, pBC->size());
   for (size_t i = 0; i < count; i++)
     floats[i] = pBC->GetNumberAt(i);
 

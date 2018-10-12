@@ -33,7 +33,7 @@ CPDF_Dictionary* CreatePageTreeNode(std::unique_ptr<CPDF_Array> kids,
   pageNode->SetNewFor<CPDF_String>("Type", "Pages", false);
   pageNode->SetNewFor<CPDF_Reference>("Kids", pDoc, pUnowned->GetObjNum());
   pageNode->SetNewFor<CPDF_Number>("Count", count);
-  for (size_t i = 0; i < pUnowned->GetCount(); i++) {
+  for (size_t i = 0; i < pUnowned->size(); i++) {
     pUnowned->GetDictAt(i)->SetNewFor<CPDF_Reference>("Parent", pDoc,
                                                       pageNode->GetObjNum());
   }

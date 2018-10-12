@@ -357,7 +357,7 @@ bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
       break;
     case CPDF_Object::ARRAY: {
       CPDF_Array* pKidsArray = pKids->AsArray();
-      for (size_t i = 0; i < pKidsArray->GetCount(); ++i) {
+      for (size_t i = 0; i < pKidsArray->size(); ++i) {
         if (CPDF_Reference* pRef = ToReference(pKidsArray->GetObjectAt(i)))
           m_PageObjList.push_back(pRef->GetRefObjNum());
       }
@@ -545,7 +545,7 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
   }
 
   pPageNode->m_type = PDF_PAGENODE_PAGES;
-  for (size_t i = 0; i < pArray->GetCount(); ++i) {
+  for (size_t i = 0; i < pArray->size(); ++i) {
     CPDF_Reference* pKid = ToReference(pArray->GetObjectAt(i));
     if (!pKid)
       continue;
@@ -610,7 +610,7 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
     }
     case CPDF_Object::ARRAY: {
       CPDF_Array* pKidsArray = pKids->AsArray();
-      for (size_t i = 0; i < pKidsArray->GetCount(); ++i) {
+      for (size_t i = 0; i < pKidsArray->size(); ++i) {
         CPDF_Reference* pKid = ToReference(pKidsArray->GetObjectAt(i));
         if (!pKid)
           continue;

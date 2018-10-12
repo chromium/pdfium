@@ -443,7 +443,7 @@ int CPDF_FormField::CountSelectedItems() const {
   if (pValue->IsString() || pValue->IsNumber())
     return pValue->GetString().IsEmpty() ? 0 : 1;
   const CPDF_Array* pArray = pValue->AsArray();
-  return pArray ? pArray->GetCount() : 0;
+  return pArray ? pArray->size() : 0;
 }
 
 int CPDF_FormField::GetSelectedIndex(int index) const {
@@ -533,7 +533,7 @@ bool CPDF_FormField::IsItemSelected(int index) const {
       break;
     }
   }
-  for (int i = 0; i < static_cast<int>(pArray->GetCount()); i++)
+  for (int i = 0; i < static_cast<int>(pArray->size()); i++)
     if (pArray->GetDirectObjectAt(i)->GetUnicodeText() == opt_value &&
         i == iPos) {
       return true;
@@ -588,7 +588,7 @@ bool CPDF_FormField::SetItemSelection(int index,
               pArray->AddNew<CPDF_String>(PDF_EncodeText(opt_value), false);
             }
           }
-          if (pArray->GetCount() > 0)
+          if (pArray->size() > 0)
             m_pDict->SetFor("V", std::move(pArray));
         }
       } else {
@@ -627,7 +627,7 @@ int CPDF_FormField::GetDefaultSelectedItem() const {
 
 int CPDF_FormField::CountOptions() const {
   const CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict.Get(), "Opt"));
-  return pArray ? pArray->GetCount() : 0;
+  return pArray ? pArray->size() : 0;
 }
 
 WideString CPDF_FormField::GetOptionText(int index, int sub_index) const {
@@ -767,7 +767,7 @@ int CPDF_FormField::GetTopVisibleIndex() const {
 
 int CPDF_FormField::CountSelectedOptions() const {
   const CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict.Get(), "I"));
-  return pArray ? pArray->GetCount() : 0;
+  return pArray ? pArray->size() : 0;
 }
 
 int CPDF_FormField::GetSelectedOptionIndex(int index) const {
@@ -775,7 +775,7 @@ int CPDF_FormField::GetSelectedOptionIndex(int index) const {
   if (!pArray)
     return -1;
 
-  int iCount = pArray->GetCount();
+  int iCount = pArray->size();
   if (iCount < 0 || index >= iCount)
     return -1;
   return pArray->GetIntegerAt(index);
@@ -805,7 +805,7 @@ bool CPDF_FormField::SelectOption(int iOptIndex,
   }
 
   bool bReturn = false;
-  for (size_t i = 0; i < pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->size(); i++) {
     int iFind = pArray->GetIntegerAt(i);
     if (iFind == iOptIndex) {
       if (bSelected)

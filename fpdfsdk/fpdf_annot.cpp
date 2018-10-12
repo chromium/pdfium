@@ -245,7 +245,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotCount(FPDF_PAGE page) {
     return 0;
 
   CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
-  return pAnnots ? pAnnots->GetCount() : 0;
+  return pAnnots ? pAnnots->size() : 0;
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
@@ -255,7 +255,7 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
     return nullptr;
 
   CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
-  if (!pAnnots || static_cast<size_t>(index) >= pAnnots->GetCount())
+  if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return nullptr;
 
   CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(index));
@@ -300,7 +300,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_RemoveAnnot(FPDF_PAGE page,
     return false;
 
   CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
-  if (!pAnnots || static_cast<size_t>(index) >= pAnnots->GetCount())
+  if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return false;
 
   pAnnots->RemoveAt(index);
@@ -630,7 +630,7 @@ FPDFAnnot_CountAttachmentPoints(FPDF_ANNOTATION annot) {
   CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
   const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
-  return pArray ? pArray->GetCount() / 8 : 0;
+  return pArray ? pArray->size() / 8 : 0;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

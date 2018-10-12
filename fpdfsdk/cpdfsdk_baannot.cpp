@@ -192,9 +192,9 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
 
   CPDF_Array* pBorder = GetAnnotDict()->GetArrayFor("Border");
   if (pBorder) {
-    if (pBorder->GetCount() >= 4) {
+    if (pBorder->size() >= 4) {
       CPDF_Array* pDP = pBorder->GetArrayAt(3);
-      if (pDP && pDP->GetCount() > 0)
+      if (pDP && pDP->size() > 0)
         return BorderStyle::DASH;
     }
   }

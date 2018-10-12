@@ -211,7 +211,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
 CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
                                                   size_t nIndex) {
   ASSERT(pArray);
-  ASSERT(nIndex < pArray->GetCount() / 8);
+  ASSERT(nIndex < pArray->size() / 8);
 
   // QuadPoints are defined with 4 pairs of numbers
   // ([ pair0, pair1, pair2, pair3 ]), where
@@ -381,7 +381,7 @@ ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
 
 // static
 size_t CPDF_Annot::QuadPointCount(const CPDF_Array* pArray) {
-  return pArray->GetCount() / 8;
+  return pArray->size() / 8;
 }
 
 bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
@@ -460,12 +460,12 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
     style_char = 'S';
     if (pBorderArray) {
       width = pBorderArray->GetNumberAt(2);
-      if (pBorderArray->GetCount() == 4) {
+      if (pBorderArray->size() == 4) {
         pDashArray = pBorderArray->GetArrayAt(3);
         if (!pDashArray) {
           return;
         }
-        size_t nLen = pDashArray->GetCount();
+        size_t nLen = pDashArray->size();
         size_t i = 0;
         for (; i < nLen; ++i) {
           CPDF_Object* pObj = pDashArray->GetDirectObjectAt(i);
@@ -502,13 +502,13 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   graph_state.m_LineWidth = width;
   if (style_char == 'D') {
     if (pDashArray) {
-      size_t dash_count = pDashArray->GetCount();
+      size_t dash_count = pDashArray->size();
       if (dash_count % 2) {
         dash_count++;
       }
       graph_state.m_DashArray.resize(dash_count);
       size_t i;
-      for (i = 0; i < pDashArray->GetCount(); ++i) {
+      for (i = 0; i < pDashArray->size(); ++i) {
         graph_state.m_DashArray[i] = pDashArray->GetNumberAt(i);
       }
       if (i < dash_count) {

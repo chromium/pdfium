@@ -60,7 +60,7 @@ void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage,
   if (!pAnnotList)
     return;
 
-  for (size_t i = 0; i < pAnnotList->GetCount(); ++i) {
+  for (size_t i = 0; i < pAnnotList->size(); ++i) {
     CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(i);
     bool add_link = (pAnnot && pAnnot->GetStringFor("Subtype") == "Link");
     // Add non-links as nullptrs to preserve z-order.

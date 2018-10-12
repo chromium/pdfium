@@ -373,7 +373,7 @@ FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark) {
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
 
   const CPDF_Dictionary* pParams = pMarkItem->GetParam();
-  return pParams ? pParams->GetCount() : 0;
+  return pParams ? pParams->size() : 0;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

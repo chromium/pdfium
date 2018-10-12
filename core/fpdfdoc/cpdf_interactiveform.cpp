@@ -591,7 +591,7 @@ CPDF_InteractiveForm::CPDF_InteractiveForm(CPDF_Document* pDocument)
   if (!pFields)
     return;
 
-  for (size_t i = 0; i < pFields->GetCount(); ++i)
+  for (size_t i = 0; i < pFields->size(); ++i)
     LoadField(pFields->GetDictAt(i), 0);
 }
 
@@ -715,7 +715,7 @@ CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
   if (!pAnnotList)
     return nullptr;
 
-  for (size_t i = pAnnotList->GetCount(); i > 0; --i) {
+  for (size_t i = pAnnotList->size(); i > 0; --i) {
     size_t annot_index = i - 1;
     CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(annot_index);
     if (!pAnnot)
@@ -751,7 +751,7 @@ int CPDF_InteractiveForm::CountFieldsInCalculationOrder() {
     return 0;
 
   CPDF_Array* pArray = m_pFormDict->GetArrayFor("CO");
-  return pArray ? pArray->GetCount() : 0;
+  return pArray ? pArray->size() : 0;
 }
 
 CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
@@ -775,7 +775,7 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
   if (!pArray)
     return -1;
 
-  for (size_t i = 0; i < pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->size(); i++) {
     CPDF_Object* pElement = pArray->GetDirectObjectAt(i);
     if (pElement == pField->GetDict())
       return i;
@@ -844,7 +844,7 @@ void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
     return;
 
   if (pFirstKid->KeyExist("T") || pFirstKid->KeyExist("Kids")) {
-    for (size_t i = 0; i < pKids->GetCount(); i++) {
+    for (size_t i = 0; i < pKids->size(); i++) {
       CPDF_Dictionary* pChildDict = pKids->GetDictAt(i);
       if (pChildDict) {
         if (pChildDict->GetObjNum() != dwParentObjNum)
@@ -869,7 +869,7 @@ void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
   if (!pAnnots)
     return;
 
-  for (size_t i = 0; i < pAnnots->GetCount(); i++) {
+  for (size_t i = 0; i < pAnnots->size(); i++) {
     CPDF_Dictionary* pAnnot = pAnnots->GetDictAt(i);
     if (pAnnot && pAnnot->GetStringFor("Subtype") == "Widget")
       LoadField(pAnnot, 0);
@@ -930,7 +930,7 @@ void CPDF_InteractiveForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
 
   CPDF_Array* pKids = pFieldDict->GetArrayFor("Kids");
   if (pKids) {
-    for (size_t i = 0; i < pKids->GetCount(); i++) {
+    for (size_t i = 0; i < pKids->size(); i++) {
       CPDF_Dictionary* pKid = pKids->GetDictAt(i);
       if (!pKid)
         continue;

@@ -89,7 +89,7 @@ const uint16_t PDFDocEncoding[256] = {
     0x00fc, 0x00fd, 0x00fe, 0x00ff};
 
 bool ValidateDecoderPipeline(const CPDF_Array* pDecoders) {
-  size_t count = pDecoders->GetCount();
+  size_t count = pDecoders->size();
   if (count <= 1)
     return true;
 
@@ -379,7 +379,7 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
       return false;
 
     const CPDF_Array* pParamsArray = ToArray(pParams);
-    for (size_t i = 0; i < pDecoders->GetCount(); ++i) {
+    for (size_t i = 0; i < pDecoders->size(); ++i) {
       DecoderArray.push_back(
           {pDecoders->GetStringAt(i),
            pParamsArray ? pParamsArray->GetDictAt(i) : nullptr});

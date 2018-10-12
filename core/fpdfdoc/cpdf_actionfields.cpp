@@ -36,7 +36,7 @@ std::vector<const CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   if (pFields->IsDictionary() || pFields->IsString()) {
     fields.push_back(pFields);
   } else if (const CPDF_Array* pArray = pFields->AsArray()) {
-    for (size_t i = 0; i < pArray->GetCount(); ++i) {
+    for (size_t i = 0; i < pArray->size(); ++i) {
       const CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
       if (pObj)
         fields.push_back(pObj);

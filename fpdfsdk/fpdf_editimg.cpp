@@ -250,7 +250,7 @@ FPDFImageObj_GetImageFilterCount(FPDF_PAGEOBJECT image_object) {
     return 0;
 
   if (pFilter->IsArray())
-    return pFilter->AsArray()->GetCount();
+    return pFilter->AsArray()->size();
   if (pFilter->IsName())
     return 1;
 

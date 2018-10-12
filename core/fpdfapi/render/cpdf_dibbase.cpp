@@ -357,7 +357,7 @@ bool CPDF_DIBBase::LoadColorInfo(const CPDF_Dictionary* pFormResources,
         if (pFilter->IsName()) {
           filter = pFilter->GetString();
         } else if (const CPDF_Array* pArray = pFilter->AsArray()) {
-          filter = pArray->GetStringAt(pArray->GetCount() - 1);
+          filter = pArray->GetStringAt(pArray->size() - 1);
         }
 
         if (filter == "JPXDecode") {
@@ -441,7 +441,7 @@ bool CPDF_DIBBase::GetDecodeAndMaskArray(bool* bDefaultDecode,
     return true;
 
   if (const CPDF_Array* pArray = pMask->AsArray()) {
-    if (pArray->GetCount() >= m_nComponents * 2) {
+    if (pArray->size() >= m_nComponents * 2) {
       for (uint32_t i = 0; i < m_nComponents; i++) {
         int min_num = pArray->GetIntegerAt(i * 2);
         int max_num = pArray->GetIntegerAt(i * 2 + 1);
@@ -825,7 +825,7 @@ void CPDF_DIBBase::ValidateDictParam() {
         m_bpc = 8;
       }
     } else if (const CPDF_Array* pArray = pFilter->AsArray()) {
-      ByteString filter = pArray->GetStringAt(pArray->GetCount() - 1);
+      ByteString filter = pArray->GetStringAt(pArray->size() - 1);
       if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
         m_bpc = 1;
         m_nComponents = 1;

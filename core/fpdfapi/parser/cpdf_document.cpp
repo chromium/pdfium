@@ -46,7 +46,7 @@ void InsertWidthArrayImpl(std::vector<int> widths, CPDF_Array* pWidthArray) {
       break;
   }
   if (i == widths.size()) {
-    int first = pWidthArray->GetIntegerAt(pWidthArray->GetCount() - 1);
+    int first = pWidthArray->GetIntegerAt(pWidthArray->size() - 1);
     pWidthArray->AddNew<CPDF_Number>(first + static_cast<int>(widths.size()) -
                                      1);
     pWidthArray->AddNew<CPDF_Number>(widths[0]);
@@ -99,7 +99,7 @@ int CountPages(CPDF_Dictionary* pPages,
   if (!pKidList)
     return 0;
   count = 0;
-  for (size_t i = 0; i < pKidList->GetCount(); i++) {
+  for (size_t i = 0; i < pKidList->size(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid || pdfium::ContainsKey(*visited_pages, pKid))
       continue;
@@ -259,8 +259,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
     return nullptr;
   }
   CPDF_Dictionary* page = nullptr;
-  for (size_t i = m_pTreeTraversal[level].second; i < pKidList->GetCount();
-       i++) {
+  for (size_t i = m_pTreeTraversal[level].second; i < pKidList->size(); i++) {
     if (*nPagesToGo == 0)
       break;
     pKidList->ConvertToIndirectObjectAt(i, this);
@@ -299,7 +298,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
       }
     }
   }
-  if (m_pTreeTraversal[level].second == pKidList->GetCount())
+  if (m_pTreeTraversal[level].second == pKidList->size())
     m_pTreeTraversal.pop_back();
   return page;
 }
@@ -388,7 +387,7 @@ int CPDF_Document::FindPageIndex(const CPDF_Dictionary* pNode,
     return -1;
   }
 
-  if (count && count == pKidList->GetCount()) {
+  if (count && count == pKidList->size()) {
     for (size_t i = 0; i < count; i++) {
       const CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i));
       if (pKid && pKid->GetRefObjNum() == objnum)
@@ -396,7 +395,7 @@ int CPDF_Document::FindPageIndex(const CPDF_Dictionary* pNode,
     }
   }
 
-  for (size_t i = 0; i < pKidList->GetCount(); i++) {
+  for (size_t i = 0; i < pKidList->size(); i++) {
     const CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid || pKid == pNode)
       continue;
@@ -527,7 +526,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
   if (!pKidList)
     return false;
 
-  for (size_t i = 0; i < pKidList->GetCount(); i++) {
+  for (size_t i = 0; i < pKidList->size(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (pKid->GetStringFor("Type") == "Page") {
       if (nPagesToGo != 0) {

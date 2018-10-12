@@ -340,7 +340,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
   CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnots)
     return false;
-  for (size_t i = *start_pos; i < pAnnots->GetCount(); i++) {
+  for (size_t i = *start_pos; i < pAnnots->size(); i++) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));
     if (!pDict)
       continue;
@@ -365,7 +365,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK link_annot) {
   const CPDF_Array* pArray =
       GetQuadPointsArrayFromDictionary(CPDFDictionaryFromFPDFLink(link_annot));
-  return pArray ? static_cast<int>(pArray->GetCount() / 8) : 0;
+  return pArray ? static_cast<int>(pArray->size() / 8) : 0;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

@@ -52,7 +52,7 @@ bool GetNodeAncestorsLimits(CPDF_Dictionary* pNode,
   if (!pKids)
     return false;
 
-  for (size_t i = 0; i < pKids->GetCount(); ++i) {
+  for (size_t i = 0; i < pKids->size(); ++i) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
@@ -94,7 +94,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
     // names to find the new lower and upper limits.
     WideString csNewLeft = csRight;
     WideString csNewRight = csLeft;
-    for (size_t i = 0; i < pNames->GetCount() / 2; ++i) {
+    for (size_t i = 0; i < pNames->size() / 2; ++i) {
       WideString wsName = pNames->GetUnicodeTextAt(i * 2);
       if (wsName.Compare(csNewLeft) < 0)
         csNewLeft = wsName;
@@ -111,7 +111,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
     return false;
 
   // Loop through the kids to find the leaf array |pFind|.
-  for (size_t i = 0; i < pKids->GetCount(); ++i) {
+  for (size_t i = 0; i < pKids->size(); ++i) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
@@ -132,7 +132,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
     // kids to find the new lower and upper limits.
     WideString csNewLeft = csRight;
     WideString csNewRight = csLeft;
-    for (size_t j = 0; j < pKids->GetCount(); ++j) {
+    for (size_t j = 0; j < pKids->size(); ++j) {
       CPDF_Array* pKidLimits = pKids->GetDictAt(j)->GetArrayFor("Limits");
       ASSERT(pKidLimits);
       if (pKidLimits->GetUnicodeTextAt(0).Compare(csNewLeft) < 0)
@@ -178,7 +178,7 @@ CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
       if (ppFind)
         *ppFind = pNames;
       if (pFindIndex)
-        *pFindIndex = pNames->GetCount() / 2 - 1;
+        *pFindIndex = pNames->size() / 2 - 1;
 
       return nullptr;
     }
@@ -186,7 +186,7 @@ CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
 
   // If the node is a leaf node, look for the name in its names array.
   if (pNames) {
-    size_t dwCount = pNames->GetCount() / 2;
+    size_t dwCount = pNames->size() / 2;
     for (size_t i = 0; i < dwCount; i++) {
       WideString csValue = pNames->GetUnicodeTextAt(i * 2);
       int32_t iCompare = csValue.Compare(csName);
@@ -211,7 +211,7 @@ CPDF_Object* SearchNameNodeByName(CPDF_Dictionary* pNode,
   if (!pKids)
     return nullptr;
 
-  for (size_t i = 0; i < pKids->GetCount(); i++) {
+  for (size_t i = 0; i < pKids->size(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
@@ -240,7 +240,7 @@ CPDF_Object* SearchNameNodeByIndex(CPDF_Dictionary* pNode,
 
   CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames) {
-    size_t nCount = pNames->GetCount() / 2;
+    size_t nCount = pNames->size() / 2;
     if (nIndex >= *nCurIndex + nCount) {
       *nCurIndex += nCount;
       return nullptr;
@@ -258,7 +258,7 @@ CPDF_Object* SearchNameNodeByIndex(CPDF_Dictionary* pNode,
   if (!pKids)
     return nullptr;
 
-  for (size_t i = 0; i < pKids->GetCount(); i++) {
+  for (size_t i = 0; i < pKids->size(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
@@ -277,14 +277,14 @@ size_t CountNamesInternal(CPDF_Dictionary* pNode, int nLevel) {
 
   CPDF_Array* pNames = pNode->GetArrayFor("Names");
   if (pNames)
-    return pNames->GetCount() / 2;
+    return pNames->size() / 2;
 
   CPDF_Array* pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return 0;
 
   size_t nCount = 0;
-  for (size_t i = 0; i < pKids->GetCount(); i++) {
+  for (size_t i = 0; i < pKids->size(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;

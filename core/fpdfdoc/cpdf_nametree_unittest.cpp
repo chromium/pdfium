@@ -238,9 +238,9 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(999, nameTree.LookupValue(L"9.txt")->GetInteger());
   EXPECT_TRUE(nameTree.LookupValueAndName(4, &csName));
   EXPECT_STREQ(L"9.txt", csName.c_str());
-  EXPECT_EQ(2u, pKid1->GetArrayFor("Kids")->GetCount());
+  EXPECT_EQ(2u, pKid1->GetArrayFor("Kids")->size());
   EXPECT_TRUE(nameTree.DeleteValueAndName(4));
-  EXPECT_EQ(1u, pKid1->GetArrayFor("Kids")->GetCount());
+  EXPECT_EQ(1u, pKid1->GetArrayFor("Kids")->size());
   CheckLimitsArray(pKid1, "1.txt", "5.txt");
 
   // Delete the name "2.txt", and check that its node does not get deleted, its
@@ -249,9 +249,9 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(222, nameTree.LookupValue(L"2.txt")->GetInteger());
   EXPECT_TRUE(nameTree.LookupValueAndName(1, &csName));
   EXPECT_STREQ(L"2.txt", csName.c_str());
-  EXPECT_EQ(4u, pKid4->GetArrayFor("Names")->GetCount());
+  EXPECT_EQ(4u, pKid4->GetArrayFor("Names")->size());
   EXPECT_TRUE(nameTree.DeleteValueAndName(1));
-  EXPECT_EQ(2u, pKid4->GetArrayFor("Names")->GetCount());
+  EXPECT_EQ(2u, pKid4->GetArrayFor("Names")->size());
   CheckLimitsArray(pKid4, "1.txt", "1.txt");
   CheckLimitsArray(pKid2, "1.txt", "5.txt");
   CheckLimitsArray(pKid1, "1.txt", "5.txt");
@@ -262,9 +262,9 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(111, nameTree.LookupValue(L"1.txt")->GetInteger());
   EXPECT_TRUE(nameTree.LookupValueAndName(0, &csName));
   EXPECT_STREQ(L"1.txt", csName.c_str());
-  EXPECT_EQ(2u, pKid2->GetArrayFor("Kids")->GetCount());
+  EXPECT_EQ(2u, pKid2->GetArrayFor("Kids")->size());
   EXPECT_TRUE(nameTree.DeleteValueAndName(0));
-  EXPECT_EQ(1u, pKid2->GetArrayFor("Kids")->GetCount());
+  EXPECT_EQ(1u, pKid2->GetArrayFor("Kids")->size());
   CheckLimitsArray(pKid2, "3.txt", "5.txt");
   CheckLimitsArray(pKid1, "3.txt", "5.txt");
 
@@ -274,9 +274,9 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(333, nameTree.LookupValue(L"3.txt")->GetInteger());
   EXPECT_TRUE(nameTree.LookupValueAndName(0, &csName));
   EXPECT_STREQ(L"3.txt", csName.c_str());
-  EXPECT_EQ(4u, pKid5->GetArrayFor("Names")->GetCount());
+  EXPECT_EQ(4u, pKid5->GetArrayFor("Names")->size());
   EXPECT_TRUE(nameTree.DeleteValueAndName(0));
-  EXPECT_EQ(2u, pKid5->GetArrayFor("Names")->GetCount());
+  EXPECT_EQ(2u, pKid5->GetArrayFor("Names")->size());
   CheckLimitsArray(pKid5, "5.txt", "5.txt");
   CheckLimitsArray(pKid2, "5.txt", "5.txt");
   CheckLimitsArray(pKid1, "5.txt", "5.txt");
@@ -287,9 +287,9 @@ TEST(cpdf_nametree, DeleteFromKids) {
   EXPECT_EQ(555, nameTree.LookupValue(L"5.txt")->GetInteger());
   EXPECT_TRUE(nameTree.LookupValueAndName(0, &csName));
   EXPECT_STREQ(L"5.txt", csName.c_str());
-  EXPECT_EQ(1u, nameTree.GetRoot()->GetArrayFor("Kids")->GetCount());
+  EXPECT_EQ(1u, nameTree.GetRoot()->GetArrayFor("Kids")->size());
   EXPECT_TRUE(nameTree.DeleteValueAndName(0));
-  EXPECT_EQ(0u, nameTree.GetRoot()->GetArrayFor("Kids")->GetCount());
+  EXPECT_EQ(0u, nameTree.GetRoot()->GetArrayFor("Kids")->size());
 
   // Check that the tree is now empty.
   EXPECT_EQ(0u, nameTree.GetCount());

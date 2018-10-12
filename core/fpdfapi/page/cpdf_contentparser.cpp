@@ -52,7 +52,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     return;
   }
 
-  m_nStreams = pArray->GetCount();
+  m_nStreams = pArray->size();
   if (m_nStreams == 0) {
     m_CurrentStage = Stage::kComplete;
     return;

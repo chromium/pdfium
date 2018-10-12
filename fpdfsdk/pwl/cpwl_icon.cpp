@@ -55,7 +55,7 @@ std::pair<float, float> CPWL_Icon::GetIconPosition() {
   if (!pA)
     return {0.0f, 0.0f};
 
-  size_t dwCount = pA->GetCount();
+  size_t dwCount = pA->size();
   return {dwCount > 0 ? pA->GetNumberAt(0) : 0.0f,
           dwCount > 1 ? pA->GetNumberAt(1) : 0.0f};
 }

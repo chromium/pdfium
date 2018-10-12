@@ -94,7 +94,7 @@ bool FDFToURLEncodedData(std::vector<uint8_t>* pBuffer) {
     return false;
 
   std::ostringstream fdfEncodedData;
-  for (uint32_t i = 0; i < pFields->GetCount(); i++) {
+  for (uint32_t i = 0; i < pFields->size(); i++) {
     CPDF_Dictionary* pField = pFields->GetDictAt(i);
     if (!pField)
       continue;
@@ -105,7 +105,7 @@ bool FDFToURLEncodedData(std::vector<uint8_t>* pBuffer) {
     WideString csWValue = PDF_DecodeText(csBValue);
     ByteString csValue_b = csWValue.ToDefANSI();
     fdfEncodedData << name_b << "=" << csValue_b;
-    if (i != pFields->GetCount() - 1)
+    if (i != pFields->size() - 1)
       fdfEncodedData << "&";
   }
 
@@ -208,7 +208,7 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
   for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {
     if (CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(i)) {
       if (CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots")) {
-        for (int j = 0, jsz = pAnnots->GetCount(); j < jsz; j++) {
+        for (int j = 0, jsz = pAnnots->size(); j < jsz; j++) {
           CPDF_Object* pDict = pAnnots->GetDirectObjectAt(j);
           if (pAnnotDict == pDict)
             return i;

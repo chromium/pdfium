@@ -985,14 +985,14 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
 FPDF_EXPORT size_t FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRangeCount(FPDF_PAGERANGE pagerange) {
   const CPDF_Array* pArray = CPDFArrayFromFPDFPageRange(pagerange);
-  return pArray ? pArray->GetCount() : 0;
+  return pArray ? pArray->size() : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_VIEWERREF_GetPrintPageRangeElement(FPDF_PAGERANGE pagerange,
                                         size_t index) {
   const CPDF_Array* pArray = CPDFArrayFromFPDFPageRange(pagerange);
-  if (!pArray || index >= pArray->GetCount())
+  if (!pArray || index >= pArray->size())
     return -1;
   return pArray->GetIntegerAt(index);
 }
@@ -1047,7 +1047,7 @@ FPDF_CountNamedDests(FPDF_DOCUMENT document) {
   pdfium::base::CheckedNumeric<FPDF_DWORD> count = nameTree.GetCount();
   const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
   if (pDest)
-    count += pDest->GetCount();
+    count += pDest->size();
 
   if (!count.IsValid())
     return 0;
@@ -1145,7 +1145,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
       return nullptr;
 
     pdfium::base::CheckedNumeric<int> checked_count = count;
-    checked_count += pDest->GetCount();
+    checked_count += pDest->size();
     if (!checked_count.IsValid() || index >= checked_count.ValueOrDie())
       return nullptr;
 

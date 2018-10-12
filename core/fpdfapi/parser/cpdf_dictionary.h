@@ -41,7 +41,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 
-  size_t GetCount() const { return m_Map.size(); }
+  size_t size() const { return m_Map.size(); }
   const CPDF_Object* GetObjectFor(const ByteString& key) const;
   CPDF_Object* GetObjectFor(const ByteString& key);
   const CPDF_Object* GetDirectObjectFor(const ByteString& key) const;

@@ -37,7 +37,7 @@ class CPDF_Array final : public CPDF_Object {
                const CPDF_Encryptor* encryptor) const override;
 
   bool IsEmpty() const { return m_Objects.empty(); }
-  size_t GetCount() const { return m_Objects.size(); }
+  size_t size() const { return m_Objects.size(); }
   CPDF_Object* GetObjectAt(size_t index);
   const CPDF_Object* GetObjectAt(size_t index) const;
   CPDF_Object* GetDirectObjectAt(size_t index);

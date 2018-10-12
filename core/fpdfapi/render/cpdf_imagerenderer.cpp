@@ -565,7 +565,7 @@ void CPDF_ImageRenderer::HandleFilters() {
   if (!pArray)
     return;
 
-  for (size_t i = 0; i < pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->size(); i++) {
     ByteString bsDecodeType = pArray->GetStringAt(i);
     if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
       m_Flags |= FXRENDER_IMAGE_LOSSY;

@@ -80,7 +80,7 @@ void GetDefaultBlackPoint(float* pPoints) {
 
 void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
   const CPDF_Array* pParam = pDict->GetArrayFor("BlackPoint");
-  if (!pParam || pParam->GetCount() != kBlackWhitePointCount) {
+  if (!pParam || pParam->size() != kBlackWhitePointCount) {
     GetDefaultBlackPoint(pPoints);
     return;
   }
@@ -97,7 +97,7 @@ void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
 
 bool GetWhitePoint(const CPDF_Dictionary* pDict, float* pPoints) {
   const CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
-  if (!pParam || pParam->GetCount() != kBlackWhitePointCount)
+  if (!pParam || pParam->size() != kBlackWhitePointCount)
     return false;
 
   for (size_t i = 0; i < kBlackWhitePointCount; ++i)
@@ -481,7 +481,7 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
     return nullptr;
 
   ByteString familyname = pFamilyObj->GetString();
-  if (pArray->GetCount() == 1)
+  if (pArray->size() == 1)
     return pdfium::WrapUnique(ColorspaceFromName(familyname));
 
   std::unique_ptr<CPDF_ColorSpace> pCS;
@@ -1101,7 +1101,7 @@ CPDF_IndexedCS::~CPDF_IndexedCS() {
 uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
-  if (pArray->GetCount() < 4)
+  if (pArray->size() < 4)
     return 0;
 
   const CPDF_Object* pBaseObj = pArray->GetDirectObjectAt(1);
@@ -1299,7 +1299,7 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
   if (m_pFunc->CountOutputs() < m_pAltCS->CountComponents())
     return 0;
 
-  return pObj->GetCount();
+  return pObj->size();
 }
 
 bool CPDF_DeviceNCS::GetRGB(const float* pBuf,

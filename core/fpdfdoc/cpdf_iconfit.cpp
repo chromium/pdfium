@@ -50,7 +50,7 @@ CFX_PointF CPDF_IconFit::GetIconBottomLeftPosition() const {
   if (!pA)
     return {fLeft, fBottom};
 
-  size_t dwCount = pA->GetCount();
+  size_t dwCount = pA->size();
   if (dwCount > 0)
     fLeft = pA->GetNumberAt(0);
   if (dwCount > 1)

@@ -66,7 +66,7 @@ CFX_Color ConvertRGB2CMYK(float dR, float dG, float dB) {
 // Static.
 CFX_Color CFX_Color::ParseColor(const CPDF_Array& array) {
   CFX_Color rt;
-  switch (array.GetCount()) {
+  switch (array.size()) {
     case 1:
       rt = CFX_Color(CFX_Color::kGray, array.GetFloatAt(0));
       break;

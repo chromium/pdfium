@@ -131,7 +131,7 @@ size_t CPDF_Action::GetSubActionsCount() const {
   if (pNext->IsDictionary())
     return 1;
   const CPDF_Array* pArray = pNext->AsArray();
-  return pArray ? pArray->GetCount() : 0;
+  return pArray ? pArray->size() : 0;
 }
 
 CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {

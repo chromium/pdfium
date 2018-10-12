@@ -216,7 +216,7 @@ void ReplaceAbbr(CPDF_Object* pObj) {
     }
     case CPDF_Object::ARRAY: {
       CPDF_Array* pArray = pObj->AsArray();
-      for (size_t i = 0; i < pArray->GetCount(); i++) {
+      for (size_t i = 0; i < pArray->size(); i++) {
         CPDF_Object* pElement = pArray->GetObjectAt(i);
         if (pElement->IsName()) {
           ByteString name = pElement->GetString();
@@ -1286,7 +1286,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   if (!pArray)
     return;
 
-  size_t n = pArray->GetCount();
+  size_t n = pArray->size();
   size_t nsegs = 0;
   for (size_t i = 0; i < n; i++) {
     if (pArray->GetDirectObjectAt(i)->IsString())

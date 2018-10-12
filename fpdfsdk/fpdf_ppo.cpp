@@ -383,7 +383,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
     }
     case CPDF_Object::ARRAY: {
       CPDF_Array* pArray = pObj->AsArray();
-      for (size_t i = 0; i < pArray->GetCount(); ++i) {
+      for (size_t i = 0; i < pArray->size(); ++i) {
         CPDF_Object* pNextObj = pArray->GetObjectAt(i);
         if (!pNextObj)
           return false;
@@ -708,7 +708,7 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
 
   if (const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj)) {
     ByteString bsSrcContentStream;
-    for (size_t i = 0; i < pSrcContentArray->GetCount(); ++i) {
+    for (size_t i = 0; i < pSrcContentArray->size(); ++i) {
       const CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
       pAcc->LoadAllDataFiltered();

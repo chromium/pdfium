@@ -22,8 +22,8 @@ void CFX_GraphState::Emplace() {
 void CFX_GraphState::SetLineDash(CPDF_Array* pArray, float phase, float scale) {
   CFX_GraphStateData* pData = m_Ref.GetPrivateCopy();
   pData->m_DashPhase = phase * scale;
-  pData->m_DashArray.resize(pArray->GetCount());
-  for (size_t i = 0; i < pArray->GetCount(); i++)
+  pData->m_DashArray.resize(pArray->size());
+  for (size_t i = 0; i < pArray->size(); i++)
     pData->m_DashArray[i] = pArray->GetNumberAt(i) * scale;
 }
 

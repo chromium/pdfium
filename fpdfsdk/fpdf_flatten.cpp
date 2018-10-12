@@ -341,7 +341,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       if (!sAnnotState.IsEmpty()) {
         pAPStream = pAPDic->GetStreamFor(sAnnotState);
       } else {
-        if (pAPDic->GetCount() > 0) {
+        if (pAPDic->size() > 0) {
           CPDF_Object* pFirstObj = pAPDic->begin()->second.get();
           if (pFirstObj) {
             if (pFirstObj->IsReference())

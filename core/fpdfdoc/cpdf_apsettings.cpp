@@ -38,7 +38,7 @@ FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
     return 0;
 
   FX_ARGB color = 0;
-  size_t dwCount = pEntry->GetCount();
+  size_t dwCount = pEntry->size();
   if (dwCount == 1) {
     iColorType = CFX_Color::kGray;
     float g = pEntry->GetNumberAt(0) * 255;
@@ -88,7 +88,7 @@ void CPDF_ApSettings::GetOriginalColor(int& iColorType,
   if (!pEntry)
     return;
 
-  size_t dwCount = pEntry->GetCount();
+  size_t dwCount = pEntry->size();
   if (dwCount == 1) {
     iColorType = CFX_Color::kGray;
     fc[0] = pEntry->GetNumberAt(0);

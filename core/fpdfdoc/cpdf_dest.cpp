@@ -85,7 +85,7 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   if (!m_pArray)
     return false;
 
-  if (m_pArray->GetCount() < 5)
+  if (m_pArray->size() < 5)
     return false;
 
   const CPDF_Name* xyz = ToName(m_pArray->GetDirectObjectAt(1));
@@ -119,11 +119,11 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
 }
 
 unsigned long CPDF_Dest::GetNumParams() const {
-  if (!m_pArray || m_pArray->GetCount() < 2)
+  if (!m_pArray || m_pArray->size() < 2)
     return 0;
 
   unsigned long maxParamsForFitType = g_sZoomModeMaxParamCount[GetZoomMode()];
-  unsigned long numParamsInArray = m_pArray->GetCount() - 2;
+  unsigned long numParamsInArray = m_pArray->size() - 2;
   return std::min(maxParamsForFitType, numParamsInArray);
 }
 

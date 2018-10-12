@@ -30,7 +30,7 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj,
 
   const CPDF_Array* pArray0 = pDict->GetArrayFor("C0");
   if (pArray0 && m_nOutputs == 0)
-    m_nOutputs = pArray0->GetCount();
+    m_nOutputs = pArray0->size();
   if (m_nOutputs == 0)
     m_nOutputs = 1;
 
