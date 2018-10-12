@@ -883,27 +883,25 @@ void CPDF_FormField::LoadDA() {
 }
 
 bool CPDF_FormField::NotifyBeforeSelectionChange(const WideString& value) {
-  if (!m_pForm->GetFormNotify())
-    return true;
-  return m_pForm->GetFormNotify()->BeforeSelectionChange(this, value);
+  auto* pNotify = m_pForm->GetFormNotify();
+  return !pNotify || pNotify->BeforeSelectionChange(this, value);
 }
 
 void CPDF_FormField::NotifyAfterSelectionChange() {
-  if (!m_pForm->GetFormNotify())
-    return;
-  m_pForm->GetFormNotify()->AfterSelectionChange(this);
+  auto* pNotify = m_pForm->GetFormNotify();
+  if (pNotify)
+    pNotify->AfterSelectionChange(this);
 }
 
 bool CPDF_FormField::NotifyBeforeValueChange(const WideString& value) {
-  if (!m_pForm->GetFormNotify())
-    return true;
-  return m_pForm->GetFormNotify()->BeforeValueChange(this, value);
+  auto* pNotify = m_pForm->GetFormNotify();
+  return !pNotify || pNotify->BeforeValueChange(this, value);
 }
 
 void CPDF_FormField::NotifyAfterValueChange() {
-  if (!m_pForm->GetFormNotify())
-    return;
-  m_pForm->GetFormNotify()->AfterValueChange(this);
+  auto* pNotify = m_pForm->GetFormNotify();
+  if (pNotify)
+    pNotify->AfterValueChange(this);
 }
 
 bool CPDF_FormField::NotifyListOrComboBoxBeforeChange(const WideString& value) {
