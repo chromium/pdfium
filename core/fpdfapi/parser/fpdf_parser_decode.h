@@ -73,7 +73,7 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
                     const CPDF_Dictionary* pDict,
                     uint32_t estimated_size,
                     bool bImageAcc,
-                    uint8_t** dest_buf,
+                    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                     uint32_t* dest_size,
                     ByteString* ImageEncoding,
                     UnownedPtr<const CPDF_Dictionary>* pImageParms);
