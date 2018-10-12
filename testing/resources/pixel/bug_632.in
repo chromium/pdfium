@@ -1,0 +1,78 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 300 200]
+  /Resources <<
+    /Font << /F1 6 0 R >>
+    /Pattern << /P1 7 0 R >>
+    /ProcSet [/PDF /Text /ImageC /ImageI /ImageB]
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+1 0 0 1 200 0 cm
+0 0 300 200 re
+W
+n
+/Pattern cs
+/P1 scn
+BT
+/F1 16 Tf
+1 0 0 1 -100 100 Tm
+(Hello, world!) Tj
+ET
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Pattern
+  /PatternType 2
+  /Shading 8 0 R
+>>
+endobj
+{{object 8 0}} <<
+  /ShadingType 2
+  /ColorSpace /DeviceCMYK
+  /Coords [0.0 0.0 1.0 0.0]
+  /Function 9 0 R
+  /Extend [true true]
+>>
+endobj
+{{object 9 0}} <<
+  /FunctionType 0
+  /Domain [0.0 1.0]
+  /Range [0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0]
+  /Size [2]
+  /BitsPerSample 1
+  /Filter /ASCIIHexDecode
+  {{streamlen}}
+>>
+stream
+ff
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
