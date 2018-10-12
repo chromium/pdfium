@@ -6,3 +6,63 @@ Alert: MyField.Sub_A
 Alert: MyField.Sub_B
 Alert: MyField.Sub_X
 Alert: MyField.Sub_Z
+Alert: Testing properties under delay
+Alert: PASS: delay = false
+Alert: PASS: delay = true
+Alert: Testing properties under non-delay
+Alert: PASS: delay = true
+Alert: PASS: delay = false
+Alert: PASS: alignment = left
+Alert: PASS: alignment = left
+Alert: PASS: calcOrderIndex = -1
+Alert: PASS: calcOrderIndex = -1
+Alert: PASS: charLimit = 0
+Alert: PASS: charLimit = 0
+Alert: PASS: comb = false
+Alert: PASS: comb = false
+Alert: PASS: defaultStyle threw error Field.defaultStyle: Operation not supported.
+Alert: PASS: defaultStyle threw error Field.defaultStyle: Operation not supported.
+Alert: PASS: doNotScroll = false
+Alert: PASS: doNotScroll = false
+Alert: PASS: doNotSpellCheck = false
+Alert: PASS: doNotSpellCheck = false
+Alert: PASS: doc = [object global]
+Alert: PASS: doc threw error Field.doc: Operation not supported.
+Alert: PASS: fileSelect = false
+Alert: PASS: fileSelect = false
+Alert: PASS: fillColor = T
+Alert: PASS: fillColor = T
+Alert: PASS: multiline = false
+Alert: PASS: multiline = false
+Alert: PASS: name = MyField
+Alert: PASS: name threw error Field.name: Operation not supported.
+Alert: PASS: page = -1
+Alert: PASS: page threw error Field.page: Cannot assign to readonly property.
+Alert: PASS: password = false
+Alert: PASS: password = false
+Alert: PASS: readonly = false
+Alert: PASS: readonly = false
+Alert: PASS: richText = false
+Alert: PASS: richText = false
+Alert: PASS: richValue = undefined
+Alert: PASS: richValue = undefined
+Alert: PASS: rotation = 0
+Alert: PASS: rotation = 0
+Alert: PASS: source = undefined
+Alert: PASS: source = undefined
+Alert: PASS: strokeColor = T
+Alert: PASS: strokeColor = T
+Alert: PASS: submitName = undefined
+Alert: PASS: submitName = undefined
+Alert: PASS: textColor = T
+Alert: PASS: textColor = T
+Alert: PASS: textSize = 0
+Alert: PASS: textSize = 0
+Alert: PASS: type = text
+Alert: PASS: type threw error Field.type: Operation not supported.
+Alert: PASS: userName = 
+Alert: PASS: userName = 
+Alert: PASS: value = 
+Alert: PASS: value = 
+Alert: PASS: valueAsString = 
+Alert: PASS: valueAsString threw error Field.valueAsString: Operation not supported.

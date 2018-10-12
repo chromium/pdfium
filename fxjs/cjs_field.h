@@ -80,6 +80,7 @@ class CJS_Field final : public CJS_Object {
   JS_STATIC_PROP(richText, rich_text, CJS_Field);
   JS_STATIC_PROP(richValue, rich_value, CJS_Field);
   JS_STATIC_PROP(rotation, rotation, CJS_Field);
+  JS_STATIC_PROP(source, source, CJS_Field);
   JS_STATIC_PROP(strokeColor, stroke_color, CJS_Field);
   JS_STATIC_PROP(style, style, CJS_Field);
   JS_STATIC_PROP(submitName, submit_name, CJS_Field);
@@ -90,7 +91,6 @@ class CJS_Field final : public CJS_Object {
   JS_STATIC_PROP(userName, user_name, CJS_Field);
   JS_STATIC_PROP(value, value, CJS_Field);
   JS_STATIC_PROP(valueAsString, value_as_string, CJS_Field);
-  JS_STATIC_PROP(source, source, CJS_Field);
 
   JS_STATIC_METHOD(browseForFileToSubmit, CJS_Field);
   JS_STATIC_METHOD(buttonGetCaption, CJS_Field);

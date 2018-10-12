@@ -511,6 +511,7 @@ const JSPropertySpec CJS_Field::PropertySpecs[] = {
     {"richText", get_rich_text_static, set_rich_text_static},
     {"richValue", get_rich_value_static, set_rich_value_static},
     {"rotation", get_rotation_static, set_rotation_static},
+    {"source", get_source_static, set_source_static},
     {"strokeColor", get_stroke_color_static, set_stroke_color_static},
     {"style", get_style_static, set_style_static},
     {"submitName", get_submit_name_static, set_submit_name_static},
@@ -520,8 +521,7 @@ const JSPropertySpec CJS_Field::PropertySpecs[] = {
     {"type", get_type_static, set_type_static},
     {"userName", get_user_name_static, set_user_name_static},
     {"value", get_value_static, set_value_static},
-    {"valueAsString", get_value_as_string_static, set_value_as_string_static},
-    {"source", get_source_static, set_source_static}};
+    {"valueAsString", get_value_as_string_static, set_value_as_string_static}};
 
 const JSMethodSpec CJS_Field::MethodSpecs[] = {
     {"browseForFileToSubmit", browseForFileToSubmit_static},
@@ -1806,6 +1806,15 @@ CJS_Result CJS_Field::set_rotation(CJS_Runtime* pRuntime,
   return CJS_Result::Success();
 }
 
+CJS_Result CJS_Field::get_source(CJS_Runtime* pRuntime) {
+  return CJS_Result::Success();
+}
+
+CJS_Result CJS_Field::set_source(CJS_Runtime* pRuntime,
+                                 v8::Local<v8::Value> vp) {
+  return CJS_Result::Success();
+}
+
 CJS_Result CJS_Field::get_stroke_color(CJS_Runtime* pRuntime) {
   CPDF_FormField* pFormField = GetFirstFormField();
   if (!pFormField)
@@ -2564,15 +2573,6 @@ CJS_Result CJS_Field::signatureValidate(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
-}
-
-CJS_Result CJS_Field::get_source(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success();
-}
-
-CJS_Result CJS_Field::set_source(CJS_Runtime* pRuntime,
-                                 v8::Local<v8::Value> vp) {
-  return CJS_Result::Success();
 }
 
 void CJS_Field::AddDelay_Int(FIELD_PROP prop, int32_t n) {
