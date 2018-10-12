@@ -136,7 +136,7 @@ jumbo_source_set("fxbarcode") {
   ]
   deps = [
     "../:fxcrt",
-    "../:fxge",
+    "../core/fxge",
     "../third_party:bigint",
   ]
   configs += [ "../:pdfium_core_config" ]
