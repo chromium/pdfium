@@ -121,7 +121,7 @@ jumbo_source_set("fxge") {
   ]
 
   deps = [
-    "../../:fxcrt",
+    "../fxcrt",
   ]
 
   if (is_component_build || use_system_freetype) {

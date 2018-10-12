@@ -14,7 +14,7 @@ jumbo_source_set("fdrm") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
-    "../../:fxcrt",
+    "../fxcrt",
   ]
   visibility = [ "../../*" ]
 }

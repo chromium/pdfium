@@ -303,8 +303,8 @@ jumbo_source_set("fpdfapi") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
-    "../../:fxcrt",
     "../../third_party:lcms2",
+    "../fxcrt",
   ]
   visibility = [ "../../*" ]
 }

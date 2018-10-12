@@ -121,7 +121,7 @@ jumbo_source_set("fwl") {
     "theme/cfwl_widgettp.h",
   ]
   deps = [
-    "../../:fxcrt",
+    "../../core/fxcrt",
     "../../fxbarcode",
     "../fgas",
   ]

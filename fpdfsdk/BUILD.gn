@@ -51,7 +51,7 @@ jumbo_source_set("fpdfsdk") {
 
   configs += [ "../:pdfium_core_config" ]
   deps = [
-    "../:fxcrt",
+    "../core/fxcrt",
   ]
   visibility = [ "../*" ]
 

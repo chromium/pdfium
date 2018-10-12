@@ -35,7 +35,7 @@ jumbo_source_set("fgas") {
     "layout/cfx_txtbreak.h",
   ]
   deps = [
-    "../../:fxcrt",
+    "../../core/fxcrt",
   ]
   configs += [
     "../../:pdfium_core_config",

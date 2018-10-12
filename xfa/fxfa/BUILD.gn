@@ -99,7 +99,7 @@ jumbo_source_set("fxfa") {
     "fxfa_basic.h",
   ]
   deps = [
-    "../../:fxcrt",
+    "../../core/fxcrt",
     "../../fxjs",
     "../fde",
     "../fgas",

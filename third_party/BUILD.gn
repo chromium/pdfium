@@ -228,7 +228,7 @@ if (!pdf_use_skia && !pdf_use_skia_paths) {
       "agg23/agg_vcgen_stroke.cpp",
     ]
     deps = [
-      "..:fxcrt",
+      "../core/fxcrt",
     ]
   }
 }

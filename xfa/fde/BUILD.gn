@@ -18,7 +18,7 @@ jumbo_source_set("fde") {
     "cfde_wordbreak_data.h",
   ]
   deps = [
-    "../../:fxcrt",
+    "../../core/fxcrt",
   ]
   configs += [
     "../../:pdfium_core_config",

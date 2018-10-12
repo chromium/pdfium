@@ -19,7 +19,7 @@ jumbo_source_set("fpdfxfa") {
     "cxfa_fwladaptertimermgr.h",
   ]
   deps = [
-    "../../:fxcrt",
+    "../../core/fxcrt",
     "../../fxjs",
     "../../xfa",
   ]

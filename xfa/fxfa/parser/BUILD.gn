@@ -699,7 +699,7 @@ jumbo_source_set("parser") {
     "xfa_utils.h",
   ]
   deps = [
-    "../../../:fxcrt",
+    "../../../core/fxcrt",
     "../../../fxjs",
     "../../fde",
     "../../fgas",

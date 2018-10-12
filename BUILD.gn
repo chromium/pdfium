@@ -141,13 +141,13 @@ jumbo_static_library("pdfium") {
   configs += [ ":pdfium_core_config" ]
 
   deps = [
-    ":fxcrt",
     "constants",
     "core/fdrm",
     "core/fpdfapi",
     "core/fpdfdoc",
     "core/fpdftext",
     "core/fxcodec",
+    "core/fxcrt",
     "core/fxge",
     "fpdfsdk",
     "fpdfsdk/formfiller",
@@ -158,7 +158,7 @@ jumbo_static_library("pdfium") {
   ]
 
   public_deps = [
-    ":fxcrt",
+    "core/fxcrt",
   ]
 
   if (is_win) {
@@ -188,168 +188,6 @@ visibility = [
   ":*",
   "//:gn_visibility",
 ]
-
-jumbo_source_set("fxcrt") {
-  sources = [
-    "core/fxcrt/autorestorer.h",
-    "core/fxcrt/bytestring.cpp",
-    "core/fxcrt/bytestring.h",
-    "core/fxcrt/cfx_binarybuf.cpp",
-    "core/fxcrt/cfx_binarybuf.h",
-    "core/fxcrt/cfx_bitstream.cpp",
-    "core/fxcrt/cfx_bitstream.h",
-    "core/fxcrt/cfx_datetime.cpp",
-    "core/fxcrt/cfx_datetime.h",
-    "core/fxcrt/cfx_fixedbufgrow.h",
-    "core/fxcrt/cfx_memorystream.cpp",
-    "core/fxcrt/cfx_memorystream.h",
-    "core/fxcrt/cfx_readonlymemorystream.cpp",
-    "core/fxcrt/cfx_readonlymemorystream.h",
-    "core/fxcrt/cfx_seekablemultistream.cpp",
-    "core/fxcrt/cfx_seekablemultistream.h",
-    "core/fxcrt/cfx_seekablestreamproxy.cpp",
-    "core/fxcrt/cfx_seekablestreamproxy.h",
-    "core/fxcrt/cfx_utf8decoder.cpp",
-    "core/fxcrt/cfx_utf8decoder.h",
-    "core/fxcrt/cfx_utf8encoder.cpp",
-    "core/fxcrt/cfx_utf8encoder.h",
-    "core/fxcrt/cfx_widetextbuf.cpp",
-    "core/fxcrt/cfx_widetextbuf.h",
-    "core/fxcrt/fileaccess_iface.h",
-    "core/fxcrt/fx_bidi.cpp",
-    "core/fxcrt/fx_bidi.h",
-    "core/fxcrt/fx_codepage.cpp",
-    "core/fxcrt/fx_codepage.h",
-    "core/fxcrt/fx_coordinates.cpp",
-    "core/fxcrt/fx_coordinates.h",
-    "core/fxcrt/fx_extension.cpp",
-    "core/fxcrt/fx_extension.h",
-    "core/fxcrt/fx_memory.cpp",
-    "core/fxcrt/fx_memory.h",
-    "core/fxcrt/fx_number.cpp",
-    "core/fxcrt/fx_number.h",
-    "core/fxcrt/fx_random.cpp",
-    "core/fxcrt/fx_random.h",
-    "core/fxcrt/fx_safe_types.h",
-    "core/fxcrt/fx_stream.cpp",
-    "core/fxcrt/fx_stream.h",
-    "core/fxcrt/fx_string.cpp",
-    "core/fxcrt/fx_string.h",
-    "core/fxcrt/fx_system.cpp",
-    "core/fxcrt/fx_system.h",
-    "core/fxcrt/fx_ucddata.cpp",
-    "core/fxcrt/fx_ucddata.h",
-    "core/fxcrt/fx_unicode.cpp",
-    "core/fxcrt/fx_unicode.h",
-    "core/fxcrt/maybe_owned.h",
-    "core/fxcrt/observable.h",
-    "core/fxcrt/pauseindicator_iface.h",
-    "core/fxcrt/retain_ptr.h",
-    "core/fxcrt/shared_copy_on_write.h",
-    "core/fxcrt/string_data_template.h",
-    "core/fxcrt/string_pool_template.h",
-    "core/fxcrt/string_view_template.h",
-    "core/fxcrt/unowned_ptr.h",
-    "core/fxcrt/weak_ptr.h",
-    "core/fxcrt/widestring.cpp",
-    "core/fxcrt/widestring.h",
-    "core/fxcrt/xml/cfx_xmlchardata.cpp",
-    "core/fxcrt/xml/cfx_xmlchardata.h",
-    "core/fxcrt/xml/cfx_xmldocument.cpp",
-    "core/fxcrt/xml/cfx_xmldocument.h",
-    "core/fxcrt/xml/cfx_xmlelement.cpp",
-    "core/fxcrt/xml/cfx_xmlelement.h",
-    "core/fxcrt/xml/cfx_xmlinstruction.cpp",
-    "core/fxcrt/xml/cfx_xmlinstruction.h",
-    "core/fxcrt/xml/cfx_xmlnode.cpp",
-    "core/fxcrt/xml/cfx_xmlnode.h",
-    "core/fxcrt/xml/cfx_xmlparser.cpp",
-    "core/fxcrt/xml/cfx_xmlparser.h",
-    "core/fxcrt/xml/cfx_xmltext.cpp",
-    "core/fxcrt/xml/cfx_xmltext.h",
-  ]
-  configs += [ ":pdfium_core_config" ]
-  visibility += [
-    "core/*",
-    "fxbarcode:*",
-    "fpdfsdk/*",
-    "fxjs:*",
-    "xfa/*",
-    "third_party:*",
-  ]
-  deps = [
-    "third_party:pdfium_base",
-  ]
-  public_deps = [
-    ":freetype_common",
-    "third_party:pdfium_base",
-    "//third_party/icu:icuuc",
-  ]
-  if (is_posix || is_fuchsia) {
-    sources += [
-      "core/fxcrt/cfx_fileaccess_posix.cpp",
-      "core/fxcrt/cfx_fileaccess_posix.h",
-    ]
-  }
-  if (is_win) {
-    sources += [
-      "core/fxcrt/cfx_fileaccess_windows.cpp",
-      "core/fxcrt/cfx_fileaccess_windows.h",
-    ]
-  }
-  if (pdf_enable_xfa) {
-    sources += [
-      "core/fxcrt/cfx_char.cpp",
-      "core/fxcrt/cfx_char.h",
-      "core/fxcrt/cfx_decimal.cpp",
-      "core/fxcrt/cfx_decimal.h",
-      "core/fxcrt/css/cfx_css.h",
-      "core/fxcrt/css/cfx_csscolorvalue.cpp",
-      "core/fxcrt/css/cfx_csscolorvalue.h",
-      "core/fxcrt/css/cfx_csscomputedstyle.cpp",
-      "core/fxcrt/css/cfx_csscomputedstyle.h",
-      "core/fxcrt/css/cfx_csscustomproperty.cpp",
-      "core/fxcrt/css/cfx_csscustomproperty.h",
-      "core/fxcrt/css/cfx_cssdata.cpp",
-      "core/fxcrt/css/cfx_cssdata.h",
-      "core/fxcrt/css/cfx_cssdeclaration.cpp",
-      "core/fxcrt/css/cfx_cssdeclaration.h",
-      "core/fxcrt/css/cfx_cssenumvalue.cpp",
-      "core/fxcrt/css/cfx_cssenumvalue.h",
-      "core/fxcrt/css/cfx_cssexttextbuf.cpp",
-      "core/fxcrt/css/cfx_cssexttextbuf.h",
-      "core/fxcrt/css/cfx_cssnumbervalue.cpp",
-      "core/fxcrt/css/cfx_cssnumbervalue.h",
-      "core/fxcrt/css/cfx_csspropertyholder.cpp",
-      "core/fxcrt/css/cfx_csspropertyholder.h",
-      "core/fxcrt/css/cfx_cssrulecollection.cpp",
-      "core/fxcrt/css/cfx_cssrulecollection.h",
-      "core/fxcrt/css/cfx_cssselector.cpp",
-      "core/fxcrt/css/cfx_cssselector.h",
-      "core/fxcrt/css/cfx_cssstringvalue.cpp",
-      "core/fxcrt/css/cfx_cssstringvalue.h",
-      "core/fxcrt/css/cfx_cssstylerule.cpp",
-      "core/fxcrt/css/cfx_cssstylerule.h",
-      "core/fxcrt/css/cfx_cssstyleselector.cpp",
-      "core/fxcrt/css/cfx_cssstyleselector.h",
-      "core/fxcrt/css/cfx_cssstylesheet.cpp",
-      "core/fxcrt/css/cfx_cssstylesheet.h",
-      "core/fxcrt/css/cfx_csssyntaxparser.cpp",
-      "core/fxcrt/css/cfx_csssyntaxparser.h",
-      "core/fxcrt/css/cfx_csstextbuf.cpp",
-      "core/fxcrt/css/cfx_csstextbuf.h",
-      "core/fxcrt/css/cfx_cssvalue.cpp",
-      "core/fxcrt/css/cfx_cssvalue.h",
-      "core/fxcrt/css/cfx_cssvaluelist.cpp",
-      "core/fxcrt/css/cfx_cssvaluelist.h",
-      "core/fxcrt/css/cfx_cssvaluelistparser.cpp",
-      "core/fxcrt/css/cfx_cssvaluelistparser.h",
-      "core/fxcrt/fx_arabic.cpp",
-      "core/fxcrt/fx_arabic.h",
-      "core/fxcrt/locale_iface.h",
-    ]
-  }
-}
 
 test("pdfium_unittests") {
   testonly = true

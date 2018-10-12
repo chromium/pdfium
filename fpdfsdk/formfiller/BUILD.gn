@@ -32,7 +32,7 @@ jumbo_source_set("formfiller") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
-    "../../:fxcrt",
+    "../../core/fxcrt",
   ]
   visibility = [ "../../*" ]
 }

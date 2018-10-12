@@ -135,7 +135,7 @@ jumbo_source_set("fxbarcode") {
     "utils.h",
   ]
   deps = [
-    "../:fxcrt",
+    "../core/fxcrt",
     "../core/fxge",
     "../third_party:bigint",
   ]
