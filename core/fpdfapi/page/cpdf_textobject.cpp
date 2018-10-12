@@ -12,7 +12,6 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 CPDF_TextObjectItem::CPDF_TextObjectItem() : m_CharCode(0) {}
 

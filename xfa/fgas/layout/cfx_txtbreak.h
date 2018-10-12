@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/cfx_char.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fgas/layout/cfx_break.h"
 
 class CFDE_TextEditEngine;

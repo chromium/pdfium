@@ -14,6 +14,7 @@
 #include "fxjs/cfxjse_runtimedata.h"
 #include "fxjs/cjs_object.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 class CFXJS_PerObjectData;
 
@@ -297,6 +298,10 @@ void FXJS_PerIsolateData::SetUp(v8::Isolate* pIsolate) {
 FXJS_PerIsolateData* FXJS_PerIsolateData::Get(v8::Isolate* pIsolate) {
   return static_cast<FXJS_PerIsolateData*>(
       pIsolate->GetData(g_embedderDataSlot));
+}
+
+int FXJS_PerIsolateData::MaxObjDefinitionID() const {
+  return pdfium::CollectionSize<int>(m_ObjectDefnArray);
 }
 
 FXJS_PerIsolateData::FXJS_PerIsolateData(v8::Isolate* pIsolate)

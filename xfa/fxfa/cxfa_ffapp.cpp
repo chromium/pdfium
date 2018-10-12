@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"

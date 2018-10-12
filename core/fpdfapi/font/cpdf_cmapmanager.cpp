@@ -11,7 +11,6 @@
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
 #include "core/fpdfapi/font/cpdf_cmap.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 CPDF_CMapManager::CPDF_CMapManager() {}
 

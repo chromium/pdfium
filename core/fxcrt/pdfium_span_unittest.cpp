@@ -4,7 +4,6 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
-#include "third_party/base/stl_util.h"
 
 // Tests PDFium-modifications to base::span. The name of this file is
 // chosen to avoid collisions with base's span_unittest.cc

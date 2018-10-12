@@ -22,7 +22,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/ijs_runtime.h"
-#include "third_party/base/stl_util.h"
 #include "v8/include/v8-util.h"
 #include "v8/include/v8.h"
 
@@ -52,9 +51,7 @@ class FXJS_PerIsolateData {
   static void SetUp(v8::Isolate* pIsolate);
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
 
-  int MaxObjDefinitionID() const {
-    return pdfium::CollectionSize<int>(m_ObjectDefnArray);
-  }
+  int MaxObjDefinitionID() const;
   CFXJS_ObjDefinition* ObjDefinitionForID(int id) const;
   int AssignIDForObjDefinition(std::unique_ptr<CFXJS_ObjDefinition> pDefn);
 

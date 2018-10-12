@@ -16,7 +16,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 CPDF_Object::~CPDF_Object() {}
 

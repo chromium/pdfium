@@ -8,7 +8,6 @@
 
 #include "core/fxcrt/css/cfx_cssstringvalue.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
-#include "third_party/base/stl_util.h"
 
 CFX_CSSComputedStyle::CFX_CSSComputedStyle() {}
 

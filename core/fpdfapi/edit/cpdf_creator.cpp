@@ -23,7 +23,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/span.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 

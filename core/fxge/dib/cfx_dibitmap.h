@@ -11,7 +11,6 @@
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibbase.h"
-#include "third_party/base/stl_util.h"
 
 class CFX_DIBitmap : public CFX_DIBBase {
  public:

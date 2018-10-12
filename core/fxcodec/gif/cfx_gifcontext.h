@@ -15,7 +15,6 @@
 #include "core/fxcodec/gif/cfx_lzwdecompressor.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/span.h"
 
 class CFX_CodecMemory;
 

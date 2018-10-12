@@ -25,7 +25,6 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "public/fpdfview.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"

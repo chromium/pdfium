@@ -15,7 +15,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/stl_util.h"
 
 class CPDF_Dictionary;
 class CPDF_Font;
@@ -110,9 +109,7 @@ class CPDF_FormField {
 
   bool ResetField(NotificationOption notify);
 
-  int CountControls() const {
-    return pdfium::CollectionSize<int>(m_ControlList);
-  }
+  int CountControls() const;
 
   CPDF_FormControl* GetControl(int index) const {
     return m_ControlList[index].Get();

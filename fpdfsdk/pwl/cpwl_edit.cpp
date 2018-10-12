@@ -25,7 +25,6 @@
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/stl_util.h"
 
 CPWL_Edit::CPWL_Edit() : m_bFocus(false) {}
 

@@ -250,6 +250,10 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
   return true;
 }
 
+int CPDF_FormField::CountControls() const {
+  return pdfium::CollectionSize<int>(m_ControlList);
+}
+
 int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {
   if (!pControl)
     return -1;

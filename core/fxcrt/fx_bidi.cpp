@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_unicode.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "core/fxcrt/fx_extension.h"

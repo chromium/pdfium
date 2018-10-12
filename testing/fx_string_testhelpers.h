@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_stream.h"
-#include "third_party/base/span.h"
 
 // Output stream operator so GTEST macros work with CFX_DateTime objects.
 std::ostream& operator<<(std::ostream& os, const CFX_DateTime& dt);

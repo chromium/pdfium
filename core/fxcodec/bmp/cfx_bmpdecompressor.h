@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcodec/bmp/fx_bmp.h"
-#include "third_party/base/span.h"
 
 class CFX_BmpContext;
 class CFX_CodecMemory;

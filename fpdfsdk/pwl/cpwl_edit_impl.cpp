@@ -31,7 +31,6 @@
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
 namespace {
 

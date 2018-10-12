@@ -8,7 +8,6 @@
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_font.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/base/span.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfx_rtfbreak.h"

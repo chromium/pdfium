@@ -9,6 +9,7 @@
 
 #include "core/fxcodec/bmp/cfx_bmpdecompressor.h"
 #include "core/fxcodec/bmp/fx_bmp.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CFX_BmpContext final : public CodecModuleIface::Context {
  public:

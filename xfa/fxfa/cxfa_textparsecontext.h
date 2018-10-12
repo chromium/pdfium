@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
-#include "third_party/base/stl_util.h"
 
 class CFX_CSSComputedStyle;
 

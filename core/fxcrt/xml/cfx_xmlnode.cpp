@@ -13,7 +13,6 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
-#include "third_party/base/stl_util.h"
 
 CFX_XMLNode::CFX_XMLNode() = default;
 

@@ -11,6 +11,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CFX_GraphStateData::LineCapButt == FPDF_LINECAP_BUTT,
