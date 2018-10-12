@@ -10,7 +10,6 @@ import("../pdfium.gni")
 
 group("third_party") {
   deps = [
-    ":bigint",
     ":pdfium_base",
     ":skia_shared",
   ]
@@ -23,24 +22,26 @@ config("pdfium_third_party_config") {
   configs = [ "..:pdfium_common_config" ]
 }
 
-source_set("bigint") {
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":pdfium_third_party_config",
-  ]
-  sources = [
-    "bigint/BigInteger.cc",
-    "bigint/BigInteger.hh",
-    "bigint/BigIntegerLibrary.hh",
-    "bigint/BigIntegerUtils.cc",
-    "bigint/BigIntegerUtils.hh",
-    "bigint/BigUnsigned.cc",
-    "bigint/BigUnsigned.hh",
-    "bigint/BigUnsignedInABase.cc",
-    "bigint/BigUnsignedInABase.hh",
-    "bigint/NumberlikeArray.hh",
-  ]
+if (pdf_enable_xfa) {
+  source_set("bigint") {
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":pdfium_third_party_config",
+    ]
+    sources = [
+      "bigint/BigInteger.cc",
+      "bigint/BigInteger.hh",
+      "bigint/BigIntegerLibrary.hh",
+      "bigint/BigIntegerUtils.cc",
+      "bigint/BigIntegerUtils.hh",
+      "bigint/BigUnsigned.cc",
+      "bigint/BigUnsigned.hh",
+      "bigint/BigUnsignedInABase.cc",
+      "bigint/BigUnsignedInABase.hh",
+      "bigint/NumberlikeArray.hh",
+    ]
+  }
 }
 
 if (pdf_bundle_freetype) {

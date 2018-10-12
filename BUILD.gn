@@ -200,7 +200,6 @@ jumbo_static_library("pdfium") {
     ":fxge",
     ":fxjs",
     ":pwl",
-    "third_party:bigint",
     "third_party:pdfium_base",
     "third_party:skia_shared",
   ]
@@ -1815,6 +1814,7 @@ if (pdf_enable_xfa) {
     ]
     deps = [
       ":fxcrt",
+      "third_party:bigint",
     ]
     configs += [ ":pdfium_core_config" ]
   }
