@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FDRM_CRYPTO_FX_CRYPT_H_
-#define CORE_FDRM_CRYPTO_FX_CRYPT_H_
+#ifndef CORE_FDRM_FX_CRYPT_H_
+#define CORE_FDRM_FX_CRYPT_H_
 
 #include "core/fxcrt/fx_system.h"
 
@@ -114,4 +114,4 @@ void CRYPT_SHA512Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]);
 
-#endif  // CORE_FDRM_CRYPTO_FX_CRYPT_H_
+#endif  // CORE_FDRM_FX_CRYPT_H_

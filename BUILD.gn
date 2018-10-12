@@ -192,10 +192,10 @@ visibility = [
 
 jumbo_source_set("fdrm") {
   sources = [
-    "core/fdrm/crypto/fx_crypt.cpp",
-    "core/fdrm/crypto/fx_crypt.h",
-    "core/fdrm/crypto/fx_crypt_aes.cpp",
-    "core/fdrm/crypto/fx_crypt_sha.cpp",
+    "core/fdrm/fx_crypt.cpp",
+    "core/fdrm/fx_crypt.h",
+    "core/fdrm/fx_crypt_aes.cpp",
+    "core/fdrm/fx_crypt_sha.cpp",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [
@@ -1057,7 +1057,7 @@ jumbo_source_set("fxge") {
 test("pdfium_unittests") {
   testonly = true
   sources = [
-    "core/fdrm/crypto/fx_crypt_unittest.cpp",
+    "core/fdrm/fx_crypt_unittest.cpp",
     "core/fpdfapi/edit/cpdf_pagecontentgenerator_unittest.cpp",
     "core/fpdfapi/font/cpdf_cmapparser_unittest.cpp",
     "core/fpdfapi/font/cpdf_tounicodemap_unittest.cpp",

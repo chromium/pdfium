@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fdrm/fx_crypt.h"
 
 #define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
 #define GET_32BIT_MSB_FIRST(cp)                    \
@@ -515,9 +515,7 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
 #undef MAKEWORD
 #undef LASTWORD
 
-void aes_setup(CRYPT_aes_context* ctx,
-               const unsigned char* key,
-               int keylen) {
+void aes_setup(CRYPT_aes_context* ctx, const unsigned char* key, int keylen) {
   ASSERT(keylen == 16 || keylen == 24 || keylen == 32);
   int Nk = keylen / 4;
   ctx->Nb = 4;

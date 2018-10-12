@@ -4,7 +4,7 @@
 
 // Originally from chromium's /src/base/md5_unittest.cc.
 
-#include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fdrm/fx_crypt.h"
 
 #include <memory>
 #include <string>
