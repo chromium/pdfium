@@ -700,7 +700,7 @@ jumbo_source_set("parser") {
   ]
   deps = [
     "../../../:fxcrt",
-    "../../../:fxjs",
+    "../../../fxjs",
     "../../fde",
     "../../fgas",
     "../../fxfa",
