@@ -201,8 +201,13 @@ bool CJS_Runtime::GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,
       v8::String::NewFromUtf8(GetIsolate(), utf8Name.unterminated_c_str(),
                               v8::NewStringType::kNormal, utf8Name.GetLength())
           .ToLocalChecked();
-  v8::Local<v8::Value> propvalue =
-      context->Global()->Get(context, str).ToLocalChecked();
+  v8::MaybeLocal<v8::Value> maybe_propvalue =
+      context->Global()->Get(context, str);
+  if (maybe_propvalue.IsEmpty()) {
+    pValue->SetUndefined();
+    return false;
+  }
+  v8::Local<v8::Value> propvalue = maybe_propvalue.ToLocalChecked();
   if (propvalue.IsEmpty()) {
     pValue->SetUndefined();
     return false;
