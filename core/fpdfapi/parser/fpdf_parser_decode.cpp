@@ -389,8 +389,10 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
         {pDecoder->GetString(), pParams ? pParams->GetDict() : nullptr});
   }
 
-  pdfium::span<const uint8_t> last_span = src_span;
   std::unique_ptr<uint8_t, FxFreeDeleter> result;
+  // May be changed to point to |result| in the for-loop below. So put it below
+  // |result| and let it get destroyed first.
+  pdfium::span<const uint8_t> last_span = src_span;
   size_t nSize = DecoderArray.size();
   for (size_t i = 0; i < nSize; ++i) {
     int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
