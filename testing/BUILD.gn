@@ -24,6 +24,7 @@ jumbo_source_set("test_support") {
   ]
   deps = [
     "../:pdfium",
+    "../core/fdrm",
     "image_diff",
     "//testing/gmock",
     "//testing/gtest",

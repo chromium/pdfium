@@ -13,6 +13,8 @@ jumbo_source_set("image_diff") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
+    "../../third_party:pdfium_base",
     "../../third_party:png",
+    "//third_party/zlib",
   ]
 }
