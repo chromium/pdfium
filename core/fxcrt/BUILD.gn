@@ -135,6 +135,7 @@ if (pdf_enable_xfa) {
       ":fxcrt",
       "../fpdfapi/parser",
     ]
+    configs += [ "../../:pdfium_core_config" ]
     visibility = [ "../../*" ]
   }
 }
