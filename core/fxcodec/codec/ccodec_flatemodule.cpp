@@ -834,14 +834,15 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(
   return ret ? offset : FX_INVALID_OFFSET;
 }
 
-bool CCodec_FlateModule::Encode(const uint8_t* src_buf,
-                                uint32_t src_size,
-                                uint8_t** dest_buf,
-                                uint32_t* dest_size) {
+bool CCodec_FlateModule::Encode(
+    const uint8_t* src_buf,
+    uint32_t src_size,
+    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+    uint32_t* dest_size) {
   *dest_size = src_size + src_size / 1000 + 12;
-  *dest_buf = FX_Alloc(uint8_t, *dest_size);
+  dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
   unsigned long temp_size = *dest_size;
-  if (!FlateCompress(*dest_buf, &temp_size, src_buf, src_size))
+  if (!FlateCompress(dest_buf->get(), &temp_size, src_buf, src_size))
     return false;
 
   *dest_size = (uint32_t)temp_size;

@@ -37,16 +37,15 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
 
   for (size_t i = 0; i < FX_ArraySize(flate_encode_cases); ++i) {
     const pdfium::StrFuncTestData& data = flate_encode_cases[i];
-    unsigned char* buf = nullptr;
+    std::unique_ptr<uint8_t, FxFreeDeleter> buf;
     uint32_t buf_size;
     EXPECT_TRUE(FlateEncode({data.input, data.input_size}, &buf, &buf_size));
     ASSERT_TRUE(buf);
     EXPECT_EQ(data.expected_size, buf_size) << " for case " << i;
     if (data.expected_size != buf_size)
       continue;
-    EXPECT_EQ(0, memcmp(data.expected, buf, data.expected_size))
+    EXPECT_EQ(0, memcmp(data.expected, buf.get(), data.expected_size))
         << " for case " << i;
-    FX_Free(buf);
   }
 }
 

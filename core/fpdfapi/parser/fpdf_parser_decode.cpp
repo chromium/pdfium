@@ -581,7 +581,7 @@ ByteString PDF_EncodeString(const ByteString& src, bool bHex) {
 }
 
 bool FlateEncode(pdfium::span<const uint8_t> src_span,
-                 uint8_t** dest_buf,
+                 std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                  uint32_t* dest_size) {
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
   return pEncoders->GetFlateModule()->Encode(src_span.data(), src_span.size(),

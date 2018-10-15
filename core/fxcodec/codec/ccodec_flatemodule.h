@@ -41,7 +41,7 @@ class CCodec_FlateModule {
 
   bool Encode(const uint8_t* src_buf,
               uint32_t src_size,
-              uint8_t** dest_buf,
+              std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
               uint32_t* dest_size);
 };
 
