@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../../pdfium.gni")
+import("../../../testing/test.gni")
 
 jumbo_source_set("parser") {
   sources = [
@@ -82,4 +83,35 @@ jumbo_source_set("parser") {
     "../../fxcodec",
   ]
   visibility = [ "../../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cpdf_array_unittest.cpp",
+    "cpdf_cross_ref_avail_unittest.cpp",
+    "cpdf_document_unittest.cpp",
+    "cpdf_hint_tables_unittest.cpp",
+    "cpdf_indirect_object_holder_unittest.cpp",
+    "cpdf_object_avail_unittest.cpp",
+    "cpdf_object_unittest.cpp",
+    "cpdf_object_walker_unittest.cpp",
+    "cpdf_page_object_avail_unittest.cpp",
+    "cpdf_parser_unittest.cpp",
+    "cpdf_read_validator_unittest.cpp",
+    "cpdf_simple_parser_unittest.cpp",
+    "cpdf_stream_acc_unittest.cpp",
+    "cpdf_syntax_parser_unittest.cpp",
+    "fpdf_parser_decode_unittest.cpp",
+    "fpdf_parser_utility_unittest.cpp",
+  ]
+  deps = [
+    ":parser",
+    "../",
+  ]
+  pdfium_root_dir = "../../../"
+
+  if (is_clang) {
+    # Suppress no override warning for overridden functions.
+    cflags = [ "-Wno-inconsistent-missing-override" ]
+  }
 }

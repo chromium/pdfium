@@ -263,3 +263,24 @@ set_defaults("test") {
     configs = default_executable_configs
   }
 }
+
+template("pdfium_unittest_source_set") {
+  source_set(target_name) {
+    _pdfium_root_dir = rebase_path(invoker.pdfium_root_dir, ".")
+
+    testonly = true
+    sources = invoker.sources
+    configs += [ _pdfium_root_dir + ":pdfium_core_config" ]
+    if (defined(invoker.configs)) {
+      configs += invoker.configs
+    }
+    deps = [
+      _pdfium_root_dir + ":pdfium_unittest_deps",
+    ]
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+    visibility = [ _pdfium_root_dir + ":*" ]
+    forward_variables_from(invoker, [ "cflags" ])
+  }
+}

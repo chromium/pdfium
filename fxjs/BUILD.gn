@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../pdfium.gni")
+import("../testing/test.gni")
 
 jumbo_source_set("fxjs") {
   sources = [
@@ -443,5 +444,22 @@ jumbo_source_set("fxjs") {
       ]
       deps += [ "../xfa/fxfa/fm2js" ]
     }
+  }
+}
+
+if (pdf_enable_v8) {
+  pdfium_unittest_source_set("unittests") {
+    sources = [
+      "cfx_v8_unittest.cpp",
+      "cfx_v8_unittest.h",
+      "cfxjs_engine_unittest.cpp",
+      "cjs_publicmethods_unittest.cpp",
+      "cjs_util_unittest.cpp",
+    ]
+    configs = [ "//v8:external_startup_data" ]
+    deps = [
+      ":fxjs",
+    ]
+    pdfium_root_dir = "../"
   }
 }

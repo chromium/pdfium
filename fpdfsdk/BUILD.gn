@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../pdfium.gni")
+import("../testing/test.gni")
 
 jumbo_source_set("fpdfsdk") {
   sources = [
@@ -87,4 +88,20 @@ jumbo_source_set("fpdfsdk") {
     ]
     allow_circular_includes_from += [ "fpdfxfa" ]
   }
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "fpdf_catalog_unittest.cpp",
+    "fpdf_doc_unittest.cpp",
+    "fpdf_editimg_unittest.cpp",
+  ]
+  deps = [
+    ":fpdfsdk",
+    "../:pdfium_public_headers",
+    "../core/fpdfapi",
+    "../core/fpdfapi/parser",
+    "../core/fpdfdoc",
+  ]
+  pdfium_root_dir = "../"
 }

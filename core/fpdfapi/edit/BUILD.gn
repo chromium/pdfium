@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../../pdfium.gni")
+import("../../../testing/test.gni")
 
 jumbo_source_set("edit") {
   sources = [
@@ -30,4 +31,18 @@ jumbo_source_set("edit") {
   ]
   allow_circular_includes_from = [ "../parser" ]
   visibility = [ "../../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cpdf_pagecontentgenerator_unittest.cpp",
+  ]
+  deps = [
+    ":edit",
+    "../",
+    "../font",
+    "../page",
+    "../parser",
+  ]
+  pdfium_root_dir = "../../../"
 }

@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 jumbo_source_set("fdrm") {
   sources = [
@@ -17,4 +18,14 @@ jumbo_source_set("fdrm") {
     "../fxcrt",
   ]
   visibility = [ "../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "fx_crypt_unittest.cpp",
+  ]
+  deps = [
+    ":fdrm",
+  ]
+  pdfium_root_dir = "../../"
 }

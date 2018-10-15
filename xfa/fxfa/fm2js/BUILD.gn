@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../../pdfium.gni")
+import("../../../testing/test.gni")
 
 assert(pdf_enable_xfa)
 
@@ -29,4 +30,17 @@ jumbo_source_set("fm2js") {
     "../../:xfa_warnings",
   ]
   visibility = [ "../../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cxfa_fmexpression_unittest.cpp",
+    "cxfa_fmlexer_unittest.cpp",
+    "cxfa_fmparser_unittest.cpp",
+    "cxfa_fmsimpleexpression_unittest.cpp",
+  ]
+  deps = [
+    ":fm2js",
+  ]
+  pdfium_root_dir = "../../../"
 }

@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 jumbo_source_set("fxcrt") {
   sources = [
@@ -142,5 +143,53 @@ if (pdf_enable_xfa) {
     ]
     configs += [ "../../:pdfium_core_config" ]
     visibility = [ "../../*" ]
+  }
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "autorestorer_unittest.cpp",
+    "bytestring_unittest.cpp",
+    "cfx_bitstream_unittest.cpp",
+    "fx_bidi_unittest.cpp",
+    "fx_coordinates_unittest.cpp",
+    "fx_extension_unittest.cpp",
+    "fx_memory_unittest.cpp",
+    "fx_number_unittest.cpp",
+    "fx_random_unittest.cpp",
+    "fx_string_unittest.cpp",
+    "fx_system_unittest.cpp",
+    "maybe_owned_unittest.cpp",
+    "observable_unittest.cpp",
+    "pdfium_span_unittest.cpp",
+    "retain_ptr_unittest.cpp",
+    "shared_copy_on_write_unittest.cpp",
+    "string_pool_template_unittest.cpp",
+    "unowned_ptr_unittest.cpp",
+    "weak_ptr_unittest.cpp",
+    "widestring_unittest.cpp",
+    "xml/cfx_xmlchardata_unittest.cpp",
+    "xml/cfx_xmldocument_unittest.cpp",
+    "xml/cfx_xmlelement_unittest.cpp",
+    "xml/cfx_xmlinstruction_unittest.cpp",
+    "xml/cfx_xmlnode_unittest.cpp",
+    "xml/cfx_xmlparser_unittest.cpp",
+    "xml/cfx_xmltext_unittest.cpp",
+  ]
+  deps = []
+  pdfium_root_dir = "../../"
+
+  if (pdf_enable_xfa) {
+    sources += [
+      "cfx_seekablemultistream_unittest.cpp",
+      "css/cfx_cssdeclaration_unittest.cpp",
+      "css/cfx_cssstylesheet_unittest.cpp",
+      "css/cfx_cssvaluelistparser_unittest.cpp",
+    ]
+    deps += [
+      ":seekablemultistream",
+      "../fpdfapi/parser",
+      "css",
+    ]
   }
 }

@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 jumbo_source_set("fxcodec") {
   sources = [
@@ -123,4 +124,26 @@ jumbo_source_set("fxcodec") {
     }
   }
   visibility = [ "../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "codec/fx_codec_a85_unittest.cpp",
+    "codec/fx_codec_jpx_unittest.cpp",
+    "codec/fx_codec_rle_unittest.cpp",
+    "jbig2/JBig2_BitStream_unittest.cpp",
+    "jbig2/JBig2_Image_unittest.cpp",
+  ]
+  deps = [
+    ":fxcodec",
+    "../fpdfapi/parser",
+  ]
+  pdfium_root_dir = "../../"
+
+  if (pdf_enable_xfa && pdf_enable_xfa_gif) {
+    sources += [
+      "gif/cfx_gifcontext_unittest.cpp",
+      "gif/cfx_lzwdecompressor_unittest.cpp",
+    ]
+  }
 }

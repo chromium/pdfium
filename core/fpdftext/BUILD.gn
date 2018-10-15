@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 jumbo_source_set("fpdftext") {
   sources = [
@@ -24,4 +25,14 @@ jumbo_source_set("fpdftext") {
     "../fxcrt",
   ]
   visibility = [ "../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cpdf_linkextract_unittest.cpp",
+  ]
+  deps = [
+    ":fpdftext",
+  ]
+  pdfium_root_dir = "../../"
 }

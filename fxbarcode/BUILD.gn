@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../pdfium.gni")
+import("../testing/test.gni")
 
 assert(pdf_enable_xfa)
 
@@ -141,4 +142,20 @@ jumbo_source_set("fxbarcode") {
   ]
   configs += [ "../:pdfium_core_config" ]
   visibility = [ "../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "oned/BC_OnedCodaBarWriter_unittest.cpp",
+    "oned/BC_OnedCode128Writer_unittest.cpp",
+    "oned/BC_OnedCode39Writer_unittest.cpp",
+    "oned/BC_OnedEAN13Writer_unittest.cpp",
+    "oned/BC_OnedEAN8Writer_unittest.cpp",
+    "oned/BC_OnedUPCAWriter_unittest.cpp",
+    "pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
+  ]
+  deps = [
+    ":fxbarcode",
+  ]
+  pdfium_root_dir = "../"
 }

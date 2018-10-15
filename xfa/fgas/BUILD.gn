@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 assert(pdf_enable_xfa)
 
@@ -54,4 +55,19 @@ jumbo_source_set("fgas") {
       "font/cfx_fontsourceenum_file.h",
     ]
   }
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "crt/cfgas_formatstring_unittest.cpp",
+    "layout/cfx_rtfbreak_unittest.cpp",
+    "layout/cfx_txtbreak_unittest.cpp",
+  ]
+  deps = [
+    ":fgas",
+    "../../core/fpdfapi",
+    "../../core/fxge",
+    "../fxfa/parser",
+  ]
+  pdfium_root_dir = "../../"
 }

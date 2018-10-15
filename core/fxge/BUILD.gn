@@ -5,6 +5,7 @@
 import("//build/config/freetype/freetype.gni")
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 config("fxge_warnings") {
   visibility = [ ":*" ]
@@ -174,4 +175,17 @@ jumbo_source_set("fxge") {
   }
 
   visibility = [ "../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "dib/cfx_dibitmap_unittest.cpp",
+    "dib/cstretchengine_unittest.cpp",
+  ]
+  deps = [
+    ":fxge",
+    "../fpdfapi/parser",
+    "../fpdfapi/render",
+  ]
+  pdfium_root_dir = "../../"
 }

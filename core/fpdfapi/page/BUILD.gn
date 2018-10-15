@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../../pdfium.gni")
+import("../../../testing/test.gni")
 
 jumbo_source_set("page") {
   sources = [
@@ -110,4 +111,18 @@ jumbo_source_set("page") {
     allow_circular_includes_from += [ "../../fxge" ]
   }
   visibility = [ "../../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cpdf_devicecs_unittest.cpp",
+    "cpdf_pageobjectholder_unittest.cpp",
+    "cpdf_psengine_unittest.cpp",
+    "cpdf_streamcontentparser_unittest.cpp",
+    "cpdf_streamparser_unittest.cpp",
+  ]
+  deps = [
+    ":page",
+  ]
+  pdfium_root_dir = "../../../"
 }

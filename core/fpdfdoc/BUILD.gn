@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 jumbo_source_set("fpdfdoc") {
   sources = [
@@ -98,4 +99,20 @@ jumbo_source_set("fpdfdoc") {
     "../fpdfapi/render",
   ]
   visibility = [ "../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cpdf_defaultappearance_unittest.cpp",
+    "cpdf_dest_unittest.cpp",
+    "cpdf_filespec_unittest.cpp",
+    "cpdf_formfield_unittest.cpp",
+    "cpdf_metadata_unittest.cpp",
+    "cpdf_nametree_unittest.cpp",
+  ]
+  deps = [
+    ":fpdfdoc",
+    "../fpdfapi/parser",
+  ]
+  pdfium_root_dir = "../../"
 }

@@ -210,148 +210,74 @@ visibility = [
   "//:gn_visibility",
 ]
 
-test("pdfium_unittests") {
+group("pdfium_unittest_deps") {
   testonly = true
-  sources = [
-    "core/fdrm/fx_crypt_unittest.cpp",
-    "core/fpdfapi/edit/cpdf_pagecontentgenerator_unittest.cpp",
-    "core/fpdfapi/font/cpdf_cmapparser_unittest.cpp",
-    "core/fpdfapi/font/cpdf_tounicodemap_unittest.cpp",
-    "core/fpdfapi/page/cpdf_devicecs_unittest.cpp",
-    "core/fpdfapi/page/cpdf_pageobjectholder_unittest.cpp",
-    "core/fpdfapi/page/cpdf_psengine_unittest.cpp",
-    "core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp",
-    "core/fpdfapi/page/cpdf_streamparser_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_array_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_cross_ref_avail_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_document_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_hint_tables_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_indirect_object_holder_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_object_avail_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_object_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_object_walker_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_page_object_avail_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_parser_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_read_validator_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_simple_parser_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_stream_acc_unittest.cpp",
-    "core/fpdfapi/parser/cpdf_syntax_parser_unittest.cpp",
-    "core/fpdfapi/parser/fpdf_parser_decode_unittest.cpp",
-    "core/fpdfapi/parser/fpdf_parser_utility_unittest.cpp",
-    "core/fpdfdoc/cpdf_defaultappearance_unittest.cpp",
-    "core/fpdfdoc/cpdf_dest_unittest.cpp",
-    "core/fpdfdoc/cpdf_filespec_unittest.cpp",
-    "core/fpdfdoc/cpdf_formfield_unittest.cpp",
-    "core/fpdfdoc/cpdf_metadata_unittest.cpp",
-    "core/fpdfdoc/cpdf_nametree_unittest.cpp",
-    "core/fpdftext/cpdf_linkextract_unittest.cpp",
-    "core/fxcodec/codec/fx_codec_a85_unittest.cpp",
-    "core/fxcodec/codec/fx_codec_jpx_unittest.cpp",
-    "core/fxcodec/codec/fx_codec_rle_unittest.cpp",
-    "core/fxcodec/jbig2/JBig2_BitStream_unittest.cpp",
-    "core/fxcodec/jbig2/JBig2_Image_unittest.cpp",
-    "core/fxcrt/autorestorer_unittest.cpp",
-    "core/fxcrt/bytestring_unittest.cpp",
-    "core/fxcrt/cfx_bitstream_unittest.cpp",
-    "core/fxcrt/fx_bidi_unittest.cpp",
-    "core/fxcrt/fx_coordinates_unittest.cpp",
-    "core/fxcrt/fx_extension_unittest.cpp",
-    "core/fxcrt/fx_memory_unittest.cpp",
-    "core/fxcrt/fx_number_unittest.cpp",
-    "core/fxcrt/fx_random_unittest.cpp",
-    "core/fxcrt/fx_string_unittest.cpp",
-    "core/fxcrt/fx_system_unittest.cpp",
-    "core/fxcrt/maybe_owned_unittest.cpp",
-    "core/fxcrt/observable_unittest.cpp",
-    "core/fxcrt/pdfium_span_unittest.cpp",
-    "core/fxcrt/retain_ptr_unittest.cpp",
-    "core/fxcrt/shared_copy_on_write_unittest.cpp",
-    "core/fxcrt/string_pool_template_unittest.cpp",
-    "core/fxcrt/unowned_ptr_unittest.cpp",
-    "core/fxcrt/weak_ptr_unittest.cpp",
-    "core/fxcrt/widestring_unittest.cpp",
-    "core/fxcrt/xml/cfx_xmlchardata_unittest.cpp",
-    "core/fxcrt/xml/cfx_xmldocument_unittest.cpp",
-    "core/fxcrt/xml/cfx_xmlelement_unittest.cpp",
-    "core/fxcrt/xml/cfx_xmlinstruction_unittest.cpp",
-    "core/fxcrt/xml/cfx_xmlnode_unittest.cpp",
-    "core/fxcrt/xml/cfx_xmlparser_unittest.cpp",
-    "core/fxcrt/xml/cfx_xmltext_unittest.cpp",
-    "core/fxge/dib/cfx_dibitmap_unittest.cpp",
-    "core/fxge/dib/cstretchengine_unittest.cpp",
-    "fpdfsdk/fpdf_catalog_unittest.cpp",
-    "fpdfsdk/fpdf_doc_unittest.cpp",
-    "fpdfsdk/fpdf_editimg_unittest.cpp",
-    "testing/pseudo_retainable.h",
-    "testing/unit_test_main.cpp",
-  ]
-  deps = [
-    ":pdfium",
+  public_deps = [
+    "core/fxcrt",
     "testing/:test_support",
     "//testing/gmock",
     "//testing/gtest",
   ]
-  include_dirs = []
+  visibility += [
+    "core/*",
+    "fpdfsdk/*",
+    "fxbarcode/*",
+    "fxjs/*",
+    "xfa/*",
+  ]
+}
+
+test("pdfium_unittests") {
+  testonly = true
+  sources = [
+    "testing/unit_test_main.cpp",
+  ]
+  deps = [
+    "core/fdrm:unittests",
+    "core/fpdfapi/edit:unittests",
+    "core/fpdfapi/font:unittests",
+    "core/fpdfapi/page:unittests",
+    "core/fpdfapi/parser:unittests",
+    "core/fpdfdoc:unittests",
+    "core/fpdftext:unittests",
+    "core/fxcodec:unittests",
+    "core/fxcrt",
+    "core/fxcrt:unittests",
+    "core/fxge",
+    "core/fxge:unittests",
+    "fpdfsdk:unittests",
+    "testing/:test_support",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+  configs += [ ":pdfium_core_config" ]
   if (pdf_enable_xfa) {
-    sources += [
-      "core/fxcrt/cfx_seekablemultistream_unittest.cpp",
-      "core/fxcrt/css/cfx_cssdeclaration_unittest.cpp",
-      "core/fxcrt/css/cfx_cssstylesheet_unittest.cpp",
-      "core/fxcrt/css/cfx_cssvaluelistparser_unittest.cpp",
-      "fxbarcode/oned/BC_OnedCodaBarWriter_unittest.cpp",
-      "fxbarcode/oned/BC_OnedCode128Writer_unittest.cpp",
-      "fxbarcode/oned/BC_OnedCode39Writer_unittest.cpp",
-      "fxbarcode/oned/BC_OnedEAN13Writer_unittest.cpp",
-      "fxbarcode/oned/BC_OnedEAN8Writer_unittest.cpp",
-      "fxbarcode/oned/BC_OnedUPCAWriter_unittest.cpp",
-      "fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
-      "xfa/fde/cfde_texteditengine_unittest.cpp",
-      "xfa/fgas/crt/cfgas_formatstring_unittest.cpp",
-      "xfa/fgas/layout/cfx_rtfbreak_unittest.cpp",
-      "xfa/fgas/layout/cfx_txtbreak_unittest.cpp",
-      "xfa/fwl/cfx_barcode_unittest.cpp",
-      "xfa/fxfa/cxfa_ffbarcode_unittest.cpp",
-      "xfa/fxfa/cxfa_textparser_unittest.cpp",
-      "xfa/fxfa/fm2js/cxfa_fmexpression_unittest.cpp",
-      "xfa/fxfa/fm2js/cxfa_fmlexer_unittest.cpp",
-      "xfa/fxfa/fm2js/cxfa_fmparser_unittest.cpp",
-      "xfa/fxfa/fm2js/cxfa_fmsimpleexpression_unittest.cpp",
-      "xfa/fxfa/parser/cxfa_document_parser_unittest.cpp",
-      "xfa/fxfa/parser/cxfa_localevalue_unittest.cpp",
-      "xfa/fxfa/parser/cxfa_node_unittest.cpp",
-      "xfa/fxfa/parser/cxfa_nodeiteratortemplate_unittest.cpp",
-      "xfa/fxfa/parser/cxfa_xmllocale_unittest.cpp",
-      "xfa/fxfa/parser/xfa_utils_unittest.cpp",
+    deps += [
+      "fxbarcode:unittests",
+      "xfa/fde:unittests",
+      "xfa/fgas",
+      "xfa/fgas:unittests",
+      "xfa/fwl:unittests",
+      "xfa/fxfa:unittests",
+      "xfa/fxfa/fm2js:unittests",
+      "xfa/fxfa/parser:unittests",
     ]
-    if (pdf_enable_xfa_gif) {
-      sources += [
-        "core/fxcodec/gif/cfx_gifcontext_unittest.cpp",
-        "core/fxcodec/gif/cfx_lzwdecompressor_unittest.cpp",
-      ]
-    }
   }
+
+  # TODO(thestig): Should this be an embeddertest?
   if (pdf_use_skia || pdf_use_skia_paths) {
     sources += [ "core/fxge/skia/fx_skia_device_unittest.cpp" ]
     deps += [ "//skia" ]
   }
   if (pdf_enable_v8) {
-    sources += [
-      "fxjs/cfx_v8_unittest.cpp",
-      "fxjs/cfx_v8_unittest.h",
-      "fxjs/cfxjs_engine_unittest.cpp",
-      "fxjs/cjs_publicmethods_unittest.cpp",
-      "fxjs/cjs_util_unittest.cpp",
-    ]
-    deps += [ "fxjs" ]
     configs += [ "//v8:external_startup_data" ]
+    deps += [
+      "fxjs:unittests",
+      "//v8",
+    ]
   }
-  configs += [ ":pdfium_core_config" ]
   if (is_android) {
     use_raw_android_executable = true
-  }
-  if (is_clang) {
-    # Suppress no override warning for overridden functions.
-    cflags = [ "-Wno-inconsistent-missing-override" ]
   }
 }
 

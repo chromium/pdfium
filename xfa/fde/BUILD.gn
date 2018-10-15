@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 assert(pdf_enable_xfa)
 
@@ -26,4 +27,15 @@ jumbo_source_set("fde") {
     "../:xfa_warnings",
   ]
   visibility = [ "../../*" ]
+}
+
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cfde_texteditengine_unittest.cpp",
+  ]
+  deps = [
+    ":fde",
+    "../fgas",
+  ]
+  pdfium_root_dir = "../../"
 }
