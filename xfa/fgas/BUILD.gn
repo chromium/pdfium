@@ -35,8 +35,13 @@ jumbo_source_set("fgas") {
     "layout/cfx_txtbreak.h",
   ]
   deps = [
+    "../../core/fpdfapi/font",
+    "../../core/fpdfapi/parser",
     "../../core/fxcrt",
+    "../../core/fxge",
+    "../fde",
   ]
+  allow_circular_includes_from = [ "../fde" ]
   configs += [
     "../../:pdfium_core_config",
     "../:xfa_warnings",

@@ -122,8 +122,12 @@ jumbo_source_set("fwl") {
   ]
   deps = [
     "../../core/fxcrt",
+    "../../core/fxge",
     "../../fxbarcode",
+    "../fde",
     "../fgas",
+    "../fxfa/parser",
+    "../fxgraphics",
   ]
   configs += [
     "../../:pdfium_core_config",

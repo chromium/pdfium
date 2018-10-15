@@ -23,10 +23,10 @@ check_targets = [
   "//testing/:*",
   "//testing/fuzzers/*",
   "//testing/image_diff/*",
+  "//xfa/*",
 
   # TODO(thestig): Work on these.
   #"//core/*",
   #"//fpdfsdk/*",
   #"//fxjs/*",
-  #"//xfa/*",
 ]

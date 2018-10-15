@@ -99,12 +99,27 @@ jumbo_source_set("fxfa") {
     "fxfa_basic.h",
   ]
   deps = [
+    "../../core/fpdfapi",
+    "../../core/fpdfapi/font",
+    "../../core/fpdfapi/parser",
+    "../../core/fpdfdoc",
+    "../../core/fxcodec",
     "../../core/fxcrt",
     "../../core/fxcrt:seekablemultistream",
     "../../core/fxcrt/css",
+    "../../core/fxge",
+    "../../fxbarcode",
     "../../fxjs",
     "../fde",
     "../fgas",
+    "../fwl",
+    "../fxgraphics",
+    "parser",
+  ]
+  allow_circular_includes_from = [
+    "../fgas",
+    "../fwl",
+    "parser",
   ]
   configs += [
     "../../:pdfium_core_config",

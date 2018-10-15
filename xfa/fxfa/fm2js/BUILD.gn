@@ -21,6 +21,7 @@ jumbo_source_set("fm2js") {
     "cxfa_fmtojavascriptdepth.h",
   ]
   deps = [
+    "../../../core/fxcrt",
     "//third_party/icu:icuuc",
   ]
   configs += [

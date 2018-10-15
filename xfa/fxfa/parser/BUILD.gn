@@ -699,12 +699,17 @@ jumbo_source_set("parser") {
     "xfa_utils.h",
   ]
   deps = [
+    "../../../core/fpdfapi",
+    "../../../core/fxcodec",
     "../../../core/fxcrt",
+    "../../../core/fxge",
+    "../../../fxbarcode",
     "../../../fxjs",
     "../../fde",
     "../../fgas",
-    "../../fxfa",
+    "../../fxgraphics",
   ]
+  allow_circular_includes_from = [ "../../fgas" ]
   configs += [
     "../../../:pdfium_core_config",
     "../../:xfa_warnings",
