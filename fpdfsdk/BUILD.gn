@@ -51,6 +51,7 @@ jumbo_source_set("fpdfsdk") {
 
   configs += [ "../:pdfium_core_config" ]
   deps = [
+    "../:pdfium_public_headers",
     "../core/fpdfapi",
     "../core/fpdfapi/page",
     "../core/fpdfapi/parser",

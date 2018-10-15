@@ -91,6 +91,32 @@ config("pdfium_core_config") {
   configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 }
 
+jumbo_source_set("pdfium_public_headers") {
+  sources = [
+    "public/cpp/fpdf_deleters.h",
+    "public/cpp/fpdf_scopers.h",
+    "public/fpdf_annot.h",
+    "public/fpdf_attachment.h",
+    "public/fpdf_catalog.h",
+    "public/fpdf_dataavail.h",
+    "public/fpdf_doc.h",
+    "public/fpdf_edit.h",
+    "public/fpdf_ext.h",
+    "public/fpdf_flatten.h",
+    "public/fpdf_formfill.h",
+    "public/fpdf_fwlevent.h",
+    "public/fpdf_ppo.h",
+    "public/fpdf_progressive.h",
+    "public/fpdf_save.h",
+    "public/fpdf_searchex.h",
+    "public/fpdf_structtree.h",
+    "public/fpdf_sysfontinfo.h",
+    "public/fpdf_text.h",
+    "public/fpdf_transformpage.h",
+    "public/fpdfview.h",
+  ]
+}
+
 jumbo_static_library("pdfium") {
   sources = [
     "fpdfsdk/fpdf_annot.cpp",
@@ -114,33 +140,13 @@ jumbo_static_library("pdfium") {
     "fpdfsdk/fpdf_text.cpp",
     "fpdfsdk/fpdf_transformpage.cpp",
     "fpdfsdk/fpdf_view.cpp",
-    "public/cpp/fpdf_deleters.h",
-    "public/cpp/fpdf_scopers.h",
-    "public/fpdf_annot.h",
-    "public/fpdf_attachment.h",
-    "public/fpdf_catalog.h",
-    "public/fpdf_dataavail.h",
-    "public/fpdf_doc.h",
-    "public/fpdf_edit.h",
-    "public/fpdf_ext.h",
-    "public/fpdf_flatten.h",
-    "public/fpdf_formfill.h",
-    "public/fpdf_fwlevent.h",
-    "public/fpdf_ppo.h",
-    "public/fpdf_progressive.h",
-    "public/fpdf_save.h",
-    "public/fpdf_searchex.h",
-    "public/fpdf_structtree.h",
-    "public/fpdf_sysfontinfo.h",
-    "public/fpdf_text.h",
-    "public/fpdf_transformpage.h",
-    "public/fpdfview.h",
   ]
 
   libs = []
   configs += [ ":pdfium_core_config" ]
 
   deps = [
+    ":pdfium_public_headers",
     "constants",
     "core/fdrm",
     "core/fpdfapi",
@@ -161,13 +167,9 @@ jumbo_static_library("pdfium") {
     "third_party:pdfium_base",
     "third_party:skia_shared",
   ]
-  allow_circular_includes_from = [
-    "fpdfsdk",
-    "fpdfsdk/formfiller",
-    "fpdfsdk/pwl",
-  ]
 
   public_deps = [
+    ":pdfium_public_headers",
     "core/fxcrt",
   ]
 
@@ -178,7 +180,6 @@ jumbo_static_library("pdfium") {
       "xfa/fxfa",
       "xfa/fxfa/parser",
     ]
-    allow_circular_includes_from += [ "fpdfsdk/fpdfxfa" ]
   }
 
   if (is_win) {
