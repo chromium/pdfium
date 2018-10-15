@@ -147,3 +147,10 @@ pdfium_unittest_source_set("unittests") {
   ]
   pdfium_root_dir = "../../"
 }
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "cfwl_edit_embeddertest.cpp",
+  ]
+  pdfium_root_dir = "../../"
+}

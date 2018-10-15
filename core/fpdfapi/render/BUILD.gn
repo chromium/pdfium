@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../../pdfium.gni")
+import("../../../testing/test.gni")
 
 jumbo_source_set("render") {
   sources = [
@@ -60,4 +61,12 @@ jumbo_source_set("render") {
     "../page",
   ]
   visibility = [ "../../../*" ]
+}
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "fpdf_render_loadimage_embeddertest.cpp",
+    "fpdf_render_pattern_embeddertest.cpp",
+  ]
+  pdfium_root_dir = "../../../"
 }

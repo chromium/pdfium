@@ -115,3 +115,15 @@ pdfium_unittest_source_set("unittests") {
     cflags = [ "-Wno-inconsistent-missing-override" ]
   }
 }
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "cpdf_parser_embeddertest.cpp",
+    "cpdf_security_handler_embeddertest.cpp",
+    "fpdf_parser_decode_embeddertest.cpp",
+  ]
+  deps = [
+    ":parser",
+  ]
+  pdfium_root_dir = "../../../"
+}

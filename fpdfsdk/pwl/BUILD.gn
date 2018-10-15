@@ -4,6 +4,7 @@
 
 import("//build/config/jumbo.gni")
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 jumbo_source_set("pwl") {
   sources = [
@@ -53,4 +54,17 @@ jumbo_source_set("pwl") {
     "../../core/fxge",
   ]
   visibility = [ "../../*" ]
+}
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "cpwl_combo_box_embeddertest.cpp",
+    "cpwl_edit_embeddertest.cpp",
+  ]
+  deps = [
+    ":pwl",
+    "../:fpdfsdk",
+    "../formfiller",
+  ]
+  pdfium_root_dir = "../../"
 }

@@ -214,7 +214,7 @@ group("pdfium_unittest_deps") {
   testonly = true
   public_deps = [
     "core/fxcrt",
-    "testing/:test_support",
+    "testing:test_support",
     "//testing/gmock",
     "//testing/gtest",
   ]
@@ -246,7 +246,7 @@ test("pdfium_unittests") {
     "core/fxge",
     "core/fxge:unittests",
     "fpdfsdk:unittests",
-    "testing/:test_support",
+    "testing:test_support",
     "//testing/gmock",
     "//testing/gtest",
   ]
@@ -278,53 +278,40 @@ test("pdfium_unittests") {
   }
 }
 
+group("pdfium_embeddertest_deps") {
+  testonly = true
+  public_deps = [
+    ":pdfium_public_headers",
+    "core/fxcrt",
+    "testing:embedder_test_support",
+    "testing:test_support",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+  visibility += [
+    "core/*",
+    "fpdfsdk/*",
+    "fxjs/*",
+    "xfa/*",
+  ]
+}
+
 test("pdfium_embeddertests") {
   testonly = true
   sources = [
-    "core/fpdfapi/edit/cpdf_creator_embeddertest.cpp",
-    "core/fpdfapi/page/cpdf_docpagedata_embeddertest.cpp",
-    "core/fpdfapi/page/cpdf_function_embeddertest.cpp",
-    "core/fpdfapi/page/cpdf_stitchfunc_embeddertest.cpp",
-    "core/fpdfapi/parser/cpdf_parser_embeddertest.cpp",
-    "core/fpdfapi/parser/cpdf_security_handler_embeddertest.cpp",
-    "core/fpdfapi/parser/fpdf_parser_decode_embeddertest.cpp",
-    "core/fpdfapi/render/fpdf_render_loadimage_embeddertest.cpp",
-    "core/fpdfapi/render/fpdf_render_pattern_embeddertest.cpp",
-    "core/fxcodec/codec/fx_codec_embeddertest.cpp",
-    "core/fxge/fx_ge_text_embeddertest.cpp",
-    "fpdfsdk/cpdfsdk_annotiterator_embeddertest.cpp",
-    "fpdfsdk/fpdf_annot_embeddertest.cpp",
-    "fpdfsdk/fpdf_attachment_embeddertest.cpp",
-    "fpdfsdk/fpdf_dataavail_embeddertest.cpp",
-    "fpdfsdk/fpdf_doc_embeddertest.cpp",
-    "fpdfsdk/fpdf_edit_embeddertest.cpp",
-    "fpdfsdk/fpdf_editpath_embeddertest.cpp",
-    "fpdfsdk/fpdf_ext_embeddertest.cpp",
-    "fpdfsdk/fpdf_flatten_embeddertest.cpp",
-    "fpdfsdk/fpdf_formfill_embeddertest.cpp",
-    "fpdfsdk/fpdf_ppo_embeddertest.cpp",
-    "fpdfsdk/fpdf_save_embeddertest.cpp",
-    "fpdfsdk/fpdf_structtree_embeddertest.cpp",
-    "fpdfsdk/fpdf_text_embeddertest.cpp",
-    "fpdfsdk/fpdf_transformpage_embeddertest.cpp",
-    "fpdfsdk/fpdf_view_c_api_test.c",
-    "fpdfsdk/fpdf_view_c_api_test.h",
-    "fpdfsdk/fpdf_view_embeddertest.cpp",
-    "fpdfsdk/pwl/cpwl_combo_box_embeddertest.cpp",
-    "fpdfsdk/pwl/cpwl_edit_embeddertest.cpp",
-    "testing/embedder_test.cpp",
-    "testing/embedder_test.h",
     "testing/embedder_test_main.cpp",
-    "testing/embedder_test_mock_delegate.h",
-    "testing/embedder_test_timer_handling_delegate.h",
-    "testing/fake_file_access.cpp",
-    "testing/fake_file_access.h",
-    "testing/range_set.cpp",
-    "testing/range_set.h",
   ]
   deps = [
     ":pdfium",
-    "testing/:test_support",
+    "core/fpdfapi/edit:embeddertests",
+    "core/fpdfapi/page:embeddertests",
+    "core/fpdfapi/parser:embeddertests",
+    "core/fpdfapi/render:embeddertests",
+    "core/fxcodec:embeddertests",
+    "core/fxge:embeddertests",
+    "fpdfsdk:embeddertests",
+    "fpdfsdk/pwl:embeddertests",
+    "testing:test_support",
     "testing/image_diff",
     "//testing/gmock",
     "//testing/gtest",
@@ -338,29 +325,18 @@ test("pdfium_embeddertests") {
   }
 
   if (pdf_enable_v8) {
-    sources += [
-      "fxjs/cfxjs_engine_embeddertest.cpp",
-      "fxjs/cjs_publicmethods_embeddertest.cpp",
-      "testing/js_embedder_test.cpp",
-      "testing/js_embedder_test.h",
+    deps += [
+      "fxjs:embeddertests",
+      "//v8",
     ]
-    deps += [ "fxjs" ]
     configs += [ "//v8:external_startup_data" ]
   }
 
   if (pdf_enable_xfa) {
-    sources += [
-      "fxjs/cfxjse_formcalc_context_embeddertest.cpp",
-      "testing/xfa_js_embedder_test.cpp",
-      "testing/xfa_js_embedder_test.h",
-      "xfa/fwl/cfwl_edit_embeddertest.cpp",
-      "xfa/fxfa/parser/cxfa_document_parser_embeddertest.cpp",
+    deps += [
+      "xfa/fwl:embeddertests",
+      "xfa/fxfa/parser:embeddertests",
     ]
-  }
-
-  if (pdf_use_skia || pdf_use_skia_paths) {
-    sources += [ "core/fxge/skia/fx_skia_device_embeddertest.cpp" ]
-    deps += [ "//skia" ]
   }
 }
 

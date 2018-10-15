@@ -41,3 +41,48 @@ jumbo_source_set("test_support") {
     configs += [ "//v8:external_startup_data" ]
   }
 }
+
+jumbo_source_set("embedder_test_support") {
+  testonly = true
+  sources = [
+    "embedder_test.cpp",
+    "embedder_test.h",
+    "embedder_test_mock_delegate.h",
+    "embedder_test_timer_handling_delegate.h",
+    "fake_file_access.cpp",
+    "fake_file_access.h",
+    "range_set.cpp",
+    "range_set.h",
+  ]
+
+  deps = [
+    ":test_support",
+    "../:pdfium",
+    "../core/fdrm",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+  configs += [ "../:pdfium_core_config" ]
+  visibility = [ "../*" ]
+
+  if (pdf_enable_v8) {
+    sources += [
+      "js_embedder_test.cpp",
+      "js_embedder_test.h",
+    ]
+    deps += [ "../fxjs" ]
+  }
+
+  if (pdf_enable_xfa) {
+    sources += [
+      "xfa_js_embedder_test.cpp",
+      "xfa_js_embedder_test.h",
+    ]
+    deps += [
+      "../fpdfsdk",
+      "../fpdfsdk/fpdfxfa",
+      "../xfa/fxfa",
+      "../xfa/fxfa/parser",
+    ]
+  }
+}

@@ -462,4 +462,21 @@ if (pdf_enable_v8) {
     ]
     pdfium_root_dir = "../"
   }
+
+  pdfium_embeddertest_source_set("embeddertests") {
+    sources = [
+      "cfxjs_engine_embeddertest.cpp",
+      "cjs_publicmethods_embeddertest.cpp",
+    ]
+    configs = [ "//v8:external_startup_data" ]
+    deps = [
+      ":fxjs",
+    ]
+    pdfium_root_dir = "../"
+
+    if (pdf_enable_xfa) {
+      sources += [ "cfxjse_formcalc_context_embeddertest.cpp" ]
+      deps += [ "..///xfa/fxfa" ]
+    }
+  }
 }

@@ -105,3 +105,34 @@ pdfium_unittest_source_set("unittests") {
   ]
   pdfium_root_dir = "../"
 }
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "cpdfsdk_annotiterator_embeddertest.cpp",
+    "fpdf_annot_embeddertest.cpp",
+    "fpdf_attachment_embeddertest.cpp",
+    "fpdf_dataavail_embeddertest.cpp",
+    "fpdf_doc_embeddertest.cpp",
+    "fpdf_edit_embeddertest.cpp",
+    "fpdf_editpath_embeddertest.cpp",
+    "fpdf_ext_embeddertest.cpp",
+    "fpdf_flatten_embeddertest.cpp",
+    "fpdf_formfill_embeddertest.cpp",
+    "fpdf_ppo_embeddertest.cpp",
+    "fpdf_save_embeddertest.cpp",
+    "fpdf_structtree_embeddertest.cpp",
+    "fpdf_text_embeddertest.cpp",
+    "fpdf_transformpage_embeddertest.cpp",
+    "fpdf_view_c_api_test.c",
+    "fpdf_view_c_api_test.h",
+    "fpdf_view_embeddertest.cpp",
+  ]
+  deps = [
+    ":fpdfsdk",
+    "../core/fpdfapi/font",
+    "../core/fpdfapi/page",
+    "../core/fpdfapi/parser",
+    "../core/fxge",
+  ]
+  pdfium_root_dir = "../"
+}

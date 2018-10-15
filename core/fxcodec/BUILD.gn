@@ -147,3 +147,10 @@ pdfium_unittest_source_set("unittests") {
     ]
   }
 }
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "codec/fx_codec_embeddertest.cpp",
+  ]
+  pdfium_root_dir = "../../"
+}
