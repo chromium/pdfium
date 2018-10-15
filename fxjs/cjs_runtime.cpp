@@ -39,7 +39,6 @@
 #include "fxjs/cjs_util.h"
 #include "fxjs/cjs_zoomtype.h"
 #include "fxjs/js_define.h"
-#include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA

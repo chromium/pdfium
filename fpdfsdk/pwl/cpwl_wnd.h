@@ -78,20 +78,6 @@ struct CPWL_Dash {
   int32_t nPhase;
 };
 
-inline bool operator==(const CFX_Color& c1, const CFX_Color& c2) {
-  return c1.nColorType == c2.nColorType && c1.fColor1 - c2.fColor1 < 0.0001 &&
-         c1.fColor1 - c2.fColor1 > -0.0001 &&
-         c1.fColor2 - c2.fColor2 < 0.0001 &&
-         c1.fColor2 - c2.fColor2 > -0.0001 &&
-         c1.fColor3 - c2.fColor3 < 0.0001 &&
-         c1.fColor3 - c2.fColor3 > -0.0001 &&
-         c1.fColor4 - c2.fColor4 < 0.0001 && c1.fColor4 - c2.fColor4 > -0.0001;
-}
-
-inline bool operator!=(const CFX_Color& c1, const CFX_Color& c2) {
-  return !(c1 == c2);
-}
-
 #define PWL_SCROLLBAR_WIDTH 12.0f
 #define PWL_SCROLLBAR_TRANSPARENCY 150
 #define PWL_DEFAULT_BLACKCOLOR CFX_Color(CFX_Color::kGray, 0)

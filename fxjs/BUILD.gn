@@ -104,6 +104,12 @@ jumbo_source_set("fxjs") {
       "jse_define.h",
     ]
     deps += [
+      "../core/fdrm",
+      "../core/fpdfapi/font",
+      "../core/fpdfapi/page",
+      "../core/fpdfapi/parser",
+      "../core/fpdfdoc",
+      "../core/fxge",
       "//v8",
       "//v8:v8_libplatform",
     ]

@@ -4,7 +4,6 @@
 
 #include "fxjs/ijs_runtime.h"
 
-#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cjs_runtimestub.h"
 #include "third_party/base/ptr_util.h"
 

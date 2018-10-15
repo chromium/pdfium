@@ -61,4 +61,18 @@ struct CFX_Color {
   float fColor4;
 };
 
+inline bool operator==(const CFX_Color& c1, const CFX_Color& c2) {
+  return c1.nColorType == c2.nColorType && c1.fColor1 - c2.fColor1 < 0.0001 &&
+         c1.fColor1 - c2.fColor1 > -0.0001 &&
+         c1.fColor2 - c2.fColor2 < 0.0001 &&
+         c1.fColor2 - c2.fColor2 > -0.0001 &&
+         c1.fColor3 - c2.fColor3 < 0.0001 &&
+         c1.fColor3 - c2.fColor3 > -0.0001 &&
+         c1.fColor4 - c2.fColor4 < 0.0001 && c1.fColor4 - c2.fColor4 > -0.0001;
+}
+
+inline bool operator!=(const CFX_Color& c1, const CFX_Color& c2) {
+  return !(c1 == c2);
+}
+
 #endif  // CORE_FXGE_CFX_COLOR_H_

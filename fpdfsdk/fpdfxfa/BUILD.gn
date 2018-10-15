@@ -28,6 +28,7 @@ jumbo_source_set("fpdfxfa") {
     "../../xfa/fxfa",
     "../../xfa/fxfa/parser",
   ]
+  allow_circular_includes_from = [ "../../fxjs" ]
   configs += [ "../../:pdfium_core_config" ]
   visibility = [ "../../*" ]
 }

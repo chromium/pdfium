@@ -20,6 +20,7 @@ check_targets = [
   "//core/fxcrt/*",
   "//fpdfsdk/*",
   "//fxbarcode/*",
+  "//fxjs/*",
   "//samples/*",
   "//testing/:*",
   "//testing/fuzzers/*",
@@ -28,5 +29,4 @@ check_targets = [
 
   # TODO(thestig): Work on these.
   #"//core/*",
-  #"//fxjs/*",
 ]

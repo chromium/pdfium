@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "core/fxge/cfx_color.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventhandler.h"
 #include "fxjs/cjs_object.h"

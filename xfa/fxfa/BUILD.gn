@@ -117,6 +117,7 @@ jumbo_source_set("fxfa") {
     "parser",
   ]
   allow_circular_includes_from = [
+    "../../fxjs",
     "../fgas",
     "../fwl",
     "parser",

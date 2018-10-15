@@ -63,6 +63,7 @@ jumbo_source_set("fpdfsdk") {
     "pwl",
   ]
   allow_circular_includes_from = [
+    "../fxjs",
     "formfiller",
     "pwl",
   ]
