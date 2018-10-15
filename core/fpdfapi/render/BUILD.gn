@@ -48,7 +48,16 @@ jumbo_source_set("render") {
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
+    "../../fxcodec",
     "../../fxcrt",
+    "../../fxge",
+    "../font",
+    "../page",
+    "../parser",
+  ]
+  allow_circular_includes_from = [
+    "../parser",
+    "../page",
   ]
   visibility = [ "../../../*" ]
 }

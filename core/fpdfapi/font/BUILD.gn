@@ -43,6 +43,14 @@ jumbo_source_set("font") {
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
     "../../fxcrt",
+    "../../fxge",
+    "../cmaps",
+    "../parser",
+  ]
+  allow_circular_includes_from = [
+    "../../fxge",
+    "../cmaps",
+    "../parser",
   ]
   visibility = [ "../../../*" ]
 }

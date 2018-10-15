@@ -72,7 +72,14 @@ jumbo_source_set("parser") {
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
+    "../../fdrm",
+    "../../fxcodec",
     "../../fxcrt",
+    "../../fxge",
+  ]
+  allow_circular_includes_from = [
+    "../../fxge",
+    "../../fxcodec",
   ]
   visibility = [ "../../../*" ]
 }

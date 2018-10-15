@@ -73,8 +73,10 @@ jumbo_source_set("fxcodec") {
     "../../third_party:lcms2",
     "../../third_party:zlib",
     "../fxcrt",
+    "../fxge",
     "//third_party:jpeg",
   ]
+  allow_circular_includes_from = [ "../fxge" ]
 
   if (pdf_enable_xfa) {
     sources += [

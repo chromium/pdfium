@@ -18,7 +18,7 @@ default_args = {
 
 check_targets = [
   ":pdfium",
-  "//core/fxcrt/*",
+  "//core/*",
   "//fpdfsdk/*",
   "//fxbarcode/*",
   "//fxjs/*",
@@ -27,7 +27,4 @@ check_targets = [
   "//testing/fuzzers/*",
   "//testing/image_diff/*",
   "//xfa/*",
-
-  # TODO(thestig): Work on these.
-  #"//core/*",
 ]

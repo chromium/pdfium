@@ -18,6 +18,9 @@ jumbo_source_set("fpdftext") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
+    "../fpdfapi/font",
+    "../fpdfapi/page",
+    "../fpdfapi/parser",
     "../fxcrt",
   ]
   visibility = [ "../../*" ]
