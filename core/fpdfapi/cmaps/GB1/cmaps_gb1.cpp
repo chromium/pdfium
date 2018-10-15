@@ -6,12 +6,7 @@
 
 #include "core/fpdfapi/cmaps/GB1/cmaps_gb1.h"
 
-#include "core/fpdfapi/cmaps/cmap_int.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/font/cpdf_fontglobals.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
-
-static const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
+const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
     {"GB-EUC-H", g_FXCMAP_GB_EUC_H_0, nullptr, 90, 0, FXCMAP_CMap::Range, 0},
     {"GB-EUC-V", g_FXCMAP_GB_EUC_V_0, nullptr, 20, 0, FXCMAP_CMap::Range, -1},
     {"GBpc-EUC-H", g_FXCMAP_GBpc_EUC_H_0, nullptr, 91, 0, FXCMAP_CMap::Range,
@@ -38,9 +33,4 @@ static const FXCMAP_CMap g_FXCMAP_GB1_cmaps[] = {
      FXCMAP_CMap::Range, -1},
 };
 
-void CPDF_ModuleMgr::LoadEmbeddedGB1CMaps() {
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  pFontGlobals->SetEmbeddedCharset(CIDSET_GB1, g_FXCMAP_GB1_cmaps);
-  pFontGlobals->SetEmbeddedToUnicode(CIDSET_GB1, g_FXCMAP_GB1CID2Unicode_5);
-}
+const size_t g_FXCMAP_GB1_cmaps_size = FX_ArraySize(g_FXCMAP_GB1_cmaps);

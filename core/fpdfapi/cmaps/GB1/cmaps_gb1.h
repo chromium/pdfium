@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFAPI_CMAPS_GB1_CMAPS_GB1_H_
 #define CORE_FPDFAPI_CMAPS_GB1_CMAPS_GB1_H_
 
-#include <stdint.h>
-
 #include "core/fpdfapi/cmaps/cmap_int.h"
 
 extern const uint16_t g_FXCMAP_GB_EUC_H_0[];
@@ -25,5 +23,7 @@ extern const uint16_t g_FXCMAP_GBK2K_V_5[];
 extern const uint16_t g_FXCMAP_UniGB_UCS2_H_4[];
 extern const uint16_t g_FXCMAP_UniGB_UCS2_V_4[];
 extern const uint16_t g_FXCMAP_GB1CID2Unicode_5[30284];
+extern const FXCMAP_CMap g_FXCMAP_GB1_cmaps[];
+extern const size_t g_FXCMAP_GB1_cmaps_size;
 
 #endif  // CORE_FPDFAPI_CMAPS_GB1_CMAPS_GB1_H_

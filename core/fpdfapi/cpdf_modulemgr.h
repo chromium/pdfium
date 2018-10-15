@@ -60,11 +60,10 @@ class CPDF_ModuleMgr {
   CPDF_ModuleMgr();
   ~CPDF_ModuleMgr();
 
-  void InitCodecModule();
   void InitPageModule();
-  void LoadEmbeddedMaps();
+  void InitCodecModule();
   void LoadCodecModules();
-
+  void LoadEmbeddedMaps();
   void LoadEmbeddedGB1CMaps();
   void LoadEmbeddedCNS1CMaps();
   void LoadEmbeddedJapan1CMaps();

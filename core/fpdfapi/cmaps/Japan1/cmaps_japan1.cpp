@@ -6,12 +6,7 @@
 
 #include "core/fpdfapi/cmaps/Japan1/cmaps_japan1.h"
 
-#include "core/fpdfapi/cmaps/cmap_int.h"
-#include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/font/cpdf_fontglobals.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
-
-static const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
+const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
     {"83pv-RKSJ-H", g_FXCMAP_83pv_RKSJ_H_1, nullptr, 222, 0, FXCMAP_CMap::Range,
      0},
     {"90ms-RKSJ-H", g_FXCMAP_90ms_RKSJ_H_2, nullptr, 171, 0, FXCMAP_CMap::Range,
@@ -50,10 +45,4 @@ static const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
      FXCMAP_CMap::Single, -1},
 };
 
-void CPDF_ModuleMgr::LoadEmbeddedJapan1CMaps() {
-  CPDF_FontGlobals* pFontGlobals =
-      CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
-  pFontGlobals->SetEmbeddedCharset(CIDSET_JAPAN1, g_FXCMAP_Japan1_cmaps);
-  pFontGlobals->SetEmbeddedToUnicode(CIDSET_JAPAN1,
-                                     g_FXCMAP_Japan1CID2Unicode_4);
-}
+const size_t g_FXCMAP_Japan1_cmaps_size = FX_ArraySize(g_FXCMAP_Japan1_cmaps);
