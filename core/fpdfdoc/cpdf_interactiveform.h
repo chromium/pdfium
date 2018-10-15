@@ -91,6 +91,9 @@ class CPDF_InteractiveForm {
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
 
+  const std::vector<UnownedPtr<CPDF_FormControl>>& GetControlsForField(
+      const CPDF_FormField* pField) const;
+
  private:
   void LoadField(CPDF_Dictionary* pFieldDict, int nLevel);
   void AddTerminalField(CPDF_Dictionary* pFieldDict);
@@ -99,12 +102,15 @@ class CPDF_InteractiveForm {
 
   static bool s_bUpdateAP;
 
+  ByteString m_bsEncoding;
   UnownedPtr<CPDF_Document> const m_pDocument;
   UnownedPtr<CPDF_Dictionary> m_pFormDict;
+  std::unique_ptr<CFieldTree> m_pFieldTree;
   std::map<const CPDF_Dictionary*, std::unique_ptr<CPDF_FormControl>>
       m_ControlMap;
-  std::unique_ptr<CFieldTree> m_pFieldTree;
-  ByteString m_bsEncoding;
+  // Points into |m_ControlMap|.
+  std::map<const CPDF_FormField*, std::vector<UnownedPtr<CPDF_FormControl>>>
+      m_ControlLists;
   UnownedPtr<IPDF_FormNotify> m_pFormNotify;
 };
 

@@ -251,15 +251,20 @@ bool CPDF_FormField::ResetField(NotificationOption notify) {
 }
 
 int CPDF_FormField::CountControls() const {
-  return pdfium::CollectionSize<int>(m_ControlList);
+  return pdfium::CollectionSize<int>(GetControls());
+}
+
+CPDF_FormControl* CPDF_FormField::GetControl(int index) const {
+  return GetControls()[index].Get();
 }
 
 int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {
   if (!pControl)
     return -1;
 
-  auto it = std::find(m_ControlList.begin(), m_ControlList.end(), pControl);
-  return it != m_ControlList.end() ? it - m_ControlList.begin() : -1;
+  const auto& controls = GetControls();
+  auto it = std::find(controls.begin(), controls.end(), pControl);
+  return it != controls.end() ? it - controls.begin() : -1;
 }
 
 FormFieldType CPDF_FormField::GetFieldType() const {
@@ -426,10 +431,11 @@ int CPDF_FormField::GetMaxLen() const {
   if (const CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict.Get(), "MaxLen"))
     return pObj->GetInteger();
 
-  for (auto& pControl : m_ControlList) {
+  for (auto& pControl : GetControls()) {
     if (!pControl)
       continue;
-    CPDF_Dictionary* pWidgetDict = pControl->GetWidget();
+
+    const CPDF_Dictionary* pWidgetDict = pControl->GetWidget();
     if (pWidgetDict->KeyExist("MaxLen"))
       return pWidgetDict->GetIntegerFor("MaxLen");
   }
@@ -930,4 +936,9 @@ void CPDF_FormField::NotifyListOrComboBoxAfterChange() {
     default:
       break;
   }
+}
+
+const std::vector<UnownedPtr<CPDF_FormControl>>& CPDF_FormField::GetControls()
+    const {
+  return m_pForm->GetControlsForField(this);
 }

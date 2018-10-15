@@ -48,7 +48,7 @@ class CPDF_FormControl {
   const CPDF_InteractiveForm* GetInteractiveForm() const {
     return m_pForm.Get();
   }
-  CPDF_FormField* GetField() const { return m_pField; }
+  CPDF_FormField* GetField() const { return m_pField.Get(); }
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict.Get(); }
   CFX_FloatRect GetRect() const;
 
@@ -115,7 +115,7 @@ class CPDF_FormControl {
   CPDF_Stream* GetIcon(const ByteString& csEntry);
   CPDF_ApSettings GetMK() const;
 
-  CPDF_FormField* const m_pField;
+  UnownedPtr<CPDF_FormField> const m_pField;
   UnownedPtr<CPDF_Dictionary> const m_pWidgetDict;
   UnownedPtr<const CPDF_InteractiveForm> const m_pForm;
 };

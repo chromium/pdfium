@@ -390,10 +390,10 @@ class CFieldTree {
  public:
   class Node {
    public:
-    Node() : m_pField(nullptr), m_level(0) {}
+    Node() : m_level(0) {}
     Node(const WideString& short_name, int level)
         : m_ShortName(short_name), m_level(level) {}
-    ~Node() {}
+    ~Node() = default;
 
     void AddChildNode(std::unique_ptr<Node> pNode) {
       m_Children.push_back(std::move(pNode));
@@ -466,9 +466,9 @@ class CFieldTree {
   Node m_Root;
 };
 
-CFieldTree::CFieldTree() {}
+CFieldTree::CFieldTree() = default;
 
-CFieldTree::~CFieldTree() {}
+CFieldTree::~CFieldTree() = default;
 
 CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
                                        const WideString& short_name) {
@@ -717,7 +717,7 @@ CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
 
   for (size_t i = pAnnotList->size(); i > 0; --i) {
     size_t annot_index = i - 1;
-    CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(annot_index);
+    const CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(annot_index);
     if (!pAnnot)
       continue;
 
@@ -824,6 +824,13 @@ void CPDF_InteractiveForm::ResetForm(NotificationOption notify) {
   }
   if (notify == NotificationOption::kNotify && m_pFormNotify)
     m_pFormNotify->AfterFormReset(this);
+}
+
+const std::vector<UnownedPtr<CPDF_FormControl>>&
+CPDF_InteractiveForm::GetControlsForField(const CPDF_FormField* pField) const {
+  const auto& it = m_ControlLists.find(pField);
+  ASSERT(it != m_ControlLists.end());
+  return it->second;
 }
 
 void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
@@ -955,7 +962,7 @@ CPDF_FormControl* CPDF_InteractiveForm::AddControl(
   auto pNew = pdfium::MakeUnique<CPDF_FormControl>(pField, pWidgetDict);
   CPDF_FormControl* pControl = pNew.get();
   m_ControlMap[pWidgetDict] = std::move(pNew);
-  pField->AddFormControl(pControl);
+  m_ControlLists[pField].emplace_back(pControl);
   return pControl;
 }
 
