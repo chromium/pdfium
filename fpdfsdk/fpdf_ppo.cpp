@@ -185,12 +185,6 @@ CFX_FloatRect GetCropBox(const CPDF_Dictionary* pPageDict) {
   return GetMediaBox(pPageDict);
 }
 
-CFX_FloatRect GetTrimBox(const CPDF_Dictionary* pPageDict) {
-  if (pPageDict->KeyExist("TrimBox"))
-    return pPageDict->GetRectFor("TrimBox");
-  return GetCropBox(pPageDict);
-}
-
 const CPDF_Object* GetPageOrganizerPageContent(
     const CPDF_Dictionary* pPageDict) {
   return pPageDict
@@ -702,7 +696,7 @@ uint32_t CPDF_NPageToOneExporter::MakeXObject(
   pNewXObjectDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pNewXObjectDict->SetNewFor<CPDF_Name>("Subtype", "Form");
   pNewXObjectDict->SetNewFor<CPDF_Number>("FormType", 1);
-  pNewXObjectDict->SetRectFor("BBox", GetTrimBox(pSrcPageDict));
+  pNewXObjectDict->SetRectFor("BBox", GetCropBox(pSrcPageDict));
   // TODO(xlou): add matrix field to pNewXObjectDict.
 
   if (const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj)) {
