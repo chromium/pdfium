@@ -17,14 +17,14 @@ WideString JSGetStringFromID(JSMessage msg) {
     case JSMessage::kParamTooLongError:
       return L"The input value is too long.";
     case JSMessage::kParseDateError:
-      return L"The input value can't be parsed as a valid date/time (%s).";
+      return L"The input value can't be parsed as a valid date/time (%ls).";
     case JSMessage::kRangeBetweenError:
-      return L"The input value must be greater than or equal to %s"
-             L" and less than or equal to %s.";
+      return L"The input value must be greater than or equal to %ls"
+             L" and less than or equal to %ls.";
     case JSMessage::kRangeGreaterError:
-      return L"The input value must be greater than or equal to %s.";
+      return L"The input value must be greater than or equal to %ls.";
     case JSMessage::kRangeLessError:
-      return L"The input value must be less than or equal to %s.";
+      return L"The input value must be less than or equal to %ls.";
     case JSMessage::kNotSupportedError:
       return L"Operation not supported.";
     case JSMessage::kBusyError:
