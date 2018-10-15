@@ -32,7 +32,14 @@ jumbo_source_set("formfiller") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
+    "../../core/fpdfapi/font",
+    "../../core/fpdfapi/page",
+    "../../core/fpdfapi/parser",
+    "../../core/fpdfdoc",
     "../../core/fxcrt",
+    "../../core/fxge",
+    "../pwl",
   ]
+  allow_circular_includes_from = [ "../pwl" ]
   visibility = [ "../../*" ]
 }

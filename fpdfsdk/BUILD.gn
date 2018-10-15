@@ -51,7 +51,20 @@ jumbo_source_set("fpdfsdk") {
 
   configs += [ "../:pdfium_core_config" ]
   deps = [
+    "../core/fpdfapi",
+    "../core/fpdfapi/page",
+    "../core/fpdfapi/parser",
+    "../core/fpdfapi/render",
+    "../core/fpdfdoc",
     "../core/fxcrt",
+    "../core/fxge",
+    "../fxjs",
+    "formfiller",
+    "pwl",
+  ]
+  allow_circular_includes_from = [
+    "formfiller",
+    "pwl",
   ]
   visibility = [ "../*" ]
 
@@ -63,6 +76,13 @@ jumbo_source_set("fpdfsdk") {
       "cpdfsdk_xfawidgethandler.h",
     ]
 
-    deps += [ "fpdfxfa" ]
+    deps += [
+      "../xfa/fwl",
+      "../xfa/fxfa",
+      "../xfa/fxfa/parser",
+      "../xfa/fxgraphics",
+      "fpdfxfa",
+    ]
+    allow_circular_includes_from += [ "fpdfxfa" ]
   }
 }

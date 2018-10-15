@@ -18,6 +18,7 @@ default_args = {
 
 check_targets = [
   "//core/fxcrt/*",
+  "//fpdfsdk/*",
   "//fxbarcode/*",
   "//samples/*",
   "//testing/:*",
@@ -27,6 +28,5 @@ check_targets = [
 
   # TODO(thestig): Work on these.
   #"//core/*",
-  #"//fpdfsdk/*",
   #"//fxjs/*",
 ]

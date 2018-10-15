@@ -19,9 +19,14 @@ jumbo_source_set("fpdfxfa") {
     "cxfa_fwladaptertimermgr.h",
   ]
   deps = [
+    "../../core/fpdfapi/page",
+    "../../core/fpdfapi/parser",
     "../../core/fxcrt",
     "../../fxjs",
-    "../../xfa",
+    "../../xfa/fgas",
+    "../../xfa/fwl",
+    "../../xfa/fxfa",
+    "../../xfa/fxfa/parser",
   ]
   configs += [ "../../:pdfium_core_config" ]
   visibility = [ "../../*" ]

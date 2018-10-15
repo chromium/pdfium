@@ -156,10 +156,24 @@ jumbo_static_library("pdfium") {
     "third_party:pdfium_base",
     "third_party:skia_shared",
   ]
+  allow_circular_includes_from = [
+    "fpdfsdk",
+    "fpdfsdk/formfiller",
+    "fpdfsdk/pwl",
+  ]
 
   public_deps = [
     "core/fxcrt",
   ]
+
+  if (pdf_enable_xfa) {
+    deps += [
+      "fpdfsdk/fpdfxfa",
+      "xfa/fxfa",
+      "xfa/fxfa/parser",
+    ]
+    allow_circular_includes_from += [ "fpdfsdk/fpdfxfa" ]
+  }
 
   if (is_win) {
     libs += [

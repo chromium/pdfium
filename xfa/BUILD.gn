@@ -12,16 +12,3 @@ config("xfa_warnings") {
     cflags = [ "-Wno-strict-overflow" ]
   }
 }
-
-group("xfa") {
-  deps = [
-    "fde",
-    "fgas",
-    "fwl",
-    "fxfa",
-    "fxfa/fm2js",
-    "fxfa/parser",
-    "fxgraphics",
-  ]
-  visibility = [ "../*" ]
-}

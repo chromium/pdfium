@@ -42,7 +42,14 @@ jumbo_source_set("pwl") {
   ]
   configs += [ "../../:pdfium_core_config" ]
   deps = [
+    "../../core/fpdfapi",
+    "../../core/fpdfapi/font",
+    "../../core/fpdfapi/page",
+    "../../core/fpdfapi/parser",
+    "../../core/fpdfapi/render",
+    "../../core/fpdfdoc",
     "../../core/fxcrt",
+    "../../core/fxge",
   ]
   visibility = [ "../../*" ]
 }

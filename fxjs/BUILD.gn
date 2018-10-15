@@ -435,6 +435,7 @@ jumbo_source_set("fxjs") {
         "xfa/cjx_xsdconnection.cpp",
         "xfa/cjx_xsdconnection.h",
       ]
+      deps += [ "../xfa/fxfa/fm2js" ]
     }
   }
 }
