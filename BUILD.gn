@@ -144,6 +144,11 @@ jumbo_static_library("pdfium") {
     "constants",
     "core/fdrm",
     "core/fpdfapi",
+    "core/fpdfapi/edit",
+    "core/fpdfapi/font",
+    "core/fpdfapi/page",
+    "core/fpdfapi/parser",
+    "core/fpdfapi/render",
     "core/fpdfdoc",
     "core/fpdftext",
     "core/fxcodec",
@@ -169,6 +174,7 @@ jumbo_static_library("pdfium") {
   if (pdf_enable_xfa) {
     deps += [
       "fpdfsdk/fpdfxfa",
+      "fxbarcode",
       "xfa/fxfa",
       "xfa/fxfa/parser",
     ]

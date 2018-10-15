@@ -17,6 +17,7 @@ default_args = {
 }
 
 check_targets = [
+  ":pdfium",
   "//core/fxcrt/*",
   "//fpdfsdk/*",
   "//fxbarcode/*",
