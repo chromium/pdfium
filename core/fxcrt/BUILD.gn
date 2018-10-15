@@ -89,7 +89,10 @@ jumbo_source_set("fxcrt") {
     "../../fpdfsdk/*",
     "../../fxbarcode:*",
     "../../fxjs:*",
-    "../../third_party:*",
+    "../../third_party:fx_agg",
+    "../../third_party:fx_lcms2",
+    "../../third_party:fx_tiff",
+    "../../third_party:pdfium_base",
     "../../xfa/*",
   ]
   deps = [
@@ -100,6 +103,8 @@ jumbo_source_set("fxcrt") {
     "../../third_party:pdfium_base",
     "//third_party/icu:icuuc",
   ]
+  allow_circular_includes_from = [ "../../third_party:pdfium_base" ]
+
   if (is_posix || is_fuchsia) {
     sources += [
       "cfx_fileaccess_posix.cpp",
