@@ -8,7 +8,8 @@
 #include "public/fpdfview.h"
 
 void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent);
-void DumpPageStructure(FPDF_PAGE page, const int page_idx);
+void DumpPageInfo(FPDF_PAGE page, int page_idx);
+void DumpPageStructure(FPDF_PAGE page, int page_idx);
 void DumpMetaData(FPDF_DOCUMENT doc);
 
 #endif  // SAMPLES_PDFIUM_TEST_DUMP_HELPER_H_

@@ -7,12 +7,17 @@
 #include <string.h>
 
 #include <algorithm>
+#include <functional>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include "public/cpp/fpdf_scopers.h"
+#include "public/fpdf_transformpage.h"
 #include "testing/test_support.h"
+
+using GetBoxInfoFunc =
+    std::function<bool(FPDF_PAGE, float*, float*, float*, float*)>;
 
 namespace {
 
@@ -22,6 +27,20 @@ std::wstring ConvertToWString(const unsigned short* buf,
   result.reserve(buf_size);
   std::copy(buf, buf + buf_size, std::back_inserter(result));
   return result;
+}
+
+void DumpBoxInfo(GetBoxInfoFunc func,
+                 const char* box_type,
+                 FPDF_PAGE page,
+                 int page_idx) {
+  FS_RECTF rect;
+  bool ret = func(page, &rect.left, &rect.bottom, &rect.right, &rect.top);
+  if (!ret) {
+    printf("Page %d: No %s.\n", page_idx, box_type);
+    return;
+  }
+  printf("Page %d: %s: %0.2f %0.2f %0.2f %0.2f\n", page_idx, box_type,
+         rect.left, rect.bottom, rect.right, rect.top);
 }
 
 }  // namespace
@@ -54,7 +73,15 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
   }
 }
 
-void DumpPageStructure(FPDF_PAGE page, const int page_idx) {
+void DumpPageInfo(FPDF_PAGE page, int page_idx) {
+  DumpBoxInfo(&FPDFPage_GetMediaBox, "MediaBox", page, page_idx);
+  DumpBoxInfo(&FPDFPage_GetCropBox, "CropBox", page, page_idx);
+  DumpBoxInfo(&FPDFPage_GetBleedBox, "BleedBox", page, page_idx);
+  DumpBoxInfo(&FPDFPage_GetTrimBox, "TrimBox", page, page_idx);
+  DumpBoxInfo(&FPDFPage_GetArtBox, "ArtBox", page, page_idx);
+}
+
+void DumpPageStructure(FPDF_PAGE page, int page_idx) {
   ScopedFPDFStructTree tree(FPDF_StructTree_GetForPage(page));
   if (!tree) {
     fprintf(stderr, "Failed to load struct tree for page %d\n", page_idx);

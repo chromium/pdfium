@@ -70,6 +70,7 @@
 
 enum OutputFormat {
   OUTPUT_NONE,
+  OUTPUT_PAGEINFO,
   OUTPUT_STRUCTURE,
   OUTPUT_TEXT,
   OUTPUT_PPM,
@@ -402,6 +403,12 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->scale_factor_as_string = cur_arg.substr(8);
+    } else if (cur_arg == "--show-pageinfo") {
+      if (options->output_format != OUTPUT_NONE) {
+        fprintf(stderr, "Duplicate or conflicting --show-pageinfo argument\n");
+        return false;
+      }
+      options->output_format = OUTPUT_PAGEINFO;
     } else if (cur_arg == "--show-structure") {
       if (options->output_format != OUTPUT_NONE) {
         fprintf(stderr, "Duplicate or conflicting --show-structure argument\n");
@@ -534,6 +541,11 @@ bool RenderPage(const std::string& name,
     SendPageEvents(form, page, events);
   if (options.save_images)
     WriteImages(page, name.c_str(), page_index);
+
+  if (options.output_format == OUTPUT_PAGEINFO) {
+    DumpPageInfo(page, page_index);
+    return true;
+  }
   if (options.output_format == OUTPUT_STRUCTURE) {
     DumpPageStructure(page, page_index);
     return true;
@@ -814,6 +826,7 @@ constexpr char kUsageString[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
     "  --show-config       - print build options and exit\n"
     "  --show-metadata     - print the file metadata\n"
+    "  --show-pageinfo     - print information about pages\n"
     "  --show-structure    - print the structure elements from the document\n"
     "  --send-events       - send input described by .evt file\n"
     "  --render-oneshot    - render image without using progressive renderer\n"
