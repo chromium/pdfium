@@ -66,8 +66,10 @@ void PSCompressData(int PSLevel,
       *filter = "/FlateDecode filter ";
     }
   } else {
-    if (pEncoders->GetBasicModule()->RunLengthEncode({src_buf, src_size},
-                                                     &dest_buf, &dest_size)) {
+    std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_unique;
+    if (pEncoders->GetBasicModule()->RunLengthEncode(
+            {src_buf, src_size}, &dest_buf_unique, &dest_size)) {
+      dest_buf = dest_buf_unique.release();
       *filter = "/RunLengthDecode filter ";
     }
   }
@@ -685,13 +687,12 @@ bool CFX_PSRenderer::DrawText(int nChars,
 }
 
 void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len) {
-  uint8_t* dest_buf;
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size;
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
   if (pEncoders->GetBasicModule()->A85Encode({data, static_cast<size_t>(len)},
                                              &dest_buf, &dest_size)) {
-    m_pStream->WriteBlock(dest_buf, dest_size);
-    FX_Free(dest_buf);
+    m_pStream->WriteBlock(dest_buf.get(), dest_size);
   } else {
     m_pStream->WriteBlock(data, len);
   }

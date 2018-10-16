@@ -1357,20 +1357,22 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 
 CCodec_ModuleMgr::~CCodec_ModuleMgr() {}
 
-bool CCodec_BasicModule::RunLengthEncode(pdfium::span<const uint8_t> src_span,
-                                         uint8_t** dest_buf,
-                                         uint32_t* dest_size) {
+bool CCodec_BasicModule::RunLengthEncode(
+    pdfium::span<const uint8_t> src_span,
+    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+    uint32_t* dest_size) {
   // Check inputs
   if (src_span.empty() || !dest_buf || !dest_size)
     return false;
 
   // Edge case
   if (src_span.size() == 1) {
-    *dest_buf = FX_Alloc(uint8_t, 3);
-    (*dest_buf)[0] = 0;
-    (*dest_buf)[1] = src_span[0];
-    (*dest_buf)[2] = 128;
     *dest_size = 3;
+    dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
+    auto dest_buf_span = pdfium::make_span(dest_buf->get(), *dest_size);
+    dest_buf_span[0] = 0;
+    dest_buf_span[1] = src_span[0];
+    dest_buf_span[2] = 128;
     return true;
   }
 
@@ -1382,10 +1384,10 @@ bool CCodec_BasicModule::RunLengthEncode(pdfium::span<const uint8_t> src_span,
   estimated_size /= 3;
   estimated_size *= 4;
   estimated_size += 1;
-  *dest_buf = FX_Alloc(uint8_t, estimated_size.ValueOrDie());
+  dest_buf->reset(FX_Alloc(uint8_t, estimated_size.ValueOrDie()));
 
   // Set up pointers.
-  uint8_t* out = *dest_buf;
+  uint8_t* out = dest_buf->get();
   uint32_t run_start = 0;
   uint32_t run_end = 1;
   uint8_t x = src_span[run_start];
@@ -1436,13 +1438,14 @@ bool CCodec_BasicModule::RunLengthEncode(pdfium::span<const uint8_t> src_span,
     out += 2;
   }
   *out = 128;
-  *dest_size = out + 1 - *dest_buf;
+  *dest_size = out + 1 - dest_buf->get();
   return true;
 }
 
-bool CCodec_BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
-                                   uint8_t** dest_buf,
-                                   uint32_t* dest_size) {
+bool CCodec_BasicModule::A85Encode(
+    pdfium::span<const uint8_t> src_span,
+    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+    uint32_t* dest_size) {
   // Check inputs.
   if (!dest_buf || !dest_size)
     return false;
@@ -1461,10 +1464,10 @@ bool CCodec_BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
   estimated_size += 4;
   estimated_size += src_span.size() / 30;
   estimated_size += 2;
-  *dest_buf = FX_Alloc(uint8_t, estimated_size.ValueOrDie());
+  dest_buf->reset(FX_Alloc(uint8_t, estimated_size.ValueOrDie()));
 
   // Set up pointers.
-  uint8_t* out = *dest_buf;
+  uint8_t* out = dest_buf->get();
   uint32_t pos = 0;
   uint32_t line_length = 0;
   while (src_span.size() >= 4 && pos < src_span.size() - 3) {
@@ -1511,7 +1514,7 @@ bool CCodec_BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
   out[0] = '~';
   out[1] = '>';
   out += 2;
-  *dest_size = out - *dest_buf;
+  *dest_size = out - dest_buf->get();
   return true;
 }
 

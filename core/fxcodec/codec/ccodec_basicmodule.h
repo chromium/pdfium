@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/span.h"
 
@@ -24,11 +25,11 @@ class CCodec_BasicModule {
       int bpc);
 
   bool RunLengthEncode(pdfium::span<const uint8_t> src_buf,
-                       uint8_t** dest_buf,
+                       std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                        uint32_t* dest_size);
 
   bool A85Encode(pdfium::span<const uint8_t> src_buf,
-                 uint8_t** dest_buf,
+                 std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                  uint32_t* dest_size);
 };
 

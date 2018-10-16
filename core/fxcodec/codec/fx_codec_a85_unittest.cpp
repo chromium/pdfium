@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include <limits>
+#include <memory>
 
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
 #include "core/fxcodec/fx_codec.h"
@@ -12,7 +13,7 @@
 
 TEST(fxcodec, A85TestBadInputs) {
   const uint8_t src_buf[] = {1, 2, 3, 4};
-  uint8_t* dest_buf = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size = 0;
 
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
@@ -26,135 +27,141 @@ TEST(fxcodec, A85TestBadInputs) {
 
 // No leftover bytes, just translate 2 sets of symbols.
 TEST(fxcodec, A85TestBasic) {
-  // Make sure really big values don't break.
-  const uint8_t src_buf[] = {1, 2, 3, 4, 255, 255, 255, 255};
-  uint8_t* dest_buf = nullptr;
-  uint32_t dest_size = 0;
-
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
-  // Should succeed.
+  // Make sure really big values don't break.
+  const uint8_t src_buf[] = {1, 2, 3, 4, 255, 255, 255, 255};
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
+  uint32_t dest_size = 0;
   EXPECT_TRUE(pEncoders->A85Encode(src_buf, &dest_buf, &dest_size));
 
   // Should have 5 chars for each set of 4 and 2 terminators.
-  ASSERT_EQ(12u, dest_size);
   const uint8_t expected_out[] = {33, 60, 78, 63, 43,  115,
                                   56, 87, 45, 33, 126, 62};
+  ASSERT_EQ(FX_ArraySize(expected_out), dest_size);
 
   // Check the output
-  for (uint32_t i = 0; i < 12; i++)
-    EXPECT_EQ(expected_out[i], dest_buf[i]) << " at " << i;
-  FX_Free(dest_buf);
+  auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+  for (uint32_t i = 0; i < dest_size; i++)
+    EXPECT_EQ(expected_out[i], dest_buf_span[i]) << " at " << i;
 }
 
 // Leftover bytes.
 TEST(fxcodec, A85TestLeftoverBytes) {
-  // 1 Leftover Byte:
-  const uint8_t src_buf_1leftover[] = {1, 2, 3, 4, 255};
-  uint8_t* dest_buf = nullptr;
-  uint32_t dest_size = 0;
-
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
-  // Should succeed
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf_1leftover, &dest_buf, &dest_size));
-  ASSERT_EQ(9u, dest_size);  // 5 chars for first symbol + 2 + 2 terminators.
-  uint8_t expected_out_1leftover[] = {33, 60, 78, 63, 43, 114, 114, 126, 62};
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
+  uint32_t dest_size = 0;
 
-  // Check the output
-  for (uint32_t i = 0; i < 9; i++)
-    EXPECT_EQ(expected_out_1leftover[i], dest_buf[i]) << " at " << i;
-  FX_Free(dest_buf);
+  {
+    // 1 Leftover Byte:
+    const uint8_t src_buf_1leftover[] = {1, 2, 3, 4, 255};
+    EXPECT_TRUE(pEncoders->A85Encode(src_buf_1leftover, &dest_buf, &dest_size));
 
-  // 2 Leftover bytes:
-  const uint8_t src_buf_2leftover[] = {1, 2, 3, 4, 255, 254};
-  dest_buf = nullptr;
-  dest_size = 0;
-  // Should succeed
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf_2leftover, &dest_buf, &dest_size));
-  ASSERT_EQ(10u, dest_size);  // 5 chars for first symbol + 3 + 2 terminators.
-  const uint8_t expected_out_2leftover[] = {33,  60, 78, 63,  43,
-                                            115, 56, 68, 126, 62};
+    // 5 chars for first symbol + 2 + 2 terminators.
+    uint8_t expected_out_1leftover[] = {33, 60, 78, 63, 43, 114, 114, 126, 62};
+    ASSERT_EQ(FX_ArraySize(expected_out_1leftover), dest_size);
 
-  // Check the output
-  for (uint32_t i = 0; i < 10; i++)
-    EXPECT_EQ(expected_out_2leftover[i], dest_buf[i]) << " at " << i;
-  FX_Free(dest_buf);
+    // Check the output
+    auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+    for (uint32_t i = 0; i < dest_size; i++)
+      EXPECT_EQ(expected_out_1leftover[i], dest_buf_span[i]) << " at " << i;
+  }
 
-  // 3 Leftover bytes:
-  const uint8_t src_buf_3leftover[] = {1, 2, 3, 4, 255, 254, 253};
-  dest_buf = nullptr;
-  dest_size = 0;
-  // Should succeed
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf_3leftover, &dest_buf, &dest_size));
-  ASSERT_EQ(11u, dest_size);  // 5 chars for first symbol + 4 + 2 terminators.
-  const uint8_t expected_out_3leftover[] = {33, 60, 78,  63,  43, 115,
-                                            56, 77, 114, 126, 62};
+  {
+    // 2 Leftover bytes:
+    const uint8_t src_buf_2leftover[] = {1, 2, 3, 4, 255, 254};
+    dest_buf.reset();
+    dest_size = 0;
+    EXPECT_TRUE(pEncoders->A85Encode(src_buf_2leftover, &dest_buf, &dest_size));
+    // 5 chars for first symbol + 3 + 2 terminators.
+    const uint8_t expected_out_2leftover[] = {33,  60, 78, 63,  43,
+                                              115, 56, 68, 126, 62};
+    ASSERT_EQ(FX_ArraySize(expected_out_2leftover), dest_size);
 
-  // Check the output
-  for (uint32_t i = 0; i < 11; i++)
-    EXPECT_EQ(expected_out_3leftover[i], dest_buf[i]) << " at " << i;
-  FX_Free(dest_buf);
+    // Check the output
+    auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+    for (uint32_t i = 0; i < dest_size; i++)
+      EXPECT_EQ(expected_out_2leftover[i], dest_buf_span[i]) << " at " << i;
+  }
+
+  {
+    // 3 Leftover bytes:
+    const uint8_t src_buf_3leftover[] = {1, 2, 3, 4, 255, 254, 253};
+    dest_buf.reset();
+    dest_size = 0;
+    EXPECT_TRUE(pEncoders->A85Encode(src_buf_3leftover, &dest_buf, &dest_size));
+    // 5 chars for first symbol + 4 + 2 terminators.
+    const uint8_t expected_out_3leftover[] = {33, 60, 78,  63,  43, 115,
+                                              56, 77, 114, 126, 62};
+    ASSERT_EQ(FX_ArraySize(expected_out_3leftover), dest_size);
+
+    // Check the output
+    auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+    for (uint32_t i = 0; i < dest_size; i++)
+      EXPECT_EQ(expected_out_3leftover[i], dest_buf_span[i]) << " at " << i;
+  }
 }
 
 // Test all zeros comes through as "z".
 TEST(fxcodec, A85TestZeros) {
-  // Make sure really big values don't break.
-  const uint8_t src_buf[] = {1, 2, 3, 4, 0, 0, 0, 0};
-  uint8_t* dest_buf = nullptr;
-  uint32_t dest_size = 0;
-
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
   EXPECT_TRUE(pEncoders);
 
-  // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf, &dest_buf, &dest_size));
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
+  uint32_t dest_size = 0;
 
-  // Should have 5 chars for first set of 4 + 1 for z + 2 terminators.
-  ASSERT_EQ(8u, dest_size);
-  const uint8_t expected_out[] = {33, 60, 78, 63, 43, 122, 126, 62};
+  {
+    // Make sure really big values don't break.
+    const uint8_t src_buf[] = {1, 2, 3, 4, 0, 0, 0, 0};
+    EXPECT_TRUE(pEncoders->A85Encode(src_buf, &dest_buf, &dest_size));
 
-  // Check the output
-  for (uint32_t i = 0; i < 8; i++)
-    EXPECT_EQ(expected_out[i], dest_buf[i]) << " at " << i;
-  FX_Free(dest_buf);
+    // Should have 5 chars for first set of 4 + 1 for z + 2 terminators.
+    const uint8_t expected_out[] = {33, 60, 78, 63, 43, 122, 126, 62};
+    ASSERT_EQ(FX_ArraySize(expected_out), dest_size);
 
-  // Should also work if it is at the start:
-  const uint8_t src_buf_2[] = {0, 0, 0, 0, 1, 2, 3, 4};
-  dest_buf = nullptr;
-  dest_size = 0;
+    // Check the output
+    auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+    for (uint32_t i = 0; i < dest_size; i++)
+      EXPECT_EQ(expected_out[i], dest_buf_span[i]) << " at " << i;
+  }
 
-  // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf_2, &dest_buf, &dest_size));
+  {
+    // Should also work if it is at the start:
+    const uint8_t src_buf_2[] = {0, 0, 0, 0, 1, 2, 3, 4};
+    dest_buf.reset();
+    dest_size = 0;
+    EXPECT_TRUE(pEncoders->A85Encode(src_buf_2, &dest_buf, &dest_size));
 
-  // Should have 5 chars for set of 4 + 1 for z + 2 terminators.
-  ASSERT_EQ(8u, dest_size);
-  const uint8_t expected_out_2[] = {122, 33, 60, 78, 63, 43, 126, 62};
+    // Should have 5 chars for set of 4 + 1 for z + 2 terminators.
+    const uint8_t expected_out_2[] = {122, 33, 60, 78, 63, 43, 126, 62};
+    ASSERT_EQ(FX_ArraySize(expected_out_2), dest_size);
 
-  // Check the output
-  for (uint32_t i = 0; i < 8; i++)
-    EXPECT_EQ(expected_out_2[i], dest_buf[i]) << " at " << i;
-  FX_Free(dest_buf);
+    // Check the output
+    auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+    for (uint32_t i = 0; i < dest_size; i++)
+      EXPECT_EQ(expected_out_2[i], dest_buf_span[i]) << " at " << i;
+  }
 
-  // Try with 2 leftover zero bytes. Make sure we don't get a "z".
-  const uint8_t src_buf_3[] = {1, 2, 3, 4, 0, 0};
-  dest_buf = nullptr;
-  dest_size = 0;
+  {
+    // Try with 2 leftover zero bytes. Make sure we don't get a "z".
+    const uint8_t src_buf_3[] = {1, 2, 3, 4, 0, 0};
+    dest_buf.reset();
+    dest_size = 0;
+    EXPECT_TRUE(pEncoders->A85Encode(src_buf_3, &dest_buf, &dest_size));
 
-  // Should succeed.
-  EXPECT_TRUE(pEncoders->A85Encode(src_buf_3, &dest_buf, &dest_size));
+    // Should have 5 chars for set of 4 + 3 for last 2 + 2 terminators.
+    const uint8_t expected_out_leftover[] = {33, 60, 78, 63,  43,
+                                             33, 33, 33, 126, 62};
+    ASSERT_EQ(FX_ArraySize(expected_out_leftover), dest_size);
 
-  // Should have 5 chars for set of 4 + 3 for last 2 + 2 terminators.
-  ASSERT_EQ(10u, dest_size);
-  const uint8_t expected_out_leftover[] = {33, 60, 78, 63,  43,
-                                           33, 33, 33, 126, 62};
-
-  // Check the output
-  for (uint32_t i = 0; i < 10; i++)
-    EXPECT_EQ(expected_out_leftover[i], dest_buf[i]) << " at " << i;
-  FX_Free(dest_buf);
+    // Check the output
+    auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+    for (uint32_t i = 0; i < dest_size; i++)
+      EXPECT_EQ(expected_out_leftover[i], dest_buf_span[i]) << " at " << i;
+  }
 }
 
 // Make sure we get returns in the expected locations.
@@ -175,7 +182,7 @@ TEST(fxcodec, A85TestLineBreaks) {
     src_buf[k + 2] = 3;
     src_buf[k + 3] = 4;
   }
-  uint8_t* dest_buf = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size = 0;
 
   CCodec_BasicModule* pEncoders = CCodec_ModuleMgr().GetBasicModule();
@@ -190,10 +197,9 @@ TEST(fxcodec, A85TestLineBreaks) {
   ASSERT_EQ(166u, dest_size);
 
   // Check for the returns.
-  EXPECT_EQ(13, dest_buf[75]);
-  EXPECT_EQ(10, dest_buf[76]);
-  EXPECT_EQ(13, dest_buf[153]);
-  EXPECT_EQ(10, dest_buf[154]);
-
-  FX_Free(dest_buf);
+  auto dest_buf_span = pdfium::make_span(dest_buf.get(), dest_size);
+  EXPECT_EQ(13, dest_buf_span[75]);
+  EXPECT_EQ(10, dest_buf_span[76]);
+  EXPECT_EQ(13, dest_buf_span[153]);
+  EXPECT_EQ(10, dest_buf_span[154]);
 }

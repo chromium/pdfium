@@ -9,10 +9,9 @@
 #include "core/fxcrt/fx_memory.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  uint8_t* dest_buf = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
   uint32_t dest_size = 0;
   CCodec_BasicModule encoder_module;
   encoder_module.A85Encode({data, size}, &dest_buf, &dest_size);
-  FX_Free(dest_buf);
   return 0;
 }
