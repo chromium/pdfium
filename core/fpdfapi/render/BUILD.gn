@@ -49,6 +49,7 @@ jumbo_source_set("render") {
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
+    "../../../constants",
     "../../fxcodec",
     "../../fxcrt",
     "../../fxge",

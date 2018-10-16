@@ -23,6 +23,7 @@ jumbo_source_set("edit") {
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
+    "../../../constants",
     "../../../third_party:skia_shared",
     "../../fxcrt",
     "../font",

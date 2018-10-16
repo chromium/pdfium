@@ -93,6 +93,7 @@ jumbo_source_set("page") {
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
+    "../../../constants",
     "../../fdrm",
     "../../fxcodec",
     "../../fxcrt",

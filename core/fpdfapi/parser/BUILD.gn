@@ -73,6 +73,7 @@ jumbo_source_set("parser") {
   ]
   configs += [ "../../../:pdfium_core_config" ]
   deps = [
+    "../../../constants",
     "../../fdrm",
     "../../fxcodec",
     "../../fxcrt",
@@ -107,6 +108,7 @@ pdfium_unittest_source_set("unittests") {
   deps = [
     ":parser",
     "../",
+    "../../../constants",
   ]
   pdfium_root_dir = "../../../"
 
