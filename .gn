@@ -30,5 +30,10 @@ check_targets = [
   "//testing/:*",
   "//testing/fuzzers/*",
   "//testing/image_diff/*",
+  "//third_party:bigint",
+  "//third_party:fx_agg",
+  "//third_party:fx_freetype",
+  "//third_party:pdfium_base",
+  "//third_party:skia_shared",
   "//xfa/*",
 ]
