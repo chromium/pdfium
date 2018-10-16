@@ -36,8 +36,8 @@ class StringDataTemplate {
     size_t usableLen = (totalSize - overhead) / sizeof(CharType);
     ASSERT(usableLen >= nLen);
 
-    void* pData = pdfium::base::PartitionAllocGeneric(
-        gStringPartitionAllocator.root(), totalSize, "StringDataTemplate");
+    void* pData = gStringPartitionAllocator.root()->Alloc(totalSize,
+                                                          "StringDataTemplate");
     return new (pData) StringDataTemplate(nLen, usableLen);
   }
 
@@ -50,8 +50,7 @@ class StringDataTemplate {
   void Retain() { ++m_nRefs; }
   void Release() {
     if (--m_nRefs <= 0)
-      pdfium::base::PartitionFreeGeneric(gStringPartitionAllocator.root(),
-                                         this);
+      gStringPartitionAllocator.root()->Free(this);
   }
 
   bool CanOperateInPlace(size_t nTotalLen) const {

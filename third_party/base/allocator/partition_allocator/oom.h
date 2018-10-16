@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_ALLOCATOR_OOM_H
-#define BASE_ALLOCATOR_OOM_H
+#ifndef THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_OOM_H_
+#define THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_OOM_H_
 
+#include "third_party/base/allocator/partition_allocator/oom_callback.h"
 #include "third_party/base/logging.h"
 
 #if defined(OS_WIN)
@@ -23,15 +24,17 @@
 #define OOM_CRASH()                                                     \
   do {                                                                  \
     OOM_CRASH_PREVENT_ICF();                                            \
+    base::internal::RunPartitionAllocOomCallback();                     \
     ::RaiseException(0xE0000008, EXCEPTION_NONCONTINUABLE, 0, nullptr); \
     IMMEDIATE_CRASH();                                                  \
   } while (0)
 #else
-#define OOM_CRASH()          \
-  do {                       \
-    OOM_CRASH_PREVENT_ICF(); \
-    IMMEDIATE_CRASH();       \
+#define OOM_CRASH()                                 \
+  do {                                              \
+    base::internal::RunPartitionAllocOomCallback(); \
+    OOM_CRASH_PREVENT_ICF();                        \
+    IMMEDIATE_CRASH();                              \
   } while (0)
 #endif
 
-#endif  // BASE_ALLOCATOR_OOM_H
+#endif  // THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_OOM_H_

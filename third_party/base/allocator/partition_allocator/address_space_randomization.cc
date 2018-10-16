@@ -7,17 +7,15 @@
 #include "build/build_config.h"
 #include "third_party/base/allocator/partition_allocator/page_allocator.h"
 #include "third_party/base/allocator/partition_allocator/spin_lock.h"
+#include "third_party/base/logging.h"
 
 #if defined(OS_WIN)
-#include <windows.h>
+#include <windows.h>  // Must be in front of other Windows header files.
+
+#include <VersionHelpers.h>
 #else
 #include <sys/time.h>
 #include <unistd.h>
-#endif
-
-// VersionHelpers.h must be included after windows.h.
-#if defined(OS_WIN)
-#include <VersionHelpers.h>
 #endif
 
 namespace pdfium {
@@ -27,7 +25,7 @@ namespace {
 
 // This is the same PRNG as used by tcmalloc for mapping address randomness;
 // see http://burtleburtle.net/bob/rand/smallprng.html
-struct ranctx {
+struct RandomContext {
   subtle::SpinLock lock;
   bool initialized;
   uint32_t a;
@@ -36,9 +34,16 @@ struct ranctx {
   uint32_t d;
 };
 
+RandomContext* GetRandomContext() {
+  static RandomContext* s_RandomContext = nullptr;
+  if (!s_RandomContext)
+    s_RandomContext = new RandomContext();
+  return s_RandomContext;
+}
+
 #define rot(x, k) (((x) << (k)) | ((x) >> (32 - (k))))
 
-uint32_t ranvalInternal(ranctx* x) {
+uint32_t RandomValueInternal(RandomContext* x) {
   uint32_t e = x->a - rot(x->b, 27);
   x->a = x->b ^ rot(x->c, 17);
   x->b = x->c + x->d;
@@ -49,7 +54,7 @@ uint32_t ranvalInternal(ranctx* x) {
 
 #undef rot
 
-uint32_t ranval(ranctx* x) {
+uint32_t RandomValue(RandomContext* x) {
   subtle::SpinLock::Guard guard(x->lock);
   if (UNLIKELY(!x->initialized)) {
     x->initialized = true;
@@ -73,29 +78,34 @@ uint32_t ranval(ranctx* x) {
     x->a = 0xf1ea5eed;
     x->b = x->c = x->d = seed;
     for (int i = 0; i < 20; ++i) {
-      (void)ranvalInternal(x);
+      RandomValueInternal(x);
     }
   }
-  uint32_t ret = ranvalInternal(x);
-  return ret;
-}
 
-static struct ranctx s_ranctx;
+  return RandomValueInternal(x);
+}
 
 }  // namespace
 
-// Calculates a random preferred mapping address. In calculating an address, we
-// balance good ASLR against not fragmenting the address space too badly.
+void SetRandomPageBaseSeed(int64_t seed) {
+  RandomContext* x = GetRandomContext();
+  subtle::SpinLock::Guard guard(x->lock);
+  // Set RNG to initial state.
+  x->initialized = true;
+  x->a = x->b = static_cast<uint32_t>(seed);
+  x->c = x->d = static_cast<uint32_t>(seed >> 32);
+}
+
 void* GetRandomPageBase() {
-  uintptr_t random;
-  random = static_cast<uintptr_t>(ranval(&s_ranctx));
-#if defined(ARCH_CPU_X86_64)
-  random <<= 32UL;
-  random |= static_cast<uintptr_t>(ranval(&s_ranctx));
-// This address mask gives a low likelihood of address space collisions. We
-// handle the situation gracefully if there is a collision.
-#if defined(OS_WIN)
-  random &= 0x3ffffffffffUL;
+  uintptr_t random = static_cast<uintptr_t>(RandomValue(GetRandomContext()));
+
+#if defined(ARCH_CPU_64_BITS)
+  random <<= 32ULL;
+  random |= static_cast<uintptr_t>(RandomValue(GetRandomContext()));
+
+// The kASLRMask and kASLROffset constants will be suitable for the
+// OS and build configuration.
+#if defined(OS_WIN) && !defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
   // Windows >= 8.1 has the full 47 bits. Use them where available.
   static bool windows_81 = false;
   static bool windows_81_initialized = false;
@@ -104,38 +114,32 @@ void* GetRandomPageBase() {
     windows_81_initialized = true;
   }
   if (!windows_81) {
-    random += 0x10000000000UL;
+    random &= internal::kASLRMaskBefore8_10;
+  } else {
+    random &= internal::kASLRMask;
   }
-#elif defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
-  // This range is copied from the TSan source, but works for all tools.
-  random &= 0x007fffffffffUL;
-  random += 0x7e8000000000UL;
+  random += internal::kASLROffset;
 #else
-  // Linux and OS X support the full 47-bit user space of x64 processors.
-  random &= 0x3fffffffffffUL;
-#endif
-#elif defined(ARCH_CPU_ARM64)
-  // ARM64 on Linux has 39-bit user space.
-  random &= 0x3fffffffffUL;
-  random += 0x1000000000UL;
-#else  // !defined(ARCH_CPU_X86_64) && !defined(ARCH_CPU_ARM64)
+  random &= internal::kASLRMask;
+  random += internal::kASLROffset;
+#endif  // defined(OS_WIN) && !defined(MEMORY_TOOL_REPLACES_ALLOCATOR)
+#else   // defined(ARCH_CPU_32_BITS)
 #if defined(OS_WIN)
   // On win32 host systems the randomization plus huge alignment causes
   // excessive fragmentation. Plus most of these systems lack ASLR, so the
   // randomization isn't buying anything. In that case we just skip it.
   // TODO(jschuh): Just dump the randomization when HE-ASLR is present.
-  static BOOL isWow64 = -1;
-  if (isWow64 == -1 && !IsWow64Process(GetCurrentProcess(), &isWow64))
-    isWow64 = FALSE;
-  if (!isWow64)
+  static BOOL is_wow64 = -1;
+  if (is_wow64 == -1 && !IsWow64Process(GetCurrentProcess(), &is_wow64))
+    is_wow64 = FALSE;
+  if (!is_wow64)
     return nullptr;
 #endif  // defined(OS_WIN)
-  // This is a good range on Windows, Linux and Mac.
-  // Allocates in the 0.5-1.5GB region.
-  random &= 0x3fffffff;
-  random += 0x20000000;
-#endif  // defined(ARCH_CPU_X86_64)
-  random &= kPageAllocationGranularityBaseMask;
+  random &= internal::kASLRMask;
+  random += internal::kASLROffset;
+#endif  // defined(ARCH_CPU_32_BITS)
+
+  DCHECK_EQ(0ULL, (random & kPageAllocationGranularityOffsetMask));
   return reinterpret_cast<void*>(random);
 }
 

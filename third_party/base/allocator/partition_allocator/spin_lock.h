@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_ALLOCATOR_PARTITION_ALLOCATOR_SPIN_LOCK_H
-#define BASE_ALLOCATOR_PARTITION_ALLOCATOR_SPIN_LOCK_H
+#ifndef THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_SPIN_LOCK_H_
+#define THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_SPIN_LOCK_H_
 
 #include <atomic>
 #include <memory>
@@ -17,16 +17,14 @@
 // intended only for very short duration locks and assume a system with multiple
 // cores. For any potentially longer wait you should use a real lock, such as
 // |base::Lock|.
-//
-// |SpinLock|s MUST be globals. Using them as (e.g.) struct/class members will
-// result in an uninitialized lock, which is dangerously incorrect.
-
 namespace pdfium {
 namespace base {
 namespace subtle {
 
-class SpinLock {
+class BASE_EXPORT SpinLock {
  public:
+  constexpr SpinLock() = default;
+  ~SpinLock() = default;
   using Guard = std::lock_guard<SpinLock>;
 
   ALWAYS_INLINE void lock() {
@@ -42,13 +40,13 @@ class SpinLock {
  private:
   // This is called if the initial attempt to acquire the lock fails. It's
   // slower, but has a much better scheduling and power consumption behavior.
-  BASE_EXPORT void LockSlow();
+  void LockSlow();
 
-  std::atomic_int lock_;
+  std::atomic_int lock_{0};
 };
 
 }  // namespace subtle
 }  // namespace base
 }  // namespace pdfium
 
-#endif  // BASE_ALLOCATOR_PARTITION_ALLOCATOR_SPIN_LOCK_H
+#endif  // THIRD_PARTY_BASE_ALLOCATOR_PARTITION_ALLOCATOR_SPIN_LOCK_H_

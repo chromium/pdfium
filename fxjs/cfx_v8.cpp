@@ -215,11 +215,10 @@ void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
 void* CFX_V8ArrayBufferAllocator::AllocateUninitialized(size_t length) {
   if (length > kMaxAllowedBytes)
     return nullptr;
-  return pdfium::base::PartitionAllocGeneric(
-      gArrayBufferPartitionAllocator.root(), length, "CFX_V8ArrayBuffer");
+  return gArrayBufferPartitionAllocator.root()->Alloc(length,
+                                                      "CFX_V8ArrayBuffer");
 }
 
 void CFX_V8ArrayBufferAllocator::Free(void* data, size_t length) {
-  pdfium::base::PartitionFreeGeneric(gArrayBufferPartitionAllocator.root(),
-                                     data);
+  gArrayBufferPartitionAllocator.root()->Free(data);
 }
