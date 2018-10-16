@@ -180,23 +180,23 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
 
   if (GET_TT_LONG(buffer) == kTableTTCF) {
     uint32_t nFaces = GET_TT_LONG(buffer + 8);
-    if (nFaces > std::numeric_limits<uint32_t>::max() / 4) {
+    FX_SAFE_SIZE_T safe_face_bytes = nFaces;
+    safe_face_bytes *= 4;
+    if (!safe_face_bytes.IsValid()) {
       fclose(pFile);
       return;
     }
-    uint32_t face_bytes = nFaces * 4;
-    uint8_t* offsets = FX_Alloc(uint8_t, face_bytes);
-    readCnt = fread(offsets, 1, face_bytes, pFile);
+    const size_t face_bytes = safe_face_bytes.ValueOrDie();
+    std::unique_ptr<uint8_t, FxFreeDeleter> offsets(
+        FX_Alloc(uint8_t, face_bytes));
+    readCnt = fread(offsets.get(), 1, face_bytes, pFile);
     if (readCnt != face_bytes) {
-      FX_Free(offsets);
       fclose(pFile);
       return;
     }
-    for (uint32_t i = 0; i < nFaces; i++) {
-      uint8_t* p = offsets + i * 4;
-      ReportFace(path, pFile, filesize, GET_TT_LONG(p));
-    }
-    FX_Free(offsets);
+    auto offsets_span = pdfium::make_span(offsets.get(), face_bytes);
+    for (uint32_t i = 0; i < nFaces; i++)
+      ReportFace(path, pFile, filesize, GET_TT_LONG(&offsets_span[i * 4]));
   } else {
     ReportFace(path, pFile, filesize, 0);
   }
