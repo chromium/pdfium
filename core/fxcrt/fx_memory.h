@@ -43,12 +43,11 @@ inline void* FX_SafeAlloc(size_t num_members, size_t member_size) {
   if (!total.IsValid())
     return nullptr;
 
-  void* result = pdfium::base::PartitionAllocGenericFlags(
-      gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
-      total.ValueOrDie(), "GeneralPartition");
-  if (result)
-    memset(result, 0, total.ValueOrDie());
-  return result;
+  constexpr int kFlags = pdfium::base::PartitionAllocReturnNull |
+                         pdfium::base::PartitionAllocZeroFill;
+  return pdfium::base::PartitionAllocGenericFlags(
+      gGeneralPartitionAllocator.root(), kFlags, total.ValueOrDie(),
+      "GeneralPartition");
 }
 
 inline void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size) {
