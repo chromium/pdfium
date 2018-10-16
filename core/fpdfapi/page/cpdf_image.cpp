@@ -216,12 +216,12 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       {
         // Span's lifetime must end before ReleaseBuffer() below.
         pdfium::span<char> pBuf = ct.GetBuffer(6);
-        pBuf[0] = (char)reset_r;
-        pBuf[1] = (char)reset_g;
-        pBuf[2] = (char)reset_b;
-        pBuf[3] = (char)set_r;
-        pBuf[4] = (char)set_g;
-        pBuf[5] = (char)set_b;
+        pBuf[0] = static_cast<char>(reset_r);
+        pBuf[1] = static_cast<char>(reset_g);
+        pBuf[2] = static_cast<char>(reset_b);
+        pBuf[3] = static_cast<char>(set_r);
+        pBuf[4] = static_cast<char>(set_g);
+        pBuf[5] = static_cast<char>(set_b);
       }
       ct.ReleaseBuffer(6);
       pCS->AddNew<CPDF_String>(ct, true);
@@ -296,42 +296,45 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 
   uint8_t* src_buf = pBitmap->GetBuffer();
   int32_t src_pitch = pBitmap->GetPitch();
-  uint8_t* dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
+      FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight));
   // Safe as checked alloc returned.
   size_t dest_size = dest_pitch * BitmapHeight;
-  uint8_t* pDest = dest_buf;
+  auto dest_span = pdfium::make_span(dest_buf.get(), dest_size);
+  size_t dest_span_offset = 0;
   if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {
-      memcpy(pDest, src_buf, dest_pitch);
-      pDest += dest_pitch;
+      memcpy(&dest_span[dest_span_offset], src_buf, dest_pitch);
+      dest_span_offset += dest_pitch;
       src_buf += src_pitch;
     }
   } else {
     int32_t src_offset = 0;
-    int32_t dest_offset = 0;
     for (int32_t row = 0; row < BitmapHeight; row++) {
+      size_t dest_span_row_offset = dest_span_offset;
       src_offset = row * src_pitch;
       for (int32_t column = 0; column < BitmapWidth; column++) {
         float alpha = 1;
-        pDest[dest_offset] = (uint8_t)(src_buf[src_offset + 2] * alpha);
-        pDest[dest_offset + 1] = (uint8_t)(src_buf[src_offset + 1] * alpha);
-        pDest[dest_offset + 2] = (uint8_t)(src_buf[src_offset] * alpha);
-        dest_offset += 3;
+        dest_span[dest_span_row_offset] =
+            static_cast<uint8_t>(src_buf[src_offset + 2] * alpha);
+        dest_span[dest_span_row_offset + 1] =
+            static_cast<uint8_t>(src_buf[src_offset + 1] * alpha);
+        dest_span[dest_span_row_offset + 2] =
+            static_cast<uint8_t>(src_buf[src_offset] * alpha);
+        dest_span_row_offset += 3;
         src_offset += bpp == 24 ? 3 : 4;
       }
 
-      pDest += dest_pitch;
-      dest_offset = 0;
+      dest_span_offset += dest_pitch;
     }
   }
   if (!m_pStream)
     m_pStream = pdfium::MakeUnique<CPDF_Stream>();
 
-  m_pStream->InitStream({dest_buf, dest_size}, std::move(pDict));
+  m_pStream->InitStream(dest_span, std::move(pDict));
   m_bIsMask = pBitmap->IsAlphaMask();
   m_Width = BitmapWidth;
   m_Height = BitmapHeight;
-  FX_Free(dest_buf);
 }
 
 void CPDF_Image::ResetCache(CPDF_Page* pPage) {
