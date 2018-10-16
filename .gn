@@ -26,6 +26,7 @@ check_targets = [
   "//fxbarcode/*",
   "//fxjs/*",
   "//samples/*",
+  "//skia/*",
   "//testing/:*",
   "//testing/fuzzers/*",
   "//testing/image_diff/*",

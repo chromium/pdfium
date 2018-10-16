@@ -185,8 +185,6 @@ component("skia") {
   ]
 
   # The skia sources values are relative to the skia_dir, so we need to rebase.
-  sources += skia_core_sources
-  sources += skia_effects_sources
   sources += skia_sksl_sources
   sources += skia_utils_sources
   sources += [
@@ -319,6 +317,9 @@ component("skia") {
     "../third_party:zlib",
     "//:freetype_common",
   ]
+  public_deps = [
+    ":skia_core_and_effects",
+  ]
 
   if (is_linux) {
     deps += [ "//third_party/icu:icuuc" ]
@@ -361,9 +362,43 @@ component("skia") {
   }
 }
 
+# Template for things that are logically part of :skia, but need to be split out
+# so custom compile flags can be applied.
+#
+# These are all opted out of check_includes, due to (logically) being part of
+# skia.
+template("skia_source_set") {
+  source_set(target_name) {
+    forward_variables_from(invoker, "*")
+
+    check_includes = false
+
+    if (!is_debug) {
+      configs -= [ "//build/config/compiler:default_optimization" ]
+      configs += [ "//build/config/compiler:optimize_max" ]
+    }
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      ":skia_config",
+      ":skia_library_config",
+      "//build/config/compiler:no_chromium_code",
+    ]
+    public_configs = [ ":skia_config" ]
+  }
+}
+
+skia_source_set("skia_core_and_effects") {
+  defines = skia_core_defines
+  sources = skia_core_sources
+  sources += skia_effects_sources
+
+  visibility = [ ":skia" ]
+}
+
 # Separated out so it can be compiled with different flags for SSE.
 if (current_cpu == "x86" || current_cpu == "x64") {
-  source_set("skia_opts_sse3") {
+  skia_source_set("skia_opts_sse3") {
     sources = skia_opts.ssse3_sources
     if (!is_win || is_clang) {
       cflags = [ "-mssse3" ]
@@ -372,14 +407,8 @@ if (current_cpu == "x86" || current_cpu == "x64") {
       defines = [ "SK_CPU_SSE_LEVEL=31" ]
     }
     visibility = [ ":skia_opts" ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      ":skia_config",
-      ":skia_library_config",
-      "//build/config/compiler:no_chromium_code",
-    ]
   }
-  source_set("skia_opts_sse41") {
+  skia_source_set("skia_opts_sse41") {
     sources = skia_opts.sse41_sources
     if (!is_win || is_clang) {
       cflags = [ "-msse4.1" ]
@@ -388,14 +417,8 @@ if (current_cpu == "x86" || current_cpu == "x64") {
       defines = [ "SK_CPU_SSE_LEVEL=41" ]
     }
     visibility = [ ":skia_opts" ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      ":skia_config",
-      ":skia_library_config",
-      "//build/config/compiler:no_chromium_code",
-    ]
   }
-  source_set("skia_opts_sse42") {
+  skia_source_set("skia_opts_sse42") {
     sources = skia_opts.sse42_sources
     if (!is_win || is_clang) {
       cflags = [ "-msse4.2" ]
@@ -404,14 +427,8 @@ if (current_cpu == "x86" || current_cpu == "x64") {
       defines = [ "SK_CPU_SSE_LEVEL=42" ]
     }
     visibility = [ ":skia_opts" ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      ":skia_config",
-      ":skia_library_config",
-      "//build/config/compiler:no_chromium_code",
-    ]
   }
-  source_set("skia_opts_avx") {
+  skia_source_set("skia_opts_avx") {
     sources = skia_opts.avx_sources
     if (!is_win) {
       cflags = [ "-mavx" ]
@@ -420,14 +437,8 @@ if (current_cpu == "x86" || current_cpu == "x64") {
       cflags = [ "/arch:AVX" ]
     }
     visibility = [ ":skia_opts" ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      ":skia_config",
-      ":skia_library_config",
-      "//build/config/compiler:no_chromium_code",
-    ]
   }
-  source_set("skia_opts_hsw") {
+  skia_source_set("skia_opts_hsw") {
     sources = skia_opts.hsw_sources
     if (!is_win) {
       cflags = [
@@ -442,15 +453,10 @@ if (current_cpu == "x86" || current_cpu == "x64") {
       cflags = [ "/arch:AVX2" ]
     }
     visibility = [ ":skia_opts" ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      ":skia_config",
-      ":skia_library_config",
-      "//build/config/compiler:no_chromium_code",
-    ]
   }
 }
-source_set("skia_opts") {
+
+skia_source_set("skia_opts") {
   cflags = []
   defines = []
 
@@ -504,13 +510,6 @@ source_set("skia_opts") {
     configs -= [ "//build/config/compiler:default_optimization" ]
     configs += [ "//build/config/compiler:optimize_max" ]
   }
-
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":skia_config",
-    ":skia_library_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
 
   visibility = [ ":skia" ]
 }
