@@ -206,10 +206,8 @@ v8::Local<v8::Array> CFX_V8::ToArray(v8::Local<v8::Value> pValue) {
 void* CFX_V8ArrayBufferAllocator::Allocate(size_t length) {
   if (length > kMaxAllowedBytes)
     return nullptr;
-  void* p = AllocateUninitialized(length);
-  if (p)
-    memset(p, 0, length);
-  return p;
+  return gArrayBufferPartitionAllocator.root()->AllocFlags(
+      pdfium::base::PartitionAllocZeroFill, length, "CFX_V8ArrayBuffer");
 }
 
 void* CFX_V8ArrayBufferAllocator::AllocateUninitialized(size_t length) {
