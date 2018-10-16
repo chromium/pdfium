@@ -43,6 +43,14 @@ const struct {
     {"Times-Italic", "Times New Roman Italic"},
 };
 
+// Used with std::unique_ptr to automatically call fclose().
+struct FxFileCloser {
+  inline void operator()(FILE* h) const {
+    if (h)
+      fclose(h);
+  }
+};
+
 ByteString FPDF_ReadStringFromFile(FILE* pFile, uint32_t size) {
   ByteString result;
   {
@@ -115,9 +123,9 @@ int32_t GetSimilarValue(int weight,
 
 }  // namespace
 
-CFX_FolderFontInfo::CFX_FolderFontInfo() {}
+CFX_FolderFontInfo::CFX_FolderFontInfo() = default;
 
-CFX_FolderFontInfo::~CFX_FolderFontInfo() {}
+CFX_FolderFontInfo::~CFX_FolderFontInfo() = default;
 
 void CFX_FolderFontInfo::AddPath(const ByteString& path) {
   m_PathList.push_back(path);
@@ -162,45 +170,41 @@ void CFX_FolderFontInfo::ScanPath(const ByteString& path) {
 }
 
 void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
-  FILE* pFile = fopen(path.c_str(), "rb");
+  std::unique_ptr<FILE, FxFileCloser> pFile(fopen(path.c_str(), "rb"));
   if (!pFile)
     return;
 
-  fseek(pFile, 0, SEEK_END);
+  fseek(pFile.get(), 0, SEEK_END);
 
-  uint32_t filesize = ftell(pFile);
+  uint32_t filesize = ftell(pFile.get());
   uint8_t buffer[16];
-  fseek(pFile, 0, SEEK_SET);
+  fseek(pFile.get(), 0, SEEK_SET);
 
-  size_t readCnt = fread(buffer, 12, 1, pFile);
-  if (readCnt != 1) {
-    fclose(pFile);
+  size_t readCnt = fread(buffer, 12, 1, pFile.get());
+  if (readCnt != 1)
+    return;
+
+  if (GET_TT_LONG(buffer) != kTableTTCF) {
+    ReportFace(path, pFile.get(), filesize, 0);
     return;
   }
 
-  if (GET_TT_LONG(buffer) == kTableTTCF) {
-    uint32_t nFaces = GET_TT_LONG(buffer + 8);
-    FX_SAFE_SIZE_T safe_face_bytes = nFaces;
-    safe_face_bytes *= 4;
-    if (!safe_face_bytes.IsValid()) {
-      fclose(pFile);
-      return;
-    }
-    const size_t face_bytes = safe_face_bytes.ValueOrDie();
-    std::unique_ptr<uint8_t, FxFreeDeleter> offsets(
-        FX_Alloc(uint8_t, face_bytes));
-    readCnt = fread(offsets.get(), 1, face_bytes, pFile);
-    if (readCnt != face_bytes) {
-      fclose(pFile);
-      return;
-    }
-    auto offsets_span = pdfium::make_span(offsets.get(), face_bytes);
-    for (uint32_t i = 0; i < nFaces; i++)
-      ReportFace(path, pFile, filesize, GET_TT_LONG(&offsets_span[i * 4]));
-  } else {
-    ReportFace(path, pFile, filesize, 0);
-  }
-  fclose(pFile);
+  uint32_t nFaces = GET_TT_LONG(buffer + 8);
+  FX_SAFE_SIZE_T safe_face_bytes = nFaces;
+  safe_face_bytes *= 4;
+  if (!safe_face_bytes.IsValid())
+    return;
+
+  const size_t face_bytes = safe_face_bytes.ValueOrDie();
+  std::unique_ptr<uint8_t, FxFreeDeleter> offsets(
+      FX_Alloc(uint8_t, face_bytes));
+  readCnt = fread(offsets.get(), 1, face_bytes, pFile.get());
+  if (readCnt != face_bytes)
+    return;
+
+  auto offsets_span = pdfium::make_span(offsets.get(), face_bytes);
+  for (uint32_t i = 0; i < nFaces; i++)
+    ReportFace(path, pFile.get(), filesize, GET_TT_LONG(&offsets_span[i * 4]));
 }
 
 void CFX_FolderFontInfo::ReportFace(const ByteString& path,
@@ -363,15 +367,15 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
   if (!datasize || size < datasize)
     return datasize;
 
-  FILE* pFile = fopen(pFont->m_FilePath.c_str(), "rb");
+  std::unique_ptr<FILE, FxFileCloser> pFile(
+      fopen(pFont->m_FilePath.c_str(), "rb"));
   if (!pFile)
     return 0;
 
-  if (fseek(pFile, offset, SEEK_SET) < 0 ||
-      fread(buffer, datasize, 1, pFile) != 1) {
-    datasize = 0;
+  if (fseek(pFile.get(), offset, SEEK_SET) < 0 ||
+      fread(buffer, datasize, 1, pFile.get()) != 1) {
+    return 0;
   }
-  fclose(pFile);
   return datasize;
 }
 
