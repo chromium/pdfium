@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <sstream>
+#include <utility>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fxcodec/codec/ccodec_basicmodule.h"
@@ -28,19 +29,20 @@
 
 namespace {
 
-void FaxCompressData(uint8_t* src_buf,
+bool FaxCompressData(std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
                      int width,
                      int height,
                      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                      uint32_t* dest_size) {
-  if (width * height > 128) {
-    CCodec_FaxModule::FaxEncode(src_buf, width, height, (width + 7) / 8,
-                                dest_buf, dest_size);
-    FX_Free(src_buf);
-  } else {
-    dest_buf->reset(src_buf);
+  if (width * height <= 128) {
+    *dest_buf = std::move(src_buf);
     *dest_size = (width + 7) / 8 * height;
+    return false;
   }
+
+  CCodec_FaxModule::FaxEncode(src_buf.get(), width, height, (width + 7) / 8,
+                              dest_buf, dest_size);
+  return true;
 }
 
 void PSCompressData(int PSLevel,
@@ -391,15 +393,17 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   if (pSource->GetBPP() == 1 && !pSource->GetPalette()) {
     int pitch = (width + 7) / 8;
     uint32_t src_size = height * pitch;
-    uint8_t* src_buf = FX_Alloc(uint8_t, src_size);
+    std::unique_ptr<uint8_t, FxFreeDeleter> src_buf(
+        FX_Alloc(uint8_t, src_size));
     for (int row = 0; row < height; row++) {
       const uint8_t* src_scan = pSource->GetScanline(row);
-      memcpy(src_buf + row * pitch, src_scan, pitch);
+      memcpy(src_buf.get() + row * pitch, src_scan, pitch);
     }
 
     std::unique_ptr<uint8_t, FxFreeDeleter> output_buf;
     uint32_t output_size;
-    FaxCompressData(src_buf, width, height, &output_buf, &output_size);
+    bool compressed = FaxCompressData(std::move(src_buf), width, height,
+                                      &output_buf, &output_size);
     if (pSource->IsAlphaMask()) {
       SetColor(color);
       m_bColorSet = false;
@@ -410,7 +414,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     buf << width << " 0 0 -" << height << " 0 " << height
         << "]currentfile/ASCII85Decode filter ";
 
-    if (output_buf.get() != src_buf) {
+    if (compressed) {
       buf << "<</K -1/EndOfBlock false/Columns " << width << "/Rows " << height
           << ">>/CCITTFaxDecode filter ";
     }
@@ -421,7 +425,6 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 
     WriteToStream(&buf);
     WritePSBinary(output_buf.get(), output_size);
-    output_buf.release();
   } else {
     CFX_DIBExtractor source_extractor(pSource);
     RetainPtr<CFX_DIBBase> pConverted = source_extractor.GetBitmap();
