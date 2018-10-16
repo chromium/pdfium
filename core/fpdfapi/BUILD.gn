@@ -26,10 +26,11 @@ jumbo_source_set("fpdfapi") {
     "render",
   ]
   allow_circular_includes_from = [
-    "parser",
+    "../fxge",
     "cmaps",
     "font",
     "page",
+    "parser",
     "render",
   ]
   visibility = [ "../../*" ]
