@@ -240,6 +240,7 @@ int CheckPDFiumCApi() {
     CHK(FORM_OnFocus);
     CHK(FORM_OnKeyDown);
     CHK(FORM_OnKeyUp);
+    CHK(FORM_OnLButtonDoubleClick);
     CHK(FORM_OnLButtonDown);
     CHK(FORM_OnLButtonUp);
     CHK(FORM_OnMouseMove);

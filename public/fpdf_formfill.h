@@ -1281,17 +1281,17 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnFocus(FPDF_FORMHANDLE hHandle,
 /**
  * Function: FORM_OnLButtonDown
  *          You can call this member function when the user presses the left
- *mouse button.
+ *          mouse button.
  * Parameters:
  *          hHandle     -   Handle to the form fill module. Returned by
- *FPDFDOC_InitFormFillEnvironment.
+ *                          FPDFDOC_InitFormFillEnvironment().
  *          page        -   Handle to the page. Returned by FPDF_LoadPage
- *function.
- *          modifier        -   Indicates whether various virtual keys are down.
+ *                          function.
+ *          modifier    -   Indicates whether various virtual keys are down.
  *          page_x      -   Specifies the x-coordinate of the cursor in PDF user
- *space.
+ *                          space.
  *          page_y      -   Specifies the y-coordinate of the cursor in PDF user
- *space.
+ *                          space.
  * Return Value:
  *          TRUE indicates success; otherwise false.
  **/
@@ -1304,10 +1304,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,
 /**
  * Function: FORM_OnLButtonUp
  *          You can call this member function when the user releases the left
- *mouse button.
+ *          mouse button.
  * Parameters:
  *          hHandle     -   Handle to the form fill module. Returned by
- *FPDFDOC_InitFormFillEnvironment.
+ *                          FPDFDOC_InitFormFillEnvironment().
  *          page        -   Handle to the page. Returned by FPDF_LoadPage
  *function.
  *          modifier    -   Indicates whether various virtual keys are down.
@@ -1321,6 +1321,30 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
                                                      int modifier,
                                                      double page_x,
                                                      double page_y);
+
+/**
+ * Function: FORM_OnLButtonDoubleClick
+ *          You can call this member function when the user double clicks the
+ *          left mouse button.
+ * Parameters:
+ *          hHandle     -   Handle to the form fill module. Returned by
+ *                          FPDFDOC_InitFormFillEnvironment().
+ *          page        -   Handle to the page. Returned by FPDF_LoadPage
+ *                          function.
+ *          modifier    -   Indicates whether various virtual keys are down.
+ *          page_x      -   Specifies the x-coordinate of the cursor in PDF user
+ *                          space.
+ *          page_y      -   Specifies the y-coordinate of the cursor in PDF user
+ *                          space.
+ * Return Value:
+ *          TRUE indicates success; otherwise false.
+ **/
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FORM_OnLButtonDoubleClick(FPDF_FORMHANDLE hHandle,
+                          FPDF_PAGE page,
+                          int modifier,
+                          double page_x,
+                          double page_y);
 
 #ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,

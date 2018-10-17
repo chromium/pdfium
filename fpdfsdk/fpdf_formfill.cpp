@@ -410,6 +410,22 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
   return pPageView->OnLButtonUp(CFX_PointF(page_x, page_y), modifier);
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FORM_OnLButtonDoubleClick(FPDF_FORMHANDLE hHandle,
+                          FPDF_PAGE page,
+                          int modifier,
+                          double page_x,
+                          double page_y) {
+  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
+  if (!pPageView)
+    return false;
+#ifdef PDF_ENABLE_CLICK_LOGGING
+  fprintf(stderr, "mousedown,doubleleft,%d,%d\n",
+          static_cast<int>(round(page_x)), static_cast<int>(round(page_y)));
+#endif  // PDF_ENABLE_CLICK_LOGGING
+  return pPageView->OnLButtonDblClk(CFX_PointF(page_x, page_y), modifier);
+}
+
 #ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
                                                        FPDF_PAGE page,

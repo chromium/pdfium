@@ -64,6 +64,12 @@ class FPDFFormFillInteractiveEmbeddertest : public FPDFFormFillEmbeddertest {
     FORM_OnLButtonUp(form_handle(), page_, 0, point.x, point.y);
   }
 
+  void DoubleClickOnFormFieldAtPoint(const CFX_PointF& point) {
+    // Click on the text field or combobox as specified by coordinates.
+    FORM_OnMouseMove(form_handle(), page_, 0, point.x, point.y);
+    FORM_OnLButtonDoubleClick(form_handle(), page_, 0, point.x, point.y);
+  }
+
   void TypeTextIntoTextField(int num_chars, const CFX_PointF& point) {
     EXPECT_EQ(GetFormType(), GetFormTypeAtPoint(point));
     ClickOnFormFieldAtPoint(point);
@@ -1540,6 +1546,23 @@ TEST_F(FPDFFormFillTextFormEmbeddertest,
   CheckSelection(L"");
   SelectAllCharLimitFormTextWithMouse();
   CheckSelection(L"ElepHippop");
+}
+
+TEST_F(FPDFFormFillTextFormEmbeddertest, DoubleClickInTextField) {
+  CheckFocusedFieldText(L"");
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckFocusedFieldText(L"");
+
+  // Test inserting text into empty text field.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> text_to_insert =
+      GetFPDFWideString(L"Hello World");
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert.get());
+  CheckFocusedFieldText(L"Hello World");
+
+  // Make sure double clicking selects the entire line.
+  CheckSelection(L"");
+  DoubleClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckSelection(L"Hello World");
 }
 
 TEST_F(FPDFFormFillTextFormEmbeddertest, FocusChanges) {

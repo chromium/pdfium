@@ -69,6 +69,10 @@ class CPDFSDK_AnnotHandlerMgr {
                          CPDFSDK_Annot::ObservedPtr* pAnnot,
                          uint32_t nFlags,
                          const CFX_PointF& point);
+  bool Annot_OnLButtonDblClk(CPDFSDK_PageView* pPageView,
+                             CPDFSDK_Annot::ObservedPtr* pAnnot,
+                             uint32_t nFlags,
+                             const CFX_PointF& point);
   bool Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
                          CPDFSDK_Annot::ObservedPtr* pAnnot,
                          uint32_t nFlags,
