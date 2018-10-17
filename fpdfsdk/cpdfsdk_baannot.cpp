@@ -50,9 +50,8 @@ CPDF_Dictionary* CPDFSDK_BAAnnot::GetAPDict() const {
 }
 
 void CPDFSDK_BAAnnot::SetRect(const CFX_FloatRect& rect) {
-  ASSERT(rect.right - rect.left >= GetMinWidth());
-  ASSERT(rect.top - rect.bottom >= GetMinHeight());
-
+  ASSERT(rect.right - rect.left >= 1.0f);
+  ASSERT(rect.top - rect.bottom >= 1.0f);
   GetAnnotDict()->SetRectFor("Rect", rect);
 }
 

@@ -14,13 +14,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #endif  // PDF_ENABLE_XFA
 
-namespace {
-
-const float kMinWidth = 1.0f;
-const float kMinHeight = 1.0f;
-
-}  // namespace
-
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
     : m_pPageView(pPageView) {}
 
@@ -45,14 +38,6 @@ CPDFXFA_Page* CPDFSDK_Annot::GetPDFXFAPage() {
 }
 
 #endif  // PDF_ENABLE_XFA
-
-float CPDFSDK_Annot::GetMinWidth() const {
-  return kMinWidth;
-}
-
-float CPDFSDK_Annot::GetMinHeight() const {
-  return kMinHeight;
-}
 
 int CPDFSDK_Annot::GetLayoutOrder() const {
   return 5;
