@@ -55,8 +55,7 @@ void CJS_GlobalData::Release() {
   }
 }
 
-CJS_GlobalData::CJS_GlobalData()
-    : m_RefCount(0), m_sFilePath(SDK_JS_GLOBALDATA_FILENAME) {
+CJS_GlobalData::CJS_GlobalData() : m_sFilePath(SDK_JS_GLOBALDATA_FILENAME) {
   LoadGlobalPersistentVariables();
 }
 
@@ -84,7 +83,7 @@ CJS_GlobalData::const_iterator CJS_GlobalData::FindGlobalVariable(
   return m_arrayGlobalData.end();
 }
 
-CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(
+CJS_GlobalData::Element* CJS_GlobalData::GetGlobalVariable(
     const ByteString& propname) {
   auto iter = FindGlobalVariable(propname);
   return iter != m_arrayGlobalData.end() ? iter->get() : nullptr;
@@ -95,12 +94,13 @@ void CJS_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
   if (!TrimPropName(&sPropName))
     return;
 
-  if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
+  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  if (pData) {
     pData->data.nType = JS_GlobalDataType::NUMBER;
     pData->data.dData = dData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::NUMBER;
   pNewData->data.dData = dData;
@@ -112,12 +112,13 @@ void CJS_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
   if (!TrimPropName(&sPropName))
     return;
 
-  if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
+  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  if (pData) {
     pData->data.nType = JS_GlobalDataType::BOOLEAN;
     pData->data.bData = bData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::BOOLEAN;
   pNewData->data.bData = bData;
@@ -129,12 +130,13 @@ void CJS_GlobalData::SetGlobalVariableString(ByteString sPropName,
   if (!TrimPropName(&sPropName))
     return;
 
-  if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
+  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  if (pData) {
     pData->data.nType = JS_GlobalDataType::STRING;
     pData->data.sData = sData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::STRING;
   pNewData->data.sData = sData;
@@ -147,12 +149,13 @@ void CJS_GlobalData::SetGlobalVariableObject(
   if (!TrimPropName(&sPropName))
     return;
 
-  if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
+  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  if (pData) {
     pData->data.nType = JS_GlobalDataType::OBJECT;
     pData->data.objData = array;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::OBJECT;
   pNewData->data.objData = array;
@@ -163,11 +166,12 @@ void CJS_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
   if (!TrimPropName(&sPropName))
     return;
 
-  if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
+  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  if (pData) {
     pData->data.nType = JS_GlobalDataType::NULLOBJ;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));
@@ -178,7 +182,7 @@ bool CJS_GlobalData::SetGlobalVariablePersistent(ByteString sPropName,
   if (!TrimPropName(&sPropName))
     return false;
 
-  CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName);
+  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (!pData)
     return false;
 
@@ -202,7 +206,7 @@ int32_t CJS_GlobalData::GetSize() const {
   return pdfium::CollectionSize<int32_t>(m_arrayGlobalData);
 }
 
-CJS_GlobalData_Element* CJS_GlobalData::GetAt(int index) const {
+CJS_GlobalData::Element* CJS_GlobalData::GetAt(int index) const {
   if (index < 0 || index >= GetSize())
     return nullptr;
   return m_arrayGlobalData[index].get();
@@ -384,3 +388,7 @@ void CJS_GlobalData::MakeByteString(const ByteString& name,
       break;
   }
 }
+
+CJS_GlobalData::Element::Element() = default;
+
+CJS_GlobalData::Element::~Element() = default;

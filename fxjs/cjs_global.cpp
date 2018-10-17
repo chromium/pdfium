@@ -328,7 +328,7 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
     return;
 
   for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
-    CJS_GlobalData_Element* pData = m_pGlobalData->GetAt(i);
+    CJS_GlobalData::Element* pData = m_pGlobalData->GetAt(i);
     switch (pData->data.nType) {
       case JS_GlobalDataType::NUMBER:
         SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::NUMBER,

@@ -15,17 +15,17 @@
 
 class CPDFSDK_FormFillEnvironment;
 
-class CJS_GlobalData_Element {
- public:
-  CJS_GlobalData_Element() {}
-  ~CJS_GlobalData_Element() {}
-
-  CJS_KeyValue data;
-  bool bPersistent;
-};
-
 class CJS_GlobalData {
  public:
+  class Element {
+   public:
+    Element();
+    ~Element();
+
+    CJS_KeyValue data;
+    bool bPersistent;
+  };
+
   static CJS_GlobalData* GetRetainedInstance(CPDFSDK_FormFillEnvironment* pApp);
   void Release();
 
@@ -39,13 +39,11 @@ class CJS_GlobalData {
   bool DeleteGlobalVariable(ByteString propname);
 
   int32_t GetSize() const;
-  CJS_GlobalData_Element* GetAt(int index) const;
+  Element* GetAt(int index) const;
 
  private:
-  using iterator =
-      std::vector<std::unique_ptr<CJS_GlobalData_Element>>::iterator;
-  using const_iterator =
-      std::vector<std::unique_ptr<CJS_GlobalData_Element>>::const_iterator;
+  using iterator = std::vector<std::unique_ptr<Element>>::iterator;
+  using const_iterator = std::vector<std::unique_ptr<Element>>::const_iterator;
 
   CJS_GlobalData();
   ~CJS_GlobalData();
@@ -53,7 +51,7 @@ class CJS_GlobalData {
   void LoadGlobalPersistentVariables();
   void SaveGlobalPersisitentVariables();
 
-  CJS_GlobalData_Element* GetGlobalVariable(const ByteString& sPropname);
+  Element* GetGlobalVariable(const ByteString& sPropname);
   iterator FindGlobalVariable(const ByteString& sPropname);
   const_iterator FindGlobalVariable(const ByteString& sPropname) const;
 
@@ -67,8 +65,8 @@ class CJS_GlobalData {
                       CJS_KeyValue* pData,
                       CFX_BinaryBuf& sData);
 
-  size_t m_RefCount;
-  std::vector<std::unique_ptr<CJS_GlobalData_Element>> m_arrayGlobalData;
+  size_t m_RefCount = 0;
+  std::vector<std::unique_ptr<Element>> m_arrayGlobalData;
   WideString m_sFilePath;
 };
 
