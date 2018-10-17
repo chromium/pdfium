@@ -92,7 +92,7 @@ class CPDF_InteractiveForm {
   CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
 
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControlsForField(
-      const CPDF_FormField* pField) const;
+      const CPDF_FormField* pField);
 
  private:
   void LoadField(CPDF_Dictionary* pFieldDict, int nLevel);

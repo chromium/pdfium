@@ -827,10 +827,8 @@ void CPDF_InteractiveForm::ResetForm(NotificationOption notify) {
 }
 
 const std::vector<UnownedPtr<CPDF_FormControl>>&
-CPDF_InteractiveForm::GetControlsForField(const CPDF_FormField* pField) const {
-  const auto& it = m_ControlLists.find(pField);
-  ASSERT(it != m_ControlLists.end());
-  return it->second;
+CPDF_InteractiveForm::GetControlsForField(const CPDF_FormField* pField) {
+  return m_ControlLists[pField];
 }
 
 void CPDF_InteractiveForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
