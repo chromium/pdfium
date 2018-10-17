@@ -236,7 +236,7 @@ class CoverageExecutor(object):
     coverage_args += ['-f', 'xfa']
 
     # Blacklist test files
-    coverage_args += ['-i', '.*test*.']
+    coverage_args += ['-i', '.*test.*']
 
     return self.call([coverage_bin] + coverage_args) == 0
 
