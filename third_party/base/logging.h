@@ -9,16 +9,15 @@
 #include <stdlib.h>
 
 #ifndef _WIN32
-#define NULL_DEREF_IF_POSSIBLE \
-  *(reinterpret_cast<volatile char*>(NULL) + 42) = 0x42;
+#define NULL_DEREF_IF_POSSIBLE __builtin_unreachable()
 #else
-#define NULL_DEREF_IF_POSSIBLE
+#define NULL_DEREF_IF_POSSIBLE __assume(0)
 #endif
 
 #define CHECK(condition)   \
   if (!(condition)) {      \
     abort();               \
-    NULL_DEREF_IF_POSSIBLE \
+    NULL_DEREF_IF_POSSIBLE;\
   }
 
 // TODO(palmer): These are quick hacks to import PartitionAlloc with minimum
