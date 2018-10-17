@@ -1152,7 +1152,8 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     index -= count;
     int i = 0;
     ByteString bsName;
-    for (const auto& it : *pDest) {
+    CPDF_DictionaryLocker locker(pDest);
+    for (const auto& it : locker) {
       bsName = it.first;
       pDestObj = it.second.get();
       if (!pDestObj)

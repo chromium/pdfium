@@ -48,7 +48,8 @@ ByteString CPDF_FormControl::GetOnStateName() const {
   if (!pN)
     return csOn;
 
-  for (const auto& it : *pN) {
+  CPDF_DictionaryLocker locker(pN);
+  for (const auto& it : locker) {
     if (it.first != "Off")
       return it.first;
   }

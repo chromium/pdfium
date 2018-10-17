@@ -37,11 +37,11 @@ class StreamIterator final : public CPDF_ObjectWalker::SubobjectIterator {
 class DictionaryIterator final : public CPDF_ObjectWalker::SubobjectIterator {
  public:
   explicit DictionaryIterator(const CPDF_Dictionary* dictionary)
-      : SubobjectIterator(dictionary) {}
+      : SubobjectIterator(dictionary), locker_(dictionary) {}
   ~DictionaryIterator() override {}
 
   bool IsFinished() const override {
-    return IsStarted() && dict_iterator_ == object()->GetDict()->end();
+    return IsStarted() && dict_iterator_ == locker_.end();
   }
 
   const CPDF_Object* IncrementImpl() override {
@@ -55,24 +55,26 @@ class DictionaryIterator final : public CPDF_ObjectWalker::SubobjectIterator {
 
   void Start() override {
     ASSERT(!IsStarted());
-    dict_iterator_ = object()->GetDict()->begin();
+    dict_iterator_ = locker_.begin();
   }
 
   ByteString dict_key() const { return dict_key_; }
 
  private:
   CPDF_Dictionary::const_iterator dict_iterator_;
+  CPDF_DictionaryLocker locker_;
   ByteString dict_key_;
 };
 
 class ArrayIterator final : public CPDF_ObjectWalker::SubobjectIterator {
  public:
-  explicit ArrayIterator(const CPDF_Array* array) : SubobjectIterator(array) {}
+  explicit ArrayIterator(const CPDF_Array* array)
+      : SubobjectIterator(array), locker_(array) {}
 
   ~ArrayIterator() override {}
 
   bool IsFinished() const override {
-    return IsStarted() && arr_iterator_ == object()->AsArray()->end();
+    return IsStarted() && arr_iterator_ == locker_.end();
   }
 
   const CPDF_Object* IncrementImpl() override {
@@ -83,10 +85,11 @@ class ArrayIterator final : public CPDF_ObjectWalker::SubobjectIterator {
     return result;
   }
 
-  void Start() override { arr_iterator_ = object()->AsArray()->begin(); }
+  void Start() override { arr_iterator_ = locker_.begin(); }
 
  public:
   CPDF_Array::const_iterator arr_iterator_;
+  CPDF_ArrayLocker locker_;
 };
 
 }  // namespace

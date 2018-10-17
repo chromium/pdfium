@@ -178,7 +178,9 @@ TEST(cpdf_array, Iterator) {
   for (size_t i = 0; i < FX_ArraySize(elems); ++i)
     arr->InsertNewAt<CPDF_Number>(i, elems[i]);
   size_t index = 0;
-  for (const auto& it : *arr)
+
+  CPDF_ArrayLocker locker(arr.get());
+  for (const auto& it : locker)
     EXPECT_EQ(elems[index++], it->AsNumber()->GetInteger());
   EXPECT_EQ(FX_ArraySize(elems), index);
 }

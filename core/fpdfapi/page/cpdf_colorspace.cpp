@@ -461,7 +461,8 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
     if (!pDict)
       return nullptr;
 
-    for (const auto& it : *pDict) {
+    CPDF_DictionaryLocker locker(pDict);
+    for (const auto& it : locker) {
       std::unique_ptr<CPDF_ColorSpace> pRet;
       CPDF_Object* pValue = it.second.get();
       if (ToName(pValue))

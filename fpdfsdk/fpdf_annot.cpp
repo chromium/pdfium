@@ -277,17 +277,18 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
   if (!pAnnots)
     return -1;
 
+  CPDF_ArrayLocker locker(pAnnots);
   CPDF_Dictionary* pDict = pAnnot->GetAnnotDict();
   auto it =
-      std::find_if(pAnnots->begin(), pAnnots->end(),
+      std::find_if(locker.begin(), locker.end(),
                    [pDict](const std::unique_ptr<CPDF_Object>& candidate) {
                      return candidate->GetDirect() == pDict;
                    });
 
-  if (it == pAnnots->end())
+  if (it == locker.end())
     return -1;
 
-  return it - pAnnots->begin();
+  return it - locker.begin();
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_CloseAnnot(FPDF_ANNOTATION annot) {

@@ -154,7 +154,8 @@ CPDF_Font* GetNativeFont(CPDF_Dictionary* pFormDict,
   if (!pFonts)
     return nullptr;
 
-  for (const auto& it : *pFonts) {
+  CPDF_DictionaryLocker locker(pFonts);
+  for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     if (!it.second)
       continue;
@@ -194,7 +195,8 @@ bool FindFont(CPDF_Dictionary* pFormDict,
   if (!pFonts)
     return false;
 
-  for (const auto& it : *pFonts) {
+  CPDF_DictionaryLocker locker(pFonts);
+  for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     if (!it.second)
       continue;
@@ -230,7 +232,8 @@ bool FindFont(CPDF_Dictionary* pFormDict,
   if (csFontName.GetLength() > 0)
     csFontName.Remove(' ');
 
-  for (const auto& it : *pFonts) {
+  CPDF_DictionaryLocker locker(pFonts);
+  for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     if (!it.second)
       continue;

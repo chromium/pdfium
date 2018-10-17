@@ -310,7 +310,8 @@ bool CPDF_DataAvail::CheckPage() {
     }
     CPDF_Array* pArray = ToArray(pObj.get());
     if (pArray) {
-      for (const auto& pArrayObj : *pArray) {
+      CPDF_ArrayLocker locker(pArray);
+      for (const auto& pArrayObj : locker) {
         if (CPDF_Reference* pRef = ToReference(pArrayObj.get()))
           UnavailObjList.push_back(pRef->GetRefObjNum());
       }

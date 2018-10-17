@@ -175,16 +175,19 @@ const CPDF_Array* CPDF_Array::GetArrayAt(size_t i) const {
 }
 
 void CPDF_Array::Clear() {
+  CHECK(!IsLocked());
   m_Objects.clear();
 }
 
 void CPDF_Array::RemoveAt(size_t i) {
+  CHECK(!IsLocked());
   if (i < m_Objects.size())
     m_Objects.erase(m_Objects.begin() + i);
 }
 
 void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
                                            CPDF_IndirectObjectHolder* pHolder) {
+  CHECK(!IsLocked());
   if (i >= m_Objects.size())
     return;
 
@@ -196,6 +199,7 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
 }
 
 CPDF_Object* CPDF_Array::SetAt(size_t i, std::unique_ptr<CPDF_Object> pObj) {
+  CHECK(!IsLocked());
   ASSERT(IsArray());
   ASSERT(!pObj || pObj->IsInline());
   if (i >= m_Objects.size()) {
@@ -209,6 +213,7 @@ CPDF_Object* CPDF_Array::SetAt(size_t i, std::unique_ptr<CPDF_Object> pObj) {
 
 CPDF_Object* CPDF_Array::InsertAt(size_t index,
                                   std::unique_ptr<CPDF_Object> pObj) {
+  CHECK(!IsLocked());
   ASSERT(IsArray());
   CHECK(!pObj || pObj->IsInline());
   CPDF_Object* pRet = pObj.get();
@@ -224,6 +229,7 @@ CPDF_Object* CPDF_Array::InsertAt(size_t index,
 }
 
 CPDF_Object* CPDF_Array::Add(std::unique_ptr<CPDF_Object> pObj) {
+  CHECK(!IsLocked());
   ASSERT(IsArray());
   CHECK(!pObj || pObj->IsInline());
   CPDF_Object* pRet = pObj.get();
@@ -241,4 +247,13 @@ bool CPDF_Array::WriteTo(IFX_ArchiveStream* archive,
       return false;
   }
   return archive->WriteString("]");
+}
+
+CPDF_ArrayLocker::CPDF_ArrayLocker(const CPDF_Array* pArray)
+    : m_pArray(pArray) {
+  m_pArray->m_LockCount++;
+}
+
+CPDF_ArrayLocker::~CPDF_ArrayLocker() {
+  m_pArray->m_LockCount--;
 }

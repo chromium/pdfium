@@ -796,7 +796,8 @@ bool CPDF_FormField::IsOptionSelected(int iOptIndex) const {
   if (!pArray)
     return false;
 
-  for (const auto& pObj : *pArray) {
+  CPDF_ArrayLocker locker(pArray);
+  for (const auto& pObj : locker) {
     if (pObj->GetInteger() == iOptIndex)
       return true;
   }

@@ -90,7 +90,8 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
   if (!pAnnots)
     return FLATTEN_NOTHINGTODO;
 
-  for (const auto& pAnnot : *pAnnots) {
+  CPDF_ArrayLocker locker(pAnnots);
+  for (const auto& pAnnot : locker) {
     CPDF_Dictionary* pAnnotDic = ToDictionary(pAnnot->GetDirect());
     if (!pAnnotDic)
       continue;
@@ -338,7 +339,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
         pAPStream = pAPDic->GetStreamFor(sAnnotState);
       } else {
         if (pAPDic->size() > 0) {
-          CPDF_Object* pFirstObj = pAPDic->begin()->second.get();
+          CPDF_DictionaryLocker locker(pAPDic);
+          CPDF_Object* pFirstObj = locker.begin()->second.get();
           if (pFirstObj) {
             if (pFirstObj->IsReference())
               pFirstObj = pFirstObj->GetDirect();

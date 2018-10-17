@@ -138,9 +138,9 @@ class PDFObjectsTest : public testing::Test {
         const CPDF_Dictionary* dict2 = obj2->AsDictionary();
         if (dict1->size() != dict2->size())
           return false;
-        for (CPDF_Dictionary::const_iterator it = dict1->begin();
-             it != dict1->end(); ++it) {
-          if (!Equal(it->second.get(), dict2->GetObjectFor(it->first)))
+        CPDF_DictionaryLocker locker1(dict1);
+        for (const auto& item : locker1) {
+          if (!Equal(item.second.get(), dict2->GetObjectFor(item.first)))
             return false;
         }
         return true;

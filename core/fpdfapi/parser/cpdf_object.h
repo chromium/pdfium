@@ -115,16 +115,13 @@ class CPDF_Object {
       CPDF_IndirectObjectHolder* holder) const;
 
  protected:
-  CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
+  CPDF_Object() = default;
+  CPDF_Object(const CPDF_Object& src) = delete;
 
   std::unique_ptr<CPDF_Object> CloneObjectNonCyclic(bool bDirect) const;
 
-  uint32_t m_ObjNum;
-
- private:
-  CPDF_Object(const CPDF_Object& src) {}
-
-  uint32_t m_GenNum;
+  uint32_t m_ObjNum = 0;
+  uint32_t m_GenNum = 0;
 };
 
 template <typename T>

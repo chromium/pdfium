@@ -389,7 +389,8 @@ FPDFPageObjMark_GetParamKey(FPDF_PAGEOBJECTMARK mark,
   if (!pParams)
     return false;
 
-  for (auto& it : *pParams) {
+  CPDF_DictionaryLocker locker(pParams);
+  for (auto& it : locker) {
     if (index == 0) {
       *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
           WideString::FromUTF8(it.first.AsStringView()), buffer, buflen);

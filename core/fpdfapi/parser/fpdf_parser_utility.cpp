@@ -192,9 +192,9 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       break;
     }
     case CPDF_Object::DICTIONARY: {
-      const CPDF_Dictionary* p = pObj->AsDictionary();
+      CPDF_DictionaryLocker locker(pObj->AsDictionary());
       buf << "<<";
-      for (const auto& it : *p) {
+      for (const auto& it : locker) {
         const ByteString& key = it.first;
         CPDF_Object* pValue = it.second.get();
         buf << "/" << PDF_NameEncode(key);

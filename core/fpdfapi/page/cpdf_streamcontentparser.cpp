@@ -174,36 +174,39 @@ ByteStringView FindFullName(const AbbrPair* table,
 void ReplaceAbbr(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case CPDF_Object::DICTIONARY: {
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
       std::vector<AbbrReplacementOp> replacements;
-      for (const auto& it : *pDict) {
-        ByteString key = it.first;
-        CPDF_Object* value = it.second.get();
-        ByteStringView fullname = FindFullName(
-            InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), key.AsStringView());
-        if (!fullname.IsEmpty()) {
-          AbbrReplacementOp op;
-          op.is_replace_key = true;
-          op.key = std::move(key);
-          op.replacement = fullname;
-          replacements.push_back(op);
-          key = fullname;
-        }
-
-        if (value->IsName()) {
-          ByteString name = value->GetString();
-          fullname =
-              FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr),
-                           name.AsStringView());
+      CPDF_Dictionary* pDict = pObj->AsDictionary();
+      {
+        CPDF_DictionaryLocker locker(pDict);
+        for (const auto& it : locker) {
+          ByteString key = it.first;
+          CPDF_Object* value = it.second.get();
+          ByteStringView fullname = FindFullName(
+              InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), key.AsStringView());
           if (!fullname.IsEmpty()) {
             AbbrReplacementOp op;
-            op.is_replace_key = false;
-            op.key = key;
+            op.is_replace_key = true;
+            op.key = std::move(key);
             op.replacement = fullname;
             replacements.push_back(op);
+            key = fullname;
           }
-        } else {
-          ReplaceAbbr(value);
+
+          if (value->IsName()) {
+            ByteString name = value->GetString();
+            fullname =
+                FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr),
+                             name.AsStringView());
+            if (!fullname.IsEmpty()) {
+              AbbrReplacementOp op;
+              op.is_replace_key = false;
+              op.key = key;
+              op.replacement = fullname;
+              replacements.push_back(op);
+            }
+          } else {
+            ReplaceAbbr(value);
+          }
         }
       }
       for (const auto& op : replacements) {

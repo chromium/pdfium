@@ -445,7 +445,8 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
 
   if (m_pParser) {
     std::unique_ptr<CPDF_Dictionary> p = m_pParser->GetCombinedTrailer();
-    for (const auto& it : *p) {
+    CPDF_DictionaryLocker locker(p.get());
+    for (const auto& it : locker) {
       const ByteString& key = it.first;
       CPDF_Object* pValue = it.second.get();
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||

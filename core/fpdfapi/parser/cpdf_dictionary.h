@@ -11,12 +11,14 @@
 #include <memory>
 #include <set>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
+#include "third_party/base/logging.h"
 #include "third_party/base/ptr_util.h"
 
 class CPDF_IndirectObjectHolder;
@@ -40,6 +42,8 @@ class CPDF_Dictionary final : public CPDF_Object {
   const CPDF_Dictionary* AsDictionary() const override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
+
+  bool IsLocked() const { return !!m_LockCount; }
 
   size_t size() const { return m_Map.size(); }
   const CPDF_Object* GetObjectFor(const ByteString& key) const;
@@ -65,6 +69,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   float GetFloatFor(const ByteString& key) const { return GetNumberFor(key); }
 
   bool KeyExist(const ByteString& key) const;
+  std::vector<ByteString> GetKeys() const;
 
   // Set* functions invalidate iterators for the element with the key |key|.
   // Takes ownership of |pObj|, returns an unowned pointer to it.
@@ -76,6 +81,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewFor(
       const ByteString& key,
       Args&&... args) {
+    CHECK(!IsLocked());
     return static_cast<T*>(
         SetFor(key, pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
@@ -83,6 +89,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewFor(
       const ByteString& key,
       Args&&... args) {
+    CHECK(!IsLocked());
     return static_cast<T*>(SetFor(
         key, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
@@ -100,19 +107,39 @@ class CPDF_Dictionary final : public CPDF_Object {
   // Invalidates iterators for the element with the key |oldkey|.
   void ReplaceKey(const ByteString& oldkey, const ByteString& newkey);
 
-  const_iterator begin() const { return m_Map.begin(); }
-  const_iterator end() const { return m_Map.end(); }
-
   WeakPtr<ByteStringPool> GetByteStringPool() const { return m_pPool; }
 
  private:
+  friend class CPDF_DictionaryLocker;
+
   ByteString MaybeIntern(const ByteString& str);
   std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* visited) const override;
 
+  mutable uint32_t m_LockCount = 0;
   WeakPtr<ByteStringPool> m_pPool;
   std::map<ByteString, std::unique_ptr<CPDF_Object>> m_Map;
+};
+
+class CPDF_DictionaryLocker {
+ public:
+  using const_iterator = CPDF_Dictionary::const_iterator;
+
+  explicit CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary);
+  ~CPDF_DictionaryLocker();
+
+  const_iterator begin() const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->m_Map.begin();
+  }
+  const_iterator end() const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->m_Map.end();
+  }
+
+ private:
+  UnownedPtr<const CPDF_Dictionary> const m_pDictionary;
 };
 
 inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {

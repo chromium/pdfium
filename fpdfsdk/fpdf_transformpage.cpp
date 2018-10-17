@@ -219,11 +219,12 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pRes)
     return true;
 
-  CPDF_Dictionary* pPattenDict = pRes->GetDictFor("Pattern");
-  if (!pPattenDict)
+  CPDF_Dictionary* pPatternDict = pRes->GetDictFor("Pattern");
+  if (!pPatternDict)
     return true;
 
-  for (const auto& it : *pPattenDict) {
+  CPDF_DictionaryLocker locker(pPatternDict);
+  for (const auto& it : locker) {
     CPDF_Object* pObj = it.second.get();
     if (pObj->IsReference())
       pObj = pObj->GetDirect();

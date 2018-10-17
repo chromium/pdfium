@@ -360,18 +360,22 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
     }
     case CPDF_Object::DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
-      auto it = pDict->begin();
-      while (it != pDict->end()) {
-        const ByteString& key = it->first;
-        CPDF_Object* pNextObj = it->second.get();
-        ++it;
-        if (key == "Parent" || key == "Prev" || key == "First")
-          continue;
-        if (!pNextObj)
-          return false;
-        if (!UpdateReference(pNextObj, pObjNumberMap))
-          pDict->RemoveFor(key);
+      std::vector<ByteString> bad_keys;
+      {
+        CPDF_DictionaryLocker locker(pDict);
+        for (auto it = locker.begin(); it != locker.end(); ++it) {
+          const ByteString& key = it->first;
+          if (key == "Parent" || key == "Prev" || key == "First")
+            continue;
+          CPDF_Object* pNextObj = it->second.get();
+          if (!pNextObj)
+            return false;
+          if (!UpdateReference(pNextObj, pObjNumberMap))
+            bad_keys.push_back(key);
+        }
       }
+      for (const auto& key : bad_keys)
+        pDict->RemoveFor(key);
       break;
     }
     case CPDF_Object::ARRAY: {
@@ -471,7 +475,8 @@ bool CPDF_PageExporter::ExportPage(const std::vector<uint32_t>& pageNums,
       return false;
 
     // Clone the page dictionary
-    for (const auto& it : *pSrcPageDict) {
+    CPDF_DictionaryLocker locker(pSrcPageDict);
+    for (const auto& it : locker) {
       const ByteString& cbSrcKeyStr = it.first;
       if (cbSrcKeyStr == pdfium::page_object::kType ||
           cbSrcKeyStr == pdfium::page_object::kParent) {
