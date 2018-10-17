@@ -296,7 +296,7 @@ bool CPDFSDK_ActionHandler::ExecuteBookMark(
   ASSERT(pFormFillEnv);
   if (action.GetType() == CPDF_Action::JavaScript) {
     RunScriptForAction(action, pFormFillEnv,
-                       [pFormFillEnv, pBookmark](IJS_EventContext* context) {
+                       [pBookmark](IJS_EventContext* context) {
                          context->OnBookmark_MouseUp(pBookmark);
                        });
   } else {
