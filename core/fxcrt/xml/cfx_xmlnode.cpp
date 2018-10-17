@@ -58,12 +58,18 @@ void CFX_XMLNode::InsertChildNode(CFX_XMLNode* pNode, int32_t index) {
     return;
   }
 
-  int32_t iCount = 0;
-  CFX_XMLNode* pFind = first_child_;
+  CFX_XMLNode* pFind;
   // Note, negative indexes, and indexes after the end of the list will result
   // in appending to the list.
-  while (++iCount != index && pFind->next_sibling_)
-    pFind = pFind->next_sibling_;
+  if (index < 0) {
+    // Optimize the negative index case.
+    pFind = last_child_;
+  } else {
+    pFind = first_child_;
+    int32_t iCount = 0;
+    while (++iCount != index && pFind->next_sibling_)
+      pFind = pFind->next_sibling_;
+  }
 
   pNode->prev_sibling_ = pFind;
   if (pFind->next_sibling_)
