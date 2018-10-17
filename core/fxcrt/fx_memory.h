@@ -30,9 +30,9 @@ void FXMEM_DefaultFree(void* pointer);
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 
-extern pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
-extern pdfium::base::PartitionAllocatorGeneric gGeneralPartitionAllocator;
-extern pdfium::base::PartitionAllocatorGeneric gStringPartitionAllocator;
+pdfium::base::PartitionAllocatorGeneric& GetArrayBufferPartitionAllocator();
+pdfium::base::PartitionAllocatorGeneric& GetGeneralPartitionAllocator();
+pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator();
 
 void FXMEM_InitializePartitionAlloc();
 NEVER_INLINE void FX_OutOfMemoryTerminate();
@@ -46,7 +46,7 @@ inline void* FX_SafeAlloc(size_t num_members, size_t member_size) {
   constexpr int kFlags = pdfium::base::PartitionAllocReturnNull |
                          pdfium::base::PartitionAllocZeroFill;
   return pdfium::base::PartitionAllocGenericFlags(
-      gGeneralPartitionAllocator.root(), kFlags, total.ValueOrDie(),
+      GetGeneralPartitionAllocator().root(), kFlags, total.ValueOrDie(),
       "GeneralPartition");
 }
 
@@ -57,8 +57,9 @@ inline void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size) {
     return nullptr;
 
   return pdfium::base::PartitionReallocGenericFlags(
-      gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
-      ptr, size.ValueOrDie(), "GeneralPartition");
+      GetGeneralPartitionAllocator().root(),
+      pdfium::base::PartitionAllocReturnNull, ptr, size.ValueOrDie(),
+      "GeneralPartition");
 }
 
 inline void* FX_AllocOrDie(size_t num_members, size_t member_size) {

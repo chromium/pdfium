@@ -11,25 +11,36 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/debug/alias.h"
 
-pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
-pdfium::base::PartitionAllocatorGeneric gGeneralPartitionAllocator;
-pdfium::base::PartitionAllocatorGeneric gStringPartitionAllocator;
+pdfium::base::PartitionAllocatorGeneric& GetArrayBufferPartitionAllocator() {
+  static pdfium::base::PartitionAllocatorGeneric s_array_buffer_allocator;
+  return s_array_buffer_allocator;
+}
+
+pdfium::base::PartitionAllocatorGeneric& GetGeneralPartitionAllocator() {
+  static pdfium::base::PartitionAllocatorGeneric s_general_allocator;
+  return s_general_allocator;
+}
+
+pdfium::base::PartitionAllocatorGeneric& GetStringPartitionAllocator() {
+  static pdfium::base::PartitionAllocatorGeneric s_string_allocator;
+  return s_string_allocator;
+}
 
 void FXMEM_InitializePartitionAlloc() {
-  static bool s_gPartitionAllocatorsInitialized = false;
-  if (!s_gPartitionAllocatorsInitialized) {
+  static bool s_partition_allocators_initialized = false;
+  if (!s_partition_allocators_initialized) {
     pdfium::base::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);
-    gArrayBufferPartitionAllocator.init();
-    gGeneralPartitionAllocator.init();
-    gStringPartitionAllocator.init();
-    s_gPartitionAllocatorsInitialized = true;
+    GetArrayBufferPartitionAllocator().init();
+    GetGeneralPartitionAllocator().init();
+    GetStringPartitionAllocator().init();
+    s_partition_allocators_initialized = true;
   }
 }
 
 void* FXMEM_DefaultAlloc(size_t byte_size) {
   return pdfium::base::PartitionAllocGenericFlags(
-      gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
-      byte_size, "GeneralPartition");
+      GetGeneralPartitionAllocator().root(),
+      pdfium::base::PartitionAllocReturnNull, byte_size, "GeneralPartition");
 }
 
 void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
@@ -38,8 +49,9 @@ void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
 
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size) {
   return pdfium::base::PartitionReallocGenericFlags(
-      gGeneralPartitionAllocator.root(), pdfium::base::PartitionAllocReturnNull,
-      pointer, new_size, "GeneralPartition");
+      GetGeneralPartitionAllocator().root(),
+      pdfium::base::PartitionAllocReturnNull, pointer, new_size,
+      "GeneralPartition");
 }
 
 void FXMEM_DefaultFree(void* pointer) {

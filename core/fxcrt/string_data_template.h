@@ -36,8 +36,8 @@ class StringDataTemplate {
     size_t usableLen = (totalSize - overhead) / sizeof(CharType);
     ASSERT(usableLen >= nLen);
 
-    void* pData = gStringPartitionAllocator.root()->Alloc(totalSize,
-                                                          "StringDataTemplate");
+    void* pData = GetStringPartitionAllocator().root()->Alloc(
+        totalSize, "StringDataTemplate");
     return new (pData) StringDataTemplate(nLen, usableLen);
   }
 
@@ -50,7 +50,7 @@ class StringDataTemplate {
   void Retain() { ++m_nRefs; }
   void Release() {
     if (--m_nRefs <= 0)
-      gStringPartitionAllocator.root()->Free(this);
+      GetStringPartitionAllocator().root()->Free(this);
   }
 
   bool CanOperateInPlace(size_t nTotalLen) const {
