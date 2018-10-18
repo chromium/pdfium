@@ -14,8 +14,7 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 
-CFX_XMLElement::CFX_XMLElement(const WideString& wsTag)
-    : CFX_XMLNode(), name_(wsTag) {
+CFX_XMLElement::CFX_XMLElement(const WideString& wsTag) : name_(wsTag) {
   ASSERT(!name_.IsEmpty());
 }
 

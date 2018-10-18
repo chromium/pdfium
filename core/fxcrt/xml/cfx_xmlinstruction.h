@@ -27,12 +27,12 @@ class CFX_XMLInstruction final : public CFX_XMLNode {
   bool IsOriginalXFAVersion() const;
   bool IsAcrobat() const;
 
-  const std::vector<WideString>& GetTargetData() const { return m_TargetData; }
+  const std::vector<WideString>& GetTargetData() const { return target_data_; }
   void AppendData(const WideString& wsData);
 
  private:
-  WideString name_;
-  std::vector<WideString> m_TargetData;
+  const WideString name_;
+  std::vector<WideString> target_data_;
 };
 
 inline CFX_XMLInstruction* ToXMLInstruction(CFX_XMLNode* pNode) {

@@ -22,11 +22,11 @@ class CFX_XMLText : public CFX_XMLNode {
   CFX_XMLNode* Clone(CFX_XMLDocument* doc) override;
   void Save(const RetainPtr<IFX_SeekableWriteStream>& pXMLStream) override;
 
-  WideString GetText() const { return m_wsText; }
-  void SetText(const WideString& wsText) { m_wsText = wsText; }
+  const WideString& GetText() const { return text_; }
+  void SetText(const WideString& wsText) { text_ = wsText; }
 
  private:
-  WideString m_wsText;
+  WideString text_;
 };
 
 inline bool IsXMLText(const CFX_XMLNode* pNode) {

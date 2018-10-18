@@ -13,7 +13,7 @@
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 
 CFX_XMLInstruction::CFX_XMLInstruction(const WideString& wsTarget)
-    : CFX_XMLNode(), name_(wsTarget) {}
+    : name_(wsTarget) {}
 
 CFX_XMLInstruction::~CFX_XMLInstruction() = default;
 
@@ -23,12 +23,12 @@ FX_XMLNODETYPE CFX_XMLInstruction::GetType() const {
 
 CFX_XMLNode* CFX_XMLInstruction::Clone(CFX_XMLDocument* doc) {
   auto* node = doc->CreateNode<CFX_XMLInstruction>(name_);
-  node->m_TargetData = m_TargetData;
+  node->target_data_ = target_data_;
   return node;
 }
 
 void CFX_XMLInstruction::AppendData(const WideString& wsData) {
-  m_TargetData.push_back(wsData);
+  target_data_.push_back(wsData);
 }
 
 bool CFX_XMLInstruction::IsOriginalXFAVersion() const {
@@ -50,7 +50,7 @@ void CFX_XMLInstruction::Save(
   pXMLStream->WriteString(name_.UTF8Encode().AsStringView());
   pXMLStream->WriteString(" ");
 
-  for (const WideString& target : m_TargetData) {
+  for (const WideString& target : target_data_) {
     pXMLStream->WriteString(target.UTF8Encode().AsStringView());
     pXMLStream->WriteString(" ");
   }
