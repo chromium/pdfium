@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
 class CJS_Report final : public CJS_Object {

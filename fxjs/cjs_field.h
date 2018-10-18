@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "fxjs/cjs_document.h"
+#include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
 class CPDF_FormControl;

@@ -7,8 +7,10 @@
 #ifndef FXJS_CJS_ANNOT_H_
 #define FXJS_CJS_ANNOT_H_
 
-#include "fpdfsdk/cpdfsdk_baannot.h"
+#include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
+
+class CPDFSDK_BAAnnot;
 
 class CJS_Annot final : public CJS_Object {
  public:
@@ -18,7 +20,7 @@ class CJS_Annot final : public CJS_Object {
   CJS_Annot(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Annot() override;
 
-  void SetSDKAnnot(CPDFSDK_BAAnnot* annot) { m_pAnnot.Reset(annot); }
+  void SetSDKAnnot(CPDFSDK_BAAnnot* annot);
 
   JS_STATIC_PROP(hidden, hidden, CJS_Annot);
   JS_STATIC_PROP(name, name, CJS_Annot);

@@ -6,6 +6,8 @@
 
 #include "fxjs/cjs_printparamsobj.h"
 
+#include "fxjs/js_define.h"
+
 int CJS_PrintParamsObj::ObjDefnID = -1;
 
 // static

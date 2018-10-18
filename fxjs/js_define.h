@@ -11,10 +11,12 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjs_engine.h"
-#include "fxjs/cjs_object.h"
 #include "fxjs/cjs_result.h"
+#include "fxjs/cjs_runtime.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/ptr_util.h"
+
+class CJS_Object;
 
 double JS_GetDateTime();
 int JS_GetYearFromTime(double dt);

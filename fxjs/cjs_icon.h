@@ -7,6 +7,7 @@
 #ifndef FXJS_CJS_ICON_H_
 #define FXJS_CJS_ICON_H_
 
+#include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
 class CJS_Icon final : public CJS_Object {

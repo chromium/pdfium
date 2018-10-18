@@ -11,7 +11,6 @@
 #include "testing/embedder_test.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFXJSE_Engine;
 class CFXJSE_Value;

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
 // Return values for ParseDataType() below.

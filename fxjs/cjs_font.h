@@ -7,7 +7,7 @@
 #ifndef FXJS_CJS_FONT_H_
 #define FXJS_CJS_FONT_H_
 
-#include "fxjs/js_define.h"
+#include "fxjs/cjs_object.h"
 
 class CJS_Font final : public CJS_Object {
  public:

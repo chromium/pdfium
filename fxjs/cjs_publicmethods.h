@@ -9,7 +9,8 @@
 
 #include <vector>
 
-#include "fxjs/js_define.h"
+#include "fxjs/cjs_object.h"
+#include "fxjs/cjs_result.h"
 
 class CJS_PublicMethods final : public CJS_Object {
  public:

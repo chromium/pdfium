@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/observable.h"
+#include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 
 class CPDFSDK_InteractiveForm;
