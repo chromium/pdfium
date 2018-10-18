@@ -6,12 +6,6 @@
 
 #include "fpdfsdk/cpdfsdk_fieldaction.h"
 
-CPDFSDK_FieldAction::CPDFSDK_FieldAction()
-    : bModifier(false),
-      bShift(false),
-      bKeyDown(false),
-      nSelEnd(0),
-      nSelStart(0),
-      bWillCommit(false),
-      bFieldFull(false),
-      bRC(true) {}
+CPDFSDK_FieldAction::CPDFSDK_FieldAction() = default;
+
+CPDFSDK_FieldAction::~CPDFSDK_FieldAction() = default;

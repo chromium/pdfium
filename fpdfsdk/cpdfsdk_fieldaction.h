@@ -21,18 +21,19 @@ typedef enum {
 struct CPDFSDK_FieldAction {
   CPDFSDK_FieldAction();
   CPDFSDK_FieldAction(const CPDFSDK_FieldAction& other) = delete;
+  ~CPDFSDK_FieldAction();
 
-  bool bModifier;
-  bool bShift;
+  bool bModifier = false;
+  bool bShift = false;
+  bool bKeyDown = false;
+  bool bWillCommit = false;
+  bool bFieldFull = false;
+  bool bRC = true;
+  int nSelEnd = 0;
+  int nSelStart = 0;
   WideString sChange;
   WideString sChangeEx;
-  bool bKeyDown;
-  int nSelEnd;
-  int nSelStart;
   WideString sValue;
-  bool bWillCommit;
-  bool bFieldFull;
-  bool bRC;
 };
 
 #endif  // FPDFSDK_CPDFSDK_FIELDACTION_H_
