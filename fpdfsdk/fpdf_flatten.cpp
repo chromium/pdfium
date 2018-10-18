@@ -167,52 +167,61 @@ CFX_FloatRect CalculateRect(std::vector<CFX_FloatRect>* pRectArray) {
   return rcRet;
 }
 
-CPDF_Object* NewIndirectContentsStream(const ByteString& key,
-                                       CPDF_Document* pDocument) {
+ByteString GenerateFlattenedContent(const ByteString& key) {
+  return "q 1 0 0 1 0 0 cm /" + key + " Do Q";
+}
+
+CPDF_Object* NewIndirectContentsStream(CPDF_Document* pDocument,
+                                       const ByteString& contents) {
   CPDF_Stream* pNewContents = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0,
       pdfium::MakeUnique<CPDF_Dictionary>(pDocument->GetByteStringPool()));
-  ByteString sStream =
-      ByteString::Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
-  pNewContents->SetData(sStream.AsRawSpan());
+  pNewContents->SetData(contents.AsRawSpan());
   return pNewContents;
 }
 
 void SetPageContents(const ByteString& key,
                      CPDF_Dictionary* pPage,
                      CPDF_Document* pDocument) {
-  CPDF_Array* pContentsArray = nullptr;
+  CPDF_Array* pContentsArray =
+      pPage->GetArrayFor(pdfium::page_object::kContents);
   CPDF_Stream* pContentsStream =
       pPage->GetStreamFor(pdfium::page_object::kContents);
-  if (!pContentsStream) {
-    pContentsArray = pPage->GetArrayFor(pdfium::page_object::kContents);
-    if (!pContentsArray) {
-      if (!key.IsEmpty()) {
-        pPage->SetFor(pdfium::page_object::kContents,
-                      NewIndirectContentsStream(key, pDocument)
-                          ->MakeReference(pDocument));
-      }
-      return;
+  if (!pContentsStream && !pContentsArray) {
+    if (!key.IsEmpty()) {
+      pPage->SetFor(
+          pdfium::page_object::kContents,
+          NewIndirectContentsStream(pDocument, GenerateFlattenedContent(key))
+              ->MakeReference(pDocument));
     }
+    return;
   }
+
   pPage->ConvertToIndirectObjectFor(pdfium::page_object::kContents, pDocument);
-  if (!pContentsArray) {
-    pContentsArray = pDocument->NewIndirect<CPDF_Array>();
+  if (pContentsArray) {
+    pContentsArray->InsertAt(
+        0, NewIndirectContentsStream(pDocument, "q")->MakeReference(pDocument));
+    pContentsArray->Add(
+        NewIndirectContentsStream(pDocument, "Q")->MakeReference(pDocument));
+  } else {
     ByteString sStream = "q\n";
     {
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
       pAcc->LoadAllDataFiltered();
-      sStream += ByteString(pAcc->GetData(), pAcc->GetSize());
+      sStream += ByteString(pAcc->GetSpan());
       sStream += "\nQ";
     }
     pContentsStream->SetDataAndRemoveFilter(sStream.AsRawSpan());
+
+    pContentsArray = pDocument->NewIndirect<CPDF_Array>();
     pContentsArray->Add(pContentsStream->MakeReference(pDocument));
     pPage->SetFor(pdfium::page_object::kContents,
                   pContentsArray->MakeReference(pDocument));
   }
   if (!key.IsEmpty()) {
     pContentsArray->Add(
-        NewIndirectContentsStream(key, pDocument)->MakeReference(pDocument));
+        NewIndirectContentsStream(pDocument, GenerateFlattenedContent(key))
+            ->MakeReference(pDocument));
   }
 }
 

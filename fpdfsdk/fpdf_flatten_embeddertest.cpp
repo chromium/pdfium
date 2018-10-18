@@ -54,3 +54,20 @@ TEST_F(FPDFFlattenEmbeddertest, BUG_890322) {
 
   VerifySavedDocument(200, 200, md5_hash);
 }
+
+TEST_F(FPDFFlattenEmbeddertest, BUG_896366) {
+  static const char md5_hash[] = "f71ab085c52c8445ae785eca3ec858b1";
+  EXPECT_TRUE(OpenDocument("bug_896366.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  CompareBitmap(bitmap.get(), 612, 792, md5_hash);
+
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  UnloadPage(page);
+
+  VerifySavedDocument(612, 792, md5_hash);
+}

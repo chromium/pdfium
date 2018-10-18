@@ -2,19 +2,23 @@
 {{object 1 0}} <<
   /Type /Catalog
   /Pages 2 0 R
-  /AcroForm << /Fields [ 4 0 R ] >>
+  /AcroForm <<
+    /Fields [4 0 R]
+  >>
 >>
 endobj
 {{object 2 0}} <<
-  /Type /Pages /Count 1 /Kids [ 3 0 R ]
+  /Type /Pages
+  /Kids [3 0 R]
+  /Count 1
 >>
 endobj
 {{object 3 0}} <<
   /Type /Page
   /Parent 2 0 R
-  /MediaBox [ 0 0 200 200 ]
-  /Contents 6 0 R
-  /Annots [ 4 0 R ]
+  /Annots [4 0 R]
+  /Contents [6 0 R]
+  /MediaBox [0 0 612 792]
 >>
 endobj
 {{object 4 0}} <<
@@ -47,8 +51,7 @@ endobj
   {{streamlen}}
 >>
 stream
-q
-Q
+1 0 0 -1 0 792 cm
 endstream
 endobj
 {{xref}}
