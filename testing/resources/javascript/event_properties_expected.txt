@@ -1,0 +1,49 @@
+Alert: *** starting test ***
+Alert: PASS: event.change = 
+Alert: PASS: event.change = 'boo' = boo
+Alert: PASS: event.change = boo
+Alert: PASS: event.changeEx = 
+Alert: PASS: event.changeEx = 'boo' threw event.changeEx: Operation not supported.
+Alert: PASS: event.commitKey = 0
+Alert: PASS: event.commitKey = 'boo' threw event.commitKey: Operation not supported.
+Alert: PASS: event.fieldFull threw event.fieldFull: unrecognized event
+Alert: PASS: event.fieldFull = 'boo' threw event.fieldFull: Operation not supported.
+Alert: PASS: event.keyDown = false
+Alert: PASS: event.keyDown = 'boo' threw event.keyDown: Operation not supported.
+Alert: PASS: event.modifier = false
+Alert: PASS: event.modifier = 'boo' threw event.modifier: Operation not supported.
+Alert: PASS: event.name = Format
+Alert: PASS: event.name = 'boo' threw event.name: Operation not supported.
+Alert: PASS: event.rc = false
+Alert: PASS: event.rc = 'boo' = boo
+Alert: PASS: event.rc = true
+Alert: PASS: event.rc = false = false
+Alert: PASS: event.richChange = undefined
+Alert: PASS: event.richChange = 'boo' = boo
+Alert: PASS: event.richChange = undefined
+Alert: PASS: event.richChangeEx = undefined
+Alert: PASS: event.richChangeEx = 'boo' = boo
+Alert: PASS: event.richChangeEx = undefined
+Alert: PASS: event.richValue = undefined
+Alert: PASS: event.richValue = 'boo' = boo
+Alert: PASS: event.richValue = undefined
+Alert: PASS: event.selEnd = undefined
+Alert: PASS: event.selEnd = 'boo' = boo
+Alert: PASS: event.selEnd = undefined
+Alert: PASS: event.selStart = undefined
+Alert: PASS: event.selStart = 'boo' = boo
+Alert: PASS: event.selStart = undefined
+Alert: PASS: event.shift = false
+Alert: PASS: event.shift = 'boo' threw event.shift: Operation not supported.
+Alert: PASS: event.source = [object Object]
+Alert: PASS: event.source = 'boo' threw event.source: Operation not supported.
+Alert: PASS: event.target = [object Object]
+Alert: PASS: event.target = 'boo' threw event.target: Operation not supported.
+Alert: PASS: event.targetName = Text Box
+Alert: PASS: event.targetName = 'boo' threw event.targetName: Operation not supported.
+Alert: PASS: event.type = Field
+Alert: PASS: event.type = 'boo' threw event.type: Operation not supported.
+Alert: PASS: event.value = 
+Alert: PASS: event.value = 'boo' = boo
+Alert: PASS: event.value = boo
+Alert: *** ending test ***

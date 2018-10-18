@@ -1,0 +1,179 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm << /Fields [ 4 0 R 10 0 R ] /DR 5 0 R >>
+>>
+endobj
+{{object 2 0}} <<
+  /Count 1
+  /Kids [ 3 0 R ]
+  /Type /Pages
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Resources 5 0 R
+  /MediaBox [ 0 0 300 200 ]
+  /Contents 8 0 R
+  /Annots [ 4 0 R 10 0 R ]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /FT /Tx
+  /T (Text Box)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [ 100 100 200 130 ]
+  /Subtype /Widget
+  /AA <<
+    /F 9 0 R
+  >>
+>>
+endobj
+{{object 5 0}} <<
+  /Font 6 0 R
+>>
+endobj
+{{object 6 0}} <<
+  /F1 7 0 R
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+>>
+endobj
+{{object 8 0}} <<
+  {{streamlen}}
+>>
+stream
+endstream
+endobj
+{{object 9 0}} <<
+  /JS (
+    function expect(expression, expected) {
+      try {
+        var actual = eval(expression);
+        if (actual == expected) {
+          app.alert('PASS: ' + expression + ' = ' + actual);
+        } else {
+          app.alert('FAIL: ' + expression + ' = ' + actual + ', expected ' + expected + " ");
+        }
+      } catch (e) {
+        app.alert('ERROR: ' + e);
+      }
+    }
+
+    function expectError(expression) {
+      try {
+        var actual = eval(expression);
+        app.alert('FAIL: ' + expression + ' = ' + actual + ', expected to throw');
+      } catch (e) {
+        app.alert('PASS: ' + expression + ' threw ' + e);
+      }
+    }
+
+    try {
+      app.alert("*** starting test ***");
+
+      expect("event.change", "");
+      expect("event.change = 'boo'", "boo");
+      expect("event.change", "boo");
+
+      expect("event.changeEx", "");
+      expectError("event.changeEx = 'boo'");
+
+      expect("event.commitKey", "");
+      expectError("event.commitKey = 'boo'");
+
+      // FieldFull applies to events named Keystroke only.
+      // TODO(tsepez): figure out a way to set event names for tests.
+      expectError("event.fieldFull");
+      expectError("event.fieldFull = 'boo'");
+
+      expect("event.keyDown", "");
+      expectError("event.keyDown = 'boo'");
+
+      expect("event.modifier", "");
+      expectError("event.modifier = 'boo'");
+
+      expect("event.name", "Format");
+      expectError("event.name = 'boo'");
+
+      expect("event.rc", false);
+      expect("event.rc = 'boo'", "boo");
+      expect("event.rc", true);
+      expect("event.rc = false", false);
+
+      // TODO(tsepez): is silently ignoring update correct here?
+      expect("event.richChange", undefined);
+      expect("event.richChange = 'boo'", "boo");
+      expect("event.richChange", undefined);
+
+      // TODO(tsepez): is silently ignoring update correct here?
+      expect("event.richChangeEx", undefined);
+      expect("event.richChangeEx = 'boo'", "boo");
+      expect("event.richChangeEx", undefined);
+
+      // TODO(tsepez): is silently ignoring update correct here?
+      expect("event.richValue", undefined);
+      expect("event.richValue = 'boo'", "boo");
+      expect("event.richValue", undefined);
+
+      // selEnd applies to events named Keystroke only.
+      // TODO(tsepez): figure out a way to set event names for tests.
+      expect("event.selEnd", undefined);
+      expect("event.selEnd = 'boo'", "boo");
+      expect("event.selEnd", undefined);
+
+      // selEnd applies to events named Keystroke only.
+      // TODO(tsepez): figure out a way to set event names for tests.
+      expect("event.selStart", undefined);
+      expect("event.selStart = 'boo'", "boo");
+      expect("event.selStart", undefined);
+
+      expect("event.shift", false);
+      expectError("event.shift = 'boo'");
+
+      // TODO(tsepez): dig deeper into object.
+      expect("event.source", "[object Object]");
+      expectError("event.source = 'boo'");
+
+      // TODO(tsepez): dig deeper into object.
+      expect("event.target", "[object Object]");
+      expectError("event.target = 'boo'");
+
+      expect("event.targetName", "Text Box");
+      expectError("event.targetName = 'boo'");
+
+      expect("event.type", "Field");
+      expectError("event.type = 'boo'");
+
+      expect("event.value", "");
+      expect("event.value = 'boo'", "boo");
+      expect("event.value", "boo");
+
+      app.alert("*** ending test ***");
+    } catch (e) {
+      app.alert("Truly unexpected error occured: " + e);
+    }
+  )
+  /S /JavaScript
+>>
+endobj
+{{object 10 0}} <<
+  /Type /Annot
+  /FT /Tx
+  /T (Text2)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [ 100 40 200 70 ]
+  /Subtype /Widget
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
