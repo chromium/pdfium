@@ -4,6 +4,7 @@
 
 #include "testing/js_embedder_test.h"
 
+#include "fxjs/cfxjs_engine.h"
 #include "third_party/base/ptr_util.h"
 
 JSEmbedderTest::JSEmbedderTest()

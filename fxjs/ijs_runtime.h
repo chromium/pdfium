@@ -14,10 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/optional.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fxjs/fxjse.h"
-#endif  // PDF_ENABLE_XFA
-
+class CFXJSE_Value;
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 class IJS_EventContext;

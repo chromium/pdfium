@@ -5,11 +5,16 @@
 #ifndef FXJS_CFX_V8_UNITTEST_H_
 #define FXJS_CFX_V8_UNITTEST_H_
 
-#include "fxjs/cfx_v8.h"
-
 #include <memory>
 
 #include "testing/gtest/include/gtest/gtest.h"
+
+class CFX_V8;
+class CFX_V8ArrayBufferAllocator;
+
+namespace v8 {
+class Isolate;
+}  // namespace v8
 
 class FXV8UnitTest : public ::testing::Test {
  public:

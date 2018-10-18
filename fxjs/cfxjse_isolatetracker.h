@@ -7,7 +7,6 @@
 #ifndef FXJS_CFXJSE_ISOLATETRACKER_H_
 #define FXJS_CFXJSE_ISOLATETRACKER_H_
 
-#include "fxjs/cfxjse_runtimedata.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_ScopeUtil_IsolateHandle {

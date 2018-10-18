@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
+#include "fxjs/cfx_v8.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"

@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "fxjs/cfx_v8.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
 #include "xfa/fxfa/parser/cxfa_manifest.h"

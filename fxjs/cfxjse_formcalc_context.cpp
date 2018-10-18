@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/locale_iface.h"
 #include "fxjs/cfxjse_class.h"
+#include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"

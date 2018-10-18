@@ -11,6 +11,7 @@
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_context.h"
+#include "fxjs/cfxjse_isolatetracker.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/cjs_result.h"
 #include "fxjs/js_resources.h"

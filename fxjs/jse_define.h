@@ -9,8 +9,9 @@
 
 #include <vector>
 
-#include "fxjs/cfx_v8.h"
 #include "fxjs/cjs_result.h"
+
+class CFX_V8;
 
 template <class C,
           CJS_Result (C::*M)(CFX_V8* runtime,

@@ -7,8 +7,12 @@
 
 #include <memory>
 
-#include "fxjs/cfxjs_engine.h"
+#include "fxjs/cfx_v8.h"
 #include "testing/embedder_test.h"
+#include "v8/include/v8.h"
+
+class CFXJS_Engine;
+class CFX_V8ArrayBufferAllocator;
 
 class JSEmbedderTest : public EmbedderTest {
  public:

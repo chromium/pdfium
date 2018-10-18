@@ -6,6 +6,8 @@
 
 #include "fxjs/cjs_object.h"
 
+#include "fxjs/cfxjs_engine.h"
+
 // static
 void CJS_Object::DefineConsts(CFXJS_Engine* pEngine,
                               int objId,

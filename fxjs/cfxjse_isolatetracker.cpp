@@ -6,6 +6,8 @@
 
 #include "fxjs/cfxjse_isolatetracker.h"
 
+#include "fxjs/cfxjse_runtimedata.h"
+
 CFXJSE_ScopeUtil_IsolateHandle::CFXJSE_ScopeUtil_IsolateHandle(
     v8::Isolate* pIsolate)
     : m_iscope(pIsolate), m_hscope(pIsolate) {}

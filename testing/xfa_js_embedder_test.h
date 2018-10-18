@@ -8,14 +8,14 @@
 #include <memory>
 #include <string>
 
-#include "fxjs/cfxjs_engine.h"
-#include "fxjs/cfxjse_value.h"
 #include "testing/embedder_test.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
 class CFXJSE_Engine;
+class CFXJSE_Value;
+class CFX_V8ArrayBufferAllocator;
 
 class XFAJSEmbedderTest : public EmbedderTest {
  public:

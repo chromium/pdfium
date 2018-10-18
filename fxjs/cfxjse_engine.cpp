@@ -12,6 +12,7 @@
 #include "core/fxcrt/cfx_widetextbuf.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_class.h"
+#include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_resolveprocessor.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/cjs_runtime.h"

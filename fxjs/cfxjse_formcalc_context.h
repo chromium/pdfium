@@ -12,9 +12,9 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjse_arguments.h"
-#include "fxjs/cfxjse_context.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
+class CFXJSE_Context;
 class CFX_WideTextBuf;
 class CXFA_Document;
 

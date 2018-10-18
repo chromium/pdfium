@@ -13,8 +13,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/cfxjse_isolatetracker.h"
-#include "fxjs/cfxjse_runtimedata.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_Class;

@@ -10,6 +10,7 @@
 
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_context.h"
+#include "fxjs/cfxjse_isolatetracker.h"
 
 namespace {
 

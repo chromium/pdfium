@@ -10,12 +10,13 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/fxjse.h"
 #include "v8/include/v8.h"
 
 class CFXJS_Engine;
 class CFXJSE_Class;
+class CFXJSE_HostObject;
 class CFXJSE_Value;
 struct FXJSE_CLASS_DESCRIPTOR;
 

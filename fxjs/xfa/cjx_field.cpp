@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_decimal.h"
+#include "fxjs/cfx_v8.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"
 #include "xfa/fxfa/cxfa_eventparam.h"

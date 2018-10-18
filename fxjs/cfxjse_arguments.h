@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjse_class.h"
-#include "fxjs/fxjse.h"
 
 class CFXJSE_Arguments {
  public:

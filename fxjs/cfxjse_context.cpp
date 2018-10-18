@@ -10,6 +10,8 @@
 
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cfxjse_class.h"
+#include "fxjs/cfxjse_isolatetracker.h"
+#include "fxjs/cfxjse_runtimedata.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 

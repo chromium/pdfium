@@ -13,6 +13,7 @@
 
 class CFXJSE_Context;
 class CFXJSE_Value;
+struct FXJSE_CLASS_DESCRIPTOR;
 
 class CFXJSE_Class {
  public:

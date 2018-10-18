@@ -9,6 +9,7 @@
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fxjs/cfxjse_engine.h"
+#include "fxjs/cfxjse_value.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
