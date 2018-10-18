@@ -22,13 +22,13 @@ struct CXFA_LoaderContext {
   ~CXFA_LoaderContext();
 
   bool bSaveLineHeight = false;
+  bool bFilterSpace = false;
   float fWidth = 0;
   float fHeight = 0;
   float fLastPos = 0;
   float fStartLineOffset = 0;
   int32_t iChar = 0;
   int32_t iTotalLines = -1;
-  uint32_t dwFlags = 0;
   UnownedPtr<const CFX_XMLNode> pXMLNode;
   UnownedPtr<CXFA_Node> pNode;
   RetainPtr<CFX_CSSComputedStyle> pParentStyle;

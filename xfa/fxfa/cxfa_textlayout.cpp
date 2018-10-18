@@ -34,8 +34,6 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
-#define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
-
 namespace {
 
 void ProcessText(WideString* pText) {
@@ -807,20 +805,19 @@ bool CXFA_TextLayout::LoadRichText(
           ProcessText(&wsText);
 
         if (m_pLoader) {
-          if (wsText.GetLength() > 0 &&
-              (m_pLoader->dwFlags & XFA_LOADERCNTXTFLG_FILTERSPACE)) {
+          if (wsText.GetLength() > 0 && m_pLoader->bFilterSpace) {
             wsText.TrimLeft(L" ");
           }
           if (CFX_CSSDisplay::Block == eDisplay) {
-            m_pLoader->dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
+            m_pLoader->bFilterSpace = true;
           } else if (CFX_CSSDisplay::Inline == eDisplay &&
-                     (m_pLoader->dwFlags & XFA_LOADERCNTXTFLG_FILTERSPACE)) {
-            m_pLoader->dwFlags &= ~XFA_LOADERCNTXTFLG_FILTERSPACE;
+                     m_pLoader->bFilterSpace) {
+            m_pLoader->bFilterSpace = false;
           } else if (wsText.GetLength() > 0 &&
                      (0x20 == wsText[wsText.GetLength() - 1])) {
-            m_pLoader->dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
+            m_pLoader->bFilterSpace = true;
           } else if (wsText.GetLength() != 0) {
-            m_pLoader->dwFlags &= ~XFA_LOADERCNTXTFLG_FILTERSPACE;
+            m_pLoader->bFilterSpace = false;
           }
         }
 
@@ -833,7 +830,7 @@ bool CXFA_TextLayout::LoadRichText(
 
           if (AppendChar(wsText, pLinePos, 0, bSavePieces)) {
             if (m_pLoader)
-              m_pLoader->dwFlags &= ~XFA_LOADERCNTXTFLG_FILTERSPACE;
+              m_pLoader->bFilterSpace = false;
             if (IsEnd(bSavePieces)) {
               if (m_pLoader && m_pLoader->iTotalLines > -1) {
                 m_pLoader->pXMLNode = pXMLNode;
@@ -860,7 +857,7 @@ bool CXFA_TextLayout::LoadRichText(
 
     if (m_pLoader) {
       if (CFX_CSSDisplay::Block == eDisplay)
-        m_pLoader->dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
+        m_pLoader->bFilterSpace = true;
     }
     if (bCurLi)
       EndBreak(CFX_BreakType::Line, pLinePos, bSavePieces);
