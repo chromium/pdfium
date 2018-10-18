@@ -458,3 +458,45 @@ TEST(CFX_Matrix, ComposeTransformations) {
   EXPECT_FLOAT_EQ(-271.0f, p_10_20_transformed.x);
   EXPECT_FLOAT_EQ(73.0f, p_10_20_transformed.y);
 }
+
+TEST(CFX_Matrix, TransformRectForRectF) {
+  CFX_Matrix rotate_90;
+  rotate_90.Rotate(FX_PI / 2);
+
+  CFX_Matrix scale_5_13;
+  scale_5_13.Scale(5, 13);
+
+  CFX_RectF rect(10.5f, 20.5f, 4.25f, 3.25f);
+  rect = rotate_90.TransformRect(rect);
+  EXPECT_FLOAT_EQ(-23.75f, rect.Left());
+  EXPECT_FLOAT_EQ(10.5f, rect.Top());
+  EXPECT_FLOAT_EQ(3.25f, rect.Width());
+  EXPECT_FLOAT_EQ(4.25f, rect.Height());
+
+  rect = scale_5_13.TransformRect(rect);
+  EXPECT_FLOAT_EQ(-118.75f, rect.Left());
+  EXPECT_FLOAT_EQ(136.5f, rect.Top());
+  EXPECT_FLOAT_EQ(16.25f, rect.Width());
+  EXPECT_FLOAT_EQ(55.25f, rect.Height());
+}
+
+TEST(CFX_Matrix, TransformRectForFloatRect) {
+  CFX_Matrix rotate_90;
+  rotate_90.Rotate(FX_PI / 2);
+
+  CFX_Matrix scale_5_13;
+  scale_5_13.Scale(5, 13);
+
+  CFX_FloatRect rect(5.5f, 0.0f, 12.25f, 2.7f);
+  rect = rotate_90.TransformRect(rect);
+  EXPECT_FLOAT_EQ(-2.7f, rect.Left());
+  EXPECT_FLOAT_EQ(5.5f, rect.Bottom());
+  EXPECT_NEAR(0.0f, rect.Right(), 0.00001f);
+  EXPECT_FLOAT_EQ(12.25f, rect.Top());
+
+  rect = scale_5_13.TransformRect(rect);
+  EXPECT_FLOAT_EQ(-13.5f, rect.Left());
+  EXPECT_FLOAT_EQ(71.5f, rect.Bottom());
+  EXPECT_NEAR(0.0f, rect.Right(), 0.00001f);
+  EXPECT_FLOAT_EQ(159.25f, rect.Top());
+}

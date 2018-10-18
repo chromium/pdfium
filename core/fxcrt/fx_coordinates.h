@@ -274,6 +274,10 @@ class CFX_FloatRect {
 
   float Width() const { return right - left; }
   float Height() const { return top - bottom; }
+  float Left() const { return left; }
+  float Bottom() const { return bottom; }
+  float Right() const { return right; }
+  float Top() const { return top; }
 
   void Inflate(float x, float y);
   void Inflate(float other_left,
@@ -426,6 +430,8 @@ class CFX_RectF {
     return rt.left >= left && rt.right() <= right() && rt.top >= top &&
            rt.bottom() <= bottom();
   }
+  float Left() const { return left; }
+  float Top() const { return top; }
   float Width() const { return width; }
   float Height() const { return height; }
   SizeType Size() const { return SizeType(width, height); }
