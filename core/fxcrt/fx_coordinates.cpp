@@ -416,45 +416,31 @@ CFX_PointF CFX_Matrix::Transform(const CFX_PointF& point) const {
   return CFX_PointF(a * point.x + c * point.y + e,
                     b * point.x + d * point.y + f);
 }
-std::tuple<float, float, float, float> CFX_Matrix::TransformRect(
-    const float& left,
-    const float& right,
-    const float& top,
-    const float& bottom) const {
-  CFX_PointF points[] = {
-      {left, top}, {left, bottom}, {right, top}, {right, bottom}};
-  for (int i = 0; i < 4; i++)
-    points[i] = Transform(points[i]);
+
+CFX_RectF CFX_Matrix::TransformRect(const CFX_RectF& rect) const {
+  CFX_FloatRect result_rect = TransformRect(rect.ToFloatRect());
+  return CFX_RectF(result_rect.left, result_rect.bottom, result_rect.Width(),
+                   result_rect.Height());
+}
+
+CFX_FloatRect CFX_Matrix::TransformRect(const CFX_FloatRect& rect) const {
+  CFX_PointF points[] = {{rect.left, rect.top},
+                         {rect.left, rect.bottom},
+                         {rect.right, rect.top},
+                         {rect.right, rect.bottom}};
+  for (CFX_PointF& point : points)
+    point = Transform(point);
 
   float new_right = points[0].x;
   float new_left = points[0].x;
   float new_top = points[0].y;
   float new_bottom = points[0].y;
-  for (int i = 1; i < 4; i++) {
+  for (size_t i = 1; i < FX_ArraySize(points); i++) {
     new_right = std::max(new_right, points[i].x);
     new_left = std::min(new_left, points[i].x);
     new_top = std::max(new_top, points[i].y);
     new_bottom = std::min(new_bottom, points[i].y);
   }
-  return std::make_tuple(new_left, new_right, new_top, new_bottom);
-}
 
-CFX_RectF CFX_Matrix::TransformRect(const CFX_RectF& rect) const {
-  float left;
-  float right;
-  float bottom;
-  float top;
-  std::tie(left, right, bottom, top) =
-      TransformRect(rect.left, rect.right(), rect.bottom(), rect.top);
-  return CFX_RectF(left, top, right - left, bottom - top);
-}
-
-CFX_FloatRect CFX_Matrix::TransformRect(const CFX_FloatRect& rect) const {
-  float left;
-  float right;
-  float top;
-  float bottom;
-  std::tie(left, right, top, bottom) =
-      TransformRect(rect.left, rect.right, rect.top, rect.bottom);
-  return CFX_FloatRect(left, bottom, right, top);
+  return CFX_FloatRect(new_left, new_bottom, new_right, new_top);
 }
