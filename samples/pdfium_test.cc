@@ -219,6 +219,19 @@ void ExampleDocMail(IPDF_JSPLATFORM*,
          GetPlatformWString(BCC).c_str(), GetPlatformWString(Subject).c_str(),
          GetPlatformWString(Msg).c_str());
 }
+
+void ExampleDocPrint(IPDF_JSPLATFORM*,
+                     FPDF_BOOL bUI,
+                     int nStart,
+                     int nEnd,
+                     FPDF_BOOL bSilent,
+                     FPDF_BOOL bShrinkToFit,
+                     FPDF_BOOL bPrintAsImage,
+                     FPDF_BOOL bReverse,
+                     FPDF_BOOL bAnnotations) {
+  printf("Doc Print: %d, %d, %d, %d, %d, %d, %d, %d\n", bUI, nStart, nEnd,
+         bSilent, bShrinkToFit, bPrintAsImage, bReverse, bAnnotations);
+}
 #endif  // PDF_ENABLE_V8
 
 void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
@@ -724,6 +737,7 @@ void RenderPdf(const std::string& name,
   platform_callbacks.app_beep = ExampleAppBeep;
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
   platform_callbacks.Doc_mail = ExampleDocMail;
+  platform_callbacks.Doc_print = ExampleDocPrint;
 #endif  // PDF_ENABLE_V8
 
   FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};

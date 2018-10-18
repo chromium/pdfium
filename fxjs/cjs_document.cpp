@@ -25,7 +25,6 @@
 #include "fxjs/cjs_delaydata.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_icon.h"
-#include "fxjs/cjs_printparamsobj.h"
 #include "fxjs/js_resources.h"
 
 namespace {
@@ -454,51 +453,41 @@ CJS_Result CJS_Document::mailForm(
 CJS_Result CJS_Document::print(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  if (!m_pFormFillEnv)
-    return CJS_Result::Failure(JSMessage::kBadObjectError);
+  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+      pRuntime, params, 8, L"bUI", L"nStart", L"nEnd", L"bSilent",
+      L"bShrinkToFit", L"bPrintAsImage", L"bReverse", L"bAnnotations");
 
   bool bUI = true;
+  if (IsExpandedParamKnown(newParams[0]))
+    bUI = pRuntime->ToBoolean(newParams[0]);
+
   int nStart = 0;
+  if (IsExpandedParamKnown(newParams[1]))
+    nStart = pRuntime->ToInt32(newParams[1]);
+
   int nEnd = 0;
+  if (IsExpandedParamKnown(newParams[2]))
+    nEnd = pRuntime->ToInt32(newParams[2]);
+
   bool bSilent = false;
+  if (IsExpandedParamKnown(newParams[3]))
+    bSilent = pRuntime->ToBoolean(newParams[3]);
+
   bool bShrinkToFit = false;
+  if (IsExpandedParamKnown(newParams[4]))
+    bShrinkToFit = pRuntime->ToBoolean(newParams[4]);
+
   bool bPrintAsImage = false;
+  if (IsExpandedParamKnown(newParams[5]))
+    bPrintAsImage = pRuntime->ToBoolean(newParams[5]);
+
   bool bReverse = false;
+  if (IsExpandedParamKnown(newParams[6]))
+    bReverse = pRuntime->ToBoolean(newParams[6]);
+
   bool bAnnotations = false;
-  size_t nLength = params.size();
-  if (nLength == 9) {
-    if (params[8]->IsObject()) {
-      v8::Local<v8::Object> pObj = pRuntime->ToObject(params[8]);
-      auto pPrintObj = JSGetObject<CJS_PrintParamsObj>(pObj);
-      if (pPrintObj) {
-        bUI = pPrintObj->GetUI();
-        nStart = pPrintObj->GetStart();
-        nEnd = pPrintObj->GetEnd();
-        bSilent = pPrintObj->GetSilent();
-        bShrinkToFit = pPrintObj->GetShrinkToFit();
-        bPrintAsImage = pPrintObj->GetPrintAsImage();
-        bReverse = pPrintObj->GetReverse();
-        bAnnotations = pPrintObj->GetAnnotations();
-      }
-    }
-  } else {
-    if (nLength > 0)
-      bUI = pRuntime->ToBoolean(params[0]);
-    if (nLength > 1)
-      nStart = pRuntime->ToInt32(params[1]);
-    if (nLength > 2)
-      nEnd = pRuntime->ToInt32(params[2]);
-    if (nLength > 3)
-      bSilent = pRuntime->ToBoolean(params[3]);
-    if (nLength > 4)
-      bShrinkToFit = pRuntime->ToBoolean(params[4]);
-    if (nLength > 5)
-      bPrintAsImage = pRuntime->ToBoolean(params[5]);
-    if (nLength > 6)
-      bReverse = pRuntime->ToBoolean(params[6]);
-    if (nLength > 7)
-      bAnnotations = pRuntime->ToBoolean(params[7]);
-  }
+  if (IsExpandedParamKnown(newParams[7]))
+    bAnnotations = pRuntime->ToBoolean(newParams[7]);
 
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
@@ -1362,10 +1351,6 @@ CJS_Result CJS_Document::getPageNumWords(
 CJS_Result CJS_Document::getPrintParams(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  v8::Local<v8::Object> pRetObj = pRuntime->NewFXJSBoundObject(
-      CJS_PrintParamsObj::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
-  if (pRetObj.IsEmpty())
-    return CJS_Result::Failure(JSMessage::kBadObjectError);
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 

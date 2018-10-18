@@ -21,17 +21,6 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #endif  // PDF_ENABLE_XFA
 
-namespace {
-
-bool IsTypeKnown(v8::Local<v8::Value> value) {
-  return !value.IsEmpty() &&
-         (value->IsString() || value->IsNumber() || value->IsBoolean() ||
-          value->IsDate() || value->IsObject() || value->IsNull() ||
-          value->IsUndefined());
-}
-
-}  // namespace
-
 #define JS_STR_VIEWERTYPE L"pdfium"
 #define JS_STR_VIEWERVARIATION L"Full"
 #define JS_STR_PLATFORM L"WIN"
@@ -237,7 +226,7 @@ CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
   std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
       pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
 
-  if (!IsTypeKnown(newParams[0]))
+  if (!IsExpandedParamKnown(newParams[0]))
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
@@ -260,15 +249,15 @@ CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
   }
 
   int iIcon = JSPLATFORM_ALERT_ICON_DEFAULT;
-  if (IsTypeKnown(newParams[1]))
+  if (IsExpandedParamKnown(newParams[1]))
     iIcon = pRuntime->ToInt32(newParams[1]);
 
   int iType = JSPLATFORM_ALERT_BUTTON_DEFAULT;
-  if (IsTypeKnown(newParams[2]))
+  if (IsExpandedParamKnown(newParams[2]))
     iType = pRuntime->ToInt32(newParams[2]);
 
   WideString swTitle;
-  if (IsTypeKnown(newParams[3]))
+  if (IsExpandedParamKnown(newParams[3]))
     swTitle = pRuntime->ToWideString(newParams[3]);
   else
     swTitle = JSGetStringFromID(JSMessage::kAlert);
@@ -288,7 +277,7 @@ CJS_Result CJS_App::beep(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kParamError);
 
   int type = JSPLATFORM_BEEP_DEFAULT;
-  if (IsTypeKnown(params[0]))
+  if (IsExpandedParamKnown(params[0]))
     type = pRuntime->ToInt32(params[0]);
 
   pRuntime->GetFormFillEnv()->JS_appBeep(type);
@@ -448,12 +437,12 @@ CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
       ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
                           L"cSubject", L"cMsg");
 
-  if (!IsTypeKnown(newParams[0]))
+  if (!IsExpandedParamKnown(newParams[0]))
     return CJS_Result::Failure(JSMessage::kParamError);
 
   bool bUI = pRuntime->ToBoolean(newParams[0]);
   WideString cTo;
-  if (IsTypeKnown(newParams[1])) {
+  if (IsExpandedParamKnown(newParams[1])) {
     cTo = pRuntime->ToWideString(newParams[1]);
   } else {
     // cTo parameter required when UI not invoked.
@@ -462,19 +451,19 @@ CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
   }
 
   WideString cCc;
-  if (IsTypeKnown(newParams[2]))
+  if (IsExpandedParamKnown(newParams[2]))
     cCc = pRuntime->ToWideString(newParams[2]);
 
   WideString cBcc;
-  if (IsTypeKnown(newParams[3]))
+  if (IsExpandedParamKnown(newParams[3]))
     cBcc = pRuntime->ToWideString(newParams[3]);
 
   WideString cSubject;
-  if (IsTypeKnown(newParams[4]))
+  if (IsExpandedParamKnown(newParams[4]))
     cSubject = pRuntime->ToWideString(newParams[4]);
 
   WideString cMsg;
-  if (IsTypeKnown(newParams[5]))
+  if (IsExpandedParamKnown(newParams[5]))
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
@@ -546,24 +535,24 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
       ExpandKeywordParams(pRuntime, params, 5, L"cQuestion", L"cTitle",
                           L"cDefault", L"bPassword", L"cLabel");
 
-  if (!IsTypeKnown(newParams[0]))
+  if (!IsExpandedParamKnown(newParams[0]))
     return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString swQuestion = pRuntime->ToWideString(newParams[0]);
   WideString swTitle = L"PDF";
-  if (IsTypeKnown(newParams[1]))
+  if (IsExpandedParamKnown(newParams[1]))
     swTitle = pRuntime->ToWideString(newParams[1]);
 
   WideString swDefault;
-  if (IsTypeKnown(newParams[2]))
+  if (IsExpandedParamKnown(newParams[2]))
     swDefault = pRuntime->ToWideString(newParams[2]);
 
   bool bPassword = false;
-  if (IsTypeKnown(newParams[3]))
+  if (IsExpandedParamKnown(newParams[3]))
     bPassword = pRuntime->ToBoolean(newParams[3]);
 
   WideString swLabel;
-  if (IsTypeKnown(newParams[4]))
+  if (IsExpandedParamKnown(newParams[4]))
     swLabel = pRuntime->ToWideString(newParams[4]);
 
   const int MAX_INPUT_BYTES = 2048;

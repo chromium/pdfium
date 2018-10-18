@@ -29,7 +29,6 @@
 #include "fxjs/cjs_icon.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_position.h"
-#include "fxjs/cjs_printparamsobj.h"
 #include "fxjs/cjs_publicmethods.h"
 #include "fxjs/cjs_report.h"
 #include "fxjs/cjs_scalehow.h"
@@ -124,9 +123,8 @@ void CJS_Runtime::DefineJSObjects() {
   CJS_GlobalConsts::DefineJSObjects(this);
   CJS_GlobalArrays::DefineJSObjects(this);
 
-  // ObjDefIDs 21 - 23.
+  // ObjDefIDs 21 - 22.
   CJS_TimerObj::DefineJSObjects(this);
-  CJS_PrintParamsObj::DefineJSObjects(this);
   CJS_Annot::DefineJSObjects(this);
 }
 

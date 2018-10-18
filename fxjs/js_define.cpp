@@ -313,3 +313,10 @@ std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
 
   return result;
 }
+
+bool IsExpandedParamKnown(v8::Local<v8::Value> value) {
+  return !value.IsEmpty() &&
+         (value->IsString() || value->IsNumber() || value->IsBoolean() ||
+          value->IsDate() || value->IsObject() || value->IsNull() ||
+          value->IsUndefined());
+}

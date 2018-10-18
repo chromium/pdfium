@@ -35,13 +35,15 @@ double JS_MakeDate(double day, double time);
 // with a single argument which is an object containing the actual arguments
 // as its properties. The varying arguments to this method are the property
 // names as wchar_t string literals corresponding to each positional argument.
-// The result will always contain |nKeywords| value, with unspecified ones
-// being set to type VT_unknown.
+// The result will always contain |nKeywords| value, check for the unspecified
+// ones in the result using IsExpandedParamKnown() below.
 std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& originals,
     size_t nKeywords,
     ...);
+
+bool IsExpandedParamKnown(v8::Local<v8::Value> value);
 
 // All JS classes have a name, an object defintion ID, and the ability to
 // register themselves with FXJS_V8. We never make a BASE class on its own
