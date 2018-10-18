@@ -316,21 +316,21 @@ XFA_AttributeEnum CXFA_TextParser::GetVAlign(
 
 float CXFA_TextParser::GetTabInterval(CFX_CSSComputedStyle* pStyle) const {
   WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(L"tab-interval", wsValue))
+  if (pStyle && pStyle->GetCustomStyle(L"tab-interval", &wsValue))
     return CXFA_Measurement(wsValue.AsStringView()).ToUnit(XFA_Unit::Pt);
   return 36;
 }
 
 int32_t CXFA_TextParser::CountTabs(CFX_CSSComputedStyle* pStyle) const {
   WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(L"xfa-tab-count", wsValue))
+  if (pStyle && pStyle->GetCustomStyle(L"xfa-tab-count", &wsValue))
     return wsValue.GetInteger();
   return 0;
 }
 
 bool CXFA_TextParser::IsSpaceRun(CFX_CSSComputedStyle* pStyle) const {
   WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(L"xfa-spacerun", wsValue)) {
+  if (pStyle && pStyle->GetCustomStyle(L"xfa-spacerun", &wsValue)) {
     wsValue.MakeLower();
     return wsValue == L"yes";
   }
@@ -382,7 +382,7 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
                                      const CFX_XMLNode* pXMLNode) const {
   if (pStyle) {
     WideString wsValue;
-    if (pStyle->GetCustomStyle(L"xfa-font-horizontal-scale", wsValue))
+    if (pStyle->GetCustomStyle(L"xfa-font-horizontal-scale", &wsValue))
       return wsValue.GetInteger();
 
     while (pXMLNode) {
@@ -391,7 +391,7 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
         CXFA_TextParseContext* pContext = it->second.get();
         if (pContext && pContext->m_pParentStyle &&
             pContext->m_pParentStyle->GetCustomStyle(
-                L"xfa-font-horizontal-scale", wsValue)) {
+                L"xfa-font-horizontal-scale", &wsValue)) {
           return wsValue.GetInteger();
         }
       }
@@ -407,7 +407,7 @@ int32_t CXFA_TextParser::GetVerScale(CXFA_TextProvider* pTextProvider,
                                      CFX_CSSComputedStyle* pStyle) const {
   if (pStyle) {
     WideString wsValue;
-    if (pStyle->GetCustomStyle(L"xfa-font-vertical-scale", wsValue))
+    if (pStyle->GetCustomStyle(L"xfa-font-vertical-scale", &wsValue))
       return wsValue.GetInteger();
   }
 
@@ -437,7 +437,7 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
     iUnderline = 1;
 
   WideString wsValue;
-  if (pStyle->GetCustomStyle(L"underlinePeriod", wsValue)) {
+  if (pStyle->GetCustomStyle(L"underlinePeriod", &wsValue)) {
     if (wsValue == L"word")
       iPeriod = XFA_AttributeEnum::Word;
   } else if (font) {
@@ -551,8 +551,8 @@ bool CXFA_TextParser::GetTabstops(CFX_CSSComputedStyle* pStyle,
     return false;
 
   WideString wsValue;
-  if (!pStyle->GetCustomStyle(L"xfa-tab-stops", wsValue) &&
-      !pStyle->GetCustomStyle(L"tab-stops", wsValue)) {
+  if (!pStyle->GetCustomStyle(L"xfa-tab-stops", &wsValue) &&
+      !pStyle->GetCustomStyle(L"tab-stops", &wsValue)) {
     return false;
   }
 

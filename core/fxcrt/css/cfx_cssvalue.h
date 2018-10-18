@@ -8,6 +8,7 @@
 #define CORE_FXCRT_CSS_CFX_CSSVALUE_H_
 
 #include "core/fxcrt/css/cfx_css.h"
+#include "core/fxcrt/retain_ptr.h"
 
 class CFX_CSSValue : public Retainable {
  public:

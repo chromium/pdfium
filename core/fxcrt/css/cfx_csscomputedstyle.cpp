@@ -9,16 +9,16 @@
 #include "core/fxcrt/css/cfx_cssstringvalue.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 
-CFX_CSSComputedStyle::CFX_CSSComputedStyle() {}
+CFX_CSSComputedStyle::CFX_CSSComputedStyle() = default;
 
-CFX_CSSComputedStyle::~CFX_CSSComputedStyle() {}
+CFX_CSSComputedStyle::~CFX_CSSComputedStyle() = default;
 
 bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
-                                          WideString& wsValue) const {
+                                          WideString* pValue) const {
   for (auto iter = m_CustomProperties.rbegin();
-       iter != m_CustomProperties.rend(); iter++) {
+       iter != m_CustomProperties.rend(); ++iter) {
     if (wsName == iter->name()) {
-      wsValue = iter->value();
+      *pValue = iter->value();
       return true;
     }
   }

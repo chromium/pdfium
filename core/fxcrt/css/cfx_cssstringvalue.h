@@ -8,6 +8,7 @@
 #define CORE_FXCRT_CSS_CFX_CSSSTRINGVALUE_H_
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
+#include "core/fxcrt/widestring.h"
 
 class CFX_CSSStringValue final : public CFX_CSSValue {
  public:

@@ -7,7 +7,7 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSS_H_
 #define CORE_FXCRT_CSS_CFX_CSS_H_
 
-#include "core/fxge/fx_dib.h"
+#include <stdint.h>
 
 enum CFX_CSSVALUETYPE {
   CFX_CSSVALUETYPE_Primitive = 1 << 0,
