@@ -31,7 +31,177 @@ Alert: this.title is string
 Alert: this.URL is string 
 Alert: this.zoom is undefined undefined
 Alert: this.zoomType is undefined undefined
-Alert: *** Setting properties ***
+Alert: *** Setting properties to true ***
+Alert: this.ADBE = true; yields true
+Alert: this.author = true; yields true
+Alert: this.baseURL = true; yields true
+Alert: this.bookmarkRoot = true; yields true
+Alert: this.calculate = true; yields true
+Alert: this.Collab = true; yields true
+Alert: this.creationDate = true; yields true
+Alert: this.creator = true; yields true
+Alert: this.delay = true; yields true
+Alert: this.dirty = true; yields true
+Alert: ERROR: Document.documentFileName: Cannot assign to readonly property.
+Alert: this.external = true; yields true
+Alert: ERROR: Document.filesize: Cannot assign to readonly property.
+Alert: ERROR: Document.icons: Cannot assign to readonly property.
+Alert: ERROR: Document.info: Cannot assign to readonly property.
+Alert: this.keywords = true; yields true
+Alert: this.layout = true; yields true
+Alert: this.media = true; yields true
+Alert: this.modDate = true; yields true
+Alert: this.mouseX = true; yields true
+Alert: this.mouseY = true; yields true
+Alert: ERROR: Document.numFields: Cannot assign to readonly property.
+Alert: ERROR: Document.numPages: Cannot assign to readonly property.
+Goto Page: 1
+Alert: this.pageNum = true; yields true
+Alert: this.pageWindowRect = true; yields true
+Alert: ERROR: Document.path: Cannot assign to readonly property.
+Alert: this.producer = true; yields true
+Alert: this.subject = true; yields true
+Alert: this.title = true; yields true
+Alert: ERROR: Document.URL: Cannot assign to readonly property.
+Alert: this.zoom = true; yields true
+Alert: this.zoomType = true; yields true
+Alert: *** Setting properties to false ***
+Alert: this.ADBE = false; yields false
+Alert: this.author = false; yields false
+Alert: this.baseURL = false; yields false
+Alert: this.bookmarkRoot = false; yields false
+Alert: this.calculate = false; yields false
+Alert: this.Collab = false; yields false
+Alert: this.creationDate = false; yields false
+Alert: this.creator = false; yields false
+Alert: this.delay = false; yields false
+Alert: this.dirty = false; yields false
+Alert: ERROR: Document.documentFileName: Cannot assign to readonly property.
+Alert: this.external = false; yields false
+Alert: ERROR: Document.filesize: Cannot assign to readonly property.
+Alert: ERROR: Document.icons: Cannot assign to readonly property.
+Alert: ERROR: Document.info: Cannot assign to readonly property.
+Alert: this.keywords = false; yields false
+Alert: this.layout = false; yields false
+Alert: this.media = false; yields false
+Alert: this.modDate = false; yields false
+Alert: this.mouseX = false; yields false
+Alert: this.mouseY = false; yields false
+Alert: ERROR: Document.numFields: Cannot assign to readonly property.
+Alert: ERROR: Document.numPages: Cannot assign to readonly property.
+Goto Page: 0
+Alert: this.pageNum = false; yields false
+Alert: this.pageWindowRect = false; yields false
+Alert: ERROR: Document.path: Cannot assign to readonly property.
+Alert: this.producer = false; yields false
+Alert: this.subject = false; yields false
+Alert: this.title = false; yields false
+Alert: ERROR: Document.URL: Cannot assign to readonly property.
+Alert: this.zoom = false; yields false
+Alert: this.zoomType = false; yields false
+Alert: *** Setting properties to ["red", 0, "blue", 42] ***
+Alert: this.ADBE = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.author = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.baseURL = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.bookmarkRoot = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.calculate = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.Collab = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.creationDate = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.creator = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.delay = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.dirty = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: ERROR: Document.documentFileName: Cannot assign to readonly property.
+Alert: this.external = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: ERROR: Document.filesize: Cannot assign to readonly property.
+Alert: ERROR: Document.icons: Cannot assign to readonly property.
+Alert: ERROR: Document.info: Cannot assign to readonly property.
+Alert: this.keywords = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.layout = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.media = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.modDate = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.mouseX = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.mouseY = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: ERROR: Document.numFields: Cannot assign to readonly property.
+Alert: ERROR: Document.numPages: Cannot assign to readonly property.
+Goto Page: 0
+Alert: this.pageNum = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.pageWindowRect = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: ERROR: Document.path: Cannot assign to readonly property.
+Alert: this.producer = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.subject = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.title = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: ERROR: Document.URL: Cannot assign to readonly property.
+Alert: this.zoom = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: this.zoomType = ["red", 0, "blue", 42]; yields red,0,blue,42
+Alert: *** Setting properties to {"red": 0, "blue": 42} ***
+Alert: this.ADBE = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.author = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.baseURL = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.bookmarkRoot = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.calculate = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.Collab = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.creationDate = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.creator = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.delay = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.dirty = {"red": 0, "blue": 42}; yields [object Object]
+Alert: ERROR: Document.documentFileName: Cannot assign to readonly property.
+Alert: this.external = {"red": 0, "blue": 42}; yields [object Object]
+Alert: ERROR: Document.filesize: Cannot assign to readonly property.
+Alert: ERROR: Document.icons: Cannot assign to readonly property.
+Alert: ERROR: Document.info: Cannot assign to readonly property.
+Alert: this.keywords = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.layout = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.media = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.modDate = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.mouseX = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.mouseY = {"red": 0, "blue": 42}; yields [object Object]
+Alert: ERROR: Document.numFields: Cannot assign to readonly property.
+Alert: ERROR: Document.numPages: Cannot assign to readonly property.
+Goto Page: 0
+Alert: this.pageNum = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.pageWindowRect = {"red": 0, "blue": 42}; yields [object Object]
+Alert: ERROR: Document.path: Cannot assign to readonly property.
+Alert: this.producer = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.subject = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.title = {"red": 0, "blue": 42}; yields [object Object]
+Alert: ERROR: Document.URL: Cannot assign to readonly property.
+Alert: this.zoom = {"red": 0, "blue": 42}; yields [object Object]
+Alert: this.zoomType = {"red": 0, "blue": 42}; yields [object Object]
+Alert: *** Setting properties to "red" ***
+Alert: this.ADBE = "red"; yields red
+Alert: this.author = "red"; yields red
+Alert: this.baseURL = "red"; yields red
+Alert: this.bookmarkRoot = "red"; yields red
+Alert: this.calculate = "red"; yields red
+Alert: this.Collab = "red"; yields red
+Alert: this.creationDate = "red"; yields red
+Alert: this.creator = "red"; yields red
+Alert: this.delay = "red"; yields red
+Alert: this.dirty = "red"; yields red
+Alert: ERROR: Document.documentFileName: Cannot assign to readonly property.
+Alert: this.external = "red"; yields red
+Alert: ERROR: Document.filesize: Cannot assign to readonly property.
+Alert: ERROR: Document.icons: Cannot assign to readonly property.
+Alert: ERROR: Document.info: Cannot assign to readonly property.
+Alert: this.keywords = "red"; yields red
+Alert: this.layout = "red"; yields red
+Alert: this.media = "red"; yields red
+Alert: this.modDate = "red"; yields red
+Alert: this.mouseX = "red"; yields red
+Alert: this.mouseY = "red"; yields red
+Alert: ERROR: Document.numFields: Cannot assign to readonly property.
+Alert: ERROR: Document.numPages: Cannot assign to readonly property.
+Goto Page: 0
+Alert: this.pageNum = "red"; yields red
+Alert: this.pageWindowRect = "red"; yields red
+Alert: ERROR: Document.path: Cannot assign to readonly property.
+Alert: this.producer = "red"; yields red
+Alert: this.subject = "red"; yields red
+Alert: this.title = "red"; yields red
+Alert: ERROR: Document.URL: Cannot assign to readonly property.
+Alert: this.zoom = "red"; yields red
+Alert: this.zoomType = "red"; yields red
+Alert: *** Setting properties to 3 ***
 Alert: this.ADBE = 3; yields 3
 Alert: this.author = 3; yields 3
 Alert: this.baseURL = 3; yields 3

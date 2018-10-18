@@ -119,11 +119,11 @@ function testGetProps(props) {
   }
 }
 
-function testSetProps(props) {
-  app.alert('*** Setting properties ***');
+function testSetProps(props, value) {
+  app.alert('*** Setting properties to ' + value + ' ***');
   for (var i = 0; i < props.length; ++i) {
     try {
-      var expr1 = "this." + props[i] + ' = 3;'
+      var expr1 = "this." + props[i] + ' = ' + value + ';'
       app.alert(expr1 + " yields " + eval(expr1));
     } catch (e) {
       app.alert("ERROR: " + e.toString());
@@ -132,7 +132,12 @@ function testSetProps(props) {
 }
 
 testGetProps(document_props);
-testSetProps(document_props);
+testSetProps(document_props, 'true');
+testSetProps(document_props, 'false');
+testSetProps(document_props, '["red", 0, "blue", 42]');
+testSetProps(document_props, '{"red": 0, "blue": 42}');
+testSetProps(document_props, '"red"');
+testSetProps(document_props, '3');
 testGetProps(document_props);
 endstream
 endobj
