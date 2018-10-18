@@ -10,10 +10,12 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/xml/cfx_xmldocument.h"
-#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
+class CFX_XMLDocument;
+class CFX_XMLNode;
 class CXFA_Document;
 class CXFA_Node;
 class CFX_XMLInstruction;

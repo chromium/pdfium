@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 

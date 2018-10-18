@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/xml/cfx_xmlnode.h"
 
 class CFX_XMLDocument;
 class CFX_XMLElement;
@@ -54,10 +53,10 @@ class CFX_XMLParser {
   void ProcessTargetData();
 
   CFX_XMLNode* current_node_ = nullptr;
-  RetainPtr<IFX_SeekableReadStream> m_pStream;
+  RetainPtr<IFX_SeekableReadStream> stream_;
   std::vector<wchar_t> current_text_;
-  size_t m_iXMLPlaneSize = 1024;
-  int32_t m_iEntityStart = -1;
+  size_t xml_plane_size_ = 1024;
+  int32_t entity_start_ = -1;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLPARSER_H_

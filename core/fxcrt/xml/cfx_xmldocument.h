@@ -13,7 +13,6 @@
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "third_party/base/ptr_util.h"
 
-class CFX_XMLInstruction;
 class CFX_XMLNode;
 
 class CFX_XMLDocument {

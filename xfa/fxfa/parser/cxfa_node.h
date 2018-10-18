@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/optional.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -20,6 +19,7 @@
 
 class CFGAS_GEFont;
 class CFX_DIBitmap;
+class CFX_XMLNode;
 class CXFA_Bind;
 class CXFA_Border;
 class CXFA_Calculate;

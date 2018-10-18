@@ -69,11 +69,10 @@ CFX_XMLParser::CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream) {
       wCodePage != FX_CODEPAGE_UTF8) {
     proxy->SetCodePage(FX_CODEPAGE_UTF8);
   }
-  m_pStream = proxy;
+  stream_ = proxy;
 
-  m_iXMLPlaneSize =
-      std::min(m_iXMLPlaneSize,
-               pdfium::base::checked_cast<size_t>(m_pStream->GetSize()));
+  xml_plane_size_ = std::min(
+      xml_plane_size_, pdfium::base::checked_cast<size_t>(stream_->GetSize()));
 
   current_text_.reserve(kCurrentTextReserve);
 }
@@ -91,10 +90,10 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
   FX_FILESIZE current_buffer_idx = 0;
   FX_FILESIZE buffer_size = 0;
 
-  FX_SAFE_SIZE_T alloc_size_safe = m_iXMLPlaneSize;
+  FX_SAFE_SIZE_T alloc_size_safe = xml_plane_size_;
   alloc_size_safe += 1;  // For NUL.
   if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0 ||
-      m_iXMLPlaneSize <= 0)
+      xml_plane_size_ <= 0)
     return false;
 
   std::vector<wchar_t> buffer;
@@ -110,11 +109,10 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
 
   while (true) {
     if (current_buffer_idx >= buffer_size) {
-      if (m_pStream->IsEOF())
+      if (stream_->IsEOF())
         return true;
 
-      size_t buffer_chars =
-          m_pStream->ReadBlock(buffer.data(), m_iXMLPlaneSize);
+      size_t buffer_chars = stream_->ReadBlock(buffer.data(), xml_plane_size_);
       if (buffer_chars == 0)
         return true;
 
@@ -261,7 +259,7 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           break;
         case FDE_XmlSyntaxState::AttriValue:
           if (ch == current_quote_character) {
-            if (m_iEntityStart > -1)
+            if (entity_start_ > -1)
               return false;
 
             current_quote_character = 0;
@@ -467,13 +465,13 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
 void CFX_XMLParser::ProcessTextChar(wchar_t character) {
   current_text_.push_back(character);
 
-  if (m_iEntityStart > -1 && character == L';') {
+  if (entity_start_ > -1 && character == L';') {
     // Copy the entity out into a string and remove from the vector. When we
     // copy the entity we don't want to copy out the & or the ; so we start
     // shifted by one and want to copy 2 less characters in total.
-    WideString csEntity(current_text_.data() + m_iEntityStart + 1,
-                        current_text_.size() - m_iEntityStart - 2);
-    current_text_.erase(current_text_.begin() + m_iEntityStart,
+    WideString csEntity(current_text_.data() + entity_start_ + 1,
+                        current_text_.size() - entity_start_ - 2);
+    current_text_.erase(current_text_.begin() + entity_start_,
                         current_text_.end());
 
     int32_t iLen = csEntity.GetLength();
@@ -514,9 +512,9 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
       }
     }
 
-    m_iEntityStart = -1;
-  } else if (m_iEntityStart < 0 && character == L'&') {
-    m_iEntityStart = current_text_.size() - 1;
+    entity_start_ = -1;
+  } else if (entity_start_ < 0 && character == L'&') {
+    entity_start_ = current_text_.size() - 1;
   }
 }
 
@@ -532,7 +530,7 @@ void CFX_XMLParser::ProcessTargetData() {
 
 WideString CFX_XMLParser::GetTextData() {
   WideString ret(current_text_.data(), current_text_.size());
-  m_iEntityStart = -1;
+  entity_start_ = -1;
   current_text_.clear();
   current_text_.reserve(kCurrentTextReserve);
   return ret;

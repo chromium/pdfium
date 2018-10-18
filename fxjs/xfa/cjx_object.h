@@ -14,13 +14,13 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
-#include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "fxjs/jse_define.h"
 #include "third_party/base/optional.h"
 #include "third_party/base/span.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
+class CFX_XMLElement;
 class CFXJSE_Value;
 class CFX_V8;
 class CJX_Object;
