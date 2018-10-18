@@ -225,21 +225,21 @@ void SetPageContents(const ByteString& key,
   }
 }
 
-CFX_Matrix GetMatrix(CFX_FloatRect rcAnnot,
-                     CFX_FloatRect rcStream,
+CFX_Matrix GetMatrix(const CFX_FloatRect& rcAnnot,
+                     const CFX_FloatRect& rcStream,
                      const CFX_Matrix& matrix) {
   if (rcStream.IsEmpty())
     return CFX_Matrix();
 
-  rcStream = matrix.TransformRect(rcStream);
-  rcStream.Normalize();
+  CFX_FloatRect rcTransformed = matrix.TransformRect(rcStream);
+  rcTransformed.Normalize();
 
-  float a = rcAnnot.Width() / rcStream.Width();
-  float d = rcAnnot.Height() / rcStream.Height();
+  float a = rcAnnot.Width() / rcTransformed.Width();
+  float d = rcAnnot.Height() / rcTransformed.Height();
 
-  float e = rcAnnot.left - rcStream.left * a;
-  float f = rcAnnot.bottom - rcStream.bottom * d;
-  return CFX_Matrix(a, 0, 0, d, e, f);
+  float e = rcAnnot.left - rcTransformed.left * a;
+  float f = rcAnnot.bottom - rcTransformed.bottom * d;
+  return CFX_Matrix(a, 0.0f, 0.0f, d, e, f);
 }
 
 }  // namespace
