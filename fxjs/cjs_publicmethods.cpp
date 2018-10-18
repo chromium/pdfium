@@ -65,14 +65,32 @@ namespace {
 constexpr double kDoubleCorrect = 0.000000000000001;
 #endif
 
-const wchar_t* const kMonths[] = {L"Jan", L"Feb", L"Mar", L"Apr",
-                                  L"May", L"Jun", L"Jul", L"Aug",
-                                  L"Sep", L"Oct", L"Nov", L"Dec"};
+constexpr const wchar_t* kMonths[] = {L"Jan", L"Feb", L"Mar", L"Apr",
+                                      L"May", L"Jun", L"Jul", L"Aug",
+                                      L"Sep", L"Oct", L"Nov", L"Dec"};
 
-const wchar_t* const kFullMonths[] = {L"January", L"February", L"March",
-                                      L"April",   L"May",      L"June",
-                                      L"July",    L"August",   L"September",
-                                      L"October", L"November", L"December"};
+constexpr const wchar_t* kFullMonths[] = {L"January", L"February", L"March",
+                                          L"April",   L"May",      L"June",
+                                          L"July",    L"August",   L"September",
+                                          L"October", L"November", L"December"};
+
+constexpr const wchar_t* kDateFormats[] = {L"m/d",
+                                           L"m/d/yy",
+                                           L"mm/dd/yy",
+                                           L"mm/yy",
+                                           L"d-mmm",
+                                           L"d-mmm-yy",
+                                           L"dd-mmm-yy",
+                                           L"yy-mm-dd",
+                                           L"mmm-yy",
+                                           L"mmmm-yy",
+                                           L"mmm d, yyyy",
+                                           L"mmmm d, yyyy",
+                                           L"m/d/yy h:MM tt",
+                                           L"m/d/yy HH:MM"};
+
+constexpr const wchar_t* kTimeFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss",
+                                           L"h:MM:ss tt"};
 
 template <typename T>
 T StrTrim(const T& str) {
@@ -1266,25 +1284,10 @@ CJS_Result CJS_PublicMethods::AFDate_Format(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  static constexpr const wchar_t* cFormats[] = {L"m/d",
-                                                L"m/d/yy",
-                                                L"mm/dd/yy",
-                                                L"mm/yy",
-                                                L"d-mmm",
-                                                L"d-mmm-yy",
-                                                L"dd-mmm-yy",
-                                                L"yy-mm-dd",
-                                                L"mmm-yy",
-                                                L"mmmm-yy",
-                                                L"mmm d, yyyy",
-                                                L"mmmm d, yyyy",
-                                                L"m/d/yy h:MM tt",
-                                                L"m/d/yy HH:MM"};
-
-  int iIndex =
-      WithinBoundsOrZero(pRuntime->ToInt32(params[0]), FX_ArraySize(cFormats));
+  int iIndex = WithinBoundsOrZero(pRuntime->ToInt32(params[0]),
+                                  FX_ArraySize(kDateFormats));
   std::vector<v8::Local<v8::Value>> newParams;
-  newParams.push_back(pRuntime->NewString(cFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kDateFormats[iIndex]));
   return AFDate_FormatEx(pRuntime, newParams);
 }
 
@@ -1295,25 +1298,10 @@ CJS_Result CJS_PublicMethods::AFDate_Keystroke(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  static constexpr const wchar_t* cFormats[] = {L"m/d",
-                                                L"m/d/yy",
-                                                L"mm/dd/yy",
-                                                L"mm/yy",
-                                                L"d-mmm",
-                                                L"d-mmm-yy",
-                                                L"dd-mmm-yy",
-                                                L"yy-mm-dd",
-                                                L"mmm-yy",
-                                                L"mmmm-yy",
-                                                L"mmm d, yyyy",
-                                                L"mmmm d, yyyy",
-                                                L"m/d/yy h:MM tt",
-                                                L"m/d/yy HH:MM"};
-
-  int iIndex =
-      WithinBoundsOrZero(pRuntime->ToInt32(params[0]), FX_ArraySize(cFormats));
+  int iIndex = WithinBoundsOrZero(pRuntime->ToInt32(params[0]),
+                                  FX_ArraySize(kDateFormats));
   std::vector<v8::Local<v8::Value>> newParams;
-  newParams.push_back(pRuntime->NewString(cFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kDateFormats[iIndex]));
   return AFDate_KeystrokeEx(pRuntime, newParams);
 }
 
@@ -1324,13 +1312,10 @@ CJS_Result CJS_PublicMethods::AFTime_Format(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  static constexpr const wchar_t* cFormats[] = {L"HH:MM", L"h:MM tt",
-                                                L"HH:MM:ss", L"h:MM:ss tt"};
-
-  int iIndex =
-      WithinBoundsOrZero(pRuntime->ToInt32(params[0]), FX_ArraySize(cFormats));
+  int iIndex = WithinBoundsOrZero(pRuntime->ToInt32(params[0]),
+                                  FX_ArraySize(kTimeFormats));
   std::vector<v8::Local<v8::Value>> newParams;
-  newParams.push_back(pRuntime->NewString(cFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kTimeFormats[iIndex]));
   return AFDate_FormatEx(pRuntime, newParams);
 }
 
@@ -1340,13 +1325,10 @@ CJS_Result CJS_PublicMethods::AFTime_Keystroke(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  static constexpr const wchar_t* cFormats[] = {L"HH:MM", L"h:MM tt",
-                                                L"HH:MM:ss", L"h:MM:ss tt"};
-
-  int iIndex =
-      WithinBoundsOrZero(pRuntime->ToInt32(params[0]), FX_ArraySize(cFormats));
+  int iIndex = WithinBoundsOrZero(pRuntime->ToInt32(params[0]),
+                                  FX_ArraySize(kTimeFormats));
   std::vector<v8::Local<v8::Value>> newParams;
-  newParams.push_back(pRuntime->NewString(cFormats[iIndex]));
+  newParams.push_back(pRuntime->NewString(kTimeFormats[iIndex]));
   return AFDate_KeystrokeEx(pRuntime, newParams);
 }
 
