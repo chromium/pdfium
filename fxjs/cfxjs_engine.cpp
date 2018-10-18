@@ -15,6 +15,7 @@
 #include "fxjs/cjs_object.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "v8/include/v8-util.h"
 
 class CFXJS_PerObjectData;
 
@@ -588,6 +589,10 @@ v8::Local<v8::Object> CFXJS_Engine::GetThisObj() {
 
 void CFXJS_Engine::Error(const WideString& message) {
   GetIsolate()->ThrowException(NewString(message.AsStringView()));
+}
+
+v8::Local<v8::Context> CFXJS_Engine::GetV8Context() {
+  return v8::Local<v8::Context>::New(GetIsolate(), m_V8Context);
 }
 
 // static

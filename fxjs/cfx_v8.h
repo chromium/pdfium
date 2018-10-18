@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "v8/include/v8-util.h"
 #include "v8/include/v8.h"
 
 class CFX_V8 {

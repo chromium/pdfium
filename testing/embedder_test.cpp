@@ -94,6 +94,12 @@ void EmbedderTest::TearDown() {
   delete loader_;
 }
 
+#ifdef PDF_ENABLE_V8
+void EmbedderTest::SetExternalIsolate(void* isolate) {
+  external_isolate_ = static_cast<v8::Isolate*>(isolate);
+}
+#endif  // PDF_ENABLE_V8
+
 bool EmbedderTest::CreateEmptyDocument() {
   document_ = FPDF_CreateNewDocument();
   if (!document_)

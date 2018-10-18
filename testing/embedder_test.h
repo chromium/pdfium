@@ -20,10 +20,6 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-#ifdef PDF_ENABLE_V8
-#include "v8/include/v8.h"
-#endif  // PDF_ENABLE_v8
-
 class TestLoader;
 
 // This class is used to load a PDF document, and then run programatic
@@ -75,9 +71,7 @@ class EmbedderTest : public ::testing::Test,
 
 #ifdef PDF_ENABLE_V8
   // Call before SetUp to pass shared isolate, otherwise PDFium creates one.
-  void SetExternalIsolate(void* isolate) {
-    external_isolate_ = static_cast<v8::Isolate*>(isolate);
-  }
+  void SetExternalIsolate(void* isolate);
 #endif  // PDF_ENABLE_V8
 
   void SetDelegate(Delegate* delegate) {
