@@ -24,11 +24,11 @@ Alert: this.numFields is number 0
 Alert: this.numPages is number 4
 Alert: this.pageNum is undefined undefined
 Alert: this.pageWindowRect is undefined undefined
-Alert: this.path is string /
+Alert: this.path is string /myfile.pdf
 Alert: this.producer is string 
 Alert: this.subject is string 
 Alert: this.title is string 
-Alert: this.URL is string 
+Alert: this.URL is string myfile.pdf
 Alert: this.zoom is undefined undefined
 Alert: this.zoomType is undefined undefined
 Alert: *** Setting properties to true ***
@@ -261,10 +261,10 @@ Alert: this.numFields is number 0
 Alert: this.numPages is number 4
 Alert: this.pageNum is undefined undefined
 Alert: this.pageWindowRect is undefined undefined
-Alert: this.path is string /
+Alert: this.path is string /myfile.pdf
 Alert: this.producer is string 3
 Alert: this.subject is string 3
 Alert: this.title is string 3
-Alert: this.URL is string 
+Alert: this.URL is string myfile.pdf
 Alert: this.zoom is undefined undefined
 Alert: this.zoomType is undefined undefined

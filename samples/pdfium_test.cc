@@ -174,6 +174,10 @@ int ExampleAppAlert(IPDF_JSPLATFORM*,
   return 0;
 }
 
+void ExampleAppBeep(IPDF_JSPLATFORM*, int type) {
+  printf("BEEP!!! %d\n", type);
+}
+
 int ExampleAppResponse(IPDF_JSPLATFORM*,
                        FPDF_WIDESTRING question,
                        FPDF_WIDESTRING title,
@@ -197,12 +201,12 @@ int ExampleAppResponse(IPDF_JSPLATFORM*,
   return 4;
 }
 
-void ExampleAppBeep(IPDF_JSPLATFORM*, int type) {
-  printf("BEEP!!! %d\n", type);
-}
-
-void ExampleDocGotoPage(IPDF_JSPLATFORM*, int page_number) {
-  printf("Goto Page: %d\n", page_number);
+int ExampleDocGetFilePath(IPDF_JSPLATFORM*, void* file_path, int length) {
+  static const char kPath[] = "myfile.pdf";
+  constexpr int kRequired = static_cast<int>(sizeof(kPath));
+  if (file_path && length >= kRequired)
+    memcpy(file_path, kPath, kRequired);
+  return kRequired;
 }
 
 void ExampleDocMail(IPDF_JSPLATFORM*,
@@ -231,6 +235,25 @@ void ExampleDocPrint(IPDF_JSPLATFORM*,
                      FPDF_BOOL bAnnotations) {
   printf("Doc Print: %d, %d, %d, %d, %d, %d, %d, %d\n", bUI, nStart, nEnd,
          bSilent, bShrinkToFit, bPrintAsImage, bReverse, bAnnotations);
+}
+
+void ExampleDocSubmitForm(IPDF_JSPLATFORM*,
+                          void* formData,
+                          int length,
+                          FPDF_WIDESTRING url) {
+  printf("Doc Submit Form: url=%ls\n", GetPlatformWString(url).c_str());
+}
+
+void ExampleDocGotoPage(IPDF_JSPLATFORM*, int page_number) {
+  printf("Goto Page: %d\n", page_number);
+}
+
+int ExampleFieldBrowse(IPDF_JSPLATFORM*, void* file_path, int length) {
+  static const char kPath[] = "selected.txt";
+  constexpr int kRequired = static_cast<int>(sizeof(kPath));
+  if (file_path && length >= kRequired)
+    memcpy(file_path, kPath, kRequired);
+  return kRequired;
 }
 #endif  // PDF_ENABLE_V8
 
@@ -733,11 +756,14 @@ void RenderPdf(const std::string& name,
   IPDF_JSPLATFORM platform_callbacks = {};
   platform_callbacks.version = 3;
   platform_callbacks.app_alert = ExampleAppAlert;
-  platform_callbacks.app_response = ExampleAppResponse;
   platform_callbacks.app_beep = ExampleAppBeep;
-  platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
+  platform_callbacks.app_response = ExampleAppResponse;
+  platform_callbacks.Doc_getFilePath = ExampleDocGetFilePath;
   platform_callbacks.Doc_mail = ExampleDocMail;
   platform_callbacks.Doc_print = ExampleDocPrint;
+  platform_callbacks.Doc_submitForm = ExampleDocSubmitForm;
+  platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
+  platform_callbacks.Field_browse = ExampleFieldBrowse;
 #endif  // PDF_ENABLE_V8
 
   FPDF_FORMFILLINFO_PDFiumTest form_callbacks = {};
