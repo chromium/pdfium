@@ -145,6 +145,7 @@ class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
   std::map<uint32_t, std::vector<RetainPtr<CFGAS_GEFont>>> m_Hash2Fonts;
+  std::set<wchar_t> m_FailedUnicodesSet;
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
@@ -155,7 +156,6 @@ class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
       m_Hash2CandidateList;
   std::map<RetainPtr<CFGAS_GEFont>, RetainPtr<IFX_SeekableReadStream>>
       m_IFXFont2FileRead;
-  std::set<wchar_t> m_FailedUnicodesSet;
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 };
 

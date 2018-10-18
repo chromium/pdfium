@@ -27,6 +27,23 @@
 #include "xfa/fgas/font/cfx_fontsourceenum_file.h"
 #endif
 
+namespace {
+
+bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
+  FXFT_Face pFace = pFont->GetDevFont()->GetFace();
+  FXFT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
+  if (FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE) != 0)
+    return false;
+
+  if (FXFT_Get_Char_Index(pFace, wcUnicode) == 0) {
+    FXFT_Set_Charmap(pFace, charmap);
+    return false;
+  }
+  return true;
+}
+
+}  // namespace
+
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
 namespace {
@@ -182,6 +199,11 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicodeImpl(
     return nullptr;
 
   pFont->SetLogicalFontStyle(dwFontStyles);
+  if (!VerifyUnicode(pFont, wUnicode)) {
+    m_FailedUnicodesSet.insert(wUnicode);
+    return nullptr;
+  }
+
   m_Hash2Fonts[dwHash].push_back(pFont);
   return pFont;
 }
@@ -779,26 +801,6 @@ void CFGAS_FontMgr::RegisterFaces(
 
 #endif  // _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
 
-namespace {
-
-bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
-  if (!pFont)
-    return false;
-
-  FXFT_Face pFace = pFont->GetDevFont()->GetFace();
-  FXFT_CharMap charmap = FXFT_Get_Face_Charmap(pFace);
-  if (FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE) != 0)
-    return false;
-
-  if (FXFT_Get_Char_Index(pFace, wcUnicode) == 0) {
-    FXFT_Set_Charmap(pFace, charmap);
-    return false;
-  }
-  return true;
-}
-
-}  // namespace
-
 RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     uint16_t wCodePage,
     uint32_t dwFontStyles,
@@ -857,10 +859,8 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
     wchar_t wUnicode,
     uint32_t dwFontStyles,
     const wchar_t* pszFontFamily) {
-#if _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
   if (pdfium::ContainsKey(m_FailedUnicodesSet, wUnicode))
     return nullptr;
-#endif  // _FX_PLATFORM_ != _FX_PLATFORM_WINDOWS_
 
   const FGAS_FONTUSB* x = FGAS_GetUnicodeBitField(wUnicode);
   uint16_t wCodePage = x ? x->wCodePage : 0xFFFF;
