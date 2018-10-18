@@ -114,6 +114,13 @@ class CFGAS_FontMgr final : public Observable<CFGAS_FontMgr> {
   bool EnumFonts();
 
  private:
+  RetainPtr<CFGAS_GEFont> GetFontByUnicodeImpl(wchar_t wUnicode,
+                                               uint32_t dwFontStyles,
+                                               const wchar_t* pszFontFamily,
+                                               uint32_t dwHash,
+                                               uint16_t wCodePage,
+                                               uint16_t wBitField);
+
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const FX_FONTDESCRIPTOR* FindFont(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
