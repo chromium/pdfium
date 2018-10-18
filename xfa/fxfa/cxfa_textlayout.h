@@ -10,10 +10,10 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fxfa/cxfa_textparser.h"
 
 class CFDE_RenderDevice;
@@ -28,6 +28,8 @@ class CXFA_PieceLine;
 class CXFA_TextPiece;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
+class FXTEXT_CHARPOS;
+struct FX_RTFTEXTOBJ;
 
 class CXFA_TextLayout {
  public:
@@ -54,7 +56,7 @@ class CXFA_TextLayout {
     return &m_pieceLines;
   }
 
-  bool m_bHasBlock;
+  bool m_bHasBlock = false;
   std::vector<int32_t> m_Blocks;
 
  private:
@@ -91,7 +93,6 @@ class CXFA_TextLayout {
                       bool bEndBreak);
   void EndBreak(CFX_BreakType dwStatus, float* pLinePos, bool bDefault);
   bool IsEnd(bool bSavePieces);
-  void ProcessText(WideString& wsText);
   void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFX_RenderDevice* pDevice,
                     CXFA_PieceLine* pPieceLine,
@@ -109,18 +110,18 @@ class CXFA_TextLayout {
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
 
-  UnownedPtr<CXFA_FFDoc> m_pDoc;
-  CXFA_TextProvider* m_pTextProvider;  // Raw, TextProvider owned by tree node.
-  CXFA_Node* m_pTextDataNode;          // Raw, this class owned by tree node.
-  bool m_bRichText;
+  bool m_bRichText = false;
+  bool m_bBlockContinue = true;
+  int32_t m_iLines = 0;
+  float m_fMaxWidth = 0;
+  UnownedPtr<CXFA_FFDoc> const m_pDoc;
+  CXFA_TextProvider* const m_pTextProvider;  // Raw, owned by tree node.
+  CXFA_Node* m_pTextDataNode = nullptr;      // Raw, owned by tree node.
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<CXFA_LoaderContext> m_pLoader;
-  int32_t m_iLines;
-  float m_fMaxWidth;
   CXFA_TextParser m_textParser;
   std::vector<std::unique_ptr<CXFA_PieceLine>> m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;
-  bool m_bBlockContinue;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTLAYOUT_H_

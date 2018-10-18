@@ -21,6 +21,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fxfa/cxfa_linkuserdata.h"
 #include "xfa/fxfa/cxfa_loadercontext.h"
 #include "xfa/fxfa/cxfa_pieceline.h"
@@ -35,16 +36,37 @@
 
 #define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
 
+namespace {
+
+void ProcessText(WideString* pText) {
+  int32_t iLen = pText->GetLength();
+  if (iLen == 0)
+    return;
+
+  int32_t iTrimLeft = 0;
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    pdfium::span<wchar_t> psz = pText->GetBuffer(iLen);
+    wchar_t wPrev = 0;
+    for (int32_t i = 0; i < iLen; i++) {
+      wchar_t wch = psz[i];
+      if (wch < 0x20)
+        wch = 0x20;
+      if (wch == 0x20 && wPrev == 0x20)
+        continue;
+
+      wPrev = wch;
+      psz[iTrimLeft++] = wch;
+    }
+  }
+  pText->ReleaseBuffer(iTrimLeft);
+}
+
+}  // namespace
+
 CXFA_TextLayout::CXFA_TextLayout(CXFA_FFDoc* doc,
                                  CXFA_TextProvider* pTextProvider)
-    : m_bHasBlock(false),
-      m_pDoc(doc),
-      m_pTextProvider(pTextProvider),
-      m_pTextDataNode(nullptr),
-      m_bRichText(false),
-      m_iLines(0),
-      m_fMaxWidth(0),
-      m_bBlockContinue(true) {
+    : m_pDoc(doc), m_pTextProvider(pTextProvider) {
   ASSERT(m_pTextProvider);
 }
 
@@ -360,7 +382,7 @@ float CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
               (m_pLoader->m_BlocksHeight[iBlockIndex * 2] == iBlockIndex)) {
             m_pLoader->m_BlocksHeight[iBlockIndex * 2 + 1] = fCalcHeight;
           } else {
-            m_pLoader->m_BlocksHeight.push_back((float)iBlockIndex);
+            m_pLoader->m_BlocksHeight.push_back(iBlockIndex);
             m_pLoader->m_BlocksHeight.push_back(fCalcHeight);
           }
         }
@@ -783,7 +805,7 @@ bool CXFA_TextLayout::LoadRichText(
 
         int32_t iLength = wsText.GetLength();
         if (iLength > 0 && bContentNode && !bSpaceRun)
-          ProcessText(wsText);
+          ProcessText(&wsText);
 
         if (m_pLoader) {
           if (wsText.GetLength() > 0 &&
@@ -912,30 +934,6 @@ bool CXFA_TextLayout::IsEnd(bool bSavePieces) {
   return false;
 }
 
-void CXFA_TextLayout::ProcessText(WideString& wsText) {
-  int32_t iLen = wsText.GetLength();
-  if (iLen == 0)
-    return;
-
-  int32_t iTrimLeft = 0;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> psz = wsText.GetBuffer(iLen);
-    wchar_t wPrev = 0;
-    for (int32_t i = 0; i < iLen; i++) {
-      wchar_t wch = psz[i];
-      if (wch < 0x20)
-        wch = 0x20;
-      if (wch == 0x20 && wPrev == 0x20)
-        continue;
-
-      wPrev = wch;
-      psz[iTrimLeft++] = wch;
-    }
-  }
-  wsText.ReleaseBuffer(iTrimLeft);
-}
-
 void CXFA_TextLayout::EndBreak(CFX_BreakType dwStatus,
                                float* pLinePos,
                                bool bSavePieces) {
@@ -1041,7 +1039,8 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
       pTP->fFontSize = m_textParser.GetFontSize(m_pTextProvider, pStyle.Get());
       pTP->rtPiece.left = pPiece->m_iStartPos / 20000.0f;
       pTP->rtPiece.width = pPiece->m_iWidth / 20000.0f;
-      pTP->rtPiece.height = (float)pPiece->m_iFontSize * fVerScale / 20.0f;
+      pTP->rtPiece.height =
+          static_cast<float>(pPiece->m_iFontSize) * fVerScale / 20.0f;
       float fBaseLineTemp =
           m_textParser.GetBaseline(m_pTextProvider, pStyle.Get());
       pTP->rtPiece.top = fBaseLineTemp;
@@ -1079,7 +1078,8 @@ void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
           m_pTextProvider, pStyle.Get(), m_iLines == 0, fVerScale);
       if (fBaseLine > 0) {
         float fLineHeightTmp =
-            fBaseLine + (float)pPiece->m_iFontSize * fVerScale / 20.0f;
+            fBaseLine +
+            static_cast<float>(pPiece->m_iFontSize) * fVerScale / 20.0f;
         if (fLineHeight < fLineHeightTmp) {
           fLineHeight = fLineHeightTmp;
         }
