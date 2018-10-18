@@ -18,17 +18,17 @@
 
 class CFDE_RenderDevice;
 class CFX_CSSComputedStyle;
-class CFX_RenderDevice;
 class CFX_RTFBreak;
+class CFX_RenderDevice;
 class CFX_XMLNode;
 class CXFA_LinkUserData;
-class CXFA_LoaderContext;
 class CXFA_Node;
 class CXFA_PieceLine;
 class CXFA_TextPiece;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
 class FXTEXT_CHARPOS;
+struct CXFA_LoaderContext;
 struct FX_RTFTEXTOBJ;
 
 class CXFA_TextLayout {

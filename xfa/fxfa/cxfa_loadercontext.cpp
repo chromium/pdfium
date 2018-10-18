@@ -6,16 +6,8 @@
 
 #include "xfa/fxfa/cxfa_loadercontext.h"
 
-CXFA_LoaderContext::CXFA_LoaderContext()
-    : m_bSaveLineHeight(false),
-      m_fWidth(0),
-      m_fHeight(0),
-      m_fLastPos(0),
-      m_fStartLineOffset(0),
-      m_iChar(0),
-      m_iTotalLines(-1),
-      m_dwFlags(0),
-      m_pXMLNode(nullptr),
-      m_pNode(nullptr) {}
+#include "core/fxcrt/css/cfx_csscomputedstyle.h"
 
-CXFA_LoaderContext::~CXFA_LoaderContext() {}
+CXFA_LoaderContext::CXFA_LoaderContext() = default;
+
+CXFA_LoaderContext::~CXFA_LoaderContext() = default;

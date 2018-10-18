@@ -9,32 +9,31 @@
 
 #include <vector>
 
-#include "core/fxcrt/css/cfx_csscomputedstyle.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+class CFX_CSSComputedStyle;
 class CFX_XMLNode;
 class CXFA_Node;
 
-class CXFA_LoaderContext {
- public:
+struct CXFA_LoaderContext {
   CXFA_LoaderContext();
   ~CXFA_LoaderContext();
 
-  bool m_bSaveLineHeight;
-  float m_fWidth;
-  float m_fHeight;
-  float m_fLastPos;
-  float m_fStartLineOffset;
-  int32_t m_iChar;
-  int32_t m_iLines;
-  int32_t m_iTotalLines;
-  uint32_t m_dwFlags;
-  UnownedPtr<const CFX_XMLNode> m_pXMLNode;
-  UnownedPtr<CXFA_Node> m_pNode;
-  RetainPtr<CFX_CSSComputedStyle> m_pParentStyle;
-  std::vector<float> m_lineHeights;
-  std::vector<float> m_BlocksHeight;
+  bool bSaveLineHeight = false;
+  float fWidth = 0;
+  float fHeight = 0;
+  float fLastPos = 0;
+  float fStartLineOffset = 0;
+  int32_t iChar = 0;
+  int32_t iTotalLines = -1;
+  uint32_t dwFlags = 0;
+  UnownedPtr<const CFX_XMLNode> pXMLNode;
+  UnownedPtr<CXFA_Node> pNode;
+  RetainPtr<CFX_CSSComputedStyle> pParentStyle;
+  std::vector<float> lineHeights;
+  std::vector<float> blocksHeight;
 };
 
 #endif  // XFA_FXFA_CXFA_LOADERCONTEXT_H_
