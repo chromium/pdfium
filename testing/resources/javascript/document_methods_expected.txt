@@ -109,14 +109,22 @@ Alert: PASS: this.gotoNamedDest(1, 2) threw error Document.gotoNamedDest: Incorr
 Alert: PASS: this.gotoNamedDest("chicago") threw error Document.gotoNamedDest: Object no longer exists.
 Alert: PASS: typeof this.mailDoc = function
 Mail Msg: 1, to=, cc=, bcc=, subject=, body=
-Alert: PASS: this.mailDoc(true) = undefined
+Alert: PASS: this.mailDoc() = undefined
 Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=Lottery Winner, body=You won the lottery!
 Alert: PASS: this.mailDoc(false, "user@example.com", "cc@example.com", "bcc@example.com", "Lottery Winner", "You won the lottery!") = undefined
+Mail Msg: 1, to=, cc=, bcc=, subject=, body=
+Alert: PASS: this.mailDoc({}) = undefined
+Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=LotteryWinner, body=You won the lottery!
+Alert: PASS: this.mailDoc({"bUI": false, "cTo": "user@example.com", "cCc": "cc@example.com", "cBcc": "bcc@example.com", "cSubject": "LotteryWinner", "cMsg": "You won the lottery!", "bogus": "yes"}) = undefined
 Alert: PASS: typeof this.mailForm = function
 Mail Msg: 1, to=, cc=, bcc=, subject=, body=
-Alert: PASS: this.mailForm(true) = undefined
+Alert: PASS: this.mailForm() = undefined
 Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=Lottery Winner, body=You won the lottery!
 Alert: PASS: this.mailForm(false, "user@example.com", "cc@example.com", "bcc@example.com", "Lottery Winner", "You won the lottery!") = undefined
+Mail Msg: 1, to=, cc=, bcc=, subject=, body=
+Alert: PASS: this.mailForm({}) = undefined
+Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=LotteryWinner, body=You won the lottery!
+Alert: PASS: this.mailForm({"bUI": false, "cTo": "user@example.com", "cCc": "cc@example.com", "cBcc": "bcc@example.com", "cSubject": "LotteryWinner", "cMsg": "You won the lottery!", "bogus": "yes"}) = undefined
 Alert: PASS: typeof this.print = function
 Doc Print: 1, 0, 0, 0, 0, 0, 0, 0
 Alert: PASS: this.print() = undefined

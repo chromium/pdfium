@@ -260,9 +260,15 @@ function testMailDoc() {
   // TODO(tsepez): test with no permissions.
 
   // Success cases.
-  expect('this.mailDoc(true)', undefined);
+  expect('this.mailDoc()', undefined);
   expect('this.mailDoc(false, "user@example.com", "cc@example.com", ' +
              '"bcc@example.com", "Lottery Winner", "You won the lottery!")',
+         undefined);
+  expect('this.mailDoc({})', undefined);
+  expect('this.mailDoc({"bUI": false, "cTo": "user@example.com", ' +
+            '"cCc": "cc@example.com", "cBcc": "bcc@example.com", ' +
+            '"cSubject": "LotteryWinner", "cMsg": "You won the lottery!", ' +
+            '"bogus": "yes"})',
          undefined);
 }
 
@@ -273,9 +279,15 @@ function testMailForm() {
   // TODO(tsepez): test with no permissions.
 
   // Success cases.
-  expect('this.mailForm(true)', undefined);
+  expect('this.mailForm()', undefined);
   expect('this.mailForm(false, "user@example.com", "cc@example.com", ' +
              '"bcc@example.com", "Lottery Winner", "You won the lottery!")',
+         undefined);
+  expect('this.mailForm({})', undefined);
+  expect('this.mailForm({"bUI": false, "cTo": "user@example.com", ' +
+            '"cCc": "cc@example.com", "cBcc": "bcc@example.com", ' +
+            '"cSubject": "LotteryWinner", "cMsg": "You won the lottery!", ' +
+            '"bogus": "yes"})',
          undefined);
 }
 

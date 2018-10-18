@@ -377,42 +377,40 @@ CJS_Result CJS_Document::importTextData(
 CJS_Result CJS_Document::mailDoc(
     CJS_Runtime* pRuntime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  // TODO(tsepez): Check maximum number of allowed params.
-  size_t nLength = params.size();
-  bool bUI = true;
-  WideString cTo;
-  WideString cCc;
-  WideString cBcc;
-  WideString cSubject;
-  WideString cMsg;
+  if (!m_pFormFillEnv)
+    return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  if (nLength > 0 && params[0]->IsObject()) {
-    v8::Local<v8::Object> pObj = pRuntime->ToObject(params[0]);
-    bUI = pRuntime->ToBoolean(pRuntime->GetObjectProperty(pObj, L"bUI"));
-    cTo = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cTo"));
-    cCc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cCc"));
-    cBcc = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cBcc"));
-    cSubject =
-        pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cSubject"));
-    cMsg = pRuntime->ToWideString(pRuntime->GetObjectProperty(pObj, L"cMsg"));
-  } else {
-    if (nLength > 0)
-      bUI = pRuntime->ToBoolean(params[0]);
-    if (nLength > 1)
-      cTo = pRuntime->ToWideString(params[1]);
-    if (nLength > 2)
-      cCc = pRuntime->ToWideString(params[2]);
-    if (nLength > 3)
-      cBcc = pRuntime->ToWideString(params[3]);
-    if (nLength > 4)
-      cSubject = pRuntime->ToWideString(params[4]);
-    if (nLength > 5)
-      cMsg = pRuntime->ToWideString(params[5]);
-  }
+  std::vector<v8::Local<v8::Value>> newParams =
+      ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
+                          L"cSubject", L"cMsg");
+
+  bool bUI = true;
+  if (IsExpandedParamKnown(newParams[0]))
+    bUI = pRuntime->ToBoolean(newParams[0]);
+
+  WideString cTo;
+  if (IsExpandedParamKnown(newParams[1]))
+    cTo = pRuntime->ToWideString(newParams[1]);
+
+  WideString cCc;
+  if (IsExpandedParamKnown(newParams[2]))
+    cCc = pRuntime->ToWideString(newParams[2]);
+
+  WideString cBcc;
+  if (IsExpandedParamKnown(newParams[3]))
+    cBcc = pRuntime->ToWideString(newParams[3]);
+
+  WideString cSubject;
+  if (IsExpandedParamKnown(newParams[4]))
+    cSubject = pRuntime->ToWideString(newParams[4]);
+
+  WideString cMsg;
+  if (IsExpandedParamKnown(newParams[5]))
+    cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
-  pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject, cCc, cBcc, cMsg);
+  m_pFormFillEnv->JS_docmailForm(nullptr, 0, bUI, cTo, cSubject, cCc, cBcc,
+                                 cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
@@ -433,19 +431,38 @@ CJS_Result CJS_Document::mailForm(
   if (sTextBuf.GetLength() == 0)
     return CJS_Result::Failure(L"Bad FDF format.");
 
-  size_t nLength = params.size();
-  bool bUI = nLength > 0 ? pRuntime->ToBoolean(params[0]) : true;
-  WideString cTo = nLength > 1 ? pRuntime->ToWideString(params[1]) : L"";
-  WideString cCc = nLength > 2 ? pRuntime->ToWideString(params[2]) : L"";
-  WideString cBcc = nLength > 3 ? pRuntime->ToWideString(params[3]) : L"";
-  WideString cSubject = nLength > 4 ? pRuntime->ToWideString(params[4]) : L"";
-  WideString cMsg = nLength > 5 ? pRuntime->ToWideString(params[5]) : L"";
-  std::vector<char> mutable_buf(sTextBuf.begin(), sTextBuf.end());
+  std::vector<v8::Local<v8::Value>> newParams =
+      ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc", L"cBcc",
+                          L"cSubject", L"cMsg");
 
+  bool bUI = true;
+  if (IsExpandedParamKnown(newParams[0]))
+    bUI = pRuntime->ToBoolean(newParams[0]);
+
+  WideString cTo;
+  if (IsExpandedParamKnown(newParams[1]))
+    cTo = pRuntime->ToWideString(newParams[1]);
+
+  WideString cCc;
+  if (IsExpandedParamKnown(newParams[2]))
+    cCc = pRuntime->ToWideString(newParams[2]);
+
+  WideString cBcc;
+  if (IsExpandedParamKnown(newParams[3]))
+    cBcc = pRuntime->ToWideString(newParams[3]);
+
+  WideString cSubject;
+  if (IsExpandedParamKnown(newParams[4]))
+    cSubject = pRuntime->ToWideString(newParams[4]);
+
+  WideString cMsg;
+  if (IsExpandedParamKnown(newParams[5]))
+    cMsg = pRuntime->ToWideString(newParams[5]);
+
+  std::vector<char> mutable_buf(sTextBuf.begin(), sTextBuf.end());
   pRuntime->BeginBlock();
-  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
-  pFormFillEnv->JS_docmailForm(mutable_buf.data(), mutable_buf.size(), bUI, cTo,
-                               cSubject, cCc, cBcc, cMsg);
+  m_pFormFillEnv->JS_docmailForm(mutable_buf.data(), mutable_buf.size(), bUI,
+                                 cTo, cSubject, cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
