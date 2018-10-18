@@ -6,6 +6,8 @@
 
 #include "fxjs/global_timer.h"
 
+#include "fxjs/cjs_app.h"
+
 GlobalTimer::GlobalTimer(CJS_App* pObj,
                          CPDFSDK_FormFillEnvironment* pFormFillEnv,
                          CJS_Runtime* pRuntime,

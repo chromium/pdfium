@@ -13,13 +13,15 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_v8.h"
-#include "fxjs/cfxjse_formcalc_context.h"
 #include "v8/include/v8.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_script.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
+class CFXJSE_Class;
+class CFXJSE_Context;
+class CFXJSE_FormCalcContext;
 class CFXJSE_ResolveProcessor;
 class CJS_Runtime;
 class CXFA_List;

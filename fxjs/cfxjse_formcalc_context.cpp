@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/locale_iface.h"
+#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_engine.h"
@@ -6180,12 +6181,11 @@ CFXJSE_FormCalcContext::CFXJSE_FormCalcContext(v8::Isolate* pScriptIsolate,
                                                CFXJSE_Context* pScriptContext,
                                                CXFA_Document* pDoc)
     : m_pIsolate(pScriptIsolate),
-      m_pFMClass(CFXJSE_Class::Create(pScriptContext,
-                                      &kFormCalcFM2JSDescriptor,
-                                      false)),
       m_pValue(pdfium::MakeUnique<CFXJSE_Value>(pScriptIsolate)),
       m_pDocument(pDoc) {
-  m_pValue.get()->SetObject(this, m_pFMClass);
+  m_pValue->SetObject(
+      this,
+      CFXJSE_Class::Create(pScriptContext, &kFormCalcFM2JSDescriptor, false));
 }
 
 CFXJSE_FormCalcContext::~CFXJSE_FormCalcContext() = default;

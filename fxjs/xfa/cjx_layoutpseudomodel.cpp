@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_engine.h"
 #include "fxjs/cfxjse_value.h"
 #include "fxjs/js_resources.h"

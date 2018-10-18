@@ -8,7 +8,6 @@
 #define FXJS_XFA_CJX_NODE_H_
 
 #include "fxjs/jse_define.h"
-#include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/cjx_tree.h"
 #include "xfa/fxfa/fxfa_basic.h"
 

@@ -11,9 +11,10 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "fxjs/cfxjse_arguments.h"
+#include "fxjs/fxjse.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
+class CFXJSE_Arguments;
 class CFXJSE_Context;
 class CFX_WideTextBuf;
 class CXFA_Document;
@@ -402,7 +403,6 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   void ThrowException(const WideString& str) const;
 
   UnownedPtr<v8::Isolate> m_pIsolate;
-  CFXJSE_Class* m_pFMClass;
   std::unique_ptr<CFXJSE_Value> m_pValue;
   UnownedPtr<CXFA_Document> const m_pDocument;
 };

@@ -9,7 +9,10 @@
 
 #include <map>
 
-#include "fxjs/cjs_app.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "fxjs/cjs_runtime.h"
+
+class CJS_App;
 
 class GlobalTimer {
  public:

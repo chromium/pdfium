@@ -7,6 +7,7 @@
 #include "fxjs/cjs_timerobj.h"
 
 #include "fxjs/global_timer.h"
+#include "fxjs/js_define.h"
 
 int CJS_TimerObj::ObjDefnID = -1;
 
