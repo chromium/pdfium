@@ -55,7 +55,7 @@ function test(size) {
 try {
   test(1000);
   test(2000000);
-  test(4000000000);
+  test(2147483647);
 } catch (e) {
   app.alert("Caught error " + e);
 }
