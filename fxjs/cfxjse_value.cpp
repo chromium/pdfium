@@ -406,8 +406,7 @@ bool CFXJSE_Value::ToBoolean() const {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(GetIsolate(), m_hValue);
-  return hValue->BooleanValue(GetIsolate()->GetCurrentContext())
-      .FromMaybe(false);
+  return hValue->BooleanValue(GetIsolate());
 }
 
 float CFXJSE_Value::ToFloat() const {

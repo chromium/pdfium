@@ -150,11 +150,7 @@ int CFX_V8::ToInt32(v8::Local<v8::Value> pValue) {
 bool CFX_V8::ToBoolean(v8::Local<v8::Value> pValue) {
   if (pValue.IsEmpty())
     return false;
-  v8::Local<v8::Context> context = m_pIsolate->GetCurrentContext();
-  v8::MaybeLocal<v8::Boolean> maybe_boolean = pValue->ToBoolean(context);
-  if (maybe_boolean.IsEmpty())
-    return false;
-  return maybe_boolean.ToLocalChecked()->Value();
+  return pValue->BooleanValue(m_pIsolate.Get());
 }
 
 double CFX_V8::ToDouble(v8::Local<v8::Value> pValue) {
