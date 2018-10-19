@@ -141,6 +141,22 @@ static_assert(static_cast<int>(FormFieldType::kXFA_TextField) ==
 static_assert(kFormFieldTypeCount == FPDF_FORMFIELD_COUNT,
               "Number of form field types must match");
 
+static_assert(static_cast<int>(CPDF_AAction::CloseDocument) ==
+                  FPDFDOC_AACTION_WC,
+              "CloseDocument action must match");
+static_assert(static_cast<int>(CPDF_AAction::SaveDocument) ==
+                  FPDFDOC_AACTION_WS,
+              "SaveDocument action must match");
+static_assert(static_cast<int>(CPDF_AAction::DocumentSaved) ==
+                  FPDFDOC_AACTION_DS,
+              "DocumentSaved action must match");
+static_assert(static_cast<int>(CPDF_AAction::PrintDocument) ==
+                  FPDFDOC_AACTION_WP,
+              "PrintDocument action must match");
+static_assert(static_cast<int>(CPDF_AAction::DocumentPrinted) ==
+                  FPDFDOC_AACTION_DP,
+              "DocumentPrinted action must match");
+
 namespace {
 
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle) {

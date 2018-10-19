@@ -1175,60 +1175,59 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle);
 FPDF_EXPORT void FPDF_CALLCONV
 FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle);
 
-// additional actions type of document.
-#define FPDFDOC_AACTION_WC \
-  0x10  // WC, before closing document, JavaScript action.
-#define FPDFDOC_AACTION_WS \
-  0x11  // WS, before saving document, JavaScript action.
-#define FPDFDOC_AACTION_DS 0x12  // DS, after saving document, JavaScript
-                                 // action.
-#define FPDFDOC_AACTION_WP \
-  0x13  // WP, before printing document, JavaScript action.
-#define FPDFDOC_AACTION_DP \
-  0x14  // DP, after printing document, JavaScript action.
+// Additional actions type of document:
+//   WC, before closing document, JavaScript action.
+//   WS, before saving document, JavaScript action.
+//   DS, after saving document, JavaScript action.
+//   WP, before printing document, JavaScript action.
+//   DP, after printing document, JavaScript action.
+#define FPDFDOC_AACTION_WC 0x10
+#define FPDFDOC_AACTION_WS 0x11
+#define FPDFDOC_AACTION_DS 0x12
+#define FPDFDOC_AACTION_WP 0x13
+#define FPDFDOC_AACTION_DP 0x14
 
 /**
-* Function: FORM_DoDocumentAAction
-*           This method is required for performing the document's
-*additional-action.
-* Parameters:
-*           hHandle     -   Handle to the form fill module. Returned by
-*FPDFDOC_InitFormFillEnvironment.
-*           aaType      -   The type of the additional-actions which defined
-*above.
-* Return Value:
-*           NONE
-* Comments:
-*           This method will do nothing if there is no document
-*additional-action corresponding to the specified aaType.
-**/
-
+ * Function: FORM_DoDocumentAAction
+ *           This method is required for performing the document's
+ *           additional-action.
+ * Parameters:
+ *           hHandle     -   Handle to the form fill module. Returned by
+ *                           FPDFDOC_InitFormFillEnvironment.
+ *           aaType      -   The type of the additional-actions which defined
+ *                           above.
+ * Return Value:
+ *           NONE
+ * Comments:
+ *           This method will do nothing if there is no document
+ *           additional-action corresponding to the specified aaType.
+ **/
 FPDF_EXPORT void FPDF_CALLCONV FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
                                                       int aaType);
 
-// Additional-action types of page object
-#define FPDFPAGE_AACTION_OPEN \
-  0  // /O -- An action to be performed when the page is opened
-#define FPDFPAGE_AACTION_CLOSE \
-  1  // /C -- An action to be performed when the page is closed
+// Additional-action types of page object:
+//   OPEN (/O) -- An action to be performed when the page is opened
+//   CLOSE (/C) -- An action to be performed when the page is closed
+#define FPDFPAGE_AACTION_OPEN 0
+#define FPDFPAGE_AACTION_CLOSE 1
 
 /**
-* Function: FORM_DoPageAAction
-*           This method is required for performing the page object's
-*additional-action when opened or closed.
-* Parameters:
-*           page        -   Handle to the page. Returned by FPDF_LoadPage
-*function.
-*           hHandle     -   Handle to the form fill module. Returned by
-*FPDFDOC_InitFormFillEnvironment.
-*           aaType      -   The type of the page object's additional-actions
-*which defined above.
-* Return Value:
-*           NONE
-* Comments:
-*           This method will do nothing if no additional-action corresponding to
-*the specified aaType exists.
-**/
+ * Function: FORM_DoPageAAction
+ *           This method is required for performing the page object's
+ *           additional-action when opened or closed.
+ * Parameters:
+ *           page        -   Handle to the page. Returned by FPDF_LoadPage
+ *                           function.
+ *           hHandle     -   Handle to the form fill module. Returned by
+ *                           FPDFDOC_InitFormFillEnvironment.
+ *           aaType      -   The type of the page object's additional-actions
+ *                           which defined above.
+ * Return Value:
+ *           NONE
+ * Comments:
+ *           This method will do nothing if no additional-action corresponding
+ *           to the specified aaType exists.
+ **/
 FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
                                                   FPDF_FORMHANDLE hHandle,
                                                   int aaType);
