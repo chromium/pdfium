@@ -55,7 +55,7 @@ Alert: PASS: AFNumber_Keystroke(1, 2, 3) = 123
 Alert: **********************
 Alert: PASS: AFParseDateEx() threw AFParseDateEx: Incorrect number of parameters passed to function.
 Alert: PASS: AFParseDateEx(1, 2, 3) threw AFParseDateEx: Incorrect number of parameters passed to function.
-Alert: PASS: AFParseDateEx(1, 2) = 1399646930000
+Alert: PASS: AFParseDateEx(1, 2) = 1399672130000
 Alert: **********************
 Alert: PASS: AFPercent_Format() threw AFPercent_Format: Incorrect number of parameters passed to function.
 Alert: PASS: AFPercent_Format(1, 2, 3) threw AFPercent_Format: Incorrect number of parameters passed to function.
@@ -96,7 +96,7 @@ Alert: PASS: AFSpecial_KeystrokeEx('999999') = 12
 Alert: **********************
 Alert: PASS: AFTime_Format() threw AFTime_Format: Incorrect number of parameters passed to function.
 Alert: PASS: AFTime_Format(1, 2) threw AFTime_Format: Incorrect number of parameters passed to function.
-Alert: PASS: AFTime_Format(1) = 2:48 pm
+Alert: PASS: AFTime_Format(1) = 9:48 pm
 Alert: **********************
 Alert: PASS: AFTime_FormatEx() threw AFTime_FormatEx: Incorrect number of parameters passed to function.
 Alert: PASS: AFTime_FormatEx('blooey', 42) threw AFTime_FormatEx: Incorrect number of parameters passed to function.

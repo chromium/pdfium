@@ -164,7 +164,7 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
   ByteString DateStr;
   if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
     if (FXSYS_time(&currentTime) != -1) {
-      tm* pTM = localtime(&currentTime);
+      tm* pTM = FXSYS_localtime(&currentTime);
       if (pTM) {
         DateStr = ByteString::Format(
             "D:%04d%02d%02d%02d%02d%02d", pTM->tm_year + 1900, pTM->tm_mon + 1,

@@ -963,7 +963,8 @@ int main(int argc, const char* argv[]) {
     // This must be a static var to avoid explicit capture, so the lambda can be
     // converted to a function ptr.
     static time_t time_ret = options.time;
-    FSDK_SetTimeFunction([]() -> time_t { return time_ret; });
+    FSDK_SetTimeFunction([]() { return time_ret; });
+    FSDK_SetLocaltimeFunction([](const time_t* tp) { return gmtime(tp); });
   }
 
   for (const std::string& filename : files) {

@@ -20,9 +20,7 @@ import sys
 def _IsValidFunctionName(function, filename):
   if function.startswith('FPDF'):
     return True
-  if function == 'FSDK_SetUnSpObjProcessHandler' and filename == 'fpdf_ext.h':
-    return True
-  if function == 'FSDK_SetTimeFunction' and filename == 'fpdf_ext.h':
+  if function.startswith('FSDK_') and filename == 'fpdf_ext.h':
     return True
   if function.startswith('FORM_') and filename == 'fpdf_formfill.h':
     return True

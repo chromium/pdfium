@@ -166,7 +166,7 @@ endobj
 
       expectError(undefined, "AFParseDateEx()");
       expectError(undefined, "AFParseDateEx(1, 2, 3)");
-      expect(undefined, "AFParseDateEx(1, 2)", "1399646930000");
+      expect(undefined, "AFParseDateEx(1, 2)", "1399672130000");
 
       app.alert("**********************");
 
@@ -223,7 +223,7 @@ endobj
 
       expectError(undefined, "AFTime_Format()");
       expectError(undefined, "AFTime_Format(1, 2)");
-      expectEventValue(undefined, "AFTime_Format(1)", "2:48 pm");
+      expectEventValue(undefined, "AFTime_Format(1)", "9:48 pm");
 
       app.alert("**********************");
 

@@ -959,7 +959,7 @@ void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
   FXSYS_time(&now);
 
   struct tm* pGmt = gmtime(&now);
-  struct tm* pLocal = localtime(&now);
+  struct tm* pLocal = FXSYS_localtime(&now);
   *pHour = pLocal->tm_hour - pGmt->tm_hour;
   *pMin = pLocal->tm_min - pGmt->tm_min;
   *pSec = pLocal->tm_sec - pGmt->tm_sec;

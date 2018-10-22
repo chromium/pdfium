@@ -83,6 +83,11 @@ FPDF_EXPORT void FPDF_CALLCONV FSDK_SetTimeFunction(time_t (*func)()) {
   FXSYS_SetTimeFunction(func);
 }
 
+FPDF_EXPORT void FPDF_CALLCONV
+FSDK_SetLocaltimeFunction(struct tm* (*func)(const time_t* tp)) {
+  FXSYS_SetLocaltimeFunction(func);
+}
+
 FPDF_EXPORT int FPDF_CALLCONV FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)

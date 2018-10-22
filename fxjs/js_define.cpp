@@ -24,7 +24,7 @@ double GetLocalTZA() {
     return 0;
   time_t t = 0;
   FXSYS_time(&t);
-  localtime(&t);
+  FXSYS_localtime(&t);
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   // In gcc 'timezone' is a global variable declared in time.h. In VC++, that
   // variable was removed in VC++ 2015, with _get_timezone replacing it.
@@ -38,7 +38,7 @@ int GetDaylightSavingTA(double d) {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
   time_t t = (time_t)(d / 1000);
-  struct tm* tmp = localtime(&t);
+  struct tm* tmp = FXSYS_localtime(&t);
   if (!tmp)
     return 0;
   if (tmp->tm_isdst > 0)
@@ -175,12 +175,10 @@ void JSDestructor(v8::Local<v8::Object> obj) {
 double JS_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
+
   time_t t = FXSYS_time(nullptr);
-  struct tm* pTm = localtime(&t);
-
-  int year = pTm->tm_year + 1900;
-  double t1 = TimeFromYear(year);
-
+  struct tm* pTm = FXSYS_localtime(&t);
+  double t1 = TimeFromYear(pTm->tm_year + 1900);
   return t1 + pTm->tm_yday * 86400000.0 + pTm->tm_hour * 3600000.0 +
          pTm->tm_min * 60000.0 + pTm->tm_sec * 1000.0;
 }
