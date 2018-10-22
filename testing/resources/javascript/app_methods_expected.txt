@@ -1,0 +1,34 @@
+title[icon=1,type=2]: message
+title: message
+title[icon=3,type=4]: message
+Alert: undefined
+Alert: null
+Alert: true
+Alert: false
+Alert: 42
+Alert: [1, 2, 3]
+Alert: [1, 2, [object Object]]
+title[icon=5,type=6]: [object Object]
+Alert: Caught expected error app.alert: Incorrect number of parameters passed to function.
+Alert: Caught expected error app.alert: Incorrect number of parameters passed to function.
+Alert: Caught expected error app.alert: Incorrect number of parameters passed to function.
+BEEP!!! 1
+Mail Msg: 1, to=, cc=, bcc=, subject=, body=
+Mail Msg: 0, to=user@example.com, cc=, bcc=, subject=, body=
+Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=subject, body=body
+Mail Msg: 1, to=, cc=, bcc=, subject=, body=
+Mail Msg: 0, to=user@example.com, cc=, bcc=, subject=, body=
+Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=subject, body=body
+Alert: Caught expected error app.mailMsg: Incorrect number of parameters passed to function.
+Alert: Caught expected error app.mailMsg: Incorrect number of parameters passed to function.
+Alert: Caught expected error app.mailMsg: Incorrect number of parameters passed to function.
+PDF: question, defaultValue=, label=, isPassword=0, length=2048
+Alert: result: No
+title: question, defaultValue=default, label=label, isPassword=1, length=2048
+Alert: result: No
+PDF: question, defaultValue=, label=, isPassword=0, length=2048
+Alert: result: No
+title: question, defaultValue=default, label=label, isPassword=1, length=2048
+Alert: result: No
+Alert: Caught expected error app.response: Incorrect number of parameters passed to function.
+Alert: Caught expected error app.response: Incorrect number of parameters passed to function.
