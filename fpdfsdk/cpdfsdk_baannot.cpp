@@ -220,7 +220,7 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
   if (AAction.ActionExist(eAAT))
     return AAction.GetAction(eAAT);
 
-  if (eAAT == CPDF_AAction::ButtonUp)
+  if (eAAT == CPDF_AAction::kButtonUp)
     return GetAction();
 
   return CPDF_Action(nullptr);

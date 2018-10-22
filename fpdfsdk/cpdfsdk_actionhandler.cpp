@@ -131,7 +131,7 @@ bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
         RunDocumentOpenJavaScript(pFormFillEnv, L"", swJS);
     }
   } else {
-    DoAction_NoJs(action, CPDF_AAction::AActionType::DocumentOpen,
+    DoAction_NoJs(action, CPDF_AAction::AActionType::kDocumentOpen,
                   pFormFillEnv);
   }
 
@@ -405,44 +405,44 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
     CPDF_AAction::AActionType type,
     CPDFSDK_FieldAction* data,
     const WideString& script) {
-  ASSERT(type != CPDF_AAction::Calculate);
-  ASSERT(type != CPDF_AAction::Format);
+  ASSERT(type != CPDF_AAction::kCalculate);
+  ASSERT(type != CPDF_AAction::kFormat);
 
   RunScript(
       pFormFillEnv, script,
       [type, data, pFormField](IJS_EventContext* context) {
         switch (type) {
-          case CPDF_AAction::CursorEnter:
+          case CPDF_AAction::kCursorEnter:
             context->OnField_MouseEnter(data->bModifier, data->bShift,
                                         pFormField);
             break;
-          case CPDF_AAction::CursorExit:
+          case CPDF_AAction::kCursorExit:
             context->OnField_MouseExit(data->bModifier, data->bShift,
                                        pFormField);
             break;
-          case CPDF_AAction::ButtonDown:
+          case CPDF_AAction::kButtonDown:
             context->OnField_MouseDown(data->bModifier, data->bShift,
                                        pFormField);
             break;
-          case CPDF_AAction::ButtonUp:
+          case CPDF_AAction::kButtonUp:
             context->OnField_MouseUp(data->bModifier, data->bShift, pFormField);
             break;
-          case CPDF_AAction::GetFocus:
+          case CPDF_AAction::kGetFocus:
             context->OnField_Focus(data->bModifier, data->bShift, pFormField,
                                    &data->sValue);
             break;
-          case CPDF_AAction::LoseFocus:
+          case CPDF_AAction::kLoseFocus:
             context->OnField_Blur(data->bModifier, data->bShift, pFormField,
                                   &data->sValue);
             break;
-          case CPDF_AAction::KeyStroke:
+          case CPDF_AAction::kKeyStroke:
             context->OnField_Keystroke(
                 &data->sChange, data->sChangeEx, data->bKeyDown,
                 data->bModifier, &data->nSelEnd, &data->nSelStart, data->bShift,
                 pFormField, &data->sValue, data->bWillCommit, data->bFieldFull,
                 &data->bRC);
             break;
-          case CPDF_AAction::Validate:
+          case CPDF_AAction::kValidate:
             context->OnField_Validate(&data->sChange, data->sChangeEx,
                                       data->bKeyDown, data->bModifier,
                                       data->bShift, pFormField, &data->sValue,
@@ -472,31 +472,31 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
   RunScript(pFormFillEnv, script,
             [type, pFormFillEnv](IJS_EventContext* context) {
               switch (type) {
-                case CPDF_AAction::OpenPage:
+                case CPDF_AAction::kOpenPage:
                   context->OnPage_Open(pFormFillEnv);
                   break;
-                case CPDF_AAction::ClosePage:
+                case CPDF_AAction::kClosePage:
                   context->OnPage_Close(pFormFillEnv);
                   break;
-                case CPDF_AAction::CloseDocument:
+                case CPDF_AAction::kCloseDocument:
                   context->OnDoc_WillClose(pFormFillEnv);
                   break;
-                case CPDF_AAction::SaveDocument:
+                case CPDF_AAction::kSaveDocument:
                   context->OnDoc_WillSave(pFormFillEnv);
                   break;
-                case CPDF_AAction::DocumentSaved:
+                case CPDF_AAction::kDocumentSaved:
                   context->OnDoc_DidSave(pFormFillEnv);
                   break;
-                case CPDF_AAction::PrintDocument:
+                case CPDF_AAction::kPrintDocument:
                   context->OnDoc_WillPrint(pFormFillEnv);
                   break;
-                case CPDF_AAction::DocumentPrinted:
+                case CPDF_AAction::kDocumentPrinted:
                   context->OnDoc_DidPrint(pFormFillEnv);
                   break;
-                case CPDF_AAction::PageVisible:
+                case CPDF_AAction::kPageVisible:
                   context->OnPage_InView(pFormFillEnv);
                   break;
-                case CPDF_AAction::PageInvisible:
+                case CPDF_AAction::kPageInvisible:
                   context->OnPage_OutView(pFormFillEnv);
                   break;
                 default:

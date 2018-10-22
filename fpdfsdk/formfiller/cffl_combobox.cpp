@@ -124,7 +124,7 @@ void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
                                   CPDF_AAction::AActionType type,
                                   CPDFSDK_FieldAction& fa) {
   switch (type) {
-    case CPDF_AAction::KeyStroke:
+    case CPDF_AAction::kKeyStroke:
       if (CPWL_ComboBox* pComboBox =
               static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, false))) {
         if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
@@ -144,7 +144,7 @@ void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
         }
       }
       break;
-    case CPDF_AAction::Validate:
+    case CPDF_AAction::kValidate:
       if (CPWL_ComboBox* pComboBox =
               static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, false))) {
         if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
@@ -152,8 +152,8 @@ void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
         }
       }
       break;
-    case CPDF_AAction::LoseFocus:
-    case CPDF_AAction::GetFocus:
+    case CPDF_AAction::kLoseFocus:
+    case CPDF_AAction::kGetFocus:
       fa.sValue = m_pWidget->GetValue();
       break;
     default:
@@ -165,7 +165,7 @@ void CFFL_ComboBox::SetActionData(CPDFSDK_PageView* pPageView,
                                   CPDF_AAction::AActionType type,
                                   const CPDFSDK_FieldAction& fa) {
   switch (type) {
-    case CPDF_AAction::KeyStroke:
+    case CPDF_AAction::kKeyStroke:
       if (CPWL_ComboBox* pComboBox =
               static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, false))) {
         if (CPWL_Edit* pEdit = pComboBox->GetEdit()) {
@@ -183,7 +183,7 @@ bool CFFL_ComboBox::IsActionDataChanged(CPDF_AAction::AActionType type,
                                         const CPDFSDK_FieldAction& faOld,
                                         const CPDFSDK_FieldAction& faNew) {
   switch (type) {
-    case CPDF_AAction::KeyStroke:
+    case CPDF_AAction::kKeyStroke:
       return (!faOld.bFieldFull && faOld.nSelEnd != faNew.nSelEnd) ||
              faOld.nSelStart != faNew.nSelStart ||
              faOld.sChange != faNew.sChange;

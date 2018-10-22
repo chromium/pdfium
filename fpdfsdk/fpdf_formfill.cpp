@@ -141,19 +141,19 @@ static_assert(static_cast<int>(FormFieldType::kXFA_TextField) ==
 static_assert(kFormFieldTypeCount == FPDF_FORMFIELD_COUNT,
               "Number of form field types must match");
 
-static_assert(static_cast<int>(CPDF_AAction::CloseDocument) ==
+static_assert(static_cast<int>(CPDF_AAction::kCloseDocument) ==
                   FPDFDOC_AACTION_WC,
               "CloseDocument action must match");
-static_assert(static_cast<int>(CPDF_AAction::SaveDocument) ==
+static_assert(static_cast<int>(CPDF_AAction::kSaveDocument) ==
                   FPDFDOC_AACTION_WS,
               "SaveDocument action must match");
-static_assert(static_cast<int>(CPDF_AAction::DocumentSaved) ==
+static_assert(static_cast<int>(CPDF_AAction::kDocumentSaved) ==
                   FPDFDOC_AACTION_DS,
               "DocumentSaved action must match");
-static_assert(static_cast<int>(CPDF_AAction::PrintDocument) ==
+static_assert(static_cast<int>(CPDF_AAction::kPrintDocument) ==
                   FPDFDOC_AACTION_WP,
               "PrintDocument action must match");
-static_assert(static_cast<int>(CPDF_AAction::DocumentPrinted) ==
+static_assert(static_cast<int>(CPDF_AAction::kDocumentPrinted) ==
                   FPDFDOC_AACTION_DP,
               "DocumentPrinted action must match");
 
@@ -724,8 +724,8 @@ FPDF_EXPORT void FPDF_CALLCONV FORM_DoPageAAction(FPDF_PAGE page,
   CPDF_Dictionary* pPageDict = pPDFPage->GetDict();
   CPDF_AAction aa(pPageDict->GetDictFor("AA"));
   CPDF_AAction::AActionType type = aaType == FPDFPAGE_AACTION_OPEN
-                                       ? CPDF_AAction::OpenPage
-                                       : CPDF_AAction::ClosePage;
+                                       ? CPDF_AAction::kOpenPage
+                                       : CPDF_AAction::kClosePage;
   if (aa.ActionExist(type)) {
     CPDF_Action action = aa.GetAction(type);
     pActionHandler->DoAction_Page(action, type, pFormFillEnv);

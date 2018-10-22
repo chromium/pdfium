@@ -140,7 +140,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
                                  CPDF_AAction::AActionType type,
                                  CPDFSDK_FieldAction& fa) {
   switch (type) {
-    case CPDF_AAction::Validate:
+    case CPDF_AAction::kValidate:
       if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
         fa.sValue = L"";
       } else {
@@ -153,8 +153,8 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
         }
       }
       break;
-    case CPDF_AAction::LoseFocus:
-    case CPDF_AAction::GetFocus:
+    case CPDF_AAction::kLoseFocus:
+    case CPDF_AAction::kGetFocus:
       if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
         fa.sValue = L"";
       } else {
