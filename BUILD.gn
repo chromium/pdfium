@@ -340,27 +340,27 @@ test("pdfium_embeddertests") {
   }
 }
 
+executable("pdfium_diff") {
+  testonly = true
+  sources = [
+    "testing/image_diff/image_diff.cpp",
+  ]
+  deps = [
+    ":pdfium",
+    "testing/image_diff",
+    "//build/win:default_exe_manifest",
+  ]
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+  configs += [ ":pdfium_core_config" ]
+}
+
 if (pdf_is_standalone) {
   jumbo_source_set("samples") {
     testonly = true
     deps = [
       "//samples",
     ]
-  }
-
-  executable("pdfium_diff") {
-    testonly = true
-    sources = [
-      "testing/image_diff/image_diff.cpp",
-    ]
-    deps = [
-      ":pdfium",
-      "testing/image_diff",
-      "//build/win:default_exe_manifest",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [ "//build/config/compiler:no_chromium_code" ]
-    configs += [ ":pdfium_core_config" ]
   }
 
   group("fuzzers") {
@@ -374,13 +374,13 @@ if (pdf_is_standalone) {
 group("pdfium_all") {
   testonly = true
   deps = [
+    ":pdfium_diff",
     ":pdfium_embeddertests",
     ":pdfium_unittests",
   ]
   if (pdf_is_standalone) {
     deps += [
       ":fuzzers",
-      ":pdfium_diff",
       ":samples",
     ]
   }
