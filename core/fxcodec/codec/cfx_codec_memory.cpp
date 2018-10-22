@@ -32,7 +32,7 @@ size_t CFX_CodecMemory::ReadBlock(void* buffer, size_t size) {
 bool CFX_CodecMemory::TryResize(size_t new_buffer_size) {
   uint8_t* pOldBuf = buffer_.release();
   uint8_t* pNewBuf = FX_TryRealloc(uint8_t, pOldBuf, new_buffer_size);
-  if (!pNewBuf) {
+  if (new_buffer_size && !pNewBuf) {
     buffer_.reset(pOldBuf);
     return false;
   }
