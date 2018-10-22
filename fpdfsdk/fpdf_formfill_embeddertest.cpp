@@ -435,6 +435,30 @@ TEST_F(FPDFFormFillEmbeddertest, DisableJavaScript) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFormFillEmbeddertest, DocumentAActions) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("document_aactions.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  const auto& alerts = delegate.GetAlerts();
+  EXPECT_EQ(0U, alerts.size());
+
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WS);
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DS);
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WP);
+  FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DP);
+  UnloadPage(page);
+
+  ASSERT_EQ(4U, alerts.size());
+  EXPECT_STREQ(L"Will Save", alerts[0].message.c_str());
+  EXPECT_STREQ(L"Did Save", alerts[1].message.c_str());
+  EXPECT_STREQ(L"Will Print", alerts[2].message.c_str());
+  EXPECT_STREQ(L"Did Print", alerts[3].message.c_str());
+}
+
 TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
   // Test that timers fire once and intervals fire repeatedly.
   EmbedderTestTimerHandlingDelegate delegate;
@@ -594,7 +618,6 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_765384) {
   FORM_OnLButtonUp(form_handle(), page, 0, 140, 590);
   UnloadPage(page);
 }
-
 #endif  // PDF_ENABLE_V8
 
 TEST_F(FPDFFormFillEmbeddertest, FormText) {
