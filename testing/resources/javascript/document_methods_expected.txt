@@ -32,6 +32,9 @@ Alert: PASS: this.extractPages(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: PASS: typeof this.getAnnot3D = function
 Alert: PASS: this.getAnnot3D() = undefined
 Alert: PASS: this.getAnnot3D(1, 2, "clams", [1, 2, 3]) = undefined
+Alert: PASS: typeof this.getAnnots3D = function
+Alert: PASS: this.getAnnots3D() = undefined
+Alert: PASS: this.getAnnots3D(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: PASS: typeof this.getLinks = function
 Alert: PASS: this.getLinks() = undefined
 Alert: PASS: this.getLinks(1, 2, "clams", [1, 2, 3]) = undefined
@@ -76,6 +79,7 @@ Alert: PASS: this.addIcon(1, 2, 3) threw error Document.addIcon: Incorrect numbe
 Alert: PASS: this.addIcon("myicon", 3) threw error Document.addIcon: Incorrect parameter type.
 Alert: PASS: this.addIcon("myicon", undefined) threw error Document.addIcon: Incorrect parameter type.
 Alert: PASS: typeof this.calculateNow = function
+Alert: PASS: this.calculateNow() = undefined
 Alert: PASS: typeof this.getAnnot = function
 Alert: PASS: this.getAnnot() threw error Document.getAnnot: Incorrect number of parameters passed to function.
 Alert: PASS: this.getAnnot(0) threw error Document.getAnnot: Incorrect number of parameters passed to function.
@@ -96,6 +100,7 @@ Alert: PASS: this.getPageNthWord(0, 0, true, "clams", [1, 2]) = Hello,
 Alert: PASS: this.getPageNthWord(-1, 0, true) threw error Document.getPageNthWord: Incorrect parameter value.
 Alert: PASS: this.getPageNthWord(6, 0, true) threw error Document.getPageNthWord: Incorrect parameter value.
 Alert: PASS: typeof this.getPageNthWordQuads = function
+Alert: PASS: this.getPageNthWordQuads() threw error Document.getPageNthWordQuads: Operation not supported.
 Alert: PASS: typeof this.getPageNumWords = function
 Alert: PASS: this.getPageNumWords(0, "clams", [1, 2]) = 2
 Alert: PASS: this.getPageNumWords(-1) threw error Document.getPageNumWords: Incorrect parameter value.

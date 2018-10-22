@@ -134,7 +134,8 @@ function testCalculateNow() {
    expect('typeof this.calculateNow', 'function');
 
    // TODO(tsepez): test with no permissions.
-   // TODO(tsepez): test success cases.
+
+   expect('this.calculateNow()', undefined)
 }
 
 function testGetAnnot() {
@@ -214,7 +215,8 @@ function testGetPageNthWordQuads() {
    expect('typeof this.getPageNthWordQuads', 'function');
 
   // TODO(tsepez): test with no permissions.
-  // TODO(tsepez): test success cases.
+
+  expectError('this.getPageNthWordQuads()');
 }
 
 function testGetPageNumWords() {
@@ -350,6 +352,7 @@ try {
   testUnsupported('this.exportAsXFDF');
   testUnsupported('this.extractPages');
   testUnsupported('this.getAnnot3D');
+  testUnsupported('this.getAnnots3D');
   testUnsupported('this.getLinks');
   testUnsupported('this.getOCGs');
   testUnsupported('this.getPageBox');
