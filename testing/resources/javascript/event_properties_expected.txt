@@ -46,4 +46,7 @@ Alert: PASS: event.type = 'boo' threw event.type: Operation not supported.
 Alert: PASS: event.value = 
 Alert: PASS: event.value = 'boo' = boo
 Alert: PASS: event.value = boo
+Alert: PASS: event.willCommit = true
+Alert: PASS: event.willCommit = 'boo' threw event.willCommit: Operation not supported.
+Alert: PASS: event.willCommit = true
 Alert: *** ending test ***

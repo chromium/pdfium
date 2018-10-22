@@ -156,6 +156,10 @@ endobj
       expect("event.value = 'boo'", "boo");
       expect("event.value", "boo");
 
+      expect("event.willCommit", true);
+      expectError("event.willCommit = 'boo'");
+      expect("event.willCommit", true);
+
       app.alert("*** ending test ***");
     } catch (e) {
       app.alert("Truly unexpected error occured: " + e);
