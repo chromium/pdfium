@@ -278,41 +278,22 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
   }
 }
 
-bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
-                               const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                               FXDIB_Channel srcChannel) {
+bool CFX_DIBitmap::LoadChannelFromAlpha(
+    FXDIB_Channel destChannel,
+    const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
   if (!m_pBuffer)
     return false;
 
   RetainPtr<CFX_DIBBase> pSrcClone = pSrcBitmap;
-  int srcOffset;
-  if (srcChannel == FXDIB_Alpha) {
-    if (!pSrcBitmap->HasAlpha() && !pSrcBitmap->IsAlphaMask())
-      return false;
+  if (!pSrcBitmap->HasAlpha() && !pSrcBitmap->IsAlphaMask())
+    return false;
 
-    if (pSrcBitmap->GetBPP() == 1) {
-      pSrcClone = pSrcBitmap->CloneConvert(FXDIB_8bppMask);
-      if (!pSrcClone)
-        return false;
-    }
-    srcOffset = pSrcBitmap->GetFormat() == FXDIB_Argb ? 3 : 0;
-  } else {
-    if (pSrcBitmap->IsAlphaMask())
+  if (pSrcBitmap->GetBPP() == 1) {
+    pSrcClone = pSrcBitmap->CloneConvert(FXDIB_8bppMask);
+    if (!pSrcClone)
       return false;
-
-    if (pSrcBitmap->GetBPP() < 24) {
-      if (pSrcBitmap->IsCmykImage()) {
-        pSrcClone = pSrcBitmap->CloneConvert(static_cast<FXDIB_Format>(
-            (pSrcBitmap->GetFormat() & 0xff00) | 0x20));
-      } else {
-        pSrcClone = pSrcBitmap->CloneConvert(static_cast<FXDIB_Format>(
-            (pSrcBitmap->GetFormat() & 0xff00) | 0x18));
-      }
-      if (!pSrcClone)
-        return false;
-    }
-    srcOffset = kChannelOffset[srcChannel];
   }
+  int srcOffset = pSrcBitmap->GetFormat() == FXDIB_Argb ? 3 : 0;
   int destOffset = 0;
   if (destChannel == FXDIB_Alpha) {
     if (IsAlphaMask()) {
@@ -343,7 +324,7 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
     }
     destOffset = kChannelOffset[destChannel];
   }
-  if (srcChannel == FXDIB_Alpha && pSrcClone->m_pAlphaMask) {
+  if (pSrcClone->m_pAlphaMask) {
     RetainPtr<CFX_DIBBase> pAlphaMask = pSrcClone->m_pAlphaMask;
     if (pSrcClone->GetWidth() != m_Width ||
         pSrcClone->GetHeight() != m_Height) {
@@ -451,7 +432,7 @@ bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
     return false;
 
   if (!IsAlphaMask() && !HasAlpha())
-    return LoadChannel(FXDIB_Alpha, pSrcBitmap, FXDIB_Alpha);
+    return LoadChannelFromAlpha(FXDIB_Alpha, pSrcBitmap);
 
   RetainPtr<CFX_DIBitmap> pSrcClone = pSrcBitmap.As<CFX_DIBitmap>();
   if (pSrcBitmap->GetWidth() != m_Width ||

@@ -1056,7 +1056,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneConvert(FXDIB_Format dest_format) {
   if (dest_format & 0x0200) {
     bool ret;
     if (dest_format == FXDIB_Argb) {
-      ret = pSrcAlpha ? pClone->LoadChannel(FXDIB_Alpha, pSrcAlpha, FXDIB_Alpha)
+      ret = pSrcAlpha ? pClone->LoadChannelFromAlpha(FXDIB_Alpha, pSrcAlpha)
                       : pClone->LoadChannel(FXDIB_Alpha, 0xff);
     } else {
       ret = pClone->SetAlphaMask(pSrcAlpha, nullptr);

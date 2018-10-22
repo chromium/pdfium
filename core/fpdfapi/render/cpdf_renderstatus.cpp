@@ -2102,7 +2102,7 @@ void CPDF_RenderStatus::DrawShading(const CPDF_ShadingPattern* pPattern,
     } break;
   }
   if (bAlphaMode)
-    pBitmap->LoadChannel(FXDIB_Red, pBitmap, FXDIB_Alpha);
+    pBitmap->LoadChannelFromAlpha(FXDIB_Red, pBitmap);
 
   if (m_Options.ColorModeIs(CPDF_RenderOptions::kGray))
     pBitmap->ConvertColorScale(0, 0xffffff);

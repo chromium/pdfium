@@ -45,9 +45,8 @@ class CFX_DIBitmap : public CFX_DIBBase {
   uint32_t GetPixel(int x, int y) const;
   void SetPixel(int x, int y, uint32_t color);
 
-  bool LoadChannel(FXDIB_Channel destChannel,
-                   const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                   FXDIB_Channel srcChannel);
+  bool LoadChannelFromAlpha(FXDIB_Channel destChannel,
+                            const RetainPtr<CFX_DIBBase>& pSrcBitmap);
   bool LoadChannel(FXDIB_Channel destChannel, int value);
 
   bool MultiplyAlpha(int alpha);
