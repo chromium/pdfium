@@ -1,34 +1,63 @@
 title[icon=1,type=2]: message
+Alert: PASS: app.alert('message', 1, 2, 'title') = 0
 title: message
+Alert: PASS: app.alert({'cMsg': 'message', 'cTitle': 'title'}) = 0
 title[icon=3,type=4]: message
+Alert: PASS: app.alert({'cMsg': 'message', 'cTitle': 'title', 'nIcon': 3, 'nType': 4}) = 0
 Alert: undefined
+Alert: PASS: app.alert(undefined) = 0
 Alert: null
+Alert: PASS: app.alert(null) = 0
 Alert: true
+Alert: PASS: app.alert(true) = 0
 Alert: false
+Alert: PASS: app.alert(false) = 0
 Alert: 42
+Alert: PASS: app.alert(42) = 0
 Alert: [1, 2, 3]
+Alert: PASS: app.alert([1, 2, 3]) = 0
 Alert: [1, 2, [object Object]]
+Alert: PASS: app.alert([1, 2, {'color': 'red'}]) = 0
 title[icon=5,type=6]: [object Object]
-Alert: Caught expected error app.alert: Incorrect number of parameters passed to function.
-Alert: Caught expected error app.alert: Incorrect number of parameters passed to function.
-Alert: Caught expected error app.alert: Incorrect number of parameters passed to function.
+Alert: PASS: app.alert({'color': 'red'}, 5, 6, 'title') = 0
+Alert: PASS: app.alert() threw error app.alert: Incorrect number of parameters passed to function.
+Alert: PASS: app.alert({}) threw error app.alert: Incorrect number of parameters passed to function.
+Alert: PASS: app.alert({'color': 'red', 'size': 42}) threw error app.alert: Incorrect number of parameters passed to function.
 BEEP!!! 1
+Alert: PASS: app.beep(1) = undefined
+Alert: FAIL: app.browseForDoc() = undefined, expected to throw error
+Alert: PASS: app.execDialog() = undefined
+Alert: PASS: app.findComponent() = undefined
+Alert: PASS: app.goBack() = undefined
+Alert: PASS: app.goForward() = undefined
+Alert: PASS: app.launchURL() = undefined
+Alert: PASS: app.newDoc() threw error app.newDoc: Operation not supported.
+Alert: PASS: app.newFDF() = undefined
+Alert: PASS: app.openDoc() threw error app.openDoc: Operation not supported.
+Alert: PASS: app.openFDF() = undefined
+Alert: PASS: app.popUpMenuEx() threw error app.popUpMenuEx: Operation not supported.
 Mail Msg: 1, to=, cc=, bcc=, subject=, body=
+Alert: PASS: app.mailMsg(true) = undefined
 Mail Msg: 0, to=user@example.com, cc=, bcc=, subject=, body=
+Alert: PASS: app.mailMsg(false, 'user@example.com') = undefined
 Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=subject, body=body
+Alert: PASS: app.mailMsg(false, 'user@example.com', 'cc@example.com', 'bcc@example.com', 'subject', 'body') = undefined
 Mail Msg: 1, to=, cc=, bcc=, subject=, body=
+Alert: PASS: app.mailMsg({'bUI': true}) = undefined
 Mail Msg: 0, to=user@example.com, cc=, bcc=, subject=, body=
+Alert: PASS: app.mailMsg({'bUI': false, 'cTo': 'user@example.com'}) = undefined
 Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=subject, body=body
-Alert: Caught expected error app.mailMsg: Incorrect number of parameters passed to function.
-Alert: Caught expected error app.mailMsg: Incorrect number of parameters passed to function.
-Alert: Caught expected error app.mailMsg: Incorrect number of parameters passed to function.
+Alert: PASS: app.mailMsg({'bUI': false, 'cTo': 'user@example.com', 'cCc': 'cc@example.com', 'cBcc': 'bcc@example.com', 'cSubject': 'subject', 'cMsg': 'body'}) = undefined
+Alert: PASS: app.mailMsg() threw error app.mailMsg: Incorrect number of parameters passed to function.
+Alert: PASS: app.mailMsg(false) threw error app.mailMsg: Incorrect number of parameters passed to function.
+Alert: PASS: app.mailMsg({'color': 'red', 'size': 42}) threw error app.mailMsg: Incorrect number of parameters passed to function.
 PDF: question, defaultValue=, label=, isPassword=0, length=2048
-Alert: result: No
+Alert: PASS: app.response('question') = No
 title: question, defaultValue=default, label=label, isPassword=1, length=2048
-Alert: result: No
+Alert: PASS: app.response('question', 'title', 'default', true, 'label') = No
 PDF: question, defaultValue=, label=, isPassword=0, length=2048
-Alert: result: No
+Alert: PASS: app.response({'cQuestion': 'question'}) = No
 title: question, defaultValue=default, label=label, isPassword=1, length=2048
-Alert: result: No
-Alert: Caught expected error app.response: Incorrect number of parameters passed to function.
-Alert: Caught expected error app.response: Incorrect number of parameters passed to function.
+Alert: PASS: app.response({'cQuestion': 'question', 'cTitle': 'title', 'cDefault': 'default', 'bPassword': true, 'cLabel': 'label'}) = No
+Alert: PASS: app.response() threw error app.response: Incorrect number of parameters passed to function.
+Alert: PASS: app.response({}) threw error app.response: Incorrect number of parameters passed to function.

@@ -31,96 +31,82 @@ endobj
   {{streamlen}}
 >>
 stream
-
-app.alert("message", 1, 2, "title");
-app.alert({"cMsg": "message", "cTitle": "title"});
-app.alert({"cMsg": "message", "cTitle": "title", "nIcon": 3, "nType": 4});
-app.alert(undefined);
-app.alert(null);
-app.alert(true);
-app.alert(false);
-app.alert(42);
-app.alert([1, 2, 3]);
-app.alert([1, 2, {"color": "red"}]);
-app.alert({"color": "red"}, 5, 6, "title");
-try {
-  app.alert();
-} catch (e) {
-  app.alert("Caught expected error " + e);
-}
-try {
-  app.alert({});
-} catch (e) {
-  app.alert("Caught expected error " + e);
-}
-try {
-  app.alert({"color": "red", "size": 42});
-} catch (e) {
-  app.alert("Caught expected error " + e);
+function expect(str, expected) {
+  try {
+    var result = eval(str);
+    if (result == expected) {
+      app.alert('PASS: ' + str + ' = ' + result);
+    } else {
+      app.alert('FAIL: ' + str + ' = ' + result + ', expected = ' + expected);
+    }
+  } catch (e) {
+    app.alert('ERROR: ' + e.toString());
+  }
 }
 
-app.beep(1);
-
-app.mailMsg(true);
-app.mailMsg(false, "user@example.com");
-app.mailMsg(false, "user@example.com", "cc@example.com",
-            "bcc@example.com", "subject", "body");
-app.mailMsg({"bUI": true});
-app.mailMsg({"bUI": false, "cTo": "user@example.com"});
-app.mailMsg({"bUI": false,
-             "cTo": "user@example.com",
-             "cCc": "cc@example.com",
-             "cBcc": "bcc@example.com",
-             "cSubject": "subject",
-             "cMsg": "body"});
-try {
-  app.mailMsg();
-} catch (e) {
-  app.alert("Caught expected error " + e);
-}
-try {
-  app.mailMsg(false);
-} catch (e) {
-  app.alert("Caught expected error " + e);
-}
-try {
-  app.mailMsg({"color": "red", "size": 42});
-} catch (e) {
-  app.alert("Caught expected error " + e);
+function expectError(str) {
+  try {
+    var result = eval(str);
+    app.alert('FAIL: ' + str + ' = ' + result + ', expected to throw error');
+  } catch (e) {
+    app.alert('PASS: ' + str + ' threw error ' + e.toString());
+  }
 }
 
-var result;
 try {
-  result = app.response("question");
-  app.alert("result: " + result);
-  result = app.response("question", "title", "default", true, "label");
-  app.alert("result: " + result);
-  result = app.response({"cQuestion": "question"});
-  app.alert("result: " + result);
-  result = app.response({
-    "cQuestion": "question",
-    "cTitle": "title",
-    "cDefault": "default",
-    "bPassword": true,
-    "cLabel": "label"
-  });
-  app.alert("result: " + result);
-} catch (e) {
-  app.alert("unexpected error " + e);
-}
-try {
-  app.response();
-  app.alert("unexpected success");
-} catch (e) {
-  app.alert("Caught expected error " + e);
-}
-try {
-  app.response({});
-  app.alert("unexpected success");
-} catch (e) {
-  app.alert("Caught expected error " + e);
-}
+  expect("app.alert('message', 1, 2, 'title')", 0);
+  expect("app.alert({'cMsg': 'message', 'cTitle': 'title'})", 0);
+  expect("app.alert({'cMsg': 'message', 'cTitle': 'title', 'nIcon': 3, 'nType': 4})", 0);
+  expect("app.alert(undefined)", 0);
+  expect("app.alert(null)", 0);
+  expect("app.alert(true)", 0);
+  expect("app.alert(false)", 0);
+  expect("app.alert(42)", 0);
+  expect("app.alert([1, 2, 3])", 0);
+  expect("app.alert([1, 2, {'color': 'red'}])", 0);
+  expect("app.alert({'color': 'red'}, 5, 6, 'title')", 0);
+  expectError("app.alert()");
+  expectError("app.alert({})");
+  expectError("app.alert({'color': 'red', 'size': 42})");
 
+  expect("app.beep(1)", undefined);
+
+  expectError("app.browseForDoc()");
+  expect("app.execDialog()", undefined);
+  expect("app.findComponent()", undefined);
+  expect("app.goBack()", undefined);
+  expect("app.goForward()", undefined);
+  expect("app.launchURL()", undefined);
+  expectError("app.newDoc()");
+  expect("app.newFDF()", undefined);
+  expectError("app.openDoc()");
+  expect("app.openFDF()", undefined);
+  expectError("app.popUpMenuEx()");
+
+  expect("app.mailMsg(true)", undefined);
+  expect("app.mailMsg(false, 'user@example.com')", undefined);
+  expect("app.mailMsg(false, 'user@example.com', 'cc@example.com', " +
+         "'bcc@example.com', 'subject', 'body')", undefined);
+  expect("app.mailMsg({'bUI': true})", undefined);
+  expect("app.mailMsg({'bUI': false, 'cTo': 'user@example.com'})", undefined);
+  expect("app.mailMsg({'bUI': false, 'cTo': 'user@example.com', " +
+         "'cCc': 'cc@example.com', 'cBcc': 'bcc@example.com', " +
+         "'cSubject': 'subject', 'cMsg': 'body'})", undefined);
+  expectError("app.mailMsg()");
+  expectError("app.mailMsg(false)");
+  expectError("app.mailMsg({'color': 'red', 'size': 42})");
+
+  expect("app.response('question')", 'No');
+  expect("app.response('question', 'title', 'default', true, 'label')", 'No');
+  expect("app.response({'cQuestion': 'question'})", 'No');
+  expect("app.response({'cQuestion': 'question', 'cTitle': 'title', " +
+         "'cDefault': 'default', 'bPassword': true, 'cLabel': 'label'})", 'No');
+  expectError("app.response()");
+  expectError("app.response({})");
+
+} catch (e) {
+  app.alert('Truly unexpected error: ' + e);
+}
 endstream
 endobj
 {{xref}}
