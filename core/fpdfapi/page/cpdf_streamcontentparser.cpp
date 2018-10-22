@@ -173,7 +173,7 @@ ByteStringView FindFullName(const AbbrPair* table,
 
 void ReplaceAbbr(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
-    case CPDF_Object::DICTIONARY: {
+    case CPDF_Object::kDictionary: {
       std::vector<AbbrReplacementOp> replacements;
       CPDF_Dictionary* pDict = pObj->AsDictionary();
       {
@@ -217,7 +217,7 @@ void ReplaceAbbr(CPDF_Object* pObj) {
       }
       break;
     }
-    case CPDF_Object::ARRAY: {
+    case CPDF_Object::kArray: {
       CPDF_Array* pArray = pObj->AsArray();
       for (size_t i = 0; i < pArray->size(); i++) {
         CPDF_Object* pElement = pArray->GetObjectAt(i);

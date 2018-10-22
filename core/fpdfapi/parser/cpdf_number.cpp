@@ -20,7 +20,7 @@ CPDF_Number::CPDF_Number(const ByteStringView& str) : m_Number(str) {}
 CPDF_Number::~CPDF_Number() {}
 
 CPDF_Object::Type CPDF_Number::GetType() const {
-  return NUMBER;
+  return kNumber;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Number::Clone() const {

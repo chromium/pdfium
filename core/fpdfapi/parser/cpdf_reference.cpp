@@ -17,7 +17,7 @@ CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum)
 CPDF_Reference::~CPDF_Reference() {}
 
 CPDF_Object::Type CPDF_Reference::GetType() const {
-  return REFERENCE;
+  return kReference;
 }
 
 ByteString CPDF_Reference::GetString() const {

@@ -40,7 +40,7 @@ CPDF_Dictionary::~CPDF_Dictionary() {
 }
 
 CPDF_Object::Type CPDF_Dictionary::GetType() const {
-  return DICTIONARY;
+  return kDictionary;
 }
 
 CPDF_Dictionary* CPDF_Dictionary::GetDict() {

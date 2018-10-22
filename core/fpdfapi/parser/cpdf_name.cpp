@@ -20,7 +20,7 @@ CPDF_Name::CPDF_Name(WeakPtr<ByteStringPool> pPool, const ByteString& str)
 CPDF_Name::~CPDF_Name() {}
 
 CPDF_Object::Type CPDF_Name::GetType() const {
-  return NAME;
+  return kName;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Name::Clone() const {

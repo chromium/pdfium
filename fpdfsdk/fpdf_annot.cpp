@@ -121,28 +121,31 @@ static_assert(static_cast<int>(CPDF_Annot::AppearanceMode::Down) ==
 
 // These checks ensure the consistency of dictionary value types across core/
 // and public/.
-static_assert(static_cast<int>(CPDF_Object::Type::BOOLEAN) ==
+static_assert(static_cast<int>(CPDF_Object::Type::kBoolean) ==
                   FPDF_OBJECT_BOOLEAN,
-              "CPDF_Object::BOOLEAN value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::NUMBER) == FPDF_OBJECT_NUMBER,
-              "CPDF_Object::NUMBER value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::STRING) == FPDF_OBJECT_STRING,
-              "CPDF_Object::STRING value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::NAME) == FPDF_OBJECT_NAME,
-              "CPDF_Object::NAME value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::ARRAY) == FPDF_OBJECT_ARRAY,
-              "CPDF_Object::ARRAY value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::DICTIONARY) ==
+              "CPDF_Object::kBoolean value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kNumber) ==
+                  FPDF_OBJECT_NUMBER,
+              "CPDF_Object::kNumber value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kString) ==
+                  FPDF_OBJECT_STRING,
+              "CPDF_Object::kString value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kName) == FPDF_OBJECT_NAME,
+              "CPDF_Object::kName value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kArray) == FPDF_OBJECT_ARRAY,
+              "CPDF_Object::kArray value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kDictionary) ==
                   FPDF_OBJECT_DICTIONARY,
-              "CPDF_Object::DICTIONARY value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::STREAM) == FPDF_OBJECT_STREAM,
-              "CPDF_Object::STREAM value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::NULLOBJ) ==
+              "CPDF_Object::kDictionary value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kStream) ==
+                  FPDF_OBJECT_STREAM,
+              "CPDF_Object::kStream value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kNullobj) ==
                   FPDF_OBJECT_NULLOBJ,
-              "CPDF_Object::NULLOBJ value mismatch");
-static_assert(static_cast<int>(CPDF_Object::Type::REFERENCE) ==
+              "CPDF_Object::kNullobj value mismatch");
+static_assert(static_cast<int>(CPDF_Object::Type::kReference) ==
                   FPDF_OBJECT_REFERENCE,
-              "CPDF_Object::REFERENCE value mismatch");
+              "CPDF_Object::kReference value mismatch");
 
 bool HasAPStream(CPDF_Dictionary* pAnnotDict) {
   return !!GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::Normal);

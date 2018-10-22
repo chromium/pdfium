@@ -16,7 +16,7 @@ CPDF_Boolean::CPDF_Boolean(bool value) : m_bValue(value) {}
 CPDF_Boolean::~CPDF_Boolean() {}
 
 CPDF_Object::Type CPDF_Boolean::GetType() const {
-  return BOOLEAN;
+  return kBoolean;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Boolean::Clone() const {

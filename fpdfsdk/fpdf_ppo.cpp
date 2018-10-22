@@ -350,7 +350,7 @@ bool CPDF_PageOrganizer::PDFDocInit() {
 bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
                                          ObjectNumberMap* pObjNumberMap) {
   switch (pObj->GetType()) {
-    case CPDF_Object::REFERENCE: {
+    case CPDF_Object::kReference: {
       CPDF_Reference* pReference = pObj->AsReference();
       uint32_t newobjnum = GetNewObjId(pObjNumberMap, pReference);
       if (newobjnum == 0)
@@ -358,7 +358,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       pReference->SetRef(dest(), newobjnum);
       break;
     }
-    case CPDF_Object::DICTIONARY: {
+    case CPDF_Object::kDictionary: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
       std::vector<ByteString> bad_keys;
       {
@@ -378,7 +378,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
         pDict->RemoveFor(key);
       break;
     }
-    case CPDF_Object::ARRAY: {
+    case CPDF_Object::kArray: {
       CPDF_Array* pArray = pObj->AsArray();
       for (size_t i = 0; i < pArray->size(); ++i) {
         CPDF_Object* pNextObj = pArray->GetObjectAt(i);
@@ -389,7 +389,7 @@ bool CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       }
       break;
     }
-    case CPDF_Object::STREAM: {
+    case CPDF_Object::kStream: {
       CPDF_Stream* pStream = pObj->AsStream();
       CPDF_Dictionary* pDict = pStream->GetDict();
       if (!pDict)

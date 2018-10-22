@@ -158,26 +158,26 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
     return buf;
   }
   switch (pObj->GetType()) {
-    case CPDF_Object::NULLOBJ:
+    case CPDF_Object::kNullobj:
       buf << " null";
       break;
-    case CPDF_Object::BOOLEAN:
-    case CPDF_Object::NUMBER:
+    case CPDF_Object::kBoolean:
+    case CPDF_Object::kNumber:
       buf << " " << pObj->GetString();
       break;
-    case CPDF_Object::STRING:
+    case CPDF_Object::kString:
       buf << PDF_EncodeString(pObj->GetString(), pObj->AsString()->IsHex());
       break;
-    case CPDF_Object::NAME: {
+    case CPDF_Object::kName: {
       ByteString str = pObj->GetString();
       buf << "/" << PDF_NameEncode(str);
       break;
     }
-    case CPDF_Object::REFERENCE: {
+    case CPDF_Object::kReference: {
       buf << " " << pObj->AsReference()->GetRefObjNum() << " 0 R ";
       break;
     }
-    case CPDF_Object::ARRAY: {
+    case CPDF_Object::kArray: {
       const CPDF_Array* p = pObj->AsArray();
       buf << "[";
       for (size_t i = 0; i < p->size(); i++) {
@@ -191,7 +191,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << "]";
       break;
     }
-    case CPDF_Object::DICTIONARY: {
+    case CPDF_Object::kDictionary: {
       CPDF_DictionaryLocker locker(pObj->AsDictionary());
       buf << "<<";
       for (const auto& it : locker) {
@@ -207,7 +207,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << ">>";
       break;
     }
-    case CPDF_Object::STREAM: {
+    case CPDF_Object::kStream: {
       const CPDF_Stream* p = pObj->AsStream();
       buf << p->GetDict() << "stream\r\n";
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);

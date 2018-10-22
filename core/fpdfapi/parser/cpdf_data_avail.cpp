@@ -353,10 +353,10 @@ bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
     return true;
 
   switch (pKids->GetType()) {
-    case CPDF_Object::REFERENCE:
+    case CPDF_Object::kReference:
       m_PageObjList.push_back(pKids->AsReference()->GetRefObjNum());
       break;
-    case CPDF_Object::ARRAY: {
+    case CPDF_Object::kArray: {
       CPDF_Array* pKidsArray = pKids->AsArray();
       for (size_t i = 0; i < pKidsArray->size(); ++i) {
         if (CPDF_Reference* pRef = ToReference(pKidsArray->GetObjectAt(i)))
@@ -602,14 +602,14 @@ bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
   }
 
   switch (pKids->GetType()) {
-    case CPDF_Object::REFERENCE: {
+    case CPDF_Object::kReference: {
       CPDF_Reference* pKid = pKids->AsReference();
       auto pNode = pdfium::MakeUnique<PageNode>();
       pNode->m_dwPageNo = pKid->GetRefObjNum();
       pPageNode->m_ChildNodes.push_back(std::move(pNode));
       break;
     }
-    case CPDF_Object::ARRAY: {
+    case CPDF_Object::kArray: {
       CPDF_Array* pKidsArray = pKids->AsArray();
       for (size_t i = 0; i < pKidsArray->size(); ++i) {
         CPDF_Reference* pKid = ToReference(pKidsArray->GetObjectAt(i));

@@ -46,7 +46,7 @@ CPDF_Stream::~CPDF_Stream() {
 }
 
 CPDF_Object::Type CPDF_Stream::GetType() const {
-  return STREAM;
+  return kStream;
 }
 
 CPDF_Dictionary* CPDF_Stream::GetDict() {

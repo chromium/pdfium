@@ -33,7 +33,7 @@ CPDF_Array::~CPDF_Array() {
 }
 
 CPDF_Object::Type CPDF_Array::GetType() const {
-  return ARRAY;
+  return kArray;
 }
 
 bool CPDF_Array::IsArray() const {

@@ -12,7 +12,7 @@
 CPDF_Null::CPDF_Null() {}
 
 CPDF_Object::Type CPDF_Null::GetType() const {
-  return NULLOBJ;
+  return kNullobj;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Null::Clone() const {

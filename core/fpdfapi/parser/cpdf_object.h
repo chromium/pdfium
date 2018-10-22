@@ -31,15 +31,15 @@ class CPDF_Object {
  public:
   static const uint32_t kInvalidObjNum = static_cast<uint32_t>(-1);
   enum Type {
-    BOOLEAN = 1,
-    NUMBER,
-    STRING,
-    NAME,
-    ARRAY,
-    DICTIONARY,
-    STREAM,
-    NULLOBJ,
-    REFERENCE
+    kBoolean = 1,
+    kNumber,
+    kString,
+    kName,
+    kArray,
+    kDictionary,
+    kStream,
+    kNullobj,
+    kReference
   };
 
   virtual ~CPDF_Object();
