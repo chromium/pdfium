@@ -31,8 +31,6 @@ WideString JSGetStringFromID(JSMessage msg) {
       return L"System is busy.";
     case JSMessage::kDuplicateEventError:
       return L"Duplicate formfield event found.";
-    case JSMessage::kRunSuccess:
-      return L"Script ran successfully.";
     case JSMessage::kSecondParamNotDateError:
       return L"The second parameter can't be converted to a Date.";
     case JSMessage::kSecondParamInvalidDateError:

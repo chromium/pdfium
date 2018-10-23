@@ -10,8 +10,7 @@
 #include "core/fxcrt/widestring.h"
 
 enum class JSMessage {
-  kRunSuccess = 0,
-  kAlert,
+  kAlert = 1,
   kParamError,
   kInvalidInputError,
   kParamTooLongError,
