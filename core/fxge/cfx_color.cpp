@@ -11,6 +11,15 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 
+// Color types are orded by increasing number of components so we can
+// choose a best color type during some conversions.
+static_assert(CFX_Color::kTransparent < CFX_Color::kGray,
+              "color type values must be ordered");
+static_assert(CFX_Color::kGray < CFX_Color::kRGB,
+              "color type values must be ordered");
+static_assert(CFX_Color::kRGB < CFX_Color::kCMYK,
+              "color type values must be ordered");
+
 namespace {
 
 bool InRange(float comp) {

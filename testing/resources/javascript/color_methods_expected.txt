@@ -1,0 +1,57 @@
+Alert: PASS: color.convert() threw error color.convert: Incorrect number of parameters passed to function.
+Alert: PASS: color.convert(1) threw error color.convert: Incorrect number of parameters passed to function.
+Alert: PASS: color.convert(undefined, 'RGB') threw error color.convert: Incorrect parameter type.
+Alert: PASS: color.convert('BOGUS', 'RGB') threw error color.convert: Incorrect parameter type.
+Alert: PASS: color.convert('{}', 'RGB') threw error color.convert: Incorrect parameter type.
+Alert: PASS: color.convert(['T'], 'BOGUS') = T
+Alert: PASS: color.convert(['T'], 'T') = T
+Alert: PASS: color.convert(['T'], 'G') = T
+Alert: PASS: color.convert(['T'], 'RGB') = T
+Alert: PASS: color.convert(['T'], 'CMYK') = T
+Alert: PASS: color.convert(['G', 0.50], 'BOGUS') = T
+Alert: PASS: color.convert(['G', 0.50], 'T') = T
+Alert: PASS: color.convert(['G', 0.50], 'G') = G,0.5
+Alert: PASS: color.convert(['G', 0.50], 'RGB') = RGB,0.5,0.5,0.5
+Alert: PASS: color.convert(['G', 0.50], 'CMYK') = CMYK,0,0,0,0.5
+Alert: PASS: color.convert(['RGB', 0.25, 0.50, 0.75], 'BOGUS') = T
+Alert: PASS: color.convert(['RGB', 0.25, 0.50, 0.75], 'T') = T
+Alert: PASS: color.convert(['RGB', 1.00, 1.00, 1.00], 'G') = G,1
+Alert: PASS: color.convert(['RGB', 0.25, 0.50, 0.75], 'RGB') = RGB,0.25,0.5,0.75
+Alert: PASS: color.convert(['RGB', 0.25, 0.50, 0.75], 'CMYK') = CMYK,0.75,0.5,0.25,0.25
+Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'BOGUS') = T
+Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'T') = T
+Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'G') = G,0.25
+Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'RGB') = RGB,0.25,0.25,0.25
+Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'CMYK') = CMYK,0.25,0.25,0.25,0.5
+Alert: PASS: color.equal() threw error color.equal: Incorrect number of parameters passed to function.
+Alert: PASS: color.equal(1) threw error color.equal: Incorrect number of parameters passed to function.
+Alert: PASS: color.equal(undefined, undefined) threw error color.equal: Incorrect parameter type.
+Alert: PASS: color.equal(undefined, 'BOGUS') threw error color.equal: Incorrect parameter type.
+Alert: PASS: color.equal('BOGUS', 'BOGUS') threw error color.equal: Incorrect parameter type.
+Alert: PASS: color.equal('BOGUS', ['T']) threw error color.equal: Incorrect parameter type.
+Alert: PASS: color.equal(['T'], 'BOGUS') threw error color.equal: Incorrect parameter type.
+Alert: PASS: color.equal(['T'], ['T']) = true
+Alert: PASS: color.equal(['T'], ['G', 0]) = false
+Alert: PASS: color.equal(['T'], ['RGB', 0, 0, 0]) = false
+Alert: PASS: color.equal(['T'], ['CMYK', 0, 0, 0, 0]) = false
+Alert: PASS: color.equal(['G', 0.50], ['T']) = false
+Alert: PASS: color.equal(['G', 0.50], ['G', 0]) = false
+Alert: PASS: color.equal(['G', 0.50], ['G', 0.50]) = true
+Alert: PASS: color.equal(['G', 0.50], ['RGB', 0, 0, 0]) = false
+Alert: PASS: color.equal(['G', 0.50], ['RGB', 0.50, 0.50, 0.50]) = true
+Alert: PASS: color.equal(['G', 0.50], ['CMYK', 0, 0, 0, 0]) = false
+Alert: PASS: color.equal(['G', 0.50], ['CMYK', 0, 0, 0, 0.50]) = true
+Alert: PASS: color.equal(['RGB', 0.25, 0.25, 0.25], ['T']) = false
+Alert: PASS: color.equal(['RGB', 0.25, 0.25, 0.25], ['G', 0]) = false
+Alert: PASS: color.equal(['RGB', 0.25, 0.25, 0.25], ['G', 0.25]) = true
+Alert: PASS: color.equal(['RGB', 0.25, 0.25, 0.25], ['RGB', 0, 0, 0]) = false
+Alert: PASS: color.equal(['RGB', 0.25, 0.25, 0.25], ['RGB', 0.25, 0.25, 0.25]) = true
+Alert: PASS: color.equal(['RGB', 0.25, 0.25, 0.25], ['CMYK', 0, 0, 0, 0]) = false
+Alert: PASS: color.equal(['RGB', 0.25, 0.25, 0.25], ['CMYK', 0.75, 0.75, 0.75, 0.75]) = true
+Alert: PASS: color.equal(['CMYK', 0.25, 0.25, 0.25, 0.50], ['T']) = false
+Alert: PASS: color.equal(['CMYK', 0.00, 0.25, 0.25, 0.50], ['G', 0]) = false
+Alert: PASS: color.equal(['CMYK', 0.00, 0.00, 0.00, 0.50], ['G', 0.50]) = true
+Alert: PASS: color.equal(['CMYK', 0.75, 0.50, 0.25, 0.25], ['RGB', 0, 0, 0]) = false
+Alert: PASS: color.equal(['CMYK', 0.75, 0.50, 0.25, 0.25], ['RGB', 0.25, 0.50, 0.75]) = true
+Alert: PASS: color.equal(['CMYK', 0.25, 0.25, 0.25, 0.50], ['CMYK', 0, 0, 0, 0]) = false
+Alert: PASS: color.equal(['CMYK', 0.25, 0.25, 0.25, 0.50], ['CMYK', 0.25, 0.25, 0.25, 0.50]) = true

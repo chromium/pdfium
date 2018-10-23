@@ -14,6 +14,7 @@ struct CFX_Color {
   static CFX_Color ParseColor(const CPDF_Array& array);
   static CFX_Color ParseColor(const ByteString& str);
 
+  // Ordered by increasing number of components.
   enum Type { kTransparent = 0, kGray, kRGB, kCMYK };
 
   explicit CFX_Color(FX_COLORREF ref)

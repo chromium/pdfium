@@ -6,6 +6,7 @@
 
 #include "fxjs/cjs_color.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "core/fxge/cfx_color.h"
@@ -271,9 +272,11 @@ CJS_Result CJS_Color::SetPropertyHelper(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Color::convert(CJS_Runtime* pRuntime,
                               const std::vector<v8::Local<v8::Value>>& params) {
-  int iSize = params.size();
-  if (iSize < 2 || params[0].IsEmpty() || !params[0]->IsArray())
+  if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
+
+  if (params[0].IsEmpty() || !params[0]->IsArray())
+    return CJS_Result::Failure(JSMessage::kTypeError);
 
   WideString sDestSpace = pRuntime->ToWideString(params[1]);
   int nColorType = CFX_Color::kTransparent;
@@ -298,9 +301,12 @@ CJS_Result CJS_Color::convert(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Color::equal(CJS_Runtime* pRuntime,
                             const std::vector<v8::Local<v8::Value>>& params) {
-  if (params.size() < 2 || params[0].IsEmpty() || !params[0]->IsArray() ||
-      params[1].IsEmpty() || !params[1]->IsArray()) {
+  if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
+
+  if (params[0].IsEmpty() || !params[0]->IsArray() || params[1].IsEmpty() ||
+      !params[1]->IsArray()) {
+    return CJS_Result::Failure(JSMessage::kTypeError);
   }
 
   CFX_Color color1 =
@@ -308,6 +314,8 @@ CJS_Result CJS_Color::equal(CJS_Runtime* pRuntime,
   CFX_Color color2 =
       ConvertArrayToPWLColor(pRuntime, pRuntime->ToArray(params[1]));
 
-  color1 = color1.ConvertColorType(color2.nColorType);
-  return CJS_Result::Success(pRuntime->NewBoolean(color1 == color2));
+  // Relies on higher values having more components.
+  int32_t best = std::max(color1.nColorType, color2.nColorType);
+  return CJS_Result::Success(pRuntime->NewBoolean(
+      color1.ConvertColorType(best) == color2.ConvertColorType(best)));
 }
