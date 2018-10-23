@@ -8,16 +8,90 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#ifndef _WIN32
-#define NULL_DEREF_IF_POSSIBLE __builtin_unreachable()
+#include "build/build_config.h"
+#include "third_party/base/compiler_specific.h"
+
+#if defined(COMPILER_GCC)
+
+#if defined(ARCH_CPU_X86_FAMILY)
+// int 3 will generate a SIGTRAP.
+#define TRAP_SEQUENCE() \
+  asm volatile(         \
+      "int3; ud2; push %0;" ::"i"(static_cast<unsigned char>(__COUNTER__)))
+
+#elif defined(ARCH_CPU_ARMEL)
+// bkpt will generate a SIGBUS when running on armv7 and a SIGTRAP when running
+// as a 32 bit userspace app on arm64. There doesn't seem to be any way to
+// cause a SIGTRAP from userspace without using a syscall (which would be a
+// problem for sandboxing).
+#define TRAP_SEQUENCE() \
+  asm volatile("bkpt #0; udf %0;" ::"i"(__COUNTER__ % 256))
+
+#elif defined(ARCH_CPU_ARM64)
+// This will always generate a SIGTRAP on arm64.
+#define TRAP_SEQUENCE() \
+  asm volatile("brk #0; hlt %0;" ::"i"(__COUNTER__ % 65536))
+
 #else
-#define NULL_DEREF_IF_POSSIBLE __assume(0)
+// Crash report accuracy will not be guaranteed on other architectures, but at
+// least this will crash as expected.
+#define TRAP_SEQUENCE() __builtin_trap()
+#endif  // ARCH_CPU_*
+
+// CHECK() and the trap sequence can be invoked from a constexpr function.
+// This could make compilation fail on GCC, as it forbids directly using inline
+// asm inside a constexpr function. However, it allows calling a lambda
+// expression including the same asm.
+// The side effect is that the top of the stacktrace will not point to the
+// calling function, but to this anonymous lambda. This is still useful as the
+// full name of the lambda will typically include the name of the function that
+// calls CHECK() and the debugger will still break at the right line of code.
+#if !defined(__clang__)
+#define WRAPPED_TRAP_SEQUENCE() \
+  do {                          \
+    [] { TRAP_SEQUENCE(); }();  \
+  } while (false)
+#else
+#define WRAPPED_TRAP_SEQUENCE() TRAP_SEQUENCE()
 #endif
 
-#define CHECK(condition)   \
-  if (!(condition)) {      \
-    abort();               \
-    NULL_DEREF_IF_POSSIBLE;\
+#define IMMEDIATE_CRASH()    \
+  ({                         \
+    WRAPPED_TRAP_SEQUENCE(); \
+    __builtin_unreachable(); \
+  })
+
+#elif defined(COMPILER_MSVC)
+
+// Clang is cleverer about coalescing int3s, so we need to add a unique-ish
+// instruction following the __debugbreak() to have it emit distinct locations
+// for CHECKs rather than collapsing them all together. It would be nice to use
+// a short intrinsic to do this (and perhaps have only one implementation for
+// both clang and MSVC), however clang-cl currently does not support intrinsics.
+// On the flip side, MSVC x64 doesn't support inline asm. So, we have to have
+// two implementations. Normally clang-cl's version will be 5 bytes (1 for
+// `int3`, 2 for `ud2`, 2 for `push byte imm`, however, TODO(scottmg):
+// https://crbug.com/694670 clang-cl doesn't currently support %'ing
+// __COUNTER__, so eventually it will emit the dword form of push.
+// TODO(scottmg): Reinvestigate a short sequence that will work on both
+// compilers once clang supports more intrinsics. See https://crbug.com/693713.
+#if defined(__clang__)
+#define IMMEDIATE_CRASH()                           \
+  ({                                                \
+    {__asm int 3 __asm ud2 __asm push __COUNTER__}; \
+    __builtin_unreachable();                        \
+  })
+#else
+#define IMMEDIATE_CRASH() __debugbreak()
+#endif  // __clang__
+
+#else
+#error Port
+#endif
+
+#define CHECK(condition)        \
+  if (UNLIKELY(!(condition))) { \
+    IMMEDIATE_CRASH();          \
   }
 
 // TODO(palmer): These are quick hacks to import PartitionAlloc with minimum
@@ -27,11 +101,6 @@
 #define DCHECK CHECK
 #define DCHECK_EQ(x, y) CHECK((x) == (y))
 #define DCHECK_IS_ON() true
-
-// TODO(palmer): Also a quick hack. IMMEDIATE_CRASH used to be simple in
-// Chromium base/, but it got way more complicated and has lots of base/
-// dependencies now. Sad!
-#define IMMEDIATE_CRASH() abort();
 
 #define NOTREACHED() assert(false)
 
