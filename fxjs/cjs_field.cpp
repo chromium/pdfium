@@ -640,16 +640,6 @@ CPDF_FormField* CJS_Field::GetFirstFormField() const {
   return fields.empty() ? nullptr : fields[0];
 }
 
-bool CJS_Field::ValueIsOccur(CPDF_FormField* pFormField,
-                             WideString csOptLabel) const {
-  for (int i = 0, sz = pFormField->CountOptions(); i < sz; i++) {
-    if (csOptLabel.Compare(pFormField->GetOptionLabel(i)) == 0)
-      return true;
-  }
-
-  return false;
-}
-
 CPDF_FormControl* CJS_Field::GetSmartFieldControl(CPDF_FormField* pFormField) {
   if (!pFormField->CountControls() ||
       m_nFormControlIndex >= pFormField->CountControls())
