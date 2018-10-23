@@ -76,8 +76,6 @@ jumbo_source_set("fxjs") {
       "cjs_position.h",
       "cjs_publicmethods.cpp",
       "cjs_publicmethods.h",
-      "cjs_report.cpp",
-      "cjs_report.h",
       "cjs_result.cpp",
       "cjs_result.h",
       "cjs_runtime.cpp",

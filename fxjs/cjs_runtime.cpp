@@ -30,7 +30,6 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_position.h"
 #include "fxjs/cjs_publicmethods.h"
-#include "fxjs/cjs_report.h"
 #include "fxjs/cjs_scalehow.h"
 #include "fxjs/cjs_scalewhen.h"
 #include "fxjs/cjs_style.h"
