@@ -1438,9 +1438,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   DebugVerifyDeviceIsPreMultiplied();
 #endif
   int blend_type = pPageObj->m_GeneralState.GetBlendType();
-  if (blend_type == FXDIB_BLEND_UNSUPPORTED)
-    return true;
-
   CPDF_Dictionary* pSMaskDict =
       ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
   if (pSMaskDict) {

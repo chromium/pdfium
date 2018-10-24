@@ -72,7 +72,6 @@ extern const int16_t SDP_Table[513];
 #define FXDIB_BLEND_SATURATION 22
 #define FXDIB_BLEND_COLOR 23
 #define FXDIB_BLEND_LUMINOSITY 24
-#define FXDIB_BLEND_UNSUPPORTED -1
 
 constexpr uint32_t FXSYS_BGR(uint8_t b, uint8_t g, uint8_t r) {
   return (b << 16) | (g << 8) | r;
