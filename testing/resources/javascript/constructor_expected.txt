@@ -1,0 +1,32 @@
+Alert: PASS: this.constructor(): illegal constructor
+Alert: PASS: new this.constructor: not a dynamic object
+Alert: PASS: app.constructor(): illegal constructor
+Alert: PASS: new app.constructor: not a dynamic object
+Alert: PASS: event.constructor(): illegal constructor
+Alert: PASS: new event.constructor: not a dynamic object
+Alert: PASS: font.constructor(): illegal constructor
+Alert: PASS: new font.constructor: not a dynamic object
+Alert: PASS: global.constructor(): illegal constructor
+Alert: PASS: new global.constructor: not a dynamic object
+Alert: PASS: util.constructor(): illegal constructor
+Alert: PASS: new util.constructor: not a dynamic object
+Alert: PASS: style.constructor(): illegal constructor
+Alert: PASS: new style.constructor: not a dynamic object
+Alert: PASS: color.constructor(): illegal constructor
+Alert: PASS: new color.constructor: not a dynamic object
+Alert: PASS: border.constructor(): illegal constructor
+Alert: PASS: new border.constructor: not a dynamic object
+Alert: PASS: display.constructor(): illegal constructor
+Alert: PASS: new display.constructor: not a dynamic object
+Alert: PASS: console.constructor(): illegal constructor
+Alert: PASS: new console.constructor: not a dynamic object
+Alert: PASS: position.constructor(): illegal constructor
+Alert: PASS: new position.constructor: not a dynamic object
+Alert: PASS: highlight.constructor(): illegal constructor
+Alert: PASS: new highlight.constructor: not a dynamic object
+Alert: PASS: zoomtype.constructor(): illegal constructor
+Alert: PASS: new zoomtype.constructor: not a dynamic object
+Alert: PASS: scaleHow.constructor(): illegal constructor
+Alert: PASS: new scaleHow.constructor: not a dynamic object
+Alert: PASS: scaleWhen.constructor(): illegal constructor
+Alert: PASS: new scaleWhen.constructor: not a dynamic object

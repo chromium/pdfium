@@ -35,8 +35,11 @@ endobj
   {{streamlen}}
 >>
 stream
-var obj = new this.constructor;
-obj.author = 3;
+try {
+  var obj = new this.constructor;
+  obj.author = 3;
+} catch (e) {
+}
 app.alert('Done!');
 endstream
 endobj
