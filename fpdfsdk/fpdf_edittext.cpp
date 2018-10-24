@@ -452,11 +452,7 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
-  if (!text_object)
-    return false;
-
-  CPDF_TextObject* pTextObj =
-      CPDFPageObjectFromFPDFPageObject(text_object)->AsText();
+  CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text_object);
   if (!pTextObj)
     return false;
 
@@ -614,9 +610,6 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetTextRenderMode(FPDF_PAGEOBJECT text) {
-  if (!text)
-    return -1;
-
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text);
   if (!pTextObj)
     return -1;
