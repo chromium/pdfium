@@ -39,3 +39,30 @@ TEST_F(PDFEditTest, LineJoin) {
 
   FPDFPageObj_Destroy(path);
 }
+
+TEST_F(PDFEditTest, LineCap) {
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(nullptr, -1));
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(nullptr, FPDF_LINECAP_BUTT));
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(nullptr, FPDF_LINECAP_ROUND));
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(nullptr, FPDF_LINECAP_PROJECTING_SQUARE));
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(nullptr, 3));
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(nullptr, 1000));
+
+  FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(0, 0);
+  EXPECT_EQ(FPDF_LINECAP_BUTT, FPDFPageObj_GetLineCap(path));
+
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(path, -1));
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(path, 3));
+  EXPECT_FALSE(FPDFPageObj_SetLineCap(path, 1000));
+
+  EXPECT_TRUE(FPDFPageObj_SetLineCap(path, FPDF_LINECAP_PROJECTING_SQUARE));
+  EXPECT_EQ(FPDF_LINECAP_PROJECTING_SQUARE, FPDFPageObj_GetLineCap(path));
+
+  EXPECT_TRUE(FPDFPageObj_SetLineCap(path, FPDF_LINECAP_ROUND));
+  EXPECT_EQ(FPDF_LINECAP_ROUND, FPDFPageObj_GetLineCap(path));
+
+  EXPECT_TRUE(FPDFPageObj_SetLineCap(path, FPDF_LINECAP_BUTT));
+  EXPECT_EQ(FPDF_LINECAP_BUTT, FPDFPageObj_GetLineCap(path));
+
+  FPDFPageObj_Destroy(path);
+}
