@@ -157,6 +157,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObj_Destroy);
     CHK(FPDFPageObj_GetBounds);
     CHK(FPDFPageObj_GetFillColor);
+    CHK(FPDFPageObj_GetLineJoin);
     CHK(FPDFPageObj_GetMark);
     CHK(FPDFPageObj_GetStrokeColor);
     CHK(FPDFPageObj_GetStrokeWidth);

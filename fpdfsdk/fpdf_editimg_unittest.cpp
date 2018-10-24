@@ -7,13 +7,13 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class PDFEditTest : public testing::Test {
+class PDFEditImgTest : public testing::Test {
   void SetUp() override { CPDF_ModuleMgr::Get()->Init(); }
 
   void TearDown() override { CPDF_ModuleMgr::Destroy(); }
 };
 
-TEST_F(PDFEditTest, InsertObjectWithInvalidPage) {
+TEST_F(PDFEditImgTest, InsertObjectWithInvalidPage) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
   EXPECT_EQ(0, FPDFPage_CountObjects(page));
@@ -32,7 +32,7 @@ TEST_F(PDFEditTest, InsertObjectWithInvalidPage) {
   FPDF_CloseDocument(doc);
 }
 
-TEST_F(PDFEditTest, NewImageObj) {
+TEST_F(PDFEditImgTest, NewImageObj) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
   EXPECT_EQ(0, FPDFPage_CountObjects(page));
@@ -46,7 +46,7 @@ TEST_F(PDFEditTest, NewImageObj) {
   FPDF_CloseDocument(doc);
 }
 
-TEST_F(PDFEditTest, NewImageObjGenerateContent) {
+TEST_F(PDFEditImgTest, NewImageObjGenerateContent) {
   FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
   FPDF_PAGE page = FPDFPage_New(doc, 0, 100, 100);
   EXPECT_EQ(0, FPDFPage_CountObjects(page));

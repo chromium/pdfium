@@ -835,6 +835,16 @@ FPDFPageObj_SetStrokeWidth(FPDF_PAGEOBJECT page_object, float width);
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_GetStrokeWidth(FPDF_PAGEOBJECT page_object, float* width);
 
+// Get the line join of |page_object|.
+//
+// page_object  - handle to a page object.
+//
+// Returns the line join, or -1 on failure.
+// Line join can be one of following: FPDF_LINEJOIN_MITER, FPDF_LINEJOIN_ROUND,
+// FPDF_LINEJOIN_BEVEL
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObj_GetLineJoin(FPDF_PAGEOBJECT page_object);
+
 // DEPRECATED as of May 2018. This API will be removed in the future. Please
 // use FPDFPageObj_SetLineJoin instead.
 //
