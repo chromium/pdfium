@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/page/cpdf_generalstate.h"
 
-#include "constants/transparency.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_dibbase.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
@@ -259,28 +258,7 @@ CFX_Matrix* CPDF_GeneralState::GetMutableMatrix() {
   return &m_Ref.GetPrivateCopy()->m_Matrix;
 }
 
-CPDF_GeneralState::StateData::StateData()
-    : m_BlendMode(pdfium::transparency::kNormal),
-      m_BlendType(0),
-      m_StrokeAlpha(1.0),
-      m_FillAlpha(1.0f),
-      m_pTR(nullptr),
-      m_pTransferFunc(nullptr),
-      m_RenderIntent(0),
-      m_StrokeAdjust(false),
-      m_AlphaSource(false),
-      m_TextKnockout(false),
-      m_StrokeOP(false),
-      m_FillOP(false),
-      m_OPMode(0),
-      m_pBG(nullptr),
-      m_pUCR(nullptr),
-      m_pHT(nullptr),
-      m_Flatness(1.0f),
-      m_Smoothness(0.0f) {
-  m_SMaskMatrix.SetIdentity();
-  m_Matrix.SetIdentity();
-}
+CPDF_GeneralState::StateData::StateData() = default;
 
 CPDF_GeneralState::StateData::StateData(const StateData& that)
     : m_BlendMode(that.m_BlendMode),
