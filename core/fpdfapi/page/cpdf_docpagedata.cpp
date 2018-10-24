@@ -30,7 +30,7 @@
 
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
     : m_bForceClear(false), m_pPDFDoc(pPDFDoc) {
-  assert(m_pPDFDoc);
+  ASSERT(m_pPDFDoc);
 }
 
 CPDF_DocPageData::~CPDF_DocPageData() {

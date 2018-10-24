@@ -33,7 +33,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
     : CPDF_Pattern(pDoc, bShading ? nullptr : pPatternObj, parentMatrix),
       m_bShadingObj(bShading),
       m_pShadingObj(pPatternObj) {
-  assert(document());
+  ASSERT(document());
   if (!bShading) {
     m_pShadingObj = pattern_obj()->GetDict()->GetDirectObjectFor("Shading");
     SetPatternToFormMatrix();

@@ -78,7 +78,7 @@ const int32_t CODE_STOP = 106;
 
 CBC_OnedCode128Writer::CBC_OnedCode128Writer(BC_TYPE type)
     : m_codeFormat(type) {
-  assert(m_codeFormat == BC_CODE128_B || m_codeFormat == BC_CODE128_C);
+  ASSERT(m_codeFormat == BC_CODE128_B || m_codeFormat == BC_CODE128_C);
 }
 
 CBC_OnedCode128Writer::~CBC_OnedCode128Writer() = default;

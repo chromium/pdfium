@@ -135,8 +135,8 @@ bool CBC_PDF417ErrorCorrection::generateErrorCorrection(
     const WideString& dataCodewords,
     int32_t errorCorrectionLevel,
     WideString* result) {
-  assert(result);
-  assert(result->IsEmpty());
+  ASSERT(result);
+  ASSERT(result->IsEmpty());
 
   int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel);
   if (k < 0)

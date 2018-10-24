@@ -30,6 +30,6 @@ void CXFA_NodeOwner::FreeOwnedNode(CXFA_Node* node) {
 
   pdfium::FakeUniquePtr<CXFA_Node> search(node);
   auto it = nodes_.find(search);
-  assert(it != nodes_.end());
+  ASSERT(it != nodes_.end());
   nodes_.erase(it);
 }
