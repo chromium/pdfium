@@ -42,11 +42,14 @@ bool CPDF_Image::IsValidJpegBitsPerComponent(int32_t bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
 }
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
+CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {
+  ASSERT(m_pDocument);
+}
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
                        std::unique_ptr<CPDF_Stream> pStream)
     : m_bIsInline(true), m_pDocument(pDoc), m_pStream(std::move(pStream)) {
+  ASSERT(m_pDocument);
   ASSERT(m_pStream.IsOwned());
   FinishInitialization(m_pStream->GetDict());
 }
@@ -54,11 +57,12 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
       m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
+  ASSERT(m_pDocument);
   ASSERT(!m_pStream.IsOwned());
   FinishInitialization(m_pStream->GetDict());
 }
 
-CPDF_Image::~CPDF_Image() {}
+CPDF_Image::~CPDF_Image() = default;
 
 void CPDF_Image::FinishInitialization(CPDF_Dictionary* pStreamDict) {
   m_pOC = pStreamDict->GetDictFor("OC");
