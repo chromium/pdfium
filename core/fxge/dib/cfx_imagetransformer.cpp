@@ -202,42 +202,38 @@ class CFX_BilinearMatrix final : public CPDF_FixedMatrix {
 }  // namespace
 
 CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
-                                           const CFX_Matrix* pMatrix,
-                                           int flags,
+                                           const CFX_Matrix& matrix,
+                                           uint32_t flags,
                                            const FX_RECT* pClip)
-    : m_pSrc(pSrc),
-      m_pMatrix(pMatrix),
-      m_pClip(pClip),
-      m_Flags(flags),
-      m_Status(0) {
-  FX_RECT result_rect = m_pMatrix->GetUnitRect().GetClosestRect();
+    : m_pSrc(pSrc), m_matrix(matrix), m_Flags(flags) {
+  FX_RECT result_rect = m_matrix.GetUnitRect().GetClosestRect();
   FX_RECT result_clip = result_rect;
-  if (m_pClip)
-    result_clip.Intersect(*m_pClip);
+  if (pClip)
+    result_clip.Intersect(*pClip);
 
   if (result_clip.IsEmpty())
     return;
 
   m_result = result_clip;
-  if (fabs(m_pMatrix->a) < fabs(m_pMatrix->b) / 20 &&
-      fabs(m_pMatrix->d) < fabs(m_pMatrix->c) / 20 &&
-      fabs(m_pMatrix->a) < 0.5f && fabs(m_pMatrix->d) < 0.5f) {
+  if (fabs(m_matrix.a) < fabs(m_matrix.b) / 20 &&
+      fabs(m_matrix.d) < fabs(m_matrix.c) / 20 && fabs(m_matrix.a) < 0.5f &&
+      fabs(m_matrix.d) < 0.5f) {
     int dest_width = result_rect.Width();
     int dest_height = result_rect.Height();
     result_clip.Offset(-result_rect.left, -result_rect.top);
     result_clip = FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
-                                    m_pMatrix->c > 0, m_pMatrix->b < 0);
+                                    m_matrix.c > 0, m_matrix.b < 0);
     m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_height, dest_width, result_clip, m_Flags);
     m_Stretcher->Start();
     m_Status = 1;
     return;
   }
-  if (fabs(m_pMatrix->b) < kFix16 && fabs(m_pMatrix->c) < kFix16) {
-    int dest_width = static_cast<int>(m_pMatrix->a > 0 ? ceil(m_pMatrix->a)
-                                                       : floor(m_pMatrix->a));
-    int dest_height = static_cast<int>(m_pMatrix->d > 0 ? -ceil(m_pMatrix->d)
-                                                        : -floor(m_pMatrix->d));
+  if (fabs(m_matrix.b) < kFix16 && fabs(m_matrix.c) < kFix16) {
+    int dest_width =
+        static_cast<int>(m_matrix.a > 0 ? ceil(m_matrix.a) : floor(m_matrix.a));
+    int dest_height = static_cast<int>(m_matrix.d > 0 ? -ceil(m_matrix.d)
+                                                      : -floor(m_matrix.d));
     result_clip.Offset(-result_rect.left, -result_rect.top);
     m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip, m_Flags);
@@ -246,14 +242,14 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
     return;
   }
   int stretch_width =
-      static_cast<int>(ceil(FXSYS_sqrt2(m_pMatrix->a, m_pMatrix->b)));
+      static_cast<int>(ceil(FXSYS_sqrt2(m_matrix.a, m_matrix.b)));
   int stretch_height =
-      static_cast<int>(ceil(FXSYS_sqrt2(m_pMatrix->c, m_pMatrix->d)));
+      static_cast<int>(ceil(FXSYS_sqrt2(m_matrix.c, m_matrix.d)));
   CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, stretch_height);
   stretch2dest.Concat(
-      CFX_Matrix(m_pMatrix->a / stretch_width, m_pMatrix->b / stretch_width,
-                 m_pMatrix->c / stretch_height, m_pMatrix->d / stretch_height,
-                 m_pMatrix->e, m_pMatrix->f));
+      CFX_Matrix(m_matrix.a / stretch_width, m_matrix.b / stretch_width,
+                 m_matrix.c / stretch_height, m_matrix.d / stretch_height,
+                 m_matrix.e, m_matrix.f));
   m_dest2stretch = stretch2dest.GetInverse();
 
   m_StretchClip =
@@ -274,7 +270,7 @@ bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
 
     if (m_Storer.GetBitmap()) {
       m_Storer.Replace(
-          m_Storer.GetBitmap()->SwapXY(m_pMatrix->c > 0, m_pMatrix->b < 0));
+          m_Storer.GetBitmap()->SwapXY(m_matrix.c > 0, m_matrix.b < 0));
     }
     return false;
   }

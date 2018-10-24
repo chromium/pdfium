@@ -1167,11 +1167,11 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   return pTransBitmap;
 }
 
-RetainPtr<CFX_DIBitmap> CFX_DIBBase::TransformTo(const CFX_Matrix* pDestMatrix,
+RetainPtr<CFX_DIBitmap> CFX_DIBBase::TransformTo(const CFX_Matrix& mtDest,
                                                  int* result_left,
                                                  int* result_top) {
   RetainPtr<CFX_DIBBase> holder(this);
-  CFX_ImageTransformer transformer(holder, pDestMatrix, 0, nullptr);
+  CFX_ImageTransformer transformer(holder, mtDest, 0, nullptr);
   transformer.Continue(nullptr);
   *result_left = transformer.result().left;
   *result_top = transformer.result().top;

@@ -423,7 +423,7 @@ void CXFA_Graphics::SetDIBitsWithMatrix(const RetainPtr<CFX_DIBBase>& source,
     int32_t left;
     int32_t top;
     RetainPtr<CFX_DIBitmap> bmp1 = source->FlipImage(false, true);
-    RetainPtr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(&m, &left, &top);
+    RetainPtr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(m, &left, &top);
     m_renderDevice->SetDIBits(bmp2, left, top);
   }
 }

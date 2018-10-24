@@ -60,7 +60,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
     }
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        pSource, &m_Matrix, dib_flags, &m_ClipBox);
+        pSource, m_Matrix, dib_flags, &m_ClipBox);
     return;
   }
 

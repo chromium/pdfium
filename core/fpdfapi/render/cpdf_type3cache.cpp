@@ -154,7 +154,7 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
     }
   }
   if (!pResBitmap)
-    pResBitmap = pBitmap->TransformTo(&image_matrix, &left, &top);
+    pResBitmap = pBitmap->TransformTo(image_matrix, &left, &top);
   if (!pResBitmap)
     return nullptr;
 

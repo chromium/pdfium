@@ -416,7 +416,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     clip_box.Intersect(image_rect);
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        m_pDIBBase, &m_ImageMatrix, m_Flags, &clip_box);
+        m_pDIBBase, m_ImageMatrix, m_Flags, &clip_box);
     return true;
   }
   if (m_ImageMatrix.a < 0)
@@ -485,7 +485,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
     int left;
     int top;
     RetainPtr<CFX_DIBitmap> pTransformed =
-        pAlphaMask->TransformTo(&m_ImageMatrix, &left, &top);
+        pAlphaMask->TransformTo(m_ImageMatrix, &left, &top);
     if (!pTransformed)
       return true;
 

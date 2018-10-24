@@ -82,7 +82,7 @@ class CFX_DIBBase : public Retainable {
                                     int dest_height,
                                     uint32_t flags,
                                     const FX_RECT* pClip);
-  RetainPtr<CFX_DIBitmap> TransformTo(const CFX_Matrix* pMatrix,
+  RetainPtr<CFX_DIBitmap> TransformTo(const CFX_Matrix& mtDest,
                                       int* left,
                                       int* top);
   RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip, bool bYFlip) const;

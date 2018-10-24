@@ -49,7 +49,7 @@ bool CXFA_ImageRenderer::Start() {
     clip_box.Intersect(image_rect);
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        pDib, &m_ImageMatrix, FXDIB_INTERPOL, &clip_box);
+        pDib, m_ImageMatrix, FXDIB_INTERPOL, &clip_box);
     return true;
   }
   if (m_ImageMatrix.a < 0)

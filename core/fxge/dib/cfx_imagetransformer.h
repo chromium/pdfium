@@ -21,8 +21,8 @@ class CFX_ImageStretcher;
 class CFX_ImageTransformer {
  public:
   CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
-                       const CFX_Matrix* pMatrix,
-                       int flags,
+                       const CFX_Matrix& matrix,
+                       uint32_t flags,
                        const FX_RECT* pClip);
   ~CFX_ImageTransformer();
 
@@ -99,15 +99,14 @@ class CFX_ImageTransformer {
       std::function<void(const DownSampleData&, uint8_t*)> func);
 
   RetainPtr<CFX_DIBBase> const m_pSrc;
-  UnownedPtr<const CFX_Matrix> const m_pMatrix;
-  const FX_RECT* const m_pClip;
+  const CFX_Matrix m_matrix;
   FX_RECT m_StretchClip;
   FX_RECT m_result;
   CFX_Matrix m_dest2stretch;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapStorer m_Storer;
   const uint32_t m_Flags;
-  int m_Status;
+  int m_Status = 0;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_IMAGETRANSFORMER_H_
