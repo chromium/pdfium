@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CFFL_LISTBOX_H_
 #define FPDFSDK_FORMFILLER_CFFL_LISTBOX_H_
 
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -21,7 +22,8 @@ class CFFL_ListBox final : public CFFL_TextObject {
 
   // CFFL_TextObject:
   CPWL_Wnd::CreateParams GetCreateParam() override;
-  CPWL_Wnd* NewPDFWindow(const CPWL_Wnd::CreateParams& cp) override;
+  std::unique_ptr<CPWL_Wnd> NewPDFWindow(
+      const CPWL_Wnd::CreateParams& cp) override;
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
   bool IsDataChanged(CPDFSDK_PageView* pPageView) override;
   void SaveData(CPDFSDK_PageView* pPageView) override;
