@@ -1251,7 +1251,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
 
   uint32_t fill_argb = FillType ? GetFillArgb(pPathObj) : 0;
   uint32_t stroke_argb = bStroke ? GetStrokeArgb(pPathObj) : 0;
-  CFX_Matrix path_matrix = pPathObj->m_Matrix;
+  CFX_Matrix path_matrix = pPathObj->matrix();
   path_matrix.Concat(mtObj2Device);
   if (!IsAvailableMatrix(path_matrix))
     return true;
@@ -1415,7 +1415,7 @@ bool CPDF_RenderStatus::ClipPattern(const CPDF_PageObject* pPageObj,
 bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
                                        const CFX_Matrix& mtObj2Device,
                                        bool bStroke) {
-  CFX_Matrix path_matrix = pPathObj->m_Matrix;
+  CFX_Matrix path_matrix = pPathObj->matrix();
   path_matrix.Concat(mtObj2Device);
   if (bStroke) {
     CFX_GraphState graphState = pPathObj->m_GraphState;
@@ -2007,9 +2007,9 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
                              charpos.m_Origin.y));
     path.m_Path.Append(pPath, &matrix);
-    path.m_Matrix = *pTextMatrix;
     path.m_bStroke = bStroke;
     path.m_FillType = bFill ? FXFILL_WINDING : 0;
+    path.set_matrix(*pTextMatrix);
     path.CalcBoundingBox();
     ProcessPath(&path, mtObj2Device);
   }

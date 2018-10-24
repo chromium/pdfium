@@ -252,7 +252,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
   if (!pPathObj)
     return false;
 
-  std::tie(*a, *b, *c, *d, *e, *f) = pPathObj->m_Matrix.AsTuple();
+  std::tie(*a, *b, *c, *d, *e, *f) = pPathObj->matrix().AsTuple();
   return true;
 }
 
@@ -267,12 +267,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetMatrix(FPDF_PAGEOBJECT path,
   if (!pPathObj)
     return false;
 
-  pPathObj->m_Matrix.a = a;
-  pPathObj->m_Matrix.b = b;
-  pPathObj->m_Matrix.c = c;
-  pPathObj->m_Matrix.d = d;
-  pPathObj->m_Matrix.e = e;
-  pPathObj->m_Matrix.f = f;
+  pPathObj->set_matrix(CFX_Matrix(a, b, c, d, e, f));
   pPathObj->SetDirty(true);
   return true;
 }

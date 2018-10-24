@@ -7,11 +7,11 @@
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 
 CPDF_PathObject::CPDF_PathObject(int32_t content_stream)
-    : CPDF_PageObject(content_stream), m_FillType(0), m_bStroke(false) {}
+    : CPDF_PageObject(content_stream) {}
 
 CPDF_PathObject::CPDF_PathObject() : CPDF_PathObject(kNoContentStream) {}
 
-CPDF_PathObject::~CPDF_PathObject() {}
+CPDF_PathObject::~CPDF_PathObject() = default;
 
 CPDF_PageObject::Type CPDF_PathObject::GetType() const {
   return PATH;

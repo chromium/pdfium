@@ -1478,7 +1478,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
     pPathObj->m_bStroke = bStroke;
     pPathObj->m_FillType = FillType;
     pPathObj->m_Path = Path;
-    pPathObj->m_Matrix = matrix;
+    pPathObj->set_matrix(matrix);
     SetGraphicStates(pPathObj.get(), true, false, true);
     pPathObj->CalcBoundingBox();
     m_pObjectHolder->AppendPageObject(std::move(pPathObj));

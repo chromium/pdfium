@@ -352,7 +352,7 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
 
-  *buf << pPathObj->m_Matrix << " cm ";
+  *buf << pPathObj->matrix() << " cm ";
 
   auto& pPoints = pPathObj->m_Path.GetPoints();
   if (pPathObj->m_Path.IsRect()) {
