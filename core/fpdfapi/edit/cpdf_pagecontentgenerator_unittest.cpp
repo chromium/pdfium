@@ -53,7 +53,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
   pPathObj->m_Path.AppendRect(10, 5, 13, 30);
   pPathObj->m_FillType = FXFILL_ALTERNATE;
-  pPathObj->m_bStroke = true;
+  pPathObj->set_stroke(true);
 
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, nullptr, false);
   CPDF_PageContentGenerator generator(pTestPage.Get());
@@ -68,7 +68,6 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
                                false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(0, 3.78f), FXPT_TYPE::LineTo, true);
   pPathObj->m_FillType = 0;
-  pPathObj->m_bStroke = false;
   buf.str("");
 
   TestProcessPath(&generator, &buf, pPathObj.get());
@@ -97,7 +96,6 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   pPathObj->m_Path.AppendPoint(CFX_PointF(12, 13.64f), FXPT_TYPE::BezierTo,
                                true);
   pPathObj->m_FillType = FXFILL_WINDING;
-  pPathObj->m_bStroke = false;
 
   auto pTestPage = pdfium::MakeRetain<CPDF_Page>(nullptr, nullptr, false);
   CPDF_PageContentGenerator generator(pTestPage.Get());
@@ -116,7 +114,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   pPathObj->m_Path.AppendPoint(CFX_PointF(3, 4), FXPT_TYPE::LineTo, false);
   pPathObj->m_Path.AppendPoint(CFX_PointF(5, 6), FXPT_TYPE::LineTo, true);
   pPathObj->m_FillType = FXFILL_WINDING;
-  pPathObj->m_bStroke = true;
+  pPathObj->set_stroke(true);
 
   static const std::vector<float> rgb = {0.5f, 0.7f, 0.35f};
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);

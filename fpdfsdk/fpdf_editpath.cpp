@@ -215,7 +215,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
     pPathObj->m_FillType = FXFILL_WINDING;
   else
     pPathObj->m_FillType = 0;
-  pPathObj->m_bStroke = stroke != 0;
+  pPathObj->set_stroke(!!stroke);
   pPathObj->SetDirty(true);
   return true;
 }
@@ -234,7 +234,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
   else
     *fillmode = FPDF_FILLMODE_NONE;
 
-  *stroke = pPathObj->m_bStroke;
+  *stroke = pPathObj->stroke();
   return true;
 }
 

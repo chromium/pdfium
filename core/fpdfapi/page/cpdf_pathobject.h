@@ -27,14 +27,17 @@ class CPDF_PathObject final : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
+  bool stroke() const { return m_bStroke; }
+  void set_stroke(bool stroke) { m_bStroke = stroke; }
+
   const CFX_Matrix& matrix() const { return m_Matrix; }
   void set_matrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
 
   CPDF_Path m_Path;
   int m_FillType = 0;
-  bool m_bStroke = false;
 
  private:
+  bool m_bStroke = false;
   CFX_Matrix m_Matrix;
 };
 
