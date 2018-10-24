@@ -2963,6 +2963,83 @@ TEST_F(FPDFEditEmbeddertest, GetImageData) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbeddertest, GetImageMatrix) {
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(39, FPDFPage_CountObjects(page));
+
+  FPDF_PAGEOBJECT obj;
+  double a;
+  double b;
+  double c;
+  double d;
+  double e;
+  double f;
+
+  obj = FPDFPage_GetObject(page, 33);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(53.0, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(43.0, d);
+  EXPECT_DOUBLE_EQ(72.0, e);
+  EXPECT_DOUBLE_EQ(646.510009765625, f);
+
+  obj = FPDFPage_GetObject(page, 34);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(70.0, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(51.0, d);
+  EXPECT_DOUBLE_EQ(216.0, e);
+  EXPECT_DOUBLE_EQ(646.510009765625, f);
+
+  obj = FPDFPage_GetObject(page, 35);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(69.0, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(51.0, d);
+  EXPECT_DOUBLE_EQ(360.0, e);
+  EXPECT_DOUBLE_EQ(646.510009765625, f);
+
+  obj = FPDFPage_GetObject(page, 36);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(59.0, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(45.0, d);
+  EXPECT_DOUBLE_EQ(72.0, e);
+  EXPECT_DOUBLE_EQ(553.510009765625, f);
+
+  obj = FPDFPage_GetObject(page, 37);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(55.94000244140625, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(46.950000762939453, d);
+  EXPECT_DOUBLE_EQ(216.0, e);
+  EXPECT_DOUBLE_EQ(552.510009765625, f);
+
+  obj = FPDFPage_GetObject(page, 38);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_TRUE(FPDFImageObj_GetMatrix(obj, &a, &b, &c, &d, &e, &f));
+  EXPECT_DOUBLE_EQ(70.528999328613281, a);
+  EXPECT_DOUBLE_EQ(0.0, b);
+  EXPECT_DOUBLE_EQ(0.0, c);
+  EXPECT_DOUBLE_EQ(43.149997711181641, d);
+  EXPECT_DOUBLE_EQ(360.0, e);
+  EXPECT_DOUBLE_EQ(553.3599853515625, f);
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbeddertest, DestroyPageObject) {
   FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
   ASSERT_TRUE(rect);

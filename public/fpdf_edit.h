@@ -565,6 +565,31 @@ FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
                                 FPDF_PAGEOBJECT image_object,
                                 FPDF_FILEACCESS* fileAccess);
 
+// Experimental API.
+// Get the transform matrix of an image object.
+//
+//   image_object - handle to an image object.
+//   a            - matrix value.
+//   b            - matrix value.
+//   c            - matrix value.
+//   d            - matrix value.
+//   e            - matrix value.
+//   f            - matrix value.
+//
+// The matrix is composed as:
+//   |a c e|
+//   |b d f|
+// and used to scale, rotate, shear and translate the image.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFImageObj_GetMatrix(FPDF_PAGEOBJECT path,
+                                                           double* a,
+                                                           double* b,
+                                                           double* c,
+                                                           double* d,
+                                                           double* e,
+                                                           double* f);
+
 // Set the transform matrix of |image_object|.
 //
 //   image_object - handle to an image object.
@@ -578,7 +603,7 @@ FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
 // The matrix is composed as:
 //   |a c e|
 //   |b d f|
-// and can be used to scale, rotate, shear and translate the |page| annotations.
+// and can be used to scale, rotate, shear and translate the |image_object|.
 //
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
