@@ -8,11 +8,10 @@
 #define CORE_FXCRT_FX_COORDINATES_H_
 
 #include <algorithm>
+#include <tuple>
 
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
-
-class CFX_Matrix;
 
 template <class BaseType>
 class CFX_PTemplate {
@@ -540,6 +539,8 @@ class CFX_Matrix {
     e = other.e;
     f = other.f;
   }
+
+  std::tuple<float, float, float, float, float, float> AsTuple() const;
 
   void SetIdentity() {
     a = 1;

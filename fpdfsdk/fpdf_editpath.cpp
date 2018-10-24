@@ -4,6 +4,7 @@
 
 #include "public/fpdf_edit.h"
 
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_path.h"
@@ -251,12 +252,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetMatrix(FPDF_PAGEOBJECT path,
   if (!pPathObj)
     return false;
 
-  *a = pPathObj->m_Matrix.a;
-  *b = pPathObj->m_Matrix.b;
-  *c = pPathObj->m_Matrix.c;
-  *d = pPathObj->m_Matrix.d;
-  *e = pPathObj->m_Matrix.e;
-  *f = pPathObj->m_Matrix.f;
+  std::tie(*a, *b, *c, *d, *e, *f) = pPathObj->m_Matrix.AsTuple();
   return true;
 }
 

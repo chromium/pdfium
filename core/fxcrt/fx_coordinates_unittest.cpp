@@ -248,25 +248,36 @@ TEST(CFX_Matrix, ReverseIdentity) {
 
 TEST(CFX_Matrix, SetIdentity) {
   CFX_Matrix m;
-  EXPECT_FLOAT_EQ(1.0, m.a);
-  EXPECT_FLOAT_EQ(0.0, m.b);
-  EXPECT_FLOAT_EQ(0.0, m.c);
-  EXPECT_FLOAT_EQ(1.0, m.d);
-  EXPECT_FLOAT_EQ(0.0, m.e);
-  EXPECT_FLOAT_EQ(0.0, m.f);
+  EXPECT_FLOAT_EQ(1.0f, m.a);
+  EXPECT_FLOAT_EQ(0.0f, m.b);
+  EXPECT_FLOAT_EQ(0.0f, m.c);
+  EXPECT_FLOAT_EQ(1.0f, m.d);
+  EXPECT_FLOAT_EQ(0.0f, m.e);
+  EXPECT_FLOAT_EQ(0.0f, m.f);
   EXPECT_TRUE(m.IsIdentity());
 
   m.a = -1;
   EXPECT_FALSE(m.IsIdentity());
 
   m.SetIdentity();
-  EXPECT_FLOAT_EQ(1.0, m.a);
-  EXPECT_FLOAT_EQ(0.0, m.b);
-  EXPECT_FLOAT_EQ(0.0, m.c);
-  EXPECT_FLOAT_EQ(1.0, m.d);
-  EXPECT_FLOAT_EQ(0.0, m.e);
-  EXPECT_FLOAT_EQ(0.0, m.f);
+  EXPECT_FLOAT_EQ(1.0f, m.a);
+  EXPECT_FLOAT_EQ(0.0f, m.b);
+  EXPECT_FLOAT_EQ(0.0f, m.c);
+  EXPECT_FLOAT_EQ(1.0f, m.d);
+  EXPECT_FLOAT_EQ(0.0f, m.e);
+  EXPECT_FLOAT_EQ(0.0f, m.f);
   EXPECT_TRUE(m.IsIdentity());
+}
+
+TEST(CFX_Matrix, AsTuple) {
+  CFX_Matrix m(1, 2, 3, 4, 5, 6);
+  auto tuple = m.AsTuple();
+  EXPECT_FLOAT_EQ(1.0f, std::get<0>(tuple));
+  EXPECT_FLOAT_EQ(2.0f, std::get<1>(tuple));
+  EXPECT_FLOAT_EQ(3.0f, std::get<2>(tuple));
+  EXPECT_FLOAT_EQ(4.0f, std::get<3>(tuple));
+  EXPECT_FLOAT_EQ(5.0f, std::get<4>(tuple));
+  EXPECT_FLOAT_EQ(6.0f, std::get<5>(tuple));
 }
 
 TEST(CFX_Matrix, GetInverse) {

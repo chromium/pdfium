@@ -6,6 +6,8 @@
 
 #include "public/fpdf_edit.h"
 
+#include <utility>
+
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
@@ -129,13 +131,7 @@ FPDFImageObj_GetMatrix(FPDF_PAGEOBJECT image_object,
   if (!pImgObj || !a || !b || !c || !d || !e || !f)
     return false;
 
-  const CFX_Matrix& matrix = pImgObj->matrix();
-  *a = matrix.a;
-  *b = matrix.b;
-  *c = matrix.c;
-  *d = matrix.d;
-  *e = matrix.e;
-  *f = matrix.f;
+  std::tie(*a, *b, *c, *d, *e, *f) = pImgObj->matrix().AsTuple();
   return true;
 }
 

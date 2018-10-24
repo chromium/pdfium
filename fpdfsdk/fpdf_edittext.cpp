@@ -524,14 +524,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_PAGEOBJECT text,
   if (!pTextObj)
     return false;
 
-  CFX_Matrix text_matrix = pTextObj->GetTextMatrix();
-  *a = text_matrix.a;
-  *b = text_matrix.b;
-  *c = text_matrix.c;
-  *d = text_matrix.d;
-  *e = text_matrix.e;
-  *f = text_matrix.f;
-
+  std::tie(*a, *b, *c, *d, *e, *f) = pTextObj->GetTextMatrix().AsTuple();
   return true;
 }
 

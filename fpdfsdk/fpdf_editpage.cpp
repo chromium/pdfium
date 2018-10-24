@@ -873,12 +873,6 @@ FPDFFormObj_GetMatrix(FPDF_PAGEOBJECT form_object,
   if (!pFormObj || !a || !b || !c || !d || !e || !f)
     return false;
 
-  const CFX_Matrix& matrix = pFormObj->form_matrix();
-  *a = matrix.a;
-  *b = matrix.b;
-  *c = matrix.c;
-  *d = matrix.d;
-  *e = matrix.e;
-  *f = matrix.f;
+  std::tie(*a, *b, *c, *d, *e, *f) = pFormObj->form_matrix().AsTuple();
   return true;
 }

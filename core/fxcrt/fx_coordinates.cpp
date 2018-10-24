@@ -300,6 +300,11 @@ std::ostream& operator<<(std::ostream& os, const CFX_RectF& rect) {
 }
 #endif  // NDEBUG
 
+std::tuple<float, float, float, float, float, float> CFX_Matrix::AsTuple()
+    const {
+  return {a, b, c, d, e, f};
+}
+
 CFX_Matrix CFX_Matrix::GetInverse() const {
   CFX_Matrix inverse;
   float i = a * d - b * c;
