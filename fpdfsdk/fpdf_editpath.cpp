@@ -210,11 +210,11 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
     return false;
 
   if (fillmode == FPDF_FILLMODE_ALTERNATE)
-    pPathObj->m_FillType = FXFILL_ALTERNATE;
+    pPathObj->set_filltype(FXFILL_ALTERNATE);
   else if (fillmode == FPDF_FILLMODE_WINDING)
-    pPathObj->m_FillType = FXFILL_WINDING;
+    pPathObj->set_filltype(FXFILL_WINDING);
   else
-    pPathObj->m_FillType = 0;
+    pPathObj->set_filltype(0);
   pPathObj->set_stroke(!!stroke);
   pPathObj->SetDirty(true);
   return true;
@@ -227,9 +227,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_GetDrawMode(FPDF_PAGEOBJECT path,
   if (!pPathObj || !fillmode || !stroke)
     return false;
 
-  if (pPathObj->m_FillType == FXFILL_ALTERNATE)
+  if (pPathObj->filltype() == FXFILL_ALTERNATE)
     *fillmode = FPDF_FILLMODE_ALTERNATE;
-  else if (pPathObj->m_FillType == FXFILL_WINDING)
+  else if (pPathObj->filltype() == FXFILL_WINDING)
     *fillmode = FPDF_FILLMODE_WINDING;
   else
     *fillmode = FPDF_FILLMODE_NONE;

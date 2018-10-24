@@ -1243,7 +1243,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 
 bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
                                     const CFX_Matrix& mtObj2Device) {
-  int FillType = pPathObj->m_FillType;
+  int FillType = pPathObj->filltype();
   bool bStroke = pPathObj->stroke();
   ProcessPathPattern(pPathObj, mtObj2Device, &FillType, &bStroke);
   if (FillType == 0 && !bStroke)
@@ -1424,7 +1424,7 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
     return m_pDevice->SetClip_PathStroke(pPathObj->m_Path.GetObject(),
                                          &path_matrix, graphState.GetObject());
   }
-  int fill_mode = pPathObj->m_FillType;
+  int fill_mode = pPathObj->filltype();
   if (m_Options.HasFlag(RENDER_NOPATHSMOOTH)) {
     fill_mode |= FXFILL_NOPATHSMOOTH;
   }
@@ -1965,10 +1965,11 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 bool bFill,
                                                 bool bStroke) {
   if (!bStroke) {
-    CPDF_PathObject path;
     std::vector<std::unique_ptr<CPDF_TextObject>> pCopy;
     pCopy.push_back(std::unique_ptr<CPDF_TextObject>(textobj->Clone()));
-    path.m_FillType = FXFILL_WINDING;
+
+    CPDF_PathObject path;
+    path.set_filltype(FXFILL_WINDING);
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
     path.m_GeneralState = textobj->m_GeneralState;
@@ -2006,7 +2007,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
                              charpos.m_Origin.y));
     path.m_Path.Append(pPath, &matrix);
-    path.m_FillType = bFill ? FXFILL_WINDING : 0;
+    path.set_filltype(bFill ? FXFILL_WINDING : 0);
     path.set_stroke(bStroke);
     path.set_matrix(*pTextMatrix);
     path.CalcBoundingBox();

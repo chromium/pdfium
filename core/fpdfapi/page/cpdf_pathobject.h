@@ -27,6 +27,9 @@ class CPDF_PathObject final : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
+  int filltype() const { return m_FillType; }
+  void set_filltype(int filltype) { m_FillType = filltype; }
+
   bool stroke() const { return m_bStroke; }
   void set_stroke(bool stroke) { m_bStroke = stroke; }
 
@@ -34,9 +37,9 @@ class CPDF_PathObject final : public CPDF_PageObject {
   void set_matrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
 
   CPDF_Path m_Path;
-  int m_FillType = 0;
 
  private:
+  int m_FillType = 0;
   bool m_bStroke = false;
   CFX_Matrix m_Matrix;
 };

@@ -394,11 +394,11 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
         *buf << " h";
     }
   }
-  if (pPathObj->m_FillType == 0)
+  if (pPathObj->filltype() == 0)
     *buf << (pPathObj->stroke() ? " S" : " n");
-  else if (pPathObj->m_FillType == FXFILL_WINDING)
+  else if (pPathObj->filltype() == FXFILL_WINDING)
     *buf << (pPathObj->stroke() ? " B" : " f");
-  else if (pPathObj->m_FillType == FXFILL_ALTERNATE)
+  else if (pPathObj->filltype() == FXFILL_ALTERNATE)
     *buf << (pPathObj->stroke() ? " B*" : " f*");
   *buf << " Q\n";
 }
