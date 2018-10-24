@@ -1276,7 +1276,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
   if (m_Options.HasFlag(RENDER_THINLINE))
     graphState.SetLineWidth(0);
   return m_pDevice->DrawPathWithBlend(
-      pPathObj->m_Path.GetObject(), &path_matrix, graphState.GetObject(),
+      pPathObj->path().GetObject(), &path_matrix, graphState.GetObject(),
       fill_argb, stroke_argb, FillType, m_curBlend);
 }
 
@@ -1421,14 +1421,14 @@ bool CPDF_RenderStatus::SelectClipPath(const CPDF_PathObject* pPathObj,
     CFX_GraphState graphState = pPathObj->m_GraphState;
     if (m_Options.HasFlag(RENDER_THINLINE))
       graphState.SetLineWidth(0);
-    return m_pDevice->SetClip_PathStroke(pPathObj->m_Path.GetObject(),
+    return m_pDevice->SetClip_PathStroke(pPathObj->path().GetObject(),
                                          &path_matrix, graphState.GetObject());
   }
   int fill_mode = pPathObj->filltype();
   if (m_Options.HasFlag(RENDER_NOPATHSMOOTH)) {
     fill_mode |= FXFILL_NOPATHSMOOTH;
   }
-  return m_pDevice->SetClip_PathFill(pPathObj->m_Path.GetObject(), &path_matrix,
+  return m_pDevice->SetClip_PathFill(pPathObj->path().GetObject(), &path_matrix,
                                      fill_mode);
 }
 
@@ -1973,7 +1973,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     path.m_ClipPath.AppendTexts(&pCopy);
     path.m_ColorState = textobj->m_ColorState;
     path.m_GeneralState = textobj->m_GeneralState;
-    path.m_Path.AppendRect(textobj->GetRect().left, textobj->GetRect().bottom,
+    path.path().AppendRect(textobj->GetRect().left, textobj->GetRect().bottom,
                            textobj->GetRect().right, textobj->GetRect().top);
     path.SetRect(textobj->GetRect());
 
@@ -2006,9 +2006,9 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     }
     matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
                              charpos.m_Origin.y));
-    path.m_Path.Append(pPath, &matrix);
-    path.set_filltype(bFill ? FXFILL_WINDING : 0);
     path.set_stroke(bStroke);
+    path.set_filltype(bFill ? FXFILL_WINDING : 0);
+    path.path().Append(pPath, &matrix);
     path.set_matrix(*pTextMatrix);
     path.CalcBoundingBox();
     ProcessPath(&path, mtObj2Device);

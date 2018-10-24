@@ -354,8 +354,8 @@ void CPDF_PageContentGenerator::ProcessPath(std::ostringstream* buf,
 
   *buf << pPathObj->matrix() << " cm ";
 
-  auto& pPoints = pPathObj->m_Path.GetPoints();
-  if (pPathObj->m_Path.IsRect()) {
+  const auto& pPoints = pPathObj->path().GetPoints();
+  if (pPathObj->path().IsRect()) {
     CFX_PointF diff = pPoints[2].m_Point - pPoints[0].m_Point;
     *buf << pPoints[0].m_Point.x << " " << pPoints[0].m_Point.y << " " << diff.x
          << " " << diff.y << " re";

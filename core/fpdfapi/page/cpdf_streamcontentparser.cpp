@@ -1475,9 +1475,9 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
   if (bStroke || FillType) {
     auto pPathObj =
         pdfium::MakeUnique<CPDF_PathObject>(GetCurrentStreamIndex());
-    pPathObj->m_Path = Path;
-    pPathObj->set_filltype(FillType);
     pPathObj->set_stroke(bStroke);
+    pPathObj->set_filltype(FillType);
+    pPathObj->path() = Path;
     pPathObj->set_matrix(matrix);
     SetGraphicStates(pPathObj.get(), true, false, true);
     pPathObj->CalcBoundingBox();

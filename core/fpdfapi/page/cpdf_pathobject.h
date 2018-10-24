@@ -27,20 +27,22 @@ class CPDF_PathObject final : public CPDF_PageObject {
 
   void CalcBoundingBox();
 
+  bool stroke() const { return m_bStroke; }
+  void set_stroke(bool stroke) { m_bStroke = stroke; }
+
   int filltype() const { return m_FillType; }
   void set_filltype(int filltype) { m_FillType = filltype; }
 
-  bool stroke() const { return m_bStroke; }
-  void set_stroke(bool stroke) { m_bStroke = stroke; }
+  CPDF_Path& path() { return m_Path; }
+  const CPDF_Path& path() const { return m_Path; }
 
   const CFX_Matrix& matrix() const { return m_Matrix; }
   void set_matrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
 
-  CPDF_Path m_Path;
-
  private:
-  int m_FillType = 0;
   bool m_bStroke = false;
+  int m_FillType = 0;
+  CPDF_Path m_Path;
   CFX_Matrix m_Matrix;
 };
 
