@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_PWL_CPWL_SCROLL_BAR_H_
 #define FPDFSDK_PWL_CPWL_SCROLL_BAR_H_
 
+#include <memory>
+
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
@@ -44,7 +46,8 @@ enum PWL_SBBUTTON_TYPE { PSBT_MIN, PSBT_MAX, PSBT_POS };
 
 class CPWL_SBButton final : public CPWL_Wnd {
  public:
-  CPWL_SBButton(PWL_SCROLLBAR_TYPE eScrollBarType,
+  CPWL_SBButton(std::unique_ptr<PrivateData> pAttachedData,
+                PWL_SCROLLBAR_TYPE eScrollBarType,
                 PWL_SBBUTTON_TYPE eButtonType);
   ~CPWL_SBButton() override;
 
@@ -59,7 +62,7 @@ class CPWL_SBButton final : public CPWL_Wnd {
  private:
   PWL_SCROLLBAR_TYPE m_eScrollBarType;
   PWL_SBBUTTON_TYPE m_eSBButtonType;
-  bool m_bMouseDown;
+  bool m_bMouseDown = false;
 };
 
 struct PWL_FLOATRANGE {
@@ -114,7 +117,8 @@ struct PWL_SCROLL_PRIVATEDATA {
 
 class CPWL_ScrollBar final : public CPWL_Wnd {
  public:
-  explicit CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType);
+  CPWL_ScrollBar(std::unique_ptr<PrivateData> pAttachedData,
+                 PWL_SCROLLBAR_TYPE sbType);
   ~CPWL_ScrollBar() override;
 
   // CPWL_Wnd:
@@ -171,11 +175,11 @@ class CPWL_ScrollBar final : public CPWL_Wnd {
   UnownedPtr<CPWL_SBButton> m_pMaxButton;
   UnownedPtr<CPWL_SBButton> m_pPosButton;
   PWL_SCROLL_PRIVATEDATA m_sData;
-  bool m_bMouseDown;
-  bool m_bMinOrMax;
-  bool m_bNotifyForever;
-  float m_nOldPos;
-  float m_fOldPosButton;
+  bool m_bMouseDown = false;
+  bool m_bMinOrMax = false;
+  bool m_bNotifyForever = true;
+  float m_nOldPos = 0.0f;
+  float m_fOldPosButton = 0.0f;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_SCROLL_BAR_H_

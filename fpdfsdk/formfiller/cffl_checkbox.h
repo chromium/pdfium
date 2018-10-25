@@ -20,7 +20,8 @@ class CFFL_CheckBox final : public CFFL_Button {
 
   // CFFL_Button:
   std::unique_ptr<CPWL_Wnd> NewPDFWindow(
-      const CPWL_Wnd::CreateParams& cp) override;
+      const CPWL_Wnd::CreateParams& cp,
+      std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) override;
   bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                  uint32_t nKeyCode,
                  uint32_t nFlags) override;

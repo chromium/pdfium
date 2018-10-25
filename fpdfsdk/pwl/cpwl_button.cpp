@@ -6,11 +6,14 @@
 
 #include "fpdfsdk/pwl/cpwl_button.h"
 
+#include <utility>
+
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-CPWL_Button::CPWL_Button() : m_bMouseDown(false) {}
+CPWL_Button::CPWL_Button(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(std::move(pAttachedData)) {}
 
-CPWL_Button::~CPWL_Button() {}
+CPWL_Button::~CPWL_Button() = default;
 
 void CPWL_Button::OnCreate(CreateParams* pParamsToAdjust) {
   pParamsToAdjust->eCursorType = FXCT_HAND;

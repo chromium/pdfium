@@ -570,12 +570,12 @@ void CFFL_InteractiveFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
 }
 
 void CFFL_InteractiveFormFiller::QueryWherePopup(
-    CPWL_Wnd::PrivateData* pAttached,
+    const CPWL_Wnd::PrivateData* pAttached,
     float fPopupMin,
     float fPopupMax,
     bool* bBottom,
     float* fPopupRet) {
-  auto* pData = static_cast<CFFL_PrivateData*>(pAttached);
+  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   CPDFSDK_Widget* pWidget = pData->pWidget;
   CPDF_Page* pPage = pWidget->GetPDFPage();
 
@@ -795,10 +795,9 @@ bool CFFL_InteractiveFormFiller::OnFull(CPDFSDK_Annot::ObservedPtr* pAnnot,
 }
 
 bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
-    CPWL_Wnd::PrivateData* pAttached,
+    const CPWL_Wnd::PrivateData* pAttached,
     uint32_t nFlag) {
-  auto* pData = static_cast<CFFL_PrivateData*>(pAttached);
-  ASSERT(pData);
+  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
 
   CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
@@ -806,10 +805,9 @@ bool CFFL_InteractiveFormFiller::OnPopupPreOpen(
 }
 
 bool CFFL_InteractiveFormFiller::OnPopupPostOpen(
-    CPWL_Wnd::PrivateData* pAttached,
+    const CPWL_Wnd::PrivateData* pAttached,
     uint32_t nFlag) {
-  auto* pData = static_cast<CFFL_PrivateData*>(pAttached);
-  ASSERT(pData);
+  auto* pData = static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(pData->pWidget);
 
   CPDFSDK_Annot::ObservedPtr pObserved(pData->pWidget);
@@ -885,7 +883,7 @@ bool CFFL_InteractiveFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
 }
 
 std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
-    CPWL_Wnd::PrivateData* pAttached,
+    const CPWL_Wnd::PrivateData* pAttached,
     WideString& strChange,
     const WideString& strChangeEx,
     int nSelStart,
@@ -893,7 +891,8 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     bool bKeyDown,
     uint32_t nFlag) {
   // Copy the private data since the window owning it may not survive.
-  CFFL_PrivateData privateData = *static_cast<CFFL_PrivateData*>(pAttached);
+  CFFL_PrivateData privateData =
+      *static_cast<const CFFL_PrivateData*>(pAttached);
   ASSERT(privateData.pWidget);
 
   CFFL_FormFiller* pFormFiller = GetFormFiller(privateData.pWidget, false);
@@ -949,7 +948,8 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
         privateData.pPageView, nValueAge == privateData.pWidget->GetValueAge());
     if (!pWnd)
       return {true, true};
-    privateData = *static_cast<CFFL_PrivateData*>(pWnd->GetAttachedData());
+    privateData =
+        *static_cast<const CFFL_PrivateData*>(pWnd->GetAttachedData());
     bExit = true;
   }
   if (fa.bRC) {
@@ -963,4 +963,14 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 
   pFormFiller->CommitData(privateData.pPageView, nFlag);
   return {false, true};
+}
+
+CFFL_PrivateData::CFFL_PrivateData() = default;
+
+CFFL_PrivateData::CFFL_PrivateData(const CFFL_PrivateData& that) = default;
+
+CFFL_PrivateData::~CFFL_PrivateData() = default;
+
+std::unique_ptr<CPWL_Wnd::PrivateData> CFFL_PrivateData::Clone() const {
+  return pdfium::MakeUnique<CFFL_PrivateData>(*this);
 }

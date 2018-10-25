@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_PWL_CPWL_EDIT_H_
 #define FPDFSDK_PWL_CPWL_EDIT_H_
 
+#include <memory>
 #include <utility>
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
@@ -18,30 +19,31 @@ class IPWL_Filler_Notify {
   virtual ~IPWL_Filler_Notify() = default;
 
   // Must write to |bBottom| and |fPopupRet|.
-  virtual void QueryWherePopup(CPWL_Wnd::PrivateData* pAttached,
+  virtual void QueryWherePopup(const CPWL_Wnd::PrivateData* pAttached,
                                float fPopupMin,
                                float fPopupMax,
                                bool* bBottom,
                                float* fPopupRet) = 0;
   virtual std::pair<bool, bool> OnBeforeKeyStroke(
-      CPWL_Wnd::PrivateData* pAttached,
+      const CPWL_Wnd::PrivateData* pAttached,
       WideString& strChange,
       const WideString& strChangeEx,
       int nSelStart,
       int nSelEnd,
       bool bKeyDown,
       uint32_t nFlag) = 0;
+
 #ifdef PDF_ENABLE_XFA
-  virtual bool OnPopupPreOpen(CPWL_Wnd::PrivateData* pAttached,
+  virtual bool OnPopupPreOpen(const CPWL_Wnd::PrivateData* pAttached,
                               uint32_t nFlag) = 0;
-  virtual bool OnPopupPostOpen(CPWL_Wnd::PrivateData* pAttached,
+  virtual bool OnPopupPostOpen(const CPWL_Wnd::PrivateData* pAttached,
                                uint32_t nFlag) = 0;
 #endif  // PDF_ENABLE_XFA
 };
 
 class CPWL_Edit final : public CPWL_EditCtrl {
  public:
-  CPWL_Edit();
+  explicit CPWL_Edit(std::unique_ptr<PrivateData> pAttachedData);
   ~CPWL_Edit() override;
 
   // CPWL_EditCtrl
@@ -118,7 +120,7 @@ class CPWL_Edit final : public CPWL_EditCtrl {
                                    bool bLatin,
                                    bool bArabic) const;
 
-  bool m_bFocus;
+  bool m_bFocus = false;
   CFX_FloatRect m_rcOldWindow;
   UnownedPtr<IPWL_Filler_Notify> m_pFillerNotify;
   UnownedPtr<CFFL_FormFiller> m_pFormFiller;

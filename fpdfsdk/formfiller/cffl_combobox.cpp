@@ -45,8 +45,9 @@ CPWL_Wnd::CreateParams CFFL_ComboBox::GetCreateParam() {
 }
 
 std::unique_ptr<CPWL_Wnd> CFFL_ComboBox::NewPDFWindow(
-    const CPWL_Wnd::CreateParams& cp) {
-  auto pWnd = pdfium::MakeUnique<CPWL_ComboBox>();
+    const CPWL_Wnd::CreateParams& cp,
+    std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
+  auto pWnd = pdfium::MakeUnique<CPWL_ComboBox>(std::move(pAttachedData));
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
 

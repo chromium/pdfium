@@ -93,7 +93,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
   CFX_SystemHandler* GetSystemHandler() const override;
 
   // CPWL_Wnd::ProviderIface:
-  CFX_Matrix GetWindowMatrix(CPWL_Wnd::PrivateData* pAttached) override;
+  CFX_Matrix GetWindowMatrix(const CPWL_Wnd::PrivateData* pAttached) override;
 
   virtual void GetActionData(CPDFSDK_PageView* pPageView,
                              CPDF_AAction::AActionType type,
@@ -107,7 +107,8 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
 
   virtual CPWL_Wnd::CreateParams GetCreateParam();
   virtual std::unique_ptr<CPWL_Wnd> NewPDFWindow(
-      const CPWL_Wnd::CreateParams& cp) = 0;
+      const CPWL_Wnd::CreateParams& cp,
+      std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) = 0;
   virtual CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
                                    bool bRestoreValue);
   virtual void SaveState(CPDFSDK_PageView* pPageView);

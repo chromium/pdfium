@@ -7,11 +7,13 @@
 #ifndef FPDFSDK_PWL_CPWL_CARET_H_
 #define FPDFSDK_PWL_CPWL_CARET_H_
 
+#include <memory>
+
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
 class CPWL_Caret final : public CPWL_Wnd {
  public:
-  CPWL_Caret();
+  explicit CPWL_Caret(std::unique_ptr<PrivateData> pAttachedData);
   ~CPWL_Caret() override;
 
   // CPWL_Wnd
@@ -29,11 +31,11 @@ class CPWL_Caret final : public CPWL_Wnd {
  private:
   CFX_FloatRect GetCaretRect() const;
 
-  bool m_bFlash;
+  bool m_bFlash = false;
   CFX_PointF m_ptHead;
   CFX_PointF m_ptFoot;
-  float m_fWidth;
-  int32_t m_nDelay;
+  float m_fWidth = 0.4f;
+  int32_t m_nDelay = 0;
   CFX_FloatRect m_rcInvalid;
 };
 

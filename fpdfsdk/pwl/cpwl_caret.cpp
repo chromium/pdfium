@@ -7,6 +7,7 @@
 #include "fpdfsdk/pwl/cpwl_caret.h"
 
 #include <sstream>
+#include <utility>
 
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -15,9 +16,10 @@
 
 #define PWL_CARET_FLASHINTERVAL 500
 
-CPWL_Caret::CPWL_Caret() : m_bFlash(false), m_fWidth(0.4f), m_nDelay(0) {}
+CPWL_Caret::CPWL_Caret(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(std::move(pAttachedData)) {}
 
-CPWL_Caret::~CPWL_Caret() {}
+CPWL_Caret::~CPWL_Caret() = default;
 
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                     const CFX_Matrix& mtUser2Device) {

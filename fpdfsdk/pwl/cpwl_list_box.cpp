@@ -7,6 +7,7 @@
 #include "fpdfsdk/pwl/cpwl_list_box.h"
 
 #include <sstream>
+#include <utility>
 
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
@@ -64,13 +65,11 @@ void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {
   m_pList->InvalidateRect(pRect);
 }
 
-CPWL_ListBox::CPWL_ListBox()
-    : m_pList(new CPWL_ListCtrl),
-      m_bMouseDown(false),
-      m_bHoverSel(false),
-      m_pFillerNotify(nullptr) {}
+CPWL_ListBox::CPWL_ListBox(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(std::move(pAttachedData)),
+      m_pList(pdfium::MakeUnique<CPWL_ListCtrl>()) {}
 
-CPWL_ListBox::~CPWL_ListBox() {}
+CPWL_ListBox::~CPWL_ListBox() = default;
 
 void CPWL_ListBox::OnCreated() {
   m_pList->SetFontMap(GetFontMap());

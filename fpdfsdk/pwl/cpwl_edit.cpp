@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -26,7 +27,8 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 
-CPWL_Edit::CPWL_Edit() : m_bFocus(false) {}
+CPWL_Edit::CPWL_Edit(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_EditCtrl(std::move(pAttachedData)) {}
 
 CPWL_Edit::~CPWL_Edit() {
   ASSERT(!m_bFocus);

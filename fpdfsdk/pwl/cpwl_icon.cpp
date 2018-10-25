@@ -8,15 +8,17 @@
 
 #include <algorithm>
 #include <sstream>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-CPWL_Icon::CPWL_Icon() : m_pPDFStream(nullptr), m_pIconFit(nullptr) {}
+CPWL_Icon::CPWL_Icon(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(std::move(pAttachedData)) {}
 
-CPWL_Icon::~CPWL_Icon() {}
+CPWL_Icon::~CPWL_Icon() = default;
 
 std::pair<float, float> CPWL_Icon::GetImageSize() {
   if (!m_pPDFStream)

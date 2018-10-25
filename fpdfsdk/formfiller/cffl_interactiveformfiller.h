@@ -131,26 +131,28 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
       std::map<CPDFSDK_Annot*, std::unique_ptr<CFFL_FormFiller>>;
 
   // IPWL_Filler_Notify:
-  void QueryWherePopup(CPWL_Wnd::PrivateData* pAttached,
+  void QueryWherePopup(const CPWL_Wnd::PrivateData* pAttached,
                        float fPopupMin,
                        float fPopupMax,
                        bool* bBottom,
                        float* fPopupRet) override;
   // Returns {bRC, bExit}.
-  std::pair<bool, bool> OnBeforeKeyStroke(CPWL_Wnd::PrivateData* pAttached,
-                                          WideString& strChange,
-                                          const WideString& strChangeEx,
-                                          int nSelStart,
-                                          int nSelEnd,
-                                          bool bKeyDown,
-                                          uint32_t nFlag) override;
+  std::pair<bool, bool> OnBeforeKeyStroke(
+      const CPWL_Wnd::PrivateData* pAttached,
+      WideString& strChange,
+      const WideString& strChangeEx,
+      int nSelStart,
+      int nSelEnd,
+      bool bKeyDown,
+      uint32_t nFlag) override;
 #ifdef PDF_ENABLE_XFA
-  bool OnPopupPreOpen(CPWL_Wnd::PrivateData* pAttached,
+  bool OnPopupPreOpen(const CPWL_Wnd::PrivateData* pAttached,
                       uint32_t nFlag) override;
-  bool OnPopupPostOpen(CPWL_Wnd::PrivateData* pAttached,
+  bool OnPopupPostOpen(const CPWL_Wnd::PrivateData* pAttached,
                        uint32_t nFlag) override;
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget, bool bSameField, bool bNext);
 #endif  // PDF_ENABLE_XFA
+
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
   UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
@@ -160,10 +162,17 @@ class CFFL_InteractiveFormFiller final : public IPWL_Filler_Notify {
 
 class CFFL_PrivateData final : public CPWL_Wnd::PrivateData {
  public:
-  CPDFSDK_Widget* pWidget;
-  CPDFSDK_PageView* pPageView;
-  uint32_t nWidgetAppearanceAge;
-  uint32_t nWidgetValueAge;
+  CFFL_PrivateData();
+  CFFL_PrivateData(const CFFL_PrivateData& that);
+  ~CFFL_PrivateData() override;
+
+  // CPWL_Wnd::PrivateData:
+  std::unique_ptr<CPWL_Wnd::PrivateData> Clone() const override;
+
+  CPDFSDK_Widget* pWidget = nullptr;
+  CPDFSDK_PageView* pPageView = nullptr;
+  uint32_t nWidgetAppearanceAge = 0;
+  uint32_t nWidgetValueAge = 0;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_INTERACTIVEFORMFILLER_H_

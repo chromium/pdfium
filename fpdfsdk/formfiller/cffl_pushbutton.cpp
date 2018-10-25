@@ -15,11 +15,12 @@ CFFL_PushButton::CFFL_PushButton(CPDFSDK_FormFillEnvironment* pApp,
                                  CPDFSDK_Widget* pWidget)
     : CFFL_Button(pApp, pWidget) {}
 
-CFFL_PushButton::~CFFL_PushButton() {}
+CFFL_PushButton::~CFFL_PushButton() = default;
 
 std::unique_ptr<CPWL_Wnd> CFFL_PushButton::NewPDFWindow(
-    const CPWL_Wnd::CreateParams& cp) {
-  auto pWnd = pdfium::MakeUnique<CPWL_PushButton>();
+    const CPWL_Wnd::CreateParams& cp,
+    std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
+  auto pWnd = pdfium::MakeUnique<CPWL_PushButton>(std::move(pAttachedData));
   pWnd->Create(cp);
   return std::move(pWnd);
 }

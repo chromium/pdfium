@@ -8,6 +8,7 @@
 
 #include <map>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include "core/fxge/cfx_renderdevice.h"
@@ -110,13 +111,8 @@ class CPWL_MsgControl final : public Observable<CPWL_MsgControl> {
   UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
 };
 
-CPWL_Wnd::CPWL_Wnd()
-    : m_rcWindow(),
-      m_rcClip(),
-      m_bCreated(false),
-      m_bVisible(false),
-      m_bNotifying(false),
-      m_bEnabled(true) {}
+CPWL_Wnd::CPWL_Wnd(std::unique_ptr<PrivateData> pAttachedData)
+    : m_pAttachedData(std::move(pAttachedData)) {}
 
 CPWL_Wnd::~CPWL_Wnd() {
   ASSERT(!m_bCreated);
@@ -504,7 +500,7 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   scp.eCursorType = FXCT_ARROW;
   scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
 
-  m_pVScrollBar = new CPWL_ScrollBar(SBT_VSCROLL);
+  m_pVScrollBar = new CPWL_ScrollBar(CloneAttachedData(), SBT_VSCROLL);
   m_pVScrollBar->Create(scp);
 }
 
@@ -540,6 +536,10 @@ void CPWL_Wnd::KillFocus() {
 void CPWL_Wnd::OnSetFocus() {}
 
 void CPWL_Wnd::OnKillFocus() {}
+
+std::unique_ptr<CPWL_Wnd::PrivateData> CPWL_Wnd::CloneAttachedData() const {
+  return m_pAttachedData ? m_pAttachedData->Clone() : nullptr;
+}
 
 bool CPWL_Wnd::WndHitTest(const CFX_PointF& point) const {
   return IsValid() && IsVisible() && GetWindowRect().Contains(point);

@@ -6,29 +6,25 @@
 
 #include "fpdfsdk/pwl/cpwl_special_button.h"
 
+#include <utility>
+
 #include "fpdfsdk/pwl/cpwl_button.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-CPWL_PushButton::CPWL_PushButton() {}
+CPWL_PushButton::CPWL_PushButton(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Button(std::move(pAttachedData)) {}
 
-CPWL_PushButton::~CPWL_PushButton() {}
+CPWL_PushButton::~CPWL_PushButton() = default;
 
 CFX_FloatRect CPWL_PushButton::GetFocusRect() const {
   return GetWindowRect().GetDeflated(static_cast<float>(GetBorderWidth()),
                                      static_cast<float>(GetBorderWidth()));
 }
 
-CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(false) {}
+CPWL_CheckBox::CPWL_CheckBox(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Button(std::move(pAttachedData)) {}
 
-CPWL_CheckBox::~CPWL_CheckBox() {}
-
-void CPWL_CheckBox::SetCheck(bool bCheck) {
-  m_bChecked = bCheck;
-}
-
-bool CPWL_CheckBox::IsChecked() const {
-  return m_bChecked;
-}
+CPWL_CheckBox::~CPWL_CheckBox() = default;
 
 bool CPWL_CheckBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (IsReadOnly())
@@ -43,9 +39,10 @@ bool CPWL_CheckBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   return true;
 }
 
-CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(false) {}
+CPWL_RadioButton::CPWL_RadioButton(std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Button(std::move(pAttachedData)) {}
 
-CPWL_RadioButton::~CPWL_RadioButton() {}
+CPWL_RadioButton::~CPWL_RadioButton() = default;
 
 bool CPWL_RadioButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (IsReadOnly())
@@ -53,14 +50,6 @@ bool CPWL_RadioButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 
   SetCheck(true);
   return true;
-}
-
-void CPWL_RadioButton::SetCheck(bool bCheck) {
-  m_bChecked = bCheck;
-}
-
-bool CPWL_RadioButton::IsChecked() const {
-  return m_bChecked;
 }
 
 bool CPWL_RadioButton::OnChar(uint16_t nChar, uint32_t nFlag) {

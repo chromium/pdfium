@@ -70,8 +70,9 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
 }
 
 std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPDFWindow(
-    const CPWL_Wnd::CreateParams& cp) {
-  auto pWnd = pdfium::MakeUnique<CPWL_Edit>();
+    const CPWL_Wnd::CreateParams& cp,
+    std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
+  auto pWnd = pdfium::MakeUnique<CPWL_Edit>(std::move(pAttachedData));
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
