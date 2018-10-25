@@ -687,28 +687,7 @@ class SkiaState {
   };
 
   // mark all cached state as uninitialized
-  explicit SkiaState(CFX_SkiaDeviceDriver* pDriver)
-      : m_pDriver(pDriver),
-        m_pTypeFace(nullptr),
-        m_fontSize(0),
-        m_scaleX(0),
-        m_fillColor(0),
-        m_strokeColor(0),
-        m_blendType(0),
-        m_commandIndex(0),
-        m_drawIndex(INT_MAX),
-        m_clipIndex(0),
-        m_type(Accumulator::kNone),
-        m_fillFullCover(false),
-        m_fillPath(false),
-        m_groupKnockout(false),
-        m_debugDisable(false)
-#if SHOW_SKIA_PATH
-        ,
-        m_debugSaveCounter(0)
-#endif
-  {
-  }
+  explicit SkiaState(CFX_SkiaDeviceDriver* pDriver) : m_pDriver(pDriver) {}
 
   bool DrawPath(const CFX_PathData* pPathData,
                 const CFX_Matrix* pMatrix,
@@ -1406,24 +1385,24 @@ class SkiaState {
   CFX_GraphStateData m_clipState;
   CFX_GraphStateData m_drawState;
   CFX_Matrix m_clipMatrix;
-  UnownedPtr<CFX_SkiaDeviceDriver> m_pDriver;
+  UnownedPtr<CFX_SkiaDeviceDriver> const m_pDriver;
   UnownedPtr<CFX_TypeFace> m_pTypeFace;
-  float m_fontSize;
-  float m_scaleX;
-  uint32_t m_fillColor;
-  uint32_t m_strokeColor;
-  int m_blendType;
-  int m_commandIndex;  // active position in clip command stack
-  int m_drawIndex;     // position of the pending path or text draw
-  int m_clipIndex;     // position reflecting depth of canvas clip stacck
-  Accumulator m_type;  // type of pending draw
-  bool m_fillFullCover;
-  bool m_fillPath;
-  bool m_groupKnockout;
-  bool m_debugDisable;  // turn off cache for debugging
+  float m_fontSize = 0;
+  float m_scaleX = 0;
+  uint32_t m_fillColor = 0;
+  uint32_t m_strokeColor = 0;
+  int m_blendType = FXDIB_BLEND_NORMAL;
+  int m_commandIndex = 0;     // active position in clip command stack
+  int m_drawIndex = INT_MAX;  // position of the pending path or text draw
+  int m_clipIndex = 0;        // position reflecting depth of canvas clip stacck
+  Accumulator m_type = Accumulator::kNone;  // type of pending draw
+  bool m_fillFullCover = false;
+  bool m_fillPath = false;
+  bool m_groupKnockout = false;
+  bool m_debugDisable = false;  // turn off cache for debugging
 #if SHOW_SKIA_PATH
  public:
-  mutable int m_debugSaveCounter;
+  mutable int m_debugSaveCounter = 0;
   static int m_debugInitCounter;
 #endif
 };
