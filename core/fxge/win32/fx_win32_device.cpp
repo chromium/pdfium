@@ -850,8 +850,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(
     int dest_top,
     int dest_width,
     int dest_height,
-    uint32_t bitmap_color,
-    uint32_t flags) {
+    uint32_t bitmap_color) {
   RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
   if (!pBitmap || dest_width == 0 || dest_height == 0)
     return false;
@@ -1287,7 +1286,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     clip_rect.Offset(-image_rect.left, -image_rect.top);
     int clip_width = clip_rect.Width(), clip_height = clip_rect.Height();
     RetainPtr<CFX_DIBitmap> pStretched(
-        pSource->StretchTo(dest_width, dest_height, flags, &clip_rect));
+        pSource->StretchTo(dest_width, dest_height, 0, &clip_rect));
     if (!pStretched)
       return true;
 
@@ -1313,19 +1312,19 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
       if (!pBitmap)
         return false;
-      return pPlatform->m_GdiplusExt.StretchDIBits(
-          m_hDC, pBitmap, dest_left, dest_top, dest_width, dest_height,
-          pClipRect, flags);
+      return pPlatform->m_GdiplusExt.StretchDIBits(m_hDC, pBitmap, dest_left,
+                                                   dest_top, dest_width,
+                                                   dest_height, pClipRect, 0);
     }
     return UseFoxitStretchEngine(pSource, color, dest_left, dest_top,
-                                 dest_width, dest_height, pClipRect, flags);
+                                 dest_width, dest_height, pClipRect, 0);
   }
   CFX_DIBExtractor temp(pSource);
   RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return false;
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
-                           dest_height, flags);
+                           dest_height, 0);
 }
 
 bool CGdiDisplayDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,

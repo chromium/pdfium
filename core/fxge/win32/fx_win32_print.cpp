@@ -121,7 +121,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
         dest_top += dest_height;
 
       return GDI_StretchBitMask(pFlipped, dest_left, dest_top, abs(dest_width),
-                                abs(dest_height), color, flags);
+                                abs(dest_height), color);
     }
 
     CFX_DIBExtractor temp(pSource);
@@ -129,7 +129,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     if (!pBitmap)
       return false;
     return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
-                              dest_height, color, flags);
+                              dest_height, color);
   }
 
   if (pSource->HasAlpha())

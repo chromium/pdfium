@@ -112,8 +112,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                           int dest_top,
                           int dest_width,
                           int dest_height,
-                          uint32_t bitmap_color,
-                          uint32_t flags);
+                          uint32_t bitmap_color);
 
   HDC m_hDC;
   bool m_bMetafileDCType;
