@@ -126,7 +126,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   bool DrawBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                         const RetainPtr<CFX_DIBBase>& pMask,
                         int bitmap_alpha,
-                        const CFX_Matrix* pMatrix,
+                        const CFX_Matrix& matrix,
                         BlendMode blend_type);
 
   bool DrawDeviceText(int nChars,

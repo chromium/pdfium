@@ -2454,7 +2454,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     const RetainPtr<CFX_DIBBase>& pSource,
     const RetainPtr<CFX_DIBBase>& pMask,
     int bitmap_alpha,
-    const CFX_Matrix* pMatrix,
+    const CFX_Matrix& matrix,
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   std::unique_ptr<uint8_t, FxFreeDeleter> src8Storage, mask8Storage;
@@ -2471,7 +2471,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   }
   m_pCanvas->save();
   SkMatrix skMatrix;
-  SetBitmapMatrix(*pMatrix, srcWidth, srcHeight, &skMatrix);
+  SetBitmapMatrix(matrix, srcWidth, srcHeight, &skMatrix);
   m_pCanvas->concat(skMatrix);
   SkPaint paint;
   SetBitmapPaint(pSource->IsAlphaMask(), 0xFFFFFFFF, bitmap_alpha, blend_type,
@@ -2502,7 +2502,7 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(
     return true;
   CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), dest_left,
                dest_top + pBitmap->GetHeight());
-  return DrawBitsWithMask(pBitmap, pMask, bitmap_alpha, &m, blend_type);
+  return DrawBitsWithMask(pBitmap, pMask, bitmap_alpha, m, blend_type);
 }
 
 void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
