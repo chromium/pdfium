@@ -23,12 +23,6 @@ class CFX_ImageRenderer;
 class FXTEXT_CHARPOS;
 struct WINDIB_Open_Args_;
 
-typedef HANDLE(__stdcall* FuncType_GdiAddFontMemResourceEx)(PVOID pbFont,
-                                                            DWORD cbFont,
-                                                            PVOID pdv,
-                                                            DWORD* pcFonts);
-typedef BOOL(__stdcall* FuncType_GdiRemoveFontMemResourceEx)(HANDLE handle);
-
 RetainPtr<CFX_DIBitmap> FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
                                                   LPVOID pData,
                                                   bool bAlpha);
@@ -39,16 +33,6 @@ class CGdiplusExt {
 
   void Load();
   bool IsAvailable() { return !!m_hModule; }
-  bool StretchBitMask(HDC hDC,
-                      BOOL bMonoDevice,
-                      const RetainPtr<CFX_DIBitmap>& pBitmap,
-                      int dest_left,
-                      int dest_top,
-                      int dest_width,
-                      int dest_height,
-                      uint32_t argb,
-                      const FX_RECT* pClipRect,
-                      int flags);
   bool StretchDIBits(HDC hDC,
                      const RetainPtr<CFX_DIBitmap>& pBitmap,
                      int dest_left,
@@ -65,57 +49,9 @@ class CGdiplusExt {
                 uint32_t stroke_argb,
                 int fill_mode);
 
-  void* LoadMemFont(uint8_t* pData, uint32_t size);
-  void DeleteMemFont(void* pFontCollection);
-  bool GdipCreateFromImage(void* bitmap, void** graphics);
-  void GdipDeleteGraphics(void* graphics);
-  void GdipSetTextRenderingHint(void* graphics, int mode);
-  void GdipSetPageUnit(void* graphics, uint32_t unit);
-  void GdipSetWorldTransform(void* graphics, void* pMatrix);
-  bool GdipDrawDriverString(void* graphics,
-                            unsigned short* text,
-                            int length,
-                            void* font,
-                            void* brush,
-                            void* positions,
-                            int flags,
-                            const void* matrix);
-  void GdipCreateBrush(uint32_t fill_argb, void** pBrush);
-  void GdipDeleteBrush(void* pBrush);
-  void GdipCreateMatrix(float a,
-                        float b,
-                        float c,
-                        float d,
-                        float e,
-                        float f,
-                        void** matrix);
-  void GdipDeleteMatrix(void* matrix);
-  bool GdipCreateFontFamilyFromName(const wchar_t* name,
-                                    void* pFontCollection,
-                                    void** pFamily);
-  void GdipDeleteFontFamily(void* pFamily);
-  bool GdipCreateFontFromFamily(void* pFamily,
-                                float font_size,
-                                int fontstyle,
-                                int flag,
-                                void** pFont);
-  void* GdipCreateFontFromCollection(void* pFontCollection,
-                                     float font_size,
-                                     int fontstyle);
-  void GdipDeleteFont(void* pFont);
-  bool GdipCreateBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap, void** bitmap);
-  void GdipDisposeImage(void* bitmap);
-  void GdipGetFontSize(void* pFont, float* size);
-  void* GdiAddFontMemResourceEx(void* pFontdata,
-                                uint32_t size,
-                                void* pdv,
-                                uint32_t* num_face);
-  bool GdiRemoveFontMemResourceEx(void* handle);
   RetainPtr<CFX_DIBitmap> LoadDIBitmap(WINDIB_Open_Args_ args);
 
   std::vector<FARPROC> m_Functions;
-  FuncType_GdiAddFontMemResourceEx m_pGdiAddFontMemResourceEx = nullptr;
-  FuncType_GdiRemoveFontMemResourceEx m_pGdiRemoveFontMemResourseEx = nullptr;
 
  protected:
   HMODULE m_hModule = nullptr;

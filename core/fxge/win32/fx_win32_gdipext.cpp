@@ -37,11 +37,7 @@ using Gdiplus::GdiplusStartupOutput;
 using Gdiplus::GpBitmap;
 using Gdiplus::GpBrush;
 using Gdiplus::GpDashCap;
-using Gdiplus::GpDashStyle;
 using Gdiplus::GpFillMode;
-using Gdiplus::GpFont;
-using Gdiplus::GpFontCollection;
-using Gdiplus::GpFontFamily;
 using Gdiplus::GpGraphics;
 using Gdiplus::GpImage;
 using Gdiplus::GpLineCap;
@@ -55,7 +51,6 @@ using Gdiplus::GpRect;
 using Gdiplus::GpRegion;
 using Gdiplus::GpSolidFill;
 using Gdiplus::GpStatus;
-using Gdiplus::GpStringFormat;
 using Gdiplus::GpUnit;
 using Gdiplus::ImageLockModeRead;
 using Gdiplus::InterpolationMode;
@@ -70,7 +65,6 @@ using Gdiplus::LineJoin;
 using Gdiplus::LineJoinBevel;
 using Gdiplus::LineJoinMiterClipped;
 using Gdiplus::LineJoinRound;
-using Gdiplus::PaletteFlagsHasAlpha;
 using Gdiplus::PathPointTypeBezier;
 using Gdiplus::PathPointTypeCloseSubpath;
 using Gdiplus::PathPointTypeLine;
@@ -81,7 +75,6 @@ using Gdiplus::REAL;
 using Gdiplus::SmoothingMode;
 using Gdiplus::SmoothingModeAntiAlias;
 using Gdiplus::SmoothingModeNone;
-using Gdiplus::TextRenderingHint;
 using Gdiplus::UnitPixel;
 using Gdiplus::UnitWorld;
 
@@ -92,11 +85,8 @@ namespace {
 
 enum {
   FuncId_GdipCreatePath2,
-  FuncId_GdipSetPenDashStyle,
   FuncId_GdipSetPenDashArray,
-  FuncId_GdipSetPenDashCap197819,
   FuncId_GdipSetPenLineJoin,
-  FuncId_GdipSetPenWidth,
   FuncId_GdipCreateFromHDC,
   FuncId_GdipSetPageUnit,
   FuncId_GdipSetSmoothingMode,
@@ -119,65 +109,31 @@ enum {
   FuncId_GdipGetImagePalette,
   FuncId_GdipBitmapUnlockBits,
   FuncId_GdipDisposeImage,
-  FuncId_GdipFillRectangle,
   FuncId_GdipCreateBitmapFromScan0,
   FuncId_GdipSetImagePalette,
   FuncId_GdipSetInterpolationMode,
   FuncId_GdipDrawImagePointsI,
-  FuncId_GdipCreateBitmapFromGdiDib,
   FuncId_GdiplusStartup,
   FuncId_GdipDrawLineI,
-  FuncId_GdipResetClip,
   FuncId_GdipCreatePath,
-  FuncId_GdipAddPathPath,
   FuncId_GdipSetPathFillMode,
-  FuncId_GdipSetClipPath,
-  FuncId_GdipGetClip,
-  FuncId_GdipCreateRegion,
-  FuncId_GdipGetClipBoundsI,
   FuncId_GdipSetClipRegion,
   FuncId_GdipWidenPath,
   FuncId_GdipAddPathLine,
   FuncId_GdipAddPathRectangle,
   FuncId_GdipDeleteRegion,
-  FuncId_GdipGetDC,
-  FuncId_GdipReleaseDC,
   FuncId_GdipSetPenLineCap197819,
   FuncId_GdipSetPenDashOffset,
-  FuncId_GdipResetPath,
-  FuncId_GdipCreateRegionPath,
-  FuncId_GdipCreateFont,
-  FuncId_GdipGetFontSize,
-  FuncId_GdipCreateFontFamilyFromName,
-  FuncId_GdipSetTextRenderingHint,
-  FuncId_GdipDrawDriverString,
   FuncId_GdipCreateMatrix2,
   FuncId_GdipDeleteMatrix,
   FuncId_GdipSetWorldTransform,
-  FuncId_GdipResetWorldTransform,
-  FuncId_GdipDeleteFontFamily,
-  FuncId_GdipDeleteFont,
-  FuncId_GdipNewPrivateFontCollection,
-  FuncId_GdipDeletePrivateFontCollection,
-  FuncId_GdipPrivateAddMemoryFont,
-  FuncId_GdipGetFontCollectionFamilyList,
-  FuncId_GdipGetFontCollectionFamilyCount,
-  FuncId_GdipSetTextContrast,
   FuncId_GdipSetPixelOffsetMode,
-  FuncId_GdipGetImageGraphicsContext,
-  FuncId_GdipDrawImageI,
-  FuncId_GdipDrawImageRectI,
-  FuncId_GdipDrawString,
-  FuncId_GdipSetPenTransform,
 };
 
 LPCSTR g_GdipFuncNames[] = {
     "GdipCreatePath2",
-    "GdipSetPenDashStyle",
     "GdipSetPenDashArray",
-    "GdipSetPenDashCap197819",
     "GdipSetPenLineJoin",
-    "GdipSetPenWidth",
     "GdipCreateFromHDC",
     "GdipSetPageUnit",
     "GdipSetSmoothingMode",
@@ -200,59 +156,28 @@ LPCSTR g_GdipFuncNames[] = {
     "GdipGetImagePalette",
     "GdipBitmapUnlockBits",
     "GdipDisposeImage",
-    "GdipFillRectangle",
     "GdipCreateBitmapFromScan0",
     "GdipSetImagePalette",
     "GdipSetInterpolationMode",
     "GdipDrawImagePointsI",
-    "GdipCreateBitmapFromGdiDib",
     "GdiplusStartup",
     "GdipDrawLineI",
-    "GdipResetClip",
     "GdipCreatePath",
-    "GdipAddPathPath",
     "GdipSetPathFillMode",
-    "GdipSetClipPath",
-    "GdipGetClip",
-    "GdipCreateRegion",
-    "GdipGetClipBoundsI",
     "GdipSetClipRegion",
     "GdipWidenPath",
     "GdipAddPathLine",
     "GdipAddPathRectangle",
     "GdipDeleteRegion",
-    "GdipGetDC",
-    "GdipReleaseDC",
     "GdipSetPenLineCap197819",
     "GdipSetPenDashOffset",
-    "GdipResetPath",
-    "GdipCreateRegionPath",
-    "GdipCreateFont",
-    "GdipGetFontSize",
-    "GdipCreateFontFamilyFromName",
-    "GdipSetTextRenderingHint",
-    "GdipDrawDriverString",
     "GdipCreateMatrix2",
     "GdipDeleteMatrix",
     "GdipSetWorldTransform",
-    "GdipResetWorldTransform",
-    "GdipDeleteFontFamily",
-    "GdipDeleteFont",
-    "GdipNewPrivateFontCollection",
-    "GdipDeletePrivateFontCollection",
-    "GdipPrivateAddMemoryFont",
-    "GdipGetFontCollectionFamilyList",
-    "GdipGetFontCollectionFamilyCount",
-    "GdipSetTextContrast",
     "GdipSetPixelOffsetMode",
-    "GdipGetImageGraphicsContext",
-    "GdipDrawImageI",
-    "GdipDrawImageRectI",
-    "GdipDrawString",
-    "GdipSetPenTransform",
 };
 static_assert(FX_ArraySize(g_GdipFuncNames) ==
-                  static_cast<size_t>(FuncId_GdipSetPenTransform) + 1,
+                  static_cast<size_t>(FuncId_GdipSetPixelOffsetMode) + 1,
               "g_GdipFuncNames has wrong size");
 
 typedef GpStatus(WINGDIPAPI* FuncType_GdipCreatePath2)(GDIPCONST GpPointF*,
@@ -260,18 +185,11 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipCreatePath2)(GDIPCONST GpPointF*,
                                                        INT,
                                                        GpFillMode,
                                                        GpPath** path);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenDashStyle)(
-    GpPen* pen,
-    GpDashStyle dashstyle);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenDashArray)(GpPen* pen,
                                                            GDIPCONST REAL* dash,
                                                            INT count);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenDashCap197819)(
-    GpPen* pen,
-    GpDashCap dashCap);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenLineJoin)(GpPen* pen,
                                                           GpLineJoin lineJoin);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenWidth)(GpPen* pen, REAL width);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateFromHDC)(HDC hdc,
                                                          GpGraphics** graphics);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPageUnit)(GpGraphics* graphics,
@@ -326,12 +244,6 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipBitmapUnlockBits)(
     GpBitmap* bitmap,
     Gdiplus::BitmapData* lockedBitmapData);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipDisposeImage)(GpImage* image);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipFillRectangle)(GpGraphics* graphics,
-                                                         GpBrush* brush,
-                                                         REAL x,
-                                                         REAL y,
-                                                         REAL width,
-                                                         REAL height);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateBitmapFromScan0)(
     INT width,
     INT height,
@@ -350,10 +262,6 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawImagePointsI)(
     GpImage* image,
     GDIPCONST GpPoint* dstpoints,
     INT count);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateBitmapFromGdiDib)(
-    GDIPCONST BITMAPINFO* gdiBitmapInfo,
-    VOID* gdiBitmapData,
-    GpBitmap** bitmap);
 typedef Gdiplus::Status(WINAPI* FuncType_GdiplusStartup)(
     OUT uintptr_t* token,
     const GdiplusStartupInput* input,
@@ -364,23 +272,10 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawLineI)(GpGraphics* graphics,
                                                      int y1,
                                                      int x2,
                                                      int y2);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipResetClip)(GpGraphics* graphics);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipCreatePath)(GpFillMode brushMode,
                                                       GpPath** path);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipAddPathPath)(
-    GpPath* path,
-    GDIPCONST GpPath* addingPath,
-    BOOL connect);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPathFillMode)(GpPath* path,
                                                            GpFillMode fillmode);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipSetClipPath)(GpGraphics* graphics,
-                                                       GpPath* path,
-                                                       CombineMode combineMode);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipGetClip)(GpGraphics* graphics,
-                                                   GpRegion* region);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateRegion)(GpRegion** region);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipGetClipBoundsI)(GpGraphics* graphics,
-                                                          GpRect* rect);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetClipRegion)(
     GpGraphics* graphics,
     GpRegion* region,
@@ -400,10 +295,6 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipAddPathRectangle)(GpPath* path,
                                                             REAL width,
                                                             REAL height);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipDeleteRegion)(GpRegion* region);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipGetDC)(GpGraphics* graphics,
-                                                 HDC* hdc);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipReleaseDC)(GpGraphics* graphics,
-                                                     HDC hdc);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenLineCap197819)(
     GpPen* pen,
     GpLineCap startCap,
@@ -411,33 +302,6 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenLineCap197819)(
     GpDashCap dashCap);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenDashOffset)(GpPen* pen,
                                                             REAL offset);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipResetPath)(GpPath* path);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateRegionPath)(GpPath* path,
-                                                            GpRegion** region);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateFont)(
-    GDIPCONST GpFontFamily* fontFamily,
-    REAL emSize,
-    INT style,
-    Gdiplus::Unit unit,
-    GpFont** font);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipGetFontSize)(GpFont* font,
-                                                       REAL* size);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateFontFamilyFromName)(
-    GDIPCONST WCHAR* name,
-    GpFontCollection* fontCollection,
-    GpFontFamily** FontFamily);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipSetTextRenderingHint)(
-    GpGraphics* graphics,
-    TextRenderingHint mode);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawDriverString)(
-    GpGraphics* graphics,
-    GDIPCONST UINT16* text,
-    INT length,
-    GDIPCONST GpFont* font,
-    GDIPCONST GpBrush* brush,
-    GDIPCONST Gdiplus::PointF* positions,
-    INT flags,
-    GDIPCONST GpMatrix* matrix);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipCreateMatrix2)(REAL m11,
                                                          REAL m12,
                                                          REAL m21,
@@ -449,55 +313,9 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipDeleteMatrix)(GpMatrix* matrix);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetWorldTransform)(
     GpGraphics* graphics,
     GpMatrix* matrix);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipResetWorldTransform)(
-    GpGraphics* graphics);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipDeleteFontFamily)(
-    GpFontFamily* FontFamily);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipDeleteFont)(GpFont* font);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipNewPrivateFontCollection)(
-    GpFontCollection** fontCollection);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipDeletePrivateFontCollection)(
-    GpFontCollection** fontCollection);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipPrivateAddMemoryFont)(
-    GpFontCollection* fontCollection,
-    GDIPCONST void* memory,
-    INT length);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipGetFontCollectionFamilyList)(
-    GpFontCollection* fontCollection,
-    INT numSought,
-    GpFontFamily* gpfamilies[],
-    INT* numFound);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipGetFontCollectionFamilyCount)(
-    GpFontCollection* fontCollection,
-    INT* numFound);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipSetTextContrast)(GpGraphics* graphics,
-                                                           UINT contrast);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPixelOffsetMode)(
     GpGraphics* graphics,
     PixelOffsetMode pixelOffsetMode);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipGetImageGraphicsContext)(
-    GpImage* image,
-    GpGraphics** graphics);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawImageI)(GpGraphics* graphics,
-                                                      GpImage* image,
-                                                      INT x,
-                                                      INT y);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawImageRectI)(GpGraphics* graphics,
-                                                          GpImage* image,
-                                                          INT x,
-                                                          INT y,
-                                                          INT width,
-                                                          INT height);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawString)(
-    GpGraphics* graphics,
-    GDIPCONST WCHAR* str,
-    INT length,
-    GDIPCONST GpFont* font,
-    GDIPCONST Gdiplus::RectF* layoutRect,
-    GDIPCONST GpStringFormat* stringFormat,
-    GDIPCONST GpBrush* brush);
-typedef GpStatus(WINGDIPAPI* FuncType_GdipSetPenTransform)(GpPen* pen,
-                                                           GpMatrix* matrix);
 #define CallFunc(funcname) \
   ((FuncType_##funcname)GdiplusExt.m_Functions[FuncId_##funcname])
 
@@ -507,151 +325,6 @@ GpBrush* GdipCreateBrushImpl(DWORD argb) {
   GpSolidFill* solidBrush = nullptr;
   CallFunc(GdipCreateSolidFill)((Gdiplus::ARGB)argb, &solidBrush);
   return solidBrush;
-}
-
-RetainPtr<CFX_DIBitmap> StretchMonoToGray(
-    int dest_width,
-    int dest_height,
-    const RetainPtr<CFX_DIBitmap>& pSource,
-    FX_RECT* pClipRect) {
-  bool bFlipX = dest_width < 0;
-  if (bFlipX)
-    dest_width = -dest_width;
-
-  bool bFlipY = dest_height < 0;
-  if (bFlipY)
-    dest_height = -dest_height;
-
-  int result_width = pClipRect->Width();
-  int result_height = pClipRect->Height();
-  int result_pitch = FxAlignToBoundary<4>(result_width);
-  auto pStretched = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pStretched->Create(result_width, result_height, FXDIB_8bppRgb))
-    return nullptr;
-
-  LPBYTE dest_buf = pStretched->GetBuffer();
-  int src_width = pSource->GetWidth();
-  int src_height = pSource->GetHeight();
-  int y_unit = src_height / dest_height;
-  int x_unit = src_width / dest_width;
-  int area_unit = y_unit * x_unit;
-  LPBYTE src_buf = pSource->GetBuffer();
-  int src_pitch = pSource->GetPitch();
-  for (int dest_y = 0; dest_y < result_height; dest_y++) {
-    LPBYTE dest_scan = dest_buf + dest_y * result_pitch;
-    int src_y_start = bFlipY ? (dest_height - 1 - dest_y - pClipRect->top)
-                             : (dest_y + pClipRect->top);
-    src_y_start = src_y_start * src_height / dest_height;
-    LPBYTE src_scan = src_buf + src_y_start * src_pitch;
-    for (int dest_x = 0; dest_x < result_width; dest_x++) {
-      int sum = 0;
-      int src_x_start = bFlipX ? (dest_width - 1 - dest_x - pClipRect->left)
-                               : (dest_x + pClipRect->left);
-      src_x_start = src_x_start * src_width / dest_width;
-      int src_x_end = src_x_start + x_unit;
-      LPBYTE src_line = src_scan;
-      for (int src_y = 0; src_y < y_unit; src_y++) {
-        for (int src_x = src_x_start; src_x < src_x_end; src_x++) {
-          if (!(src_line[src_x / 8] & (1 << (7 - src_x % 8)))) {
-            sum += 255;
-          }
-        }
-        src_line += src_pitch;
-      }
-      dest_scan[dest_x] = 255 - sum / area_unit;
-    }
-  }
-  return pStretched;
-}
-
-void OutputImageMask(GpGraphics* pGraphics,
-                     BOOL bMonoDevice,
-                     const RetainPtr<CFX_DIBitmap>& pBitmap,
-                     int dest_left,
-                     int dest_top,
-                     int dest_width,
-                     int dest_height,
-                     FX_ARGB argb,
-                     const FX_RECT* pClipRect) {
-  ASSERT(pBitmap->GetBPP() == 1);
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  int src_width = pBitmap->GetWidth(), src_height = pBitmap->GetHeight();
-  int src_pitch = pBitmap->GetPitch();
-  uint8_t* scan0 = pBitmap->GetBuffer();
-  if (src_width == 1 && src_height == 1) {
-    if ((scan0[0] & 0x80) == 0)
-      return;
-
-    GpSolidFill* solidBrush;
-    CallFunc(GdipCreateSolidFill)((Gdiplus::ARGB)argb, &solidBrush);
-    if (dest_width < 0) {
-      dest_width = -dest_width;
-      dest_left -= dest_width;
-    }
-    if (dest_height < 0) {
-      dest_height = -dest_height;
-      dest_top -= dest_height;
-    }
-    CallFunc(GdipFillRectangle)(pGraphics, solidBrush, (float)dest_left,
-                                (float)dest_top, (float)dest_width,
-                                (float)dest_height);
-    CallFunc(GdipDeleteBrush)(solidBrush);
-    return;
-  }
-  if (!bMonoDevice && abs(dest_width) < src_width &&
-      abs(dest_height) < src_height) {
-    FX_RECT image_rect(dest_left, dest_top, dest_left + dest_width,
-                       dest_top + dest_height);
-    image_rect.Normalize();
-    FX_RECT image_clip = image_rect;
-    image_clip.Intersect(*pClipRect);
-    if (image_clip.IsEmpty())
-      return;
-
-    image_clip.Offset(-image_rect.left, -image_rect.top);
-    RetainPtr<CFX_DIBitmap> pStretched;
-    if (src_width * src_height > 10000) {
-      pStretched =
-          StretchMonoToGray(dest_width, dest_height, pBitmap, &image_clip);
-    } else {
-      pStretched =
-          pBitmap->StretchTo(dest_width, dest_height, false, &image_clip);
-    }
-    GpBitmap* bitmap;
-    CallFunc(GdipCreateBitmapFromScan0)(
-        image_clip.Width(), image_clip.Height(),
-        FxAlignToBoundary<4>(image_clip.Width()), PixelFormat8bppIndexed,
-        pStretched->GetBuffer(), &bitmap);
-    int a;
-    int r;
-    int g;
-    int b;
-    std::tie(a, r, g, b) = ArgbDecode(argb);
-    UINT pal[258];
-    pal[0] = 0;
-    pal[1] = 256;
-    for (int i = 0; i < 256; i++) {
-      pal[i + 2] = ArgbEncode(i * a / 255, r, g, b);
-    }
-    CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal);
-    CallFunc(GdipDrawImageI)(pGraphics, bitmap,
-                             image_rect.left + image_clip.left,
-                             image_rect.top + image_clip.top);
-    CallFunc(GdipDisposeImage)(bitmap);
-    return;
-  }
-  GpBitmap* bitmap;
-  CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
-                                      PixelFormat1bppIndexed, scan0, &bitmap);
-  UINT palette[4] = {PaletteFlagsHasAlpha, 2, 0, argb};
-  CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)palette);
-  Gdiplus::Point destinationPoints[] = {
-      Gdiplus::Point(dest_left, dest_top),
-      Gdiplus::Point(dest_left + dest_width, dest_top),
-      Gdiplus::Point(dest_left, dest_top + dest_height)};
-  CallFunc(GdipDrawImagePointsI)(pGraphics, bitmap, destinationPoints, 3);
-  CallFunc(GdipDisposeImage)(bitmap);
 }
 
 void OutputImage(GpGraphics* pGraphics,
@@ -1091,22 +764,6 @@ void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
 
 }  // namespace
 
-void* CGdiplusExt::GdiAddFontMemResourceEx(void* pFontdata,
-                                           uint32_t size,
-                                           void* pdv,
-                                           uint32_t* num_face) {
-  if (!m_pGdiAddFontMemResourceEx)
-    return nullptr;
-
-  return m_pGdiAddFontMemResourceEx((PVOID)pFontdata, (DWORD)size, (PVOID)pdv,
-                                    (DWORD*)num_face);
-}
-
-bool CGdiplusExt::GdiRemoveFontMemResourceEx(void* handle) {
-  return m_pGdiRemoveFontMemResourseEx &&
-         m_pGdiRemoveFontMemResourseEx((HANDLE)handle);
-}
-
 CGdiplusExt::CGdiplusExt() {}
 
 CGdiplusExt::~CGdiplusExt() {
@@ -1137,227 +794,8 @@ void CGdiplusExt::Load() {
   ((FuncType_GdiplusStartup)m_Functions[FuncId_GdiplusStartup])(
       &gdiplusToken, &gdiplusStartupInput, nullptr);
   m_GdiModule = LoadLibraryA("GDI32.DLL");
-  if (!m_GdiModule)
-    return;
-
-  m_pGdiAddFontMemResourceEx =
-      reinterpret_cast<FuncType_GdiAddFontMemResourceEx>(
-          GetProcAddress(m_GdiModule, "AddFontMemResourceEx"));
-  m_pGdiRemoveFontMemResourseEx =
-      reinterpret_cast<FuncType_GdiRemoveFontMemResourceEx>(
-          GetProcAddress(m_GdiModule, "RemoveFontMemResourceEx"));
 }
 
-LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
-  GpFontCollection* pCollection = nullptr;
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipNewPrivateFontCollection)(&pCollection);
-  GpStatus status =
-      CallFunc(GdipPrivateAddMemoryFont)(pCollection, pData, size);
-  if (status == Gdiplus::Ok)
-    return pCollection;
-
-  CallFunc(GdipDeletePrivateFontCollection)(&pCollection);
-  return nullptr;
-}
-void CGdiplusExt::DeleteMemFont(LPVOID pCollection) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  auto* pActualType = static_cast<GpFontCollection*>(pCollection);
-  CallFunc(GdipDeletePrivateFontCollection)(&pActualType);
-}
-bool CGdiplusExt::GdipCreateBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                                   void** bitmap) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  Gdiplus::PixelFormat format;
-  switch (pBitmap->GetFormat()) {
-    case FXDIB_Rgb:
-      format = PixelFormat24bppRGB;
-      break;
-    case FXDIB_Rgb32:
-      format = PixelFormat32bppRGB;
-      break;
-    case FXDIB_Argb:
-      format = PixelFormat32bppARGB;
-      break;
-    default:
-      return false;
-  }
-  GpStatus status = CallFunc(GdipCreateBitmapFromScan0)(
-      pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap->GetPitch(), format,
-      pBitmap->GetBuffer(), (GpBitmap**)bitmap);
-  return status == Gdiplus::Ok;
-}
-bool CGdiplusExt::GdipCreateFromImage(void* bitmap, void** graphics) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpStatus status = CallFunc(GdipGetImageGraphicsContext)(
-      (GpBitmap*)bitmap, (GpGraphics**)graphics);
-  return status == Gdiplus::Ok;
-}
-bool CGdiplusExt::GdipCreateFontFamilyFromName(const wchar_t* name,
-                                               void* pFontCollection,
-                                               void** pFamily) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpStatus status = CallFunc(GdipCreateFontFamilyFromName)(
-      (GDIPCONST WCHAR*)name, (GpFontCollection*)pFontCollection,
-      (GpFontFamily**)pFamily);
-  return status == Gdiplus::Ok;
-}
-bool CGdiplusExt::GdipCreateFontFromFamily(void* pFamily,
-                                           float font_size,
-                                           int fontstyle,
-                                           int flag,
-                                           void** pFont) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpStatus status =
-      CallFunc(GdipCreateFont)((GpFontFamily*)pFamily, font_size, fontstyle,
-                               Gdiplus::Unit(flag), (GpFont**)pFont);
-  return status == Gdiplus::Ok;
-}
-void CGdiplusExt::GdipGetFontSize(void* pFont, float* size) {
-  REAL get_size;
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpStatus status = CallFunc(GdipGetFontSize)((GpFont*)pFont, &get_size);
-  *size = (status == Gdiplus::Ok) ? static_cast<float>(get_size) : 0;
-}
-void CGdiplusExt::GdipSetTextRenderingHint(void* graphics, int mode) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipSetTextRenderingHint)((GpGraphics*)graphics,
-                                     (TextRenderingHint)mode);
-}
-void CGdiplusExt::GdipSetPageUnit(void* graphics, uint32_t unit) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipSetPageUnit)((GpGraphics*)graphics, (GpUnit)unit);
-}
-bool CGdiplusExt::GdipDrawDriverString(void* graphics,
-                                       unsigned short* text,
-                                       int length,
-                                       void* font,
-                                       void* brush,
-                                       void* positions,
-                                       int flags,
-                                       const void* matrix) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpStatus status = CallFunc(GdipDrawDriverString)(
-      (GpGraphics*)graphics, (GDIPCONST UINT16*)text, (INT)length,
-      (GDIPCONST GpFont*)font, (GDIPCONST GpBrush*)brush,
-      (GDIPCONST Gdiplus::PointF*)positions, (INT)flags,
-      (GDIPCONST GpMatrix*)matrix);
-  return status == Gdiplus::Ok;
-}
-void CGdiplusExt::GdipCreateBrush(uint32_t fill_argb, void** pBrush) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipCreateSolidFill)((Gdiplus::ARGB)fill_argb,
-                                (GpSolidFill**)pBrush);
-}
-void CGdiplusExt::GdipDeleteBrush(void* pBrush) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipDeleteBrush)((GpSolidFill*)pBrush);
-}
-void* CGdiplusExt::GdipCreateFontFromCollection(void* pFontCollection,
-                                                float font_size,
-                                                int fontstyle) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  int numFamilies = 0;
-  GpStatus status = CallFunc(GdipGetFontCollectionFamilyCount)(
-      (GpFontCollection*)pFontCollection, &numFamilies);
-  if (status != Gdiplus::Ok)
-    return nullptr;
-
-  GpFontFamily* family_list[1];
-  status = CallFunc(GdipGetFontCollectionFamilyList)(
-      (GpFontCollection*)pFontCollection, 1, family_list, &numFamilies);
-  if (status != Gdiplus::Ok)
-    return nullptr;
-
-  GpFont* pFont = nullptr;
-  status = CallFunc(GdipCreateFont)(family_list[0], font_size, fontstyle,
-                                    UnitPixel, &pFont);
-  if (status != Gdiplus::Ok)
-    return nullptr;
-
-  return pFont;
-}
-void CGdiplusExt::GdipCreateMatrix(float a,
-                                   float b,
-                                   float c,
-                                   float d,
-                                   float e,
-                                   float f,
-                                   void** matrix) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipCreateMatrix2)(a, b, c, d, e, f, (GpMatrix**)matrix);
-}
-void CGdiplusExt::GdipDeleteMatrix(void* matrix) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipDeleteMatrix)((GpMatrix*)matrix);
-}
-void CGdiplusExt::GdipDeleteFontFamily(void* pFamily) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipDeleteFontFamily)((GpFontFamily*)pFamily);
-}
-void CGdiplusExt::GdipDeleteFont(void* pFont) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipDeleteFont)((GpFont*)pFont);
-}
-void CGdiplusExt::GdipSetWorldTransform(void* graphics, void* pMatrix) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipSetWorldTransform)((GpGraphics*)graphics, (GpMatrix*)pMatrix);
-}
-void CGdiplusExt::GdipDisposeImage(void* bitmap) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipDisposeImage)((GpBitmap*)bitmap);
-}
-void CGdiplusExt::GdipDeleteGraphics(void* graphics) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  CallFunc(GdipDeleteGraphics)((GpGraphics*)graphics);
-}
-bool CGdiplusExt::StretchBitMask(HDC hDC,
-                                 BOOL bMonoDevice,
-                                 const RetainPtr<CFX_DIBitmap>& pBitmap,
-                                 int dest_left,
-                                 int dest_top,
-                                 int dest_width,
-                                 int dest_height,
-                                 uint32_t argb,
-                                 const FX_RECT* pClipRect,
-                                 int flags) {
-  ASSERT(pBitmap->GetBPP() == 1);
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  GpGraphics* pGraphics = nullptr;
-  CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
-  CallFunc(GdipSetPageUnit)(pGraphics, UnitPixel);
-  if (flags & FXDIB_NOSMOOTH) {
-    CallFunc(GdipSetInterpolationMode)(pGraphics,
-                                       InterpolationModeNearestNeighbor);
-  } else {
-    CallFunc(GdipSetInterpolationMode)(pGraphics, InterpolationModeHighQuality);
-  }
-  OutputImageMask(pGraphics, bMonoDevice, pBitmap, dest_left, dest_top,
-                  dest_width, dest_height, argb, pClipRect);
-  CallFunc(GdipDeleteGraphics)(pGraphics);
-  return true;
-}
 bool CGdiplusExt::StretchDIBits(HDC hDC,
                                 const RetainPtr<CFX_DIBitmap>& pBitmap,
                                 int dest_left,
