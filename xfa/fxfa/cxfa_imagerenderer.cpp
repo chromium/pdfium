@@ -22,7 +22,7 @@ CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 bool CXFA_ImageRenderer::Start() {
   if (m_pDevice->StartDIBitsWithBlend(m_pDIBBase, 255, 0, &m_ImageMatrix,
                                       FXDIB_INTERPOL, &m_DeviceHandle,
-                                      FXDIB_BLEND_NORMAL)) {
+                                      BlendMode::kNormal)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return true;
@@ -62,7 +62,7 @@ bool CXFA_ImageRenderer::Start() {
   if (m_pDIBBase->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
             m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
-            FXDIB_INTERPOL, FXDIB_BLEND_NORMAL)) {
+            FXDIB_INTERPOL, BlendMode::kNormal)) {
       return false;
     }
   }
@@ -103,7 +103,7 @@ bool CXFA_ImageRenderer::Continue() {
     } else {
       m_pDevice->SetDIBitsWithBlend(pBitmap, m_pTransformer->result().left,
                                     m_pTransformer->result().top,
-                                    FXDIB_BLEND_NORMAL);
+                                    BlendMode::kNormal);
     }
     return false;
   }
@@ -134,7 +134,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
     if (pDIBitmap->IsAlphaMask())
       return;
 
-    m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, FXDIB_BLEND_NORMAL);
+    m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, BlendMode::kNormal);
     return;
   }
   if (!pDIBitmap->HasAlpha() ||

@@ -16,6 +16,7 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/fx_dib.h"
 
 class CFX_PathData;
 class CPDF_Color;
@@ -111,7 +112,7 @@ class CPDF_RenderStatus {
                          int top,
                          FX_ARGB mask_argb,
                          int bitmap_alpha,
-                         int blend_mode,
+                         BlendMode blend_mode,
                          const CPDF_Transparency& transparency);
 
  private:
@@ -202,7 +203,7 @@ class CPDF_RenderStatus {
   uint32_t m_GroupFamily = 0;
   UnownedPtr<CPDF_Type3Char> m_pType3Char;
   FX_ARGB m_T3FillColor = 0;
-  int m_curBlend = FXDIB_BLEND_NORMAL;
+  BlendMode m_curBlend = BlendMode::kNormal;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_RENDERSTATUS_H_

@@ -18,7 +18,7 @@ TEST(CPDFPageObjectHolder, GraphicsDataAsKey) {
   // Verify self-comparisions.
   for (float c1 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan}) {
     for (float c2 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan}) {
-      for (int c3 : {1, 2})
+      for (BlendMode c3 : {BlendMode::kMultiply, BlendMode::kScreen})
         EXPECT_FALSE(GraphicsData({c1, c2, c3}) < GraphicsData({c1, c2, c3}));
     }
   }
@@ -27,7 +27,7 @@ TEST(CPDFPageObjectHolder, GraphicsDataAsKey) {
 
   // Insert in reverse index permuted order.
   size_t x = 0;
-  for (int c3 : {2, 1}) {
+  for (BlendMode c3 : {BlendMode::kScreen, BlendMode::kMultiply}) {
     for (float c2 : {fNan, fInf, fMax, 2.0f, 1.0f, fMin}) {
       for (float c1 : {fNan, fInf, fMax, 2.0f, 1.0f, fMin}) {
         graphics_map[{c1, c2, c3}] = x++;
@@ -56,7 +56,7 @@ TEST(CPDFPageObjectHolder, GraphicsDataAsKey) {
   EXPECT_EQ(72u, x);
 
   // Erase in forward index permuted order.
-  for (int c3 : {1, 2}) {
+  for (BlendMode c3 : {BlendMode::kMultiply, BlendMode::kScreen}) {
     for (float c2 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan}) {
       for (float c1 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan})
         graphics_map.erase({c1, c2, c3});

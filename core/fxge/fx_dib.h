@@ -55,22 +55,26 @@ extern const int16_t SDP_Table[513];
 #define FXDIB_BICUBIC_INTERPOL 0x80
 #define FXDIB_NOSMOOTH 0x100
 
-#define FXDIB_BLEND_NORMAL 0
-#define FXDIB_BLEND_MULTIPLY 1
-#define FXDIB_BLEND_SCREEN 2
-#define FXDIB_BLEND_OVERLAY 3
-#define FXDIB_BLEND_DARKEN 4
-#define FXDIB_BLEND_LIGHTEN 5
-#define FXDIB_BLEND_COLORDODGE 6
-#define FXDIB_BLEND_COLORBURN 7
-#define FXDIB_BLEND_HARDLIGHT 8
-#define FXDIB_BLEND_SOFTLIGHT 9
-#define FXDIB_BLEND_DIFFERENCE 10
-#define FXDIB_BLEND_EXCLUSION 11
-#define FXDIB_BLEND_HUE 21
-#define FXDIB_BLEND_SATURATION 22
-#define FXDIB_BLEND_COLOR 23
-#define FXDIB_BLEND_LUMINOSITY 24
+// See PDF 1.7 spec, table 7.2 and 7.3. The enum values need to be in the same
+// order as listed in the spec.
+enum class BlendMode {
+  kNormal = 0,
+  kMultiply,
+  kScreen,
+  kOverlay,
+  kDarken,
+  kLighten,
+  kColorDodge,
+  kColorBurn,
+  kHardLight,
+  kSoftLight,
+  kDifference,
+  kExclusion,
+  kHue,
+  kSaturation,
+  kColor,
+  kLuminosity,
+};
 
 constexpr uint32_t FXSYS_BGR(uint8_t b, uint8_t g, uint8_t r) {
   return (b << 16) | (g << 8) | r;

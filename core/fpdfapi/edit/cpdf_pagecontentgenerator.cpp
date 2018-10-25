@@ -439,7 +439,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
   graphD.strokeAlpha = pPageObj->m_GeneralState.GetStrokeAlpha();
   graphD.blendType = pPageObj->m_GeneralState.GetBlendType();
   if (graphD.fillAlpha == 1.0f && graphD.strokeAlpha == 1.0f &&
-      graphD.blendType == FXDIB_BLEND_NORMAL) {
+      graphD.blendType == BlendMode::kNormal) {
     return;
   }
 
@@ -455,7 +455,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(std::ostringstream* buf,
     if (graphD.strokeAlpha != 1.0f)
       gsDict->SetNewFor<CPDF_Number>("CA", graphD.strokeAlpha);
 
-    if (graphD.blendType != FXDIB_BLEND_NORMAL) {
+    if (graphD.blendType != BlendMode::kNormal) {
       gsDict->SetNewFor<CPDF_Name>("BM",
                                    pPageObj->m_GeneralState.GetBlendMode());
     }
@@ -479,7 +479,7 @@ ByteString CPDF_PageContentGenerator::GetOrCreateDefaultGraphics() const {
   GraphicsData defaultGraphics;
   defaultGraphics.fillAlpha = 1.0f;
   defaultGraphics.strokeAlpha = 1.0f;
-  defaultGraphics.blendType = FXDIB_BLEND_NORMAL;
+  defaultGraphics.blendType = BlendMode::kNormal;
   auto it = m_pObjHolder->m_GraphicsMap.find(defaultGraphics);
 
   // If default graphics already exists, return it.

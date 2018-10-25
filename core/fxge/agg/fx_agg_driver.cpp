@@ -1311,8 +1311,8 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                    uint32_t fill_color,
                                    uint32_t stroke_color,
                                    int fill_mode,
-                                   int blend_type) {
-  if (blend_type != FXDIB_BLEND_NORMAL)
+                                   BlendMode blend_type) {
+  if (blend_type != BlendMode::kNormal)
     return false;
 
   if (!GetBuffer())
@@ -1410,8 +1410,8 @@ bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
 
 bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                             uint32_t fill_color,
-                                            int blend_type) {
-  if (blend_type != FXDIB_BLEND_NORMAL)
+                                            BlendMode blend_type) {
+  if (blend_type != BlendMode::kNormal)
     return false;
 
   if (!m_pBitmap->GetBuffer())
@@ -1438,7 +1438,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   m_pBitmap->CompositeMask(draw_rect.left, draw_rect.top, draw_rect.Width(),
                            draw_rect.Height(), m_pClipRgn->GetMask(),
                            fill_color, draw_rect.left - clip_rect.left,
-                           draw_rect.top - clip_rect.top, FXDIB_BLEND_NORMAL,
+                           draw_rect.top - clip_rect.top, BlendMode::kNormal,
                            nullptr, m_bRgbByteOrder, 0);
   return true;
 }
@@ -1469,7 +1469,7 @@ bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       return true;
 
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
-                           m_pBitmap, 0, 0, FXDIB_BLEND_NORMAL, nullptr, false);
+                           m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
   } else {
     pBack = m_pBitmap->Clone(&rect);
     if (!pBack)
@@ -1496,7 +1496,7 @@ bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                     const FX_RECT* pSrcRect,
                                     int left,
                                     int top,
-                                    int blend_type) {
+                                    BlendMode blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 
@@ -1519,7 +1519,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                         int dest_height,
                                         const FX_RECT* pClipRect,
                                         uint32_t flags,
-                                        int blend_type) {
+                                        BlendMode blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 
@@ -1551,7 +1551,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
     const CFX_Matrix* pMatrix,
     uint32_t render_flags,
     std::unique_ptr<CFX_ImageRenderer>* handle,
-    int blend_type) {
+    BlendMode blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 

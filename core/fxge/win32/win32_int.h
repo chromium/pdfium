@@ -149,14 +149,14 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode,
-                int blend_type) override;
+                BlendMode blend_type) override;
   bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t fill_color,
-                         int blend_type) override;
+                         BlendMode blend_type) override;
   bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                         const CFX_PointF& ptLineTo,
                         uint32_t color,
-                        int blend_type) override;
+                        BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
 
   void DrawLine(float x1, float y1, float x2, float y2);
@@ -202,7 +202,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
-                 int blend_type) override;
+                 BlendMode blend_type) override;
   bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
@@ -211,14 +211,14 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                      int dest_height,
                      const FX_RECT* pClipRect,
                      uint32_t flags,
-                     int blend_type) override;
+                     BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
-                   int blend_type) override;
+                   BlendMode blend_type) override;
   bool UseFoxitStretchEngine(const RetainPtr<CFX_DIBBase>& pSource,
                              uint32_t color,
                              int dest_left,
@@ -241,7 +241,7 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
-                 int blend_type) override;
+                 BlendMode blend_type) override;
   bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
@@ -250,14 +250,14 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
                      int dest_height,
                      const FX_RECT* pClipRect,
                      uint32_t flags,
-                     int blend_type) override;
+                     BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
-                   int blend_type) override;
+                   BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,
@@ -293,14 +293,14 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode,
-                int blend_type) override;
+                BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
-                 int blend_type) override;
+                 BlendMode blend_type) override;
   bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
@@ -309,14 +309,14 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                      int dest_height,
                      const FX_RECT* pClipRect,
                      uint32_t flags,
-                     int blend_type) override;
+                     BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
-                   int blend_type) override;
+                   BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,
@@ -356,14 +356,14 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode,
-                int blend_type) override;
+                BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
-                 int blend_type) override;
+                 BlendMode blend_type) override;
   bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
@@ -372,14 +372,14 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
                      int dest_height,
                      const FX_RECT* pClipRect,
                      uint32_t flags,
-                     int blend_type) override;
+                     BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
-                   int blend_type) override;
+                   BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,

@@ -12,6 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/fx_dib.h"
 
 class CFX_DIBitmap;
 class CFX_DIBBase;
@@ -48,15 +49,15 @@ class RenderDeviceDriverIface {
                         uint32_t fill_color,
                         uint32_t stroke_color,
                         int fill_mode,
-                        int blend_type) = 0;
+                        BlendMode blend_type) = 0;
   virtual bool SetPixel(int x, int y, uint32_t color);
   virtual bool FillRectWithBlend(const FX_RECT& rect,
                                  uint32_t fill_color,
-                                 int blend_type);
+                                 BlendMode blend_type);
   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                 const CFX_PointF& ptLineTo,
                                 uint32_t color,
-                                int blend_type);
+                                BlendMode blend_type);
 
   virtual bool GetClipBox(FX_RECT* pRect) = 0;
   virtual bool GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
@@ -68,7 +69,7 @@ class RenderDeviceDriverIface {
                          const FX_RECT* pSrcRect,
                          int dest_left,
                          int dest_top,
-                         int blend_type) = 0;
+                         BlendMode blend_type) = 0;
   virtual bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                              uint32_t color,
                              int dest_left,
@@ -77,14 +78,14 @@ class RenderDeviceDriverIface {
                              int dest_height,
                              const FX_RECT* pClipRect,
                              uint32_t flags,
-                             int blend_type) = 0;
+                             BlendMode blend_type) = 0;
   virtual bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                            int bitmap_alpha,
                            uint32_t color,
                            const CFX_Matrix* pMatrix,
                            uint32_t flags,
                            std::unique_ptr<CFX_ImageRenderer>* handle,
-                           int blend_type) = 0;
+                           BlendMode blend_type) = 0;
   virtual bool ContinueDIBits(CFX_ImageRenderer* handle,
                               PauseIndicatorIface* pPause);
   virtual bool DrawDeviceText(int nChars,
@@ -105,7 +106,7 @@ class RenderDeviceDriverIface {
                                int left,
                                int top,
                                int bitmap_alpha,
-                               int blend_type);
+                               BlendMode blend_type);
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   virtual void Flush();
 #endif

@@ -57,11 +57,11 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode,
-                int blend_type) override;
+                BlendMode blend_type) override;
   bool SetPixel(int x, int y, uint32_t color) override;
   bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t fill_color,
-                         int blend_type) override;
+                         BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
   bool GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int left,
@@ -72,7 +72,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
-                 int blend_type) override;
+                 BlendMode blend_type) override;
   bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
@@ -81,14 +81,14 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                      int dest_height,
                      const FX_RECT* pClipRect,
                      uint32_t flags,
-                     int blend_type) override;
+                     BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
-                   int blend_type) override;
+                   BlendMode blend_type) override;
   bool ContinueDIBits(CFX_ImageRenderer* handle,
                       PauseIndicatorIface* pPause) override;
   bool DrawDeviceText(int nChars,

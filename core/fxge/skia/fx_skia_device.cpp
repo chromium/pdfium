@@ -318,39 +318,39 @@ SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m, SkScalar flip) {
   return skMatrix;
 }
 
-SkBlendMode GetSkiaBlendMode(int blend_type) {
+SkBlendMode GetSkiaBlendMode(BlendMode blend_type) {
   switch (blend_type) {
-    case FXDIB_BLEND_MULTIPLY:
+    case BlendMode::kMultiply:
       return SkBlendMode::kMultiply;
-    case FXDIB_BLEND_SCREEN:
+    case BlendMode::kScreen:
       return SkBlendMode::kScreen;
-    case FXDIB_BLEND_OVERLAY:
+    case BlendMode::kOverlay:
       return SkBlendMode::kOverlay;
-    case FXDIB_BLEND_DARKEN:
+    case BlendMode::kDarken:
       return SkBlendMode::kDarken;
-    case FXDIB_BLEND_LIGHTEN:
+    case BlendMode::kLighten:
       return SkBlendMode::kLighten;
-    case FXDIB_BLEND_COLORDODGE:
+    case BlendMode::kColorDodge:
       return SkBlendMode::kColorDodge;
-    case FXDIB_BLEND_COLORBURN:
+    case BlendMode::kColorBurn:
       return SkBlendMode::kColorBurn;
-    case FXDIB_BLEND_HARDLIGHT:
+    case BlendMode::kHardLight:
       return SkBlendMode::kHardLight;
-    case FXDIB_BLEND_SOFTLIGHT:
+    case BlendMode::kSoftLight:
       return SkBlendMode::kSoftLight;
-    case FXDIB_BLEND_DIFFERENCE:
+    case BlendMode::kDifference:
       return SkBlendMode::kDifference;
-    case FXDIB_BLEND_EXCLUSION:
+    case BlendMode::kExclusion:
       return SkBlendMode::kExclusion;
-    case FXDIB_BLEND_HUE:
+    case BlendMode::kHue:
       return SkBlendMode::kHue;
-    case FXDIB_BLEND_SATURATION:
+    case BlendMode::kSaturation:
       return SkBlendMode::kSaturation;
-    case FXDIB_BLEND_COLOR:
+    case BlendMode::kColor:
       return SkBlendMode::kColor;
-    case FXDIB_BLEND_LUMINOSITY:
+    case BlendMode::kLuminosity:
       return SkBlendMode::kLuminosity;
-    case FXDIB_BLEND_NORMAL:
+    case BlendMode::kNormal:
     default:
       return SkBlendMode::kSrcOver;
   }
@@ -563,7 +563,7 @@ void SetBitmapMatrix(const CFX_Matrix* pMatrix,
 void SetBitmapPaint(bool isAlphaMask,
                     uint32_t argb,
                     int bitmap_alpha,
-                    int blend_type,
+                    BlendMode blend_type,
                     SkPaint* paint) {
   paint->setAntiAlias(true);
   if (isAlphaMask) {
@@ -695,7 +695,7 @@ class SkiaState {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode,
-                int blend_type) {
+                BlendMode blend_type) {
     if (m_debugDisable)
       return false;
     Dump(__func__);
@@ -1074,7 +1074,7 @@ class SkiaState {
                    uint32_t fill_color,
                    uint32_t stroke_color,
                    int fill_mode,
-                   int blend_type,
+                   BlendMode blend_type,
                    bool group_knockout) const {
     return MatrixChanged(pMatrix, m_drawMatrix) ||
            StateChanged(pState, m_drawState) || fill_color != m_fillColor ||
@@ -1391,7 +1391,7 @@ class SkiaState {
   float m_scaleX = 0;
   uint32_t m_fillColor = 0;
   uint32_t m_strokeColor = 0;
-  int m_blendType = FXDIB_BLEND_NORMAL;
+  BlendMode m_blendType = BlendMode::kNormal;
   int m_commandIndex = 0;     // active position in clip command stack
   int m_drawIndex = INT_MAX;  // position of the pending path or text draw
   int m_clipIndex = 0;        // position reflecting depth of canvas clip stacck
@@ -1880,7 +1880,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     uint32_t fill_color,                    // fill color
     uint32_t stroke_color,                  // stroke color
     int fill_mode,  // fill mode, WINDING or ALTERNATE. 0 for not filled
-    int blend_type) {
+    BlendMode blend_type) {
   if (fill_mode & FX_ZEROAREA_FILL)
     return true;
   if (m_pCache->DrawPath(pPathData, pObject2Device, pGraphState, fill_color,
@@ -1941,13 +1941,13 @@ bool CFX_SkiaDeviceDriver::DrawPath(
 bool CFX_SkiaDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                             const CFX_PointF& ptLineTo,
                                             uint32_t color,
-                                            int blend_type) {
+                                            BlendMode blend_type) {
   return false;
 }
 
 bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                              uint32_t fill_color,
-                                             int blend_type) {
+                                             BlendMode blend_type) {
   m_pCache->FlushForDraw();
   SkPaint spaint;
   spaint.setAntiAlias(true);
@@ -2212,7 +2212,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       return true;
 
     pBack->CompositeBitmap(0, 0, pBack->GetWidth(), pBack->GetHeight(),
-                           m_pBitmap, 0, 0, FXDIB_BLEND_NORMAL, nullptr, false);
+                           m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
   } else {
     pBack = m_pBitmap->Clone(&rect);
     if (!pBack)
@@ -2242,7 +2242,7 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                      const FX_RECT* pSrcRect,
                                      int left,
                                      int top,
-                                     int blend_type) {
+                                     BlendMode blend_type) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return true;
 
@@ -2275,7 +2275,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                          int dest_height,
                                          const FX_RECT* pClipRect,
                                          uint32_t flags,
-                                         int blend_type) {
+                                         BlendMode blend_type) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
   if (!m_pBitmap->GetBuffer())
@@ -2325,7 +2325,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     const CFX_Matrix* pMatrix,
     uint32_t render_flags,
     std::unique_ptr<CFX_ImageRenderer>* handle,
-    int blend_type) {
+    BlendMode blend_type) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
@@ -2456,7 +2456,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     const RetainPtr<CFX_DIBBase>& pMask,
     int bitmap_alpha,
     const CFX_Matrix* pMatrix,
-    int blend_type) {
+    BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   std::unique_ptr<uint8_t, FxFreeDeleter> src8Storage, mask8Storage;
   std::unique_ptr<uint32_t, FxFreeDeleter> src32Storage, mask32Storage;
@@ -2498,7 +2498,7 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(
     int dest_left,
     int dest_top,
     int bitmap_alpha,
-    int blend_type) {
+    BlendMode blend_type) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return true;
   CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), dest_left,
@@ -2599,7 +2599,7 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
     int left,
     int top,
     int bitmap_alpha,
-    int blend_type) {
+    BlendMode blend_type) {
   CFX_SkiaDeviceDriver* skDriver =
       static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver());
   if (skDriver)

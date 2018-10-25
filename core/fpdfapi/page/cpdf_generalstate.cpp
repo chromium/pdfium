@@ -27,43 +27,43 @@ int RI_StringToId(const ByteString& ri) {
   return 0;
 }
 
-int GetBlendTypeInternal(const ByteString& mode) {
+BlendMode GetBlendTypeInternal(const ByteString& mode) {
   switch (mode.GetID()) {
     case FXBSTR_ID('N', 'o', 'r', 'm'):
     case FXBSTR_ID('C', 'o', 'm', 'p'):
-      return FXDIB_BLEND_NORMAL;
+      return BlendMode::kNormal;
     case FXBSTR_ID('M', 'u', 'l', 't'):
-      return FXDIB_BLEND_MULTIPLY;
+      return BlendMode::kMultiply;
     case FXBSTR_ID('S', 'c', 'r', 'e'):
-      return FXDIB_BLEND_SCREEN;
+      return BlendMode::kScreen;
     case FXBSTR_ID('O', 'v', 'e', 'r'):
-      return FXDIB_BLEND_OVERLAY;
+      return BlendMode::kOverlay;
     case FXBSTR_ID('D', 'a', 'r', 'k'):
-      return FXDIB_BLEND_DARKEN;
+      return BlendMode::kDarken;
     case FXBSTR_ID('L', 'i', 'g', 'h'):
-      return FXDIB_BLEND_LIGHTEN;
+      return BlendMode::kLighten;
     case FXBSTR_ID('C', 'o', 'l', 'o'):
       if (mode.GetLength() == 10)
-        return FXDIB_BLEND_COLORDODGE;
+        return BlendMode::kColorDodge;
       if (mode.GetLength() == 9)
-        return FXDIB_BLEND_COLORBURN;
-      return FXDIB_BLEND_COLOR;
+        return BlendMode::kColorBurn;
+      return BlendMode::kColor;
     case FXBSTR_ID('H', 'a', 'r', 'd'):
-      return FXDIB_BLEND_HARDLIGHT;
+      return BlendMode::kHardLight;
     case FXBSTR_ID('S', 'o', 'f', 't'):
-      return FXDIB_BLEND_SOFTLIGHT;
+      return BlendMode::kSoftLight;
     case FXBSTR_ID('D', 'i', 'f', 'f'):
-      return FXDIB_BLEND_DIFFERENCE;
+      return BlendMode::kDifference;
     case FXBSTR_ID('E', 'x', 'c', 'l'):
-      return FXDIB_BLEND_EXCLUSION;
+      return BlendMode::kExclusion;
     case FXBSTR_ID('H', 'u', 'e', 0):
-      return FXDIB_BLEND_HUE;
+      return BlendMode::kHue;
     case FXBSTR_ID('S', 'a', 't', 'u'):
-      return FXDIB_BLEND_SATURATION;
+      return BlendMode::kSaturation;
     case FXBSTR_ID('L', 'u', 'm', 'i'):
-      return FXDIB_BLEND_LUMINOSITY;
+      return BlendMode::kLuminosity;
   }
-  return FXDIB_BLEND_NORMAL;
+  return BlendMode::kNormal;
 }
 
 }  // namespace
@@ -81,48 +81,48 @@ void CPDF_GeneralState::SetRenderIntent(const ByteString& ri) {
 
 ByteString CPDF_GeneralState::GetBlendMode() const {
   switch (GetBlendType()) {
-    case FXDIB_BLEND_NORMAL:
+    case BlendMode::kNormal:
       return ByteString(pdfium::transparency::kNormal);
-    case FXDIB_BLEND_MULTIPLY:
+    case BlendMode::kMultiply:
       return ByteString(pdfium::transparency::kMultiply);
-    case FXDIB_BLEND_SCREEN:
+    case BlendMode::kScreen:
       return ByteString(pdfium::transparency::kScreen);
-    case FXDIB_BLEND_OVERLAY:
+    case BlendMode::kOverlay:
       return ByteString(pdfium::transparency::kOverlay);
-    case FXDIB_BLEND_DARKEN:
+    case BlendMode::kDarken:
       return ByteString(pdfium::transparency::kDarken);
-    case FXDIB_BLEND_LIGHTEN:
+    case BlendMode::kLighten:
       return ByteString(pdfium::transparency::kLighten);
-    case FXDIB_BLEND_COLORDODGE:
+    case BlendMode::kColorDodge:
       return ByteString(pdfium::transparency::kColorDodge);
-    case FXDIB_BLEND_COLORBURN:
+    case BlendMode::kColorBurn:
       return ByteString(pdfium::transparency::kColorBurn);
-    case FXDIB_BLEND_HARDLIGHT:
+    case BlendMode::kHardLight:
       return ByteString(pdfium::transparency::kHardLight);
-    case FXDIB_BLEND_SOFTLIGHT:
+    case BlendMode::kSoftLight:
       return ByteString(pdfium::transparency::kSoftLight);
-    case FXDIB_BLEND_DIFFERENCE:
+    case BlendMode::kDifference:
       return ByteString(pdfium::transparency::kDifference);
-    case FXDIB_BLEND_EXCLUSION:
+    case BlendMode::kExclusion:
       return ByteString(pdfium::transparency::kExclusion);
-    case FXDIB_BLEND_HUE:
+    case BlendMode::kHue:
       return ByteString(pdfium::transparency::kHue);
-    case FXDIB_BLEND_SATURATION:
+    case BlendMode::kSaturation:
       return ByteString(pdfium::transparency::kSaturation);
-    case FXDIB_BLEND_COLOR:
+    case BlendMode::kColor:
       return ByteString(pdfium::transparency::kColor);
-    case FXDIB_BLEND_LUMINOSITY:
+    case BlendMode::kLuminosity:
       return ByteString(pdfium::transparency::kLuminosity);
   }
   return ByteString(pdfium::transparency::kNormal);
 }
 
-int CPDF_GeneralState::GetBlendType() const {
+BlendMode CPDF_GeneralState::GetBlendType() const {
   const StateData* pData = m_Ref.GetObject();
-  return pData ? pData->m_BlendType : FXDIB_BLEND_NORMAL;
+  return pData ? pData->m_BlendType : BlendMode::kNormal;
 }
 
-void CPDF_GeneralState::SetBlendType(int type) {
+void CPDF_GeneralState::SetBlendType(BlendMode type) {
   m_Ref.GetPrivateCopy()->m_BlendType = type;
 }
 

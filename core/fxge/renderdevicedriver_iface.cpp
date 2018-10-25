@@ -31,14 +31,14 @@ bool RenderDeviceDriverIface::SetPixel(int x, int y, uint32_t color) {
 
 bool RenderDeviceDriverIface::FillRectWithBlend(const FX_RECT& rect,
                                                 uint32_t fill_color,
-                                                int blend_type) {
+                                                BlendMode blend_type) {
   return false;
 }
 
 bool RenderDeviceDriverIface::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                                const CFX_PointF& ptLineTo,
                                                uint32_t color,
-                                               int blend_type) {
+                                               BlendMode blend_type) {
   return false;
 }
 
@@ -86,7 +86,7 @@ bool RenderDeviceDriverIface::SetBitsWithMask(
     int left,
     int top,
     int bitmap_alpha,
-    int blend_type) {
+    BlendMode blend_type) {
   return false;
 }
 

@@ -29,8 +29,8 @@ class CPDF_GeneralState {
   void SetRenderIntent(const ByteString& ri);
 
   ByteString GetBlendMode() const;
-  int GetBlendType() const;
-  void SetBlendType(int type);
+  BlendMode GetBlendType() const;
+  void SetBlendType(BlendMode type);
 
   float GetFillAlpha() const;
   void SetFillAlpha(float alpha);
@@ -85,7 +85,7 @@ class CPDF_GeneralState {
     ~StateData() override;
 
     ByteString m_BlendMode = pdfium::transparency::kNormal;
-    int m_BlendType = FXDIB_BLEND_NORMAL;
+    BlendMode m_BlendType = BlendMode::kNormal;
     UnownedPtr<CPDF_Object> m_pSoftMask;
     CFX_Matrix m_SMaskMatrix;
     float m_StrokeAlpha = 1.0f;

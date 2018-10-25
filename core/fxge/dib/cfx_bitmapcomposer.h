@@ -14,6 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
+#include "core/fxge/fx_dib.h"
 
 class CFX_ClipRgn;
 class CFX_DIBitmap;
@@ -33,7 +34,7 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
                bool bFlipY,
                bool bRgbByteOrder,
                int alpha_flag,
-               int blend_type);
+               BlendMode blend_type);
 
   // ScanlineComposerIface
   bool SetInfo(int width,
@@ -71,8 +72,8 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
   bool m_bFlipX;
   bool m_bFlipY;
   int m_AlphaFlag;
-  bool m_bRgbByteOrder;
-  int m_BlendType;
+  bool m_bRgbByteOrder = false;
+  BlendMode m_BlendType = BlendMode::kNormal;
   std::vector<uint8_t> m_pScanlineV;
   std::vector<uint8_t> m_pClipScanV;
   std::vector<uint8_t> m_pAddClipScan;

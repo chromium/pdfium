@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
+#include "core/fxge/fx_dib.h"
 
 class CFX_DIBitmap;
 class CFX_DIBBase;
@@ -33,7 +34,7 @@ class CPDF_ImageRenderer {
              CPDF_ImageObject* pImageObject,
              const CFX_Matrix* pObj2Device,
              bool bStdCS,
-             int blendType);
+             BlendMode blendType);
 
   bool Start(CPDF_RenderStatus* pStatus,
              const RetainPtr<CFX_DIBBase>& pDIBBase,
@@ -42,7 +43,7 @@ class CPDF_ImageRenderer {
              const CFX_Matrix* pImage2Device,
              uint32_t flags,
              bool bStdCS,
-             int blendType);
+             BlendMode blendType);
 
   bool Continue(PauseIndicatorIface* pPause);
   bool GetResult() const { return m_Result; }
@@ -76,7 +77,7 @@ class CPDF_ImageRenderer {
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
   int m_Status = 0;
   int m_BitmapAlpha = 0;
-  int m_BlendType = FXDIB_BLEND_NORMAL;
+  BlendMode m_BlendType = BlendMode::kNormal;
   FX_ARGB m_FillArgb = 0;
   uint32_t m_Flags = 0;
   bool m_bPatternColor = false;

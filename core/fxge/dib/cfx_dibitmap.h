@@ -11,6 +11,7 @@
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibbase.h"
+#include "core/fxge/fx_dib.h"
 
 class CFX_DIBitmap : public CFX_DIBBase {
  public:
@@ -67,7 +68,7 @@ class CFX_DIBitmap : public CFX_DIBBase {
                        const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                        int src_left,
                        int src_top,
-                       int blend_type,
+                       BlendMode blend_type,
                        const CFX_ClipRgn* pClipRgn,
                        bool bRgbByteOrder);
 
@@ -79,7 +80,7 @@ class CFX_DIBitmap : public CFX_DIBBase {
                      uint32_t color,
                      int src_left,
                      int src_top,
-                     int blend_type,
+                     BlendMode blend_type,
                      const CFX_ClipRgn* pClipRgn,
                      bool bRgbByteOrder,
                      int alpha_flag);

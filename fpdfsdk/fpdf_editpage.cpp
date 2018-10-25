@@ -486,8 +486,7 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pPageObj)
     return false;
 
-  int blend_type = pPageObj->m_GeneralState.GetBlendType();
-  if (blend_type != FXDIB_BLEND_NORMAL)
+  if (pPageObj->m_GeneralState.GetBlendType() != BlendMode::kNormal)
     return true;
 
   const CPDF_Dictionary* pSMaskDict =
@@ -498,20 +497,18 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (pPageObj->m_GeneralState.GetFillAlpha() != 1.0f)
     return true;
 
-  if (pPageObj->IsPath() && pPageObj->m_GeneralState.GetStrokeAlpha() != 1.0f) {
+  if (pPageObj->IsPath() && pPageObj->m_GeneralState.GetStrokeAlpha() != 1.0f)
     return true;
-  }
 
-  if (pPageObj->IsForm()) {
-    const CPDF_Form* pForm = pPageObj->AsForm()->form();
-    if (pForm) {
-      const CPDF_Transparency& trans = pForm->GetTransparency();
-      if (trans.IsGroup() || trans.IsIsolated())
-        return true;
-    }
-  }
+  if (!pPageObj->IsForm())
+    return false;
 
-  return false;
+  const CPDF_Form* pForm = pPageObj->AsForm()->form();
+  if (!pForm)
+    return false;
+
+  const CPDF_Transparency& trans = pForm->GetTransparency();
+  return trans.IsGroup() || trans.IsIsolated();
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

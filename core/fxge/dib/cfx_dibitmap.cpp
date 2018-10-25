@@ -862,7 +862,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                                    const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                    int src_left,
                                    int src_top,
-                                   int blend_type,
+                                   BlendMode blend_type,
                                    const CFX_ClipRgn* pClipRgn,
                                    bool bRgbByteOrder) {
   if (!m_pBuffer)
@@ -934,7 +934,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  uint32_t color,
                                  int src_left,
                                  int src_top,
-                                 int blend_type,
+                                 BlendMode blend_type,
                                  const CFX_ClipRgn* pClipRgn,
                                  bool bRgbByteOrder,
                                  int alpha_flag) {

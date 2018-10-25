@@ -1110,7 +1110,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
 
   m_pImageRenderer = pdfium::MakeUnique<CPDF_ImageRenderer>();
   if (!m_pImageRenderer->Start(this, pObj->AsImage(), &mtObj2Device, false,
-                               FXDIB_BLEND_NORMAL)) {
+                               BlendMode::kNormal)) {
     if (!m_pImageRenderer->GetResult())
       DrawObjWithBackground(pObj, mtObj2Device);
     m_pImageRenderer.reset();
@@ -1437,7 +1437,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  int blend_type = pPageObj->m_GeneralState.GetBlendType();
+  BlendMode blend_type = pPageObj->m_GeneralState.GetBlendType();
   CPDF_Dictionary* pSMaskDict =
       ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
   if (pSMaskDict) {
@@ -1488,12 +1488,12 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       int format = pColorSpace->GetFamily();
       if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
           format == PDFCS_DEVICEN) {
-        blend_type = FXDIB_BLEND_DARKEN;
+        blend_type = BlendMode::kDarken;
       }
       pDocument->GetPageData()->ReleaseColorSpace(pCSObj);
     }
   }
-  if (!pSMaskDict && group_alpha == 1.0f && blend_type == FXDIB_BLEND_NORMAL &&
+  if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
       !bTextClip && !bGroupTransparent) {
     return false;
   }
@@ -1502,7 +1502,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     int rendCaps = m_pDevice->GetRenderCaps();
     if (!(transparency.IsIsolated() || pSMaskDict || bTextClip) &&
         (rendCaps & FXRC_BLEND_MODE)) {
-      int oldBlend = m_curBlend;
+      BlendMode oldBlend = m_curBlend;
       m_curBlend = blend_type;
       bRet = DrawObjWithBlend(pPageObj, mtObj2Device);
       m_curBlend = oldBlend;
@@ -1910,7 +1910,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         image_matrix.Concat(matrix);
         CPDF_ImageRenderer renderer;
         if (renderer.Start(this, pType3Char->GetBitmap(), fill_argb, 255,
-                           &image_matrix, 0, false, FXDIB_BLEND_NORMAL)) {
+                           &image_matrix, 0, false, BlendMode::kNormal)) {
           renderer.Continue(nullptr);
         }
         if (!renderer.GetResult())
@@ -1948,7 +1948,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                            glyph.m_pGlyph->m_pBitmap->GetWidth(),
                            glyph.m_pGlyph->m_pBitmap->GetHeight(),
                            glyph.m_pGlyph->m_pBitmap, fill_argb, 0, 0,
-                           FXDIB_BLEND_NORMAL, nullptr, false, 0);
+                           BlendMode::kNormal, nullptr, false, 0);
   }
   m_pDevice->SetBitMask(pBitmap, rect.left, rect.top, fill_argb);
   return true;
@@ -2315,18 +2315,18 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       } else {
         if (pPattern->colored()) {
           pScreen->CompositeBitmap(start_x, start_y, width, height,
-                                   pPatternBitmap, 0, 0, FXDIB_BLEND_NORMAL,
+                                   pPatternBitmap, 0, 0, BlendMode::kNormal,
                                    nullptr, false);
         } else {
           pScreen->CompositeMask(start_x, start_y, width, height,
                                  pPatternBitmap, fill_argb, 0, 0,
-                                 FXDIB_BLEND_NORMAL, nullptr, false, 0);
+                                 BlendMode::kNormal, nullptr, false, 0);
         }
       }
     }
   }
   CompositeDIBitmap(pScreen, clip_box.left, clip_box.top, 0, 255,
-                    FXDIB_BLEND_NORMAL, CPDF_Transparency());
+                    BlendMode::kNormal, CPDF_Transparency());
 }
 
 void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
@@ -2380,12 +2380,12 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     int top,
     FX_ARGB mask_argb,
     int bitmap_alpha,
-    int blend_mode,
+    BlendMode blend_mode,
     const CPDF_Transparency& transparency) {
   if (!pDIBitmap)
     return;
 
-  if (blend_mode == FXDIB_BLEND_NORMAL) {
+  if (blend_mode == BlendMode::kNormal) {
     if (!pDIBitmap->IsAlphaMask()) {
       if (bitmap_alpha < 255) {
 #ifdef _SKIA_SUPPORT_
@@ -2416,7 +2416,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     }
   }
   bool bIsolated = transparency.IsIsolated();
-  bool bBackAlphaRequired = blend_mode && bIsolated && !m_bDropObjects;
+  bool bBackAlphaRequired =
+      blend_mode != BlendMode::kNormal && bIsolated && !m_bDropObjects;
   bool bGetBackGround =
       ((m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT)) ||
       (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
@@ -2440,7 +2441,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
       pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                               pForeBitmap, rect.left, rect.top,
-                              FXDIB_BLEND_NORMAL, nullptr, false);
+                              BlendMode::kNormal, nullptr, false);
       left = std::min(left, 0);
       top = std::min(top, 0);
       if (pDIBitmap->IsAlphaMask()) {
@@ -2470,7 +2471,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                top + pDIBitmap->GetHeight());
   RetainPtr<CFX_DIBitmap> pBackdrop = GetBackdrop(
-      m_pCurObj.Get(), rect, blend_mode > FXDIB_BLEND_NORMAL && bIsolated,
+      m_pCurObj.Get(), rect, blend_mode != BlendMode::kNormal && bIsolated,
       &back_left, &back_top);
   if (!pBackdrop)
     return;
@@ -2492,7 +2493,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   pBackdrop1->Clear((uint32_t)-1);
   pBackdrop1->CompositeBitmap(0, 0, pBackdrop->GetWidth(),
                               pBackdrop->GetHeight(), pBackdrop, 0, 0,
-                              FXDIB_BLEND_NORMAL, nullptr, false);
+                              BlendMode::kNormal, nullptr, false);
   pBackdrop = std::move(pBackdrop1);
   m_pDevice->SetDIBits(pBackdrop, back_left, back_top);
 }

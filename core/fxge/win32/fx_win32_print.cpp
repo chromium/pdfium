@@ -73,17 +73,17 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                   const FX_RECT* pSrcRect,
                                   int left,
                                   int top,
-                                  int blend_type) {
+                                  BlendMode blend_type) {
   if (pSource->IsAlphaMask()) {
     FX_RECT clip_rect(left, top, left + pSrcRect->Width(),
                       top + pSrcRect->Height());
     return StretchDIBits(pSource, color, left - pSrcRect->left,
                          top - pSrcRect->top, pSource->GetWidth(),
                          pSource->GetHeight(), &clip_rect, 0,
-                         FXDIB_BLEND_NORMAL);
+                         BlendMode::kNormal);
   }
   ASSERT(pSource && !pSource->IsAlphaMask() && pSrcRect);
-  ASSERT(blend_type == FXDIB_BLEND_NORMAL);
+  ASSERT(blend_type == BlendMode::kNormal);
   if (pSource->HasAlpha())
     return false;
 
@@ -103,7 +103,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                       int dest_height,
                                       const FX_RECT* pClipRect,
                                       uint32_t flags,
-                                      int blend_type) {
+                                      BlendMode blend_type) {
   if (pSource->IsAlphaMask()) {
     int alpha = FXARGB_A(color);
     if (pSource->GetBPP() != 1 || alpha != 255)
@@ -164,7 +164,7 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                     const CFX_Matrix* pMatrix,
                                     uint32_t render_flags,
                                     std::unique_ptr<CFX_ImageRenderer>* handle,
-                                    int blend_type) {
+                                    BlendMode blend_type) {
   if (bitmap_alpha < 255 || pSource->HasAlpha() ||
       (pSource->IsAlphaMask() && (pSource->GetBPP() != 1))) {
     return false;
@@ -440,8 +440,8 @@ bool CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
                                 FX_ARGB fill_color,
                                 FX_ARGB stroke_color,
                                 int fill_mode,
-                                int blend_type) {
-  if (blend_type != FXDIB_BLEND_NORMAL) {
+                                BlendMode blend_type) {
+  if (blend_type != BlendMode::kNormal) {
     return false;
   }
   return m_PSRenderer.DrawPath(pPathData, pObject2Device, pGraphState,
@@ -458,8 +458,8 @@ bool CPSPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                  const FX_RECT* pSrcRect,
                                  int left,
                                  int top,
-                                 int blend_type) {
-  if (blend_type != FXDIB_BLEND_NORMAL)
+                                 BlendMode blend_type) {
+  if (blend_type != BlendMode::kNormal)
     return false;
   return m_PSRenderer.SetDIBits(pBitmap, color, left, top);
 }
@@ -472,8 +472,8 @@ bool CPSPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                      int dest_height,
                                      const FX_RECT* pClipRect,
                                      uint32_t flags,
-                                     int blend_type) {
-  if (blend_type != FXDIB_BLEND_NORMAL)
+                                     BlendMode blend_type) {
+  if (blend_type != BlendMode::kNormal)
     return false;
   return m_PSRenderer.StretchDIBits(pBitmap, color, dest_left, dest_top,
                                     dest_width, dest_height, flags);
@@ -485,8 +485,8 @@ bool CPSPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                    const CFX_Matrix* pMatrix,
                                    uint32_t render_flags,
                                    std::unique_ptr<CFX_ImageRenderer>* handle,
-                                   int blend_type) {
-  if (blend_type != FXDIB_BLEND_NORMAL)
+                                   BlendMode blend_type) {
+  if (blend_type != BlendMode::kNormal)
     return false;
 
   if (bitmap_alpha < 255)
@@ -560,7 +560,7 @@ bool CTextOnlyPrinterDriver::DrawPath(const CFX_PathData* pPathData,
                                       uint32_t fill_color,
                                       uint32_t stroke_color,
                                       int fill_mode,
-                                      int blend_type) {
+                                      BlendMode blend_type) {
   return false;
 }
 
@@ -569,7 +569,7 @@ bool CTextOnlyPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                        const FX_RECT* pSrcRect,
                                        int left,
                                        int top,
-                                       int blend_type) {
+                                       BlendMode blend_type) {
   return false;
 }
 
@@ -590,7 +590,7 @@ bool CTextOnlyPrinterDriver::StretchDIBits(
     int dest_height,
     const FX_RECT* pClipRect,
     uint32_t flags,
-    int blend_type) {
+    BlendMode blend_type) {
   return false;
 }
 
@@ -601,7 +601,7 @@ bool CTextOnlyPrinterDriver::StartDIBits(
     const CFX_Matrix* pMatrix,
     uint32_t render_flags,
     std::unique_ptr<CFX_ImageRenderer>* handle,
-    int blend_type) {
+    BlendMode blend_type) {
   return false;
 }
 

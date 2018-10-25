@@ -118,7 +118,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
     return DrawPatternImage(m_pObj2Device.Get());
 
   if (m_BitmapAlpha != 255 || !state.HasRef() || !state.GetFillOP() ||
-      state.GetOPMode() != 0 || state.GetBlendType() != FXDIB_BLEND_NORMAL ||
+      state.GetOPMode() != 0 || state.GetBlendType() != BlendMode::kNormal ||
       state.GetStrokeAlpha() != 1.0f || state.GetFillAlpha() != 1.0f) {
     return StartDIBBase();
   }
@@ -142,7 +142,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   int format = pColorSpace->GetFamily();
   if (format == PDFCS_DEVICECMYK || format == PDFCS_SEPARATION ||
       format == PDFCS_DEVICEN) {
-    m_BlendType = FXDIB_BLEND_DARKEN;
+    m_BlendType = BlendMode::kDarken;
   }
   pDocument->GetPageData()->ReleaseColorSpace(pCSObj);
   return StartDIBBase();
@@ -152,7 +152,7 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                CPDF_ImageObject* pImageObject,
                                const CFX_Matrix* pObj2Device,
                                bool bStdCS,
-                               int blendType) {
+                               BlendMode blendType) {
   ASSERT(pImageObject);
   m_pRenderStatus = pStatus;
   m_bStdCS = bStdCS;
@@ -178,7 +178,7 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                const CFX_Matrix* pImage2Device,
                                uint32_t flags,
                                bool bStdCS,
-                               int blendType) {
+                               BlendMode blendType) {
   m_pRenderStatus = pStatus;
   m_pDIBBase = pDIBBase;
   m_FillArgb = bitmap_argb;
@@ -222,7 +222,7 @@ void CPDF_ImageRenderer::CalculateDrawImage(
 
   CPDF_ImageRenderer image_render;
   if (image_render.Start(&bitmap_render, pDIBBase, 0xffffffff, 255, pNewMatrix,
-                         m_Flags, true, FXDIB_BLEND_NORMAL)) {
+                         m_Flags, true, BlendMode::kNormal)) {
     image_render.Continue(nullptr);
   }
   if (m_Loader.MatteColor() == 0xffffffff)
@@ -333,7 +333,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   bitmap_render.Initialize(nullptr, nullptr);
   CPDF_ImageRenderer image_render;
   if (image_render.Start(&bitmap_render, m_pDIBBase, 0, 255, &new_matrix,
-                         m_Flags, true, FXDIB_BLEND_NORMAL)) {
+                         m_Flags, true, BlendMode::kNormal)) {
     image_render.Continue(nullptr);
   }
   CFX_DefaultRenderDevice bitmap_device2;

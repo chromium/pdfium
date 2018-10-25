@@ -36,7 +36,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
                        int left,
                        int top,
                        int bitmap_alpha,
-                       int blend_type) override;
+                       BlendMode blend_type) override;
 #endif
 };
 

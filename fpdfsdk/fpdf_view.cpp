@@ -498,7 +498,7 @@ void RenderBitmap(CFX_RenderDevice* device,
 
   pDst->Clear(0xffffffff);
   pDst->CompositeBitmap(0, 0, size_x_bm, size_y_bm, pSrc, 0, 0,
-                        FXDIB_BLEND_NORMAL, nullptr, false);
+                        BlendMode::kNormal, nullptr, false);
 
   if (device->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
     device->StretchDIBits(pDst, mask_area.left, mask_area.top, size_x_bm,
@@ -606,7 +606,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
       if (pDst->Create(size_x, size_y, FXDIB_Rgb32)) {
         memset(pDst->GetBuffer(), -1, pBitmap->GetPitch() * size_y);
         pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
-                              FXDIB_BLEND_NORMAL, nullptr, false);
+                              BlendMode::kNormal, nullptr, false);
         WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
         bitsStretched = true;
       }

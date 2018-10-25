@@ -103,7 +103,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   }
   if (pForm->GetTransparency().IsGroup()) {
     CPDF_GeneralState* pState = &m_pParser->GetCurStates()->m_GeneralState;
-    pState->SetBlendType(FXDIB_BLEND_NORMAL);
+    pState->SetBlendType(BlendMode::kNormal);
     pState->SetStrokeAlpha(1.0f);
     pState->SetFillAlpha(1.0f);
     pState->SetSoftMask(nullptr);
