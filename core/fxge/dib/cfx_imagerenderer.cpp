@@ -18,18 +18,15 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                                      const RetainPtr<CFX_DIBBase>& pSource,
                                      int bitmap_alpha,
                                      uint32_t mask_color,
-                                     const CFX_Matrix* pMatrix,
+                                     const CFX_Matrix& matrix,
                                      uint32_t dib_flags,
                                      bool bRgbByteOrder)
     : m_pDevice(pDevice),
       m_pClipRgn(pClipRgn),
-      m_Matrix(*pMatrix),
+      m_Matrix(matrix),
       m_BitmapAlpha(bitmap_alpha),
-      m_BlendType(FXDIB_BLEND_NORMAL),
-      m_bRgbByteOrder(bRgbByteOrder),
       m_MaskColor(mask_color),
-      m_Status(0),
-      m_AlphaFlag(0) {
+      m_bRgbByteOrder(bRgbByteOrder) {
   FX_RECT image_rect = m_Matrix.GetUnitRect().GetOuterRect();
   m_ClipBox = pClipRgn ? pClipRgn->GetBox() : FX_RECT(0, 0, pDevice->GetWidth(),
                                                       pDevice->GetHeight());
@@ -50,7 +47,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                                       m_Matrix.c > 0, m_Matrix.b < 0);
       m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
                          true, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
-                         0, m_BlendType);
+                         0, FXDIB_BLEND_NORMAL);
       m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
           &m_Composer, pSource, dest_height, dest_width, bitmap_clip,
           dib_flags);
@@ -78,7 +75,8 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
   FX_RECT bitmap_clip = m_ClipBox;
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
   m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
-                     false, false, false, m_bRgbByteOrder, 0, m_BlendType);
+                     false, false, false, m_bRgbByteOrder, 0,
+                     FXDIB_BLEND_NORMAL);
   m_Status = 1;
   m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
       &m_Composer, pSource, dest_width, dest_height, bitmap_clip, dib_flags);
@@ -111,14 +109,14 @@ bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
     m_pDevice->CompositeMask(
         m_pTransformer->result().left, m_pTransformer->result().top,
         pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-        m_BlendType, m_pClipRgn.Get(), m_bRgbByteOrder, m_AlphaFlag);
+        FXDIB_BLEND_NORMAL, m_pClipRgn.Get(), m_bRgbByteOrder, m_AlphaFlag);
   } else {
     if (m_BitmapAlpha != 255)
       pBitmap->MultiplyAlpha(m_BitmapAlpha);
     m_pDevice->CompositeBitmap(
         m_pTransformer->result().left, m_pTransformer->result().top,
-        pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0, m_BlendType,
-        m_pClipRgn.Get(), m_bRgbByteOrder);
+        pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0,
+        FXDIB_BLEND_NORMAL, m_pClipRgn.Get(), m_bRgbByteOrder);
   }
   return false;
 }

@@ -27,7 +27,7 @@ class CFX_ImageRenderer {
                     const RetainPtr<CFX_DIBBase>& pSource,
                     int bitmap_alpha,
                     uint32_t mask_color,
-                    const CFX_Matrix* pMatrix,
+                    const CFX_Matrix& matrix,
                     uint32_t dib_flags,
                     bool bRgbByteOrder);
   ~CFX_ImageRenderer();
@@ -38,16 +38,15 @@ class CFX_ImageRenderer {
   RetainPtr<CFX_DIBitmap> const m_pDevice;
   UnownedPtr<const CFX_ClipRgn> const m_pClipRgn;
   const CFX_Matrix m_Matrix;
-  const int m_BitmapAlpha;
-  const int m_BlendType;
-  const bool m_bRgbByteOrder;
-  uint32_t m_MaskColor;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapComposer m_Composer;
-  int m_Status;
   FX_RECT m_ClipBox;
-  int m_AlphaFlag;
+  const int m_BitmapAlpha;
+  int m_Status = 0;
+  int m_AlphaFlag = 0;
+  uint32_t m_MaskColor;
+  const bool m_bRgbByteOrder;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_IMAGERENDERER_H_

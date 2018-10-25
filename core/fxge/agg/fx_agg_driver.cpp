@@ -1556,7 +1556,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
     return true;
 
   *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, pMatrix,
+      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, *pMatrix,
       render_flags, m_bRgbByteOrder);
   return true;
 }
