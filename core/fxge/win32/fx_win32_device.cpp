@@ -767,7 +767,7 @@ void CGdiDeviceDriver::RestoreState(bool bKeepSaved) {
 }
 
 bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
-                                     const FX_RECT* pSrcRect,
+                                     const FX_RECT& src_rect,
                                      int left,
                                      int top) {
   if (m_DeviceClass == FXDC_PRINTER) {
@@ -778,32 +778,31 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
     if (pBitmap->IsCmykImage() && !pBitmap->ConvertFormat(FXDIB_Rgb))
       return false;
 
-    int width = pSrcRect->Width(), height = pSrcRect->Height();
     LPBYTE pBuffer = pBitmap->GetBuffer();
     ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
-    FX_RECT dst_rect(0, 0, width, height);
+    FX_RECT dst_rect(0, 0, src_rect.Width(), src_rect.Height());
     dst_rect.Intersect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
     int dst_width = dst_rect.Width();
     int dst_height = dst_rect.Height();
     ::StretchDIBits(m_hDC, left, top, dst_width, dst_height, 0, 0, dst_width,
                     dst_height, pBuffer, (BITMAPINFO*)info.c_str(),
                     DIB_RGB_COLORS, SRCCOPY);
-  } else {
-    RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
-    if (pBitmap->IsCmykImage()) {
-      pBitmap = pBitmap->CloneConvert(FXDIB_Rgb);
-      if (!pBitmap)
-        return false;
-    }
-    int width = pSrcRect->Width(), height = pSrcRect->Height();
-    LPBYTE pBuffer = pBitmap->GetBuffer();
-    ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
-    ::SetDIBitsToDevice(m_hDC, left, top, width, height, pSrcRect->left,
-                        pBitmap->GetHeight() - pSrcRect->bottom, 0,
-                        pBitmap->GetHeight(), pBuffer,
-                        (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
+    return true;
   }
+
+  RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
+  if (pBitmap->IsCmykImage()) {
+    pBitmap = pBitmap->CloneConvert(FXDIB_Rgb);
+    if (!pBitmap)
+      return false;
+  }
+  LPBYTE pBuffer = pBitmap->GetBuffer();
+  ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+  ::SetDIBitsToDevice(m_hDC, left, top, src_rect.Width(), src_rect.Height(),
+                      src_rect.left, pBitmap->GetHeight() - src_rect.bottom, 0,
+                      pBitmap->GetHeight(), pBuffer, (BITMAPINFO*)info.c_str(),
+                      DIB_RGB_COLORS);
   return true;
 }
 
@@ -1188,7 +1187,7 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
 bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                   uint32_t color,
-                                  const FX_RECT* pSrcRect,
+                                  const FX_RECT& src_rect,
                                   int left,
                                   int top,
                                   BlendMode blend_type) {
@@ -1204,33 +1203,35 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                      BlendMode::kNormal, nullptr, false, 0)) {
         return false;
       }
-      FX_RECT src_rect(0, 0, width, height);
-      return SetDIBits(background, 0, &src_rect, left, top, BlendMode::kNormal);
+      FX_RECT alpha_src_rect(0, 0, width, height);
+      return SetDIBits(background, 0, alpha_src_rect, left, top,
+                       BlendMode::kNormal);
     }
-    FX_RECT clip_rect(left, top, left + pSrcRect->Width(),
-                      top + pSrcRect->Height());
-    return StretchDIBits(pSource, color, left - pSrcRect->left,
-                         top - pSrcRect->top, width, height, &clip_rect, 0,
+    FX_RECT clip_rect(left, top, left + src_rect.Width(),
+                      top + src_rect.Height());
+    return StretchDIBits(pSource, color, left - src_rect.left,
+                         top - src_rect.top, width, height, &clip_rect, 0,
                          BlendMode::kNormal);
   }
-  int width = pSrcRect->Width(), height = pSrcRect->Height();
+  int width = src_rect.Width();
+  int height = src_rect.Height();
   if (pSource->HasAlpha()) {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!bitmap->Create(width, height, FXDIB_Rgb) ||
         !GetDIBits(bitmap, left, top) ||
-        !bitmap->CompositeBitmap(0, 0, width, height, pSource, pSrcRect->left,
-                                 pSrcRect->top, BlendMode::kNormal, nullptr,
+        !bitmap->CompositeBitmap(0, 0, width, height, pSource, src_rect.left,
+                                 src_rect.top, BlendMode::kNormal, nullptr,
                                  false)) {
       return false;
     }
-    FX_RECT src_rect(0, 0, width, height);
-    return SetDIBits(bitmap, 0, &src_rect, left, top, BlendMode::kNormal);
+    FX_RECT alpha_src_rect(0, 0, width, height);
+    return SetDIBits(bitmap, 0, alpha_src_rect, left, top, BlendMode::kNormal);
   }
   CFX_DIBExtractor temp(pSource);
   RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return false;
-  return GDI_SetDIBits(pBitmap, pSrcRect, left, top);
+  return GDI_SetDIBits(pBitmap, src_rect, left, top);
 }
 
 bool CGdiDisplayDriver::UseFoxitStretchEngine(
@@ -1256,8 +1257,8 @@ bool CGdiDisplayDriver::UseFoxitStretchEngine(
     return true;
 
   FX_RECT src_rect(0, 0, pStretched->GetWidth(), pStretched->GetHeight());
-  return SetDIBits(pStretched, color, &src_rect, pClipRect->left,
-                   pClipRect->top, BlendMode::kNormal);
+  return SetDIBits(pStretched, color, src_rect, pClipRect->left, pClipRect->top,
+                   BlendMode::kNormal);
 }
 
 bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
@@ -1301,7 +1302,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     }
 
     FX_RECT src_rect(0, 0, clip_width, clip_height);
-    return SetDIBits(background, 0, &src_rect, image_rect.left + clip_rect.left,
+    return SetDIBits(background, 0, src_rect, image_rect.left + clip_rect.left,
                      image_rect.top + clip_rect.top, BlendMode::kNormal);
   }
   if (pSource->HasAlpha()) {

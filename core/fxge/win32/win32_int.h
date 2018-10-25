@@ -98,7 +98,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
   void DrawLine(float x1, float y1, float x2, float y2);
 
   bool GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                     const FX_RECT* pSrcRect,
+                     const FX_RECT& src_rect,
                      int left,
                      int top);
   bool GDI_StretchDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
@@ -135,7 +135,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                  int top) override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
-                 const FX_RECT* pSrcRect,
+                 const FX_RECT& src_rect,
                  int left,
                  int top,
                  BlendMode blend_type) override;
@@ -174,7 +174,7 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
   int GetDeviceCaps(int caps_id) const override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
-                 const FX_RECT* pSrcRect,
+                 const FX_RECT& src_rect,
                  int left,
                  int top,
                  BlendMode blend_type) override;
@@ -233,7 +233,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
   bool GetClipBox(FX_RECT* pRect) override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
-                 const FX_RECT* pSrcRect,
+                 const FX_RECT& src_rect,
                  int left,
                  int top,
                  BlendMode blend_type) override;
@@ -296,7 +296,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
   bool GetClipBox(FX_RECT* pRect) override;
   bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                  uint32_t color,
-                 const FX_RECT* pSrcRect,
+                 const FX_RECT& src_rect,
                  int left,
                  int top,
                  BlendMode blend_type) override;

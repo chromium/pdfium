@@ -664,7 +664,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
   bitmap_device.GetDeviceDriver()->Flush();
 #endif
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
-  return m_pDeviceDriver->SetDIBits(bitmap, 0, &src_rect, rect.left, rect.top,
+  return m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
                                     BlendMode::kNormal);
 }
 
@@ -689,7 +689,7 @@ bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT& rect,
     return false;
   }
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
-  m_pDeviceDriver->SetDIBits(bitmap, 0, &src_rect, rect.left, rect.top,
+  m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
                              BlendMode::kNormal);
   return true;
 }
@@ -738,7 +738,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                    dest_rect.top - top + dest_rect.Height());
   if ((blend_mode == BlendMode::kNormal || (m_RenderCaps & FXRC_BLEND_MODE)) &&
       (!pBitmap->HasAlpha() || (m_RenderCaps & FXRC_ALPHA_IMAGE))) {
-    return m_pDeviceDriver->SetDIBits(pBitmap, 0, &src_rect, dest_rect.left,
+    return m_pDeviceDriver->SetDIBits(pBitmap, 0, src_rect, dest_rect.left,
                                       dest_rect.top, blend_mode);
   }
   if (!(m_RenderCaps & FXRC_GET_BITS))
@@ -761,7 +761,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
     return false;
   }
   FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);
-  return m_pDeviceDriver->SetDIBits(background, 0, &rect, dest_rect.left,
+  return m_pDeviceDriver->SetDIBits(background, 0, rect, dest_rect.left,
                                     dest_rect.top, BlendMode::kNormal);
 }
 
@@ -786,7 +786,7 @@ bool CFX_RenderDevice::SetBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                   int top,
                                   uint32_t argb) {
   FX_RECT src_rect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
-  return m_pDeviceDriver->SetDIBits(pBitmap, argb, &src_rect, left, top,
+  return m_pDeviceDriver->SetDIBits(pBitmap, argb, src_rect, left, top,
                                     BlendMode::kNormal);
 }
 

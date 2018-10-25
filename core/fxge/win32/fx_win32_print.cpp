@@ -70,19 +70,19 @@ int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
 
 bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                   uint32_t color,
-                                  const FX_RECT* pSrcRect,
+                                  const FX_RECT& src_rect,
                                   int left,
                                   int top,
                                   BlendMode blend_type) {
   if (pSource->IsAlphaMask()) {
-    FX_RECT clip_rect(left, top, left + pSrcRect->Width(),
-                      top + pSrcRect->Height());
-    return StretchDIBits(pSource, color, left - pSrcRect->left,
-                         top - pSrcRect->top, pSource->GetWidth(),
+    FX_RECT clip_rect(left, top, left + src_rect.Width(),
+                      top + src_rect.Height());
+    return StretchDIBits(pSource, color, left - src_rect.left,
+                         top - src_rect.top, pSource->GetWidth(),
                          pSource->GetHeight(), &clip_rect, 0,
                          BlendMode::kNormal);
   }
-  ASSERT(pSource && !pSource->IsAlphaMask() && pSrcRect);
+  ASSERT(pSource && !pSource->IsAlphaMask());
   ASSERT(blend_type == BlendMode::kNormal);
   if (pSource->HasAlpha())
     return false;
@@ -92,7 +92,7 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   if (!pBitmap)
     return false;
 
-  return GDI_SetDIBits(pBitmap, pSrcRect, left, top);
+  return GDI_SetDIBits(pBitmap, src_rect, left, top);
 }
 
 bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
@@ -455,7 +455,7 @@ bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {
 
 bool CPSPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                  uint32_t color,
-                                 const FX_RECT* pSrcRect,
+                                 const FX_RECT& src_rect,
                                  int left,
                                  int top,
                                  BlendMode blend_type) {
@@ -566,7 +566,7 @@ bool CTextOnlyPrinterDriver::DrawPath(const CFX_PathData* pPathData,
 
 bool CTextOnlyPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                        uint32_t color,
-                                       const FX_RECT* pSrcRect,
+                                       const FX_RECT& src_rect,
                                        int left,
                                        int top,
                                        BlendMode blend_type) {
