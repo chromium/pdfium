@@ -20,7 +20,7 @@ CXFA_ImageRenderer::CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
 CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start() {
-  if (m_pDevice->StartDIBitsWithBlend(m_pDIBBase, 255, 0, &m_ImageMatrix,
+  if (m_pDevice->StartDIBitsWithBlend(m_pDIBBase, 255, 0, m_ImageMatrix,
                                       FXDIB_INTERPOL, &m_DeviceHandle,
                                       BlendMode::kNormal)) {
     if (m_DeviceHandle) {

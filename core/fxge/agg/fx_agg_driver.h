@@ -85,7 +85,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
-                   const CFX_Matrix* pMatrix,
+                   const CFX_Matrix& matrix,
                    uint32_t flags,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;

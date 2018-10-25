@@ -2392,7 +2392,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
         std::unique_ptr<CFX_ImageRenderer> dummy;
         CFX_Matrix m(pDIBitmap->GetWidth(), 0, 0, -pDIBitmap->GetHeight(), left,
                      top + pDIBitmap->GetHeight());
-        m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, &m, 0, &dummy);
+        m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, m, 0, &dummy);
         return;
 #else
         pDIBitmap->MultiplyAlpha(bitmap_alpha);

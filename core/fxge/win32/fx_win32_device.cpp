@@ -1330,7 +1330,7 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 bool CGdiDisplayDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                     int bitmap_alpha,
                                     uint32_t color,
-                                    const CFX_Matrix* pMatrix,
+                                    const CFX_Matrix& matrix,
                                     uint32_t render_flags,
                                     std::unique_ptr<CFX_ImageRenderer>* handle,
                                     BlendMode blend_type) {

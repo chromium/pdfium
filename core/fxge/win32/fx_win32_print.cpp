@@ -161,7 +161,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                     int bitmap_alpha,
                                     uint32_t color,
-                                    const CFX_Matrix* pMatrix,
+                                    const CFX_Matrix& matrix,
                                     uint32_t render_flags,
                                     std::unique_ptr<CFX_ImageRenderer>* handle,
                                     BlendMode blend_type) {
@@ -169,12 +169,12 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       (pSource->IsAlphaMask() && (pSource->GetBPP() != 1))) {
     return false;
   }
-  CFX_FloatRect unit_rect = pMatrix->GetUnitRect();
+  CFX_FloatRect unit_rect = matrix.GetUnitRect();
   FX_RECT full_rect = unit_rect.GetOuterRect();
-  if (fabs(pMatrix->b) < 0.5f && pMatrix->a != 0 && fabs(pMatrix->c) < 0.5f &&
-      pMatrix->d != 0) {
-    bool bFlipX = pMatrix->a < 0;
-    bool bFlipY = pMatrix->d > 0;
+  if (fabs(matrix.b) < 0.5f && matrix.a != 0 && fabs(matrix.c) < 0.5f &&
+      matrix.d != 0) {
+    bool bFlipX = matrix.a < 0;
+    bool bFlipY = matrix.d > 0;
     return StretchDIBits(pSource, color,
                          bFlipX ? full_rect.right : full_rect.left,
                          bFlipY ? full_rect.bottom : full_rect.top,
@@ -182,11 +182,11 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                          bFlipY ? -full_rect.Height() : full_rect.Height(),
                          nullptr, 0, blend_type);
   }
-  if (fabs(pMatrix->a) >= 0.5f || fabs(pMatrix->d) >= 0.5f)
+  if (fabs(matrix.a) >= 0.5f || fabs(matrix.d) >= 0.5f)
     return false;
 
   RetainPtr<CFX_DIBitmap> pTransformed =
-      pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0);
+      pSource->SwapXY(matrix.c > 0, matrix.b < 0);
   if (!pTransformed)
     return false;
 
@@ -482,7 +482,7 @@ bool CPSPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
 bool CPSPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                    int bitmap_alpha,
                                    uint32_t color,
-                                   const CFX_Matrix* pMatrix,
+                                   const CFX_Matrix& matrix,
                                    uint32_t render_flags,
                                    std::unique_ptr<CFX_ImageRenderer>* handle,
                                    BlendMode blend_type) {
@@ -493,7 +493,7 @@ bool CPSPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
     return false;
 
   *handle = nullptr;
-  return m_PSRenderer.DrawDIBits(pBitmap, color, pMatrix, render_flags);
+  return m_PSRenderer.DrawDIBits(pBitmap, color, matrix, render_flags);
 }
 
 bool CPSPrinterDriver::DrawDeviceText(int nChars,
@@ -598,7 +598,7 @@ bool CTextOnlyPrinterDriver::StartDIBits(
     const RetainPtr<CFX_DIBBase>& pBitmap,
     int bitmap_alpha,
     uint32_t color,
-    const CFX_Matrix* pMatrix,
+    const CFX_Matrix& matrix,
     uint32_t render_flags,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {

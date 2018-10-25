@@ -348,7 +348,7 @@ bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   CFX_Matrix matrix((float)(pSource->GetWidth()), 0.0f, 0.0f,
                     -(float)(pSource->GetHeight()), (float)(left),
                     (float)(top + pSource->GetHeight()));
-  return DrawDIBits(pSource, color, &matrix, 0);
+  return DrawDIBits(pSource, color, matrix, 0);
 }
 
 bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
@@ -361,18 +361,17 @@ bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   StartRendering();
   CFX_Matrix matrix((float)(dest_width), 0.0f, 0.0f, (float)(-dest_height),
                     (float)(dest_left), (float)(dest_top + dest_height));
-  return DrawDIBits(pSource, color, &matrix, flags);
+  return DrawDIBits(pSource, color, matrix, flags);
 }
 
 bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                 uint32_t color,
-                                const CFX_Matrix* pMatrix,
+                                const CFX_Matrix& matrix,
                                 uint32_t flags) {
   StartRendering();
-  if ((pMatrix->a == 0 && pMatrix->b == 0) ||
-      (pMatrix->c == 0 && pMatrix->d == 0)) {
+  if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0))
     return true;
-  }
+
   if (pSource->HasAlpha())
     return false;
 
@@ -383,8 +382,8 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   m_pStream->WriteString("q\n");
 
   std::ostringstream buf;
-  buf << "[" << pMatrix->a << " " << pMatrix->b << " " << pMatrix->c << " "
-      << pMatrix->d << " " << pMatrix->e << " " << pMatrix->f << "]cm ";
+  buf << "[" << matrix.a << " " << matrix.b << " " << matrix.c << " "
+      << matrix.d << " " << matrix.e << " " << matrix.f << "]cm ";
 
   int width = pSource->GetWidth();
   int height = pSource->GetHeight();

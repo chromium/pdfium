@@ -382,7 +382,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
   if (m_pDIBBase->HasAlpha())
     CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          premultiplied, m_BitmapAlpha, m_FillArgb, &m_ImageMatrix, m_Flags,
+          premultiplied, m_BitmapAlpha, m_FillArgb, m_ImageMatrix, m_Flags,
           &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;
@@ -392,7 +392,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
   }
 #else
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          m_pDIBBase, m_BitmapAlpha, m_FillArgb, &m_ImageMatrix, m_Flags,
+          m_pDIBBase, m_BitmapAlpha, m_FillArgb, m_ImageMatrix, m_Flags,
           &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;

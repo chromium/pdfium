@@ -551,11 +551,10 @@ void ClipAngledGradient(const SkPoint pts[2],
 }
 
 #ifdef _SKIA_SUPPORT_
-void SetBitmapMatrix(const CFX_Matrix* pMatrix,
+void SetBitmapMatrix(const CFX_Matrix& m,
                      int width,
                      int height,
                      SkMatrix* skMatrix) {
-  const CFX_Matrix& m = *pMatrix;
   skMatrix->setAll(m.a / width, -m.c / height, m.c + m.e, m.b / width,
                    -m.d / height, m.d + m.f, 0, 0, 1);
 }
@@ -2250,7 +2249,7 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
   CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), left,
                top + pBitmap->GetHeight());
   std::unique_ptr<CFX_ImageRenderer> dummy;
-  return StartDIBits(pBitmap, 0xFF, argb, &m, 0, &dummy, blend_type);
+  return StartDIBits(pBitmap, 0xFF, argb, m, 0, &dummy, blend_type);
 #endif  // _SKIA_SUPPORT_
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -2288,7 +2287,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                        pClipRect->right, pClipRect->top);
   m_pCanvas->clipRect(skClipRect, SkClipOp::kIntersect, true);
   std::unique_ptr<CFX_ImageRenderer> dummy;
-  bool result = StartDIBits(pSource, 0xFF, argb, &m, 0, &dummy, blend_type);
+  bool result = StartDIBits(pSource, 0xFF, argb, m, 0, &dummy, blend_type);
   m_pCanvas->restore();
 
   return result;
@@ -2322,7 +2321,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     const RetainPtr<CFX_DIBBase>& pSource,
     int bitmap_alpha,
     uint32_t argb,
-    const CFX_Matrix* pMatrix,
+    const CFX_Matrix& matrix,
     uint32_t render_flags,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
@@ -2339,7 +2338,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   }
   m_pCanvas->save();
   SkMatrix skMatrix;
-  SetBitmapMatrix(pMatrix, width, height, &skMatrix);
+  SetBitmapMatrix(matrix, width, height, &skMatrix);
   m_pCanvas->concat(skMatrix);
   SkPaint paint;
   SetBitmapPaint(pSource->IsAlphaMask(), argb, bitmap_alpha, blend_type,
@@ -2371,7 +2370,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     return true;
   m_pBitmap->UnPreMultiply();
   *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, *pMatrix,
+      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix,
       render_flags, m_bRgbByteOrder);
 #endif  // _SKIA_SUPPORT_PATHS_
   return true;
@@ -2472,7 +2471,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   }
   m_pCanvas->save();
   SkMatrix skMatrix;
-  SetBitmapMatrix(pMatrix, srcWidth, srcHeight, &skMatrix);
+  SetBitmapMatrix(*pMatrix, srcWidth, srcHeight, &skMatrix);
   m_pCanvas->concat(skMatrix);
   SkPaint paint;
   SetBitmapPaint(pSource->IsAlphaMask(), 0xFFFFFFFF, bitmap_alpha, blend_type,

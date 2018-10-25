@@ -1548,7 +1548,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
     const RetainPtr<CFX_DIBBase>& pSource,
     int bitmap_alpha,
     uint32_t argb,
-    const CFX_Matrix* pMatrix,
+    const CFX_Matrix& matrix,
     uint32_t render_flags,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
@@ -1556,7 +1556,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
     return true;
 
   *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, *pMatrix,
+      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix,
       render_flags, m_bRgbByteOrder);
   return true;
 }

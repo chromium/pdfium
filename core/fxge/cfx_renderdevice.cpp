@@ -820,11 +820,11 @@ bool CFX_RenderDevice::StartDIBitsWithBlend(
     const RetainPtr<CFX_DIBBase>& pBitmap,
     int bitmap_alpha,
     uint32_t argb,
-    const CFX_Matrix* pMatrix,
+    const CFX_Matrix& matrix,
     uint32_t flags,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_mode) {
-  return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha, argb, pMatrix,
+  return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha, argb, matrix,
                                       flags, handle, blend_mode);
 }
 
