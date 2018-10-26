@@ -177,15 +177,16 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 
-  void InvalidateFocusHandler(FocusHandlerIface* handler);
-  void InvalidateProvider(ProviderIface* provider);
-  void Create(const CreateParams& cp);
+  void AddChild(CPWL_Wnd* pWnd);
+  void RemoveChild(CPWL_Wnd* pWnd);
+  void Realize(const CreateParams& cp);
   void Destroy();
   bool Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
 
+  void InvalidateFocusHandler(FocusHandlerIface* handler);
+  void InvalidateProvider(ProviderIface* provider);
   void SetCapture();
   void ReleaseCapture();
-
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device);
 
@@ -295,9 +296,6 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
                            const CFX_Matrix& mtUser2Device);
 
   CFX_FloatRect PWLtoWnd(const CFX_FloatRect& rect) const;
-
-  void AddChild(CPWL_Wnd* pWnd);
-  void RemoveChild(CPWL_Wnd* pWnd);
 
   void CreateScrollBar(const CreateParams& cp);
   void CreateVScrollBar(const CreateParams& cp);

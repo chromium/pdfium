@@ -43,8 +43,10 @@ std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
   auto pWnd = pdfium::MakeUnique<CPWL_ListBox>(std::move(pAttachedData));
+  if (cp.pParentWnd)
+    cp.pParentWnd->AddChild(pWnd.get());
   pWnd->AttachFFLData(this);
-  pWnd->Create(cp);
+  pWnd->Realize(cp);
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 
   for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++)

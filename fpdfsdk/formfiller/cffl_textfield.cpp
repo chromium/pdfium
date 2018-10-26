@@ -74,7 +74,9 @@ std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPWLWindow(
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
   auto pWnd = pdfium::MakeUnique<CPWL_Edit>(std::move(pAttachedData));
   pWnd->AttachFFLData(this);
-  pWnd->Create(cp);
+  if (cp.pParentWnd)
+    cp.pParentWnd->AddChild(pWnd.get());
+  pWnd->Realize(cp);
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 
   int32_t nMaxLen = m_pWidget->GetMaxLen();

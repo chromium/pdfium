@@ -543,19 +543,23 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
 
   if (!m_pMinButton) {
     m_pMinButton = new CPWL_SBButton(CloneAttachedData(), m_sbType, PSBT_MIN);
-    m_pMinButton->Create(scp);
+    AddChild(m_pMinButton.Get());
+    m_pMinButton->Realize(scp);
   }
 
   if (!m_pMaxButton) {
     m_pMaxButton = new CPWL_SBButton(CloneAttachedData(), m_sbType, PSBT_MAX);
-    m_pMaxButton->Create(scp);
+    AddChild(m_pMaxButton.Get());
+    m_pMaxButton->Realize(scp);
   }
 
   if (!m_pPosButton) {
     m_pPosButton = new CPWL_SBButton(CloneAttachedData(), m_sbType, PSBT_POS);
     ObservedPtr thisObserved(this);
-    if (m_pPosButton->SetVisible(false) && thisObserved)
-      m_pPosButton->Create(scp);
+    if (m_pPosButton->SetVisible(false) && thisObserved) {
+      AddChild(m_pPosButton.Get());
+      m_pPosButton->Realize(scp);
+    }
   }
 }
 

@@ -21,6 +21,8 @@ std::unique_ptr<CPWL_Wnd> CFFL_PushButton::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
   auto pWnd = pdfium::MakeUnique<CPWL_PushButton>(std::move(pAttachedData));
-  pWnd->Create(cp);
+  if (cp.pParentWnd)
+    cp.pParentWnd->AddChild(pWnd.get());
+  pWnd->Realize(cp);
   return std::move(pWnd);
 }

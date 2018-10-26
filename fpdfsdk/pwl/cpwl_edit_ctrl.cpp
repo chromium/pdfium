@@ -90,6 +90,7 @@ void CPWL_EditCtrl::CreateEditCaret(const CreateParams& cp) {
 
   m_pEditCaret = new CPWL_Caret(CloneAttachedData());
   m_pEditCaret->SetInvalidRect(GetClientRect());
+  AddChild(m_pEditCaret);
 
   CreateParams ecp = cp;
   ecp.pParentWnd = this;
@@ -97,7 +98,7 @@ void CPWL_EditCtrl::CreateEditCaret(const CreateParams& cp) {
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;
   ecp.rcRectWnd = CFX_FloatRect();
-  m_pEditCaret->Create(ecp);
+  m_pEditCaret->Realize(ecp);
 }
 
 void CPWL_EditCtrl::SetFontSize(float fFontSize) {

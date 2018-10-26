@@ -274,6 +274,7 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
 
   m_pEdit = new CPWL_Edit(CloneAttachedData());
   m_pEdit->AttachFFLData(m_pFormFiller.Get());
+  AddChild(m_pEdit.Get());
 
   CreateParams ecp = cp;
   ecp.pParentWnd = this;
@@ -289,7 +290,7 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
   ecp.rcRectWnd = CFX_FloatRect();
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;
-  m_pEdit->Create(ecp);
+  m_pEdit->Realize(ecp);
 }
 
 void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
@@ -297,6 +298,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
     return;
 
   m_pButton = new CPWL_CBButton(CloneAttachedData());
+  AddChild(m_pButton.Get());
 
   CreateParams bcp = cp;
   bcp.pParentWnd = this;
@@ -307,7 +309,7 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   bcp.dwBorderWidth = 2;
   bcp.nBorderStyle = BorderStyle::BEVELED;
   bcp.eCursorType = FXCT_ARROW;
-  m_pButton->Create(bcp);
+  m_pButton->Realize(bcp);
 }
 
 void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
@@ -316,6 +318,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
 
   m_pList = new CPWL_CBListBox(CloneAttachedData());
   m_pList->AttachFFLData(m_pFormFiller.Get());
+  AddChild(m_pList.Get());
 
   CreateParams lcp = cp;
   lcp.pParentWnd = this;
@@ -335,7 +338,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   if (cp.sBackgroundColor.nColorType == CFX_Color::kTransparent)
     lcp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
 
-  m_pList->Create(lcp);
+  m_pList->Realize(lcp);
 }
 
 bool CPWL_ComboBox::RePosChildWnd() {
