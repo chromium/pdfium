@@ -2391,8 +2391,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       if (bitmap_alpha < 255) {
 #ifdef _SKIA_SUPPORT_
         std::unique_ptr<CFX_ImageRenderer> dummy;
-        CFX_Matrix m(pDIBitmap->GetWidth(), 0, 0, -pDIBitmap->GetHeight(), left,
-                     top + pDIBitmap->GetHeight());
+        CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
+            pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), left, top);
         m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, m, 0, &dummy);
         return;
 #else

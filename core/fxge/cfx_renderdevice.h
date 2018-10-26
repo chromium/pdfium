@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
@@ -101,7 +102,11 @@ class CFX_RenderDevice {
   CFX_RenderDevice();
   virtual ~CFX_RenderDevice();
 
-  // Take ownership of |pDriver|.
+  static CFX_Matrix GetFlipMatrix(float width,
+                                  float height,
+                                  float left,
+                                  float top);
+
   void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
   RenderDeviceDriverIface* GetDeviceDriver() const {
     return m_pDeviceDriver.get();
@@ -297,11 +302,11 @@ class CFX_RenderDevice {
                          BlendMode blend_type);
 
   RetainPtr<CFX_DIBitmap> m_pBitmap;
-  int m_Width;
-  int m_Height;
-  int m_bpp;
-  int m_RenderCaps;
-  int m_DeviceClass;
+  int m_Width = 0;
+  int m_Height = 0;
+  int m_bpp = 0;
+  int m_RenderCaps = 0;
+  int m_DeviceClass = 0;
   FX_RECT m_ClipBox;
   std::unique_ptr<RenderDeviceDriverIface> m_pDeviceDriver;
 };

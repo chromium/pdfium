@@ -346,9 +346,8 @@ bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                int left,
                                int top) {
   StartRendering();
-  CFX_Matrix matrix((float)(pSource->GetWidth()), 0.0f, 0.0f,
-                    -(float)(pSource->GetHeight()), (float)(left),
-                    (float)(top + pSource->GetHeight()));
+  CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
+      pSource->GetWidth(), pSource->GetHeight(), left, top);
   return DrawDIBits(pSource, color, matrix, 0);
 }
 
@@ -360,8 +359,8 @@ bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                    int dest_height,
                                    uint32_t flags) {
   StartRendering();
-  CFX_Matrix matrix((float)(dest_width), 0.0f, 0.0f, (float)(-dest_height),
-                    (float)(dest_left), (float)(dest_top + dest_height));
+  CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
+                                                      dest_left, dest_top);
   return DrawDIBits(pSource, color, matrix, flags);
 }
 

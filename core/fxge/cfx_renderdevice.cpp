@@ -364,21 +364,23 @@ FXTEXT_CHARPOS::FXTEXT_CHARPOS()
 
 FXTEXT_CHARPOS::FXTEXT_CHARPOS(const FXTEXT_CHARPOS&) = default;
 
-FXTEXT_CHARPOS::~FXTEXT_CHARPOS(){};
+FXTEXT_CHARPOS::~FXTEXT_CHARPOS() = default;
 
-CFX_RenderDevice::CFX_RenderDevice()
-    : m_pBitmap(nullptr),
-      m_Width(0),
-      m_Height(0),
-      m_bpp(0),
-      m_RenderCaps(0),
-      m_DeviceClass(0) {}
+CFX_RenderDevice::CFX_RenderDevice() = default;
 
 CFX_RenderDevice::~CFX_RenderDevice() {
   RestoreState(false);
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   Flush(true);
 #endif
+}
+
+// static
+CFX_Matrix CFX_RenderDevice::GetFlipMatrix(float width,
+                                           float height,
+                                           float left,
+                                           float top) {
+  return CFX_Matrix(width, 0, 0, -height, left, top + height);
 }
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_

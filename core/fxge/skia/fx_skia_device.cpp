@@ -2247,8 +2247,8 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
     return true;
 
 #ifdef _SKIA_SUPPORT_
-  CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), left,
-               top + pBitmap->GetHeight());
+  CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
+      pBitmap->GetWidth(), pBitmap->GetHeight(), left, top);
   std::unique_ptr<CFX_ImageRenderer> dummy;
   return StartDIBits(pBitmap, 0xFF, argb, m, 0, &dummy, blend_type);
 #endif  // _SKIA_SUPPORT_
@@ -2280,9 +2280,9 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   m_pCache->FlushForDraw();
   if (!m_pBitmap->GetBuffer())
     return true;
-  CFX_Matrix m(dest_width, 0, 0, -dest_height, dest_left,
-               dest_top + dest_height);
 
+  CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
+                                                 dest_left, dest_top);
   m_pCanvas->save();
   SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
                                        pClipRect->right, pClipRect->top);
@@ -2501,8 +2501,9 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(
     BlendMode blend_type) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return true;
-  CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), dest_left,
-               dest_top + pBitmap->GetHeight());
+
+  CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
+      pBitmap->GetWidth(), pBitmap->GetHeight(), dest_left, dest_top);
   return DrawBitsWithMask(pBitmap, pMask, bitmap_alpha, m, blend_type);
 }
 
