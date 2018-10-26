@@ -20,7 +20,7 @@ CFFL_RadioButton::CFFL_RadioButton(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_RadioButton::~CFFL_RadioButton() {}
 
-std::unique_ptr<CPWL_Wnd> CFFL_RadioButton::NewPDFWindow(
+std::unique_ptr<CPWL_Wnd> CFFL_RadioButton::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
   auto pWnd = pdfium::MakeUnique<CPWL_RadioButton>(std::move(pAttachedData));

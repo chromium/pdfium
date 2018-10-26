@@ -106,7 +106,7 @@ class CFFL_FormFiller : public CPWL_Wnd::ProviderIface,
                                    const CPDFSDK_FieldAction& faNew);
 
   virtual CPWL_Wnd::CreateParams GetCreateParam();
-  virtual std::unique_ptr<CPWL_Wnd> NewPDFWindow(
+  virtual std::unique_ptr<CPWL_Wnd> NewPWLWindow(
       const CPWL_Wnd::CreateParams& cp,
       std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) = 0;
   virtual CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,

@@ -17,7 +17,7 @@ CFFL_PushButton::CFFL_PushButton(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_PushButton::~CFFL_PushButton() = default;
 
-std::unique_ptr<CPWL_Wnd> CFFL_PushButton::NewPDFWindow(
+std::unique_ptr<CPWL_Wnd> CFFL_PushButton::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
   auto pWnd = pdfium::MakeUnique<CPWL_PushButton>(std::move(pAttachedData));
