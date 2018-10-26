@@ -14,6 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/fx_dib.h"
 
+class CFX_DIBBase;
 class PauseIndicatorIface;
 class ScanlineComposerIface;
 

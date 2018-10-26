@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/fx_dib.h"
 
 class CFX_ScanlineCompositor {

@@ -8,11 +8,9 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fxge/cfx_renderdevice.h"
 
-CPDF_CharPosList::CPDF_CharPosList() {
-  m_pCharPos = nullptr;
-  m_nChars = 0;
-}
+CPDF_CharPosList::CPDF_CharPosList() = default;
 
 CPDF_CharPosList::~CPDF_CharPosList() {
   FX_Free(m_pCharPos);

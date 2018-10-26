@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "core/fxge/cfx_cliprgn.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/ptr_util.h"

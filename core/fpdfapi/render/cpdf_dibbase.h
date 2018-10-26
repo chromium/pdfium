@@ -16,10 +16,8 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/render/cpdf_imageloader.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
-#include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "third_party/base/span.h"
 

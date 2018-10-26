@@ -12,15 +12,7 @@
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/cfx_color.h"
 #include "core/fxge/fx_dib.h"
-
-class CFX_DIBitmap;
-class CFX_Font;
-class CFX_GraphStateData;
-class CFX_ImageRenderer;
-class PauseIndicatorIface;
-class RenderDeviceDriverIface;
 
 #define FXDC_DEVICE_CLASS 1
 #define FXDC_PIXEL_WIDTH 2
@@ -64,7 +56,15 @@ class RenderDeviceDriverIface;
 #define FXTEXT_PRINTIMAGETEXT 0x10
 #define FXTEXT_NOSMOOTH 0x20
 
+class CFX_DIBBase;
+class CFX_DIBitmap;
+class CFX_Font;
+class CFX_GraphStateData;
+class CFX_ImageRenderer;
 class CFX_PathData;
+class PauseIndicatorIface;
+class RenderDeviceDriverIface;
+struct CFX_Color;
 
 enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 

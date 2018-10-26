@@ -10,7 +10,6 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/fx_dib.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdfview.h"
 

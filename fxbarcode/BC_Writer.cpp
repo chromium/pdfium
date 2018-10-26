@@ -6,6 +6,8 @@
 
 #include "fxbarcode/BC_Writer.h"
 
+#include "core/fxge/dib/cfx_dibitmap.h"
+
 CBC_Writer::CBC_Writer() = default;
 
 CBC_Writer::~CBC_Writer() = default;

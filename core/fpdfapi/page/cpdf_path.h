@@ -11,9 +11,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/shared_copy_on_write.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_pathdata.h"
-#include "core/fxge/cfx_renderdevice.h"
 
 class CPDF_Path {
  public:

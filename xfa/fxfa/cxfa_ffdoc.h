@@ -17,6 +17,7 @@
 
 class CFGAS_PDFFontMgr;
 class CFX_ChecksumContext;
+class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_XMLDocument;
 class CPDF_Document;
@@ -37,18 +38,6 @@ struct FX_IMAGEDIB_AND_DPI {
   int32_t iImageXDpi;
   int32_t iImageYDpi;
 };
-
-inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI() = default;
-inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(
-    const FX_IMAGEDIB_AND_DPI& that) = default;
-
-inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(
-    const RetainPtr<CFX_DIBBase>& pDib,
-    int32_t xDpi,
-    int32_t yDpi)
-    : pDibSource(pDib), iImageXDpi(xDpi), iImageYDpi(yDpi) {}
-
-inline FX_IMAGEDIB_AND_DPI::~FX_IMAGEDIB_AND_DPI() = default;
 
 class CXFA_FFDoc {
  public:

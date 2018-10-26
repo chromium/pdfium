@@ -44,10 +44,6 @@ using FX_COLORREF = uint32_t;
 
 using FX_CMYK = uint32_t;
 
-class CFX_ClipRgn;
-class CFX_DIBBase;
-class CStretchEngine;
-
 extern const int16_t SDP_Table[513];
 
 #define FXDIB_DOWNSAMPLE 0x04

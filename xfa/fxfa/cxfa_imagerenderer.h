@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/fx_dib.h"
 
 class CFX_RenderDevice;
 class CFX_DIBBase;

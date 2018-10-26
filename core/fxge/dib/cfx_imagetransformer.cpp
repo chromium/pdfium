@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/compiler_specific.h"

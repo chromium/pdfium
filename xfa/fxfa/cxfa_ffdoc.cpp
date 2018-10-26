@@ -39,6 +39,17 @@
 #include "xfa/fxfa/parser/cxfa_dynamicrender.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
+FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI() = default;
+FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(const FX_IMAGEDIB_AND_DPI& that) =
+    default;
+
+FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(const RetainPtr<CFX_DIBBase>& pDib,
+                                         int32_t xDpi,
+                                         int32_t yDpi)
+    : pDibSource(pDib), iImageXDpi(xDpi), iImageYDpi(yDpi) {}
+
+FX_IMAGEDIB_AND_DPI::~FX_IMAGEDIB_AND_DPI() = default;
+
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment)
     : m_pDocEnvironment(pDocEnvironment), m_pApp(pApp) {}
 

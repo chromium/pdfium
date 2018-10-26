@@ -10,13 +10,13 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/cfx_renderdevice.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/BC_Writer.h"
 
 class CFX_Font;
 class CFX_PathData;
 class CFX_RenderDevice;
+class FXTEXT_CHARPOS;
 
 class CBC_OneDimWriter : public CBC_Writer {
  public:

@@ -131,6 +131,10 @@ bool CFX_ImageStretcher::Continue(PauseIndicatorIface* pPause) {
   return ContinueStretch(pPause);
 }
 
+RetainPtr<CFX_DIBBase> CFX_ImageStretcher::source() {
+  return m_pSource;
+}
+
 bool CFX_ImageStretcher::StartStretch() {
   m_pStretchEngine = pdfium::MakeUnique<CStretchEngine>(
       m_pDest.Get(), m_DestFormat, m_DestWidth, m_DestHeight, m_ClipRect,

@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_char.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fde/cfde_data.h"

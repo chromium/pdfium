@@ -11,13 +11,8 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/fx_dib.h"
 #include "xfa/fxgraphics/cxfa_gecolor.h"
-
-class CXFA_GEPath;
 
 using FX_FillMode = int32_t;
 
@@ -30,7 +25,9 @@ enum class FX_HatchStyle {
   DiagonalCross = 5
 };
 
+class CFX_DIBBase;
 class CFX_RenderDevice;
+class CXFA_GEPath;
 
 class CXFA_Graphics {
  public:

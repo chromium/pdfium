@@ -13,6 +13,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 
+class CFX_ClipRgn;
 class FXTEXT_CHARPOS;
 class SkCanvas;
 class SkMatrix;

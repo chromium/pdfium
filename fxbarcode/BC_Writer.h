@@ -8,10 +8,11 @@
 #define FXBARCODE_BC_WRITER_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/utils.h"
+
+class CFX_DIBitmap;
 
 class CBC_Writer {
  public:

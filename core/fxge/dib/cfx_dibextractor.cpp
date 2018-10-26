@@ -7,6 +7,7 @@
 #include "core/fxge/dib/cfx_dibextractor.h"
 
 #include "core/fxge/dib/cfx_dibbase.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_DIBExtractor::CFX_DIBExtractor(const RetainPtr<CFX_DIBBase>& pSrc) {
   if (!pSrc->GetBuffer()) {

@@ -9,18 +9,19 @@
 
 #include "core/fxcrt/fx_system.h"
 
-#ifndef _SKIA_SUPPORT_
-#include "core/fxge/agg/fx_agg_driver.h"
-#endif
-
 #include "core/fxge/apple/apple_int.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/span.h"
+
+#ifndef _SKIA_SUPPORT_
+#include "core/fxge/agg/fx_agg_driver.h"
+#endif
 
 #ifndef _SKIA_SUPPORT_
 

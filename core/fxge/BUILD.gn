@@ -105,6 +105,7 @@ jumbo_source_set("fxge") {
     "fontdata/chromefontdata/chromefontdata.h",
     "freetype/fx_freetype.cpp",
     "fx_dib.h",
+    "fx_font.cpp",
     "fx_font.h",
     "fx_freetype.h",
     "fx_ge_fontmap.cpp",

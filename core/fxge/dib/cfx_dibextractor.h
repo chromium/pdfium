@@ -8,9 +8,9 @@
 #define CORE_FXGE_DIB_CFX_DIBEXTRACTOR_H_
 
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/dib/cfx_dibitmap.h"
 
 class CFX_DIBBase;
+class CFX_DIBitmap;
 
 class CFX_DIBExtractor {
  public:

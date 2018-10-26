@@ -8,6 +8,7 @@
 
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibbase.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/ptr_util.h"

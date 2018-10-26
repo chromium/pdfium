@@ -12,13 +12,13 @@
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
-#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
+#include "core/fpdfapi/render/cpdf_transparency.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 
 class CFX_PathData;
+class CFX_RenderDevice;
 class CPDF_Color;
 class CPDF_Dictionary;
 class CPDF_Font;

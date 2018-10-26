@@ -9,8 +9,8 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/fx_dib.h"
 
+class CFX_DIBBase;
 class CPDF_ImageObject;
 class CPDF_PageRenderCache;
 class CPDF_RenderStatus;
@@ -40,11 +40,10 @@ class CPDF_ImageLoader {
  private:
   void HandleFailure();
 
-  RetainPtr<CFX_DIBBase> m_pBitmap;
-  RetainPtr<CFX_DIBBase> m_pMask;
   uint32_t m_MatteColor = 0;
   bool m_bCached = false;
-
+  RetainPtr<CFX_DIBBase> m_pBitmap;
+  RetainPtr<CFX_DIBBase> m_pMask;
   UnownedPtr<CPDF_PageRenderCache> m_pCache;
   UnownedPtr<CPDF_ImageObject> m_pImageObject;
 };

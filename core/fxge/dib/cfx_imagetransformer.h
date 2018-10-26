@@ -13,10 +13,11 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
-#include "core/fxge/dib/cfx_dibbase.h"
-#include "core/fxge/dib/cfx_dibitmap.h"
 
+class CFX_DIBBase;
+class CFX_DIBitmap;
 class CFX_ImageStretcher;
+class PauseIndicatorIface;
 
 class CFX_ImageTransformer {
  public:

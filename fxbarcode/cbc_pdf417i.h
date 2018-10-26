@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/fx_dib.h"
 #include "fxbarcode/cbc_codebase.h"
 
 class CBC_PDF417Writer;

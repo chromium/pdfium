@@ -14,6 +14,7 @@
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/fx_freetype.h"

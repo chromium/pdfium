@@ -7,8 +7,10 @@
 #ifndef CORE_FXGE_CFX_COLOR_H_
 #define CORE_FXGE_CFX_COLOR_H_
 
-#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_dib.h"
+
+class CPDF_Array;
 
 struct CFX_Color {
   static CFX_Color ParseColor(const CPDF_Array& array);

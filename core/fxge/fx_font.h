@@ -9,17 +9,10 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_freetype.h"
-
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
-class SkTypeface;
-
-using CFX_TypeFace = SkTypeface;
-#endif
 
 /* Font pitch and family flags */
 #define FXFONT_FF_FIXEDPITCH (1 << 0)
@@ -51,6 +44,14 @@ using CFX_TypeFace = SkTypeface;
 #define GET_TT_LONG(w) \
   (uint32_t)(((w)[0] << 24) | ((w)[1] << 16) | ((w)[2] << 8) | (w)[3])
 
+class CFX_DIBitmap;
+
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+class SkTypeface;
+
+using CFX_TypeFace = SkTypeface;
+#endif
+
 // Sets the given transform on the font, and resets it to the identity when it
 // goes out of scope.
 class ScopedFontTransform {
@@ -71,11 +72,6 @@ class CFX_GlyphBitmap {
   int m_Left;
   RetainPtr<CFX_DIBitmap> m_pBitmap;
 };
-
-inline CFX_GlyphBitmap::CFX_GlyphBitmap()
-    : m_pBitmap(pdfium::MakeRetain<CFX_DIBitmap>()) {}
-
-inline CFX_GlyphBitmap::~CFX_GlyphBitmap() = default;
 
 class FXTEXT_GLYPHPOS {
  public:

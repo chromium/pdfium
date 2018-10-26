@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_BitmapStorer::CFX_BitmapStorer() {}
 

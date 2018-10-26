@@ -11,11 +11,12 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_char.h"
-#include "core/fxge/cfx_renderdevice.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fgas/layout/cfx_break.h"
 
 class CFDE_TextEditEngine;
 class CFGAS_GEFont;
+class FXTEXT_CHARPOS;
 struct FDE_TEXTEDITPIECE;
 
 #define FX_TXTCHARSTYLE_ArabicShadda 0x0020

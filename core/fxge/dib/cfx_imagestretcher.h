@@ -17,6 +17,7 @@
 #include "core/fxge/fx_dib.h"
 
 class CFX_DIBBase;
+class CStretchEngine;
 class PauseIndicatorIface;
 
 class CFX_ImageStretcher {
@@ -32,7 +33,7 @@ class CFX_ImageStretcher {
   bool Start();
   bool Continue(PauseIndicatorIface* pPause);
 
-  RetainPtr<CFX_DIBBase> source() { return m_pSource; }
+  RetainPtr<CFX_DIBBase> source();
 
  private:
   bool StartQuickStretch();
