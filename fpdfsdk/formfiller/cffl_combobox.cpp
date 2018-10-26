@@ -48,8 +48,6 @@ std::unique_ptr<CPWL_Wnd> CFFL_ComboBox::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
   auto pWnd = pdfium::MakeUnique<CPWL_ComboBox>(std::move(pAttachedData));
-  if (cp.pParentWnd)
-    cp.pParentWnd->AddChild(pWnd.get());
   pWnd->AttachFFLData(this);
   pWnd->Realize(cp);
 

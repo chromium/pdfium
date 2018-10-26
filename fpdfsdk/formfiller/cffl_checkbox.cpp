@@ -25,8 +25,6 @@ std::unique_ptr<CPWL_Wnd> CFFL_CheckBox::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
   auto pWnd = pdfium::MakeUnique<CPWL_CheckBox>(std::move(pAttachedData));
-  if (cp.pParentWnd)
-    cp.pParentWnd->AddChild(pWnd.get());
   pWnd->Realize(cp);
   pWnd->SetCheck(m_pWidget->IsChecked());
   return std::move(pWnd);
