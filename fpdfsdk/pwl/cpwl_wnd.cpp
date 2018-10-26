@@ -173,9 +173,8 @@ void CPWL_Wnd::Destroy() {
         delete pChild;
       }
     }
-    if (m_CreationParams.pParentWnd)
-      m_CreationParams.pParentWnd->RemoveChild(this);
-
+    if (m_pParent)
+      m_pParent->RemoveChild(this);
     m_bCreated = false;
   }
   DestroyMsgControl();
@@ -379,10 +378,14 @@ bool CPWL_Wnd::OnMouseWheel(short zDelta,
 }
 
 void CPWL_Wnd::AddChild(CPWL_Wnd* pWnd) {
+  ASSERT(!pWnd->m_pParent);
+  pWnd->m_pParent = this;
   m_Children.push_back(pWnd);
 }
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
+  ASSERT(pWnd->m_pParent == this);
+  pWnd->m_pParent = nullptr;
   for (auto it = m_Children.rbegin(); it != m_Children.rend(); ++it) {
     if (*it && *it == pWnd) {
       m_Children.erase(std::next(it).base());
@@ -492,7 +495,6 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   scp.dwFlags =
       PWS_CHILD | PWS_BACKGROUND | PWS_AUTOTRANSPARENT | PWS_NOREFRESHCLIP;
 
-  scp.pParentWnd = this;
   scp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
   scp.eCursorType = FXCT_ARROW;
   scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;

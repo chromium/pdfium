@@ -277,7 +277,6 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
   AddChild(m_pEdit.Get());
 
   CreateParams ecp = cp;
-  ecp.pParentWnd = this;
   ecp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PES_CENTER |
                 PES_AUTOSCROLL | PES_UNDO;
 
@@ -301,7 +300,6 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   AddChild(m_pButton.Get());
 
   CreateParams bcp = cp;
-  bcp.pParentWnd = this;
   bcp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND;
   bcp.sBackgroundColor = CFX_Color(CFX_Color::kRGB, 220.0f / 255.0f,
                                    220.0f / 255.0f, 220.0f / 255.0f);
@@ -321,7 +319,6 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   AddChild(m_pList.Get());
 
   CreateParams lcp = cp;
-  lcp.pParentWnd = this;
   lcp.dwFlags =
       PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
   lcp.nBorderStyle = BorderStyle::SOLID;

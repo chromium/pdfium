@@ -127,7 +127,6 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     int32_t nTransparency;                            // optional
     float fFontSize;                                  // optional
     CPWL_Dash sDash;                                  // optional
-    UnownedPtr<CPWL_Wnd> pParentWnd;                  // ignore
     CPWL_MsgControl* pMsgControl;                     // ignore
     int32_t eCursorType;                              // ignore
     CFX_Matrix mtChild;                               // ignore
@@ -215,9 +214,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   void SetClipRect(const CFX_FloatRect& rect);
   const CFX_FloatRect& GetClipRect() const;
 
-  CPWL_Wnd* GetParentWindow() const {
-    return m_CreationParams.pParentWnd.Get();
-  }
+  CPWL_Wnd* GetParentWindow() const { return m_pParent.Get(); }
   const PrivateData* GetAttachedData() const { return m_pAttachedData.get(); }
   std::unique_ptr<PrivateData> CloneAttachedData() const;
 
@@ -308,6 +305,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
 
   CreateParams m_CreationParams;
   std::unique_ptr<PrivateData> m_pAttachedData;
+  UnownedPtr<CPWL_Wnd> m_pParent;
   std::vector<CPWL_Wnd*> m_Children;
   UnownedPtr<CPWL_ScrollBar> m_pVScrollBar;
   CFX_FloatRect m_rcWindow;

@@ -93,7 +93,6 @@ void CPWL_EditCtrl::CreateEditCaret(const CreateParams& cp) {
   AddChild(m_pEditCaret);
 
   CreateParams ecp = cp;
-  ecp.pParentWnd = this;
   ecp.dwFlags = PWS_CHILD | PWS_NOREFRESHCLIP;
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;

@@ -329,7 +329,6 @@ bool CFFL_FormFiller::IsValid() const {
 
 CPWL_Wnd::CreateParams CFFL_FormFiller::GetCreateParam() {
   CPWL_Wnd::CreateParams cp;
-  cp.pParentWnd = nullptr;
   cp.pProvider.Reset(this);
   cp.rcRectWnd = GetPDFWindowRect();
 
