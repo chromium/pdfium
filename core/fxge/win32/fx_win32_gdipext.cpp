@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <sstream>
+#include <utility>
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -288,17 +289,23 @@ typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipSetWorldTransform)(
 typedef Gdiplus::GpStatus(WINGDIPAPI* FuncType_GdipSetPixelOffsetMode)(
     Gdiplus::GpGraphics* graphics,
     Gdiplus::PixelOffsetMode pixelOffsetMode);
-#define CallFunc(funcname) \
-  ((FuncType_##funcname)GdiplusExt.m_Functions[FuncId_##funcname])
+#define CallFunc(funcname)               \
+  reinterpret_cast<FuncType_##funcname>( \
+      GdiplusExt.m_Functions[FuncId_##funcname])
 
 Gdiplus::GpFillMode GdiFillType2Gdip(int fill_type) {
   return fill_type == ALTERNATE ? Gdiplus::FillModeAlternate
                                 : Gdiplus::FillModeWinding;
 }
 
+const CGdiplusExt& GetGdiplusExt() {
+  auto* pData =
+      reinterpret_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatformData());
+  return pData->m_GdiplusExt;
+}
+
 Gdiplus::GpBrush* GdipCreateBrushImpl(DWORD argb) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
+  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   Gdiplus::GpSolidFill* solidBrush = nullptr;
   CallFunc(GdipCreateSolidFill)((Gdiplus::ARGB)argb, &solidBrush);
   return solidBrush;
@@ -312,8 +319,7 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
                  int dest_width,
                  int dest_height) {
   int src_width = pSrcRect->Width(), src_height = pSrcRect->Height();
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
+  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   if (pBitmap->GetBPP() == 1 && (pSrcRect->left % 8)) {
     FX_RECT new_rect(0, 0, src_width, src_height);
     RetainPtr<CFX_DIBitmap> pCloned = pBitmap->Clone(pSrcRect);
@@ -377,8 +383,7 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
                                   const CFX_Matrix* pMatrix,
                                   DWORD argb,
                                   bool bTextMode) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
+  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   float width = pGraphState->m_LineWidth;
   if (!bTextMode) {
     float unit = pMatrix
@@ -476,14 +481,12 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   return pPen;
 }
 
-bool IsSmallTriangle(Gdiplus::PointF* points,
-                     const CFX_Matrix* pMatrix,
-                     int& v1,
-                     int& v2) {
-  int pairs[] = {1, 2, 0, 2, 0, 1};
-  for (int i = 0; i < 3; i++) {
-    int pair1 = pairs[i * 2];
-    int pair2 = pairs[i * 2 + 1];
+Optional<std::pair<size_t, size_t>> IsSmallTriangle(Gdiplus::PointF* points,
+                                                    const CFX_Matrix* pMatrix) {
+  size_t pairs[] = {1, 2, 0, 2, 0, 1};
+  for (size_t i = 0; i < FX_ArraySize(pairs) / 2; i++) {
+    size_t pair1 = pairs[i * 2];
+    size_t pair2 = pairs[i * 2 + 1];
 
     CFX_PointF p1(points[pair1].X, points[pair1].Y);
     CFX_PointF p2(points[pair2].X, points[pair2].Y);
@@ -494,13 +497,10 @@ bool IsSmallTriangle(Gdiplus::PointF* points,
 
     CFX_PointF diff = p1 - p2;
     float distance_square = (diff.x * diff.x) + (diff.y * diff.y);
-    if (distance_square < (1.0f * 2 + 1.0f / 4)) {
-      v1 = i;
-      v2 = pair1;
-      return true;
-    }
+    if (distance_square < (1.0f * 2 + 1.0f / 4))
+      return std::make_pair(i, pair1);
   }
-  return false;
+  return {};
 }
 
 class GpStream final : public IStream {
@@ -651,12 +651,10 @@ struct PREVIEW3_DIBITMAP {
 PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
   Gdiplus::GpBitmap* pBitmap;
   GpStream* pStream = nullptr;
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
+  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   Gdiplus::Status status = Gdiplus::Ok;
   if (args.flags == WINDIB_OPEN_PATHNAME) {
-    status = CallFunc(GdipCreateBitmapFromFileICM)((wchar_t*)args.path_name,
-                                                   &pBitmap);
+    status = CallFunc(GdipCreateBitmapFromFileICM)(args.path_name, &pBitmap);
   } else {
     if (args.memory_size == 0 || !args.memory_base)
       return nullptr;
@@ -729,8 +727,7 @@ PREVIEW3_DIBITMAP* LoadDIBitmap(WINDIB_Open_Args_ args) {
 }
 
 void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
+  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   CallFunc(GdipBitmapUnlockBits)(pInfo->pBitmap, pInfo->pBitmapData);
   CallFunc(GdipDisposeImage)(pInfo->pBitmap);
   FX_Free(pInfo->pBitmapData);
@@ -783,8 +780,7 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
                                 const FX_RECT* pClipRect,
                                 int flags) {
   Gdiplus::GpGraphics* pGraphics;
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
+  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
   CallFunc(GdipSetPageUnit)(pGraphics, Gdiplus::UnitPixel);
   if (flags & FXDIB_NOSMOOTH) {
@@ -818,8 +814,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     return true;
 
   Gdiplus::GpGraphics* pGraphics = nullptr;
-  CGdiplusExt& GdiplusExt =
-      ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
+  const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
   CallFunc(GdipSetPageUnit)(pGraphics, Gdiplus::UnitPixel);
   CallFunc(GdipSetPixelOffsetMode)(pGraphics, Gdiplus::PixelOffsetModeHalf);
@@ -902,8 +897,11 @@ bool CGdiplusExt::DrawPath(HDC hDC,
   }
   int new_fill_mode = fill_mode & 3;
   if (pPoints.size() == 4 && !pGraphState) {
-    int v1, v2;
-    if (IsSmallTriangle(points, pObject2Device, v1, v2)) {
+    auto indices = IsSmallTriangle(points, pObject2Device);
+    if (indices.has_value()) {
+      size_t v1;
+      size_t v2;
+      std::tie(v1, v2) = indices.value();
       Gdiplus::GpPen* pPen = nullptr;
       CallFunc(GdipCreatePen1)(fill_argb, 1.0f, Gdiplus::UnitPixel, &pPen);
       CallFunc(GdipDrawLineI)(
