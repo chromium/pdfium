@@ -13,7 +13,8 @@
 
 class CPWL_Button : public CPWL_Wnd {
  public:
-  explicit CPWL_Button(std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_Button(const CreateParams& cp,
+              std::unique_ptr<PrivateData> pAttachedData);
   ~CPWL_Button() override;
 
   // CPWL_Wnd

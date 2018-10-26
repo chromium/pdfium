@@ -111,17 +111,17 @@ class CPWL_MsgControl final : public Observable<CPWL_MsgControl> {
   UnownedPtr<CPWL_Wnd> m_pMainKeyboardWnd;
 };
 
-CPWL_Wnd::CPWL_Wnd(std::unique_ptr<PrivateData> pAttachedData)
-    : m_pAttachedData(std::move(pAttachedData)) {}
+CPWL_Wnd::CPWL_Wnd(const CreateParams& cp,
+                   std::unique_ptr<PrivateData> pAttachedData)
+    : m_CreationParams(cp), m_pAttachedData(std::move(pAttachedData)) {}
 
 CPWL_Wnd::~CPWL_Wnd() {
   ASSERT(!m_bCreated);
 }
 
-void CPWL_Wnd::Realize(const CreateParams& cp) {
+void CPWL_Wnd::Realize() {
   ASSERT(!m_bCreated);
 
-  m_CreationParams = cp;
   OnCreate(&m_CreationParams);
   m_CreationParams.rcRectWnd.Normalize();
   m_rcWindow = m_CreationParams.rcRectWnd;
@@ -484,20 +484,17 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
     return;
 
   CreateParams scp = cp;
-
-  // flags
   scp.dwFlags =
       PWS_CHILD | PWS_BACKGROUND | PWS_AUTOTRANSPARENT | PWS_NOREFRESHCLIP;
-
   scp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
   scp.eCursorType = FXCT_ARROW;
   scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
 
   auto pBar =
-      pdfium::MakeUnique<CPWL_ScrollBar>(CloneAttachedData(), SBT_VSCROLL);
+      pdfium::MakeUnique<CPWL_ScrollBar>(scp, CloneAttachedData(), SBT_VSCROLL);
   m_pVScrollBar = pBar.get();
   AddChild(std::move(pBar));
-  m_pVScrollBar->Realize(scp);
+  m_pVScrollBar->Realize();
 }
 
 void CPWL_Wnd::SetCapture() {

@@ -42,9 +42,9 @@ CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
 std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
     const CPWL_Wnd::CreateParams& cp,
     std::unique_ptr<CPWL_Wnd::PrivateData> pAttachedData) {
-  auto pWnd = pdfium::MakeUnique<CPWL_ListBox>(std::move(pAttachedData));
+  auto pWnd = pdfium::MakeUnique<CPWL_ListBox>(cp, std::move(pAttachedData));
   pWnd->AttachFFLData(this);
-  pWnd->Realize(cp);
+  pWnd->Realize();
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 
   for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++)

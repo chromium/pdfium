@@ -43,7 +43,7 @@ class IPWL_Filler_Notify {
 
 class CPWL_Edit final : public CPWL_EditCtrl {
  public:
-  explicit CPWL_Edit(std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_Edit(const CreateParams& cp, std::unique_ptr<PrivateData> pAttachedData);
   ~CPWL_Edit() override;
 
   // CPWL_EditCtrl

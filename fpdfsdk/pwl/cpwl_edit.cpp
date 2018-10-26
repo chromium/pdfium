@@ -27,8 +27,9 @@
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 
-CPWL_Edit::CPWL_Edit(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_EditCtrl(std::move(pAttachedData)) {}
+CPWL_Edit::CPWL_Edit(const CreateParams& cp,
+                     std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_EditCtrl(cp, std::move(pAttachedData)) {}
 
 CPWL_Edit::~CPWL_Edit() {
   ASSERT(!m_bFocus);

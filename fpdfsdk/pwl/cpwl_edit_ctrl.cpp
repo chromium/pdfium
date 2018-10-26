@@ -18,8 +18,9 @@
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/ptr_util.h"
 
-CPWL_EditCtrl::CPWL_EditCtrl(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(std::move(pAttachedData)),
+CPWL_EditCtrl::CPWL_EditCtrl(const CreateParams& cp,
+                             std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_pEdit(pdfium::MakeUnique<CPWL_EditImpl>()) {}
 
 CPWL_EditCtrl::~CPWL_EditCtrl() = default;
@@ -94,11 +95,11 @@ void CPWL_EditCtrl::CreateEditCaret(const CreateParams& cp) {
   ecp.nBorderStyle = BorderStyle::SOLID;
   ecp.rcRectWnd = CFX_FloatRect();
 
-  auto pCaret = pdfium::MakeUnique<CPWL_Caret>(CloneAttachedData());
+  auto pCaret = pdfium::MakeUnique<CPWL_Caret>(ecp, CloneAttachedData());
   m_pEditCaret = pCaret.get();
   m_pEditCaret->SetInvalidRect(GetClientRect());
   AddChild(std::move(pCaret));
-  m_pEditCaret->Realize(ecp);
+  m_pEditCaret->Realize();
 }
 
 void CPWL_EditCtrl::SetFontSize(float fFontSize) {

@@ -10,8 +10,9 @@
 
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-CPWL_Button::CPWL_Button(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(std::move(pAttachedData)) {}
+CPWL_Button::CPWL_Button(const CreateParams& cp,
+                         std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_Button::~CPWL_Button() = default;
 

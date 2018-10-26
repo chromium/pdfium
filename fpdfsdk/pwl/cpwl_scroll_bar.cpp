@@ -105,10 +105,11 @@ void PWL_SCROLL_PRIVATEDATA::SubBig() {
     SetPos(ScrollRange.fMin);
 }
 
-CPWL_SBButton::CPWL_SBButton(std::unique_ptr<PrivateData> pAttachedData,
+CPWL_SBButton::CPWL_SBButton(const CreateParams& cp,
+                             std::unique_ptr<PrivateData> pAttachedData,
                              PWL_SCROLLBAR_TYPE eScrollBarType,
                              PWL_SBBUTTON_TYPE eButtonType)
-    : CPWL_Wnd(std::move(pAttachedData)),
+    : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_eScrollBarType(eScrollBarType),
       m_eSBButtonType(eButtonType) {}
 
@@ -298,9 +299,10 @@ bool CPWL_SBButton::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-CPWL_ScrollBar::CPWL_ScrollBar(std::unique_ptr<PrivateData> pAttachedData,
+CPWL_ScrollBar::CPWL_ScrollBar(const CreateParams& cp,
+                               std::unique_ptr<PrivateData> pAttachedData,
                                PWL_SCROLLBAR_TYPE sbType)
-    : CPWL_Wnd(std::move(pAttachedData)), m_sbType(sbType) {}
+    : CPWL_Wnd(cp, std::move(pAttachedData)), m_sbType(sbType) {}
 
 CPWL_ScrollBar::~CPWL_ScrollBar() = default;
 
@@ -541,29 +543,29 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
       PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
 
   if (!m_pMinButton) {
-    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(CloneAttachedData(),
+    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(scp, CloneAttachedData(),
                                                      m_sbType, PSBT_MIN);
     m_pMinButton = pButton.get();
     AddChild(std::move(pButton));
-    m_pMinButton->Realize(scp);
+    m_pMinButton->Realize();
   }
 
   if (!m_pMaxButton) {
-    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(CloneAttachedData(),
+    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(scp, CloneAttachedData(),
                                                      m_sbType, PSBT_MAX);
     m_pMaxButton = pButton.get();
     AddChild(std::move(pButton));
-    m_pMaxButton->Realize(scp);
+    m_pMaxButton->Realize();
   }
 
   if (!m_pPosButton) {
-    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(CloneAttachedData(),
+    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(scp, CloneAttachedData(),
                                                      m_sbType, PSBT_POS);
     m_pPosButton = pButton.get();
     ObservedPtr thisObserved(this);
     if (m_pPosButton->SetVisible(false) && thisObserved) {
       AddChild(std::move(pButton));
-      m_pPosButton->Realize(scp);
+      m_pPosButton->Realize();
     }
   }
 }

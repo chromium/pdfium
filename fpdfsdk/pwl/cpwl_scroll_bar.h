@@ -12,9 +12,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 
-class CPWL_SBButton;
-class CPWL_ScrollBar;
-
 struct PWL_SCROLL_INFO {
  public:
   PWL_SCROLL_INFO()
@@ -46,7 +43,8 @@ enum PWL_SBBUTTON_TYPE { PSBT_MIN, PSBT_MAX, PSBT_POS };
 
 class CPWL_SBButton final : public CPWL_Wnd {
  public:
-  CPWL_SBButton(std::unique_ptr<PrivateData> pAttachedData,
+  CPWL_SBButton(const CreateParams& cp,
+                std::unique_ptr<PrivateData> pAttachedData,
                 PWL_SCROLLBAR_TYPE eScrollBarType,
                 PWL_SBBUTTON_TYPE eButtonType);
   ~CPWL_SBButton() override;
@@ -117,7 +115,8 @@ struct PWL_SCROLL_PRIVATEDATA {
 
 class CPWL_ScrollBar final : public CPWL_Wnd {
  public:
-  CPWL_ScrollBar(std::unique_ptr<PrivateData> pAttachedData,
+  CPWL_ScrollBar(const CreateParams& cp,
+                 std::unique_ptr<PrivateData> pAttachedData,
                  PWL_SCROLLBAR_TYPE sbType);
   ~CPWL_ScrollBar() override;
 

@@ -27,8 +27,9 @@ constexpr int kDefaultButtonWidth = 13;
 
 }  // namespace
 
-CPWL_CBListBox::CPWL_CBListBox(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_ListBox(std::move(pAttachedData)) {}
+CPWL_CBListBox::CPWL_CBListBox(const CreateParams& cp,
+                               std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_ListBox(cp, std::move(pAttachedData)) {}
 
 CPWL_CBListBox::~CPWL_CBListBox() = default;
 
@@ -100,8 +101,9 @@ bool CPWL_CBListBox::OnCharNotify(uint16_t nChar, uint32_t nFlag) {
   return OnNotifySelectionChanged(true, nFlag);
 }
 
-CPWL_CBButton::CPWL_CBButton(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(std::move(pAttachedData)) {}
+CPWL_CBButton::CPWL_CBButton(const CreateParams& cp,
+                             std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_CBButton::~CPWL_CBButton() = default;
 
@@ -156,8 +158,9 @@ bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-CPWL_ComboBox::CPWL_ComboBox(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(std::move(pAttachedData)) {}
+CPWL_ComboBox::CPWL_ComboBox(const CreateParams& cp,
+                             std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_ComboBox::~CPWL_ComboBox() = default;
 
@@ -286,11 +289,11 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;
 
-  auto pEdit = pdfium::MakeUnique<CPWL_Edit>(CloneAttachedData());
+  auto pEdit = pdfium::MakeUnique<CPWL_Edit>(ecp, CloneAttachedData());
   m_pEdit = pEdit.get();
   m_pEdit->AttachFFLData(m_pFormFiller.Get());
   AddChild(std::move(pEdit));
-  m_pEdit->Realize(ecp);
+  m_pEdit->Realize();
 }
 
 void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
@@ -306,10 +309,10 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   bcp.nBorderStyle = BorderStyle::BEVELED;
   bcp.eCursorType = FXCT_ARROW;
 
-  auto pButton = pdfium::MakeUnique<CPWL_CBButton>(CloneAttachedData());
+  auto pButton = pdfium::MakeUnique<CPWL_CBButton>(bcp, CloneAttachedData());
   m_pButton = pButton.get();
   AddChild(std::move(pButton));
-  m_pButton->Realize(bcp);
+  m_pButton->Realize();
 }
 
 void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
@@ -333,11 +336,11 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   if (cp.sBackgroundColor.nColorType == CFX_Color::kTransparent)
     lcp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
 
-  auto pList = pdfium::MakeUnique<CPWL_CBListBox>(CloneAttachedData());
+  auto pList = pdfium::MakeUnique<CPWL_CBListBox>(lcp, CloneAttachedData());
   m_pList = pList.get();
   m_pList->AttachFFLData(m_pFormFiller.Get());
   AddChild(std::move(pList));
-  m_pList->Realize(lcp);
+  m_pList->Realize();
 }
 
 bool CPWL_ComboBox::RePosChildWnd() {

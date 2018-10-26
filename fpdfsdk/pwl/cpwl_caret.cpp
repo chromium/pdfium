@@ -16,8 +16,9 @@
 
 #define PWL_CARET_FLASHINTERVAL 500
 
-CPWL_Caret::CPWL_Caret(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(std::move(pAttachedData)) {}
+CPWL_Caret::CPWL_Caret(const CreateParams& cp,
+                       std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(cp, std::move(pAttachedData)) {}
 
 CPWL_Caret::~CPWL_Caret() = default;
 

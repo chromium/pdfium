@@ -683,10 +683,11 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   if (rcIcon.IsEmpty() || !pIconStream)
     return ByteString();
 
-  CPWL_Icon icon(nullptr);
-  CPWL_Wnd::CreateParams cp;  // No parent.
+  CPWL_Wnd::CreateParams cp;
   cp.dwFlags = PWS_VISIBLE;
-  icon.Realize(cp);
+
+  CPWL_Icon icon(cp, nullptr);
+  icon.Realize();
   icon.SetIconFit(&fit);
   icon.SetPDFStream(pIconStream);
   if (!icon.Move(rcIcon, false, false))

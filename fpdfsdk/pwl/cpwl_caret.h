@@ -13,7 +13,8 @@
 
 class CPWL_Caret final : public CPWL_Wnd {
  public:
-  explicit CPWL_Caret(std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_Caret(const CreateParams& cp,
+             std::unique_ptr<PrivateData> pAttachedData);
   ~CPWL_Caret() override;
 
   // CPWL_Wnd

@@ -132,7 +132,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
     CFX_Matrix mtChild;                               // ignore
   };
 
-  explicit CPWL_Wnd(std::unique_ptr<PrivateData> pAttachedData);
+  CPWL_Wnd(const CreateParams& cp, std::unique_ptr<PrivateData> pAttachedData);
   ~CPWL_Wnd() override;
 
   // Returns |true| iff this instance is still allocated.
@@ -178,7 +178,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
 
   void AddChild(std::unique_ptr<CPWL_Wnd> pWnd);
   void RemoveChild(CPWL_Wnd* pWnd);
-  void Realize(const CreateParams& cp);
+  void Realize();
   void Destroy();
   bool Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
 

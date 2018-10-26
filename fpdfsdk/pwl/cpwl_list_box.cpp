@@ -65,8 +65,9 @@ void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {
   m_pList->InvalidateRect(pRect);
 }
 
-CPWL_ListBox::CPWL_ListBox(std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(std::move(pAttachedData)),
+CPWL_ListBox::CPWL_ListBox(const CreateParams& cp,
+                           std::unique_ptr<PrivateData> pAttachedData)
+    : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_pList(pdfium::MakeUnique<CPWL_ListCtrl>()) {}
 
 CPWL_ListBox::~CPWL_ListBox() = default;
