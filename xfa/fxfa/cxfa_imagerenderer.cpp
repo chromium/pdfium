@@ -22,7 +22,7 @@ CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start() {
   if (m_pDevice->StartDIBitsWithBlend(m_pDIBBase, 255, 0, m_ImageMatrix,
-                                      FXDIB_INTERPOL, &m_DeviceHandle,
+                                      kBilinearInterpolation, &m_DeviceHandle,
                                       BlendMode::kNormal)) {
     if (m_DeviceHandle) {
       m_Status = 3;
@@ -50,7 +50,7 @@ bool CXFA_ImageRenderer::Start() {
     clip_box.Intersect(image_rect);
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        pDib, m_ImageMatrix, FXDIB_INTERPOL, &clip_box);
+        pDib, m_ImageMatrix, kBilinearInterpolation, &clip_box);
     return true;
   }
   if (m_ImageMatrix.a < 0)
@@ -63,14 +63,14 @@ bool CXFA_ImageRenderer::Start() {
   if (m_pDIBBase->IsOpaqueImage()) {
     if (m_pDevice->StretchDIBitsWithFlagsAndBlend(
             m_pDIBBase, dest_left, dest_top, dest_width, dest_height,
-            FXDIB_INTERPOL, BlendMode::kNormal)) {
+            kBilinearInterpolation, BlendMode::kNormal)) {
       return false;
     }
   }
   if (m_pDIBBase->IsAlphaMask()) {
     if (m_pDevice->StretchBitMaskWithFlags(m_pDIBBase, dest_left, dest_top,
                                            dest_width, dest_height, 0,
-                                           FXDIB_INTERPOL)) {
+                                           kBilinearInterpolation)) {
       return false;
     }
   }
@@ -82,7 +82,7 @@ bool CXFA_ImageRenderer::Start() {
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
   RetainPtr<CFX_DIBitmap> pStretched = m_pDIBBase->StretchTo(
-      dest_width, dest_height, FXDIB_INTERPOL, &dest_clip);
+      dest_width, dest_height, kBilinearInterpolation, &dest_clip);
   if (pStretched)
     CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top);
 

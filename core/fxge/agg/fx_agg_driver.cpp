@@ -1519,7 +1519,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                         int dest_width,
                                         int dest_height,
                                         const FX_RECT* pClipRect,
-                                        uint32_t flags,
+                                        const FXDIB_ResampleOptions& options,
                                         BlendMode blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
@@ -1539,7 +1539,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                    false, false, m_bRgbByteOrder, 0, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
   CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
-                               dest_clip, flags);
+                               dest_clip, options);
   if (stretcher.Start())
     stretcher.Continue(nullptr);
   return true;
@@ -1550,15 +1550,15 @@ bool CFX_AggDeviceDriver::StartDIBits(
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
-    uint32_t render_flags,
+    const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 
   *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix,
-      render_flags, m_bRgbByteOrder);
+      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix, options,
+      m_bRgbByteOrder);
   return true;
 }
 

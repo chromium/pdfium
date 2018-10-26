@@ -20,7 +20,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                                      int bitmap_alpha,
                                      uint32_t mask_color,
                                      const CFX_Matrix& matrix,
-                                     uint32_t dib_flags,
+                                     const FXDIB_ResampleOptions& options,
                                      bool bRgbByteOrder)
     : m_pDevice(pDevice),
       m_pClipRgn(pClipRgn),
@@ -50,15 +50,14 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                          true, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
                          0, BlendMode::kNormal);
       m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
-          &m_Composer, pSource, dest_height, dest_width, bitmap_clip,
-          dib_flags);
+          &m_Composer, pSource, dest_height, dest_width, bitmap_clip, options);
       if (m_Stretcher->Start())
         m_Status = 1;
       return;
     }
     m_Status = 2;
     m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
-        pSource, m_Matrix, dib_flags, &m_ClipBox);
+        pSource, m_Matrix, options, &m_ClipBox);
     return;
   }
 
@@ -80,7 +79,7 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                      BlendMode::kNormal);
   m_Status = 1;
   m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
-      &m_Composer, pSource, dest_width, dest_height, bitmap_clip, dib_flags);
+      &m_Composer, pSource, dest_width, dest_height, bitmap_clip, options);
   m_Stretcher->Start();
 }
 

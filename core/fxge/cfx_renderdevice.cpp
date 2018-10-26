@@ -774,14 +774,14 @@ bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
     int top,
     int dest_width,
     int dest_height,
-    uint32_t flags,
+    const FXDIB_ResampleOptions& options,
     BlendMode blend_mode) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
   FX_RECT clip_box = m_ClipBox;
   clip_box.Intersect(dest_rect);
   return clip_box.IsEmpty() || m_pDeviceDriver->StretchDIBits(
                                    pBitmap, 0, left, top, dest_width,
-                                   dest_height, &clip_box, flags, blend_mode);
+                                   dest_height, &clip_box, options, blend_mode);
 }
 
 bool CFX_RenderDevice::SetBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
@@ -800,7 +800,7 @@ bool CFX_RenderDevice::StretchBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                       int dest_height,
                                       uint32_t color) {
   return StretchBitMaskWithFlags(pBitmap, left, top, dest_width, dest_height,
-                                 color, 0);
+                                 color, FXDIB_ResampleOptions());
 }
 
 bool CFX_RenderDevice::StretchBitMaskWithFlags(
@@ -810,12 +810,12 @@ bool CFX_RenderDevice::StretchBitMaskWithFlags(
     int dest_width,
     int dest_height,
     uint32_t argb,
-    uint32_t flags) {
+    const FXDIB_ResampleOptions& options) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
   FX_RECT clip_box = m_ClipBox;
   clip_box.Intersect(dest_rect);
   return m_pDeviceDriver->StretchDIBits(pBitmap, argb, left, top, dest_width,
-                                        dest_height, &clip_box, flags,
+                                        dest_height, &clip_box, options,
                                         BlendMode::kNormal);
 }
 
@@ -824,11 +824,11 @@ bool CFX_RenderDevice::StartDIBitsWithBlend(
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
-    uint32_t flags,
+    const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_mode) {
   return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha, argb, matrix,
-                                      flags, handle, blend_mode);
+                                      options, handle, blend_mode);
 }
 
 bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,

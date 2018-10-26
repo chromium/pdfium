@@ -1171,17 +1171,19 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::TransformTo(const CFX_Matrix& mtDest,
                                                  int* result_left,
                                                  int* result_top) {
   RetainPtr<CFX_DIBBase> holder(this);
-  CFX_ImageTransformer transformer(holder, mtDest, 0, nullptr);
+  CFX_ImageTransformer transformer(holder, mtDest, FXDIB_ResampleOptions(),
+                                   nullptr);
   transformer.Continue(nullptr);
   *result_left = transformer.result().left;
   *result_top = transformer.result().top;
   return transformer.DetachBitmap();
 }
 
-RetainPtr<CFX_DIBitmap> CFX_DIBBase::StretchTo(int dest_width,
-                                               int dest_height,
-                                               uint32_t flags,
-                                               const FX_RECT* pClip) {
+RetainPtr<CFX_DIBitmap> CFX_DIBBase::StretchTo(
+    int dest_width,
+    int dest_height,
+    const FXDIB_ResampleOptions& options,
+    const FX_RECT* pClip) {
   RetainPtr<CFX_DIBBase> holder(this);
   FX_RECT clip_rect(0, 0, abs(dest_width), abs(dest_height));
   if (pClip)
@@ -1195,7 +1197,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::StretchTo(int dest_width,
 
   CFX_BitmapStorer storer;
   CFX_ImageStretcher stretcher(&storer, holder, dest_width, dest_height,
-                               clip_rect, flags);
+                               clip_rect, options);
   if (stretcher.Start())
     stretcher.Continue(nullptr);
 

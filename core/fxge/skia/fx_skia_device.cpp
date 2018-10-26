@@ -2250,7 +2250,8 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
   CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
       pBitmap->GetWidth(), pBitmap->GetHeight(), left, top);
   std::unique_ptr<CFX_ImageRenderer> dummy;
-  return StartDIBits(pBitmap, 0xFF, argb, m, 0, &dummy, blend_type);
+  return StartDIBits(pBitmap, 0xFF, argb, m, FXDIB_ResampleOptions(), &dummy,
+                     blend_type);
 #endif  // _SKIA_SUPPORT_
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -2274,7 +2275,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                          int dest_width,
                                          int dest_height,
                                          const FX_RECT* pClipRect,
-                                         uint32_t flags,
+                                         const FXDIB_ResampleOptions& options,
                                          BlendMode blend_type) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
@@ -2288,7 +2289,8 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                        pClipRect->right, pClipRect->top);
   m_pCanvas->clipRect(skClipRect, SkClipOp::kIntersect, true);
   std::unique_ptr<CFX_ImageRenderer> dummy;
-  bool result = StartDIBits(pSource, 0xFF, argb, m, 0, &dummy, blend_type);
+  bool result = StartDIBits(pSource, 0xFF, argb, m, FXDIB_ResampleOptions(),
+                            &dummy, blend_type);
   m_pCanvas->restore();
 
   return result;
@@ -2311,7 +2313,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                    false, false, m_bRgbByteOrder, 0, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
   CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
-                               dest_clip, flags);
+                               dest_clip, options);
   if (stretcher.Start())
     stretcher.Continue(nullptr);
   return true;
@@ -2323,7 +2325,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
-    uint32_t render_flags,
+    const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
 #ifdef _SKIA_SUPPORT_
@@ -2371,8 +2373,8 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     return true;
   m_pBitmap->UnPreMultiply();
   *handle = pdfium::MakeUnique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix,
-      render_flags, m_bRgbByteOrder);
+      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix, options,
+      m_bRgbByteOrder);
 #endif  // _SKIA_SUPPORT_PATHS_
   return true;
 }

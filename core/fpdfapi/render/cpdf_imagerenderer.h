@@ -41,7 +41,7 @@ class CPDF_ImageRenderer {
              FX_ARGB bitmap_argb,
              int bitmap_alpha,
              const CFX_Matrix* pImage2Device,
-             uint32_t flags,
+             const FXDIB_ResampleOptions& options,
              bool bStdCS,
              BlendMode blendType);
 
@@ -79,7 +79,7 @@ class CPDF_ImageRenderer {
   int m_BitmapAlpha = 0;
   BlendMode m_BlendType = BlendMode::kNormal;
   FX_ARGB m_FillArgb = 0;
-  uint32_t m_Flags = 0;
+  FXDIB_ResampleOptions m_ResampleOptions;
   bool m_bPatternColor = false;
   bool m_bStdCS = false;
   bool m_Result = true;

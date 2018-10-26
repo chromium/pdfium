@@ -1523,8 +1523,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::TiffContinueDecode() {
     m_status = FXCODEC_STATUS_ERR_MEMORY;
     return m_status;
   }
-  RetainPtr<CFX_DIBitmap> pStrechBitmap =
-      pFormatBitmap->StretchTo(m_sizeX, m_sizeY, FXDIB_INTERPOL, nullptr);
+  RetainPtr<CFX_DIBitmap> pStrechBitmap = pFormatBitmap->StretchTo(
+      m_sizeX, m_sizeY, kBilinearInterpolation, nullptr);
   pFormatBitmap = nullptr;
   if (!pStrechBitmap) {
     m_pDeviceBitmap = nullptr;

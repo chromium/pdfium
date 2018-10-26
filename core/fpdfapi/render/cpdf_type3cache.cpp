@@ -146,7 +146,8 @@ std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
         return nullptr;
 
       pResBitmap = pBitmap->StretchTo(static_cast<int>(image_matrix.a),
-                                      safe_height.ValueOrDie(), 0, nullptr);
+                                      safe_height.ValueOrDie(),
+                                      FXDIB_ResampleOptions(), nullptr);
       top = top_line;
       if (image_matrix.a < 0)
         left = FXSYS_round(image_matrix.e + image_matrix.a);

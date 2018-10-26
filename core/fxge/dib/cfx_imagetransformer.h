@@ -23,7 +23,7 @@ class CFX_ImageTransformer {
  public:
   CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
                        const CFX_Matrix& matrix,
-                       uint32_t flags,
+                       const FXDIB_ResampleOptions& options,
                        const FX_RECT* pClip);
   ~CFX_ImageTransformer();
 
@@ -73,10 +73,8 @@ class CFX_ImageTransformer {
   void CalcMono(const CalcData& cdata, FXDIB_Format format);
   void CalcColor(const CalcData& cdata, FXDIB_Format format, int Bpp);
 
-  bool IsBilinear() const {
-    return !(m_Flags & FXDIB_DOWNSAMPLE) && !IsBiCubic();
-  }
-  bool IsBiCubic() const { return !!(m_Flags & FXDIB_BICUBIC_INTERPOL); }
+  bool IsBilinear() const;
+  bool IsBiCubic() const;
 
   int stretch_width() const { return m_StretchClip.Width(); }
   int stretch_height() const { return m_StretchClip.Height(); }
@@ -106,7 +104,7 @@ class CFX_ImageTransformer {
   CFX_Matrix m_dest2stretch;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapStorer m_Storer;
-  const uint32_t m_Flags;
+  const FXDIB_ResampleOptions m_ResampleOptions;
   int m_Status = 0;
 };
 

@@ -171,14 +171,15 @@ class CFX_RenderDevice {
                      int dest_width,
                      int dest_height) {
     return StretchDIBitsWithFlagsAndBlend(pBitmap, left, top, dest_width,
-                                          dest_height, 0, BlendMode::kNormal);
+                                          dest_height, FXDIB_ResampleOptions(),
+                                          BlendMode::kNormal);
   }
   bool StretchDIBitsWithFlagsAndBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                                       int left,
                                       int top,
                                       int dest_width,
                                       int dest_height,
-                                      uint32_t flags,
+                                      const FXDIB_ResampleOptions& options,
                                       BlendMode blend_type);
   bool SetBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                   int left,
@@ -196,21 +197,21 @@ class CFX_RenderDevice {
                                int dest_width,
                                int dest_height,
                                uint32_t color,
-                               uint32_t flags);
+                               const FXDIB_ResampleOptions& options);
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
-                   uint32_t flags,
+                   const FXDIB_ResampleOptions& options,
                    std::unique_ptr<CFX_ImageRenderer>* handle) {
-    return StartDIBitsWithBlend(pBitmap, bitmap_alpha, color, matrix, flags,
+    return StartDIBitsWithBlend(pBitmap, bitmap_alpha, color, matrix, options,
                                 handle, BlendMode::kNormal);
   }
   bool StartDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
                             int bitmap_alpha,
                             uint32_t color,
                             const CFX_Matrix& matrix,
-                            uint32_t flags,
+                            const FXDIB_ResampleOptions& options,
                             std::unique_ptr<CFX_ImageRenderer>* handle,
                             BlendMode blend_type);
   bool ContinueDIBits(CFX_ImageRenderer* handle, PauseIndicatorIface* pPause);

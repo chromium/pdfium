@@ -24,6 +24,7 @@ class CFX_Matrix;
 class CFX_PathData;
 class CPSFont;
 class FXTEXT_CHARPOS;
+struct FXDIB_ResampleOptions;
 
 class CFX_PSRenderer {
  public:
@@ -62,11 +63,11 @@ class CFX_PSRenderer {
                      int dest_top,
                      int dest_width,
                      int dest_height,
-                     uint32_t flags);
+                     const FXDIB_ResampleOptions& options);
   bool DrawDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                   uint32_t color,
                   const CFX_Matrix& matrix,
-                  uint32_t flags);
+                  const FXDIB_ResampleOptions& options);
   bool DrawText(int nChars,
                 const FXTEXT_CHARPOS* pCharPos,
                 CFX_Font* pFont,

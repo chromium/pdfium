@@ -40,7 +40,7 @@ class CGdiplusExt {
                      int dest_width,
                      int dest_height,
                      const FX_RECT* pClipRect,
-                     int flags);
+                     const FXDIB_ResampleOptions& options);
   bool DrawPath(HDC hDC,
                 const CFX_PathData* pPathData,
                 const CFX_Matrix* pObject2Device,
@@ -106,7 +106,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                          int dest_top,
                          int dest_width,
                          int dest_height,
-                         uint32_t flags);
+                         const FXDIB_ResampleOptions& options);
   bool GDI_StretchBitMask(const RetainPtr<CFX_DIBitmap>& pBitmap,
                           int dest_left,
                           int dest_top,
@@ -145,13 +145,13 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                      int dest_width,
                      int dest_height,
                      const FX_RECT* pClipRect,
-                     uint32_t flags,
+                     const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
-                   uint32_t render_flags,
+                   const FXDIB_ResampleOptions& options,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
   bool UseFoxitStretchEngine(const RetainPtr<CFX_DIBBase>& pSource,
@@ -161,7 +161,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                              int dest_width,
                              int dest_height,
                              const FX_RECT* pClipRect,
-                             int render_flags);
+                             const FXDIB_ResampleOptions& options);
 };
 
 class CGdiPrinterDriver final : public CGdiDeviceDriver {
@@ -184,13 +184,13 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
                      int dest_width,
                      int dest_height,
                      const FX_RECT* pClipRect,
-                     uint32_t flags,
+                     const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
-                   uint32_t render_flags,
+                   const FXDIB_ResampleOptions& options,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
@@ -243,13 +243,13 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                      int dest_width,
                      int dest_height,
                      const FX_RECT* pClipRect,
-                     uint32_t flags,
+                     const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
-                   uint32_t render_flags,
+                   const FXDIB_ResampleOptions& options,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,
@@ -306,13 +306,13 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
                      int dest_width,
                      int dest_height,
                      const FX_RECT* pClipRect,
-                     uint32_t flags,
+                     const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
-                   uint32_t render_flags,
+                   const FXDIB_ResampleOptions& options,
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
   bool DrawDeviceText(int nChars,

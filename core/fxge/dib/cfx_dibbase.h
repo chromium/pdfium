@@ -80,7 +80,7 @@ class CFX_DIBBase : public Retainable {
   RetainPtr<CFX_DIBitmap> CloneConvert(FXDIB_Format format);
   RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
                                     int dest_height,
-                                    uint32_t flags,
+                                    const FXDIB_ResampleOptions& options,
                                     const FX_RECT* pClip);
   RetainPtr<CFX_DIBitmap> TransformTo(const CFX_Matrix& mtDest,
                                       int* left,

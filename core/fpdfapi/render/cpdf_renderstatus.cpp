@@ -1911,7 +1911,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         image_matrix.Concat(matrix);
         CPDF_ImageRenderer renderer;
         if (renderer.Start(this, pType3Char->GetBitmap(), fill_argb, 255,
-                           &image_matrix, 0, false, BlendMode::kNormal)) {
+                           &image_matrix, FXDIB_ResampleOptions(), false,
+                           BlendMode::kNormal)) {
           renderer.Continue(nullptr);
         }
         if (!renderer.GetResult())
@@ -2257,7 +2258,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     RetainPtr<CFX_DIBitmap> pEnlargedBitmap =
         DrawPatternBitmap(m_pContext->GetDocument(), m_pContext->GetPageCache(),
                           pPattern, mtObj2Device, 8, 8, m_Options.GetFlags());
-    pPatternBitmap = pEnlargedBitmap->StretchTo(width, height, 0, nullptr);
+    pPatternBitmap = pEnlargedBitmap->StretchTo(
+        width, height, FXDIB_ResampleOptions(), nullptr);
   } else {
     pPatternBitmap = DrawPatternBitmap(
         m_pContext->GetDocument(), m_pContext->GetPageCache(), pPattern,
@@ -2393,7 +2395,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
         std::unique_ptr<CFX_ImageRenderer> dummy;
         CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
             pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), left, top);
-        m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, m, 0, &dummy);
+        m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, m,
+                               FXDIB_ResampleOptions(), &dummy);
         return;
 #else
         pDIBitmap->MultiplyAlpha(bitmap_alpha);

@@ -204,9 +204,9 @@ class CFX_BilinearMatrix final : public CPDF_FixedMatrix {
 
 CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
                                            const CFX_Matrix& matrix,
-                                           uint32_t flags,
+                                           const FXDIB_ResampleOptions& options,
                                            const FX_RECT* pClip)
-    : m_pSrc(pSrc), m_matrix(matrix), m_Flags(flags) {
+    : m_pSrc(pSrc), m_matrix(matrix), m_ResampleOptions(options) {
   FX_RECT result_rect = m_matrix.GetUnitRect().GetClosestRect();
   FX_RECT result_clip = result_rect;
   if (pClip)
@@ -225,7 +225,8 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
     result_clip = FXDIB_SwapClipBox(result_clip, dest_width, dest_height,
                                     m_matrix.c > 0, m_matrix.b < 0);
     m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
-        &m_Storer, m_pSrc, dest_height, dest_width, result_clip, m_Flags);
+        &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
+        m_ResampleOptions);
     m_Stretcher->Start();
     m_Status = 1;
     return;
@@ -237,7 +238,8 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
                                                       : -floor(m_matrix.d));
     result_clip.Offset(-result_rect.left, -result_rect.top);
     m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
-        &m_Storer, m_pSrc, dest_width, dest_height, result_clip, m_Flags);
+        &m_Storer, m_pSrc, dest_width, dest_height, result_clip,
+        m_ResampleOptions);
     m_Stretcher->Start();
     m_Status = 2;
     return;
@@ -257,7 +259,8 @@ CFX_ImageTransformer::CFX_ImageTransformer(const RetainPtr<CFX_DIBBase>& pSrc,
       m_dest2stretch.TransformRect(CFX_FloatRect(result_clip)).GetOuterRect();
   m_StretchClip.Intersect(0, 0, stretch_width, stretch_height);
   m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
-      &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip, m_Flags);
+      &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
+      m_ResampleOptions);
   m_Stretcher->Start();
   m_Status = 3;
 }
@@ -461,6 +464,14 @@ void CFX_ImageTransformer::CalcColor(const CalcData& cdata,
     };
     DoDownSampleLoop(cdata, destBpp, func);
   }
+}
+
+bool CFX_ImageTransformer::IsBilinear() const {
+  return !m_ResampleOptions.bInterpolateDownsample && !IsBiCubic();
+}
+
+bool CFX_ImageTransformer::IsBiCubic() const {
+  return m_ResampleOptions.bInterpolateBicubic;
 }
 
 void CFX_ImageTransformer::AdjustCoords(int* col, int* row) const {

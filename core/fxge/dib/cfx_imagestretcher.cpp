@@ -48,10 +48,10 @@ CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
                                        int dest_width,
                                        int dest_height,
                                        const FX_RECT& bitmap_rect,
-                                       uint32_t flags)
+                                       const FXDIB_ResampleOptions& options)
     : m_pDest(pDest),
       m_pSource(pSource),
-      m_Flags(flags),
+      m_ResampleOptions(options),
       m_bFlipX(false),
       m_bFlipY(false),
       m_DestWidth(dest_width),
@@ -119,14 +119,13 @@ bool CFX_ImageStretcher::Start() {
     return false;
   }
 
-  if (m_Flags & FXDIB_DOWNSAMPLE)
+  if (m_ResampleOptions.bInterpolateDownsample)
     return StartQuickStretch();
-
   return StartStretch();
 }
 
 bool CFX_ImageStretcher::Continue(PauseIndicatorIface* pPause) {
-  if (m_Flags & FXDIB_DOWNSAMPLE)
+  if (m_ResampleOptions.bInterpolateDownsample)
     return ContinueQuickStretch(pPause);
   return ContinueStretch(pPause);
 }
@@ -138,7 +137,7 @@ RetainPtr<CFX_DIBBase> CFX_ImageStretcher::source() {
 bool CFX_ImageStretcher::StartStretch() {
   m_pStretchEngine = pdfium::MakeUnique<CStretchEngine>(
       m_pDest.Get(), m_DestFormat, m_DestWidth, m_DestHeight, m_ClipRect,
-      m_pSource, m_Flags);
+      m_pSource, m_ResampleOptions);
   m_pStretchEngine->StartStretchHorz();
   if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
     m_pStretchEngine->Continue(nullptr);

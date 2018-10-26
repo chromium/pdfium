@@ -28,7 +28,7 @@ class CFX_ImageRenderer {
                     int bitmap_alpha,
                     uint32_t mask_color,
                     const CFX_Matrix& matrix,
-                    uint32_t dib_flags,
+                    const FXDIB_ResampleOptions& options,
                     bool bRgbByteOrder);
   ~CFX_ImageRenderer();
 

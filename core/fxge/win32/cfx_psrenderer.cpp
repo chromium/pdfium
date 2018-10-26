@@ -25,6 +25,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/fx_dib.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "third_party/base/ptr_util.h"
 
@@ -348,7 +349,7 @@ bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   StartRendering();
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
       pSource->GetWidth(), pSource->GetHeight(), left, top);
-  return DrawDIBits(pSource, color, matrix, 0);
+  return DrawDIBits(pSource, color, matrix, FXDIB_ResampleOptions());
 }
 
 bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
@@ -357,17 +358,17 @@ bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                    int dest_top,
                                    int dest_width,
                                    int dest_height,
-                                   uint32_t flags) {
+                                   const FXDIB_ResampleOptions& options) {
   StartRendering();
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
                                                       dest_left, dest_top);
-  return DrawDIBits(pSource, color, matrix, flags);
+  return DrawDIBits(pSource, color, matrix, options);
 }
 
 bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                 uint32_t color,
                                 const CFX_Matrix& matrix,
-                                uint32_t flags) {
+                                const FXDIB_ResampleOptions& options) {
   StartRendering();
   if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0))
     return true;
@@ -459,7 +460,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     uint8_t* output_buf = nullptr;
     size_t output_size = 0;
     const char* filter = nullptr;
-    if ((m_PSLevel == 2 || flags & FXRENDER_IMAGE_LOSSY) &&
+    if ((m_PSLevel == 2 || options.bLossy) &&
         CCodec_JpegModule::JpegEncode(pConverted, &output_buf, &output_size)) {
       filter = "/DCTDecode filter ";
     }

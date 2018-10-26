@@ -778,12 +778,12 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
                                 int dest_width,
                                 int dest_height,
                                 const FX_RECT* pClipRect,
-                                int flags) {
+                                const FXDIB_ResampleOptions& options) {
   Gdiplus::GpGraphics* pGraphics;
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
   CallFunc(GdipSetPageUnit)(pGraphics, Gdiplus::UnitPixel);
-  if (flags & FXDIB_NOSMOOTH) {
+  if (options.bNoSmoothing) {
     CallFunc(GdipSetInterpolationMode)(
         pGraphics, Gdiplus::InterpolationModeNearestNeighbor);
   } else if (pBitmap->GetWidth() > abs(dest_width) / 2 ||
