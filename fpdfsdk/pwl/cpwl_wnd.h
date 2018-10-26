@@ -176,7 +176,7 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;
 
-  void AddChild(CPWL_Wnd* pWnd);
+  void AddChild(std::unique_ptr<CPWL_Wnd> pWnd);
   void RemoveChild(CPWL_Wnd* pWnd);
   void Realize(const CreateParams& cp);
   void Destroy();

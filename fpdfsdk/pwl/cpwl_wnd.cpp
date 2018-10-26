@@ -377,10 +377,10 @@ bool CPWL_Wnd::OnMouseWheel(short zDelta,
   return false;
 }
 
-void CPWL_Wnd::AddChild(CPWL_Wnd* pWnd) {
+void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
   ASSERT(!pWnd->m_pParent);
   pWnd->m_pParent = this;
-  m_Children.push_back(pWnd);
+  m_Children.push_back(pWnd.release());
 }
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
@@ -499,8 +499,10 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
   scp.eCursorType = FXCT_ARROW;
   scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
 
-  m_pVScrollBar = new CPWL_ScrollBar(CloneAttachedData(), SBT_VSCROLL);
-  AddChild(m_pVScrollBar.Get());
+  auto pBar =
+      pdfium::MakeUnique<CPWL_ScrollBar>(CloneAttachedData(), SBT_VSCROLL);
+  m_pVScrollBar = pBar.get();
+  AddChild(std::move(pBar));
   m_pVScrollBar->Realize(scp);
 }
 

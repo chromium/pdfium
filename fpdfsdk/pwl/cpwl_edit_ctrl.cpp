@@ -88,15 +88,16 @@ void CPWL_EditCtrl::CreateEditCaret(const CreateParams& cp) {
   if (m_pEditCaret)
     return;
 
-  m_pEditCaret = new CPWL_Caret(CloneAttachedData());
-  m_pEditCaret->SetInvalidRect(GetClientRect());
-  AddChild(m_pEditCaret);
-
   CreateParams ecp = cp;
   ecp.dwFlags = PWS_CHILD | PWS_NOREFRESHCLIP;
   ecp.dwBorderWidth = 0;
   ecp.nBorderStyle = BorderStyle::SOLID;
   ecp.rcRectWnd = CFX_FloatRect();
+
+  auto pCaret = pdfium::MakeUnique<CPWL_Caret>(CloneAttachedData());
+  m_pEditCaret = pCaret.get();
+  m_pEditCaret->SetInvalidRect(GetClientRect());
+  AddChild(std::move(pCaret));
   m_pEditCaret->Realize(ecp);
 }
 

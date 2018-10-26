@@ -541,22 +541,28 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
       PWS_VISIBLE | PWS_CHILD | PWS_BORDER | PWS_BACKGROUND | PWS_NOREFRESHCLIP;
 
   if (!m_pMinButton) {
-    m_pMinButton = new CPWL_SBButton(CloneAttachedData(), m_sbType, PSBT_MIN);
-    AddChild(m_pMinButton.Get());
+    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(CloneAttachedData(),
+                                                     m_sbType, PSBT_MIN);
+    m_pMinButton = pButton.get();
+    AddChild(std::move(pButton));
     m_pMinButton->Realize(scp);
   }
 
   if (!m_pMaxButton) {
-    m_pMaxButton = new CPWL_SBButton(CloneAttachedData(), m_sbType, PSBT_MAX);
-    AddChild(m_pMaxButton.Get());
+    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(CloneAttachedData(),
+                                                     m_sbType, PSBT_MAX);
+    m_pMaxButton = pButton.get();
+    AddChild(std::move(pButton));
     m_pMaxButton->Realize(scp);
   }
 
   if (!m_pPosButton) {
-    m_pPosButton = new CPWL_SBButton(CloneAttachedData(), m_sbType, PSBT_POS);
+    auto pButton = pdfium::MakeUnique<CPWL_SBButton>(CloneAttachedData(),
+                                                     m_sbType, PSBT_POS);
+    m_pPosButton = pButton.get();
     ObservedPtr thisObserved(this);
     if (m_pPosButton->SetVisible(false) && thisObserved) {
-      AddChild(m_pPosButton.Get());
+      AddChild(std::move(pButton));
       m_pPosButton->Realize(scp);
     }
   }
