@@ -13,8 +13,7 @@ class CJS_Position final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  CJS_Position(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_Position() override;
+  CJS_Position() = delete;
 
  private:
   static int ObjDefnID;

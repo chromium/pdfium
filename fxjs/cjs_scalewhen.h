@@ -13,8 +13,7 @@ class CJS_ScaleWhen final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  CJS_ScaleWhen(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_ScaleWhen() override;
+  CJS_ScaleWhen() = delete;
 
  private:
   static int ObjDefnID;

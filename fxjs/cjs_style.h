@@ -13,8 +13,7 @@ class CJS_Style final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  CJS_Style(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_Style() override;
+  CJS_Style() = delete;
 
  private:
   static int ObjDefnID;

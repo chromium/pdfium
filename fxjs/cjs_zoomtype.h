@@ -13,8 +13,7 @@ class CJS_Zoomtype final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  CJS_Zoomtype(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_Zoomtype() override;
+  CJS_Zoomtype() = delete;
 
  private:
   static int ObjDefnID;

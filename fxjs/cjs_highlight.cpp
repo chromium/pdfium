@@ -20,9 +20,3 @@ void CJS_Highlight::DefineJSObjects(CFXJS_Engine* pEngine) {
       pEngine->DefineObj("highlight", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }
-
-CJS_Highlight::CJS_Highlight(v8::Local<v8::Object> pObject,
-                             CJS_Runtime* pRuntime)
-    : CJS_Object(pObject, pRuntime) {}
-
-CJS_Highlight::~CJS_Highlight() = default;

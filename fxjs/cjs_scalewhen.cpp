@@ -20,9 +20,3 @@ void CJS_ScaleWhen::DefineJSObjects(CFXJS_Engine* pEngine) {
       pEngine->DefineObj("scaleWhen", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }
-
-CJS_ScaleWhen::CJS_ScaleWhen(v8::Local<v8::Object> pObject,
-                             CJS_Runtime* pRuntime)
-    : CJS_Object(pObject, pRuntime) {}
-
-CJS_ScaleWhen::~CJS_ScaleWhen() = default;

@@ -13,8 +13,7 @@ class CJS_Border final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  CJS_Border(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_Border() override;
+  CJS_Border() = delete;
 
  private:
   static int ObjDefnID;

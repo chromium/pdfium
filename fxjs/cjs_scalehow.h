@@ -13,8 +13,7 @@ class CJS_ScaleHow final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  CJS_ScaleHow(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_ScaleHow() override;
+  CJS_ScaleHow() = delete;
 
  private:
   static int ObjDefnID;

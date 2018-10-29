@@ -21,8 +21,3 @@ void CJS_Style::DefineJSObjects(CFXJS_Engine* pEngine) {
   ObjDefnID = pEngine->DefineObj("style", FXJSOBJTYPE_STATIC, nullptr, nullptr);
   DefineConsts(pEngine, ObjDefnID, ConstSpecs);
 }
-
-CJS_Style::CJS_Style(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
-    : CJS_Object(pObject, pRuntime) {}
-
-CJS_Style::~CJS_Style() = default;

@@ -13,8 +13,7 @@ class CJS_Display final : public CJS_Object {
  public:
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
-  CJS_Display(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_Display() override;
+  CJS_Display() = delete;
 
  private:
   static int ObjDefnID;
