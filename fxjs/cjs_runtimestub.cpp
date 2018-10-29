@@ -14,10 +14,6 @@ CJS_RuntimeStub::CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv)
 
 CJS_RuntimeStub::~CJS_RuntimeStub() = default;
 
-CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {
-  return nullptr;
-}
-
 IJS_EventContext* CJS_RuntimeStub::NewEventContext() {
   if (!m_pContext)
     m_pContext = pdfium::MakeUnique<CJS_EventContextStub>();
@@ -31,6 +27,10 @@ CPDFSDK_FormFillEnvironment* CJS_RuntimeStub::GetFormFillEnv() const {
 }
 
 #ifdef PDF_ENABLE_XFA
+CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {
+  return nullptr;
+}
+
 bool CJS_RuntimeStub::GetValueByNameFromGlobalObject(const ByteStringView&,
                                                      CFXJSE_Value*) {
   return false;

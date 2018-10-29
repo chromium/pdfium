@@ -127,10 +127,6 @@ void CJS_Runtime::DefineJSObjects() {
   CJS_Annot::DefineJSObjects(this);
 }
 
-CJS_Runtime* CJS_Runtime::AsCJSRuntime() {
-  return this;
-}
-
 IJS_EventContext* CJS_Runtime::NewEventContext() {
   m_EventContextArray.push_back(pdfium::MakeUnique<CJS_EventContext>(this));
   return m_EventContextArray.back().get();
@@ -185,6 +181,10 @@ WideString ChangeObjName(const WideString& str) {
   WideString sRet = str;
   sRet.Replace(L"_", L".");
   return sRet;
+}
+
+CJS_Runtime* CJS_Runtime::AsCJSRuntime() {
+  return this;
 }
 
 bool CJS_Runtime::GetValueByNameFromGlobalObject(const ByteStringView& utf8Name,

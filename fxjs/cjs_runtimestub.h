@@ -21,12 +21,13 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   explicit CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   ~CJS_RuntimeStub() override;
 
-  CJS_Runtime* AsCJSRuntime() override;
+  // IJS_Runtime:
   IJS_EventContext* NewEventContext() override;
   void ReleaseEventContext(IJS_EventContext* pContext) override;
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override;
 
 #ifdef PDF_ENABLE_XFA
+  CJS_Runtime* AsCJSRuntime() override;
   bool GetValueByNameFromGlobalObject(const ByteStringView&,
                                       CFXJSE_Value*) override;
   bool SetValueByNameInGlobalObject(const ByteStringView&,
