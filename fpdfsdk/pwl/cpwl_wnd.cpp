@@ -122,7 +122,6 @@ CPWL_Wnd::~CPWL_Wnd() {
 void CPWL_Wnd::Realize() {
   ASSERT(!m_bCreated);
 
-  OnCreate(&m_CreationParams);
   m_CreationParams.rcRectWnd.Normalize();
   m_rcWindow = m_CreationParams.rcRectWnd;
   m_rcClip = m_rcWindow;
@@ -143,8 +142,6 @@ void CPWL_Wnd::Realize() {
 
   m_bCreated = true;
 }
-
-void CPWL_Wnd::OnCreate(CreateParams* pParamsToAdjust) {}
 
 void CPWL_Wnd::OnCreated() {}
 
@@ -604,10 +601,8 @@ void CPWL_Wnd::CreateChildWnd(const CreateParams& cp) {}
 
 void CPWL_Wnd::SetCursor() {
   if (IsValid()) {
-    if (CFX_SystemHandler* pSH = GetSystemHandler()) {
-      int32_t nCursorType = GetCreationParams().eCursorType;
-      pSH->SetCursor(nCursorType);
-    }
+    if (CFX_SystemHandler* pSH = GetSystemHandler())
+      pSH->SetCursor(GetCreationParams()->eCursorType);
   }
 }
 

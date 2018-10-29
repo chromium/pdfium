@@ -260,13 +260,12 @@ class CPWL_Wnd : public CPWL_TimerHandler, public Observable<CPWL_Wnd> {
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   const CFX_Matrix& mtUser2Device);
 
-  virtual void OnCreate(CreateParams* pParamsToAdjust);
   virtual void OnCreated();
   virtual void OnDestroy();
 
   bool IsNotifying() const { return m_bNotifying; }
   bool IsValid() const { return m_bCreated; }
-  const CreateParams& GetCreationParams() const { return m_CreationParams; }
+  CreateParams* GetCreationParams() { return &m_CreationParams; }
 
   // Returns |true| iff this instance is still allocated.
   bool InvalidateRectMove(const CFX_FloatRect& rcOld,

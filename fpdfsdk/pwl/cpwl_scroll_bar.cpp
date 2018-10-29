@@ -111,13 +111,11 @@ CPWL_SBButton::CPWL_SBButton(const CreateParams& cp,
                              PWL_SBBUTTON_TYPE eButtonType)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
       m_eScrollBarType(eScrollBarType),
-      m_eSBButtonType(eButtonType) {}
+      m_eSBButtonType(eButtonType) {
+  GetCreationParams()->eCursorType = FXCT_ARROW;
+}
 
 CPWL_SBButton::~CPWL_SBButton() = default;
-
-void CPWL_SBButton::OnCreate(CreateParams* pParamsToAdjust) {
-  pParamsToAdjust->eCursorType = FXCT_ARROW;
-}
 
 void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix& mtUser2Device) {
@@ -302,13 +300,11 @@ bool CPWL_SBButton::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
 CPWL_ScrollBar::CPWL_ScrollBar(const CreateParams& cp,
                                std::unique_ptr<PrivateData> pAttachedData,
                                PWL_SCROLLBAR_TYPE sbType)
-    : CPWL_Wnd(cp, std::move(pAttachedData)), m_sbType(sbType) {}
+    : CPWL_Wnd(cp, std::move(pAttachedData)), m_sbType(sbType) {
+  GetCreationParams()->eCursorType = FXCT_ARROW;
+}
 
 CPWL_ScrollBar::~CPWL_ScrollBar() = default;
-
-void CPWL_ScrollBar::OnCreate(CreateParams* pParamsToAdjust) {
-  pParamsToAdjust->eCursorType = FXCT_ARROW;
-}
 
 void CPWL_ScrollBar::OnDestroy() {
   // Until cleanup takes place in the virtual destructor for CPWL_Wnd

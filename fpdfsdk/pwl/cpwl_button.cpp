@@ -12,13 +12,11 @@
 
 CPWL_Button::CPWL_Button(const CreateParams& cp,
                          std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(cp, std::move(pAttachedData)) {}
+    : CPWL_Wnd(cp, std::move(pAttachedData)) {
+  GetCreationParams()->eCursorType = FXCT_HAND;
+}
 
 CPWL_Button::~CPWL_Button() = default;
-
-void CPWL_Button::OnCreate(CreateParams* pParamsToAdjust) {
-  pParamsToAdjust->eCursorType = FXCT_HAND;
-}
 
 bool CPWL_Button::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);

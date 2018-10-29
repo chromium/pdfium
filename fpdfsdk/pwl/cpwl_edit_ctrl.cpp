@@ -21,16 +21,15 @@
 CPWL_EditCtrl::CPWL_EditCtrl(const CreateParams& cp,
                              std::unique_ptr<PrivateData> pAttachedData)
     : CPWL_Wnd(cp, std::move(pAttachedData)),
-      m_pEdit(pdfium::MakeUnique<CPWL_EditImpl>()) {}
+      m_pEdit(pdfium::MakeUnique<CPWL_EditImpl>()) {
+  GetCreationParams()->eCursorType = FXCT_VBEAM;
+}
 
 CPWL_EditCtrl::~CPWL_EditCtrl() = default;
 
-void CPWL_EditCtrl::OnCreate(CreateParams* pParamsToAdjust) {
-  pParamsToAdjust->eCursorType = FXCT_VBEAM;
-}
 
 void CPWL_EditCtrl::OnCreated() {
-  SetFontSize(GetCreationParams().fFontSize);
+  SetFontSize(GetCreationParams()->fFontSize);
   m_pEdit->SetFontMap(GetFontMap());
   m_pEdit->SetNotify(this);
   m_pEdit->Initialize();

@@ -160,14 +160,12 @@ bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
 
 CPWL_ComboBox::CPWL_ComboBox(const CreateParams& cp,
                              std::unique_ptr<PrivateData> pAttachedData)
-    : CPWL_Wnd(cp, std::move(pAttachedData)) {}
+    : CPWL_Wnd(cp, std::move(pAttachedData)) {
+  GetCreationParams()->dwFlags &= ~PWS_HSCROLL;
+  GetCreationParams()->dwFlags &= ~PWS_VSCROLL;
+}
 
 CPWL_ComboBox::~CPWL_ComboBox() = default;
-
-void CPWL_ComboBox::OnCreate(CreateParams* pParamsToAdjust) {
-  pParamsToAdjust->dwFlags &= ~PWS_HSCROLL;
-  pParamsToAdjust->dwFlags &= ~PWS_VSCROLL;
-}
 
 void CPWL_ComboBox::OnDestroy() {
   // Until cleanup takes place in the virtual destructor for CPWL_Wnd
