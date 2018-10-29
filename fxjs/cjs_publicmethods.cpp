@@ -490,9 +490,9 @@ double CJS_PublicMethods::ParseNormalDate(const WideString& value,
                                          nYear, nHour, nMin, nSec));
 }
 
-double CJS_PublicMethods::MakeRegularDate(const WideString& value,
-                                          const WideString& format,
-                                          bool* bWrongFormat) {
+double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
+                                               const WideString& format,
+                                               bool* bWrongFormat) {
   double dt = JS_GetDateTime();
 
   if (format.IsEmpty() || value.IsEmpty())
@@ -753,8 +753,8 @@ double CJS_PublicMethods::MakeRegularDate(const WideString& value,
   return dRet;
 }
 
-WideString CJS_PublicMethods::MakeFormatDate(double dDate,
-                                             const WideString& format) {
+WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
+                                                   const WideString& format) {
   WideString sRet;
   WideString sPart;
 
@@ -1195,7 +1195,7 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     // such as "Tue Aug 11 14:24:16 GMT+08002009"
     dDate = MakeInterDate(strValue);
   } else {
-    dDate = MakeRegularDate(strValue, sFormat, nullptr);
+    dDate = ParseDateUsingFormat(strValue, sFormat, nullptr);
   }
 
   if (std::isnan(dDate)) {
@@ -1205,7 +1205,7 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     return CJS_Result::Failure(JSMessage::kParseDateError);
   }
 
-  val = MakeFormatDate(dDate, sFormat);
+  val = PrintDateUsingFormat(dDate, sFormat);
   return CJS_Result::Success();
 }
 
@@ -1268,7 +1268,7 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
 
   WideString sFormat = pRuntime->ToWideString(params[0]);
   bool bWrongFormat = false;
-  double dRet = MakeRegularDate(strValue, sFormat, &bWrongFormat);
+  double dRet = ParseDateUsingFormat(strValue, sFormat, &bWrongFormat);
   if (bWrongFormat || std::isnan(dRet)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());
@@ -1521,7 +1521,7 @@ CJS_Result CJS_PublicMethods::AFParseDateEx(
 
   WideString sValue = pRuntime->ToWideString(params[0]);
   WideString sFormat = pRuntime->ToWideString(params[1]);
-  double dDate = MakeRegularDate(sValue, sFormat, nullptr);
+  double dDate = ParseDateUsingFormat(sValue, sFormat, nullptr);
   if (std::isnan(dDate)) {
     WideString swMsg = WideString::Format(
         JSGetStringFromID(JSMessage::kParseDateError).c_str(), sFormat.c_str());

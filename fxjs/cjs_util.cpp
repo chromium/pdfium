@@ -370,7 +370,7 @@ CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
   WideString sDate = pRuntime->ToWideString(params[1]);
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0)
-    dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
+    dDate = CJS_PublicMethods::ParseDateUsingFormat(sDate, sFormat, nullptr);
   if (std::isnan(dDate))
     return CJS_Result::Success(pRuntime->NewUndefined());
 

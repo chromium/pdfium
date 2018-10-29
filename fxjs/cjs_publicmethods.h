@@ -18,12 +18,13 @@ class CJS_PublicMethods final : public CJS_Object {
   ~CJS_PublicMethods() override;
 
   static void DefineJSObjects(CFXJS_Engine* pEngine);
-  static double MakeRegularDate(const WideString& value,
-                                const WideString& format,
-                                bool* bWrongFormat);
+  static double ParseDateUsingFormat(const WideString& value,
+                                     const WideString& format,
+                                     bool* bWrongFormat);
 
   // Exposed for testing.
-  static WideString MakeFormatDate(double dDate, const WideString& format);
+  static WideString PrintDateUsingFormat(double dDate,
+                                         const WideString& format);
   static bool IsNumber(const WideString& str);
 
   static CJS_Result AFNumber_Format(
