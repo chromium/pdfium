@@ -374,7 +374,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
 
     if (image_size.ValueOrDie() > FPDF_HUGE_IMAGE_SIZE &&
         !m_ResampleOptions.bHalftone) {
-      m_ResampleOptions.bInterpolateDownsample = true;
+      m_ResampleOptions.bInterpolateBilinear = true;
     }
   }
 #ifdef _SKIA_SUPPORT_
