@@ -412,8 +412,8 @@ WideString CJS_PublicMethods::ParseStringString(const WideString& str,
   return swRet;
 }
 
-double CJS_PublicMethods::ParseNormalDate(const WideString& value,
-                                          bool* bWrongFormat) {
+double CJS_PublicMethods::ParseDate(const WideString& value,
+                                    bool* bWrongFormat) {
   double dt = JS_GetDateTime();
 
   int nYear = JS_GetYearFromTime(dt);
@@ -736,7 +736,7 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
 
   double dRet;
   if (bBadFormat) {
-    dRet = ParseNormalDate(value, &bBadFormat);
+    dRet = ParseDate(value, &bBadFormat);
   } else {
     dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
                        JS_MakeTime(nHour, nMin, nSec, 0));
@@ -745,7 +745,7 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
   }
 
   if (std::isnan(dRet))
-    dRet = ParseNormalDate(value, &bBadFormat);
+    dRet = ParseDate(value, &bBadFormat);
 
   if (bWrongFormat)
     *bWrongFormat = bBadFormat;
@@ -1191,9 +1191,8 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
   WideString sFormat = pRuntime->ToWideString(params[0]);
   double dDate;
   if (strValue.Contains(L"GMT")) {
-    // for GMT format time
-    // such as "Tue Aug 11 14:24:16 GMT+08002009"
-    dDate = MakeInterDate(strValue);
+    // e.g. "Tue Aug 11 14:24:16 GMT+08002009"
+    dDate = ParseDateAsGMT(strValue);
   } else {
     dDate = ParseDateUsingFormat(strValue, sFormat, nullptr);
   }
@@ -1209,7 +1208,7 @@ CJS_Result CJS_PublicMethods::AFDate_FormatEx(
   return CJS_Result::Success();
 }
 
-double CJS_PublicMethods::MakeInterDate(const WideString& strValue) {
+double CJS_PublicMethods::ParseDateAsGMT(const WideString& strValue) {
   std::vector<WideString> wsArray;
   WideString sTemp;
   for (const auto& c : strValue) {

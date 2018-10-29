@@ -18,6 +18,9 @@ class CJS_PublicMethods final : public CJS_Object {
   ~CJS_PublicMethods() override;
 
   static void DefineJSObjects(CFXJS_Engine* pEngine);
+
+  static double ParseDate(const WideString& value, bool* bWrongFormat);
+  static double ParseDateAsGMT(const WideString& value);
   static double ParseDateUsingFormat(const WideString& value,
                                      const WideString& format,
                                      bool* bWrongFormat);
@@ -137,7 +140,6 @@ class CJS_PublicMethods final : public CJS_Object {
   static void AFExtractNums_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static const JSMethodSpec GlobalFunctionSpecs[];
   static int ParseStringInteger(const WideString& str,
                                 size_t nStart,
                                 size_t* pSkip,
@@ -145,17 +147,16 @@ class CJS_PublicMethods final : public CJS_Object {
   static WideString ParseStringString(const WideString& str,
                                       size_t nStart,
                                       size_t* pSkip);
-  static double ParseNormalDate(const WideString& value, bool* bWrongFormat);
-  static double MakeInterDate(const WideString& value);
-
   static bool MaskSatisfied(wchar_t c_Change, wchar_t c_Mask);
   static bool IsReservedMaskChar(wchar_t ch);
-
   static double AF_Simple(const wchar_t* sFuction,
                           double dValue1,
                           double dValue2);
   static v8::Local<v8::Array> AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                    v8::Local<v8::Value> val);
+
+ private:
+  static const JSMethodSpec GlobalFunctionSpecs[];
 };
 
 #endif  // FXJS_CJS_PUBLICMETHODS_H_
