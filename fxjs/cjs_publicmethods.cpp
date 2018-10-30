@@ -1400,13 +1400,19 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
     if (valEvent.IsEmpty())
       return CJS_Result::Success();
 
-    size_t iIndexMask = 0;
-    for (; iIndexMask < valEvent.GetLength(); ++iIndexMask) {
-      if (!MaskSatisfied(valEvent[iIndexMask], wstrMask[iIndexMask]))
+    if (valEvent.GetLength() > wstrMask.GetLength()) {
+      AlertIfPossible(pContext,
+                      JSGetStringFromID(JSMessage::kParamTooLongError));
+      pEvent->Rc() = false;
+      return CJS_Result::Success();
+    }
+
+    size_t iIndex = 0;
+    for (iIndex = 0; iIndex < valEvent.GetLength(); ++iIndex) {
+      if (!MaskSatisfied(valEvent[iIndex], wstrMask[iIndex]))
         break;
     }
-    if (iIndexMask != wstrMask.GetLength() ||
-        (iIndexMask != valEvent.GetLength() && wstrMask.GetLength() != 0)) {
+    if (iIndex != wstrMask.GetLength()) {
       AlertIfPossible(pContext,
                       JSGetStringFromID(JSMessage::kInvalidInputError));
       pEvent->Rc() = false;

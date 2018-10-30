@@ -217,7 +217,12 @@ endobj
       app.alert("**********************");
 
       expectError(undefined, "AFSpecial_KeystrokeEx()", undefined);
-      expectEventValue("12", "AFSpecial_KeystrokeEx('999999')", "12");
+      expectEventValue("12345", "AFSpecial_KeystrokeEx('')", "12345");      // No notification.
+      expectEventValue("123", "AFSpecial_KeystrokeEx('9999')", "123");      // Notifies invalid.
+      expectEventValue("12345", "AFSpecial_KeystrokeEx('9999')", "12345");  // Notifies too long.
+      expectEventValue("abcd", "AFSpecial_KeystrokeEx('9999')", "abcd");    // Notifies invalid.
+      expectEventValue("1234", "AFSpecial_KeystrokeEx('9999')", "1234");
+      expectEventValue("abcd", "AFSpecial_KeystrokeEx('XXXX')", "abcd");
 
       app.alert("**********************");
 

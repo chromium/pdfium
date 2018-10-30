@@ -91,8 +91,15 @@ Alert: PASS: AFSpecial_Keystroke(65, 66) threw AFSpecial_Keystroke: Incorrect nu
 Alert: PASS: AFSpecial_Keystroke(65) = abc
 Alert: **********************
 Alert: PASS: AFSpecial_KeystrokeEx() threw AFSpecial_KeystrokeEx: Incorrect number of parameters passed to function.
+Alert: PASS: AFSpecial_KeystrokeEx('') = 12345
 [icon=3,type=0]: The input value is invalid.
-Alert: PASS: AFSpecial_KeystrokeEx('999999') = 12
+Alert: PASS: AFSpecial_KeystrokeEx('9999') = 123
+[icon=3,type=0]: The input value is too long.
+Alert: PASS: AFSpecial_KeystrokeEx('9999') = 12345
+[icon=3,type=0]: The input value is invalid.
+Alert: PASS: AFSpecial_KeystrokeEx('9999') = abcd
+Alert: PASS: AFSpecial_KeystrokeEx('9999') = 1234
+Alert: PASS: AFSpecial_KeystrokeEx('XXXX') = abcd
 Alert: **********************
 Alert: PASS: AFTime_Format() threw AFTime_Format: Incorrect number of parameters passed to function.
 Alert: PASS: AFTime_Format(1, 2) threw AFTime_Format: Incorrect number of parameters passed to function.
