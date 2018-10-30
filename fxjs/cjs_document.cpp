@@ -1002,7 +1002,7 @@ CJS_Result CJS_Document::get_document_file_name(CJS_Runtime* pRuntime) {
   if (i > 0 && i < wsFilePath.GetLength())
     return CJS_Result::Success(pRuntime->NewString(wsFilePath.c_str() + i));
 
-  return CJS_Result::Success(pRuntime->NewString(L""));
+  return CJS_Result::Success(pRuntime->NewString(""));
 }
 
 CJS_Result CJS_Document::set_document_file_name(CJS_Runtime* pRuntime,

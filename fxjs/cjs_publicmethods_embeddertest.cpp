@@ -193,9 +193,8 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   runtime.GetCurrentEventContext()->GetEventHandler()->m_pValue = &result;
 
   auto ary = runtime.NewArray();
-
-  runtime.PutArrayElement(ary, 0, runtime.NewString(L"Calc1_A"));
-  runtime.PutArrayElement(ary, 1, runtime.NewString(L"Calc1_B"));
+  runtime.PutArrayElement(ary, 0, runtime.NewString("Calc1_A"));
+  runtime.PutArrayElement(ary, 1, runtime.NewString("Calc1_B"));
 
   std::vector<v8::Local<v8::Value>> params;
   params.push_back(runtime.NewString("SUM"));
@@ -239,8 +238,8 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
   handler->SetSelEnd(0);
 
   std::vector<v8::Local<v8::Value>> params;
-  params.push_back(runtime.NewString(L"-10"));
-  params.push_back(runtime.NewString(L""));
+  params.push_back(runtime.NewString("-10"));
+  params.push_back(runtime.NewString(""));
 
   CJS_Result ret = CJS_PublicMethods::AFNumber_Keystroke(&runtime, params);
   EXPECT_TRUE(valid);

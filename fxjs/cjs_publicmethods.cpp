@@ -965,7 +965,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (CJS_Field* fTarget = pEvent->Target_Field()) {
         v8::Local<v8::Array> arColor = pRuntime->NewArray();
-        pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString(L"RGB"));
+        pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString("RGB"));
         pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(1));
         pRuntime->PutArrayElement(arColor, 2, pRuntime->NewNumber(0));
         pRuntime->PutArrayElement(arColor, 3, pRuntime->NewNumber(0));
@@ -976,7 +976,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (CJS_Field* fTarget = pEvent->Target_Field()) {
         v8::Local<v8::Array> arColor = pRuntime->NewArray();
-        pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString(L"RGB"));
+        pRuntime->PutArrayElement(arColor, 0, pRuntime->NewString("RGB"));
         pRuntime->PutArrayElement(arColor, 1, pRuntime->NewNumber(0));
         pRuntime->PutArrayElement(arColor, 2, pRuntime->NewNumber(0));
         pRuntime->PutArrayElement(arColor, 3, pRuntime->NewNumber(0));

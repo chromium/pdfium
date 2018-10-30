@@ -56,23 +56,23 @@ v8::Local<v8::Array> CJS_Color::ConvertPWLColorToArray(CJS_Runtime* pRuntime,
   switch (color.nColorType) {
     case CFX_Color::kTransparent:
       array = pRuntime->NewArray();
-      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"T"));
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString("T"));
       break;
     case CFX_Color::kGray:
       array = pRuntime->NewArray();
-      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"G"));
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString("G"));
       pRuntime->PutArrayElement(array, 1, pRuntime->NewNumber(color.fColor1));
       break;
     case CFX_Color::kRGB:
       array = pRuntime->NewArray();
-      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"RGB"));
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString("RGB"));
       pRuntime->PutArrayElement(array, 1, pRuntime->NewNumber(color.fColor1));
       pRuntime->PutArrayElement(array, 2, pRuntime->NewNumber(color.fColor2));
       pRuntime->PutArrayElement(array, 3, pRuntime->NewNumber(color.fColor3));
       break;
     case CFX_Color::kCMYK:
       array = pRuntime->NewArray();
-      pRuntime->PutArrayElement(array, 0, pRuntime->NewString(L"CMYK"));
+      pRuntime->PutArrayElement(array, 0, pRuntime->NewString("CMYK"));
       pRuntime->PutArrayElement(array, 1, pRuntime->NewNumber(color.fColor1));
       pRuntime->PutArrayElement(array, 2, pRuntime->NewNumber(color.fColor2));
       pRuntime->PutArrayElement(array, 3, pRuntime->NewNumber(color.fColor3));

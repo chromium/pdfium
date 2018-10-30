@@ -118,7 +118,7 @@ TEST_F(FXV8UnitTest, NewString) {
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(v8::Context::New(isolate()));
 
-  auto str = cfx_v8()->NewString(L"123");
+  auto str = cfx_v8()->NewString("123");
   EXPECT_TRUE(cfx_v8()->ToBoolean(str));
   EXPECT_EQ(123, cfx_v8()->ToInt32(str));
   EXPECT_EQ(123, cfx_v8()->ToDouble(str));
@@ -126,6 +126,15 @@ TEST_F(FXV8UnitTest, NewString) {
   EXPECT_EQ(L"123", cfx_v8()->ToWideString(str));
   EXPECT_TRUE(cfx_v8()->ToObject(str).IsEmpty());
   EXPECT_TRUE(cfx_v8()->ToArray(str).IsEmpty());
+
+  auto str2 = cfx_v8()->NewString(L"123");
+  EXPECT_TRUE(cfx_v8()->ToBoolean(str2));
+  EXPECT_EQ(123, cfx_v8()->ToInt32(str2));
+  EXPECT_EQ(123, cfx_v8()->ToDouble(str2));
+  EXPECT_EQ("123", cfx_v8()->ToByteString(str2));
+  EXPECT_EQ(L"123", cfx_v8()->ToWideString(str2));
+  EXPECT_TRUE(cfx_v8()->ToObject(str2).IsEmpty());
+  EXPECT_TRUE(cfx_v8()->ToArray(str2).IsEmpty());
 }
 
 TEST_F(FXV8UnitTest, NewDate) {
