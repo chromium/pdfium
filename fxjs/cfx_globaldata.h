@@ -4,36 +4,36 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJS_GLOBALDATA_H_
-#define FXJS_CJS_GLOBALDATA_H_
+#ifndef FXJS_CFX_GLOBALDATA_H_
+#define FXJS_CFX_GLOBALDATA_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/cfx_binarybuf.h"
-#include "fxjs/cjs_keyvalue.h"
+#include "fxjs/cfx_keyvalue.h"
 
 class CPDFSDK_FormFillEnvironment;
 
-class CJS_GlobalData {
+class CFX_GlobalData {
  public:
   class Element {
    public:
     Element();
     ~Element();
 
-    CJS_KeyValue data;
+    CFX_KeyValue data;
     bool bPersistent;
   };
 
-  static CJS_GlobalData* GetRetainedInstance(CPDFSDK_FormFillEnvironment* pApp);
+  static CFX_GlobalData* GetRetainedInstance(CPDFSDK_FormFillEnvironment* pApp);
   void Release();
 
   void SetGlobalVariableNumber(ByteString propname, double dData);
   void SetGlobalVariableBoolean(ByteString propname, bool bData);
   void SetGlobalVariableString(ByteString propname, const ByteString& sData);
   void SetGlobalVariableObject(ByteString propname,
-                               const CJS_GlobalVariableArray& array);
+                               const CFX_GlobalArray& array);
   void SetGlobalVariableNull(ByteString propname);
   bool SetGlobalVariablePersistent(ByteString propname, bool bPersistent);
   bool DeleteGlobalVariable(ByteString propname);
@@ -45,8 +45,8 @@ class CJS_GlobalData {
   using iterator = std::vector<std::unique_ptr<Element>>::iterator;
   using const_iterator = std::vector<std::unique_ptr<Element>>::const_iterator;
 
-  CJS_GlobalData();
-  ~CJS_GlobalData();
+  CFX_GlobalData();
+  ~CFX_GlobalData();
 
   void LoadGlobalPersistentVariables();
   void SaveGlobalPersisitentVariables();
@@ -62,7 +62,7 @@ class CJS_GlobalData {
                        const char* pBuffer,
                        int32_t nLength);
   void MakeByteString(const ByteString& name,
-                      CJS_KeyValue* pData,
+                      CFX_KeyValue* pData,
                       CFX_BinaryBuf& sData);
 
   size_t m_RefCount = 0;
@@ -70,4 +70,4 @@ class CJS_GlobalData {
   WideString m_sFilePath;
 };
 
-#endif  // FXJS_CJS_GLOBALDATA_H_
+#endif  // FXJS_CFX_GLOBALDATA_H_

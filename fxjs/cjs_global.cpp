@@ -12,10 +12,10 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
+#include "fxjs/cfx_globaldata.h"
+#include "fxjs/cfx_keyvalue.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_eventhandler.h"
-#include "fxjs/cjs_globaldata.h"
-#include "fxjs/cjs_keyvalue.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
@@ -220,7 +220,7 @@ CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
     : CJS_Object(pObject, pRuntime) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = GetRuntime()->GetFormFillEnv();
   m_pFormFillEnv.Reset(pFormFillEnv);
-  m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pFormFillEnv);
+  m_pGlobalData = CFX_GlobalData::GetRetainedInstance(pFormFillEnv);
   UpdateGlobalPersistentVariables();
 }
 
@@ -328,7 +328,7 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
     return;
 
   for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
-    CJS_GlobalData::Element* pData = m_pGlobalData->GetAt(i);
+    CFX_GlobalData::Element* pData = m_pGlobalData->GetAt(i);
     switch (pData->data.nType) {
       case JS_GlobalDataType::NUMBER:
         SetGlobalVariables(pData->data.sKey, JS_GlobalDataType::NUMBER,
@@ -396,7 +396,7 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case JS_GlobalDataType::OBJECT: {
-        CJS_GlobalVariableArray array;
+        CFX_GlobalArray array;
         v8::Local<v8::Object> obj =
             v8::Local<v8::Object>::New(GetIsolate(), pData->pData);
         ObjectToArray(pRuntime, obj, &array);
@@ -413,13 +413,13 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
 
 void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
                                v8::Local<v8::Object> pObj,
-                               CJS_GlobalVariableArray* pArray) {
+                               CFX_GlobalArray* pArray) {
   std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
     ByteString sKey = ws.UTF8Encode();
     v8::Local<v8::Value> v = pRuntime->GetObjectProperty(pObj, ws);
     if (v->IsNumber()) {
-      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
+      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::NUMBER;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToDouble(v);
@@ -427,7 +427,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       continue;
     }
     if (v->IsBoolean()) {
-      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
+      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::BOOLEAN;
       pObjElement->sKey = sKey;
       pObjElement->dData = pRuntime->ToBoolean(v);
@@ -436,7 +436,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
     }
     if (v->IsString()) {
       ByteString sValue = pRuntime->ToWideString(v).ToDefANSI();
-      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
+      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::STRING;
       pObjElement->sKey = sKey;
       pObjElement->sData = sValue;
@@ -444,7 +444,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       continue;
     }
     if (v->IsObject()) {
-      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
+      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::OBJECT;
       pObjElement->sKey = sKey;
       ObjectToArray(pRuntime, pRuntime->ToObject(v), &pObjElement->objData);
@@ -452,7 +452,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
       continue;
     }
     if (v->IsNull()) {
-      auto pObjElement = pdfium::MakeUnique<CJS_KeyValue>();
+      auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();
       pObjElement->nType = JS_GlobalDataType::NULLOBJ;
       pObjElement->sKey = sKey;
       pArray->Add(std::move(pObjElement));
@@ -461,13 +461,13 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
 }
 
 void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
-                                   CJS_KeyValue* pData) {
+                                   CFX_KeyValue* pData) {
   CJS_Runtime* pRuntime = GetRuntime();
   if (pRuntime)
     return;
 
   for (int i = 0, sz = pData->objData.Count(); i < sz; i++) {
-    CJS_KeyValue* pObjData = pData->objData.GetAt(i);
+    CFX_KeyValue* pObjData = pData->objData.GetAt(i);
     switch (pObjData->nType) {
       case JS_GlobalDataType::NUMBER:
         pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),

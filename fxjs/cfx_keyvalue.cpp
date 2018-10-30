@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cjs_keyvalue.h"
+#include "fxjs/cfx_keyvalue.h"
 
-CJS_KeyValue::CJS_KeyValue() {}
+CFX_KeyValue::CFX_KeyValue() = default;
 
-CJS_KeyValue::~CJS_KeyValue() {}
+CFX_KeyValue::~CFX_KeyValue() = default;

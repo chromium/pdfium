@@ -4,25 +4,25 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJS_CJS_KEYVALUE_H_
-#define FXJS_CJS_KEYVALUE_H_
+#ifndef FXJS_CFX_KEYVALUE_H_
+#define FXJS_CFX_KEYVALUE_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "fxjs/cjs_globalvariablearray.h"
+#include "fxjs/cfx_globalarray.h"
 
 enum class JS_GlobalDataType { NUMBER = 0, BOOLEAN, STRING, OBJECT, NULLOBJ };
 
-class CJS_KeyValue {
+class CFX_KeyValue {
  public:
-  CJS_KeyValue();
-  ~CJS_KeyValue();
+  CFX_KeyValue();
+  ~CFX_KeyValue();
 
   ByteString sKey;
   JS_GlobalDataType nType;
   double dData;
   bool bData;
   ByteString sData;
-  CJS_GlobalVariableArray objData;
+  CFX_GlobalArray objData;
 };
 
-#endif  // FXJS_CJS_KEYVALUE_H_
+#endif  // FXJS_CFX_KEYVALUE_H_

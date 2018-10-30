@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
+#include "fxjs/cfx_globaldata.h"
 #include "fxjs/cjs_annot.h"
 #include "fxjs/cjs_app.h"
 #include "fxjs/cjs_border.h"
@@ -24,7 +25,6 @@
 #include "fxjs/cjs_global.h"
 #include "fxjs/cjs_globalarrays.h"
 #include "fxjs/cjs_globalconsts.h"
-#include "fxjs/cjs_globaldata.h"
 #include "fxjs/cjs_highlight.h"
 #include "fxjs/cjs_icon.h"
 #include "fxjs/cjs_object.h"

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxjs/cjs_globaldata.h"
+#include "fxjs/cfx_globaldata.h"
 
 #include <utility>
 
@@ -34,36 +34,36 @@ bool TrimPropName(ByteString* sPropName) {
   return sPropName->GetLength() != 0;
 }
 
-CJS_GlobalData* g_pInstance = nullptr;
+CFX_GlobalData* g_pInstance = nullptr;
 
 }  // namespace
 
 // static
-CJS_GlobalData* CJS_GlobalData::GetRetainedInstance(
+CFX_GlobalData* CFX_GlobalData::GetRetainedInstance(
     CPDFSDK_FormFillEnvironment* pApp) {
   if (!g_pInstance) {
-    g_pInstance = new CJS_GlobalData();
+    g_pInstance = new CFX_GlobalData();
   }
   ++g_pInstance->m_RefCount;
   return g_pInstance;
 }
 
-void CJS_GlobalData::Release() {
+void CFX_GlobalData::Release() {
   if (!--m_RefCount) {
     delete g_pInstance;
     g_pInstance = nullptr;
   }
 }
 
-CJS_GlobalData::CJS_GlobalData() : m_sFilePath(SDK_JS_GLOBALDATA_FILENAME) {
+CFX_GlobalData::CFX_GlobalData() : m_sFilePath(SDK_JS_GLOBALDATA_FILENAME) {
   LoadGlobalPersistentVariables();
 }
 
-CJS_GlobalData::~CJS_GlobalData() {
+CFX_GlobalData::~CFX_GlobalData() {
   SaveGlobalPersisitentVariables();
 }
 
-CJS_GlobalData::iterator CJS_GlobalData::FindGlobalVariable(
+CFX_GlobalData::iterator CFX_GlobalData::FindGlobalVariable(
     const ByteString& propname) {
   for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
        ++it) {
@@ -73,7 +73,7 @@ CJS_GlobalData::iterator CJS_GlobalData::FindGlobalVariable(
   return m_arrayGlobalData.end();
 }
 
-CJS_GlobalData::const_iterator CJS_GlobalData::FindGlobalVariable(
+CFX_GlobalData::const_iterator CFX_GlobalData::FindGlobalVariable(
     const ByteString& propname) const {
   for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
        ++it) {
@@ -83,106 +83,105 @@ CJS_GlobalData::const_iterator CJS_GlobalData::FindGlobalVariable(
   return m_arrayGlobalData.end();
 }
 
-CJS_GlobalData::Element* CJS_GlobalData::GetGlobalVariable(
+CFX_GlobalData::Element* CFX_GlobalData::GetGlobalVariable(
     const ByteString& propname) {
   auto iter = FindGlobalVariable(propname);
   return iter != m_arrayGlobalData.end() ? iter->get() : nullptr;
 }
 
-void CJS_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
+void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
                                              double dData) {
   if (!TrimPropName(&sPropName))
     return;
 
-  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
     pData->data.nType = JS_GlobalDataType::NUMBER;
     pData->data.dData = dData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
+  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::NUMBER;
   pNewData->data.dData = dData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
+void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
                                               bool bData) {
   if (!TrimPropName(&sPropName))
     return;
 
-  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
     pData->data.nType = JS_GlobalDataType::BOOLEAN;
     pData->data.bData = bData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
+  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::BOOLEAN;
   pNewData->data.bData = bData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableString(ByteString sPropName,
+void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
                                              const ByteString& sData) {
   if (!TrimPropName(&sPropName))
     return;
 
-  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
     pData->data.nType = JS_GlobalDataType::STRING;
     pData->data.sData = sData;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
+  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::STRING;
   pNewData->data.sData = sData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableObject(
-    ByteString sPropName,
-    const CJS_GlobalVariableArray& array) {
+void CFX_GlobalData::SetGlobalVariableObject(ByteString sPropName,
+                                             const CFX_GlobalArray& array) {
   if (!TrimPropName(&sPropName))
     return;
 
-  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
     pData->data.nType = JS_GlobalDataType::OBJECT;
     pData->data.objData = array;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
+  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::OBJECT;
   pNewData->data.objData = array;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-void CJS_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
+void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
   if (!TrimPropName(&sPropName))
     return;
 
-  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
     pData->data.nType = JS_GlobalDataType::NULLOBJ;
     return;
   }
-  auto pNewData = pdfium::MakeUnique<CJS_GlobalData::Element>();
+  auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = JS_GlobalDataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
-bool CJS_GlobalData::SetGlobalVariablePersistent(ByteString sPropName,
+bool CFX_GlobalData::SetGlobalVariablePersistent(ByteString sPropName,
                                                  bool bPersistent) {
   if (!TrimPropName(&sPropName))
     return false;
 
-  CJS_GlobalData::Element* pData = GetGlobalVariable(sPropName);
+  CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (!pData)
     return false;
 
@@ -190,7 +189,7 @@ bool CJS_GlobalData::SetGlobalVariablePersistent(ByteString sPropName,
   return true;
 }
 
-bool CJS_GlobalData::DeleteGlobalVariable(ByteString sPropName) {
+bool CFX_GlobalData::DeleteGlobalVariable(ByteString sPropName) {
   if (!TrimPropName(&sPropName))
     return false;
 
@@ -202,17 +201,17 @@ bool CJS_GlobalData::DeleteGlobalVariable(ByteString sPropName) {
   return true;
 }
 
-int32_t CJS_GlobalData::GetSize() const {
+int32_t CFX_GlobalData::GetSize() const {
   return pdfium::CollectionSize<int32_t>(m_arrayGlobalData);
 }
 
-CJS_GlobalData::Element* CJS_GlobalData::GetAt(int index) const {
+CFX_GlobalData::Element* CFX_GlobalData::GetAt(int index) const {
   if (index < 0 || index >= GetSize())
     return nullptr;
   return m_arrayGlobalData[index].get();
 }
 
-void CJS_GlobalData::LoadGlobalPersistentVariables() {
+void CFX_GlobalData::LoadGlobalPersistentVariables() {
   uint8_t* pBuffer = nullptr;
   int32_t nLength = 0;
 
@@ -302,7 +301,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
   }
 }
 
-void CJS_GlobalData::SaveGlobalPersisitentVariables() {
+void CFX_GlobalData::SaveGlobalPersisitentVariables() {
   uint32_t nCount = 0;
   CFX_BinaryBuf sData;
   for (const auto& pElement : m_arrayGlobalData) {
@@ -334,20 +333,20 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables() {
                   reinterpret_cast<char*>(sFile.GetBuffer()), sFile.GetSize());
 }
 
-void CJS_GlobalData::LoadFileBuffer(const wchar_t* sFilePath,
+void CFX_GlobalData::LoadFileBuffer(const wchar_t* sFilePath,
                                     uint8_t*& pBuffer,
                                     int32_t& nLength) {
   // UnSupport.
 }
 
-void CJS_GlobalData::WriteFileBuffer(const wchar_t* sFilePath,
+void CFX_GlobalData::WriteFileBuffer(const wchar_t* sFilePath,
                                      const char* pBuffer,
                                      int32_t nLength) {
   // UnSupport.
 }
 
-void CJS_GlobalData::MakeByteString(const ByteString& name,
-                                    CJS_KeyValue* pData,
+void CFX_GlobalData::MakeByteString(const ByteString& name,
+                                    CFX_KeyValue* pData,
                                     CFX_BinaryBuf& sData) {
   switch (pData->nType) {
     case JS_GlobalDataType::NUMBER: {
@@ -389,6 +388,6 @@ void CJS_GlobalData::MakeByteString(const ByteString& name,
   }
 }
 
-CJS_GlobalData::Element::Element() = default;
+CFX_GlobalData::Element::Element() = default;
 
-CJS_GlobalData::Element::~Element() = default;
+CFX_GlobalData::Element::~Element() = default;
