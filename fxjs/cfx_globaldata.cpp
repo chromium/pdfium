@@ -12,12 +12,12 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-#define JS_MAXGLOBALDATA (1024 * 4 - 8)
-#define SDK_JS_GLOBALDATA_FILENAME L"SDK_JsGlobal.Data"
-
 namespace {
 
-const uint8_t JS_RC4KEY[] = {
+constexpr size_t kMaxGlobalDataBytes = 4 * 1024 - 8;
+constexpr wchar_t kGlobalDataFileName[] = L"SDK_JsGlobal.Data";
+
+const uint8_t kRC4KEY[] = {
     0x19, 0xa8, 0xe8, 0x01, 0xf6, 0xa8, 0xb6, 0x4d, 0x82, 0x04, 0x45, 0x6d,
     0xb4, 0xcf, 0xd7, 0x77, 0x67, 0xf9, 0x75, 0x9f, 0xf0, 0xe0, 0x1e, 0x51,
     0xee, 0x46, 0xfd, 0x0b, 0xc9, 0x93, 0x25, 0x55, 0x4a, 0xee, 0xe0, 0x16,
@@ -55,7 +55,7 @@ void CFX_GlobalData::Release() {
   }
 }
 
-CFX_GlobalData::CFX_GlobalData() : m_sFilePath(SDK_JS_GLOBALDATA_FILENAME) {
+CFX_GlobalData::CFX_GlobalData() : m_sFilePath(kGlobalDataFileName) {
   LoadGlobalPersistentVariables();
 }
 
@@ -96,13 +96,13 @@ void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = JS_GlobalDataType::NUMBER;
+    pData->data.nType = CFX_KeyValue::DataType::NUMBER;
     pData->data.dData = dData;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = JS_GlobalDataType::NUMBER;
+  pNewData->data.nType = CFX_KeyValue::DataType::NUMBER;
   pNewData->data.dData = dData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -114,13 +114,13 @@ void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = JS_GlobalDataType::BOOLEAN;
+    pData->data.nType = CFX_KeyValue::DataType::BOOLEAN;
     pData->data.bData = bData;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = JS_GlobalDataType::BOOLEAN;
+  pNewData->data.nType = CFX_KeyValue::DataType::BOOLEAN;
   pNewData->data.bData = bData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -132,13 +132,13 @@ void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = JS_GlobalDataType::STRING;
+    pData->data.nType = CFX_KeyValue::DataType::STRING;
     pData->data.sData = sData;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = JS_GlobalDataType::STRING;
+  pNewData->data.nType = CFX_KeyValue::DataType::STRING;
   pNewData->data.sData = sData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -150,13 +150,13 @@ void CFX_GlobalData::SetGlobalVariableObject(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = JS_GlobalDataType::OBJECT;
+    pData->data.nType = CFX_KeyValue::DataType::OBJECT;
     pData->data.objData = array;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = JS_GlobalDataType::OBJECT;
+  pNewData->data.nType = CFX_KeyValue::DataType::OBJECT;
   pNewData->data.objData = array;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -167,12 +167,12 @@ void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = JS_GlobalDataType::NULLOBJ;
+    pData->data.nType = CFX_KeyValue::DataType::NULLOBJ;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = JS_GlobalDataType::NULLOBJ;
+  pNewData->data.nType = CFX_KeyValue::DataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
@@ -216,7 +216,7 @@ void CFX_GlobalData::LoadGlobalPersistentVariables() {
   int32_t nLength = 0;
 
   LoadFileBuffer(m_sFilePath.c_str(), pBuffer, nLength);
-  CRYPT_ArcFourCryptBlock(pBuffer, nLength, JS_RC4KEY, sizeof(JS_RC4KEY));
+  CRYPT_ArcFourCryptBlock(pBuffer, nLength, kRC4KEY, sizeof(kRC4KEY));
 
   if (pBuffer) {
     uint8_t* p = pBuffer;
@@ -249,12 +249,12 @@ void CFX_GlobalData::LoadGlobalPersistentVariables() {
           ByteString sEntry = ByteString(p, dwNameLen);
           p += sizeof(char) * dwNameLen;
 
-          JS_GlobalDataType wDataType =
-              static_cast<JS_GlobalDataType>(*((uint16_t*)p));
+          CFX_KeyValue::DataType wDataType =
+              static_cast<CFX_KeyValue::DataType>(*((uint16_t*)p));
           p += sizeof(uint16_t);
 
           switch (wDataType) {
-            case JS_GlobalDataType::NUMBER: {
+            case CFX_KeyValue::DataType::NUMBER: {
               double dData = 0;
               switch (wVersion) {
                 case 1: {
@@ -270,13 +270,13 @@ void CFX_GlobalData::LoadGlobalPersistentVariables() {
               SetGlobalVariableNumber(sEntry, dData);
               SetGlobalVariablePersistent(sEntry, true);
             } break;
-            case JS_GlobalDataType::BOOLEAN: {
+            case CFX_KeyValue::DataType::BOOLEAN: {
               uint16_t wData = *((uint16_t*)p);
               p += sizeof(uint16_t);
               SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
               SetGlobalVariablePersistent(sEntry, true);
             } break;
-            case JS_GlobalDataType::STRING: {
+            case CFX_KeyValue::DataType::STRING: {
               uint32_t dwLength = *((uint32_t*)p);
               p += sizeof(uint32_t);
 
@@ -287,11 +287,11 @@ void CFX_GlobalData::LoadGlobalPersistentVariables() {
               SetGlobalVariablePersistent(sEntry, true);
               p += sizeof(char) * dwLength;
             } break;
-            case JS_GlobalDataType::NULLOBJ: {
+            case CFX_KeyValue::DataType::NULLOBJ: {
               SetGlobalVariableNull(sEntry);
               SetGlobalVariablePersistent(sEntry, true);
             } break;
-            case JS_GlobalDataType::OBJECT:
+            case CFX_KeyValue::DataType::OBJECT:
               break;
           }
         }
@@ -308,7 +308,7 @@ void CFX_GlobalData::SaveGlobalPersisitentVariables() {
     if (pElement->bPersistent) {
       CFX_BinaryBuf sElement;
       MakeByteString(pElement->data.sKey, &pElement->data, sElement);
-      if (sData.GetSize() + sElement.GetSize() > JS_MAXGLOBALDATA)
+      if (sData.GetSize() + sElement.GetSize() > kMaxGlobalDataBytes)
         break;
 
       sData.AppendBlock(sElement.GetBuffer(), sElement.GetSize());
@@ -327,8 +327,8 @@ void CFX_GlobalData::SaveGlobalPersisitentVariables() {
 
   sFile.AppendBlock(sData.GetBuffer(), sData.GetSize());
 
-  CRYPT_ArcFourCryptBlock(sFile.GetBuffer(), sFile.GetSize(), JS_RC4KEY,
-                          sizeof(JS_RC4KEY));
+  CRYPT_ArcFourCryptBlock(sFile.GetBuffer(), sFile.GetSize(), kRC4KEY,
+                          sizeof(kRC4KEY));
   WriteFileBuffer(m_sFilePath.c_str(),
                   reinterpret_cast<char*>(sFile.GetBuffer()), sFile.GetSize());
 }
@@ -349,7 +349,7 @@ void CFX_GlobalData::MakeByteString(const ByteString& name,
                                     CFX_KeyValue* pData,
                                     CFX_BinaryBuf& sData) {
   switch (pData->nType) {
-    case JS_GlobalDataType::NUMBER: {
+    case CFX_KeyValue::DataType::NUMBER: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
@@ -358,7 +358,7 @@ void CFX_GlobalData::MakeByteString(const ByteString& name,
       double dData = pData->dData;
       sData.AppendBlock(&dData, sizeof(double));
     } break;
-    case JS_GlobalDataType::BOOLEAN: {
+    case CFX_KeyValue::DataType::BOOLEAN: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
@@ -367,7 +367,7 @@ void CFX_GlobalData::MakeByteString(const ByteString& name,
       uint16_t wData = (uint16_t)pData->bData;
       sData.AppendBlock(&wData, sizeof(uint16_t));
     } break;
-    case JS_GlobalDataType::STRING: {
+    case CFX_KeyValue::DataType::STRING: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
@@ -377,7 +377,7 @@ void CFX_GlobalData::MakeByteString(const ByteString& name,
       sData.AppendBlock(&dwDataLen, sizeof(uint32_t));
       sData.AppendString(pData->sData);
     } break;
-    case JS_GlobalDataType::NULLOBJ: {
+    case CFX_KeyValue::DataType::NULLOBJ: {
       uint32_t dwNameLen = (uint32_t)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);

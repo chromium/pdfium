@@ -20,38 +20,38 @@ CFX_GlobalArray& CFX_GlobalArray::operator=(const CFX_GlobalArray& that) {
     return *this;
 
   m_Array.clear();
-  for (int i = 0, sz = that.Count(); i < sz; i++) {
+  for (size_t i = 0, sz = that.Count(); i < sz; i++) {
     CFX_KeyValue* pOldObjData = that.GetAt(i);
     switch (pOldObjData->nType) {
-      case JS_GlobalDataType::NUMBER: {
+      case CFX_KeyValue::DataType::NUMBER: {
         auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->dData = pOldObjData->dData;
         Add(std::move(pNewObjData));
       } break;
-      case JS_GlobalDataType::BOOLEAN: {
+      case CFX_KeyValue::DataType::BOOLEAN: {
         auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->bData = pOldObjData->bData;
         Add(std::move(pNewObjData));
       } break;
-      case JS_GlobalDataType::STRING: {
+      case CFX_KeyValue::DataType::STRING: {
         auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->sData = pOldObjData->sData;
         Add(std::move(pNewObjData));
       } break;
-      case JS_GlobalDataType::OBJECT: {
+      case CFX_KeyValue::DataType::OBJECT: {
         auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->objData = pOldObjData->objData;
         Add(std::move(pNewObjData));
       } break;
-      case JS_GlobalDataType::NULLOBJ: {
+      case CFX_KeyValue::DataType::NULLOBJ: {
         auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
@@ -66,7 +66,7 @@ void CFX_GlobalArray::Add(std::unique_ptr<CFX_KeyValue> pKeyValue) {
   m_Array.push_back(std::move(pKeyValue));
 }
 
-int CFX_GlobalArray::Count() const {
+size_t CFX_GlobalArray::Count() const {
   return m_Array.size();
 }
 

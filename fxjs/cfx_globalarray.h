@@ -20,7 +20,7 @@ class CFX_GlobalArray {
   CFX_GlobalArray& operator=(const CFX_GlobalArray& array);
 
   void Add(std::unique_ptr<CFX_KeyValue> pKeyValue);
-  int Count() const;
+  size_t Count() const;
   CFX_KeyValue* GetAt(int index) const;
 
  private:

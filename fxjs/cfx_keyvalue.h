@@ -10,17 +10,23 @@
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cfx_globalarray.h"
 
-enum class JS_GlobalDataType { NUMBER = 0, BOOLEAN, STRING, OBJECT, NULLOBJ };
-
 class CFX_KeyValue {
  public:
+  enum class DataType : uint8_t {
+    NUMBER = 0,
+    BOOLEAN,
+    STRING,
+    OBJECT,
+    NULLOBJ
+  };
+
   CFX_KeyValue();
   ~CFX_KeyValue();
 
   ByteString sKey;
-  JS_GlobalDataType nType;
-  double dData;
+  CFX_KeyValue::DataType nType;
   bool bData;
+  double dData;
   ByteString sData;
   CFX_GlobalArray objData;
 };

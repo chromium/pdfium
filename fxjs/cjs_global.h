@@ -55,7 +55,7 @@ class CJS_Global final : public CJS_Object {
     JSGlobalData();
     ~JSGlobalData();
 
-    JS_GlobalDataType nType;
+    CFX_KeyValue::DataType nType;
     double dData;
     bool bData;
     ByteString sData;
@@ -71,7 +71,7 @@ class CJS_Global final : public CJS_Object {
   void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
   void DestroyGlobalPersisitentVariables();
   CJS_Result SetGlobalVariables(const ByteString& propname,
-                                JS_GlobalDataType nType,
+                                CFX_KeyValue::DataType nType,
                                 double dData,
                                 bool bData,
                                 const ByteString& sData,
