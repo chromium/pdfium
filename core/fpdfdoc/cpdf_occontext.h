@@ -24,8 +24,8 @@ class CPDF_OCContext final : public Retainable {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  bool CheckOCGVisible(const CPDF_Dictionary* pOCGDict);
-  bool CheckObjectVisible(const CPDF_PageObject* pObj);
+  bool CheckOCGVisible(const CPDF_Dictionary* pOCGDict) const;
+  bool CheckObjectVisible(const CPDF_PageObject* pObj) const;
 
  private:
   CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);
@@ -34,13 +34,13 @@ class CPDF_OCContext final : public Retainable {
   bool LoadOCGStateFromConfig(const ByteString& csConfig,
                               const CPDF_Dictionary* pOCGDict) const;
   bool LoadOCGState(const CPDF_Dictionary* pOCGDict) const;
-  bool GetOCGVisible(const CPDF_Dictionary* pOCGDict);
-  bool GetOCGVE(const CPDF_Array* pExpression, int nLevel);
-  bool LoadOCMDState(const CPDF_Dictionary* pOCMDDict);
+  bool GetOCGVisible(const CPDF_Dictionary* pOCGDict) const;
+  bool GetOCGVE(const CPDF_Array* pExpression, int nLevel) const;
+  bool LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const;
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   const UsageType m_eUsageType;
-  std::map<const CPDF_Dictionary*, bool> m_OCGStates;
+  mutable std::map<const CPDF_Dictionary*, bool> m_OGCStateCache;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_OCCONTEXT_H_

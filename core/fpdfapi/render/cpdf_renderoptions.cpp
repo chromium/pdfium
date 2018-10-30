@@ -6,20 +6,17 @@
 
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 
-CPDF_RenderOptions::CPDF_RenderOptions()
-    : m_ColorMode(kNormal),
-      m_Flags(RENDER_CLEARTYPE),
-      m_dwLimitCacheSize(1024 * 1024 * 100),
-      m_bDrawAnnots(false) {}
+namespace {
 
-CPDF_RenderOptions::CPDF_RenderOptions(const CPDF_RenderOptions& rhs)
-    : m_ColorMode(rhs.m_ColorMode),
-      m_Flags(rhs.m_Flags),
-      m_dwLimitCacheSize(rhs.m_dwLimitCacheSize),
-      m_bDrawAnnots(rhs.m_bDrawAnnots),
-      m_pOCContext(rhs.m_pOCContext) {}
+constexpr uint32_t kCacheSizeLimitBytes = 100 * 1024 * 1024;
 
-CPDF_RenderOptions::~CPDF_RenderOptions() {}
+}  // namespace
+
+CPDF_RenderOptions::CPDF_RenderOptions() = default;
+
+CPDF_RenderOptions::CPDF_RenderOptions(const CPDF_RenderOptions& rhs) = default;
+
+CPDF_RenderOptions::~CPDF_RenderOptions() = default;
 
 FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
   if (ColorModeIs(kNormal))
@@ -34,4 +31,8 @@ FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
   std::tie(a, r, g, b) = ArgbDecode(argb);
   int gray = FXRGB2GRAY(r, g, b);
   return ArgbEncode(a, gray, gray, gray);
+}
+
+uint32_t CPDF_RenderOptions::GetCacheSizeLimit() const {
+  return kCacheSizeLimitBytes;
 }

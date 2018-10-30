@@ -168,20 +168,20 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
   return LoadOCGStateFromConfig(csState, pOCGDict);
 }
 
-bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) {
+bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) const {
   if (!pOCGDict)
     return false;
 
-  const auto it = m_OCGStates.find(pOCGDict);
-  if (it != m_OCGStates.end())
+  const auto it = m_OGCStateCache.find(pOCGDict);
+  if (it != m_OGCStateCache.end())
     return it->second;
 
   bool bState = LoadOCGState(pOCGDict);
-  m_OCGStates[pOCGDict] = bState;
+  m_OGCStateCache[pOCGDict] = bState;
   return bState;
 }
 
-bool CPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
+bool CPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) const {
   for (size_t i = 0; i < pObj->m_ContentMarks.CountItems(); ++i) {
     const CPDF_ContentMarkItem* item = pObj->m_ContentMarks.GetItem(i);
     if (item->GetName() == "OC" &&
@@ -193,7 +193,7 @@ bool CPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
   return true;
 }
 
-bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) {
+bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
   if (nLevel > 32 || !pExpression)
     return false;
 
@@ -237,7 +237,7 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) {
   return bValue;
 }
 
-bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) {
+bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
   const CPDF_Array* pVE = pOCMDDict->GetArrayFor("VE");
   if (pVE)
     return GetOCGVE(pVE, 0);
@@ -276,7 +276,7 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) {
   return !bValidEntrySeen || bState;
 }
 
-bool CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary* pOCGDict) {
+bool CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary* pOCGDict) const {
   if (!pOCGDict)
     return true;
 
