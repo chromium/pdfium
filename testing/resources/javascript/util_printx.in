@@ -44,6 +44,19 @@ function TestOneFormat(fmt, src) {
     app.alert(title + ": Caught error: " + e);
   }
 }
+
+// Error cases
+try {
+  util.printx();
+} catch (e) {
+  app.alert('PASS: ' + e);
+}
+try {
+  util.printx("99");
+} catch (e) {
+  app.alert('PASS: ' + e);
+}
+
 TestOneFormat("", "");
 TestOneFormat("", "123");
 TestOneFormat("??", "");

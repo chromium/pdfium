@@ -34,7 +34,7 @@ WideString JSGetStringFromID(JSMessage msg) {
     case JSMessage::kSecondParamNotDateError:
       return L"The second parameter can't be converted to a Date.";
     case JSMessage::kSecondParamInvalidDateError:
-      return L"The second parameter is an invalid Date!";
+      return L"The second parameter is an invalid Date.";
     case JSMessage::kGlobalNotFoundError:
       return L"Global value not found.";
     case JSMessage::kReadOnlyError:

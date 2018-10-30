@@ -51,6 +51,24 @@ function TestOneXFAFormat(str, d, flag) {
     app.alert(str + ": Caught error: " + e);
   }
 }
+
+// Invalid arguments.
+try {
+  util.printd();
+} catch (e) {
+  app.alert('PASS: ' + e);
+}
+try {
+  util.printd('mm');
+} catch (e) {
+  app.alert('PASS: ' + e);
+}
+try {
+  util.printd('mm', new Date(undefined));
+} catch (e) {
+  app.alert('PASS: ' + e);
+}
+
 // July 4th, 2014 11:59:59 AM local time.
 var d1 = new Date(2014, 06, 04, 15, 59, 58);
 TestOneFormat("mm/dd/yyyy HH:MM:ss", d1);
