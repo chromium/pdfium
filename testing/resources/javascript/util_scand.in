@@ -1,0 +1,77 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OpenAction 10 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [
+    3 0 R
+  ]
+>>
+endobj
+% Page number 0.
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+>>
+endobj
+% OpenAction action
+{{object 10 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS 11 0 R
+>>
+endobj
+% JS program to exexute
+{{object 11 0}} <<
+  {{streamlen}}
+>>
+stream
+function expect(str, expected) {
+  try {
+    var result = eval(str);
+    if (result == expected) {
+      app.alert('PASS: ' + str + ' = ' + result);
+    } else {
+      app.alert('FAIL: ' + str + ' = ' + result + ', expected = ' + expected);
+    }
+  } catch (e) {
+    app.alert('ERROR: ' + e.toString());
+  }
+}
+
+function expectError(str) {
+  try {
+    var result = eval(str);
+    app.alert('FAIL: ' + str + ' = ' + result + ', expected to throw error');
+  } catch (e) {
+    app.alert('PASS: ' + str + ' threw error ' + e.toString());
+  }
+}
+
+try {
+  const tuesday = "Tue, 20 Dec 2016 21:48:50 GMT";
+  const friday = "Fri, 09 May 2014 11:22:03 GMT";
+  expectError("util.scand()");
+  expectError("util.scand('12/20/2016')");
+  expect("util.scand('mm/dd/yyyy', '12/20/2016').toUTCString()", tuesday);
+  expect("util.scand('dd/mm/yyyy', '20/12/2016').toUTCString()", tuesday);
+  expect("util.scand('yyyy/mm/dd', '2016/12/20').toUTCString()", tuesday);
+  expect("util.scand('dd/mmm/yyyy', '20/Dec/2016').toUTCString()", tuesday);
+  expect("util.scand('..dd:-:mmm/yyyy', '**20/*/Dec.2016').toUTCString()", tuesday);
+  expect("util.scand('hh:MM:ss', '11:22:03').toUTCString()", friday);
+  expect("util.scand('s:MM:hh', '3:22:11').toUTCString()", friday);
+} catch (e) {
+  app.alert("Truly unexpected error: " + e);
+}
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

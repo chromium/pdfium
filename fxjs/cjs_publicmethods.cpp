@@ -402,7 +402,7 @@ WideString CJS_PublicMethods::ParseStringString(const WideString& str,
   swRet.Reserve(str.GetLength());
   for (size_t i = nStart; i < str.GetLength(); ++i) {
     wchar_t c = str[i];
-    if (!std::iswdigit(c))
+    if (!std::iswalnum(c))
       break;
 
     swRet += c;
