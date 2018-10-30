@@ -30,9 +30,11 @@ enum class JSMessage {
   kPermissionError,
   kBadObjectError,
   kObjectTypeError,
-  kTooManyOccurances,
   kUnknownProperty,
+#ifdef PDF_ENABLE_XFA
+  kTooManyOccurances,
   kUnknownMethod,
+#endif
 };
 
 WideString JSGetStringFromID(JSMessage msg);

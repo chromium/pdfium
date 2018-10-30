@@ -49,12 +49,14 @@ WideString JSGetStringFromID(JSMessage msg) {
       return L"Object no longer exists.";
     case JSMessage::kObjectTypeError:
       return L"Object is of the wrong type.";
-    case JSMessage::kTooManyOccurances:
-      return L"Too many occurances.";
     case JSMessage::kUnknownProperty:
       return L"Unknown property.";
+#ifdef PDF_ENABLE_XFA
+    case JSMessage::kTooManyOccurances:
+      return L"Too many occurances.";
     case JSMessage::kUnknownMethod:
       return L"Unknown method.";
+#endif
   }
   NOTREACHED();
   return L"";
