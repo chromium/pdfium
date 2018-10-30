@@ -70,7 +70,17 @@ Alert: PASS: AFPercent_Keystroke(1, 0) = .123
 Alert: **********************
 Alert: PASS: AFRange_Validate() threw AFRange_Validate: Incorrect number of parameters passed to function.
 Alert: PASS: AFRange_Validate(1, 2, 3, 4, 5) threw AFRange_Validate: Incorrect number of parameters passed to function.
-Alert: PASS: AFRange_Validate(true, 2, false, 4) = 3
+[icon=3,type=0]: The input value must be greater than or equal to 2 and less than or equal to 4.
+Alert: PASS: AFRange_Validate(true, 2, true, 4) = 1
+[icon=3,type=0]: The input value must be greater than or equal to 2 and less than or equal to 4.
+Alert: PASS: AFRange_Validate(true, 2, true, 4) = 5
+[icon=3,type=0]: The input value must be greater than or equal to 2.
+Alert: PASS: AFRange_Validate(true, 2, false, 4) = 1
+[icon=3,type=0]: The input value must be less than or equal to 4.
+Alert: PASS: AFRange_Validate(false, 2, true, 4) = 5
+Alert: PASS: AFRange_Validate(true, 2, true, 4) = 3
+Alert: PASS: AFRange_Validate(false, 2, true, 4) = 1
+Alert: PASS: AFRange_Validate(true, 2, false, 4) = 5
 Alert: **********************
 Alert: PASS: AFSimple() threw AFSimple: Incorrect number of parameters passed to function.
 Alert: PASS: AFSimple(1, 2, 3, 4) threw AFSimple: Incorrect number of parameters passed to function.

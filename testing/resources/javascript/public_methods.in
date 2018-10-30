@@ -186,7 +186,13 @@ endobj
 
       expectError(undefined, "AFRange_Validate()", undefined);
       expectError(undefined, "AFRange_Validate(1, 2, 3, 4, 5)", undefined);
-      expectEventValue("3", "AFRange_Validate(true, 2, false, 4)", "3");
+      expectEventValue("1", "AFRange_Validate(true, 2, true, 4)", "1");  // Notifies "between".
+      expectEventValue("5", "AFRange_Validate(true, 2, true, 4)", "5");  // Notifies "between".
+      expectEventValue("1", "AFRange_Validate(true, 2, false, 4)", "1");  // Notifies "greater".
+      expectEventValue("5", "AFRange_Validate(false, 2, true, 4)", "5");  // Notifies "less".
+      expectEventValue("3", "AFRange_Validate(true, 2, true, 4)", "3");   // No notification.
+      expectEventValue("1", "AFRange_Validate(false, 2, true, 4)", "1");  // No notification.
+      expectEventValue("5", "AFRange_Validate(true, 2, false, 4)", "5");  // No notification.
 
       app.alert("**********************");
 
