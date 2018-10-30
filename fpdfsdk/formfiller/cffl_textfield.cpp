@@ -6,10 +6,13 @@
 
 #include "fpdfsdk/formfiller/cffl_textfield.h"
 
+#include <utility>
+
 #include "fpdfsdk/cpdfsdk_common.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cba_fontmap.h"
+#include "third_party/base/ptr_util.h"
 
 CFFL_TextField::CFFL_TextField(CPDFSDK_FormFillEnvironment* pApp,
                                CPDFSDK_Widget* pWidget)
@@ -66,15 +69,15 @@ CPWL_Wnd::CreateParams CFFL_TextField::GetCreateParam() {
   return cp;
 }
 
-CPWL_Wnd* CFFL_TextField::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
-  auto* pWnd = new CPWL_Edit();
+std::unique_ptr<CPWL_Wnd> CFFL_TextField::NewPDFWindow(
+    const CPWL_Wnd::CreateParams& cp) {
+  auto pWnd = pdfium::MakeUnique<CPWL_Edit>();
   pWnd->AttachFFLData(this);
   pWnd->Create(cp);
   pWnd->SetFillerNotify(m_pFormFillEnv->GetInteractiveFormFiller());
 
   int32_t nMaxLen = m_pWidget->GetMaxLen();
   WideString swValue = m_pWidget->GetValue();
-
   if (nMaxLen > 0) {
     if (pWnd->HasFlag(PES_CHARARRAY)) {
       pWnd->SetCharArray(nMaxLen);
@@ -83,9 +86,8 @@ CPWL_Wnd* CFFL_TextField::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
       pWnd->SetLimitChar(nMaxLen);
     }
   }
-
   pWnd->SetText(swValue);
-  return pWnd;
+  return std::move(pWnd);
 }
 
 bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,

@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/formfiller/cffl_pushbutton.h"
 
+#include <utility>
+
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/pwl/cpwl_special_button.h"
 
@@ -15,8 +17,9 @@ CFFL_PushButton::CFFL_PushButton(CPDFSDK_FormFillEnvironment* pApp,
 
 CFFL_PushButton::~CFFL_PushButton() {}
 
-CPWL_Wnd* CFFL_PushButton::NewPDFWindow(const CPWL_Wnd::CreateParams& cp) {
-  auto* pWnd = new CPWL_PushButton();
+std::unique_ptr<CPWL_Wnd> CFFL_PushButton::NewPDFWindow(
+    const CPWL_Wnd::CreateParams& cp) {
+  auto pWnd = pdfium::MakeUnique<CPWL_PushButton>();
   pWnd->Create(cp);
-  return pWnd;
+  return std::move(pWnd);
 }
