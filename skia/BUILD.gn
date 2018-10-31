@@ -6,6 +6,7 @@ import("//build/config/features.gni")
 import("//build/config/ui.gni")
 import("//testing/test.gni")
 import("//third_party/skia/gn/shared_sources.gni")
+import("//third_party/skia/third_party/skcms/skcms.gni")
 
 if (current_cpu == "arm") {
   import("//build/config/arm.gni")
@@ -177,6 +178,29 @@ config("skia_library_config") {
   }
 }
 
+source_set("skcms") {
+  cflags = []
+  if (!is_win || is_clang) {
+    cflags += [
+      "-w",
+      "-std=c11",
+    ]
+  }
+
+  # LLVM automatically sets the equivalent of GCC's -mfp16-format=ieee on ARM
+  # builds by default, while GCC itself does not. We need it to enable support
+  # for half-precision floating point data types used by SKCMS on ARM.
+  if (is_linux && !is_clang && current_cpu == "arm") {
+    cflags += [ "-mfp16-format=ieee" ]
+  }
+
+  public = [
+    "//third_party/skia/third_party/skcms/skcms.h",
+  ]
+  sources =
+      rebase_path(skcms_sources, ".", "//third_party/skia/third_party/skcms")
+}
+
 component("skia") {
   sources = [
     # PDFium sources.
@@ -313,6 +337,7 @@ component("skia") {
   public_configs = [ ":skia_config" ]
 
   deps = [
+    ":skcms",
     ":skia_opts",
     "../third_party:zlib",
     "//:freetype_common",
