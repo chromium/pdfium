@@ -42,8 +42,9 @@ authentication instructions. **Note that you must authenticate with your
 Once you've done this, the toolchain will be installed automatically for
 you in the [Generate the build files](#GenBuild) step below.
 
-The toolchain will be in `depot_tools\win_toolchain\vs_files\<hash>`, and windbg
-can be found in `depot_tools\win_toolchain\vs_files\<hash>\win_sdk\Debuggers`.
+The toolchain will be in `depot_tools\win_toolchain\vs_files\<hash>`, and
+windbg can be found in
+`depot_tools\win_toolchain\vs_files\<hash>\win_sdk\Debuggers`.
 
 If you want the IDE for debugging and editing, you will need to install
 it separately, but this is optional and not needed for building PDFium.
@@ -89,8 +90,10 @@ A typical `<directory>` name is `out/Debug`.
 use_goma = true  # Googlers only. Make sure goma is installed and running first.
 is_debug = true  # Enable debugging features.
 
-pdf_use_skia = false  # Set true to enable experimental skia backend.
-pdf_use_skia_paths = false  # Set true to enable experimental skia backend (paths only).
+# Set true to enable experimental Skia backend.
+pdf_use_skia = false
+# Set true to enable experimental Skia backend (paths only).
+pdf_use_skia_paths = false
 
 pdf_enable_xfa = true  # Set false to remove XFA support (implies JS support).
 pdf_enable_v8 = true  # Set false to remove Javascript support.
@@ -100,8 +103,11 @@ is_component_build = false # Disable component build (must be false)
 clang_use_chrome_plugins = false  # Currently must be false.
 ```
 
-Note, you must set `pdf_is_standalone = true` if you want the sample
-applications like `pdfium_test` to build.
+For sample applications like `pdfium_test` to build, one must set
+`pdf_is_standalone = true`.
+
+To use the Skia backend, one must set `use_cxx11 = false` which will build the
+entire project with C++14.
 
 When complete the arguments will be stored in `<directory>/args.gn`, and
 GN will automatically use the new arguments to generate build files.
