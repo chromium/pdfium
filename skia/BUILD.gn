@@ -335,13 +335,6 @@ component("skia") {
     ]
   }
 
-  if (skia_support_pdf) {
-    deps += [ "//third_party/sfntly" ]
-    sources += skia_pdf_sources
-  } else {
-    sources += [ "//third_party/skia/src/pdf/SkDocument_PDF_None.cpp" ]
-  }
-
   if (is_android && !is_debug) {
     configs -= [ "//build/config/compiler:default_optimization" ]
     configs += [ "//build/config/compiler:optimize_max" ]
@@ -359,6 +352,13 @@ component("skia") {
 
     # To disable warning "CGContextSelectFont' is deprecated"
     cflags = [ "-Wno-deprecated-declarations" ]
+  }
+
+  if (skia_support_pdf) {
+    deps += [ "//third_party/sfntly" ]
+    sources += skia_pdf_sources
+  } else {
+    sources += [ "//third_party/skia/src/pdf/SkDocument_PDF_None.cpp" ]
   }
 }
 
