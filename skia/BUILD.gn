@@ -81,13 +81,15 @@ config("skia_config") {
 # Internal-facing config for Skia library code.
 config("skia_library_config") {
   # These include directories are only included for Skia code and are not
-  # exported to dependents. It's not clear if this is on purpose, but this
-  # matches the GYP build.
+  # exported to dependents.
   include_dirs = [
+    "//third_party/skia/include/codec",
     "//third_party/skia/include/private",
     "//third_party/skia/include/client/android",
+    "//third_party/skia/src/codec",
     "//third_party/skia/src/core",
     "//third_party/skia/src/image",
+    "//third_party/skia/src/lazy",
     "//third_party/skia/src/opts",
     "//third_party/skia/src/pdf",
     "//third_party/skia/src/ports",
@@ -95,7 +97,6 @@ config("skia_library_config") {
     "//third_party/skia/src/shaders",
     "//third_party/skia/src/sksl",
     "//third_party/skia/src/utils",
-    "//third_party/skia/src/lazy",
   ]
   if (is_mac || is_ios) {
     include_dirs += [ "//third_party/skia/include/utils/mac" ]
