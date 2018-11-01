@@ -419,6 +419,7 @@ skia_source_set("skia_core_and_effects") {
   defines = skia_core_defines
   sources = skia_core_sources
   sources += skia_effects_sources
+  sources += skia_effects_imagefilter_sources
 
   visibility = [ ":skia" ]
 }
