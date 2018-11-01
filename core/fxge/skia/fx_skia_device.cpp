@@ -364,11 +364,11 @@ bool AddColors(const CPDF_ExpIntFunc* pFunc, SkTDArray<SkColor>* skColors) {
     return false;
   if (pFunc->m_nOrigOutputs != 3)
     return false;
-  skColors->push(
+  skColors->push_back(
       SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_BeginValues[0]),
                      SkUnitScalarClampToByte(pFunc->m_BeginValues[1]),
                      SkUnitScalarClampToByte(pFunc->m_BeginValues[2])));
-  skColors->push(
+  skColors->push_back(
       SkColorSetARGB(0xFF, SkUnitScalarClampToByte(pFunc->m_EndValues[0]),
                      SkUnitScalarClampToByte(pFunc->m_EndValues[1]),
                      SkUnitScalarClampToByte(pFunc->m_EndValues[2])));
@@ -420,8 +420,8 @@ bool AddSamples(const CPDF_SampledFunc* pFunc,
     SkColor color =
         SkPackARGB32(0xFF, FloatToByte(floatColors[0]),
                      FloatToByte(floatColors[1]), FloatToByte(floatColors[2]));
-    skColors->push(color);
-    skPos->push((float)i / (sampleCount - 1));
+    skColors->push_back(color);
+    skPos->push_back((float)i / (sampleCount - 1));
   }
   return true;
 }
@@ -441,8 +441,8 @@ bool AddStitching(const CPDF_StitchFunc* pFunc,
       return false;
     float boundsEnd =
         i < subFunctionCount - 1 ? pFunc->GetBound(i + 1) : pFunc->GetDomain(1);
-    skPos->push(boundsStart);
-    skPos->push(boundsEnd);
+    skPos->push_back(boundsStart);
+    skPos->push_back(boundsEnd);
     boundsStart = boundsEnd;
   }
   return true;
@@ -990,7 +990,7 @@ class SkiaState {
       m_commands[m_commandIndex] = Clip::kPath;
       m_clips[m_commandIndex] = skClipPath;
     } else {
-      m_commands.push(Clip::kPath);
+      m_commands.push_back(Clip::kPath);
       m_clips.push_back(skClipPath);
     }
     ++m_commandIndex;
@@ -1052,7 +1052,7 @@ class SkiaState {
       m_clips[m_commandIndex] = m_skEmptyPath;
     } else {
       AdjustClip(m_commandIndex);
-      m_commands.push(Clip::kSave);
+      m_commands.push_back(Clip::kSave);
       m_clips.push_back(m_skEmptyPath);
     }
     ++m_commandIndex;
@@ -2002,8 +2002,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     } else if (const CPDF_ExpIntFunc* pExpIntFuc = pFuncs[j]->ToExpIntFunc()) {
       if (!AddColors(pExpIntFuc, &skColors))
         return false;
-      skPos.push(0);
-      skPos.push(1);
+      skPos.push_back(0);
+      skPos.push_back(1);
     } else if (const CPDF_StitchFunc* pStitchFunc = pFuncs[j]->ToStitchFunc()) {
       if (!AddStitching(pStitchFunc, &skColors, &skPos))
         return false;
