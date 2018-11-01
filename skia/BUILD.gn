@@ -95,6 +95,7 @@ config("skia_library_config") {
     "//third_party/skia/src/ports",
     "//third_party/skia/src/sfnt",
     "//third_party/skia/src/shaders",
+    "//third_party/skia/src/shaders/gradients",
     "//third_party/skia/src/sksl",
     "//third_party/skia/src/utils",
   ]
