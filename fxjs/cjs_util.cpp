@@ -20,6 +20,7 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_publicmethods.h"
 #include "fxjs/cjs_runtime.h"
+#include "fxjs/fx_date_helpers.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 
@@ -169,13 +170,13 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
   if (v8_date.IsEmpty() || std::isnan(pRuntime->ToDouble(v8_date)))
     return CJS_Result::Failure(JSMessage::kSecondParamInvalidDateError);
 
-  double date = JS_LocalTime(pRuntime->ToDouble(v8_date));
-  int year = JS_GetYearFromTime(date);
-  int month = JS_GetMonthFromTime(date) + 1;  // One-based.
-  int day = JS_GetDayFromTime(date);
-  int hour = JS_GetHourFromTime(date);
-  int min = JS_GetMinFromTime(date);
-  int sec = JS_GetSecFromTime(date);
+  double date = FX_LocalTime(pRuntime->ToDouble(v8_date));
+  int year = FX_GetYearFromTime(date);
+  int month = FX_GetMonthFromTime(date) + 1;  // One-based.
+  int day = FX_GetDayFromTime(date);
+  int hour = FX_GetHourFromTime(date);
+  int min = FX_GetMinFromTime(date);
+  int sec = FX_GetSecFromTime(date);
 
   if (params[0]->IsNumber()) {
     WideString swResult;
@@ -368,7 +369,7 @@ CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
 
   WideString sFormat = pRuntime->ToWideString(params[0]);
   WideString sDate = pRuntime->ToWideString(params[1]);
-  double dDate = JS_GetDateTime();
+  double dDate = FX_GetDateTime();
   if (sDate.GetLength() > 0)
     dDate = CJS_PublicMethods::ParseDateUsingFormat(sDate, sFormat, nullptr);
   if (std::isnan(dDate))

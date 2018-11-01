@@ -30,6 +30,7 @@
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/cjs_util.h"
+#include "fxjs/fx_date_helpers.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 
@@ -414,14 +415,13 @@ WideString CJS_PublicMethods::ParseStringString(const WideString& str,
 
 double CJS_PublicMethods::ParseDate(const WideString& value,
                                     bool* bWrongFormat) {
-  double dt = JS_GetDateTime();
-
-  int nYear = JS_GetYearFromTime(dt);
-  int nMonth = JS_GetMonthFromTime(dt) + 1;
-  int nDay = JS_GetDayFromTime(dt);
-  int nHour = JS_GetHourFromTime(dt);
-  int nMin = JS_GetMinFromTime(dt);
-  int nSec = JS_GetSecFromTime(dt);
+  double dt = FX_GetDateTime();
+  int nYear = FX_GetYearFromTime(dt);
+  int nMonth = FX_GetMonthFromTime(dt) + 1;
+  int nDay = FX_GetDayFromTime(dt);
+  int nHour = FX_GetHourFromTime(dt);
+  int nMin = FX_GetMinFromTime(dt);
+  int nSec = FX_GetSecFromTime(dt);
 
   int number[3];
 
@@ -493,17 +493,17 @@ double CJS_PublicMethods::ParseDate(const WideString& value,
 double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
                                                const WideString& format,
                                                bool* bWrongFormat) {
-  double dt = JS_GetDateTime();
+  double dt = FX_GetDateTime();
 
   if (format.IsEmpty() || value.IsEmpty())
     return dt;
 
-  int nYear = JS_GetYearFromTime(dt);
-  int nMonth = JS_GetMonthFromTime(dt) + 1;
-  int nDay = JS_GetDayFromTime(dt);
-  int nHour = JS_GetHourFromTime(dt);
-  int nMin = JS_GetMinFromTime(dt);
-  int nSec = JS_GetSecFromTime(dt);
+  int nYear = FX_GetYearFromTime(dt);
+  int nMonth = FX_GetMonthFromTime(dt) + 1;
+  int nDay = FX_GetDayFromTime(dt);
+  int nHour = FX_GetHourFromTime(dt);
+  int nMin = FX_GetMinFromTime(dt);
+  int nSec = FX_GetSecFromTime(dt);
 
   int nYearSub = 99;  // nYear - 2000;
 
@@ -738,8 +738,8 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
   if (bBadFormat) {
     dRet = ParseDate(value, &bBadFormat);
   } else {
-    dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
-                       JS_MakeTime(nHour, nMin, nSec, 0));
+    dRet = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
+                       FX_MakeTime(nHour, nMin, nSec, 0));
     if (std::isnan(dRet))
       dRet = JS_DateParse(value);
   }
@@ -758,12 +758,12 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
   WideString sRet;
   WideString sPart;
 
-  int nYear = JS_GetYearFromTime(dDate);
-  int nMonth = JS_GetMonthFromTime(dDate) + 1;
-  int nDay = JS_GetDayFromTime(dDate);
-  int nHour = JS_GetHourFromTime(dDate);
-  int nMin = JS_GetMinFromTime(dDate);
-  int nSec = JS_GetSecFromTime(dDate);
+  int nYear = FX_GetYearFromTime(dDate);
+  int nMonth = FX_GetMonthFromTime(dDate) + 1;
+  int nDay = FX_GetDayFromTime(dDate);
+  int nHour = FX_GetHourFromTime(dDate);
+  int nMin = FX_GetMinFromTime(dDate);
+  int nSec = FX_GetSecFromTime(dDate);
 
   size_t i = 0;
   while (i < format.GetLength()) {
@@ -1236,8 +1236,8 @@ double CJS_PublicMethods::ParseDateAsGMT(const WideString& strValue) {
   int nMin = FX_atof(wsArray[4].AsStringView());
   int nSec = FX_atof(wsArray[5].AsStringView());
   int nYear = FX_atof(wsArray[7].AsStringView());
-  double dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
-                            JS_MakeTime(nHour, nMin, nSec, 0));
+  double dRet = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
+                            FX_MakeTime(nHour, nMin, nSec, 0));
   if (std::isnan(dRet))
     dRet = JS_DateParse(strValue);
 

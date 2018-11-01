@@ -18,18 +18,7 @@
 
 class CJS_Object;
 
-double JS_GetDateTime();
-int JS_GetYearFromTime(double dt);
-int JS_GetMonthFromTime(double dt);
-int JS_GetDayFromTime(double dt);
-int JS_GetHourFromTime(double dt);
-int JS_GetMinFromTime(double dt);
-int JS_GetSecFromTime(double dt);
-double JS_LocalTime(double d);
 double JS_DateParse(const WideString& str);
-double JS_MakeDay(int nYear, int nMonth, int nDay);
-double JS_MakeTime(int nHour, int nMin, int nSec, int nMs);
-double JS_MakeDate(double day, double time);
 
 // Some JS methods have the bizarre convention that they may also be called
 // with a single argument which is an object containing the actual arguments

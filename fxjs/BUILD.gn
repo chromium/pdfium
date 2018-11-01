@@ -92,6 +92,8 @@ jumbo_source_set("fxjs") {
       "cjs_util.h",
       "cjs_zoomtype.cpp",
       "cjs_zoomtype.h",
+      "fx_date_helpers.cpp",
+      "fx_date_helpers.h",
       "global_timer.cpp",
       "global_timer.h",
       "js_define.cpp",
