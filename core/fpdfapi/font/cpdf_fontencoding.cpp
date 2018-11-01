@@ -18,7 +18,7 @@
 
 namespace {
 
-const uint16_t MSSymbolEncoding[256] = {
+const uint16_t MSSymbolEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -49,7 +49,7 @@ const uint16_t MSSymbolEncoding[256] = {
     0x2320, 0x0000, 0x2321, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000};
 
-const uint16_t StandardEncoding[256] = {
+const uint16_t StandardEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -80,7 +80,7 @@ const uint16_t StandardEncoding[256] = {
     0x0000, 0x0000, 0x0131, 0x0000, 0x0000, 0x0142, 0x00f8, 0x0153, 0x00df,
     0x0000, 0x0000, 0x0000, 0x0000};
 
-const uint16_t MacRomanEncoding[256] = {
+const uint16_t MacRomanEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -111,7 +111,7 @@ const uint16_t MacRomanEncoding[256] = {
     0x00db, 0x00d9, 0x0131, 0x02c6, 0x02dc, 0x00af, 0x02d8, 0x02d9, 0x02da,
     0x00b8, 0x02dd, 0x02db, 0x02c7};
 
-const uint16_t AdobeWinAnsiEncoding[256] = {
+const uint16_t AdobeWinAnsiEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -142,7 +142,7 @@ const uint16_t AdobeWinAnsiEncoding[256] = {
     0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb,
     0x00fc, 0x00fd, 0x00fe, 0x00ff};
 
-const uint16_t MacExpertEncoding[256] = {
+const uint16_t MacExpertEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -173,7 +173,7 @@ const uint16_t MacExpertEncoding[256] = {
     0xf6f4, 0xf7af, 0xf6ea, 0x207f, 0xf6ef, 0xf6e2, 0xf6e8, 0xf6f7, 0xf6fc,
     0x0000, 0x0000, 0x0000, 0x0000};
 
-const uint16_t AdobeSymbolEncoding[256] = {
+const uint16_t AdobeSymbolEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -205,7 +205,7 @@ const uint16_t AdobeSymbolEncoding[256] = {
     0xF8FC, 0xF8FD, 0xF8FE, 0x0000,
 };
 
-const uint16_t ZapfEncoding[256] = {
+const uint16_t ZapfEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -1638,9 +1638,10 @@ const char* const ZapfEncodingNames[224] = {
     "a186",  "a195",  "a187",  "a188",  "a189",  "a190",  "a191",  nullptr};
 
 uint32_t PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
-  for (uint32_t i = 0; i < 256; i++)
+  for (size_t i = 0; i < CPDF_FontEncoding::kEncodingTableSize; i++) {
     if (pCodes[i] == unicode)
       return i;
+  }
   return 0;
 }
 
@@ -1651,10 +1652,10 @@ CPDF_FontEncoding::CPDF_FontEncoding() {
 }
 
 int CPDF_FontEncoding::CharCodeFromUnicode(wchar_t unicode) const {
-  for (int i = 0; i < 256; i++)
-    if (m_Unicodes[i] == unicode) {
+  for (size_t i = 0; i < FX_ArraySize(m_Unicodes); i++) {
+    if (m_Unicodes[i] == unicode)
       return i;
-    }
+  }
   return -1;
 }
 
@@ -1663,7 +1664,7 @@ CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding) {
   if (!pSrc) {
     memset(m_Unicodes, 0, sizeof(m_Unicodes));
   } else {
-    for (int i = 0; i < 256; i++)
+    for (size_t i = 0; i < FX_ArraySize(m_Unicodes); i++)
       m_Unicodes[i] = pSrc[i];
   }
 }
@@ -1679,7 +1680,7 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
        cs++) {
     const uint16_t* pSrc = PDF_UnicodesForPredefinedCharSet(cs);
     bool match = true;
-    for (int i = 0; i < 256; ++i) {
+    for (size_t i = 0; i < FX_ArraySize(m_Unicodes); i++) {
       if (m_Unicodes[i] != pSrc[i]) {
         match = false;
         break;
@@ -1703,11 +1704,11 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
   const uint16_t* pStandard =
       PDF_UnicodesForPredefinedCharSet(PDFFONT_ENCODING_WINANSI);
   auto pDiff = pdfium::MakeUnique<CPDF_Array>();
-  for (int i = 0; i < 256; i++) {
+  for (size_t i = 0; i < FX_ArraySize(m_Unicodes); i++) {
     if (pStandard[i] == m_Unicodes[i])
       continue;
 
-    pDiff->AddNew<CPDF_Number>(i);
+    pDiff->AddNew<CPDF_Number>(static_cast<int>(i));
     pDiff->AddNew<CPDF_Name>(PDF_AdobeNameFromUnicode(m_Unicodes[i]));
   }
 

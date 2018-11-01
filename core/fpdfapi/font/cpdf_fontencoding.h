@@ -36,6 +36,8 @@ class CPDF_Object;
 
 class CPDF_FontEncoding {
  public:
+  static constexpr size_t kEncodingTableSize = 256;
+
   CPDF_FontEncoding();
   explicit CPDF_FontEncoding(int PredefinedEncoding);
 
@@ -55,7 +57,7 @@ class CPDF_FontEncoding {
   std::unique_ptr<CPDF_Object> Realize(WeakPtr<ByteStringPool> pPool);
 
  public:
-  wchar_t m_Unicodes[256];
+  wchar_t m_Unicodes[kEncodingTableSize];
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_FONTENCODING_H_
