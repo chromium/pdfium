@@ -259,20 +259,20 @@ const CPDF_ContentMarks* CPDF_PageContentGenerator::ProcessContentMarks(
     *buf << "/" << PDF_NameEncode(item->GetName()) << " ";
 
     // If there are no parameters, write a BMC (begin marked content) operator.
-    if (item->GetParamType() == CPDF_ContentMarkItem::None) {
+    if (item->GetParamType() == CPDF_ContentMarkItem::kNone) {
       *buf << "BMC\n";
       continue;
     }
 
     // If there are parameters, write properties, direct or indirect.
     switch (item->GetParamType()) {
-      case CPDF_ContentMarkItem::DirectDict: {
+      case CPDF_ContentMarkItem::kDirectDict: {
         CPDF_StringArchiveStream archive_stream(buf);
         item->GetParam()->WriteTo(&archive_stream, nullptr);
         *buf << " ";
         break;
       }
-      case CPDF_ContentMarkItem::PropertiesDict: {
+      case CPDF_ContentMarkItem::kPropertiesDict: {
         *buf << "/" << item->GetPropertyName() << " ";
         break;
       }
