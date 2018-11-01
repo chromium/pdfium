@@ -27,7 +27,7 @@
 #include "third_party/skia/include/core/SkTypeface.h"
 
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
-#include "third_party/skia/include/ports/SkFontMgr.h"
+#include "third_party/skia/include/core/SkFontMgr.h"
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"
 #endif
 #endif
