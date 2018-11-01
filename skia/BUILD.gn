@@ -84,6 +84,7 @@ config("skia_library_config") {
   # exported to dependents.
   include_dirs = [
     "//third_party/skia/include/codec",
+    "//third_party/skia/include/docs",
     "//third_party/skia/include/private",
     "//third_party/skia/include/client/android",
     "//third_party/skia/src/codec",
