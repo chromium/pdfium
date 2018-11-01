@@ -38,6 +38,9 @@ group("fuzzers") {
     ":pdf_xml_fuzzer_src",
     ":pdfium_fuzzer_src",
   ]
+  if (pdf_enable_v8) {
+    deps += [ ":pdf_cjs_util_fuzzer_src" ]
+  }
   if (pdf_enable_xfa) {
     deps += [
       ":pdf_bidi_fuzzer_src",
@@ -113,6 +116,17 @@ template("pdfium_fuzzer") {
     if (pdf_enable_v8) {
       configs += [ "//v8:external_startup_data" ]
     }
+  }
+}
+
+if (pdf_enable_v8) {
+  pdfium_fuzzer("pdf_cjs_util_fuzzer_src") {
+    sources = [
+      "pdf_cjs_util_fuzzer.cc",
+    ]
+    deps = [
+      "../../fxjs",
+    ]
   }
 }
 

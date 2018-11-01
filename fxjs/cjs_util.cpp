@@ -55,6 +55,16 @@ const TbConvert TbConvertTable[] = {
 #endif
 };
 
+enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
+
+wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
+  if (eMode == kLowerCase && FXSYS_iswupper(input))
+    return input | 0x20;
+  if (eMode == kUpperCase && FXSYS_iswlower(input))
+    return input & ~0x20;
+  return input;
+}
+
 }  // namespace
 
 const JSMethodSpec CJS_Util::MethodSpecs[] = {
@@ -258,23 +268,13 @@ CJS_Result CJS_Util::printx(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kParamError);
 
   return CJS_Result::Success(
-      pRuntime->NewString(printx(pRuntime->ToWideString(params[0]),
-                                 pRuntime->ToWideString(params[1]))
+      pRuntime->NewString(StringPrintx(pRuntime->ToWideString(params[0]),
+                                       pRuntime->ToWideString(params[1]))
                               .AsStringView()));
 }
 
-enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
-
-static wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
-  if (eMode == kLowerCase && FXSYS_iswupper(input))
-    return input | 0x20;
-  if (eMode == kUpperCase && FXSYS_iswlower(input))
-    return input & ~0x20;
-  return input;
-}
-
-WideString CJS_Util::printx(const WideString& wsFormat,
-                            const WideString& wsSource) {
+WideString CJS_Util::StringPrintx(const WideString& wsFormat,
+                                  const WideString& wsSource) {
   WideString wsResult;
   size_t iSourceIdx = 0;
   size_t iFormatIdx = 0;

@@ -26,8 +26,10 @@ class CJS_Util final : public CJS_Object {
   CJS_Util(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Util() override;
 
-  static WideString printx(const WideString& cFormat,
-                           const WideString& cSource);
+  // Exposed for testing.
+  static int ParseDataType(std::wstring* sFormat);
+  static WideString StringPrintx(const WideString& cFormat,
+                                 const WideString& cSource);
 
   JS_STATIC_METHOD(printd, CJS_Util);
   JS_STATIC_METHOD(printf, CJS_Util);
@@ -36,13 +38,10 @@ class CJS_Util final : public CJS_Object {
   JS_STATIC_METHOD(byteToChar, CJS_Util);
 
  private:
-  friend class CJS_Util_ParseDataType_Test;
-
   static int ObjDefnID;
   static const char kName[];
   static const JSMethodSpec MethodSpecs[];
 
-  static int ParseDataType(std::wstring* sFormat);
 
   CJS_Result printd(CJS_Runtime* pRuntime,
                     const std::vector<v8::Local<v8::Value>>& params);

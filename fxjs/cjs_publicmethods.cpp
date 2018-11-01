@@ -1365,7 +1365,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_Format(
       wsFormat = L"99999-9999";
       break;
     case 2:
-      if (CJS_Util::printx(L"9999999999", wsSource).GetLength() >= 10)
+      if (CJS_Util::StringPrintx(L"9999999999", wsSource).GetLength() >= 10)
         wsFormat = L"(999) 999-9999";
       else
         wsFormat = L"999-9999";
@@ -1375,7 +1375,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_Format(
       break;
   }
 
-  pEvent->Value() = CJS_Util::printx(wsFormat, wsSource);
+  pEvent->Value() = CJS_Util::StringPrintx(wsFormat, wsSource);
   return CJS_Result::Success();
 }
 
