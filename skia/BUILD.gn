@@ -213,6 +213,7 @@ component("skia") {
   sources += skia_sksl_sources
   sources += skia_utils_sources
   sources += [
+    "//third_party/skia/src/codec/SkMasks.cpp",
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
     "//third_party/skia/src/fonts/SkRemotableFontMgr.cpp",
     "//third_party/skia/src/images/SkImageEncoder.cpp",
