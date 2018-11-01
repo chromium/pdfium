@@ -220,7 +220,7 @@ CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
     : CJS_Object(pObject, pRuntime) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = GetRuntime()->GetFormFillEnv();
   m_pFormFillEnv.Reset(pFormFillEnv);
-  m_pGlobalData = CFX_GlobalData::GetRetainedInstance(pFormFillEnv);
+  m_pGlobalData = CFX_GlobalData::GetRetainedInstance(nullptr);
   UpdateGlobalPersistentVariables();
 }
 

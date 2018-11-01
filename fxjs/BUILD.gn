@@ -446,6 +446,7 @@ jumbo_source_set("fxjs") {
 if (pdf_enable_v8) {
   pdfium_unittest_source_set("unittests") {
     sources = [
+      "cfx_globaldata_unittest.cpp",
       "cfx_v8_unittest.cpp",
       "cfx_v8_unittest.h",
       "cfxjs_engine_unittest.cpp",

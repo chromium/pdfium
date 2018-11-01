@@ -11,12 +11,24 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_binarybuf.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_keyvalue.h"
+#include "third_party/base/optional.h"
+#include "third_party/base/span.h"
 
 class CPDFSDK_FormFillEnvironment;
 
 class CFX_GlobalData {
  public:
+  class Delegate {
+   public:
+    virtual ~Delegate() {}
+
+    virtual bool StoreBuffer(pdfium::span<const uint8_t> pBuffer) = 0;
+    virtual Optional<pdfium::span<uint8_t>> LoadBuffer() = 0;
+    virtual void BufferDone() = 0;
+  };
+
   class Element {
    public:
     Element();
@@ -26,8 +38,8 @@ class CFX_GlobalData {
     bool bPersistent;
   };
 
-  static CFX_GlobalData* GetRetainedInstance(CPDFSDK_FormFillEnvironment* pApp);
-  void Release();
+  static CFX_GlobalData* GetRetainedInstance(Delegate* pDelegate);
+  bool Release();
 
   void SetGlobalVariableNumber(ByteString propname, double dData);
   void SetGlobalVariableBoolean(ByteString propname, bool bData);
@@ -45,10 +57,11 @@ class CFX_GlobalData {
   using iterator = std::vector<std::unique_ptr<Element>>::iterator;
   using const_iterator = std::vector<std::unique_ptr<Element>>::const_iterator;
 
-  CFX_GlobalData();
+  explicit CFX_GlobalData(Delegate* pDelegate);
   ~CFX_GlobalData();
 
   void LoadGlobalPersistentVariables();
+  void LoadGlobalPersistentVariablesFromBuffer(pdfium::span<uint8_t> buffer);
   void SaveGlobalPersisitentVariables();
 
   Element* GetGlobalVariable(const ByteString& sPropname);
@@ -66,8 +79,8 @@ class CFX_GlobalData {
                       CFX_BinaryBuf& sData);
 
   size_t m_RefCount = 0;
+  UnownedPtr<Delegate> const m_pDelegate;
   std::vector<std::unique_ptr<Element>> m_arrayGlobalData;
-  WideString m_sFilePath;
 };
 
 #endif  // FXJS_CFX_GLOBALDATA_H_
