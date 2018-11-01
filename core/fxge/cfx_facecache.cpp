@@ -318,7 +318,7 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
   if (!m_pTypeface) {
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
     m_pTypeface = SkTypeface::MakeFromStream(
-        new SkMemoryStream(span.data(), span.size()));
+        pdfium::MakeUnique<SkMemoryStream>(span.data(), span.size()));
   }
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   if (!m_pTypeface) {
