@@ -12,6 +12,7 @@
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
+#include "public/fpdf_progressive.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_mock_delegate.h"
 #include "testing/embedder_test_timer_handling_delegate.h"
@@ -382,6 +383,24 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
   FORM_OnMouseMove(nullptr, page, 0, 10.0, 10.0);
   FORM_OnMouseMove(form_handle(), nullptr, 0, 10.0, 10.0);
 
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, BUG_900552) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("bug_900552.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  DoOpenActions();
+  delegate.AdvanceTime(4000);
+
+  // Simulate a repaint.
+  FPDF_BITMAP bitmap = FPDFBitmap_Create(512, 512, 0);
+  ASSERT_TRUE(bitmap);
+  FPDF_RenderPageBitmap_Start(bitmap, page, 0, 0, 512, 512, 0, 0, nullptr);
+  FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }
 

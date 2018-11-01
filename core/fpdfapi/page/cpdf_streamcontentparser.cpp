@@ -591,30 +591,26 @@ void CPDF_StreamContentParser::Handle_EOFillStrokePath() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
-  ByteString tag = GetString(1);
   CPDF_Object* pProperty = GetObject(0);
   if (!pProperty)
     return;
 
-  bool bIndirect = pProperty->IsName();
-  ByteString property_name;
-  if (bIndirect) {
-    property_name = pProperty->GetString();
-    pProperty = FindResourceObj("Properties", property_name);
-    if (!pProperty)
+  ByteString tag = GetString(1);
+  std::unique_ptr<CPDF_ContentMarks> new_marks =
+      m_ContentMarksStack.top()->Clone();
+
+  if (pProperty->IsName()) {
+    ByteString property_name = pProperty->GetString();
+    CPDF_Dictionary* pHolder = FindResourceHolder("Properties");
+    if (!pHolder || !pHolder->GetDictFor(property_name))
       return;
+    new_marks->AddMarkWithPropertiesHolder(tag, pHolder, property_name);
+  } else if (pProperty->IsDictionary()) {
+    new_marks->AddMarkWithDirectDict(tag, pProperty->AsDictionary());
+  } else {
+    return;
   }
-  if (CPDF_Dictionary* pDict = pProperty->AsDictionary()) {
-    std::unique_ptr<CPDF_ContentMarks> new_marks =
-        m_ContentMarksStack.top()->Clone();
-    if (bIndirect) {
-      new_marks->AddMarkWithPropertiesDict(std::move(tag), pDict,
-                                           property_name);
-    } else {
-      new_marks->AddMarkWithDirectDict(std::move(tag), pDict);
-    }
-    m_ContentMarksStack.push(std::move(new_marks));
-  }
+  m_ContentMarksStack.push(std::move(new_marks));
 }
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
@@ -1139,18 +1135,25 @@ void CPDF_StreamContentParser::Handle_SetFont() {
   }
 }
 
-CPDF_Object* CPDF_StreamContentParser::FindResourceObj(const ByteString& type,
-                                                       const ByteString& name) {
+CPDF_Dictionary* CPDF_StreamContentParser::FindResourceHolder(
+    const ByteString& type) {
   if (!m_pResources)
     return nullptr;
+
   CPDF_Dictionary* pDict = m_pResources->GetDictFor(type);
   if (pDict)
-    return pDict->GetDirectObjectFor(name);
+    return pDict;
+
   if (m_pResources == m_pPageResources || !m_pPageResources)
     return nullptr;
 
-  CPDF_Dictionary* pPageDict = m_pPageResources->GetDictFor(type);
-  return pPageDict ? pPageDict->GetDirectObjectFor(name) : nullptr;
+  return m_pPageResources->GetDictFor(type);
+}
+
+CPDF_Object* CPDF_StreamContentParser::FindResourceObj(const ByteString& type,
+                                                       const ByteString& name) {
+  CPDF_Dictionary* pHolder = FindResourceHolder(type);
+  return pHolder ? pHolder->GetDirectObjectFor(name) : nullptr;
 }
 
 CPDF_Font* CPDF_StreamContentParser::FindFont(const ByteString& name) {

@@ -1,0 +1,92 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /OpenAction 8 0 R
+>>
+2 0 obj <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 600 700]
+  /Resources 5 0 R
+  /Contents 4 0 R
+  /Annots [6 0 R]
+>>
+endobj
+4 0 obj <<
+  /Length 68
+>>
+stream
+  (OC)
+  /V
+  BDC
+  BT
+   /F1 20 Tf
+   100 100 Td
+   (Test) Tj
+  ET
+endstream
+endobj
+5 0 obj <<
+  /Properties 6 0 R
+  /Font <<F1 7 0 R>>
+>>
+endobj
+6 0 obj <<
+  /FT /Tx
+  /Type /Annot
+  /Subtype /Widget
+  /T (txt1)
+  /F 4
+  /Rect [200 200 400 400]
+  /V <</A (b)>>
+>>
+endobj
+7 0 obj <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+>>
+endobj
+8 0 obj <<
+  /Type /Action
+  /S /JavaScript
+  /JS 9 0 R
+>>
+endobj
+9 0 obj <<
+  /Length 86
+>>
+stream
+function run() {
+  this.getField('txt1').value = 'a';
+}
+app.setTimeOut('run()', 1000)
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000081 00000 n 
+0000000144 00000 n 
+0000000276 00000 n 
+0000000395 00000 n 
+0000000457 00000 n 
+0000000583 00000 n 
+0000000659 00000 n 
+0000000725 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 10
+>>
+startxref
+862
+%%EOF

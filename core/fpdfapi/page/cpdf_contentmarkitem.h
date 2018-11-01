@@ -32,14 +32,14 @@ class CPDF_ContentMarkItem final : public Retainable {
   bool HasMCID() const;
 
   void SetDirectDict(std::unique_ptr<CPDF_Dictionary> pDict);
-  void SetPropertiesDict(CPDF_Dictionary* pDict,
-                         const ByteString& property_name);
+  void SetPropertiesHolder(CPDF_Dictionary* pHolder,
+                           const ByteString& property_name);
 
  private:
   ParamType m_ParamType = kNone;
   ByteString m_MarkName;
   ByteString m_PropertyName;
-  UnownedPtr<CPDF_Dictionary> m_pPropertiesDict;
+  UnownedPtr<CPDF_Dictionary> m_pPropertiesHolder;
   std::unique_ptr<CPDF_Dictionary> m_pDirectDict;
 };
 

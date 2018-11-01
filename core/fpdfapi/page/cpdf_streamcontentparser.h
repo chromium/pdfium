@@ -119,6 +119,7 @@ class CPDF_StreamContentParser {
                         bool bGraph);
   CPDF_ColorSpace* FindColorSpace(const ByteString& name);
   CPDF_Pattern* FindPattern(const ByteString& name, bool bShading);
+  CPDF_Dictionary* FindResourceHolder(const ByteString& type);
   CPDF_Object* FindResourceObj(const ByteString& type, const ByteString& name);
 
   // Takes ownership of |pImageObj|, returns unowned pointer to it.

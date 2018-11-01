@@ -32,9 +32,9 @@ class CPDF_ContentMarks {
 
   void AddMark(ByteString name);
   void AddMarkWithDirectDict(ByteString name, CPDF_Dictionary* pDict);
-  void AddMarkWithPropertiesDict(ByteString name,
-                                 CPDF_Dictionary* pDict,
-                                 const ByteString& property_name);
+  void AddMarkWithPropertiesHolder(const ByteString& name,
+                                   CPDF_Dictionary* pHolder,
+                                   const ByteString& property_name);
   bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
   void DeleteLastMark();
   size_t FindFirstDifference(const CPDF_ContentMarks* other) const;
@@ -54,9 +54,9 @@ class CPDF_ContentMarks {
     int GetMarkedContentID() const;
     void AddMark(ByteString name);
     void AddMarkWithDirectDict(ByteString name, CPDF_Dictionary* pDict);
-    void AddMarkWithPropertiesDict(ByteString name,
-                                   CPDF_Dictionary* pDict,
-                                   const ByteString& property_name);
+    void AddMarkWithPropertiesHolder(const ByteString& name,
+                                     CPDF_Dictionary* pHolder,
+                                     const ByteString& property_name);
     bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
     void DeleteLastMark();
 
