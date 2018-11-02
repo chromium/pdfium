@@ -7,6 +7,10 @@
 #ifndef FXJS_FX_DATE_HELPERS_H_
 #define FXJS_FX_DATE_HELPERS_H_
 
+#include <stddef.h>
+
+#include "core/fxcrt/fx_string.h"
+
 namespace fxjs {
 
 double FX_GetDateTime();
@@ -21,6 +25,15 @@ double FX_MakeDay(int nYear, int nMonth, int nDay);
 double FX_MakeTime(int nHour, int nMin, int nSec, int nMs);
 double FX_MakeDate(double day, double time);
 
+int FX_ParseStringInteger(const WideString& str,
+                          size_t nStart,
+                          size_t* pSkip,
+                          size_t nMaxStep);
+
+WideString FX_ParseStringString(const WideString& str,
+                                size_t nStart,
+                                size_t* pSkip);
+
 }  // namespace fxjs
 
 using fxjs::FX_GetDateTime;
@@ -34,5 +47,7 @@ using fxjs::FX_LocalTime;
 using fxjs::FX_MakeDay;
 using fxjs::FX_MakeTime;
 using fxjs::FX_MakeDate;
+using fxjs::FX_ParseStringInteger;
+using fxjs::FX_ParseStringString;
 
 #endif  // FXJS_FX_DATE_HELPERS_H_

@@ -372,46 +372,6 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
   return StrArray;
 }
 
-int CJS_PublicMethods::ParseStringInteger(const WideString& str,
-                                          size_t nStart,
-                                          size_t* pSkip,
-                                          size_t nMaxStep) {
-  int nRet = 0;
-  size_t nSkip = 0;
-  for (size_t i = nStart; i < str.GetLength(); ++i) {
-    if (i - nStart > 10)
-      break;
-
-    wchar_t c = str[i];
-    if (!std::iswdigit(c))
-      break;
-
-    nRet = nRet * 10 + FXSYS_DecimalCharToInt(c);
-    ++nSkip;
-    if (nSkip >= nMaxStep)
-      break;
-  }
-
-  *pSkip = nSkip;
-  return nRet;
-}
-
-WideString CJS_PublicMethods::ParseStringString(const WideString& str,
-                                                size_t nStart,
-                                                size_t* pSkip) {
-  WideString swRet;
-  swRet.Reserve(str.GetLength());
-  for (size_t i = nStart; i < str.GetLength(); ++i) {
-    wchar_t c = str[i];
-    if (!std::iswalnum(c))
-      break;
-
-    swRet += c;
-  }
-
-  *pSkip = swRet.GetLength();
-  return swRet;
-}
 
 double CJS_PublicMethods::ParseDate(const WideString& value,
                                     bool* bWrongFormat) {
@@ -435,7 +395,7 @@ double CJS_PublicMethods::ParseDate(const WideString& value,
 
     wchar_t c = value[i];
     if (std::iswdigit(c)) {
-      number[nIndex++] = ParseStringInteger(value, i, &nSkip, 4);
+      number[nIndex++] = FX_ParseStringInteger(value, i, &nSkip, 4);
       i += nSkip;
     } else {
       i++;
@@ -548,32 +508,32 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
               j++;
               break;
             case 'm':
-              nMonth = ParseStringInteger(value, j, &nSkip, 2);
+              nMonth = FX_ParseStringInteger(value, j, &nSkip, 2);
               i++;
               j += nSkip;
               break;
             case 'd':
-              nDay = ParseStringInteger(value, j, &nSkip, 2);
+              nDay = FX_ParseStringInteger(value, j, &nSkip, 2);
               i++;
               j += nSkip;
               break;
             case 'H':
-              nHour = ParseStringInteger(value, j, &nSkip, 2);
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
               i++;
               j += nSkip;
               break;
             case 'h':
-              nHour = ParseStringInteger(value, j, &nSkip, 2);
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
               i++;
               j += nSkip;
               break;
             case 'M':
-              nMin = ParseStringInteger(value, j, &nSkip, 2);
+              nMin = FX_ParseStringInteger(value, j, &nSkip, 2);
               i++;
               j += nSkip;
               break;
             case 's':
-              nSec = ParseStringInteger(value, j, &nSkip, 2);
+              nSec = FX_ParseStringInteger(value, j, &nSkip, 2);
               i++;
               j += nSkip;
               break;
@@ -586,37 +546,37 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
         } else if (remaining == 1 || format[i + 2] != c) {
           switch (c) {
             case 'y':
-              nYear = ParseStringInteger(value, j, &nSkip, 2);
+              nYear = FX_ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;
             case 'm':
-              nMonth = ParseStringInteger(value, j, &nSkip, 2);
+              nMonth = FX_ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;
             case 'd':
-              nDay = ParseStringInteger(value, j, &nSkip, 2);
+              nDay = FX_ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;
             case 'H':
-              nHour = ParseStringInteger(value, j, &nSkip, 2);
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;
             case 'h':
-              nHour = ParseStringInteger(value, j, &nSkip, 2);
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;
             case 'M':
-              nMin = ParseStringInteger(value, j, &nSkip, 2);
+              nMin = FX_ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;
             case 's':
-              nSec = ParseStringInteger(value, j, &nSkip, 2);
+              nSec = FX_ParseStringInteger(value, j, &nSkip, 2);
               i += 2;
               j += nSkip;
               break;
@@ -630,7 +590,7 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
         } else if (remaining == 2 || format[i + 3] != c) {
           switch (c) {
             case 'm': {
-              WideString sMonth = ParseStringString(value, j, &nSkip);
+              WideString sMonth = FX_ParseStringString(value, j, &nSkip);
               bool bFind = false;
               for (int m = 0; m < 12; m++) {
                 if (sMonth.CompareNoCase(kMonths[m]) == 0) {
@@ -643,7 +603,7 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
               }
 
               if (!bFind) {
-                nMonth = ParseStringInteger(value, j, &nSkip, 3);
+                nMonth = FX_ParseStringInteger(value, j, &nSkip, 3);
                 i += 3;
                 j += nSkip;
               }
@@ -658,14 +618,14 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
         } else if (remaining == 3 || format[i + 4] != c) {
           switch (c) {
             case 'y':
-              nYear = ParseStringInteger(value, j, &nSkip, 4);
+              nYear = FX_ParseStringInteger(value, j, &nSkip, 4);
               j += nSkip;
               i += 4;
               break;
             case 'm': {
               bool bFind = false;
 
-              WideString sMonth = ParseStringString(value, j, &nSkip);
+              WideString sMonth = FX_ParseStringString(value, j, &nSkip);
               sMonth.MakeLower();
 
               for (int m = 0; m < 12; m++) {
@@ -682,7 +642,7 @@ double CJS_PublicMethods::ParseDateUsingFormat(const WideString& value,
               }
 
               if (!bFind) {
-                nMonth = ParseStringInteger(value, j, &nSkip, 4);
+                nMonth = FX_ParseStringInteger(value, j, &nSkip, 4);
                 i += 4;
                 j += nSkip;
               }

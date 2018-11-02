@@ -231,4 +231,45 @@ double FX_MakeDate(double day, double time) {
   return day * 86400000 + time;
 }
 
+int FX_ParseStringInteger(const WideString& str,
+                          size_t nStart,
+                          size_t* pSkip,
+                          size_t nMaxStep) {
+  int nRet = 0;
+  size_t nSkip = 0;
+  for (size_t i = nStart; i < str.GetLength(); ++i) {
+    if (i - nStart > 10)
+      break;
+
+    wchar_t c = str[i];
+    if (!std::iswdigit(c))
+      break;
+
+    nRet = nRet * 10 + FXSYS_DecimalCharToInt(c);
+    ++nSkip;
+    if (nSkip >= nMaxStep)
+      break;
+  }
+
+  *pSkip = nSkip;
+  return nRet;
+}
+
+WideString FX_ParseStringString(const WideString& str,
+                                size_t nStart,
+                                size_t* pSkip) {
+  WideString swRet;
+  swRet.Reserve(str.GetLength());
+  for (size_t i = nStart; i < str.GetLength(); ++i) {
+    wchar_t c = str[i];
+    if (!std::iswalnum(c))
+      break;
+
+    swRet += c;
+  }
+
+  *pSkip = swRet.GetLength();
+  return swRet;
+}
+
 }  // namespace fxjs

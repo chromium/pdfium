@@ -140,13 +140,6 @@ class CJS_PublicMethods final : public CJS_Object {
   static void AFExtractNums_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static int ParseStringInteger(const WideString& str,
-                                size_t nStart,
-                                size_t* pSkip,
-                                size_t nMaxStep);
-  static WideString ParseStringString(const WideString& str,
-                                      size_t nStart,
-                                      size_t* pSkip);
   static bool MaskSatisfied(wchar_t c_Change, wchar_t c_Mask);
   static bool IsReservedMaskChar(wchar_t ch);
   static double AF_Simple(const wchar_t* sFuction,
