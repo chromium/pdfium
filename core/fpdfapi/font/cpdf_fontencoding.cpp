@@ -237,7 +237,14 @@ const uint16_t ZapfEncoding[CPDF_FontEncoding::kEncodingTableSize] = {
     0x27BC, 0x27BD, 0x27BE, 0x0000,
 };
 
-const char* const StandardEncodingNames[224] = {
+constexpr size_t kEncodingTableFirstChar = 32;
+constexpr size_t kEncodingNamesTableSize =
+    CPDF_FontEncoding::kEncodingTableSize - kEncodingTableFirstChar;
+constexpr size_t kPDFDocEncodingTableFirstChar = 24;
+constexpr size_t kPDFDocEncodingNamesTableSize =
+    CPDF_FontEncoding::kEncodingTableSize - kPDFDocEncodingTableFirstChar;
+
+const char* const StandardEncodingNames[kEncodingNamesTableSize] = {
     "space",
     "exclam",
     "quotedbl",
@@ -464,7 +471,7 @@ const char* const StandardEncodingNames[224] = {
     nullptr,
 };
 
-const char* const AdobeWinAnsiEncodingNames[224] = {
+const char* const AdobeWinAnsiEncodingNames[kEncodingNamesTableSize] = {
     "space",
     "exclam",
     "quotedbl",
@@ -691,7 +698,7 @@ const char* const AdobeWinAnsiEncodingNames[224] = {
     "ydieresis",
 };
 
-const char* const MacRomanEncodingNames[224] = {
+const char* const MacRomanEncodingNames[kEncodingNamesTableSize] = {
     "space",
     "exclam",
     "quotedbl",
@@ -918,7 +925,7 @@ const char* const MacRomanEncodingNames[224] = {
     "caron",
 };
 
-const char* const MacExpertEncodingNames[224] = {
+const char* const MacExpertEncodingNames[kEncodingNamesTableSize] = {
     "space",
     "exclamsmall",
     "Hungarumlautsmall",
@@ -1145,7 +1152,7 @@ const char* const MacExpertEncodingNames[224] = {
     nullptr,
 };
 
-const char* const PDFDocEncodingNames[232] = {
+const char* const PDFDocEncodingNames[kPDFDocEncodingNamesTableSize] = {
     "breve",
     "caron",
     "circumflex",
@@ -1380,7 +1387,7 @@ const char* const PDFDocEncodingNames[232] = {
     "ydieresis",
 };
 
-const char* const AdobeSymbolEncodingNames[224] = {
+const char* const AdobeSymbolEncodingNames[kEncodingNamesTableSize] = {
     "space",
     "exclam",
     "universal",
@@ -1607,7 +1614,7 @@ const char* const AdobeSymbolEncodingNames[224] = {
     nullptr,
 };
 
-const char* const ZapfEncodingNames[224] = {
+const char* const ZapfEncodingNames[kEncodingNamesTableSize] = {
     "space", "a1",    "a2",    "a202",  "a3",    "a4",    "a5",    "a119",
     "a118",  "a117",  "a11",   "a12",   "a13",   "a14",   "a15",   "a16",
     "a105",  "a17",   "a18",   "a19",   "a20",   "a21",   "a22",   "a23",
@@ -1771,15 +1778,15 @@ ByteString PDF_AdobeNameFromUnicode(wchar_t unicode) {
 
 const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode) {
   if (encoding == PDFFONT_ENCODING_PDFDOC) {
-    if (charcode < 24)
+    if (charcode < kPDFDocEncodingTableFirstChar)
       return nullptr;
 
-    charcode -= 24;
+    charcode -= kPDFDocEncodingTableFirstChar;
   } else {
-    if (charcode < 32)
+    if (charcode < kEncodingTableFirstChar)
       return nullptr;
 
-    charcode -= 32;
+    charcode -= kEncodingTableFirstChar;
   }
   switch (encoding) {
     case PDFFONT_ENCODING_WINANSI:
