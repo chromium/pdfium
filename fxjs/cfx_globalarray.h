@@ -15,9 +15,12 @@ class CFX_KeyValue;
 class CFX_GlobalArray {
  public:
   CFX_GlobalArray();
+  CFX_GlobalArray(const CFX_GlobalArray& that) = delete;
+  CFX_GlobalArray(CFX_GlobalArray&& that);
   ~CFX_GlobalArray();
 
-  CFX_GlobalArray& operator=(const CFX_GlobalArray& array);
+  CFX_GlobalArray& operator=(const CFX_GlobalArray& array) = delete;
+  CFX_GlobalArray& operator=(CFX_GlobalArray&& array);
 
   void Add(std::unique_ptr<CFX_KeyValue> pKeyValue);
   size_t Count() const;

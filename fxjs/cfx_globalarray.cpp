@@ -13,54 +13,11 @@
 
 CFX_GlobalArray::CFX_GlobalArray() = default;
 
+CFX_GlobalArray::CFX_GlobalArray(CFX_GlobalArray&& that) = default;
+
 CFX_GlobalArray::~CFX_GlobalArray() = default;
 
-CFX_GlobalArray& CFX_GlobalArray::operator=(const CFX_GlobalArray& that) {
-  if (this == &that)
-    return *this;
-
-  m_Array.clear();
-  for (size_t i = 0, sz = that.Count(); i < sz; i++) {
-    CFX_KeyValue* pOldObjData = that.GetAt(i);
-    switch (pOldObjData->nType) {
-      case CFX_KeyValue::DataType::NUMBER: {
-        auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->dData = pOldObjData->dData;
-        Add(std::move(pNewObjData));
-      } break;
-      case CFX_KeyValue::DataType::BOOLEAN: {
-        auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->bData = pOldObjData->bData;
-        Add(std::move(pNewObjData));
-      } break;
-      case CFX_KeyValue::DataType::STRING: {
-        auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->sData = pOldObjData->sData;
-        Add(std::move(pNewObjData));
-      } break;
-      case CFX_KeyValue::DataType::OBJECT: {
-        auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        pNewObjData->objData = pOldObjData->objData;
-        Add(std::move(pNewObjData));
-      } break;
-      case CFX_KeyValue::DataType::NULLOBJ: {
-        auto pNewObjData = pdfium::MakeUnique<CFX_KeyValue>();
-        pNewObjData->sKey = pOldObjData->sKey;
-        pNewObjData->nType = pOldObjData->nType;
-        Add(std::move(pNewObjData));
-      } break;
-    }
-  }
-  return *this;
-}
+CFX_GlobalArray& CFX_GlobalArray::operator=(CFX_GlobalArray&& array) = default;
 
 void CFX_GlobalArray::Add(std::unique_ptr<CFX_KeyValue> pKeyValue) {
   m_Array.push_back(std::move(pKeyValue));

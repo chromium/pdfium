@@ -400,7 +400,7 @@ void CJS_Global::CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime) {
         v8::Local<v8::Object> obj =
             v8::Local<v8::Object>::New(GetIsolate(), pData->pData);
         ObjectToArray(pRuntime, obj, &array);
-        m_pGlobalData->SetGlobalVariableObject(name, array);
+        m_pGlobalData->SetGlobalVariableObject(name, std::move(array));
         m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
       } break;
       case CFX_KeyValue::DataType::NULLOBJ:

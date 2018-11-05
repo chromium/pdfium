@@ -147,20 +147,20 @@ void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
 }
 
 void CFX_GlobalData::SetGlobalVariableObject(ByteString sPropName,
-                                             const CFX_GlobalArray& array) {
+                                             CFX_GlobalArray array) {
   if (!TrimPropName(&sPropName))
     return;
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
     pData->data.nType = CFX_KeyValue::DataType::OBJECT;
-    pData->data.objData = array;
+    pData->data.objData = std::move(array);
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_KeyValue::DataType::OBJECT;
-  pNewData->data.objData = array;
+  pNewData->data.objData = std::move(array);
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
