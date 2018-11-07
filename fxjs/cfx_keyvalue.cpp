@@ -6,6 +6,10 @@
 
 #include "fxjs/cfx_keyvalue.h"
 
+CFX_Value::CFX_Value() = default;
+
+CFX_Value::~CFX_Value() = default;
+
 CFX_KeyValue::CFX_KeyValue() = default;
 
 CFX_KeyValue::~CFX_KeyValue() = default;

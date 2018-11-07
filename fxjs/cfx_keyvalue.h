@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/cfx_globalarray.h"
 
-class CFX_KeyValue {
+class CFX_Value {
  public:
   enum class DataType : uint8_t {
     NUMBER = 0,
@@ -20,15 +20,22 @@ class CFX_KeyValue {
     NULLOBJ
   };
 
-  CFX_KeyValue();
-  ~CFX_KeyValue();
+  CFX_Value();
+  ~CFX_Value();
 
-  ByteString sKey;
-  CFX_KeyValue::DataType nType;
+  DataType nType = DataType::NULLOBJ;
   bool bData;
   double dData;
   ByteString sData;
   CFX_GlobalArray objData;
+};
+
+class CFX_KeyValue : public CFX_Value {
+ public:
+  CFX_KeyValue();
+  ~CFX_KeyValue();
+
+  ByteString sKey;
 };
 
 #endif  // FXJS_CFX_KEYVALUE_H_

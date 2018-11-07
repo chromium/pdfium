@@ -39,7 +39,7 @@ bool TrimPropName(ByteString* sPropName) {
 }
 
 void MakeNameTypeString(const ByteString& name,
-                        CFX_KeyValue::DataType eType,
+                        CFX_Value::DataType eType,
                         CFX_BinaryBuf* result) {
   uint32_t dwNameLen = (uint32_t)name.GetLength();
   result->AppendBlock(&dwNameLen, sizeof(uint32_t));
@@ -53,31 +53,31 @@ bool MakeByteString(const ByteString& name,
                     const CFX_KeyValue& pData,
                     CFX_BinaryBuf* result) {
   switch (pData.nType) {
-    case CFX_KeyValue::DataType::NUMBER: {
+    case CFX_Value::DataType::NUMBER: {
       MakeNameTypeString(name, pData.nType, result);
       double dData = pData.dData;
       result->AppendBlock(&dData, sizeof(double));
       return true;
     }
-    case CFX_KeyValue::DataType::BOOLEAN: {
+    case CFX_Value::DataType::BOOLEAN: {
       MakeNameTypeString(name, pData.nType, result);
       uint16_t wData = static_cast<uint16_t>(pData.bData);
       result->AppendBlock(&wData, sizeof(uint16_t));
       return true;
     }
-    case CFX_KeyValue::DataType::STRING: {
+    case CFX_Value::DataType::STRING: {
       MakeNameTypeString(name, pData.nType, result);
       uint32_t dwDataLen = (uint32_t)pData.sData.GetLength();
       result->AppendBlock(&dwDataLen, sizeof(uint32_t));
       result->AppendString(pData.sData);
       return true;
     }
-    case CFX_KeyValue::DataType::NULLOBJ: {
+    case CFX_Value::DataType::NULLOBJ: {
       MakeNameTypeString(name, pData.nType, result);
       return true;
     }
     // Arrays don't get persisted per JS spec page 484.
-    case CFX_KeyValue::DataType::OBJECT:
+    case CFX_Value::DataType::OBJECT:
     default:
       break;
   }
@@ -145,13 +145,13 @@ void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = CFX_KeyValue::DataType::NUMBER;
+    pData->data.nType = CFX_Value::DataType::NUMBER;
     pData->data.dData = dData;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = CFX_KeyValue::DataType::NUMBER;
+  pNewData->data.nType = CFX_Value::DataType::NUMBER;
   pNewData->data.dData = dData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -163,13 +163,13 @@ void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = CFX_KeyValue::DataType::BOOLEAN;
+    pData->data.nType = CFX_Value::DataType::BOOLEAN;
     pData->data.bData = bData;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = CFX_KeyValue::DataType::BOOLEAN;
+  pNewData->data.nType = CFX_Value::DataType::BOOLEAN;
   pNewData->data.bData = bData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -181,13 +181,13 @@ void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = CFX_KeyValue::DataType::STRING;
+    pData->data.nType = CFX_Value::DataType::STRING;
     pData->data.sData = sData;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = CFX_KeyValue::DataType::STRING;
+  pNewData->data.nType = CFX_Value::DataType::STRING;
   pNewData->data.sData = sData;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -199,13 +199,13 @@ void CFX_GlobalData::SetGlobalVariableObject(ByteString sPropName,
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = CFX_KeyValue::DataType::OBJECT;
+    pData->data.nType = CFX_Value::DataType::OBJECT;
     pData->data.objData = std::move(array);
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = CFX_KeyValue::DataType::OBJECT;
+  pNewData->data.nType = CFX_Value::DataType::OBJECT;
   pNewData->data.objData = std::move(array);
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
@@ -216,12 +216,12 @@ void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
 
   CFX_GlobalData::Element* pData = GetGlobalVariable(sPropName);
   if (pData) {
-    pData->data.nType = CFX_KeyValue::DataType::NULLOBJ;
+    pData->data.nType = CFX_Value::DataType::NULLOBJ;
     return;
   }
   auto pNewData = pdfium::MakeUnique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
-  pNewData->data.nType = CFX_KeyValue::DataType::NULLOBJ;
+  pNewData->data.nType = CFX_Value::DataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
@@ -317,12 +317,12 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
     ByteString sEntry = ByteString(p, dwNameLen);
     p += sizeof(char) * dwNameLen;
 
-    CFX_KeyValue::DataType wDataType =
-        static_cast<CFX_KeyValue::DataType>(*((uint16_t*)p));
+    CFX_Value::DataType wDataType =
+        static_cast<CFX_Value::DataType>(*((uint16_t*)p));
     p += sizeof(uint16_t);
 
     switch (wDataType) {
-      case CFX_KeyValue::DataType::NUMBER: {
+      case CFX_Value::DataType::NUMBER: {
         double dData = 0;
         switch (wVersion) {
           case 1: {
@@ -338,13 +338,13 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
         SetGlobalVariableNumber(sEntry, dData);
         SetGlobalVariablePersistent(sEntry, true);
       } break;
-      case CFX_KeyValue::DataType::BOOLEAN: {
+      case CFX_Value::DataType::BOOLEAN: {
         uint16_t wData = *((uint16_t*)p);
         p += sizeof(uint16_t);
         SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
         SetGlobalVariablePersistent(sEntry, true);
       } break;
-      case CFX_KeyValue::DataType::STRING: {
+      case CFX_Value::DataType::STRING: {
         uint32_t dwLength = *((uint32_t*)p);
         p += sizeof(uint32_t);
         if (p + dwLength > buffer.end())
@@ -354,11 +354,11 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
         SetGlobalVariablePersistent(sEntry, true);
         p += sizeof(char) * dwLength;
       } break;
-      case CFX_KeyValue::DataType::NULLOBJ: {
+      case CFX_Value::DataType::NULLOBJ: {
         SetGlobalVariableNull(sEntry);
         SetGlobalVariablePersistent(sEntry, true);
       } break;
-      case CFX_KeyValue::DataType::OBJECT:
+      case CFX_Value::DataType::OBJECT:
       default:
         // Arrays aren't allowed in these buffers, nor are unrecoginzed tags.
         return false;

@@ -51,17 +51,14 @@ class CJS_Global final : public CJS_Object {
                          v8::Local<v8::Value> vp);
 
  private:
-  struct JSGlobalData {
+  struct JSGlobalData : public CFX_Value {
+   public:
     JSGlobalData();
     ~JSGlobalData();
 
-    CFX_KeyValue::DataType nType;
-    double dData;
-    bool bData;
-    ByteString sData;
     v8::Global<v8::Object> pData;
-    bool bPersistent;
-    bool bDeleted;
+    bool bPersistent = false;
+    bool bDeleted = false;
   };
 
   static int ObjDefnID;
@@ -71,7 +68,7 @@ class CJS_Global final : public CJS_Object {
   void CommitGlobalPersisitentVariables(CJS_Runtime* pRuntime);
   void DestroyGlobalPersisitentVariables();
   CJS_Result SetGlobalVariables(const ByteString& propname,
-                                CFX_KeyValue::DataType nType,
+                                CFX_Value::DataType nType,
                                 double dData,
                                 bool bData,
                                 const ByteString& sData,
