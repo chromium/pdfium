@@ -8,6 +8,8 @@
 
 #include <time.h>
 
+#include <cmath>
+
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -164,6 +166,15 @@ int DateFromTime(double t) {
 
 }  // namespace
 
+const wchar_t* const kMonths[12] = {L"Jan", L"Feb", L"Mar", L"Apr",
+                                    L"May", L"Jun", L"Jul", L"Aug",
+                                    L"Sep", L"Oct", L"Nov", L"Dec"};
+
+const wchar_t* const kFullMonths[12] = {L"January", L"February", L"March",
+                                        L"April",   L"May",      L"June",
+                                        L"July",    L"August",   L"September",
+                                        L"October", L"November", L"December"};
+
 double FX_GetDateTime() {
   if (!FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
     return 0;
@@ -197,6 +208,28 @@ int FX_GetMinFromTime(double dt) {
 
 int FX_GetSecFromTime(double dt) {
   return (int)Mod(floor(dt / 1000), 60);
+}
+
+bool FX_IsValidMonth(int m) {
+  return m >= 1 && m <= 12;
+}
+
+// TODO(thestig): Should this take the month into consideration?
+bool FX_IsValidDay(int d) {
+  return d >= 1 && d <= 31;
+}
+
+// TODO(thestig): Should 24 be allowed? Similarly, 60 for minutes and seconds.
+bool FX_IsValid24Hour(int h) {
+  return h >= 0 && h <= 24;
+}
+
+bool FX_IsValidMinute(int m) {
+  return m >= 0 && m <= 60;
+}
+
+bool FX_IsValidSecond(int s) {
+  return s >= 0 && s <= 60;
 }
 
 double FX_LocalTime(double d) {
@@ -270,6 +303,260 @@ WideString FX_ParseStringString(const WideString& str,
 
   *pSkip = swRet.GetLength();
   return swRet;
+}
+
+ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
+                                         const WideString& format,
+                                         double* result) {
+  double dt = FX_GetDateTime();
+  if (format.IsEmpty() || value.IsEmpty()) {
+    *result = dt;
+    return ConversionStatus::kSuccess;
+  }
+
+  int nYear = FX_GetYearFromTime(dt);
+  int nMonth = FX_GetMonthFromTime(dt) + 1;
+  int nDay = FX_GetDayFromTime(dt);
+  int nHour = FX_GetHourFromTime(dt);
+  int nMin = FX_GetMinFromTime(dt);
+  int nSec = FX_GetSecFromTime(dt);
+  int nYearSub = 99;  // nYear - 2000;
+  bool bPm = false;
+  bool bExit = false;
+  bool bBadFormat = false;
+  size_t i = 0;
+  size_t j = 0;
+
+  while (i < format.GetLength()) {
+    if (bExit)
+      break;
+
+    wchar_t c = format[i];
+    switch (c) {
+      case ':':
+      case '.':
+      case '-':
+      case '\\':
+      case '/':
+        i++;
+        j++;
+        break;
+
+      case 'y':
+      case 'm':
+      case 'd':
+      case 'H':
+      case 'h':
+      case 'M':
+      case 's':
+      case 't': {
+        size_t oldj = j;
+        size_t nSkip = 0;
+        size_t remaining = format.GetLength() - i - 1;
+
+        if (remaining == 0 || format[i + 1] != c) {
+          switch (c) {
+            case 'y':
+              i++;
+              j++;
+              break;
+            case 'm':
+              nMonth = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i++;
+              j += nSkip;
+              break;
+            case 'd':
+              nDay = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i++;
+              j += nSkip;
+              break;
+            case 'H':
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i++;
+              j += nSkip;
+              break;
+            case 'h':
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i++;
+              j += nSkip;
+              break;
+            case 'M':
+              nMin = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i++;
+              j += nSkip;
+              break;
+            case 's':
+              nSec = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i++;
+              j += nSkip;
+              break;
+            case 't':
+              bPm = (j < value.GetLength() && value[j] == 'p');
+              i++;
+              j++;
+              break;
+          }
+        } else if (remaining == 1 || format[i + 2] != c) {
+          switch (c) {
+            case 'y':
+              nYear = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i += 2;
+              j += nSkip;
+              break;
+            case 'm':
+              nMonth = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i += 2;
+              j += nSkip;
+              break;
+            case 'd':
+              nDay = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i += 2;
+              j += nSkip;
+              break;
+            case 'H':
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i += 2;
+              j += nSkip;
+              break;
+            case 'h':
+              nHour = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i += 2;
+              j += nSkip;
+              break;
+            case 'M':
+              nMin = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i += 2;
+              j += nSkip;
+              break;
+            case 's':
+              nSec = FX_ParseStringInteger(value, j, &nSkip, 2);
+              i += 2;
+              j += nSkip;
+              break;
+            case 't':
+              bPm = (j + 1 < value.GetLength() && value[j] == 'p' &&
+                     value[j + 1] == 'm');
+              i += 2;
+              j += 2;
+              break;
+          }
+        } else if (remaining == 2 || format[i + 3] != c) {
+          switch (c) {
+            case 'm': {
+              WideString sMonth = FX_ParseStringString(value, j, &nSkip);
+              bool bFind = false;
+              for (int m = 0; m < 12; m++) {
+                if (sMonth.CompareNoCase(kMonths[m]) == 0) {
+                  nMonth = m + 1;
+                  i += 3;
+                  j += nSkip;
+                  bFind = true;
+                  break;
+                }
+              }
+
+              if (!bFind) {
+                nMonth = FX_ParseStringInteger(value, j, &nSkip, 3);
+                i += 3;
+                j += nSkip;
+              }
+            } break;
+            case 'y':
+              break;
+            default:
+              i += 3;
+              j += 3;
+              break;
+          }
+        } else if (remaining == 3 || format[i + 4] != c) {
+          switch (c) {
+            case 'y':
+              nYear = FX_ParseStringInteger(value, j, &nSkip, 4);
+              j += nSkip;
+              i += 4;
+              break;
+            case 'm': {
+              bool bFind = false;
+
+              WideString sMonth = FX_ParseStringString(value, j, &nSkip);
+              sMonth.MakeLower();
+
+              for (int m = 0; m < 12; m++) {
+                WideString sFullMonths = WideString(kFullMonths[m]);
+                sFullMonths.MakeLower();
+
+                if (sFullMonths.Contains(sMonth.c_str())) {
+                  nMonth = m + 1;
+                  i += 4;
+                  j += nSkip;
+                  bFind = true;
+                  break;
+                }
+              }
+
+              if (!bFind) {
+                nMonth = FX_ParseStringInteger(value, j, &nSkip, 4);
+                i += 4;
+                j += nSkip;
+              }
+            } break;
+            default:
+              i += 4;
+              j += 4;
+              break;
+          }
+        } else {
+          if (j >= value.GetLength() || format[i] != value[j]) {
+            bBadFormat = true;
+            bExit = true;
+          }
+          i++;
+          j++;
+        }
+
+        if (oldj == j) {
+          bBadFormat = true;
+          bExit = true;
+        }
+        break;
+      }
+
+      default:
+        if (value.GetLength() <= j) {
+          bExit = true;
+        } else if (format[i] != value[j]) {
+          bBadFormat = true;
+          bExit = true;
+        }
+
+        i++;
+        j++;
+        break;
+    }
+  }
+
+  if (bBadFormat)
+    return ConversionStatus::kBadFormat;
+
+  if (bPm)
+    nHour += 12;
+
+  if (nYear >= 0 && nYear <= nYearSub)
+    nYear += 2000;
+
+  if (!FX_IsValidMonth(nMonth) || !FX_IsValidDay(nDay) ||
+      !FX_IsValid24Hour(nHour) || !FX_IsValidMinute(nMin) ||
+      !FX_IsValidSecond(nSec)) {
+    return ConversionStatus::kBadDate;
+  }
+
+  dt = FX_MakeDate(FX_MakeDay(nYear, nMonth - 1, nDay),
+                   FX_MakeTime(nHour, nMin, nSec, 0));
+  if (std::isnan(dt))
+    return ConversionStatus::kBadDate;
+
+  *result = dt;
+  return ConversionStatus::kSuccess;
 }
 
 }  // namespace fxjs
