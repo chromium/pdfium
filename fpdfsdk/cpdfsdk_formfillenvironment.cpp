@@ -62,6 +62,7 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
     m_pInfo->Release(m_pInfo);
 }
 
+#ifdef PDF_ENABLE_V8
 int CPDFSDK_FormFillEnvironment::JS_appAlert(const WideString& Msg,
                                              const WideString& Title,
                                              int Type,
@@ -127,38 +128,6 @@ WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
   return WideString::FromLocal(ByteStringView(pBuff));
 }
 
-WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
-  if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
-      !m_pInfo->m_pJsPlatform->Doc_getFilePath) {
-    return WideString();
-  }
-  const int nRequiredLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
-      m_pInfo->m_pJsPlatform, nullptr, 0);
-  if (nRequiredLen <= 0)
-    return WideString();
-
-  std::vector<uint8_t> pBuff(nRequiredLen);
-  const int nActualLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
-      m_pInfo->m_pJsPlatform, pBuff.data(), nRequiredLen);
-  if (nActualLen <= 0 || nActualLen > nRequiredLen)
-    return WideString();
-
-  pBuff.resize(nActualLen);
-  return WideString::FromLocal(ByteStringView(pBuff));
-}
-
-void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
-                                                   int length,
-                                                   const WideString& URL) {
-  if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
-      !m_pInfo->m_pJsPlatform->Doc_submitForm) {
-    return;
-  }
-  ByteString bsUrl = URL.UTF16LE_Encode();
-  m_pInfo->m_pJsPlatform->Doc_submitForm(m_pInfo->m_pJsPlatform, formData,
-                                         length, AsFPDFWideString(&bsUrl));
-}
-
 void CPDFSDK_FormFillEnvironment::JS_docmailForm(void* mailData,
                                                  int length,
                                                  FPDF_BOOL bUI,
@@ -205,6 +174,39 @@ void CPDFSDK_FormFillEnvironment::JS_docgotoPage(int nPageNum) {
     return;
   }
   m_pInfo->m_pJsPlatform->Doc_gotoPage(m_pInfo->m_pJsPlatform, nPageNum);
+}
+#endif  // PDF_ENABLE_V8
+
+WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
+  if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
+      !m_pInfo->m_pJsPlatform->Doc_getFilePath) {
+    return WideString();
+  }
+  const int nRequiredLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
+      m_pInfo->m_pJsPlatform, nullptr, 0);
+  if (nRequiredLen <= 0)
+    return WideString();
+
+  std::vector<uint8_t> pBuff(nRequiredLen);
+  const int nActualLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
+      m_pInfo->m_pJsPlatform, pBuff.data(), nRequiredLen);
+  if (nActualLen <= 0 || nActualLen > nRequiredLen)
+    return WideString();
+
+  pBuff.resize(nActualLen);
+  return WideString::FromLocal(ByteStringView(pBuff));
+}
+
+void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
+                                                   int length,
+                                                   const WideString& URL) {
+  if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
+      !m_pInfo->m_pJsPlatform->Doc_submitForm) {
+    return;
+  }
+  ByteString bsUrl = URL.UTF16LE_Encode();
+  m_pInfo->m_pJsPlatform->Doc_submitForm(m_pInfo->m_pJsPlatform, formData,
+                                         length, AsFPDFWideString(&bsUrl));
 }
 
 IJS_Runtime* CPDFSDK_FormFillEnvironment::GetIJSRuntime() {

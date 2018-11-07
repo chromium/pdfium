@@ -113,6 +113,7 @@ class CPDFSDK_FormFillEnvironment final
 
   CPDF_Document* GetPDFDocument() const { return m_pCPDFDoc.Get(); }
 
+#ifdef PDF_ENABLE_V8
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Context* GetXFAContext() const;
   int GetPageViewCount() const;
@@ -176,8 +177,6 @@ class CPDFSDK_FormFillEnvironment final
                      int length);
   void JS_appBeep(int nType);
   WideString JS_fieldBrowse();
-  WideString JS_docGetFilePath();
-  void JS_docSubmitForm(void* formData, int length, const WideString& URL);
   void JS_docmailForm(void* mailData,
                       int length,
                       FPDF_BOOL bUI,
@@ -195,8 +194,14 @@ class CPDFSDK_FormFillEnvironment final
                    FPDF_BOOL bReverse,
                    FPDF_BOOL bAnnotations);
   void JS_docgotoPage(int nPageNum);
+#endif  // PDF_ENABLE_V8
 
   bool IsJSPlatformPresent() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+
+  // TODO(tsepez): required even if !V8, investigate.
+  WideString JS_docGetFilePath();
+  void JS_docSubmitForm(void* formData, int length, const WideString& URL);
+
   ByteString GetAppName() const { return ""; }
   CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
