@@ -55,6 +55,11 @@ class CPDF_IndirectObjectHolder {
       uint32_t objnum,
       std::unique_ptr<CPDF_Object> pObj);
 
+  // Takes ownership of |pObj|, persist it for life of the indirect object
+  // holder (typically so that unowned pointers to it remain valid). No-op
+  // if |pObj| is NULL.
+  void AddOrphan(std::unique_ptr<CPDF_Object> pObj);
+
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }
 
