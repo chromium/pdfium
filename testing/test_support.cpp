@@ -68,7 +68,8 @@ std::unique_ptr<v8::Platform> InitializeV8Common(const std::string& exe_path) {
 
   // By enabling predictable mode, V8 won't post any background tasks.
   // By enabling GC, it makes it easier to chase use-after-free.
-  const char v8_flags[] = "--predictable --expose-gc";
+  // Disabling WASM is a good precedent for other embedders.
+  const char v8_flags[] = "--predictable --expose-gc --no-expose-wasm";
   v8::V8::SetFlagsFromString(v8_flags, static_cast<int>(strlen(v8_flags)));
   v8::V8::Initialize();
   return platform;

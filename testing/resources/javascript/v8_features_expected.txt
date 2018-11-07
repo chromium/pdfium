@@ -1,0 +1,2 @@
+Alert: PASS: typeof gc = function
+Alert: PASS: typeof WebAssembly = undefined
