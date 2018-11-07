@@ -50,7 +50,10 @@ class CFX_GlobalData {
   bool DeleteGlobalVariable(ByteString propname);
 
   int32_t GetSize() const;
-  Element* GetAt(int index) const;
+  Element* GetAt(int index);
+
+  // Exposed for testing.
+  Element* GetGlobalVariable(const ByteString& sPropname);
 
  private:
   using iterator = std::vector<std::unique_ptr<Element>>::iterator;
@@ -63,7 +66,6 @@ class CFX_GlobalData {
   void LoadGlobalPersistentVariablesFromBuffer(pdfium::span<uint8_t> buffer);
   void SaveGlobalPersisitentVariables();
 
-  Element* GetGlobalVariable(const ByteString& sPropname);
   iterator FindGlobalVariable(const ByteString& sPropname);
   const_iterator FindGlobalVariable(const ByteString& sPropname) const;
 
@@ -73,9 +75,6 @@ class CFX_GlobalData {
   void WriteFileBuffer(const wchar_t* sFilePath,
                        const char* pBuffer,
                        int32_t nLength);
-  void MakeByteString(const ByteString& name,
-                      CFX_KeyValue* pData,
-                      CFX_BinaryBuf& sData);
 
   size_t m_RefCount = 0;
   UnownedPtr<Delegate> const m_pDelegate;
