@@ -63,8 +63,6 @@ CJS_Result CJS_Event::get_change(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Event::set_change(CJS_Runtime* pRuntime,
                                  v8::Local<v8::Value> vp) {
-  ASSERT(pRuntime->GetCurrentEventContext());
-
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
@@ -101,7 +99,7 @@ CJS_Result CJS_Event::set_commit_key(CJS_Runtime* pRuntime,
 CJS_Result CJS_Event::get_field_full(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
-  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
+  if (wcscmp(pEvent->Name(), L"Keystroke") != 0)
     return CJS_Result::Failure(L"unrecognized event");
 
   return CJS_Result::Success(pRuntime->NewBoolean(pEvent->FieldFull()));
@@ -188,7 +186,7 @@ CJS_Result CJS_Event::get_sel_end(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
+  if (wcscmp(pEvent->Name(), L"Keystroke") != 0)
     return CJS_Result::Success();
 
   return CJS_Result::Success(pRuntime->NewNumber(pEvent->SelEnd()));
@@ -199,7 +197,7 @@ CJS_Result CJS_Event::set_sel_end(CJS_Runtime* pRuntime,
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") == 0)
+  if (wcscmp(pEvent->Name(), L"Keystroke") == 0)
     pEvent->SetSelEnd(pRuntime->ToInt32(vp));
 
   return CJS_Result::Success();
@@ -209,7 +207,7 @@ CJS_Result CJS_Event::get_sel_start(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
+  if (wcscmp(pEvent->Name(), L"Keystroke") != 0)
     return CJS_Result::Success();
 
   return CJS_Result::Success(pRuntime->NewNumber(pEvent->SelStart()));
@@ -220,7 +218,7 @@ CJS_Result CJS_Event::set_sel_start(CJS_Runtime* pRuntime,
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") == 0)
+  if (wcscmp(pEvent->Name(), L"Keystroke") == 0)
     pEvent->SetSelStart(pRuntime->ToInt32(vp));
 
   return CJS_Result::Success();
@@ -249,7 +247,6 @@ CJS_Result CJS_Event::set_source(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Event::get_target(CJS_Runtime* pRuntime) {
-  ASSERT(pRuntime->GetCurrentEventContext());
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Result::Success(pEvent->Target_Field()->ToV8Object());
@@ -261,7 +258,6 @@ CJS_Result CJS_Event::set_target(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Event::get_target_name(CJS_Runtime* pRuntime) {
-  ASSERT(pRuntime->GetCurrentEventContext());
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
   return CJS_Result::Success(
@@ -287,7 +283,7 @@ CJS_Result CJS_Event::get_value(CJS_Runtime* pRuntime) {
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Type(), L"Field") != 0)
+  if (wcscmp(pEvent->Type(), L"Field") != 0)
     return CJS_Result::Failure(L"Bad event type.");
 
   if (!pEvent->m_pValue)
@@ -299,12 +295,10 @@ CJS_Result CJS_Event::get_value(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Event::set_value(CJS_Runtime* pRuntime,
                                 v8::Local<v8::Value> vp) {
-  ASSERT(pRuntime->GetCurrentEventContext());
-
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Type(), L"Field") != 0)
+  if (wcscmp(pEvent->Type(), L"Field") != 0)
     return CJS_Result::Failure(L"Bad event type.");
 
   if (!pEvent->m_pValue)
@@ -315,10 +309,9 @@ CJS_Result CJS_Event::set_value(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Event::get_will_commit(CJS_Runtime* pRuntime) {
-  ASSERT(pRuntime->GetCurrentEventContext());
-
   CJS_EventHandler* pEvent =
       pRuntime->GetCurrentEventContext()->GetEventHandler();
+
   return CJS_Result::Success(pRuntime->NewBoolean(pEvent->WillCommit()));
 }
 
