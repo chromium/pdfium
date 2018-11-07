@@ -214,6 +214,10 @@ TEST_F(FPDFAnnotEmbeddertest, ExtractInkMultiple) {
     EXPECT_EQ(475.336090f, rect.right);
     EXPECT_EQ(681.535034f, rect.top);
   }
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 612, 792, "354002e1c4386d38fdde29ef8d61074a");
+  }
   UnloadPageNoEvents(page);
 }
 
@@ -458,7 +462,6 @@ TEST_F(FPDFAnnotEmbeddertest, GetAndSetQuadPoints) {
   }
 
   FPDFPage_CloseAnnot(squareAnnot);
-
   UnloadPage(page);
 }
 
