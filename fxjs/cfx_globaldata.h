@@ -62,9 +62,9 @@ class CFX_GlobalData {
   explicit CFX_GlobalData(Delegate* pDelegate);
   ~CFX_GlobalData();
 
-  void LoadGlobalPersistentVariables();
-  void LoadGlobalPersistentVariablesFromBuffer(pdfium::span<uint8_t> buffer);
-  void SaveGlobalPersisitentVariables();
+  bool LoadGlobalPersistentVariables();
+  bool LoadGlobalPersistentVariablesFromBuffer(pdfium::span<uint8_t> buffer);
+  bool SaveGlobalPersisitentVariables();
 
   iterator FindGlobalVariable(const ByteString& sPropname);
   const_iterator FindGlobalVariable(const ByteString& sPropname) const;

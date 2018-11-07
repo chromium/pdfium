@@ -93,7 +93,7 @@ TEST(CFXGlobalData, StoreReload) {
   EXPECT_EQ("null", element->data.sKey);
   EXPECT_EQ(CFX_KeyValue::DataType::NULLOBJ, element->data.nType);
 
-  // TODO(tsepez): arrays don't get persisted.
+  // Arrays don't get persisted.
   element = pInstance->GetAt(4);
   ASSERT_FALSE(element);
 

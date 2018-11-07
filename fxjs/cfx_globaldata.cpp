@@ -76,7 +76,7 @@ bool MakeByteString(const ByteString& name,
       MakeNameTypeString(name, pData.nType, result);
       return true;
     }
-    // TODO(tsepez): persist these array objects.
+    // Arrays don't get persisted per JS spec page 484.
     case CFX_KeyValue::DataType::OBJECT:
     default:
       break;
@@ -260,25 +260,27 @@ CFX_GlobalData::Element* CFX_GlobalData::GetAt(int index) {
   return m_arrayGlobalData[index].get();
 }
 
-void CFX_GlobalData::LoadGlobalPersistentVariables() {
+bool CFX_GlobalData::LoadGlobalPersistentVariables() {
   if (!m_pDelegate)
-    return;
+    return false;
 
+  bool ret;
   {
     // Span can't outlive call to BufferDone().
     Optional<pdfium::span<uint8_t>> buffer = m_pDelegate->LoadBuffer();
     if (!buffer.has_value() || buffer.value().empty())
-      return;
+      return false;
 
-    LoadGlobalPersistentVariablesFromBuffer(buffer.value());
+    ret = LoadGlobalPersistentVariablesFromBuffer(buffer.value());
   }
   m_pDelegate->BufferDone();
+  return ret;
 }
 
-void CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
+bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
     pdfium::span<uint8_t> buffer) {
   if (buffer.size() < kMinGlobalDataBytes)
-    return;
+    return false;
 
   CRYPT_ArcFourCryptBlock(buffer.data(), buffer.size(), kRC4KEY,
                           sizeof(kRC4KEY));
@@ -287,12 +289,12 @@ void CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
   uint16_t wType = *((uint16_t*)p);
   p += sizeof(uint16_t);
   if (wType != kMagic)
-    return;
+    return false;
 
   uint16_t wVersion = *((uint16_t*)p);
   p += sizeof(uint16_t);
   if (wVersion > kMaxVersion)
-    return;
+    return false;
 
   uint32_t dwCount = *((uint32_t*)p);
   p += sizeof(uint32_t);
@@ -301,7 +303,7 @@ void CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
   p += sizeof(uint32_t);
 
   if (dwSize != buffer.size() - sizeof(uint16_t) * 2 - sizeof(uint32_t) * 2)
-    return;
+    return false;
 
   for (int32_t i = 0, sz = dwCount; i < sz; i++) {
     if (p > buffer.end())
@@ -357,14 +359,17 @@ void CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
         SetGlobalVariablePersistent(sEntry, true);
       } break;
       case CFX_KeyValue::DataType::OBJECT:
-        break;
+      default:
+        // Arrays aren't allowed in these buffers, nor are unrecoginzed tags.
+        return false;
     }
   }
+  return true;
 }
 
-void CFX_GlobalData::SaveGlobalPersisitentVariables() {
+bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
   if (!m_pDelegate)
-    return;
+    return false;
 
   uint32_t nCount = 0;
   CFX_BinaryBuf sData;
@@ -385,18 +390,19 @@ void CFX_GlobalData::SaveGlobalPersisitentVariables() {
 
   CFX_BinaryBuf sFile;
   uint16_t wType = kMagic;
-  sFile.AppendBlock(&wType, sizeof(uint16_t));
   uint16_t wVersion = 2;
+  sFile.AppendBlock(&wType, sizeof(uint16_t));
   sFile.AppendBlock(&wVersion, sizeof(uint16_t));
   sFile.AppendBlock(&nCount, sizeof(uint32_t));
+
   uint32_t dwSize = sData.GetSize();
   sFile.AppendBlock(&dwSize, sizeof(uint32_t));
   sFile.AppendBlock(sData.GetBuffer(), sData.GetSize());
+
   CRYPT_ArcFourCryptBlock(sFile.GetBuffer(), sFile.GetSize(), kRC4KEY,
                           sizeof(kRC4KEY));
 
-  // TODO(tsepez): check return value?
-  m_pDelegate->StoreBuffer({sFile.GetBuffer(), sFile.GetSize()});
+  return m_pDelegate->StoreBuffer({sFile.GetBuffer(), sFile.GetSize()});
 }
 
 CFX_GlobalData::Element::Element() = default;
