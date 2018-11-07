@@ -36,9 +36,6 @@ bool CPDF_TilingPattern::Load() {
     return true;
 
   const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
-  if (!pDict)
-    return false;
-
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
   m_XStep = static_cast<float>(fabs(pDict->GetNumberFor("XStep")));
   m_YStep = static_cast<float>(fabs(pDict->GetNumberFor("YStep")));
