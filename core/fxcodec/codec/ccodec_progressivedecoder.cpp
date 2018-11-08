@@ -767,7 +767,9 @@ bool CCodec_ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     return false;
   }
 
-  uint32_t availableData = m_SrcSize > m_offSet ? m_SrcSize - m_offSet : 0;
+  uint32_t availableData = m_pCodecMemory->GetSize() > m_offSet
+                               ? m_pCodecMemory->GetSize() - m_offSet
+                               : 0;
   if (neededData > availableData) {
     m_status = FXCODEC_STATUS_ERR_FORMAT;
     return false;
@@ -1265,10 +1267,9 @@ bool CCodec_ProgressiveDecoder::PngDetectImageTypeInBuffer(
       m_status = FXCODEC_STATUS_ERR_FORMAT;
       return false;
     }
-    if (m_pCodecMemory && input_size > m_SrcSize) {
+    if (m_pCodecMemory && input_size > m_pCodecMemory->GetSize())
       m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
-      m_SrcSize = input_size;
-    }
+
     if (!m_pFile->ReadBlock(m_pCodecMemory->GetBuffer(), m_offSet,
                             input_size)) {
       m_status = FXCODEC_STATUS_ERR_READ;
@@ -1349,10 +1350,9 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::PngContinueDecode() {
       m_status = FXCODEC_STATUS_DECODE_FINISH;
       return m_status;
     }
-    if (m_pCodecMemory && input_size > m_SrcSize) {
+    if (m_pCodecMemory && input_size > m_pCodecMemory->GetSize())
       m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
-      m_SrcSize = input_size;
-    }
+
     bool bResult =
         m_pFile->ReadBlock(m_pCodecMemory->GetBuffer(), m_offSet, input_size);
     if (!bResult) {
@@ -1548,14 +1548,13 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
 #endif  // PDF_ENABLE_XFA_TIFF
 
   size_t size = std::min<size_t>(m_pFile->GetSize(), FXCODEC_BLOCK_SIZE);
-  m_SrcSize = static_cast<uint32_t>(size);
-  m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(m_SrcSize);
+  m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(size);
   m_offSet = 0;
-  if (!m_pFile->ReadBlock(m_pCodecMemory->GetBuffer(), m_offSet, m_SrcSize)) {
+  if (!m_pFile->ReadBlock(m_pCodecMemory->GetBuffer(), m_offSet, size)) {
     m_status = FXCODEC_STATUS_ERR_READ;
     return false;
   }
-  m_offSet += m_SrcSize;
+  m_offSet += size;
 
   if (imageType == FXCODEC_IMAGE_JPG)
     return JpegDetectImageTypeInBuffer(pAttribute);
@@ -1592,31 +1591,30 @@ bool CCodec_ProgressiveDecoder::ReadMoreData(
   uint32_t dwBytesToFetchFromFile = m_pFile->GetSize() - m_offSet;
 
   // Figure out if the codec stopped processing midway through the buffer.
-  uint32_t dwUnconsumed = 0;
+  size_t dwUnconsumed = 0;
   if (!invalidate_buffer) {
-    FX_SAFE_UINT32 avail_input = pModule->GetAvailInput(pContext);
+    FX_SAFE_SIZE_T avail_input = pModule->GetAvailInput(pContext);
     if (!avail_input.IsValid())
       return false;
     dwUnconsumed = avail_input.ValueOrDie();
   }
 
-  if (dwUnconsumed == m_SrcSize) {
+  if (dwUnconsumed == m_pCodecMemory->GetSize()) {
     // Codec couldn't make any progress against the bytes in the buffer.
     // Increase the buffer size so that there might be enough contiguous
     // bytes to allow whatever operation is having difficulty to succeed.
     dwBytesToFetchFromFile =
         std::min<uint32_t>(dwBytesToFetchFromFile, FXCODEC_BLOCK_SIZE);
-    uint32_t dwNewSize = m_SrcSize + dwBytesToFetchFromFile;
+    size_t dwNewSize = m_pCodecMemory->GetSize() + dwBytesToFetchFromFile;
     if (!m_pCodecMemory->TryResize(dwNewSize)) {
       err_status = FXCODEC_STATUS_ERR_MEMORY;
       return false;
     }
-    m_SrcSize = dwNewSize;
   } else {
-    uint32_t dwConsumed = m_SrcSize - dwUnconsumed;
+    size_t dwConsumed = m_pCodecMemory->GetSize() - dwUnconsumed;
     m_pCodecMemory->Consume(dwConsumed);
-    dwBytesToFetchFromFile = std::min(dwBytesToFetchFromFile, dwConsumed);
-    m_SrcSize = dwBytesToFetchFromFile + dwUnconsumed;
+    dwBytesToFetchFromFile =
+        std::min<uint32_t>(dwBytesToFetchFromFile, dwConsumed);
   }
 
   // Append new data past the bytes not yet processed by the codec.

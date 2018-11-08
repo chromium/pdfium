@@ -268,7 +268,6 @@ class CCodec_ProgressiveDecoder :
   std::unique_ptr<CodecModuleIface::Context> m_pTiffContext;
 #endif  // PDF_ENABLE_XFA_TIFF
   uint32_t m_offSet = 0;
-  uint32_t m_SrcSize = 0;
   int m_ScanlineSize = 0;
   CFXCODEC_WeightTable m_WeightHorz;
   CFXCODEC_VertTable m_WeightVert;
