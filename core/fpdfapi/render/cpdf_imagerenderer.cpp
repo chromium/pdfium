@@ -98,15 +98,15 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
     m_pDIBBase = pClone;
   }
   m_ResampleOptions = FXDIB_ResampleOptions();
-  if (GetRenderOptions().HasFlag(RENDER_FORCE_DOWNSAMPLE))
+  if (GetRenderOptions().GetOptions().bForceDownsample)
     m_ResampleOptions.bInterpolateDownsample = true;
-  else if (GetRenderOptions().HasFlag(RENDER_FORCE_HALFTONE))
+  else if (GetRenderOptions().GetOptions().bForceDownsample)
     m_ResampleOptions.bHalftone = true;
 
   if (m_pRenderStatus->GetRenderDevice()->GetDeviceClass() != FXDC_DISPLAY)
     HandleFilters();
 
-  if (GetRenderOptions().HasFlag(RENDER_NOIMAGESMOOTH))
+  if (GetRenderOptions().GetOptions().bNoImageSmooth)
     m_ResampleOptions.bNoSmoothing = true;
   else if (m_pImageObject->GetImage()->IsInterpol())
     m_ResampleOptions.bInterpolateBilinear = true;

@@ -211,12 +211,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     pDevice->SetClip_Rect(rect);
 
     CPDF_RenderOptions options;
-    uint32_t option_flags = options.GetFlags();
-    if (flags & FPDF_LCD_TEXT)
-      option_flags |= RENDER_CLEARTYPE;
-    else
-      option_flags &= ~RENDER_CLEARTYPE;
-    options.SetFlags(option_flags);
+    options.GetOptions().bClearType = !!(flags & FPDF_LCD_TEXT);
 
     // Grayscale output
     if (flags & FPDF_GRAYSCALE)

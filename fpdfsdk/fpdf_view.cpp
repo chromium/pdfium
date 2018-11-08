@@ -84,26 +84,14 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
   if (!pContext->m_pOptions)
     pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
 
-  uint32_t option_flags = pContext->m_pOptions->GetFlags();
-  if (flags & FPDF_LCD_TEXT)
-    option_flags |= RENDER_CLEARTYPE;
-  else
-    option_flags &= ~RENDER_CLEARTYPE;
-
-  if (flags & FPDF_NO_NATIVETEXT)
-    option_flags |= RENDER_NO_NATIVETEXT;
-  if (flags & FPDF_RENDER_LIMITEDIMAGECACHE)
-    option_flags |= RENDER_LIMITEDIMAGECACHE;
-  if (flags & FPDF_RENDER_FORCEHALFTONE)
-    option_flags |= RENDER_FORCE_HALFTONE;
-  if (flags & FPDF_RENDER_NO_SMOOTHTEXT)
-    option_flags |= RENDER_NOTEXTSMOOTH;
-  if (flags & FPDF_RENDER_NO_SMOOTHIMAGE)
-    option_flags |= RENDER_NOIMAGESMOOTH;
-  if (flags & FPDF_RENDER_NO_SMOOTHPATH)
-    option_flags |= RENDER_NOPATHSMOOTH;
-
-  pContext->m_pOptions->SetFlags(option_flags);
+  auto& options = pContext->m_pOptions->GetOptions();
+  options.bClearType = !!(flags & FPDF_LCD_TEXT);
+  options.bNoNativeText = !!(flags & FPDF_NO_NATIVETEXT);
+  options.bLimitedImageCache = !!(flags & FPDF_RENDER_LIMITEDIMAGECACHE);
+  options.bForceHalftone = !!(flags & FPDF_RENDER_FORCEHALFTONE);
+  options.bNoTextSmooth = !!(flags & FPDF_RENDER_NO_SMOOTHTEXT);
+  options.bNoImageSmooth = !!(flags & FPDF_RENDER_NO_SMOOTHIMAGE);
+  options.bNoPathSmooth = !!(flags & FPDF_RENDER_NO_SMOOTHPATH);
 
   // Grayscale output
   if (flags & FPDF_GRAYSCALE)
@@ -547,9 +535,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pDevice->Attach(pBitmap, false, nullptr, false);
     if (bHasMask) {
       pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
-      uint32_t option_flags = pContext->m_pOptions->GetFlags();
-      option_flags |= RENDER_BREAKFORMASKS;
-      pContext->m_pOptions->SetFlags(option_flags);
+      pContext->m_pOptions->GetOptions().bBreakForMasks = true;
     }
   } else {
     pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc);
@@ -581,10 +567,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     pContext = pPage->GetRenderContext();
     pContext->m_pDevice = pdfium::MakeUnique<CFX_WindowsRenderDevice>(dc);
     pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
-
-    uint32_t option_flags = pContext->m_pOptions->GetFlags();
-    option_flags |= RENDER_BREAKFORMASKS;
-    pContext->m_pOptions->SetFlags(option_flags);
+    pContext->m_pOptions->GetOptions().bBreakForMasks = true;
 
     RenderPageWithContext(pContext, page, start_x, start_y, size_x, size_y,
                           rotate, flags, true, nullptr);

@@ -444,7 +444,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
     return;
   }
   bool bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER ||
-                   (pOptions && (pOptions->HasFlag(RENDER_PRINTPREVIEW)));
+                   (pOptions && pOptions->GetOptions().bPrintPreview);
   if (bPrinting && (annot_flags & ANNOTFLAG_PRINT) == 0) {
     return;
   }
@@ -525,7 +525,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   path.AppendRect(rect);
 
   int fill_type = 0;
-  if (pOptions && (pOptions->HasFlag(RENDER_NOPATHSMOOTH)))
+  if (pOptions && pOptions->GetOptions().bNoPathSmooth)
     fill_type |= FXFILL_NOPATHSMOOTH;
 
   pDevice->DrawPath(&path, pUser2Device, &graph_state, argb, argb, fill_type);

@@ -82,7 +82,7 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
           pCurObj->GetRect().right >= m_ClipRect.left &&
           pCurObj->GetRect().bottom <= m_ClipRect.top &&
           pCurObj->GetRect().top >= m_ClipRect.bottom) {
-        if (m_pOptions->HasFlag(RENDER_BREAKFORMASKS) && pCurObj->IsImage() &&
+        if (m_pOptions->GetOptions().bBreakForMasks && pCurObj->IsImage() &&
             pCurObj->AsImage()->GetImage()->IsMask()) {
           if (m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
             m_LastObjectRendered = iter;
@@ -96,8 +96,9 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
                 pCurObj, m_pCurrentLayer->m_Matrix, pPause)) {
           return;
         }
-        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions().HasFlag(
-                                      RENDER_LIMITEDIMAGECACHE)) {
+        if (pCurObj->IsImage() && m_pRenderStatus->GetRenderOptions()
+                                      .GetOptions()
+                                      .bLimitedImageCache) {
           m_pContext->GetPageCache()->CacheOptimization(
               m_pRenderStatus->GetRenderOptions().GetCacheSizeLimit());
         }

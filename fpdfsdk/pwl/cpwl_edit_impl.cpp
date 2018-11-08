@@ -48,7 +48,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
 
   CFX_PointF pos = mtUser2Device.Transform(pt);
   CPDF_RenderOptions ro;
-  ro.SetFlags(RENDER_CLEARTYPE);
+  ASSERT(ro.GetOptions().bClearType);
   ro.SetColorMode(CPDF_RenderOptions::kNormal);
   CPDF_TextRenderer::DrawTextString(pDevice, pos.x, pos.y, pFont, fFontSize,
                                     mtUser2Device, str, crTextFill, nullptr,
