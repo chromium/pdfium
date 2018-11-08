@@ -39,7 +39,10 @@ group("fuzzers") {
     ":pdfium_fuzzer_src",
   ]
   if (pdf_enable_v8) {
-    deps += [ ":pdf_cjs_util_fuzzer_src" ]
+    deps += [
+      ":pdf_cjs_util_fuzzer_src",
+      ":pdf_fx_date_helpers_fuzzer_src",
+    ]
   }
   if (pdf_enable_xfa) {
     deps += [
@@ -123,6 +126,14 @@ if (pdf_enable_v8) {
   pdfium_fuzzer("pdf_cjs_util_fuzzer_src") {
     sources = [
       "pdf_cjs_util_fuzzer.cc",
+    ]
+    deps = [
+      "../../fxjs",
+    ]
+  }
+  pdfium_fuzzer("pdf_fx_date_helpers_fuzzer_src") {
+    sources = [
+      "pdf_fx_date_helpers_fuzzer.cc",
     ]
     deps = [
       "../../fxjs",
