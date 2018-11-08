@@ -11,6 +11,7 @@
 
 #include "core/fxge/dib/cfx_filtereddib.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/span.h"
 
 class CPDF_TransferFunc;
 
@@ -35,9 +36,9 @@ class CPDF_DIBTransferFunc final : public CFX_FilteredDIB {
   ~CPDF_DIBTransferFunc() override;
 
   RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
-  const uint8_t* m_RampR;
-  const uint8_t* m_RampG;
-  const uint8_t* m_RampB;
+  const pdfium::span<const uint8_t> m_RampR;
+  const pdfium::span<const uint8_t> m_RampG;
+  const pdfium::span<const uint8_t> m_RampB;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_DIBTRANSFERFUNC_H_

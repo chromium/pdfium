@@ -6,7 +6,10 @@
 
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 
+#include <array>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fpdfapi/page/cpdf_function.h"
@@ -88,39 +91,46 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
     if (!pFuncs[0])
       return nullptr;
   }
-  auto pTransfer = pdfium::MakeRetain<CPDF_TransferFunc>(m_pPDFDoc.Get());
-  m_TransferFuncMap[pObj] = pTransfer;
 
   float input;
   int noutput;
   float output[kMaxOutputs];
   memset(output, 0, sizeof(output));
-  for (int v = 0; v < 256; ++v) {
-    input = (float)v / 255.0f;
+
+  std::vector<uint8_t> samples_r(CPDF_TransferFunc::kChannelSampleSize);
+  std::vector<uint8_t> samples_g(CPDF_TransferFunc::kChannelSampleSize);
+  std::vector<uint8_t> samples_b(CPDF_TransferFunc::kChannelSampleSize);
+  std::array<pdfium::span<uint8_t>, 3> samples = {samples_r, samples_g,
+                                                  samples_b};
+  for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {
+    input = static_cast<float>(v) / 255.0f;
     if (bUniTransfer) {
       if (pFuncs[0] && pFuncs[0]->CountOutputs() <= kMaxOutputs)
         pFuncs[0]->Call(&input, 1, output, &noutput);
-      int o = FXSYS_round(output[0] * 255);
+      size_t o = FXSYS_round(output[0] * 255);
       if (o != v)
         bIdentity = false;
-      for (int i = 0; i < 3; ++i)
-        pTransfer->GetSamples()[i * 256 + v] = o;
+      for (auto& channel : samples)
+        channel[v] = o;
       continue;
     }
     for (int i = 0; i < 3; ++i) {
       if (!pFuncs[i] || pFuncs[i]->CountOutputs() > kMaxOutputs) {
-        pTransfer->GetSamples()[i * 256 + v] = v;
+        samples[i][v] = v;
         continue;
       }
       pFuncs[i]->Call(&input, 1, output, &noutput);
-      int o = FXSYS_round(output[0] * 255);
+      size_t o = FXSYS_round(output[0] * 255);
       if (o != v)
         bIdentity = false;
-      pTransfer->GetSamples()[i * 256 + v] = o;
+      samples[i][v] = o;
     }
   }
 
-  pTransfer->SetIdentity(bIdentity);
+  auto pTransfer = pdfium::MakeRetain<CPDF_TransferFunc>(
+      m_pPDFDoc.Get(), bIdentity, std::move(samples_r), std::move(samples_g),
+      std::move(samples_b));
+  m_TransferFuncMap[pObj] = pTransfer;
   return pTransfer;
 }
 

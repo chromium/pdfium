@@ -10,13 +10,14 @@
 #include <map>
 
 #include "core/fpdfapi/page/cpdf_countedobject.h"
-#include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Document;
 class CPDF_Font;
 class CPDF_Object;
+class CPDF_TransferFunc;
 class CPDF_Type3Cache;
 class CPDF_Type3Font;
 
