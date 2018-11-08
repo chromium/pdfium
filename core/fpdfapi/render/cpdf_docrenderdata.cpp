@@ -28,24 +28,7 @@ const int kMaxOutputs = 16;
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc) {}
 
-CPDF_DocRenderData::~CPDF_DocRenderData() {
-  Clear(true);
-}
-
-void CPDF_DocRenderData::Clear(bool bRelease) {
-  for (auto it = m_Type3FaceMap.begin(); it != m_Type3FaceMap.end();) {
-    auto curr_it = it++;
-    if (bRelease || curr_it->second->HasOneRef()) {
-      m_Type3FaceMap.erase(curr_it);
-    }
-  }
-
-  for (auto it = m_TransferFuncMap.begin(); it != m_TransferFuncMap.end();) {
-    auto curr_it = it++;
-    if (bRelease || curr_it->second->HasOneRef())
-      m_TransferFuncMap.erase(curr_it);
-  }
-}
+CPDF_DocRenderData::~CPDF_DocRenderData() = default;
 
 RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
     CPDF_Type3Font* pFont) {
