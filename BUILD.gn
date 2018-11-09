@@ -238,6 +238,7 @@ test("pdfium_unittests") {
     "core/fpdfapi/font:unittests",
     "core/fpdfapi/page:unittests",
     "core/fpdfapi/parser:unittests",
+    "core/fpdfapi/render:unittests",
     "core/fpdfdoc:unittests",
     "core/fpdftext:unittests",
     "core/fxcodec:unittests",

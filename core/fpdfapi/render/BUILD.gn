@@ -64,6 +64,17 @@ jumbo_source_set("render") {
   visibility = [ "../../../*" ]
 }
 
+pdfium_unittest_source_set("unittests") {
+  sources = [
+    "cpdf_docrenderdata_unittest.cpp",
+  ]
+  deps = [
+    ":render",
+    "../parser",
+  ]
+  pdfium_root_dir = "../../../"
+}
+
 pdfium_embeddertest_source_set("embeddertests") {
   sources = [
     "fpdf_render_loadimage_embeddertest.cpp",

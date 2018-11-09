@@ -26,17 +26,22 @@ class CPDF_DocRenderData {
   explicit CPDF_DocRenderData(CPDF_Document* pPDFDoc);
   ~CPDF_DocRenderData();
 
+  CPDF_DocRenderData(const CPDF_DocRenderData&) = delete;
+  CPDF_DocRenderData& operator=(const CPDF_DocRenderData&) = delete;
+
   RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
   void MaybePurgeCachedType3(CPDF_Type3Font* pFont);
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(const CPDF_Object* pObj);
   void MaybePurgeTransferFunc(const CPDF_Object* pObj);
 
- private:
+ protected:
+  // protected for use by test subclasses.
   RetainPtr<CPDF_TransferFunc> CreateTransferFunc(
       const CPDF_Object* pObj) const;
 
-  UnownedPtr<CPDF_Document> m_pPDFDoc;
+ private:
+  UnownedPtr<CPDF_Document> const m_pPDFDoc;
   std::map<CPDF_Font*, RetainPtr<CPDF_Type3Cache>> m_Type3FaceMap;
   std::map<const CPDF_Object*, RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
 };
