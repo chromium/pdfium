@@ -304,6 +304,12 @@ CJS_Result CJS_Event::set_value(CJS_Runtime* pRuntime,
   if (!pEvent->m_pValue)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
+  if (vp.IsEmpty())
+    return CJS_Result::Failure(JSMessage::kBadObjectError);
+
+  if (vp->IsNullOrUndefined() || vp->IsBoolean())
+    return CJS_Result::Failure(JSMessage::kInvalidSetError);
+
   pEvent->Value() = pRuntime->ToWideString(vp);
   return CJS_Result::Success();
 }

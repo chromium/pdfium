@@ -155,6 +155,16 @@ endobj
       expect("event.value", "");
       expect("event.value = 'boo'", "boo");
       expect("event.value", "boo");
+      expect("event.value = ''", "");
+      expect("event.value", "");
+      expect("event.value = 0", 0);
+      expect("event.value", 0);
+      expect("event.value = 2", 2);
+      expect("event.value", 2);
+      expectError("event.value = true");
+      expectError("event.value = false");
+      expectError("event.value = undefined");
+      expectError("event.value = null");
 
       expect("event.willCommit", true);
       expectError("event.willCommit = 'boo'");

@@ -46,6 +46,16 @@ Alert: PASS: event.type = 'boo' threw event.type: Operation not supported.
 Alert: PASS: event.value = 
 Alert: PASS: event.value = 'boo' = boo
 Alert: PASS: event.value = boo
+Alert: PASS: event.value = '' = 
+Alert: PASS: event.value = 
+Alert: PASS: event.value = 0 = 0
+Alert: PASS: event.value = 0
+Alert: PASS: event.value = 2 = 2
+Alert: PASS: event.value = 2
+Alert: PASS: event.value = true threw event.value: Set not possible, invalid or unknown.
+Alert: PASS: event.value = false threw event.value: Set not possible, invalid or unknown.
+Alert: PASS: event.value = undefined threw event.value: Set not possible, invalid or unknown.
+Alert: PASS: event.value = null threw event.value: Set not possible, invalid or unknown.
 Alert: PASS: event.willCommit = true
 Alert: PASS: event.willCommit = 'boo' threw event.willCommit: Operation not supported.
 Alert: PASS: event.willCommit = true

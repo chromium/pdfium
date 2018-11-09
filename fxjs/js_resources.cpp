@@ -51,6 +51,8 @@ WideString JSGetStringFromID(JSMessage msg) {
       return L"Object is of the wrong type.";
     case JSMessage::kUnknownProperty:
       return L"Unknown property.";
+    case JSMessage::kInvalidSetError:
+      return L"Set not possible, invalid or unknown.";
 #ifdef PDF_ENABLE_XFA
     case JSMessage::kTooManyOccurances:
       return L"Too many occurances.";
