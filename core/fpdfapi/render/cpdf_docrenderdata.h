@@ -33,6 +33,9 @@ class CPDF_DocRenderData {
   void MaybePurgeTransferFunc(const CPDF_Object* pObj);
 
  private:
+  RetainPtr<CPDF_TransferFunc> CreateTransferFunc(
+      const CPDF_Object* pObj) const;
+
   UnownedPtr<CPDF_Document> m_pPDFDoc;
   std::map<CPDF_Font*, RetainPtr<CPDF_Type3Cache>> m_Type3FaceMap;
   std::map<const CPDF_Object*, RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
