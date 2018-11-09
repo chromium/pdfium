@@ -19,6 +19,13 @@ endobj
   /Type /Page
   /Parent 2 0 R
   /MediaBox [0 0 612 792]
+  /Annots [
+    5 0 R
+    6 0 R
+    7 0 R
+    8 0 R
+    9 0 R
+  ]
 >>
 endobj
 % Forms
@@ -206,7 +213,7 @@ function testPropertiesCase(field) {
     testROProperty(field, "doc", "[object global]");
     // testROProperty(field, "editable", "clams");
     // testROProperty(field, "exportValues", "clams");
-    // testROProperty(field, "hidden", "clams");
+    testRWProperty(field, "hidden", false, true);
     testRIProperty(field, "fileSelect", false, true);
     testRIProperty(field, "fillColor", "T", ["RGB", 0, 0, 0]);
     // testROProperty(field, "lineWidth", "clams");
@@ -215,7 +222,7 @@ function testPropertiesCase(field) {
     // testROProperty(field, "multipleSelection", "clams");
     testROProperty(field, "name", "MyField");
     // testROProperty(field, "numItems", "clams");
-    testROProperty(field, "page", -1);
+    testROProperty(field, "page", 0);
     testRIProperty(field, "password", false, 42);
     // testROProperty(field, "print", "clams");
     // testROProperty(field, "radiosInUnison", "clams");
