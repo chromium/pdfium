@@ -33,6 +33,7 @@
 #include "fxjs/fx_date_helpers.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/optional.h"
 
 // static
 const JSMethodSpec CJS_PublicMethods::GlobalFunctionSpecs[] = {
@@ -198,6 +199,21 @@ void NormalizeDecimalMarkW(WideString* str) {
   str->Replace(L",", L".");
 }
 
+Optional<double> ApplyNamedOperation(const wchar_t* sFunction,
+                                     double dValue1,
+                                     double dValue2) {
+  if (FXSYS_wcsicmp(sFunction, L"AVG") == 0 ||
+      FXSYS_wcsicmp(sFunction, L"SUM") == 0) {
+    return dValue1 + dValue2;
+  }
+  if (FXSYS_wcsicmp(sFunction, L"PRD") == 0)
+    return dValue1 * dValue2;
+  if (FXSYS_wcsicmp(sFunction, L"MIN") == 0)
+    return std::min(dValue1, dValue2);
+  if (FXSYS_wcsicmp(sFunction, L"MAX") == 0)
+    return std::max(dValue1, dValue2);
+  return {};
+}
 
 }  // namespace
 
@@ -295,28 +311,14 @@ bool CJS_PublicMethods::IsReservedMaskChar(wchar_t ch) {
   return ch == L'9' || ch == L'A' || ch == L'O' || ch == L'X';
 }
 
-double CJS_PublicMethods::AF_Simple(const wchar_t* sFuction,
-                                    double dValue1,
-                                    double dValue2) {
-  if (FXSYS_wcsicmp(sFuction, L"AVG") == 0 ||
-      FXSYS_wcsicmp(sFuction, L"SUM") == 0) {
-    return dValue1 + dValue2;
-  }
-  if (FXSYS_wcsicmp(sFuction, L"PRD") == 0)
-    return dValue1 * dValue2;
-  if (FXSYS_wcsicmp(sFuction, L"MIN") == 0)
-    return std::min(dValue1, dValue2);
-  if (FXSYS_wcsicmp(sFuction, L"MAX") == 0)
-    return std::max(dValue1, dValue2);
-  return dValue1;
-}
-
 v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
     CJS_Runtime* pRuntime,
     v8::Local<v8::Value> val) {
-  if (!val.IsEmpty() && val->IsArray())
+  ASSERT(!val.IsEmpty());
+  if (val->IsArray())
     return pRuntime->ToArray(val);
 
+  ASSERT(val->IsString());
   WideString wsStr = pRuntime->ToWideString(val);
   ByteString t = wsStr.ToDefANSI();
   const char* p = t.c_str();
@@ -1232,9 +1234,21 @@ CJS_Result CJS_PublicMethods::AFSimple(
   if (params.size() != 3)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  return CJS_Result::Success(pRuntime->NewNumber(static_cast<double>(AF_Simple(
-      pRuntime->ToWideString(params[0]).c_str(), pRuntime->ToDouble(params[1]),
-      pRuntime->ToDouble(params[2])))));
+  WideString sFunction = pRuntime->ToWideString(params[0]);
+  double arg1 = pRuntime->ToDouble(params[1]);
+  double arg2 = pRuntime->ToDouble(params[2]);
+  if (std::isnan(arg1) || std::isnan(arg2))
+    return CJS_Result::Failure(JSMessage::kValueError);
+
+  Optional<double> result = ApplyNamedOperation(sFunction.c_str(), arg1, arg2);
+  if (!result.has_value())
+    return CJS_Result::Failure(JSMessage::kValueError);
+
+  double dValue = result.value();
+  if (wcscmp(sFunction.c_str(), L"AVG") == 0)
+    dValue /= 2.0;
+
+  return CJS_Result::Success(pRuntime->NewNumber(dValue));
 }
 
 CJS_Result CJS_PublicMethods::AFMakeNumber(
@@ -1260,18 +1274,18 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  if ((params[1].IsEmpty() || !params[1]->IsArray()) && !params[1]->IsString())
+  if (params[1].IsEmpty() || (!params[1]->IsArray() && !params[1]->IsString()))
     return CJS_Result::Failure(JSMessage::kParamError);
+
+  WideString sFunction = pRuntime->ToWideString(params[0]);
+  v8::Local<v8::Array> FieldNameArray =
+      AF_MakeArrayFromList(pRuntime, params[1]);
 
   CPDFSDK_InteractiveForm* pReaderForm =
       pRuntime->GetFormFillEnv()->GetInteractiveForm();
   CPDF_InteractiveForm* pForm = pReaderForm->GetInteractiveForm();
 
-  WideString sFunction = pRuntime->ToWideString(params[0]);
   double dValue = wcscmp(sFunction.c_str(), L"PRD") == 0 ? 1.0 : 0.0;
-
-  v8::Local<v8::Array> FieldNameArray =
-      AF_MakeArrayFromList(pRuntime, params[1]);
   int nFieldsCount = 0;
   for (size_t i = 0; i < pRuntime->GetArrayLength(FieldNameArray); ++i) {
     WideString wsFieldName =
@@ -1325,8 +1339,12 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
            wcscmp(sFunction.c_str(), L"MAX") == 0)) {
         dValue = dTemp;
       }
-      dValue = AF_Simple(sFunction.c_str(), dValue, dTemp);
+      Optional<double> dResult =
+          ApplyNamedOperation(sFunction.c_str(), dValue, dTemp);
+      if (!dResult.has_value())
+        return CJS_Result::Failure(JSMessage::kValueError);
 
+      dValue = dResult.value();
       nFieldsCount++;
     }
   }

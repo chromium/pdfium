@@ -2,7 +2,14 @@
 {{object 1 0}} <<
   /Type /Catalog
   /Pages 2 0 R
-  /AcroForm << /Fields [ 4 0 R 10 0 R ] /DR 5 0 R >>
+  /AcroForm <<
+    /Fields [
+      4 0 R
+      10 0 R
+      11 0 R
+    ]
+    /DR 5 0 R
+  >>
 >>
 endobj
 {{object 2 0}} <<
@@ -17,7 +24,11 @@ endobj
   /Resources 5 0 R
   /MediaBox [ 0 0 300 200 ]
   /Contents 8 0 R
-  /Annots [ 4 0 R 10 0 R ]
+  /Annots [
+    4 0 R
+    10 0 R
+    11 0 R
+  ]
 >>
 endobj
 {{object 4 0}} <<
@@ -96,8 +107,8 @@ endobj
     try {
       app.alert("*** starting test ***");
 
-      expectError(undefined, "AFDate_Format()");
-      expectError(undefined, "AFDate_Format(1, 2)");
+      expectError('', "AFDate_Format()");
+      expectError('', "AFDate_Format(1, 2)");
       expectEventValue("GMT", "AFDate_Format(1)", "1/1/70");
       expectEventValue("PDT", "AFDate_Format(1)", "5/9/14");
       expectEventValue("GMT", "AFDate_Format('blooey')", "1/1");
@@ -105,87 +116,87 @@ endobj
 
       app.alert("**********************");
 
-      expectError(undefined, "AFDate_FormatEx()");
-      expectError(undefined, "AFDate_FormatEx(1, 2)");
+      expectError('', "AFDate_FormatEx()");
+      expectError('', "AFDate_FormatEx(1, 2)");
       expectEventValue("x", "AFDate_FormatEx(2)", "2");
       expectEventValue("x", "AFDate_FormatEx('blooey')", "blooey");
       expectEventValue("x", "AFDate_FormatEx('m/d')", "5/9");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFDate_Keystroke()");
-      expectError(undefined, "AFDate_Keystroke(1, 2)");
+      expectError('', "AFDate_Keystroke()");
+      expectError('', "AFDate_Keystroke(1, 2)");
       expectEventValue("04/19", "AFDate_Keystroke(2)", "04/19");
       expectEventValue("04/19/15", "AFDate_Keystroke('blooey')", "04/19/15");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFDate_KeystrokeEx()");
-      expectError(undefined, "AFDate_KeystrokeEx(1, 2)");
+      expectError('', "AFDate_KeystrokeEx()");
+      expectError('', "AFDate_KeystrokeEx(1, 2)");
       expectEventValue("x", "AFDate_KeystrokeEx(2)", "x");
       expectEventValue("x", "AFDate_KeystrokeEx('blooey')", "x");
       expectEventValue("x", "AFDate_KeystrokeEx('m/d')", "x");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFExtractNums()");
-      expectError(undefined, "AFExtractNums(1, 2)");
-      expect(undefined, "AFExtractNums('100 200')", "100,200");
+      expectError('', "AFExtractNums()");
+      expectError('', "AFExtractNums(1, 2)");
+      expect('', "AFExtractNums('100 200')", "100,200");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFMakeNumber()");
-      expectError(undefined, "AFMakeNumber(1, 2)");
-      expect(undefined, "AFMakeNumber('2blooey')", 0);
-      expect(undefined, "AFMakeNumber(1)", 1);
-      expect(undefined, "AFMakeNumber('1.2')", 1.2);
-      expect(undefined, "AFMakeNumber('1,2')", 1.2);
+      expectError('', "AFMakeNumber()");
+      expectError('', "AFMakeNumber(1, 2)");
+      expect('', "AFMakeNumber('2blooey')", 0);
+      expect('', "AFMakeNumber(1)", 1);
+      expect('', "AFMakeNumber('1.2')", 1.2);
+      expect('', "AFMakeNumber('1,2')", 1.2);
 
       app.alert("**********************");
 
-      expectError(undefined, "AFMergeChange()");
-      expectError(undefined, "AFMergeChange(1, 2)");
+      expectError('', "AFMergeChange()");
+      expectError('', "AFMergeChange(1, 2)");
       expect("one", "AFMergeChange(undefined)", "one");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFNumber_Format()");
-      expectError(undefined, "AFNumber_Format(0, 1, 0, 0, '', false, 42)");
+      expectError('', "AFNumber_Format()");
+      expectError('', "AFNumber_Format(0, 1, 0, 0, '', false, 42)");
       expectEventValue("blooey", "AFNumber_Format(0, 1, 0, 0, '', false)", 0);
       expectEventValue(12, "AFNumber_Format(0, 1, 0, 0, '', false)", 12);
 
       app.alert("**********************");
 
-      expectError(undefined, "AFNumber_Keystroke()");
-      expectError(undefined, "AFNumber_Keystroke(1)");
+      expectError('', "AFNumber_Keystroke()");
+      expectError('', "AFNumber_Keystroke(1)");
       expectError("abc", "AFNumber_Keystroke(1, 2)");
       expectEventValue("123", "AFNumber_Keystroke(1, 2)", "123");
       expectEventValue("123", "AFNumber_Keystroke(1, 2, 3)", "123");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFParseDateEx()");
-      expectError(undefined, "AFParseDateEx(1, 2, 3)");
-      expect(undefined, "AFParseDateEx(1, 2)", "1399672130000");
+      expectError('', "AFParseDateEx()");
+      expectError('', "AFParseDateEx(1, 2, 3)");
+      expect('', "AFParseDateEx(1, 2)", "1399672130000");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFPercent_Format()");
-      expectError(undefined, "AFPercent_Format(1, 2, 3)");
+      expectError('', "AFPercent_Format()");
+      expectError('', "AFPercent_Format(1, 2, 3)");
       expectEventValue(12.3456, "AFPercent_Format(1, 0)", "1,234.6%");
       expectEventValue(12.3456, "AFPercent_Format(4, 1)", "1234.5600%");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFPercent_Keystroke()");
-      expectError(undefined, "AFPercent_Keystroke(1)");
+      expectError('', "AFPercent_Keystroke()");
+      expectError('', "AFPercent_Keystroke(1)");
       expectError("abc", "AFPercent_Keystroke(1, 0)");
       expectEventValue(".123", "AFPercent_Keystroke(1, 0)", ".123");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFRange_Validate()", undefined);
-      expectError(undefined, "AFRange_Validate(1, 2, 3, 4, 5)", undefined);
+      expectError('', "AFRange_Validate()", '');
+      expectError('', "AFRange_Validate(1, 2, 3, 4, 5)", '');
       expectEventValue("1", "AFRange_Validate(true, 2, true, 4)", "1");  // Notifies "between".
       expectEventValue("5", "AFRange_Validate(true, 2, true, 4)", "5");  // Notifies "between".
       expectEventValue("1", "AFRange_Validate(true, 2, false, 4)", "1");  // Notifies "greater".
@@ -196,33 +207,49 @@ endobj
 
       app.alert("**********************");
 
-      expectError(undefined, "AFSimple()", 2);
-      expectError(undefined, "AFSimple(1, 2, 3, 4)");
-      expect(undefined, "AFSimple(1, 2, 3)", 2);
+      expectError('', "AFSimple()", 2);
+      expectError('', "AFSimple(1, 2, 3, 4)");
+      expectError('', "AFSimple(1, 2, 3)");
+      expectError('', "AFSimple('nonesuch', 2, 3)");
+      expect('', "AFSimple('AVG', 2, 3)", 2.5);
+      expect('', "AFSimple('MIN', 2, 3)", 2);
+      expect('', "AFSimple('MAX', 2, 3)", 3);
+      expect('', "AFSimple('SUM', 2, 3)", 5);
+      expect('', "AFSimple('PRD', 2, 3)", 6);
+      expectError('', "AFSimple('AVG', 2, 'nonesuch')");
+      expectError('', "AFSimple('MIN', 2, 'nonesuch')");
+      expectError('', "AFSimple('MAX', 2, 'nonesuch')");
+      expectError('', "AFSimple('SUM', 2, 'nonesuch')");
+      expectError('', "AFSimple('PRD', 2, 'nonesuch')");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFSimple_Calculate()");
-      expectError(undefined, "AFSimple_Calculate(1)");
-      expectEventValue(undefined, "AFSimple_Calculate('blooey', [1, 3, 14])", 0);
-      expectEventValue(undefined, "AFSimple_Calculate('AVG', [1, 3, 14])", 0);
-      expectEventValue(undefined, "AFSimple_Calculate('SUM', [1, 3, 14])", 0);
+      expectError('', "AFSimple_Calculate()");
+      expectError('', "AFSimple_Calculate(1)");
+      expectEventValue('', "AFSimple_Calculate('blooey', ['Text2', 'Text3'])", 0);
+      expectEventValue('', "AFSimple_Calculate('AVG', [1, 'nonesuch', {'crud': 32}])", 0);
+      expectEventValue('', "AFSimple_Calculate('AVG', ['Text2', 'Text3'])", (123 + 456) / 2);
+      expectEventValue('', "AFSimple_Calculate('SUM', ['Text2', 'Text3'])", 123 + 456);
+      expectEventValue('', "AFSimple_Calculate('PRD', ['Text2', 'Text3'])", 123 * 456);
+      expectEventValue('', "AFSimple_Calculate('MIN', ['Text2', 'Text3'])", 123);
+      expectEventValue('', "AFSimple_Calculate('MAX', ['Text2', 'Text3'])", 456);
+      expectEventValue('', "AFSimple_Calculate('AVG', 'Text2, Text3')", (123 + 456) / 2);
 
       app.alert("**********************");
 
-      expectError(undefined, "AFSpecial_Format()", undefined);
-      expectError(undefined, "AFSpecial_Format(1, 2)", undefined);
-      expectEventValue(undefined, "AFSpecial_Format(3)", "--");
+      expectError('', "AFSpecial_Format()", '');
+      expectError('', "AFSpecial_Format(1, 2)", '');
+      expectEventValue('', "AFSpecial_Format(3)", "--");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFSpecial_Keystroke()");
-      expectError(undefined, "AFSpecial_Keystroke(65, 66)");
+      expectError('', "AFSpecial_Keystroke()");
+      expectError('', "AFSpecial_Keystroke(65, 66)");
       expectEventValue("abc", "AFSpecial_Keystroke(65)", "abc");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFSpecial_KeystrokeEx()", undefined);
+      expectError('', "AFSpecial_KeystrokeEx()", '');
       expectEventValue("12345", "AFSpecial_KeystrokeEx('')", "12345");      // No notification.
       expectEventValue("123", "AFSpecial_KeystrokeEx('9999')", "123");      // Notifies invalid.
       expectEventValue("12345", "AFSpecial_KeystrokeEx('9999')", "12345");  // Notifies too long.
@@ -232,26 +259,26 @@ endobj
 
       app.alert("**********************");
 
-      expectError(undefined, "AFTime_Format()");
-      expectError(undefined, "AFTime_Format(1, 2)");
-      expectEventValue(undefined, "AFTime_Format(1)", "9:48 pm");
+      expectError('', "AFTime_Format()");
+      expectError('', "AFTime_Format(1, 2)");
+      expectEventValue(0, "AFTime_Format(1)", "9:48 pm");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFTime_FormatEx()");
-      expectError(undefined, "AFTime_FormatEx('blooey', 42)");
-      expectEventValue(undefined, "AFTime_FormatEx('blooey')", "blooey");
+      expectError('', "AFTime_FormatEx()");
+      expectError('', "AFTime_FormatEx('blooey', 42)");
+      expectEventValue(0, "AFTime_FormatEx('blooey')", "blooey");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFTime_Keystroke()", undefined);
-      expectError(undefined, "AFTime_Keystroke(1, 2)", undefined);
+      expectError('', "AFTime_Keystroke()", '');
+      expectError('', "AFTime_Keystroke(1, 2)", '');
       expectEventValue("12:03", "AFTime_Keystroke(65)", "12:03");
 
       app.alert("**********************");
 
-      expectError(undefined, "AFTime_KeystrokeEx()");
-      expectError(undefined, "AFTime_KeystrokeEx(1, 2)");
+      expectError('', "AFTime_KeystrokeEx()");
+      expectError('', "AFTime_KeystrokeEx(1, 2)");
       expectEventValue("12:04", "AFTime_KeystrokeEx('blooey')", "12:04");
 
       app.alert("*** ending test ***");
@@ -267,8 +294,19 @@ endobj
   /FT /Tx
   /T (Text2)
   /DA (0 0 0 rg /F1 12 Tf)
-  /Rect [ 100 40 200 70 ]
+  /Rect [100 40 200 70]
   /Subtype /Widget
+  /V (123)
+>>
+endobj
+{{object 11 0}} <<
+  /Type /Annot
+  /FT /Tx
+  /T (Text3)
+  /DA (0 0 0 rg /F1 12 Tf)
+  /Rect [100 0 200 30]
+  /Subtype /Widget
+  /V (456)
 >>
 endobj
 {{xref}}
