@@ -69,10 +69,8 @@ void CPDF_DocRenderData::MaybePurgeTransferFunc(const CPDF_Object* pObj) {
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
     const CPDF_Object* pObj) const {
   std::unique_ptr<CPDF_Function> pFuncs[3];
-  bool bUniTransfer = true;
-  bool bIdentity = true;
-  if (const CPDF_Array* pArray = pObj->AsArray()) {
-    bUniTransfer = false;
+  const CPDF_Array* pArray = pObj->AsArray();
+  if (pArray) {
     if (pArray->size() < 3)
       return nullptr;
 
@@ -87,39 +85,39 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
       return nullptr;
   }
 
-  float input;
   int noutput;
   float output[kMaxOutputs];
   memset(output, 0, sizeof(output));
 
+  bool bIdentity = true;
   std::vector<uint8_t> samples_r(CPDF_TransferFunc::kChannelSampleSize);
   std::vector<uint8_t> samples_g(CPDF_TransferFunc::kChannelSampleSize);
   std::vector<uint8_t> samples_b(CPDF_TransferFunc::kChannelSampleSize);
   std::array<pdfium::span<uint8_t>, 3> samples = {samples_r, samples_g,
                                                   samples_b};
   for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {
-    input = static_cast<float>(v) / 255.0f;
-    if (bUniTransfer) {
-      if (pFuncs[0] && pFuncs[0]->CountOutputs() <= kMaxOutputs)
-        pFuncs[0]->Call(&input, 1, output, &noutput);
-      size_t o = FXSYS_round(output[0] * 255);
-      if (o != v)
-        bIdentity = false;
-      for (auto& channel : samples)
-        channel[v] = o;
+    float input = static_cast<float>(v) / 255.0f;
+    if (pArray) {
+      for (int i = 0; i < 3; ++i) {
+        if (pFuncs[i]->CountOutputs() > kMaxOutputs) {
+          samples[i][v] = v;
+          continue;
+        }
+        pFuncs[i]->Call(&input, 1, output, &noutput);
+        size_t o = FXSYS_round(output[0] * 255);
+        if (o != v)
+          bIdentity = false;
+        samples[i][v] = o;
+      }
       continue;
     }
-    for (int i = 0; i < 3; ++i) {
-      if (!pFuncs[i] || pFuncs[i]->CountOutputs() > kMaxOutputs) {
-        samples[i][v] = v;
-        continue;
-      }
-      pFuncs[i]->Call(&input, 1, output, &noutput);
-      size_t o = FXSYS_round(output[0] * 255);
-      if (o != v)
-        bIdentity = false;
-      samples[i][v] = o;
-    }
+    if (pFuncs[0]->CountOutputs() <= kMaxOutputs)
+      pFuncs[0]->Call(&input, 1, output, &noutput);
+    size_t o = FXSYS_round(output[0] * 255);
+    if (o != v)
+      bIdentity = false;
+    for (auto& channel : samples)
+      channel[v] = o;
   }
 
   return pdfium::MakeRetain<CPDF_TransferFunc>(
