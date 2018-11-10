@@ -22,7 +22,7 @@ vars = {
   'code_coverage_revision': '4191ea0675c4c133cb506316b6b974f31e600576',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'depot_tools_revision': '71e3be7a50c21faeee91ed99a8d5addfb7594e7c',
-  'freetype_revision': 'f56830ed406f90f6f53ee6367f2068a0f27bf90b',
+  'freetype_revision': 'fb0d66d04c4dd8d7f9604af1a6001b2737cb5098',
   'gtest_revision': 'd5266326752f0a1dadbd310932d8f4fd8c3c5e7d',
   'icu_revision': 'c56c671998902fcc4fc9ace88c83daa99f980793',
   'instrumented_lib_revision': '323cf32193caecbf074d1a0cb5b02b905f163e0f',
