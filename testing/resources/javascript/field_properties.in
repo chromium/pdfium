@@ -193,7 +193,7 @@ function testPropertiesCase(field) {
   try {
     // TODO(tsepez): devise tests and uncomment.
     testRIProperty(field, "alignment", "left", "center");
-    // testRWProperty(field, "borderStyle", "solid", "inset");
+    testRWProperty(field, "borderStyle", "solid", "inset");
     // testROProperty(field, "buttonAlignX", "clams");
     // testROProperty(field, "buttonAlignY", "clams");
     // testROProperty(field, "buttonFitBounds", "clams");
@@ -206,17 +206,17 @@ function testPropertiesCase(field) {
     // testRIProperty(field, "commitOnSelChange", false, true);
     // testROProperty(field, "currentValueIndices", "clams");
     testXXProperty(field, "defaultStyle");
-    // testROProperty(field, "defaultValue", "clams");
+    testRIProperty(field, "defaultValue", "", "clams");
     testRIProperty(field, "doNotScroll", false, true);
     testRIProperty(field, "doNotSpellCheck", false, true);
-    // testROProperty(field, "display", "clams");
+    testRWProperty(field, "display", 2, 3);
     testROProperty(field, "doc", "[object global]");
     // testROProperty(field, "editable", "clams");
     // testROProperty(field, "exportValues", "clams");
     testRWProperty(field, "hidden", false, true);
     testRIProperty(field, "fileSelect", false, true);
     testRIProperty(field, "fillColor", "T", ["RGB", 0, 0, 0]);
-    // testROProperty(field, "lineWidth", "clams");
+    testRWProperty(field, "lineWidth", 1, 4);
     // testROProperty(field, "highlight", "clams");
     testRIProperty(field, "multiline", false, true);
     // testROProperty(field, "multipleSelection", "clams");
@@ -224,7 +224,7 @@ function testPropertiesCase(field) {
     // testROProperty(field, "numItems", "clams");
     testROProperty(field, "page", 0);
     testRIProperty(field, "password", false, 42);
-    // testROProperty(field, "print", "clams");
+    testRWProperty(field, "print", true, false);
     // testROProperty(field, "radiosInUnison", "clams");
     testRIProperty(field, "readonly", false, true);
     // testRWProperty(field, "rect", [0,0,0,0], [0,0,0,0]);

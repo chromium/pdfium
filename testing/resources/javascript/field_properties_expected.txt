@@ -6,6 +6,8 @@ Alert: PASS: delay = true
 Alert: PASS: delay = false
 Alert: PASS: alignment = left
 Alert: PASS: alignment = left
+Alert: PASS: borderStyle = solid
+Alert: PASS: borderStyle = inset
 Alert: PASS: calcOrderIndex = -1
 Alert: PASS: calcOrderIndex = -1
 Alert: PASS: charLimit = 0
@@ -14,10 +16,14 @@ Alert: PASS: comb = false
 Alert: PASS: comb = false
 Alert: PASS: defaultStyle threw error Field.defaultStyle: Operation not supported.
 Alert: PASS: defaultStyle threw error Field.defaultStyle: Operation not supported.
+Alert: PASS: defaultValue = 
+Alert: PASS: defaultValue = 
 Alert: PASS: doNotScroll = false
 Alert: PASS: doNotScroll = false
 Alert: PASS: doNotSpellCheck = false
 Alert: PASS: doNotSpellCheck = false
+Alert: PASS: display = 2
+Alert: PASS: display = 3
 Alert: PASS: doc = [object global]
 Alert: PASS: doc threw error Field.doc: Operation not supported.
 Alert: PASS: hidden = false
@@ -26,6 +32,8 @@ Alert: PASS: fileSelect = false
 Alert: PASS: fileSelect = false
 Alert: PASS: fillColor = T
 Alert: PASS: fillColor = T
+Alert: PASS: lineWidth = 1
+Alert: PASS: lineWidth = 4
 Alert: PASS: multiline = false
 Alert: PASS: multiline = false
 Alert: PASS: name = MyField
@@ -34,6 +42,8 @@ Alert: PASS: page = 0
 Alert: PASS: page threw error Field.page: Cannot assign to readonly property.
 Alert: PASS: password = false
 Alert: PASS: password = false
+Alert: PASS: print = true
+Alert: PASS: print = false
 Alert: PASS: readonly = false
 Alert: PASS: readonly = false
 Alert: PASS: richText = false
