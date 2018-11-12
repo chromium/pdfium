@@ -70,3 +70,19 @@ Alert: PASS: value =
 Alert: PASS: value = 
 Alert: PASS: valueAsString = 
 Alert: PASS: valueAsString threw error Field.valueAsString: Operation not supported.
+Alert: PASS: buttonAlignX = 0
+Alert: PASS: buttonAlignX = 0
+Alert: PASS: buttonAlignY = 0
+Alert: PASS: buttonAlignY = 0
+Alert: PASS: buttonFitBounds = false
+Alert: PASS: buttonFitBounds = false
+Alert: PASS: buttonPosition = 0
+Alert: PASS: buttonPosition = 0
+Alert: PASS: buttonScaleHow = false
+Alert: PASS: buttonScaleHow = false
+Alert: PASS: buttonScaleWhen = 0
+Alert: PASS: buttonScaleWhen = 0
+Alert: PASS: highlight = invert
+Alert: PASS: highlight = invert
+Alert: PASS: type = button
+Alert: PASS: type threw error Field.type: Operation not supported.

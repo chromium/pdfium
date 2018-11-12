@@ -57,7 +57,8 @@ endobj
 >>
 endobj
 {{object 7 0}} <<
-  /FT /Tx
+  /FT /Btn
+  /Ff 65536
   /Parent 5 0 R
   /T (Sub_A)
   /Type /Annot
@@ -177,29 +178,25 @@ function testXXProperty(field, prop) {
 function testProperties() {
   try {
     var field = this.getField("MyField");
+    var button = this.getField("MyField.Sub_A");
     app.alert('Testing properties under delay');
     testRWProperty(field, "delay", false, true);
     // TODO(tsepez): try this case, too.
-    // testPropertiesCase(field);
+    // testTextPropertiesCase(field);
     app.alert('Testing properties under non-delay');
     testRWProperty(field, "delay", true, false);
-    testPropertiesCase(field);
+    testTextPropertiesCase(field);
+    testButtonPropertiesCase(button);
   } catch (e) {
     app.alert("Unexpected error: " + e);
   }
 }
 
-function testPropertiesCase(field) {
+function testTextPropertiesCase(field) {
   try {
     // TODO(tsepez): devise tests and uncomment.
     testRIProperty(field, "alignment", "left", "center");
     testRWProperty(field, "borderStyle", "solid", "inset");
-    // testROProperty(field, "buttonAlignX", "clams");
-    // testROProperty(field, "buttonAlignY", "clams");
-    // testROProperty(field, "buttonFitBounds", "clams");
-    // testROProperty(field, "buttonPosition", "clams");
-    // testROProperty(field, "buttonScaleHow", "clams");
-    // testROProperty(field, "buttonScaleWhen", "clams");
     testRIProperty(field, "calcOrderIndex", -1, 100);
     testRIProperty(field, "charLimit", 0, 100);
     testRIProperty(field, "comb", false, true);
@@ -217,7 +214,6 @@ function testPropertiesCase(field) {
     testRIProperty(field, "fileSelect", false, true);
     testRIProperty(field, "fillColor", "T", ["RGB", 0, 0, 0]);
     testRWProperty(field, "lineWidth", 1, 4);
-    // testROProperty(field, "highlight", "clams");
     testRIProperty(field, "multiline", false, true);
     // testROProperty(field, "multipleSelection", "clams");
     testROProperty(field, "name", "MyField");
@@ -247,6 +243,22 @@ function testPropertiesCase(field) {
     app.alert("Unexpected error: " + e);
   }
 }
+
+function testButtonPropertiesCase(field) {
+  try {
+    testRIProperty(field, "buttonAlignX", 0, 50);
+    testRIProperty(field, "buttonAlignY", 0, 50);
+    testRIProperty(field, "buttonFitBounds", false);
+    testRIProperty(field, "buttonPosition", 0);
+    testRIProperty(field, "buttonScaleHow", 0);
+    testRIProperty(field, "buttonScaleWhen", 0);
+    testRIProperty(field, "highlight", "invert");
+    testROProperty(field, "type", "button");
+  } catch (e) {
+    app.alert("Unexpected error: " + e);
+  }
+}
+
 testProperties();
 endstream
 endobj
