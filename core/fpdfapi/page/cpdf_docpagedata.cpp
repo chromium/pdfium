@@ -342,9 +342,8 @@ void CPDF_DocPageData::ReleaseColorSpace(const CPDF_Object* pColorSpace) {
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
                                            bool bShading,
                                            const CFX_Matrix& matrix) {
-  ASSERT(pPatternObj);
-  ASSERT(pPatternObj->IsDictionary() || pPatternObj->IsStream());
-  ASSERT(pPatternObj->GetDict());
+  if (!pPatternObj)
+    return nullptr;
 
   CPDF_CountedPattern* ptData = nullptr;
   auto it = m_PatternMap.find(pPatternObj);
@@ -360,6 +359,9 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
         m_pPDFDoc.Get(), pPatternObj, true, matrix);
   } else {
     CPDF_Dictionary* pDict = pPatternObj->GetDict();
+    if (!pDict)
+      return nullptr;
+
     int type = pDict->GetIntegerFor("PatternType");
     if (type == CPDF_Pattern::TILING) {
       pPattern = pdfium::MakeUnique<CPDF_TilingPattern>(m_pPDFDoc.Get(),
