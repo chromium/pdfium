@@ -1,21 +1,21 @@
-function expect(str, expected) {
+function expect(expression, expected) {
   try {
-    var result = eval(str);
-    if (result == expected) {
-      app.alert('PASS: ' + str + ' = ' + result);
+    var actual = eval(expression);
+    if (actual == expected) {
+      app.alert('PASS: ' + expression + ' = ' + actual);
     } else {
-      app.alert('FAIL: ' + str + ' = ' + result + ', expected = ' + expected);
+      app.alert('FAIL: ' + expression + ' = ' + actual + ', expected ' + expected + " ");
     }
   } catch (e) {
-    app.alert('ERROR: ' + e.toString());
+    app.alert('ERROR: ' + e);
   }
 }
 
-function expectError(str) {
+function expectError(expression) {
   try {
-    var result = eval(str);
-    app.alert('FAIL: ' + str + ' = ' + result + ', expected to throw error');
+    var actual = eval(expression);
+    app.alert('FAIL: ' + expression + ' = ' + actual + ', expected to throw');
   } catch (e) {
-    app.alert('PASS: ' + str + ' threw error ' + e.toString());
+    app.alert('PASS: ' + expression + ' threw ' + e);
   }
 }

@@ -73,45 +73,45 @@ Alert: PASS: this.syncAnnotScan() = undefined
 Alert: PASS: this.syncAnnotScan(1, 2, "clams", [1, 2, 3]) = undefined
 Alert: *** Testing Supported Methods ***
 Alert: PASS: typeof this.addIcon = function
-Alert: PASS: this.addIcon() threw error Document.addIcon: Incorrect number of parameters passed to function.
-Alert: PASS: this.addIcon(1) threw error Document.addIcon: Incorrect number of parameters passed to function.
-Alert: PASS: this.addIcon(1, 2, 3) threw error Document.addIcon: Incorrect number of parameters passed to function.
-Alert: PASS: this.addIcon("myicon", 3) threw error Document.addIcon: Incorrect parameter type.
-Alert: PASS: this.addIcon("myicon", undefined) threw error Document.addIcon: Incorrect parameter type.
+Alert: PASS: this.addIcon() threw Document.addIcon: Incorrect number of parameters passed to function.
+Alert: PASS: this.addIcon(1) threw Document.addIcon: Incorrect number of parameters passed to function.
+Alert: PASS: this.addIcon(1, 2, 3) threw Document.addIcon: Incorrect number of parameters passed to function.
+Alert: PASS: this.addIcon("myicon", 3) threw Document.addIcon: Incorrect parameter type.
+Alert: PASS: this.addIcon("myicon", undefined) threw Document.addIcon: Incorrect parameter type.
 Alert: PASS: typeof this.calculateNow = function
 Alert: PASS: this.calculateNow() = undefined
 Alert: PASS: typeof this.getAnnot = function
-Alert: PASS: this.getAnnot() threw error Document.getAnnot: Incorrect number of parameters passed to function.
-Alert: PASS: this.getAnnot(0) threw error Document.getAnnot: Incorrect number of parameters passed to function.
-Alert: PASS: this.getAnnot(0, "test", 0) threw error Document.getAnnot: Incorrect number of parameters passed to function.
+Alert: PASS: this.getAnnot() threw Document.getAnnot: Incorrect number of parameters passed to function.
+Alert: PASS: this.getAnnot(0) threw Document.getAnnot: Incorrect number of parameters passed to function.
+Alert: PASS: this.getAnnot(0, "test", 0) threw Document.getAnnot: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.getAnnots = function
 Alert: PASS: typeof this.getField = function
-Alert: PASS: this.getField() threw error Document.getField: Incorrect number of parameters passed to function.
+Alert: PASS: this.getField() threw Document.getField: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.getIcon = function
-Alert: PASS: this.getIcon() threw error Document.getIcon: Incorrect number of parameters passed to function.
-Alert: PASS: this.getIcon(1, 2) threw error Document.getIcon: Incorrect number of parameters passed to function.
+Alert: PASS: this.getIcon() threw Document.getIcon: Incorrect number of parameters passed to function.
+Alert: PASS: this.getIcon(1, 2) threw Document.getIcon: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.getNthFieldName = function
-Alert: PASS: this.getNthFieldName() threw error Document.getNthFieldName: Incorrect number of parameters passed to function.
-Alert: PASS: this.getNthFieldName(-1) threw error Document.getNthFieldName: Incorrect parameter value.
-Alert: PASS: this.getNthFieldName(400000) threw error Document.getNthFieldName: Object no longer exists.
-Alert: PASS: this.getNthFieldName(0) threw error Document.getNthFieldName: Object no longer exists.
+Alert: PASS: this.getNthFieldName() threw Document.getNthFieldName: Incorrect number of parameters passed to function.
+Alert: PASS: this.getNthFieldName(-1) threw Document.getNthFieldName: Incorrect parameter value.
+Alert: PASS: this.getNthFieldName(400000) threw Document.getNthFieldName: Object no longer exists.
+Alert: PASS: this.getNthFieldName(0) threw Document.getNthFieldName: Object no longer exists.
 Alert: PASS: typeof this.getPageNthWord = function
 Alert: PASS: this.getPageNthWord(0, 0, true, "clams", [1, 2]) = Hello,
-Alert: PASS: this.getPageNthWord(-1, 0, true) threw error Document.getPageNthWord: Incorrect parameter value.
-Alert: PASS: this.getPageNthWord(6, 0, true) threw error Document.getPageNthWord: Incorrect parameter value.
+Alert: PASS: this.getPageNthWord(-1, 0, true) threw Document.getPageNthWord: Incorrect parameter value.
+Alert: PASS: this.getPageNthWord(6, 0, true) threw Document.getPageNthWord: Incorrect parameter value.
 Alert: PASS: typeof this.getPageNthWordQuads = function
-Alert: PASS: this.getPageNthWordQuads() threw error Document.getPageNthWordQuads: Operation not supported.
+Alert: PASS: this.getPageNthWordQuads() threw Document.getPageNthWordQuads: Operation not supported.
 Alert: PASS: typeof this.getPageNumWords = function
 Alert: PASS: this.getPageNumWords(0, "clams", [1, 2]) = 2
-Alert: PASS: this.getPageNumWords(-1) threw error Document.getPageNumWords: Incorrect parameter value.
-Alert: PASS: this.getPageNumWords(6) threw error Document.getPageNumWords: Incorrect parameter value.
+Alert: PASS: this.getPageNumWords(-1) threw Document.getPageNumWords: Incorrect parameter value.
+Alert: PASS: this.getPageNumWords(6) threw Document.getPageNumWords: Incorrect parameter value.
 Alert: PASS: typeof this.getPrintParams = function
-Alert: PASS: this.getPrintParams() threw error Document.getPrintParams: Operation not supported.
-Alert: PASS: this.getPrintParams(42) threw error Document.getPrintParams: Operation not supported.
+Alert: PASS: this.getPrintParams() threw Document.getPrintParams: Operation not supported.
+Alert: PASS: this.getPrintParams(42) threw Document.getPrintParams: Operation not supported.
 Alert: PASS: typeof this.gotoNamedDest = function
-Alert: PASS: this.gotoNamedDest() threw error Document.gotoNamedDest: Incorrect number of parameters passed to function.
-Alert: PASS: this.gotoNamedDest(1, 2) threw error Document.gotoNamedDest: Incorrect number of parameters passed to function.
-Alert: PASS: this.gotoNamedDest("chicago") threw error Document.gotoNamedDest: Object no longer exists.
+Alert: PASS: this.gotoNamedDest() threw Document.gotoNamedDest: Incorrect number of parameters passed to function.
+Alert: PASS: this.gotoNamedDest(1, 2) threw Document.gotoNamedDest: Incorrect number of parameters passed to function.
+Alert: PASS: this.gotoNamedDest("chicago") threw Document.gotoNamedDest: Object no longer exists.
 Alert: PASS: typeof this.mailDoc = function
 Mail Msg: 1, to=, cc=, bcc=, subject=, body=
 Alert: PASS: this.mailDoc() = undefined
@@ -140,11 +140,11 @@ Alert: PASS: this.print({}) = undefined
 Doc Print: 1, 42, 17, 1, 1, 1, 1, 1
 Alert: PASS: this.print({"bUi": false, "nStart": 42, "nEnd": 17, "bSilent": true, "bShrinkToFit": true, "bPrintAsImage": true, "bReverse": true, "bAnnotations": true, "bogus": "yes"}) = undefined
 Alert: PASS: typeof this.removeField = function
-Alert: PASS: this.removeField() threw error Document.removeField: Incorrect number of parameters passed to function.
+Alert: PASS: this.removeField() threw Document.removeField: Incorrect number of parameters passed to function.
 Alert: PASS: typeof this.resetForm = function
 Alert: PASS: this.resetForm() = undefined
 Alert: PASS: this.resetForm("myform") = undefined
 Alert: PASS: typeof this.submitForm = function
-Alert: PASS: this.submitForm() threw error Document.submitForm: Incorrect number of parameters passed to function.
+Alert: PASS: this.submitForm() threw Document.submitForm: Incorrect number of parameters passed to function.
 Doc Submit Form: url=myform
 Alert: PASS: this.submitForm("myform", true, true, ["name", "age"]) = undefined

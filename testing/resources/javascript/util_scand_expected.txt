@@ -1,5 +1,5 @@
-Alert: PASS: util.scand() threw error util.scand: Incorrect number of parameters passed to function.
-Alert: PASS: util.scand('12/20/2016') threw error util.scand: Incorrect number of parameters passed to function.
+Alert: PASS: util.scand() threw util.scand: Incorrect number of parameters passed to function.
+Alert: PASS: util.scand('12/20/2016') threw util.scand: Incorrect number of parameters passed to function.
 Alert: PASS: util.scand('mm/dd/yyyy', '12/20/2016').toUTCString() = Tue, 20 Dec 2016 21:48:50 GMT
 Alert: PASS: util.scand('dd/mm/yyyy', '20/12/2016').toUTCString() = Tue, 20 Dec 2016 21:48:50 GMT
 Alert: PASS: util.scand('yyyy/mm/dd', '2016/12/20').toUTCString() = Tue, 20 Dec 2016 21:48:50 GMT

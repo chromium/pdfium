@@ -324,7 +324,7 @@ def insert_includes(input_path, output_file, visited_set):
   try:
     with open(input_path, 'rb') as infile:
       for line in infile:
-        match = re.match(r'\{\{include\s+(.+)\}\}', line);
+        match = re.match(r'\s*\{\{include\s+(.+)\}\}', line);
         if match:
           insert_includes(
               os.path.join(os.path.dirname(input_path), match.group(1)),

@@ -14,8 +14,8 @@ Alert: PASS: charLimit = 0
 Alert: PASS: charLimit = 0
 Alert: PASS: comb = false
 Alert: PASS: comb = false
-Alert: PASS: defaultStyle threw error Field.defaultStyle: Operation not supported.
-Alert: PASS: defaultStyle threw error Field.defaultStyle: Operation not supported.
+Alert: PASS: defaultStyle threw Field.defaultStyle: Operation not supported.
+Alert: PASS: defaultStyle threw Field.defaultStyle: Operation not supported.
 Alert: PASS: defaultValue = 
 Alert: PASS: defaultValue = 
 Alert: PASS: doNotScroll = false
@@ -25,7 +25,7 @@ Alert: PASS: doNotSpellCheck = false
 Alert: PASS: display = 2
 Alert: PASS: display = 3
 Alert: PASS: doc = [object global]
-Alert: PASS: doc threw error Field.doc: Operation not supported.
+Alert: PASS: doc threw Field.doc: Operation not supported.
 Alert: PASS: hidden = false
 Alert: PASS: hidden = true
 Alert: PASS: fileSelect = false
@@ -37,9 +37,9 @@ Alert: PASS: lineWidth = 4
 Alert: PASS: multiline = false
 Alert: PASS: multiline = false
 Alert: PASS: name = MyField
-Alert: PASS: name threw error Field.name: Operation not supported.
+Alert: PASS: name threw Field.name: Operation not supported.
 Alert: PASS: page = 0
-Alert: PASS: page threw error Field.page: Cannot assign to readonly property.
+Alert: PASS: page threw Field.page: Cannot assign to readonly property.
 Alert: PASS: password = false
 Alert: PASS: password = false
 Alert: PASS: print = true
@@ -63,13 +63,13 @@ Alert: PASS: textColor = T
 Alert: PASS: textSize = 0
 Alert: PASS: textSize = 0
 Alert: PASS: type = text
-Alert: PASS: type threw error Field.type: Operation not supported.
+Alert: PASS: type threw Field.type: Operation not supported.
 Alert: PASS: userName = 
 Alert: PASS: userName = 
 Alert: PASS: value = 
 Alert: PASS: value = 
 Alert: PASS: valueAsString = 
-Alert: PASS: valueAsString threw error Field.valueAsString: Operation not supported.
+Alert: PASS: valueAsString threw Field.valueAsString: Operation not supported.
 Alert: PASS: buttonAlignX = 0
 Alert: PASS: buttonAlignX = 0
 Alert: PASS: buttonAlignY = 0
@@ -85,4 +85,4 @@ Alert: PASS: buttonScaleWhen = 0
 Alert: PASS: highlight = invert
 Alert: PASS: highlight = invert
 Alert: PASS: type = button
-Alert: PASS: type threw error Field.type: Operation not supported.
+Alert: PASS: type threw Field.type: Operation not supported.

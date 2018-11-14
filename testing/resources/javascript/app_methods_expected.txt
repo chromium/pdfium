@@ -20,22 +20,22 @@ Alert: [1, 2, [object Object]]
 Alert: PASS: app.alert([1, 2, {'color': 'red'}]) = 0
 title[icon=5,type=6]: [object Object]
 Alert: PASS: app.alert({'color': 'red'}, 5, 6, 'title') = 0
-Alert: PASS: app.alert() threw error app.alert: Incorrect number of parameters passed to function.
-Alert: PASS: app.alert({}) threw error app.alert: Incorrect number of parameters passed to function.
-Alert: PASS: app.alert({'color': 'red', 'size': 42}) threw error app.alert: Incorrect number of parameters passed to function.
+Alert: PASS: app.alert() threw app.alert: Incorrect number of parameters passed to function.
+Alert: PASS: app.alert({}) threw app.alert: Incorrect number of parameters passed to function.
+Alert: PASS: app.alert({'color': 'red', 'size': 42}) threw app.alert: Incorrect number of parameters passed to function.
 BEEP!!! 1
 Alert: PASS: app.beep(1) = undefined
-Alert: FAIL: app.browseForDoc() = undefined, expected to throw error
+Alert: FAIL: app.browseForDoc() = undefined, expected to throw
 Alert: PASS: app.execDialog() = undefined
 Alert: PASS: app.findComponent() = undefined
 Alert: PASS: app.goBack() = undefined
 Alert: PASS: app.goForward() = undefined
 Alert: PASS: app.launchURL() = undefined
-Alert: PASS: app.newDoc() threw error app.newDoc: Operation not supported.
+Alert: PASS: app.newDoc() threw app.newDoc: Operation not supported.
 Alert: PASS: app.newFDF() = undefined
-Alert: PASS: app.openDoc() threw error app.openDoc: Operation not supported.
+Alert: PASS: app.openDoc() threw app.openDoc: Operation not supported.
 Alert: PASS: app.openFDF() = undefined
-Alert: PASS: app.popUpMenuEx() threw error app.popUpMenuEx: Operation not supported.
+Alert: PASS: app.popUpMenuEx() threw app.popUpMenuEx: Operation not supported.
 Mail Msg: 1, to=, cc=, bcc=, subject=, body=
 Alert: PASS: app.mailMsg(true) = undefined
 Mail Msg: 0, to=user@example.com, cc=, bcc=, subject=, body=
@@ -48,9 +48,9 @@ Mail Msg: 0, to=user@example.com, cc=, bcc=, subject=, body=
 Alert: PASS: app.mailMsg({'bUI': false, 'cTo': 'user@example.com'}) = undefined
 Mail Msg: 0, to=user@example.com, cc=cc@example.com, bcc=bcc@example.com, subject=subject, body=body
 Alert: PASS: app.mailMsg({'bUI': false, 'cTo': 'user@example.com', 'cCc': 'cc@example.com', 'cBcc': 'bcc@example.com', 'cSubject': 'subject', 'cMsg': 'body'}) = undefined
-Alert: PASS: app.mailMsg() threw error app.mailMsg: Incorrect number of parameters passed to function.
-Alert: PASS: app.mailMsg(false) threw error app.mailMsg: Incorrect number of parameters passed to function.
-Alert: PASS: app.mailMsg({'color': 'red', 'size': 42}) threw error app.mailMsg: Incorrect number of parameters passed to function.
+Alert: PASS: app.mailMsg() threw app.mailMsg: Incorrect number of parameters passed to function.
+Alert: PASS: app.mailMsg(false) threw app.mailMsg: Incorrect number of parameters passed to function.
+Alert: PASS: app.mailMsg({'color': 'red', 'size': 42}) threw app.mailMsg: Incorrect number of parameters passed to function.
 PDF: question, defaultValue=, label=, isPassword=0, length=2048
 Alert: PASS: app.response('question') = No
 title: question, defaultValue=default, label=label, isPassword=1, length=2048
@@ -59,5 +59,5 @@ PDF: question, defaultValue=, label=, isPassword=0, length=2048
 Alert: PASS: app.response({'cQuestion': 'question'}) = No
 title: question, defaultValue=default, label=label, isPassword=1, length=2048
 Alert: PASS: app.response({'cQuestion': 'question', 'cTitle': 'title', 'cDefault': 'default', 'bPassword': true, 'cLabel': 'label'}) = No
-Alert: PASS: app.response() threw error app.response: Incorrect number of parameters passed to function.
-Alert: PASS: app.response({}) threw error app.response: Incorrect number of parameters passed to function.
+Alert: PASS: app.response() threw app.response: Incorrect number of parameters passed to function.
+Alert: PASS: app.response({}) threw app.response: Incorrect number of parameters passed to function.

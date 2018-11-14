@@ -1,8 +1,8 @@
-Alert: PASS: color.convert() threw error color.convert: Incorrect number of parameters passed to function.
-Alert: PASS: color.convert(1) threw error color.convert: Incorrect number of parameters passed to function.
-Alert: PASS: color.convert(undefined, 'RGB') threw error color.convert: Incorrect parameter type.
-Alert: PASS: color.convert('BOGUS', 'RGB') threw error color.convert: Incorrect parameter type.
-Alert: PASS: color.convert('{}', 'RGB') threw error color.convert: Incorrect parameter type.
+Alert: PASS: color.convert() threw color.convert: Incorrect number of parameters passed to function.
+Alert: PASS: color.convert(1) threw color.convert: Incorrect number of parameters passed to function.
+Alert: PASS: color.convert(undefined, 'RGB') threw color.convert: Incorrect parameter type.
+Alert: PASS: color.convert('BOGUS', 'RGB') threw color.convert: Incorrect parameter type.
+Alert: PASS: color.convert('{}', 'RGB') threw color.convert: Incorrect parameter type.
 Alert: PASS: color.convert(['T'], 'BOGUS') = T
 Alert: PASS: color.convert(['T'], 'T') = T
 Alert: PASS: color.convert(['T'], 'G') = T
@@ -23,13 +23,13 @@ Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'T') = T
 Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'G') = G,0.25
 Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'RGB') = RGB,0.25,0.25,0.25
 Alert: PASS: color.convert(['CMYK',0.25,0.25,0.25,0.50], 'CMYK') = CMYK,0.25,0.25,0.25,0.5
-Alert: PASS: color.equal() threw error color.equal: Incorrect number of parameters passed to function.
-Alert: PASS: color.equal(1) threw error color.equal: Incorrect number of parameters passed to function.
-Alert: PASS: color.equal(undefined, undefined) threw error color.equal: Incorrect parameter type.
-Alert: PASS: color.equal(undefined, 'BOGUS') threw error color.equal: Incorrect parameter type.
-Alert: PASS: color.equal('BOGUS', 'BOGUS') threw error color.equal: Incorrect parameter type.
-Alert: PASS: color.equal('BOGUS', ['T']) threw error color.equal: Incorrect parameter type.
-Alert: PASS: color.equal(['T'], 'BOGUS') threw error color.equal: Incorrect parameter type.
+Alert: PASS: color.equal() threw color.equal: Incorrect number of parameters passed to function.
+Alert: PASS: color.equal(1) threw color.equal: Incorrect number of parameters passed to function.
+Alert: PASS: color.equal(undefined, undefined) threw color.equal: Incorrect parameter type.
+Alert: PASS: color.equal(undefined, 'BOGUS') threw color.equal: Incorrect parameter type.
+Alert: PASS: color.equal('BOGUS', 'BOGUS') threw color.equal: Incorrect parameter type.
+Alert: PASS: color.equal('BOGUS', ['T']) threw color.equal: Incorrect parameter type.
+Alert: PASS: color.equal(['T'], 'BOGUS') threw color.equal: Incorrect parameter type.
 Alert: PASS: color.equal(['T'], ['T']) = true
 Alert: PASS: color.equal(['T'], ['G', 0]) = false
 Alert: PASS: color.equal(['T'], ['RGB', 0, 0, 0]) = false
