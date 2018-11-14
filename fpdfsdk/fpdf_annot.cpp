@@ -225,8 +225,7 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   if (!pPage || !FPDFAnnot_IsSupportedSubtype(subtype))
     return nullptr;
 
-  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(
-      pPage->GetDocument()->GetByteStringPool());
+  auto pDict = pPage->GetDocument()->New<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "Annot");
   pDict->SetNewFor<CPDF_Name>("Subtype",
                               CPDF_Annot::AnnotSubtypeToString(

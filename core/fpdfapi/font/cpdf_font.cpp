@@ -293,7 +293,7 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
   if (pFont)
     return pFont;
 
-  CPDF_Dictionary* pDict = new CPDF_Dictionary(pDoc->GetByteStringPool());
+  CPDF_Dictionary* pDict = pDoc->New<CPDF_Dictionary>().release();
   pDict->SetNewFor<CPDF_Name>("Type", "Font");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontname);

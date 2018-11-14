@@ -47,6 +47,15 @@ class CPDF_IndirectObjectHolder {
         pdfium::MakeUnique<T>(m_pByteStringPool, std::forward<Args>(args)...)));
   }
 
+  // Creates and adds a new object not owned by the indirect object holder,
+  // but which can intern strings from it.
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value, std::unique_ptr<T>>::type
+  New(Args&&... args) {
+    return pdfium::MakeUnique<T>(m_pByteStringPool,
+                                 std::forward<Args>(args)...);
+  }
+
   // Takes ownership of |pObj|, returns unowned pointer to it.
   CPDF_Object* AddIndirectObject(std::unique_ptr<CPDF_Object> pObj);
 

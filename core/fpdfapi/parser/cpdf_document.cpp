@@ -168,8 +168,7 @@ std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
     int descend,
     std::unique_ptr<CPDF_Array> bbox,
     int32_t stemV) {
-  auto pFontDesc =
-      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+  auto pFontDesc = pDoc->New<CPDF_Dictionary>();
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", basefont);
   pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);

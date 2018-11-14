@@ -99,8 +99,7 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(
   if (!IsValidJpegComponent(num_comps) || !IsValidJpegBitsPerComponent(bits))
     return nullptr;
 
-  auto pDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
+  auto pDict = m_pDocument->New<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   pDict->SetNewFor<CPDF_Number>("Width", width);
@@ -179,8 +178,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   if (BitmapWidth < 1 || BitmapHeight < 1)
     return;
 
-  auto pDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
+  auto pDict = m_pDocument->New<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   pDict->SetNewFor<CPDF_Number>("Width", BitmapWidth);
@@ -249,8 +247,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         ptr[2] = (uint8_t)argb;
         ptr += 3;
       }
-      auto pNewDict =
-          pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
+      auto pNewDict = m_pDocument->New<CPDF_Dictionary>();
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
           std::move(pColorTable), iPalette * 3, std::move(pNewDict));
       pCS->Add(pCTS->MakeReference(m_pDocument.Get()));
@@ -276,8 +273,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     int32_t maskHeight = pMaskBitmap->GetHeight();
     std::unique_ptr<uint8_t, FxFreeDeleter> mask_buf;
     int32_t mask_size = 0;
-    auto pMaskDict =
-        pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
+    auto pMaskDict = m_pDocument->New<CPDF_Dictionary>();
     pMaskDict->SetNewFor<CPDF_Name>("Type", "XObject");
     pMaskDict->SetNewFor<CPDF_Name>("Subtype", "Image");
     pMaskDict->SetNewFor<CPDF_Number>("Width", maskWidth);

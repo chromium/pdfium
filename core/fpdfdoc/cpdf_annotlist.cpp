@@ -81,8 +81,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
   if (sContents.IsEmpty())
     return nullptr;
 
-  auto pAnnotDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(pDocument->GetByteStringPool());
+  auto pAnnotDict = pDocument->New<CPDF_Dictionary>();
   pAnnotDict->SetNewFor<CPDF_Name>("Type", "Annot");
   pAnnotDict->SetNewFor<CPDF_Name>("Subtype", "Popup");
   pAnnotDict->SetNewFor<CPDF_String>("T", pParentDict->GetStringFor("T"),

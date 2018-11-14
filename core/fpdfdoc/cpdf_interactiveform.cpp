@@ -1025,8 +1025,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       pMainDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsFilePath),
                                         false);
     } else {
-      auto pNewDict =
-          pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+      auto pNewDict = pDoc->New<CPDF_Dictionary>();
       pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
       CPDF_FileSpec filespec(pNewDict.get());
       filespec.SetFileName(pdf_path);
@@ -1054,8 +1053,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     }
 
     WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
-    auto pFieldDict =
-        pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+    auto pFieldDict = pDoc->New<CPDF_Dictionary>();
     pFieldDict->SetNewFor<CPDF_String>("T", fullname);
     if (pField->GetType() == CPDF_FormField::kCheckBox ||
         pField->GetType() == CPDF_FormField::kRadioButton) {

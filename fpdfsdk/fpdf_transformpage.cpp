@@ -191,14 +191,12 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pDoc)
     return false;
 
-  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(
-      nullptr, 0,
-      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
+  CPDF_Stream* pStream =
+      pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&textBuf);
 
-  CPDF_Stream* pEndStream = pDoc->NewIndirect<CPDF_Stream>(
-      nullptr, 0,
-      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
+  CPDF_Stream* pEndStream =
+      pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pEndStream->SetData(ByteStringView(" Q").span());
 
   if (CPDF_Array* pContentArray = ToArray(pContentObj)) {
@@ -353,9 +351,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pDoc)
     return;
 
-  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(
-      nullptr, 0,
-      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
+  CPDF_Stream* pStream =
+      pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&strClip);
 
   if (CPDF_Array* pArray = ToArray(pContentObj)) {

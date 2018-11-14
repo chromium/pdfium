@@ -371,8 +371,7 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
   }
   if (param.m_Type == ContentParam::NAME) {
     param.m_Type = ContentParam::OBJECT;
-    param.m_pObject = pdfium::MakeUnique<CPDF_Name>(
-        m_pDocument->GetByteStringPool(), param.m_Name);
+    param.m_pObject = m_pDocument->New<CPDF_Name>(param.m_Name);
     return param.m_pObject.get();
   }
   if (param.m_Type == ContentParam::OBJECT)
@@ -615,8 +614,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = m_pSyntax->GetPos();
-  auto pDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
+  auto pDict = m_pDocument->New<CPDF_Dictionary>();
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::Keyword) {

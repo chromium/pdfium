@@ -129,8 +129,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
             ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Datasets)),
             pDsfileWrite) &&
         pDsfileWrite->GetSize() > 0) {
-      auto pDataDict = pdfium::MakeUnique<CPDF_Dictionary>(
-          pPDFDocument->GetByteStringPool());
+      auto pDataDict = pPDFDocument->New<CPDF_Dictionary>();
       if (iDataSetsIndex != -1) {
         if (pDataSetsStream) {
           pDataSetsStream->InitStreamFromFile(pDsfileWrite,
@@ -156,8 +155,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
             ToNode(ffdoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form)),
             pfileWrite) &&
         pfileWrite->GetSize() > 0) {
-      auto pDataDict = pdfium::MakeUnique<CPDF_Dictionary>(
-          pPDFDocument->GetByteStringPool());
+      auto pDataDict = pPDFDocument->New<CPDF_Dictionary>();
       if (iFormIndex != -1) {
         if (pFormStream)
           pFormStream->InitStreamFromFile(pfileWrite, std::move(pDataDict));

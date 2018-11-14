@@ -402,8 +402,7 @@ std::unique_ptr<CPDF_Dictionary> GenerateResourceFontDict(
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
   pFontDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
 
-  auto pResourceFontDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+  auto pResourceFontDict = pDoc->New<CPDF_Dictionary>();
   pResourceFontDict->SetFor(sFontDictName, pFontDict->MakeReference(pDoc));
   return pResourceFontDict;
 }
@@ -489,8 +488,7 @@ std::unique_ptr<CPDF_Dictionary> GenerateResourceDict(
     CPDF_Document* pDoc,
     std::unique_ptr<CPDF_Dictionary> pExtGStateDict,
     std::unique_ptr<CPDF_Dictionary> pResourceFontDict) {
-  auto pResourceDict =
-      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+  auto pResourceDict = pDoc->New<CPDF_Dictionary>();
   if (pExtGStateDict)
     pResourceDict->SetFor("ExtGState", std::move(pExtGStateDict));
   if (pResourceFontDict)

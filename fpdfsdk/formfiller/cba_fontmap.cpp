@@ -168,8 +168,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   if (!pStreamDict) {
-    auto pOwnedDict =
-        pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
+    auto pOwnedDict = m_pDocument->New<CPDF_Dictionary>();
     pStreamDict = pOwnedDict.get();
     pStream->InitStream({}, std::move(pOwnedDict));
   }
