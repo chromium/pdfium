@@ -1,0 +1,7 @@
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+{{include xfa_locale.xml}}
+endstream
+endobj

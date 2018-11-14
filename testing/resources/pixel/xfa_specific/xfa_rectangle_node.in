@@ -67,8 +67,7 @@ stream
 endstream
 endobj
 
-{{xfalocale 6 0}}
-
+{{include ../../xfa_locale_6_0.fragment}}
 {{xfapostamble 7 0}}
 
 {{xref}}
