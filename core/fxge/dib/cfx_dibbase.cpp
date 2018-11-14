@@ -866,7 +866,9 @@ void CFX_DIBBase::GetOverlapRect(int& dest_left,
   if (width == 0 || height == 0)
     return;
 
-  ASSERT(width > 0 && height > 0);
+  ASSERT(width > 0);
+  ASSERT(height > 0);
+
   if (dest_left > m_Width || dest_top > m_Height) {
     width = 0;
     height = 0;
@@ -905,7 +907,9 @@ void CFX_DIBBase::SetPalette(const uint32_t* pSrc) {
 }
 
 void CFX_DIBBase::GetPalette(uint32_t* pal, int alpha) const {
-  ASSERT(GetBPP() <= 8 && !IsCmykImage());
+  ASSERT(GetBPP() <= 8);
+  ASSERT(!IsCmykImage());
+
   if (GetBPP() == 1) {
     pal[0] = ((m_pPalette ? m_pPalette.get()[0] : 0xff000000) & 0xffffff) |
              (alpha << 24);

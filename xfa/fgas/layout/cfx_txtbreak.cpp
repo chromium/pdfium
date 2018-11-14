@@ -38,8 +38,8 @@ void CFX_TxtBreak::SetLineWidth(float fLineWidth) {
 }
 
 void CFX_TxtBreak::SetAlignment(int32_t iAlignment) {
-  ASSERT(iAlignment >= CFX_TxtLineAlignment_Left &&
-         iAlignment <= CFX_TxtLineAlignment_Justified);
+  ASSERT(iAlignment >= CFX_TxtLineAlignment_Left);
+  ASSERT(iAlignment <= CFX_TxtLineAlignment_Justified);
   m_iAlignment = iAlignment;
 }
 
@@ -613,7 +613,9 @@ int32_t CFX_TxtBreak::GetBreakPos(std::vector<CFX_Char>& ca,
 void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
                                  CFX_BreakLine* pNextLine,
                                  bool bAllChars) {
-  ASSERT(pCurLine && pNextLine);
+  ASSERT(pCurLine);
+  ASSERT(pNextLine);
+
   if (pCurLine->m_LineChars.size() < 2)
     return;
 

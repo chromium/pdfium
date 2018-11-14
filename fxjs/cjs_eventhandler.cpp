@@ -162,7 +162,11 @@ void CJS_EventHandler::OnField_Keystroke(WideString* strChange,
                                          bool bWillCommit,
                                          bool bFieldFull,
                                          bool* pbRc) {
-  ASSERT(pValue && pbRc && pSelEnd && pSelStart);
+  ASSERT(pValue);
+  ASSERT(pbRc);
+  ASSERT(pSelStart);
+  ASSERT(pSelEnd);
+
   Initialize(JET_FIELD_KEYSTROKE);
 
   m_nCommitKey = 0;
@@ -188,7 +192,9 @@ void CJS_EventHandler::OnField_Validate(WideString* strChange,
                                         CPDF_FormField* pTarget,
                                         WideString* pValue,
                                         bool* pbRc) {
-  ASSERT(pValue && pbRc);
+  ASSERT(pValue);
+  ASSERT(pbRc);
+
   Initialize(JET_FIELD_VALIDATE);
 
   m_pWideStrChange = strChange;
@@ -205,7 +211,9 @@ void CJS_EventHandler::OnField_Calculate(CPDF_FormField* pSource,
                                          CPDF_FormField* pTarget,
                                          WideString* pValue,
                                          bool* pRc) {
-  ASSERT(pValue && pRc);
+  ASSERT(pValue);
+  ASSERT(pRc);
+
   Initialize(JET_FIELD_CALCULATE);
 
   if (pSource)

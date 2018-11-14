@@ -64,13 +64,18 @@ class StringDataTemplate {
   }
 
   void CopyContents(const CharType* pStr, size_t nLen) {
-    ASSERT(nLen >= 0 && nLen <= m_nAllocLength);
+    ASSERT(nLen >= 0);
+    ASSERT(nLen <= m_nAllocLength);
+
     memcpy(m_String, pStr, nLen * sizeof(CharType));
     m_String[nLen] = 0;
   }
 
   void CopyContentsAt(size_t offset, const CharType* pStr, size_t nLen) {
-    ASSERT(offset >= 0 && nLen >= 0 && offset + nLen <= m_nAllocLength);
+    ASSERT(offset >= 0);
+    ASSERT(nLen >= 0);
+    ASSERT(offset + nLen <= m_nAllocLength);
+
     memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
     m_String[offset + nLen] = 0;
   }

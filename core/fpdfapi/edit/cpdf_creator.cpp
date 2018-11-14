@@ -74,7 +74,8 @@ bool CFX_FileBufferArchive::Flush() {
 }
 
 bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
-  ASSERT(pBuf && size > 0);
+  ASSERT(pBuf);
+  ASSERT(size > 0);
 
   const uint8_t* buffer = reinterpret_cast<const uint8_t*>(pBuf);
   size_t temp_size = size;

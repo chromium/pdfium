@@ -643,7 +643,9 @@ void CFWL_MonthCalendar::JumpToToday() {
 }
 
 WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
-  ASSERT(iMonth > 0 && iMonth < 13);
+  ASSERT(iMonth > 0);
+  ASSERT(iMonth < 13);
+
   static const wchar_t* const pMonth[] = {L"January", L"February", L"March",
                                           L"April",   L"May",      L"June",
                                           L"July",    L"August",   L"September",

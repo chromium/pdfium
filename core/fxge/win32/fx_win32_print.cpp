@@ -83,7 +83,8 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                          pSource->GetHeight(), &clip_rect,
                          FXDIB_ResampleOptions(), BlendMode::kNormal);
   }
-  ASSERT(pSource && !pSource->IsAlphaMask());
+  ASSERT(pSource);
+  ASSERT(!pSource->IsAlphaMask());
   ASSERT(blend_type == BlendMode::kNormal);
   if (pSource->HasAlpha())
     return false;

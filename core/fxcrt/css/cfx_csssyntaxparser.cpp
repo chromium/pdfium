@@ -35,7 +35,10 @@ CFX_CSSSyntaxParser::CFX_CSSSyntaxParser(const wchar_t* pBuffer,
     : m_iTextDataLen(0),
       m_dwCheck(0xFFFFFFFF),
       m_eStatus(CFX_CSSSyntaxStatus::None) {
-  ASSERT(pBuffer && iBufferSize > 0 && iTextDatSize > 0);
+  ASSERT(pBuffer);
+  ASSERT(iBufferSize > 0);
+  ASSERT(iTextDatSize > 0);
+
   m_eMode = bOnlyDeclaration ? CFX_CSSSyntaxMode::PropertyName
                              : CFX_CSSSyntaxMode::RuleSet;
   m_TextData.InitWithSize(iTextDatSize);

@@ -12,7 +12,8 @@ CFX_CSSValueListParser::CFX_CSSValueListParser(const wchar_t* psz,
                                                int32_t iLen,
                                                wchar_t separator)
     : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {
-  ASSERT(psz && iLen > 0);
+  ASSERT(psz);
+  ASSERT(iLen > 0);
 }
 
 bool CFX_CSSValueListParser::NextValue(CFX_CSSPrimitiveType* eType,

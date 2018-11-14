@@ -40,7 +40,9 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               int32_t iCount,
                               float fFontSize,
                               const CFX_Matrix* pMatrix) {
-  ASSERT(pFont && pCharPos && iCount > 0);
+  ASSERT(pFont);
+  ASSERT(pCharPos);
+  ASSERT(iCount > 0);
 
   CFX_Font* pFxFont = pFont->GetDevFont();
   if (FontStyleIsItalic(pFont->GetFontStyles()) && !pFxFont->IsItalic()) {
@@ -207,7 +209,8 @@ void CFDE_TextOut::CalcLogicSize(const WideString& str, CFX_RectF* pRect) {
     return;
   }
 
-  ASSERT(m_pFont && m_fFontSize >= 1.0f);
+  ASSERT(m_pFont);
+  ASSERT(m_fFontSize >= 1.0f);
 
   if (!m_Styles.single_line_) {
     if (pRect->Width() < 1.0f)
@@ -283,7 +286,8 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
 void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
                                  const WideStringView& str,
                                  const CFX_RectF& rect) {
-  ASSERT(m_pFont && m_fFontSize >= 1.0f);
+  ASSERT(m_pFont);
+  ASSERT(m_fFontSize >= 1.0f);
 
   if (str.IsEmpty())
     return;

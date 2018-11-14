@@ -66,7 +66,8 @@ bool CFX_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
 }
 
 CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
-  ASSERT(m_pFont && m_pCurLine);
+  ASSERT(m_pFont);
+  ASSERT(m_pCurLine);
 
   uint32_t dwProps = FX_GetUnicodeProperties(wch);
   FX_CHARTYPE chartype = GetCharTypeFromProp(dwProps);
@@ -679,7 +680,8 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_Char>& tca,
 void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
                                  CFX_BreakLine* pNextLine,
                                  bool bAllChars) {
-  ASSERT(pCurLine && pNextLine);
+  ASSERT(pCurLine);
+  ASSERT(pNextLine);
 
   if (pCurLine->m_LineChars.size() < 2)
     return;
@@ -720,7 +722,8 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   if (!pText || pText->iLength < 1)
     return 0;
 
-  ASSERT(pText->pFont && pText->pRect);
+  ASSERT(pText->pFont);
+  ASSERT(pText->pRect);
 
   RetainPtr<CFGAS_GEFont> pFont = pText->pFont;
   CFX_RectF rtText(*pText->pRect);

@@ -1054,7 +1054,9 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return true;
   }
   if (m_bpp == 1) {
-    ASSERT(!IsCmykImage() && static_cast<uint8_t>(alpha_flag >> 8) == 0);
+    ASSERT(!IsCmykImage());
+    ASSERT(static_cast<uint8_t>(alpha_flag >> 8) == 0);
+
     int left_shift = rect.left % 8;
     int right_shift = rect.right % 8;
     int new_width = rect.right / 8 - rect.left / 8;

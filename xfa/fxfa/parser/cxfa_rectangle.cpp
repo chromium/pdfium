@@ -446,7 +446,8 @@ void CXFA_Rectangle::GetPath(const std::vector<CXFA_Stroke*>& strokes,
                              int32_t nIndex,
                              bool bStart,
                              bool bCorner) {
-  ASSERT(nIndex >= 0 && nIndex < 8);
+  ASSERT(nIndex >= 0);
+  ASSERT(nIndex < 8);
 
   int32_t n = (nIndex & 1) ? nIndex - 1 : nIndex;
   CXFA_Stroke* corner1 = strokes[n];

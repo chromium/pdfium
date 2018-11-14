@@ -678,7 +678,9 @@ void CXFA_LocaleValue::GetNumericFormat(WideString& wsFormat,
                                         int32_t nIntLen,
                                         int32_t nDecLen) {
   ASSERT(wsFormat.IsEmpty());
-  ASSERT(nIntLen >= -1 && nDecLen >= -1);
+  ASSERT(nIntLen >= -1);
+  ASSERT(nDecLen >= -1);
+
   int32_t nTotalLen = (nIntLen >= 0 ? nIntLen : 2) + 1 +
                       (nDecLen >= 0 ? nDecLen : 2) + (nDecLen == 0 ? 0 : 1);
   {

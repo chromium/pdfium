@@ -30,7 +30,9 @@ int32_t CFX_BreakPiece::GetEndPos() const {
 }
 
 CFX_Char* CFX_BreakPiece::GetChar(int32_t index) const {
-  ASSERT(index >= 0 && index < m_iChars && m_pChars);
+  ASSERT(index >= 0);
+  ASSERT(index < m_iChars);
+  ASSERT(m_pChars);
   return &(*m_pChars)[m_iStartChar + index];
 }
 

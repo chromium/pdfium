@@ -1270,7 +1270,9 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                       const FX_RECT* pClipRect,
                                       const FXDIB_ResampleOptions& options,
                                       BlendMode blend_type) {
-  ASSERT(pSource && pClipRect);
+  ASSERT(pSource);
+  ASSERT(pClipRect);
+
   if (options.HasAnyOptions() || dest_width > 10000 || dest_width < -10000 ||
       dest_height > 10000 || dest_height < -10000) {
     return UseFoxitStretchEngine(pSource, color, dest_left, dest_top,

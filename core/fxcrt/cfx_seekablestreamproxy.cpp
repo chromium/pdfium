@@ -28,7 +28,8 @@ std::pair<size_t, size_t> UTF8Decode(const char* pSrc,
                                      size_t srcLen,
                                      wchar_t* pDst,
                                      size_t dstLen) {
-  ASSERT(pDst && dstLen > 0);
+  ASSERT(pDst);
+  ASSERT(dstLen > 0);
 
   if (srcLen < 1)
     return {0, 0};
@@ -203,7 +204,8 @@ void CFX_SeekableStreamProxy::SetCodePage(uint16_t wCodePage) {
 }
 
 size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
-  ASSERT(pBuffer && iBufferSize > 0);
+  ASSERT(pBuffer);
+  ASSERT(iBufferSize > 0);
 
   iBufferSize =
       std::min(iBufferSize, static_cast<size_t>(GetSize() - m_iPosition));

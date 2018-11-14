@@ -376,7 +376,8 @@ bool AddColors(const CPDF_ExpIntFunc* pFunc, SkTDArray<SkColor>* skColors) {
 }
 
 uint8_t FloatToByte(float f) {
-  ASSERT(0 <= f && f <= 1);
+  ASSERT(0 <= f);
+  ASSERT(f <= 1);
   return (uint8_t)(f * 255.99f);
 }
 

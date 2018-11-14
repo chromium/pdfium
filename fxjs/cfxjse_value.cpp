@@ -262,7 +262,8 @@ bool CFXJSE_Value::SetObjectOwnProperty(const ByteStringView& szPropName,
 
 bool CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
                                    CFXJSE_Value* lpNewThis) {
-  ASSERT(lpOldFunction && lpNewThis);
+  ASSERT(lpOldFunction);
+  ASSERT(lpNewThis);
 
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(GetIsolate());
   v8::Local<v8::Value> rgArgs[2];
