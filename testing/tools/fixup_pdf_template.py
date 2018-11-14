@@ -17,8 +17,6 @@ script replaces {{name}}-style variables in the input with calculated results
   {{streamlen}} - expands to |/Length n|.
   {{xfapreamble x y}} - expands to an object |x y obj| containing a XML preamble
                         to be used in XFA docs.
-  {{xfaconfig x y}} - expands to an object |x y obj| containing a config XML
-                      block to be used in XFA docs.
   {{xfapostamble x y}} - expands to an object |x y obj| containing a XML
                          posteamble to be used in XFA docs.
 """
@@ -69,39 +67,6 @@ class TemplateProcessor:
   XFAPOSTAMBLE_PATTERN = r'\{\{xfapostamble\s+(\d+)\s+(\d+)\}\}'
   XFAPOSTAMBLE_REPLACEMENT = '%d %d obj\n<<\n  /Length %d\n>>\nstream\n%s\nendstream\nendobj\n'
   XFAPOSTAMBLE_STREAM = '</xdp:xdp>'
-
-  XFACONFIG_PATTERN = r'\{\{xfaconfig\s+(\d+)\s+(\d+)\}\}'
-  XFACONFIG_REPLACEMENT = '%d %d obj\n<<\n  /Length %d\n>>\nstream\n%s\nendstream\nendobj\n'
-  XFACONFIG_STREAM = '''<config xmlns="http://www.xfa.org/schema/xci/3.0/">
-  <agent name="designer">
-    <destination>pdf</destination>
-    <pdf>
-      <fontInfo/>
-    </pdf>
-  </agent>
-  <present>
-    <pdf>
-      <version>1.7</version>
-      <adobeExtensionLevel>8</adobeExtensionLevel>
-      <renderPolicy>client</renderPolicy>
-      <scriptModel>XFA</scriptModel>
-      <interactive>1</interactive>
-    </pdf>
-    <xdp>
-      <packets>*</packets>
-    </xdp>
-    <destination>pdf</destination>
-    <script>
-      <runScripts>server</runScripts>
-    </script>
-  </present>
-  <acrobat>
-    <acrobat7>
-      <dynamicRender>required</dynamicRender>
-    </acrobat7>
-    <validate>preSubmit</validate>
-  </acrobat>
-</config>'''
 
   def __init__(self):
     self.streamlen_state = StreamLenState.START
@@ -165,10 +130,6 @@ class TemplateProcessor:
                                 self.XFAPREAMBLE_PATTERN,
                                 self.XFAPREAMBLE_REPLACEMENT,
                                 self.XFAPREAMBLE_STREAM)
-    line = self.replace_xfa_tag(line,
-                                self.XFACONFIG_PATTERN,
-                                self.XFACONFIG_REPLACEMENT,
-                                self.XFACONFIG_STREAM)
     line = self.replace_xfa_tag(line,
                                 self.XFAPOSTAMBLE_PATTERN,
                                 self.XFAPOSTAMBLE_REPLACEMENT,

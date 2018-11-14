@@ -34,7 +34,7 @@ endobj
 endobj
 
 {{xfapreamble 3 0}}
-{{xfaconfig 4 0}}
+{{include ../xfa_config_4_0.fragment}}
 
 {{object 5 0}}
 <<

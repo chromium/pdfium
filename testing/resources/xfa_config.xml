@@ -1,0 +1,30 @@
+<config xmlns="http://www.xfa.org/schema/xci/3.0/">
+<agent name="designer">
+  <destination>pdf</destination>
+  <pdf>
+    <fontInfo/>
+  </pdf>
+</agent>
+<present>
+  <pdf>
+    <version>1.7</version>
+    <adobeExtensionLevel>8</adobeExtensionLevel>
+    <renderPolicy>client</renderPolicy>
+    <scriptModel>XFA</scriptModel>
+    <interactive>1</interactive>
+  </pdf>
+  <xdp>
+    <packets>*</packets>
+  </xdp>
+  <destination>pdf</destination>
+  <script>
+    <runScripts>server</runScripts>
+  </script>
+</present>
+<acrobat>
+  <acrobat7>
+    <dynamicRender>required</dynamicRender>
+  </acrobat7>
+  <validate>preSubmit</validate>
+</acrobat>
+</config>

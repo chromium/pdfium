@@ -1,0 +1,7 @@
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+{{include xfa_config.xml}}
+endstream
+endobj
