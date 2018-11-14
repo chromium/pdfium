@@ -100,3 +100,9 @@ TEST_F(FPDFSaveEmbedderTest, BUG_342) {
   EXPECT_THAT(GetString(),
               testing::Not(testing::HasSubstr("0000000000 65536 f\r\n")));
 }
+
+TEST_F(FPDFSaveEmbedderTest, BUG_905142) {
+  EXPECT_TRUE(OpenDocument("bug_905142.pdf"));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  EXPECT_THAT(GetString(), testing::HasSubstr("/Length 0"));
+}

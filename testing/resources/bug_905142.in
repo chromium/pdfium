@@ -1,0 +1,31 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Kids [ 3 0 R ]
+  /Count 1
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 1 0 R
+  /Contents [ 4 0 R ]
+  /MediaBox [ 0 0 612 792 ]
+>>
+endobj
+{{object 4 0}} <<
+  /Filter /FlateDecode
+  /Length 0
+>>
+stream
+
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

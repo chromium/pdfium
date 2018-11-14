@@ -192,20 +192,24 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
     data = encrypted_data;
   }
 
-  if (static_cast<uint32_t>(encoder.GetDict()->GetIntegerFor("Length")) !=
-      data.size()) {
+  size_t size = data.size();
+  if (static_cast<size_t>(encoder.GetDict()->GetIntegerFor("Length")) != size) {
     encoder.CloneDict();
-    encoder.GetClonedDict()->SetNewFor<CPDF_Number>(
-        "Length", static_cast<int>(data.size()));
+    encoder.GetClonedDict()->SetNewFor<CPDF_Number>("Length",
+                                                    static_cast<int>(size));
   }
 
   if (!encoder.GetDict()->WriteTo(archive, encryptor))
     return false;
 
-  if (!archive->WriteString("stream\r\n") ||
-      !archive->WriteBlock(data.data(), data.size()) ||
-      !archive->WriteString("\r\nendstream")) {
+  if (!archive->WriteString("stream\r\n"))
     return false;
-  }
+
+  if (size && !archive->WriteBlock(data.data(), size))
+    return false;
+
+  if (!archive->WriteString("\r\nendstream"))
+    return false;
+
   return true;
 }
