@@ -1,0 +1,7 @@
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+{{include xfa_postamble.xml}}
+endstream
+endobj

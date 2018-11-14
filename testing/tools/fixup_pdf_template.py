@@ -15,10 +15,6 @@ script replaces {{name}}-style variables in the input with calculated results
   {{startxref} - expands to a startxref directive followed by correct offset.
   {{object x y}} - expands to |x y obj| declaration, noting the offset.
   {{streamlen}} - expands to |/Length n|.
-  {{xfapreamble x y}} - expands to an object |x y obj| containing a XML preamble
-                        to be used in XFA docs.
-  {{xfapostamble x y}} - expands to an object |x y obj| containing a XML
-                         posteamble to be used in XFA docs.
 """
 
 import cStringIO
@@ -59,14 +55,6 @@ class TemplateProcessor:
 
   STREAMLEN_TOKEN = '{{streamlen}}'
   STREAMLEN_REPLACEMENT = '/Length %d'
-
-  XFAPREAMBLE_PATTERN = r'\{\{xfapreamble\s+(\d+)\s+(\d+)\}\}'
-  XFAPREAMBLE_REPLACEMENT = '%d %d obj\n<<\n  /Length %d\n>>\nstream\n%s\nendstream\nendobj\n'
-  XFAPREAMBLE_STREAM = '<xdp:xdp xmlns:xdp="http://ns.adobe.com/xdp/" timeStamp="2018-02-23T21:37:11Z" uuid="21482798-7bf0-40a4-bc5d-3cefdccf32b5">'
-
-  XFAPOSTAMBLE_PATTERN = r'\{\{xfapostamble\s+(\d+)\s+(\d+)\}\}'
-  XFAPOSTAMBLE_REPLACEMENT = '%d %d obj\n<<\n  /Length %d\n>>\nstream\n%s\nendstream\nendobj\n'
-  XFAPOSTAMBLE_STREAM = '</xdp:xdp>'
 
   def __init__(self):
     self.streamlen_state = StreamLenState.START
@@ -126,25 +114,7 @@ class TemplateProcessor:
     if match:
       self.insert_xref_entry(int(match.group(1)), int(match.group(2)))
       line = re.sub(self.OBJECT_PATTERN, self.OBJECT_REPLACEMENT, line)
-    line = self.replace_xfa_tag(line,
-                                self.XFAPREAMBLE_PATTERN,
-                                self.XFAPREAMBLE_REPLACEMENT,
-                                self.XFAPREAMBLE_STREAM)
-    line = self.replace_xfa_tag(line,
-                                self.XFAPOSTAMBLE_PATTERN,
-                                self.XFAPOSTAMBLE_REPLACEMENT,
-                                self.XFAPOSTAMBLE_STREAM)
-
     self.offset += len(line)
-    return line
-
-  def replace_xfa_tag(self, line, pattern, replacement, stream):
-    match = re.match(pattern, line)
-    if match:
-      x = int(match.group(1))
-      y = int(match.group(2))
-      self.insert_xref_entry(x, y)
-      line = replacement % (x, y, len(stream), stream)
     return line
 
 
