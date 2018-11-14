@@ -8,6 +8,7 @@
 There are several places in a PDF file where byte-offsets are required. This
 script replaces {{name}}-style variables in the input with calculated results
 
+  {{include path/to/file}} - inserts file's contents into stream.
   {{header}} - expands to the header comment required for PDF files.
   {{xref}} - expands to a generated xref table, noting the offset.
   {{trailer}} - expands to a standard trailer with "1 0 R" as the /Root.
@@ -299,20 +300,40 @@ class TemplateProcessor:
     return line
 
 
-def expand_file(input_path, output_path):
+def expand_file(infile, output_path):
   processor = TemplateProcessor()
   try:
-    with open(input_path, 'rb') as infile:
-      with open(output_path, 'wb') as outfile:
-        preprocessed = cStringIO.StringIO()
-        for line in infile:
-          preprocessed.write(line)
-          processor.preprocess_line(line)
-        preprocessed.seek(0)
-        for line in preprocessed:
-          outfile.write(processor.process_line(line))
+    with open(output_path, 'wb') as outfile:
+      preprocessed = cStringIO.StringIO()
+      for line in infile:
+        preprocessed.write(line)
+        processor.preprocess_line(line)
+      preprocessed.seek(0)
+      for line in preprocessed:
+        outfile.write(processor.process_line(line))
   except IOError:
     print >> sys.stderr, 'failed to process %s' % input_path
+
+
+def insert_includes(input_path, output_file, visited_set):
+  input_path = os.path.normpath(input_path)
+  if input_path in visited_set:
+    print >> sys.stderr, 'Circular inclusion %s, ignoring' % input_path
+    return
+  visited_set.add(input_path)
+  try:
+    with open(input_path, 'rb') as infile:
+      for line in infile:
+        match = re.match(r'\{\{include\s+(.+)\}\}', line);
+        if match:
+          insert_includes(
+              os.path.join(os.path.dirname(input_path), match.group(1)),
+              output_file, visited_set)
+        else:
+          output_file.write(line)
+  except IOError:
+    print >> sys.stderr, 'failed to include %s' % input_path
+  visited_set.discard(input_path)
 
 
 def main():
@@ -325,8 +346,11 @@ def main():
     output_dir = os.path.dirname(testcase_path)
     if options.output_dir:
       output_dir = options.output_dir
+    intermediate_stream = cStringIO.StringIO()
+    insert_includes(testcase_path, intermediate_stream, set())
+    intermediate_stream.seek(0)
     output_path = os.path.join(output_dir, testcase_root + '.pdf')
-    expand_file(testcase_path, output_path)
+    expand_file(intermediate_stream, output_path)
   return 0
 
 
