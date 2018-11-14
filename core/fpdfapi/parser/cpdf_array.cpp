@@ -21,7 +21,9 @@
 
 CPDF_Array::CPDF_Array() {}
 
-CPDF_Array::CPDF_Array(const WeakPtr<ByteStringPool>& pPool) : m_pPool(pPool) {}
+CPDF_Array::CPDF_Array(const WeakPtr<ByteStringPool>& pPool,
+                       CPDF_IndirectObjectHolder* pHolder)
+    : m_pPool(pPool), m_pHolder(pHolder) {}
 
 CPDF_Array::~CPDF_Array() {
   // Break cycles for cyclic references.

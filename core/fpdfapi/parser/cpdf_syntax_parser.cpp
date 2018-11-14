@@ -478,7 +478,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
   }
   if (word == "<<") {
     std::unique_ptr<CPDF_Dictionary> pDict =
-        pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
+        pdfium::MakeUnique<CPDF_Dictionary>(m_pPool, pObjList);
     while (1) {
       ByteString inner_word = GetNextWord(nullptr);
       if (inner_word.IsEmpty())

@@ -32,6 +32,7 @@ ByteString PDF_AdobeNameFromUnicode(wchar_t unicode);
 const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding);
 const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
 
+class CPDF_IndirectObjectHolder;
 class CPDF_Object;
 
 class CPDF_FontEncoding {
@@ -54,7 +55,7 @@ class CPDF_FontEncoding {
     m_Unicodes[charcode] = unicode;
   }
 
-  std::unique_ptr<CPDF_Object> Realize(WeakPtr<ByteStringPool> pPool);
+  std::unique_ptr<CPDF_Object> Realize(CPDF_IndirectObjectHolder* pHolder);
 
  public:
   wchar_t m_Unicodes[kEncodingTableSize];

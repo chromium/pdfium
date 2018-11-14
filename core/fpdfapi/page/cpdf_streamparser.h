@@ -18,6 +18,7 @@
 #include "third_party/base/span.h"
 
 class CPDF_Dictionary;
+class CPDF_IndirectObjectHolder;
 
 class CPDF_StreamParser {
  public:
@@ -25,7 +26,9 @@ class CPDF_StreamParser {
 
   explicit CPDF_StreamParser(pdfium::span<const uint8_t> span);
   CPDF_StreamParser(pdfium::span<const uint8_t> span,
-                    const WeakPtr<ByteStringPool>& pPool);
+                    const WeakPtr<ByteStringPool>& pPool,
+                    CPDF_IndirectObjectHolder* pHolder);
+
   ~CPDF_StreamParser();
 
   SyntaxType ParseNextElement();
@@ -55,6 +58,7 @@ class CPDF_StreamParser {
   uint32_t m_Pos = 0;       // Current byte position within m_pBuf.
   uint32_t m_WordSize = 0;  // Current byte position within m_WordBuffer.
   WeakPtr<ByteStringPool> m_pPool;
+  UnownedPtr<CPDF_IndirectObjectHolder> m_pHolder;
   std::unique_ptr<CPDF_Object> m_pLastObj;
   pdfium::span<const uint8_t> m_pBuf;
   uint8_t m_WordBuffer[kMaxWordLength + 1];  // Include space for NUL.

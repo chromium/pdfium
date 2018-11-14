@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
@@ -1681,7 +1682,7 @@ bool CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
 }
 
 std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
-    WeakPtr<ByteStringPool> pPool) {
+    CPDF_IndirectObjectHolder* pHolder) {
   int predefined = 0;
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
        cs++) {
@@ -1699,13 +1700,18 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
     }
   }
   if (predefined) {
-    if (predefined == PDFFONT_ENCODING_WINANSI)
-      return pdfium::MakeUnique<CPDF_Name>(pPool, "WinAnsiEncoding");
-    if (predefined == PDFFONT_ENCODING_MACROMAN)
-      return pdfium::MakeUnique<CPDF_Name>(pPool, "MacRomanEncoding");
-    if (predefined == PDFFONT_ENCODING_MACEXPERT)
-      return pdfium::MakeUnique<CPDF_Name>(pPool, "MacExpertEncoding");
-
+    if (predefined == PDFFONT_ENCODING_WINANSI) {
+      return pdfium::MakeUnique<CPDF_Name>(pHolder->GetByteStringPool(),
+                                           "WinAnsiEncoding");
+    }
+    if (predefined == PDFFONT_ENCODING_MACROMAN) {
+      return pdfium::MakeUnique<CPDF_Name>(pHolder->GetByteStringPool(),
+                                           "MacRomanEncoding");
+    }
+    if (predefined == PDFFONT_ENCODING_MACEXPERT) {
+      return pdfium::MakeUnique<CPDF_Name>(pHolder->GetByteStringPool(),
+                                           "MacExpertEncoding");
+    }
     return nullptr;
   }
   const uint16_t* pStandard =
@@ -1719,7 +1725,8 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
     pDiff->AddNew<CPDF_Name>(PDF_AdobeNameFromUnicode(m_Unicodes[i]));
   }
 
-  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(pPool);
+  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(pHolder->GetByteStringPool(),
+                                                   pHolder);
   pDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
   pDict->SetFor("Differences", std::move(pDiff));
   return std::move(pDict);

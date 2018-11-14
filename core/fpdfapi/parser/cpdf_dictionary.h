@@ -29,7 +29,9 @@ class CPDF_Dictionary final : public CPDF_Object {
       std::map<ByteString, std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Dictionary();
-  explicit CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool);
+  CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool,
+                  CPDF_IndirectObjectHolder* pHolder);
+
   ~CPDF_Dictionary() override;
 
   // CPDF_Object:
@@ -86,12 +88,23 @@ class CPDF_Dictionary final : public CPDF_Object {
         SetFor(key, pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewFor(
-      const ByteString& key,
-      Args&&... args) {
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              !CanOrphanChildren<T>::value,
+                          T*>::type
+  SetNewFor(const ByteString& key, Args&&... args) {
     CHECK(!IsLocked());
     return static_cast<T*>(SetFor(
         key, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
+  }
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              CanOrphanChildren<T>::value,
+                          T*>::type
+  SetNewFor(const ByteString& key, Args&&... args) {
+    CHECK(!IsLocked());
+    return static_cast<T*>(
+        SetFor(key, pdfium::MakeUnique<T>(m_pPool, m_pHolder.Get(),
+                                          std::forward<Args>(args)...)));
   }
 
   // Convenience functions to convert native objects to array form.
@@ -108,6 +121,9 @@ class CPDF_Dictionary final : public CPDF_Object {
   void ReplaceKey(const ByteString& oldkey, const ByteString& newkey);
 
   WeakPtr<ByteStringPool> GetByteStringPool() const { return m_pPool; }
+  CPDF_IndirectObjectHolder* GetIndirectObjectHolder() const {
+    return m_pHolder.Get();
+  }
 
  private:
   friend class CPDF_DictionaryLocker;
@@ -119,6 +135,7 @@ class CPDF_Dictionary final : public CPDF_Object {
 
   mutable uint32_t m_LockCount = 0;
   WeakPtr<ByteStringPool> m_pPool;
+  UnownedPtr<CPDF_IndirectObjectHolder> m_pHolder;
   std::map<ByteString, std::unique_ptr<CPDF_Object>> m_Map;
 };
 

@@ -18,13 +18,17 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "third_party/base/ptr_util.h"
 
+class CPDF_IndirectObjectHolder;
+
 class CPDF_Array final : public CPDF_Object {
  public:
   using const_iterator =
       std::vector<std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Array();
-  explicit CPDF_Array(const WeakPtr<ByteStringPool>& pPool);
+  CPDF_Array(const WeakPtr<ByteStringPool>& pPool,
+             CPDF_IndirectObjectHolder* pHolder);
+
   ~CPDF_Array() override;
 
   // CPDF_Object:
@@ -63,7 +67,8 @@ class CPDF_Array final : public CPDF_Object {
 
   // Creates object owned by the array, returns unowned pointer to it.
   // We have special cases for objects that can intern strings from
-  // a ByteStringPool.
+  // a ByteStringPool, and for those that can return children back to
+  // an IndirectObjectHolder.
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type AddNew(
       Args&&... args) {
@@ -71,11 +76,22 @@ class CPDF_Array final : public CPDF_Object {
         Add(pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type AddNew(
-      Args&&... args) {
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              !CanOrphanChildren<T>::value,
+                          T*>::type
+  AddNew(Args&&... args) {
     return static_cast<T*>(
         Add(pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              CanOrphanChildren<T>::value,
+                          T*>::type
+  AddNew(Args&&... args) {
+    return static_cast<T*>(Add(pdfium::MakeUnique<T>(
+        m_pPool, m_pHolder.Get(), std::forward<Args>(args)...)));
+  }
+
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewAt(
       size_t index,
@@ -84,12 +100,23 @@ class CPDF_Array final : public CPDF_Object {
         SetAt(index, pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewAt(
-      size_t index,
-      Args&&... args) {
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              !CanOrphanChildren<T>::value,
+                          T*>::type
+  SetNewAt(size_t index, Args&&... args) {
     return static_cast<T*>(SetAt(
         index, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              CanOrphanChildren<T>::value,
+                          T*>::type
+  SetNewAt(size_t index, Args&&... args) {
+    return static_cast<T*>(
+        SetAt(index, pdfium::MakeUnique<T>(m_pPool, m_pHolder.Get(),
+                                           std::forward<Args>(args)...)));
+  }
+
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type InsertNewAt(
       size_t index,
@@ -98,11 +125,21 @@ class CPDF_Array final : public CPDF_Object {
         InsertAt(index, pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type InsertNewAt(
-      size_t index,
-      Args&&... args) {
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              !CanOrphanChildren<T>::value,
+                          T*>::type
+  InsertNewAt(size_t index, Args&&... args) {
     return static_cast<T*>(InsertAt(
         index, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
+  }
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value &&
+                              CanOrphanChildren<T>::value,
+                          T*>::type
+  InsertNewAt(size_t index, Args&&... args) {
+    return static_cast<T*>(
+        InsertAt(index, pdfium::MakeUnique<T>(m_pPool, m_pHolder.Get(),
+                                              std::forward<Args>(args)...)));
   }
 
   void Clear();
@@ -119,6 +156,7 @@ class CPDF_Array final : public CPDF_Object {
 
   std::vector<std::unique_ptr<CPDF_Object>> m_Objects;
   WeakPtr<ByteStringPool> m_pPool;
+  UnownedPtr<CPDF_IndirectObjectHolder> m_pHolder;
   mutable uint32_t m_LockCount = 0;
 };
 
