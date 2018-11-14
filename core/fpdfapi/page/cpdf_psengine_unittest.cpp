@@ -5,6 +5,29 @@
 #include "core/fpdfapi/page/cpdf_psengine.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace {
+
+float DoOperator1(CPDF_PSEngine* engine, float v1, PDF_PSOP op) {
+  EXPECT_EQ(0u, engine->GetStackSize());
+  engine->Push(v1);
+  engine->DoOperator(op);
+  float ret = engine->Pop();
+  EXPECT_EQ(0u, engine->GetStackSize());
+  return ret;
+}
+
+float DoOperator2(CPDF_PSEngine* engine, float v1, float v2, PDF_PSOP op) {
+  EXPECT_EQ(0u, engine->GetStackSize());
+  engine->Push(v1);
+  engine->Push(v2);
+  engine->DoOperator(op);
+  float ret = engine->Pop();
+  EXPECT_EQ(0u, engine->GetStackSize());
+  return ret;
+}
+
+}  // namespace
+
 TEST(CPDF_PSProc, AddOperator) {
   static const struct {
     const char* name;
@@ -53,4 +76,17 @@ TEST(CPDF_PSProc, AddOperator) {
         EXPECT_EQ(word, ByteString::FormatFloat(fv));
     }
   }
+}
+
+TEST(CPDF_PSEngine, Basic) {
+  CPDF_PSEngine engine;
+
+  EXPECT_FLOAT_EQ(300.0f, DoOperator2(&engine, 100, 200, PSOP_ADD));
+  EXPECT_FLOAT_EQ(-50.0f, DoOperator2(&engine, 100, 150, PSOP_SUB));
+  EXPECT_FLOAT_EQ(600.0f, DoOperator2(&engine, 5, 120, PSOP_MUL));
+  EXPECT_FLOAT_EQ(1.5f, DoOperator2(&engine, 15, 10, PSOP_DIV));
+  EXPECT_FLOAT_EQ(1.0f, DoOperator2(&engine, 15, 10, PSOP_IDIV));
+  EXPECT_FLOAT_EQ(5.0f, DoOperator2(&engine, 15, 10, PSOP_MOD));
+  EXPECT_FLOAT_EQ(5.0f, DoOperator1(&engine, -5, PSOP_NEG));
+  EXPECT_FLOAT_EQ(5.0f, DoOperator1(&engine, -5, PSOP_ABS));
 }

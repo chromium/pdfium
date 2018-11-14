@@ -173,9 +173,9 @@ void CPDF_PSProc::AddOperator(const ByteStringView& word) {
     m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>(FX_atof(word)));
 }
 
-CPDF_PSEngine::CPDF_PSEngine() : m_StackCount(0) {}
+CPDF_PSEngine::CPDF_PSEngine() = default;
 
-CPDF_PSEngine::~CPDF_PSEngine() {}
+CPDF_PSEngine::~CPDF_PSEngine() = default;
 
 void CPDF_PSEngine::Push(float v) {
   if (m_StackCount < kPSEngineStackSize)
