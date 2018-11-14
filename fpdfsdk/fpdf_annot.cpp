@@ -793,9 +793,9 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   } else {
     if (pApDict) {
       if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL)
-        pAnnotDict->RemoveFor("AP");
+        pAnnotDict->RemoveAndOrphan("AP");
       else
-        pApDict->RemoveFor(modeKey);
+        pApDict->RemoveAndOrphan(modeKey);
     }
   }
 

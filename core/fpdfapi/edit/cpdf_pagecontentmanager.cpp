@@ -107,7 +107,7 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
     // Only stream that can be removed is 0.
     if (streams_to_remove_.find(0) != streams_to_remove_.end()) {
       CPDF_Dictionary* page_dict = obj_holder_->GetDict();
-      page_dict->RemoveFor("Contents");
+      page_dict->RemoveAndOrphan("Contents");
       contents_stream_ = nullptr;
     }
   } else if (contents_array_) {

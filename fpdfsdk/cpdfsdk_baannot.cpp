@@ -96,7 +96,7 @@ bool CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
 
 void CPDFSDK_BAAnnot::SetAnnotName(const WideString& sName) {
   if (sName.IsEmpty())
-    GetAnnotDict()->RemoveFor("NM");
+    GetAnnotDict()->RemoveAndOrphan("NM");
   else
     GetAnnotDict()->SetNewFor<CPDF_String>("NM", PDF_EncodeText(sName), false);
 }
@@ -115,7 +115,7 @@ uint32_t CPDFSDK_BAAnnot::GetFlags() const {
 
 void CPDFSDK_BAAnnot::SetAppState(const ByteString& str) {
   if (str.IsEmpty())
-    GetAnnotDict()->RemoveFor("AS");
+    GetAnnotDict()->RemoveAndOrphan("AS");
   else
     GetAnnotDict()->SetNewFor<CPDF_String>("AS", str, false);
 }
