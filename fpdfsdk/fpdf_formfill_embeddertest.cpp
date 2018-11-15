@@ -423,6 +423,25 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_901654) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFormFillEmbeddertest, BUG_901654_2) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("bug_901654_2.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  DoOpenActions();
+  delegate.AdvanceTime(4000);
+
+  // Simulate a repaint.
+  {
+    ScopedFPDFBitmap bitmap(FPDFBitmap_Create(512, 512, 0));
+    FPDF_RenderPageBitmap_Start(bitmap.get(), page, 0, 0, 512, 512, 0, 0,
+                                nullptr);
+  }
+  UnloadPage(page);
+}
+
 class DoURIActionBlockedDelegate final : public EmbedderTest::Delegate {
  public:
   void DoURIAction(FPDF_BYTESTRING uri) override {
