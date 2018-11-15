@@ -29,8 +29,8 @@ class CPDF_Parser;
 
 class CPDF_Creator {
  public:
-  explicit CPDF_Creator(CPDF_Document* pDoc,
-                        const RetainPtr<IFX_WriteStream>& archive);
+  CPDF_Creator(CPDF_Document* pDoc,
+               const RetainPtr<IFX_RetainableWriteStream>& archive);
   ~CPDF_Creator();
 
   void RemoveSecurity();

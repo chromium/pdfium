@@ -109,7 +109,7 @@ CFX_PSRenderer::CFX_PSRenderer()
 
 CFX_PSRenderer::~CFX_PSRenderer() {}
 
-void CFX_PSRenderer::Init(const RetainPtr<IFX_WriteStream>& pStream,
+void CFX_PSRenderer::Init(const RetainPtr<IFX_RetainableWriteStream>& pStream,
                           int pslevel,
                           int width,
                           int height,

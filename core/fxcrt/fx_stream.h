@@ -36,10 +36,13 @@ struct FxFolderHandleCloser {
 #define FX_FILEMODE_ReadOnly 1
 #define FX_FILEMODE_Truncate 2
 
-class IFX_WriteStream : virtual public Retainable {
+class IFX_WriteStream {
  public:
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
   virtual bool WriteString(const ByteStringView& str) = 0;
+
+ protected:
+  virtual ~IFX_WriteStream() = default;
 };
 
 class IFX_ArchiveStream : public IFX_WriteStream {
@@ -49,7 +52,10 @@ class IFX_ArchiveStream : public IFX_WriteStream {
   virtual FX_FILESIZE CurrentOffset() const = 0;
 };
 
-class IFX_SeekableWriteStream : public IFX_WriteStream {
+class IFX_RetainableWriteStream : virtual public Retainable,
+                                  public IFX_WriteStream {};
+
+class IFX_SeekableWriteStream : public IFX_RetainableWriteStream {
  public:
   // IFX_WriteStream:
   bool WriteBlock(const void* pData, size_t size) override;

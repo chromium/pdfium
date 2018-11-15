@@ -31,7 +31,8 @@ const size_t kArchiveBufferSize = 32768;
 
 class CFX_FileBufferArchive final : public IFX_ArchiveStream {
  public:
-  explicit CFX_FileBufferArchive(const RetainPtr<IFX_WriteStream>& archive);
+  explicit CFX_FileBufferArchive(
+      const RetainPtr<IFX_RetainableWriteStream>& archive);
   ~CFX_FileBufferArchive() override;
 
   bool WriteBlock(const void* pBuf, size_t size) override;
@@ -47,11 +48,11 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
   FX_FILESIZE offset_;
   size_t current_length_;
   std::vector<uint8_t> buffer_;
-  RetainPtr<IFX_WriteStream> backing_file_;
+  RetainPtr<IFX_RetainableWriteStream> backing_file_;
 };
 
 CFX_FileBufferArchive::CFX_FileBufferArchive(
-    const RetainPtr<IFX_WriteStream>& file)
+    const RetainPtr<IFX_RetainableWriteStream>& file)
     : offset_(0),
       current_length_(0),
       buffer_(kArchiveBufferSize),
@@ -141,7 +142,7 @@ bool OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
 }  // namespace
 
 CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc,
-                           const RetainPtr<IFX_WriteStream>& archive)
+                           const RetainPtr<IFX_RetainableWriteStream>& archive)
     : m_pDocument(pDoc),
       m_pParser(pDoc->GetParser()),
       m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),

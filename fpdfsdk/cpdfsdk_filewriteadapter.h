@@ -12,7 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "public/fpdf_save.h"
 
-class CPDFSDK_FileWriteAdapter final : public IFX_WriteStream {
+class CPDFSDK_FileWriteAdapter final : public IFX_RetainableWriteStream {
  public:
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
