@@ -239,7 +239,14 @@ endobj
 
       expectError('', "AFSpecial_Format()", '');
       expectError('', "AFSpecial_Format(1, 2)", '');
+      expectEventValue('', "AFSpecial_Format(0)", "");
+      expectEventValue('', "AFSpecial_Format(1)", "-");
+      expectEventValue('', "AFSpecial_Format(2)", "-");
       expectEventValue('', "AFSpecial_Format(3)", "--");
+      expectEventValue("0123456789", "AFSpecial_Format(0)", "01234");
+      expectEventValue("0123456789", "AFSpecial_Format(1)", "01234-5678");
+      expectEventValue("0123456789", "AFSpecial_Format(2)", "(012) 345-6789");
+      expectEventValue("0123456789", "AFSpecial_Format(3)", "012-34-5678");
 
       app.alert("**********************");
 

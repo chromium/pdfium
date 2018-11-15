@@ -110,7 +110,14 @@ Alert: PASS: AFSimple_Calculate('AVG', 'Text2, Text3') = 289.5
 Alert: **********************
 Alert: PASS: AFSpecial_Format() threw AFSpecial_Format: Incorrect number of parameters passed to function.
 Alert: PASS: AFSpecial_Format(1, 2) threw AFSpecial_Format: Incorrect number of parameters passed to function.
+Alert: PASS: AFSpecial_Format(0) = 
+Alert: PASS: AFSpecial_Format(1) = -
+Alert: PASS: AFSpecial_Format(2) = -
 Alert: PASS: AFSpecial_Format(3) = --
+Alert: PASS: AFSpecial_Format(0) = 01234
+Alert: PASS: AFSpecial_Format(1) = 01234-5678
+Alert: PASS: AFSpecial_Format(2) = (012) 345-6789
+Alert: PASS: AFSpecial_Format(3) = 012-34-5678
 Alert: **********************
 Alert: PASS: AFSpecial_Keystroke() threw AFSpecial_Keystroke: Incorrect number of parameters passed to function.
 Alert: PASS: AFSpecial_Keystroke(65, 66) threw AFSpecial_Keystroke: Incorrect number of parameters passed to function.
