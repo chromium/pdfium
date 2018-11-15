@@ -132,10 +132,4 @@ struct CanInternStrings {
                             std::is_same<T, CPDF_String>::value;
 };
 
-template <typename T>
-struct CanOrphanChildren {
-  static const bool value = std::is_same<T, CPDF_Array>::value ||
-                            std::is_same<T, CPDF_Dictionary>::value;
-};
-
 #endif  // CORE_FPDFAPI_PARSER_CPDF_OBJECT_H_

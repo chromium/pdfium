@@ -175,8 +175,10 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const ByteString& fontName,
   pDict->SetNewFor<CPDF_Name>("Type", "Font");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontName);
-  if (pEncoding)
-    pDict->SetFor("Encoding", pEncoding->Realize(m_pPDFDoc.Get()));
+  if (pEncoding) {
+    pDict->SetFor("Encoding",
+                  pEncoding->Realize(m_pPDFDoc->GetByteStringPool()));
+  }
 
   std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc.Get(), pDict);
   if (!pFont)

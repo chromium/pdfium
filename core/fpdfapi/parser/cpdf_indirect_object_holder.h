@@ -33,8 +33,7 @@ class CPDF_IndirectObjectHolder {
 
   // Creates and adds a new object owned by the indirect object holder,
   // and returns an unowned pointer to it.  We have a special case to
-  // handle objects that can intern strings from our ByteStringPool, and
-  // for those that can return objects back to the indirect object holder.
+  // handle objects that can intern strings from our ByteStringPool.
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type NewIndirect(
       Args&&... args) {
@@ -42,39 +41,18 @@ class CPDF_IndirectObjectHolder {
         AddIndirectObject(pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value &&
-                              !CanOrphanChildren<T>::value,
-                          T*>::type
-  NewIndirect(Args&&... args) {
+  typename std::enable_if<CanInternStrings<T>::value, T*>::type NewIndirect(
+      Args&&... args) {
     return static_cast<T*>(AddIndirectObject(
         pdfium::MakeUnique<T>(m_pByteStringPool, std::forward<Args>(args)...)));
-  }
-  template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value &&
-                              CanOrphanChildren<T>::value,
-                          T*>::type
-  NewIndirect(Args&&... args) {
-    return static_cast<T*>(AddIndirectObject(pdfium::MakeUnique<T>(
-        m_pByteStringPool, this, std::forward<Args>(args)...)));
   }
 
   // Creates and adds a new object not owned by the indirect object holder,
   // but which can intern strings from it.
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value &&
-                              !CanOrphanChildren<T>::value,
-                          std::unique_ptr<T>>::type
+  typename std::enable_if<CanInternStrings<T>::value, std::unique_ptr<T>>::type
   New(Args&&... args) {
     return pdfium::MakeUnique<T>(m_pByteStringPool,
-                                 std::forward<Args>(args)...);
-  }
-
-  template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value &&
-                              CanOrphanChildren<T>::value,
-                          std::unique_ptr<T>>::type
-  New(Args&&... args) {
-    return pdfium::MakeUnique<T>(m_pByteStringPool, this,
                                  std::forward<Args>(args)...);
   }
 

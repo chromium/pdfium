@@ -106,11 +106,10 @@ CPDF_StreamParser::CPDF_StreamParser(pdfium::span<const uint8_t> span)
     : m_pBuf(span) {}
 
 CPDF_StreamParser::CPDF_StreamParser(pdfium::span<const uint8_t> span,
-                                     const WeakPtr<ByteStringPool>& pPool,
-                                     CPDF_IndirectObjectHolder* pHolder)
-    : m_pPool(pPool), m_pHolder(pHolder), m_pBuf(span) {}
+                                     const WeakPtr<ByteStringPool>& pPool)
+    : m_pPool(pPool), m_pBuf(span) {}
 
-CPDF_StreamParser::~CPDF_StreamParser() = default;
+CPDF_StreamParser::~CPDF_StreamParser() {}
 
 std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
@@ -329,7 +328,7 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
     if (m_WordSize == 1)
       return pdfium::MakeUnique<CPDF_String>(m_pPool, ReadHexString(), true);
 
-    auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool, m_pHolder.Get());
+    auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
     while (1) {
       GetNextWord(bIsNumber);
       if (m_WordSize == 2 && m_WordBuffer[0] == '>')

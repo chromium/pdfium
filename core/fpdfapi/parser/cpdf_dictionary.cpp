@@ -23,11 +23,11 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_Dictionary::CPDF_Dictionary() = default;
+CPDF_Dictionary::CPDF_Dictionary()
+    : CPDF_Dictionary(WeakPtr<ByteStringPool>()) {}
 
-CPDF_Dictionary::CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool,
-                                 CPDF_IndirectObjectHolder* pHolder)
-    : m_pPool(pPool), m_pHolder(pHolder) {}
+CPDF_Dictionary::CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool)
+    : m_pPool(pPool) {}
 
 CPDF_Dictionary::~CPDF_Dictionary() {
   // Mark the object as deleted so that it will not be deleted again,
@@ -71,7 +71,7 @@ std::unique_ptr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  auto pCopy = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool, m_pHolder.Get());
+  auto pCopy = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
   CPDF_DictionaryLocker locker(this);
   for (const auto& it : locker) {
     if (!pdfium::ContainsKey(*pVisited, it.second.get())) {

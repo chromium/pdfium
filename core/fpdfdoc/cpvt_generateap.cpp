@@ -467,8 +467,8 @@ std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
     const CPDF_Dictionary& pAnnotDict,
     const ByteString& sExtGSDictName,
     const ByteString& sBlendMode) {
-  auto pGSDict = pdfium::MakeUnique<CPDF_Dictionary>(
-      pAnnotDict.GetByteStringPool(), pAnnotDict.GetIndirectObjectHolder());
+  auto pGSDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
   pGSDict->SetNewFor<CPDF_Name>("Type", "ExtGState");
 
   float fOpacity =
@@ -478,8 +478,8 @@ std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
   pGSDict->SetNewFor<CPDF_Boolean>("AIS", false);
   pGSDict->SetNewFor<CPDF_Name>("BM", sBlendMode);
 
-  auto pExtGStateDict = pdfium::MakeUnique<CPDF_Dictionary>(
-      pAnnotDict.GetByteStringPool(), pAnnotDict.GetIndirectObjectHolder());
+  auto pExtGStateDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
   pExtGStateDict->SetFor(sExtGSDictName, std::move(pGSDict));
   return pExtGStateDict;
 }

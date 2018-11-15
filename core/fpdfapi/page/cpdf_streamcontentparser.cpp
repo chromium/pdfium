@@ -1519,7 +1519,7 @@ uint32_t CPDF_StreamContentParser::Parse(
 
   uint32_t init_obj_count = m_pObjectHolder->GetPageObjectList()->size();
   CPDF_StreamParser syntax(pdfium::make_span(pDataStart, size_left),
-                           m_pDocument->GetByteStringPool(), m_pDocument.Get());
+                           m_pDocument->GetByteStringPool());
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   while (1) {
     uint32_t cost =
