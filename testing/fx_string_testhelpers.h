@@ -19,7 +19,9 @@ class CFX_InvalidSeekableReadStream final : public IFX_SeekableReadStream {
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream overrides:
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
+  bool ReadBlockAtOffset(void* buffer,
+                         FX_FILESIZE offset,
+                         size_t size) override {
     return false;
   }
   FX_FILESIZE GetSize() override { return data_size_; }

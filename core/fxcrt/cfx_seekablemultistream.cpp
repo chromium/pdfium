@@ -29,9 +29,9 @@ FX_FILESIZE CFX_SeekableMultiStream::GetSize() {
   return dwSize;
 }
 
-bool CFX_SeekableMultiStream::ReadBlock(void* buffer,
-                                        FX_FILESIZE offset,
-                                        size_t size) {
+bool CFX_SeekableMultiStream::ReadBlockAtOffset(void* buffer,
+                                                FX_FILESIZE offset,
+                                                size_t size) {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Data);
   int32_t index = 0;
   while (index < iCount) {

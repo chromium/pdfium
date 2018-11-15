@@ -36,7 +36,9 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
   FX_FILESIZE GetSize() override { return m_pFile->GetSize(); }
   bool IsEOF() override { return GetPosition() >= GetSize(); }
   FX_FILESIZE GetPosition() override { return m_pFile->GetPosition(); }
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
+  bool ReadBlockAtOffset(void* buffer,
+                         FX_FILESIZE offset,
+                         size_t size) override {
     return m_pFile->ReadPos(buffer, size, offset) > 0;
   }
   size_t ReadBlock(void* buffer, size_t size) override {

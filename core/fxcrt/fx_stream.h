@@ -78,7 +78,9 @@ class IFX_SeekableReadStream : public IFX_ReadStream {
   FX_FILESIZE GetPosition() override;
   size_t ReadBlock(void* buffer, size_t size) override;
 
-  virtual bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
+  virtual bool ReadBlockAtOffset(void* buffer,
+                                 FX_FILESIZE offset,
+                                 size_t size) = 0;
   virtual FX_FILESIZE GetSize() = 0;
 };
 
@@ -96,7 +98,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
   bool IsEOF() override = 0;
   FX_FILESIZE GetPosition() override = 0;
   size_t ReadBlock(void* buffer, size_t size) override = 0;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override = 0;
   FX_FILESIZE GetSize() override = 0;
 
   // IFX_SeekableWriteStream:

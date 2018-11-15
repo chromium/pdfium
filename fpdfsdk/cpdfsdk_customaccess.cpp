@@ -15,9 +15,9 @@ FX_FILESIZE CPDFSDK_CustomAccess::GetSize() {
   return m_FileAccess.m_FileLen;
 }
 
-bool CPDFSDK_CustomAccess::ReadBlock(void* buffer,
-                                     FX_FILESIZE offset,
-                                     size_t size) {
+bool CPDFSDK_CustomAccess::ReadBlockAtOffset(void* buffer,
+                                             FX_FILESIZE offset,
+                                             size_t size) {
   if (offset < 0)
     return false;
 

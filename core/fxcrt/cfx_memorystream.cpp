@@ -36,9 +36,9 @@ bool CFX_MemoryStream::Flush() {
   return true;
 }
 
-bool CFX_MemoryStream::ReadBlock(void* buffer,
-                                 FX_FILESIZE offset,
-                                 size_t size) {
+bool CFX_MemoryStream::ReadBlockAtOffset(void* buffer,
+                                         FX_FILESIZE offset,
+                                         size_t size) {
   if (!buffer || offset < 0 || !size)
     return false;
 
@@ -59,7 +59,7 @@ size_t CFX_MemoryStream::ReadBlock(void* buffer, size_t size) {
     return 0;
 
   size_t nRead = std::min(size, m_nCurSize - m_nCurPos);
-  if (!ReadBlock(buffer, static_cast<int32_t>(m_nCurPos), nRead))
+  if (!ReadBlockAtOffset(buffer, static_cast<int32_t>(m_nCurPos), nRead))
     return 0;
 
   return nRead;

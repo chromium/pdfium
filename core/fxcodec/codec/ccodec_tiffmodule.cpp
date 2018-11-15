@@ -121,7 +121,7 @@ tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
     return 0;
 
   FX_FILESIZE offset = pTiffContext->offset();
-  if (!pTiffContext->io_in()->ReadBlock(buf, offset, length))
+  if (!pTiffContext->io_in()->ReadBlockAtOffset(buf, offset, length))
     return 0;
 
   pTiffContext->set_offset(increment.ValueOrDie());

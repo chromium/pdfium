@@ -256,8 +256,8 @@ TEST(cpdf_parser, ParseStartXRefWithHeaderOffset) {
   ASSERT_TRUE(pFileAccess);
 
   std::vector<unsigned char> data(pFileAccess->GetSize() + kTestHeaderOffset);
-  ASSERT_TRUE(pFileAccess->ReadBlock(&data.front() + kTestHeaderOffset, 0,
-                                     pFileAccess->GetSize()));
+  ASSERT_TRUE(pFileAccess->ReadBlockAtOffset(&data.front() + kTestHeaderOffset,
+                                             0, pFileAccess->GetSize()));
   CPDF_TestParser parser;
   parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
 
@@ -277,8 +277,8 @@ TEST(cpdf_parser, ParseLinearizedWithHeaderOffset) {
   ASSERT_TRUE(pFileAccess);
 
   std::vector<unsigned char> data(pFileAccess->GetSize() + kTestHeaderOffset);
-  ASSERT_TRUE(pFileAccess->ReadBlock(&data.front() + kTestHeaderOffset, 0,
-                                     pFileAccess->GetSize()));
+  ASSERT_TRUE(pFileAccess->ReadBlockAtOffset(&data.front() + kTestHeaderOffset,
+                                             0, pFileAccess->GetSize()));
   CPDF_TestParser parser;
   parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
 

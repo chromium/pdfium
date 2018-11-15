@@ -73,7 +73,9 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override { return m_pFileAccess->m_FileLen; }
 
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
+  bool ReadBlockAtOffset(void* buffer,
+                         FX_FILESIZE offset,
+                         size_t size) override {
     return !!m_pFileAccess->m_GetBlock(m_pFileAccess->m_Param, offset,
                                        static_cast<uint8_t*>(buffer), size);
   }

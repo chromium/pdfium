@@ -18,7 +18,9 @@ class InvalidStream final : public IFX_SeekableReadStream {
   ~InvalidStream() override = default;
 
   // IFX_SeekableReadStream overrides:
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
+  bool ReadBlockAtOffset(void* buffer,
+                         FX_FILESIZE offset,
+                         size_t size) override {
     // Read failure.
     return false;
   }

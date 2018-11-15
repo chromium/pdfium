@@ -25,9 +25,8 @@ class CFX_SeekableStreamProxy final : public IFX_SeekableReadStream {
   FX_FILESIZE GetSize() override;
   FX_FILESIZE GetPosition() override;
   bool IsEOF() override;
-
   size_t ReadBlock(void* pStr, size_t size) override;
-  bool ReadBlock(void* pStr, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlockAtOffset(void* pStr, FX_FILESIZE offset, size_t size) override;
 
   uint16_t GetCodePage() const { return m_wCodePage; }
   void SetCodePage(uint16_t wCodePage);

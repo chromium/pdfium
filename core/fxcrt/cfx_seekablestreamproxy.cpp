@@ -212,7 +212,7 @@ size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
   if (iBufferSize <= 0)
     return 0;
 
-  if (!m_pStream->ReadBlock(pBuffer, m_iPosition, iBufferSize))
+  if (!m_pStream->ReadBlockAtOffset(pBuffer, m_iPosition, iBufferSize))
     return 0;
 
   pdfium::base::CheckedNumeric<FX_FILESIZE> new_pos = m_iPosition;
@@ -260,9 +260,9 @@ size_t CFX_SeekableStreamProxy::ReadBlock(void* pStr, size_t size) {
   return size;
 }
 
-bool CFX_SeekableStreamProxy::ReadBlock(void* pStr,
-                                        FX_FILESIZE offset,
-                                        size_t size) {
+bool CFX_SeekableStreamProxy::ReadBlockAtOffset(void* pStr,
+                                                FX_FILESIZE offset,
+                                                size_t size) {
   NOTREACHED();
   return false;
 }

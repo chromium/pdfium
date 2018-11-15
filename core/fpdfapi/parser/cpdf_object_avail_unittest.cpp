@@ -26,7 +26,7 @@ class TestReadValidator final : public CPDF_ReadValidator {
   template <typename T, typename... Args>
   friend RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  void SimulateReadError() { ReadBlock(nullptr, 0, 1); }
+  void SimulateReadError() { ReadBlockAtOffset(nullptr, 0, 1); }
 
  private:
   TestReadValidator()

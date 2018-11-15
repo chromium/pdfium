@@ -48,7 +48,9 @@ class FPDF_FileHandlerContext final : public IFX_SeekableStream {
   FX_FILESIZE GetSize() override;
   bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool ReadBlockAtOffset(void* buffer,
+                         FX_FILESIZE offset,
+                         size_t size) override;
   size_t ReadBlock(void* buffer, size_t size) override;
   bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
   bool Flush() override;
@@ -87,9 +89,9 @@ FX_FILESIZE FPDF_FileHandlerContext::GetPosition() {
   return m_nCurPos;
 }
 
-bool FPDF_FileHandlerContext::ReadBlock(void* buffer,
-                                        FX_FILESIZE offset,
-                                        size_t size) {
+bool FPDF_FileHandlerContext::ReadBlockAtOffset(void* buffer,
+                                                FX_FILESIZE offset,
+                                                size_t size) {
   if (!buffer || !size || !m_pFS->ReadBlock)
     return false;
 
