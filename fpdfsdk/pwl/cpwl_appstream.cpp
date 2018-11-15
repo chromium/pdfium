@@ -1947,7 +1947,7 @@ void CPWL_AppStream::Write(const ByteString& sAPType,
 }
 
 void CPWL_AppStream::Remove(const ByteString& sAPType) {
-  dict_->RemoveAndOrphan(sAPType);
+  dict_->RemoveFor(sAPType);
 }
 
 ByteString CPWL_AppStream::GetBackgroundAppStream() const {

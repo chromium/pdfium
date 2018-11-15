@@ -404,6 +404,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
                                   m.e, m.f, sFormName.c_str());
     pNewXObject->SetDataAndRemoveFilter(sStream.AsRawSpan());
   }
-  pPageDict->RemoveAndOrphan("Annots");
+  pPageDict->RemoveFor("Annots");
   return FLATTEN_SUCCESS;
 }

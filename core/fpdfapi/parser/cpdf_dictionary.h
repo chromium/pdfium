@@ -114,16 +114,8 @@ class CPDF_Dictionary final : public CPDF_Object {
   void ConvertToIndirectObjectFor(const ByteString& key,
                                   CPDF_IndirectObjectHolder* pHolder);
 
-  // Removes |key| and returns the object bound to it for re-use.
   // Invalidates iterators for the element with the key |key|.
-  std::unique_ptr<CPDF_Object> RemoveFor(const ByteString& key)
-      WARN_UNUSED_RESULT;
-
-  // Removes |key| but keeps the object bound to it alive for the duration
-  // that the indirect object holder is in existence, in case there are
-  // additional references.
-  // Invalidates iterators for the element with the key |key|.
-  void RemoveAndOrphan(const ByteString& key);
+  std::unique_ptr<CPDF_Object> RemoveFor(const ByteString& key);
 
   // Invalidates iterators for the element with the key |oldkey|.
   void ReplaceKey(const ByteString& oldkey, const ByteString& newkey);

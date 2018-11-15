@@ -112,8 +112,8 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
 
 void CPDF_Stream::SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData) {
   SetData(pData);
-  m_pDict->RemoveAndOrphan("Filter");
-  m_pDict->RemoveAndOrphan(pdfium::stream::kDecodeParms);
+  m_pDict->RemoveFor("Filter");
+  m_pDict->RemoveFor(pdfium::stream::kDecodeParms);
 }
 
 void CPDF_Stream::SetDataFromStringstreamAndRemoveFilter(

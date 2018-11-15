@@ -207,10 +207,10 @@ std::vector<ByteString> CPDF_Dictionary::GetKeys() const {
 CPDF_Object* CPDF_Dictionary::SetFor(const ByteString& key,
                                      std::unique_ptr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
-  RemoveAndOrphan(key);
-  if (!pObj)
+  if (!pObj) {
+    m_Map.erase(key);
     return nullptr;
-
+  }
   ASSERT(pObj->IsInline());
   CPDF_Object* pRet = pObj.get();
   m_Map[MaybeIntern(key)] = std::move(pObj);
@@ -238,12 +238,6 @@ std::unique_ptr<CPDF_Object> CPDF_Dictionary::RemoveFor(const ByteString& key) {
     m_Map.erase(it);
   }
   return result;
-}
-
-void CPDF_Dictionary::RemoveAndOrphan(const ByteString& key) {
-  auto result = RemoveFor(key);
-  if (m_pHolder)
-    m_pHolder->AddOrphan(std::move(result));
 }
 
 void CPDF_Dictionary::ReplaceKey(const ByteString& oldkey,
