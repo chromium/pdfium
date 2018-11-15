@@ -23,7 +23,7 @@ class CFX_RTFBreakTest : public testing::Test {
   void SetUp() override {
     font_ =
         CFGAS_GEFont::LoadFont(L"Arial Black", 0, 0, GetGlobalFontManager());
-    ASSERT(font_.Get());
+    ASSERT_TRUE(font_.Get());
   }
 
   std::unique_ptr<CFX_RTFBreak> CreateBreak(int32_t args) {
