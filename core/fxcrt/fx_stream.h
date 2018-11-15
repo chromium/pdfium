@@ -105,8 +105,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
                   size_t size) override = 0;
   bool WriteBlock(const void* buffer, size_t size) override;
   bool WriteString(const ByteStringView& str) override;
-
-  bool Flush() override = 0;
 };
 
 #endif  // CORE_FXCRT_FX_STREAM_H_
