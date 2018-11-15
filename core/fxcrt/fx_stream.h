@@ -49,13 +49,6 @@ class IFX_ArchiveStream : public IFX_WriteStream {
   virtual FX_FILESIZE CurrentOffset() const = 0;
 };
 
-class IFX_ReadStream : virtual public Retainable {
- public:
-  virtual bool IsEOF() = 0;
-  virtual FX_FILESIZE GetPosition() = 0;
-  virtual size_t ReadBlock(void* buffer, size_t size) = 0;
-};
-
 class IFX_SeekableWriteStream : public IFX_WriteStream {
  public:
   // IFX_WriteStream:
@@ -68,15 +61,14 @@ class IFX_SeekableWriteStream : public IFX_WriteStream {
                                   size_t size) = 0;
 };
 
-class IFX_SeekableReadStream : public IFX_ReadStream {
+class IFX_SeekableReadStream : virtual public Retainable {
  public:
   static RetainPtr<IFX_SeekableReadStream> CreateFromFilename(
       const char* filename);
 
-  // IFX_ReadStream:
-  bool IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  size_t ReadBlock(void* buffer, size_t size) override;
+  virtual bool IsEOF();
+  virtual FX_FILESIZE GetPosition();
+  virtual size_t ReadBlock(void* buffer, size_t size);
 
   virtual bool ReadBlockAtOffset(void* buffer,
                                  FX_FILESIZE offset,
