@@ -63,9 +63,9 @@ class IFX_SeekableWriteStream : public IFX_WriteStream {
 
   virtual FX_FILESIZE GetSize() = 0;
   virtual bool Flush() = 0;
-  virtual bool WriteBlock(const void* pData,
-                          FX_FILESIZE offset,
-                          size_t size) = 0;
+  virtual bool WriteBlockAtOffset(const void* pData,
+                                  FX_FILESIZE offset,
+                                  size_t size) = 0;
 };
 
 class IFX_SeekableReadStream : public IFX_ReadStream {
@@ -101,9 +101,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
   FX_FILESIZE GetSize() override = 0;
 
   // IFX_SeekableWriteStream:
-  bool WriteBlock(const void* buffer,
-                  FX_FILESIZE offset,
-                  size_t size) override = 0;
   bool WriteBlock(const void* buffer, size_t size) override;
   bool WriteString(const ByteStringView& str) override;
 };

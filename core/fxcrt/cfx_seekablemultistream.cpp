@@ -77,9 +77,9 @@ bool CFX_SeekableMultiStream::Flush() {
   return false;
 }
 
-bool CFX_SeekableMultiStream::WriteBlock(const void* pData,
-                                         FX_FILESIZE offset,
-                                         size_t size) {
+bool CFX_SeekableMultiStream::WriteBlockAtOffset(const void* pData,
+                                                 FX_FILESIZE offset,
+                                                 size_t size) {
   NOTREACHED();
   return false;
 }

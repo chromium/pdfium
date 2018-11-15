@@ -30,7 +30,9 @@ class CFX_SeekableMultiStream final : public IFX_SeekableStream {
   size_t ReadBlock(void* buffer, size_t size) override;
   bool IsEOF() override;
   bool Flush() override;
-  bool WriteBlock(const void* pData, FX_FILESIZE offset, size_t size) override;
+  bool WriteBlockAtOffset(const void* pData,
+                          FX_FILESIZE offset,
+                          size_t size) override;
 
  private:
   std::vector<RetainPtr<CPDF_StreamAcc>> m_Data;
