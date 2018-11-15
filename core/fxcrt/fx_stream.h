@@ -95,9 +95,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
       uint32_t dwModes);
 
   // IFX_SeekableReadStream:
-  bool IsEOF() override = 0;
-  FX_FILESIZE GetPosition() override = 0;
-  size_t ReadBlock(void* buffer, size_t size) override = 0;
   FX_FILESIZE GetSize() override = 0;
 
   // IFX_SeekableWriteStream:
