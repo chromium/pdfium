@@ -49,7 +49,7 @@ TEST(PDF417HighLevelEncoder, EncodeBinary) {
     }
     WideString expected(ptr->expected, ptr->expected_length);
     WideString result;
-    CBC_PDF417HighLevelEncoder::encodeBinary(
+    CBC_PDF417HighLevelEncoder::EncodeBinary(
         &input_array, ptr->offset, ptr->count, ptr->startmode, result);
     EXPECT_EQ(expected, result) << " for case number " << i;
   }
@@ -112,7 +112,7 @@ TEST(PDF417HighLevelEncoder, EncodeNumeric) {
     WideString input(ptr->input);
     WideString expected(ptr->expected, ptr->expected_length);
     WideString result;
-    CBC_PDF417HighLevelEncoder::encodeNumeric(input, ptr->offset, ptr->count,
+    CBC_PDF417HighLevelEncoder::EncodeNumeric(input, ptr->offset, ptr->count,
                                               result);
     EXPECT_EQ(expected, result) << " for case number " << i;
   }
@@ -158,7 +158,7 @@ TEST(PDF417HighLevelEncoder, ConsecutiveDigitCount) {
     ConsecutiveDigitCase* ptr = &consecutive_digit_cases[i];
     WideString input(ptr->input);
     int actual_count =
-        CBC_PDF417HighLevelEncoder::determineConsecutiveDigitCount(input,
+        CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(input,
                                                                    ptr->offset);
     EXPECT_EQ(ptr->expected_count, actual_count) << " for case number " << i;
   }
@@ -219,7 +219,7 @@ TEST(PDF417HighLevelEncoder, ConsecutiveTextCount) {
     ConsecutiveTextCase* ptr = &consecutive_text_cases[i];
     WideString input(ptr->input);
     int actual_count =
-        CBC_PDF417HighLevelEncoder::determineConsecutiveTextCount(input,
+        CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(input,
                                                                   ptr->offset);
     EXPECT_EQ(ptr->expected_count, actual_count) << " for case number " << i;
   }

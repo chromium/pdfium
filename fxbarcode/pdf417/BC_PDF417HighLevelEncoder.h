@@ -14,7 +14,7 @@
 
 class CBC_PDF417HighLevelEncoder {
  public:
-  static WideString encodeHighLevel(WideString msg,
+  static WideString EncodeHighLevel(WideString msg,
                                     Compaction compaction,
                                     int32_t& e);
   static void Inverse();
@@ -22,44 +22,34 @@ class CBC_PDF417HighLevelEncoder {
   static void Finalize();
 
  private:
-  static const int32_t TEXT_COMPACTION;
-  static const int32_t BYTE_COMPACTION;
-  static const int32_t NUMERIC_COMPACTION;
-  static const int32_t SUBMODE_PUNCTUATION;
-  static const int32_t LATCH_TO_TEXT;
-  static const int32_t LATCH_TO_BYTE_PADDED;
-  static const int32_t LATCH_TO_NUMERIC;
-  static const int32_t SHIFT_TO_BYTE;
-  static const int32_t LATCH_TO_BYTE;
-  static const uint8_t TEXT_MIXED_RAW[];
-  static const uint8_t TEXT_PUNCTUATION_RAW[];
+  static constexpr int32_t TEXT_COMPACTION = 0;
+  static constexpr int32_t BYTE_COMPACTION = 1;
+  static constexpr int32_t NUMERIC_COMPACTION = 2;
+  static constexpr int32_t SUBMODE_PUNCTUATION = 3;
 
-  static int32_t MIXED[128];
-  static int32_t PUNCTUATION[128];
-
-  static int32_t encodeText(WideString msg,
+  static int32_t EncodeText(WideString msg,
                             size_t startpos,
                             size_t count,
                             WideString& sb,
                             int32_t initialSubmode);
-  static void encodeBinary(std::vector<uint8_t>* bytes,
+  static void EncodeBinary(std::vector<uint8_t>* bytes,
                            size_t startpos,
                            size_t count,
                            int32_t startmode,
                            WideString& sb);
-  static void encodeNumeric(WideString msg,
+  static void EncodeNumeric(WideString msg,
                             size_t startpos,
                             size_t count,
                             WideString& sb);
-  static bool isDigit(wchar_t ch);
-  static bool isAlphaUpper(wchar_t ch);
-  static bool isAlphaLower(wchar_t ch);
-  static bool isMixed(wchar_t ch);
-  static bool isPunctuation(wchar_t ch);
-  static bool isText(wchar_t ch);
-  static size_t determineConsecutiveDigitCount(WideString msg, size_t startpos);
-  static size_t determineConsecutiveTextCount(WideString msg, size_t startpos);
-  static Optional<size_t> determineConsecutiveBinaryCount(
+  static bool IsDigit(wchar_t ch);
+  static bool IsAlphaUpper(wchar_t ch);
+  static bool IsAlphaLower(wchar_t ch);
+  static bool IsMixed(wchar_t ch);
+  static bool IsPunctuation(wchar_t ch);
+  static bool IsText(wchar_t ch);
+  static size_t DetermineConsecutiveDigitCount(WideString msg, size_t startpos);
+  static size_t DetermineConsecutiveTextCount(WideString msg, size_t startpos);
+  static Optional<size_t> DetermineConsecutiveBinaryCount(
       WideString msg,
       std::vector<uint8_t>* bytes,
       size_t startpos);

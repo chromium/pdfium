@@ -409,7 +409,7 @@ bool CBC_PDF417::generateBarcodeLogic(WideString msg,
 
   int32_t e = BCExceptionNO;
   WideString highLevel =
-      CBC_PDF417HighLevelEncoder::encodeHighLevel(msg, m_compaction, e);
+      CBC_PDF417HighLevelEncoder::EncodeHighLevel(msg, m_compaction, e);
   if (e != BCExceptionNO)
     return false;
   int32_t sourceCodeWords = highLevel.GetLength();
