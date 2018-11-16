@@ -157,6 +157,7 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(WideString msg,
                                                WideString& sb,
                                                int32_t initialSubmode) {
   WideString tmp;
+  tmp.Reserve(count);
   int32_t submode = initialSubmode;
   size_t idx = 0;
   while (true) {
@@ -185,11 +186,10 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(WideString msg,
         break;
       case SUBMODE_LOWER:
         if (isAlphaLower(ch)) {
-          if (ch == ' ') {
+          if (ch == ' ')
             tmp += 26;
-          } else {
+          else
             tmp += ch - 97;
-          }
           break;
         }
         if (isAlphaUpper(ch)) {
