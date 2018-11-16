@@ -93,7 +93,7 @@ int32_t ParseTimeZone(const wchar_t* pStr, int32_t iLen, FX_TIMEZONE* tz) {
 }
 
 int32_t ConvertHex(int32_t iKeyValue, wchar_t ch) {
-  if (FXSYS_isHexDigit(ch))
+  if (FXSYS_IsHexDigit(ch))
     return iKeyValue * 16 + FXSYS_HexCharToInt(ch);
   return iKeyValue;
 }

@@ -480,7 +480,7 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
         uint32_t ch = 0;
         if (iLen > 1 && csEntity[1] == L'x') {
           for (int32_t i = 2; i < iLen; i++) {
-            if (!FXSYS_isHexDigit(csEntity[i]))
+            if (!FXSYS_IsHexDigit(csEntity[i]))
               break;
             ch = (ch << 4) + FXSYS_HexCharToInt(csEntity[i]);
           }

@@ -255,7 +255,7 @@ ByteString CPDF_SyntaxParser::ReadString() {
           buf << static_cast<char>(ch);
         break;
       case ReadStatus::Backslash:
-        if (ch >= '0' && ch <= '7') {
+        if (FXSYS_IsOctalDigit(ch)) {
           iEscCode = FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           status = ReadStatus::Octal;
           break;
@@ -281,7 +281,7 @@ ByteString CPDF_SyntaxParser::ReadString() {
         status = ReadStatus::Normal;
         break;
       case ReadStatus::Octal:
-        if (ch >= '0' && ch <= '7') {
+        if (FXSYS_IsOctalDigit(ch)) {
           iEscCode =
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           status = ReadStatus::FinishOctal;
@@ -293,7 +293,7 @@ ByteString CPDF_SyntaxParser::ReadString() {
         break;
       case ReadStatus::FinishOctal:
         status = ReadStatus::Normal;
-        if (ch >= '0' && ch <= '7') {
+        if (FXSYS_IsOctalDigit(ch)) {
           iEscCode =
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
           buf << static_cast<char>(iEscCode);

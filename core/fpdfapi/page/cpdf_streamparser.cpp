@@ -493,7 +493,7 @@ ByteString CPDF_StreamParser::ReadString() {
         }
         break;
       case 1:
-        if (ch >= '0' && ch <= '7') {
+        if (FXSYS_IsOctalDigit(ch)) {
           iEscCode = FXSYS_DecimalCharToInt(static_cast<char>(ch));
           status = 2;
           break;
@@ -520,7 +520,7 @@ ByteString CPDF_StreamParser::ReadString() {
         status = 0;
         break;
       case 2:
-        if (ch >= '0' && ch <= '7') {
+        if (FXSYS_IsOctalDigit(ch)) {
           iEscCode =
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<char>(ch));
           status = 3;
@@ -531,7 +531,7 @@ ByteString CPDF_StreamParser::ReadString() {
         }
         break;
       case 3:
-        if (ch >= '0' && ch <= '7') {
+        if (FXSYS_IsOctalDigit(ch)) {
           iEscCode =
               iEscCode * 8 + FXSYS_DecimalCharToInt(static_cast<char>(ch));
           buf << static_cast<char>(iEscCode);
