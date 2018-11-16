@@ -217,12 +217,6 @@ Optional<double> ApplyNamedOperation(const wchar_t* sFunction,
 
 }  // namespace
 
-CJS_PublicMethods::CJS_PublicMethods(v8::Local<v8::Object> pObject,
-                                     CJS_Runtime* pRuntime)
-    : CJS_Object(pObject, pRuntime) {}
-
-CJS_PublicMethods::~CJS_PublicMethods() = default;
-
 // static
 void CJS_PublicMethods::DefineJSObjects(CFXJS_Engine* pEngine) {
   for (const auto& spec : GlobalFunctionSpecs)

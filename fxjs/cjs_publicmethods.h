@@ -14,8 +14,7 @@
 
 class CJS_PublicMethods final : public CJS_Object {
  public:
-  CJS_PublicMethods(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  ~CJS_PublicMethods() override;
+  CJS_PublicMethods() = delete;
 
   static void DefineJSObjects(CFXJS_Engine* pEngine);
 
