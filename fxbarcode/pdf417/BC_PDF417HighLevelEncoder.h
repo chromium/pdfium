@@ -22,11 +22,9 @@ class CBC_PDF417HighLevelEncoder {
   static void Finalize();
 
  private:
-  enum class SubMode { kAlpha = 0, kLower, kMixed, kPunctuation };
+  enum class EncodingMode { kUnknown = 0, kText, kByte, kNumeric };
 
-  static constexpr int32_t TEXT_COMPACTION = 0;
-  static constexpr int32_t BYTE_COMPACTION = 1;
-  static constexpr int32_t NUMERIC_COMPACTION = 2;
+  enum class SubMode { kAlpha = 0, kLower, kMixed, kPunctuation };
 
   static SubMode EncodeText(const WideString& msg,
                             size_t startpos,
@@ -36,7 +34,7 @@ class CBC_PDF417HighLevelEncoder {
   static void EncodeBinary(const std::vector<uint8_t>& bytes,
                            size_t startpos,
                            size_t count,
-                           int32_t startmode,
+                           EncodingMode startmode,
                            WideString* sb);
   static void EncodeNumeric(const WideString& msg,
                             size_t startpos,

@@ -102,26 +102,26 @@ WideString CBC_PDF417HighLevelEncoder::EncodeHighLevel(WideString wideMsg,
   if (compaction == TEXT) {
     EncodeText(msg, p, len, textSubMode, &sb);
   } else if (compaction == BYTES) {
-    EncodeBinary(byteArr, p, byteArr.size(), BYTE_COMPACTION, &sb);
+    EncodeBinary(byteArr, p, byteArr.size(), EncodingMode::kByte, &sb);
   } else if (compaction == NUMERIC) {
     sb += kLatchToNumeric;
     EncodeNumeric(msg, p, len, &sb);
   } else {
-    int32_t encodingMode = kLatchToText;
+    EncodingMode encodingMode = EncodingMode::kUnknown;
     while (p < len) {
       size_t n = DetermineConsecutiveDigitCount(msg, p);
       if (n >= 13) {
         sb += kLatchToNumeric;
-        encodingMode = NUMERIC_COMPACTION;
+        encodingMode = EncodingMode::kNumeric;
         textSubMode = SubMode::kAlpha;
         EncodeNumeric(msg, p, n, &sb);
         p += n;
       } else {
         size_t t = DetermineConsecutiveTextCount(msg, p);
         if (t >= 5 || n == len) {
-          if (encodingMode != TEXT_COMPACTION) {
+          if (encodingMode != EncodingMode::kText) {
             sb += kLatchToText;
-            encodingMode = TEXT_COMPACTION;
+            encodingMode = EncodingMode::kText;
             textSubMode = SubMode::kAlpha;
           }
           textSubMode = EncodeText(msg, p, t, textSubMode, &sb);
@@ -137,11 +137,11 @@ WideString CBC_PDF417HighLevelEncoder::EncodeHighLevel(WideString wideMsg,
           if (b_value == 0) {
             b_value = 1;
           }
-          if (b_value == 1 && encodingMode == TEXT_COMPACTION) {
-            EncodeBinary(byteArr, p, 1, TEXT_COMPACTION, &sb);
+          if (b_value == 1 && encodingMode == EncodingMode::kText) {
+            EncodeBinary(byteArr, p, 1, EncodingMode::kText, &sb);
           } else {
             EncodeBinary(byteArr, p, b_value, encodingMode, &sb);
-            encodingMode = BYTE_COMPACTION;
+            encodingMode = EncodingMode::kByte;
             textSubMode = SubMode::kAlpha;
           }
           p += b_value;
@@ -286,9 +286,9 @@ CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
 void CBC_PDF417HighLevelEncoder::EncodeBinary(const std::vector<uint8_t>& bytes,
                                               size_t startpos,
                                               size_t count,
-                                              int32_t startmode,
+                                              EncodingMode startmode,
                                               WideString* sb) {
-  if (count == 1 && startmode == TEXT_COMPACTION)
+  if (count == 1 && startmode == EncodingMode::kText)
     *sb += kShiftToByte;
 
   size_t idx = startpos;

@@ -18,23 +18,23 @@ TEST(PDF417HighLevelEncoder, EncodeBinary) {
     const char* input;
     int offset;
     int count;
-    int startmode;
+    CBC_PDF417HighLevelEncoder::EncodingMode startmode;
     const wchar_t* expected;
     int expected_length;
   } encode_binary_cases[] = {
       // Empty string encodes as empty string.
-      {"", 0, 0, CBC_PDF417HighLevelEncoder::TEXT_COMPACTION, L"", 0},
+      {"", 0, 0, CBC_PDF417HighLevelEncoder::EncodingMode::kText, L"", 0},
 
       // Fewer than 6 characters encodes as prefix without compaction.
-      {"xxxxx", 0, 5, CBC_PDF417HighLevelEncoder::TEXT_COMPACTION,
+      {"xxxxx", 0, 5, CBC_PDF417HighLevelEncoder::EncodingMode::kText,
        L"\x0385xxxxx", 6},
 
       // 6 charcters triggerst text encoding compaction.
-      {"xxxxxx", 0, 6, CBC_PDF417HighLevelEncoder::TEXT_COMPACTION,
+      {"xxxxxx", 0, 6, CBC_PDF417HighLevelEncoder::EncodingMode::kText,
        L"\u039c\u00c9\u031f\u012a\u00d2\u02d0", 6},
 
       // Same result if initially in numeric compaction mode.
-      {"xxxxxx", 0, 6, CBC_PDF417HighLevelEncoder::NUMERIC_COMPACTION,
+      {"xxxxxx", 0, 6, CBC_PDF417HighLevelEncoder::EncodingMode::kNumeric,
        L"\u039c\u00c9\u031f\u012a\u00d2\u02d0", 6},
   };
 
