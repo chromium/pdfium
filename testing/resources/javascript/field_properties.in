@@ -1,6 +1,6 @@
 {{header}}
-{{header}}
 {{include field.fragment}}
+
 % JS program to exexute
 {{object 11 0}} <<
   {{streamlen}}
@@ -89,6 +89,8 @@ function testProperties() {
   try {
     var field = this.getField("MyField");
     var button = this.getField("MyField.Sub_A");
+    var radio = this.getField("MyField.Sub_Z");
+    var check = this.getField("MyField.Sub_B");
     app.alert('Testing properties under delay');
     testRWProperty(field, "delay", false, true);
     // TODO(tsepez): try this case, too.
@@ -96,7 +98,9 @@ function testProperties() {
     app.alert('Testing properties under non-delay');
     testRWProperty(field, "delay", true, false);
     testTextPropertiesCase(field);
-    testButtonPropertiesCase(button);
+    testPushButtonPropertiesCase(button);
+    testRadioButtonPropertiesCase(radio);
+    testCheckBoxPropertiesCase(check);
   } catch (e) {
     app.alert("Unexpected error: " + e);
   }
@@ -119,7 +123,6 @@ function testTextPropertiesCase(field) {
     testRWProperty(field, "display", 2, 3);
     testROProperty(field, "doc", "[object global]");
     // testROProperty(field, "editable", "clams");
-    // testROProperty(field, "exportValues", "clams");
     testRWProperty(field, "hidden", false, true);
     testRIProperty(field, "fileSelect", false, true);
     testRIProperty(field, "fillColor", "T", ["RGB", 0, 0, 0]);
@@ -131,7 +134,6 @@ function testTextPropertiesCase(field) {
     testROProperty(field, "page", 0);
     testRIProperty(field, "password", false, 42);
     testRWProperty(field, "print", true, false);
-    // testROProperty(field, "radiosInUnison", "clams");
     testRIProperty(field, "readonly", false, true);
     // testRWProperty(field, "rect", [0,0,0,0], [0,0,0,0]);
     // testROProperty(field, "required", "clams");
@@ -140,7 +142,6 @@ function testTextPropertiesCase(field) {
     testRIProperty(field, "rotation", 0, 42);
     testRIProperty(field, "source", undefined, "clams");
     testRIProperty(field, "strokeColor", "T", ["RGB", 0, 0, 0]);
-    // testROProperty(field, "style", "clams");
     testRIProperty(field, "submitName", undefined, "clams");
     testRIProperty(field, "textColor", "T", ["RGB", 0, 0, 0]);
     // testROProperty(field, "textFont", "clams");
@@ -154,7 +155,7 @@ function testTextPropertiesCase(field) {
   }
 }
 
-function testButtonPropertiesCase(field) {
+function testPushButtonPropertiesCase(field) {
   try {
     testRIProperty(field, "buttonAlignX", 0, 50);
     testRIProperty(field, "buttonAlignY", 0, 50);
@@ -164,6 +165,31 @@ function testButtonPropertiesCase(field) {
     testRIProperty(field, "buttonScaleWhen", 0);
     testRIProperty(field, "highlight", "invert");
     testROProperty(field, "type", "button");
+  } catch (e) {
+    app.alert("Unexpected error: " + e);
+  }
+}
+
+function testRadioButtonPropertiesCase(field) {
+  try {
+    testROProperty(field, "exportValues", "N");
+    testRIProperty(field, "radiosInUnison", false);
+    testRIProperty(field, "style", "check");
+    testROProperty(field, "type", "radiobutton");
+    testRIProperty(field, "value", "Off");
+    testROProperty(field, "valueAsString", "Off");
+  } catch (e) {
+    app.alert("Unexpected error: " + e);
+  }
+}
+
+function testCheckBoxPropertiesCase(field) {
+  try {
+    testROProperty(field, "exportValues", "N");
+    testRIProperty(field, "style", "check");
+    testROProperty(field, "type", "checkbox");
+    testRIProperty(field, "value", "Off");
+    testROProperty(field, "valueAsString", "Off");
   } catch (e) {
     app.alert("Unexpected error: " + e);
   }

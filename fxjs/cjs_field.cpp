@@ -1868,9 +1868,10 @@ CJS_Result CJS_Field::get_style(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   WideString csWCaption = pFormControl->GetNormalCaption();
-  ByteString csBCaption;
+  wchar_t selector = !csWCaption.IsEmpty() ? csWCaption[0] : L'4';
 
-  switch (csWCaption[0]) {
+  ByteString csBCaption;
+  switch (selector) {
     case L'l':
       csBCaption = "circle";
       break;
