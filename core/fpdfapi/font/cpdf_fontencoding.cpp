@@ -1699,14 +1699,17 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
     }
   }
   if (predefined) {
+    const char* pName;
     if (predefined == PDFFONT_ENCODING_WINANSI)
-      return pdfium::MakeUnique<CPDF_Name>(pPool, "WinAnsiEncoding");
-    if (predefined == PDFFONT_ENCODING_MACROMAN)
-      return pdfium::MakeUnique<CPDF_Name>(pPool, "MacRomanEncoding");
-    if (predefined == PDFFONT_ENCODING_MACEXPERT)
-      return pdfium::MakeUnique<CPDF_Name>(pPool, "MacExpertEncoding");
+      pName = "WinAnsiEncoding";
+    else if (predefined == PDFFONT_ENCODING_MACROMAN)
+      pName = "MacRomanEncoding";
+    else if (predefined == PDFFONT_ENCODING_MACEXPERT)
+      pName = "MacExpertEncoding";
+    else
+      return nullptr;
 
-    return nullptr;
+    return pdfium::MakeUnique<CPDF_Name>(pPool, pName);
   }
   const uint16_t* pStandard =
       PDF_UnicodesForPredefinedCharSet(PDFFONT_ENCODING_WINANSI);
