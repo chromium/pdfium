@@ -11,8 +11,6 @@
 
 #include "core/fxcrt/fx_system.h"
 
-class CBC_CommonBitArray;
-
 class CBC_CommonBitMatrix {
  public:
   CBC_CommonBitMatrix();

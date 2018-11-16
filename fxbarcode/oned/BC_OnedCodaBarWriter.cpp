@@ -23,7 +23,6 @@
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
 #include "fxbarcode/BC_Writer.h"
-#include "fxbarcode/common/BC_CommonBitArray.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 #include "third_party/base/stl_util.h"

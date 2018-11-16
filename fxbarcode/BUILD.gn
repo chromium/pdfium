@@ -41,8 +41,6 @@ jumbo_source_set("fxbarcode") {
     "cbc_qrcode.h",
     "cbc_upca.cpp",
     "cbc_upca.h",
-    "common/BC_CommonBitArray.cpp",
-    "common/BC_CommonBitArray.h",
     "common/BC_CommonBitMatrix.cpp",
     "common/BC_CommonBitMatrix.h",
     "common/BC_CommonByteMatrix.cpp",
