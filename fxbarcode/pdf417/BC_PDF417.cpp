@@ -407,12 +407,11 @@ bool CBC_PDF417::generateBarcodeLogic(WideString msg,
   if (errorCorrectionCodeWords < 0)
     return false;
 
-  int32_t e = BCExceptionNO;
-  WideString highLevel =
-      CBC_PDF417HighLevelEncoder::EncodeHighLevel(msg, m_compaction, e);
-  if (e != BCExceptionNO)
+  Optional<WideString> high_level =
+      CBC_PDF417HighLevelEncoder::EncodeHighLevel(msg, m_compaction);
+  if (!high_level.has_value())
     return false;
-  int32_t sourceCodeWords = highLevel.GetLength();
+  int32_t sourceCodeWords = high_level.value().GetLength();
   std::vector<int32_t> dimensions =
       determineDimensions(sourceCodeWords, errorCorrectionCodeWords);
   if (dimensions.size() != 2)
@@ -427,7 +426,7 @@ bool CBC_PDF417::generateBarcodeLogic(WideString msg,
   int32_t n = sourceCodeWords + pad + 1;
   WideString sb;
   sb += (wchar_t)n;
-  sb += highLevel;
+  sb += high_level.value();
   for (int32_t i = 0; i < pad; i++)
     sb += (wchar_t)900;
 

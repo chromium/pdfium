@@ -69,90 +69,7 @@ bool IsText(wchar_t ch) {
   return (ch >= 32 && ch <= 126) || ch == '\t' || ch == '\n' || ch == '\r';
 }
 
-}  // namespace
-
-void CBC_PDF417HighLevelEncoder::Initialize() {
-  Inverse();
-}
-
-void CBC_PDF417HighLevelEncoder::Finalize() {}
-
-WideString CBC_PDF417HighLevelEncoder::EncodeHighLevel(WideString wideMsg,
-                                                       Compaction compaction,
-                                                       int32_t& e) {
-  ByteString bytes;
-  CBC_UtilCodingConvert::UnicodeToUTF8(wideMsg, bytes);
-  size_t len = bytes.GetLength();
-  WideString msg;
-  msg.Reserve(len);
-  for (size_t i = 0; i < len; i++) {
-    wchar_t ch = bytes[i] & 0xff;
-    if (ch == '?' && bytes[i] != '?') {
-      e = BCExceptionCharactersOutsideISO88591Encoding;
-      return WideString();
-    }
-    msg += ch;
-  }
-  std::vector<uint8_t> byteArr(bytes.begin(), bytes.end());
-  len = msg.GetLength();
-  WideString sb;
-  sb.Reserve(len);
-  size_t p = 0;
-  SubMode textSubMode = SubMode::kAlpha;
-  if (compaction == TEXT) {
-    EncodeText(msg, p, len, textSubMode, &sb);
-  } else if (compaction == BYTES) {
-    EncodeBinary(byteArr, p, byteArr.size(), EncodingMode::kByte, &sb);
-  } else if (compaction == NUMERIC) {
-    sb += kLatchToNumeric;
-    EncodeNumeric(msg, p, len, &sb);
-  } else {
-    EncodingMode encodingMode = EncodingMode::kUnknown;
-    while (p < len) {
-      size_t n = DetermineConsecutiveDigitCount(msg, p);
-      if (n >= 13) {
-        sb += kLatchToNumeric;
-        encodingMode = EncodingMode::kNumeric;
-        textSubMode = SubMode::kAlpha;
-        EncodeNumeric(msg, p, n, &sb);
-        p += n;
-      } else {
-        size_t t = DetermineConsecutiveTextCount(msg, p);
-        if (t >= 5 || n == len) {
-          if (encodingMode != EncodingMode::kText) {
-            sb += kLatchToText;
-            encodingMode = EncodingMode::kText;
-            textSubMode = SubMode::kAlpha;
-          }
-          textSubMode = EncodeText(msg, p, t, textSubMode, &sb);
-          p += t;
-        } else {
-          Optional<size_t> b =
-              DetermineConsecutiveBinaryCount(msg, &byteArr, p);
-          if (!b) {
-            e = BCExceptionNonEncodableCharacterDetected;
-            return L" ";
-          }
-          size_t b_value = b.value();
-          if (b_value == 0) {
-            b_value = 1;
-          }
-          if (b_value == 1 && encodingMode == EncodingMode::kText) {
-            EncodeBinary(byteArr, p, 1, EncodingMode::kText, &sb);
-          } else {
-            EncodeBinary(byteArr, p, b_value, encodingMode, &sb);
-            encodingMode = EncodingMode::kByte;
-            textSubMode = SubMode::kAlpha;
-          }
-          p += b_value;
-        }
-      }
-    }
-  }
-  return sb;
-}
-
-void CBC_PDF417HighLevelEncoder::Inverse() {
+void Inverse() {
   for (size_t l = 0; l < FX_ArraySize(g_mixed); ++l)
     g_mixed[l] = -1;
 
@@ -170,6 +87,87 @@ void CBC_PDF417HighLevelEncoder::Inverse() {
     if (b != 0)
       g_punctuation[b] = i;
   }
+}
+
+}  // namespace
+
+void CBC_PDF417HighLevelEncoder::Initialize() {
+  Inverse();
+}
+
+void CBC_PDF417HighLevelEncoder::Finalize() {}
+
+Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
+    const WideString& msg,
+    Compaction compaction) {
+  ByteString bytes;
+  CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytes);
+  size_t len = bytes.GetLength();
+  WideString result;
+  result.Reserve(len);
+  for (size_t i = 0; i < len; i++) {
+    wchar_t ch = bytes[i] & 0xff;
+    if (ch == '?' && bytes[i] != '?')
+      return {};
+
+    result += ch;
+  }
+  std::vector<uint8_t> byteArr(bytes.begin(), bytes.end());
+  len = result.GetLength();
+  WideString sb;
+  sb.Reserve(len);
+  size_t p = 0;
+  SubMode textSubMode = SubMode::kAlpha;
+  if (compaction == TEXT) {
+    EncodeText(result, p, len, textSubMode, &sb);
+  } else if (compaction == BYTES) {
+    EncodeBinary(byteArr, p, byteArr.size(), EncodingMode::kByte, &sb);
+  } else if (compaction == NUMERIC) {
+    sb += kLatchToNumeric;
+    EncodeNumeric(result, p, len, &sb);
+  } else {
+    EncodingMode encodingMode = EncodingMode::kUnknown;
+    while (p < len) {
+      size_t n = DetermineConsecutiveDigitCount(result, p);
+      if (n >= 13) {
+        sb += kLatchToNumeric;
+        encodingMode = EncodingMode::kNumeric;
+        textSubMode = SubMode::kAlpha;
+        EncodeNumeric(result, p, n, &sb);
+        p += n;
+      } else {
+        size_t t = DetermineConsecutiveTextCount(result, p);
+        if (t >= 5 || n == len) {
+          if (encodingMode != EncodingMode::kText) {
+            sb += kLatchToText;
+            encodingMode = EncodingMode::kText;
+            textSubMode = SubMode::kAlpha;
+          }
+          textSubMode = EncodeText(result, p, t, textSubMode, &sb);
+          p += t;
+        } else {
+          Optional<size_t> b =
+              DetermineConsecutiveBinaryCount(result, &byteArr, p);
+          if (!b)
+            return {};
+
+          size_t b_value = b.value();
+          if (b_value == 0) {
+            b_value = 1;
+          }
+          if (b_value == 1 && encodingMode == EncodingMode::kText) {
+            EncodeBinary(byteArr, p, 1, EncodingMode::kText, &sb);
+          } else {
+            EncodeBinary(byteArr, p, b_value, encodingMode, &sb);
+            encodingMode = EncodingMode::kByte;
+            textSubMode = SubMode::kAlpha;
+          }
+          p += b_value;
+        }
+      }
+    }
+  }
+  return sb;
 }
 
 CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(

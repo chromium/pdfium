@@ -11,13 +11,12 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "fxbarcode/pdf417/BC_PDF417Compaction.h"
+#include "third_party/base/optional.h"
 
 class CBC_PDF417HighLevelEncoder {
  public:
-  static WideString EncodeHighLevel(WideString msg,
-                                    Compaction compaction,
-                                    int32_t& e);
-  static void Inverse();
+  static Optional<WideString> EncodeHighLevel(const WideString& msg,
+                                              Compaction compaction);
   static void Initialize();
   static void Finalize();
 
