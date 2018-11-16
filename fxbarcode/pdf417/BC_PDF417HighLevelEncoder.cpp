@@ -27,10 +27,6 @@
 #include "fxbarcode/utils.h"
 #include "third_party/bigint/BigIntegerLibrary.hh"
 
-#define SUBMODE_ALPHA 0
-#define SUBMODE_LOWER 1
-#define SUBMODE_MIXED 2
-
 namespace {
 
 constexpr int32_t kLatchToText = 900;
@@ -102,7 +98,7 @@ WideString CBC_PDF417HighLevelEncoder::EncodeHighLevel(WideString wideMsg,
   WideString sb;
   sb.Reserve(len);
   size_t p = 0;
-  int32_t textSubMode = SUBMODE_ALPHA;
+  SubMode textSubMode = SubMode::kAlpha;
   if (compaction == TEXT) {
     EncodeText(msg, p, len, textSubMode, &sb);
   } else if (compaction == BYTES) {
@@ -117,7 +113,7 @@ WideString CBC_PDF417HighLevelEncoder::EncodeHighLevel(WideString wideMsg,
       if (n >= 13) {
         sb += kLatchToNumeric;
         encodingMode = NUMERIC_COMPACTION;
-        textSubMode = SUBMODE_ALPHA;
+        textSubMode = SubMode::kAlpha;
         EncodeNumeric(msg, p, n, &sb);
         p += n;
       } else {
@@ -126,7 +122,7 @@ WideString CBC_PDF417HighLevelEncoder::EncodeHighLevel(WideString wideMsg,
           if (encodingMode != TEXT_COMPACTION) {
             sb += kLatchToText;
             encodingMode = TEXT_COMPACTION;
-            textSubMode = SUBMODE_ALPHA;
+            textSubMode = SubMode::kAlpha;
           }
           textSubMode = EncodeText(msg, p, t, textSubMode, &sb);
           p += t;
@@ -146,7 +142,7 @@ WideString CBC_PDF417HighLevelEncoder::EncodeHighLevel(WideString wideMsg,
           } else {
             EncodeBinary(byteArr, p, b_value, encodingMode, &sb);
             encodingMode = BYTE_COMPACTION;
-            textSubMode = SUBMODE_ALPHA;
+            textSubMode = SubMode::kAlpha;
           }
           p += b_value;
         }
@@ -176,19 +172,20 @@ void CBC_PDF417HighLevelEncoder::Inverse() {
   }
 }
 
-int32_t CBC_PDF417HighLevelEncoder::EncodeText(const WideString& msg,
-                                               size_t startpos,
-                                               size_t count,
-                                               int32_t initialSubmode,
-                                               WideString* sb) {
+CBC_PDF417HighLevelEncoder::SubMode CBC_PDF417HighLevelEncoder::EncodeText(
+    const WideString& msg,
+    size_t startpos,
+    size_t count,
+    SubMode initialSubmode,
+    WideString* sb) {
   WideString tmp;
   tmp.Reserve(count);
-  int32_t submode = initialSubmode;
+  SubMode submode = initialSubmode;
   size_t idx = 0;
   while (true) {
     wchar_t ch = msg[startpos + idx];
     switch (submode) {
-      case SUBMODE_ALPHA:
+      case SubMode::kAlpha:
         if (IsAlphaUpperOrSpace(ch)) {
           if (ch == ' ')
             tmp += 26;
@@ -197,19 +194,19 @@ int32_t CBC_PDF417HighLevelEncoder::EncodeText(const WideString& msg,
           break;
         }
         if (IsAlphaLowerOrSpace(ch)) {
-          submode = SUBMODE_LOWER;
+          submode = SubMode::kLower;
           tmp += 27;
           continue;
         }
         if (IsMixed(ch)) {
-          submode = SUBMODE_MIXED;
+          submode = SubMode::kMixed;
           tmp += 28;
           continue;
         }
         tmp += 29;
         tmp += g_punctuation[ch];
         break;
-      case SUBMODE_LOWER:
+      case SubMode::kLower:
         if (IsAlphaLowerOrSpace(ch)) {
           if (ch == ' ')
             tmp += 26;
@@ -223,7 +220,7 @@ int32_t CBC_PDF417HighLevelEncoder::EncodeText(const WideString& msg,
           break;
         }
         if (IsMixed(ch)) {
-          submode = SUBMODE_MIXED;
+          submode = SubMode::kMixed;
           tmp += 28;
           continue;
         }
@@ -231,25 +228,25 @@ int32_t CBC_PDF417HighLevelEncoder::EncodeText(const WideString& msg,
         tmp += 29;
         tmp += g_punctuation[ch];
         break;
-      case SUBMODE_MIXED:
+      case SubMode::kMixed:
         if (IsMixed(ch)) {
           tmp += g_mixed[ch];
           break;
         }
         if (IsAlphaUpperOrSpace(ch)) {
-          submode = SUBMODE_ALPHA;
+          submode = SubMode::kAlpha;
           tmp += 28;
           continue;
         }
         if (IsAlphaLowerOrSpace(ch)) {
-          submode = SUBMODE_LOWER;
+          submode = SubMode::kLower;
           tmp += 27;
           continue;
         }
         if (startpos + idx + 1 < count) {
           wchar_t next = msg[startpos + idx + 1];
           if (IsPunctuation(next)) {
-            submode = SUBMODE_PUNCTUATION;
+            submode = SubMode::kPunctuation;
             tmp += 25;
             continue;
           }
@@ -262,7 +259,7 @@ int32_t CBC_PDF417HighLevelEncoder::EncodeText(const WideString& msg,
           tmp += g_punctuation[ch];
           break;
         }
-        submode = SUBMODE_ALPHA;
+        submode = SubMode::kAlpha;
         tmp += 29;
         continue;
     }
