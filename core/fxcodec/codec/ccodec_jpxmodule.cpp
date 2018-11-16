@@ -25,13 +25,12 @@ namespace {
 
 void fx_ignore_callback(const char* msg, void* client_data) {}
 
-opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data,
-                                                 OPJ_SIZE_T p_size,
-                                                 OPJ_BOOL p_is_read_stream) {
+opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data) {
   if (!data || !data->src_data || data->src_size <= 0)
     return nullptr;
 
-  opj_stream_t* stream = opj_stream_create(p_size, p_is_read_stream);
+  opj_stream_t* stream = opj_stream_create(OPJ_J2K_STREAM_CHUNK_SIZE,
+                                           /*p_is_input=*/OPJ_TRUE);
   if (!stream)
     return nullptr;
 
@@ -484,9 +483,7 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
   m_SrcData = src_data;
   m_DecodeData =
       pdfium::MakeUnique<DecodeData>(src_data.data(), src_data.size());
-  m_Stream = fx_opj_stream_create_memory_stream(
-      m_DecodeData.get(), static_cast<unsigned int>(OPJ_J2K_STREAM_CHUNK_SIZE),
-      1);
+  m_Stream = fx_opj_stream_create_memory_stream(m_DecodeData.get());
   if (!m_Stream)
     return false;
 
