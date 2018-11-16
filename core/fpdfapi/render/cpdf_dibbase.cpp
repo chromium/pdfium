@@ -592,6 +592,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIBBase::LoadJpxBitmap() {
   if (!context->decoder())
     return nullptr;
 
+  if (!context->decoder()->StartDecode())
+    return nullptr;
+
   uint32_t width = 0;
   uint32_t height = 0;
   uint32_t components = 0;

@@ -16,6 +16,14 @@ CCodec_JpxModule g_module;
 
 namespace {
 const uint32_t kMaxJPXFuzzSize = 100 * 1024 * 1024;  // 100 MB
+
+bool CheckImageSize(uint32_t width, uint32_t height, uint32_t components) {
+  static constexpr uint32_t kMemLimitBytes = 1024 * 1024 * 1024;  // 1 GB.
+  FX_SAFE_UINT32 mem = width;
+  mem *= height;
+  mem *= components;
+  return mem.IsValid() && mem.ValueOrDie() <= kMemLimitBytes;
+}
 }  // namespace
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
@@ -24,16 +32,21 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!decoder)
     return 0;
 
+  // A call to StartDecode could be too expensive if image size is very big, so
+  // check size before calling StartDecode().
   uint32_t width;
   uint32_t height;
   uint32_t components;
   g_module.GetImageInfo(decoder.get(), &width, &height, &components);
+  if (!CheckImageSize(width, height, components))
+    return 0;
 
-  static constexpr uint32_t kMemLimit = 1024 * 1024 * 1024;  // 1 GB.
-  FX_SAFE_UINT32 mem = width;
-  mem *= height;
-  mem *= components;
-  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit)
+  if (!decoder->StartDecode())
+    return 0;
+
+  // StartDecode() could change image size, so check again.
+  g_module.GetImageInfo(decoder.get(), &width, &height, &components);
+  if (!CheckImageSize(width, height, components))
     return 0;
 
   FXDIB_Format format;

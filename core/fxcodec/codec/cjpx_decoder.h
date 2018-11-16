@@ -24,6 +24,7 @@ class CJPX_Decoder {
 
   bool Init(pdfium::span<const uint8_t> src_data);
   void GetInfo(uint32_t* width, uint32_t* height, uint32_t* components);
+  bool StartDecode();
   bool Decode(uint8_t* dest_buf,
               uint32_t pitch,
               const std::vector<uint8_t>& offsets);

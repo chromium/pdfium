@@ -517,7 +517,10 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
 
   m_Image = pTempImage;
   m_Image->pdfium_use_colorspace = !!m_ColorSpace;
+  return true;
+}
 
+bool CJPX_Decoder::StartDecode() {
   if (!m_Parameters.nb_tile_to_decode) {
     if (!opj_set_decode_area(m_Codec.Get(), m_Image.Get(), m_Parameters.DA_x0,
                              m_Parameters.DA_y0, m_Parameters.DA_x1,
@@ -554,7 +557,6 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
     m_Image->icc_profile_buf = nullptr;
     m_Image->icc_profile_len = 0;
   }
-
   return true;
 }
 
