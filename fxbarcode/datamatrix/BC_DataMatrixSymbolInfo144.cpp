@@ -32,8 +32,3 @@ CBC_DataMatrixSymbolInfo144::~CBC_DataMatrixSymbolInfo144() {}
 int32_t CBC_DataMatrixSymbolInfo144::getInterleavedBlockCount() const {
   return 10;
 }
-
-int32_t CBC_DataMatrixSymbolInfo144getDataLengthForInterleavedBlock(
-    int32_t index) {
-  return index <= 8 ? 156 : 155;
-}
