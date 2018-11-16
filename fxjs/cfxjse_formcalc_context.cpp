@@ -564,7 +564,7 @@ double ByteStringToDouble(const ByteStringView& szStringVal) {
         nIntegralLen > 17) {
       break;
     }
-    if (!FXSYS_isDecimalDigit(str[cc])) {
+    if (!FXSYS_IsDecimalDigit(str[cc])) {
       return 0;
     }
     nIntegral = nIntegral * 10 + str[cc] - '0';
@@ -588,7 +588,7 @@ double ByteStringToDouble(const ByteStringView& szStringVal) {
           str[cc] == 'e') {
         break;
       }
-      if (!FXSYS_isDecimalDigit(str[cc]))
+      if (!FXSYS_IsDecimalDigit(str[cc]))
         return 0;
     }
     dwFractional = static_cast<uint32_t>(fraction * 4294967296.0);
@@ -607,7 +607,7 @@ double ByteStringToDouble(const ByteStringView& szStringVal) {
       }
     }
     while (cc < len) {
-      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]))
+      if (str[cc] == '.' || !FXSYS_IsDecimalDigit(str[cc]))
         return 0;
 
       nExponent = nExponent * 10 + str[cc] - '0';
@@ -1013,7 +1013,7 @@ WideString DecodeURL(const WideString& wsURLString) {
     while (iCount < 2) {
       ++i;
       ch = pData[i];
-      if (ch <= '9' && ch >= '0') {
+      if (FXSYS_IsDecimalDigit((ch))) {
         // TODO(dsinclair): Premultiply and add rather then scale.
         chTemp += (ch - '0') * (!iCount ? 16 : 1);
       } else if (ch <= 'F' && ch >= 'A') {
@@ -1059,10 +1059,10 @@ WideString DecodeHTML(const WideString& wsHTMLString) {
 
       ++i;
       ch = pData[i];
-      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
+      if (FXSYS_IsDecimalDigit(ch) || (ch <= 'f' && ch >= 'a') ||
           (ch <= 'F' && ch >= 'A')) {
         while (ch != ';' && i < iLen) {
-          if (ch >= '0' && ch <= '9') {
+          if (FXSYS_IsDecimalDigit(ch)) {
             iCode += ch - '0';
           } else if (ch <= 'f' && ch >= 'a') {
             iCode += ch - 'a' + 10;
@@ -1132,10 +1132,10 @@ WideString DecodeXML(const WideString& wsXMLString) {
 
       ++i;
       ch = pData[i];
-      if ((ch >= '0' && ch <= '9') || (ch <= 'f' && ch >= 'a') ||
+      if ((FXSYS_IsDecimalDigit(ch)) || (ch <= 'f' && ch >= 'a') ||
           (ch <= 'F' && ch >= 'A')) {
         while (ch != ';') {
-          if (ch >= '0' && ch <= '9') {
+          if (FXSYS_IsDecimalDigit(ch)) {
             iCode += ch - '0';
           } else if (ch <= 'f' && ch >= 'a') {
             iCode += ch - 'a' + 10;

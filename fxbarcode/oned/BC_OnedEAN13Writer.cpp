@@ -70,9 +70,8 @@ WideString CBC_OnedEAN13Writer::FilterContents(const WideStringView& contents) {
       i++;
       continue;
     }
-    if (ch >= '0' && ch <= '9') {
+    if (FXSYS_IsDecimalDigit(ch))
       filtercontents += ch;
-    }
   }
   return filtercontents;
 }

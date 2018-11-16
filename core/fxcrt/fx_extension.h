@@ -75,16 +75,16 @@ inline int FXSYS_HexCharToInt(char c) {
   return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
 }
 
-inline bool FXSYS_isDecimalDigit(char c) {
+inline bool FXSYS_IsDecimalDigit(char c) {
   return !((c & 0x80) || !std::isdigit(c));
 }
 
-inline bool FXSYS_isDecimalDigit(wchar_t c) {
+inline bool FXSYS_IsDecimalDigit(wchar_t c) {
   return !!std::iswdigit(c);
 }
 
 inline int FXSYS_DecimalCharToInt(char c) {
-  return FXSYS_isDecimalDigit(c) ? c - '0' : 0;
+  return FXSYS_IsDecimalDigit(c) ? c - '0' : 0;
 }
 
 inline int FXSYS_DecimalCharToInt(wchar_t c) {

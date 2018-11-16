@@ -26,6 +26,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_ASCIIEncoder.h"
@@ -168,7 +169,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
     }
     wchar_t c = msg[startpos + charsProcessed];
     charsProcessed++;
-    if (isDigit(c)) {
+    if (FXSYS_IsDecimalDigit(c)) {
       charCounts[ASCII_ENCODATION] += 0.5;
     } else if (isExtendedASCII(c)) {
       charCounts[ASCII_ENCODATION] = (float)ceil(charCounts[ASCII_ENCODATION]);
@@ -262,9 +263,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
     }
   }
 }
-bool CBC_HighLevelEncoder::isDigit(wchar_t ch) {
-  return ch >= '0' && ch <= '9';
-}
+
 bool CBC_HighLevelEncoder::isExtendedASCII(wchar_t ch) {
   return ch >= 128 && ch <= 255;
 }
@@ -275,7 +274,7 @@ int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(WideString msg,
   int32_t idx = startpos;
   if (idx < len) {
     wchar_t ch = msg[idx];
-    while (isDigit(ch) && idx < len) {
+    while (FXSYS_IsDecimalDigit(ch) && idx < len) {
       count++;
       idx++;
       if (idx < len) {

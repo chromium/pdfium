@@ -229,7 +229,7 @@ double CXFA_LocaleValue::GetDoubleNum() const {
   int64_t nIntegral = 0;
   size_t nIntegralLen = 0;
   while (cc < str.size()) {
-    if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]) || nIntegralLen > 17)
+    if (str[cc] == '.' || !FXSYS_IsDecimalDigit(str[cc]) || nIntegralLen > 17)
       break;
 
     nIntegral = nIntegral * 10 + str[cc++] - '0';
@@ -242,7 +242,7 @@ double CXFA_LocaleValue::GetDoubleNum() const {
   double fraction = 0.0;
   if (cc < str.size() && str[cc] == '.') {
     cc++;
-    while (cc < str.size() && FXSYS_isDecimalDigit(str[cc])) {
+    while (cc < str.size() && FXSYS_IsDecimalDigit(str[cc])) {
       fraction += XFA_GetFractionalScale(scale) * (str[cc++] - '0');
       if (++scale == XFA_GetMaxFractionalScale())
         break;
@@ -259,7 +259,7 @@ double CXFA_LocaleValue::GetDoubleNum() const {
         cc++;
       }
     }
-    while (cc < str.size() && FXSYS_isDecimalDigit(str[cc]))
+    while (cc < str.size() && FXSYS_IsDecimalDigit(str[cc]))
       nExponent = nExponent * 10 + str[cc++] - '0';
 
     nExponent = bExpSign ? -nExponent : nExponent;
@@ -447,7 +447,7 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
   int nIndex = 0;
   int nStart = 0;
   while (pDate[nIndex] != '\0' && nIndex < wCountY) {
-    if (!FXSYS_isDecimalDigit(pDate[nIndex]))
+    if (!FXSYS_IsDecimalDigit(pDate[nIndex]))
       return false;
 
     wYear = (pDate[nIndex] - '0') + wYear * 10;
@@ -461,7 +461,7 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
 
   nStart = nIndex;
   while (pDate[nIndex] != '\0' && nIndex - nStart < wCountM && nIndex < nLen) {
-    if (!FXSYS_isDecimalDigit(pDate[nIndex]))
+    if (!FXSYS_IsDecimalDigit(pDate[nIndex]))
       return false;
 
     wMonth = (pDate[nIndex] - '0') + wMonth * 10;
@@ -475,7 +475,7 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
 
   nStart = nIndex;
   while (pDate[nIndex] != '\0' && nIndex - nStart < wCountD && nIndex < nLen) {
-    if (!FXSYS_isDecimalDigit(pDate[nIndex]))
+    if (!FXSYS_IsDecimalDigit(pDate[nIndex]))
       return false;
 
     wDay = (pDate[nIndex] - '0') + wDay * 10;
@@ -523,7 +523,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
   int nIndex = 0;
   int nStart = 0;
   while (nIndex - nStart < wCountH && pTime[nIndex]) {
-    if (!FXSYS_isDecimalDigit(pTime[nIndex]))
+    if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
       return false;
     wHour = pTime[nIndex] - '0' + wHour * 10;
     nIndex++;
@@ -536,7 +536,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
 
   nStart = nIndex;
   while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
-    if (!FXSYS_isDecimalDigit(pTime[nIndex]))
+    if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
       return false;
     wMinute = pTime[nIndex] - '0' + wMinute * 10;
     nIndex++;
@@ -548,7 +548,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
   }
   nStart = nIndex;
   while (nIndex - nStart < wCountS && nIndex < nLen && pTime[nIndex]) {
-    if (!FXSYS_isDecimalDigit(pTime[nIndex]))
+    if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
       return false;
     wSecond = pTime[nIndex] - '0' + wSecond * 10;
     nIndex++;
@@ -560,7 +560,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
     nIndex++;
     nStart = nIndex;
     while (nIndex - nStart < wCountF && nIndex < nLen && pTime[nIndex]) {
-      if (!FXSYS_isDecimalDigit(pTime[nIndex]))
+      if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
         return false;
       wFraction = pTime[nIndex] - '0' + wFraction * 10;
       nIndex++;
@@ -575,7 +575,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
       nIndex++;
       nStart = nIndex;
       while (nIndex - nStart < wCountH && nIndex < nLen && pTime[nIndex]) {
-        if (!FXSYS_isDecimalDigit(pTime[nIndex]))
+        if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
           return false;
         nOffsetH = pTime[nIndex] - '0' + nOffsetH * 10;
         nIndex++;
@@ -587,7 +587,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const WideString& wsTime) {
       }
       nStart = nIndex;
       while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
-        if (!FXSYS_isDecimalDigit(pTime[nIndex]))
+        if (!FXSYS_IsDecimalDigit(pTime[nIndex]))
           return false;
         nOffsetM = pTime[nIndex] - '0' + nOffsetM * 10;
         nIndex++;
@@ -736,7 +736,7 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   int32_t nCount = wsNumeric.GetLength();
   int32_t nCountFmt = wsFormat.GetLength();
   while (n < nCount && (bLimit ? nf < nCountFmt : true) &&
-         FXSYS_isDecimalDigit(c = pNum[n])) {
+         FXSYS_IsDecimalDigit(c = pNum[n])) {
     if (bLimit == true) {
       if ((cf = pFmt[nf]) == L'*')
         bLimit = false;
@@ -772,7 +772,7 @@ bool CXFA_LocaleValue::ValidateNumericTemp(const WideString& wsNumeric,
   ++n;
   bLimit = true;
   while (n < nCount && (bLimit ? nf < nCountFmt : true) &&
-         FXSYS_isDecimalDigit(c = pNum[n])) {
+         FXSYS_IsDecimalDigit(c = pNum[n])) {
     if (bLimit == true) {
       if ((cf = pFmt[nf]) == L'*')
         bLimit = false;

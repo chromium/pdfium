@@ -22,6 +22,7 @@
 
 #include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/pdf417/BC_PDF417Compaction.h"
 #include "fxbarcode/utils.h"
@@ -44,10 +45,6 @@ constexpr uint8_t kTextPunctuationRaw[] = {
 
 int32_t g_mixed[128] = {0};
 int32_t g_punctuation[128] = {0};
-
-bool IsDigit(wchar_t ch) {
-  return ch >= '0' && ch <= '9';
-}
 
 bool IsAlphaUpperOrSpace(wchar_t ch) {
   return ch == ' ' || (ch >= 'A' && ch <= 'Z');
@@ -346,7 +343,7 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveDigitCount(
   size_t idx = startpos;
   if (idx < len) {
     wchar_t ch = msg[idx];
-    while (IsDigit(ch) && idx < len) {
+    while (FXSYS_IsDecimalDigit(ch) && idx < len) {
       count++;
       idx++;
       if (idx < len)
@@ -364,7 +361,7 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
   while (idx < len) {
     wchar_t ch = msg[idx];
     size_t numericCount = 0;
-    while (numericCount < 13 && IsDigit(ch) && idx < len) {
+    while (numericCount < 13 && FXSYS_IsDecimalDigit(ch) && idx < len) {
       numericCount++;
       idx++;
       if (idx < len)
@@ -391,7 +388,7 @@ Optional<size_t> CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
   while (idx < len) {
     wchar_t ch = msg[idx];
     size_t numericCount = 0;
-    while (numericCount < 13 && IsDigit(ch)) {
+    while (numericCount < 13 && FXSYS_IsDecimalDigit(ch)) {
       numericCount++;
       size_t i = idx + numericCount;
       if (i >= len)

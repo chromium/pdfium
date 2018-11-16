@@ -22,11 +22,11 @@ TEST(fxcrt, FXSYS_DecimalCharToInt) {
   EXPECT_EQ(0, FXSYS_DecimalCharToInt(L'a'));
 }
 
-TEST(fxcrt, FXSYS_isDecimalDigit) {
-  EXPECT_TRUE(FXSYS_isDecimalDigit('7'));
-  EXPECT_TRUE(FXSYS_isDecimalDigit(L'7'));
-  EXPECT_FALSE(FXSYS_isDecimalDigit('a'));
-  EXPECT_FALSE(FXSYS_isDecimalDigit(L'a'));
+TEST(fxcrt, FXSYS_IsDecimalDigit) {
+  EXPECT_TRUE(FXSYS_IsDecimalDigit('7'));
+  EXPECT_TRUE(FXSYS_IsDecimalDigit(L'7'));
+  EXPECT_FALSE(FXSYS_IsDecimalDigit('a'));
+  EXPECT_FALSE(FXSYS_IsDecimalDigit(L'a'));
 }
 
 TEST(fxcrt, FX_HashCode_Ascii) {

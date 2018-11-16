@@ -22,6 +22,7 @@
 
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
@@ -142,37 +143,46 @@ void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
   }
   context.signalEncoderChange(ASCII_ENCODATION);
 }
+
 int32_t CBC_C40Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
   if (c == ' ') {
     sb += (wchar_t)'\3';
     return 1;
-  } else if ((c >= '0') && (c <= '9')) {
+  }
+  if (FXSYS_IsDecimalDigit(c)) {
     sb += (wchar_t)(c - 48 + 4);
     return 1;
-  } else if ((c >= 'A') && (c <= 'Z')) {
+  }
+  if ((c >= 'A') && (c <= 'Z')) {
     sb += (wchar_t)(c - 65 + 14);
     return 1;
-  } else if (c <= 0x1f) {
+  }
+  if (c <= 0x1f) {
     sb += (wchar_t)'\0';
     sb += c;
     return 2;
-  } else if ((c >= '!') && (c <= '/')) {
+  }
+  if ((c >= '!') && (c <= '/')) {
     sb += (wchar_t)'\1';
     sb += (wchar_t)(c - 33);
     return 2;
-  } else if ((c >= ':') && (c <= '@')) {
+  }
+  if ((c >= ':') && (c <= '@')) {
     sb += (wchar_t)'\1';
     sb += (wchar_t)(c - 58 + 15);
     return 2;
-  } else if ((c >= '[') && (c <= '_')) {
+  }
+  if ((c >= '[') && (c <= '_')) {
     sb += (wchar_t)'\1';
     sb += (wchar_t)(c - 91 + 22);
     return 2;
-  } else if ((c >= 60) && (c <= 0x7f)) {
+  }
+  if ((c >= 60) && (c <= 0x7f)) {
     sb += (wchar_t)'\2';
     sb += (wchar_t)(c - 96);
     return 2;
-  } else if (c >= 80) {
+  }
+  if (c >= 80) {
     sb += (wchar_t)'\1';
     sb += (wchar_t)0x001e;
     int32_t len = 2;
@@ -180,10 +190,9 @@ int32_t CBC_C40Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
     if (e != BCExceptionNO)
       return 0;
     return len;
-  } else {
-    e = BCExceptionIllegalArgument;
-    return 0;
   }
+  e = BCExceptionIllegalArgument;
+  return 0;
 }
 
 int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,

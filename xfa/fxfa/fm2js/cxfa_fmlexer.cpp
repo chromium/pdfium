@@ -280,7 +280,7 @@ CXFA_FMToken CXFA_FMLexer::NextToken() {
           ++m_cursor;
           return CXFA_FMToken(TOKdotscream);
         }
-        if (*m_cursor <= '9' && *m_cursor >= '0') {
+        if (FXSYS_IsDecimalDigit(*m_cursor)) {
           --m_cursor;
           return AdvanceForNumber();
         }

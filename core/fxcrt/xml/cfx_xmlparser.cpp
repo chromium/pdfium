@@ -486,7 +486,7 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
           }
         } else {
           for (int32_t i = 1; i < iLen; i++) {
-            if (!FXSYS_isDecimalDigit(csEntity[i]))
+            if (!FXSYS_IsDecimalDigit(csEntity[i]))
               break;
             ch = ch * 10 + FXSYS_DecimalCharToInt(csEntity[i]);
           }

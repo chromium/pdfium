@@ -32,7 +32,6 @@ class CBC_HighLevelEncoder {
   static int32_t lookAheadTest(const WideString& msg,
                                int32_t startpos,
                                int32_t currentMode);
-  static bool isDigit(wchar_t ch);
   static bool isExtendedASCII(wchar_t ch);
   static int32_t determineConsecutiveDigitCount(WideString msg,
                                                 int32_t startpos);

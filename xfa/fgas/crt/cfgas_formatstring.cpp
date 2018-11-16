@@ -204,7 +204,7 @@ bool ExtractCountDigits(const wchar_t* str,
   for (int i = count; i > 0; --i) {
     if (*cc >= len)
       return false;
-    if (!FXSYS_isDecimalDigit(str[*cc]))
+    if (!FXSYS_IsDecimalDigit(str[*cc]))
       return false;
     *value = *value * 10 + FXSYS_DecimalCharToInt(str[(*cc)++]);
   }
@@ -1113,7 +1113,7 @@ bool CFGAS_FormatString::ParseText(const WideString& wsSrcText,
         break;
       case 'O':
       case '0':
-        if (FXSYS_isDecimalDigit(pStrText[iText]) ||
+        if (FXSYS_IsDecimalDigit(pStrText[iText]) ||
             FXSYS_iswalpha(pStrText[iText])) {
           *wsValue += pStrText[iText];
           iText++;
@@ -1121,7 +1121,7 @@ bool CFGAS_FormatString::ParseText(const WideString& wsSrcText,
         iPattern++;
         break;
       case '9':
-        if (FXSYS_isDecimalDigit(pStrText[iText])) {
+        if (FXSYS_IsDecimalDigit(pStrText[iText])) {
           *wsValue += pStrText[iText];
           iText++;
         }
@@ -1200,7 +1200,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
         break;
       }
       case '9':
-        if (!FXSYS_isDecimalDigit(str[cc]))
+        if (!FXSYS_IsDecimalDigit(str[cc]))
           return false;
 
         wsValue->InsertAtFront(str[cc]);
@@ -1210,7 +1210,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
       case 'z':
       case 'Z':
         if (strf[ccf] == 'z' || str[cc] != ' ') {
-          if (FXSYS_isDecimalDigit(str[cc])) {
+          if (FXSYS_IsDecimalDigit(str[cc])) {
             wsValue->InsertAtFront(str[cc]);
             cc--;
           }
@@ -1238,7 +1238,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
         while (cc >= 0) {
           if (str[cc] == 'E' || str[cc] == 'e')
             break;
-          if (FXSYS_isDecimalDigit(str[cc])) {
+          if (FXSYS_IsDecimalDigit(str[cc])) {
             iExponent = iExponent + FXSYS_DecimalCharToInt(str[cc]) * 10;
             cc--;
             continue;
@@ -1377,7 +1377,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
           break;
         }
         case '9':
-          if (!FXSYS_isDecimalDigit(str[cc]))
+          if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
 
           *wsValue += str[cc];
@@ -1387,7 +1387,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
         case 'z':
         case 'Z':
           if (strf[ccf] == 'z' || str[cc] != ' ') {
-            if (FXSYS_isDecimalDigit(str[cc])) {
+            if (FXSYS_IsDecimalDigit(str[cc])) {
               *wsValue += str[cc];
               cc++;
             }
@@ -1425,7 +1425,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
             }
           }
           while (cc < len) {
-            if (!FXSYS_isDecimalDigit(str[cc]))
+            if (!FXSYS_IsDecimalDigit(str[cc]))
               break;
 
             iExponent = iExponent * 10 + FXSYS_DecimalCharToInt(str[cc]);
@@ -1490,7 +1490,7 @@ bool CFGAS_FormatString::ParseNum(const WideString& wsSrcNum,
           while (ccf < lenf && strf[ccf] == '8')
             ccf++;
 
-          while (cc < len && FXSYS_isDecimalDigit(str[cc])) {
+          while (cc < len && FXSYS_IsDecimalDigit(str[cc])) {
             *wsValue += str[cc];
             cc++;
           }
@@ -1828,7 +1828,7 @@ bool CFGAS_FormatString::FormatText(const WideString& wsSrcText,
         break;
       case 'O':
       case '0':
-        if (iText >= iLenText || (!FXSYS_isDecimalDigit(pStrText[iText]) &&
+        if (iText >= iLenText || (!FXSYS_IsDecimalDigit(pStrText[iText]) &&
                                   !FXSYS_iswalpha(pStrText[iText]))) {
           return false;
         }
@@ -1836,7 +1836,7 @@ bool CFGAS_FormatString::FormatText(const WideString& wsSrcText,
         iPattern++;
         break;
       case '9':
-        if (iText >= iLenText || !FXSYS_isDecimalDigit(pStrText[iText]))
+        if (iText >= iLenText || !FXSYS_IsDecimalDigit(pStrText[iText]))
           return false;
 
         *wsOutput += pStrText[iText++];
@@ -1951,7 +1951,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
     switch (strf[ccf]) {
       case '9':
         if (cc >= 0) {
-          if (!FXSYS_isDecimalDigit(str[cc]))
+          if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
 
           wsOutput->InsertAtFront(str[cc]);
@@ -1963,7 +1963,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       case 'z':
         if (cc >= 0) {
-          if (!FXSYS_isDecimalDigit(str[cc]))
+          if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
           if (str[0] != '0')
             wsOutput->InsertAtFront(str[cc]);
@@ -1974,7 +1974,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       case 'Z':
         if (cc >= 0) {
-          if (!FXSYS_isDecimalDigit(str[cc]))
+          if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
 
           wsOutput->InsertAtFront(str[0] == '0' ? L' ' : str[cc]);
@@ -2118,7 +2118,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       case '9':
         if (cc < len) {
-          if (!FXSYS_isDecimalDigit(str[cc]))
+          if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
 
           *wsOutput += str[cc];
@@ -2130,7 +2130,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       case 'z':
         if (cc < len) {
-          if (!FXSYS_isDecimalDigit(str[cc]))
+          if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
 
           *wsOutput += str[cc];
@@ -2140,7 +2140,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
         break;
       case 'Z':
         if (cc < len) {
-          if (!FXSYS_isDecimalDigit(str[cc]))
+          if (!FXSYS_IsDecimalDigit(str[cc]))
             return false;
 
           *wsOutput += str[cc];
@@ -2198,7 +2198,7 @@ bool CFGAS_FormatString::FormatStrNum(const WideStringView& wsInputNum,
       case '8':
         while (ccf < lenf && strf[ccf] == '8')
           ccf++;
-        while (cc < len && FXSYS_isDecimalDigit(str[cc])) {
+        while (cc < len && FXSYS_IsDecimalDigit(str[cc])) {
           *wsOutput += str[cc];
           cc++;
         }

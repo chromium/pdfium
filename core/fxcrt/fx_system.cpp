@@ -23,7 +23,7 @@ IntType FXSYS_StrToInt(const CharType* str) {
     str++;
 
   IntType num = 0;
-  while (*str && FXSYS_isDecimalDigit(*str)) {
+  while (*str && FXSYS_IsDecimalDigit(*str)) {
     IntType val = FXSYS_DecimalCharToInt(*str);
     if (num > (std::numeric_limits<IntType>::max() - val) / 10) {
       if (neg && std::numeric_limits<IntType>::is_signed) {

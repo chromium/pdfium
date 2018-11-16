@@ -20,6 +20,7 @@
 
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
@@ -38,7 +39,7 @@ int32_t CBC_TextEncoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
     sb += (wchar_t)'\3';
     return 1;
   }
-  if (c >= '0' && c <= '9') {
+  if (FXSYS_IsDecimalDigit(c)) {
     sb += (wchar_t)(c - 48 + 4);
     return 1;
   }

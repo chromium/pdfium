@@ -24,6 +24,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
@@ -60,9 +61,9 @@ bool CBC_OnedCode39Writer::CheckContentValidity(
     const WideStringView& contents) {
   for (size_t i = 0; i < contents.GetLength(); i++) {
     wchar_t ch = contents[i];
-    if ((ch >= L'0' && ch <= L'9') || (ch >= L'A' && ch <= L'Z') ||
-        ch == L'-' || ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' ||
-        ch == L'/' || ch == L'+' || ch == L'%') {
+    if (FXSYS_IsDecimalDigit(ch) || (ch >= L'A' && ch <= L'Z') || ch == L'-' ||
+        ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' || ch == L'/' ||
+        ch == L'+' || ch == L'%') {
       continue;
     }
     return false;
@@ -84,9 +85,9 @@ WideString CBC_OnedCode39Writer::FilterContents(
       continue;
     }
     ch = Upper(ch);
-    if ((ch >= L'0' && ch <= L'9') || (ch >= L'A' && ch <= L'Z') ||
-        ch == L'-' || ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' ||
-        ch == L'/' || ch == L'+' || ch == L'%') {
+    if (FXSYS_IsDecimalDigit(ch) || (ch >= L'A' && ch <= L'Z') || ch == L'-' ||
+        ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' || ch == L'/' ||
+        ch == L'+' || ch == L'%') {
       filtercontents += ch;
     }
   }
@@ -105,7 +106,7 @@ WideString CBC_OnedCode39Writer::RenderTextContents(
       i++;
       continue;
     }
-    if ((ch >= L'0' && ch <= L'9') || (ch >= L'A' && ch <= L'Z') ||
+    if (FXSYS_IsDecimalDigit(ch) || (ch >= L'A' && ch <= L'Z') ||
         (ch >= L'a' && ch <= L'z') || ch == L'-' || ch == L'.' || ch == L' ' ||
         ch == L'*' || ch == L'$' || ch == L'/' || ch == L'+' || ch == L'%') {
       renderContents += ch;

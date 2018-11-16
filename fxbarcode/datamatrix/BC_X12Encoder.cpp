@@ -22,6 +22,7 @@
 
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
@@ -88,7 +89,7 @@ int32_t CBC_X12Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
     sb += (wchar_t)'\2';
   } else if (c == ' ') {
     sb += (wchar_t)'\3';
-  } else if (c >= '0' && c <= '9') {
+  } else if (FXSYS_IsDecimalDigit(c)) {
     sb += (wchar_t)(c - 48 + 4);
   } else if (c >= 'A' && c <= 'Z') {
     sb += (wchar_t)(c - 65 + 14);

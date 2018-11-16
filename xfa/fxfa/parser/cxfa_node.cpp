@@ -4646,7 +4646,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
   }
   for (; i < iCount; i++) {
     wchar_t wc = wsValue[i];
-    if (FXSYS_isDecimalDigit(wc)) {
+    if (FXSYS_IsDecimalDigit(wc)) {
       if (iLead >= 0) {
         iLead_++;
         if (iLead_ > iLead)

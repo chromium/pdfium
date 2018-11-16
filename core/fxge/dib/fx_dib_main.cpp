@@ -137,7 +137,7 @@ FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
   uint8_t g = 0;
   uint8_t b = 0;
   while (cc < len) {
-    if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
+    if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc]))
       break;
 
     r = r * 10 + str[cc] - '0';
@@ -149,7 +149,7 @@ FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
       cc++;
 
     while (cc < len) {
-      if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
+      if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc]))
         break;
 
       g = g * 10 + str[cc] - '0';
@@ -161,7 +161,7 @@ FX_ARGB StringToFXARGB(const WideStringView& wsValue) {
         cc++;
 
       while (cc < len) {
-        if (str[cc] == ',' || !FXSYS_isDecimalDigit(str[cc]))
+        if (str[cc] == ',' || !FXSYS_IsDecimalDigit(str[cc]))
           break;
 
         b = b * 10 + str[cc] - '0';

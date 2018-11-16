@@ -22,6 +22,7 @@
 
 #include "fxbarcode/datamatrix/BC_ASCIIEncoder.h"
 
+#include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
@@ -32,8 +33,7 @@
 namespace {
 
 Optional<wchar_t> EncodeASCIIDigits(wchar_t digit1, wchar_t digit2) {
-  if (!CBC_HighLevelEncoder::isDigit(digit1) ||
-      !CBC_HighLevelEncoder::isDigit(digit2)) {
+  if (!FXSYS_IsDecimalDigit(digit1) || !FXSYS_IsDecimalDigit(digit2)) {
     // This could potentially return 0 as a sentinel value. Then this function
     // can just return wchar_t instead of Optional<wchar_t>.
     return {};
