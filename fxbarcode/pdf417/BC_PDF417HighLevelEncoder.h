@@ -27,26 +27,20 @@ class CBC_PDF417HighLevelEncoder {
   static constexpr int32_t NUMERIC_COMPACTION = 2;
   static constexpr int32_t SUBMODE_PUNCTUATION = 3;
 
-  static int32_t EncodeText(WideString msg,
+  static int32_t EncodeText(const WideString& msg,
                             size_t startpos,
                             size_t count,
-                            WideString& sb,
-                            int32_t initialSubmode);
-  static void EncodeBinary(std::vector<uint8_t>* bytes,
+                            int32_t initialSubmode,
+                            WideString* sb);
+  static void EncodeBinary(const std::vector<uint8_t>& bytes,
                            size_t startpos,
                            size_t count,
                            int32_t startmode,
-                           WideString& sb);
-  static void EncodeNumeric(WideString msg,
+                           WideString* sb);
+  static void EncodeNumeric(const WideString& msg,
                             size_t startpos,
                             size_t count,
-                            WideString& sb);
-  static bool IsDigit(wchar_t ch);
-  static bool IsAlphaUpper(wchar_t ch);
-  static bool IsAlphaLower(wchar_t ch);
-  static bool IsMixed(wchar_t ch);
-  static bool IsPunctuation(wchar_t ch);
-  static bool IsText(wchar_t ch);
+                            WideString* sb);
   static size_t DetermineConsecutiveDigitCount(WideString msg, size_t startpos);
   static size_t DetermineConsecutiveTextCount(WideString msg, size_t startpos);
   static Optional<size_t> DetermineConsecutiveBinaryCount(

@@ -50,7 +50,7 @@ TEST(PDF417HighLevelEncoder, EncodeBinary) {
     WideString expected(ptr->expected, ptr->expected_length);
     WideString result;
     CBC_PDF417HighLevelEncoder::EncodeBinary(
-        &input_array, ptr->offset, ptr->count, ptr->startmode, result);
+        input_array, ptr->offset, ptr->count, ptr->startmode, &result);
     EXPECT_EQ(expected, result) << " for case number " << i;
   }
   CBC_PDF417HighLevelEncoder::Finalize();
@@ -113,7 +113,7 @@ TEST(PDF417HighLevelEncoder, EncodeNumeric) {
     WideString expected(ptr->expected, ptr->expected_length);
     WideString result;
     CBC_PDF417HighLevelEncoder::EncodeNumeric(input, ptr->offset, ptr->count,
-                                              result);
+                                              &result);
     EXPECT_EQ(expected, result) << " for case number " << i;
   }
   CBC_PDF417HighLevelEncoder::Finalize();
