@@ -474,7 +474,7 @@ const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
 const size_t g_szScriptIndexCount = FX_ArraySize(g_XFAScriptIndex);
 
 #undef ATTR
-#define ATTR(a, b, c, d, e) a, reinterpret_cast<XFA_ATTRIBUTE_CALLBACK>(c), d, e
+#define ATTR(a, b, c, d, e) a, d, e, reinterpret_cast<XFA_ATTRIBUTE_CALLBACK>(c)
 
 const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     /* ps */

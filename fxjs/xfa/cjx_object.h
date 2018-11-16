@@ -291,9 +291,9 @@ typedef void (CJX_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
 
 struct XFA_SCRIPTATTRIBUTEINFO {
   uint32_t uHash;
-  XFA_ATTRIBUTE_CALLBACK callback;
   XFA_Attribute attribute;
   XFA_ScriptType eValueType;
+  XFA_ATTRIBUTE_CALLBACK callback;
 };
 
 #endif  // FXJS_XFA_CJX_OBJECT_H_
