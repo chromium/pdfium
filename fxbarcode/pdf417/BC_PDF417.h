@@ -11,13 +11,14 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "fxbarcode/pdf417/BC_PDF417Compaction.h"
 
 class CBC_BarcodeRow;
 class CBC_BarcodeMatrix;
 
 class CBC_PDF417 {
  public:
+  enum class Compaction { AUTO, TEXT, BYTES, NUMERIC };
+
   CBC_PDF417();
   explicit CBC_PDF417(bool compact);
   virtual ~CBC_PDF417();

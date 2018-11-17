@@ -24,7 +24,6 @@
 
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
-#include "fxbarcode/pdf417/BC_PDF417Compaction.h"
 #include "fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"
 #include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 #include "fxbarcode/utils.h"
@@ -387,7 +386,7 @@ CBC_PDF417::CBC_PDF417() : CBC_PDF417(false) {}
 
 CBC_PDF417::CBC_PDF417(bool compact)
     : m_compact(compact),
-      m_compaction(AUTO),
+      m_compaction(Compaction::AUTO),
       m_minCols(1),
       m_maxCols(30),
       m_maxRows(90),

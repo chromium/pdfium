@@ -29,7 +29,6 @@
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
-#include "fxbarcode/pdf417/BC_PDF417Compaction.h"
 
 CBC_PDF417Writer::CBC_PDF417Writer() {
   m_bFixedSize = false;

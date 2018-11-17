@@ -24,7 +24,6 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/BC_UtilCodingConvert.h"
-#include "fxbarcode/pdf417/BC_PDF417Compaction.h"
 #include "fxbarcode/utils.h"
 #include "third_party/bigint/BigIntegerLibrary.hh"
 
@@ -96,7 +95,7 @@ void CBC_PDF417HighLevelEncoder::Finalize() {}
 
 Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
     const WideString& msg,
-    Compaction compaction) {
+    CBC_PDF417::Compaction compaction) {
   ByteString bytes;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytes);
   size_t len = bytes.GetLength();
@@ -115,11 +114,11 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
   sb.Reserve(len);
   size_t p = 0;
   SubMode textSubMode = SubMode::kAlpha;
-  if (compaction == TEXT) {
+  if (compaction == CBC_PDF417::Compaction::TEXT) {
     EncodeText(result, p, len, textSubMode, &sb);
-  } else if (compaction == BYTES) {
+  } else if (compaction == CBC_PDF417::Compaction::BYTES) {
     EncodeBinary(byteArr, p, byteArr.size(), EncodingMode::kByte, &sb);
-  } else if (compaction == NUMERIC) {
+  } else if (compaction == CBC_PDF417::Compaction::NUMERIC) {
     sb += kLatchToNumeric;
     EncodeNumeric(result, p, len, &sb);
   } else {

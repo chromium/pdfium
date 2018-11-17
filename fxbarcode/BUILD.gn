@@ -101,8 +101,6 @@ jumbo_source_set("fxbarcode") {
     "pdf417/BC_PDF417BarcodeMatrix.h",
     "pdf417/BC_PDF417BarcodeRow.cpp",
     "pdf417/BC_PDF417BarcodeRow.h",
-    "pdf417/BC_PDF417Compaction.cpp",
-    "pdf417/BC_PDF417Compaction.h",
     "pdf417/BC_PDF417ErrorCorrection.cpp",
     "pdf417/BC_PDF417ErrorCorrection.h",
     "pdf417/BC_PDF417HighLevelEncoder.cpp",
