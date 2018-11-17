@@ -49,21 +49,6 @@ void CBC_QRCoderErrorCorrectionLevel::Finalize() {
   delete H;
 }
 
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::ForBits(
-    int32_t bits) {
-  switch (bits) {
-    case 0x00:
-      return M;
-    case 0x01:
-      return L;
-    case 0x02:
-      return H;
-    case 0x03:
-      return Q;
-    default:
-      return nullptr;
-  }
-}
 void CBC_QRCoderErrorCorrectionLevel::Destroy() {
   if (L) {
     delete CBC_QRCoderErrorCorrectionLevel::L;

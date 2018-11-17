@@ -19,7 +19,6 @@ class CBC_QRCoderErrorCorrectionLevel {
   static void Initialize();
   static void Finalize();
   static void Destroy();
-  static CBC_QRCoderErrorCorrectionLevel* ForBits(int32_t bits);
 
   ~CBC_QRCoderErrorCorrectionLevel();
 

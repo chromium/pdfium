@@ -19,7 +19,6 @@ class CBC_QRCoderMode {
 
   static void Initialize();
   static void Finalize();
-  static CBC_QRCoderMode* ForBits(int32_t bits, int32_t& e);
   static void Destroy();
 
   int32_t GetCharacterCountBits(int32_t number, int32_t& e) const;

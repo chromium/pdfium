@@ -75,34 +75,6 @@ void CBC_QRCoderMode::Finalize() {
   delete sSTRUCTURED_APPEND;
 }
 
-CBC_QRCoderMode* CBC_QRCoderMode::ForBits(int32_t bits, int32_t& e) {
-  switch (bits) {
-    case 0x0:
-      return sTERMINATOR;
-    case 0x1:
-      return sNUMERIC;
-    case 0x2:
-      return sALPHANUMERIC;
-    case 0x3:
-      return sSTRUCTURED_APPEND;
-    case 0x4:
-      return sBYTE;
-    case 0x5:
-      return sFNC1_FIRST_POSITION;
-    case 0x7:
-      return sECI;
-    case 0x8:
-      return sKANJI;
-    case 0x9:
-      return sFNC1_SECOND_POSITION;
-    case 0x0D:
-      return sGBK;
-    default:
-      e = BCExceptionUnsupportedMode;
-      return nullptr;
-  }
-}
-
 int32_t CBC_QRCoderMode::GetBits() const {
   return m_bits;
 }
