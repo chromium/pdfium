@@ -92,15 +92,19 @@ bool CBC_EncoderContext::hasMoreCharacters() {
 size_t CBC_EncoderContext::getRemainingCharacters() {
   return getTotalMessageCharCount() - m_pos;
 }
-void CBC_EncoderContext::updateSymbolInfo(int32_t& e) {
-  updateSymbolInfo(getCodewordCount(), e);
+
+bool CBC_EncoderContext::UpdateSymbolInfo() {
+  return UpdateSymbolInfo(getCodewordCount());
 }
-void CBC_EncoderContext::updateSymbolInfo(int32_t len, int32_t& e) {
+
+bool CBC_EncoderContext::UpdateSymbolInfo(int32_t len) {
   if (!m_symbolInfo || len > m_symbolInfo->dataCapacity()) {
+    int32_t e = BCExceptionNO;
     m_symbolInfo = CBC_SymbolInfo::lookup(len, m_allowRectangular, e);
     if (e != BCExceptionNO)
-      return;
+      return false;
   }
+  return true;
 }
 
 void CBC_EncoderContext::resetSymbolInfo() {

@@ -114,17 +114,17 @@ uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
     return nullptr;
 
   WideString ecLevel;
-  int32_t e = BCExceptionNO;
-  WideString encoded =
-      CBC_HighLevelEncoder::encodeHighLevel(contents, ecLevel, false, e);
-  if (e != BCExceptionNO)
+  Optional<WideString> encoded =
+      CBC_HighLevelEncoder::EncodeHighLevel(contents, ecLevel, false);
+  if (!encoded.has_value())
     return nullptr;
+  int32_t e = BCExceptionNO;
   CBC_SymbolInfo* symbolInfo =
-      CBC_SymbolInfo::lookup(encoded.GetLength(), false, e);
+      CBC_SymbolInfo::lookup(encoded.value().GetLength(), false, e);
   if (e != BCExceptionNO)
     return nullptr;
   WideString codewords =
-      CBC_ErrorCorrection::encodeECC200(encoded, symbolInfo, e);
+      CBC_ErrorCorrection::encodeECC200(encoded.value(), symbolInfo, e);
   if (e != BCExceptionNO)
     return nullptr;
 

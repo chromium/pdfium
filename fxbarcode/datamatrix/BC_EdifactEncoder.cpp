@@ -59,9 +59,7 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
     return false;
 
   if (count == 1) {
-    int32_t e = BCExceptionNO;
-    context->updateSymbolInfo(e);
-    if (e != BCExceptionNO)
+    if (!context->UpdateSymbolInfo())
       return false;
 
     int32_t available =
@@ -79,19 +77,17 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
   bool endOfSymbolReached = !context->hasMoreCharacters();
   bool restInAscii = endOfSymbolReached && restChars <= 2;
   if (restChars <= 2) {
-    int32_t e = BCExceptionNO;
-    context->updateSymbolInfo(context->getCodewordCount() + restChars, e);
-    if (e != BCExceptionNO)
+    if (!context->UpdateSymbolInfo(context->getCodewordCount() + restChars))
       return false;
 
     int32_t available =
         context->m_symbolInfo->dataCapacity() - context->getCodewordCount();
     if (available >= 3) {
       restInAscii = false;
-      context->updateSymbolInfo(
-          context->getCodewordCount() + encoded.GetLength(), e);
-      if (e != BCExceptionNO)
+      if (!context->UpdateSymbolInfo(context->getCodewordCount() +
+                                     encoded.GetLength())) {
         return false;
+      }
     }
   }
 

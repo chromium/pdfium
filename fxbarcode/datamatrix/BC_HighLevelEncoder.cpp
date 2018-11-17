@@ -67,13 +67,14 @@ std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(WideString msg) {
 }
 
 // static
-WideString CBC_HighLevelEncoder::encodeHighLevel(WideString msg,
-                                                 WideString ecLevel,
-                                                 bool allowRectangular,
-                                                 int32_t& e) {
+Optional<WideString> CBC_HighLevelEncoder::EncodeHighLevel(
+    const WideString& msg,
+    const WideString& ecLevel,
+    bool allowRectangular) {
+  int32_t e = BCExceptionNO;
   CBC_EncoderContext context(msg, ecLevel, e);
   if (e != BCExceptionNO)
-    return WideString();
+    return {};
 
   context.setAllowRectangular(allowRectangular);
   if ((msg.Left(6) == MACRO_05_HEADER) && (msg.Last() == MACRO_TRAILER)) {
@@ -96,10 +97,8 @@ WideString CBC_HighLevelEncoder::encodeHighLevel(WideString msg,
   encoders.push_back(pdfium::MakeUnique<CBC_Base256Encoder>());
   int32_t encodingMode = ASCII_ENCODATION;
   while (context.hasMoreCharacters()) {
-    if (!encoders[encodingMode]->Encode(&context)) {
-      e = BCExceptionGeneric;
-      return L"";
-    }
+    if (!encoders[encodingMode]->Encode(&context))
+      return {};
 
     if (context.m_newEncoding >= 0) {
       encodingMode = context.m_newEncoding;
@@ -107,9 +106,8 @@ WideString CBC_HighLevelEncoder::encodeHighLevel(WideString msg,
     }
   }
   int32_t len = context.m_codewords.GetLength();
-  context.updateSymbolInfo(e);
-  if (e != BCExceptionNO)
-    return L"";
+  if (!context.UpdateSymbolInfo())
+    return {};
 
   int32_t capacity = context.m_symbolInfo->dataCapacity();
   if (len < capacity) {
@@ -129,6 +127,7 @@ WideString CBC_HighLevelEncoder::encodeHighLevel(WideString msg,
   }
   return codewords;
 }
+
 int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
                                             int32_t startpos,
                                             int32_t currentMode) {

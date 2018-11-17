@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/widestring.h"
+#include "third_party/base/optional.h"
 
 #define ASCII_ENCODATION 0
 #define C40_ENCODATION 1
@@ -25,10 +26,9 @@ class CBC_HighLevelEncoder {
 
   std::vector<uint8_t>& getBytesForMessage(WideString msg);
 
-  static WideString encodeHighLevel(WideString msg,
-                                    WideString ecLevel,
-                                    bool allowRectangular,
-                                    int32_t& e);
+  static Optional<WideString> EncodeHighLevel(const WideString& msg,
+                                              const WideString& ecLevel,
+                                              bool allowRectangular);
   static int32_t lookAheadTest(const WideString& msg,
                                int32_t startpos,
                                int32_t currentMode);

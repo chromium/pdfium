@@ -65,9 +65,7 @@ bool CBC_X12Encoder::Encode(CBC_EncoderContext* context) {
 
 bool CBC_X12Encoder::HandleEOD(CBC_EncoderContext* context,
                                WideString* buffer) {
-  int32_t e = BCExceptionNO;
-  context->updateSymbolInfo(e);
-  if (e != BCExceptionNO)
+  if (!context->UpdateSymbolInfo())
     return false;
 
   int32_t available =

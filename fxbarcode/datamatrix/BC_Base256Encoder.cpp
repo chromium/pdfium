@@ -70,9 +70,7 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
   int32_t lengthFieldSize = 1;
   int32_t currentSize =
       context->getCodewordCount() + dataCount + lengthFieldSize;
-  int32_t e = BCExceptionNO;
-  context->updateSymbolInfo(currentSize, e);
-  if (e != BCExceptionNO)
+  if (!context->UpdateSymbolInfo(currentSize))
     return false;
 
   bool mustPad = (context->m_symbolInfo->dataCapacity() - currentSize) > 0;

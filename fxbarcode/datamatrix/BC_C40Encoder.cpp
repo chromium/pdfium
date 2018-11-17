@@ -65,8 +65,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
 
     int32_t unwritten = (buffer.GetLength() / 3) * 2;
     int32_t curCodewordCount = context->getCodewordCount() + unwritten;
-    context->updateSymbolInfo(curCodewordCount, e);
-    if (e != BCExceptionNO)
+    if (!context->UpdateSymbolInfo(curCodewordCount))
       return false;
 
     int32_t available =
@@ -111,9 +110,7 @@ bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
   int32_t unwritten = (buffer->GetLength() / 3) * 2;
   int32_t rest = buffer->GetLength() % 3;
   int32_t curCodewordCount = context->getCodewordCount() + unwritten;
-  int32_t e = BCExceptionNO;
-  context->updateSymbolInfo(curCodewordCount, e);
-  if (e != BCExceptionNO)
+  if (!context->UpdateSymbolInfo(curCodewordCount))
     return false;
 
   int32_t available = context->m_symbolInfo->dataCapacity() - curCodewordCount;

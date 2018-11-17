@@ -30,8 +30,8 @@ class CBC_EncoderContext {
   void resetEncoderSignal();
   bool hasMoreCharacters();
   size_t getRemainingCharacters();
-  void updateSymbolInfo(int32_t& e);
-  void updateSymbolInfo(int32_t len, int32_t& e);
+  bool UpdateSymbolInfo();
+  bool UpdateSymbolInfo(int32_t len);
   void resetSymbolInfo();
 
   WideString m_msg;
