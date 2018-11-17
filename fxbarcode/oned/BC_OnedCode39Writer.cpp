@@ -22,6 +22,7 @@
 
 #include "fxbarcode/oned/BC_OnedCode39Writer.h"
 
+#include <algorithm>
 #include <memory>
 
 #include "core/fxcrt/fx_extension.h"
@@ -51,6 +52,12 @@ const int16_t kOnedCode39CharacterEncoding[] = {
     0x0085, 0x0184, 0x00C4, 0x0094, 0x00A8, 0x00A2, 0x008A, 0x002A};
 static_assert(FX_ArraySize(kOnedCode39CharacterEncoding) == 44, "Wrong size");
 
+bool IsInOnedCode39Alphabet(wchar_t ch) {
+  return FXSYS_IsDecimalDigit(ch) || (ch >= L'A' && ch <= L'Z') || ch == L'-' ||
+         ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' || ch == L'/' ||
+         ch == L'+' || ch == L'%';
+}
+
 }  // namespace
 
 CBC_OnedCode39Writer::CBC_OnedCode39Writer() = default;
@@ -59,16 +66,7 @@ CBC_OnedCode39Writer::~CBC_OnedCode39Writer() = default;
 
 bool CBC_OnedCode39Writer::CheckContentValidity(
     const WideStringView& contents) {
-  for (size_t i = 0; i < contents.GetLength(); i++) {
-    wchar_t ch = contents[i];
-    if (FXSYS_IsDecimalDigit(ch) || (ch >= L'A' && ch <= L'Z') || ch == L'-' ||
-        ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' || ch == L'/' ||
-        ch == L'+' || ch == L'%') {
-      continue;
-    }
-    return false;
-  }
-  return true;
+  return std::all_of(contents.begin(), contents.end(), IsInOnedCode39Alphabet);
 }
 
 WideString CBC_OnedCode39Writer::FilterContents(
@@ -85,11 +83,8 @@ WideString CBC_OnedCode39Writer::FilterContents(
       continue;
     }
     ch = Upper(ch);
-    if (FXSYS_IsDecimalDigit(ch) || (ch >= L'A' && ch <= L'Z') || ch == L'-' ||
-        ch == L'.' || ch == L' ' || ch == L'*' || ch == L'$' || ch == L'/' ||
-        ch == L'+' || ch == L'%') {
+    if (IsInOnedCode39Alphabet(ch))
       filtercontents += ch;
-    }
   }
   return filtercontents;
 }
@@ -106,11 +101,8 @@ WideString CBC_OnedCode39Writer::RenderTextContents(
       i++;
       continue;
     }
-    if (FXSYS_IsDecimalDigit(ch) || (ch >= L'A' && ch <= L'Z') ||
-        (ch >= L'a' && ch <= L'z') || ch == L'-' || ch == L'.' || ch == L' ' ||
-        ch == L'*' || ch == L'$' || ch == L'/' || ch == L'+' || ch == L'%') {
+    if (IsInOnedCode39Alphabet(Upper(ch)))
       renderContents += ch;
-    }
   }
   return renderContents;
 }
