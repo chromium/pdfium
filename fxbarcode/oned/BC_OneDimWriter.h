@@ -79,7 +79,6 @@ class CBC_OneDimWriter : public CBC_Writer {
                                 int32_t startColor,
                                 int32_t& e);
 
-  wchar_t Upper(wchar_t ch);
   void RenderVerticalBars(int32_t outputX, int32_t width, int32_t height);
 
   bool m_bPrintChecksum = true;

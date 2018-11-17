@@ -82,7 +82,7 @@ WideString CBC_OnedCode39Writer::FilterContents(
       i++;
       continue;
     }
-    ch = Upper(ch);
+    ch = FXSYS_ToUpperASCII(ch);
     if (IsInOnedCode39Alphabet(ch))
       filtercontents += ch;
   }
@@ -101,7 +101,7 @@ WideString CBC_OnedCode39Writer::RenderTextContents(
       i++;
       continue;
     }
-    if (IsInOnedCode39Alphabet(Upper(ch)))
+    if (IsInOnedCode39Alphabet(FXSYS_ToUpperASCII(ch)))
       renderContents += ch;
   }
   return renderContents;

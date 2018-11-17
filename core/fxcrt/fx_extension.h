@@ -48,6 +48,10 @@ inline int32_t FXSYS_towupper(wchar_t c) {
   return u_toupper(c);
 }
 
+inline char FXSYS_ToUpperASCII(char c) {
+  return (c >= 'a' && c <= 'z') ? (c + ('A' - 'a')) : c;
+}
+
 inline bool FXSYS_iswalpha(wchar_t c) {
   return u_isalpha(c);
 }
@@ -71,7 +75,7 @@ inline bool FXSYS_IsHexDigit(char c) {
 inline int FXSYS_HexCharToInt(char c) {
   if (!FXSYS_IsHexDigit(c))
     return 0;
-  char upchar = std::toupper(c);
+  char upchar = FXSYS_ToUpperASCII(c);
   return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
 }
 

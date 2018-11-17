@@ -70,13 +70,6 @@ void CBC_OneDimWriter::SetFontColor(FX_ARGB color) {
   m_fontColor = color;
 }
 
-wchar_t CBC_OneDimWriter::Upper(wchar_t ch) {
-  if (ch >= 'a' && ch <= 'z') {
-    ch = ch - ('a' - 'A');
-  }
-  return ch;
-}
-
 uint8_t* CBC_OneDimWriter::EncodeWithHint(const ByteString& contents,
                                           BCFORMAT format,
                                           int32_t& outWidth,
