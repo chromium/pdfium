@@ -13,8 +13,8 @@ class CBC_SymbolInfo;
 
 class CBC_ErrorCorrection {
  public:
-  CBC_ErrorCorrection();
-  virtual ~CBC_ErrorCorrection();
+  CBC_ErrorCorrection() = delete;
+  ~CBC_ErrorCorrection() = delete;
 
   static void Initialize();
   static void Finalize();

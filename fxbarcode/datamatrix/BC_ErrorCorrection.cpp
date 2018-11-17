@@ -117,8 +117,7 @@ void CBC_ErrorCorrection::Initialize() {
   }
 }
 void CBC_ErrorCorrection::Finalize() {}
-CBC_ErrorCorrection::CBC_ErrorCorrection() {}
-CBC_ErrorCorrection::~CBC_ErrorCorrection() {}
+
 WideString CBC_ErrorCorrection::encodeECC200(WideString codewords,
                                              CBC_SymbolInfo* symbolInfo,
                                              int32_t& e) {
