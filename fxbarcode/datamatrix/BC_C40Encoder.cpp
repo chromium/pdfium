@@ -32,10 +32,10 @@
 
 namespace {
 
-WideString EncodeToC40Codewords(const WideString& sb, int32_t startPos) {
-  wchar_t c1 = sb[startPos];
-  wchar_t c2 = sb[startPos + 1];
-  wchar_t c3 = sb[startPos + 2];
+WideString EncodeToC40Codewords(const WideString& sb) {
+  wchar_t c1 = sb[0];
+  wchar_t c2 = sb[1];
+  wchar_t c3 = sb[2];
   int32_t v = (1600 * c1) + (40 * c2) + c3 + 1;
   wchar_t cw[2];
   cw[0] = static_cast<wchar_t>(v / 256);
@@ -101,7 +101,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
 
 void CBC_C40Encoder::WriteNextTriplet(CBC_EncoderContext* context,
                                       WideString* buffer) {
-  context->writeCodewords(EncodeToC40Codewords(*buffer, 0));
+  context->writeCodewords(EncodeToC40Codewords(*buffer));
   buffer->Delete(0, 3);
 }
 
