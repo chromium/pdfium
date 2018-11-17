@@ -52,7 +52,6 @@ enum BCFORMAT {
 #define BCExceptionCharactersOutsideISO88591Encoding 87
 #define BCExceptionIllegalDataCodewords 88
 #define BCExceptionIllegalStateUnexpectedCase 90
-#define BCExceptionIllegalStateMessageLengthInvalid 92
 #define BCExceptionGeneric 107
 
 #endif  // FXBARCODE_UTILS_H_

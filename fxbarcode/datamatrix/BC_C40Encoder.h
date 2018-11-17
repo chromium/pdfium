@@ -17,7 +17,7 @@ class CBC_C40Encoder : public CBC_Encoder {
 
   // CBC_Encoder
   int32_t getEncodingMode() override;
-  void Encode(CBC_EncoderContext& context, int32_t& e) override;
+  bool Encode(CBC_EncoderContext* context) override;
 
   static void writeNextTriplet(CBC_EncoderContext& context, WideString& buffer);
 

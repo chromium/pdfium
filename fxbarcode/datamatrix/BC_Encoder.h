@@ -17,7 +17,7 @@ class CBC_Encoder {
   virtual ~CBC_Encoder();
 
   virtual int32_t getEncodingMode() = 0;
-  virtual void Encode(CBC_EncoderContext& context, int32_t& e) = 0;
+  virtual bool Encode(CBC_EncoderContext* context) = 0;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_ENCODER_H_

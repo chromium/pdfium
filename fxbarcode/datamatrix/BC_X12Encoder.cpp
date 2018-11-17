@@ -31,33 +31,40 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/utils.h"
 
-CBC_X12Encoder::CBC_X12Encoder() {}
-CBC_X12Encoder::~CBC_X12Encoder() {}
+CBC_X12Encoder::CBC_X12Encoder() = default;
+
+CBC_X12Encoder::~CBC_X12Encoder() = default;
+
 int32_t CBC_X12Encoder::getEncodingMode() {
   return X12_ENCODATION;
 }
-void CBC_X12Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
+
+bool CBC_X12Encoder::Encode(CBC_EncoderContext* context) {
   WideString buffer;
-  while (context.hasMoreCharacters()) {
-    wchar_t c = context.getCurrentChar();
-    context.m_pos++;
+  while (context->hasMoreCharacters()) {
+    wchar_t c = context->getCurrentChar();
+    context->m_pos++;
+    int32_t e = BCExceptionNO;
     encodeChar(c, buffer, e);
-    if (e != BCExceptionNO) {
-      return;
-    }
+    if (e != BCExceptionNO)
+      return false;
+
     int32_t count = buffer.GetLength();
     if ((count % 3) == 0) {
-      writeNextTriplet(context, buffer);
+      writeNextTriplet(*context, buffer);
       int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
-          context.m_msg, context.m_pos, getEncodingMode());
+          context->m_msg, context->m_pos, getEncodingMode());
       if (newMode != getEncodingMode()) {
-        context.signalEncoderChange(newMode);
+        context->signalEncoderChange(newMode);
         break;
       }
     }
   }
-  handleEOD(context, buffer, e);
+  int32_t e = BCExceptionNO;
+  handleEOD(*context, buffer, e);
+  return e == BCExceptionNO;
 }
+
 void CBC_X12Encoder::handleEOD(CBC_EncoderContext& context,
                                WideString& buffer,
                                int32_t& e) {

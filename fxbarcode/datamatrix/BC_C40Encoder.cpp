@@ -53,54 +53,55 @@ int32_t CBC_C40Encoder::getEncodingMode() {
   return C40_ENCODATION;
 }
 
-void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
+bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
   WideString buffer;
-  while (context.hasMoreCharacters()) {
-    wchar_t c = context.getCurrentChar();
-    context.m_pos++;
+  while (context->hasMoreCharacters()) {
+    wchar_t c = context->getCurrentChar();
+    context->m_pos++;
+    int32_t e = BCExceptionNO;
     int32_t lastCharSize = encodeChar(c, buffer, e);
-    if (e != BCExceptionNO) {
-      return;
-    }
+    if (e != BCExceptionNO)
+      return false;
+
     int32_t unwritten = (buffer.GetLength() / 3) * 2;
-    int32_t curCodewordCount = context.getCodewordCount() + unwritten;
-    context.updateSymbolInfo(curCodewordCount, e);
-    if (e != BCExceptionNO) {
-      return;
-    }
-    int32_t available = context.m_symbolInfo->dataCapacity() - curCodewordCount;
-    if (!context.hasMoreCharacters()) {
+    int32_t curCodewordCount = context->getCodewordCount() + unwritten;
+    context->updateSymbolInfo(curCodewordCount, e);
+    if (e != BCExceptionNO)
+      return false;
+
+    int32_t available =
+        context->m_symbolInfo->dataCapacity() - curCodewordCount;
+    if (!context->hasMoreCharacters()) {
       if ((buffer.GetLength() % 3) == 2) {
         if (available < 2 || available > 2) {
-          lastCharSize = BacktrackOneCharacter(&context, &buffer, lastCharSize);
-          if (lastCharSize < 0) {
-            e = BCExceptionGeneric;
-            return;
-          }
+          lastCharSize = BacktrackOneCharacter(context, &buffer, lastCharSize);
+          if (lastCharSize < 0)
+            return false;
         }
       }
       while ((buffer.GetLength() % 3) == 1 &&
              ((lastCharSize <= 3 && available != 1) || lastCharSize > 3)) {
-        lastCharSize = BacktrackOneCharacter(&context, &buffer, lastCharSize);
-        if (lastCharSize < 0) {
-          e = BCExceptionGeneric;
-          return;
-        }
+        lastCharSize = BacktrackOneCharacter(context, &buffer, lastCharSize);
+        if (lastCharSize < 0)
+          return false;
       }
       break;
     }
     int32_t count = buffer.GetLength();
     if ((count % 3) == 0) {
       int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
-          context.m_msg, context.m_pos, getEncodingMode());
+          context->m_msg, context->m_pos, getEncodingMode());
       if (newMode != getEncodingMode()) {
-        context.signalEncoderChange(newMode);
+        context->signalEncoderChange(newMode);
         break;
       }
     }
   }
-  handleEOD(context, buffer, e);
+  int32_t e = BCExceptionNO;
+  handleEOD(*context, buffer, e);
+  return e == BCExceptionNO;
 }
+
 void CBC_C40Encoder::writeNextTriplet(CBC_EncoderContext& context,
                                       WideString& buffer) {
   context.writeCodewords(EncodeToC40Codewords(buffer, 0));

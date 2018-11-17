@@ -125,33 +125,32 @@ int32_t CBC_EdifactEncoder::getEncodingMode() {
   return EDIFACT_ENCODATION;
 }
 
-void CBC_EdifactEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
+bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
   WideString buffer;
-  while (context.hasMoreCharacters()) {
-    wchar_t c = context.getCurrentChar();
+  while (context->hasMoreCharacters()) {
+    wchar_t c = context->getCurrentChar();
+    int32_t e = BCExceptionNO;
     encodeChar(c, &buffer, e);
-    if (e != BCExceptionNO) {
-      return;
-    }
-    context.m_pos++;
+    if (e != BCExceptionNO)
+      return false;
+
+    context->m_pos++;
     int32_t count = buffer.GetLength();
     if (count >= 4) {
       WideString encoded = EncodeToEdifactCodewords(buffer, 0);
-      if (encoded.IsEmpty()) {
-        e = BCExceptionGeneric;
-        return;
-      }
-      context.writeCodewords(encoded);
+      if (encoded.IsEmpty())
+        return false;
+
+      context->writeCodewords(encoded);
       buffer.Delete(0, 4);
       int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
-          context.m_msg, context.m_pos, getEncodingMode());
+          context->m_msg, context->m_pos, getEncodingMode());
       if (newMode != getEncodingMode()) {
-        context.signalEncoderChange(ASCII_ENCODATION);
+        context->signalEncoderChange(ASCII_ENCODATION);
         break;
       }
     }
   }
   buffer += static_cast<wchar_t>(31);
-  if (!HandleEOD(&context, buffer))
-    e = BCExceptionGeneric;
+  return HandleEOD(context, buffer);
 }

@@ -96,9 +96,10 @@ WideString CBC_HighLevelEncoder::encodeHighLevel(WideString msg,
   encoders.push_back(pdfium::MakeUnique<CBC_Base256Encoder>());
   int32_t encodingMode = ASCII_ENCODATION;
   while (context.hasMoreCharacters()) {
-    encoders[encodingMode]->Encode(context, e);
-    if (e != BCExceptionNO)
+    if (!encoders[encodingMode]->Encode(&context)) {
+      e = BCExceptionGeneric;
       return L"";
+    }
 
     if (context.m_newEncoding >= 0) {
       encodingMode = context.m_newEncoding;

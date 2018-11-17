@@ -48,18 +48,18 @@ int32_t CBC_Base256Encoder::getEncodingMode() {
   return BASE256_ENCODATION;
 }
 
-void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
+bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
   WideString buffer;
-  buffer.Reserve(context.getRemainingCharacters() + 1);
+  buffer.Reserve(context->getRemainingCharacters() + 1);
   buffer += L'\0';
-  while (context.hasMoreCharacters()) {
-    wchar_t c = context.getCurrentChar();
+  while (context->hasMoreCharacters()) {
+    wchar_t c = context->getCurrentChar();
     buffer += c;
-    context.m_pos++;
+    context->m_pos++;
     int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
-        context.m_msg, context.m_pos, getEncodingMode());
+        context->m_msg, context->m_pos, getEncodingMode());
     if (newMode != getEncodingMode()) {
-      context.signalEncoderChange(newMode);
+      context->signalEncoderChange(newMode);
       break;
     }
   }
@@ -69,24 +69,26 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   buffer.SetAt(0, static_cast<wchar_t>(*buf) - '0');
   int32_t lengthFieldSize = 1;
   int32_t currentSize =
-      context.getCodewordCount() + dataCount + lengthFieldSize;
-  context.updateSymbolInfo(currentSize, e);
-  if (e != BCExceptionNO) {
-    return;
-  }
-  bool mustPad = (context.m_symbolInfo->dataCapacity() - currentSize) > 0;
-  if (context.hasMoreCharacters() || mustPad) {
+      context->getCodewordCount() + dataCount + lengthFieldSize;
+  int32_t e = BCExceptionNO;
+  context->updateSymbolInfo(currentSize, e);
+  if (e != BCExceptionNO)
+    return false;
+
+  bool mustPad = (context->m_symbolInfo->dataCapacity() - currentSize) > 0;
+  if (context->hasMoreCharacters() || mustPad) {
     if (dataCount <= 249) {
       buffer.SetAt(0, static_cast<wchar_t>(dataCount));
     } else if (dataCount > 249 && dataCount <= 1555) {
       buffer.SetAt(0, static_cast<wchar_t>((dataCount / 250) + 249));
       buffer.Insert(1, static_cast<wchar_t>(dataCount % 250));
     } else {
-      e = BCExceptionIllegalStateMessageLengthInvalid;
-      return;
+      return false;
     }
   }
   for (const auto& c : buffer) {
-    context.writeCodeword(Randomize255State(c, context.getCodewordCount() + 1));
+    context->writeCodeword(
+        Randomize255State(c, context->getCodewordCount() + 1));
   }
+  return true;
 }
