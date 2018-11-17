@@ -19,11 +19,9 @@ class CBC_C40Encoder : public CBC_Encoder {
   int32_t getEncodingMode() override;
   bool Encode(CBC_EncoderContext* context) override;
 
-  static void writeNextTriplet(CBC_EncoderContext& context, WideString& buffer);
+  static void WriteNextTriplet(CBC_EncoderContext* context, WideString* buffer);
 
-  virtual void handleEOD(CBC_EncoderContext& context,
-                         WideString& buffer,
-                         int32_t& e);
+  virtual bool HandleEOD(CBC_EncoderContext* context, WideString* buffer);
   virtual int32_t encodeChar(wchar_t c, WideString& sb, int32_t& e);
 
  private:

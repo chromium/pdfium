@@ -51,7 +51,7 @@ bool CBC_X12Encoder::Encode(CBC_EncoderContext* context) {
 
     int32_t count = buffer.GetLength();
     if ((count % 3) == 0) {
-      writeNextTriplet(*context, buffer);
+      WriteNextTriplet(context, &buffer);
       int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
           context->m_msg, context->m_pos, getEncodingMode());
       if (newMode != getEncodingMode()) {
@@ -60,33 +60,33 @@ bool CBC_X12Encoder::Encode(CBC_EncoderContext* context) {
       }
     }
   }
-  int32_t e = BCExceptionNO;
-  handleEOD(*context, buffer, e);
-  return e == BCExceptionNO;
+  return HandleEOD(context, &buffer);
 }
 
-void CBC_X12Encoder::handleEOD(CBC_EncoderContext& context,
-                               WideString& buffer,
-                               int32_t& e) {
-  context.updateSymbolInfo(e);
-  if (e != BCExceptionNO) {
-    return;
-  }
+bool CBC_X12Encoder::HandleEOD(CBC_EncoderContext* context,
+                               WideString* buffer) {
+  int32_t e = BCExceptionNO;
+  context->updateSymbolInfo(e);
+  if (e != BCExceptionNO)
+    return false;
+
   int32_t available =
-      context.m_symbolInfo->dataCapacity() - context.getCodewordCount();
-  int32_t count = buffer.GetLength();
+      context->m_symbolInfo->dataCapacity() - context->getCodewordCount();
+  int32_t count = buffer->GetLength();
   if (count == 2) {
-    context.writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);
-    context.m_pos -= 2;
-    context.signalEncoderChange(ASCII_ENCODATION);
+    context->writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);
+    context->m_pos -= 2;
+    context->signalEncoderChange(ASCII_ENCODATION);
   } else if (count == 1) {
-    context.m_pos--;
+    context->m_pos--;
     if (available > 1) {
-      context.writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);
+      context->writeCodeword(CBC_HighLevelEncoder::X12_UNLATCH);
     }
-    context.signalEncoderChange(ASCII_ENCODATION);
+    context->signalEncoderChange(ASCII_ENCODATION);
   }
+  return true;
 }
+
 int32_t CBC_X12Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
   if (c == '\r') {
     sb += (wchar_t)'\0';

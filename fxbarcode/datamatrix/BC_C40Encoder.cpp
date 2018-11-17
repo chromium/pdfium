@@ -97,55 +97,51 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
       }
     }
   }
-  int32_t e = BCExceptionNO;
-  handleEOD(*context, buffer, e);
-  return e == BCExceptionNO;
+  return HandleEOD(context, &buffer);
 }
 
-void CBC_C40Encoder::writeNextTriplet(CBC_EncoderContext& context,
-                                      WideString& buffer) {
-  context.writeCodewords(EncodeToC40Codewords(buffer, 0));
-  buffer.Delete(0, 3);
+void CBC_C40Encoder::WriteNextTriplet(CBC_EncoderContext* context,
+                                      WideString* buffer) {
+  context->writeCodewords(EncodeToC40Codewords(*buffer, 0));
+  buffer->Delete(0, 3);
 }
-void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
-                               WideString& buffer,
-                               int32_t& e) {
-  int32_t unwritten = (buffer.GetLength() / 3) * 2;
-  int32_t rest = buffer.GetLength() % 3;
-  int32_t curCodewordCount = context.getCodewordCount() + unwritten;
-  context.updateSymbolInfo(curCodewordCount, e);
-  if (e != BCExceptionNO) {
-    return;
-  }
-  int32_t available = context.m_symbolInfo->dataCapacity() - curCodewordCount;
+
+bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
+                               WideString* buffer) {
+  int32_t unwritten = (buffer->GetLength() / 3) * 2;
+  int32_t rest = buffer->GetLength() % 3;
+  int32_t curCodewordCount = context->getCodewordCount() + unwritten;
+  int32_t e = BCExceptionNO;
+  context->updateSymbolInfo(curCodewordCount, e);
+  if (e != BCExceptionNO)
+    return false;
+
+  int32_t available = context->m_symbolInfo->dataCapacity() - curCodewordCount;
   if (rest == 2) {
-    buffer += (wchar_t)'\0';
-    while (buffer.GetLength() >= 3) {
-      writeNextTriplet(context, buffer);
-    }
-    if (context.hasMoreCharacters()) {
-      context.writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
+    *buffer += (wchar_t)'\0';
+    while (buffer->GetLength() >= 3)
+      WriteNextTriplet(context, buffer);
+    if (context->hasMoreCharacters()) {
+      context->writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
     }
   } else if (available == 1 && rest == 1) {
-    while (buffer.GetLength() >= 3) {
-      writeNextTriplet(context, buffer);
+    while (buffer->GetLength() >= 3)
+      WriteNextTriplet(context, buffer);
+    if (context->hasMoreCharacters()) {
+      context->writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
     }
-    if (context.hasMoreCharacters()) {
-      context.writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
-    }
-    context.m_pos--;
+    context->m_pos--;
   } else if (rest == 0) {
-    while (buffer.GetLength() >= 3) {
-      writeNextTriplet(context, buffer);
-    }
-    if (available > 0 || context.hasMoreCharacters()) {
-      context.writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
+    while (buffer->GetLength() >= 3)
+      WriteNextTriplet(context, buffer);
+    if (available > 0 || context->hasMoreCharacters()) {
+      context->writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
     }
   } else {
-    e = BCExceptionIllegalStateUnexpectedCase;
-    return;
+    return false;
   }
-  context.signalEncoderChange(ASCII_ENCODATION);
+  context->signalEncoderChange(ASCII_ENCODATION);
+  return true;
 }
 
 int32_t CBC_C40Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
