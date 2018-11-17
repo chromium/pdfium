@@ -45,11 +45,14 @@ WideString EncodeToC40Codewords(const WideString& sb, int32_t startPos) {
 
 }  // namespace
 
-CBC_C40Encoder::CBC_C40Encoder() {}
-CBC_C40Encoder::~CBC_C40Encoder() {}
+CBC_C40Encoder::CBC_C40Encoder() = default;
+
+CBC_C40Encoder::~CBC_C40Encoder() = default;
+
 int32_t CBC_C40Encoder::getEncodingMode() {
   return C40_ENCODATION;
 }
+
 void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   WideString buffer;
   while (context.hasMoreCharacters()) {

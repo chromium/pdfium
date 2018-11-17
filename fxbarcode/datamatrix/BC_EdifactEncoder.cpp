@@ -117,9 +117,9 @@ void encodeChar(wchar_t c, WideString* sb, int32_t& e) {
 
 }  // namespace
 
-CBC_EdifactEncoder::CBC_EdifactEncoder() {}
+CBC_EdifactEncoder::CBC_EdifactEncoder() = default;
 
-CBC_EdifactEncoder::~CBC_EdifactEncoder() {}
+CBC_EdifactEncoder::~CBC_EdifactEncoder() = default;
 
 int32_t CBC_EdifactEncoder::getEncodingMode() {
   return EDIFACT_ENCODATION;

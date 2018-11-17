@@ -17,9 +17,6 @@ class CBC_Base256Encoder final : public CBC_Encoder {
   // CBC_Encoder
   int32_t getEncodingMode() override;
   void Encode(CBC_EncoderContext& context, int32_t& e) override;
-
- private:
-  static wchar_t randomize255State(wchar_t ch, int32_t codewordPosition);
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_BASE256ENCODER_H_

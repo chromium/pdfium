@@ -43,9 +43,9 @@ Optional<wchar_t> EncodeASCIIDigits(wchar_t digit1, wchar_t digit2) {
 
 }  // namespace
 
-CBC_ASCIIEncoder::CBC_ASCIIEncoder() {}
+CBC_ASCIIEncoder::CBC_ASCIIEncoder() = default;
 
-CBC_ASCIIEncoder::~CBC_ASCIIEncoder() {}
+CBC_ASCIIEncoder::~CBC_ASCIIEncoder() = default;
 
 int32_t CBC_ASCIIEncoder::getEncodingMode() {
   return ASCII_ENCODATION;

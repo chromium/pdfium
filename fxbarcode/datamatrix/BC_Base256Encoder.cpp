@@ -28,11 +28,26 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/utils.h"
 
-CBC_Base256Encoder::CBC_Base256Encoder() {}
-CBC_Base256Encoder::~CBC_Base256Encoder() {}
+namespace {
+
+wchar_t Randomize255State(wchar_t ch, int32_t position) {
+  int32_t pseudoRandom = ((149 * position) % 255) + 1;
+  int32_t tempVariable = ch + pseudoRandom;
+  if (tempVariable <= 255)
+    return static_cast<wchar_t>(tempVariable);
+  return static_cast<wchar_t>(tempVariable - 256);
+}
+
+}  // namespace
+
+CBC_Base256Encoder::CBC_Base256Encoder() = default;
+
+CBC_Base256Encoder::~CBC_Base256Encoder() = default;
+
 int32_t CBC_Base256Encoder::getEncodingMode() {
   return BASE256_ENCODATION;
 }
+
 void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   WideString buffer;
   buffer.Reserve(context.getRemainingCharacters() + 1);
@@ -72,16 +87,6 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
     }
   }
   for (const auto& c : buffer) {
-    context.writeCodeword(randomize255State(c, context.getCodewordCount() + 1));
-  }
-}
-wchar_t CBC_Base256Encoder::randomize255State(wchar_t ch,
-                                              int32_t codewordPosition) {
-  int32_t pseudoRandom = ((149 * codewordPosition) % 255) + 1;
-  int32_t tempVariable = ch + pseudoRandom;
-  if (tempVariable <= 255) {
-    return static_cast<wchar_t>(tempVariable);
-  } else {
-    return static_cast<wchar_t>(tempVariable - 256);
+    context.writeCodeword(Randomize255State(c, context.getCodewordCount() + 1));
   }
 }
