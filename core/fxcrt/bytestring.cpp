@@ -668,10 +668,6 @@ size_t ByteString::Replace(const ByteStringView& pOld,
   return nCount;
 }
 
-WideString ByteString::UTF8Decode() const {
-  return WideString::FromUTF8(AsStringView());
-}
-
 int ByteString::Compare(const ByteStringView& str) const {
   if (!m_pData)
     return str.IsEmpty() ? 0 : -1;

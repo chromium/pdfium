@@ -772,7 +772,7 @@ void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace, const WideString* pFaceName) {
       table.clear();
   }
   pFont->m_wsFamilyNames = GetNames(table.empty() ? nullptr : table.data());
-  pFont->m_wsFamilyNames.push_back(ByteString(pFace->family_name).UTF8Decode());
+  pFont->m_wsFamilyNames.push_back(WideString::FromUTF8(pFace->family_name));
   pFont->m_wsFaceName =
       pFaceName ? *pFaceName
                 : WideString::FromLocal(FXFT_Get_Postscript_Name(pFace));

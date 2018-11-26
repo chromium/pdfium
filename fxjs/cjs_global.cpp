@@ -326,15 +326,16 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
         SetGlobalVariables(pData->data.sKey, CFX_Value::DataType::NUMBER,
                            pData->data.dData, false, "",
                            v8::Local<v8::Object>(), pData->bPersistent == 1);
-        pRuntime->PutObjectProperty(ToV8Object(), pData->data.sKey.UTF8Decode(),
-                                    pRuntime->NewNumber(pData->data.dData));
+        pRuntime->PutObjectProperty(
+            ToV8Object(), WideString::FromUTF8(pData->data.sKey.AsStringView()),
+            pRuntime->NewNumber(pData->data.dData));
         break;
       case CFX_Value::DataType::BOOLEAN:
         SetGlobalVariables(pData->data.sKey, CFX_Value::DataType::BOOLEAN, 0,
                            pData->data.bData == 1, "", v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
         pRuntime->PutObjectProperty(
-            ToV8Object(), pData->data.sKey.UTF8Decode(),
+            ToV8Object(), WideString::FromUTF8(pData->data.sKey.AsStringView()),
             pRuntime->NewBoolean(pData->data.bData == 1));
         break;
       case CFX_Value::DataType::STRING:
@@ -342,8 +343,10 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
                            false, pData->data.sData, v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
         pRuntime->PutObjectProperty(
-            ToV8Object(), pData->data.sKey.UTF8Decode(),
-            pRuntime->NewString(pData->data.sData.UTF8Decode().AsStringView()));
+            ToV8Object(), WideString::FromUTF8(pData->data.sKey.AsStringView()),
+            pRuntime->NewString(
+                WideString::FromUTF8(pData->data.sData.AsStringView())
+                    .AsStringView()));
         break;
       case CFX_Value::DataType::OBJECT: {
         v8::Local<v8::Object> pObj = pRuntime->NewObject();
@@ -351,16 +354,18 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
           PutObjectProperty(pObj, &pData->data);
           SetGlobalVariables(pData->data.sKey, CFX_Value::DataType::OBJECT, 0,
                              false, "", pObj, pData->bPersistent == 1);
-          pRuntime->PutObjectProperty(ToV8Object(),
-                                      pData->data.sKey.UTF8Decode(), pObj);
+          pRuntime->PutObjectProperty(
+              ToV8Object(),
+              WideString::FromUTF8(pData->data.sKey.AsStringView()), pObj);
         }
       } break;
       case CFX_Value::DataType::NULLOBJ:
         SetGlobalVariables(pData->data.sKey, CFX_Value::DataType::NULLOBJ, 0,
                            false, "", v8::Local<v8::Object>(),
                            pData->bPersistent == 1);
-        pRuntime->PutObjectProperty(ToV8Object(), pData->data.sKey.UTF8Decode(),
-                                    pRuntime->NewNull());
+        pRuntime->PutObjectProperty(
+            ToV8Object(), WideString::FromUTF8(pData->data.sKey.AsStringView()),
+            pRuntime->NewNull());
         break;
     }
   }
@@ -462,29 +467,35 @@ void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
     CFX_KeyValue* pObjData = pData->objData.GetAt(i);
     switch (pObjData->nType) {
       case CFX_Value::DataType::NUMBER:
-        pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),
-                                    pRuntime->NewNumber(pObjData->dData));
+        pRuntime->PutObjectProperty(
+            pObj, WideString::FromUTF8(pObjData->sKey.AsStringView()),
+            pRuntime->NewNumber(pObjData->dData));
         break;
       case CFX_Value::DataType::BOOLEAN:
-        pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),
-                                    pRuntime->NewBoolean(pObjData->bData == 1));
+        pRuntime->PutObjectProperty(
+            pObj, WideString::FromUTF8(pObjData->sKey.AsStringView()),
+            pRuntime->NewBoolean(pObjData->bData == 1));
         break;
       case CFX_Value::DataType::STRING:
         pRuntime->PutObjectProperty(
-            pObj, pObjData->sKey.UTF8Decode(),
-            pRuntime->NewString(pObjData->sData.UTF8Decode().AsStringView()));
+            pObj, WideString::FromUTF8(pObjData->sKey.AsStringView()),
+            pRuntime->NewString(
+                WideString::FromUTF8(pObjData->sData.AsStringView())
+                    .AsStringView()));
         break;
       case CFX_Value::DataType::OBJECT: {
         v8::Local<v8::Object> pNewObj = pRuntime->NewObject();
         if (!pNewObj.IsEmpty()) {
           PutObjectProperty(pNewObj, pObjData);
-          pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),
-                                      pNewObj);
+          pRuntime->PutObjectProperty(
+              pObj, WideString::FromUTF8(pObjData->sKey.AsStringView()),
+              pNewObj);
         }
       } break;
       case CFX_Value::DataType::NULLOBJ:
-        pRuntime->PutObjectProperty(pObj, pObjData->sKey.UTF8Decode(),
-                                    pRuntime->NewNull());
+        pRuntime->PutObjectProperty(
+            pObj, WideString::FromUTF8(pObjData->sKey.AsStringView()),
+            pRuntime->NewNull());
         break;
     }
   }

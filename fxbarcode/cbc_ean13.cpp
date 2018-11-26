@@ -42,7 +42,7 @@ WideString CBC_EAN13::Preprocess(const WideStringView& contents) {
     ByteString byteString = encodeContents.UTF8Encode();
     int32_t checksum = pWriter->CalcChecksum(byteString);
     byteString += checksum - 0 + '0';
-    encodeContents = byteString.UTF8Decode();
+    encodeContents = WideString::FromUTF8(byteString.AsStringView());
   }
   if (length > 13)
     encodeContents = encodeContents.Left(13);

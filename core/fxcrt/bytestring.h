@@ -24,7 +24,6 @@ namespace fxcrt {
 class ByteString_Assign_Test;
 class ByteString_Concat_Test;
 class StringPool_ByteString_Test;
-class WideString;
 
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
@@ -194,10 +193,7 @@ class ByteString {
   void TrimRight(const ByteStringView& targets);
 
   size_t Replace(const ByteStringView& lpszOld, const ByteStringView& lpszNew);
-
   size_t Remove(char ch);
-
-  WideString UTF8Decode() const;
 
   uint32_t GetID() const { return AsStringView().GetID(); }
 

@@ -95,7 +95,9 @@ FPDF_StructElement_GetType(FPDF_STRUCTELEMENT struct_element,
                            unsigned long buflen) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  return elem ? WideStringToBuffer(elem->GetType().UTF8Decode(), buffer, buflen)
+  return elem ? WideStringToBuffer(
+                    WideString::FromUTF8(elem->GetType().AsStringView()),
+                    buffer, buflen)
               : 0;
 }
 
@@ -105,9 +107,10 @@ FPDF_StructElement_GetTitle(FPDF_STRUCTELEMENT struct_element,
                             unsigned long buflen) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
-  return elem
-             ? WideStringToBuffer(elem->GetTitle().UTF8Decode(), buffer, buflen)
-             : 0;
+  return elem ? WideStringToBuffer(
+                    WideString::FromUTF8(elem->GetTitle().AsStringView()),
+                    buffer, buflen)
+              : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

@@ -77,7 +77,7 @@ ByteString CFX_FontSourceEnum_File::GetNextFile() {
 }
 
 void CFX_FontSourceEnum_File::GetNext() {
-  m_wsNext = GetNextFile().UTF8Decode();
+  m_wsNext = WideString::FromUTF8(GetNextFile().AsStringView());
 }
 
 bool CFX_FontSourceEnum_File::HasNext() const {
