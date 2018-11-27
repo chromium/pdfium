@@ -14,8 +14,6 @@ jumbo_source_set("fxbarcode") {
     "BC_Library.h",
     "BC_TwoDimWriter.cpp",
     "BC_TwoDimWriter.h",
-    "BC_UtilCodingConvert.cpp",
-    "BC_UtilCodingConvert.h",
     "BC_Writer.cpp",
     "BC_Writer.h",
     "cbc_codabar.cpp",

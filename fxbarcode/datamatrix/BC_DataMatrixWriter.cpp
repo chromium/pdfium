@@ -25,7 +25,6 @@
 #include <memory>
 
 #include "fxbarcode/BC_TwoDimWriter.h"
-#include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"

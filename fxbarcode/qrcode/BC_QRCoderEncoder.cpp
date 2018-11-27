@@ -27,7 +27,6 @@
 #include <utility>
 #include <vector>
 
-#include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
@@ -468,8 +467,7 @@ bool CBC_QRCoderEncoder::Encode(const WideString& content,
                                 const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                 CBC_QRCoder* qrCode) {
   ByteString encoding = "utf8";
-  ByteString utf8Data;
-  CBC_UtilCodingConvert::UnicodeToUTF8(content, utf8Data);
+  ByteString utf8Data = content.ToUTF8();
   CBC_QRCoderMode* mode = ChooseMode(utf8Data, encoding);
   CBC_QRCoderBitVector dataBits;
   if (!AppendBytes(utf8Data, mode, &dataBits, encoding))

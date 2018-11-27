@@ -27,7 +27,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_extension.h"
-#include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_ASCIIEncoder.h"
 #include "fxbarcode/datamatrix/BC_Base256Encoder.h"
@@ -60,8 +59,7 @@ CBC_HighLevelEncoder::CBC_HighLevelEncoder() {}
 CBC_HighLevelEncoder::~CBC_HighLevelEncoder() {}
 
 std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(WideString msg) {
-  ByteString bytestr;
-  CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytestr);
+  ByteString bytestr = msg.ToUTF8();
   m_bytearray.insert(m_bytearray.end(), bytestr.begin(), bytestr.end());
   return m_bytearray;
 }

@@ -24,7 +24,6 @@
 
 #include <utility>
 
-#include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
@@ -33,8 +32,7 @@
 CBC_EncoderContext::CBC_EncoderContext(const WideString& msg,
                                        const WideString& ecLevel,
                                        int32_t& e) {
-  ByteString dststr;
-  CBC_UtilCodingConvert::UnicodeToUTF8(msg, dststr);
+  ByteString dststr = msg.ToUTF8();
   size_t c = dststr.GetLength();
   WideString sb;
   sb.Reserve(c);
