@@ -302,7 +302,7 @@ std::ostream& operator<<(std::ostream& os, const CFX_RectF& rect) {
 
 std::tuple<float, float, float, float, float, float> CFX_Matrix::AsTuple()
     const {
-  return {a, b, c, d, e, f};
+  return std::make_tuple(a, b, c, d, e, f);
 }
 
 CFX_Matrix CFX_Matrix::GetInverse() const {
