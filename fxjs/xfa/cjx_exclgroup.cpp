@@ -130,7 +130,7 @@ void CJX_ExclGroup::defaultValue(CFXJSE_Value* pValue,
     pValue->SetNull();
     return;
   }
-  pValue->SetString(wsValue.UTF8Encode().AsStringView());
+  pValue->SetString(wsValue.ToUTF8().AsStringView());
 }
 
 void CJX_ExclGroup::rawValue(CFXJSE_Value* pValue,

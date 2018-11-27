@@ -38,7 +38,7 @@ WideString CBC_UPCA::Preprocess(const WideStringView& contents) {
     for (int32_t i = 0; i < 11 - length; i++)
       encodeContents = wchar_t('0') + encodeContents;
 
-    ByteString byteString = encodeContents.UTF8Encode();
+    ByteString byteString = encodeContents.ToUTF8();
     int32_t checksum = pWriter->CalcChecksum(byteString);
     byteString += checksum - 0 + '0';
     encodeContents = WideString::FromUTF8(byteString.AsStringView());
@@ -57,7 +57,7 @@ bool CBC_UPCA::Encode(const WideStringView& contents) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   m_renderContents = Preprocess(contents);
-  ByteString byteString = m_renderContents.UTF8Encode();
+  ByteString byteString = m_renderContents.ToUTF8();
   CBC_OnedUPCAWriter* pWriter = GetOnedUPCAWriter();
   pWriter->Init();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(

@@ -145,7 +145,7 @@ void CJX_Tree::nodes(CFXJSE_Value* pValue,
 
   if (bSetting) {
     WideString wsMessage = L"Unable to set ";
-    FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringView());
+    FXJSE_ThrowMessage(wsMessage.ToUTF8().AsStringView());
     return;
   }
 
@@ -213,7 +213,7 @@ void CJX_Tree::somExpression(CFXJSE_Value* pValue,
   }
 
   WideString wsSOMExpression = GetXFAObject()->GetSOMExpression();
-  pValue->SetString(wsSOMExpression.UTF8Encode().AsStringView());
+  pValue->SetString(wsSOMExpression.ToUTF8().AsStringView());
 }
 
 void CJX_Tree::ResolveNodeList(CFXJSE_Value* pValue,

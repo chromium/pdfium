@@ -183,7 +183,7 @@ FPDFAction_GetFilePath(FPDF_ACTION pDict, void* buffer, unsigned long buflen) {
     return 0;
 
   CPDF_Action action(CPDFDictionaryFromFPDFAction(pDict));
-  ByteString path = action.GetFilePath().UTF8Encode();
+  ByteString path = action.GetFilePath().ToUTF8();
   unsigned long len = path.GetLength() + 1;
   if (buffer && len <= buflen)
     memcpy(buffer, path.c_str(), len);

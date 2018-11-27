@@ -341,13 +341,13 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
     RegenerateFormFile_Changed(pNode, buf, bSaveXML);
     size_t nLen = buf.GetLength();
     if (nLen > 0)
-      pStream->WriteString(buf.MakeString().UTF8Encode().AsStringView());
+      pStream->WriteString(buf.MakeString().ToUTF8().AsStringView());
     return;
   }
 
   WideString wsElement(pNode->GetClassName());
   pStream->WriteString("<");
-  pStream->WriteString(wsElement.UTF8Encode().AsStringView());
+  pStream->WriteString(wsElement.ToUTF8().AsStringView());
 
   WideString wsOutput;
   SaveAttribute(pNode, XFA_Attribute::Name, L"name", true, wsOutput);
@@ -366,7 +366,7 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
   }
 
   if (!wsOutput.IsEmpty())
-    pStream->WriteString(wsOutput.UTF8Encode().AsStringView());
+    pStream->WriteString(wsOutput.ToUTF8().AsStringView());
 
   CXFA_Node* pChildNode = pNode->GetFirstChild();
   if (!pChildNode) {
@@ -380,7 +380,7 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
     pChildNode = pChildNode->GetNextSibling();
   }
   pStream->WriteString("</");
-  pStream->WriteString(wsElement.UTF8Encode().AsStringView());
+  pStream->WriteString(wsElement.ToUTF8().AsStringView());
   pStream->WriteString(">\n");
 }
 
@@ -518,7 +518,7 @@ void XFA_DataExporter_RegenerateFormFile(
       wsVersionNumber = L"2.8";
 
     wsVersionNumber += L"/\"\n>";
-    pStream->WriteString(wsVersionNumber.UTF8Encode().AsStringView());
+    pStream->WriteString(wsVersionNumber.ToUTF8().AsStringView());
 
     CXFA_Node* pChildNode = pNode->GetFirstChild();
     while (pChildNode) {

@@ -24,7 +24,7 @@ void StringProperty(CFXJSE_Value* pReturn, WideString* wsValue, bool bSetting) {
     return;
   }
 
-  pReturn->SetString(wsValue->UTF8Encode().AsStringView());
+  pReturn->SetString(wsValue->ToUTF8().AsStringView());
 }
 
 void InterProperty(CFXJSE_Value* pReturn, int32_t* iValue, bool bSetting) {
@@ -112,7 +112,7 @@ void CJX_EventPseudoModel::newText(CFXJSE_Value* pValue,
   if (!pEventParam)
     return;
 
-  pValue->SetString(pEventParam->GetNewText().UTF8Encode().AsStringView());
+  pValue->SetString(pEventParam->GetNewText().ToUTF8().AsStringView());
 }
 
 void CJX_EventPseudoModel::prevContentType(CFXJSE_Value* pValue,

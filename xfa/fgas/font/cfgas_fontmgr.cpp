@@ -522,7 +522,7 @@ FXFT_Face LoadFace(const RetainPtr<IFX_SeekableReadStream>& pFontStream,
 bool VerifyUnicodeForFontDescriptor(CFX_FontDescriptor* pDesc,
                                     wchar_t wcUnicode) {
   RetainPtr<IFX_SeekableReadStream> pFileRead =
-      CreateFontStream(pDesc->m_wsFaceName.UTF8Encode());
+      CreateFontStream(pDesc->m_wsFaceName.ToUTF8());
   if (!pFileRead)
     return false;
 
@@ -715,7 +715,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFontInternal(
     return nullptr;
 
   RetainPtr<IFX_SeekableReadStream> pFontStream =
-      CreateFontStream(wsFaceName.UTF8Encode());
+      CreateFontStream(wsFaceName.ToUTF8());
   if (!pFontStream)
     return nullptr;
 

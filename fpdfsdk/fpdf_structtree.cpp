@@ -20,7 +20,7 @@ unsigned long WideStringToBuffer(const WideString& str,
   if (str.IsEmpty())
     return 0;
 
-  ByteString encodedStr = str.UTF16LE_Encode();
+  ByteString encodedStr = str.ToUTF16LE();
   const unsigned long len = encodedStr.GetLength();
   if (buffer && len <= buflen)
     memcpy(buffer, encodedStr.c_str(), len);

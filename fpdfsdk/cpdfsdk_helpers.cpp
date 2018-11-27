@@ -171,7 +171,7 @@ CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
 ByteString CFXByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
   return WideString::FromUTF16LE(wide_string,
                                  WideString::WStringLength(wide_string))
-      .UTF8Encode();
+      .ToUTF8();
 }
 
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
@@ -323,7 +323,7 @@ unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
 unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   void* buffer,
                                                   unsigned long buflen) {
-  ByteString encoded_text = text.UTF16LE_Encode();
+  ByteString encoded_text = text.ToUTF16LE();
   unsigned long len = encoded_text.GetLength();
   if (buffer && len <= buflen)
     memcpy(buffer, encoded_text.c_str(), len);

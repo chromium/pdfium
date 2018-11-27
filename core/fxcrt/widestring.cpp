@@ -654,11 +654,11 @@ ByteString WideString::ToDefANSI() const {
   return bstr;
 }
 
-ByteString WideString::UTF8Encode() const {
+ByteString WideString::ToUTF8() const {
   return FX_UTF8Encode(AsStringView());
 }
 
-ByteString WideString::UTF16LE_Encode() const {
+ByteString WideString::ToUTF16LE() const {
   if (!m_pData)
     return ByteString("\0\0", 2);
 
@@ -1033,7 +1033,7 @@ std::wostream& operator<<(std::wostream& os, const WideString& str) {
 }
 
 std::ostream& operator<<(std::ostream& os, const WideString& str) {
-  os << str.UTF8Encode();
+  os << str.ToUTF8();
   return os;
 }
 

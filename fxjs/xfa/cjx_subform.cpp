@@ -90,7 +90,7 @@ void CJX_Subform::locale(CFXJSE_Value* pValue,
   }
 
   WideString wsLocaleName = GetXFANode()->GetLocaleName().value_or(L"");
-  pValue->SetString(wsLocaleName.UTF8Encode().AsStringView());
+  pValue->SetString(wsLocaleName.ToUTF8().AsStringView());
 }
 
 void CJX_Subform::instanceIndex(CFXJSE_Value* pValue,

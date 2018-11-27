@@ -47,11 +47,11 @@ void CFX_XMLInstruction::Save(
   }
 
   pXMLStream->WriteString("<?");
-  pXMLStream->WriteString(name_.UTF8Encode().AsStringView());
+  pXMLStream->WriteString(name_.ToUTF8().AsStringView());
   pXMLStream->WriteString(" ");
 
   for (const WideString& target : target_data_) {
-    pXMLStream->WriteString(target.UTF8Encode().AsStringView());
+    pXMLStream->WriteString(target.ToUTF8().AsStringView());
     pXMLStream->WriteString(" ");
   }
 

@@ -207,7 +207,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
   if (wsImage.GetLength() > 0) {
     XFA_AttributeEnum iEncoding = pImage->GetTransferEncoding();
     if (iEncoding == XFA_AttributeEnum::Base64) {
-      ByteString bsData = wsImage.UTF8Encode();
+      ByteString bsData = wsImage.ToUTF8();
       buffer.resize(bsData.GetLength());
       int32_t iRead = XFA_Base64Decode(bsData.c_str(), buffer.data());
       if (iRead > 0) {

@@ -230,7 +230,7 @@ bool CBC_OnedCode39Writer::encodedContents(const WideStringView& contents,
   *result = WideString(contents);
   if (m_bCalcChecksum && m_bPrintChecksum) {
     WideString checksumContent = FilterContents(contents);
-    ByteString str = checksumContent.UTF8Encode();
+    ByteString str = checksumContent.ToUTF8();
     char checksum;
     checksum = CalcCheckSum(str);
     if (checksum == '*')

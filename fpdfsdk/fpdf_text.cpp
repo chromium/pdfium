@@ -204,7 +204,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
 
   // UFT16LE_Encode doesn't handle surrogate pairs properly, so it is expected
   // the number of items to stay the same.
-  ByteString byte_str = str.UTF16LE_Encode();
+  ByteString byte_str = str.ToUTF16LE();
   size_t byte_str_len = byte_str.GetLength();
   int ret_count = byte_str_len / kBytesPerCharacter;
 
@@ -260,7 +260,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
   if (buflen <= 0 || !buffer)
     return str.GetLength();
 
-  ByteString cbUTF16Str = str.UTF16LE_Encode();
+  ByteString cbUTF16Str = str.ToUTF16LE();
   int len = cbUTF16Str.GetLength() / sizeof(unsigned short);
   int size = buflen > len ? len : buflen;
   memcpy(buffer, cbUTF16Str.c_str(), size * sizeof(unsigned short));
@@ -361,7 +361,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetURL(FPDF_PAGELINK link_page,
     CPDF_LinkExtract* pageLink = CPDFLinkExtractFromFPDFPageLink(link_page);
     wsUrl = pageLink->GetURL(link_index);
   }
-  ByteString cbUTF16URL = wsUrl.UTF16LE_Encode();
+  ByteString cbUTF16URL = wsUrl.ToUTF16LE();
   int required = cbUTF16URL.GetLength() / sizeof(unsigned short);
   if (!buffer || buflen <= 0)
     return required;

@@ -504,7 +504,7 @@ ByteString GetLocalDateTimeFormat(
                               : pLocale->GetTimePattern(category);
   if (!bStandard)
     AlternateDateTimeSymbols(&strRet, pLocale->GetDateTimeSymbols(), bIsDate);
-  return strRet.UTF8Encode();
+  return strRet.ToUTF8();
 }
 
 bool IsWhitespace(char c) {
@@ -2713,7 +2713,7 @@ ByteString CFXJSE_FormCalcContext::IsoDate2Local(
   WideString wsRet;
   CXFA_LocaleValue(XFA_VT_DATE, WideString::FromUTF8(szDate), pMgr)
       .FormatPatterns(wsRet, wsFormat, pLocale, XFA_VALUEPICTURE_Display);
-  return wsRet.UTF8Encode();
+  return wsRet.ToUTF8();
 }
 
 // static
@@ -2737,7 +2737,7 @@ ByteString CFXJSE_FormCalcContext::IsoTime2Local(
   WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
-  return wsRet.UTF8Encode();
+  return wsRet.ToUTF8();
 }
 
 // static
@@ -3971,7 +3971,7 @@ void CFXJSE_FormCalcContext::Format(CFXJSE_Value* pThis,
     return;
   }
 
-  args.GetReturnValue()->SetString(wsRet.UTF8Encode().AsStringView());
+  args.GetReturnValue()->SetString(wsRet.ToUTF8().AsStringView());
 }
 
 // static
@@ -4106,7 +4106,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
       return;
     }
     args.GetReturnValue()->SetString(
-        localeValue.GetValue().UTF8Encode().AsStringView());
+        localeValue.GetValue().ToUTF8().AsStringView());
     return;
   }
 
@@ -4130,7 +4130,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
         return;
       }
       args.GetReturnValue()->SetString(
-          localeValue.GetValue().UTF8Encode().AsStringView());
+          localeValue.GetValue().ToUTF8().AsStringView());
       return;
     }
     case XFA_VT_DATE: {
@@ -4142,7 +4142,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
         return;
       }
       args.GetReturnValue()->SetString(
-          localeValue.GetValue().UTF8Encode().AsStringView());
+          localeValue.GetValue().ToUTF8().AsStringView());
       return;
     }
     case XFA_VT_TIME: {
@@ -4154,7 +4154,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
         return;
       }
       args.GetReturnValue()->SetString(
-          localeValue.GetValue().UTF8Encode().AsStringView());
+          localeValue.GetValue().ToUTF8().AsStringView());
       return;
     }
     case XFA_VT_TEXT: {
@@ -4166,7 +4166,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
         return;
       }
       args.GetReturnValue()->SetString(
-          localeValue.GetValue().UTF8Encode().AsStringView());
+          localeValue.GetValue().ToUTF8().AsStringView());
       return;
     }
     case XFA_VT_FLOAT: {
@@ -4197,7 +4197,7 @@ void CFXJSE_FormCalcContext::Parse(CFXJSE_Value* pThis,
         return;
       }
       args.GetReturnValue()->SetString(
-          localeValue2.GetValue().UTF8Encode().AsStringView());
+          localeValue2.GetValue().ToUTF8().AsStringView());
       return;
     }
   }
@@ -4721,7 +4721,7 @@ void CFXJSE_FormCalcContext::Post(CFXJSE_Value* pThis,
     pContext->ThrowServerDeniedException();
     return;
   }
-  args.GetReturnValue()->SetString(decodedResponse.UTF8Encode().AsStringView());
+  args.GetReturnValue()->SetString(decodedResponse.ToUTF8().AsStringView());
 }
 
 // static
@@ -6235,5 +6235,5 @@ void CFXJSE_FormCalcContext::ThrowArgumentMismatchException() const {
 
 void CFXJSE_FormCalcContext::ThrowException(const WideString& str) const {
   ASSERT(!str.IsEmpty());
-  FXJSE_ThrowMessage(str.UTF8Encode().AsStringView());
+  FXJSE_ThrowMessage(str.ToUTF8().AsStringView());
 }

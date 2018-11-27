@@ -428,7 +428,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     return;
 
   int fileType = bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML;
-  ByteString bs = wsFilePath.UTF16LE_Encode();
+  ByteString bs = wsFilePath.ToUTF16LE();
   if (wsFilePath.IsEmpty()) {
     if (!pFormFillEnv->GetFormFillInfo() ||
         !pFormFillEnv->GetFormFillInfo()->m_pJsPlatform) {
@@ -436,7 +436,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     }
 
     WideString filepath = pFormFillEnv->JS_fieldBrowse();
-    bs = filepath.UTF16LE_Encode();
+    bs = filepath.ToUTF16LE();
   }
   FPDF_FILEHANDLER* pFileHandler = pFormFillEnv->OpenFile(
       bXDP ? FXFA_SAVEAS_XDP : FXFA_SAVEAS_XML, AsFPDFWideString(&bs), "wb");
@@ -496,7 +496,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         WideString wPath = WideString::FromUTF16LE(
             reinterpret_cast<const unsigned short*>(bs.c_str()),
             bs.GetLength() / sizeof(unsigned short));
-        ByteString bPath = wPath.UTF8Encode();
+        ByteString bPath = wPath.ToUTF8();
         static const char kFormat[] =
             "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
         ByteString content = ByteString::Format(kFormat, bPath.c_str());
@@ -700,7 +700,7 @@ RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
   if (!pFormFillEnv)
     return nullptr;
 
-  ByteString bs = wsLink.UTF16LE_Encode();
+  ByteString bs = wsLink.ToUTF16LE();
   FPDF_FILEHANDLER* pFileHandler =
       pFormFillEnv->OpenFile(0, AsFPDFWideString(&bs), "rb");
   if (!pFileHandler)
@@ -952,11 +952,11 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
                     csMsg)) {
       return false;
     }
-    ByteString bsTo = WideString(csToAddress).UTF16LE_Encode();
-    ByteString bsCC = WideString(csCCAddress).UTF16LE_Encode();
-    ByteString bsBcc = WideString(csBCCAddress).UTF16LE_Encode();
-    ByteString bsSubject = WideString(csSubject).UTF16LE_Encode();
-    ByteString bsMsg = WideString(csMsg).UTF16LE_Encode();
+    ByteString bsTo = WideString(csToAddress).ToUTF16LE();
+    ByteString bsCC = WideString(csCCAddress).ToUTF16LE();
+    ByteString bsBcc = WideString(csBCCAddress).ToUTF16LE();
+    ByteString bsSubject = WideString(csSubject).ToUTF16LE();
+    ByteString bsMsg = WideString(csMsg).ToUTF16LE();
     pFormFillEnv->EmailTo(pFileHandler, AsFPDFWideString(&bsTo),
                           AsFPDFWideString(&bsSubject), AsFPDFWideString(&bsCC),
                           AsFPDFWideString(&bsBcc), AsFPDFWideString(&bsMsg));
@@ -964,7 +964,7 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
   }
 
   // HTTP or FTP
-  ByteString bs = csURL.UTF16LE_Encode();
+  ByteString bs = csURL.ToUTF16LE();
   pFormFillEnv->UploadTo(pFileHandler, fileFlag, AsFPDFWideString(&bs));
   return true;
 }

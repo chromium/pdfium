@@ -1159,7 +1159,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pDestObj->IsArray())
     return nullptr;
 
-  ByteString utf16Name = wsName.UTF16LE_Encode();
+  ByteString utf16Name = wsName.ToUTF16LE();
   int len = utf16Name.GetLength();
   if (!buffer) {
     *buflen = len;

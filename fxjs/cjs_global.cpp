@@ -413,7 +413,7 @@ void CJS_Global::ObjectToArray(CJS_Runtime* pRuntime,
                                CFX_GlobalArray* pArray) {
   std::vector<WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
-    ByteString sKey = ws.UTF8Encode();
+    ByteString sKey = ws.ToUTF8();
     v8::Local<v8::Value> v = pRuntime->GetObjectProperty(pObj, ws);
     if (v->IsNumber()) {
       auto pObjElement = pdfium::MakeUnique<CFX_KeyValue>();

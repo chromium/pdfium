@@ -86,7 +86,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
   pAnnotDict->SetNewFor<CPDF_Name>("Subtype", "Popup");
   pAnnotDict->SetNewFor<CPDF_String>("T", pParentDict->GetStringFor("T"),
                                      false);
-  pAnnotDict->SetNewFor<CPDF_String>("Contents", sContents.UTF8Encode(), false);
+  pAnnotDict->SetNewFor<CPDF_String>("Contents", sContents.ToUTF8(), false);
 
   CFX_FloatRect rect = pParentDict->GetRectFor("Rect");
   rect.Normalize();

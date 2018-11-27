@@ -245,7 +245,7 @@ void CFFL_ComboBox::OnSetFocus(CPWL_Edit* pEdit) {
 
   WideString wsText = pEdit->GetText();
   int nCharacters = wsText.GetLength();
-  ByteString bsUTFText = wsText.UTF16LE_Encode();
+  ByteString bsUTFText = wsText.ToUTF16LE();
   auto* pBuffer = reinterpret_cast<const unsigned short*>(bsUTFText.c_str());
   m_pFormFillEnv->OnSetFieldInputFocus(pBuffer, nCharacters, true);
 }

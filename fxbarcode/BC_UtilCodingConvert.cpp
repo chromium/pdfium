@@ -18,13 +18,13 @@ void CBC_UtilCodingConvert::UnicodeToLocale(const WideString& src,
 void CBC_UtilCodingConvert::LocaleToUtf8(const ByteString& src,
                                          ByteString& dst) {
   WideString unicode = WideString::FromDefANSI(src.AsStringView());
-  dst = unicode.UTF8Encode();
+  dst = unicode.ToUTF8();
 }
 
 void CBC_UtilCodingConvert::LocaleToUtf8(const ByteString& src,
                                          std::vector<uint8_t>& dst) {
   WideString unicode = WideString::FromDefANSI(src.AsStringView());
-  ByteString utf8 = unicode.UTF8Encode();
+  ByteString utf8 = unicode.ToUTF8();
   dst = std::vector<uint8_t>(utf8.begin(), utf8.end());
 }
 
@@ -45,5 +45,5 @@ void CBC_UtilCodingConvert::Utf8ToLocale(const uint8_t* src,
 
 void CBC_UtilCodingConvert::UnicodeToUTF8(const WideString& src,
                                           ByteString& dst) {
-  dst = src.UTF8Encode();
+  dst = src.ToUTF8();
 }

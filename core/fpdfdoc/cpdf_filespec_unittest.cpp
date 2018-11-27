@@ -205,7 +205,7 @@ TEST(cpdf_filespec, GetFileStream) {
       // Check that the file content stream is as expected.
       EXPECT_STREQ(
           streams[i],
-          file_spec.GetFileStream()->GetUnicodeText().UTF8Encode().c_str());
+          file_spec.GetFileStream()->GetUnicodeText().ToUTF8().c_str());
 
       if (i == 2) {
         dict_obj->SetNewFor<CPDF_String>("FS", "URL", false);

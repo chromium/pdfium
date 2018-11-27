@@ -192,12 +192,12 @@ class WideString {
   size_t Remove(wchar_t ch);
 
   ByteString ToDefANSI() const;
-  ByteString UTF8Encode() const;
+  ByteString ToUTF8() const;
 
   // This method will add \0\0 to the end of the string to represent the
   // wide string terminator. These values are in the string, not just the data,
   // so GetLength() will include them.
-  ByteString UTF16LE_Encode() const;
+  ByteString ToUTF16LE() const;
 
  protected:
   using StringData = StringDataTemplate<wchar_t>;

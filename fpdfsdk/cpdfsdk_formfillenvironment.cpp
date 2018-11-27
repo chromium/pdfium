@@ -72,8 +72,8 @@ int CPDFSDK_FormFillEnvironment::JS_appAlert(const WideString& Msg,
     return -1;
   }
 
-  ByteString bsMsg = Msg.UTF16LE_Encode();
-  ByteString bsTitle = Title.UTF16LE_Encode();
+  ByteString bsMsg = Msg.ToUTF16LE();
+  ByteString bsTitle = Title.ToUTF16LE();
   return m_pInfo->m_pJsPlatform->app_alert(
       m_pInfo->m_pJsPlatform, AsFPDFWideString(&bsMsg),
       AsFPDFWideString(&bsTitle), Type, Icon);
@@ -90,10 +90,10 @@ int CPDFSDK_FormFillEnvironment::JS_appResponse(const WideString& Question,
       !m_pInfo->m_pJsPlatform->app_response) {
     return -1;
   }
-  ByteString bsQuestion = Question.UTF16LE_Encode();
-  ByteString bsTitle = Title.UTF16LE_Encode();
-  ByteString bsDefault = Default.UTF16LE_Encode();
-  ByteString bsLabel = Label.UTF16LE_Encode();
+  ByteString bsQuestion = Question.ToUTF16LE();
+  ByteString bsTitle = Title.ToUTF16LE();
+  ByteString bsDefault = Default.ToUTF16LE();
+  ByteString bsLabel = Label.ToUTF16LE();
   return m_pInfo->m_pJsPlatform->app_response(
       m_pInfo->m_pJsPlatform, AsFPDFWideString(&bsQuestion),
       AsFPDFWideString(&bsTitle), AsFPDFWideString(&bsDefault),
@@ -140,11 +140,11 @@ void CPDFSDK_FormFillEnvironment::JS_docmailForm(void* mailData,
       !m_pInfo->m_pJsPlatform->Doc_mail) {
     return;
   }
-  ByteString bsTo = To.UTF16LE_Encode();
-  ByteString bsSubject = Subject.UTF16LE_Encode();
-  ByteString bsCC = CC.UTF16LE_Encode();
-  ByteString bsBcc = BCC.UTF16LE_Encode();
-  ByteString bsMsg = Msg.UTF16LE_Encode();
+  ByteString bsTo = To.ToUTF16LE();
+  ByteString bsSubject = Subject.ToUTF16LE();
+  ByteString bsCC = CC.ToUTF16LE();
+  ByteString bsBcc = BCC.ToUTF16LE();
+  ByteString bsMsg = Msg.ToUTF16LE();
   m_pInfo->m_pJsPlatform->Doc_mail(
       m_pInfo->m_pJsPlatform, mailData, length, bUI, AsFPDFWideString(&bsTo),
       AsFPDFWideString(&bsSubject), AsFPDFWideString(&bsCC),
@@ -204,7 +204,7 @@ void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
       !m_pInfo->m_pJsPlatform->Doc_submitForm) {
     return;
   }
-  ByteString bsUrl = URL.UTF16LE_Encode();
+  ByteString bsUrl = URL.ToUTF16LE();
   m_pInfo->m_pJsPlatform->Doc_submitForm(m_pInfo->m_pJsPlatform, formData,
                                          length, AsFPDFWideString(&bsUrl));
 }
@@ -376,7 +376,7 @@ void CPDFSDK_FormFillEnvironment::GotoURL(const WideString& wsURL) {
   if (!m_pInfo || !m_pInfo->FFI_GotoURL)
     return;
 
-  ByteString bsTo = wsURL.UTF16LE_Encode();
+  ByteString bsTo = wsURL.ToUTF16LE();
   m_pInfo->FFI_GotoURL(m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()),
                        AsFPDFWideString(&bsTo));
 }
@@ -438,7 +438,7 @@ RetainPtr<IFX_SeekableReadStream> CPDFSDK_FormFillEnvironment::DownloadFromURL(
   if (!m_pInfo || !m_pInfo->FFI_DownloadFromURL)
     return nullptr;
 
-  ByteString bstrURL = url.UTF16LE_Encode();
+  ByteString bstrURL = url.ToUTF16LE();
   FPDF_LPFILEHANDLER fileHandler =
       m_pInfo->FFI_DownloadFromURL(m_pInfo, AsFPDFWideString(&bstrURL));
 
@@ -454,11 +454,11 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
   if (!m_pInfo || !m_pInfo->FFI_PostRequestURL)
     return L"";
 
-  ByteString bsURL = wsURL.UTF16LE_Encode();
-  ByteString bsData = wsData.UTF16LE_Encode();
-  ByteString bsContentType = wsContentType.UTF16LE_Encode();
-  ByteString bsEncode = wsEncode.UTF16LE_Encode();
-  ByteString bsHeader = wsHeader.UTF16LE_Encode();
+  ByteString bsURL = wsURL.ToUTF16LE();
+  ByteString bsData = wsData.ToUTF16LE();
+  ByteString bsContentType = wsContentType.ToUTF16LE();
+  ByteString bsEncode = wsEncode.ToUTF16LE();
+  ByteString bsHeader = wsHeader.ToUTF16LE();
 
   FPDF_BSTR response;
   FPDF_BStr_Init(&response);
@@ -482,9 +482,9 @@ FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(
   if (!m_pInfo || !m_pInfo->FFI_PutRequestURL)
     return false;
 
-  ByteString bsURL = wsURL.UTF16LE_Encode();
-  ByteString bsData = wsData.UTF16LE_Encode();
-  ByteString bsEncode = wsEncode.UTF16LE_Encode();
+  ByteString bsURL = wsURL.ToUTF16LE();
+  ByteString bsData = wsData.ToUTF16LE();
+  ByteString bsEncode = wsEncode.ToUTF16LE();
 
   return m_pInfo->FFI_PutRequestURL(m_pInfo, AsFPDFWideString(&bsURL),
                                     AsFPDFWideString(&bsData),

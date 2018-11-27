@@ -111,7 +111,7 @@ void CJX_Draw::defaultValue(CFXJSE_Value* pValue,
     if (content.IsEmpty())
       pValue->SetNull();
     else
-      pValue->SetString(content.UTF8Encode().AsStringView());
+      pValue->SetString(content.ToUTF8().AsStringView());
 
     return;
   }

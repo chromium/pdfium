@@ -981,7 +981,7 @@ TEST(WideString, MultiCharReverseIterator) {
   EXPECT_TRUE(iter == multi_str.rbegin());
 }
 
-TEST(WideString, UTF16LE_Encode) {
+TEST(WideString, ToUTF16LE) {
   struct UTF16LEEncodeCase {
     WideString ws;
     ByteString bs;
@@ -996,7 +996,7 @@ TEST(WideString, UTF16LE_Encode) {
 
   for (size_t i = 0; i < FX_ArraySize(utf16le_encode_cases); ++i) {
     EXPECT_EQ(utf16le_encode_cases[i].bs,
-              utf16le_encode_cases[i].ws.UTF16LE_Encode())
+              utf16le_encode_cases[i].ws.ToUTF16LE())
         << " for case number " << i;
   }
 }

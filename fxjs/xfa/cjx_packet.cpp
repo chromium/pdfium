@@ -41,7 +41,7 @@ CJS_Result CJX_Packet::getAttribute(
     attributeValue = element->GetAttribute(runtime->ToWideString(params[0]));
 
   return CJS_Result::Success(
-      runtime->NewString(attributeValue.UTF8Encode().AsStringView()));
+      runtime->NewString(attributeValue.ToUTF8().AsStringView()));
 }
 
 CJS_Result CJX_Packet::setAttribute(
@@ -94,5 +94,5 @@ void CJX_Packet::content(CFXJSE_Value* pValue,
   if (element)
     wsTextData = element->GetTextData();
 
-  pValue->SetString(wsTextData.UTF8Encode().AsStringView());
+  pValue->SetString(wsTextData.ToUTF8().AsStringView());
 }

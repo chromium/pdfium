@@ -130,7 +130,7 @@ void CJX_HostPseudoModel::language(CFXJSE_Value* pValue,
     return;
   }
   pValue->SetString(
-      pNotify->GetAppProvider()->GetLanguage().UTF8Encode().AsStringView());
+      pNotify->GetAppProvider()->GetLanguage().ToUTF8().AsStringView());
 }
 
 void CJX_HostPseudoModel::numPages(CFXJSE_Value* pValue,
@@ -160,7 +160,7 @@ void CJX_HostPseudoModel::platform(CFXJSE_Value* pValue,
     return;
   }
   pValue->SetString(
-      pNotify->GetAppProvider()->GetPlatform().UTF8Encode().AsStringView());
+      pNotify->GetAppProvider()->GetPlatform().ToUTF8().AsStringView());
 }
 
 void CJX_HostPseudoModel::title(CFXJSE_Value* pValue,
@@ -181,7 +181,7 @@ void CJX_HostPseudoModel::title(CFXJSE_Value* pValue,
 
   WideString wsTitle;
   hDoc->GetDocEnvironment()->GetTitle(hDoc, wsTitle);
-  pValue->SetString(wsTitle.UTF8Encode().AsStringView());
+  pValue->SetString(wsTitle.ToUTF8().AsStringView());
 }
 
 void CJX_HostPseudoModel::validationsEnabled(CFXJSE_Value* pValue,
@@ -236,7 +236,7 @@ void CJX_HostPseudoModel::name(CFXJSE_Value* pValue,
     return;
   }
   pValue->SetString(
-      pNotify->GetAppProvider()->GetAppName().UTF8Encode().AsStringView());
+      pNotify->GetAppProvider()->GetAppName().ToUTF8().AsStringView());
 }
 
 CJS_Result CJX_HostPseudoModel::gotoURL(
@@ -340,7 +340,7 @@ CJS_Result CJX_HostPseudoModel::response(
   WideString answer =
       pNotify->GetAppProvider()->Response(question, title, defaultAnswer, mark);
   return CJS_Result::Success(
-      runtime->NewString(answer.UTF8Encode().AsStringView()));
+      runtime->NewString(answer.ToUTF8().AsStringView()));
 }
 
 CJS_Result CJX_HostPseudoModel::documentInBatch(

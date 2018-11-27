@@ -152,7 +152,7 @@ CJS_Result CJX_Node::getAttribute(
 
   WideString expression = runtime->ToWideString(params[0]);
   return CJS_Result::Success(runtime->NewString(
-      GetAttribute(expression.AsStringView()).UTF8Encode().AsStringView()));
+      GetAttribute(expression.AsStringView()).ToUTF8().AsStringView()));
 }
 
 CJS_Result CJX_Node::getElement(
@@ -406,7 +406,7 @@ void CJX_Node::ns(CFXJSE_Value* pValue,
     return;
   }
   pValue->SetString(
-      TryNamespace().value_or(WideString()).UTF8Encode().AsStringView());
+      TryNamespace().value_or(WideString()).ToUTF8().AsStringView());
 }
 
 void CJX_Node::model(CFXJSE_Value* pValue,
