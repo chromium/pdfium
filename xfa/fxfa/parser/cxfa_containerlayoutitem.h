@@ -22,8 +22,4 @@ class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
   UnownedPtr<CXFA_Node> m_pOldSubform;
 };
 
-inline CXFA_ContainerLayoutItem* ToContainerLayoutItem(CXFA_LayoutItem* pItem) {
-  return pItem ? pItem->AsContainerLayoutItem() : nullptr;
-}
-
 #endif  // XFA_FXFA_PARSER_CXFA_CONTAINERLAYOUTITEM_H_

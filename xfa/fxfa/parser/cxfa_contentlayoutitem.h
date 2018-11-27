@@ -9,10 +9,14 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
 
+class CXFA_FFWidget;
+
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
   explicit CXFA_ContentLayoutItem(CXFA_Node* pNode);
   ~CXFA_ContentLayoutItem() override;
+
+  virtual CXFA_FFWidget* AsFFWidget();
 
   CXFA_ContentLayoutItem* GetFirst();
   CXFA_ContentLayoutItem* GetLast();
@@ -30,8 +34,8 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
   mutable uint32_t m_dwStatus = 0;
 };
 
-inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* pItem) {
-  return pItem ? pItem->AsContentLayoutItem() : nullptr;
+inline CXFA_FFWidget* ToFFWidget(CXFA_ContentLayoutItem* item) {
+  return item ? item->AsFFWidget() : nullptr;
 }
 
 #endif  // XFA_FXFA_PARSER_CXFA_CONTENTLAYOUTITEM_H_

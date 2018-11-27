@@ -89,6 +89,9 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   explicit CXFA_FFWidget(CXFA_Node* pNode);
   ~CXFA_FFWidget() override;
 
+  // CXFA_ContentLayoutItem:
+  CXFA_FFWidget* AsFFWidget() override;
+
   virtual CFX_RectF GetBBox(uint32_t dwStatus, FocusOption focus);
   virtual void RenderWidget(CXFA_Graphics* pGS,
                             const CFX_Matrix& matrix,
@@ -162,7 +165,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   CFX_PointF Rotate2Normal(const CFX_PointF& point);
   CFX_Matrix GetRotateMatrix();
   bool IsLayoutRectEmpty();
-  CXFA_FFWidget* GetParent();
+  CXFA_LayoutItem* GetParent();
   bool IsAncestorOf(CXFA_FFWidget* pWidget);
   const CFWL_App* GetFWLApp();
 

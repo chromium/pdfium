@@ -276,7 +276,7 @@ CXFA_FFWidget* CXFA_FFWidgetHandler::CreateWidget(CXFA_FFWidget* hParent,
   m_pDocView->RunLayout();
   CXFA_LayoutItem* pLayout =
       m_pDocView->GetXFALayout()->GetLayoutItem(pNewFormItem);
-  return static_cast<CXFA_FFWidget*>(pLayout);
+  return ToFFWidget(ToContentLayoutItem(pLayout));
 }
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateWidgetFormItem(

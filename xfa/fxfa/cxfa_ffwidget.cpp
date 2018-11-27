@@ -224,9 +224,10 @@ void XFA_RectWithoutMargin(CFX_RectF* rt, const CXFA_Margin* margin) {
 }
 
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  if (pLayoutItem->GetFormNode()->HasCreatedUIWidget())
-    return static_cast<CXFA_FFWidget*>(pLayoutItem);
-  return nullptr;
+  if (!pLayoutItem->GetFormNode()->HasCreatedUIWidget())
+    return nullptr;
+
+  return ToFFWidget(ToContentLayoutItem(pLayoutItem));
 }
 
 CXFA_CalcData::CXFA_CalcData() : m_iRefCount(0) {}
@@ -236,7 +237,11 @@ CXFA_CalcData::~CXFA_CalcData() {}
 CXFA_FFWidget::CXFA_FFWidget(CXFA_Node* node)
     : CXFA_ContentLayoutItem(node), m_pNode(node) {}
 
-CXFA_FFWidget::~CXFA_FFWidget() {}
+CXFA_FFWidget::~CXFA_FFWidget() = default;
+
+CXFA_FFWidget* CXFA_FFWidget::AsFFWidget() {
+  return this;
+}
 
 const CFWL_App* CXFA_FFWidget::GetFWLApp() {
   return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();
@@ -398,10 +403,10 @@ bool CXFA_FFWidget::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
-  CXFA_FFWidget* pParent = GetParent();
-  if (pParent && !pParent->IsAncestorOf(pOldWidget)) {
+  CXFA_FFWidget* pParent = ToFFWidget(ToContentLayoutItem(GetParent()));
+  if (pParent && !pParent->IsAncestorOf(pOldWidget))
     pParent->OnSetFocus(pOldWidget);
-  }
+
   m_dwStatus |= XFA_WidgetStatus_Focused;
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
@@ -413,12 +418,13 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 bool CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
   EventKillFocus();
-  if (pNewWidget) {
-    CXFA_FFWidget* pParent = GetParent();
-    if (pParent && !pParent->IsAncestorOf(pNewWidget)) {
-      pParent->OnKillFocus(pNewWidget);
-    }
-  }
+  if (!pNewWidget)
+    return true;
+
+  CXFA_FFWidget* pParent = ToFFWidget(ToContentLayoutItem(GetParent()));
+  if (pParent && !pParent->IsAncestorOf(pNewWidget))
+    pParent->OnKillFocus(pNewWidget);
+
   return true;
 }
 
@@ -557,13 +563,13 @@ bool CXFA_FFWidget::IsLayoutRectEmpty() {
   return rtLayout.width < 0.1f && rtLayout.height < 0.1f;
 }
 
-CXFA_FFWidget* CXFA_FFWidget::GetParent() {
+CXFA_LayoutItem* CXFA_FFWidget::GetParent() {
   CXFA_Node* pParentNode = m_pNode->GetParent();
-  if (pParentNode) {
-    CXFA_LayoutProcessor* layout = GetDocView()->GetXFALayout();
-    return static_cast<CXFA_FFWidget*>(layout->GetLayoutItem(pParentNode));
-  }
-  return nullptr;
+  if (!pParentNode)
+    return nullptr;
+
+  CXFA_LayoutProcessor* layout = GetDocView()->GetXFALayout();
+  return layout->GetLayoutItem(pParentNode);
 }
 
 bool CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {

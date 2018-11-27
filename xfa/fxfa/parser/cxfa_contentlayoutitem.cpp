@@ -18,6 +18,10 @@ CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() {
     m_pFormNode->JSObject()->SetLayoutItem(nullptr);
 }
 
+CXFA_FFWidget* CXFA_ContentLayoutItem::AsFFWidget() {
+  return nullptr;
+}
+
 CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetFirst() {
   CXFA_ContentLayoutItem* pCurNode = this;
   while (pCurNode->m_pPrev)

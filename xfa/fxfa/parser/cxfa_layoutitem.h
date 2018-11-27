@@ -45,6 +45,14 @@ class CXFA_LayoutItem {
   UnownedPtr<CXFA_Node> m_pFormNode;
 };
 
+inline CXFA_ContainerLayoutItem* ToContainerLayoutItem(CXFA_LayoutItem* item) {
+  return item ? item->AsContainerLayoutItem() : nullptr;
+}
+
+inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* item) {
+  return item ? item->AsContentLayoutItem() : nullptr;
+}
+
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
 
 #endif  // XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_
