@@ -16,7 +16,7 @@ class CBC_TextEncoder final : public CBC_C40Encoder {
 
   // CBC_C40Encoder
   int32_t getEncodingMode() override;
-  int32_t encodeChar(wchar_t c, WideString& sb, int32_t& e) override;
+  int32_t EncodeChar(wchar_t c, WideString* sb) override;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_TEXTENCODER_H_

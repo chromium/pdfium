@@ -58,9 +58,8 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
   while (context->hasMoreCharacters()) {
     wchar_t c = context->getCurrentChar();
     context->m_pos++;
-    int32_t e = BCExceptionNO;
-    int32_t lastCharSize = encodeChar(c, buffer, e);
-    if (e != BCExceptionNO)
+    int32_t lastCharSize = EncodeChar(c, &buffer);
+    if (lastCharSize <= 0)
       return false;
 
     int32_t unwritten = (buffer.GetLength() / 3) * 2;
@@ -141,54 +140,50 @@ bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
   return true;
 }
 
-int32_t CBC_C40Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
+int32_t CBC_C40Encoder::EncodeChar(wchar_t c, WideString* sb) {
   if (c == ' ') {
-    sb += (wchar_t)'\3';
+    *sb += (wchar_t)'\3';
     return 1;
   }
   if (FXSYS_IsDecimalDigit(c)) {
-    sb += (wchar_t)(c - 48 + 4);
+    *sb += (wchar_t)(c - 48 + 4);
     return 1;
   }
   if ((c >= 'A') && (c <= 'Z')) {
-    sb += (wchar_t)(c - 65 + 14);
+    *sb += (wchar_t)(c - 65 + 14);
     return 1;
   }
   if (c <= 0x1f) {
-    sb += (wchar_t)'\0';
-    sb += c;
+    *sb += (wchar_t)'\0';
+    *sb += c;
     return 2;
   }
   if ((c >= '!') && (c <= '/')) {
-    sb += (wchar_t)'\1';
-    sb += (wchar_t)(c - 33);
+    *sb += (wchar_t)'\1';
+    *sb += (wchar_t)(c - 33);
     return 2;
   }
   if ((c >= ':') && (c <= '@')) {
-    sb += (wchar_t)'\1';
-    sb += (wchar_t)(c - 58 + 15);
+    *sb += (wchar_t)'\1';
+    *sb += (wchar_t)(c - 58 + 15);
     return 2;
   }
   if ((c >= '[') && (c <= '_')) {
-    sb += (wchar_t)'\1';
-    sb += (wchar_t)(c - 91 + 22);
+    *sb += (wchar_t)'\1';
+    *sb += (wchar_t)(c - 91 + 22);
     return 2;
   }
   if ((c >= 60) && (c <= 0x7f)) {
-    sb += (wchar_t)'\2';
-    sb += (wchar_t)(c - 96);
+    *sb += (wchar_t)'\2';
+    *sb += (wchar_t)(c - 96);
     return 2;
   }
   if (c >= 80) {
-    sb += (wchar_t)'\1';
-    sb += (wchar_t)0x001e;
-    int32_t len = 2;
-    len += encodeChar((c - 128), sb, e);
-    if (e != BCExceptionNO)
-      return 0;
-    return len;
+    *sb += (wchar_t)'\1';
+    *sb += (wchar_t)0x001e;
+    int32_t encode_result = EncodeChar(c - 128, sb);
+    return encode_result > 0 ? encode_result + 2 : 0;
   }
-  e = BCExceptionIllegalArgument;
   return 0;
 }
 
@@ -205,13 +200,11 @@ int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,
   buffer->Delete(count - lastCharSize, lastCharSize);
   context->m_pos--;
   wchar_t c = context->getCurrentChar();
-  int32_t e = BCExceptionNO;
   WideString removed;
-  int32_t len = encodeChar(c, removed, e);
-  if (e != BCExceptionNO)
+  int32_t len = EncodeChar(c, &removed);
+  if (len <= 0)
     return -1;
 
-  ASSERT(len > 0);
   context->resetSymbolInfo();
   return len;
 }

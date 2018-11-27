@@ -44,9 +44,7 @@ bool CBC_X12Encoder::Encode(CBC_EncoderContext* context) {
   while (context->hasMoreCharacters()) {
     wchar_t c = context->getCurrentChar();
     context->m_pos++;
-    int32_t e = BCExceptionNO;
-    encodeChar(c, buffer, e);
-    if (e != BCExceptionNO)
+    if (EncodeChar(c, &buffer) <= 0)
       return false;
 
     int32_t count = buffer.GetLength();
@@ -85,22 +83,20 @@ bool CBC_X12Encoder::HandleEOD(CBC_EncoderContext* context,
   return true;
 }
 
-int32_t CBC_X12Encoder::encodeChar(wchar_t c, WideString& sb, int32_t& e) {
-  if (c == '\r') {
-    sb += (wchar_t)'\0';
-  } else if (c == '*') {
-    sb += (wchar_t)'\1';
-  } else if (c == '>') {
-    sb += (wchar_t)'\2';
-  } else if (c == ' ') {
-    sb += (wchar_t)'\3';
-  } else if (FXSYS_IsDecimalDigit(c)) {
-    sb += (wchar_t)(c - 48 + 4);
-  } else if (c >= 'A' && c <= 'Z') {
-    sb += (wchar_t)(c - 65 + 14);
-  } else {
-    e = BCExceptionIllegalArgument;
-    return -1;
-  }
+int32_t CBC_X12Encoder::EncodeChar(wchar_t c, WideString* sb) {
+  if (c == '\r')
+    *sb += (wchar_t)'\0';
+  else if (c == '*')
+    *sb += (wchar_t)'\1';
+  else if (c == '>')
+    *sb += (wchar_t)'\2';
+  else if (c == ' ')
+    *sb += (wchar_t)'\3';
+  else if (FXSYS_IsDecimalDigit(c))
+    *sb += (wchar_t)(c - 48 + 4);
+  else if (c >= 'A' && c <= 'Z')
+    *sb += (wchar_t)(c - 65 + 14);
+  else
+    return 0;
   return 1;
 }

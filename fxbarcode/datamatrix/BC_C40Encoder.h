@@ -22,7 +22,9 @@ class CBC_C40Encoder : public CBC_Encoder {
   static void WriteNextTriplet(CBC_EncoderContext* context, WideString* buffer);
 
   virtual bool HandleEOD(CBC_EncoderContext* context, WideString* buffer);
-  virtual int32_t encodeChar(wchar_t c, WideString& sb, int32_t& e);
+
+  // Returns the number of characters appended to |sb|, or 0 on failure.
+  virtual int32_t EncodeChar(wchar_t c, WideString* sb);
 
  private:
   // Moves back by 1 position in |context| and adjusts |buffer| accordingly
