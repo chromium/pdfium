@@ -401,7 +401,7 @@ void CPDFXFA_DocEnvironment::GetTitle(CXFA_FFDoc* hDoc, WideString& wsTitle) {
     return;
 
   ByteString csTitle = pInfoDict->GetStringFor("Title");
-  wsTitle = WideString::FromLocal(csTitle.AsStringView());
+  wsTitle = WideString::FromDefANSI(csTitle.AsStringView());
 }
 
 void CPDFXFA_DocEnvironment::SetTitle(CXFA_FFDoc* hDoc,
@@ -644,7 +644,7 @@ bool CPDFXFA_DocEnvironment::OnBeforeNotifySubmit() {
       if (!pFormFillEnv)
         return false;
 
-      pFormFillEnv->JS_appAlert(WideString::FromLocal(IDS_XFA_Validate_Input),
+      pFormFillEnv->JS_appAlert(WideString::FromDefANSI(IDS_XFA_Validate_Input),
                                 L"", JSPLATFORM_ALERT_BUTTON_OK,
                                 JSPLATFORM_ALERT_ICON_WARNING);
       return false;
@@ -899,7 +899,7 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
 
   WideString csURL = submit->GetSubmitTarget();
   if (csURL.IsEmpty()) {
-    pFormFillEnv->JS_appAlert(WideString::FromLocal("Submit cancelled."), L"",
+    pFormFillEnv->JS_appAlert(WideString::FromDefANSI("Submit cancelled."), L"",
                               JSPLATFORM_ALERT_BUTTON_OK,
                               JSPLATFORM_ALERT_ICON_ASTERISK);
     return false;
@@ -912,7 +912,7 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
       WideString csContent = submit->GetSubmitXDPContent();
       csContent.Trim();
 
-      WideString space = WideString::FromLocal(" ");
+      WideString space = WideString::FromDefANSI(" ");
       csContent = space + csContent + space;
       FPDF_DWORD flag = 0;
       if (submit->IsSubmitEmbedPDF())

@@ -113,9 +113,9 @@ bool CFGAS_GEFont::InitFont() {
 WideString CFGAS_GEFont::GetFamilyName() const {
   if (!m_pFont->GetSubstFont() ||
       m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {
-    return WideString::FromLocal(m_pFont->GetFamilyName().AsStringView());
+    return WideString::FromDefANSI(m_pFont->GetFamilyName().AsStringView());
   }
-  return WideString::FromLocal(
+  return WideString::FromDefANSI(
       m_pFont->GetSubstFont()->m_Family.AsStringView());
 }
 

@@ -1892,7 +1892,7 @@ CJS_Result CJS_Field::get_style(CJS_Runtime* pRuntime) {
       break;
   }
   return CJS_Result::Success(pRuntime->NewString(
-      WideString::FromLocal(csBCaption.AsStringView()).AsStringView()));
+      WideString::FromDefANSI(csBCaption.AsStringView()).AsStringView()));
 }
 
 CJS_Result CJS_Field::set_style(CJS_Runtime* pRuntime,
@@ -1978,7 +1978,7 @@ CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   return CJS_Result::Success(pRuntime->NewString(
-      WideString::FromLocal(pFont->GetBaseFont().AsStringView())
+      WideString::FromDefANSI(pFont->GetBaseFont().AsStringView())
           .AsStringView()));
 }
 

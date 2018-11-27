@@ -646,7 +646,7 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
       continue;
 
     WideString wsFaceName =
-        WideString::FromLocal(pFontMapper->GetFaceName(i).AsStringView());
+        WideString::FromDefANSI(pFontMapper->GetFaceName(i).AsStringView());
     RegisterFaces(pFontStream, &wsFaceName);
   }
 
@@ -775,7 +775,7 @@ void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace, const WideString* pFaceName) {
   pFont->m_wsFamilyNames.push_back(WideString::FromUTF8(pFace->family_name));
   pFont->m_wsFaceName =
       pFaceName ? *pFaceName
-                : WideString::FromLocal(FXFT_Get_Postscript_Name(pFace));
+                : WideString::FromDefANSI(FXFT_Get_Postscript_Name(pFace));
   pFont->m_nFaceIndex = pFace->face_index;
   m_InstalledFonts.push_back(std::move(pFont));
 }

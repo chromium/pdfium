@@ -1028,7 +1028,7 @@ TEST(WideString, ToDefANSI) {
 }
 
 TEST(WideString, FromLocal) {
-  EXPECT_EQ(L"", WideString::FromLocal(ByteStringView()));
+  EXPECT_EQ(L"", WideString::FromDefANSI(ByteStringView()));
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const wchar_t* kResult =
       L"x"
@@ -1042,10 +1042,10 @@ TEST(WideString, FromLocal) {
       L"\u00ff"
       L"y";
 #endif
-  EXPECT_EQ(kResult, WideString::FromLocal("x"
-                                           "\x80"
-                                           "\xff"
-                                           "y"));
+  EXPECT_EQ(kResult, WideString::FromDefANSI("x"
+                                             "\x80"
+                                             "\xff"
+                                             "y"));
 }
 
 TEST(WideStringView, FromVector) {

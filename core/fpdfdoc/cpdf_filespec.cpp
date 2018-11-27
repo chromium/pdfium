@@ -100,7 +100,7 @@ WideString CPDF_FileSpec::GetFileName() const {
   if (const CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
     csFileName = pDict->GetUnicodeTextFor("UF");
     if (csFileName.IsEmpty()) {
-      csFileName = WideString::FromLocal(
+      csFileName = WideString::FromDefANSI(
           pDict->GetStringFor(pdfium::stream::kF).AsStringView());
     }
     if (pDict->GetStringFor("FS") == "URL")
@@ -111,13 +111,13 @@ WideString CPDF_FileSpec::GetFileName() const {
       for (const auto* key : keys) {
         if (pDict->KeyExist(key)) {
           csFileName =
-              WideString::FromLocal(pDict->GetStringFor(key).AsStringView());
+              WideString::FromDefANSI(pDict->GetStringFor(key).AsStringView());
           break;
         }
       }
     }
   } else if (m_pObj->IsString()) {
-    csFileName = WideString::FromLocal(m_pObj->GetString().AsStringView());
+    csFileName = WideString::FromDefANSI(m_pObj->GetString().AsStringView());
   }
   return DecodeFileName(csFileName);
 }

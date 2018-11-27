@@ -80,7 +80,7 @@ WideString CPDF_Action::GetFilePath() const {
   if (!pWinDict)
     return WideString();
 
-  return WideString::FromLocal(
+  return WideString::FromDefANSI(
       pWinDict->GetStringFor(pdfium::stream::kF).AsStringView());
 }
 

@@ -60,7 +60,7 @@ class WideString {
 
   ~WideString();
 
-  static WideString FromLocal(const ByteStringView& str) WARN_UNUSED_RESULT;
+  static WideString FromDefANSI(const ByteStringView& str) WARN_UNUSED_RESULT;
   static WideString FromUTF8(const ByteStringView& str) WARN_UNUSED_RESULT;
   static WideString FromUTF16LE(const unsigned short* str,
                                 size_t len) WARN_UNUSED_RESULT;

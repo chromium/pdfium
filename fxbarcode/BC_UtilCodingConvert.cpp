@@ -17,13 +17,13 @@ void CBC_UtilCodingConvert::UnicodeToLocale(const WideString& src,
 
 void CBC_UtilCodingConvert::LocaleToUtf8(const ByteString& src,
                                          ByteString& dst) {
-  WideString unicode = WideString::FromLocal(src.AsStringView());
+  WideString unicode = WideString::FromDefANSI(src.AsStringView());
   dst = unicode.UTF8Encode();
 }
 
 void CBC_UtilCodingConvert::LocaleToUtf8(const ByteString& src,
                                          std::vector<uint8_t>& dst) {
-  WideString unicode = WideString::FromLocal(src.AsStringView());
+  WideString unicode = WideString::FromDefANSI(src.AsStringView());
   ByteString utf8 = unicode.UTF8Encode();
   dst = std::vector<uint8_t>(utf8.begin(), utf8.end());
 }

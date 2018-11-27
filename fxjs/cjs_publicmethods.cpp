@@ -634,7 +634,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
   }
 
   // Processing currency string
-  Value = WideString::FromLocal(strValue.AsStringView());
+  Value = WideString::FromDefANSI(strValue.AsStringView());
   if (bCurrencyPrepend)
     Value = wstrCurrency + Value;
   else
@@ -845,7 +845,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
     strValue.InsertAtFront('-');
 
   strValue += '%';
-  Value = WideString::FromLocal(strValue.AsStringView());
+  Value = WideString::FromDefANSI(strValue.AsStringView());
 #endif
   return CJS_Result::Success();
 }

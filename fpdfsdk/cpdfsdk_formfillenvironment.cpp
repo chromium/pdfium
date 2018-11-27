@@ -125,7 +125,7 @@ WideString CPDFSDK_FormFillEnvironment::JS_fieldBrowse() {
     return WideString();
 
   pBuff.resize(nActualLen);
-  return WideString::FromLocal(ByteStringView(pBuff));
+  return WideString::FromDefANSI(ByteStringView(pBuff));
 }
 
 void CPDFSDK_FormFillEnvironment::JS_docmailForm(void* mailData,
@@ -194,7 +194,7 @@ WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
     return WideString();
 
   pBuff.resize(nActualLen);
-  return WideString::FromLocal(ByteStringView(pBuff));
+  return WideString::FromDefANSI(ByteStringView(pBuff));
 }
 
 void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,

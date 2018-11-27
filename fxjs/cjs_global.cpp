@@ -254,7 +254,7 @@ CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
       return CJS_Result::Success(pRuntime->NewBoolean(pData->bData));
     case CFX_Value::DataType::STRING:
       return CJS_Result::Success(pRuntime->NewString(
-          WideString::FromLocal(pData->sData.AsStringView()).AsStringView()));
+          WideString::FromDefANSI(pData->sData.AsStringView()).AsStringView()));
     case CFX_Value::DataType::OBJECT:
       return CJS_Result::Success(
           v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData));

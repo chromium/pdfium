@@ -103,7 +103,7 @@ CJS_Result CJS_Annot::get_type(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   return CJS_Result::Success(pRuntime->NewString(
-      WideString::FromLocal(
+      WideString::FromDefANSI(
           CPDF_Annot::AnnotSubtypeToString(pBAAnnot->GetAnnotSubtype())
               .AsStringView())
           .AsStringView()));

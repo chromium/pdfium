@@ -152,7 +152,7 @@ RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const wchar_t* filename) {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadFromFile(const char* filename) {
-  return LoadFromFile(WideString::FromLocal(filename).c_str());
+  return LoadFromFile(WideString::FromDefANSI(filename).c_str());
 }
 
 RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {

@@ -864,7 +864,7 @@ size_t WideString::Replace(const WideStringView& pOld,
 }
 
 // static
-WideString WideString::FromLocal(const ByteStringView& bstr) {
+WideString WideString::FromDefANSI(const ByteStringView& bstr) {
   int src_len = bstr.GetLength();
   int dest_len = FXSYS_MultiByteToWideChar(
       FX_CODEPAGE_DefANSI, 0, bstr.unterminated_c_str(), src_len, nullptr, 0);

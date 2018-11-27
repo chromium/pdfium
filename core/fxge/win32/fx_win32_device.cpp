@@ -589,7 +589,7 @@ void* CFX_Win32FontInfo::MapFont(int weight,
   if (face.EqualNoCase(facebuf))
     return hFont;
 
-  WideString wsFace = WideString::FromLocal(facebuf);
+  WideString wsFace = WideString::FromDefANSI(facebuf);
   for (size_t i = 0; i < FX_ArraySize(g_VariantNames); ++i) {
     if (face != g_VariantNames[i].m_pFaceName)
       continue;
