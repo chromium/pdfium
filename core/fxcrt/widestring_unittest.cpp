@@ -1001,6 +1001,29 @@ TEST(WideString, ToUTF16LE) {
   }
 }
 
+TEST(WideString, IsASCII) {
+  EXPECT_TRUE(WideString(L"xy\u007fz").IsASCII());
+  EXPECT_FALSE(WideString(L"xy\u0080z").IsASCII());
+  EXPECT_FALSE(WideString(L"xy\u2041z").IsASCII());
+}
+
+TEST(WideString, ToASCII) {
+  const char* kResult =
+      "x"
+      "\x02"
+      "\x7f"
+      "\x22"
+      "\x0c"
+      "y";
+  EXPECT_EQ(kResult, WideString(L"x"
+                                L"\u0082"
+                                L"\u00ff"
+                                L"\u0122"
+                                L"\u208c"
+                                L"y")
+                         .ToASCII());
+}
+
 TEST(WideString, ToDefANSI) {
   EXPECT_EQ("", WideString().ToDefANSI());
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
@@ -1027,7 +1050,20 @@ TEST(WideString, ToDefANSI) {
                          .ToDefANSI());
 }
 
-TEST(WideString, FromLocal) {
+TEST(WideString, FromASCII) {
+  EXPECT_EQ(L"", WideString::FromDefANSI(ByteStringView()));
+  const wchar_t* kResult =
+      L"x"
+      L"\u0002"
+      L"\u007f"
+      L"y";
+  EXPECT_EQ(kResult, WideString::FromASCII("x"
+                                           "\x82"
+                                           "\xff"
+                                           "y"));
+}
+
+TEST(WideString, FromDefANSI) {
   EXPECT_EQ(L"", WideString::FromDefANSI(ByteStringView()));
 #if _FX_PLATFORM_ == _FX_PLATFORM_WINDOWS_
   const wchar_t* kResult =

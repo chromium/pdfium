@@ -635,7 +635,22 @@ intptr_t WideString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }
 
-// static
+bool WideString::IsASCII() const {
+  for (wchar_t wc : *this) {
+    if (wc <= 0 || wc > 127)  // Questionable signedness of wchar_t.
+      return false;
+  }
+  return true;
+}
+
+ByteString WideString::ToASCII() const {
+  ByteString result;
+  result.Reserve(GetLength());
+  for (wchar_t wc : *this)
+    result.InsertAtBack(static_cast<char>(wc & 0x7f));
+  return result;
+}
+
 ByteString WideString::ToDefANSI() const {
   int src_len = GetLength();
   int dest_len = FXSYS_WideCharToMultiByte(
@@ -861,6 +876,15 @@ size_t WideString::Replace(const WideStringView& pOld,
   wmemcpy(pDest, pStart, pEnd - pStart);
   m_pData.Swap(pNewData);
   return count;
+}
+
+// static
+WideString WideString::FromASCII(const ByteStringView& bstr) {
+  WideString result;
+  result.Reserve(bstr.GetLength());
+  for (char c : bstr)
+    result.InsertAtBack(static_cast<wchar_t>(c & 0x7f));
+  return result;
 }
 
 // static

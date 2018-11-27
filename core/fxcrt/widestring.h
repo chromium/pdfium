@@ -60,6 +60,7 @@ class WideString {
 
   ~WideString();
 
+  static WideString FromASCII(const ByteStringView& str) WARN_UNUSED_RESULT;
   static WideString FromDefANSI(const ByteStringView& str) WARN_UNUSED_RESULT;
   static WideString FromUTF8(const ByteStringView& str) WARN_UNUSED_RESULT;
   static WideString FromUTF16LE(const unsigned short* str,
@@ -191,6 +192,8 @@ class WideString {
   size_t Replace(const WideStringView& pOld, const WideStringView& pNew);
   size_t Remove(wchar_t ch);
 
+  bool IsASCII() const;
+  ByteString ToASCII() const;
   ByteString ToDefANSI() const;
   ByteString ToUTF8() const;
 
