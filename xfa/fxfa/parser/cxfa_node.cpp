@@ -865,17 +865,13 @@ CXFA_Node* CXFA_Node::GetBindData() {
   return GetBindingNode();
 }
 
-std::vector<UnownedPtr<CXFA_Node>>* CXFA_Node::GetBindItems() {
-  return &binding_nodes_;
-}
-
 int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   ASSERT(pFormNode);
 
   if (BindsFormItems()) {
     bool found = false;
-    for (auto& v : binding_nodes_) {
-      if (v.Get() == pFormNode) {
+    for (auto* v : binding_nodes_) {
+      if (v == pFormNode) {
         found = true;
         break;
       }
@@ -893,9 +889,9 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
   if (pOldFormItem == pFormNode)
     return 1;
 
-  std::vector<UnownedPtr<CXFA_Node>> items;
-  items.emplace_back(pOldFormItem);
-  items.emplace_back(pFormNode);
+  std::vector<CXFA_Node*> items;
+  items.push_back(pOldFormItem);
+  items.push_back(pFormNode);
   binding_nodes_ = std::move(items);
 
   m_uNodeFlags |= XFA_NodeFlag_BindFormItems;
@@ -904,10 +900,8 @@ int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
 
 int32_t CXFA_Node::RemoveBindItem(CXFA_Node* pFormNode) {
   if (BindsFormItems()) {
-    auto it = std::find_if(binding_nodes_.begin(), binding_nodes_.end(),
-                           [&pFormNode](const UnownedPtr<CXFA_Node>& node) {
-                             return node.Get() == pFormNode;
-                           });
+    auto it =
+        std::find(binding_nodes_.begin(), binding_nodes_.end(), pFormNode);
     if (it != binding_nodes_.end())
       binding_nodes_.erase(it);
 
@@ -953,10 +947,10 @@ CXFA_Node* CXFA_Node::GetContainerNode() {
       return nullptr;
 
     CXFA_Node* pFieldNode = nullptr;
-    for (const auto& pFormNode : *(pDataNode->GetBindItems())) {
+    for (auto* pFormNode : *(pDataNode->GetBindItems())) {
       if (!pFormNode || pFormNode->HasRemovedChildren())
         continue;
-      pFieldNode = pFormNode->IsWidgetReady() ? pFormNode.Get() : nullptr;
+      pFieldNode = pFormNode->IsWidgetReady() ? pFormNode : nullptr;
       if (pFieldNode)
         wsPicture = pFieldNode->GetPictureContent(XFA_VALUEPICTURE_DataBind);
       if (!wsPicture.IsEmpty())
@@ -1421,16 +1415,6 @@ void CXFA_Node::SetFlag(uint32_t dwFlag) {
 
 void CXFA_Node::ClearFlag(uint32_t dwFlag) {
   m_uNodeFlags &= ~dwFlag;
-}
-
-void CXFA_Node::ReleaseBindingNodes() {
-  // Clear any binding nodes as we don't necessarily destruct in an order that
-  // makes sense.
-  for (auto& node : binding_nodes_)
-    node.Release();
-
-  for (CXFA_Node* pNode = first_child_; pNode; pNode = pNode->next_sibling_)
-    pNode->ReleaseBindingNodes();
 }
 
 bool CXFA_Node::IsAttributeInXML() {

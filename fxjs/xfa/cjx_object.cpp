@@ -623,8 +623,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
               i++;
             }
           }
-          for (const auto& pArrayNode : *(pBind->GetBindItems())) {
-            if (pArrayNode.Get() != ToNode(GetXFAObject())) {
+          for (auto* pArrayNode : *(pBind->GetBindItems())) {
+            if (pArrayNode != ToNode(GetXFAObject())) {
               pArrayNode->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                                  bScriptModify, false);
             }
@@ -649,8 +649,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
       if (pBindNode && bSyncData) {
         pBindNode->JSObject()->SetContent(wsContent, wsXMLValue, bNotify,
                                           bScriptModify, false);
-        for (const auto& pArrayNode : *(pBindNode->GetBindItems())) {
-          if (pArrayNode.Get() != ToNode(GetXFAObject())) {
+        for (auto* pArrayNode : *(pBindNode->GetBindItems())) {
+          if (pArrayNode != ToNode(GetXFAObject())) {
             pArrayNode->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                                true, false);
           }
@@ -722,7 +722,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
 
   SetAttributeValue(wsContent, wsXMLValue, bNotify, bScriptModify);
   if (pBindNode && bSyncData) {
-    for (const auto& pArrayNode : *(pBindNode->GetBindItems())) {
+    for (auto* pArrayNode : *(pBindNode->GetBindItems())) {
       pArrayNode->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                          bScriptModify, false);
     }
@@ -1453,7 +1453,7 @@ void CJX_Object::Script_Som_DefaultValue(CFXJSE_Value* pValue,
     CXFA_Node* pContainerNode = nullptr;
     if (ToNode(GetXFAObject())->GetPacketType() == XFA_PacketType::Datasets) {
       WideString wsPicture;
-      for (const auto& pFormNode : *(ToNode(GetXFAObject())->GetBindItems())) {
+      for (auto* pFormNode : *(ToNode(GetXFAObject())->GetBindItems())) {
         if (!pFormNode || pFormNode->HasRemovedChildren())
           continue;
 
