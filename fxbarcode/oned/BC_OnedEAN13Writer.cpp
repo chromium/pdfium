@@ -103,10 +103,7 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const ByteString& contents,
   std::unique_ptr<uint8_t, FxFreeDeleter> result(
       FX_Alloc(uint8_t, m_codeWidth));
   int32_t pos = 0;
-  int32_t e = BCExceptionNO;
-  pos += AppendPattern(result.get(), pos, kOnedEAN13StartPattern, 3, 1, e);
-  if (e != BCExceptionNO)
-    return nullptr;
+  pos += AppendPattern(result.get(), pos, kOnedEAN13StartPattern, 3, true);
 
   int32_t i = 0;
   for (i = 1; i <= 6; i++) {
@@ -114,23 +111,15 @@ uint8_t* CBC_OnedEAN13Writer::EncodeImpl(const ByteString& contents,
     if ((parities >> (6 - i) & 1) == 1) {
       digit += 10;
     }
-    pos += AppendPattern(result.get(), pos, L_AND_G_PATTERNS[digit], 4, 0, e);
-    if (e != BCExceptionNO)
-      return nullptr;
+    pos += AppendPattern(result.get(), pos, L_AND_G_PATTERNS[digit], 4, false);
   }
-  pos += AppendPattern(result.get(), pos, kOnedEAN13MiddlePattern, 5, 0, e);
-  if (e != BCExceptionNO)
-    return nullptr;
+  pos += AppendPattern(result.get(), pos, kOnedEAN13MiddlePattern, 5, false);
 
   for (i = 7; i <= 12; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos += AppendPattern(result.get(), pos, kOnedEAN13LPattern[digit], 4, 1, e);
-    if (e != BCExceptionNO)
-      return nullptr;
+    pos += AppendPattern(result.get(), pos, kOnedEAN13LPattern[digit], 4, true);
   }
-  pos += AppendPattern(result.get(), pos, kOnedEAN13StartPattern, 3, 1, e);
-  if (e != BCExceptionNO)
-    return nullptr;
+  pos += AppendPattern(result.get(), pos, kOnedEAN13StartPattern, 3, true);
   return result.release();
 }
 

@@ -90,20 +90,15 @@ int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
                                         int32_t pos,
                                         const int8_t* pattern,
                                         int32_t patternLength,
-                                        int32_t startColor,
-                                        int32_t& e) {
-  if (startColor != 0 && startColor != 1) {
-    e = BCExceptionValueMustBeEither0or1;
-    return 0;
-  }
-  uint8_t color = (uint8_t)startColor;
+                                        bool startColor) {
+  bool color = startColor;
   int32_t numAdded = 0;
   for (int32_t i = 0; i < patternLength; i++) {
     for (int32_t j = 0; j < pattern[i]; j++) {
-      target[pos++] = color;
+      target[pos++] = color ? 1 : 0;
       numAdded += 1;
     }
-    color ^= 1;
+    color = !color;
   }
   return numAdded;
 }

@@ -157,10 +157,7 @@ uint8_t* CBC_OnedCode128Writer::EncodeImpl(const ByteString& contents,
   int32_t pos = 0;
   for (size_t i = 0; i < patterns.size(); ++i) {
     const int8_t* pattern = CODE_PATTERNS[patterns[i]];
-    int32_t e = BCExceptionNO;
-    pos += AppendPattern(result.get(), pos, pattern, kPatternSize, 1, e);
-    if (e != BCExceptionNO)
-      return nullptr;
+    pos += AppendPattern(result.get(), pos, pattern, kPatternSize, true);
   }
   return result.release();
 }
