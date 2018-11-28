@@ -16,10 +16,9 @@ class CBC_EncoderContext {
  public:
   CBC_EncoderContext(const WideString& msg,
                      const WideString& ecLevel,
-                     int32_t& e);
+                     bool bAllowRectangular);
   ~CBC_EncoderContext();
 
-  void setAllowRectangular(bool allow);
   void setSkipAtEnd(int32_t count);
   wchar_t getCurrentChar();
   wchar_t getCurrent();
@@ -34,17 +33,22 @@ class CBC_EncoderContext {
   bool UpdateSymbolInfo(int32_t len);
   void resetSymbolInfo();
 
+  bool HasCharactersOutsideISO88591Encoding() const {
+    return m_bHasCharactersOutsideISO88591Encoding;
+  }
+
   WideString m_msg;
   WideString m_codewords;
-  size_t m_pos;
-  int32_t m_newEncoding;
+  size_t m_pos = 0;
+  int32_t m_newEncoding = -1;
   UnownedPtr<CBC_SymbolInfo> m_symbolInfo;
 
  private:
   size_t getTotalMessageCharCount();
 
-  bool m_allowRectangular;  // Force square when false.
-  size_t m_skipAtEnd;
+  bool m_bAllowRectangular;  // Force square when false.
+  bool m_bHasCharactersOutsideISO88591Encoding = false;
+  size_t m_skipAtEnd = 0;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_

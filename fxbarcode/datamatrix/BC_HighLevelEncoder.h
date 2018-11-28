@@ -28,7 +28,7 @@ class CBC_HighLevelEncoder {
 
   static Optional<WideString> EncodeHighLevel(const WideString& msg,
                                               const WideString& ecLevel,
-                                              bool allowRectangular);
+                                              bool bAllowRectangular);
   static int32_t lookAheadTest(const WideString& msg,
                                int32_t startpos,
                                int32_t currentMode);

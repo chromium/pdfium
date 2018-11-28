@@ -68,13 +68,11 @@ std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(WideString msg) {
 Optional<WideString> CBC_HighLevelEncoder::EncodeHighLevel(
     const WideString& msg,
     const WideString& ecLevel,
-    bool allowRectangular) {
-  int32_t e = BCExceptionNO;
-  CBC_EncoderContext context(msg, ecLevel, e);
-  if (e != BCExceptionNO)
+    bool bAllowRectangular) {
+  CBC_EncoderContext context(msg, ecLevel, bAllowRectangular);
+  if (context.HasCharactersOutsideISO88591Encoding())
     return {};
 
-  context.setAllowRectangular(allowRectangular);
   if ((msg.Left(6) == MACRO_05_HEADER) && (msg.Last() == MACRO_TRAILER)) {
     context.writeCodeword(MACRO_05);
     context.setSkipAtEnd(2);
