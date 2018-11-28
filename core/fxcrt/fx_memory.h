@@ -134,7 +134,7 @@ char (&ArraySizeHelper(T (&array)[N]))[N];
 template <int N, typename T>
 inline T FxAlignToBoundary(T size) {
   static_assert(N > 0 && (N & (N - 1)) == 0, "Not non-zero power of two");
-  return (size + N - 1) & ~(N - 1);
+  return (size + (N - 1)) & ~(N - 1);
 }
 
 // Used with std::unique_ptr to FX_Free raw memory.
