@@ -53,7 +53,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   ~CFWL_Widget() override;
 
   virtual FWL_Type GetClassID() const = 0;
-  virtual bool IsInstance(const WideStringView& wsClass) const;
+  virtual bool IsForm() const;
   virtual CFX_RectF GetAutosizedWidgetRect();
   virtual CFX_RectF GetWidgetRect();
   virtual CFX_RectF GetClientRect();

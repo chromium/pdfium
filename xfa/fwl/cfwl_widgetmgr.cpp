@@ -330,14 +330,11 @@ void CFWL_WidgetMgr::ResetRedrawCounts(CFWL_Widget* pWidget) {
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrItem(
     const CFWL_Widget* pWidget) const {
   auto it = m_mapWidgetItem.find(pWidget);
-  return it != m_mapWidgetItem.end() ? static_cast<Item*>(it->second.get())
-                                     : nullptr;
+  return it != m_mapWidgetItem.end() ? it->second.get() : nullptr;
 }
 
 bool CFWL_WidgetMgr::IsAbleNative(CFWL_Widget* pWidget) const {
-  if (!pWidget)
-    return false;
-  if (!pWidget->IsInstance(FWL_CLASS_Form))
+  if (!pWidget || !pWidget->IsForm())
     return false;
 
   uint32_t dwStyles = pWidget->GetStyles();

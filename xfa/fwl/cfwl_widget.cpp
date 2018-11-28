@@ -62,7 +62,7 @@ CFWL_Widget::~CFWL_Widget() {
   m_pWidgetMgr->RemoveWidget(this);
 }
 
-bool CFWL_Widget::IsInstance(const WideStringView& wsClass) const {
+bool CFWL_Widget::IsForm() const {
   return false;
 }
 

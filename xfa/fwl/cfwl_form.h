@@ -13,8 +13,6 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-#define FWL_CLASS_Form L"FWL_FORM"
-
 class CFWL_MessageMouse;
 class CFWL_NoteLoop;
 class CFWL_Widget;
@@ -29,7 +27,7 @@ class CFWL_Form final : public CFWL_Widget {
 
   // CFWL_Widget
   FWL_Type GetClassID() const override;
-  bool IsInstance(const WideStringView& wsClass) const override;
+  bool IsForm() const override;
   CFX_RectF GetClientRect() override;
   void Update() override;
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
