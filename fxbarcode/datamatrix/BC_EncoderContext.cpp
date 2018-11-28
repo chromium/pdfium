@@ -89,9 +89,8 @@ bool CBC_EncoderContext::UpdateSymbolInfo() {
 
 bool CBC_EncoderContext::UpdateSymbolInfo(int32_t len) {
   if (!m_symbolInfo || len > m_symbolInfo->dataCapacity()) {
-    int32_t e = BCExceptionNO;
-    m_symbolInfo = CBC_SymbolInfo::lookup(len, m_bAllowRectangular, e);
-    if (e != BCExceptionNO)
+    m_symbolInfo = CBC_SymbolInfo::Lookup(len, m_bAllowRectangular);
+    if (!m_symbolInfo)
       return false;
   }
   return true;
