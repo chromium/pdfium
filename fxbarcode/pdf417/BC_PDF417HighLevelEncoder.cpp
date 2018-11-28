@@ -93,8 +93,7 @@ void CBC_PDF417HighLevelEncoder::Initialize() {
 void CBC_PDF417HighLevelEncoder::Finalize() {}
 
 Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
-    const WideString& msg,
-    CBC_PDF417::Compaction compaction) {
+    const WideString& msg) {
   ByteString bytes = msg.ToUTF8();
   size_t len = bytes.GetLength();
   WideString result;
@@ -112,52 +111,43 @@ Optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
   sb.Reserve(len);
   size_t p = 0;
   SubMode textSubMode = SubMode::kAlpha;
-  if (compaction == CBC_PDF417::Compaction::TEXT) {
-    EncodeText(result, p, len, textSubMode, &sb);
-  } else if (compaction == CBC_PDF417::Compaction::BYTES) {
-    EncodeBinary(byteArr, p, byteArr.size(), EncodingMode::kByte, &sb);
-  } else if (compaction == CBC_PDF417::Compaction::NUMERIC) {
-    sb += kLatchToNumeric;
-    EncodeNumeric(result, p, len, &sb);
-  } else {
-    EncodingMode encodingMode = EncodingMode::kUnknown;
-    while (p < len) {
-      size_t n = DetermineConsecutiveDigitCount(result, p);
-      if (n >= 13) {
-        sb += kLatchToNumeric;
-        encodingMode = EncodingMode::kNumeric;
-        textSubMode = SubMode::kAlpha;
-        EncodeNumeric(result, p, n, &sb);
-        p += n;
-      } else {
-        size_t t = DetermineConsecutiveTextCount(result, p);
-        if (t >= 5 || n == len) {
-          if (encodingMode != EncodingMode::kText) {
-            sb += kLatchToText;
-            encodingMode = EncodingMode::kText;
-            textSubMode = SubMode::kAlpha;
-          }
-          textSubMode = EncodeText(result, p, t, textSubMode, &sb);
-          p += t;
-        } else {
-          Optional<size_t> b =
-              DetermineConsecutiveBinaryCount(result, &byteArr, p);
-          if (!b)
-            return {};
-
-          size_t b_value = b.value();
-          if (b_value == 0) {
-            b_value = 1;
-          }
-          if (b_value == 1 && encodingMode == EncodingMode::kText) {
-            EncodeBinary(byteArr, p, 1, EncodingMode::kText, &sb);
-          } else {
-            EncodeBinary(byteArr, p, b_value, encodingMode, &sb);
-            encodingMode = EncodingMode::kByte;
-            textSubMode = SubMode::kAlpha;
-          }
-          p += b_value;
+  EncodingMode encodingMode = EncodingMode::kUnknown;
+  while (p < len) {
+    size_t n = DetermineConsecutiveDigitCount(result, p);
+    if (n >= 13) {
+      sb += kLatchToNumeric;
+      encodingMode = EncodingMode::kNumeric;
+      textSubMode = SubMode::kAlpha;
+      EncodeNumeric(result, p, n, &sb);
+      p += n;
+    } else {
+      size_t t = DetermineConsecutiveTextCount(result, p);
+      if (t >= 5 || n == len) {
+        if (encodingMode != EncodingMode::kText) {
+          sb += kLatchToText;
+          encodingMode = EncodingMode::kText;
+          textSubMode = SubMode::kAlpha;
         }
+        textSubMode = EncodeText(result, p, t, textSubMode, &sb);
+        p += t;
+      } else {
+        Optional<size_t> b =
+            DetermineConsecutiveBinaryCount(result, &byteArr, p);
+        if (!b)
+          return {};
+
+        size_t b_value = b.value();
+        if (b_value == 0) {
+          b_value = 1;
+        }
+        if (b_value == 1 && encodingMode == EncodingMode::kText) {
+          EncodeBinary(byteArr, p, 1, EncodingMode::kText, &sb);
+        } else {
+          EncodeBinary(byteArr, p, b_value, encodingMode, &sb);
+          encodingMode = EncodingMode::kByte;
+          textSubMode = SubMode::kAlpha;
+        }
+        p += b_value;
       }
     }
   }

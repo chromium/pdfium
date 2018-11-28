@@ -382,17 +382,9 @@ const int32_t CBC_PDF417::CODEWORD_TABLE[][929] = {
      0x10396, 0x107b6, 0x187d4, 0x187d2, 0x10794, 0x10fb4, 0x10792, 0x10fb2,
      0x1c7ea}};
 
-CBC_PDF417::CBC_PDF417() : CBC_PDF417(false) {}
+CBC_PDF417::CBC_PDF417() = default;
 
-CBC_PDF417::CBC_PDF417(bool compact)
-    : m_compact(compact),
-      m_compaction(Compaction::AUTO),
-      m_minCols(1),
-      m_maxCols(30),
-      m_maxRows(90),
-      m_minRows(3) {}
-
-CBC_PDF417::~CBC_PDF417() {}
+CBC_PDF417::~CBC_PDF417() = default;
 
 CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
   return m_barcodeMatrix.get();
@@ -407,9 +399,10 @@ bool CBC_PDF417::generateBarcodeLogic(WideString msg,
     return false;
 
   Optional<WideString> high_level =
-      CBC_PDF417HighLevelEncoder::EncodeHighLevel(msg, m_compaction);
+      CBC_PDF417HighLevelEncoder::EncodeHighLevel(msg);
   if (!high_level.has_value())
     return false;
+
   int32_t sourceCodeWords = high_level.value().GetLength();
   std::vector<int32_t> dimensions =
       determineDimensions(sourceCodeWords, errorCorrectionCodeWords);
@@ -450,14 +443,6 @@ void CBC_PDF417::setDimensions(int32_t maxCols,
   m_minCols = minCols;
   m_maxRows = maxRows;
   m_minRows = minRows;
-}
-
-void CBC_PDF417::setCompaction(Compaction compaction) {
-  m_compaction = compaction;
-}
-
-void CBC_PDF417::setCompact(bool compact) {
-  m_compact = compact;
 }
 
 int32_t CBC_PDF417::calculateNumberOfRows(int32_t m, int32_t k, int32_t c) {
@@ -525,13 +510,9 @@ void CBC_PDF417::encodeLowLevel(WideString fullCodewords,
       encodeChar(pattern, 17, logicRow);
       idx++;
     }
-    if (m_compact) {
-      encodeChar(STOP_PATTERN, 1, logicRow);
-    } else {
-      pattern = CODEWORD_TABLE[cluster][right];
-      encodeChar(pattern, 17, logicRow);
-      encodeChar(STOP_PATTERN, 18, logicRow);
-    }
+    pattern = CODEWORD_TABLE[cluster][right];
+    encodeChar(pattern, 17, logicRow);
+    encodeChar(STOP_PATTERN, 18, logicRow);
   }
 }
 

@@ -19,12 +19,9 @@ class CBC_PDF417HighLevelEncoder {
   CBC_PDF417HighLevelEncoder() = delete;
   ~CBC_PDF417HighLevelEncoder() = delete;
 
-  static Optional<WideString> EncodeHighLevel(
-      const WideString& msg,
-      CBC_PDF417::Compaction compaction);
-
   static void Initialize();
   static void Finalize();
+  static Optional<WideString> EncodeHighLevel(const WideString& msg);
 
  private:
   enum class EncodingMode { kUnknown = 0, kText, kByte, kNumeric };
