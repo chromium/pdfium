@@ -72,10 +72,21 @@ inline bool FXSYS_IsHexDigit(char c) {
   return !((c & 0x80) || !std::isxdigit(c));
 }
 
+inline bool FXSYS_IsWideHexDigit(wchar_t c) {
+  return !((c & 0xFFFFFF80) || !std::isxdigit(c));
+}
+
 inline int FXSYS_HexCharToInt(char c) {
   if (!FXSYS_IsHexDigit(c))
     return 0;
   char upchar = FXSYS_ToUpperASCII(c);
+  return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
+}
+
+inline int FXSYS_WideHexCharToInt(wchar_t c) {
+  if (!FXSYS_IsWideHexDigit(c))
+    return 0;
+  char upchar = std::toupper(static_cast<char>(c));
   return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
 }
 
