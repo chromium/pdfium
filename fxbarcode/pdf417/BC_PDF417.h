@@ -30,7 +30,6 @@ class CBC_PDF417 {
  private:
   static const int32_t START_PATTERN = 0x1fea8;
   static const int32_t STOP_PATTERN = 0x3fa29;
-  static const int32_t CODEWORD_TABLE[][929];
   static constexpr float PREFERRED_RATIO = 3.0f;
   static constexpr float DEFAULT_MODULE_WIDTH = 0.357f;
   static constexpr float HEIGHT = 2.0f;
