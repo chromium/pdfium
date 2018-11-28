@@ -95,7 +95,6 @@ int32_t FindMSBSet(int32_t value) {
 bool EmbedDataBits(CBC_QRCoderBitVector* dataBits,
                    int32_t maskPattern,
                    CBC_CommonByteMatrix* matrix) {
-  int32_t e = BCExceptionNO;
   size_t szBitIndex = 0;
   int32_t direction = -1;
   int32_t x = matrix->GetWidth() - 1;
@@ -121,14 +120,9 @@ bool EmbedDataBits(CBC_QRCoderBitVector* dataBits,
         } else {
           bit = 0;
         }
-        if (maskPattern != -1) {
-          bool bol = CBC_QRCoderMaskUtil::GetDataMaskBit(maskPattern, xx, y, e);
-          if (e != BCExceptionNO)
-            return false;
-          if (bol) {
-            bit ^= 0x01;
-          }
-        }
+        ASSERT(CBC_QRCoder::IsValidMaskPattern(maskPattern));
+        if (CBC_QRCoderMaskUtil::GetDataMaskBit(maskPattern, xx, y))
+          bit ^= 0x01;
         matrix->Set(xx, y, bit);
       }
       y += direction;

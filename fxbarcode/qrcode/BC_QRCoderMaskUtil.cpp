@@ -26,14 +26,48 @@
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 #include "fxbarcode/utils.h"
 
-CBC_QRCoderMaskUtil::CBC_QRCoderMaskUtil() {}
-CBC_QRCoderMaskUtil::~CBC_QRCoderMaskUtil() {}
+namespace {
+
+int32_t ApplyMaskPenaltyRule1Internal(CBC_CommonByteMatrix* matrix,
+                                      bool isHorizontal) {
+  int32_t penalty = 0;
+  int32_t numSameBitCells = 0;
+  int32_t prevBit = -1;
+  int32_t width = matrix->GetWidth();
+  int32_t height = matrix->GetHeight();
+  int32_t iLimit = isHorizontal ? height : width;
+  int32_t jLimit = isHorizontal ? width : height;
+  pdfium::span<const uint8_t> array = matrix->GetArray();
+  for (int32_t i = 0; i < iLimit; ++i) {
+    for (int32_t j = 0; j < jLimit; ++j) {
+      int32_t bit = isHorizontal ? array[i * width + j] : array[j * width + i];
+      if (bit == prevBit) {
+        numSameBitCells += 1;
+        if (numSameBitCells == 5) {
+          penalty += 3;
+        } else if (numSameBitCells > 5) {
+          penalty += 1;
+        }
+      } else {
+        numSameBitCells = 1;
+        prevBit = bit;
+      }
+    }
+    numSameBitCells = 0;
+  }
+  return penalty;
+}
+
+}  // namespace
+
+// static
 int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1(
     CBC_CommonByteMatrix* matrix) {
   return ApplyMaskPenaltyRule1Internal(matrix, true) +
          ApplyMaskPenaltyRule1Internal(matrix, false);
 }
 
+// static
 int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(
     CBC_CommonByteMatrix* matrix) {
   int32_t penalty = 0;
@@ -53,6 +87,7 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(
   return 3 * penalty;
 }
 
+// static
 int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(
     CBC_CommonByteMatrix* matrix) {
   int32_t penalty = 0;
@@ -105,6 +140,8 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule3(
   }
   return penalty;
 }
+
+// static
 int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(
     CBC_CommonByteMatrix* matrix) {
   int32_t numDarkCells = 0;
@@ -118,17 +155,16 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(
     }
   }
   int32_t numTotalCells = matrix->GetHeight() * matrix->GetWidth();
-  double darkRatio = (double)numDarkCells / numTotalCells;
-  return abs((int32_t)(darkRatio * 100 - 50) / 5) * 5 * 10;
+  double darkRatio = static_cast<double>(numDarkCells) / numTotalCells;
+  return abs(static_cast<int32_t>(darkRatio * 100 - 50) / 5) * 5 * 10;
 }
+
+// static
 bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
                                          int32_t x,
-                                         int32_t y,
-                                         int32_t& e) {
-  if (!CBC_QRCoder::IsValidMaskPattern(maskPattern)) {
-    e = (BCExceptionInvalidateMaskPattern);
-    return false;
-  }
+                                         int32_t y) {
+  ASSERT(CBC_QRCoder::IsValidMaskPattern(maskPattern));
+
   int32_t intermediate = 0, temp = 0;
   switch (maskPattern) {
     case 0:
@@ -158,40 +194,9 @@ bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
       temp = y * x;
       intermediate = (((temp % 3) + ((y + x) & 0x1)) & 0x1);
       break;
-    default: {
-      e = BCExceptionInvalidateMaskPattern;
+    default:
+      NOTREACHED();
       return false;
-    }
   }
   return intermediate == 0;
-}
-int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1Internal(
-    CBC_CommonByteMatrix* matrix,
-    bool isHorizontal) {
-  int32_t penalty = 0;
-  int32_t numSameBitCells = 0;
-  int32_t prevBit = -1;
-  int32_t width = matrix->GetWidth();
-  int32_t height = matrix->GetHeight();
-  int32_t iLimit = isHorizontal ? height : width;
-  int32_t jLimit = isHorizontal ? width : height;
-  pdfium::span<const uint8_t> array = matrix->GetArray();
-  for (int32_t i = 0; i < iLimit; ++i) {
-    for (int32_t j = 0; j < jLimit; ++j) {
-      int32_t bit = isHorizontal ? array[i * width + j] : array[j * width + i];
-      if (bit == prevBit) {
-        numSameBitCells += 1;
-        if (numSameBitCells == 5) {
-          penalty += 3;
-        } else if (numSameBitCells > 5) {
-          penalty += 1;
-        }
-      } else {
-        numSameBitCells = 1;
-        prevBit = bit;
-      }
-    }
-    numSameBitCells = 0;
-  }
-  return penalty;
 }
