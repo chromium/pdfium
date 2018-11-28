@@ -18,13 +18,13 @@ class CBC_QRCoderBitVector {
   ~CBC_QRCoderBitVector();
 
   const uint8_t* GetArray() const;
-  int32_t At(size_t index, int32_t& e) const;
+  int32_t At(size_t index) const;
   size_t Size() const;
   size_t sizeInBytes() const;
 
   void AppendBit(int32_t bit);
   void AppendBits(int32_t value, int32_t numBits);
-  void AppendBitVector(CBC_QRCoderBitVector* bits);
+  void AppendBitVector(const CBC_QRCoderBitVector* bits);
   bool XOR(const CBC_QRCoderBitVector* other);
 
  private:

@@ -96,7 +96,7 @@ bool EmbedDataBits(CBC_QRCoderBitVector* dataBits,
                    int32_t maskPattern,
                    CBC_CommonByteMatrix* matrix) {
   int32_t e = BCExceptionNO;
-  size_t bitIndex = 0;
+  size_t szBitIndex = 0;
   int32_t direction = -1;
   int32_t x = matrix->GetWidth() - 1;
   int32_t y = matrix->GetHeight() - 1;
@@ -115,11 +115,9 @@ bool EmbedDataBits(CBC_QRCoderBitVector* dataBits,
           continue;
         }
         int32_t bit;
-        if (bitIndex < dataBits->Size()) {
-          bit = dataBits->At(bitIndex, e);
-          if (e != BCExceptionNO)
-            return false;
-          bitIndex++;
+        if (szBitIndex < dataBits->Size()) {
+          bit = dataBits->At(szBitIndex);
+          szBitIndex++;
         } else {
           bit = 0;
         }
@@ -139,7 +137,7 @@ bool EmbedDataBits(CBC_QRCoderBitVector* dataBits,
     y += direction;
     x -= 2;
   }
-  return bitIndex == dataBits->Size();
+  return szBitIndex == dataBits->Size();
 }
 
 int32_t CalculateBCHCode(int32_t value, int32_t poly) {
@@ -184,11 +182,8 @@ bool EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
   if (!MakeTypeInfoBits(ecLevel, maskPattern, &typeInfoBits))
     return false;
 
-  int32_t e = BCExceptionNO;
   for (size_t i = 0; i < typeInfoBits.Size(); i++) {
-    int32_t bit = typeInfoBits.At(typeInfoBits.Size() - 1 - i, e);
-    if (e != BCExceptionNO)
-      return false;
+    int32_t bit = typeInfoBits.At(typeInfoBits.Size() - 1 - i);
     int32_t x1 = TYPE_INFO_COORDINATES[i][0];
     int32_t y1 = TYPE_INFO_COORDINATES[i][1];
     matrix->Set(x1, y1, bit);
@@ -205,25 +200,21 @@ bool EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
   return true;
 }
 
-bool MaybeEmbedVersionInfo(int32_t version, CBC_CommonByteMatrix* matrix) {
+void MaybeEmbedVersionInfo(int32_t version, CBC_CommonByteMatrix* matrix) {
   if (version < 7)
-    return true;
+    return;
 
   CBC_QRCoderBitVector versionInfoBits;
   MakeVersionInfoBits(version, &versionInfoBits);
   int32_t bitIndex = 6 * 3 - 1;
-  int32_t e = BCExceptionNO;
   for (int32_t i = 0; i < 6; i++) {
     for (int32_t j = 0; j < 3; j++) {
-      int32_t bit = versionInfoBits.At(bitIndex, e);
-      if (e != BCExceptionNO)
-        return false;
+      int32_t bit = versionInfoBits.At(bitIndex);
       bitIndex--;
       matrix->Set(i, matrix->GetHeight() - 11 + j, bit);
       matrix->Set(matrix->GetHeight() - 11 + j, i, bit);
     }
   }
-  return true;
 }
 
 bool EmbedTimingPatterns(CBC_CommonByteMatrix* matrix) {
@@ -396,9 +387,7 @@ bool CBC_QRCoderMatrixUtil::BuildMatrix(
     return false;
   if (!EmbedTypeInfo(ecLevel, maskPattern, matrix))
     return false;
-  if (!MaybeEmbedVersionInfo(version, matrix))
-    return false;
-  if (!EmbedDataBits(dataBits, maskPattern, matrix))
-    return false;
-  return true;
+
+  MaybeEmbedVersionInfo(version, matrix);
+  return EmbedDataBits(dataBits, maskPattern, matrix);
 }

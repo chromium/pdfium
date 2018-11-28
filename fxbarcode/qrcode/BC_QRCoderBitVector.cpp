@@ -25,15 +25,12 @@
 #include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/utils.h"
 
-CBC_QRCoderBitVector::CBC_QRCoderBitVector() {}
+CBC_QRCoderBitVector::CBC_QRCoderBitVector() = default;
 
-CBC_QRCoderBitVector::~CBC_QRCoderBitVector() {}
+CBC_QRCoderBitVector::~CBC_QRCoderBitVector() = default;
 
-int32_t CBC_QRCoderBitVector::At(size_t index, int32_t& e) const {
-  if (index >= m_sizeInBits) {
-    e = BCExceptionBadIndexException;
-    return 0;
-  }
+int32_t CBC_QRCoderBitVector::At(size_t index) const {
+  CHECK(index < m_sizeInBits);
   int32_t value = m_array[index >> 3] & 0xff;
   return (value >> (7 - (index & 0x7))) & 1;
 }
@@ -73,14 +70,9 @@ void CBC_QRCoderBitVector::AppendBits(int32_t value, int32_t numBits) {
   }
 }
 
-void CBC_QRCoderBitVector::AppendBitVector(CBC_QRCoderBitVector* bits) {
-  int32_t size = bits->Size();
-  for (int32_t i = 0; i < size; i++) {
-    int e = BCExceptionNO;
-    int32_t num = bits->At(i, e);
-    ASSERT(e == BCExceptionNO);
-    AppendBit(num);
-  }
+void CBC_QRCoderBitVector::AppendBitVector(const CBC_QRCoderBitVector* bits) {
+  for (size_t i = 0; i < bits->Size(); i++)
+    AppendBit(bits->At(i));
 }
 
 bool CBC_QRCoderBitVector::XOR(const CBC_QRCoderBitVector* other) {
