@@ -46,6 +46,7 @@ CFWL_Widget::CFWL_Widget(const CFWL_App* app,
       m_nEventKey(0),
       m_pDelegate(nullptr) {
   ASSERT(m_pWidgetMgr);
+  ASSERT(m_pProperties);
 
   CFWL_Widget* pParent = m_pProperties->m_pParent;
   m_pWidgetMgr->InsertWidget(pParent, this);
@@ -173,9 +174,6 @@ CFX_PointF CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
 }
 
 CFX_Matrix CFWL_Widget::GetMatrix() const {
-  if (!m_pProperties)
-    return CFX_Matrix();
-
   CFWL_Widget* parent = GetParent();
   std::vector<CFWL_Widget*> parents;
   while (parent) {
