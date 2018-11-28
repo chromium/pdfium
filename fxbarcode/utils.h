@@ -26,7 +26,6 @@ enum BCFORMAT {
 #define BCExceptionIllegalArgument 16
 #define BCExceptionValueMustBeEither0or1 50
 #define BCExceptionInvalidateMaskPattern 68
-#define BCExceptionCharacterNotThisMode 75
 #define BCExceptionGeneric 107
 
 #endif  // FXBARCODE_UTILS_H_

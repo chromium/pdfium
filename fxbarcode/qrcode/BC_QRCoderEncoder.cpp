@@ -166,12 +166,11 @@ bool AppendLengthInfo(int32_t numLetters,
                       int32_t version,
                       CBC_QRCoderMode* mode,
                       CBC_QRCoderBitVector* bits) {
-  int32_t e = BCExceptionNO;
   const auto* qcv = CBC_QRCoderVersion::GetVersionForNumber(version);
   if (!qcv)
     return false;
-  int32_t numBits = mode->GetCharacterCountBits(qcv->GetVersionNumber(), e);
-  if (e != BCExceptionNO)
+  int32_t numBits = mode->GetCharacterCountBits(qcv->GetVersionNumber());
+  if (numBits == 0)
     return false;
   if (numBits > ((1 << numBits) - 1))
     return true;
