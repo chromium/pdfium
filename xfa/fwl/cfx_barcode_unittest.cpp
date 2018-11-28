@@ -41,14 +41,10 @@ class BarcodeTest : public testing::Test {
 
   CFX_Barcode* barcode() const { return barcode_.get(); }
 
-  bool Create(BC_TYPE type) {
+  void Create(BC_TYPE type) {
     barcode_ = CFX_Barcode::Create(type);
-    if (!barcode_)
-      return false;
-
     barcode_->SetHeight(298);
     barcode_->SetWidth(418);
-    return true;
   }
 
   bool RenderDevice() {
@@ -73,102 +69,102 @@ class BarcodeTest : public testing::Test {
 };
 
 TEST_F(BarcodeTest, Code39) {
-  EXPECT_TRUE(Create(BC_CODE39));
+  Create(BC_CODE39);
   EXPECT_TRUE(barcode()->Encode(L"CLAMS"));
   RenderDevice();
   EXPECT_EQ("cd4cd3f36da38ff58d9f621827018903", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, CodaBar) {
-  EXPECT_TRUE(Create(BC_CODABAR));
+  Create(BC_CODABAR);
   EXPECT_TRUE(barcode()->Encode(L"$123-456"));
   RenderDevice();
   EXPECT_EQ("5fad4fc19f099001a0fe83c89430c977", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, DISABLED_CodaBarLetters) {
-  EXPECT_TRUE(Create(BC_CODABAR));
+  Create(BC_CODABAR);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
 TEST_F(BarcodeTest, Code128) {
-  EXPECT_TRUE(Create(BC_CODE128));
+  Create(BC_CODE128);
   EXPECT_TRUE(barcode()->Encode(L"Clams"));
   RenderDevice();
   EXPECT_EQ("6351f0f6e997050e4658bbb4777aef74", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, Code128B) {
-  EXPECT_TRUE(Create(BC_CODE128_B));
+  Create(BC_CODE128_B);
   EXPECT_TRUE(barcode()->Encode(L"Clams"));
   RenderDevice();
   EXPECT_EQ("6351f0f6e997050e4658bbb4777aef74", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, Code128C) {
-  EXPECT_TRUE(Create(BC_CODE128_C));
+  Create(BC_CODE128_C);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
   EXPECT_EQ("fba730a807ba6363f9bd2bc7f8c56d1f", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, DISABLED_Code128CLetters) {
-  EXPECT_TRUE(Create(BC_CODE128_C));
+  Create(BC_CODE128_C);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
 TEST_F(BarcodeTest, Ean8) {
-  EXPECT_TRUE(Create(BC_EAN8));
+  Create(BC_EAN8);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
   EXPECT_EQ("aff88491ac46ca6217d780d185300cde", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, DISABLED_Ean8Letters) {
-  EXPECT_TRUE(Create(BC_EAN8));
+  Create(BC_EAN8);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
 TEST_F(BarcodeTest, UPCA) {
-  EXPECT_TRUE(Create(BC_UPCA));
+  Create(BC_UPCA);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
   EXPECT_EQ("fe26a5714cff7ffe3f9b02183efc435b", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, DISABLED_UPCALetters) {
-  EXPECT_TRUE(Create(BC_UPCA));
+  Create(BC_UPCA);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
 TEST_F(BarcodeTest, Ean13) {
-  EXPECT_TRUE(Create(BC_EAN13));
+  Create(BC_EAN13);
   EXPECT_TRUE(barcode()->Encode(L"123456"));
   RenderDevice();
   EXPECT_EQ("72d2190b98d635c32834bf67552e561e", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, DISABLED_Ean13Letters) {
-  EXPECT_TRUE(Create(BC_EAN13));
+  Create(BC_EAN13);
   EXPECT_FALSE(barcode()->Encode(L"clams"));
 }
 
 TEST_F(BarcodeTest, Pdf417) {
-  EXPECT_TRUE(Create(BC_PDF417));
+  Create(BC_PDF417);
   EXPECT_TRUE(barcode()->Encode(L"clams"));
   RenderDevice();
   EXPECT_EQ("191e35d11613901b7d5d51033689aa89", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, DataMatrix) {
-  EXPECT_TRUE(Create(BC_DATAMATRIX));
+  Create(BC_DATAMATRIX);
   EXPECT_TRUE(barcode()->Encode(L"clams"));
   RenderDevice();
   EXPECT_EQ("5e5cd9a680b86fcd4ffd53ed36e3c980", BitmapChecksum());
 }
 
 TEST_F(BarcodeTest, QrCode) {
-  EXPECT_TRUE(Create(BC_QR_CODE));
+  Create(BC_QR_CODE);
   EXPECT_TRUE(barcode()->Encode(L"clams"));
   RenderDevice();
   EXPECT_EQ("4751c6e0f67749fabe24f787128decee", BitmapChecksum());

@@ -18,8 +18,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   size -= sizeof(uint16_t);
 
   auto barcode = CFX_Barcode::Create(type);
-  if (!barcode)
-    return 0;
 
   // TODO(tsepez): Setup more options from |data|.
   barcode->SetModuleHeight(300);

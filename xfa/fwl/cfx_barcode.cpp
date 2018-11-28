@@ -60,9 +60,8 @@ CFX_Barcode::CFX_Barcode() {}
 CFX_Barcode::~CFX_Barcode() {}
 
 std::unique_ptr<CFX_Barcode> CFX_Barcode::Create(BC_TYPE type) {
-  auto barcodeEngine = CreateBarCodeEngineObject(type);
-  std::unique_ptr<CFX_Barcode> barcode(new CFX_Barcode());
-  barcode->m_pBCEngine.swap(barcodeEngine);
+  auto barcode = pdfium::WrapUnique(new CFX_Barcode());  // Private ctor.
+  barcode->m_pBCEngine = CreateBarCodeEngineObject(type);
   return barcode;
 }
 
