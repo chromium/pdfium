@@ -132,7 +132,7 @@ static void NotifyHideChildWidget(CFWL_WidgetMgr* widgetMgr,
 
 void CFWL_Widget::SetStates(uint32_t dwStates) {
   m_pProperties->m_dwStates |= dwStates;
-  if (!(dwStates & FWL_WGTSTATE_Invisible))
+  if (IsVisible())
     return;
 
   CFWL_NoteDriver* noteDriver =
@@ -213,7 +213,7 @@ bool CFWL_Widget::HasBorder() const {
 }
 
 bool CFWL_Widget::IsVisible() const {
-  return (m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) == 0;
+  return !(m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible);
 }
 
 bool CFWL_Widget::IsOverLapper() const {
@@ -258,9 +258,8 @@ IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() const {
 
   const CFWL_Widget* pUp = this;
   do {
-    pUp = (pUp->GetStyles() & FWL_WGTSTYLE_Popup)
-              ? m_pWidgetMgr->GetOwnerWidget(pUp)
-              : m_pWidgetMgr->GetParentWidget(pUp);
+    pUp = pUp->IsPopup() ? m_pWidgetMgr->GetOwnerWidget(pUp)
+                         : m_pWidgetMgr->GetParentWidget(pUp);
     if (pUp) {
       IFWL_ThemeProvider* pRet = pUp->GetThemeProvider();
       if (pRet)

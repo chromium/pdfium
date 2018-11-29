@@ -116,9 +116,7 @@ class CFWL_ComboBox final : public CFWL_Widget {
 
   void InitComboList();
   void InitComboEdit();
-  bool IsDropListVisible() const {
-    return !(m_pListBox->GetStates() & FWL_WGTSTATE_Invisible);
-  }
+  bool IsDropListVisible() const { return m_pListBox->IsVisible(); }
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnKey(CFWL_MessageKey* pMsg);

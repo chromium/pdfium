@@ -648,8 +648,9 @@ void CFWL_ListBox::InitHorizontalScrollBar() {
 bool CFWL_ListBox::IsShowScrollBar(bool bVert) {
   CFWL_ScrollBar* pScrollbar =
       bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
-  if (!pScrollbar || (pScrollbar->GetStates() & FWL_WGTSTATE_Invisible))
+  if (!pScrollbar || !pScrollbar->IsVisible())
     return false;
+
   return !(m_pProperties->m_dwStyleExes &
            FWL_STYLEEXT_LTB_ShowScrollBarFocus) ||
          (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);

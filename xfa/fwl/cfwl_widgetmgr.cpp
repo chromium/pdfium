@@ -231,12 +231,10 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
   if (!parent)
     return nullptr;
 
-  CFX_PointF pos;
   CFWL_Widget* child = GetLastChildWidget(parent);
   while (child) {
-    if ((child->GetStates() & FWL_WGTSTATE_Invisible) == 0) {
-      pos = parent->GetMatrix().GetInverse().Transform(point);
-
+    if (child->IsVisible()) {
+      CFX_PointF pos = parent->GetMatrix().GetInverse().Transform(point);
       CFX_RectF bounds = child->GetWidgetRect();
       if (bounds.Contains(pos)) {
         pos -= bounds.TopLeft();
@@ -337,10 +335,7 @@ bool CFWL_WidgetMgr::IsAbleNative(CFWL_Widget* pWidget) const {
   if (!pWidget || !pWidget->IsForm())
     return false;
 
-  uint32_t dwStyles = pWidget->GetStyles();
-  return ((dwStyles & FWL_WGTSTYLE_WindowTypeMask) ==
-          FWL_WGTSTYLE_OverLapper) ||
-         (dwStyles & FWL_WGTSTYLE_Popup);
+  return pWidget->IsOverLapper() || pWidget->IsPopup();
 }
 
 void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
@@ -409,7 +404,7 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
   while (pNextChild) {
     CFWL_Widget* child = pNextChild;
     pNextChild = GetNextSiblingWidget(child);
-    if (child->GetStates() & FWL_WGTSTATE_Invisible)
+    if (!child->IsVisible())
       continue;
 
     CFX_RectF rtWidget = child->GetWidgetRect();

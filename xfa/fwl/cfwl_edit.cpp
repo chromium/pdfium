@@ -664,12 +664,8 @@ void CFWL_Edit::UpdateCaret() {
 }
 
 CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
-  bool bShowHorz =
-      m_pHorzScrollBar &&
-      ((m_pHorzScrollBar->GetStates() & FWL_WGTSTATE_Invisible) == 0);
-  bool bShowVert =
-      m_pVertScrollBar &&
-      ((m_pVertScrollBar->GetStates() & FWL_WGTSTATE_Invisible) == 0);
+  bool bShowHorz = m_pHorzScrollBar && m_pHorzScrollBar->IsVisible();
+  bool bShowVert = m_pVertScrollBar && m_pVertScrollBar->IsVisible();
   if (!bShowHorz && !bShowVert)
     return nullptr;
 

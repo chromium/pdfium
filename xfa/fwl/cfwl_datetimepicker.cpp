@@ -268,7 +268,7 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
 }
 
 bool CFWL_DateTimePicker::IsMonthCalendarVisible() const {
-  return (m_pMonthCal && !(m_pMonthCal->GetStates() & FWL_WGTSTATE_Invisible));
+  return m_pMonthCal && m_pMonthCal->IsVisible();
 }
 
 void CFWL_DateTimePicker::ResetEditAlignment() {

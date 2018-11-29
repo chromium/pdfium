@@ -78,6 +78,11 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
 
   void SetParent(CFWL_Widget* pParent);
 
+  bool IsVisible() const;
+  bool IsOverLapper() const;
+  bool IsPopup() const;
+  bool IsChild() const;
+
   CFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
   CFWL_Widget* GetOuter() const { return m_pOuter; }
 
@@ -155,11 +160,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
  private:
   CFWL_Widget* GetParent() const { return m_pWidgetMgr->GetParentWidget(this); }
   CFX_SizeF GetOffsetFromParent(CFWL_Widget* pParent);
-
-  bool IsVisible() const;
-  bool IsOverLapper() const;
-  bool IsPopup() const;
-  bool IsChild() const;
   CFWL_Widget* GetRootOuter();
   void DrawBackground(CXFA_Graphics* pGraphics,
                       CFWL_Part iPartBk,
