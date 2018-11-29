@@ -8,13 +8,13 @@
 namespace {
 
 // 3 wide and 4 narrow modules per delimiter. One space between them.
-const int kModulesForDelimiters = (3 * 2 + 4 * 1) * 2 + 1;
+constexpr int kModulesForDelimiters = (3 * 2 + 4) * 2 + 1;
 
 // 2 wide and 5 narrow modules per number, '_' or '$'. 1 space between chars.
-const int kModulesPerNumber = 2 * 2 + 5 * 1 + 1;
+constexpr int kModulesPerNumber = 2 * 2 + 5 + 1;
 
 // 3 wide and 4 narrow modules per number, '_' or '$'. 1 space between chars.
-const int kModulesPerPunctuation = 3 * 2 + 4 * 1 + 1;
+constexpr int kModulesPerPunctuation = 3 * 2 + 4 + 1;
 
 TEST(OnedCodaBarWriterTest, Encode) {
   CBC_OnedCodaBarWriter writer;

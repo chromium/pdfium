@@ -10,7 +10,7 @@
 namespace {
 
 // 3 wide and 6 narrow modules per char. 1 space between chars.
-const int MODULES_PER_CHAR = 3 * 3 + 6 * 1 + 1;
+constexpr int MODULES_PER_CHAR = 3 * 3 + 6 + 1;
 
 // '*' is added as the first and last char.
 const int DELIMITER_CHARS = 2;

@@ -36,11 +36,11 @@ WideString CBC_EAN8::Preprocess(const WideStringView& contents) {
   int32_t length = encodeContents.GetLength();
   if (length <= 7) {
     for (int32_t i = 0; i < 7 - length; i++)
-      encodeContents = wchar_t('0') + encodeContents;
+      encodeContents = L'0' + encodeContents;
 
     ByteString byteString = encodeContents.ToUTF8();
     int32_t checksum = pWriter->CalcChecksum(byteString);
-    encodeContents += wchar_t(checksum - 0 + '0');
+    encodeContents += L'0' + checksum;
   }
   if (length > 8)
     encodeContents = encodeContents.Left(8);
