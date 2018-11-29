@@ -109,8 +109,8 @@ CBC_SymbolInfo::CBC_SymbolInfo(int32_t dataCapacity,
 
 CBC_SymbolInfo::~CBC_SymbolInfo() = default;
 
-CBC_SymbolInfo* CBC_SymbolInfo::Lookup(int32_t iDataCodewords,
-                                       bool bAllowRectangular) {
+const CBC_SymbolInfo* CBC_SymbolInfo::Lookup(int32_t iDataCodewords,
+                                             bool bAllowRectangular) {
   for (size_t i = 0; i < kSymbolsCount; i++) {
     CBC_SymbolInfo* symbol = g_symbols[i];
     if (symbol->m_rectangular && !bAllowRectangular)

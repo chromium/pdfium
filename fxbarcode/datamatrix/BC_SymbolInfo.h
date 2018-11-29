@@ -22,7 +22,8 @@ class CBC_SymbolInfo {
   static void Initialize();
   static void Finalize();
   static void overrideSymbolSet(CBC_SymbolInfo* override);
-  static CBC_SymbolInfo* Lookup(int32_t iDataCodewords, bool bAllowRectangular);
+  static const CBC_SymbolInfo* Lookup(int32_t iDataCodewords,
+                                      bool bAllowRectangular);
 
   int32_t getSymbolDataWidth() const;
   int32_t getSymbolDataHeight() const;

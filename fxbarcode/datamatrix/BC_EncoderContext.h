@@ -41,7 +41,7 @@ class CBC_EncoderContext {
   WideString m_codewords;
   size_t m_pos = 0;
   int32_t m_newEncoding = -1;
-  UnownedPtr<CBC_SymbolInfo> m_symbolInfo;
+  UnownedPtr<const CBC_SymbolInfo> m_symbolInfo;
 
  private:
   size_t getTotalMessageCharCount();

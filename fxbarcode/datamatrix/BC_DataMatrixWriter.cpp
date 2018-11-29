@@ -47,7 +47,7 @@ namespace {
 
 std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
     CBC_DefaultPlacement* placement,
-    CBC_SymbolInfo* symbolInfo) {
+    const CBC_SymbolInfo* symbolInfo) {
   int32_t symbolWidth = symbolInfo->getSymbolDataWidth();
   ASSERT(symbolWidth);
   int32_t symbolHeight = symbolInfo->getSymbolDataHeight();
@@ -117,10 +117,12 @@ uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
       CBC_HighLevelEncoder::EncodeHighLevel(contents, ecLevel, false);
   if (encoded.IsEmpty())
     return nullptr;
-  CBC_SymbolInfo* pSymbolInfo =
+
+  const CBC_SymbolInfo* pSymbolInfo =
       CBC_SymbolInfo::Lookup(encoded.GetLength(), false);
   if (!pSymbolInfo)
     return nullptr;
+
   WideString codewords =
       CBC_ErrorCorrection::EncodeECC200(encoded, pSymbolInfo);
   if (codewords.IsEmpty())
