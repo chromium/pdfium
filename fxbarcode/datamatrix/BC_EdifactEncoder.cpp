@@ -101,14 +101,18 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
   return true;
 }
 
-void encodeChar(wchar_t c, WideString* sb, int32_t& e) {
+bool AppendEncodedChar(wchar_t c, WideString* sb) {
   if (c >= ' ' && c <= '?') {
     *sb += c;
-  } else if (c >= '@' && c <= '^') {
-    *sb += (wchar_t)(c - 64);
-  } else {
-    e = BCExceptionIllegalArgument;
+    return true;
   }
+
+  if (c >= '@' && c <= '^') {
+    *sb += (c - 64);
+    return true;
+  }
+
+  return false;
 }
 
 }  // namespace
@@ -125,9 +129,7 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
   WideString buffer;
   while (context->hasMoreCharacters()) {
     wchar_t c = context->getCurrentChar();
-    int32_t e = BCExceptionNO;
-    encodeChar(c, &buffer, e);
-    if (e != BCExceptionNO)
+    if (!AppendEncodedChar(c, &buffer))
       return false;
 
     context->m_pos++;

@@ -118,22 +118,22 @@ void CBC_ErrorCorrection::Initialize() {
 }
 void CBC_ErrorCorrection::Finalize() {}
 
-WideString CBC_ErrorCorrection::encodeECC200(WideString codewords,
-                                             CBC_SymbolInfo* symbolInfo,
-                                             int32_t& e) {
+Optional<WideString> CBC_ErrorCorrection::EncodeECC200(
+    const WideString& codewords,
+    const CBC_SymbolInfo* symbolInfo) {
   if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) !=
       symbolInfo->dataCapacity()) {
-    e = BCExceptionIllegalArgument;
-    return WideString();
+    return {};
   }
   WideString sb;
   sb += codewords;
   int32_t blockCount = symbolInfo->getInterleavedBlockCount();
   if (blockCount == 1) {
-    WideString ecc = createECCBlock(codewords, symbolInfo->errorCodewords(), e);
-    if (e != BCExceptionNO)
+    Optional<WideString> ecc =
+        CreateECCBlock(codewords, symbolInfo->errorCodewords());
+    if (!ecc.has_value())
       return WideString();
-    sb += ecc;
+    sb += ecc.value();
   } else {
     std::vector<int32_t> dataSizes(blockCount);
     std::vector<int32_t> errorSizes(blockCount);
@@ -151,40 +151,34 @@ WideString CBC_ErrorCorrection::encodeECC200(WideString codewords,
       for (int32_t d = block; d < symbolInfo->dataCapacity(); d += blockCount) {
         temp += (wchar_t)codewords[d];
       }
-      WideString ecc = createECCBlock(temp, errorSizes[block], e);
-      if (e != BCExceptionNO)
+      Optional<WideString> ecc = CreateECCBlock(temp, errorSizes[block]);
+      if (!ecc.has_value())
         return WideString();
       int32_t pos = 0;
       for (int32_t l = block; l < errorSizes[block] * blockCount;
            l += blockCount) {
-        sb.SetAt(symbolInfo->dataCapacity() + l, ecc[pos++]);
+        sb.SetAt(symbolInfo->dataCapacity() + l, ecc.value()[pos++]);
       }
     }
   }
   return sb;
 }
-WideString CBC_ErrorCorrection::createECCBlock(WideString codewords,
-                                               int32_t numECWords,
-                                               int32_t& e) {
-  return createECCBlock(codewords, 0, codewords.GetLength(), numECWords, e);
-}
-WideString CBC_ErrorCorrection::createECCBlock(WideString codewords,
-                                               int32_t start,
-                                               int32_t len,
-                                               int32_t numECWords,
-                                               int32_t& e) {
+
+Optional<WideString> CBC_ErrorCorrection::CreateECCBlock(
+    const WideString& codewords,
+    int32_t numECWords) {
+  const int32_t len = codewords.GetLength();
   static const size_t kFactorTableNum = sizeof(FACTOR_SETS) / sizeof(int32_t);
   size_t table = 0;
   while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
     table++;
 
-  if (table >= kFactorTableNum) {
-    e = BCExceptionIllegalArgument;
-    return WideString();
-  }
+  if (table >= kFactorTableNum)
+    return {};
+
   uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
-  for (int32_t l = start; l < start + len; l++) {
-    uint16_t m = ecc[numECWords - 1] ^ codewords[l];
+  for (int32_t i = 0; i < len; i++) {
+    uint16_t m = ecc[numECWords - 1] ^ codewords[i];
     for (int32_t k = numECWords - 1; k > 0; k--) {
       if (m != 0 && FACTORS[table][k] != 0) {
         ecc[k] = (uint16_t)(ecc[k - 1] ^

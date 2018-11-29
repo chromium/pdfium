@@ -22,8 +22,4 @@ enum BCFORMAT {
   BCFORMAT_QR_CODE
 };
 
-#define BCExceptionNO 0
-#define BCExceptionIllegalArgument 16
-#define BCExceptionGeneric 107
-
 #endif  // FXBARCODE_UTILS_H_
