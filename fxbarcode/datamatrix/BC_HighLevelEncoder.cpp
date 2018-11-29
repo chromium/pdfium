@@ -64,13 +64,12 @@ std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(WideString msg) {
 }
 
 // static
-Optional<WideString> CBC_HighLevelEncoder::EncodeHighLevel(
-    const WideString& msg,
-    const WideString& ecLevel,
-    bool bAllowRectangular) {
+WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
+                                                 const WideString& ecLevel,
+                                                 bool bAllowRectangular) {
   CBC_EncoderContext context(msg, ecLevel, bAllowRectangular);
   if (context.HasCharactersOutsideISO88591Encoding())
-    return {};
+    return WideString();
 
   if ((msg.Left(6) == MACRO_05_HEADER) && (msg.Last() == MACRO_TRAILER)) {
     context.writeCodeword(MACRO_05);
@@ -93,7 +92,7 @@ Optional<WideString> CBC_HighLevelEncoder::EncodeHighLevel(
   int32_t encodingMode = ASCII_ENCODATION;
   while (context.hasMoreCharacters()) {
     if (!encoders[encodingMode]->Encode(&context))
-      return {};
+      return WideString();
 
     if (context.m_newEncoding >= 0) {
       encodingMode = context.m_newEncoding;
@@ -102,7 +101,7 @@ Optional<WideString> CBC_HighLevelEncoder::EncodeHighLevel(
   }
   int32_t len = context.m_codewords.GetLength();
   if (!context.UpdateSymbolInfo())
-    return {};
+    return WideString();
 
   int32_t capacity = context.m_symbolInfo->dataCapacity();
   if (len < capacity) {
@@ -112,14 +111,15 @@ Optional<WideString> CBC_HighLevelEncoder::EncodeHighLevel(
     }
   }
   WideString codewords = context.m_codewords;
-  if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) < capacity) {
+  if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) < capacity)
     codewords += PAD;
-  }
+
   while (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) <
          capacity) {
     codewords += (randomize253State(
         PAD, pdfium::base::checked_cast<int32_t>(codewords.GetLength()) + 1));
   }
+  ASSERT(!codewords.IsEmpty());
   return codewords;
 }
 

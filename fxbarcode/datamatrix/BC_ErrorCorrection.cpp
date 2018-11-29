@@ -104,8 +104,9 @@ constexpr int32_t MODULO_VALUE = 0x12D;
 int32_t LOG[256] = {0};
 int32_t ALOG[256] = {0};
 
-Optional<WideString> CreateECCBlock(const WideString& codewords,
-                                    int32_t numECWords) {
+WideString CreateECCBlock(const WideString& codewords, int32_t numECWords) {
+  ASSERT(numECWords > 0);
+
   const int32_t len = codewords.GetLength();
   static const size_t kFactorTableNum = sizeof(FACTOR_SETS) / sizeof(int32_t);
   size_t table = 0;
@@ -113,7 +114,7 @@ Optional<WideString> CreateECCBlock(const WideString& codewords,
     table++;
 
   if (table >= kFactorTableNum)
-    return {};
+    return WideString();
 
   uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
   for (int32_t i = 0; i < 0 + len; i++) {
@@ -137,8 +138,11 @@ Optional<WideString> CreateECCBlock(const WideString& codewords,
     strecc += (wchar_t)ecc[numECWords - j - 1];
   }
   FX_Free(ecc);
+
+  ASSERT(!strecc.IsEmpty());
   return strecc;
 }
+
 }  // namespace
 
 void CBC_ErrorCorrection::Initialize() {
@@ -154,22 +158,20 @@ void CBC_ErrorCorrection::Initialize() {
 }
 void CBC_ErrorCorrection::Finalize() {}
 
-Optional<WideString> CBC_ErrorCorrection::EncodeECC200(
-    const WideString& codewords,
-    const CBC_SymbolInfo* symbolInfo) {
+WideString CBC_ErrorCorrection::EncodeECC200(const WideString& codewords,
+                                             const CBC_SymbolInfo* symbolInfo) {
   if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) !=
       symbolInfo->dataCapacity()) {
-    return {};
+    return WideString();
   }
   WideString sb;
   sb += codewords;
   int32_t blockCount = symbolInfo->getInterleavedBlockCount();
   if (blockCount == 1) {
-    Optional<WideString> ecc =
-        CreateECCBlock(codewords, symbolInfo->errorCodewords());
-    if (!ecc.has_value())
+    WideString ecc = CreateECCBlock(codewords, symbolInfo->errorCodewords());
+    if (ecc.IsEmpty())
       return WideString();
-    sb += ecc.value();
+    sb += ecc;
   } else {
     std::vector<int32_t> dataSizes(blockCount);
     std::vector<int32_t> errorSizes(blockCount);
@@ -187,15 +189,16 @@ Optional<WideString> CBC_ErrorCorrection::EncodeECC200(
       for (int32_t d = block; d < symbolInfo->dataCapacity(); d += blockCount) {
         temp += (wchar_t)codewords[d];
       }
-      Optional<WideString> ecc = CreateECCBlock(temp, errorSizes[block]);
-      if (!ecc.has_value())
+      WideString ecc = CreateECCBlock(temp, errorSizes[block]);
+      if (ecc.IsEmpty())
         return WideString();
       int32_t pos = 0;
       for (int32_t l = block; l < errorSizes[block] * blockCount;
            l += blockCount) {
-        sb.SetAt(symbolInfo->dataCapacity() + l, ecc.value()[pos++]);
+        sb.SetAt(symbolInfo->dataCapacity() + l, ecc[pos++]);
       }
     }
   }
+  ASSERT(!sb.IsEmpty());
   return sb;
 }

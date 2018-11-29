@@ -113,17 +113,17 @@ uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
     return nullptr;
 
   WideString ecLevel;
-  Optional<WideString> encoded =
+  WideString encoded =
       CBC_HighLevelEncoder::EncodeHighLevel(contents, ecLevel, false);
-  if (!encoded.has_value())
+  if (encoded.IsEmpty())
     return nullptr;
   CBC_SymbolInfo* pSymbolInfo =
-      CBC_SymbolInfo::Lookup(encoded.value().GetLength(), false);
+      CBC_SymbolInfo::Lookup(encoded.GetLength(), false);
   if (!pSymbolInfo)
     return nullptr;
-  Optional<WideString> codewords =
-      CBC_ErrorCorrection::EncodeECC200(encoded.value(), pSymbolInfo);
-  if (!codewords.has_value())
+  WideString codewords =
+      CBC_ErrorCorrection::EncodeECC200(encoded, pSymbolInfo);
+  if (codewords.IsEmpty())
     return nullptr;
 
   int32_t width = pSymbolInfo->getSymbolDataWidth();
@@ -131,8 +131,8 @@ uint8_t* CBC_DataMatrixWriter::Encode(const WideString& contents,
   int32_t height = pSymbolInfo->getSymbolDataHeight();
   ASSERT(height);
 
-  auto placement = pdfium::MakeUnique<CBC_DefaultPlacement>(codewords.value(),
-                                                            width, height);
+  auto placement =
+      pdfium::MakeUnique<CBC_DefaultPlacement>(codewords, width, height);
   placement->place();
   auto bytematrix = encodeLowLevel(placement.get(), pSymbolInfo);
   if (!bytematrix)
