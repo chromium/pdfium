@@ -110,9 +110,11 @@ void CPDF_CMapParser::ParseWord(const ByteStringView& word) {
   } else if (m_Status == 7) {
     if (word == "endcodespacerange") {
       const auto& code_ranges = m_pCMap->GetMixedFourByteLeadingRanges();
-      size_t nSegs = code_ranges.size();
+      size_t nSegs = code_ranges.size() + m_PendingRanges.size();
       if (nSegs == 1) {
-        m_pCMap->SetCodingScheme((code_ranges[0].m_CharSize == 2)
+        const auto& first_range =
+            code_ranges.size() > 0 ? code_ranges[0] : m_PendingRanges[0];
+        m_pCMap->SetCodingScheme((first_range.m_CharSize == 2)
                                      ? CPDF_CMap::TwoBytes
                                      : CPDF_CMap::OneByte);
       } else if (nSegs > 1) {
