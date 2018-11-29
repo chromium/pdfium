@@ -1052,6 +1052,13 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
       name_tree.LookupNamedDest(pDoc, PDF_DecodeText(ByteString(name))));
 }
 
+#ifdef PDF_ENABLE_V8
+FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags() {
+  // Reduce exposure since no PDF should contain web assembly.
+  return "--no-expose-wasm";
+}
+#endif  // PDF_ENABLE_V8
+
 #ifdef PDF_ENABLE_XFA
 FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Init(FPDF_BSTR* str) {
   if (!str)

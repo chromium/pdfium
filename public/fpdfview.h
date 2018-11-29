@@ -1115,6 +1115,19 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
                                                       void* buffer,
                                                       long* buflen);
 
+#ifdef PDF_ENABLE_V8
+// Function: FPDF_GetRecommendedV8Flags
+//          Returns a space-separated string of command line flags that are
+//          recommended to be passed into V8 via V8::SetFlagsFromString()
+//          prior to initializing the PDFium library.
+// Parameters:
+//          None.
+// Return value:
+//          NUL-terminated string of the form "--flag1 --flag2".
+//          The caller must not attempt to modify or free the result.
+FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags();
+#endif  // PDF_ENABLE_V8
+
 #ifdef PDF_ENABLE_XFA
 // Function: FPDF_BStr_Init
 //          Helper function to initialize a byte string.
