@@ -19,9 +19,9 @@ struct FGAS_FONTUSB {
 const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t wUnicode);
 
 struct FGAS_FontInfo {
-  uint32_t dwFontNameHash;
-  const wchar_t* pPsName;
-  const wchar_t* pReplaceFont;
+  uint32_t dwFontNameHash;  // WideString hash.
+  const char* pPsName;
+  const char* pReplaceFont;
   uint16_t dwStyles;
   uint16_t wCodePage;
 };

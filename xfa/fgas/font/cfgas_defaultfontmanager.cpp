@@ -32,15 +32,16 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
   if (FontStyleIsItalic(dwFontStyles))
     dwStyle |= FXFONT_ITALIC;
 
-  const wchar_t* pReplace = pCurFont->pReplaceFont;
-  int32_t iLength = wcslen(pReplace);
+  const char* pReplace = pCurFont->pReplaceFont;
+  int32_t iLength = strlen(pReplace);
   while (iLength > 0) {
-    const wchar_t* pNameText = pReplace;
-    while (*pNameText != L',' && iLength > 0) {
+    const char* pNameText = pReplace;
+    while (*pNameText != ',' && iLength > 0) {
       pNameText++;
       iLength--;
     }
-    WideString wsReplace = WideString(pReplace, pNameText - pReplace);
+    WideString wsReplace =
+        WideString::FromASCII(ByteStringView(pReplace, pNameText - pReplace));
     pFont = pFontMgr->LoadFont(wsReplace.c_str(), dwStyle, 0xFFFF);
     if (pFont)
       break;
