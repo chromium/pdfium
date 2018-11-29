@@ -1007,6 +1007,17 @@ TEST(WideString, IsASCII) {
   EXPECT_FALSE(WideString(L"xy\u2041z").IsASCII());
 }
 
+TEST(WideString, EqualsASCII) {
+  EXPECT_TRUE(WideString(L"").EqualsASCII(""));
+  EXPECT_FALSE(WideString(L"A").EqualsASCII(""));
+  EXPECT_FALSE(WideString(L"").EqualsASCII("A"));
+  EXPECT_FALSE(WideString(L"A").EqualsASCII("B"));
+  EXPECT_TRUE(WideString(L"ABC").EqualsASCII("ABC"));
+  EXPECT_FALSE(WideString(L"ABC").EqualsASCII("AEC"));
+  EXPECT_FALSE(WideString(L"\u00c1").EqualsASCII("\x41"));
+  EXPECT_FALSE(WideString(L"\u0141").EqualsASCII("\x41"));
+}
+
 TEST(WideString, ToASCII) {
   const char* kResult =
       "x"

@@ -193,6 +193,7 @@ class WideString {
   size_t Remove(wchar_t ch);
 
   bool IsASCII() const;
+  bool EqualsASCII(const ByteStringView& that) const;
   ByteString ToASCII() const;
   ByteString ToDefANSI() const;
   ByteString ToUTF8() const;

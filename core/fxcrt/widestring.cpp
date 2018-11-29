@@ -643,6 +643,19 @@ bool WideString::IsASCII() const {
   return true;
 }
 
+bool WideString::EqualsASCII(const ByteStringView& that) const {
+  size_t length = GetLength();
+  if (length != that.GetLength())
+    return false;
+
+  for (size_t i = 0; i < length; ++i) {
+    wchar_t wc = (*this)[i];
+    if (wc <= 0 || wc > 127 || wc != that[i])  // Questionable signedness.
+      return false;
+  }
+  return true;
+}
+
 ByteString WideString::ToASCII() const {
   ByteString result;
   result.Reserve(GetLength());
