@@ -269,16 +269,6 @@ IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() const {
   return nullptr;
 }
 
-CFWL_Widget* CFWL_Widget::GetRootOuter() {
-  CFWL_Widget* pRet = m_pOuter;
-  if (!pRet)
-    return nullptr;
-
-  while (CFWL_Widget* pOuter = pRet->GetOuter())
-    pRet = pOuter;
-  return pRet;
-}
-
 CFX_SizeF CFWL_Widget::CalcTextSize(const WideString& wsText,
                                     IFWL_ThemeProvider* pTheme,
                                     bool bMultiLine) {
@@ -360,11 +350,6 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   if (!pNoteDriver)
     return;
   pNoteDriver->SendEvent(pEvent);
-}
-
-void CFWL_Widget::Repaint() {
-  RepaintRect(CFX_RectF(0, 0, m_pProperties->m_rtWidget.width,
-                        m_pProperties->m_rtWidget.height));
 }
 
 void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {
