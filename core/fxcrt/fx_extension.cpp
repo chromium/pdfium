@@ -140,30 +140,6 @@ int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count) {
   return wch1 - wch2;
 }
 
-uint32_t FX_HashCode_GetA(const ByteStringView& str, bool bIgnoreCase) {
-  uint32_t dwHashCode = 0;
-  if (bIgnoreCase) {
-    for (const auto& c : str)
-      dwHashCode = 31 * dwHashCode + tolower(c);
-  } else {
-    for (const auto& c : str)
-      dwHashCode = 31 * dwHashCode + c;
-  }
-  return dwHashCode;
-}
-
-uint32_t FX_HashCode_GetW(const WideStringView& str, bool bIgnoreCase) {
-  uint32_t dwHashCode = 0;
-  if (bIgnoreCase) {
-    for (const auto& c : str)
-      dwHashCode = 1313 * dwHashCode + FXSYS_towlower(c);
-  } else {
-    for (const auto& c : str)
-      dwHashCode = 1313 * dwHashCode + c;
-  }
-  return dwHashCode;
-}
-
 void FXSYS_IntToTwoHexChars(uint8_t n, char* buf) {
   static const char kHex[] = "0123456789ABCDEF";
   buf[0] = kHex[n / 16];

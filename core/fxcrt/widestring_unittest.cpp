@@ -1847,4 +1847,15 @@ TEST(WideStringView, WideOStreamOverload) {
   }
 }
 
+TEST(WideString, FX_HashCode_Wide) {
+  EXPECT_EQ(0u, FX_HashCode_GetW(L"", false));
+  EXPECT_EQ(65u, FX_HashCode_GetW(L"A", false));
+  EXPECT_EQ(97u, FX_HashCode_GetW(L"A", true));
+  EXPECT_EQ(1313 * 65u + 66u, FX_HashCode_GetW(L"AB", false));
+  EXPECT_EQ(FX_HashCode_GetAsIfW("AB\xff", false),
+            FX_HashCode_GetW(L"AB\xff", false));
+  EXPECT_EQ(FX_HashCode_GetAsIfW("AB\xff", true),
+            FX_HashCode_GetW(L"AB\xff", true));
+}
+
 }  // namespace fxcrt

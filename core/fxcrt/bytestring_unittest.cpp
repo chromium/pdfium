@@ -1814,4 +1814,22 @@ TEST(ByteString, FormatInteger) {
   EXPECT_EQ("-2147483648", ByteString::FormatInteger(INT_MIN));
 }
 
+TEST(ByteString, FX_HashCode_Ascii) {
+  EXPECT_EQ(0u, FX_HashCode_GetA("", false));
+  EXPECT_EQ(65u, FX_HashCode_GetA("A", false));
+  EXPECT_EQ(97u, FX_HashCode_GetA("A", true));
+  EXPECT_EQ(31 * 65u + 66u, FX_HashCode_GetA("AB", false));
+  EXPECT_EQ(31u * 65u + 255u, FX_HashCode_GetA("A\xff", false));
+  EXPECT_EQ(31u * 97u + 255u, FX_HashCode_GetA("A\xff", true));
+}
+
+TEST(ByteString, FX_HashCode_Wide) {
+  EXPECT_EQ(0u, FX_HashCode_GetAsIfW("", false));
+  EXPECT_EQ(65u, FX_HashCode_GetAsIfW("A", false));
+  EXPECT_EQ(97u, FX_HashCode_GetAsIfW("A", true));
+  EXPECT_EQ(1313u * 65u + 66u, FX_HashCode_GetAsIfW("AB", false));
+  EXPECT_EQ(1313u * 65u + 255u, FX_HashCode_GetAsIfW("A\xff", false));
+  EXPECT_EQ(1313u * 97u + 255u, FX_HashCode_GetAsIfW("A\xff", true));
+}
+
 }  // namespace fxcrt

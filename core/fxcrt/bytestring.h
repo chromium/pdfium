@@ -278,6 +278,7 @@ std::ostream& operator<<(std::ostream& os, const ByteStringView& str);
 using ByteString = fxcrt::ByteString;
 
 uint32_t FX_HashCode_GetA(const ByteStringView& str, bool bIgnoreCase);
+uint32_t FX_HashCode_GetAsIfW(const ByteStringView& str, bool bIgnoreCase);
 
 namespace std {
 
