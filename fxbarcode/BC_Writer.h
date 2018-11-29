@@ -10,7 +10,6 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
-#include "fxbarcode/utils.h"
 
 class CFX_DIBitmap;
 

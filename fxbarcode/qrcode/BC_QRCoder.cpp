@@ -26,7 +26,6 @@
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
-#include "fxbarcode/utils.h"
 
 CBC_QRCoder::CBC_QRCoder()
     : m_mode(nullptr),

@@ -25,11 +25,10 @@
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
-#include "fxbarcode/utils.h"
 
 namespace {
 
-const size_t kSymbolsCount = 30;
+constexpr size_t kSymbolsCount = 30;
 
 CBC_SymbolInfo* g_symbols[kSymbolsCount] = {
     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,

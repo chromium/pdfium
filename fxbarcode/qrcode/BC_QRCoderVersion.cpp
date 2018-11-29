@@ -29,7 +29,6 @@
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "fxbarcode/qrcode/BC_QRCoderECBlocksData.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
-#include "fxbarcode/utils.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

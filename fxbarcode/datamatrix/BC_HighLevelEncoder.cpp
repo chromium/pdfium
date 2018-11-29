@@ -37,7 +37,6 @@
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
-#include "fxbarcode/utils.h"
 #include "third_party/base/ptr_util.h"
 
 const wchar_t CBC_HighLevelEncoder::LATCH_TO_C40 = 230;

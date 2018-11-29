@@ -23,7 +23,6 @@
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
 
 #include "core/fxcrt/fx_memory.h"
-#include "fxbarcode/utils.h"
 
 CBC_QRCoderBitVector::CBC_QRCoderBitVector() = default;
 

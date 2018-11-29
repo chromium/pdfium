@@ -12,6 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/BC_Writer.h"
+#include "fxbarcode/utils.h"
 
 class CFX_Font;
 class CFX_PathData;

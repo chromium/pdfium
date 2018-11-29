@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "fxbarcode/utils.h"
 #include "third_party/base/optional.h"
 
 class CBC_ReedSolomonGF256Poly;

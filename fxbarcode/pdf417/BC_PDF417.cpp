@@ -26,7 +26,6 @@
 #include "fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 #include "fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"
 #include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
-#include "fxbarcode/utils.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {

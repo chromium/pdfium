@@ -27,7 +27,6 @@
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/utils.h"
 
 CBC_EncoderContext::CBC_EncoderContext(const WideString& msg,
                                        const WideString& ecLevel,

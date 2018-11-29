@@ -21,15 +21,6 @@ class CBC_ErrorCorrection {
   static void Finalize();
   static Optional<WideString> EncodeECC200(const WideString& codewords,
                                            const CBC_SymbolInfo* symbolInfo);
-
- private:
-  static const int32_t MODULO_VALUE = 0x12D;
-
-  static int32_t LOG[256];
-  static int32_t ALOG[256];
-
-  static Optional<WideString> CreateECCBlock(const WideString& codewords,
-                                             int32_t numECWords);
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_

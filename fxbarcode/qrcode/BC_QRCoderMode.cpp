@@ -24,8 +24,6 @@
 
 #include <utility>
 
-#include "fxbarcode/utils.h"
-
 CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sNUMERIC = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sALPHANUMERIC = nullptr;

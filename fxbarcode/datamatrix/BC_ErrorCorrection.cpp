@@ -26,7 +26,6 @@
 
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "fxbarcode/utils.h"
 
 namespace {
 
@@ -100,10 +99,47 @@ const uint8_t* const FACTORS[16] = {
     FACTORS_6,  FACTORS_7,  FACTORS_8,  FACTORS_9, FACTORS_10, FACTORS_11,
     FACTORS_12, FACTORS_13, FACTORS_14, FACTORS_15};
 
-}  // namespace
+constexpr int32_t MODULO_VALUE = 0x12D;
 
-int32_t CBC_ErrorCorrection::LOG[256] = {0};
-int32_t CBC_ErrorCorrection::ALOG[256] = {0};
+int32_t LOG[256] = {0};
+int32_t ALOG[256] = {0};
+
+Optional<WideString> CreateECCBlock(const WideString& codewords,
+                                    int32_t numECWords) {
+  const int32_t len = codewords.GetLength();
+  static const size_t kFactorTableNum = sizeof(FACTOR_SETS) / sizeof(int32_t);
+  size_t table = 0;
+  while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
+    table++;
+
+  if (table >= kFactorTableNum)
+    return {};
+
+  uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
+  for (int32_t i = 0; i < 0 + len; i++) {
+    uint16_t m = ecc[numECWords - 1] ^ codewords[i];
+    for (int32_t k = numECWords - 1; k > 0; k--) {
+      if (m != 0 && FACTORS[table][k] != 0) {
+        ecc[k] = (uint16_t)(ecc[k - 1] ^
+                            ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
+      } else {
+        ecc[k] = ecc[k - 1];
+      }
+    }
+    if (m != 0 && FACTORS[table][0] != 0) {
+      ecc[0] = (uint16_t)ALOG[(LOG[m] + LOG[FACTORS[table][0]]) % 255];
+    } else {
+      ecc[0] = 0;
+    }
+  }
+  WideString strecc;
+  for (int32_t j = 0; j < numECWords; j++) {
+    strecc += (wchar_t)ecc[numECWords - j - 1];
+  }
+  FX_Free(ecc);
+  return strecc;
+}
+}  // namespace
 
 void CBC_ErrorCorrection::Initialize() {
   int32_t p = 1;
@@ -162,41 +198,4 @@ Optional<WideString> CBC_ErrorCorrection::EncodeECC200(
     }
   }
   return sb;
-}
-
-Optional<WideString> CBC_ErrorCorrection::CreateECCBlock(
-    const WideString& codewords,
-    int32_t numECWords) {
-  const int32_t len = codewords.GetLength();
-  static const size_t kFactorTableNum = sizeof(FACTOR_SETS) / sizeof(int32_t);
-  size_t table = 0;
-  while (table < kFactorTableNum && FACTOR_SETS[table] != numECWords)
-    table++;
-
-  if (table >= kFactorTableNum)
-    return {};
-
-  uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
-  for (int32_t i = 0; i < len; i++) {
-    uint16_t m = ecc[numECWords - 1] ^ codewords[i];
-    for (int32_t k = numECWords - 1; k > 0; k--) {
-      if (m != 0 && FACTORS[table][k] != 0) {
-        ecc[k] = (uint16_t)(ecc[k - 1] ^
-                            ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
-      } else {
-        ecc[k] = ecc[k - 1];
-      }
-    }
-    if (m != 0 && FACTORS[table][0] != 0) {
-      ecc[0] = (uint16_t)ALOG[(LOG[m] + LOG[FACTORS[table][0]]) % 255];
-    } else {
-      ecc[0] = 0;
-    }
-  }
-  WideString strecc;
-  for (int32_t j = 0; j < numECWords; j++) {
-    strecc += (wchar_t)ecc[numECWords - j - 1];
-  }
-  FX_Free(ecc);
-  return strecc;
 }
