@@ -48,7 +48,10 @@ class CPDF_Parser {
 
   // A limit on the maximum object number in the xref table. Theoretical limits
   // are higher, but this may be large enough in practice.
-  static const uint32_t kMaxObjectNumber = 1048576;
+  // Note: This was 1M, but https://crbug.com/910009 encountered a PDF with
+  // object numbers in the 1.7M range. The PDF only has 10K objects, but they
+  // are non-consecutive.
+  static constexpr uint32_t kMaxObjectNumber = 4 * 1024 * 1024;
 
   static const size_t kInvalidPos = std::numeric_limits<size_t>::max();
 
