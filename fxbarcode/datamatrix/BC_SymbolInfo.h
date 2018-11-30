@@ -12,8 +12,8 @@
 
 class CBC_SymbolInfo {
  public:
-  CBC_SymbolInfo(int32_t dataCapacity,
-                 int32_t errorCodewords,
+  CBC_SymbolInfo(size_t dataCapacity,
+                 size_t errorCodewords,
                  int32_t matrixWidth,
                  int32_t matrixHeight,
                  int32_t dataRegions);
@@ -22,26 +22,26 @@ class CBC_SymbolInfo {
   static void Initialize();
   static void Finalize();
   static void overrideSymbolSet(CBC_SymbolInfo* override);
-  static const CBC_SymbolInfo* Lookup(int32_t iDataCodewords,
+  static const CBC_SymbolInfo* Lookup(size_t iDataCodewords,
                                       bool bAllowRectangular);
 
   int32_t getSymbolDataWidth() const;
   int32_t getSymbolDataHeight() const;
   int32_t getSymbolWidth() const;
   int32_t getSymbolHeight() const;
-  int32_t getCodewordCount() const;
-  virtual int32_t getInterleavedBlockCount() const;
+  size_t getCodewordCount() const;
+  virtual size_t getInterleavedBlockCount() const;
   int32_t getDataLengthForInterleavedBlock(int32_t index) const;
   int32_t getErrorLengthForInterleavedBlock(int32_t index) const;
 
-  int32_t dataCapacity() const { return m_dataCapacity; }
-  int32_t errorCodewords() const { return m_errorCodewords; }
+  size_t dataCapacity() const { return m_dataCapacity; }
+  size_t errorCodewords() const { return m_errorCodewords; }
   int32_t matrixWidth() const { return m_matrixWidth; }
   int32_t matrixHeight() const { return m_matrixHeight; }
 
  protected:
-  CBC_SymbolInfo(int32_t dataCapacity,
-                 int32_t errorCodewords,
+  CBC_SymbolInfo(size_t dataCapacity,
+                 size_t errorCodewords,
                  int32_t matrixWidth,
                  int32_t matrixHeight,
                  int32_t dataRegions,
@@ -53,8 +53,8 @@ class CBC_SymbolInfo {
   int32_t getVerticalDataRegions() const;
 
   const bool m_rectangular;
-  const int32_t m_dataCapacity;
-  const int32_t m_errorCodewords;
+  const size_t m_dataCapacity;
+  const size_t m_errorCodewords;
   const int32_t m_matrixWidth;
   const int32_t m_matrixHeight;
   const int32_t m_dataRegions;

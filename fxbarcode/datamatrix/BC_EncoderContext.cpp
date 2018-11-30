@@ -66,18 +66,23 @@ void CBC_EncoderContext::writeCodewords(const WideString& codewords) {
 void CBC_EncoderContext::writeCodeword(wchar_t codeword) {
   m_codewords += codeword;
 }
+
 size_t CBC_EncoderContext::getCodewordCount() {
   return m_codewords.GetLength();
 }
+
 void CBC_EncoderContext::signalEncoderChange(int32_t encoding) {
   m_newEncoding = encoding;
 }
+
 void CBC_EncoderContext::resetEncoderSignal() {
   m_newEncoding = -1;
 }
+
 bool CBC_EncoderContext::hasMoreCharacters() {
   return m_pos < getTotalMessageCharCount();
 }
+
 size_t CBC_EncoderContext::getRemainingCharacters() {
   return getTotalMessageCharCount() - m_pos;
 }
@@ -86,7 +91,7 @@ bool CBC_EncoderContext::UpdateSymbolInfo() {
   return UpdateSymbolInfo(getCodewordCount());
 }
 
-bool CBC_EncoderContext::UpdateSymbolInfo(int32_t len) {
+bool CBC_EncoderContext::UpdateSymbolInfo(size_t len) {
   if (!m_symbolInfo || len > m_symbolInfo->dataCapacity()) {
     m_symbolInfo = CBC_SymbolInfo::Lookup(len, m_bAllowRectangular);
     if (!m_symbolInfo)

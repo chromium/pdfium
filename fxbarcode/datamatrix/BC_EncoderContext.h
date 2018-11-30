@@ -30,7 +30,7 @@ class CBC_EncoderContext {
   bool hasMoreCharacters();
   size_t getRemainingCharacters();
   bool UpdateSymbolInfo();
-  bool UpdateSymbolInfo(int32_t len);
+  bool UpdateSymbolInfo(size_t len);
   void resetSymbolInfo();
 
   bool HasCharactersOutsideISO88591Encoding() const {

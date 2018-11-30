@@ -66,8 +66,8 @@ int32_t GetAlphaNumericCode(int32_t code) {
 }
 
 bool AppendNumericBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
-  int32_t length = content.GetLength();
-  int32_t i = 0;
+  size_t length = content.GetLength();
+  size_t i = 0;
   while (i < length) {
     int32_t num1 = content[i] - '0';
     if (i + 2 < length) {
@@ -89,8 +89,8 @@ bool AppendNumericBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
 
 bool AppendAlphaNumericBytes(const ByteString& content,
                              CBC_QRCoderBitVector* bits) {
-  int32_t length = content.GetLength();
-  int32_t i = 0;
+  size_t length = content.GetLength();
+  size_t i = 0;
   while (i < length) {
     int32_t code1 = GetAlphaNumericCode(content[i]);
     if (code1 == -1)
@@ -112,9 +112,9 @@ bool AppendAlphaNumericBytes(const ByteString& content,
 }
 
 bool AppendGBKBytes(const ByteString& content, CBC_QRCoderBitVector* bits) {
-  int32_t length = content.GetLength();
+  size_t length = content.GetLength();
   uint32_t value = 0;
-  for (int32_t i = 0; i < length; i += 2) {
+  for (size_t i = 0; i < length; i += 2) {
     value = (uint32_t)(content[i] << 8 | content[i + 1]);
     if (value <= 0xAAFE && value >= 0xA1A1)
       value -= 0xA1A1;

@@ -99,11 +99,11 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
       context.resetEncoderSignal();
     }
   }
-  int32_t len = context.m_codewords.GetLength();
+  size_t len = context.m_codewords.GetLength();
   if (!context.UpdateSymbolInfo())
     return WideString();
 
-  int32_t capacity = context.m_symbolInfo->dataCapacity();
+  size_t capacity = context.m_symbolInfo->dataCapacity();
   if (len < capacity) {
     if (encodingMode != ASCII_ENCODATION &&
         encodingMode != BASE256_ENCODATION) {
@@ -111,14 +111,12 @@ WideString CBC_HighLevelEncoder::EncodeHighLevel(const WideString& msg,
     }
   }
   WideString codewords = context.m_codewords;
-  if (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) < capacity)
+  if (codewords.GetLength() < capacity)
     codewords += PAD;
 
-  while (pdfium::base::checked_cast<int32_t>(codewords.GetLength()) <
-         capacity) {
-    codewords += (randomize253State(
-        PAD, pdfium::base::checked_cast<int32_t>(codewords.GetLength()) + 1));
-  }
+  while (codewords.GetLength() < capacity)
+    codewords += randomize253State(PAD, codewords.GetLength() + 1);
+
   ASSERT(!codewords.IsEmpty());
   return codewords;
 }
@@ -262,10 +260,11 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(const WideString& msg,
 bool CBC_HighLevelEncoder::isExtendedASCII(wchar_t ch) {
   return ch >= 128 && ch <= 255;
 }
+
 int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(WideString msg,
                                                              int32_t startpos) {
   int32_t count = 0;
-  int32_t len = msg.GetLength();
+  int32_t len = pdfium::base::checked_cast<int32_t>(msg.GetLength());
   int32_t idx = startpos;
   if (idx < len) {
     wchar_t ch = msg[idx];
@@ -284,9 +283,10 @@ wchar_t CBC_HighLevelEncoder::randomize253State(wchar_t ch,
                                                 int32_t codewordPosition) {
   int32_t pseudoRandom = ((149 * codewordPosition) % 253) + 1;
   int32_t tempVariable = ch + pseudoRandom;
-  return tempVariable <= 254 ? (wchar_t)tempVariable
-                             : (wchar_t)(tempVariable - 254);
+  return tempVariable <= 254 ? static_cast<wchar_t>(tempVariable)
+                             : static_cast<wchar_t>(tempVariable - 254);
 }
+
 int32_t CBC_HighLevelEncoder::findMinimums(std::vector<float>& charCounts,
                                            std::vector<int32_t>& intCharCounts,
                                            int32_t min,

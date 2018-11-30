@@ -46,7 +46,7 @@ class CBC_PDF417 {
                       int32_t errorCorrectionLevel,
                       CBC_BarcodeMatrix* logic);
   std::vector<int32_t> determineDimensions(
-      int32_t sourceCodeWords,
+      size_t sourceCodeWords,
       int32_t errorCorrectionCodeWords) const;
 
   std::unique_ptr<CBC_BarcodeMatrix> m_barcodeMatrix;

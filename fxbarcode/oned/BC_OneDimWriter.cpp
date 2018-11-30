@@ -186,8 +186,7 @@ bool CBC_OneDimWriter::ShowChars(const WideStringView& contents,
     return false;
 
   ByteString str = FX_UTF8Encode(contents);
-  int32_t iLen = str.GetLength();
-  std::vector<FXTEXT_CHARPOS> charpos(iLen);
+  std::vector<FXTEXT_CHARPOS> charpos(str.GetLength());
   float charsLen = 0;
   float geWidth = 0;
   if (m_locTextLoc == BC_TEXT_LOC_ABOVEEMBED ||

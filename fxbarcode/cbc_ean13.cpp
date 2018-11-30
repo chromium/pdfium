@@ -34,18 +34,18 @@ CBC_EAN13::~CBC_EAN13() {}
 WideString CBC_EAN13::Preprocess(const WideStringView& contents) {
   auto* pWriter = GetOnedEAN13Writer();
   WideString encodeContents = pWriter->FilterContents(contents);
-  int32_t length = encodeContents.GetLength();
+  size_t length = encodeContents.GetLength();
   if (length <= 12) {
-    for (int32_t i = 0; i < 12 - length; i++)
-      encodeContents = wchar_t('0') + encodeContents;
+    for (size_t i = 0; i < 12 - length; i++)
+      encodeContents.InsertAtFront(L'0');
 
     ByteString byteString = encodeContents.ToUTF8();
     int32_t checksum = pWriter->CalcChecksum(byteString);
     byteString += checksum + '0';
     encodeContents = WideString::FromUTF8(byteString.AsStringView());
-  }
-  if (length > 13)
+  } else {
     encodeContents = encodeContents.Left(13);
+  }
 
   return encodeContents;
 }

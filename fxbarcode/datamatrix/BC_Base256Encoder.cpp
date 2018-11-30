@@ -62,7 +62,7 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
       break;
     }
   }
-  int32_t dataCount = buffer.GetLength() - 1;
+  size_t dataCount = buffer.GetLength() - 1;
   char buf[128];
   FXSYS_itoa(dataCount, buf, 10);
   buffer.SetAt(0, static_cast<wchar_t>(*buf) - '0');

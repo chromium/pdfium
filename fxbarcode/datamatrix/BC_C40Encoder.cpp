@@ -61,7 +61,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
     if (lastCharSize <= 0)
       return false;
 
-    int32_t unwritten = (buffer.GetLength() / 3) * 2;
+    size_t unwritten = (buffer.GetLength() / 3) * 2;
     int32_t curCodewordCount = context->getCodewordCount() + unwritten;
     if (!context->UpdateSymbolInfo(curCodewordCount))
       return false;
@@ -84,7 +84,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
       }
       break;
     }
-    int32_t count = buffer.GetLength();
+    size_t count = buffer.GetLength();
     if ((count % 3) == 0) {
       int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
           context->m_msg, context->m_pos, getEncodingMode());
@@ -105,8 +105,8 @@ void CBC_C40Encoder::WriteNextTriplet(CBC_EncoderContext* context,
 
 bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
                                WideString* buffer) {
-  int32_t unwritten = (buffer->GetLength() / 3) * 2;
-  int32_t rest = buffer->GetLength() % 3;
+  size_t unwritten = (buffer->GetLength() / 3) * 2;
+  size_t rest = buffer->GetLength() % 3;
   int32_t curCodewordCount = context->getCodewordCount() + unwritten;
   if (!context->UpdateSymbolInfo(curCodewordCount))
     return false;
@@ -189,11 +189,13 @@ int32_t CBC_C40Encoder::EncodeChar(wchar_t c, WideString* sb) {
 int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,
                                               WideString* buffer,
                                               int32_t lastCharSize) {
+  ASSERT(lastCharSize >= 0);
+
   if (context->m_pos < 1)
     return -1;
 
-  int32_t count = buffer->GetLength();
-  if (count < lastCharSize)
+  size_t count = buffer->GetLength();
+  if (count < static_cast<size_t>(lastCharSize))
     return -1;
 
   buffer->Delete(count - lastCharSize, lastCharSize);

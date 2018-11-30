@@ -33,18 +33,18 @@ CBC_UPCA::~CBC_UPCA() {}
 WideString CBC_UPCA::Preprocess(const WideStringView& contents) {
   CBC_OnedUPCAWriter* pWriter = GetOnedUPCAWriter();
   WideString encodeContents = pWriter->FilterContents(contents);
-  int32_t length = encodeContents.GetLength();
+  size_t length = encodeContents.GetLength();
   if (length <= 11) {
-    for (int32_t i = 0; i < 11 - length; i++)
+    for (size_t i = 0; i < 11 - length; i++)
       encodeContents = L'0' + encodeContents;
 
     ByteString byteString = encodeContents.ToUTF8();
     int32_t checksum = pWriter->CalcChecksum(byteString);
     byteString += '0' + checksum;
     encodeContents = WideString::FromUTF8(byteString.AsStringView());
-  }
-  if (length > 12)
+  } else {
     encodeContents = encodeContents.Left(12);
+  }
 
   return encodeContents;
 }

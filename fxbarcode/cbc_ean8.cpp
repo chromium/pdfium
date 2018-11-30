@@ -33,17 +33,17 @@ CBC_EAN8::~CBC_EAN8() {}
 WideString CBC_EAN8::Preprocess(const WideStringView& contents) {
   auto* pWriter = GetOnedEAN8Writer();
   WideString encodeContents = pWriter->FilterContents(contents);
-  int32_t length = encodeContents.GetLength();
+  size_t length = encodeContents.GetLength();
   if (length <= 7) {
-    for (int32_t i = 0; i < 7 - length; i++)
+    for (size_t i = 0; i < 7 - length; i++)
       encodeContents = L'0' + encodeContents;
 
     ByteString byteString = encodeContents.ToUTF8();
     int32_t checksum = pWriter->CalcChecksum(byteString);
     encodeContents += L'0' + checksum;
-  }
-  if (length > 8)
+  } else {
     encodeContents = encodeContents.Left(8);
+  }
 
   return encodeContents;
 }

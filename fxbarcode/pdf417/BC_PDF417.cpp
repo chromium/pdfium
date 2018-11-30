@@ -370,7 +370,7 @@ bool CBC_PDF417::generateBarcodeLogic(WideString msg,
   if (!high_level.has_value())
     return false;
 
-  int32_t sourceCodeWords = high_level.value().GetLength();
+  size_t sourceCodeWords = high_level.value().GetLength();
   std::vector<int32_t> dimensions =
       determineDimensions(sourceCodeWords, errorCorrectionCodeWords);
   if (dimensions.size() != 2)
@@ -484,7 +484,7 @@ void CBC_PDF417::encodeLowLevel(WideString fullCodewords,
 }
 
 std::vector<int32_t> CBC_PDF417::determineDimensions(
-    int32_t sourceCodeWords,
+    size_t sourceCodeWords,
     int32_t errorCorrectionCodeWords) const {
   std::vector<int32_t> dimensions;
   float ratio = 0.0f;

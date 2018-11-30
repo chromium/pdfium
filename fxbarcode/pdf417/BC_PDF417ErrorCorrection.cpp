@@ -143,8 +143,8 @@ bool CBC_PDF417ErrorCorrection::generateErrorCorrection(
     return false;
 
   std::vector<wchar_t> ech(k);
-  int32_t sld = dataCodewords.GetLength();
-  for (int32_t i = 0; i < sld; i++) {
+  size_t sld = dataCodewords.GetLength();
+  for (size_t i = 0; i < sld; i++) {
     int32_t t1 = (dataCodewords[i] + ech[k - 1]) % 929;
     int32_t t2;
     int32_t t3;

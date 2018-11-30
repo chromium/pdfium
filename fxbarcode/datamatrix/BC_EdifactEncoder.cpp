@@ -51,7 +51,7 @@ WideString EncodeToEdifactCodewords(const WideString& sb, int32_t startPos) {
 }
 
 bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
-  int32_t count = buffer.GetLength();
+  size_t count = buffer.GetLength();
   if (count == 0)
     return true;
   if (count > 4)
@@ -132,7 +132,7 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
       return false;
 
     context->m_pos++;
-    int32_t count = buffer.GetLength();
+    size_t count = buffer.GetLength();
     if (count >= 4) {
       WideString encoded = EncodeToEdifactCodewords(buffer, 0);
       if (encoded.IsEmpty())
